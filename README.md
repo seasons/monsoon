@@ -3,11 +3,9 @@
 
 Monsoon is a Gateway service as its schema is built on top of the Shopify GraphQL API using a GraphQL design pattern called [Schema Stitching](https://www.apollographql.com/docs/graphql-tools/schema-stitching/). Stitching allows us to merge multiple remote services (both GraphQL and RESTful APIs) into a single endpoint.
 
-You can explore the GraphQL API and Schema in this [GraphQL Playground](https://e7339i1sra.execute-api.us-east-1.amazonaws.com/dev/playground)
+You can explore the Monsoon API using the staging [GraphQL Playground](https://e7339i1sra.execute-api.us-east-1.amazonaws.com/dev/playground)
 
-(TODO) Talk about Prisma
-
-![](https://blog.hasura.io/content/images/downloaded_images/the-ultimate-guide-to-schema-stitching-in-graphql-f30178ac0072/1-_KqIWctCiD9sJ7BUuHF3vQ.png)
+![](https://miro.medium.com/max/3200/1*abI3_s-HJJ0cLrT5UM1rfQ.png)
 
 ## Features
 
