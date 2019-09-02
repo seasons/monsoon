@@ -12,8 +12,8 @@
 # Happy Coding!
 
 service: monsoon
-#app: your-app-name
-#tenant: your-tenant-name
+app: monsoon
+org: l2succes
 
 # You can pin your service to only deploy with a specific Serverless version
 # Check out our docs for more details
@@ -60,6 +60,9 @@ provider:
 #  exclude:
 #    - exclude-me.js
 #    - exclude-me-dir/**
+package:
+  include:
+    - src/**/*.graphql
 
 functions:
   graphql:
@@ -74,7 +77,7 @@ functions:
           method: get
           cors: true
   playground:
-    handler: src/handler.playground
+    handler: src/handler.graphql
     events:
       - http:
           path: playground

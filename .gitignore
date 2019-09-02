@@ -6,3 +6,5 @@ node_modules
 *.log
 .env*
 .serverless
+.build
+.DS_Store
