@@ -1,18 +1,17 @@
 <h1>⽲ Monsoon</h1>
 <h3>GraphQL API for Seasons</h3>
 
-This project was bootstrapped with `graphql-cli` and the [Typescript GraphQL Boilerplate](https://github.com/graphql-boilerplates/typescript-graphql-server/tree/master/advanced).
+Monsoon is a Gateway service as its schema is built on top of the Shopify GraphQL API using a GraphQL design pattern called [Schema Stitching](https://www.apollographql.com/docs/graphql-tools/schema-stitching/). Stitching allows us to merge multiple remote services (both GraphQL and RESTful APIs) into a single endpoint.
 
-## Architecture
-
-This server is heavily built on top of the Shopify GraphQL API using a GraphQL design pattern called [Schema Stitching](https://www.apollographql.com/docs/graphql-tools/schema-stitching/). Stitching allows us to merge multiple remote schemas
 You can explore the GraphQL API and Schema in this [GraphQL Playground](https://e7339i1sra.execute-api.us-east-1.amazonaws.com/dev/playground)
 
 (TODO) Talk about Prisma
 
+![](https://blog.hasura.io/content/images/downloaded_images/the-ultimate-guide-to-schema-stitching-in-graphql-f30178ac0072/1-_KqIWctCiD9sJ7BUuHF3vQ.png)
+
 ## Features
 
-- **Scalable GraphQL server:** The server uses [`graphql-yoga`](https://github.com/prisma/graphql-yoga) which is based on Apollo Server & Express
+- **Scalable GraphQL server:** The server uses [`apollo-server`](https://github.com/prisma/graphql-yoga) which is based on Apollo Server & Express
 - **Static type generation**: TypeScript types for GraphQL queries & mutations are generated in a build step
 - **Authentication**: Signup and login workflows are ready to use for your users
 - **GraphQL database:** Includes GraphQL database binding to [Prisma](https://www.prismagraphql.com) (running on MySQL)
@@ -35,12 +34,10 @@ npm install -g serverless
 # 1. Installs all required dependencies
 yarn install
 
-# 2. When prompted, deploy the Prisma service to a _public cluster_
+# 2. Setup an environment variable file
+cp .env.example .env
 
-# 3. Navigate to the new project
-cd my-app
-
-# 4. Start server (runs on http://localhost:4000) and open GraphQL Playground
+# 3. Start server (runs on http://localhost:3000) and open GraphQL Playground
 yarn start
 ```
 
@@ -50,7 +47,7 @@ yarn start
 
 ### Commands
 
-- `yarn start` starts GraphQL server on `http://localhost:4000`
+- `yarn start` starts GraphQL server on `http://localhost:3000`
 - `yarn prisma <subcommand>` gives access to local version of Prisma CLI (e.g. `yarn prisma deploy`)
 
 > **Note**: We recommend that you're using `yarn dev` during development as it will give you access to the GraphQL API or your server (defined by the [application schema](./src/schema.graphql)) as well as to the Prisma API directly (defined by the [Prisma database schema](./generated/prisma.graphql)). If you're starting the server with `yarn start`, you'll only be able to access the API of the application schema.
@@ -74,3 +71,4 @@ yarn start
 ## Resources
 
 - [GraphQL Resolvers: Best Practices](https://medium.com/paypal-engineering/graphql-resolvers-best-practices-cd36fdbcef55)
+- [The ultimate guide to Schema Stitching in GraphQL](https://blog.hasura.io/the-ultimate-guide-to-schema-stitching-in-graphql-f30178ac0072/)
