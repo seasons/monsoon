@@ -1,11 +1,18 @@
-import { init } from "."
+import { prisma } from "./generated/prisma-client"
+import { ApolloServer } from "apollo-server-lambda"
+import { schema } from "./schema"
 
-export async function graphql(event, context, callback) {
-  const { server } = await init()
-  server(event, context, callback)
-}
+const server = new ApolloServer({
+  schema,
+  context: request => ({
+    ...request,
+    prisma,
+  }),
+})
 
-export async function playground(event, context, callback) {
-  const { playground } = await init()
-  playground(event, context, callback)
+export function graphql(event, context, callback) {
+  context.callbackWaitsForEmptyEventLoop = false
+  const handler = server.createHandler()
+
+  return handler(event, context, callback)
 }

@@ -1,16 +1,14 @@
 import { HttpLink } from "apollo-link-http"
 import fetch from "node-fetch"
 import {
-  introspectSchema,
   makeRemoteExecutableSchema,
   transformSchema,
   FilterTypes,
-  FilterRootFields,
 } from "graphql-tools"
 import { ApolloLink } from "apollo-link"
+import { importSchema } from "graphql-import"
 
 const { SHOPIFY_GRAPHQL_API, SHOPIFY_ACCESS_TOKEN } = process.env
-console.log("graphQL API: ", SHOPIFY_GRAPHQL_API, SHOPIFY_ACCESS_TOKEN)
 
 const link = new HttpLink({
   uri: SHOPIFY_GRAPHQL_API,
@@ -27,21 +25,21 @@ const middlewareLink = new ApolloLink((operation, forward) => {
   return forward(operation)
 })
 
-export default async () => {
-  const schema = await introspectSchema(middlewareLink.concat(link))
-  const transformedSchema = transformSchema(schema, [
-    new FilterRootFields((_, name) => {
-      return ["collection", "product"].includes(name)
-    }),
+export default () => {
+  const typeDefs = importSchema("./src/shopify/shopify.graphql")
+  const executableSchema = makeRemoteExecutableSchema({
+    schema: typeDefs,
+    link: middlewareLink.concat(link),
+  })
+
+  const transformedSchema = transformSchema(executableSchema, [
+    // new FilterRootFields((_, name) => {
+    //   return ["collection", "product", "products"].includes(name)
+    // }),
     new FilterTypes(filter => {
       return filter.toString() !== "Job"
     }),
   ])
 
-  const executableSchema = makeRemoteExecutableSchema({
-    schema: transformedSchema,
-    link,
-  })
-
-  return executableSchema
+  return transformedSchema
 }
