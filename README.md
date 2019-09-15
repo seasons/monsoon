@@ -35,8 +35,23 @@ yarn install
 # 2. Setup an environment variable file
 cp .env.example .env
 
-# 3. Start server (runs on http://localhost:3000) and open GraphQL Playground
+# 3. Start server (runs on http://localhost:3000/playground) and open GraphQL Playground
 yarn start
+```
+
+To verify the server is setup properly. go open the [playground](http://localhost:3000/playground) and run the following query
+
+```graphql
+{
+  products(first: 10) {
+    edges {
+      node {
+        id
+        title
+      }
+    }
+  }
+}
 ```
 
 ![](https://imgur.com/hElq68i.png)
