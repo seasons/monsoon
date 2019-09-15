@@ -8,6 +8,26 @@ const server = new ApolloServer({
     ...request,
     prisma,
   }),
+  playground: {
+    settings: {
+      'editor.theme': 'dark',
+    },
+    tabs: [
+      {
+        endpoint: "/",
+        query: `{
+          products(first: 10){
+            edges {
+              node {
+                id
+                title
+              }
+            }
+          }
+        }`,
+      },
+    ],
+  },
 })
 
 export function graphql(event, context, callback) {
