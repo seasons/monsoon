@@ -7,6 +7,7 @@
     "deploy": "serverless deploy"
   },
   "dependencies": {
+    "apollo-datasource-rest": "^0.6.4",
     "apollo-link-http": "^1.5.15",
     "apollo-server-lambda": "^2.9.3",
     "bcryptjs": "2.4.3",
@@ -20,13 +21,15 @@
     "@types/bcryptjs": "2.4.2",
     "@types/node": "10.14.17",
     "dotenv-cli": "1.4.0",
+    "graceful-fs": "^4.2.2",
     "nodemon": "1.19.1",
     "prettier": "^1.18.2",
     "rimraf": "2.7.1",
     "serverless": "^1.51.0",
     "serverless-dotenv-plugin": "^2.1.1",
     "serverless-offline": "^5.10.1",
-    "serverless-plugin-typescript": "^1.1.9",
+    "serverless-plugin-include-dependencies": "^3.2.1",
+    "serverless-plugin-typescript": "^1.1.7",
     "ts-node": "7.0.1",
     "typescript": "3.2.2"
   },

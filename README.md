@@ -54,7 +54,10 @@ To verify the server is setup properly. go open the [playground](http://localhos
 }
 ```
 
-![](https://imgur.com/hElq68i.png)
+## Deployment
+
+To deploy monsoon onto AWS services, you need to configure serverless with AWS AMI credentials.
+`serverless config credentials --provider aws --key <AWS_API_KEY> --secret <AWS_USER_SECRET>`
 
 ## Documentation
 

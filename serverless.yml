@@ -23,6 +23,7 @@ plugins:
   - serverless-plugin-typescript
   - serverless-offline
   - serverless-dotenv-plugin
+  - serverless-plugin-include-dependencies
 
 provider:
   name: aws

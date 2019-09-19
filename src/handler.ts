@@ -2,6 +2,18 @@ import { prisma } from "./generated/prisma-client"
 import { ApolloServer } from "apollo-server-lambda"
 import { schema } from "./schema"
 
+const defaultQuery = `{
+  products(first: 10) {
+    edges {
+      node {
+        id
+        title
+      }
+    }
+  }
+}
+`
+
 const server = new ApolloServer({
   schema,
   context: request => ({
@@ -10,24 +22,16 @@ const server = new ApolloServer({
   }),
   playground: {
     settings: {
-      'editor.theme': 'dark',
+      "editor.theme": "dark",
     },
     tabs: [
       {
         endpoint: "/",
-        query: `{
-          products(first: 10){
-            edges {
-              node {
-                id
-                title
-              }
-            }
-          }
-        }`,
+        query: defaultQuery,
       },
     ],
   },
+  mocks: true,
 })
 
 export function graphql(event, context, callback) {
