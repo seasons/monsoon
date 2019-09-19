@@ -1,20 +1,11 @@
 type Query {
-  feed: [Post!]!
-  drafts: [Post!]!
-  post(id: ID!): Post
   me: User
+  products: [Product!]
 }
 
 type Mutation {
   signup(email: String!, password: String!, name: String!): AuthPayload!
   login(email: String!, password: String!): AuthPayload!
-  createDraft(title: String!, content: String!): Post!
-  publish(id: ID!): Post!
-  deletePost(id: ID!): Post!
-}
-
-type Subscription {
-  feedSubscription: Post
 }
 
 type AuthPayload {
@@ -26,13 +17,154 @@ type User {
   id: ID!
   email: String!
   name: String!
-  posts: [Post!]!
+  bag: Bag!
 }
 
-type Post {
+type Bag {
   id: ID!
-  published: Boolean!
-  title: String!
-  content: String!
-  author: User!
+}
+
+enum Tier {
+  Tier0
+  Tier1
+  Tier2
+  Niche
+  Upcoming
+  Retro
+  Boutique
+}
+
+enum Size {
+  ExtraSmall
+  Small
+  Medium
+  Large
+  ExtraLarge
+}
+
+enum Material {
+  Cotton
+  Mesh
+  Nylon
+  Denim
+  Leather
+  Fur
+  Polyamide
+  Feather
+  Polyester
+}
+
+enum Department {
+  Clothes
+  Bags
+  Accessories
+  Jewelry
+}
+
+enum Category {
+  Outerwear
+  Tops
+}
+
+enum Color {
+  Black
+  Red
+  White
+  Silver
+  Gray
+  Maroon
+  Yellow
+  Olive
+  Lime
+  Green
+  Aqua
+  Teal
+  Blue
+  Navy
+  Purple
+  Salmon
+  Gold
+  Orange
+  Turquoise
+  RoyalBlue
+  Magenta
+  Lavender
+  Ivory
+  MintCream
+  Beige
+  Brown
+  Tan
+  LightBlue
+  HotPink
+  Pink
+  DarkGray
+}
+
+type Image {
+  href: String
+  height: Int
+  width: Int
+  imageURL: String
+  originalHeight: Int
+  originalWidth: Int
+
+  resized(width: Int, height: Int, version: [String]): ResizedImageUrl
+}
+
+type ResizedImageUrl {
+  factor: Float
+  width: Int
+  height: Int
+  url: String
+}
+
+type Price {
+  cent: Int
+  display: String
+}
+
+type Brand {
+  id: ID!
+  name: String!
+  tier: Tier!
+  website: String!
+  logo: Image
+  description: String!
+  since: Int
+  primary: Boolean!
+  code: String!
+}
+
+type Product {
+  id: ID!
+  upc: String!
+  brand: Brand
+  description: String!
+  images: [Image]!
+  modelSize: Size
+  modelHeight: Int!
+  brand: Brand!
+  relatedProducts: [Product!]
+  availableSizes: [Size!]!
+  variants: [ProductVariant]
+  price: Price!
+  formattedPrice: String!
+  materials: [Material!]!
+  department: Department
+  category: Category
+  tags: [String!]
+}
+
+type ProductVariant {
+  id: ID!
+  product: Product
+  UPC: Int!
+  SKU: String!
+  images: [Image!]!
+  size: Size
+  primaryColor: Color
+  colors: [Color!]
+  price: Price
+  weight: Double
+  height: Double
 }
