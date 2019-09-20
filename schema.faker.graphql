@@ -1,3 +1,16 @@
+# This is sample SDL schema for GraphQL Faker.
+#
+# There are two directives you can use to enhance fake data:
+#   - @fake
+#   - @examples
+# Each directive has autocompletion working so start by typing @
+#
+# Press save or Cmd+Enter to apply the changes and update server. Switch to GraphiQL
+# on the left panel to immediately test your changes.
+# This tool also supports extending existing APIs. Check graphql-faker --help
+#
+# Developed with ❤️ by APIs.guru | https://github.com/APIs-guru/graphql-faker
+
 type Query {
   me: User
   products: [Product!]
@@ -101,13 +114,6 @@ enum Color {
   DarkGray
 }
 
-type PhysicalProductState {
-  id: ID!
-  name: String!
-  description: String!
-  previousState: PhysicalProductState
-}
-
 type Image {
   href: String
   height: Int
@@ -132,30 +138,30 @@ type Price {
 }
 
 type Brand {
-  id: ID!
-  name: String!
+  id: ID! @fake(type: uuid)
+  name: String! @fake(type: companyName)
   tier: Tier!
-  website: String!
+  website: String! @fake(type: url)
   logo: Image
   description: String!
-  since: Int
-  primary: Boolean!
+  since: Int @examples(values: [1990, 1991, 1950])
+  primary: Boolean! @examples(values: [true, false])
   code: String!
 }
 
 type Product {
-  id: ID!
-  name: String!
-  brand: Brand
-  description: String!
-  images: [Image]!
-  modelSize: Size
-  modelHeight: Int!
+  id: ID! @fake(type: uuid)
+  upc: String! @fake(type: uuid)
+  name: String! @fake(type: product)
   brand: Brand!
+  description: String! @examples(values: ["This is a nice product"])
+  images: [Image]!
+  modelSize: Size 
+  modelHeight: Int! @fake(type: number)
   relatedProducts: [Product!]
   availableSizes: [Size!]!
   variants: [ProductVariant]
-  price: Price!
+  price: Price! 
   formattedPrice: String!
   materials: [Material!]!
   department: Department
@@ -167,6 +173,7 @@ type ProductVariant {
   id: ID!
   product: Product
   UPC: Int!
+  SKU: String!
   images: [Image!]!
   size: Size
   primaryColor: Color
@@ -174,12 +181,5 @@ type ProductVariant {
   price: Price
   weight: Float
   height: Float
-  inventoryCount: Int
 }
 
-type PhysicalProduct {
-  id: ID!
-  SKU: String!
-  productVariant: ProductVariant
-  currentState: PhysicalProductState
-}

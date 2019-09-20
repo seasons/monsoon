@@ -11,6 +11,7 @@
     "apollo-link-http": "^1.5.15",
     "apollo-server-lambda": "^2.9.3",
     "bcryptjs": "2.4.3",
+    "faker": "^4.1.0",
     "graphql-import": "^0.7.1",
     "graphql-yoga": "1.18.3",
     "jsonwebtoken": "8.5.1",
