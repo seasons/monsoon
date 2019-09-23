@@ -1,8 +1,12 @@
 {
   "name": "monsoon",
+  "version": "0.1.0",
   "author": "Luc Succes <l2succes@gmail.com>",
   "license": "MIT",
   "main": "dist/index.js",
+  "engines": {
+    "node": "10.3.0"
+  },
   "scripts": {
     "start-sls": "serverless offline",
     "debug-sls": "export SLS_DEBUG=* && node --inspect ./node_modules/.bin/serverless offline -s dev",
