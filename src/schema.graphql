@@ -146,7 +146,6 @@ type Brand {
 type Product {
   id: ID!
   name: String!
-  brand: Brand
   description: String!
   images: [Image]!
   modelSize: Size
