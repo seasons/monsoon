@@ -10,8 +10,8 @@
   "scripts": {
     "start-sls": "serverless offline",
     "debug-sls": "export SLS_DEBUG=* && node --inspect ./node_modules/.bin/serverless offline -s dev",
-    "build": "serverless package",
-    "deploy": "serverless deploy",
+    "build-sls": "serverless package",
+    "deploy-sls": "serverless deploy",
     "build-ts": "tsc",
     "watch-ts": "tsc -w",
     "postinstall": "yarn build-ts",
