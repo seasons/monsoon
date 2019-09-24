@@ -6,8 +6,6 @@ import { importSchema } from "graphql-import"
 
 const { MIST_URL } = process.env
 
-console.log("Mist URL: ", MIST_URL)
-
 const link = new HttpLink({
   uri: MIST_URL,
   fetch,
