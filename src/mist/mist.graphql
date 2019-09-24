@@ -12,45 +12,13 @@ type Brand implements Node {
   name: String!
   tier: BrandTier!
   websiteUrl: String
-  logoImageId: Int
+  images: JSON
   description: String
   since: Date
   isPrimaryBrand: Boolean
   brandCode: String!
   createdAt: Datetime!
   updatedAt: Datetime!
-
-  """Reads a single `Image` that is related to this `Brand`."""
-  imageByLogoImageId: Image
-
-  """Reads and enables pagination through a set of `Product`."""
-  productsByBrandId(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `Product`."""
-    orderBy: [ProductsOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: ProductCondition
-  ): ProductsConnection!
 }
 
 """
@@ -69,8 +37,8 @@ input BrandCondition {
   """Checks for equality with the object’s `websiteUrl` field."""
   websiteUrl: String
 
-  """Checks for equality with the object’s `logoImageId` field."""
-  logoImageId: Int
+  """Checks for equality with the object’s `images` field."""
+  images: JSON
 
   """Checks for equality with the object’s `description` field."""
   description: String
@@ -97,7 +65,7 @@ input BrandInput {
   name: String!
   tier: BrandTier!
   websiteUrl: String
-  logoImageId: Int
+  images: JSON
   description: String
   since: Date
   isPrimaryBrand: Boolean
@@ -114,7 +82,7 @@ input BrandPatch {
   name: String
   tier: BrandTier
   websiteUrl: String
-  logoImageId: Int
+  images: JSON
   description: String
   since: Date
   isPrimaryBrand: Boolean
@@ -160,8 +128,8 @@ enum BrandsOrderBy {
   TIER_DESC
   WEBSITE_URL_ASC
   WEBSITE_URL_DESC
-  LOGO_IMAGE_ID_ASC
-  LOGO_IMAGE_ID_DESC
+  IMAGES_ASC
+  IMAGES_DESC
   DESCRIPTION_ASC
   DESCRIPTION_DESC
   SINCE_ASC
@@ -433,9 +401,6 @@ type CreateBrandPayload {
   """
   query: Query
 
-  """Reads a single `Image` that is related to this `Brand`."""
-  imageByLogoImageId: Image
-
   """An edge for our `Brand`. May be used by Relay 1."""
   brandEdge(
     """The method to use when ordering `Brand`."""
@@ -611,9 +576,6 @@ type CreateProductPayload {
   """
   query: Query
 
-  """Reads a single `Brand` that is related to this `Product`."""
-  brandByBrandId: Brand
-
   """Reads a single `Category` that is related to this `Product`."""
   categoryByCategoryId: Category
 
@@ -764,9 +726,6 @@ type DeleteBrandPayload {
   Our root query field type. Allows us to run any query from our mutation payload.
   """
   query: Query
-
-  """Reads a single `Image` that is related to this `Brand`."""
-  imageByLogoImageId: Image
 
   """An edge for our `Brand`. May be used by Relay 1."""
   brandEdge(
@@ -1018,9 +977,6 @@ type DeleteProductPayload {
   """
   query: Query
 
-  """Reads a single `Brand` that is related to this `Product`."""
-  brandByBrandId: Brand
-
   """Reads a single `Category` that is related to this `Product`."""
   categoryByCategoryId: Category
 
@@ -1159,35 +1115,6 @@ type Image implements Node {
   originalWidth: Int
   createdAt: Datetime!
   updatedAt: Datetime!
-
-  """Reads and enables pagination through a set of `Brand`."""
-  brandsByLogoImageId(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `Brand`."""
-    orderBy: [BrandsOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: BrandCondition
-  ): BrandsConnection!
 }
 
 """
@@ -1300,6 +1227,11 @@ enum ImagesOrderBy {
   PRIMARY_KEY_ASC
   PRIMARY_KEY_DESC
 }
+
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON
 
 type Location implements Node {
   """
@@ -1837,9 +1769,6 @@ type Product implements Node {
   categoryId: Int!
   createdAt: Datetime!
   updatedAt: Datetime!
-
-  """Reads a single `Brand` that is related to this `Product`."""
-  brandByBrandId: Brand
 
   """Reads a single `Category` that is related to this `Product`."""
   categoryByCategoryId: Category
@@ -2687,9 +2616,6 @@ type UpdateBrandPayload {
   """
   query: Query
 
-  """Reads a single `Image` that is related to this `Brand`."""
-  imageByLogoImageId: Image
-
   """An edge for our `Brand`. May be used by Relay 1."""
   brandEdge(
     """The method to use when ordering `Brand`."""
@@ -2989,9 +2915,6 @@ type UpdateProductPayload {
   Our root query field type. Allows us to run any query from our mutation payload.
   """
   query: Query
-
-  """Reads a single `Brand` that is related to this `Product`."""
-  brandByBrandId: Brand
 
   """Reads a single `Category` that is related to this `Product`."""
   categoryByCategoryId: Category
