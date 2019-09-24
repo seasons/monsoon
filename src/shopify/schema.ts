@@ -33,9 +33,6 @@ export default () => {
   })
 
   const transformedSchema = transformSchema(executableSchema, [
-    // new FilterRootFields((_, name) => {
-    //   return ["collection", "product", "products"].includes(name)
-    // }),
     new FilterTypes(filter => {
       return filter.toString() !== "Job"
     }),

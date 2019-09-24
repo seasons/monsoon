@@ -1,0 +1,3137 @@
+"""
+A floating point number that requires more precision than IEEE 754 binary 64
+"""
+scalar BigFloat
+
+type Brand implements Node {
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  nodeId: ID!
+  id: Int!
+  name: String!
+  tier: BrandTier!
+  websiteUrl: String
+  logoImageId: Int
+  description: String
+  since: Date
+  isPrimaryBrand: Boolean
+  brandCode: String!
+  createdAt: Datetime!
+  updatedAt: Datetime!
+
+  """Reads a single `Image` that is related to this `Brand`."""
+  imageByLogoImageId: Image
+
+  """Reads and enables pagination through a set of `Product`."""
+  productsByBrandId(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `Product`."""
+    orderBy: [ProductsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: ProductCondition
+  ): ProductsConnection!
+}
+
+"""
+A condition to be used against `Brand` object types. All fields are tested for equality and combined with a logical ‘and.’
+"""
+input BrandCondition {
+  """Checks for equality with the object’s `id` field."""
+  id: Int
+
+  """Checks for equality with the object’s `name` field."""
+  name: String
+
+  """Checks for equality with the object’s `tier` field."""
+  tier: BrandTier
+
+  """Checks for equality with the object’s `websiteUrl` field."""
+  websiteUrl: String
+
+  """Checks for equality with the object’s `logoImageId` field."""
+  logoImageId: Int
+
+  """Checks for equality with the object’s `description` field."""
+  description: String
+
+  """Checks for equality with the object’s `since` field."""
+  since: Date
+
+  """Checks for equality with the object’s `isPrimaryBrand` field."""
+  isPrimaryBrand: Boolean
+
+  """Checks for equality with the object’s `brandCode` field."""
+  brandCode: String
+
+  """Checks for equality with the object’s `createdAt` field."""
+  createdAt: Datetime
+
+  """Checks for equality with the object’s `updatedAt` field."""
+  updatedAt: Datetime
+}
+
+"""An input for mutations affecting `Brand`"""
+input BrandInput {
+  id: Int
+  name: String!
+  tier: BrandTier!
+  websiteUrl: String
+  logoImageId: Int
+  description: String
+  since: Date
+  isPrimaryBrand: Boolean
+  brandCode: String!
+  createdAt: Datetime
+  updatedAt: Datetime
+}
+
+"""
+Represents an update to a `Brand`. Fields that are set will be updated.
+"""
+input BrandPatch {
+  id: Int
+  name: String
+  tier: BrandTier
+  websiteUrl: String
+  logoImageId: Int
+  description: String
+  since: Date
+  isPrimaryBrand: Boolean
+  brandCode: String
+  createdAt: Datetime
+  updatedAt: Datetime
+}
+
+"""A connection to a list of `Brand` values."""
+type BrandsConnection {
+  """A list of `Brand` objects."""
+  nodes: [Brand]!
+
+  """
+  A list of edges which contains the `Brand` and cursor to aid in pagination.
+  """
+  edges: [BrandsEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* `Brand` you could get from the connection."""
+  totalCount: Int!
+}
+
+"""A `Brand` edge in the connection."""
+type BrandsEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `Brand` at the end of the edge."""
+  node: Brand
+}
+
+"""Methods to use when ordering `Brand`."""
+enum BrandsOrderBy {
+  NATURAL
+  ID_ASC
+  ID_DESC
+  NAME_ASC
+  NAME_DESC
+  TIER_ASC
+  TIER_DESC
+  WEBSITE_URL_ASC
+  WEBSITE_URL_DESC
+  LOGO_IMAGE_ID_ASC
+  LOGO_IMAGE_ID_DESC
+  DESCRIPTION_ASC
+  DESCRIPTION_DESC
+  SINCE_ASC
+  SINCE_DESC
+  IS_PRIMARY_BRAND_ASC
+  IS_PRIMARY_BRAND_DESC
+  BRAND_CODE_ASC
+  BRAND_CODE_DESC
+  CREATED_AT_ASC
+  CREATED_AT_DESC
+  UPDATED_AT_ASC
+  UPDATED_AT_DESC
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+}
+
+enum BrandTier {
+  TIER_0
+  TIER_1
+  TIER_2
+  NICHE
+  UPCOMING
+  RETRO
+  BOUTIQUE
+}
+
+"""A connection to a list of `Category` values."""
+type CategoriesConnection {
+  """A list of `Category` objects."""
+  nodes: [Category]!
+
+  """
+  A list of edges which contains the `Category` and cursor to aid in pagination.
+  """
+  edges: [CategoriesEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* `Category` you could get from the connection."""
+  totalCount: Int!
+}
+
+"""A `Category` edge in the connection."""
+type CategoriesEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `Category` at the end of the edge."""
+  node: Category
+}
+
+"""Methods to use when ordering `Category`."""
+enum CategoriesOrderBy {
+  NATURAL
+  ID_ASC
+  ID_DESC
+  NAME_ASC
+  NAME_DESC
+  DESCRIPTION_ASC
+  DESCRIPTION_DESC
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+}
+
+type Category implements Node {
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  nodeId: ID!
+  id: Int!
+  name: String!
+  description: String
+
+  """Reads and enables pagination through a set of `Product`."""
+  productsByCategoryId(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `Product`."""
+    orderBy: [ProductsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: ProductCondition
+  ): ProductsConnection!
+}
+
+"""
+A condition to be used against `Category` object types. All fields are tested
+for equality and combined with a logical ‘and.’
+"""
+input CategoryCondition {
+  """Checks for equality with the object’s `id` field."""
+  id: Int
+
+  """Checks for equality with the object’s `name` field."""
+  name: String
+
+  """Checks for equality with the object’s `description` field."""
+  description: String
+}
+
+"""An input for mutations affecting `Category`"""
+input CategoryInput {
+  id: Int
+  name: String!
+  description: String
+}
+
+"""
+Represents an update to a `Category`. Fields that are set will be updated.
+"""
+input CategoryPatch {
+  id: Int
+  name: String
+  description: String
+}
+
+type Color implements Node {
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  nodeId: ID!
+  id: String!
+  name: String
+  hexCode: String!
+
+  """Reads and enables pagination through a set of `ProductVariant`."""
+  productVariantsByColorId(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `ProductVariant`."""
+    orderBy: [ProductVariantsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: ProductVariantCondition
+  ): ProductVariantsConnection!
+}
+
+"""
+A condition to be used against `Color` object types. All fields are tested for equality and combined with a logical ‘and.’
+"""
+input ColorCondition {
+  """Checks for equality with the object’s `id` field."""
+  id: String
+
+  """Checks for equality with the object’s `name` field."""
+  name: String
+
+  """Checks for equality with the object’s `hexCode` field."""
+  hexCode: String
+}
+
+"""An input for mutations affecting `Color`"""
+input ColorInput {
+  id: String!
+  name: String
+  hexCode: String!
+}
+
+"""
+Represents an update to a `Color`. Fields that are set will be updated.
+"""
+input ColorPatch {
+  id: String
+  name: String
+  hexCode: String
+}
+
+"""A connection to a list of `Color` values."""
+type ColorsConnection {
+  """A list of `Color` objects."""
+  nodes: [Color]!
+
+  """
+  A list of edges which contains the `Color` and cursor to aid in pagination.
+  """
+  edges: [ColorsEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* `Color` you could get from the connection."""
+  totalCount: Int!
+}
+
+"""A `Color` edge in the connection."""
+type ColorsEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `Color` at the end of the edge."""
+  node: Color
+}
+
+"""Methods to use when ordering `Color`."""
+enum ColorsOrderBy {
+  NATURAL
+  ID_ASC
+  ID_DESC
+  NAME_ASC
+  NAME_DESC
+  HEX_CODE_ASC
+  HEX_CODE_DESC
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+}
+
+"""All input for the create `Brand` mutation."""
+input CreateBrandInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `Brand` to be created by this mutation."""
+  brand: BrandInput!
+}
+
+"""The output of our create `Brand` mutation."""
+type CreateBrandPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Brand` that was created by this mutation."""
+  brand: Brand
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """Reads a single `Image` that is related to this `Brand`."""
+  imageByLogoImageId: Image
+
+  """An edge for our `Brand`. May be used by Relay 1."""
+  brandEdge(
+    """The method to use when ordering `Brand`."""
+    orderBy: [BrandsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): BrandsEdge
+}
+
+"""All input for the create `Category` mutation."""
+input CreateCategoryInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `Category` to be created by this mutation."""
+  category: CategoryInput!
+}
+
+"""The output of our create `Category` mutation."""
+type CreateCategoryPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Category` that was created by this mutation."""
+  category: Category
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `Category`. May be used by Relay 1."""
+  categoryEdge(
+    """The method to use when ordering `Category`."""
+    orderBy: [CategoriesOrderBy!] = [PRIMARY_KEY_ASC]
+  ): CategoriesEdge
+}
+
+"""All input for the create `Color` mutation."""
+input CreateColorInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `Color` to be created by this mutation."""
+  color: ColorInput!
+}
+
+"""The output of our create `Color` mutation."""
+type CreateColorPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Color` that was created by this mutation."""
+  color: Color
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `Color`. May be used by Relay 1."""
+  colorEdge(
+    """The method to use when ordering `Color`."""
+    orderBy: [ColorsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): ColorsEdge
+}
+
+"""All input for the create `Image` mutation."""
+input CreateImageInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `Image` to be created by this mutation."""
+  image: ImageInput!
+}
+
+"""The output of our create `Image` mutation."""
+type CreateImagePayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Image` that was created by this mutation."""
+  image: Image
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `Image`. May be used by Relay 1."""
+  imageEdge(
+    """The method to use when ordering `Image`."""
+    orderBy: [ImagesOrderBy!] = [PRIMARY_KEY_ASC]
+  ): ImagesEdge
+}
+
+"""All input for the create `Location` mutation."""
+input CreateLocationInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `Location` to be created by this mutation."""
+  location: LocationInput!
+}
+
+"""The output of our create `Location` mutation."""
+type CreateLocationPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Location` that was created by this mutation."""
+  location: Location
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `Location`. May be used by Relay 1."""
+  locationEdge(
+    """The method to use when ordering `Location`."""
+    orderBy: [LocationsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): LocationsEdge
+}
+
+"""All input for the create `Product` mutation."""
+input CreateProductInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `Product` to be created by this mutation."""
+  product: ProductInput!
+}
+
+"""The output of our create `Product` mutation."""
+type CreateProductPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Product` that was created by this mutation."""
+  product: Product
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """Reads a single `Brand` that is related to this `Product`."""
+  brandByBrandId: Brand
+
+  """Reads a single `Category` that is related to this `Product`."""
+  categoryByCategoryId: Category
+
+  """An edge for our `Product`. May be used by Relay 1."""
+  productEdge(
+    """The method to use when ordering `Product`."""
+    orderBy: [ProductsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): ProductsEdge
+}
+
+"""All input for the create `ProductVariant` mutation."""
+input CreateProductVariantInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `ProductVariant` to be created by this mutation."""
+  productVariant: ProductVariantInput!
+}
+
+"""All input for the create `ProductVariantInventoryLevel` mutation."""
+input CreateProductVariantInventoryLevelInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `ProductVariantInventoryLevel` to be created by this mutation."""
+  productVariantInventoryLevel: ProductVariantInventoryLevelInput!
+}
+
+"""The output of our create `ProductVariantInventoryLevel` mutation."""
+type CreateProductVariantInventoryLevelPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `ProductVariantInventoryLevel` that was created by this mutation."""
+  productVariantInventoryLevel: ProductVariantInventoryLevel
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """
+  Reads a single `Product` that is related to this `ProductVariantInventoryLevel`.
+  """
+  productByProductId: Product
+
+  """
+  Reads a single `ProductVariant` that is related to this `ProductVariantInventoryLevel`.
+  """
+  productVariantByProductVariantId: ProductVariant
+
+  """
+  An edge for our `ProductVariantInventoryLevel`. May be used by Relay 1.
+  """
+  productVariantInventoryLevelEdge(
+    """The method to use when ordering `ProductVariantInventoryLevel`."""
+    orderBy: [ProductVariantInventoryLevelsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): ProductVariantInventoryLevelsEdge
+}
+
+"""The output of our create `ProductVariant` mutation."""
+type CreateProductVariantPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `ProductVariant` that was created by this mutation."""
+  productVariant: ProductVariant
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """Reads a single `Product` that is related to this `ProductVariant`."""
+  productByProductId: Product
+
+  """Reads a single `Color` that is related to this `ProductVariant`."""
+  colorByColorId: Color
+
+  """An edge for our `ProductVariant`. May be used by Relay 1."""
+  productVariantEdge(
+    """The method to use when ordering `ProductVariant`."""
+    orderBy: [ProductVariantsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): ProductVariantsEdge
+}
+
+"""A location in a connection that can be used for resuming pagination."""
+scalar Cursor
+
+"""The day, does not include a time."""
+scalar Date
+
+"""
+A point in time as described by the [ISO
+8601](https://en.wikipedia.org/wiki/ISO_8601) standard. May or may not include a timezone.
+"""
+scalar Datetime
+
+"""All input for the `deleteBrandById` mutation."""
+input DeleteBrandByIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  id: Int!
+}
+
+"""All input for the `deleteBrand` mutation."""
+input DeleteBrandInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `Brand` to be deleted.
+  """
+  nodeId: ID!
+}
+
+"""The output of our delete `Brand` mutation."""
+type DeleteBrandPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Brand` that was deleted by this mutation."""
+  brand: Brand
+  deletedBrandId: ID
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """Reads a single `Image` that is related to this `Brand`."""
+  imageByLogoImageId: Image
+
+  """An edge for our `Brand`. May be used by Relay 1."""
+  brandEdge(
+    """The method to use when ordering `Brand`."""
+    orderBy: [BrandsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): BrandsEdge
+}
+
+"""All input for the `deleteCategoryById` mutation."""
+input DeleteCategoryByIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  id: Int!
+}
+
+"""All input for the `deleteCategory` mutation."""
+input DeleteCategoryInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `Category` to be deleted.
+  """
+  nodeId: ID!
+}
+
+"""The output of our delete `Category` mutation."""
+type DeleteCategoryPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Category` that was deleted by this mutation."""
+  category: Category
+  deletedCategoryId: ID
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `Category`. May be used by Relay 1."""
+  categoryEdge(
+    """The method to use when ordering `Category`."""
+    orderBy: [CategoriesOrderBy!] = [PRIMARY_KEY_ASC]
+  ): CategoriesEdge
+}
+
+"""All input for the `deleteColorById` mutation."""
+input DeleteColorByIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  id: String!
+}
+
+"""All input for the `deleteColor` mutation."""
+input DeleteColorInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `Color` to be deleted.
+  """
+  nodeId: ID!
+}
+
+"""The output of our delete `Color` mutation."""
+type DeleteColorPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Color` that was deleted by this mutation."""
+  color: Color
+  deletedColorId: ID
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `Color`. May be used by Relay 1."""
+  colorEdge(
+    """The method to use when ordering `Color`."""
+    orderBy: [ColorsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): ColorsEdge
+}
+
+"""All input for the `deleteImageById` mutation."""
+input DeleteImageByIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  id: Int!
+}
+
+"""All input for the `deleteImage` mutation."""
+input DeleteImageInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `Image` to be deleted.
+  """
+  nodeId: ID!
+}
+
+"""The output of our delete `Image` mutation."""
+type DeleteImagePayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Image` that was deleted by this mutation."""
+  image: Image
+  deletedImageId: ID
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `Image`. May be used by Relay 1."""
+  imageEdge(
+    """The method to use when ordering `Image`."""
+    orderBy: [ImagesOrderBy!] = [PRIMARY_KEY_ASC]
+  ): ImagesEdge
+}
+
+"""All input for the `deleteLocationById` mutation."""
+input DeleteLocationByIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  id: Int!
+}
+
+"""All input for the `deleteLocation` mutation."""
+input DeleteLocationInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `Location` to be deleted.
+  """
+  nodeId: ID!
+}
+
+"""The output of our delete `Location` mutation."""
+type DeleteLocationPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Location` that was deleted by this mutation."""
+  location: Location
+  deletedLocationId: ID
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `Location`. May be used by Relay 1."""
+  locationEdge(
+    """The method to use when ordering `Location`."""
+    orderBy: [LocationsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): LocationsEdge
+}
+
+"""All input for the `deleteProductById` mutation."""
+input DeleteProductByIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  id: Int!
+}
+
+"""All input for the `deleteProductByName` mutation."""
+input DeleteProductByNameInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  name: String!
+}
+
+"""All input for the `deleteProduct` mutation."""
+input DeleteProductInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `Product` to be deleted.
+  """
+  nodeId: ID!
+}
+
+"""The output of our delete `Product` mutation."""
+type DeleteProductPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Product` that was deleted by this mutation."""
+  product: Product
+  deletedProductId: ID
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """Reads a single `Brand` that is related to this `Product`."""
+  brandByBrandId: Brand
+
+  """Reads a single `Category` that is related to this `Product`."""
+  categoryByCategoryId: Category
+
+  """An edge for our `Product`. May be used by Relay 1."""
+  productEdge(
+    """The method to use when ordering `Product`."""
+    orderBy: [ProductsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): ProductsEdge
+}
+
+"""All input for the `deleteProductVariantById` mutation."""
+input DeleteProductVariantByIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  id: Int!
+}
+
+"""All input for the `deleteProductVariant` mutation."""
+input DeleteProductVariantInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `ProductVariant` to be deleted.
+  """
+  nodeId: ID!
+}
+
+"""All input for the `deleteProductVariantInventoryLevelById` mutation."""
+input DeleteProductVariantInventoryLevelByIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  id: Int!
+}
+
+"""All input for the `deleteProductVariantInventoryLevel` mutation."""
+input DeleteProductVariantInventoryLevelInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `ProductVariantInventoryLevel` to be deleted.
+  """
+  nodeId: ID!
+}
+
+"""The output of our delete `ProductVariantInventoryLevel` mutation."""
+type DeleteProductVariantInventoryLevelPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `ProductVariantInventoryLevel` that was deleted by this mutation."""
+  productVariantInventoryLevel: ProductVariantInventoryLevel
+  deletedProductVariantInventoryLevelId: ID
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """
+  Reads a single `Product` that is related to this `ProductVariantInventoryLevel`.
+  """
+  productByProductId: Product
+
+  """
+  Reads a single `ProductVariant` that is related to this `ProductVariantInventoryLevel`.
+  """
+  productVariantByProductVariantId: ProductVariant
+
+  """
+  An edge for our `ProductVariantInventoryLevel`. May be used by Relay 1.
+  """
+  productVariantInventoryLevelEdge(
+    """The method to use when ordering `ProductVariantInventoryLevel`."""
+    orderBy: [ProductVariantInventoryLevelsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): ProductVariantInventoryLevelsEdge
+}
+
+"""The output of our delete `ProductVariant` mutation."""
+type DeleteProductVariantPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `ProductVariant` that was deleted by this mutation."""
+  productVariant: ProductVariant
+  deletedProductVariantId: ID
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """Reads a single `Product` that is related to this `ProductVariant`."""
+  productByProductId: Product
+
+  """Reads a single `Color` that is related to this `ProductVariant`."""
+  colorByColorId: Color
+
+  """An edge for our `ProductVariant`. May be used by Relay 1."""
+  productVariantEdge(
+    """The method to use when ordering `ProductVariant`."""
+    orderBy: [ProductVariantsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): ProductVariantsEdge
+}
+
+type Image implements Node {
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  nodeId: ID!
+  id: Int!
+  title: String
+  caption: String
+  originalUrl: String!
+  resizedUrl: String!
+  originalHeight: Int
+  originalWidth: Int
+  createdAt: Datetime!
+  updatedAt: Datetime!
+
+  """Reads and enables pagination through a set of `Brand`."""
+  brandsByLogoImageId(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `Brand`."""
+    orderBy: [BrandsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: BrandCondition
+  ): BrandsConnection!
+}
+
+"""
+A condition to be used against `Image` object types. All fields are tested for equality and combined with a logical ‘and.’
+"""
+input ImageCondition {
+  """Checks for equality with the object’s `id` field."""
+  id: Int
+
+  """Checks for equality with the object’s `title` field."""
+  title: String
+
+  """Checks for equality with the object’s `caption` field."""
+  caption: String
+
+  """Checks for equality with the object’s `originalUrl` field."""
+  originalUrl: String
+
+  """Checks for equality with the object’s `resizedUrl` field."""
+  resizedUrl: String
+
+  """Checks for equality with the object’s `originalHeight` field."""
+  originalHeight: Int
+
+  """Checks for equality with the object’s `originalWidth` field."""
+  originalWidth: Int
+
+  """Checks for equality with the object’s `createdAt` field."""
+  createdAt: Datetime
+
+  """Checks for equality with the object’s `updatedAt` field."""
+  updatedAt: Datetime
+}
+
+"""An input for mutations affecting `Image`"""
+input ImageInput {
+  id: Int
+  title: String
+  caption: String
+  originalUrl: String!
+  resizedUrl: String!
+  originalHeight: Int
+  originalWidth: Int
+  createdAt: Datetime
+  updatedAt: Datetime
+}
+
+"""
+Represents an update to a `Image`. Fields that are set will be updated.
+"""
+input ImagePatch {
+  id: Int
+  title: String
+  caption: String
+  originalUrl: String
+  resizedUrl: String
+  originalHeight: Int
+  originalWidth: Int
+  createdAt: Datetime
+  updatedAt: Datetime
+}
+
+"""A connection to a list of `Image` values."""
+type ImagesConnection {
+  """A list of `Image` objects."""
+  nodes: [Image]!
+
+  """
+  A list of edges which contains the `Image` and cursor to aid in pagination.
+  """
+  edges: [ImagesEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* `Image` you could get from the connection."""
+  totalCount: Int!
+}
+
+"""A `Image` edge in the connection."""
+type ImagesEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `Image` at the end of the edge."""
+  node: Image
+}
+
+"""Methods to use when ordering `Image`."""
+enum ImagesOrderBy {
+  NATURAL
+  ID_ASC
+  ID_DESC
+  TITLE_ASC
+  TITLE_DESC
+  CAPTION_ASC
+  CAPTION_DESC
+  ORIGINAL_URL_ASC
+  ORIGINAL_URL_DESC
+  RESIZED_URL_ASC
+  RESIZED_URL_DESC
+  ORIGINAL_HEIGHT_ASC
+  ORIGINAL_HEIGHT_DESC
+  ORIGINAL_WIDTH_ASC
+  ORIGINAL_WIDTH_DESC
+  CREATED_AT_ASC
+  CREATED_AT_DESC
+  UPDATED_AT_ASC
+  UPDATED_AT_DESC
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+}
+
+type Location implements Node {
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  nodeId: ID!
+  id: Int!
+  locationType: LocationType!
+  name: String
+  description: String
+  address1: String!
+  address2: String!
+  city: String!
+  state: String!
+  zip: Int!
+  lat: BigFloat
+  lng: BigFloat
+}
+
+"""
+A condition to be used against `Location` object types. All fields are tested
+for equality and combined with a logical ‘and.’
+"""
+input LocationCondition {
+  """Checks for equality with the object’s `id` field."""
+  id: Int
+
+  """Checks for equality with the object’s `locationType` field."""
+  locationType: LocationType
+
+  """Checks for equality with the object’s `name` field."""
+  name: String
+
+  """Checks for equality with the object’s `description` field."""
+  description: String
+
+  """Checks for equality with the object’s `address1` field."""
+  address1: String
+
+  """Checks for equality with the object’s `address2` field."""
+  address2: String
+
+  """Checks for equality with the object’s `city` field."""
+  city: String
+
+  """Checks for equality with the object’s `state` field."""
+  state: String
+
+  """Checks for equality with the object’s `zip` field."""
+  zip: Int
+
+  """Checks for equality with the object’s `lat` field."""
+  lat: BigFloat
+
+  """Checks for equality with the object’s `lng` field."""
+  lng: BigFloat
+}
+
+"""An input for mutations affecting `Location`"""
+input LocationInput {
+  id: Int
+  locationType: LocationType!
+  name: String
+  description: String
+  address1: String!
+  address2: String!
+  city: String!
+  state: String!
+  zip: Int!
+  lat: BigFloat
+  lng: BigFloat
+}
+
+"""
+Represents an update to a `Location`. Fields that are set will be updated.
+"""
+input LocationPatch {
+  id: Int
+  locationType: LocationType
+  name: String
+  description: String
+  address1: String
+  address2: String
+  city: String
+  state: String
+  zip: Int
+  lat: BigFloat
+  lng: BigFloat
+}
+
+"""A connection to a list of `Location` values."""
+type LocationsConnection {
+  """A list of `Location` objects."""
+  nodes: [Location]!
+
+  """
+  A list of edges which contains the `Location` and cursor to aid in pagination.
+  """
+  edges: [LocationsEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* `Location` you could get from the connection."""
+  totalCount: Int!
+}
+
+"""A `Location` edge in the connection."""
+type LocationsEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `Location` at the end of the edge."""
+  node: Location
+}
+
+"""Methods to use when ordering `Location`."""
+enum LocationsOrderBy {
+  NATURAL
+  ID_ASC
+  ID_DESC
+  LOCATION_TYPE_ASC
+  LOCATION_TYPE_DESC
+  NAME_ASC
+  NAME_DESC
+  DESCRIPTION_ASC
+  DESCRIPTION_DESC
+  ADDRESS1_ASC
+  ADDRESS1_DESC
+  ADDRESS2_ASC
+  ADDRESS2_DESC
+  CITY_ASC
+  CITY_DESC
+  STATE_ASC
+  STATE_DESC
+  ZIP_ASC
+  ZIP_DESC
+  LAT_ASC
+  LAT_DESC
+  LNG_ASC
+  LNG_DESC
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+}
+
+enum LocationType {
+  OFFICE
+  WAREHOUSE
+  CLEANER
+  CUSTOMER
+}
+
+"""
+The root mutation type which contains root level fields which mutate data.
+"""
+type Mutation {
+  """Creates a single `Brand`."""
+  createBrand(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: CreateBrandInput!
+  ): CreateBrandPayload
+
+  """Creates a single `Category`."""
+  createCategory(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: CreateCategoryInput!
+  ): CreateCategoryPayload
+
+  """Creates a single `Color`."""
+  createColor(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: CreateColorInput!
+  ): CreateColorPayload
+
+  """Creates a single `Image`."""
+  createImage(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: CreateImageInput!
+  ): CreateImagePayload
+
+  """Creates a single `Location`."""
+  createLocation(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: CreateLocationInput!
+  ): CreateLocationPayload
+
+  """Creates a single `ProductVariantInventoryLevel`."""
+  createProductVariantInventoryLevel(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: CreateProductVariantInventoryLevelInput!
+  ): CreateProductVariantInventoryLevelPayload
+
+  """Creates a single `ProductVariant`."""
+  createProductVariant(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: CreateProductVariantInput!
+  ): CreateProductVariantPayload
+
+  """Creates a single `Product`."""
+  createProduct(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: CreateProductInput!
+  ): CreateProductPayload
+
+  """Updates a single `Brand` using its globally unique id and a patch."""
+  updateBrand(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateBrandInput!
+  ): UpdateBrandPayload
+
+  """Updates a single `Brand` using a unique key and a patch."""
+  updateBrandById(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateBrandByIdInput!
+  ): UpdateBrandPayload
+
+  """Updates a single `Category` using its globally unique id and a patch."""
+  updateCategory(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateCategoryInput!
+  ): UpdateCategoryPayload
+
+  """Updates a single `Category` using a unique key and a patch."""
+  updateCategoryById(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateCategoryByIdInput!
+  ): UpdateCategoryPayload
+
+  """Updates a single `Color` using its globally unique id and a patch."""
+  updateColor(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateColorInput!
+  ): UpdateColorPayload
+
+  """Updates a single `Color` using a unique key and a patch."""
+  updateColorById(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateColorByIdInput!
+  ): UpdateColorPayload
+
+  """Updates a single `Image` using its globally unique id and a patch."""
+  updateImage(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateImageInput!
+  ): UpdateImagePayload
+
+  """Updates a single `Image` using a unique key and a patch."""
+  updateImageById(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateImageByIdInput!
+  ): UpdateImagePayload
+
+  """Updates a single `Location` using its globally unique id and a patch."""
+  updateLocation(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateLocationInput!
+  ): UpdateLocationPayload
+
+  """Updates a single `Location` using a unique key and a patch."""
+  updateLocationById(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateLocationByIdInput!
+  ): UpdateLocationPayload
+
+  """
+  Updates a single `ProductVariantInventoryLevel` using its globally unique id and a patch.
+  """
+  updateProductVariantInventoryLevel(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateProductVariantInventoryLevelInput!
+  ): UpdateProductVariantInventoryLevelPayload
+
+  """
+  Updates a single `ProductVariantInventoryLevel` using a unique key and a patch.
+  """
+  updateProductVariantInventoryLevelById(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateProductVariantInventoryLevelByIdInput!
+  ): UpdateProductVariantInventoryLevelPayload
+
+  """
+  Updates a single `ProductVariant` using its globally unique id and a patch.
+  """
+  updateProductVariant(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateProductVariantInput!
+  ): UpdateProductVariantPayload
+
+  """Updates a single `ProductVariant` using a unique key and a patch."""
+  updateProductVariantById(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateProductVariantByIdInput!
+  ): UpdateProductVariantPayload
+
+  """Updates a single `Product` using its globally unique id and a patch."""
+  updateProduct(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateProductInput!
+  ): UpdateProductPayload
+
+  """Updates a single `Product` using a unique key and a patch."""
+  updateProductById(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateProductByIdInput!
+  ): UpdateProductPayload
+
+  """Updates a single `Product` using a unique key and a patch."""
+  updateProductByName(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateProductByNameInput!
+  ): UpdateProductPayload
+
+  """Deletes a single `Brand` using its globally unique id."""
+  deleteBrand(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteBrandInput!
+  ): DeleteBrandPayload
+
+  """Deletes a single `Brand` using a unique key."""
+  deleteBrandById(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteBrandByIdInput!
+  ): DeleteBrandPayload
+
+  """Deletes a single `Category` using its globally unique id."""
+  deleteCategory(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteCategoryInput!
+  ): DeleteCategoryPayload
+
+  """Deletes a single `Category` using a unique key."""
+  deleteCategoryById(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteCategoryByIdInput!
+  ): DeleteCategoryPayload
+
+  """Deletes a single `Color` using its globally unique id."""
+  deleteColor(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteColorInput!
+  ): DeleteColorPayload
+
+  """Deletes a single `Color` using a unique key."""
+  deleteColorById(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteColorByIdInput!
+  ): DeleteColorPayload
+
+  """Deletes a single `Image` using its globally unique id."""
+  deleteImage(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteImageInput!
+  ): DeleteImagePayload
+
+  """Deletes a single `Image` using a unique key."""
+  deleteImageById(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteImageByIdInput!
+  ): DeleteImagePayload
+
+  """Deletes a single `Location` using its globally unique id."""
+  deleteLocation(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteLocationInput!
+  ): DeleteLocationPayload
+
+  """Deletes a single `Location` using a unique key."""
+  deleteLocationById(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteLocationByIdInput!
+  ): DeleteLocationPayload
+
+  """
+  Deletes a single `ProductVariantInventoryLevel` using its globally unique id.
+  """
+  deleteProductVariantInventoryLevel(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteProductVariantInventoryLevelInput!
+  ): DeleteProductVariantInventoryLevelPayload
+
+  """Deletes a single `ProductVariantInventoryLevel` using a unique key."""
+  deleteProductVariantInventoryLevelById(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteProductVariantInventoryLevelByIdInput!
+  ): DeleteProductVariantInventoryLevelPayload
+
+  """Deletes a single `ProductVariant` using its globally unique id."""
+  deleteProductVariant(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteProductVariantInput!
+  ): DeleteProductVariantPayload
+
+  """Deletes a single `ProductVariant` using a unique key."""
+  deleteProductVariantById(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteProductVariantByIdInput!
+  ): DeleteProductVariantPayload
+
+  """Deletes a single `Product` using its globally unique id."""
+  deleteProduct(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteProductInput!
+  ): DeleteProductPayload
+
+  """Deletes a single `Product` using a unique key."""
+  deleteProductById(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteProductByIdInput!
+  ): DeleteProductPayload
+
+  """Deletes a single `Product` using a unique key."""
+  deleteProductByName(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteProductByNameInput!
+  ): DeleteProductPayload
+}
+
+"""An object with a globally unique `ID`."""
+interface Node {
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  nodeId: ID!
+}
+
+"""Information about pagination in a connection."""
+type PageInfo {
+  """When paginating forwards, are there more items?"""
+  hasNextPage: Boolean!
+
+  """When paginating backwards, are there more items?"""
+  hasPreviousPage: Boolean!
+
+  """When paginating backwards, the cursor to continue."""
+  startCursor: Cursor
+
+  """When paginating forwards, the cursor to continue."""
+  endCursor: Cursor
+}
+
+type Product implements Node {
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  nodeId: ID!
+  id: Int!
+  name: String!
+  description: String
+  brandId: Int!
+  retailPrice: Float
+  categoryId: Int!
+  createdAt: Datetime!
+  updatedAt: Datetime!
+
+  """Reads a single `Brand` that is related to this `Product`."""
+  brandByBrandId: Brand
+
+  """Reads a single `Category` that is related to this `Product`."""
+  categoryByCategoryId: Category
+
+  """Reads and enables pagination through a set of `ProductVariant`."""
+  productVariantsByProductId(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `ProductVariant`."""
+    orderBy: [ProductVariantsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: ProductVariantCondition
+  ): ProductVariantsConnection!
+
+  """
+  Reads and enables pagination through a set of `ProductVariantInventoryLevel`.
+  """
+  productVariantInventoryLevelsByProductId(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `ProductVariantInventoryLevel`."""
+    orderBy: [ProductVariantInventoryLevelsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: ProductVariantInventoryLevelCondition
+  ): ProductVariantInventoryLevelsConnection!
+}
+
+"""
+A condition to be used against `Product` object types. All fields are tested for equality and combined with a logical ‘and.’
+"""
+input ProductCondition {
+  """Checks for equality with the object’s `id` field."""
+  id: Int
+
+  """Checks for equality with the object’s `name` field."""
+  name: String
+
+  """Checks for equality with the object’s `description` field."""
+  description: String
+
+  """Checks for equality with the object’s `brandId` field."""
+  brandId: Int
+
+  """Checks for equality with the object’s `retailPrice` field."""
+  retailPrice: Float
+
+  """Checks for equality with the object’s `categoryId` field."""
+  categoryId: Int
+
+  """Checks for equality with the object’s `createdAt` field."""
+  createdAt: Datetime
+
+  """Checks for equality with the object’s `updatedAt` field."""
+  updatedAt: Datetime
+}
+
+"""An input for mutations affecting `Product`"""
+input ProductInput {
+  id: Int
+  name: String!
+  description: String
+  brandId: Int!
+  retailPrice: Float
+  categoryId: Int!
+  createdAt: Datetime
+  updatedAt: Datetime
+}
+
+"""
+Represents an update to a `Product`. Fields that are set will be updated.
+"""
+input ProductPatch {
+  id: Int
+  name: String
+  description: String
+  brandId: Int
+  retailPrice: Float
+  categoryId: Int
+  createdAt: Datetime
+  updatedAt: Datetime
+}
+
+"""A connection to a list of `Product` values."""
+type ProductsConnection {
+  """A list of `Product` objects."""
+  nodes: [Product]!
+
+  """
+  A list of edges which contains the `Product` and cursor to aid in pagination.
+  """
+  edges: [ProductsEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* `Product` you could get from the connection."""
+  totalCount: Int!
+}
+
+"""A `Product` edge in the connection."""
+type ProductsEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `Product` at the end of the edge."""
+  node: Product
+}
+
+"""Methods to use when ordering `Product`."""
+enum ProductsOrderBy {
+  NATURAL
+  ID_ASC
+  ID_DESC
+  NAME_ASC
+  NAME_DESC
+  DESCRIPTION_ASC
+  DESCRIPTION_DESC
+  BRAND_ID_ASC
+  BRAND_ID_DESC
+  RETAIL_PRICE_ASC
+  RETAIL_PRICE_DESC
+  CATEGORY_ID_ASC
+  CATEGORY_ID_DESC
+  CREATED_AT_ASC
+  CREATED_AT_DESC
+  UPDATED_AT_ASC
+  UPDATED_AT_DESC
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+}
+
+type ProductVariant implements Node {
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  nodeId: ID!
+  id: Int!
+  upc: Int
+  sku: String
+  productId: Int!
+  retailPrice: Float
+  colorId: String!
+  size: Size!
+  weight: Int
+  height: Int
+  createdAt: Datetime!
+  updatedAt: Datetime!
+
+  """Reads a single `Product` that is related to this `ProductVariant`."""
+  productByProductId: Product
+
+  """Reads a single `Color` that is related to this `ProductVariant`."""
+  colorByColorId: Color
+
+  """
+  Reads and enables pagination through a set of `ProductVariantInventoryLevel`.
+  """
+  productVariantInventoryLevelsByProductVariantId(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `ProductVariantInventoryLevel`."""
+    orderBy: [ProductVariantInventoryLevelsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: ProductVariantInventoryLevelCondition
+  ): ProductVariantInventoryLevelsConnection!
+}
+
+"""
+A condition to be used against `ProductVariant` object types. All fields are
+tested for equality and combined with a logical ‘and.’
+"""
+input ProductVariantCondition {
+  """Checks for equality with the object’s `id` field."""
+  id: Int
+
+  """Checks for equality with the object’s `upc` field."""
+  upc: Int
+
+  """Checks for equality with the object’s `sku` field."""
+  sku: String
+
+  """Checks for equality with the object’s `productId` field."""
+  productId: Int
+
+  """Checks for equality with the object’s `retailPrice` field."""
+  retailPrice: Float
+
+  """Checks for equality with the object’s `colorId` field."""
+  colorId: String
+
+  """Checks for equality with the object’s `size` field."""
+  size: Size
+
+  """Checks for equality with the object’s `weight` field."""
+  weight: Int
+
+  """Checks for equality with the object’s `height` field."""
+  height: Int
+
+  """Checks for equality with the object’s `createdAt` field."""
+  createdAt: Datetime
+
+  """Checks for equality with the object’s `updatedAt` field."""
+  updatedAt: Datetime
+}
+
+"""An input for mutations affecting `ProductVariant`"""
+input ProductVariantInput {
+  id: Int
+  upc: Int
+  sku: String
+  productId: Int!
+  retailPrice: Float
+  colorId: String!
+  size: Size!
+  weight: Int
+  height: Int
+  createdAt: Datetime
+  updatedAt: Datetime
+}
+
+type ProductVariantInventoryLevel implements Node {
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  nodeId: ID!
+  id: Int!
+  productId: Int!
+  productVariantId: Int!
+  nonReservablePhysicalProducts: Int
+  reservablePhysicalProducts: Int
+  reservedPhysicalProducts: Int
+
+  """
+  Reads a single `Product` that is related to this `ProductVariantInventoryLevel`.
+  """
+  productByProductId: Product
+
+  """
+  Reads a single `ProductVariant` that is related to this `ProductVariantInventoryLevel`.
+  """
+  productVariantByProductVariantId: ProductVariant
+}
+
+"""
+A condition to be used against `ProductVariantInventoryLevel` object types. All
+fields are tested for equality and combined with a logical ‘and.’
+"""
+input ProductVariantInventoryLevelCondition {
+  """Checks for equality with the object’s `id` field."""
+  id: Int
+
+  """Checks for equality with the object’s `productId` field."""
+  productId: Int
+
+  """Checks for equality with the object’s `productVariantId` field."""
+  productVariantId: Int
+
+  """
+  Checks for equality with the object’s `nonReservablePhysicalProducts` field.
+  """
+  nonReservablePhysicalProducts: Int
+
+  """
+  Checks for equality with the object’s `reservablePhysicalProducts` field.
+  """
+  reservablePhysicalProducts: Int
+
+  """
+  Checks for equality with the object’s `reservedPhysicalProducts` field.
+  """
+  reservedPhysicalProducts: Int
+}
+
+"""An input for mutations affecting `ProductVariantInventoryLevel`"""
+input ProductVariantInventoryLevelInput {
+  id: Int
+  productId: Int!
+  productVariantId: Int!
+  nonReservablePhysicalProducts: Int
+  reservablePhysicalProducts: Int
+  reservedPhysicalProducts: Int
+}
+
+"""
+Represents an update to a `ProductVariantInventoryLevel`. Fields that are set will be updated.
+"""
+input ProductVariantInventoryLevelPatch {
+  id: Int
+  productId: Int
+  productVariantId: Int
+  nonReservablePhysicalProducts: Int
+  reservablePhysicalProducts: Int
+  reservedPhysicalProducts: Int
+}
+
+"""A connection to a list of `ProductVariantInventoryLevel` values."""
+type ProductVariantInventoryLevelsConnection {
+  """A list of `ProductVariantInventoryLevel` objects."""
+  nodes: [ProductVariantInventoryLevel]!
+
+  """
+  A list of edges which contains the `ProductVariantInventoryLevel` and cursor to aid in pagination.
+  """
+  edges: [ProductVariantInventoryLevelsEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """
+  The count of *all* `ProductVariantInventoryLevel` you could get from the connection.
+  """
+  totalCount: Int!
+}
+
+"""A `ProductVariantInventoryLevel` edge in the connection."""
+type ProductVariantInventoryLevelsEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `ProductVariantInventoryLevel` at the end of the edge."""
+  node: ProductVariantInventoryLevel
+}
+
+"""Methods to use when ordering `ProductVariantInventoryLevel`."""
+enum ProductVariantInventoryLevelsOrderBy {
+  NATURAL
+  ID_ASC
+  ID_DESC
+  PRODUCT_ID_ASC
+  PRODUCT_ID_DESC
+  PRODUCT_VARIANT_ID_ASC
+  PRODUCT_VARIANT_ID_DESC
+  NON_RESERVABLE_PHYSICAL_PRODUCTS_ASC
+  NON_RESERVABLE_PHYSICAL_PRODUCTS_DESC
+  RESERVABLE_PHYSICAL_PRODUCTS_ASC
+  RESERVABLE_PHYSICAL_PRODUCTS_DESC
+  RESERVED_PHYSICAL_PRODUCTS_ASC
+  RESERVED_PHYSICAL_PRODUCTS_DESC
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+}
+
+"""
+Represents an update to a `ProductVariant`. Fields that are set will be updated.
+"""
+input ProductVariantPatch {
+  id: Int
+  upc: Int
+  sku: String
+  productId: Int
+  retailPrice: Float
+  colorId: String
+  size: Size
+  weight: Int
+  height: Int
+  createdAt: Datetime
+  updatedAt: Datetime
+}
+
+"""A connection to a list of `ProductVariant` values."""
+type ProductVariantsConnection {
+  """A list of `ProductVariant` objects."""
+  nodes: [ProductVariant]!
+
+  """
+  A list of edges which contains the `ProductVariant` and cursor to aid in pagination.
+  """
+  edges: [ProductVariantsEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* `ProductVariant` you could get from the connection."""
+  totalCount: Int!
+}
+
+"""A `ProductVariant` edge in the connection."""
+type ProductVariantsEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `ProductVariant` at the end of the edge."""
+  node: ProductVariant
+}
+
+"""Methods to use when ordering `ProductVariant`."""
+enum ProductVariantsOrderBy {
+  NATURAL
+  ID_ASC
+  ID_DESC
+  UPC_ASC
+  UPC_DESC
+  SKU_ASC
+  SKU_DESC
+  PRODUCT_ID_ASC
+  PRODUCT_ID_DESC
+  RETAIL_PRICE_ASC
+  RETAIL_PRICE_DESC
+  COLOR_ID_ASC
+  COLOR_ID_DESC
+  SIZE_ASC
+  SIZE_DESC
+  WEIGHT_ASC
+  WEIGHT_DESC
+  HEIGHT_ASC
+  HEIGHT_DESC
+  CREATED_AT_ASC
+  CREATED_AT_DESC
+  UPDATED_AT_ASC
+  UPDATED_AT_DESC
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+}
+
+"""The root query type which gives access points into the data universe."""
+type Query implements Node {
+  """
+  Exposes the root query type nested one level down. This is helpful for Relay 1
+  which can only query top level fields if they are in a particular form.
+  """
+  query: Query!
+
+  """
+  The root query type must be a `Node` to work well with Relay 1 mutations. This just resolves to `query`.
+  """
+  nodeId: ID!
+
+  """Fetches an object given its globally unique `ID`."""
+  node(
+    """The globally unique `ID`."""
+    nodeId: ID!
+  ): Node
+
+  """Reads and enables pagination through a set of `Brand`."""
+  allBrands(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `Brand`."""
+    orderBy: [BrandsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: BrandCondition
+  ): BrandsConnection
+
+  """Reads and enables pagination through a set of `Category`."""
+  allCategories(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `Category`."""
+    orderBy: [CategoriesOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: CategoryCondition
+  ): CategoriesConnection
+
+  """Reads and enables pagination through a set of `Color`."""
+  allColors(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `Color`."""
+    orderBy: [ColorsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: ColorCondition
+  ): ColorsConnection
+
+  """Reads and enables pagination through a set of `Image`."""
+  allImages(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `Image`."""
+    orderBy: [ImagesOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: ImageCondition
+  ): ImagesConnection
+
+  """Reads and enables pagination through a set of `Location`."""
+  allLocations(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `Location`."""
+    orderBy: [LocationsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: LocationCondition
+  ): LocationsConnection
+
+  """
+  Reads and enables pagination through a set of `ProductVariantInventoryLevel`.
+  """
+  allProductVariantInventoryLevels(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `ProductVariantInventoryLevel`."""
+    orderBy: [ProductVariantInventoryLevelsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: ProductVariantInventoryLevelCondition
+  ): ProductVariantInventoryLevelsConnection
+
+  """Reads and enables pagination through a set of `ProductVariant`."""
+  allProductVariants(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `ProductVariant`."""
+    orderBy: [ProductVariantsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: ProductVariantCondition
+  ): ProductVariantsConnection
+
+  """Reads and enables pagination through a set of `Product`."""
+  allProducts(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `Product`."""
+    orderBy: [ProductsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: ProductCondition
+  ): ProductsConnection
+  brandById(id: Int!): Brand
+  categoryById(id: Int!): Category
+  colorById(id: String!): Color
+  imageById(id: Int!): Image
+  locationById(id: Int!): Location
+  productVariantInventoryLevelById(id: Int!): ProductVariantInventoryLevel
+  productVariantById(id: Int!): ProductVariant
+  productById(id: Int!): Product
+  productByName(name: String!): Product
+
+  """Reads a single `Brand` using its globally unique `ID`."""
+  brand(
+    """The globally unique `ID` to be used in selecting a single `Brand`."""
+    nodeId: ID!
+  ): Brand
+
+  """Reads a single `Category` using its globally unique `ID`."""
+  category(
+    """The globally unique `ID` to be used in selecting a single `Category`."""
+    nodeId: ID!
+  ): Category
+
+  """Reads a single `Color` using its globally unique `ID`."""
+  color(
+    """The globally unique `ID` to be used in selecting a single `Color`."""
+    nodeId: ID!
+  ): Color
+
+  """Reads a single `Image` using its globally unique `ID`."""
+  image(
+    """The globally unique `ID` to be used in selecting a single `Image`."""
+    nodeId: ID!
+  ): Image
+
+  """Reads a single `Location` using its globally unique `ID`."""
+  location(
+    """The globally unique `ID` to be used in selecting a single `Location`."""
+    nodeId: ID!
+  ): Location
+
+  """
+  Reads a single `ProductVariantInventoryLevel` using its globally unique `ID`.
+  """
+  productVariantInventoryLevel(
+    """
+    The globally unique `ID` to be used in selecting a single `ProductVariantInventoryLevel`.
+    """
+    nodeId: ID!
+  ): ProductVariantInventoryLevel
+
+  """Reads a single `ProductVariant` using its globally unique `ID`."""
+  productVariant(
+    """
+    The globally unique `ID` to be used in selecting a single `ProductVariant`.
+    """
+    nodeId: ID!
+  ): ProductVariant
+
+  """Reads a single `Product` using its globally unique `ID`."""
+  product(
+    """The globally unique `ID` to be used in selecting a single `Product`."""
+    nodeId: ID!
+  ): Product
+}
+
+enum Size {
+  XS
+  S
+  M
+  L
+  XL
+}
+
+"""All input for the `updateBrandById` mutation."""
+input UpdateBrandByIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  An object where the defined keys will be set on the `Brand` being updated.
+  """
+  brandPatch: BrandPatch!
+  id: Int!
+}
+
+"""All input for the `updateBrand` mutation."""
+input UpdateBrandInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `Brand` to be updated.
+  """
+  nodeId: ID!
+
+  """
+  An object where the defined keys will be set on the `Brand` being updated.
+  """
+  brandPatch: BrandPatch!
+}
+
+"""The output of our update `Brand` mutation."""
+type UpdateBrandPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Brand` that was updated by this mutation."""
+  brand: Brand
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """Reads a single `Image` that is related to this `Brand`."""
+  imageByLogoImageId: Image
+
+  """An edge for our `Brand`. May be used by Relay 1."""
+  brandEdge(
+    """The method to use when ordering `Brand`."""
+    orderBy: [BrandsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): BrandsEdge
+}
+
+"""All input for the `updateCategoryById` mutation."""
+input UpdateCategoryByIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  An object where the defined keys will be set on the `Category` being updated.
+  """
+  categoryPatch: CategoryPatch!
+  id: Int!
+}
+
+"""All input for the `updateCategory` mutation."""
+input UpdateCategoryInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `Category` to be updated.
+  """
+  nodeId: ID!
+
+  """
+  An object where the defined keys will be set on the `Category` being updated.
+  """
+  categoryPatch: CategoryPatch!
+}
+
+"""The output of our update `Category` mutation."""
+type UpdateCategoryPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Category` that was updated by this mutation."""
+  category: Category
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `Category`. May be used by Relay 1."""
+  categoryEdge(
+    """The method to use when ordering `Category`."""
+    orderBy: [CategoriesOrderBy!] = [PRIMARY_KEY_ASC]
+  ): CategoriesEdge
+}
+
+"""All input for the `updateColorById` mutation."""
+input UpdateColorByIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  An object where the defined keys will be set on the `Color` being updated.
+  """
+  colorPatch: ColorPatch!
+  id: String!
+}
+
+"""All input for the `updateColor` mutation."""
+input UpdateColorInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `Color` to be updated.
+  """
+  nodeId: ID!
+
+  """
+  An object where the defined keys will be set on the `Color` being updated.
+  """
+  colorPatch: ColorPatch!
+}
+
+"""The output of our update `Color` mutation."""
+type UpdateColorPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Color` that was updated by this mutation."""
+  color: Color
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `Color`. May be used by Relay 1."""
+  colorEdge(
+    """The method to use when ordering `Color`."""
+    orderBy: [ColorsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): ColorsEdge
+}
+
+"""All input for the `updateImageById` mutation."""
+input UpdateImageByIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  An object where the defined keys will be set on the `Image` being updated.
+  """
+  imagePatch: ImagePatch!
+  id: Int!
+}
+
+"""All input for the `updateImage` mutation."""
+input UpdateImageInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `Image` to be updated.
+  """
+  nodeId: ID!
+
+  """
+  An object where the defined keys will be set on the `Image` being updated.
+  """
+  imagePatch: ImagePatch!
+}
+
+"""The output of our update `Image` mutation."""
+type UpdateImagePayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Image` that was updated by this mutation."""
+  image: Image
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `Image`. May be used by Relay 1."""
+  imageEdge(
+    """The method to use when ordering `Image`."""
+    orderBy: [ImagesOrderBy!] = [PRIMARY_KEY_ASC]
+  ): ImagesEdge
+}
+
+"""All input for the `updateLocationById` mutation."""
+input UpdateLocationByIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  An object where the defined keys will be set on the `Location` being updated.
+  """
+  locationPatch: LocationPatch!
+  id: Int!
+}
+
+"""All input for the `updateLocation` mutation."""
+input UpdateLocationInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `Location` to be updated.
+  """
+  nodeId: ID!
+
+  """
+  An object where the defined keys will be set on the `Location` being updated.
+  """
+  locationPatch: LocationPatch!
+}
+
+"""The output of our update `Location` mutation."""
+type UpdateLocationPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Location` that was updated by this mutation."""
+  location: Location
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `Location`. May be used by Relay 1."""
+  locationEdge(
+    """The method to use when ordering `Location`."""
+    orderBy: [LocationsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): LocationsEdge
+}
+
+"""All input for the `updateProductById` mutation."""
+input UpdateProductByIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  An object where the defined keys will be set on the `Product` being updated.
+  """
+  productPatch: ProductPatch!
+  id: Int!
+}
+
+"""All input for the `updateProductByName` mutation."""
+input UpdateProductByNameInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  An object where the defined keys will be set on the `Product` being updated.
+  """
+  productPatch: ProductPatch!
+  name: String!
+}
+
+"""All input for the `updateProduct` mutation."""
+input UpdateProductInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `Product` to be updated.
+  """
+  nodeId: ID!
+
+  """
+  An object where the defined keys will be set on the `Product` being updated.
+  """
+  productPatch: ProductPatch!
+}
+
+"""The output of our update `Product` mutation."""
+type UpdateProductPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Product` that was updated by this mutation."""
+  product: Product
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """Reads a single `Brand` that is related to this `Product`."""
+  brandByBrandId: Brand
+
+  """Reads a single `Category` that is related to this `Product`."""
+  categoryByCategoryId: Category
+
+  """An edge for our `Product`. May be used by Relay 1."""
+  productEdge(
+    """The method to use when ordering `Product`."""
+    orderBy: [ProductsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): ProductsEdge
+}
+
+"""All input for the `updateProductVariantById` mutation."""
+input UpdateProductVariantByIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  An object where the defined keys will be set on the `ProductVariant` being updated.
+  """
+  productVariantPatch: ProductVariantPatch!
+  id: Int!
+}
+
+"""All input for the `updateProductVariant` mutation."""
+input UpdateProductVariantInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `ProductVariant` to be updated.
+  """
+  nodeId: ID!
+
+  """
+  An object where the defined keys will be set on the `ProductVariant` being updated.
+  """
+  productVariantPatch: ProductVariantPatch!
+}
+
+"""All input for the `updateProductVariantInventoryLevelById` mutation."""
+input UpdateProductVariantInventoryLevelByIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  An object where the defined keys will be set on the `ProductVariantInventoryLevel` being updated.
+  """
+  productVariantInventoryLevelPatch: ProductVariantInventoryLevelPatch!
+  id: Int!
+}
+
+"""All input for the `updateProductVariantInventoryLevel` mutation."""
+input UpdateProductVariantInventoryLevelInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `ProductVariantInventoryLevel` to be updated.
+  """
+  nodeId: ID!
+
+  """
+  An object where the defined keys will be set on the `ProductVariantInventoryLevel` being updated.
+  """
+  productVariantInventoryLevelPatch: ProductVariantInventoryLevelPatch!
+}
+
+"""The output of our update `ProductVariantInventoryLevel` mutation."""
+type UpdateProductVariantInventoryLevelPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `ProductVariantInventoryLevel` that was updated by this mutation."""
+  productVariantInventoryLevel: ProductVariantInventoryLevel
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """
+  Reads a single `Product` that is related to this `ProductVariantInventoryLevel`.
+  """
+  productByProductId: Product
+
+  """
+  Reads a single `ProductVariant` that is related to this `ProductVariantInventoryLevel`.
+  """
+  productVariantByProductVariantId: ProductVariant
+
+  """
+  An edge for our `ProductVariantInventoryLevel`. May be used by Relay 1.
+  """
+  productVariantInventoryLevelEdge(
+    """The method to use when ordering `ProductVariantInventoryLevel`."""
+    orderBy: [ProductVariantInventoryLevelsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): ProductVariantInventoryLevelsEdge
+}
+
+"""The output of our update `ProductVariant` mutation."""
+type UpdateProductVariantPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `ProductVariant` that was updated by this mutation."""
+  productVariant: ProductVariant
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """Reads a single `Product` that is related to this `ProductVariant`."""
+  productByProductId: Product
+
+  """Reads a single `Color` that is related to this `ProductVariant`."""
+  colorByColorId: Color
+
+  """An edge for our `ProductVariant`. May be used by Relay 1."""
+  productVariantEdge(
+    """The method to use when ordering `ProductVariant`."""
+    orderBy: [ProductVariantsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): ProductVariantsEdge
+}
+

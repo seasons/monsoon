@@ -5,7 +5,7 @@
   "license": "MIT",
   "main": "dist/index.js",
   "engines": {
-    "node": "10.3.0"
+    "node": "10.x.x"
   },
   "scripts": {
     "start-sls": "serverless offline",
@@ -15,8 +15,9 @@
     "build-ts": "tsc",
     "watch-ts": "tsc -w",
     "postinstall": "yarn build-ts",
-    "start": "node dist/index.js",
-    "watch": "nodemon dist/index.js"
+    "start": "node -r dotenv/config dist/index.js",
+    "watch": "nodemon dist/index.js",
+    "update-mist-schema": "get-graphql-schema https://mist-staging.herokuapp.com/graphql > ./src/mist/mist.graphql"
   },
   "dependencies": {
     "apollo-datasource-rest": "^0.6.4",
@@ -24,6 +25,7 @@
     "apollo-server": "^2.9.3",
     "apollo-server-lambda": "^2.9.3",
     "bcryptjs": "2.4.3",
+    "dotenv": "^8.1.0",
     "faker": "^4.1.0",
     "graphql": "^14.5.7",
     "graphql-import": "^0.7.1",
@@ -46,7 +48,7 @@
     "serverless-offline": "^5.10.1",
     "serverless-plugin-include-dependencies": "^3.2.1",
     "serverless-plugin-typescript": "^1.1.7",
-    "ts-node": "7.0.1",
+    "ts-node": "^8.4.1",
     "typescript": "3.2.2"
   },
   "prettier": {

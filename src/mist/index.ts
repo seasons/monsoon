@@ -1,9 +1,12 @@
 import { HttpLink } from "apollo-link-http"
 import fetch from "node-fetch"
-import { makeRemoteExecutableSchema, introspectSchema } from "graphql-tools"
+import { makeRemoteExecutableSchema } from "graphql-tools"
 import { ApolloLink } from "apollo-link"
+import { importSchema } from "graphql-import"
 
 const { MIST_URL } = process.env
+
+console.log("Mist URL: ", MIST_URL)
 
 const link = new HttpLink({
   uri: MIST_URL,
@@ -19,9 +22,9 @@ const middlewareLink = new ApolloLink((operation, forward) => {
   return forward(operation)
 })
 
-export default async () => {
-  return makeRemoteExecutableSchema({
-    schema: await introspectSchema(link),
-    link: middlewareLink.concat(link),
-  })
-}
+const typeDefs = importSchema("./src/mist/mist.graphql")
+
+export const schema = makeRemoteExecutableSchema({
+  schema: typeDefs,
+  link: middlewareLink.concat(link),
+})

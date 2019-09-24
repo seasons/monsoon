@@ -1,6 +1,6 @@
 import resolvers from "./resolvers"
 import { makeExecutableSchema, mergeSchemas } from "graphql-tools"
-// import makeShopifySchema from "./shopify/schema"
+import { schema as mistSchema } from "./mist"
 import { importSchema } from "graphql-import"
 
 const typeDefs = importSchema("./src/schema.graphql")
@@ -9,8 +9,6 @@ const localSchema = makeExecutableSchema({
   resolvers,
 })
 
-// const shopifySchema = makeShopifySchema()
-
 export const schema = mergeSchemas({
-  schemas: [localSchema],
+  schemas: [localSchema, mistSchema],
 })

@@ -1,7 +1,5 @@
 type Query {
   me: User
-  products: [Product!]
-  product(id: ID): Product
 }
 
 type Mutation {
@@ -101,13 +99,6 @@ enum Color {
   DarkGray
 }
 
-type PhysicalProductState {
-  id: ID!
-  name: String!
-  description: String!
-  previousState: PhysicalProductState
-}
-
 type Image {
   href: String
   height: Int
@@ -124,61 +115,4 @@ type ResizedImageUrl {
   width: Int
   height: Int
   url: String
-}
-
-type Price {
-  cent: Int
-  display: String
-}
-
-type Brand {
-  id: ID!
-  name: String!
-  tier: Tier!
-  website: String!
-  logo: Image
-  description: String!
-  since: Int
-  primary: Boolean!
-  code: String!
-}
-
-type Product {
-  id: ID!
-  name: String!
-  description: String!
-  images: [Image]!
-  modelSize: Size
-  modelHeight: Int!
-  brand: Brand!
-  relatedProducts: [Product!]
-  availableSizes: [Size!]!
-  variants: [ProductVariant]
-  price: Price!
-  formattedPrice: String!
-  materials: [Material!]!
-  department: Department
-  category: Category
-  tags: [String!]
-}
-
-type ProductVariant {
-  id: ID!
-  product: Product
-  UPC: Int!
-  images: [Image!]!
-  size: Size
-  primaryColor: Color
-  colors: [Color!]
-  price: Price
-  weight: Float
-  height: Float
-  inventoryCount: Int
-}
-
-type PhysicalProduct {
-  id: ID!
-  SKU: String!
-  productVariant: ProductVariant
-  currentState: PhysicalProductState
 }

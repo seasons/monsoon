@@ -5,8 +5,4 @@ export const Query = {
     const id = getUserId(ctx)
     return ctx.prisma.user({ id })
   },
-
-  products(parent, args, ctx: Context) {
-    return {}
-  },
 }
