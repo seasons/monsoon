@@ -9,10 +9,12 @@ type Brand implements Node {
   """
   nodeId: ID!
   id: Int!
+  airtableId: String!
+  slug: String!
   name: String!
   tier: BrandTier!
   websiteUrl: String
-  images: JSON
+  logo: JSON
   description: String
   since: Date
   isPrimaryBrand: Boolean
@@ -28,6 +30,12 @@ input BrandCondition {
   """Checks for equality with the object’s `id` field."""
   id: Int
 
+  """Checks for equality with the object’s `airtableId` field."""
+  airtableId: String
+
+  """Checks for equality with the object’s `slug` field."""
+  slug: String
+
   """Checks for equality with the object’s `name` field."""
   name: String
 
@@ -37,8 +45,8 @@ input BrandCondition {
   """Checks for equality with the object’s `websiteUrl` field."""
   websiteUrl: String
 
-  """Checks for equality with the object’s `images` field."""
-  images: JSON
+  """Checks for equality with the object’s `logo` field."""
+  logo: JSON
 
   """Checks for equality with the object’s `description` field."""
   description: String
@@ -62,10 +70,12 @@ input BrandCondition {
 """An input for mutations affecting `Brand`"""
 input BrandInput {
   id: Int
+  airtableId: String!
+  slug: String!
   name: String!
   tier: BrandTier!
   websiteUrl: String
-  images: JSON
+  logo: JSON
   description: String
   since: Date
   isPrimaryBrand: Boolean
@@ -79,10 +89,12 @@ Represents an update to a `Brand`. Fields that are set will be updated.
 """
 input BrandPatch {
   id: Int
+  airtableId: String
+  slug: String
   name: String
   tier: BrandTier
   websiteUrl: String
-  images: JSON
+  logo: JSON
   description: String
   since: Date
   isPrimaryBrand: Boolean
@@ -122,14 +134,18 @@ enum BrandsOrderBy {
   NATURAL
   ID_ASC
   ID_DESC
+  AIRTABLE_ID_ASC
+  AIRTABLE_ID_DESC
+  SLUG_ASC
+  SLUG_DESC
   NAME_ASC
   NAME_DESC
   TIER_ASC
   TIER_DESC
   WEBSITE_URL_ASC
   WEBSITE_URL_DESC
-  IMAGES_ASC
-  IMAGES_DESC
+  LOGO_ASC
+  LOGO_DESC
   DESCRIPTION_ASC
   DESCRIPTION_DESC
   SINCE_ASC
@@ -187,6 +203,8 @@ enum CategoriesOrderBy {
   NATURAL
   ID_ASC
   ID_DESC
+  AIRTABLE_ID_ASC
+  AIRTABLE_ID_DESC
   NAME_ASC
   NAME_DESC
   DESCRIPTION_ASC
@@ -201,37 +219,9 @@ type Category implements Node {
   """
   nodeId: ID!
   id: Int!
+  airtableId: String!
   name: String!
   description: String
-
-  """Reads and enables pagination through a set of `Product`."""
-  productsByCategoryId(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `Product`."""
-    orderBy: [ProductsOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: ProductCondition
-  ): ProductsConnection!
 }
 
 """
@@ -241,6 +231,9 @@ for equality and combined with a logical ‘and.’
 input CategoryCondition {
   """Checks for equality with the object’s `id` field."""
   id: Int
+
+  """Checks for equality with the object’s `airtableId` field."""
+  airtableId: String
 
   """Checks for equality with the object’s `name` field."""
   name: String
@@ -252,6 +245,7 @@ input CategoryCondition {
 """An input for mutations affecting `Category`"""
 input CategoryInput {
   id: Int
+  airtableId: String!
   name: String!
   description: String
 }
@@ -261,6 +255,7 @@ Represents an update to a `Category`. Fields that are set will be updated.
 """
 input CategoryPatch {
   id: Int
+  airtableId: String
   name: String
   description: String
 }
@@ -576,9 +571,6 @@ type CreateProductPayload {
   """
   query: Query
 
-  """Reads a single `Category` that is related to this `Product`."""
-  categoryByCategoryId: Category
-
   """An edge for our `Product`. May be used by Relay 1."""
   productEdge(
     """The method to use when ordering `Product`."""
@@ -686,6 +678,16 @@ A point in time as described by the [ISO
 """
 scalar Datetime
 
+"""All input for the `deleteBrandByAirtableId` mutation."""
+input DeleteBrandByAirtableIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  airtableId: String!
+}
+
 """All input for the `deleteBrandById` mutation."""
 input DeleteBrandByIdInput {
   """
@@ -694,6 +696,16 @@ input DeleteBrandByIdInput {
   """
   clientMutationId: String
   id: Int!
+}
+
+"""All input for the `deleteBrandBySlug` mutation."""
+input DeleteBrandBySlugInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  slug: String!
 }
 
 """All input for the `deleteBrand` mutation."""
@@ -976,9 +988,6 @@ type DeleteProductPayload {
   Our root query field type. Allows us to run any query from our mutation payload.
   """
   query: Query
-
-  """Reads a single `Category` that is related to this `Product`."""
-  categoryByCategoryId: Category
 
   """An edge for our `Product`. May be used by Relay 1."""
   productEdge(
@@ -1468,6 +1477,22 @@ type Mutation {
     input: UpdateBrandByIdInput!
   ): UpdateBrandPayload
 
+  """Updates a single `Brand` using a unique key and a patch."""
+  updateBrandByAirtableId(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateBrandByAirtableIdInput!
+  ): UpdateBrandPayload
+
+  """Updates a single `Brand` using a unique key and a patch."""
+  updateBrandBySlug(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateBrandBySlugInput!
+  ): UpdateBrandPayload
+
   """Updates a single `Category` using its globally unique id and a patch."""
   updateCategory(
     """
@@ -1608,6 +1633,22 @@ type Mutation {
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
     """
     input: DeleteBrandByIdInput!
+  ): DeleteBrandPayload
+
+  """Deletes a single `Brand` using a unique key."""
+  deleteBrandByAirtableId(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteBrandByAirtableIdInput!
+  ): DeleteBrandPayload
+
+  """Deletes a single `Brand` using a unique key."""
+  deleteBrandBySlug(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteBrandBySlugInput!
   ): DeleteBrandPayload
 
   """Deletes a single `Category` using its globally unique id."""
@@ -1769,9 +1810,6 @@ type Product implements Node {
   categoryId: Int!
   createdAt: Datetime!
   updatedAt: Datetime!
-
-  """Reads a single `Category` that is related to this `Product`."""
-  categoryByCategoryId: Category
 
   """Reads and enables pagination through a set of `ProductVariant`."""
   productVariantsByProductId(
@@ -2494,6 +2532,8 @@ type Query implements Node {
     condition: ProductCondition
   ): ProductsConnection
   brandById(id: Int!): Brand
+  brandByAirtableId(airtableId: String!): Brand
+  brandBySlug(slug: String!): Brand
   categoryById(id: Int!): Category
   colorById(id: String!): Color
   imageById(id: Int!): Image
@@ -2566,6 +2606,21 @@ enum Size {
   XL
 }
 
+"""All input for the `updateBrandByAirtableId` mutation."""
+input UpdateBrandByAirtableIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  An object where the defined keys will be set on the `Brand` being updated.
+  """
+  brandPatch: BrandPatch!
+  airtableId: String!
+}
+
 """All input for the `updateBrandById` mutation."""
 input UpdateBrandByIdInput {
   """
@@ -2579,6 +2634,21 @@ input UpdateBrandByIdInput {
   """
   brandPatch: BrandPatch!
   id: Int!
+}
+
+"""All input for the `updateBrandBySlug` mutation."""
+input UpdateBrandBySlugInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  An object where the defined keys will be set on the `Brand` being updated.
+  """
+  brandPatch: BrandPatch!
+  slug: String!
 }
 
 """All input for the `updateBrand` mutation."""
@@ -2915,9 +2985,6 @@ type UpdateProductPayload {
   Our root query field type. Allows us to run any query from our mutation payload.
   """
   query: Query
-
-  """Reads a single `Category` that is related to this `Product`."""
-  categoryByCategoryId: Category
 
   """An edge for our `Product`. May be used by Relay 1."""
   productEdge(
