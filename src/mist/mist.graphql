@@ -21,6 +21,35 @@ type Brand implements Node {
   brandCode: String!
   createdAt: Datetime!
   updatedAt: Datetime!
+
+  """Reads and enables pagination through a set of `Product`."""
+  productsByBrandId(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `Product`."""
+    orderBy: [ProductsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: ProductCondition
+  ): ProductsConnection!
 }
 
 """
@@ -222,6 +251,35 @@ type Category implements Node {
   airtableId: String!
   name: String!
   description: String
+
+  """Reads and enables pagination through a set of `Product`."""
+  productsByCategoryId(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `Product`."""
+    orderBy: [ProductsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: ProductCondition
+  ): ProductsConnection!
 }
 
 """
@@ -571,6 +629,12 @@ type CreateProductPayload {
   """
   query: Query
 
+  """Reads a single `Brand` that is related to this `Product`."""
+  brandByBrandId: Brand
+
+  """Reads a single `Category` that is related to this `Product`."""
+  categoryByCategoryId: Category
+
   """An edge for our `Product`. May be used by Relay 1."""
   productEdge(
     """The method to use when ordering `Product`."""
@@ -619,11 +683,6 @@ type CreateProductVariantInventoryLevelPayload {
   query: Query
 
   """
-  Reads a single `Product` that is related to this `ProductVariantInventoryLevel`.
-  """
-  productByProductId: Product
-
-  """
   Reads a single `ProductVariant` that is related to this `ProductVariantInventoryLevel`.
   """
   productVariantByProductVariantId: ProductVariant
@@ -652,9 +711,6 @@ type CreateProductVariantPayload {
   Our root query field type. Allows us to run any query from our mutation payload.
   """
   query: Query
-
-  """Reads a single `Product` that is related to this `ProductVariant`."""
-  productByProductId: Product
 
   """Reads a single `Color` that is related to this `ProductVariant`."""
   colorByColorId: Color
@@ -989,6 +1045,12 @@ type DeleteProductPayload {
   """
   query: Query
 
+  """Reads a single `Brand` that is related to this `Product`."""
+  brandByBrandId: Brand
+
+  """Reads a single `Category` that is related to this `Product`."""
+  categoryByCategoryId: Category
+
   """An edge for our `Product`. May be used by Relay 1."""
   productEdge(
     """The method to use when ordering `Product`."""
@@ -1062,11 +1124,6 @@ type DeleteProductVariantInventoryLevelPayload {
   query: Query
 
   """
-  Reads a single `Product` that is related to this `ProductVariantInventoryLevel`.
-  """
-  productByProductId: Product
-
-  """
   Reads a single `ProductVariant` that is related to this `ProductVariantInventoryLevel`.
   """
   productVariantByProductVariantId: ProductVariant
@@ -1096,9 +1153,6 @@ type DeleteProductVariantPayload {
   Our root query field type. Allows us to run any query from our mutation payload.
   """
   query: Query
-
-  """Reads a single `Product` that is related to this `ProductVariant`."""
-  productByProductId: Product
 
   """Reads a single `Color` that is related to this `ProductVariant`."""
   colorByColorId: Color
@@ -1806,70 +1860,21 @@ type Product implements Node {
   name: String!
   description: String
   brandId: Int!
+  images: JSON!
+  modelSize: Size
+  modelHeight: Int
+  externalUrl: String
+  tags: JSON
   retailPrice: Float
   categoryId: Int!
   createdAt: Datetime!
   updatedAt: Datetime!
 
-  """Reads and enables pagination through a set of `ProductVariant`."""
-  productVariantsByProductId(
-    """Only read the first `n` values of the set."""
-    first: Int
+  """Reads a single `Brand` that is related to this `Product`."""
+  brandByBrandId: Brand
 
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `ProductVariant`."""
-    orderBy: [ProductVariantsOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: ProductVariantCondition
-  ): ProductVariantsConnection!
-
-  """
-  Reads and enables pagination through a set of `ProductVariantInventoryLevel`.
-  """
-  productVariantInventoryLevelsByProductId(
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """The method to use when ordering `ProductVariantInventoryLevel`."""
-    orderBy: [ProductVariantInventoryLevelsOrderBy!] = [PRIMARY_KEY_ASC]
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: ProductVariantInventoryLevelCondition
-  ): ProductVariantInventoryLevelsConnection!
+  """Reads a single `Category` that is related to this `Product`."""
+  categoryByCategoryId: Category
 }
 
 """
@@ -1887,6 +1892,21 @@ input ProductCondition {
 
   """Checks for equality with the object’s `brandId` field."""
   brandId: Int
+
+  """Checks for equality with the object’s `images` field."""
+  images: JSON
+
+  """Checks for equality with the object’s `modelSize` field."""
+  modelSize: Size
+
+  """Checks for equality with the object’s `modelHeight` field."""
+  modelHeight: Int
+
+  """Checks for equality with the object’s `externalUrl` field."""
+  externalUrl: String
+
+  """Checks for equality with the object’s `tags` field."""
+  tags: JSON
 
   """Checks for equality with the object’s `retailPrice` field."""
   retailPrice: Float
@@ -1907,6 +1927,11 @@ input ProductInput {
   name: String!
   description: String
   brandId: Int!
+  images: JSON!
+  modelSize: Size
+  modelHeight: Int
+  externalUrl: String
+  tags: JSON
   retailPrice: Float
   categoryId: Int!
   createdAt: Datetime
@@ -1921,6 +1946,11 @@ input ProductPatch {
   name: String
   description: String
   brandId: Int
+  images: JSON
+  modelSize: Size
+  modelHeight: Int
+  externalUrl: String
+  tags: JSON
   retailPrice: Float
   categoryId: Int
   createdAt: Datetime
@@ -1964,6 +1994,16 @@ enum ProductsOrderBy {
   DESCRIPTION_DESC
   BRAND_ID_ASC
   BRAND_ID_DESC
+  IMAGES_ASC
+  IMAGES_DESC
+  MODEL_SIZE_ASC
+  MODEL_SIZE_DESC
+  MODEL_HEIGHT_ASC
+  MODEL_HEIGHT_DESC
+  EXTERNAL_URL_ASC
+  EXTERNAL_URL_DESC
+  TAGS_ASC
+  TAGS_DESC
   RETAIL_PRICE_ASC
   RETAIL_PRICE_DESC
   CATEGORY_ID_ASC
@@ -1992,9 +2032,6 @@ type ProductVariant implements Node {
   height: Int
   createdAt: Datetime!
   updatedAt: Datetime!
-
-  """Reads a single `Product` that is related to this `ProductVariant`."""
-  productByProductId: Product
 
   """Reads a single `Color` that is related to this `ProductVariant`."""
   colorByColorId: Color
@@ -2096,11 +2133,6 @@ type ProductVariantInventoryLevel implements Node {
   nonReservablePhysicalProducts: Int
   reservablePhysicalProducts: Int
   reservedPhysicalProducts: Int
-
-  """
-  Reads a single `Product` that is related to this `ProductVariantInventoryLevel`.
-  """
-  productByProductId: Product
 
   """
   Reads a single `ProductVariant` that is related to this `ProductVariantInventoryLevel`.
@@ -2986,6 +3018,12 @@ type UpdateProductPayload {
   """
   query: Query
 
+  """Reads a single `Brand` that is related to this `Product`."""
+  brandByBrandId: Brand
+
+  """Reads a single `Category` that is related to this `Product`."""
+  categoryByCategoryId: Category
+
   """An edge for our `Product`. May be used by Relay 1."""
   productEdge(
     """The method to use when ordering `Product`."""
@@ -3078,11 +3116,6 @@ type UpdateProductVariantInventoryLevelPayload {
   query: Query
 
   """
-  Reads a single `Product` that is related to this `ProductVariantInventoryLevel`.
-  """
-  productByProductId: Product
-
-  """
   Reads a single `ProductVariant` that is related to this `ProductVariantInventoryLevel`.
   """
   productVariantByProductVariantId: ProductVariant
@@ -3111,9 +3144,6 @@ type UpdateProductVariantPayload {
   Our root query field type. Allows us to run any query from our mutation payload.
   """
   query: Query
-
-  """Reads a single `Product` that is related to this `ProductVariant`."""
-  productByProductId: Product
 
   """Reads a single `Color` that is related to this `ProductVariant`."""
   colorByColorId: Color
