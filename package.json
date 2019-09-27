@@ -16,7 +16,7 @@
     "watch-ts": "tsc -w",
     "postinstall": "yarn build-ts",
     "start": "node -r dotenv/config dist/index.js",
-    "watch": "nodemon dist/index.js",
+    "watch": "nodemon -r dotenv/config dist/index.js",
     "update-mist-schema": "get-graphql-schema https://mist-staging.herokuapp.com/graphql > ./src/mist/mist.graphql"
   },
   "dependencies": {

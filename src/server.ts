@@ -2,16 +2,18 @@ import { schema } from "./schema"
 import { prisma } from "./generated/prisma-client"
 
 const defaultQuery = `{
-    products(first: 10) {
-      edges {
-        node {
-          id
-          title
-        }
+  allProducts {
+    edges {
+      node {
+        id
+        name
+        description
+        retailPrice
       }
     }
   }
-  `
+}
+`
 
 export const serverOptions = {
   schema,
@@ -30,5 +32,4 @@ export const serverOptions = {
       },
     ],
   },
-  //   mocks: true,
 }
