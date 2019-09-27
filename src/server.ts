@@ -21,6 +21,7 @@ export const serverOptions = {
     ...request,
     prisma,
   }),
+  introspection: true,
   playground: {
     settings: {
       "editor.theme": "dark" as any,
