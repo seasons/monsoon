@@ -31,12 +31,6 @@ export const syncBrands = () => {
 
             const slug = slugify(values.Name).toLowerCase()
 
-            record
-              .patchUpdate({
-                Slug: slug,
-              })
-              .catch(console.error)
-
             const data = {
               name: values.Name,
               tier: (values.Tier || "").replace(" ", "") as BrandTier,
@@ -58,6 +52,13 @@ export const syncBrands = () => {
               },
               update: data,
             })
+
+            record
+              .patchUpdate({
+                "Seasons ID": brand.id,
+                Slug: slug,
+              })
+              .catch(console.error)
 
             console.log(brand)
           } catch (e) {
