@@ -1,7 +1,120 @@
+directive @external on FIELD_DEFINITION
+
+directive @requires(fields: _FieldSet!) on FIELD_DEFINITION
+
+directive @provides(fields: _FieldSet!) on FIELD_DEFINITION
+
+directive @key(fields: _FieldSet!) on OBJECT | INTERFACE
+
+scalar _Any
+
+"""A union of all federated types (those that use the @key directive)."""
+union _Entity = Brand | Product | Category | Color | ProductVariant | ProductVariantInventoryLevel | Image | Location
+
+"""
+Used to represent a set of fields. Grammatically, a field set is a
+selection set minus the braces.
+"""
+scalar _FieldSet
+
+"""Describes our federated service."""
+type _Service {
+  """
+  The GraphQL Schema Language definiton of our endpoint including the
+  Apollo Federation directives (but not their definitions or the special
+  Apollo Federation fields).
+  """
+  sdl: String @deprecated(reason: "Only Apollo Federation should use this")
+}
+
 """
 A floating point number that requires more precision than IEEE 754 binary 64
 """
 scalar BigFloat
+
+"""
+A filter to be used against BigFloat fields. All fields are combined with a logical ‘and.’
+"""
+input BigFloatFilter {
+  """
+  Is null (if `true` is specified) or is not null (if `false` is specified).
+  """
+  isNull: Boolean
+
+  """Equal to the specified value."""
+  equalTo: BigFloat
+
+  """Not equal to the specified value."""
+  notEqualTo: BigFloat
+
+  """
+  Not equal to the specified value, treating null like an ordinary value.
+  """
+  distinctFrom: BigFloat
+
+  """Equal to the specified value, treating null like an ordinary value."""
+  notDistinctFrom: BigFloat
+
+  """Included in the specified list."""
+  in: [BigFloat!]
+
+  """Not included in the specified list."""
+  notIn: [BigFloat!]
+
+  """Less than the specified value."""
+  lessThan: BigFloat
+
+  """Less than or equal to the specified value."""
+  lessThanOrEqualTo: BigFloat
+
+  """Greater than the specified value."""
+  greaterThan: BigFloat
+
+  """Greater than or equal to the specified value."""
+  greaterThanOrEqualTo: BigFloat
+}
+
+"""
+A filter to be used against Boolean fields. All fields are combined with a logical ‘and.’
+"""
+input BooleanFilter {
+  """
+  Is null (if `true` is specified) or is not null (if `false` is specified).
+  """
+  isNull: Boolean
+
+  """Equal to the specified value."""
+  equalTo: Boolean
+
+  """Not equal to the specified value."""
+  notEqualTo: Boolean
+
+  """
+  Not equal to the specified value, treating null like an ordinary value.
+  """
+  distinctFrom: Boolean
+
+  """Equal to the specified value, treating null like an ordinary value."""
+  notDistinctFrom: Boolean
+
+  """Included in the specified list."""
+  in: [Boolean!]
+
+  """Not included in the specified list."""
+  notIn: [Boolean!]
+
+  """Less than the specified value."""
+  lessThan: Boolean
+
+  """Less than or equal to the specified value."""
+  lessThanOrEqualTo: Boolean
+
+  """Greater than the specified value."""
+  greaterThan: Boolean
+
+  """Greater than or equal to the specified value."""
+  greaterThanOrEqualTo: Boolean
+}
 
 type Brand implements Node {
   """
@@ -23,7 +136,7 @@ type Brand implements Node {
   updatedAt: Datetime!
 
   """Reads and enables pagination through a set of `Product`."""
-  productsByBrandId(
+  products(
     """Only read the first `n` values of the set."""
     first: Int
 
@@ -49,6 +162,11 @@ type Brand implements Node {
     A condition to be used in determining which values should be returned by the collection.
     """
     condition: ProductCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: ProductFilter
   ): ProductsConnection!
 }
 
@@ -94,6 +212,59 @@ input BrandCondition {
 
   """Checks for equality with the object’s `updatedAt` field."""
   updatedAt: Datetime
+}
+
+"""
+A filter to be used against `Brand` object types. All fields are combined with a logical ‘and.’
+"""
+input BrandFilter {
+  """Filter by the object’s `id` field."""
+  id: IntFilter
+
+  """Filter by the object’s `airtableId` field."""
+  airtableId: StringFilter
+
+  """Filter by the object’s `slug` field."""
+  slug: StringFilter
+
+  """Filter by the object’s `name` field."""
+  name: StringFilter
+
+  """Filter by the object’s `tier` field."""
+  tier: BrandTierFilter
+
+  """Filter by the object’s `websiteUrl` field."""
+  websiteUrl: StringFilter
+
+  """Filter by the object’s `logo` field."""
+  logo: JSONFilter
+
+  """Filter by the object’s `description` field."""
+  description: StringFilter
+
+  """Filter by the object’s `since` field."""
+  since: DateFilter
+
+  """Filter by the object’s `isPrimaryBrand` field."""
+  isPrimaryBrand: BooleanFilter
+
+  """Filter by the object’s `brandCode` field."""
+  brandCode: StringFilter
+
+  """Filter by the object’s `createdAt` field."""
+  createdAt: DatetimeFilter
+
+  """Filter by the object’s `updatedAt` field."""
+  updatedAt: DatetimeFilter
+
+  """Checks for all expressions in this list."""
+  and: [BrandFilter!]
+
+  """Checks for any expressions in this list."""
+  or: [BrandFilter!]
+
+  """Negates the expression."""
+  not: BrandFilter
 }
 
 """An input for mutations affecting `Brand`"""
@@ -201,6 +372,48 @@ enum BrandTier {
   BOUTIQUE
 }
 
+"""
+A filter to be used against BrandTier fields. All fields are combined with a logical ‘and.’
+"""
+input BrandTierFilter {
+  """
+  Is null (if `true` is specified) or is not null (if `false` is specified).
+  """
+  isNull: Boolean
+
+  """Equal to the specified value."""
+  equalTo: BrandTier
+
+  """Not equal to the specified value."""
+  notEqualTo: BrandTier
+
+  """
+  Not equal to the specified value, treating null like an ordinary value.
+  """
+  distinctFrom: BrandTier
+
+  """Equal to the specified value, treating null like an ordinary value."""
+  notDistinctFrom: BrandTier
+
+  """Included in the specified list."""
+  in: [BrandTier!]
+
+  """Not included in the specified list."""
+  notIn: [BrandTier!]
+
+  """Less than the specified value."""
+  lessThan: BrandTier
+
+  """Less than or equal to the specified value."""
+  lessThanOrEqualTo: BrandTier
+
+  """Greater than the specified value."""
+  greaterThan: BrandTier
+
+  """Greater than or equal to the specified value."""
+  greaterThanOrEqualTo: BrandTier
+}
+
 """A connection to a list of `Category` values."""
 type CategoriesConnection {
   """A list of `Category` objects."""
@@ -253,7 +466,7 @@ type Category implements Node {
   description: String
 
   """Reads and enables pagination through a set of `Product`."""
-  productsByCategoryId(
+  products(
     """Only read the first `n` values of the set."""
     first: Int
 
@@ -279,6 +492,11 @@ type Category implements Node {
     A condition to be used in determining which values should be returned by the collection.
     """
     condition: ProductCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: ProductFilter
   ): ProductsConnection!
 }
 
@@ -298,6 +516,32 @@ input CategoryCondition {
 
   """Checks for equality with the object’s `description` field."""
   description: String
+}
+
+"""
+A filter to be used against `Category` object types. All fields are combined with a logical ‘and.’
+"""
+input CategoryFilter {
+  """Filter by the object’s `id` field."""
+  id: IntFilter
+
+  """Filter by the object’s `airtableId` field."""
+  airtableId: StringFilter
+
+  """Filter by the object’s `name` field."""
+  name: StringFilter
+
+  """Filter by the object’s `description` field."""
+  description: StringFilter
+
+  """Checks for all expressions in this list."""
+  and: [CategoryFilter!]
+
+  """Checks for any expressions in this list."""
+  or: [CategoryFilter!]
+
+  """Negates the expression."""
+  not: CategoryFilter
 }
 
 """An input for mutations affecting `Category`"""
@@ -328,7 +572,7 @@ type Color implements Node {
   hexCode: String!
 
   """Reads and enables pagination through a set of `ProductVariant`."""
-  productVariantsByColorId(
+  productVariants(
     """Only read the first `n` values of the set."""
     first: Int
 
@@ -354,6 +598,11 @@ type Color implements Node {
     A condition to be used in determining which values should be returned by the collection.
     """
     condition: ProductVariantCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: ProductVariantFilter
   ): ProductVariantsConnection!
 }
 
@@ -369,6 +618,29 @@ input ColorCondition {
 
   """Checks for equality with the object’s `hexCode` field."""
   hexCode: String
+}
+
+"""
+A filter to be used against `Color` object types. All fields are combined with a logical ‘and.’
+"""
+input ColorFilter {
+  """Filter by the object’s `id` field."""
+  id: StringFilter
+
+  """Filter by the object’s `name` field."""
+  name: StringFilter
+
+  """Filter by the object’s `hexCode` field."""
+  hexCode: StringFilter
+
+  """Checks for all expressions in this list."""
+  and: [ColorFilter!]
+
+  """Checks for any expressions in this list."""
+  or: [ColorFilter!]
+
+  """Negates the expression."""
+  not: ColorFilter
 }
 
 """An input for mutations affecting `Color`"""
@@ -630,10 +902,10 @@ type CreateProductPayload {
   query: Query
 
   """Reads a single `Brand` that is related to this `Product`."""
-  brandByBrandId: Brand
+  brand: Brand
 
   """Reads a single `Category` that is related to this `Product`."""
-  categoryByCategoryId: Category
+  category: Category
 
   """An edge for our `Product`. May be used by Relay 1."""
   productEdge(
@@ -685,7 +957,7 @@ type CreateProductVariantInventoryLevelPayload {
   """
   Reads a single `ProductVariant` that is related to this `ProductVariantInventoryLevel`.
   """
-  productVariantByProductVariantId: ProductVariant
+  productVariant: ProductVariant
 
   """
   An edge for our `ProductVariantInventoryLevel`. May be used by Relay 1.
@@ -713,7 +985,7 @@ type CreateProductVariantPayload {
   query: Query
 
   """Reads a single `Color` that is related to this `ProductVariant`."""
-  colorByColorId: Color
+  color: Color
 
   """An edge for our `ProductVariant`. May be used by Relay 1."""
   productVariantEdge(
@@ -729,10 +1001,94 @@ scalar Cursor
 scalar Date
 
 """
+A filter to be used against Date fields. All fields are combined with a logical ‘and.’
+"""
+input DateFilter {
+  """
+  Is null (if `true` is specified) or is not null (if `false` is specified).
+  """
+  isNull: Boolean
+
+  """Equal to the specified value."""
+  equalTo: Date
+
+  """Not equal to the specified value."""
+  notEqualTo: Date
+
+  """
+  Not equal to the specified value, treating null like an ordinary value.
+  """
+  distinctFrom: Date
+
+  """Equal to the specified value, treating null like an ordinary value."""
+  notDistinctFrom: Date
+
+  """Included in the specified list."""
+  in: [Date!]
+
+  """Not included in the specified list."""
+  notIn: [Date!]
+
+  """Less than the specified value."""
+  lessThan: Date
+
+  """Less than or equal to the specified value."""
+  lessThanOrEqualTo: Date
+
+  """Greater than the specified value."""
+  greaterThan: Date
+
+  """Greater than or equal to the specified value."""
+  greaterThanOrEqualTo: Date
+}
+
+"""
 A point in time as described by the [ISO
 8601](https://en.wikipedia.org/wiki/ISO_8601) standard. May or may not include a timezone.
 """
 scalar Datetime
+
+"""
+A filter to be used against Datetime fields. All fields are combined with a logical ‘and.’
+"""
+input DatetimeFilter {
+  """
+  Is null (if `true` is specified) or is not null (if `false` is specified).
+  """
+  isNull: Boolean
+
+  """Equal to the specified value."""
+  equalTo: Datetime
+
+  """Not equal to the specified value."""
+  notEqualTo: Datetime
+
+  """
+  Not equal to the specified value, treating null like an ordinary value.
+  """
+  distinctFrom: Datetime
+
+  """Equal to the specified value, treating null like an ordinary value."""
+  notDistinctFrom: Datetime
+
+  """Included in the specified list."""
+  in: [Datetime!]
+
+  """Not included in the specified list."""
+  notIn: [Datetime!]
+
+  """Less than the specified value."""
+  lessThan: Datetime
+
+  """Less than or equal to the specified value."""
+  lessThanOrEqualTo: Datetime
+
+  """Greater than the specified value."""
+  greaterThan: Datetime
+
+  """Greater than or equal to the specified value."""
+  greaterThanOrEqualTo: Datetime
+}
 
 """All input for the `deleteBrandByAirtableId` mutation."""
 input DeleteBrandByAirtableIdInput {
@@ -744,14 +1100,18 @@ input DeleteBrandByAirtableIdInput {
   airtableId: String!
 }
 
-"""All input for the `deleteBrandById` mutation."""
-input DeleteBrandByIdInput {
+"""All input for the `deleteBrandByNodeId` mutation."""
+input DeleteBrandByNodeIdInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
   """
   clientMutationId: String
-  id: Int!
+
+  """
+  The globally unique `ID` which will identify a single `Brand` to be deleted.
+  """
+  nodeId: ID!
 }
 
 """All input for the `deleteBrandBySlug` mutation."""
@@ -771,11 +1131,7 @@ input DeleteBrandInput {
   payload verbatim. May be used to track mutations by the client.
   """
   clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `Brand` to be deleted.
-  """
-  nodeId: ID!
+  id: Int!
 }
 
 """The output of our delete `Brand` mutation."""
@@ -788,7 +1144,7 @@ type DeleteBrandPayload {
 
   """The `Brand` that was deleted by this mutation."""
   brand: Brand
-  deletedBrandId: ID
+  deletedBrandNodeId: ID
 
   """
   Our root query field type. Allows us to run any query from our mutation payload.
@@ -802,18 +1158,8 @@ type DeleteBrandPayload {
   ): BrandsEdge
 }
 
-"""All input for the `deleteCategoryById` mutation."""
-input DeleteCategoryByIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  id: Int!
-}
-
-"""All input for the `deleteCategory` mutation."""
-input DeleteCategoryInput {
+"""All input for the `deleteCategoryByNodeId` mutation."""
+input DeleteCategoryByNodeIdInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
@@ -826,6 +1172,16 @@ input DeleteCategoryInput {
   nodeId: ID!
 }
 
+"""All input for the `deleteCategory` mutation."""
+input DeleteCategoryInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  id: Int!
+}
+
 """The output of our delete `Category` mutation."""
 type DeleteCategoryPayload {
   """
@@ -836,7 +1192,7 @@ type DeleteCategoryPayload {
 
   """The `Category` that was deleted by this mutation."""
   category: Category
-  deletedCategoryId: ID
+  deletedCategoryNodeId: ID
 
   """
   Our root query field type. Allows us to run any query from our mutation payload.
@@ -850,18 +1206,8 @@ type DeleteCategoryPayload {
   ): CategoriesEdge
 }
 
-"""All input for the `deleteColorById` mutation."""
-input DeleteColorByIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  id: String!
-}
-
-"""All input for the `deleteColor` mutation."""
-input DeleteColorInput {
+"""All input for the `deleteColorByNodeId` mutation."""
+input DeleteColorByNodeIdInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
@@ -874,6 +1220,16 @@ input DeleteColorInput {
   nodeId: ID!
 }
 
+"""All input for the `deleteColor` mutation."""
+input DeleteColorInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  id: String!
+}
+
 """The output of our delete `Color` mutation."""
 type DeleteColorPayload {
   """
@@ -884,7 +1240,7 @@ type DeleteColorPayload {
 
   """The `Color` that was deleted by this mutation."""
   color: Color
-  deletedColorId: ID
+  deletedColorNodeId: ID
 
   """
   Our root query field type. Allows us to run any query from our mutation payload.
@@ -898,18 +1254,8 @@ type DeleteColorPayload {
   ): ColorsEdge
 }
 
-"""All input for the `deleteImageById` mutation."""
-input DeleteImageByIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  id: Int!
-}
-
-"""All input for the `deleteImage` mutation."""
-input DeleteImageInput {
+"""All input for the `deleteImageByNodeId` mutation."""
+input DeleteImageByNodeIdInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
@@ -922,6 +1268,16 @@ input DeleteImageInput {
   nodeId: ID!
 }
 
+"""All input for the `deleteImage` mutation."""
+input DeleteImageInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  id: Int!
+}
+
 """The output of our delete `Image` mutation."""
 type DeleteImagePayload {
   """
@@ -932,7 +1288,7 @@ type DeleteImagePayload {
 
   """The `Image` that was deleted by this mutation."""
   image: Image
-  deletedImageId: ID
+  deletedImageNodeId: ID
 
   """
   Our root query field type. Allows us to run any query from our mutation payload.
@@ -946,18 +1302,8 @@ type DeleteImagePayload {
   ): ImagesEdge
 }
 
-"""All input for the `deleteLocationById` mutation."""
-input DeleteLocationByIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  id: Int!
-}
-
-"""All input for the `deleteLocation` mutation."""
-input DeleteLocationInput {
+"""All input for the `deleteLocationByNodeId` mutation."""
+input DeleteLocationByNodeIdInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
@@ -970,6 +1316,16 @@ input DeleteLocationInput {
   nodeId: ID!
 }
 
+"""All input for the `deleteLocation` mutation."""
+input DeleteLocationInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  id: Int!
+}
+
 """The output of our delete `Location` mutation."""
 type DeleteLocationPayload {
   """
@@ -980,7 +1336,7 @@ type DeleteLocationPayload {
 
   """The `Location` that was deleted by this mutation."""
   location: Location
-  deletedLocationId: ID
+  deletedLocationNodeId: ID
 
   """
   Our root query field type. Allows us to run any query from our mutation payload.
@@ -994,16 +1350,6 @@ type DeleteLocationPayload {
   ): LocationsEdge
 }
 
-"""All input for the `deleteProductById` mutation."""
-input DeleteProductByIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  id: Int!
-}
-
 """All input for the `deleteProductByName` mutation."""
 input DeleteProductByNameInput {
   """
@@ -1014,8 +1360,8 @@ input DeleteProductByNameInput {
   name: String!
 }
 
-"""All input for the `deleteProduct` mutation."""
-input DeleteProductInput {
+"""All input for the `deleteProductByNodeId` mutation."""
+input DeleteProductByNodeIdInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
@@ -1028,6 +1374,16 @@ input DeleteProductInput {
   nodeId: ID!
 }
 
+"""All input for the `deleteProduct` mutation."""
+input DeleteProductInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  id: Int!
+}
+
 """The output of our delete `Product` mutation."""
 type DeleteProductPayload {
   """
@@ -1038,7 +1394,7 @@ type DeleteProductPayload {
 
   """The `Product` that was deleted by this mutation."""
   product: Product
-  deletedProductId: ID
+  deletedProductNodeId: ID
 
   """
   Our root query field type. Allows us to run any query from our mutation payload.
@@ -1046,10 +1402,10 @@ type DeleteProductPayload {
   query: Query
 
   """Reads a single `Brand` that is related to this `Product`."""
-  brandByBrandId: Brand
+  brand: Brand
 
   """Reads a single `Category` that is related to this `Product`."""
-  categoryByCategoryId: Category
+  category: Category
 
   """An edge for our `Product`. May be used by Relay 1."""
   productEdge(
@@ -1058,18 +1414,8 @@ type DeleteProductPayload {
   ): ProductsEdge
 }
 
-"""All input for the `deleteProductVariantById` mutation."""
-input DeleteProductVariantByIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  id: Int!
-}
-
-"""All input for the `deleteProductVariant` mutation."""
-input DeleteProductVariantInput {
+"""All input for the `deleteProductVariantByNodeId` mutation."""
+input DeleteProductVariantByNodeIdInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
@@ -1082,8 +1428,8 @@ input DeleteProductVariantInput {
   nodeId: ID!
 }
 
-"""All input for the `deleteProductVariantInventoryLevelById` mutation."""
-input DeleteProductVariantInventoryLevelByIdInput {
+"""All input for the `deleteProductVariant` mutation."""
+input DeleteProductVariantInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
@@ -1092,8 +1438,10 @@ input DeleteProductVariantInventoryLevelByIdInput {
   id: Int!
 }
 
-"""All input for the `deleteProductVariantInventoryLevel` mutation."""
-input DeleteProductVariantInventoryLevelInput {
+"""
+All input for the `deleteProductVariantInventoryLevelByNodeId` mutation.
+"""
+input DeleteProductVariantInventoryLevelByNodeIdInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
@@ -1106,6 +1454,16 @@ input DeleteProductVariantInventoryLevelInput {
   nodeId: ID!
 }
 
+"""All input for the `deleteProductVariantInventoryLevel` mutation."""
+input DeleteProductVariantInventoryLevelInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  id: Int!
+}
+
 """The output of our delete `ProductVariantInventoryLevel` mutation."""
 type DeleteProductVariantInventoryLevelPayload {
   """
@@ -1116,7 +1474,7 @@ type DeleteProductVariantInventoryLevelPayload {
 
   """The `ProductVariantInventoryLevel` that was deleted by this mutation."""
   productVariantInventoryLevel: ProductVariantInventoryLevel
-  deletedProductVariantInventoryLevelId: ID
+  deletedProductVariantInventoryLevelNodeId: ID
 
   """
   Our root query field type. Allows us to run any query from our mutation payload.
@@ -1126,7 +1484,7 @@ type DeleteProductVariantInventoryLevelPayload {
   """
   Reads a single `ProductVariant` that is related to this `ProductVariantInventoryLevel`.
   """
-  productVariantByProductVariantId: ProductVariant
+  productVariant: ProductVariant
 
   """
   An edge for our `ProductVariantInventoryLevel`. May be used by Relay 1.
@@ -1147,7 +1505,7 @@ type DeleteProductVariantPayload {
 
   """The `ProductVariant` that was deleted by this mutation."""
   productVariant: ProductVariant
-  deletedProductVariantId: ID
+  deletedProductVariantNodeId: ID
 
   """
   Our root query field type. Allows us to run any query from our mutation payload.
@@ -1155,13 +1513,55 @@ type DeleteProductVariantPayload {
   query: Query
 
   """Reads a single `Color` that is related to this `ProductVariant`."""
-  colorByColorId: Color
+  color: Color
 
   """An edge for our `ProductVariant`. May be used by Relay 1."""
   productVariantEdge(
     """The method to use when ordering `ProductVariant`."""
     orderBy: [ProductVariantsOrderBy!] = [PRIMARY_KEY_ASC]
   ): ProductVariantsEdge
+}
+
+"""
+A filter to be used against Float fields. All fields are combined with a logical ‘and.’
+"""
+input FloatFilter {
+  """
+  Is null (if `true` is specified) or is not null (if `false` is specified).
+  """
+  isNull: Boolean
+
+  """Equal to the specified value."""
+  equalTo: Float
+
+  """Not equal to the specified value."""
+  notEqualTo: Float
+
+  """
+  Not equal to the specified value, treating null like an ordinary value.
+  """
+  distinctFrom: Float
+
+  """Equal to the specified value, treating null like an ordinary value."""
+  notDistinctFrom: Float
+
+  """Included in the specified list."""
+  in: [Float!]
+
+  """Not included in the specified list."""
+  notIn: [Float!]
+
+  """Less than the specified value."""
+  lessThan: Float
+
+  """Less than or equal to the specified value."""
+  lessThanOrEqualTo: Float
+
+  """Greater than the specified value."""
+  greaterThan: Float
+
+  """Greater than or equal to the specified value."""
+  greaterThanOrEqualTo: Float
 }
 
 type Image implements Node {
@@ -1210,6 +1610,47 @@ input ImageCondition {
 
   """Checks for equality with the object’s `updatedAt` field."""
   updatedAt: Datetime
+}
+
+"""
+A filter to be used against `Image` object types. All fields are combined with a logical ‘and.’
+"""
+input ImageFilter {
+  """Filter by the object’s `id` field."""
+  id: IntFilter
+
+  """Filter by the object’s `title` field."""
+  title: StringFilter
+
+  """Filter by the object’s `caption` field."""
+  caption: StringFilter
+
+  """Filter by the object’s `originalUrl` field."""
+  originalUrl: StringFilter
+
+  """Filter by the object’s `resizedUrl` field."""
+  resizedUrl: StringFilter
+
+  """Filter by the object’s `originalHeight` field."""
+  originalHeight: IntFilter
+
+  """Filter by the object’s `originalWidth` field."""
+  originalWidth: IntFilter
+
+  """Filter by the object’s `createdAt` field."""
+  createdAt: DatetimeFilter
+
+  """Filter by the object’s `updatedAt` field."""
+  updatedAt: DatetimeFilter
+
+  """Checks for all expressions in this list."""
+  and: [ImageFilter!]
+
+  """Checks for any expressions in this list."""
+  or: [ImageFilter!]
+
+  """Negates the expression."""
+  not: ImageFilter
 }
 
 """An input for mutations affecting `Image`"""
@@ -1292,9 +1733,108 @@ enum ImagesOrderBy {
 }
 
 """
+A filter to be used against Int fields. All fields are combined with a logical ‘and.’
+"""
+input IntFilter {
+  """
+  Is null (if `true` is specified) or is not null (if `false` is specified).
+  """
+  isNull: Boolean
+
+  """Equal to the specified value."""
+  equalTo: Int
+
+  """Not equal to the specified value."""
+  notEqualTo: Int
+
+  """
+  Not equal to the specified value, treating null like an ordinary value.
+  """
+  distinctFrom: Int
+
+  """Equal to the specified value, treating null like an ordinary value."""
+  notDistinctFrom: Int
+
+  """Included in the specified list."""
+  in: [Int!]
+
+  """Not included in the specified list."""
+  notIn: [Int!]
+
+  """Less than the specified value."""
+  lessThan: Int
+
+  """Less than or equal to the specified value."""
+  lessThanOrEqualTo: Int
+
+  """Greater than the specified value."""
+  greaterThan: Int
+
+  """Greater than or equal to the specified value."""
+  greaterThanOrEqualTo: Int
+}
+
+"""
 The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
 """
 scalar JSON
+
+"""
+A filter to be used against JSON fields. All fields are combined with a logical ‘and.’
+"""
+input JSONFilter {
+  """
+  Is null (if `true` is specified) or is not null (if `false` is specified).
+  """
+  isNull: Boolean
+
+  """Equal to the specified value."""
+  equalTo: JSON
+
+  """Not equal to the specified value."""
+  notEqualTo: JSON
+
+  """
+  Not equal to the specified value, treating null like an ordinary value.
+  """
+  distinctFrom: JSON
+
+  """Equal to the specified value, treating null like an ordinary value."""
+  notDistinctFrom: JSON
+
+  """Included in the specified list."""
+  in: [JSON!]
+
+  """Not included in the specified list."""
+  notIn: [JSON!]
+
+  """Less than the specified value."""
+  lessThan: JSON
+
+  """Less than or equal to the specified value."""
+  lessThanOrEqualTo: JSON
+
+  """Greater than the specified value."""
+  greaterThan: JSON
+
+  """Greater than or equal to the specified value."""
+  greaterThanOrEqualTo: JSON
+
+  """Contains the specified JSON."""
+  contains: JSON
+
+  """Contains the specified key."""
+  containsKey: String
+
+  """Contains all of the specified keys."""
+  containsAllKeys: [String!]
+
+  """Contains any of the specified keys."""
+  containsAnyKeys: [String!]
+
+  """Contained by the specified JSON."""
+  containedBy: JSON
+}
 
 type Location implements Node {
   """
@@ -1351,6 +1891,53 @@ input LocationCondition {
 
   """Checks for equality with the object’s `lng` field."""
   lng: BigFloat
+}
+
+"""
+A filter to be used against `Location` object types. All fields are combined with a logical ‘and.’
+"""
+input LocationFilter {
+  """Filter by the object’s `id` field."""
+  id: IntFilter
+
+  """Filter by the object’s `locationType` field."""
+  locationType: LocationTypeFilter
+
+  """Filter by the object’s `name` field."""
+  name: StringFilter
+
+  """Filter by the object’s `description` field."""
+  description: StringFilter
+
+  """Filter by the object’s `address1` field."""
+  address1: StringFilter
+
+  """Filter by the object’s `address2` field."""
+  address2: StringFilter
+
+  """Filter by the object’s `city` field."""
+  city: StringFilter
+
+  """Filter by the object’s `state` field."""
+  state: StringFilter
+
+  """Filter by the object’s `zip` field."""
+  zip: IntFilter
+
+  """Filter by the object’s `lat` field."""
+  lat: BigFloatFilter
+
+  """Filter by the object’s `lng` field."""
+  lng: BigFloatFilter
+
+  """Checks for all expressions in this list."""
+  and: [LocationFilter!]
+
+  """Checks for any expressions in this list."""
+  or: [LocationFilter!]
+
+  """Negates the expression."""
+  not: LocationFilter
 }
 
 """An input for mutations affecting `Location`"""
@@ -1448,6 +2035,48 @@ enum LocationType {
 }
 
 """
+A filter to be used against LocationType fields. All fields are combined with a logical ‘and.’
+"""
+input LocationTypeFilter {
+  """
+  Is null (if `true` is specified) or is not null (if `false` is specified).
+  """
+  isNull: Boolean
+
+  """Equal to the specified value."""
+  equalTo: LocationType
+
+  """Not equal to the specified value."""
+  notEqualTo: LocationType
+
+  """
+  Not equal to the specified value, treating null like an ordinary value.
+  """
+  distinctFrom: LocationType
+
+  """Equal to the specified value, treating null like an ordinary value."""
+  notDistinctFrom: LocationType
+
+  """Included in the specified list."""
+  in: [LocationType!]
+
+  """Not included in the specified list."""
+  notIn: [LocationType!]
+
+  """Less than the specified value."""
+  lessThan: LocationType
+
+  """Less than or equal to the specified value."""
+  lessThanOrEqualTo: LocationType
+
+  """Greater than the specified value."""
+  greaterThan: LocationType
+
+  """Greater than or equal to the specified value."""
+  greaterThanOrEqualTo: LocationType
+}
+
+"""
 The root mutation type which contains root level fields which mutate data.
 """
 type Mutation {
@@ -1516,19 +2145,19 @@ type Mutation {
   ): CreateProductPayload
 
   """Updates a single `Brand` using its globally unique id and a patch."""
+  updateBrandByNodeId(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateBrandByNodeIdInput!
+  ): UpdateBrandPayload
+
+  """Updates a single `Brand` using a unique key and a patch."""
   updateBrand(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
     """
     input: UpdateBrandInput!
-  ): UpdateBrandPayload
-
-  """Updates a single `Brand` using a unique key and a patch."""
-  updateBrandById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateBrandByIdInput!
   ): UpdateBrandPayload
 
   """Updates a single `Brand` using a unique key and a patch."""
@@ -1548,6 +2177,14 @@ type Mutation {
   ): UpdateBrandPayload
 
   """Updates a single `Category` using its globally unique id and a patch."""
+  updateCategoryByNodeId(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateCategoryByNodeIdInput!
+  ): UpdateCategoryPayload
+
+  """Updates a single `Category` using a unique key and a patch."""
   updateCategory(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
@@ -1555,15 +2192,15 @@ type Mutation {
     input: UpdateCategoryInput!
   ): UpdateCategoryPayload
 
-  """Updates a single `Category` using a unique key and a patch."""
-  updateCategoryById(
+  """Updates a single `Color` using its globally unique id and a patch."""
+  updateColorByNodeId(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
     """
-    input: UpdateCategoryByIdInput!
-  ): UpdateCategoryPayload
+    input: UpdateColorByNodeIdInput!
+  ): UpdateColorPayload
 
-  """Updates a single `Color` using its globally unique id and a patch."""
+  """Updates a single `Color` using a unique key and a patch."""
   updateColor(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
@@ -1571,15 +2208,15 @@ type Mutation {
     input: UpdateColorInput!
   ): UpdateColorPayload
 
-  """Updates a single `Color` using a unique key and a patch."""
-  updateColorById(
+  """Updates a single `Image` using its globally unique id and a patch."""
+  updateImageByNodeId(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
     """
-    input: UpdateColorByIdInput!
-  ): UpdateColorPayload
+    input: UpdateImageByNodeIdInput!
+  ): UpdateImagePayload
 
-  """Updates a single `Image` using its globally unique id and a patch."""
+  """Updates a single `Image` using a unique key and a patch."""
   updateImage(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
@@ -1587,15 +2224,15 @@ type Mutation {
     input: UpdateImageInput!
   ): UpdateImagePayload
 
-  """Updates a single `Image` using a unique key and a patch."""
-  updateImageById(
+  """Updates a single `Location` using its globally unique id and a patch."""
+  updateLocationByNodeId(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
     """
-    input: UpdateImageByIdInput!
-  ): UpdateImagePayload
+    input: UpdateLocationByNodeIdInput!
+  ): UpdateLocationPayload
 
-  """Updates a single `Location` using its globally unique id and a patch."""
+  """Updates a single `Location` using a unique key and a patch."""
   updateLocation(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
@@ -1603,16 +2240,18 @@ type Mutation {
     input: UpdateLocationInput!
   ): UpdateLocationPayload
 
-  """Updates a single `Location` using a unique key and a patch."""
-  updateLocationById(
+  """
+  Updates a single `ProductVariantInventoryLevel` using its globally unique id and a patch.
+  """
+  updateProductVariantInventoryLevelByNodeId(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
     """
-    input: UpdateLocationByIdInput!
-  ): UpdateLocationPayload
+    input: UpdateProductVariantInventoryLevelByNodeIdInput!
+  ): UpdateProductVariantInventoryLevelPayload
 
   """
-  Updates a single `ProductVariantInventoryLevel` using its globally unique id and a patch.
+  Updates a single `ProductVariantInventoryLevel` using a unique key and a patch.
   """
   updateProductVariantInventoryLevel(
     """
@@ -1622,18 +2261,16 @@ type Mutation {
   ): UpdateProductVariantInventoryLevelPayload
 
   """
-  Updates a single `ProductVariantInventoryLevel` using a unique key and a patch.
+  Updates a single `ProductVariant` using its globally unique id and a patch.
   """
-  updateProductVariantInventoryLevelById(
+  updateProductVariantByNodeId(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
     """
-    input: UpdateProductVariantInventoryLevelByIdInput!
-  ): UpdateProductVariantInventoryLevelPayload
+    input: UpdateProductVariantByNodeIdInput!
+  ): UpdateProductVariantPayload
 
-  """
-  Updates a single `ProductVariant` using its globally unique id and a patch.
-  """
+  """Updates a single `ProductVariant` using a unique key and a patch."""
   updateProductVariant(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
@@ -1641,28 +2278,20 @@ type Mutation {
     input: UpdateProductVariantInput!
   ): UpdateProductVariantPayload
 
-  """Updates a single `ProductVariant` using a unique key and a patch."""
-  updateProductVariantById(
+  """Updates a single `Product` using its globally unique id and a patch."""
+  updateProductByNodeId(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
     """
-    input: UpdateProductVariantByIdInput!
-  ): UpdateProductVariantPayload
+    input: UpdateProductByNodeIdInput!
+  ): UpdateProductPayload
 
-  """Updates a single `Product` using its globally unique id and a patch."""
+  """Updates a single `Product` using a unique key and a patch."""
   updateProduct(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
     """
     input: UpdateProductInput!
-  ): UpdateProductPayload
-
-  """Updates a single `Product` using a unique key and a patch."""
-  updateProductById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateProductByIdInput!
   ): UpdateProductPayload
 
   """Updates a single `Product` using a unique key and a patch."""
@@ -1674,19 +2303,19 @@ type Mutation {
   ): UpdateProductPayload
 
   """Deletes a single `Brand` using its globally unique id."""
+  deleteBrandByNodeId(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteBrandByNodeIdInput!
+  ): DeleteBrandPayload
+
+  """Deletes a single `Brand` using a unique key."""
   deleteBrand(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
     """
     input: DeleteBrandInput!
-  ): DeleteBrandPayload
-
-  """Deletes a single `Brand` using a unique key."""
-  deleteBrandById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteBrandByIdInput!
   ): DeleteBrandPayload
 
   """Deletes a single `Brand` using a unique key."""
@@ -1706,6 +2335,14 @@ type Mutation {
   ): DeleteBrandPayload
 
   """Deletes a single `Category` using its globally unique id."""
+  deleteCategoryByNodeId(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteCategoryByNodeIdInput!
+  ): DeleteCategoryPayload
+
+  """Deletes a single `Category` using a unique key."""
   deleteCategory(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
@@ -1713,15 +2350,15 @@ type Mutation {
     input: DeleteCategoryInput!
   ): DeleteCategoryPayload
 
-  """Deletes a single `Category` using a unique key."""
-  deleteCategoryById(
+  """Deletes a single `Color` using its globally unique id."""
+  deleteColorByNodeId(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
     """
-    input: DeleteCategoryByIdInput!
-  ): DeleteCategoryPayload
+    input: DeleteColorByNodeIdInput!
+  ): DeleteColorPayload
 
-  """Deletes a single `Color` using its globally unique id."""
+  """Deletes a single `Color` using a unique key."""
   deleteColor(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
@@ -1729,15 +2366,15 @@ type Mutation {
     input: DeleteColorInput!
   ): DeleteColorPayload
 
-  """Deletes a single `Color` using a unique key."""
-  deleteColorById(
+  """Deletes a single `Image` using its globally unique id."""
+  deleteImageByNodeId(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
     """
-    input: DeleteColorByIdInput!
-  ): DeleteColorPayload
+    input: DeleteImageByNodeIdInput!
+  ): DeleteImagePayload
 
-  """Deletes a single `Image` using its globally unique id."""
+  """Deletes a single `Image` using a unique key."""
   deleteImage(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
@@ -1745,15 +2382,15 @@ type Mutation {
     input: DeleteImageInput!
   ): DeleteImagePayload
 
-  """Deletes a single `Image` using a unique key."""
-  deleteImageById(
+  """Deletes a single `Location` using its globally unique id."""
+  deleteLocationByNodeId(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
     """
-    input: DeleteImageByIdInput!
-  ): DeleteImagePayload
+    input: DeleteLocationByNodeIdInput!
+  ): DeleteLocationPayload
 
-  """Deletes a single `Location` using its globally unique id."""
+  """Deletes a single `Location` using a unique key."""
   deleteLocation(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
@@ -1761,17 +2398,17 @@ type Mutation {
     input: DeleteLocationInput!
   ): DeleteLocationPayload
 
-  """Deletes a single `Location` using a unique key."""
-  deleteLocationById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteLocationByIdInput!
-  ): DeleteLocationPayload
-
   """
   Deletes a single `ProductVariantInventoryLevel` using its globally unique id.
   """
+  deleteProductVariantInventoryLevelByNodeId(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteProductVariantInventoryLevelByNodeIdInput!
+  ): DeleteProductVariantInventoryLevelPayload
+
+  """Deletes a single `ProductVariantInventoryLevel` using a unique key."""
   deleteProductVariantInventoryLevel(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
@@ -1779,15 +2416,15 @@ type Mutation {
     input: DeleteProductVariantInventoryLevelInput!
   ): DeleteProductVariantInventoryLevelPayload
 
-  """Deletes a single `ProductVariantInventoryLevel` using a unique key."""
-  deleteProductVariantInventoryLevelById(
+  """Deletes a single `ProductVariant` using its globally unique id."""
+  deleteProductVariantByNodeId(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
     """
-    input: DeleteProductVariantInventoryLevelByIdInput!
-  ): DeleteProductVariantInventoryLevelPayload
+    input: DeleteProductVariantByNodeIdInput!
+  ): DeleteProductVariantPayload
 
-  """Deletes a single `ProductVariant` using its globally unique id."""
+  """Deletes a single `ProductVariant` using a unique key."""
   deleteProductVariant(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
@@ -1795,28 +2432,20 @@ type Mutation {
     input: DeleteProductVariantInput!
   ): DeleteProductVariantPayload
 
-  """Deletes a single `ProductVariant` using a unique key."""
-  deleteProductVariantById(
+  """Deletes a single `Product` using its globally unique id."""
+  deleteProductByNodeId(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
     """
-    input: DeleteProductVariantByIdInput!
-  ): DeleteProductVariantPayload
+    input: DeleteProductByNodeIdInput!
+  ): DeleteProductPayload
 
-  """Deletes a single `Product` using its globally unique id."""
+  """Deletes a single `Product` using a unique key."""
   deleteProduct(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
     """
     input: DeleteProductInput!
-  ): DeleteProductPayload
-
-  """Deletes a single `Product` using a unique key."""
-  deleteProductById(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteProductByIdInput!
   ): DeleteProductPayload
 
   """Deletes a single `Product` using a unique key."""
@@ -1826,6 +2455,86 @@ type Mutation {
     """
     input: DeleteProductByNameInput!
   ): DeleteProductPayload
+
+  """Upserts a single `Brand`."""
+  upsertBrand(
+    where: UpsertBrandWhere!
+
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpsertBrandInput!
+  ): UpsertBrandPayload
+
+  """Upserts a single `Category`."""
+  upsertCategory(
+    where: UpsertCategoryWhere!
+
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpsertCategoryInput!
+  ): UpsertCategoryPayload
+
+  """Upserts a single `Color`."""
+  upsertColor(
+    where: UpsertColorWhere!
+
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpsertColorInput!
+  ): UpsertColorPayload
+
+  """Upserts a single `Image`."""
+  upsertImage(
+    where: UpsertImageWhere!
+
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpsertImageInput!
+  ): UpsertImagePayload
+
+  """Upserts a single `Location`."""
+  upsertLocation(
+    where: UpsertLocationWhere!
+
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpsertLocationInput!
+  ): UpsertLocationPayload
+
+  """Upserts a single `ProductVariantInventoryLevel`."""
+  upsertProductVariantInventoryLevel(
+    where: UpsertProductVariantInventoryLevelWhere!
+
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpsertProductVariantInventoryLevelInput!
+  ): UpsertProductVariantInventoryLevelPayload
+
+  """Upserts a single `ProductVariant`."""
+  upsertProductVariant(
+    where: UpsertProductVariantWhere!
+
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpsertProductVariantInput!
+  ): UpsertProductVariantPayload
+
+  """Upserts a single `Product`."""
+  upsertProduct(
+    where: UpsertProductWhere!
+
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpsertProductInput!
+  ): UpsertProductPayload
 }
 
 """An object with a globally unique `ID`."""
@@ -1871,10 +2580,10 @@ type Product implements Node {
   updatedAt: Datetime!
 
   """Reads a single `Brand` that is related to this `Product`."""
-  brandByBrandId: Brand
+  brand: Brand
 
   """Reads a single `Category` that is related to this `Product`."""
-  categoryByCategoryId: Category
+  category: Category
 }
 
 """
@@ -1919,6 +2628,59 @@ input ProductCondition {
 
   """Checks for equality with the object’s `updatedAt` field."""
   updatedAt: Datetime
+}
+
+"""
+A filter to be used against `Product` object types. All fields are combined with a logical ‘and.’
+"""
+input ProductFilter {
+  """Filter by the object’s `id` field."""
+  id: IntFilter
+
+  """Filter by the object’s `name` field."""
+  name: StringFilter
+
+  """Filter by the object’s `description` field."""
+  description: StringFilter
+
+  """Filter by the object’s `brandId` field."""
+  brandId: IntFilter
+
+  """Filter by the object’s `images` field."""
+  images: JSONFilter
+
+  """Filter by the object’s `modelSize` field."""
+  modelSize: SizeFilter
+
+  """Filter by the object’s `modelHeight` field."""
+  modelHeight: IntFilter
+
+  """Filter by the object’s `externalUrl` field."""
+  externalUrl: StringFilter
+
+  """Filter by the object’s `tags` field."""
+  tags: JSONFilter
+
+  """Filter by the object’s `retailPrice` field."""
+  retailPrice: FloatFilter
+
+  """Filter by the object’s `categoryId` field."""
+  categoryId: IntFilter
+
+  """Filter by the object’s `createdAt` field."""
+  createdAt: DatetimeFilter
+
+  """Filter by the object’s `updatedAt` field."""
+  updatedAt: DatetimeFilter
+
+  """Checks for all expressions in this list."""
+  and: [ProductFilter!]
+
+  """Checks for any expressions in this list."""
+  or: [ProductFilter!]
+
+  """Negates the expression."""
+  not: ProductFilter
 }
 
 """An input for mutations affecting `Product`"""
@@ -2034,12 +2796,12 @@ type ProductVariant implements Node {
   updatedAt: Datetime!
 
   """Reads a single `Color` that is related to this `ProductVariant`."""
-  colorByColorId: Color
+  color: Color
 
   """
   Reads and enables pagination through a set of `ProductVariantInventoryLevel`.
   """
-  productVariantInventoryLevelsByProductVariantId(
+  productVariantInventoryLevels(
     """Only read the first `n` values of the set."""
     first: Int
 
@@ -2065,6 +2827,11 @@ type ProductVariant implements Node {
     A condition to be used in determining which values should be returned by the collection.
     """
     condition: ProductVariantInventoryLevelCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: ProductVariantInventoryLevelFilter
   ): ProductVariantInventoryLevelsConnection!
 }
 
@@ -2107,6 +2874,53 @@ input ProductVariantCondition {
   updatedAt: Datetime
 }
 
+"""
+A filter to be used against `ProductVariant` object types. All fields are combined with a logical ‘and.’
+"""
+input ProductVariantFilter {
+  """Filter by the object’s `id` field."""
+  id: IntFilter
+
+  """Filter by the object’s `upc` field."""
+  upc: IntFilter
+
+  """Filter by the object’s `sku` field."""
+  sku: StringFilter
+
+  """Filter by the object’s `productId` field."""
+  productId: IntFilter
+
+  """Filter by the object’s `retailPrice` field."""
+  retailPrice: FloatFilter
+
+  """Filter by the object’s `colorId` field."""
+  colorId: StringFilter
+
+  """Filter by the object’s `size` field."""
+  size: SizeFilter
+
+  """Filter by the object’s `weight` field."""
+  weight: IntFilter
+
+  """Filter by the object’s `height` field."""
+  height: IntFilter
+
+  """Filter by the object’s `createdAt` field."""
+  createdAt: DatetimeFilter
+
+  """Filter by the object’s `updatedAt` field."""
+  updatedAt: DatetimeFilter
+
+  """Checks for all expressions in this list."""
+  and: [ProductVariantFilter!]
+
+  """Checks for any expressions in this list."""
+  or: [ProductVariantFilter!]
+
+  """Negates the expression."""
+  not: ProductVariantFilter
+}
+
 """An input for mutations affecting `ProductVariant`"""
 input ProductVariantInput {
   id: Int
@@ -2137,7 +2951,7 @@ type ProductVariantInventoryLevel implements Node {
   """
   Reads a single `ProductVariant` that is related to this `ProductVariantInventoryLevel`.
   """
-  productVariantByProductVariantId: ProductVariant
+  productVariant: ProductVariant
 }
 
 """
@@ -2168,6 +2982,38 @@ input ProductVariantInventoryLevelCondition {
   Checks for equality with the object’s `reservedPhysicalProducts` field.
   """
   reservedPhysicalProducts: Int
+}
+
+"""
+A filter to be used against `ProductVariantInventoryLevel` object types. All fields are combined with a logical ‘and.’
+"""
+input ProductVariantInventoryLevelFilter {
+  """Filter by the object’s `id` field."""
+  id: IntFilter
+
+  """Filter by the object’s `productId` field."""
+  productId: IntFilter
+
+  """Filter by the object’s `productVariantId` field."""
+  productVariantId: IntFilter
+
+  """Filter by the object’s `nonReservablePhysicalProducts` field."""
+  nonReservablePhysicalProducts: IntFilter
+
+  """Filter by the object’s `reservablePhysicalProducts` field."""
+  reservablePhysicalProducts: IntFilter
+
+  """Filter by the object’s `reservedPhysicalProducts` field."""
+  reservedPhysicalProducts: IntFilter
+
+  """Checks for all expressions in this list."""
+  and: [ProductVariantInventoryLevelFilter!]
+
+  """Checks for any expressions in this list."""
+  or: [ProductVariantInventoryLevelFilter!]
+
+  """Negates the expression."""
+  not: ProductVariantInventoryLevelFilter
 }
 
 """An input for mutations affecting `ProductVariantInventoryLevel`"""
@@ -2331,7 +3177,7 @@ type Query implements Node {
   ): Node
 
   """Reads and enables pagination through a set of `Brand`."""
-  allBrands(
+  brands(
     """Only read the first `n` values of the set."""
     first: Int
 
@@ -2357,10 +3203,15 @@ type Query implements Node {
     A condition to be used in determining which values should be returned by the collection.
     """
     condition: BrandCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: BrandFilter
   ): BrandsConnection
 
   """Reads and enables pagination through a set of `Category`."""
-  allCategories(
+  categories(
     """Only read the first `n` values of the set."""
     first: Int
 
@@ -2386,10 +3237,15 @@ type Query implements Node {
     A condition to be used in determining which values should be returned by the collection.
     """
     condition: CategoryCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: CategoryFilter
   ): CategoriesConnection
 
   """Reads and enables pagination through a set of `Color`."""
-  allColors(
+  colors(
     """Only read the first `n` values of the set."""
     first: Int
 
@@ -2415,10 +3271,15 @@ type Query implements Node {
     A condition to be used in determining which values should be returned by the collection.
     """
     condition: ColorCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: ColorFilter
   ): ColorsConnection
 
   """Reads and enables pagination through a set of `Image`."""
-  allImages(
+  images(
     """Only read the first `n` values of the set."""
     first: Int
 
@@ -2444,10 +3305,15 @@ type Query implements Node {
     A condition to be used in determining which values should be returned by the collection.
     """
     condition: ImageCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: ImageFilter
   ): ImagesConnection
 
   """Reads and enables pagination through a set of `Location`."""
-  allLocations(
+  locations(
     """Only read the first `n` values of the set."""
     first: Int
 
@@ -2473,12 +3339,17 @@ type Query implements Node {
     A condition to be used in determining which values should be returned by the collection.
     """
     condition: LocationCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: LocationFilter
   ): LocationsConnection
 
   """
   Reads and enables pagination through a set of `ProductVariantInventoryLevel`.
   """
-  allProductVariantInventoryLevels(
+  productVariantInventoryLevels(
     """Only read the first `n` values of the set."""
     first: Int
 
@@ -2504,10 +3375,15 @@ type Query implements Node {
     A condition to be used in determining which values should be returned by the collection.
     """
     condition: ProductVariantInventoryLevelCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: ProductVariantInventoryLevelFilter
   ): ProductVariantInventoryLevelsConnection
 
   """Reads and enables pagination through a set of `ProductVariant`."""
-  allProductVariants(
+  productVariants(
     """Only read the first `n` values of the set."""
     first: Int
 
@@ -2533,10 +3409,15 @@ type Query implements Node {
     A condition to be used in determining which values should be returned by the collection.
     """
     condition: ProductVariantCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: ProductVariantFilter
   ): ProductVariantsConnection
 
   """Reads and enables pagination through a set of `Product`."""
-  allProducts(
+  products(
     """Only read the first `n` values of the set."""
     first: Int
 
@@ -2562,45 +3443,50 @@ type Query implements Node {
     A condition to be used in determining which values should be returned by the collection.
     """
     condition: ProductCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: ProductFilter
   ): ProductsConnection
-  brandById(id: Int!): Brand
+  brand(id: Int!): Brand
   brandByAirtableId(airtableId: String!): Brand
   brandBySlug(slug: String!): Brand
-  categoryById(id: Int!): Category
-  colorById(id: String!): Color
-  imageById(id: Int!): Image
-  locationById(id: Int!): Location
-  productVariantInventoryLevelById(id: Int!): ProductVariantInventoryLevel
-  productVariantById(id: Int!): ProductVariant
-  productById(id: Int!): Product
+  category(id: Int!): Category
+  color(id: String!): Color
+  image(id: Int!): Image
+  location(id: Int!): Location
+  productVariantInventoryLevel(id: Int!): ProductVariantInventoryLevel
+  productVariant(id: Int!): ProductVariant
+  product(id: Int!): Product
   productByName(name: String!): Product
 
   """Reads a single `Brand` using its globally unique `ID`."""
-  brand(
+  brandByNodeId(
     """The globally unique `ID` to be used in selecting a single `Brand`."""
     nodeId: ID!
   ): Brand
 
   """Reads a single `Category` using its globally unique `ID`."""
-  category(
+  categoryByNodeId(
     """The globally unique `ID` to be used in selecting a single `Category`."""
     nodeId: ID!
   ): Category
 
   """Reads a single `Color` using its globally unique `ID`."""
-  color(
+  colorByNodeId(
     """The globally unique `ID` to be used in selecting a single `Color`."""
     nodeId: ID!
   ): Color
 
   """Reads a single `Image` using its globally unique `ID`."""
-  image(
+  imageByNodeId(
     """The globally unique `ID` to be used in selecting a single `Image`."""
     nodeId: ID!
   ): Image
 
   """Reads a single `Location` using its globally unique `ID`."""
-  location(
+  locationByNodeId(
     """The globally unique `ID` to be used in selecting a single `Location`."""
     nodeId: ID!
   ): Location
@@ -2608,7 +3494,7 @@ type Query implements Node {
   """
   Reads a single `ProductVariantInventoryLevel` using its globally unique `ID`.
   """
-  productVariantInventoryLevel(
+  productVariantInventoryLevelByNodeId(
     """
     The globally unique `ID` to be used in selecting a single `ProductVariantInventoryLevel`.
     """
@@ -2616,7 +3502,7 @@ type Query implements Node {
   ): ProductVariantInventoryLevel
 
   """Reads a single `ProductVariant` using its globally unique `ID`."""
-  productVariant(
+  productVariantByNodeId(
     """
     The globally unique `ID` to be used in selecting a single `ProductVariant`.
     """
@@ -2624,10 +3510,22 @@ type Query implements Node {
   ): ProductVariant
 
   """Reads a single `Product` using its globally unique `ID`."""
-  product(
+  productByNodeId(
     """The globally unique `ID` to be used in selecting a single `Product`."""
     nodeId: ID!
   ): Product
+
+  """
+  Fetches a list of entities using their representations; used for Apollo
+  Federation.
+  """
+  _entities(representations: [_Any!]!): [_Entity]! @deprecated(reason: "Only Apollo Federation should use this")
+
+  """
+  Entrypoint for Apollo Federation to determine more information about
+  this service.
+  """
+  _service: _Service! @deprecated(reason: "Only Apollo Federation should use this")
 }
 
 enum Size {
@@ -2636,6 +3534,162 @@ enum Size {
   M
   L
   XL
+}
+
+"""
+A filter to be used against Size fields. All fields are combined with a logical ‘and.’
+"""
+input SizeFilter {
+  """
+  Is null (if `true` is specified) or is not null (if `false` is specified).
+  """
+  isNull: Boolean
+
+  """Equal to the specified value."""
+  equalTo: Size
+
+  """Not equal to the specified value."""
+  notEqualTo: Size
+
+  """
+  Not equal to the specified value, treating null like an ordinary value.
+  """
+  distinctFrom: Size
+
+  """Equal to the specified value, treating null like an ordinary value."""
+  notDistinctFrom: Size
+
+  """Included in the specified list."""
+  in: [Size!]
+
+  """Not included in the specified list."""
+  notIn: [Size!]
+
+  """Less than the specified value."""
+  lessThan: Size
+
+  """Less than or equal to the specified value."""
+  lessThanOrEqualTo: Size
+
+  """Greater than the specified value."""
+  greaterThan: Size
+
+  """Greater than or equal to the specified value."""
+  greaterThanOrEqualTo: Size
+}
+
+"""
+A filter to be used against String fields. All fields are combined with a logical ‘and.’
+"""
+input StringFilter {
+  """
+  Is null (if `true` is specified) or is not null (if `false` is specified).
+  """
+  isNull: Boolean
+
+  """Equal to the specified value."""
+  equalTo: String
+
+  """Not equal to the specified value."""
+  notEqualTo: String
+
+  """
+  Not equal to the specified value, treating null like an ordinary value.
+  """
+  distinctFrom: String
+
+  """Equal to the specified value, treating null like an ordinary value."""
+  notDistinctFrom: String
+
+  """Included in the specified list."""
+  in: [String!]
+
+  """Not included in the specified list."""
+  notIn: [String!]
+
+  """Less than the specified value."""
+  lessThan: String
+
+  """Less than or equal to the specified value."""
+  lessThanOrEqualTo: String
+
+  """Greater than the specified value."""
+  greaterThan: String
+
+  """Greater than or equal to the specified value."""
+  greaterThanOrEqualTo: String
+
+  """Contains the specified string (case-sensitive)."""
+  includes: String
+
+  """Does not contain the specified string (case-sensitive)."""
+  notIncludes: String
+
+  """Contains the specified string (case-insensitive)."""
+  includesInsensitive: String
+
+  """Does not contain the specified string (case-insensitive)."""
+  notIncludesInsensitive: String
+
+  """Starts with the specified string (case-sensitive)."""
+  startsWith: String
+
+  """Does not start with the specified string (case-sensitive)."""
+  notStartsWith: String
+
+  """Starts with the specified string (case-insensitive)."""
+  startsWithInsensitive: String
+
+  """Does not start with the specified string (case-insensitive)."""
+  notStartsWithInsensitive: String
+
+  """Ends with the specified string (case-sensitive)."""
+  endsWith: String
+
+  """Does not end with the specified string (case-sensitive)."""
+  notEndsWith: String
+
+  """Ends with the specified string (case-insensitive)."""
+  endsWithInsensitive: String
+
+  """Does not end with the specified string (case-insensitive)."""
+  notEndsWithInsensitive: String
+
+  """
+  Matches the specified pattern (case-sensitive). An underscore (_) matches any
+  single character; a percent sign (%) matches any sequence of zero or more characters.
+  """
+  like: String
+
+  """
+  Does not match the specified pattern (case-sensitive). An underscore (_)
+  matches any single character; a percent sign (%) matches any sequence of zero
+  or more characters.
+  """
+  notLike: String
+
+  """
+  Matches the specified pattern (case-insensitive). An underscore (_) matches
+  any single character; a percent sign (%) matches any sequence of zero or more characters.
+  """
+  likeInsensitive: String
+
+  """
+  Does not match the specified pattern (case-insensitive). An underscore (_)
+  matches any single character; a percent sign (%) matches any sequence of zero
+  or more characters.
+  """
+  notLikeInsensitive: String
+
+  """
+  Matches the specified pattern using the SQL standard's definition of a regular expression.
+  """
+  similarTo: String
+
+  """
+  Does not match the specified pattern using the SQL standard's definition of a regular expression.
+  """
+  notSimilarTo: String
 }
 
 """All input for the `updateBrandByAirtableId` mutation."""
@@ -2649,42 +3703,12 @@ input UpdateBrandByAirtableIdInput {
   """
   An object where the defined keys will be set on the `Brand` being updated.
   """
-  brandPatch: BrandPatch!
+  patch: BrandPatch!
   airtableId: String!
 }
 
-"""All input for the `updateBrandById` mutation."""
-input UpdateBrandByIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  An object where the defined keys will be set on the `Brand` being updated.
-  """
-  brandPatch: BrandPatch!
-  id: Int!
-}
-
-"""All input for the `updateBrandBySlug` mutation."""
-input UpdateBrandBySlugInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  An object where the defined keys will be set on the `Brand` being updated.
-  """
-  brandPatch: BrandPatch!
-  slug: String!
-}
-
-"""All input for the `updateBrand` mutation."""
-input UpdateBrandInput {
+"""All input for the `updateBrandByNodeId` mutation."""
+input UpdateBrandByNodeIdInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
@@ -2699,7 +3723,37 @@ input UpdateBrandInput {
   """
   An object where the defined keys will be set on the `Brand` being updated.
   """
-  brandPatch: BrandPatch!
+  patch: BrandPatch!
+}
+
+"""All input for the `updateBrandBySlug` mutation."""
+input UpdateBrandBySlugInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  An object where the defined keys will be set on the `Brand` being updated.
+  """
+  patch: BrandPatch!
+  slug: String!
+}
+
+"""All input for the `updateBrand` mutation."""
+input UpdateBrandInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  An object where the defined keys will be set on the `Brand` being updated.
+  """
+  patch: BrandPatch!
+  id: Int!
 }
 
 """The output of our update `Brand` mutation."""
@@ -2725,23 +3779,8 @@ type UpdateBrandPayload {
   ): BrandsEdge
 }
 
-"""All input for the `updateCategoryById` mutation."""
-input UpdateCategoryByIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  An object where the defined keys will be set on the `Category` being updated.
-  """
-  categoryPatch: CategoryPatch!
-  id: Int!
-}
-
-"""All input for the `updateCategory` mutation."""
-input UpdateCategoryInput {
+"""All input for the `updateCategoryByNodeId` mutation."""
+input UpdateCategoryByNodeIdInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
@@ -2756,7 +3795,22 @@ input UpdateCategoryInput {
   """
   An object where the defined keys will be set on the `Category` being updated.
   """
-  categoryPatch: CategoryPatch!
+  patch: CategoryPatch!
+}
+
+"""All input for the `updateCategory` mutation."""
+input UpdateCategoryInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  An object where the defined keys will be set on the `Category` being updated.
+  """
+  patch: CategoryPatch!
+  id: Int!
 }
 
 """The output of our update `Category` mutation."""
@@ -2782,23 +3836,8 @@ type UpdateCategoryPayload {
   ): CategoriesEdge
 }
 
-"""All input for the `updateColorById` mutation."""
-input UpdateColorByIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  An object where the defined keys will be set on the `Color` being updated.
-  """
-  colorPatch: ColorPatch!
-  id: String!
-}
-
-"""All input for the `updateColor` mutation."""
-input UpdateColorInput {
+"""All input for the `updateColorByNodeId` mutation."""
+input UpdateColorByNodeIdInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
@@ -2813,7 +3852,22 @@ input UpdateColorInput {
   """
   An object where the defined keys will be set on the `Color` being updated.
   """
-  colorPatch: ColorPatch!
+  patch: ColorPatch!
+}
+
+"""All input for the `updateColor` mutation."""
+input UpdateColorInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  An object where the defined keys will be set on the `Color` being updated.
+  """
+  patch: ColorPatch!
+  id: String!
 }
 
 """The output of our update `Color` mutation."""
@@ -2839,23 +3893,8 @@ type UpdateColorPayload {
   ): ColorsEdge
 }
 
-"""All input for the `updateImageById` mutation."""
-input UpdateImageByIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  An object where the defined keys will be set on the `Image` being updated.
-  """
-  imagePatch: ImagePatch!
-  id: Int!
-}
-
-"""All input for the `updateImage` mutation."""
-input UpdateImageInput {
+"""All input for the `updateImageByNodeId` mutation."""
+input UpdateImageByNodeIdInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
@@ -2870,7 +3909,22 @@ input UpdateImageInput {
   """
   An object where the defined keys will be set on the `Image` being updated.
   """
-  imagePatch: ImagePatch!
+  patch: ImagePatch!
+}
+
+"""All input for the `updateImage` mutation."""
+input UpdateImageInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  An object where the defined keys will be set on the `Image` being updated.
+  """
+  patch: ImagePatch!
+  id: Int!
 }
 
 """The output of our update `Image` mutation."""
@@ -2896,23 +3950,8 @@ type UpdateImagePayload {
   ): ImagesEdge
 }
 
-"""All input for the `updateLocationById` mutation."""
-input UpdateLocationByIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  An object where the defined keys will be set on the `Location` being updated.
-  """
-  locationPatch: LocationPatch!
-  id: Int!
-}
-
-"""All input for the `updateLocation` mutation."""
-input UpdateLocationInput {
+"""All input for the `updateLocationByNodeId` mutation."""
+input UpdateLocationByNodeIdInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
@@ -2927,7 +3966,22 @@ input UpdateLocationInput {
   """
   An object where the defined keys will be set on the `Location` being updated.
   """
-  locationPatch: LocationPatch!
+  patch: LocationPatch!
+}
+
+"""All input for the `updateLocation` mutation."""
+input UpdateLocationInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  An object where the defined keys will be set on the `Location` being updated.
+  """
+  patch: LocationPatch!
+  id: Int!
 }
 
 """The output of our update `Location` mutation."""
@@ -2953,21 +4007,6 @@ type UpdateLocationPayload {
   ): LocationsEdge
 }
 
-"""All input for the `updateProductById` mutation."""
-input UpdateProductByIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  An object where the defined keys will be set on the `Product` being updated.
-  """
-  productPatch: ProductPatch!
-  id: Int!
-}
-
 """All input for the `updateProductByName` mutation."""
 input UpdateProductByNameInput {
   """
@@ -2979,12 +4018,12 @@ input UpdateProductByNameInput {
   """
   An object where the defined keys will be set on the `Product` being updated.
   """
-  productPatch: ProductPatch!
+  patch: ProductPatch!
   name: String!
 }
 
-"""All input for the `updateProduct` mutation."""
-input UpdateProductInput {
+"""All input for the `updateProductByNodeId` mutation."""
+input UpdateProductByNodeIdInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
@@ -2999,7 +4038,22 @@ input UpdateProductInput {
   """
   An object where the defined keys will be set on the `Product` being updated.
   """
-  productPatch: ProductPatch!
+  patch: ProductPatch!
+}
+
+"""All input for the `updateProduct` mutation."""
+input UpdateProductInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  An object where the defined keys will be set on the `Product` being updated.
+  """
+  patch: ProductPatch!
+  id: Int!
 }
 
 """The output of our update `Product` mutation."""
@@ -3019,10 +4073,10 @@ type UpdateProductPayload {
   query: Query
 
   """Reads a single `Brand` that is related to this `Product`."""
-  brandByBrandId: Brand
+  brand: Brand
 
   """Reads a single `Category` that is related to this `Product`."""
-  categoryByCategoryId: Category
+  category: Category
 
   """An edge for our `Product`. May be used by Relay 1."""
   productEdge(
@@ -3031,23 +4085,8 @@ type UpdateProductPayload {
   ): ProductsEdge
 }
 
-"""All input for the `updateProductVariantById` mutation."""
-input UpdateProductVariantByIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  An object where the defined keys will be set on the `ProductVariant` being updated.
-  """
-  productVariantPatch: ProductVariantPatch!
-  id: Int!
-}
-
-"""All input for the `updateProductVariant` mutation."""
-input UpdateProductVariantInput {
+"""All input for the `updateProductVariantByNodeId` mutation."""
+input UpdateProductVariantByNodeIdInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
@@ -3062,11 +4101,11 @@ input UpdateProductVariantInput {
   """
   An object where the defined keys will be set on the `ProductVariant` being updated.
   """
-  productVariantPatch: ProductVariantPatch!
+  patch: ProductVariantPatch!
 }
 
-"""All input for the `updateProductVariantInventoryLevelById` mutation."""
-input UpdateProductVariantInventoryLevelByIdInput {
+"""All input for the `updateProductVariant` mutation."""
+input UpdateProductVariantInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
@@ -3074,14 +4113,16 @@ input UpdateProductVariantInventoryLevelByIdInput {
   clientMutationId: String
 
   """
-  An object where the defined keys will be set on the `ProductVariantInventoryLevel` being updated.
+  An object where the defined keys will be set on the `ProductVariant` being updated.
   """
-  productVariantInventoryLevelPatch: ProductVariantInventoryLevelPatch!
+  patch: ProductVariantPatch!
   id: Int!
 }
 
-"""All input for the `updateProductVariantInventoryLevel` mutation."""
-input UpdateProductVariantInventoryLevelInput {
+"""
+All input for the `updateProductVariantInventoryLevelByNodeId` mutation.
+"""
+input UpdateProductVariantInventoryLevelByNodeIdInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
@@ -3096,7 +4137,22 @@ input UpdateProductVariantInventoryLevelInput {
   """
   An object where the defined keys will be set on the `ProductVariantInventoryLevel` being updated.
   """
-  productVariantInventoryLevelPatch: ProductVariantInventoryLevelPatch!
+  patch: ProductVariantInventoryLevelPatch!
+}
+
+"""All input for the `updateProductVariantInventoryLevel` mutation."""
+input UpdateProductVariantInventoryLevelInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  An object where the defined keys will be set on the `ProductVariantInventoryLevel` being updated.
+  """
+  patch: ProductVariantInventoryLevelPatch!
+  id: Int!
 }
 
 """The output of our update `ProductVariantInventoryLevel` mutation."""
@@ -3118,7 +4174,7 @@ type UpdateProductVariantInventoryLevelPayload {
   """
   Reads a single `ProductVariant` that is related to this `ProductVariantInventoryLevel`.
   """
-  productVariantByProductVariantId: ProductVariant
+  productVariant: ProductVariant
 
   """
   An edge for our `ProductVariantInventoryLevel`. May be used by Relay 1.
@@ -3146,12 +4202,353 @@ type UpdateProductVariantPayload {
   query: Query
 
   """Reads a single `Color` that is related to this `ProductVariant`."""
-  colorByColorId: Color
+  color: Color
 
   """An edge for our `ProductVariant`. May be used by Relay 1."""
   productVariantEdge(
     """The method to use when ordering `ProductVariant`."""
     orderBy: [ProductVariantsOrderBy!] = [PRIMARY_KEY_ASC]
   ): ProductVariantsEdge
+}
+
+"""All input for the upsert `Brand` mutation."""
+input UpsertBrandInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `Brand` to be upserted by this mutation."""
+  brand: BrandInput!
+}
+
+"""The output of our upsert `Brand` mutation."""
+type UpsertBrandPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Brand` that was upserted by this mutation."""
+  brand: Brand
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `Brand`. May be used by Relay 1."""
+  brandEdge(
+    """The method to use when ordering `Brand`."""
+    orderBy: [BrandsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): BrandsEdge
+}
+
+"""Where conditions for the upsert `Brand` mutation."""
+input UpsertBrandWhere {
+  id: Int
+  airtableId: String
+  slug: String
+}
+
+"""All input for the upsert `Category` mutation."""
+input UpsertCategoryInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `Category` to be upserted by this mutation."""
+  category: CategoryInput!
+}
+
+"""The output of our upsert `Category` mutation."""
+type UpsertCategoryPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Category` that was upserted by this mutation."""
+  category: Category
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `Category`. May be used by Relay 1."""
+  categoryEdge(
+    """The method to use when ordering `Category`."""
+    orderBy: [CategoriesOrderBy!] = [PRIMARY_KEY_ASC]
+  ): CategoriesEdge
+}
+
+"""Where conditions for the upsert `Category` mutation."""
+input UpsertCategoryWhere {
+  id: Int
+}
+
+"""All input for the upsert `Color` mutation."""
+input UpsertColorInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `Color` to be upserted by this mutation."""
+  color: ColorInput!
+}
+
+"""The output of our upsert `Color` mutation."""
+type UpsertColorPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Color` that was upserted by this mutation."""
+  color: Color
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `Color`. May be used by Relay 1."""
+  colorEdge(
+    """The method to use when ordering `Color`."""
+    orderBy: [ColorsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): ColorsEdge
+}
+
+"""Where conditions for the upsert `Color` mutation."""
+input UpsertColorWhere {
+  id: String
+}
+
+"""All input for the upsert `Image` mutation."""
+input UpsertImageInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `Image` to be upserted by this mutation."""
+  image: ImageInput!
+}
+
+"""The output of our upsert `Image` mutation."""
+type UpsertImagePayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Image` that was upserted by this mutation."""
+  image: Image
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `Image`. May be used by Relay 1."""
+  imageEdge(
+    """The method to use when ordering `Image`."""
+    orderBy: [ImagesOrderBy!] = [PRIMARY_KEY_ASC]
+  ): ImagesEdge
+}
+
+"""Where conditions for the upsert `Image` mutation."""
+input UpsertImageWhere {
+  id: Int
+}
+
+"""All input for the upsert `Location` mutation."""
+input UpsertLocationInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `Location` to be upserted by this mutation."""
+  location: LocationInput!
+}
+
+"""The output of our upsert `Location` mutation."""
+type UpsertLocationPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Location` that was upserted by this mutation."""
+  location: Location
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `Location`. May be used by Relay 1."""
+  locationEdge(
+    """The method to use when ordering `Location`."""
+    orderBy: [LocationsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): LocationsEdge
+}
+
+"""Where conditions for the upsert `Location` mutation."""
+input UpsertLocationWhere {
+  id: Int
+}
+
+"""All input for the upsert `Product` mutation."""
+input UpsertProductInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `Product` to be upserted by this mutation."""
+  product: ProductInput!
+}
+
+"""The output of our upsert `Product` mutation."""
+type UpsertProductPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Product` that was upserted by this mutation."""
+  product: Product
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """Reads a single `Brand` that is related to this `Product`."""
+  brand: Brand
+
+  """Reads a single `Category` that is related to this `Product`."""
+  category: Category
+
+  """An edge for our `Product`. May be used by Relay 1."""
+  productEdge(
+    """The method to use when ordering `Product`."""
+    orderBy: [ProductsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): ProductsEdge
+}
+
+"""All input for the upsert `ProductVariant` mutation."""
+input UpsertProductVariantInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `ProductVariant` to be upserted by this mutation."""
+  productVariant: ProductVariantInput!
+}
+
+"""All input for the upsert `ProductVariantInventoryLevel` mutation."""
+input UpsertProductVariantInventoryLevelInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `ProductVariantInventoryLevel` to be upserted by this mutation."""
+  productVariantInventoryLevel: ProductVariantInventoryLevelInput!
+}
+
+"""The output of our upsert `ProductVariantInventoryLevel` mutation."""
+type UpsertProductVariantInventoryLevelPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `ProductVariantInventoryLevel` that was upserted by this mutation."""
+  productVariantInventoryLevel: ProductVariantInventoryLevel
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """
+  Reads a single `ProductVariant` that is related to this `ProductVariantInventoryLevel`.
+  """
+  productVariant: ProductVariant
+
+  """
+  An edge for our `ProductVariantInventoryLevel`. May be used by Relay 1.
+  """
+  productVariantInventoryLevelEdge(
+    """The method to use when ordering `ProductVariantInventoryLevel`."""
+    orderBy: [ProductVariantInventoryLevelsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): ProductVariantInventoryLevelsEdge
+}
+
+"""
+Where conditions for the upsert `ProductVariantInventoryLevel` mutation.
+"""
+input UpsertProductVariantInventoryLevelWhere {
+  id: Int
+}
+
+"""The output of our upsert `ProductVariant` mutation."""
+type UpsertProductVariantPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `ProductVariant` that was upserted by this mutation."""
+  productVariant: ProductVariant
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """Reads a single `Color` that is related to this `ProductVariant`."""
+  color: Color
+
+  """An edge for our `ProductVariant`. May be used by Relay 1."""
+  productVariantEdge(
+    """The method to use when ordering `ProductVariant`."""
+    orderBy: [ProductVariantsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): ProductVariantsEdge
+}
+
+"""Where conditions for the upsert `ProductVariant` mutation."""
+input UpsertProductVariantWhere {
+  id: Int
+}
+
+"""Where conditions for the upsert `Product` mutation."""
+input UpsertProductWhere {
+  id: Int
+  name: String
 }
 
