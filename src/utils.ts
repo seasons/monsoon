@@ -1,9 +1,12 @@
 import * as jwt from "jsonwebtoken"
 import { Prisma } from "./prisma"
+import { Binding } from "graphql-binding"
+import { Request } from "express"
 
 export interface Context {
   prisma: Prisma
-  request: any
+  db: Binding
+  request: Request
 }
 
 export function getUserId(ctx: Context) {

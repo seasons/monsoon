@@ -1,5 +1,17 @@
+# import Category, User, Bag from "./prisma/prisma.graphql"
+
 type Query {
   me: User
+  products(
+    categoryName: String
+    orderBy: ProductOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): ProductConnection!
+  product(where: ProductWhereUniqueInput!): Product
 }
 
 type Mutation {
@@ -10,17 +22,6 @@ type Mutation {
 type AuthPayload {
   token: String!
   user: User!
-}
-
-type User {
-  id: ID!
-  email: String!
-  name: String!
-  bag: Bag!
-}
-
-type Bag {
-  id: ID!
 }
 
 type Image {

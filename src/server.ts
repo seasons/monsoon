@@ -1,8 +1,9 @@
 import { schema } from "./schema"
 import { prisma } from "./prisma"
+import { Prisma } from "prisma-binding"
 
 const defaultQuery = `{
-  allProducts {
+  products {
     edges {
       node {
         id
@@ -15,11 +16,17 @@ const defaultQuery = `{
 }
 `
 
+const db = new Prisma({
+  typeDefs: "./src/prisma/prisma.graphql",
+  endpoint: process.env.PRISMA_ENDPOINT || "http://localhost:4466",
+})
+
 export const serverOptions = {
   schema,
   context: request => ({
     ...request,
     prisma,
+    db,
   }),
   introspection: true,
   playground: {

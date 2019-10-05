@@ -10,11 +10,11 @@ enum BrandTier {
 }
 
 enum Size {
-  ExtraSmall
-  Small
-  Medium
-  Large
-  ExtraLarge
+  XS
+  S
+  M
+  L
+  XL
 }
 
 enum Material {
@@ -75,8 +75,8 @@ type Brand {
 
 type Category {
   id: ID! @id
+  name: String! @unique
   description: String
-  name: String!
   products: [Product!]!
 }
 
@@ -116,14 +116,14 @@ type Location {
 
 type Product {
   id: ID! @id
+  name: String!
   brand: Brand!
   category: Category!
   description: String
   externalUrl: String
   images: Json!
   modelHeight: Int
-  modelSize: Int
-  name: String! @unique
+  modelSize: Size
   retailPrice: Int
   tags: Json
   createdAt: DateTime! @createdAt

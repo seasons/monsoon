@@ -607,6 +607,16 @@ export type ImageOrderByInput =
   | "updatedAt_ASC"
   | "updatedAt_DESC";
 
+export type Size = "XS" | "S" | "M" | "L" | "XL";
+
+export type ColorOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "hexCode_ASC"
+  | "hexCode_DESC"
+  | "name_ASC"
+  | "name_DESC";
+
 export type PhysicalProductOrderByInput =
   | "id_ASC"
   | "id_DESC"
@@ -617,13 +627,31 @@ export type PhysicalProductOrderByInput =
   | "updatedAt_ASC"
   | "updatedAt_DESC";
 
-export type ColorOrderByInput =
+export type BrandOrderByInput =
   | "id_ASC"
   | "id_DESC"
-  | "hexCode_ASC"
-  | "hexCode_DESC"
+  | "brandCode_ASC"
+  | "brandCode_DESC"
+  | "description_ASC"
+  | "description_DESC"
+  | "isPrimaryBrand_ASC"
+  | "isPrimaryBrand_DESC"
+  | "logo_ASC"
+  | "logo_DESC"
   | "name_ASC"
-  | "name_DESC";
+  | "name_DESC"
+  | "since_ASC"
+  | "since_DESC"
+  | "slug_ASC"
+  | "slug_DESC"
+  | "tier_ASC"
+  | "tier_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC"
+  | "websiteUrl_ASC"
+  | "websiteUrl_DESC";
 
 export type LocationType = "Office" | "Warehouse" | "Cleaner" | "Customer";
 
@@ -650,6 +678,8 @@ export type ProductVariantOrderByInput =
 export type ProductOrderByInput =
   | "id_ASC"
   | "id_DESC"
+  | "name_ASC"
+  | "name_DESC"
   | "description_ASC"
   | "description_DESC"
   | "externalUrl_ASC"
@@ -660,8 +690,6 @@ export type ProductOrderByInput =
   | "modelHeight_DESC"
   | "modelSize_ASC"
   | "modelSize_DESC"
-  | "name_ASC"
-  | "name_DESC"
   | "retailPrice_ASC"
   | "retailPrice_DESC"
   | "tags_ASC"
@@ -681,13 +709,15 @@ export type ProductVariantInventoryLevelOrderByInput =
   | "reservedPhysicalProducts_ASC"
   | "reservedPhysicalProducts_DESC";
 
+export type MutationType = "CREATED" | "UPDATED" | "DELETED";
+
 export type CategoryOrderByInput =
   | "id_ASC"
   | "id_DESC"
-  | "description_ASC"
-  | "description_DESC"
   | "name_ASC"
-  | "name_DESC";
+  | "name_DESC"
+  | "description_ASC"
+  | "description_DESC";
 
 export type CustomerOrderByInput =
   | "id_ASC"
@@ -719,37 +749,11 @@ export type LocationOrderByInput =
   | "locationType_ASC"
   | "locationType_DESC";
 
-export type MutationType = "CREATED" | "UPDATED" | "DELETED";
-
-export type BrandOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "brandCode_ASC"
-  | "brandCode_DESC"
-  | "description_ASC"
-  | "description_DESC"
-  | "isPrimaryBrand_ASC"
-  | "isPrimaryBrand_DESC"
-  | "logo_ASC"
-  | "logo_DESC"
-  | "name_ASC"
-  | "name_DESC"
-  | "since_ASC"
-  | "since_DESC"
-  | "slug_ASC"
-  | "slug_DESC"
-  | "tier_ASC"
-  | "tier_DESC"
-  | "createdAt_ASC"
-  | "createdAt_DESC"
-  | "updatedAt_ASC"
-  | "updatedAt_DESC"
-  | "websiteUrl_ASC"
-  | "websiteUrl_DESC";
-
-export interface CategoryUpdateWithoutProductsDataInput {
-  description?: Maybe<String>;
-  name?: Maybe<String>;
+export interface CategoryUpdateOneRequiredWithoutProductsInput {
+  create?: Maybe<CategoryCreateWithoutProductsInput>;
+  update?: Maybe<CategoryUpdateWithoutProductsDataInput>;
+  upsert?: Maybe<CategoryUpsertWithoutProductsInput>;
+  connect?: Maybe<CategoryWhereUniqueInput>;
 }
 
 export type BagWhereUniqueInput = AtLeastOne<{
@@ -857,13 +861,13 @@ export interface BrandCreateWithoutProductsInput {
 
 export interface ProductCreateWithoutCategoryInput {
   id?: Maybe<ID_Input>;
+  name: String;
   brand: BrandCreateOneWithoutProductsInput;
   description?: Maybe<String>;
   externalUrl?: Maybe<String>;
   images: Json;
   modelHeight?: Maybe<Int>;
-  modelSize?: Maybe<Int>;
-  name: String;
+  modelSize?: Maybe<Size>;
   retailPrice?: Maybe<Int>;
   tags?: Maybe<Json>;
 }
@@ -909,8 +913,8 @@ export interface PhysicalProductUpdateManyWithoutProductVariantInput {
 
 export interface CategoryCreateWithoutProductsInput {
   id?: Maybe<ID_Input>;
-  description?: Maybe<String>;
   name: String;
+  description?: Maybe<String>;
 }
 
 export interface ProductVariantInventoryLevelSubscriptionWhereInput {
@@ -1373,6 +1377,7 @@ export interface ProductVariantCreateWithoutInventoryLevelsInput {
 
 export type CategoryWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
+  name?: Maybe<String>;
 }>;
 
 export interface CustomerCreateOneWithoutBagInput {
@@ -1381,12 +1386,12 @@ export interface CustomerCreateOneWithoutBagInput {
 }
 
 export interface ProductUpdateManyMutationInput {
+  name?: Maybe<String>;
   description?: Maybe<String>;
   externalUrl?: Maybe<String>;
   images?: Maybe<Json>;
   modelHeight?: Maybe<Int>;
-  modelSize?: Maybe<Int>;
-  name?: Maybe<String>;
+  modelSize?: Maybe<Size>;
   retailPrice?: Maybe<Int>;
   tags?: Maybe<Json>;
 }
@@ -1421,6 +1426,20 @@ export interface ProductWhereInput {
   id_not_starts_with?: Maybe<ID_Input>;
   id_ends_with?: Maybe<ID_Input>;
   id_not_ends_with?: Maybe<ID_Input>;
+  name?: Maybe<String>;
+  name_not?: Maybe<String>;
+  name_in?: Maybe<String[] | String>;
+  name_not_in?: Maybe<String[] | String>;
+  name_lt?: Maybe<String>;
+  name_lte?: Maybe<String>;
+  name_gt?: Maybe<String>;
+  name_gte?: Maybe<String>;
+  name_contains?: Maybe<String>;
+  name_not_contains?: Maybe<String>;
+  name_starts_with?: Maybe<String>;
+  name_not_starts_with?: Maybe<String>;
+  name_ends_with?: Maybe<String>;
+  name_not_ends_with?: Maybe<String>;
   brand?: Maybe<BrandWhereInput>;
   category?: Maybe<CategoryWhereInput>;
   description?: Maybe<String>;
@@ -1459,28 +1478,10 @@ export interface ProductWhereInput {
   modelHeight_lte?: Maybe<Int>;
   modelHeight_gt?: Maybe<Int>;
   modelHeight_gte?: Maybe<Int>;
-  modelSize?: Maybe<Int>;
-  modelSize_not?: Maybe<Int>;
-  modelSize_in?: Maybe<Int[] | Int>;
-  modelSize_not_in?: Maybe<Int[] | Int>;
-  modelSize_lt?: Maybe<Int>;
-  modelSize_lte?: Maybe<Int>;
-  modelSize_gt?: Maybe<Int>;
-  modelSize_gte?: Maybe<Int>;
-  name?: Maybe<String>;
-  name_not?: Maybe<String>;
-  name_in?: Maybe<String[] | String>;
-  name_not_in?: Maybe<String[] | String>;
-  name_lt?: Maybe<String>;
-  name_lte?: Maybe<String>;
-  name_gt?: Maybe<String>;
-  name_gte?: Maybe<String>;
-  name_contains?: Maybe<String>;
-  name_not_contains?: Maybe<String>;
-  name_starts_with?: Maybe<String>;
-  name_not_starts_with?: Maybe<String>;
-  name_ends_with?: Maybe<String>;
-  name_not_ends_with?: Maybe<String>;
+  modelSize?: Maybe<Size>;
+  modelSize_not?: Maybe<Size>;
+  modelSize_in?: Maybe<Size[] | Size>;
+  modelSize_not_in?: Maybe<Size[] | Size>;
   retailPrice?: Maybe<Int>;
   retailPrice_not?: Maybe<Int>;
   retailPrice_in?: Maybe<Int[] | Int>;
@@ -1646,14 +1647,14 @@ export interface ImageUpdateManyMutationInput {
 }
 
 export interface ProductUpdateDataInput {
+  name?: Maybe<String>;
   brand?: Maybe<BrandUpdateOneRequiredWithoutProductsInput>;
   category?: Maybe<CategoryUpdateOneRequiredWithoutProductsInput>;
   description?: Maybe<String>;
   externalUrl?: Maybe<String>;
   images?: Maybe<Json>;
   modelHeight?: Maybe<Int>;
-  modelSize?: Maybe<Int>;
-  name?: Maybe<String>;
+  modelSize?: Maybe<Size>;
   retailPrice?: Maybe<Int>;
   tags?: Maybe<Json>;
 }
@@ -1701,11 +1702,10 @@ export interface BagUpdateOneRequiredWithoutCustomerInput {
   connect?: Maybe<BagWhereUniqueInput>;
 }
 
-export interface CategoryUpdateOneRequiredWithoutProductsInput {
-  create?: Maybe<CategoryCreateWithoutProductsInput>;
-  update?: Maybe<CategoryUpdateWithoutProductsDataInput>;
-  upsert?: Maybe<CategoryUpsertWithoutProductsInput>;
-  connect?: Maybe<CategoryWhereUniqueInput>;
+export interface ProductUpsertWithWhereUniqueWithoutCategoryInput {
+  where: ProductWhereUniqueInput;
+  update: ProductUpdateWithoutCategoryDataInput;
+  create: ProductCreateWithoutCategoryInput;
 }
 
 export interface BagCreateWithoutCustomerInput {
@@ -1713,10 +1713,9 @@ export interface BagCreateWithoutCustomerInput {
   items?: Maybe<ProductVariantCreateManyInput>;
 }
 
-export interface ProductUpsertWithWhereUniqueWithoutCategoryInput {
-  where: ProductWhereUniqueInput;
-  update: ProductUpdateWithoutCategoryDataInput;
-  create: ProductCreateWithoutCategoryInput;
+export interface CategoryUpdateWithoutProductsDataInput {
+  name?: Maybe<String>;
+  description?: Maybe<String>;
 }
 
 export interface BagCreateOneWithoutCustomerInput {
@@ -2019,13 +2018,13 @@ export interface ProductVariantCreateManyInput {
 }
 
 export interface ProductUpdateWithoutCategoryDataInput {
+  name?: Maybe<String>;
   brand?: Maybe<BrandUpdateOneRequiredWithoutProductsInput>;
   description?: Maybe<String>;
   externalUrl?: Maybe<String>;
   images?: Maybe<Json>;
   modelHeight?: Maybe<Int>;
-  modelSize?: Maybe<Int>;
-  name?: Maybe<String>;
+  modelSize?: Maybe<Size>;
   retailPrice?: Maybe<Int>;
   tags?: Maybe<Json>;
 }
@@ -2872,8 +2871,8 @@ export type ImageWhereUniqueInput = AtLeastOne<{
 }>;
 
 export interface CategoryUpdateInput {
-  description?: Maybe<String>;
   name?: Maybe<String>;
+  description?: Maybe<String>;
   products?: Maybe<ProductUpdateManyWithoutCategoryInput>;
 }
 
@@ -2903,7 +2902,6 @@ export interface BrandCreateInput {
 
 export type ProductWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
-  name?: Maybe<String>;
 }>;
 
 export interface ProductCreateManyWithoutBrandInput {
@@ -2919,20 +2917,20 @@ export type ProductVariantInventoryLevelWhereUniqueInput = AtLeastOne<{
 
 export interface ProductCreateWithoutBrandInput {
   id?: Maybe<ID_Input>;
+  name: String;
   category: CategoryCreateOneWithoutProductsInput;
   description?: Maybe<String>;
   externalUrl?: Maybe<String>;
   images: Json;
   modelHeight?: Maybe<Int>;
-  modelSize?: Maybe<Int>;
-  name: String;
+  modelSize?: Maybe<Size>;
   retailPrice?: Maybe<Int>;
   tags?: Maybe<Json>;
 }
 
 export interface CategoryUpdateManyMutationInput {
-  description?: Maybe<String>;
   name?: Maybe<String>;
+  description?: Maybe<String>;
 }
 
 export interface BrandUpdateInput {
@@ -2950,14 +2948,14 @@ export interface BrandUpdateInput {
 
 export interface ProductCreateInput {
   id?: Maybe<ID_Input>;
+  name: String;
   brand: BrandCreateOneWithoutProductsInput;
   category: CategoryCreateOneWithoutProductsInput;
   description?: Maybe<String>;
   externalUrl?: Maybe<String>;
   images: Json;
   modelHeight?: Maybe<Int>;
-  modelSize?: Maybe<Int>;
-  name: String;
+  modelSize?: Maybe<Size>;
   retailPrice?: Maybe<Int>;
   tags?: Maybe<Json>;
 }
@@ -3000,20 +2998,6 @@ export interface CategoryWhereInput {
   id_not_starts_with?: Maybe<ID_Input>;
   id_ends_with?: Maybe<ID_Input>;
   id_not_ends_with?: Maybe<ID_Input>;
-  description?: Maybe<String>;
-  description_not?: Maybe<String>;
-  description_in?: Maybe<String[] | String>;
-  description_not_in?: Maybe<String[] | String>;
-  description_lt?: Maybe<String>;
-  description_lte?: Maybe<String>;
-  description_gt?: Maybe<String>;
-  description_gte?: Maybe<String>;
-  description_contains?: Maybe<String>;
-  description_not_contains?: Maybe<String>;
-  description_starts_with?: Maybe<String>;
-  description_not_starts_with?: Maybe<String>;
-  description_ends_with?: Maybe<String>;
-  description_not_ends_with?: Maybe<String>;
   name?: Maybe<String>;
   name_not?: Maybe<String>;
   name_in?: Maybe<String[] | String>;
@@ -3028,6 +3012,20 @@ export interface CategoryWhereInput {
   name_not_starts_with?: Maybe<String>;
   name_ends_with?: Maybe<String>;
   name_not_ends_with?: Maybe<String>;
+  description?: Maybe<String>;
+  description_not?: Maybe<String>;
+  description_in?: Maybe<String[] | String>;
+  description_not_in?: Maybe<String[] | String>;
+  description_lt?: Maybe<String>;
+  description_lte?: Maybe<String>;
+  description_gt?: Maybe<String>;
+  description_gte?: Maybe<String>;
+  description_contains?: Maybe<String>;
+  description_not_contains?: Maybe<String>;
+  description_starts_with?: Maybe<String>;
+  description_not_starts_with?: Maybe<String>;
+  description_ends_with?: Maybe<String>;
+  description_not_ends_with?: Maybe<String>;
   products_every?: Maybe<ProductWhereInput>;
   products_some?: Maybe<ProductWhereInput>;
   products_none?: Maybe<ProductWhereInput>;
@@ -3042,26 +3040,26 @@ export interface ProductUpdateWithWhereUniqueWithoutBrandInput {
 }
 
 export interface ProductUpdateInput {
+  name?: Maybe<String>;
   brand?: Maybe<BrandUpdateOneRequiredWithoutProductsInput>;
   category?: Maybe<CategoryUpdateOneRequiredWithoutProductsInput>;
   description?: Maybe<String>;
   externalUrl?: Maybe<String>;
   images?: Maybe<Json>;
   modelHeight?: Maybe<Int>;
-  modelSize?: Maybe<Int>;
-  name?: Maybe<String>;
+  modelSize?: Maybe<Size>;
   retailPrice?: Maybe<Int>;
   tags?: Maybe<Json>;
 }
 
 export interface ProductUpdateWithoutBrandDataInput {
+  name?: Maybe<String>;
   category?: Maybe<CategoryUpdateOneRequiredWithoutProductsInput>;
   description?: Maybe<String>;
   externalUrl?: Maybe<String>;
   images?: Maybe<Json>;
   modelHeight?: Maybe<Int>;
-  modelSize?: Maybe<Int>;
-  name?: Maybe<String>;
+  modelSize?: Maybe<Size>;
   retailPrice?: Maybe<Int>;
   tags?: Maybe<Json>;
 }
@@ -3105,6 +3103,20 @@ export interface ProductScalarWhereInput {
   id_not_starts_with?: Maybe<ID_Input>;
   id_ends_with?: Maybe<ID_Input>;
   id_not_ends_with?: Maybe<ID_Input>;
+  name?: Maybe<String>;
+  name_not?: Maybe<String>;
+  name_in?: Maybe<String[] | String>;
+  name_not_in?: Maybe<String[] | String>;
+  name_lt?: Maybe<String>;
+  name_lte?: Maybe<String>;
+  name_gt?: Maybe<String>;
+  name_gte?: Maybe<String>;
+  name_contains?: Maybe<String>;
+  name_not_contains?: Maybe<String>;
+  name_starts_with?: Maybe<String>;
+  name_not_starts_with?: Maybe<String>;
+  name_ends_with?: Maybe<String>;
+  name_not_ends_with?: Maybe<String>;
   description?: Maybe<String>;
   description_not?: Maybe<String>;
   description_in?: Maybe<String[] | String>;
@@ -3141,28 +3153,10 @@ export interface ProductScalarWhereInput {
   modelHeight_lte?: Maybe<Int>;
   modelHeight_gt?: Maybe<Int>;
   modelHeight_gte?: Maybe<Int>;
-  modelSize?: Maybe<Int>;
-  modelSize_not?: Maybe<Int>;
-  modelSize_in?: Maybe<Int[] | Int>;
-  modelSize_not_in?: Maybe<Int[] | Int>;
-  modelSize_lt?: Maybe<Int>;
-  modelSize_lte?: Maybe<Int>;
-  modelSize_gt?: Maybe<Int>;
-  modelSize_gte?: Maybe<Int>;
-  name?: Maybe<String>;
-  name_not?: Maybe<String>;
-  name_in?: Maybe<String[] | String>;
-  name_not_in?: Maybe<String[] | String>;
-  name_lt?: Maybe<String>;
-  name_lte?: Maybe<String>;
-  name_gt?: Maybe<String>;
-  name_gte?: Maybe<String>;
-  name_contains?: Maybe<String>;
-  name_not_contains?: Maybe<String>;
-  name_starts_with?: Maybe<String>;
-  name_not_starts_with?: Maybe<String>;
-  name_ends_with?: Maybe<String>;
-  name_not_ends_with?: Maybe<String>;
+  modelSize?: Maybe<Size>;
+  modelSize_not?: Maybe<Size>;
+  modelSize_in?: Maybe<Size[] | Size>;
+  modelSize_not_in?: Maybe<Size[] | Size>;
   retailPrice?: Maybe<Int>;
   retailPrice_not?: Maybe<Int>;
   retailPrice_in?: Maybe<Int[] | Int>;
@@ -3228,8 +3222,8 @@ export interface ProductCreateManyWithoutCategoryInput {
 
 export interface CategoryCreateInput {
   id?: Maybe<ID_Input>;
-  description?: Maybe<String>;
   name: String;
+  description?: Maybe<String>;
   products?: Maybe<ProductCreateManyWithoutCategoryInput>;
 }
 
@@ -3246,12 +3240,12 @@ export interface BrandUpdateManyMutationInput {
 }
 
 export interface ProductUpdateManyDataInput {
+  name?: Maybe<String>;
   description?: Maybe<String>;
   externalUrl?: Maybe<String>;
   images?: Maybe<Json>;
   modelHeight?: Maybe<Int>;
-  modelSize?: Maybe<Int>;
-  name?: Maybe<String>;
+  modelSize?: Maybe<Size>;
   retailPrice?: Maybe<Int>;
   tags?: Maybe<Json>;
 }
@@ -4027,12 +4021,12 @@ export interface BrandSubscriptionPayloadSubscription
 
 export interface Product {
   id: ID_Output;
+  name: String;
   description?: String;
   externalUrl?: String;
   images: Json;
   modelHeight?: Int;
-  modelSize?: Int;
-  name: String;
+  modelSize?: Size;
   retailPrice?: Int;
   tags?: Json;
   createdAt: DateTimeOutput;
@@ -4041,14 +4035,14 @@ export interface Product {
 
 export interface ProductPromise extends Promise<Product>, Fragmentable {
   id: () => Promise<ID_Output>;
+  name: () => Promise<String>;
   brand: <T = BrandPromise>() => T;
   category: <T = CategoryPromise>() => T;
   description: () => Promise<String>;
   externalUrl: () => Promise<String>;
   images: () => Promise<Json>;
   modelHeight: () => Promise<Int>;
-  modelSize: () => Promise<Int>;
-  name: () => Promise<String>;
+  modelSize: () => Promise<Size>;
   retailPrice: () => Promise<Int>;
   tags: () => Promise<Json>;
   createdAt: () => Promise<DateTimeOutput>;
@@ -4059,14 +4053,14 @@ export interface ProductSubscription
   extends Promise<AsyncIterator<Product>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
+  name: () => Promise<AsyncIterator<String>>;
   brand: <T = BrandSubscription>() => T;
   category: <T = CategorySubscription>() => T;
   description: () => Promise<AsyncIterator<String>>;
   externalUrl: () => Promise<AsyncIterator<String>>;
   images: () => Promise<AsyncIterator<Json>>;
   modelHeight: () => Promise<AsyncIterator<Int>>;
-  modelSize: () => Promise<AsyncIterator<Int>>;
-  name: () => Promise<AsyncIterator<String>>;
+  modelSize: () => Promise<AsyncIterator<Size>>;
   retailPrice: () => Promise<AsyncIterator<Int>>;
   tags: () => Promise<AsyncIterator<Json>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
@@ -4077,14 +4071,14 @@ export interface ProductNullablePromise
   extends Promise<Product | null>,
     Fragmentable {
   id: () => Promise<ID_Output>;
+  name: () => Promise<String>;
   brand: <T = BrandPromise>() => T;
   category: <T = CategoryPromise>() => T;
   description: () => Promise<String>;
   externalUrl: () => Promise<String>;
   images: () => Promise<Json>;
   modelHeight: () => Promise<Int>;
-  modelSize: () => Promise<Int>;
-  name: () => Promise<String>;
+  modelSize: () => Promise<Size>;
   retailPrice: () => Promise<Int>;
   tags: () => Promise<Json>;
   createdAt: () => Promise<DateTimeOutput>;
@@ -4316,24 +4310,24 @@ export interface AggregateCustomerSubscription
 
 export interface CategoryPreviousValues {
   id: ID_Output;
-  description?: String;
   name: String;
+  description?: String;
 }
 
 export interface CategoryPreviousValuesPromise
   extends Promise<CategoryPreviousValues>,
     Fragmentable {
   id: () => Promise<ID_Output>;
-  description: () => Promise<String>;
   name: () => Promise<String>;
+  description: () => Promise<String>;
 }
 
 export interface CategoryPreviousValuesSubscription
   extends Promise<AsyncIterator<CategoryPreviousValues>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
-  description: () => Promise<AsyncIterator<String>>;
   name: () => Promise<AsyncIterator<String>>;
+  description: () => Promise<AsyncIterator<String>>;
 }
 
 export interface CustomerConnection {
@@ -5234,12 +5228,12 @@ export interface ProductVariantPreviousValuesSubscription
 
 export interface ProductPreviousValues {
   id: ID_Output;
+  name: String;
   description?: String;
   externalUrl?: String;
   images: Json;
   modelHeight?: Int;
-  modelSize?: Int;
-  name: String;
+  modelSize?: Size;
   retailPrice?: Int;
   tags?: Json;
   createdAt: DateTimeOutput;
@@ -5250,12 +5244,12 @@ export interface ProductPreviousValuesPromise
   extends Promise<ProductPreviousValues>,
     Fragmentable {
   id: () => Promise<ID_Output>;
+  name: () => Promise<String>;
   description: () => Promise<String>;
   externalUrl: () => Promise<String>;
   images: () => Promise<Json>;
   modelHeight: () => Promise<Int>;
-  modelSize: () => Promise<Int>;
-  name: () => Promise<String>;
+  modelSize: () => Promise<Size>;
   retailPrice: () => Promise<Int>;
   tags: () => Promise<Json>;
   createdAt: () => Promise<DateTimeOutput>;
@@ -5266,12 +5260,12 @@ export interface ProductPreviousValuesSubscription
   extends Promise<AsyncIterator<ProductPreviousValues>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
+  name: () => Promise<AsyncIterator<String>>;
   description: () => Promise<AsyncIterator<String>>;
   externalUrl: () => Promise<AsyncIterator<String>>;
   images: () => Promise<AsyncIterator<Json>>;
   modelHeight: () => Promise<AsyncIterator<Int>>;
-  modelSize: () => Promise<AsyncIterator<Int>>;
-  name: () => Promise<AsyncIterator<String>>;
+  modelSize: () => Promise<AsyncIterator<Size>>;
   retailPrice: () => Promise<AsyncIterator<Int>>;
   tags: () => Promise<AsyncIterator<Json>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
@@ -5305,14 +5299,14 @@ export interface ProductSubscriptionPayloadSubscription
 
 export interface Category {
   id: ID_Output;
-  description?: String;
   name: String;
+  description?: String;
 }
 
 export interface CategoryPromise extends Promise<Category>, Fragmentable {
   id: () => Promise<ID_Output>;
-  description: () => Promise<String>;
   name: () => Promise<String>;
+  description: () => Promise<String>;
   products: <T = FragmentableArray<Product>>(args?: {
     where?: ProductWhereInput;
     orderBy?: ProductOrderByInput;
@@ -5328,8 +5322,8 @@ export interface CategorySubscription
   extends Promise<AsyncIterator<Category>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
-  description: () => Promise<AsyncIterator<String>>;
   name: () => Promise<AsyncIterator<String>>;
+  description: () => Promise<AsyncIterator<String>>;
   products: <T = Promise<AsyncIterator<ProductSubscription>>>(args?: {
     where?: ProductWhereInput;
     orderBy?: ProductOrderByInput;
@@ -5345,8 +5339,8 @@ export interface CategoryNullablePromise
   extends Promise<Category | null>,
     Fragmentable {
   id: () => Promise<ID_Output>;
-  description: () => Promise<String>;
   name: () => Promise<String>;
+  description: () => Promise<String>;
   products: <T = FragmentableArray<Product>>(args?: {
     where?: ProductWhereInput;
     orderBy?: ProductOrderByInput;
