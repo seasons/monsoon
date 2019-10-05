@@ -15,7 +15,7 @@
     "debug-sls": "export SLS_DEBUG=* && node --inspect ./node_modules/.bin/serverless offline -s dev",
     "build-sls": "serverless package",
     "deploy-sls": "serverless deploy",
-    "postinstall": "yarn build-ts",
+    "postinstall": "yarn build",
     "start": "dotenv -- nodemon -e ts,graphql -x ts-node src/index.ts",
     "debug": "dotenv -- nodemon -e ts,graphql -x node --inspect -r dotenv/config -r ts-node/register src/index.ts",
     "build": "rimraf dist && tsc",
