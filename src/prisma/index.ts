@@ -563,7 +563,8 @@ export type BrandTier =
   | "Niche"
   | "Upcoming"
   | "Retro"
-  | "Boutique";
+  | "Boutique"
+  | "Local";
 
 export type UserOrderByInput =
   | "id_ASC"

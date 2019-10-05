@@ -290,6 +290,7 @@ enum BrandTier {
   Upcoming
   Retro
   Boutique
+  Local
 }
 
 input BrandUpdateInput {

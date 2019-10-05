@@ -6,6 +6,7 @@ enum BrandTier {
   Upcoming
   Retro
   Boutique
+  Local
 }
 
 enum Size {
