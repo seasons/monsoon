@@ -1,0 +1,144 @@
+enum BrandTier {
+  Tier0
+  Tier1
+  Tier2
+  Niche
+  Upcoming
+  Retro
+  Boutique
+}
+
+enum Size {
+  ExtraSmall
+  Small
+  Medium
+  Large
+  ExtraLarge
+}
+
+enum Material {
+  Cotton
+  Mesh
+  Nylon
+  Denim
+  Leather
+  Fur
+  Polyamide
+  Feather
+  Polyester
+}
+
+enum Department {
+  Clothes
+  Bags
+  Accessories
+  Jewelry
+}
+
+enum LocationType {
+  Office
+  Warehouse
+  Cleaner
+  Customer
+}
+
+type Brand {
+  id: ID! @id
+  brandCode: String! @unique
+  description: String
+  isPrimaryBrand: Boolean @default(value: false)
+  logo: Json
+  name: String!
+  products: [Product!]!
+  since: DateTime
+  slug: String! @unique
+  tier: BrandTier!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+  websiteUrl: String
+}
+
+type Category {
+  id: ID! @id
+  description: String
+  name: String!
+  products: [Product!]!
+}
+
+type Color {
+  id: ID! @id
+  hexCode: String!
+  name: String
+  productVariants: [ProductVariant!]!
+}
+
+type Image {
+  id: ID! @id
+  caption: String
+  originalHeight: Int
+  originalUrl: String!
+  originalWidth: Int
+  resizedUrl: String!
+  title: String
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type Location {
+  id: ID! @id
+  address1: String!
+  address2: String!
+  city: String!
+  description: String
+  lat: Float
+  lng: Float
+  locationType: LocationType
+  name: String
+  state: String!
+  zip: Int!
+}
+
+type Product {
+  id: ID! @id
+  brand: Brand!
+  category: Category!
+  description: String
+  externalUrl: String
+  images: Json!
+  modelHeight: Int
+  modelSize: Int
+  name: String! @unique
+  retailPrice: Int
+  tags: Json
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type ProductVariant {
+  id: ID! @id
+  color: Color!
+  weight: Int
+  height: Int
+  product: Product!
+  productVariantInventoryLevels: [ProductVariantInventoryLevel]
+  sku: String
+  upc: Int
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type ProductVariantInventoryLevel {
+  id: ID! @id
+  product: Product!
+  productVariant: ProductVariant!
+  nonReservablePhysicalProducts: Int
+  reservablePhysicalProducts: Int
+  reservedPhysicalProducts: Int
+}
+
+type User {
+  id: ID! @id
+  firstName: String!
+  lastName: String!
+  email: String @unique
+}
