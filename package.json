@@ -15,13 +15,12 @@
     "debug-sls": "export SLS_DEBUG=* && node --inspect ./node_modules/.bin/serverless offline -s dev",
     "build-sls": "serverless package",
     "deploy-sls": "serverless deploy",
-    "build-ts": "tsc",
-    "watch-ts": "tsc -w",
     "postinstall": "yarn build-ts",
     "start": "dotenv -- nodemon -e ts,graphql -x ts-node src/index.ts",
     "debug": "dotenv -- nodemon -e ts,graphql -x node --inspect -r dotenv/config -r ts-node/register src/index.ts",
     "build": "rimraf dist && tsc",
-    "update-mist-schema": "get-graphql-schema https://mist-staging.herokuapp.com/graphql > ./src/mist/mist.graphql"
+    "prisma:deploy": "prisma deploy",
+    "prisma:deploy-staging": "prisma deploy -e .env.staging"
   },
   "dependencies": {
     "airtable": "^0.7.1",

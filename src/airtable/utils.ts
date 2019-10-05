@@ -31,3 +31,7 @@ export const getAllBrands = async () => {
 export const getAllCategories = async () => {
   return getAll("Categories")
 }
+
+export const getAllProducts = async () => {
+  return getAll("Products")
+}

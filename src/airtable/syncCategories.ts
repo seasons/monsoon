@@ -1,48 +1,32 @@
-import { base } from "./config"
 import { prisma } from "../prisma"
+import { getAllCategories } from "./utils"
 
-export const syncCategories = () => {
-  return base("Categories")
-    .select({
-      view: "Grid view",
-    })
-    .eachPage(
-      (records, fetchNextPage) => {
-        records.forEach(async function(record) {
-          try {
-            const values = record.fields
-            console.log("Retrieved", JSON.stringify(record.fields, null, 2))
+export const syncCategories = async () => {
+  const allCategories = await getAllCategories()
 
-            const data = {
-              name: values.Name,
-              description: values.Description,
-            }
+  for (let record of allCategories) {
+    try {
+      const values = record.fields
+      console.log("Retrieved", JSON.stringify(record.fields, null, 2))
 
-            const category = await prisma.upsertCategory({
-              where: {
-                name: values.Name,
-              },
-              create: data,
-              update: data,
-            })
-
-            record
-              .patchUpdate({
-                "Seasons ID": category.id,
-              })
-              .catch(console.error)
-          } catch (e) {
-            console.error(e)
-          }
-        })
-
-        return fetchNextPage()
-      },
-      err => {
-        console.error(err)
-        return
+      const data = {
+        name: values.Name,
+        description: values.Description,
       }
-    )
-}
 
-syncCategories()
+      const category = await prisma.upsertCategory({
+        where: {
+          name: values.Name,
+        },
+        create: data,
+        update: data,
+      })
+
+      await record.patchUpdate({
+        "Seasons ID": category.id,
+      })
+    } catch (e) {
+      console.error(e)
+    }
+  }
+}

@@ -1,7 +1,7 @@
-import { base } from "./config"
 import slugify from "slugify"
 import { prisma, BrandTier } from "../prisma"
 import { isEmpty } from "lodash"
+import { getAllBrands } from "./utils"
 
 interface AirtableBrandInput {
   Name: string
@@ -15,64 +15,48 @@ interface AirtableBrandInput {
   Primary: boolean
 }
 
-export const syncBrands = () => {
-  return base("Brands")
-    .select({
-      view: "Grid view",
-    })
-    .eachPage(
-      (records, fetchNextPage) => {
-        records.forEach(async function(record) {
-          try {
-            const values: AirtableBrandInput = record.fields
-            if (isEmpty(values.Name)) {
-              return
-            }
+export const syncBrands = async () => {
+  const records = await getAllBrands()
 
-            const slug = slugify(values.Name).toLowerCase()
-
-            const data = {
-              name: values.Name,
-              tier: (values.Tier || "").replace(" ", "") as BrandTier,
-              websiteUrl: values.Website,
-              logo: values.Logo,
-              description: values.Description,
-              since: values.Since ? `${values.Since}-01-01` : "2019-01-01",
-              isPrimaryBrand: values.Primary,
-              brandCode: values["Brand Code"],
-            }
-
-            const brand = await prisma.upsertBrand({
-              where: {
-                slug,
-              },
-              create: {
-                slug,
-                ...data,
-              },
-              update: data,
-            })
-
-            record
-              .patchUpdate({
-                "Seasons ID": brand.id,
-                Slug: slug,
-              })
-              .catch(console.error)
-
-            console.log(brand)
-          } catch (e) {
-            console.error(e)
-          }
-        })
-
-        return fetchNextPage()
-      },
-      err => {
-        console.error(err)
+  for (let record of records) {
+    try {
+      const values: AirtableBrandInput = record.fields
+      if (isEmpty(values.Name)) {
         return
       }
-    )
-}
 
-syncBrands()
+      const slug = slugify(values.Name).toLowerCase()
+
+      const data = {
+        name: values.Name,
+        tier: (values.Tier || "").replace(" ", "") as BrandTier,
+        websiteUrl: values.Website,
+        logo: values.Logo,
+        description: values.Description,
+        since: values.Since ? `${values.Since}-01-01` : "2019-01-01",
+        isPrimaryBrand: values.Primary,
+        brandCode: values["Brand Code"],
+      }
+
+      const brand = await prisma.upsertBrand({
+        where: {
+          slug,
+        },
+        create: {
+          slug,
+          ...data,
+        },
+        update: data,
+      })
+
+      await record.patchUpdate({
+        "Seasons ID": brand.id,
+        Slug: slug,
+      })
+
+      console.log(brand)
+    } catch (e) {
+      console.error(e)
+    }
+  }
+}
