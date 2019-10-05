@@ -12,6 +12,15 @@ type Query {
     last: Int
   ): ProductConnection!
   product(where: ProductWhereUniqueInput!): Product
+  categories(
+    where: CategoryWhereInput
+    orderBy: CategoryOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Category]!
 }
 
 type Mutation {
