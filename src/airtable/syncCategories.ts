@@ -7,7 +7,6 @@ export const syncCategories = async () => {
   for (let record of allCategories) {
     try {
       const values = record.fields
-      console.log("Retrieved", JSON.stringify(record.fields, null, 2))
 
       const data = {
         name: values.Name,
@@ -25,6 +24,7 @@ export const syncCategories = async () => {
       await record.patchUpdate({
         "Seasons ID": category.id,
       })
+      console.log(category)
     } catch (e) {
       console.error(e)
     }
