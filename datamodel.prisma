@@ -42,6 +42,20 @@ enum LocationType {
   Customer
 }
 
+enum CustomerStatus {
+  Invited
+  Waitlisted
+  Activated
+  Suspended
+  Deactivated
+}
+
+enum UserRole {
+  Admin
+  Customer
+  Partner
+}
+
 type Brand {
   id: ID! @id
   brandCode: String! @unique
@@ -86,16 +100,17 @@ type Image {
 
 type Location {
   id: ID! @id
+  name: String
+  description: String
   address1: String!
   address2: String!
   city: String!
-  description: String
   lat: Float
   lng: Float
-  locationType: LocationType
-  name: String
   state: String!
   zip: Int!
+  locationType: LocationType
+  user: User
 }
 
 type Product {
@@ -116,13 +131,16 @@ type Product {
 
 type ProductVariant {
   id: ID! @id
+  sku: String
+  upc: Int
   color: Color!
   weight: Int
   height: Int
   product: Product!
-  productVariantInventoryLevels: [ProductVariantInventoryLevel]
-  sku: String
-  upc: Int
+  retailPrice: Int
+  images: Json
+  inventoryLevels: [ProductVariantInventoryLevel!]!
+  physicalProducts: [PhysicalProduct!]!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
@@ -136,9 +154,34 @@ type ProductVariantInventoryLevel {
   reservedPhysicalProducts: Int
 }
 
+type PhysicalProduct {
+  id: ID! @id
+  seasonsUID: String! @unique
+  location: Location
+  productVariant: ProductVariant
+  inventoryLevel: ProductVariantInventoryLevel
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
 type User {
   id: ID! @id
+  email: String! @unique
   firstName: String!
   lastName: String!
-  email: String @unique
+  password: String!
+  role: UserRole! @default(value: Customer)
+}
+
+type Bag {
+  id: ID! @id
+  items: [ProductVariant!]!
+  customer: Customer! @relation(link: TABLE)
+}
+
+type Customer {
+  id: ID! @id
+  user: User!
+  status: CustomerStatus
+  bag: Bag!
 }

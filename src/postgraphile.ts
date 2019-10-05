@@ -1,4 +1,4 @@
-import { prisma } from "./generated/prisma-client"
+import { prisma } from "./prisma"
 import { ApolloServer } from "apollo-server-lambda"
 import { makeSchemaAndPlugin } from "postgraphile-apollo-server"
 import { Pool } from "pg"

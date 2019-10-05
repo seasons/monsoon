@@ -5,6 +5,7 @@ node_modules
 .vscode
 *.log
 .env
+.env.staging
 .serverless
 .build
 .DS_Store

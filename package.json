@@ -7,6 +7,9 @@
   "engines": {
     "node": "10.x.x"
   },
+  "resolutions": {
+    "graphql": "^14.5.7"
+  },
   "scripts": {
     "start-sls": "serverless offline",
     "debug-sls": "export SLS_DEBUG=* && node --inspect ./node_modules/.bin/serverless offline -s dev",
@@ -15,8 +18,9 @@
     "build-ts": "tsc",
     "watch-ts": "tsc -w",
     "postinstall": "yarn build-ts",
-    "start": "node -r dotenv/config dist/index.js",
-    "watch": "nodemon -r dotenv/config dist/index.js",
+    "start": "dotenv -- nodemon -e ts,graphql -x ts-node src/index.ts",
+    "debug": "dotenv -- nodemon -e ts,graphql -x ts-node --inspect src/index.ts",
+    "build": "rimraf dist && tsc",
     "update-mist-schema": "get-graphql-schema https://mist-staging.herokuapp.com/graphql > ./src/mist/mist.graphql"
   },
   "dependencies": {
@@ -29,6 +33,7 @@
     "faker": "^4.1.0",
     "graphql": "^14.5.7",
     "graphql-import": "^0.7.1",
+    "graphql-tools": "^4.0.5",
     "jsonwebtoken": "8.5.1",
     "postgraphile": "^4.4.3",
     "postgraphile-apollo-server": "^0.1.1",

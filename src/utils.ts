@@ -1,5 +1,5 @@
-import * as jwt from 'jsonwebtoken'
-import { Prisma } from './generated/prisma-client'
+import * as jwt from "jsonwebtoken"
+import { Prisma } from "./prisma"
 
 export interface Context {
   prisma: Prisma
@@ -7,10 +7,12 @@ export interface Context {
 }
 
 export function getUserId(ctx: Context) {
-  const Authorization = ctx.request.get('Authorization')
+  const Authorization = ctx.request.get("Authorization")
   if (Authorization) {
-    const token = Authorization.replace('Bearer ', '')
-    const { userId } = jwt.verify(token, process.env.APP_SECRET) as { userId: string }
+    const token = Authorization.replace("Bearer ", "")
+    const { userId } = jwt.verify(token, process.env.APP_SECRET) as {
+      userId: string
+    }
     return userId
   }
 
@@ -19,6 +21,6 @@ export function getUserId(ctx: Context) {
 
 export class AuthError extends Error {
   constructor() {
-    super('Not authorized')
+    super("Not authorized")
   }
 }

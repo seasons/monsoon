@@ -1,5 +1,5 @@
 import { schema } from "./schema"
-import { prisma } from "./generated/prisma-client"
+import { prisma } from "./prisma"
 
 const defaultQuery = `{
   allProducts {
