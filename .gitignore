@@ -6,6 +6,7 @@ node_modules
 *.log
 .env
 .env.staging
+.env.production
 .serverless
 .build
 .DS_Store
