@@ -1,24 +1,34 @@
 import { schema } from "./schema"
-import { prisma } from "./generated/prisma-client"
+import { prisma } from "./prisma"
+import { Prisma } from "prisma-binding"
 
 const defaultQuery = `{
-    products(first: 10) {
-      edges {
-        node {
-          id
-          title
-        }
+  products {
+    edges {
+      node {
+        id
+        name
+        description
+        retailPrice
       }
     }
   }
-  `
+}
+`
+
+const db = new Prisma({
+  typeDefs: "./src/prisma/prisma.graphql",
+  endpoint: process.env.PRISMA_ENDPOINT || "http://localhost:4466",
+})
 
 export const serverOptions = {
   schema,
   context: request => ({
     ...request,
     prisma,
+    db,
   }),
+  introspection: true,
   playground: {
     settings: {
       "editor.theme": "dark" as any,
@@ -30,5 +40,4 @@ export const serverOptions = {
       },
     ],
   },
-  //   mocks: true,
 }

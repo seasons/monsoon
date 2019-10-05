@@ -1,5 +1,17 @@
+# import Category, User, Bag from "./prisma/prisma.graphql"
+
 type Query {
   me: User
+  products(
+    categoryName: String
+    orderBy: ProductOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): ProductConnection!
+  product(where: ProductWhereUniqueInput!): Product
 }
 
 type Mutation {
@@ -10,93 +22,6 @@ type Mutation {
 type AuthPayload {
   token: String!
   user: User!
-}
-
-type User {
-  id: ID!
-  email: String!
-  name: String!
-  bag: Bag!
-}
-
-type Bag {
-  id: ID!
-}
-
-enum Tier {
-  Tier0
-  Tier1
-  Tier2
-  Niche
-  Upcoming
-  Retro
-  Boutique
-}
-
-enum Size {
-  ExtraSmall
-  Small
-  Medium
-  Large
-  ExtraLarge
-}
-
-enum Material {
-  Cotton
-  Mesh
-  Nylon
-  Denim
-  Leather
-  Fur
-  Polyamide
-  Feather
-  Polyester
-}
-
-enum Department {
-  Clothes
-  Bags
-  Accessories
-  Jewelry
-}
-
-enum Category {
-  Outerwear
-  Tops
-}
-
-enum Color {
-  Black
-  Red
-  White
-  Silver
-  Gray
-  Maroon
-  Yellow
-  Olive
-  Lime
-  Green
-  Aqua
-  Teal
-  Blue
-  Navy
-  Purple
-  Salmon
-  Gold
-  Orange
-  Turquoise
-  RoyalBlue
-  Magenta
-  Lavender
-  Ivory
-  MintCream
-  Beige
-  Brown
-  Tan
-  LightBlue
-  HotPink
-  Pink
-  DarkGray
 }
 
 type Image {

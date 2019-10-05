@@ -1,6 +1,6 @@
-import * as bcrypt from 'bcryptjs'
-import * as jwt from 'jsonwebtoken'
-import { Context } from '../../utils'
+import * as bcrypt from "bcryptjs"
+import * as jwt from "jsonwebtoken"
+import { Context } from "../../utils"
 
 export const auth = {
   async signup(parent, args, ctx: Context) {
@@ -19,9 +19,9 @@ export const auth = {
       throw new Error(`No such user found for email: ${email}`)
     }
 
-    const valid = await bcrypt.compare(password, user.password)
+    const valid = await bcrypt.compare(password, (user as any).password)
     if (!valid) {
-      throw new Error('Invalid password')
+      throw new Error("Invalid password")
     }
 
     return {
