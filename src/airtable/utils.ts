@@ -35,3 +35,15 @@ export const getAllCategories = async () => {
 export const getAllProducts = async () => {
   return getAll("Products")
 }
+
+export const getAllProductVariants = async () => {
+  return getAll("Product Variants")
+}
+
+export const getAllPhysicalProducts = async () => {
+  return getAll("Physical Products")
+}
+
+export const getAllColors = async () => {
+  return getAll("Colors")
+}

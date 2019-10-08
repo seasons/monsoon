@@ -26,6 +26,10 @@ type AggregateImage {
   count: Int!
 }
 
+type AggregateInventoryLevel {
+  count: Int!
+}
+
 type AggregateLocation {
   count: Int!
 }
@@ -39,10 +43,6 @@ type AggregateProduct {
 }
 
 type AggregateProductVariant {
-  count: Int!
-}
-
-type AggregateProductVariantInventoryLevel {
   count: Int!
 }
 
@@ -626,6 +626,7 @@ input CategoryWhereUniqueInput {
 
 type Color {
   id: ID!
+  colorCode: String!
   hexCode: String!
   name: String
   productVariants(where: ProductVariantWhereInput, orderBy: ProductVariantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariant!]
@@ -639,6 +640,7 @@ type ColorConnection {
 
 input ColorCreateInput {
   id: ID
+  colorCode: String!
   hexCode: String!
   name: String
   productVariants: ProductVariantCreateManyWithoutColorInput
@@ -651,6 +653,7 @@ input ColorCreateOneWithoutProductVariantsInput {
 
 input ColorCreateWithoutProductVariantsInput {
   id: ID
+  colorCode: String!
   hexCode: String!
   name: String
 }
@@ -663,6 +666,8 @@ type ColorEdge {
 enum ColorOrderByInput {
   id_ASC
   id_DESC
+  colorCode_ASC
+  colorCode_DESC
   hexCode_ASC
   hexCode_DESC
   name_ASC
@@ -671,6 +676,7 @@ enum ColorOrderByInput {
 
 type ColorPreviousValues {
   id: ID!
+  colorCode: String!
   hexCode: String!
   name: String
 }
@@ -694,12 +700,14 @@ input ColorSubscriptionWhereInput {
 }
 
 input ColorUpdateInput {
+  colorCode: String
   hexCode: String
   name: String
   productVariants: ProductVariantUpdateManyWithoutColorInput
 }
 
 input ColorUpdateManyMutationInput {
+  colorCode: String
   hexCode: String
   name: String
 }
@@ -712,6 +720,7 @@ input ColorUpdateOneRequiredWithoutProductVariantsInput {
 }
 
 input ColorUpdateWithoutProductVariantsDataInput {
+  colorCode: String
   hexCode: String
   name: String
 }
@@ -736,6 +745,20 @@ input ColorWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
+  colorCode: String
+  colorCode_not: String
+  colorCode_in: [String!]
+  colorCode_not_in: [String!]
+  colorCode_lt: String
+  colorCode_lte: String
+  colorCode_gt: String
+  colorCode_gte: String
+  colorCode_contains: String
+  colorCode_not_contains: String
+  colorCode_starts_with: String
+  colorCode_not_starts_with: String
+  colorCode_ends_with: String
+  colorCode_not_ends_with: String
   hexCode: String
   hexCode_not: String
   hexCode_in: [String!]
@@ -774,6 +797,7 @@ input ColorWhereInput {
 
 input ColorWhereUniqueInput {
   id: ID
+  colorCode: String
 }
 
 type Customer {
@@ -1123,6 +1147,194 @@ input ImageWhereUniqueInput {
   id: ID
 }
 
+type InventoryLevel {
+  id: ID!
+  product: Product!
+  productVariant: ProductVariant!
+  reservable: Int
+  reserved: Int
+  nonReservable: Int
+}
+
+type InventoryLevelConnection {
+  pageInfo: PageInfo!
+  edges: [InventoryLevelEdge]!
+  aggregate: AggregateInventoryLevel!
+}
+
+input InventoryLevelCreateInput {
+  id: ID
+  product: ProductCreateOneInput!
+  productVariant: ProductVariantCreateOneWithoutInventoryLevelInput!
+  reservable: Int
+  reserved: Int
+  nonReservable: Int
+}
+
+input InventoryLevelCreateOneInput {
+  create: InventoryLevelCreateInput
+  connect: InventoryLevelWhereUniqueInput
+}
+
+input InventoryLevelCreateOneWithoutProductVariantInput {
+  create: InventoryLevelCreateWithoutProductVariantInput
+  connect: InventoryLevelWhereUniqueInput
+}
+
+input InventoryLevelCreateWithoutProductVariantInput {
+  id: ID
+  product: ProductCreateOneInput!
+  reservable: Int
+  reserved: Int
+  nonReservable: Int
+}
+
+type InventoryLevelEdge {
+  node: InventoryLevel!
+  cursor: String!
+}
+
+enum InventoryLevelOrderByInput {
+  id_ASC
+  id_DESC
+  reservable_ASC
+  reservable_DESC
+  reserved_ASC
+  reserved_DESC
+  nonReservable_ASC
+  nonReservable_DESC
+}
+
+type InventoryLevelPreviousValues {
+  id: ID!
+  reservable: Int
+  reserved: Int
+  nonReservable: Int
+}
+
+type InventoryLevelSubscriptionPayload {
+  mutation: MutationType!
+  node: InventoryLevel
+  updatedFields: [String!]
+  previousValues: InventoryLevelPreviousValues
+}
+
+input InventoryLevelSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: InventoryLevelWhereInput
+  AND: [InventoryLevelSubscriptionWhereInput!]
+  OR: [InventoryLevelSubscriptionWhereInput!]
+  NOT: [InventoryLevelSubscriptionWhereInput!]
+}
+
+input InventoryLevelUpdateDataInput {
+  product: ProductUpdateOneRequiredInput
+  productVariant: ProductVariantUpdateOneRequiredWithoutInventoryLevelInput
+  reservable: Int
+  reserved: Int
+  nonReservable: Int
+}
+
+input InventoryLevelUpdateInput {
+  product: ProductUpdateOneRequiredInput
+  productVariant: ProductVariantUpdateOneRequiredWithoutInventoryLevelInput
+  reservable: Int
+  reserved: Int
+  nonReservable: Int
+}
+
+input InventoryLevelUpdateManyMutationInput {
+  reservable: Int
+  reserved: Int
+  nonReservable: Int
+}
+
+input InventoryLevelUpdateOneInput {
+  create: InventoryLevelCreateInput
+  update: InventoryLevelUpdateDataInput
+  upsert: InventoryLevelUpsertNestedInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: InventoryLevelWhereUniqueInput
+}
+
+input InventoryLevelUpdateOneRequiredWithoutProductVariantInput {
+  create: InventoryLevelCreateWithoutProductVariantInput
+  update: InventoryLevelUpdateWithoutProductVariantDataInput
+  upsert: InventoryLevelUpsertWithoutProductVariantInput
+  connect: InventoryLevelWhereUniqueInput
+}
+
+input InventoryLevelUpdateWithoutProductVariantDataInput {
+  product: ProductUpdateOneRequiredInput
+  reservable: Int
+  reserved: Int
+  nonReservable: Int
+}
+
+input InventoryLevelUpsertNestedInput {
+  update: InventoryLevelUpdateDataInput!
+  create: InventoryLevelCreateInput!
+}
+
+input InventoryLevelUpsertWithoutProductVariantInput {
+  update: InventoryLevelUpdateWithoutProductVariantDataInput!
+  create: InventoryLevelCreateWithoutProductVariantInput!
+}
+
+input InventoryLevelWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  product: ProductWhereInput
+  productVariant: ProductVariantWhereInput
+  reservable: Int
+  reservable_not: Int
+  reservable_in: [Int!]
+  reservable_not_in: [Int!]
+  reservable_lt: Int
+  reservable_lte: Int
+  reservable_gt: Int
+  reservable_gte: Int
+  reserved: Int
+  reserved_not: Int
+  reserved_in: [Int!]
+  reserved_not_in: [Int!]
+  reserved_lt: Int
+  reserved_lte: Int
+  reserved_gt: Int
+  reserved_gte: Int
+  nonReservable: Int
+  nonReservable_not: Int
+  nonReservable_in: [Int!]
+  nonReservable_not_in: [Int!]
+  nonReservable_lt: Int
+  nonReservable_lte: Int
+  nonReservable_gt: Int
+  nonReservable_gte: Int
+  AND: [InventoryLevelWhereInput!]
+  OR: [InventoryLevelWhereInput!]
+  NOT: [InventoryLevelWhereInput!]
+}
+
+input InventoryLevelWhereUniqueInput {
+  id: ID
+}
+
 scalar Json
 
 type Location {
@@ -1465,6 +1677,12 @@ type Mutation {
   upsertImage(where: ImageWhereUniqueInput!, create: ImageCreateInput!, update: ImageUpdateInput!): Image!
   deleteImage(where: ImageWhereUniqueInput!): Image
   deleteManyImages(where: ImageWhereInput): BatchPayload!
+  createInventoryLevel(data: InventoryLevelCreateInput!): InventoryLevel!
+  updateInventoryLevel(data: InventoryLevelUpdateInput!, where: InventoryLevelWhereUniqueInput!): InventoryLevel
+  updateManyInventoryLevels(data: InventoryLevelUpdateManyMutationInput!, where: InventoryLevelWhereInput): BatchPayload!
+  upsertInventoryLevel(where: InventoryLevelWhereUniqueInput!, create: InventoryLevelCreateInput!, update: InventoryLevelUpdateInput!): InventoryLevel!
+  deleteInventoryLevel(where: InventoryLevelWhereUniqueInput!): InventoryLevel
+  deleteManyInventoryLevels(where: InventoryLevelWhereInput): BatchPayload!
   createLocation(data: LocationCreateInput!): Location!
   updateLocation(data: LocationUpdateInput!, where: LocationWhereUniqueInput!): Location
   updateManyLocations(data: LocationUpdateManyMutationInput!, where: LocationWhereInput): BatchPayload!
@@ -1489,12 +1707,6 @@ type Mutation {
   upsertProductVariant(where: ProductVariantWhereUniqueInput!, create: ProductVariantCreateInput!, update: ProductVariantUpdateInput!): ProductVariant!
   deleteProductVariant(where: ProductVariantWhereUniqueInput!): ProductVariant
   deleteManyProductVariants(where: ProductVariantWhereInput): BatchPayload!
-  createProductVariantInventoryLevel(data: ProductVariantInventoryLevelCreateInput!): ProductVariantInventoryLevel!
-  updateProductVariantInventoryLevel(data: ProductVariantInventoryLevelUpdateInput!, where: ProductVariantInventoryLevelWhereUniqueInput!): ProductVariantInventoryLevel
-  updateManyProductVariantInventoryLevels(data: ProductVariantInventoryLevelUpdateManyMutationInput!, where: ProductVariantInventoryLevelWhereInput): BatchPayload!
-  upsertProductVariantInventoryLevel(where: ProductVariantInventoryLevelWhereUniqueInput!, create: ProductVariantInventoryLevelCreateInput!, update: ProductVariantInventoryLevelUpdateInput!): ProductVariantInventoryLevel!
-  deleteProductVariantInventoryLevel(where: ProductVariantInventoryLevelWhereUniqueInput!): ProductVariantInventoryLevel
-  deleteManyProductVariantInventoryLevels(where: ProductVariantInventoryLevelWhereInput): BatchPayload!
   createUser(data: UserCreateInput!): User!
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   updateManyUsers(data: UserUpdateManyMutationInput!, where: UserWhereInput): BatchPayload!
@@ -1525,7 +1737,7 @@ type PhysicalProduct {
   seasonsUID: String!
   location: Location
   productVariant: ProductVariant
-  inventoryLevel: ProductVariantInventoryLevel
+  inventoryLevel: InventoryLevel
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -1541,7 +1753,7 @@ input PhysicalProductCreateInput {
   seasonsUID: String!
   location: LocationCreateOneInput
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput
-  inventoryLevel: ProductVariantInventoryLevelCreateOneInput
+  inventoryLevel: InventoryLevelCreateOneInput
 }
 
 input PhysicalProductCreateManyWithoutProductVariantInput {
@@ -1553,7 +1765,7 @@ input PhysicalProductCreateWithoutProductVariantInput {
   id: ID
   seasonsUID: String!
   location: LocationCreateOneInput
-  inventoryLevel: ProductVariantInventoryLevelCreateOneInput
+  inventoryLevel: InventoryLevelCreateOneInput
 }
 
 type PhysicalProductEdge {
@@ -1651,7 +1863,7 @@ input PhysicalProductUpdateInput {
   seasonsUID: String
   location: LocationUpdateOneInput
   productVariant: ProductVariantUpdateOneWithoutPhysicalProductsInput
-  inventoryLevel: ProductVariantInventoryLevelUpdateOneInput
+  inventoryLevel: InventoryLevelUpdateOneInput
 }
 
 input PhysicalProductUpdateManyDataInput {
@@ -1682,7 +1894,7 @@ input PhysicalProductUpdateManyWithWhereNestedInput {
 input PhysicalProductUpdateWithoutProductVariantDataInput {
   seasonsUID: String
   location: LocationUpdateOneInput
-  inventoryLevel: ProductVariantInventoryLevelUpdateOneInput
+  inventoryLevel: InventoryLevelUpdateOneInput
 }
 
 input PhysicalProductUpdateWithWhereUniqueWithoutProductVariantInput {
@@ -1727,7 +1939,7 @@ input PhysicalProductWhereInput {
   seasonsUID_not_ends_with: String
   location: LocationWhereInput
   productVariant: ProductVariantWhereInput
-  inventoryLevel: ProductVariantInventoryLevelWhereInput
+  inventoryLevel: InventoryLevelWhereInput
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -2129,14 +2341,14 @@ input ProductUpsertWithWhereUniqueWithoutCategoryInput {
 type ProductVariant {
   id: ID!
   sku: String
-  upc: Int
+  upc: String
   color: Color!
   weight: Int
   height: Int
   product: Product!
   retailPrice: Int
   images: Json
-  inventoryLevels(where: ProductVariantInventoryLevelWhereInput, orderBy: ProductVariantInventoryLevelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariantInventoryLevel!]
+  inventoryLevel: InventoryLevel!
   physicalProducts(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct!]
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -2151,14 +2363,14 @@ type ProductVariantConnection {
 input ProductVariantCreateInput {
   id: ID
   sku: String
-  upc: Int
+  upc: String
   color: ColorCreateOneWithoutProductVariantsInput!
   weight: Int
   height: Int
   product: ProductCreateOneInput!
   retailPrice: Int
   images: Json
-  inventoryLevels: ProductVariantInventoryLevelCreateManyWithoutProductVariantInput
+  inventoryLevel: InventoryLevelCreateOneWithoutProductVariantInput!
   physicalProducts: PhysicalProductCreateManyWithoutProductVariantInput
 }
 
@@ -2172,8 +2384,8 @@ input ProductVariantCreateManyWithoutColorInput {
   connect: [ProductVariantWhereUniqueInput!]
 }
 
-input ProductVariantCreateOneWithoutInventoryLevelsInput {
-  create: ProductVariantCreateWithoutInventoryLevelsInput
+input ProductVariantCreateOneWithoutInventoryLevelInput {
+  create: ProductVariantCreateWithoutInventoryLevelInput
   connect: ProductVariantWhereUniqueInput
 }
 
@@ -2185,20 +2397,20 @@ input ProductVariantCreateOneWithoutPhysicalProductsInput {
 input ProductVariantCreateWithoutColorInput {
   id: ID
   sku: String
-  upc: Int
+  upc: String
   weight: Int
   height: Int
   product: ProductCreateOneInput!
   retailPrice: Int
   images: Json
-  inventoryLevels: ProductVariantInventoryLevelCreateManyWithoutProductVariantInput
+  inventoryLevel: InventoryLevelCreateOneWithoutProductVariantInput!
   physicalProducts: PhysicalProductCreateManyWithoutProductVariantInput
 }
 
-input ProductVariantCreateWithoutInventoryLevelsInput {
+input ProductVariantCreateWithoutInventoryLevelInput {
   id: ID
   sku: String
-  upc: Int
+  upc: String
   color: ColorCreateOneWithoutProductVariantsInput!
   weight: Int
   height: Int
@@ -2211,273 +2423,19 @@ input ProductVariantCreateWithoutInventoryLevelsInput {
 input ProductVariantCreateWithoutPhysicalProductsInput {
   id: ID
   sku: String
-  upc: Int
+  upc: String
   color: ColorCreateOneWithoutProductVariantsInput!
   weight: Int
   height: Int
   product: ProductCreateOneInput!
   retailPrice: Int
   images: Json
-  inventoryLevels: ProductVariantInventoryLevelCreateManyWithoutProductVariantInput
+  inventoryLevel: InventoryLevelCreateOneWithoutProductVariantInput!
 }
 
 type ProductVariantEdge {
   node: ProductVariant!
   cursor: String!
-}
-
-type ProductVariantInventoryLevel {
-  id: ID!
-  product: Product!
-  productVariant: ProductVariant!
-  nonReservablePhysicalProducts: Int
-  reservablePhysicalProducts: Int
-  reservedPhysicalProducts: Int
-}
-
-type ProductVariantInventoryLevelConnection {
-  pageInfo: PageInfo!
-  edges: [ProductVariantInventoryLevelEdge]!
-  aggregate: AggregateProductVariantInventoryLevel!
-}
-
-input ProductVariantInventoryLevelCreateInput {
-  id: ID
-  product: ProductCreateOneInput!
-  productVariant: ProductVariantCreateOneWithoutInventoryLevelsInput!
-  nonReservablePhysicalProducts: Int
-  reservablePhysicalProducts: Int
-  reservedPhysicalProducts: Int
-}
-
-input ProductVariantInventoryLevelCreateManyWithoutProductVariantInput {
-  create: [ProductVariantInventoryLevelCreateWithoutProductVariantInput!]
-  connect: [ProductVariantInventoryLevelWhereUniqueInput!]
-}
-
-input ProductVariantInventoryLevelCreateOneInput {
-  create: ProductVariantInventoryLevelCreateInput
-  connect: ProductVariantInventoryLevelWhereUniqueInput
-}
-
-input ProductVariantInventoryLevelCreateWithoutProductVariantInput {
-  id: ID
-  product: ProductCreateOneInput!
-  nonReservablePhysicalProducts: Int
-  reservablePhysicalProducts: Int
-  reservedPhysicalProducts: Int
-}
-
-type ProductVariantInventoryLevelEdge {
-  node: ProductVariantInventoryLevel!
-  cursor: String!
-}
-
-enum ProductVariantInventoryLevelOrderByInput {
-  id_ASC
-  id_DESC
-  nonReservablePhysicalProducts_ASC
-  nonReservablePhysicalProducts_DESC
-  reservablePhysicalProducts_ASC
-  reservablePhysicalProducts_DESC
-  reservedPhysicalProducts_ASC
-  reservedPhysicalProducts_DESC
-}
-
-type ProductVariantInventoryLevelPreviousValues {
-  id: ID!
-  nonReservablePhysicalProducts: Int
-  reservablePhysicalProducts: Int
-  reservedPhysicalProducts: Int
-}
-
-input ProductVariantInventoryLevelScalarWhereInput {
-  id: ID
-  id_not: ID
-  id_in: [ID!]
-  id_not_in: [ID!]
-  id_lt: ID
-  id_lte: ID
-  id_gt: ID
-  id_gte: ID
-  id_contains: ID
-  id_not_contains: ID
-  id_starts_with: ID
-  id_not_starts_with: ID
-  id_ends_with: ID
-  id_not_ends_with: ID
-  nonReservablePhysicalProducts: Int
-  nonReservablePhysicalProducts_not: Int
-  nonReservablePhysicalProducts_in: [Int!]
-  nonReservablePhysicalProducts_not_in: [Int!]
-  nonReservablePhysicalProducts_lt: Int
-  nonReservablePhysicalProducts_lte: Int
-  nonReservablePhysicalProducts_gt: Int
-  nonReservablePhysicalProducts_gte: Int
-  reservablePhysicalProducts: Int
-  reservablePhysicalProducts_not: Int
-  reservablePhysicalProducts_in: [Int!]
-  reservablePhysicalProducts_not_in: [Int!]
-  reservablePhysicalProducts_lt: Int
-  reservablePhysicalProducts_lte: Int
-  reservablePhysicalProducts_gt: Int
-  reservablePhysicalProducts_gte: Int
-  reservedPhysicalProducts: Int
-  reservedPhysicalProducts_not: Int
-  reservedPhysicalProducts_in: [Int!]
-  reservedPhysicalProducts_not_in: [Int!]
-  reservedPhysicalProducts_lt: Int
-  reservedPhysicalProducts_lte: Int
-  reservedPhysicalProducts_gt: Int
-  reservedPhysicalProducts_gte: Int
-  AND: [ProductVariantInventoryLevelScalarWhereInput!]
-  OR: [ProductVariantInventoryLevelScalarWhereInput!]
-  NOT: [ProductVariantInventoryLevelScalarWhereInput!]
-}
-
-type ProductVariantInventoryLevelSubscriptionPayload {
-  mutation: MutationType!
-  node: ProductVariantInventoryLevel
-  updatedFields: [String!]
-  previousValues: ProductVariantInventoryLevelPreviousValues
-}
-
-input ProductVariantInventoryLevelSubscriptionWhereInput {
-  mutation_in: [MutationType!]
-  updatedFields_contains: String
-  updatedFields_contains_every: [String!]
-  updatedFields_contains_some: [String!]
-  node: ProductVariantInventoryLevelWhereInput
-  AND: [ProductVariantInventoryLevelSubscriptionWhereInput!]
-  OR: [ProductVariantInventoryLevelSubscriptionWhereInput!]
-  NOT: [ProductVariantInventoryLevelSubscriptionWhereInput!]
-}
-
-input ProductVariantInventoryLevelUpdateDataInput {
-  product: ProductUpdateOneRequiredInput
-  productVariant: ProductVariantUpdateOneRequiredWithoutInventoryLevelsInput
-  nonReservablePhysicalProducts: Int
-  reservablePhysicalProducts: Int
-  reservedPhysicalProducts: Int
-}
-
-input ProductVariantInventoryLevelUpdateInput {
-  product: ProductUpdateOneRequiredInput
-  productVariant: ProductVariantUpdateOneRequiredWithoutInventoryLevelsInput
-  nonReservablePhysicalProducts: Int
-  reservablePhysicalProducts: Int
-  reservedPhysicalProducts: Int
-}
-
-input ProductVariantInventoryLevelUpdateManyDataInput {
-  nonReservablePhysicalProducts: Int
-  reservablePhysicalProducts: Int
-  reservedPhysicalProducts: Int
-}
-
-input ProductVariantInventoryLevelUpdateManyMutationInput {
-  nonReservablePhysicalProducts: Int
-  reservablePhysicalProducts: Int
-  reservedPhysicalProducts: Int
-}
-
-input ProductVariantInventoryLevelUpdateManyWithoutProductVariantInput {
-  create: [ProductVariantInventoryLevelCreateWithoutProductVariantInput!]
-  delete: [ProductVariantInventoryLevelWhereUniqueInput!]
-  connect: [ProductVariantInventoryLevelWhereUniqueInput!]
-  set: [ProductVariantInventoryLevelWhereUniqueInput!]
-  disconnect: [ProductVariantInventoryLevelWhereUniqueInput!]
-  update: [ProductVariantInventoryLevelUpdateWithWhereUniqueWithoutProductVariantInput!]
-  upsert: [ProductVariantInventoryLevelUpsertWithWhereUniqueWithoutProductVariantInput!]
-  deleteMany: [ProductVariantInventoryLevelScalarWhereInput!]
-  updateMany: [ProductVariantInventoryLevelUpdateManyWithWhereNestedInput!]
-}
-
-input ProductVariantInventoryLevelUpdateManyWithWhereNestedInput {
-  where: ProductVariantInventoryLevelScalarWhereInput!
-  data: ProductVariantInventoryLevelUpdateManyDataInput!
-}
-
-input ProductVariantInventoryLevelUpdateOneInput {
-  create: ProductVariantInventoryLevelCreateInput
-  update: ProductVariantInventoryLevelUpdateDataInput
-  upsert: ProductVariantInventoryLevelUpsertNestedInput
-  delete: Boolean
-  disconnect: Boolean
-  connect: ProductVariantInventoryLevelWhereUniqueInput
-}
-
-input ProductVariantInventoryLevelUpdateWithoutProductVariantDataInput {
-  product: ProductUpdateOneRequiredInput
-  nonReservablePhysicalProducts: Int
-  reservablePhysicalProducts: Int
-  reservedPhysicalProducts: Int
-}
-
-input ProductVariantInventoryLevelUpdateWithWhereUniqueWithoutProductVariantInput {
-  where: ProductVariantInventoryLevelWhereUniqueInput!
-  data: ProductVariantInventoryLevelUpdateWithoutProductVariantDataInput!
-}
-
-input ProductVariantInventoryLevelUpsertNestedInput {
-  update: ProductVariantInventoryLevelUpdateDataInput!
-  create: ProductVariantInventoryLevelCreateInput!
-}
-
-input ProductVariantInventoryLevelUpsertWithWhereUniqueWithoutProductVariantInput {
-  where: ProductVariantInventoryLevelWhereUniqueInput!
-  update: ProductVariantInventoryLevelUpdateWithoutProductVariantDataInput!
-  create: ProductVariantInventoryLevelCreateWithoutProductVariantInput!
-}
-
-input ProductVariantInventoryLevelWhereInput {
-  id: ID
-  id_not: ID
-  id_in: [ID!]
-  id_not_in: [ID!]
-  id_lt: ID
-  id_lte: ID
-  id_gt: ID
-  id_gte: ID
-  id_contains: ID
-  id_not_contains: ID
-  id_starts_with: ID
-  id_not_starts_with: ID
-  id_ends_with: ID
-  id_not_ends_with: ID
-  product: ProductWhereInput
-  productVariant: ProductVariantWhereInput
-  nonReservablePhysicalProducts: Int
-  nonReservablePhysicalProducts_not: Int
-  nonReservablePhysicalProducts_in: [Int!]
-  nonReservablePhysicalProducts_not_in: [Int!]
-  nonReservablePhysicalProducts_lt: Int
-  nonReservablePhysicalProducts_lte: Int
-  nonReservablePhysicalProducts_gt: Int
-  nonReservablePhysicalProducts_gte: Int
-  reservablePhysicalProducts: Int
-  reservablePhysicalProducts_not: Int
-  reservablePhysicalProducts_in: [Int!]
-  reservablePhysicalProducts_not_in: [Int!]
-  reservablePhysicalProducts_lt: Int
-  reservablePhysicalProducts_lte: Int
-  reservablePhysicalProducts_gt: Int
-  reservablePhysicalProducts_gte: Int
-  reservedPhysicalProducts: Int
-  reservedPhysicalProducts_not: Int
-  reservedPhysicalProducts_in: [Int!]
-  reservedPhysicalProducts_not_in: [Int!]
-  reservedPhysicalProducts_lt: Int
-  reservedPhysicalProducts_lte: Int
-  reservedPhysicalProducts_gt: Int
-  reservedPhysicalProducts_gte: Int
-  AND: [ProductVariantInventoryLevelWhereInput!]
-  OR: [ProductVariantInventoryLevelWhereInput!]
-  NOT: [ProductVariantInventoryLevelWhereInput!]
-}
-
-input ProductVariantInventoryLevelWhereUniqueInput {
-  id: ID
 }
 
 enum ProductVariantOrderByInput {
@@ -2504,7 +2462,7 @@ enum ProductVariantOrderByInput {
 type ProductVariantPreviousValues {
   id: ID!
   sku: String
-  upc: Int
+  upc: String
   weight: Int
   height: Int
   retailPrice: Int
@@ -2542,14 +2500,20 @@ input ProductVariantScalarWhereInput {
   sku_not_starts_with: String
   sku_ends_with: String
   sku_not_ends_with: String
-  upc: Int
-  upc_not: Int
-  upc_in: [Int!]
-  upc_not_in: [Int!]
-  upc_lt: Int
-  upc_lte: Int
-  upc_gt: Int
-  upc_gte: Int
+  upc: String
+  upc_not: String
+  upc_in: [String!]
+  upc_not_in: [String!]
+  upc_lt: String
+  upc_lte: String
+  upc_gt: String
+  upc_gte: String
+  upc_contains: String
+  upc_not_contains: String
+  upc_starts_with: String
+  upc_not_starts_with: String
+  upc_ends_with: String
+  upc_not_ends_with: String
   weight: Int
   weight_not: Int
   weight_in: [Int!]
@@ -2615,33 +2579,33 @@ input ProductVariantSubscriptionWhereInput {
 
 input ProductVariantUpdateDataInput {
   sku: String
-  upc: Int
+  upc: String
   color: ColorUpdateOneRequiredWithoutProductVariantsInput
   weight: Int
   height: Int
   product: ProductUpdateOneRequiredInput
   retailPrice: Int
   images: Json
-  inventoryLevels: ProductVariantInventoryLevelUpdateManyWithoutProductVariantInput
+  inventoryLevel: InventoryLevelUpdateOneRequiredWithoutProductVariantInput
   physicalProducts: PhysicalProductUpdateManyWithoutProductVariantInput
 }
 
 input ProductVariantUpdateInput {
   sku: String
-  upc: Int
+  upc: String
   color: ColorUpdateOneRequiredWithoutProductVariantsInput
   weight: Int
   height: Int
   product: ProductUpdateOneRequiredInput
   retailPrice: Int
   images: Json
-  inventoryLevels: ProductVariantInventoryLevelUpdateManyWithoutProductVariantInput
+  inventoryLevel: InventoryLevelUpdateOneRequiredWithoutProductVariantInput
   physicalProducts: PhysicalProductUpdateManyWithoutProductVariantInput
 }
 
 input ProductVariantUpdateManyDataInput {
   sku: String
-  upc: Int
+  upc: String
   weight: Int
   height: Int
   retailPrice: Int
@@ -2662,7 +2626,7 @@ input ProductVariantUpdateManyInput {
 
 input ProductVariantUpdateManyMutationInput {
   sku: String
-  upc: Int
+  upc: String
   weight: Int
   height: Int
   retailPrice: Int
@@ -2686,10 +2650,10 @@ input ProductVariantUpdateManyWithWhereNestedInput {
   data: ProductVariantUpdateManyDataInput!
 }
 
-input ProductVariantUpdateOneRequiredWithoutInventoryLevelsInput {
-  create: ProductVariantCreateWithoutInventoryLevelsInput
-  update: ProductVariantUpdateWithoutInventoryLevelsDataInput
-  upsert: ProductVariantUpsertWithoutInventoryLevelsInput
+input ProductVariantUpdateOneRequiredWithoutInventoryLevelInput {
+  create: ProductVariantCreateWithoutInventoryLevelInput
+  update: ProductVariantUpdateWithoutInventoryLevelDataInput
+  upsert: ProductVariantUpsertWithoutInventoryLevelInput
   connect: ProductVariantWhereUniqueInput
 }
 
@@ -2704,19 +2668,19 @@ input ProductVariantUpdateOneWithoutPhysicalProductsInput {
 
 input ProductVariantUpdateWithoutColorDataInput {
   sku: String
-  upc: Int
+  upc: String
   weight: Int
   height: Int
   product: ProductUpdateOneRequiredInput
   retailPrice: Int
   images: Json
-  inventoryLevels: ProductVariantInventoryLevelUpdateManyWithoutProductVariantInput
+  inventoryLevel: InventoryLevelUpdateOneRequiredWithoutProductVariantInput
   physicalProducts: PhysicalProductUpdateManyWithoutProductVariantInput
 }
 
-input ProductVariantUpdateWithoutInventoryLevelsDataInput {
+input ProductVariantUpdateWithoutInventoryLevelDataInput {
   sku: String
-  upc: Int
+  upc: String
   color: ColorUpdateOneRequiredWithoutProductVariantsInput
   weight: Int
   height: Int
@@ -2728,14 +2692,14 @@ input ProductVariantUpdateWithoutInventoryLevelsDataInput {
 
 input ProductVariantUpdateWithoutPhysicalProductsDataInput {
   sku: String
-  upc: Int
+  upc: String
   color: ColorUpdateOneRequiredWithoutProductVariantsInput
   weight: Int
   height: Int
   product: ProductUpdateOneRequiredInput
   retailPrice: Int
   images: Json
-  inventoryLevels: ProductVariantInventoryLevelUpdateManyWithoutProductVariantInput
+  inventoryLevel: InventoryLevelUpdateOneRequiredWithoutProductVariantInput
 }
 
 input ProductVariantUpdateWithWhereUniqueNestedInput {
@@ -2748,9 +2712,9 @@ input ProductVariantUpdateWithWhereUniqueWithoutColorInput {
   data: ProductVariantUpdateWithoutColorDataInput!
 }
 
-input ProductVariantUpsertWithoutInventoryLevelsInput {
-  update: ProductVariantUpdateWithoutInventoryLevelsDataInput!
-  create: ProductVariantCreateWithoutInventoryLevelsInput!
+input ProductVariantUpsertWithoutInventoryLevelInput {
+  update: ProductVariantUpdateWithoutInventoryLevelDataInput!
+  create: ProductVariantCreateWithoutInventoryLevelInput!
 }
 
 input ProductVariantUpsertWithoutPhysicalProductsInput {
@@ -2799,14 +2763,20 @@ input ProductVariantWhereInput {
   sku_not_starts_with: String
   sku_ends_with: String
   sku_not_ends_with: String
-  upc: Int
-  upc_not: Int
-  upc_in: [Int!]
-  upc_not_in: [Int!]
-  upc_lt: Int
-  upc_lte: Int
-  upc_gt: Int
-  upc_gte: Int
+  upc: String
+  upc_not: String
+  upc_in: [String!]
+  upc_not_in: [String!]
+  upc_lt: String
+  upc_lte: String
+  upc_gt: String
+  upc_gte: String
+  upc_contains: String
+  upc_not_contains: String
+  upc_starts_with: String
+  upc_not_starts_with: String
+  upc_ends_with: String
+  upc_not_ends_with: String
   color: ColorWhereInput
   weight: Int
   weight_not: Int
@@ -2833,9 +2803,7 @@ input ProductVariantWhereInput {
   retailPrice_lte: Int
   retailPrice_gt: Int
   retailPrice_gte: Int
-  inventoryLevels_every: ProductVariantInventoryLevelWhereInput
-  inventoryLevels_some: ProductVariantInventoryLevelWhereInput
-  inventoryLevels_none: ProductVariantInventoryLevelWhereInput
+  inventoryLevel: InventoryLevelWhereInput
   physicalProducts_every: PhysicalProductWhereInput
   physicalProducts_some: PhysicalProductWhereInput
   physicalProducts_none: PhysicalProductWhereInput
@@ -2987,6 +2955,9 @@ type Query {
   image(where: ImageWhereUniqueInput!): Image
   images(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Image]!
   imagesConnection(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ImageConnection!
+  inventoryLevel(where: InventoryLevelWhereUniqueInput!): InventoryLevel
+  inventoryLevels(where: InventoryLevelWhereInput, orderBy: InventoryLevelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [InventoryLevel]!
+  inventoryLevelsConnection(where: InventoryLevelWhereInput, orderBy: InventoryLevelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): InventoryLevelConnection!
   location(where: LocationWhereUniqueInput!): Location
   locations(where: LocationWhereInput, orderBy: LocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Location]!
   locationsConnection(where: LocationWhereInput, orderBy: LocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): LocationConnection!
@@ -2999,9 +2970,6 @@ type Query {
   productVariant(where: ProductVariantWhereUniqueInput!): ProductVariant
   productVariants(where: ProductVariantWhereInput, orderBy: ProductVariantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariant]!
   productVariantsConnection(where: ProductVariantWhereInput, orderBy: ProductVariantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductVariantConnection!
-  productVariantInventoryLevel(where: ProductVariantInventoryLevelWhereUniqueInput!): ProductVariantInventoryLevel
-  productVariantInventoryLevels(where: ProductVariantInventoryLevelWhereInput, orderBy: ProductVariantInventoryLevelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariantInventoryLevel]!
-  productVariantInventoryLevelsConnection(where: ProductVariantInventoryLevelWhereInput, orderBy: ProductVariantInventoryLevelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductVariantInventoryLevelConnection!
   user(where: UserWhereUniqueInput!): User
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
@@ -3023,20 +2991,22 @@ type Subscription {
   color(where: ColorSubscriptionWhereInput): ColorSubscriptionPayload
   customer(where: CustomerSubscriptionWhereInput): CustomerSubscriptionPayload
   image(where: ImageSubscriptionWhereInput): ImageSubscriptionPayload
+  inventoryLevel(where: InventoryLevelSubscriptionWhereInput): InventoryLevelSubscriptionPayload
   location(where: LocationSubscriptionWhereInput): LocationSubscriptionPayload
   physicalProduct(where: PhysicalProductSubscriptionWhereInput): PhysicalProductSubscriptionPayload
   product(where: ProductSubscriptionWhereInput): ProductSubscriptionPayload
   productVariant(where: ProductVariantSubscriptionWhereInput): ProductVariantSubscriptionPayload
-  productVariantInventoryLevel(where: ProductVariantInventoryLevelSubscriptionWhereInput): ProductVariantInventoryLevelSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
 }
 
 type User {
   id: ID!
+  auth0Id: String!
   email: String!
   firstName: String!
   lastName: String!
   password: String!
+  avatar: String
   role: UserRole!
 }
 
@@ -3048,10 +3018,12 @@ type UserConnection {
 
 input UserCreateInput {
   id: ID
+  auth0Id: String!
   email: String!
   firstName: String!
   lastName: String!
   password: String!
+  avatar: String
   role: UserRole
 }
 
@@ -3068,6 +3040,8 @@ type UserEdge {
 enum UserOrderByInput {
   id_ASC
   id_DESC
+  auth0Id_ASC
+  auth0Id_DESC
   email_ASC
   email_DESC
   firstName_ASC
@@ -3076,16 +3050,20 @@ enum UserOrderByInput {
   lastName_DESC
   password_ASC
   password_DESC
+  avatar_ASC
+  avatar_DESC
   role_ASC
   role_DESC
 }
 
 type UserPreviousValues {
   id: ID!
+  auth0Id: String!
   email: String!
   firstName: String!
   lastName: String!
   password: String!
+  avatar: String
   role: UserRole!
 }
 
@@ -3114,26 +3092,32 @@ input UserSubscriptionWhereInput {
 }
 
 input UserUpdateDataInput {
+  auth0Id: String
   email: String
   firstName: String
   lastName: String
   password: String
+  avatar: String
   role: UserRole
 }
 
 input UserUpdateInput {
+  auth0Id: String
   email: String
   firstName: String
   lastName: String
   password: String
+  avatar: String
   role: UserRole
 }
 
 input UserUpdateManyMutationInput {
+  auth0Id: String
   email: String
   firstName: String
   lastName: String
   password: String
+  avatar: String
   role: UserRole
 }
 
@@ -3173,6 +3157,20 @@ input UserWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
+  auth0Id: String
+  auth0Id_not: String
+  auth0Id_in: [String!]
+  auth0Id_not_in: [String!]
+  auth0Id_lt: String
+  auth0Id_lte: String
+  auth0Id_gt: String
+  auth0Id_gte: String
+  auth0Id_contains: String
+  auth0Id_not_contains: String
+  auth0Id_starts_with: String
+  auth0Id_not_starts_with: String
+  auth0Id_ends_with: String
+  auth0Id_not_ends_with: String
   email: String
   email_not: String
   email_in: [String!]
@@ -3229,6 +3227,20 @@ input UserWhereInput {
   password_not_starts_with: String
   password_ends_with: String
   password_not_ends_with: String
+  avatar: String
+  avatar_not: String
+  avatar_in: [String!]
+  avatar_not_in: [String!]
+  avatar_lt: String
+  avatar_lte: String
+  avatar_gt: String
+  avatar_gte: String
+  avatar_contains: String
+  avatar_not_contains: String
+  avatar_starts_with: String
+  avatar_not_starts_with: String
+  avatar_ends_with: String
+  avatar_not_ends_with: String
   role: UserRole
   role_not: UserRole
   role_in: [UserRole!]
@@ -3240,6 +3252,7 @@ input UserWhereInput {
 
 input UserWhereUniqueInput {
   id: ID
+  auth0Id: String
   email: String
 }
 `
