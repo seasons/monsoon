@@ -1,5 +1,10 @@
 # import Category, User, Bag from "./prisma/prisma.graphql"
 
+directive @isAuthenticated on QUERY | FIELD | MUTATION
+directive @hasRole(roles: [String]) on QUERY | FIELD | MUTATION
+directive @isOwner(type: String) on QUERY | MUTATION
+directive @isOwnerOrHasRole(type: String, roles: [String]) on QUERY | MUTATION
+
 type Query {
   me: User
   products(
@@ -26,6 +31,7 @@ type Query {
 type Mutation {
   signup(email: String!, password: String!, name: String!): AuthPayload!
   login(email: String!, password: String!): AuthPayload!
+  authenticate(idToken: String!): User
 }
 
 type AuthPayload {

@@ -1,32 +1,22 @@
-import * as bcrypt from "bcryptjs"
-import * as jwt from "jsonwebtoken"
-import { Context } from "../../utils"
+import {
+  Context,
+  validateAndParseIdToken,
+  createPrismaUser,
+} from "../../auth/utils"
 
 export const auth = {
-  async signup(parent, args, ctx: Context) {
-    const password = await bcrypt.hash(args.password, 10)
-    const user = await ctx.prisma.createUser({ ...args, password })
-
-    return {
-      token: jwt.sign({ userId: user.id }, process.env.APP_SECRET),
-      user,
+  async authenticate(parent, { idToken }, ctx: Context, info) {
+    let userToken = null
+    try {
+      userToken = await validateAndParseIdToken(idToken)
+    } catch (err) {
+      throw new Error(err.message)
     }
-  },
-
-  async login(parent, { email, password }, ctx: Context) {
-    const user = await ctx.prisma.user({ email })
+    const auth0id = userToken.sub.split("|")[1]
+    let user = await ctx.db.query.user({ where: { auth0id } }, info)
     if (!user) {
-      throw new Error(`No such user found for email: ${email}`)
+      user = createPrismaUser(ctx, userToken)
     }
-
-    const valid = await bcrypt.compare(password, (user as any).password)
-    if (!valid) {
-      throw new Error("Invalid password")
-    }
-
-    return {
-      token: jwt.sign({ userId: user.id }, process.env.APP_SECRET),
-      user,
-    }
+    return user
   },
 }

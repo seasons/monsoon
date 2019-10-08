@@ -1,3 +1,3 @@
-import { Context } from "../utils"
+import { Context } from "../auth/utils"
 
 export const User = {}

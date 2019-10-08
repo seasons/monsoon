@@ -1,9 +1,9 @@
-import { getUserId, Context } from "../utils"
+import { getUserId, Context } from "../auth/utils"
 import { ProductWhereInput } from "../prisma"
 
 export const Query = {
-  me(parent, args, ctx: Context) {
-    const id = getUserId(ctx)
+  async me(parent, args, ctx: Context) {
+    const id = await getUserId(ctx)
     return ctx.prisma.user({ id })
   },
   products(parent, args, ctx: Context, info) {
