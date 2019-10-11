@@ -12,7 +12,7 @@ You can explore the Monsoon API using the staging [GraphQL Playground](https://e
 - **Scalable GraphQL server:** The server uses [`apollo-server`](https://github.com/prisma/graphql-yoga) which is based on Apollo Server & Express
 - **Static type generation**: TypeScript types for GraphQL queries & mutations are generated in a build step
 - **Authentication**: Signup and login workflows are ready to use for your users
-- **GraphQL database:** Includes GraphQL database binding to [Prisma](https://www.prismagraphql.com) (running on MySQL)
+- **GraphQL database:** Includes GraphQL database binding to [Prisma](https://www.prismagraphql.com) (running on Postgres)
 - **Tooling**: Out-of-the-box support for [GraphQL Playground](https://github.com/prisma/graphql-playground) & [query performance tracing](https://github.com/apollographql/apollo-tracing)
 - **Extensible**: Simple and flexible [data model](./database/datamodel.graphql) – easy to adjust and extend
 - **No configuration overhead**: Preconfigured [`graphql-config`](https://github.com/prisma/graphql-config) setup
@@ -20,11 +20,12 @@ You can explore the Monsoon API using the staging [GraphQL Playground](https://e
 
 ## Requirements
 
-You need to have both the [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html) and [Serverless CLI](https://serverless.com/) installed and setup;
-
+1. You need to have both the [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html) and [Serverless CLI](https://serverless.com/) installed and setup;
 ```sh
 npm install -g serverless
 ```
+2. Docker command line tools. You can get them by visiting the [Docker Website](https://www.docker.com/products/docker-desktop) and downloading the desktop client.
+3. Access to the Seasons [Airtable](https://airtable.com/) workspace. 
 
 ## Getting started
 
@@ -35,11 +36,16 @@ yarn install
 # 2. Setup an environment variable file
 cp .env.example .env
 
-# 3. Start server (runs on http://localhost:3000/playground) and open GraphQL Playground
+# 3. Create your local Prisma Server and Postgres instances
+docker-compose up -d
+
+# 4. Seed the database (make sure you've set your airtable API Key in the .env file first. See https://airtable.com/account. You may need to be added to the seasons airtable workspace first.
+yarn seed-db
+
+# 3. Start server (runs on http://localhost:4000/playground) and open GraphQL Playground
 yarn start
 ```
-
-To verify the server is setup properly. go open the [playground](http://localhost:3000/playground) and run the following query
+To verify the server is setup properly. go open the [playground](http://localhost:4000/playground) and run the following query
 
 ```graphql
 {
