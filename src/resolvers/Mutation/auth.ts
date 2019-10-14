@@ -1,22 +1,52 @@
 import {
-  Context,
-  validateAndParseIdToken,
-  createPrismaUser,
+    Context,
+    createPrismaUser,
+    createAuth0User,
+    getAuth0UserAccessToken
 } from "../../auth/utils"
+import { UserInputError, ForbiddenError } from 'apollo-server'
 
 export const auth = {
-  async authenticate(parent, { idToken }, ctx: Context, info) {
-    let userToken = null
-    try {
-      userToken = await validateAndParseIdToken(idToken)
-    } catch (err) {
-      throw new Error(err.message)
+    // The signup mutation signs up users with a "Customer" role.
+    async signup(obj, { email, password, firstName, lastName }, ctx: Context, info) {
+        // Register the user on Auth0
+        let userAuth0ID
+        try {
+            userAuth0ID = await createAuth0User(email, password)
+        } catch (err) {
+            if (err.message.includes("400")) {
+                throw new UserInputError(err)
+            }
+            throw new Error(err)
+        }
+
+        // Get their API access token
+        let token
+        try {
+            token = await getAuth0UserAccessToken(email, password)
+        } catch (err) {
+            if (err.message.includes("403")) {
+                throw new ForbiddenError(err)
+            }
+            throw new UserInputError(err)
+        }
+
+        // Create a user object in our database
+        let user
+        try {
+            user = createPrismaUser(ctx, {
+                auth0Id: userAuth0ID,
+                email,
+                firstName,
+                lastName
+            })
+        } catch (err) {
+            throw new Error(err)
+        }
+
+        return {
+            token,
+            user
+        }
     }
-    const auth0id = userToken.sub.split("|")[1]
-    let user = await ctx.db.query.user({ where: { auth0id } }, info)
-    if (!user) {
-      user = createPrismaUser(ctx, userToken)
-    }
-    return user
-  },
 }

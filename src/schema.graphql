@@ -29,9 +29,8 @@ type Query {
 }
 
 type Mutation {
-  signup(email: String!, password: String!, name: String!): AuthPayload!
+  signup(email: String!, password: String!, firstName: String!, lastName: String!): AuthPayload!
   login(email: String!, password: String!): AuthPayload!
-  authenticate(idToken: String!): User
 }
 
 type AuthPayload {
@@ -46,7 +45,6 @@ type Image {
   imageURL: String
   originalHeight: Int
   originalWidth: Int
-
   resized(width: Int, height: Int, version: [String]): ResizedImageUrl
 }
 

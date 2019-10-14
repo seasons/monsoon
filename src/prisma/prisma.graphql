@@ -3001,8 +3001,6 @@ type User {
   email: String!
   firstName: String!
   lastName: String!
-  password: String!
-  avatar: String
   role: UserRole!
 }
 
@@ -3018,8 +3016,6 @@ input UserCreateInput {
   email: String!
   firstName: String!
   lastName: String!
-  password: String!
-  avatar: String
   role: UserRole
 }
 
@@ -3044,10 +3040,6 @@ enum UserOrderByInput {
   firstName_DESC
   lastName_ASC
   lastName_DESC
-  password_ASC
-  password_DESC
-  avatar_ASC
-  avatar_DESC
   role_ASC
   role_DESC
 }
@@ -3058,8 +3050,6 @@ type UserPreviousValues {
   email: String!
   firstName: String!
   lastName: String!
-  password: String!
-  avatar: String
   role: UserRole!
 }
 
@@ -3092,8 +3082,6 @@ input UserUpdateDataInput {
   email: String
   firstName: String
   lastName: String
-  password: String
-  avatar: String
   role: UserRole
 }
 
@@ -3102,8 +3090,6 @@ input UserUpdateInput {
   email: String
   firstName: String
   lastName: String
-  password: String
-  avatar: String
   role: UserRole
 }
 
@@ -3112,8 +3098,6 @@ input UserUpdateManyMutationInput {
   email: String
   firstName: String
   lastName: String
-  password: String
-  avatar: String
   role: UserRole
 }
 
@@ -3209,34 +3193,6 @@ input UserWhereInput {
   lastName_not_starts_with: String
   lastName_ends_with: String
   lastName_not_ends_with: String
-  password: String
-  password_not: String
-  password_in: [String!]
-  password_not_in: [String!]
-  password_lt: String
-  password_lte: String
-  password_gt: String
-  password_gte: String
-  password_contains: String
-  password_not_contains: String
-  password_starts_with: String
-  password_not_starts_with: String
-  password_ends_with: String
-  password_not_ends_with: String
-  avatar: String
-  avatar_not: String
-  avatar_in: [String!]
-  avatar_not_in: [String!]
-  avatar_lt: String
-  avatar_lte: String
-  avatar_gt: String
-  avatar_gte: String
-  avatar_contains: String
-  avatar_not_contains: String
-  avatar_starts_with: String
-  avatar_not_starts_with: String
-  avatar_ends_with: String
-  avatar_not_ends_with: String
   role: UserRole
   role_not: UserRole
   role_in: [UserRole!]
