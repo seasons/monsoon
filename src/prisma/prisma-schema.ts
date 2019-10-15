@@ -1171,11 +1171,6 @@ input InventoryLevelCreateInput {
   nonReservable: Int
 }
 
-input InventoryLevelCreateOneInput {
-  create: InventoryLevelCreateInput
-  connect: InventoryLevelWhereUniqueInput
-}
-
 input InventoryLevelCreateOneWithoutProductVariantInput {
   create: InventoryLevelCreateWithoutProductVariantInput
   connect: InventoryLevelWhereUniqueInput
@@ -1230,14 +1225,6 @@ input InventoryLevelSubscriptionWhereInput {
   NOT: [InventoryLevelSubscriptionWhereInput!]
 }
 
-input InventoryLevelUpdateDataInput {
-  product: ProductUpdateOneRequiredInput
-  productVariant: ProductVariantUpdateOneRequiredWithoutInventoryLevelInput
-  reservable: Int
-  reserved: Int
-  nonReservable: Int
-}
-
 input InventoryLevelUpdateInput {
   product: ProductUpdateOneRequiredInput
   productVariant: ProductVariantUpdateOneRequiredWithoutInventoryLevelInput
@@ -1252,15 +1239,6 @@ input InventoryLevelUpdateManyMutationInput {
   nonReservable: Int
 }
 
-input InventoryLevelUpdateOneInput {
-  create: InventoryLevelCreateInput
-  update: InventoryLevelUpdateDataInput
-  upsert: InventoryLevelUpsertNestedInput
-  delete: Boolean
-  disconnect: Boolean
-  connect: InventoryLevelWhereUniqueInput
-}
-
 input InventoryLevelUpdateOneRequiredWithoutProductVariantInput {
   create: InventoryLevelCreateWithoutProductVariantInput
   update: InventoryLevelUpdateWithoutProductVariantDataInput
@@ -1273,11 +1251,6 @@ input InventoryLevelUpdateWithoutProductVariantDataInput {
   reservable: Int
   reserved: Int
   nonReservable: Int
-}
-
-input InventoryLevelUpsertNestedInput {
-  update: InventoryLevelUpdateDataInput!
-  create: InventoryLevelCreateInput!
 }
 
 input InventoryLevelUpsertWithoutProductVariantInput {
@@ -1641,6 +1614,18 @@ input LocationWhereUniqueInput {
 
 scalar Long
 
+enum Material {
+  Cotton
+  Mesh
+  Nylon
+  Denim
+  Leather
+  Fur
+  Polyamide
+  Feather
+  Polyester
+}
+
 type Mutation {
   createBag(data: BagCreateInput!): Bag!
   updateBag(data: BagUpdateInput!, where: BagWhereUniqueInput!): Bag
@@ -1736,8 +1721,7 @@ type PhysicalProduct {
   id: ID!
   seasonsUID: String!
   location: Location
-  productVariant: ProductVariant
-  inventoryLevel: InventoryLevel
+  productVariant: ProductVariant!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -1752,8 +1736,7 @@ input PhysicalProductCreateInput {
   id: ID
   seasonsUID: String!
   location: LocationCreateOneInput
-  productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput
-  inventoryLevel: InventoryLevelCreateOneInput
+  productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
 }
 
 input PhysicalProductCreateManyWithoutProductVariantInput {
@@ -1765,7 +1748,6 @@ input PhysicalProductCreateWithoutProductVariantInput {
   id: ID
   seasonsUID: String!
   location: LocationCreateOneInput
-  inventoryLevel: InventoryLevelCreateOneInput
 }
 
 type PhysicalProductEdge {
@@ -1862,8 +1844,7 @@ input PhysicalProductSubscriptionWhereInput {
 input PhysicalProductUpdateInput {
   seasonsUID: String
   location: LocationUpdateOneInput
-  productVariant: ProductVariantUpdateOneWithoutPhysicalProductsInput
-  inventoryLevel: InventoryLevelUpdateOneInput
+  productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
 }
 
 input PhysicalProductUpdateManyDataInput {
@@ -1894,7 +1875,6 @@ input PhysicalProductUpdateManyWithWhereNestedInput {
 input PhysicalProductUpdateWithoutProductVariantDataInput {
   seasonsUID: String
   location: LocationUpdateOneInput
-  inventoryLevel: InventoryLevelUpdateOneInput
 }
 
 input PhysicalProductUpdateWithWhereUniqueWithoutProductVariantInput {
@@ -1939,7 +1919,6 @@ input PhysicalProductWhereInput {
   seasonsUID_not_ends_with: String
   location: LocationWhereInput
   productVariant: ProductVariantWhereInput
-  inventoryLevel: InventoryLevelWhereInput
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -1978,6 +1957,9 @@ type Product {
   modelSize: Size
   retailPrice: Int
   tags: Json
+  availableSizes: [Size!]!
+  innerMaterials: [Material!]!
+  outerMaterials: [Material!]!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -1986,6 +1968,14 @@ type ProductConnection {
   pageInfo: PageInfo!
   edges: [ProductEdge]!
   aggregate: AggregateProduct!
+}
+
+input ProductCreateavailableSizesInput {
+  set: [Size!]
+}
+
+input ProductCreateinnerMaterialsInput {
+  set: [Material!]
 }
 
 input ProductCreateInput {
@@ -2000,6 +1990,9 @@ input ProductCreateInput {
   modelSize: Size
   retailPrice: Int
   tags: Json
+  availableSizes: ProductCreateavailableSizesInput
+  innerMaterials: ProductCreateinnerMaterialsInput
+  outerMaterials: ProductCreateouterMaterialsInput
 }
 
 input ProductCreateManyWithoutBrandInput {
@@ -2017,6 +2010,10 @@ input ProductCreateOneInput {
   connect: ProductWhereUniqueInput
 }
 
+input ProductCreateouterMaterialsInput {
+  set: [Material!]
+}
+
 input ProductCreateWithoutBrandInput {
   id: ID
   name: String!
@@ -2028,6 +2025,9 @@ input ProductCreateWithoutBrandInput {
   modelSize: Size
   retailPrice: Int
   tags: Json
+  availableSizes: ProductCreateavailableSizesInput
+  innerMaterials: ProductCreateinnerMaterialsInput
+  outerMaterials: ProductCreateouterMaterialsInput
 }
 
 input ProductCreateWithoutCategoryInput {
@@ -2041,6 +2041,9 @@ input ProductCreateWithoutCategoryInput {
   modelSize: Size
   retailPrice: Int
   tags: Json
+  availableSizes: ProductCreateavailableSizesInput
+  innerMaterials: ProductCreateinnerMaterialsInput
+  outerMaterials: ProductCreateouterMaterialsInput
 }
 
 type ProductEdge {
@@ -2083,6 +2086,9 @@ type ProductPreviousValues {
   modelSize: Size
   retailPrice: Int
   tags: Json
+  availableSizes: [Size!]!
+  innerMaterials: [Material!]!
+  outerMaterials: [Material!]!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -2203,6 +2209,10 @@ input ProductSubscriptionWhereInput {
   NOT: [ProductSubscriptionWhereInput!]
 }
 
+input ProductUpdateavailableSizesInput {
+  set: [Size!]
+}
+
 input ProductUpdateDataInput {
   name: String
   brand: BrandUpdateOneRequiredWithoutProductsInput
@@ -2214,6 +2224,13 @@ input ProductUpdateDataInput {
   modelSize: Size
   retailPrice: Int
   tags: Json
+  availableSizes: ProductUpdateavailableSizesInput
+  innerMaterials: ProductUpdateinnerMaterialsInput
+  outerMaterials: ProductUpdateouterMaterialsInput
+}
+
+input ProductUpdateinnerMaterialsInput {
+  set: [Material!]
 }
 
 input ProductUpdateInput {
@@ -2227,6 +2244,9 @@ input ProductUpdateInput {
   modelSize: Size
   retailPrice: Int
   tags: Json
+  availableSizes: ProductUpdateavailableSizesInput
+  innerMaterials: ProductUpdateinnerMaterialsInput
+  outerMaterials: ProductUpdateouterMaterialsInput
 }
 
 input ProductUpdateManyDataInput {
@@ -2238,6 +2258,9 @@ input ProductUpdateManyDataInput {
   modelSize: Size
   retailPrice: Int
   tags: Json
+  availableSizes: ProductUpdateavailableSizesInput
+  innerMaterials: ProductUpdateinnerMaterialsInput
+  outerMaterials: ProductUpdateouterMaterialsInput
 }
 
 input ProductUpdateManyMutationInput {
@@ -2249,6 +2272,9 @@ input ProductUpdateManyMutationInput {
   modelSize: Size
   retailPrice: Int
   tags: Json
+  availableSizes: ProductUpdateavailableSizesInput
+  innerMaterials: ProductUpdateinnerMaterialsInput
+  outerMaterials: ProductUpdateouterMaterialsInput
 }
 
 input ProductUpdateManyWithoutBrandInput {
@@ -2287,6 +2313,10 @@ input ProductUpdateOneRequiredInput {
   connect: ProductWhereUniqueInput
 }
 
+input ProductUpdateouterMaterialsInput {
+  set: [Material!]
+}
+
 input ProductUpdateWithoutBrandDataInput {
   name: String
   category: CategoryUpdateOneRequiredWithoutProductsInput
@@ -2297,6 +2327,9 @@ input ProductUpdateWithoutBrandDataInput {
   modelSize: Size
   retailPrice: Int
   tags: Json
+  availableSizes: ProductUpdateavailableSizesInput
+  innerMaterials: ProductUpdateinnerMaterialsInput
+  outerMaterials: ProductUpdateouterMaterialsInput
 }
 
 input ProductUpdateWithoutCategoryDataInput {
@@ -2309,6 +2342,9 @@ input ProductUpdateWithoutCategoryDataInput {
   modelSize: Size
   retailPrice: Int
   tags: Json
+  availableSizes: ProductUpdateavailableSizesInput
+  innerMaterials: ProductUpdateinnerMaterialsInput
+  outerMaterials: ProductUpdateouterMaterialsInput
 }
 
 input ProductUpdateWithWhereUniqueWithoutBrandInput {
@@ -2657,12 +2693,10 @@ input ProductVariantUpdateOneRequiredWithoutInventoryLevelInput {
   connect: ProductVariantWhereUniqueInput
 }
 
-input ProductVariantUpdateOneWithoutPhysicalProductsInput {
+input ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput {
   create: ProductVariantCreateWithoutPhysicalProductsInput
   update: ProductVariantUpdateWithoutPhysicalProductsDataInput
   upsert: ProductVariantUpsertWithoutPhysicalProductsInput
-  delete: Boolean
-  disconnect: Boolean
   connect: ProductVariantWhereUniqueInput
 }
 

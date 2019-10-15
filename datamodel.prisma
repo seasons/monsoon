@@ -127,6 +127,9 @@ type Product {
   modelSize: Size
   retailPrice: Int
   tags: Json
+  availableSizes: [Size!]! @scalarList(strategy: RELATION)
+  innerMaterials: [Material!]! @scalarList(strategy: RELATION)
+  outerMaterials: [Material!]! @scalarList(strategy: RELATION)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
@@ -160,8 +163,7 @@ type PhysicalProduct {
   id: ID! @id
   seasonsUID: String! @unique
   location: Location
-  productVariant: ProductVariant
-  inventoryLevel: InventoryLevel
+  productVariant: ProductVariant!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
