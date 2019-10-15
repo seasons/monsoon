@@ -18,6 +18,10 @@ type AggregateCustomer {
   count: Int!
 }
 
+type AggregateCustomerDetail {
+  count: Int!
+}
+
 type AggregateImage {
   count: Int!
 }
@@ -800,6 +804,7 @@ type Customer {
   id: ID!
   user: User!
   status: CustomerStatus
+  detail: CustomerDetail
   bag: Bag!
 }
 
@@ -813,6 +818,7 @@ input CustomerCreateInput {
   id: ID
   user: UserCreateOneInput!
   status: CustomerStatus
+  detail: CustomerDetailCreateOneWithoutCustomerInput
   bag: BagCreateOneWithoutCustomerInput!
 }
 
@@ -821,10 +827,423 @@ input CustomerCreateOneWithoutBagInput {
   connect: CustomerWhereUniqueInput
 }
 
+input CustomerCreateOneWithoutDetailInput {
+  create: CustomerCreateWithoutDetailInput
+  connect: CustomerWhereUniqueInput
+}
+
 input CustomerCreateWithoutBagInput {
   id: ID
   user: UserCreateOneInput!
   status: CustomerStatus
+  detail: CustomerDetailCreateOneWithoutCustomerInput
+}
+
+input CustomerCreateWithoutDetailInput {
+  id: ID
+  user: UserCreateOneInput!
+  status: CustomerStatus
+  bag: BagCreateOneWithoutCustomerInput!
+}
+
+type CustomerDetail {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  customer: Customer!
+  phoneNumber: String
+  birthday: DateTime
+  height: Int
+  bodyType: String
+  averageTopSize: String
+  averagePantSize: String
+  preferredPronouns: String
+  profession: String
+  partyFrequency: String
+  travelFrequency: String
+  shoppingFrequency: String
+  averageSpend: String
+  shippingAddress: Location
+}
+
+type CustomerDetailConnection {
+  pageInfo: PageInfo!
+  edges: [CustomerDetailEdge]!
+  aggregate: AggregateCustomerDetail!
+}
+
+input CustomerDetailCreateInput {
+  id: ID
+  customer: CustomerCreateOneWithoutDetailInput!
+  phoneNumber: String
+  birthday: DateTime
+  height: Int
+  bodyType: String
+  averageTopSize: String
+  averagePantSize: String
+  preferredPronouns: String
+  profession: String
+  partyFrequency: String
+  travelFrequency: String
+  shoppingFrequency: String
+  averageSpend: String
+  shippingAddress: LocationCreateOneInput
+}
+
+input CustomerDetailCreateOneWithoutCustomerInput {
+  create: CustomerDetailCreateWithoutCustomerInput
+  connect: CustomerDetailWhereUniqueInput
+}
+
+input CustomerDetailCreateWithoutCustomerInput {
+  id: ID
+  phoneNumber: String
+  birthday: DateTime
+  height: Int
+  bodyType: String
+  averageTopSize: String
+  averagePantSize: String
+  preferredPronouns: String
+  profession: String
+  partyFrequency: String
+  travelFrequency: String
+  shoppingFrequency: String
+  averageSpend: String
+  shippingAddress: LocationCreateOneInput
+}
+
+type CustomerDetailEdge {
+  node: CustomerDetail!
+  cursor: String!
+}
+
+enum CustomerDetailOrderByInput {
+  id_ASC
+  id_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  phoneNumber_ASC
+  phoneNumber_DESC
+  birthday_ASC
+  birthday_DESC
+  height_ASC
+  height_DESC
+  bodyType_ASC
+  bodyType_DESC
+  averageTopSize_ASC
+  averageTopSize_DESC
+  averagePantSize_ASC
+  averagePantSize_DESC
+  preferredPronouns_ASC
+  preferredPronouns_DESC
+  profession_ASC
+  profession_DESC
+  partyFrequency_ASC
+  partyFrequency_DESC
+  travelFrequency_ASC
+  travelFrequency_DESC
+  shoppingFrequency_ASC
+  shoppingFrequency_DESC
+  averageSpend_ASC
+  averageSpend_DESC
+}
+
+type CustomerDetailPreviousValues {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  phoneNumber: String
+  birthday: DateTime
+  height: Int
+  bodyType: String
+  averageTopSize: String
+  averagePantSize: String
+  preferredPronouns: String
+  profession: String
+  partyFrequency: String
+  travelFrequency: String
+  shoppingFrequency: String
+  averageSpend: String
+}
+
+type CustomerDetailSubscriptionPayload {
+  mutation: MutationType!
+  node: CustomerDetail
+  updatedFields: [String!]
+  previousValues: CustomerDetailPreviousValues
+}
+
+input CustomerDetailSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: CustomerDetailWhereInput
+  AND: [CustomerDetailSubscriptionWhereInput!]
+  OR: [CustomerDetailSubscriptionWhereInput!]
+  NOT: [CustomerDetailSubscriptionWhereInput!]
+}
+
+input CustomerDetailUpdateInput {
+  customer: CustomerUpdateOneRequiredWithoutDetailInput
+  phoneNumber: String
+  birthday: DateTime
+  height: Int
+  bodyType: String
+  averageTopSize: String
+  averagePantSize: String
+  preferredPronouns: String
+  profession: String
+  partyFrequency: String
+  travelFrequency: String
+  shoppingFrequency: String
+  averageSpend: String
+  shippingAddress: LocationUpdateOneInput
+}
+
+input CustomerDetailUpdateManyMutationInput {
+  phoneNumber: String
+  birthday: DateTime
+  height: Int
+  bodyType: String
+  averageTopSize: String
+  averagePantSize: String
+  preferredPronouns: String
+  profession: String
+  partyFrequency: String
+  travelFrequency: String
+  shoppingFrequency: String
+  averageSpend: String
+}
+
+input CustomerDetailUpdateOneWithoutCustomerInput {
+  create: CustomerDetailCreateWithoutCustomerInput
+  update: CustomerDetailUpdateWithoutCustomerDataInput
+  upsert: CustomerDetailUpsertWithoutCustomerInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: CustomerDetailWhereUniqueInput
+}
+
+input CustomerDetailUpdateWithoutCustomerDataInput {
+  phoneNumber: String
+  birthday: DateTime
+  height: Int
+  bodyType: String
+  averageTopSize: String
+  averagePantSize: String
+  preferredPronouns: String
+  profession: String
+  partyFrequency: String
+  travelFrequency: String
+  shoppingFrequency: String
+  averageSpend: String
+  shippingAddress: LocationUpdateOneInput
+}
+
+input CustomerDetailUpsertWithoutCustomerInput {
+  update: CustomerDetailUpdateWithoutCustomerDataInput!
+  create: CustomerDetailCreateWithoutCustomerInput!
+}
+
+input CustomerDetailWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  customer: CustomerWhereInput
+  phoneNumber: String
+  phoneNumber_not: String
+  phoneNumber_in: [String!]
+  phoneNumber_not_in: [String!]
+  phoneNumber_lt: String
+  phoneNumber_lte: String
+  phoneNumber_gt: String
+  phoneNumber_gte: String
+  phoneNumber_contains: String
+  phoneNumber_not_contains: String
+  phoneNumber_starts_with: String
+  phoneNumber_not_starts_with: String
+  phoneNumber_ends_with: String
+  phoneNumber_not_ends_with: String
+  birthday: DateTime
+  birthday_not: DateTime
+  birthday_in: [DateTime!]
+  birthday_not_in: [DateTime!]
+  birthday_lt: DateTime
+  birthday_lte: DateTime
+  birthday_gt: DateTime
+  birthday_gte: DateTime
+  height: Int
+  height_not: Int
+  height_in: [Int!]
+  height_not_in: [Int!]
+  height_lt: Int
+  height_lte: Int
+  height_gt: Int
+  height_gte: Int
+  bodyType: String
+  bodyType_not: String
+  bodyType_in: [String!]
+  bodyType_not_in: [String!]
+  bodyType_lt: String
+  bodyType_lte: String
+  bodyType_gt: String
+  bodyType_gte: String
+  bodyType_contains: String
+  bodyType_not_contains: String
+  bodyType_starts_with: String
+  bodyType_not_starts_with: String
+  bodyType_ends_with: String
+  bodyType_not_ends_with: String
+  averageTopSize: String
+  averageTopSize_not: String
+  averageTopSize_in: [String!]
+  averageTopSize_not_in: [String!]
+  averageTopSize_lt: String
+  averageTopSize_lte: String
+  averageTopSize_gt: String
+  averageTopSize_gte: String
+  averageTopSize_contains: String
+  averageTopSize_not_contains: String
+  averageTopSize_starts_with: String
+  averageTopSize_not_starts_with: String
+  averageTopSize_ends_with: String
+  averageTopSize_not_ends_with: String
+  averagePantSize: String
+  averagePantSize_not: String
+  averagePantSize_in: [String!]
+  averagePantSize_not_in: [String!]
+  averagePantSize_lt: String
+  averagePantSize_lte: String
+  averagePantSize_gt: String
+  averagePantSize_gte: String
+  averagePantSize_contains: String
+  averagePantSize_not_contains: String
+  averagePantSize_starts_with: String
+  averagePantSize_not_starts_with: String
+  averagePantSize_ends_with: String
+  averagePantSize_not_ends_with: String
+  preferredPronouns: String
+  preferredPronouns_not: String
+  preferredPronouns_in: [String!]
+  preferredPronouns_not_in: [String!]
+  preferredPronouns_lt: String
+  preferredPronouns_lte: String
+  preferredPronouns_gt: String
+  preferredPronouns_gte: String
+  preferredPronouns_contains: String
+  preferredPronouns_not_contains: String
+  preferredPronouns_starts_with: String
+  preferredPronouns_not_starts_with: String
+  preferredPronouns_ends_with: String
+  preferredPronouns_not_ends_with: String
+  profession: String
+  profession_not: String
+  profession_in: [String!]
+  profession_not_in: [String!]
+  profession_lt: String
+  profession_lte: String
+  profession_gt: String
+  profession_gte: String
+  profession_contains: String
+  profession_not_contains: String
+  profession_starts_with: String
+  profession_not_starts_with: String
+  profession_ends_with: String
+  profession_not_ends_with: String
+  partyFrequency: String
+  partyFrequency_not: String
+  partyFrequency_in: [String!]
+  partyFrequency_not_in: [String!]
+  partyFrequency_lt: String
+  partyFrequency_lte: String
+  partyFrequency_gt: String
+  partyFrequency_gte: String
+  partyFrequency_contains: String
+  partyFrequency_not_contains: String
+  partyFrequency_starts_with: String
+  partyFrequency_not_starts_with: String
+  partyFrequency_ends_with: String
+  partyFrequency_not_ends_with: String
+  travelFrequency: String
+  travelFrequency_not: String
+  travelFrequency_in: [String!]
+  travelFrequency_not_in: [String!]
+  travelFrequency_lt: String
+  travelFrequency_lte: String
+  travelFrequency_gt: String
+  travelFrequency_gte: String
+  travelFrequency_contains: String
+  travelFrequency_not_contains: String
+  travelFrequency_starts_with: String
+  travelFrequency_not_starts_with: String
+  travelFrequency_ends_with: String
+  travelFrequency_not_ends_with: String
+  shoppingFrequency: String
+  shoppingFrequency_not: String
+  shoppingFrequency_in: [String!]
+  shoppingFrequency_not_in: [String!]
+  shoppingFrequency_lt: String
+  shoppingFrequency_lte: String
+  shoppingFrequency_gt: String
+  shoppingFrequency_gte: String
+  shoppingFrequency_contains: String
+  shoppingFrequency_not_contains: String
+  shoppingFrequency_starts_with: String
+  shoppingFrequency_not_starts_with: String
+  shoppingFrequency_ends_with: String
+  shoppingFrequency_not_ends_with: String
+  averageSpend: String
+  averageSpend_not: String
+  averageSpend_in: [String!]
+  averageSpend_not_in: [String!]
+  averageSpend_lt: String
+  averageSpend_lte: String
+  averageSpend_gt: String
+  averageSpend_gte: String
+  averageSpend_contains: String
+  averageSpend_not_contains: String
+  averageSpend_starts_with: String
+  averageSpend_not_starts_with: String
+  averageSpend_ends_with: String
+  averageSpend_not_ends_with: String
+  shippingAddress: LocationWhereInput
+  AND: [CustomerDetailWhereInput!]
+  OR: [CustomerDetailWhereInput!]
+  NOT: [CustomerDetailWhereInput!]
+}
+
+input CustomerDetailWhereUniqueInput {
+  id: ID
 }
 
 type CustomerEdge {
@@ -873,6 +1292,7 @@ input CustomerSubscriptionWhereInput {
 input CustomerUpdateInput {
   user: UserUpdateOneRequiredInput
   status: CustomerStatus
+  detail: CustomerDetailUpdateOneWithoutCustomerInput
   bag: BagUpdateOneRequiredWithoutCustomerInput
 }
 
@@ -887,14 +1307,33 @@ input CustomerUpdateOneRequiredWithoutBagInput {
   connect: CustomerWhereUniqueInput
 }
 
+input CustomerUpdateOneRequiredWithoutDetailInput {
+  create: CustomerCreateWithoutDetailInput
+  update: CustomerUpdateWithoutDetailDataInput
+  upsert: CustomerUpsertWithoutDetailInput
+  connect: CustomerWhereUniqueInput
+}
+
 input CustomerUpdateWithoutBagDataInput {
   user: UserUpdateOneRequiredInput
   status: CustomerStatus
+  detail: CustomerDetailUpdateOneWithoutCustomerInput
+}
+
+input CustomerUpdateWithoutDetailDataInput {
+  user: UserUpdateOneRequiredInput
+  status: CustomerStatus
+  bag: BagUpdateOneRequiredWithoutCustomerInput
 }
 
 input CustomerUpsertWithoutBagInput {
   update: CustomerUpdateWithoutBagDataInput!
   create: CustomerCreateWithoutBagInput!
+}
+
+input CustomerUpsertWithoutDetailInput {
+  update: CustomerUpdateWithoutDetailDataInput!
+  create: CustomerCreateWithoutDetailInput!
 }
 
 input CustomerWhereInput {
@@ -917,6 +1356,7 @@ input CustomerWhereInput {
   status_not: CustomerStatus
   status_in: [CustomerStatus!]
   status_not_in: [CustomerStatus!]
+  detail: CustomerDetailWhereInput
   bag: BagWhereInput
   AND: [CustomerWhereInput!]
   OR: [CustomerWhereInput!]
@@ -1336,6 +1776,7 @@ scalar Json
 type Location {
   id: ID!
   name: String
+  company: String
   description: String
   address1: String!
   address2: String!
@@ -1357,6 +1798,7 @@ type LocationConnection {
 input LocationCreateInput {
   id: ID
   name: String
+  company: String
   description: String
   address1: String!
   address2: String!
@@ -1384,6 +1826,8 @@ enum LocationOrderByInput {
   id_DESC
   name_ASC
   name_DESC
+  company_ASC
+  company_DESC
   description_ASC
   description_DESC
   address1_ASC
@@ -1407,6 +1851,7 @@ enum LocationOrderByInput {
 type LocationPreviousValues {
   id: ID!
   name: String
+  company: String
   description: String
   address1: String!
   address2: String!
@@ -1445,6 +1890,7 @@ enum LocationType {
 
 input LocationUpdateDataInput {
   name: String
+  company: String
   description: String
   address1: String
   address2: String
@@ -1459,6 +1905,7 @@ input LocationUpdateDataInput {
 
 input LocationUpdateInput {
   name: String
+  company: String
   description: String
   address1: String
   address2: String
@@ -1473,6 +1920,7 @@ input LocationUpdateInput {
 
 input LocationUpdateManyMutationInput {
   name: String
+  company: String
   description: String
   address1: String
   address2: String
@@ -1527,6 +1975,20 @@ input LocationWhereInput {
   name_not_starts_with: String
   name_ends_with: String
   name_not_ends_with: String
+  company: String
+  company_not: String
+  company_in: [String!]
+  company_not_in: [String!]
+  company_lt: String
+  company_lte: String
+  company_gt: String
+  company_gte: String
+  company_contains: String
+  company_not_contains: String
+  company_starts_with: String
+  company_not_starts_with: String
+  company_ends_with: String
+  company_not_ends_with: String
   description: String
   description_not: String
   description_in: [String!]
@@ -1667,6 +2129,12 @@ type Mutation {
   upsertCustomer(where: CustomerWhereUniqueInput!, create: CustomerCreateInput!, update: CustomerUpdateInput!): Customer!
   deleteCustomer(where: CustomerWhereUniqueInput!): Customer
   deleteManyCustomers(where: CustomerWhereInput): BatchPayload!
+  createCustomerDetail(data: CustomerDetailCreateInput!): CustomerDetail!
+  updateCustomerDetail(data: CustomerDetailUpdateInput!, where: CustomerDetailWhereUniqueInput!): CustomerDetail
+  updateManyCustomerDetails(data: CustomerDetailUpdateManyMutationInput!, where: CustomerDetailWhereInput): BatchPayload!
+  upsertCustomerDetail(where: CustomerDetailWhereUniqueInput!, create: CustomerDetailCreateInput!, update: CustomerDetailUpdateInput!): CustomerDetail!
+  deleteCustomerDetail(where: CustomerDetailWhereUniqueInput!): CustomerDetail
+  deleteManyCustomerDetails(where: CustomerDetailWhereInput): BatchPayload!
   createImage(data: ImageCreateInput!): Image!
   updateImage(data: ImageUpdateInput!, where: ImageWhereUniqueInput!): Image
   updateManyImages(data: ImageUpdateManyMutationInput!, where: ImageWhereInput): BatchPayload!
@@ -2948,6 +3416,9 @@ type Query {
   customer(where: CustomerWhereUniqueInput!): Customer
   customers(where: CustomerWhereInput, orderBy: CustomerOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Customer]!
   customersConnection(where: CustomerWhereInput, orderBy: CustomerOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CustomerConnection!
+  customerDetail(where: CustomerDetailWhereUniqueInput!): CustomerDetail
+  customerDetails(where: CustomerDetailWhereInput, orderBy: CustomerDetailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CustomerDetail]!
+  customerDetailsConnection(where: CustomerDetailWhereInput, orderBy: CustomerDetailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CustomerDetailConnection!
   image(where: ImageWhereUniqueInput!): Image
   images(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Image]!
   imagesConnection(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ImageConnection!
@@ -2986,6 +3457,7 @@ type Subscription {
   category(where: CategorySubscriptionWhereInput): CategorySubscriptionPayload
   color(where: ColorSubscriptionWhereInput): ColorSubscriptionPayload
   customer(where: CustomerSubscriptionWhereInput): CustomerSubscriptionPayload
+  customerDetail(where: CustomerDetailSubscriptionWhereInput): CustomerDetailSubscriptionPayload
   image(where: ImageSubscriptionWhereInput): ImageSubscriptionPayload
   inventoryLevel(where: InventoryLevelSubscriptionWhereInput): InventoryLevelSubscriptionPayload
   location(where: LocationSubscriptionWhereInput): LocationSubscriptionPayload
@@ -3002,6 +3474,8 @@ type User {
   firstName: String!
   lastName: String!
   role: UserRole!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 type UserConnection {
@@ -3042,6 +3516,10 @@ enum UserOrderByInput {
   lastName_DESC
   role_ASC
   role_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
 }
 
 type UserPreviousValues {
@@ -3051,6 +3529,8 @@ type UserPreviousValues {
   firstName: String!
   lastName: String!
   role: UserRole!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 enum UserRole {
@@ -3197,6 +3677,22 @@ input UserWhereInput {
   role_not: UserRole
   role_in: [UserRole!]
   role_not_in: [UserRole!]
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
   AND: [UserWhereInput!]
   OR: [UserWhereInput!]
   NOT: [UserWhereInput!]

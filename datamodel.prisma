@@ -103,6 +103,7 @@ type Image {
 type Location {
   id: ID! @id
   name: String
+  company: String
   description: String
   address1: String!
   address2: String!
@@ -177,6 +178,31 @@ type User {
   updatedAt: DateTime! @updatedAt
 }
 
+type CustomerDetail {
+    id: ID! @id
+    createdAt: DateTime! @createdAt
+    updatedAt: DateTime! @updatedAt
+    customer: Customer! @relation(link: INLINE)
+    phoneNumber: String
+    birthday: DateTime
+    # Height in inches
+    height: Int
+    bodyType: String
+    averageTopSize: String
+    averagePantSize: String
+    preferredPronouns: String
+    profession: String
+    # How often do you go out? 
+    partyFrequency: String 
+    # Do you travel a lot?
+    travelFrequency: String
+    # How often do you buy clothes?
+    shoppingFrequency: String
+    # How much do you spend?
+    averageSpend: String
+    shippingAddress: Location
+}
+
 type Bag {
   id: ID! @id
   items: [ProductVariant!]!
@@ -187,5 +213,6 @@ type Customer {
   id: ID! @id
   user: User!
   status: CustomerStatus
+  detail: CustomerDetail 
   bag: Bag!
 }

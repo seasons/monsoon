@@ -5,6 +5,8 @@ import { Request } from "express"
 import jwksClient from "jwks-rsa"
 import request from "request"
 
+const PW_STRENGTH_RULES_URL = "https://manage.auth0.com/dashboard/us/seasons/connections/database/con_btTULQOf6kAxxbCz/security"
+
 export interface Context {
     prisma: Prisma
     db: Binding
@@ -50,9 +52,22 @@ export function createAuth0User(email: string, password: string): Promise<string
             },
             json: true
         }, function handleResponse(error, response, body) {
+            // Handle a generic error
             if (error) {
                 reject(new Error(`Error creating Auth0 user: ${error}`))
             }
+            // Give a precise error message if a user tried to sign up with an
+            // email that's already in the db
+            if (response.statusCode == 400 && body.code === "invalid_signup") {
+                console.log(body)
+                reject(new Error("400 -- email already in db"))
+            }
+            // Give a precise error message if a user tried to sign up with 
+            // a insufficiently strong password
+            if (response.statusCode == 400 && body.name === "PasswordStrengthError") {
+                reject(new Error(`400 -- insufficiently strong password. see pw rules at ${PW_STRENGTH_RULES_URL}`))
+            }
+            // If any other error occured, expose a generic error message
             if (response.statusCode != 200) {
                 reject(new Error(`Error creating new Auth0 user. Auth0 returned ` +
                     `${response.statusCode} with body: ${JSON.stringify(body)}`))
