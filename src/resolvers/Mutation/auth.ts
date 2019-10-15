@@ -1,7 +1,8 @@
 import {
     Context,
-    createPrismaUser,
+    createPrismaCustomerForExistingUser,
     createAuth0User,
+    createPrismaUser,
     getAuth0UserAccessToken
 } from "../../auth/utils"
 import { UserInputError, ForbiddenError } from 'apollo-server'
@@ -34,7 +35,7 @@ export const auth = {
         // Create a user object in our database
         let user
         try {
-            user = createPrismaUser(ctx, {
+            user = await createPrismaUser(ctx, {
                 auth0Id: userAuth0ID,
                 email,
                 firstName,
@@ -44,9 +45,18 @@ export const auth = {
             throw new Error(err)
         }
 
+        // Create a customer object in our database
+        let customer
+        try {
+            customer = await createPrismaCustomerForExistingUser(ctx, {
+                userID: user.id
+            })
+        } catch (err) {
+            throw new Error(err)
+        }
         return {
             token,
-            user
+            user: user
         }
     }
 }

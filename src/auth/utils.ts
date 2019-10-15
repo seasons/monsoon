@@ -114,7 +114,7 @@ export async function getUserId(ctx: Context) {
     throw new AuthError()
 }
 
-export async function createPrismaUser(ctx, { auth0Id, email, firstName,
+export async function createPrismaUser(ctx: Context, { auth0Id, email, firstName,
     lastName }) {
     const user = await ctx.prisma.createUser({
         auth0Id,
@@ -123,6 +123,16 @@ export async function createPrismaUser(ctx, { auth0Id, email, firstName,
         lastName,
     })
     return user
+}
+
+export async function createPrismaCustomerForExistingUser(ctx: Context, { userID }) {
+    const customer = await ctx.prisma.createCustomer({
+        user: {
+            connect: { id: userID },
+        },
+        bag: { create: {} }
+    })
+    return customer
 }
 
 export class AuthError extends Error {
