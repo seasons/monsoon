@@ -1,3 +1,5 @@
 export { syncBrands } from "./syncBrands"
 export { syncCategories } from "./syncCategories"
+export { syncColors } from "./syncColors"
 export { syncProducts } from "./syncProducts"
+export { syncProductVariants } from "./syncProductVariants"

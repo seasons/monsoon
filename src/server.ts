@@ -17,27 +17,27 @@ const defaultQuery = `{
 `
 
 const db = new Prisma({
-  typeDefs: "./src/prisma/prisma.graphql",
-  endpoint: process.env.PRISMA_ENDPOINT || "http://localhost:4466",
+    typeDefs: "./src/prisma/prisma.graphql",
+    endpoint: process.env.PRISMA_ENDPOINT || "http://localhost:4466",
 })
 
 export const serverOptions = {
-  schema,
-  context: request => ({
-    ...request,
-    prisma,
-    db,
-  }),
-  introspection: true,
-  playground: {
-    settings: {
-      "editor.theme": "dark" as any,
+    schema,
+    context: request => ({
+        ...request,
+        prisma,
+        db,
+    }),
+    introspection: true,
+    playground: {
+        settings: {
+            "editor.theme": "dark" as any,
+        },
+        tabs: [
+            {
+                endpoint: "/",
+                query: defaultQuery,
+            },
+        ],
     },
-    tabs: [
-      {
-        endpoint: "/",
-        query: defaultQuery,
-      },
-    ],
-  },
 }

@@ -82,6 +82,7 @@ type Category {
 
 type Color {
   id: ID! @id
+  colorCode: String! @unique
   hexCode: String!
   name: String
   productVariants: [ProductVariant!]!
@@ -102,6 +103,7 @@ type Image {
 type Location {
   id: ID! @id
   name: String
+  company: String
   description: String
   address1: String!
   address2: String!
@@ -133,26 +135,26 @@ type Product {
 type ProductVariant {
   id: ID! @id
   sku: String
-  upc: Int
+  upc: String
   color: Color!
   weight: Int
   height: Int
   product: Product!
   retailPrice: Int
   images: Json
-  inventoryLevels: [ProductVariantInventoryLevel!]!
+  inventoryLevel: InventoryLevel! @relation(link: INLINE)
   physicalProducts: [PhysicalProduct!]!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
 
-type ProductVariantInventoryLevel {
+type InventoryLevel {
   id: ID! @id
   product: Product!
   productVariant: ProductVariant!
-  nonReservablePhysicalProducts: Int
-  reservablePhysicalProducts: Int
-  reservedPhysicalProducts: Int
+  reservable: Int
+  reserved: Int
+  nonReservable: Int
 }
 
 type PhysicalProduct {
@@ -160,18 +162,45 @@ type PhysicalProduct {
   seasonsUID: String! @unique
   location: Location
   productVariant: ProductVariant
-  inventoryLevel: ProductVariantInventoryLevel
+  inventoryLevel: InventoryLevel
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
 
 type User {
   id: ID! @id
+  auth0Id: String! @unique
   email: String! @unique
   firstName: String!
   lastName: String!
-  password: String!
   role: UserRole! @default(value: Customer)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type CustomerDetail {
+    id: ID! @id
+    createdAt: DateTime! @createdAt
+    updatedAt: DateTime! @updatedAt
+    customer: Customer! @relation(link: INLINE)
+    phoneNumber: String
+    birthday: DateTime
+    # Height in inches
+    height: Int
+    bodyType: String
+    averageTopSize: String
+    averagePantSize: String
+    preferredPronouns: String
+    profession: String
+    # How often do you go out? 
+    partyFrequency: String 
+    # Do you travel a lot?
+    travelFrequency: String
+    # How often do you buy clothes?
+    shoppingFrequency: String
+    # How much do you spend?
+    averageSpend: String
+    shippingAddress: Location
 }
 
 type Bag {
@@ -184,5 +213,6 @@ type Customer {
   id: ID! @id
   user: User!
   status: CustomerStatus
+  detail: CustomerDetail 
   bag: Bag!
 }

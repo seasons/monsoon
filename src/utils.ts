@@ -1,29 +1,25 @@
-import * as jwt from "jsonwebtoken"
-import { Prisma } from "./prisma"
-import { Binding } from "graphql-binding"
-import { Request } from "express"
-
-export interface Context {
-  prisma: Prisma
-  db: Binding
-  request: Request
+export enum ProductSize {
+  XS = "XS",
+  S = "S",
+  M = "M",
+  L = "L",
+  XL = "XL",
 }
 
-export function getUserId(ctx: Context) {
-  const Authorization = ctx.request.get("Authorization")
-  if (Authorization) {
-    const token = Authorization.replace("Bearer ", "")
-    const { userId } = jwt.verify(token, process.env.APP_SECRET) as {
-      userId: string
-    }
-    return userId
-  }
+export const seasonsIDFromProductVariant = (product, productVariant) => {}
 
-  throw new AuthError()
-}
-
-export class AuthError extends Error {
-  constructor() {
-    super("Not authorized")
+export const sizeToSizeCode = (size: ProductSize) => {
+  switch (size) {
+    case ProductSize.XS:
+      return "XS"
+    case ProductSize.S:
+      return "SS"
+    case ProductSize.M:
+      return "MM"
+    case ProductSize.L:
+      return "LL"
+    case ProductSize.XL:
+      return "XL"
   }
+  return ""
 }
