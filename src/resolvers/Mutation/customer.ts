@@ -22,18 +22,14 @@ export const customer = {
     written to overwritten if the payload includes values for them. 
     */
   async addCustomerDetails(obj, { details }, ctx: Context, info) {
-    // They also should not have included any "id" in the input
+    // They should not have included any "id" in the input
     if (details.id != null) {
       throw new UserInputError("payload should not include id")
     }
 
     // Grab the customer off the context
     let customer
-    try {
-      customer = await getCustomerFromContext(ctx)
-    } catch (err) {
-      throw new Error(err)
-    }
+    customer = await getCustomerFromContext(ctx)
 
     // Add the details. If necessary, create the details object afresh.
     let updatedDetails
@@ -41,24 +37,16 @@ export const customer = {
       .customer({ id: customer.id })
       .detail()
     if (currentCustomerDetail == null) {
-      try {
-        await ctx.prisma.updateCustomer({
-          data: { detail: { create: details } },
-          where: { id: customer.id },
-        })
-        updatedDetails = await ctx.prisma.customer({ id: customer.id }).detail()
-      } catch (err) {
-        throw new Error(err)
-      }
+      await ctx.prisma.updateCustomer({
+        data: { detail: { create: details } },
+        where: { id: customer.id },
+      })
+      updatedDetails = await ctx.prisma.customer({ id: customer.id }).detail()
     } else {
-      try {
-        updatedDetails = await ctx.prisma.updateCustomerDetail({
-          data: details,
-          where: { id: currentCustomerDetail.id },
-        })
-      } catch (err) {
-        throw new Error(err)
-      }
+      updatedDetails = await ctx.prisma.updateCustomerDetail({
+        data: details,
+        where: { id: currentCustomerDetail.id },
+      })
     }
 
     // Return the updated customer object

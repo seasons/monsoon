@@ -1,11 +1,9 @@
 # import Category, User, Bag, CustomerDetail from "./prisma/prisma.graphql"
 
-directive @isAuthenticated on QUERY | FIELD | MUTATION
-directive @hasRole(
-  roles: [String]
-) on QUERY | FIELD | MUTATION | FIELD_DEFINITION
-directive @isOwner(type: String) on QUERY | MUTATION
-directive @isOwnerOrHasRole(type: String, roles: [String]) on QUERY | MUTATION
+directive @isAuthenticated on FIELD_DEFINITION
+directive @hasRole(roles: [String]) on FIELD_DEFINITION
+directive @isOwner(type: String) on FIELD_DEFINITION
+directive @isOwnerOrHasRole(type: String, roles: [String]) on FIELD_DEFINITION
 
 type Query {
   me: User
