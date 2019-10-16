@@ -1,4 +1,5 @@
-import { getUserId, Context } from "../auth/utils"
+import { getUserId } from "../auth/utils"
+import { Context } from "../utils"
 import { ProductWhereInput } from "../prisma"
 
 export const Query = {

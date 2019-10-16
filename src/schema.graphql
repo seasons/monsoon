@@ -1,9 +1,9 @@
-# import Category, User, Bag, ProductVariant, Order from "./prisma/prisma.graphql"
+# import Category, User, Bag, CustomerDetail from "./prisma/prisma.graphql"
 
 directive @isAuthenticated on FIELD_DEFINITION
-directive @hasRole(roles: [String]) on QUERY | FIELD | MUTATION
-directive @isOwner(type: String) on QUERY | MUTATION
-directive @isOwnerOrHasRole(type: String, roles: [String]) on QUERY | MUTATION
+directive @hasRole(roles: [String]) on FIELD_DEFINITION
+directive @isOwner(type: String) on FIELD_DEFINITION
+directive @isOwnerOrHasRole(type: String, roles: [String]) on FIELD_DEFINITION
 
 type Query {
   me: User @isAuthenticated
@@ -30,9 +30,15 @@ type Query {
 }
 
 type Mutation {
-  signup(email: String!, password: String!, name: String!): AuthPayload!
+  signup(
+    email: String!
+    password: String!
+    firstName: String!
+    lastName: String!
+  ): AuthPayload!
   login(email: String!, password: String!): AuthPayload!
-  authenticate(idToken: String!): User
+  addCustomerDetails(details: CustomerDetailCreateInput): Customer!
+    @hasRole(roles: ["Customer"])
 }
 
 type AuthPayload {
@@ -47,7 +53,6 @@ type Image {
   imageURL: String
   originalHeight: Int
   originalWidth: Int
-
   resized(width: Int, height: Int, version: [String]): ResizedImageUrl
 }
 

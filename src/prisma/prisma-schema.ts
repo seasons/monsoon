@@ -22,6 +22,10 @@ type AggregateCustomer {
   count: Int!
 }
 
+type AggregateCustomerDetail {
+  count: Int!
+}
+
 type AggregateImage {
   count: Int!
 }
@@ -808,6 +812,7 @@ type Customer {
   id: ID!
   user: User!
   status: CustomerStatus
+  detail: CustomerDetail
   bag: Bag!
 }
 
@@ -821,6 +826,7 @@ input CustomerCreateInput {
   id: ID
   user: UserCreateOneInput!
   status: CustomerStatus
+  detail: CustomerDetailCreateOneInput
   bag: BagCreateOneWithoutCustomerInput!
 }
 
@@ -833,6 +839,386 @@ input CustomerCreateWithoutBagInput {
   id: ID
   user: UserCreateOneInput!
   status: CustomerStatus
+  detail: CustomerDetailCreateOneInput
+}
+
+type CustomerDetail {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  phoneNumber: String
+  birthday: DateTime
+  height: Int
+  bodyType: String
+  averageTopSize: String
+  averagePantSize: String
+  preferredPronouns: String
+  profession: String
+  partyFrequency: String
+  travelFrequency: String
+  shoppingFrequency: String
+  averageSpend: String
+  shippingAddress: Location
+}
+
+type CustomerDetailConnection {
+  pageInfo: PageInfo!
+  edges: [CustomerDetailEdge]!
+  aggregate: AggregateCustomerDetail!
+}
+
+input CustomerDetailCreateInput {
+  id: ID
+  phoneNumber: String
+  birthday: DateTime
+  height: Int
+  bodyType: String
+  averageTopSize: String
+  averagePantSize: String
+  preferredPronouns: String
+  profession: String
+  partyFrequency: String
+  travelFrequency: String
+  shoppingFrequency: String
+  averageSpend: String
+  shippingAddress: LocationCreateOneInput
+}
+
+input CustomerDetailCreateOneInput {
+  create: CustomerDetailCreateInput
+  connect: CustomerDetailWhereUniqueInput
+}
+
+type CustomerDetailEdge {
+  node: CustomerDetail!
+  cursor: String!
+}
+
+enum CustomerDetailOrderByInput {
+  id_ASC
+  id_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  phoneNumber_ASC
+  phoneNumber_DESC
+  birthday_ASC
+  birthday_DESC
+  height_ASC
+  height_DESC
+  bodyType_ASC
+  bodyType_DESC
+  averageTopSize_ASC
+  averageTopSize_DESC
+  averagePantSize_ASC
+  averagePantSize_DESC
+  preferredPronouns_ASC
+  preferredPronouns_DESC
+  profession_ASC
+  profession_DESC
+  partyFrequency_ASC
+  partyFrequency_DESC
+  travelFrequency_ASC
+  travelFrequency_DESC
+  shoppingFrequency_ASC
+  shoppingFrequency_DESC
+  averageSpend_ASC
+  averageSpend_DESC
+}
+
+type CustomerDetailPreviousValues {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  phoneNumber: String
+  birthday: DateTime
+  height: Int
+  bodyType: String
+  averageTopSize: String
+  averagePantSize: String
+  preferredPronouns: String
+  profession: String
+  partyFrequency: String
+  travelFrequency: String
+  shoppingFrequency: String
+  averageSpend: String
+}
+
+type CustomerDetailSubscriptionPayload {
+  mutation: MutationType!
+  node: CustomerDetail
+  updatedFields: [String!]
+  previousValues: CustomerDetailPreviousValues
+}
+
+input CustomerDetailSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: CustomerDetailWhereInput
+  AND: [CustomerDetailSubscriptionWhereInput!]
+  OR: [CustomerDetailSubscriptionWhereInput!]
+  NOT: [CustomerDetailSubscriptionWhereInput!]
+}
+
+input CustomerDetailUpdateDataInput {
+  phoneNumber: String
+  birthday: DateTime
+  height: Int
+  bodyType: String
+  averageTopSize: String
+  averagePantSize: String
+  preferredPronouns: String
+  profession: String
+  partyFrequency: String
+  travelFrequency: String
+  shoppingFrequency: String
+  averageSpend: String
+  shippingAddress: LocationUpdateOneInput
+}
+
+input CustomerDetailUpdateInput {
+  phoneNumber: String
+  birthday: DateTime
+  height: Int
+  bodyType: String
+  averageTopSize: String
+  averagePantSize: String
+  preferredPronouns: String
+  profession: String
+  partyFrequency: String
+  travelFrequency: String
+  shoppingFrequency: String
+  averageSpend: String
+  shippingAddress: LocationUpdateOneInput
+}
+
+input CustomerDetailUpdateManyMutationInput {
+  phoneNumber: String
+  birthday: DateTime
+  height: Int
+  bodyType: String
+  averageTopSize: String
+  averagePantSize: String
+  preferredPronouns: String
+  profession: String
+  partyFrequency: String
+  travelFrequency: String
+  shoppingFrequency: String
+  averageSpend: String
+}
+
+input CustomerDetailUpdateOneInput {
+  create: CustomerDetailCreateInput
+  update: CustomerDetailUpdateDataInput
+  upsert: CustomerDetailUpsertNestedInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: CustomerDetailWhereUniqueInput
+}
+
+input CustomerDetailUpsertNestedInput {
+  update: CustomerDetailUpdateDataInput!
+  create: CustomerDetailCreateInput!
+}
+
+input CustomerDetailWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  phoneNumber: String
+  phoneNumber_not: String
+  phoneNumber_in: [String!]
+  phoneNumber_not_in: [String!]
+  phoneNumber_lt: String
+  phoneNumber_lte: String
+  phoneNumber_gt: String
+  phoneNumber_gte: String
+  phoneNumber_contains: String
+  phoneNumber_not_contains: String
+  phoneNumber_starts_with: String
+  phoneNumber_not_starts_with: String
+  phoneNumber_ends_with: String
+  phoneNumber_not_ends_with: String
+  birthday: DateTime
+  birthday_not: DateTime
+  birthday_in: [DateTime!]
+  birthday_not_in: [DateTime!]
+  birthday_lt: DateTime
+  birthday_lte: DateTime
+  birthday_gt: DateTime
+  birthday_gte: DateTime
+  height: Int
+  height_not: Int
+  height_in: [Int!]
+  height_not_in: [Int!]
+  height_lt: Int
+  height_lte: Int
+  height_gt: Int
+  height_gte: Int
+  bodyType: String
+  bodyType_not: String
+  bodyType_in: [String!]
+  bodyType_not_in: [String!]
+  bodyType_lt: String
+  bodyType_lte: String
+  bodyType_gt: String
+  bodyType_gte: String
+  bodyType_contains: String
+  bodyType_not_contains: String
+  bodyType_starts_with: String
+  bodyType_not_starts_with: String
+  bodyType_ends_with: String
+  bodyType_not_ends_with: String
+  averageTopSize: String
+  averageTopSize_not: String
+  averageTopSize_in: [String!]
+  averageTopSize_not_in: [String!]
+  averageTopSize_lt: String
+  averageTopSize_lte: String
+  averageTopSize_gt: String
+  averageTopSize_gte: String
+  averageTopSize_contains: String
+  averageTopSize_not_contains: String
+  averageTopSize_starts_with: String
+  averageTopSize_not_starts_with: String
+  averageTopSize_ends_with: String
+  averageTopSize_not_ends_with: String
+  averagePantSize: String
+  averagePantSize_not: String
+  averagePantSize_in: [String!]
+  averagePantSize_not_in: [String!]
+  averagePantSize_lt: String
+  averagePantSize_lte: String
+  averagePantSize_gt: String
+  averagePantSize_gte: String
+  averagePantSize_contains: String
+  averagePantSize_not_contains: String
+  averagePantSize_starts_with: String
+  averagePantSize_not_starts_with: String
+  averagePantSize_ends_with: String
+  averagePantSize_not_ends_with: String
+  preferredPronouns: String
+  preferredPronouns_not: String
+  preferredPronouns_in: [String!]
+  preferredPronouns_not_in: [String!]
+  preferredPronouns_lt: String
+  preferredPronouns_lte: String
+  preferredPronouns_gt: String
+  preferredPronouns_gte: String
+  preferredPronouns_contains: String
+  preferredPronouns_not_contains: String
+  preferredPronouns_starts_with: String
+  preferredPronouns_not_starts_with: String
+  preferredPronouns_ends_with: String
+  preferredPronouns_not_ends_with: String
+  profession: String
+  profession_not: String
+  profession_in: [String!]
+  profession_not_in: [String!]
+  profession_lt: String
+  profession_lte: String
+  profession_gt: String
+  profession_gte: String
+  profession_contains: String
+  profession_not_contains: String
+  profession_starts_with: String
+  profession_not_starts_with: String
+  profession_ends_with: String
+  profession_not_ends_with: String
+  partyFrequency: String
+  partyFrequency_not: String
+  partyFrequency_in: [String!]
+  partyFrequency_not_in: [String!]
+  partyFrequency_lt: String
+  partyFrequency_lte: String
+  partyFrequency_gt: String
+  partyFrequency_gte: String
+  partyFrequency_contains: String
+  partyFrequency_not_contains: String
+  partyFrequency_starts_with: String
+  partyFrequency_not_starts_with: String
+  partyFrequency_ends_with: String
+  partyFrequency_not_ends_with: String
+  travelFrequency: String
+  travelFrequency_not: String
+  travelFrequency_in: [String!]
+  travelFrequency_not_in: [String!]
+  travelFrequency_lt: String
+  travelFrequency_lte: String
+  travelFrequency_gt: String
+  travelFrequency_gte: String
+  travelFrequency_contains: String
+  travelFrequency_not_contains: String
+  travelFrequency_starts_with: String
+  travelFrequency_not_starts_with: String
+  travelFrequency_ends_with: String
+  travelFrequency_not_ends_with: String
+  shoppingFrequency: String
+  shoppingFrequency_not: String
+  shoppingFrequency_in: [String!]
+  shoppingFrequency_not_in: [String!]
+  shoppingFrequency_lt: String
+  shoppingFrequency_lte: String
+  shoppingFrequency_gt: String
+  shoppingFrequency_gte: String
+  shoppingFrequency_contains: String
+  shoppingFrequency_not_contains: String
+  shoppingFrequency_starts_with: String
+  shoppingFrequency_not_starts_with: String
+  shoppingFrequency_ends_with: String
+  shoppingFrequency_not_ends_with: String
+  averageSpend: String
+  averageSpend_not: String
+  averageSpend_in: [String!]
+  averageSpend_not_in: [String!]
+  averageSpend_lt: String
+  averageSpend_lte: String
+  averageSpend_gt: String
+  averageSpend_gte: String
+  averageSpend_contains: String
+  averageSpend_not_contains: String
+  averageSpend_starts_with: String
+  averageSpend_not_starts_with: String
+  averageSpend_ends_with: String
+  averageSpend_not_ends_with: String
+  shippingAddress: LocationWhereInput
+  AND: [CustomerDetailWhereInput!]
+  OR: [CustomerDetailWhereInput!]
+  NOT: [CustomerDetailWhereInput!]
+}
+
+input CustomerDetailWhereUniqueInput {
+  id: ID
 }
 
 type CustomerEdge {
@@ -881,6 +1267,7 @@ input CustomerSubscriptionWhereInput {
 input CustomerUpdateInput {
   user: UserUpdateOneRequiredInput
   status: CustomerStatus
+  detail: CustomerDetailUpdateOneInput
   bag: BagUpdateOneRequiredWithoutCustomerInput
 }
 
@@ -898,6 +1285,7 @@ input CustomerUpdateOneRequiredWithoutBagInput {
 input CustomerUpdateWithoutBagDataInput {
   user: UserUpdateOneRequiredInput
   status: CustomerStatus
+  detail: CustomerDetailUpdateOneInput
 }
 
 input CustomerUpsertWithoutBagInput {
@@ -925,6 +1313,7 @@ input CustomerWhereInput {
   status_not: CustomerStatus
   status_in: [CustomerStatus!]
   status_not_in: [CustomerStatus!]
+  detail: CustomerDetailWhereInput
   bag: BagWhereInput
   AND: [CustomerWhereInput!]
   OR: [CustomerWhereInput!]
@@ -1323,6 +1712,7 @@ scalar Json
 type Location {
   id: ID!
   name: String
+  company: String
   description: String
   address1: String!
   address2: String!
@@ -1344,6 +1734,7 @@ type LocationConnection {
 input LocationCreateInput {
   id: ID
   name: String
+  company: String
   description: String
   address1: String!
   address2: String!
@@ -1371,6 +1762,8 @@ enum LocationOrderByInput {
   id_DESC
   name_ASC
   name_DESC
+  company_ASC
+  company_DESC
   description_ASC
   description_DESC
   address1_ASC
@@ -1394,6 +1787,7 @@ enum LocationOrderByInput {
 type LocationPreviousValues {
   id: ID!
   name: String
+  company: String
   description: String
   address1: String!
   address2: String!
@@ -1432,6 +1826,7 @@ enum LocationType {
 
 input LocationUpdateDataInput {
   name: String
+  company: String
   description: String
   address1: String
   address2: String
@@ -1446,6 +1841,7 @@ input LocationUpdateDataInput {
 
 input LocationUpdateInput {
   name: String
+  company: String
   description: String
   address1: String
   address2: String
@@ -1460,6 +1856,7 @@ input LocationUpdateInput {
 
 input LocationUpdateManyMutationInput {
   name: String
+  company: String
   description: String
   address1: String
   address2: String
@@ -1514,6 +1911,20 @@ input LocationWhereInput {
   name_not_starts_with: String
   name_ends_with: String
   name_not_ends_with: String
+  company: String
+  company_not: String
+  company_in: [String!]
+  company_not_in: [String!]
+  company_lt: String
+  company_lte: String
+  company_gt: String
+  company_gte: String
+  company_contains: String
+  company_not_contains: String
+  company_starts_with: String
+  company_not_starts_with: String
+  company_ends_with: String
+  company_not_ends_with: String
   description: String
   description_not: String
   description_in: [String!]
@@ -1666,6 +2077,12 @@ type Mutation {
   upsertCustomer(where: CustomerWhereUniqueInput!, create: CustomerCreateInput!, update: CustomerUpdateInput!): Customer!
   deleteCustomer(where: CustomerWhereUniqueInput!): Customer
   deleteManyCustomers(where: CustomerWhereInput): BatchPayload!
+  createCustomerDetail(data: CustomerDetailCreateInput!): CustomerDetail!
+  updateCustomerDetail(data: CustomerDetailUpdateInput!, where: CustomerDetailWhereUniqueInput!): CustomerDetail
+  updateManyCustomerDetails(data: CustomerDetailUpdateManyMutationInput!, where: CustomerDetailWhereInput): BatchPayload!
+  upsertCustomerDetail(where: CustomerDetailWhereUniqueInput!, create: CustomerDetailCreateInput!, update: CustomerDetailUpdateInput!): CustomerDetail!
+  deleteCustomerDetail(where: CustomerDetailWhereUniqueInput!): CustomerDetail
+  deleteManyCustomerDetails(where: CustomerDetailWhereInput): BatchPayload!
   createImage(data: ImageCreateInput!): Image!
   updateImage(data: ImageUpdateInput!, where: ImageWhereUniqueInput!): Image
   updateManyImages(data: ImageUpdateManyMutationInput!, where: ImageWhereInput): BatchPayload!
@@ -1685,6 +2102,8 @@ type Mutation {
   deleteLocation(where: LocationWhereUniqueInput!): Location
   deleteManyLocations(where: LocationWhereInput): BatchPayload!
   createOrder(data: OrderCreateInput!): Order!
+  updateOrder(data: OrderUpdateInput!, where: OrderWhereUniqueInput!): Order
+  upsertOrder(where: OrderWhereUniqueInput!, create: OrderCreateInput!, update: OrderUpdateInput!): Order!
   deleteOrder(where: OrderWhereUniqueInput!): Order
   deleteManyOrders(where: OrderWhereInput): BatchPayload!
   createPhysicalProduct(data: PhysicalProductCreateInput!): PhysicalProduct!
@@ -1725,6 +2144,10 @@ interface Node {
 
 type Order {
   id: ID!
+  user: User!
+  products(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct!]
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 type OrderConnection {
@@ -1735,6 +2158,8 @@ type OrderConnection {
 
 input OrderCreateInput {
   id: ID
+  user: UserCreateOneInput!
+  products: PhysicalProductCreateManyInput
 }
 
 type OrderEdge {
@@ -1745,10 +2170,16 @@ type OrderEdge {
 enum OrderOrderByInput {
   id_ASC
   id_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
 }
 
 type OrderPreviousValues {
   id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 type OrderSubscriptionPayload {
@@ -1769,6 +2200,11 @@ input OrderSubscriptionWhereInput {
   NOT: [OrderSubscriptionWhereInput!]
 }
 
+input OrderUpdateInput {
+  user: UserUpdateOneRequiredInput
+  products: PhysicalProductUpdateManyInput
+}
+
 input OrderWhereInput {
   id: ID
   id_not: ID
@@ -1784,6 +2220,26 @@ input OrderWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
+  user: UserWhereInput
+  products_every: PhysicalProductWhereInput
+  products_some: PhysicalProductWhereInput
+  products_none: PhysicalProductWhereInput
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
   AND: [OrderWhereInput!]
   OR: [OrderWhereInput!]
   NOT: [OrderWhereInput!]
@@ -1806,7 +2262,7 @@ type PhysicalProduct {
   location: Location
   productVariant: ProductVariant!
   inventoryStatus: InventoryStatus!
-  productStatus: ProductStatus
+  productStatus: ProductStatus!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -1823,7 +2279,12 @@ input PhysicalProductCreateInput {
   location: LocationCreateOneInput
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
   inventoryStatus: InventoryStatus!
-  productStatus: ProductStatus
+  productStatus: ProductStatus!
+}
+
+input PhysicalProductCreateManyInput {
+  create: [PhysicalProductCreateInput!]
+  connect: [PhysicalProductWhereUniqueInput!]
 }
 
 input PhysicalProductCreateManyWithoutProductVariantInput {
@@ -1836,7 +2297,7 @@ input PhysicalProductCreateWithoutProductVariantInput {
   seasonsUID: String!
   location: LocationCreateOneInput
   inventoryStatus: InventoryStatus!
-  productStatus: ProductStatus
+  productStatus: ProductStatus!
 }
 
 type PhysicalProductEdge {
@@ -1863,7 +2324,7 @@ type PhysicalProductPreviousValues {
   id: ID!
   seasonsUID: String!
   inventoryStatus: InventoryStatus!
-  productStatus: ProductStatus
+  productStatus: ProductStatus!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -1944,6 +2405,14 @@ input PhysicalProductSubscriptionWhereInput {
   NOT: [PhysicalProductSubscriptionWhereInput!]
 }
 
+input PhysicalProductUpdateDataInput {
+  seasonsUID: String
+  location: LocationUpdateOneInput
+  productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
+  inventoryStatus: InventoryStatus
+  productStatus: ProductStatus
+}
+
 input PhysicalProductUpdateInput {
   seasonsUID: String
   location: LocationUpdateOneInput
@@ -1956,6 +2425,18 @@ input PhysicalProductUpdateManyDataInput {
   seasonsUID: String
   inventoryStatus: InventoryStatus
   productStatus: ProductStatus
+}
+
+input PhysicalProductUpdateManyInput {
+  create: [PhysicalProductCreateInput!]
+  update: [PhysicalProductUpdateWithWhereUniqueNestedInput!]
+  upsert: [PhysicalProductUpsertWithWhereUniqueNestedInput!]
+  delete: [PhysicalProductWhereUniqueInput!]
+  connect: [PhysicalProductWhereUniqueInput!]
+  set: [PhysicalProductWhereUniqueInput!]
+  disconnect: [PhysicalProductWhereUniqueInput!]
+  deleteMany: [PhysicalProductScalarWhereInput!]
+  updateMany: [PhysicalProductUpdateManyWithWhereNestedInput!]
 }
 
 input PhysicalProductUpdateManyMutationInput {
@@ -1988,9 +2469,20 @@ input PhysicalProductUpdateWithoutProductVariantDataInput {
   productStatus: ProductStatus
 }
 
+input PhysicalProductUpdateWithWhereUniqueNestedInput {
+  where: PhysicalProductWhereUniqueInput!
+  data: PhysicalProductUpdateDataInput!
+}
+
 input PhysicalProductUpdateWithWhereUniqueWithoutProductVariantInput {
   where: PhysicalProductWhereUniqueInput!
   data: PhysicalProductUpdateWithoutProductVariantDataInput!
+}
+
+input PhysicalProductUpsertWithWhereUniqueNestedInput {
+  where: PhysicalProductWhereUniqueInput!
+  update: PhysicalProductUpdateDataInput!
+  create: PhysicalProductCreateInput!
 }
 
 input PhysicalProductUpsertWithWhereUniqueWithoutProductVariantInput {
@@ -2503,7 +2995,6 @@ input ProductUpsertWithWhereUniqueWithoutCategoryInput {
 type ProductVariant {
   id: ID!
   sku: String
-  upc: String
   color: Color!
   weight: Int
   height: Int
@@ -2524,7 +3015,6 @@ type ProductVariantConnection {
 input ProductVariantCreateInput {
   id: ID
   sku: String
-  upc: String
   color: ColorCreateOneWithoutProductVariantsInput!
   weight: Int
   height: Int
@@ -2557,7 +3047,6 @@ input ProductVariantCreateOneWithoutPhysicalProductsInput {
 input ProductVariantCreateWithoutColorInput {
   id: ID
   sku: String
-  upc: String
   weight: Int
   height: Int
   product: ProductCreateOneInput!
@@ -2569,7 +3058,6 @@ input ProductVariantCreateWithoutColorInput {
 input ProductVariantCreateWithoutInventoryLevelInput {
   id: ID
   sku: String
-  upc: String
   color: ColorCreateOneWithoutProductVariantsInput!
   weight: Int
   height: Int
@@ -2581,7 +3069,6 @@ input ProductVariantCreateWithoutInventoryLevelInput {
 input ProductVariantCreateWithoutPhysicalProductsInput {
   id: ID
   sku: String
-  upc: String
   color: ColorCreateOneWithoutProductVariantsInput!
   weight: Int
   height: Int
@@ -2600,8 +3087,6 @@ enum ProductVariantOrderByInput {
   id_DESC
   sku_ASC
   sku_DESC
-  upc_ASC
-  upc_DESC
   weight_ASC
   weight_DESC
   height_ASC
@@ -2617,7 +3102,6 @@ enum ProductVariantOrderByInput {
 type ProductVariantPreviousValues {
   id: ID!
   sku: String
-  upc: String
   weight: Int
   height: Int
   retailPrice: Int
@@ -2654,20 +3138,6 @@ input ProductVariantScalarWhereInput {
   sku_not_starts_with: String
   sku_ends_with: String
   sku_not_ends_with: String
-  upc: String
-  upc_not: String
-  upc_in: [String!]
-  upc_not_in: [String!]
-  upc_lt: String
-  upc_lte: String
-  upc_gt: String
-  upc_gte: String
-  upc_contains: String
-  upc_not_contains: String
-  upc_starts_with: String
-  upc_not_starts_with: String
-  upc_ends_with: String
-  upc_not_ends_with: String
   weight: Int
   weight_not: Int
   weight_in: [Int!]
@@ -2733,7 +3203,6 @@ input ProductVariantSubscriptionWhereInput {
 
 input ProductVariantUpdateDataInput {
   sku: String
-  upc: String
   color: ColorUpdateOneRequiredWithoutProductVariantsInput
   weight: Int
   height: Int
@@ -2745,7 +3214,6 @@ input ProductVariantUpdateDataInput {
 
 input ProductVariantUpdateInput {
   sku: String
-  upc: String
   color: ColorUpdateOneRequiredWithoutProductVariantsInput
   weight: Int
   height: Int
@@ -2757,7 +3225,6 @@ input ProductVariantUpdateInput {
 
 input ProductVariantUpdateManyDataInput {
   sku: String
-  upc: String
   weight: Int
   height: Int
   retailPrice: Int
@@ -2777,7 +3244,6 @@ input ProductVariantUpdateManyInput {
 
 input ProductVariantUpdateManyMutationInput {
   sku: String
-  upc: String
   weight: Int
   height: Int
   retailPrice: Int
@@ -2816,7 +3282,6 @@ input ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput {
 
 input ProductVariantUpdateWithoutColorDataInput {
   sku: String
-  upc: String
   weight: Int
   height: Int
   product: ProductUpdateOneRequiredInput
@@ -2827,7 +3292,6 @@ input ProductVariantUpdateWithoutColorDataInput {
 
 input ProductVariantUpdateWithoutInventoryLevelDataInput {
   sku: String
-  upc: String
   color: ColorUpdateOneRequiredWithoutProductVariantsInput
   weight: Int
   height: Int
@@ -2838,7 +3302,6 @@ input ProductVariantUpdateWithoutInventoryLevelDataInput {
 
 input ProductVariantUpdateWithoutPhysicalProductsDataInput {
   sku: String
-  upc: String
   color: ColorUpdateOneRequiredWithoutProductVariantsInput
   weight: Int
   height: Int
@@ -2908,20 +3371,6 @@ input ProductVariantWhereInput {
   sku_not_starts_with: String
   sku_ends_with: String
   sku_not_ends_with: String
-  upc: String
-  upc_not: String
-  upc_in: [String!]
-  upc_not_in: [String!]
-  upc_lt: String
-  upc_lte: String
-  upc_gt: String
-  upc_gte: String
-  upc_contains: String
-  upc_not_contains: String
-  upc_starts_with: String
-  upc_not_starts_with: String
-  upc_ends_with: String
-  upc_not_ends_with: String
   color: ColorWhereInput
   weight: Int
   weight_not: Int
@@ -3097,6 +3546,9 @@ type Query {
   customer(where: CustomerWhereUniqueInput!): Customer
   customers(where: CustomerWhereInput, orderBy: CustomerOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Customer]!
   customersConnection(where: CustomerWhereInput, orderBy: CustomerOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CustomerConnection!
+  customerDetail(where: CustomerDetailWhereUniqueInput!): CustomerDetail
+  customerDetails(where: CustomerDetailWhereInput, orderBy: CustomerDetailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CustomerDetail]!
+  customerDetailsConnection(where: CustomerDetailWhereInput, orderBy: CustomerDetailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CustomerDetailConnection!
   image(where: ImageWhereUniqueInput!): Image
   images(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Image]!
   imagesConnection(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ImageConnection!
@@ -3138,6 +3590,7 @@ type Subscription {
   category(where: CategorySubscriptionWhereInput): CategorySubscriptionPayload
   color(where: ColorSubscriptionWhereInput): ColorSubscriptionPayload
   customer(where: CustomerSubscriptionWhereInput): CustomerSubscriptionPayload
+  customerDetail(where: CustomerDetailSubscriptionWhereInput): CustomerDetailSubscriptionPayload
   image(where: ImageSubscriptionWhereInput): ImageSubscriptionPayload
   inventoryLevel(where: InventoryLevelSubscriptionWhereInput): InventoryLevelSubscriptionPayload
   location(where: LocationSubscriptionWhereInput): LocationSubscriptionPayload
@@ -3154,9 +3607,9 @@ type User {
   email: String!
   firstName: String!
   lastName: String!
-  password: String!
-  avatar: String
   role: UserRole!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 type UserConnection {
@@ -3171,8 +3624,6 @@ input UserCreateInput {
   email: String!
   firstName: String!
   lastName: String!
-  password: String!
-  avatar: String
   role: UserRole
 }
 
@@ -3197,12 +3648,12 @@ enum UserOrderByInput {
   firstName_DESC
   lastName_ASC
   lastName_DESC
-  password_ASC
-  password_DESC
-  avatar_ASC
-  avatar_DESC
   role_ASC
   role_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
 }
 
 type UserPreviousValues {
@@ -3211,9 +3662,9 @@ type UserPreviousValues {
   email: String!
   firstName: String!
   lastName: String!
-  password: String!
-  avatar: String
   role: UserRole!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 enum UserRole {
@@ -3245,8 +3696,6 @@ input UserUpdateDataInput {
   email: String
   firstName: String
   lastName: String
-  password: String
-  avatar: String
   role: UserRole
 }
 
@@ -3255,8 +3704,6 @@ input UserUpdateInput {
   email: String
   firstName: String
   lastName: String
-  password: String
-  avatar: String
   role: UserRole
 }
 
@@ -3265,8 +3712,6 @@ input UserUpdateManyMutationInput {
   email: String
   firstName: String
   lastName: String
-  password: String
-  avatar: String
   role: UserRole
 }
 
@@ -3362,38 +3807,26 @@ input UserWhereInput {
   lastName_not_starts_with: String
   lastName_ends_with: String
   lastName_not_ends_with: String
-  password: String
-  password_not: String
-  password_in: [String!]
-  password_not_in: [String!]
-  password_lt: String
-  password_lte: String
-  password_gt: String
-  password_gte: String
-  password_contains: String
-  password_not_contains: String
-  password_starts_with: String
-  password_not_starts_with: String
-  password_ends_with: String
-  password_not_ends_with: String
-  avatar: String
-  avatar_not: String
-  avatar_in: [String!]
-  avatar_not_in: [String!]
-  avatar_lt: String
-  avatar_lte: String
-  avatar_gt: String
-  avatar_gte: String
-  avatar_contains: String
-  avatar_not_contains: String
-  avatar_starts_with: String
-  avatar_not_starts_with: String
-  avatar_ends_with: String
-  avatar_not_ends_with: String
   role: UserRole
   role_not: UserRole
   role_in: [UserRole!]
   role_not_in: [UserRole!]
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
   AND: [UserWhereInput!]
   OR: [UserWhereInput!]
   NOT: [UserWhereInput!]

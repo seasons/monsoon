@@ -1,22 +1,68 @@
 import {
-  Context,
-  validateAndParseIdToken,
+  createPrismaCustomerForExistingUser,
+  createAuth0User,
   createPrismaUser,
+  getAuth0UserAccessToken,
 } from "../../auth/utils"
+import { Context } from "../../utils"
+import { UserInputError, ForbiddenError } from "apollo-server"
 
 export const auth = {
-  async authenticate(parent, { idToken }, ctx: Context, info) {
-    let userToken = null
+  // The signup mutation signs up users with a "Customer" role.
+  async signup(
+    obj,
+    { email, password, firstName, lastName },
+    ctx: Context,
+    info
+  ) {
+    // Register the user on Auth0
+    let userAuth0ID
     try {
-      userToken = await validateAndParseIdToken(idToken)
+      userAuth0ID = await createAuth0User(email, password)
     } catch (err) {
-      throw new Error(err.message)
+      if (err.message.includes("400")) {
+        throw new UserInputError(err)
+      }
+      throw new Error(err)
     }
-    const auth0id = userToken.sub.split("|")[1]
-    let user = await ctx.db.query.user({ where: { auth0id } }, info)
-    if (!user) {
-      user = createPrismaUser(ctx, userToken)
+
+    // Get their API access token
+    let token
+    try {
+      token = await getAuth0UserAccessToken(email, password)
+    } catch (err) {
+      if (err.message.includes("403")) {
+        throw new ForbiddenError(err)
+      }
+      throw new UserInputError(err)
     }
-    return user
+
+    // Create a user object in our database
+    let user
+    try {
+      user = await createPrismaUser(ctx, {
+        auth0Id: userAuth0ID,
+        email,
+        firstName,
+        lastName,
+      })
+    } catch (err) {
+      throw new Error(err)
+    }
+
+    // Create a customer object in our database
+    let customer
+    try {
+      customer = await createPrismaCustomerForExistingUser(ctx, {
+        userID: user.id,
+      })
+    } catch (err) {
+      throw new Error(err)
+    }
+
+    return {
+      token,
+      user: user,
+    }
   },
 }

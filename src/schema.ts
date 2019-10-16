@@ -5,7 +5,7 @@ import { directiveResolvers } from "./auth/directives"
 
 const typeDefs = importSchema("./src/schema.graphql")
 export const schema = makeExecutableSchema({
-  typeDefs,
-  resolvers,
-  directiveResolvers,
+    typeDefs,
+    resolvers,
+    directiveResolvers,
 })

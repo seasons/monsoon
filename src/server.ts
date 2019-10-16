@@ -23,8 +23,9 @@ const db = new Prisma({
 
 export const serverOptions = {
   schema,
-  context: request => ({
-    ...request,
+  context: ({ req, res }) => ({
+    req,
+    res,
     prisma,
     db,
   }),
