@@ -822,7 +822,7 @@ input CustomerCreateInput {
   id: ID
   user: UserCreateOneInput!
   status: CustomerStatus
-  detail: CustomerDetailCreateOneWithoutCustomerInput
+  detail: CustomerDetailCreateOneInput
   bag: BagCreateOneWithoutCustomerInput!
 }
 
@@ -831,30 +831,17 @@ input CustomerCreateOneWithoutBagInput {
   connect: CustomerWhereUniqueInput
 }
 
-input CustomerCreateOneWithoutDetailInput {
-  create: CustomerCreateWithoutDetailInput
-  connect: CustomerWhereUniqueInput
-}
-
 input CustomerCreateWithoutBagInput {
   id: ID
   user: UserCreateOneInput!
   status: CustomerStatus
-  detail: CustomerDetailCreateOneWithoutCustomerInput
-}
-
-input CustomerCreateWithoutDetailInput {
-  id: ID
-  user: UserCreateOneInput!
-  status: CustomerStatus
-  bag: BagCreateOneWithoutCustomerInput!
+  detail: CustomerDetailCreateOneInput
 }
 
 type CustomerDetail {
   id: ID!
   createdAt: DateTime!
   updatedAt: DateTime!
-  customer: Customer!
   phoneNumber: String
   birthday: DateTime
   height: Int
@@ -878,7 +865,6 @@ type CustomerDetailConnection {
 
 input CustomerDetailCreateInput {
   id: ID
-  customer: CustomerCreateOneWithoutDetailInput!
   phoneNumber: String
   birthday: DateTime
   height: Int
@@ -894,26 +880,9 @@ input CustomerDetailCreateInput {
   shippingAddress: LocationCreateOneInput
 }
 
-input CustomerDetailCreateOneWithoutCustomerInput {
-  create: CustomerDetailCreateWithoutCustomerInput
+input CustomerDetailCreateOneInput {
+  create: CustomerDetailCreateInput
   connect: CustomerDetailWhereUniqueInput
-}
-
-input CustomerDetailCreateWithoutCustomerInput {
-  id: ID
-  phoneNumber: String
-  birthday: DateTime
-  height: Int
-  bodyType: String
-  averageTopSize: String
-  averagePantSize: String
-  preferredPronouns: String
-  profession: String
-  partyFrequency: String
-  travelFrequency: String
-  shoppingFrequency: String
-  averageSpend: String
-  shippingAddress: LocationCreateOneInput
 }
 
 type CustomerDetailEdge {
@@ -990,8 +959,23 @@ input CustomerDetailSubscriptionWhereInput {
   NOT: [CustomerDetailSubscriptionWhereInput!]
 }
 
+input CustomerDetailUpdateDataInput {
+  phoneNumber: String
+  birthday: DateTime
+  height: Int
+  bodyType: String
+  averageTopSize: String
+  averagePantSize: String
+  preferredPronouns: String
+  profession: String
+  partyFrequency: String
+  travelFrequency: String
+  shoppingFrequency: String
+  averageSpend: String
+  shippingAddress: LocationUpdateOneInput
+}
+
 input CustomerDetailUpdateInput {
-  customer: CustomerUpdateOneRequiredWithoutDetailInput
   phoneNumber: String
   birthday: DateTime
   height: Int
@@ -1022,34 +1006,18 @@ input CustomerDetailUpdateManyMutationInput {
   averageSpend: String
 }
 
-input CustomerDetailUpdateOneWithoutCustomerInput {
-  create: CustomerDetailCreateWithoutCustomerInput
-  update: CustomerDetailUpdateWithoutCustomerDataInput
-  upsert: CustomerDetailUpsertWithoutCustomerInput
+input CustomerDetailUpdateOneInput {
+  create: CustomerDetailCreateInput
+  update: CustomerDetailUpdateDataInput
+  upsert: CustomerDetailUpsertNestedInput
   delete: Boolean
   disconnect: Boolean
   connect: CustomerDetailWhereUniqueInput
 }
 
-input CustomerDetailUpdateWithoutCustomerDataInput {
-  phoneNumber: String
-  birthday: DateTime
-  height: Int
-  bodyType: String
-  averageTopSize: String
-  averagePantSize: String
-  preferredPronouns: String
-  profession: String
-  partyFrequency: String
-  travelFrequency: String
-  shoppingFrequency: String
-  averageSpend: String
-  shippingAddress: LocationUpdateOneInput
-}
-
-input CustomerDetailUpsertWithoutCustomerInput {
-  update: CustomerDetailUpdateWithoutCustomerDataInput!
-  create: CustomerDetailCreateWithoutCustomerInput!
+input CustomerDetailUpsertNestedInput {
+  update: CustomerDetailUpdateDataInput!
+  create: CustomerDetailCreateInput!
 }
 
 input CustomerDetailWhereInput {
@@ -1083,7 +1051,6 @@ input CustomerDetailWhereInput {
   updatedAt_lte: DateTime
   updatedAt_gt: DateTime
   updatedAt_gte: DateTime
-  customer: CustomerWhereInput
   phoneNumber: String
   phoneNumber_not: String
   phoneNumber_in: [String!]
@@ -1296,7 +1263,7 @@ input CustomerSubscriptionWhereInput {
 input CustomerUpdateInput {
   user: UserUpdateOneRequiredInput
   status: CustomerStatus
-  detail: CustomerDetailUpdateOneWithoutCustomerInput
+  detail: CustomerDetailUpdateOneInput
   bag: BagUpdateOneRequiredWithoutCustomerInput
 }
 
@@ -1311,33 +1278,15 @@ input CustomerUpdateOneRequiredWithoutBagInput {
   connect: CustomerWhereUniqueInput
 }
 
-input CustomerUpdateOneRequiredWithoutDetailInput {
-  create: CustomerCreateWithoutDetailInput
-  update: CustomerUpdateWithoutDetailDataInput
-  upsert: CustomerUpsertWithoutDetailInput
-  connect: CustomerWhereUniqueInput
-}
-
 input CustomerUpdateWithoutBagDataInput {
   user: UserUpdateOneRequiredInput
   status: CustomerStatus
-  detail: CustomerDetailUpdateOneWithoutCustomerInput
-}
-
-input CustomerUpdateWithoutDetailDataInput {
-  user: UserUpdateOneRequiredInput
-  status: CustomerStatus
-  bag: BagUpdateOneRequiredWithoutCustomerInput
+  detail: CustomerDetailUpdateOneInput
 }
 
 input CustomerUpsertWithoutBagInput {
   update: CustomerUpdateWithoutBagDataInput!
   create: CustomerCreateWithoutBagInput!
-}
-
-input CustomerUpsertWithoutDetailInput {
-  update: CustomerUpdateWithoutDetailDataInput!
-  create: CustomerCreateWithoutDetailInput!
 }
 
 input CustomerWhereInput {

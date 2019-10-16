@@ -182,7 +182,6 @@ type CustomerDetail {
     id: ID! @id
     createdAt: DateTime! @createdAt
     updatedAt: DateTime! @updatedAt
-    customer: Customer! @relation(link: INLINE)
     phoneNumber: String
     birthday: DateTime
     # Height in inches

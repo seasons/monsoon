@@ -1,6 +1,6 @@
 const _get = require("lodash.get")
 
-const userLocationOnContext = "request.user"
+const userLocationOnContext = "req.user"
 
 const isLoggedIn = ctx => {
   const user = ctxUser(ctx)
@@ -18,9 +18,14 @@ export const directiveResolvers = {
     isLoggedIn(ctx)
     return next()
   },
-  hasRole: (next, source, { roles }, ctx) => {
-    const { role } = isLoggedIn(ctx)
-    if (roles.includes(role)) {
+  hasRole: async (next, source, { roles }, ctx) => {
+    // Extract the auth0Id from the user object on the request
+    const { sub } = isLoggedIn(ctx)
+    const auth0Id = sub.split("|")[1]
+
+    // get the user from our database and check the role
+    const user = await ctx.prisma.user({ auth0Id })
+    if (roles.includes(user.role)) {
       return next()
     }
     throw new Error(`Unauthorized, incorrect role`)

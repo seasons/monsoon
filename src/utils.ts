@@ -1,3 +1,7 @@
+import { Prisma } from "./prisma"
+import { Binding } from "graphql-binding"
+import { Request, Response } from "express"
+
 export enum ProductSize {
   XS = "XS",
   S = "S",
@@ -22,4 +26,11 @@ export const sizeToSizeCode = (size: ProductSize) => {
       return "XL"
   }
   return ""
+}
+
+export interface Context {
+  prisma: Prisma
+  db: Binding
+  req: Request & { user: any }
+  res: Response
 }
