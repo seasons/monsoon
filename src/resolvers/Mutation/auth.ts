@@ -3,6 +3,7 @@ import {
   createAuth0User,
   createPrismaUser,
   getAuth0UserAccessToken,
+  isLoggedIn,
 } from "../../auth/utils"
 import { Context } from "../../utils"
 import { UserInputError, ForbiddenError } from "apollo-server"
@@ -11,7 +12,7 @@ export const auth = {
   // The signup mutation signs up users with a "Customer" role.
   async signup(
     obj,
-    { email, password, firstName, lastName },
+    { email, password, firstName, lastName, details },
     ctx: Context,
     info
   ) {
@@ -55,6 +56,7 @@ export const auth = {
     try {
       customer = await createPrismaCustomerForExistingUser(ctx, {
         userID: user.id,
+        details,
       })
     } catch (err) {
       throw new Error(err)
@@ -64,5 +66,28 @@ export const auth = {
       token,
       user: user,
     }
+  },
+
+  async login(obj, { email, password }, ctx: Context, info) {
+    // If they are already logged in, throw an error
+    if (isLoggedIn(ctx)) {
+      throw new Error(`user is already logged in`)
+    }
+
+    // Get their API access token
+    let token
+    try {
+      token = await getAuth0UserAccessToken(email, password)
+    } catch (err) {
+      if (err.message.includes("403")) {
+        throw new ForbiddenError(err)
+      }
+      throw new UserInputError(err)
+    }
+
+    // Get user with this email
+    let user = await ctx.prisma.user({ email })
+
+    return { token, user }
   },
 }

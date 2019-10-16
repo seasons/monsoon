@@ -53,3 +53,13 @@ export const customer = {
     return { ...customer, detail: updatedDetails }
   },
 }
+
+// mutation add {
+//     addCustomerDetails(details:{phoneNumber:"asdfa", profession:"asdfas"}) {
+//       detail {
+//         phoneNumber
+//         profession
+//         partyFrequency
+//       }
+//     }
+//   }
