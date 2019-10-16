@@ -2,6 +2,7 @@ import * as jwt from "jsonwebtoken"
 import jwksClient from "jwks-rsa"
 import request from "request"
 import { Context } from "../utils"
+import get from "lodash.get"
 
 const PW_STRENGTH_RULES_URL =
   "https://manage.auth0.com/dashboard/us/seasons/connections/database/con_btTULQOf6kAxxbCz/security"
@@ -103,13 +104,12 @@ export function createAuth0User(
       function handleResponse(error, response, body) {
         // Handle a generic error
         if (error) {
-          reject(new Error(`Error creating Auth0 user: ${error}`))
+          return reject(new Error(`Error creating Auth0 user: ${error}`))
         }
         // Give a precise error message if a user tried to sign up with an
         // email that's already in the db
         if (response.statusCode == 400 && body.code === "invalid_signup") {
-          console.log(body)
-          reject(new Error("400 -- email already in db"))
+          return reject(new Error("400 -- email already in db"))
         }
         // Give a precise error message if a user tried to sign up with
         // a insufficiently strong password
@@ -117,7 +117,7 @@ export function createAuth0User(
           response.statusCode == 400 &&
           body.name === "PasswordStrengthError"
         ) {
-          reject(
+          return reject(
             new Error(
               `400 -- insufficiently strong password. see pw rules at ${PW_STRENGTH_RULES_URL}`
             )
@@ -125,14 +125,14 @@ export function createAuth0User(
         }
         // If any other error occured, expose a generic error message
         if (response.statusCode != 200) {
-          reject(
+          return reject(
             new Error(
               `Error creating new Auth0 user. Auth0 returned ` +
                 `${response.statusCode} with body: ${JSON.stringify(body)}`
             )
           )
         }
-        resolve(body._id)
+        return resolve(body._id)
       }
     )
   })
@@ -157,17 +157,17 @@ export function getAuth0UserAccessToken(email, password) {
       },
       function handleResponse(error, response, body) {
         if (error) {
-          reject(new Error(`Error retrieving access token: ${error}`))
+          return reject(new Error(`Error retrieving access token: ${error}`))
         }
         if (response.statusCode != 200) {
-          reject(
+          return reject(
             new Error(
               `Error retrieving access token from Auth0. Auth0 returned ` +
                 `${response.statusCode} with body: ${JSON.stringify(body)}`
             )
           )
         }
-        resolve(body.access_token)
+        return resolve(body.access_token)
       }
     )
   })
@@ -212,4 +212,10 @@ export class AuthError extends Error {
   constructor() {
     super("Not authorized")
   }
+}
+
+export const isLoggedIn = ctx => {
+  const user = get(ctx, "req.user")
+  if (!user) throw new Error(`Not logged in`)
+  return user
 }

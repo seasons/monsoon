@@ -34,3 +34,9 @@ export interface Context {
   req: Request & { user: any }
   res: Response
 }
+
+const isLoggedIn = ctx => {
+  const user = ctxUser(ctx)
+  if (!user) throw new Error(`Not logged in`)
+  return user
+}
