@@ -22,6 +22,7 @@ export const Query = {
   },
   product: (parent, args, ctx: Context, info) =>
     ctx.db.query.product(args, info),
+
   categories: (parent, args, ctx: Context, info) =>
     ctx.db.query.categories(args, info),
 }

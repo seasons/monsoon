@@ -62,6 +62,9 @@ export const syncProductVariants = async () => {
           },
         }
 
+        // TODO: Figure out if we need to create new instance of physical products
+        // based on the counts and what's available in the database
+
         const productVariantData = !!pvSeasonsID
           ? await prisma.upsertProductVariant({
               where: {

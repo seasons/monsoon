@@ -57,6 +57,19 @@ enum UserRole {
   Partner
 }
 
+enum InventoryStatus {
+  NonReservable
+  Reservable
+  Reserved
+}
+
+enum ProductStatus {
+  New
+  Used
+  Damaged
+  Clean
+}
+
 type Brand {
   id: ID! @id
   brandCode: String! @unique
@@ -137,13 +150,11 @@ type Product {
 type ProductVariant {
   id: ID! @id
   sku: String
-  upc: String
   color: Color!
   weight: Int
   height: Int
   product: Product!
   retailPrice: Int
-  images: Json
   inventoryLevel: InventoryLevel! @relation(link: INLINE)
   physicalProducts: [PhysicalProduct!]!
   createdAt: DateTime! @createdAt
@@ -164,6 +175,8 @@ type PhysicalProduct {
   seasonsUID: String! @unique
   location: Location
   productVariant: ProductVariant!
+  inventoryStatus: InventoryStatus!
+  productStatus: ProductStatus!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
@@ -190,4 +203,12 @@ type Customer {
   user: User!
   status: CustomerStatus
   bag: Bag!
+}
+
+type Order {
+  id: ID! @id
+  user: User!
+  products: [PhysicalProduct!]!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
 }
