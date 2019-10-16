@@ -1,13 +1,4 @@
-const _get = require("lodash.get")
-
-const userLocationOnContext = "req.user"
-
-const isLoggedIn = ctx => {
-  const user = ctxUser(ctx)
-  if (!user) throw new Error(`Not logged in`)
-  return user
-}
-const ctxUser = ctx => _get(ctx, userLocationOnContext)
+import { isLoggedIn } from "./utils"
 
 const isRequestingUserAlsoOwner = ({ ctx, userId, type, typeId }) =>
   ctx.db.exists[type]({ id: typeId, user: { id: userId } })
@@ -20,12 +11,9 @@ export const directiveResolvers = {
   },
   hasRole: async (next, source, { roles }, ctx) => {
     // Extract the auth0Id from the user object on the request
-    const { sub } = isLoggedIn(ctx)
-    const auth0Id = sub.split("|")[1]
+    const { role } = isLoggedIn(ctx)
 
-    // get the user from our database and check the role
-    const user = await ctx.prisma.user({ auth0Id })
-    if (roles.includes(user.role)) {
+    if (roles.includes(role)) {
       return next()
     }
     throw new Error(`Unauthorized, incorrect role`)
