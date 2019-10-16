@@ -36,16 +36,12 @@ export async function validateAndParseIdToken(idToken) {
 // If no such user exists, throws an error.
 export async function getUserFromContext(ctx: Context) {
   return new Promise(async function getCustomerFromToken(resolve, reject) {
-    let token = ctx.req.headers.authorization.split("Bearer ")[1]
-    let decodedToken
-    try {
-      decodedToken = await validateAndParseIdToken(token)
-    } catch (err) {
-      reject(err)
+    if (!ctx.req.user) {
+      reject(new Error("no user on context"))
     }
 
     // Does such a user exist?
-    const auth0Id = decodedToken.payload.sub.split("|")[1] // e.g "auth0|5da61ffdeef18b0c5f5c2c6f"
+    const auth0Id = ctx.req.user.sub.split("|")[1] // e.g "auth0|5da61ffdeef18b0c5f5c2c6f"
     const userExists = await ctx.prisma.$exists.user({ auth0Id })
     if (!userExists) {
       reject("token does not correspond to any known user")
@@ -58,6 +54,7 @@ export async function getUserFromContext(ctx: Context) {
 }
 
 export async function getCustomerFromContext(ctx: Context) {
+  // Get the user on the context
   let user
   try {
     user = await getUserFromContext(ctx)
@@ -71,7 +68,18 @@ export async function getCustomerFromContext(ctx: Context) {
     )
   }
 
-  return user
+  // Get the customer record corresponding to that user
+  let customer
+  try {
+    let customerArray = await ctx.prisma.customers({
+      where: { user: { id: user.id } },
+    })
+    customer = customerArray[0]
+  } catch (err) {
+    throw new Error(err)
+  }
+
+  return customer
 }
 
 export function createAuth0User(
