@@ -197,13 +197,14 @@ export async function createPrismaUser(
 
 export async function createPrismaCustomerForExistingUser(
   ctx: Context,
-  { userID }
+  { userID, details = {} }
 ) {
   const customer = await ctx.prisma.createCustomer({
     user: {
       connect: { id: userID },
     },
     bag: { create: {} },
+    detail: { create: details },
   })
   return customer
 }
@@ -215,6 +216,10 @@ export class AuthError extends Error {
 }
 
 export const isLoggedIn = ctx => {
+  return !!get(ctx, "req.user")
+}
+
+export const getUserIfExists = ctx => {
   const user = get(ctx, "req.user")
   if (!user) throw new Error(`Not logged in`)
   return user

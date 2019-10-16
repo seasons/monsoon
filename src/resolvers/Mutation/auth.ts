@@ -12,7 +12,7 @@ export const auth = {
   // The signup mutation signs up users with a "Customer" role.
   async signup(
     obj,
-    { email, password, firstName, lastName },
+    { email, password, firstName, lastName, details },
     ctx: Context,
     info
   ) {
@@ -56,6 +56,7 @@ export const auth = {
     try {
       customer = await createPrismaCustomerForExistingUser(ctx, {
         userID: user.id,
+        details,
       })
     } catch (err) {
       throw new Error(err)
@@ -69,11 +70,8 @@ export const auth = {
 
   async login(obj, { email, password }, ctx: Context, info) {
     // If they are already logged in, throw an error
-    let loggedInUser = isLoggedIn(ctx)
-    if (loggedInUser) {
-      throw new Error(
-        `user is already logged in with email ${loggedInUser.email}`
-      )
+    if (isLoggedIn(ctx)) {
+      throw new Error(`user is already logged in`)
     }
 
     // Get their API access token

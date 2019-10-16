@@ -1,4 +1,4 @@
-import { isLoggedIn } from "./utils"
+import { getUserIfExists } from "./utils"
 
 const isRequestingUserAlsoOwner = ({ ctx, userId, type, typeId }) =>
   ctx.db.exists[type]({ id: typeId, user: { id: userId } })
@@ -6,12 +6,12 @@ const isRequestingUser = ({ ctx, userId }) => ctx.db.exists.User({ id: userId })
 
 export const directiveResolvers = {
   isAuthenticated: (next, source, args, ctx) => {
-    isLoggedIn(ctx)
+    getUserIfExists(ctx)
     return next()
   },
   hasRole: async (next, source, { roles }, ctx) => {
     // Extract the auth0Id from the user object on the request
-    const { role } = isLoggedIn(ctx)
+    const { role } = getUserIfExists(ctx)
 
     if (roles.includes(role)) {
       return next()
@@ -25,7 +25,7 @@ export const directiveResolvers = {
         : ctx.request.body.variables
         ? ctx.request.body.variables
         : { id: null }
-    const { id: userId } = isLoggedIn(ctx)
+    const { id: userId } = getUserIfExists(ctx)
     const isOwner =
       type === `User`
         ? userId === typeId
@@ -36,7 +36,7 @@ export const directiveResolvers = {
     throw new Error(`Unauthorized, must be owner`)
   },
   isOwnerOrHasRole: async (next, source, { roles, type }, ctx, ...p) => {
-    const { id: userId, role } = isLoggedIn(ctx)
+    const { id: userId, role } = getUserIfExists(ctx)
     if (roles.includes(role)) {
       return next()
     }
