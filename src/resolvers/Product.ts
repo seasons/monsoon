@@ -1,4 +1,4 @@
-import { Context } from "../auth/utils"
+import { Context } from "../utils"
 
 export const Product = {}
 

@@ -26,7 +26,6 @@ type Query {
     first: Int
     last: Int
   ): [Category]!
-  reserveItems(items: [ID!]!): Order
 }
 
 type Mutation {
@@ -40,6 +39,7 @@ type Mutation {
   login(email: String!, password: String!): AuthPayload!
   addCustomerDetails(details: CustomerDetailCreateInput): Customer!
     @hasRole(roles: ["Customer"])
+  reserveItems(items: [ID!]!): Order
 }
 
 type AuthPayload {

@@ -70,6 +70,13 @@ enum ProductStatus {
   Clean
 }
 
+enum ReservationStatus {
+  OnHold
+  Shipped
+  InTransit
+  Received
+}
+
 type Brand {
   id: ID! @id
   brandCode: String! @unique
@@ -194,27 +201,27 @@ type User {
 }
 
 type CustomerDetail {
-    id: ID! @id
-    createdAt: DateTime! @createdAt
-    updatedAt: DateTime! @updatedAt
-    phoneNumber: String
-    birthday: DateTime
-    # Height in inches
-    height: Int
-    bodyType: String
-    averageTopSize: String
-    averagePantSize: String
-    preferredPronouns: String
-    profession: String
-    # How often do you go out? 
-    partyFrequency: String 
-    # Do you travel a lot?
-    travelFrequency: String
-    # How often do you buy clothes?
-    shoppingFrequency: String
-    # How much do you spend?
-    averageSpend: String
-    shippingAddress: Location
+  id: ID! @id
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+  phoneNumber: String
+  birthday: DateTime
+  # Height in inches
+  height: Int
+  bodyType: String
+  averageTopSize: String
+  averagePantSize: String
+  preferredPronouns: String
+  profession: String
+  # How often do you go out?
+  partyFrequency: String
+  # Do you travel a lot?
+  travelFrequency: String
+  # How often do you buy clothes?
+  shoppingFrequency: String
+  # How much do you spend?
+  averageSpend: String
+  shippingAddress: Location
 }
 
 type Bag {
@@ -227,14 +234,27 @@ type Customer {
   id: ID! @id
   user: User!
   status: CustomerStatus
-  detail: CustomerDetail 
+  detail: CustomerDetail
   bag: Bag!
 }
 
 type Order {
   id: ID! @id
+}
+
+type Reservation {
+  id: ID! @id
   user: User!
+  shippingLabel: Label! @relation(name: "ShippingLabelReservation")
+  returnLabel: Label @relation(name: "ReturnLabelReservation")
   products: [PhysicalProduct!]!
+  shipped: Boolean!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
+}
+
+type Label {
+  id: ID! @id
+  name: String
+  image: String
 }

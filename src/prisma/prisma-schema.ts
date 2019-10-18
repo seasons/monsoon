@@ -34,6 +34,10 @@ type AggregateInventoryLevel {
   count: Int!
 }
 
+type AggregateLabel {
+  count: Int!
+}
+
 type AggregateLocation {
   count: Int!
 }
@@ -51,6 +55,10 @@ type AggregateProduct {
 }
 
 type AggregateProductVariant {
+  count: Int!
+}
+
+type AggregateReservation {
   count: Int!
 }
 
@@ -1709,6 +1717,155 @@ enum InventoryStatus {
 
 scalar Json
 
+type Label {
+  id: ID!
+  name: String
+  image: String
+}
+
+type LabelConnection {
+  pageInfo: PageInfo!
+  edges: [LabelEdge]!
+  aggregate: AggregateLabel!
+}
+
+input LabelCreateInput {
+  id: ID
+  name: String
+  image: String
+}
+
+input LabelCreateOneInput {
+  create: LabelCreateInput
+  connect: LabelWhereUniqueInput
+}
+
+type LabelEdge {
+  node: Label!
+  cursor: String!
+}
+
+enum LabelOrderByInput {
+  id_ASC
+  id_DESC
+  name_ASC
+  name_DESC
+  image_ASC
+  image_DESC
+}
+
+type LabelPreviousValues {
+  id: ID!
+  name: String
+  image: String
+}
+
+type LabelSubscriptionPayload {
+  mutation: MutationType!
+  node: Label
+  updatedFields: [String!]
+  previousValues: LabelPreviousValues
+}
+
+input LabelSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: LabelWhereInput
+  AND: [LabelSubscriptionWhereInput!]
+  OR: [LabelSubscriptionWhereInput!]
+  NOT: [LabelSubscriptionWhereInput!]
+}
+
+input LabelUpdateDataInput {
+  name: String
+  image: String
+}
+
+input LabelUpdateInput {
+  name: String
+  image: String
+}
+
+input LabelUpdateManyMutationInput {
+  name: String
+  image: String
+}
+
+input LabelUpdateOneInput {
+  create: LabelCreateInput
+  update: LabelUpdateDataInput
+  upsert: LabelUpsertNestedInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: LabelWhereUniqueInput
+}
+
+input LabelUpdateOneRequiredInput {
+  create: LabelCreateInput
+  update: LabelUpdateDataInput
+  upsert: LabelUpsertNestedInput
+  connect: LabelWhereUniqueInput
+}
+
+input LabelUpsertNestedInput {
+  update: LabelUpdateDataInput!
+  create: LabelCreateInput!
+}
+
+input LabelWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  name: String
+  name_not: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_lt: String
+  name_lte: String
+  name_gt: String
+  name_gte: String
+  name_contains: String
+  name_not_contains: String
+  name_starts_with: String
+  name_not_starts_with: String
+  name_ends_with: String
+  name_not_ends_with: String
+  image: String
+  image_not: String
+  image_in: [String!]
+  image_not_in: [String!]
+  image_lt: String
+  image_lte: String
+  image_gt: String
+  image_gte: String
+  image_contains: String
+  image_not_contains: String
+  image_starts_with: String
+  image_not_starts_with: String
+  image_ends_with: String
+  image_not_ends_with: String
+  AND: [LabelWhereInput!]
+  OR: [LabelWhereInput!]
+  NOT: [LabelWhereInput!]
+}
+
+input LabelWhereUniqueInput {
+  id: ID
+}
+
 type Location {
   id: ID!
   name: String
@@ -2095,6 +2252,12 @@ type Mutation {
   upsertInventoryLevel(where: InventoryLevelWhereUniqueInput!, create: InventoryLevelCreateInput!, update: InventoryLevelUpdateInput!): InventoryLevel!
   deleteInventoryLevel(where: InventoryLevelWhereUniqueInput!): InventoryLevel
   deleteManyInventoryLevels(where: InventoryLevelWhereInput): BatchPayload!
+  createLabel(data: LabelCreateInput!): Label!
+  updateLabel(data: LabelUpdateInput!, where: LabelWhereUniqueInput!): Label
+  updateManyLabels(data: LabelUpdateManyMutationInput!, where: LabelWhereInput): BatchPayload!
+  upsertLabel(where: LabelWhereUniqueInput!, create: LabelCreateInput!, update: LabelUpdateInput!): Label!
+  deleteLabel(where: LabelWhereUniqueInput!): Label
+  deleteManyLabels(where: LabelWhereInput): BatchPayload!
   createLocation(data: LocationCreateInput!): Location!
   updateLocation(data: LocationUpdateInput!, where: LocationWhereUniqueInput!): Location
   updateManyLocations(data: LocationUpdateManyMutationInput!, where: LocationWhereInput): BatchPayload!
@@ -2102,8 +2265,6 @@ type Mutation {
   deleteLocation(where: LocationWhereUniqueInput!): Location
   deleteManyLocations(where: LocationWhereInput): BatchPayload!
   createOrder(data: OrderCreateInput!): Order!
-  updateOrder(data: OrderUpdateInput!, where: OrderWhereUniqueInput!): Order
-  upsertOrder(where: OrderWhereUniqueInput!, create: OrderCreateInput!, update: OrderUpdateInput!): Order!
   deleteOrder(where: OrderWhereUniqueInput!): Order
   deleteManyOrders(where: OrderWhereInput): BatchPayload!
   createPhysicalProduct(data: PhysicalProductCreateInput!): PhysicalProduct!
@@ -2124,6 +2285,12 @@ type Mutation {
   upsertProductVariant(where: ProductVariantWhereUniqueInput!, create: ProductVariantCreateInput!, update: ProductVariantUpdateInput!): ProductVariant!
   deleteProductVariant(where: ProductVariantWhereUniqueInput!): ProductVariant
   deleteManyProductVariants(where: ProductVariantWhereInput): BatchPayload!
+  createReservation(data: ReservationCreateInput!): Reservation!
+  updateReservation(data: ReservationUpdateInput!, where: ReservationWhereUniqueInput!): Reservation
+  updateManyReservations(data: ReservationUpdateManyMutationInput!, where: ReservationWhereInput): BatchPayload!
+  upsertReservation(where: ReservationWhereUniqueInput!, create: ReservationCreateInput!, update: ReservationUpdateInput!): Reservation!
+  deleteReservation(where: ReservationWhereUniqueInput!): Reservation
+  deleteManyReservations(where: ReservationWhereInput): BatchPayload!
   createUser(data: UserCreateInput!): User!
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   updateManyUsers(data: UserUpdateManyMutationInput!, where: UserWhereInput): BatchPayload!
@@ -2144,10 +2311,6 @@ interface Node {
 
 type Order {
   id: ID!
-  user: User!
-  products(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct!]
-  createdAt: DateTime!
-  updatedAt: DateTime!
 }
 
 type OrderConnection {
@@ -2158,8 +2321,6 @@ type OrderConnection {
 
 input OrderCreateInput {
   id: ID
-  user: UserCreateOneInput!
-  products: PhysicalProductCreateManyInput
 }
 
 type OrderEdge {
@@ -2170,16 +2331,10 @@ type OrderEdge {
 enum OrderOrderByInput {
   id_ASC
   id_DESC
-  createdAt_ASC
-  createdAt_DESC
-  updatedAt_ASC
-  updatedAt_DESC
 }
 
 type OrderPreviousValues {
   id: ID!
-  createdAt: DateTime!
-  updatedAt: DateTime!
 }
 
 type OrderSubscriptionPayload {
@@ -2200,11 +2355,6 @@ input OrderSubscriptionWhereInput {
   NOT: [OrderSubscriptionWhereInput!]
 }
 
-input OrderUpdateInput {
-  user: UserUpdateOneRequiredInput
-  products: PhysicalProductUpdateManyInput
-}
-
 input OrderWhereInput {
   id: ID
   id_not: ID
@@ -2220,26 +2370,6 @@ input OrderWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
-  user: UserWhereInput
-  products_every: PhysicalProductWhereInput
-  products_some: PhysicalProductWhereInput
-  products_none: PhysicalProductWhereInput
-  createdAt: DateTime
-  createdAt_not: DateTime
-  createdAt_in: [DateTime!]
-  createdAt_not_in: [DateTime!]
-  createdAt_lt: DateTime
-  createdAt_lte: DateTime
-  createdAt_gt: DateTime
-  createdAt_gte: DateTime
-  updatedAt: DateTime
-  updatedAt_not: DateTime
-  updatedAt_in: [DateTime!]
-  updatedAt_not_in: [DateTime!]
-  updatedAt_lt: DateTime
-  updatedAt_lte: DateTime
-  updatedAt_gt: DateTime
-  updatedAt_gte: DateTime
   AND: [OrderWhereInput!]
   OR: [OrderWhereInput!]
   NOT: [OrderWhereInput!]
@@ -3555,6 +3685,9 @@ type Query {
   inventoryLevel(where: InventoryLevelWhereUniqueInput!): InventoryLevel
   inventoryLevels(where: InventoryLevelWhereInput, orderBy: InventoryLevelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [InventoryLevel]!
   inventoryLevelsConnection(where: InventoryLevelWhereInput, orderBy: InventoryLevelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): InventoryLevelConnection!
+  label(where: LabelWhereUniqueInput!): Label
+  labels(where: LabelWhereInput, orderBy: LabelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Label]!
+  labelsConnection(where: LabelWhereInput, orderBy: LabelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): LabelConnection!
   location(where: LocationWhereUniqueInput!): Location
   locations(where: LocationWhereInput, orderBy: LocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Location]!
   locationsConnection(where: LocationWhereInput, orderBy: LocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): LocationConnection!
@@ -3570,10 +3703,140 @@ type Query {
   productVariant(where: ProductVariantWhereUniqueInput!): ProductVariant
   productVariants(where: ProductVariantWhereInput, orderBy: ProductVariantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariant]!
   productVariantsConnection(where: ProductVariantWhereInput, orderBy: ProductVariantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductVariantConnection!
+  reservation(where: ReservationWhereUniqueInput!): Reservation
+  reservations(where: ReservationWhereInput, orderBy: ReservationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Reservation]!
+  reservationsConnection(where: ReservationWhereInput, orderBy: ReservationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ReservationConnection!
   user(where: UserWhereUniqueInput!): User
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
   node(id: ID!): Node
+}
+
+type Reservation {
+  id: ID!
+  user: User!
+  shippingLabel: Label!
+  returnLabel: Label
+  products(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct!]
+  shipped: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type ReservationConnection {
+  pageInfo: PageInfo!
+  edges: [ReservationEdge]!
+  aggregate: AggregateReservation!
+}
+
+input ReservationCreateInput {
+  id: ID
+  user: UserCreateOneInput!
+  shippingLabel: LabelCreateOneInput!
+  returnLabel: LabelCreateOneInput
+  products: PhysicalProductCreateManyInput
+  shipped: Boolean!
+}
+
+type ReservationEdge {
+  node: Reservation!
+  cursor: String!
+}
+
+enum ReservationOrderByInput {
+  id_ASC
+  id_DESC
+  shipped_ASC
+  shipped_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type ReservationPreviousValues {
+  id: ID!
+  shipped: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type ReservationSubscriptionPayload {
+  mutation: MutationType!
+  node: Reservation
+  updatedFields: [String!]
+  previousValues: ReservationPreviousValues
+}
+
+input ReservationSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: ReservationWhereInput
+  AND: [ReservationSubscriptionWhereInput!]
+  OR: [ReservationSubscriptionWhereInput!]
+  NOT: [ReservationSubscriptionWhereInput!]
+}
+
+input ReservationUpdateInput {
+  user: UserUpdateOneRequiredInput
+  shippingLabel: LabelUpdateOneRequiredInput
+  returnLabel: LabelUpdateOneInput
+  products: PhysicalProductUpdateManyInput
+  shipped: Boolean
+}
+
+input ReservationUpdateManyMutationInput {
+  shipped: Boolean
+}
+
+input ReservationWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  user: UserWhereInput
+  shippingLabel: LabelWhereInput
+  returnLabel: LabelWhereInput
+  products_every: PhysicalProductWhereInput
+  products_some: PhysicalProductWhereInput
+  products_none: PhysicalProductWhereInput
+  shipped: Boolean
+  shipped_not: Boolean
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [ReservationWhereInput!]
+  OR: [ReservationWhereInput!]
+  NOT: [ReservationWhereInput!]
+}
+
+input ReservationWhereUniqueInput {
+  id: ID
 }
 
 enum Size {
@@ -3593,11 +3856,13 @@ type Subscription {
   customerDetail(where: CustomerDetailSubscriptionWhereInput): CustomerDetailSubscriptionPayload
   image(where: ImageSubscriptionWhereInput): ImageSubscriptionPayload
   inventoryLevel(where: InventoryLevelSubscriptionWhereInput): InventoryLevelSubscriptionPayload
+  label(where: LabelSubscriptionWhereInput): LabelSubscriptionPayload
   location(where: LocationSubscriptionWhereInput): LocationSubscriptionPayload
   order(where: OrderSubscriptionWhereInput): OrderSubscriptionPayload
   physicalProduct(where: PhysicalProductSubscriptionWhereInput): PhysicalProductSubscriptionPayload
   product(where: ProductSubscriptionWhereInput): ProductSubscriptionPayload
   productVariant(where: ProductVariantSubscriptionWhereInput): ProductVariantSubscriptionPayload
+  reservation(where: ReservationSubscriptionWhereInput): ReservationSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
 }
 
