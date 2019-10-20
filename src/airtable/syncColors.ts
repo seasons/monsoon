@@ -1,3 +1,4 @@
+import slugify from "slugify"
 import { prisma } from "../prisma"
 import { getAllColors } from "./utils"
 
@@ -8,11 +9,13 @@ export const syncColors = async () => {
     try {
       const values = record.fields
       const seasonsID = values["Seasons ID"]
+      const slug = slugify(values.Name).toLowerCase()
 
       const data = {
         colorCode: values["Color Code"],
         hexCode: values.RGB,
         name: values.Name,
+        slug,
       }
 
       const color = !!seasonsID
@@ -27,6 +30,7 @@ export const syncColors = async () => {
 
       await record.patchUpdate({
         "Seasons ID": color.id,
+        Slug: slug,
       })
 
       console.log(color)
@@ -35,5 +39,3 @@ export const syncColors = async () => {
     }
   }
 }
-
-syncColors()

@@ -79,6 +79,7 @@ enum ReservationStatus {
 
 type Brand {
   id: ID! @id
+  slug: String! @unique
   brandCode: String! @unique
   description: String
   isPrimaryBrand: Boolean @default(value: false)
@@ -86,15 +87,15 @@ type Brand {
   name: String!
   products: [Product!]!
   since: DateTime
-  slug: String! @unique
   tier: BrandTier!
+  websiteUrl: String
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
-  websiteUrl: String
 }
 
 type Category {
   id: ID! @id
+  slug: String! @unique
   name: String! @unique
   description: String
   products: [Product!]!
@@ -102,9 +103,10 @@ type Category {
 
 type Color {
   id: ID! @id
+  slug: String! @unique
+  name: String!
   colorCode: String! @unique
   hexCode: String!
-  name: String
   productVariants: [ProductVariant!]!
 }
 
@@ -122,22 +124,27 @@ type Image {
 
 type Location {
   id: ID! @id
-  name: String
+  slug: String! @unique
+  name: String! @unique
   company: String
   description: String
   address1: String!
   address2: String!
   city: String!
-  lat: Float
-  lng: Float
   state: String!
-  zip: Int!
+  zipCode: String!
   locationType: LocationType
   user: User
+  lat: Float
+  lng: Float
+  physicalProducts: [PhysicalProduct!]!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
 }
 
 type Product {
   id: ID! @id
+  slug: String! @unique
   name: String!
   brand: Brand!
   category: Category!
@@ -157,13 +164,13 @@ type Product {
 
 type ProductVariant {
   id: ID! @id
-  sku: String
+  sku: String @unique
   color: Color!
   weight: Int
   height: Int
   product: Product!
   retailPrice: Int
-  inventoryLevel: InventoryLevel! @relation(link: INLINE)
+  inventoryLevel: InventoryLevel! @relation(link: TABLE)
   physicalProducts: [PhysicalProduct!]!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
@@ -172,10 +179,11 @@ type ProductVariant {
 type InventoryLevel {
   id: ID! @id
   product: Product!
-  productVariant: ProductVariant!
-  reservable: Int
-  reserved: Int
-  nonReservable: Int
+  productVariant: ProductVariant! @unique
+  total: Int!
+  reservable: Int!
+  reserved: Int!
+  nonReservable: Int!
 }
 
 type PhysicalProduct {
@@ -202,8 +210,6 @@ type User {
 
 type CustomerDetail {
   id: ID! @id
-  createdAt: DateTime! @createdAt
-  updatedAt: DateTime! @updatedAt
   phoneNumber: String
   birthday: DateTime
   # Height in inches
@@ -222,6 +228,8 @@ type CustomerDetail {
   # How much do you spend?
   averageSpend: String
   shippingAddress: Location
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
 }
 
 type Bag {

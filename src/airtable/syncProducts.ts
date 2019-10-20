@@ -1,5 +1,6 @@
 import { getAllBrands, getAllCategories, getAllProducts } from "./utils"
 import { prisma } from "../prisma"
+import slugify from "slugify"
 
 export const syncProducts = async () => {
   const allBrands = await getAllBrands()
@@ -25,7 +26,10 @@ export const syncProducts = async () => {
       const brand = brandByAirtableId(brandId)
       const category = categoryByAirtableId(categoryId)
 
+      const slug = slugify(values.Name + " " + values.Color)
+
       const data = {
+        slug,
         name: values.Name,
         description: values.Description,
         brand: !!brand && {
