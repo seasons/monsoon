@@ -9,142 +9,189 @@ import {
 import { prisma, InventoryStatus, PhysicalProductCreateInput } from "../prisma"
 import { sizeToSizeCode } from "../utils"
 import { base } from "./config"
+import { isEmpty } from "lodash"
+
+const SeasonsLocationID = "recvzTcW19kdBPqf4"
 
 export const syncProductVariants = async () => {
-  try {
-    const allBrands = await getAllBrands()
-    const allColors = await getAllColors()
-    const allProducts = await getAllProducts()
-    const allLocations = await getAllLocations()
-    const allProductVariants = await getAllProductVariants()
-    const allPhysicalProducts = await getAllPhysicalProducts()
+  const allBrands = await getAllBrands()
+  const allColors = await getAllColors()
+  const allProducts = await getAllProducts()
+  const allLocations = await getAllLocations()
+  const allProductVariants = await getAllProductVariants()
+  const allPhysicalProducts = await getAllPhysicalProducts()
 
-    for (let productVariant of allProductVariants) {
-      let productId = productVariant.get("Product")[0]
-      let product = allProducts.find(x => x.id === productId)
+  for (let productVariant of allProductVariants) {
+    try {
+      const { model } = productVariant
 
-      let brandId = product.get("Brand")[0]
-      let brand = allBrands.find(x => x.id === brandId)
+      const product = allProducts.findByIds(model.product)
+      const brand = allBrands.findByIds(product.model.brand)
+      const color = allColors.find(x => x.model.name === product.model.color)
+      const location = allLocations.find(x => x.id === SeasonsLocationID)
 
-      let colorName = product.get("Color")
-      let color = allColors.find(x => x.get("Name") === colorName)
-
-      let seasonsLocationID = "recvzTcW19kdBPqf4"
-      let location = allLocations.find(x => x.id === seasonsLocationID)
-
-      if (product && brand) {
-        let brandCode = brand.get("Brand Code")
-        let colorCode = color.get("Color Code")
-        let sizeCode = sizeToSizeCode(productVariant.get("Size"))
-        let sku = `${brandCode}-${colorCode}-${sizeCode}`
-        let totalCount = productVariant.get("Total Count") || 0
-        let reservedCount = productVariant.get("Reserved Count") || 0
-        let nonReservableCount = productVariant.get("Non-Reservable Count") || 0
-        let updatedReservableCount = totalCount - reservedCount
-
-        // Figure out if we need to create new instance of physical products
-        // based on the counts and what's available in the database
-        const physicalProducts = allPhysicalProducts.filter(a =>
-          (a.get("Product") || []).includes(productId)
-        )
-        const physicalProductCount = physicalProducts.length
-        const newPhysicalProducts = []
-
-        // We need to create more physical products
-        if (physicalProductCount < totalCount) {
-          for (let i = 1; i <= totalCount - physicalProductCount; i++) {
-            const physicalProductID = (physicalProductCount + i)
-              .toString()
-              .padStart(5, "0")
-
-            newPhysicalProducts.push({
-              fields: {
-                SUID: sku + `-${physicalProductID}`,
-                Product: [product.id],
-                Location: [seasonsLocationID], // Seasons HQ
-                "Product Variant": [productVariant.id],
-                "Inventory Status": "Non Reservable",
-                "Product Status": "New",
-              },
-            })
-          }
-          await base("Physical Products").create(newPhysicalProducts)
-        }
-
-        const inventoryLevel = {
-          product: {
-            connect: {
-              id: product.get("Seasons ID"),
-            },
-          },
-          total: totalCount,
-          reservable: updatedReservableCount,
-          reserved: reservedCount,
-          nonReservable: nonReservableCount,
-        }
-
-        let data = {
-          sku,
-          images: productVariant.get("Images"),
-          weight: productVariant.get("Weight") || 0,
-          height: productVariant.get("Height") || 0,
-          color: !!color && {
-            connect: {
-              id: color.get("Seasons ID"),
-            },
-          },
-          product: {
-            connect: {
-              id: product.get("Seasons ID"),
-            },
-          },
-          physicalProducts: {
-            create: newPhysicalProducts.map(
-              ({ fields }) =>
-                ({
-                  seasonsUID: fields.SUID,
-                  location: {
-                    connect: {
-                      id: location.get("Seasons ID"),
-                    },
-                  },
-                  inventoryStatus: "NonReservable" as InventoryStatus,
-                  productStatus: fields["Product Status"],
-                } as PhysicalProductCreateInput)
-            ),
-          },
-        }
-
-        try {
-          const productVariantData = await prisma.upsertProductVariant({
-            where: {
-              sku: sku,
-            },
-            create: {
-              ...data,
-              inventoryLevel: {
-                create: inventoryLevel,
-              },
-            },
-            update: {
-              ...data,
-            },
-          })
-
-          console.log(productVariantData)
-
-          await productVariant.patchUpdate({
-            SKU: sku,
-            "Seasons ID": productVariantData.id,
-          })
-        } catch (e) {
-          console.error(e)
-        }
+      if (isEmpty(model) || isEmpty(brand)) {
+        continue
       }
+
+      const sku = skuForData(brand, color, productVariant)
+
+      const {
+        totalCount,
+        nonReservableCount,
+        reservedCount,
+        updatedReservableCount,
+      } = countsForVariant(productVariant)
+
+      // Figure out if we need to create new instance of physical products
+      // based on the counts and what's available in the database
+      const physicalProducts = allPhysicalProducts.filter(a =>
+        (a.get("Product") || []).includes(product.id)
+      )
+
+      const newPhysicalProducts = await createMorePhysicalProductsIfNeeded({
+        sku,
+        product,
+        productVariant,
+        physicalProducts,
+        totalCount,
+      })
+
+      const inventoryLevel = {
+        product: {
+          connect: {
+            slug: product.model.slug,
+          },
+        },
+        total: totalCount,
+        reservable: updatedReservableCount,
+        reserved: reservedCount,
+        nonReservable: nonReservableCount,
+      }
+
+      const { weight, height } = model
+
+      let data = {
+        sku,
+        weight: weight || 0,
+        height: height || 0,
+        color: {
+          connect: {
+            slug: color.model.slug,
+          },
+        },
+        product: {
+          connect: {
+            slug: product.model.slug,
+          },
+        },
+        physicalProducts: {
+          create: newPhysicalProducts.map(
+            ({ fields }) =>
+              ({
+                seasonsUID: fields.SUID,
+                location: {
+                  connect: {
+                    id: location.model.slug,
+                  },
+                },
+                inventoryStatus: "NonReservable" as InventoryStatus,
+                productStatus: fields["Product Status"],
+              } as PhysicalProductCreateInput)
+          ),
+        },
+      }
+
+      const productVariantData = await prisma.upsertProductVariant({
+        where: {
+          sku: sku,
+        },
+        create: {
+          ...data,
+          inventoryLevel: {
+            create: inventoryLevel,
+          },
+        },
+        update: {
+          ...data,
+        },
+      })
+
+      console.log(productVariantData)
+
+      await productVariant.patchUpdate({
+        SKU: sku,
+        "Total Count": totalCount,
+        "Reservable Count": updatedReservableCount,
+        "Reserved Count": reservedCount,
+        "Non-Reservable Count": nonReservableCount,
+      })
+    } catch (e) {
+      console.error(e)
     }
-  } catch (e) {
-    console.error(e)
   }
+}
+
+const skuForData = (brand, color, productVariant) => {
+  let brandCode = brand.get("Brand Code")
+  let colorCode = color.get("Color Code")
+  let sizeCode = sizeToSizeCode(productVariant.get("Size"))
+  return `${brandCode}-${colorCode}-${sizeCode}`
+}
+
+const countsForVariant = productVariant => {
+  let data = {
+    totalCount: productVariant.get("Total Count") || 0,
+    reservedCount: productVariant.get("Reserved Count") || 0,
+    nonReservableCount: productVariant.get("Non-Reservable Count") || 0,
+  }
+
+  return {
+    ...data,
+    updatedReservableCount: data.totalCount - data.reservedCount,
+  }
+}
+
+type CreateMorePhysicalProductsFunction = (data: {
+  sku: string
+  productVariant: any
+  product: any
+  physicalProducts: any[]
+  totalCount: number
+}) => Promise<any[]>
+
+const createMorePhysicalProductsIfNeeded: CreateMorePhysicalProductsFunction = async ({
+  sku,
+  productVariant,
+  product,
+  physicalProducts,
+  totalCount,
+}) => {
+  const physicalProductCount = physicalProducts.length
+  const newPhysicalProducts: any[] = []
+
+  // We need to create more physical products
+  if (physicalProductCount < totalCount) {
+    for (let i = 1; i <= totalCount - physicalProductCount; i++) {
+      const physicalProductID = (physicalProductCount + i)
+        .toString()
+        .padStart(5, "0")
+
+      newPhysicalProducts.push({
+        fields: {
+          SUID: sku + `-${physicalProductID}`,
+          Product: [product.id],
+          Location: [SeasonsLocationID], // Seasons HQ
+          "Product Variant": [productVariant.id],
+          "Inventory Status": "Non Reservable",
+          "Product Status": "New",
+        },
+      })
+    }
+    await base("Physical Products").create(newPhysicalProducts)
+  }
+
+  return newPhysicalProducts
 }
 
 syncProductVariants()

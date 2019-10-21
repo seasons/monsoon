@@ -1,35 +1,38 @@
 import slugify from "slugify"
 import { prisma } from "../prisma"
 import { getAllColors } from "./utils"
+import { isEmpty } from "lodash"
 
 export const syncColors = async () => {
   const records = await getAllColors()
 
   for (let record of records) {
     try {
-      const values = record.fields
-      const seasonsID = values["Seasons ID"]
-      const slug = slugify(values.Name).toLowerCase()
+      const { model } = record
+      const { name, colorCode, rGB } = model
+
+      if (isEmpty(model) || isEmpty(name)) {
+        continue
+      }
+
+      const slug = slugify(name).toLowerCase()
 
       const data = {
-        colorCode: values["Color Code"],
-        hexCode: values.RGB,
-        name: values.Name,
+        colorCode,
+        hexCode: rGB,
+        name,
         slug,
       }
 
-      const color = !!seasonsID
-        ? await prisma.upsertColor({
-            where: {
-              id: seasonsID,
-            },
-            create: data,
-            update: data,
-          })
-        : await prisma.createColor(data)
+      const color = await prisma.upsertColor({
+        where: {
+          slug,
+        },
+        create: data,
+        update: data,
+      })
 
       await record.patchUpdate({
-        "Seasons ID": color.id,
         Slug: slug,
       })
 

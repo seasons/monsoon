@@ -18,15 +18,44 @@ enum Size {
 }
 
 enum Material {
+  Acetate
+  Acrylic
+  Alpaca
+  CalfLeather
+  CamelHair
+  Cashmere
   Cotton
-  Mesh
+  CowLeather
+  Cupro
+  DuckFeathers
+  Elastane
+  Esterlane
+  Feather
+  FeatherDown
+  GooseDown
+  LambLeather
+  Lyocell
+  MerinoWool
   Nylon
+  OrganicCotton
+  Polyamide
+  Polyester
+  Polyurethane
+  Rayon
+  Silk
+  SheepLeather
+  Spandex
+  Taffeta
+  Tartan
+  VirginWool
+  Viscose
+  WhiteDuckDown
+  WhiteGooseDown
+  Wool
+  Mesh
+  Wool
   Denim
   Leather
-  Fur
-  Polyamide
-  Feather
-  Polyester
 }
 
 enum Department {
@@ -63,11 +92,16 @@ enum InventoryStatus {
   Reserved
 }
 
-enum ProductStatus {
+enum PhysicalProductStatus {
   New
   Used
   Damaged
   Clean
+}
+
+enum ProductStatus {
+  Available
+  NotAvailable
 }
 
 enum ReservationStatus {
@@ -149,15 +183,19 @@ type Product {
   brand: Brand!
   category: Category!
   description: String
-  externalUrl: String
+  externalURL: String
   images: Json!
   modelHeight: Int
   modelSize: Size
   retailPrice: Int
+  color: Color! @relation(name: "ProductPrimaryColor")
+  secondaryColor: Color @relation(name: "ProductSecondaryColor")
   tags: Json
+  functions: [String!]! @scalarList(strategy: RELATION)
   availableSizes: [Size!]! @scalarList(strategy: RELATION)
   innerMaterials: [Material!]! @scalarList(strategy: RELATION)
   outerMaterials: [Material!]! @scalarList(strategy: RELATION)
+  status: ProductStatus @default(value: Available)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
@@ -192,7 +230,7 @@ type PhysicalProduct {
   location: Location
   productVariant: ProductVariant!
   inventoryStatus: InventoryStatus!
-  productStatus: ProductStatus!
+  productStatus: PhysicalProductStatus!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }

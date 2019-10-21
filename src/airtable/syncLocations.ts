@@ -1,14 +1,22 @@
 import slugify from "slugify"
 import { prisma, LocationCreateInput } from "../prisma"
-import { getAllLocations, airtableToPrismaObject } from "./utils"
+import { getAllLocations } from "./utils"
 import omit from "lodash/omit"
+import { isEmpty } from "lodash"
 
 export const syncLocations = async () => {
   const allLocations = await getAllLocations()
 
   for (let record of allLocations) {
     try {
-      let values = omit(airtableToPrismaObject(record.fields), [
+      const { model } = record
+      const { name } = model
+
+      if (isEmpty(model) || isEmpty(name)) {
+        continue
+      }
+
+      let values = omit(model, [
         "physicalProducts",
         "createdAt",
         "updatedAt",
@@ -16,7 +24,7 @@ export const syncLocations = async () => {
 
       values = {
         ...values,
-        slug: slugify(values.name),
+        slug: slugify(values.name).toLowerCase(),
       }
 
       const location = await prisma.upsertLocation({
@@ -28,7 +36,6 @@ export const syncLocations = async () => {
       })
 
       await record.patchUpdate({
-        "Seasons ID": location.id,
         Slug: values.slug,
       })
 

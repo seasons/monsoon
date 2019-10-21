@@ -1,7 +1,16 @@
 import { base } from "./config"
 
-const getAll: (name: string) => Promise<any[]> = async name => {
-  let data = []
+interface AirtableData extends Array<any> {
+  findByIds: (ids?: any) => any
+}
+
+const getAll: (name: string) => Promise<AirtableData> = async name => {
+  let data = [] as AirtableData
+
+  data.findByIds = (ids = []) => {
+    return data.find(record => ids.includes(record.id))
+  }
+
   return new Promise((resolve, reject) => {
     base(name)
       .select({
@@ -9,7 +18,10 @@ const getAll: (name: string) => Promise<any[]> = async name => {
       })
       .eachPage(
         (records, fetchNextPage) => {
-          data = data.concat(records)
+          records.forEach(record => {
+            record.model = airtableToPrismaObject(record.fields)
+            data.push(record)
+          })
           return fetchNextPage()
         },
         function done(err) {
