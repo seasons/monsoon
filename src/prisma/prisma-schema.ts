@@ -2175,12 +2175,10 @@ input LocationUpdateOneInput {
   connect: LocationWhereUniqueInput
 }
 
-input LocationUpdateOneWithoutPhysicalProductsInput {
+input LocationUpdateOneRequiredWithoutPhysicalProductsInput {
   create: LocationCreateWithoutPhysicalProductsInput
   update: LocationUpdateWithoutPhysicalProductsDataInput
   upsert: LocationUpsertWithoutPhysicalProductsInput
-  delete: Boolean
-  disconnect: Boolean
   connect: LocationWhereUniqueInput
 }
 
@@ -2410,6 +2408,7 @@ enum Material {
   Alpaca
   CalfLeather
   CamelHair
+  Camel
   Cashmere
   Cotton
   CowLeather
@@ -2421,6 +2420,7 @@ enum Material {
   FeatherDown
   GooseDown
   LambLeather
+  Leather
   Lyocell
   MerinoWool
   Nylon
@@ -2428,20 +2428,24 @@ enum Material {
   Polyamide
   Polyester
   Polyurethane
+  PolyurethanicResin
   Rayon
+  RecycledWool
   Silk
+  Suede
   SheepLeather
   Spandex
   Taffeta
   Tartan
   VirginWool
   Viscose
+  Velcro
+  WaxCoating
   WhiteDuckDown
   WhiteGooseDown
   Wool
   Mesh
   Denim
-  Leather
 }
 
 type Mutation {
@@ -2629,7 +2633,7 @@ type PageInfo {
 type PhysicalProduct {
   id: ID!
   seasonsUID: String!
-  location: Location
+  location: Location!
   productVariant: ProductVariant!
   inventoryStatus: InventoryStatus!
   productStatus: PhysicalProductStatus!
@@ -2646,7 +2650,7 @@ type PhysicalProductConnection {
 input PhysicalProductCreateInput {
   id: ID
   seasonsUID: String!
-  location: LocationCreateOneWithoutPhysicalProductsInput
+  location: LocationCreateOneWithoutPhysicalProductsInput!
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
   inventoryStatus: InventoryStatus!
   productStatus: PhysicalProductStatus!
@@ -2678,7 +2682,7 @@ input PhysicalProductCreateWithoutLocationInput {
 input PhysicalProductCreateWithoutProductVariantInput {
   id: ID
   seasonsUID: String!
-  location: LocationCreateOneWithoutPhysicalProductsInput
+  location: LocationCreateOneWithoutPhysicalProductsInput!
   inventoryStatus: InventoryStatus!
   productStatus: PhysicalProductStatus!
 }
@@ -2797,7 +2801,7 @@ input PhysicalProductSubscriptionWhereInput {
 
 input PhysicalProductUpdateDataInput {
   seasonsUID: String
-  location: LocationUpdateOneWithoutPhysicalProductsInput
+  location: LocationUpdateOneRequiredWithoutPhysicalProductsInput
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
   inventoryStatus: InventoryStatus
   productStatus: PhysicalProductStatus
@@ -2805,7 +2809,7 @@ input PhysicalProductUpdateDataInput {
 
 input PhysicalProductUpdateInput {
   seasonsUID: String
-  location: LocationUpdateOneWithoutPhysicalProductsInput
+  location: LocationUpdateOneRequiredWithoutPhysicalProductsInput
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
   inventoryStatus: InventoryStatus
   productStatus: PhysicalProductStatus
@@ -2873,7 +2877,7 @@ input PhysicalProductUpdateWithoutLocationDataInput {
 
 input PhysicalProductUpdateWithoutProductVariantDataInput {
   seasonsUID: String
-  location: LocationUpdateOneWithoutPhysicalProductsInput
+  location: LocationUpdateOneRequiredWithoutPhysicalProductsInput
   inventoryStatus: InventoryStatus
   productStatus: PhysicalProductStatus
 }

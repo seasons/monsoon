@@ -886,6 +886,7 @@ export type Material =
   | "Alpaca"
   | "CalfLeather"
   | "CamelHair"
+  | "Camel"
   | "Cashmere"
   | "Cotton"
   | "CowLeather"
@@ -897,6 +898,7 @@ export type Material =
   | "FeatherDown"
   | "GooseDown"
   | "LambLeather"
+  | "Leather"
   | "Lyocell"
   | "MerinoWool"
   | "Nylon"
@@ -904,20 +906,24 @@ export type Material =
   | "Polyamide"
   | "Polyester"
   | "Polyurethane"
+  | "PolyurethanicResin"
   | "Rayon"
+  | "RecycledWool"
   | "Silk"
+  | "Suede"
   | "SheepLeather"
   | "Spandex"
   | "Taffeta"
   | "Tartan"
   | "VirginWool"
   | "Viscose"
+  | "Velcro"
+  | "WaxCoating"
   | "WhiteDuckDown"
   | "WhiteGooseDown"
   | "Wool"
   | "Mesh"
-  | "Denim"
-  | "Leather";
+  | "Denim";
 
 export type PhysicalProductOrderByInput =
   | "id_ASC"
@@ -1403,7 +1409,7 @@ export interface CustomerDetailWhereInput {
 export interface PhysicalProductCreateWithoutProductVariantInput {
   id?: Maybe<ID_Input>;
   seasonsUID: String;
-  location?: Maybe<LocationCreateOneWithoutPhysicalProductsInput>;
+  location: LocationCreateOneWithoutPhysicalProductsInput;
   inventoryStatus: InventoryStatus;
   productStatus: PhysicalProductStatus;
 }
@@ -1834,7 +1840,7 @@ export interface BagUpdateInput {
 
 export interface PhysicalProductUpdateInput {
   seasonsUID?: Maybe<String>;
-  location?: Maybe<LocationUpdateOneWithoutPhysicalProductsInput>;
+  location?: Maybe<LocationUpdateOneRequiredWithoutPhysicalProductsInput>;
   productVariant?: Maybe<
     ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
   >;
@@ -2585,7 +2591,7 @@ export interface ColorCreateOneWithoutProductVariantsInput {
 
 export interface PhysicalProductUpdateWithoutProductVariantDataInput {
   seasonsUID?: Maybe<String>;
-  location?: Maybe<LocationUpdateOneWithoutPhysicalProductsInput>;
+  location?: Maybe<LocationUpdateOneRequiredWithoutPhysicalProductsInput>;
   inventoryStatus?: Maybe<InventoryStatus>;
   productStatus?: Maybe<PhysicalProductStatus>;
 }
@@ -2595,12 +2601,10 @@ export interface ProductCreateOneInput {
   connect?: Maybe<ProductWhereUniqueInput>;
 }
 
-export interface LocationUpdateOneWithoutPhysicalProductsInput {
+export interface LocationUpdateOneRequiredWithoutPhysicalProductsInput {
   create?: Maybe<LocationCreateWithoutPhysicalProductsInput>;
   update?: Maybe<LocationUpdateWithoutPhysicalProductsDataInput>;
   upsert?: Maybe<LocationUpsertWithoutPhysicalProductsInput>;
-  delete?: Maybe<Boolean>;
-  disconnect?: Maybe<Boolean>;
   connect?: Maybe<LocationWhereUniqueInput>;
 }
 
@@ -3010,7 +3014,7 @@ export interface PhysicalProductUpdateManyWithWhereNestedInput {
 
 export interface PhysicalProductUpdateDataInput {
   seasonsUID?: Maybe<String>;
-  location?: Maybe<LocationUpdateOneWithoutPhysicalProductsInput>;
+  location?: Maybe<LocationUpdateOneRequiredWithoutPhysicalProductsInput>;
   productVariant?: Maybe<
     ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
   >;
@@ -3901,7 +3905,7 @@ export interface PhysicalProductUpsertWithWhereUniqueWithoutLocationInput {
 export interface PhysicalProductCreateInput {
   id?: Maybe<ID_Input>;
   seasonsUID: String;
-  location?: Maybe<LocationCreateOneWithoutPhysicalProductsInput>;
+  location: LocationCreateOneWithoutPhysicalProductsInput;
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput;
   inventoryStatus: InventoryStatus;
   productStatus: PhysicalProductStatus;

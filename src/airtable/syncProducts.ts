@@ -67,10 +67,10 @@ export const syncProducts = async () => {
           set: availableSizes,
         },
         innerMaterials: {
-          set: innerMaterials.map(a => a.replace(" ", "")),
+          set: (innerMaterials || []).map(a => a.replace(/\ /g, "")),
         },
         outerMaterials: {
-          set: outerMaterials.map(a => a.replace(" ", "")),
+          set: (outerMaterials || []).map(a => a.replace(/\ /g, "")),
         },
         tags: {
           set: tags,
