@@ -18,15 +18,51 @@ enum Size {
 }
 
 enum Material {
+  Acetate
+  Acrylic
+  Alpaca
+  CalfLeather
+  CamelHair
+  Camel
+  Cashmere
   Cotton
-  Mesh
+  CowLeather
+  Cupro
+  DuckFeathers
+  Elastane
+  Esterlane
+  Feather
+  FeatherDown
+  GooseDown
+  LambLeather
+  Leather
+  Lyocell
+  MerinoWool
   Nylon
+  OrganicCotton
+  Polyamide
+  Polyester
+  Polyurethane
+  PolyurethanicResin
+  Rayon
+  RecycledWool
+  Silk
+  Suede
+  SheepLeather
+  Spandex
+  Taffeta
+  Tartan
+  VirginWool
+  Viscose
+  Velcro
+  WaxCoating
+  WhiteDuckDown
+  WhiteGooseDown
+  Wool
+  Mesh
+  Wool
   Denim
   Leather
-  Fur
-  Polyamide
-  Feather
-  Polyester
 }
 
 enum Department {
@@ -57,8 +93,34 @@ enum UserRole {
   Partner
 }
 
+enum InventoryStatus {
+  NonReservable
+  Reservable
+  Reserved
+}
+
+enum PhysicalProductStatus {
+  New
+  Used
+  Damaged
+  Clean
+}
+
+enum ProductStatus {
+  Available
+  NotAvailable
+}
+
+enum ReservationStatus {
+  OnHold
+  Shipped
+  InTransit
+  Received
+}
+
 type Brand {
   id: ID! @id
+  slug: String! @unique
   brandCode: String! @unique
   description: String
   isPrimaryBrand: Boolean @default(value: false)
@@ -66,15 +128,15 @@ type Brand {
   name: String!
   products: [Product!]!
   since: DateTime
-  slug: String! @unique
   tier: BrandTier!
+  websiteUrl: String
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
-  websiteUrl: String
 }
 
 type Category {
   id: ID! @id
+  slug: String! @unique
   name: String! @unique
   description: String
   products: [Product!]!
@@ -82,9 +144,10 @@ type Category {
 
 type Color {
   id: ID! @id
+  slug: String! @unique
+  name: String!
   colorCode: String! @unique
   hexCode: String!
-  name: String
   productVariants: [ProductVariant!]!
 }
 
@@ -102,47 +165,62 @@ type Image {
 
 type Location {
   id: ID! @id
-  name: String
+  slug: String! @unique
+  name: String! @unique
   company: String
   description: String
   address1: String!
   address2: String!
   city: String!
-  lat: Float
-  lng: Float
   state: String!
-  zip: Int!
+  zipCode: String!
   locationType: LocationType
   user: User
-}
-
-type Product {
-  id: ID! @id
-  name: String!
-  brand: Brand!
-  category: Category!
-  description: String
-  externalUrl: String
-  images: Json!
-  modelHeight: Int
-  modelSize: Size
-  retailPrice: Int
-  tags: Json
+  lat: Float
+  lng: Float
+  physicalProducts: [PhysicalProduct!]!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
 
+type Product {
+  id: ID! @id
+  slug: String! @unique
+  name: String!
+  brand: Brand!
+  category: Category!
+  description: String
+  externalURL: String
+  images: Json!
+  modelHeight: Int
+  modelSize: Size
+  retailPrice: Int
+  color: Color! @relation(name: "ProductPrimaryColor")
+  secondaryColor: Color @relation(name: "ProductSecondaryColor")
+  tags: Json
+  functions: [ProductFunction!]!
+  availableSizes: [Size!]! @scalarList(strategy: RELATION)
+  innerMaterials: [Material!]! @scalarList(strategy: RELATION)
+  outerMaterials: [Material!]! @scalarList(strategy: RELATION)
+  status: ProductStatus @default(value: Available)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type ProductFunction {
+  id: ID! @id
+  name: String @unique
+}
+
 type ProductVariant {
   id: ID! @id
-  sku: String
-  upc: String
+  sku: String @unique
   color: Color!
   weight: Int
   height: Int
   product: Product!
   retailPrice: Int
-  images: Json
-  inventoryLevel: InventoryLevel! @relation(link: INLINE)
+  inventoryLevel: InventoryLevel! @relation(link: TABLE)
   physicalProducts: [PhysicalProduct!]!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
@@ -151,18 +229,20 @@ type ProductVariant {
 type InventoryLevel {
   id: ID! @id
   product: Product!
-  productVariant: ProductVariant!
-  reservable: Int
-  reserved: Int
-  nonReservable: Int
+  productVariant: ProductVariant! @unique
+  total: Int!
+  reservable: Int!
+  reserved: Int!
+  nonReservable: Int!
 }
 
 type PhysicalProduct {
   id: ID! @id
   seasonsUID: String! @unique
-  location: Location
-  productVariant: ProductVariant
-  inventoryLevel: InventoryLevel
+  location: Location!
+  productVariant: ProductVariant!
+  inventoryStatus: InventoryStatus!
+  productStatus: PhysicalProductStatus!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
@@ -179,27 +259,27 @@ type User {
 }
 
 type CustomerDetail {
-    id: ID! @id
-    createdAt: DateTime! @createdAt
-    updatedAt: DateTime! @updatedAt
-    phoneNumber: String
-    birthday: DateTime
-    # Height in inches
-    height: Int
-    bodyType: String
-    averageTopSize: String
-    averagePantSize: String
-    preferredPronouns: String
-    profession: String
-    # How often do you go out? 
-    partyFrequency: String 
-    # Do you travel a lot?
-    travelFrequency: String
-    # How often do you buy clothes?
-    shoppingFrequency: String
-    # How much do you spend?
-    averageSpend: String
-    shippingAddress: Location
+  id: ID! @id
+  phoneNumber: String
+  birthday: DateTime
+  # Height in inches
+  height: Int
+  bodyType: String
+  averageTopSize: String
+  averagePantSize: String
+  preferredPronouns: String
+  profession: String
+  # How often do you go out?
+  partyFrequency: String
+  # Do you travel a lot?
+  travelFrequency: String
+  # How often do you buy clothes?
+  shoppingFrequency: String
+  # How much do you spend?
+  averageSpend: String
+  shippingAddress: Location
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
 }
 
 type Bag {
@@ -212,6 +292,27 @@ type Customer {
   id: ID! @id
   user: User!
   status: CustomerStatus
-  detail: CustomerDetail 
+  detail: CustomerDetail
   bag: Bag!
+}
+
+type Order {
+  id: ID! @id
+}
+
+type Reservation {
+  id: ID! @id
+  user: User!
+  shippingLabel: Label! @relation(name: "ShippingLabelReservation")
+  returnLabel: Label @relation(name: "ReturnLabelReservation")
+  products: [PhysicalProduct!]!
+  shipped: Boolean!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type Label {
+  id: ID! @id
+  name: String
+  image: String
 }

@@ -30,7 +30,15 @@ type AggregateInventoryLevel {
   count: Int!
 }
 
+type AggregateLabel {
+  count: Int!
+}
+
 type AggregateLocation {
+  count: Int!
+}
+
+type AggregateOrder {
   count: Int!
 }
 
@@ -42,7 +50,15 @@ type AggregateProduct {
   count: Int!
 }
 
+type AggregateProductFunction {
+  count: Int!
+}
+
 type AggregateProductVariant {
+  count: Int!
+}
+
+type AggregateReservation {
   count: Int!
 }
 
@@ -165,6 +181,7 @@ type BatchPayload {
 
 type Brand {
   id: ID!
+  slug: String!
   brandCode: String!
   description: String
   isPrimaryBrand: Boolean
@@ -172,11 +189,10 @@ type Brand {
   name: String!
   products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
   since: DateTime
-  slug: String!
   tier: BrandTier!
+  websiteUrl: String
   createdAt: DateTime!
   updatedAt: DateTime!
-  websiteUrl: String
 }
 
 type BrandConnection {
@@ -187,6 +203,7 @@ type BrandConnection {
 
 input BrandCreateInput {
   id: ID
+  slug: String!
   brandCode: String!
   description: String
   isPrimaryBrand: Boolean
@@ -194,7 +211,6 @@ input BrandCreateInput {
   name: String!
   products: ProductCreateManyWithoutBrandInput
   since: DateTime
-  slug: String!
   tier: BrandTier!
   websiteUrl: String
 }
@@ -206,13 +222,13 @@ input BrandCreateOneWithoutProductsInput {
 
 input BrandCreateWithoutProductsInput {
   id: ID
+  slug: String!
   brandCode: String!
   description: String
   isPrimaryBrand: Boolean
   logo: Json
   name: String!
   since: DateTime
-  slug: String!
   tier: BrandTier!
   websiteUrl: String
 }
@@ -225,6 +241,8 @@ type BrandEdge {
 enum BrandOrderByInput {
   id_ASC
   id_DESC
+  slug_ASC
+  slug_DESC
   brandCode_ASC
   brandCode_DESC
   description_ASC
@@ -237,31 +255,29 @@ enum BrandOrderByInput {
   name_DESC
   since_ASC
   since_DESC
-  slug_ASC
-  slug_DESC
   tier_ASC
   tier_DESC
+  websiteUrl_ASC
+  websiteUrl_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
   updatedAt_DESC
-  websiteUrl_ASC
-  websiteUrl_DESC
 }
 
 type BrandPreviousValues {
   id: ID!
+  slug: String!
   brandCode: String!
   description: String
   isPrimaryBrand: Boolean
   logo: Json
   name: String!
   since: DateTime
-  slug: String!
   tier: BrandTier!
+  websiteUrl: String
   createdAt: DateTime!
   updatedAt: DateTime!
-  websiteUrl: String
 }
 
 type BrandSubscriptionPayload {
@@ -294,6 +310,7 @@ enum BrandTier {
 }
 
 input BrandUpdateInput {
+  slug: String
   brandCode: String
   description: String
   isPrimaryBrand: Boolean
@@ -301,19 +318,18 @@ input BrandUpdateInput {
   name: String
   products: ProductUpdateManyWithoutBrandInput
   since: DateTime
-  slug: String
   tier: BrandTier
   websiteUrl: String
 }
 
 input BrandUpdateManyMutationInput {
+  slug: String
   brandCode: String
   description: String
   isPrimaryBrand: Boolean
   logo: Json
   name: String
   since: DateTime
-  slug: String
   tier: BrandTier
   websiteUrl: String
 }
@@ -326,13 +342,13 @@ input BrandUpdateOneRequiredWithoutProductsInput {
 }
 
 input BrandUpdateWithoutProductsDataInput {
+  slug: String
   brandCode: String
   description: String
   isPrimaryBrand: Boolean
   logo: Json
   name: String
   since: DateTime
-  slug: String
   tier: BrandTier
   websiteUrl: String
 }
@@ -357,6 +373,20 @@ input BrandWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
+  slug: String
+  slug_not: String
+  slug_in: [String!]
+  slug_not_in: [String!]
+  slug_lt: String
+  slug_lte: String
+  slug_gt: String
+  slug_gte: String
+  slug_contains: String
+  slug_not_contains: String
+  slug_starts_with: String
+  slug_not_starts_with: String
+  slug_ends_with: String
+  slug_not_ends_with: String
   brandCode: String
   brandCode_not: String
   brandCode_in: [String!]
@@ -412,24 +442,24 @@ input BrandWhereInput {
   since_lte: DateTime
   since_gt: DateTime
   since_gte: DateTime
-  slug: String
-  slug_not: String
-  slug_in: [String!]
-  slug_not_in: [String!]
-  slug_lt: String
-  slug_lte: String
-  slug_gt: String
-  slug_gte: String
-  slug_contains: String
-  slug_not_contains: String
-  slug_starts_with: String
-  slug_not_starts_with: String
-  slug_ends_with: String
-  slug_not_ends_with: String
   tier: BrandTier
   tier_not: BrandTier
   tier_in: [BrandTier!]
   tier_not_in: [BrandTier!]
+  websiteUrl: String
+  websiteUrl_not: String
+  websiteUrl_in: [String!]
+  websiteUrl_not_in: [String!]
+  websiteUrl_lt: String
+  websiteUrl_lte: String
+  websiteUrl_gt: String
+  websiteUrl_gte: String
+  websiteUrl_contains: String
+  websiteUrl_not_contains: String
+  websiteUrl_starts_with: String
+  websiteUrl_not_starts_with: String
+  websiteUrl_ends_with: String
+  websiteUrl_not_ends_with: String
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -446,20 +476,6 @@ input BrandWhereInput {
   updatedAt_lte: DateTime
   updatedAt_gt: DateTime
   updatedAt_gte: DateTime
-  websiteUrl: String
-  websiteUrl_not: String
-  websiteUrl_in: [String!]
-  websiteUrl_not_in: [String!]
-  websiteUrl_lt: String
-  websiteUrl_lte: String
-  websiteUrl_gt: String
-  websiteUrl_gte: String
-  websiteUrl_contains: String
-  websiteUrl_not_contains: String
-  websiteUrl_starts_with: String
-  websiteUrl_not_starts_with: String
-  websiteUrl_ends_with: String
-  websiteUrl_not_ends_with: String
   AND: [BrandWhereInput!]
   OR: [BrandWhereInput!]
   NOT: [BrandWhereInput!]
@@ -467,12 +483,13 @@ input BrandWhereInput {
 
 input BrandWhereUniqueInput {
   id: ID
-  brandCode: String
   slug: String
+  brandCode: String
 }
 
 type Category {
   id: ID!
+  slug: String!
   name: String!
   description: String
   products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
@@ -486,6 +503,7 @@ type CategoryConnection {
 
 input CategoryCreateInput {
   id: ID
+  slug: String!
   name: String!
   description: String
   products: ProductCreateManyWithoutCategoryInput
@@ -498,6 +516,7 @@ input CategoryCreateOneWithoutProductsInput {
 
 input CategoryCreateWithoutProductsInput {
   id: ID
+  slug: String!
   name: String!
   description: String
 }
@@ -510,6 +529,8 @@ type CategoryEdge {
 enum CategoryOrderByInput {
   id_ASC
   id_DESC
+  slug_ASC
+  slug_DESC
   name_ASC
   name_DESC
   description_ASC
@@ -518,6 +539,7 @@ enum CategoryOrderByInput {
 
 type CategoryPreviousValues {
   id: ID!
+  slug: String!
   name: String!
   description: String
 }
@@ -541,12 +563,14 @@ input CategorySubscriptionWhereInput {
 }
 
 input CategoryUpdateInput {
+  slug: String
   name: String
   description: String
   products: ProductUpdateManyWithoutCategoryInput
 }
 
 input CategoryUpdateManyMutationInput {
+  slug: String
   name: String
   description: String
 }
@@ -559,6 +583,7 @@ input CategoryUpdateOneRequiredWithoutProductsInput {
 }
 
 input CategoryUpdateWithoutProductsDataInput {
+  slug: String
   name: String
   description: String
 }
@@ -583,6 +608,20 @@ input CategoryWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
+  slug: String
+  slug_not: String
+  slug_in: [String!]
+  slug_not_in: [String!]
+  slug_lt: String
+  slug_lte: String
+  slug_gt: String
+  slug_gte: String
+  slug_contains: String
+  slug_not_contains: String
+  slug_starts_with: String
+  slug_not_starts_with: String
+  slug_ends_with: String
+  slug_not_ends_with: String
   name: String
   name_not: String
   name_in: [String!]
@@ -621,14 +660,16 @@ input CategoryWhereInput {
 
 input CategoryWhereUniqueInput {
   id: ID
+  slug: String
   name: String
 }
 
 type Color {
   id: ID!
+  slug: String!
+  name: String!
   colorCode: String!
   hexCode: String!
-  name: String
   productVariants(where: ProductVariantWhereInput, orderBy: ProductVariantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariant!]
 }
 
@@ -640,10 +681,16 @@ type ColorConnection {
 
 input ColorCreateInput {
   id: ID
+  slug: String!
+  name: String!
   colorCode: String!
   hexCode: String!
-  name: String
   productVariants: ProductVariantCreateManyWithoutColorInput
+}
+
+input ColorCreateOneInput {
+  create: ColorCreateInput
+  connect: ColorWhereUniqueInput
 }
 
 input ColorCreateOneWithoutProductVariantsInput {
@@ -653,9 +700,10 @@ input ColorCreateOneWithoutProductVariantsInput {
 
 input ColorCreateWithoutProductVariantsInput {
   id: ID
+  slug: String!
+  name: String!
   colorCode: String!
   hexCode: String!
-  name: String
 }
 
 type ColorEdge {
@@ -666,19 +714,22 @@ type ColorEdge {
 enum ColorOrderByInput {
   id_ASC
   id_DESC
+  slug_ASC
+  slug_DESC
+  name_ASC
+  name_DESC
   colorCode_ASC
   colorCode_DESC
   hexCode_ASC
   hexCode_DESC
-  name_ASC
-  name_DESC
 }
 
 type ColorPreviousValues {
   id: ID!
+  slug: String!
+  name: String!
   colorCode: String!
   hexCode: String!
-  name: String
 }
 
 type ColorSubscriptionPayload {
@@ -699,17 +750,43 @@ input ColorSubscriptionWhereInput {
   NOT: [ColorSubscriptionWhereInput!]
 }
 
-input ColorUpdateInput {
+input ColorUpdateDataInput {
+  slug: String
+  name: String
   colorCode: String
   hexCode: String
+  productVariants: ProductVariantUpdateManyWithoutColorInput
+}
+
+input ColorUpdateInput {
+  slug: String
   name: String
+  colorCode: String
+  hexCode: String
   productVariants: ProductVariantUpdateManyWithoutColorInput
 }
 
 input ColorUpdateManyMutationInput {
+  slug: String
+  name: String
   colorCode: String
   hexCode: String
-  name: String
+}
+
+input ColorUpdateOneInput {
+  create: ColorCreateInput
+  update: ColorUpdateDataInput
+  upsert: ColorUpsertNestedInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: ColorWhereUniqueInput
+}
+
+input ColorUpdateOneRequiredInput {
+  create: ColorCreateInput
+  update: ColorUpdateDataInput
+  upsert: ColorUpsertNestedInput
+  connect: ColorWhereUniqueInput
 }
 
 input ColorUpdateOneRequiredWithoutProductVariantsInput {
@@ -720,9 +797,15 @@ input ColorUpdateOneRequiredWithoutProductVariantsInput {
 }
 
 input ColorUpdateWithoutProductVariantsDataInput {
+  slug: String
+  name: String
   colorCode: String
   hexCode: String
-  name: String
+}
+
+input ColorUpsertNestedInput {
+  update: ColorUpdateDataInput!
+  create: ColorCreateInput!
 }
 
 input ColorUpsertWithoutProductVariantsInput {
@@ -745,6 +828,34 @@ input ColorWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
+  slug: String
+  slug_not: String
+  slug_in: [String!]
+  slug_not_in: [String!]
+  slug_lt: String
+  slug_lte: String
+  slug_gt: String
+  slug_gte: String
+  slug_contains: String
+  slug_not_contains: String
+  slug_starts_with: String
+  slug_not_starts_with: String
+  slug_ends_with: String
+  slug_not_ends_with: String
+  name: String
+  name_not: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_lt: String
+  name_lte: String
+  name_gt: String
+  name_gte: String
+  name_contains: String
+  name_not_contains: String
+  name_starts_with: String
+  name_not_starts_with: String
+  name_ends_with: String
+  name_not_ends_with: String
   colorCode: String
   colorCode_not: String
   colorCode_in: [String!]
@@ -773,20 +884,6 @@ input ColorWhereInput {
   hexCode_not_starts_with: String
   hexCode_ends_with: String
   hexCode_not_ends_with: String
-  name: String
-  name_not: String
-  name_in: [String!]
-  name_not_in: [String!]
-  name_lt: String
-  name_lte: String
-  name_gt: String
-  name_gte: String
-  name_contains: String
-  name_not_contains: String
-  name_starts_with: String
-  name_not_starts_with: String
-  name_ends_with: String
-  name_not_ends_with: String
   productVariants_every: ProductVariantWhereInput
   productVariants_some: ProductVariantWhereInput
   productVariants_none: ProductVariantWhereInput
@@ -797,6 +894,7 @@ input ColorWhereInput {
 
 input ColorWhereUniqueInput {
   id: ID
+  slug: String
   colorCode: String
 }
 
@@ -836,8 +934,6 @@ input CustomerCreateWithoutBagInput {
 
 type CustomerDetail {
   id: ID!
-  createdAt: DateTime!
-  updatedAt: DateTime!
   phoneNumber: String
   birthday: DateTime
   height: Int
@@ -851,6 +947,8 @@ type CustomerDetail {
   shoppingFrequency: String
   averageSpend: String
   shippingAddress: Location
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 type CustomerDetailConnection {
@@ -889,10 +987,6 @@ type CustomerDetailEdge {
 enum CustomerDetailOrderByInput {
   id_ASC
   id_DESC
-  createdAt_ASC
-  createdAt_DESC
-  updatedAt_ASC
-  updatedAt_DESC
   phoneNumber_ASC
   phoneNumber_DESC
   birthday_ASC
@@ -917,12 +1011,14 @@ enum CustomerDetailOrderByInput {
   shoppingFrequency_DESC
   averageSpend_ASC
   averageSpend_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
 }
 
 type CustomerDetailPreviousValues {
   id: ID!
-  createdAt: DateTime!
-  updatedAt: DateTime!
   phoneNumber: String
   birthday: DateTime
   height: Int
@@ -935,6 +1031,8 @@ type CustomerDetailPreviousValues {
   travelFrequency: String
   shoppingFrequency: String
   averageSpend: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 type CustomerDetailSubscriptionPayload {
@@ -1031,22 +1129,6 @@ input CustomerDetailWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
-  createdAt: DateTime
-  createdAt_not: DateTime
-  createdAt_in: [DateTime!]
-  createdAt_not_in: [DateTime!]
-  createdAt_lt: DateTime
-  createdAt_lte: DateTime
-  createdAt_gt: DateTime
-  createdAt_gte: DateTime
-  updatedAt: DateTime
-  updatedAt_not: DateTime
-  updatedAt_in: [DateTime!]
-  updatedAt_not_in: [DateTime!]
-  updatedAt_lt: DateTime
-  updatedAt_lte: DateTime
-  updatedAt_gt: DateTime
-  updatedAt_gte: DateTime
   phoneNumber: String
   phoneNumber_not: String
   phoneNumber_in: [String!]
@@ -1204,6 +1286,22 @@ input CustomerDetailWhereInput {
   averageSpend_ends_with: String
   averageSpend_not_ends_with: String
   shippingAddress: LocationWhereInput
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
   AND: [CustomerDetailWhereInput!]
   OR: [CustomerDetailWhereInput!]
   NOT: [CustomerDetailWhereInput!]
@@ -1536,9 +1634,10 @@ type InventoryLevel {
   id: ID!
   product: Product!
   productVariant: ProductVariant!
-  reservable: Int
-  reserved: Int
-  nonReservable: Int
+  total: Int!
+  reservable: Int!
+  reserved: Int!
+  nonReservable: Int!
 }
 
 type InventoryLevelConnection {
@@ -1551,14 +1650,10 @@ input InventoryLevelCreateInput {
   id: ID
   product: ProductCreateOneInput!
   productVariant: ProductVariantCreateOneWithoutInventoryLevelInput!
-  reservable: Int
-  reserved: Int
-  nonReservable: Int
-}
-
-input InventoryLevelCreateOneInput {
-  create: InventoryLevelCreateInput
-  connect: InventoryLevelWhereUniqueInput
+  total: Int!
+  reservable: Int!
+  reserved: Int!
+  nonReservable: Int!
 }
 
 input InventoryLevelCreateOneWithoutProductVariantInput {
@@ -1569,9 +1664,10 @@ input InventoryLevelCreateOneWithoutProductVariantInput {
 input InventoryLevelCreateWithoutProductVariantInput {
   id: ID
   product: ProductCreateOneInput!
-  reservable: Int
-  reserved: Int
-  nonReservable: Int
+  total: Int!
+  reservable: Int!
+  reserved: Int!
+  nonReservable: Int!
 }
 
 type InventoryLevelEdge {
@@ -1582,6 +1678,8 @@ type InventoryLevelEdge {
 enum InventoryLevelOrderByInput {
   id_ASC
   id_DESC
+  total_ASC
+  total_DESC
   reservable_ASC
   reservable_DESC
   reserved_ASC
@@ -1592,9 +1690,10 @@ enum InventoryLevelOrderByInput {
 
 type InventoryLevelPreviousValues {
   id: ID!
-  reservable: Int
-  reserved: Int
-  nonReservable: Int
+  total: Int!
+  reservable: Int!
+  reserved: Int!
+  nonReservable: Int!
 }
 
 type InventoryLevelSubscriptionPayload {
@@ -1615,35 +1714,20 @@ input InventoryLevelSubscriptionWhereInput {
   NOT: [InventoryLevelSubscriptionWhereInput!]
 }
 
-input InventoryLevelUpdateDataInput {
-  product: ProductUpdateOneRequiredInput
-  productVariant: ProductVariantUpdateOneRequiredWithoutInventoryLevelInput
-  reservable: Int
-  reserved: Int
-  nonReservable: Int
-}
-
 input InventoryLevelUpdateInput {
   product: ProductUpdateOneRequiredInput
   productVariant: ProductVariantUpdateOneRequiredWithoutInventoryLevelInput
+  total: Int
   reservable: Int
   reserved: Int
   nonReservable: Int
 }
 
 input InventoryLevelUpdateManyMutationInput {
+  total: Int
   reservable: Int
   reserved: Int
   nonReservable: Int
-}
-
-input InventoryLevelUpdateOneInput {
-  create: InventoryLevelCreateInput
-  update: InventoryLevelUpdateDataInput
-  upsert: InventoryLevelUpsertNestedInput
-  delete: Boolean
-  disconnect: Boolean
-  connect: InventoryLevelWhereUniqueInput
 }
 
 input InventoryLevelUpdateOneRequiredWithoutProductVariantInput {
@@ -1655,14 +1739,10 @@ input InventoryLevelUpdateOneRequiredWithoutProductVariantInput {
 
 input InventoryLevelUpdateWithoutProductVariantDataInput {
   product: ProductUpdateOneRequiredInput
+  total: Int
   reservable: Int
   reserved: Int
   nonReservable: Int
-}
-
-input InventoryLevelUpsertNestedInput {
-  update: InventoryLevelUpdateDataInput!
-  create: InventoryLevelCreateInput!
 }
 
 input InventoryLevelUpsertWithoutProductVariantInput {
@@ -1687,6 +1767,14 @@ input InventoryLevelWhereInput {
   id_not_ends_with: ID
   product: ProductWhereInput
   productVariant: ProductVariantWhereInput
+  total: Int
+  total_not: Int
+  total_in: [Int!]
+  total_not_in: [Int!]
+  total_lt: Int
+  total_lte: Int
+  total_gt: Int
+  total_gte: Int
   reservable: Int
   reservable_not: Int
   reservable_in: [Int!]
@@ -1720,22 +1808,181 @@ input InventoryLevelWhereUniqueInput {
   id: ID
 }
 
+enum InventoryStatus {
+  NonReservable
+  Reservable
+  Reserved
+}
+
 scalar Json
+
+type Label {
+  id: ID!
+  name: String
+  image: String
+}
+
+type LabelConnection {
+  pageInfo: PageInfo!
+  edges: [LabelEdge]!
+  aggregate: AggregateLabel!
+}
+
+input LabelCreateInput {
+  id: ID
+  name: String
+  image: String
+}
+
+input LabelCreateOneInput {
+  create: LabelCreateInput
+  connect: LabelWhereUniqueInput
+}
+
+type LabelEdge {
+  node: Label!
+  cursor: String!
+}
+
+enum LabelOrderByInput {
+  id_ASC
+  id_DESC
+  name_ASC
+  name_DESC
+  image_ASC
+  image_DESC
+}
+
+type LabelPreviousValues {
+  id: ID!
+  name: String
+  image: String
+}
+
+type LabelSubscriptionPayload {
+  mutation: MutationType!
+  node: Label
+  updatedFields: [String!]
+  previousValues: LabelPreviousValues
+}
+
+input LabelSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: LabelWhereInput
+  AND: [LabelSubscriptionWhereInput!]
+  OR: [LabelSubscriptionWhereInput!]
+  NOT: [LabelSubscriptionWhereInput!]
+}
+
+input LabelUpdateDataInput {
+  name: String
+  image: String
+}
+
+input LabelUpdateInput {
+  name: String
+  image: String
+}
+
+input LabelUpdateManyMutationInput {
+  name: String
+  image: String
+}
+
+input LabelUpdateOneInput {
+  create: LabelCreateInput
+  update: LabelUpdateDataInput
+  upsert: LabelUpsertNestedInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: LabelWhereUniqueInput
+}
+
+input LabelUpdateOneRequiredInput {
+  create: LabelCreateInput
+  update: LabelUpdateDataInput
+  upsert: LabelUpsertNestedInput
+  connect: LabelWhereUniqueInput
+}
+
+input LabelUpsertNestedInput {
+  update: LabelUpdateDataInput!
+  create: LabelCreateInput!
+}
+
+input LabelWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  name: String
+  name_not: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_lt: String
+  name_lte: String
+  name_gt: String
+  name_gte: String
+  name_contains: String
+  name_not_contains: String
+  name_starts_with: String
+  name_not_starts_with: String
+  name_ends_with: String
+  name_not_ends_with: String
+  image: String
+  image_not: String
+  image_in: [String!]
+  image_not_in: [String!]
+  image_lt: String
+  image_lte: String
+  image_gt: String
+  image_gte: String
+  image_contains: String
+  image_not_contains: String
+  image_starts_with: String
+  image_not_starts_with: String
+  image_ends_with: String
+  image_not_ends_with: String
+  AND: [LabelWhereInput!]
+  OR: [LabelWhereInput!]
+  NOT: [LabelWhereInput!]
+}
+
+input LabelWhereUniqueInput {
+  id: ID
+}
 
 type Location {
   id: ID!
-  name: String
+  slug: String!
+  name: String!
   company: String
   description: String
   address1: String!
   address2: String!
   city: String!
-  lat: Float
-  lng: Float
   state: String!
-  zip: Int!
+  zipCode: String!
   locationType: LocationType
   user: User
+  lat: Float
+  lng: Float
+  physicalProducts(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct!]
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 type LocationConnection {
@@ -1746,23 +1993,47 @@ type LocationConnection {
 
 input LocationCreateInput {
   id: ID
-  name: String
+  slug: String!
+  name: String!
   company: String
   description: String
   address1: String!
   address2: String!
   city: String!
-  lat: Float
-  lng: Float
   state: String!
-  zip: Int!
+  zipCode: String!
   locationType: LocationType
   user: UserCreateOneInput
+  lat: Float
+  lng: Float
+  physicalProducts: PhysicalProductCreateManyWithoutLocationInput
 }
 
 input LocationCreateOneInput {
   create: LocationCreateInput
   connect: LocationWhereUniqueInput
+}
+
+input LocationCreateOneWithoutPhysicalProductsInput {
+  create: LocationCreateWithoutPhysicalProductsInput
+  connect: LocationWhereUniqueInput
+}
+
+input LocationCreateWithoutPhysicalProductsInput {
+  id: ID
+  slug: String!
+  name: String!
+  company: String
+  description: String
+  address1: String!
+  address2: String!
+  city: String!
+  state: String!
+  zipCode: String!
+  locationType: LocationType
+  user: UserCreateOneInput
+  lat: Float
+  lng: Float
 }
 
 type LocationEdge {
@@ -1773,6 +2044,8 @@ type LocationEdge {
 enum LocationOrderByInput {
   id_ASC
   id_DESC
+  slug_ASC
+  slug_DESC
   name_ASC
   name_DESC
   company_ASC
@@ -1785,31 +2058,38 @@ enum LocationOrderByInput {
   address2_DESC
   city_ASC
   city_DESC
+  state_ASC
+  state_DESC
+  zipCode_ASC
+  zipCode_DESC
+  locationType_ASC
+  locationType_DESC
   lat_ASC
   lat_DESC
   lng_ASC
   lng_DESC
-  state_ASC
-  state_DESC
-  zip_ASC
-  zip_DESC
-  locationType_ASC
-  locationType_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
 }
 
 type LocationPreviousValues {
   id: ID!
-  name: String
+  slug: String!
+  name: String!
   company: String
   description: String
   address1: String!
   address2: String!
   city: String!
+  state: String!
+  zipCode: String!
+  locationType: LocationType
   lat: Float
   lng: Float
-  state: String!
-  zip: Int!
-  locationType: LocationType
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 type LocationSubscriptionPayload {
@@ -1838,47 +2118,52 @@ enum LocationType {
 }
 
 input LocationUpdateDataInput {
+  slug: String
   name: String
   company: String
   description: String
   address1: String
   address2: String
   city: String
-  lat: Float
-  lng: Float
   state: String
-  zip: Int
+  zipCode: String
   locationType: LocationType
   user: UserUpdateOneInput
+  lat: Float
+  lng: Float
+  physicalProducts: PhysicalProductUpdateManyWithoutLocationInput
 }
 
 input LocationUpdateInput {
+  slug: String
   name: String
   company: String
   description: String
   address1: String
   address2: String
   city: String
-  lat: Float
-  lng: Float
   state: String
-  zip: Int
+  zipCode: String
   locationType: LocationType
   user: UserUpdateOneInput
+  lat: Float
+  lng: Float
+  physicalProducts: PhysicalProductUpdateManyWithoutLocationInput
 }
 
 input LocationUpdateManyMutationInput {
+  slug: String
   name: String
   company: String
   description: String
   address1: String
   address2: String
   city: String
+  state: String
+  zipCode: String
+  locationType: LocationType
   lat: Float
   lng: Float
-  state: String
-  zip: Int
-  locationType: LocationType
 }
 
 input LocationUpdateOneInput {
@@ -1890,9 +2175,37 @@ input LocationUpdateOneInput {
   connect: LocationWhereUniqueInput
 }
 
+input LocationUpdateOneRequiredWithoutPhysicalProductsInput {
+  create: LocationCreateWithoutPhysicalProductsInput
+  update: LocationUpdateWithoutPhysicalProductsDataInput
+  upsert: LocationUpsertWithoutPhysicalProductsInput
+  connect: LocationWhereUniqueInput
+}
+
+input LocationUpdateWithoutPhysicalProductsDataInput {
+  slug: String
+  name: String
+  company: String
+  description: String
+  address1: String
+  address2: String
+  city: String
+  state: String
+  zipCode: String
+  locationType: LocationType
+  user: UserUpdateOneInput
+  lat: Float
+  lng: Float
+}
+
 input LocationUpsertNestedInput {
   update: LocationUpdateDataInput!
   create: LocationCreateInput!
+}
+
+input LocationUpsertWithoutPhysicalProductsInput {
+  update: LocationUpdateWithoutPhysicalProductsDataInput!
+  create: LocationCreateWithoutPhysicalProductsInput!
 }
 
 input LocationWhereInput {
@@ -1910,6 +2223,20 @@ input LocationWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
+  slug: String
+  slug_not: String
+  slug_in: [String!]
+  slug_not_in: [String!]
+  slug_lt: String
+  slug_lte: String
+  slug_gt: String
+  slug_gte: String
+  slug_contains: String
+  slug_not_contains: String
+  slug_starts_with: String
+  slug_not_starts_with: String
+  slug_ends_with: String
+  slug_not_ends_with: String
   name: String
   name_not: String
   name_in: [String!]
@@ -1994,6 +2321,39 @@ input LocationWhereInput {
   city_not_starts_with: String
   city_ends_with: String
   city_not_ends_with: String
+  state: String
+  state_not: String
+  state_in: [String!]
+  state_not_in: [String!]
+  state_lt: String
+  state_lte: String
+  state_gt: String
+  state_gte: String
+  state_contains: String
+  state_not_contains: String
+  state_starts_with: String
+  state_not_starts_with: String
+  state_ends_with: String
+  state_not_ends_with: String
+  zipCode: String
+  zipCode_not: String
+  zipCode_in: [String!]
+  zipCode_not_in: [String!]
+  zipCode_lt: String
+  zipCode_lte: String
+  zipCode_gt: String
+  zipCode_gte: String
+  zipCode_contains: String
+  zipCode_not_contains: String
+  zipCode_starts_with: String
+  zipCode_not_starts_with: String
+  zipCode_ends_with: String
+  zipCode_not_ends_with: String
+  locationType: LocationType
+  locationType_not: LocationType
+  locationType_in: [LocationType!]
+  locationType_not_in: [LocationType!]
+  user: UserWhereInput
   lat: Float
   lat_not: Float
   lat_in: [Float!]
@@ -2010,33 +2370,25 @@ input LocationWhereInput {
   lng_lte: Float
   lng_gt: Float
   lng_gte: Float
-  state: String
-  state_not: String
-  state_in: [String!]
-  state_not_in: [String!]
-  state_lt: String
-  state_lte: String
-  state_gt: String
-  state_gte: String
-  state_contains: String
-  state_not_contains: String
-  state_starts_with: String
-  state_not_starts_with: String
-  state_ends_with: String
-  state_not_ends_with: String
-  zip: Int
-  zip_not: Int
-  zip_in: [Int!]
-  zip_not_in: [Int!]
-  zip_lt: Int
-  zip_lte: Int
-  zip_gt: Int
-  zip_gte: Int
-  locationType: LocationType
-  locationType_not: LocationType
-  locationType_in: [LocationType!]
-  locationType_not_in: [LocationType!]
-  user: UserWhereInput
+  physicalProducts_every: PhysicalProductWhereInput
+  physicalProducts_some: PhysicalProductWhereInput
+  physicalProducts_none: PhysicalProductWhereInput
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
   AND: [LocationWhereInput!]
   OR: [LocationWhereInput!]
   NOT: [LocationWhereInput!]
@@ -2044,9 +2396,57 @@ input LocationWhereInput {
 
 input LocationWhereUniqueInput {
   id: ID
+  slug: String
+  name: String
 }
 
 scalar Long
+
+enum Material {
+  Acetate
+  Acrylic
+  Alpaca
+  CalfLeather
+  CamelHair
+  Camel
+  Cashmere
+  Cotton
+  CowLeather
+  Cupro
+  DuckFeathers
+  Elastane
+  Esterlane
+  Feather
+  FeatherDown
+  GooseDown
+  LambLeather
+  Leather
+  Lyocell
+  MerinoWool
+  Nylon
+  OrganicCotton
+  Polyamide
+  Polyester
+  Polyurethane
+  PolyurethanicResin
+  Rayon
+  RecycledWool
+  Silk
+  Suede
+  SheepLeather
+  Spandex
+  Taffeta
+  Tartan
+  VirginWool
+  Viscose
+  Velcro
+  WaxCoating
+  WhiteDuckDown
+  WhiteGooseDown
+  Wool
+  Mesh
+  Denim
+}
 
 type Mutation {
   createBag(data: BagCreateInput!): Bag!
@@ -2096,12 +2496,21 @@ type Mutation {
   upsertInventoryLevel(where: InventoryLevelWhereUniqueInput!, create: InventoryLevelCreateInput!, update: InventoryLevelUpdateInput!): InventoryLevel!
   deleteInventoryLevel(where: InventoryLevelWhereUniqueInput!): InventoryLevel
   deleteManyInventoryLevels(where: InventoryLevelWhereInput): BatchPayload!
+  createLabel(data: LabelCreateInput!): Label!
+  updateLabel(data: LabelUpdateInput!, where: LabelWhereUniqueInput!): Label
+  updateManyLabels(data: LabelUpdateManyMutationInput!, where: LabelWhereInput): BatchPayload!
+  upsertLabel(where: LabelWhereUniqueInput!, create: LabelCreateInput!, update: LabelUpdateInput!): Label!
+  deleteLabel(where: LabelWhereUniqueInput!): Label
+  deleteManyLabels(where: LabelWhereInput): BatchPayload!
   createLocation(data: LocationCreateInput!): Location!
   updateLocation(data: LocationUpdateInput!, where: LocationWhereUniqueInput!): Location
   updateManyLocations(data: LocationUpdateManyMutationInput!, where: LocationWhereInput): BatchPayload!
   upsertLocation(where: LocationWhereUniqueInput!, create: LocationCreateInput!, update: LocationUpdateInput!): Location!
   deleteLocation(where: LocationWhereUniqueInput!): Location
   deleteManyLocations(where: LocationWhereInput): BatchPayload!
+  createOrder(data: OrderCreateInput!): Order!
+  deleteOrder(where: OrderWhereUniqueInput!): Order
+  deleteManyOrders(where: OrderWhereInput): BatchPayload!
   createPhysicalProduct(data: PhysicalProductCreateInput!): PhysicalProduct!
   updatePhysicalProduct(data: PhysicalProductUpdateInput!, where: PhysicalProductWhereUniqueInput!): PhysicalProduct
   updateManyPhysicalProducts(data: PhysicalProductUpdateManyMutationInput!, where: PhysicalProductWhereInput): BatchPayload!
@@ -2114,12 +2523,24 @@ type Mutation {
   upsertProduct(where: ProductWhereUniqueInput!, create: ProductCreateInput!, update: ProductUpdateInput!): Product!
   deleteProduct(where: ProductWhereUniqueInput!): Product
   deleteManyProducts(where: ProductWhereInput): BatchPayload!
+  createProductFunction(data: ProductFunctionCreateInput!): ProductFunction!
+  updateProductFunction(data: ProductFunctionUpdateInput!, where: ProductFunctionWhereUniqueInput!): ProductFunction
+  updateManyProductFunctions(data: ProductFunctionUpdateManyMutationInput!, where: ProductFunctionWhereInput): BatchPayload!
+  upsertProductFunction(where: ProductFunctionWhereUniqueInput!, create: ProductFunctionCreateInput!, update: ProductFunctionUpdateInput!): ProductFunction!
+  deleteProductFunction(where: ProductFunctionWhereUniqueInput!): ProductFunction
+  deleteManyProductFunctions(where: ProductFunctionWhereInput): BatchPayload!
   createProductVariant(data: ProductVariantCreateInput!): ProductVariant!
   updateProductVariant(data: ProductVariantUpdateInput!, where: ProductVariantWhereUniqueInput!): ProductVariant
   updateManyProductVariants(data: ProductVariantUpdateManyMutationInput!, where: ProductVariantWhereInput): BatchPayload!
   upsertProductVariant(where: ProductVariantWhereUniqueInput!, create: ProductVariantCreateInput!, update: ProductVariantUpdateInput!): ProductVariant!
   deleteProductVariant(where: ProductVariantWhereUniqueInput!): ProductVariant
   deleteManyProductVariants(where: ProductVariantWhereInput): BatchPayload!
+  createReservation(data: ReservationCreateInput!): Reservation!
+  updateReservation(data: ReservationUpdateInput!, where: ReservationWhereUniqueInput!): Reservation
+  updateManyReservations(data: ReservationUpdateManyMutationInput!, where: ReservationWhereInput): BatchPayload!
+  upsertReservation(where: ReservationWhereUniqueInput!, create: ReservationCreateInput!, update: ReservationUpdateInput!): Reservation!
+  deleteReservation(where: ReservationWhereUniqueInput!): Reservation
+  deleteManyReservations(where: ReservationWhereInput): BatchPayload!
   createUser(data: UserCreateInput!): User!
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   updateManyUsers(data: UserUpdateManyMutationInput!, where: UserWhereInput): BatchPayload!
@@ -2138,6 +2559,76 @@ interface Node {
   id: ID!
 }
 
+type Order {
+  id: ID!
+}
+
+type OrderConnection {
+  pageInfo: PageInfo!
+  edges: [OrderEdge]!
+  aggregate: AggregateOrder!
+}
+
+input OrderCreateInput {
+  id: ID
+}
+
+type OrderEdge {
+  node: Order!
+  cursor: String!
+}
+
+enum OrderOrderByInput {
+  id_ASC
+  id_DESC
+}
+
+type OrderPreviousValues {
+  id: ID!
+}
+
+type OrderSubscriptionPayload {
+  mutation: MutationType!
+  node: Order
+  updatedFields: [String!]
+  previousValues: OrderPreviousValues
+}
+
+input OrderSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: OrderWhereInput
+  AND: [OrderSubscriptionWhereInput!]
+  OR: [OrderSubscriptionWhereInput!]
+  NOT: [OrderSubscriptionWhereInput!]
+}
+
+input OrderWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  AND: [OrderWhereInput!]
+  OR: [OrderWhereInput!]
+  NOT: [OrderWhereInput!]
+}
+
+input OrderWhereUniqueInput {
+  id: ID
+}
+
 type PageInfo {
   hasNextPage: Boolean!
   hasPreviousPage: Boolean!
@@ -2148,9 +2639,10 @@ type PageInfo {
 type PhysicalProduct {
   id: ID!
   seasonsUID: String!
-  location: Location
-  productVariant: ProductVariant
-  inventoryLevel: InventoryLevel
+  location: Location!
+  productVariant: ProductVariant!
+  inventoryStatus: InventoryStatus!
+  productStatus: PhysicalProductStatus!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -2164,9 +2656,20 @@ type PhysicalProductConnection {
 input PhysicalProductCreateInput {
   id: ID
   seasonsUID: String!
-  location: LocationCreateOneInput
-  productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput
-  inventoryLevel: InventoryLevelCreateOneInput
+  location: LocationCreateOneWithoutPhysicalProductsInput!
+  productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
+  inventoryStatus: InventoryStatus!
+  productStatus: PhysicalProductStatus!
+}
+
+input PhysicalProductCreateManyInput {
+  create: [PhysicalProductCreateInput!]
+  connect: [PhysicalProductWhereUniqueInput!]
+}
+
+input PhysicalProductCreateManyWithoutLocationInput {
+  create: [PhysicalProductCreateWithoutLocationInput!]
+  connect: [PhysicalProductWhereUniqueInput!]
 }
 
 input PhysicalProductCreateManyWithoutProductVariantInput {
@@ -2174,11 +2677,20 @@ input PhysicalProductCreateManyWithoutProductVariantInput {
   connect: [PhysicalProductWhereUniqueInput!]
 }
 
+input PhysicalProductCreateWithoutLocationInput {
+  id: ID
+  seasonsUID: String!
+  productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
+  inventoryStatus: InventoryStatus!
+  productStatus: PhysicalProductStatus!
+}
+
 input PhysicalProductCreateWithoutProductVariantInput {
   id: ID
   seasonsUID: String!
-  location: LocationCreateOneInput
-  inventoryLevel: InventoryLevelCreateOneInput
+  location: LocationCreateOneWithoutPhysicalProductsInput!
+  inventoryStatus: InventoryStatus!
+  productStatus: PhysicalProductStatus!
 }
 
 type PhysicalProductEdge {
@@ -2191,6 +2703,10 @@ enum PhysicalProductOrderByInput {
   id_DESC
   seasonsUID_ASC
   seasonsUID_DESC
+  inventoryStatus_ASC
+  inventoryStatus_DESC
+  productStatus_ASC
+  productStatus_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -2200,6 +2716,8 @@ enum PhysicalProductOrderByInput {
 type PhysicalProductPreviousValues {
   id: ID!
   seasonsUID: String!
+  inventoryStatus: InventoryStatus!
+  productStatus: PhysicalProductStatus!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -2233,6 +2751,14 @@ input PhysicalProductScalarWhereInput {
   seasonsUID_not_starts_with: String
   seasonsUID_ends_with: String
   seasonsUID_not_ends_with: String
+  inventoryStatus: InventoryStatus
+  inventoryStatus_not: InventoryStatus
+  inventoryStatus_in: [InventoryStatus!]
+  inventoryStatus_not_in: [InventoryStatus!]
+  productStatus: PhysicalProductStatus
+  productStatus_not: PhysicalProductStatus
+  productStatus_in: [PhysicalProductStatus!]
+  productStatus_not_in: [PhysicalProductStatus!]
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -2254,6 +2780,13 @@ input PhysicalProductScalarWhereInput {
   NOT: [PhysicalProductScalarWhereInput!]
 }
 
+enum PhysicalProductStatus {
+  New
+  Used
+  Damaged
+  Clean
+}
+
 type PhysicalProductSubscriptionPayload {
   mutation: MutationType!
   node: PhysicalProduct
@@ -2272,19 +2805,56 @@ input PhysicalProductSubscriptionWhereInput {
   NOT: [PhysicalProductSubscriptionWhereInput!]
 }
 
+input PhysicalProductUpdateDataInput {
+  seasonsUID: String
+  location: LocationUpdateOneRequiredWithoutPhysicalProductsInput
+  productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
+  inventoryStatus: InventoryStatus
+  productStatus: PhysicalProductStatus
+}
+
 input PhysicalProductUpdateInput {
   seasonsUID: String
-  location: LocationUpdateOneInput
-  productVariant: ProductVariantUpdateOneWithoutPhysicalProductsInput
-  inventoryLevel: InventoryLevelUpdateOneInput
+  location: LocationUpdateOneRequiredWithoutPhysicalProductsInput
+  productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
+  inventoryStatus: InventoryStatus
+  productStatus: PhysicalProductStatus
 }
 
 input PhysicalProductUpdateManyDataInput {
   seasonsUID: String
+  inventoryStatus: InventoryStatus
+  productStatus: PhysicalProductStatus
+}
+
+input PhysicalProductUpdateManyInput {
+  create: [PhysicalProductCreateInput!]
+  update: [PhysicalProductUpdateWithWhereUniqueNestedInput!]
+  upsert: [PhysicalProductUpsertWithWhereUniqueNestedInput!]
+  delete: [PhysicalProductWhereUniqueInput!]
+  connect: [PhysicalProductWhereUniqueInput!]
+  set: [PhysicalProductWhereUniqueInput!]
+  disconnect: [PhysicalProductWhereUniqueInput!]
+  deleteMany: [PhysicalProductScalarWhereInput!]
+  updateMany: [PhysicalProductUpdateManyWithWhereNestedInput!]
 }
 
 input PhysicalProductUpdateManyMutationInput {
   seasonsUID: String
+  inventoryStatus: InventoryStatus
+  productStatus: PhysicalProductStatus
+}
+
+input PhysicalProductUpdateManyWithoutLocationInput {
+  create: [PhysicalProductCreateWithoutLocationInput!]
+  delete: [PhysicalProductWhereUniqueInput!]
+  connect: [PhysicalProductWhereUniqueInput!]
+  set: [PhysicalProductWhereUniqueInput!]
+  disconnect: [PhysicalProductWhereUniqueInput!]
+  update: [PhysicalProductUpdateWithWhereUniqueWithoutLocationInput!]
+  upsert: [PhysicalProductUpsertWithWhereUniqueWithoutLocationInput!]
+  deleteMany: [PhysicalProductScalarWhereInput!]
+  updateMany: [PhysicalProductUpdateManyWithWhereNestedInput!]
 }
 
 input PhysicalProductUpdateManyWithoutProductVariantInput {
@@ -2304,15 +2874,45 @@ input PhysicalProductUpdateManyWithWhereNestedInput {
   data: PhysicalProductUpdateManyDataInput!
 }
 
+input PhysicalProductUpdateWithoutLocationDataInput {
+  seasonsUID: String
+  productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
+  inventoryStatus: InventoryStatus
+  productStatus: PhysicalProductStatus
+}
+
 input PhysicalProductUpdateWithoutProductVariantDataInput {
   seasonsUID: String
-  location: LocationUpdateOneInput
-  inventoryLevel: InventoryLevelUpdateOneInput
+  location: LocationUpdateOneRequiredWithoutPhysicalProductsInput
+  inventoryStatus: InventoryStatus
+  productStatus: PhysicalProductStatus
+}
+
+input PhysicalProductUpdateWithWhereUniqueNestedInput {
+  where: PhysicalProductWhereUniqueInput!
+  data: PhysicalProductUpdateDataInput!
+}
+
+input PhysicalProductUpdateWithWhereUniqueWithoutLocationInput {
+  where: PhysicalProductWhereUniqueInput!
+  data: PhysicalProductUpdateWithoutLocationDataInput!
 }
 
 input PhysicalProductUpdateWithWhereUniqueWithoutProductVariantInput {
   where: PhysicalProductWhereUniqueInput!
   data: PhysicalProductUpdateWithoutProductVariantDataInput!
+}
+
+input PhysicalProductUpsertWithWhereUniqueNestedInput {
+  where: PhysicalProductWhereUniqueInput!
+  update: PhysicalProductUpdateDataInput!
+  create: PhysicalProductCreateInput!
+}
+
+input PhysicalProductUpsertWithWhereUniqueWithoutLocationInput {
+  where: PhysicalProductWhereUniqueInput!
+  update: PhysicalProductUpdateWithoutLocationDataInput!
+  create: PhysicalProductCreateWithoutLocationInput!
 }
 
 input PhysicalProductUpsertWithWhereUniqueWithoutProductVariantInput {
@@ -2352,7 +2952,14 @@ input PhysicalProductWhereInput {
   seasonsUID_not_ends_with: String
   location: LocationWhereInput
   productVariant: ProductVariantWhereInput
-  inventoryLevel: InventoryLevelWhereInput
+  inventoryStatus: InventoryStatus
+  inventoryStatus_not: InventoryStatus
+  inventoryStatus_in: [InventoryStatus!]
+  inventoryStatus_not_in: [InventoryStatus!]
+  productStatus: PhysicalProductStatus
+  productStatus_not: PhysicalProductStatus
+  productStatus_in: [PhysicalProductStatus!]
+  productStatus_not_in: [PhysicalProductStatus!]
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -2381,16 +2988,24 @@ input PhysicalProductWhereUniqueInput {
 
 type Product {
   id: ID!
+  slug: String!
   name: String!
   brand: Brand!
   category: Category!
   description: String
-  externalUrl: String
+  externalURL: String
   images: Json!
   modelHeight: Int
   modelSize: Size
   retailPrice: Int
+  color: Color!
+  secondaryColor: Color
   tags: Json
+  functions(where: ProductFunctionWhereInput, orderBy: ProductFunctionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductFunction!]
+  availableSizes: [Size!]!
+  innerMaterials: [Material!]!
+  outerMaterials: [Material!]!
+  status: ProductStatus
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -2401,18 +3016,34 @@ type ProductConnection {
   aggregate: AggregateProduct!
 }
 
+input ProductCreateavailableSizesInput {
+  set: [Size!]
+}
+
+input ProductCreateinnerMaterialsInput {
+  set: [Material!]
+}
+
 input ProductCreateInput {
   id: ID
+  slug: String!
   name: String!
   brand: BrandCreateOneWithoutProductsInput!
   category: CategoryCreateOneWithoutProductsInput!
   description: String
-  externalUrl: String
+  externalURL: String
   images: Json!
   modelHeight: Int
   modelSize: Size
   retailPrice: Int
+  color: ColorCreateOneInput!
+  secondaryColor: ColorCreateOneInput
   tags: Json
+  functions: ProductFunctionCreateManyInput
+  availableSizes: ProductCreateavailableSizesInput
+  innerMaterials: ProductCreateinnerMaterialsInput
+  outerMaterials: ProductCreateouterMaterialsInput
+  status: ProductStatus
 }
 
 input ProductCreateManyWithoutBrandInput {
@@ -2430,30 +3061,50 @@ input ProductCreateOneInput {
   connect: ProductWhereUniqueInput
 }
 
+input ProductCreateouterMaterialsInput {
+  set: [Material!]
+}
+
 input ProductCreateWithoutBrandInput {
   id: ID
+  slug: String!
   name: String!
   category: CategoryCreateOneWithoutProductsInput!
   description: String
-  externalUrl: String
+  externalURL: String
   images: Json!
   modelHeight: Int
   modelSize: Size
   retailPrice: Int
+  color: ColorCreateOneInput!
+  secondaryColor: ColorCreateOneInput
   tags: Json
+  functions: ProductFunctionCreateManyInput
+  availableSizes: ProductCreateavailableSizesInput
+  innerMaterials: ProductCreateinnerMaterialsInput
+  outerMaterials: ProductCreateouterMaterialsInput
+  status: ProductStatus
 }
 
 input ProductCreateWithoutCategoryInput {
   id: ID
+  slug: String!
   name: String!
   brand: BrandCreateOneWithoutProductsInput!
   description: String
-  externalUrl: String
+  externalURL: String
   images: Json!
   modelHeight: Int
   modelSize: Size
   retailPrice: Int
+  color: ColorCreateOneInput!
+  secondaryColor: ColorCreateOneInput
   tags: Json
+  functions: ProductFunctionCreateManyInput
+  availableSizes: ProductCreateavailableSizesInput
+  innerMaterials: ProductCreateinnerMaterialsInput
+  outerMaterials: ProductCreateouterMaterialsInput
+  status: ProductStatus
 }
 
 type ProductEdge {
@@ -2461,46 +3112,45 @@ type ProductEdge {
   cursor: String!
 }
 
-enum ProductOrderByInput {
+type ProductFunction {
+  id: ID!
+  name: String
+}
+
+type ProductFunctionConnection {
+  pageInfo: PageInfo!
+  edges: [ProductFunctionEdge]!
+  aggregate: AggregateProductFunction!
+}
+
+input ProductFunctionCreateInput {
+  id: ID
+  name: String
+}
+
+input ProductFunctionCreateManyInput {
+  create: [ProductFunctionCreateInput!]
+  connect: [ProductFunctionWhereUniqueInput!]
+}
+
+type ProductFunctionEdge {
+  node: ProductFunction!
+  cursor: String!
+}
+
+enum ProductFunctionOrderByInput {
   id_ASC
   id_DESC
   name_ASC
   name_DESC
-  description_ASC
-  description_DESC
-  externalUrl_ASC
-  externalUrl_DESC
-  images_ASC
-  images_DESC
-  modelHeight_ASC
-  modelHeight_DESC
-  modelSize_ASC
-  modelSize_DESC
-  retailPrice_ASC
-  retailPrice_DESC
-  tags_ASC
-  tags_DESC
-  createdAt_ASC
-  createdAt_DESC
-  updatedAt_ASC
-  updatedAt_DESC
 }
 
-type ProductPreviousValues {
+type ProductFunctionPreviousValues {
   id: ID!
-  name: String!
-  description: String
-  externalUrl: String
-  images: Json!
-  modelHeight: Int
-  modelSize: Size
-  retailPrice: Int
-  tags: Json
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  name: String
 }
 
-input ProductScalarWhereInput {
+input ProductFunctionScalarWhereInput {
   id: ID
   id_not: ID
   id_in: [ID!]
@@ -2529,6 +3179,203 @@ input ProductScalarWhereInput {
   name_not_starts_with: String
   name_ends_with: String
   name_not_ends_with: String
+  AND: [ProductFunctionScalarWhereInput!]
+  OR: [ProductFunctionScalarWhereInput!]
+  NOT: [ProductFunctionScalarWhereInput!]
+}
+
+type ProductFunctionSubscriptionPayload {
+  mutation: MutationType!
+  node: ProductFunction
+  updatedFields: [String!]
+  previousValues: ProductFunctionPreviousValues
+}
+
+input ProductFunctionSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: ProductFunctionWhereInput
+  AND: [ProductFunctionSubscriptionWhereInput!]
+  OR: [ProductFunctionSubscriptionWhereInput!]
+  NOT: [ProductFunctionSubscriptionWhereInput!]
+}
+
+input ProductFunctionUpdateDataInput {
+  name: String
+}
+
+input ProductFunctionUpdateInput {
+  name: String
+}
+
+input ProductFunctionUpdateManyDataInput {
+  name: String
+}
+
+input ProductFunctionUpdateManyInput {
+  create: [ProductFunctionCreateInput!]
+  update: [ProductFunctionUpdateWithWhereUniqueNestedInput!]
+  upsert: [ProductFunctionUpsertWithWhereUniqueNestedInput!]
+  delete: [ProductFunctionWhereUniqueInput!]
+  connect: [ProductFunctionWhereUniqueInput!]
+  set: [ProductFunctionWhereUniqueInput!]
+  disconnect: [ProductFunctionWhereUniqueInput!]
+  deleteMany: [ProductFunctionScalarWhereInput!]
+  updateMany: [ProductFunctionUpdateManyWithWhereNestedInput!]
+}
+
+input ProductFunctionUpdateManyMutationInput {
+  name: String
+}
+
+input ProductFunctionUpdateManyWithWhereNestedInput {
+  where: ProductFunctionScalarWhereInput!
+  data: ProductFunctionUpdateManyDataInput!
+}
+
+input ProductFunctionUpdateWithWhereUniqueNestedInput {
+  where: ProductFunctionWhereUniqueInput!
+  data: ProductFunctionUpdateDataInput!
+}
+
+input ProductFunctionUpsertWithWhereUniqueNestedInput {
+  where: ProductFunctionWhereUniqueInput!
+  update: ProductFunctionUpdateDataInput!
+  create: ProductFunctionCreateInput!
+}
+
+input ProductFunctionWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  name: String
+  name_not: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_lt: String
+  name_lte: String
+  name_gt: String
+  name_gte: String
+  name_contains: String
+  name_not_contains: String
+  name_starts_with: String
+  name_not_starts_with: String
+  name_ends_with: String
+  name_not_ends_with: String
+  AND: [ProductFunctionWhereInput!]
+  OR: [ProductFunctionWhereInput!]
+  NOT: [ProductFunctionWhereInput!]
+}
+
+input ProductFunctionWhereUniqueInput {
+  id: ID
+  name: String
+}
+
+enum ProductOrderByInput {
+  id_ASC
+  id_DESC
+  slug_ASC
+  slug_DESC
+  name_ASC
+  name_DESC
+  description_ASC
+  description_DESC
+  externalURL_ASC
+  externalURL_DESC
+  images_ASC
+  images_DESC
+  modelHeight_ASC
+  modelHeight_DESC
+  modelSize_ASC
+  modelSize_DESC
+  retailPrice_ASC
+  retailPrice_DESC
+  tags_ASC
+  tags_DESC
+  status_ASC
+  status_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type ProductPreviousValues {
+  id: ID!
+  slug: String!
+  name: String!
+  description: String
+  externalURL: String
+  images: Json!
+  modelHeight: Int
+  modelSize: Size
+  retailPrice: Int
+  tags: Json
+  availableSizes: [Size!]!
+  innerMaterials: [Material!]!
+  outerMaterials: [Material!]!
+  status: ProductStatus
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+input ProductScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  slug: String
+  slug_not: String
+  slug_in: [String!]
+  slug_not_in: [String!]
+  slug_lt: String
+  slug_lte: String
+  slug_gt: String
+  slug_gte: String
+  slug_contains: String
+  slug_not_contains: String
+  slug_starts_with: String
+  slug_not_starts_with: String
+  slug_ends_with: String
+  slug_not_ends_with: String
+  name: String
+  name_not: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_lt: String
+  name_lte: String
+  name_gt: String
+  name_gte: String
+  name_contains: String
+  name_not_contains: String
+  name_starts_with: String
+  name_not_starts_with: String
+  name_ends_with: String
+  name_not_ends_with: String
   description: String
   description_not: String
   description_in: [String!]
@@ -2543,20 +3390,20 @@ input ProductScalarWhereInput {
   description_not_starts_with: String
   description_ends_with: String
   description_not_ends_with: String
-  externalUrl: String
-  externalUrl_not: String
-  externalUrl_in: [String!]
-  externalUrl_not_in: [String!]
-  externalUrl_lt: String
-  externalUrl_lte: String
-  externalUrl_gt: String
-  externalUrl_gte: String
-  externalUrl_contains: String
-  externalUrl_not_contains: String
-  externalUrl_starts_with: String
-  externalUrl_not_starts_with: String
-  externalUrl_ends_with: String
-  externalUrl_not_ends_with: String
+  externalURL: String
+  externalURL_not: String
+  externalURL_in: [String!]
+  externalURL_not_in: [String!]
+  externalURL_lt: String
+  externalURL_lte: String
+  externalURL_gt: String
+  externalURL_gte: String
+  externalURL_contains: String
+  externalURL_not_contains: String
+  externalURL_starts_with: String
+  externalURL_not_starts_with: String
+  externalURL_ends_with: String
+  externalURL_not_ends_with: String
   modelHeight: Int
   modelHeight_not: Int
   modelHeight_in: [Int!]
@@ -2577,6 +3424,10 @@ input ProductScalarWhereInput {
   retailPrice_lte: Int
   retailPrice_gt: Int
   retailPrice_gte: Int
+  status: ProductStatus
+  status_not: ProductStatus
+  status_in: [ProductStatus!]
+  status_not_in: [ProductStatus!]
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -2598,6 +3449,11 @@ input ProductScalarWhereInput {
   NOT: [ProductScalarWhereInput!]
 }
 
+enum ProductStatus {
+  Available
+  NotAvailable
+}
+
 type ProductSubscriptionPayload {
   mutation: MutationType!
   node: Product
@@ -2616,52 +3472,86 @@ input ProductSubscriptionWhereInput {
   NOT: [ProductSubscriptionWhereInput!]
 }
 
+input ProductUpdateavailableSizesInput {
+  set: [Size!]
+}
+
 input ProductUpdateDataInput {
+  slug: String
   name: String
   brand: BrandUpdateOneRequiredWithoutProductsInput
   category: CategoryUpdateOneRequiredWithoutProductsInput
   description: String
-  externalUrl: String
+  externalURL: String
   images: Json
   modelHeight: Int
   modelSize: Size
   retailPrice: Int
+  color: ColorUpdateOneRequiredInput
+  secondaryColor: ColorUpdateOneInput
   tags: Json
+  functions: ProductFunctionUpdateManyInput
+  availableSizes: ProductUpdateavailableSizesInput
+  innerMaterials: ProductUpdateinnerMaterialsInput
+  outerMaterials: ProductUpdateouterMaterialsInput
+  status: ProductStatus
+}
+
+input ProductUpdateinnerMaterialsInput {
+  set: [Material!]
 }
 
 input ProductUpdateInput {
+  slug: String
   name: String
   brand: BrandUpdateOneRequiredWithoutProductsInput
   category: CategoryUpdateOneRequiredWithoutProductsInput
   description: String
-  externalUrl: String
+  externalURL: String
   images: Json
   modelHeight: Int
   modelSize: Size
   retailPrice: Int
+  color: ColorUpdateOneRequiredInput
+  secondaryColor: ColorUpdateOneInput
   tags: Json
+  functions: ProductFunctionUpdateManyInput
+  availableSizes: ProductUpdateavailableSizesInput
+  innerMaterials: ProductUpdateinnerMaterialsInput
+  outerMaterials: ProductUpdateouterMaterialsInput
+  status: ProductStatus
 }
 
 input ProductUpdateManyDataInput {
+  slug: String
   name: String
   description: String
-  externalUrl: String
+  externalURL: String
   images: Json
   modelHeight: Int
   modelSize: Size
   retailPrice: Int
   tags: Json
+  availableSizes: ProductUpdateavailableSizesInput
+  innerMaterials: ProductUpdateinnerMaterialsInput
+  outerMaterials: ProductUpdateouterMaterialsInput
+  status: ProductStatus
 }
 
 input ProductUpdateManyMutationInput {
+  slug: String
   name: String
   description: String
-  externalUrl: String
+  externalURL: String
   images: Json
   modelHeight: Int
   modelSize: Size
   retailPrice: Int
   tags: Json
+  availableSizes: ProductUpdateavailableSizesInput
+  innerMaterials: ProductUpdateinnerMaterialsInput
+  outerMaterials: ProductUpdateouterMaterialsInput
+  status: ProductStatus
 }
 
 input ProductUpdateManyWithoutBrandInput {
@@ -2700,28 +3590,48 @@ input ProductUpdateOneRequiredInput {
   connect: ProductWhereUniqueInput
 }
 
+input ProductUpdateouterMaterialsInput {
+  set: [Material!]
+}
+
 input ProductUpdateWithoutBrandDataInput {
+  slug: String
   name: String
   category: CategoryUpdateOneRequiredWithoutProductsInput
   description: String
-  externalUrl: String
+  externalURL: String
   images: Json
   modelHeight: Int
   modelSize: Size
   retailPrice: Int
+  color: ColorUpdateOneRequiredInput
+  secondaryColor: ColorUpdateOneInput
   tags: Json
+  functions: ProductFunctionUpdateManyInput
+  availableSizes: ProductUpdateavailableSizesInput
+  innerMaterials: ProductUpdateinnerMaterialsInput
+  outerMaterials: ProductUpdateouterMaterialsInput
+  status: ProductStatus
 }
 
 input ProductUpdateWithoutCategoryDataInput {
+  slug: String
   name: String
   brand: BrandUpdateOneRequiredWithoutProductsInput
   description: String
-  externalUrl: String
+  externalURL: String
   images: Json
   modelHeight: Int
   modelSize: Size
   retailPrice: Int
+  color: ColorUpdateOneRequiredInput
+  secondaryColor: ColorUpdateOneInput
   tags: Json
+  functions: ProductFunctionUpdateManyInput
+  availableSizes: ProductUpdateavailableSizesInput
+  innerMaterials: ProductUpdateinnerMaterialsInput
+  outerMaterials: ProductUpdateouterMaterialsInput
+  status: ProductStatus
 }
 
 input ProductUpdateWithWhereUniqueWithoutBrandInput {
@@ -2754,13 +3664,11 @@ input ProductUpsertWithWhereUniqueWithoutCategoryInput {
 type ProductVariant {
   id: ID!
   sku: String
-  upc: String
   color: Color!
   weight: Int
   height: Int
   product: Product!
   retailPrice: Int
-  images: Json
   inventoryLevel: InventoryLevel!
   physicalProducts(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct!]
   createdAt: DateTime!
@@ -2776,13 +3684,11 @@ type ProductVariantConnection {
 input ProductVariantCreateInput {
   id: ID
   sku: String
-  upc: String
   color: ColorCreateOneWithoutProductVariantsInput!
   weight: Int
   height: Int
   product: ProductCreateOneInput!
   retailPrice: Int
-  images: Json
   inventoryLevel: InventoryLevelCreateOneWithoutProductVariantInput!
   physicalProducts: PhysicalProductCreateManyWithoutProductVariantInput
 }
@@ -2810,12 +3716,10 @@ input ProductVariantCreateOneWithoutPhysicalProductsInput {
 input ProductVariantCreateWithoutColorInput {
   id: ID
   sku: String
-  upc: String
   weight: Int
   height: Int
   product: ProductCreateOneInput!
   retailPrice: Int
-  images: Json
   inventoryLevel: InventoryLevelCreateOneWithoutProductVariantInput!
   physicalProducts: PhysicalProductCreateManyWithoutProductVariantInput
 }
@@ -2823,26 +3727,22 @@ input ProductVariantCreateWithoutColorInput {
 input ProductVariantCreateWithoutInventoryLevelInput {
   id: ID
   sku: String
-  upc: String
   color: ColorCreateOneWithoutProductVariantsInput!
   weight: Int
   height: Int
   product: ProductCreateOneInput!
   retailPrice: Int
-  images: Json
   physicalProducts: PhysicalProductCreateManyWithoutProductVariantInput
 }
 
 input ProductVariantCreateWithoutPhysicalProductsInput {
   id: ID
   sku: String
-  upc: String
   color: ColorCreateOneWithoutProductVariantsInput!
   weight: Int
   height: Int
   product: ProductCreateOneInput!
   retailPrice: Int
-  images: Json
   inventoryLevel: InventoryLevelCreateOneWithoutProductVariantInput!
 }
 
@@ -2856,16 +3756,12 @@ enum ProductVariantOrderByInput {
   id_DESC
   sku_ASC
   sku_DESC
-  upc_ASC
-  upc_DESC
   weight_ASC
   weight_DESC
   height_ASC
   height_DESC
   retailPrice_ASC
   retailPrice_DESC
-  images_ASC
-  images_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -2875,11 +3771,9 @@ enum ProductVariantOrderByInput {
 type ProductVariantPreviousValues {
   id: ID!
   sku: String
-  upc: String
   weight: Int
   height: Int
   retailPrice: Int
-  images: Json
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -2913,20 +3807,6 @@ input ProductVariantScalarWhereInput {
   sku_not_starts_with: String
   sku_ends_with: String
   sku_not_ends_with: String
-  upc: String
-  upc_not: String
-  upc_in: [String!]
-  upc_not_in: [String!]
-  upc_lt: String
-  upc_lte: String
-  upc_gt: String
-  upc_gte: String
-  upc_contains: String
-  upc_not_contains: String
-  upc_starts_with: String
-  upc_not_starts_with: String
-  upc_ends_with: String
-  upc_not_ends_with: String
   weight: Int
   weight_not: Int
   weight_in: [Int!]
@@ -2992,37 +3872,31 @@ input ProductVariantSubscriptionWhereInput {
 
 input ProductVariantUpdateDataInput {
   sku: String
-  upc: String
   color: ColorUpdateOneRequiredWithoutProductVariantsInput
   weight: Int
   height: Int
   product: ProductUpdateOneRequiredInput
   retailPrice: Int
-  images: Json
   inventoryLevel: InventoryLevelUpdateOneRequiredWithoutProductVariantInput
   physicalProducts: PhysicalProductUpdateManyWithoutProductVariantInput
 }
 
 input ProductVariantUpdateInput {
   sku: String
-  upc: String
   color: ColorUpdateOneRequiredWithoutProductVariantsInput
   weight: Int
   height: Int
   product: ProductUpdateOneRequiredInput
   retailPrice: Int
-  images: Json
   inventoryLevel: InventoryLevelUpdateOneRequiredWithoutProductVariantInput
   physicalProducts: PhysicalProductUpdateManyWithoutProductVariantInput
 }
 
 input ProductVariantUpdateManyDataInput {
   sku: String
-  upc: String
   weight: Int
   height: Int
   retailPrice: Int
-  images: Json
 }
 
 input ProductVariantUpdateManyInput {
@@ -3039,11 +3913,9 @@ input ProductVariantUpdateManyInput {
 
 input ProductVariantUpdateManyMutationInput {
   sku: String
-  upc: String
   weight: Int
   height: Int
   retailPrice: Int
-  images: Json
 }
 
 input ProductVariantUpdateManyWithoutColorInput {
@@ -3070,48 +3942,40 @@ input ProductVariantUpdateOneRequiredWithoutInventoryLevelInput {
   connect: ProductVariantWhereUniqueInput
 }
 
-input ProductVariantUpdateOneWithoutPhysicalProductsInput {
+input ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput {
   create: ProductVariantCreateWithoutPhysicalProductsInput
   update: ProductVariantUpdateWithoutPhysicalProductsDataInput
   upsert: ProductVariantUpsertWithoutPhysicalProductsInput
-  delete: Boolean
-  disconnect: Boolean
   connect: ProductVariantWhereUniqueInput
 }
 
 input ProductVariantUpdateWithoutColorDataInput {
   sku: String
-  upc: String
   weight: Int
   height: Int
   product: ProductUpdateOneRequiredInput
   retailPrice: Int
-  images: Json
   inventoryLevel: InventoryLevelUpdateOneRequiredWithoutProductVariantInput
   physicalProducts: PhysicalProductUpdateManyWithoutProductVariantInput
 }
 
 input ProductVariantUpdateWithoutInventoryLevelDataInput {
   sku: String
-  upc: String
   color: ColorUpdateOneRequiredWithoutProductVariantsInput
   weight: Int
   height: Int
   product: ProductUpdateOneRequiredInput
   retailPrice: Int
-  images: Json
   physicalProducts: PhysicalProductUpdateManyWithoutProductVariantInput
 }
 
 input ProductVariantUpdateWithoutPhysicalProductsDataInput {
   sku: String
-  upc: String
   color: ColorUpdateOneRequiredWithoutProductVariantsInput
   weight: Int
   height: Int
   product: ProductUpdateOneRequiredInput
   retailPrice: Int
-  images: Json
   inventoryLevel: InventoryLevelUpdateOneRequiredWithoutProductVariantInput
 }
 
@@ -3176,20 +4040,6 @@ input ProductVariantWhereInput {
   sku_not_starts_with: String
   sku_ends_with: String
   sku_not_ends_with: String
-  upc: String
-  upc_not: String
-  upc_in: [String!]
-  upc_not_in: [String!]
-  upc_lt: String
-  upc_lte: String
-  upc_gt: String
-  upc_gte: String
-  upc_contains: String
-  upc_not_contains: String
-  upc_starts_with: String
-  upc_not_starts_with: String
-  upc_ends_with: String
-  upc_not_ends_with: String
   color: ColorWhereInput
   weight: Int
   weight_not: Int
@@ -3243,6 +4093,7 @@ input ProductVariantWhereInput {
 
 input ProductVariantWhereUniqueInput {
   id: ID
+  sku: String
 }
 
 input ProductWhereInput {
@@ -3260,6 +4111,20 @@ input ProductWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
+  slug: String
+  slug_not: String
+  slug_in: [String!]
+  slug_not_in: [String!]
+  slug_lt: String
+  slug_lte: String
+  slug_gt: String
+  slug_gte: String
+  slug_contains: String
+  slug_not_contains: String
+  slug_starts_with: String
+  slug_not_starts_with: String
+  slug_ends_with: String
+  slug_not_ends_with: String
   name: String
   name_not: String
   name_in: [String!]
@@ -3290,20 +4155,20 @@ input ProductWhereInput {
   description_not_starts_with: String
   description_ends_with: String
   description_not_ends_with: String
-  externalUrl: String
-  externalUrl_not: String
-  externalUrl_in: [String!]
-  externalUrl_not_in: [String!]
-  externalUrl_lt: String
-  externalUrl_lte: String
-  externalUrl_gt: String
-  externalUrl_gte: String
-  externalUrl_contains: String
-  externalUrl_not_contains: String
-  externalUrl_starts_with: String
-  externalUrl_not_starts_with: String
-  externalUrl_ends_with: String
-  externalUrl_not_ends_with: String
+  externalURL: String
+  externalURL_not: String
+  externalURL_in: [String!]
+  externalURL_not_in: [String!]
+  externalURL_lt: String
+  externalURL_lte: String
+  externalURL_gt: String
+  externalURL_gte: String
+  externalURL_contains: String
+  externalURL_not_contains: String
+  externalURL_starts_with: String
+  externalURL_not_starts_with: String
+  externalURL_ends_with: String
+  externalURL_not_ends_with: String
   modelHeight: Int
   modelHeight_not: Int
   modelHeight_in: [Int!]
@@ -3324,6 +4189,15 @@ input ProductWhereInput {
   retailPrice_lte: Int
   retailPrice_gt: Int
   retailPrice_gte: Int
+  color: ColorWhereInput
+  secondaryColor: ColorWhereInput
+  functions_every: ProductFunctionWhereInput
+  functions_some: ProductFunctionWhereInput
+  functions_none: ProductFunctionWhereInput
+  status: ProductStatus
+  status_not: ProductStatus
+  status_in: [ProductStatus!]
+  status_not_in: [ProductStatus!]
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -3347,6 +4221,7 @@ input ProductWhereInput {
 
 input ProductWhereUniqueInput {
   id: ID
+  slug: String
 }
 
 type Query {
@@ -3374,22 +4249,161 @@ type Query {
   inventoryLevel(where: InventoryLevelWhereUniqueInput!): InventoryLevel
   inventoryLevels(where: InventoryLevelWhereInput, orderBy: InventoryLevelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [InventoryLevel]!
   inventoryLevelsConnection(where: InventoryLevelWhereInput, orderBy: InventoryLevelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): InventoryLevelConnection!
+  label(where: LabelWhereUniqueInput!): Label
+  labels(where: LabelWhereInput, orderBy: LabelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Label]!
+  labelsConnection(where: LabelWhereInput, orderBy: LabelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): LabelConnection!
   location(where: LocationWhereUniqueInput!): Location
   locations(where: LocationWhereInput, orderBy: LocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Location]!
   locationsConnection(where: LocationWhereInput, orderBy: LocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): LocationConnection!
+  order(where: OrderWhereUniqueInput!): Order
+  orders(where: OrderWhereInput, orderBy: OrderOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Order]!
+  ordersConnection(where: OrderWhereInput, orderBy: OrderOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): OrderConnection!
   physicalProduct(where: PhysicalProductWhereUniqueInput!): PhysicalProduct
   physicalProducts(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct]!
   physicalProductsConnection(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PhysicalProductConnection!
   product(where: ProductWhereUniqueInput!): Product
   products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product]!
   productsConnection(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductConnection!
+  productFunction(where: ProductFunctionWhereUniqueInput!): ProductFunction
+  productFunctions(where: ProductFunctionWhereInput, orderBy: ProductFunctionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductFunction]!
+  productFunctionsConnection(where: ProductFunctionWhereInput, orderBy: ProductFunctionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductFunctionConnection!
   productVariant(where: ProductVariantWhereUniqueInput!): ProductVariant
   productVariants(where: ProductVariantWhereInput, orderBy: ProductVariantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariant]!
   productVariantsConnection(where: ProductVariantWhereInput, orderBy: ProductVariantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductVariantConnection!
+  reservation(where: ReservationWhereUniqueInput!): Reservation
+  reservations(where: ReservationWhereInput, orderBy: ReservationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Reservation]!
+  reservationsConnection(where: ReservationWhereInput, orderBy: ReservationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ReservationConnection!
   user(where: UserWhereUniqueInput!): User
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
   node(id: ID!): Node
+}
+
+type Reservation {
+  id: ID!
+  user: User!
+  shippingLabel: Label!
+  returnLabel: Label
+  products(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct!]
+  shipped: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type ReservationConnection {
+  pageInfo: PageInfo!
+  edges: [ReservationEdge]!
+  aggregate: AggregateReservation!
+}
+
+input ReservationCreateInput {
+  id: ID
+  user: UserCreateOneInput!
+  shippingLabel: LabelCreateOneInput!
+  returnLabel: LabelCreateOneInput
+  products: PhysicalProductCreateManyInput
+  shipped: Boolean!
+}
+
+type ReservationEdge {
+  node: Reservation!
+  cursor: String!
+}
+
+enum ReservationOrderByInput {
+  id_ASC
+  id_DESC
+  shipped_ASC
+  shipped_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type ReservationPreviousValues {
+  id: ID!
+  shipped: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type ReservationSubscriptionPayload {
+  mutation: MutationType!
+  node: Reservation
+  updatedFields: [String!]
+  previousValues: ReservationPreviousValues
+}
+
+input ReservationSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: ReservationWhereInput
+  AND: [ReservationSubscriptionWhereInput!]
+  OR: [ReservationSubscriptionWhereInput!]
+  NOT: [ReservationSubscriptionWhereInput!]
+}
+
+input ReservationUpdateInput {
+  user: UserUpdateOneRequiredInput
+  shippingLabel: LabelUpdateOneRequiredInput
+  returnLabel: LabelUpdateOneInput
+  products: PhysicalProductUpdateManyInput
+  shipped: Boolean
+}
+
+input ReservationUpdateManyMutationInput {
+  shipped: Boolean
+}
+
+input ReservationWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  user: UserWhereInput
+  shippingLabel: LabelWhereInput
+  returnLabel: LabelWhereInput
+  products_every: PhysicalProductWhereInput
+  products_some: PhysicalProductWhereInput
+  products_none: PhysicalProductWhereInput
+  shipped: Boolean
+  shipped_not: Boolean
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [ReservationWhereInput!]
+  OR: [ReservationWhereInput!]
+  NOT: [ReservationWhereInput!]
+}
+
+input ReservationWhereUniqueInput {
+  id: ID
 }
 
 enum Size {
@@ -3409,10 +4423,14 @@ type Subscription {
   customerDetail(where: CustomerDetailSubscriptionWhereInput): CustomerDetailSubscriptionPayload
   image(where: ImageSubscriptionWhereInput): ImageSubscriptionPayload
   inventoryLevel(where: InventoryLevelSubscriptionWhereInput): InventoryLevelSubscriptionPayload
+  label(where: LabelSubscriptionWhereInput): LabelSubscriptionPayload
   location(where: LocationSubscriptionWhereInput): LocationSubscriptionPayload
+  order(where: OrderSubscriptionWhereInput): OrderSubscriptionPayload
   physicalProduct(where: PhysicalProductSubscriptionWhereInput): PhysicalProductSubscriptionPayload
   product(where: ProductSubscriptionWhereInput): ProductSubscriptionPayload
+  productFunction(where: ProductFunctionSubscriptionWhereInput): ProductFunctionSubscriptionPayload
   productVariant(where: ProductVariantSubscriptionWhereInput): ProductVariantSubscriptionPayload
+  reservation(where: ReservationSubscriptionWhereInput): ReservationSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
 }
 

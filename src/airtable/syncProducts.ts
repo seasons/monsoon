@@ -1,69 +1,113 @@
 import { getAllBrands, getAllCategories, getAllProducts } from "./utils"
-import { prisma } from "../prisma"
+import {
+  prisma,
+  ProductCreateInput,
+  ProductFunctionCreateManyInput,
+} from "../prisma"
+import slugify from "slugify"
+import { isEmpty } from "lodash"
 
 export const syncProducts = async () => {
   const allBrands = await getAllBrands()
   const allCategories = await getAllCategories()
   const allProducts = await getAllProducts()
-
-  const brandByAirtableId = brandId =>
-    allBrands.find(record => record.id === brandId)
-
-  const categoryByAirtableId = categoryId =>
-    allCategories.find(record => record.id === categoryId)
+  let i = 1
 
   for (let record of allProducts) {
     try {
-      const values = record.fields
+      const { model } = record
+      const { name } = model
 
-      const brands = record.fields.Brand
-      const brandId = brands && brands[0]
+      const brand = allBrands.findByIds(model.brand)
+      const category = allCategories.findByIds(model.category)
 
-      const categories = record.fields.Category
-      const categoryId = categories && categories[0]
-
-      const brand = brandByAirtableId(brandId)
-      const category = categoryByAirtableId(categoryId)
-
-      const data = {
-        name: values.Name,
-        description: values.Description,
-        brand: !!brand && {
-          connect: {
-            id: brand.fields["Seasons ID"],
-          },
-        },
-        category: !!category && {
-          connect: {
-            id: category.fields["Seasons ID"],
-          },
-        },
-        images: values.Images,
-        modelSize: values["Model Size"],
-        modelHeight: values["Model Height"],
-        externalUrl: values.Link,
-        tags: values.Tags,
-        retailPrice: values.Retail,
-        categoryId: category && category.node && category.node.id,
+      if (
+        isEmpty(model) ||
+        isEmpty(name) ||
+        isEmpty(brand) ||
+        isEmpty(category)
+      ) {
+        continue
       }
 
-      const product = !!values["Seasons ID"]
-        ? await prisma.upsertProduct({
-            where: {
-              id: values["Seasons ID"],
-            },
-            create: data,
-            update: data,
-          })
-        : await prisma.createProduct(data)
+      const {
+        color,
+        description,
+        images,
+        availableSizes,
+        modelSize,
+        modelHeight,
+        externalURL,
+        tags,
+        retailPrice,
+        innerMaterials,
+        outerMaterials,
+        functions,
+        status,
+      } = model
 
-      await record.patchUpdate({
-        "Seasons ID": product.id,
+      const slug = slugify(name + " " + color).toLowerCase()
+
+      const data = {
+        brand: {
+          connect: {
+            slug: brand.model.slug,
+          },
+        },
+        category: {
+          connect: {
+            slug: category.model.slug,
+          },
+        },
+        color: {
+          connect: {
+            slug: slugify(color).toLowerCase(),
+          },
+        },
+        functions: {
+          connect: functions.map(a => ({ name: a })),
+        },
+        availableSizes: {
+          set: availableSizes,
+        },
+        innerMaterials: {
+          set: (innerMaterials || []).map(a => a.replace(/\ /g, "")),
+        },
+        outerMaterials: {
+          set: (outerMaterials || []).map(a => a.replace(/\ /g, "")),
+        },
+        tags: {
+          set: tags,
+        },
+        name,
+        slug,
+        description,
+        images,
+        retailPrice,
+        modelSize,
+        modelHeight,
+        externalURL,
+        status: (status || "Available").replace(" ", ""),
+      } as ProductCreateInput
+
+      const product = await prisma.upsertProduct({
+        where: {
+          slug,
+        },
+        create: data,
+        update: data,
       })
 
-      console.log(product)
+      await record.patchUpdate({
+        Slug: slug,
+      })
+
+      console.log(i++, product)
     } catch (e) {
       console.error(e)
     }
   }
 }
+
+syncProducts()
+console.log("Done processing products...")
