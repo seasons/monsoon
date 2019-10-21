@@ -1,5 +1,9 @@
 import { getAllBrands, getAllCategories, getAllProducts } from "./utils"
-import { prisma, ProductCreateInput } from "../prisma"
+import {
+  prisma,
+  ProductCreateInput,
+  ProductFunctionCreateManyInput,
+} from "../prisma"
 import slugify from "slugify"
 import { isEmpty } from "lodash"
 
@@ -61,7 +65,7 @@ export const syncProducts = async () => {
           },
         },
         functions: {
-          set: functions,
+          connect: functions.map(a => ({ name: a })),
         },
         availableSizes: {
           set: availableSizes,

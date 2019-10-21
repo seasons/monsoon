@@ -1,4 +1,4 @@
-# import Category, User, Bag, CustomerDetail from "./prisma/prisma.graphql"
+# import Category, User, Bag, CustomerDetail, ProductFunction from "./prisma/prisma.graphql"
 
 directive @isAuthenticated on FIELD_DEFINITION
 directive @hasRole(roles: [String]) on FIELD_DEFINITION
@@ -8,14 +8,14 @@ directive @isOwnerOrHasRole(type: String, roles: [String]) on FIELD_DEFINITION
 type Query {
   me: User @isAuthenticated
   products(
-    categoryName: String
+    where: ProductWhereInput
     orderBy: ProductOrderByInput
     skip: Int
     after: String
     before: String
     first: Int
     last: Int
-  ): ProductConnection!
+  ): [Product]!
   product(where: ProductWhereUniqueInput!): Product
   categories(
     where: CategoryWhereInput
@@ -26,6 +26,15 @@ type Query {
     first: Int
     last: Int
   ): [Category]!
+  productFunctions(
+    where: ProductFunctionWhereInput
+    orderBy: ProductFunctionOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [ProductFunction]!
 }
 
 type Mutation {

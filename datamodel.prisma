@@ -198,13 +198,18 @@ type Product {
   color: Color! @relation(name: "ProductPrimaryColor")
   secondaryColor: Color @relation(name: "ProductSecondaryColor")
   tags: Json
-  functions: [String!]! @scalarList(strategy: RELATION)
+  functions: [ProductFunction!]!
   availableSizes: [Size!]! @scalarList(strategy: RELATION)
   innerMaterials: [Material!]! @scalarList(strategy: RELATION)
   outerMaterials: [Material!]! @scalarList(strategy: RELATION)
   status: ProductStatus @default(value: Available)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
+}
+
+type ProductFunction {
+  id: ID! @id
+  name: String @unique
 }
 
 type ProductVariant {
