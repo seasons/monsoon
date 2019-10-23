@@ -166,7 +166,7 @@ type Image {
 type Location {
   id: ID! @id
   slug: String! @unique
-  name: String! @unique
+  name: String!
   company: String
   description: String
   address1: String!
@@ -202,6 +202,7 @@ type Product {
   availableSizes: [Size!]! @scalarList(strategy: RELATION)
   innerMaterials: [Material!]! @scalarList(strategy: RELATION)
   outerMaterials: [Material!]! @scalarList(strategy: RELATION)
+  variants: [ProductVariant!]! @relation(link: TABLE)
   status: ProductStatus @default(value: Available)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
@@ -216,10 +217,11 @@ type ProductVariant {
   id: ID! @id
   sku: String @unique
   color: Color!
-  weight: Int
-  height: Int
+  size: Size!
+  weight: Float
+  height: Float
   product: Product!
-  retailPrice: Int
+  retailPrice: Float
   inventoryLevel: InventoryLevel! @relation(link: TABLE)
   physicalProducts: [PhysicalProduct!]!
   createdAt: DateTime! @createdAt

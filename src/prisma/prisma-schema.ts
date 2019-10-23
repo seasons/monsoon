@@ -2401,7 +2401,6 @@ input LocationWhereInput {
 input LocationWhereUniqueInput {
   id: ID
   slug: String
-  name: String
 }
 
 scalar Long
@@ -3009,6 +3008,7 @@ type Product {
   availableSizes: [Size!]!
   innerMaterials: [Material!]!
   outerMaterials: [Material!]!
+  variants(where: ProductVariantWhereInput, orderBy: ProductVariantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariant!]
   status: ProductStatus
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -3047,6 +3047,7 @@ input ProductCreateInput {
   availableSizes: ProductCreateavailableSizesInput
   innerMaterials: ProductCreateinnerMaterialsInput
   outerMaterials: ProductCreateouterMaterialsInput
+  variants: ProductVariantCreateManyWithoutProductInput
   status: ProductStatus
 }
 
@@ -3062,6 +3063,11 @@ input ProductCreateManyWithoutCategoryInput {
 
 input ProductCreateOneInput {
   create: ProductCreateInput
+  connect: ProductWhereUniqueInput
+}
+
+input ProductCreateOneWithoutVariantsInput {
+  create: ProductCreateWithoutVariantsInput
   connect: ProductWhereUniqueInput
 }
 
@@ -3087,6 +3093,7 @@ input ProductCreateWithoutBrandInput {
   availableSizes: ProductCreateavailableSizesInput
   innerMaterials: ProductCreateinnerMaterialsInput
   outerMaterials: ProductCreateouterMaterialsInput
+  variants: ProductVariantCreateManyWithoutProductInput
   status: ProductStatus
 }
 
@@ -3095,6 +3102,29 @@ input ProductCreateWithoutCategoryInput {
   slug: String!
   name: String!
   brand: BrandCreateOneWithoutProductsInput!
+  description: String
+  externalURL: String
+  images: Json!
+  modelHeight: Int
+  modelSize: Size
+  retailPrice: Int
+  color: ColorCreateOneInput!
+  secondaryColor: ColorCreateOneInput
+  tags: Json
+  functions: ProductFunctionCreateManyInput
+  availableSizes: ProductCreateavailableSizesInput
+  innerMaterials: ProductCreateinnerMaterialsInput
+  outerMaterials: ProductCreateouterMaterialsInput
+  variants: ProductVariantCreateManyWithoutProductInput
+  status: ProductStatus
+}
+
+input ProductCreateWithoutVariantsInput {
+  id: ID
+  slug: String!
+  name: String!
+  brand: BrandCreateOneWithoutProductsInput!
+  category: CategoryCreateOneWithoutProductsInput!
   description: String
   externalURL: String
   images: Json!
@@ -3498,6 +3528,7 @@ input ProductUpdateDataInput {
   availableSizes: ProductUpdateavailableSizesInput
   innerMaterials: ProductUpdateinnerMaterialsInput
   outerMaterials: ProductUpdateouterMaterialsInput
+  variants: ProductVariantUpdateManyWithoutProductInput
   status: ProductStatus
 }
 
@@ -3523,6 +3554,7 @@ input ProductUpdateInput {
   availableSizes: ProductUpdateavailableSizesInput
   innerMaterials: ProductUpdateinnerMaterialsInput
   outerMaterials: ProductUpdateouterMaterialsInput
+  variants: ProductVariantUpdateManyWithoutProductInput
   status: ProductStatus
 }
 
@@ -3594,6 +3626,13 @@ input ProductUpdateOneRequiredInput {
   connect: ProductWhereUniqueInput
 }
 
+input ProductUpdateOneRequiredWithoutVariantsInput {
+  create: ProductCreateWithoutVariantsInput
+  update: ProductUpdateWithoutVariantsDataInput
+  upsert: ProductUpsertWithoutVariantsInput
+  connect: ProductWhereUniqueInput
+}
+
 input ProductUpdateouterMaterialsInput {
   set: [Material!]
 }
@@ -3615,6 +3654,7 @@ input ProductUpdateWithoutBrandDataInput {
   availableSizes: ProductUpdateavailableSizesInput
   innerMaterials: ProductUpdateinnerMaterialsInput
   outerMaterials: ProductUpdateouterMaterialsInput
+  variants: ProductVariantUpdateManyWithoutProductInput
   status: ProductStatus
 }
 
@@ -3622,6 +3662,28 @@ input ProductUpdateWithoutCategoryDataInput {
   slug: String
   name: String
   brand: BrandUpdateOneRequiredWithoutProductsInput
+  description: String
+  externalURL: String
+  images: Json
+  modelHeight: Int
+  modelSize: Size
+  retailPrice: Int
+  color: ColorUpdateOneRequiredInput
+  secondaryColor: ColorUpdateOneInput
+  tags: Json
+  functions: ProductFunctionUpdateManyInput
+  availableSizes: ProductUpdateavailableSizesInput
+  innerMaterials: ProductUpdateinnerMaterialsInput
+  outerMaterials: ProductUpdateouterMaterialsInput
+  variants: ProductVariantUpdateManyWithoutProductInput
+  status: ProductStatus
+}
+
+input ProductUpdateWithoutVariantsDataInput {
+  slug: String
+  name: String
+  brand: BrandUpdateOneRequiredWithoutProductsInput
+  category: CategoryUpdateOneRequiredWithoutProductsInput
   description: String
   externalURL: String
   images: Json
@@ -3653,6 +3715,11 @@ input ProductUpsertNestedInput {
   create: ProductCreateInput!
 }
 
+input ProductUpsertWithoutVariantsInput {
+  update: ProductUpdateWithoutVariantsDataInput!
+  create: ProductCreateWithoutVariantsInput!
+}
+
 input ProductUpsertWithWhereUniqueWithoutBrandInput {
   where: ProductWhereUniqueInput!
   update: ProductUpdateWithoutBrandDataInput!
@@ -3669,10 +3736,11 @@ type ProductVariant {
   id: ID!
   sku: String
   color: Color!
-  weight: Int
-  height: Int
+  size: Size!
+  weight: Float
+  height: Float
   product: Product!
-  retailPrice: Int
+  retailPrice: Float
   inventoryLevel: InventoryLevel!
   physicalProducts(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct!]
   createdAt: DateTime!
@@ -3689,10 +3757,11 @@ input ProductVariantCreateInput {
   id: ID
   sku: String
   color: ColorCreateOneWithoutProductVariantsInput!
-  weight: Int
-  height: Int
-  product: ProductCreateOneInput!
-  retailPrice: Int
+  size: Size!
+  weight: Float
+  height: Float
+  product: ProductCreateOneWithoutVariantsInput!
+  retailPrice: Float
   inventoryLevel: InventoryLevelCreateOneWithoutProductVariantInput!
   physicalProducts: PhysicalProductCreateManyWithoutProductVariantInput
 }
@@ -3704,6 +3773,11 @@ input ProductVariantCreateManyInput {
 
 input ProductVariantCreateManyWithoutColorInput {
   create: [ProductVariantCreateWithoutColorInput!]
+  connect: [ProductVariantWhereUniqueInput!]
+}
+
+input ProductVariantCreateManyWithoutProductInput {
+  create: [ProductVariantCreateWithoutProductInput!]
   connect: [ProductVariantWhereUniqueInput!]
 }
 
@@ -3720,10 +3794,11 @@ input ProductVariantCreateOneWithoutPhysicalProductsInput {
 input ProductVariantCreateWithoutColorInput {
   id: ID
   sku: String
-  weight: Int
-  height: Int
-  product: ProductCreateOneInput!
-  retailPrice: Int
+  size: Size!
+  weight: Float
+  height: Float
+  product: ProductCreateOneWithoutVariantsInput!
+  retailPrice: Float
   inventoryLevel: InventoryLevelCreateOneWithoutProductVariantInput!
   physicalProducts: PhysicalProductCreateManyWithoutProductVariantInput
 }
@@ -3732,10 +3807,11 @@ input ProductVariantCreateWithoutInventoryLevelInput {
   id: ID
   sku: String
   color: ColorCreateOneWithoutProductVariantsInput!
-  weight: Int
-  height: Int
-  product: ProductCreateOneInput!
-  retailPrice: Int
+  size: Size!
+  weight: Float
+  height: Float
+  product: ProductCreateOneWithoutVariantsInput!
+  retailPrice: Float
   physicalProducts: PhysicalProductCreateManyWithoutProductVariantInput
 }
 
@@ -3743,11 +3819,24 @@ input ProductVariantCreateWithoutPhysicalProductsInput {
   id: ID
   sku: String
   color: ColorCreateOneWithoutProductVariantsInput!
-  weight: Int
-  height: Int
-  product: ProductCreateOneInput!
-  retailPrice: Int
+  size: Size!
+  weight: Float
+  height: Float
+  product: ProductCreateOneWithoutVariantsInput!
+  retailPrice: Float
   inventoryLevel: InventoryLevelCreateOneWithoutProductVariantInput!
+}
+
+input ProductVariantCreateWithoutProductInput {
+  id: ID
+  sku: String
+  color: ColorCreateOneWithoutProductVariantsInput!
+  size: Size!
+  weight: Float
+  height: Float
+  retailPrice: Float
+  inventoryLevel: InventoryLevelCreateOneWithoutProductVariantInput!
+  physicalProducts: PhysicalProductCreateManyWithoutProductVariantInput
 }
 
 type ProductVariantEdge {
@@ -3760,6 +3849,8 @@ enum ProductVariantOrderByInput {
   id_DESC
   sku_ASC
   sku_DESC
+  size_ASC
+  size_DESC
   weight_ASC
   weight_DESC
   height_ASC
@@ -3775,9 +3866,10 @@ enum ProductVariantOrderByInput {
 type ProductVariantPreviousValues {
   id: ID!
   sku: String
-  weight: Int
-  height: Int
-  retailPrice: Int
+  size: Size!
+  weight: Float
+  height: Float
+  retailPrice: Float
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -3811,30 +3903,34 @@ input ProductVariantScalarWhereInput {
   sku_not_starts_with: String
   sku_ends_with: String
   sku_not_ends_with: String
-  weight: Int
-  weight_not: Int
-  weight_in: [Int!]
-  weight_not_in: [Int!]
-  weight_lt: Int
-  weight_lte: Int
-  weight_gt: Int
-  weight_gte: Int
-  height: Int
-  height_not: Int
-  height_in: [Int!]
-  height_not_in: [Int!]
-  height_lt: Int
-  height_lte: Int
-  height_gt: Int
-  height_gte: Int
-  retailPrice: Int
-  retailPrice_not: Int
-  retailPrice_in: [Int!]
-  retailPrice_not_in: [Int!]
-  retailPrice_lt: Int
-  retailPrice_lte: Int
-  retailPrice_gt: Int
-  retailPrice_gte: Int
+  size: Size
+  size_not: Size
+  size_in: [Size!]
+  size_not_in: [Size!]
+  weight: Float
+  weight_not: Float
+  weight_in: [Float!]
+  weight_not_in: [Float!]
+  weight_lt: Float
+  weight_lte: Float
+  weight_gt: Float
+  weight_gte: Float
+  height: Float
+  height_not: Float
+  height_in: [Float!]
+  height_not_in: [Float!]
+  height_lt: Float
+  height_lte: Float
+  height_gt: Float
+  height_gte: Float
+  retailPrice: Float
+  retailPrice_not: Float
+  retailPrice_in: [Float!]
+  retailPrice_not_in: [Float!]
+  retailPrice_lt: Float
+  retailPrice_lte: Float
+  retailPrice_gt: Float
+  retailPrice_gte: Float
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -3877,10 +3973,11 @@ input ProductVariantSubscriptionWhereInput {
 input ProductVariantUpdateDataInput {
   sku: String
   color: ColorUpdateOneRequiredWithoutProductVariantsInput
-  weight: Int
-  height: Int
-  product: ProductUpdateOneRequiredInput
-  retailPrice: Int
+  size: Size
+  weight: Float
+  height: Float
+  product: ProductUpdateOneRequiredWithoutVariantsInput
+  retailPrice: Float
   inventoryLevel: InventoryLevelUpdateOneRequiredWithoutProductVariantInput
   physicalProducts: PhysicalProductUpdateManyWithoutProductVariantInput
 }
@@ -3888,19 +3985,21 @@ input ProductVariantUpdateDataInput {
 input ProductVariantUpdateInput {
   sku: String
   color: ColorUpdateOneRequiredWithoutProductVariantsInput
-  weight: Int
-  height: Int
-  product: ProductUpdateOneRequiredInput
-  retailPrice: Int
+  size: Size
+  weight: Float
+  height: Float
+  product: ProductUpdateOneRequiredWithoutVariantsInput
+  retailPrice: Float
   inventoryLevel: InventoryLevelUpdateOneRequiredWithoutProductVariantInput
   physicalProducts: PhysicalProductUpdateManyWithoutProductVariantInput
 }
 
 input ProductVariantUpdateManyDataInput {
   sku: String
-  weight: Int
-  height: Int
-  retailPrice: Int
+  size: Size
+  weight: Float
+  height: Float
+  retailPrice: Float
 }
 
 input ProductVariantUpdateManyInput {
@@ -3917,9 +4016,10 @@ input ProductVariantUpdateManyInput {
 
 input ProductVariantUpdateManyMutationInput {
   sku: String
-  weight: Int
-  height: Int
-  retailPrice: Int
+  size: Size
+  weight: Float
+  height: Float
+  retailPrice: Float
 }
 
 input ProductVariantUpdateManyWithoutColorInput {
@@ -3930,6 +4030,18 @@ input ProductVariantUpdateManyWithoutColorInput {
   disconnect: [ProductVariantWhereUniqueInput!]
   update: [ProductVariantUpdateWithWhereUniqueWithoutColorInput!]
   upsert: [ProductVariantUpsertWithWhereUniqueWithoutColorInput!]
+  deleteMany: [ProductVariantScalarWhereInput!]
+  updateMany: [ProductVariantUpdateManyWithWhereNestedInput!]
+}
+
+input ProductVariantUpdateManyWithoutProductInput {
+  create: [ProductVariantCreateWithoutProductInput!]
+  delete: [ProductVariantWhereUniqueInput!]
+  connect: [ProductVariantWhereUniqueInput!]
+  set: [ProductVariantWhereUniqueInput!]
+  disconnect: [ProductVariantWhereUniqueInput!]
+  update: [ProductVariantUpdateWithWhereUniqueWithoutProductInput!]
+  upsert: [ProductVariantUpsertWithWhereUniqueWithoutProductInput!]
   deleteMany: [ProductVariantScalarWhereInput!]
   updateMany: [ProductVariantUpdateManyWithWhereNestedInput!]
 }
@@ -3955,10 +4067,11 @@ input ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput {
 
 input ProductVariantUpdateWithoutColorDataInput {
   sku: String
-  weight: Int
-  height: Int
-  product: ProductUpdateOneRequiredInput
-  retailPrice: Int
+  size: Size
+  weight: Float
+  height: Float
+  product: ProductUpdateOneRequiredWithoutVariantsInput
+  retailPrice: Float
   inventoryLevel: InventoryLevelUpdateOneRequiredWithoutProductVariantInput
   physicalProducts: PhysicalProductUpdateManyWithoutProductVariantInput
 }
@@ -3966,21 +4079,34 @@ input ProductVariantUpdateWithoutColorDataInput {
 input ProductVariantUpdateWithoutInventoryLevelDataInput {
   sku: String
   color: ColorUpdateOneRequiredWithoutProductVariantsInput
-  weight: Int
-  height: Int
-  product: ProductUpdateOneRequiredInput
-  retailPrice: Int
+  size: Size
+  weight: Float
+  height: Float
+  product: ProductUpdateOneRequiredWithoutVariantsInput
+  retailPrice: Float
   physicalProducts: PhysicalProductUpdateManyWithoutProductVariantInput
 }
 
 input ProductVariantUpdateWithoutPhysicalProductsDataInput {
   sku: String
   color: ColorUpdateOneRequiredWithoutProductVariantsInput
-  weight: Int
-  height: Int
-  product: ProductUpdateOneRequiredInput
-  retailPrice: Int
+  size: Size
+  weight: Float
+  height: Float
+  product: ProductUpdateOneRequiredWithoutVariantsInput
+  retailPrice: Float
   inventoryLevel: InventoryLevelUpdateOneRequiredWithoutProductVariantInput
+}
+
+input ProductVariantUpdateWithoutProductDataInput {
+  sku: String
+  color: ColorUpdateOneRequiredWithoutProductVariantsInput
+  size: Size
+  weight: Float
+  height: Float
+  retailPrice: Float
+  inventoryLevel: InventoryLevelUpdateOneRequiredWithoutProductVariantInput
+  physicalProducts: PhysicalProductUpdateManyWithoutProductVariantInput
 }
 
 input ProductVariantUpdateWithWhereUniqueNestedInput {
@@ -3991,6 +4117,11 @@ input ProductVariantUpdateWithWhereUniqueNestedInput {
 input ProductVariantUpdateWithWhereUniqueWithoutColorInput {
   where: ProductVariantWhereUniqueInput!
   data: ProductVariantUpdateWithoutColorDataInput!
+}
+
+input ProductVariantUpdateWithWhereUniqueWithoutProductInput {
+  where: ProductVariantWhereUniqueInput!
+  data: ProductVariantUpdateWithoutProductDataInput!
 }
 
 input ProductVariantUpsertWithoutInventoryLevelInput {
@@ -4013,6 +4144,12 @@ input ProductVariantUpsertWithWhereUniqueWithoutColorInput {
   where: ProductVariantWhereUniqueInput!
   update: ProductVariantUpdateWithoutColorDataInput!
   create: ProductVariantCreateWithoutColorInput!
+}
+
+input ProductVariantUpsertWithWhereUniqueWithoutProductInput {
+  where: ProductVariantWhereUniqueInput!
+  update: ProductVariantUpdateWithoutProductDataInput!
+  create: ProductVariantCreateWithoutProductInput!
 }
 
 input ProductVariantWhereInput {
@@ -4045,31 +4182,35 @@ input ProductVariantWhereInput {
   sku_ends_with: String
   sku_not_ends_with: String
   color: ColorWhereInput
-  weight: Int
-  weight_not: Int
-  weight_in: [Int!]
-  weight_not_in: [Int!]
-  weight_lt: Int
-  weight_lte: Int
-  weight_gt: Int
-  weight_gte: Int
-  height: Int
-  height_not: Int
-  height_in: [Int!]
-  height_not_in: [Int!]
-  height_lt: Int
-  height_lte: Int
-  height_gt: Int
-  height_gte: Int
+  size: Size
+  size_not: Size
+  size_in: [Size!]
+  size_not_in: [Size!]
+  weight: Float
+  weight_not: Float
+  weight_in: [Float!]
+  weight_not_in: [Float!]
+  weight_lt: Float
+  weight_lte: Float
+  weight_gt: Float
+  weight_gte: Float
+  height: Float
+  height_not: Float
+  height_in: [Float!]
+  height_not_in: [Float!]
+  height_lt: Float
+  height_lte: Float
+  height_gt: Float
+  height_gte: Float
   product: ProductWhereInput
-  retailPrice: Int
-  retailPrice_not: Int
-  retailPrice_in: [Int!]
-  retailPrice_not_in: [Int!]
-  retailPrice_lt: Int
-  retailPrice_lte: Int
-  retailPrice_gt: Int
-  retailPrice_gte: Int
+  retailPrice: Float
+  retailPrice_not: Float
+  retailPrice_in: [Float!]
+  retailPrice_not_in: [Float!]
+  retailPrice_lt: Float
+  retailPrice_lte: Float
+  retailPrice_gt: Float
+  retailPrice_gte: Float
   inventoryLevel: InventoryLevelWhereInput
   physicalProducts_every: PhysicalProductWhereInput
   physicalProducts_some: PhysicalProductWhereInput
@@ -4198,6 +4339,9 @@ input ProductWhereInput {
   functions_every: ProductFunctionWhereInput
   functions_some: ProductFunctionWhereInput
   functions_none: ProductFunctionWhereInput
+  variants_every: ProductVariantWhereInput
+  variants_some: ProductVariantWhereInput
+  variants_none: ProductVariantWhereInput
   status: ProductStatus
   status_not: ProductStatus
   status_in: [ProductStatus!]
