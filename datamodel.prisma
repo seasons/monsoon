@@ -166,7 +166,7 @@ type Image {
 type Location {
   id: ID! @id
   slug: String! @unique
-  name: String!
+  name: String! @unique
   company: String
   description: String
   address1: String!
