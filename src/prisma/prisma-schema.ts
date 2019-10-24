@@ -2401,6 +2401,7 @@ input LocationWhereInput {
 input LocationWhereUniqueInput {
   id: ID
   slug: String
+  name: String
 }
 
 scalar Long

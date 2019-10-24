@@ -2336,6 +2336,7 @@ export interface ProductUpdateOneRequiredWithoutVariantsInput {
 export type LocationWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
   slug?: Maybe<String>;
+  name?: Maybe<String>;
 }>;
 
 export interface ProductUpdateWithoutVariantsDataInput {
