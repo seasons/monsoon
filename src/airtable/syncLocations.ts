@@ -29,7 +29,7 @@ export const syncLocations = async () => {
 
       const location = await prisma.upsertLocation({
         where: {
-          name: values.name,
+          slug: values.slug,
         },
         create: values,
         update: values,
