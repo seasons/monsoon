@@ -266,9 +266,11 @@ type CustomerDetail {
   birthday: DateTime
   # Height in inches
   height: Int
+  weight: String
   bodyType: String
   averageTopSize: String
-  averagePantSize: String
+  averageWaistSize: String
+  averagePantLength: String
   preferredPronouns: String
   profession: String
   # How often do you go out?
@@ -279,6 +281,8 @@ type CustomerDetail {
   shoppingFrequency: String
   # How much do you spend?
   averageSpend: String
+  style: String
+  commuteStyle: String
   shippingAddress: Location
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
