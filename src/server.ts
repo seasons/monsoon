@@ -4,14 +4,10 @@ import { Prisma } from "prisma-binding"
 
 const defaultQuery = `{
   products {
-    edges {
-      node {
-        id
-        name
-        description
-        retailPrice
-      }
-    }
+    id
+    name
+    description
+    retailPrice
   }
 }
 `

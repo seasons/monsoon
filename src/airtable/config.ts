@@ -4,8 +4,8 @@ Airtable.configure({
   endpointUrl: "https://api.airtable.com",
   apiKey: process.env.AIRTABLE_KEY,
 })
-// export const base = Airtable.base("appvmn48T0eEl4lGV")
-const baseID = process.env.AIRTABLE_KEY
+
+const baseID = process.env.AIRTABLE_DATABASE_ID
 export const base = Airtable.base(baseID)
 export const graphqlURL =
   process.env.MIST_GRAPHQL_ENDPOINT ||
