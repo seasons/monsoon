@@ -1,0 +1,22 @@
+
+export const HomepageResult = {
+  __resolveType(obj, _context, _info){
+    if(obj.brand || obj.colorway){
+      return 'Product';
+    }
+
+    if(obj.website){
+      return 'Category';
+    }
+
+    if(obj.website){
+      return 'Brand';
+    }
+
+    if(obj.heroImageURL){
+      return 'Hero';
+    }
+
+    return null;
+  },
+}
