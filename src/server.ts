@@ -1,5 +1,6 @@
 import { schema } from "./schema"
 import { prisma } from "./prisma"
+import cors from "cors"
 import { Prisma } from "prisma-binding"
 
 const defaultQuery = `{

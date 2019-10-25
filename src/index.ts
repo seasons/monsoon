@@ -4,11 +4,21 @@ import express from "express"
 import { checkJwt } from "./middleware/jwt"
 import { createGetUserMiddleware } from "./middleware/user"
 import { prisma } from "./prisma"
+import cors from "cors"
 
 const server = new ApolloServer(serverOptions)
 
 const app = express()
-app.use(checkJwt, createGetUserMiddleware(prisma))
+app.use(
+  cors({
+    origin: [
+      "http://signup-staging.seasons.nyc/",
+      "http://signup.seasons.nyc/",
+    ],
+  }),
+  checkJwt,
+  createGetUserMiddleware(prisma)
+)
 server.applyMiddleware({ app, path: "/" })
 app.listen({ port: process.env.PORT || 4000 }, () =>
   console.log(`🚀 Server ready at http://localhost:4000/`)
