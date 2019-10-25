@@ -85,8 +85,13 @@ export async function getCustomerFromContext(ctx: Context) {
 
 export function createAuth0User(
   email: string,
-  password: string
+  password: string,
+  details: {
+    firstName: string
+    lastName: string
+  }
 ): Promise<string> {
+  const { firstName, lastName } = details
   return new Promise(function CreateUserAndReturnId(resolve, reject) {
     request(
       {
@@ -94,6 +99,8 @@ export function createAuth0User(
         url: `https://${process.env.AUTH0_DOMAIN}/dbconnections/signup`,
         headers: { "content-type": "application/json" },
         body: {
+          given_name: firstName,
+          family_name: lastName,
           email,
           password,
           client_id: `${process.env.AUTH0_CLIENTID}`,

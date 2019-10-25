@@ -9,7 +9,7 @@ import {
 import { prisma, InventoryStatus, PhysicalProductCreateInput } from "../prisma"
 import { sizeToSizeCode } from "../utils"
 import { base } from "./config"
-import { isEmpty } from "lodash"
+import { isEmpty, first } from "lodash"
 
 const SeasonsLocationID = "recvzTcW19kdBPqf4"
 
@@ -29,12 +29,16 @@ export const syncProductVariants = async () => {
       const brand = allBrands.findByIds(product.model.brand)
       const color = allColors.find(x => x.model.name === product.model.color)
       const location = allLocations.find(x => x.id === SeasonsLocationID)
+      const productsForBrand = allProducts.filter(
+        p => first(p.model.brand) === first(product.model.brand)
+      )
+      const styleNumber = productsForBrand.indexOf(product) + 1
 
       if (isEmpty(model) || isEmpty(brand) || isEmpty(product)) {
         continue
       }
 
-      const sku = skuForData(brand, color, productVariant)
+      const sku = skuForData(brand, color, productVariant, styleNumber)
 
       const {
         totalCount,
@@ -55,12 +59,13 @@ export const syncProductVariants = async () => {
         nonReservable: nonReservableCount,
       }
 
-      const { weight, height } = model
+      const { weight, height, size } = model
 
       let data = {
         sku,
-        weight: weight || 0,
-        height: height || 0,
+        size,
+        weight: parseFloat(weight) || 0,
+        height: parseFloat(height) || 0,
         color: {
           connect: {
             slug: color.model.slug,
@@ -130,11 +135,13 @@ export const syncProductVariants = async () => {
   }
 }
 
-const skuForData = (brand, color, productVariant) => {
+const skuForData = (brand, color, productVariant, styleNumber) => {
   let brandCode = brand.get("Brand Code")
   let colorCode = color.get("Color Code")
-  let sizeCode = sizeToSizeCode(productVariant.get("Size"))
-  return `${brandCode}-${colorCode}-${sizeCode}`
+  let size = productVariant.get("Size")
+  let sizeCode = sizeToSizeCode(size)
+  let styleCode = styleNumber.toString().padStart(3, "0")
+  return `${brandCode}-${colorCode}-${sizeCode}-${styleCode}`
 }
 
 const countsForVariant = productVariant => {
@@ -175,7 +182,7 @@ const createMorePhysicalProductsIfNeeded: CreateMorePhysicalProductsFunction = a
     for (let i = 1; i <= totalCount - physicalProductCount; i++) {
       const physicalProductID = (physicalProductCount + i)
         .toString()
-        .padStart(5, "0")
+        .padStart(2, "0")
 
       newPhysicalProducts.push({
         fields: {
@@ -211,4 +218,4 @@ const createMorePhysicalProductsIfNeeded: CreateMorePhysicalProductsFunction = a
   )
 }
 
-syncProductVariants()
+// syncProductVariants()

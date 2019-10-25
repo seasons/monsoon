@@ -19,7 +19,10 @@ export const auth = {
     // Register the user on Auth0
     let userAuth0ID
     try {
-      userAuth0ID = await createAuth0User(email, password)
+      userAuth0ID = await createAuth0User(email, password, {
+        firstName,
+        lastName,
+      })
     } catch (err) {
       if (err.message.includes("400")) {
         throw new UserInputError(err)

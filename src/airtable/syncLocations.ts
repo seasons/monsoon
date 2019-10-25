@@ -24,7 +24,7 @@ export const syncLocations = async () => {
 
       values = {
         ...values,
-        slug: slugify(values.name).toLowerCase(),
+        slug: slugify(values.name + Date.now() / 1000).toLowerCase(),
       }
 
       const location = await prisma.upsertLocation({
