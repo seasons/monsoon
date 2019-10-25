@@ -12,7 +12,7 @@ const app = express()
 app.use(
   cors({
     origin: [
-      "http://signup-staging.seasons.nyc/, https://seedling-production.herokuapp.com/",
+      "http://signup-staging.seasons.nyc/",
       "http://signup.seasons.nyc/",
     ],
   }),
