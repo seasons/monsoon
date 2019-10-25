@@ -266,7 +266,7 @@ type CustomerDetail {
   birthday: DateTime
   # Height in inches
   height: Int
-  weight: string
+  weight: String
   bodyType: String
   averageTopSize: String
   averageWaistSize: String
