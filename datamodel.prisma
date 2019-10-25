@@ -281,6 +281,7 @@ type CustomerDetail {
   shoppingFrequency: String
   # How much do you spend?
   averageSpend: String
+  style: String
   commuteStyle: String
   shippingAddress: Location
   createdAt: DateTime! @createdAt
