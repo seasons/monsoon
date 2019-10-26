@@ -5,9 +5,10 @@ export const HomepageResult = {
       return 'Product';
     }
 
-    if(obj.website){
-      return 'Category';
-    }
+    // FIXME: Add category
+    // if(obj.website){
+    //   return 'Category';
+    // }
 
     if(obj.brandCode){
       return 'Brand';
