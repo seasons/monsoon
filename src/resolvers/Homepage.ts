@@ -9,7 +9,7 @@ export const HomepageResult = {
       return 'Category';
     }
 
-    if(obj.website){
+    if(obj.brandCode){
       return 'Brand';
     }
 
