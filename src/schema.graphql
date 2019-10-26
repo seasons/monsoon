@@ -35,6 +35,7 @@ type Query {
     first: Int
     last: Int
   ): [ProductFunction]!
+  homepage: Homepage
 }
 
 type Mutation {
@@ -71,4 +72,28 @@ type ResizedImageUrl {
   width: Int
   height: Int
   url: String
+}
+
+type Homepage {
+  sections: [HomepageSection!]!
+}
+
+type HomepageSection {
+  type: HomePageSectionType!
+  results: [HomepageResult!]!
+  title: String
+}
+
+type Hero {
+  id: ID!
+  heroImageURL: String!
+}
+
+union HomepageResult = Category | Product | Brand | Hero
+
+enum HomePageSectionType {
+  Hero
+  Categories
+  Products
+  Brands
 }
