@@ -26,6 +26,7 @@ export const Query = {
       "sections": [
         {
           "type": "Hero",
+          "__typename": "HomepageSection",
           "title": "Featured collection",
           "results": [
             { "id": "1", "heroImageURL": "https://i.pinimg.com/564x/ef/84/64/ef84647415e51db15a87993393aa8fe2.jpg" },
@@ -37,6 +38,7 @@ export const Query = {
         },
         {
           "type": "Products",
+          "__typename": "HomepageSection",
           "title": "Just added",
           "results": [ 
             {
@@ -76,6 +78,7 @@ export const Query = {
         },
         {
           "type": "Brands",
+          "__typename": "HomepageSection",
           "title": "Featured brands",
           "results": [ 
               { 
@@ -141,6 +144,7 @@ export const Query = {
           ]
         },
         {
+          "__typename": "HomepageSection",
           "title": "Our latest picks",
           "type": "Products",
           "results": [ 
