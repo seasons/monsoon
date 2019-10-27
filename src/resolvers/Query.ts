@@ -26,6 +26,8 @@ export const Query = {
       "sections": [
         {
           "type": "Hero",
+          "__typename": "HomepageSection",
+          "title": "Featured collection",
           "results": [
             { "id": "1", "heroImageURL": "https://i.pinimg.com/564x/ef/84/64/ef84647415e51db15a87993393aa8fe2.jpg" },
             { "id": "2", "heroImageURL": "https://i.pinimg.com/564x/f5/ba/30/f5ba30d71615c639199887f5e7cb2608.jpg" },
@@ -35,8 +37,9 @@ export const Query = {
           ]
         },
         {
-          "title:": "Just added",
           "type": "Products",
+          "__typename": "HomepageSection",
+          "title": "Just added",
           "results": [ 
             {
               "images": [ {
@@ -74,97 +77,75 @@ export const Query = {
           ]
         },
         {
-          "title:": "Featured brands",
           "type": "Brands",
+          "__typename": "HomepageSection",
+          "title": "Featured brands",
           "results": [ 
               { 
-                "id":"ck1dnzs9q004j0754n8ih3xdm",
-                "image": {
-                  "url":"https://dl.airtable.com/.attachments/5c9d13d7f3dda4fdd94e5d0a9217dd1e/f18da935/A-Cold-Wall-Logo.jpg"
-                },
+                "id":"ck298qbuu001l0791wskrkgq0",
+                "logo": "https://dl.airtable.com/.attachments/5c9d13d7f3dda4fdd94e5d0a9217dd1e/f18da935/A-Cold-Wall-Logo.jpg",
                 "brandCode": "ACWL"
               },
               {
-                "id":"ck1dnzs9q004j0754n8ih3xdm",
-                "image": {
-                  "url":"https://dl.airtable.com/.attachments/6fb6ff5d1eec5a217274f334f5183b94/96d55c51/acne-stockists.jpg"
-                },
+                "id":"ck298qc91002h0791nahpe0wm",
+                "logo": "https://dl.airtable.com/.attachments/6fb6ff5d1eec5a217274f334f5183b94/96d55c51/acne-stockists.jpg",
                 "brandCode": "ACNE"
               },
               {
-                "id": "ck1dnzs9q004j0754n8ih3xdm",
-                "image": {
-                  "url":"https://dl.airtable.com/.attachments/3cec4b0ce5a7e53f5224c023fea03ed4/d0a99052/acronym-stockists.jpg"
-                },
+                "id": "ck298qcfh002o07916o65iwxg",
+                "logo": "https://dl.airtable.com/.attachments/3cec4b0ce5a7e53f5224c023fea03ed4/d0a99052/acronym-stockists.jpg",
                 "brandCode": "ACRN"
               },
               { 
-                "id":"ck1dnzs9q004j0754n8ih3xdm",
-                "image": {
-                  "url":"https://dl.airtable.com/.attachments/5c9d13d7f3dda4fdd94e5d0a9217dd1e/f18da935/A-Cold-Wall-Logo.jpg"
-                },
+                "id":"ck298qbuu001l0791wskrkgq0",
+                "logo": "https://dl.airtable.com/.attachments/5c9d13d7f3dda4fdd94e5d0a9217dd1e/f18da935/A-Cold-Wall-Logo.jpg",
                 "brandCode": "ACWL"
               },
               {
-                "id":"ck1dnzs9q004j0754n8ih3xdm",
-                "image": {
-                  "url":"https://dl.airtable.com/.attachments/6fb6ff5d1eec5a217274f334f5183b94/96d55c51/acne-stockists.jpg"
-                },
+                "id":"ck298qc91002h0791nahpe0wm",
+                "logo": "https://dl.airtable.com/.attachments/6fb6ff5d1eec5a217274f334f5183b94/96d55c51/acne-stockists.jpg",
                 "brandCode": "ACNE"
               },
               {
-                "id": "ck1dnzs9q004j0754n8ih3xdm",
-                "image": {
-                  "url":"https://dl.airtable.com/.attachments/3cec4b0ce5a7e53f5224c023fea03ed4/d0a99052/acronym-stockists.jpg"
-                },
+                "id": "ck298qcfh002o07916o65iwxg",
+                "logo": "https://dl.airtable.com/.attachments/3cec4b0ce5a7e53f5224c023fea03ed4/d0a99052/acronym-stockists.jpg",
                 "brandCode": "ACRN"
               },
               { 
-                "id":"ck1dnzs9q004j0754n8ih3xdm",
-                "image": {
-                  "url":"https://dl.airtable.com/.attachments/5c9d13d7f3dda4fdd94e5d0a9217dd1e/f18da935/A-Cold-Wall-Logo.jpg"
-                },
+                "id":"ck298qbuu001l0791wskrkgq0",
+                "logo": "https://dl.airtable.com/.attachments/5c9d13d7f3dda4fdd94e5d0a9217dd1e/f18da935/A-Cold-Wall-Logo.jpg",
                 "brandCode": "ACWL"
               },
               {
-                "id":"ck1dnzs9q004j0754n8ih3xdm",
-                "image": {
-                  "url":"https://dl.airtable.com/.attachments/6fb6ff5d1eec5a217274f334f5183b94/96d55c51/acne-stockists.jpg"
-                },
+                "id":"ck298qc91002h0791nahpe0wm",
+                "logo": "https://dl.airtable.com/.attachments/6fb6ff5d1eec5a217274f334f5183b94/96d55c51/acne-stockists.jpg",
                 "brandCode": "ACNE"
               },
               {
-                "id": "ck1dnzs9q004j0754n8ih3xdm",
-                "image": {
-                  "url":"https://dl.airtable.com/.attachments/3cec4b0ce5a7e53f5224c023fea03ed4/d0a99052/acronym-stockists.jpg"
-                },
+                "id": "ck298qcfh002o07916o65iwxg",
+                "logo": "https://dl.airtable.com/.attachments/3cec4b0ce5a7e53f5224c023fea03ed4/d0a99052/acronym-stockists.jpg",
                 "brandCode": "ACRN"
               },
               { 
-                "id":"ck1dnzs9q004j0754n8ih3xdm",
-                "image": {
-                  "url":"https://dl.airtable.com/.attachments/5c9d13d7f3dda4fdd94e5d0a9217dd1e/f18da935/A-Cold-Wall-Logo.jpg"
-                },
+                "id":"ck298qbuu001l0791wskrkgq0",
+                "logo": "https://dl.airtable.com/.attachments/5c9d13d7f3dda4fdd94e5d0a9217dd1e/f18da935/A-Cold-Wall-Logo.jpg",
                 "brandCode": "ACWL"
               },
               {
-                "id":"ck1dnzs9q004j0754n8ih3xdm",
-                "image": {
-                  "url":"https://dl.airtable.com/.attachments/6fb6ff5d1eec5a217274f334f5183b94/96d55c51/acne-stockists.jpg"
-                },
+                "id":"ck298qc91002h0791nahpe0wm",
+                "logo": "https://dl.airtable.com/.attachments/6fb6ff5d1eec5a217274f334f5183b94/96d55c51/acne-stockists.jpg",
                 "brandCode": "ACNE"
               },
               {
-                "id": "ck1dnzs9q004j0754n8ih3xdm",
-                "image": {
-                  "url":"https://dl.airtable.com/.attachments/3cec4b0ce5a7e53f5224c023fea03ed4/d0a99052/acronym-stockists.jpg"
-                },
+                "id": "ck298qcfh002o07916o65iwxg",
+                "logo": "https://dl.airtable.com/.attachments/3cec4b0ce5a7e53f5224c023fea03ed4/d0a99052/acronym-stockists.jpg",
                 "brandCode": "ACRN"
-              }
+              },
           ]
         },
         {
-          "title:": "Our latest picks",
+          "__typename": "HomepageSection",
+          "title": "Our latest picks",
           "type": "Products",
           "results": [ 
             {
