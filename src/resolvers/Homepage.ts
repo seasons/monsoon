@@ -10,7 +10,7 @@ export const HomepageResult = {
     //   return 'Category';
     // }
 
-    if(obj.brandCode){
+    if(obj.logo){
       return 'Brand';
     }
 
