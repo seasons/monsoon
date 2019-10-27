@@ -151,6 +151,16 @@ type Color {
   productVariants: [ProductVariant!]!
 }
 
+type Collection {
+  id: ID! @id
+  slug: String! @unique
+  images: Json!
+  title: String
+  subTitle: String
+  description: String
+  products: [Product] 
+}
+
 type Image {
   id: ID! @id
   caption: String
