@@ -5,6 +5,7 @@ import {
   syncLocations,
   syncProducts,
   syncProductVariants,
+  syncCollections
 } from "."
 
 export const syncAll = async () => {
@@ -14,4 +15,5 @@ export const syncAll = async () => {
   await syncLocations()
   await syncProducts()
   await syncProductVariants()
+  await syncCollections()
 }

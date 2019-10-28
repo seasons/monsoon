@@ -11,6 +11,8 @@ export const Query = {
     const result = await ctx.db.query.products(args, info)
     return result
   },
+  collections: (parent, args, ctx: Context, info) =>
+    ctx.db.query.collections(args, info),
 
   product: (parent, args, ctx: Context, info) =>
     ctx.db.query.product(args, info),
