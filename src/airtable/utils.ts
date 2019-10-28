@@ -2,6 +2,7 @@ import { base } from "./config"
 
 interface AirtableData extends Array<any> {
   findByIds: (ids?: any) => any
+  findMultipleByIds: (ids?: any) => any[]
 }
 
 const getAll: (name: string) => Promise<AirtableData> = async name => {
@@ -9,6 +10,10 @@ const getAll: (name: string) => Promise<AirtableData> = async name => {
 
   data.findByIds = (ids = []) => {
     return data.find(record => ids.includes(record.id))
+  }
+
+  data.findMultipleByIds = (ids = []) => {
+    return data.filter(record => ids.includes(record.id))
   }
 
   return new Promise((resolve, reject) => {

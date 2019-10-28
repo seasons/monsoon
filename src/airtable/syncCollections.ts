@@ -10,7 +10,7 @@ export const syncCollections = async () => {
   for (let record of records) {
     try {
       const { model } = record
-      const product = allProducts.findByIds(model.product)
+      const products = allProducts.findMultipleByIds(model.products)
       const {
         description,
         title,
@@ -25,10 +25,8 @@ export const syncCollections = async () => {
       const slug = slugify(title).toLowerCase()
 
       const data = {
-        product: {
-          connect: {
-            slug: product.model.slug,
-          },
+        products: {
+          connect: products.map(product => ({ slug: product.model.slug }))
         },
         slug,
         title,
@@ -58,3 +56,5 @@ export const syncCollections = async () => {
     }
   }
 }
+
+syncCollections()
