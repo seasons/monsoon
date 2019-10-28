@@ -56,3 +56,5 @@ export const syncCollections = async () => {
     }
   }
 }
+
+syncCollections()
