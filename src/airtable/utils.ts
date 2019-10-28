@@ -40,6 +40,10 @@ export const getAllBrands = async () => {
   return getAll("Brands")
 }
 
+export const getAllCollections = async () => {
+  return getAll("Collections")
+}
+
 export const getAllCategories = async () => {
   return getAll("Categories")
 }
