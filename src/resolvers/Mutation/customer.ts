@@ -1,6 +1,8 @@
 import { Context } from "../../utils"
-import { getCustomerFromContext } from "../../auth/utils"
+import { getCustomerFromContext, getUserFromContext } from "../../auth/utils"
 import { UserInputError, ForbiddenError } from "apollo-server"
+import { createCustomerSubscription } from "../../payments"
+import { User } from "../../prisma"
 
 export const customer = {
   /*
@@ -28,8 +30,7 @@ export const customer = {
     }
 
     // Grab the customer off the context
-    let customer
-    customer = await getCustomerFromContext(ctx)
+    const customer = await getCustomerFromContext(ctx)
 
     // Add the details. If necessary, create the details object afresh.
     let updatedDetails
@@ -48,6 +49,9 @@ export const customer = {
         where: { id: currentCustomerDetail.id },
       })
     }
+
+    const user = (await getUserFromContext(ctx)) as User
+    await createCustomerSubscription(user, details)
 
     // Return the updated customer object
     return { ...customer, detail: updatedDetails }
