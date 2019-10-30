@@ -67,11 +67,14 @@ export const auth = {
     }
 
     // TODO: save user in customer table in airtable
-    createUser({
-      firstName,
-      lastName,
-      email,
-    })
+    createUser(
+      {
+        firstName,
+        lastName,
+        email,
+      },
+      details
+    )
 
     return {
       token,

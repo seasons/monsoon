@@ -103,7 +103,6 @@ export const ProductMutations = {
       },
       shippingLabel: {
         create: {
-          // id: Date.now() / 1000,
           image: "",
           name: "USPS",
         },
