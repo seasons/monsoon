@@ -34,10 +34,6 @@ type AggregateImage {
   count: Int!
 }
 
-type AggregateInventoryLevel {
-  count: Int!
-}
-
 type AggregateLabel {
   count: Int!
 }
@@ -1900,184 +1896,6 @@ input ImageWhereUniqueInput {
   id: ID
 }
 
-type InventoryLevel {
-  id: ID!
-  product: Product!
-  productVariant: ProductVariant!
-  total: Int!
-  reservable: Int!
-  reserved: Int!
-  nonReservable: Int!
-}
-
-type InventoryLevelConnection {
-  pageInfo: PageInfo!
-  edges: [InventoryLevelEdge]!
-  aggregate: AggregateInventoryLevel!
-}
-
-input InventoryLevelCreateInput {
-  id: ID
-  product: ProductCreateOneInput!
-  productVariant: ProductVariantCreateOneWithoutInventoryLevelInput!
-  total: Int!
-  reservable: Int!
-  reserved: Int!
-  nonReservable: Int!
-}
-
-input InventoryLevelCreateOneWithoutProductVariantInput {
-  create: InventoryLevelCreateWithoutProductVariantInput
-  connect: InventoryLevelWhereUniqueInput
-}
-
-input InventoryLevelCreateWithoutProductVariantInput {
-  id: ID
-  product: ProductCreateOneInput!
-  total: Int!
-  reservable: Int!
-  reserved: Int!
-  nonReservable: Int!
-}
-
-type InventoryLevelEdge {
-  node: InventoryLevel!
-  cursor: String!
-}
-
-enum InventoryLevelOrderByInput {
-  id_ASC
-  id_DESC
-  total_ASC
-  total_DESC
-  reservable_ASC
-  reservable_DESC
-  reserved_ASC
-  reserved_DESC
-  nonReservable_ASC
-  nonReservable_DESC
-}
-
-type InventoryLevelPreviousValues {
-  id: ID!
-  total: Int!
-  reservable: Int!
-  reserved: Int!
-  nonReservable: Int!
-}
-
-type InventoryLevelSubscriptionPayload {
-  mutation: MutationType!
-  node: InventoryLevel
-  updatedFields: [String!]
-  previousValues: InventoryLevelPreviousValues
-}
-
-input InventoryLevelSubscriptionWhereInput {
-  mutation_in: [MutationType!]
-  updatedFields_contains: String
-  updatedFields_contains_every: [String!]
-  updatedFields_contains_some: [String!]
-  node: InventoryLevelWhereInput
-  AND: [InventoryLevelSubscriptionWhereInput!]
-  OR: [InventoryLevelSubscriptionWhereInput!]
-  NOT: [InventoryLevelSubscriptionWhereInput!]
-}
-
-input InventoryLevelUpdateInput {
-  product: ProductUpdateOneRequiredInput
-  productVariant: ProductVariantUpdateOneRequiredWithoutInventoryLevelInput
-  total: Int
-  reservable: Int
-  reserved: Int
-  nonReservable: Int
-}
-
-input InventoryLevelUpdateManyMutationInput {
-  total: Int
-  reservable: Int
-  reserved: Int
-  nonReservable: Int
-}
-
-input InventoryLevelUpdateOneRequiredWithoutProductVariantInput {
-  create: InventoryLevelCreateWithoutProductVariantInput
-  update: InventoryLevelUpdateWithoutProductVariantDataInput
-  upsert: InventoryLevelUpsertWithoutProductVariantInput
-  connect: InventoryLevelWhereUniqueInput
-}
-
-input InventoryLevelUpdateWithoutProductVariantDataInput {
-  product: ProductUpdateOneRequiredInput
-  total: Int
-  reservable: Int
-  reserved: Int
-  nonReservable: Int
-}
-
-input InventoryLevelUpsertWithoutProductVariantInput {
-  update: InventoryLevelUpdateWithoutProductVariantDataInput!
-  create: InventoryLevelCreateWithoutProductVariantInput!
-}
-
-input InventoryLevelWhereInput {
-  id: ID
-  id_not: ID
-  id_in: [ID!]
-  id_not_in: [ID!]
-  id_lt: ID
-  id_lte: ID
-  id_gt: ID
-  id_gte: ID
-  id_contains: ID
-  id_not_contains: ID
-  id_starts_with: ID
-  id_not_starts_with: ID
-  id_ends_with: ID
-  id_not_ends_with: ID
-  product: ProductWhereInput
-  productVariant: ProductVariantWhereInput
-  total: Int
-  total_not: Int
-  total_in: [Int!]
-  total_not_in: [Int!]
-  total_lt: Int
-  total_lte: Int
-  total_gt: Int
-  total_gte: Int
-  reservable: Int
-  reservable_not: Int
-  reservable_in: [Int!]
-  reservable_not_in: [Int!]
-  reservable_lt: Int
-  reservable_lte: Int
-  reservable_gt: Int
-  reservable_gte: Int
-  reserved: Int
-  reserved_not: Int
-  reserved_in: [Int!]
-  reserved_not_in: [Int!]
-  reserved_lt: Int
-  reserved_lte: Int
-  reserved_gt: Int
-  reserved_gte: Int
-  nonReservable: Int
-  nonReservable_not: Int
-  nonReservable_in: [Int!]
-  nonReservable_not_in: [Int!]
-  nonReservable_lt: Int
-  nonReservable_lte: Int
-  nonReservable_gt: Int
-  nonReservable_gte: Int
-  AND: [InventoryLevelWhereInput!]
-  OR: [InventoryLevelWhereInput!]
-  NOT: [InventoryLevelWhereInput!]
-}
-
-input InventoryLevelWhereUniqueInput {
-  id: ID
-}
-
 enum InventoryStatus {
   NonReservable
   Reservable
@@ -2765,12 +2583,6 @@ type Mutation {
   upsertImage(where: ImageWhereUniqueInput!, create: ImageCreateInput!, update: ImageUpdateInput!): Image!
   deleteImage(where: ImageWhereUniqueInput!): Image
   deleteManyImages(where: ImageWhereInput): BatchPayload!
-  createInventoryLevel(data: InventoryLevelCreateInput!): InventoryLevel!
-  updateInventoryLevel(data: InventoryLevelUpdateInput!, where: InventoryLevelWhereUniqueInput!): InventoryLevel
-  updateManyInventoryLevels(data: InventoryLevelUpdateManyMutationInput!, where: InventoryLevelWhereInput): BatchPayload!
-  upsertInventoryLevel(where: InventoryLevelWhereUniqueInput!, create: InventoryLevelCreateInput!, update: InventoryLevelUpdateInput!): InventoryLevel!
-  deleteInventoryLevel(where: InventoryLevelWhereUniqueInput!): InventoryLevel
-  deleteManyInventoryLevels(where: InventoryLevelWhereInput): BatchPayload!
   createLabel(data: LabelCreateInput!): Label!
   updateLabel(data: LabelUpdateInput!, where: LabelWhereUniqueInput!): Label
   updateManyLabels(data: LabelUpdateManyMutationInput!, where: LabelWhereInput): BatchPayload!
@@ -3338,11 +3150,6 @@ input ProductCreateManyWithoutCategoryInput {
   connect: [ProductWhereUniqueInput!]
 }
 
-input ProductCreateOneInput {
-  create: ProductCreateInput
-  connect: ProductWhereUniqueInput
-}
-
 input ProductCreateOneWithoutVariantsInput {
   create: ProductCreateWithoutVariantsInput
   connect: ProductWhereUniqueInput
@@ -3908,13 +3715,6 @@ input ProductUpdateManyWithWhereNestedInput {
   data: ProductUpdateManyDataInput!
 }
 
-input ProductUpdateOneRequiredInput {
-  create: ProductCreateInput
-  update: ProductUpdateDataInput
-  upsert: ProductUpsertNestedInput
-  connect: ProductWhereUniqueInput
-}
-
 input ProductUpdateOneRequiredWithoutVariantsInput {
   create: ProductCreateWithoutVariantsInput
   update: ProductUpdateWithoutVariantsDataInput
@@ -4004,11 +3804,6 @@ input ProductUpdateWithWhereUniqueWithoutCategoryInput {
   data: ProductUpdateWithoutCategoryDataInput!
 }
 
-input ProductUpsertNestedInput {
-  update: ProductUpdateDataInput!
-  create: ProductCreateInput!
-}
-
 input ProductUpsertWithoutVariantsInput {
   update: ProductUpdateWithoutVariantsDataInput!
   create: ProductCreateWithoutVariantsInput!
@@ -4039,10 +3834,14 @@ type ProductVariant {
   size: Size!
   weight: Float
   height: Float
+  productID: String!
   product: Product!
   retailPrice: Float
-  inventoryLevel: InventoryLevel!
   physicalProducts(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct!]
+  total: Int!
+  reservable: Int!
+  reserved: Int!
+  nonReservable: Int!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -4060,10 +3859,14 @@ input ProductVariantCreateInput {
   size: Size!
   weight: Float
   height: Float
+  productID: String!
   product: ProductCreateOneWithoutVariantsInput!
   retailPrice: Float
-  inventoryLevel: InventoryLevelCreateOneWithoutProductVariantInput!
   physicalProducts: PhysicalProductCreateManyWithoutProductVariantInput
+  total: Int!
+  reservable: Int!
+  reserved: Int!
+  nonReservable: Int!
 }
 
 input ProductVariantCreateManyInput {
@@ -4081,11 +3884,6 @@ input ProductVariantCreateManyWithoutProductInput {
   connect: [ProductVariantWhereUniqueInput!]
 }
 
-input ProductVariantCreateOneWithoutInventoryLevelInput {
-  create: ProductVariantCreateWithoutInventoryLevelInput
-  connect: ProductVariantWhereUniqueInput
-}
-
 input ProductVariantCreateOneWithoutPhysicalProductsInput {
   create: ProductVariantCreateWithoutPhysicalProductsInput
   connect: ProductVariantWhereUniqueInput
@@ -4097,22 +3895,14 @@ input ProductVariantCreateWithoutColorInput {
   size: Size!
   weight: Float
   height: Float
-  product: ProductCreateOneWithoutVariantsInput!
-  retailPrice: Float
-  inventoryLevel: InventoryLevelCreateOneWithoutProductVariantInput!
-  physicalProducts: PhysicalProductCreateManyWithoutProductVariantInput
-}
-
-input ProductVariantCreateWithoutInventoryLevelInput {
-  id: ID
-  sku: String
-  color: ColorCreateOneWithoutProductVariantsInput!
-  size: Size!
-  weight: Float
-  height: Float
+  productID: String!
   product: ProductCreateOneWithoutVariantsInput!
   retailPrice: Float
   physicalProducts: PhysicalProductCreateManyWithoutProductVariantInput
+  total: Int!
+  reservable: Int!
+  reserved: Int!
+  nonReservable: Int!
 }
 
 input ProductVariantCreateWithoutPhysicalProductsInput {
@@ -4122,9 +3912,13 @@ input ProductVariantCreateWithoutPhysicalProductsInput {
   size: Size!
   weight: Float
   height: Float
+  productID: String!
   product: ProductCreateOneWithoutVariantsInput!
   retailPrice: Float
-  inventoryLevel: InventoryLevelCreateOneWithoutProductVariantInput!
+  total: Int!
+  reservable: Int!
+  reserved: Int!
+  nonReservable: Int!
 }
 
 input ProductVariantCreateWithoutProductInput {
@@ -4134,9 +3928,13 @@ input ProductVariantCreateWithoutProductInput {
   size: Size!
   weight: Float
   height: Float
+  productID: String!
   retailPrice: Float
-  inventoryLevel: InventoryLevelCreateOneWithoutProductVariantInput!
   physicalProducts: PhysicalProductCreateManyWithoutProductVariantInput
+  total: Int!
+  reservable: Int!
+  reserved: Int!
+  nonReservable: Int!
 }
 
 type ProductVariantEdge {
@@ -4155,8 +3953,18 @@ enum ProductVariantOrderByInput {
   weight_DESC
   height_ASC
   height_DESC
+  productID_ASC
+  productID_DESC
   retailPrice_ASC
   retailPrice_DESC
+  total_ASC
+  total_DESC
+  reservable_ASC
+  reservable_DESC
+  reserved_ASC
+  reserved_DESC
+  nonReservable_ASC
+  nonReservable_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -4169,7 +3977,12 @@ type ProductVariantPreviousValues {
   size: Size!
   weight: Float
   height: Float
+  productID: String!
   retailPrice: Float
+  total: Int!
+  reservable: Int!
+  reserved: Int!
+  nonReservable: Int!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -4223,6 +4036,20 @@ input ProductVariantScalarWhereInput {
   height_lte: Float
   height_gt: Float
   height_gte: Float
+  productID: String
+  productID_not: String
+  productID_in: [String!]
+  productID_not_in: [String!]
+  productID_lt: String
+  productID_lte: String
+  productID_gt: String
+  productID_gte: String
+  productID_contains: String
+  productID_not_contains: String
+  productID_starts_with: String
+  productID_not_starts_with: String
+  productID_ends_with: String
+  productID_not_ends_with: String
   retailPrice: Float
   retailPrice_not: Float
   retailPrice_in: [Float!]
@@ -4231,6 +4058,38 @@ input ProductVariantScalarWhereInput {
   retailPrice_lte: Float
   retailPrice_gt: Float
   retailPrice_gte: Float
+  total: Int
+  total_not: Int
+  total_in: [Int!]
+  total_not_in: [Int!]
+  total_lt: Int
+  total_lte: Int
+  total_gt: Int
+  total_gte: Int
+  reservable: Int
+  reservable_not: Int
+  reservable_in: [Int!]
+  reservable_not_in: [Int!]
+  reservable_lt: Int
+  reservable_lte: Int
+  reservable_gt: Int
+  reservable_gte: Int
+  reserved: Int
+  reserved_not: Int
+  reserved_in: [Int!]
+  reserved_not_in: [Int!]
+  reserved_lt: Int
+  reserved_lte: Int
+  reserved_gt: Int
+  reserved_gte: Int
+  nonReservable: Int
+  nonReservable_not: Int
+  nonReservable_in: [Int!]
+  nonReservable_not_in: [Int!]
+  nonReservable_lt: Int
+  nonReservable_lte: Int
+  nonReservable_gt: Int
+  nonReservable_gte: Int
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -4276,10 +4135,14 @@ input ProductVariantUpdateDataInput {
   size: Size
   weight: Float
   height: Float
+  productID: String
   product: ProductUpdateOneRequiredWithoutVariantsInput
   retailPrice: Float
-  inventoryLevel: InventoryLevelUpdateOneRequiredWithoutProductVariantInput
   physicalProducts: PhysicalProductUpdateManyWithoutProductVariantInput
+  total: Int
+  reservable: Int
+  reserved: Int
+  nonReservable: Int
 }
 
 input ProductVariantUpdateInput {
@@ -4288,10 +4151,14 @@ input ProductVariantUpdateInput {
   size: Size
   weight: Float
   height: Float
+  productID: String
   product: ProductUpdateOneRequiredWithoutVariantsInput
   retailPrice: Float
-  inventoryLevel: InventoryLevelUpdateOneRequiredWithoutProductVariantInput
   physicalProducts: PhysicalProductUpdateManyWithoutProductVariantInput
+  total: Int
+  reservable: Int
+  reserved: Int
+  nonReservable: Int
 }
 
 input ProductVariantUpdateManyDataInput {
@@ -4299,7 +4166,12 @@ input ProductVariantUpdateManyDataInput {
   size: Size
   weight: Float
   height: Float
+  productID: String
   retailPrice: Float
+  total: Int
+  reservable: Int
+  reserved: Int
+  nonReservable: Int
 }
 
 input ProductVariantUpdateManyInput {
@@ -4319,7 +4191,12 @@ input ProductVariantUpdateManyMutationInput {
   size: Size
   weight: Float
   height: Float
+  productID: String
   retailPrice: Float
+  total: Int
+  reservable: Int
+  reserved: Int
+  nonReservable: Int
 }
 
 input ProductVariantUpdateManyWithoutColorInput {
@@ -4351,13 +4228,6 @@ input ProductVariantUpdateManyWithWhereNestedInput {
   data: ProductVariantUpdateManyDataInput!
 }
 
-input ProductVariantUpdateOneRequiredWithoutInventoryLevelInput {
-  create: ProductVariantCreateWithoutInventoryLevelInput
-  update: ProductVariantUpdateWithoutInventoryLevelDataInput
-  upsert: ProductVariantUpsertWithoutInventoryLevelInput
-  connect: ProductVariantWhereUniqueInput
-}
-
 input ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput {
   create: ProductVariantCreateWithoutPhysicalProductsInput
   update: ProductVariantUpdateWithoutPhysicalProductsDataInput
@@ -4370,21 +4240,14 @@ input ProductVariantUpdateWithoutColorDataInput {
   size: Size
   weight: Float
   height: Float
-  product: ProductUpdateOneRequiredWithoutVariantsInput
-  retailPrice: Float
-  inventoryLevel: InventoryLevelUpdateOneRequiredWithoutProductVariantInput
-  physicalProducts: PhysicalProductUpdateManyWithoutProductVariantInput
-}
-
-input ProductVariantUpdateWithoutInventoryLevelDataInput {
-  sku: String
-  color: ColorUpdateOneRequiredWithoutProductVariantsInput
-  size: Size
-  weight: Float
-  height: Float
+  productID: String
   product: ProductUpdateOneRequiredWithoutVariantsInput
   retailPrice: Float
   physicalProducts: PhysicalProductUpdateManyWithoutProductVariantInput
+  total: Int
+  reservable: Int
+  reserved: Int
+  nonReservable: Int
 }
 
 input ProductVariantUpdateWithoutPhysicalProductsDataInput {
@@ -4393,9 +4256,13 @@ input ProductVariantUpdateWithoutPhysicalProductsDataInput {
   size: Size
   weight: Float
   height: Float
+  productID: String
   product: ProductUpdateOneRequiredWithoutVariantsInput
   retailPrice: Float
-  inventoryLevel: InventoryLevelUpdateOneRequiredWithoutProductVariantInput
+  total: Int
+  reservable: Int
+  reserved: Int
+  nonReservable: Int
 }
 
 input ProductVariantUpdateWithoutProductDataInput {
@@ -4404,9 +4271,13 @@ input ProductVariantUpdateWithoutProductDataInput {
   size: Size
   weight: Float
   height: Float
+  productID: String
   retailPrice: Float
-  inventoryLevel: InventoryLevelUpdateOneRequiredWithoutProductVariantInput
   physicalProducts: PhysicalProductUpdateManyWithoutProductVariantInput
+  total: Int
+  reservable: Int
+  reserved: Int
+  nonReservable: Int
 }
 
 input ProductVariantUpdateWithWhereUniqueNestedInput {
@@ -4422,11 +4293,6 @@ input ProductVariantUpdateWithWhereUniqueWithoutColorInput {
 input ProductVariantUpdateWithWhereUniqueWithoutProductInput {
   where: ProductVariantWhereUniqueInput!
   data: ProductVariantUpdateWithoutProductDataInput!
-}
-
-input ProductVariantUpsertWithoutInventoryLevelInput {
-  update: ProductVariantUpdateWithoutInventoryLevelDataInput!
-  create: ProductVariantCreateWithoutInventoryLevelInput!
 }
 
 input ProductVariantUpsertWithoutPhysicalProductsInput {
@@ -4502,6 +4368,20 @@ input ProductVariantWhereInput {
   height_lte: Float
   height_gt: Float
   height_gte: Float
+  productID: String
+  productID_not: String
+  productID_in: [String!]
+  productID_not_in: [String!]
+  productID_lt: String
+  productID_lte: String
+  productID_gt: String
+  productID_gte: String
+  productID_contains: String
+  productID_not_contains: String
+  productID_starts_with: String
+  productID_not_starts_with: String
+  productID_ends_with: String
+  productID_not_ends_with: String
   product: ProductWhereInput
   retailPrice: Float
   retailPrice_not: Float
@@ -4511,10 +4391,41 @@ input ProductVariantWhereInput {
   retailPrice_lte: Float
   retailPrice_gt: Float
   retailPrice_gte: Float
-  inventoryLevel: InventoryLevelWhereInput
   physicalProducts_every: PhysicalProductWhereInput
   physicalProducts_some: PhysicalProductWhereInput
   physicalProducts_none: PhysicalProductWhereInput
+  total: Int
+  total_not: Int
+  total_in: [Int!]
+  total_not_in: [Int!]
+  total_lt: Int
+  total_lte: Int
+  total_gt: Int
+  total_gte: Int
+  reservable: Int
+  reservable_not: Int
+  reservable_in: [Int!]
+  reservable_not_in: [Int!]
+  reservable_lt: Int
+  reservable_lte: Int
+  reservable_gt: Int
+  reservable_gte: Int
+  reserved: Int
+  reserved_not: Int
+  reserved_in: [Int!]
+  reserved_not_in: [Int!]
+  reserved_lt: Int
+  reserved_lte: Int
+  reserved_gt: Int
+  reserved_gte: Int
+  nonReservable: Int
+  nonReservable_not: Int
+  nonReservable_in: [Int!]
+  nonReservable_not_in: [Int!]
+  nonReservable_lt: Int
+  nonReservable_lte: Int
+  nonReservable_gt: Int
+  nonReservable_gte: Int
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -4697,9 +4608,6 @@ type Query {
   image(where: ImageWhereUniqueInput!): Image
   images(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Image]!
   imagesConnection(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ImageConnection!
-  inventoryLevel(where: InventoryLevelWhereUniqueInput!): InventoryLevel
-  inventoryLevels(where: InventoryLevelWhereInput, orderBy: InventoryLevelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [InventoryLevel]!
-  inventoryLevelsConnection(where: InventoryLevelWhereInput, orderBy: InventoryLevelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): InventoryLevelConnection!
   label(where: LabelWhereUniqueInput!): Label
   labels(where: LabelWhereInput, orderBy: LabelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Label]!
   labelsConnection(where: LabelWhereInput, orderBy: LabelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): LabelConnection!
@@ -4874,7 +4782,6 @@ type Subscription {
   customer(where: CustomerSubscriptionWhereInput): CustomerSubscriptionPayload
   customerDetail(where: CustomerDetailSubscriptionWhereInput): CustomerDetailSubscriptionPayload
   image(where: ImageSubscriptionWhereInput): ImageSubscriptionPayload
-  inventoryLevel(where: InventoryLevelSubscriptionWhereInput): InventoryLevelSubscriptionPayload
   label(where: LabelSubscriptionWhereInput): LabelSubscriptionPayload
   location(where: LocationSubscriptionWhereInput): LocationSubscriptionPayload
   order(where: OrderSubscriptionWhereInput): OrderSubscriptionPayload

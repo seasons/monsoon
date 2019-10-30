@@ -60,9 +60,6 @@ export const syncProducts = async () => {
             slug: slugify(color).toLowerCase(),
           },
         },
-        // functions: {
-        //   connect: functions.map(a => ({ name: a })),
-        // },
         availableSizes: {
           set: availableSizes,
         },
@@ -104,6 +101,3 @@ export const syncProducts = async () => {
     }
   }
 }
-
-syncProducts()
-console.log("Done processing products...")

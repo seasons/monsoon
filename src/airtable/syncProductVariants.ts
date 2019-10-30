@@ -6,7 +6,13 @@ import {
   getAllColors,
   getAllLocations,
 } from "./utils"
-import { prisma, InventoryStatus, PhysicalProductCreateInput } from "../prisma"
+import {
+  prisma,
+  InventoryStatus,
+  PhysicalProductCreateInput,
+  ProductVariantUpdateInput,
+  ProductVariantCreateInput,
+} from "../prisma"
 import { sizeToSizeCode } from "../utils"
 import { base } from "./config"
 import { isEmpty, first } from "lodash"
@@ -47,18 +53,6 @@ export const syncProductVariants = async () => {
         updatedReservableCount,
       } = countsForVariant(productVariant)
 
-      const inventoryLevel = {
-        product: {
-          connect: {
-            slug: product.model.slug,
-          },
-        },
-        total: totalCount,
-        reservable: updatedReservableCount,
-        reserved: reservedCount,
-        nonReservable: nonReservableCount,
-      }
-
       const { weight, height, size } = model
 
       let data = {
@@ -66,6 +60,10 @@ export const syncProductVariants = async () => {
         size,
         weight: parseFloat(weight) || 0,
         height: parseFloat(height) || 0,
+        total: totalCount,
+        reservable: updatedReservableCount,
+        reserved: reservedCount,
+        nonReservable: nonReservableCount,
         color: {
           connect: {
             slug: color.model.slug,
@@ -76,7 +74,8 @@ export const syncProductVariants = async () => {
             slug: product.model.slug,
           },
         },
-      }
+        productID: product.model.slug,
+      } as ProductVariantCreateInput
 
       const productVariantData = await prisma.upsertProductVariant({
         where: {
@@ -84,9 +83,6 @@ export const syncProductVariants = async () => {
         },
         create: {
           ...data,
-          inventoryLevel: {
-            create: inventoryLevel,
-          },
         },
         update: {
           ...data,
@@ -186,7 +182,9 @@ const createMorePhysicalProductsIfNeeded: CreateMorePhysicalProductsFunction = a
 
       newPhysicalProducts.push({
         fields: {
-          SUID: sku + `-${physicalProductID}`,
+          SUID: {
+            text: sku + `-${physicalProductID}`,
+          },
           Product: [product.id],
           Location: [SeasonsLocationID], // Seasons HQ
           "Product Variant": [productVariant.id],
@@ -201,7 +199,7 @@ const createMorePhysicalProductsIfNeeded: CreateMorePhysicalProductsFunction = a
   return newPhysicalProducts.map(
     ({ fields }) =>
       ({
-        seasonsUID: fields.SUID,
+        seasonsUID: fields.SUID.text,
         productVariant: {
           connect: {
             sku,
