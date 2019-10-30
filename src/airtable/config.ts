@@ -7,6 +7,3 @@ Airtable.configure({
 
 const baseID = process.env.AIRTABLE_DATABASE_ID
 export const base = Airtable.base(baseID)
-export const graphqlURL =
-  process.env.MIST_GRAPHQL_ENDPOINT ||
-  "https://mist-staging.herokuapp.com/graphql"
