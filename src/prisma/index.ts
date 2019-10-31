@@ -928,6 +928,8 @@ export type CustomerDetailOrderByInput =
   | "style_DESC"
   | "commuteStyle_ASC"
   | "commuteStyle_DESC"
+  | "phoneOS_ASC"
+  | "phoneOS_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -1721,6 +1723,20 @@ export interface CustomerDetailWhereInput {
   commuteStyle_ends_with?: Maybe<String>;
   commuteStyle_not_ends_with?: Maybe<String>;
   shippingAddress?: Maybe<LocationWhereInput>;
+  phoneOS?: Maybe<String>;
+  phoneOS_not?: Maybe<String>;
+  phoneOS_in?: Maybe<String[] | String>;
+  phoneOS_not_in?: Maybe<String[] | String>;
+  phoneOS_lt?: Maybe<String>;
+  phoneOS_lte?: Maybe<String>;
+  phoneOS_gt?: Maybe<String>;
+  phoneOS_gte?: Maybe<String>;
+  phoneOS_contains?: Maybe<String>;
+  phoneOS_not_contains?: Maybe<String>;
+  phoneOS_starts_with?: Maybe<String>;
+  phoneOS_not_starts_with?: Maybe<String>;
+  phoneOS_ends_with?: Maybe<String>;
+  phoneOS_not_ends_with?: Maybe<String>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -1958,6 +1974,7 @@ export interface CustomerDetailCreateInput {
   style?: Maybe<String>;
   commuteStyle?: Maybe<String>;
   shippingAddress?: Maybe<LocationCreateOneInput>;
+  phoneOS?: Maybe<String>;
 }
 
 export interface CategoryWhereInput {
@@ -2688,6 +2705,7 @@ export interface CustomerDetailUpdateInput {
   style?: Maybe<String>;
   commuteStyle?: Maybe<String>;
   shippingAddress?: Maybe<LocationUpdateOneInput>;
+  phoneOS?: Maybe<String>;
 }
 
 export interface ProductVariantUpdateWithoutColorDataInput {
@@ -3976,6 +3994,7 @@ export interface CustomerDetailUpdateDataInput {
   style?: Maybe<String>;
   commuteStyle?: Maybe<String>;
   shippingAddress?: Maybe<LocationUpdateOneInput>;
+  phoneOS?: Maybe<String>;
 }
 
 export interface UserWhereInput {
@@ -4440,6 +4459,7 @@ export interface CustomerDetailUpdateManyMutationInput {
   averageSpend?: Maybe<String>;
   style?: Maybe<String>;
   commuteStyle?: Maybe<String>;
+  phoneOS?: Maybe<String>;
 }
 
 export interface CustomerDetailUpsertNestedInput {
@@ -6415,6 +6435,7 @@ export interface CustomerDetailPreviousValues {
   averageSpend?: String;
   style?: String;
   commuteStyle?: String;
+  phoneOS?: String;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -6439,6 +6460,7 @@ export interface CustomerDetailPreviousValuesPromise
   averageSpend: () => Promise<String>;
   style: () => Promise<String>;
   commuteStyle: () => Promise<String>;
+  phoneOS: () => Promise<String>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -6463,6 +6485,7 @@ export interface CustomerDetailPreviousValuesSubscription
   averageSpend: () => Promise<AsyncIterator<String>>;
   style: () => Promise<AsyncIterator<String>>;
   commuteStyle: () => Promise<AsyncIterator<String>>;
+  phoneOS: () => Promise<AsyncIterator<String>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -6504,6 +6527,7 @@ export interface CustomerDetail {
   averageSpend?: String;
   style?: String;
   commuteStyle?: String;
+  phoneOS?: String;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -6529,6 +6553,7 @@ export interface CustomerDetailPromise
   style: () => Promise<String>;
   commuteStyle: () => Promise<String>;
   shippingAddress: <T = LocationPromise>() => T;
+  phoneOS: () => Promise<String>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -6554,6 +6579,7 @@ export interface CustomerDetailSubscription
   style: () => Promise<AsyncIterator<String>>;
   commuteStyle: () => Promise<AsyncIterator<String>>;
   shippingAddress: <T = LocationSubscription>() => T;
+  phoneOS: () => Promise<AsyncIterator<String>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -6579,6 +6605,7 @@ export interface CustomerDetailNullablePromise
   style: () => Promise<String>;
   commuteStyle: () => Promise<String>;
   shippingAddress: <T = LocationPromise>() => T;
+  phoneOS: () => Promise<String>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }

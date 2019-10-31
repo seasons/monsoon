@@ -10,14 +10,15 @@ const server = new ApolloServer(serverOptions)
 
 const app = express()
 app.use(
+  checkJwt,
+  createGetUserMiddleware(prisma),
   cors({
     origin: [
+      "https://seedling-staging.herokuapp.com/",
       "http://signup-staging.seasons.nyc/",
       "http://signup.seasons.nyc/",
     ],
-  }),
-  checkJwt,
-  createGetUserMiddleware(prisma)
+  })
 )
 server.applyMiddleware({ app, path: "/" })
 app.listen({ port: process.env.PORT || 4000 }, () =>
