@@ -300,7 +300,7 @@ type Bag {
 
 type Customer {
   id: ID! @id
-  user: User!
+  user: User! @unique
   status: CustomerStatus
   detail: CustomerDetail
   bag: Bag!
