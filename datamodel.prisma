@@ -161,6 +161,13 @@ type Collection {
   products: [Product]
 }
 
+type FeaturedCollection {
+  id: ID! @id
+  slug: String! @unique
+  title: String
+  collections: [Collection] 
+}
+
 type Image {
   id: ID! @id
   caption: String

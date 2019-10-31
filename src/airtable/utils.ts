@@ -59,6 +59,10 @@ export const getAllCollections = async () => {
   return getAll("Collections")
 }
 
+export const getAllFeaturedCollections = async () => {
+  return getAll("Featured Collections")
+}
+
 export const getAllCategories = async () => {
   return getAll("Categories")
 }
