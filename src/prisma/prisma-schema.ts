@@ -18,6 +18,10 @@ type AggregateCollection {
   count: Int!
 }
 
+type AggregateCollectionGroup {
+  count: Int!
+}
+
 type AggregateColor {
   count: Int!
 }
@@ -694,9 +698,154 @@ input CollectionCreateInput {
   products: ProductCreateManyInput
 }
 
+input CollectionCreateManyInput {
+  create: [CollectionCreateInput!]
+  connect: [CollectionWhereUniqueInput!]
+}
+
 type CollectionEdge {
   node: Collection!
   cursor: String!
+}
+
+type CollectionGroup {
+  id: ID!
+  slug: String!
+  title: String
+  collectionCount: Int
+  collections(where: CollectionWhereInput, orderBy: CollectionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Collection!]
+}
+
+type CollectionGroupConnection {
+  pageInfo: PageInfo!
+  edges: [CollectionGroupEdge]!
+  aggregate: AggregateCollectionGroup!
+}
+
+input CollectionGroupCreateInput {
+  id: ID
+  slug: String!
+  title: String
+  collectionCount: Int
+  collections: CollectionCreateManyInput
+}
+
+type CollectionGroupEdge {
+  node: CollectionGroup!
+  cursor: String!
+}
+
+enum CollectionGroupOrderByInput {
+  id_ASC
+  id_DESC
+  slug_ASC
+  slug_DESC
+  title_ASC
+  title_DESC
+  collectionCount_ASC
+  collectionCount_DESC
+}
+
+type CollectionGroupPreviousValues {
+  id: ID!
+  slug: String!
+  title: String
+  collectionCount: Int
+}
+
+type CollectionGroupSubscriptionPayload {
+  mutation: MutationType!
+  node: CollectionGroup
+  updatedFields: [String!]
+  previousValues: CollectionGroupPreviousValues
+}
+
+input CollectionGroupSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: CollectionGroupWhereInput
+  AND: [CollectionGroupSubscriptionWhereInput!]
+  OR: [CollectionGroupSubscriptionWhereInput!]
+  NOT: [CollectionGroupSubscriptionWhereInput!]
+}
+
+input CollectionGroupUpdateInput {
+  slug: String
+  title: String
+  collectionCount: Int
+  collections: CollectionUpdateManyInput
+}
+
+input CollectionGroupUpdateManyMutationInput {
+  slug: String
+  title: String
+  collectionCount: Int
+}
+
+input CollectionGroupWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  slug: String
+  slug_not: String
+  slug_in: [String!]
+  slug_not_in: [String!]
+  slug_lt: String
+  slug_lte: String
+  slug_gt: String
+  slug_gte: String
+  slug_contains: String
+  slug_not_contains: String
+  slug_starts_with: String
+  slug_not_starts_with: String
+  slug_ends_with: String
+  slug_not_ends_with: String
+  title: String
+  title_not: String
+  title_in: [String!]
+  title_not_in: [String!]
+  title_lt: String
+  title_lte: String
+  title_gt: String
+  title_gte: String
+  title_contains: String
+  title_not_contains: String
+  title_starts_with: String
+  title_not_starts_with: String
+  title_ends_with: String
+  title_not_ends_with: String
+  collectionCount: Int
+  collectionCount_not: Int
+  collectionCount_in: [Int!]
+  collectionCount_not_in: [Int!]
+  collectionCount_lt: Int
+  collectionCount_lte: Int
+  collectionCount_gt: Int
+  collectionCount_gte: Int
+  collections_every: CollectionWhereInput
+  collections_some: CollectionWhereInput
+  collections_none: CollectionWhereInput
+  AND: [CollectionGroupWhereInput!]
+  OR: [CollectionGroupWhereInput!]
+  NOT: [CollectionGroupWhereInput!]
+}
+
+input CollectionGroupWhereUniqueInput {
+  id: ID
+  slug: String
 }
 
 enum CollectionOrderByInput {
@@ -723,6 +872,82 @@ type CollectionPreviousValues {
   description: String
 }
 
+input CollectionScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  slug: String
+  slug_not: String
+  slug_in: [String!]
+  slug_not_in: [String!]
+  slug_lt: String
+  slug_lte: String
+  slug_gt: String
+  slug_gte: String
+  slug_contains: String
+  slug_not_contains: String
+  slug_starts_with: String
+  slug_not_starts_with: String
+  slug_ends_with: String
+  slug_not_ends_with: String
+  title: String
+  title_not: String
+  title_in: [String!]
+  title_not_in: [String!]
+  title_lt: String
+  title_lte: String
+  title_gt: String
+  title_gte: String
+  title_contains: String
+  title_not_contains: String
+  title_starts_with: String
+  title_not_starts_with: String
+  title_ends_with: String
+  title_not_ends_with: String
+  subTitle: String
+  subTitle_not: String
+  subTitle_in: [String!]
+  subTitle_not_in: [String!]
+  subTitle_lt: String
+  subTitle_lte: String
+  subTitle_gt: String
+  subTitle_gte: String
+  subTitle_contains: String
+  subTitle_not_contains: String
+  subTitle_starts_with: String
+  subTitle_not_starts_with: String
+  subTitle_ends_with: String
+  subTitle_not_ends_with: String
+  description: String
+  description_not: String
+  description_in: [String!]
+  description_not_in: [String!]
+  description_lt: String
+  description_lte: String
+  description_gt: String
+  description_gte: String
+  description_contains: String
+  description_not_contains: String
+  description_starts_with: String
+  description_not_starts_with: String
+  description_ends_with: String
+  description_not_ends_with: String
+  AND: [CollectionScalarWhereInput!]
+  OR: [CollectionScalarWhereInput!]
+  NOT: [CollectionScalarWhereInput!]
+}
+
 type CollectionSubscriptionPayload {
   mutation: MutationType!
   node: Collection
@@ -741,6 +966,15 @@ input CollectionSubscriptionWhereInput {
   NOT: [CollectionSubscriptionWhereInput!]
 }
 
+input CollectionUpdateDataInput {
+  slug: String
+  images: Json
+  title: String
+  subTitle: String
+  description: String
+  products: ProductUpdateManyInput
+}
+
 input CollectionUpdateInput {
   slug: String
   images: Json
@@ -750,12 +984,48 @@ input CollectionUpdateInput {
   products: ProductUpdateManyInput
 }
 
+input CollectionUpdateManyDataInput {
+  slug: String
+  images: Json
+  title: String
+  subTitle: String
+  description: String
+}
+
+input CollectionUpdateManyInput {
+  create: [CollectionCreateInput!]
+  update: [CollectionUpdateWithWhereUniqueNestedInput!]
+  upsert: [CollectionUpsertWithWhereUniqueNestedInput!]
+  delete: [CollectionWhereUniqueInput!]
+  connect: [CollectionWhereUniqueInput!]
+  set: [CollectionWhereUniqueInput!]
+  disconnect: [CollectionWhereUniqueInput!]
+  deleteMany: [CollectionScalarWhereInput!]
+  updateMany: [CollectionUpdateManyWithWhereNestedInput!]
+}
+
 input CollectionUpdateManyMutationInput {
   slug: String
   images: Json
   title: String
   subTitle: String
   description: String
+}
+
+input CollectionUpdateManyWithWhereNestedInput {
+  where: CollectionScalarWhereInput!
+  data: CollectionUpdateManyDataInput!
+}
+
+input CollectionUpdateWithWhereUniqueNestedInput {
+  where: CollectionWhereUniqueInput!
+  data: CollectionUpdateDataInput!
+}
+
+input CollectionUpsertWithWhereUniqueNestedInput {
+  where: CollectionWhereUniqueInput!
+  update: CollectionUpdateDataInput!
+  create: CollectionCreateInput!
 }
 
 input CollectionWhereInput {
@@ -2559,6 +2829,12 @@ type Mutation {
   upsertCollection(where: CollectionWhereUniqueInput!, create: CollectionCreateInput!, update: CollectionUpdateInput!): Collection!
   deleteCollection(where: CollectionWhereUniqueInput!): Collection
   deleteManyCollections(where: CollectionWhereInput): BatchPayload!
+  createCollectionGroup(data: CollectionGroupCreateInput!): CollectionGroup!
+  updateCollectionGroup(data: CollectionGroupUpdateInput!, where: CollectionGroupWhereUniqueInput!): CollectionGroup
+  updateManyCollectionGroups(data: CollectionGroupUpdateManyMutationInput!, where: CollectionGroupWhereInput): BatchPayload!
+  upsertCollectionGroup(where: CollectionGroupWhereUniqueInput!, create: CollectionGroupCreateInput!, update: CollectionGroupUpdateInput!): CollectionGroup!
+  deleteCollectionGroup(where: CollectionGroupWhereUniqueInput!): CollectionGroup
+  deleteManyCollectionGroups(where: CollectionGroupWhereInput): BatchPayload!
   createColor(data: ColorCreateInput!): Color!
   updateColor(data: ColorUpdateInput!, where: ColorWhereUniqueInput!): Color
   updateManyColors(data: ColorUpdateManyMutationInput!, where: ColorWhereInput): BatchPayload!
@@ -4596,6 +4872,9 @@ type Query {
   collection(where: CollectionWhereUniqueInput!): Collection
   collections(where: CollectionWhereInput, orderBy: CollectionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Collection]!
   collectionsConnection(where: CollectionWhereInput, orderBy: CollectionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CollectionConnection!
+  collectionGroup(where: CollectionGroupWhereUniqueInput!): CollectionGroup
+  collectionGroups(where: CollectionGroupWhereInput, orderBy: CollectionGroupOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CollectionGroup]!
+  collectionGroupsConnection(where: CollectionGroupWhereInput, orderBy: CollectionGroupOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CollectionGroupConnection!
   color(where: ColorWhereUniqueInput!): Color
   colors(where: ColorWhereInput, orderBy: ColorOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Color]!
   colorsConnection(where: ColorWhereInput, orderBy: ColorOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ColorConnection!
@@ -4778,6 +5057,7 @@ type Subscription {
   brand(where: BrandSubscriptionWhereInput): BrandSubscriptionPayload
   category(where: CategorySubscriptionWhereInput): CategorySubscriptionPayload
   collection(where: CollectionSubscriptionWhereInput): CollectionSubscriptionPayload
+  collectionGroup(where: CollectionGroupSubscriptionWhereInput): CollectionGroupSubscriptionPayload
   color(where: ColorSubscriptionWhereInput): ColorSubscriptionPayload
   customer(where: CustomerSubscriptionWhereInput): CustomerSubscriptionPayload
   customerDetail(where: CustomerDetailSubscriptionWhereInput): CustomerDetailSubscriptionPayload

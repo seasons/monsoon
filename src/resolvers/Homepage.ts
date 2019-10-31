@@ -1,4 +1,5 @@
 import { Context } from "../utils"
+import { CollectionGroups } from "./CollectionGroups"
 
 export const HomepageResult = {
   __resolveType(obj, _context, _info) {
@@ -11,12 +12,12 @@ export const HomepageResult = {
     //   return 'Category';
     // }
 
-    if (obj.logo) {
-      return "Brand"
+    if (obj.subTitle) {
+      return "Collection"
     }
 
-    if (obj.heroImageURL) {
-      return "Hero"
+    if (obj.logo) {
+      return "Brand"
     }
 
     return null
@@ -27,36 +28,13 @@ export const Homepage = (parent, args, ctx: Context, info) => {
   return {
     sections: [
       {
-        type: "Hero",
+        type: "CollectionGroups",
         __typename: "HomepageSection",
         title: "Featured collection",
-        results: [
-          {
-            id: "1",
-            heroImageURL:
-              "https://i.pinimg.com/564x/ef/84/64/ef84647415e51db15a87993393aa8fe2.jpg",
-          },
-          {
-            id: "2",
-            heroImageURL:
-              "https://i.pinimg.com/564x/f5/ba/30/f5ba30d71615c639199887f5e7cb2608.jpg",
-          },
-          {
-            id: "3",
-            heroImageURL:
-              "https://i.pinimg.com/564x/9e/de/54/9ede54d2e658c7b73c49f0c7051f0f3f.jpg",
-          },
-          {
-            id: "4",
-            heroImageURL:
-              "https://i.pinimg.com/564x/d8/ad/60/d8ad6000717d71e36fb828bfc1a64432.jpg",
-          },
-          {
-            id: "5",
-            heroImageURL:
-              "https://i.pinimg.com/564x/1e/ac/c1/1eacc1e8b6d30435c88cf0ef5a58a7de.jpg",
-          },
-        ],
+        results: async (args, ctx: Context, info) => {
+          const collections = await ctx.prisma.collectionGroup({slug: 'featured-collections'}).collections()
+          return collections
+        }
       },
       {
         type: "Products",
