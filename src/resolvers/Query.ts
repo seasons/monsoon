@@ -7,15 +7,20 @@ export const Query = {
     const { id } = await getUserId(ctx)
     return ctx.prisma.user({ id })
   },
+  
   products: async (parent, args, ctx: Context, info) => {
     const result = await ctx.db.query.products(args, info)
     return result
   },
-  collections: (parent, args, ctx: Context, info) =>
-    ctx.db.query.collections(args, info),
 
   product: (parent, args, ctx: Context, info) =>
-    ctx.db.query.product(args, info),
+      ctx.db.query.product(args, info),
+
+  collections: (parent, args, ctx: Context, info) =>
+    ctx.db.query.collections(args, info),
+  
+  collection: (parent, args, ctx: Context, info) =>
+    ctx.db.query.collection(args, info),
 
   productFunctions: (parent, args, ctx: Context, info) =>
     ctx.db.query.productFunctions(args, info),
