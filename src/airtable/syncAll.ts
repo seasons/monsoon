@@ -6,7 +6,7 @@ import {
   syncProducts,
   syncProductVariants,
   syncCollections,
-  syncFeaturedCollections
+  syncCollectionGroup
 } from "."
 
 export const syncAll = async () => {
@@ -17,5 +17,5 @@ export const syncAll = async () => {
   await syncProducts()
   await syncProductVariants()
   await syncCollections()
-  await syncFeaturedCollections()
+  await syncCollectionGroup()
 }

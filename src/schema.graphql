@@ -16,16 +16,16 @@ type Query {
     first: Int
     last: Int
   ): [Product]!
-  featuredCollections(
-    where: FeaturedCollectionWhereInput
-    orderBy: FeaturedCollectionOrderByInput
+  collectionGroups(
+    where: CollectionGroupWhereInput
+    orderBy: CollectionGroupOrderByInput
     skip: Int
     after: String
     before: String
     first: Int
     last: Int
-  ): [FeaturedCollection]!
-  featuredCollection(where: FeaturedCollectionWhereUniqueInput!): FeaturedCollection
+  ): [CollectionGroup]!
+  collectionGroup(where: CollectionGroupWhereUniqueInput!): CollectionGroup
   collections(
     where: CollectionWhereInput
     orderBy: CollectionOrderByInput
@@ -105,11 +105,6 @@ type HomepageSection {
   title: String
 }
 
-type Hero {
-  id: ID!
-  heroImageURL: String!
-}
-
 type CreditCard {
   # A type-specific ID likely used as a database ID.
   id: ID!
@@ -167,10 +162,10 @@ type Me {
   customer: Customer!
 }
 
-union HomepageResult = Category | Product | Brand | Hero
+union HomepageResult = Category | Product | Brand | Collection
 
 enum HomePageSectionType {
-  Hero
+  CollectionGroups
   Categories
   Products
   Brands

@@ -1,10 +1,10 @@
 import slugify from "slugify"
 import { prisma } from "../prisma"
 import { isEmpty } from "lodash"
-import { getAllCollections, getAllFeaturedCollections } from "./utils"
+import { getAllCollections, getAllCollectionGroups } from "./utils"
 
-export const syncFeaturedCollections = async () => {
-  const records = await getAllFeaturedCollections()
+export const syncCollectionGroups = async () => {
+  const records = await getAllCollectionGroups()
   const allCollections = await getAllCollections()
 
   for (let record of records) {
@@ -27,10 +27,12 @@ export const syncFeaturedCollections = async () => {
             return { slug: collection.model.slug }
           })
         },
+        collectionCount: collections.length,
+        title,
         slug,
       }
 
-      const featuredCollection = await prisma.upsertFeaturedCollection({
+      const collectionGroup = await prisma.upsertCollectionGroup({
         where: {
           slug,
         },
@@ -42,11 +44,11 @@ export const syncFeaturedCollections = async () => {
         Slug: slug,
       })
 
-      console.log(featuredCollection)
+      console.log(collectionGroup)
     } catch (e) {
       console.error(e)
     }
   }
 }
 
-syncFeaturedCollections()
+syncCollectionGroups()

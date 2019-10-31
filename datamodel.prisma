@@ -158,14 +158,15 @@ type Collection {
   title: String
   subTitle: String
   description: String
-  products: [Product]
+  products: [Product!]!
 }
 
-type FeaturedCollection {
+type CollectionGroup {
   id: ID! @id
   slug: String! @unique
   title: String
-  collections: [Collection] 
+  collectionCount: Int
+  collections: [Collection!]! 
 }
 
 type Image {
