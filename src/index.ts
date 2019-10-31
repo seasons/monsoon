@@ -14,9 +14,9 @@ app.use(
   createGetUserMiddleware(prisma),
   cors({
     origin: [
-      "https://seedling-staging.herokuapp.com/",
-      "http://signup-staging.seasons.nyc/",
-      "http://signup.seasons.nyc/",
+      "https://seedling-staging.herokuapp.com",
+      "http://signup-staging.seasons.nyc",
+      "http://signup.seasons.nyc",
     ],
   })
 )
