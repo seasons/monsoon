@@ -1399,6 +1399,7 @@ type CustomerDetail {
   style: String
   commuteStyle: String
   shippingAddress: Location
+  phoneOS: String
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -1428,6 +1429,7 @@ input CustomerDetailCreateInput {
   style: String
   commuteStyle: String
   shippingAddress: LocationCreateOneInput
+  phoneOS: String
 }
 
 input CustomerDetailCreateOneInput {
@@ -1475,6 +1477,8 @@ enum CustomerDetailOrderByInput {
   style_DESC
   commuteStyle_ASC
   commuteStyle_DESC
+  phoneOS_ASC
+  phoneOS_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -1499,6 +1503,7 @@ type CustomerDetailPreviousValues {
   averageSpend: String
   style: String
   commuteStyle: String
+  phoneOS: String
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -1539,6 +1544,7 @@ input CustomerDetailUpdateDataInput {
   style: String
   commuteStyle: String
   shippingAddress: LocationUpdateOneInput
+  phoneOS: String
 }
 
 input CustomerDetailUpdateInput {
@@ -1559,6 +1565,7 @@ input CustomerDetailUpdateInput {
   style: String
   commuteStyle: String
   shippingAddress: LocationUpdateOneInput
+  phoneOS: String
 }
 
 input CustomerDetailUpdateManyMutationInput {
@@ -1578,6 +1585,7 @@ input CustomerDetailUpdateManyMutationInput {
   averageSpend: String
   style: String
   commuteStyle: String
+  phoneOS: String
 }
 
 input CustomerDetailUpdateOneInput {
@@ -1822,6 +1830,20 @@ input CustomerDetailWhereInput {
   commuteStyle_ends_with: String
   commuteStyle_not_ends_with: String
   shippingAddress: LocationWhereInput
+  phoneOS: String
+  phoneOS_not: String
+  phoneOS_in: [String!]
+  phoneOS_not_in: [String!]
+  phoneOS_lt: String
+  phoneOS_lte: String
+  phoneOS_gt: String
+  phoneOS_gte: String
+  phoneOS_contains: String
+  phoneOS_not_contains: String
+  phoneOS_starts_with: String
+  phoneOS_not_starts_with: String
+  phoneOS_ends_with: String
+  phoneOS_not_ends_with: String
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]

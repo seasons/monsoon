@@ -296,6 +296,7 @@ type CustomerDetail {
   style: String
   commuteStyle: String
   shippingAddress: Location
+  phoneOS: String
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
