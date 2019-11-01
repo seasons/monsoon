@@ -157,7 +157,8 @@ type Collection {
   images: Json!
   title: String
   subTitle: String
-  description: String
+  descriptionTop: String
+  descriptionBottom: String,
   products: [Product!]!
 }
 

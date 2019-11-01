@@ -678,7 +678,8 @@ type Collection {
   images: Json!
   title: String
   subTitle: String
-  description: String
+  descriptionTop: String
+  descriptionBottom: String
   products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
 }
 
@@ -694,7 +695,8 @@ input CollectionCreateInput {
   images: Json!
   title: String
   subTitle: String
-  description: String
+  descriptionTop: String
+  descriptionBottom: String
   products: ProductCreateManyInput
 }
 
@@ -859,8 +861,10 @@ enum CollectionOrderByInput {
   title_DESC
   subTitle_ASC
   subTitle_DESC
-  description_ASC
-  description_DESC
+  descriptionTop_ASC
+  descriptionTop_DESC
+  descriptionBottom_ASC
+  descriptionBottom_DESC
 }
 
 type CollectionPreviousValues {
@@ -869,7 +873,8 @@ type CollectionPreviousValues {
   images: Json!
   title: String
   subTitle: String
-  description: String
+  descriptionTop: String
+  descriptionBottom: String
 }
 
 input CollectionScalarWhereInput {
@@ -929,20 +934,34 @@ input CollectionScalarWhereInput {
   subTitle_not_starts_with: String
   subTitle_ends_with: String
   subTitle_not_ends_with: String
-  description: String
-  description_not: String
-  description_in: [String!]
-  description_not_in: [String!]
-  description_lt: String
-  description_lte: String
-  description_gt: String
-  description_gte: String
-  description_contains: String
-  description_not_contains: String
-  description_starts_with: String
-  description_not_starts_with: String
-  description_ends_with: String
-  description_not_ends_with: String
+  descriptionTop: String
+  descriptionTop_not: String
+  descriptionTop_in: [String!]
+  descriptionTop_not_in: [String!]
+  descriptionTop_lt: String
+  descriptionTop_lte: String
+  descriptionTop_gt: String
+  descriptionTop_gte: String
+  descriptionTop_contains: String
+  descriptionTop_not_contains: String
+  descriptionTop_starts_with: String
+  descriptionTop_not_starts_with: String
+  descriptionTop_ends_with: String
+  descriptionTop_not_ends_with: String
+  descriptionBottom: String
+  descriptionBottom_not: String
+  descriptionBottom_in: [String!]
+  descriptionBottom_not_in: [String!]
+  descriptionBottom_lt: String
+  descriptionBottom_lte: String
+  descriptionBottom_gt: String
+  descriptionBottom_gte: String
+  descriptionBottom_contains: String
+  descriptionBottom_not_contains: String
+  descriptionBottom_starts_with: String
+  descriptionBottom_not_starts_with: String
+  descriptionBottom_ends_with: String
+  descriptionBottom_not_ends_with: String
   AND: [CollectionScalarWhereInput!]
   OR: [CollectionScalarWhereInput!]
   NOT: [CollectionScalarWhereInput!]
@@ -971,7 +990,8 @@ input CollectionUpdateDataInput {
   images: Json
   title: String
   subTitle: String
-  description: String
+  descriptionTop: String
+  descriptionBottom: String
   products: ProductUpdateManyInput
 }
 
@@ -980,7 +1000,8 @@ input CollectionUpdateInput {
   images: Json
   title: String
   subTitle: String
-  description: String
+  descriptionTop: String
+  descriptionBottom: String
   products: ProductUpdateManyInput
 }
 
@@ -989,7 +1010,8 @@ input CollectionUpdateManyDataInput {
   images: Json
   title: String
   subTitle: String
-  description: String
+  descriptionTop: String
+  descriptionBottom: String
 }
 
 input CollectionUpdateManyInput {
@@ -1009,7 +1031,8 @@ input CollectionUpdateManyMutationInput {
   images: Json
   title: String
   subTitle: String
-  description: String
+  descriptionTop: String
+  descriptionBottom: String
 }
 
 input CollectionUpdateManyWithWhereNestedInput {
@@ -1085,20 +1108,34 @@ input CollectionWhereInput {
   subTitle_not_starts_with: String
   subTitle_ends_with: String
   subTitle_not_ends_with: String
-  description: String
-  description_not: String
-  description_in: [String!]
-  description_not_in: [String!]
-  description_lt: String
-  description_lte: String
-  description_gt: String
-  description_gte: String
-  description_contains: String
-  description_not_contains: String
-  description_starts_with: String
-  description_not_starts_with: String
-  description_ends_with: String
-  description_not_ends_with: String
+  descriptionTop: String
+  descriptionTop_not: String
+  descriptionTop_in: [String!]
+  descriptionTop_not_in: [String!]
+  descriptionTop_lt: String
+  descriptionTop_lte: String
+  descriptionTop_gt: String
+  descriptionTop_gte: String
+  descriptionTop_contains: String
+  descriptionTop_not_contains: String
+  descriptionTop_starts_with: String
+  descriptionTop_not_starts_with: String
+  descriptionTop_ends_with: String
+  descriptionTop_not_ends_with: String
+  descriptionBottom: String
+  descriptionBottom_not: String
+  descriptionBottom_in: [String!]
+  descriptionBottom_not_in: [String!]
+  descriptionBottom_lt: String
+  descriptionBottom_lte: String
+  descriptionBottom_gt: String
+  descriptionBottom_gte: String
+  descriptionBottom_contains: String
+  descriptionBottom_not_contains: String
+  descriptionBottom_starts_with: String
+  descriptionBottom_not_starts_with: String
+  descriptionBottom_ends_with: String
+  descriptionBottom_not_ends_with: String
   products_every: ProductWhereInput
   products_some: ProductWhereInput
   products_none: ProductWhereInput
