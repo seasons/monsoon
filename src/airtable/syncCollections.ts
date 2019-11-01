@@ -12,7 +12,8 @@ export const syncCollections = async () => {
       const { model } = record
       const products = allProducts.findMultipleByIds(model.products)
       const {
-        description,
+        descriptionTop,
+        descriptionBottom,
         title,
         subTitle,
         images,
@@ -31,7 +32,8 @@ export const syncCollections = async () => {
         slug,
         title,
         subTitle,
-        description,
+        descriptionTop,
+        descriptionBottom,
         images,
       }
 
