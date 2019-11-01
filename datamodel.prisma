@@ -139,6 +139,7 @@ type Category {
   slug: String! @unique
   name: String! @unique
   description: String
+  
   products: [Product!]!
 }
 
