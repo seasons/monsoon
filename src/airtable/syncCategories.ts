@@ -10,7 +10,7 @@ export const syncCategories = async () => {
   for (let record of allCategories) {
     try {
       const { model } = record
-      const { name, description, visible } = model
+      const { name, description, visible, image } = model
 
       if (isEmpty(model) || isEmpty(name)) {
         continue
@@ -23,6 +23,7 @@ export const syncCategories = async () => {
         name,
         description,
         visible,
+        image
       } as CategoryCreateInput
 
       const category = await prisma.upsertCategory({
@@ -130,3 +131,4 @@ function getLeafNodes(nodes, result = []) {
   }
   return result
 }
+

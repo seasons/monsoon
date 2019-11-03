@@ -496,6 +496,7 @@ type Category {
   id: ID!
   slug: String!
   name: String!
+  image: Json
   description: String
   visible: Boolean!
   products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
@@ -512,6 +513,7 @@ input CategoryCreateInput {
   id: ID
   slug: String!
   name: String!
+  image: Json
   description: String
   visible: Boolean
   products: ProductCreateManyWithoutCategoryInput
@@ -532,6 +534,7 @@ input CategoryCreateWithoutChildrenInput {
   id: ID
   slug: String!
   name: String!
+  image: Json
   description: String
   visible: Boolean
   products: ProductCreateManyWithoutCategoryInput
@@ -541,6 +544,7 @@ input CategoryCreateWithoutProductsInput {
   id: ID
   slug: String!
   name: String!
+  image: Json
   description: String
   visible: Boolean
   children: CategoryCreateManyWithoutChildrenInput
@@ -558,6 +562,8 @@ enum CategoryOrderByInput {
   slug_DESC
   name_ASC
   name_DESC
+  image_ASC
+  image_DESC
   description_ASC
   description_DESC
   visible_ASC
@@ -568,6 +574,7 @@ type CategoryPreviousValues {
   id: ID!
   slug: String!
   name: String!
+  image: Json
   description: String
   visible: Boolean!
 }
@@ -657,6 +664,7 @@ input CategorySubscriptionWhereInput {
 input CategoryUpdateInput {
   slug: String
   name: String
+  image: Json
   description: String
   visible: Boolean
   products: ProductUpdateManyWithoutCategoryInput
@@ -666,6 +674,7 @@ input CategoryUpdateInput {
 input CategoryUpdateManyDataInput {
   slug: String
   name: String
+  image: Json
   description: String
   visible: Boolean
 }
@@ -673,6 +682,7 @@ input CategoryUpdateManyDataInput {
 input CategoryUpdateManyMutationInput {
   slug: String
   name: String
+  image: Json
   description: String
   visible: Boolean
 }
@@ -704,6 +714,7 @@ input CategoryUpdateOneRequiredWithoutProductsInput {
 input CategoryUpdateWithoutChildrenDataInput {
   slug: String
   name: String
+  image: Json
   description: String
   visible: Boolean
   products: ProductUpdateManyWithoutCategoryInput
@@ -712,6 +723,7 @@ input CategoryUpdateWithoutChildrenDataInput {
 input CategoryUpdateWithoutProductsDataInput {
   slug: String
   name: String
+  image: Json
   description: String
   visible: Boolean
   children: CategoryUpdateManyWithoutChildrenInput
