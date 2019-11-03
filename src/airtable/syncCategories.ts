@@ -16,10 +16,6 @@ export const syncCategories = async () => {
         continue
       }
 
-      if(image){
-        console.log("image",image)
-      }
-
       const slug = slugify(name).toLowerCase()
 
       const data = {
