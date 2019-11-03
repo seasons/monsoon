@@ -7,10 +7,9 @@ export const HomepageResult = {
       return "Product"
     }
 
-    // FIXME: Add category
-    // if(obj.website){
-    //   return 'Category';
-    // }
+    if(obj.website){
+      return 'Category';
+    }
 
     if (obj.subTitle) {
       return "Collection"

@@ -7,6 +7,7 @@ enum BrandTier {
   Retro
   Boutique
   Local
+  Discovery
 }
 
 enum Size {
@@ -123,7 +124,7 @@ type Brand {
   slug: String! @unique
   brandCode: String! @unique
   description: String
-  isPrimaryBrand: Boolean @default(value: false)
+  isPrimaryBrand: Boolean! @default(value: false)
   logo: Json
   name: String!
   products: [Product!]!
@@ -139,7 +140,9 @@ type Category {
   slug: String! @unique
   name: String! @unique
   description: String
+  visible: Boolean! @default(value: false)
   products: [Product!]!
+  children: [Category!]! @relation(name: "CategoryToChildren")
 }
 
 type Color {
@@ -157,7 +160,8 @@ type Collection {
   images: Json!
   title: String
   subTitle: String
-  description: String
+  descriptionTop: String
+  descriptionBottom: String
   products: [Product!]!
 }
 
@@ -166,7 +170,7 @@ type CollectionGroup {
   slug: String! @unique
   title: String
   collectionCount: Int
-  collections: [Collection!]! 
+  collections: [Collection!]!
 }
 
 type Image {

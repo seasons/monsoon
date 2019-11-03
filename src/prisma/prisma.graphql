@@ -188,7 +188,7 @@ type Brand {
   slug: String!
   brandCode: String!
   description: String
-  isPrimaryBrand: Boolean
+  isPrimaryBrand: Boolean!
   logo: Json
   name: String!
   products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
@@ -274,7 +274,7 @@ type BrandPreviousValues {
   slug: String!
   brandCode: String!
   description: String
-  isPrimaryBrand: Boolean
+  isPrimaryBrand: Boolean!
   logo: Json
   name: String!
   since: DateTime
@@ -311,6 +311,7 @@ enum BrandTier {
   Retro
   Boutique
   Local
+  Discovery
 }
 
 input BrandUpdateInput {
@@ -496,7 +497,9 @@ type Category {
   slug: String!
   name: String!
   description: String
+  visible: Boolean!
   products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
+  children(where: CategoryWhereInput, orderBy: CategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Category!]
 }
 
 type CategoryConnection {
@@ -510,7 +513,14 @@ input CategoryCreateInput {
   slug: String!
   name: String!
   description: String
+  visible: Boolean
   products: ProductCreateManyWithoutCategoryInput
+  children: CategoryCreateManyWithoutChildrenInput
+}
+
+input CategoryCreateManyWithoutChildrenInput {
+  create: [CategoryCreateWithoutChildrenInput!]
+  connect: [CategoryWhereUniqueInput!]
 }
 
 input CategoryCreateOneWithoutProductsInput {
@@ -518,11 +528,22 @@ input CategoryCreateOneWithoutProductsInput {
   connect: CategoryWhereUniqueInput
 }
 
+input CategoryCreateWithoutChildrenInput {
+  id: ID
+  slug: String!
+  name: String!
+  description: String
+  visible: Boolean
+  products: ProductCreateManyWithoutCategoryInput
+}
+
 input CategoryCreateWithoutProductsInput {
   id: ID
   slug: String!
   name: String!
   description: String
+  visible: Boolean
+  children: CategoryCreateManyWithoutChildrenInput
 }
 
 type CategoryEdge {
@@ -539,6 +560,8 @@ enum CategoryOrderByInput {
   name_DESC
   description_ASC
   description_DESC
+  visible_ASC
+  visible_DESC
 }
 
 type CategoryPreviousValues {
@@ -546,6 +569,71 @@ type CategoryPreviousValues {
   slug: String!
   name: String!
   description: String
+  visible: Boolean!
+}
+
+input CategoryScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  slug: String
+  slug_not: String
+  slug_in: [String!]
+  slug_not_in: [String!]
+  slug_lt: String
+  slug_lte: String
+  slug_gt: String
+  slug_gte: String
+  slug_contains: String
+  slug_not_contains: String
+  slug_starts_with: String
+  slug_not_starts_with: String
+  slug_ends_with: String
+  slug_not_ends_with: String
+  name: String
+  name_not: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_lt: String
+  name_lte: String
+  name_gt: String
+  name_gte: String
+  name_contains: String
+  name_not_contains: String
+  name_starts_with: String
+  name_not_starts_with: String
+  name_ends_with: String
+  name_not_ends_with: String
+  description: String
+  description_not: String
+  description_in: [String!]
+  description_not_in: [String!]
+  description_lt: String
+  description_lte: String
+  description_gt: String
+  description_gte: String
+  description_contains: String
+  description_not_contains: String
+  description_starts_with: String
+  description_not_starts_with: String
+  description_ends_with: String
+  description_not_ends_with: String
+  visible: Boolean
+  visible_not: Boolean
+  AND: [CategoryScalarWhereInput!]
+  OR: [CategoryScalarWhereInput!]
+  NOT: [CategoryScalarWhereInput!]
 }
 
 type CategorySubscriptionPayload {
@@ -570,13 +658,40 @@ input CategoryUpdateInput {
   slug: String
   name: String
   description: String
+  visible: Boolean
   products: ProductUpdateManyWithoutCategoryInput
+  children: CategoryUpdateManyWithoutChildrenInput
+}
+
+input CategoryUpdateManyDataInput {
+  slug: String
+  name: String
+  description: String
+  visible: Boolean
 }
 
 input CategoryUpdateManyMutationInput {
   slug: String
   name: String
   description: String
+  visible: Boolean
+}
+
+input CategoryUpdateManyWithoutChildrenInput {
+  create: [CategoryCreateWithoutChildrenInput!]
+  delete: [CategoryWhereUniqueInput!]
+  connect: [CategoryWhereUniqueInput!]
+  set: [CategoryWhereUniqueInput!]
+  disconnect: [CategoryWhereUniqueInput!]
+  update: [CategoryUpdateWithWhereUniqueWithoutChildrenInput!]
+  upsert: [CategoryUpsertWithWhereUniqueWithoutChildrenInput!]
+  deleteMany: [CategoryScalarWhereInput!]
+  updateMany: [CategoryUpdateManyWithWhereNestedInput!]
+}
+
+input CategoryUpdateManyWithWhereNestedInput {
+  where: CategoryScalarWhereInput!
+  data: CategoryUpdateManyDataInput!
 }
 
 input CategoryUpdateOneRequiredWithoutProductsInput {
@@ -586,15 +701,36 @@ input CategoryUpdateOneRequiredWithoutProductsInput {
   connect: CategoryWhereUniqueInput
 }
 
+input CategoryUpdateWithoutChildrenDataInput {
+  slug: String
+  name: String
+  description: String
+  visible: Boolean
+  products: ProductUpdateManyWithoutCategoryInput
+}
+
 input CategoryUpdateWithoutProductsDataInput {
   slug: String
   name: String
   description: String
+  visible: Boolean
+  children: CategoryUpdateManyWithoutChildrenInput
+}
+
+input CategoryUpdateWithWhereUniqueWithoutChildrenInput {
+  where: CategoryWhereUniqueInput!
+  data: CategoryUpdateWithoutChildrenDataInput!
 }
 
 input CategoryUpsertWithoutProductsInput {
   update: CategoryUpdateWithoutProductsDataInput!
   create: CategoryCreateWithoutProductsInput!
+}
+
+input CategoryUpsertWithWhereUniqueWithoutChildrenInput {
+  where: CategoryWhereUniqueInput!
+  update: CategoryUpdateWithoutChildrenDataInput!
+  create: CategoryCreateWithoutChildrenInput!
 }
 
 input CategoryWhereInput {
@@ -654,9 +790,14 @@ input CategoryWhereInput {
   description_not_starts_with: String
   description_ends_with: String
   description_not_ends_with: String
+  visible: Boolean
+  visible_not: Boolean
   products_every: ProductWhereInput
   products_some: ProductWhereInput
   products_none: ProductWhereInput
+  children_every: CategoryWhereInput
+  children_some: CategoryWhereInput
+  children_none: CategoryWhereInput
   AND: [CategoryWhereInput!]
   OR: [CategoryWhereInput!]
   NOT: [CategoryWhereInput!]
@@ -674,7 +815,8 @@ type Collection {
   images: Json!
   title: String
   subTitle: String
-  description: String
+  descriptionTop: String
+  descriptionBottom: String
   products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
 }
 
@@ -690,7 +832,8 @@ input CollectionCreateInput {
   images: Json!
   title: String
   subTitle: String
-  description: String
+  descriptionTop: String
+  descriptionBottom: String
   products: ProductCreateManyInput
 }
 
@@ -855,8 +998,10 @@ enum CollectionOrderByInput {
   title_DESC
   subTitle_ASC
   subTitle_DESC
-  description_ASC
-  description_DESC
+  descriptionTop_ASC
+  descriptionTop_DESC
+  descriptionBottom_ASC
+  descriptionBottom_DESC
 }
 
 type CollectionPreviousValues {
@@ -865,7 +1010,8 @@ type CollectionPreviousValues {
   images: Json!
   title: String
   subTitle: String
-  description: String
+  descriptionTop: String
+  descriptionBottom: String
 }
 
 input CollectionScalarWhereInput {
@@ -925,20 +1071,34 @@ input CollectionScalarWhereInput {
   subTitle_not_starts_with: String
   subTitle_ends_with: String
   subTitle_not_ends_with: String
-  description: String
-  description_not: String
-  description_in: [String!]
-  description_not_in: [String!]
-  description_lt: String
-  description_lte: String
-  description_gt: String
-  description_gte: String
-  description_contains: String
-  description_not_contains: String
-  description_starts_with: String
-  description_not_starts_with: String
-  description_ends_with: String
-  description_not_ends_with: String
+  descriptionTop: String
+  descriptionTop_not: String
+  descriptionTop_in: [String!]
+  descriptionTop_not_in: [String!]
+  descriptionTop_lt: String
+  descriptionTop_lte: String
+  descriptionTop_gt: String
+  descriptionTop_gte: String
+  descriptionTop_contains: String
+  descriptionTop_not_contains: String
+  descriptionTop_starts_with: String
+  descriptionTop_not_starts_with: String
+  descriptionTop_ends_with: String
+  descriptionTop_not_ends_with: String
+  descriptionBottom: String
+  descriptionBottom_not: String
+  descriptionBottom_in: [String!]
+  descriptionBottom_not_in: [String!]
+  descriptionBottom_lt: String
+  descriptionBottom_lte: String
+  descriptionBottom_gt: String
+  descriptionBottom_gte: String
+  descriptionBottom_contains: String
+  descriptionBottom_not_contains: String
+  descriptionBottom_starts_with: String
+  descriptionBottom_not_starts_with: String
+  descriptionBottom_ends_with: String
+  descriptionBottom_not_ends_with: String
   AND: [CollectionScalarWhereInput!]
   OR: [CollectionScalarWhereInput!]
   NOT: [CollectionScalarWhereInput!]
@@ -967,7 +1127,8 @@ input CollectionUpdateDataInput {
   images: Json
   title: String
   subTitle: String
-  description: String
+  descriptionTop: String
+  descriptionBottom: String
   products: ProductUpdateManyInput
 }
 
@@ -976,7 +1137,8 @@ input CollectionUpdateInput {
   images: Json
   title: String
   subTitle: String
-  description: String
+  descriptionTop: String
+  descriptionBottom: String
   products: ProductUpdateManyInput
 }
 
@@ -985,7 +1147,8 @@ input CollectionUpdateManyDataInput {
   images: Json
   title: String
   subTitle: String
-  description: String
+  descriptionTop: String
+  descriptionBottom: String
 }
 
 input CollectionUpdateManyInput {
@@ -1005,7 +1168,8 @@ input CollectionUpdateManyMutationInput {
   images: Json
   title: String
   subTitle: String
-  description: String
+  descriptionTop: String
+  descriptionBottom: String
 }
 
 input CollectionUpdateManyWithWhereNestedInput {
@@ -1081,20 +1245,34 @@ input CollectionWhereInput {
   subTitle_not_starts_with: String
   subTitle_ends_with: String
   subTitle_not_ends_with: String
-  description: String
-  description_not: String
-  description_in: [String!]
-  description_not_in: [String!]
-  description_lt: String
-  description_lte: String
-  description_gt: String
-  description_gte: String
-  description_contains: String
-  description_not_contains: String
-  description_starts_with: String
-  description_not_starts_with: String
-  description_ends_with: String
-  description_not_ends_with: String
+  descriptionTop: String
+  descriptionTop_not: String
+  descriptionTop_in: [String!]
+  descriptionTop_not_in: [String!]
+  descriptionTop_lt: String
+  descriptionTop_lte: String
+  descriptionTop_gt: String
+  descriptionTop_gte: String
+  descriptionTop_contains: String
+  descriptionTop_not_contains: String
+  descriptionTop_starts_with: String
+  descriptionTop_not_starts_with: String
+  descriptionTop_ends_with: String
+  descriptionTop_not_ends_with: String
+  descriptionBottom: String
+  descriptionBottom_not: String
+  descriptionBottom_in: [String!]
+  descriptionBottom_not_in: [String!]
+  descriptionBottom_lt: String
+  descriptionBottom_lte: String
+  descriptionBottom_gt: String
+  descriptionBottom_gte: String
+  descriptionBottom_contains: String
+  descriptionBottom_not_contains: String
+  descriptionBottom_starts_with: String
+  descriptionBottom_not_starts_with: String
+  descriptionBottom_ends_with: String
+  descriptionBottom_not_ends_with: String
   products_every: ProductWhereInput
   products_some: ProductWhereInput
   products_none: ProductWhereInput

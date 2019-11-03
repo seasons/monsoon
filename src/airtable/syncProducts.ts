@@ -1,12 +1,13 @@
 import { getAllBrands, getAllCategories, getAllProducts } from "./utils"
 import { prisma, ProductCreateInput } from "../prisma"
 import slugify from "slugify"
-import { isEmpty } from "lodash"
+import { isEmpty, uniqBy } from "lodash"
 
 export const syncProducts = async () => {
   const allBrands = await getAllBrands()
-  const allCategories = await getAllCategories()
   const allProducts = await getAllProducts()
+  const allCategories = await getAllCategories() 
+
   let i = 1
 
   for (let record of allProducts) {
