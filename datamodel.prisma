@@ -139,6 +139,7 @@ type Category {
   id: ID! @id
   slug: String! @unique
   name: String! @unique
+  image: Json
   description: String
   visible: Boolean! @default(value: false)
   products: [Product!]!

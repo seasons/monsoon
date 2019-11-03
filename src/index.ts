@@ -12,10 +12,7 @@ const app = express()
 app.use(
   checkJwt,
   createGetUserMiddleware(prisma),
-  cors({
-    origin: [/\.seasons\.nyc$/, "seedling-staging.herokuapp.com"],
-    credentials: true,
-  })
+  cors()
 )
 server.applyMiddleware({ app, path: "/" })
 app.listen({ port: process.env.PORT || 4000 }, () =>
