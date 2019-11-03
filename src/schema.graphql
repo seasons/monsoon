@@ -8,6 +8,7 @@ directive @isOwnerOrHasRole(type: String, roles: [String]) on FIELD_DEFINITION
 type Query {
   me: Me @isAuthenticated
   products(
+    category: String
     where: ProductWhereInput
     orderBy: ProductOrderByInput
     skip: Int
