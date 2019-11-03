@@ -92,12 +92,10 @@ export const auth = {
     let token
     try {
       token = await getAuth0UserAccessToken(email, password)
-      console.log('token', token)
     } catch (err) {
       if (err.message.includes("403")) {
         throw new ForbiddenError(err)
       }
-      console.log('err', err)
       throw new UserInputError(err)
     }
 
