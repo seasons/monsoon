@@ -3,6 +3,7 @@ import jwksClient from "jwks-rsa"
 import request from "request"
 import { Context } from "../utils"
 import get from "lodash.get"
+import { Customer } from "../prisma"
 
 const PW_STRENGTH_RULES_URL =
   "https://manage.auth0.com/dashboard/us/seasons/connections/database/con_btTULQOf6kAxxbCz/security"
@@ -54,7 +55,7 @@ export async function getUserFromContext(ctx: Context) {
   })
 }
 
-export async function getCustomerFromContext(ctx: Context) {
+export async function getCustomerFromContext(ctx: Context): Promise<Customer> {
   // Get the user on the context
   let user
   try {

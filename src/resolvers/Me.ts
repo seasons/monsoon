@@ -8,8 +8,13 @@ export const Me = {
     const { id } = await getUserId(ctx)
     return ctx.prisma.user({ id })
   },
-  customer: async (parent, args, ctx: Context) => {
+  customer: async (parent, args, ctx: Context, info) => {
     const customer = await getCustomerFromContext(ctx)
-    return customer
+    return await ctx.db.query.customer(
+      {
+        where: { id: customer.id },
+      },
+      info
+    )
   },
 }
