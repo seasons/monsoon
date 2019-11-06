@@ -57,6 +57,20 @@ type Query {
     last: Int
   ): [ProductFunction]!
   homepage: Homepage
+  chargebeeCheckout(planID: PlanID): ChargebeeCheckout
+}
+
+type ChargebeeCheckout {
+  created_at: Int!
+  embed: Boolean!
+  expires_at: Int!
+  id: String!
+  object: String!
+  resource_version: Int!
+  state: String!
+  type: String!
+  updated_at: Int!
+  url: String!
 }
 
 type Mutation {
@@ -71,7 +85,6 @@ type Mutation {
   addCustomerDetails(details: CustomerDetailCreateInput): Customer!
     @hasRole(roles: ["Customer"])
   reserveItems(items: [ID!]!): Order
-  setCreditCard(creditCard: CreditCardCreateInput): CreditCard
 }
 
 type AuthPayload {
@@ -170,4 +183,9 @@ enum HomePageSectionType {
   Categories
   Products
   Brands
+}
+
+enum PlanID {
+  AllAccess
+  Essential
 }
