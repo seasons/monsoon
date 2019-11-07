@@ -323,8 +323,6 @@ type Customer {
   status: CustomerStatus
   detail: CustomerDetail
   bag: Bag!
-  # activeReservation: Reservation
-  #   @relation(name: "CustomerActiveReservation", link: INLINE)
   reservations: [Reservation] @relation(name: "CustomerToReservation")
   savedProducts: [Product!]!
 }

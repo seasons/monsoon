@@ -165,6 +165,7 @@ input CreditCardCreateInput {
 type Me {
   user: User!
   customer: Customer!
+  activeReservation: Reservation
 }
 
 union HomepageResult = Category | Product | Brand | Collection
