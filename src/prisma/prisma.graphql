@@ -1538,6 +1538,8 @@ type Customer {
   status: CustomerStatus
   detail: CustomerDetail
   bag: Bag!
+  reservations(where: ReservationWhereInput, orderBy: ReservationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Reservation!]
+  savedProducts(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
 }
 
 type CustomerConnection {
@@ -1552,10 +1554,17 @@ input CustomerCreateInput {
   status: CustomerStatus
   detail: CustomerDetailCreateOneInput
   bag: BagCreateOneWithoutCustomerInput!
+  reservations: ReservationCreateManyWithoutCustomerInput
+  savedProducts: ProductCreateManyInput
 }
 
 input CustomerCreateOneWithoutBagInput {
   create: CustomerCreateWithoutBagInput
+  connect: CustomerWhereUniqueInput
+}
+
+input CustomerCreateOneWithoutReservationsInput {
+  create: CustomerCreateWithoutReservationsInput
   connect: CustomerWhereUniqueInput
 }
 
@@ -1564,6 +1573,17 @@ input CustomerCreateWithoutBagInput {
   user: UserCreateOneInput!
   status: CustomerStatus
   detail: CustomerDetailCreateOneInput
+  reservations: ReservationCreateManyWithoutCustomerInput
+  savedProducts: ProductCreateManyInput
+}
+
+input CustomerCreateWithoutReservationsInput {
+  id: ID
+  user: UserCreateOneInput!
+  status: CustomerStatus
+  detail: CustomerDetailCreateOneInput
+  bag: BagCreateOneWithoutCustomerInput!
+  savedProducts: ProductCreateManyInput
 }
 
 type CustomerDetail {
@@ -2075,6 +2095,7 @@ type CustomerPreviousValues {
 enum CustomerStatus {
   Invited
   Waitlisted
+  Authorized
   Activated
   Suspended
   Deactivated
@@ -2103,6 +2124,8 @@ input CustomerUpdateInput {
   status: CustomerStatus
   detail: CustomerDetailUpdateOneInput
   bag: BagUpdateOneRequiredWithoutCustomerInput
+  reservations: ReservationUpdateManyWithoutCustomerInput
+  savedProducts: ProductUpdateManyInput
 }
 
 input CustomerUpdateManyMutationInput {
@@ -2116,15 +2139,37 @@ input CustomerUpdateOneRequiredWithoutBagInput {
   connect: CustomerWhereUniqueInput
 }
 
+input CustomerUpdateOneRequiredWithoutReservationsInput {
+  create: CustomerCreateWithoutReservationsInput
+  update: CustomerUpdateWithoutReservationsDataInput
+  upsert: CustomerUpsertWithoutReservationsInput
+  connect: CustomerWhereUniqueInput
+}
+
 input CustomerUpdateWithoutBagDataInput {
   user: UserUpdateOneRequiredInput
   status: CustomerStatus
   detail: CustomerDetailUpdateOneInput
+  reservations: ReservationUpdateManyWithoutCustomerInput
+  savedProducts: ProductUpdateManyInput
+}
+
+input CustomerUpdateWithoutReservationsDataInput {
+  user: UserUpdateOneRequiredInput
+  status: CustomerStatus
+  detail: CustomerDetailUpdateOneInput
+  bag: BagUpdateOneRequiredWithoutCustomerInput
+  savedProducts: ProductUpdateManyInput
 }
 
 input CustomerUpsertWithoutBagInput {
   update: CustomerUpdateWithoutBagDataInput!
   create: CustomerCreateWithoutBagInput!
+}
+
+input CustomerUpsertWithoutReservationsInput {
+  update: CustomerUpdateWithoutReservationsDataInput!
+  create: CustomerCreateWithoutReservationsInput!
 }
 
 input CustomerWhereInput {
@@ -2149,6 +2194,12 @@ input CustomerWhereInput {
   status_not_in: [CustomerStatus!]
   detail: CustomerDetailWhereInput
   bag: BagWhereInput
+  reservations_every: ReservationWhereInput
+  reservations_some: ReservationWhereInput
+  reservations_none: ReservationWhereInput
+  savedProducts_every: ProductWhereInput
+  savedProducts_some: ProductWhereInput
+  savedProducts_none: ProductWhereInput
   AND: [CustomerWhereInput!]
   OR: [CustomerWhereInput!]
   NOT: [CustomerWhereInput!]
@@ -5128,10 +5179,14 @@ type Query {
 type Reservation {
   id: ID!
   user: User!
+  customer: Customer!
   shippingLabel: Label!
   returnLabel: Label
+  location: Location
   products(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct!]
+  reservationNumber: Int!
   shipped: Boolean!
+  status: ReservationStatus!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -5145,10 +5200,31 @@ type ReservationConnection {
 input ReservationCreateInput {
   id: ID
   user: UserCreateOneInput!
+  customer: CustomerCreateOneWithoutReservationsInput!
   shippingLabel: LabelCreateOneInput!
   returnLabel: LabelCreateOneInput
+  location: LocationCreateOneInput
   products: PhysicalProductCreateManyInput
+  reservationNumber: Int!
   shipped: Boolean!
+  status: ReservationStatus!
+}
+
+input ReservationCreateManyWithoutCustomerInput {
+  create: [ReservationCreateWithoutCustomerInput!]
+  connect: [ReservationWhereUniqueInput!]
+}
+
+input ReservationCreateWithoutCustomerInput {
+  id: ID
+  user: UserCreateOneInput!
+  shippingLabel: LabelCreateOneInput!
+  returnLabel: LabelCreateOneInput
+  location: LocationCreateOneInput
+  products: PhysicalProductCreateManyInput
+  reservationNumber: Int!
+  shipped: Boolean!
+  status: ReservationStatus!
 }
 
 type ReservationEdge {
@@ -5159,8 +5235,12 @@ type ReservationEdge {
 enum ReservationOrderByInput {
   id_ASC
   id_DESC
+  reservationNumber_ASC
+  reservationNumber_DESC
   shipped_ASC
   shipped_DESC
+  status_ASC
+  status_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -5169,9 +5249,71 @@ enum ReservationOrderByInput {
 
 type ReservationPreviousValues {
   id: ID!
+  reservationNumber: Int!
   shipped: Boolean!
+  status: ReservationStatus!
   createdAt: DateTime!
   updatedAt: DateTime!
+}
+
+input ReservationScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  reservationNumber: Int
+  reservationNumber_not: Int
+  reservationNumber_in: [Int!]
+  reservationNumber_not_in: [Int!]
+  reservationNumber_lt: Int
+  reservationNumber_lte: Int
+  reservationNumber_gt: Int
+  reservationNumber_gte: Int
+  shipped: Boolean
+  shipped_not: Boolean
+  status: ReservationStatus
+  status_not: ReservationStatus
+  status_in: [ReservationStatus!]
+  status_not_in: [ReservationStatus!]
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [ReservationScalarWhereInput!]
+  OR: [ReservationScalarWhereInput!]
+  NOT: [ReservationScalarWhereInput!]
+}
+
+enum ReservationStatus {
+  InQueue
+  OnHold
+  InTransit
+  Shipped
+  Received
+  Active
+  Completed
 }
 
 type ReservationSubscriptionPayload {
@@ -5194,14 +5336,65 @@ input ReservationSubscriptionWhereInput {
 
 input ReservationUpdateInput {
   user: UserUpdateOneRequiredInput
+  customer: CustomerUpdateOneRequiredWithoutReservationsInput
   shippingLabel: LabelUpdateOneRequiredInput
   returnLabel: LabelUpdateOneInput
+  location: LocationUpdateOneInput
   products: PhysicalProductUpdateManyInput
+  reservationNumber: Int
   shipped: Boolean
+  status: ReservationStatus
+}
+
+input ReservationUpdateManyDataInput {
+  reservationNumber: Int
+  shipped: Boolean
+  status: ReservationStatus
 }
 
 input ReservationUpdateManyMutationInput {
+  reservationNumber: Int
   shipped: Boolean
+  status: ReservationStatus
+}
+
+input ReservationUpdateManyWithoutCustomerInput {
+  create: [ReservationCreateWithoutCustomerInput!]
+  delete: [ReservationWhereUniqueInput!]
+  connect: [ReservationWhereUniqueInput!]
+  set: [ReservationWhereUniqueInput!]
+  disconnect: [ReservationWhereUniqueInput!]
+  update: [ReservationUpdateWithWhereUniqueWithoutCustomerInput!]
+  upsert: [ReservationUpsertWithWhereUniqueWithoutCustomerInput!]
+  deleteMany: [ReservationScalarWhereInput!]
+  updateMany: [ReservationUpdateManyWithWhereNestedInput!]
+}
+
+input ReservationUpdateManyWithWhereNestedInput {
+  where: ReservationScalarWhereInput!
+  data: ReservationUpdateManyDataInput!
+}
+
+input ReservationUpdateWithoutCustomerDataInput {
+  user: UserUpdateOneRequiredInput
+  shippingLabel: LabelUpdateOneRequiredInput
+  returnLabel: LabelUpdateOneInput
+  location: LocationUpdateOneInput
+  products: PhysicalProductUpdateManyInput
+  reservationNumber: Int
+  shipped: Boolean
+  status: ReservationStatus
+}
+
+input ReservationUpdateWithWhereUniqueWithoutCustomerInput {
+  where: ReservationWhereUniqueInput!
+  data: ReservationUpdateWithoutCustomerDataInput!
+}
+
+input ReservationUpsertWithWhereUniqueWithoutCustomerInput {
+  where: ReservationWhereUniqueInput!
+  update: ReservationUpdateWithoutCustomerDataInput!
+  create: ReservationCreateWithoutCustomerInput!
 }
 
 input ReservationWhereInput {
@@ -5220,13 +5413,27 @@ input ReservationWhereInput {
   id_ends_with: ID
   id_not_ends_with: ID
   user: UserWhereInput
+  customer: CustomerWhereInput
   shippingLabel: LabelWhereInput
   returnLabel: LabelWhereInput
+  location: LocationWhereInput
   products_every: PhysicalProductWhereInput
   products_some: PhysicalProductWhereInput
   products_none: PhysicalProductWhereInput
+  reservationNumber: Int
+  reservationNumber_not: Int
+  reservationNumber_in: [Int!]
+  reservationNumber_not_in: [Int!]
+  reservationNumber_lt: Int
+  reservationNumber_lte: Int
+  reservationNumber_gt: Int
+  reservationNumber_gte: Int
   shipped: Boolean
   shipped_not: Boolean
+  status: ReservationStatus
+  status_not: ReservationStatus
+  status_in: [ReservationStatus!]
+  status_not_in: [ReservationStatus!]
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]

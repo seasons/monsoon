@@ -5,6 +5,8 @@ import { checkJwt } from "./middleware/jwt"
 import { createGetUserMiddleware } from "./middleware/user"
 import { prisma } from "./prisma"
 import cors from "cors"
+import { app as webhooks } from "./webhooks"
+import bodyParser from "body-parser"
 
 const server = new ApolloServer(serverOptions)
 
@@ -17,6 +19,8 @@ app.use(
     credentials: true,
   })
 )
+app.use(bodyParser.json())
+app.use(webhooks)
 server.applyMiddleware({ app, path: "/" })
 app.listen({ port: process.env.PORT || 4000 }, () =>
   console.log(`🚀 Server ready at http://localhost:4000/`)
