@@ -1,6 +1,6 @@
 import { Context } from "../utils"
 import { Homepage } from "./Homepage"
-import { getUserId } from "../auth/utils"
+import { getUserId, getCustomerFromContext } from "../auth/utils"
 import chargebee from "chargebee"
 
 export const Query = {
@@ -61,7 +61,10 @@ export const Query = {
     // get the user's info
     const { id } = await getUserId(ctx)
     const { email, firstName, lastName } = await ctx.prisma.user({ id })
-    console.log(email)
+    const customer = await getCustomerFromContext(ctx)
+    let { phoneNumber } = await ctx.prisma
+      .customer({ id: customer.id })
+      .detail()
 
     // translate the passed planID into a chargebee-readable version
     let truePlanID
@@ -89,6 +92,7 @@ export const Query = {
             email: email,
             first_name: firstName,
             last_name: lastName,
+            phone: phoneNumber,
           },
         })
         .request(function(error, result) {
