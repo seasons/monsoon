@@ -70,8 +70,12 @@ type Mutation {
   login(email: String!, password: String!): AuthPayload!
   addCustomerDetails(details: CustomerDetailCreateInput): Customer!
     @hasRole(roles: ["Customer"])
-  reserveItems(items: [ID!]!): Order
+  reserveItems(items: [ID!]!, options: ReserveItemsOptions): Order
   setCreditCard(creditCard: CreditCardCreateInput): CreditCard
+}
+
+input ReserveItemsOptions {
+  dryRun: Boolean
 }
 
 type AuthPayload {
