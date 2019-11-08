@@ -119,6 +119,11 @@ enum ReservationStatus {
   Received
 }
 
+enum Plan {
+    AllAccess
+    Essential
+}
+
 type Brand {
   id: ID! @id
   slug: String! @unique
@@ -317,6 +322,8 @@ type Customer {
   user: User! @unique
   status: CustomerStatus
   detail: CustomerDetail
+  billingInfo: BillingInfo
+  plan: Plan
   bag: Bag!
 }
 
@@ -340,3 +347,19 @@ type Label {
   name: String
   image: String
 }
+
+type BillingInfo {
+  id: ID! @id
+  brand: String!
+  name: String
+  last_digits: String!
+  expiration_month: Int!
+  expiration_year: Int!
+  street1: String
+  street2: String
+  city: String
+  state: String
+  country: String
+  postal_code: String
+}
+

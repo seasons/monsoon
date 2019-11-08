@@ -6,6 +6,10 @@ export const typeDefs = /* GraphQL */ `type AggregateBag {
   count: Int!
 }
 
+type AggregateBillingInfo {
+  count: Int!
+}
+
 type AggregateBrand {
   count: Int!
 }
@@ -185,6 +189,334 @@ input BagWhereUniqueInput {
 
 type BatchPayload {
   count: Long!
+}
+
+type BillingInfo {
+  id: ID!
+  brand: String!
+  name: String
+  last_digits: String!
+  expiration_month: Int!
+  expiration_year: Int!
+  street1: String
+  street2: String
+  city: String
+  state: String
+  country: String
+  postal_code: String
+}
+
+type BillingInfoConnection {
+  pageInfo: PageInfo!
+  edges: [BillingInfoEdge]!
+  aggregate: AggregateBillingInfo!
+}
+
+input BillingInfoCreateInput {
+  id: ID
+  brand: String!
+  name: String
+  last_digits: String!
+  expiration_month: Int!
+  expiration_year: Int!
+  street1: String
+  street2: String
+  city: String
+  state: String
+  country: String
+  postal_code: String
+}
+
+input BillingInfoCreateOneInput {
+  create: BillingInfoCreateInput
+  connect: BillingInfoWhereUniqueInput
+}
+
+type BillingInfoEdge {
+  node: BillingInfo!
+  cursor: String!
+}
+
+enum BillingInfoOrderByInput {
+  id_ASC
+  id_DESC
+  brand_ASC
+  brand_DESC
+  name_ASC
+  name_DESC
+  last_digits_ASC
+  last_digits_DESC
+  expiration_month_ASC
+  expiration_month_DESC
+  expiration_year_ASC
+  expiration_year_DESC
+  street1_ASC
+  street1_DESC
+  street2_ASC
+  street2_DESC
+  city_ASC
+  city_DESC
+  state_ASC
+  state_DESC
+  country_ASC
+  country_DESC
+  postal_code_ASC
+  postal_code_DESC
+}
+
+type BillingInfoPreviousValues {
+  id: ID!
+  brand: String!
+  name: String
+  last_digits: String!
+  expiration_month: Int!
+  expiration_year: Int!
+  street1: String
+  street2: String
+  city: String
+  state: String
+  country: String
+  postal_code: String
+}
+
+type BillingInfoSubscriptionPayload {
+  mutation: MutationType!
+  node: BillingInfo
+  updatedFields: [String!]
+  previousValues: BillingInfoPreviousValues
+}
+
+input BillingInfoSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: BillingInfoWhereInput
+  AND: [BillingInfoSubscriptionWhereInput!]
+  OR: [BillingInfoSubscriptionWhereInput!]
+  NOT: [BillingInfoSubscriptionWhereInput!]
+}
+
+input BillingInfoUpdateDataInput {
+  brand: String
+  name: String
+  last_digits: String
+  expiration_month: Int
+  expiration_year: Int
+  street1: String
+  street2: String
+  city: String
+  state: String
+  country: String
+  postal_code: String
+}
+
+input BillingInfoUpdateInput {
+  brand: String
+  name: String
+  last_digits: String
+  expiration_month: Int
+  expiration_year: Int
+  street1: String
+  street2: String
+  city: String
+  state: String
+  country: String
+  postal_code: String
+}
+
+input BillingInfoUpdateManyMutationInput {
+  brand: String
+  name: String
+  last_digits: String
+  expiration_month: Int
+  expiration_year: Int
+  street1: String
+  street2: String
+  city: String
+  state: String
+  country: String
+  postal_code: String
+}
+
+input BillingInfoUpdateOneInput {
+  create: BillingInfoCreateInput
+  update: BillingInfoUpdateDataInput
+  upsert: BillingInfoUpsertNestedInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: BillingInfoWhereUniqueInput
+}
+
+input BillingInfoUpsertNestedInput {
+  update: BillingInfoUpdateDataInput!
+  create: BillingInfoCreateInput!
+}
+
+input BillingInfoWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  brand: String
+  brand_not: String
+  brand_in: [String!]
+  brand_not_in: [String!]
+  brand_lt: String
+  brand_lte: String
+  brand_gt: String
+  brand_gte: String
+  brand_contains: String
+  brand_not_contains: String
+  brand_starts_with: String
+  brand_not_starts_with: String
+  brand_ends_with: String
+  brand_not_ends_with: String
+  name: String
+  name_not: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_lt: String
+  name_lte: String
+  name_gt: String
+  name_gte: String
+  name_contains: String
+  name_not_contains: String
+  name_starts_with: String
+  name_not_starts_with: String
+  name_ends_with: String
+  name_not_ends_with: String
+  last_digits: String
+  last_digits_not: String
+  last_digits_in: [String!]
+  last_digits_not_in: [String!]
+  last_digits_lt: String
+  last_digits_lte: String
+  last_digits_gt: String
+  last_digits_gte: String
+  last_digits_contains: String
+  last_digits_not_contains: String
+  last_digits_starts_with: String
+  last_digits_not_starts_with: String
+  last_digits_ends_with: String
+  last_digits_not_ends_with: String
+  expiration_month: Int
+  expiration_month_not: Int
+  expiration_month_in: [Int!]
+  expiration_month_not_in: [Int!]
+  expiration_month_lt: Int
+  expiration_month_lte: Int
+  expiration_month_gt: Int
+  expiration_month_gte: Int
+  expiration_year: Int
+  expiration_year_not: Int
+  expiration_year_in: [Int!]
+  expiration_year_not_in: [Int!]
+  expiration_year_lt: Int
+  expiration_year_lte: Int
+  expiration_year_gt: Int
+  expiration_year_gte: Int
+  street1: String
+  street1_not: String
+  street1_in: [String!]
+  street1_not_in: [String!]
+  street1_lt: String
+  street1_lte: String
+  street1_gt: String
+  street1_gte: String
+  street1_contains: String
+  street1_not_contains: String
+  street1_starts_with: String
+  street1_not_starts_with: String
+  street1_ends_with: String
+  street1_not_ends_with: String
+  street2: String
+  street2_not: String
+  street2_in: [String!]
+  street2_not_in: [String!]
+  street2_lt: String
+  street2_lte: String
+  street2_gt: String
+  street2_gte: String
+  street2_contains: String
+  street2_not_contains: String
+  street2_starts_with: String
+  street2_not_starts_with: String
+  street2_ends_with: String
+  street2_not_ends_with: String
+  city: String
+  city_not: String
+  city_in: [String!]
+  city_not_in: [String!]
+  city_lt: String
+  city_lte: String
+  city_gt: String
+  city_gte: String
+  city_contains: String
+  city_not_contains: String
+  city_starts_with: String
+  city_not_starts_with: String
+  city_ends_with: String
+  city_not_ends_with: String
+  state: String
+  state_not: String
+  state_in: [String!]
+  state_not_in: [String!]
+  state_lt: String
+  state_lte: String
+  state_gt: String
+  state_gte: String
+  state_contains: String
+  state_not_contains: String
+  state_starts_with: String
+  state_not_starts_with: String
+  state_ends_with: String
+  state_not_ends_with: String
+  country: String
+  country_not: String
+  country_in: [String!]
+  country_not_in: [String!]
+  country_lt: String
+  country_lte: String
+  country_gt: String
+  country_gte: String
+  country_contains: String
+  country_not_contains: String
+  country_starts_with: String
+  country_not_starts_with: String
+  country_ends_with: String
+  country_not_ends_with: String
+  postal_code: String
+  postal_code_not: String
+  postal_code_in: [String!]
+  postal_code_not_in: [String!]
+  postal_code_lt: String
+  postal_code_lte: String
+  postal_code_gt: String
+  postal_code_gte: String
+  postal_code_contains: String
+  postal_code_not_contains: String
+  postal_code_starts_with: String
+  postal_code_not_starts_with: String
+  postal_code_ends_with: String
+  postal_code_not_ends_with: String
+  AND: [BillingInfoWhereInput!]
+  OR: [BillingInfoWhereInput!]
+  NOT: [BillingInfoWhereInput!]
+}
+
+input BillingInfoWhereUniqueInput {
+  id: ID
 }
 
 type Brand {
@@ -1541,6 +1873,8 @@ type Customer {
   user: User!
   status: CustomerStatus
   detail: CustomerDetail
+  billingInfo: BillingInfo
+  plan: Plan
   bag: Bag!
 }
 
@@ -1555,6 +1889,8 @@ input CustomerCreateInput {
   user: UserCreateOneInput!
   status: CustomerStatus
   detail: CustomerDetailCreateOneInput
+  billingInfo: BillingInfoCreateOneInput
+  plan: Plan
   bag: BagCreateOneWithoutCustomerInput!
 }
 
@@ -1568,6 +1904,8 @@ input CustomerCreateWithoutBagInput {
   user: UserCreateOneInput!
   status: CustomerStatus
   detail: CustomerDetailCreateOneInput
+  billingInfo: BillingInfoCreateOneInput
+  plan: Plan
 }
 
 type CustomerDetail {
@@ -2069,11 +2407,14 @@ enum CustomerOrderByInput {
   id_DESC
   status_ASC
   status_DESC
+  plan_ASC
+  plan_DESC
 }
 
 type CustomerPreviousValues {
   id: ID!
   status: CustomerStatus
+  plan: Plan
 }
 
 enum CustomerStatus {
@@ -2106,11 +2447,14 @@ input CustomerUpdateInput {
   user: UserUpdateOneRequiredInput
   status: CustomerStatus
   detail: CustomerDetailUpdateOneInput
+  billingInfo: BillingInfoUpdateOneInput
+  plan: Plan
   bag: BagUpdateOneRequiredWithoutCustomerInput
 }
 
 input CustomerUpdateManyMutationInput {
   status: CustomerStatus
+  plan: Plan
 }
 
 input CustomerUpdateOneRequiredWithoutBagInput {
@@ -2124,6 +2468,8 @@ input CustomerUpdateWithoutBagDataInput {
   user: UserUpdateOneRequiredInput
   status: CustomerStatus
   detail: CustomerDetailUpdateOneInput
+  billingInfo: BillingInfoUpdateOneInput
+  plan: Plan
 }
 
 input CustomerUpsertWithoutBagInput {
@@ -2152,6 +2498,11 @@ input CustomerWhereInput {
   status_in: [CustomerStatus!]
   status_not_in: [CustomerStatus!]
   detail: CustomerDetailWhereInput
+  billingInfo: BillingInfoWhereInput
+  plan: Plan
+  plan_not: Plan
+  plan_in: [Plan!]
+  plan_not_in: [Plan!]
   bag: BagWhereInput
   AND: [CustomerWhereInput!]
   OR: [CustomerWhereInput!]
@@ -3023,6 +3374,12 @@ type Mutation {
   upsertBag(where: BagWhereUniqueInput!, create: BagCreateInput!, update: BagUpdateInput!): Bag!
   deleteBag(where: BagWhereUniqueInput!): Bag
   deleteManyBags(where: BagWhereInput): BatchPayload!
+  createBillingInfo(data: BillingInfoCreateInput!): BillingInfo!
+  updateBillingInfo(data: BillingInfoUpdateInput!, where: BillingInfoWhereUniqueInput!): BillingInfo
+  updateManyBillingInfoes(data: BillingInfoUpdateManyMutationInput!, where: BillingInfoWhereInput): BatchPayload!
+  upsertBillingInfo(where: BillingInfoWhereUniqueInput!, create: BillingInfoCreateInput!, update: BillingInfoUpdateInput!): BillingInfo!
+  deleteBillingInfo(where: BillingInfoWhereUniqueInput!): BillingInfo
+  deleteManyBillingInfoes(where: BillingInfoWhereInput): BatchPayload!
   createBrand(data: BrandCreateInput!): Brand!
   updateBrand(data: BrandUpdateInput!, where: BrandWhereUniqueInput!): Brand
   updateManyBrands(data: BrandUpdateManyMutationInput!, where: BrandWhereInput): BatchPayload!
@@ -3559,6 +3916,11 @@ input PhysicalProductWhereInput {
 input PhysicalProductWhereUniqueInput {
   id: ID
   seasonsUID: String
+}
+
+enum Plan {
+  AllAccess
+  Essential
 }
 
 type Product {
@@ -5075,6 +5437,9 @@ type Query {
   bag(where: BagWhereUniqueInput!): Bag
   bags(where: BagWhereInput, orderBy: BagOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Bag]!
   bagsConnection(where: BagWhereInput, orderBy: BagOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BagConnection!
+  billingInfo(where: BillingInfoWhereUniqueInput!): BillingInfo
+  billingInfoes(where: BillingInfoWhereInput, orderBy: BillingInfoOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [BillingInfo]!
+  billingInfoesConnection(where: BillingInfoWhereInput, orderBy: BillingInfoOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BillingInfoConnection!
   brand(where: BrandWhereUniqueInput!): Brand
   brands(where: BrandWhereInput, orderBy: BrandOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Brand]!
   brandsConnection(where: BrandWhereInput, orderBy: BrandOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BrandConnection!
@@ -5266,6 +5631,7 @@ enum Size {
 
 type Subscription {
   bag(where: BagSubscriptionWhereInput): BagSubscriptionPayload
+  billingInfo(where: BillingInfoSubscriptionWhereInput): BillingInfoSubscriptionPayload
   brand(where: BrandSubscriptionWhereInput): BrandSubscriptionPayload
   category(where: CategorySubscriptionWhereInput): CategorySubscriptionPayload
   collection(where: CollectionSubscriptionWhereInput): CollectionSubscriptionPayload

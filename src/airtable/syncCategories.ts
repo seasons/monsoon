@@ -23,7 +23,7 @@ export const syncCategories = async () => {
         name,
         description,
         visible,
-        image
+        image,
       } as CategoryCreateInput
 
       const category = await prisma.upsertCategory({
@@ -131,4 +131,3 @@ function getLeafNodes(nodes, result = []) {
   }
   return result
 }
-

@@ -85,6 +85,12 @@ type Mutation {
   addCustomerDetails(details: CustomerDetailCreateInput): Customer!
     @hasRole(roles: ["Customer"])
   reserveItems(items: [ID!]!): Order
+  saveCustomerBillingInfo: BillingInfoPlayoad
+}
+
+type BillingInfoPlayoad {
+  billingInfo: BillingInfo
+  plan: Plan
 }
 
 type AuthPayload {
@@ -117,58 +123,6 @@ type HomepageSection {
   type: HomePageSectionType!
   results: [HomepageResult!]!
   title: String
-}
-
-type CreditCard {
-  # A type-specific ID likely used as a database ID.
-  id: ID!
-
-  # Brand of credit card
-  brand: String!
-
-  # Name on the credit card
-  name: String
-
-  # Last four digits on the credit card
-  last_digits: String!
-
-  # Credit card's expiration month
-  expiration_month: Int!
-
-  # Credit card's expiration year
-  expiration_year: Int!
-
-  # Billing address street1
-  street1: String
-
-  # Billing address street2
-  street2: String
-
-  # Billing address city
-  city: String
-
-  # Billing address state
-  state: String
-
-  # Billing address country code
-  country: String
-
-  # Billing address postal code
-  postal_code: String
-}
-
-input CreditCardCreateInput {
-  brand: String!
-  name: String
-  last_digits: String!
-  expiration_month: Int!
-  expiration_year: Int!
-  street1: String
-  street2: String
-  city: String
-  state: String
-  country: String
-  postal_code: String
 }
 
 type Me {
