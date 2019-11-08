@@ -205,7 +205,7 @@ export async function createPrismaUser(
 
 export async function createPrismaCustomerForExistingUser(
   ctx: Context,
-  { userID, details = {} }
+  { userID, details = {}, status }
 ) {
   const customer = await ctx.prisma.createCustomer({
     user: {
@@ -213,6 +213,7 @@ export async function createPrismaCustomerForExistingUser(
     },
     bag: { create: {} },
     detail: { create: details },
+    status: status || "Waitlisted",
   })
   return customer
 }

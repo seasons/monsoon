@@ -61,6 +61,7 @@ export const auth = {
       customer = await createPrismaCustomerForExistingUser(ctx, {
         userID: user.id,
         details,
+        status: "Waitlisted",
       })
     } catch (err) {
       throw new Error(err)
