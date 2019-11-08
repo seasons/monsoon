@@ -50,6 +50,8 @@ export const customer = {
       })
     }
 
+    // TODO:
+
     const user = (await getUserFromContext(ctx)) as User
     await createCustomerSubscription(user, details)
 

@@ -214,6 +214,9 @@ export async function createPrismaCustomerForExistingUser(
     bag: { create: {} },
     detail: { create: details },
   })
+
+  // TODO: update airtable with customer data
+
   return customer
 }
 

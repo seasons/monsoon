@@ -5191,6 +5191,7 @@ type Reservation {
   reservationNumber: Int!
   shipped: Boolean!
   status: ReservationStatus!
+  receivedAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -5212,6 +5213,7 @@ input ReservationCreateInput {
   reservationNumber: Int!
   shipped: Boolean!
   status: ReservationStatus!
+  receivedAt: DateTime
 }
 
 input ReservationCreateManyWithoutCustomerInput {
@@ -5229,6 +5231,7 @@ input ReservationCreateWithoutCustomerInput {
   reservationNumber: Int!
   shipped: Boolean!
   status: ReservationStatus!
+  receivedAt: DateTime
 }
 
 type ReservationEdge {
@@ -5245,6 +5248,8 @@ enum ReservationOrderByInput {
   shipped_DESC
   status_ASC
   status_DESC
+  receivedAt_ASC
+  receivedAt_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -5256,6 +5261,7 @@ type ReservationPreviousValues {
   reservationNumber: Int!
   shipped: Boolean!
   status: ReservationStatus!
+  receivedAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -5289,6 +5295,14 @@ input ReservationScalarWhereInput {
   status_not: ReservationStatus
   status_in: [ReservationStatus!]
   status_not_in: [ReservationStatus!]
+  receivedAt: DateTime
+  receivedAt_not: DateTime
+  receivedAt_in: [DateTime!]
+  receivedAt_not_in: [DateTime!]
+  receivedAt_lt: DateTime
+  receivedAt_lte: DateTime
+  receivedAt_gt: DateTime
+  receivedAt_gte: DateTime
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -5311,6 +5325,7 @@ input ReservationScalarWhereInput {
 }
 
 enum ReservationStatus {
+  New
   InQueue
   OnHold
   InTransit
@@ -5348,18 +5363,21 @@ input ReservationUpdateInput {
   reservationNumber: Int
   shipped: Boolean
   status: ReservationStatus
+  receivedAt: DateTime
 }
 
 input ReservationUpdateManyDataInput {
   reservationNumber: Int
   shipped: Boolean
   status: ReservationStatus
+  receivedAt: DateTime
 }
 
 input ReservationUpdateManyMutationInput {
   reservationNumber: Int
   shipped: Boolean
   status: ReservationStatus
+  receivedAt: DateTime
 }
 
 input ReservationUpdateManyWithoutCustomerInput {
@@ -5388,6 +5406,7 @@ input ReservationUpdateWithoutCustomerDataInput {
   reservationNumber: Int
   shipped: Boolean
   status: ReservationStatus
+  receivedAt: DateTime
 }
 
 input ReservationUpdateWithWhereUniqueWithoutCustomerInput {
@@ -5438,6 +5457,14 @@ input ReservationWhereInput {
   status_not: ReservationStatus
   status_in: [ReservationStatus!]
   status_not_in: [ReservationStatus!]
+  receivedAt: DateTime
+  receivedAt_not: DateTime
+  receivedAt_in: [DateTime!]
+  receivedAt_not_in: [DateTime!]
+  receivedAt_lt: DateTime
+  receivedAt_lte: DateTime
+  receivedAt_gt: DateTime
+  receivedAt_gte: DateTime
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]

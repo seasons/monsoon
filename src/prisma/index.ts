@@ -850,6 +850,8 @@ export type ReservationOrderByInput =
   | "shipped_DESC"
   | "status_ASC"
   | "status_DESC"
+  | "receivedAt_ASC"
+  | "receivedAt_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -898,6 +900,7 @@ export type LabelOrderByInput =
   | "image_DESC";
 
 export type ReservationStatus =
+  | "New"
   | "InQueue"
   | "OnHold"
   | "InTransit"
@@ -1757,6 +1760,7 @@ export interface ReservationUpdateManyMutationInput {
   reservationNumber?: Maybe<Int>;
   shipped?: Maybe<Boolean>;
   status?: Maybe<ReservationStatus>;
+  receivedAt?: Maybe<DateTimeInput>;
 }
 
 export interface ProductVariantCreateWithoutPhysicalProductsInput {
@@ -1891,6 +1895,7 @@ export interface ReservationCreateWithoutCustomerInput {
   reservationNumber: Int;
   shipped: Boolean;
   status: ReservationStatus;
+  receivedAt?: Maybe<DateTimeInput>;
 }
 
 export interface ReservationUpdateInput {
@@ -1903,6 +1908,7 @@ export interface ReservationUpdateInput {
   reservationNumber?: Maybe<Int>;
   shipped?: Maybe<Boolean>;
   status?: Maybe<ReservationStatus>;
+  receivedAt?: Maybe<DateTimeInput>;
 }
 
 export interface LabelCreateOneInput {
@@ -1932,6 +1938,7 @@ export interface ReservationCreateInput {
   reservationNumber: Int;
   shipped: Boolean;
   status: ReservationStatus;
+  receivedAt?: Maybe<DateTimeInput>;
 }
 
 export interface PhysicalProductCreateManyInput {
@@ -4879,6 +4886,14 @@ export interface ReservationWhereInput {
   status_not?: Maybe<ReservationStatus>;
   status_in?: Maybe<ReservationStatus[] | ReservationStatus>;
   status_not_in?: Maybe<ReservationStatus[] | ReservationStatus>;
+  receivedAt?: Maybe<DateTimeInput>;
+  receivedAt_not?: Maybe<DateTimeInput>;
+  receivedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  receivedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  receivedAt_lt?: Maybe<DateTimeInput>;
+  receivedAt_lte?: Maybe<DateTimeInput>;
+  receivedAt_gt?: Maybe<DateTimeInput>;
+  receivedAt_gte?: Maybe<DateTimeInput>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -5264,6 +5279,7 @@ export interface ReservationUpdateWithoutCustomerDataInput {
   reservationNumber?: Maybe<Int>;
   shipped?: Maybe<Boolean>;
   status?: Maybe<ReservationStatus>;
+  receivedAt?: Maybe<DateTimeInput>;
 }
 
 export type ProductVariantWhereUniqueInput = AtLeastOne<{
@@ -5478,6 +5494,14 @@ export interface ReservationScalarWhereInput {
   status_not?: Maybe<ReservationStatus>;
   status_in?: Maybe<ReservationStatus[] | ReservationStatus>;
   status_not_in?: Maybe<ReservationStatus[] | ReservationStatus>;
+  receivedAt?: Maybe<DateTimeInput>;
+  receivedAt_not?: Maybe<DateTimeInput>;
+  receivedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  receivedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  receivedAt_lt?: Maybe<DateTimeInput>;
+  receivedAt_lte?: Maybe<DateTimeInput>;
+  receivedAt_gt?: Maybe<DateTimeInput>;
+  receivedAt_gte?: Maybe<DateTimeInput>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -5517,6 +5541,7 @@ export interface ReservationUpdateManyDataInput {
   reservationNumber?: Maybe<Int>;
   shipped?: Maybe<Boolean>;
   status?: Maybe<ReservationStatus>;
+  receivedAt?: Maybe<DateTimeInput>;
 }
 
 export interface ProductCreateWithoutVariantsInput {
@@ -7340,6 +7365,7 @@ export interface Reservation {
   reservationNumber: Int;
   shipped: Boolean;
   status: ReservationStatus;
+  receivedAt?: DateTimeOutput;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -7363,6 +7389,7 @@ export interface ReservationPromise extends Promise<Reservation>, Fragmentable {
   reservationNumber: () => Promise<Int>;
   shipped: () => Promise<Boolean>;
   status: () => Promise<ReservationStatus>;
+  receivedAt: () => Promise<DateTimeOutput>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -7388,6 +7415,7 @@ export interface ReservationSubscription
   reservationNumber: () => Promise<AsyncIterator<Int>>;
   shipped: () => Promise<AsyncIterator<Boolean>>;
   status: () => Promise<AsyncIterator<ReservationStatus>>;
+  receivedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -7413,6 +7441,7 @@ export interface ReservationNullablePromise
   reservationNumber: () => Promise<Int>;
   shipped: () => Promise<Boolean>;
   status: () => Promise<ReservationStatus>;
+  receivedAt: () => Promise<DateTimeOutput>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -9064,6 +9093,7 @@ export interface ReservationPreviousValues {
   reservationNumber: Int;
   shipped: Boolean;
   status: ReservationStatus;
+  receivedAt?: DateTimeOutput;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -9075,6 +9105,7 @@ export interface ReservationPreviousValuesPromise
   reservationNumber: () => Promise<Int>;
   shipped: () => Promise<Boolean>;
   status: () => Promise<ReservationStatus>;
+  receivedAt: () => Promise<DateTimeOutput>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -9086,6 +9117,7 @@ export interface ReservationPreviousValuesSubscription
   reservationNumber: () => Promise<AsyncIterator<Int>>;
   shipped: () => Promise<AsyncIterator<Boolean>>;
   status: () => Promise<AsyncIterator<ReservationStatus>>;
+  receivedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }

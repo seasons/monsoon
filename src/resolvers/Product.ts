@@ -71,24 +71,43 @@ export const ProductMutations = {
 
       console.log(reservation)
       createReservation(user, reservationData)
+
+      // TODO: swap static email with recipiant email
+      const msg = {
+        to: "l2succes@gmail.com",
+        from: "luc@seasons.nyc",
+        templateId: "d-2f3c87ab19054af4a13c730e3267a2c5",
+        dynamic_template_data: {
+          reservation,
+          items: products,
+        },
+      }
+      sgMail.send(msg)
+
+      return reservation
     }
 
-    // await ctx.prisma.updateCustomer({
-    //   data: {
+    return {
+      success: true,
+    }
+  },
+  async checkItemsAvailability(parent, { items }, ctx: Context, info) {
+    const user = await getUserId(ctx)
+    console.log(user, items)
 
-    //   }
-    // })
+    const physicalProducts = await ctx.prisma.physicalProducts({
+      where: {
+        productVariant: {
+          id_in: items,
+        },
+      },
+    })
 
-    // TODO: swap static email with recipiant email
-    // const msg = {
-    //   to: "l2succes@gmail.com",
-    //   from: "luc@seasons.nyc",
-    //   templateId: "d-2f3c87ab19054af4a13c730e3267a2c5",
-    //   dynamic_template_data: {
-    //     items: products,
-    //   },
-    // }
-    // sgMail.send(msg)
+    await updateProductVariantCounts(items, physicalProducts, ctx, {
+      dryRun: true,
+    })
+
+    return true
   },
 }
 
@@ -96,7 +115,7 @@ const updateProductVariantCounts = async (
   items,
   physicalProducts,
   ctx,
-  { dryRun = false }
+  { dryRun } = { dryRun: false }
 ) => {
   // Check if physical product is available for each product variant
   const variants = await ctx.prisma.productVariants({
