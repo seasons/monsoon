@@ -81,12 +81,13 @@ enum LocationType {
 }
 
 enum CustomerStatus {
-  Invited
-  Waitlisted
-  Authorized
-  Activated
-  Suspended
-  Deactivated
+  Invited # Customer is let into the service directly without going through the waitlist
+  Waitlisted # Customer is in the waitlist
+  Authorized # Customer is authorized to signup for a plan and start using the service
+  Active # Customer has a valid subscription and has selected a plan
+  Suspended # Customer has an suspended for either non payment or breaking the rules
+  Paused # Customer account is paused by the internal account manager or themselves in the app
+  Deactivated # Customer has a inactive account
 }
 
 enum UserRole {
@@ -342,6 +343,8 @@ type Reservation {
   reservationNumber: Int!
   shipped: Boolean!
   status: ReservationStatus!
+  shippedAt: DateTime
+  receivedAt: DateTime
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }

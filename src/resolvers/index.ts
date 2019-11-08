@@ -5,6 +5,7 @@ import { Me } from "./Me"
 import { HomepageResult } from "./Homepage"
 import { ProductMutations } from "./Product"
 import { Reservation } from "./Reservation"
+import { PhysicalProduct } from "./PhysicalProduct"
 
 export default {
   Query,
@@ -16,4 +17,5 @@ export default {
   },
   Me,
   Reservation,
+  PhysicalProduct,
 }

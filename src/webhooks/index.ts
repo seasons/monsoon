@@ -16,6 +16,12 @@ app.post("/airtable_events", async (req, res) => {
       return res.sendStatus(400)
     }
 
+    // Check if record is user
+    if (record.fields.status === "Authorized") {
+      // Send email via sendgrid
+      // Set prisma user object status to authorized
+    }
+
     // Check if record is Physical Product
     if (!!record.fields.SUID) {
       const { text: SUID } = record.fields.SUID
