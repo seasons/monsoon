@@ -1,4 +1,4 @@
-# import Category, User, Bag, Collection, CustomerDetail, ProductFunction from "./prisma/prisma.graphql"
+# import Category, User, Bag, Collection, CustomerDetail, ProductFunction, SavedProduct from "./prisma/prisma.graphql"
 
 directive @isAuthenticated on FIELD_DEFINITION
 directive @hasRole(roles: [String]) on FIELD_DEFINITION
@@ -87,6 +87,7 @@ type Mutation {
   checkItemsAvailability(items: [ID!]!): Boolean!
   reserveItems(items: [ID!]!, options: ReserveItemsOptions): Reservation
   saveCustomerBillingInfo: BillingInfoPlayoad
+  saveProduct(item: ID!, save: Boolean!): SavedProduct
 }
 
 type BillingInfoPlayoad {

@@ -14,10 +14,11 @@ const app = express()
 app.use(
   checkJwt,
   createGetUserMiddleware(prisma),
-  cors({
-    origin: [/\.seasons\.nyc$/, "seedling-staging.herokuapp.com"],
-    credentials: true,
-  })
+  // cors({
+  //   origin: [/\.seasons\.nyc$/, "seedling-staging.herokuapp.com"],
+  //   credentials: true,
+  // })
+  cors()
 )
 app.use(bodyParser.json())
 app.use(webhooks)

@@ -323,6 +323,12 @@ type Bag {
   customer: Customer! @relation(link: TABLE)
 }
 
+type SavedProduct {
+  id: ID! @id
+  productVariant: ProductVariant!
+  customer: Customer! @relation(link: TABLE)
+}
+
 type Customer {
   id: ID! @id
   user: User! @unique
@@ -331,8 +337,8 @@ type Customer {
   billingInfo: BillingInfo
   plan: Plan
   bag: Bag!
+  savedProducts: [SavedProduct!]!
   reservations: [Reservation] @relation(name: "CustomerToReservation")
-  savedProducts: [Product!]!
 }
 
 type Order {

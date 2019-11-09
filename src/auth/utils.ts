@@ -212,6 +212,7 @@ export async function createPrismaCustomerForExistingUser(
       connect: { id: userID },
     },
     bag: { create: {} },
+    savedProducts: { create: {} },
     detail: { create: details },
     status: status || "Waitlisted",
   })

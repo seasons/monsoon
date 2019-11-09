@@ -58,6 +58,26 @@ export const customer = {
     return { ...customer, detail: updatedDetails }
   },
 
+  async saveProduct(obj, { item, save }, ctx: Context, info) {
+    const customer = await getCustomerFromContext(ctx)
+    let updatedSavedProducts
+    const currentSavedProducts = await ctx.prisma
+      .customer({ id: customer.id })
+      .savedProducts()
+
+    if( save ){
+      updatedSavedProducts = await ctx.prisma.updateSavedProduct({
+        data: item,
+        where: { id: currentSavedProducts.id },
+      })
+    } else {
+
+    }
+
+
+    return { ...customer, savedProduct: updatedSavedProducts }
+  },
+
   async saveCustomerBillingInfo(obj, args, ctx: Context, info) {
     // Get the customer's id
     const { id } = await getUserId(ctx)
