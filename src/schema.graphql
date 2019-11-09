@@ -130,10 +130,21 @@ type HomepageSection {
   title: String
 }
 
+type MembershipInfo {
+  results: [PlanInfo!]!
+}
+
+type PlanInfo {
+  type: String!
+  whatsIncluded: [String!]!
+  price: String!
+}
+
 type Me {
   user: User!
   customer: Customer!
   activeReservation: Reservation
+  membershipInfo: MembershipInfo
 }
 
 union HomepageResult = Category | Product | Brand | Collection
