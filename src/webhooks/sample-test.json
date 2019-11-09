@@ -1,0 +1,42 @@
+{
+  "authed_users": ["U123456"],
+  "event_id": "EvKQ62L5EY",
+  "api_app_id": "A123456",
+  "team_id": "T123456",
+  "event": {
+    "attachments": [
+      {
+        "author_name": "Dylan Sather",
+        "author_icon": "https://static.airtable.com/images/userIcons/user_icon_6@3x.png",
+        "color": "11af22",
+        "title_link": "https://airtable.com/tbl123/rec456",
+        "id": 1,
+        "title": "NEW RECORD",
+        "fields": [
+          {
+            "short": true,
+            "title": "Name",
+            "value": "NEW RECORD"
+          },
+          {
+            "short": true,
+            "title": "Status",
+            "value": "CLOSED"
+          }
+        ],
+        "fallback": "NEW RECORD"
+      }
+    ],
+    "subtype": "bot_message",
+    "event_ts": "1560993644.000100",
+    "channel": "C123456",
+    "text": "Dylan Sather updated 1 record in table *Table 1* in My awesome base",
+    "type": "message",
+    "channel_type": "channel",
+    "bot_id": "B123456",
+    "ts": "1560993644.000100"
+  },
+  "type": "event_callback",
+  "event_time": 1560993644,
+  "token": "abc"
+}

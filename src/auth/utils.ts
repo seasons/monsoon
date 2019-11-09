@@ -215,6 +215,9 @@ export async function createPrismaCustomerForExistingUser(
     detail: { create: details },
     status: status || "Waitlisted",
   })
+
+  // TODO: update airtable with customer data
+
   return customer
 }
 

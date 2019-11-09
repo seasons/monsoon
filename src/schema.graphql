@@ -84,13 +84,18 @@ type Mutation {
   login(email: String!, password: String!): AuthPayload!
   addCustomerDetails(details: CustomerDetailCreateInput): Customer!
     @hasRole(roles: ["Customer"])
-  reserveItems(items: [ID!]!): Order
+  checkItemsAvailability(items: [ID!]!): Boolean!
+  reserveItems(items: [ID!]!, options: ReserveItemsOptions): Reservation
   saveCustomerBillingInfo: BillingInfoPlayoad
 }
 
 type BillingInfoPlayoad {
   billingInfo: BillingInfo
   plan: Plan
+}
+
+input ReserveItemsOptions {
+  dryRun: Boolean
 }
 
 type AuthPayload {
@@ -128,6 +133,7 @@ type HomepageSection {
 type Me {
   user: User!
   customer: Customer!
+  activeReservation: Reservation
 }
 
 union HomepageResult = Category | Product | Brand | Collection

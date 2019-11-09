@@ -107,30 +107,34 @@ export const airtableToPrismaObject = record => {
   return obj
 }
 
-export const createReservation = async (data: ReservationCreateInput) => {
-  const user = await getUserById(data.user)
-  const itemIDs = (data.products.connect as { id: string }[]).map(a => a.id)
+export const createReservation = async (user, data: ReservationCreateInput) => {
+  const itemIDs = (data.products.connect as { seasonsUID: string }[]).map(
+    a => a.seasonsUID
+  )
   const items = await getPhysicalProducts(itemIDs)
+  const aUser = await getUserById(user)
 
-  return new Promise((resolve, reject) => {
-    base("Reservations").create(
-      [
-        {
-          User: [user.id],
-          Items: items,
+  try {
+    const createData = [
+      {
+        fields: {
+          ID: data.reservationNumber,
+          User: [aUser.id],
+          Location: ["recjLC8KaIy089LOL"],
+          Items: items.map(a => a.id),
           Shipped: false,
           Status: "New",
         },
-      ],
-      (err, records) => {
-        if (records.length > 0) {
-          resolve(user)
-        } else {
-          reject(err)
-        }
-      }
-    )
-  })
+      },
+    ]
+
+    const records = await base("Reservations").create(createData)
+
+    return records
+  } catch (e) {
+    console.log(e)
+    throw e
+  }
 }
 
 export const getProductVariant = (SKU: string) => {

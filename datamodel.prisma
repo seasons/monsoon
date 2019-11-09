@@ -81,11 +81,13 @@ enum LocationType {
 }
 
 enum CustomerStatus {
-  Invited
-  Waitlisted
-  Activated
-  Suspended
-  Deactivated
+  Invited 
+  Waitlisted 
+  Authorized 
+  Active 
+  Suspended 
+  Paused 
+  Deactivated 
 }
 
 enum UserRole {
@@ -113,10 +115,14 @@ enum ProductStatus {
 }
 
 enum ReservationStatus {
+  New
+  InQueue
   OnHold
-  Shipped
   InTransit
+  Shipped
   Received
+  Active
+  Completed
 }
 
 enum Plan {
@@ -325,6 +331,8 @@ type Customer {
   billingInfo: BillingInfo
   plan: Plan
   bag: Bag!
+  reservations: [Reservation] @relation(name: "CustomerToReservation")
+  savedProducts: [Product!]!
 }
 
 type Order {
@@ -334,10 +342,16 @@ type Order {
 type Reservation {
   id: ID! @id
   user: User!
+  customer: Customer! @relation(name: "CustomerToReservation")
   shippingLabel: Label! @relation(name: "ShippingLabelReservation")
   returnLabel: Label @relation(name: "ReturnLabelReservation")
+  location: Location
   products: [PhysicalProduct!]!
+  reservationNumber: Int!
   shipped: Boolean!
+  status: ReservationStatus!
+  shippedAt: DateTime
+  receivedAt: DateTime
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
