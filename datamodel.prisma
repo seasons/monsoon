@@ -126,8 +126,15 @@ enum ReservationStatus {
 }
 
 enum Plan {
-    AllAccess
-    Essential
+  AllAccess
+  Essential
+}
+
+type PlanInfo {
+  id: ID! @id
+  type: String!
+  whatsIncluded: [String!]! @scalarList(strategy: RELATION)
+  price: String!
 }
 
 type Brand {
@@ -330,6 +337,7 @@ type Customer {
   detail: CustomerDetail
   billingInfo: BillingInfo
   plan: Plan
+  planInfo: PlanInfo
   bag: Bag!
   reservations: [Reservation] @relation(name: "CustomerToReservation")
   savedProducts: [Product!]!
