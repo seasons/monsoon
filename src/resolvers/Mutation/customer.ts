@@ -4,9 +4,9 @@ import {
   getUserFromContext,
   getUserId,
 } from "../../auth/utils"
-import { UserInputError, ForbiddenError } from "apollo-server"
-import { User } from "../../prisma"
+import { UserInputError } from "apollo-server"
 import chargebee from "chargebee"
+import { createOrUpdateAirtableUser } from "../../airtable/createUser"
 
 export const customer = {
   /*
@@ -34,6 +34,7 @@ export const customer = {
     }
 
     // Grab the customer off the context
+    const user = await getUserFromContext(ctx)
     const customer = await getCustomerFromContext(ctx)
 
     // Add the details. If necessary, create the details object afresh.
@@ -53,6 +54,11 @@ export const customer = {
         where: { id: currentCustomerDetail.id },
       })
     }
+
+    await createOrUpdateAirtableUser(user, {
+      ...currentCustomerDetail,
+      ...details,
+    })
 
     // Return the updated customer object
     return { ...customer, detail: updatedDetails }

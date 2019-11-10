@@ -7,7 +7,6 @@ import {
 } from "../../auth/utils"
 import { Context } from "../../utils"
 import { UserInputError, ForbiddenError } from "apollo-server"
-import { createUser } from "../../airtable/createUser"
 
 export const auth = {
   // The signup mutation signs up users with a "Customer" role.
@@ -66,16 +65,6 @@ export const auth = {
     } catch (err) {
       throw new Error(err)
     }
-
-    // TODO: save user in customer table in airtable
-    createUser(
-      {
-        firstName,
-        lastName,
-        email,
-      },
-      details
-    )
 
     return {
       token,

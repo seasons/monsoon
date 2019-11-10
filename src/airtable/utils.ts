@@ -1,5 +1,10 @@
 import { base } from "./config"
-import { ReservationCreateInput } from "../prisma"
+import {
+  ReservationCreateInput,
+  LocationCreateInput,
+  LocationCreateOneInput,
+} from "../prisma"
+import slugify from "slugify"
 
 interface AirtableData extends Array<any> {
   findByIds: (ids?: any) => any
@@ -135,6 +140,26 @@ export const createReservation = async (user, data: ReservationCreateInput) => {
     console.log(e)
     throw e
   }
+}
+
+export const createLocation = async (user, data: LocationCreateInput) => {
+  const createData = [
+    {
+      fields: {
+        Name: data.name,
+        Company: data.company,
+        "Address 1": data.address1,
+        "Address 2": data.address2,
+        City: data.city,
+        State: data.state,
+        "Zip Code": data.zipCode,
+        Slug: data.slug,
+        "Location Type": data.locationType,
+      },
+    },
+  ]
+
+  return base("Locations").create(createData)
 }
 
 export const getProductVariant = (SKU: string) => {

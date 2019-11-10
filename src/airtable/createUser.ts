@@ -1,9 +1,12 @@
 import { base } from "./config"
-import { CustomerDetailCreateInput } from "../prisma"
+import { CustomerDetailCreateInput, LocationCreateInput } from "../prisma"
+import { createLocation } from "./utils"
 
-export const createUser = (user, details: CustomerDetailCreateInput) => {
+export const createOrUpdateAirtableUser = async (
+  user,
+  details: CustomerDetailCreateInput
+) => {
   const { email, firstName, lastName } = user
-  const { phoneNumber } = details
 
   const keyMap = {
     phoneNumber: "Phone Number",
@@ -23,23 +26,32 @@ export const createUser = (user, details: CustomerDetailCreateInput) => {
     style: "Style",
     commuteStyle: "Commute Style",
     shippingAddress: "Shipping Address",
-    phoneOS: "Phone OS",
+    phoneOS: "Platform OS",
   }
 
   const data = {
     Email: email,
     "First Name": firstName,
     "Last Name": lastName,
-    "Phone Number": phoneNumber,
   }
 
   for (let key in details) {
-    data[keyMap[key]] = details[key]
+    if (keyMap[key] && details[key]) {
+      data[keyMap[key]] = details[key]
+    }
   }
 
-  base("Users").create([
-    {
-      fields: data,
-    },
-  ])
+  if (details.shippingAddress) {
+    const location = await createLocation(user, details.shippingAddress.create)
+    data["Shipping Address"] = location.map(l => l.id)
+  }
+  try {
+    return base("Users").create([
+      {
+        fields: data,
+      },
+    ])
+  } catch (e) {
+    console.log(e)
+  }
 }
