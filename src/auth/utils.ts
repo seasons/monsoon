@@ -146,7 +146,14 @@ export function createAuth0User(
   })
 }
 
-export function getAuth0UserAccessToken(email, password) {
+export function getAuth0UserAccessToken(
+  email,
+  password
+): Promise<{
+  access_token: string
+  refresh_token: string
+  expires_in: number
+}> {
   return new Promise(function RetrieveAccessToken(resolve, reject) {
     request(
       {
@@ -157,6 +164,7 @@ export function getAuth0UserAccessToken(email, password) {
           grant_type: "password",
           username: email,
           password: password,
+          scope: "offline_access",
           audience: `${process.env.AUTH0_AUDIENCE}`,
           client_id: `${process.env.AUTH0_CLIENTID}`,
           client_secret: `${process.env.AUTH0_CLIENT_SECRET}`,
@@ -175,7 +183,7 @@ export function getAuth0UserAccessToken(email, password) {
             )
           )
         }
-        return resolve(body.access_token)
+        return resolve(body)
       }
     )
   })

@@ -31,9 +31,9 @@ export const auth = {
     }
 
     // Get their API access token
-    let token
+    let tokenData
     try {
-      token = await getAuth0UserAccessToken(email, password)
+      tokenData = await getAuth0UserAccessToken(email, password)
     } catch (err) {
       if (err.message.includes("403")) {
         throw new ForbiddenError(err)
@@ -67,7 +67,9 @@ export const auth = {
     }
 
     return {
-      token,
+      token: tokenData.access_token,
+      refreshToken: tokenData.refresh_token,
+      expiresIn: tokenData.expires_in,
       user: user,
     }
   },
@@ -79,9 +81,9 @@ export const auth = {
     }
 
     // Get their API access token
-    let token
+    let tokenData
     try {
-      token = await getAuth0UserAccessToken(email, password)
+      tokenData = await getAuth0UserAccessToken(email, password)
     } catch (err) {
       if (err.message.includes("403")) {
         throw new ForbiddenError(err)
@@ -92,6 +94,11 @@ export const auth = {
     // Get user with this email
     let user = await ctx.prisma.user({ email })
 
-    return { token, user }
+    return {
+      token: tokenData.access_token,
+      refreshToken: tokenData.refresh_token,
+      expiresIn: tokenData.expires_in,
+      user,
+    }
   },
 }
