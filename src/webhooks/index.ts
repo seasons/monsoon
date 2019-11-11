@@ -3,32 +3,35 @@ import { base } from "../airtable/config"
 import { prisma } from "../prisma"
 import crypto from "crypto"
 import sgMail from "@sendgrid/mail"
-const app = express()
 
+const app = express()
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
 app.post("/airtable_events", async (req, res) => {
-  console.log(req.body)
   const data = req.body
+  console.log(data)
   for (let row of data) {
     const { tableId, recordId, updates } = row
-
-    console.log("Table ID: ", tableId, updates)
 
     const record = await base(tableId).find(recordId)
     if (!record) {
       return res.sendStatus(400)
     }
 
-    // Check if record is user
-    if (record.fields.status === "Authorized") {
+    // Check if a user's status was just set to Authorized
+    if (
+      updates.length >= 1 &&
+      updates[0].field === "Status" &&
+      updates[0].newValue === "Authorized"
+      //   updates[0].newValue === "Invited"
+    ) {
       // create the custom link
-      const user = await prisma.user({ email: record.fields.email })
+      const user = await prisma.user({ email: record.fields.Email })
       const idHash = crypto
         .createHash("sha256")
         .update(`${user.id}${process.env.HASH_SECRET}`)
         .digest("hex")
-      const link = `${process.env.SEEDLING_URL}?id=${idHash}`
+      const link = `${process.env.SEEDLING_URL}/complete?id=${idHash}`
 
       // Set prisma user object status to authorized
       let customerArray = await prisma.customers({
