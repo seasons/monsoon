@@ -76,6 +76,10 @@ export const getAllColors = async () => {
   return getAll("Colors")
 }
 
+export const getAllHomepageProductRails = async () => {
+  return getAll("Homepage Product Rails")
+}
+
 export const getAllProducts = async () => {
   return getAll("Products")
 }
