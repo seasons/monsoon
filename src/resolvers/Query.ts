@@ -1,4 +1,4 @@
-import { Context } from "../utils"
+import { Context, getUserIDHash, getCustomerFromUserID } from "../utils"
 import { Homepage } from "./Homepage"
 import { getUserId, getCustomerFromContext } from "../auth/utils"
 import chargebee from "chargebee"
@@ -57,20 +57,40 @@ export const Query = {
 
   homepage: Homepage,
 
-  chargebeeCheckout: async (parent, args, ctx: Context, info) => {
-    // get the user's info
-    const { id } = await getUserId(ctx)
-    const { email, firstName, lastName } = await ctx.prisma.user({ id })
-    const customer = await getCustomerFromContext(ctx)
+  chargebeeCheckout: async (
+    parent,
+    { planID, userIDHash },
+    ctx: Context,
+    info
+  ) => {
+    // Is there a user in the db that corresponds to the given userIDHash?
+    const allUsers = await ctx.prisma.users()
+    let targetUser
+    for (let user of allUsers) {
+      let thisUsersIDHash = getUserIDHash(user.id)
+      if (thisUsersIDHash === userIDHash) {
+        targetUser = user
+      }
+    }
+    if (targetUser === undefined) {
+      throw new Error(`no user found for idHash: ${userIDHash}`)
+    }
+
+    // Get email, firstName, lastName, phoneNumber of targetUser
+    const { email, firstName, lastName } = targetUser
+    const correspondingCustomer = await getCustomerFromUserID(
+      ctx,
+      targetUser.id
+    )
     let { phoneNumber } = await ctx.prisma
-      .customer({ id: customer.id })
+      .customer({ id: correspondingCustomer.id })
       .detail()
 
     // translate the passed planID into a chargebee-readable version
     let truePlanID
-    if (args.planID == "AllAccess") {
+    if (planID == "AllAccess") {
       truePlanID = "all-access"
-    } else if (args.planID == "Essential") {
+    } else if (planID == "Essential") {
       truePlanID = "essential"
     } else {
       throw new Error("unrecognized planID")
@@ -88,7 +108,7 @@ export const Query = {
             plan_id: truePlanID,
           },
           customer: {
-            id: id,
+            id: targetUser.id,
             email: email,
             first_name: firstName,
             last_name: lastName,

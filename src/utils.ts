@@ -1,6 +1,7 @@
-import { Prisma } from "./prisma"
+import { Prisma, Customer } from "./prisma"
 import { Binding } from "graphql-binding"
 import { Request, Response } from "express"
+import crypto from "crypto"
 
 export enum ProductSize {
   XS = "XS",
@@ -26,6 +27,30 @@ export const sizeToSizeCode = (size: ProductSize) => {
       return "XL"
   }
   return ""
+}
+
+export function getUserIDHash(userID: string): string {
+  return crypto
+    .createHash("sha256")
+    .update(`${userID}${process.env.HASH_SECRET}`)
+    .digest("hex")
+}
+
+export async function getCustomerFromUserID(
+  ctx: Context,
+  userID: string
+): Promise<Customer> {
+  let customer
+  try {
+    let customerArray = await ctx.prisma.customers({
+      where: { user: { id: userID } },
+    })
+    customer = customerArray[0]
+  } catch (err) {
+    throw new Error(err)
+  }
+
+  return customer
 }
 
 export interface Context {

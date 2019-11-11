@@ -3,6 +3,7 @@ import { base } from "../airtable/config"
 import { prisma } from "../prisma"
 import crypto from "crypto"
 import sgMail from "@sendgrid/mail"
+import { getUserIDHash } from "../utils"
 
 const app = express()
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
@@ -27,10 +28,7 @@ app.post("/airtable_events", async (req, res) => {
     ) {
       // create the custom link
       const user = await prisma.user({ email: record.fields.Email })
-      const idHash = crypto
-        .createHash("sha256")
-        .update(`${user.id}${process.env.HASH_SECRET}`)
-        .digest("hex")
+      const idHash = getUserIDHash(user.id)
       const link = `${process.env.SEEDLING_URL}/complete?id=${idHash}`
 
       // Set prisma user object status to authorized

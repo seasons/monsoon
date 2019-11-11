@@ -57,7 +57,7 @@ type Query {
     last: Int
   ): [ProductFunction]!
   homepage: Homepage
-  chargebeeCheckout(planID: PlanID): ChargebeeCheckout
+  chargebeeCheckout(planID: PlanID!, userIDHash: String!): ChargebeeCheckout
 }
 
 type ChargebeeCheckout {
