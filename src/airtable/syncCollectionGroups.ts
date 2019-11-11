@@ -50,5 +50,3 @@ export const syncCollectionGroups = async () => {
     }
   }
 }
-
-syncCollectionGroups()

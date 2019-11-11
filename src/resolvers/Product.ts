@@ -18,7 +18,6 @@ export const ProductMutations = {
   ) {
     const user = await getUserId(ctx)
     const customer = await getCustomerFromContext(ctx)
-    console.log(user, items)
 
     const physicalProducts = await ctx.prisma.physicalProducts({
       where: {
