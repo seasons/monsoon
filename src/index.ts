@@ -15,7 +15,7 @@ app.use(
   checkJwt,
   createGetUserMiddleware(prisma),
   cors({
-    origin: [/\.seasons\.nyc$/, "seedling-staging.herokuapp.com"],
+    origin: [/\.seasons\.nyc$/, "seedling-staging.herokuapp.com", /localhost/],
     credentials: true,
   })
 )

@@ -58,6 +58,8 @@ type Query {
   ): [ProductFunction]!
   homepage: Homepage
   chargebeeCheckout(planID: PlanID!, userIDHash: String!): ChargebeeCheckout
+  homepageProductRails(where: HomepageProductRailWhereInput, orderBy: HomepageProductRailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [HomepageProductRail]!
+  homepageProductRail(where: HomepageProductRailWhereUniqueInput!): HomepageProductRail
 }
 
 type ChargebeeCheckout {
@@ -100,6 +102,8 @@ input ReserveItemsOptions {
 
 type AuthPayload {
   token: String!
+  refreshToken: String!
+  expiresIn: Int!
   user: User!
 }
 
@@ -142,6 +146,7 @@ enum HomePageSectionType {
   CollectionGroups
   Categories
   Products
+  HomepageProductRails
   Brands
 }
 

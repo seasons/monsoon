@@ -7,7 +7,6 @@ import {
 } from "../../auth/utils"
 import { Context } from "../../utils"
 import { UserInputError, ForbiddenError } from "apollo-server"
-import { createUser } from "../../airtable/createUser"
 
 export const auth = {
   // The signup mutation signs up users with a "Customer" role.
@@ -32,9 +31,9 @@ export const auth = {
     }
 
     // Get their API access token
-    let token
+    let tokenData
     try {
-      token = await getAuth0UserAccessToken(email, password)
+      tokenData = await getAuth0UserAccessToken(email, password)
     } catch (err) {
       if (err.message.includes("403")) {
         throw new ForbiddenError(err)
@@ -67,18 +66,10 @@ export const auth = {
       throw new Error(err)
     }
 
-    // TODO: save user in customer table in airtable
-    createUser(
-      {
-        firstName,
-        lastName,
-        email,
-      },
-      details
-    )
-
     return {
-      token,
+      token: tokenData.access_token,
+      refreshToken: tokenData.refresh_token,
+      expiresIn: tokenData.expires_in,
       user: user,
     }
   },
@@ -90,9 +81,9 @@ export const auth = {
     }
 
     // Get their API access token
-    let token
+    let tokenData
     try {
-      token = await getAuth0UserAccessToken(email, password)
+      tokenData = await getAuth0UserAccessToken(email, password)
     } catch (err) {
       if (err.message.includes("403")) {
         throw new ForbiddenError(err)
@@ -103,6 +94,11 @@ export const auth = {
     // Get user with this email
     let user = await ctx.prisma.user({ email })
 
-    return { token, user }
+    return {
+      token: tokenData.access_token,
+      refreshToken: tokenData.refresh_token,
+      expiresIn: tokenData.expires_in,
+      user,
+    }
   },
 }

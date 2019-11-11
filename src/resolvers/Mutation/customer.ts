@@ -4,9 +4,9 @@ import {
   getUserFromContext,
   getUserId,
 } from "../../auth/utils"
-import { UserInputError, ForbiddenError } from "apollo-server"
-import { User } from "../../prisma"
+import { UserInputError } from "apollo-server"
 import chargebee from "chargebee"
+import { createOrUpdateAirtableUser } from "../../airtable/createUser"
 
 export const customer = {
   /*
@@ -34,6 +34,7 @@ export const customer = {
     }
 
     // Grab the customer off the context
+    const user = await getUserFromContext(ctx)
     const customer = await getCustomerFromContext(ctx)
 
     // Add the details. If necessary, create the details object afresh.
@@ -54,6 +55,11 @@ export const customer = {
       })
     }
 
+    await createOrUpdateAirtableUser(user, {
+      ...currentCustomerDetail,
+      ...details,
+    })
+
     // Return the updated customer object
     return { ...customer, detail: updatedDetails }
   },
@@ -68,7 +74,7 @@ export const customer = {
       site: process.env.CHARGEBEE_SITE,
       api_key: process.env.CHARGEE_API_KEY,
     })
-    let billingInfo, plan
+    let billingInfo, plan, planInfo
     await chargebee.subscription
       .list({
         limit: 1,
@@ -85,8 +91,30 @@ export const customer = {
           // Store all the relevant data
           if (subscription.plan_id == "essential") {
             plan = "Essential"
+            planInfo = {
+              type: "essential", 
+              __typename: "PlanInfo", 
+              price: "155", 
+              whatsIncluded: [
+                "3 pieces every month", 
+                "Keep for up to 30 days",
+                "Free returns & dry cleaning",
+                "Pause or cancel anytime"
+              ]
+            }
           } else if (subscription.plan_id == "all-access") {
             plan = "AllAccess"
+            planInfo = {
+              type: "allAccess", 
+              __typename: "PlanInfo", 
+              price: "195", 
+              whatsIncluded: [
+                "3 pieces at a time", 
+                "Unlimited swaps",
+                "Free returns & dry cleaning",
+                "Pause or cancel anytime"
+              ]
+            }
           } else {
             throw new Error(`unexpected plan-id: ${subscription.plan_id}`)
           }
@@ -106,6 +134,7 @@ export const customer = {
           await ctx.prisma.updateCustomer({
             data: {
               plan: plan,
+              planInfo,
               billingInfo: {
                 upsert: {
                   create: billingInfo,

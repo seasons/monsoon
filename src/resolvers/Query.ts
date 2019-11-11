@@ -55,6 +55,12 @@ export const Query = {
   categories: (parent, args, ctx: Context, info) =>
     ctx.db.query.categories(args, info),
 
+  homepageProductRails: (parent, args, ctx: Context, info) =>
+    ctx.db.query.homepageProductRails(args, info),
+
+  homepageProductRail: (parent, args, ctx: Context, info) =>
+    ctx.db.query.homepageProductRail(args, info),
+
   homepage: Homepage,
 
   chargebeeCheckout: async (
