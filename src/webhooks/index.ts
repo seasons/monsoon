@@ -1,56 +1,31 @@
 import express from "express"
 import { base } from "../airtable/config"
-import { prisma } from "../prisma"
+import { prisma, User } from "../prisma"
 import crypto from "crypto"
 import sgMail from "@sendgrid/mail"
-const app = express()
+import { getUserIDHash, setCustomerStatus } from "../utils"
 
+const app = express()
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
 app.post("/airtable_events", async (req, res) => {
-  console.log(req.body)
   const data = req.body
+  console.log(data)
   for (let row of data) {
     const { tableId, recordId, updates } = row
-
-    console.log("Table ID: ", tableId, updates)
 
     const record = await base(tableId).find(recordId)
     if (!record) {
       return res.sendStatus(400)
     }
 
-    // Check if record is user
-    if (record.fields.status === "Authorized") {
-      // create the custom link
-      const user = await prisma.user({ email: record.fields.email })
-      const idHash = crypto
-        .createHash("sha256")
-        .update(`${user.id}${process.env.HASH_SECRET}`)
-        .digest("hex")
-      const link = `${process.env.SEEDLING_URL}?id=${idHash}`
+    console.log("new row")
+    console.log(updates)
 
-      // Set prisma user object status to authorized
-      let customerArray = await prisma.customers({
-        where: { user: { id: user.id } },
-      })
-      const customer = customerArray[0]
-      await prisma.updateCustomer({
-        data: { status: "Authorized" },
-        where: { id: customer.id },
-      })
-
-      // Send email via sendgrid
-      const msg = {
-        to: user.email,
-        from: "membership@seasons.nyc",
-        templateId: "d-a62e1c840166432abd396d1536e4489d",
-        dynamic_template_data: {
-          name: user.firstName,
-          url: link,
-        },
-      }
-      sgMail.send(msg)
+    if (userBecameAuthorizedToSubscribe(updates)) {
+      const user = await prisma.user({ email: record.fields.Email })
+      setCustomerStatus(prisma, user, "Authorized")
+      sendAuthorizedToSubscribeEmail(user)
     }
 
     // Check if record is Physical Product
@@ -99,6 +74,36 @@ const incrementReservableCount = async (productVariant, physicalProduct) => {
   })
 
   console.log(physicalProduct, productVariant)
+}
+
+interface Update {
+  field: string
+  newValue: string
+}
+
+function userBecameAuthorizedToSubscribe(updates: Array<Update>): boolean {
+  for (let update of updates) {
+    const { field, newValue } = update
+    if (field === "Status" && newValue === "Authorized") {
+      return true
+    }
+  }
+  return false
+}
+
+function sendAuthorizedToSubscribeEmail(user: User) {
+  const msg = {
+    to: user.email,
+    from: "membership@seasons.nyc",
+    templateId: "d-a62e1c840166432abd396d1536e4489d",
+    dynamic_template_data: {
+      name: user.firstName,
+      url: `${process.env.SEEDLING_URL}/complete?idHash=${getUserIDHash(
+        user.id
+      )}`,
+    },
+  }
+  sgMail.send(msg)
 }
 
 export { app }

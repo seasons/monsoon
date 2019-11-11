@@ -57,9 +57,9 @@ type Query {
     last: Int
   ): [ProductFunction]!
   homepage: Homepage
+  chargebeeCheckout(planID: PlanID!, userIDHash: String!): ChargebeeCheckout
   homepageProductRails(where: HomepageProductRailWhereInput, orderBy: HomepageProductRailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [HomepageProductRail]!
   homepageProductRail(where: HomepageProductRailWhereUniqueInput!): HomepageProductRail
-  chargebeeCheckout(planID: PlanID): ChargebeeCheckout
 }
 
 type ChargebeeCheckout {
