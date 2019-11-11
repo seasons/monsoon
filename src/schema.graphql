@@ -102,6 +102,8 @@ input ReserveItemsOptions {
 
 type AuthPayload {
   token: String!
+  refreshToken: String!
+  expiresIn: Int!
   user: User!
 }
 
