@@ -30,7 +30,7 @@ export const Homepage = async (parent, args, ctx: Context, info) => {
         __typename: "HomepageSection",
         title: "Featured collection",
         results: async (args, ctx: Context, info) => {
-          const collections = await ctx.prisma.collectionGroup({slug: 'featured-collections'}).collections()
+          const collections = await ctx.prisma.collectionGroup({slug: 'homepage-1'}).collections()
           return collections
         }
       },
@@ -60,6 +60,15 @@ export const Homepage = async (parent, args, ctx: Context, info) => {
           return newProducts
         }
         
+      },
+      {
+        type: "CollectionGroups",
+        __typename: "HomepageSection",
+        title: "Featured collection",
+        results: async (args, ctx: Context, info) => {
+          const collections = await ctx.prisma.collectionGroup({slug: 'homepage-2'}).collections()
+          return collections
+        }
       },
       {
         __typename: "HomepageSection",
