@@ -1,5 +1,4 @@
 import { Context } from "../utils"
-import { CollectionGroups } from "./CollectionGroups"
 
 export const HomepageResult = {
   __resolveType(obj, _context, _info) {
