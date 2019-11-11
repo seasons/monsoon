@@ -91,30 +91,8 @@ export const customer = {
           // Store all the relevant data
           if (subscription.plan_id == "essential") {
             plan = "Essential"
-            planInfo = {
-              type: "essential", 
-              __typename: "PlanInfo", 
-              price: "155", 
-              whatsIncluded: [
-                "3 pieces every month", 
-                "Keep for up to 30 days",
-                "Free returns & dry cleaning",
-                "Pause or cancel anytime"
-              ]
-            }
           } else if (subscription.plan_id == "all-access") {
             plan = "AllAccess"
-            planInfo = {
-              type: "allAccess", 
-              __typename: "PlanInfo", 
-              price: "195", 
-              whatsIncluded: [
-                "3 pieces at a time", 
-                "Unlimited swaps",
-                "Free returns & dry cleaning",
-                "Pause or cancel anytime"
-              ]
-            }
           } else {
             throw new Error(`unexpected plan-id: ${subscription.plan_id}`)
           }
@@ -134,7 +112,6 @@ export const customer = {
           await ctx.prisma.updateCustomer({
             data: {
               plan: plan,
-              planInfo,
               billingInfo: {
                 upsert: {
                   create: billingInfo,
