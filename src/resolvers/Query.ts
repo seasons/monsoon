@@ -79,7 +79,7 @@ export const Query = {
     // Get email, firstName, lastName, phoneNumber of targetUser
     const { email, firstName, lastName } = targetUser
     const correspondingCustomer = await getCustomerFromUserID(
-      ctx,
+      ctx.prisma,
       targetUser.id
     )
     let { phoneNumber } = await ctx.prisma

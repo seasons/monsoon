@@ -1,4 +1,4 @@
-import { Prisma, Customer } from "./prisma"
+import { Prisma, Customer, User } from "./prisma"
 import { Binding } from "graphql-binding"
 import { Request, Response } from "express"
 import crypto from "crypto"
@@ -37,12 +37,12 @@ export function getUserIDHash(userID: string): string {
 }
 
 export async function getCustomerFromUserID(
-  ctx: Context,
+  prisma: Prisma,
   userID: string
 ): Promise<Customer> {
   let customer
   try {
-    let customerArray = await ctx.prisma.customers({
+    let customerArray = await prisma.customers({
       where: { user: { id: userID } },
     })
     customer = customerArray[0]
@@ -51,6 +51,20 @@ export async function getCustomerFromUserID(
   }
 
   return customer
+}
+
+// given the corresponding user object, set the customer status on a customer
+export async function setCustomerStatus(
+  prisma: Prisma,
+  user: User,
+  status: String
+) {
+  const customer = await getCustomerFromUserID(prisma, user.id)
+  await prisma.updateCustomer({
+    //@ts-ignore
+    data: { status: status },
+    where: { id: customer.id },
+  })
 }
 
 export interface Context {

@@ -1,9 +1,9 @@
 import express from "express"
 import { base } from "../airtable/config"
-import { prisma } from "../prisma"
+import { prisma, User } from "../prisma"
 import crypto from "crypto"
 import sgMail from "@sendgrid/mail"
-import { getUserIDHash } from "../utils"
+import { getUserIDHash, setCustomerStatus } from "../utils"
 
 const app = express()
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
@@ -19,39 +19,13 @@ app.post("/airtable_events", async (req, res) => {
       return res.sendStatus(400)
     }
 
-    // Check if a user's status was just set to Authorized
-    if (
-      updates.length >= 1 &&
-      updates[0].field === "Status" &&
-      updates[0].newValue === "Authorized"
-      //   updates[0].newValue === "Invited"
-    ) {
-      // create the custom link
+    console.log("new row")
+    console.log(updates)
+
+    if (userBecameAuthorizedToSubscribe(updates)) {
       const user = await prisma.user({ email: record.fields.Email })
-      const idHash = getUserIDHash(user.id)
-      const link = `${process.env.SEEDLING_URL}/complete?id=${idHash}`
-
-      // Set prisma user object status to authorized
-      let customerArray = await prisma.customers({
-        where: { user: { id: user.id } },
-      })
-      const customer = customerArray[0]
-      await prisma.updateCustomer({
-        data: { status: "Authorized" },
-        where: { id: customer.id },
-      })
-
-      // Send email via sendgrid
-      const msg = {
-        to: user.email,
-        from: "membership@seasons.nyc",
-        templateId: "d-a62e1c840166432abd396d1536e4489d",
-        dynamic_template_data: {
-          name: user.firstName,
-          url: link,
-        },
-      }
-      sgMail.send(msg)
+      setCustomerStatus(prisma, user, "Authorized")
+      sendAuthorizedToSubscribeEmail(user)
     }
 
     // Check if record is Physical Product
@@ -100,6 +74,36 @@ const incrementReservableCount = async (productVariant, physicalProduct) => {
   })
 
   console.log(physicalProduct, productVariant)
+}
+
+interface Update {
+  field: string
+  newValue: string
+}
+
+function userBecameAuthorizedToSubscribe(updates: Array<Update>): boolean {
+  for (let update of updates) {
+    const { field, newValue } = update
+    if (field === "Status" && newValue === "Authorized") {
+      return true
+    }
+  }
+  return false
+}
+
+function sendAuthorizedToSubscribeEmail(user: User) {
+  const msg = {
+    to: user.email,
+    from: "membership@seasons.nyc",
+    templateId: "d-a62e1c840166432abd396d1536e4489d",
+    dynamic_template_data: {
+      name: user.firstName,
+      url: `${process.env.SEEDLING_URL}/complete?idHash=${getUserIDHash(
+        user.id
+      )}`,
+    },
+  }
+  sgMail.send(msg)
 }
 
 export { app }
