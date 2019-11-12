@@ -7,6 +7,7 @@ import {
 } from "../../auth/utils"
 import { Context } from "../../utils"
 import { UserInputError, ForbiddenError } from "apollo-server"
+import { createOrUpdateAirtableUser } from "../../airtable/createOrUpdateUser"
 
 export const auth = {
     // The signup mutation signs up users with a "Customer" role.
@@ -65,6 +66,9 @@ export const auth = {
         } catch (err) {
             throw new Error(err)
         }
+
+        // Insert them into airtable
+        createOrUpdateAirtableUser(user, details, "Waitlisted")
 
         return {
             token: tokenData.access_token,
