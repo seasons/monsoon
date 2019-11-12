@@ -9,7 +9,12 @@ import chargebee from "chargebee"
 import { createOrUpdateAirtableUser } from "../../airtable/createOrUpdateUser"
 import sgMail from "@sendgrid/mail"
 import { User } from "../../prisma"
+
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+chargebee.configure({
+    site: process.env.CHARGEBEE_SITE,
+    api_key: process.env.CHARGEE_API_KEY,
+})
 
 export const customer = {
     /*
@@ -68,10 +73,6 @@ export const customer = {
     },
 
     async acknowledgeCompletedChargebeeHostedCheckout(obj, { hostedPageID }, ctx: Context, info) {
-        chargebee.configure({
-            site: process.env.CHARGEBEE_SITE,
-            api_key: process.env.CHARGEE_API_KEY,
-        })
         try {
             await chargebee.hosted_page.acknowledge(hostedPageID).request(async function (error, result) {
                 if (error) {
@@ -96,10 +97,6 @@ export const customer = {
         const prismaCustomer = await getCustomerFromContext(ctx)
 
         // Retrieve all the relevant data
-        chargebee.configure({
-            site: process.env.CHARGEBEE_SITE,
-            api_key: process.env.CHARGEE_API_KEY,
-        })
         let billingInfo, plan, planInfo
         await chargebee.subscription
             .list({
