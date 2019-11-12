@@ -99,7 +99,7 @@ type Mutation {
   checkItemsAvailability(items: [ID!]!): Boolean!
   reserveItems(items: [ID!]!, options: ReserveItemsOptions): Reservation
   saveCustomerBillingInfo: BillingInfoPlayoad
-  processCompletedChargebeeHostedCheckout(hostedPageID: String!): Boolean
+  acknowledgeCompletedChargebeeHostedCheckout(hostedPageID: String!): Boolean
 }
 
 type BillingInfoPlayoad {

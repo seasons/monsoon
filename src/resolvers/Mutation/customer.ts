@@ -1,4 +1,4 @@
-import { Context, getUserFromUserIDHash, getCustomerFromUserID, setCustomerPrismaStatus } from "../../utils"
+import { Context, setCustomerPrismaStatus } from "../../utils"
 import {
     getCustomerFromContext,
     getUserFromContext,
@@ -7,8 +7,9 @@ import {
 import { UserInputError } from "apollo-server"
 import chargebee from "chargebee"
 import { createOrUpdateAirtableUser } from "../../airtable/createOrUpdateUser"
-import { getUserById } from "../../airtable/utils"
-import { base } from "../../airtable/config"
+import sgMail from "@sendgrid/mail"
+import { User } from "../../prisma"
+sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
 export const customer = {
     /*
@@ -66,22 +67,27 @@ export const customer = {
         return { ...customer, detail: updatedDetails }
     },
 
-    async processCompletedChargebeeHostedCheckout(obj, { hostedPageID }, ctx: Context, info) {
+    async acknowledgeCompletedChargebeeHostedCheckout(obj, { hostedPageID }, ctx: Context, info) {
         chargebee.configure({
             site: process.env.CHARGEBEE_SITE,
             api_key: process.env.CHARGEE_API_KEY,
         })
-        let prismaUser
-        await chargebee.hosted_page.acknowledge(hostedPageID).request(async function (error, result) {
-            if (error) {
-                console.log(error)
-            } else {
-                var { subscription: { customer_id } } = result.hosted_page.content;
-                prismaUser = await ctx.prisma.user({ id: customer_id })
-                await setCustomerPrismaStatus(ctx.prisma, prismaUser, "Active")
-                await createOrUpdateAirtableUser(prismaUser, {}, "Active")
-            }
-        })
+        try {
+            await chargebee.hosted_page.acknowledge(hostedPageID).request(async function (error, result) {
+                if (error) {
+                    throw (error)
+                } else {
+                    var { subscription: { customer_id } } = result.hosted_page.content;
+                    let prismaUser = await ctx.prisma.user({ id: customer_id })
+                    await setCustomerPrismaStatus(ctx.prisma, prismaUser, "Active")
+                    await createOrUpdateAirtableUser(prismaUser, {}, "Active")
+                    sendWelcomeToSeasonsEmail(prismaUser)
+                }
+            })
+        } catch (err) {
+            throw (err)
+        }
+        return true
     },
 
     async saveCustomerBillingInfo(obj, args, ctx: Context, info) {
@@ -149,4 +155,18 @@ export const customer = {
             plan: ctx.prisma.customer({ id: prismaCustomer.id }).plan(),
         }
     },
+}
+
+
+function sendWelcomeToSeasonsEmail(user: User) {
+    const msg = {
+        to: user.email,
+        from: "membership@seasons.nyc",
+        templateId: "d-05ae098e5bfb47eb9372ea2c461ffcf6",
+        dynamic_template_data: {
+            name: user.firstName,
+            url: `www.google.com`,
+        },
+    }
+    sgMail.send(msg)
 }
