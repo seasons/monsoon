@@ -23,7 +23,8 @@
     "prisma:deploy-staging": "prisma deploy -e .env.staging && prisma generate",
     "prisma:deploy-production": "prisma deploy -e .env.production && prisma generate",
     "seed-db": "node -r dotenv/config -r ts-node/register scripts/airtableToDB.ts",
-    "seed-db:staging": "yarn seed-db -- dotenv_config_path=.env.staging"
+    "seed-db:staging": "yarn seed-db -- dotenv_config_path=.env.staging",
+    "seed-db:production": "yarn seed-db -- dotenv_config_path=.env.production"
   },
   "dependencies": {
     "@auth0/auth0-spa-js": "^1.3.0",
