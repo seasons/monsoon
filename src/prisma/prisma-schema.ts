@@ -3090,7 +3090,7 @@ type Location {
   company: String
   description: String
   address1: String!
-  address2: String!
+  address2: String
   city: String!
   state: String!
   zipCode: String!
@@ -3116,7 +3116,7 @@ input LocationCreateInput {
   company: String
   description: String
   address1: String!
-  address2: String!
+  address2: String
   city: String!
   state: String!
   zipCode: String!
@@ -3144,7 +3144,7 @@ input LocationCreateWithoutPhysicalProductsInput {
   company: String
   description: String
   address1: String!
-  address2: String!
+  address2: String
   city: String!
   state: String!
   zipCode: String!
@@ -3199,7 +3199,7 @@ type LocationPreviousValues {
   company: String
   description: String
   address1: String!
-  address2: String!
+  address2: String
   city: String!
   state: String!
   zipCode: String!
