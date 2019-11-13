@@ -2066,8 +2066,8 @@ export interface CustomerCreateWithoutBagInput {
   billingInfo?: Maybe<BillingInfoCreateOneInput>;
   plan?: Maybe<Plan>;
   planInfo?: Maybe<PlanInfoCreateOneInput>;
-  reservations?: Maybe<ReservationCreateManyWithoutCustomerInput>;
   savedProducts?: Maybe<ProductCreateManyInput>;
+  reservations?: Maybe<ReservationCreateManyWithoutCustomerInput>;
 }
 
 export type BillingInfoWhereUniqueInput = AtLeastOne<{
@@ -2608,12 +2608,9 @@ export interface ProductFunctionUpdateManyMutationInput {
   name?: Maybe<String>;
 }
 
-export interface ReservationCreateManyWithoutCustomerInput {
-  create?: Maybe<
-    | ReservationCreateWithoutCustomerInput[]
-    | ReservationCreateWithoutCustomerInput
-  >;
-  connect?: Maybe<ReservationWhereUniqueInput[] | ReservationWhereUniqueInput>;
+export interface ProductCreateManyInput {
+  create?: Maybe<ProductCreateInput[] | ProductCreateInput>;
+  connect?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
 }
 
 export type ColorWhereUniqueInput = AtLeastOne<{
@@ -2622,18 +2619,27 @@ export type ColorWhereUniqueInput = AtLeastOne<{
   colorCode?: Maybe<String>;
 }>;
 
-export interface ReservationCreateWithoutCustomerInput {
+export interface ProductCreateInput {
   id?: Maybe<ID_Input>;
-  user: UserCreateOneInput;
-  shippingLabel: LabelCreateOneInput;
-  returnLabel?: Maybe<LabelCreateOneInput>;
-  location?: Maybe<LocationCreateOneInput>;
-  products?: Maybe<PhysicalProductCreateManyInput>;
-  reservationNumber: Int;
-  shipped: Boolean;
-  status: ReservationStatus;
-  shippedAt?: Maybe<DateTimeInput>;
-  receivedAt?: Maybe<DateTimeInput>;
+  slug: String;
+  name: String;
+  brand: BrandCreateOneWithoutProductsInput;
+  category: CategoryCreateOneWithoutProductsInput;
+  description?: Maybe<String>;
+  externalURL?: Maybe<String>;
+  images: Json;
+  modelHeight?: Maybe<Int>;
+  modelSize?: Maybe<Size>;
+  retailPrice?: Maybe<Int>;
+  color: ColorCreateOneInput;
+  secondaryColor?: Maybe<ColorCreateOneInput>;
+  tags?: Maybe<Json>;
+  functions?: Maybe<ProductFunctionCreateManyInput>;
+  availableSizes?: Maybe<ProductCreateavailableSizesInput>;
+  innerMaterials?: Maybe<ProductCreateinnerMaterialsInput>;
+  outerMaterials?: Maybe<ProductCreateouterMaterialsInput>;
+  variants?: Maybe<ProductVariantCreateManyWithoutProductInput>;
+  status?: Maybe<ProductStatus>;
 }
 
 export interface ProductUpdateInput {
@@ -2658,9 +2664,12 @@ export interface ProductUpdateInput {
   status?: Maybe<ProductStatus>;
 }
 
-export interface LabelCreateOneInput {
-  create?: Maybe<LabelCreateInput>;
-  connect?: Maybe<LabelWhereUniqueInput>;
+export interface ReservationCreateManyWithoutCustomerInput {
+  create?: Maybe<
+    | ReservationCreateWithoutCustomerInput[]
+    | ReservationCreateWithoutCustomerInput
+  >;
+  connect?: Maybe<ReservationWhereUniqueInput[] | ReservationWhereUniqueInput>;
 }
 
 export interface PlanInfoUpdateInput {
@@ -2669,10 +2678,18 @@ export interface PlanInfoUpdateInput {
   price?: Maybe<String>;
 }
 
-export interface LabelCreateInput {
+export interface ReservationCreateWithoutCustomerInput {
   id?: Maybe<ID_Input>;
-  name?: Maybe<String>;
-  image?: Maybe<String>;
+  user: UserCreateOneInput;
+  shippingLabel: LabelCreateOneInput;
+  returnLabel?: Maybe<LabelCreateOneInput>;
+  location?: Maybe<LocationCreateOneInput>;
+  products?: Maybe<PhysicalProductCreateManyInput>;
+  reservationNumber: Int;
+  shipped: Boolean;
+  status: ReservationStatus;
+  shippedAt?: Maybe<DateTimeInput>;
+  receivedAt?: Maybe<DateTimeInput>;
 }
 
 export interface CategoryWhereInput {
@@ -2745,11 +2762,9 @@ export interface CategoryWhereInput {
   NOT?: Maybe<CategoryWhereInput[] | CategoryWhereInput>;
 }
 
-export interface PhysicalProductCreateManyInput {
-  create?: Maybe<PhysicalProductCreateInput[] | PhysicalProductCreateInput>;
-  connect?: Maybe<
-    PhysicalProductWhereUniqueInput[] | PhysicalProductWhereUniqueInput
-  >;
+export interface LabelCreateOneInput {
+  create?: Maybe<LabelCreateInput>;
+  connect?: Maybe<LabelWhereUniqueInput>;
 }
 
 export interface PhysicalProductUpdateInput {
@@ -2762,22 +2777,21 @@ export interface PhysicalProductUpdateInput {
   productStatus?: Maybe<PhysicalProductStatus>;
 }
 
-export interface PhysicalProductCreateInput {
+export interface LabelCreateInput {
   id?: Maybe<ID_Input>;
-  seasonsUID: String;
-  location: LocationCreateOneWithoutPhysicalProductsInput;
-  productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput;
-  inventoryStatus: InventoryStatus;
-  productStatus: PhysicalProductStatus;
+  name?: Maybe<String>;
+  image?: Maybe<String>;
 }
 
 export type CustomerDetailWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
 
-export interface ProductCreateManyInput {
-  create?: Maybe<ProductCreateInput[] | ProductCreateInput>;
-  connect?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
+export interface PhysicalProductCreateManyInput {
+  create?: Maybe<PhysicalProductCreateInput[] | PhysicalProductCreateInput>;
+  connect?: Maybe<
+    PhysicalProductWhereUniqueInput[] | PhysicalProductWhereUniqueInput
+  >;
 }
 
 export interface LocationUpdateInput {
@@ -2797,27 +2811,13 @@ export interface LocationUpdateInput {
   physicalProducts?: Maybe<PhysicalProductUpdateManyWithoutLocationInput>;
 }
 
-export interface ProductCreateInput {
+export interface PhysicalProductCreateInput {
   id?: Maybe<ID_Input>;
-  slug: String;
-  name: String;
-  brand: BrandCreateOneWithoutProductsInput;
-  category: CategoryCreateOneWithoutProductsInput;
-  description?: Maybe<String>;
-  externalURL?: Maybe<String>;
-  images: Json;
-  modelHeight?: Maybe<Int>;
-  modelSize?: Maybe<Size>;
-  retailPrice?: Maybe<Int>;
-  color: ColorCreateOneInput;
-  secondaryColor?: Maybe<ColorCreateOneInput>;
-  tags?: Maybe<Json>;
-  functions?: Maybe<ProductFunctionCreateManyInput>;
-  availableSizes?: Maybe<ProductCreateavailableSizesInput>;
-  innerMaterials?: Maybe<ProductCreateinnerMaterialsInput>;
-  outerMaterials?: Maybe<ProductCreateouterMaterialsInput>;
-  variants?: Maybe<ProductVariantCreateManyWithoutProductInput>;
-  status?: Maybe<ProductStatus>;
+  seasonsUID: String;
+  location: LocationCreateOneWithoutPhysicalProductsInput;
+  productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput;
+  inventoryStatus: InventoryStatus;
+  productStatus: PhysicalProductStatus;
 }
 
 export interface LabelUpdateInput {
@@ -3262,8 +3262,8 @@ export interface CustomerCreateInput {
   plan?: Maybe<Plan>;
   planInfo?: Maybe<PlanInfoCreateOneInput>;
   bag: BagCreateOneWithoutCustomerInput;
-  reservations?: Maybe<ReservationCreateManyWithoutCustomerInput>;
   savedProducts?: Maybe<ProductCreateManyInput>;
+  reservations?: Maybe<ReservationCreateManyWithoutCustomerInput>;
 }
 
 export interface CategoryUpdateOneRequiredWithoutProductsInput {
@@ -4995,8 +4995,8 @@ export interface CustomerUpdateInput {
   plan?: Maybe<Plan>;
   planInfo?: Maybe<PlanInfoUpdateOneInput>;
   bag?: Maybe<BagUpdateOneRequiredWithoutCustomerInput>;
-  reservations?: Maybe<ReservationUpdateManyWithoutCustomerInput>;
   savedProducts?: Maybe<ProductUpdateManyInput>;
+  reservations?: Maybe<ReservationUpdateManyWithoutCustomerInput>;
 }
 
 export interface CategoryUpsertWithWhereUniqueWithoutChildrenInput {
@@ -5158,8 +5158,8 @@ export interface CustomerUpdateWithoutBagDataInput {
   billingInfo?: Maybe<BillingInfoUpdateOneInput>;
   plan?: Maybe<Plan>;
   planInfo?: Maybe<PlanInfoUpdateOneInput>;
-  reservations?: Maybe<ReservationUpdateManyWithoutCustomerInput>;
   savedProducts?: Maybe<ProductUpdateManyInput>;
+  reservations?: Maybe<ReservationUpdateManyWithoutCustomerInput>;
 }
 
 export type UserWhereUniqueInput = AtLeastOne<{
@@ -5811,6 +5811,121 @@ export interface CategoryCreateInput {
   children?: Maybe<CategoryCreateManyWithoutChildrenInput>;
 }
 
+export interface ProductUpdateManyInput {
+  create?: Maybe<ProductCreateInput[] | ProductCreateInput>;
+  update?: Maybe<
+    | ProductUpdateWithWhereUniqueNestedInput[]
+    | ProductUpdateWithWhereUniqueNestedInput
+  >;
+  upsert?: Maybe<
+    | ProductUpsertWithWhereUniqueNestedInput[]
+    | ProductUpsertWithWhereUniqueNestedInput
+  >;
+  delete?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
+  connect?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
+  set?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
+  disconnect?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
+  deleteMany?: Maybe<ProductScalarWhereInput[] | ProductScalarWhereInput>;
+  updateMany?: Maybe<
+    | ProductUpdateManyWithWhereNestedInput[]
+    | ProductUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface ProductUpdateManyWithoutBrandInput {
+  create?: Maybe<
+    ProductCreateWithoutBrandInput[] | ProductCreateWithoutBrandInput
+  >;
+  delete?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
+  connect?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
+  set?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
+  disconnect?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
+  update?: Maybe<
+    | ProductUpdateWithWhereUniqueWithoutBrandInput[]
+    | ProductUpdateWithWhereUniqueWithoutBrandInput
+  >;
+  upsert?: Maybe<
+    | ProductUpsertWithWhereUniqueWithoutBrandInput[]
+    | ProductUpsertWithWhereUniqueWithoutBrandInput
+  >;
+  deleteMany?: Maybe<ProductScalarWhereInput[] | ProductScalarWhereInput>;
+  updateMany?: Maybe<
+    | ProductUpdateManyWithWhereNestedInput[]
+    | ProductUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface ProductUpdateWithWhereUniqueNestedInput {
+  where: ProductWhereUniqueInput;
+  data: ProductUpdateDataInput;
+}
+
+export interface ColorCreateWithoutProductVariantsInput {
+  id?: Maybe<ID_Input>;
+  slug: String;
+  name: String;
+  colorCode: String;
+  hexCode: String;
+}
+
+export interface ProductUpdateDataInput {
+  slug?: Maybe<String>;
+  name?: Maybe<String>;
+  brand?: Maybe<BrandUpdateOneRequiredWithoutProductsInput>;
+  category?: Maybe<CategoryUpdateOneRequiredWithoutProductsInput>;
+  description?: Maybe<String>;
+  externalURL?: Maybe<String>;
+  images?: Maybe<Json>;
+  modelHeight?: Maybe<Int>;
+  modelSize?: Maybe<Size>;
+  retailPrice?: Maybe<Int>;
+  color?: Maybe<ColorUpdateOneRequiredInput>;
+  secondaryColor?: Maybe<ColorUpdateOneInput>;
+  tags?: Maybe<Json>;
+  functions?: Maybe<ProductFunctionUpdateManyInput>;
+  availableSizes?: Maybe<ProductUpdateavailableSizesInput>;
+  innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
+  outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
+  variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
+  status?: Maybe<ProductStatus>;
+}
+
+export interface CategoryCreateWithoutChildrenInput {
+  id?: Maybe<ID_Input>;
+  slug: String;
+  name: String;
+  image?: Maybe<Json>;
+  description?: Maybe<String>;
+  visible?: Maybe<Boolean>;
+  products?: Maybe<ProductCreateManyWithoutCategoryInput>;
+}
+
+export interface ProductUpsertWithWhereUniqueNestedInput {
+  where: ProductWhereUniqueInput;
+  update: ProductUpdateDataInput;
+  create: ProductCreateInput;
+}
+
+export interface ProductVariantSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<ProductVariantWhereInput>;
+  AND?: Maybe<
+    | ProductVariantSubscriptionWhereInput[]
+    | ProductVariantSubscriptionWhereInput
+  >;
+  OR?: Maybe<
+    | ProductVariantSubscriptionWhereInput[]
+    | ProductVariantSubscriptionWhereInput
+  >;
+  NOT?: Maybe<
+    | ProductVariantSubscriptionWhereInput[]
+    | ProductVariantSubscriptionWhereInput
+  >;
+}
+
 export interface ReservationUpdateManyWithoutCustomerInput {
   create?: Maybe<
     | ReservationCreateWithoutCustomerInput[]
@@ -5839,97 +5954,6 @@ export interface ReservationUpdateManyWithoutCustomerInput {
   >;
 }
 
-export interface ProductUpdateManyWithoutBrandInput {
-  create?: Maybe<
-    ProductCreateWithoutBrandInput[] | ProductCreateWithoutBrandInput
-  >;
-  delete?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
-  connect?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
-  set?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
-  disconnect?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
-  update?: Maybe<
-    | ProductUpdateWithWhereUniqueWithoutBrandInput[]
-    | ProductUpdateWithWhereUniqueWithoutBrandInput
-  >;
-  upsert?: Maybe<
-    | ProductUpsertWithWhereUniqueWithoutBrandInput[]
-    | ProductUpsertWithWhereUniqueWithoutBrandInput
-  >;
-  deleteMany?: Maybe<ProductScalarWhereInput[] | ProductScalarWhereInput>;
-  updateMany?: Maybe<
-    | ProductUpdateManyWithWhereNestedInput[]
-    | ProductUpdateManyWithWhereNestedInput
-  >;
-}
-
-export interface ReservationUpdateWithWhereUniqueWithoutCustomerInput {
-  where: ReservationWhereUniqueInput;
-  data: ReservationUpdateWithoutCustomerDataInput;
-}
-
-export interface ColorCreateWithoutProductVariantsInput {
-  id?: Maybe<ID_Input>;
-  slug: String;
-  name: String;
-  colorCode: String;
-  hexCode: String;
-}
-
-export interface ReservationUpdateWithoutCustomerDataInput {
-  user?: Maybe<UserUpdateOneRequiredInput>;
-  shippingLabel?: Maybe<LabelUpdateOneRequiredInput>;
-  returnLabel?: Maybe<LabelUpdateOneInput>;
-  location?: Maybe<LocationUpdateOneInput>;
-  products?: Maybe<PhysicalProductUpdateManyInput>;
-  reservationNumber?: Maybe<Int>;
-  shipped?: Maybe<Boolean>;
-  status?: Maybe<ReservationStatus>;
-  shippedAt?: Maybe<DateTimeInput>;
-  receivedAt?: Maybe<DateTimeInput>;
-}
-
-export interface CategoryCreateWithoutChildrenInput {
-  id?: Maybe<ID_Input>;
-  slug: String;
-  name: String;
-  image?: Maybe<Json>;
-  description?: Maybe<String>;
-  visible?: Maybe<Boolean>;
-  products?: Maybe<ProductCreateManyWithoutCategoryInput>;
-}
-
-export interface LabelUpdateOneRequiredInput {
-  create?: Maybe<LabelCreateInput>;
-  update?: Maybe<LabelUpdateDataInput>;
-  upsert?: Maybe<LabelUpsertNestedInput>;
-  connect?: Maybe<LabelWhereUniqueInput>;
-}
-
-export interface ProductVariantSubscriptionWhereInput {
-  mutation_in?: Maybe<MutationType[] | MutationType>;
-  updatedFields_contains?: Maybe<String>;
-  updatedFields_contains_every?: Maybe<String[] | String>;
-  updatedFields_contains_some?: Maybe<String[] | String>;
-  node?: Maybe<ProductVariantWhereInput>;
-  AND?: Maybe<
-    | ProductVariantSubscriptionWhereInput[]
-    | ProductVariantSubscriptionWhereInput
-  >;
-  OR?: Maybe<
-    | ProductVariantSubscriptionWhereInput[]
-    | ProductVariantSubscriptionWhereInput
-  >;
-  NOT?: Maybe<
-    | ProductVariantSubscriptionWhereInput[]
-    | ProductVariantSubscriptionWhereInput
-  >;
-}
-
-export interface LabelUpdateDataInput {
-  name?: Maybe<String>;
-  image?: Maybe<String>;
-}
-
 export interface HomepageProductRailSubscriptionWhereInput {
   mutation_in?: Maybe<MutationType[] | MutationType>;
   updatedFields_contains?: Maybe<String>;
@@ -5950,9 +5974,9 @@ export interface HomepageProductRailSubscriptionWhereInput {
   >;
 }
 
-export interface LabelUpsertNestedInput {
-  update: LabelUpdateDataInput;
-  create: LabelCreateInput;
+export interface ReservationUpdateWithWhereUniqueWithoutCustomerInput {
+  where: ReservationWhereUniqueInput;
+  data: ReservationUpdateWithoutCustomerDataInput;
 }
 
 export interface ReservationUpdateManyMutationInput {
@@ -5963,13 +5987,17 @@ export interface ReservationUpdateManyMutationInput {
   receivedAt?: Maybe<DateTimeInput>;
 }
 
-export interface LabelUpdateOneInput {
-  create?: Maybe<LabelCreateInput>;
-  update?: Maybe<LabelUpdateDataInput>;
-  upsert?: Maybe<LabelUpsertNestedInput>;
-  delete?: Maybe<Boolean>;
-  disconnect?: Maybe<Boolean>;
-  connect?: Maybe<LabelWhereUniqueInput>;
+export interface ReservationUpdateWithoutCustomerDataInput {
+  user?: Maybe<UserUpdateOneRequiredInput>;
+  shippingLabel?: Maybe<LabelUpdateOneRequiredInput>;
+  returnLabel?: Maybe<LabelUpdateOneInput>;
+  location?: Maybe<LocationUpdateOneInput>;
+  products?: Maybe<PhysicalProductUpdateManyInput>;
+  reservationNumber?: Maybe<Int>;
+  shipped?: Maybe<Boolean>;
+  status?: Maybe<ReservationStatus>;
+  shippedAt?: Maybe<DateTimeInput>;
+  receivedAt?: Maybe<DateTimeInput>;
 }
 
 export interface ProductVariantUpdateInput {
@@ -5986,6 +6014,61 @@ export interface ProductVariantUpdateInput {
   reservable?: Maybe<Int>;
   reserved?: Maybe<Int>;
   nonReservable?: Maybe<Int>;
+}
+
+export interface LabelUpdateOneRequiredInput {
+  create?: Maybe<LabelCreateInput>;
+  update?: Maybe<LabelUpdateDataInput>;
+  upsert?: Maybe<LabelUpsertNestedInput>;
+  connect?: Maybe<LabelWhereUniqueInput>;
+}
+
+export interface LabelUpdateManyMutationInput {
+  name?: Maybe<String>;
+  image?: Maybe<String>;
+}
+
+export interface LabelUpdateDataInput {
+  name?: Maybe<String>;
+  image?: Maybe<String>;
+}
+
+export type LabelWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
+export interface LabelUpsertNestedInput {
+  update: LabelUpdateDataInput;
+  create: LabelCreateInput;
+}
+
+export interface CollectionUpdateManyDataInput {
+  slug?: Maybe<String>;
+  images?: Maybe<Json>;
+  title?: Maybe<String>;
+  subTitle?: Maybe<String>;
+  descriptionTop?: Maybe<String>;
+  descriptionBottom?: Maybe<String>;
+}
+
+export interface LabelUpdateOneInput {
+  create?: Maybe<LabelCreateInput>;
+  update?: Maybe<LabelUpdateDataInput>;
+  upsert?: Maybe<LabelUpsertNestedInput>;
+  delete?: Maybe<Boolean>;
+  disconnect?: Maybe<Boolean>;
+  connect?: Maybe<LabelWhereUniqueInput>;
+}
+
+export interface CollectionCreateInput {
+  id?: Maybe<ID_Input>;
+  slug: String;
+  images: Json;
+  title?: Maybe<String>;
+  subTitle?: Maybe<String>;
+  descriptionTop?: Maybe<String>;
+  descriptionBottom?: Maybe<String>;
+  products?: Maybe<ProductCreateManyInput>;
 }
 
 export interface PhysicalProductUpdateManyInput {
@@ -6019,132 +6102,15 @@ export interface PhysicalProductUpdateManyInput {
   >;
 }
 
-export interface LabelUpdateManyMutationInput {
-  name?: Maybe<String>;
-  image?: Maybe<String>;
-}
-
-export interface PhysicalProductUpdateWithWhereUniqueNestedInput {
-  where: PhysicalProductWhereUniqueInput;
-  data: PhysicalProductUpdateDataInput;
-}
-
-export type LabelWhereUniqueInput = AtLeastOne<{
-  id: Maybe<ID_Input>;
-}>;
-
-export interface PhysicalProductUpdateDataInput {
-  seasonsUID?: Maybe<String>;
-  location?: Maybe<LocationUpdateOneRequiredWithoutPhysicalProductsInput>;
-  productVariant?: Maybe<
-    ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
-  >;
-  inventoryStatus?: Maybe<InventoryStatus>;
-  productStatus?: Maybe<PhysicalProductStatus>;
-}
-
-export interface CollectionUpdateManyDataInput {
-  slug?: Maybe<String>;
-  images?: Maybe<Json>;
-  title?: Maybe<String>;
-  subTitle?: Maybe<String>;
-  descriptionTop?: Maybe<String>;
-  descriptionBottom?: Maybe<String>;
-}
-
-export interface PhysicalProductUpsertWithWhereUniqueNestedInput {
-  where: PhysicalProductWhereUniqueInput;
-  update: PhysicalProductUpdateDataInput;
-  create: PhysicalProductCreateInput;
-}
-
-export interface CollectionCreateInput {
-  id?: Maybe<ID_Input>;
-  slug: String;
-  images: Json;
-  title?: Maybe<String>;
-  subTitle?: Maybe<String>;
-  descriptionTop?: Maybe<String>;
-  descriptionBottom?: Maybe<String>;
-  products?: Maybe<ProductCreateManyInput>;
-}
-
-export interface ReservationUpsertWithWhereUniqueWithoutCustomerInput {
-  where: ReservationWhereUniqueInput;
-  update: ReservationUpdateWithoutCustomerDataInput;
-  create: ReservationCreateWithoutCustomerInput;
-}
-
 export interface BagCreateInput {
   id?: Maybe<ID_Input>;
   items?: Maybe<ProductVariantCreateManyInput>;
   customer: CustomerCreateOneWithoutBagInput;
 }
 
-export interface ReservationScalarWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  reservationNumber?: Maybe<Int>;
-  reservationNumber_not?: Maybe<Int>;
-  reservationNumber_in?: Maybe<Int[] | Int>;
-  reservationNumber_not_in?: Maybe<Int[] | Int>;
-  reservationNumber_lt?: Maybe<Int>;
-  reservationNumber_lte?: Maybe<Int>;
-  reservationNumber_gt?: Maybe<Int>;
-  reservationNumber_gte?: Maybe<Int>;
-  shipped?: Maybe<Boolean>;
-  shipped_not?: Maybe<Boolean>;
-  status?: Maybe<ReservationStatus>;
-  status_not?: Maybe<ReservationStatus>;
-  status_in?: Maybe<ReservationStatus[] | ReservationStatus>;
-  status_not_in?: Maybe<ReservationStatus[] | ReservationStatus>;
-  shippedAt?: Maybe<DateTimeInput>;
-  shippedAt_not?: Maybe<DateTimeInput>;
-  shippedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  shippedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  shippedAt_lt?: Maybe<DateTimeInput>;
-  shippedAt_lte?: Maybe<DateTimeInput>;
-  shippedAt_gt?: Maybe<DateTimeInput>;
-  shippedAt_gte?: Maybe<DateTimeInput>;
-  receivedAt?: Maybe<DateTimeInput>;
-  receivedAt_not?: Maybe<DateTimeInput>;
-  receivedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  receivedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  receivedAt_lt?: Maybe<DateTimeInput>;
-  receivedAt_lte?: Maybe<DateTimeInput>;
-  receivedAt_gt?: Maybe<DateTimeInput>;
-  receivedAt_gte?: Maybe<DateTimeInput>;
-  createdAt?: Maybe<DateTimeInput>;
-  createdAt_not?: Maybe<DateTimeInput>;
-  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_lt?: Maybe<DateTimeInput>;
-  createdAt_lte?: Maybe<DateTimeInput>;
-  createdAt_gt?: Maybe<DateTimeInput>;
-  createdAt_gte?: Maybe<DateTimeInput>;
-  updatedAt?: Maybe<DateTimeInput>;
-  updatedAt_not?: Maybe<DateTimeInput>;
-  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_lt?: Maybe<DateTimeInput>;
-  updatedAt_lte?: Maybe<DateTimeInput>;
-  updatedAt_gt?: Maybe<DateTimeInput>;
-  updatedAt_gte?: Maybe<DateTimeInput>;
-  AND?: Maybe<ReservationScalarWhereInput[] | ReservationScalarWhereInput>;
-  OR?: Maybe<ReservationScalarWhereInput[] | ReservationScalarWhereInput>;
-  NOT?: Maybe<ReservationScalarWhereInput[] | ReservationScalarWhereInput>;
+export interface PhysicalProductUpdateWithWhereUniqueNestedInput {
+  where: PhysicalProductWhereUniqueInput;
+  data: PhysicalProductUpdateDataInput;
 }
 
 export interface ColorCreateInput {
@@ -6156,9 +6122,14 @@ export interface ColorCreateInput {
   productVariants?: Maybe<ProductVariantCreateManyWithoutColorInput>;
 }
 
-export interface ReservationUpdateManyWithWhereNestedInput {
-  where: ReservationScalarWhereInput;
-  data: ReservationUpdateManyDataInput;
+export interface PhysicalProductUpdateDataInput {
+  seasonsUID?: Maybe<String>;
+  location?: Maybe<LocationUpdateOneRequiredWithoutPhysicalProductsInput>;
+  productVariant?: Maybe<
+    ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
+  >;
+  inventoryStatus?: Maybe<InventoryStatus>;
+  productStatus?: Maybe<PhysicalProductStatus>;
 }
 
 export interface UserWhereInput {
@@ -6257,37 +6228,20 @@ export interface UserWhereInput {
   NOT?: Maybe<UserWhereInput[] | UserWhereInput>;
 }
 
-export interface ReservationUpdateManyDataInput {
-  reservationNumber?: Maybe<Int>;
-  shipped?: Maybe<Boolean>;
-  status?: Maybe<ReservationStatus>;
-  shippedAt?: Maybe<DateTimeInput>;
-  receivedAt?: Maybe<DateTimeInput>;
+export interface PhysicalProductUpsertWithWhereUniqueNestedInput {
+  where: PhysicalProductWhereUniqueInput;
+  update: PhysicalProductUpdateDataInput;
+  create: PhysicalProductCreateInput;
 }
 
 export type CustomerWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
 
-export interface ProductUpdateManyInput {
-  create?: Maybe<ProductCreateInput[] | ProductCreateInput>;
-  update?: Maybe<
-    | ProductUpdateWithWhereUniqueNestedInput[]
-    | ProductUpdateWithWhereUniqueNestedInput
-  >;
-  upsert?: Maybe<
-    | ProductUpsertWithWhereUniqueNestedInput[]
-    | ProductUpsertWithWhereUniqueNestedInput
-  >;
-  delete?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
-  connect?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
-  set?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
-  disconnect?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
-  deleteMany?: Maybe<ProductScalarWhereInput[] | ProductScalarWhereInput>;
-  updateMany?: Maybe<
-    | ProductUpdateManyWithWhereNestedInput[]
-    | ProductUpdateManyWithWhereNestedInput
-  >;
+export interface ReservationUpsertWithWhereUniqueWithoutCustomerInput {
+  where: ReservationWhereUniqueInput;
+  update: ReservationUpdateWithoutCustomerDataInput;
+  create: ReservationCreateWithoutCustomerInput;
 }
 
 export interface BagCreateOneWithoutCustomerInput {
@@ -6295,9 +6249,70 @@ export interface BagCreateOneWithoutCustomerInput {
   connect?: Maybe<BagWhereUniqueInput>;
 }
 
-export interface ProductUpdateWithWhereUniqueNestedInput {
-  where: ProductWhereUniqueInput;
-  data: ProductUpdateDataInput;
+export interface ReservationScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  reservationNumber?: Maybe<Int>;
+  reservationNumber_not?: Maybe<Int>;
+  reservationNumber_in?: Maybe<Int[] | Int>;
+  reservationNumber_not_in?: Maybe<Int[] | Int>;
+  reservationNumber_lt?: Maybe<Int>;
+  reservationNumber_lte?: Maybe<Int>;
+  reservationNumber_gt?: Maybe<Int>;
+  reservationNumber_gte?: Maybe<Int>;
+  shipped?: Maybe<Boolean>;
+  shipped_not?: Maybe<Boolean>;
+  status?: Maybe<ReservationStatus>;
+  status_not?: Maybe<ReservationStatus>;
+  status_in?: Maybe<ReservationStatus[] | ReservationStatus>;
+  status_not_in?: Maybe<ReservationStatus[] | ReservationStatus>;
+  shippedAt?: Maybe<DateTimeInput>;
+  shippedAt_not?: Maybe<DateTimeInput>;
+  shippedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  shippedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  shippedAt_lt?: Maybe<DateTimeInput>;
+  shippedAt_lte?: Maybe<DateTimeInput>;
+  shippedAt_gt?: Maybe<DateTimeInput>;
+  shippedAt_gte?: Maybe<DateTimeInput>;
+  receivedAt?: Maybe<DateTimeInput>;
+  receivedAt_not?: Maybe<DateTimeInput>;
+  receivedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  receivedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  receivedAt_lt?: Maybe<DateTimeInput>;
+  receivedAt_lte?: Maybe<DateTimeInput>;
+  receivedAt_gt?: Maybe<DateTimeInput>;
+  receivedAt_gte?: Maybe<DateTimeInput>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<ReservationScalarWhereInput[] | ReservationScalarWhereInput>;
+  OR?: Maybe<ReservationScalarWhereInput[] | ReservationScalarWhereInput>;
+  NOT?: Maybe<ReservationScalarWhereInput[] | ReservationScalarWhereInput>;
 }
 
 export interface ProductUpdateWithoutBrandDataInput {
@@ -6340,32 +6355,17 @@ export interface CustomerUpsertWithoutBagInput {
   create: CustomerCreateWithoutBagInput;
 }
 
-export interface ProductUpsertWithWhereUniqueNestedInput {
-  where: ProductWhereUniqueInput;
-  update: ProductUpdateDataInput;
-  create: ProductCreateInput;
+export interface ReservationUpdateManyDataInput {
+  reservationNumber?: Maybe<Int>;
+  shipped?: Maybe<Boolean>;
+  status?: Maybe<ReservationStatus>;
+  shippedAt?: Maybe<DateTimeInput>;
+  receivedAt?: Maybe<DateTimeInput>;
 }
 
-export interface ProductUpdateDataInput {
-  slug?: Maybe<String>;
-  name?: Maybe<String>;
-  brand?: Maybe<BrandUpdateOneRequiredWithoutProductsInput>;
-  category?: Maybe<CategoryUpdateOneRequiredWithoutProductsInput>;
-  description?: Maybe<String>;
-  externalURL?: Maybe<String>;
-  images?: Maybe<Json>;
-  modelHeight?: Maybe<Int>;
-  modelSize?: Maybe<Size>;
-  retailPrice?: Maybe<Int>;
-  color?: Maybe<ColorUpdateOneRequiredInput>;
-  secondaryColor?: Maybe<ColorUpdateOneInput>;
-  tags?: Maybe<Json>;
-  functions?: Maybe<ProductFunctionUpdateManyInput>;
-  availableSizes?: Maybe<ProductUpdateavailableSizesInput>;
-  innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
-  outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
-  variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
-  status?: Maybe<ProductStatus>;
+export interface ReservationUpdateManyWithWhereNestedInput {
+  where: ReservationScalarWhereInput;
+  data: ReservationUpdateManyDataInput;
 }
 
 export interface BrandCreateWithoutProductsInput {
@@ -6496,12 +6496,12 @@ export interface CustomerWhereInput {
   plan_not_in?: Maybe<Plan[] | Plan>;
   planInfo?: Maybe<PlanInfoWhereInput>;
   bag?: Maybe<BagWhereInput>;
-  reservations_every?: Maybe<ReservationWhereInput>;
-  reservations_some?: Maybe<ReservationWhereInput>;
-  reservations_none?: Maybe<ReservationWhereInput>;
   savedProducts_every?: Maybe<ProductWhereInput>;
   savedProducts_some?: Maybe<ProductWhereInput>;
   savedProducts_none?: Maybe<ProductWhereInput>;
+  reservations_every?: Maybe<ReservationWhereInput>;
+  reservations_some?: Maybe<ReservationWhereInput>;
+  reservations_none?: Maybe<ReservationWhereInput>;
   AND?: Maybe<CustomerWhereInput[] | CustomerWhereInput>;
   OR?: Maybe<CustomerWhereInput[] | CustomerWhereInput>;
   NOT?: Maybe<CustomerWhereInput[] | CustomerWhereInput>;
@@ -10287,18 +10287,18 @@ export interface CustomerPromise extends Promise<Customer>, Fragmentable {
   plan: () => Promise<Plan>;
   planInfo: <T = PlanInfoPromise>() => T;
   bag: <T = BagPromise>() => T;
-  reservations: <T = FragmentableArray<Reservation>>(args?: {
-    where?: ReservationWhereInput;
-    orderBy?: ReservationOrderByInput;
+  savedProducts: <T = FragmentableArray<Product>>(args?: {
+    where?: ProductWhereInput;
+    orderBy?: ProductOrderByInput;
     skip?: Int;
     after?: String;
     before?: String;
     first?: Int;
     last?: Int;
   }) => T;
-  savedProducts: <T = FragmentableArray<Product>>(args?: {
-    where?: ProductWhereInput;
-    orderBy?: ProductOrderByInput;
+  reservations: <T = FragmentableArray<Reservation>>(args?: {
+    where?: ReservationWhereInput;
+    orderBy?: ReservationOrderByInput;
     skip?: Int;
     after?: String;
     before?: String;
@@ -10318,18 +10318,18 @@ export interface CustomerSubscription
   plan: () => Promise<AsyncIterator<Plan>>;
   planInfo: <T = PlanInfoSubscription>() => T;
   bag: <T = BagSubscription>() => T;
-  reservations: <T = Promise<AsyncIterator<ReservationSubscription>>>(args?: {
-    where?: ReservationWhereInput;
-    orderBy?: ReservationOrderByInput;
+  savedProducts: <T = Promise<AsyncIterator<ProductSubscription>>>(args?: {
+    where?: ProductWhereInput;
+    orderBy?: ProductOrderByInput;
     skip?: Int;
     after?: String;
     before?: String;
     first?: Int;
     last?: Int;
   }) => T;
-  savedProducts: <T = Promise<AsyncIterator<ProductSubscription>>>(args?: {
-    where?: ProductWhereInput;
-    orderBy?: ProductOrderByInput;
+  reservations: <T = Promise<AsyncIterator<ReservationSubscription>>>(args?: {
+    where?: ReservationWhereInput;
+    orderBy?: ReservationOrderByInput;
     skip?: Int;
     after?: String;
     before?: String;
@@ -10349,18 +10349,18 @@ export interface CustomerNullablePromise
   plan: () => Promise<Plan>;
   planInfo: <T = PlanInfoPromise>() => T;
   bag: <T = BagPromise>() => T;
-  reservations: <T = FragmentableArray<Reservation>>(args?: {
-    where?: ReservationWhereInput;
-    orderBy?: ReservationOrderByInput;
+  savedProducts: <T = FragmentableArray<Product>>(args?: {
+    where?: ProductWhereInput;
+    orderBy?: ProductOrderByInput;
     skip?: Int;
     after?: String;
     before?: String;
     first?: Int;
     last?: Int;
   }) => T;
-  savedProducts: <T = FragmentableArray<Product>>(args?: {
-    where?: ProductWhereInput;
-    orderBy?: ProductOrderByInput;
+  reservations: <T = FragmentableArray<Reservation>>(args?: {
+    where?: ReservationWhereInput;
+    orderBy?: ReservationOrderByInput;
     skip?: Int;
     after?: String;
     before?: String;

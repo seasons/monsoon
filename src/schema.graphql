@@ -1,9 +1,51 @@
-# import Category, User, Bag, Collection, CustomerDetail, ProductFunction from "./prisma/prisma.graphql"
+# import Category, User, Bag, Collection, CustomerDetail, ProductFunction, SavedProduct from "./prisma/prisma.graphql"
 
 directive @isAuthenticated on FIELD_DEFINITION
 directive @hasRole(roles: [String]) on FIELD_DEFINITION
 directive @isOwner(type: String) on FIELD_DEFINITION
 directive @isOwnerOrHasRole(type: String, roles: [String]) on FIELD_DEFINITION
+
+type Product {
+  id: ID!
+  slug: String!
+  name: String!
+  brand: Brand!
+  category: Category!
+  description: String
+  externalURL: String
+  images: Json!
+  modelHeight: Int
+  modelSize: Size
+  retailPrice: Int
+  color: Color!
+  secondaryColor: Color
+  tags: Json
+  functions(
+    where: ProductFunctionWhereInput
+    orderBy: ProductFunctionOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [ProductFunction!]
+  availableSizes: [Size!]!
+  innerMaterials: [Material!]!
+  outerMaterials: [Material!]!
+  variants(
+    where: ProductVariantWhereInput
+    orderBy: ProductVariantOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [ProductVariant!]
+  status: ProductStatus
+  isSaved: Boolean
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
 
 type Query {
   me: Me @isAuthenticated
@@ -99,6 +141,7 @@ type Mutation {
   checkItemsAvailability(items: [ID!]!): Boolean!
   reserveItems(items: [ID!]!, options: ReserveItemsOptions): Reservation
   saveCustomerBillingInfo: BillingInfoPlayoad
+  saveProduct(item: ID!, save: Boolean!): Product
   acknowledgeCompletedChargebeeHostedCheckout(hostedPageID: String!): Boolean
 }
 

@@ -57,4 +57,4 @@ export const syncPhysicalProducts = async () => {
   }
 }
 
-syncPhysicalProducts()
+// syncPhysicalProducts()

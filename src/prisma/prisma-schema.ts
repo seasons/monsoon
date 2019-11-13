@@ -1885,8 +1885,8 @@ type Customer {
   plan: Plan
   planInfo: PlanInfo
   bag: Bag!
-  reservations(where: ReservationWhereInput, orderBy: ReservationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Reservation!]
   savedProducts(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
+  reservations(where: ReservationWhereInput, orderBy: ReservationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Reservation!]
 }
 
 type CustomerConnection {
@@ -1904,8 +1904,8 @@ input CustomerCreateInput {
   plan: Plan
   planInfo: PlanInfoCreateOneInput
   bag: BagCreateOneWithoutCustomerInput!
-  reservations: ReservationCreateManyWithoutCustomerInput
   savedProducts: ProductCreateManyInput
+  reservations: ReservationCreateManyWithoutCustomerInput
 }
 
 input CustomerCreateOneWithoutBagInput {
@@ -1926,8 +1926,8 @@ input CustomerCreateWithoutBagInput {
   billingInfo: BillingInfoCreateOneInput
   plan: Plan
   planInfo: PlanInfoCreateOneInput
-  reservations: ReservationCreateManyWithoutCustomerInput
   savedProducts: ProductCreateManyInput
+  reservations: ReservationCreateManyWithoutCustomerInput
 }
 
 input CustomerCreateWithoutReservationsInput {
@@ -2487,8 +2487,8 @@ input CustomerUpdateInput {
   plan: Plan
   planInfo: PlanInfoUpdateOneInput
   bag: BagUpdateOneRequiredWithoutCustomerInput
-  reservations: ReservationUpdateManyWithoutCustomerInput
   savedProducts: ProductUpdateManyInput
+  reservations: ReservationUpdateManyWithoutCustomerInput
 }
 
 input CustomerUpdateManyMutationInput {
@@ -2517,8 +2517,8 @@ input CustomerUpdateWithoutBagDataInput {
   billingInfo: BillingInfoUpdateOneInput
   plan: Plan
   planInfo: PlanInfoUpdateOneInput
-  reservations: ReservationUpdateManyWithoutCustomerInput
   savedProducts: ProductUpdateManyInput
+  reservations: ReservationUpdateManyWithoutCustomerInput
 }
 
 input CustomerUpdateWithoutReservationsDataInput {
@@ -2570,12 +2570,12 @@ input CustomerWhereInput {
   plan_not_in: [Plan!]
   planInfo: PlanInfoWhereInput
   bag: BagWhereInput
-  reservations_every: ReservationWhereInput
-  reservations_some: ReservationWhereInput
-  reservations_none: ReservationWhereInput
   savedProducts_every: ProductWhereInput
   savedProducts_some: ProductWhereInput
   savedProducts_none: ProductWhereInput
+  reservations_every: ReservationWhereInput
+  reservations_some: ReservationWhereInput
+  reservations_none: ReservationWhereInput
   AND: [CustomerWhereInput!]
   OR: [CustomerWhereInput!]
   NOT: [CustomerWhereInput!]
