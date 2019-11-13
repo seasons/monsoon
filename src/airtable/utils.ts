@@ -1,180 +1,209 @@
 import { base } from "./config"
-import { ReservationCreateInput } from "../prisma"
+import {
+    ReservationCreateInput,
+    LocationCreateInput,
+    LocationCreateOneInput,
+} from "../prisma"
+import slugify from "slugify"
 
 interface AirtableData extends Array<any> {
-  findByIds: (ids?: any) => any
-  findMultipleByIds: (ids?: any) => any[]
+    findByIds: (ids?: any) => any
+    findMultipleByIds: (ids?: any) => any[]
 }
 
 const getAll: (
-  name: string,
-  filterFormula?: string
+    name: string,
+    filterFormula?: string
 ) => Promise<AirtableData> = async (name, filterFormula) => {
-  let data = [] as AirtableData
+    let data = [] as AirtableData
 
-  data.findByIds = (ids = []) => {
-    return data.find(record => ids.includes(record.id))
-  }
-
-  data.findMultipleByIds = (ids = []) => {
-    return data.filter(record => ids.includes(record.id))
-  }
-
-  return new Promise((resolve, reject) => {
-    const options: { view: string; filterByFormula?: string } = {
-      view: "Grid view",
+    data.findByIds = (ids = []) => {
+        return data.find(record => ids.includes(record.id))
     }
 
-    if (filterFormula && filterFormula.length) {
-      options.filterByFormula = filterFormula
+    data.findMultipleByIds = (ids = []) => {
+        return data.filter(record => ids.includes(record.id))
     }
 
-    base(name)
-      .select(options)
-      .eachPage(
-        (records, fetchNextPage) => {
-          records.forEach(record => {
-            record.model = airtableToPrismaObject(record.fields)
-            data.push(record)
-          })
-          return fetchNextPage()
-        },
-        function done(err) {
-          if (err) {
-            console.error(err)
-            reject(err)
-            return
-          }
-          resolve(data)
+    return new Promise((resolve, reject) => {
+        const options: { view: string; filterByFormula?: string } = {
+            view: "Grid view",
         }
-      )
-  })
+
+        if (filterFormula && filterFormula.length) {
+            options.filterByFormula = filterFormula
+        }
+
+        base(name)
+            .select(options)
+            .eachPage(
+                (records, fetchNextPage) => {
+                    records.forEach(record => {
+                        record.model = airtableToPrismaObject(record.fields)
+                        data.push(record)
+                    })
+                    return fetchNextPage()
+                },
+                function done(err) {
+                    if (err) {
+                        console.error(err)
+                        reject(err)
+                        return
+                    }
+                    resolve(data)
+                }
+            )
+    })
 }
 
 export const getAllBrands = async () => {
-  return getAll("Brands")
+    return getAll("Brands")
 }
 
 export const getAllCollections = async () => {
-  return getAll("Collections")
+    return getAll("Collections")
 }
 
 export const getAllCollectionGroups = async () => {
-  return getAll("Collection Groups")
+    return getAll("Collection Groups")
 }
 
 export const getAllCategories = async () => {
-  return getAll("Categories")
+    return getAll("Categories")
 }
 
 export const getAllColors = async () => {
-  return getAll("Colors")
+    return getAll("Colors")
+}
+
+export const getAllHomepageProductRails = async () => {
+    return getAll("Homepage Product Rails")
 }
 
 export const getAllProducts = async () => {
-  return getAll("Products")
+    return getAll("Products")
 }
 
 export const getAllProductVariants = async () => {
-  return getAll("Product Variants")
+    return getAll("Product Variants")
 }
 
 export const getAllPhysicalProducts = async () => {
-  return getAll("Physical Products")
+    return getAll("Physical Products")
 }
 
 export const getAllLocations = async () => {
-  return getAll("Locations")
+    return getAll("Locations")
 }
 
 export const airtableToPrismaObject = record => {
-  function camelCase(str) {
-    return str
-      .replace(/\s(.)/g, function(a) {
-        return a.toUpperCase()
-      })
-      .replace(/\s/g, "")
-      .replace(/^(.)/, function(b) {
-        return b.toLowerCase()
-      })
-  }
+    function camelCase(str) {
+        return str
+            .replace(/\s(.)/g, function (a) {
+                return a.toUpperCase()
+            })
+            .replace(/\s/g, "")
+            .replace(/^(.)/, function (b) {
+                return b.toLowerCase()
+            })
+    }
 
-  const obj = {}
-  for (let id of Object.keys(record)) {
-    let newKey = camelCase(id)
-    obj[newKey] = record[id]
-  }
-  return obj
+    const obj = {}
+    for (let id of Object.keys(record)) {
+        let newKey = camelCase(id)
+        obj[newKey] = record[id]
+    }
+    return obj
 }
 
 export const createReservation = async (user, data: ReservationCreateInput) => {
-  const itemIDs = (data.products.connect as { seasonsUID: string }[]).map(
-    a => a.seasonsUID
-  )
-  const items = await getPhysicalProducts(itemIDs)
-  const aUser = await getUserById(user)
+    const itemIDs = (data.products.connect as { seasonsUID: string }[]).map(
+        a => a.seasonsUID
+    )
+    const items = await getPhysicalProducts(itemIDs)
+    const aUser = await getUserById(user)
 
-  try {
+    try {
+        const createData = [
+            {
+                fields: {
+                    ID: data.reservationNumber,
+                    User: [aUser.id],
+                    Location: ["recjLC8KaIy089LOL"],
+                    Items: items.map(a => a.id),
+                    Shipped: false,
+                    Status: "New",
+                },
+            },
+        ]
+
+        const records = await base("Reservations").create(createData)
+
+        return records
+    } catch (e) {
+        console.log(e)
+        throw e
+    }
+}
+
+export const createLocation = async (user, data: LocationCreateInput) => {
     const createData = [
-      {
-        fields: {
-          ID: data.reservationNumber,
-          User: [aUser.id],
-          Location: ["recjLC8KaIy089LOL"],
-          Items: items.map(a => a.id),
-          Shipped: false,
-          Status: "New",
+        {
+            fields: {
+                Name: data.name,
+                Company: data.company,
+                "Address 1": data.address1,
+                "Address 2": data.address2,
+                City: data.city,
+                State: data.state,
+                "Zip Code": data.zipCode,
+                Slug: data.slug,
+                "Location Type": data.locationType,
+            },
         },
-      },
     ]
 
-    const records = await base("Reservations").create(createData)
-
-    return records
-  } catch (e) {
-    console.log(e)
-    throw e
-  }
+    return base("Locations").create(createData)
 }
 
 export const getProductVariant = (SKU: string) => {
-  return getAll("Product Variants", `{SKU}=${SKU}`)
+    return getAll("Product Variants", `{SKU}=${SKU}`)
 }
 
 export const getPhysicalProducts = (SUIDs: string[]) => {
-  const formula = `OR(${SUIDs.map(a => `{SUID}='${a}'`).join(",")})`
-  return getAll("Physical Products", formula)
+    const formula = `OR(${SUIDs.map(a => `{SUID}='${a}'`).join(",")})`
+    return getAll("Physical Products", formula)
 }
 
 export const updateProductVariant = async data => {
-  return new Promise((resolve, reject) => {
-    base("Reservations").create([{}], (err, records) => {
-      if (records.length > 0) {
-        const user = records[0]
-        resolve(user)
-      } else {
-        reject(err)
-      }
+    return new Promise((resolve, reject) => {
+        base("Reservations").create([{}], (err, records) => {
+            if (records.length > 0) {
+                const user = records[0]
+                resolve(user)
+            } else {
+                reject(err)
+            }
+        })
     })
-  })
 }
 
 export const getUserById: (
-  UserCreateInput
+    UserCreateInput
 ) => Promise<{ id: string }> = user => {
-  return new Promise((resolve, reject) => {
-    base("Users")
-      .select({
-        view: "Grid view",
-        filterByFormula: `{Email}='${user.email}'`,
-      })
-      .firstPage((err, records) => {
-        if (records.length > 0) {
-          const user = records[0]
-          resolve(user)
-        } else {
-          reject(err)
-        }
-      })
-  })
+    return new Promise((resolve, reject) => {
+        base("Users")
+            .select({
+                view: "Grid view",
+                filterByFormula: `{Email}='${user.email}'`,
+            })
+            .firstPage((err, records) => {
+                if (records.length > 0) {
+                    const user = records[0]
+                    resolve(user)
+                } else {
+                    reject(err)
+                }
+            })
+    })
 }

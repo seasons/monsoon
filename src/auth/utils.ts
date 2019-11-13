@@ -3,7 +3,7 @@ import jwksClient from "jwks-rsa"
 import request from "request"
 import { Context } from "../utils"
 import get from "lodash.get"
-import { Customer } from "../prisma"
+import { Customer, User } from "../prisma"
 
 const PW_STRENGTH_RULES_URL =
   "https://manage.auth0.com/dashboard/us/seasons/connections/database/con_btTULQOf6kAxxbCz/security"
@@ -36,10 +36,10 @@ export async function validateAndParseIdToken(idToken) {
 
 // retrieves the user indicated by the JWT token on the request.
 // If no such user exists, throws an error.
-export async function getUserFromContext(ctx: Context) {
+export async function getUserFromContext(ctx: Context): Promise<User> {
   return new Promise(async function getCustomerFromToken(resolve, reject) {
     if (!ctx.req.user) {
-      reject(new Error("no user on context"))
+      reject("no user on context")
     }
 
     // Does such a user exist?
@@ -146,7 +146,14 @@ export function createAuth0User(
   })
 }
 
-export function getAuth0UserAccessToken(email, password) {
+export function getAuth0UserAccessToken(
+  email,
+  password
+): Promise<{
+  access_token: string
+  refresh_token: string
+  expires_in: number
+}> {
   return new Promise(function RetrieveAccessToken(resolve, reject) {
     request(
       {
@@ -157,6 +164,7 @@ export function getAuth0UserAccessToken(email, password) {
           grant_type: "password",
           username: email,
           password: password,
+          scope: "offline_access",
           audience: `${process.env.AUTH0_AUDIENCE}`,
           client_id: `${process.env.AUTH0_CLIENTID}`,
           client_secret: `${process.env.AUTH0_CLIENT_SECRET}`,
@@ -175,7 +183,7 @@ export function getAuth0UserAccessToken(email, password) {
             )
           )
         }
-        return resolve(body.access_token)
+        return resolve(body)
       }
     )
   })
@@ -212,7 +220,6 @@ export async function createPrismaCustomerForExistingUser(
       connect: { id: userID },
     },
     bag: { create: {} },
-    savedProducts: { create: {} },
     detail: { create: details },
     status: status || "Waitlisted",
   })

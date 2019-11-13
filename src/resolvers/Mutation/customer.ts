@@ -1,32 +1,40 @@
-import { Context } from "../../utils"
+import { Context, setCustomerPrismaStatus } from "../../utils"
 import {
   getCustomerFromContext,
   getUserFromContext,
   getUserId,
 } from "../../auth/utils"
-import { UserInputError, ForbiddenError } from "apollo-server"
-import { User } from "../../prisma"
+import { UserInputError } from "apollo-server"
 import chargebee from "chargebee"
+import { createOrUpdateAirtableUser } from "../../airtable/createOrUpdateUser"
+import sgMail from "@sendgrid/mail"
+import { User, ProductUpdateDataInput } from "../../prisma"
+
+sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+chargebee.configure({
+  site: process.env.CHARGEBEE_SITE,
+  api_key: process.env.CHARGEE_API_KEY,
+})
 
 export const customer = {
   /*
-    Test Cases for addCustomerDetails resolver:
-    IF user submits an 'id' field in the resolver inputs, they get an error. 
-
-    IF there is no value for the Authorization header, THEN they get a 401. 
-
-    IF they use a token for an admin, THEN they get a 401
-
-    IF they use a token for a partner, THEN they get a 401
-
-    IF they add details to a customer with no existing customerDetail record, 
-    THEN a new record is created 
-    AND the customer record's "detail" field has the id of the newly created customerDetail record
-
-    IF they add details to a customer with an existing details object
-    THEN the existing record is updated, with any fields that were previously
-    written to overwritten if the payload includes values for them. 
-    */
+      Test Cases for addCustomerDetails resolver:
+      IF user submits an 'id' field in the resolver inputs, they get an error. 
+  
+      IF there is no value for the Authorization header, THEN they get a 401. 
+  
+      IF they use a token for an admin, THEN they get a 401
+  
+      IF they use a token for a partner, THEN they get a 401
+  
+      IF they add details to a customer with no existing customerDetail record, 
+      THEN a new record is created 
+      AND the customer record's "detail" field has the id of the newly created customerDetail record
+  
+      IF they add details to a customer with an existing details object
+      THEN the existing record is updated, with any fields that were previously
+      written to overwritten if the payload includes values for them. 
+      */
   async addCustomerDetails(obj, { details }, ctx: Context, info) {
     // They should not have included any "id" in the input
     if (details.id != null) {
@@ -34,6 +42,7 @@ export const customer = {
     }
 
     // Grab the customer off the context
+    const user = await getUserFromContext(ctx)
     const customer = await getCustomerFromContext(ctx)
 
     // Add the details. If necessary, create the details object afresh.
@@ -54,26 +63,60 @@ export const customer = {
       })
     }
 
+    await createOrUpdateAirtableUser(user, {
+      ...currentCustomerDetail,
+      ...details,
+    })
+
     // Return the updated customer object
     return { ...customer, detail: updatedDetails }
   },
 
+  async acknowledgeCompletedChargebeeHostedCheckout(
+    obj,
+    { hostedPageID },
+    ctx: Context,
+    info
+  ) {
+    try {
+      await chargebee.hosted_page
+        .acknowledge(hostedPageID)
+        .request(async function(error, result) {
+          if (error) {
+            throw error
+          } else {
+            var {
+              subscription: { customer_id },
+            } = result.hosted_page.content
+            let prismaUser = await ctx.prisma.user({ id: customer_id })
+            await setCustomerPrismaStatus(ctx.prisma, prismaUser, "Active")
+            await createOrUpdateAirtableUser(prismaUser, {}, "Active")
+            sendWelcomeToSeasonsEmail(prismaUser)
+          }
+        })
+    } catch (err) {
+      throw err
+    }
+    return true
+  },
+
   async saveProduct(obj, { item, save }, ctx: Context, info) {
     const customer = await getCustomerFromContext(ctx)
+
     let updatedSavedProducts
-    const currentSavedProducts = await ctx.prisma
-      .customer({ id: customer.id })
-      .savedProducts()
 
-    if( save ){
-      updatedSavedProducts = await ctx.prisma.updateSavedProduct({
-        data: item,
-        where: { id: currentSavedProducts.id },
-      })
-    } else {
+    let key = save ? "connect" : "disconnect"
 
-    }
-
+    await ctx.prisma.updateCustomer({
+      where: {
+        id: customer.id,
+      },
+      data: {
+        savedProducts: {
+          [key]: [{ id: item }],
+        },
+      },
+    })
 
     return { ...customer, savedProduct: updatedSavedProducts }
   },
@@ -82,13 +125,8 @@ export const customer = {
     // Get the customer's id
     const { id } = await getUserId(ctx)
     const prismaCustomer = await getCustomerFromContext(ctx)
-
     // Retrieve all the relevant data
-    chargebee.configure({
-      site: process.env.CHARGEBEE_SITE,
-      api_key: process.env.CHARGEE_API_KEY,
-    })
-    let billingInfo, plan
+    let billingInfo, plan, planInfo
     await chargebee.subscription
       .list({
         limit: 1,
@@ -143,4 +181,17 @@ export const customer = {
       plan: ctx.prisma.customer({ id: prismaCustomer.id }).plan(),
     }
   },
+}
+
+function sendWelcomeToSeasonsEmail(user: User) {
+  const msg = {
+    to: user.email,
+    from: "membership@seasons.nyc",
+    templateId: "d-05ae098e5bfb47eb9372ea2c461ffcf6",
+    dynamic_template_data: {
+      name: user.firstName,
+      url: `www.google.com`,
+    },
+  }
+  sgMail.send(msg)
 }

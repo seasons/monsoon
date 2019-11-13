@@ -27,6 +27,10 @@ export const serverOptions = {
     db,
   }),
   introspection: true,
+  formatError: error => {
+    console.log(error)
+    return error
+  },
   playground: {
     settings: {
       "editor.theme": "dark" as any,

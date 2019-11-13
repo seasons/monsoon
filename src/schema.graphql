@@ -5,6 +5,48 @@ directive @hasRole(roles: [String]) on FIELD_DEFINITION
 directive @isOwner(type: String) on FIELD_DEFINITION
 directive @isOwnerOrHasRole(type: String, roles: [String]) on FIELD_DEFINITION
 
+type Product {
+  id: ID!
+  slug: String!
+  name: String!
+  brand: Brand!
+  category: Category!
+  description: String
+  externalURL: String
+  images: Json!
+  modelHeight: Int
+  modelSize: Size
+  retailPrice: Int
+  color: Color!
+  secondaryColor: Color
+  tags: Json
+  functions(
+    where: ProductFunctionWhereInput
+    orderBy: ProductFunctionOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [ProductFunction!]
+  availableSizes: [Size!]!
+  innerMaterials: [Material!]!
+  outerMaterials: [Material!]!
+  variants(
+    where: ProductVariantWhereInput
+    orderBy: ProductVariantOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [ProductVariant!]
+  status: ProductStatus
+  isSaved: Boolean
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
 type Query {
   me: Me @isAuthenticated
   products(
@@ -57,7 +99,19 @@ type Query {
     last: Int
   ): [ProductFunction]!
   homepage: Homepage
-  chargebeeCheckout(planID: PlanID): ChargebeeCheckout
+  chargebeeCheckout(planID: PlanID!, userIDHash: String!): ChargebeeCheckout
+  homepageProductRails(
+    where: HomepageProductRailWhereInput
+    orderBy: HomepageProductRailOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [HomepageProductRail]!
+  homepageProductRail(
+    where: HomepageProductRailWhereUniqueInput!
+  ): HomepageProductRail
 }
 
 type ChargebeeCheckout {
@@ -87,7 +141,8 @@ type Mutation {
   checkItemsAvailability(items: [ID!]!): Boolean!
   reserveItems(items: [ID!]!, options: ReserveItemsOptions): Reservation
   saveCustomerBillingInfo: BillingInfoPlayoad
-  saveProduct(item: ID!, save: Boolean!): SavedProduct
+  saveProduct(item: ID!, save: Boolean!): Product
+  acknowledgeCompletedChargebeeHostedCheckout(hostedPageID: String!): Boolean
 }
 
 type BillingInfoPlayoad {
@@ -101,6 +156,8 @@ input ReserveItemsOptions {
 
 type AuthPayload {
   token: String!
+  refreshToken: String!
+  expiresIn: Int!
   user: User!
 }
 
@@ -143,6 +200,7 @@ enum HomePageSectionType {
   CollectionGroups
   Categories
   Products
+  HomepageProductRails
   Brands
 }
 
