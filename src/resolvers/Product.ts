@@ -7,7 +7,23 @@ import { ApolloError } from "apollo-server"
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
-export const Product = {}
+export const Product = {
+  async isSaved(parent, {}, ctx: Context, info) {
+    const customer = await getCustomerFromContext(ctx)
+
+    const product = await ctx.prisma
+      .customer({
+        id: customer.id,
+      })
+      .savedProducts({
+        where: {
+          id: parent.id,
+        },
+      })
+
+    return !!product.length
+  },
+}
 
 export const ProductMutations = {
   async reserveItems(
