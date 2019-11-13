@@ -218,7 +218,7 @@ type Location {
   company: String
   description: String
   address1: String!
-  address2: String!
+  address2: String
   city: String!
   state: String!
   zipCode: String!
