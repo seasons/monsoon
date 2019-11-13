@@ -1,3 +1,5 @@
+// DO NOT RUN THIS IN PRODUCTION AFTER LAUNCH
+//
 // reset inventory totals and remove all reservations
 //      make sure you include begin transaction so you can inspect the query after
 //      then run COMMIT;
