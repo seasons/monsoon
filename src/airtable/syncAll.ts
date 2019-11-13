@@ -5,9 +5,10 @@ import {
   syncLocations,
   syncProducts,
   syncProductVariants,
+  syncPhysicalProducts,
   syncCollections,
   syncCollectionGroups,
-  syncHomepageProductRails
+  syncHomepageProductRails,
 } from "."
 
 export const syncAll = async () => {
@@ -17,6 +18,7 @@ export const syncAll = async () => {
   await syncLocations()
   await syncProducts()
   await syncProductVariants()
+  await syncPhysicalProducts()
   await syncCollections()
   await syncCollectionGroups()
   await syncHomepageProductRails()
