@@ -81,13 +81,13 @@ enum LocationType {
 }
 
 enum CustomerStatus {
-  Invited 
-  Waitlisted 
-  Authorized 
-  Active 
-  Suspended 
-  Paused 
-  Deactivated 
+  Invited
+  Waitlisted
+  Authorized
+  Active
+  Suspended
+  Paused
+  Deactivated
 }
 
 enum UserRole {
@@ -337,11 +337,11 @@ type Bag {
   customer: Customer! @relation(link: TABLE)
 }
 
-type SavedProduct {
-  id: ID! @id
-  productVariant: ProductVariant!
-  customer: Customer! @relation(link: TABLE)
-}
+# type SavedProduct {
+#   id: ID! @id
+#   productVariant: ProductVariant!
+#   customer: Customer! @relation(link: TABLE)
+# }
 
 type Customer {
   id: ID! @id
@@ -352,7 +352,7 @@ type Customer {
   plan: Plan
   planInfo: PlanInfo
   bag: Bag!
-  savedProducts: [SavedProduct!]!
+  savedProducts: [Product!]!
   reservations: [Reservation] @relation(name: "CustomerToReservation")
 }
 
@@ -397,4 +397,3 @@ type BillingInfo {
   country: String
   postal_code: String
 }
-
