@@ -165,25 +165,29 @@ const updateProductVariantCounts = async (
         reserved: variant.reserved + 1,
       } as ProductVariantUpdateInput
 
-      const update = ctx.prisma.updateProductVariant({
-        where: {
-          id: variant.id,
-        },
-        data,
-      })
+      try {
+        const update = ctx.prisma.updateProductVariant({
+          where: {
+            id: variant.id,
+          },
+          data,
+        })
 
-      const { reservable, reserved, nonReservable } = await update
+        const { reservable, reserved, nonReservable } = await update
 
-      // Airtable record of product variant
-      const aProductVariant = productVariants.find(
-        a => a.model.sKU === variant.sku
-      )
+        // Airtable record of product variant
+        const aProductVariant = productVariants.find(
+          a => a.model.sKU === variant.sku
+        )
 
-      aProductVariant.patchUpdate({
-        "Reservable Count": reservable,
-        "Reserved Count": reserved,
-        "Non-Reservable Count": nonReservable,
-      })
+        aProductVariant.patchUpdate({
+          "Reservable Count": reservable,
+          "Reserved Count": reserved,
+          "Non-Reservable Count": nonReservable,
+        })
+      } catch (e) {
+        console.log(e)
+      }
     }
   }
 
