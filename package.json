@@ -19,9 +19,9 @@
     "start": "dotenv -- nodemon -e ts,graphql -x ts-node src/index.ts",
     "debug": "dotenv -- nodemon -e ts,graphql -x node --inspect -r dotenv/config -r ts-node/register src/index.ts",
     "build": "rimraf dist && tsc",
-    "prisma:deploy": "prisma deploy && prisma generate",
-    "prisma:deploy-staging": "prisma deploy -e .env.staging && prisma generate",
-    "prisma:deploy-production": "prisma deploy -e .env.production && prisma generate",
+    "prisma:deploy": "prisma deploy",
+    "prisma:deploy-staging": "prisma deploy -e .env.staging",
+    "prisma:deploy-production": "prisma deploy -e .env.production",
     "seed-db": "node -r dotenv/config -r ts-node/register scripts/airtableToDB.ts",
     "seed-db:staging": "yarn seed-db -- dotenv_config_path=.env.staging",
     "seed-db:production": "yarn seed-db -- dotenv_config_path=.env.production"
