@@ -937,6 +937,8 @@ export type BrandOrderByInput =
   | "logo_DESC"
   | "name_ASC"
   | "name_DESC"
+  | "basedIn_ASC"
+  | "basedIn_DESC"
   | "since_ASC"
   | "since_DESC"
   | "tier_ASC"
@@ -966,9 +968,11 @@ export type Material =
   | "FeatherDown"
   | "GooseDown"
   | "LambLeather"
+  | "LambSkin"
   | "Leather"
   | "Lyocell"
   | "MerinoWool"
+  | "Modacrylic"
   | "Nylon"
   | "OrganicCotton"
   | "Polyamide"
@@ -3238,6 +3242,7 @@ export interface BrandUpdateWithoutProductsDataInput {
   isPrimaryBrand?: Maybe<Boolean>;
   logo?: Maybe<Json>;
   name?: Maybe<String>;
+  basedIn?: Maybe<String>;
   since?: Maybe<DateTimeInput>;
   tier?: Maybe<BrandTier>;
   websiteUrl?: Maybe<String>;
@@ -3721,6 +3726,7 @@ export interface BrandUpdateManyMutationInput {
   isPrimaryBrand?: Maybe<Boolean>;
   logo?: Maybe<Json>;
   name?: Maybe<String>;
+  basedIn?: Maybe<String>;
   since?: Maybe<DateTimeInput>;
   tier?: Maybe<BrandTier>;
   websiteUrl?: Maybe<String>;
@@ -3908,6 +3914,7 @@ export interface BrandUpdateInput {
   isPrimaryBrand?: Maybe<Boolean>;
   logo?: Maybe<Json>;
   name?: Maybe<String>;
+  basedIn?: Maybe<String>;
   products?: Maybe<ProductUpdateManyWithoutBrandInput>;
   since?: Maybe<DateTimeInput>;
   tier?: Maybe<BrandTier>;
@@ -3938,6 +3945,7 @@ export interface BrandCreateInput {
   isPrimaryBrand?: Maybe<Boolean>;
   logo?: Maybe<Json>;
   name: String;
+  basedIn?: Maybe<String>;
   products?: Maybe<ProductCreateManyWithoutBrandInput>;
   since?: Maybe<DateTimeInput>;
   tier: BrandTier;
@@ -5680,6 +5688,20 @@ export interface BrandWhereInput {
   name_not_starts_with?: Maybe<String>;
   name_ends_with?: Maybe<String>;
   name_not_ends_with?: Maybe<String>;
+  basedIn?: Maybe<String>;
+  basedIn_not?: Maybe<String>;
+  basedIn_in?: Maybe<String[] | String>;
+  basedIn_not_in?: Maybe<String[] | String>;
+  basedIn_lt?: Maybe<String>;
+  basedIn_lte?: Maybe<String>;
+  basedIn_gt?: Maybe<String>;
+  basedIn_gte?: Maybe<String>;
+  basedIn_contains?: Maybe<String>;
+  basedIn_not_contains?: Maybe<String>;
+  basedIn_starts_with?: Maybe<String>;
+  basedIn_not_starts_with?: Maybe<String>;
+  basedIn_ends_with?: Maybe<String>;
+  basedIn_not_ends_with?: Maybe<String>;
   products_every?: Maybe<ProductWhereInput>;
   products_some?: Maybe<ProductWhereInput>;
   products_none?: Maybe<ProductWhereInput>;
@@ -6376,6 +6398,7 @@ export interface BrandCreateWithoutProductsInput {
   isPrimaryBrand?: Maybe<Boolean>;
   logo?: Maybe<Json>;
   name: String;
+  basedIn?: Maybe<String>;
   since?: Maybe<DateTimeInput>;
   tier: BrandTier;
   websiteUrl?: Maybe<String>;
@@ -7316,6 +7339,7 @@ export interface BrandPreviousValues {
   isPrimaryBrand: Boolean;
   logo?: Json;
   name: String;
+  basedIn?: String;
   since?: DateTimeOutput;
   tier: BrandTier;
   websiteUrl?: String;
@@ -7333,6 +7357,7 @@ export interface BrandPreviousValuesPromise
   isPrimaryBrand: () => Promise<Boolean>;
   logo: () => Promise<Json>;
   name: () => Promise<String>;
+  basedIn: () => Promise<String>;
   since: () => Promise<DateTimeOutput>;
   tier: () => Promise<BrandTier>;
   websiteUrl: () => Promise<String>;
@@ -7350,6 +7375,7 @@ export interface BrandPreviousValuesSubscription
   isPrimaryBrand: () => Promise<AsyncIterator<Boolean>>;
   logo: () => Promise<AsyncIterator<Json>>;
   name: () => Promise<AsyncIterator<String>>;
+  basedIn: () => Promise<AsyncIterator<String>>;
   since: () => Promise<AsyncIterator<DateTimeOutput>>;
   tier: () => Promise<AsyncIterator<BrandTier>>;
   websiteUrl: () => Promise<AsyncIterator<String>>;
@@ -9228,6 +9254,7 @@ export interface Brand {
   isPrimaryBrand: Boolean;
   logo?: Json;
   name: String;
+  basedIn?: String;
   since?: DateTimeOutput;
   tier: BrandTier;
   websiteUrl?: String;
@@ -9243,6 +9270,7 @@ export interface BrandPromise extends Promise<Brand>, Fragmentable {
   isPrimaryBrand: () => Promise<Boolean>;
   logo: () => Promise<Json>;
   name: () => Promise<String>;
+  basedIn: () => Promise<String>;
   products: <T = FragmentableArray<Product>>(args?: {
     where?: ProductWhereInput;
     orderBy?: ProductOrderByInput;
@@ -9269,6 +9297,7 @@ export interface BrandSubscription
   isPrimaryBrand: () => Promise<AsyncIterator<Boolean>>;
   logo: () => Promise<AsyncIterator<Json>>;
   name: () => Promise<AsyncIterator<String>>;
+  basedIn: () => Promise<AsyncIterator<String>>;
   products: <T = Promise<AsyncIterator<ProductSubscription>>>(args?: {
     where?: ProductWhereInput;
     orderBy?: ProductOrderByInput;
@@ -9295,6 +9324,7 @@ export interface BrandNullablePromise
   isPrimaryBrand: () => Promise<Boolean>;
   logo: () => Promise<Json>;
   name: () => Promise<String>;
+  basedIn: () => Promise<String>;
   products: <T = FragmentableArray<Product>>(args?: {
     where?: ProductWhereInput;
     orderBy?: ProductOrderByInput;
