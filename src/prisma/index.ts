@@ -1441,7 +1441,7 @@ export interface LocationCreateWithoutPhysicalProductsInput {
   company?: Maybe<String>;
   description?: Maybe<String>;
   address1: String;
-  address2: String;
+  address2?: Maybe<String>;
   city: String;
   state: String;
   zipCode: String;
@@ -2321,7 +2321,7 @@ export interface LocationCreateInput {
   company?: Maybe<String>;
   description?: Maybe<String>;
   address1: String;
-  address2: String;
+  address2?: Maybe<String>;
   city: String;
   state: String;
   zipCode: String;
@@ -9144,7 +9144,7 @@ export interface LocationPreviousValues {
   company?: String;
   description?: String;
   address1: String;
-  address2: String;
+  address2?: String;
   city: String;
   state: String;
   zipCode: String;
@@ -9491,7 +9491,7 @@ export interface Location {
   company?: String;
   description?: String;
   address1: String;
-  address2: String;
+  address2?: String;
   city: String;
   state: String;
   zipCode: String;
@@ -10622,6 +10622,7 @@ export const models: Model[] = [
 export const Prisma = makePrismaClientClass<ClientConstructor<Prisma>>({
   typeDefs,
   models,
-  endpoint: `${process.env["PRISMA_ENDPOINT"]}`
+  endpoint: `${process.env["PRISMA_ENDPOINT"]}`,
+  secret: `${process.env["PRISMA_SECRET"]}`
 });
 export const prisma = new Prisma();
