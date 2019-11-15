@@ -46,6 +46,9 @@ export const Homepage = async (parent, args, ctx: Context, info) => {
               ...args,
               orderBy: "createdAt_ASC",
               first: 6,
+              where: {
+                status: "Available",
+              },
             },
             `{
             __typename
