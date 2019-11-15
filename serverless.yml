@@ -1,6 +1,6 @@
 service: monsoon
-app: monsoon
-org: l2succes
+app: myapp
+org: frahman5
 
 # You can pin your service to only deploy with a specific Serverless version
 # Check out our docs for more details
@@ -21,32 +21,11 @@ package:
     - src/**/*.graphql
 
 functions:
-  graphql:
-    handler: src/handler.graphql
+  checkAndAuthorizeUsers:
+    handler: handler.checkAndAuthorizeUsers
     events:
       - http:
-          path: /
+          path: api/checkAndAuthorize
           method: post
-          cors: true
-      - http:
-          path: /
-          method: get
-          cors: true
-  playground:
-    handler: src/handler.graphql
-    events:
-      - http:
-          path: playground
-          method: get
-          cors: true
-  postgraphile:
-    handler: src/postgraphile.graphql
-    events:
-      - http:
-          path: /postgraphile
-          method: post
-          cors: true
-      - http:
-          path: /postgraphile
-          method: get
+          integration: lambda
           cors: true
