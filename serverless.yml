@@ -1,4 +1,4 @@
-service: monsoon
+service: monsoon-test
 app: myapp
 org: frahman5
 
