@@ -11,9 +11,7 @@ export const syncCollectionGroups = async () => {
     try {
       const { model } = record
       const collections = allCollections.findMultipleByIds(model.collections)
-      const {
-        title,
-      } = model
+      const { title } = model
 
       if (isEmpty(title)) {
         continue
@@ -25,7 +23,7 @@ export const syncCollectionGroups = async () => {
         collections: {
           connect: collections.map(collection => {
             return { slug: collection.model.slug }
-          })
+          }),
         },
         collectionCount: collections.length,
         title,
@@ -50,3 +48,5 @@ export const syncCollectionGroups = async () => {
     }
   }
 }
+
+syncCollectionGroups()

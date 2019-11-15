@@ -20,11 +20,13 @@ export const Query = {
         children.length > 0
           ? {
               where: {
+                ...args.where,
                 OR: children.map(({ slug }) => ({ category: { slug } })),
               },
             }
           : {
               where: {
+                ...args.where,
                 category: { slug: category.slug },
               },
             }
