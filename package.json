@@ -71,7 +71,7 @@
     "nodemon": "^1.19.2",
     "prettier": "^1.18.2",
     "rimraf": "2.7.1",
-    "serverless": "^1.51.0",
+    "serverless": "^1.57.0",
     "serverless-dotenv-plugin": "^2.1.1",
     "serverless-offline": "^5.10.1",
     "serverless-plugin-include-dependencies": "^3.2.1",
