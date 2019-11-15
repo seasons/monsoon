@@ -28,7 +28,7 @@
         "serverless:login": "serverless login",
         "serverless:integrate": "serverless --org frahman5 --app myapp",
         "serverless:deploy": "serverless deploy",
-        "serverless:local": "serverless local"
+        "serverless:offline": "serverless offline"
     },
     "dependencies": {
         "@auth0/auth0-spa-js": "^1.3.0",
