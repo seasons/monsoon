@@ -1,4 +1,4 @@
-import { Context, setCustomerPrismaStatus } from "../../utils"
+import { Context, setCustomerPrismaStatus, sendTransactionalEmail } from "../../utils"
 import {
   getCustomerFromContext,
   getUserFromContext,
@@ -184,14 +184,7 @@ export const customer = {
 }
 
 function sendWelcomeToSeasonsEmail(user: User) {
-  const msg = {
-    to: user.email,
-    from: "membership@seasons.nyc",
-    templateId: "d-05ae098e5bfb47eb9372ea2c461ffcf6",
-    dynamic_template_data: {
+    sendTransactionalEmail(user.email, "d-05ae098e5bfb47eb9372ea2c461ffcf6", {
       name: user.firstName,
-      url: `www.google.com`,
-    },
-  }
-  sgMail.send(msg)
+    })
 }
