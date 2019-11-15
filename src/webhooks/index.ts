@@ -3,7 +3,7 @@ import { base } from "../airtable/config"
 import { prisma, User } from "../prisma"
 import crypto from "crypto"
 import sgMail from "@sendgrid/mail"
-import { getUserIDHash, setCustomerPrismaStatus } from "../utils"
+import { getUserIDHash, setCustomerPrismaStatus, sendTransactionalEmail } from "../utils"
 
 const app = express()
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
@@ -88,18 +88,12 @@ function userBecameAuthorizedToSubscribe(updates: Array<Update>): boolean {
 }
 
 function sendAuthorizedToSubscribeEmail(user: User) {
-    const msg = {
-        to: user.email,
-        from: "membership@seasons.nyc",
-        templateId: "d-a62e1c840166432abd396d1536e4489d",
-        dynamic_template_data: {
+    sendTransactionalEmail(user.email, "d-a62e1c840166432abd396d1536e4489d", {
             name: user.firstName,
             url: `${process.env.SEEDLING_URL}/complete?idHash=${getUserIDHash(
                 user.id
             )}`,
-        },
-    }
-    sgMail.send(msg)
+        })
 }
 
 export { app }
