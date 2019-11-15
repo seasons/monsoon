@@ -27,7 +27,8 @@
         "seed-db:production": "yarn seed-db -- dotenv_config_path=.env.production",
         "serverless:login": "serverless login",
         "serverless:integrate": "serverless --org frahman5 --app myapp",
-        "serverless:deploy": "serverless deploy"
+        "serverless:deploy": "serverless deploy",
+        "serverless:local": "serverless local"
     },
     "dependencies": {
         "@auth0/auth0-spa-js": "^1.3.0",

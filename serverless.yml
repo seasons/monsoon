@@ -22,7 +22,7 @@ package:
 
 functions:
   checkAndAuthorizeUsers:
-    handler: handler.checkAndAuthorizeUsers
+    handler: src/handler.checkAndAuthorizeUsers
     events:
       - http:
           path: api/checkAndAuthorize
