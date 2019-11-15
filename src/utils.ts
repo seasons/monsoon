@@ -92,7 +92,7 @@ export function sendTransactionalEmail(to: string, templateId: string, dynamic_t
     const msg = {
         to,
         templateId,
-        from: { email: "membership@seasons.nyc", name: "Membership | Seasons NYC" },
+        from: { email: "membership@seasons.nyc", name: "Seasons NYC" },
         dynamic_template_data,
         ...otherMsgValues,
     }
