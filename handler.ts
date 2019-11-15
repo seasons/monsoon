@@ -9,5 +9,5 @@ module.exports.checkAndAuthorizeUsers = (event, context, callback) => {
         dynamic_template_data: {},
     }
     sgMail.send(msg)
-    console.log("ran checkAndAUthorize users!")
+    console.log("ran checkAndAUthorize users!!")
 };
