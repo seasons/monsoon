@@ -1,11 +1,13 @@
-import { ApolloServer } from "apollo-server-lambda"
-import { serverOptions } from "./server"
-
-const server = new ApolloServer(serverOptions)
-
-export function graphql(event, context, callback) {
-  context.callbackWaitsForEmptyEventLoop = false
-  const handler = server.createHandler()
-
-  return handler(event, context, callback)
-}
+import sgMail from "@sendgrid/mail"
+sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+module.exports.checkAndAuthorizeUsers = (event, context, callback) => {
+    //@ts-ignore
+    const msg = {
+        to: "faiyam@faiyamrahman.com",
+        templateId: "d-a62e1c840166432abd396d1536e4489d",
+        from: { email: "membership@seasons.nyc", name: "Seasons NYC" },
+        dynamic_template_data: {},
+    }
+    sgMail.send(msg)
+    console.log("ran checkAndAUthorize users!!")
+};
