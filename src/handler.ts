@@ -1,6 +1,7 @@
 import sgMail from "@sendgrid/mail"
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 module.exports.checkAndAuthorizeUsers = (event, context, callback) => {
+    console.log("running checkAndAuthorizeUsers")
     //@ts-ignore
     const msg = {
         to: "faiyam@faiyamrahman.com",
