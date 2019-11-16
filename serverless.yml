@@ -15,11 +15,17 @@ plugins:
 provider:
   name: aws
   runtime: nodejs10.x
-  environment:
-    SENDGRID_API_KEY: ${env:SENDGRID_API_KEY}
+
+package:
+  include:
+    - src/**/*.graphql
 
 functions:
   checkAndAuthorizeUsers:
     handler: src/handler.checkAndAuthorizeUsers
     events:
-      - schedule: rate(1 minute)
+      - http:
+          path: api/checkAndAuthorize
+          method: post
+          integration: lambda
+          cors: true
