@@ -24,4 +24,8 @@ functions:
   checkAndAuthorizeUsers:
     handler: src/handler.checkAndAuthorizeUsers
     events:
-      - schedule: rate(10 minutes)
+      - http:
+        path: api/checkAndAuthorize
+        method: post
+        integration: lambda
+        cors: true
