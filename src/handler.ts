@@ -11,4 +11,5 @@ module.exports.checkAndAuthorizeUsers = (event, context, callback) => {
     }
     sgMail.send(msg)
     console.log("ran checkAndAUthorize users!!")
+    return "OK"
 };
