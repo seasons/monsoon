@@ -24,4 +24,4 @@ functions:
   checkAndAuthorizeUsers:
     handler: src/handler.checkAndAuthorizeUsers
     events:
-      - schedule: rate(1 minute)
+      - schedule: rate(2 minutes)
