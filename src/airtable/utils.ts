@@ -68,6 +68,10 @@ export const getAllCollectionGroups = async () => {
     return getAll("Collection Groups")
 }
 
+export const getAllUsers = async () => {
+    return getAll("Users")
+}
+
 export const getAllCategories = async () => {
     return getAll("Categories")
 }
