@@ -74,6 +74,23 @@ export async function getCustomerFromUserID(
     return customer
 }
 
+export async function getCustomerFromEmail(
+    prisma: Prisma,
+    email: string
+): Promise<Customer> {
+    let customer
+    try {
+        let customerArray = await prisma.customers({
+            where: { user: { email } },
+        })
+        customer = customerArray[0]
+    } catch (err) {
+        throw new Error(err)
+    }
+
+    return customer
+}
+
 // given the corresponding user object, set the customer status on a customer
 export async function setCustomerPrismaStatus(
     prisma: Prisma,

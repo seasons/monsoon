@@ -1,4 +1,4 @@
-service: monsoon-test
+service: authorize-users
 app: myapp
 org: frahman5
 
@@ -10,7 +10,6 @@ plugins:
   - serverless-plugin-typescript
   - serverless-offline
   - serverless-dotenv-plugin
-  - serverless-plugin-include-dependencies
 
 provider:
   name: aws
@@ -18,14 +17,11 @@ provider:
 
 package:
   include:
-    - src/**/*.graphql
+    - src/handler.ts
+    - src/prisma/**
 
 functions:
   checkAndAuthorizeUsers:
-    handler: handler.checkAndAuthorizeUsers
+    handler: src/handler.checkAndAuthorizeUsers
     events:
-      - http:
-          path: api/checkAndAuthorize
-          method: post
-          integration: lambda
-          cors: true
+      - schedule: rate(1 minute)
