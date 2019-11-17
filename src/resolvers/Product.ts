@@ -1,4 +1,4 @@
-import { Context } from "../utils"
+import { Context, sendTransactionalEmail } from "../utils"
 import { getUserId, getCustomerFromContext } from "../auth/utils"
 import sgMail from "@sendgrid/mail"
 import { ProductVariantUpdateInput, ReservationCreateInput, User, Product as PrismaProduct, Prisma, Reservation } from "../prisma"
@@ -203,18 +203,12 @@ async function sendReservationConfirmationEmail(prisma: Prisma, user: User, prod
     const prod1Data = await getReservationConfirmationDataForProduct(prisma, products[0], "item1")
     const prod2Data = await getReservationConfirmationDataForProduct(prisma, products[1], "item2")
     const prod3Data = await getReservationConfirmationDataForProduct(prisma, products[2], "item3")
-    const msg = {
-        to: user.email,
-        from: "membership@seasons.nyc",
-        templateId: "d-f1de06bb4b89408e8059c07eb30d9f8f",
-        dynamic_template_data: {
-            order_number: reservation.reservationNumber,
-            ...prod1Data,
-            ...prod2Data,
-            ...prod3Data,
-        },
-    }
-    sgMail.send(msg)
+    sendTransactionalEmail(user.email, "d-f1de06bb4b89408e8059c07eb30d9f8f", {
+        order_number: reservation.reservationNumber,
+        ...prod1Data,
+        ...prod2Data,
+        ...prod3Data,
+    })
 
     // *************************************************************************
     async function getReservationConfirmationDataForProduct(prisma: Prisma, product: PrismaProduct, prefix: String) {

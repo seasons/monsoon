@@ -3,7 +3,7 @@ import { base } from "../airtable/config"
 import { prisma, User } from "../prisma"
 import crypto from "crypto"
 import sgMail from "@sendgrid/mail"
-import { getUserIDHash, setCustomerPrismaStatus } from "../utils"
+import { getUserIDHash, setCustomerPrismaStatus, sendTransactionalEmail } from "../utils"
 
 const app = express()
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
@@ -16,12 +16,6 @@ app.post("/airtable_events", async (req, res) => {
         const record = await base(tableId).find(recordId)
         if (!record) {
             return res.sendStatus(400)
-        }
-
-        if (userBecameAuthorizedToSubscribe(updates)) {
-            const user = await prisma.user({ email: record.fields.Email })
-            setCustomerPrismaStatus(prisma, user, "Authorized")
-            sendAuthorizedToSubscribeEmail(user)
         }
 
         // Check if record is Physical Product
@@ -77,29 +71,13 @@ interface Update {
     newValue: string
 }
 
-function userBecameAuthorizedToSubscribe(updates: Array<Update>): boolean {
-    for (let update of updates) {
-        const { field, newValue } = update
-        if (field === "Status" && newValue === "Authorized") {
-            return true
-        }
-    }
-    return false
-}
-
 function sendAuthorizedToSubscribeEmail(user: User) {
-    const msg = {
-        to: user.email,
-        from: "membership@seasons.nyc",
-        templateId: "d-a62e1c840166432abd396d1536e4489d",
-        dynamic_template_data: {
-            name: user.firstName,
-            url: `${process.env.SEEDLING_URL}/complete?idHash=${getUserIDHash(
-                user.id
-            )}`,
-        },
-    }
-    sgMail.send(msg)
+    sendTransactionalEmail(user.email, "d-a62e1c840166432abd396d1536e4489d", {
+        name: user.firstName,
+        url: `${process.env.SEEDLING_URL}/complete?idHash=${getUserIDHash(
+            user.id
+        )}`,
+    })
 }
 
 export { app }

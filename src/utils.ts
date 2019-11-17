@@ -2,6 +2,8 @@ import { Prisma, Customer, User } from "./prisma"
 import { Binding } from "graphql-binding"
 import { Request, Response } from "express"
 import crypto from "crypto"
+import sgMail from "@sendgrid/mail"
+sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
 export enum ProductSize {
     XS = "XS",
@@ -72,6 +74,23 @@ export async function getCustomerFromUserID(
     return customer
 }
 
+export async function getCustomerFromEmail(
+    prisma: Prisma,
+    email: string
+): Promise<Customer> {
+    let customer
+    try {
+        let customerArray = await prisma.customers({
+            where: { user: { email } },
+        })
+        customer = customerArray[0]
+    } catch (err) {
+        throw new Error(err)
+    }
+
+    return customer
+}
+
 // given the corresponding user object, set the customer status on a customer
 export async function setCustomerPrismaStatus(
     prisma: Prisma,
@@ -84,6 +103,17 @@ export async function setCustomerPrismaStatus(
         data: { status: status },
         where: { id: customer.id },
     })
+}
+
+export function sendTransactionalEmail(to: string, templateId: string, dynamic_template_data: any, otherMsgValues?: any) {
+    const msg = {
+        to,
+        templateId,
+        from: { email: "membership@seasons.nyc", name: "Seasons NYC" },
+        dynamic_template_data,
+        ...otherMsgValues,
+    }
+    sgMail.send(msg)
 }
 
 export interface Context {

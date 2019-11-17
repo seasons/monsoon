@@ -1,6 +1,6 @@
-service: monsoon
+service: authorize-users
 app: monsoon
-org: l2succes
+org: seasons
 
 # You can pin your service to only deploy with a specific Serverless version
 # Check out our docs for more details
@@ -10,7 +10,6 @@ plugins:
   - serverless-plugin-typescript
   - serverless-offline
   - serverless-dotenv-plugin
-  - serverless-plugin-include-dependencies
 
 provider:
   name: aws
@@ -18,35 +17,11 @@ provider:
 
 package:
   include:
-    - src/**/*.graphql
+    - src/handler.ts
+    - src/prisma/**
 
 functions:
-  graphql:
-    handler: src/handler.graphql
+  checkAndAuthorizeUsers:
+    handler: src/handler.checkAndAuthorizeUsers
     events:
-      - http:
-          path: /
-          method: post
-          cors: true
-      - http:
-          path: /
-          method: get
-          cors: true
-  playground:
-    handler: src/handler.graphql
-    events:
-      - http:
-          path: playground
-          method: get
-          cors: true
-  postgraphile:
-    handler: src/postgraphile.graphql
-    events:
-      - http:
-          path: /postgraphile
-          method: post
-          cors: true
-      - http:
-          path: /postgraphile
-          method: get
-          cors: true
+      - schedule: rate(1 minute)
