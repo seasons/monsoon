@@ -10,15 +10,17 @@ plugins:
   - serverless-plugin-typescript
   - serverless-offline
   - serverless-dotenv-plugin
-  - serverless-plugin-include-dependencies
 
 provider:
   name: aws
   runtime: nodejs10.x
+  environment:
+    PRISMA_ENDPOINT: https://monsoon-prisma-staging.herokuapp.com/
 
 package:
   include:
-    - src/**/*.graphql
+    - src/handler.ts
+    - src/prisma/**
 
 functions:
   checkAndAuthorizeUsers:
