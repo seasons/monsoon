@@ -18,12 +18,6 @@ app.post("/airtable_events", async (req, res) => {
             return res.sendStatus(400)
         }
 
-        if (userBecameAuthorizedToSubscribe(updates)) {
-            const user = await prisma.user({ email: record.fields.Email })
-            setCustomerPrismaStatus(prisma, user, "Authorized")
-            sendAuthorizedToSubscribeEmail(user)
-        }
-
         // Check if record is Physical Product
         if (!!record.fields.SUID) {
             const { text: SUID } = record.fields.SUID
@@ -77,23 +71,13 @@ interface Update {
     newValue: string
 }
 
-function userBecameAuthorizedToSubscribe(updates: Array<Update>): boolean {
-    for (let update of updates) {
-        const { field, newValue } = update
-        if (field === "Status" && newValue === "Authorized") {
-            return true
-        }
-    }
-    return false
-}
-
 function sendAuthorizedToSubscribeEmail(user: User) {
     sendTransactionalEmail(user.email, "d-a62e1c840166432abd396d1536e4489d", {
-            name: user.firstName,
-            url: `${process.env.SEEDLING_URL}/complete?idHash=${getUserIDHash(
-                user.id
-            )}`,
-        })
+        name: user.firstName,
+        url: `${process.env.SEEDLING_URL}/complete?idHash=${getUserIDHash(
+            user.id
+        )}`,
+    })
 }
 
 export { app }

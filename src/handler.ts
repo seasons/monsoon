@@ -1,39 +1,40 @@
 import sgMail from "@sendgrid/mail"
 
 import { getAllUsers } from "./airtable/utils"
-import { prisma } from "./prisma"
+import { prisma, User } from "./prisma"
 import { getCustomerFromUserID, setCustomerPrismaStatus, sendTransactionalEmail, getUserIDHash } from "./utils"
+
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
-module.exports.checkAndAuthorizeUsers = async (event, context, callback) => {
-    const x = await prisma.user({ email: "frahman305@gmail.com" }).id()
-    console.log(x)
-    // // Retrieve emails and statuses of every user on the airtable DB
-    // const allAirtableUsers = await getAllUsers()
-    // for (let airtableUser of allAirtableUsers) {
-    //     if (airtableUser.fields.Status === "Authorized") {
-    //         console.log(airtableUser.model)
-    //         const prismaUserId = await prisma.user({ email: "frahman305@gmail.com" }).id()
-    //         console.log(prismaUserId)
-    //         let customerArray = await prisma.customers({
-    //             where: { user: { id: prismaUserId } },
-    //         }).then(resp => console.log(resp))
-    //         const prismaCustomer = await getCustomerFromUserID(prisma, prismaUserId)
-    //         const prismaCustomerStatus = await prisma.customer({ user: { email: airtableUser.model.email } })
-    //         if (prismaCustomerStatus !== "Authorized") {
-    //             // setCustomerPrismaStatus(prisma, prismaUser, "Authorized")
-    //             sendAuthorizedToSubscribeEmail(airtableUser.model.email, airtableUser.model.firstName, prismaUserId)
-    //         }
-    //     }
-    // }
-    // return "OK"
+export async function checkAndAuthorizeUsers(event, context, callback) {
+    // Retrieve emails and statuses of every user on the airtable DB
+    let updatedUsers = []
+    let usersInAirtableButNotPrisma = []
+    const allAirtableUsers = await getAllUsers()
+    for (let airtableUser of allAirtableUsers) {
+        if (airtableUser.fields.Status === "Authorized") {
+            const prismaUser = await prisma.user({ email: airtableUser.model.email })
+            if (!!prismaUser) {
+                const prismaCustomer = await getCustomerFromUserID(prisma, prismaUser.id)
+                const prismaCustomerStatus = await prisma.customer({ id: prismaCustomer.id }).status()
+                if (prismaCustomerStatus !== "Authorized") {
+                    updatedUsers = [...updatedUsers, prismaUser.email]
+                    setCustomerPrismaStatus(prisma, prismaUser, "Authorized")
+                    sendAuthorizedToSubscribeEmail(prismaUser)
+                }
+            } else {
+                usersInAirtableButNotPrisma = [...usersInAirtableButNotPrisma, airtableUser.model.email]
+            }
+        }
+    }
+    callback(null, { "updated": updatedUsers, "usersInAirtableButNotPrisma": usersInAirtableButNotPrisma })
 };
 
-function sendAuthorizedToSubscribeEmail(email: string, firstName: string, id: string) {
-    sendTransactionalEmail(email, "d-a62e1c840166432abd396d1536e4489d", {
-        name: firstName,
+function sendAuthorizedToSubscribeEmail(user: User) {
+    sendTransactionalEmail(user.email, "d-a62e1c840166432abd396d1536e4489d", {
+        name: user.firstName,
         url: `${process.env.SEEDLING_URL}/complete?idHash=${getUserIDHash(
-            id
+            user.id
         )}`,
     })
 }
