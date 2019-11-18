@@ -1,4 +1,4 @@
-import { Context, setCustomerPrismaStatus, sendTransactionalEmail } from "../../utils"
+import { Context, setCustomerPrismaStatus, sendTransactionalEmail, getCustomerFromUserID } from "../../utils"
 import {
     getCustomerFromContext,
     getUserFromContext,
@@ -69,11 +69,7 @@ export const customer = {
         }
 
         // Sync with airtable
-        await createOrUpdateAirtableUser(user, {
-            ...currentCustomerDetail,
-            ...details,
-            status,
-        })
+        await createOrUpdateAirtableUser(user, {...currentCustomerDetail, ...details, status})
 
         // Return the updated customer object
         return { ...customer, detail: updatedDetails }
@@ -85,6 +81,7 @@ export const customer = {
         ctx: Context,
         info
     ) {
+        let prismaCustomer
         try {
             await chargebee.hosted_page
                 .acknowledge(hostedPageID)
@@ -93,18 +90,56 @@ export const customer = {
                         throw error
                     } else {
                         var {
-                            subscription: { customer_id },
+                            subscription, card, customer: chargebeeCustomer,
                         } = result.hosted_page.content
-                        let prismaUser = await ctx.prisma.user({ id: customer_id })
-                        await setCustomerPrismaStatus(ctx.prisma, prismaUser, "Active")
-                        await createOrUpdateAirtableUser(prismaUser, {}, "Active")
+
+                        // Retrieve plan and billing data
+                        let plan = { "essential": "Essential", "all-access": "AllAccess" }[subscription.plan_id]
+                        if (!plan) {
+                            throw new Error(`unexpected plan-id: ${subscription.plan_id}`)
+                        }
+                        let billingInfo = createBillingInfoObject(card, chargebeeCustomer)
+                        let planInfo = {
+                            type: "Some type", 
+                            price: `${subscription.plan_unit_price}`,
+                            whatsIncluded: {
+                                set: ["thing 1", "thing2", "thing 3"]
+                            }
+                        }
+
+                        // Save it to prisma
+                        let prismaUser = await ctx.prisma.user({ id: subscription.customer_id })
+                        prismaCustomer = await getCustomerFromUserID(ctx.prisma, prismaUser.id)
+                        await ctx.prisma.updateCustomer({
+                            data: {
+                                plan: plan,
+                                planInfo: {
+                                    create: planInfo
+                                },
+                                billingInfo: {
+                                    create: billingInfo,
+                                },
+                                status: "Active"
+                            },
+                            where: { id: prismaCustomer.id },
+                        })
+
+                        // Save it to airtable
+                        await createOrUpdateAirtableUser(prismaUser, {status: "Active", plan, billingInfo})
+
+                        // Send welcome to seasons email
                         sendWelcomeToSeasonsEmail(prismaUser)
+
+                        // Return 
+                        return {
+                            billingInfo: ctx.prisma.customer({ id: prismaCustomer.id }).billingInfo(),
+                            plan: ctx.prisma.customer({ id: prismaCustomer.id }).plan(),
+                        }
                     }
                 })
         } catch (err) {
             throw err
         }
-        return true
     },
 
     async saveProduct(obj, { item, save }, ctx: Context, info) {
@@ -127,71 +162,30 @@ export const customer = {
 
         return { ...customer, savedProduct: updatedSavedProducts }
     },
-
-    async saveCustomerBillingInfo(obj, args, ctx: Context, info) {
-        // Get the customer's id
-        const { id } = await getUserId(ctx)
-        const prismaCustomer = await getCustomerFromContext(ctx)
-        // Retrieve all the relevant data
-        let billingInfo, plan, planInfo
-        await chargebee.subscription
-            .list({
-                limit: 1,
-                "customer_id[is]": id,
-            })
-            .request(async function (error, result) {
-                if (error) {
-                    throw new Error(error)
-                } else {
-                    const subscription = result.list[0].subscription
-                    const chargebeeCustomer = result.list[0].customer
-                    const card = result.list[0].card
-
-                    // Store all the relevant data
-                    if (subscription.plan_id == "essential") {
-                        plan = "Essential"
-                    } else if (subscription.plan_id == "all-access") {
-                        plan = "AllAccess"
-                    } else {
-                        throw new Error(`unexpected plan-id: ${subscription.plan_id}`)
-                    }
-                    billingInfo = {
-                        brand: card.card_type,
-                        name: `${card.first_name} ${card.last_name}`,
-                        last_digits: card.last4,
-                        expiration_month: card.expiry_month,
-                        expiration_year: card.expiry_year,
-                        street1: chargebeeCustomer.billing_address.line1,
-                        street2: chargebeeCustomer.billing_address.line2,
-                        city: chargebeeCustomer.billing_address.city,
-                        state: chargebeeCustomer.billing_address.state,
-                        country: chargebeeCustomer.billing_address.country,
-                        postal_code: chargebeeCustomer.billing_address.zip,
-                    }
-                    await ctx.prisma.updateCustomer({
-                        data: {
-                            plan: plan,
-                            billingInfo: {
-                                upsert: {
-                                    create: billingInfo,
-                                    update: billingInfo,
-                                },
-                            },
-                        },
-                        where: { id: prismaCustomer.id },
-                    })
-                }
-            })
-
-        return {
-            billingInfo: ctx.prisma.customer({ id: prismaCustomer.id }).billingInfo(),
-            plan: ctx.prisma.customer({ id: prismaCustomer.id }).plan(),
-        }
-    },
 }
 
 function sendWelcomeToSeasonsEmail(user: User) {
     sendTransactionalEmail(user.email, "d-05ae098e5bfb47eb9372ea2c461ffcf6", {
-      name: user.firstName,
+        name: user.firstName,
     })
+}
+
+function getNameFromCard(card) {
+    return `${!!card.first_name ? card.first_name : ""}${!!card.last_name ? " " + card.last_name : ""}`
+}
+
+function createBillingInfoObject(card, chargebeeCustomer) {
+    return {
+        brand: card.card_type,
+        name: getNameFromCard(card),
+        last_digits: card.last4,
+        expiration_month: card.expiry_month,
+        expiration_year: card.expiry_year,
+        street1: chargebeeCustomer.billing_address.line1,
+        street2: chargebeeCustomer.billing_address.line2,
+        city: chargebeeCustomer.billing_address.city,
+        state: chargebeeCustomer.billing_address.state,
+        country: chargebeeCustomer.billing_address.country,
+        postal_code: chargebeeCustomer.billing_address.zip,
+    }
 }

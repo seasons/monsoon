@@ -140,9 +140,8 @@ type Mutation {
     @hasRole(roles: ["Customer"])
   checkItemsAvailability(items: [ID!]!): Boolean!
   reserveItems(items: [ID!]!, options: ReserveItemsOptions): Reservation
-  saveCustomerBillingInfo: BillingInfoPlayoad
   saveProduct(item: ID!, save: Boolean!): Product
-  acknowledgeCompletedChargebeeHostedCheckout(hostedPageID: String!): Boolean
+  acknowledgeCompletedChargebeeHostedCheckout(hostedPageID: String!): BillingInfoPlayoad
 }
 
 type BillingInfoPlayoad {
