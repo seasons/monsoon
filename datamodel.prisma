@@ -82,6 +82,7 @@ enum LocationType {
 
 enum CustomerStatus {
   Invited
+  Created
   Waitlisted
   Authorized
   Active
