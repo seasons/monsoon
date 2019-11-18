@@ -133,13 +133,6 @@ enum Plan {
   Essential
 }
 
-type PlanInfo {
-  id: ID! @id
-  type: String!
-  whatsIncluded: [String!]! @scalarList(strategy: RELATION)
-  price: String!
-}
-
 type Brand {
   id: ID! @id
   slug: String! @unique
@@ -354,7 +347,6 @@ type Customer {
   detail: CustomerDetail
   billingInfo: BillingInfo
   plan: Plan
-  planInfo: PlanInfo
   bag: Bag!
   savedProducts: [Product!]!
   reservations: [Reservation] @relation(name: "CustomerToReservation")
