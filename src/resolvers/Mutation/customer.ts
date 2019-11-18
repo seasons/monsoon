@@ -99,13 +99,6 @@ export const customer = {
                             throw new Error(`unexpected plan-id: ${subscription.plan_id}`)
                         }
                         let billingInfo = createBillingInfoObject(card, chargebeeCustomer)
-                        let planInfo = {
-                            type: "Some type", 
-                            price: `${subscription.plan_unit_price}`,
-                            whatsIncluded: {
-                                set: ["thing 1", "thing2", "thing 3"]
-                            }
-                        }
 
                         // Save it to prisma
                         let prismaUser = await ctx.prisma.user({ id: subscription.customer_id })
@@ -113,9 +106,6 @@ export const customer = {
                         await ctx.prisma.updateCustomer({
                             data: {
                                 plan: plan,
-                                planInfo: {
-                                    create: planInfo
-                                },
                                 billingInfo: {
                                     create: billingInfo,
                                 },
