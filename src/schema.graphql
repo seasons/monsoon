@@ -136,7 +136,7 @@ type Mutation {
     details: CustomerDetailCreateInput
   ): AuthPayload!
   login(email: String!, password: String!): AuthPayload!
-  addCustomerDetails(details: CustomerDetailCreateInput): Customer!
+  addCustomerDetails(details: CustomerDetailCreateInput!, status: CustomerStatus): Customer!
     @hasRole(roles: ["Customer"])
   checkItemsAvailability(items: [ID!]!): Boolean!
   reserveItems(items: [ID!]!, options: ReserveItemsOptions): Reservation

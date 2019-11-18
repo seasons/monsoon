@@ -2472,6 +2472,7 @@ type CustomerPreviousValues {
 
 enum CustomerStatus {
   Invited
+  Created
   Waitlisted
   Authorized
   Active
