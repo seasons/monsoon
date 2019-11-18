@@ -68,7 +68,7 @@ export const auth = {
         }
 
         // Insert them into airtable
-        createOrUpdateAirtableUser(user, details, "Created")
+        createOrUpdateAirtableUser(user, {...details, status: "Created"})
 
         return {
             token: tokenData.access_token,

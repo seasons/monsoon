@@ -3,6 +3,7 @@ import {
     ReservationCreateInput,
     LocationCreateInput,
     LocationCreateOneInput,
+    BillingInfoCreateInput
 } from "../prisma"
 import slugify from "slugify"
 
@@ -168,6 +169,22 @@ export const createLocation = async (user, data: LocationCreateInput) => {
     ]
 
     return base("Locations").create(createData)
+}
+
+export async function createBillingInfo(data: BillingInfoCreateInput) {
+    return base("BillingInfos").create({
+                Brand: data.brand,
+                Name: data.name,
+                LastDigits: data.last_digits,
+                "Expiration Month": data.expiration_month,
+                "Expiration Year": data.expiration_year,
+                "Street 1": data.street1,
+                "Street 2": data.street2,
+                City: data.city,
+                State: data.state,
+                Country: data.country,
+                "Postal Code": data.postal_code,
+            })
 }
 
 export const getProductVariant = (SKU: string) => {
