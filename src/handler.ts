@@ -27,7 +27,9 @@ export async function checkAndAuthorizeUsers(event, context, callback) {
             }
         }
     }
-    callback(null, { "updated": updatedUsers, "usersInAirtableButNotPrisma": usersInAirtableButNotPrisma })
+    const response = { "updated": updatedUsers, "usersInAirtableButNotPrisma": usersInAirtableButNotPrisma }
+    console.log(response)
+    return response
 };
 
 function sendAuthorizedToSubscribeEmail(user: User) {

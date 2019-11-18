@@ -16,14 +16,9 @@ provider:
   runtime: nodejs10.x
 
 package:
-  exclude:
-    - src/**
-    - node_modules/**
-    - webhooks
   include:
     - src/handler.ts
     - src/prisma/**
-    - scripts/**
 
 functions:
   checkAndAuthorizeUsers:
