@@ -535,6 +535,7 @@ type Brand {
   isPrimaryBrand: Boolean!
   logo: Json
   name: String!
+  basedIn: String
   products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
   since: DateTime
   tier: BrandTier!
@@ -557,6 +558,7 @@ input BrandCreateInput {
   isPrimaryBrand: Boolean
   logo: Json
   name: String!
+  basedIn: String
   products: ProductCreateManyWithoutBrandInput
   since: DateTime
   tier: BrandTier!
@@ -576,6 +578,7 @@ input BrandCreateWithoutProductsInput {
   isPrimaryBrand: Boolean
   logo: Json
   name: String!
+  basedIn: String
   since: DateTime
   tier: BrandTier!
   websiteUrl: String
@@ -601,6 +604,8 @@ enum BrandOrderByInput {
   logo_DESC
   name_ASC
   name_DESC
+  basedIn_ASC
+  basedIn_DESC
   since_ASC
   since_DESC
   tier_ASC
@@ -621,6 +626,7 @@ type BrandPreviousValues {
   isPrimaryBrand: Boolean!
   logo: Json
   name: String!
+  basedIn: String
   since: DateTime
   tier: BrandTier!
   websiteUrl: String
@@ -665,6 +671,7 @@ input BrandUpdateInput {
   isPrimaryBrand: Boolean
   logo: Json
   name: String
+  basedIn: String
   products: ProductUpdateManyWithoutBrandInput
   since: DateTime
   tier: BrandTier
@@ -678,6 +685,7 @@ input BrandUpdateManyMutationInput {
   isPrimaryBrand: Boolean
   logo: Json
   name: String
+  basedIn: String
   since: DateTime
   tier: BrandTier
   websiteUrl: String
@@ -697,6 +705,7 @@ input BrandUpdateWithoutProductsDataInput {
   isPrimaryBrand: Boolean
   logo: Json
   name: String
+  basedIn: String
   since: DateTime
   tier: BrandTier
   websiteUrl: String
@@ -780,6 +789,20 @@ input BrandWhereInput {
   name_not_starts_with: String
   name_ends_with: String
   name_not_ends_with: String
+  basedIn: String
+  basedIn_not: String
+  basedIn_in: [String!]
+  basedIn_not_in: [String!]
+  basedIn_lt: String
+  basedIn_lte: String
+  basedIn_gt: String
+  basedIn_gte: String
+  basedIn_contains: String
+  basedIn_not_contains: String
+  basedIn_starts_with: String
+  basedIn_not_starts_with: String
+  basedIn_ends_with: String
+  basedIn_not_ends_with: String
   products_every: ProductWhereInput
   products_some: ProductWhereInput
   products_none: ProductWhereInput
@@ -3538,9 +3561,11 @@ enum Material {
   FeatherDown
   GooseDown
   LambLeather
+  LambSkin
   Leather
   Lyocell
   MerinoWool
+  Modacrylic
   Nylon
   OrganicCotton
   Polyamide

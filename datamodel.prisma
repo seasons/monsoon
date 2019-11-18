@@ -36,9 +36,11 @@ enum Material {
   FeatherDown
   GooseDown
   LambLeather
+  LambSkin
   Leather
   Lyocell
   MerinoWool
+  Modacrylic
   Nylon
   OrganicCotton
   Polyamide
@@ -146,6 +148,7 @@ type Brand {
   isPrimaryBrand: Boolean! @default(value: false)
   logo: Json
   name: String!
+  basedIn: String
   products: [Product!]!
   since: DateTime
   tier: BrandTier!
