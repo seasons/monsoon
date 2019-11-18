@@ -37,7 +37,7 @@ export const createOrUpdateAirtableUser = async (
         "Last Name": lastName,
     }
 
-    const allDetails = { ...details, status }
+    const allDetails = !!status ? { ...details, status } : details
     for (let key in allDetails) {
         if (keyMap[key] && allDetails[key]) {
             data[keyMap[key]] = allDetails[key]
