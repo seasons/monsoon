@@ -136,10 +136,11 @@ export const createReservation = async (
         fields: {
           ID: data.reservationNumber,
           User: [airtableUserRecord.id],
-          Location: [process.env.NEXT_CLEANERS_AIRTABLE_LOCATION_ID],
+          "Current Location": [process.env.NEXT_CLEANERS_AIRTABLE_LOCATION_ID],
           Items: items.map(a => a.id),
           Shipped: false,
           Status: "New",
+          "Shipping Address": airtableUserRecord.fields["Shipping Address"],
           "Shipping Label": data.shippingLabel.create.image,
           "Tracking Number": data.shippingLabel.create.trackingNumber,
           "Tracking URL": data.shippingLabel.create.trackingURL,
@@ -218,7 +219,7 @@ export const updateProductVariant = async data => {
 
 export function getAirtableUserRecordByUserEmail(
   email: string
-): Promise<{ id: string }> {
+): Promise<{ id: string; fields: any }> {
   return new Promise(function retrieveUser(resolve, reject) {
     base("Users")
       .select({
