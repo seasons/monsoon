@@ -1,10 +1,10 @@
 import { Context } from "../utils"
 import { head } from "lodash"
-import { getUserId, getCustomerFromContext } from "../auth/utils"
+import { getUserRequestObject, getCustomerFromContext } from "../auth/utils"
 
 export const Me = {
   user: async (parent, args, ctx: Context) => {
-    const { id } = await getUserId(ctx)
+    const { id } = await getUserRequestObject(ctx)
     return ctx.prisma.user({ id })
   },
   customer: async (parent, args, ctx: Context, info) => {
