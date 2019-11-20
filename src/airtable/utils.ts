@@ -123,7 +123,9 @@ export const airtableToPrismaObject = record => {
 
 export const createReservation = async (
   userEmail: string,
-  data: ReservationCreateInput
+  data: ReservationCreateInput,
+  shippingError: string,
+  returnShippingError: string
 ) => {
   try {
     const itemIDs = (data.products.connect as { seasonsUID: string }[]).map(
@@ -142,11 +144,11 @@ export const createReservation = async (
           Status: "New",
           "Shipping Address": airtableUserRecord.fields["Shipping Address"],
           "Shipping Label": data.shippingLabel.create.image,
-          "Tracking Number": data.shippingLabel.create.trackingNumber,
           "Tracking URL": data.shippingLabel.create.trackingURL,
           "Return Label": data.returnLabel.create.image,
-          "Return Tracking Number": data.returnLabel.create.trackingNumber,
           "Return Tracking URL": data.returnLabel.create.trackingURL,
+          "Shipping Error": shippingError,
+          "Return Shipping Error": returnShippingError,
         },
       },
     ]

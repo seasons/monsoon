@@ -19,6 +19,7 @@ import { ApolloError } from "apollo-server"
 import shippo from "shippo"
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+var activeShippo = shippo(process.env.SHIPPO_API_KEY)
 
 export const Product = {
   async isSaved(parent, {}, ctx: Context, info) {
@@ -39,12 +40,7 @@ export const Product = {
 }
 
 export const ProductMutations = {
-  async reserveItems(
-    parent,
-    { items, options = { dryRun: false } },
-    ctx: Context,
-    info
-  ) {
+  async reserveItems(parent, { items }, ctx: Context, info) {
     let reservationReturnData
     try {
       // Get user data
@@ -62,15 +58,14 @@ export const ProductMutations = {
       const products = await updateProductVariantCounts(
         items,
         physicalProducts,
-        ctx,
-        options
+        ctx
       )
       const physicalProductSUIDs = physicalProducts.map(p => ({
         seasonsUID: p.seasonsUID,
       }))
 
-      // Create shipping labels
-      var activeShippo = shippo(process.env.SHIPPO_API_KEY)
+      // Create shipping labels. Wrap the transaction calls in a try-catch
+      // so if the label creation fails, the call still continues as planned
       const [
         seasonsToShippoShipment,
         customerToSeasonsShipment,
@@ -80,19 +75,21 @@ export const ProductMutations = {
         customer,
         items
       )
-      const seasonsToCustomerTransaction = await activeShippo.transaction.create(
+      let seasonsToCustomerTransaction = await createShippingLabel(
         {
           shipment: seasonsToShippoShipment,
           carrier_account: process.env.UPS_ACCOUNT_ID,
           servicelevel_token: "ups_ground",
-        }
+        },
+        userRequestObject.id
       )
-      const customerToSeasonsTransaction = await activeShippo.transaction.create(
+      let customerToSeasonsTransaction = await createShippingLabel(
         {
           shipment: customerToSeasonsShipment,
           carrier_account: process.env.UPS_ACCOUNT_ID,
           servicelevel_token: "ups_ground",
-        }
+        },
+        userRequestObject.id
       )
 
       // Create reservation records in prisma and airtable
@@ -104,7 +101,12 @@ export const ProductMutations = {
         physicalProductSUIDs
       )
       const reservation = await ctx.prisma.createReservation(reservationData)
-      createReservation(userRequestObject.email, reservationData)
+      createReservation(
+        userRequestObject.email,
+        reservationData,
+        seasonsToCustomerTransaction.formatted_error,
+        customerToSeasonsTransaction.formatted_error
+      )
 
       // Send confirmation email
       await sendReservationConfirmationEmail(
@@ -127,8 +129,7 @@ export const ProductMutations = {
     return reservationReturnData
   },
   async checkItemsAvailability(parent, { items }, ctx: Context, info) {
-    const userRequestObject = await getUserRequestObject(ctx)
-
+    const userRequestObject = getUserRequestObject(ctx)
     const physicalProducts = await ctx.prisma.physicalProducts({
       where: {
         productVariant: {
@@ -393,17 +394,17 @@ function createReservationData(
     },
     shippingLabel: {
       create: {
-        image: seasonsToCustomerTransaction.label_url,
-        trackingNumber: seasonsToCustomerTransaction.tracking_number,
-        trackingURL: seasonsToCustomerTransaction.tracking_url_provider,
+        image: seasonsToCustomerTransaction.label_url || "",
+        trackingNumber: seasonsToCustomerTransaction.tracking_number || "",
+        trackingURL: seasonsToCustomerTransaction.tracking_url_provider || "",
         name: "UPS",
       },
     },
     returnLabel: {
       create: {
-        image: customerToSeasonsTransaction.label_url,
-        trackingNumber: customerToSeasonsTransaction.tracking_number,
-        trackingURL: customerToSeasonsTransaction.tracking_url_provider,
+        image: customerToSeasonsTransaction.label_url || "",
+        trackingNumber: customerToSeasonsTransaction.tracking_number || "",
+        trackingURL: customerToSeasonsTransaction.tracking_url_provider || "",
         name: "UPS",
       },
     },
@@ -411,4 +412,31 @@ function createReservationData(
     shipped: false,
     status: "InQueue",
   }
+}
+
+interface ShippoTransaction {
+  label_url: string
+  tracking_number: string
+  tracking_url_provider: string
+  messages: Array<any>
+  formatted_error?: string
+  status: string
+}
+
+interface ShippoLabelInputs {
+  shipment: ShippoShipment
+  carrier_account: string
+  servicelevel_token: string
+}
+async function createShippingLabel(
+  inputs: ShippoLabelInputs,
+  userID: string
+): Promise<ShippoTransaction> {
+  let transaction = await activeShippo.transaction.create(inputs)
+  transaction.formatted_error =
+    transaction.status === "ERROR"
+      ? `Failed to make one or more shipping labels for user with id: ` +
+        ` ${userID}.\nError Messages: ${JSON.stringify(transaction.messages)}`
+      : ""
+  return transaction
 }
