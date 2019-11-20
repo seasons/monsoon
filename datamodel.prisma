@@ -377,6 +377,8 @@ type Label {
   id: ID! @id
   name: String
   image: String
+  trackingNumber: String
+  trackingURL: String
 }
 
 type BillingInfo {

@@ -1003,7 +1003,11 @@ export type LabelOrderByInput =
   | "name_ASC"
   | "name_DESC"
   | "image_ASC"
-  | "image_DESC";
+  | "image_DESC"
+  | "trackingNumber_ASC"
+  | "trackingNumber_DESC"
+  | "trackingURL_ASC"
+  | "trackingURL_DESC";
 
 export type UserRole = "Admin" | "Customer" | "Partner";
 
@@ -2699,6 +2703,8 @@ export interface LabelCreateInput {
   id?: Maybe<ID_Input>;
   name?: Maybe<String>;
   image?: Maybe<String>;
+  trackingNumber?: Maybe<String>;
+  trackingURL?: Maybe<String>;
 }
 
 export type CustomerWhereUniqueInput = AtLeastOne<{
@@ -2739,6 +2745,8 @@ export interface PhysicalProductCreateInput {
 export interface LabelUpdateManyMutationInput {
   name?: Maybe<String>;
   image?: Maybe<String>;
+  trackingNumber?: Maybe<String>;
+  trackingURL?: Maybe<String>;
 }
 
 export interface BagUpdateInput {
@@ -2749,6 +2757,8 @@ export interface BagUpdateInput {
 export interface LabelUpdateInput {
   name?: Maybe<String>;
   image?: Maybe<String>;
+  trackingNumber?: Maybe<String>;
+  trackingURL?: Maybe<String>;
 }
 
 export interface ProductVariantUpdateManyInput {
@@ -5809,6 +5819,8 @@ export type CollectionWhereUniqueInput = AtLeastOne<{
 export interface LabelUpdateDataInput {
   name?: Maybe<String>;
   image?: Maybe<String>;
+  trackingNumber?: Maybe<String>;
+  trackingURL?: Maybe<String>;
 }
 
 export interface ProductUpdateInput {
@@ -6105,6 +6117,34 @@ export interface LabelWhereInput {
   image_not_starts_with?: Maybe<String>;
   image_ends_with?: Maybe<String>;
   image_not_ends_with?: Maybe<String>;
+  trackingNumber?: Maybe<String>;
+  trackingNumber_not?: Maybe<String>;
+  trackingNumber_in?: Maybe<String[] | String>;
+  trackingNumber_not_in?: Maybe<String[] | String>;
+  trackingNumber_lt?: Maybe<String>;
+  trackingNumber_lte?: Maybe<String>;
+  trackingNumber_gt?: Maybe<String>;
+  trackingNumber_gte?: Maybe<String>;
+  trackingNumber_contains?: Maybe<String>;
+  trackingNumber_not_contains?: Maybe<String>;
+  trackingNumber_starts_with?: Maybe<String>;
+  trackingNumber_not_starts_with?: Maybe<String>;
+  trackingNumber_ends_with?: Maybe<String>;
+  trackingNumber_not_ends_with?: Maybe<String>;
+  trackingURL?: Maybe<String>;
+  trackingURL_not?: Maybe<String>;
+  trackingURL_in?: Maybe<String[] | String>;
+  trackingURL_not_in?: Maybe<String[] | String>;
+  trackingURL_lt?: Maybe<String>;
+  trackingURL_lte?: Maybe<String>;
+  trackingURL_gt?: Maybe<String>;
+  trackingURL_gte?: Maybe<String>;
+  trackingURL_contains?: Maybe<String>;
+  trackingURL_not_contains?: Maybe<String>;
+  trackingURL_starts_with?: Maybe<String>;
+  trackingURL_not_starts_with?: Maybe<String>;
+  trackingURL_ends_with?: Maybe<String>;
+  trackingURL_not_ends_with?: Maybe<String>;
   AND?: Maybe<LabelWhereInput[] | LabelWhereInput>;
   OR?: Maybe<LabelWhereInput[] | LabelWhereInput>;
   NOT?: Maybe<LabelWhereInput[] | LabelWhereInput>;
@@ -7636,12 +7676,16 @@ export interface Label {
   id: ID_Output;
   name?: String;
   image?: String;
+  trackingNumber?: String;
+  trackingURL?: String;
 }
 
 export interface LabelPromise extends Promise<Label>, Fragmentable {
   id: () => Promise<ID_Output>;
   name: () => Promise<String>;
   image: () => Promise<String>;
+  trackingNumber: () => Promise<String>;
+  trackingURL: () => Promise<String>;
 }
 
 export interface LabelSubscription
@@ -7650,6 +7694,8 @@ export interface LabelSubscription
   id: () => Promise<AsyncIterator<ID_Output>>;
   name: () => Promise<AsyncIterator<String>>;
   image: () => Promise<AsyncIterator<String>>;
+  trackingNumber: () => Promise<AsyncIterator<String>>;
+  trackingURL: () => Promise<AsyncIterator<String>>;
 }
 
 export interface LabelNullablePromise
@@ -7658,6 +7704,8 @@ export interface LabelNullablePromise
   id: () => Promise<ID_Output>;
   name: () => Promise<String>;
   image: () => Promise<String>;
+  trackingNumber: () => Promise<String>;
+  trackingURL: () => Promise<String>;
 }
 
 export interface ColorConnection {
@@ -8824,6 +8872,8 @@ export interface LabelPreviousValues {
   id: ID_Output;
   name?: String;
   image?: String;
+  trackingNumber?: String;
+  trackingURL?: String;
 }
 
 export interface LabelPreviousValuesPromise
@@ -8832,6 +8882,8 @@ export interface LabelPreviousValuesPromise
   id: () => Promise<ID_Output>;
   name: () => Promise<String>;
   image: () => Promise<String>;
+  trackingNumber: () => Promise<String>;
+  trackingURL: () => Promise<String>;
 }
 
 export interface LabelPreviousValuesSubscription
@@ -8840,6 +8892,8 @@ export interface LabelPreviousValuesSubscription
   id: () => Promise<AsyncIterator<ID_Output>>;
   name: () => Promise<AsyncIterator<String>>;
   image: () => Promise<AsyncIterator<String>>;
+  trackingNumber: () => Promise<AsyncIterator<String>>;
+  trackingURL: () => Promise<AsyncIterator<String>>;
 }
 
 export interface CustomerDetailEdge {

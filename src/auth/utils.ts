@@ -188,8 +188,26 @@ export function getAuth0UserAccessToken(
     )
   })
 }
+export interface UserRequestObject {
+  iss: string
+  sub: string
+  aud: string
+  iat: number
+  exp: number
+  azp: string
+  scope: string
+  gty: string
+  updatedAt: string
+  email: string
+  role: string
+  lastName: string
+  firstName: string
+  id: string
+  createdAt: string
+  auth0Id: string
+}
 
-export async function getUserId(ctx: Context) {
+export function getUserRequestObject(ctx: Context): UserRequestObject {
   const user = ctx.req.user
   if (user) {
     return user

@@ -1,11 +1,11 @@
 import { Context, getUserIDHash, getCustomerFromUserID } from "../utils"
 import { Homepage } from "./Homepage"
-import { getUserId, getCustomerFromContext } from "../auth/utils"
+import { getUserRequestObject, getCustomerFromContext } from "../auth/utils"
 import chargebee from "chargebee"
 
 export const Query = {
   async me(parent, args, ctx: Context) {
-    const { id } = await getUserId(ctx)
+    const { id } = await getUserRequestObject(ctx)
     return ctx.prisma.user({ id })
   },
 
