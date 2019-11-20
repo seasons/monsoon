@@ -2950,6 +2950,8 @@ type Label {
   id: ID!
   name: String
   image: String
+  trackingNumber: String
+  trackingURL: String
 }
 
 type LabelConnection {
@@ -2962,6 +2964,8 @@ input LabelCreateInput {
   id: ID
   name: String
   image: String
+  trackingNumber: String
+  trackingURL: String
 }
 
 input LabelCreateOneInput {
@@ -2981,12 +2985,18 @@ enum LabelOrderByInput {
   name_DESC
   image_ASC
   image_DESC
+  trackingNumber_ASC
+  trackingNumber_DESC
+  trackingURL_ASC
+  trackingURL_DESC
 }
 
 type LabelPreviousValues {
   id: ID!
   name: String
   image: String
+  trackingNumber: String
+  trackingURL: String
 }
 
 type LabelSubscriptionPayload {
@@ -3010,16 +3020,22 @@ input LabelSubscriptionWhereInput {
 input LabelUpdateDataInput {
   name: String
   image: String
+  trackingNumber: String
+  trackingURL: String
 }
 
 input LabelUpdateInput {
   name: String
   image: String
+  trackingNumber: String
+  trackingURL: String
 }
 
 input LabelUpdateManyMutationInput {
   name: String
   image: String
+  trackingNumber: String
+  trackingURL: String
 }
 
 input LabelUpdateOneInput {
@@ -3086,6 +3102,34 @@ input LabelWhereInput {
   image_not_starts_with: String
   image_ends_with: String
   image_not_ends_with: String
+  trackingNumber: String
+  trackingNumber_not: String
+  trackingNumber_in: [String!]
+  trackingNumber_not_in: [String!]
+  trackingNumber_lt: String
+  trackingNumber_lte: String
+  trackingNumber_gt: String
+  trackingNumber_gte: String
+  trackingNumber_contains: String
+  trackingNumber_not_contains: String
+  trackingNumber_starts_with: String
+  trackingNumber_not_starts_with: String
+  trackingNumber_ends_with: String
+  trackingNumber_not_ends_with: String
+  trackingURL: String
+  trackingURL_not: String
+  trackingURL_in: [String!]
+  trackingURL_not_in: [String!]
+  trackingURL_lt: String
+  trackingURL_lte: String
+  trackingURL_gt: String
+  trackingURL_gte: String
+  trackingURL_contains: String
+  trackingURL_not_contains: String
+  trackingURL_starts_with: String
+  trackingURL_not_starts_with: String
+  trackingURL_ends_with: String
+  trackingURL_not_ends_with: String
   AND: [LabelWhereInput!]
   OR: [LabelWhereInput!]
   NOT: [LabelWhereInput!]
