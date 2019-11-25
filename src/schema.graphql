@@ -148,6 +148,10 @@ type Mutation {
   ): BillingInfoPlayoad
 }
 
+input ReserveItemsOptions {
+  dryRun: Boolean
+}
+
 type BillingInfoPlayoad {
   billingInfo: BillingInfo
   plan: Plan
