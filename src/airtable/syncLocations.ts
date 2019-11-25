@@ -11,7 +11,6 @@ export const syncLocations = async () => {
     try {
       const { model } = record
       const { name } = model
-
       if (isEmpty(model) || isEmpty(name)) {
         continue
       }
@@ -20,6 +19,12 @@ export const syncLocations = async () => {
         "physicalProducts",
         "createdAt",
         "updatedAt",
+        "recordID",
+        "reservations",
+        "reservations2",
+        "reservations3",
+        "users",
+        "users2",
       ]) as LocationCreateInput
 
       values = {
@@ -38,8 +43,6 @@ export const syncLocations = async () => {
       await record.patchUpdate({
         Slug: values.slug,
       })
-
-      console.log(location)
     } catch (e) {
       console.error(e)
     }
