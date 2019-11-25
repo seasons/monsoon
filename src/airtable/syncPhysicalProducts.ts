@@ -49,12 +49,9 @@ export const syncPhysicalProducts = async () => {
         create: data,
         update: data,
       })
-
-      console.log(i++, physicalProduct)
     } catch (e) {
       console.error(e)
+      break
     }
   }
 }
-
-// syncPhysicalProducts()
