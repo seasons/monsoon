@@ -141,7 +141,7 @@ type Mutation {
     status: CustomerStatus
   ): Customer! @hasRole(roles: ["Customer"])
   checkItemsAvailability(items: [ID!]!): Boolean!
-  reserveItems(items: [ID!]!): Reservation
+  reserveItems(items: [ID!]!, options: ReserveItemsOptions): Reservation
   saveProduct(item: ID!, save: Boolean!): Product
   acknowledgeCompletedChargebeeHostedCheckout(
     hostedPageID: String!
