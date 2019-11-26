@@ -1,7 +1,9 @@
 import { schema } from "./schema"
 import { prisma } from "./prisma"
-import cors from "cors"
 import { Prisma } from "prisma-binding"
+import Analytics from "analytics-node"
+
+var analytics = new Analytics(process.env.SEGMENT_MONSOON_WRITE_KEY)
 
 const defaultQuery = `{
   products {
@@ -26,6 +28,7 @@ export const serverOptions = {
     res,
     prisma,
     db,
+    analytics,
   }),
   introspection: true,
   formatError: error => {
