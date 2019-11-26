@@ -136,23 +136,26 @@ type Mutation {
     details: CustomerDetailCreateInput
   ): AuthPayload!
   login(email: String!, password: String!): AuthPayload!
-  addCustomerDetails(details: CustomerDetailCreateInput): Customer!
-    @hasRole(roles: ["Customer"])
+  addCustomerDetails(
+    details: CustomerDetailCreateInput!
+    status: CustomerStatus
+  ): Customer! @hasRole(roles: ["Customer"])
   checkItemsAvailability(items: [ID!]!): Boolean!
   reserveItems(items: [ID!]!, options: ReserveItemsOptions): Reservation
-  saveCustomerBillingInfo: BillingInfoPlayoad
   saveProduct(item: ID!, save: Boolean!): Product
   wantProduct(item: ID!, want: Boolean!): ProductVariant
-  acknowledgeCompletedChargebeeHostedCheckout(hostedPageID: String!): Boolean
+  acknowledgeCompletedChargebeeHostedCheckout(
+    hostedPageID: String!
+  ): BillingInfoPlayoad
+}
+
+input ReserveItemsOptions {
+  dryRun: Boolean
 }
 
 type BillingInfoPlayoad {
   billingInfo: BillingInfo
   plan: Plan
-}
-
-input ReserveItemsOptions {
-  dryRun: Boolean
 }
 
 type AuthPayload {

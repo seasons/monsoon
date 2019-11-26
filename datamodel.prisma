@@ -84,6 +84,7 @@ enum LocationType {
 
 enum CustomerStatus {
   Invited
+  Created
   Waitlisted
   Authorized
   Active
@@ -130,13 +131,6 @@ enum ReservationStatus {
 enum Plan {
   AllAccess
   Essential
-}
-
-type PlanInfo {
-  id: ID! @id
-  type: String!
-  whatsIncluded: [String!]! @scalarList(strategy: RELATION)
-  price: String!
 }
 
 type Brand {
@@ -353,7 +347,6 @@ type Customer {
   detail: CustomerDetail
   billingInfo: BillingInfo
   plan: Plan
-  planInfo: PlanInfo
   bag: Bag!
   savedProducts: [Product!]!
   reservations: [Reservation] @relation(name: "CustomerToReservation")
@@ -384,6 +377,8 @@ type Label {
   id: ID! @id
   name: String
   image: String
+  trackingNumber: String
+  trackingURL: String
 }
 
 type BillingInfo {

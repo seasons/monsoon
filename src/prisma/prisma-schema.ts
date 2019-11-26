@@ -62,10 +62,6 @@ type AggregatePhysicalProduct {
   count: Int!
 }
 
-type AggregatePlanInfo {
-  count: Int!
-}
-
 type AggregateProduct {
   count: Int!
 }
@@ -1910,7 +1906,6 @@ type Customer {
   detail: CustomerDetail
   billingInfo: BillingInfo
   plan: Plan
-  planInfo: PlanInfo
   bag: Bag!
   savedProducts(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
   reservations(where: ReservationWhereInput, orderBy: ReservationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Reservation!]
@@ -1929,7 +1924,6 @@ input CustomerCreateInput {
   detail: CustomerDetailCreateOneInput
   billingInfo: BillingInfoCreateOneInput
   plan: Plan
-  planInfo: PlanInfoCreateOneInput
   bag: BagCreateOneWithoutCustomerInput!
   savedProducts: ProductCreateManyInput
   reservations: ReservationCreateManyWithoutCustomerInput
@@ -1957,7 +1951,6 @@ input CustomerCreateWithoutBagInput {
   detail: CustomerDetailCreateOneInput
   billingInfo: BillingInfoCreateOneInput
   plan: Plan
-  planInfo: PlanInfoCreateOneInput
   savedProducts: ProductCreateManyInput
   reservations: ReservationCreateManyWithoutCustomerInput
 }
@@ -1969,7 +1962,6 @@ input CustomerCreateWithoutReservationsInput {
   detail: CustomerDetailCreateOneInput
   billingInfo: BillingInfoCreateOneInput
   plan: Plan
-  planInfo: PlanInfoCreateOneInput
   bag: BagCreateOneWithoutCustomerInput!
   savedProducts: ProductCreateManyInput
 }
@@ -2485,6 +2477,7 @@ type CustomerPreviousValues {
 
 enum CustomerStatus {
   Invited
+  Created
   Waitlisted
   Authorized
   Active
@@ -2517,7 +2510,6 @@ input CustomerUpdateDataInput {
   detail: CustomerDetailUpdateOneInput
   billingInfo: BillingInfoUpdateOneInput
   plan: Plan
-  planInfo: PlanInfoUpdateOneInput
   bag: BagUpdateOneRequiredWithoutCustomerInput
   savedProducts: ProductUpdateManyInput
   reservations: ReservationUpdateManyWithoutCustomerInput
@@ -2529,7 +2521,6 @@ input CustomerUpdateInput {
   detail: CustomerDetailUpdateOneInput
   billingInfo: BillingInfoUpdateOneInput
   plan: Plan
-  planInfo: PlanInfoUpdateOneInput
   bag: BagUpdateOneRequiredWithoutCustomerInput
   savedProducts: ProductUpdateManyInput
   reservations: ReservationUpdateManyWithoutCustomerInput
@@ -2567,7 +2558,6 @@ input CustomerUpdateWithoutBagDataInput {
   detail: CustomerDetailUpdateOneInput
   billingInfo: BillingInfoUpdateOneInput
   plan: Plan
-  planInfo: PlanInfoUpdateOneInput
   savedProducts: ProductUpdateManyInput
   reservations: ReservationUpdateManyWithoutCustomerInput
 }
@@ -2578,7 +2568,6 @@ input CustomerUpdateWithoutReservationsDataInput {
   detail: CustomerDetailUpdateOneInput
   billingInfo: BillingInfoUpdateOneInput
   plan: Plan
-  planInfo: PlanInfoUpdateOneInput
   bag: BagUpdateOneRequiredWithoutCustomerInput
   savedProducts: ProductUpdateManyInput
 }
@@ -2624,7 +2613,6 @@ input CustomerWhereInput {
   plan_not: Plan
   plan_in: [Plan!]
   plan_not_in: [Plan!]
-  planInfo: PlanInfoWhereInput
   bag: BagWhereInput
   savedProducts_every: ProductWhereInput
   savedProducts_some: ProductWhereInput
@@ -2994,6 +2982,8 @@ type Label {
   id: ID!
   name: String
   image: String
+  trackingNumber: String
+  trackingURL: String
 }
 
 type LabelConnection {
@@ -3006,6 +2996,8 @@ input LabelCreateInput {
   id: ID
   name: String
   image: String
+  trackingNumber: String
+  trackingURL: String
 }
 
 input LabelCreateOneInput {
@@ -3025,12 +3017,18 @@ enum LabelOrderByInput {
   name_DESC
   image_ASC
   image_DESC
+  trackingNumber_ASC
+  trackingNumber_DESC
+  trackingURL_ASC
+  trackingURL_DESC
 }
 
 type LabelPreviousValues {
   id: ID!
   name: String
   image: String
+  trackingNumber: String
+  trackingURL: String
 }
 
 type LabelSubscriptionPayload {
@@ -3054,16 +3052,22 @@ input LabelSubscriptionWhereInput {
 input LabelUpdateDataInput {
   name: String
   image: String
+  trackingNumber: String
+  trackingURL: String
 }
 
 input LabelUpdateInput {
   name: String
   image: String
+  trackingNumber: String
+  trackingURL: String
 }
 
 input LabelUpdateManyMutationInput {
   name: String
   image: String
+  trackingNumber: String
+  trackingURL: String
 }
 
 input LabelUpdateOneInput {
@@ -3130,6 +3134,34 @@ input LabelWhereInput {
   image_not_starts_with: String
   image_ends_with: String
   image_not_ends_with: String
+  trackingNumber: String
+  trackingNumber_not: String
+  trackingNumber_in: [String!]
+  trackingNumber_not_in: [String!]
+  trackingNumber_lt: String
+  trackingNumber_lte: String
+  trackingNumber_gt: String
+  trackingNumber_gte: String
+  trackingNumber_contains: String
+  trackingNumber_not_contains: String
+  trackingNumber_starts_with: String
+  trackingNumber_not_starts_with: String
+  trackingNumber_ends_with: String
+  trackingNumber_not_ends_with: String
+  trackingURL: String
+  trackingURL_not: String
+  trackingURL_in: [String!]
+  trackingURL_not_in: [String!]
+  trackingURL_lt: String
+  trackingURL_lte: String
+  trackingURL_gt: String
+  trackingURL_gte: String
+  trackingURL_contains: String
+  trackingURL_not_contains: String
+  trackingURL_starts_with: String
+  trackingURL_not_starts_with: String
+  trackingURL_ends_with: String
+  trackingURL_not_ends_with: String
   AND: [LabelWhereInput!]
   OR: [LabelWhereInput!]
   NOT: [LabelWhereInput!]
@@ -3710,12 +3742,6 @@ type Mutation {
   upsertPhysicalProduct(where: PhysicalProductWhereUniqueInput!, create: PhysicalProductCreateInput!, update: PhysicalProductUpdateInput!): PhysicalProduct!
   deletePhysicalProduct(where: PhysicalProductWhereUniqueInput!): PhysicalProduct
   deleteManyPhysicalProducts(where: PhysicalProductWhereInput): BatchPayload!
-  createPlanInfo(data: PlanInfoCreateInput!): PlanInfo!
-  updatePlanInfo(data: PlanInfoUpdateInput!, where: PlanInfoWhereUniqueInput!): PlanInfo
-  updateManyPlanInfoes(data: PlanInfoUpdateManyMutationInput!, where: PlanInfoWhereInput): BatchPayload!
-  upsertPlanInfo(where: PlanInfoWhereUniqueInput!, create: PlanInfoCreateInput!, update: PlanInfoUpdateInput!): PlanInfo!
-  deletePlanInfo(where: PlanInfoWhereUniqueInput!): PlanInfo
-  deleteManyPlanInfoes(where: PlanInfoWhereInput): BatchPayload!
   createProduct(data: ProductCreateInput!): Product!
   updateProduct(data: ProductUpdateInput!, where: ProductWhereUniqueInput!): Product
   updateManyProducts(data: ProductUpdateManyMutationInput!, where: ProductWhereInput): BatchPayload!
@@ -4193,162 +4219,6 @@ input PhysicalProductWhereUniqueInput {
 enum Plan {
   AllAccess
   Essential
-}
-
-type PlanInfo {
-  id: ID!
-  type: String!
-  whatsIncluded: [String!]!
-  price: String!
-}
-
-type PlanInfoConnection {
-  pageInfo: PageInfo!
-  edges: [PlanInfoEdge]!
-  aggregate: AggregatePlanInfo!
-}
-
-input PlanInfoCreateInput {
-  id: ID
-  type: String!
-  whatsIncluded: PlanInfoCreatewhatsIncludedInput
-  price: String!
-}
-
-input PlanInfoCreateOneInput {
-  create: PlanInfoCreateInput
-  connect: PlanInfoWhereUniqueInput
-}
-
-input PlanInfoCreatewhatsIncludedInput {
-  set: [String!]
-}
-
-type PlanInfoEdge {
-  node: PlanInfo!
-  cursor: String!
-}
-
-enum PlanInfoOrderByInput {
-  id_ASC
-  id_DESC
-  type_ASC
-  type_DESC
-  price_ASC
-  price_DESC
-}
-
-type PlanInfoPreviousValues {
-  id: ID!
-  type: String!
-  whatsIncluded: [String!]!
-  price: String!
-}
-
-type PlanInfoSubscriptionPayload {
-  mutation: MutationType!
-  node: PlanInfo
-  updatedFields: [String!]
-  previousValues: PlanInfoPreviousValues
-}
-
-input PlanInfoSubscriptionWhereInput {
-  mutation_in: [MutationType!]
-  updatedFields_contains: String
-  updatedFields_contains_every: [String!]
-  updatedFields_contains_some: [String!]
-  node: PlanInfoWhereInput
-  AND: [PlanInfoSubscriptionWhereInput!]
-  OR: [PlanInfoSubscriptionWhereInput!]
-  NOT: [PlanInfoSubscriptionWhereInput!]
-}
-
-input PlanInfoUpdateDataInput {
-  type: String
-  whatsIncluded: PlanInfoUpdatewhatsIncludedInput
-  price: String
-}
-
-input PlanInfoUpdateInput {
-  type: String
-  whatsIncluded: PlanInfoUpdatewhatsIncludedInput
-  price: String
-}
-
-input PlanInfoUpdateManyMutationInput {
-  type: String
-  whatsIncluded: PlanInfoUpdatewhatsIncludedInput
-  price: String
-}
-
-input PlanInfoUpdateOneInput {
-  create: PlanInfoCreateInput
-  update: PlanInfoUpdateDataInput
-  upsert: PlanInfoUpsertNestedInput
-  delete: Boolean
-  disconnect: Boolean
-  connect: PlanInfoWhereUniqueInput
-}
-
-input PlanInfoUpdatewhatsIncludedInput {
-  set: [String!]
-}
-
-input PlanInfoUpsertNestedInput {
-  update: PlanInfoUpdateDataInput!
-  create: PlanInfoCreateInput!
-}
-
-input PlanInfoWhereInput {
-  id: ID
-  id_not: ID
-  id_in: [ID!]
-  id_not_in: [ID!]
-  id_lt: ID
-  id_lte: ID
-  id_gt: ID
-  id_gte: ID
-  id_contains: ID
-  id_not_contains: ID
-  id_starts_with: ID
-  id_not_starts_with: ID
-  id_ends_with: ID
-  id_not_ends_with: ID
-  type: String
-  type_not: String
-  type_in: [String!]
-  type_not_in: [String!]
-  type_lt: String
-  type_lte: String
-  type_gt: String
-  type_gte: String
-  type_contains: String
-  type_not_contains: String
-  type_starts_with: String
-  type_not_starts_with: String
-  type_ends_with: String
-  type_not_ends_with: String
-  price: String
-  price_not: String
-  price_in: [String!]
-  price_not_in: [String!]
-  price_lt: String
-  price_lte: String
-  price_gt: String
-  price_gte: String
-  price_contains: String
-  price_not_contains: String
-  price_starts_with: String
-  price_not_starts_with: String
-  price_ends_with: String
-  price_not_ends_with: String
-  AND: [PlanInfoWhereInput!]
-  OR: [PlanInfoWhereInput!]
-  NOT: [PlanInfoWhereInput!]
-}
-
-input PlanInfoWhereUniqueInput {
-  id: ID
 }
 
 type Product {
@@ -5924,9 +5794,6 @@ type Query {
   physicalProduct(where: PhysicalProductWhereUniqueInput!): PhysicalProduct
   physicalProducts(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct]!
   physicalProductsConnection(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PhysicalProductConnection!
-  planInfo(where: PlanInfoWhereUniqueInput!): PlanInfo
-  planInfoes(where: PlanInfoWhereInput, orderBy: PlanInfoOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PlanInfo]!
-  planInfoesConnection(where: PlanInfoWhereInput, orderBy: PlanInfoOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PlanInfoConnection!
   product(where: ProductWhereUniqueInput!): Product
   products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product]!
   productsConnection(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductConnection!
@@ -6308,7 +6175,6 @@ type Subscription {
   location(where: LocationSubscriptionWhereInput): LocationSubscriptionPayload
   order(where: OrderSubscriptionWhereInput): OrderSubscriptionPayload
   physicalProduct(where: PhysicalProductSubscriptionWhereInput): PhysicalProductSubscriptionPayload
-  planInfo(where: PlanInfoSubscriptionWhereInput): PlanInfoSubscriptionPayload
   product(where: ProductSubscriptionWhereInput): ProductSubscriptionPayload
   productFunction(where: ProductFunctionSubscriptionWhereInput): ProductFunctionSubscriptionPayload
   productVariant(where: ProductVariantSubscriptionWhereInput): ProductVariantSubscriptionPayload

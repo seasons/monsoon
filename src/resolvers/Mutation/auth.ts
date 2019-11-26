@@ -61,14 +61,14 @@ export const auth = {
             customer = await createPrismaCustomerForExistingUser(ctx, {
                 userID: user.id,
                 details,
-                status: "Waitlisted",
+                status: "Created",
             })
         } catch (err) {
             throw new Error(err)
         }
 
         // Insert them into airtable
-        createOrUpdateAirtableUser(user, details, "Waitlisted")
+        createOrUpdateAirtableUser(user, {...details, status: "Created"})
 
         return {
             token: tokenData.access_token,
