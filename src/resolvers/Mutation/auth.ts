@@ -6,6 +6,7 @@ import {
   isLoggedIn,
 } from "../../auth/utils"
 import { Context } from "../../utils"
+import { CustomerDetail } from "../../prisma"
 import { UserInputError, ForbiddenError } from "apollo-server"
 import { createOrUpdateAirtableUser } from "../../airtable/createOrUpdateUser"
 
@@ -74,7 +75,11 @@ export const auth = {
     ctx.analytics.identify({
       userId: user.id,
       traits: {
-        name: `${user.firstName} + ${user.lastName}`,
+        ...extractSegmentReservedTraitsFromCustomerDetail(details),
+        firstName: user.firstName,
+        lastName: user.lastName,
+        createdAt: new Date().toISOString(),
+        id: user.id,
         role: user.role,
         email: user.email,
         auth0Id: user.auth0Id,
@@ -120,4 +125,19 @@ export const auth = {
       user,
     }
   },
+}
+
+// TODO: Write code for address
+interface SegmentReservedTraitsInCustomerDetail {
+  phone?: string
+  address?: any
+}
+function extractSegmentReservedTraitsFromCustomerDetail(
+  detail: CustomerDetail
+): SegmentReservedTraitsInCustomerDetail {
+  let traits = {}
+  if (!!detail.phoneNumber) {
+    traits["phone"] = detail.phoneNumber
+  }
+  return traits
 }
