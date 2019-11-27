@@ -72,13 +72,14 @@ export const auth = {
     createOrUpdateAirtableUser(user, { ...details, status: "Created" })
 
     // Add them to segment and track their account creation event
+    let now = new Date()
     ctx.analytics.identify({
       userId: user.id,
       traits: {
         ...extractSegmentReservedTraitsFromCustomerDetail(details),
         firstName: user.firstName,
         lastName: user.lastName,
-        createdAt: new Date().toISOString(),
+        createdAt: now.toISOString(),
         id: user.id,
         role: user.role,
         email: user.email,

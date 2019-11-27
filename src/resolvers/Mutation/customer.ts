@@ -82,10 +82,11 @@ export const customer = {
     })
 
     // Track the event, if its been passed
+    const eventNameMap = { CompletedWaitlistForm: "Completed Waitlist Form" }
     if (!!event) {
       ctx.analytics.track({
         userId: user.id,
-        event: event,
+        event: eventNameMap[event],
       })
     }
 
