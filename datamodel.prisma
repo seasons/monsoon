@@ -360,7 +360,7 @@ type Reservation {
   id: ID! @id
   user: User!
   customer: Customer! @relation(name: "CustomerToReservation")
-  sentPackage: Package! @relation(name: "SeasonsToCustomerPackage")
+  sentPackage: Package @relation(name: "SeasonsToCustomerPackage")
   returnedPackage: Package @relation(name: "CustomerToSeasonsPackage")
   location: Location
   products: [PhysicalProduct!]!
