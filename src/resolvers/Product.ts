@@ -8,11 +8,12 @@ import sgMail from "@sendgrid/mail"
 import {
   ProductVariantUpdateInput,
   ReservationCreateInput,
-  User,
   Product as PrismaProduct,
   Prisma,
   Reservation,
   Customer,
+  Location,
+  PhysicalProductWhereUniqueInput,
 } from "../prisma"
 import { getAllProductVariants, createReservation } from "../airtable/utils"
 import { ApolloError } from "apollo-server"
@@ -66,6 +67,7 @@ export const ProductMutations = {
 
       // Create shipping labels. Wrap the transaction calls in a try-catch
       // so if the label creation fails, the call still continues as planned
+      const shipmentWeight = await calcShipmentWeight(ctx.prisma, items)
       const [
         seasonsToShippoShipment,
         customerToSeasonsShipment,
@@ -73,7 +75,7 @@ export const ProductMutations = {
         ctx.prisma,
         userRequestObject,
         customer,
-        items
+        shipmentWeight
       )
       let seasonsToCustomerTransaction = await createShippingLabel(
         {
@@ -93,12 +95,15 @@ export const ProductMutations = {
       )
 
       // Create reservation records in prisma and airtable
-      const reservationData = createReservationData(
+      const reservationData = await createReservationData(
+        ctx.prisma,
         seasonsToCustomerTransaction,
         customerToSeasonsTransaction,
         userRequestObject,
         customer,
-        physicalProductSUIDs
+        physicalProductSUIDs,
+        shipmentWeight,
+        items
       )
       const reservation = await ctx.prisma.createReservation(reservationData)
       createReservation(
@@ -283,7 +288,7 @@ async function sendReservationConfirmationEmail(
 async function calcShipmentWeight(
   prisma: Prisma,
   itemIDs: Array<string>
-): Promise<Number> {
+): Promise<number> {
   const shippingBagWeight = 1
   const productVariants = await prisma.productVariants({
     where: { id_in: itemIDs },
@@ -303,32 +308,43 @@ async function createShippoShipment(
   prisma: Prisma,
   user: UserRequestObject,
   customer: Customer,
-  items: Array<string>
+  shipmentWeight: Number
 ): Promise<Array<ShippoShipment>> {
-  var seasonsAddressShippo = {
-    name: "Seasons NYC",
-    company: "Seasons NYC",
-    street1: "134 Mulberry Street",
-    street2: "Unit 5A2",
-    city: "New York",
-    state: "NY",
-    zip: "10003",
-    country: "US",
-    phone: "706-271-7092",
-    email: "reservations@seasons.nyc",
-  }
+  // Create Next Cleaners Address object
+  const nextCleanersAddressPrisma = await prisma.location({
+    slug: "seasons-cleaners-official",
+  })
   var nextCleanersAddressShippo = {
-    name: "Seasons NYC",
-    company: "Seasons NYC",
-    street1: "650 Belleville Tpke",
-    street2: "",
-    city: "Kearny",
-    state: "New Jersey",
-    zip: "07032",
+    name: nextCleanersAddressPrisma.name,
+    company: nextCleanersAddressPrisma.company,
+    street1: nextCleanersAddressPrisma.address1,
+    street2: nextCleanersAddressPrisma.address2,
+    city: nextCleanersAddressPrisma.city,
+    state: nextCleanersAddressPrisma.state,
+    zip: nextCleanersAddressPrisma.zipCode,
     country: "US",
     phone: "706-271-7092",
     email: "reservations@seasons.nyc",
   }
+
+  // Create Seasons Address object
+  const seasonsHQAddressPrisma = await prisma.location({
+    slug: "seasons-hq-official",
+  })
+  var seasonsAddressShippo = {
+    name: seasonsHQAddressPrisma.name,
+    company: seasonsHQAddressPrisma.company,
+    street1: seasonsHQAddressPrisma.address1,
+    street2: seasonsHQAddressPrisma.address2,
+    city: seasonsHQAddressPrisma.city,
+    state: seasonsHQAddressPrisma.state,
+    zip: seasonsHQAddressPrisma.zipCode,
+    country: "US",
+    phone: "706-271-7092",
+    email: "reservations@seasons.nyc",
+  }
+
+  // Create customer address object
   const customerShippingAddressPrisma = await prisma
     .customer({ id: customer.id })
     .detail()
@@ -344,10 +360,12 @@ async function createShippoShipment(
     city: customerShippingAddressPrisma.city,
     state: customerShippingAddressPrisma.state,
     zip: customerShippingAddressPrisma.zipCode,
+    phone: customerPhoneNumber,
     country: "US",
     email: user.email,
   }
-  const shipmentWeight = await calcShipmentWeight(prisma, items)
+
+  // Create parcel object
   var parcel = {
     // dimensions of seasons bag
     length: "20",
@@ -357,6 +375,7 @@ async function createShippoShipment(
     weight: shipmentWeight,
     mass_unit: "lb",
   }
+
   return [
     {
       address_from: seasonsAddressShippo,
@@ -371,13 +390,34 @@ async function createShippoShipment(
   ]
 }
 
-function createReservationData(
+async function createReservationData(
+  prisma: Prisma,
   seasonsToCustomerTransaction,
   customerToSeasonsTransaction,
   user: UserRequestObject,
   customer: Customer,
-  physicalProductSUIDs: Array<{ seasonsUID: string }>
-): ReservationCreateInput {
+  physicalProductSUIDs: Array<{ seasonsUID: string }>,
+  shipmentWeight: number,
+  items: Array<string>
+): Promise<ReservationCreateInput> {
+  // Create or format data needed for the return object
+  const customerShippingAddressRecordID = await prisma
+    .customer({ id: customer.id })
+    .detail()
+    .shippingAddress()
+    .id()
+  // need to create the below array with A) a function that has a typed return and
+  // B, an explicit loop rather than e.g a map call because otherwise we get build
+  // errors complaining that this array of {id: string}s is not right.
+  const itemsAsPhysicalProductWhereUniqueInputArray = (function(): Array<{
+    id: string
+  }> {
+    let returnArray = []
+    for (let item of items) {
+      returnArray.push({ id: item })
+    }
+    return returnArray
+  })()
   return {
     products: {
       connect: physicalProductSUIDs,
@@ -392,20 +432,52 @@ function createReservationData(
         id: user.id,
       },
     },
-    shippingLabel: {
+    sentPackage: {
       create: {
-        image: seasonsToCustomerTransaction.label_url || "",
-        trackingNumber: seasonsToCustomerTransaction.tracking_number || "",
-        trackingURL: seasonsToCustomerTransaction.tracking_url_provider || "",
-        name: "UPS",
+        weight: shipmentWeight,
+        items: {
+          connect: itemsAsPhysicalProductWhereUniqueInputArray,
+        },
+        shippingLabel: {
+          create: {
+            image: seasonsToCustomerTransaction.label_url || "",
+            trackingNumber: seasonsToCustomerTransaction.tracking_number || "",
+            trackingURL:
+              seasonsToCustomerTransaction.tracking_url_provider || "",
+            name: "UPS",
+          },
+        },
+        fromAddress: {
+          connect: {
+            slug: "seasons-hq-official",
+          },
+        },
+        toAddress: {
+          connect: { id: customerShippingAddressRecordID },
+        },
       },
     },
-    returnLabel: {
+    returnedPackage: {
       create: {
-        image: customerToSeasonsTransaction.label_url || "",
-        trackingNumber: customerToSeasonsTransaction.tracking_number || "",
-        trackingURL: customerToSeasonsTransaction.tracking_url_provider || "",
-        name: "UPS",
+        shippingLabel: {
+          create: {
+            image: customerToSeasonsTransaction.label_url || "",
+            trackingNumber: customerToSeasonsTransaction.tracking_number || "",
+            trackingURL:
+              customerToSeasonsTransaction.tracking_url_provider || "",
+            name: "UPS",
+          },
+        },
+        fromAddress: {
+          connect: {
+            id: customerShippingAddressRecordID,
+          },
+        },
+        toAddress: {
+          connect: {
+            slug: "seasons-cleaners-official",
+          },
+        },
       },
     },
     reservationNumber: Math.floor(Math.random() * 90000) + 10000,
