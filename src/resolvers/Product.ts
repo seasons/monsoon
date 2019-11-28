@@ -406,18 +406,9 @@ async function createReservationData(
     .detail()
     .shippingAddress()
     .id()
-  // need to create the below array with A) a function that has a typed return and
-  // B, an explicit loop rather than e.g a map call because otherwise we get build
-  // errors complaining that this array of {id: string}s is not right.
-  const itemsAsPhysicalProductWhereUniqueInputArray = (function(): Array<{
+  interface UniqueIDObject {
     id: string
-  }> {
-    let returnArray = []
-    for (let item of items) {
-      returnArray.push({ id: item })
-    }
-    return returnArray
-  })()
+  }
   return {
     products: {
       connect: physicalProductSUIDs,
@@ -436,7 +427,11 @@ async function createReservationData(
       create: {
         weight: shipmentWeight,
         items: {
-          connect: itemsAsPhysicalProductWhereUniqueInputArray,
+          // need to include the type on the function passed into map
+          // or we get build errors comlaining about the type here
+          connect: items.map(function(item): UniqueIDObject {
+            return { id: item }
+          }),
         },
         shippingLabel: {
           create: {
