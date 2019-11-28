@@ -143,10 +143,13 @@ export const createReservation = async (
           Shipped: false,
           Status: "New",
           "Shipping Address": airtableUserRecord.fields["Shipping Address"],
-          "Shipping Label": data.shippingLabel.create.image,
-          "Tracking URL": data.shippingLabel.create.trackingURL,
-          "Return Label": data.returnLabel.create.image,
-          "Return Tracking URL": data.returnLabel.create.trackingURL,
+          "Shipping Label": data.sentPackage.create.shippingLabel.create.image,
+          "Tracking URL":
+            data.sentPackage.create.shippingLabel.create.trackingURL,
+          "Return Label":
+            data.returnedPackage.create.shippingLabel.create.image,
+          "Return Tracking URL":
+            data.returnedPackage.create.shippingLabel.create.trackingURL,
           "Shipping Error": shippingError,
           "Return Shipping Error": returnShippingError,
         },
