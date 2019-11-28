@@ -3931,13 +3931,6 @@ input PackageUpdateOneInput {
   connect: PackageWhereUniqueInput
 }
 
-input PackageUpdateOneRequiredInput {
-  create: PackageCreateInput
-  update: PackageUpdateDataInput
-  upsert: PackageUpsertNestedInput
-  connect: PackageWhereUniqueInput
-}
-
 input PackageUpsertNestedInput {
   update: PackageUpdateDataInput!
   create: PackageCreateInput!
@@ -5940,7 +5933,7 @@ type Reservation {
   id: ID!
   user: User!
   customer: Customer!
-  sentPackage: Package!
+  sentPackage: Package
   returnedPackage: Package
   location: Location
   products(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct!]
@@ -5963,7 +5956,7 @@ input ReservationCreateInput {
   id: ID
   user: UserCreateOneInput!
   customer: CustomerCreateOneWithoutReservationsInput!
-  sentPackage: PackageCreateOneInput!
+  sentPackage: PackageCreateOneInput
   returnedPackage: PackageCreateOneInput
   location: LocationCreateOneInput
   products: PhysicalProductCreateManyInput
@@ -5982,7 +5975,7 @@ input ReservationCreateManyWithoutCustomerInput {
 input ReservationCreateWithoutCustomerInput {
   id: ID
   user: UserCreateOneInput!
-  sentPackage: PackageCreateOneInput!
+  sentPackage: PackageCreateOneInput
   returnedPackage: PackageCreateOneInput
   location: LocationCreateOneInput
   products: PhysicalProductCreateManyInput
@@ -6126,7 +6119,7 @@ input ReservationSubscriptionWhereInput {
 input ReservationUpdateInput {
   user: UserUpdateOneRequiredInput
   customer: CustomerUpdateOneRequiredWithoutReservationsInput
-  sentPackage: PackageUpdateOneRequiredInput
+  sentPackage: PackageUpdateOneInput
   returnedPackage: PackageUpdateOneInput
   location: LocationUpdateOneInput
   products: PhysicalProductUpdateManyInput
@@ -6172,7 +6165,7 @@ input ReservationUpdateManyWithWhereNestedInput {
 
 input ReservationUpdateWithoutCustomerDataInput {
   user: UserUpdateOneRequiredInput
-  sentPackage: PackageUpdateOneRequiredInput
+  sentPackage: PackageUpdateOneInput
   returnedPackage: PackageUpdateOneInput
   location: LocationUpdateOneInput
   products: PhysicalProductUpdateManyInput
