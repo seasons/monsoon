@@ -360,8 +360,8 @@ type Reservation {
   id: ID! @id
   user: User!
   customer: Customer! @relation(name: "CustomerToReservation")
-  shippingLabel: Label! @relation(name: "ShippingLabelReservation")
-  returnLabel: Label @relation(name: "ReturnLabelReservation")
+  sentPackage: Package! @relation(name: "SeasonsToCustomerPackage")
+  returnedPackage: Package @relation(name: "CustomerToSeasonsPackage")
   location: Location
   products: [PhysicalProduct!]!
   reservationNumber: Int!
@@ -371,6 +371,17 @@ type Reservation {
   receivedAt: DateTime
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
+}
+
+type Package {
+    id: ID! @id
+    items: [PhysicalProduct!]
+    shippingLabel: Label!
+    fromAddress: Location! @relation(name: "SenderAddress")
+    toAddress: Location! @relation(name: "RecipientAddress")
+    weight: Float
+    createdAt: DateTime! @createdAt
+    updatedAt: DateTime! @updatedAt
 }
 
 type Label {
