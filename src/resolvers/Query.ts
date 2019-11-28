@@ -136,7 +136,7 @@ export const Query = {
 
     // Track the selection
     ctx.analytics.track({
-      userId: targetUser,
+      userId: targetUser.id,
       event: "Opened Checkout",
       properties: {
         plan: planID,
