@@ -6,6 +6,7 @@ import {
 import {
   getUserRequestObject,
   getCustomerFromContext,
+  getUserFromContext,
   UserRequestObject,
 } from "../auth/utils"
 import sgMail from "@sendgrid/mail"
@@ -147,6 +148,16 @@ export const ProductMutations = {
       console.log(err)
       throw new Error(err)
     }
+
+    // Track the selection
+    const prismaUser = await getUserFromContext(ctx)
+    ctx.analytics.track({
+      userId: prismaUser.id,
+      event: "Reserved Items",
+      properties: {
+        productVariantIDs: items,
+      },
+    })
 
     return reservationReturnData
   },
@@ -438,6 +449,10 @@ async function createReservationData(
     .detail()
     .shippingAddress()
     .id()
+  const nextCleanersAddressPrisma = await getPrismaLocationFromSlug(
+    prisma,
+    SEASONS_CLEANER_LOCATION_SLUG
+  )
   interface UniqueIDObject {
     id: string
   }
@@ -509,6 +524,11 @@ async function createReservationData(
       },
     },
     reservationNumber: Math.floor(Math.random() * 90000) + 10000,
+    location: {
+      connect: {
+        slug: SEASONS_CLEANER_LOCATION_SLUG,
+      },
+    },
     shipped: false,
     status: "InQueue",
   }
