@@ -1,4 +1,4 @@
-import { Prisma, Customer, User } from "./prisma"
+import { Prisma, Customer, User, Location } from "./prisma"
 import { Binding } from "graphql-binding"
 import { Request, Response } from "express"
 import crypto from "crypto"
@@ -131,4 +131,20 @@ export interface Context {
   req: Request & { user: any }
   res: Response
   analytics: Analytics
+}
+
+export async function getPrismaLocationFromSlug(
+  prisma: Prisma,
+  slug: string
+): Promise<Location> {
+  return new Promise(async function(resolve, reject) {
+    const prismaLocation = await prisma.location({
+      slug: slug,
+    })
+    if (!prismaLocation) {
+      reject(`no location with slug ${slug} found in DB`)
+    } else {
+      resolve(prismaLocation)
+    }
+  })
 }
