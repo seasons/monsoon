@@ -105,7 +105,6 @@ export const ProductMutations = {
         throw e
       })
 
-      console.log("Shippo transactions created")
       // Create reservation records in prisma and airtable
       const reservationData = await createReservationData(
         ctx.prisma,
@@ -124,14 +123,12 @@ export const ProductMutations = {
         .catch(e => {
           throw e
         })
-      console.log("Prisma reservation data  created")
       await createReservation(
         userRequestObject.email,
         reservationData,
         seasonsToCustomerTransaction.formatted_error,
         customerToSeasonsTransaction.formatted_error
       )
-      console.log("Airtable reservation record created")
 
       // Send confirmation email
       await sendReservationConfirmationEmail(
@@ -140,7 +137,6 @@ export const ProductMutations = {
         products,
         reservation
       )
-      console.log("Confirmation email sent")
 
       // Get return data
       reservationReturnData = await ctx.db.query.reservation(
