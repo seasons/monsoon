@@ -449,10 +449,6 @@ async function createReservationData(
     .detail()
     .shippingAddress()
     .id()
-  const nextCleanersAddressPrisma = await getPrismaLocationFromSlug(
-    prisma,
-    SEASONS_CLEANER_LOCATION_SLUG
-  )
   interface UniqueIDObject {
     id: string
   }
