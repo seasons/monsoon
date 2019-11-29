@@ -1,4 +1,8 @@
-import { Context, sendTransactionalEmail } from "../utils"
+import {
+  Context,
+  sendTransactionalEmail,
+  getPrismaLocationFromSlug,
+} from "../utils"
 import {
   getUserRequestObject,
   getCustomerFromContext,
@@ -13,7 +17,7 @@ import {
   Reservation,
   Customer,
   Location,
-  PhysicalProductWhereUniqueInput,
+  PhysicalProduct,
 } from "../prisma"
 import { getAllProductVariants, createReservation } from "../airtable/utils"
 import { ApolloError } from "apollo-server"
@@ -21,6 +25,9 @@ import shippo from "shippo"
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 var activeShippo = shippo(process.env.SHIPPO_API_KEY)
+
+const SEASONS_CLEANER_LOCATION_SLUG = "seasons-cleaners-official"
+const SEASONS_HQ_LOCATION_SLUG = "seasons-hq-official"
 
 export const Product = {
   async isSaved(parent, {}, ctx: Context, info) {
@@ -84,7 +91,9 @@ export const ProductMutations = {
           servicelevel_token: "ups_ground",
         },
         userRequestObject.id
-      )
+      ).catch(e => {
+        throw e
+      })
       let customerToSeasonsTransaction = await createShippingLabel(
         {
           shipment: customerToSeasonsShipment,
@@ -92,8 +101,11 @@ export const ProductMutations = {
           servicelevel_token: "ups_ground",
         },
         userRequestObject.id
-      )
+      ).catch(e => {
+        throw e
+      })
 
+      console.log("Shippo transactions created")
       // Create reservation records in prisma and airtable
       const reservationData = await createReservationData(
         ctx.prisma,
@@ -103,15 +115,23 @@ export const ProductMutations = {
         customer,
         physicalProductSUIDs,
         shipmentWeight,
-        items
-      )
-      const reservation = await ctx.prisma.createReservation(reservationData)
-      createReservation(
+        physicalProducts
+      ).catch(e => {
+        throw e
+      })
+      const reservation = await ctx.prisma
+        .createReservation(reservationData)
+        .catch(e => {
+          throw e
+        })
+      console.log("Prisma reservation data  created")
+      await createReservation(
         userRequestObject.email,
         reservationData,
         seasonsToCustomerTransaction.formatted_error,
         customerToSeasonsTransaction.formatted_error
       )
+      console.log("Airtable reservation record created")
 
       // Send confirmation email
       await sendReservationConfirmationEmail(
@@ -120,6 +140,7 @@ export const ProductMutations = {
         products,
         reservation
       )
+      console.log("Confirmation email sent")
 
       // Get return data
       reservationReturnData = await ctx.db.query.reservation(
@@ -304,6 +325,15 @@ interface ShippoShipment {
   parcels: any
 }
 
+interface CoreShippoAddressFields {
+  name: string
+  company: string
+  street1: String
+  street2: String
+  city: String
+  state: String
+  zip: String
+}
 async function createShippoShipment(
   prisma: Prisma,
   user: UserRequestObject,
@@ -311,37 +341,23 @@ async function createShippoShipment(
   shipmentWeight: Number
 ): Promise<Array<ShippoShipment>> {
   // Create Next Cleaners Address object
-  const nextCleanersAddressPrisma = await prisma.location({
-    slug: "seasons-cleaners-official",
-  })
-  var nextCleanersAddressShippo = {
-    name: nextCleanersAddressPrisma.name,
-    company: nextCleanersAddressPrisma.company,
-    street1: nextCleanersAddressPrisma.address1,
-    street2: nextCleanersAddressPrisma.address2,
-    city: nextCleanersAddressPrisma.city,
-    state: nextCleanersAddressPrisma.state,
-    zip: nextCleanersAddressPrisma.zipCode,
-    country: "US",
-    phone: "706-271-7092",
-    email: "reservations@seasons.nyc",
+  const nextCleanersAddressPrisma = await getPrismaLocationFromSlug(
+    prisma,
+    SEASONS_CLEANER_LOCATION_SLUG
+  )
+  const nextCleanersAddressShippo = {
+    ...prismaLocationToCoreShippoAddressFields(nextCleanersAddressPrisma),
+    ...seasonsHQOrCleanersSecondaryAddressFields(),
   }
 
   // Create Seasons Address object
-  const seasonsHQAddressPrisma = await prisma.location({
-    slug: "seasons-hq-official",
-  })
-  var seasonsAddressShippo = {
-    name: seasonsHQAddressPrisma.name,
-    company: seasonsHQAddressPrisma.company,
-    street1: seasonsHQAddressPrisma.address1,
-    street2: seasonsHQAddressPrisma.address2,
-    city: seasonsHQAddressPrisma.city,
-    state: seasonsHQAddressPrisma.state,
-    zip: seasonsHQAddressPrisma.zipCode,
-    country: "US",
-    phone: "706-271-7092",
-    email: "reservations@seasons.nyc",
+  const seasonsHQAddressPrisma = await getPrismaLocationFromSlug(
+    prisma,
+    SEASONS_HQ_LOCATION_SLUG
+  )
+  const seasonsAddressShippo = {
+    ...prismaLocationToCoreShippoAddressFields(seasonsHQAddressPrisma),
+    ...seasonsHQOrCleanersSecondaryAddressFields(),
   }
 
   // Create customer address object
@@ -353,20 +369,16 @@ async function createShippoShipment(
     .customer({ id: customer.id })
     .detail()
     .phoneNumber()
-  var customerAddressShippo = {
+  const customerAddressShippo = {
+    ...prismaLocationToCoreShippoAddressFields(customerShippingAddressPrisma),
     name: `${user.firstName} ${user.lastName}`,
-    street1: customerShippingAddressPrisma.address1,
-    street2: customerShippingAddressPrisma.address2,
-    city: customerShippingAddressPrisma.city,
-    state: customerShippingAddressPrisma.state,
-    zip: customerShippingAddressPrisma.zipCode,
     phone: customerPhoneNumber,
     country: "US",
     email: user.email,
   }
 
   // Create parcel object
-  var parcel = {
+  const parcel = {
     // dimensions of seasons bag
     length: "20",
     width: "28",
@@ -388,6 +400,31 @@ async function createShippoShipment(
       parcels: [parcel],
     },
   ]
+
+  // **************************************************
+  function prismaLocationToCoreShippoAddressFields(
+    location: Location
+  ): CoreShippoAddressFields {
+    if (location == null) {
+      throw new Error("can not extract values from null object")
+    }
+    return {
+      name: location.name,
+      company: location.company,
+      street1: location.address1,
+      street2: location.address2,
+      city: location.city,
+      state: location.state,
+      zip: location.zipCode,
+    }
+  }
+  function seasonsHQOrCleanersSecondaryAddressFields() {
+    return {
+      country: "US",
+      phone: "706-271-7092",
+      email: "reservations@seasons.nyc",
+    }
+  }
 }
 
 async function createReservationData(
@@ -398,9 +435,8 @@ async function createReservationData(
   customer: Customer,
   physicalProductSUIDs: Array<{ seasonsUID: string }>,
   shipmentWeight: number,
-  items: Array<string>
+  physicalProducts: Array<PhysicalProduct>
 ): Promise<ReservationCreateInput> {
-  // Create or format data needed for the return object
   const customerShippingAddressRecordID = await prisma
     .customer({ id: customer.id })
     .detail()
@@ -409,6 +445,7 @@ async function createReservationData(
   interface UniqueIDObject {
     id: string
   }
+
   return {
     products: {
       connect: physicalProductSUIDs,
@@ -429,8 +466,8 @@ async function createReservationData(
         items: {
           // need to include the type on the function passed into map
           // or we get build errors comlaining about the type here
-          connect: items.map(function(item): UniqueIDObject {
-            return { id: item }
+          connect: physicalProducts.map(function(prod): UniqueIDObject {
+            return { id: prod.id }
           }),
         },
         shippingLabel: {
@@ -444,7 +481,7 @@ async function createReservationData(
         },
         fromAddress: {
           connect: {
-            slug: "seasons-hq-official",
+            slug: SEASONS_HQ_LOCATION_SLUG,
           },
         },
         toAddress: {
@@ -470,7 +507,7 @@ async function createReservationData(
         },
         toAddress: {
           connect: {
-            slug: "seasons-cleaners-official",
+            slug: SEASONS_CLEANER_LOCATION_SLUG,
           },
         },
       },
@@ -499,11 +536,22 @@ async function createShippingLabel(
   inputs: ShippoLabelInputs,
   userID: string
 ): Promise<ShippoTransaction> {
-  let transaction = await activeShippo.transaction.create(inputs)
-  transaction.formatted_error =
-    transaction.status === "ERROR"
-      ? `Failed to make one or more shipping labels for user with id: ` +
-        ` ${userID}.\nError Messages: ${JSON.stringify(transaction.messages)}`
-      : ""
-  return transaction
+  return new Promise(async function(resolve, reject) {
+    let transaction = await activeShippo.transaction
+      .create(inputs)
+      .catch(err => reject(err))
+    if (
+      transaction.object_state === "VALID" &&
+      transaction.status === "ERROR"
+    ) {
+      reject(
+        transaction.messages.reduce(function(acc, curVal) {
+          return `${acc}. Source: ${curVal.source}. Code: ${curVal.code}. Error Message: ${curVal.text}`
+        }, "")
+      )
+    } else if (!transaction.label_url) {
+      reject(JSON.stringify(transaction))
+    }
+    resolve(transaction)
+  })
 }
