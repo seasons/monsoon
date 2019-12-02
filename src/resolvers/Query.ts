@@ -133,6 +133,16 @@ export const Query = {
     }).catch(error => {
       throw new Error(JSON.stringify(error))
     })
+
+    // Track the selection
+    ctx.analytics.track({
+      userId: targetUser.id,
+      event: "Opened Checkout",
+      properties: {
+        plan: planID,
+      },
+    })
+
     return hostedPage
   },
 }

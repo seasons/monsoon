@@ -4,16 +4,12 @@ import {
   sendTransactionalEmail,
   getCustomerFromUserID,
 } from "../../utils"
-import {
-  getCustomerFromContext,
-  getUserFromContext,
-  getUserRequestObject,
-} from "../../auth/utils"
+import { getCustomerFromContext, getUserFromContext } from "../../auth/utils"
 import { UserInputError } from "apollo-server"
 import chargebee from "chargebee"
 import { createOrUpdateAirtableUser } from "../../airtable/createOrUpdateUser"
 import sgMail from "@sendgrid/mail"
-import { User, ProductUpdateDataInput } from "../../prisma"
+import { User } from "../../prisma"
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 chargebee.configure({
@@ -40,7 +36,12 @@ export const customer = {
         THEN the existing record is updated, with any fields that were previously
         written to overwritten if the payload includes values for them. 
         */
-  async addCustomerDetails(obj, { details, status }, ctx: Context, info) {
+  async addCustomerDetails(
+    obj,
+    { details, status, event },
+    ctx: Context,
+    info
+  ) {
     // They should not have included any "id" in the input
     if (details.id != null) {
       throw new UserInputError("payload should not include id")
@@ -80,8 +81,21 @@ export const customer = {
       status,
     })
 
+    // Track the event, if its been passed
+    const eventNameMap = { CompletedWaitlistForm: "Completed Waitlist Form" }
+    if (!!event) {
+      ctx.analytics.track({
+        userId: user.id,
+        event: eventNameMap[event],
+      })
+    }
+
     // Return the updated customer object
-    return { ...customer, detail: updatedDetails }
+    const returnData = await ctx.db.query.customer(
+      { where: { id: customer.id } },
+      info
+    )
+    return returnData
   },
 
   async acknowledgeCompletedChargebeeHostedCheckout(
@@ -141,6 +155,15 @@ export const customer = {
 
             // Send welcome to seasons email
             sendWelcomeToSeasonsEmail(prismaUser)
+
+            // Track the event
+            ctx.analytics.track({
+              userId: prismaUser.id,
+              event: "Subscribed",
+              properties: {
+                plan: plan,
+              },
+            })
 
             // Return
             return {
