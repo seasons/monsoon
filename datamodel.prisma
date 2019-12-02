@@ -119,12 +119,14 @@ enum ProductStatus {
 
 enum ReservationStatus {
   New
-  InQueue
   OnHold
+  Packed
+  Processing
   InTransit
   Shipped
   Received
-  Active
+  Cancelled
+  Retrieved
   Completed
 }
 
@@ -330,7 +332,8 @@ type CustomerDetail {
 
 type Bag {
   id: ID! @id
-  items: [ProductVariant!]!
+  heldItems: [PhysicalProduct]!
+  wantedItems: [ProductVariant]!
   customer: Customer! @relation(link: TABLE)
 }
 

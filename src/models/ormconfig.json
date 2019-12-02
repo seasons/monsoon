@@ -1,0 +1,16 @@
+[
+  {
+    "name": "default",
+    "type": "postgres",
+    "host": "127.0.0.1",
+    "port": 9876,
+    "username": "prisma",
+    "password": "prisma",
+    "database": "prisma",
+    "schema": "monsoon$dev",
+    "synchronize": false,
+    "entities": [
+      "entities/*.js"
+    ]
+  }
+]
