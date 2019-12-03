@@ -1,0 +1,184 @@
+import { getAllPhysicalProducts } from "../airtable/utils"
+import {
+  prisma,
+  ProductVariant,
+  InventoryStatus,
+  PhysicalProduct,
+} from "../prisma"
+import {
+  updateProductVariantCounts,
+  AirtableProductVariantCounts,
+} from "../airtable/updateProductVariantCounts"
+
+export async function updatePhysicalProductStatus(event, context, callback) {
+  // Get relevant data for airtable, setup containers to hold return data
+  let updatedPhysicalProducts = []
+  let updatedProductVariants = []
+  let physicalProductsInAirtableButNotPrisma = []
+  const allAirtablePhysicalProducts = await getAllPhysicalProducts()
+
+  // Update relevant products
+  for (let airtablePhysicalProduct of allAirtablePhysicalProducts) {
+    const prismaPhysicalProduct = await prisma.physicalProduct({
+      seasonsUID: airtablePhysicalProduct.fields.SUID,
+    })
+
+    if (!!prismaPhysicalProduct) {
+      const newStatusOnAirtable =
+        airtablePhysicalProduct.fields["Inventory Status"]
+      const currentStatusOnPrisma = prismaPhysicalProduct.inventoryStatus
+
+      // If the status has changed, then update prisma and airtable accordingly
+      if (
+        physicalProductStatusChanged(newStatusOnAirtable, currentStatusOnPrisma)
+      ) {
+        // Pause a second, to avoid hitting the 5 requests/sec airtble rate limit
+        await new Promise(resolve => setTimeout(resolve, 1000))
+
+        // Get the associated ProductVariantID, and ProductVariant from prisma
+        const prismaProductVariantID = await prisma
+          .physicalProduct({ id: prismaPhysicalProduct.id })
+          .productVariant()
+          .id()
+        const prismaProductVariant = await prisma.productVariant({
+          id: prismaProductVariantID,
+        })
+
+        // Update the counts on the corresponding product variant in prisma
+        prisma.updateProductVariant({
+          data: getUpdatedCounts(
+            prismaProductVariant,
+            currentStatusOnPrisma,
+            newStatusOnAirtable,
+            "prisma"
+          ) as prismaProductVariantCounts,
+          where: {
+            id: prismaProductVariantID,
+          },
+        })
+
+        // Update the counts on the corresponding product variant in airtable
+        updateProductVariantCounts(
+          airtablePhysicalProduct.fields["Product Variant"][0],
+          getUpdatedCounts(
+            prismaProductVariant,
+            currentStatusOnPrisma,
+            newStatusOnAirtable,
+            "airtable"
+          ) as AirtableProductVariantCounts
+        )
+
+        // Update the status of the corresponding physical product in prisma
+        prisma.updatePhysicalProduct({
+          data: {
+            inventoryStatus: airtableToPrismaStatus(newStatusOnAirtable),
+          },
+          where: { seasonsUID: prismaPhysicalProduct.seasonsUID["text"] },
+        })
+
+        // Store updated ids for reporting
+        updatedPhysicalProducts.push(prismaPhysicalProduct.id)
+        updatedProductVariants.push(prismaProductVariantID)
+      }
+    } else {
+      physicalProductsInAirtableButNotPrisma.push(
+        airtablePhysicalProduct.fields.SUID
+      )
+    }
+  }
+
+  return {
+    updatedPhysicalProducts,
+    updatedProductVariants,
+    physicalProductsInAirtableButNotPrisma,
+  }
+}
+
+updatePhysicalProductStatus({}, {}, {}).then(resp => console.log(resp))
+// *****************************************************************************
+type AirtablePhysicalProductStatus =
+  | "Reservable"
+  | "Non Reservable"
+  | "Reserved"
+type prismaProductVariantCounts = Pick<
+  ProductVariant,
+  "reservable" | "nonReservable" | "reserved"
+>
+type productVariantCounts =
+  | prismaProductVariantCounts
+  | AirtableProductVariantCounts
+
+function physicalProductStatusChanged(
+  newStatusOnAirtable: AirtablePhysicalProductStatus,
+  currentStatusOnPrisma: InventoryStatus
+): boolean {
+  return airtableToPrismaStatus(newStatusOnAirtable) !== currentStatusOnPrisma
+}
+
+function airtableToPrismaStatus(
+  airtableStatus: AirtablePhysicalProductStatus
+): InventoryStatus {
+  let prismaStatus
+  if (airtableStatus === "Reservable") {
+    prismaStatus = "Reservable"
+  }
+  if (airtableStatus === "Non Reservable") {
+    prismaStatus = "NonReservable"
+  }
+  if (airtableStatus === "Reserved") {
+    prismaStatus = "Reserved"
+  }
+  return prismaStatus
+}
+
+function getUpdatedCounts(
+  prismaProductVariant: ProductVariant,
+  currentStatusOnPrisma: InventoryStatus,
+  newStatusOnAirtable: AirtablePhysicalProductStatus,
+  format: "prisma" | "airtable"
+): productVariantCounts {
+  let prismaCounts = {} as prismaProductVariantCounts
+  let airtableCounts = {} as AirtableProductVariantCounts
+
+  // Decrement the count for whichever status we are moving away from
+  switch (currentStatusOnPrisma) {
+    case "NonReservable":
+      prismaCounts["nonReservable"] = prismaProductVariant.nonReservable - 1
+      airtableCounts["Non-Reservable Count"] = prismaCounts["nonReservable"]
+      break
+    case "Reserved":
+      prismaCounts["reserved"] = prismaProductVariant.reserved - 1
+      airtableCounts["Reserved Count"] = prismaCounts["reserved"]
+    case "Reservable":
+      prismaCounts["reservable"] = prismaProductVariant.reservable - 1
+      airtableCounts["Reservable Count"] = prismaCounts["reservable"]
+      break
+  }
+
+  // Increment the count for whichever status we are switching on to
+  switch (newStatusOnAirtable) {
+    case "Non Reservable":
+      prismaCounts["nonReservable"] = prismaProductVariant.nonReservable + 1
+      airtableCounts["Non-Reservable Count"] = prismaCounts["nonReservable"]
+      break
+    case "Reserved":
+      prismaCounts["reserved"] = prismaProductVariant.reserved + 1
+      airtableCounts["Reserved Count"] = prismaCounts["reserved"]
+      break
+    case "Reservable":
+      prismaCounts["reservable"] = prismaProductVariant.reservable + 1
+      airtableCounts["Reservable Count"] = prismaCounts["reservable"]
+      break
+  }
+
+  // Get the formatting right
+  let retVal
+  if (format == "prisma") {
+    retVal = prismaCounts
+  }
+  if (format == "airtable") {
+    retVal = airtableCounts
+  }
+
+  return retVal
+}
