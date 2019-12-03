@@ -2,7 +2,7 @@ import { getAllPhysicalProducts } from "../airtable/utils"
 import {
   prisma,
   ProductVariant,
-  InventoryStatus,
+  InventoryStatus as PrismaInventoryStatus,
   PhysicalProduct,
 } from "../prisma"
 import {
@@ -29,7 +29,7 @@ export async function updatePhysicalProductStatus(event, context, callback) {
     // Wrap it in a try/catch so individual sync errors don't stop the whole job
     try {
       const prismaPhysicalProduct = await prisma.physicalProduct({
-        seasonsUID: airtablePhysicalProduct.fields.SUID,
+        seasonsUID: airtablePhysicalProduct.fields.SUID["text"],
       })
 
       if (!!prismaPhysicalProduct) {
@@ -57,7 +57,7 @@ export async function updatePhysicalProductStatus(event, context, callback) {
           })
 
           // Update the counts on the corresponding product variant in prisma
-          prisma.updateProductVariant({
+          await prisma.updateProductVariant({
             data: getUpdatedCounts(
               prismaProductVariant,
               currentStatusOnPrisma,
@@ -81,11 +81,11 @@ export async function updatePhysicalProductStatus(event, context, callback) {
           )
 
           // Update the status of the corresponding physical product in prisma
-          prisma.updatePhysicalProduct({
+          await prisma.updatePhysicalProduct({
             data: {
               inventoryStatus: airtableToPrismaStatus(newStatusOnAirtable),
             },
-            where: { seasonsUID: prismaPhysicalProduct.seasonsUID["text"] },
+            where: { id: prismaPhysicalProduct.id },
           })
 
           // Store updated ids for reporting
@@ -120,12 +120,8 @@ export async function updatePhysicalProductStatus(event, context, callback) {
   return returnValue
 }
 
-// updatePhysicalProductStatus({}, {}, {}).then(resp => console.log(resp))
 // *****************************************************************************
-type AirtablePhysicalProductStatus =
-  | "Reservable"
-  | "Non Reservable"
-  | "Reserved"
+type AirtableInventoryStatus = "Reservable" | "Non Reservable" | "Reserved"
 type prismaProductVariantCounts = Pick<
   ProductVariant,
   "reservable" | "nonReservable" | "reserved"
@@ -135,15 +131,15 @@ type productVariantCounts =
   | AirtableProductVariantCounts
 
 function physicalProductStatusChanged(
-  newStatusOnAirtable: AirtablePhysicalProductStatus,
-  currentStatusOnPrisma: InventoryStatus
+  newStatusOnAirtable: AirtableInventoryStatus,
+  currentStatusOnPrisma: PrismaInventoryStatus
 ): boolean {
   return airtableToPrismaStatus(newStatusOnAirtable) !== currentStatusOnPrisma
 }
 
 function airtableToPrismaStatus(
-  airtableStatus: AirtablePhysicalProductStatus
-): InventoryStatus {
+  airtableStatus: AirtableInventoryStatus
+): PrismaInventoryStatus {
   let prismaStatus
   if (airtableStatus === "Reservable") {
     prismaStatus = "Reservable"
@@ -159,8 +155,8 @@ function airtableToPrismaStatus(
 
 function getUpdatedCounts(
   prismaProductVariant: ProductVariant,
-  currentStatusOnPrisma: InventoryStatus,
-  newStatusOnAirtable: AirtablePhysicalProductStatus,
+  currentStatusOnPrisma: PrismaInventoryStatus,
+  newStatusOnAirtable: AirtableInventoryStatus,
   format: "prisma" | "airtable"
 ): productVariantCounts {
   let prismaCounts = {} as prismaProductVariantCounts
@@ -175,6 +171,7 @@ function getUpdatedCounts(
     case "Reserved":
       prismaCounts["reserved"] = prismaProductVariant.reserved - 1
       airtableCounts["Reserved Count"] = prismaCounts["reserved"]
+      break
     case "Reservable":
       prismaCounts["reservable"] = prismaProductVariant.reservable - 1
       airtableCounts["Reservable Count"] = prismaCounts["reservable"]
