@@ -6399,6 +6399,7 @@ export interface ReservationScalarWhereInput {
 
 export type ReservationWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
+  reservationNumber?: Maybe<Int>;
 }>;
 
 export interface BillingInfoUpdateManyMutationInput {

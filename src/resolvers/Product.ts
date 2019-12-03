@@ -19,16 +19,18 @@ import {
   Customer,
   Location,
   PhysicalProduct,
+  ID_Input,
+  ProductVariant,
 } from "../prisma"
 import { getAllProductVariants, createReservation } from "../airtable/utils"
 import { ApolloError } from "apollo-server"
 import shippo from "shippo"
+import { uniqBy } from "lodash"
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 var activeShippo = shippo(process.env.SHIPPO_API_KEY)
 
 const SEASONS_CLEANER_LOCATION_SLUG = "seasons-cleaners-official"
-const SEASONS_HQ_LOCATION_SLUG = "seasons-hq-official"
 
 export const Product = {
   async isSaved(parent, {}, ctx: Context, info) {
@@ -48,6 +50,10 @@ export const Product = {
   },
 }
 
+interface PhysicalProductWithReservationSpecificData extends PhysicalProduct {
+  productVariant: Pick<ProductVariant, "id">
+}
+
 export const ProductMutations = {
   async reserveItems(parent, { items }, ctx: Context, info) {
     let reservationReturnData
@@ -57,24 +63,28 @@ export const ProductMutations = {
       const customer = await getCustomerFromContext(ctx)
 
       // Get product data, update variant counts, update physical product statuses
-      const physicalProducts = await ctx.prisma.physicalProducts({
-        where: {
-          productVariant: {
-            id_in: items,
-          },
-        },
-      })
-      console.log(physicalProducts)
-      const products = await updateProductVariantCounts(
+      const allPhysicalProductsForGivenProductVariantIDs = await getPhysicalProductsWithReservationSpecificData(
+        ctx,
+        items
+      )
+      const [
+        products,
+        physicalProductsBeingReserved,
+      ] = await updateProductVariantCounts(
         items,
-        physicalProducts,
+        allPhysicalProductsForGivenProductVariantIDs,
         ctx
       )
-      await updatePhysicalProductInventoryStatuses(ctx.prisma, physicalProducts)
+      await updatePhysicalProductInventoryStatuses(
+        ctx.prisma,
+        physicalProductsBeingReserved as PhysicalProduct[]
+      )
 
-      const physicalProductSUIDs = physicalProducts.map(p => ({
-        seasonsUID: p.seasonsUID,
-      }))
+      const physicalProductSUIDs = (physicalProductsBeingReserved as PhysicalProduct[]).map(
+        p => ({
+          seasonsUID: p.seasonsUID,
+        })
+      )
 
       // Create shipping labels. Wrap the transaction calls in a try-catch
       // so if the label creation fails, the call still continues as planned
@@ -118,7 +128,7 @@ export const ProductMutations = {
         customer,
         physicalProductSUIDs,
         shipmentWeight,
-        physicalProducts
+        physicalProductsBeingReserved as PhysicalProduct[]
       ).catch(e => {
         throw e
       })
@@ -138,7 +148,7 @@ export const ProductMutations = {
       await sendReservationConfirmationEmail(
         ctx.prisma,
         userRequestObject,
-        products,
+        products as PrismaProduct[],
         reservation
       )
 
@@ -166,13 +176,10 @@ export const ProductMutations = {
   },
   async checkItemsAvailability(parent, { items }, ctx: Context, info) {
     const userRequestObject = getUserRequestObject(ctx)
-    const physicalProducts = await ctx.prisma.physicalProducts({
-      where: {
-        productVariant: {
-          id_in: items,
-        },
-      },
-    })
+    const physicalProducts = await getPhysicalProductsWithReservationSpecificData(
+      ctx,
+      items
+    )
 
     await updateProductVariantCounts(items, physicalProducts, ctx, {
       dryRun: true,
@@ -194,17 +201,24 @@ async function updatePhysicalProductInventoryStatuses(
   }
 }
 
+/* Returns back [ProductsBeingReserved, PhysicalProductsBeingReserved] */
 const updateProductVariantCounts = async (
-  items,
-  physicalProducts,
-  ctx,
+  /* array of product variant ids */
+  items: Array<ID_Input>,
+
+  /* all physical products associated with the product variants indicated by `items` */
+  physicalProducts: Array<PhysicalProductWithReservationSpecificData>,
+
+  ctx: Context,
   { dryRun } = { dryRun: false }
-) => {
-  // Check if physical product is available for each product variant
+): Promise<
+  Array<PrismaProduct[] | PhysicalProductWithReservationSpecificData[]>
+> => {
   const variants = await ctx.prisma.productVariants({
     where: { id_in: items },
   })
 
+  // Are there any unavailable variants? If so, throw an error
   const unavailableVariants = variants.filter(v => v.reservable <= 0)
   if (unavailableVariants.length > 0) {
     throw new ApolloError(
@@ -213,12 +227,12 @@ const updateProductVariantCounts = async (
       unavailableVariants
     )
   }
-  const availablePhysicalProducts = []
-  for (let physicalProduct of physicalProducts) {
-    if (true) {
-      availablePhysicalProducts.push(physicalProduct)
-    }
-  }
+
+  // Double check that the product variants have a sufficient number of available
+  // physical products
+  let availablePhysicalProducts = extractUniqueReservablePhysicalProducts(
+    physicalProducts
+  )
   if (availablePhysicalProducts.length < 3) {
     // TODO: list out unavailable items
     throw new ApolloError("Must reserve at least 3 items a time", "515")
@@ -239,8 +253,8 @@ const updateProductVariantCounts = async (
       .product()
 
     products.push(iProduct)
-    // console.log(iProduct, variant)
 
+    // Update product variant counts in prisma and airtable
     if (!dryRun) {
       const data = {
         reservable: variant.reservable - 1,
@@ -273,7 +287,7 @@ const updateProductVariantCounts = async (
     }
   }
 
-  return products
+  return [products, availablePhysicalProducts]
 }
 
 async function sendReservationConfirmationEmail(
@@ -371,16 +385,6 @@ async function createShippoShipment(
     ...seasonsHQOrCleanersSecondaryAddressFields(),
   }
 
-  // Create Seasons Address object
-  const seasonsHQAddressPrisma = await getPrismaLocationFromSlug(
-    prisma,
-    SEASONS_HQ_LOCATION_SLUG
-  )
-  const seasonsAddressShippo = {
-    ...prismaLocationToCoreShippoAddressFields(seasonsHQAddressPrisma),
-    ...seasonsHQOrCleanersSecondaryAddressFields(),
-  }
-
   // Create customer address object
   const customerShippingAddressPrisma = await prisma
     .customer({ id: customer.id })
@@ -411,7 +415,7 @@ async function createShippoShipment(
 
   return [
     {
-      address_from: seasonsAddressShippo,
+      address_from: nextCleanersAddressShippo,
       address_to: customerAddressShippo,
       parcels: [parcel],
     },
@@ -466,6 +470,7 @@ async function createReservationData(
   interface UniqueIDObject {
     id: string
   }
+  const uniqueReservationNumber = await getUniqueReservationNumber(prisma)
 
   return {
     products: {
@@ -502,7 +507,7 @@ async function createReservationData(
         },
         fromAddress: {
           connect: {
-            slug: SEASONS_HQ_LOCATION_SLUG,
+            slug: SEASONS_CLEANER_LOCATION_SLUG,
           },
         },
         toAddress: {
@@ -533,7 +538,7 @@ async function createReservationData(
         },
       },
     },
-    reservationNumber: Math.floor(Math.random() * 90000) + 10000,
+    reservationNumber: uniqueReservationNumber,
     location: {
       connect: {
         slug: SEASONS_CLEANER_LOCATION_SLUG,
@@ -542,6 +547,24 @@ async function createReservationData(
     shipped: false,
     status: "InQueue",
   }
+}
+
+async function getUniqueReservationNumber(prisma: Prisma): Promise<number> {
+  return new Promise(async function checkRandomNumbersUntilWeFindAUniqueOne(
+    resolve,
+    reject
+  ) {
+    let reservationNumber: number
+    let foundUnique = false
+    while (!foundUnique) {
+      reservationNumber = Math.floor(Math.random() * 900000000) + 100000000
+      const reservationWithThatNumber = await prisma.reservation({
+        reservationNumber,
+      })
+      foundUnique = !reservationWithThatNumber
+    }
+    resolve(reservationNumber)
+  })
 }
 
 interface ShippoTransaction {
@@ -580,4 +603,36 @@ async function createShippingLabel(
     }
     resolve(transaction)
   })
+}
+
+async function getPhysicalProductsWithReservationSpecificData(
+  ctx: Context,
+  items: ID_Input[]
+): Promise<Array<PhysicalProductWithReservationSpecificData>> {
+  return await ctx.db.query.physicalProducts(
+    {
+      where: {
+        productVariant: {
+          id_in: items,
+        },
+      },
+    },
+    `{ 
+        id
+        seasonsUID
+        inventoryStatus 
+        productVariant { 
+            id 
+        } 
+    }`
+  )
+}
+
+function extractUniqueReservablePhysicalProducts(
+  physicalProducts: PhysicalProductWithReservationSpecificData[]
+): PhysicalProductWithReservationSpecificData[] {
+  return uniqBy(
+    physicalProducts.filter(a => a.inventoryStatus === "Reservable"),
+    b => b.productVariant.id
+  )
 }

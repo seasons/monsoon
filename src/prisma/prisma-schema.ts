@@ -6263,6 +6263,7 @@ input ReservationWhereInput {
 
 input ReservationWhereUniqueInput {
   id: ID
+  reservationNumber: Int
 }
 
 enum Size {
