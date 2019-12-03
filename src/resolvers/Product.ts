@@ -56,7 +56,7 @@ export const ProductMutations = {
       const userRequestObject = await getUserRequestObject(ctx)
       const customer = await getCustomerFromContext(ctx)
 
-      // Get product data and update variant counts
+      // Get product data, update variant counts, update physical product statuses
       const physicalProducts = await ctx.prisma.physicalProducts({
         where: {
           productVariant: {
@@ -64,11 +64,14 @@ export const ProductMutations = {
           },
         },
       })
+      console.log(physicalProducts)
       const products = await updateProductVariantCounts(
         items,
         physicalProducts,
         ctx
       )
+      await updatePhysicalProductInventoryStatuses(ctx.prisma, physicalProducts)
+
       const physicalProductSUIDs = physicalProducts.map(p => ({
         seasonsUID: p.seasonsUID,
       }))
@@ -146,7 +149,7 @@ export const ProductMutations = {
       )
     } catch (err) {
       console.log(err)
-      throw new Error(err)
+      throw err
     }
 
     // Track the selection
@@ -179,6 +182,18 @@ export const ProductMutations = {
   },
 }
 
+async function updatePhysicalProductInventoryStatuses(
+  prisma: Prisma,
+  products: Array<PhysicalProduct>
+) {
+  for (let prod of products) {
+    await prisma.updatePhysicalProduct({
+      data: { inventoryStatus: "Reserved" },
+      where: { id: prod.id },
+    })
+  }
+}
+
 const updateProductVariantCounts = async (
   items,
   physicalProducts,
@@ -198,26 +213,25 @@ const updateProductVariantCounts = async (
       unavailableVariants
     )
   }
-
   const availablePhysicalProducts = []
   for (let physicalProduct of physicalProducts) {
     if (true) {
       availablePhysicalProducts.push(physicalProduct)
     }
   }
-
   if (availablePhysicalProducts.length < 3) {
     // TODO: list out unavailable items
     throw new ApolloError("Must reserve at least 3 items a time", "515")
   }
 
+  // Get the corresponding product variant records from airtable
   const allProductVariants = await getAllProductVariants()
   const variantSlugs = variants.map(a => a.sku)
   const productVariants = allProductVariants.filter(a =>
     variantSlugs.includes(a.model.sKU)
   )
-  const products = []
 
+  const products = []
   //TODO: convert to transaction
   for (let variant of variants) {
     const iProduct = await ctx.prisma

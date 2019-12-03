@@ -12,18 +12,21 @@ async function syncReservedPhysicalProductStatuses() {
     where: { status: "InQueue" },
   })
   for (let resy of allActiveReservations) {
-    console.log(`UPDATING PRODUCTS FROM RESY ${resy.id}`)
+    console.log(`\nUPDATING PRODUCTS FROM RESY ${resy.id}`)
+
     const physicalProducts = await prisma
       .reservation({ id: resy.id })
       .products()
     console.log("BEFORE UPDATE")
     console.log(physicalProducts)
+
     for (let product of physicalProducts) {
       await prisma.updatePhysicalProduct({
         data: { inventoryStatus: "Reserved" },
         where: { id: product.id },
       })
     }
+
     const physicalProducts2 = await prisma
       .reservation({ id: resy.id })
       .products()
