@@ -28,6 +28,7 @@ export const serverOptions = {
     res,
     prisma,
     db,
+    /* track events on segment */
     analytics,
   }),
   introspection: true,

@@ -10,88 +10,114 @@ import {
   AirtableProductVariantCounts,
 } from "../airtable/updateProductVariantCounts"
 
+// Set up Sentry, which automatically reports on uncaught exceptions
+const Sentry = require("@sentry/node")
+Sentry.init({
+  dsn: process.env.SENTRY_DSN,
+})
+
 export async function updatePhysicalProductStatus(event, context, callback) {
   // Get relevant data for airtable, setup containers to hold return data
   let updatedPhysicalProducts = []
   let updatedProductVariants = []
+  let errors = []
   let physicalProductsInAirtableButNotPrisma = []
   const allAirtablePhysicalProducts = await getAllPhysicalProducts()
 
   // Update relevant products
   for (let airtablePhysicalProduct of allAirtablePhysicalProducts) {
-    const prismaPhysicalProduct = await prisma.physicalProduct({
-      seasonsUID: airtablePhysicalProduct.fields.SUID,
-    })
+    // Wrap it in a try/catch so individual sync errors don't stop the whole job
+    try {
+      const prismaPhysicalProduct = await prisma.physicalProduct({
+        seasonsUID: airtablePhysicalProduct.fields.SUID,
+      })
 
-    if (!!prismaPhysicalProduct) {
-      const newStatusOnAirtable =
-        airtablePhysicalProduct.fields["Inventory Status"]
-      const currentStatusOnPrisma = prismaPhysicalProduct.inventoryStatus
+      if (!!prismaPhysicalProduct) {
+        const newStatusOnAirtable =
+          airtablePhysicalProduct.fields["Inventory Status"]
+        const currentStatusOnPrisma = prismaPhysicalProduct.inventoryStatus
 
-      // If the status has changed, then update prisma and airtable accordingly
-      if (
-        physicalProductStatusChanged(newStatusOnAirtable, currentStatusOnPrisma)
-      ) {
-        // Pause a second, to avoid hitting the 5 requests/sec airtable rate limit
-        await new Promise(resolve => setTimeout(resolve, 1000))
-
-        // Get the associated ProductVariantID, and ProductVariant from prisma
-        const prismaProductVariantID = await prisma
-          .physicalProduct({ id: prismaPhysicalProduct.id })
-          .productVariant()
-          .id()
-        const prismaProductVariant = await prisma.productVariant({
-          id: prismaProductVariantID,
-        })
-
-        // Update the counts on the corresponding product variant in prisma
-        prisma.updateProductVariant({
-          data: getUpdatedCounts(
-            prismaProductVariant,
-            currentStatusOnPrisma,
+        // If the status has changed, then update prisma and airtable accordingly
+        if (
+          physicalProductStatusChanged(
             newStatusOnAirtable,
-            "prisma"
-          ) as prismaProductVariantCounts,
-          where: {
+            currentStatusOnPrisma
+          )
+        ) {
+          // Pause a second, to avoid hitting the 5 requests/sec airtable rate limit
+          await new Promise(resolve => setTimeout(resolve, 1000))
+
+          // Get the associated ProductVariantID, and ProductVariant from prisma
+          const prismaProductVariantID = await prisma
+            .physicalProduct({ id: prismaPhysicalProduct.id })
+            .productVariant()
+            .id()
+          const prismaProductVariant = await prisma.productVariant({
             id: prismaProductVariantID,
-          },
-        })
+          })
 
-        // Update the counts on the corresponding product variant in airtable
-        updateProductVariantCounts(
-          airtablePhysicalProduct.fields["Product Variant"][0],
-          getUpdatedCounts(
-            prismaProductVariant,
-            currentStatusOnPrisma,
-            newStatusOnAirtable,
-            "airtable"
-          ) as AirtableProductVariantCounts
+          // Update the counts on the corresponding product variant in prisma
+          prisma.updateProductVariant({
+            data: getUpdatedCounts(
+              prismaProductVariant,
+              currentStatusOnPrisma,
+              newStatusOnAirtable,
+              "prisma"
+            ) as prismaProductVariantCounts,
+            where: {
+              id: prismaProductVariantID,
+            },
+          })
+
+          // Update the counts on the corresponding product variant in airtable
+          updateProductVariantCounts(
+            airtablePhysicalProduct.fields["Product Variant"][0],
+            getUpdatedCounts(
+              prismaProductVariant,
+              currentStatusOnPrisma,
+              newStatusOnAirtable,
+              "airtable"
+            ) as AirtableProductVariantCounts
+          )
+
+          // Update the status of the corresponding physical product in prisma
+          prisma.updatePhysicalProduct({
+            data: {
+              inventoryStatus: airtableToPrismaStatus(newStatusOnAirtable),
+            },
+            where: { seasonsUID: prismaPhysicalProduct.seasonsUID["text"] },
+          })
+
+          // Store updated ids for reporting
+          updatedPhysicalProducts.push(prismaPhysicalProduct.id)
+          updatedProductVariants.push(prismaProductVariantID)
+        }
+      } else {
+        physicalProductsInAirtableButNotPrisma.push(
+          airtablePhysicalProduct.fields.SUID
         )
-
-        // Update the status of the corresponding physical product in prisma
-        prisma.updatePhysicalProduct({
-          data: {
-            inventoryStatus: airtableToPrismaStatus(newStatusOnAirtable),
-          },
-          where: { seasonsUID: prismaPhysicalProduct.seasonsUID["text"] },
-        })
-
-        // Store updated ids for reporting
-        updatedPhysicalProducts.push(prismaPhysicalProduct.id)
-        updatedProductVariants.push(prismaProductVariantID)
+        Sentry.captureMessage(
+          `updatePhysicalProductStatus encountered a physical` +
+            `Product in airtable but not prisma: ${JSON.stringify(
+              airtablePhysicalProduct
+            )} `
+        )
       }
-    } else {
-      physicalProductsInAirtableButNotPrisma.push(
-        airtablePhysicalProduct.fields.SUID
-      )
+    } catch (error) {
+      console.log(error)
+      errors.push(error)
+      Sentry.captureException(error)
     }
   }
 
-  return {
+  let returnValue = {
     updatedPhysicalProducts,
     updatedProductVariants,
     physicalProductsInAirtableButNotPrisma,
+    errors,
   }
+  console.log(returnValue)
+  return returnValue
 }
 
 // updatePhysicalProductStatus({}, {}, {}).then(resp => console.log(resp))
