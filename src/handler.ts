@@ -1,17 +1,7 @@
 import sgMail from "@sendgrid/mail"
 
-import {
-  getAllUsers,
-  getAllPhysicalProducts,
-  getAllReservations,
-} from "./airtable/utils"
-import {
-  prisma,
-  User,
-  PhysicalProduct,
-  ProductVariant,
-  InventoryStatus,
-} from "./prisma"
+import { getAllUsers, getAllReservations } from "./airtable/utils"
+import { prisma, User } from "./prisma"
 import {
   getCustomerFromUserID,
   setCustomerPrismaStatus,
@@ -115,14 +105,4 @@ function sendYouCanNowReserveAgainEmail(user: User) {
   sendTransactionalEmail(user.email, "TK", {
     name: user.firstName,
   })
-}
-
-function physicalProductUpdatedToNonReservable(
-  prismaPhysicalProduct: PhysicalProduct,
-  airtablePhysicalProduct: AirtablePhysicalProduct
-): boolean {
-  return (
-    airtablePhysicalProduct.fields["Inventory Status"] == "Non Reservable" &&
-    prismaPhysicalProduct.inventoryStatus != "NonReservable"
-  )
 }

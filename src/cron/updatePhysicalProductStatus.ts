@@ -32,7 +32,7 @@ export async function updatePhysicalProductStatus(event, context, callback) {
       if (
         physicalProductStatusChanged(newStatusOnAirtable, currentStatusOnPrisma)
       ) {
-        // Pause a second, to avoid hitting the 5 requests/sec airtble rate limit
+        // Pause a second, to avoid hitting the 5 requests/sec airtable rate limit
         await new Promise(resolve => setTimeout(resolve, 1000))
 
         // Get the associated ProductVariantID, and ProductVariant from prisma
@@ -94,7 +94,7 @@ export async function updatePhysicalProductStatus(event, context, callback) {
   }
 }
 
-updatePhysicalProductStatus({}, {}, {}).then(resp => console.log(resp))
+// updatePhysicalProductStatus({}, {}, {}).then(resp => console.log(resp))
 // *****************************************************************************
 type AirtablePhysicalProductStatus =
   | "Reservable"

@@ -21,10 +21,10 @@ package:
     - src/prisma/**
 
 functions:
-  checkAndAuthorizeUsers:
-    handler: src/handler.checkAndAuthorizeUsers
-    events:
-      - schedule: rate(1 minute)
+  # checkAndAuthorizeUsers:
+  #   handler: src/handler.checkAndAuthorizeUsers
+  #   events:
+  #     - schedule: rate(1 minute)
   updatePhysicalProductStatus:
     handler: src/cron/updatePhysicalProductStatus.updatePhysicalProductStatus
     events:
