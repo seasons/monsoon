@@ -24,7 +24,6 @@ export const Me = {
         orderBy: "createdAt_DESC",
       })
 
-    // If the latest reservation is completed, return null. Else return latest reservation
     const latestReservation = head(reservations)
     return latestReservation.status === "Completed" ? null : latestReservation
   },
