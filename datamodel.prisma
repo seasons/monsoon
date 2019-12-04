@@ -330,15 +330,10 @@ type CustomerDetail {
 
 type Bag {
   id: ID! @id
-  items: [ProductVariant!]!
+  heldItems: [PhysicalProduct!]!
+  wantedItems: [ProductVariant!]!
   customer: Customer! @relation(link: TABLE)
 }
-
-# type SavedProduct {
-#   id: ID! @id
-#   productVariant: ProductVariant!
-#   customer: Customer! @relation(link: TABLE)
-# }
 
 type Customer {
   id: ID! @id

@@ -88,7 +88,8 @@ type AggregateUser {
 
 type Bag {
   id: ID!
-  items(where: ProductVariantWhereInput, orderBy: ProductVariantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariant!]
+  heldItems(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct!]
+  wantedItems(where: ProductVariantWhereInput, orderBy: ProductVariantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariant!]
   customer: Customer!
 }
 
@@ -100,7 +101,8 @@ type BagConnection {
 
 input BagCreateInput {
   id: ID
-  items: ProductVariantCreateManyInput
+  heldItems: PhysicalProductCreateManyInput
+  wantedItems: ProductVariantCreateManyInput
   customer: CustomerCreateOneWithoutBagInput!
 }
 
@@ -111,7 +113,8 @@ input BagCreateOneWithoutCustomerInput {
 
 input BagCreateWithoutCustomerInput {
   id: ID
-  items: ProductVariantCreateManyInput
+  heldItems: PhysicalProductCreateManyInput
+  wantedItems: ProductVariantCreateManyInput
 }
 
 type BagEdge {
@@ -147,7 +150,8 @@ input BagSubscriptionWhereInput {
 }
 
 input BagUpdateInput {
-  items: ProductVariantUpdateManyInput
+  heldItems: PhysicalProductUpdateManyInput
+  wantedItems: ProductVariantUpdateManyInput
   customer: CustomerUpdateOneRequiredWithoutBagInput
 }
 
@@ -159,7 +163,8 @@ input BagUpdateOneRequiredWithoutCustomerInput {
 }
 
 input BagUpdateWithoutCustomerDataInput {
-  items: ProductVariantUpdateManyInput
+  heldItems: PhysicalProductUpdateManyInput
+  wantedItems: ProductVariantUpdateManyInput
 }
 
 input BagUpsertWithoutCustomerInput {
@@ -182,9 +187,12 @@ input BagWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
-  items_every: ProductVariantWhereInput
-  items_some: ProductVariantWhereInput
-  items_none: ProductVariantWhereInput
+  heldItems_every: PhysicalProductWhereInput
+  heldItems_some: PhysicalProductWhereInput
+  heldItems_none: PhysicalProductWhereInput
+  wantedItems_every: ProductVariantWhereInput
+  wantedItems_some: ProductVariantWhereInput
+  wantedItems_none: ProductVariantWhereInput
   customer: CustomerWhereInput
   AND: [BagWhereInput!]
   OR: [BagWhereInput!]
