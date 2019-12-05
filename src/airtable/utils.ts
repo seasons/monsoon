@@ -121,44 +121,52 @@ export const airtableToPrismaObject = record => {
   return obj
 }
 
-export const createReservation = async (
+export async function createReservation(
   userEmail: string,
   data: ReservationCreateInput,
   shippingError: string,
   returnShippingError: string
-) => {
-  try {
-    const itemIDs = (data.products.connect as { seasonsUID: string }[]).map(
-      a => a.seasonsUID
-    )
-    const items = await getPhysicalProducts(itemIDs)
-    const airtableUserRecord = await getAirtableUserRecordByUserEmail(userEmail)
-    const createData = [
-      {
-        fields: {
-          ID: data.reservationNumber,
-          User: [airtableUserRecord.id],
-          "Current Location": [process.env.NEXT_CLEANERS_AIRTABLE_LOCATION_ID],
-          Items: items.map(a => a.id),
-          Shipped: false,
-          Status: "New",
-          "Shipping Address": airtableUserRecord.fields["Shipping Address"],
-          "Shipping Label": data.shippingLabel.create.image,
-          "Tracking URL": data.shippingLabel.create.trackingURL,
-          "Return Label": data.returnLabel.create.image,
-          "Return Tracking URL": data.returnLabel.create.trackingURL,
-          "Shipping Error": shippingError,
-          "Return Shipping Error": returnShippingError,
+): Promise<any> {
+  return new Promise(async function(resolve, reject) {
+    try {
+      const itemIDs = (data.products.connect as { seasonsUID: string }[]).map(
+        a => a.seasonsUID
+      )
+      const items = await getPhysicalProducts(itemIDs)
+      const airtableUserRecord = await getAirtableUserRecordByUserEmail(
+        userEmail
+      )
+      const createData = [
+        {
+          fields: {
+            ID: data.reservationNumber,
+            User: [airtableUserRecord.id],
+            "Current Location": [
+              process.env.NEXT_CLEANERS_AIRTABLE_LOCATION_ID,
+            ],
+            Items: items.map(a => a.id),
+            Shipped: false,
+            Status: "New",
+            "Shipping Address": airtableUserRecord.fields["Shipping Address"],
+            "Shipping Label":
+              data.sentPackage.create.shippingLabel.create.image,
+            "Tracking URL":
+              data.sentPackage.create.shippingLabel.create.trackingURL,
+            "Return Label":
+              data.returnedPackage.create.shippingLabel.create.image,
+            "Return Tracking URL":
+              data.returnedPackage.create.shippingLabel.create.trackingURL,
+            "Shipping Error": shippingError,
+            "Return Shipping Error": returnShippingError,
+          },
         },
-      },
-    ]
-
-    const records = await base("Reservations").create(createData)
-    return records
-  } catch (e) {
-    console.log(e)
-    throw e
-  }
+      ]
+      const records = await base("Reservations").create(createData)
+      resolve(records)
+    } catch (err) {
+      reject(err)
+    }
+  })
 }
 
 export const createLocation = async (user, data: LocationCreateInput) => {
