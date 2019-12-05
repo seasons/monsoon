@@ -2,9 +2,14 @@ import {
   getAllReservations,
   getAllPhysicalProducts,
 } from "../src/airtable/utils"
-import { prisma, ReservationStatus } from "../src/prisma"
+import {
+  prisma,
+  ReservationStatus,
+  ReservationWhereUniqueInput,
+} from "../src/prisma"
 
-const reservationsToBackfillAirtableToPrisma = [37007]
+const reservationsToBackfillAirtableToPrisma = []
+const reservationNumbersForReservationsToSyncStatusFromAirtableToPrisma = []
 
 async function airtableToPrisma() {
   const allAirtableReservations = await getAllReservations()
@@ -81,8 +86,31 @@ async function airtableToPrisma() {
 
   console.log(`**** CREATED RECORDS ${createdRecords} IN PRISMA ****`)
 }
+async function syncAirtableStatusesToPrismaStatuses() {
+  const allAirtableReservations = await getAllReservations()
 
-airtableToPrisma()
+  for (let resNumber of reservationNumbersForReservationsToSyncStatusFromAirtableToPrisma) {
+    // Get the reservation record from airtable
+    const airtableResy = allAirtableReservations.find(
+      resy => resy.fields.ID === resNumber
+    )
+    if (!airtableResy) {
+      throw new Error(
+        `No reservation with ID ${resNumber} found on airtable. Exiting script.`
+      )
+    }
+
+    // Update the record in prisma
+    const updatedResy = await prisma.updateReservation({
+      data: { status: airtableResy.fields.Status },
+      where: { reservationNumber: resNumber },
+    })
+    console.log(airtableResy.fields.Status)
+    console.log(updatedResy)
+  }
+}
+
+syncAirtableStatusesToPrismaStatuses()
 
 /*******************************************************************************/
 function getPhysicalProductConnectData(
