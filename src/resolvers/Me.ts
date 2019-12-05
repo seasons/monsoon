@@ -24,7 +24,7 @@ export const Me = {
         orderBy: "createdAt_DESC",
       })
 
-    const firstReservation = head(reservations)
-    return firstReservation
+    const latestReservation = head(reservations)
+    return latestReservation.status === "Completed" ? null : latestReservation
   },
 }
