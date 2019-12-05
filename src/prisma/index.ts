@@ -1235,7 +1235,8 @@ export type ReservationStatus =
   | "Shipped"
   | "Received"
   | "Active"
-  | "Completed";
+  | "Completed"
+  | "Cancelled";
 
 export type PackageOrderByInput =
   | "id_ASC"

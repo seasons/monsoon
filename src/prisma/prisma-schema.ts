@@ -6096,6 +6096,7 @@ enum ReservationStatus {
   Received
   Active
   Completed
+  Cancelled
 }
 
 type ReservationSubscriptionPayload {
