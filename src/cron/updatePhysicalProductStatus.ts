@@ -3,15 +3,14 @@ import {
   prisma,
   ProductVariant,
   InventoryStatus as PrismaInventoryStatus,
-  PhysicalProduct,
 } from "../prisma"
 import {
   updateProductVariantCounts,
   AirtableProductVariantCounts,
 } from "../airtable/updateProductVariantCounts"
+import { AirtableInventoryStatus } from "../airtable/updatePhysicalProduct"
+import Sentry from "@sentry/node"
 
-// Set up Sentry, which automatically reports on uncaught exceptions
-const Sentry = require("@sentry/node")
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
 })
@@ -121,7 +120,7 @@ export async function updatePhysicalProductStatus(event, context, callback) {
 }
 
 // *****************************************************************************
-type AirtableInventoryStatus = "Reservable" | "Non Reservable" | "Reserved"
+
 type prismaProductVariantCounts = Pick<
   ProductVariant,
   "reservable" | "nonReservable" | "reserved"
