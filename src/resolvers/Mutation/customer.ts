@@ -186,16 +186,16 @@ export const customer = {
 
     let key = save ? "connect" : "disconnect"
 
-    await ctx.prisma.updateCustomer({
-      where: {
-        id: customer.id,
-      },
-      data: {
-        savedProducts: {
-          [key]: [{ id: item }],
-        },
-      },
-    })
+    // await ctx.prisma.updateCustomer({
+    //   where: {
+    //     id: customer.id,
+    //   },
+    //   data: {
+    //     savedProducts: {
+    //       [key]: [{ id: item }],
+    //     },
+    //   },
+    // })
 
     return { ...customer, savedProduct: updatedSavedProducts }
   },

@@ -210,7 +210,7 @@ const createMorePhysicalProductsIfNeeded: CreateMorePhysicalProductsFunction = a
             slug: location.model.slug,
           },
         },
-        inventoryStatus: "NonReservable" as InventoryStatus,
+        inventoryStatus: "Reservable" as InventoryStatus,
         productStatus: fields["Product Status"],
       } as PhysicalProductCreateInput)
   )
