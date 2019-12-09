@@ -12,10 +12,10 @@ TODO:
 - Update this to more carefully assess which reservations are active or not
 */
 
-import { prisma } from "../src/prisma"
-import { base } from "../src/airtable/config"
-import { getAllPhysicalProducts } from "../src/airtable/utils"
-import { updatePhysicalProduct } from "../src/airtable/updatePhysicalProduct"
+import { prisma } from "../../src/prisma"
+import { base } from "../../src/airtable/config"
+import { getAllPhysicalProducts } from "../../src/airtable/utils"
+import { updatePhysicalProduct } from "../../src/airtable/updatePhysicalProduct"
 import Sentry from "@sentry/node"
 
 Sentry.init({

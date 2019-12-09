@@ -5,8 +5,8 @@ on this ticket: https://app.asana.com/0/1141411134053249/1152833785783081
 import {
   getAllPhysicalProducts,
   getAllProductVariants,
-} from "../src/airtable/utils"
-import { prisma } from "../src/prisma"
+} from "../../src/airtable/utils"
+import { prisma } from "../../src/prisma"
 
 async function queryMismatchedProductVariants(onlyReserved: boolean) {
   // Get all the physical products from airtable

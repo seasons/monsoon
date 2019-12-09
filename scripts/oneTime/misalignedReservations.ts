@@ -1,5 +1,5 @@
-import { prisma, Reservation } from "../src/prisma"
-import { getAllReservations } from "../src/airtable/utils"
+import { prisma, Reservation } from "../../src/prisma"
+import { getAllReservations } from "../../src/airtable/utils"
 
 async function displayReservationsInOnePlaceButNotTheOther() {
   // Get all the reservation records on airtable && prisma.

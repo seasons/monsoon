@@ -1,12 +1,12 @@
 import {
   getAllReservations,
   getAllPhysicalProducts,
-} from "../src/airtable/utils"
+} from "../../src/airtable/utils"
 import {
   prisma,
   ReservationStatus,
   ReservationWhereUniqueInput,
-} from "../src/prisma"
+} from "../../src/prisma"
 
 const reservationsToBackfillAirtableToPrisma = []
 const reservationNumbersForReservationsToSyncStatusFromAirtableToPrisma = []
