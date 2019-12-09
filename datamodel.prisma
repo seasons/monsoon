@@ -126,6 +126,7 @@ enum ReservationStatus {
   Received
   Active
   Completed
+  Cancelled
 }
 
 enum Plan {
