@@ -88,8 +88,8 @@ export async function syncPhysicalProductStatus() {
           })
 
           // Store updated ids for reporting
-          updatedPhysicalProducts.push(prismaPhysicalProduct.id)
-          updatedProductVariants.push(prismaProductVariantID)
+          updatedPhysicalProducts.push(prismaPhysicalProduct.seasonsUID)
+          updatedProductVariants.push(prismaProductVariant.sku)
         }
       } else {
         physicalProductsInAirtableButNotPrisma.push(
