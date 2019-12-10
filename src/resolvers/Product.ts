@@ -22,6 +22,8 @@ import {
   PhysicalProduct,
   ID_Input,
   ProductVariant,
+  InventoryStatus,
+  ReservationStatus,
 } from "../prisma"
 import {
   getAllProductVariants,
@@ -33,6 +35,7 @@ import shippo from "shippo"
 import { uniqBy } from "lodash"
 import { updatePhysicalProduct } from "../airtable/updatePhysicalProduct"
 import { base } from "../airtable/config"
+import { head } from "lodash"
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 var activeShippo = shippo(process.env.SHIPPO_API_KEY)
@@ -47,17 +50,23 @@ export const Product = {
   async isSaved(parent, {}, ctx: Context, info) {
     const customer = await getCustomerFromContext(ctx)
 
-    const product = await ctx.prisma
-      .customer({
-        id: customer.id,
-      })
-      .savedProducts({
-        where: {
-          id: parent.id,
-        },
-      })
+    const bagItem = await ctx.prisma.bagItems({
+      where: {},
+    })
 
-    return !!product.length
+    return true
+
+    // const product = await ctx.prisma
+    //   .customer({
+    //     id: customer.id,
+    //   })
+    //   .savedProducts({
+    //     where: {
+    //       id: parent.id,
+    //     },
+    //   })
+
+    // return !!product.length
   },
 }
 
@@ -69,20 +78,44 @@ export const ProductMutations = {
   async reserveItems(parent, { items }, ctx: Context, info) {
     let reservationReturnData
     try {
+      // Do a quick validation on the data
+      if (items.length < 3) {
+        throw new ApolloError(
+          "Must supply at least three product variant ids",
+          "515"
+        )
+      }
+
       // Get user data
       const userRequestObject = await getUserRequestObject(ctx)
       const customer = await getCustomerFromContext(ctx)
 
+      // Figure out which items the user is reserving anew and which they
+      // already have
+      const lastReservation = await getLatestReservation(
+        ctx.prisma,
+        ctx.db,
+        customer
+      )
+      checkLastReservation(lastReservation)
+      const newProductVariantsBeingReserved = await getNewProductVariantsBeingReserved(
+        lastReservation,
+        items
+      )
+      const heldPhysicalProducts = await getHeldPhysicalProducts(
+        lastReservation
+      )
+
       // Get product data, update variant counts, update physical product statuses
       const allPhysicalProductsForGivenProductVariantIDs = await getPhysicalProductsWithReservationSpecificData(
         ctx,
-        items
+        newProductVariantsBeingReserved
       )
       const [
         products,
         physicalProductsBeingReserved,
       ] = await updateProductVariantCounts(
-        items,
+        newProductVariantsBeingReserved,
         allPhysicalProductsForGivenProductVariantIDs,
         ctx
       )
@@ -94,17 +127,11 @@ export const ProductMutations = {
         physicalProductsBeingReserved as PhysicalProduct[]
       )
 
-      const physicalProductSUIDs = (physicalProductsBeingReserved as PhysicalProduct[]).map(
-        p => ({
-          seasonsUID: p.seasonsUID,
-        })
-      )
-
       // Create shipping labels. Wrap the transaction calls in a try-catch
       // so if the label creation fails, the call still continues as planned
       const shipmentWeight = await calcShipmentWeightFromProductVariantIDs(
         ctx.prisma,
-        items
+        newProductVariantsBeingReserved as string[]
       )
       const [
         seasonsToShippoShipment,
@@ -143,9 +170,9 @@ export const ProductMutations = {
         customerToSeasonsTransaction,
         userRequestObject,
         customer,
-        physicalProductSUIDs,
         shipmentWeight,
-        physicalProductsBeingReserved as PhysicalProduct[]
+        physicalProductsBeingReserved as PhysicalProduct[],
+        heldPhysicalProducts
       ).catch(e => {
         throw e
       })
@@ -250,9 +277,12 @@ const updateProductVariantCounts = async (
   let availablePhysicalProducts = extractUniqueReservablePhysicalProducts(
     physicalProducts
   )
-  if (availablePhysicalProducts.length < 3) {
+  if (availablePhysicalProducts.length < items.length) {
     // TODO: list out unavailable items
-    throw new ApolloError("Must reserve at least 3 items a time", "515")
+    throw new ApolloError(
+      "One or more product variants does not have an available physical product",
+      "515"
+    )
   }
 
   // Get the corresponding product variant records from airtable
@@ -319,17 +349,23 @@ async function sendReservationConfirmationEmail(
       products[0],
       "item1"
     )
-    const prod2Data = await getReservationConfirmationDataForProduct(
-      prisma,
-      products[1],
-      "item2"
-    )
-    const prod3Data = await getReservationConfirmationDataForProduct(
-      prisma,
-      products[2],
-      "item3"
-    )
-    sendTransactionalEmail(user.email, "d-f1de06bb4b89408e8059c07eb30d9f8f", {
+    let [prod2Data, prod3Data] = [{}, {}]
+    if (!!products[1]) {
+      prod2Data = await getReservationConfirmationDataForProduct(
+        prisma,
+        products[1],
+        "item2"
+      )
+    }
+    if (!!products[2]) {
+      prod3Data = await getReservationConfirmationDataForProduct(
+        prisma,
+        products[2],
+        "item3"
+      )
+    }
+    sendTransactionalEmail(user.email, "d-2b8bb24a330740b7b3acfc7f4dea186a", {
+      // sendTransactionalEmail(user.email, "d-f1de06bb4b89408e8059c07eb30d9f8f", {
       order_number: reservation.reservationNumber,
       ...prod1Data,
       ...prod2Data,
@@ -462,10 +498,21 @@ async function createReservationData(
   customerToSeasonsTransaction,
   user: UserRequestObject,
   customer: Customer,
-  physicalProductSUIDs: Array<{ seasonsUID: string }>,
   shipmentWeight: number,
-  physicalProducts: Array<PhysicalProduct>
+  physicalProductsBeingReserved: PhysicalProduct[],
+  heldPhysicalProducts: PhysicalProduct[]
 ): Promise<ReservationCreateInput> {
+  const allPhysicalProductsInReservation = [
+    ...physicalProductsBeingReserved,
+    ...heldPhysicalProducts,
+  ]
+  if (allPhysicalProductsInReservation.length > 3) {
+    throw new ApolloError("Can not reserve more than 3 items at a time")
+  }
+  const physicalProductSUIDs = allPhysicalProductsInReservation.map(p => ({
+    seasonsUID: p.seasonsUID,
+  }))
+
   const customerShippingAddressRecordID = await prisma
     .customer({ id: customer.id })
     .detail()
@@ -496,7 +543,9 @@ async function createReservationData(
         items: {
           // need to include the type on the function passed into map
           // or we get build errors comlaining about the type here
-          connect: physicalProducts.map(function(prod): UniqueIDObject {
+          connect: physicalProductsBeingReserved.map(function(
+            prod
+          ): UniqueIDObject {
             return { id: prod.id }
           }),
         },
@@ -655,5 +704,123 @@ async function updatePhysicalProductInventoryStatusesOnAirtable(
       }
       updatePhysicalProduct(record.id, { "Inventory Status": "Reserved" })
     })
+  }
+}
+
+interface PhysicalProductWithProductVariant extends PhysicalProduct {
+  productVariant: { id: ID_Input }
+}
+interface ReservationWithProductVariantData {
+  id: ID_Input
+  status: ReservationStatus
+  reservationNumber: number
+  products: PhysicalProductWithProductVariant[]
+}
+
+async function getLatestReservation(
+  prisma: Prisma,
+  db: any,
+  customer: Customer
+): Promise<ReservationWithProductVariantData | null> {
+  return new Promise(async function(resolve, reject) {
+    const allCustomerReservationsOrderedByCreatedAt = await prisma
+      .customer({ id: customer.id })
+      .reservations({
+        orderBy: "createdAt_DESC",
+      })
+
+    const latestReservation = head(allCustomerReservationsOrderedByCreatedAt)
+    if (latestReservation == null) {
+      resolve(null)
+    } else {
+      const res = await db.query.reservation(
+        {
+          where: { id: latestReservation.id },
+        },
+        `{ 
+            id  
+            products {
+                id
+                seasonsUID
+                inventoryStatus
+                productStatus
+                productVariant {
+                    id
+                }
+            }
+            status
+            reservationNumber
+         }`
+      )
+      resolve(res)
+    }
+  })
+}
+
+async function getNewProductVariantsBeingReserved(
+  lastReservation: ReservationWithProductVariantData,
+  items: ID_Input[]
+): Promise<ID_Input[]> {
+  return new Promise(async function(resolve, reject) {
+    if (lastReservation == null) {
+      resolve(items)
+      return
+    }
+    const productVariantsInLastReservation = lastReservation.products.map(
+      prod => prod.productVariant.id
+    )
+    const newProductVariantBeingReserved = items.filter(prodVarId => {
+      const notInLastReservation = !productVariantsInLastReservation.includes(
+        prodVarId as string
+      )
+      const inLastReservationButNowReservable =
+        productVariantsInLastReservation.includes(prodVarId as string) &&
+        inventoryStatusOf(lastReservation, prodVarId) === "Reservable"
+
+      return notInLastReservation || inLastReservationButNowReservable
+    })
+
+    resolve(newProductVariantBeingReserved)
+  })
+
+  // ******************************************************
+  function inventoryStatusOf(
+    res: ReservationWithProductVariantData,
+    prodVarId: ID_Input
+  ): InventoryStatus {
+    return res.products.find(prod => prod.productVariant.id === prodVarId)
+      .inventoryStatus
+  }
+}
+
+async function getHeldPhysicalProducts(
+  lastReservation: ReservationWithProductVariantData
+): Promise<PhysicalProduct[]> {
+  return new Promise((resolve, reject) => {
+    if (lastReservation == null) {
+      resolve([])
+      return
+    }
+    resolve(
+      lastReservation.products.filter(
+        prod => prod.inventoryStatus === "Reserved"
+      )
+    )
+  })
+}
+
+function checkLastReservation(
+  lastReservation: ReservationWithProductVariantData
+) {
+  if (
+    !!lastReservation &&
+    ![
+      "Completed" as ReservationStatus,
+      "Cancelled" as ReservationStatus,
+    ].includes(lastReservation.status)
+  ) {
+    throw new ApolloError(
+      `Last reservation has  non-completed, non-cancelled status. Last Reservation number, status: ${lastReservation.reservationNumber}, ${lastReservation.status}`
+    )
   }
 }

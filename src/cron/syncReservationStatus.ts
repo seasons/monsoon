@@ -1,5 +1,12 @@
 import { getAllReservations } from "../airtable/utils"
-import { prisma, ID_Input, User, ReservationStatus, Prisma } from "../prisma"
+import {
+  prisma,
+  ID_Input,
+  User,
+  ReservationStatus,
+  Prisma,
+  InventoryStatus,
+} from "../prisma"
 import {
   sendTransactionalEmail,
   calcShipmentWeightFromProductVariantIDs,
@@ -136,7 +143,12 @@ async function updateUsersBagItemsOnCompletedReservation(
   const returnedPhysicalProductsProductVariantIDs: {
     id: ID_Input
   }[] = prismaReservation.products
-    .filter(p => p.inventoryStatus === "Reservable")
+    .filter(p =>
+      [
+        "Reservable" as InventoryStatus,
+        "NonReservable" as InventoryStatus,
+      ].includes(p.inventoryStatus)
+    )
     .map(p => p.productVariant.id)
 
   const customerBagItems = await db.query.bagItems(
@@ -171,7 +183,12 @@ async function updateReturnPackageOnCompletedReservation(
   const returnedPhysicalProductIDs: {
     id: ID_Input
   } = prismaReservation.products
-    .filter(p => p.inventoryStatus === "Reservable")
+    .filter(p =>
+      [
+        "Reservable" as InventoryStatus,
+        "NonReservable" as InventoryStatus,
+      ].includes(p.inventoryStatus)
+    )
     .map(p => {
       return { id: p.id }
     })
