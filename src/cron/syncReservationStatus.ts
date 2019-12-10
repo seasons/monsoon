@@ -1,13 +1,5 @@
 import { getAllReservations } from "../airtable/utils"
-import {
-  prisma,
-  ID_Input,
-  User,
-  ReservationStatus,
-  Prisma,
-  Reservation,
-  Product,
-} from "../prisma"
+import { prisma, ID_Input, User, ReservationStatus, Prisma } from "../prisma"
 import {
   sendTransactionalEmail,
   calcShipmentWeightFromProductVariantIDs,
@@ -20,7 +12,7 @@ Sentry.init({
   dsn: process.env.SENTRY_DSN,
 })
 
-export async function syncReservationStatus(event, context, callback) {
+export async function syncReservationStatus() {
   const updatedReservations = []
   const errors = []
   const reservationsInAirtableButNotPrisma = []
@@ -43,13 +35,13 @@ export async function syncReservationStatus(event, context, callback) {
             })
 
             // Update the status
-            // await prisma.updateReservation({
-            //   data: { status: "Completed" },
-            //   where: { id: prismaReservation.id },
-            // })
+            await prisma.updateReservation({
+              data: { status: "Completed" },
+              where: { id: prismaReservation.id },
+            })
 
             // Update the user's bag
-            await updateUsersBagOnCompletedReservation(
+            await updateUsersBagItemsOnCompletedReservation(
               prisma,
               prismaReservation
             )
@@ -86,17 +78,11 @@ export async function syncReservationStatus(event, context, callback) {
         })
       }
     } catch (err) {
-      console.log(err)
       errors.push(err)
       Sentry.captureException(err)
     }
   }
 
-  console.log({
-    updatedReservations,
-    errors,
-    reservationsInAirtableButNotPrisma,
-  })
   return {
     updatedReservations,
     errors,
@@ -104,7 +90,7 @@ export async function syncReservationStatus(event, context, callback) {
   }
 }
 
-syncReservationStatus(null, null, null)
+// *****************************************************************************
 
 function sendYouCanNowReserveAgainEmail(user: User) {
   sendTransactionalEmail(user.email, "d-528db6242ecf4c0d886ea0357b363052", {})
@@ -127,16 +113,13 @@ async function getPrismaReservationWithNeededFields(reservationNumber) {
             }
         }
         customer {
-            bag {
-                id
-            }
+            id
         }
         returnedPackage {
             id
         }
     }`
   )
-  //   console.log(`reservation ${reservationNumber}: ${JSON.stringify(res)}`)
   return res
 }
 
@@ -146,25 +129,39 @@ function airtableToPrismaReservationStatus(
   return airtableStatus.replace(" ", "") as ReservationStatus
 }
 
-async function updateUsersBagOnCompletedReservation(
+async function updateUsersBagItemsOnCompletedReservation(
   prisma: Prisma,
   prismaReservation: any // actually a Prisma Reservation with fields specified in getPrismaReservationWithNeededFields
 ) {
-  const stillHeldPhysicalProductsIDs: {
+  const returnedPhysicalProductsProductVariantIDs: {
     id: ID_Input
   }[] = prismaReservation.products
-    .filter(p => p.inventoryStatus === "Reserved")
-    .map(p => {
-      return { id: p.id }
-    })
-  await prisma.updateBag({
-    data: {
-      heldItems: {
-        connect: stillHeldPhysicalProductsIDs,
-      },
+    .filter(p => p.inventoryStatus === "Reservable")
+    .map(p => p.productVariant.id)
+
+  const customerBagItems = await db.query.bagItems(
+    {
+      where: { customer: { id: prismaReservation.customer.id } },
     },
-    where: { id: prismaReservation.customer.bag.id },
-  })
+    `{ 
+        id
+        productVariant {
+            id
+        }
+    }`
+  )
+
+  for (let prodVarId of returnedPhysicalProductsProductVariantIDs) {
+    const bagItem = customerBagItems.find(
+      val => val.productVariant.id == prodVarId
+    )
+    if (!bagItem) {
+      throw new Error(
+        `bagItem with productVariant id ${prodVarId} not found for customer w/id ${prismaReservation.customer.id}`
+      )
+    }
+    await prisma.deleteBagItem({ id: bagItem.id })
+  }
 }
 
 async function updateReturnPackageOnCompletedReservation(

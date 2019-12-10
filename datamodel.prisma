@@ -121,10 +121,11 @@ enum ReservationStatus {
   New
   InQueue
   OnHold
-  InTransit
+  Packed
   Shipped
+  InTransit
   Received
-  Active
+  Cancelled
   Completed
   Cancelled
 }
@@ -329,11 +330,12 @@ type CustomerDetail {
   updatedAt: DateTime! @updatedAt
 }
 
-type Bag {
+type BagItem {
   id: ID! @id
-  heldItems: [PhysicalProduct!]!
-  wantedItems: [ProductVariant!]!
-  customer: Customer! @relation(link: TABLE)
+  customer: Customer!
+  productVariant: ProductVariant!
+  position: Int
+  saved: Boolean
 }
 
 type Customer {
@@ -343,8 +345,6 @@ type Customer {
   detail: CustomerDetail
   billingInfo: BillingInfo
   plan: Plan
-  bag: Bag!
-  savedProducts: [Product!]!
   reservations: [Reservation] @relation(name: "CustomerToReservation")
 }
 

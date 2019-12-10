@@ -25,11 +25,7 @@ functions:
     handler: src/handler.checkAndAuthorizeUsers
     events:
       - schedule: rate(1 minute)
-  updatePhysicalProductStatus:
-    handler: src/cron/updatePhysicalProductStatus.updatePhysicalProductStatus
-    events:
-      - schedule: rate(1 minute)
-  syncReservationStatus:
-    handler: src/cron/syncReservationStatus.syncReservationStatus
+  syncPhysicalProductAndReservationStatus:
+    handler: src/cron/syncPhysicalProductAndReservationStatus.syncPhysicalProductAndReservationStatus
     events:
       - schedule: rate(1 minute)

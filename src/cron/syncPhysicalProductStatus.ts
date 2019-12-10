@@ -15,7 +15,7 @@ Sentry.init({
   dsn: process.env.SENTRY_DSN,
 })
 
-export async function updatePhysicalProductStatus(event, context, callback) {
+export async function syncPhysicalProductStatus() {
   // Get relevant data for airtable, setup containers to hold return data
   let updatedPhysicalProducts = []
   let updatedProductVariants = []
@@ -103,23 +103,19 @@ export async function updatePhysicalProductStatus(event, context, callback) {
         )
       }
     } catch (error) {
-      console.log(error)
       errors.push(error)
       Sentry.captureException(error)
     }
   }
 
-  let returnValue = {
+  return {
     updatedPhysicalProducts,
     updatedProductVariants,
     physicalProductsInAirtableButNotPrisma,
     errors,
   }
-  console.log(returnValue)
-  return returnValue
 }
 
-updatePhysicalProductStatus(null, null, null)
 // *****************************************************************************
 
 type prismaProductVariantCounts = Pick<
