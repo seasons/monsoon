@@ -5,7 +5,7 @@ import {
   getAuth0UserAccessToken,
   isLoggedIn,
 } from "../../auth/utils"
-import { Context } from "../../utils"
+import { Context, getCustomerFromUserID } from "../../utils"
 import { CustomerDetail } from "../../prisma"
 import { UserInputError, ForbiddenError } from "apollo-server"
 import { createOrUpdateAirtableUser } from "../../airtable/createOrUpdateUser"
@@ -118,6 +118,14 @@ export const auth = {
 
     // Get user with this email
     let user = await ctx.prisma.user({ email })
+
+    // If the user is a Customer, make sure that the account has been approved
+    if (user && user.role == "Customer") {
+      const customer = await getCustomerFromUserID(ctx.prisma, user.id);
+      if (customer && (customer.status !== "Active" && customer.status !== "Authorized")) {
+        throw new Error(`User account has not been approved`);
+      }
+    }
 
     return {
       token: tokenData.access_token,
