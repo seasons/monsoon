@@ -6,7 +6,7 @@ const isRequestingUser = ({ ctx, userId }) => ctx.db.exists.User({ id: userId })
 
 export const directiveResolvers = {
   isAuthenticated: (next, source, args, ctx) => {
-    getUserIfExists(ctx)
+    getUserIfExists(ctx);
     return next()
   },
   hasRole: async (next, source, { roles }, ctx) => {
@@ -23,8 +23,8 @@ export const directiveResolvers = {
       source && source.id
         ? source
         : ctx.request.body.variables
-        ? ctx.request.body.variables
-        : { id: null }
+          ? ctx.request.body.variables
+          : { id: null }
     const { id: userId } = getUserIfExists(ctx)
     const isOwner =
       type === `User`
