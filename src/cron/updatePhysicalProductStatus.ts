@@ -9,8 +9,8 @@ import {
   AirtableProductVariantCounts,
 } from "../airtable/updateProductVariantCounts"
 import { AirtableInventoryStatus } from "../airtable/updatePhysicalProduct"
-import Sentry from "@sentry/node"
 
+const Sentry = require("@sentry/node")
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
 })
@@ -119,6 +119,7 @@ export async function updatePhysicalProductStatus(event, context, callback) {
   return returnValue
 }
 
+updatePhysicalProductStatus(null, null, null)
 // *****************************************************************************
 
 type prismaProductVariantCounts = Pick<

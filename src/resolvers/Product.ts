@@ -2,6 +2,7 @@ import {
   Context,
   sendTransactionalEmail,
   getPrismaLocationFromSlug,
+  calcShipmentWeightFromProductVariantIDs,
 } from "../utils"
 import {
   getUserRequestObject,
@@ -22,13 +23,23 @@ import {
   ID_Input,
   ProductVariant,
 } from "../prisma"
-import { getAllProductVariants, createReservation } from "../airtable/utils"
+import {
+  getAllProductVariants,
+  createReservation,
+  getPhysicalProducts,
+} from "../airtable/utils"
 import { ApolloError } from "apollo-server"
 import shippo from "shippo"
 import { uniqBy } from "lodash"
+import { updatePhysicalProduct } from "../airtable/updatePhysicalProduct"
+import { base } from "../airtable/config"
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 var activeShippo = shippo(process.env.SHIPPO_API_KEY)
+const Sentry = require("@sentry/node")
+Sentry.init({
+  dsn: process.env.SENTRY_DSN,
+})
 
 const SEASONS_CLEANER_LOCATION_SLUG = "seasons-cleaners-official"
 
@@ -75,8 +86,11 @@ export const ProductMutations = {
         allPhysicalProductsForGivenProductVariantIDs,
         ctx
       )
-      await updatePhysicalProductInventoryStatuses(
+      await updatePhysicalProductInventoryStatusesOnPrisma(
         ctx.prisma,
+        physicalProductsBeingReserved as PhysicalProduct[]
+      )
+      await updatePhysicalProductInventoryStatusesOnAirtable(
         physicalProductsBeingReserved as PhysicalProduct[]
       )
 
@@ -88,7 +102,10 @@ export const ProductMutations = {
 
       // Create shipping labels. Wrap the transaction calls in a try-catch
       // so if the label creation fails, the call still continues as planned
-      const shipmentWeight = await calcShipmentWeight(ctx.prisma, items)
+      const shipmentWeight = await calcShipmentWeightFromProductVariantIDs(
+        ctx.prisma,
+        items
+      )
       const [
         seasonsToShippoShipment,
         customerToSeasonsShipment,
@@ -189,7 +206,7 @@ export const ProductMutations = {
   },
 }
 
-async function updatePhysicalProductInventoryStatuses(
+async function updatePhysicalProductInventoryStatusesOnPrisma(
   prisma: Prisma,
   products: Array<PhysicalProduct>
 ) {
@@ -339,19 +356,6 @@ async function sendReservationConfirmationEmail(
     data[`${prefix}_price`] = product.retailPrice
     return data
   }
-}
-
-async function calcShipmentWeight(
-  prisma: Prisma,
-  itemIDs: Array<string>
-): Promise<number> {
-  const shippingBagWeight = 1
-  const productVariants = await prisma.productVariants({
-    where: { id_in: itemIDs },
-  })
-  return productVariants.reduce(function addProductWeight(acc, curProdVar) {
-    return acc + curProdVar.weight
-  }, shippingBagWeight)
 }
 
 interface ShippoShipment {
@@ -635,4 +639,21 @@ function extractUniqueReservablePhysicalProducts(
     physicalProducts.filter(a => a.inventoryStatus === "Reservable"),
     b => b.productVariant.id
   )
+}
+
+async function updatePhysicalProductInventoryStatusesOnAirtable(
+  physicalProducts: PhysicalProduct[]
+) {
+  const airtablePhysicalProductRecords = await getPhysicalProducts(
+    physicalProducts.map(prod => prod.seasonsUID)
+  )
+  for (let prod of airtablePhysicalProductRecords) {
+    base("Physical Products").find(prod.id, function(err, record) {
+      if (err) {
+        Sentry.captureException(err)
+        return
+      }
+      updatePhysicalProduct(record.id, { "Inventory Status": "Reserved" })
+    })
+  }
 }

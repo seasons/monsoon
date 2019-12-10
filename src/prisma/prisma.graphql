@@ -6095,12 +6095,12 @@ enum ReservationStatus {
   New
   InQueue
   OnHold
-  InTransit
+  Packed
   Shipped
+  InTransit
   Received
-  Active
-  Completed
   Cancelled
+  Completed
 }
 
 type ReservationSubscriptionPayload {

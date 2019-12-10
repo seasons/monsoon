@@ -29,3 +29,7 @@ functions:
     handler: src/cron/updatePhysicalProductStatus.updatePhysicalProductStatus
     events:
       - schedule: rate(1 minute)
+  syncReservationStatus:
+    handler: src/cron/syncReservationStatus.syncReservationStatus
+    events:
+      - schedule: rate(1 minute)
