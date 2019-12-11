@@ -61,6 +61,10 @@ export const getAllBrands = async () => {
   return getAll("Brands")
 }
 
+export const getAllReservations = async () => {
+  return getAll("Reservations")
+}
+
 export const getAllCollections = async () => {
   return getAll("Collections")
 }

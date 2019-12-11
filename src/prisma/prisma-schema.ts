@@ -6054,10 +6054,11 @@ enum ReservationStatus {
   New
   InQueue
   OnHold
-  InTransit
+  Packed
   Shipped
+  InTransit
   Received
-  Active
+  Cancelled
   Completed
 }
 
@@ -6226,6 +6227,7 @@ input ReservationWhereInput {
 
 input ReservationWhereUniqueInput {
   id: ID
+  reservationNumber: Int
 }
 
 enum Size {

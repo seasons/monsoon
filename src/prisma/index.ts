@@ -1123,10 +1123,11 @@ export type ReservationStatus =
   | "New"
   | "InQueue"
   | "OnHold"
-  | "InTransit"
+  | "Packed"
   | "Shipped"
+  | "InTransit"
   | "Received"
-  | "Active"
+  | "Cancelled"
   | "Completed";
 
 export type CustomerDetailOrderByInput =
@@ -4727,6 +4728,7 @@ export interface ProductVariantUpsertWithWhereUniqueWithoutProductInput {
 
 export type ReservationWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
+  reservationNumber?: Maybe<Int>;
 }>;
 
 export interface ProductUpsertWithWhereUniqueWithoutCategoryInput {

@@ -121,11 +121,13 @@ enum ReservationStatus {
   New
   InQueue
   OnHold
-  InTransit
+  Packed
   Shipped
+  InTransit
   Received
-  Active
+  Cancelled
   Completed
+  Cancelled
 }
 
 enum Plan {
@@ -358,7 +360,7 @@ type Reservation {
   returnedPackage: Package @relation(name: "CustomerToSeasonsPackage")
   location: Location
   products: [PhysicalProduct!]!
-  reservationNumber: Int!
+  reservationNumber: Int! @unique
   shipped: Boolean!
   status: ReservationStatus!
   shippedAt: DateTime
