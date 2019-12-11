@@ -16,11 +16,19 @@ async function allProdsInPrismaNotAirtable() {
   )
   const allPrismaProductSlugs = allPrismaProducts.map(prod => prod.slug)
 
-  const XOR = xor(allAirtableProductSlugs, allPrismaProductSlugs)
+  const list = []
 
-  for (let slug of XOR) {
-    console.log(slug)
+  for (let productSlug of allPrismaProductSlugs) {
+    if (!allAirtableProductSlugs.includes(productSlug)) {
+      list.push(productSlug)
+    }
   }
+  // const XOR = xor(allAirtableProductSlugs, allPrismaProductSlugs)
+
+  for (let slug of list) {
+    console.log(`"${slug}",`)
+  }
+  console.log("Number of products in prisma but not airtable: ", list.length)
 }
 
 allProdsInPrismaNotAirtable()
