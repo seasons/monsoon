@@ -6,6 +6,7 @@ import { HomepageResult } from "./Homepage"
 import { Product, ProductMutations } from "./Product"
 import { Reservation } from "./Reservation"
 import { PhysicalProduct } from "./PhysicalProduct"
+import { bag } from "./Mutation/bag"
 
 export default {
   Query,
@@ -14,6 +15,7 @@ export default {
     ...auth,
     ...ProductMutations,
     ...customer,
+    ...bag,
   },
   Me,
   Reservation,

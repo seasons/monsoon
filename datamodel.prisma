@@ -328,17 +328,13 @@ type CustomerDetail {
   updatedAt: DateTime! @updatedAt
 }
 
-type Bag {
+type BagItem {
   id: ID! @id
-  items: [ProductVariant!]!
-  customer: Customer! @relation(link: TABLE)
+  customer: Customer!
+  productVariant: ProductVariant!
+  position: Int
+  saved: Boolean
 }
-
-# type SavedProduct {
-#   id: ID! @id
-#   productVariant: ProductVariant!
-#   customer: Customer! @relation(link: TABLE)
-# }
 
 type Customer {
   id: ID! @id
@@ -347,8 +343,6 @@ type Customer {
   detail: CustomerDetail
   billingInfo: BillingInfo
   plan: Plan
-  bag: Bag!
-  savedProducts: [Product!]!
   reservations: [Reservation] @relation(name: "CustomerToReservation")
 }
 
@@ -374,14 +368,14 @@ type Reservation {
 }
 
 type Package {
-    id: ID! @id
-    items: [PhysicalProduct!]
-    shippingLabel: Label!
-    fromAddress: Location! @relation(name: "SenderAddress")
-    toAddress: Location! @relation(name: "RecipientAddress")
-    weight: Float
-    createdAt: DateTime! @createdAt
-    updatedAt: DateTime! @updatedAt
+  id: ID! @id
+  items: [PhysicalProduct!]
+  shippingLabel: Label!
+  fromAddress: Location! @relation(name: "SenderAddress")
+  toAddress: Location! @relation(name: "RecipientAddress")
+  weight: Float
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
 }
 
 type Label {
