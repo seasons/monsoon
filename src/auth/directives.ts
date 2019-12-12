@@ -1,5 +1,4 @@
 import { getUserIfExists } from "./utils"
-import * as jsonld from "jsonld";
 import { json } from "body-parser";
 
 const isRequestingUserAlsoOwner = ({ ctx, userId, type, typeId }) =>

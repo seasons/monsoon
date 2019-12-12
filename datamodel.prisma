@@ -406,3 +406,16 @@ type BillingInfo {
   country: String
   postal_code: String
 }
+
+type ProductRequest {
+  id: ID! @id
+  sku: String @unique
+  brand: String!
+  description: String!
+  imageURL: String!
+  name: String!
+  price: String!
+  priceCurrency: String!
+  productID: String!
+  url: String!
+}
