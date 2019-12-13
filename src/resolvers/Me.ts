@@ -6,6 +6,7 @@ import request from "request";
 
 export const Me = {
   user: async (parent, args, ctx: Context) => {
+    console.log("GETTING ME!!!");
     const { id } = await getUserRequestObject(ctx)
     console.log("GOT ME");
     // const url = 'https://www.ssense.com/en-us/men/product/reebok-by-pyer-moss/white-and-red-collection-3-nylon-windbreaker-jacket/4460711';
