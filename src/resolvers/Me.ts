@@ -64,4 +64,40 @@ export const Me = {
     const latestReservation = head(reservations)
     return latestReservation.status === "Completed" ? null : latestReservation
   },
+
+  async bag(parent, args, ctx: Context, info) {
+    const customer = await getCustomerFromContext(ctx)
+
+    const bagItems = await ctx.db.query.bagItems(
+      {
+        where: {
+          customer: {
+            id: customer.id,
+          },
+          saved: false,
+        },
+      },
+      info
+    )
+
+    return bagItems
+  },
+
+  async savedItems(parent, args, ctx: Context, info) {
+    const customer = await getCustomerFromContext(ctx)
+
+    const savedItems = await ctx.db.query.bagItems(
+      {
+        where: {
+          customer: {
+            id: customer.id,
+          },
+          saved: true,
+        },
+      },
+      info
+    )
+
+    return savedItems
+  },
 }

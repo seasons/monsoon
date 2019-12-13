@@ -121,11 +121,13 @@ enum ReservationStatus {
   New
   InQueue
   OnHold
-  InTransit
+  Packed
   Shipped
+  InTransit
   Received
-  Active
+  Cancelled
   Completed
+  Cancelled
 }
 
 enum Plan {
@@ -328,17 +330,13 @@ type CustomerDetail {
   updatedAt: DateTime! @updatedAt
 }
 
-type Bag {
+type BagItem {
   id: ID! @id
-  items: [ProductVariant!]!
-  customer: Customer! @relation(link: TABLE)
+  customer: Customer!
+  productVariant: ProductVariant!
+  position: Int
+  saved: Boolean
 }
-
-# type SavedProduct {
-#   id: ID! @id
-#   productVariant: ProductVariant!
-#   customer: Customer! @relation(link: TABLE)
-# }
 
 type Customer {
   id: ID! @id
@@ -347,8 +345,6 @@ type Customer {
   detail: CustomerDetail
   billingInfo: BillingInfo
   plan: Plan
-  bag: Bag!
-  savedProducts: [Product!]!
   reservations: [Reservation] @relation(name: "CustomerToReservation")
 }
 
@@ -364,7 +360,7 @@ type Reservation {
   returnedPackage: Package @relation(name: "CustomerToSeasonsPackage")
   location: Location
   products: [PhysicalProduct!]!
-  reservationNumber: Int!
+  reservationNumber: Int! @unique
   shipped: Boolean!
   status: ReservationStatus!
   shippedAt: DateTime
@@ -374,14 +370,14 @@ type Reservation {
 }
 
 type Package {
-    id: ID! @id
-    items: [PhysicalProduct!]
-    shippingLabel: Label!
-    fromAddress: Location! @relation(name: "SenderAddress")
-    toAddress: Location! @relation(name: "RecipientAddress")
-    weight: Float
-    createdAt: DateTime! @createdAt
-    updatedAt: DateTime! @updatedAt
+  id: ID! @id
+  items: [PhysicalProduct!]
+  shippingLabel: Label!
+  fromAddress: Location! @relation(name: "SenderAddress")
+  toAddress: Location! @relation(name: "RecipientAddress")
+  weight: Float
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
 }
 
 type Label {

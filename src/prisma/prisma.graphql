@@ -1,4 +1,4 @@
-type AggregateBag {
+type AggregateBagItem {
   count: Int!
 }
 
@@ -86,88 +86,79 @@ type AggregateUser {
   count: Int!
 }
 
-type Bag {
+type BagItem {
   id: ID!
-  items(where: ProductVariantWhereInput, orderBy: ProductVariantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariant!]
   customer: Customer!
+  productVariant: ProductVariant!
+  position: Int
+  saved: Boolean
 }
 
-type BagConnection {
+type BagItemConnection {
   pageInfo: PageInfo!
-  edges: [BagEdge]!
-  aggregate: AggregateBag!
+  edges: [BagItemEdge]!
+  aggregate: AggregateBagItem!
 }
 
-input BagCreateInput {
+input BagItemCreateInput {
   id: ID
-  items: ProductVariantCreateManyInput
-  customer: CustomerCreateOneWithoutBagInput!
+  customer: CustomerCreateOneInput!
+  productVariant: ProductVariantCreateOneInput!
+  position: Int
+  saved: Boolean
 }
 
-input BagCreateOneWithoutCustomerInput {
-  create: BagCreateWithoutCustomerInput
-  connect: BagWhereUniqueInput
-}
-
-input BagCreateWithoutCustomerInput {
-  id: ID
-  items: ProductVariantCreateManyInput
-}
-
-type BagEdge {
-  node: Bag!
+type BagItemEdge {
+  node: BagItem!
   cursor: String!
 }
 
-enum BagOrderByInput {
+enum BagItemOrderByInput {
   id_ASC
   id_DESC
+  position_ASC
+  position_DESC
+  saved_ASC
+  saved_DESC
 }
 
-type BagPreviousValues {
+type BagItemPreviousValues {
   id: ID!
+  position: Int
+  saved: Boolean
 }
 
-type BagSubscriptionPayload {
+type BagItemSubscriptionPayload {
   mutation: MutationType!
-  node: Bag
+  node: BagItem
   updatedFields: [String!]
-  previousValues: BagPreviousValues
+  previousValues: BagItemPreviousValues
 }
 
-input BagSubscriptionWhereInput {
+input BagItemSubscriptionWhereInput {
   mutation_in: [MutationType!]
   updatedFields_contains: String
   updatedFields_contains_every: [String!]
   updatedFields_contains_some: [String!]
-  node: BagWhereInput
-  AND: [BagSubscriptionWhereInput!]
-  OR: [BagSubscriptionWhereInput!]
-  NOT: [BagSubscriptionWhereInput!]
+  node: BagItemWhereInput
+  AND: [BagItemSubscriptionWhereInput!]
+  OR: [BagItemSubscriptionWhereInput!]
+  NOT: [BagItemSubscriptionWhereInput!]
 }
 
-input BagUpdateInput {
-  items: ProductVariantUpdateManyInput
-  customer: CustomerUpdateOneRequiredWithoutBagInput
+input BagItemUpdateInput {
+  customer: CustomerUpdateOneRequiredInput
+  productVariant: ProductVariantUpdateOneRequiredInput
+  position: Int
+  saved: Boolean
 }
 
-input BagUpdateOneRequiredWithoutCustomerInput {
-  create: BagCreateWithoutCustomerInput
-  update: BagUpdateWithoutCustomerDataInput
-  upsert: BagUpsertWithoutCustomerInput
-  connect: BagWhereUniqueInput
+input BagItemUpdateManyMutationInput {
+  position: Int
+  saved: Boolean
 }
 
-input BagUpdateWithoutCustomerDataInput {
-  items: ProductVariantUpdateManyInput
-}
-
-input BagUpsertWithoutCustomerInput {
-  update: BagUpdateWithoutCustomerDataInput!
-  create: BagCreateWithoutCustomerInput!
-}
-
-input BagWhereInput {
+input BagItemWhereInput {
   id: ID
   id_not: ID
   id_in: [ID!]
@@ -182,16 +173,24 @@ input BagWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
-  items_every: ProductVariantWhereInput
-  items_some: ProductVariantWhereInput
-  items_none: ProductVariantWhereInput
   customer: CustomerWhereInput
-  AND: [BagWhereInput!]
-  OR: [BagWhereInput!]
-  NOT: [BagWhereInput!]
+  productVariant: ProductVariantWhereInput
+  position: Int
+  position_not: Int
+  position_in: [Int!]
+  position_not_in: [Int!]
+  position_lt: Int
+  position_lte: Int
+  position_gt: Int
+  position_gte: Int
+  saved: Boolean
+  saved_not: Boolean
+  AND: [BagItemWhereInput!]
+  OR: [BagItemWhereInput!]
+  NOT: [BagItemWhereInput!]
 }
 
-input BagWhereUniqueInput {
+input BagItemWhereUniqueInput {
   id: ID
 }
 
@@ -1906,8 +1905,6 @@ type Customer {
   detail: CustomerDetail
   billingInfo: BillingInfo
   plan: Plan
-  bag: Bag!
-  savedProducts(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
   reservations(where: ReservationWhereInput, orderBy: ReservationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Reservation!]
 }
 
@@ -1924,30 +1921,17 @@ input CustomerCreateInput {
   detail: CustomerDetailCreateOneInput
   billingInfo: BillingInfoCreateOneInput
   plan: Plan
-  bag: BagCreateOneWithoutCustomerInput!
-  savedProducts: ProductCreateManyInput
   reservations: ReservationCreateManyWithoutCustomerInput
 }
 
-input CustomerCreateOneWithoutBagInput {
-  create: CustomerCreateWithoutBagInput
+input CustomerCreateOneInput {
+  create: CustomerCreateInput
   connect: CustomerWhereUniqueInput
 }
 
 input CustomerCreateOneWithoutReservationsInput {
   create: CustomerCreateWithoutReservationsInput
   connect: CustomerWhereUniqueInput
-}
-
-input CustomerCreateWithoutBagInput {
-  id: ID
-  user: UserCreateOneInput!
-  status: CustomerStatus
-  detail: CustomerDetailCreateOneInput
-  billingInfo: BillingInfoCreateOneInput
-  plan: Plan
-  savedProducts: ProductCreateManyInput
-  reservations: ReservationCreateManyWithoutCustomerInput
 }
 
 input CustomerCreateWithoutReservationsInput {
@@ -1957,8 +1941,6 @@ input CustomerCreateWithoutReservationsInput {
   detail: CustomerDetailCreateOneInput
   billingInfo: BillingInfoCreateOneInput
   plan: Plan
-  bag: BagCreateOneWithoutCustomerInput!
-  savedProducts: ProductCreateManyInput
 }
 
 type CustomerDetail {
@@ -2499,14 +2481,21 @@ input CustomerSubscriptionWhereInput {
   NOT: [CustomerSubscriptionWhereInput!]
 }
 
+input CustomerUpdateDataInput {
+  user: UserUpdateOneRequiredInput
+  status: CustomerStatus
+  detail: CustomerDetailUpdateOneInput
+  billingInfo: BillingInfoUpdateOneInput
+  plan: Plan
+  reservations: ReservationUpdateManyWithoutCustomerInput
+}
+
 input CustomerUpdateInput {
   user: UserUpdateOneRequiredInput
   status: CustomerStatus
   detail: CustomerDetailUpdateOneInput
   billingInfo: BillingInfoUpdateOneInput
   plan: Plan
-  bag: BagUpdateOneRequiredWithoutCustomerInput
-  savedProducts: ProductUpdateManyInput
   reservations: ReservationUpdateManyWithoutCustomerInput
 }
 
@@ -2515,10 +2504,10 @@ input CustomerUpdateManyMutationInput {
   plan: Plan
 }
 
-input CustomerUpdateOneRequiredWithoutBagInput {
-  create: CustomerCreateWithoutBagInput
-  update: CustomerUpdateWithoutBagDataInput
-  upsert: CustomerUpsertWithoutBagInput
+input CustomerUpdateOneRequiredInput {
+  create: CustomerCreateInput
+  update: CustomerUpdateDataInput
+  upsert: CustomerUpsertNestedInput
   connect: CustomerWhereUniqueInput
 }
 
@@ -2529,29 +2518,17 @@ input CustomerUpdateOneRequiredWithoutReservationsInput {
   connect: CustomerWhereUniqueInput
 }
 
-input CustomerUpdateWithoutBagDataInput {
-  user: UserUpdateOneRequiredInput
-  status: CustomerStatus
-  detail: CustomerDetailUpdateOneInput
-  billingInfo: BillingInfoUpdateOneInput
-  plan: Plan
-  savedProducts: ProductUpdateManyInput
-  reservations: ReservationUpdateManyWithoutCustomerInput
-}
-
 input CustomerUpdateWithoutReservationsDataInput {
   user: UserUpdateOneRequiredInput
   status: CustomerStatus
   detail: CustomerDetailUpdateOneInput
   billingInfo: BillingInfoUpdateOneInput
   plan: Plan
-  bag: BagUpdateOneRequiredWithoutCustomerInput
-  savedProducts: ProductUpdateManyInput
 }
 
-input CustomerUpsertWithoutBagInput {
-  update: CustomerUpdateWithoutBagDataInput!
-  create: CustomerCreateWithoutBagInput!
+input CustomerUpsertNestedInput {
+  update: CustomerUpdateDataInput!
+  create: CustomerCreateInput!
 }
 
 input CustomerUpsertWithoutReservationsInput {
@@ -2585,10 +2562,6 @@ input CustomerWhereInput {
   plan_not: Plan
   plan_in: [Plan!]
   plan_not_in: [Plan!]
-  bag: BagWhereInput
-  savedProducts_every: ProductWhereInput
-  savedProducts_some: ProductWhereInput
-  savedProducts_none: ProductWhereInput
   reservations_every: ReservationWhereInput
   reservations_some: ReservationWhereInput
   reservations_none: ReservationWhereInput
@@ -3626,11 +3599,12 @@ enum Material {
 }
 
 type Mutation {
-  createBag(data: BagCreateInput!): Bag!
-  updateBag(data: BagUpdateInput!, where: BagWhereUniqueInput!): Bag
-  upsertBag(where: BagWhereUniqueInput!, create: BagCreateInput!, update: BagUpdateInput!): Bag!
-  deleteBag(where: BagWhereUniqueInput!): Bag
-  deleteManyBags(where: BagWhereInput): BatchPayload!
+  createBagItem(data: BagItemCreateInput!): BagItem!
+  updateBagItem(data: BagItemUpdateInput!, where: BagItemWhereUniqueInput!): BagItem
+  updateManyBagItems(data: BagItemUpdateManyMutationInput!, where: BagItemWhereInput): BatchPayload!
+  upsertBagItem(where: BagItemWhereUniqueInput!, create: BagItemCreateInput!, update: BagItemUpdateInput!): BagItem!
+  deleteBagItem(where: BagItemWhereUniqueInput!): BagItem
+  deleteManyBagItems(where: BagItemWhereInput): BatchPayload!
   createBillingInfo(data: BillingInfoCreateInput!): BillingInfo!
   updateBillingInfo(data: BillingInfoUpdateInput!, where: BillingInfoWhereUniqueInput!): BillingInfo
   updateManyBillingInfoes(data: BillingInfoUpdateManyMutationInput!, where: BillingInfoWhereInput): BatchPayload!
@@ -5420,11 +5394,6 @@ input ProductVariantCreateInput {
   nonReservable: Int!
 }
 
-input ProductVariantCreateManyInput {
-  create: [ProductVariantCreateInput!]
-  connect: [ProductVariantWhereUniqueInput!]
-}
-
 input ProductVariantCreateManyWithoutColorInput {
   create: [ProductVariantCreateWithoutColorInput!]
   connect: [ProductVariantWhereUniqueInput!]
@@ -5433,6 +5402,11 @@ input ProductVariantCreateManyWithoutColorInput {
 input ProductVariantCreateManyWithoutProductInput {
   create: [ProductVariantCreateWithoutProductInput!]
   connect: [ProductVariantWhereUniqueInput!]
+}
+
+input ProductVariantCreateOneInput {
+  create: ProductVariantCreateInput
+  connect: ProductVariantWhereUniqueInput
 }
 
 input ProductVariantCreateOneWithoutPhysicalProductsInput {
@@ -5725,18 +5699,6 @@ input ProductVariantUpdateManyDataInput {
   nonReservable: Int
 }
 
-input ProductVariantUpdateManyInput {
-  create: [ProductVariantCreateInput!]
-  update: [ProductVariantUpdateWithWhereUniqueNestedInput!]
-  upsert: [ProductVariantUpsertWithWhereUniqueNestedInput!]
-  delete: [ProductVariantWhereUniqueInput!]
-  connect: [ProductVariantWhereUniqueInput!]
-  set: [ProductVariantWhereUniqueInput!]
-  disconnect: [ProductVariantWhereUniqueInput!]
-  deleteMany: [ProductVariantScalarWhereInput!]
-  updateMany: [ProductVariantUpdateManyWithWhereNestedInput!]
-}
-
 input ProductVariantUpdateManyMutationInput {
   sku: String
   size: Size
@@ -5777,6 +5739,13 @@ input ProductVariantUpdateManyWithoutProductInput {
 input ProductVariantUpdateManyWithWhereNestedInput {
   where: ProductVariantScalarWhereInput!
   data: ProductVariantUpdateManyDataInput!
+}
+
+input ProductVariantUpdateOneRequiredInput {
+  create: ProductVariantCreateInput
+  update: ProductVariantUpdateDataInput
+  upsert: ProductVariantUpsertNestedInput
+  connect: ProductVariantWhereUniqueInput
 }
 
 input ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput {
@@ -5831,11 +5800,6 @@ input ProductVariantUpdateWithoutProductDataInput {
   nonReservable: Int
 }
 
-input ProductVariantUpdateWithWhereUniqueNestedInput {
-  where: ProductVariantWhereUniqueInput!
-  data: ProductVariantUpdateDataInput!
-}
-
 input ProductVariantUpdateWithWhereUniqueWithoutColorInput {
   where: ProductVariantWhereUniqueInput!
   data: ProductVariantUpdateWithoutColorDataInput!
@@ -5846,15 +5810,14 @@ input ProductVariantUpdateWithWhereUniqueWithoutProductInput {
   data: ProductVariantUpdateWithoutProductDataInput!
 }
 
+input ProductVariantUpsertNestedInput {
+  update: ProductVariantUpdateDataInput!
+  create: ProductVariantCreateInput!
+}
+
 input ProductVariantUpsertWithoutPhysicalProductsInput {
   update: ProductVariantUpdateWithoutPhysicalProductsDataInput!
   create: ProductVariantCreateWithoutPhysicalProductsInput!
-}
-
-input ProductVariantUpsertWithWhereUniqueNestedInput {
-  where: ProductVariantWhereUniqueInput!
-  update: ProductVariantUpdateDataInput!
-  create: ProductVariantCreateInput!
 }
 
 input ProductVariantUpsertWithWhereUniqueWithoutColorInput {
@@ -6135,9 +6098,9 @@ input ProductWhereUniqueInput {
 }
 
 type Query {
-  bag(where: BagWhereUniqueInput!): Bag
-  bags(where: BagWhereInput, orderBy: BagOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Bag]!
-  bagsConnection(where: BagWhereInput, orderBy: BagOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BagConnection!
+  bagItem(where: BagItemWhereUniqueInput!): BagItem
+  bagItems(where: BagItemWhereInput, orderBy: BagItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [BagItem]!
+  bagItemsConnection(where: BagItemWhereInput, orderBy: BagItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BagItemConnection!
   billingInfo(where: BillingInfoWhereUniqueInput!): BillingInfo
   billingInfoes(where: BillingInfoWhereInput, orderBy: BillingInfoOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [BillingInfo]!
   billingInfoesConnection(where: BillingInfoWhereInput, orderBy: BillingInfoOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BillingInfoConnection!
@@ -6366,10 +6329,11 @@ enum ReservationStatus {
   New
   InQueue
   OnHold
-  InTransit
+  Packed
   Shipped
+  InTransit
   Received
-  Active
+  Cancelled
   Completed
 }
 
@@ -6538,6 +6502,7 @@ input ReservationWhereInput {
 
 input ReservationWhereUniqueInput {
   id: ID
+  reservationNumber: Int
 }
 
 enum Size {
@@ -6549,7 +6514,7 @@ enum Size {
 }
 
 type Subscription {
-  bag(where: BagSubscriptionWhereInput): BagSubscriptionPayload
+  bagItem(where: BagItemSubscriptionWhereInput): BagItemSubscriptionPayload
   billingInfo(where: BillingInfoSubscriptionWhereInput): BillingInfoSubscriptionPayload
   brand(where: BrandSubscriptionWhereInput): BrandSubscriptionPayload
   category(where: CategorySubscriptionWhereInput): CategorySubscriptionPayload
