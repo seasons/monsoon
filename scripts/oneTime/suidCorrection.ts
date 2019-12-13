@@ -13,8 +13,13 @@
 import { prisma } from "../../src/prisma"
 import { db } from "../../src/server"
 import { sizeToSizeCode } from "../../src/utils"
-import { getAllProducts, getAllProductVariants } from "../../src/airtable/utils"
+import {
+  getAllProducts,
+  getAllProductVariants,
+  getAllPhysicalProducts,
+} from "../../src/airtable/utils"
 import { base } from "../../src/airtable/config"
+import { getCorrespondingAirtableProductVariant } from "../utils"
 
 export const SUIDcorrection = async (
   scopeBrand?: mismatchedBrand,
@@ -101,7 +106,7 @@ export const SUIDcorrection = async (
   //   console.log("Number with no variants: ", productsNoVariants)
 }
 
-SUIDcorrection("SCAI", false)
+// SUIDcorrection("SCAI", false)
 
 async function fakeFixBrand(brand: mismatchedBrand, printMap: boolean) {
   // Create JSON representation of the product variants table for all ACNE product variants, including their associated physical products.
@@ -305,8 +310,75 @@ async function fixBrand(brand: mismatchedBrand) {
   }
 }
 
+async function fixSUIDSKUMisalignments() {
+  const allPrismaProductVariants = await db.query.productVariants(
+    {},
+    `
+        {
+            sku
+            physicalProducts {
+                seasonsUID
+                id
+            }
+            product {
+                slug
+            }
+            size
+        }`
+  )
+  const allAirtableProductVariants = await getAllProductVariants()
+  const allAirtablePhysicalProducts = await getAllPhysicalProducts()
+  const allAirtableProducts = await getAllProducts()
+  for (let prismaProductVariant of allPrismaProductVariants) {
+    for (let physProd of prismaProductVariant.physicalProducts) {
+      if (!physProd.seasonsUID.startsWith(prismaProductVariant.sku)) {
+        // Don't deal with > 1 cases
+        if (prismaProductVariant.physicalProducts.length > 1) {
+          continue
+        }
+
+        // Update the SUID on prisma
+        let newSUID = `${prismaProductVariant.sku}-01`
+        await prisma.updatePhysicalProduct({
+          data: { seasonsUID: newSUID },
+          where: { id: physProd.id },
+        })
+        console.log(`PRISMA: ${physProd.seasonsUID} --> ${newSUID}`)
+
+        // Update the SUID on airtable
+        const correspondingAirtableProductVariant = getCorrespondingAirtableProductVariant(
+          allAirtableProducts,
+          allAirtableProductVariants,
+          prismaProductVariant
+        )
+        const correspondingAirtablePhysicalProducts = allAirtablePhysicalProducts.filter(
+          physProd =>
+            correspondingAirtableProductVariant.fields[
+              "Physical Products"
+            ].includes(physProd.id)
+        )
+        if (correspondingAirtablePhysicalProducts.length != 1) {
+          throw new Error(
+            "More than 1 physical product on airtable. Unexpected!"
+          )
+        }
+        base("Physical Products").update(
+          correspondingAirtablePhysicalProducts[0].id,
+          { SUID: { text: newSUID } }
+        )
+        console.log(
+          `AIRTABLE: ${correspondingAirtablePhysicalProducts[0].fields.SUID.text} --> ${newSUID}`
+        )
+        console.log(``)
+      }
+    }
+  }
+}
 // fixBrand("LEVI")
 // all the mismatched brands
+
+fixSUIDSKUMisalignments()
+
 type mismatchedBrand =
   | "ACNE"
   | "CARH"
