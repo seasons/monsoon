@@ -126,6 +126,15 @@ type Query {
     first: Int
     last: Int
   ): [ProductFunction]!
+  productRequests(
+    where: ProductRequestWhereInput
+    orderBy: ProductRequestOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [ProductRequest]!
   homepage: Homepage
   chargebeeCheckout(planID: PlanID!, userIDHash: String!): ChargebeeCheckout
   homepageProductRails(

@@ -19,17 +19,17 @@ export const Query = {
       const filter =
         children.length > 0
           ? {
-              where: {
-                ...args.where,
-                OR: children.map(({ slug }) => ({ category: { slug } })),
-              },
-            }
+            where: {
+              ...args.where,
+              OR: children.map(({ slug }) => ({ category: { slug } })),
+            },
+          }
           : {
-              where: {
-                ...args.where,
-                category: { slug: category.slug },
-              },
-            }
+            where: {
+              ...args.where,
+              category: { slug: category.slug },
+            },
+          }
       const { first, skip } = args
       const products = await ctx.db.query.products(
         { first, skip, ...filter },
@@ -44,6 +44,9 @@ export const Query = {
 
   product: (parent, args, ctx: Context, info) =>
     ctx.db.query.product(args, info),
+
+  productRequests: (parent, args, ctx: Context, info) =>
+    ctx.db.query.productRequests(args, info),
 
   collections: (parent, args, ctx: Context, info) =>
     ctx.db.query.collections(args, info),
@@ -123,7 +126,7 @@ export const Query = {
             phone: phoneNumber,
           },
         })
-        .request(function(error, result) {
+        .request(function (error, result) {
           if (error) {
             reject(error)
           } else {
