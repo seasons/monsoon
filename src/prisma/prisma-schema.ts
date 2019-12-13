@@ -4721,7 +4721,7 @@ type ProductRequest {
   description: String!
   imageURL: String!
   name: String!
-  price: String!
+  price: Int!
   priceCurrency: String!
   productID: String!
   url: String!
@@ -4740,7 +4740,7 @@ input ProductRequestCreateInput {
   description: String!
   imageURL: String!
   name: String!
-  price: String!
+  price: Int!
   priceCurrency: String!
   productID: String!
   url: String!
@@ -4781,7 +4781,7 @@ type ProductRequestPreviousValues {
   description: String!
   imageURL: String!
   name: String!
-  price: String!
+  price: Int!
   priceCurrency: String!
   productID: String!
   url: String!
@@ -4811,7 +4811,7 @@ input ProductRequestUpdateInput {
   description: String
   imageURL: String
   name: String
-  price: String
+  price: Int
   priceCurrency: String
   productID: String
   url: String
@@ -4823,7 +4823,7 @@ input ProductRequestUpdateManyMutationInput {
   description: String
   imageURL: String
   name: String
-  price: String
+  price: Int
   priceCurrency: String
   productID: String
   url: String
@@ -4914,20 +4914,14 @@ input ProductRequestWhereInput {
   name_not_starts_with: String
   name_ends_with: String
   name_not_ends_with: String
-  price: String
-  price_not: String
-  price_in: [String!]
-  price_not_in: [String!]
-  price_lt: String
-  price_lte: String
-  price_gt: String
-  price_gte: String
-  price_contains: String
-  price_not_contains: String
-  price_starts_with: String
-  price_not_starts_with: String
-  price_ends_with: String
-  price_not_ends_with: String
+  price: Int
+  price_not: Int
+  price_in: [Int!]
+  price_not_in: [Int!]
+  price_lt: Int
+  price_lte: Int
+  price_gt: Int
+  price_gte: Int
   priceCurrency: String
   priceCurrency_not: String
   priceCurrency_in: [String!]

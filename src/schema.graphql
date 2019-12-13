@@ -186,6 +186,7 @@ type Mutation {
   acknowledgeCompletedChargebeeHostedCheckout(
     hostedPageID: String!
   ): BillingInfoPlayoad
+  addProductRequest(url: String!): ProductRequest!
 }
 
 input ReserveItemsOptions {

@@ -410,7 +410,7 @@ type ProductRequest {
   description: String!
   imageURL: String!
   name: String!
-  price: String!
+  price: Int!
   priceCurrency: String!
   productID: String!
   url: String!

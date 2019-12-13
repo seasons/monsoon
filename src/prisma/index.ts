@@ -2846,7 +2846,7 @@ export interface ProductRequestUpdateInput {
   description?: Maybe<String>;
   imageURL?: Maybe<String>;
   name?: Maybe<String>;
-  price?: Maybe<String>;
+  price?: Maybe<Int>;
   priceCurrency?: Maybe<String>;
   productID?: Maybe<String>;
   url?: Maybe<String>;
@@ -3583,20 +3583,14 @@ export interface ProductRequestWhereInput {
   name_not_starts_with?: Maybe<String>;
   name_ends_with?: Maybe<String>;
   name_not_ends_with?: Maybe<String>;
-  price?: Maybe<String>;
-  price_not?: Maybe<String>;
-  price_in?: Maybe<String[] | String>;
-  price_not_in?: Maybe<String[] | String>;
-  price_lt?: Maybe<String>;
-  price_lte?: Maybe<String>;
-  price_gt?: Maybe<String>;
-  price_gte?: Maybe<String>;
-  price_contains?: Maybe<String>;
-  price_not_contains?: Maybe<String>;
-  price_starts_with?: Maybe<String>;
-  price_not_starts_with?: Maybe<String>;
-  price_ends_with?: Maybe<String>;
-  price_not_ends_with?: Maybe<String>;
+  price?: Maybe<Int>;
+  price_not?: Maybe<Int>;
+  price_in?: Maybe<Int[] | Int>;
+  price_not_in?: Maybe<Int[] | Int>;
+  price_lt?: Maybe<Int>;
+  price_lte?: Maybe<Int>;
+  price_gt?: Maybe<Int>;
+  price_gte?: Maybe<Int>;
   priceCurrency?: Maybe<String>;
   priceCurrency_not?: Maybe<String>;
   priceCurrency_in?: Maybe<String[] | String>;
@@ -5774,7 +5768,7 @@ export interface ProductRequestCreateInput {
   description: String;
   imageURL: String;
   name: String;
-  price: String;
+  price: Int;
   priceCurrency: String;
   productID: String;
   url: String;
@@ -6551,7 +6545,7 @@ export interface ProductRequestUpdateManyMutationInput {
   description?: Maybe<String>;
   imageURL?: Maybe<String>;
   name?: Maybe<String>;
-  price?: Maybe<String>;
+  price?: Maybe<Int>;
   priceCurrency?: Maybe<String>;
   productID?: Maybe<String>;
   url?: Maybe<String>;
@@ -9022,7 +9016,7 @@ export interface ProductRequest {
   description: String;
   imageURL: String;
   name: String;
-  price: String;
+  price: Int;
   priceCurrency: String;
   productID: String;
   url: String;
@@ -9037,7 +9031,7 @@ export interface ProductRequestPromise
   description: () => Promise<String>;
   imageURL: () => Promise<String>;
   name: () => Promise<String>;
-  price: () => Promise<String>;
+  price: () => Promise<Int>;
   priceCurrency: () => Promise<String>;
   productID: () => Promise<String>;
   url: () => Promise<String>;
@@ -9052,7 +9046,7 @@ export interface ProductRequestSubscription
   description: () => Promise<AsyncIterator<String>>;
   imageURL: () => Promise<AsyncIterator<String>>;
   name: () => Promise<AsyncIterator<String>>;
-  price: () => Promise<AsyncIterator<String>>;
+  price: () => Promise<AsyncIterator<Int>>;
   priceCurrency: () => Promise<AsyncIterator<String>>;
   productID: () => Promise<AsyncIterator<String>>;
   url: () => Promise<AsyncIterator<String>>;
@@ -9067,7 +9061,7 @@ export interface ProductRequestNullablePromise
   description: () => Promise<String>;
   imageURL: () => Promise<String>;
   name: () => Promise<String>;
-  price: () => Promise<String>;
+  price: () => Promise<Int>;
   priceCurrency: () => Promise<String>;
   productID: () => Promise<String>;
   url: () => Promise<String>;
@@ -10742,7 +10736,7 @@ export interface ProductRequestPreviousValues {
   description: String;
   imageURL: String;
   name: String;
-  price: String;
+  price: Int;
   priceCurrency: String;
   productID: String;
   url: String;
@@ -10757,7 +10751,7 @@ export interface ProductRequestPreviousValuesPromise
   description: () => Promise<String>;
   imageURL: () => Promise<String>;
   name: () => Promise<String>;
-  price: () => Promise<String>;
+  price: () => Promise<Int>;
   priceCurrency: () => Promise<String>;
   productID: () => Promise<String>;
   url: () => Promise<String>;
@@ -10772,7 +10766,7 @@ export interface ProductRequestPreviousValuesSubscription
   description: () => Promise<AsyncIterator<String>>;
   imageURL: () => Promise<AsyncIterator<String>>;
   name: () => Promise<AsyncIterator<String>>;
-  price: () => Promise<AsyncIterator<String>>;
+  price: () => Promise<AsyncIterator<Int>>;
   priceCurrency: () => Promise<AsyncIterator<String>>;
   productID: () => Promise<AsyncIterator<String>>;
   url: () => Promise<AsyncIterator<String>>;
