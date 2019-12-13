@@ -1,0 +1,49 @@
+Number of mismatched SKUs:  12
+Mapping LEVI-BLK-LL-003 to LEVI-BLK-LL-001
+-- prisma product variant: LEVI-BLK-LL-003 --> LEVI-BLK-LL-001
+-- prisma physical product: LEVI-BLK-LL-003-01 --> LEVI-BLK-LL-001-01
+-- airtable physical product recSZXLgPjYC62zNd suid set to LEVI-BLK-LL-001-01
+Mapping LEVI-BLK-MM-003 to LEVI-BLK-MM-001
+-- prisma product variant: LEVI-BLK-MM-003 --> LEVI-BLK-MM-001
+-- prisma physical product: LEVI-BLK-MM-003-01 --> LEVI-BLK-MM-001-01
+-- airtable physical product recaCDt5Wf5RhWXQp suid set to LEVI-BLK-MM-001-01
+Mapping LEVI-BLK-SS-003 to LEVI-BLK-SS-001
+-- prisma product variant: LEVI-BLK-SS-003 --> LEVI-BLK-SS-001
+-- prisma physical product: LEVI-BLK-SS-003-01 --> LEVI-BLK-SS-001-01
+-- airtable physical product recQoabCDzMcPKRQo suid set to LEVI-BLK-SS-001-01
+Mapping LEVI-RED-LL-006 to LEVI-RED-LL-002
+-- prisma product variant: LEVI-RED-LL-006 --> LEVI-RED-LL-002
+-- prisma physical product: LEVI-RED-LL-006-01 --> LEVI-RED-LL-002-01
+-- airtable physical product recBEJagWQTnHXKzl suid set to LEVI-RED-LL-002-01
+Mapping LEVI-RED-MM-006 to LEVI-RED-MM-002
+-- prisma product variant: LEVI-RED-MM-006 --> LEVI-RED-MM-002
+-- prisma physical product: LEVI-RED-MM-006-01 --> LEVI-RED-MM-002-01
+-- airtable physical product recwUx2fPtqWkYSm2 suid set to LEVI-RED-MM-002-01
+Mapping LEVI-RED-SS-006 to LEVI-RED-SS-002
+-- prisma product variant: LEVI-RED-SS-006 --> LEVI-RED-SS-002
+-- prisma physical product: LEVI-RED-SS-006-01 --> LEVI-RED-SS-002-01
+-- airtable physical product recWQX02vqqY5lRWn suid set to LEVI-RED-SS-002-01
+Mapping LEVI-BLU-LL-007 to LEVI-BLU-LL-003
+-- prisma product variant: LEVI-BLU-LL-007 --> LEVI-BLU-LL-003
+-- prisma physical product: LEVI-BLU-LL-007-01 --> LEVI-BLU-LL-003-01
+-- airtable physical product recE97pbGFfVwTUia suid set to LEVI-BLU-LL-003-01
+Mapping LEVI-BLU-MM-007 to LEVI-BLU-MM-003
+-- prisma product variant: LEVI-BLU-MM-007 --> LEVI-BLU-MM-003
+-- prisma physical product: LEVI-BLU-MM-007-01 --> LEVI-BLU-MM-003-01
+-- airtable physical product recxovCnECilGRkZF suid set to LEVI-BLU-MM-003-01
+Mapping LEVI-BLU-SS-007 to LEVI-BLU-SS-003
+-- prisma product variant: LEVI-BLU-SS-007 --> LEVI-BLU-SS-003
+-- prisma physical product: LEVI-BLU-SS-007-01 --> LEVI-BLU-SS-003-01
+-- airtable physical product recvdcpwmsTmOavxK suid set to LEVI-BLU-SS-003-01
+Mapping LEVI-BLU-LL-008 to LEVI-BLU-LL-004
+-- prisma product variant: LEVI-BLU-LL-008 --> LEVI-BLU-LL-004
+-- prisma physical product: LEVI-BLU-LL-008-01 --> LEVI-BLU-LL-004-01
+-- airtable physical product recPR0TsekoPb24Gr suid set to LEVI-BLU-LL-004-01
+Mapping LEVI-BLU-MM-008 to LEVI-BLU-MM-004
+-- prisma product variant: LEVI-BLU-MM-008 --> LEVI-BLU-MM-004
+-- prisma physical product: LEVI-BLU-MM-008-01 --> LEVI-BLU-MM-004-01
+-- airtable physical product recfoBon91p2MWufE suid set to LEVI-BLU-MM-004-01
+Mapping LEVI-BLU-SS-008 to LEVI-BLU-SS-004
+-- prisma product variant: LEVI-BLU-SS-008 --> LEVI-BLU-SS-004
+-- prisma physical product: LEVI-BLU-SS-008-01 --> LEVI-BLU-SS-004-01
+-- airtable physical product recrugBDaMb3rA4FC suid set to LEVI-BLU-SS-004-01

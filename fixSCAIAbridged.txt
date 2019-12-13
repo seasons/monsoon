@@ -1,0 +1,81 @@
+CHANGES TO MAKE:
+{ 'SCAI-BLU-SS-003': 'SCAI-BLU-SS-001',
+  'SCAI-BLU-MM-003': 'SCAI-BLU-MM-001',
+  'SCAI-BLU-LL-003': 'SCAI-BLU-LL-001',
+  'SCAI-BWN-SS-004': 'SCAI-BWN-SS-002',
+  'SCAI-GRN-LL-005': 'SCAI-GRN-LL-003',
+  'SCAI-GRN-MM-005': 'SCAI-GRN-MM-003',
+  'SCAI-GRN-SS-005': 'SCAI-GRN-SS-003',
+  'SCAI-BWN-MM-007': 'SCAI-BWN-MM-004',
+  'SCAI-BWN-LL-007': 'SCAI-BWN-LL-004' }
+SNAPSHOT OF PRODUCT VARIANTS DB BEFORE OPERATIONS
+{ 'SCAI-BLU-SS-003': [ 'SCAI-BLU-SS-004-01' ],
+  'SCAI-BLU-MM-003': [ 'SCAI-BLU-MM-004-01' ],
+  'SCAI-BLU-LL-003': [ 'SCAI-BLU-LL-004-01' ],
+  'SCAI-BWN-LL-004': [ 'SCAI-BWN-LL-006-01' ],
+  'SCAI-BWN-MM-004': [ 'SCAI-BWN-MM-006-01' ],
+  'SCAI-BWN-SS-004': [ 'SCAI-BWN-SS-006-01' ],
+  'SCAI-GRN-LL-005': [ 'SCAI-GRN-LL-005-01' ],
+  'SCAI-GRN-MM-005': [ 'SCAI-GRN-MM-005-01' ],
+  'SCAI-GRN-SS-005': [ 'SCAI-GRN-SS-005-01' ],
+  'SCAI-BWN-MM-007': [ 'SCAI-BWN-MM-007-01' ],
+  'SCAI-BWN-LL-007': [ 'SCAI-BWN-LL-007-01' ],
+  'SCAI-BLU-SS-001': [],
+  'SCAI-BLU-MM-001': [],
+  'SCAI-BLU-LL-001': [],
+  'SCAI-BWN-LL-002': [],
+  'SCAI-BWN-MM-002': [],
+  'SCAI-BWN-SS-002': [],
+  'SCAI-GRN-LL-003': [],
+  'SCAI-GRN-MM-003': [],
+  'SCAI-GRN-SS-003': [] }
+HANDLE product variant w/sku: SCAI-BLU-SS-003
+- (No physical products to delete)
+- DELETE product variant w/SKU: SCAI-BLU-SS-001
+- SHIFT sku: SCAI-BLU-SS-003 --> SCAI-BLU-SS-001
+HANDLE product variant w/sku: SCAI-BLU-MM-003
+- (No physical products to delete)
+- DELETE product variant w/SKU: SCAI-BLU-MM-001
+- SHIFT sku: SCAI-BLU-MM-003 --> SCAI-BLU-MM-001
+HANDLE product variant w/sku: SCAI-BLU-LL-003
+- (No physical products to delete)
+- DELETE product variant w/SKU: SCAI-BLU-LL-001
+- SHIFT sku: SCAI-BLU-LL-003 --> SCAI-BLU-LL-001
+HANDLE product variant w/sku: SCAI-BWN-SS-004
+- (No physical products to delete)
+- DELETE product variant w/SKU: SCAI-BWN-SS-002
+- SHIFT sku: SCAI-BWN-SS-004 --> SCAI-BWN-SS-002
+HANDLE product variant w/sku: SCAI-GRN-LL-005
+- (No physical products to delete)
+- DELETE product variant w/SKU: SCAI-GRN-LL-003
+- SHIFT sku: SCAI-GRN-LL-005 --> SCAI-GRN-LL-003
+HANDLE product variant w/sku: SCAI-GRN-MM-005
+- (No physical products to delete)
+- DELETE product variant w/SKU: SCAI-GRN-MM-003
+- SHIFT sku: SCAI-GRN-MM-005 --> SCAI-GRN-MM-003
+HANDLE product variant w/sku: SCAI-GRN-SS-005
+- (No physical products to delete)
+- DELETE product variant w/SKU: SCAI-GRN-SS-003
+- SHIFT sku: SCAI-GRN-SS-005 --> SCAI-GRN-SS-003
+HANDLE product variant w/sku: SCAI-BWN-MM-007
+- DELETE physical product w/ SUID: SCAI-BWN-MM-006-01
+- TODO: Update brandmap
+- DELETE product variant w/SKU: SCAI-BWN-MM-004
+- SHIFT sku: SCAI-BWN-MM-007 --> SCAI-BWN-MM-004
+HANDLE product variant w/sku: SCAI-BWN-LL-007
+- DELETE physical product w/ SUID: SCAI-BWN-LL-006-01
+- TODO: Update brandmap
+- DELETE product variant w/SKU: SCAI-BWN-LL-004
+- SHIFT sku: SCAI-BWN-LL-007 --> SCAI-BWN-LL-004
+SNAPSHOT OF PRODUCT VARIANTS DB AFTER OPERATIONS
+{ 'SCAI-BWN-LL-002': [],
+  'SCAI-BWN-MM-002': [],
+  'SCAI-BLU-SS-001': [ 'SCAI-BLU-SS-004-01' ],
+  'SCAI-BLU-MM-001': [ 'SCAI-BLU-MM-004-01' ],
+  'SCAI-BLU-LL-001': [ 'SCAI-BLU-LL-004-01' ],
+  'SCAI-BWN-SS-002': [ 'SCAI-BWN-SS-006-01' ],
+  'SCAI-GRN-LL-003': [ 'SCAI-GRN-LL-005-01' ],
+  'SCAI-GRN-MM-003': [ 'SCAI-GRN-MM-005-01' ],
+  'SCAI-GRN-SS-003': [ 'SCAI-GRN-SS-005-01' ],
+  'SCAI-BWN-MM-004': [ 'SCAI-BWN-MM-007-01' ],
+  'SCAI-BWN-LL-004': [ 'SCAI-BWN-LL-007-01' ] }

@@ -13,8 +13,16 @@
 import { prisma } from "../../src/prisma"
 import { db } from "../../src/server"
 import { sizeToSizeCode } from "../../src/utils"
+import { getAllProducts, getAllProductVariants } from "../../src/airtable/utils"
+import { base } from "../../src/airtable/config"
 
-export const SUIDcorrection = async () => {
+export const SUIDcorrection = async (
+  scopeBrand?: mismatchedBrand,
+  print?: boolean
+) => {
+  if (print == null) {
+    print = false
+  }
   // Get all the physical products from airtable
   const allPrismaProducts = await db.query.products(
     {
@@ -45,73 +53,267 @@ export const SUIDcorrection = async () => {
   const allBrands = await prisma.brands()
   let mismatchedSKUs = 0
   let productsNoVariants = 0
+  let skusToChange = []
+  let skuChangesMap = {}
 
   for (let brand of allBrands) {
+    if (!!scopeBrand && brand.brandCode !== scopeBrand) {
+      continue
+    }
     const productsForBrand = allPrismaProducts.filter(
       a => a.brand.id === brand.id
     )
+    console.log(productsForBrand.map(prod => prod.name))
     // console.log(productsForBrand)
     let i = 0
 
     for (let product of productsForBrand) {
       const brandCode = product.brand.brandCode
       const colorCode = product.color.colorCode
-      //   if (product.variants.length === 0) {
-      if (toDeleteSlugs.includes(product.slug)) {
-        // productsNoVariants++
-        continue
-      }
       const styleCode = (++i).toString().padStart(3, "0")
-      console.log(product.name, product.color.name)
+      if (print) {
+        console.log(product.name, product.color.name)
+      }
 
       for (let variant of product.variants) {
         const sizeCode = sizeToSizeCode(variant.size)
         const sku = `${brandCode}-${colorCode}-${sizeCode}-${styleCode}`
         if (sku !== variant.sku) {
+          skusToChange.push(variant.sku)
+          skuChangesMap[variant.sku] = sku
           mismatchedSKUs++
-          console.log(sku, " - ", variant.sku)
+          if (print) {
+            console.log(sku, " - ", variant.sku)
+          }
         }
       }
     }
   }
   console.log("Number of mismatched SKUs: ", mismatchedSKUs)
+  console.log({
+    skusToChange,
+    skuChangesMap,
+  })
+  return {
+    skusToChange,
+    skuChangesMap,
+  }
   //   console.log("Number with no variants: ", productsNoVariants)
 }
 
-SUIDcorrection()
+SUIDcorrection("SCAI", false)
 
-const toDeleteSlugs = [
-  "cotton-twill-jacket-blue",
-  "single-breasted-wool-coat-green",
-  "relaxed-oatmeal-coat-brown",
-  "poplin-zip-up-jacket-black",
-  "wool-all-over-logo-sweater-red",
-  "all-over-logo-zip-turtleneck-black",
-  "og-detroit-jacket-black",
-  "og-detroit-jacket-brown",
-  "volta-liner-bomber-jacket-gray",
-  "michigan-jacket-brown",
-  "bleached-denim-parka-blue",
-  "herringbone-bomber-jacket-green",
-  "three-layer-coat-blue",
-  "madison-parka-black",
-  "denim-sherpa-hooded-long-trucker-jacket-blue",
-  "corduroy-sherpa-trucker-jacket-brown",
-  "sherpa-type-3-trucker-jacket-blue",
-  "sherpa-jackson-overshirt-blue",
-  "nylon-gabardine-shirt-black",
-  "nylon-knit-jacket-black",
-  "classic-cropped-denim-jacket-black",
-  "faux-fur-trim-down-parka-black",
-  "herringbone-down-shirt-jacket-gray",
-  "polo-wool-blend-peacoat-blue",
-  "washable-cashmere-sweater-gray",
-  "denim-sportsman-trucker-jacket-blue",
-  "leopard-faux-fur-blouson-jacket-black",
-  "denim-jacket-black",
-  "black-ma-1-bomber-jacket-black",
-  "corduroy-coach-jacket-brown",
-  "ghost-piece-wool-sweatshirt-l-black",
-  "tie-dye-sweatshirt-white",
-  "tie-dye-skill-sweatshirt-white",
-]
+async function fakeFixBrand(brand: mismatchedBrand, printMap: boolean) {
+  // Create JSON representation of the product variants table for all ACNE product variants, including their associated physical products.
+  const { skusToChange, skuChangesMap } = await SUIDcorrection(brand, false)
+  console.log("CHANGES TO MAKE:")
+  console.log(skuChangesMap)
+  const allProdVarsForBrand = await db.query.productVariants(
+    { where: { sku_starts_with: brand } },
+    `{
+        sku
+        physicalProducts {
+            id
+            seasonsUID
+        }
+    }`
+  )
+  let brandMap = {}
+  for (let prodVar of allProdVarsForBrand) {
+    brandMap[prodVar.sku] = []
+    for (let physProd of prodVar.physicalProducts) {
+      brandMap[prodVar.sku].push(physProd.seasonsUID)
+    }
+  }
+
+  let step = 0
+  console.log(`SNAPSHOT OF PRODUCT VARIANTS DB BEFORE OPERATIONS`)
+  console.log(brandMap)
+
+  for (let originSKU of skusToChange) {
+    let destinationSKU = skuChangesMap[originSKU]
+    console.log(`HANDLE product variant w/sku: ${originSKU}`)
+
+    // Delete any associated physical products on the product variant with the destinationSKU
+    const physicalProductsOnProductVariantWithDestinationSKU = await db.query.physicalProducts(
+      { where: { productVariant: { sku: destinationSKU } } }
+    )
+    for (let physProd of physicalProductsOnProductVariantWithDestinationSKU) {
+      console.log(`- DELETE physical product w/ SUID: ${physProd.seasonsUID}`)
+      console.log(`- TODO: Update brandmap`)
+    }
+    if (physicalProductsOnProductVariantWithDestinationSKU.length === 0) {
+      console.log(`- (No physical products to delete)`)
+    }
+
+    // Shift the sku on the product variant
+    if (destinationSKU in brandMap) {
+      console.log(`- DELETE product variant w/SKU: ${destinationSKU}`)
+      console.log(`- SHIFT sku: ${originSKU} --> ${destinationSKU}`)
+      delete brandMap[destinationSKU]
+      brandMap[destinationSKU] = [...brandMap[originSKU]]
+      delete brandMap[originSKU]
+    } else {
+      console.log(`- SHIFT sku: ${originSKU} --> ${destinationSKU}`)
+      brandMap[destinationSKU] = [...brandMap[originSKU]]
+      delete brandMap[originSKU]
+    }
+    if (!!printMap) {
+      console.log(`MAP STEP ${++step}`)
+      console.log(brandMap)
+    }
+  }
+
+  console.log(`SNAPSHOT OF PRODUCT VARIANTS DB AFTER OPERATIONS`)
+  console.log(brandMap)
+}
+
+async function fixBrand(brand: mismatchedBrand) {
+  const allAirtableProducts = await getAllProducts()
+  const allAirtableProductVariants = await getAllProductVariants()
+  const { skusToChange, skuChangesMap } = await SUIDcorrection(brand, false)
+
+  let count = 0
+  //   console.log(`${JSON.stringify(skuChangesMap)}`)
+  for (let originSKU of skusToChange) {
+    let destinationSKU = skuChangesMap[originSKU]
+    console.log(`Mapping ${originSKU} to ${destinationSKU}`)
+
+    // Make sure we don't need to delete any physical products
+    const physicalProductsOnProductVariantWithDestinationSKU = await db.query.physicalProducts(
+      { where: { productVariant: { sku: destinationSKU } } }
+    )
+    if (physicalProductsOnProductVariantWithDestinationSKU.length !== 0) {
+      throw new Error(
+        "UNEXPECTED RESULT -- WE NEED TO DELETE A PHYSICAL PRODUCT!"
+      )
+    }
+
+    // Shift the sku on the product variant in prisma
+    let prodVarToBeDeleted = await prisma.productVariant({
+      sku: destinationSKU,
+    })
+    if (!!prodVarToBeDeleted) {
+      await prisma.deleteProductVariant({ sku: destinationSKU })
+    }
+    let prismaProductVariant = await prisma.updateProductVariant({
+      where: { sku: originSKU },
+      data: { sku: destinationSKU },
+    })
+    console.log(`-- prisma product variant: ${originSKU} --> ${destinationSKU}`)
+
+    // If need be, shift the sku on airtable
+    prismaProductVariant = await db.query.productVariants(
+      { where: { id: prismaProductVariant.id } },
+      //   { where: { id: "ck2zed4w60vll0734wv3wgay1" } },
+      `{
+            id
+            sku
+            size
+            product {
+                slug
+            }
+        }`
+    )
+    prismaProductVariant = prismaProductVariant[0]
+
+    const correspondingAirtableProduct = allAirtableProducts.find(
+      //@ts-ignore
+      prod => prod.fields.Slug === prismaProductVariant.product.slug
+    )
+    const candidateProductVariants = allAirtableProductVariants.filter(
+      prodVar =>
+        correspondingAirtableProduct.fields["Product Variants"].includes(
+          prodVar.id
+        )
+    )
+    const correspondingAirtableProductVariant = candidateProductVariants.find(
+      prodVar => prodVar.fields.Size === prismaProductVariant.size
+    )
+    if (
+      correspondingAirtableProductVariant.fields.SKU !==
+      prismaProductVariant.sku
+    ) {
+      base("Product Variants").update(correspondingAirtableProductVariant.id, {
+        SKU: prismaProductVariant.sku,
+      })
+      console.log(
+        `-- airtable product variant ${correspondingAirtableProductVariant.id}: ${correspondingAirtableProductVariant.fields.SKU} --> ${prismaProductVariant.sku}`
+      )
+    }
+
+    // Check that the number of linked physical products are the same on prisma and airtable
+    const prismaPhysicalProducts = await prisma.physicalProducts({
+      where: { productVariant: { id: prismaProductVariant.id } },
+      orderBy: "createdAt_ASC",
+    })
+    if (
+      prismaPhysicalProducts.length !==
+      correspondingAirtableProductVariant.fields["Physical Products"].length
+    ) {
+      throw new Error(
+        `${prismaPhysicalProducts.length} physical products found on prisma.` +
+          ` ${correspondingAirtableProductVariant.fields["Physical Products"].length}` +
+          ` found on airtable. Prisma product variant id, sku: ${prismaProductVariant.id}, ${prismaProductVariant.sku}` +
+          `. Airtable product variant record id: ${correspondingAirtableProductVariant.id}`
+      )
+    }
+
+    // Fix the suid in prisma
+    const newSUID = `${prismaProductVariant.sku}-01`
+    if (prismaPhysicalProducts.length > 1) {
+      throw new Error(
+        `More than one physical product found for variant ${prismaProductVariant.sku}`
+      )
+    }
+    let oldSUID
+    if (prismaPhysicalProducts.length == 1) {
+      oldSUID = await prisma
+        .physicalProduct({
+          id: prismaPhysicalProducts[0].id,
+        })
+        .seasonsUID()
+      await prisma.updatePhysicalProduct({
+        where: { id: prismaPhysicalProducts[0].id },
+        data: {
+          seasonsUID: newSUID,
+        },
+      })
+      console.log(`-- prisma physical product: ${oldSUID} --> ${newSUID}`)
+    }
+
+    // Fix the suid in airtable
+    if (
+      correspondingAirtableProductVariant.fields["Physical Products"].length > 1
+    ) {
+      throw new Error(
+        `More than one physical product linked to record on airtable. Airtable product variant record id ${correspondingAirtableProductVariant.id}`
+      )
+    }
+    if (
+      correspondingAirtableProductVariant.fields["Physical Products"].length ==
+      1
+    ) {
+      base("Physical Products").update(
+        correspondingAirtableProductVariant.fields["Physical Products"][0],
+        { SUID: { text: newSUID } }
+      )
+      console.log(
+        `-- airtable physical product ${correspondingAirtableProductVariant.fields["Physical Products"][0]} suid set to ${newSUID}`
+      )
+    }
+  }
+}
+
+// fixBrand("LEVI")
+// all the mismatched brands
+type mismatchedBrand =
+  | "ACNE"
+  | "CARH"
+  | "CAVE"
+  | "CDGS"
+  | "PRDA"
+  | "RHUD"
+  | "SCAI"
+  | "STIS"
+  | "LEVI"

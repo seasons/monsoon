@@ -1,0 +1,51 @@
+CHANGES TO MAKE:
+{ 'CARH-BLK-LL-005': 'CARH-BLK-LL-001',
+  'CARH-BLK-MM-005': 'CARH-BLK-MM-001',
+  'CARH-BLK-SS-005': 'CARH-BLK-SS-001',
+  'CARH-GRN-LL-006': 'CARH-GRN-LL-002',
+  'CARH-GRN-MM-006': 'CARH-GRN-MM-002',
+  'CARH-GRN-SS-006': 'CARH-GRN-SS-002' }
+SNAPSHOT OF PRODUCT VARIANTS DB BEFORE OPERATIONS
+{ 'CARH-GRN-LL-006': [ 'CARH-GRN-LL-007-01' ],
+  'CARH-GRN-MM-006': [ 'CARH-GRN-MM-007-01' ],
+  'CARH-GRN-SS-006': [ 'CARH-GRN-SS-007-01' ],
+  'CARH-BLK-LL-005': [ 'CARH-BLK-LL-006-01' ],
+  'CARH-BLK-MM-005': [ 'CARH-BLK-MM-006-01' ],
+  'CARH-BLK-SS-005': [ 'CARH-BLK-SS-006-01' ],
+  'CARH-GRN-LL-002': [],
+  'CARH-GRN-MM-002': [],
+  'CARH-GRN-SS-002': [],
+  'CARH-BLK-LL-001': [],
+  'CARH-BLK-MM-001': [],
+  'CARH-BLK-SS-001': [] }
+HANDLE product variant w/sku: CARH-BLK-LL-005
+- (No physical products to delete)
+- DELETE product variant w/SKU: CARH-BLK-LL-001
+- SHIFT sku: CARH-BLK-LL-005 --> CARH-BLK-LL-001
+HANDLE product variant w/sku: CARH-BLK-MM-005
+- (No physical products to delete)
+- DELETE product variant w/SKU: CARH-BLK-MM-001
+- SHIFT sku: CARH-BLK-MM-005 --> CARH-BLK-MM-001
+HANDLE product variant w/sku: CARH-BLK-SS-005
+- (No physical products to delete)
+- DELETE product variant w/SKU: CARH-BLK-SS-001
+- SHIFT sku: CARH-BLK-SS-005 --> CARH-BLK-SS-001
+HANDLE product variant w/sku: CARH-GRN-LL-006
+- (No physical products to delete)
+- DELETE product variant w/SKU: CARH-GRN-LL-002
+- SHIFT sku: CARH-GRN-LL-006 --> CARH-GRN-LL-002
+HANDLE product variant w/sku: CARH-GRN-MM-006
+- (No physical products to delete)
+- DELETE product variant w/SKU: CARH-GRN-MM-002
+- SHIFT sku: CARH-GRN-MM-006 --> CARH-GRN-MM-002
+HANDLE product variant w/sku: CARH-GRN-SS-006
+- (No physical products to delete)
+- DELETE product variant w/SKU: CARH-GRN-SS-002
+- SHIFT sku: CARH-GRN-SS-006 --> CARH-GRN-SS-002
+SNAPSHOT OF PRODUCT VARIANTS DB AFTER OPERATIONS
+{ 'CARH-BLK-LL-001': [ 'CARH-BLK-LL-006-01' ],
+  'CARH-BLK-MM-001': [ 'CARH-BLK-MM-006-01' ],
+  'CARH-BLK-SS-001': [ 'CARH-BLK-SS-006-01' ],
+  'CARH-GRN-LL-002': [ 'CARH-GRN-LL-007-01' ],
+  'CARH-GRN-MM-002': [ 'CARH-GRN-MM-007-01' ],
+  'CARH-GRN-SS-002': [ 'CARH-GRN-SS-007-01' ] }

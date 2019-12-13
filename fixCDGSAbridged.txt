@@ -1,0 +1,175 @@
+CHANGES TO MAKE:
+{ 'CDGS-BLK-SS-007': 'CDGS-BLK-SS-005',
+  'CDGS-BLK-MM-007': 'CDGS-BLK-MM-005',
+  'CDGS-BLK-LL-007': 'CDGS-BLK-LL-005',
+  'CDGS-BLK-LL-008': 'CDGS-BLK-LL-006',
+  'CDGS-BLK-MM-008': 'CDGS-BLK-MM-006',
+  'CDGS-BLK-SS-008': 'CDGS-BLK-SS-006',
+  'CDGS-BLK-XL-008': 'CDGS-BLK-XL-006',
+  'CDGS-BLU-LL-009': 'CDGS-BLU-LL-007',
+  'CDGS-BLU-MM-009': 'CDGS-BLU-MM-007',
+  'CDGS-BLU-SS-009': 'CDGS-BLU-SS-007',
+  'CDGS-BLU-XL-009': 'CDGS-BLU-XL-007',
+  'CDGS-GRN-LL-010': 'CDGS-GRN-LL-008',
+  'CDGS-GRN-MM-010': 'CDGS-GRN-MM-008',
+  'CDGS-GRN-SS-010': 'CDGS-GRN-SS-008',
+  'CDGS-GRN-XL-010': 'CDGS-GRN-XL-008',
+  'CDGS-BWN-LL-011': 'CDGS-BWN-LL-009',
+  'CDGS-BWN-MM-011': 'CDGS-BWN-MM-009',
+  'CDGS-BWN-SS-011': 'CDGS-BWN-SS-009' }
+SNAPSHOT OF PRODUCT VARIANTS DB BEFORE OPERATIONS
+{ 'CDGS-BLK-SS-007': [ 'CDGS-BLK-SS-007-01' ],
+  'CDGS-BLK-MM-007': [ 'CDGS-BLK-MM-007-01' ],
+  'CDGS-BLK-LL-007': [ 'CDGS-BLK-LL-007-01' ],
+  'CDGS-WTE-SS-002': [ 'CDGS-WTE-SS-002-01' ],
+  'CDGS-WTE-MM-002': [ 'CDGS-WTE-MM-002-01' ],
+  'CDGS-WTE-LL-002': [ 'CDGS-WTE-LL-002-01' ],
+  'CDGS-WTE-XL-002': [ 'CDGS-WTE-XL-002-01' ],
+  'CDGS-BLK-SS-001': [ 'CDGS-BLK-SS-001-01' ],
+  'CDGS-BLK-MM-001': [ 'CDGS-BLK-MM-001-01' ],
+  'CDGS-BLK-LL-001': [ 'CDGS-BLK-LL-001-01' ],
+  'CDGS-BLK-XL-001': [ 'CDGS-BLK-XL-001-01' ],
+  'CDGS-BLK-LL-008': [ 'CDGS-BLK-LL-008-01' ],
+  'CDGS-BLK-MM-008': [ 'CDGS-BLK-MM-008-01' ],
+  'CDGS-BLK-SS-008': [ 'CDGS-BLK-SS-008-01' ],
+  'CDGS-BLU-LL-009': [ 'CDGS-BLU-LL-009-01' ],
+  'CDGS-BLU-MM-009': [ 'CDGS-BLU-MM-009-01' ],
+  'CDGS-BLU-SS-009': [ 'CDGS-BLU-SS-009-01' ],
+  'CDGS-BWN-LL-011': [ 'CDGS-BWN-LL-011-01' ],
+  'CDGS-BWN-MM-011': [ 'CDGS-BWN-MM-011-01' ],
+  'CDGS-BWN-SS-011': [ 'CDGS-BWN-SS-011-01' ],
+  'CDGS-GRN-LL-010': [ 'CDGS-GRN-LL-010-01' ],
+  'CDGS-GRN-MM-010': [ 'CDGS-GRN-MM-010-01' ],
+  'CDGS-GRN-SS-010': [ 'CDGS-GRN-SS-010-01' ],
+  'CDGS-GRY-LL-004': [ 'CDGS-GRY-LL-004-01' ],
+  'CDGS-GRY-MM-004': [ 'CDGS-GRY-MM-004-01' ],
+  'CDGS-GRY-SS-004': [ 'CDGS-GRY-SS-004-01' ],
+  'CDGS-BLK-LL-003': [ 'CDGS-BLK-LL-003-01' ],
+  'CDGS-BLK-MM-003': [ 'CDGS-BLK-MM-003-01' ],
+  'CDGS-BLK-SS-003': [ 'CDGS-BLK-SS-003-01' ],
+  'CDGS-BLK-XL-008': [],
+  'CDGS-BLU-XL-009': [],
+  'CDGS-GRN-XL-010': [],
+  'CDGS-BLK-SS-005': [],
+  'CDGS-BLK-MM-005': [],
+  'CDGS-BLK-LL-005': [],
+  'CDGS-BLK-LL-006': [],
+  'CDGS-BLK-MM-006': [],
+  'CDGS-BLK-SS-006': [],
+  'CDGS-BLU-LL-007': [],
+  'CDGS-BLU-MM-007': [],
+  'CDGS-BLU-SS-007': [],
+  'CDGS-BWN-LL-009': [],
+  'CDGS-BWN-MM-009': [],
+  'CDGS-BWN-SS-009': [],
+  'CDGS-GRN-LL-008': [],
+  'CDGS-GRN-MM-008': [],
+  'CDGS-GRN-SS-008': [],
+  'CDGS-BLK-XL-006': [],
+  'CDGS-BLU-XL-007': [],
+  'CDGS-GRN-XL-008': [] }
+HANDLE product variant w/sku: CDGS-BLK-SS-007
+- (No physical products to delete)
+- DELETE product variant w/SKU: CDGS-BLK-SS-005
+- SHIFT sku: CDGS-BLK-SS-007 --> CDGS-BLK-SS-005
+HANDLE product variant w/sku: CDGS-BLK-MM-007
+- (No physical products to delete)
+- DELETE product variant w/SKU: CDGS-BLK-MM-005
+- SHIFT sku: CDGS-BLK-MM-007 --> CDGS-BLK-MM-005
+HANDLE product variant w/sku: CDGS-BLK-LL-007
+- (No physical products to delete)
+- DELETE product variant w/SKU: CDGS-BLK-LL-005
+- SHIFT sku: CDGS-BLK-LL-007 --> CDGS-BLK-LL-005
+HANDLE product variant w/sku: CDGS-BLK-LL-008
+- (No physical products to delete)
+- DELETE product variant w/SKU: CDGS-BLK-LL-006
+- SHIFT sku: CDGS-BLK-LL-008 --> CDGS-BLK-LL-006
+HANDLE product variant w/sku: CDGS-BLK-MM-008
+- (No physical products to delete)
+- DELETE product variant w/SKU: CDGS-BLK-MM-006
+- SHIFT sku: CDGS-BLK-MM-008 --> CDGS-BLK-MM-006
+HANDLE product variant w/sku: CDGS-BLK-SS-008
+- (No physical products to delete)
+- DELETE product variant w/SKU: CDGS-BLK-SS-006
+- SHIFT sku: CDGS-BLK-SS-008 --> CDGS-BLK-SS-006
+HANDLE product variant w/sku: CDGS-BLK-XL-008
+- (No physical products to delete)
+- DELETE product variant w/SKU: CDGS-BLK-XL-006
+- SHIFT sku: CDGS-BLK-XL-008 --> CDGS-BLK-XL-006
+HANDLE product variant w/sku: CDGS-BLU-LL-009
+- (No physical products to delete)
+- DELETE product variant w/SKU: CDGS-BLU-LL-007
+- SHIFT sku: CDGS-BLU-LL-009 --> CDGS-BLU-LL-007
+HANDLE product variant w/sku: CDGS-BLU-MM-009
+- (No physical products to delete)
+- DELETE product variant w/SKU: CDGS-BLU-MM-007
+- SHIFT sku: CDGS-BLU-MM-009 --> CDGS-BLU-MM-007
+HANDLE product variant w/sku: CDGS-BLU-SS-009
+- (No physical products to delete)
+- DELETE product variant w/SKU: CDGS-BLU-SS-007
+- SHIFT sku: CDGS-BLU-SS-009 --> CDGS-BLU-SS-007
+HANDLE product variant w/sku: CDGS-BLU-XL-009
+- (No physical products to delete)
+- DELETE product variant w/SKU: CDGS-BLU-XL-007
+- SHIFT sku: CDGS-BLU-XL-009 --> CDGS-BLU-XL-007
+HANDLE product variant w/sku: CDGS-GRN-LL-010
+- (No physical products to delete)
+- DELETE product variant w/SKU: CDGS-GRN-LL-008
+- SHIFT sku: CDGS-GRN-LL-010 --> CDGS-GRN-LL-008
+HANDLE product variant w/sku: CDGS-GRN-MM-010
+- (No physical products to delete)
+- DELETE product variant w/SKU: CDGS-GRN-MM-008
+- SHIFT sku: CDGS-GRN-MM-010 --> CDGS-GRN-MM-008
+HANDLE product variant w/sku: CDGS-GRN-SS-010
+- (No physical products to delete)
+- DELETE product variant w/SKU: CDGS-GRN-SS-008
+- SHIFT sku: CDGS-GRN-SS-010 --> CDGS-GRN-SS-008
+HANDLE product variant w/sku: CDGS-GRN-XL-010
+- (No physical products to delete)
+- DELETE product variant w/SKU: CDGS-GRN-XL-008
+- SHIFT sku: CDGS-GRN-XL-010 --> CDGS-GRN-XL-008
+HANDLE product variant w/sku: CDGS-BWN-LL-011
+- (No physical products to delete)
+- DELETE product variant w/SKU: CDGS-BWN-LL-009
+- SHIFT sku: CDGS-BWN-LL-011 --> CDGS-BWN-LL-009
+HANDLE product variant w/sku: CDGS-BWN-MM-011
+- (No physical products to delete)
+- DELETE product variant w/SKU: CDGS-BWN-MM-009
+- SHIFT sku: CDGS-BWN-MM-011 --> CDGS-BWN-MM-009
+HANDLE product variant w/sku: CDGS-BWN-SS-011
+- (No physical products to delete)
+- DELETE product variant w/SKU: CDGS-BWN-SS-009
+- SHIFT sku: CDGS-BWN-SS-011 --> CDGS-BWN-SS-009
+SNAPSHOT OF PRODUCT VARIANTS DB AFTER OPERATIONS
+{ 'CDGS-WTE-SS-002': [ 'CDGS-WTE-SS-002-01' ],
+  'CDGS-WTE-MM-002': [ 'CDGS-WTE-MM-002-01' ],
+  'CDGS-WTE-LL-002': [ 'CDGS-WTE-LL-002-01' ],
+  'CDGS-WTE-XL-002': [ 'CDGS-WTE-XL-002-01' ],
+  'CDGS-BLK-SS-001': [ 'CDGS-BLK-SS-001-01' ],
+  'CDGS-BLK-MM-001': [ 'CDGS-BLK-MM-001-01' ],
+  'CDGS-BLK-LL-001': [ 'CDGS-BLK-LL-001-01' ],
+  'CDGS-BLK-XL-001': [ 'CDGS-BLK-XL-001-01' ],
+  'CDGS-GRY-LL-004': [ 'CDGS-GRY-LL-004-01' ],
+  'CDGS-GRY-MM-004': [ 'CDGS-GRY-MM-004-01' ],
+  'CDGS-GRY-SS-004': [ 'CDGS-GRY-SS-004-01' ],
+  'CDGS-BLK-LL-003': [ 'CDGS-BLK-LL-003-01' ],
+  'CDGS-BLK-MM-003': [ 'CDGS-BLK-MM-003-01' ],
+  'CDGS-BLK-SS-003': [ 'CDGS-BLK-SS-003-01' ],
+  'CDGS-BLK-SS-005': [ 'CDGS-BLK-SS-007-01' ],
+  'CDGS-BLK-MM-005': [ 'CDGS-BLK-MM-007-01' ],
+  'CDGS-BLK-LL-005': [ 'CDGS-BLK-LL-007-01' ],
+  'CDGS-BLK-LL-006': [ 'CDGS-BLK-LL-008-01' ],
+  'CDGS-BLK-MM-006': [ 'CDGS-BLK-MM-008-01' ],
+  'CDGS-BLK-SS-006': [ 'CDGS-BLK-SS-008-01' ],
+  'CDGS-BLK-XL-006': [],
+  'CDGS-BLU-LL-007': [ 'CDGS-BLU-LL-009-01' ],
+  'CDGS-BLU-MM-007': [ 'CDGS-BLU-MM-009-01' ],
+  'CDGS-BLU-SS-007': [ 'CDGS-BLU-SS-009-01' ],
+  'CDGS-BLU-XL-007': [],
+  'CDGS-GRN-LL-008': [ 'CDGS-GRN-LL-010-01' ],
+  'CDGS-GRN-MM-008': [ 'CDGS-GRN-MM-010-01' ],
+  'CDGS-GRN-SS-008': [ 'CDGS-GRN-SS-010-01' ],
+  'CDGS-GRN-XL-008': [],
+  'CDGS-BWN-LL-009': [ 'CDGS-BWN-LL-011-01' ],
+  'CDGS-BWN-MM-009': [ 'CDGS-BWN-MM-011-01' ],
+  'CDGS-BWN-SS-009': [ 'CDGS-BWN-SS-011-01' ] }

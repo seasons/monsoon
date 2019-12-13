@@ -1,0 +1,99 @@
+CHANGES TO MAKE:
+{ 'LEVI-BLK-LL-003': 'LEVI-BLK-LL-001',
+  'LEVI-BLK-MM-003': 'LEVI-BLK-MM-001',
+  'LEVI-BLK-SS-003': 'LEVI-BLK-SS-001',
+  'LEVI-RED-LL-006': 'LEVI-RED-LL-002',
+  'LEVI-RED-MM-006': 'LEVI-RED-MM-002',
+  'LEVI-RED-SS-006': 'LEVI-RED-SS-002',
+  'LEVI-BLU-LL-007': 'LEVI-BLU-LL-003',
+  'LEVI-BLU-MM-007': 'LEVI-BLU-MM-003',
+  'LEVI-BLU-SS-007': 'LEVI-BLU-SS-003',
+  'LEVI-BLU-LL-008': 'LEVI-BLU-LL-004',
+  'LEVI-BLU-MM-008': 'LEVI-BLU-MM-004',
+  'LEVI-BLU-SS-008': 'LEVI-BLU-SS-004' }
+SNAPSHOT OF PRODUCT VARIANTS DB BEFORE OPERATIONS
+{ 'LEVI-BLU-LL-008': [ 'LEVI-BLU-LL-008-01' ],
+  'LEVI-BLU-MM-008': [ 'LEVI-BLU-MM-008-01' ],
+  'LEVI-BLU-SS-008': [ 'LEVI-BLU-SS-008-01' ],
+  'LEVI-BLU-LL-007': [ 'LEVI-BLU-LL-007-01' ],
+  'LEVI-BLU-MM-007': [ 'LEVI-BLU-MM-007-01' ],
+  'LEVI-BLU-SS-007': [ 'LEVI-BLU-SS-007-01' ],
+  'LEVI-RED-LL-006': [ 'LEVI-RED-LL-006-01' ],
+  'LEVI-RED-MM-006': [ 'LEVI-RED-MM-006-01' ],
+  'LEVI-RED-SS-006': [ 'LEVI-RED-SS-006-01' ],
+  'LEVI-BLK-LL-003': [ 'LEVI-BLK-LL-003-01' ],
+  'LEVI-BLK-MM-003': [ 'LEVI-BLK-MM-003-01' ],
+  'LEVI-BLK-SS-003': [ 'LEVI-BLK-SS-003-01' ],
+  'LEVI-BLU-LL-004': [],
+  'LEVI-BLU-MM-004': [],
+  'LEVI-BLU-SS-004': [],
+  'LEVI-BLU-LL-003': [],
+  'LEVI-BLU-MM-003': [],
+  'LEVI-BLU-SS-003': [],
+  'LEVI-RED-LL-002': [],
+  'LEVI-RED-MM-002': [],
+  'LEVI-RED-SS-002': [],
+  'LEVI-BLK-LL-001': [],
+  'LEVI-BLK-MM-001': [],
+  'LEVI-BLK-SS-001': [] }
+HANDLE product variant w/sku: LEVI-BLK-LL-003
+- (No physical products to delete)
+- DELETE product variant w/SKU: LEVI-BLK-LL-001
+- SHIFT sku: LEVI-BLK-LL-003 --> LEVI-BLK-LL-001
+HANDLE product variant w/sku: LEVI-BLK-MM-003
+- (No physical products to delete)
+- DELETE product variant w/SKU: LEVI-BLK-MM-001
+- SHIFT sku: LEVI-BLK-MM-003 --> LEVI-BLK-MM-001
+HANDLE product variant w/sku: LEVI-BLK-SS-003
+- (No physical products to delete)
+- DELETE product variant w/SKU: LEVI-BLK-SS-001
+- SHIFT sku: LEVI-BLK-SS-003 --> LEVI-BLK-SS-001
+HANDLE product variant w/sku: LEVI-RED-LL-006
+- (No physical products to delete)
+- DELETE product variant w/SKU: LEVI-RED-LL-002
+- SHIFT sku: LEVI-RED-LL-006 --> LEVI-RED-LL-002
+HANDLE product variant w/sku: LEVI-RED-MM-006
+- (No physical products to delete)
+- DELETE product variant w/SKU: LEVI-RED-MM-002
+- SHIFT sku: LEVI-RED-MM-006 --> LEVI-RED-MM-002
+HANDLE product variant w/sku: LEVI-RED-SS-006
+- (No physical products to delete)
+- DELETE product variant w/SKU: LEVI-RED-SS-002
+- SHIFT sku: LEVI-RED-SS-006 --> LEVI-RED-SS-002
+HANDLE product variant w/sku: LEVI-BLU-LL-007
+- (No physical products to delete)
+- DELETE product variant w/SKU: LEVI-BLU-LL-003
+- SHIFT sku: LEVI-BLU-LL-007 --> LEVI-BLU-LL-003
+HANDLE product variant w/sku: LEVI-BLU-MM-007
+- (No physical products to delete)
+- DELETE product variant w/SKU: LEVI-BLU-MM-003
+- SHIFT sku: LEVI-BLU-MM-007 --> LEVI-BLU-MM-003
+HANDLE product variant w/sku: LEVI-BLU-SS-007
+- (No physical products to delete)
+- DELETE product variant w/SKU: LEVI-BLU-SS-003
+- SHIFT sku: LEVI-BLU-SS-007 --> LEVI-BLU-SS-003
+HANDLE product variant w/sku: LEVI-BLU-LL-008
+- (No physical products to delete)
+- DELETE product variant w/SKU: LEVI-BLU-LL-004
+- SHIFT sku: LEVI-BLU-LL-008 --> LEVI-BLU-LL-004
+HANDLE product variant w/sku: LEVI-BLU-MM-008
+- (No physical products to delete)
+- DELETE product variant w/SKU: LEVI-BLU-MM-004
+- SHIFT sku: LEVI-BLU-MM-008 --> LEVI-BLU-MM-004
+HANDLE product variant w/sku: LEVI-BLU-SS-008
+- (No physical products to delete)
+- DELETE product variant w/SKU: LEVI-BLU-SS-004
+- SHIFT sku: LEVI-BLU-SS-008 --> LEVI-BLU-SS-004
+SNAPSHOT OF PRODUCT VARIANTS DB AFTER OPERATIONS
+{ 'LEVI-BLK-LL-001': [ 'LEVI-BLK-LL-003-01' ],
+  'LEVI-BLK-MM-001': [ 'LEVI-BLK-MM-003-01' ],
+  'LEVI-BLK-SS-001': [ 'LEVI-BLK-SS-003-01' ],
+  'LEVI-RED-LL-002': [ 'LEVI-RED-LL-006-01' ],
+  'LEVI-RED-MM-002': [ 'LEVI-RED-MM-006-01' ],
+  'LEVI-RED-SS-002': [ 'LEVI-RED-SS-006-01' ],
+  'LEVI-BLU-LL-003': [ 'LEVI-BLU-LL-007-01' ],
+  'LEVI-BLU-MM-003': [ 'LEVI-BLU-MM-007-01' ],
+  'LEVI-BLU-SS-003': [ 'LEVI-BLU-SS-007-01' ],
+  'LEVI-BLU-LL-004': [ 'LEVI-BLU-LL-008-01' ],
+  'LEVI-BLU-MM-004': [ 'LEVI-BLU-MM-008-01' ],
+  'LEVI-BLU-SS-004': [ 'LEVI-BLU-SS-008-01' ] }
