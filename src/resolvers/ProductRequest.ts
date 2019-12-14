@@ -11,22 +11,33 @@ export const ProductRequestMutations = {
         // Handle a generic error
         if (error) {
           reject(error);
-          return;
         }
         const $ = cheerio.load(body, { xmlMode: false });
+
+        // Search for json+ld in HTML body
         const ldJSONHTML = $("script[type='application/ld+json']").html();
         const ldJSON = JSON.parse(ldJSONHTML);
         if (!ldJSON) {
           reject("Failed to extract json+ld from URL.");
         }
-        console.log(ldJSON);
+
+        // Extract fields from json+ld
         const { description, name, sku } = ldJSON;
         const brand = ldJSON.brand ? ldJSON.brand.name : null;
         const imageURL = ldJSON.image ? ldJSON.image[0] : null;
         const price = ldJSON.offers ? ldJSON.offers.price : null;
         const priceCurrency = ldJSON.offers ? ldJSON.offers.priceCurrency : null;
         const productID = ldJSON.productID ? ldJSON.productID.toString() : null;
-        if (description && name && productID && sku && brand && imageURL && price && priceCurrency) {
+        if (
+          description &&
+          name &&
+          productID &&
+          sku &&
+          brand &&
+          imageURL &&
+          price &&
+          priceCurrency
+        ) {
           try {
             const productRequest = await ctx.prisma.createProductRequest({
               brand,
