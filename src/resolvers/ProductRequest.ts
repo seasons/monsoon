@@ -24,7 +24,7 @@ export const ProductRequestMutations = {
         // Extract fields from json+ld
         const { description, name, sku } = ldJSON;
         const brand = ldJSON.brand ? ldJSON.brand.name : null;
-        const imageURL = ldJSON.image ? ldJSON.image[0] : null;
+        const images = ldJSON.image ? ldJSON.image : null;
         const price = ldJSON.offers ? ldJSON.offers.price : null;
         const priceCurrency = ldJSON.offers ? ldJSON.offers.priceCurrency : null;
         const productID = ldJSON.productID ? ldJSON.productID.toString() : null;
@@ -34,7 +34,7 @@ export const ProductRequestMutations = {
           productID &&
           sku &&
           brand &&
-          imageURL &&
+          images &&
           price &&
           priceCurrency
         ) {
@@ -42,7 +42,7 @@ export const ProductRequestMutations = {
             const productRequest = await ctx.prisma.createProductRequest({
               brand,
               description,
-              imageURL,
+              images: { set: images },
               name,
               price,
               priceCurrency,
@@ -60,4 +60,15 @@ export const ProductRequestMutations = {
       });
     });
   },
+
+  async deleteProductRequest(parent, { requestID }, ctx: Context, info) {
+    return new Promise(async function (resolve, reject) {
+      try {
+        const productRequest = await ctx.prisma.deleteProductRequest({ id: requestID });
+        resolve(productRequest);
+      } catch (e) {
+        reject(e);
+      }
+    });
+  }
 }

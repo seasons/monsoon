@@ -187,6 +187,7 @@ type Mutation {
     hostedPageID: String!
   ): BillingInfoPlayoad
   addProductRequest(url: String!): ProductRequest!
+  deleteProductRequest(requestID: ID!): ProductRequest!
 }
 
 input ReserveItemsOptions {

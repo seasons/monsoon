@@ -408,7 +408,7 @@ type ProductRequest {
   sku: String @unique
   brand: String!
   description: String!
-  imageURL: String!
+  images: [String!]! @scalarList(strategy: RELATION)
   name: String!
   price: Int!
   priceCurrency: String!

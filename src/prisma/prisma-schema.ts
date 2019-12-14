@@ -4719,7 +4719,7 @@ type ProductRequest {
   sku: String
   brand: String!
   description: String!
-  imageURL: String!
+  images: [String!]!
   name: String!
   price: Int!
   priceCurrency: String!
@@ -4733,12 +4733,16 @@ type ProductRequestConnection {
   aggregate: AggregateProductRequest!
 }
 
+input ProductRequestCreateimagesInput {
+  set: [String!]
+}
+
 input ProductRequestCreateInput {
   id: ID
   sku: String
   brand: String!
   description: String!
-  imageURL: String!
+  images: ProductRequestCreateimagesInput
   name: String!
   price: Int!
   priceCurrency: String!
@@ -4760,8 +4764,6 @@ enum ProductRequestOrderByInput {
   brand_DESC
   description_ASC
   description_DESC
-  imageURL_ASC
-  imageURL_DESC
   name_ASC
   name_DESC
   price_ASC
@@ -4779,7 +4781,7 @@ type ProductRequestPreviousValues {
   sku: String
   brand: String!
   description: String!
-  imageURL: String!
+  images: [String!]!
   name: String!
   price: Int!
   priceCurrency: String!
@@ -4805,11 +4807,15 @@ input ProductRequestSubscriptionWhereInput {
   NOT: [ProductRequestSubscriptionWhereInput!]
 }
 
+input ProductRequestUpdateimagesInput {
+  set: [String!]
+}
+
 input ProductRequestUpdateInput {
   sku: String
   brand: String
   description: String
-  imageURL: String
+  images: ProductRequestUpdateimagesInput
   name: String
   price: Int
   priceCurrency: String
@@ -4821,7 +4827,7 @@ input ProductRequestUpdateManyMutationInput {
   sku: String
   brand: String
   description: String
-  imageURL: String
+  images: ProductRequestUpdateimagesInput
   name: String
   price: Int
   priceCurrency: String
@@ -4886,20 +4892,6 @@ input ProductRequestWhereInput {
   description_not_starts_with: String
   description_ends_with: String
   description_not_ends_with: String
-  imageURL: String
-  imageURL_not: String
-  imageURL_in: [String!]
-  imageURL_not_in: [String!]
-  imageURL_lt: String
-  imageURL_lte: String
-  imageURL_gt: String
-  imageURL_gte: String
-  imageURL_contains: String
-  imageURL_not_contains: String
-  imageURL_starts_with: String
-  imageURL_not_starts_with: String
-  imageURL_ends_with: String
-  imageURL_not_ends_with: String
   name: String
   name_not: String
   name_in: [String!]
