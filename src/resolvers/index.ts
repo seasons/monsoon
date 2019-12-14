@@ -4,6 +4,7 @@ import { customer } from "./Mutation/customer"
 import { Me } from "./Me"
 import { HomepageResult } from "./Homepage"
 import { Product, ProductMutations } from "./Product"
+import { ProductRequestMutations } from "./ProductRequest"
 import { Reservation } from "./Reservation"
 import { PhysicalProduct } from "./PhysicalProduct"
 import { bag } from "./Mutation/bag"
@@ -14,6 +15,7 @@ export default {
   Mutation: {
     ...auth,
     ...ProductMutations,
+    ...ProductRequestMutations,
     ...customer,
     ...bag,
   },
