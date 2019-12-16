@@ -13,7 +13,7 @@ import { db } from "../src/server"
 import { airtableToPrismaInventoryStatus } from "../src/utils"
 import { xor } from "lodash"
 
-async function checkProductsAlignment() {
+async function checkProductsAlignment () {
   const allAirtableProductVariants = await getAllProductVariants()
   const allAirtablePhysicalProducts = await getAllPhysicalProducts()
   const allAirtableProducts = await getAllProducts()
@@ -140,6 +140,7 @@ async function checkProductsAlignment() {
   let {
     misalignedSUIDsOnReservations,
     misalignedStatusOnReservations,
+    reservationsWithMoreThanThreeProducts,
     reservationsInAirtableButNotPrisma,
     reservationsInPrismaButNotAirtable,
   } = checkReservations(
@@ -171,10 +172,12 @@ async function checkProductsAlignment() {
   console.log(
     `--- PRODUCT VARIANTS ON AIRTABLE BUT NOT PRISMA: ${productVariantsInAirtableButNotPrisma.length}`
   )
+  console.log(``)
   console.log(`DO PRODUCT VARIANT SKUS MATCH ON PRISMA AND AIRTABLE?`)
   console.log(
     `-- MISMATCHED PRODUCT VARIANT SKUS BETWEEN PRISMA/AIRTABLE: ${productVariantSKUMismatches.length}`
   )
+  console.log(``)
   console.log(`ARE SUIDS CORRECT ON PRISMA AND AIRTABLE?`)
   console.log(
     `-- MISMATCHED SUID/SKU COMBOS ON PRISMA: ${prismaSUIDToSKUMismatches.length}`
@@ -182,6 +185,7 @@ async function checkProductsAlignment() {
   console.log(
     `-- MISMATCHED SUID/SKU COMBOS ON AIRTABLE: ${airtableSUIDToSKUMismatches.length}`
   )
+  console.log(``)
   console.log(`ARE THE COUNTS THE SAME ON PRISMA AND AIRTABLE?`)
   console.log(`-- MISMATCHED COUNTS: ${countMisalignments.length}`)
   console.log(
@@ -190,10 +194,12 @@ async function checkProductsAlignment() {
   console.log(
     `-- AIRTABLE: NUMBER OF PRODUCT VARIANTS WITH INCORRECT NUMBER OF PHYSICAL PRODUCTS ATTACHED: ${airtableTotalPhysicalProductMisalignment.length}`
   )
+  console.log(``)
   console.log(`ARE THE PHYSICAL PRODUCT STATUSES ALIGNED?`)
   console.log(
     `---NUMBER OF PHYSICAL PRODUCTS WITH MISMATCHING INVENTORY STATUSES: ${mismatchingStatuses.length}`
   )
+  console.log(``)
   console.log(`ARE THE RESERVATIONS ALIGNED?`)
   console.log(
     `-- RESERVATIONS IN PRISMA BUT NOT AIRTABLE; ${reservationsInPrismaButNotAirtable.length}`
@@ -207,15 +213,17 @@ async function checkProductsAlignment() {
   console.log(
     `-- RESERVATIONS WITH MISMATCHING STATUSES: ${misalignedStatusOnReservations.length}`
   )
+  console.log(
+    `-- RESERVATIONS WITH MORE THAN 3 PRODUCTS: ${reservationsWithMoreThanThreeProducts.length}`
+  )
 
   console.log(`ERRORS: ${errors.length}`)
-  console.log(misalignedStatusOnReservations)
 }
 
 checkProductsAlignment()
 
 // *****************************************************************************
-function getPrismaAirtableProductVariantSKUMismatches(
+function getPrismaAirtableProductVariantSKUMismatches (
   allAirtableProducts,
   allAirtableProductVariants,
   allPrismaProductVariants,
@@ -258,7 +266,7 @@ function getPrismaAirtableProductVariantSKUMismatches(
   return { productVariantSKUMismatches, errors }
 }
 
-function checkSUIDs(
+function checkSUIDs (
   allPrismaProductVariants,
   allAirtableProductVariants,
   allAirtablePhysicalProducts
@@ -302,7 +310,7 @@ function checkSUIDs(
   return { prismaSUIDToSKUMismatches, airtableSUIDToSKUMismatches }
 }
 
-function checkCounts(
+function checkCounts (
   allAirtableProductVariants,
   allPrismaProductVariants,
   allAirtableProducts
@@ -357,13 +365,6 @@ function checkCounts(
     }
 
     // Does prisma have the number of physical products it should? ibid, Airtable?
-    if (prismaProductVariant.sku == "PLSR-RED-SS-004") {
-      console.log("PLSR-RED-SS-004")
-      console.log(
-        `Num physical products: ${prismaProductVariant.physicalProducts.length}`
-      )
-      console.log(`Total: ${prismaProductVariant.total}`)
-    }
     if (
       prismaProductVariant.physicalProducts.length !==
       prismaProductVariant.total
@@ -397,7 +398,7 @@ function checkCounts(
   }
 }
 
-function checkPhysicalProductStatuses(
+function checkPhysicalProductStatuses (
   allPrismaPhysicalProducts,
   allAirtablePhysicalProducts
 ) {
@@ -431,13 +432,14 @@ function checkPhysicalProductStatuses(
   return { mismatchingStatuses, physicalProductsOnPrismaButNotAirtable }
 }
 
-function checkReservations(
+function checkReservations (
   allPrismaReservations,
   allAirtableReservations,
   allAirtablePhysicalProducts
 ) {
   let misalignedSUIDsOnReservations = []
   let misalignedStatusOnReservations = []
+  let reservationsWithMoreThanThreeProducts = []
   let allPrismaReservationNumbers = allPrismaReservations.map(
     resy => resy.reservationNumber
   )
@@ -495,10 +497,18 @@ function checkReservations(
         airtableStatus: correspondingAirtableReservation.fields.Status,
       })
     }
+
+    // Check item count
+    if (prismaPhysicalProductSUIDs.length > 3) {
+      reservationsWithMoreThanThreeProducts.push({
+        reservationNumber: prismaResy.reservationNumber,
+      })
+    }
   }
   return {
     misalignedSUIDsOnReservations,
     misalignedStatusOnReservations,
+    reservationsWithMoreThanThreeProducts,
     reservationsInAirtableButNotPrisma,
     reservationsInPrismaButNotAirtable,
   }
