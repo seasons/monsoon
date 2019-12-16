@@ -2,6 +2,7 @@ import {
   getAllProducts,
   getAllPhysicalProducts,
   getAllProductVariants,
+  getAllReservations,
 } from "../src/airtable/utils"
 import { prisma } from "../src/prisma"
 import {
@@ -10,11 +11,13 @@ import {
 } from "./utils"
 import { db } from "../src/server"
 import { airtableToPrismaInventoryStatus } from "../src/utils"
+import { xor } from "lodash"
 
 async function checkProductsAlignment() {
   const allAirtableProductVariants = await getAllProductVariants()
   const allAirtablePhysicalProducts = await getAllPhysicalProducts()
   const allAirtableProducts = await getAllProducts()
+  const allAirtableReservations = await getAllReservations()
 
   const allPrismaProductVariants = await db.query.productVariants(
     {},
@@ -36,6 +39,19 @@ async function checkProductsAlignment() {
   )
   const allPrismaPhysicalProducts = await prisma.physicalProducts()
   const allPrismaProducts = await prisma.products()
+  const allPrismaReservations = await db.query.reservations(
+    {},
+    `
+    {
+        id
+        reservationNumber
+        products {
+            seasonsUID
+        }
+        status
+    }
+    `
+  )
 
   let errors = []
 
@@ -120,6 +136,18 @@ async function checkProductsAlignment() {
     allAirtablePhysicalProducts
   )
 
+  /* Are the reservations aligned? */
+  let {
+    misalignedSUIDsOnReservations,
+    misalignedStatusOnReservations,
+    reservationsInAirtableButNotPrisma,
+    reservationsInPrismaButNotAirtable,
+  } = checkReservations(
+    allPrismaReservations,
+    allAirtableReservations,
+    allAirtablePhysicalProducts
+  )
+
   /* REPORT */
   console.log(`/*********** REPORT ***********/`)
   console.log(
@@ -166,8 +194,22 @@ async function checkProductsAlignment() {
   console.log(
     `---NUMBER OF PHYSICAL PRODUCTS WITH MISMATCHING INVENTORY STATUSES: ${mismatchingStatuses.length}`
   )
+  console.log(`ARE THE RESERVATIONS ALIGNED?`)
+  console.log(
+    `-- RESERVATIONS IN PRISMA BUT NOT AIRTABLE; ${reservationsInPrismaButNotAirtable.length}`
+  )
+  console.log(
+    `-- RESERVATIONS IN AIRTABLE BUT NOT PRISMA: ${reservationsInAirtableButNotPrisma.length}`
+  )
+  console.log(
+    `-- RESERVATIONS WITH MISMATCHING PRODUCTS: ${misalignedSUIDsOnReservations.length}`
+  )
+  console.log(
+    `-- RESERVATIONS WITH MISMATCHING STATUSES: ${misalignedStatusOnReservations.length}`
+  )
 
   console.log(`ERRORS: ${errors.length}`)
+  console.log(misalignedStatusOnReservations)
 }
 
 checkProductsAlignment()
@@ -387,4 +429,77 @@ function checkPhysicalProductStatuses(
     }
   }
   return { mismatchingStatuses, physicalProductsOnPrismaButNotAirtable }
+}
+
+function checkReservations(
+  allPrismaReservations,
+  allAirtableReservations,
+  allAirtablePhysicalProducts
+) {
+  let misalignedSUIDsOnReservations = []
+  let misalignedStatusOnReservations = []
+  let allPrismaReservationNumbers = allPrismaReservations.map(
+    resy => resy.reservationNumber
+  )
+  let allAirtableReservationNumbers = allAirtableReservations.map(
+    resy => resy.fields.ID
+  )
+  const reservationsInPrismaButNotAirtable = allPrismaReservationNumbers.filter(
+    prismaResyNumber =>
+      !allAirtableReservationNumbers.includes(prismaResyNumber)
+  )
+  const reservationsInAirtableButNotPrisma = allAirtableReservationNumbers.filter(
+    airtableResyNumber =>
+      !allPrismaReservationNumbers.includes(airtableResyNumber)
+  )
+  for (let prismaResy of allPrismaReservations) {
+    if (
+      reservationsInPrismaButNotAirtable.includes(prismaResy.reservationNumber)
+    ) {
+      continue
+    }
+
+    const correspondingAirtableReservation = allAirtableReservations.find(
+      airtableResy => airtableResy.fields.ID === prismaResy.reservationNumber
+    )
+
+    // Check SUID match
+    const prismaPhysicalProductSUIDs = prismaResy.products.map(
+      prod => prod.seasonsUID
+    )
+    const airtablePhysicalProductSUIDs = correspondingAirtableReservation.fields.Items.map(
+      airtablePhysicalProductRecordID =>
+        allAirtablePhysicalProducts.find(
+          airtablePhysProd =>
+            airtablePhysProd.id === airtablePhysicalProductRecordID
+        )
+    ).map(airtablePhysProdRecord => airtablePhysProdRecord.fields.SUID.text)
+    if (
+      xor(prismaPhysicalProductSUIDs, airtablePhysicalProductSUIDs).length !== 0
+    ) {
+      misalignedSUIDsOnReservations.push({
+        reservationNumber: prismaResy.reservationNumber,
+        airtableSUIDs: airtablePhysicalProductSUIDs,
+        prismaSUIDs: prismaPhysicalProductSUIDs,
+      })
+    }
+
+    // Check status match
+    if (
+      prismaResy.status !==
+      correspondingAirtableReservation.fields.Status.replace(" ", "")
+    ) {
+      misalignedStatusOnReservations.push({
+        reservationNumber: prismaResy.reservationNumber,
+        prismaStatus: prismaResy.status,
+        airtableStatus: correspondingAirtableReservation.fields.Status,
+      })
+    }
+  }
+  return {
+    misalignedSUIDsOnReservations,
+    misalignedStatusOnReservations,
+    reservationsInAirtableButNotPrisma,
+    reservationsInPrismaButNotAirtable,
+  }
 }
