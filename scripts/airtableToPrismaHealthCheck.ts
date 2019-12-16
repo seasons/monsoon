@@ -7,7 +7,7 @@ import { prisma } from "../src/prisma"
 import { getCorrespondingAirtableProductVariant } from "./utils"
 import { db } from "../src/server"
 
-async function checkProductsAlignment() {
+async function checkProductsAlignment () {
   const allAirtableProductVariants = await getAllProductVariants()
   const allAirtablePhysicalProducts = await getAllPhysicalProducts()
   const allAirtableProducts = await getAllProducts()
@@ -151,12 +151,13 @@ async function checkProductsAlignment() {
   )
 
   console.log(`ERRORS: ${errors.length}`)
+//   console.log(prismaTotalPhysicalProductMisalignment)
 }
 
 checkProductsAlignment()
 
 // *****************************************************************************
-function getPrismaAirtableProductVariantSKUMismatches(
+function getPrismaAirtableProductVariantSKUMismatches (
   allAirtableProducts,
   allAirtableProductVariants,
   allPrismaProductVariants,
@@ -199,7 +200,7 @@ function getPrismaAirtableProductVariantSKUMismatches(
   return { productVariantSKUMismatches, errors }
 }
 
-function checkSUIDs(
+function checkSUIDs (
   allPrismaProductVariants,
   allAirtableProductVariants,
   allAirtablePhysicalProducts
@@ -243,7 +244,7 @@ function checkSUIDs(
   return { prismaSUIDToSKUMismatches, airtableSUIDToSKUMismatches }
 }
 
-function checkCounts(
+function checkCounts (
   allAirtableProductVariants,
   allPrismaProductVariants,
   allAirtableProducts
@@ -295,37 +296,40 @@ function checkCounts(
             correspondingAirtableProductVariant.fields["Non-Reservable Count"],
         },
       })
+    }
 
-      // Does prisma have the number of physical products it should? ibid, Airtable?
-      if (
-        prismaProductVariant.physicalProducts.length !==
-        prismaProductVariant.total
-      ) {
-        prismaTotalPhysicalProductMisalignment.push({
-          sku: prismaProductVariant.sku,
-          totalCount: prismaProductVariant.total,
-          attachedPhysicalProducts:
-            prismaProductVariant.physicalProducts.length,
-        })
-      }
-      const noPhysicalProductsAndMisalignment =
-        !correspondingAirtableProductVariant.fields["Physical Products"] &&
-        correspondingAirtableProductVariant.fields["Total Count"] !== 0
-      const physicalProductsAndMisalignment =
-        !!correspondingAirtableProductVariant.fields["Physical Products"] &&
-        correspondingAirtableProductVariant.fields["Physical Products"]
-          .length !== correspondingAirtableProductVariant.fields["Total Count"]
-      if (
-        noPhysicalProductsAndMisalignment ||
-        physicalProductsAndMisalignment
-      ) {
-        airtableTotalPhysicalProductMisalignment.push({
-          sku: correspondingAirtableProductVariant.fields.SKU,
-          totalCount: correspondingAirtableProductVariant.fields["Total Count"],
-          attachedPhysicalProducts:
-            correspondingAirtableProductVariant.fields["Total Count"].length,
-        })
-      }
+    // Does prisma have the number of physical products it should? ibid, Airtable?
+    if (prismaProductVariant.sku == "PLSR-RED-SS-004") {
+      console.log("PLSR-RED-SS-004")
+      console.log(
+        `Num physical products: ${prismaProductVariant.physicalProducts.length}`
+      )
+      console.log(`Total: ${prismaProductVariant.total}`)
+    }
+    if (
+      prismaProductVariant.physicalProducts.length !==
+      prismaProductVariant.total
+    ) {
+      prismaTotalPhysicalProductMisalignment.push({
+        sku: prismaProductVariant.sku,
+        totalCount: prismaProductVariant.total,
+        attachedPhysicalProducts: prismaProductVariant.physicalProducts.length,
+      })
+    }
+    const noPhysicalProductsAndMisalignment =
+      !correspondingAirtableProductVariant.fields["Physical Products"] &&
+      correspondingAirtableProductVariant.fields["Total Count"] !== 0
+    const physicalProductsAndMisalignment =
+      !!correspondingAirtableProductVariant.fields["Physical Products"] &&
+      correspondingAirtableProductVariant.fields["Physical Products"].length !==
+        correspondingAirtableProductVariant.fields["Total Count"]
+    if (noPhysicalProductsAndMisalignment || physicalProductsAndMisalignment) {
+      airtableTotalPhysicalProductMisalignment.push({
+        sku: correspondingAirtableProductVariant.fields.SKU,
+        totalCount: correspondingAirtableProductVariant.fields["Total Count"],
+        attachedPhysicalProducts:
+          correspondingAirtableProductVariant.fields["Total Count"].length,
+      })
     }
   }
   return {
