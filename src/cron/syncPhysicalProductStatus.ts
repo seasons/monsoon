@@ -9,6 +9,7 @@ import {
   AirtableProductVariantCounts,
 } from "../airtable/updateProductVariantCounts"
 import { AirtableInventoryStatus } from "../airtable/updatePhysicalProduct"
+import { airtableToPrismaInventoryStatus } from "../utils"
 
 const Sentry = require("@sentry/node")
 Sentry.init({
@@ -82,7 +83,9 @@ export async function syncPhysicalProductStatus() {
           // Update the status of the corresponding physical product in prisma
           await prisma.updatePhysicalProduct({
             data: {
-              inventoryStatus: airtableToPrismaStatus(newStatusOnAirtable),
+              inventoryStatus: airtableToPrismaInventoryStatus(
+                newStatusOnAirtable
+              ),
             },
             where: { id: prismaPhysicalProduct.id },
           })
@@ -130,23 +133,10 @@ function physicalProductStatusChanged(
   newStatusOnAirtable: AirtableInventoryStatus,
   currentStatusOnPrisma: PrismaInventoryStatus
 ): boolean {
-  return airtableToPrismaStatus(newStatusOnAirtable) !== currentStatusOnPrisma
-}
-
-function airtableToPrismaStatus(
-  airtableStatus: AirtableInventoryStatus
-): PrismaInventoryStatus {
-  let prismaStatus
-  if (airtableStatus === "Reservable") {
-    prismaStatus = "Reservable"
-  }
-  if (airtableStatus === "Non Reservable") {
-    prismaStatus = "NonReservable"
-  }
-  if (airtableStatus === "Reserved") {
-    prismaStatus = "Reserved"
-  }
-  return prismaStatus
+  return (
+    airtableToPrismaInventoryStatus(newStatusOnAirtable) !==
+    currentStatusOnPrisma
+  )
 }
 
 function getUpdatedCounts(

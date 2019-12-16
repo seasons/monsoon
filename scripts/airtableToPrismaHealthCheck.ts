@@ -4,10 +4,14 @@ import {
   getAllProductVariants,
 } from "../src/airtable/utils"
 import { prisma } from "../src/prisma"
-import { getCorrespondingAirtableProductVariant } from "./utils"
+import {
+  getCorrespondingAirtableProductVariant,
+  getCorrespondingAirtablePhysicalProduct,
+} from "./utils"
 import { db } from "../src/server"
+import { airtableToPrismaInventoryStatus } from "../src/utils"
 
-async function checkProductsAlignment () {
+async function checkProductsAlignment() {
   const allAirtableProductVariants = await getAllProductVariants()
   const allAirtablePhysicalProducts = await getAllPhysicalProducts()
   const allAirtableProducts = await getAllProducts()
@@ -107,6 +111,15 @@ async function checkProductsAlignment () {
     allAirtableProducts
   )
 
+  /* Are the physical product statuses matching between prisma and airtable? */
+  let {
+    mismatchingStatuses,
+    physicalProductsOnPrismaButNotAirtable,
+  } = checkPhysicalProductStatuses(
+    allPrismaPhysicalProducts,
+    allAirtablePhysicalProducts
+  )
+
   /* REPORT */
   console.log(`/*********** REPORT ***********/`)
   console.log(
@@ -149,15 +162,18 @@ async function checkProductsAlignment () {
   console.log(
     `-- AIRTABLE: NUMBER OF PRODUCT VARIANTS WITH INCORRECT NUMBER OF PHYSICAL PRODUCTS ATTACHED: ${airtableTotalPhysicalProductMisalignment.length}`
   )
+  console.log(`ARE THE PHYSICAL PRODUCT STATUSES ALIGNED?`)
+  console.log(
+    `---NUMBER OF PHYSICAL PRODUCTS WITH MISMATCHING INVENTORY STATUSES: ${mismatchingStatuses.length}`
+  )
 
   console.log(`ERRORS: ${errors.length}`)
-//   console.log(prismaTotalPhysicalProductMisalignment)
 }
 
 checkProductsAlignment()
 
 // *****************************************************************************
-function getPrismaAirtableProductVariantSKUMismatches (
+function getPrismaAirtableProductVariantSKUMismatches(
   allAirtableProducts,
   allAirtableProductVariants,
   allPrismaProductVariants,
@@ -200,7 +216,7 @@ function getPrismaAirtableProductVariantSKUMismatches (
   return { productVariantSKUMismatches, errors }
 }
 
-function checkSUIDs (
+function checkSUIDs(
   allPrismaProductVariants,
   allAirtableProductVariants,
   allAirtablePhysicalProducts
@@ -244,7 +260,7 @@ function checkSUIDs (
   return { prismaSUIDToSKUMismatches, airtableSUIDToSKUMismatches }
 }
 
-function checkCounts (
+function checkCounts(
   allAirtableProductVariants,
   allPrismaProductVariants,
   allAirtableProducts
@@ -337,4 +353,38 @@ function checkCounts (
     prismaTotalPhysicalProductMisalignment,
     airtableTotalPhysicalProductMisalignment,
   }
+}
+
+function checkPhysicalProductStatuses(
+  allPrismaPhysicalProducts,
+  allAirtablePhysicalProducts
+) {
+  let mismatchingStatuses = []
+  let physicalProductsOnPrismaButNotAirtable = []
+  for (let prismaPhysicalProduct of allPrismaPhysicalProducts) {
+    let correspondingAirtablePhysicalProduct = getCorrespondingAirtablePhysicalProduct(
+      allAirtablePhysicalProducts,
+      prismaPhysicalProduct
+    )
+    if (!correspondingAirtablePhysicalProduct) {
+      physicalProductsOnPrismaButNotAirtable.push(
+        prismaPhysicalProduct.seasonsUID
+      )
+      continue
+    } else {
+      if (
+        airtableToPrismaInventoryStatus(
+          correspondingAirtablePhysicalProduct.fields["Inventory Status"]
+        ) !== prismaPhysicalProduct.inventoryStatus
+      ) {
+        mismatchingStatuses.push({
+          seasonsUID: prismaPhysicalProduct.seasonsUID,
+          airtableInventoryStatus:
+            correspondingAirtablePhysicalProduct.fields["Inventory Status"],
+          prismaInventoryStatus: prismaPhysicalProduct.inventoryStatus,
+        })
+      }
+    }
+  }
+  return { mismatchingStatuses, physicalProductsOnPrismaButNotAirtable }
 }

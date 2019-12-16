@@ -22,3 +22,12 @@ export function getCorrespondingAirtableProductVariant(
 
   return correspondingAirtableProductVariant
 }
+
+export function getCorrespondingAirtablePhysicalProduct(
+  allAirtablePhysicalProducts,
+  prismaPhysicalProduct
+) {
+  return allAirtablePhysicalProducts.find(
+    physProd => physProd.fields.SUID.text === prismaPhysicalProduct.seasonsUID
+  )
+}

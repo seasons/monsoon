@@ -103,7 +103,6 @@ enum InventoryStatus {
   NonReservable
   Reservable
   Reserved
-  Lost
 }
 
 enum PhysicalProductStatus {
@@ -111,6 +110,7 @@ enum PhysicalProductStatus {
   Used
   Damaged
   Clean
+  Lost
 }
 
 enum ProductStatus {
