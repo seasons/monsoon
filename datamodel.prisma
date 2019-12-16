@@ -103,6 +103,7 @@ enum InventoryStatus {
   NonReservable
   Reservable
   Reserved
+  Lost
 }
 
 enum PhysicalProductStatus {
