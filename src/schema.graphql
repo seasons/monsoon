@@ -47,6 +47,34 @@ type Product {
   updatedAt: DateTime!
 }
 
+type ProductVariant {
+  id: ID!
+  sku: String
+  color: Color!
+  size: Size!
+  weight: Float
+  height: Float
+  productID: String!
+  product: Product!
+  retailPrice: Float
+  physicalProducts(
+    where: PhysicalProductWhereInput
+    orderBy: PhysicalProductOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [PhysicalProduct!]
+  total: Int!
+  reservable: Int!
+  reserved: Int!
+  nonReservable: Int!
+  isSaved: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
 type Query {
   me: Me @isAuthenticated
   products(
@@ -98,6 +126,15 @@ type Query {
     first: Int
     last: Int
   ): [ProductFunction]!
+  productRequests(
+    where: ProductRequestWhereInput
+    orderBy: ProductRequestOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [ProductRequest]!
   homepage: Homepage
   chargebeeCheckout(planID: PlanID!, userIDHash: String!): ChargebeeCheckout
   homepageProductRails(
@@ -143,10 +180,14 @@ type Mutation {
   ): Customer! @hasRole(roles: ["Customer"])
   checkItemsAvailability(items: [ID!]!): Boolean!
   reserveItems(items: [ID!]!, options: ReserveItemsOptions): Reservation
-  saveProduct(item: ID!, save: Boolean!): Product
+  addToBag(item: ID!): BagItem!
+  removeFromBag(item: ID!): BagItem!
+  saveProduct(item: ID!, save: Boolean!): BagItem!
   acknowledgeCompletedChargebeeHostedCheckout(
     hostedPageID: String!
   ): BillingInfoPlayoad
+  addProductRequest(url: String!): ProductRequest!
+  deleteProductRequest(requestID: ID!): ProductRequest!
 }
 
 input ReserveItemsOptions {
@@ -196,6 +237,8 @@ type Me {
   user: User!
   customer: Customer!
   activeReservation: Reservation
+  bag: [BagItem!]!
+  savedItems: [BagItem!]!
 }
 
 union HomepageResult = Category | Product | Brand | Collection

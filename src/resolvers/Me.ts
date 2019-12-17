@@ -1,6 +1,8 @@
 import { Context } from "../utils"
 import { head } from "lodash"
 import { getUserRequestObject, getCustomerFromContext } from "../auth/utils"
+import * as cheerio from "cheerio";
+import request from "request";
 
 export const Me = {
   user: async (parent, args, ctx: Context) => {
@@ -25,6 +27,46 @@ export const Me = {
       })
 
     const latestReservation = head(reservations)
-    return latestReservation.status === "Completed" ? null : latestReservation
+    if (latestReservation && latestReservation.status !== "Completed") {
+      return latestReservation
+    }
+
+    return null
+  },
+
+  async bag(parent, args, ctx: Context, info) {
+    const customer = await getCustomerFromContext(ctx)
+
+    const bagItems = await ctx.db.query.bagItems(
+      {
+        where: {
+          customer: {
+            id: customer.id,
+          },
+          saved: false,
+        },
+      },
+      info
+    )
+
+    return bagItems
+  },
+
+  async savedItems(parent, args, ctx: Context, info) {
+    const customer = await getCustomerFromContext(ctx)
+
+    const savedItems = await ctx.db.query.bagItems(
+      {
+        where: {
+          customer: {
+            id: customer.id,
+          },
+          saved: true,
+        },
+      },
+      info
+    )
+
+    return savedItems
   },
 }

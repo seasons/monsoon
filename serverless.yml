@@ -1,4 +1,4 @@
-service: authorize-users
+service: monsoon
 app: monsoon
 org: seasons
 
@@ -17,11 +17,16 @@ provider:
 
 package:
   include:
+    - src/schema.graphql
     - src/handler.ts
     - src/prisma/**
 
 functions:
   checkAndAuthorizeUsers:
     handler: src/handler.checkAndAuthorizeUsers
+    events:
+      - schedule: rate(1 minute)
+  syncPhysicalProductAndReservationStatus:
+    handler: src/cron/syncPhysicalProductAndReservationStatus.syncPhysicalProductAndReservationStatus
     events:
       - schedule: rate(1 minute)
