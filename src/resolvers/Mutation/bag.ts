@@ -1,6 +1,9 @@
 import { Context } from "../../utils"
-import { getCustomerFromContext, getUserFromContext } from "../../auth/utils"
+import { getCustomerFromContext } from "../../auth/utils"
 import { head } from "lodash"
+import { ApolloError } from "apollo-server"
+
+const BAG_SIZE = 3
 
 export const bag = {
   async addToBag(obj, { item }, ctx: Context, info) {
@@ -11,6 +14,18 @@ export const bag = {
 
     // Check if the bag item already exists
     // Upsert it instead
+    const bag = await ctx.prisma.bagItems({
+      where: {
+        customer: {
+          id: customer.id,
+        },
+        saved: false,
+      },
+    })
+
+    if (bag.length >= BAG_SIZE) {
+      throw new ApolloError("Bag is full", "514")
+    }
 
     const bagItems = await ctx.prisma.bagItems({
       where: {
@@ -20,15 +35,14 @@ export const bag = {
         productVariant: {
           id: item,
         },
+        saved: true,
       },
     })
 
     if (bagItems.length) {
-      const bagItem = head(bagItems)
-
-      if (!bagItem.saved) {
-        throw new Error("Item already in Bag")
-      }
+      await ctx.prisma.deleteManyBagItems({
+        id_in: bagItems.map(i => i.id),
+      })
     }
 
     return await ctx.prisma.createBagItem({
@@ -58,6 +72,7 @@ export const bag = {
         productVariant: {
           id: item,
         },
+        saved: false,
       },
     })
     const bagItem = head(bagItems)
@@ -69,8 +84,20 @@ export const bag = {
 
   async saveProduct(obj, { item, save = false }, ctx: Context, info) {
     const customer = await getCustomerFromContext(ctx)
+    const bagItems = await ctx.prisma.bagItems({
+      where: {
+        customer: {
+          id: customer.id,
+        },
+        productVariant: {
+          id: item,
+        },
+        saved: true,
+      },
+    })
+    const bagItem = head(bagItems)
 
-    if (save) {
+    if (save && !bagItem) {
       return await ctx.prisma.createBagItem({
         customer: {
           connect: {
@@ -86,25 +113,12 @@ export const bag = {
         saved: save,
       })
     } else {
-      const bagItems = await ctx.prisma.bagItems({
-        where: {
-          customer: {
-            id: customer.id,
-          },
-          productVariant: {
-            id: item,
-          },
-        },
-      })
-      const bagItem = head(bagItems)
-
       if (bagItem) {
         await ctx.prisma.deleteBagItem({
           id: bagItem.id,
         })
       }
-
-      return bagItem
     }
+    return bagItem
   },
 }

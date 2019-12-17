@@ -25,7 +25,11 @@ export const Me = {
       })
 
     const latestReservation = head(reservations)
-    return latestReservation.status === "Completed" ? null : latestReservation
+    if (latestReservation && latestReservation.status !== "Completed") {
+      return latestReservation
+    }
+
+    return null
   },
 
   async bag(parent, args, ctx: Context, info) {

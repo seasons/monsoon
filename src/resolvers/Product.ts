@@ -50,6 +50,7 @@ export const Product = {
         productVariant: {
           id_in: productVariants.map(a => a.id),
         },
+        saved: true,
       },
     })
 
@@ -191,7 +192,7 @@ export const ProductMutations = {
 const updateProductVariantCounts = async (
   items,
   physicalProducts,
-  ctx,
+  ctx: Context,
   { dryRun } = { dryRun: false }
 ) => {
   // Check if physical product is available for each product variant
@@ -201,6 +202,14 @@ const updateProductVariantCounts = async (
 
   const unavailableVariants = variants.filter(v => v.reservable <= 0)
   if (unavailableVariants.length > 0) {
+    // Remove items in the bag that are not available anymore
+    await ctx.prisma.deleteManyBagItems({
+      productVariant: {
+        id_in: unavailableVariants.map(a => a.id),
+      },
+      saved: false,
+    })
+
     throw new ApolloError(
       "The following item is not reservable",
       "511",
