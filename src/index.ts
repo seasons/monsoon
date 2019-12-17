@@ -8,8 +8,14 @@ import cors from "cors"
 import { app as webhooks } from "./webhooks"
 import bodyParser from "body-parser"
 
-const server = new ApolloServer(serverOptions)
+// Set up Sentry, which automatically reports on uncaught exceptions
+const Sentry = require("@sentry/node")
+Sentry.init({
+  dsn: process.env.SENTRY_DSN,
+})
 
+// Set up the server
+const server = new ApolloServer(serverOptions)
 const app = express()
 app.use(
   checkJwt,
