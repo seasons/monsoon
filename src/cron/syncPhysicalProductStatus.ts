@@ -69,17 +69,6 @@ export async function syncPhysicalProductStatus() {
             },
           })
 
-          // Update the counts on the corresponding product variant in airtable
-          updateProductVariantCounts(
-            airtablePhysicalProduct.fields["Product Variant"][0],
-            getUpdatedCounts(
-              prismaProductVariant,
-              currentStatusOnPrisma,
-              newStatusOnAirtable,
-              "airtable"
-            ) as AirtableProductVariantCounts
-          )
-
           // Update the status of the corresponding physical product in prisma
           await prisma.updatePhysicalProduct({
             data: {
@@ -89,6 +78,17 @@ export async function syncPhysicalProductStatus() {
             },
             where: { id: prismaPhysicalProduct.id },
           })
+
+          // Update the counts on the corresponding product variant in airtable
+          await updateProductVariantCounts(
+            airtablePhysicalProduct.fields["Product Variant"][0],
+            getUpdatedCounts(
+              prismaProductVariant,
+              currentStatusOnPrisma,
+              newStatusOnAirtable,
+              "airtable"
+            ) as AirtableProductVariantCounts
+          )
 
           // Store updated ids for reporting
           updatedPhysicalProducts.push(prismaPhysicalProduct.seasonsUID)
