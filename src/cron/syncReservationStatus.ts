@@ -23,6 +23,7 @@ export async function syncReservationStatus() {
   const updatedReservations = []
   const errors = []
   const reservationsInAirtableButNotPrisma = []
+  console.log("About to getAllReservations")
   const allAirtableReservations = await getAllReservations()
 
   for (let airtableReservation of allAirtableReservations) {
