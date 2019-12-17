@@ -27,7 +27,8 @@
     "seed-db:staging": "yarn seed-db -- dotenv_config_path=.env.staging",
     "seed-db:production": "yarn seed-db -- dotenv_config_path=.env.production",
     "serverless:login": "serverless login",
-    "serverless:offline": "serverless offline"
+    "serverless:offline": "serverless offline",
+    "healthCheck:production": "node -r dotenv/config -r ts-node/register scripts/airtableToPrismaHealthCheck.ts -- dotenv_config_path=.env.production"
   },
   "dependencies": {
     "@auth0/auth0-spa-js": "^1.3.0",

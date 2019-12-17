@@ -110,6 +110,7 @@ enum PhysicalProductStatus {
   Used
   Damaged
   Clean
+  Lost
 }
 
 enum ProductStatus {
