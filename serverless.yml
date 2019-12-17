@@ -1,4 +1,4 @@
-service: authorize-users
+service: monsoon
 app: monsoon
 org: seasons
 
@@ -17,6 +17,7 @@ provider:
 
 package:
   include:
+    - src/schema.graphql
     - src/handler.ts
     - src/prisma/**
 

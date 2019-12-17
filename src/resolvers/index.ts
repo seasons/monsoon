@@ -7,6 +7,7 @@ import { Product, ProductMutations } from "./Product"
 import { ProductRequestMutations } from "./ProductRequest"
 import { Reservation } from "./Reservation"
 import { PhysicalProduct } from "./PhysicalProduct"
+import { ProductVariant } from "./ProductVariant"
 import { bag } from "./Mutation/bag"
 
 export default {
@@ -23,4 +24,5 @@ export default {
   Reservation,
   PhysicalProduct,
   Product,
+  ProductVariant,
 }

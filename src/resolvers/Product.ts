@@ -66,6 +66,7 @@ export const Product = {
         productVariant: {
           id_in: productVariants.map(a => a.id),
         },
+        saved: true,
       },
     })
 
@@ -268,6 +269,14 @@ const updateProductVariantCounts = async (
   // Are there any unavailable variants? If so, throw an error
   const unavailableVariants = variants.filter(v => v.reservable <= 0)
   if (unavailableVariants.length > 0) {
+    // Remove items in the bag that are not available anymore
+    await ctx.prisma.deleteManyBagItems({
+      productVariant: {
+        id_in: unavailableVariants.map(a => a.id),
+      },
+      saved: false,
+    })
+
     throw new ApolloError(
       "The following item is not reservable",
       "511",

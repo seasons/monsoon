@@ -5,22 +5,16 @@ export const ProductVariant = {
   async isSaved(parent, {}, ctx: Context, info) {
     const customer = await getCustomerFromContext(ctx)
 
-    const bagItem = await ctx.prisma.bagItems({
-      where: {},
+    console.log(parent)
+    const bagItems = await ctx.prisma.bagItems({
+      where: {
+        productVariant: {
+          id: parent.id,
+        },
+        saved: true,
+      },
     })
 
-    return true
-
-    // const product = await ctx.prisma
-    //   .customer({
-    //     id: customer.id,
-    //   })
-    //   .savedProducts({
-    //     where: {
-    //       id: parent.id,
-    //     },
-    //   })
-
-    // return !!product.length
+    return bagItems.length > 0
   },
 }
