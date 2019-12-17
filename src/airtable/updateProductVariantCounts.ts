@@ -6,9 +6,9 @@ export type AirtableProductVariantCounts = {
   "Non-Reservable Count": number
 }
 
-export function updateProductVariantCounts(
+export async function updateProductVariantCounts(
   airtableID: string,
   counts: AirtableProductVariantCounts
 ) {
-  base("Product Variants").update(airtableID, counts)
+  return base("Product Variants").update(airtableID, counts)
 }
