@@ -4126,6 +4126,7 @@ enum PhysicalProductStatus {
   Used
   Damaged
   Clean
+  Lost
 }
 
 type PhysicalProductSubscriptionPayload {
