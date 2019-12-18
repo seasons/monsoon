@@ -96,6 +96,7 @@ type BagItem {
   productVariant: ProductVariant!
   position: Int
   saved: Boolean
+  status: BagItemStatus!
 }
 
 type BagItemConnection {
@@ -110,6 +111,7 @@ input BagItemCreateInput {
   productVariant: ProductVariantCreateOneInput!
   position: Int
   saved: Boolean
+  status: BagItemStatus!
 }
 
 type BagItemEdge {
@@ -124,12 +126,22 @@ enum BagItemOrderByInput {
   position_DESC
   saved_ASC
   saved_DESC
+  status_ASC
+  status_DESC
 }
 
 type BagItemPreviousValues {
   id: ID!
   position: Int
   saved: Boolean
+  status: BagItemStatus!
+}
+
+enum BagItemStatus {
+  Added
+  Reserved
+  Received
+  Removed
 }
 
 type BagItemSubscriptionPayload {
@@ -155,11 +167,13 @@ input BagItemUpdateInput {
   productVariant: ProductVariantUpdateOneRequiredInput
   position: Int
   saved: Boolean
+  status: BagItemStatus
 }
 
 input BagItemUpdateManyMutationInput {
   position: Int
   saved: Boolean
+  status: BagItemStatus
 }
 
 input BagItemWhereInput {
@@ -189,6 +203,10 @@ input BagItemWhereInput {
   position_gte: Int
   saved: Boolean
   saved_not: Boolean
+  status: BagItemStatus
+  status_not: BagItemStatus
+  status_in: [BagItemStatus!]
+  status_not_in: [BagItemStatus!]
   AND: [BagItemWhereInput!]
   OR: [BagItemWhereInput!]
   NOT: [BagItemWhereInput!]

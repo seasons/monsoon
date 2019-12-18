@@ -40,6 +40,7 @@ export const bag = {
       },
       position: 0,
       saved: false,
+      status: "Added",
     })
   },
 
@@ -93,6 +94,7 @@ export const bag = {
         },
         position: 0,
         saved: save,
+        status: "Added",
       })
     } else {
       if (bagItem) {
