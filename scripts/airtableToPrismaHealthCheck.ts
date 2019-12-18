@@ -13,7 +13,7 @@ import { db } from "../src/server"
 import { airtableToPrismaInventoryStatus } from "../src/utils"
 import { xor } from "lodash"
 
-async function checkProductsAlignment () {
+async function checkProductsAlignment() {
   const allAirtableProductVariants = await getAllProductVariants()
   const allAirtablePhysicalProducts = await getAllPhysicalProducts()
   const allAirtableProducts = await getAllProducts()
@@ -223,7 +223,7 @@ async function checkProductsAlignment () {
 checkProductsAlignment()
 
 // *****************************************************************************
-function getPrismaAirtableProductVariantSKUMismatches (
+function getPrismaAirtableProductVariantSKUMismatches(
   allAirtableProducts,
   allAirtableProductVariants,
   allPrismaProductVariants,
@@ -266,7 +266,7 @@ function getPrismaAirtableProductVariantSKUMismatches (
   return { productVariantSKUMismatches, errors }
 }
 
-function checkSUIDs (
+function checkSUIDs(
   allPrismaProductVariants,
   allAirtableProductVariants,
   allAirtablePhysicalProducts
@@ -310,7 +310,7 @@ function checkSUIDs (
   return { prismaSUIDToSKUMismatches, airtableSUIDToSKUMismatches }
 }
 
-function checkCounts (
+function checkCounts(
   allAirtableProductVariants,
   allPrismaProductVariants,
   allAirtableProducts
@@ -398,7 +398,7 @@ function checkCounts (
   }
 }
 
-function checkPhysicalProductStatuses (
+function checkPhysicalProductStatuses(
   allPrismaPhysicalProducts,
   allAirtablePhysicalProducts
 ) {
@@ -432,7 +432,7 @@ function checkPhysicalProductStatuses (
   return { mismatchingStatuses, physicalProductsOnPrismaButNotAirtable }
 }
 
-function checkReservations (
+function checkReservations(
   allPrismaReservations,
   allAirtableReservations,
   allAirtablePhysicalProducts
