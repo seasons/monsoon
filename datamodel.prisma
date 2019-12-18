@@ -131,6 +131,12 @@ enum ReservationStatus {
   Cancelled
 }
 
+enum BagItemStatus {
+  Added
+  Reserved
+  Received
+}
+
 enum Plan {
   AllAccess
   Essential
@@ -337,6 +343,7 @@ type BagItem {
   productVariant: ProductVariant!
   position: Int
   saved: Boolean
+  status: BagItemStatus!
 }
 
 type Customer {
