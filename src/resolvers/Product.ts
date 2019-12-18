@@ -192,6 +192,8 @@ export const ProductMutations = {
         customerToSeasonsTransaction.formatted_error
       )
 
+      await updateAddedBagItems(ctx.prisma, newProductVariantsBeingReserved)
+
       // Send confirmation email
       await sendReservationConfirmationEmail(
         ctx.prisma,
@@ -835,4 +837,21 @@ function checkLastReservation(
       `Last reservation has  non-completed, non-cancelled status. Last Reservation number, status: ${lastReservation.reservationNumber}, ${lastReservation.status}`
     )
   }
+}
+
+async function updateAddedBagItems(
+  prisma: Prisma,
+  productVariantIds: Array<ID_Input>
+) {
+  return await prisma.updateManyBagItems({
+    where: {
+      productVariant: {
+        id_in: productVariantIds,
+      },
+      status: "Added",
+    },
+    data: {
+      status: "Reserved",
+    },
+  })
 }

@@ -27,24 +27,6 @@ export const bag = {
       throw new ApolloError("Bag is full", "514")
     }
 
-    const bagItems = await ctx.prisma.bagItems({
-      where: {
-        customer: {
-          id: customer.id,
-        },
-        productVariant: {
-          id: item,
-        },
-        saved: true,
-      },
-    })
-
-    if (bagItems.length) {
-      await ctx.prisma.deleteManyBagItems({
-        id_in: bagItems.map(i => i.id),
-      })
-    }
-
     return await ctx.prisma.createBagItem({
       customer: {
         connect: {
@@ -58,6 +40,7 @@ export const bag = {
       },
       position: 0,
       saved: false,
+      status: "Added",
     })
   },
 
@@ -111,6 +94,7 @@ export const bag = {
         },
         position: 0,
         saved: save,
+        status: "Added",
       })
     } else {
       if (bagItem) {
