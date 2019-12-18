@@ -2,14 +2,13 @@ service: monsoon
 app: monsoon
 org: seasons
 
-# You can pin your service to only deploy with a specific Serverless version
-# Check out our docs for more details
-# frameworkVersion: "=X.X.X"
+# Pin to 1.59.3 because 1.60.0 breaks the build
+frameworkVersion: "=1.59.3"
 
 plugins:
   - serverless-plugin-typescript
   - serverless-offline
-  - serverless-dotenv-plugin
+  - serverless removeserverless-dotenv-plugin
 
 provider:
   name: aws
