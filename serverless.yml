@@ -20,6 +20,7 @@ package:
     - src/schema.graphql
     - src/handler.ts
     - src/prisma/**
+    - src/airtable/**
 
 functions:
   checkAndAuthorizeUsers:
