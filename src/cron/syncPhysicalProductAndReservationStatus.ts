@@ -17,4 +17,4 @@ export async function syncPhysicalProductAndReservationStatus(
   return { ...physProdReport, ...reservationReport, errors: allErrors }
 }
 
-syncPhysicalProductAndReservationStatus(null, null, null)
+// syncPhysicalProductAndReservationStatus(null, null, null)
