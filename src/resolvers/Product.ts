@@ -44,7 +44,7 @@ Sentry.init({
   dsn: process.env.SENTRY_DSN,
 })
 
-const SEASONS_CLEANER_LOCATION_SLUG = "seasons-cleaners-official"
+export const SEASONS_CLEANER_LOCATION_SLUG = "seasons-cleaners-official"
 
 export const Product = {
   async isSaved(parent, {}, ctx: Context, info) {
