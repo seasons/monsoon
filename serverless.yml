@@ -3,7 +3,7 @@ app: monsoon
 org: seasons
 
 # Pin to 1.59.3 because 1.60.0 breaks the build
-# frameworkVersion: "=1.59.3"
+frameworkVersion: "=1.59.3"
 
 plugins:
   - serverless-plugin-typescript
