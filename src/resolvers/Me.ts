@@ -1,10 +1,12 @@
 import { Context } from "../utils"
 import { head } from "lodash"
-import { getUserId, getCustomerFromContext } from "../auth/utils"
+import { getUserRequestObject, getCustomerFromContext } from "../auth/utils"
+import * as cheerio from "cheerio";
+import request from "request";
 
 export const Me = {
   user: async (parent, args, ctx: Context) => {
-    const { id } = await getUserId(ctx)
+    const { id } = await getUserRequestObject(ctx)
     return ctx.prisma.user({ id })
   },
   customer: async (parent, args, ctx: Context, info) => {
@@ -24,7 +26,47 @@ export const Me = {
         orderBy: "createdAt_DESC",
       })
 
-    const firstReservation = head(reservations)
-    return firstReservation
+    const latestReservation = head(reservations)
+    if (latestReservation && latestReservation.status !== "Completed") {
+      return latestReservation
+    }
+
+    return null
+  },
+
+  async bag(parent, args, ctx: Context, info) {
+    const customer = await getCustomerFromContext(ctx)
+
+    const bagItems = await ctx.db.query.bagItems(
+      {
+        where: {
+          customer: {
+            id: customer.id,
+          },
+          saved: false,
+        },
+      },
+      info
+    )
+
+    return bagItems
+  },
+
+  async savedItems(parent, args, ctx: Context, info) {
+    const customer = await getCustomerFromContext(ctx)
+
+    const savedItems = await ctx.db.query.bagItems(
+      {
+        where: {
+          customer: {
+            id: customer.id,
+          },
+          saved: true,
+        },
+      },
+      info
+    )
+
+    return savedItems
   },
 }

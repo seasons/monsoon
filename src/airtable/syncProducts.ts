@@ -6,7 +6,7 @@ import { isEmpty, uniqBy } from "lodash"
 export const syncProducts = async () => {
   const allBrands = await getAllBrands()
   const allProducts = await getAllProducts()
-  const allCategories = await getAllCategories() 
+  const allCategories = await getAllCategories()
 
   let i = 1
 
@@ -102,3 +102,5 @@ export const syncProducts = async () => {
     }
   }
 }
+
+syncProducts()

@@ -1,0 +1,26 @@
+// DONE WITH SOME ERRORS. THEN MANUALLY FIXED IN PRISMA AND AIRTABLE
+Number of mismatched SKUs:  6
+Mapping CARH-BLK-LL-005 to CARH-BLK-LL-001
+-- prisma product variant: CARH-BLK-LL-005 --> CARH-BLK-LL-001
+Number of mismatched SKUs:  5
+Mapping CARH-BLK-MM-005 to CARH-BLK-MM-001
+-- prisma product variant: CARH-BLK-MM-005 --> CARH-BLK-MM-001
+Number of mismatched SKUs:  4
+Mapping CARH-BLK-SS-005 to CARH-BLK-SS-001
+-- prisma product variant: CARH-BLK-SS-005 --> CARH-BLK-SS-001
+Number of mismatched SKUs:  3
+Mapping CARH-GRN-LL-006 to CARH-GRN-LL-002
+-- prisma product variant: CARH-GRN-LL-006 --> CARH-GRN-LL-002
+-- prisma physical product: CARH-BLK-LL-006-01 --> CARH-BLK-LL-001-01
+-- airtable physical product recFXBQg7GKMpKlYP suid set to CARH-BLK-LL-001-01
+
+// DONE CORRECTLY
+Number of mismatched SKUs:  2
+Mapping CARH-GRN-MM-006 to CARH-GRN-MM-002
+-- prisma product variant: CARH-GRN-MM-006 --> CARH-GRN-MM-002
+-- prisma physical product: CARH-GRN-MM-006-01 --> CARH-GRN-MM-002-01
+-- airtable physical product recB6kbl3pkDI5zuG suid set to CARH-GRN-MM-002-01
+Mapping CARH-GRN-SS-006 to CARH-GRN-SS-002
+-- prisma product variant: CARH-GRN-SS-006 --> CARH-GRN-SS-002
+-- prisma physical product: CARH-GRN-SS-006-01 --> CARH-GRN-SS-002-01
+-- airtable physical product recQOilTvex9CSFU6 suid set to CARH-GRN-SS-002-01

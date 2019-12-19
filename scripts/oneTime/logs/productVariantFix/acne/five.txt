@@ -1,0 +1,5 @@
+Number of mismatched SKUs:  12
+Mapping ACNE-PRP-LL-010 to ACNE-PRP-LL-007
+-- prisma product variant: ACNE-PRP-LL-010 --> ACNE-PRP-LL-007
+-- prisma physical product: ACNE-PRP-LL-013-01 --> ACNE-PRP-LL-007-01
+-- airtable physical product recZXAbAcrvybaPkL suid set to ACNE-PRP-LL-007-01

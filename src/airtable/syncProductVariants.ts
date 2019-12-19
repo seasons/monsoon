@@ -94,7 +94,7 @@ export const syncProductVariants = async () => {
       // Figure out if we need to create new instance of physical products
       // based on the counts and what's available in the database
       const physicalProducts = allPhysicalProducts.filter(a =>
-        (a.get("Product") || []).includes(product.id)
+        (a.get("Product Variant") || []).includes(productVariant.id)
       )
 
       const newPhysicalProducts = await createMorePhysicalProductsIfNeeded({
@@ -210,8 +210,10 @@ const createMorePhysicalProductsIfNeeded: CreateMorePhysicalProductsFunction = a
             slug: location.model.slug,
           },
         },
-        inventoryStatus: "NonReservable" as InventoryStatus,
+        inventoryStatus: "Reservable" as InventoryStatus,
         productStatus: fields["Product Status"],
       } as PhysicalProductCreateInput)
   )
 }
+
+syncProductVariants()

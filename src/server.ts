@@ -1,7 +1,9 @@
 import { schema } from "./schema"
 import { prisma } from "./prisma"
-import cors from "cors"
 import { Prisma } from "prisma-binding"
+import Analytics from "analytics-node"
+
+var analytics = new Analytics(process.env.SEGMENT_MONSOON_WRITE_KEY)
 
 const defaultQuery = `{
   products {
@@ -13,7 +15,7 @@ const defaultQuery = `{
 }
 `
 
-const db = new Prisma({
+export const db = new Prisma({
   typeDefs: "./src/prisma/prisma.graphql",
   endpoint: process.env.PRISMA_ENDPOINT || "http://localhost:4466",
   secret: process.env.PRISMA_SECRET,
@@ -26,6 +28,8 @@ export const serverOptions = {
     res,
     prisma,
     db,
+    /* track events on segment */
+    analytics,
   }),
   introspection: true,
   formatError: error => {

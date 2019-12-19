@@ -1,11 +1,11 @@
 import { Context, getUserIDHash, getCustomerFromUserID } from "../utils"
 import { Homepage } from "./Homepage"
-import { getUserId, getCustomerFromContext } from "../auth/utils"
+import { getUserRequestObject, getCustomerFromContext } from "../auth/utils"
 import chargebee from "chargebee"
 
 export const Query = {
   async me(parent, args, ctx: Context) {
-    const { id } = await getUserId(ctx)
+    const { id } = await getUserRequestObject(ctx)
     return ctx.prisma.user({ id })
   },
 
@@ -19,17 +19,17 @@ export const Query = {
       const filter =
         children.length > 0
           ? {
-              where: {
-                ...args.where,
-                OR: children.map(({ slug }) => ({ category: { slug } })),
-              },
-            }
+            where: {
+              ...args.where,
+              OR: children.map(({ slug }) => ({ category: { slug } })),
+            },
+          }
           : {
-              where: {
-                ...args.where,
-                category: { slug: category.slug },
-              },
-            }
+            where: {
+              ...args.where,
+              category: { slug: category.slug },
+            },
+          }
       const { first, skip } = args
       const products = await ctx.db.query.products(
         { first, skip, ...filter },
@@ -44,6 +44,9 @@ export const Query = {
 
   product: (parent, args, ctx: Context, info) =>
     ctx.db.query.product(args, info),
+
+  productRequests: (parent, args, ctx: Context, info) =>
+    ctx.db.query.productRequests(args, info),
 
   collections: (parent, args, ctx: Context, info) =>
     ctx.db.query.collections(args, info),
@@ -123,7 +126,7 @@ export const Query = {
             phone: phoneNumber,
           },
         })
-        .request(function(error, result) {
+        .request(function (error, result) {
           if (error) {
             reject(error)
           } else {
@@ -133,6 +136,16 @@ export const Query = {
     }).catch(error => {
       throw new Error(JSON.stringify(error))
     })
+
+    // Track the selection
+    ctx.analytics.track({
+      userId: targetUser.id,
+      event: "Opened Checkout",
+      properties: {
+        plan: planID,
+      },
+    })
+
     return hostedPage
   },
 }
