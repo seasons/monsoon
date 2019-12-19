@@ -137,7 +137,6 @@ enum BagItemStatus {
   Added
   Reserved
   Received
-  Removed
 }
 
 type BagItemSubscriptionPayload {
