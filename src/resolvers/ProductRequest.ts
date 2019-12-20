@@ -52,7 +52,13 @@ export const ProductRequestMutations = {
             });
             resolve(productRequest);
           } catch (e) {
-            reject(e);
+            // Check to see if a product request for this item has already been made
+            const productRequest = ctx.prisma.productRequest({ sku });
+            if (productRequest) {
+              resolve(productRequest)
+            } else {
+              reject(e);
+            }
           }
         } else {
           reject("Incorrectly formatted json+ld.");
