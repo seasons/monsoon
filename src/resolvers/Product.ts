@@ -44,7 +44,7 @@ Sentry.init({
   dsn: process.env.SENTRY_DSN,
 })
 
-const SEASONS_CLEANER_LOCATION_SLUG = "seasons-cleaners-official"
+export const SEASONS_CLEANER_LOCATION_SLUG = "seasons-cleaners-official"
 
 export const Product = {
   async isSaved(parent, {}, ctx: Context, info) {
@@ -107,6 +107,7 @@ export const ProductMutations = {
         items
       )
       const heldPhysicalProducts = await getHeldPhysicalProducts(
+        ctx,
         lastReservation
       )
 
@@ -118,11 +119,7 @@ export const ProductMutations = {
       const [
         products,
         physicalProductsBeingReserved,
-      ] = await updateProductVariantCounts(
-        newProductVariantsBeingReserved,
-        allPhysicalProductsForGivenProductVariantIDs,
-        ctx
-      )
+      ] = await updateProductVariantCounts(newProductVariantsBeingReserved, ctx)
       await updatePhysicalProductInventoryStatusesOnPrisma(
         ctx.prisma,
         physicalProductsBeingReserved as PhysicalProduct[]
@@ -225,13 +222,32 @@ export const ProductMutations = {
     return reservationReturnData
   },
   async checkItemsAvailability(parent, { items }, ctx: Context, info) {
-    const userRequestObject = getUserRequestObject(ctx)
-    const physicalProducts = await getPhysicalProductsWithReservationSpecificData(
-      ctx,
-      items
+    const userRequestObject = await getUserRequestObject(ctx)
+    const customer = await getCustomerFromContext(ctx)
+
+    const reservedBagItems = await ctx.db.query.bagItems(
+      {
+        where: {
+          customer: {
+            id: customer.id,
+          },
+          productVariant: {
+            id_in: items,
+          },
+          status: "Reserved",
+        },
+      },
+      `{
+      productVariant {
+        id
+      }
+    }`
     )
 
-    await updateProductVariantCounts(items, physicalProducts, ctx, {
+    const reservedIds = reservedBagItems.map(a => a.productVariant.id)
+    const newItems = items.filter(a => !reservedIds.includes(a))
+
+    await updateProductVariantCounts(newItems, ctx, {
       dryRun: true,
     })
 
@@ -256,9 +272,6 @@ const updateProductVariantCounts = async (
   /* array of product variant ids */
   items: Array<ID_Input>,
 
-  /* all physical products associated with the product variants indicated by `items` */
-  physicalProducts: Array<PhysicalProductWithReservationSpecificData>,
-
   ctx: Context,
   { dryRun } = { dryRun: false }
 ): Promise<
@@ -267,6 +280,11 @@ const updateProductVariantCounts = async (
   const variants = await ctx.prisma.productVariants({
     where: { id_in: items },
   })
+
+  const physicalProducts = await getPhysicalProductsWithReservationSpecificData(
+    ctx,
+    items
+  )
 
   // Are there any unavailable variants? If so, throw an error
   const unavailableVariants = variants.filter(v => v.reservable <= 0)
@@ -277,6 +295,7 @@ const updateProductVariantCounts = async (
         id_in: unavailableVariants.map(a => a.id),
       },
       saved: false,
+      status: "Added",
     })
 
     throw new ApolloError(
@@ -520,9 +539,10 @@ async function createReservationData(
     ...physicalProductsBeingReserved,
     ...heldPhysicalProducts,
   ]
-  if (allPhysicalProductsInReservation.length > 3) {
-    throw new ApolloError("Can not reserve more than 3 items at a time")
-  }
+  console.log(allPhysicalProductsInReservation)
+  // if (allPhysicalProductsInReservation.length > 3) {
+  //   throw new ApolloError("Can not reserve more than 3 items at a time")
+  // }
   const physicalProductSUIDs = allPhysicalProductsInReservation.map(p => ({
     seasonsUID: p.seasonsUID,
   }))
@@ -808,19 +828,21 @@ async function getNewProductVariantsBeingReserved(
 }
 
 async function getHeldPhysicalProducts(
+  ctx: Context,
   lastReservation: ReservationWithProductVariantData
 ): Promise<PhysicalProduct[]> {
-  return new Promise((resolve, reject) => {
-    if (lastReservation == null) {
-      resolve([])
-      return
-    }
-    resolve(
-      lastReservation.products.filter(
-        prod => prod.inventoryStatus === "Reserved"
-      )
-    )
-  })
+  if (lastReservation == null) {
+    return []
+  }
+
+  const reservedBagItems = await getReservedBagItems(ctx)
+  const reservedProductVariantIds = reservedBagItems.map(
+    a => a.productVariant.id
+  )
+
+  return lastReservation.products
+    .filter(prod => prod.inventoryStatus === "Reserved")
+    .filter(a => reservedProductVariantIds.includes(a.productVariant.id))
 }
 
 function checkLastReservation(
@@ -854,4 +876,28 @@ async function updateAddedBagItems(
       status: "Reserved",
     },
   })
+}
+
+async function getReservedBagItems(ctx) {
+  const customer = await getCustomerFromContext(ctx)
+  const reservedBagItems = await ctx.db.query.bagItems(
+    {
+      where: {
+        customer: {
+          id: customer.id,
+        },
+        status: "Reserved",
+      },
+    },
+    `{
+      id
+      status
+      position
+      saved
+      productVariant {
+        id
+      }
+  }`
+  )
+  return reservedBagItems
 }
