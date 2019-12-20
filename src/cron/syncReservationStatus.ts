@@ -12,6 +12,7 @@ import {
   calcShipmentWeightFromProductVariantIDs,
 } from "../utils"
 import { db } from "../server"
+import { SEASONS_CLEANER_LOCATION_SLUG } from "../resolvers/Product"
 
 // Set up Sentry, for error reporting
 const Sentry = require("@sentry/node")
@@ -19,7 +20,7 @@ Sentry.init({
   dsn: process.env.SENTRY_DSN,
 })
 
-export async function syncReservationStatus() {
+export async function syncReservationStatus () {
   const updatedReservations = []
   const errors = []
   const reservationsInAirtableButNotPrisma = []
@@ -100,11 +101,11 @@ export async function syncReservationStatus() {
 
 // *****************************************************************************
 
-function sendYouCanNowReserveAgainEmail(user: User) {
+function sendYouCanNowReserveAgainEmail (user: User) {
   sendTransactionalEmail(user.email, "d-528db6242ecf4c0d886ea0357b363052", {})
 }
 
-async function getPrismaReservationWithNeededFields(reservationNumber) {
+async function getPrismaReservationWithNeededFields (reservationNumber) {
   const res = await db.query.reservation(
     {
       where: { reservationNumber },
@@ -122,6 +123,11 @@ async function getPrismaReservationWithNeededFields(reservationNumber) {
         }
         customer {
             id
+            detail {
+                shippingAddress {
+                    slug
+                }
+            }
         }
         returnedPackage {
             id
@@ -131,13 +137,13 @@ async function getPrismaReservationWithNeededFields(reservationNumber) {
   return res
 }
 
-function airtableToPrismaReservationStatus(
+function airtableToPrismaReservationStatus (
   airtableStatus: string
 ): ReservationStatus {
   return airtableStatus.replace(" ", "") as ReservationStatus
 }
 
-async function updateUsersBagItemsOnCompletedReservation(
+async function updateUsersBagItemsOnCompletedReservation (
   prisma: Prisma,
   prismaReservation: any // actually a Prisma Reservation with fields specified in getPrismaReservationWithNeededFields
 ) {
@@ -177,7 +183,7 @@ async function updateUsersBagItemsOnCompletedReservation(
   }
 }
 
-async function updateReturnPackageOnCompletedReservation(
+async function updateReturnPackageOnCompletedReservation (
   prisma: Prisma,
   prismaReservation: any // actually a Prisma Reservation with fields specified in getPrismaReservationWithNeededFields
 ) {
@@ -200,11 +206,41 @@ async function updateReturnPackageOnCompletedReservation(
     prisma,
     returnedProductVariantIDs
   )
-  await prisma.updatePackage({
-    data: {
-      items: { connect: returnedPhysicalProductIDs },
-      weight,
-    },
-    where: { id: prismaReservation.returnedPackage.id },
-  })
+
+  if (prismaReservation.returnedPackage != null) {
+    await prisma.updatePackage({
+      data: {
+        items: { connect: returnedPhysicalProductIDs },
+        weight,
+      },
+      where: { id: prismaReservation.returnedPackage.id },
+    })
+  } else {
+    await prisma.updateReservation({
+      data: {
+        returnedPackage: {
+          create: {
+            items: { connect: returnedPhysicalProductIDs },
+            weight,
+            shippingLabel: {
+              create: {},
+            },
+            fromAddress: {
+              connect: {
+                slug: prismaReservation.customer.detail.shippingAddress.slug,
+              },
+            },
+            toAddress: {
+              connect: {
+                slug: SEASONS_CLEANER_LOCATION_SLUG,
+              },
+            },
+          },
+        },
+      },
+      where: {
+        id: prismaReservation.id,
+      },
+    })
+  }
 }
