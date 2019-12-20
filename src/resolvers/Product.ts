@@ -295,6 +295,7 @@ const updateProductVariantCounts = async (
         id_in: unavailableVariants.map(a => a.id),
       },
       saved: false,
+      status: "Added",
     })
 
     throw new ApolloError(
