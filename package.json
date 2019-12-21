@@ -29,7 +29,8 @@
     "seed-db": "node -r dotenv/config -r ts-node/register scripts/airtableToDB.ts",
     "seed-db:staging": "yarn seed-db -- dotenv_config_path=.env.staging",
     "seed-db:production": "yarn seed-db -- dotenv_config_path=.env.production",
-    "healthCheck:production": "node -r dotenv/config -r ts-node/register scripts/airtableToPrismaHealthCheck.ts -- dotenv_config_path=.env.production"
+    "healthCheck:production": "node -r dotenv/config -r ts-node/register scripts/airtableToPrismaHealthCheck.ts -- dotenv_config_path=.env.production",
+    "test": "jest"
   },
   "dependencies": {
     "@auth0/auth0-spa-js": "^1.3.0",
@@ -77,9 +78,11 @@
   },
   "devDependencies": {
     "@types/bcryptjs": "2.4.2",
+    "@types/jest": "^24.0.24",
     "@types/node": "10.14.17",
     "dotenv-cli": "1.4.0",
     "graceful-fs": "^4.2.2",
+    "jest": "^24.9.0",
     "nodemon": "^1.19.2",
     "prettier": "^1.18.2",
     "rimraf": "^3.0.0",

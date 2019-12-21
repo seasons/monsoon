@@ -20,7 +20,7 @@ Sentry.init({
   dsn: process.env.SENTRY_DSN,
 })
 
-export async function syncReservationStatus () {
+export async function syncReservationStatus() {
   const updatedReservations = []
   const errors = []
   const reservationsInAirtableButNotPrisma = []
@@ -101,11 +101,11 @@ export async function syncReservationStatus () {
 
 // *****************************************************************************
 
-function sendYouCanNowReserveAgainEmail (user: User) {
+function sendYouCanNowReserveAgainEmail(user: User) {
   sendTransactionalEmail(user.email, "d-528db6242ecf4c0d886ea0357b363052", {})
 }
 
-async function getPrismaReservationWithNeededFields (reservationNumber) {
+async function getPrismaReservationWithNeededFields(reservationNumber) {
   const res = await db.query.reservation(
     {
       where: { reservationNumber },
@@ -137,13 +137,13 @@ async function getPrismaReservationWithNeededFields (reservationNumber) {
   return res
 }
 
-function airtableToPrismaReservationStatus (
+function airtableToPrismaReservationStatus(
   airtableStatus: string
 ): ReservationStatus {
   return airtableStatus.replace(" ", "") as ReservationStatus
 }
 
-async function updateUsersBagItemsOnCompletedReservation (
+async function updateUsersBagItemsOnCompletedReservation(
   prisma: Prisma,
   prismaReservation: any // actually a Prisma Reservation with fields specified in getPrismaReservationWithNeededFields
 ) {
@@ -183,7 +183,7 @@ async function updateUsersBagItemsOnCompletedReservation (
   }
 }
 
-async function updateReturnPackageOnCompletedReservation (
+async function updateReturnPackageOnCompletedReservation(
   prisma: Prisma,
   prismaReservation: any // actually a Prisma Reservation with fields specified in getPrismaReservationWithNeededFields
 ) {
