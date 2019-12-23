@@ -1,4 +1,3 @@
-import { ApolloError } from "apollo-server"
 import * as cheerio from "cheerio";
 import request from "request";
 import { Context } from "../utils"
@@ -14,55 +13,20 @@ export const ProductRequestMutations = {
         }
         const $ = cheerio.load(body, { xmlMode: false });
 
-        // Search for json+ld in HTML body
-        const ldJSONHTML = $("script[type='application/ld+json']").html();
-        const ldJSON = JSON.parse(ldJSONHTML);
-        if (!ldJSON) {
-          reject("Failed to extract json+ld from URL.");
+        // First try looking for ld+json
+        let productRequest = await scrapeLDJSON($, url, ctx);
+        if (productRequest) {
+          resolve(productRequest);
         }
 
-        // Extract fields from json+ld
-        const { description, name, sku } = ldJSON;
-        const brand = ldJSON.brand ? ldJSON.brand.name : null;
-        const images = ldJSON.image ? ldJSON.image : null;
-        const price = ldJSON.offers ? ldJSON.offers.price : null;
-        const priceCurrency = ldJSON.offers ? ldJSON.offers.priceCurrency : null;
-        const productID = ldJSON.productID ? ldJSON.productID.toString() : null;
-        if (
-          description &&
-          name &&
-          productID &&
-          sku &&
-          brand &&
-          images &&
-          price &&
-          priceCurrency
-        ) {
-          try {
-            const productRequest = await ctx.prisma.createProductRequest({
-              brand,
-              description,
-              images: { set: images },
-              name,
-              price,
-              priceCurrency,
-              productID,
-              sku,
-              url,
-            });
-            resolve(productRequest);
-          } catch (e) {
-            // Check to see if a product request for this item has already been made
-            const productRequest = ctx.prisma.productRequest({ sku });
-            if (productRequest) {
-              resolve(productRequest)
-            } else {
-              reject(e);
-            }
-          }
-        } else {
-          reject("Incorrectly formatted json+ld.");
+        // Then try looking for og (open graph) meta tags
+        productRequest = await scrapeOGTags($, url, ctx);
+        if (productRequest) {
+          resolve(productRequest);
         }
+
+        // Otherwise, means we failed to scrape URL
+        reject("Failed to scrape product information from URL");
       });
     });
   },
@@ -76,5 +40,118 @@ export const ProductRequestMutations = {
         reject(e);
       }
     });
+  }
+}
+
+const scrapeLDJSON = async ($, url: string, ctx: Context) => {
+  // Search for json+ld in HTML body
+  const ldJSONHTML = $("script[type='application/ld+json']").html();
+  const ldJSON = JSON.parse(ldJSONHTML);
+  if (!ldJSON) {
+    // Failed to extract json+ld from URL
+    return null;
+  }
+
+  // Extract fields from json+ld
+  const { description, name, sku } = ldJSON;
+  const brand = ldJSON.brand ? ldJSON.brand.name : null;
+  const images = ldJSON.image ? ldJSON.image : null;
+  const price = ldJSON.offers ? ldJSON.offers.price : null;
+  const priceCurrency = ldJSON.offers ? ldJSON.offers.priceCurrency : null;
+  const productID = ldJSON.productID ? ldJSON.productID.toString() : null;
+  if (
+    description &&
+    name &&
+    productID &&
+    sku &&
+    brand &&
+    images &&
+    price &&
+    priceCurrency
+  ) {
+    return await createProductRequest(
+      ctx,
+      brand,
+      description,
+      images,
+      name,
+      price,
+      priceCurrency,
+      productID,
+      sku,
+      url
+    );
+  } else {
+    // Incorrectly formatted json+ld
+    return null;
+  }
+};
+
+const scrapeOGTags = async ($, url: string, ctx: Context) => {
+  const ogSKU = $('meta[property="product:retailer_item_id"]').attr('content');
+  const ogTitle = $('meta[property="og:title"]').attr('content');
+  const ogSiteName = $('meta[property="og:site_name"]').attr('content');
+  const ogDescription = $('meta[property="og:description"]').attr('content');
+  const ogPriceAmount = parseInt($('meta[property="og:price:amount"]').attr('content'));
+  const ogPriceCurrency = $('meta[property="og:price:currency"]').attr('content');
+  const productID = $('meta[itemprop="productID"]').attr('content');
+
+  let ogImages: string[] = []
+  $('meta[property="og:image"]').each((index, elem) => {
+    ogImages.push($(elem).attr('content'));
+  });
+
+  console.log(ogSKU, ogTitle, ogSiteName, ogDescription, ogPriceAmount, ogPriceCurrency, productID, ogImages);
+  if (ogSKU && ogTitle && ogSiteName && ogDescription && ogPriceAmount && ogPriceCurrency && productID) {
+    return await createProductRequest(
+      ctx,
+      ogSiteName,
+      ogDescription,
+      ogImages,
+      ogTitle,
+      ogPriceAmount,
+      ogPriceCurrency,
+      productID,
+      ogSKU,
+      url
+    );
+  } else {
+    return null;
+  }
+}
+
+const createProductRequest = async (
+  ctx: Context,
+  brand: string,
+  description: string,
+  images: string[],
+  name: string,
+  price: number,
+  priceCurrency: string,
+  productID: string,
+  sku: string,
+  url: string,
+) => {
+  try {
+    const productRequest = await ctx.prisma.createProductRequest({
+      brand,
+      description,
+      images: { set: images },
+      name,
+      price,
+      priceCurrency,
+      productID,
+      sku,
+      url,
+    });
+    return productRequest;
+  } catch (e) {
+    // Check to see if a product request for this item has already been made
+    const productRequest = ctx.prisma.productRequest({ sku });
+    if (productRequest) {
+      return productRequest;
+    } else {
+      return null;
+    }
   }
 }
