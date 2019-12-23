@@ -59,16 +59,7 @@ const scrapeLDJSON = async ($, url: string, ctx: Context) => {
   const price = ldJSON.offers ? ldJSON.offers.price : null;
   const priceCurrency = ldJSON.offers ? ldJSON.offers.priceCurrency : null;
   const productID = ldJSON.productID ? ldJSON.productID.toString() : null;
-  if (
-    description &&
-    name &&
-    productID &&
-    sku &&
-    brand &&
-    images &&
-    price &&
-    priceCurrency
-  ) {
+  if (description && name && productID && sku && brand && images && price && priceCurrency) {
     return await createProductRequest(
       ctx,
       brand,
@@ -88,12 +79,12 @@ const scrapeLDJSON = async ($, url: string, ctx: Context) => {
 };
 
 const scrapeOGTags = async ($, url: string, ctx: Context) => {
-  const ogSKU = $('meta[property="product:retailer_item_id"]').attr('content');
-  const ogTitle = $('meta[property="og:title"]').attr('content');
-  const ogSiteName = $('meta[property="og:site_name"]').attr('content');
   const ogDescription = $('meta[property="og:description"]').attr('content');
   const ogPriceAmount = parseInt($('meta[property="og:price:amount"]').attr('content'));
   const ogPriceCurrency = $('meta[property="og:price:currency"]').attr('content');
+  const ogSKU = $('meta[property="product:retailer_item_id"]').attr('content');
+  const ogSiteName = $('meta[property="og:site_name"]').attr('content');
+  const ogTitle = $('meta[property="og:title"]').attr('content');
   const productID = $('meta[itemprop="productID"]').attr('content');
 
   let ogImages: string[] = []
@@ -101,8 +92,7 @@ const scrapeOGTags = async ($, url: string, ctx: Context) => {
     ogImages.push($(elem).attr('content'));
   });
 
-  console.log(ogSKU, ogTitle, ogSiteName, ogDescription, ogPriceAmount, ogPriceCurrency, productID, ogImages);
-  if (ogSKU && ogTitle && ogSiteName && ogDescription && ogPriceAmount && ogPriceCurrency && productID) {
+  if (ogDescription && ogPriceAmount && ogPriceCurrency && ogSKU && ogSiteName && ogTitle && productID && ogImages) {
     return await createProductRequest(
       ctx,
       ogSiteName,
