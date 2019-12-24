@@ -126,8 +126,11 @@ const createProductRequest = async (
   sku: string,
   url: string,
 ) => {
+  console.log("ABOUT TO CREATE");
+  console.log(reason);
   const user = await getUserFromContext(ctx);
   if (!user) {
+    console.log("NO USER");
     return null;
   }
   try {
@@ -150,10 +153,11 @@ const createProductRequest = async (
     });
     return productRequest;
   } catch (e) {
-    // Check to see if a product request for this item has already been made
-    const productRequest = ctx.prisma.productRequest({ sku });
-    if (productRequest) {
-      return productRequest;
+    console.log(e);
+    // Check to see if a product request for this item has already been made by this user
+    const productRequests = ctx.prisma.productRequests({ where: { url, user } })
+    if (productRequests) {
+      return productRequests[0];
     } else {
       return null;
     }

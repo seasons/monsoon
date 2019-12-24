@@ -413,7 +413,6 @@ type BillingInfo {
 
 type ProductRequest {
   id: ID! @id
-  sku: String @unique
   brand: String!
   description: String!
   images: [String!]! @scalarList(strategy: RELATION)
@@ -422,6 +421,7 @@ type ProductRequest {
   priceCurrency: String!
   productID: String!
   reason: String!
+  sku: String! 
   url: String!
   user: User!
 }
