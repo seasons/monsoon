@@ -151,7 +151,6 @@ const createProductRequest = async (
     });
     return productRequest;
   } catch (e) {
-    console.log(e);
     return null;
   }
 }
