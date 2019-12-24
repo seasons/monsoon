@@ -421,5 +421,7 @@ type ProductRequest {
   price: Int!
   priceCurrency: String!
   productID: String!
+  reason: String!
   url: String!
+  user: User!
 }

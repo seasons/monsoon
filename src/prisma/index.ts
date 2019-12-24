@@ -1438,6 +1438,8 @@ export type ProductRequestOrderByInput =
   | "priceCurrency_DESC"
   | "productID_ASC"
   | "productID_DESC"
+  | "reason_ASC"
+  | "reason_DESC"
   | "url_ASC"
   | "url_DESC";
 
@@ -3501,6 +3503,20 @@ export interface ProductRequestWhereInput {
   productID_not_starts_with?: Maybe<String>;
   productID_ends_with?: Maybe<String>;
   productID_not_ends_with?: Maybe<String>;
+  reason?: Maybe<String>;
+  reason_not?: Maybe<String>;
+  reason_in?: Maybe<String[] | String>;
+  reason_not_in?: Maybe<String[] | String>;
+  reason_lt?: Maybe<String>;
+  reason_lte?: Maybe<String>;
+  reason_gt?: Maybe<String>;
+  reason_gte?: Maybe<String>;
+  reason_contains?: Maybe<String>;
+  reason_not_contains?: Maybe<String>;
+  reason_starts_with?: Maybe<String>;
+  reason_not_starts_with?: Maybe<String>;
+  reason_ends_with?: Maybe<String>;
+  reason_not_ends_with?: Maybe<String>;
   url?: Maybe<String>;
   url_not?: Maybe<String>;
   url_in?: Maybe<String[] | String>;
@@ -3515,6 +3531,7 @@ export interface ProductRequestWhereInput {
   url_not_starts_with?: Maybe<String>;
   url_ends_with?: Maybe<String>;
   url_not_ends_with?: Maybe<String>;
+  user?: Maybe<UserWhereInput>;
   AND?: Maybe<ProductRequestWhereInput[] | ProductRequestWhereInput>;
   OR?: Maybe<ProductRequestWhereInput[] | ProductRequestWhereInput>;
   NOT?: Maybe<ProductRequestWhereInput[] | ProductRequestWhereInput>;
@@ -4767,6 +4784,7 @@ export interface ProductRequestUpdateManyMutationInput {
   price?: Maybe<Int>;
   priceCurrency?: Maybe<String>;
   productID?: Maybe<String>;
+  reason?: Maybe<String>;
   url?: Maybe<String>;
 }
 
@@ -4784,7 +4802,9 @@ export interface ProductRequestUpdateInput {
   price?: Maybe<Int>;
   priceCurrency?: Maybe<String>;
   productID?: Maybe<String>;
+  reason?: Maybe<String>;
   url?: Maybe<String>;
+  user?: Maybe<UserUpdateOneRequiredInput>;
 }
 
 export interface ColorUpdateOneInput {
@@ -4806,7 +4826,9 @@ export interface ProductRequestCreateInput {
   price: Int;
   priceCurrency: String;
   productID: String;
+  reason: String;
   url: String;
+  user: UserCreateOneInput;
 }
 
 export interface ProductFunctionUpdateManyInput {
@@ -9034,6 +9056,7 @@ export interface ProductRequest {
   price: Int;
   priceCurrency: String;
   productID: String;
+  reason: String;
   url: String;
 }
 
@@ -9049,7 +9072,9 @@ export interface ProductRequestPromise
   price: () => Promise<Int>;
   priceCurrency: () => Promise<String>;
   productID: () => Promise<String>;
+  reason: () => Promise<String>;
   url: () => Promise<String>;
+  user: <T = UserPromise>() => T;
 }
 
 export interface ProductRequestSubscription
@@ -9064,7 +9089,9 @@ export interface ProductRequestSubscription
   price: () => Promise<AsyncIterator<Int>>;
   priceCurrency: () => Promise<AsyncIterator<String>>;
   productID: () => Promise<AsyncIterator<String>>;
+  reason: () => Promise<AsyncIterator<String>>;
   url: () => Promise<AsyncIterator<String>>;
+  user: <T = UserSubscription>() => T;
 }
 
 export interface ProductRequestNullablePromise
@@ -9079,7 +9106,9 @@ export interface ProductRequestNullablePromise
   price: () => Promise<Int>;
   priceCurrency: () => Promise<String>;
   productID: () => Promise<String>;
+  reason: () => Promise<String>;
   url: () => Promise<String>;
+  user: <T = UserPromise>() => T;
 }
 
 export interface ImageSubscriptionPayload {
@@ -10715,6 +10744,7 @@ export interface ProductRequestPreviousValues {
   price: Int;
   priceCurrency: String;
   productID: String;
+  reason: String;
   url: String;
 }
 
@@ -10730,6 +10760,7 @@ export interface ProductRequestPreviousValuesPromise
   price: () => Promise<Int>;
   priceCurrency: () => Promise<String>;
   productID: () => Promise<String>;
+  reason: () => Promise<String>;
   url: () => Promise<String>;
 }
 
@@ -10745,6 +10776,7 @@ export interface ProductRequestPreviousValuesSubscription
   price: () => Promise<AsyncIterator<Int>>;
   priceCurrency: () => Promise<AsyncIterator<String>>;
   productID: () => Promise<AsyncIterator<String>>;
+  reason: () => Promise<AsyncIterator<String>>;
   url: () => Promise<AsyncIterator<String>>;
 }
 

@@ -1,9 +1,10 @@
 import * as cheerio from "cheerio";
 import request from "request";
+import { getUserFromContext } from "../auth/utils"
 import { Context } from "../utils"
 
 export const ProductRequestMutations = {
-  async addProductRequest(parent, { url }, ctx: Context, info) {
+  async addProductRequest(parent, { reason, url }, ctx: Context, info) {
     return new Promise(function (resolve, reject) {
       // Set jar: true to avoid possible redirect loop
       request({ jar: true, url }, async (error, response, body) => {
@@ -14,13 +15,13 @@ export const ProductRequestMutations = {
         const $ = cheerio.load(body, { xmlMode: false });
 
         // First try looking for ld+json
-        let productRequest = await scrapeLDJSON($, url, ctx);
+        let productRequest = await scrapeLDJSON($, reason, url, ctx);
         if (productRequest) {
           resolve(productRequest);
         }
 
         // Then try looking for og (open graph) meta tags
-        productRequest = await scrapeOGTags($, url, ctx);
+        productRequest = await scrapeOGTags($, reason, url, ctx);
         if (productRequest) {
           resolve(productRequest);
         }
@@ -43,7 +44,7 @@ export const ProductRequestMutations = {
   }
 }
 
-const scrapeLDJSON = async ($, url: string, ctx: Context) => {
+const scrapeLDJSON = async ($, reason: string, url: string, ctx: Context) => {
   // Search for json+ld in HTML body
   const ldJSONHTML = $("script[type='application/ld+json']").html();
   const ldJSON = JSON.parse(ldJSONHTML);
@@ -69,6 +70,7 @@ const scrapeLDJSON = async ($, url: string, ctx: Context) => {
       price,
       priceCurrency,
       productID,
+      reason,
       sku,
       url
     );
@@ -78,7 +80,7 @@ const scrapeLDJSON = async ($, url: string, ctx: Context) => {
   }
 };
 
-const scrapeOGTags = async ($, url: string, ctx: Context) => {
+const scrapeOGTags = async ($, reason: string, url: string, ctx: Context) => {
   const ogDescription = $('meta[property="og:description"]').attr('content');
   const ogPriceAmount = parseInt($('meta[property="og:price:amount"]').attr('content'));
   const ogPriceCurrency = $('meta[property="og:price:currency"]').attr('content');
@@ -102,6 +104,7 @@ const scrapeOGTags = async ($, url: string, ctx: Context) => {
       ogPriceAmount,
       ogPriceCurrency,
       productID,
+      reason,
       ogSKU,
       url
     );
@@ -119,9 +122,14 @@ const createProductRequest = async (
   price: number,
   priceCurrency: string,
   productID: string,
+  reason: string,
   sku: string,
   url: string,
 ) => {
+  const user = await getUserFromContext(ctx);
+  if (!user) {
+    return null;
+  }
   try {
     const productRequest = await ctx.prisma.createProductRequest({
       brand,
@@ -131,8 +139,14 @@ const createProductRequest = async (
       price,
       priceCurrency,
       productID,
+      reason,
       sku,
       url,
+      user: {
+        connect: {
+          id: user.id,
+        }
+      },
     });
     return productRequest;
   } catch (e) {

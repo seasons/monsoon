@@ -4742,7 +4742,9 @@ type ProductRequest {
   price: Int!
   priceCurrency: String!
   productID: String!
+  reason: String!
   url: String!
+  user: User!
 }
 
 type ProductRequestConnection {
@@ -4765,7 +4767,9 @@ input ProductRequestCreateInput {
   price: Int!
   priceCurrency: String!
   productID: String!
+  reason: String!
   url: String!
+  user: UserCreateOneInput!
 }
 
 type ProductRequestEdge {
@@ -4790,6 +4794,8 @@ enum ProductRequestOrderByInput {
   priceCurrency_DESC
   productID_ASC
   productID_DESC
+  reason_ASC
+  reason_DESC
   url_ASC
   url_DESC
 }
@@ -4804,6 +4810,7 @@ type ProductRequestPreviousValues {
   price: Int!
   priceCurrency: String!
   productID: String!
+  reason: String!
   url: String!
 }
 
@@ -4838,7 +4845,9 @@ input ProductRequestUpdateInput {
   price: Int
   priceCurrency: String
   productID: String
+  reason: String
   url: String
+  user: UserUpdateOneRequiredInput
 }
 
 input ProductRequestUpdateManyMutationInput {
@@ -4850,6 +4859,7 @@ input ProductRequestUpdateManyMutationInput {
   price: Int
   priceCurrency: String
   productID: String
+  reason: String
   url: String
 }
 
@@ -4960,6 +4970,20 @@ input ProductRequestWhereInput {
   productID_not_starts_with: String
   productID_ends_with: String
   productID_not_ends_with: String
+  reason: String
+  reason_not: String
+  reason_in: [String!]
+  reason_not_in: [String!]
+  reason_lt: String
+  reason_lte: String
+  reason_gt: String
+  reason_gte: String
+  reason_contains: String
+  reason_not_contains: String
+  reason_starts_with: String
+  reason_not_starts_with: String
+  reason_ends_with: String
+  reason_not_ends_with: String
   url: String
   url_not: String
   url_in: [String!]
@@ -4974,6 +4998,7 @@ input ProductRequestWhereInput {
   url_not_starts_with: String
   url_ends_with: String
   url_not_ends_with: String
+  user: UserWhereInput
   AND: [ProductRequestWhereInput!]
   OR: [ProductRequestWhereInput!]
   NOT: [ProductRequestWhereInput!]
