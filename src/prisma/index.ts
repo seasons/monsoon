@@ -1424,8 +1424,6 @@ export type CustomerStatus =
 export type ProductRequestOrderByInput =
   | "id_ASC"
   | "id_DESC"
-  | "sku_ASC"
-  | "sku_DESC"
   | "brand_ASC"
   | "brand_DESC"
   | "description_ASC"
@@ -1438,6 +1436,10 @@ export type ProductRequestOrderByInput =
   | "priceCurrency_DESC"
   | "productID_ASC"
   | "productID_DESC"
+  | "reason_ASC"
+  | "reason_DESC"
+  | "sku_ASC"
+  | "sku_DESC"
   | "url_ASC"
   | "url_DESC";
 
@@ -3384,7 +3386,6 @@ export interface ProductUpdateWithoutVariantsDataInput {
 
 export type ProductRequestWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
-  sku?: Maybe<String>;
 }>;
 
 export interface BrandUpdateOneRequiredWithoutProductsInput {
@@ -3409,20 +3410,6 @@ export interface ProductRequestWhereInput {
   id_not_starts_with?: Maybe<ID_Input>;
   id_ends_with?: Maybe<ID_Input>;
   id_not_ends_with?: Maybe<ID_Input>;
-  sku?: Maybe<String>;
-  sku_not?: Maybe<String>;
-  sku_in?: Maybe<String[] | String>;
-  sku_not_in?: Maybe<String[] | String>;
-  sku_lt?: Maybe<String>;
-  sku_lte?: Maybe<String>;
-  sku_gt?: Maybe<String>;
-  sku_gte?: Maybe<String>;
-  sku_contains?: Maybe<String>;
-  sku_not_contains?: Maybe<String>;
-  sku_starts_with?: Maybe<String>;
-  sku_not_starts_with?: Maybe<String>;
-  sku_ends_with?: Maybe<String>;
-  sku_not_ends_with?: Maybe<String>;
   brand?: Maybe<String>;
   brand_not?: Maybe<String>;
   brand_in?: Maybe<String[] | String>;
@@ -3501,6 +3488,34 @@ export interface ProductRequestWhereInput {
   productID_not_starts_with?: Maybe<String>;
   productID_ends_with?: Maybe<String>;
   productID_not_ends_with?: Maybe<String>;
+  reason?: Maybe<String>;
+  reason_not?: Maybe<String>;
+  reason_in?: Maybe<String[] | String>;
+  reason_not_in?: Maybe<String[] | String>;
+  reason_lt?: Maybe<String>;
+  reason_lte?: Maybe<String>;
+  reason_gt?: Maybe<String>;
+  reason_gte?: Maybe<String>;
+  reason_contains?: Maybe<String>;
+  reason_not_contains?: Maybe<String>;
+  reason_starts_with?: Maybe<String>;
+  reason_not_starts_with?: Maybe<String>;
+  reason_ends_with?: Maybe<String>;
+  reason_not_ends_with?: Maybe<String>;
+  sku?: Maybe<String>;
+  sku_not?: Maybe<String>;
+  sku_in?: Maybe<String[] | String>;
+  sku_not_in?: Maybe<String[] | String>;
+  sku_lt?: Maybe<String>;
+  sku_lte?: Maybe<String>;
+  sku_gt?: Maybe<String>;
+  sku_gte?: Maybe<String>;
+  sku_contains?: Maybe<String>;
+  sku_not_contains?: Maybe<String>;
+  sku_starts_with?: Maybe<String>;
+  sku_not_starts_with?: Maybe<String>;
+  sku_ends_with?: Maybe<String>;
+  sku_not_ends_with?: Maybe<String>;
   url?: Maybe<String>;
   url_not?: Maybe<String>;
   url_in?: Maybe<String[] | String>;
@@ -3515,6 +3530,7 @@ export interface ProductRequestWhereInput {
   url_not_starts_with?: Maybe<String>;
   url_ends_with?: Maybe<String>;
   url_not_ends_with?: Maybe<String>;
+  user?: Maybe<UserWhereInput>;
   AND?: Maybe<ProductRequestWhereInput[] | ProductRequestWhereInput>;
   OR?: Maybe<ProductRequestWhereInput[] | ProductRequestWhereInput>;
   NOT?: Maybe<ProductRequestWhereInput[] | ProductRequestWhereInput>;
@@ -4759,7 +4775,6 @@ export interface ProductVariantUpdateManyDataInput {
 }
 
 export interface ProductRequestUpdateManyMutationInput {
-  sku?: Maybe<String>;
   brand?: Maybe<String>;
   description?: Maybe<String>;
   images?: Maybe<ProductRequestUpdateimagesInput>;
@@ -4767,6 +4782,8 @@ export interface ProductRequestUpdateManyMutationInput {
   price?: Maybe<Int>;
   priceCurrency?: Maybe<String>;
   productID?: Maybe<String>;
+  reason?: Maybe<String>;
+  sku?: Maybe<String>;
   url?: Maybe<String>;
 }
 
@@ -4776,7 +4793,6 @@ export interface ColorUpsertNestedInput {
 }
 
 export interface ProductRequestUpdateInput {
-  sku?: Maybe<String>;
   brand?: Maybe<String>;
   description?: Maybe<String>;
   images?: Maybe<ProductRequestUpdateimagesInput>;
@@ -4784,7 +4800,10 @@ export interface ProductRequestUpdateInput {
   price?: Maybe<Int>;
   priceCurrency?: Maybe<String>;
   productID?: Maybe<String>;
+  reason?: Maybe<String>;
+  sku?: Maybe<String>;
   url?: Maybe<String>;
+  user?: Maybe<UserUpdateOneRequiredInput>;
 }
 
 export interface ColorUpdateOneInput {
@@ -4798,7 +4817,6 @@ export interface ColorUpdateOneInput {
 
 export interface ProductRequestCreateInput {
   id?: Maybe<ID_Input>;
-  sku?: Maybe<String>;
   brand: String;
   description: String;
   images?: Maybe<ProductRequestCreateimagesInput>;
@@ -4806,7 +4824,10 @@ export interface ProductRequestCreateInput {
   price: Int;
   priceCurrency: String;
   productID: String;
+  reason: String;
+  sku: String;
   url: String;
+  user: UserCreateOneInput;
 }
 
 export interface ProductFunctionUpdateManyInput {
@@ -9026,7 +9047,6 @@ export interface BagItemConnectionSubscription
 
 export interface ProductRequest {
   id: ID_Output;
-  sku?: String;
   brand: String;
   description: String;
   images: String[];
@@ -9034,6 +9054,8 @@ export interface ProductRequest {
   price: Int;
   priceCurrency: String;
   productID: String;
+  reason: String;
+  sku: String;
   url: String;
 }
 
@@ -9041,7 +9063,6 @@ export interface ProductRequestPromise
   extends Promise<ProductRequest>,
     Fragmentable {
   id: () => Promise<ID_Output>;
-  sku: () => Promise<String>;
   brand: () => Promise<String>;
   description: () => Promise<String>;
   images: () => Promise<String[]>;
@@ -9049,14 +9070,16 @@ export interface ProductRequestPromise
   price: () => Promise<Int>;
   priceCurrency: () => Promise<String>;
   productID: () => Promise<String>;
+  reason: () => Promise<String>;
+  sku: () => Promise<String>;
   url: () => Promise<String>;
+  user: <T = UserPromise>() => T;
 }
 
 export interface ProductRequestSubscription
   extends Promise<AsyncIterator<ProductRequest>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
-  sku: () => Promise<AsyncIterator<String>>;
   brand: () => Promise<AsyncIterator<String>>;
   description: () => Promise<AsyncIterator<String>>;
   images: () => Promise<AsyncIterator<String[]>>;
@@ -9064,14 +9087,16 @@ export interface ProductRequestSubscription
   price: () => Promise<AsyncIterator<Int>>;
   priceCurrency: () => Promise<AsyncIterator<String>>;
   productID: () => Promise<AsyncIterator<String>>;
+  reason: () => Promise<AsyncIterator<String>>;
+  sku: () => Promise<AsyncIterator<String>>;
   url: () => Promise<AsyncIterator<String>>;
+  user: <T = UserSubscription>() => T;
 }
 
 export interface ProductRequestNullablePromise
   extends Promise<ProductRequest | null>,
     Fragmentable {
   id: () => Promise<ID_Output>;
-  sku: () => Promise<String>;
   brand: () => Promise<String>;
   description: () => Promise<String>;
   images: () => Promise<String[]>;
@@ -9079,7 +9104,10 @@ export interface ProductRequestNullablePromise
   price: () => Promise<Int>;
   priceCurrency: () => Promise<String>;
   productID: () => Promise<String>;
+  reason: () => Promise<String>;
+  sku: () => Promise<String>;
   url: () => Promise<String>;
+  user: <T = UserPromise>() => T;
 }
 
 export interface ImageSubscriptionPayload {
@@ -10707,7 +10735,6 @@ export interface ProductFunctionNullablePromise
 
 export interface ProductRequestPreviousValues {
   id: ID_Output;
-  sku?: String;
   brand: String;
   description: String;
   images: String[];
@@ -10715,6 +10742,8 @@ export interface ProductRequestPreviousValues {
   price: Int;
   priceCurrency: String;
   productID: String;
+  reason: String;
+  sku: String;
   url: String;
 }
 
@@ -10722,7 +10751,6 @@ export interface ProductRequestPreviousValuesPromise
   extends Promise<ProductRequestPreviousValues>,
     Fragmentable {
   id: () => Promise<ID_Output>;
-  sku: () => Promise<String>;
   brand: () => Promise<String>;
   description: () => Promise<String>;
   images: () => Promise<String[]>;
@@ -10730,6 +10758,8 @@ export interface ProductRequestPreviousValuesPromise
   price: () => Promise<Int>;
   priceCurrency: () => Promise<String>;
   productID: () => Promise<String>;
+  reason: () => Promise<String>;
+  sku: () => Promise<String>;
   url: () => Promise<String>;
 }
 
@@ -10737,7 +10767,6 @@ export interface ProductRequestPreviousValuesSubscription
   extends Promise<AsyncIterator<ProductRequestPreviousValues>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
-  sku: () => Promise<AsyncIterator<String>>;
   brand: () => Promise<AsyncIterator<String>>;
   description: () => Promise<AsyncIterator<String>>;
   images: () => Promise<AsyncIterator<String[]>>;
@@ -10745,6 +10774,8 @@ export interface ProductRequestPreviousValuesSubscription
   price: () => Promise<AsyncIterator<Int>>;
   priceCurrency: () => Promise<AsyncIterator<String>>;
   productID: () => Promise<AsyncIterator<String>>;
+  reason: () => Promise<AsyncIterator<String>>;
+  sku: () => Promise<AsyncIterator<String>>;
   url: () => Promise<AsyncIterator<String>>;
 }
 
