@@ -355,12 +355,13 @@ const updateProductVariantCounts = async (
         const aProductVariant = productVariants.find(
           a => a.model.sKU === variant.sku
         )
-
-        aProductVariant.patchUpdate({
-          "Reservable Count": reservable,
-          "Reserved Count": reserved,
-          "Non-Reservable Count": nonReservable,
-        })
+        if (aProductVariant) {
+          aProductVariant.patchUpdate({
+            "Reservable Count": reservable,
+            "Reserved Count": reserved,
+            "Non-Reservable Count": nonReservable,
+          })
+        }
       } catch (e) {
         console.log(e)
       }
