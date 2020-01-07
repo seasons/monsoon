@@ -39,7 +39,6 @@ export const syncProducts = async () => {
         retailPrice,
         innerMaterials,
         outerMaterials,
-        functions,
         status,
       } = model
 
