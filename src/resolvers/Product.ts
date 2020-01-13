@@ -151,7 +151,7 @@ export const ProductMutations = {
         },
         userRequestObject.id
       ).catch(e => {
-        throw e
+        console.error(e)
       })
       let customerToSeasonsTransaction = await createShippingLabel(
         {
@@ -161,7 +161,7 @@ export const ProductMutations = {
         },
         userRequestObject.id
       ).catch(e => {
-        throw e
+        console.error(e)
       })
 
       // Create reservation records in prisma and airtable
@@ -185,8 +185,8 @@ export const ProductMutations = {
       await createReservation(
         userRequestObject.email,
         reservationData,
-        seasonsToCustomerTransaction.formatted_error,
-        customerToSeasonsTransaction.formatted_error
+        (seasonsToCustomerTransaction as ShippoTransaction).formatted_error,
+        (customerToSeasonsTransaction as ShippoTransaction).formatted_error
       )
 
       await updateAddedBagItems(ctx.prisma, newProductVariantsBeingReserved)
@@ -234,7 +234,7 @@ export const ProductMutations = {
           productVariant: {
             id_in: items,
           },
-          status: "Reserved",
+          status_not: "Added",
         },
       },
       `{
@@ -355,12 +355,13 @@ const updateProductVariantCounts = async (
         const aProductVariant = productVariants.find(
           a => a.model.sKU === variant.sku
         )
-
-        aProductVariant.patchUpdate({
-          "Reservable Count": reservable,
-          "Reserved Count": reserved,
-          "Non-Reservable Count": nonReservable,
-        })
+        if (aProductVariant) {
+          aProductVariant.patchUpdate({
+            "Reservable Count": reservable,
+            "Reserved Count": reserved,
+            "Non-Reservable Count": nonReservable,
+          })
+        }
       } catch (e) {
         console.log(e)
       }
