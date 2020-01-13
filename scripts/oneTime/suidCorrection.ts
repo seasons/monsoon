@@ -23,11 +23,8 @@ import { getCorrespondingAirtableProductVariant } from "../utils"
 
 export const SUIDcorrection = async (
   scopeBrand?: mismatchedBrand,
-  print?: boolean
+  print: boolean = false
 ) => {
-  if (print == null) {
-    print = false
-  }
   // Get all the physical products from airtable
   const allPrismaProducts = await db.query.products(
     {
@@ -83,6 +80,7 @@ export const SUIDcorrection = async (
       for (let variant of product.variants) {
         const sizeCode = sizeToSizeCode(variant.size)
         const sku = `${brandCode}-${colorCode}-${sizeCode}-${styleCode}`
+
         if (sku !== variant.sku) {
           skusToChange.push(variant.sku)
           skuChangesMap[variant.sku] = sku

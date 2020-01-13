@@ -1,7 +1,7 @@
 import { getAllBrands, getAllCategories, getAllProducts } from "./utils"
 import { prisma, ProductCreateInput } from "../prisma"
 import slugify from "slugify"
-import { isEmpty, uniqBy } from "lodash"
+import { isEmpty } from "lodash"
 
 export const syncProducts = async () => {
   const allBrands = await getAllBrands()
@@ -39,7 +39,6 @@ export const syncProducts = async () => {
         retailPrice,
         innerMaterials,
         outerMaterials,
-        functions,
         status,
       } = model
 
@@ -103,4 +102,4 @@ export const syncProducts = async () => {
   }
 }
 
-syncProducts()
+// syncProducts()

@@ -131,5 +131,3 @@ function getLeafNodes(nodes, result = []) {
   }
   return result
 }
-
-// syncCategories()

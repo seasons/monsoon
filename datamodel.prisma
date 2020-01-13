@@ -45,9 +45,12 @@ enum Material {
   OrganicCotton
   Polyamide
   Polyester
+  Polyethylene
   Polyurethane
   PolyurethanicResin
+  PVC
   Rayon
+  RecycledPolyester
   RecycledWool
   Silk
   Suede
@@ -421,7 +424,7 @@ type ProductRequest {
   priceCurrency: String!
   productID: String!
   reason: String!
-  sku: String! 
+  sku: String!
   url: String!
   user: User!
 }

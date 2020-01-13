@@ -10,12 +10,11 @@ import {
   prisma,
   InventoryStatus,
   PhysicalProductCreateInput,
-  ProductVariantUpdateInput,
   ProductVariantCreateInput,
 } from "../prisma"
 import { sizeToSizeCode } from "../utils"
 import { base } from "./config"
-import { isEmpty, first } from "lodash"
+import { isEmpty } from "lodash"
 
 const SeasonsLocationID = "recvzTcW19kdBPqf4"
 
@@ -35,10 +34,7 @@ export const syncProductVariants = async () => {
       const brand = allBrands.findByIds(product.model.brand)
       const color = allColors.find(x => x.model.name === product.model.color)
       const location = allLocations.find(x => x.id === SeasonsLocationID)
-      const productsForBrand = allProducts.filter(
-        p => first(p.model.brand) === first(product.model.brand)
-      )
-      const styleNumber = productsForBrand.indexOf(product) + 1
+      const styleNumber = product.model.styleCode
 
       if (isEmpty(model) || isEmpty(brand) || isEmpty(product)) {
         continue
@@ -215,5 +211,3 @@ const createMorePhysicalProductsIfNeeded: CreateMorePhysicalProductsFunction = a
       } as PhysicalProductCreateInput)
   )
 }
-
-syncProductVariants()
