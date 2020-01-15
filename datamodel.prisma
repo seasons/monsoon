@@ -16,6 +16,7 @@ enum Size {
   M
   L
   XL
+  XXL
 }
 
 enum Material {
@@ -41,6 +42,7 @@ enum Material {
   Lyocell
   MerinoWool
   Modacrylic
+  Mohair
   Nylon
   OrganicCotton
   Polyamide
