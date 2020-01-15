@@ -3590,6 +3590,7 @@ enum Material {
   Lyocell
   MerinoWool
   Modacrylic
+  Mohair
   Nylon
   OrganicCotton
   Polyamide
@@ -6542,6 +6543,7 @@ enum Size {
   M
   L
   XL
+  XXL
 }
 
 type Subscription {
