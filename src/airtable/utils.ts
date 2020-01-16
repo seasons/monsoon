@@ -95,7 +95,7 @@ export const getAllProducts = async () => {
 }
 
 export const getAllProductVariants = async () => {
-  return getAll("Product Variants", null, "luc")
+  return getAll("Product Variants")
 }
 
 export const getAllPhysicalProducts = async () => {
