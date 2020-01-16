@@ -77,9 +77,14 @@
     "typescript": "3.2.2"
   },
   "devDependencies": {
+    "@babel/core": "^7.8.3",
+    "@babel/preset-env": "^7.8.3",
+    "@babel/preset-typescript": "^7.8.3",
     "@types/bcryptjs": "2.4.2",
     "@types/jest": "^24.0.24",
     "@types/node": "10.14.17",
+    "apollo-server-testing": "^2.9.16",
+    "babel-jest": "^24.9.0",
     "dotenv-cli": "1.4.0",
     "graceful-fs": "^4.2.2",
     "jest": "^24.9.0",
@@ -96,5 +101,21 @@
     "singleQuote": false,
     "trailingComma": "es5",
     "bracketSpacing": true
+  },
+  "jest": {
+    "setupFilesAfterEnv": [
+      "<rootDir>/src/tests/setupJest.ts"
+    ],
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/dist/"
+    ],
+    "moduleFileExtensions": [
+      "js",
+      "jsx",
+      "json",
+      "ts",
+      "tsx"
+    ]
   }
 }
