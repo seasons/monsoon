@@ -16,6 +16,7 @@ enum Size {
   M
   L
   XL
+  XXL
 }
 
 enum Material {
@@ -41,13 +42,17 @@ enum Material {
   Lyocell
   MerinoWool
   Modacrylic
+  Mohair
   Nylon
   OrganicCotton
   Polyamide
   Polyester
+  Polyethylene
   Polyurethane
   PolyurethanicResin
+  PVC
   Rayon
+  RecycledPolyester
   RecycledWool
   Silk
   Suede
@@ -110,6 +115,7 @@ enum PhysicalProductStatus {
   Used
   Damaged
   Clean
+  Lost
 }
 
 enum ProductStatus {
@@ -121,13 +127,18 @@ enum ReservationStatus {
   New
   OnHold
   Packed
-  Processing
-  InTransit
   Shipped
+  InTransit
   Received
   Cancelled
-  Retrieved
   Completed
+  Cancelled
+}
+
+enum BagItemStatus {
+  Added
+  Reserved
+  Received
 }
 
 enum Plan {
@@ -330,17 +341,13 @@ type CustomerDetail {
   updatedAt: DateTime! @updatedAt
 }
 
-type Bag {
+type BagItem {
   id: ID! @id
-  heldItems: [PhysicalProduct]!
-  wantedItems: [ProductVariant]!
-  customer: Customer! @relation(link: TABLE)
-}
-
-type WantedProduct {
-  id: ID! @id
+  customer: Customer!
   productVariant: ProductVariant!
-  customer: Customer! @relation(link: TABLE)
+  position: Int
+  saved: Boolean
+  status: BagItemStatus!
 }
 
 type Customer {
@@ -350,8 +357,6 @@ type Customer {
   detail: CustomerDetail
   billingInfo: BillingInfo
   plan: Plan
-  bag: Bag!
-  savedProducts: [Product!]!
   reservations: [Reservation] @relation(name: "CustomerToReservation")
 }
 
@@ -367,7 +372,7 @@ type Reservation {
   returnedPackage: Package @relation(name: "CustomerToSeasonsPackage")
   location: Location
   products: [PhysicalProduct!]!
-  reservationNumber: Int!
+  reservationNumber: Int! @unique
   shipped: Boolean!
   status: ReservationStatus!
   shippedAt: DateTime
@@ -377,14 +382,14 @@ type Reservation {
 }
 
 type Package {
-    id: ID! @id
-    items: [PhysicalProduct!]
-    shippingLabel: Label!
-    fromAddress: Location! @relation(name: "SenderAddress")
-    toAddress: Location! @relation(name: "RecipientAddress")
-    weight: Float
-    createdAt: DateTime! @createdAt
-    updatedAt: DateTime! @updatedAt
+  id: ID! @id
+  items: [PhysicalProduct!]
+  shippingLabel: Label!
+  fromAddress: Location! @relation(name: "SenderAddress")
+  toAddress: Location! @relation(name: "RecipientAddress")
+  weight: Float
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
 }
 
 type Label {
@@ -408,4 +413,19 @@ type BillingInfo {
   state: String
   country: String
   postal_code: String
+}
+
+type ProductRequest {
+  id: ID! @id
+  brand: String!
+  description: String!
+  images: [String!]! @scalarList(strategy: RELATION)
+  name: String!
+  price: Int!
+  priceCurrency: String!
+  productID: String!
+  reason: String!
+  sku: String!
+  url: String!
+  user: User!
 }

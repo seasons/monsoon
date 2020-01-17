@@ -1,0 +1,21 @@
+Number of mismatched SKUs:  4
+Mapping STIS-GRN-SS-011 to STIS-GRN-SS-010
+-- prisma product variant: STIS-GRN-SS-011 --> STIS-GRN-SS-010
+-- airtable product variant rec7aTZXhy5Zc6LuO: STIS-GRN-SS-011 --> STIS-GRN-SS-010
+-- prisma physical product: STIS-GRN-SS-011-01 --> STIS-GRN-SS-010-01
+-- airtable physical product recvRfQsMufOKkjB8 suid set to STIS-GRN-SS-010-01
+Mapping STIS-GRN-MM-011 to STIS-GRN-MM-010
+-- prisma product variant: STIS-GRN-MM-011 --> STIS-GRN-MM-010
+-- airtable product variant rec2aCRrLITfaSNP3: STIS-GRN-MM-011 --> STIS-GRN-MM-010
+-- prisma physical product: STIS-GRN-MM-011-01 --> STIS-GRN-MM-010-01
+-- airtable physical product rec6toIaeQJRpYOEw suid set to STIS-GRN-MM-010-01
+Mapping STIS-GRN-LL-011 to STIS-GRN-LL-010
+-- prisma product variant: STIS-GRN-LL-011 --> STIS-GRN-LL-010
+-- airtable product variant recCCZDZUnze16KfY: STIS-GRN-LL-011 --> STIS-GRN-LL-010
+-- prisma physical product: STIS-GRN-LL-011-01 --> STIS-GRN-LL-010-01
+-- airtable physical product recZKamYgeuNMeEuV suid set to STIS-GRN-LL-010-01
+Mapping STIS-GRN-XL-011 to STIS-GRN-XL-010
+-- prisma product variant: STIS-GRN-XL-011 --> STIS-GRN-XL-010
+-- airtable product variant rec2Hh3nXX51K0tA8: STIS-GRN-XL-011 --> STIS-GRN-XL-010
+-- prisma physical product: STIS-GRN-XL-011-01 --> STIS-GRN-XL-010-01
+-- airtable physical product recG56J315Q0jklR3 suid set to STIS-GRN-XL-010-01

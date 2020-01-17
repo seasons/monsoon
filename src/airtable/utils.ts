@@ -14,8 +14,9 @@ interface AirtableData extends Array<any> {
 
 const getAll: (
   name: string,
-  filterFormula?: string
-) => Promise<AirtableData> = async (name, filterFormula) => {
+  filterFormula?: string,
+  view?: string
+) => Promise<AirtableData> = async (name, filterFormula, view = "Script") => {
   let data = [] as AirtableData
 
   data.findByIds = (ids = []) => {
@@ -28,7 +29,7 @@ const getAll: (
 
   return new Promise((resolve, reject) => {
     const options: { view: string; filterByFormula?: string } = {
-      view: "Grid view",
+      view,
     }
 
     if (filterFormula && filterFormula.length) {
@@ -59,6 +60,10 @@ const getAll: (
 
 export const getAllBrands = async () => {
   return getAll("Brands")
+}
+
+export const getAllReservations = async () => {
+  return getAll("Reservations")
 }
 
 export const getAllCollections = async () => {

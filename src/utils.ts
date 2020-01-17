@@ -1,9 +1,10 @@
-import { Prisma, Customer, User, Location } from "./prisma"
+import { Prisma, Customer, User, Location, InventoryStatus } from "./prisma"
 import { Binding } from "graphql-binding"
 import { Request, Response } from "express"
 import crypto from "crypto"
 import sgMail from "@sendgrid/mail"
 import Analytics from "analytics-node"
+import { AirtableInventoryStatus } from "./airtable/updatePhysicalProduct"
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
@@ -13,6 +14,7 @@ export enum ProductSize {
   M = "M",
   L = "L",
   XL = "XL",
+  XXL = "XXL",
 }
 
 export const seasonsIDFromProductVariant = (product, productVariant) => {}
@@ -29,6 +31,8 @@ export const sizeToSizeCode = (size: ProductSize) => {
       return "LL"
     case ProductSize.XL:
       return "XL"
+    case ProductSize.XXL:
+      return "XXL"
   }
   return ""
 }
@@ -147,4 +151,34 @@ export async function getPrismaLocationFromSlug(
       resolve(prismaLocation)
     }
   })
+}
+
+export async function calcShipmentWeightFromProductVariantIDs(
+  prisma: Prisma,
+  itemIDs: Array<string>
+): Promise<number> {
+  const shippingBagWeight = 1
+  const productVariants = await prisma.productVariants({
+    where: { id_in: itemIDs },
+  })
+  console.log(`items returned: ${itemIDs}`)
+  return productVariants.reduce(function addProductWeight(acc, curProdVar) {
+    return acc + curProdVar.weight
+  }, shippingBagWeight)
+}
+
+export function airtableToPrismaInventoryStatus(
+  airtableStatus: AirtableInventoryStatus
+): InventoryStatus {
+  let prismaStatus
+  if (airtableStatus === "Reservable") {
+    prismaStatus = "Reservable"
+  }
+  if (airtableStatus === "Non Reservable") {
+    prismaStatus = "NonReservable"
+  }
+  if (airtableStatus === "Reserved") {
+    prismaStatus = "Reserved"
+  }
+  return prismaStatus
 }

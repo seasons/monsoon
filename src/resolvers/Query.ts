@@ -32,18 +32,24 @@ export const Query = {
             }
       const { first, skip } = args
       const products = await ctx.db.query.products(
-        { first, skip, ...filter },
+        { first, skip, orderBy: "createdAt_DESC", ...filter },
         info
       )
       return products
     }
 
-    const result = await ctx.db.query.products(args, info)
+    const result = await ctx.db.query.products(
+      { ...args, orderBy: "createdAt_DESC" },
+      info
+    )
     return result
   },
 
   product: (parent, args, ctx: Context, info) =>
     ctx.db.query.product(args, info),
+
+  productRequests: (parent, args, ctx: Context, info) =>
+    ctx.db.query.productRequests(args, info),
 
   collections: (parent, args, ctx: Context, info) =>
     ctx.db.query.collections(args, info),
