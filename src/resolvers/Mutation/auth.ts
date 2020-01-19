@@ -9,6 +9,7 @@ import { Context, getCustomerFromUserID } from "../../utils"
 import { CustomerDetail } from "../../prisma"
 import { UserInputError, ForbiddenError } from "apollo-server"
 import { createOrUpdateAirtableUser } from "../../airtable/createOrUpdateUser"
+import request from "request"
 
 export const auth = {
   // The signup mutation signs up users with a "Customer" role.
@@ -137,6 +138,35 @@ export const auth = {
       user,
     }
   },
+
+  async resetPassword(
+    obj,
+    { email },
+    ctx: Context,
+    info
+  ) {
+    return new Promise(function (resolve, reject) {
+      request(
+        {
+          method: "Post",
+          url: `https://${process.env.AUTH0_DOMAIN}/dbconnections/change_password`,
+          headers: { "content-type": "application/json" },
+          body: {
+            client_id: `${process.env.AUTH0_CLIENTID}`,
+            connection: `${process.env.AUTH0_DB_CONNECTION}`,
+            email,
+          },
+          json: true,
+        },
+        async (error, response, body) => {
+          if (error) {
+            reject(error);
+          }
+          resolve({ message: body });
+        }
+      )
+    });
+  }
 }
 
 // TODO: Write code for address
