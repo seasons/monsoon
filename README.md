@@ -21,11 +21,13 @@ You can explore the Monsoon API using the staging [GraphQL Playground](https://e
 ## Requirements
 
 1. You need to have both the [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html) and [Serverless CLI](https://serverless.com/) installed and setup;
+
 ```sh
 npm install -g serverless
 ```
+
 2. Docker command line tools. You can get them by visiting the [Docker Website](https://www.docker.com/products/docker-desktop) and downloading the desktop client.
-3. Access to the Seasons [Airtable](https://airtable.com/) workspace. 
+3. Access to the Seasons [Airtable](https://airtable.com/) workspace.
 
 ## Getting started
 
@@ -45,6 +47,7 @@ yarn seed-db
 # 3. Start server (runs on http://localhost:4000/playground) and open GraphQL Playground
 yarn start
 ```
+
 To verify the server is setup properly. go open the [playground](http://localhost:4000/playground) and run the following query
 
 ```graphql
@@ -71,6 +74,10 @@ To deploy monsoon onto AWS services, you need to configure serverless with AWS A
 
 - `yarn start` starts GraphQL server on `http://localhost:3000`
 - `yarn prisma <subcommand>` gives access to local version of Prisma CLI (e.g. `yarn prisma deploy`)
+
+Monsoon ships with a command line interface. To install it run `yarn link`. Once that's complete, you can use the following commands:
+
+- `monsoon sync-db [base]` where `base` can be (`colors`, `categories,`brands`,`products`,`product-variants`)
 
 > **Note**: We recommend that you're using `yarn dev` during development as it will give you access to the GraphQL API or your server (defined by the [application schema](./src/schema.graphql)) as well as to the Prisma API directly (defined by the [Prisma database schema](./generated/prisma.graphql)). If you're starting the server with `yarn start`, you'll only be able to access the API of the application schema.
 

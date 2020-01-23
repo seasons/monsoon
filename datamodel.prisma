@@ -71,6 +71,7 @@ enum Material {
   Wool
   Denim
   Leather
+  RecycledPolyester
 }
 
 enum Department {
