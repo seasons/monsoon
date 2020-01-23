@@ -5,7 +5,7 @@ import { Context } from "../utils"
 
 export const ProductRequestMutations = {
   async addProductRequest(parent, { reason, url }, ctx: Context, info) {
-    return new Promise(function (resolve, reject) {
+    return new Promise((resolve, reject) => {
       // Set jar: true to avoid possible redirect loop
       request({ jar: true, url }, async (error, response, body) => {
         // Handle a generic error
@@ -41,7 +41,7 @@ export const ProductRequestMutations = {
   },
 
   async deleteProductRequest(parent, { requestID }, ctx: Context, info) {
-    return new Promise(async function (resolve, reject) {
+    return new Promise(async (resolve, reject) => {
       try {
         const productRequest = await ctx.prisma.deleteProductRequest({
           id: requestID,
