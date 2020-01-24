@@ -4807,7 +4807,7 @@ export interface ProductRequestUpdateInput {
   reason?: Maybe<String>;
   sku?: Maybe<String>;
   url?: Maybe<String>;
-  user?: Maybe<UserUpdateOneInput>;
+  user?: Maybe<UserUpdateOneRequiredInput>;
 }
 
 export interface ColorUpdateOneInput {
@@ -4831,7 +4831,7 @@ export interface ProductRequestCreateInput {
   reason: String;
   sku?: Maybe<String>;
   url: String;
-  user?: Maybe<UserCreateOneInput>;
+  user: UserCreateOneInput;
 }
 
 export interface ProductFunctionUpdateManyInput {

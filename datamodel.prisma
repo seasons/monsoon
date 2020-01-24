@@ -429,5 +429,5 @@ type ProductRequest {
   reason: String!
   sku: String
   url: String!
-  user: User
+  user: User!
 }
