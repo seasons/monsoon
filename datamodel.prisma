@@ -419,15 +419,15 @@ type BillingInfo {
 
 type ProductRequest {
   id: ID! @id
-  brand: String!
-  description: String!
-  images: [String!]! @scalarList(strategy: RELATION)
-  name: String!
-  price: Int!
-  priceCurrency: String!
-  productID: String!
+  brand: String
+  description: String
+  images: [String!] @scalarList(strategy: RELATION)
+  name: String
+  price: Int
+  priceCurrency: String
+  productID: String
   reason: String!
-  sku: String!
+  sku: String
   url: String!
-  user: User!
+  user: User
 }

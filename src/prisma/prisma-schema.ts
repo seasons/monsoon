@@ -4738,17 +4738,17 @@ type ProductPreviousValues {
 
 type ProductRequest {
   id: ID!
-  brand: String!
-  description: String!
+  brand: String
+  description: String
   images: [String!]!
-  name: String!
-  price: Int!
-  priceCurrency: String!
-  productID: String!
+  name: String
+  price: Int
+  priceCurrency: String
+  productID: String
   reason: String!
-  sku: String!
+  sku: String
   url: String!
-  user: User!
+  user: User
 }
 
 type ProductRequestConnection {
@@ -4763,17 +4763,17 @@ input ProductRequestCreateimagesInput {
 
 input ProductRequestCreateInput {
   id: ID
-  brand: String!
-  description: String!
+  brand: String
+  description: String
   images: ProductRequestCreateimagesInput
-  name: String!
-  price: Int!
-  priceCurrency: String!
-  productID: String!
+  name: String
+  price: Int
+  priceCurrency: String
+  productID: String
   reason: String!
-  sku: String!
+  sku: String
   url: String!
-  user: UserCreateOneInput!
+  user: UserCreateOneInput
 }
 
 type ProductRequestEdge {
@@ -4806,15 +4806,15 @@ enum ProductRequestOrderByInput {
 
 type ProductRequestPreviousValues {
   id: ID!
-  brand: String!
-  description: String!
+  brand: String
+  description: String
   images: [String!]!
-  name: String!
-  price: Int!
-  priceCurrency: String!
-  productID: String!
+  name: String
+  price: Int
+  priceCurrency: String
+  productID: String
   reason: String!
-  sku: String!
+  sku: String
   url: String!
 }
 
@@ -4851,7 +4851,7 @@ input ProductRequestUpdateInput {
   reason: String
   sku: String
   url: String
-  user: UserUpdateOneRequiredInput
+  user: UserUpdateOneInput
 }
 
 input ProductRequestUpdateManyMutationInput {
