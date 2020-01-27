@@ -32,7 +32,7 @@
     "seed-db:staging": "yarn seed-db -- dotenv_config_path=.env.staging",
     "seed-db:production": "yarn seed-db -- dotenv_config_path=.env.production",
     "healthCheck:production": "node -r dotenv/config -r ts-node/register scripts/airtableToPrismaHealthCheck.ts -- dotenv_config_path=.env.production",
-    "typeorm:generate-entities": "typeorm-model-generator -u prisma -d prisma -s 'monsoon$dev' -x prisma -e postgres -p 9876 -o ./src"
+    "typeorm:generate-entities": "typeorm-model-generator -u prisma -d prisma -s 'monsoon$dev' -x prisma -e postgres -p 9876 -o ./src && rm src/tsconfig.json && rm src/ormconfig.json"
   },
   "dependencies": {
     "@auth0/auth0-spa-js": "^1.3.0",
@@ -64,11 +64,13 @@
     "jsonwebtoken": "8.5.1",
     "jwks-rsa": "^1.6.0",
     "lodash": "^4.17.15",
+    "pg": "^7.17.1",
     "postgraphile": "^4.4.3",
     "postgraphile-apollo-server": "^0.1.1",
     "prisma": "^1.34.8",
     "prisma-binding": "^2.3.16",
     "prisma-client-lib": "^1.34.8",
+    "reflect-metadata": "^0.1.13",
     "request": "^2.88.0",
     "sendmail": "^1.6.1",
     "serverless": "1.59.3",

@@ -8,6 +8,8 @@ import cors from "cors"
 import { app as webhooks } from "./webhooks"
 import bodyParser from "body-parser"
 
+import "reflect-metadata"
+
 // Set up Sentry, which automatically reports on uncaught exceptions
 const Sentry = require("@sentry/node")
 Sentry.init({

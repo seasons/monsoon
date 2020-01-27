@@ -9480,7 +9480,7 @@ pg-types@~1.12.1:
     pgpass "1.x"
     semver "4.3.2"
 
-pg@^7.17.0:
+pg@^7.17.0, pg@^7.17.1:
   version "7.17.1"
   resolved "https://registry.yarnpkg.com/pg/-/pg-7.17.1.tgz#1eb4d900e1f21f43978b306972b02a2329138755"
   integrity sha512-SYWEip6eADsgDQIZk0bmB2JDOrC8Xu6z10KlhlXl03NSomwVmHB6ZTVyDCwOfT6bXHI8QndJdk5XxSSRXikaSA==
