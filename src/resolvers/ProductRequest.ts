@@ -5,12 +5,13 @@ import { Context } from "../utils"
 
 export const ProductRequestMutations = {
   async addProductRequest(parent, { reason, url }, ctx: Context, info) {
-    return new Promise(function(resolve, reject) {
+    return new Promise((resolve, reject) => {
       // Set jar: true to avoid possible redirect loop
       request({ jar: true, url }, async (error, response, body) => {
         // Handle a generic error
         if (error) {
           reject(error)
+          return
         }
         const $ = cheerio.load(body, { xmlMode: false })
 
@@ -18,22 +19,29 @@ export const ProductRequestMutations = {
         let productRequest = await scrapeLDJSON($, reason, url, ctx)
         if (productRequest) {
           resolve(productRequest)
+          return
         }
 
         // Then try looking for og (open graph) meta tags
         productRequest = await scrapeOGTags($, reason, url, ctx)
         if (productRequest) {
           resolve(productRequest)
+          return
         }
 
-        // Otherwise, means we failed to scrape URL
-        reject("Failed to scrape product information from URL")
+        // Otherwise, means we failed to scrape URL so just store 
+        // the reason and URL itself
+        productRequest = await ctx.prisma.createProductRequest({
+          reason,
+          url
+        })
+        resolve(productRequest)
       })
     })
   },
 
   async deleteProductRequest(parent, { requestID }, ctx: Context, info) {
-    return new Promise(async function(resolve, reject) {
+    return new Promise(async (resolve, reject) => {
       try {
         const productRequest = await ctx.prisma.deleteProductRequest({
           id: requestID,

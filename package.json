@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "author": "Luc Succes <l2succes@gmail.com>",
   "license": "MIT",
+  "bin": "bin/sync.js",
   "main": "dist/index.js",
   "engines": {
     "node": "10.x.x"
@@ -95,8 +96,9 @@
     "serverless-dotenv-plugin": "^2.1.1",
     "serverless-offline": "^5.10.1",
     "serverless-plugin-include-dependencies": "^3.2.1",
-    "serverless-plugin-typescript": "^1.1.7",
-    "typeorm-model-generator": "^0.3.5"
+    "serverless-plugin-typescript": "1.1.7",
+    "typeorm-model-generator": "^0.3.5",
+    "yargs": "^15.1.0"
   },
   "prettier": {
     "semi": false,

@@ -173,6 +173,7 @@ type Mutation {
     details: CustomerDetailCreateInput
   ): AuthPayload!
   login(email: String!, password: String!): AuthPayload!
+  resetPassword(email: String!): ResetPasswordPayload!
   addCustomerDetails(
     details: CustomerDetailCreateInput!
     status: CustomerStatus
@@ -204,6 +205,10 @@ type AuthPayload {
   refreshToken: String!
   expiresIn: Int!
   user: User!
+}
+
+type ResetPasswordPayload {
+  message: String!
 }
 
 type Image {

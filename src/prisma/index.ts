@@ -4806,7 +4806,7 @@ export interface ProductRequestUpdateInput {
   reason?: Maybe<String>;
   sku?: Maybe<String>;
   url?: Maybe<String>;
-  user?: Maybe<UserUpdateOneRequiredInput>;
+  user?: Maybe<UserUpdateOneInput>;
 }
 
 export interface ColorUpdateOneInput {
@@ -4820,17 +4820,17 @@ export interface ColorUpdateOneInput {
 
 export interface ProductRequestCreateInput {
   id?: Maybe<ID_Input>;
-  brand: String;
-  description: String;
+  brand?: Maybe<String>;
+  description?: Maybe<String>;
   images?: Maybe<ProductRequestCreateimagesInput>;
-  name: String;
-  price: Int;
-  priceCurrency: String;
-  productID: String;
+  name?: Maybe<String>;
+  price?: Maybe<Int>;
+  priceCurrency?: Maybe<String>;
+  productID?: Maybe<String>;
   reason: String;
-  sku: String;
+  sku?: Maybe<String>;
   url: String;
-  user: UserCreateOneInput;
+  user?: Maybe<UserCreateOneInput>;
 }
 
 export interface ProductFunctionUpdateManyInput {
@@ -9050,15 +9050,15 @@ export interface BagItemConnectionSubscription
 
 export interface ProductRequest {
   id: ID_Output;
-  brand: String;
-  description: String;
+  brand?: String;
+  description?: String;
   images: String[];
-  name: String;
-  price: Int;
-  priceCurrency: String;
-  productID: String;
+  name?: String;
+  price?: Int;
+  priceCurrency?: String;
+  productID?: String;
   reason: String;
-  sku: String;
+  sku?: String;
   url: String;
 }
 
@@ -10738,15 +10738,15 @@ export interface ProductFunctionNullablePromise
 
 export interface ProductRequestPreviousValues {
   id: ID_Output;
-  brand: String;
-  description: String;
+  brand?: String;
+  description?: String;
   images: String[];
-  name: String;
-  price: Int;
-  priceCurrency: String;
-  productID: String;
+  name?: String;
+  price?: Int;
+  priceCurrency?: String;
+  productID?: String;
   reason: String;
-  sku: String;
+  sku?: String;
   url: String;
 }
 
