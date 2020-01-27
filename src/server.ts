@@ -2,6 +2,7 @@ import { schema } from "./schema"
 import { prisma } from "./prisma"
 import { Prisma } from "prisma-binding"
 import Analytics from "analytics-node"
+import { createConnection } from "typeorm"
 
 var analytics = new Analytics(process.env.SEGMENT_MONSOON_WRITE_KEY)
 
@@ -21,30 +22,38 @@ export const db = new Prisma({
   secret: process.env.PRISMA_SECRET,
 })
 
-export const serverOptions = {
-  schema,
-  context: ({ req, res }) => ({
-    req,
-    res,
-    prisma,
-    db,
-    /* track events on segment */
-    analytics,
-  }),
-  introspection: true,
-  formatError: error => {
-    console.log(error)
-    return error
-  },
-  playground: {
-    settings: {
-      "editor.theme": "dark" as any,
+export const createServerOptions = async () => {
+  const typeorm = await createConnection({
+    type: "postgres",
+    url: process.env.DB_URL,
+  })
+
+  return {
+    schema,
+    context: ({ req, res }) => ({
+      req,
+      res,
+      prisma,
+      db,
+      /* track events on segment */
+      analytics,
+      typeorm,
+    }),
+    introspection: true,
+    formatError: error => {
+      console.log(error)
+      return error
     },
-    tabs: [
-      {
-        endpoint: "/",
-        query: defaultQuery,
+    playground: {
+      settings: {
+        "editor.theme": "dark" as any,
       },
-    ],
-  },
+      tabs: [
+        {
+          endpoint: "/",
+          query: defaultQuery,
+        },
+      ],
+    },
+  }
 }
