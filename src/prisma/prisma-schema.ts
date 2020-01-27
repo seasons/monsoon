@@ -4748,7 +4748,7 @@ type ProductRequest {
   reason: String!
   sku: String
   url: String!
-  user: User
+  user: User!
 }
 
 type ProductRequestConnection {
@@ -4773,7 +4773,7 @@ input ProductRequestCreateInput {
   reason: String!
   sku: String
   url: String!
-  user: UserCreateOneInput
+  user: UserCreateOneInput!
 }
 
 type ProductRequestEdge {
@@ -4851,7 +4851,7 @@ input ProductRequestUpdateInput {
   reason: String
   sku: String
   url: String
-  user: UserUpdateOneInput
+  user: UserUpdateOneRequiredInput
 }
 
 input ProductRequestUpdateManyMutationInput {
