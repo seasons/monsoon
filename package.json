@@ -19,6 +19,7 @@
     "clean:sls": "rm -rf .build && rm -rf .serverless",
     "deploy:sls-staging": "serverless deploy --verbose --stage qa --region us-east-1 --env=staging",
     "deploy:sls-production": "serverless deploy --verbose --stage prod --region us-east-1 --env=production",
+    "test": "jest",
     "postinstall": "npm run build",
     "start": "dotenv -- nodemon -e ts,graphql -x ts-node src/index.ts",
     "debug": "dotenv -- nodemon -e ts,graphql -x node --inspect -r dotenv/config -r ts-node/register src/index.ts",
@@ -31,7 +32,7 @@
     "seed-db:staging": "yarn seed-db -- dotenv_config_path=.env.staging",
     "seed-db:production": "yarn seed-db -- dotenv_config_path=.env.production",
     "healthCheck:production": "node -r dotenv/config -r ts-node/register scripts/airtableToPrismaHealthCheck.ts -- dotenv_config_path=.env.production",
-    "test": "jest"
+    "typeorm:generate-entities": "typeorm-model-generator -u prisma -d prisma -s 'monsoon$dev' -x prisma -e postgres -p 9876 -o ./src"
   },
   "dependencies": {
     "@auth0/auth0-spa-js": "^1.3.0",
@@ -97,7 +98,7 @@
     "serverless-offline": "^5.10.1",
     "serverless-plugin-include-dependencies": "^3.2.1",
     "serverless-plugin-typescript": "1.1.7",
-    "typeorm-model-generator": "^0.3.5",
+    "typeorm-model-generator": "^0.4.0",
     "yargs": "^15.1.0"
   },
   "prettier": {

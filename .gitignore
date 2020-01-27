@@ -11,3 +11,5 @@ node_modules
 .build
 .DS_Store
 devnotes.txt
+src/tsconfig.json
+src/ormconfig.json
