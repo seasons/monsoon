@@ -2,7 +2,9 @@ import { schema } from "./schema"
 import { prisma } from "./prisma"
 import { Prisma } from "prisma-binding"
 import Analytics from "analytics-node"
-import { createConnection } from "typeorm"
+import { createConnection, getManager } from "typeorm"
+import { entities } from "./entities"
+import { Product } from "./entities/Product"
 
 var analytics = new Analytics(process.env.SEGMENT_MONSOON_WRITE_KEY)
 
@@ -26,7 +28,18 @@ export const createServerOptions = async () => {
   const typeorm = await createConnection({
     type: "postgres",
     url: process.env.DB_URL,
+    logging: true,
+    // synchronize: true,
+    entities: entities,
   })
+
+  const entityManager = getManager()
+  const product = await entityManager.findOne(
+    Product,
+    "ck2xmac05023t0819pxfd02te"
+  )
+
+  console.log(product)
 
   return {
     schema,
