@@ -1237,6 +1237,7 @@ export type UserRole = "Admin" | "Customer" | "Partner";
 
 export type ReservationStatus =
   | "New"
+  | "InQueue"
   | "OnHold"
   | "Packed"
   | "Shipped"

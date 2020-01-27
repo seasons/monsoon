@@ -6363,6 +6363,7 @@ input ReservationScalarWhereInput {
 
 enum ReservationStatus {
   New
+  InQueue
   OnHold
   Packed
   Shipped
