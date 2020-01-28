@@ -174,7 +174,11 @@ export const ProductMutations = {
       })
 
       // Update relevant BagItems
-      await updateAddedBagItems(ctx.prisma, newProductVariantsBeingReserved)
+      const rollbackBagItemsUpdate = await updateAddedBagItems(
+        ctx.prisma,
+        newProductVariantsBeingReserved
+      )
+      rollbackFuncs.push(rollbackBagItemsUpdate)
 
       // Create reservation records in prisma and airtable
       const reservationData = await createReservationData(
@@ -947,18 +951,34 @@ function checkLastReservation(
 async function updateAddedBagItems(
   prisma: Prisma,
   productVariantIds: Array<ID_Input>
-) {
-  return await prisma.updateManyBagItems({
+): Promise<Function> {
+  // Update the bag items
+  const bagItemsToUpdate = await prisma.bagItems({
     where: {
       productVariant: {
         id_in: productVariantIds,
       },
       status: "Added",
     },
+  })
+  const bagItemsToUpdateIds = bagItemsToUpdate.map(a => a.id)
+  await prisma.updateManyBagItems({
+    where: { id_in: bagItemsToUpdateIds },
     data: {
       status: "Reserved",
     },
   })
+
+  // Create and return a rollback function
+  const rollbackFunc = async () => {
+    await prisma.updateManyBagItems({
+      where: { id_in: bagItemsToUpdateIds },
+      data: {
+        status: "Added",
+      },
+    })
+  }
+  return rollbackFunc
 }
 
 async function getReservedBagItems(ctx) {
