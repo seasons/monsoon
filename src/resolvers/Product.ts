@@ -123,10 +123,11 @@ export const ProductMutations = {
         rollbackUpdateProductVariantCounts,
       ] = await updateProductVariantCounts(newProductVariantsBeingReserved, ctx)
       rollbackFuncs.push(rollbackUpdateProductVariantCounts)
-      await updatePhysicalProductInventoryStatusesOnPrisma(
+      const rollbackPrismaPhysicalProductStatuses = await updatePhysicalProductInventoryStatusesOnPrisma(
         ctx.prisma,
         physicalProductsBeingReserved as PhysicalProduct[]
       )
+      rollbackFuncs.push(rollbackPrismaPhysicalProductStatuses)
       await updatePhysicalProductInventoryStatusesOnAirtable(
         physicalProductsBeingReserved as PhysicalProduct[]
       )
@@ -268,14 +269,20 @@ export const ProductMutations = {
 
 async function updatePhysicalProductInventoryStatusesOnPrisma(
   prisma: Prisma,
-  products: Array<PhysicalProduct>
-) {
-  for (let prod of products) {
-    await prisma.updatePhysicalProduct({
-      data: { inventoryStatus: "Reserved" },
-      where: { id: prod.id },
+  physicalProducts: Array<PhysicalProduct>
+): Promise<Function> {
+  const physicalProductIDs = physicalProducts.map(a => a.id)
+  await prisma.updateManyPhysicalProducts({
+    where: { id_in: physicalProductIDs },
+    data: { inventoryStatus: "Reserved" },
+  })
+  const rollbackUpdate = async () => {
+    await prisma.updateManyPhysicalProducts({
+      where: { id_in: physicalProductIDs },
+      data: { inventoryStatus: "Reservable" },
     })
   }
+  return rollbackUpdate
 }
 
 /* Returns back [ProductsBeingReserved, PhysicalProductsBeingReserved] */
