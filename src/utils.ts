@@ -14,6 +14,7 @@ export enum ProductSize {
   M = "M",
   L = "L",
   XL = "XL",
+  XXL = "XXL",
 }
 
 export const seasonsIDFromProductVariant = (product, productVariant) => {}
@@ -30,6 +31,8 @@ export const sizeToSizeCode = (size: ProductSize) => {
       return "LL"
     case ProductSize.XL:
       return "XL"
+    case ProductSize.XXL:
+      return "XXL"
   }
   return ""
 }

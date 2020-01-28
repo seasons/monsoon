@@ -3590,6 +3590,7 @@ enum Material {
   Lyocell
   MerinoWool
   Modacrylic
+  Mohair
   Nylon
   OrganicCotton
   Polyamide
@@ -4733,15 +4734,15 @@ type ProductPreviousValues {
 
 type ProductRequest {
   id: ID!
-  brand: String!
-  description: String!
+  brand: String
+  description: String
   images: [String!]!
-  name: String!
-  price: Int!
-  priceCurrency: String!
-  productID: String!
+  name: String
+  price: Int
+  priceCurrency: String
+  productID: String
   reason: String!
-  sku: String!
+  sku: String
   url: String!
   user: User!
 }
@@ -4758,15 +4759,15 @@ input ProductRequestCreateimagesInput {
 
 input ProductRequestCreateInput {
   id: ID
-  brand: String!
-  description: String!
+  brand: String
+  description: String
   images: ProductRequestCreateimagesInput
-  name: String!
-  price: Int!
-  priceCurrency: String!
-  productID: String!
+  name: String
+  price: Int
+  priceCurrency: String
+  productID: String
   reason: String!
-  sku: String!
+  sku: String
   url: String!
   user: UserCreateOneInput!
 }
@@ -4801,15 +4802,15 @@ enum ProductRequestOrderByInput {
 
 type ProductRequestPreviousValues {
   id: ID!
-  brand: String!
-  description: String!
+  brand: String
+  description: String
   images: [String!]!
-  name: String!
-  price: Int!
-  priceCurrency: String!
-  productID: String!
+  name: String
+  price: Int
+  priceCurrency: String
+  productID: String
   reason: String!
-  sku: String!
+  sku: String
   url: String!
 }
 
@@ -6542,6 +6543,7 @@ enum Size {
   M
   L
   XL
+  XXL
 }
 
 type Subscription {

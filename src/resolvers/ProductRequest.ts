@@ -1,39 +1,59 @@
 import * as cheerio from "cheerio"
 import request from "request"
 import { getUserFromContext } from "../auth/utils"
+import { User } from "../prisma"
 import { Context } from "../utils"
 
 export const ProductRequestMutations = {
   async addProductRequest(parent, { reason, url }, ctx: Context, info) {
-    return new Promise(function(resolve, reject) {
+    return new Promise((resolve, reject) => {
       // Set jar: true to avoid possible redirect loop
       request({ jar: true, url }, async (error, response, body) => {
         // Handle a generic error
         if (error) {
           reject(error)
+          return
         }
+
+        const user = await getUserFromContext(ctx)
+        if (!user) {
+          reject("Missing user from context")
+        }
+
         const $ = cheerio.load(body, { xmlMode: false })
 
         // First try looking for ld+json
-        let productRequest = await scrapeLDJSON($, reason, url, ctx)
+        let productRequest = await scrapeLDJSON($, reason, url, user, ctx)
         if (productRequest) {
           resolve(productRequest)
+          return
         }
 
         // Then try looking for og (open graph) meta tags
-        productRequest = await scrapeOGTags($, reason, url, ctx)
+        productRequest = await scrapeOGTags($, reason, url, user, ctx)
         if (productRequest) {
           resolve(productRequest)
+          return
         }
 
-        // Otherwise, means we failed to scrape URL
-        reject("Failed to scrape product information from URL")
+        // Otherwise, means we failed to scrape URL so just store 
+        // the reason and URL itself
+        productRequest = await ctx.prisma.createProductRequest({
+          reason,
+          url,
+          user: {
+            connect: {
+              id: user.id,
+            },
+          },
+        })
+        resolve(productRequest)
       })
     })
   },
 
   async deleteProductRequest(parent, { requestID }, ctx: Context, info) {
-    return new Promise(async function(resolve, reject) {
+    return new Promise(async (resolve, reject) => {
       try {
         const productRequest = await ctx.prisma.deleteProductRequest({
           id: requestID,
@@ -46,7 +66,7 @@ export const ProductRequestMutations = {
   },
 }
 
-const scrapeLDJSON = async ($, reason: string, url: string, ctx: Context) => {
+const scrapeLDJSON = async ($, reason: string, url: string, user: User, ctx: Context) => {
   // Search for json+ld in HTML body
   const ldJSONHTML = $("script[type='application/ld+json']").html()
   const ldJSON = JSON.parse(ldJSONHTML)
@@ -74,6 +94,7 @@ const scrapeLDJSON = async ($, reason: string, url: string, ctx: Context) => {
   ) {
     return await createProductRequest(
       ctx,
+      user,
       brand,
       description,
       images,
@@ -91,7 +112,7 @@ const scrapeLDJSON = async ($, reason: string, url: string, ctx: Context) => {
   }
 }
 
-const scrapeOGTags = async ($, reason: string, url: string, ctx: Context) => {
+const scrapeOGTags = async ($, reason: string, url: string, user: User, ctx: Context) => {
   const ogDescription = $('meta[property="og:description"]').attr("content")
   const ogPriceAmount = parseInt(
     $('meta[property="og:price:amount"]').attr("content")
@@ -121,6 +142,7 @@ const scrapeOGTags = async ($, reason: string, url: string, ctx: Context) => {
   ) {
     return await createProductRequest(
       ctx,
+      user,
       ogSiteName,
       ogDescription,
       ogImages,
@@ -139,6 +161,7 @@ const scrapeOGTags = async ($, reason: string, url: string, ctx: Context) => {
 
 const createProductRequest = async (
   ctx: Context,
+  user: User,
   brand: string,
   description: string,
   images: string[],
@@ -150,11 +173,6 @@ const createProductRequest = async (
   sku: string,
   url: string
 ) => {
-  const user = await getUserFromContext(ctx)
-  if (!user) {
-    return null
-  }
-
   try {
     const productRequest = await ctx.prisma.createProductRequest({
       brand,

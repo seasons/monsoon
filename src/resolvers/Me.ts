@@ -1,8 +1,6 @@
 import { Context } from "../utils"
 import { head } from "lodash"
 import { getUserRequestObject, getCustomerFromContext } from "../auth/utils"
-import * as cheerio from "cheerio"
-import request from "request"
 
 export const Me = {
   user: async (parent, args, ctx: Context) => {
