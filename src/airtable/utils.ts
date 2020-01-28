@@ -126,7 +126,7 @@ export const airtableToPrismaObject = record => {
   return obj
 }
 
-export async function createReservation(
+export async function createAirtableReservation(
   userEmail: string,
   data: ReservationCreateInput,
   shippingError: string,

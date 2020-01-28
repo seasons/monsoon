@@ -27,7 +27,7 @@ import {
 } from "../prisma"
 import {
   getAllProductVariants,
-  createReservation,
+  createAirtableReservation,
   getPhysicalProducts,
 } from "../airtable/utils"
 import { ApolloError } from "apollo-server"
@@ -117,7 +117,7 @@ export const ProductMutations = {
         newProductVariantsBeingReserved
       )
       const [
-        products,
+        productsBeingReserved,
         physicalProductsBeingReserved,
       ] = await updateProductVariantCounts(newProductVariantsBeingReserved, ctx)
       await updatePhysicalProductInventoryStatusesOnPrisma(
@@ -164,6 +164,9 @@ export const ProductMutations = {
         console.error(e)
       })
 
+      // Update relevant BagItems
+      await updateAddedBagItems(ctx.prisma, newProductVariantsBeingReserved)
+
       // Create reservation records in prisma and airtable
       const reservationData = await createReservationData(
         ctx.prisma,
@@ -182,20 +185,18 @@ export const ProductMutations = {
         .catch(e => {
           throw e
         })
-      await createReservation(
+      await createAirtableReservation(
         userRequestObject.email,
         reservationData,
         (seasonsToCustomerTransaction as ShippoTransaction).formatted_error,
         (customerToSeasonsTransaction as ShippoTransaction).formatted_error
       )
 
-      await updateAddedBagItems(ctx.prisma, newProductVariantsBeingReserved)
-
       // Send confirmation email
       await sendReservationConfirmationEmail(
         ctx.prisma,
         userRequestObject,
-        products as PrismaProduct[],
+        productsBeingReserved as PrismaProduct[],
         reservation
       )
 
@@ -342,14 +343,16 @@ const updateProductVariantCounts = async (
       } as ProductVariantUpdateInput
 
       try {
-        const update = ctx.prisma.updateProductVariant({
+        const {
+          reservable,
+          reserved,
+          nonReservable,
+        } = await ctx.prisma.updateProductVariant({
           where: {
             id: variant.id,
           },
           data,
         })
-
-        const { reservable, reserved, nonReservable } = await update
 
         // Airtable record of product variant
         const aProductVariant = productVariants.find(
