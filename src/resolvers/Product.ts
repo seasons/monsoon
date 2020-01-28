@@ -81,6 +81,7 @@ interface PhysicalProductWithReservationSpecificData extends PhysicalProduct {
 export const ProductMutations = {
   async reserveItems(parent, { items }, ctx: Context, info) {
     let reservationReturnData
+    let rollbackFuncs = []
     try {
       // Do a quick validation on the data
       if (items.length < 3) {
@@ -119,7 +120,9 @@ export const ProductMutations = {
       const [
         productsBeingReserved,
         physicalProductsBeingReserved,
+        rollbackUpdateProductVariantCounts,
       ] = await updateProductVariantCounts(newProductVariantsBeingReserved, ctx)
+      rollbackFuncs.push(rollbackUpdateProductVariantCounts)
       await updatePhysicalProductInventoryStatusesOnPrisma(
         ctx.prisma,
         physicalProductsBeingReserved as PhysicalProduct[]
@@ -207,6 +210,13 @@ export const ProductMutations = {
       )
     } catch (err) {
       console.log(err)
+
+      // TODO: If any individual rollbackFunc fails, log a high-prio error on Sentry
+      // indicating that we need to manually fix this data
+      for (let rollbackFunc of rollbackFuncs) {
+        await rollbackFunc()
+      }
+
       throw err
     }
 
@@ -276,9 +286,11 @@ const updateProductVariantCounts = async (
   ctx: Context,
   { dryRun } = { dryRun: false }
 ): Promise<
-  Array<PrismaProduct[] | PhysicalProductWithReservationSpecificData[]>
+  Array<
+    PrismaProduct[] | PhysicalProductWithReservationSpecificData[] | Function
+  >
 > => {
-  const variants = await ctx.prisma.productVariants({
+  const prismaProductVariants = await ctx.prisma.productVariants({
     where: { id_in: items },
   })
 
@@ -288,7 +300,9 @@ const updateProductVariantCounts = async (
   )
 
   // Are there any unavailable variants? If so, throw an error
-  const unavailableVariants = variants.filter(v => v.reservable <= 0)
+  const unavailableVariants = prismaProductVariants.filter(
+    v => v.reservable <= 0
+  )
   if (unavailableVariants.length > 0) {
     // Remove items in the bag that are not available anymore
     await ctx.prisma.deleteManyBagItems({
@@ -320,58 +334,87 @@ const updateProductVariantCounts = async (
   }
 
   // Get the corresponding product variant records from airtable
-  const allProductVariants = await getAllProductVariants()
-  const variantSlugs = variants.map(a => a.sku)
-  const productVariants = allProductVariants.filter(a =>
-    variantSlugs.includes(a.model.sKU)
+  const allAirtableProductVariants = await getAllProductVariants()
+  const allAirtableProductVariantSlugs = prismaProductVariants.map(a => a.sku)
+  const airtableProductVariants = allAirtableProductVariants.filter(a =>
+    allAirtableProductVariantSlugs.includes(a.model.sKU)
   )
 
-  const products = []
-  //TODO: convert to transaction
-  for (let variant of variants) {
-    const iProduct = await ctx.prisma
-      .productVariant({ id: variant.id })
-      .product()
+  const productsBeingReserved = []
+  const rollbackFuncs = []
+  try {
+    for (let prismaProductVariant of prismaProductVariants) {
+      const iProduct = await ctx.prisma
+        .productVariant({ id: prismaProductVariant.id })
+        .product()
+      productsBeingReserved.push(iProduct)
 
-    products.push(iProduct)
+      // Update product variant counts in prisma and airtable
+      if (!dryRun) {
+        const data = {
+          reservable: prismaProductVariant.reservable - 1,
+          reserved: prismaProductVariant.reserved + 1,
+        }
+        const rollbackData = {
+          reservable: prismaProductVariant.reservable,
+          reserved: prismaProductVariant.reserved,
+        }
 
-    // Update product variant counts in prisma and airtable
-    if (!dryRun) {
-      const data = {
-        reservable: variant.reservable - 1,
-        reserved: variant.reserved + 1,
-      } as ProductVariantUpdateInput
-
-      try {
-        const {
-          reservable,
-          reserved,
-          nonReservable,
-        } = await ctx.prisma.updateProductVariant({
+        await ctx.prisma.updateProductVariant({
           where: {
-            id: variant.id,
+            id: prismaProductVariant.id,
           },
           data,
         })
-
-        // Airtable record of product variant
-        const aProductVariant = productVariants.find(
-          a => a.model.sKU === variant.sku
-        )
-        if (aProductVariant) {
-          aProductVariant.patchUpdate({
-            "Reservable Count": reservable,
-            "Reserved Count": reserved,
-            "Non-Reservable Count": nonReservable,
+        const rollbackPrismaProductVariantUpdate = async () => {
+          await ctx.prisma.updateProductVariant({
+            where: {
+              id: prismaProductVariant.id,
+            },
+            data: rollbackData,
           })
         }
-      } catch (e) {
-        console.log(e)
+        rollbackFuncs.push(rollbackPrismaProductVariantUpdate)
+
+        // Airtable record of product variant
+        const airtableProductVariant = airtableProductVariants.find(
+          a => a.model.sKU === prismaProductVariant.sku
+        )
+        if (airtableProductVariant) {
+          airtableProductVariant.patchUpdate({
+            "Reservable Count": data.reservable,
+            "Reserved Count": data.reserved,
+          })
+          const rollbackAirtableProductVariantUpdate = async () => {
+            airtableProductVariant.patchUpdate({
+              "Reservable Count": rollbackData.reservable,
+              "Reserved Count": rollbackData.reserved,
+            })
+          }
+          rollbackFuncs.push(rollbackAirtableProductVariantUpdate)
+        }
       }
+    }
+  } catch (err) {
+    // TODO: If a rollbackFunc fails, throw a high prio error on Sentry
+    // saying we need to manually fix this data
+    for (let rollbackFunc of rollbackFuncs) {
+      await rollbackFunc()
+    }
+    throw err
+  }
+
+  const rollbackPrismaAndAirtableChanges = async () => {
+    for (let rollbackFunc of rollbackFuncs) {
+      await rollbackFunc()
     }
   }
 
-  return [products, availablePhysicalProducts]
+  return [
+    productsBeingReserved,
+    availablePhysicalProducts,
+    rollbackPrismaAndAirtableChanges,
+  ]
 }
 
 async function sendReservationConfirmationEmail(
