@@ -183,7 +183,7 @@ type Mutation {
   reserveItems(items: [ID!]!, options: ReserveItemsOptions): Reservation
   addToBag(item: ID!): BagItem!
   removeFromBag(item: ID!): BagItem!
-  saveProduct(item: ID!, save: Boolean!): BagItem!
+  saveProduct(item: ID!, save: Boolean!): BagItem
   acknowledgeCompletedChargebeeHostedCheckout(
     hostedPageID: String!
   ): BillingInfoPlayoad

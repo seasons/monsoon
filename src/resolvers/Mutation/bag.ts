@@ -78,10 +78,10 @@ export const bag = {
         saved: true,
       },
     })
-    const bagItem = head(bagItems)
+    let bagItem = head(bagItems)
 
     if (save && !bagItem) {
-      return await ctx.prisma.createBagItem({
+      bagItem = await ctx.prisma.createBagItem({
         customer: {
           connect: {
             id: customer.id,
@@ -103,6 +103,15 @@ export const bag = {
         })
       }
     }
-    return bagItem
+
+    if (bagItem) {
+      return ctx.db.query.bagItem({
+        where: {
+          id: bagItem.id
+        }
+      }, info)
+    }
+
+    return null
   },
 }
