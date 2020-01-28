@@ -572,7 +572,7 @@ async function createReservationData(
         id: user.id,
       },
     },
-    sentPackage: {
+    sentParcel: {
       create: {
         weight: shipmentWeight,
         items: {
@@ -603,7 +603,7 @@ async function createReservationData(
         },
       },
     },
-    returnedPackage: {
+    returnedParcel: {
       create: {
         shippingLabel: {
           create: {

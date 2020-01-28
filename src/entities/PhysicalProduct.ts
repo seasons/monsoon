@@ -7,7 +7,7 @@ import {
   OneToMany
 } from "typeorm";
 import { Location } from "./Location";
-import { PackageToPhysicalProduct } from "./PackageToPhysicalProduct";
+import { ParcelToPhysicalProduct } from "./ParcelToPhysicalProduct";
 import { PhysicalProductToProductVariant } from "./PhysicalProductToProductVariant";
 import { PhysicalProductToReservation } from "./PhysicalProductToReservation";
 
@@ -44,10 +44,10 @@ export class PhysicalProduct {
   location: Location;
 
   @OneToMany(
-    () => PackageToPhysicalProduct,
-    packageToPhysicalProduct => packageToPhysicalProduct.b2
+    () => ParcelToPhysicalProduct,
+    parcelToPhysicalProduct => parcelToPhysicalProduct.b2
   )
-  packageToPhysicalProducts: PackageToPhysicalProduct[];
+  parcelToPhysicalProducts: ParcelToPhysicalProduct[];
 
   @OneToMany(
     () => PhysicalProductToProductVariant,

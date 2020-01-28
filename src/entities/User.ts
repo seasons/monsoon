@@ -1,6 +1,7 @@
 import { Column, Entity, Index, OneToMany } from "typeorm";
 import { Customer } from "./Customer";
 import { Location } from "./Location";
+import { ProductRequest } from "./ProductRequest";
 import { Reservation } from "./Reservation";
 
 @Index("monsoon$dev.User.auth0Id._UNIQUE", ["auth0Id"], { unique: true })
@@ -43,6 +44,12 @@ export class User {
     location => location.user
   )
   locations: Location[];
+
+  @OneToMany(
+    () => ProductRequest,
+    productRequest => productRequest.user
+  )
+  productRequests: ProductRequest[];
 
   @OneToMany(
     () => Reservation,

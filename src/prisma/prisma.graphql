@@ -54,7 +54,7 @@ type AggregateOrder {
   count: Int!
 }
 
-type AggregatePackage {
+type AggregateParcel {
   count: Int!
 }
 
@@ -3701,12 +3701,12 @@ type Mutation {
   createOrder(data: OrderCreateInput!): Order!
   deleteOrder(where: OrderWhereUniqueInput!): Order
   deleteManyOrders(where: OrderWhereInput): BatchPayload!
-  createPackage(data: PackageCreateInput!): Package!
-  updatePackage(data: PackageUpdateInput!, where: PackageWhereUniqueInput!): Package
-  updateManyPackages(data: PackageUpdateManyMutationInput!, where: PackageWhereInput): BatchPayload!
-  upsertPackage(where: PackageWhereUniqueInput!, create: PackageCreateInput!, update: PackageUpdateInput!): Package!
-  deletePackage(where: PackageWhereUniqueInput!): Package
-  deleteManyPackages(where: PackageWhereInput): BatchPayload!
+  createParcel(data: ParcelCreateInput!): Parcel!
+  updateParcel(data: ParcelUpdateInput!, where: ParcelWhereUniqueInput!): Parcel
+  updateManyParcels(data: ParcelUpdateManyMutationInput!, where: ParcelWhereInput): BatchPayload!
+  upsertParcel(where: ParcelWhereUniqueInput!, create: ParcelCreateInput!, update: ParcelUpdateInput!): Parcel!
+  deleteParcel(where: ParcelWhereUniqueInput!): Parcel
+  deleteManyParcels(where: ParcelWhereInput): BatchPayload!
   createPhysicalProduct(data: PhysicalProductCreateInput!): PhysicalProduct!
   updatePhysicalProduct(data: PhysicalProductUpdateInput!, where: PhysicalProductWhereUniqueInput!): PhysicalProduct
   updateManyPhysicalProducts(data: PhysicalProductUpdateManyMutationInput!, where: PhysicalProductWhereInput): BatchPayload!
@@ -3831,7 +3831,14 @@ input OrderWhereUniqueInput {
   id: ID
 }
 
-type Package {
+type PageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+  endCursor: String
+}
+
+type Parcel {
   id: ID!
   items(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct!]
   shippingLabel: Label!
@@ -3842,13 +3849,13 @@ type Package {
   updatedAt: DateTime!
 }
 
-type PackageConnection {
+type ParcelConnection {
   pageInfo: PageInfo!
-  edges: [PackageEdge]!
-  aggregate: AggregatePackage!
+  edges: [ParcelEdge]!
+  aggregate: AggregateParcel!
 }
 
-input PackageCreateInput {
+input ParcelCreateInput {
   id: ID
   items: PhysicalProductCreateManyInput
   shippingLabel: LabelCreateOneInput!
@@ -3857,17 +3864,17 @@ input PackageCreateInput {
   weight: Float
 }
 
-input PackageCreateOneInput {
-  create: PackageCreateInput
-  connect: PackageWhereUniqueInput
+input ParcelCreateOneInput {
+  create: ParcelCreateInput
+  connect: ParcelWhereUniqueInput
 }
 
-type PackageEdge {
-  node: Package!
+type ParcelEdge {
+  node: Parcel!
   cursor: String!
 }
 
-enum PackageOrderByInput {
+enum ParcelOrderByInput {
   id_ASC
   id_DESC
   weight_ASC
@@ -3878,32 +3885,32 @@ enum PackageOrderByInput {
   updatedAt_DESC
 }
 
-type PackagePreviousValues {
+type ParcelPreviousValues {
   id: ID!
   weight: Float
   createdAt: DateTime!
   updatedAt: DateTime!
 }
 
-type PackageSubscriptionPayload {
+type ParcelSubscriptionPayload {
   mutation: MutationType!
-  node: Package
+  node: Parcel
   updatedFields: [String!]
-  previousValues: PackagePreviousValues
+  previousValues: ParcelPreviousValues
 }
 
-input PackageSubscriptionWhereInput {
+input ParcelSubscriptionWhereInput {
   mutation_in: [MutationType!]
   updatedFields_contains: String
   updatedFields_contains_every: [String!]
   updatedFields_contains_some: [String!]
-  node: PackageWhereInput
-  AND: [PackageSubscriptionWhereInput!]
-  OR: [PackageSubscriptionWhereInput!]
-  NOT: [PackageSubscriptionWhereInput!]
+  node: ParcelWhereInput
+  AND: [ParcelSubscriptionWhereInput!]
+  OR: [ParcelSubscriptionWhereInput!]
+  NOT: [ParcelSubscriptionWhereInput!]
 }
 
-input PackageUpdateDataInput {
+input ParcelUpdateDataInput {
   items: PhysicalProductUpdateManyInput
   shippingLabel: LabelUpdateOneRequiredInput
   fromAddress: LocationUpdateOneRequiredInput
@@ -3911,7 +3918,7 @@ input PackageUpdateDataInput {
   weight: Float
 }
 
-input PackageUpdateInput {
+input ParcelUpdateInput {
   items: PhysicalProductUpdateManyInput
   shippingLabel: LabelUpdateOneRequiredInput
   fromAddress: LocationUpdateOneRequiredInput
@@ -3919,25 +3926,25 @@ input PackageUpdateInput {
   weight: Float
 }
 
-input PackageUpdateManyMutationInput {
+input ParcelUpdateManyMutationInput {
   weight: Float
 }
 
-input PackageUpdateOneInput {
-  create: PackageCreateInput
-  update: PackageUpdateDataInput
-  upsert: PackageUpsertNestedInput
+input ParcelUpdateOneInput {
+  create: ParcelCreateInput
+  update: ParcelUpdateDataInput
+  upsert: ParcelUpsertNestedInput
   delete: Boolean
   disconnect: Boolean
-  connect: PackageWhereUniqueInput
+  connect: ParcelWhereUniqueInput
 }
 
-input PackageUpsertNestedInput {
-  update: PackageUpdateDataInput!
-  create: PackageCreateInput!
+input ParcelUpsertNestedInput {
+  update: ParcelUpdateDataInput!
+  create: ParcelCreateInput!
 }
 
-input PackageWhereInput {
+input ParcelWhereInput {
   id: ID
   id_not: ID
   id_in: [ID!]
@@ -3982,20 +3989,13 @@ input PackageWhereInput {
   updatedAt_lte: DateTime
   updatedAt_gt: DateTime
   updatedAt_gte: DateTime
-  AND: [PackageWhereInput!]
-  OR: [PackageWhereInput!]
-  NOT: [PackageWhereInput!]
+  AND: [ParcelWhereInput!]
+  OR: [ParcelWhereInput!]
+  NOT: [ParcelWhereInput!]
 }
 
-input PackageWhereUniqueInput {
+input ParcelWhereUniqueInput {
   id: ID
-}
-
-type PageInfo {
-  hasNextPage: Boolean!
-  hasPreviousPage: Boolean!
-  startCursor: String
-  endCursor: String
 }
 
 type PhysicalProduct {
@@ -6172,9 +6172,9 @@ type Query {
   order(where: OrderWhereUniqueInput!): Order
   orders(where: OrderWhereInput, orderBy: OrderOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Order]!
   ordersConnection(where: OrderWhereInput, orderBy: OrderOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): OrderConnection!
-  package(where: PackageWhereUniqueInput!): Package
-  packages(where: PackageWhereInput, orderBy: PackageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Package]!
-  packagesConnection(where: PackageWhereInput, orderBy: PackageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PackageConnection!
+  parcel(where: ParcelWhereUniqueInput!): Parcel
+  parcels(where: ParcelWhereInput, orderBy: ParcelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Parcel]!
+  parcelsConnection(where: ParcelWhereInput, orderBy: ParcelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ParcelConnection!
   physicalProduct(where: PhysicalProductWhereUniqueInput!): PhysicalProduct
   physicalProducts(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct]!
   physicalProductsConnection(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PhysicalProductConnection!
@@ -6203,8 +6203,8 @@ type Reservation {
   id: ID!
   user: User!
   customer: Customer!
-  sentPackage: Package
-  returnedPackage: Package
+  sentParcel: Parcel
+  returnedParcel: Parcel
   location: Location
   products(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct!]
   reservationNumber: Int!
@@ -6226,8 +6226,8 @@ input ReservationCreateInput {
   id: ID
   user: UserCreateOneInput!
   customer: CustomerCreateOneWithoutReservationsInput!
-  sentPackage: PackageCreateOneInput
-  returnedPackage: PackageCreateOneInput
+  sentParcel: ParcelCreateOneInput
+  returnedParcel: ParcelCreateOneInput
   location: LocationCreateOneInput
   products: PhysicalProductCreateManyInput
   reservationNumber: Int!
@@ -6245,8 +6245,8 @@ input ReservationCreateManyWithoutCustomerInput {
 input ReservationCreateWithoutCustomerInput {
   id: ID
   user: UserCreateOneInput!
-  sentPackage: PackageCreateOneInput
-  returnedPackage: PackageCreateOneInput
+  sentParcel: ParcelCreateOneInput
+  returnedParcel: ParcelCreateOneInput
   location: LocationCreateOneInput
   products: PhysicalProductCreateManyInput
   reservationNumber: Int!
@@ -6390,8 +6390,8 @@ input ReservationSubscriptionWhereInput {
 input ReservationUpdateInput {
   user: UserUpdateOneRequiredInput
   customer: CustomerUpdateOneRequiredWithoutReservationsInput
-  sentPackage: PackageUpdateOneInput
-  returnedPackage: PackageUpdateOneInput
+  sentParcel: ParcelUpdateOneInput
+  returnedParcel: ParcelUpdateOneInput
   location: LocationUpdateOneInput
   products: PhysicalProductUpdateManyInput
   reservationNumber: Int
@@ -6436,8 +6436,8 @@ input ReservationUpdateManyWithWhereNestedInput {
 
 input ReservationUpdateWithoutCustomerDataInput {
   user: UserUpdateOneRequiredInput
-  sentPackage: PackageUpdateOneInput
-  returnedPackage: PackageUpdateOneInput
+  sentParcel: ParcelUpdateOneInput
+  returnedParcel: ParcelUpdateOneInput
   location: LocationUpdateOneInput
   products: PhysicalProductUpdateManyInput
   reservationNumber: Int
@@ -6475,8 +6475,8 @@ input ReservationWhereInput {
   id_not_ends_with: ID
   user: UserWhereInput
   customer: CustomerWhereInput
-  sentPackage: PackageWhereInput
-  returnedPackage: PackageWhereInput
+  sentParcel: ParcelWhereInput
+  returnedParcel: ParcelWhereInput
   location: LocationWhereInput
   products_every: PhysicalProductWhereInput
   products_some: PhysicalProductWhereInput
@@ -6561,7 +6561,7 @@ type Subscription {
   label(where: LabelSubscriptionWhereInput): LabelSubscriptionPayload
   location(where: LocationSubscriptionWhereInput): LocationSubscriptionPayload
   order(where: OrderSubscriptionWhereInput): OrderSubscriptionPayload
-  package(where: PackageSubscriptionWhereInput): PackageSubscriptionPayload
+  parcel(where: ParcelSubscriptionWhereInput): ParcelSubscriptionPayload
   physicalProduct(where: PhysicalProductSubscriptionWhereInput): PhysicalProductSubscriptionPayload
   product(where: ProductSubscriptionWhereInput): ProductSubscriptionPayload
   productFunction(where: ProductFunctionSubscriptionWhereInput): ProductFunctionSubscriptionPayload

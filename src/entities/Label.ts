@@ -1,5 +1,5 @@
 import { Column, Entity, Index, OneToMany } from "typeorm";
-import { Package } from "./Package";
+import { Parcel } from "./Parcel";
 
 @Index("Label_pkey", ["id"], { unique: true })
 @Entity("Label", { schema: "monsoon$dev" })
@@ -20,8 +20,8 @@ export class Label {
   trackingUrl: string | null;
 
   @OneToMany(
-    () => Package,
-    package => package.shippingLabel
+    () => Parcel,
+    parcel => parcel.shippingLabel
   )
-  packages: Package[];
+  parcels: Parcel[];
 }

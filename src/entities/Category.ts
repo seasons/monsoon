@@ -16,11 +16,11 @@ export class Category {
   @Column("text", { name: "name" })
   name: string;
 
-  @Column("text", { name: "image", nullable: true })
-  image: string | null;
-
   @Column("text", { name: "description", nullable: true })
   description: string | null;
+
+  @Column("text", { name: "image", nullable: true })
+  image: string | null;
 
   @Column("boolean", { name: "visible" })
   visible: boolean;

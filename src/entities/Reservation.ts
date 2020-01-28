@@ -8,7 +8,7 @@ import {
 } from "typeorm";
 import { Customer } from "./Customer";
 import { Location } from "./Location";
-import { Package } from "./Package";
+import { Parcel } from "./Parcel";
 import { User } from "./User";
 import { PhysicalProductToReservation } from "./PhysicalProductToReservation";
 
@@ -23,11 +23,17 @@ export class Reservation {
   @Column("character varying", { primary: true, name: "id", length: 25 })
   id: string;
 
-  @Column("integer", { name: "reservationNumber" })
-  reservationNumber: number;
-
   @Column("boolean", { name: "shipped" })
   shipped: boolean;
+
+  @Column("timestamp without time zone", { name: "createdAt" })
+  createdAt: Date;
+
+  @Column("timestamp without time zone", { name: "updatedAt" })
+  updatedAt: Date;
+
+  @Column("integer", { name: "reservationNumber" })
+  reservationNumber: number;
 
   @Column("text", { name: "status" })
   status: string;
@@ -37,12 +43,6 @@ export class Reservation {
 
   @Column("timestamp without time zone", { name: "receivedAt", nullable: true })
   receivedAt: Date | null;
-
-  @Column("timestamp without time zone", { name: "createdAt" })
-  createdAt: Date;
-
-  @Column("timestamp without time zone", { name: "updatedAt" })
-  updatedAt: Date;
 
   @ManyToOne(
     () => Customer,
@@ -61,20 +61,20 @@ export class Reservation {
   location: Location;
 
   @ManyToOne(
-    () => Package,
-    package => package.reservations,
+    () => Parcel,
+    parcel => parcel.reservations,
     { onDelete: "SET NULL" }
   )
-  @JoinColumn([{ name: "returnedPackage", referencedColumnName: "id" }])
-  returnedPackage: Package;
+  @JoinColumn([{ name: "returnedParcel", referencedColumnName: "id" }])
+  returnedParcel: Parcel;
 
   @ManyToOne(
-    () => Package,
-    package => package.reservations2,
+    () => Parcel,
+    parcel => parcel.reservations2,
     { onDelete: "SET NULL" }
   )
-  @JoinColumn([{ name: "sentPackage", referencedColumnName: "id" }])
-  sentPackage: Package;
+  @JoinColumn([{ name: "sentParcel", referencedColumnName: "id" }])
+  sentParcel: Parcel;
 
   @ManyToOne(
     () => User,

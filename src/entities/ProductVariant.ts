@@ -40,9 +40,6 @@ export class ProductVariant {
   })
   height: string | null;
 
-  @Column("text", { name: "productID" })
-  productId: string;
-
   @Column("numeric", {
     name: "retailPrice",
     nullable: true,
@@ -50,6 +47,15 @@ export class ProductVariant {
     scale: 30
   })
   retailPrice: string | null;
+
+  @Column("timestamp without time zone", { name: "createdAt" })
+  createdAt: Date;
+
+  @Column("timestamp without time zone", { name: "updatedAt" })
+  updatedAt: Date;
+
+  @Column("text", { name: "productID" })
+  productId: string;
 
   @Column("integer", { name: "total" })
   total: number;
@@ -62,12 +68,6 @@ export class ProductVariant {
 
   @Column("integer", { name: "nonReservable" })
   nonReservable: number;
-
-  @Column("timestamp without time zone", { name: "createdAt" })
-  createdAt: Date;
-
-  @Column("timestamp without time zone", { name: "updatedAt" })
-  updatedAt: Date;
 
   @OneToMany(
     () => BagItem,
