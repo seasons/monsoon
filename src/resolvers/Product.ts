@@ -4,6 +4,7 @@ import {
   getPrismaLocationFromSlug,
   calcShipmentWeightFromProductVariantIDs,
 } from "../utils"
+import { fill } from "lodash"
 import {
   getUserRequestObject,
   getCustomerFromContext,
@@ -33,7 +34,10 @@ import {
 import { ApolloError } from "apollo-server"
 import shippo from "shippo"
 import { uniqBy } from "lodash"
-import { updatePhysicalProduct } from "../airtable/updatePhysicalProduct"
+import {
+  updatePhysicalProducts,
+  AirtablePhysicalProductFields,
+} from "../airtable/updatePhysicalProduct"
 import { base } from "../airtable/config"
 import { head } from "lodash"
 
@@ -128,9 +132,10 @@ export const ProductMutations = {
         physicalProductsBeingReserved as PhysicalProduct[]
       )
       rollbackFuncs.push(rollbackPrismaPhysicalProductStatuses)
-      await updatePhysicalProductInventoryStatusesOnAirtable(
+      const rollbackAirtablePhysicalProductStatuses = await updatePhysicalProductInventoryStatusesOnAirtable(
         physicalProductsBeingReserved as PhysicalProduct[]
       )
+      rollbackFuncs.push(rollbackAirtablePhysicalProductStatuses)
 
       // Create shipping labels. Wrap the transaction calls in a try-catch
       // so if the label creation fails, the call still continues as planned
@@ -780,19 +785,43 @@ function extractUniqueReservablePhysicalProducts(
 
 async function updatePhysicalProductInventoryStatusesOnAirtable(
   physicalProducts: PhysicalProduct[]
-) {
+): Promise<Function> {
+  // Get the record ids of all relevant airtable physical products
   const airtablePhysicalProductRecords = await getPhysicalProducts(
     physicalProducts.map(prod => prod.seasonsUID)
   )
-  for (let prod of airtablePhysicalProductRecords) {
-    base("Physical Products").find(prod.id, function(err, record) {
-      if (err) {
-        Sentry.captureException(err)
-        return
-      }
-      updatePhysicalProduct(record.id, { "Inventory Status": "Reserved" })
-    })
+  let airtablePhysicalProductRecordIds = airtablePhysicalProductRecords.map(
+    a => a.id
+  )
+
+  // Update their statuses on airtable
+  const airtablePhysicalProductRecordsData = fill(
+    new Array(airtablePhysicalProductRecordIds.length),
+    {
+      "Inventory Status": "Reserved",
+    }
+  )
+  updatePhysicalProducts(
+    airtablePhysicalProductRecordIds as [string],
+    airtablePhysicalProductRecordsData as [AirtablePhysicalProductFields]
+  )
+
+  // Create and return a rollback function
+  const airtablePhysicalProductRecordsRollbackData = fill(
+    new Array(airtablePhysicalProductRecordIds.length),
+    {
+      "Inventory Status": "Reservable",
+    }
+  )
+  const rollbackFunc = async () => {
+    updatePhysicalProducts(
+      airtablePhysicalProductRecordIds as [string],
+      airtablePhysicalProductRecordsRollbackData as [
+        AirtablePhysicalProductFields
+      ]
+    )
   }
+  return rollbackFunc
 }
 
 interface PhysicalProductWithProductVariant extends PhysicalProduct {
