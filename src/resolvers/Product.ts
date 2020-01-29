@@ -117,10 +117,6 @@ export const ProductMutations = {
       )
 
       // Get product data, update variant counts, update physical product statuses
-      const allPhysicalProductsForGivenProductVariantIDs = await getPhysicalProductsWithReservationSpecificData(
-        ctx,
-        newProductVariantsBeingReserved
-      )
       const [
         productsBeingReserved,
         physicalProductsBeingReserved,
@@ -137,8 +133,7 @@ export const ProductMutations = {
       )
       rollbackFuncs.push(rollbackAirtablePhysicalProductStatuses)
 
-      // Create shipping labels. Wrap the transaction calls in a try-catch
-      // so if the label creation fails, the call still continues as planned
+      // Create shipping labels.
       const shipmentWeight = await calcShipmentWeightFromProductVariantIDs(
         ctx.prisma,
         newProductVariantsBeingReserved as string[]
@@ -194,7 +189,7 @@ export const ProductMutations = {
         throw e
       })
       const [
-        reservation,
+        prismaReservation,
         rollbackPrismaReservationCreation,
       ] = await createPrismaReservation(ctx.prisma, reservationData)
       rollbackFuncs.push(rollbackPrismaReservationCreation)
@@ -214,12 +209,12 @@ export const ProductMutations = {
         ctx.prisma,
         userRequestObject,
         productsBeingReserved,
-        reservation
+        prismaReservation
       )
 
       // Get return data
       reservationReturnData = await ctx.db.query.reservation(
-        { where: { id: reservation.id } },
+        { where: { id: prismaReservation.id } },
         info
       )
     } catch (err) {

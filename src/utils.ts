@@ -161,7 +161,6 @@ export async function calcShipmentWeightFromProductVariantIDs(
   const productVariants = await prisma.productVariants({
     where: { id_in: itemIDs },
   })
-  console.log(`items returned: ${itemIDs}`)
   return productVariants.reduce(function addProductWeight(acc, curProdVar) {
     return acc + curProdVar.weight
   }, shippingBagWeight)
