@@ -129,11 +129,11 @@ export const ProductMutations = {
       rollbackFuncs.push(rollbackUpdateProductVariantCounts)
       const rollbackPrismaPhysicalProductStatuses = await updatePhysicalProductInventoryStatusesOnPrisma(
         ctx.prisma,
-        physicalProductsBeingReserved as PhysicalProduct[]
+        physicalProductsBeingReserved
       )
       rollbackFuncs.push(rollbackPrismaPhysicalProductStatuses)
       const rollbackAirtablePhysicalProductStatuses = await updatePhysicalProductInventoryStatusesOnAirtable(
-        physicalProductsBeingReserved as PhysicalProduct[]
+        physicalProductsBeingReserved
       )
       rollbackFuncs.push(rollbackAirtablePhysicalProductStatuses)
 
@@ -188,28 +188,32 @@ export const ProductMutations = {
         userRequestObject,
         customer,
         shipmentWeight,
-        physicalProductsBeingReserved as PhysicalProduct[],
+        physicalProductsBeingReserved,
         heldPhysicalProducts
       ).catch(e => {
         throw e
       })
-      const reservation = await ctx.prisma
-        .createReservation(reservationData)
-        .catch(e => {
-          throw e
-        })
-      await createAirtableReservation(
+      const [
+        reservation,
+        rollbackPrismaReservationCreation,
+      ] = await createPrismaReservation(ctx.prisma, reservationData)
+      rollbackFuncs.push(rollbackPrismaReservationCreation)
+      const [
+        ,
+        rollbackAirtableReservationCreation,
+      ] = await createAirtableReservation(
         userRequestObject.email,
         reservationData,
         (seasonsToCustomerTransaction as ShippoTransaction).formatted_error,
         (customerToSeasonsTransaction as ShippoTransaction).formatted_error
       )
+      rollbackFuncs.push(rollbackAirtableReservationCreation)
 
       // Send confirmation email
       await sendReservationConfirmationEmail(
         ctx.prisma,
         userRequestObject,
-        productsBeingReserved as PrismaProduct[],
+        productsBeingReserved,
         reservation
       )
 
@@ -294,7 +298,7 @@ async function updatePhysicalProductInventoryStatusesOnPrisma(
   return rollbackUpdate
 }
 
-/* Returns back [ProductsBeingReserved, PhysicalProductsBeingReserved] */
+/* Returns back [ProductsBeingReserved, PhysicalProductsBeingReserved, RollbackFunc] */
 const updateProductVariantCounts = async (
   /* array of product variant ids */
   items: Array<ID_Input>,
@@ -302,9 +306,7 @@ const updateProductVariantCounts = async (
   ctx: Context,
   { dryRun } = { dryRun: false }
 ): Promise<
-  Array<
-    PrismaProduct[] | PhysicalProductWithReservationSpecificData[] | Function
-  >
+  [PrismaProduct[], PhysicalProductWithReservationSpecificData[], Function]
 > => {
   const prismaProductVariants = await ctx.prisma.productVariants({
     where: { id_in: items },
@@ -356,7 +358,7 @@ const updateProductVariantCounts = async (
     allAirtableProductVariantSlugs.includes(a.model.sKU)
   )
 
-  const productsBeingReserved = []
+  const productsBeingReserved = [] as PrismaProduct[]
   const rollbackFuncs = []
   try {
     for (let prismaProductVariant of prismaProductVariants) {
@@ -1003,4 +1005,16 @@ async function getReservedBagItems(ctx) {
   }`
   )
   return reservedBagItems
+}
+
+/* Returns [createdReservation, rollbackFunc] */
+async function createPrismaReservation(
+  prisma: Prisma,
+  reservationData: ReservationCreateInput
+): Promise<[Reservation, Function]> {
+  const reservation = await prisma.createReservation(reservationData)
+  const rollbackFunc = async () => {
+    await prisma.deleteReservation({ id: reservation.id })
+  }
+  return [reservation, rollbackFunc]
 }

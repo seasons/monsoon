@@ -131,7 +131,7 @@ export async function createAirtableReservation(
   data: ReservationCreateInput,
   shippingError: string,
   returnShippingError: string
-): Promise<any> {
+): Promise<[AirtableData, Function]> {
   return new Promise(async function(resolve, reject) {
     try {
       const itemIDs = (data.products.connect as { seasonsUID: string }[]).map(
@@ -167,7 +167,19 @@ export async function createAirtableReservation(
         },
       ]
       const records = await base("Reservations").create(createData)
-      resolve(records)
+
+      const deleteRecord = async () => {
+        base("Reservations").destroy([records[0].getId()], function(
+          err,
+          deletedRecords
+        ) {
+          if (err) {
+            throw err
+          }
+          console.log("Deleted", deletedRecords.length, "records")
+        })
+      }
+      resolve([records[0], deleteRecord])
     } catch (err) {
       reject(err)
     }
