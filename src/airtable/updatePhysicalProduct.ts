@@ -16,10 +16,16 @@ export function updatePhysicalProducts(
     throw new Error("airtableIDs and fields must be arrays of equal length")
   }
   if (airtableIDs.length < 1 || airtableIDs.length > 10) {
-    throw new Error("please include at one to ten airtable record IDs")
+    throw new Error("please include one to ten airtable record IDs")
   }
 
-  base("Physical Products").update(zip(airtableIDs, fields))
+  const formattedUpdateData = zip(airtableIDs, fields).map(a => {
+    return {
+      id: a[0],
+      fields: a[1],
+    }
+  })
+  base("Physical Products").update(formattedUpdateData)
 }
 
 // ***************************************************
