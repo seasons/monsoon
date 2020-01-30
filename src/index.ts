@@ -18,15 +18,16 @@ Sentry.init({
 const server = new ApolloServer(serverOptions)
 const app = express()
 app.use(
+  Sentry.Handlers.requestHandler(), // must be first middleware on app
   checkJwt,
   createGetUserMiddleware(prisma),
   cors({
     origin: [/\.seasons\.nyc$/, "seedling-staging.herokuapp.com", /localhost/],
     credentials: true,
-  })
+  }),
+  bodyParser.json(),
+  webhooks
 )
-app.use(bodyParser.json())
-app.use(webhooks)
 server.applyMiddleware({ app, path: "/" })
 app.listen({ port: process.env.PORT || 4000 }, () =>
   console.log(`🚀 Server ready at ${process.env.PORT || 4000}`)
