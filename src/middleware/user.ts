@@ -1,4 +1,9 @@
-export function createGetUserMiddleware(prisma) {
+const Sentry = require("@sentry/node")
+Sentry.init({
+  dsn: process.env.SENTRY_DSN,
+})
+
+export function createGetUserMiddleware (prisma) {
   return (req, res, next) => {
     // Get auth0 user from request
     const auth0User = req.user
@@ -9,14 +14,14 @@ export function createGetUserMiddleware(prisma) {
     // Get user from prisma
     const { sub } = auth0User
     const auth0Id = sub.split("|")[1]
-    prisma
-      .user({ auth0Id })
-      .then(function putUserOnRequest(prismaUser) {
-        req.user = { ...req.user, ...prismaUser }
-        return next()
-      })
-      .catch(function handleError(err) {
-        throw new Error(`Error retrieving user in middleware: ${err.message}`)
-      })
+    const prismaUser = prisma.user({ auth0Id })
+    req.user = { ...req.user, ...prismaUser }
+
+    // Add user context on Sentry
+    Sentry.configureScope(function (scope) {
+      scope.setUser({ id: prismaUser.id, email: prismaUser.email })
+    })
+
+    return next()
   }
 }
