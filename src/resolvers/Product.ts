@@ -37,6 +37,7 @@ import {
   AirtablePhysicalProductFields,
 } from "../airtable/updatePhysicalProduct"
 import { head } from "lodash"
+import { RollbackError } from "../errors"
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 var activeShippo = shippo(process.env.SHIPPO_API_KEY)
@@ -48,7 +49,7 @@ Sentry.init({
 export const SEASONS_CLEANER_LOCATION_SLUG = "seasons-cleaners-official"
 
 export const Product = {
-  async isSaved (parent, {}, ctx: Context, info) {
+  async isSaved(parent, {}, ctx: Context, info) {
     const customer = await getCustomerFromContext(ctx)
 
     const productVariants = await ctx.prisma.productVariants({
@@ -80,9 +81,10 @@ interface PhysicalProductWithReservationSpecificData extends PhysicalProduct {
 }
 
 export const ProductMutations = {
-  async reserveItems (parent, { items }, ctx: Context, info) {
+  async reserveItems(parent, { items }, ctx: Context, info) {
     let reservationReturnData
     let rollbackFuncs = []
+
     try {
       // Do a quick validation on the data
       if (items.length < 3) {
@@ -209,18 +211,24 @@ export const ProductMutations = {
         info
       )
     } catch (err) {
-      // TODO: If any individual rollbackFunc fails, log a high-prio error on Sentry
-      // indicating that we need to manually fix this data and continue executing
-      // any remaining rollbackfuncs
       for (let rollbackFunc of rollbackFuncs) {
-        await rollbackFunc()
+        try {
+          await rollbackFunc()
+        } catch (err2) {
+          Sentry.configureScope(function(scope) {
+            scope.setTag("flag", "data-corruption")
+            scope.setExtra(`item ids`, `${items}`)
+            scope.setExtra(`original error`, err)
+          })
+          Sentry.captureException(new RollbackError(err2))
+        }
       }
       throw err
     }
 
-    return {}
+    return reservationReturnData
   },
-  async checkItemsAvailability (parent, { items }, ctx: Context, info) {
+  async checkItemsAvailability(parent, { items }, ctx: Context, info) {
     const userRequestObject = await getUserRequestObject(ctx)
     const customer = await getCustomerFromContext(ctx)
 
@@ -254,7 +262,7 @@ export const ProductMutations = {
   },
 }
 
-async function updatePhysicalProductInventoryStatusesOnPrisma (
+async function updatePhysicalProductInventoryStatusesOnPrisma(
   prisma: Prisma,
   physicalProducts: Array<PhysicalProduct>
 ): Promise<Function> {
@@ -279,11 +287,9 @@ const updateProductVariantCounts = async (
 
   ctx: Context,
   { dryRun } = { dryRun: false }
-): Promise<[
-  PrismaProduct[],
-  PhysicalProductWithReservationSpecificData[],
-  Function
-]> => {
+): Promise<
+  [PrismaProduct[], PhysicalProductWithReservationSpecificData[], Function]
+> => {
   const prismaProductVariants = await ctx.prisma.productVariants({
     where: { id_in: items },
   })
@@ -390,8 +396,6 @@ const updateProductVariantCounts = async (
       }
     }
   } catch (err) {
-    // TODO: If a rollbackFunc fails, throw a high prio error on Sentry
-    // saying we need to manually fix this data
     for (let rollbackFunc of rollbackFuncs) {
       await rollbackFunc()
     }
@@ -411,7 +415,7 @@ const updateProductVariantCounts = async (
   ]
 }
 
-async function sendReservationConfirmationEmail (
+async function sendReservationConfirmationEmail(
   prisma: Prisma,
   user: UserRequestObject,
   products: Array<PrismaProduct>,
@@ -445,7 +449,7 @@ async function sendReservationConfirmationEmail (
   })
 
   // *************************************************************************
-  async function getReservationConfirmationDataForProduct (
+  async function getReservationConfirmationDataForProduct(
     prisma: Prisma,
     product: PrismaProduct,
     prefix: String
@@ -477,7 +481,7 @@ interface CoreShippoAddressFields {
   state: String
   zip: String
 }
-async function createShippoShipment (
+async function createShippoShipment(
   prisma: Prisma,
   user: UserRequestObject,
   customer: Customer,
@@ -535,7 +539,7 @@ async function createShippoShipment (
   ]
 
   // **************************************************
-  function prismaLocationToCoreShippoAddressFields (
+  function prismaLocationToCoreShippoAddressFields(
     location: Location
   ): CoreShippoAddressFields {
     if (location == null) {
@@ -551,7 +555,7 @@ async function createShippoShipment (
       zip: location.zipCode,
     }
   }
-  function seasonsHQOrCleanersSecondaryAddressFields () {
+  function seasonsHQOrCleanersSecondaryAddressFields() {
     return {
       country: "US",
       phone: "706-271-7092",
@@ -560,7 +564,7 @@ async function createShippoShipment (
   }
 }
 
-async function createReservationData (
+async function createReservationData(
   prisma: Prisma,
   seasonsToCustomerTransaction,
   customerToSeasonsTransaction,
@@ -611,7 +615,7 @@ async function createReservationData (
         items: {
           // need to include the type on the function passed into map
           // or we get build errors comlaining about the type here
-          connect: physicalProductsBeingReserved.map(function (
+          connect: physicalProductsBeingReserved.map(function(
             prod
           ): UniqueIDObject {
             return { id: prod.id }
@@ -670,8 +674,8 @@ async function createReservationData (
   }
 }
 
-async function getUniqueReservationNumber (prisma: Prisma): Promise<number> {
-  return new Promise(async function checkRandomNumbersUntilWeFindAUniqueOne (
+async function getUniqueReservationNumber(prisma: Prisma): Promise<number> {
+  return new Promise(async function checkRandomNumbersUntilWeFindAUniqueOne(
     resolve,
     reject
   ) {
@@ -702,11 +706,11 @@ interface ShippoLabelInputs {
   carrier_account: string
   servicelevel_token: string
 }
-async function createShippingLabel (
+async function createShippingLabel(
   inputs: ShippoLabelInputs,
   userID: string
 ): Promise<ShippoTransaction> {
-  return new Promise(async function (resolve, reject) {
+  return new Promise(async function(resolve, reject) {
     let transaction = await activeShippo.transaction
       .create(inputs)
       .catch(err => reject(err))
@@ -715,7 +719,7 @@ async function createShippingLabel (
       transaction.status === "ERROR"
     ) {
       reject(
-        transaction.messages.reduce(function (acc, curVal) {
+        transaction.messages.reduce(function(acc, curVal) {
           return `${acc}. Source: ${curVal.source}. Code: ${curVal.code}. Error Message: ${curVal.text}`
         }, "")
       )
@@ -726,7 +730,7 @@ async function createShippingLabel (
   })
 }
 
-async function getPhysicalProductsWithReservationSpecificData (
+async function getPhysicalProductsWithReservationSpecificData(
   ctx: Context,
   items: ID_Input[]
 ): Promise<Array<PhysicalProductWithReservationSpecificData>> {
@@ -749,7 +753,7 @@ async function getPhysicalProductsWithReservationSpecificData (
   )
 }
 
-function extractUniqueReservablePhysicalProducts (
+function extractUniqueReservablePhysicalProducts(
   physicalProducts: PhysicalProductWithReservationSpecificData[]
 ): PhysicalProductWithReservationSpecificData[] {
   return uniqBy(
@@ -758,7 +762,7 @@ function extractUniqueReservablePhysicalProducts (
   )
 }
 
-async function updatePhysicalProductInventoryStatusesOnAirtable (
+async function updatePhysicalProductInventoryStatusesOnAirtable(
   physicalProducts: PhysicalProduct[]
 ): Promise<Function> {
   // Get the record ids of all relevant airtable physical products
@@ -807,12 +811,12 @@ interface ReservationWithProductVariantData {
   products: PhysicalProductWithProductVariant[]
 }
 
-async function getLatestReservation (
+async function getLatestReservation(
   prisma: Prisma,
   db: any,
   customer: Customer
 ): Promise<ReservationWithProductVariantData | null> {
-  return new Promise(async function (resolve, reject) {
+  return new Promise(async function(resolve, reject) {
     const allCustomerReservationsOrderedByCreatedAt = await prisma
       .customer({ id: customer.id })
       .reservations({
@@ -847,11 +851,11 @@ async function getLatestReservation (
   })
 }
 
-async function getNewProductVariantsBeingReserved (
+async function getNewProductVariantsBeingReserved(
   lastReservation: ReservationWithProductVariantData,
   items: ID_Input[]
 ): Promise<ID_Input[]> {
-  return new Promise(async function (resolve, reject) {
+  return new Promise(async function(resolve, reject) {
     if (lastReservation == null) {
       resolve(items)
       return
@@ -874,7 +878,7 @@ async function getNewProductVariantsBeingReserved (
   })
 
   // ******************************************************
-  function inventoryStatusOf (
+  function inventoryStatusOf(
     res: ReservationWithProductVariantData,
     prodVarId: ID_Input
   ): InventoryStatus {
@@ -883,7 +887,7 @@ async function getNewProductVariantsBeingReserved (
   }
 }
 
-async function getHeldPhysicalProducts (
+async function getHeldPhysicalProducts(
   ctx: Context,
   lastReservation: ReservationWithProductVariantData
 ): Promise<PhysicalProduct[]> {
@@ -901,7 +905,7 @@ async function getHeldPhysicalProducts (
     .filter(a => reservedProductVariantIds.includes(a.productVariant.id))
 }
 
-function checkLastReservation (
+function checkLastReservation(
   lastReservation: ReservationWithProductVariantData
 ) {
   if (
@@ -917,7 +921,7 @@ function checkLastReservation (
   }
 }
 
-async function updateAddedBagItems (
+async function updateAddedBagItems(
   prisma: Prisma,
   productVariantIds: Array<ID_Input>
 ): Promise<Function> {
@@ -950,7 +954,7 @@ async function updateAddedBagItems (
   return rollbackAddedBagItems
 }
 
-async function getReservedBagItems (ctx) {
+async function getReservedBagItems(ctx) {
   const customer = await getCustomerFromContext(ctx)
   const reservedBagItems = await ctx.db.query.bagItems(
     {
@@ -975,7 +979,7 @@ async function getReservedBagItems (ctx) {
 }
 
 /* Returns [createdReservation, rollbackFunc] */
-async function createPrismaReservation (
+async function createPrismaReservation(
   prisma: Prisma,
   reservationData: ReservationCreateInput
 ): Promise<[Reservation, Function]> {
