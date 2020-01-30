@@ -14,14 +14,17 @@ export function createGetUserMiddleware (prisma) {
     // Get user from prisma
     const { sub } = auth0User
     const auth0Id = sub.split("|")[1]
-    const prismaUser = prisma.user({ auth0Id })
-    req.user = { ...req.user, ...prismaUser }
+    prisma
+      .user({ auth0Id })
+      .then(function putUserOnRequestAndAddUserToSentryContext (prismaUser) {
+        req.user = { ...req.user, ...prismaUser }
 
-    // Add user context on Sentry
-    Sentry.configureScope(function (scope) {
-      scope.setUser({ id: prismaUser.id, email: prismaUser.email })
-    })
+        // Add user context on Sentry
+        Sentry.configureScope(function (scope) {
+          scope.setUser({ id: prismaUser.id, email: prismaUser.email })
+        })
 
-    return next()
+        return next()
+      })
   }
 }
