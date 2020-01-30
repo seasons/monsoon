@@ -8,7 +8,7 @@ export function updatePhysicalProduct(
   base("Physical Products").update(airtableID, fields)
 }
 
-export function updatePhysicalProducts(
+export async function updatePhysicalProducts(
   airtableIDs: [string],
   fields: [AirtablePhysicalProductFields]
 ) {
@@ -25,7 +25,10 @@ export function updatePhysicalProducts(
       fields: a[1],
     }
   })
-  base("Physical Products").update(formattedUpdateData)
+  const updatedRecords = await base("Physical Products").update(
+    formattedUpdateData
+  )
+  return updatedRecords
 }
 
 // ***************************************************

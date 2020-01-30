@@ -169,15 +169,10 @@ export async function createAirtableReservation(
       const records = await base("Reservations").create(createData)
 
       const deleteRecord = async () => {
-        base("Reservations").destroy([records[0].getId()], function(
-          err,
-          deletedRecords
-        ) {
-          if (err) {
-            throw err
-          }
-          console.log("Deleted", deletedRecords.length, "records")
-        })
+        const numDeleted = await base("Reservations").destroy([
+          records[0].getId(),
+        ])
+        return numDeleted
       }
       resolve([records[0], deleteRecord])
     } catch (err) {

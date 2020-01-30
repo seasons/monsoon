@@ -8,12 +8,10 @@ import { fill } from "lodash"
 import {
   getUserRequestObject,
   getCustomerFromContext,
-  getUserFromContext,
   UserRequestObject,
 } from "../auth/utils"
 import sgMail from "@sendgrid/mail"
 import {
-  ProductVariantUpdateInput,
   ReservationCreateInput,
   Product as PrismaProduct,
   Prisma,
@@ -38,7 +36,6 @@ import {
   updatePhysicalProducts,
   AirtablePhysicalProductFields,
 } from "../airtable/updatePhysicalProduct"
-import { base } from "../airtable/config"
 import { head } from "lodash"
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
@@ -154,9 +151,7 @@ export const ProductMutations = {
           servicelevel_token: "ups_ground",
         },
         userRequestObject.id
-      ).catch(e => {
-        console.error(e)
-      })
+      )
       let customerToSeasonsTransaction = await createShippingLabel(
         {
           shipment: customerToSeasonsShipment,
@@ -164,9 +159,7 @@ export const ProductMutations = {
           servicelevel_token: "ups_ground",
         },
         userRequestObject.id
-      ).catch(e => {
-        console.error(e)
-      })
+      )
 
       // Update relevant BagItems
       const rollbackBagItemsUpdate = await updateAddedBagItems(
@@ -185,9 +178,7 @@ export const ProductMutations = {
         shipmentWeight,
         physicalProductsBeingReserved,
         heldPhysicalProducts
-      ).catch(e => {
-        throw e
-      })
+      )
       const [
         prismaReservation,
         rollbackPrismaReservationCreation,
@@ -218,6 +209,7 @@ export const ProductMutations = {
         info
       )
     } catch (err) {
+      console.log("Catch 1")
       console.log(err)
 
       // TODO: If any individual rollbackFunc fails, log a high-prio error on Sentry
@@ -226,20 +218,11 @@ export const ProductMutations = {
         await rollbackFunc()
       }
 
+      console.log("Catch 2")
       throw err
     }
 
-    // Track the selection
-    const prismaUser = await getUserFromContext(ctx)
-    ctx.analytics.track({
-      userId: prismaUser.id,
-      event: "Reserved Items",
-      properties: {
-        productVariantIDs: items,
-      },
-    })
-
-    return reservationReturnData
+    return {}
   },
   async checkItemsAvailability(parent, { items }, ctx: Context, info) {
     const userRequestObject = await getUserRequestObject(ctx)
@@ -394,12 +377,12 @@ const updateProductVariantCounts = async (
           a => a.model.sKU === prismaProductVariant.sku
         )
         if (airtableProductVariant) {
-          airtableProductVariant.patchUpdate({
+          await airtableProductVariant.patchUpdate({
             "Reservable Count": data.reservable,
             "Reserved Count": data.reserved,
           })
           const rollbackAirtableProductVariantUpdate = async () => {
-            airtableProductVariant.patchUpdate({
+            await airtableProductVariant.patchUpdate({
               "Reservable Count": rollbackData.reservable,
               "Reserved Count": rollbackData.reserved,
             })
@@ -436,38 +419,32 @@ async function sendReservationConfirmationEmail(
   products: Array<PrismaProduct>,
   reservation: Reservation
 ) {
-  try {
-    const prod1Data = await getReservationConfirmationDataForProduct(
+  const prod1Data = await getReservationConfirmationDataForProduct(
+    prisma,
+    products[0],
+    "item1"
+  )
+  let [prod2Data, prod3Data] = [{}, {}]
+  if (!!products[1]) {
+    prod2Data = await getReservationConfirmationDataForProduct(
       prisma,
-      products[0],
-      "item1"
+      products[1],
+      "item2"
     )
-    let [prod2Data, prod3Data] = [{}, {}]
-    if (!!products[1]) {
-      prod2Data = await getReservationConfirmationDataForProduct(
-        prisma,
-        products[1],
-        "item2"
-      )
-    }
-    if (!!products[2]) {
-      prod3Data = await getReservationConfirmationDataForProduct(
-        prisma,
-        products[2],
-        "item3"
-      )
-    }
-    sendTransactionalEmail(user.email, "d-2b8bb24a330740b7b3acfc7f4dea186a", {
-      // sendTransactionalEmail(user.email, "d-f1de06bb4b89408e8059c07eb30d9f8f", {
-      order_number: reservation.reservationNumber,
-      ...prod1Data,
-      ...prod2Data,
-      ...prod3Data,
-    })
-  } catch (err) {
-    console.log(err)
-    throw err
   }
+  if (!!products[2]) {
+    prod3Data = await getReservationConfirmationDataForProduct(
+      prisma,
+      products[2],
+      "item3"
+    )
+  }
+  sendTransactionalEmail(user.email, "d-2b8bb24a330740b7b3acfc7f4dea186a", {
+    order_number: reservation.reservationNumber,
+    ...prod1Data,
+    ...prod2Data,
+    ...prod3Data,
+  })
 
   // *************************************************************************
   async function getReservationConfirmationDataForProduct(
@@ -599,10 +576,9 @@ async function createReservationData(
     ...physicalProductsBeingReserved,
     ...heldPhysicalProducts,
   ]
-  console.log(allPhysicalProductsInReservation)
-  // if (allPhysicalProductsInReservation.length > 3) {
-  //   throw new ApolloError("Can not reserve more than 3 items at a time")
-  // }
+  if (allPhysicalProductsInReservation.length > 3) {
+    throw new ApolloError("Can not reserve more than 3 items at a time")
+  }
   const physicalProductSUIDs = allPhysicalProductsInReservation.map(p => ({
     seasonsUID: p.seasonsUID,
   }))
@@ -793,7 +769,7 @@ async function updatePhysicalProductInventoryStatusesOnAirtable(
   )
   let airtablePhysicalProductRecordIds = airtablePhysicalProductRecords.map(
     a => a.id
-  )
+  ) as [string]
 
   // Update their statuses on airtable
   const airtablePhysicalProductRecordsData = fill(
@@ -801,10 +777,10 @@ async function updatePhysicalProductInventoryStatusesOnAirtable(
     {
       "Inventory Status": "Reserved",
     }
-  )
-  updatePhysicalProducts(
-    airtablePhysicalProductRecordIds as [string],
-    airtablePhysicalProductRecordsData as [AirtablePhysicalProductFields]
+  ) as [AirtablePhysicalProductFields]
+  await updatePhysicalProducts(
+    airtablePhysicalProductRecordIds,
+    airtablePhysicalProductRecordsData
   )
 
   // Create and return a rollback function
@@ -813,13 +789,11 @@ async function updatePhysicalProductInventoryStatusesOnAirtable(
     {
       "Inventory Status": "Reservable",
     }
-  )
+  ) as [AirtablePhysicalProductFields]
   const rollbackFunc = async () => {
-    updatePhysicalProducts(
-      airtablePhysicalProductRecordIds as [string],
-      airtablePhysicalProductRecordsRollbackData as [
-        AirtablePhysicalProductFields
-      ]
+    await updatePhysicalProducts(
+      airtablePhysicalProductRecordIds,
+      airtablePhysicalProductRecordsRollbackData
     )
   }
   return rollbackFunc
