@@ -387,8 +387,8 @@ type Package {
   id: ID! @id
   items: [PhysicalProduct!]
   shippingLabel: Label!
-  fromAddress: Location! @relation(name: "SenderAddress", onDelete: "CASCADE")
-  toAddress: Location! @relation(name: "RecipientAddress", onDelete: "CASCADE")
+  fromAddress: Location! @relation(name: "SenderAddress")
+  toAddress: Location! @relation(name: "RecipientAddress")
   weight: Float
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
