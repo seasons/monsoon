@@ -1399,7 +1399,8 @@ export type Material =
   | "WhiteGooseDown"
   | "Wool"
   | "Mesh"
-  | "Denim";
+  | "Denim"
+  | "Lambswool";
 
 export type ColorOrderByInput =
   | "id_ASC"

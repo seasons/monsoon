@@ -3621,6 +3621,7 @@ enum Material {
   Wool
   Mesh
   Denim
+  Lambswool
 }
 
 type Mutation {
