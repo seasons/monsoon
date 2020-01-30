@@ -46,7 +46,7 @@ const getAll: (
           })
           return fetchNextPage()
         },
-        function done(err) {
+        function done (err) {
           if (err) {
             console.error(err)
             reject(err)
@@ -107,13 +107,13 @@ export const getAllLocations = async () => {
 }
 
 export const airtableToPrismaObject = record => {
-  function camelCase(str) {
+  function camelCase (str) {
     return str
-      .replace(/\s(.)/g, function(a) {
+      .replace(/\s(.)/g, function (a) {
         return a.toUpperCase()
       })
       .replace(/\s/g, "")
-      .replace(/^(.)/, function(b) {
+      .replace(/^(.)/, function (b) {
         return b.toLowerCase()
       })
   }
@@ -126,13 +126,13 @@ export const airtableToPrismaObject = record => {
   return obj
 }
 
-export async function createAirtableReservation(
+export async function createAirtableReservation (
   userEmail: string,
   data: ReservationCreateInput,
   shippingError: string,
   returnShippingError: string
 ): Promise<[AirtableData, Function]> {
-  return new Promise(async function(resolve, reject) {
+  return new Promise(async function (resolve, reject) {
     try {
       const itemIDs = (data.products.connect as { seasonsUID: string }[]).map(
         a => a.seasonsUID
@@ -168,13 +168,13 @@ export async function createAirtableReservation(
       ]
       const records = await base("Reservations").create(createData)
 
-      const deleteRecord = async () => {
+      const rollbackAirtableReservation = async () => {
         const numDeleted = await base("Reservations").destroy([
           records[0].getId(),
         ])
         return numDeleted
       }
-      resolve([records[0], deleteRecord])
+      resolve([records[0], rollbackAirtableReservation])
     } catch (err) {
       reject(err)
     }
@@ -201,7 +201,7 @@ export const createLocation = async (user, data: LocationCreateInput) => {
   return base("Locations").create(createData)
 }
 
-export async function createBillingInfo(data: BillingInfoCreateInput) {
+export async function createBillingInfo (data: BillingInfoCreateInput) {
   return base("BillingInfos").create({
     Brand: data.brand,
     Name: data.name,
@@ -239,10 +239,10 @@ export const updateProductVariant = async data => {
   })
 }
 
-export function getAirtableUserRecordByUserEmail(
+export function getAirtableUserRecordByUserEmail (
   email: string
 ): Promise<{ id: string; fields: any }> {
-  return new Promise(function retrieveUser(resolve, reject) {
+  return new Promise(function retrieveUser (resolve, reject) {
     base("Users")
       .select({
         view: "Grid view",
