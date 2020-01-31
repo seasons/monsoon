@@ -11,6 +11,7 @@ import {
 import { AirtableInventoryStatus } from "../airtable/updatePhysicalProduct"
 import { airtableToPrismaInventoryStatus } from "../utils"
 import * as Sentry from "@sentry/node"
+import { SyncError } from "../errors"
 
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
@@ -29,6 +30,15 @@ export async function syncPhysicalProductStatus() {
   for (let airtablePhysicalProduct of allAirtablePhysicalProducts) {
     // Wrap it in a try/catch so individual sync errors don't stop the whole job
     try {
+      if (process.env.NODE_ENV === "production") {
+        Sentry.configureScope(scope => {
+          scope.setExtra(
+            "physicalProductSUID",
+            airtablePhysicalProduct.fields.SUID["text"]
+          )
+        })
+      }
+
       const prismaPhysicalProduct = await prisma.physicalProduct({
         seasonsUID: airtablePhysicalProduct.fields.SUID["text"],
       })
@@ -99,16 +109,17 @@ export async function syncPhysicalProductStatus() {
         physicalProductsInAirtableButNotPrisma.push(
           airtablePhysicalProduct.fields.SUID
         )
-        Sentry.captureMessage(
-          `updatePhysicalProductStatus encountered a physical` +
-            `Product in airtable but not prisma: ${JSON.stringify(
-              airtablePhysicalProduct
-            )} `
-        )
+        if (process.env.NODE_ENV === "production") {
+          Sentry.captureException(
+            new SyncError(`Physical product in airtable but not prisma`)
+          )
+        }
       }
     } catch (error) {
       errors.push(error)
-      Sentry.captureException(error)
+      if (process.env.NODE_ENV === "production") {
+        Sentry.captureException(error)
+      }
     }
   }
 
