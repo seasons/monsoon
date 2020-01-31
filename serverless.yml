@@ -28,11 +28,11 @@ package:
 
 functions:
   checkAndAuthorizeUsers:
-    handler: src/handler.checkAndAuthorizeUsers
+    handler: src/cron/checkAndAuthorizeUsers.checkAndAuthorizeUsers
     events:
       - schedule: rate(1 minute)
   syncPhysicalProductAndReservationStatus:
     handler: src/cron/syncPhysicalProductAndReservationStatus.syncPhysicalProductAndReservationStatus
     events:
       - schedule: rate(1 minute)
-    timeout: 60 # timeout in 60 seconds, rather than default of 6
+    timeout: 60 # rather than default of 6

@@ -1,13 +1,12 @@
 import sgMail from "@sendgrid/mail"
-
-import { getAllUsers, getAllReservations } from "./airtable/utils"
-import { prisma, User } from "./prisma"
+import { getAllUsers } from "../airtable/utils"
+import { prisma, User } from "../prisma"
 import {
   getCustomerFromUserID,
   setCustomerPrismaStatus,
   sendTransactionalEmail,
   getUserIDHash,
-} from "./utils"
+} from "../utils"
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
