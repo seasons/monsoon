@@ -40,8 +40,7 @@ export async function reserveItems(parent, { items }, ctx: Context, info) {
     const userRequestObject = await getUserRequestObject(ctx)
     const customer = await getCustomerFromContext(ctx)
 
-    // Figure out which items the user is reserving anew and which they
-    // already have
+    // Figure out which items the user is reserving anew and which they already have
     const lastReservation = await getLatestReservation(
       ctx.prisma,
       ctx.db,
@@ -102,6 +101,7 @@ export async function reserveItems(parent, { items }, ctx: Context, info) {
     // Update relevant BagItems
     const rollbackBagItemsUpdate = await markBagItemsReserved(
       ctx.prisma,
+      customer.id,
       newProductVariantsBeingReserved
     )
     rollbackFuncs.push(rollbackBagItemsUpdate)

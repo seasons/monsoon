@@ -1,15 +1,16 @@
 import { Prisma, ID_Input } from "../../prisma"
 
-// TODO: Suspected bug: this currently updates all bagItems across all customers.
-// We need to scope this to a particular customer
-
 export async function markBagItemsReserved(
   prisma: Prisma,
+  customer_id: ID_Input,
   productVariantIds: Array<ID_Input>
 ): Promise<Function> {
   // Update the bag items
   const bagItemsToUpdate = await prisma.bagItems({
     where: {
+      customer: {
+        id: customer_id,
+      },
       productVariant: {
         id_in: productVariantIds,
       },
