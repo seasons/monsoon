@@ -12,9 +12,9 @@ import {
   calcShipmentWeightFromProductVariantIDs,
 } from "../utils"
 import { db } from "../server"
+import * as Sentry from "@sentry/node"
 
 // Set up Sentry, for error reporting
-const Sentry = require("@sentry/node")
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
 })
@@ -28,6 +28,12 @@ export async function syncReservationStatus() {
 
   for (let airtableReservation of allAirtableReservations) {
     try {
+      if (process.env.NODE_ENV === "production") {
+        Sentry.configureScope(scope => {
+          scope.setExtra("reservationNumber", airtableReservation.fields.ID)
+        })
+      }
+
       const prismaReservation = await getPrismaReservationWithNeededFields(
         airtableReservation.fields.ID
       )
@@ -87,7 +93,9 @@ export async function syncReservationStatus() {
       }
     } catch (err) {
       errors.push(err)
-      Sentry.captureException(err)
+      if (process.env.NODE_ENV === "production") {
+        Sentry.captureException(err)
+      }
     }
   }
 
