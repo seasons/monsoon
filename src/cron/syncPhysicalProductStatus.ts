@@ -10,8 +10,8 @@ import {
 } from "../airtable/updateProductVariantCounts"
 import { AirtableInventoryStatus } from "../airtable/updatePhysicalProduct"
 import { airtableToPrismaInventoryStatus } from "../utils"
+import * as Sentry from "@sentry/node"
 
-const Sentry = require("@sentry/node")
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
 })

@@ -16,5 +16,3 @@ export async function syncPhysicalProductAndReservationStatus(
   console.log({ ...physProdReport, ...reservationReport, errors: allErrors })
   return { ...physProdReport, ...reservationReport, errors: allErrors }
 }
-
-// syncPhysicalProductAndReservationStatus(null, null, null)
