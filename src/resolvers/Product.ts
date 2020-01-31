@@ -32,16 +32,14 @@ import {
 import { ApolloError } from "apollo-server"
 import shippo from "shippo"
 import { uniqBy } from "lodash"
-import {
-  updatePhysicalProducts,
-  AirtablePhysicalProductFields,
-} from "../airtable/updatePhysicalProduct"
+import { AirtablePhysicalProductFields } from "../airtable/updatePhysicalProduct"
 import { head } from "lodash"
 import { RollbackError } from "../errors"
+import { updatePhysicalProducts } from "../airtable/updatePhysicalProducts"
+import * as Sentry from "@sentry/node"
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 var activeShippo = shippo(process.env.SHIPPO_API_KEY)
-const Sentry = require("@sentry/node")
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
 })
