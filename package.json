@@ -17,7 +17,7 @@
     "sls:build": "serverless package",
     "sls:login": "serverless login",
     "sls:clean": "rm -rf .build && rm -rf .serverless",
-    "sls:deploy-staging:": "serverless deploy --verbose --stage qa --region us-east-1 --env=staging",
+    "sls:deploy-staging": "serverless deploy --verbose --stage qa --region us-east-1 --env=staging",
     "sls:deploy-production": "serverless deploy --verbose --stage prod --region us-east-1 --env=production",
     "postinstall": "npm run build",
     "start": "dotenv -- nodemon -e ts,graphql -x ts-node src/index.ts",

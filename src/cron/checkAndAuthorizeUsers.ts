@@ -31,7 +31,7 @@ export async function checkAndAuthorizeUsers(event, context, callback) {
         })
         if (!!prismaUser) {
           // Add user context on Sentry
-          Sentry.configureScope(function(scope) {
+          Sentry.configureScope(scope => {
             scope.setUser({ id: prismaUser.id, email: prismaUser.email })
           })
 
