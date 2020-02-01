@@ -13,6 +13,7 @@ import {
 } from "../utils"
 import { db } from "../server"
 import * as Sentry from "@sentry/node"
+import { SyncError } from "../errors"
 
 // Set up Sentry, for error reporting
 Sentry.init({
@@ -71,10 +72,11 @@ export async function syncReservationStatus() {
           }
         } else {
           reservationsInAirtableButNotPrisma.push(airtableReservation.fields.ID)
-          Sentry.captureMessage(
-            `completeReservations encountered a reservation in airtable but not prisma` +
-              `: ${JSON.stringify(airtableReservation)} `
-          )
+          if (process.env.NODE_ENV === "production") {
+            Sentry.captureException(
+              new SyncError("Reservation in airtable but not prisma")
+            )
+          }
         }
       } else if (
         airtableReservation.fields.Status !== prismaReservation.status

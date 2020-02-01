@@ -123,6 +123,14 @@ export async function syncPhysicalProductStatus() {
     }
   }
 
+  // Remove physicalProductSUID from the sentry scope so it doesn't cloud
+  // any errors thrown later
+  if (process.env.NODE_ENV === "production") {
+    Sentry.configureScope(scope => {
+      scope.setExtra("physicalProductSUID", "")
+    })
+  }
+
   return {
     updatedPhysicalProducts,
     updatedProductVariants,
