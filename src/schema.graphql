@@ -87,6 +87,10 @@ type Query {
     first: Int
     last: Int
   ): [Product]!
+  productsAlphabetically(
+    category: String
+    sizes: [Size]!
+  ): [Product]!
   collectionGroups(
     where: CollectionGroupWhereInput
     orderBy: CollectionGroupOrderByInput
