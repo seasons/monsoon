@@ -19,20 +19,21 @@ export const Query = {
       const filter =
         children.length > 0
           ? {
-              where: {
-                ...args.where,
-                OR: children.map(({ slug }) => ({ category: { slug } })),
-              },
-            }
+            where: {
+              ...args.where,
+              OR: children.map(({ slug }) => ({ category: { slug } })),
+            },
+          }
           : {
-              where: {
-                ...args.where,
-                category: { slug: category.slug },
-              },
-            }
+            where: {
+              ...args.where,
+              category: { slug: category.slug },
+            },
+          }
       const { first, skip } = args
+      const orderBy = args.orderBy ? args.orderBy : "createdAt_DESC"
       const products = await ctx.db.query.products(
-        { first, skip, orderBy: "createdAt_DESC", ...filter },
+        { first, skip, orderBy, ...filter },
         info
       )
       return products
@@ -129,7 +130,7 @@ export const Query = {
             phone: phoneNumber,
           },
         })
-        .request(function(error, result) {
+        .request((error, result) => {
           if (error) {
             reject(error)
           } else {
