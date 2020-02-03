@@ -102,6 +102,7 @@ export const auth = {
 
   async login(obj, { email, password }, ctx: Context, info) {
     // If they are already logged in, throw an error
+    console.log("IN LOGIN")
     if (isLoggedIn(ctx)) {
       throw new Error(`user is already logged in`)
     }
@@ -111,14 +112,17 @@ export const auth = {
     try {
       tokenData = await getAuth0UserAccessToken(email, password)
     } catch (err) {
+      console.log("FAILED GETTING TOKEN DATA")
       if (err.message.includes("403")) {
         throw new ForbiddenError(err)
       }
       throw new UserInputError(err)
     }
+    console.log("getting user")
 
     // Get user with this email
     let user = await ctx.prisma.user({ email })
+    console.log("GOT USER")
 
     // If the user is a Customer, make sure that the account has been approved
     if (user && user.role == "Customer") {

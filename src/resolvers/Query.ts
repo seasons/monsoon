@@ -49,16 +49,24 @@ export const Query = {
   productsAlphabetically: async (parent, args, ctx: Context, info) => {
     if (args.category && args.category !== "all") {
     }
-
-    // const brands = await ctx.db.query.brands(
-    //   { orderBy: "name_ASC" },
-    //   info
-    // )
-    const brands = await ctx.prisma.brands(
-      { orderBy: "name_ASC" }
+    console.log("INFO:", info)
+    const brands = await ctx.db.query.brands(
+      { orderBy: "name_ASC" },
+      `
+      {
+        name
+        products(orderBy: name_ASC) {
+          name
+        }
+      }
+      `
     )
+    // const brands = await ctx.prisma.brands(
+    //   { orderBy: "name_ASC" }
+    // )
     console.log("HERE BRANDS:")
     console.log(Object.keys(brands[0]))
+    console.log(brands[0].products)
     return brands
   },
 
