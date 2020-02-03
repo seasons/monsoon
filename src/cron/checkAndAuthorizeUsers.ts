@@ -9,15 +9,17 @@ import {
 } from "../utils"
 import * as Sentry from "@sentry/node"
 
-Sentry.init({
-  dsn: process.env.SENTRY_DSN,
-})
+if (process.env.NODE_ENV === "production") {
+  Sentry.init({
+    dsn: process.env.SENTRY_DSN,
+  })
+}
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
 // When a user's status is set to "Authorized" on Airtable, execute the necessary
 // actions to enable that user to register for the service
-export async function checkAndAuthorizeUsers(event, context, callback) {
+export async function checkAndAuthorizeUsers (event, context, callback) {
   let response
   try {
     // Retrieve emails and statuses of every user on the airtable DB
@@ -71,7 +73,7 @@ export async function checkAndAuthorizeUsers(event, context, callback) {
   return response
 }
 
-function sendAuthorizedToSubscribeEmail(user: User) {
+function sendAuthorizedToSubscribeEmail (user: User) {
   sendTransactionalEmail(user.email, "d-a62e1c840166432abd396d1536e4489d", {
     name: user.firstName,
     url: `${process.env.SEEDLING_URL}/complete?idHash=${getUserIDHash(

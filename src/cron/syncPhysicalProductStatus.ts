@@ -13,11 +13,13 @@ import { airtableToPrismaInventoryStatus } from "../utils"
 import * as Sentry from "@sentry/node"
 import { SyncError } from "../errors"
 
-Sentry.init({
-  dsn: process.env.SENTRY_DSN,
-})
+if (process.env.NODE_ENV === "production") {
+  Sentry.init({
+    dsn: process.env.SENTRY_DSN,
+  })
+}
 
-export async function syncPhysicalProductStatus() {
+export async function syncPhysicalProductStatus () {
   // Get relevant data for airtable, setup containers to hold return data
   let updatedPhysicalProducts = []
   let updatedProductVariants = []
@@ -148,7 +150,7 @@ type productVariantCounts =
   | prismaProductVariantCounts
   | AirtableProductVariantCounts
 
-function physicalProductStatusChanged(
+function physicalProductStatusChanged (
   newStatusOnAirtable: AirtableInventoryStatus,
   currentStatusOnPrisma: PrismaInventoryStatus
 ): boolean {
@@ -158,7 +160,7 @@ function physicalProductStatusChanged(
   )
 }
 
-function getUpdatedCounts(
+function getUpdatedCounts (
   prismaProductVariant: ProductVariant,
   currentStatusOnPrisma: PrismaInventoryStatus,
   newStatusOnAirtable: AirtableInventoryStatus,
