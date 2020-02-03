@@ -23,7 +23,6 @@ export async function syncPhysicalProductStatus() {
   let updatedProductVariants = []
   let errors = []
   let physicalProductsInAirtableButNotPrisma = []
-  console.log("")
   const allAirtablePhysicalProducts = await getAllPhysicalProducts()
 
   // Update relevant products
