@@ -7,7 +7,6 @@ export function updatePhysicalProduct(
   base("Physical Products").update(airtableID, fields)
 }
 
-// ***************************************************
 export type AirtableInventoryStatus =
   | "Reservable"
   | "Non Reservable"

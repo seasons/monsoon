@@ -31,7 +31,8 @@
     "seed-db:staging": "yarn seed-db -- dotenv_config_path=.env.staging",
     "seed-db:production": "yarn seed-db -- dotenv_config_path=.env.production",
     "healthCheck:production": "node -r dotenv/config -r ts-node/register scripts/airtableToPrismaHealthCheck.ts -- dotenv_config_path=.env.production",
-    "test": "jest"
+    "test": "jest",
+    "lint": "yarn tslint -c 'tslint.json' 'src/**/*.ts'"
   },
   "dependencies": {
     "@auth0/auth0-spa-js": "^1.3.0",
@@ -47,6 +48,7 @@
     "apollo-server": "^2.9.3",
     "apollo-server-express": "^2.9.5",
     "apollo-server-lambda": "^2.9.3",
+    "apollo-server-plugin-base": "^0.6.10",
     "auth0": "^2.20.0",
     "bcryptjs": "2.4.3",
     "body-parser": "^1.19.0",
@@ -74,8 +76,8 @@
     "shippo": "^1.3.1",
     "slugify": "^1.3.5",
     "ts-node": "^8.4.1",
-    "tslint": "^5.20.0",
-    "typescript": "3.2.2"
+    "tslint": "^6.0.0",
+    "typescript": "^3.7.5"
   },
   "devDependencies": {
     "@babel/core": "^7.8.3",

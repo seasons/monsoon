@@ -12,7 +12,6 @@ import {
   calcShipmentWeightFromProductVariantIDs,
 } from "../utils"
 import { db } from "../server"
-import { SEASONS_CLEANER_LOCATION_SLUG } from "../resolvers/Product"
 
 // Set up Sentry, for error reporting
 const Sentry = require("@sentry/node")
@@ -232,7 +231,7 @@ async function updateReturnPackageOnCompletedReservation(
             },
             toAddress: {
               connect: {
-                slug: SEASONS_CLEANER_LOCATION_SLUG,
+                slug: process.env.SEASONS_CLEANER_LOCATION_SLUG,
               },
             },
           },
