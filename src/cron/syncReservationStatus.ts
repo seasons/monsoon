@@ -16,9 +16,11 @@ import * as Sentry from "@sentry/node"
 import { SyncError } from "../errors"
 
 // Set up Sentry, for error reporting
-Sentry.init({
-  dsn: process.env.SENTRY_DSN,
-})
+if (process.env.NODE_ENV === "production") {
+  Sentry.init({
+    dsn: process.env.SENTRY_DSN,
+  })
+}
 
 export async function syncReservationStatus () {
   const updatedReservations = []
