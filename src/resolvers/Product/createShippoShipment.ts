@@ -28,6 +28,10 @@ export async function createShippoShipment(
     .customer({ id: customer.id })
     .detail()
     .phoneNumber()
+  const insureShipmentForCustomer = await prisma
+    .customer({ id: customer.id })
+    .detail()
+    .insureShipment()
   const customerAddressShippo = {
     ...prismaLocationToCoreShippoAddressFields(customerShippingAddressPrisma),
     name: `${user.firstName} ${user.lastName}`,
@@ -52,12 +56,14 @@ export async function createShippoShipment(
       address_from: nextCleanersAddressShippo,
       address_to: customerAddressShippo,
       parcels: [parcel],
-      extra: {
-        insurance: {
-          amount: insuranceAmount.toString(),
-          currency: "USD",
+      ...(insureShipmentForCustomer) && {
+        extra: {
+          insurance: {
+            amount: insuranceAmount.toString(),
+            currency: "USD",
+          },
         },
-      },
+      }
     },
     {
       address_from: customerAddressShippo,

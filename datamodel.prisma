@@ -339,6 +339,7 @@ type CustomerDetail {
   commuteStyle: String
   shippingAddress: Location
   phoneOS: String
+  insureShipment: Boolean! @default(value: false)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
