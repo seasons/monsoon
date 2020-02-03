@@ -57,12 +57,7 @@ export async function getUserFromContext(ctx: Context): Promise<User> {
 
 export async function getCustomerFromContext(ctx: Context): Promise<Customer> {
   // Get the user on the context
-  let user
-  try {
-    user = await getUserFromContext(ctx)
-  } catch (err) {
-    throw new Error(err)
-  }
+  const user = await getUserFromContext(ctx) // will throw error if user doesn't exist
 
   if (user.role !== "Customer") {
     throw new Error(
@@ -71,15 +66,10 @@ export async function getCustomerFromContext(ctx: Context): Promise<Customer> {
   }
 
   // Get the customer record corresponding to that user
-  let customer
-  try {
-    let customerArray = await ctx.prisma.customers({
-      where: { user: { id: user.id } },
-    })
-    customer = customerArray[0]
-  } catch (err) {
-    throw new Error(err)
-  }
+  let customerArray = await ctx.prisma.customers({
+    where: { user: { id: user.id } },
+  })
+  const customer = customerArray[0]
 
   return customer
 }
