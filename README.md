@@ -1,7 +1,7 @@
 <h1>⽲ Monsoon</h1>
 <h3>GraphQL API for Seasons</h3>
 
-Monsoon is a Gateway service as its schema is built on top of the Shopify GraphQL API using a GraphQL design pattern called [Schema Stitching](https://www.apollographql.com/docs/graphql-tools/schema-stitching/). Stitching allows us to merge multiple remote services (both GraphQL and RESTful APIs) into a single endpoint.
+Monsoon is a Gateway service as its schema is using a GraphQL design pattern called [Schema Stitching](https://www.apollographql.com/docs/graphql-tools/schema-stitching/). Stitching allows us to merge multiple remote services (both GraphQL and RESTful APIs) into a single endpoint.
 
 You can explore the Monsoon API using the staging [GraphQL Playground](https://e7339i1sra.execute-api.us-east-1.amazonaws.com/dev/playground)
 
@@ -65,21 +65,43 @@ To verify the server is setup properly. go open the [playground](http://localhos
 
 ## Deployment
 
-To deploy monsoon onto AWS services, you need to configure serverless with AWS AMI credentials.
-`serverless config credentials --provider aws --key <AWS_API_KEY> --secret <AWS_USER_SECRET>`
+All deployments follow the following pattern.
+
+1. Create a Pull Request for your branch code onto master.
+2. Once that PR is reviewed and merged, create another PR to merge master to staging. Merge it. Your code will automatically deploy to the staging server.
+3. Once your code passes QA on staging, use Heroku's "Promotion" feature on [this page](https://dashboard.heroku.com/pipelines/07c04186-4604-4488-b9bf-4811420933bf) to deploy to production.
+
+Before deploying to production your first time, please check with a senior member of the engineering team.
 
 ## Documentation
 
 ### Commands
 
 - `yarn start` starts GraphQL server on `http://localhost:3000`
-- `yarn prisma <subcommand>` gives access to local version of Prisma CLI (e.g. `yarn prisma deploy`)
+- `yarn prisma:<subcommand>` gives access to local version of Prisma CLI (e.g. `yarn prisma:deploy`)
+- `yarn sls:<subcommand>` executes the given subcommand for code we've deployed to Serverless. (e.g `yarn sls:start`)
 
 Monsoon ships with a command line interface. To install it run `yarn link`. Once that's complete, you can use the following commands:
 
 - `monsoon sync-db [base]` where `base` can be (`colors`, `categories`,`brands`,`products`,`product-variants`)
 
 > **Note**: We recommend that you're using `yarn dev` during development as it will give you access to the GraphQL API or your server (defined by the [application schema](./src/schema.graphql)) as well as to the Prisma API directly (defined by the [Prisma database schema](./generated/prisma.graphql)). If you're starting the server with `yarn start`, you'll only be able to access the API of the application schema.
+
+### Environments
+
+You should have `.env`, `.env.staging`, and `.env.production` that declare the environment variables for your local, and the staging and production environments respectively.
+
+You can copy the staging and production environment variables directly from heroku using the heroku command line tool: `heroku config -s --app monsoon-staging > .env.staging`, `heroku config -s --app monsoon-production > .env.production`.
+
+You may need to install the CLI and login using `heroku login` first.
+
+### Database security
+
+All prisma services (your local instance, staging, and production) have both their management API and the core service itself protected by secrets. You can learn more about how this works on the [prisma docs for security](https://www.prisma.io/docs/prisma-server/authentication-and-security-kke4/).
+
+To use the prisma manamgent API through the prisma CLI, you need to set the `PRISMA_MANAGEMENT_API_SECRET` environment variable. This will be taken care of if you have pulled the latest environment variables from heroku and are only using the prisma CLI through the associated `yarn` scripts.
+
+To make calls to prisma services on the prisma playground or use the prisma admin, you'll need to add a JWT. To generate that token, use the script `yarn prisma:token-<env>`.
 
 ### Project structure
 
