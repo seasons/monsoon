@@ -2,6 +2,7 @@ import { Context, getUserIDHash, getCustomerFromUserID } from "../utils"
 import { Homepage } from "./Homepage"
 import { getUserRequestObject, getCustomerFromContext } from "../auth/utils"
 import chargebee from "chargebee"
+import { findBreakingChanges } from "graphql"
 
 export const Query = {
   async me(parent, args, ctx: Context) {
@@ -31,9 +32,8 @@ export const Query = {
             },
           }
       const { first, skip } = args
-      const orderBy = args.orderBy ? args.orderBy : "createdAt_DESC"
       const products = await ctx.db.query.products(
-        { first, skip, orderBy, ...filter },
+        { first, skip, orderBy: "createdAt_DESC", ...filter },
         info
       )
       return products
@@ -47,27 +47,50 @@ export const Query = {
   },
 
   productsAlphabetically: async (parent, args, ctx: Context, info) => {
-    if (args.category && args.category !== "all") {
-    }
-    console.log("INFO:", info)
+    const { category, sizes } = args
+    if (!category || !sizes) return []
     const brands = await ctx.db.query.brands(
       { orderBy: "name_ASC" },
       `
       {
         name
-        products(orderBy: name_ASC) {
+        products(
+          orderBy: name_ASC, 
+          where: {
+            ${category !== "all" ? `category: { slug: "${category}" },` : ""}
+            status: Available,
+            variants_some: { size_in: [${sizes}] }
+          }
+        ) {
+          id
           name
+          description
+          images
+          modelSize
+          modelHeight
+          externalURL
+          tags
+          retailPrice
+          status
+          createdAt
+          updatedAt
+          brand {
+            name
+          }
+          variants {
+            id
+            size
+            total
+            reservable
+            nonReservable
+            reserved
+          }
         }
       }
       `
     )
-    // const brands = await ctx.prisma.brands(
-    //   { orderBy: "name_ASC" }
-    // )
-    console.log("HERE BRANDS:")
-    console.log(Object.keys(brands[0]))
-    console.log(brands[0].products)
-    return brands
+    const products = brands.map(b => b.products).flat()
+    return products
   },
 
   product: (parent, args, ctx: Context, info) =>
