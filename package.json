@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "author": "Luc Succes <l2succes@gmail.com>",
   "license": "MIT",
+  "bin": "bin/sync.js",
   "main": "dist/index.js",
   "engines": {
     "node": "10.x.x"
@@ -11,12 +12,13 @@
     "graphql": "^14.5.7"
   },
   "scripts": {
-    "start:sls": "serverless offline",
-    "debug:sls": "export SLS_DEBUG=* && node --inspect ./node_modules/.bin/serverless offline -s dev",
-    "build:sls": "serverless package",
-    "login:sls": "serverless login",
-    "clean:sls": "rm -rf .build && rm -rf .serverless",
-    "deploy:sls-staging": "serverless deploy --verbose --stage qa --region us-east-1 --env=staging",
+    "sls:start": "serverless offline",
+    "sls:debug": "export SLS_DEBUG=* && node --inspect ./node_modules/.bin/serverless offline -s dev",
+    "sls:build": "serverless package",
+    "sls:login": "serverless login",
+    "sls:clean": "rm -rf .build && rm -rf .serverless",
+    "sls:deploy-staging": "serverless deploy --verbose --stage qa --region us-east-1 --env=staging",
+    "sls:deploy-production": "serverless deploy --verbose --stage prod --region us-east-1 --env=production",
     "postinstall": "npm run build",
     "start": "dotenv -- nodemon -e ts,graphql -x ts-node src/index.ts",
     "debug": "dotenv -- nodemon -e ts,graphql -x node --inspect -r dotenv/config -r ts-node/register src/index.ts",
@@ -28,7 +30,9 @@
     "seed-db": "node -r dotenv/config -r ts-node/register scripts/airtableToDB.ts",
     "seed-db:staging": "yarn seed-db -- dotenv_config_path=.env.staging",
     "seed-db:production": "yarn seed-db -- dotenv_config_path=.env.production",
-    "healthCheck:production": "node -r dotenv/config -r ts-node/register scripts/airtableToPrismaHealthCheck.ts -- dotenv_config_path=.env.production"
+    "healthCheck:production": "node -r dotenv/config -r ts-node/register scripts/airtableToPrismaHealthCheck.ts -- dotenv_config_path=.env.production",
+    "test": "jest",
+    "lint": "yarn tslint -c 'tslint.json' 'src/**/*.ts'"
   },
   "dependencies": {
     "@auth0/auth0-spa-js": "^1.3.0",
@@ -44,6 +48,7 @@
     "apollo-server": "^2.9.3",
     "apollo-server-express": "^2.9.5",
     "apollo-server-lambda": "^2.9.3",
+    "apollo-server-plugin-base": "^0.6.10",
     "auth0": "^2.20.0",
     "bcryptjs": "2.4.3",
     "body-parser": "^1.19.0",
@@ -71,26 +76,50 @@
     "shippo": "^1.3.1",
     "slugify": "^1.3.5",
     "ts-node": "^8.4.1",
-    "tslint": "^5.20.0",
-    "typescript": "3.2.2"
+    "tslint": "^6.0.0",
+    "typescript": "^3.7.5"
   },
   "devDependencies": {
+    "@babel/core": "^7.8.3",
+    "@babel/preset-env": "^7.8.3",
+    "@babel/preset-typescript": "^7.8.3",
     "@types/bcryptjs": "2.4.2",
+    "@types/jest": "^24.0.24",
     "@types/node": "10.14.17",
+    "apollo-server-testing": "^2.9.16",
+    "babel-jest": "^24.9.0",
     "dotenv-cli": "1.4.0",
     "graceful-fs": "^4.2.2",
+    "jest": "^24.9.0",
     "nodemon": "^1.19.2",
     "prettier": "^1.18.2",
     "rimraf": "^3.0.0",
     "serverless-dotenv-plugin": "^2.1.1",
     "serverless-offline": "^5.10.1",
     "serverless-plugin-include-dependencies": "^3.2.1",
-    "serverless-plugin-typescript": "1.1.7"
+    "serverless-plugin-typescript": "1.1.7",
+    "yargs": "^15.1.0"
   },
   "prettier": {
     "semi": false,
     "singleQuote": false,
     "trailingComma": "es5",
     "bracketSpacing": true
+  },
+  "jest": {
+    "setupFilesAfterEnv": [
+      "<rootDir>/src/tests/setupJest.ts"
+    ],
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/dist/"
+    ],
+    "moduleFileExtensions": [
+      "js",
+      "jsx",
+      "json",
+      "ts",
+      "tsx"
+    ]
   }
 }

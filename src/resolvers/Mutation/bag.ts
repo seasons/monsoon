@@ -2,6 +2,7 @@ import { Context } from "../../utils"
 import { getCustomerFromContext } from "../../auth/utils"
 import { head } from "lodash"
 import { ApolloError } from "apollo-server"
+import { BagItem } from "../../prisma"
 
 const BAG_SIZE = 3
 
@@ -67,7 +68,7 @@ export const bag = {
 
   async saveProduct(obj, { item, save = false }, ctx: Context, info) {
     const customer = await getCustomerFromContext(ctx)
-    const bagItems = await ctx.prisma.bagItems({
+    const bagItems = await ctx.db.query.bagItems({
       where: {
         customer: {
           id: customer.id,
@@ -77,11 +78,11 @@ export const bag = {
         },
         saved: true,
       },
-    })
-    const bagItem = head(bagItems)
+    }, info)
+    let bagItem: BagItem = head(bagItems)
 
     if (save && !bagItem) {
-      return await ctx.prisma.createBagItem({
+      bagItem = await ctx.prisma.createBagItem({
         customer: {
           connect: {
             id: customer.id,
@@ -103,6 +104,15 @@ export const bag = {
         })
       }
     }
+
+    if (save) {
+      return ctx.db.query.bagItem({
+        where: {
+          id: bagItem.id
+        }
+      }, info)
+    }
+    
     return bagItem
   },
 }

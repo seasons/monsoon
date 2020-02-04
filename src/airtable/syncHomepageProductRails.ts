@@ -11,9 +11,7 @@ export const syncHomepageProductRails = async () => {
     try {
       const { model } = record
       const products = allProducts.findMultipleByIds(model.products)
-      const {
-        name,
-      } = model
+      const { name } = model
 
       if (isEmpty(name)) {
         continue

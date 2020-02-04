@@ -16,6 +16,7 @@ enum Size {
   M
   L
   XL
+  XXL
 }
 
 enum Material {
@@ -41,13 +42,17 @@ enum Material {
   Lyocell
   MerinoWool
   Modacrylic
+  Mohair
   Nylon
   OrganicCotton
   Polyamide
   Polyester
+  Polyethylene
   Polyurethane
   PolyurethanicResin
+  PVC
   Rayon
+  RecycledPolyester
   RecycledWool
   Silk
   Suede
@@ -66,6 +71,7 @@ enum Material {
   Wool
   Denim
   Leather
+  RecycledPolyester
 }
 
 enum Department {
@@ -364,8 +370,8 @@ type Reservation {
   id: ID! @id
   user: User!
   customer: Customer! @relation(name: "CustomerToReservation")
-  sentPackage: Package @relation(name: "SeasonsToCustomerPackage")
-  returnedPackage: Package @relation(name: "CustomerToSeasonsPackage")
+  sentPackage: Package @relation(name: "SeasonsToCustomerPackage", onDelete:"CASCADE")
+  returnedPackage: Package @relation(name: "CustomerToSeasonsPackage", onDelete:"CASCADE")
   location: Location
   products: [PhysicalProduct!]!
   reservationNumber: Int! @unique
@@ -413,13 +419,15 @@ type BillingInfo {
 
 type ProductRequest {
   id: ID! @id
-  sku: String @unique
-  brand: String!
-  description: String!
-  images: [String!]! @scalarList(strategy: RELATION)
-  name: String!
-  price: Int!
-  priceCurrency: String!
-  productID: String!
+  brand: String
+  description: String
+  images: [String!] @scalarList(strategy: RELATION)
+  name: String
+  price: Int
+  priceCurrency: String
+  productID: String
+  reason: String!
+  sku: String
   url: String!
+  user: User!
 }

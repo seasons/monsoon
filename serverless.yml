@@ -3,7 +3,7 @@ app: monsoon
 org: seasons
 
 # Pin to 1.59.3 because 1.60.0 breaks the build
-# frameworkVersion: "=1.59.3"
+frameworkVersion: "=1.59.3"
 
 plugins:
   - serverless-plugin-typescript
@@ -28,11 +28,11 @@ package:
 
 functions:
   checkAndAuthorizeUsers:
-    handler: src/handler.checkAndAuthorizeUsers
+    handler: src/cron/checkAndAuthorizeUsers.checkAndAuthorizeUsers
     events:
       - schedule: rate(1 minute)
   syncPhysicalProductAndReservationStatus:
     handler: src/cron/syncPhysicalProductAndReservationStatus.syncPhysicalProductAndReservationStatus
     events:
       - schedule: rate(1 minute)
-    timeout: 60 # timeout in 60 seconds, rather than default of 6
+    timeout: 60 # rather than default of 6

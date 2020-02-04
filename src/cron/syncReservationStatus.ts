@@ -12,14 +12,17 @@ import {
   calcShipmentWeightFromProductVariantIDs,
 } from "../utils"
 import { db } from "../server"
+import * as Sentry from "@sentry/node"
+import { SyncError } from "../errors"
 
 // Set up Sentry, for error reporting
-const Sentry = require("@sentry/node")
-Sentry.init({
-  dsn: process.env.SENTRY_DSN,
-})
+if (process.env.NODE_ENV === "production") {
+  Sentry.init({
+    dsn: process.env.SENTRY_DSN,
+  })
+}
 
-export async function syncReservationStatus() {
+export async function syncReservationStatus () {
   const updatedReservations = []
   const errors = []
   const reservationsInAirtableButNotPrisma = []
@@ -28,6 +31,12 @@ export async function syncReservationStatus() {
 
   for (let airtableReservation of allAirtableReservations) {
     try {
+      if (process.env.NODE_ENV === "production") {
+        Sentry.configureScope(scope => {
+          scope.setExtra("reservationNumber", airtableReservation.fields.ID)
+        })
+      }
+
       const prismaReservation = await getPrismaReservationWithNeededFields(
         airtableReservation.fields.ID
       )
@@ -65,10 +74,11 @@ export async function syncReservationStatus() {
           }
         } else {
           reservationsInAirtableButNotPrisma.push(airtableReservation.fields.ID)
-          Sentry.captureMessage(
-            `completeReservations encountered a reservation in airtable but not prisma` +
-              `: ${JSON.stringify(airtableReservation)} `
-          )
+          if (process.env.NODE_ENV === "production") {
+            Sentry.captureException(
+              new SyncError("Reservation in airtable but not prisma")
+            )
+          }
         }
       } else if (
         airtableReservation.fields.Status !== prismaReservation.status
@@ -87,7 +97,9 @@ export async function syncReservationStatus() {
       }
     } catch (err) {
       errors.push(err)
-      Sentry.captureException(err)
+      if (process.env.NODE_ENV === "production") {
+        Sentry.captureException(err)
+      }
     }
   }
 
@@ -100,11 +112,11 @@ export async function syncReservationStatus() {
 
 // *****************************************************************************
 
-function sendYouCanNowReserveAgainEmail(user: User) {
+function sendYouCanNowReserveAgainEmail (user: User) {
   sendTransactionalEmail(user.email, "d-528db6242ecf4c0d886ea0357b363052", {})
 }
 
-async function getPrismaReservationWithNeededFields(reservationNumber) {
+async function getPrismaReservationWithNeededFields (reservationNumber) {
   const res = await db.query.reservation(
     {
       where: { reservationNumber },
@@ -122,6 +134,11 @@ async function getPrismaReservationWithNeededFields(reservationNumber) {
         }
         customer {
             id
+            detail {
+                shippingAddress {
+                    slug
+                }
+            }
         }
         returnedPackage {
             id
@@ -131,13 +148,13 @@ async function getPrismaReservationWithNeededFields(reservationNumber) {
   return res
 }
 
-function airtableToPrismaReservationStatus(
+function airtableToPrismaReservationStatus (
   airtableStatus: string
 ): ReservationStatus {
   return airtableStatus.replace(" ", "") as ReservationStatus
 }
 
-async function updateUsersBagItemsOnCompletedReservation(
+async function updateUsersBagItemsOnCompletedReservation (
   prisma: Prisma,
   prismaReservation: any // actually a Prisma Reservation with fields specified in getPrismaReservationWithNeededFields
 ) {
@@ -177,7 +194,7 @@ async function updateUsersBagItemsOnCompletedReservation(
   }
 }
 
-async function updateReturnPackageOnCompletedReservation(
+async function updateReturnPackageOnCompletedReservation (
   prisma: Prisma,
   prismaReservation: any // actually a Prisma Reservation with fields specified in getPrismaReservationWithNeededFields
 ) {
@@ -200,11 +217,41 @@ async function updateReturnPackageOnCompletedReservation(
     prisma,
     returnedProductVariantIDs
   )
-  await prisma.updatePackage({
-    data: {
-      items: { connect: returnedPhysicalProductIDs },
-      weight,
-    },
-    where: { id: prismaReservation.returnedPackage.id },
-  })
+
+  if (prismaReservation.returnedPackage != null) {
+    await prisma.updatePackage({
+      data: {
+        items: { connect: returnedPhysicalProductIDs },
+        weight,
+      },
+      where: { id: prismaReservation.returnedPackage.id },
+    })
+  } else {
+    await prisma.updateReservation({
+      data: {
+        returnedPackage: {
+          create: {
+            items: { connect: returnedPhysicalProductIDs },
+            weight,
+            shippingLabel: {
+              create: {},
+            },
+            fromAddress: {
+              connect: {
+                slug: prismaReservation.customer.detail.shippingAddress.slug,
+              },
+            },
+            toAddress: {
+              connect: {
+                slug: process.env.SEASONS_CLEANER_LOCATION_SLUG,
+              },
+            },
+          },
+        },
+      },
+      where: {
+        id: prismaReservation.id,
+      },
+    })
+  }
 }

@@ -44,8 +44,8 @@ export const Homepage = async (parent, args, ctx: Context, info) => {
           const newProducts = await ctx.db.query.products(
             {
               ...args,
-              orderBy: "createdAt_ASC",
-              first: 6,
+              orderBy: "createdAt_DESC",
+              first: 8,
               where: {
                 status: "Available",
               },

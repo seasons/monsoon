@@ -14,6 +14,7 @@ export enum ProductSize {
   M = "M",
   L = "L",
   XL = "XL",
+  XXL = "XXL",
 }
 
 export const seasonsIDFromProductVariant = (product, productVariant) => {}
@@ -30,6 +31,8 @@ export const sizeToSizeCode = (size: ProductSize) => {
       return "LL"
     case ProductSize.XL:
       return "XL"
+    case ProductSize.XXL:
+      return "XXL"
   }
   return ""
 }
@@ -138,16 +141,14 @@ export async function getPrismaLocationFromSlug(
   prisma: Prisma,
   slug: string
 ): Promise<Location> {
-  return new Promise(async function(resolve, reject) {
-    const prismaLocation = await prisma.location({
-      slug: slug,
-    })
-    if (!prismaLocation) {
-      reject(`no location with slug ${slug} found in DB`)
-    } else {
-      resolve(prismaLocation)
-    }
+  const prismaLocation = await prisma.location({
+    slug: slug,
   })
+  if (!prismaLocation) {
+    throw Error(`no location with slug ${slug} found in DB`)
+  }
+
+  return prismaLocation
 }
 
 export async function calcShipmentWeightFromProductVariantIDs(
@@ -158,7 +159,6 @@ export async function calcShipmentWeightFromProductVariantIDs(
   const productVariants = await prisma.productVariants({
     where: { id_in: itemIDs },
   })
-  console.log(`items returned: ${itemIDs}`)
   return productVariants.reduce(function addProductWeight(acc, curProdVar) {
     return acc + curProdVar.weight
   }, shippingBagWeight)
