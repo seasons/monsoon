@@ -11,6 +11,7 @@ export const Query = {
   },
 
   products: async (parent, args, ctx: Context, info) => {
+    const orderBy = args.orderBy || "createdAt_DESC"
     if (args.category && args.category !== "all") {
       const category = await ctx.prisma.category({ slug: args.category })
       const children = await ctx.prisma
@@ -33,14 +34,14 @@ export const Query = {
           }
       const { first, skip } = args
       const products = await ctx.db.query.products(
-        { first, skip, orderBy: "createdAt_DESC", ...filter },
+        { first, skip, orderBy, ...filter },
         info
       )
       return products
     }
 
     const result = await ctx.db.query.products(
-      { ...args, orderBy: "createdAt_DESC" },
+      { ...args, orderBy },
       info
     )
     return result
