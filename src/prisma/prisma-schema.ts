@@ -1984,6 +1984,7 @@ type CustomerDetail {
   commuteStyle: String
   shippingAddress: Location
   phoneOS: String
+  insureShipment: Boolean!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -2014,6 +2015,7 @@ input CustomerDetailCreateInput {
   commuteStyle: String
   shippingAddress: LocationCreateOneInput
   phoneOS: String
+  insureShipment: Boolean
 }
 
 input CustomerDetailCreateOneInput {
@@ -2063,6 +2065,8 @@ enum CustomerDetailOrderByInput {
   commuteStyle_DESC
   phoneOS_ASC
   phoneOS_DESC
+  insureShipment_ASC
+  insureShipment_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -2088,6 +2092,7 @@ type CustomerDetailPreviousValues {
   style: String
   commuteStyle: String
   phoneOS: String
+  insureShipment: Boolean!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -2129,6 +2134,7 @@ input CustomerDetailUpdateDataInput {
   commuteStyle: String
   shippingAddress: LocationUpdateOneInput
   phoneOS: String
+  insureShipment: Boolean
 }
 
 input CustomerDetailUpdateInput {
@@ -2150,6 +2156,7 @@ input CustomerDetailUpdateInput {
   commuteStyle: String
   shippingAddress: LocationUpdateOneInput
   phoneOS: String
+  insureShipment: Boolean
 }
 
 input CustomerDetailUpdateManyMutationInput {
@@ -2170,6 +2177,7 @@ input CustomerDetailUpdateManyMutationInput {
   style: String
   commuteStyle: String
   phoneOS: String
+  insureShipment: Boolean
 }
 
 input CustomerDetailUpdateOneInput {
@@ -2428,6 +2436,8 @@ input CustomerDetailWhereInput {
   phoneOS_not_starts_with: String
   phoneOS_ends_with: String
   phoneOS_not_ends_with: String
+  insureShipment: Boolean
+  insureShipment_not: Boolean
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]

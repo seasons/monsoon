@@ -1,6 +1,7 @@
 import {
   Context,
   calcShipmentWeightFromProductVariantIDs,
+  calcTotalRetailPriceFromProductVariantIDs,
 } from "../../../utils"
 import { ApolloError } from "apollo-server"
 import {
@@ -78,6 +79,10 @@ export async function reserveItems(parent, { items }, ctx: Context, info) {
       ctx.prisma,
       newProductVariantsBeingReserved as string[]
     )
+    const insuranceAmount = await calcTotalRetailPriceFromProductVariantIDs(
+      ctx.prisma,
+      newProductVariantsBeingReserved as string[]
+    )
     const [
       seasonsToShippoShipment,
       customerToSeasonsShipment,
@@ -85,7 +90,8 @@ export async function reserveItems(parent, { items }, ctx: Context, info) {
       ctx.prisma,
       userRequestObject,
       customer,
-      shipmentWeight
+      shipmentWeight,
+      insuranceAmount
     )
     let seasonsToCustomerTransaction = await createShippingLabel({
       shipment: seasonsToShippoShipment,

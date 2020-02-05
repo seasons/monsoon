@@ -1297,6 +1297,8 @@ export type CustomerDetailOrderByInput =
   | "commuteStyle_DESC"
   | "phoneOS_ASC"
   | "phoneOS_DESC"
+  | "insureShipment_ASC"
+  | "insureShipment_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -3126,6 +3128,7 @@ export interface CustomerDetailUpdateDataInput {
   commuteStyle?: Maybe<String>;
   shippingAddress?: Maybe<LocationUpdateOneInput>;
   phoneOS?: Maybe<String>;
+  insureShipment?: Maybe<Boolean>;
 }
 
 export interface HomepageProductRailCreateInput {
@@ -4169,6 +4172,8 @@ export interface CustomerDetailWhereInput {
   phoneOS_not_starts_with?: Maybe<String>;
   phoneOS_ends_with?: Maybe<String>;
   phoneOS_not_ends_with?: Maybe<String>;
+  insureShipment?: Maybe<Boolean>;
+  insureShipment_not?: Maybe<Boolean>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -5105,6 +5110,7 @@ export interface CustomerDetailUpdateInput {
   commuteStyle?: Maybe<String>;
   shippingAddress?: Maybe<LocationUpdateOneInput>;
   phoneOS?: Maybe<String>;
+  insureShipment?: Maybe<Boolean>;
 }
 
 export interface ProductUpdateavailableSizesInput {
@@ -6213,6 +6219,7 @@ export interface CustomerDetailCreateInput {
   commuteStyle?: Maybe<String>;
   shippingAddress?: Maybe<LocationCreateOneInput>;
   phoneOS?: Maybe<String>;
+  insureShipment?: Maybe<Boolean>;
 }
 
 export interface PhysicalProductUpsertWithWhereUniqueNestedInput {
@@ -6682,6 +6689,7 @@ export interface CustomerDetailUpdateManyMutationInput {
   style?: Maybe<String>;
   commuteStyle?: Maybe<String>;
   phoneOS?: Maybe<String>;
+  insureShipment?: Maybe<Boolean>;
 }
 
 export interface ProductVariantUpsertNestedInput {
@@ -8753,6 +8761,7 @@ export interface CustomerDetailPreviousValues {
   style?: String;
   commuteStyle?: String;
   phoneOS?: String;
+  insureShipment: Boolean;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -8778,6 +8787,7 @@ export interface CustomerDetailPreviousValuesPromise
   style: () => Promise<String>;
   commuteStyle: () => Promise<String>;
   phoneOS: () => Promise<String>;
+  insureShipment: () => Promise<Boolean>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -8803,6 +8813,7 @@ export interface CustomerDetailPreviousValuesSubscription
   style: () => Promise<AsyncIterator<String>>;
   commuteStyle: () => Promise<AsyncIterator<String>>;
   phoneOS: () => Promise<AsyncIterator<String>>;
+  insureShipment: () => Promise<AsyncIterator<Boolean>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -10107,6 +10118,7 @@ export interface CustomerDetail {
   style?: String;
   commuteStyle?: String;
   phoneOS?: String;
+  insureShipment: Boolean;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -10133,6 +10145,7 @@ export interface CustomerDetailPromise
   commuteStyle: () => Promise<String>;
   shippingAddress: <T = LocationPromise>() => T;
   phoneOS: () => Promise<String>;
+  insureShipment: () => Promise<Boolean>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -10159,6 +10172,7 @@ export interface CustomerDetailSubscription
   commuteStyle: () => Promise<AsyncIterator<String>>;
   shippingAddress: <T = LocationSubscription>() => T;
   phoneOS: () => Promise<AsyncIterator<String>>;
+  insureShipment: () => Promise<AsyncIterator<Boolean>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -10185,6 +10199,7 @@ export interface CustomerDetailNullablePromise
   commuteStyle: () => Promise<String>;
   shippingAddress: <T = LocationPromise>() => T;
   phoneOS: () => Promise<String>;
+  insureShipment: () => Promise<Boolean>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
