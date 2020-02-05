@@ -10,7 +10,19 @@ export const Query = {
   },
 
   products: async (parent, args, ctx: Context, info) => {
+    const category = args.category || "all"
     const orderBy = args.orderBy || "createdAt_DESC"
+    const sizes = args.sizes || []
+    // Add filtering by sizes in query
+    const where = args.where || {}
+    where.variants_some = { size_in: sizes }
+
+    // If client wants to sort by name, we will assume that they
+    // want to sort by brand name as well
+    if (orderBy.includes("name_")) {
+      return await productsAlphabetically(ctx, category, orderBy, sizes);
+    }
+
     if (args.category && args.category !== "all") {
       const category = await ctx.prisma.category({ slug: args.category })
       const children = await ctx.prisma
@@ -33,64 +45,17 @@ export const Query = {
           }
       const { first, skip } = args
       const products = await ctx.db.query.products(
-        { first, skip, orderBy, ...filter },
+        { first, skip, orderBy, where, ...filter },
         info
       )
       return products
     }
 
     const result = await ctx.db.query.products(
-      { ...args, orderBy },
+      { ...args, orderBy, where },
       info
     )
     return result
-  },
-
-  productsAlphabetically: async (parent, args, ctx: Context, info) => {
-    const { category, sizes } = args
-    if (!category || !sizes) return []
-    const brands = await ctx.db.query.brands(
-      { orderBy: "name_ASC" },
-      `
-      {
-        name
-        products(
-          orderBy: name_ASC, 
-          where: {
-            ${category !== "all" ? `category: { slug: "${category}" },` : ""}
-            status: Available,
-            variants_some: { size_in: [${sizes}] }
-          }
-        ) {
-          id
-          name
-          description
-          images
-          modelSize
-          modelHeight
-          externalURL
-          tags
-          retailPrice
-          status
-          createdAt
-          updatedAt
-          brand {
-            name
-          }
-          variants {
-            id
-            size
-            total
-            reservable
-            nonReservable
-            reserved
-          }
-        }
-      }
-      `
-    )
-    const products = brands.map(b => b.products).flat()
-    return products
   },
 
   product: (parent, args, ctx: Context, info) =>
@@ -199,4 +164,49 @@ export const Query = {
 
     return hostedPage
   },
+}
+
+const productsAlphabetically = async (ctx: Context, category: String, orderBy: String, sizes: [String]) => {
+  const brands = await ctx.db.query.brands(
+    { orderBy },
+    `
+    {
+      name
+      products(
+        orderBy: name_ASC, 
+        where: {
+          ${category !== "all" ? `category: { slug: "${category}" },` : ""}
+          status: Available,
+          variants_some: { size_in: [${sizes}] }
+        }
+      ) {
+        id
+        name
+        description
+        images
+        modelSize
+        modelHeight
+        externalURL
+        tags
+        retailPrice
+        status
+        createdAt
+        updatedAt
+        brand {
+          name
+        }
+        variants {
+          id
+          size
+          total
+          reservable
+          nonReservable
+          reserved
+        }
+      }
+    }
+    `
+  )
+  const products = brands.map(b => b.products).flat()
+  return products
 }
