@@ -10,25 +10,36 @@ import {
 } from "../airtable/updateProductVariantCounts"
 import { AirtableInventoryStatus } from "../airtable/updatePhysicalProduct"
 import { airtableToPrismaInventoryStatus } from "../utils"
+import * as Sentry from "@sentry/node"
+import { SyncError } from "../errors"
 
-const Sentry = require("@sentry/node")
-Sentry.init({
-  dsn: process.env.SENTRY_DSN,
-})
+if (process.env.NODE_ENV === "production") {
+  Sentry.init({
+    dsn: process.env.SENTRY_DSN,
+  })
+}
 
-export async function syncPhysicalProductStatus() {
+export async function syncPhysicalProductStatus () {
   // Get relevant data for airtable, setup containers to hold return data
   let updatedPhysicalProducts = []
   let updatedProductVariants = []
   let errors = []
   let physicalProductsInAirtableButNotPrisma = []
-  console.log("")
   const allAirtablePhysicalProducts = await getAllPhysicalProducts()
 
   // Update relevant products
   for (let airtablePhysicalProduct of allAirtablePhysicalProducts) {
     // Wrap it in a try/catch so individual sync errors don't stop the whole job
     try {
+      if (process.env.NODE_ENV === "production") {
+        Sentry.configureScope(scope => {
+          scope.setExtra(
+            "physicalProductSUID",
+            airtablePhysicalProduct.fields.SUID["text"]
+          )
+        })
+      }
+
       const prismaPhysicalProduct = await prisma.physicalProduct({
         seasonsUID: airtablePhysicalProduct.fields.SUID["text"],
       })
@@ -99,17 +110,26 @@ export async function syncPhysicalProductStatus() {
         physicalProductsInAirtableButNotPrisma.push(
           airtablePhysicalProduct.fields.SUID
         )
-        Sentry.captureMessage(
-          `updatePhysicalProductStatus encountered a physical` +
-            `Product in airtable but not prisma: ${JSON.stringify(
-              airtablePhysicalProduct
-            )} `
-        )
+        if (process.env.NODE_ENV === "production") {
+          Sentry.captureException(
+            new SyncError(`Physical product in airtable but not prisma`)
+          )
+        }
       }
     } catch (error) {
       errors.push(error)
-      Sentry.captureException(error)
+      if (process.env.NODE_ENV === "production") {
+        Sentry.captureException(error)
+      }
     }
+  }
+
+  // Remove physicalProductSUID from the sentry scope so it doesn't cloud
+  // any errors thrown later
+  if (process.env.NODE_ENV === "production") {
+    Sentry.configureScope(scope => {
+      scope.setExtra("physicalProductSUID", "")
+    })
   }
 
   return {
@@ -130,7 +150,7 @@ type productVariantCounts =
   | prismaProductVariantCounts
   | AirtableProductVariantCounts
 
-function physicalProductStatusChanged(
+function physicalProductStatusChanged (
   newStatusOnAirtable: AirtableInventoryStatus,
   currentStatusOnPrisma: PrismaInventoryStatus
 ): boolean {
@@ -140,7 +160,7 @@ function physicalProductStatusChanged(
   )
 }
 
-function getUpdatedCounts(
+function getUpdatedCounts (
   prismaProductVariant: ProductVariant,
   currentStatusOnPrisma: PrismaInventoryStatus,
   newStatusOnAirtable: AirtableInventoryStatus,

@@ -371,8 +371,8 @@ type Reservation {
   id: ID! @id
   user: User!
   customer: Customer! @relation(name: "CustomerToReservation")
-  sentPackage: Package @relation(name: "SeasonsToCustomerPackage")
-  returnedPackage: Package @relation(name: "CustomerToSeasonsPackage")
+  sentPackage: Package @relation(name: "SeasonsToCustomerPackage", onDelete:"CASCADE")
+  returnedPackage: Package @relation(name: "CustomerToSeasonsPackage", onDelete:"CASCADE")
   location: Location
   products: [PhysicalProduct!]!
   reservationNumber: Int! @unique

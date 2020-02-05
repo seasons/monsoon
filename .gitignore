@@ -11,3 +11,4 @@ node_modules
 .build
 .DS_Store
 devnotes.txt
+.helpers.md

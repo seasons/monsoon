@@ -2,7 +2,6 @@ import { db } from "../../src/server"
 import { getAllProducts, getAllProductVariants } from "../../src/airtable/utils"
 import { PhysicalProduct } from "../../src/resolvers/PhysicalProduct"
 import { PhysicalProductUpdateInput, prisma } from "../../src/prisma"
-import { SEASONS_CLEANER_LOCATION_SLUG } from "../../src/resolvers/Product"
 
 export async function findProductVariantsWithNoPhysicalProducts() {
   const allPrismaProductVariants = await db.query.productVariants(
