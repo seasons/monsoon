@@ -5,11 +5,6 @@ import chargebee from "chargebee"
 import { Search } from "./Search"
 
 export const Query = {
-  async me(parent, args, ctx: Context) {
-    const { id } = await getUserRequestObject(ctx)
-    return ctx.prisma.user({ id })
-  },
-
   products: async (parent, args, ctx: Context, info) => {
     const category = args.category || "all"
     const orderBy = args.orderBy || "createdAt_DESC"
@@ -85,7 +80,7 @@ export const Query = {
   homepageProductRail: (parent, args, ctx: Context, info) =>
     ctx.db.query.homepageProductRail(args, info),
 
-  homepage: Homepage,
+  // homepage: Homepage,
 
   chargebeeCheckout: async (
     parent,
