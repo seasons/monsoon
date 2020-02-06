@@ -118,10 +118,10 @@ export const auth = {
     }
 
     // Get user with this email
-    let user = await ctx.prisma.user({ email })
+    const user = await ctx.prisma.user({ email })
 
     // If the user is a Customer, make sure that the account has been approved
-    if (user && user.role == "Customer") {
+    if (user && user.role === "Customer") {
       const customer = await getCustomerFromUserID(ctx.prisma, user.id)
       if (
         customer &&
@@ -139,13 +139,8 @@ export const auth = {
     }
   },
 
-  async resetPassword(
-    obj,
-    { email },
-    ctx: Context,
-    info
-  ) {
-    return new Promise(function (resolve, reject) {
+  async resetPassword(obj, { email }, ctx: Context, info) {
+    return new Promise(function(resolve, reject) {
       request(
         {
           method: "Post",
@@ -160,13 +155,13 @@ export const auth = {
         },
         async (error, response, body) => {
           if (error) {
-            reject(error);
+            reject(error)
           }
-          resolve({ message: body });
+          resolve({ message: body })
         }
       )
-    });
-  }
+    })
+  },
 }
 
 // TODO: Write code for address
