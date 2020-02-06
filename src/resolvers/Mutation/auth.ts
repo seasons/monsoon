@@ -7,7 +7,7 @@ import {
 } from "../../auth/utils"
 import { Context, getCustomerFromUserID } from "../../utils"
 import { CustomerDetail } from "../../prisma"
-import { UserInputError, ForbiddenError } from "apollo-server"
+import { UserInputError, ForbiddenError, ApolloError } from "apollo-server"
 import { createOrUpdateAirtableUser } from "../../airtable/createOrUpdateUser"
 import request from "request"
 
@@ -73,7 +73,7 @@ export const auth = {
     createOrUpdateAirtableUser(user, { ...details, status: "Created" })
 
     // Add them to segment and track their account creation event
-    let now = new Date()
+    const now = new Date()
     ctx.analytics.identify({
       userId: user.id,
       traits: {
@@ -96,7 +96,7 @@ export const auth = {
       token: tokenData.access_token,
       refreshToken: tokenData.refresh_token,
       expiresIn: tokenData.expires_in,
-      user: user,
+      user,
     }
   },
 
@@ -121,14 +121,18 @@ export const auth = {
     const user = await ctx.prisma.user({ email })
 
     // If the user is a Customer, make sure that the account has been approved
-    if (user && user.role === "Customer") {
-      const customer = await getCustomerFromUserID(ctx.prisma, user.id)
-      if (
-        customer &&
-        (customer.status !== "Active" && customer.status !== "Authorized")
-      ) {
-        throw new Error(`User account has not been approved`)
+    if (user) {
+      if (user.role === "Customer") {
+        const customer = await getCustomerFromUserID(ctx.prisma, user.id)
+        if (
+          customer &&
+          (customer.status !== "Active" && customer.status !== "Authorized")
+        ) {
+          throw new Error(`User account has not been approved`)
+        }
       }
+    } else {
+      throw new Error("User record not found")
     }
 
     return {
@@ -140,7 +144,7 @@ export const auth = {
   },
 
   async resetPassword(obj, { email }, ctx: Context, info) {
-    return new Promise(function(resolve, reject) {
+    return new Promise((resolve, reject) => {
       request(
         {
           method: "Post",
