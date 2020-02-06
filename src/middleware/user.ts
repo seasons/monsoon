@@ -3,7 +3,7 @@ Sentry.init({
   dsn: process.env.SENTRY_DSN,
 })
 
-export function createGetUserMiddleware (prisma) {
+export function createGetUserMiddleware(prisma) {
   return (req, res, next) => {
     // Get auth0 user from request
     const auth0User = req.user
@@ -16,13 +16,19 @@ export function createGetUserMiddleware (prisma) {
     const auth0Id = sub.split("|")[1]
     prisma
       .user({ auth0Id })
-      .then(function putUserOnRequestAndAddUserToSentryContext (prismaUser) {
+      .then(function putUserOnRequestAndAddUserToSentryContext(prismaUser) {
         req.user = { ...req.user, ...prismaUser }
 
-        // Add user context on Sentry
-        Sentry.configureScope(function (scope) {
-          scope.setUser({ id: prismaUser.id, email: prismaUser.email })
-        })
+        try {
+          // Add user context on Sentry
+          if (prismaUser) {
+            Sentry.configureScope(scope => {
+              scope.setUser({ id: prismaUser.id, email: prismaUser.email })
+            })
+          }
+        } catch (e) {
+          console.error(e)
+        }
 
         return next()
       })
