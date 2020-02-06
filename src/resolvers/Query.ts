@@ -50,7 +50,7 @@ export const Query = {
   homepageProductRail: (parent, args, ctx: Context, info) =>
     ctx.db.query.homepageProductRail(args, info),
 
-  homepage: Homepage,
+  // homepage: Homepage,
 
   faq: Faq,
 
