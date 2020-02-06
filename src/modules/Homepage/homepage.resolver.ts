@@ -1,14 +1,9 @@
-import { 
-  Resolver,
-  Parent,
-  ResolveProperty, 
-  Query 
-} from '@nestjs/graphql'
+import { Resolver, Parent, ResolveProperty, Query } from "@nestjs/graphql"
 import { Context } from "../../utils"
 import { head } from "lodash"
 import { getUserRequestObject, getCustomerFromContext } from "../../auth/utils"
 
-@Resolver('Homepage')
+@Resolver("Homepage")
 export class HomepageResolver {
   @Query()
   async homepage() {
@@ -64,16 +59,12 @@ export class HomepageResolver {
   @ResolveProperty()
   async sections(@Parent() homepage) {
     console.log("hi")
-    return [
-
-    ]
+    return []
   }
 
   @ResolveProperty()
   async results(@Parent() sections) {
     console.log("hi2")
-    return [
-
-    ]
+    return []
   }
-} 
+}
