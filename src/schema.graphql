@@ -246,14 +246,12 @@ type Me {
   savedItems: [BagItem!]!
 }
 
-union HomepageResult = Category | Product | Brand | Collection
+union HomepageResult = HomepageProductRail | Product | Collection
 
 enum HomePageSectionType {
   CollectionGroups
-  Categories
   Products
   HomepageProductRails
-  Brands
 }
 
 enum PlanID {
