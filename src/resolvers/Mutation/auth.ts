@@ -7,7 +7,7 @@ import {
 } from "../../auth/utils"
 import { Context, getCustomerFromUserID } from "../../utils"
 import { CustomerDetail } from "../../prisma"
-import { UserInputError, ForbiddenError, ApolloError } from "apollo-server"
+import { UserInputError, ForbiddenError } from "apollo-server"
 import { createOrUpdateAirtableUser } from "../../airtable/createOrUpdateUser"
 import request from "request"
 
