@@ -1,21 +1,22 @@
 import { ShippoShipment } from "./createShippoShipment"
 import shippo from "shippo"
 
-var activeShippo = shippo(process.env.SHIPPO_API_KEY)
+const activeShippo = shippo(process.env.SHIPPO_API_KEY)
 
 export async function createShippingLabel(
   inputs: ShippoLabelInputs
 ): Promise<ShippoTransaction> {
-  return new Promise(async function(resolve, reject) {
-    let transaction = await activeShippo.transaction
+  return new Promise(async (resolve, reject) => {
+    const transaction = await activeShippo.transaction
       .create(inputs)
-      .catch(err => reject(err))
+      .catch(reject)
+
     if (
       transaction.object_state === "VALID" &&
       transaction.status === "ERROR"
     ) {
       reject(
-        transaction.messages.reduce(function(acc, curVal) {
+        transaction.messages.reduce((acc, curVal) => {
           return `${acc}. Source: ${curVal.source}. Code: ${curVal.code}. Error Message: ${curVal.text}`
         }, "")
       )

@@ -88,10 +88,7 @@ type Query {
     first: Int
     last: Int
   ): [Product]!
-  productsAlphabetically(
-    category: String
-    sizes: [Size]!
-  ): [Product]!
+  productsAlphabetically(category: String, sizes: [Size]!): [Product]!
   collectionGroups(
     where: CollectionGroupWhereInput
     orderBy: CollectionGroupOrderByInput
@@ -191,16 +188,17 @@ type Mutation {
   saveProduct(item: ID!, save: Boolean!): BagItem
   acknowledgeCompletedChargebeeHostedCheckout(
     hostedPageID: String!
-  ): BillingInfoPlayoad
+  ): BillingInfoPayload
   addProductRequest(reason: String!, url: String!): ProductRequest!
   deleteProductRequest(requestID: ID!): ProductRequest!
+  validateAddress(input: ValidateAddressInput!): ValidationPayload!
 }
 
 input ReserveItemsOptions {
   dryRun: Boolean
 }
 
-type BillingInfoPlayoad {
+type BillingInfoPayload {
   billingInfo: BillingInfo
   plan: Plan
 }
@@ -214,6 +212,16 @@ type AuthPayload {
 
 type ResetPasswordPayload {
   message: String!
+}
+
+input ValidateAddressInput {
+  location: LocationCreateInput!
+}
+
+type ValidationPayload {
+  isValid: Boolean!
+  code: String
+  text: String
 }
 
 type Image {
