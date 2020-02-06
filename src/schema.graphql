@@ -81,11 +81,16 @@ type Query {
     category: String
     where: ProductWhereInput
     orderBy: ProductOrderByInput
+    sizes: [Size]!
     skip: Int
     after: String
     before: String
     first: Int
     last: Int
+  ): [Product]!
+  productsAlphabetically(
+    category: String
+    sizes: [Size]!
   ): [Product]!
   collectionGroups(
     where: CollectionGroupWhereInput
