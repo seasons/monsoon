@@ -1,11 +1,8 @@
-import { Module } from '@nestjs/common'
+import { Module } from "@nestjs/common"
 import { serverOptions } from "./server"
 import { ApolloServer } from "apollo-server-express"
-import { GraphQLModule, GraphQLFactory } from '@nestjs/graphql'
-import { 
-  MeModule,
-  HomepageModule,
-} from "./modules"
+import { GraphQLModule, GraphQLFactory } from "@nestjs/graphql"
+import { MeModule, HomepageModule } from "./modules"
 import { schema } from "./schema"
 
 import resolvers from "./resolvers"
@@ -25,13 +22,11 @@ const typeDefs = importSchema("./src/schema.graphql")
     }),
   ],
 })
-export class AppModule { 
+export class AppModule {
   // // Inject graphQLFactory as in Nestjs Docs
   // constructor(private readonly graphQLFactory: GraphQLFactory) { }
-
-  // configureGraphQL(app: any) { 
+  // configureGraphQL(app: any) {
   //   const server = new ApolloServer({ schema });
   //   server.applyMiddleware({ app, path: "/" });
   // }
 }
-
