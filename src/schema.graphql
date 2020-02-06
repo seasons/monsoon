@@ -81,7 +81,6 @@ type Query {
     category: String
     where: ProductWhereInput
     orderBy: ProductOrderByInput
-    sizes: [Size]!
     skip: Int
     after: String
     before: String
