@@ -1,7 +1,8 @@
-import { Context, getUserIDHash, getCustomerFromUserID } from "../utils"
+import { Context, getUserIDHash, getCustomerFromUserID, ProductSize } from "../utils"
 import { Homepage } from "./Homepage"
 import { getUserRequestObject, getCustomerFromContext } from "../auth/utils"
 import chargebee from "chargebee"
+import { Product } from "./Product"
 
 export const Query = {
   async me(parent, args, ctx: Context) {
@@ -12,7 +13,7 @@ export const Query = {
   products: async (parent, args, ctx: Context, info) => {
     const category = args.category || "all"
     const orderBy = args.orderBy || "createdAt_DESC"
-    const sizes = args.sizes || []
+    const sizes = args.sizes || Object.keys(ProductSize)
     // Add filtering by sizes in query		
     const where = args.where || {}
     where.variants_some = { size_in: sizes }
@@ -166,7 +167,7 @@ export const Query = {
   },
 }
 
-const productsAlphabetically = async (ctx: Context, category: String, orderBy: String, sizes: [String]) => {
+const productsAlphabetically = async (ctx: Context, category: String, orderBy: String, sizes: String[]) => {
   const brands = await ctx.db.query.brands(
     { orderBy },
     `
