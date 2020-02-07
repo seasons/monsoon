@@ -8,8 +8,10 @@ import {
   getUserIDHash,
 } from "../utils"
 import * as Sentry from "@sentry/node"
+import { emails } from "../emails"
 
-if (process.env.NODE_ENV === "production") {
+const shouldReportErrorsToSentry = process.env.NODE_ENV === "production"
+if (shouldReportErrorsToSentry) {
   Sentry.init({
     dsn: process.env.SENTRY_DSN,
   })
@@ -19,21 +21,22 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
 // When a user's status is set to "Authorized" on Airtable, execute the necessary
 // actions to enable that user to register for the service
-export async function checkAndAuthorizeUsers (event, context, callback) {
+export async function checkAndAuthorizeUsers(event, context, callback) {
   let response
   try {
     // Retrieve emails and statuses of every user on the airtable DB
     let updatedUsers = []
     let usersInAirtableButNotPrisma = []
     const allAirtableUsers = await getAllUsers()
-    for (let airtableUser of allAirtableUsers) {
+    for (const airtableUser of allAirtableUsers) {
       if (airtableUser.fields.Status === "Authorized") {
+        console.log(airtableUser.model.email)
         const prismaUser = await prisma.user({
           email: airtableUser.model.email,
         })
         if (!!prismaUser) {
           // Add user context on Sentry
-          if (process.env.NODE_ENV === "production") {
+          if (shouldReportErrorsToSentry) {
             Sentry.configureScope(scope => {
               scope.setUser({ id: prismaUser.id, email: prismaUser.email })
             })
@@ -61,11 +64,10 @@ export async function checkAndAuthorizeUsers (event, context, callback) {
     }
     response = {
       updated: updatedUsers,
-      usersInAirtableButNotPrisma: usersInAirtableButNotPrisma,
+      usersInAirtableButNotPrisma,
     }
-    console.log(response)
   } catch (err) {
-    if (process.env.NODE_ENV === "production") {
+    if (shouldReportErrorsToSentry) {
       Sentry.captureException(err)
     }
   }
@@ -73,11 +75,13 @@ export async function checkAndAuthorizeUsers (event, context, callback) {
   return response
 }
 
-function sendAuthorizedToSubscribeEmail (user: User) {
-  sendTransactionalEmail(user.email, "d-a62e1c840166432abd396d1536e4489d", {
-    name: user.firstName,
-    url: `${process.env.SEEDLING_URL}/complete?idHash=${getUserIDHash(
-      user.id
-    )}`,
-  })
+function sendAuthorizedToSubscribeEmail(user: User) {
+  sendTransactionalEmail(
+    user.email,
+    process.env.MASTER_EMAIL_TEMPLATE_ID,
+    emails.completeAccount(
+      user.firstName,
+      `${process.env.SEEDLING_URL}/complete?idHash=${getUserIDHash(user.id)}`
+    )
+  )
 }
