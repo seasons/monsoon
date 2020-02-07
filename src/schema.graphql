@@ -81,6 +81,7 @@ type Query {
     category: String
     where: ProductWhereInput
     orderBy: ProductOrderByInput
+    sizes: [Size]!
     skip: Int
     after: String
     before: String
@@ -186,16 +187,17 @@ type Mutation {
   saveProduct(item: ID!, save: Boolean!): BagItem
   acknowledgeCompletedChargebeeHostedCheckout(
     hostedPageID: String!
-  ): BillingInfoPlayoad
+  ): BillingInfoPayload
   addProductRequest(reason: String!, url: String!): ProductRequest!
   deleteProductRequest(requestID: ID!): ProductRequest!
+  validateAddress(input: ValidateAddressInput!): ValidationPayload!
 }
 
 input ReserveItemsOptions {
   dryRun: Boolean
 }
 
-type BillingInfoPlayoad {
+type BillingInfoPayload {
   billingInfo: BillingInfo
   plan: Plan
 }
@@ -209,6 +211,16 @@ type AuthPayload {
 
 type ResetPasswordPayload {
   message: String!
+}
+
+input ValidateAddressInput {
+  location: LocationCreateInput!
+}
+
+type ValidationPayload {
+  isValid: Boolean!
+  code: String
+  text: String
 }
 
 type Image {

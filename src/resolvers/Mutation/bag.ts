@@ -68,17 +68,20 @@ export const bag = {
 
   async saveProduct(obj, { item, save = false }, ctx: Context, info) {
     const customer = await getCustomerFromContext(ctx)
-    const bagItems = await ctx.db.query.bagItems({
-      where: {
-        customer: {
-          id: customer.id,
+    const bagItems = await ctx.db.query.bagItems(
+      {
+        where: {
+          customer: {
+            id: customer.id,
+          },
+          productVariant: {
+            id: item,
+          },
+          saved: true,
         },
-        productVariant: {
-          id: item,
-        },
-        saved: true,
       },
-    }, info)
+      info
+    )
     let bagItem: BagItem = head(bagItems)
 
     if (save && !bagItem) {
@@ -106,13 +109,16 @@ export const bag = {
     }
 
     if (save) {
-      return ctx.db.query.bagItem({
-        where: {
-          id: bagItem.id
-        }
-      }, info)
+      return ctx.db.query.bagItem(
+        {
+          where: {
+            id: bagItem.id,
+          },
+        },
+        info
+      )
     }
-    
+
     return bagItem
   },
 }

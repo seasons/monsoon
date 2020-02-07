@@ -93,12 +93,12 @@ export async function reserveItems(parent, { items }, ctx: Context, info) {
       shipmentWeight,
       insuranceAmount
     )
-    let seasonsToCustomerTransaction = await createShippingLabel({
+    const seasonsToCustomerTransaction = await createShippingLabel({
       shipment: seasonsToShippoShipment,
       carrier_account: process.env.UPS_ACCOUNT_ID,
       servicelevel_token: "ups_ground",
     })
-    let customerToSeasonsTransaction = await createShippingLabel({
+    const customerToSeasonsTransaction = await createShippingLabel({
       shipment: customerToSeasonsShipment,
       carrier_account: process.env.UPS_ACCOUNT_ID,
       servicelevel_token: "ups_ground",
@@ -153,11 +153,11 @@ export async function reserveItems(parent, { items }, ctx: Context, info) {
       info
     )
   } catch (err) {
-    for (let rollbackFunc of rollbackFuncs) {
+    for (const rollbackFunc of rollbackFuncs) {
       try {
         await rollbackFunc()
       } catch (err2) {
-        Sentry.configureScope(function(scope) {
+        Sentry.configureScope(scope => {
           scope.setTag("flag", "data-corruption")
           scope.setExtra(`item ids`, `${items}`)
           scope.setExtra(`original error`, err)
