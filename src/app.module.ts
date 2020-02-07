@@ -2,7 +2,8 @@ import { Module } from "@nestjs/common"
 import { serverOptions } from "./server"
 import { ApolloServer } from "apollo-server-express"
 import { GraphQLModule, GraphQLFactory } from "@nestjs/graphql"
-import { MeModule, HomepageModule } from "./modules"
+import { MeModule, HomepageModule, ProductModule } from "./modules"
+import { PrismaModule } from "./prisma/prisma.module"
 import { schema } from "./schema"
 
 import resolvers from "./resolvers"
@@ -16,6 +17,8 @@ const typeDefs = importSchema("./src/schema.graphql")
   imports: [
     MeModule,
     HomepageModule,
+    ProductModule,
+    PrismaModule,
     GraphQLModule.forRoot({
       typeDefs,
       resolvers,
