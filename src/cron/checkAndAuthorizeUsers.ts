@@ -30,7 +30,6 @@ export async function checkAndAuthorizeUsers(event, context, callback) {
     const allAirtableUsers = await getAllUsers()
     for (const airtableUser of allAirtableUsers) {
       if (airtableUser.fields.Status === "Authorized") {
-        console.log(airtableUser.model.email)
         const prismaUser = await prisma.user({
           email: airtableUser.model.email,
         })
@@ -79,7 +78,7 @@ function sendAuthorizedToSubscribeEmail(user: User) {
   sendTransactionalEmail(
     user.email,
     process.env.MASTER_EMAIL_TEMPLATE_ID,
-    emails.completeAccount(
+    emails.completeAccountData(
       user.firstName,
       `${process.env.SEEDLING_URL}/complete?idHash=${getUserIDHash(user.id)}`
     )

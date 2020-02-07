@@ -136,7 +136,11 @@ export async function syncReservationStatus() {
 // *****************************************************************************
 
 function sendYouCanNowReserveAgainEmail(user: User) {
-  sendTransactionalEmail(user.email, "d-528db6242ecf4c0d886ea0357b363052", {})
+  sendTransactionalEmail(
+    user.email,
+    process.env.MASTER_EMAIL_TEMPLATE_ID,
+    emails.freeToReserveData()
+  )
 }
 
 async function getPrismaReservationWithNeededFields(reservationNumber) {

@@ -47,7 +47,7 @@ export const emails = {
       },
     }
   },
-  completeAccount: (firstName, url) => {
+  completeAccountData: (firstName, url) => {
     return {
       email: {
         body: {
@@ -72,6 +72,26 @@ export const emails = {
         },
         title: "You're in. Let's choose your plan",
         subject: "You're in. Let's choose your plan",
+      },
+    }
+  },
+  freeToReserveData: () => {
+    return {
+      email: {
+        body: {
+          paragraphs: [
+            {
+              html:
+                "Good news! Your items made it back to Seasons HQ and we've reset your bag. You can now place a new reservation",
+            },
+            {
+              html:
+                "If you have any questions, feel free to reply to this e-mail.",
+            },
+          ],
+        },
+        title: "We've got your order",
+        subject: "We've received your return",
       },
     }
   },
