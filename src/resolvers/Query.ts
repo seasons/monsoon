@@ -2,7 +2,6 @@ import { Context, getUserIDHash, getCustomerFromUserID } from "../utils"
 import { Homepage } from "./Homepage"
 import { getUserRequestObject, getCustomerFromContext } from "../auth/utils"
 import chargebee from "chargebee"
-import { Product } from "./Product"
 
 export const Query = {
   async me(parent, args, ctx: Context) {
