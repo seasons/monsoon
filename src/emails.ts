@@ -20,4 +20,39 @@ export const emails = {
       },
     }
   },
+  reservationConfirmationData: (
+    reservationNumber,
+    reservedItems: ReservedItem[]
+  ) => {
+    return {
+      email: {
+        body: {
+          paragraphs: [
+            {
+              html:
+                "Sit back, relax and we'll let you know when it's on its way.",
+            },
+          ],
+        },
+        prefooter: {
+          paragraphs: [
+            {
+              html:
+                "If you have any questions, reach out to memberships@seasons.nyc.",
+            },
+          ],
+        },
+        title: "We've got your order",
+        reservedItems,
+        subject: `Order #${reservationNumber} | Your Reservation is Confirmed`,
+      },
+    }
+  },
+}
+
+export interface ReservedItem {
+  brand: string
+  url: string
+  name: string
+  price: number
 }

@@ -1,54 +1,50 @@
 import { sendTransactionalEmail } from "../../utils"
 import { Prisma, Product as PrismaProduct, Reservation } from "../../prisma"
 import { UserRequestObject } from "../../auth/utils"
+import { emails } from "../../emails"
 
 export async function sendReservationConfirmationEmail(
   prisma: Prisma,
   user: UserRequestObject,
-  products: Array<PrismaProduct>,
+  products: PrismaProduct[],
   reservation: Reservation
 ) {
-  const prod1Data = await getReservationConfirmationDataForProduct(
-    prisma,
-    products[0],
-    "item1"
-  )
-  let [prod2Data, prod3Data] = [{}, {}]
+  const reservedItems = [
+    await getReservationConfirmationDataForProduct(prisma, products[0]),
+  ]
   if (!!products[1]) {
-    prod2Data = await getReservationConfirmationDataForProduct(
-      prisma,
-      products[1],
-      "item2"
+    reservedItems.push(
+      await getReservationConfirmationDataForProduct(prisma, products[1])
     )
   }
   if (!!products[2]) {
-    prod3Data = await getReservationConfirmationDataForProduct(
-      prisma,
-      products[2],
-      "item3"
+    reservedItems.push(
+      await getReservationConfirmationDataForProduct(prisma, products[2])
     )
   }
-  sendTransactionalEmail(user.email, "d-2b8bb24a330740b7b3acfc7f4dea186a", {
-    order_number: reservation.reservationNumber,
-    ...prod1Data,
-    ...prod2Data,
-    ...prod3Data,
-  })
+
+  sendTransactionalEmail(
+    user.email,
+    process.env.MASTER_EMAIL_TEMPLATE_ID,
+    emails.reservationConfirmationData(
+      reservation.reservationNumber,
+      reservedItems
+    )
+  )
 
   // *************************************************************************
   async function getReservationConfirmationDataForProduct(
     prisma: Prisma,
-    product: PrismaProduct,
-    prefix: String
+    product: PrismaProduct
   ) {
-    let data = {}
-    data[`${prefix}_url`] = product.images[0].url
-    data[`${prefix}_brand`] = await prisma
-      .product({ id: product.id })
-      .brand()
-      .name()
-    data[`${prefix}_name`] = product.name
-    data[`${prefix}_price`] = product.retailPrice
-    return data
+    return {
+      url: product.images[0].url,
+      brand: await prisma
+        .product({ id: product.id })
+        .brand()
+        .name(),
+      name: product.name,
+      price: product.retailPrice,
+    }
   }
 }
