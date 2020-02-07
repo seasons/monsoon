@@ -164,6 +164,20 @@ export async function calcShipmentWeightFromProductVariantIDs(
   }, shippingBagWeight)
 }
 
+export async function calcTotalRetailPriceFromProductVariantIDs(
+  prisma: Prisma,
+  itemIDs: Array<string>
+): Promise<number> {
+  const products = await prisma.products({
+    where: { 
+      variants_some: {
+        id_in: itemIDs
+      }
+    }
+  })
+  return products.reduce(((acc, prod) => acc + prod.retailPrice), 0)
+}
+
 export function airtableToPrismaInventoryStatus(
   airtableStatus: AirtableInventoryStatus
 ): InventoryStatus {

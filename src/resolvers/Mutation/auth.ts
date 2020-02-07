@@ -73,7 +73,7 @@ export const auth = {
     createOrUpdateAirtableUser(user, { ...details, status: "Created" })
 
     // Add them to segment and track their account creation event
-    let now = new Date()
+    const now = new Date()
     ctx.analytics.identify({
       userId: user.id,
       traits: {
@@ -96,7 +96,7 @@ export const auth = {
       token: tokenData.access_token,
       refreshToken: tokenData.refresh_token,
       expiresIn: tokenData.expires_in,
-      user: user,
+      user,
     }
   },
 
@@ -118,17 +118,21 @@ export const auth = {
     }
 
     // Get user with this email
-    let user = await ctx.prisma.user({ email })
+    const user = await ctx.prisma.user({ email })
 
     // If the user is a Customer, make sure that the account has been approved
-    if (user && user.role == "Customer") {
-      const customer = await getCustomerFromUserID(ctx.prisma, user.id)
-      if (
-        customer &&
-        (customer.status !== "Active" && customer.status !== "Authorized")
-      ) {
-        throw new Error(`User account has not been approved`)
+    if (user) {
+      if (user.role === "Customer") {
+        const customer = await getCustomerFromUserID(ctx.prisma, user.id)
+        if (
+          customer &&
+          (customer.status !== "Active" && customer.status !== "Authorized")
+        ) {
+          throw new Error(`User account has not been approved`)
+        }
       }
+    } else {
+      throw new Error("User record not found")
     }
 
     return {
@@ -139,13 +143,8 @@ export const auth = {
     }
   },
 
-  async resetPassword(
-    obj,
-    { email },
-    ctx: Context,
-    info
-  ) {
-    return new Promise(function (resolve, reject) {
+  async resetPassword(obj, { email }, ctx: Context, info) {
+    return new Promise((resolve, reject) => {
       request(
         {
           method: "Post",
@@ -160,13 +159,13 @@ export const auth = {
         },
         async (error, response, body) => {
           if (error) {
-            reject(error);
+            reject(error)
           }
-          resolve({ message: body });
+          resolve({ message: body })
         }
       )
-    });
-  }
+    })
+  },
 }
 
 // TODO: Write code for address

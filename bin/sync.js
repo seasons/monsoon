@@ -44,6 +44,10 @@ require("yargs")
         case "product-variants":
           await syncProducts()
           return await syncProductVariants()
+        case "collections":
+          return await syncCollections()
+        case "collection-groups":
+          return await syncCollectionGroups()
       }
     }
   )
