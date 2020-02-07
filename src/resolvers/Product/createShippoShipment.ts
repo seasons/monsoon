@@ -6,16 +6,16 @@ export async function createShippoShipment(
   prisma: Prisma,
   user: UserRequestObject,
   customer: Customer,
-  shipmentWeight: Number,
-  insuranceAmount: Number
-): Promise<Array<ShippoShipment>> {
+  shipmentWeight: number,
+  insuranceAmount: number
+): Promise<ShippoShipment[]> {
   // Create Next Cleaners Address object
   const nextCleanersAddressPrisma = await getPrismaLocationFromSlug(
     prisma,
     process.env.SEASONS_CLEANER_LOCATION_SLUG
   )
   const nextCleanersAddressShippo = {
-    ...prismaLocationToCoreShippoAddressFields(nextCleanersAddressPrisma),
+    ...locationDataToShippoAddress(nextCleanersAddressPrisma),
     ...seasonsHQOrCleanersSecondaryAddressFields(),
   }
 
@@ -33,7 +33,7 @@ export async function createShippoShipment(
     .detail()
     .insureShipment()
   const customerAddressShippo = {
-    ...prismaLocationToCoreShippoAddressFields(customerShippingAddressPrisma),
+    ...locationDataToShippoAddress(customerShippingAddressPrisma),
     name: `${user.firstName} ${user.lastName}`,
     phone: customerPhoneNumber,
     country: "US",
@@ -56,14 +56,14 @@ export async function createShippoShipment(
       address_from: nextCleanersAddressShippo,
       address_to: customerAddressShippo,
       parcels: [parcel],
-      ...(insureShipmentForCustomer) && {
+      ...(insureShipmentForCustomer && {
         extra: {
           insurance: {
             amount: insuranceAmount.toString(),
             currency: "USD",
           },
         },
-      }
+      }),
     },
     {
       address_from: customerAddressShippo,
@@ -72,23 +72,6 @@ export async function createShippoShipment(
     },
   ]
 
-  // **************************************************
-  function prismaLocationToCoreShippoAddressFields(
-    location: Location
-  ): CoreShippoAddressFields {
-    if (location == null) {
-      throw new Error("can not extract values from null object")
-    }
-    return {
-      name: location.name,
-      company: location.company,
-      street1: location.address1,
-      street2: location.address2,
-      city: location.city,
-      state: location.state,
-      zip: location.zipCode,
-    }
-  }
   function seasonsHQOrCleanersSecondaryAddressFields() {
     return {
       country: "US",
@@ -108,9 +91,26 @@ export interface ShippoShipment {
 interface CoreShippoAddressFields {
   name: string
   company: string
-  street1: String
-  street2: String
-  city: String
-  state: String
-  zip: String
+  street1: string
+  street2: string
+  city: string
+  state: string
+  zip: string
+}
+
+export function locationDataToShippoAddress(
+  location: Location
+): CoreShippoAddressFields {
+  if (location == null) {
+    throw new Error("can not extract values from null object")
+  }
+  return {
+    name: location.name,
+    company: location.company,
+    street1: location.address1,
+    street2: location.address2,
+    city: location.city,
+    state: location.state,
+    zip: location.zipCode,
+  }
 }

@@ -9,6 +9,7 @@ import { Reservation } from "./Reservation"
 import { PhysicalProduct } from "./PhysicalProduct"
 import { ProductVariant } from "./ProductVariant"
 import { bag } from "./Mutation/bag"
+import { address } from "./Mutation/address"
 
 export default {
   Query,
@@ -19,6 +20,7 @@ export default {
     ...ProductRequestMutations,
     ...customer,
     ...bag,
+    ...address,
   },
   Me,
   Reservation,

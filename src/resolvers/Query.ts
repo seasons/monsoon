@@ -13,12 +13,14 @@ export const Query = {
     const category = args.category || "all"
     const orderBy = args.orderBy || "createdAt_DESC"
     const sizes = args.sizes || []
-    // Add filtering by sizes in query
+    // Add filtering by sizes in query	
     const where = args.where || {}
-    where.variants_some = { size_in: sizes }
+    if (sizes && sizes.length > 0) {
+      where.variants_some = { size_in: sizes }
+    }
 
-    // If client wants to sort by name, we will assume that they
-    // want to sort by brand name as well
+    // If client wants to sort by name, we will assume that they		
+    // want to sort by brand name as well		
     if (orderBy.includes("name_")) {
       return await productsAlphabetically(ctx, category, orderBy, sizes);
     }
@@ -166,7 +168,7 @@ export const Query = {
   },
 }
 
-const productsAlphabetically = async (ctx: Context, category: String, orderBy: String, sizes: [String]) => {
+const productsAlphabetically = async (ctx: Context, category: String, orderBy: String, sizes: String[]) => {
   const brands = await ctx.db.query.brands(
     { orderBy },
     `
