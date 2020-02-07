@@ -1,4 +1,4 @@
-import { Context, getUserIDHash, getCustomerFromUserID, ProductSize } from "../utils"
+import { Context, getUserIDHash, getCustomerFromUserID } from "../utils"
 import { Homepage } from "./Homepage"
 import { getUserRequestObject, getCustomerFromContext } from "../auth/utils"
 import chargebee from "chargebee"
@@ -13,10 +13,12 @@ export const Query = {
   products: async (parent, args, ctx: Context, info) => {
     const category = args.category || "all"
     const orderBy = args.orderBy || "createdAt_DESC"
-    const sizes = args.sizes || Object.keys(ProductSize)
-    // Add filtering by sizes in query		
+    const sizes = args.sizes || []
+    // Add filtering by sizes in query	
     const where = args.where || {}
-    where.variants_some = { size_in: sizes }
+    if (sizes && sizes.length > 0) {
+      where.variants_some = { size_in: sizes }
+    }
 
     // If client wants to sort by name, we will assume that they		
     // want to sort by brand name as well		
