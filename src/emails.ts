@@ -62,7 +62,7 @@ export const emails = {
             {
               html:
                 `Heads up -- due to demand, we may need to give your spot to someone` +
-                `else if you don't choose your plan within the next 48 hours.`,
+                ` else if you don't choose your plan within the next 48 hours.`,
             },
             { html: "Thanks,<br>The Seasons Team" },
           ],
