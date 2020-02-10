@@ -150,6 +150,7 @@ type Query {
   homepageProductRail(
     where: HomepageProductRailWhereUniqueInput!
   ): HomepageProductRail
+  search(query: String!, options: SearchOptions): [SearchResult]!
 }
 
 type ChargebeeCheckout {
@@ -191,7 +192,6 @@ type Mutation {
   addProductRequest(reason: String!, url: String!): ProductRequest!
   deleteProductRequest(requestID: ID!): ProductRequest!
   validateAddress(input: ValidateAddressInput!): ValidationPayload!
-  search(query: String!, options: SearchOptions): [SearchResult]!
 }
 
 input ReserveItemsOptions {
@@ -225,13 +225,14 @@ type ValidationPayload {
 }
 
 input SearchOptions {
-  includeTypes: [SearchResultType]
+  includeTypes: [String]
 }
 
 union SearchResultType = Product | Brand
 
 type SearchResult {
-  data: SearchResultType
+  data: SearchResultType!
+  score: Float
 }
 
 type Image {

@@ -1,7 +1,7 @@
 import { elasticsearch } from "../search"
 import { Context } from "../utils"
 
-export const search = {
+export const Search = {
   async search(parent, args, ctx: Context, info) {
     const { query, options } = args
     const indexes = ["brands", "products"]
@@ -10,10 +10,30 @@ export const search = {
         .map(a => `${a}-${process.env.NODE_ENV ?? "staging"}`)
         .join(","),
       body: {
-        multi_match: {},
+        query: {
+          query_string: {
+            query,
+          },
+        },
       },
     })
 
-    console.log(result)
+    const data = result.body.hits.hits.map(({ _score, _source }) => {
+      return {
+        data: _source,
+        score: _score,
+      }
+    })
+
+    return data
+  },
+}
+
+export const SearchResultType = {
+  __resolveType(obj, context, info) {
+    if (obj.brand) {
+      return "Product"
+    }
+    return "Brand"
   },
 }

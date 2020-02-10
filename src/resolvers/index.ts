@@ -10,6 +10,7 @@ import { PhysicalProduct } from "./PhysicalProduct"
 import { ProductVariant } from "./ProductVariant"
 import { bag } from "./Mutation/bag"
 import { address } from "./Mutation/address"
+import { Search, SearchResultType } from "./Search"
 
 export default {
   Query,
@@ -27,4 +28,5 @@ export default {
   PhysicalProduct,
   Product,
   ProductVariant,
+  SearchResultType,
 }
