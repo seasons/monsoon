@@ -186,6 +186,7 @@ type Mutation {
   addToBag(item: ID!): BagItem!
   removeFromBag(item: ID!): BagItem!
   saveProduct(item: ID!, save: Boolean!): BagItem
+  addViewedProduct(item: ID!): RecentlyViewedProduct!
   acknowledgeCompletedChargebeeHostedCheckout(
     hostedPageID: String!
   ): BillingInfoPayload

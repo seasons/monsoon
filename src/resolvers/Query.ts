@@ -1,6 +1,6 @@
 import { Context, getUserIDHash, getCustomerFromUserID } from "../utils"
 import { Homepage } from "./Homepage"
-import { getUserRequestObject, getCustomerFromContext } from "../auth/utils"
+import { getUserRequestObject } from "../auth/utils"
 import chargebee from "chargebee"
 import { Search } from "./Search"
 
@@ -16,7 +16,9 @@ export const Query = {
     const sizes = args.sizes || []
     // Add filtering by sizes in query
     const where = args.where || {}
-    where.variants_some = { size_in: sizes }
+    if (sizes && sizes.length > 0) {
+      where.variants_some = { size_in: sizes }
+    }
 
     // If client wants to sort by name, we will assume that they
     // want to sort by brand name as well

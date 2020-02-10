@@ -10,6 +10,7 @@ import chargebee from "chargebee"
 import { createOrUpdateAirtableUser } from "../../airtable/createOrUpdateUser"
 import sgMail from "@sendgrid/mail"
 import { User } from "../../prisma"
+import { emails } from "../../emails"
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 chargebee.configure({
@@ -18,24 +19,6 @@ chargebee.configure({
 })
 
 export const customer = {
-  /*
-        Test Cases for addCustomerDetails resolver:
-        IF user submits an 'id' field in the resolver inputs, they get an error. 
-    
-        IF there is no value for the Authorization header, THEN they get a 401. 
-    
-        IF they use a token for an admin, THEN they get a 401
-    
-        IF they use a token for a partner, THEN they get a 401
-    
-        IF they add details to a customer with no existing customerDetail record, 
-        THEN a new record is created 
-        AND the customer record's "detail" field has the id of the newly created customerDetail record
-    
-        IF they add details to a customer with an existing details object
-        THEN the existing record is updated, with any fields that were previously
-        written to overwritten if the payload includes values for them. 
-        */
   async addCustomerDetails(
     obj,
     { details, status, event },
@@ -178,22 +161,14 @@ export const customer = {
       throw err
     }
   },
-
-  async saveProduct(obj, { item, save }, ctx: Context, info) {
-    const customer = await getCustomerFromContext(ctx)
-
-    let updatedSavedProducts
-
-    let key = save ? "connect" : "disconnect"
-
-    return { ...customer, savedProduct: updatedSavedProducts }
-  },
 }
 
 function sendWelcomeToSeasonsEmail(user: User) {
-  sendTransactionalEmail(user.email, "d-05ae098e5bfb47eb9372ea2c461ffcf6", {
-    name: user.firstName,
-  })
+  sendTransactionalEmail(
+    user.email,
+    process.env.MASTER_EMAIL_TEMPLATE_ID,
+    emails.welcomeToSeasonsData(user.firstName)
+  )
 }
 
 function getNameFromCard(card) {
