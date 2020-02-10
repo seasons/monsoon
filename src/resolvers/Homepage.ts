@@ -2,7 +2,7 @@ import { Context } from "../utils"
 import { getCustomerFromContext } from "../auth/utils"
 
 // FIXME: This is being used because currently info is lacking the __typename, add __typename to info
-const productFragment = `{
+const ProductFragment = `{
   __typename
   id
   images
@@ -75,7 +75,7 @@ export const Homepage = async (parent, args, ctx: Context, info) => {
                 status: "Available",
               },
             },
-            productFragment
+            ProductFragment
           )
 
           return newProducts
@@ -95,7 +95,7 @@ export const Homepage = async (parent, args, ctx: Context, info) => {
             },
             `{ 
               updatedAt
-              product ${productFragment} 
+              product ${ProductFragment} 
             }`
           )
           return viewedProducts.map(viewedProduct => viewedProduct.product)
@@ -118,7 +118,7 @@ export const Homepage = async (parent, args, ctx: Context, info) => {
               }),
             },
           },
-          productFragment
+          ProductFragment
         )
       },
     })
