@@ -161,16 +161,6 @@ export const customer = {
       throw err
     }
   },
-
-  async saveProduct(obj, { item, save }, ctx: Context, info) {
-    let customer = await getCustomerFromContext(ctx)
-
-    let updatedSavedProducts
-
-    let key = save ? "connect" : "disconnect"
-
-    return { ...customer, savedProduct: updatedSavedProducts }
-  },
 }
 
 function sendWelcomeToSeasonsEmail(user: User) {
