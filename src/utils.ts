@@ -49,7 +49,7 @@ export async function getUserFromUserIDHash(
   userIDHash: string
 ): Promise<User | null> {
   const allUsers = await prisma.users()
-  return new Promise(function(resolve, reject) {
+  return new Promise((resolve, reject) => {
     let targetUser
     for (let user of allUsers) {
       let thisUsersIDHash = getUserIDHash(user.id)
@@ -71,7 +71,7 @@ export async function getCustomerFromUserID(
 ): Promise<Customer> {
   let customer
   try {
-    let customerArray = await prisma.customers({
+    const customerArray = await prisma.customers({
       where: { user: { id: userID } },
     })
     customer = customerArray[0]
@@ -88,7 +88,7 @@ export async function getCustomerFromEmail(
 ): Promise<Customer> {
   let customer
   try {
-    let customerArray = await prisma.customers({
+    const customerArray = await prisma.customers({
       where: { user: { email } },
     })
     customer = customerArray[0]
@@ -103,7 +103,7 @@ export async function getCustomerFromEmail(
 export async function setCustomerPrismaStatus(
   prisma: Prisma,
   user: User,
-  status: String
+  status: string
 ) {
   const customer = await getCustomerFromUserID(prisma, user.id)
   await prisma.updateCustomer({
@@ -116,14 +116,14 @@ export async function setCustomerPrismaStatus(
 export function sendTransactionalEmail(
   to: string,
   templateId: string,
-  dynamic_template_data: any,
+  dynamicTemplateData: any,
   otherMsgValues?: any
 ) {
   const msg = {
     to,
     templateId,
     from: { email: "membership@seasons.nyc", name: "Seasons NYC" },
-    dynamic_template_data,
+    dynamicTemplateData,
     ...otherMsgValues,
   }
   sgMail.send(msg)
@@ -142,7 +142,7 @@ export async function getPrismaLocationFromSlug(
   slug: string
 ): Promise<Location> {
   const prismaLocation = await prisma.location({
-    slug: slug,
+    slug,
   })
   if (!prismaLocation) {
     throw Error(`no location with slug ${slug} found in DB`)
@@ -153,7 +153,7 @@ export async function getPrismaLocationFromSlug(
 
 export async function calcShipmentWeightFromProductVariantIDs(
   prisma: Prisma,
-  itemIDs: Array<string>
+  itemIDs: string[]
 ): Promise<number> {
   const shippingBagWeight = 1
   const productVariants = await prisma.productVariants({
@@ -166,16 +166,16 @@ export async function calcShipmentWeightFromProductVariantIDs(
 
 export async function calcTotalRetailPriceFromProductVariantIDs(
   prisma: Prisma,
-  itemIDs: Array<string>
+  itemIDs: string[]
 ): Promise<number> {
   const products = await prisma.products({
-    where: { 
+    where: {
       variants_some: {
-        id_in: itemIDs
-      }
-    }
+        id_in: itemIDs,
+      },
+    },
   })
-  return products.reduce(((acc, prod) => acc + prod.retailPrice), 0)
+  return products.reduce((acc, prod) => acc + prod.retailPrice, 0)
 }
 
 export function airtableToPrismaInventoryStatus(
