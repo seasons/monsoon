@@ -2,6 +2,7 @@ import { getAllBrands, getAllCategories, getAllProducts } from "./utils"
 import { prisma, ProductCreateInput } from "../prisma"
 import slugify from "slugify"
 import { isEmpty } from "lodash"
+import { elasticsearch } from "../search"
 
 export const syncProducts = async () => {
   const allBrands = await getAllBrands()
@@ -10,7 +11,7 @@ export const syncProducts = async () => {
 
   let i = 1
 
-  for (let record of allProducts) {
+  for (const record of allProducts) {
     try {
       const { model } = record
       const { name } = model
@@ -93,6 +94,11 @@ export const syncProducts = async () => {
 
       await record.patchUpdate({
         Slug: slug,
+      })
+
+      await elasticsearch.index({
+        index: "products",
+        body: product,
       })
 
       console.log(i++, product)
