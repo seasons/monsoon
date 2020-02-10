@@ -10,11 +10,11 @@ export const emails = {
         body: {
           paragraphs: [
             {
-              html: `Items returned: ${itemsReturned}<br></br>User: ${userEmail}}`,
+              html: `Items returned: ${itemsReturned}<br></br>User: ${userEmail}`,
             },
             {
               html:
-                `Please confirm that the reservation was processed as expected.` +
+                `Please confirm that the reservation was processed as expected. ` +
                 `If anything looks wrong, please alert a developer.`,
             },
           ],
