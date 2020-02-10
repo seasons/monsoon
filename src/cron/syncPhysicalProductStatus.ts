@@ -13,25 +13,28 @@ import { airtableToPrismaInventoryStatus } from "../utils"
 import * as Sentry from "@sentry/node"
 import { SyncError } from "../errors"
 
-if (process.env.NODE_ENV === "production") {
+const shouldReportErrorsToSentry = process.env.NODE_ENV === "production"
+
+if (shouldReportErrorsToSentry) {
   Sentry.init({
     dsn: process.env.SENTRY_DSN,
   })
 }
 
-export async function syncPhysicalProductStatus () {
+export async function syncPhysicalProductStatus() {
   // Get relevant data for airtable, setup containers to hold return data
-  let updatedPhysicalProducts = []
-  let updatedProductVariants = []
-  let errors = []
-  let physicalProductsInAirtableButNotPrisma = []
+  const updatedPhysicalProducts = []
+  const updatedProductVariants = []
+  const errors = []
+  const physicalProductsInAirtableButNotPrisma = []
   const allAirtablePhysicalProducts = await getAllPhysicalProducts()
 
   // Update relevant products
-  for (let airtablePhysicalProduct of allAirtablePhysicalProducts) {
+  for (const airtablePhysicalProduct of allAirtablePhysicalProducts) {
+    // console.log(airtablePhysicalProduct.fields.SUID["text"])
     // Wrap it in a try/catch so individual sync errors don't stop the whole job
     try {
-      if (process.env.NODE_ENV === "production") {
+      if (shouldReportErrorsToSentry) {
         Sentry.configureScope(scope => {
           scope.setExtra(
             "physicalProductSUID",
@@ -110,7 +113,7 @@ export async function syncPhysicalProductStatus () {
         physicalProductsInAirtableButNotPrisma.push(
           airtablePhysicalProduct.fields.SUID
         )
-        if (process.env.NODE_ENV === "production") {
+        if (shouldReportErrorsToSentry) {
           Sentry.captureException(
             new SyncError(`Physical product in airtable but not prisma`)
           )
@@ -118,7 +121,7 @@ export async function syncPhysicalProductStatus () {
       }
     } catch (error) {
       errors.push(error)
-      if (process.env.NODE_ENV === "production") {
+      if (shouldReportErrorsToSentry) {
         Sentry.captureException(error)
       }
     }
@@ -126,7 +129,7 @@ export async function syncPhysicalProductStatus () {
 
   // Remove physicalProductSUID from the sentry scope so it doesn't cloud
   // any errors thrown later
-  if (process.env.NODE_ENV === "production") {
+  if (shouldReportErrorsToSentry) {
     Sentry.configureScope(scope => {
       scope.setExtra("physicalProductSUID", "")
     })
@@ -150,7 +153,7 @@ type productVariantCounts =
   | prismaProductVariantCounts
   | AirtableProductVariantCounts
 
-function physicalProductStatusChanged (
+function physicalProductStatusChanged(
   newStatusOnAirtable: AirtableInventoryStatus,
   currentStatusOnPrisma: PrismaInventoryStatus
 ): boolean {
@@ -160,14 +163,14 @@ function physicalProductStatusChanged (
   )
 }
 
-function getUpdatedCounts (
+function getUpdatedCounts(
   prismaProductVariant: ProductVariant,
   currentStatusOnPrisma: PrismaInventoryStatus,
   newStatusOnAirtable: AirtableInventoryStatus,
   format: "prisma" | "airtable"
 ): productVariantCounts {
-  let prismaCounts = {} as prismaProductVariantCounts
-  let airtableCounts = {} as AirtableProductVariantCounts
+  const prismaCounts = {} as prismaProductVariantCounts
+  const airtableCounts = {} as AirtableProductVariantCounts
 
   // Decrement the count for whichever status we are moving away from
   switch (currentStatusOnPrisma) {
@@ -203,10 +206,10 @@ function getUpdatedCounts (
 
   // Get the formatting right
   let retVal
-  if (format == "prisma") {
+  if (format === "prisma") {
     retVal = prismaCounts
   }
-  if (format == "airtable") {
+  if (format === "airtable") {
     retVal = airtableCounts
   }
 
