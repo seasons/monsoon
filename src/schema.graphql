@@ -191,6 +191,7 @@ type Mutation {
   addProductRequest(reason: String!, url: String!): ProductRequest!
   deleteProductRequest(requestID: ID!): ProductRequest!
   validateAddress(input: ValidateAddressInput!): ValidationPayload!
+  search(query: String!, options: SearchOptions): [SearchResult]!
 }
 
 input ReserveItemsOptions {
@@ -221,6 +222,16 @@ type ValidationPayload {
   isValid: Boolean!
   code: String
   text: String
+}
+
+input SearchOptions {
+  includeTypes: [SearchResultType]
+}
+
+union SearchResultType = Product | Brand
+
+type SearchResult {
+  data: SearchResultType
 }
 
 type Image {
