@@ -108,7 +108,7 @@ export const emails = {
           paragraphs: [
             {
               html:
-                `Hey ${firstName}, thank you so much for signing up. We're excited` +
+                `Hey ${firstName}, thank you so much for signing up. We're excited ` +
                 `you're here. As a Founding Member, you'll be the first to know about` +
                 ` exclusive features, products and restocks.`,
             },
