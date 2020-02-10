@@ -116,7 +116,7 @@ export const emails = {
               html:
                 `We're still actively working on the beta app. If you have any ideas` +
                 ` or thoughts about the service, give us your feedback! Good or bad.` +
-                ` Just write to membership@seasons.com`,
+                ` Just write to ${process.env.MAIN_CONTACT_EMAIL}`,
             },
             {
               html:
