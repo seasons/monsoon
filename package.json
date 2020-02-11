@@ -27,7 +27,6 @@
     "seed-db:production": "yarn seed-db -- dotenv_config_path=.env.production",
     "seed-db:staging": "yarn seed-db -- dotenv_config_path=.env.staging",
     "seed-db": "node -r dotenv/config -r ts-node/register scripts/airtableToDB.ts",
-    "sync-prod-db-to-staging-db": "bash scripts/syncProdDBToStagingDB.sh",
     "sls:build": "serverless package",
     "sls:clean": "rm -rf .build && rm -rf .serverless",
     "sls:debug": "export SLS_DEBUG=* && node --inspect ./node_modules/.bin/serverless offline -s dev",
@@ -36,6 +35,7 @@
     "sls:login": "serverless login",
     "sls:start": "serverless offline",
     "start": "dotenv -- nodemon -e ts,graphql -x ts-node src/index.ts",
+    "sync-prod-db-to-staging-db": "bash scripts/syncProdDBToStagingDB.sh",
     "test": "jest"
   },
   "dependencies": {
