@@ -74,13 +74,6 @@ export async function checkAndAuthorizeUsers(event, context, callback) {
   return response
 }
 
-export const dooSomething = (prod, hello) => {
-  return "hi"
-}
-
-function doSomething(prod, hello) {
-  return "hi"
-}
 export const sendAuthorizedToSubscribeEmail = (user: User) => {
   sendTransactionalEmail({
     to: user.email,
