@@ -3,11 +3,6 @@ import { base } from "../airtable/config"
 import { prisma, User } from "../prisma"
 import crypto from "crypto"
 import sgMail from "@sendgrid/mail"
-import {
-  getUserIDHash,
-  setCustomerPrismaStatus,
-  sendTransactionalEmail,
-} from "../utils"
 
 const app = express()
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
@@ -73,15 +68,6 @@ const incrementReservableCount = async (productVariant, physicalProduct) => {
 interface Update {
   field: string
   newValue: string
-}
-
-function sendAuthorizedToSubscribeEmail(user: User) {
-  sendTransactionalEmail(user.email, "d-a62e1c840166432abd396d1536e4489d", {
-    name: user.firstName,
-    url: `${process.env.SEEDLING_URL}/complete?idHash=${getUserIDHash(
-      user.id
-    )}`,
-  })
 }
 
 export { app }

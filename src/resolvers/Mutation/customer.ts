@@ -1,9 +1,9 @@
 import {
   Context,
   setCustomerPrismaStatus,
-  sendTransactionalEmail,
   getCustomerFromUserID,
 } from "../../utils"
+import { sendTransactionalEmail } from "../../sendTransactionalEmail"
 import { getCustomerFromContext, getUserFromContext } from "../../auth/utils"
 import { UserInputError } from "apollo-server"
 import chargebee from "chargebee"
@@ -164,11 +164,10 @@ export const customer = {
 }
 
 function sendWelcomeToSeasonsEmail(user: User) {
-  sendTransactionalEmail(
-    user.email,
-    process.env.MASTER_EMAIL_TEMPLATE_ID,
-    emails.welcomeToSeasonsData(user.firstName)
-  )
+  sendTransactionalEmail({
+    to: user.email,
+    data: emails.welcomeToSeasonsData(user.firstName),
+  })
 }
 
 function getNameFromCard(card) {
