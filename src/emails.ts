@@ -10,11 +10,11 @@ export const emails = {
         body: {
           paragraphs: [
             {
-              html: `Items returned: ${itemsReturned}<br></br>User: ${userEmail}}`,
+              html: `Items returned: ${itemsReturned}<br></br>User: ${userEmail}`,
             },
             {
               html:
-                `Please confirm that the reservation was processed as expected.` +
+                `Please confirm that the reservation was processed as expected. ` +
                 `If anything looks wrong, please alert a developer.`,
             },
           ],
@@ -62,7 +62,7 @@ export const emails = {
             {
               html:
                 `Heads up -- due to demand, we may need to give your spot to someone` +
-                `else if you don't choose your plan within the next 48 hours.`,
+                ` else if you don't choose your plan within the next 48 hours.`,
             },
             { html: "Thanks,<br>The Seasons Team" },
           ],
@@ -108,7 +108,7 @@ export const emails = {
           paragraphs: [
             {
               html:
-                `Hey ${firstName}, thank you so much for signing up. We're excited` +
+                `Hey ${firstName}, thank you so much for signing up. We're excited ` +
                 `you're here. As a Founding Member, you'll be the first to know about` +
                 ` exclusive features, products and restocks.`,
             },

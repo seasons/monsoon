@@ -48,6 +48,8 @@ require("yargs")
           return await syncCollections()
         case "collection-groups":
           return await syncCollectionGroups()
+        case "homepage-product-rails":
+          return await syncHomepageProductRails()
       }
     }
   )

@@ -364,6 +364,15 @@ type Customer {
   reservations: [Reservation] @relation(name: "CustomerToReservation")
 }
 
+type RecentlyViewedProduct {
+  id: ID! @id
+  product: Product!
+  customer: Customer!
+  viewCount: Int! @default(value: 0)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
 type Order {
   id: ID! @id
 }
