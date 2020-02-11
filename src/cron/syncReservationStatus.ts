@@ -7,10 +7,8 @@ import {
   Prisma,
   InventoryStatus,
 } from "../prisma"
-import {
-  sendTransactionalEmail,
-  calcShipmentWeightFromProductVariantIDs,
-} from "../utils"
+import { calcShipmentWeightFromProductVariantIDs } from "../utils"
+import { sendTransactionalEmail } from "../sendTransactionalEmail"
 import { db } from "../server"
 import * as Sentry from "@sentry/node"
 import { SyncError } from "../errors"
@@ -93,15 +91,14 @@ export async function syncReservationStatus() {
           )
 
           // Email an admin a confirmation email
-          sendTransactionalEmail(
-            process.env.OPERATIONS_ADMIN_EMAIL,
-            process.env.MASTER_EMAIL_TEMPLATE_ID,
-            emails.reservationReturnConfirmationData(
+          sendTransactionalEmail({
+            to: process.env.OPERATIONS_ADMIN_EMAIL,
+            data: emails.reservationReturnConfirmationData(
               prismaReservation.reservationNumber,
               returnedPhysicalProducts.map(p => p.seasonsUID),
               prismaUser.email
-            )
-          )
+            ),
+          })
         }
       } else if (
         airtableReservation.fields.Status !== prismaReservation.status
@@ -136,11 +133,10 @@ export async function syncReservationStatus() {
 // *****************************************************************************
 
 function sendYouCanNowReserveAgainEmail(user: User) {
-  sendTransactionalEmail(
-    user.email,
-    process.env.MASTER_EMAIL_TEMPLATE_ID,
-    emails.freeToReserveData()
-  )
+  sendTransactionalEmail({
+    to: user.email,
+    data: emails.freeToReserveData(),
+  })
 }
 
 async function getPrismaReservationWithNeededFields(reservationNumber) {

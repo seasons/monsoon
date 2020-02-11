@@ -113,22 +113,6 @@ export async function setCustomerPrismaStatus(
   })
 }
 
-export function sendTransactionalEmail(
-  to: string,
-  templateId: string,
-  dynamicTemplateData: any,
-  otherMsgValues?: any
-) {
-  const msg = {
-    to,
-    templateId,
-    from: { email: "membership@seasons.nyc", name: "Seasons NYC" },
-    dynamicTemplateData,
-    ...otherMsgValues,
-  }
-  sgMail.send(msg)
-}
-
 export interface Context {
   prisma: Prisma
   db: Binding
