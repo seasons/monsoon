@@ -1,7 +1,8 @@
 import { Context } from "../utils"
+import { getCustomerFromContext } from "../auth/utils"
 
 // FIXME: This is being used because currently info is lacking the __typename, add __typename to info
-const productFragment = `{
+const ProductFragment = `{
   __typename
   id
   images
@@ -74,10 +75,30 @@ export const Homepage = async (parent, args, ctx: Context, info) => {
                 status: "Available",
               },
             },
-            productFragment
+            ProductFragment
           )
 
           return newProducts
+        },
+      },
+      {
+        type: "Products",
+        __typename: "HomepageSection",
+        title: "Recently viewed",
+        results: async (args, ctx: Context, info) => {
+          const currentCustomer = await getCustomerFromContext(ctx)
+          const viewedProducts = await ctx.db.query.recentlyViewedProducts(
+            {
+              where: { customer: { id: currentCustomer.id } },
+              orderBy: "updatedAt_DESC",
+              limit: 10,
+            },
+            `{ 
+              updatedAt
+              product ${ProductFragment} 
+            }`
+          )
+          return viewedProducts.map(viewedProduct => viewedProduct.product)
         },
       },
     ],
@@ -97,7 +118,7 @@ export const Homepage = async (parent, args, ctx: Context, info) => {
               }),
             },
           },
-          productFragment
+          ProductFragment
         )
       },
     })

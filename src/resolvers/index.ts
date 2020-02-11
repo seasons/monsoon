@@ -10,6 +10,7 @@ import { PhysicalProduct } from "./PhysicalProduct"
 import { ProductVariant } from "./ProductVariant"
 import { bag } from "./Mutation/bag"
 import { address } from "./Mutation/address"
+import { recentlyViewedProduct } from "./Mutation/recentlyViewedProduct"
 
 export default {
   Query,
@@ -21,6 +22,7 @@ export default {
     ...customer,
     ...bag,
     ...address,
+    ...recentlyViewedProduct,
   },
   Me,
   Reservation,

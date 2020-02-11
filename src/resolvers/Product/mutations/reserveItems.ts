@@ -26,7 +26,7 @@ import { markBagItemsReserved } from "../updateAddedBagItems"
 
 export async function reserveItems(parent, { items }, ctx: Context, info) {
   let reservationReturnData
-  let rollbackFuncs = []
+  const rollbackFuncs = []
 
   try {
     // Do a quick validation on the data
