@@ -150,6 +150,7 @@ type Query {
   homepageProductRail(
     where: HomepageProductRailWhereUniqueInput!
   ): HomepageProductRail
+  search(query: String!, options: SearchOptions): [SearchResult]!
 }
 
 type ChargebeeCheckout {
@@ -222,6 +223,17 @@ type ValidationPayload {
   isValid: Boolean!
   code: String
   text: String
+}
+
+input SearchOptions {
+  includeTypes: [String]
+}
+
+union SearchResultType = Product | Brand
+
+type SearchResult {
+  data: SearchResultType!
+  score: Float
 }
 
 type Image {
