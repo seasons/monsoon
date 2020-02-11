@@ -58,11 +58,11 @@ export async function createReservationData(
         items: {
           // need to include the type on the function passed into map
           // or we get build errors comlaining about the type here
-          connect: physicalProductsBeingReserved.map(function(
-            prod
-          ): UniqueIDObject {
-            return { id: prod.id }
-          }),
+          connect: physicalProductsBeingReserved.map(
+            (prod): UniqueIDObject => {
+              return { id: prod.id }
+            }
+          ),
         },
         shippingLabel: {
           create: {

@@ -1,4 +1,4 @@
-import { sendTransactionalEmail } from "../../utils"
+import { sendTransactionalEmail } from "../../sendTransactionalEmail"
 import { Prisma, Product as PrismaProduct, Reservation } from "../../prisma"
 import { UserRequestObject } from "../../auth/utils"
 import { emails } from "../../emails"
@@ -23,14 +23,13 @@ export async function sendReservationConfirmationEmail(
     )
   }
 
-  sendTransactionalEmail(
-    user.email,
-    process.env.MASTER_EMAIL_TEMPLATE_ID,
-    emails.reservationConfirmationData(
+  sendTransactionalEmail({
+    to: user.email,
+    data: emails.reservationConfirmationData(
       reservation.reservationNumber,
       reservedItems
-    )
-  )
+    ),
+  })
 
   // *************************************************************************
   async function getReservationConfirmationDataForProduct(
