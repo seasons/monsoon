@@ -203,6 +203,7 @@ const productsAlphabetically = async (
         createdAt
         updatedAt
         brand {
+          id
           name
         }
         variants {
