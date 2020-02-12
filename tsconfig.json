@@ -6,14 +6,10 @@
     "sourceMap": true,
     "rootDir": "src",
     "outDir": "dist",
-    "lib": [
-      "esnext",
-      "dom"
-    ],
+    "lib": ["esnext", "dom"],
     "esModuleInterop": true,
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
   },
-  "exclude": [
-    "./scripts/"
-  ]
+  "exclude": ["./scripts/"]
 }

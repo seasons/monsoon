@@ -5,7 +5,8 @@ import { Prisma } from "./prisma.binding"
 export class PrismaService extends Prisma {
   constructor() {
     super({
-      endpoint: "https://monsoon-prisma-staging.herokuapp.com/monsoon/staging",
+      secret: process.env.PRISMA_SECRET,
+      endpoint: process.env.PRISMA_ENDPOINT,
       debug: false,
     })
   }
