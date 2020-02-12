@@ -2,6 +2,7 @@ import slugify from "slugify"
 import { prisma, BrandTier } from "../prisma"
 import { isEmpty } from "lodash"
 import { getAllBrands } from "./utils"
+import { elasticsearch } from "../search"
 
 export const syncBrands = async () => {
   const records = await getAllBrands()
@@ -52,6 +53,11 @@ export const syncBrands = async () => {
 
       await record.patchUpdate({
         Slug: slug,
+      })
+
+      await elasticsearch.index({
+        index: `brands-${process.env.NODE_ENV}`,
+        body: brand,
       })
 
       console.log(brand)
