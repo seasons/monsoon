@@ -2,7 +2,7 @@ import { Query, Resolver, Args, Info } from "@nestjs/graphql"
 import { PrismaService } from "../../prisma/prisma.service"
 import { Product } from "../../prisma"
 
-@Resolver()
+@Resolver("Product")
 export class ProductResolver {
   constructor(private readonly prisma: PrismaService) {}
 

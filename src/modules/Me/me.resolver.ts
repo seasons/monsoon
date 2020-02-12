@@ -1,9 +1,9 @@
-import { Resolver, Query } from '@nestjs/graphql'
+import { Resolver, Query } from "@nestjs/graphql"
 import { Context } from "../../utils"
 import { head } from "lodash"
 import { getUserRequestObject, getCustomerFromContext } from "../../auth/utils"
 
-@Resolver('Me')
+@Resolver("Me")
 export class MeResolver {
   @Query()
   async me() {
@@ -74,4 +74,4 @@ export class MeResolver {
       },
     }
   }
-} 
+}
