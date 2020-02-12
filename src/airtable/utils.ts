@@ -12,6 +12,7 @@ export interface AirtableData extends Array<any> {
   findMultipleByIds: (ids?: any) => any[]
   fields: any
 }
+export type AirtableModeName = "Colors" | "Brands" | "Models" | "Categories"
 
 const getAll: (
   name: string,
@@ -68,6 +69,10 @@ const getAll: (
 
 export const getAllBrands = async (airtableBase?) => {
   return getAll("Brands", "", "", airtableBase)
+}
+
+export const getAllModels = async (airtableBase?) => {
+  return getAll("Models", "", "", airtableBase)
 }
 
 export const getAllReservations = async (airtableBase?) => {

@@ -13,6 +13,10 @@
   },
   "scripts": {
     "build": "rimraf dist && tsc",
+    "db:seed-production": "yarn seed-db -- dotenv_config_path=.env.production",
+    "db:seed-staging": "yarn seed-db -- dotenv_config_path=.env.staging",
+    "db:seed": "node -r dotenv/config -r ts-node/register scripts/airtableToDB.ts",
+    "db:syncProdToStaging": "eval $(egrep -v '^#' .env | xargs) scripts/syncProdDBToStagingDB.sh",
     "debug": "dotenv -- nodemon -e ts,graphql -x node --inspect -r dotenv/config -r ts-node/register src/index.ts",
     "healthCheck:production": "node -r dotenv/config -r ts-node/register scripts/airtableToPrismaHealthCheck.ts -- dotenv_config_path=.env.production",
     "lint": "yarn tslint -c 'tslint.json' 'src/**/*.ts'",
@@ -24,9 +28,6 @@
     "prisma:token-production": "prisma token -e .env.production",
     "prisma:token-staging": "prisma token -e .env.staging",
     "prisma:token": "prisma token",
-    "seed-db:production": "yarn seed-db -- dotenv_config_path=.env.production",
-    "seed-db:staging": "yarn seed-db -- dotenv_config_path=.env.staging",
-    "seed-db": "node -r dotenv/config -r ts-node/register scripts/airtableToDB.ts",
     "sls:build": "serverless package",
     "sls:clean": "rm -rf .build && rm -rf .serverless",
     "sls:debug": "export SLS_DEBUG=* && node --inspect ./node_modules/.bin/serverless offline -s dev",
@@ -35,7 +36,6 @@
     "sls:login": "serverless login",
     "sls:start": "serverless offline",
     "start": "dotenv -- nodemon -e ts,graphql -x ts-node src/index.ts",
-    "sync-prod-db-to-staging-db": "eval $(egrep -v '^#' .env | xargs) scripts/syncProdDBToStagingDB.sh",
     "test": "jest"
   },
   "dependencies": {
