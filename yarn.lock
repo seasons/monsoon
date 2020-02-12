@@ -935,7 +935,10 @@
     minimist "^1.2.0"
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
+=======
+>>>>>>> Stashed changes
 "@elastic/elasticsearch@^7.6.0":
   version "7.6.0"
   resolved "https://registry.yarnpkg.com/@elastic/elasticsearch/-/elasticsearch-7.6.0.tgz#960e937b56826b53d4784bc48f3375ce4efc5377"
