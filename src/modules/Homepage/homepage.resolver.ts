@@ -7,12 +7,10 @@ import { getUserRequestObject, getCustomerFromContext } from "../../auth/utils"
 export class HomepageResolver {
   @Query()
   async homepage() {
-    console.log("asdf")
     return {}
   }
   @ResolveProperty()
   async sections(@Parent() homepage) {
-    console.log("hi")
     return [
       {
         type: "CollectionGroups",
