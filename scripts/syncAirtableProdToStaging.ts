@@ -1,4 +1,4 @@
-import { getAllBrands, getAllColors } from "../src/airtable/utils"
+import { getAllBrands, getAllColors, AirtableData } from "../src/airtable/utils"
 import * as Airtable from "airtable"
 import { base } from "../src/airtable/config"
 
@@ -24,23 +24,49 @@ export const sync = async () => {
   //   await syncHomepageProductRails()
 
   try {
-    // Sync colors
-    // Get all production colors
-    const allColorRecords = await getAllColors(productionBase)
-    await deleteAllStagingColors()
-    for (const colorRecord of allColorRecords) {
-      await stagingBase("Colors").create([{ fields: colorRecord.fields }])
-    }
+    syncColorsProdToStaging()
   } catch (err) {
     console.log(err)
   }
 }
 
-const deleteAllStagingBrands = async () => {
-  const allBrands = await getAllBrands(stagingBase)
-  for (const brand of allBrands) {
-    await base("Brands").destroy([brand.id])
+const syncColorsProdToStaging = async () => {
+  const allColorRecords = await getAllColors(productionBase)
+  await deleteAllRecordsOnStaging("Colors")
+  for (const colorRecord of allColorRecords) {
+    await stagingBase("Colors").create([{ fields: colorRecord.fields }])
   }
+}
+
+const syncBrandsProdToStaging = async () => {
+  const allBrands = await getAllBrands(productionBase)
+  await deleteAllRecordsOnStaging("Brands")
+  for (const )
+}
+
+interface DeleteAllInput {
+  getAllFunc: (airtableBase?: any) => Promise<AirtableData>
+  modelName: AirtableModeName
+}
+
+type AirtableModeName = "Colors" | "Brands"
+
+const deleteAllRecordsOnStaging = async (modelName: AirtableModeName) => {
+  const _base = stagingBase
+  const allRecords = await airtableModelNameToGetAllFunc(modelName)(_base)
+  for (const rec of allRecords) {
+    await _base(`${modelName}`).destroy([rec.id])
+  }
+}
+
+const airtableModelNameToGetAllFunc = (modelname: AirtableModeName) => {
+  switch (modelname) {
+    case "Colors":
+      return getAllColors
+    case "Brands":
+      return getAllBrands
+  }
+  throw new Error("invalid model name")
 }
 
 const deleteAllStagingColors = async () => {

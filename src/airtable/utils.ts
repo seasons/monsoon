@@ -7,17 +7,25 @@ import {
 } from "../prisma"
 import slugify from "slugify"
 
-interface AirtableData extends Array<any> {
+export interface AirtableData extends Array<any> {
   findByIds: (ids?: any) => any
   findMultipleByIds: (ids?: any) => any[]
+  fields: any
 }
 
 const getAll: (
   name: string,
   filterFormula?: string,
-  view?: string
-) => Promise<AirtableData> = async (name, filterFormula, view = "Script") => {
-  let data = [] as AirtableData
+  view?: string,
+  airtableBase?: any
+) => Promise<AirtableData> = async (
+  name,
+  filterFormula,
+  view = "Script",
+  airtableBase
+) => {
+  const data = [] as AirtableData
+  const baseToUse = airtableBase || base
 
   data.findByIds = (ids = []) => {
     return data.find(record => ids.includes(record.id))
@@ -36,7 +44,7 @@ const getAll: (
       options.filterByFormula = filterFormula
     }
 
-    base(name)
+    baseToUse(name)
       .select(options)
       .eachPage(
         (records, fetchNextPage) => {
@@ -46,7 +54,7 @@ const getAll: (
           })
           return fetchNextPage()
         },
-        function done (err) {
+        function done(err) {
           if (err) {
             console.error(err)
             reject(err)
@@ -58,62 +66,62 @@ const getAll: (
   })
 }
 
-export const getAllBrands = async () => {
-  return getAll("Brands")
+export const getAllBrands = async (airtableBase?) => {
+  return getAll("Brands", "", "", airtableBase)
 }
 
-export const getAllReservations = async () => {
-  return getAll("Reservations")
+export const getAllReservations = async (airtableBase?) => {
+  return getAll("Reservations", "", "", airtableBase)
 }
 
-export const getAllCollections = async () => {
-  return getAll("Collections")
+export const getAllCollections = async (airtableBase?) => {
+  return getAll("Collections", "", "", airtableBase)
 }
 
-export const getAllCollectionGroups = async () => {
-  return getAll("Collection Groups")
+export const getAllCollectionGroups = async (airtableBase?) => {
+  return getAll("Collection Groups", "", "", airtableBase)
 }
 
-export const getAllUsers = async () => {
-  return getAll("Users")
+export const getAllUsers = async (airtableBase?) => {
+  return getAll("Users", "", "", airtableBase)
 }
 
-export const getAllCategories = async () => {
-  return getAll("Categories")
+export const getAllCategories = async (airtableBase?) => {
+  return getAll("Categories", "", "", airtableBase)
 }
 
-export const getAllColors = async () => {
-  return getAll("Colors")
+export const getAllColors = async (airtableBase?) => {
+  return getAll("Colors", "", "", airtableBase)
 }
 
-export const getAllHomepageProductRails = async () => {
-  return getAll("Homepage Product Rails")
+export const getAllHomepageProductRails = async (airtableBase?) => {
+  return getAll("Homepage Product Rails", "", "", airtableBase)
 }
 
-export const getAllProducts = async () => {
-  return getAll("Products")
+export const getAllProducts = async (airtableBase?) => {
+  return getAll("Products", "", "", airtableBase)
 }
 
-export const getAllProductVariants = async () => {
-  return getAll("Product Variants")
+export const getAllProductVariants = async (airtableBase?) => {
+  return getAll("Product Variants", "", "", airtableBase)
 }
 
-export const getAllPhysicalProducts = async () => {
-  return getAll("Physical Products")
+export const getAllPhysicalProducts = async (airtableBase?) => {
+  return getAll("Physical Products", "", "", airtableBase)
 }
 
-export const getAllLocations = async () => {
-  return getAll("Locations")
+export const getAllLocations = async (airtableBase?) => {
+  return getAll("Locations", "", "", airtableBase)
 }
 
 export const airtableToPrismaObject = record => {
-  function camelCase (str) {
+  function camelCase(str) {
     return str
-      .replace(/\s(.)/g, function (a) {
+      .replace(/\s(.)/g, function(a) {
         return a.toUpperCase()
       })
       .replace(/\s/g, "")
-      .replace(/^(.)/, function (b) {
+      .replace(/^(.)/, function(b) {
         return b.toLowerCase()
       })
   }
@@ -126,13 +134,13 @@ export const airtableToPrismaObject = record => {
   return obj
 }
 
-export async function createAirtableReservation (
+export async function createAirtableReservation(
   userEmail: string,
   data: ReservationCreateInput,
   shippingError: string,
   returnShippingError: string
 ): Promise<[AirtableData, Function]> {
-  return new Promise(async function (resolve, reject) {
+  return new Promise(async function(resolve, reject) {
     try {
       const itemIDs = (data.products.connect as { seasonsUID: string }[]).map(
         a => a.seasonsUID
@@ -201,7 +209,7 @@ export const createLocation = async (user, data: LocationCreateInput) => {
   return base("Locations").create(createData)
 }
 
-export async function createBillingInfo (data: BillingInfoCreateInput) {
+export async function createBillingInfo(data: BillingInfoCreateInput) {
   return base("BillingInfos").create({
     Brand: data.brand,
     Name: data.name,
@@ -239,10 +247,10 @@ export const updateProductVariant = async data => {
   })
 }
 
-export function getAirtableUserRecordByUserEmail (
+export function getAirtableUserRecordByUserEmail(
   email: string
 ): Promise<{ id: string; fields: any }> {
-  return new Promise(function retrieveUser (resolve, reject) {
+  return new Promise(function retrieveUser(resolve, reject) {
     base("Users")
       .select({
         view: "Grid view",
