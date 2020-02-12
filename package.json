@@ -35,7 +35,7 @@
     "sls:login": "serverless login",
     "sls:start": "serverless offline",
     "start": "dotenv -- nodemon -e ts,graphql -x ts-node src/index.ts",
-    "sync-prod-db-to-staging-db": "bash scripts/syncProdDBToStagingDB.sh",
+    "sync-prod-db-to-staging-db": "eval $(egrep -v '^#' .env | xargs) scripts/syncProdDBToStagingDB.sh",
     "test": "jest"
   },
   "dependencies": {
