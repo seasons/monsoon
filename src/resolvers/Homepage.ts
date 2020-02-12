@@ -7,6 +7,7 @@ const productFragment = `{
   images
   name
   brand {
+    id
     name
   }
   variants {
