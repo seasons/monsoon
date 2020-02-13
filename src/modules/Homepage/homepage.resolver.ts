@@ -58,3 +58,7 @@ export class HomepageResolver {
     ]
   }
 }
+
+// @Resolver("HomepageSection")
+// export class HomepageSectionResolver {
+// }

@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common"
-import { GraphQLModule } from "@nestjs/graphql"
-import { MeModule, HomepageModule, ProductModule } from "./modules"
+import { GraphQLModule, GqlModuleOptions } from "@nestjs/graphql"
+import { UserModule, HomepageModule, ProductModule } from "./modules"
 import { PrismaModule } from "./prisma/prisma.module"
 import { importSchema } from "graphql-import"
 
@@ -18,10 +18,11 @@ const typeDefs = importSchema("./src/schema.graphql")
           resolverValidationOptions: {
             requireResolversForResolveType: false,
           },
-        }
+          context: ({ req }) => ({ req }),
+        } as GqlModuleOptions
       },
     }),
-    MeModule,
+    UserModule,
     HomepageModule,
     ProductModule,
   ],

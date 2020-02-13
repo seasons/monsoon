@@ -121,15 +121,13 @@ export const auth = {
     const user = await ctx.prisma.user({ email })
 
     // If the user is a Customer, make sure that the account has been approved
-    if (user) {
-      if (user.role === "Customer") {
-        const customer = await getCustomerFromUserID(ctx.prisma, user.id)
-        if (
-          customer &&
-          (customer.status !== "Active" && customer.status !== "Authorized")
-        ) {
-          throw new Error(`User account has not been approved`)
-        }
+    if (user && user.role == "Customer") {
+      const customer = await getCustomerFromUserID(ctx.prisma, user.id)
+      if (
+        customer &&
+        customer.status !== "Active" && customer.status !== "Authorized"
+      ) {
+        throw new Error(`User account has not been approved`)
       }
     } else {
       throw new Error("User record not found")
