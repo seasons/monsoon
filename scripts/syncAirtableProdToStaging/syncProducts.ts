@@ -14,7 +14,7 @@ import {
 import { linkStagingRecords } from "./linkStagingRecords"
 
 export const syncProducts = async () => {
-  console.log(" -- PRODUCTS -- ")
+  console.log(" -- Products -- ")
 
   const allProductsProduction = await getAllProducts(productionBase)
   await deleteAllStagingRecords("Products")
