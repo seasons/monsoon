@@ -50,7 +50,7 @@ server.use(
 )
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule)
+  const app = await NestFactory.create(AppModule, new ExpressAdapter(server))
   await app.listen(process.env.PORT ? process.env.PORT : 4000, () =>
     console.log(`🚀 Server ready at ${process.env.PORT || 4000}`)
   )
