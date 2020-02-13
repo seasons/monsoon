@@ -25,7 +25,10 @@ export const Me = {
       })
 
     const latestReservation = head(reservations)
-    if (latestReservation && latestReservation.status !== "Completed") {
+    if (
+      latestReservation &&
+      !["Completed", "Cancelled"].includes(latestReservation.status)
+    ) {
       return latestReservation
     }
 
