@@ -3596,6 +3596,7 @@ enum Material {
   Cotton
   CowLeather
   Cupro
+  DuckDown
   DuckFeathers
   Elastane
   Esterlane
@@ -3626,6 +3627,7 @@ enum Material {
   Spandex
   Taffeta
   Tartan
+  Triacetate
   VirginWool
   Viscose
   Velcro
