@@ -6,6 +6,7 @@ import {
   getAllCategories,
   getAllLocations,
   getAllProducts,
+  getAllHomepageProductRails,
 } from "../../src/airtable/utils"
 import { stagingBase, productionBase } from "./"
 
@@ -76,6 +77,7 @@ export const syncLocations = async () => {
     }
   )
 }
+
 export const airtableModelNameToGetAllFunc = (modelname: AirtableModelName) => {
   const func = {
     Colors: getAllColors,
@@ -84,6 +86,7 @@ export const airtableModelNameToGetAllFunc = (modelname: AirtableModelName) => {
     Categories: getAllCategories,
     Locations: getAllLocations,
     Products: getAllProducts,
+    "Homepage Product Rails": getAllHomepageProductRails,
   }[modelname]
   if (!func) {
     throw new Error(`Unrecognized model name: ${modelname}`)

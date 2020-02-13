@@ -1,61 +1,102 @@
-import { getAllProducts, getAllBrands } from "../../src/airtable/utils"
+import {
+  getAllProducts,
+  getAllBrands,
+  getAllModels,
+  getAllCategories,
+  getAllCollections,
+} from "../../src/airtable/utils"
 import { stagingBase, productionBase } from "./"
 import {
   deleteAllStagingRecords,
   createAllStagingRecordsWithoutLinks,
 } from "./utils"
 import { linkStagingRecord } from "./linkStagingRecord"
+import { linkStagingRecords } from "./linkStagingRecords"
 
 export const syncProducts = async () => {
   console.log(" -- PRODUCTS -- ")
 
-  const allProds = await getAllProducts(productionBase)
+  const allProductsProduction = await getAllProducts(productionBase)
   await deleteAllStagingRecords("Products")
-  await createAllStagingRecordsWithoutLinks("Products", allProds, fields => {
-    const sanitizedFields = {
-      ...fields,
-      Brand: [],
-      Model: [],
-      "Product Variants": [],
-      "Physical Products": [],
-      Category: [],
-      Images: [],
-      "Homepage product rail": [],
-      Collections: [],
+  await createAllStagingRecordsWithoutLinks(
+    "Products",
+    allProductsProduction,
+    fields => {
+      const sanitizedFields = {
+        ...fields,
+        Brand: [],
+        Model: [],
+        "Product Variants": [],
+        "Physical Products": [],
+        Category: [],
+        Images: [],
+        "Homepage product rail": [],
+        Collections: [],
+      }
+      delete sanitizedFields["Created Date"]
+      return sanitizedFields
     }
-    delete sanitizedFields["Created Date"]
-    return sanitizedFields
-  })
+  )
 
   // (TODO: Add images)
-  await addBrandLinks(allProds)
-  // TODO: Link Model
-  // TODO: Link Category
-  // TODO: Link homepage product rail
-  // TODO: Link Collections
+  const allProductsStaging = await getAllProducts(stagingBase)
+  await addBrandLinks(allProductsProduction, allProductsStaging)
+  await addModelLinks(allProductsProduction, allProductsStaging)
+  await addCategoryLinks(allProductsProduction, allProductsStaging)
+  await addCollectionLinks(allProductsProduction, allProductsStaging)
 }
 
-const addBrandLinks = async allProductionProducts => {
-  for (const productionProduct of allProductionProducts) {
-    if (!productionProduct.fields.Brand) {
-      continue
-    }
-    if (productionProduct.fields.Brand.length === 1) {
-      await linkStagingRecord({
-        rootProductionRecord: productionProduct,
-        rootRecordName: "Products",
-        allRootStagingRecords: await getAllProducts(stagingBase),
-        allTargetProductionRecords: await getAllBrands(productionBase),
-        allTargetStagingRecords: await getAllBrands(stagingBase),
-        matchRootRecords: (prodRec, stagingRec) =>
-          prodRec.fields.Slug === stagingRec.fields.Slug,
-        matchTargetRecords: (prodRec, stagingRec) =>
-          prodRec.fields.Name === stagingRec.fields.Name,
-        getTargetProductionIds: rootProdRec => rootProdRec.fields.Brand,
-        createFieldsData: targetRecordIds => {
-          return { Brand: targetRecordIds }
-        },
-      })
-    }
-  }
+const addBrandLinks = async (allProductionProducts, allStagingProducts) => {
+  await linkStagingRecords({
+    rootRecordName: "Products",
+    targetFieldNameOnRootRecord: "Brand",
+    allRootProductionRecords: allProductionProducts,
+    allRootStagingRecords: allStagingProducts,
+    allTargetProductionRecords: await getAllBrands(productionBase),
+    allTargetStagingRecords: await getAllBrands(stagingBase),
+    getRootRecordIdentifer: rec => rec.fields.Slug,
+    getTargetRecordIdentifer: rec => rec.fields.Name,
+  })
+}
+
+const addModelLinks = async (allProductionProducts, allStagingProducts) => {
+  await linkStagingRecords({
+    rootRecordName: "Products",
+    targetFieldNameOnRootRecord: "Model",
+    allRootProductionRecords: allProductionProducts,
+    allRootStagingRecords: allStagingProducts,
+    allTargetProductionRecords: await getAllModels(productionBase),
+    allTargetStagingRecords: await getAllModels(stagingBase),
+    getRootRecordIdentifer: rec => rec.fields.Slug,
+    getTargetRecordIdentifer: rec => rec.fields.Name,
+  })
+}
+
+const addCategoryLinks = async (allProductionProducts, allStagingProducts) => {
+  await linkStagingRecords({
+    rootRecordName: "Products",
+    targetFieldNameOnRootRecord: "Category",
+    allRootProductionRecords: allProductionProducts,
+    allRootStagingRecords: allStagingProducts,
+    allTargetProductionRecords: await getAllCategories(productionBase),
+    allTargetStagingRecords: await getAllCategories(stagingBase),
+    getRootRecordIdentifer: rec => rec.fields.Slug,
+    getTargetRecordIdentifer: rec => rec.fields.Slug,
+  })
+}
+
+const addCollectionLinks = async (
+  allProductionProducts,
+  allStagingProducts
+) => {
+  await linkStagingRecords({
+    rootRecordName: "Products",
+    targetFieldNameOnRootRecord: "Collections",
+    allRootProductionRecords: allProductionProducts,
+    allRootStagingRecords: allStagingProducts,
+    allTargetProductionRecords: await getAllCollections(productionBase),
+    allTargetStagingRecords: await getAllCollections(stagingBase),
+    getRootRecordIdentifer: rec => rec.fields.Slug,
+    getTargetRecordIdentifer: rec => rec.fields.Slug,
+  })
 }

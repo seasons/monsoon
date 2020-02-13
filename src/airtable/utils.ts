@@ -19,6 +19,7 @@ export type AirtableModelName =
   | "Categories"
   | "Locations"
   | "Products"
+  | "Homepage Product Rails"
 
 const getAll: (
   name: string,

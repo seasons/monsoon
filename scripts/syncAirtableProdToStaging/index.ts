@@ -2,6 +2,7 @@ import * as Airtable from "airtable"
 import { syncCategories } from "./syncCategories"
 import { syncBrands, syncModels, syncColors, syncLocations } from "./utils"
 import { syncProducts } from "./syncProducts"
+import { syncHomepageProductRails } from "./syncHomepageProductRails"
 
 Airtable.configure({
   endpointUrl: "https://api.airtable.com",
@@ -30,7 +31,9 @@ export const sync = async () => {
     // await syncModels()
     // await syncCategories()
     // await syncLocations()
+    // await syncCollections()
     await syncProducts()
+    // await syncHomepageProductRails()
   } catch (err) {
     console.log(err)
   }
