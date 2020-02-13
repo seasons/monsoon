@@ -12,7 +12,13 @@ export interface AirtableData extends Array<any> {
   findMultipleByIds: (ids?: any) => any[]
   fields: any
 }
-export type AirtableModeName = "Colors" | "Brands" | "Models" | "Categories"
+export type AirtableModelName =
+  | "Colors"
+  | "Brands"
+  | "Models"
+  | "Categories"
+  | "Locations"
+  | "Products"
 
 const getAll: (
   name: string,

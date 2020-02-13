@@ -1,6 +1,9 @@
 import { getAllCategories } from "../../src/airtable/utils"
 import { productionBase, stagingBase } from "./index"
-import { deleteAllStagingRecords } from "./utils"
+import {
+  deleteAllStagingRecords,
+  createAllStagingRecordsWithoutLinks,
+} from "./utils"
 
 export const syncCategories = async () => {
   console.log(" -- Categories -- ")
@@ -9,23 +12,27 @@ export const syncCategories = async () => {
   await deleteAllStagingRecords("Categories")
 
   // Create records
-  for (const category of allProductionCategories) {
-    await stagingBase("Categories").create([
-      {
-        fields: {
-          ...category.fields,
-          // (?TODO) Avoid complexity of linking image for now
-          Image: [],
-          // Will link in next for loop
-          Parent: [],
-          // Will link in later function call
-          Products: [],
-        },
-      },
-    ])
-  }
+  await createAllStagingRecordsWithoutLinks(
+    "Categories",
+    allProductionCategories,
+    fields => {
+      return {
+        ...fields,
+        // (?TODO) Avoid complexity of linking image for now
+        Image: [],
+        // Will link in next for loop
+        Parent: [],
+        // Will link in later function call
+        Products: [],
+      }
+    }
+  )
 
   // Add links to parent category
+  await addParentCategoryLinks(allProductionCategories)
+}
+
+const addParentCategoryLinks = async allProductionCategories => {
   const allStagingCategories = await getAllCategories(stagingBase)
   for (const productionCategory of allProductionCategories) {
     if (!productionCategory.fields.Parent) {
@@ -48,6 +55,7 @@ export const syncCategories = async () => {
     }
   }
 }
+
 const getStagingChildAndParentIds = (
   allProductionCategories,
   allStagingCategories,
