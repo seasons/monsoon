@@ -1,6 +1,7 @@
 import * as Airtable from "airtable"
 import { syncCategories } from "./syncCategories"
 import { syncBrands, syncModels, syncColors, syncLocations } from "./utils"
+import { syncProducts } from "./syncProducts"
 
 Airtable.configure({
   endpointUrl: "https://api.airtable.com",
@@ -9,7 +10,7 @@ Airtable.configure({
 
 export const productionBase = Airtable.base("appvmn48T0eEl4lGV")
 // export const stagingBase = Airtable.base("app9otmmsjksEbOHZ")
-export const stagingBase = Airtable.base("appWWFMmeY2KCDgN8") // test base
+export const stagingBase = Airtable.base("appJa6pNZkPgDKhuT") // test base
 
 export const sync = async () => {
   //   await syncBrands()
@@ -28,7 +29,8 @@ export const sync = async () => {
     // await syncBrands()
     // await syncModels()
     // await syncCategories()
-    await syncLocations()
+    // await syncLocations()
+    await syncProducts()
   } catch (err) {
     console.log(err)
   }
