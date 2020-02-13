@@ -1,13 +1,10 @@
-import {
-  getAllProducts,
-  getAllBrands,
-  AirtableData,
-} from "../../src/airtable/utils"
+import { getAllProducts, getAllBrands } from "../../src/airtable/utils"
 import { stagingBase, productionBase } from "./"
 import {
   deleteAllStagingRecords,
   createAllStagingRecordsWithoutLinks,
 } from "./utils"
+import { linkStagingRecord } from "./linkStagingRecord"
 
 export const syncProducts = async () => {
   console.log(" -- PRODUCTS -- ")
@@ -39,36 +36,26 @@ export const syncProducts = async () => {
 }
 
 const addBrandLinks = async allProductionProducts => {
-  const allStagingProducts = await getAllProducts(stagingBase)
-  const allStagingBrands = await getAllBrands(stagingBase)
-  const allProductionBrands = await getAllBrands(productionBase)
   for (const productionProduct of allProductionProducts) {
     if (!productionProduct.fields.Brand) {
       continue
     }
     if (productionProduct.fields.Brand.length === 1) {
-      await setProductBrand(productionProduct)
-    }
-  }
-
-  // ***********
-  async function setProductBrand(productionProd) {
-    const correspondingStagingProduct = allStagingProducts.find(
-      sp => sp.fields.Slug === productionProd.fields.Slug
-    )
-    const productionBrand = allProductionBrands.findByIds(
-      productionProd.fields.Brand
-    )
-    const stagingBrand = allStagingBrands.find(
-      sb => sb.fields.Name === productionBrand.fields.Name
-    )
-    await stagingBase("Products").update([
-      {
-        id: correspondingStagingProduct.id,
-        fields: {
-          Brand: [stagingBrand.id],
+      await linkStagingRecord({
+        rootProductionRecord: productionProduct,
+        rootRecordName: "Products",
+        allRootStagingRecords: await getAllProducts(stagingBase),
+        allTargetProductionRecords: await getAllBrands(productionBase),
+        allTargetStagingRecords: await getAllBrands(stagingBase),
+        matchRootRecords: (prodRec, stagingRec) =>
+          prodRec.fields.Slug === stagingRec.fields.Slug,
+        matchTargetRecords: (prodRec, stagingRec) =>
+          prodRec.fields.Name === stagingRec.fields.Name,
+        getTargetProductionIds: rootProdRec => rootProdRec.fields.Brand,
+        createFieldsData: targetRecordIds => {
+          return { Brand: targetRecordIds }
         },
-      },
-    ])
+      })
+    }
   }
 }

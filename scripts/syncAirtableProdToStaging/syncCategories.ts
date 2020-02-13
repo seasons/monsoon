@@ -4,6 +4,7 @@ import {
   deleteAllStagingRecords,
   createAllStagingRecordsWithoutLinks,
 } from "./utils"
+import { linkStagingRecord } from "./linkStagingRecord"
 
 export const syncCategories = async () => {
   console.log(" -- Categories -- ")
@@ -18,11 +19,8 @@ export const syncCategories = async () => {
     fields => {
       return {
         ...fields,
-        // (?TODO) Avoid complexity of linking image for now
         Image: [],
-        // Will link in next for loop
         Parent: [],
-        // Will link in later function call
         Products: [],
       }
     }
@@ -39,36 +37,23 @@ const addParentCategoryLinks = async allProductionCategories => {
       continue
     }
     if (productionCategory.fields.Parent.length === 1) {
-      const [childId, parentId] = getStagingChildAndParentIds(
-        allProductionCategories,
-        allStagingCategories,
-        productionCategory
-      )
-      await stagingBase("Categories").update([
-        {
-          id: childId,
-          fields: {
-            Parent: [parentId],
-          },
+      await linkStagingRecord({
+        rootProductionRecord: productionCategory,
+        rootRecordName: "Categories",
+        allRootStagingRecords: allStagingCategories,
+        allTargetProductionRecords: allProductionCategories,
+        allTargetStagingRecords: allStagingCategories,
+        // find record with same name
+        matchRootRecords: (rootProdRec, candidateRootStagingRec) =>
+          candidateRootStagingRec.fields.Name === rootProdRec.fields.Name,
+        matchTargetRecords: (targetProdRecord, candidateTargetStagingRecord) =>
+          targetProdRecord.fields.Name ===
+          candidateTargetStagingRecord.fields.Name,
+        getTargetProductionIds: rootProdRec => rootProdRec.fields.Parent,
+        createFieldsData: targetRecIDs => {
+          return { Parent: targetRecIDs }
         },
-      ])
+      })
     }
   }
-}
-
-const getStagingChildAndParentIds = (
-  allProductionCategories,
-  allStagingCategories,
-  productionCategory
-) => {
-  const parentCategoryProductionRecord = allProductionCategories.find(
-    c => c.id === productionCategory.fields.Parent[0]
-  )
-  const parentCategoryStagingRecord = allStagingCategories.find(
-    c => c.fields.Name === parentCategoryProductionRecord.fields.Name
-  )
-  const correspondingCategoryOnStaging = allStagingCategories.find(
-    c => c.fields.Name === productionCategory.fields.Name
-  )
-  return [correspondingCategoryOnStaging.id, parentCategoryStagingRecord.id]
 }
