@@ -14,13 +14,13 @@ export const syncHomepageProductRails = async () => {
 
   const allProductionRecs = await getAllHomepageProductRails(productionBase)
   await deleteAllStagingRecords("Homepage Product Rails")
-  await createAllStagingRecordsWithoutLinks(
-    "Homepage Product Rails",
-    allProductionRecs,
-    fields => {
+  await createAllStagingRecordsWithoutLinks({
+    modelName: "Homepage Product Rails",
+    allProductionRecords: allProductionRecs,
+    sanitizeFunc: fields => {
       return { ...fields, Products: [] }
-    }
-  )
+    },
+  })
 
   await addProductsLinks(
     allProductionRecs,

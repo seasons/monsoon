@@ -14,18 +14,18 @@ export const syncCategories = async () => {
   await deleteAllStagingRecords("Categories")
 
   // Create records
-  await createAllStagingRecordsWithoutLinks(
-    "Categories",
-    allProductionCategories,
-    fields => {
+  await createAllStagingRecordsWithoutLinks({
+    modelName: "Categories",
+    allProductionRecords: allProductionCategories,
+    sanitizeFunc: fields => {
       return {
         ...fields,
         Image: [],
         Parent: [],
         Products: [],
       }
-    }
-  )
+    },
+  })
 
   // Add links to parent category
   const allStagingCategories = await getAllCategories(stagingBase)

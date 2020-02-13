@@ -7,6 +7,7 @@ import {
   getAllLocations,
   getAllProducts,
   getAllHomepageProductRails,
+  AirtableData,
 } from "../../src/airtable/utils"
 import { stagingBase, productionBase } from "./"
 
@@ -14,54 +15,54 @@ export const syncBrands = async () => {
   console.log(" -- BRANDS -- ")
 
   await deleteAllStagingRecords("Brands")
-  await createAllStagingRecordsWithoutLinks(
-    "Brands",
-    await getAllBrands(productionBase),
-    fields => {
+  await createAllStagingRecordsWithoutLinks({
+    modelName: "Brands",
+    allProductionRecords: await getAllBrands(productionBase),
+    sanitizeFunc: fields => {
       return {
         ...fields,
-        Logo: [],
+        Logo: sanitizeAttachments(fields.Logo),
         Products: [],
       }
-    }
-  )
+    },
+  })
 }
 
 export const syncColors = async () => {
   console.log(" -- COLORS -- ")
 
   await deleteAllStagingRecords("Colors")
-  await createAllStagingRecordsWithoutLinks(
-    "Colors",
-    await getAllColors(productionBase),
-    fields => fields
-  )
+  await createAllStagingRecordsWithoutLinks({
+    modelName: "Colors",
+    allProductionRecords: await getAllColors(productionBase),
+    sanitizeFunc: fields => fields,
+  })
 }
 
 export const syncModels = async () => {
   console.log(" -- Models -- ")
 
   await deleteAllStagingRecords("Models")
-  await createAllStagingRecordsWithoutLinks(
-    "Models",
-    await getAllModels(productionBase),
-    fields => {
+  await createAllStagingRecordsWithoutLinks({
+    modelName: "Models",
+    allProductionRecords: await getAllModels(productionBase),
+    sanitizeFunc: fields => {
       return {
         ...fields,
         Products: [],
       }
-    }
-  )
+    },
+  })
 }
 
 export const syncLocations = async () => {
   console.log(" -- Locations -- ")
 
   await deleteAllStagingRecords("Locations")
-  await createAllStagingRecordsWithoutLinks(
-    "Locations",
-    await getAllLocations(productionBase),
-    fields => {
+  await createAllStagingRecordsWithoutLinks({
+    modelName: "Locations",
+    allProductionRecords: await getAllLocations(productionBase),
+    sanitizeFunc: fields => {
       const sanitizedFields = {
         ...fields,
         "Physical Products": [],
@@ -74,8 +75,8 @@ export const syncLocations = async () => {
       delete sanitizedFields["Created At"]
       delete sanitizedFields["Updated At"]
       return sanitizedFields
-    }
-  )
+    },
+  })
 }
 
 export const airtableModelNameToGetAllFunc = (modelname: AirtableModelName) => {
@@ -101,15 +102,26 @@ export const deleteAllStagingRecords = async (modelName: AirtableModelName) => {
   }
 }
 
-export const createAllStagingRecordsWithoutLinks = async (
-  modelName: AirtableModelName,
-  allProductionRecords: any[],
+export const createAllStagingRecordsWithoutLinks = async ({
+  modelName,
+  allProductionRecords,
+  sanitizeFunc,
+}: {
+  modelName: AirtableModelName
+  allProductionRecords: AirtableData
   sanitizeFunc: (fields: any) => any
-) => {
+}) => {
   for (const rec of allProductionRecords) {
+    console.log(rec.fields.Images)
     // console.log(sanitizeFunc(rec.fields))
     await stagingBase(`${modelName}`).create([
       { fields: sanitizeFunc(rec.fields) },
     ])
   }
+}
+
+export const sanitizeAttachments = attachments => {
+  return attachments.map(a => {
+    return { url: a.url }
+  })
 }

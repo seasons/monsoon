@@ -9,8 +9,8 @@ import { stagingBase, productionBase } from "./"
 import {
   deleteAllStagingRecords,
   createAllStagingRecordsWithoutLinks,
+  sanitizeAttachments,
 } from "./utils"
-import { linkStagingRecord } from "./linkStagingRecord"
 import { linkStagingRecords } from "./linkStagingRecords"
 
 export const syncProducts = async () => {
@@ -18,10 +18,10 @@ export const syncProducts = async () => {
 
   const allProductsProduction = await getAllProducts(productionBase)
   await deleteAllStagingRecords("Products")
-  await createAllStagingRecordsWithoutLinks(
-    "Products",
-    allProductsProduction,
-    fields => {
+  await createAllStagingRecordsWithoutLinks({
+    modelName: "Products",
+    allProductionRecords: allProductsProduction,
+    sanitizeFunc: fields => {
       const sanitizedFields = {
         ...fields,
         Brand: [],
@@ -29,16 +29,15 @@ export const syncProducts = async () => {
         "Product Variants": [],
         "Physical Products": [],
         Category: [],
-        Images: [],
+        Images: sanitizeAttachments(fields.Images),
         "Homepage product rail": [],
         Collections: [],
       }
       delete sanitizedFields["Created Date"]
       return sanitizedFields
-    }
-  )
+    },
+  })
 
-  // (TODO: Add images)
   const allProductsStaging = await getAllProducts(stagingBase)
   await addBrandLinks(allProductsProduction, allProductsStaging)
   await addModelLinks(allProductsProduction, allProductsStaging)
