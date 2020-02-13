@@ -29,7 +29,7 @@ import { ExpressAdapter } from "@nestjs/platform-express"
 >>>>>>> Finish products
 
 // Set up Sentry, which automatically reports on uncaught exceptions
-const Sentry = require("@sentry/node")
+import * as Sentry from '@sentry/node';
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
 })
@@ -55,7 +55,7 @@ server.use(
 )
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule)
+  const app = await NestFactory.create(AppModule, new ExpressAdapter(server))
   await app.listen(process.env.PORT ? process.env.PORT : 4000, () =>
     console.log(`🚀 Server ready at ${process.env.PORT || 4000}`)
   )

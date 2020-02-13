@@ -1,7 +1,9 @@
-import { Resolver, Parent, ResolveProperty, Query } from "@nestjs/graphql"
-import { Context } from "../../utils"
-import { head } from "lodash"
-import { getUserRequestObject, getCustomerFromContext } from "../../auth/utils"
+import { Resolver, ResolveProperty, Query } from "@nestjs/graphql"
+
+export enum SectionTitle {
+  FeaturedCollection = "Featured collection",
+  JustAdded = "Just added"
+}
 
 @Resolver("Homepage")
 export class HomepageResolver {
@@ -9,52 +11,22 @@ export class HomepageResolver {
   async homepage() {
     return {}
   }
+
   @ResolveProperty()
-  async sections(@Parent() homepage) {
+  async sections() {
     return [
       {
         type: "CollectionGroups",
         __typename: "HomepageSection",
-        title: "Featured collection",
-        results: async (args, ctx: Context, info) => {
-          const collections = await ctx.prisma
-            .collectionGroup({ slug: "homepage-1" })
-            .collections()
-          return collections
-        },
+        title: SectionTitle.FeaturedCollection
       },
       {
         type: "Products",
         __typename: "HomepageSection",
-        title: "Just added",
-        results: async (args, ctx: Context, info) => {
-          const newProducts = await ctx.db.query.products(
-            {
-              ...args,
-              orderBy: "createdAt_DESC",
-              first: 8,
-              where: {
-                status: "Available",
-              },
-            },
-            `{
-              __typename
-              id
-              images
-              brand {
-                name
-              }
-              name
-              color {
-                name
-              }
-              retailPrice
-            }`
-          )
-
-          return newProducts
-        },
+        title: SectionTitle.JustAdded
       },
     ]
   }
 }
+
+
