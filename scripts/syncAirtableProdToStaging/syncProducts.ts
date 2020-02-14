@@ -12,6 +12,7 @@ import {
   sanitizeAttachments,
 } from "./utils"
 import { linkStagingRecords } from "./linkStagingRecords"
+import { deleteFieldsFromObject } from "../../src/utils"
 
 export const syncProducts = async () => {
   console.log(" -- Products -- ")
@@ -21,21 +22,21 @@ export const syncProducts = async () => {
   await createAllStagingRecordsWithoutLinks({
     modelName: "Products",
     allProductionRecords: allProductsProduction,
-    sanitizeFunc: fields => {
-      const sanitizedFields = {
-        ...fields,
-        Brand: [],
-        Model: [],
-        "Product Variants": [],
-        "Physical Products": [],
-        Category: [],
-        Images: sanitizeAttachments(fields.Images),
-        "Homepage product rail": [],
-        Collections: [],
-      }
-      delete sanitizedFields["Created Date"]
-      return sanitizedFields
-    },
+    sanitizeFunc: fields =>
+      deleteFieldsFromObject(
+        {
+          ...fields,
+          Brand: [],
+          Model: [],
+          "Product Variants": [],
+          "Physical Products": [],
+          Category: [],
+          Images: sanitizeAttachments(fields.Images),
+          "Homepage product rail": [],
+          Collections: [],
+        },
+        ["Created Date"]
+      ),
   })
 
   const allProductsStaging = await getAllProducts(stagingBase)

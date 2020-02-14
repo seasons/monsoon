@@ -11,8 +11,10 @@ import {
   getAllProductVariants,
   getAllPhysicalProducts,
   getAllUsers,
+  getAllReservations,
 } from "../../src/airtable/utils"
 import { stagingBase, productionBase } from "./"
+import { Identity, deleteFieldsFromObject } from "../../src/utils"
 
 export const syncBrands = async () => {
   console.log(" -- Brands -- ")
@@ -21,13 +23,12 @@ export const syncBrands = async () => {
   await createAllStagingRecordsWithoutLinks({
     modelName: "Brands",
     allProductionRecords: await getAllBrands(productionBase),
-    sanitizeFunc: fields => {
-      return {
+    sanitizeFunc: fields =>
+      Identity({
         ...fields,
         Logo: sanitizeAttachments(fields.Logo),
         Products: [],
-      }
-    },
+      }),
   })
 }
 
@@ -49,12 +50,11 @@ export const syncModels = async () => {
   await createAllStagingRecordsWithoutLinks({
     modelName: "Models",
     allProductionRecords: await getAllModels(productionBase),
-    sanitizeFunc: fields => {
-      return {
+    sanitizeFunc: fields =>
+      Identity({
         ...fields,
         Products: [],
-      }
-    },
+      }),
   })
 }
 
@@ -65,20 +65,19 @@ export const syncLocations = async () => {
   await createAllStagingRecordsWithoutLinks({
     modelName: "Locations",
     allProductionRecords: await getAllLocations(productionBase),
-    sanitizeFunc: fields => {
-      const sanitizedFields = {
-        ...fields,
-        "Physical Products": [],
-        Reservations: "",
-        "Reservations 2": [],
-        "Reservations 3": [],
-        Users: [],
-        "Users 2": [],
-      }
-      delete sanitizedFields["Created At"]
-      delete sanitizedFields["Updated At"]
-      return sanitizedFields
-    },
+    sanitizeFunc: fields =>
+      deleteFieldsFromObject(
+        {
+          ...fields,
+          "Physical Products": [],
+          Reservations: "",
+          "Reservations 2": [],
+          "Reservations 3": [],
+          Users: [],
+          "Users 2": [],
+        },
+        ["Created At", "Updated At"]
+      ),
   })
 }
 
@@ -94,6 +93,7 @@ export const airtableModelNameToGetAllFunc = (modelname: AirtableModelName) => {
     "Product Variants": getAllProductVariants,
     "Physical Products": getAllPhysicalProducts,
     Users: getAllUsers,
+    Reservations: getAllReservations,
   }[modelname]
   if (!func) {
     throw new Error(`Unrecognized model name: ${modelname}`)
@@ -125,8 +125,5 @@ export const createAllStagingRecordsWithoutLinks = async ({
   }
 }
 
-export const sanitizeAttachments = attachments => {
-  return attachments.map(a => {
-    return { url: a.url }
-  })
-}
+export const sanitizeAttachments = attachments =>
+  attachments?.map(a => Identity({ url: a.url }))

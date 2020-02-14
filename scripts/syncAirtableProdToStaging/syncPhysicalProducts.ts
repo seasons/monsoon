@@ -4,6 +4,7 @@ import {
   getAllPhysicalProducts,
   getAllLocations,
 } from "../../src/airtable/utils"
+import { deleteFieldsFromObject } from "../../src/utils"
 import { productionBase, stagingBase } from "."
 import {
   deleteAllStagingRecords,
@@ -21,23 +22,25 @@ export const syncPhysicalProducts = async () => {
   await createAllStagingRecordsWithoutLinks({
     modelName: "Physical Products",
     allProductionRecords: allPhysicalProductsProduction,
-    sanitizeFunc: fields => {
-      const sanitizedFields = {
-        ...fields,
-        Product: [],
-        Location: [],
-        "Product Variant": [],
-        Reservations: [],
-      }
-      delete sanitizedFields["Created At"]
-      delete sanitizedFields["Updated At"]
-      delete sanitizedFields["Sequence Number"]
-      delete sanitizedFields["Item Weight"]
-      delete sanitizedFields["Barcode Image URL"]
-      delete sanitizedFields.Images
-      delete sanitizedFields.Barcode
-      return sanitizedFields
-    },
+    sanitizeFunc: fields =>
+      deleteFieldsFromObject(
+        {
+          ...fields,
+          Product: [],
+          Location: [],
+          "Product Variant": [],
+          Reservations: [],
+        },
+        [
+          "Created At",
+          "Updated At",
+          "Sequence Number",
+          "Item Weight",
+          "Barcode Image URL",
+          "Images",
+          "Barcode",
+        ]
+      ),
   })
   const allPhysicalProductsStaging = await getAllPhysicalProducts(stagingBase)
   await addProductLinks(

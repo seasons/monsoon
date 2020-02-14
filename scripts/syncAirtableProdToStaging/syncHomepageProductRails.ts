@@ -8,6 +8,7 @@ import {
 } from "../../src/airtable/utils"
 import { productionBase, stagingBase } from "."
 import { linkStagingRecords } from "./linkStagingRecords"
+import { Identity } from "../../src/utils"
 
 export const syncHomepageProductRails = async () => {
   console.log(" -- Homepage Product Rails -- ")
@@ -17,9 +18,7 @@ export const syncHomepageProductRails = async () => {
   await createAllStagingRecordsWithoutLinks({
     modelName: "Homepage Product Rails",
     allProductionRecords: allProductionRecs,
-    sanitizeFunc: fields => {
-      return { ...fields, Products: [] }
-    },
+    sanitizeFunc: fields => Identity({ ...fields, Products: [] }),
   })
 
   await addProductsLinks(

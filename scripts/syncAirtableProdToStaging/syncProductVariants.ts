@@ -5,6 +5,7 @@ import {
   createAllStagingRecordsWithoutLinks,
 } from "./utils"
 import { linkStagingRecords } from "./linkStagingRecords"
+import { deleteFieldsFromObject } from "../../src/utils"
 
 export const syncProductVariants = async () => {
   console.log(" -- Product Variants -- ")
@@ -16,20 +17,16 @@ export const syncProductVariants = async () => {
   await createAllStagingRecordsWithoutLinks({
     modelName: "Product Variants",
     allProductionRecords: allProductVariantsProduction,
-    sanitizeFunc: fields => {
-      const sanitizedFields = {
-        ...fields,
-        Product: [],
-        "Physical Products": [],
-        Orders: [],
-      }
-      delete sanitizedFields["Variant Number"]
-      delete sanitizedFields["Created At"]
-      delete sanitizedFields.Images
-      delete sanitizedFields.Brand
-      delete sanitizedFields.Color
-      return sanitizedFields
-    },
+    sanitizeFunc: fields =>
+      deleteFieldsFromObject(
+        {
+          ...fields,
+          Product: [],
+          "Physical Products": [],
+          Orders: [],
+        },
+        ["Variant Number", "Created At", "Images", "Brand", "Color"]
+      ),
   })
   const allProductVariantsStaging = await getAllProductVariants(stagingBase)
   await addProductLinks(allProductVariantsProduction, allProductVariantsStaging)

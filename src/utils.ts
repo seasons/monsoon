@@ -177,3 +177,14 @@ export function airtableToPrismaInventoryStatus(
   }
   return prismaStatus
 }
+
+export const deleteFieldsFromObject = (
+  obj: object,
+  fieldsToDelete: string[]
+) => {
+  const objCopy = { ...obj }
+  fieldsToDelete.forEach(a => delete objCopy[a])
+  return objCopy
+}
+
+export const Identity = a => a

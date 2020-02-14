@@ -4,8 +4,8 @@ import {
   deleteAllStagingRecords,
   createAllStagingRecordsWithoutLinks,
 } from "./utils"
-import { linkStagingRecord } from "./linkStagingRecord"
 import { linkStagingRecords } from "./linkStagingRecords"
+import { Identity } from "../../src/utils"
 
 export const syncCategories = async () => {
   console.log(" -- Categories -- ")
@@ -13,21 +13,13 @@ export const syncCategories = async () => {
   const allProductionCategories = await getAllCategories(productionBase)
   await deleteAllStagingRecords("Categories")
 
-  // Create records
   await createAllStagingRecordsWithoutLinks({
     modelName: "Categories",
     allProductionRecords: allProductionCategories,
-    sanitizeFunc: fields => {
-      return {
-        ...fields,
-        Image: [],
-        Parent: [],
-        Products: [],
-      }
-    },
+    sanitizeFunc: fields =>
+      Identity({ ...fields, Image: [], Parent: [], Products: [] }),
   })
 
-  // Add links to parent category
   const allStagingCategories = await getAllCategories(stagingBase)
   await addParentCategoryLinks(allProductionCategories, allStagingCategories)
 }
@@ -43,7 +35,6 @@ const addParentCategoryLinks = async (
     allRootStagingRecords: allStagingCategories,
     allTargetProductionRecords: allProductionCategories,
     allTargetStagingRecords: allStagingCategories,
-    // find record with same name
     getRootRecordIdentifer: rec => rec.fields.Name,
     getTargetRecordIdentifer: rec => rec.fields.Name,
   })

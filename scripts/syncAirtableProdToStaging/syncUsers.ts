@@ -5,6 +5,7 @@ import {
   createAllStagingRecordsWithoutLinks,
 } from "./utils"
 import { linkStagingRecords } from "./linkStagingRecords"
+import { deleteFieldsFromObject } from "../../src/utils"
 
 export const syncUsers = async () => {
   console.log(" -- Users -- ")
@@ -14,18 +15,17 @@ export const syncUsers = async () => {
   await createAllStagingRecordsWithoutLinks({
     modelName: "Users",
     allProductionRecords: allUsersProduction,
-    sanitizeFunc: fields => {
-      const sanitizedFields = {
-        ...fields,
-        "Shipping Address": [],
-        Location: [],
-        "Billing Info": [],
-        Reservations: [],
-      }
-      delete sanitizedFields.Joined
-      delete sanitizedFields["Full Name"]
-      return sanitizedFields
-    },
+    sanitizeFunc: fields =>
+      deleteFieldsFromObject(
+        {
+          ...fields,
+          "Shipping Address": [],
+          Location: [],
+          "Billing Info": [],
+          Reservations: [],
+        },
+        ["Joined", "Full Name"]
+      ),
   })
   const allUsersStaging = await getAllUsers(stagingBase)
   await addShippingAddressLinks(allUsersProduction, allUsersStaging)

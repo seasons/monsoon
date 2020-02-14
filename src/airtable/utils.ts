@@ -23,6 +23,7 @@ export type AirtableModelName =
   | "Product Variants"
   | "Physical Products"
   | "Users"
+  | "Reservations"
 
 const getAll: (
   name: string,
