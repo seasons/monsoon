@@ -188,3 +188,9 @@ export const deleteFieldsFromObject = (
 }
 
 export const Identity = a => a
+
+export const allVariablesDefined = (arr: any[]) => {
+  return arr.reduce((acc, curval) => {
+    return acc && curval !== undefined
+  }, true)
+}

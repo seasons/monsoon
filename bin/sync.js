@@ -1,8 +1,10 @@
 #!/usr/bin/env node
 require("dotenv").config()
+
 const startsWith = require("lodash/startsWith")
 
 const { syncAll } = require("../dist/airtable/syncAll")
+const { syncPrisma, checkDBEnvVars } = require("../dist/syncPrisma")
 const {
   syncBrands,
   syncCategories,
@@ -51,6 +53,26 @@ require("yargs")
         case "homepage-product-rails":
           return await syncHomepageProductRails()
       }
+    }
+  )
+  .command(
+    "sync-prisma [destination]",
+    "sync prisma production to staging/local",
+    yargs => {
+      yargs.positional("table", {
+        type: "string",
+        describe: "Prisma environment to sync to: staging | local",
+      })
+    },
+    argv => {
+      if (!checkDBEnvVars("production")) {
+        return
+      }
+      if (!["staging", "local"].includes(argv.destination)) {
+        console.log("Destination must be one of local, staging")
+        return
+      }
+      syncPrisma(argv.destination)
     }
   )
   .completion("completion", (current, argv) => {
