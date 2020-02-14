@@ -4,6 +4,7 @@ import { syncBrands, syncModels, syncColors, syncLocations } from "./utils"
 import { syncProducts } from "./syncProducts"
 import { syncHomepageProductRails } from "./syncHomepageProductRails"
 import { syncProductVariants } from "./syncProductVariants"
+import { syncPhysicalProducts } from "./syncPhysicalProducts"
 
 Airtable.configure({
   endpointUrl: "https://api.airtable.com",
@@ -15,9 +16,6 @@ export const productionBase = Airtable.base("appvmn48T0eEl4lGV")
 export const stagingBase = Airtable.base("appJa6pNZkPgDKhuT") // test base
 
 export const sync = async () => {
-  //   await syncPhysicalProducts()
-  //   await syncCollectionGroups()
-
   try {
     // await syncColors()
     // await syncBrands()
@@ -27,7 +25,10 @@ export const sync = async () => {
     // await syncCollections()/
     // await syncProducts()
     // await syncHomepageProductRails()
-    await syncProductVariants()
+    // await syncProductVariants()
+    await syncPhysicalProducts()
+    // await syncReservations()
+    // await syncUsers()
   } catch (err) {
     console.log(err)
   }

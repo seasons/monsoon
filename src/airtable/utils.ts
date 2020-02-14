@@ -21,6 +21,7 @@ export type AirtableModelName =
   | "Products"
   | "Homepage Product Rails"
   | "Product Variants"
+  | "Physical Products"
 
 const getAll: (
   name: string,

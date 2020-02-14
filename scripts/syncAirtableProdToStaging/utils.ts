@@ -9,11 +9,12 @@ import {
   getAllHomepageProductRails,
   AirtableData,
   getAllProductVariants,
+  getAllPhysicalProducts,
 } from "../../src/airtable/utils"
 import { stagingBase, productionBase } from "./"
 
 export const syncBrands = async () => {
-  console.log(" -- BRANDS -- ")
+  console.log(" -- Brands -- ")
 
   await deleteAllStagingRecords("Brands")
   await createAllStagingRecordsWithoutLinks({
@@ -30,7 +31,7 @@ export const syncBrands = async () => {
 }
 
 export const syncColors = async () => {
-  console.log(" -- COLORS -- ")
+  console.log(" -- Colors -- ")
 
   await deleteAllStagingRecords("Colors")
   await createAllStagingRecordsWithoutLinks({
@@ -90,6 +91,7 @@ export const airtableModelNameToGetAllFunc = (modelname: AirtableModelName) => {
     Products: getAllProducts,
     "Homepage Product Rails": getAllHomepageProductRails,
     "Product Variants": getAllProductVariants,
+    "Physical Products": getAllPhysicalProducts,
   }[modelname]
   if (!func) {
     throw new Error(`Unrecognized model name: ${modelname}`)
@@ -114,7 +116,6 @@ export const createAllStagingRecordsWithoutLinks = async ({
   sanitizeFunc: (fields: any) => any
 }) => {
   for (const rec of allProductionRecords) {
-    console.log(sanitizeFunc(rec.fields))
     await stagingBase(`${modelName}`).create([
       { fields: sanitizeFunc(rec.fields) },
     ])

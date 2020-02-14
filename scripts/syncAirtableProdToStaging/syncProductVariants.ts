@@ -1,12 +1,7 @@
-import {
-  getAllProductVariants,
-  getAllBrands,
-  getAllProducts,
-} from "../../src/airtable/utils"
+import { getAllProductVariants, getAllProducts } from "../../src/airtable/utils"
 import { productionBase, stagingBase } from "."
 import {
   deleteAllStagingRecords,
-  sanitizeAttachments,
   createAllStagingRecordsWithoutLinks,
 } from "./utils"
 import { linkStagingRecords } from "./linkStagingRecords"
@@ -30,11 +25,9 @@ export const syncProductVariants = async () => {
       }
       delete sanitizedFields["Variant Number"]
       delete sanitizedFields["Created At"]
-      // tslint:disable-next-line:no-string-literal
-      delete sanitizedFields["Images"]
-      // tslint:disable-next-line: no-string-literal
-      delete sanitizedFields["Brand"]
-      delete sanitizedFields["Color"]
+      delete sanitizedFields.Images
+      delete sanitizedFields.Brand
+      delete sanitizedFields.Color
       return sanitizedFields
     },
   })
