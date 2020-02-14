@@ -10,6 +10,7 @@ import {
   AirtableData,
   getAllProductVariants,
   getAllPhysicalProducts,
+  getAllUsers,
 } from "../../src/airtable/utils"
 import { stagingBase, productionBase } from "./"
 
@@ -92,6 +93,7 @@ export const airtableModelNameToGetAllFunc = (modelname: AirtableModelName) => {
     "Homepage Product Rails": getAllHomepageProductRails,
     "Product Variants": getAllProductVariants,
     "Physical Products": getAllPhysicalProducts,
+    Users: getAllUsers,
   }[modelname]
   if (!func) {
     throw new Error(`Unrecognized model name: ${modelname}`)
@@ -116,6 +118,7 @@ export const createAllStagingRecordsWithoutLinks = async ({
   sanitizeFunc: (fields: any) => any
 }) => {
   for (const rec of allProductionRecords) {
+    // console.log(sanitizeFunc(rec.fields))
     await stagingBase(`${modelName}`).create([
       { fields: sanitizeFunc(rec.fields) },
     ])

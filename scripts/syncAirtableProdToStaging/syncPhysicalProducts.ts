@@ -1,6 +1,5 @@
 import {
   getAllProductVariants,
-  getAllBrands,
   getAllProducts,
   getAllPhysicalProducts,
   getAllLocations,
@@ -8,7 +7,6 @@ import {
 import { productionBase, stagingBase } from "."
 import {
   deleteAllStagingRecords,
-  sanitizeAttachments,
   createAllStagingRecordsWithoutLinks,
 } from "./utils"
 import { linkStagingRecords } from "./linkStagingRecords"

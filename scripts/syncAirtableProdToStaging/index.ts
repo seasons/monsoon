@@ -5,6 +5,7 @@ import { syncProducts } from "./syncProducts"
 import { syncHomepageProductRails } from "./syncHomepageProductRails"
 import { syncProductVariants } from "./syncProductVariants"
 import { syncPhysicalProducts } from "./syncPhysicalProducts"
+import { syncUsers } from "./syncUsers"
 
 Airtable.configure({
   endpointUrl: "https://api.airtable.com",
@@ -26,9 +27,9 @@ export const sync = async () => {
     // await syncProducts()
     // await syncHomepageProductRails()
     // await syncProductVariants()
-    await syncPhysicalProducts()
+    // await syncPhysicalProducts()
+    await syncUsers()
     // await syncReservations()
-    // await syncUsers()
   } catch (err) {
     console.log(err)
   }
