@@ -25,6 +25,7 @@ package:
     - src/handler.ts
     - src/prisma/**
     - src/airtable/**
+    - master-email.html
 
 functions:
   checkAndAuthorizeUsers:
