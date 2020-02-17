@@ -1,6 +1,6 @@
 import slugify from "slugify"
-import { prisma } from "../prisma"
-import { getAllColors } from "./utils"
+import { prisma } from "../../prisma"
+import { getAllColors } from "../utils"
 import { isEmpty } from "lodash"
 
 export const syncColors = async () => {

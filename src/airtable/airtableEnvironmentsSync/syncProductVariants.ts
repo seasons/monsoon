@@ -1,11 +1,11 @@
-import { getAllProductVariants, getAllProducts } from "../../src/airtable/utils"
-import { productionBase, stagingBase } from "."
+import { getAllProductVariants, getAllProducts } from "../utils"
+import { deleteFieldsFromObject } from "../../utils"
+import { productionBase, stagingBase } from "../config"
 import {
   deleteAllStagingRecords,
   createAllStagingRecordsWithoutLinks,
-} from "./utils"
-import { linkStagingRecords } from "./linkStagingRecords"
-import { deleteFieldsFromObject } from "../../src/utils"
+  linkStagingRecords,
+} from "."
 
 export const syncProductVariants = async () => {
   console.log(" -- Product Variants -- ")

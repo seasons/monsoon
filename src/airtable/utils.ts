@@ -1,4 +1,4 @@
-import { base } from "./config"
+import { productionBase } from "./config"
 import {
   ReservationCreateInput,
   LocationCreateInput,
@@ -37,7 +37,7 @@ const getAll: (
   airtableBase
 ) => {
   const data = [] as AirtableData
-  const baseToUse = airtableBase || base
+  const baseToUse = airtableBase || productionBase
 
   data.findByIds = (ids = []) => {
     return data.find(record => ids.includes(record.id))
@@ -190,10 +190,10 @@ export async function createAirtableReservation(
           },
         },
       ]
-      const records = await base("Reservations").create(createData)
+      const records = await productionBase("Reservations").create(createData)
 
       const rollbackAirtableReservation = async () => {
-        const numDeleted = await base("Reservations").destroy([
+        const numDeleted = await productionBase("Reservations").destroy([
           records[0].getId(),
         ])
         return numDeleted
@@ -222,11 +222,11 @@ export const createLocation = async (user, data: LocationCreateInput) => {
     },
   ]
 
-  return base("Locations").create(createData)
+  return productionBase("Locations").create(createData)
 }
 
 export async function createBillingInfo(data: BillingInfoCreateInput) {
-  return base("BillingInfos").create({
+  return productionBase("BillingInfos").create({
     Brand: data.brand,
     Name: data.name,
     LastDigits: data.last_digits,
@@ -252,7 +252,7 @@ export const getPhysicalProducts = (SUIDs: string[]) => {
 
 export const updateProductVariant = async data => {
   return new Promise((resolve, reject) => {
-    base("Reservations").create([{}], (err, records) => {
+    productionBase("Reservations").create([{}], (err, records) => {
       if (records.length > 0) {
         const user = records[0]
         resolve(user)
@@ -267,7 +267,7 @@ export function getAirtableUserRecordByUserEmail(
   email: string
 ): Promise<{ id: string; fields: any }> {
   return new Promise(function retrieveUser(resolve, reject) {
-    base("Users")
+    productionBase("Users")
       .select({
         view: "Grid view",
         filterByFormula: `{Email}='${email}'`,

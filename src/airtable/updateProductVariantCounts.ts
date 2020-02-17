@@ -1,4 +1,4 @@
-import { base } from "./config"
+import { productionBase } from "./config"
 
 export type AirtableProductVariantCounts = {
   "Reservable Count": number
@@ -10,5 +10,5 @@ export async function updateProductVariantCounts(
   airtableID: string,
   counts: AirtableProductVariantCounts
 ) {
-  return base("Product Variants").update(airtableID, counts)
+  return productionBase("Product Variants").update(airtableID, counts)
 }

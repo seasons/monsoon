@@ -1,5 +1,5 @@
 import express from "express"
-import { base } from "../airtable/config"
+import { productionBase } from "../airtable/config"
 import { prisma, User } from "../prisma"
 import crypto from "crypto"
 import sgMail from "@sendgrid/mail"
@@ -12,7 +12,7 @@ app.post("/airtable_events", async (req, res) => {
   for (let row of data) {
     const { tableId, recordId, updates } = row
 
-    const record = await base(tableId).find(recordId)
+    const record = await productionBase(tableId).find(recordId)
     if (!record) {
       return res.sendStatus(400)
     }

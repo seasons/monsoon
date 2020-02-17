@@ -1,11 +1,11 @@
-import { getAllCategories } from "../../src/airtable/utils"
-import { productionBase, stagingBase } from "./index"
+import { getAllCategories } from "../utils"
+import { Identity } from "../../utils"
 import {
   deleteAllStagingRecords,
   createAllStagingRecordsWithoutLinks,
-} from "./utils"
-import { linkStagingRecords } from "./linkStagingRecords"
-import { Identity } from "../../src/utils"
+  linkStagingRecords,
+} from "."
+import { productionBase, stagingBase } from "../config"
 
 export const syncCategories = async () => {
   console.log(" -- Categories -- ")

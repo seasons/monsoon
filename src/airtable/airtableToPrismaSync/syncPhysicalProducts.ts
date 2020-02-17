@@ -2,8 +2,8 @@ import {
   getAllProductVariants,
   getAllPhysicalProducts,
   getAllLocations,
-} from "./utils"
-import { prisma } from "../prisma"
+} from "../utils"
+import { prisma } from "../../prisma"
 import { isEmpty } from "lodash"
 
 export const syncPhysicalProducts = async () => {
@@ -13,7 +13,7 @@ export const syncPhysicalProducts = async () => {
 
   let i = 1
 
-  for (let record of allPhysicalProducts) {
+  for (const record of allPhysicalProducts) {
     try {
       const { model } = record
 

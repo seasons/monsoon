@@ -12,9 +12,9 @@ import {
   getAllPhysicalProducts,
   getAllUsers,
   getAllReservations,
-} from "../../src/airtable/utils"
+} from "../utils"
 import { stagingBase, productionBase } from "./"
-import { Identity, deleteFieldsFromObject } from "../../src/utils"
+import { Identity, deleteFieldsFromObject } from "../../utils"
 
 export const syncBrands = async () => {
   console.log(" -- Brands -- ")
@@ -81,7 +81,7 @@ export const syncLocations = async () => {
   })
 }
 
-export const airtableModelNameToGetAllFunc = (modelname: AirtableModelName) => {
+const airtableModelNameToGetAllFunc = (modelname: AirtableModelName) => {
   const func = {
     Colors: getAllColors,
     Brands: getAllBrands,

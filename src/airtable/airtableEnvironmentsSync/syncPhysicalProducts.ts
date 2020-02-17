@@ -1,16 +1,16 @@
+import { deleteFieldsFromObject } from "../../utils"
 import {
-  getAllProductVariants,
-  getAllProducts,
   getAllPhysicalProducts,
+  getAllProducts,
+  getAllProductVariants,
   getAllLocations,
-} from "../../src/airtable/utils"
-import { deleteFieldsFromObject } from "../../src/utils"
-import { productionBase, stagingBase } from "."
+} from "../utils"
+import { productionBase, stagingBase } from "../config"
 import {
   deleteAllStagingRecords,
   createAllStagingRecordsWithoutLinks,
-} from "./utils"
-import { linkStagingRecords } from "./linkStagingRecords"
+  linkStagingRecords,
+} from "."
 
 export const syncPhysicalProducts = async () => {
   console.log(" -- Physical Products -- ")

@@ -2,16 +2,15 @@ import {
   getAllReservations,
   getAllLocations,
   getAllPhysicalProducts,
-} from "../../src/airtable/utils"
+} from "../utils"
 
-import { productionBase, stagingBase } from "."
-
+import { deleteFieldsFromObject } from "../../utils"
+import { productionBase, stagingBase } from "../config"
 import {
   deleteAllStagingRecords,
   createAllStagingRecordsWithoutLinks,
-} from "./utils"
-import { linkStagingRecords } from "./linkStagingRecords"
-import { deleteFieldsFromObject } from "../../src/utils"
+  linkStagingRecords,
+} from "."
 
 export const syncReservations = async () => {
   console.log(" -- Reservations -- ")

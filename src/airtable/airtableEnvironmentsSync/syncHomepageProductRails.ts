@@ -1,14 +1,11 @@
+import { Identity } from "../../utils"
+import { getAllHomepageProductRails, getAllProducts } from "../utils"
+import { productionBase, stagingBase } from "../config"
 import {
   deleteAllStagingRecords,
   createAllStagingRecordsWithoutLinks,
-} from "./utils"
-import {
-  getAllHomepageProductRails,
-  getAllProducts,
-} from "../../src/airtable/utils"
-import { productionBase, stagingBase } from "."
-import { linkStagingRecords } from "./linkStagingRecords"
-import { Identity } from "../../src/utils"
+  linkStagingRecords,
+} from "."
 
 export const syncHomepageProductRails = async () => {
   console.log(" -- Homepage Product Rails -- ")

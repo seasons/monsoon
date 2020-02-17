@@ -5,5 +5,5 @@ Airtable.configure({
   apiKey: process.env.AIRTABLE_KEY,
 })
 
-const baseID = process.env.AIRTABLE_DATABASE_ID
-export const base = Airtable.base(baseID)
+export const productionBase = Airtable.base(process.env.AIRTABLE_DATABASE_ID)
+export const stagingBase = Airtable.base(process.env._STAGING_AIRTABLE_BASEID) // test base

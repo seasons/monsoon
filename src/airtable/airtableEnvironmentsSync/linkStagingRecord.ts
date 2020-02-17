@@ -1,5 +1,5 @@
-import { AirtableData, AirtableModelName } from "../../src/airtable/utils"
-import { stagingBase } from "./index"
+import { AirtableData, AirtableModelName } from "../utils"
+import { stagingBase } from "../config"
 
 export const linkStagingRecord = async ({
   rootProductionRecord,

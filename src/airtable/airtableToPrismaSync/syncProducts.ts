@@ -1,5 +1,5 @@
-import { getAllBrands, getAllCategories, getAllProducts } from "./utils"
-import { prisma, ProductCreateInput } from "../prisma"
+import { getAllBrands, getAllCategories, getAllProducts } from "../utils"
+import { prisma, ProductCreateInput } from "../../prisma"
 import slugify from "slugify"
 import { isEmpty } from "lodash"
 
@@ -10,7 +10,7 @@ export const syncProducts = async () => {
 
   let i = 1
 
-  for (let record of allProducts) {
+  for (const record of allProducts) {
     try {
       const { model } = record
       const { name } = model

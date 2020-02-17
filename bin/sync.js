@@ -59,7 +59,7 @@ require("yargs")
     "sync-prisma [destination]",
     "sync prisma production to staging/local",
     yargs => {
-      yargs.positional("table", {
+      yargs.positional("destination", {
         type: "string",
         describe: "Prisma environment to sync to: staging | local",
       })
@@ -74,6 +74,17 @@ require("yargs")
       }
       syncPrisma(argv.destination)
     }
+  )
+  .command(
+    "sync-airtable [baseID]",
+    "syncs airtable production environment to staging environment",
+    yargs => {
+      yargs.positional("baseID", {
+        type: "string",
+        describe: "ID of the airtable base to which you wish to sync",
+      })
+    },
+    argv => {}
   )
   .completion("completion", (current, argv) => {
     if (current == "sync-db") {

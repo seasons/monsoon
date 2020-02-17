@@ -4,15 +4,15 @@ import {
   getAllModels,
   getAllCategories,
   getAllCollections,
-} from "../../src/airtable/utils"
-import { stagingBase, productionBase } from "./"
+} from "../utils"
+import { deleteFieldsFromObject } from "../../utils"
+import { productionBase, stagingBase } from "../config"
 import {
   deleteAllStagingRecords,
   createAllStagingRecordsWithoutLinks,
   sanitizeAttachments,
-} from "./utils"
-import { linkStagingRecords } from "./linkStagingRecords"
-import { deleteFieldsFromObject } from "../../src/utils"
+  linkStagingRecords,
+} from "."
 
 export const syncProducts = async () => {
   console.log(" -- Products -- ")
