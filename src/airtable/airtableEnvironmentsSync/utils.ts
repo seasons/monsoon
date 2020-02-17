@@ -13,8 +13,8 @@ import {
   getAllUsers,
   getAllReservations,
 } from "../utils"
-import { stagingBase, productionBase } from "./"
 import { Identity, deleteFieldsFromObject } from "../../utils"
+import { productionBase, stagingBase } from "../config"
 
 export const syncBrands = async () => {
   console.log(" -- Brands -- ")
