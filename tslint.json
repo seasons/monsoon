@@ -9,7 +9,8 @@
     "no-bitwise": true,
     "no-conditional-assignment": true,
     "no-consecutive-blank-lines": false,
-    "max-classes-per-file": [true, 1]
+    "max-classes-per-file": [true, 1],
+    "no-shadowed-variable": false
   },
   "jsRules": {
     "max-line-length": {

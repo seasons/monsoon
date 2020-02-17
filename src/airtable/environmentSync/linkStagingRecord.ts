@@ -1,5 +1,5 @@
 import { AirtableData, AirtableModelName } from "../utils"
-import { stagingBase } from "../config"
+import { getStagingBase } from "../config"
 
 export const linkStagingRecord = async ({
   rootProductionRecord,
@@ -29,7 +29,7 @@ export const linkStagingRecord = async ({
     )
   )
   //   Do the update
-  await stagingBase(`${rootRecordName}`).update([
+  await getStagingBase()(`${rootRecordName}`).update([
     {
       id: correspondingRootStagingRecord.id,
       fields: {

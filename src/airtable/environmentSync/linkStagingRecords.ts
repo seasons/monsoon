@@ -1,5 +1,5 @@
 import { AirtableModelName, AirtableData } from "../utils"
-import { linkStagingRecord, LinkStagingRecordInput } from "./"
+import { linkStagingRecord, LinkStagingRecordInput } from "."
 
 export const linkStagingRecords = async ({
   rootRecordName,
@@ -10,8 +10,10 @@ export const linkStagingRecords = async ({
   allTargetStagingRecords,
   getRootRecordIdentifer,
   getTargetRecordIdentifer,
+  cliProgressBar,
 }: Omit<LinkStagingRecordsInput, "rootProductionRecord">) => {
   for (const rootProductionRecord of allRootProductionRecords) {
+    cliProgressBar?.increment()
     if (!rootProductionRecord.fields[`${targetFieldNameOnRootRecord}`]) {
       continue
     }
@@ -31,4 +33,5 @@ export const linkStagingRecords = async ({
 interface LinkStagingRecordsInput extends LinkStagingRecordInput {
   rootRecordName: AirtableModelName
   allRootProductionRecords: AirtableData
+  cliProgressBar?: any
 }

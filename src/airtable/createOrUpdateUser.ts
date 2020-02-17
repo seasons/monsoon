@@ -1,4 +1,4 @@
-import { productionBase } from "./config"
+import { base } from "./config"
 import {
   CustomerDetailCreateInput,
   Plan,
@@ -67,7 +67,7 @@ export const createOrUpdateAirtableUser = async (
   }
 
   // Create or update the record
-  productionBase("Users")
+  base("Users")
     .select({
       view: "Grid view",
       filterByFormula: `{Email}='${email}'`,
@@ -78,13 +78,13 @@ export const createOrUpdateAirtableUser = async (
       }
       if (records.length > 0) {
         const user = records[0]
-        productionBase("Users").update(user.id, data, function(err, record) {
+        base("Users").update(user.id, data, function(err, record) {
           if (err) {
             throw err
           }
         })
       } else {
-        productionBase("Users").create([
+        base("Users").create([
           {
             fields: data,
           },

@@ -1,32 +1,46 @@
 import { getAllCategories } from "../utils"
-import { Identity } from "../../utils"
+import { deleteFieldsFromObject } from "../../utils"
 import {
   deleteAllStagingRecords,
   createAllStagingRecordsWithoutLinks,
   linkStagingRecords,
 } from "."
-import { productionBase, stagingBase } from "../config"
+import { getProductionBase, getStagingBase } from "../config"
 
-export const syncCategories = async () => {
-  console.log(" -- Categories -- ")
-
-  const allProductionCategories = await getAllCategories(productionBase)
-  await deleteAllStagingRecords("Categories")
+export const syncCategories = async (cliProgressBar?) => {
+  const allProductionCategories = await getAllCategories(getProductionBase())
+  await deleteAllStagingRecords("Categories", cliProgressBar)
 
   await createAllStagingRecordsWithoutLinks({
     modelName: "Categories",
     allProductionRecords: allProductionCategories,
     sanitizeFunc: fields =>
-      Identity({ ...fields, Image: [], Parent: [], Products: [] }),
+      deleteFieldsFromObject(
+        {
+          ...fields,
+          Image: [],
+          Parent: [],
+          Products: [],
+        },
+        ["Products 2"]
+      ),
+    cliProgressBar,
   })
 
-  const allStagingCategories = await getAllCategories(stagingBase)
-  await addParentCategoryLinks(allProductionCategories, allStagingCategories)
+  const allStagingCategories = await getAllCategories(getStagingBase())
+  await addParentCategoryLinks(
+    allProductionCategories,
+    allStagingCategories,
+    cliProgressBar
+  )
 }
+
+export const getNumLinksCategories = () => 1
 
 const addParentCategoryLinks = async (
   allProductionCategories,
-  allStagingCategories
+  allStagingCategories,
+  cliProgressBar?
 ) => {
   await linkStagingRecords({
     rootRecordName: "Categories",
@@ -37,5 +51,6 @@ const addParentCategoryLinks = async (
     allTargetStagingRecords: allStagingCategories,
     getRootRecordIdentifer: rec => rec.fields.Name,
     getTargetRecordIdentifer: rec => rec.fields.Name,
+    cliProgressBar,
   })
 }

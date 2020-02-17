@@ -1,10 +1,10 @@
-import { productionBase } from "./config"
+import { base } from "./config"
 
 export function updatePhysicalProduct(
   airtableID: string,
   fields: AirtablePhysicalProductFields
 ) {
-  productionBase("Physical Products").update(airtableID, fields)
+  base("Physical Products").update(airtableID, fields)
 }
 
 export type AirtableInventoryStatus =

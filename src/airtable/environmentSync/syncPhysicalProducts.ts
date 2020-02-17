@@ -4,21 +4,25 @@ import {
   getAllProducts,
   getAllProductVariants,
   getAllLocations,
+  AirtableData,
+  AirtableData,
+  AirtableData,
+  AirtableData,
+  AirtableData,
+  AirtableData,
 } from "../utils"
-import { productionBase, stagingBase } from "../config"
+import { getProductionBase, getStagingBase } from "../config"
 import {
   deleteAllStagingRecords,
   createAllStagingRecordsWithoutLinks,
   linkStagingRecords,
 } from "."
 
-export const syncPhysicalProducts = async () => {
-  console.log(" -- Physical Products -- ")
-
+export const syncPhysicalProducts = async (cliProgressBar?: any) => {
   const allPhysicalProductsProduction = await getAllPhysicalProducts(
-    productionBase
+    getProductionBase()
   )
-  await deleteAllStagingRecords("Physical Products")
+  await deleteAllStagingRecords("Physical Products", cliProgressBar)
   await createAllStagingRecordsWithoutLinks({
     modelName: "Physical Products",
     allProductionRecords: allPhysicalProductsProduction,
@@ -41,66 +45,82 @@ export const syncPhysicalProducts = async () => {
           "Barcode",
         ]
       ),
+    cliProgressBar,
   })
-  const allPhysicalProductsStaging = await getAllPhysicalProducts(stagingBase)
+  const allPhysicalProductsStaging = await getAllPhysicalProducts(
+    getStagingBase()
+  )
   await addProductLinks(
     allPhysicalProductsProduction,
-    allPhysicalProductsStaging
+    allPhysicalProductsStaging,
+    cliProgressBar
   )
   await addProductVariantLinks(
     allPhysicalProductsProduction,
-    allPhysicalProductsStaging
+    allPhysicalProductsStaging,
+    cliProgressBar
   )
   await addLocationLinks(
     allPhysicalProductsProduction,
-    allPhysicalProductsStaging
+    allPhysicalProductsStaging,
+    cliProgressBar
   )
 }
 
+export const getNumLinksPhysicalProducts = () => 3
+
 const addProductLinks = async (
-  allPhysicalProductsProduction,
-  allPhysicalProductsStaging
+  allPhysicalProductsProduction: AirtableData,
+  allPhysicalProductsStaging: AirtableData,
+  cliProgressBar?: any
 ) => {
   await linkStagingRecords({
     rootRecordName: "Physical Products",
     targetFieldNameOnRootRecord: "Product",
     allRootProductionRecords: allPhysicalProductsProduction,
     allRootStagingRecords: allPhysicalProductsStaging,
-    allTargetProductionRecords: await getAllProducts(productionBase),
-    allTargetStagingRecords: await getAllProducts(stagingBase),
+    allTargetProductionRecords: await getAllProducts(getProductionBase()),
+    allTargetStagingRecords: await getAllProducts(getStagingBase()),
     getRootRecordIdentifer: rec => rec.fields.SUID.text,
     getTargetRecordIdentifer: rec => rec.fields.Slug,
+    cliProgressBar,
   })
 }
 
 const addProductVariantLinks = async (
-  allPhysicalProductsProduction,
-  allPhysicalProductsStaging
+  allPhysicalProductsProduction: AirtableData,
+  allPhysicalProductsStaging: AirtableData,
+  cliProgressBar?: any
 ) => {
   await linkStagingRecords({
     rootRecordName: "Physical Products",
     targetFieldNameOnRootRecord: "Product Variant",
     allRootProductionRecords: allPhysicalProductsProduction,
     allRootStagingRecords: allPhysicalProductsStaging,
-    allTargetProductionRecords: await getAllProductVariants(productionBase),
-    allTargetStagingRecords: await getAllProductVariants(stagingBase),
+    allTargetProductionRecords: await getAllProductVariants(
+      getProductionBase()
+    ),
+    allTargetStagingRecords: await getAllProductVariants(getStagingBase()),
     getRootRecordIdentifer: rec => rec.fields.SUID.text,
     getTargetRecordIdentifer: rec => rec.fields.SKU,
+    cliProgressBar,
   })
 }
 
 const addLocationLinks = async (
-  allPhysicalProductsProduction,
-  allPhysicalProductsStaging
+  allPhysicalProductsProduction: AirtableData,
+  allPhysicalProductsStaging: AirtableData,
+  cliProgressBar?: any
 ) => {
   await linkStagingRecords({
     rootRecordName: "Physical Products",
     targetFieldNameOnRootRecord: "Location",
     allRootProductionRecords: allPhysicalProductsProduction,
     allRootStagingRecords: allPhysicalProductsStaging,
-    allTargetProductionRecords: await getAllLocations(productionBase),
-    allTargetStagingRecords: await getAllLocations(stagingBase),
+    allTargetProductionRecords: await getAllLocations(getProductionBase()),
+    allTargetStagingRecords: await getAllLocations(getStagingBase()),
     getRootRecordIdentifer: rec => rec.fields.SUID.text,
     getTargetRecordIdentifer: rec => rec.fields.Slug,
+    cliProgressBar,
   })
 }

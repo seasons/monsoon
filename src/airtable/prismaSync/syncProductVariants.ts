@@ -13,7 +13,7 @@ import {
   ProductVariantCreateInput,
 } from "../../prisma"
 import { sizeToSizeCode } from "../../utils"
-import { productionBase } from "../config"
+import { base } from "../config"
 import { isEmpty } from "lodash"
 
 const SeasonsLocationID = "recvzTcW19kdBPqf4"
@@ -189,7 +189,7 @@ const createMorePhysicalProductsIfNeeded: CreateMorePhysicalProductsFunction = a
         },
       })
     }
-    await productionBase("Physical Products").create(newPhysicalProducts)
+    await base("Physical Products").create(newPhysicalProducts)
   }
 
   return newPhysicalProducts.map(

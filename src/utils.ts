@@ -2,6 +2,7 @@ import { Prisma, Customer, User, Location, InventoryStatus } from "./prisma"
 import { Binding } from "graphql-binding"
 import { Request, Response } from "express"
 import crypto from "crypto"
+import fs from "fs"
 import sgMail from "@sendgrid/mail"
 import Analytics from "analytics-node"
 import { AirtableInventoryStatus } from "./airtable/updatePhysicalProduct"
@@ -193,4 +194,9 @@ export const allVariablesDefined = (arr: any[]) => {
   return arr.reduce((acc, curval) => {
     return acc && curval !== undefined
   }, true)
+}
+
+export const readJSONObjectFromFile = (filepath: string) => {
+  const rawData = fs.readFileSync(filepath) as any
+  return JSON.parse(rawData)
 }

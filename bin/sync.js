@@ -2,8 +2,12 @@
 require("dotenv").config()
 
 const startsWith = require("lodash/startsWith")
+const fs = require("fs")
 
-const { syncAll } = require("../dist/airtable/syncAll")
+const { syncAll } = require("../dist/airtable/prismaSync/syncAll")
+const {
+  syncAll: syncAllAirtableToAirtable,
+} = require("../dist/airtable/environmentSync/syncAll")
 const { syncPrisma, checkDBEnvVars } = require("../dist/syncPrisma")
 const {
   syncBrands,
@@ -16,7 +20,9 @@ const {
   syncCollectionGroups,
   syncHomepageProductRails,
   syncPhysicalProducts,
-} = require("../dist/airtable")
+} = require("../dist/airtable/prismaSync")
+const { downloadFromS3 } = require("../dist/downloadFromS3")
+const { readJSONObjectFromFile } = require("../dist/utils")
 
 require("yargs")
   .scriptName("monsoon")
@@ -76,15 +82,42 @@ require("yargs")
     }
   )
   .command(
-    "sync-airtable [baseID]",
-    "syncs airtable production environment to staging environment",
+    "sync-airtable base",
+    "syncs airtable production environment to given secondary environment",
     yargs => {
-      yargs.positional("baseID", {
+      yargs.positional("base", {
         type: "string",
-        describe: "ID of the airtable base to which you wish to sync",
+        describe:
+          "human readable name of base to sync to. Options are staging1 | staging2",
       })
     },
-    argv => {}
+    async argv => {
+      const envFilePath = await downloadFromS3(
+        "/tmp/env.json",
+        "monsoon-scripts",
+        "env.json"
+      )
+      try {
+        const env = readJSONObjectFromFile(envFilePath)
+        if (!(env.airtable[argv.base] && env.airtable[argv.base].baseID)) {
+          throw new Error("invalid base. valid options are staging1 | staging2")
+        }
+        if (argv.base === "production") {
+          throw new Error(
+            "can not sync to production. valid options are staging1 | staging2"
+          )
+        }
+        process.env._PRODUCTION_AIRTABLE_BASEID =
+          env.airtable["production"].baseID
+        process.env._STAGING_AIRTABLE_BASEID = env.airtable[argv.base].baseID
+        await syncAllAirtableToAirtable()
+      } catch (err) {
+        console.log(err)
+      } finally {
+        // delete the env file
+        fs.unlinkSync(envFilePath)
+      }
+    }
   )
   .completion("completion", (current, argv) => {
     if (current == "sync-db") {

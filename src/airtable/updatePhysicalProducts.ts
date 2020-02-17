@@ -1,5 +1,5 @@
 import { AirtablePhysicalProductFields } from "./updatePhysicalProduct"
-import { productionBase } from "./config"
+import { base } from "./config"
 import { zip } from "lodash"
 
 export async function updatePhysicalProducts(
@@ -19,7 +19,7 @@ export async function updatePhysicalProducts(
       fields: a[1],
     }
   })
-  const updatedRecords = await productionBase("Physical Products").update(
+  const updatedRecords = await base("Physical Products").update(
     formattedUpdateData
   )
   return updatedRecords
