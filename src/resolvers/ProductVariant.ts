@@ -1,8 +1,8 @@
 import { Context } from "../utils"
-import { getCustomerFromContext } from "../auth/utils"
+import { getCustomerFromContext, getUserFromContext } from "../auth/utils"
 
 export const ProductVariant = {
-  async isSaved(parent, {}, ctx: Context, info) {
+  async isSaved(parent, { }, ctx: Context, info) {
     const customer = await getCustomerFromContext(ctx)
 
     const bagItems = await ctx.prisma.bagItems({
