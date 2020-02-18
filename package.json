@@ -13,10 +13,6 @@
   },
   "scripts": {
     "build": "rimraf dist && tsc",
-    "db:seed-production": "yarn db:seed -- dotenv_config_path=.env.production",
-    "db:seed-staging": "yarn db:seed -- dotenv_config_path=.env.staging",
-    "db:seed": "node -r dotenv/config -r ts-node/register scripts/airtableToDB.ts",
-    "db:syncProdToStaging": "eval $(egrep -v '^#' .env | xargs) scripts/syncProdDBToStagingDB.sh",
     "debug": "dotenv -- nodemon -e ts,graphql -x node --inspect -r dotenv/config -r ts-node/register src/index.ts",
     "healthCheck:production": "node -r dotenv/config -r ts-node/register scripts/airtableToPrismaHealthCheck.ts -- dotenv_config_path=.env.production",
     "lint": "yarn tslint -c 'tslint.json' 'src/**/*.ts'",

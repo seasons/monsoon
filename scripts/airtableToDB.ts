@@ -1,3 +1,3 @@
-import { syncAll } from "../src/airtable/airtableToPrismaSync/syncAll"
+import { syncAll } from "../dist/airtable/prismaSync/syncAll"
 
 syncAll()
