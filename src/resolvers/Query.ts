@@ -2,7 +2,6 @@ import { Context, getUserIDHash, getCustomerFromUserID } from "../utils"
 import { Homepage } from "./Homepage"
 import { getUserRequestObject } from "../auth/utils"
 import chargebee from "chargebee"
-import { ProductVariantWant } from "./ProductVariantWant"
 import { Search } from "./Search"
 
 export const Query = {
@@ -173,7 +172,6 @@ export const Query = {
     return hostedPage
   },
 
-  ...ProductVariantWant,
   ...Search,
 }
 
