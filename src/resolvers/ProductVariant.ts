@@ -21,17 +21,14 @@ export const ProductVariant = {
   },
 
   async isWanted(parent, { }, ctx: Context, info) {
-    console.log("GETTING ISWANTED")
     const user = await getUserFromContext(ctx)
     if (!user) {
       return false
-      // throw new Error("Missing user from context")
     }
 
     const productVariant = await ctx.prisma.productVariant({ id: parent.id })
     if (!productVariant) {
       return false
-      // throw new Error("Failed to find product variant for id")
     }
 
     const productVariantWants = await ctx.prisma.productVariantWants({
@@ -49,6 +46,5 @@ export const ProductVariant = {
 
     const exists = productVariantWants && productVariantWants.length > 0
     return exists
-    // return { exists }
   }
 }

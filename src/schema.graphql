@@ -110,6 +110,7 @@ type Query {
   ): [Collection]!
   collection(where: CollectionWhereUniqueInput!): Collection
   product(where: ProductWhereUniqueInput!): Product
+  productVariant(where: ProductVariantWhereUniqueInput!): ProductVariant!
   categories(
     where: CategoryWhereInput
     orderBy: CategoryOrderByInput

@@ -62,6 +62,10 @@ export const Query = {
     return result
   },
 
+  async productVariant(parent, { where }, ctx: Context, info) {
+    return await ctx.prisma.productVariant(where)
+  },
+
   product: (parent, args, ctx: Context, info) =>
     ctx.db.query.product(args, info),
 
