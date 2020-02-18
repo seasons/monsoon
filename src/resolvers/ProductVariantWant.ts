@@ -8,12 +8,10 @@ export const ProductVariantWant = {
       throw new Error("Missing user from context")
     }
 
-    console.log("FINDING")
     const productVariant = await ctx.prisma.productVariant({ id: variantID })
     if (!productVariant) {
       throw new Error("Failed to find product variant for id")
     }
-    console.log("HERE")
 
     const productVariantWants = await ctx.prisma.productVariantWants({
       where: {
