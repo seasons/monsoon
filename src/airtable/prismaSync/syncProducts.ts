@@ -1,5 +1,5 @@
-import { getAllBrands, getAllCategories, getAllProducts } from "./utils"
-import { prisma, ProductCreateInput } from "../prisma"
+import { getAllBrands, getAllCategories, getAllProducts } from "../utils"
+import { prisma, ProductCreateInput } from "../../prisma"
 import slugify from "slugify"
 import { isEmpty, omit } from "lodash"
 import { elasticsearch } from "../search"

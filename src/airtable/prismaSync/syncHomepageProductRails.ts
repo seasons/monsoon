@@ -1,43 +1,33 @@
 import slugify from "slugify"
-import { prisma } from "../prisma"
+import { prisma } from "../../prisma"
 import { isEmpty } from "lodash"
-import { getAllCollections, getAllProducts } from "./utils"
+import { getAllProducts, getAllHomepageProductRails } from "../utils"
 
-export const syncCollections = async () => {
-  const records = await getAllCollections()
+export const syncHomepageProductRails = async () => {
+  const records = await getAllHomepageProductRails()
   const allProducts = await getAllProducts()
 
   for (let record of records) {
     try {
       const { model } = record
       const products = allProducts.findMultipleByIds(model.products)
-      const {
-        descriptionTop,
-        descriptionBottom,
-        title,
-        subTitle,
-        images,
-      } = model
+      const { name } = model
 
-      if (isEmpty(images) || isEmpty(title)) {
+      if (isEmpty(name)) {
         continue
       }
 
-      const slug = slugify(title).toLowerCase()
+      const slug = slugify(name).toLowerCase()
 
       const data = {
         products: {
           connect: products.map(product => ({ slug: product.model.slug })),
         },
         slug,
-        title,
-        subTitle,
-        descriptionTop,
-        descriptionBottom,
-        images,
+        name,
       }
 
-      const collection = await prisma.upsertCollection({
+      const homepageProductRail = await prisma.upsertHomepageProductRail({
         where: {
           slug,
         },
@@ -52,7 +42,7 @@ export const syncCollections = async () => {
         Slug: slug,
       })
 
-      console.log(collection)
+      console.log(homepageProductRail)
     } catch (e) {
       console.error(e)
     }
