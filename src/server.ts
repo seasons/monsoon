@@ -4,7 +4,7 @@ import { Prisma } from "prisma-binding"
 import Analytics from "analytics-node"
 import { apolloServerSentryPlugin } from "./apollo/sentryIntegration"
 
-var analytics = new Analytics(process.env.SEGMENT_MONSOON_WRITE_KEY)
+const analytics = new Analytics(process.env.SEGMENT_MONSOON_WRITE_KEY)
 
 const defaultQuery = `{
   products {

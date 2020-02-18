@@ -6,13 +6,15 @@ import { createGetUserMiddleware } from "./middleware/user"
 import { prisma } from "./prisma"
 import cors from "cors"
 import { app as webhooks } from "./webhooks"
+import { app as pushNotifications } from "./pushNotifications"
 import bodyParser from "body-parser"
+import Sentry from "@sentry/node"
 
-// Set up Sentry, which automatically reports on uncaught exceptions
-const Sentry = require("@sentry/node")
-Sentry.init({
-  dsn: process.env.SENTRY_DSN,
-})
+if (process.env.NODE_ENV === "production") {
+  Sentry.init({
+    dsn: process.env.SENTRY_DSN,
+  })
+}
 
 // Set up the server
 const server = new ApolloServer(serverOptions)
@@ -26,7 +28,8 @@ app.use(
     credentials: true,
   }),
   bodyParser.json(),
-  webhooks
+  webhooks,
+  pushNotifications
 )
 server.applyMiddleware({ app, path: "/" })
 app.listen({ port: process.env.PORT || 4000 }, () =>
