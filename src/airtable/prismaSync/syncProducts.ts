@@ -1,7 +1,8 @@
 import { getAllBrands, getAllCategories, getAllProducts } from "../utils"
 import { prisma, ProductCreateInput } from "../../prisma"
 import slugify from "slugify"
-import { isEmpty } from "lodash"
+import { isEmpty, omit } from "lodash"
+import { elasticsearch } from "../search"
 
 export const syncProducts = async () => {
   const allBrands = await getAllBrands()
@@ -95,9 +96,25 @@ export const syncProducts = async () => {
         Slug: slug,
       })
 
+      const esData = {
+        ...product,
+        brand: omit(brand.model, ["products"]),
+        category: omit(category.model, ["parent", "products"]),
+        tags: product.tags?.set,
+      }
+
+      console.log(esData)
+
+      await elasticsearch.index({
+        index: `products-${process.env.NODE_ENV}`,
+        body: esData,
+      })
+
       console.log(i++, product)
     } catch (e) {
       console.error(e)
     }
   }
 }
+
+syncProducts()
