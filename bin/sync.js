@@ -28,7 +28,7 @@ require("yargs")
   .scriptName("monsoon")
   .usage("$0 <cmd> <cmd> [args]")
   .command(
-    "sync:airtable:prisma [table]",
+    "sync:airtable:prisma <table>",
     "sync airtable data to prisma",
     yargs => {
       yargs.positional("table", {
@@ -62,7 +62,7 @@ require("yargs")
     }
   )
   .command(
-    "sync:prisma:prisma [destination]",
+    "sync:prisma:prisma <destination>",
     "sync prisma production to staging/local",
     yargs => {
       yargs.positional("destination", {
@@ -99,7 +99,7 @@ require("yargs")
     }
   )
   .command(
-    "sync:airtable:airtable [base]",
+    "sync:airtable:airtable <base>",
     "sync airtable production to secondary environment",
     yargs => {
       yargs.positional("base", {
