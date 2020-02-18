@@ -36,11 +36,7 @@
   },
   "dependencies": {
     "@auth0/auth0-spa-js": "^1.3.0",
-<<<<<<< HEAD
-    "@elastic/elasticsearch": "^7.6.0",
-=======
     "@elastic/elasticsearch": "^7.5.1",
->>>>>>> master
     "@sendgrid/mail": "^6.4.0",
     "@sentry/node": "^5.10.2",
     "@sentry/types": "^5.10.0",
