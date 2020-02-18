@@ -447,4 +447,5 @@ type ProductVariantWant {
   id: ID! @id
   productVariant: ProductVariant!
   user: User!
+  isFulfilled: Boolean!
 }

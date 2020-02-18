@@ -71,6 +71,7 @@ type ProductVariant {
   reserved: Int!
   nonReservable: Int!
   isSaved: Boolean!
+  isWanted: Boolean!
   createdAt: DateTime!
   updatedAt: DateTime!
 }

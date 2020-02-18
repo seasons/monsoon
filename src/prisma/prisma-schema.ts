@@ -3762,6 +3762,7 @@ type Mutation {
   deleteManyProductVariants(where: ProductVariantWhereInput): BatchPayload!
   createProductVariantWant(data: ProductVariantWantCreateInput!): ProductVariantWant!
   updateProductVariantWant(data: ProductVariantWantUpdateInput!, where: ProductVariantWantWhereUniqueInput!): ProductVariantWant
+  updateManyProductVariantWants(data: ProductVariantWantUpdateManyMutationInput!, where: ProductVariantWantWhereInput): BatchPayload!
   upsertProductVariantWant(where: ProductVariantWantWhereUniqueInput!, create: ProductVariantWantCreateInput!, update: ProductVariantWantUpdateInput!): ProductVariantWant!
   deleteProductVariantWant(where: ProductVariantWantWhereUniqueInput!): ProductVariantWant
   deleteManyProductVariantWants(where: ProductVariantWantWhereInput): BatchPayload!
@@ -5919,6 +5920,7 @@ type ProductVariantWant {
   id: ID!
   productVariant: ProductVariant!
   user: User!
+  isFulfilled: Boolean!
 }
 
 type ProductVariantWantConnection {
@@ -5931,6 +5933,7 @@ input ProductVariantWantCreateInput {
   id: ID
   productVariant: ProductVariantCreateOneInput!
   user: UserCreateOneInput!
+  isFulfilled: Boolean!
 }
 
 type ProductVariantWantEdge {
@@ -5941,10 +5944,13 @@ type ProductVariantWantEdge {
 enum ProductVariantWantOrderByInput {
   id_ASC
   id_DESC
+  isFulfilled_ASC
+  isFulfilled_DESC
 }
 
 type ProductVariantWantPreviousValues {
   id: ID!
+  isFulfilled: Boolean!
 }
 
 type ProductVariantWantSubscriptionPayload {
@@ -5968,6 +5974,11 @@ input ProductVariantWantSubscriptionWhereInput {
 input ProductVariantWantUpdateInput {
   productVariant: ProductVariantUpdateOneRequiredInput
   user: UserUpdateOneRequiredInput
+  isFulfilled: Boolean
+}
+
+input ProductVariantWantUpdateManyMutationInput {
+  isFulfilled: Boolean
 }
 
 input ProductVariantWantWhereInput {
@@ -5987,6 +5998,8 @@ input ProductVariantWantWhereInput {
   id_not_ends_with: ID
   productVariant: ProductVariantWhereInput
   user: UserWhereInput
+  isFulfilled: Boolean
+  isFulfilled_not: Boolean
   AND: [ProductVariantWantWhereInput!]
   OR: [ProductVariantWantWhereInput!]
   NOT: [ProductVariantWantWhereInput!]

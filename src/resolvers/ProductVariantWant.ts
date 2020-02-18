@@ -44,6 +44,7 @@ export const ProductVariantWantMutations = {
     }
 
     const productVariantWant = await ctx.prisma.createProductVariantWant({
+      isFulfilled: false,
       productVariant: {
         connect: {
           id: productVariant.id,
