@@ -1,9 +1,7 @@
-import {
-  getNumLinksColors,
-  getNumLinksModels,
-  getNumLinksLocations,
-  getNumLinksBrands,
-} from "./utils"
+import { getNumLinksLocations } from "./syncLocations"
+import { getNumLinksModels } from "./syncModels"
+import { getNumLinksColors } from "./syncColors"
+import { getNumLinksBrands } from "./syncBrands"
 import { AirtableModelName } from "../utils"
 import {
   getNumLinksProducts,

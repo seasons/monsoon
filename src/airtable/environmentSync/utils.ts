@@ -13,75 +13,9 @@ import {
   getAllUsers,
   getAllReservations,
 } from "../utils"
-import { Identity, deleteFieldsFromObject } from "../../utils"
+import { Identity } from "../../utils"
 import { getStagingBase, getProductionBase } from "../config"
 import { getNumLinks } from "./getNumLinks"
-
-export const syncBrands = async (cliProgressBar?: any) => {
-  await deleteAllStagingRecords("Brands", cliProgressBar)
-  await createAllStagingRecordsWithoutLinks({
-    modelName: "Brands",
-    allProductionRecords: await getAllBrands(getProductionBase()),
-    sanitizeFunc: fields =>
-      Identity({
-        ...fields,
-        Logo: sanitizeAttachments(fields.Logo),
-        Products: [],
-      }),
-    cliProgressBar,
-  })
-}
-
-export const getNumLinksBrands = () => 0
-
-export const syncColors = async (cliProgressBar?) => {
-  await deleteAllStagingRecords("Colors", cliProgressBar)
-  await createAllStagingRecordsWithoutLinks({
-    modelName: "Colors",
-    allProductionRecords: await getAllColors(getProductionBase()),
-    sanitizeFunc: fields => fields,
-    cliProgressBar,
-  })
-}
-export const getNumLinksColors = () => 0
-
-export const syncModels = async (cliProgressBar?) => {
-  await deleteAllStagingRecords("Models", cliProgressBar)
-  await createAllStagingRecordsWithoutLinks({
-    modelName: "Models",
-    allProductionRecords: await getAllModels(getProductionBase()),
-    sanitizeFunc: fields =>
-      Identity({
-        ...fields,
-        Products: [],
-      }),
-    cliProgressBar,
-  })
-}
-export const getNumLinksModels = () => 0
-
-export const syncLocations = async (cliProgressBar?) => {
-  await deleteAllStagingRecords("Locations", cliProgressBar)
-  await createAllStagingRecordsWithoutLinks({
-    modelName: "Locations",
-    allProductionRecords: await getAllLocations(getProductionBase()),
-    sanitizeFunc: fields =>
-      deleteFieldsFromObject(
-        {
-          ...fields,
-          "Physical Products": [],
-          Reservations: "",
-          "Reservations 2": [],
-          "Reservations 3": [],
-          Users: [],
-          "Users 2": [],
-        },
-        ["Created At", "Updated At", "Record ID"]
-      ),
-    cliProgressBar,
-  })
-}
-export const getNumLinksLocations = () => 0
 
 const airtableModelNameToGetAllFunc = (modelname: AirtableModelName) => {
   const func = {

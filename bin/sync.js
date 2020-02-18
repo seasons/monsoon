@@ -100,7 +100,7 @@ require("yargs")
   )
   .command(
     "sync-airtable [base]",
-    "syncs airtable production environment to given secondary environment",
+    "sync airtable production to secondary environment",
     yargs => {
       yargs.positional("base", {
         type: "string",
