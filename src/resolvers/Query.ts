@@ -2,6 +2,7 @@ import { Context, getUserIDHash, getCustomerFromUserID } from "../utils"
 import { Homepage } from "./Homepage"
 import { getUserRequestObject } from "../auth/utils"
 import chargebee from "chargebee"
+import { ProductVariantWant } from "./ProductVariantWant"
 import { Search } from "./Search"
 
 export const Query = {
@@ -35,17 +36,17 @@ export const Query = {
       const filter =
         children.length > 0
           ? {
-              where: {
-                ...args.where,
-                OR: children.map(({ slug }) => ({ category: { slug } })),
-              },
-            }
+            where: {
+              ...args.where,
+              OR: children.map(({ slug }) => ({ category: { slug } })),
+            },
+          }
           : {
-              where: {
-                ...args.where,
-                category: { slug: category.slug },
-              },
-            }
+            where: {
+              ...args.where,
+              category: { slug: category.slug },
+            },
+          }
       const { first, skip } = args
       const products = await ctx.db.query.products(
         { first, skip, orderBy, where, ...filter },
@@ -168,6 +169,7 @@ export const Query = {
     return hostedPage
   },
 
+  ...ProductVariantWant,
   ...Search,
 }
 
