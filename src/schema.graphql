@@ -153,7 +153,6 @@ type Query {
     where: HomepageProductRailWhereUniqueInput!
   ): HomepageProductRail
   search(query: String!, options: SearchOptions): [SearchResult]!
-  productVariantWantExists(variantID: ID!): ProductVariantWantExistsPayload!
 }
 
 type ChargebeeCheckout {
@@ -273,10 +272,6 @@ type Me {
   activeReservation: Reservation
   bag: [BagItem!]!
   savedItems: [BagItem!]!
-}
-
-type ProductVariantWantExistsPayload {
-  exists: Boolean!
 }
 
 union HomepageResult = HomepageProductRail | Product | Collection
