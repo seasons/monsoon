@@ -136,6 +136,29 @@ export const emails = {
       },
     }
   },
+  returnReminderData: ({ name, returnDate }) => ({
+    email: {
+      body: {
+        paragraphs: [
+          { html: `Hey ${name}!<br><br>It's time to return your items.` },
+          {
+            html: `Please <b>drop off</b> your bag no later than <b>${returnDate}</b>. Once we've received and processed your items, we'll send you an email confirmation and your bag will be reset for you to place your next order! This typically takes about 2-3 business days.`,
+          },
+          { html: "Thanks,<br>The Seasons Team" },
+        ],
+      },
+      prefooter: {
+        paragraphs: [
+          {
+            html:
+              "If you have any questions, reach out to memberships@seasons.nyc.",
+          },
+        ],
+      },
+      title: "It's time to return your items",
+      subject: "It's time to return your items",
+    },
+  }),
 }
 
 export interface ReservedItem {

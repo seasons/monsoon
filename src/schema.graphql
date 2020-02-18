@@ -217,6 +217,7 @@ type ResetPasswordPayload {
 
 input ValidateAddressInput {
   location: LocationCreateInput!
+  email: String!
 }
 
 type ValidationPayload {

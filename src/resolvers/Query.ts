@@ -118,9 +118,9 @@ export const Query = {
 
     // translate the passed planID into a chargebee-readable version
     let truePlanID
-    if (planID == "AllAccess") {
+    if (planID === "AllAccess") {
       truePlanID = "all-access"
-    } else if (planID == "Essential") {
+    } else if (planID === "Essential") {
       truePlanID = "essential"
     } else {
       throw new Error("unrecognized planID")

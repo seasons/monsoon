@@ -96,7 +96,7 @@ export const Homepage = async (parent, args, ctx: Context, info) => {
             },
             `{ 
               updatedAt
-              product ${ProductFragment} 
+              product ${ProductFragment}
             }`
           )
           return viewedProducts.map(viewedProduct => viewedProduct.product)

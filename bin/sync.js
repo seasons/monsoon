@@ -30,7 +30,6 @@ require("yargs")
       })
     },
     async argv => {
-      debugger
       console.log("Starting to sync", argv.table, "...")
       switch (argv.table) {
         case "all":
