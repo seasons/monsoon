@@ -1,12 +1,9 @@
-import readline from "readline"
+import readlineSync from "readline-sync"
 import { execSync } from "child_process"
-import { allVariablesDefined } from "./utils"
+import fs from "fs"
 
 export type prismaSyncDestination = "local" | "staging"
-export const syncPrisma = (env: prismaSyncDestination) => {
-  if (!checkDBEnvVars(env)) {
-    return
-  }
+export const syncPrisma = async (env: prismaSyncDestination) => {
   let toHost
   let toDBName
   let toUsername
@@ -29,114 +26,69 @@ export const syncPrisma = (env: prismaSyncDestination) => {
       break
   }
 
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-  })
-  rl.on("close", () => {
-    process.exit(0)
-  })
-  rl.question(getWarning(toHost, toDBName), answer => {
-    if (answer === "y") {
-      runSync(toHost, toPort, toUsername, toDBName, toSchema)
-    } else {
-      console.log("Exited without syncing prisma")
-    }
-    rl.close()
-  })
+  if (
+    readlineSync.keyInYN(getWarning({ toHost, toDBName, toPort, toUsername }))
+  ) {
+    // Y key was pressed
+    runSync(toHost, toPort, toUsername, toDBName, toSchema)
+  } else {
+    // Another key was pressed.
+    console.log(`\n** Exited without syncing prisma **`)
+  }
 }
 
 const runSync = (toHost, toPort, toUsername, toDBName, toSchema) => {
   // .pgpass specifies passwords for the databases
-  execSync("export PGPASSFILE=$PWD/.pgpass", { stdio: "inherit" })
+  fs.chmodSync("/tmp/.pgpass", 0o600)
+
+  const execSyncWithOptions = getExecSyncWithOptions({
+    stdio: "inherit",
+    env: { ...process.env, PGPASSFILE: "/tmp/.pgpass" },
+  })
 
   // Copy monsoon$production schema and all contained tables as is to destination DB.
+  // We are ok with this throwing a few errors.
   try {
-    execSync(
-      `pg_dump --format=t --clean --create --no-password --host=${process.env.DB_PROD_HOST}\
- --port=${process.env.DB_PROD_PORT} --username=${process.env.DB_PROD_USERNAME} ${process.env.DB_PROD_DBNAME}\
- | pg_restore --host=${toHost} --port=${toPort} --username=${toUsername} --no-password\
- --dbname=${toDBName}`,
-      { stdio: "inherit" }
+    execSyncWithOptions(
+      `pg_dump --format=t --clean --create --no-password --host=${process.env.DB_PRODUCTION_HOST}\
+ --port=${process.env.DB_PRODUCTION_PORT} --username=${process.env.DB_PRODUCTION_USERNAME}\
+ ${process.env.DB_PRODUCTION_DBNAME} | pg_restore --host=${toHost} --port=${toPort}\
+ --username=${toUsername} --no-password --dbname=${toDBName}`
     )
   } catch (err) {
     console.log(err)
   }
 
   //  Drop the (old) monsoon$staging or monsoon$dev schema and all contained tables
-  execSync(
+  execSyncWithOptions(
     `echo 'DROP SCHEMA "${toSchema}" CASCADE' | psql --host=${toHost}\
- --port=${toPort} --username=${toUsername} --no-password --dbname=${toDBName}`,
-    { stdio: "inherit" }
+ --port=${toPort} --username=${toUsername} --no-password --dbname=${toDBName}`
   )
 
   // Adjust the name of the schema to be appropriate for staging or dev
-  execSync(
+  execSyncWithOptions(
     `echo 'ALTER SCHEMA "monsoon$production" RENAME TO "${toSchema}"' | psql --host=${toHost}\
- --port=${toPort} --username=${toUsername} --no-password --dbname=${toDBName}`,
-    { stdio: "inherit" }
+ --port=${toPort} --username=${toUsername} --no-password --dbname=${toDBName}`
   )
 }
 
 export type dbEnv = "staging" | "local" | "production"
-export const checkDBEnvVars = (env: dbEnv) => {
-  switch (env) {
-    case "production":
-      if (
-        !allVariablesDefined([
-          process.env.DB_PROD_HOST,
-          process.env.DB_PROD_PORT,
-          process.env.DB_PROD_USERNAME,
-          process.env.DB_PROD_DBNAME,
-        ])
-      ) {
-        console.log(
-          `Check your environment variables. DB_PROD_HOST, DB_PROD_PORT,` +
-            `DB_PROD_USERNAME and DB_PROD_DBNAME must be set`
-        )
-        return false
-      }
-      break
-    case "staging":
-      if (
-        !allVariablesDefined([
-          process.env.DB_STAGING_HOST,
-          process.env.DB_STAGING_PORT,
-          process.env.DB_STAGING_USERNAME,
-          process.env.DB_STAGING_DBNAME,
-        ])
-      ) {
-        console.log(
-          `Check your environment variables. DB_STAGING_HOST, DB_STAGING_PORT,` +
-            `DB_STAGING_USERNAME and DB_STAGING_DBNAME must be set`
-        )
-        return false
-      }
-      break
-    case "local":
-      if (
-        !allVariablesDefined([
-          process.env.DB_LOCAL_HOST,
-          process.env.DB_LOCAL_PORT,
-          process.env.DB_LOCAL_USERNAME,
-          process.env.DB_LOCAL_DBNAME,
-        ])
-      ) {
-        console.log(
-          `Check your environment variables. DB_LOCAL_HOST, DB_LOCAL_PORT,` +
-            `DB_LOCAL_USERNAME and DB_LOCAL_DBNAME must be set`
-        )
-        return false
-      }
-      break
-  }
-  return true
+export interface DBVars {
+  host: string
+  port: number
+  dbname: string
+  username: string
 }
 
-const getWarning = (toHost, toDBName) =>
+export const setDBEnvVarsFromJSON = (env: dbEnv, values: DBVars) => {
+  process.env[`DB_${env.toUpperCase()}_HOST`] = values.host
+  process.env[`DB_${env.toUpperCase()}_PORT`] = `${values.port}`
+  process.env[`DB_${env.toUpperCase()}_USERNAME`] = values.username
+  process.env[`DB_${env.toUpperCase()}_DBNAME`] = values.dbname
+}
+
+const getWarning = ({ toHost, toDBName, toPort, toUsername }) =>
   `
-** Note: Please ensure you are in monsoon's root directory, or this won't work **
-    
 For your convenience:
 
 Prisma production URL: https://dashboard.heroku.com/apps/monsoon-prisma-production
@@ -145,8 +97,27 @@ Prisma staging URL: https://dashboard.heroku.com/apps/monsoon-prisma-staging
 Prisma Production DB Credentials: https://data.heroku.com/datastores/678b494b-b22a-4623-b8be-cdd4af0b73aa#credentials
 Prisma Staging DB Credentials: https://data.heroku.com/datastores/22766167-0a92-40df-9949-6c9733728e93#administration
 
-DANGER ALERT. You are about to delete all data on the database at "${toHost}" with \
-name "${toDBName}" and replace it with data from DB \
-"${process.env.DB_PROD_DBNAME}" at host "${process.env.DB_PROD_HOST}"
+DANGER ALERT. Please review the change you are about to make.
 
-Proceed? (y/n)\n`
+Source DB:
+-- Host: ${process.env.DB_PRODUCTION_HOST}
+-- Port: ${process.env.DB_PRODUCTION_PORT}
+-- DBname: ${process.env.DB_PRODUCTION_DBNAME}
+-- Username: ${process.env.DB_PRODUCTION_USERNAME}
+
+Destination DB:
+-- Host: ${toHost}
+-- Port: ${toPort}
+-- DBName: ${toDBName}
+-- Username: ${toUsername}
+
+All data on the destination DB will be irreversibly (unless you have a backup)
+replaced with the data from source.
+
+Proceed?`
+
+const getExecSyncWithOptions = options => {
+  return (cmd: string) => {
+    execSync(cmd, options)
+  }
+}

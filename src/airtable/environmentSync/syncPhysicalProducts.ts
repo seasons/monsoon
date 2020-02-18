@@ -5,11 +5,6 @@ import {
   getAllProductVariants,
   getAllLocations,
   AirtableData,
-  AirtableData,
-  AirtableData,
-  AirtableData,
-  AirtableData,
-  AirtableData,
 } from "../utils"
 import { getProductionBase, getStagingBase } from "../config"
 import {

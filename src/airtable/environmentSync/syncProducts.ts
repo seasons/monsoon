@@ -5,13 +5,6 @@ import {
   getAllCategories,
   getAllCollections,
   AirtableData,
-  AirtableData,
-  AirtableData,
-  AirtableData,
-  AirtableData,
-  AirtableData,
-  AirtableData,
-  AirtableData,
 } from "../utils"
 import { deleteFieldsFromObject } from "../../utils"
 import { getProductionBase, getStagingBase } from "../config"

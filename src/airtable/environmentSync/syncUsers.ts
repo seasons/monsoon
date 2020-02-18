@@ -1,9 +1,4 @@
-import {
-  getAllUsers,
-  getAllLocations,
-  AirtableData,
-  AirtableData,
-} from "../utils"
+import { getAllUsers, getAllLocations, AirtableData } from "../utils"
 import { deleteFieldsFromObject } from "../../utils"
 import { getProductionBase, getStagingBase } from "../config"
 import {

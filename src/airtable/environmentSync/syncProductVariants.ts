@@ -1,9 +1,4 @@
-import {
-  getAllProductVariants,
-  getAllProducts,
-  AirtableData,
-  AirtableData,
-} from "../utils"
+import { getAllProductVariants, getAllProducts, AirtableData } from "../utils"
 import { deleteFieldsFromObject } from "../../utils"
 import { getStagingBase, getProductionBase } from "../config"
 import {

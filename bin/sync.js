@@ -8,7 +8,7 @@ const { syncAll } = require("../dist/airtable/prismaSync/syncAll")
 const {
   syncAll: syncAllAirtableToAirtable,
 } = require("../dist/airtable/environmentSync/syncAll")
-const { syncPrisma, checkDBEnvVars } = require("../dist/syncPrisma")
+const { syncPrisma, setDBEnvVarsFromJSON } = require("../dist/syncPrisma")
 const {
   syncBrands,
   syncCategories,
@@ -70,19 +70,36 @@ require("yargs")
         describe: "Prisma environment to sync to: staging | local",
       })
     },
-    argv => {
-      if (!checkDBEnvVars("production")) {
-        return
-      }
+    async argv => {
       if (!["staging", "local"].includes(argv.destination)) {
         console.log("Destination must be one of local, staging")
         return
       }
-      syncPrisma(argv.destination)
+      const pgpassFilepath = await downloadFromS3(
+        "/tmp/.pgpass",
+        "monsoon-scripts",
+        "pgpass.txt"
+      )
+      const envFilepath = await downloadFromS3(
+        "/tmp/__monsoon__env.json",
+        "monsoon-scripts",
+        "env.json"
+      )
+      try {
+        const env = readJSONObjectFromFile(envFilepath)
+        setDBEnvVarsFromJSON("production", env.postgres.production)
+        setDBEnvVarsFromJSON(argv.destination, env.postgres[argv.destination])
+        syncPrisma(argv.destination)
+      } catch (err) {
+        console.log(err)
+      } finally {
+        fs.unlinkSync(pgpassFilepath)
+        fs.unlinkSync(envFilepath)
+      }
     }
   )
   .command(
-    "sync-airtable base",
+    "sync-airtable [base]",
     "syncs airtable production environment to given secondary environment",
     yargs => {
       yargs.positional("base", {
@@ -93,7 +110,7 @@ require("yargs")
     },
     async argv => {
       const envFilePath = await downloadFromS3(
-        "/tmp/env.json",
+        "/tmp/__monsoon__env.json",
         "monsoon-scripts",
         "env.json"
       )
