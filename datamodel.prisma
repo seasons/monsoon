@@ -444,3 +444,10 @@ type ProductRequest {
   url: String!
   user: User!
 }
+
+type ProductVariantWant {
+  id: ID! @id
+  productVariant: ProductVariant!
+  user: User!
+  isFulfilled: Boolean!
+}

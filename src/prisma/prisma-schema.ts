@@ -82,6 +82,10 @@ type AggregateProductVariant {
   count: Int!
 }
 
+type AggregateProductVariantWant {
+  count: Int!
+}
+
 type AggregateRecentlyViewedProduct {
   count: Int!
 }
@@ -3758,6 +3762,12 @@ type Mutation {
   upsertProductVariant(where: ProductVariantWhereUniqueInput!, create: ProductVariantCreateInput!, update: ProductVariantUpdateInput!): ProductVariant!
   deleteProductVariant(where: ProductVariantWhereUniqueInput!): ProductVariant
   deleteManyProductVariants(where: ProductVariantWhereInput): BatchPayload!
+  createProductVariantWant(data: ProductVariantWantCreateInput!): ProductVariantWant!
+  updateProductVariantWant(data: ProductVariantWantUpdateInput!, where: ProductVariantWantWhereUniqueInput!): ProductVariantWant
+  updateManyProductVariantWants(data: ProductVariantWantUpdateManyMutationInput!, where: ProductVariantWantWhereInput): BatchPayload!
+  upsertProductVariantWant(where: ProductVariantWantWhereUniqueInput!, create: ProductVariantWantCreateInput!, update: ProductVariantWantUpdateInput!): ProductVariantWant!
+  deleteProductVariantWant(where: ProductVariantWantWhereUniqueInput!): ProductVariantWant
+  deleteManyProductVariantWants(where: ProductVariantWantWhereInput): BatchPayload!
   createRecentlyViewedProduct(data: RecentlyViewedProductCreateInput!): RecentlyViewedProduct!
   updateRecentlyViewedProduct(data: RecentlyViewedProductUpdateInput!, where: RecentlyViewedProductWhereUniqueInput!): RecentlyViewedProduct
   updateManyRecentlyViewedProducts(data: RecentlyViewedProductUpdateManyMutationInput!, where: RecentlyViewedProductWhereInput): BatchPayload!
@@ -5908,6 +5918,99 @@ input ProductVariantUpsertWithWhereUniqueWithoutProductInput {
   create: ProductVariantCreateWithoutProductInput!
 }
 
+type ProductVariantWant {
+  id: ID!
+  productVariant: ProductVariant!
+  user: User!
+  isFulfilled: Boolean!
+}
+
+type ProductVariantWantConnection {
+  pageInfo: PageInfo!
+  edges: [ProductVariantWantEdge]!
+  aggregate: AggregateProductVariantWant!
+}
+
+input ProductVariantWantCreateInput {
+  id: ID
+  productVariant: ProductVariantCreateOneInput!
+  user: UserCreateOneInput!
+  isFulfilled: Boolean!
+}
+
+type ProductVariantWantEdge {
+  node: ProductVariantWant!
+  cursor: String!
+}
+
+enum ProductVariantWantOrderByInput {
+  id_ASC
+  id_DESC
+  isFulfilled_ASC
+  isFulfilled_DESC
+}
+
+type ProductVariantWantPreviousValues {
+  id: ID!
+  isFulfilled: Boolean!
+}
+
+type ProductVariantWantSubscriptionPayload {
+  mutation: MutationType!
+  node: ProductVariantWant
+  updatedFields: [String!]
+  previousValues: ProductVariantWantPreviousValues
+}
+
+input ProductVariantWantSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: ProductVariantWantWhereInput
+  AND: [ProductVariantWantSubscriptionWhereInput!]
+  OR: [ProductVariantWantSubscriptionWhereInput!]
+  NOT: [ProductVariantWantSubscriptionWhereInput!]
+}
+
+input ProductVariantWantUpdateInput {
+  productVariant: ProductVariantUpdateOneRequiredInput
+  user: UserUpdateOneRequiredInput
+  isFulfilled: Boolean
+}
+
+input ProductVariantWantUpdateManyMutationInput {
+  isFulfilled: Boolean
+}
+
+input ProductVariantWantWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  productVariant: ProductVariantWhereInput
+  user: UserWhereInput
+  isFulfilled: Boolean
+  isFulfilled_not: Boolean
+  AND: [ProductVariantWantWhereInput!]
+  OR: [ProductVariantWantWhereInput!]
+  NOT: [ProductVariantWantWhereInput!]
+}
+
+input ProductVariantWantWhereUniqueInput {
+  id: ID
+}
+
 input ProductVariantWhereInput {
   id: ID
   id_not: ID
@@ -6234,6 +6337,9 @@ type Query {
   productVariant(where: ProductVariantWhereUniqueInput!): ProductVariant
   productVariants(where: ProductVariantWhereInput, orderBy: ProductVariantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariant]!
   productVariantsConnection(where: ProductVariantWhereInput, orderBy: ProductVariantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductVariantConnection!
+  productVariantWant(where: ProductVariantWantWhereUniqueInput!): ProductVariantWant
+  productVariantWants(where: ProductVariantWantWhereInput, orderBy: ProductVariantWantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariantWant]!
+  productVariantWantsConnection(where: ProductVariantWantWhereInput, orderBy: ProductVariantWantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductVariantWantConnection!
   recentlyViewedProduct(where: RecentlyViewedProductWhereUniqueInput!): RecentlyViewedProduct
   recentlyViewedProducts(where: RecentlyViewedProductWhereInput, orderBy: RecentlyViewedProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [RecentlyViewedProduct]!
   recentlyViewedProductsConnection(where: RecentlyViewedProductWhereInput, orderBy: RecentlyViewedProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): RecentlyViewedProductConnection!
@@ -6737,6 +6843,7 @@ type Subscription {
   productFunction(where: ProductFunctionSubscriptionWhereInput): ProductFunctionSubscriptionPayload
   productRequest(where: ProductRequestSubscriptionWhereInput): ProductRequestSubscriptionPayload
   productVariant(where: ProductVariantSubscriptionWhereInput): ProductVariantSubscriptionPayload
+  productVariantWant(where: ProductVariantWantSubscriptionWhereInput): ProductVariantWantSubscriptionPayload
   recentlyViewedProduct(where: RecentlyViewedProductSubscriptionWhereInput): RecentlyViewedProductSubscriptionPayload
   reservation(where: ReservationSubscriptionWhereInput): ReservationSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
