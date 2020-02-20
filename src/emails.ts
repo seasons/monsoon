@@ -23,32 +23,48 @@ export const emails = {
     }
   },
   reservationConfirmationData: (
-    reservationNumber,
-    reservedItems: ReservedItem[]
-  ) => {
-    return {
-      email: {
-        body: {
-          paragraphs: [
-            {
-              html:
-                "Sit back, relax and we'll let you know when it's on its way.",
-            },
-          ],
-        },
-        prefooter: {
-          paragraphs: [
-            {
-              html: `If you have any questions, reach out to ${process.env.MAIN_CONTACT_EMAIL}`,
-            },
-          ],
-        },
-        title: "We've got your order",
-        reservedItems,
-        subject: `Order #${reservationNumber} | Your Reservation is Confirmed`,
+    reservationNumber: number,
+    reservedItems: ReservedItem[],
+    returnDateFormatted: string
+  ) => ({
+    email: {
+      body: {
+        paragraphs: [
+          {
+            html:
+              "Sit back, relax and we'll let you know when it's on its way.",
+          },
+        ],
       },
-    }
-  },
+      prefooter: {
+        paragraphs: [
+          {
+            html:
+              `Please return your items no later than ${returnDateFormatted}. ` +
+              `Here's what you'll need to do:`,
+          },
+          {
+            html:
+              `<ol style="margin:0px"><li>Place the items you’re returning into your bag - hangers included!</li>` +
+              `<li>Insert the return shipping label into the pouch on the outside of the bag.</li>` +
+              `<li>Drop off at your closest UPS pick up location.</li></ol>`,
+          },
+          {
+            html:
+              "Once we’ve received and processed your items, we’ll send you an email " +
+              "confirmation and your bag will be reset for you to place your next order!" +
+              " This typically takes about 2-3 business days.",
+          },
+          {
+            html: `If you have any questions, reach out to ${process.env.MAIN_CONTACT_EMAIL}`,
+          },
+        ],
+      },
+      title: "We've got your order",
+      reservedItems,
+      subject: `Order #${reservationNumber} | Your Reservation is Confirmed`,
+    },
+  }),
   completeAccountData: (firstName, url) => {
     return {
       email: {
