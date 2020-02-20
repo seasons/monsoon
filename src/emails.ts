@@ -39,10 +39,9 @@ export const emails = {
       prefooter: {
         paragraphs: [
           {
-            html:
-              `Please return your items no later than ${returnDateFormatted}. ` +
-              `Here's what you'll need to do:`,
+            html: `Please return your items no later than ${returnDateFormatted}.`,
           },
+          { html: `Here's what you'll need to do:` },
           {
             html:
               `<ol style="margin:0px"><li>Place the items you’re returning into your bag - hangers included!</li>` +
