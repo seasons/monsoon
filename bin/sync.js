@@ -1,32 +1,14 @@
 #!/usr/bin/env node
 require("dotenv").config()
 
-const startsWith = require("lodash/startsWith")
 const fs = require("fs")
 
-const { syncAll } = require("../dist/airtable/prismaSync/syncAll")
-const {
-  syncAll: syncAllAirtableToAirtable,
-} = require("../dist/airtable/environmentSync/syncAll")
-const { syncPrisma, setDBEnvVarsFromJSON } = require("../dist/syncPrisma")
-const {
-  syncBrands,
-  syncCategories,
-  syncColors,
-  syncLocations,
-  syncProducts,
-  syncProductVariants,
-  syncCollections,
-  syncCollectionGroups,
-  syncHomepageProductRails,
-  syncPhysicalProducts,
-} = require("../dist/airtable/prismaSync")
 const { downloadFromS3 } = require("../dist/downloadFromS3")
 const { readJSONObjectFromFile } = require("../dist/utils")
 
 require("yargs")
   .scriptName("monsoon")
-  .usage("$0 <cmd> <cmd> [args]")
+  .usage("$0 <cmd> <table> -e [environment]")
   .command(
     "sync:airtable:prisma <table>",
     "sync airtable data to prisma",
@@ -38,6 +20,36 @@ require("yargs")
       })
     },
     async argv => {
+      const envFilePath = await downloadFromS3(
+        "/tmp/__monsoon__env.json",
+        "monsoon-scripts",
+        "env.json"
+      )
+      try {
+        const environment = argv.e || "staging"
+        const env = readJSONObjectFromFile(envFilePath)
+        const { endpoint, secret } = env.prisma[environment]
+        process.env.PRISMA_ENDPOINT = endpoint
+        process.env.PRISMA_SECRET = secret
+        console.log(env, endpoint, secret)
+      } catch (err) {
+        console.log(err)
+      } finally {
+        // delete the env file
+        fs.unlinkSync(envFilePath)
+      }
+
+      const {
+        syncBrands,
+        syncCategories,
+        syncProducts,
+        syncProductVariants,
+        syncCollections,
+        syncCollectionGroups,
+        syncHomepageProductRails,
+      } = require("../dist/airtable/prismaSync")
+      const { syncAll } = require("../dist/airtable/prismaSync/syncAll")
+
       debugger
       switch (argv.table) {
         case "all":
@@ -80,6 +92,8 @@ require("yargs")
       })
     },
     async argv => {
+      const { syncPrisma, setDBEnvVarsFromJSON } = require("../dist/syncPrisma")
+
       if (!["staging", "local"].includes(argv.destination)) {
         console.log("Destination must be one of local, staging")
         return
@@ -118,6 +132,10 @@ require("yargs")
       })
     },
     async argv => {
+      const {
+        syncAll: syncAllAirtableToAirtable,
+      } = require("../dist/airtable/environmentSync/syncAll")
+
       const envFilePath = await downloadFromS3(
         "/tmp/__monsoon__env.json",
         "monsoon-scripts",
@@ -145,20 +163,4 @@ require("yargs")
       }
     }
   )
-  .completion("completion", (current, argv) => {
-    if (current == "sync-db") {
-      const options = [
-        "all",
-        "brands",
-        "categories",
-        "colors",
-        "products",
-        "product-variants",
-        "physical-products",
-      ]
-
-      return options.filter(a => startsWith(a, argv.table))
-    }
-    return []
-  })
   .help().argv
