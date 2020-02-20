@@ -88,6 +88,16 @@ type Query {
     first: Int
     last: Int
   ): [Product]!
+  productsConnection(
+    category: String
+    where: ProductWhereInput
+    orderBy: ProductOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): ProductConnection!
   collectionGroups(
     where: CollectionGroupWhereInput
     orderBy: CollectionGroupOrderByInput

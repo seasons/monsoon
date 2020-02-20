@@ -10,17 +10,18 @@ import { app as pushNotifications } from "./pushNotifications"
 import bodyParser from "body-parser"
 import Sentry from "@sentry/node"
 
+// Set up the server
+const server = new ApolloServer(serverOptions)
+const app = express()
+
 if (process.env.NODE_ENV === "production") {
   Sentry.init({
     dsn: process.env.SENTRY_DSN,
   })
+  app.use(Sentry.Handlers.requestHandler()) // must be first middleware on app
 }
 
-// Set up the server
-const server = new ApolloServer(serverOptions)
-const app = express()
 app.use(
-  Sentry.Handlers.requestHandler(), // must be first middleware on app
   checkJwt,
   createGetUserMiddleware(prisma),
   cors({
