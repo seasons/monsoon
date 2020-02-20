@@ -31,6 +31,7 @@ enum Material {
   CowLeather
   Cupro
   DuckDown
+  Denim
   DuckFeathers
   Elastane
   Esterlane
@@ -39,6 +40,7 @@ enum Material {
   GooseDown
   LambLeather
   LambSkin
+  Lambswool
   Leather
   Lyocell
   MerinoWool
@@ -46,9 +48,11 @@ enum Material {
   Mohair
   Nylon
   OrganicCotton
+  PolyAcetate
   Polyamide
   Polyester
   Polyethylene
+  PolySatin
   Polyurethane
   PolyurethanicResin
   PVC
@@ -71,10 +75,6 @@ enum Material {
   Wool
   Mesh
   Wool
-  Denim
-  Leather
-  RecycledPolyester
-  Lambswool
 }
 
 enum Department {
@@ -383,8 +383,10 @@ type Reservation {
   id: ID! @id
   user: User!
   customer: Customer! @relation(name: "CustomerToReservation")
-  sentPackage: Package @relation(name: "SeasonsToCustomerPackage", onDelete:"CASCADE")
-  returnedPackage: Package @relation(name: "CustomerToSeasonsPackage", onDelete:"CASCADE")
+  sentPackage: Package
+    @relation(name: "SeasonsToCustomerPackage", onDelete: "CASCADE")
+  returnedPackage: Package
+    @relation(name: "CustomerToSeasonsPackage", onDelete: "CASCADE")
   location: Location
   products: [PhysicalProduct!]!
   reservationNumber: Int! @unique
