@@ -66,9 +66,9 @@ const filtersForCategory = async (ctx, args) => {
 
 const productsAlphabetically = async (
   ctx: Context,
-  category: String,
-  orderBy: String,
-  sizes: [String]
+  category: string,
+  orderBy: string,
+  sizes: [string]
 ) => {
   const brands = await ctx.db.query.brands(
     { orderBy },

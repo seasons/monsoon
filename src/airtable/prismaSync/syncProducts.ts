@@ -1,8 +1,8 @@
-import { getAllBrands, getAllCategories, getAllProducts } from "./utils"
-import { prisma, ProductCreateInput } from "../prisma"
+import { getAllBrands, getAllCategories, getAllProducts } from "../utils"
+import { prisma, ProductCreateInput } from "../../prisma"
 import slugify from "slugify"
 import { isEmpty, omit, head } from "lodash"
-import { elasticsearch } from "../search"
+import { elasticsearch } from "../../search"
 
 export const syncProducts = async () => {
   const allBrands = await getAllBrands()

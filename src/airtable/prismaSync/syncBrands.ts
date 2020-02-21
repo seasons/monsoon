@@ -1,8 +1,8 @@
 import slugify from "slugify"
-import { prisma, BrandTier } from "../prisma"
+import { prisma, BrandTier } from "../../prisma"
 import { isEmpty } from "lodash"
-import { getAllBrands } from "./utils"
-import { elasticsearch } from "../search"
+import { getAllBrands } from "../utils"
+import { elasticsearch } from "../../search"
 
 export const syncBrands = async () => {
   const records = await getAllBrands()
