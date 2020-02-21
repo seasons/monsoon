@@ -159,6 +159,13 @@ export const emails = {
           {
             html: `Please <b>drop off</b> your bag no later than <b>${returnDate}</b>. Once we've received and processed your items, we'll send you an email confirmation and your bag will be reset for you to place your next order! This typically takes about 2-3 business days.`,
           },
+          { html: `As a reminder, here's what you need to do:` },
+          {
+            html:
+              `<ol style="margin:0px"><li>Place the items you’re returning into your bag - hangers included!</li>` +
+              `<li>Insert the return shipping label into the pouch on the outside of the bag.</li>` +
+              `<li>Drop off at your closest UPS pick up location.</li></ol>`,
+          },
           { html: "Thanks,<br>The Seasons Team" },
         ],
       },
