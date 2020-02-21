@@ -30,6 +30,7 @@ enum Material {
   Cotton
   CowLeather
   Cupro
+  DuckDown
   DuckFeathers
   Elastane
   Esterlane
@@ -60,6 +61,7 @@ enum Material {
   Spandex
   Taffeta
   Tartan
+  Triacetate
   VirginWool
   Viscose
   Velcro
@@ -441,4 +443,11 @@ type ProductRequest {
   sku: String
   url: String!
   user: User!
+}
+
+type ProductVariantWant {
+  id: ID! @id
+  productVariant: ProductVariant!
+  user: User!
+  isFulfilled: Boolean!
 }

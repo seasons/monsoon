@@ -35,17 +35,17 @@ export const Query = {
       const filter =
         children.length > 0
           ? {
-              where: {
-                ...args.where,
-                OR: children.map(({ slug }) => ({ category: { slug } })),
-              },
-            }
+            where: {
+              ...args.where,
+              OR: children.map(({ slug }) => ({ category: { slug } })),
+            },
+          }
           : {
-              where: {
-                ...args.where,
-                category: { slug: category.slug },
-              },
-            }
+            where: {
+              ...args.where,
+              category: { slug: category.slug },
+            },
+          }
       const { first, skip } = args
       const products = await ctx.db.query.products(
         { first, skip, orderBy, where, ...filter },
@@ -59,6 +59,10 @@ export const Query = {
       info
     )
     return result
+  },
+
+  async productVariant(parent, { where }, ctx: Context, info) {
+    return await ctx.prisma.productVariant(where)
   },
 
   product: (parent, args, ctx: Context, info) =>

@@ -46,7 +46,9 @@ export async function getUserFromContext(ctx: Context): Promise<User> {
     const auth0Id = ctx.req.user.sub.split("|")[1] // e.g "auth0|5da61ffdeef18b0c5f5c2c6f"
     const userExists = await ctx.prisma.$exists.user({ auth0Id })
     if (!userExists) {
-      reject("token does not correspond to any known user")
+      reject(
+        `token does not correspond to any known user. User Auth0ID: ${auth0Id}`
+      )
     }
 
     // User exists. Let's return

@@ -1,5 +1,5 @@
-import { prisma, CategoryCreateInput, CategoryUpdateInput } from "../prisma"
-import { getAllCategories } from "./utils"
+import { prisma, CategoryCreateInput, CategoryUpdateInput } from "../../prisma"
+import { getAllCategories } from "../utils"
 import slugify from "slugify"
 import { isEmpty } from "lodash"
 

@@ -1,6 +1,6 @@
 import slugify from "slugify"
-import { prisma, LocationCreateInput } from "../prisma"
-import { getAllLocations } from "./utils"
+import { prisma, LocationCreateInput } from "../../prisma"
+import { getAllLocations } from "../utils"
 import omit from "lodash/omit"
 import { isEmpty } from "lodash"
 
