@@ -73,7 +73,7 @@ export const sendReturnNotifications = async () => {
 const returnNoticeNeeded = async (reservation: Reservation) => {
   const now = DateTime.local()
   const reservationCreatedAt = DateTime.fromISO(reservation.createdAt)
-  const twentyEightToThirtyDaysAgo = Interval.fromDateTimes(
+  const twentyEightToTwentyNineDaysAgo = Interval.fromDateTimes(
     now.minus({ days: 29 }),
     now.minus({ days: 28 })
   )
@@ -84,7 +84,7 @@ const returnNoticeNeeded = async (reservation: Reservation) => {
     .customer()
 
   return (
-    twentyEightToThirtyDaysAgo.contains(reservationCreatedAt) &&
+    twentyEightToTwentyNineDaysAgo.contains(reservationCreatedAt) &&
     !reservation.reminderSentAt &&
     customer.plan === "Essential" &&
     !["Cancelled", "Completed"].includes(reservation.status)
