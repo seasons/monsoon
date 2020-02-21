@@ -97,7 +97,12 @@ require("yargs")
       try {
         const env = readJSONObjectFromFile(envFilepath)
         setDBEnvVarsFromJSON("production", env.postgres.production)
-        setDBEnvVarsFromJSON(argv.destination, env.postgres[argv.destination])
+        setDBEnvVarsFromJSON(argv.destination, {
+          ...env.postgres[argv.destination],
+          ...env.prisma[argv.destination],
+        })
+        process.env[`AUTH0_MANAGEMENT_TOKEN`] =
+          env.auth0.staging.managementAPIToken
         syncPrisma(argv.destination)
       } catch (err) {
         console.log(err)

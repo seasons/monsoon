@@ -6,9 +6,7 @@ export interface Auth0User {
   given_name: string
   user_id: string
 }
-export const getAuth0Users = async (
-  managementAPIToken: string
-): Promise<Auth0User[]> =>
+export const getAuth0Users = async (): Promise<Auth0User[]> =>
   new Promise((resolve, reject) => {
     request(
       {
@@ -16,7 +14,7 @@ export const getAuth0Users = async (
         url: `https://${process.env.AUTH0_DOMAIN}/api/v2/users`,
         headers: {
           "content-type": "application/json",
-          Authorization: `Bearer ${managementAPIToken}`,
+          Authorization: `Bearer ${process.env.AUTH0_MANAGEMENT_TOKEN}`,
         },
         json: true,
       },
