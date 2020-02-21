@@ -165,8 +165,7 @@ export const emails = {
       prefooter: {
         paragraphs: [
           {
-            html:
-              "If you have any questions, reach out to memberships@seasons.nyc.",
+            html: `If you have any questions, reach out to ${process.env.MAIN_CONTACT_EMAIL}.`,
           },
         ],
       },
