@@ -1,6 +1,27 @@
 import { Resolver, Parent, ResolveProperty, Context, Args } from "@nestjs/graphql"
 import { SectionTitle } from "./homepage.resolver"
 
+// FIXME: This is being used because currently info is lacking the __typename, add __typename to info
+const ProductFragment = `{
+  __typename
+  id
+  images
+  name
+  brand {
+    id
+    name
+  }
+  variants {
+    id
+    size
+    reservable
+  }
+  color {
+    name
+  }
+  retailPrice
+}`
+
 @Resolver("HomepageSection")
 export class HomepageSectionResolver {
   @ResolveProperty()
@@ -10,9 +31,6 @@ export class HomepageSectionResolver {
         const collections = await ctx.prisma
           .collectionGroup({ slug: "homepage-1" })
           .collections()
-        collections.forEach(element => {
-          element.__typename = "Collection"
-        })
         return collections
       case SectionTitle.JustAdded:
         const newProducts = await ctx.db.query.products(
@@ -24,22 +42,24 @@ export class HomepageSectionResolver {
               status: "Available",
             },
           },
+          ProductFragment
+        )
+        return newProducts
+      case SectionTitle.RecentlyViewed:
+        // Will handle once auth stuff is finished
+        return []
+      default:
+        const rails = await ctx.db.query.homepageProductRails(
+          {
+            where: {
+              name: section.title
+            }
+          },
           `{
-            __typename
-            id
-            images
-            brand {
-              name
-            }
-            name
-            color {
-              name
-            }
-            retailPrice
+            products ${ProductFragment}
           }`
         )
-
-        return newProducts
+        return Array.prototype.concat.apply([], rails.map(rail => rail.products))
     }
   }
 }
