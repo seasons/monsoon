@@ -1,8 +1,9 @@
-import { Resolver, ResolveProperty, Query } from "@nestjs/graphql"
+import { Resolver, ResolveProperty, Query, Context } from "@nestjs/graphql"
 
 export enum SectionTitle {
   FeaturedCollection = "Featured collection",
-  JustAdded = "Just added"
+  JustAdded = "Just added",
+  RecentlyViewed = "Recently viewed",
 }
 
 @Resolver("Homepage")
@@ -13,8 +14,15 @@ export class HomepageResolver {
   }
 
   @ResolveProperty()
-  async sections() {
-    return [
+  async sections(@Context() ctx) {
+    const productRails = await ctx.db.query.homepageProductRails(
+      {},
+      `{
+        name
+      }`
+    )
+
+    const sections = [
       {
         type: "CollectionGroups",
         __typename: "HomepageSection",
@@ -25,7 +33,22 @@ export class HomepageResolver {
         __typename: "HomepageSection",
         title: SectionTitle.JustAdded
       },
+      {
+        type: "Products",
+        __typename: "HomepageSection",
+        title: SectionTitle.RecentlyViewed,
+      },
     ]
+
+    productRails.forEach(rail => {
+      sections.push({
+        type: "HomepageProductRails",
+        __typename: "HomepageSection",
+        title: rail.name
+      })
+    })
+
+    return sections
   }
 }
 
