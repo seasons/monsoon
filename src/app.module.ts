@@ -23,11 +23,7 @@ export const db = new Prisma({
           resolverValidationOptions: {
             requireResolversForResolveType: false,
           },
-          context: ({ req }) => ({
-            req,
-            prisma,
-            db,
-          }),
+          context: ({ req }) => ({ req }),
         } as GqlModuleOptions
       },
     }),

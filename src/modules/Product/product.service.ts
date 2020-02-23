@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma } from "prisma-binding"
+import { Prisma, BrandOrderByInput } from "../../prisma/prisma.binding"
 
 @Injectable()
 export class ProductService {
   async productsAlphabetically(
     db: Prisma,
     category: string,
-    orderBy: string,
+    orderBy: BrandOrderByInput,
     sizes: [string]
   ) {
     const brands = await db.query.brands(
@@ -15,7 +15,7 @@ export class ProductService {
       {
         name
         products(
-          orderBy: name_ASC, 
+          orderBy: name_ASC,
           where: {
             ${category !== "all" ? `category: { slug: "${category}" },` : ""}
             status: Available,
