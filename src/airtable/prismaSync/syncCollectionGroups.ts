@@ -1,7 +1,7 @@
 import slugify from "slugify"
-import { prisma } from "../prisma"
+import { prisma } from "../../prisma"
 import { isEmpty } from "lodash"
-import { getAllCollections, getAllCollectionGroups } from "./utils"
+import { getAllCollections, getAllCollectionGroups } from "../utils"
 
 export const syncCollectionGroups = async () => {
   const records = await getAllCollectionGroups()

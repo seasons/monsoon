@@ -5,15 +5,15 @@ import {
   getAllBrands,
   getAllColors,
   getAllLocations,
-} from "./utils"
+} from "../utils"
 import {
   prisma,
   InventoryStatus,
   PhysicalProductCreateInput,
   ProductVariantCreateInput,
-} from "../prisma"
-import { sizeToSizeCode } from "../utils"
-import { base } from "./config"
+} from "../../prisma"
+import { sizeToSizeCode } from "../../utils"
+import { base } from "../config"
 import { isEmpty } from "lodash"
 
 const SeasonsLocationID = "recvzTcW19kdBPqf4"
@@ -26,7 +26,7 @@ export const syncProductVariants = async () => {
   const allProductVariants = await getAllProductVariants()
   const allPhysicalProducts = await getAllPhysicalProducts()
 
-  for (let productVariant of allProductVariants) {
+  for (const productVariant of allProductVariants) {
     try {
       const { model } = productVariant
 

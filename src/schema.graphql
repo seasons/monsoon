@@ -71,6 +71,7 @@ type ProductVariant {
   reserved: Int!
   nonReservable: Int!
   isSaved: Boolean!
+  isWanted: Boolean!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -119,6 +120,7 @@ type Query {
   ): [Collection]!
   collection(where: CollectionWhereUniqueInput!): Collection
   product(where: ProductWhereUniqueInput!): Product
+  productVariant(where: ProductVariantWhereUniqueInput!): ProductVariant!
   categories(
     where: CategoryWhereInput
     orderBy: CategoryOrderByInput
@@ -203,6 +205,7 @@ type Mutation {
   addProductRequest(reason: String!, url: String!): ProductRequest!
   deleteProductRequest(requestID: ID!): ProductRequest!
   validateAddress(input: ValidateAddressInput!): ValidationPayload!
+  addProductVariantWant(variantID: ID!): ProductVariantWant!
 }
 
 input ReserveItemsOptions {

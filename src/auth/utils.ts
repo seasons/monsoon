@@ -39,14 +39,21 @@ export async function validateAndParseIdToken(idToken) {
 export async function getUserFromContext(ctx: Context): Promise<User> {
   return new Promise(async function getCustomerFromToken(resolve, reject) {
     if (!ctx.req.user) {
-      reject("no user on context")
+      return reject("no user on context")
     }
+    let userExists = false
 
     // Does such a user exist?
     const auth0Id = ctx.req?.user?.sub?.split("|")[1] // e.g "auth0|5da61ffdeef18b0c5f5c2c6f"
-    const userExists = await ctx.prisma.$exists.user({ auth0Id })
+    try {
+      userExists = await ctx.prisma.$exists.user({ auth0Id })
+    } catch (err) {
+      console.log(err)
+    }
     if (!userExists) {
-      reject("token does not correspond to any known user")
+      reject(
+        `token does not correspond to any known user. User Auth0ID: ${auth0Id}`
+      )
     }
 
     // User exists. Let's return
