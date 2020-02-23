@@ -1,4 +1,5 @@
 import { Resolver, ResolveProperty, Query, Context } from "@nestjs/graphql"
+import { DBService } from "../../prisma/DB.service"
 
 export enum SectionTitle {
   FeaturedCollection = "Featured collection",
@@ -8,14 +9,16 @@ export enum SectionTitle {
 
 @Resolver("Homepage")
 export class HomepageResolver {
+  constructor(private readonly dbService: DBService) {}
+
   @Query()
   async homepage() {
     return {}
   }
 
   @ResolveProperty()
-  async sections(@Context() ctx) {
-    const productRails = await ctx.db.query.homepageProductRails(
+  async sections() {
+    const productRails = await this.dbService.query.homepageProductRails(
       {},
       `{
         name
@@ -26,17 +29,17 @@ export class HomepageResolver {
       {
         type: "CollectionGroups",
         __typename: "HomepageSection",
-        title: SectionTitle.FeaturedCollection
+        title: SectionTitle[SectionTitle.FeaturedCollection]
       },
       {
         type: "Products",
         __typename: "HomepageSection",
-        title: SectionTitle.JustAdded
+        title: SectionTitle[SectionTitle.JustAdded]
       },
       {
         type: "Products",
         __typename: "HomepageSection",
-        title: SectionTitle.RecentlyViewed,
+        title: SectionTitle[SectionTitle.RecentlyViewed]
       },
     ]
 

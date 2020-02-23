@@ -1,11 +1,15 @@
 import { Module } from "@nestjs/common"
 import { MeResolver } from "./me.resolver"
 import { PrismaModule } from "../../prisma/prisma.module"
-import { Strategy } from "passport-jwt"
-import { GraphqlAuthGuard } from "./auth.guard"
+import { AuthResolver } from "./auth.resolver"
+import { AuthService } from "./auth.service"
 
 @Module({
   imports: [PrismaModule],
-  providers: [MeResolver, GraphqlAuthGuard],
+  providers: [
+    AuthService,
+    MeResolver,
+    AuthResolver
+  ],
 })
 export class UserModule {}

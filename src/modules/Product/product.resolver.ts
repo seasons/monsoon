@@ -1,13 +1,17 @@
 import { Query, Resolver, ResolveProperty, Args, Info, Context, Parent } from "@nestjs/graphql"
-import { PrismaService } from "../../prisma/prisma.service"
 import { ProductService } from "./product.service"
+import { DBService } from "../../prisma/DB.service"
+import { prisma } from "../../prisma"
 
 @Resolver("Product")
 export class ProductResolver {
-  constructor(private readonly prisma: PrismaService, private readonly productService: ProductService) {}
+  constructor(
+    private readonly db: DBService,
+    private readonly productService: ProductService
+  ) {}
 
   @Query()
-  async products(@Args() args, @Info() info, @Context() ctx) {
+  async products(@Args() args, @Info() info) {
     const category = args.category || "all"
     const orderBy = args.orderBy || "createdAt_DESC"
     const sizes = args.sizes || []
@@ -20,12 +24,12 @@ export class ProductResolver {
     // If client wants to sort by name, we will assume that they
     // want to sort by brand name as well
     if (orderBy.includes("name_")) {
-      return await this.productService.productsAlphabetically(ctx, category, orderBy, sizes)
+      return await this.productService.productsAlphabetically(this.db, category, orderBy, sizes)
     }
 
     if (args.category && args.category !== "all") {
-      const category = await ctx.prisma.category({ slug: args.category })
-      const children = await ctx.prisma
+      const category = await prisma.category({ slug: args.category })
+      const children = await prisma
         .category({ slug: args.category })
         .children()
 
@@ -44,14 +48,14 @@ export class ProductResolver {
               },
             }
       const { first, skip } = args
-      const products = await ctx.db.query.products(
+      const products = await this.db.query.products(
         { first, skip, orderBy, where, ...filter },
         info
       )
       return products
     }
 
-    const result = await ctx.db.query.products(
+    const result = await this.db.query.products(
       { ...args, orderBy, where },
       info
     )
@@ -60,6 +64,6 @@ export class ProductResolver {
 
   @Query()
   async product(@Args() args, @Info() info) {
-    return await this.prisma.query.product(args, info)
+    return await this.db.query.product(args, info)
   }
 }
