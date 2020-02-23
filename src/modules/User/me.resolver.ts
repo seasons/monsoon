@@ -4,18 +4,22 @@ import {
   ResolveProperty,
   Context,
   Info,
+  Args,
 } from "@nestjs/graphql"
-import { UseGuards } from "@nestjs/common"
-import { getUserRequestObject, getCustomerFromContext } from "../../auth/utils"
-import { PrismaService } from "../../prisma/prisma.service"
-import { User as CurrUser } from "./user.decorator"
-import { GraphqlAuthGuard } from "./auth.guard"
+import { head } from "lodash"
+import { prisma } from "../../prisma"
+import { AuthService } from "./auth.service"
+import { User } from "./user.decorator"
+import { AuthError } from "../../auth/utils"
+import { DBService } from "../../prisma/DB.service"
 
 @Resolver("Me")
 export class MeResolver {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly db: DBService
+  ) {}
 
-  @UseGuards(GraphqlAuthGuard)
   @Query()
   async me() {
     console.log("HERE")

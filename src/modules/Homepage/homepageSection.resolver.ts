@@ -1,13 +1,17 @@
 import { Resolver, Parent, ResolveProperty, Context, Args } from "@nestjs/graphql"
 import { SectionTitle } from "./homepage.resolver"
+import { DBService } from "../../prisma/DB.service"
+import { prisma } from "../../prisma"
 
 @Resolver("HomepageSection")
 export class HomepageSectionResolver {
+  constructor(private readonly dbService: DBService) {}
+
   @ResolveProperty()
-  async results(@Parent() section, @Context() ctx, @Args() args) {
+  async results(@Parent() section, @Args() args) {
     switch (section.title) {
       case SectionTitle.FeaturedCollection:
-        const collections = await ctx.prisma
+        const collections = await prisma
           .collectionGroup({ slug: "homepage-1" })
           .collections()
         collections.forEach(element => {
@@ -15,7 +19,7 @@ export class HomepageSectionResolver {
         })
         return collections
       case SectionTitle.JustAdded:
-        const newProducts = await ctx.db.query.products(
+        const newProducts = await this.dbService.query.products(
           {
             ...args,
             orderBy: "createdAt_DESC",
