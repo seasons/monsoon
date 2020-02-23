@@ -28,6 +28,7 @@ enum Material {
   Camel
   Cashmere
   Cotton
+  CottonPoplin
   CowLeather
   Cupro
   DuckDown
