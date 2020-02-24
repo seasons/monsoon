@@ -1,5 +1,6 @@
 import { Context, getUserIDHash, getCustomerFromUserID } from "../utils"
 import { Homepage } from "./Homepage"
+import { Faq } from "./Faq"
 import { getUserRequestObject } from "../auth/utils"
 import chargebee from "chargebee"
 import { Search } from "./Search"
@@ -38,6 +39,8 @@ export const Query = {
     ctx.db.query.homepageProductRail(args, info),
 
   homepage: Homepage,
+
+  faq: Faq,
 
   chargebeeCheckout: async (
     parent,
