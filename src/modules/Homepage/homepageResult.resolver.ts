@@ -10,8 +10,7 @@ export class HomepageResultResolver {
       return "Collection"
     } else if (obj.name) {
       return "HomepageProductRail"
-    } else {
-      return null
     }
+    return null
   }
 }
