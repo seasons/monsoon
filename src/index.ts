@@ -27,8 +27,8 @@ app.use(
   cors({
     origin: [
       "seedling-staging.herokuapp.com",
-      "flare.now.sh",
-      /\.seasons\.nyc$/,
+      /flare\.now\.sh$/,
+      /seasons\.nyc$/,
       /localhost/,
     ],
     credentials: true,
