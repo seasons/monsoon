@@ -4,6 +4,13 @@ import { Resolver, ResolveProperty } from "@nestjs/graphql"
 export class HomepageResultResolver {
   @ResolveProperty()
   __resolveType(obj) {
-    return obj.__typename
+    if (obj.brand || obj.colorway) {
+      return "Product"
+    } else if (obj.subTitle) {
+      return "Collection"
+    } else if (obj.name) {
+      return "HomepageProductRail"
+    }
+    return null
   }
 }
