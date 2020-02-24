@@ -3,30 +3,36 @@ import { getCustomerFromContext, getUserFromContext } from "../auth/utils"
 
 export const ProductVariant = {
   async isSaved(parent, {}, ctx: Context, info) {
-    let customer
     try {
-      customer = await getCustomerFromContext(ctx)
-    } catch (error) {
-      return false
+      const customer = await getCustomerFromContext(ctx)
+
+      const bagItems = await ctx.prisma.bagItems({
+        where: {
+          productVariant: {
+            id: parent.id,
+          },
+          customer: {
+            id: customer.id,
+          },
+          saved: true,
+        },
+      })
+
+      return bagItems.length > 0
+    } catch (e) {
+      // In case no customer is set
     }
-
-    const bagItems = await ctx.prisma.bagItems({
-      where: {
-        productVariant: {
-          id: parent.id,
-        },
-        customer: {
-          id: customer.id,
-        },
-        saved: true,
-      },
-    })
-
-    return bagItems.length > 0
+    return false
   },
 
   async isWanted(parent, {}, ctx: Context, info) {
-    const user = await getUserFromContext(ctx)
+    let user = null
+    try {
+      user = await getUserFromContext(ctx)
+    } catch (e) {
+      return false
+    }
+
     if (!user) {
       return false
     }
