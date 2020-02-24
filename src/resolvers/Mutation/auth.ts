@@ -1,10 +1,10 @@
 import {
   createPrismaCustomerForExistingUser,
-  createAuth0User,
   createPrismaUser,
-  getAuth0UserAccessToken,
   isLoggedIn,
 } from "../../auth/utils"
+import { createAuth0User } from "../../auth/createAuth0User"
+import { getAuth0UserAccessToken } from "../../auth/getAuth0UserAccessToken"
 import { Context, getCustomerFromUserID } from "../../utils"
 import { CustomerDetail } from "../../prisma"
 import { UserInputError, ForbiddenError } from "apollo-server"
@@ -126,7 +126,7 @@ export const auth = {
         const customer = await getCustomerFromUserID(ctx.prisma, user.id)
         if (
           customer &&
-          (customer.status !== "Active" && customer.status !== "Authorized")
+          customer.status !== "Active" && customer.status !== "Authorized"
         ) {
           throw new Error(`User account has not been approved`)
         }
