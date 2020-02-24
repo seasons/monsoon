@@ -48,7 +48,7 @@ export const Query = {
     // Is there a user in the db that corresponds to the given userIDHash?
     const allUsers = await ctx.prisma.users()
     let targetUser
-    for (let user of allUsers) {
+    for (const user of allUsers) {
       let thisUsersIDHash = getUserIDHash(user.id)
       if (thisUsersIDHash === userIDHash) {
         targetUser = user
@@ -64,7 +64,7 @@ export const Query = {
       ctx.prisma,
       targetUser.id
     )
-    let { phoneNumber } = await ctx.prisma
+    const { phoneNumber } = await ctx.prisma
       .customer({ id: correspondingCustomer.id })
       .detail()
 
@@ -91,7 +91,7 @@ export const Query = {
           },
           customer: {
             id: targetUser.id,
-            email: email,
+            email,
             first_name: firstName,
             last_name: lastName,
             phone: phoneNumber,
