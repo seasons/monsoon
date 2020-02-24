@@ -37,3 +37,8 @@ functions:
     events:
       - schedule: rate(1 minute)
     timeout: 60 # rather than default of 6
+  sendReservationReturnNotifications:
+    handler: src/cron/sendReturnNotifications.sendReturnNotifications
+    events:
+      - schedule: rate(6 hours)
+    timeout: 60

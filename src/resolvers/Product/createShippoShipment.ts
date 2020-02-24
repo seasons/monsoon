@@ -69,6 +69,7 @@ export async function createShippoShipment(
       address_from: customerAddressShippo,
       address_to: nextCleanersAddressShippo,
       parcels: [parcel],
+      extra: { is_return: true },
     },
   ]
 

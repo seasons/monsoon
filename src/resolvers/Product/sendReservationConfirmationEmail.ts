@@ -3,6 +3,7 @@ import { Prisma, Product as PrismaProduct, Reservation } from "../../prisma"
 import { UserRequestObject } from "../../auth/utils"
 import { emails } from "../../emails"
 import { Identity } from "../../utils"
+import { formatReservationReturnDate } from "./formatReservationReturnDate"
 
 export async function sendReservationConfirmationEmail(
   prisma: Prisma,
@@ -31,17 +32,6 @@ export async function sendReservationConfirmationEmail(
       reservedItems,
       formatReservationReturnDate(new Date(reservation.createdAt))
     ),
-  })
-}
-
-const formatReservationReturnDate = (reservationCreatedAtDate: Date) => {
-  const returnDate = new Date(reservationCreatedAtDate)
-  returnDate.setDate(reservationCreatedAtDate.getDate() + 30)
-  return returnDate.toLocaleDateString("en-US", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
   })
 }
 
