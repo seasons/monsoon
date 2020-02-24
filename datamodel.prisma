@@ -395,6 +395,7 @@ type Reservation {
   status: ReservationStatus!
   shippedAt: DateTime
   receivedAt: DateTime
+  reminderSentAt: DateTime
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }

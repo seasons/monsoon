@@ -7,15 +7,15 @@ const shippo = Shippo(process.env.SHIPPO_API_KEY)
 
 export const address = {
   async validateAddress(obj, { input }, ctx: Context, info) {
-    const { location } = input
+    const { email, location } = input
 
-    const user = await getUserFromContext(ctx)
+    // const user = await getUserFromContext(ctx)
     const shippoAddress = locationDataToShippoAddress(location)
 
     const result = await shippo.address.create({
       ...shippoAddress,
-      name: `${user.firstName} ${user.lastName}`,
-      email: user.email,
+      email,
+      name: location.name,
       country: "US",
       validate: true,
     })

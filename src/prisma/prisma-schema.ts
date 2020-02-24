@@ -6491,6 +6491,7 @@ type Reservation {
   status: ReservationStatus!
   shippedAt: DateTime
   receivedAt: DateTime
+  reminderSentAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -6514,6 +6515,7 @@ input ReservationCreateInput {
   status: ReservationStatus!
   shippedAt: DateTime
   receivedAt: DateTime
+  reminderSentAt: DateTime
 }
 
 input ReservationCreateManyWithoutCustomerInput {
@@ -6533,6 +6535,7 @@ input ReservationCreateWithoutCustomerInput {
   status: ReservationStatus!
   shippedAt: DateTime
   receivedAt: DateTime
+  reminderSentAt: DateTime
 }
 
 type ReservationEdge {
@@ -6553,6 +6556,8 @@ enum ReservationOrderByInput {
   shippedAt_DESC
   receivedAt_ASC
   receivedAt_DESC
+  reminderSentAt_ASC
+  reminderSentAt_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -6566,6 +6571,7 @@ type ReservationPreviousValues {
   status: ReservationStatus!
   shippedAt: DateTime
   receivedAt: DateTime
+  reminderSentAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -6615,6 +6621,14 @@ input ReservationScalarWhereInput {
   receivedAt_lte: DateTime
   receivedAt_gt: DateTime
   receivedAt_gte: DateTime
+  reminderSentAt: DateTime
+  reminderSentAt_not: DateTime
+  reminderSentAt_in: [DateTime!]
+  reminderSentAt_not_in: [DateTime!]
+  reminderSentAt_lt: DateTime
+  reminderSentAt_lte: DateTime
+  reminderSentAt_gt: DateTime
+  reminderSentAt_gte: DateTime
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -6678,6 +6692,7 @@ input ReservationUpdateInput {
   status: ReservationStatus
   shippedAt: DateTime
   receivedAt: DateTime
+  reminderSentAt: DateTime
 }
 
 input ReservationUpdateManyDataInput {
@@ -6686,6 +6701,7 @@ input ReservationUpdateManyDataInput {
   status: ReservationStatus
   shippedAt: DateTime
   receivedAt: DateTime
+  reminderSentAt: DateTime
 }
 
 input ReservationUpdateManyMutationInput {
@@ -6694,6 +6710,7 @@ input ReservationUpdateManyMutationInput {
   status: ReservationStatus
   shippedAt: DateTime
   receivedAt: DateTime
+  reminderSentAt: DateTime
 }
 
 input ReservationUpdateManyWithoutCustomerInput {
@@ -6724,6 +6741,7 @@ input ReservationUpdateWithoutCustomerDataInput {
   status: ReservationStatus
   shippedAt: DateTime
   receivedAt: DateTime
+  reminderSentAt: DateTime
 }
 
 input ReservationUpdateWithWhereUniqueWithoutCustomerInput {
@@ -6790,6 +6808,14 @@ input ReservationWhereInput {
   receivedAt_lte: DateTime
   receivedAt_gt: DateTime
   receivedAt_gte: DateTime
+  reminderSentAt: DateTime
+  reminderSentAt_not: DateTime
+  reminderSentAt_in: [DateTime!]
+  reminderSentAt_not_in: [DateTime!]
+  reminderSentAt_lt: DateTime
+  reminderSentAt_lte: DateTime
+  reminderSentAt_gt: DateTime
+  reminderSentAt_gte: DateTime
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
