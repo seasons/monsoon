@@ -26,7 +26,13 @@ export const ProductVariant = {
   },
 
   async isWanted(parent, {}, ctx: Context, info) {
-    const user = await getUserFromContext(ctx)
+    let user = null
+    try {
+      user = await getUserFromContext(ctx)
+    } catch (e) {
+      return false
+    }
+
     if (!user) {
       return false
     }
