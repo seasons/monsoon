@@ -25,7 +25,12 @@ app.use(
   checkJwt,
   createGetUserMiddleware(prisma),
   cors({
-    origin: [/\.seasons\.nyc$/, "seedling-staging.herokuapp.com", /localhost/],
+    origin: [
+      "seedling-staging.herokuapp.com",
+      "flare.now.sh",
+      /\.seasons\.nyc$/,
+      /localhost/,
+    ],
     credentials: true,
   }),
   bodyParser.json(),
