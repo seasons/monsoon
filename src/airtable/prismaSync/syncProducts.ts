@@ -116,5 +116,3 @@ export const syncProducts = async () => {
     }
   }
 }
-
-syncProducts()

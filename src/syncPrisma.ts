@@ -1,8 +1,8 @@
 import readlineSync from "readline-sync"
 import { execSync } from "child_process"
 import fs from "fs"
-import { Prisma } from "prisma-binding"
 import { getAuth0Users } from "./auth/getAuth0Users"
+import { Prisma } from "prisma-binding"
 
 export type prismaSyncDestination = "local" | "staging"
 export const syncPrisma = async (env: prismaSyncDestination) => {
@@ -40,7 +40,6 @@ export const syncPrisma = async (env: prismaSyncDestination) => {
     // Y key was pressed
     runSync(toHost, toPort, toUsername, toDBName, toSchema)
     resetAuth0IDsForUsers({
-      // tslint:disable-next-line:max-line-length
       endpoint: toEndpoint,
       secret: toSecret,
     })
@@ -85,7 +84,7 @@ const runSync = (toHost, toPort, toUsername, toDBName, toSchema) => {
   )
 }
 
-const resetAuth0IDsForUsers = async ({
+export const resetAuth0IDsForUsers = async ({
   endpoint,
   secret,
 }: {
@@ -110,6 +109,9 @@ const resetAuth0IDsForUsers = async ({
       a => a.email === prismaUser.email
     )
     if (!!correspondingAuth0User) {
+      console.log(
+        `User w/Email: ${prismaUser.email} auth0ID synced with staging`
+      )
       await db.mutation.updateUser({
         where: { id: prismaUser.id },
         data: { auth0Id: correspondingAuth0User.user_id.split("|")[1] },

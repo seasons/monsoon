@@ -1,4 +1,5 @@
 import request from "request"
+import { getAuth0ManagementAPIToken } from "./getAuth0ManagementAPIToken"
 
 export interface Auth0User {
   email: string
@@ -6,15 +7,16 @@ export interface Auth0User {
   given_name: string
   user_id: string
 }
-export const getAuth0Users = async (): Promise<Auth0User[]> =>
-  new Promise((resolve, reject) => {
+export const getAuth0Users = async (): Promise<Auth0User[]> => {
+  const token = await getAuth0ManagementAPIToken()
+  return new Promise((resolve, reject) => {
     request(
       {
         method: "Get",
         url: `https://${process.env.AUTH0_DOMAIN}/api/v2/users`,
         headers: {
           "content-type": "application/json",
-          Authorization: `Bearer ${process.env.AUTH0_MANAGEMENT_TOKEN}`,
+          Authorization: `Bearer ${token}`,
         },
         json: true,
       },
@@ -23,9 +25,16 @@ export const getAuth0Users = async (): Promise<Auth0User[]> =>
           return reject(error)
         }
         if (response.statusCode !== 200) {
-          return reject("Invalid status code <" + response.statusCode + ">")
+          return reject(
+            "Invalid status code <" +
+              response.statusCode +
+              ">" +
+              "Response: " +
+              JSON.stringify(response.body)
+          )
         }
         return resolve(body)
       }
     )
   })
+}

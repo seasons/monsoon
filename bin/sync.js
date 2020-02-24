@@ -101,8 +101,10 @@ require("yargs")
           ...env.postgres[argv.destination],
           ...env.prisma[argv.destination],
         })
-        process.env[`AUTH0_MANAGEMENT_TOKEN`] =
-          env.auth0.staging.managementAPIToken
+        process.env.AUTH0_MACHINE_TO_MACHINE_CLIENT_ID =
+          env.auth0.staging["monsoon(staging)"].clientID
+        process.env.AUTH0_MACHINE_TO_MACHINE_CLIENT_SECRET =
+          env.auth0.staging["monsoon(staging)"].clientSecret
         syncPrisma(argv.destination)
       } catch (err) {
         console.log(err)
@@ -150,20 +152,4 @@ require("yargs")
       }
     }
   )
-  .completion("completion", (current, argv) => {
-    if (current == "sync-db") {
-      const options = [
-        "all",
-        "brands",
-        "categories",
-        "colors",
-        "products",
-        "product-variants",
-        "physical-products",
-      ]
-
-      return options.filter(a => startsWith(a, argv.table))
-    }
-    return []
-  })
   .help().argv
