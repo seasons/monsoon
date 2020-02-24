@@ -119,6 +119,21 @@ type Query {
     last: Int
   ): [Collection]!
   collection(where: CollectionWhereUniqueInput!): Collection
+  faq: Faq
+  homepage: Homepage
+  chargebeeCheckout(planID: PlanID!, userIDHash: String!): ChargebeeCheckout
+  homepageProductRail(
+    where: HomepageProductRailWhereUniqueInput!
+  ): HomepageProductRail
+  homepageProductRails(
+    where: HomepageProductRailWhereInput
+    orderBy: HomepageProductRailOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [HomepageProductRail]!
   product(where: ProductWhereUniqueInput!): Product
   productVariant(where: ProductVariantWhereUniqueInput!): ProductVariant!
   categories(
@@ -148,20 +163,6 @@ type Query {
     first: Int
     last: Int
   ): [ProductRequest]!
-  homepage: Homepage
-  chargebeeCheckout(planID: PlanID!, userIDHash: String!): ChargebeeCheckout
-  homepageProductRails(
-    where: HomepageProductRailWhereInput
-    orderBy: HomepageProductRailOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [HomepageProductRail]!
-  homepageProductRail(
-    where: HomepageProductRailWhereUniqueInput!
-  ): HomepageProductRail
   search(query: String!, options: SearchOptions): [SearchResult]!
 }
 
@@ -300,4 +301,18 @@ enum PlanID {
 
 enum Event {
   CompletedWaitlistForm
+}
+
+type Faq {
+  sections: [FaqSection!]!
+}
+
+type FaqSection {
+  title: String!
+  subsections: [FaqSubsection!]!
+}
+
+type FaqSubsection {
+  title: String!
+  text: String!
 }
