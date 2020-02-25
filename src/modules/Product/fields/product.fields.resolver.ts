@@ -1,4 +1,4 @@
-import { Resolver, Args, Context, ResolveProperty } from "@nestjs/graphql"
+import { Resolver, Parent, Context, ResolveProperty } from "@nestjs/graphql"
 import { ProductService } from "../services/product.service"
 import { DBService } from "../../../prisma/db.service"
 
@@ -10,7 +10,7 @@ export class ProductFieldsResolver {
   ) {}
 
   @ResolveProperty()
-  async isSaved(@Args() { item }, @Context() ctx) {
-    return this.productService.isSaved(item, ctx)
+  async isSaved(@Parent() parent, @Context() ctx) {
+    return this.productService.isSaved(parent, ctx)
   }
 }
