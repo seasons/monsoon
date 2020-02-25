@@ -8,7 +8,7 @@ import cors from "cors"
 import { app as webhooks } from "./webhooks"
 import { app as pushNotifications } from "./pushNotifications"
 import bodyParser from "body-parser"
-import Sentry from "@sentry/node"
+import * as Sentry from "@sentry/node"
 
 // Set up the server
 const server = new ApolloServer(serverOptions)
