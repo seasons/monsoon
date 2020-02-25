@@ -8,8 +8,8 @@ import cors from "cors"
 import { app as webhooks } from "./webhooks"
 import { app as pushNotifications } from "./pushNotifications"
 import bodyParser from "body-parser"
-import { ExpressAdapter } from '@nestjs/platform-express'
-import * as Sentry from '@sentry/node'
+import { ExpressAdapter } from "@nestjs/platform-express"
+import * as Sentry from "@sentry/node"
 
 // Set up the server
 const server = express()
@@ -23,7 +23,6 @@ if (process.env.NODE_ENV === "production") {
 }
 
 server.use(
-  Sentry.Handlers.requestHandler(), // must be first middleware on app
   checkJwt,
   createGetUserMiddleware(prisma),
   cors({

@@ -1,8 +1,12 @@
 import { Module } from "@nestjs/common"
 import { GraphQLModule, GqlModuleOptions } from "@nestjs/graphql"
-import { UserModule, HomepageModule, ProductModule, CollectionModule } from "./modules"
+import {
+  UserModule,
+  HomepageModule,
+  ProductModule,
+  CollectionModule,
+} from "./modules"
 import { importSchema } from "graphql-import"
-import { prisma } from "./prisma"
 import { Prisma } from "prisma-binding"
 
 export const db = new Prisma({

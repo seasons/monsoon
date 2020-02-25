@@ -6,10 +6,7 @@ import { AuthService } from "./auth.service"
 
 @Module({
   imports: [PrismaModule],
-  providers: [
-    AuthService,
-    MeResolver,
-    AuthResolver
-  ],
+  providers: [AuthService, MeResolver, AuthResolver],
+  exports: [AuthService],
 })
 export class UserModule {}

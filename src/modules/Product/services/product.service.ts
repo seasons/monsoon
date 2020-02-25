@@ -1,9 +1,9 @@
-import { Injectable } from '@nestjs/common'
-import { DBService } from '../../prisma/DB.service'
-import { prisma, RecentlyViewedProduct } from '../../prisma'
-import { productsAlphabetically } from './utils'
-import { AuthService } from '../User/auth.service'
-import { head } from 'lodash'
+import { Injectable } from "@nestjs/common"
+import { DBService } from "../../../prisma/DB.service"
+import { prisma, RecentlyViewedProduct, Product } from "../../../prisma"
+import { productsAlphabetically } from "../utils"
+import { AuthService } from "../../User/auth.service"
+import { head } from "lodash"
 
 @Injectable()
 export class ProductService {
@@ -30,9 +30,7 @@ export class ProductService {
 
     if (args.category && args.category !== "all") {
       const category = await prisma.category({ slug: args.category })
-      const children = await prisma
-        .category({ slug: args.category })
-        .children()
+      const children = await prisma.category({ slug: args.category }).children()
 
       const filter =
         children.length > 0
@@ -65,14 +63,12 @@ export class ProductService {
 
   async addViewedProduct(item, ctx) {
     const customer = await this.authService.getCustomerFromContext(ctx)
-    const viewedProducts = await prisma.recentlyViewedProducts(
-      {
-        where: {
-          customer: { id: customer.id },
-          product: { id: item },
-        },
-      }
-    )
+    const viewedProducts = await prisma.recentlyViewedProducts({
+      where: {
+        customer: { id: customer.id },
+        product: { id: item },
+      },
+    })
     const viewedProduct: RecentlyViewedProduct = head(viewedProducts)
 
     if (viewedProduct) {
@@ -99,5 +95,36 @@ export class ProductService {
         viewCount: 1,
       })
     }
+  }
+
+  async isSaved(product, ctx) {
+    let customer
+    try {
+      customer = await this.authService.getCustomerFromContext(ctx)
+    } catch (error) {
+      return false
+    }
+
+    const productVariants = await prisma.productVariants({
+      where: {
+        product: {
+          id: product.id,
+        },
+      },
+    })
+
+    const bagItem = await prisma.bagItems({
+      where: {
+        customer: {
+          id: customer.id,
+        },
+        productVariant: {
+          id_in: productVariants.map(a => a.id),
+        },
+        saved: true,
+      },
+    })
+
+    return bagItem.length > 0
   }
 }
