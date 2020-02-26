@@ -21,7 +21,7 @@ chargebee.configure({
 export const customer = {
   async addCustomerDetails(
     obj,
-    { details, status, event },
+    { event, details, status },
     ctx: Context,
     info
   ) {
@@ -35,8 +35,7 @@ export const customer = {
     const customer = await getCustomerFromContext(ctx)
 
     // Add the details. If necessary, create the details object afresh.
-    let updatedDetails
-    let currentCustomerDetail = await ctx.prisma
+    const currentCustomerDetail = await ctx.prisma
       .customer({ id: customer.id })
       .detail()
     if (currentCustomerDetail == null) {
@@ -44,9 +43,8 @@ export const customer = {
         data: { detail: { create: details } },
         where: { id: customer.id },
       })
-      updatedDetails = await ctx.prisma.customer({ id: customer.id }).detail()
     } else {
-      updatedDetails = await ctx.prisma.updateCustomerDetail({
+      await ctx.prisma.updateCustomerDetail({
         data: details,
         where: { id: currentCustomerDetail.id },
       })
@@ -81,6 +79,41 @@ export const customer = {
     return returnData
   },
 
+  async updateCustomerInfo(
+    obj,
+    { billingInfo, detail },
+    ctx: Context,
+    info
+  ) {
+
+    // Grab the customer off the context
+    const user = await getUserFromContext(ctx)
+    const customer = await getCustomerFromContext(ctx)
+    const currentCustomer = ctx.prisma.customer({ id: customer.id })
+
+    // Updates the user's billing information.
+    if (billingInfo) {
+      const currentCustomerBillingInfo = await currentCustomer.billingInfo()
+      if (currentCustomerBillingInfo) {
+        await ctx.prisma.updateCustomer({
+          data: { billingInfo: { create: billingInfo } },
+          where: { id: customer.id }
+        })
+      } else {
+        await ctx.prisma.updateBillingInfo({
+          data: billingInfo,
+          where: { id: currentCustomerBillingInfo.id }
+        })
+      }
+    }
+
+    // Return the updated customer object
+    return await ctx.db.query.customer(
+      { where: { id: customer.id } },
+      info
+    )
+  },
+
   async acknowledgeCompletedChargebeeHostedCheckout(
     obj,
     { hostedPageID },
@@ -91,7 +124,7 @@ export const customer = {
     try {
       await chargebee.hosted_page
         .acknowledge(hostedPageID)
-        .request(async function(error, result) {
+        .request(async function (error, result) {
           if (error) {
             throw error
           } else {
@@ -173,7 +206,7 @@ function sendWelcomeToSeasonsEmail(user: User) {
 function getNameFromCard(card) {
   return `${!!card.first_name ? card.first_name : ""}${
     !!card.last_name ? " " + card.last_name : ""
-  }`
+    }`
 }
 
 function createBillingInfoObject(card, chargebeeCustomer) {
