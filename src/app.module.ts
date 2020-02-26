@@ -1,15 +1,13 @@
 import { Module } from "@nestjs/common"
 import { GraphQLModule, GqlModuleOptions } from "@nestjs/graphql"
-import { UserModule, HomepageModule, ProductModule, CollectionModule } from "./modules"
+import {
+  UserModule,
+  HomepageModule,
+  ProductModule,
+  CollectionModule,
+  directiveResolvers
+} from "./modules"
 import { importSchema } from "graphql-import"
-import { prisma } from "./prisma"
-import { Prisma } from "prisma-binding"
-
-export const db = new Prisma({
-  typeDefs: "./src/prisma/prisma.graphql",
-  endpoint: process.env.PRISMA_ENDPOINT || "http://localhost:4466",
-  secret: process.env.PRISMA_SECRET,
-})
 
 @Module({
   imports: [
@@ -23,6 +21,7 @@ export const db = new Prisma({
           resolverValidationOptions: {
             requireResolversForResolveType: false,
           },
+          directiveResolvers,
           context: ({ req }) => ({ req }),
         } as GqlModuleOptions
       },
