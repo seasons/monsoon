@@ -1,6 +1,7 @@
 import { ProductVariant, Size, PhysicalProduct } from "../src/prisma"
 
 export interface ProductVariantWithNeededFields {
+  yarn
   product: { slug: string }
   size: Size
 }

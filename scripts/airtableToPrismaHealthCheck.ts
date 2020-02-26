@@ -18,7 +18,6 @@ async function checkProductsAlignment() {
   const allAirtablePhysicalProducts = await getAllPhysicalProducts()
   const allAirtableProducts = await getAllProducts()
   const allAirtableReservations = await getAllReservations()
-
   const allPrismaProductVariants = await db.query.productVariants(
     {},
     `{
@@ -152,13 +151,13 @@ async function checkProductsAlignment() {
   /* REPORT */
   console.log(`/*********** REPORT ***********/`)
   console.log(
-    `DO PRODUCTS, PHYSICAL PRODUCTS, AND PRODUCT VARIANTS ALIGN IN NUMBER?`
-  )
-  console.log(
     `--- PRODUCTS ON PRISMA BUT NOR AIRTABLE: ${productsInPrismaButNotAirtable.length}`
   )
   console.log(
     `--- PRODUCTS ON AIRTABLE BUT NOT PRISMA: ${productsInAirtableButNotPrisma.length}`
+  )
+  console.log(
+    `DO PRODUCTS, PHYSICAL PRODUCTS, AND PRODUCT VARIANTS ALIGN IN NUMBER?`
   )
   console.log(
     `--- PHYSICAL PRODUCTS ON PRISMA BUT NOT AIRTABLE: ${physicalProductsInPrismaButNotAirtable.length}`
@@ -169,6 +168,9 @@ async function checkProductsAlignment() {
   console.log(
     `--- PRODUCT VARIANTS ON PRISMA BUT NOT AIRTABLE: ${productVariantsInPrismaButNotAirtable.length}`
   )
+  for (let p of productVariantsInPrismaButNotAirtable) {
+    console.log(p)
+  }
   console.log(
     `--- PRODUCT VARIANTS ON AIRTABLE BUT NOT PRISMA: ${productVariantsInAirtableButNotPrisma.length}`
   )
@@ -326,6 +328,13 @@ function checkCounts(
     )
 
     // Are the total, reservable, reserved, and nonreservable counts identical?
+    if (correspondingAirtableProductVariant === undefined) {
+      console.log(
+        "could not find product variant in airtable. sku: ",
+        prismaProductVariant.sku
+      )
+      continue
+    }
     const totalCorrect =
       prismaProductVariant.total ===
       correspondingAirtableProductVariant.fields["Total Count"]
