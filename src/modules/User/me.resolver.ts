@@ -4,13 +4,11 @@ import {
   ResolveProperty,
   Context,
   Info,
-  Args,
 } from "@nestjs/graphql"
 import { head } from "lodash"
 import { prisma } from "../../prisma"
 import { AuthService } from "./auth.service"
 import { User } from "./user.decorator"
-import { AuthError } from "../../auth/utils"
 import { DBService } from "../../prisma/DB.service"
 
 @Resolver("Me")
