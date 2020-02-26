@@ -1,6 +1,7 @@
 import { Context } from "../utils"
 import { head } from "lodash"
 import { getUserRequestObject, getCustomerFromContext } from "../auth/utils"
+import { ReservationCreateInput } from "../prisma"
 
 export const Me = {
   user: async (parent, args, ctx: Context) => {
@@ -18,13 +19,17 @@ export const Me = {
   },
   activeReservation: async (parent, args, ctx: Context, info) => {
     const customer = await getCustomerFromContext(ctx)
-    const reservations = await ctx.prisma
-      .customer({ id: customer.id })
-      .reservations({
+    const reservations = await ctx.db.query.reservations(
+      {
+        where: {
+          id: customer.id,
+        },
         orderBy: "createdAt_DESC",
-      })
+      },
+      info
+    )
 
-    const latestReservation = head(reservations)
+    const latestReservation: ReservationCreateInput = head(reservations)
     if (
       latestReservation &&
       !["Completed", "Cancelled"].includes(latestReservation.status)
