@@ -97,7 +97,14 @@ require("yargs")
       try {
         const env = readJSONObjectFromFile(envFilepath)
         setDBEnvVarsFromJSON("production", env.postgres.production)
-        setDBEnvVarsFromJSON(argv.destination, env.postgres[argv.destination])
+        setDBEnvVarsFromJSON(argv.destination, {
+          ...env.postgres[argv.destination],
+          ...env.prisma[argv.destination],
+        })
+        process.env.AUTH0_MACHINE_TO_MACHINE_CLIENT_ID =
+          env.auth0.staging["monsoon(staging)"].clientID
+        process.env.AUTH0_MACHINE_TO_MACHINE_CLIENT_SECRET =
+          env.auth0.staging["monsoon(staging)"].clientSecret
         syncPrisma(argv.destination)
       } catch (err) {
         console.log(err)
@@ -145,20 +152,4 @@ require("yargs")
       }
     }
   )
-  .completion("completion", (current, argv) => {
-    if (current == "sync-db") {
-      const options = [
-        "all",
-        "brands",
-        "categories",
-        "colors",
-        "products",
-        "product-variants",
-        "physical-products",
-      ]
-
-      return options.filter(a => startsWith(a, argv.table))
-    }
-    return []
-  })
   .help().argv

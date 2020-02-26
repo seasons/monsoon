@@ -2,7 +2,12 @@ import { Context } from "../../../utils"
 import { getCustomerFromContext } from "../../../auth/utils"
 
 export async function isSaved(parent, {}, ctx: Context, info) {
-  const customer = await getCustomerFromContext(ctx)
+  let customer
+  try {
+    customer = await getCustomerFromContext(ctx)
+  } catch (error) {
+    return false
+  }
 
   const productVariants = await ctx.prisma.productVariants({
     where: {

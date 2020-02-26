@@ -1,6 +1,8 @@
 import readlineSync from "readline-sync"
 import { execSync } from "child_process"
 import fs from "fs"
+import { getAuth0Users } from "./auth/getAuth0Users"
+import { Prisma } from "prisma-binding"
 
 export type prismaSyncDestination = "local" | "staging"
 export const syncPrisma = async (env: prismaSyncDestination) => {
@@ -9,12 +11,16 @@ export const syncPrisma = async (env: prismaSyncDestination) => {
   let toUsername
   let toPort
   let toSchema
+  let toEndpoint
+  let toSecret
   switch (env) {
     case "staging":
       toHost = process.env.DB_STAGING_HOST
       toDBName = process.env.DB_STAGING_DBNAME
       toUsername = process.env.DB_STAGING_USERNAME
       toPort = process.env.DB_STAGING_PORT
+      toEndpoint = process.env.DB_STAGING_ENDPOINT
+      toSecret = process.env.DB_STAGING_SECRET
       toSchema = "monsoon$staging"
       break
     case "local":
@@ -22,6 +28,8 @@ export const syncPrisma = async (env: prismaSyncDestination) => {
       toDBName = process.env.DB_LOCAL_DBNAME
       toUsername = process.env.DB_LOCAL_USERNAME
       toPort = process.env.DB_LOCAL_PORT
+      toEndpoint = process.env.DB_LOCAL_ENDPOINT
+      toSecret = process.env.DB_LOCAL_SECRET
       toSchema = "monsoon$dev"
       break
   }
@@ -31,6 +39,10 @@ export const syncPrisma = async (env: prismaSyncDestination) => {
   ) {
     // Y key was pressed
     runSync(toHost, toPort, toUsername, toDBName, toSchema)
+    resetAuth0IDsForUsers({
+      endpoint: toEndpoint,
+      secret: toSecret,
+    })
   } else {
     // Another key was pressed.
     console.log(`\n** Exited without syncing prisma **`)
@@ -72,12 +84,50 @@ const runSync = (toHost, toPort, toUsername, toDBName, toSchema) => {
   )
 }
 
+export const resetAuth0IDsForUsers = async ({
+  endpoint,
+  secret,
+}: {
+  endpoint: string
+  secret: string
+}) => {
+  const db = new Prisma({
+    typeDefs: "./src/prisma/prisma.graphql",
+    endpoint,
+    secret,
+  })
+  const prismaUsers = await db.query.users(
+    {},
+    `{
+        id
+        email
+    }`
+  )
+  const auth0Users = await getAuth0Users()
+  for (const prismaUser of prismaUsers) {
+    const correspondingAuth0User = auth0Users.find(
+      a => a.email === prismaUser.email
+    )
+    if (!!correspondingAuth0User) {
+      console.log(
+        `User w/Email: ${prismaUser.email} auth0ID synced with staging`
+      )
+      await db.mutation.updateUser({
+        where: { id: prismaUser.id },
+        data: { auth0Id: correspondingAuth0User.user_id.split("|")[1] },
+      })
+    }
+  }
+}
+
 export type dbEnv = "staging" | "local" | "production"
 export interface DBVars {
   host: string
   port: number
   dbname: string
   username: string
+  endpoint: string
+  secret: string
 }
 
 export const setDBEnvVarsFromJSON = (env: dbEnv, values: DBVars) => {
@@ -85,6 +135,8 @@ export const setDBEnvVarsFromJSON = (env: dbEnv, values: DBVars) => {
   process.env[`DB_${env.toUpperCase()}_PORT`] = `${values.port}`
   process.env[`DB_${env.toUpperCase()}_USERNAME`] = values.username
   process.env[`DB_${env.toUpperCase()}_DBNAME`] = values.dbname
+  process.env[`DB_${env.toUpperCase()}_ENDPOINT`] = values.endpoint
+  process.env[`DB_${env.toUpperCase()}_SECRET`] = values.secret
 }
 
 const getWarning = ({ toHost, toDBName, toPort, toUsername }) =>

@@ -37,6 +37,12 @@ export const HomepageResult = {
 }
 
 export const Homepage = async (parent, args, ctx: Context, info) => {
+  let customer
+  try {
+    customer = await getCustomerFromContext(ctx)
+  } catch (error) {
+    console.log("Customer is not logged in", error)
+  }
   const productRails = await ctx.db.query.homepageProductRails(
     {},
     `{
@@ -82,27 +88,30 @@ export const Homepage = async (parent, args, ctx: Context, info) => {
           return newProducts
         },
       },
-      {
-        type: "Products",
-        __typename: "HomepageSection",
-        title: "Recently viewed",
-        results: async (args, ctx: Context, info) => {
-          const currentCustomer = await getCustomerFromContext(ctx)
-          const viewedProducts = await ctx.db.query.recentlyViewedProducts(
-            {
-              where: { customer: { id: currentCustomer.id } },
-              orderBy: "updatedAt_DESC",
-              limit: 10,
-            },
-            `{ 
-              updatedAt
-              product ${ProductFragment} 
-            }`
-          )
-          return viewedProducts.map(viewedProduct => viewedProduct.product)
-        },
-      },
     ],
+  }
+
+  if (customer) {
+    homepageSections.sections.push({
+      type: "Products",
+      __typename: "HomepageSection",
+      title: "Recently viewed",
+      results: async (args, ctx: Context, info) => {
+        //
+        const viewedProducts = await ctx.db.query.recentlyViewedProducts(
+          {
+            where: { customer: { id: customer.id } },
+            orderBy: "updatedAt_DESC",
+            limit: 10,
+          },
+          `{ 
+            updatedAt
+            product ${ProductFragment} 
+          }`
+        )
+        return viewedProducts.map(viewedProduct => viewedProduct.product)
+      },
+    })
   }
 
   productRails.forEach(rail => {

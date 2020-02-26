@@ -1,8 +1,8 @@
 import { getAllBrands, getAllCategories, getAllProducts } from "../utils"
 import { prisma, ProductCreateInput } from "../../prisma"
 import slugify from "slugify"
-import { isEmpty, omit } from "lodash"
-import { elasticsearch } from "../search"
+import { isEmpty, omit, head } from "lodash"
+import { elasticsearch } from "../../search"
 
 export const syncProducts = async () => {
   const allBrands = await getAllBrands()
@@ -78,9 +78,9 @@ export const syncProducts = async () => {
         description,
         images,
         retailPrice,
-        modelSize,
-        modelHeight,
         externalURL,
+        modelSize,
+        modelHeight: head(modelHeight) ?? 0,
         status: (status || "Available").replace(" ", ""),
       } as ProductCreateInput
 
@@ -116,5 +116,3 @@ export const syncProducts = async () => {
     }
   }
 }
-
-syncProducts()
