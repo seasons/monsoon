@@ -201,7 +201,6 @@ async function checkProductsAlignment() {
   console.log(
     `---NUMBER OF PHYSICAL PRODUCTS WITH MISMATCHING INVENTORY STATUSES: ${mismatchingStatuses.length}`
   )
-  console.log(``)
   console.log(`ARE THE RESERVATIONS ALIGNED?`)
   console.log(
     `-- RESERVATIONS IN PRISMA BUT NOT AIRTABLE; ${reservationsInPrismaButNotAirtable.length}`
