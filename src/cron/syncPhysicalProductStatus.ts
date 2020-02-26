@@ -113,11 +113,6 @@ export async function syncPhysicalProductStatus() {
         physicalProductsInAirtableButNotPrisma.push(
           airtablePhysicalProduct.fields.SUID
         )
-        if (shouldReportErrorsToSentry) {
-          Sentry.captureException(
-            new SyncError(`Physical product in airtable but not prisma`)
-          )
-        }
       }
     } catch (error) {
       errors.push(error)

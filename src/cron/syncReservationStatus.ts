@@ -144,7 +144,7 @@ async function getPrismaReservationWithNeededFields(reservationNumber) {
     {
       where: { reservationNumber },
     },
-    `{ 
+    `{
         id
         status
         reservationNumber
