@@ -240,6 +240,7 @@ type BillingInfo {
   state: String
   country: String
   postal_code: String
+  cvv: String
 }
 
 type BillingInfoConnection {
@@ -261,6 +262,7 @@ input BillingInfoCreateInput {
   state: String
   country: String
   postal_code: String
+  cvv: String
 }
 
 input BillingInfoCreateOneInput {
@@ -298,6 +300,8 @@ enum BillingInfoOrderByInput {
   country_DESC
   postal_code_ASC
   postal_code_DESC
+  cvv_ASC
+  cvv_DESC
 }
 
 type BillingInfoPreviousValues {
@@ -313,6 +317,7 @@ type BillingInfoPreviousValues {
   state: String
   country: String
   postal_code: String
+  cvv: String
 }
 
 type BillingInfoSubscriptionPayload {
@@ -345,6 +350,7 @@ input BillingInfoUpdateDataInput {
   state: String
   country: String
   postal_code: String
+  cvv: String
 }
 
 input BillingInfoUpdateInput {
@@ -359,6 +365,7 @@ input BillingInfoUpdateInput {
   state: String
   country: String
   postal_code: String
+  cvv: String
 }
 
 input BillingInfoUpdateManyMutationInput {
@@ -373,6 +380,7 @@ input BillingInfoUpdateManyMutationInput {
   state: String
   country: String
   postal_code: String
+  cvv: String
 }
 
 input BillingInfoUpdateOneInput {
@@ -546,6 +554,20 @@ input BillingInfoWhereInput {
   postal_code_not_starts_with: String
   postal_code_ends_with: String
   postal_code_not_ends_with: String
+  cvv: String
+  cvv_not: String
+  cvv_in: [String!]
+  cvv_not_in: [String!]
+  cvv_lt: String
+  cvv_lte: String
+  cvv_gt: String
+  cvv_gte: String
+  cvv_contains: String
+  cvv_not_contains: String
+  cvv_starts_with: String
+  cvv_not_starts_with: String
+  cvv_ends_with: String
+  cvv_not_ends_with: String
   AND: [BillingInfoWhereInput!]
   OR: [BillingInfoWhereInput!]
   NOT: [BillingInfoWhereInput!]
