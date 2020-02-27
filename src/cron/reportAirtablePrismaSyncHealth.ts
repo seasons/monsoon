@@ -1,6 +1,6 @@
 import { WebClient } from "@slack/web-api"
 import { Identity } from "../utils"
-import { checkProductsAlignment } from "../../scripts/airtableToPrismaHealthCheck"
+import { checkProductsAlignment } from "./airtableToPrismaHealthCheck"
 
 export const run = async () => {
   const web = new WebClient(process.env.SLACK_CANARY_API_TOKEN)
@@ -184,7 +184,10 @@ export const run = async () => {
         type: "section",
         text: {
           type: "mrkdwn",
-          text: `Note: \`Highlighted numbers\` need attention`,
+          text:
+            `Note: \`Highlighted numbers\` need attention. For more details` +
+            ` work with the health check script locally using \`yarn healthCheck:production\`` +
+            `, printing more details as needed`,
         },
       },
     ],

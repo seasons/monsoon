@@ -3,14 +3,14 @@ import {
   getAllPhysicalProducts,
   getAllProductVariants,
   getAllReservations,
-} from "../src/airtable/utils"
-import { prisma } from "../src/prisma"
+} from "../airtable/utils"
+import { prisma } from "../prisma"
 import {
   getCorrespondingAirtableProductVariant,
   getCorrespondingAirtablePhysicalProduct,
 } from "./utils"
-import { db } from "../src/server"
-import { airtableToPrismaInventoryStatus } from "../src/utils"
+import { db } from "../server"
+import { airtableToPrismaInventoryStatus } from "../utils"
 import { xor } from "lodash"
 
 export async function checkProductsAlignment() {
