@@ -22,7 +22,9 @@ export const Me = {
     const reservations = await ctx.db.query.reservations(
       {
         where: {
-          id: customer.id,
+          customer: {
+            id: customer.id,
+          },
         },
         orderBy: "createdAt_DESC",
       },
