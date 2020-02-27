@@ -31,7 +31,8 @@ require("yargs")
         const { endpoint, secret } = env.prisma[environment]
         process.env.PRISMA_ENDPOINT = endpoint
         process.env.PRISMA_SECRET = secret
-        console.log(env, endpoint, secret)
+        process.env.AIRTABLE_DATABASE_ID = env.airtable.production.baseID
+        console.log(env, endpoint, secret, env.airtable.production.baseID)
       } catch (err) {
         console.log(err)
       } finally {
