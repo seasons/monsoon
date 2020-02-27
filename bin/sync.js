@@ -32,7 +32,6 @@ require("yargs")
         process.env.PRISMA_ENDPOINT = endpoint
         process.env.PRISMA_SECRET = secret
         process.env.AIRTABLE_DATABASE_ID = env.airtable.production.baseID
-        console.log(env, endpoint, secret, env.airtable.production.baseID)
       } catch (err) {
         console.log(err)
       } finally {
@@ -50,8 +49,20 @@ require("yargs")
         syncHomepageProductRails,
       } = require("../dist/airtable/prismaSync")
       const { syncAll } = require("../dist/airtable/prismaSync/syncAll")
+      readlineSync = require("readline-sync")
 
-      debugger
+      const shouldProceed = readlineSync.keyInYN(
+        `You are about sync ${
+          argv.table === "all" ? "all the tables" : "the " + argv.table
+        } from airtable with baseID ${
+          process.env.AIRTABLE_DATABASE_ID
+        } to prisma at url ${process.env.PRISMA_ENDPOINT}\n. Proceed? (y/n)`
+      )
+      if (!shouldProceed) {
+        console.log("\nExited without running anything\n")
+        return
+      }
+
       switch (argv.table) {
         case "all":
           console.log("syncing all")
