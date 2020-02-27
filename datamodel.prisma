@@ -432,7 +432,6 @@ type BillingInfo {
   state: String
   country: String
   postal_code: String
-  cvv: String
 }
 
 type ProductRequest {

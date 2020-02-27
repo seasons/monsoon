@@ -1220,9 +1220,7 @@ export type BillingInfoOrderByInput =
   | "country_ASC"
   | "country_DESC"
   | "postal_code_ASC"
-  | "postal_code_DESC"
-  | "cvv_ASC"
-  | "cvv_DESC";
+  | "postal_code_DESC";
 
 export type PackageOrderByInput =
   | "id_ASC"
@@ -1921,20 +1919,6 @@ export interface BillingInfoWhereInput {
   postal_code_not_starts_with?: Maybe<String>;
   postal_code_ends_with?: Maybe<String>;
   postal_code_not_ends_with?: Maybe<String>;
-  cvv?: Maybe<String>;
-  cvv_not?: Maybe<String>;
-  cvv_in?: Maybe<String[] | String>;
-  cvv_not_in?: Maybe<String[] | String>;
-  cvv_lt?: Maybe<String>;
-  cvv_lte?: Maybe<String>;
-  cvv_gt?: Maybe<String>;
-  cvv_gte?: Maybe<String>;
-  cvv_contains?: Maybe<String>;
-  cvv_not_contains?: Maybe<String>;
-  cvv_starts_with?: Maybe<String>;
-  cvv_not_starts_with?: Maybe<String>;
-  cvv_ends_with?: Maybe<String>;
-  cvv_not_ends_with?: Maybe<String>;
   AND?: Maybe<BillingInfoWhereInput[] | BillingInfoWhereInput>;
   OR?: Maybe<BillingInfoWhereInput[] | BillingInfoWhereInput>;
   NOT?: Maybe<BillingInfoWhereInput[] | BillingInfoWhereInput>;
@@ -2974,7 +2958,6 @@ export interface BillingInfoCreateInput {
   state?: Maybe<String>;
   country?: Maybe<String>;
   postal_code?: Maybe<String>;
-  cvv?: Maybe<String>;
 }
 
 export interface RecentlyViewedProductCreateInput {
@@ -6146,7 +6129,6 @@ export interface BillingInfoUpdateDataInput {
   state?: Maybe<String>;
   country?: Maybe<String>;
   postal_code?: Maybe<String>;
-  cvv?: Maybe<String>;
 }
 
 export interface LocationWhereInput {
@@ -6991,7 +6973,6 @@ export interface BillingInfoUpdateManyMutationInput {
   state?: Maybe<String>;
   country?: Maybe<String>;
   postal_code?: Maybe<String>;
-  cvv?: Maybe<String>;
 }
 
 export interface BillingInfoUpdateInput {
@@ -7006,7 +6987,6 @@ export interface BillingInfoUpdateInput {
   state?: Maybe<String>;
   country?: Maybe<String>;
   postal_code?: Maybe<String>;
-  cvv?: Maybe<String>;
 }
 
 export interface ProductVariantWhereInput {
@@ -8057,7 +8037,6 @@ export interface BillingInfoPreviousValues {
   state?: String;
   country?: String;
   postal_code?: String;
-  cvv?: String;
 }
 
 export interface BillingInfoPreviousValuesPromise
@@ -8075,7 +8054,6 @@ export interface BillingInfoPreviousValuesPromise
   state: () => Promise<String>;
   country: () => Promise<String>;
   postal_code: () => Promise<String>;
-  cvv: () => Promise<String>;
 }
 
 export interface BillingInfoPreviousValuesSubscription
@@ -8093,7 +8071,6 @@ export interface BillingInfoPreviousValuesSubscription
   state: () => Promise<AsyncIterator<String>>;
   country: () => Promise<AsyncIterator<String>>;
   postal_code: () => Promise<AsyncIterator<String>>;
-  cvv: () => Promise<AsyncIterator<String>>;
 }
 
 export interface ProductRequestEdge {
@@ -11286,7 +11263,6 @@ export interface BillingInfo {
   state?: String;
   country?: String;
   postal_code?: String;
-  cvv?: String;
 }
 
 export interface BillingInfoPromise extends Promise<BillingInfo>, Fragmentable {
@@ -11302,7 +11278,6 @@ export interface BillingInfoPromise extends Promise<BillingInfo>, Fragmentable {
   state: () => Promise<String>;
   country: () => Promise<String>;
   postal_code: () => Promise<String>;
-  cvv: () => Promise<String>;
 }
 
 export interface BillingInfoSubscription
@@ -11320,7 +11295,6 @@ export interface BillingInfoSubscription
   state: () => Promise<AsyncIterator<String>>;
   country: () => Promise<AsyncIterator<String>>;
   postal_code: () => Promise<AsyncIterator<String>>;
-  cvv: () => Promise<AsyncIterator<String>>;
 }
 
 export interface BillingInfoNullablePromise
@@ -11338,7 +11312,6 @@ export interface BillingInfoNullablePromise
   state: () => Promise<String>;
   country: () => Promise<String>;
   postal_code: () => Promise<String>;
-  cvv: () => Promise<String>;
 }
 
 export interface ProductVariantWantPreviousValues {

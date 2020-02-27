@@ -87,22 +87,26 @@ export const customer = {
   ) {
 
     // Grab the customer off the context
-    const user = await getUserFromContext(ctx)
     const customer = await getCustomerFromContext(ctx)
+
+    if (!customer) {
+      throw new Error('No customer object found for user')
+    }
+
     const currentCustomer = ctx.prisma.customer({ id: customer.id })
 
     // Updates the user's billing information.
     if (billingInfo) {
       const currentCustomerBillingInfo = await currentCustomer.billingInfo()
       if (currentCustomerBillingInfo) {
-        await ctx.prisma.updateCustomer({
-          data: { billingInfo: { create: billingInfo } },
-          where: { id: customer.id }
-        })
-      } else {
         await ctx.prisma.updateBillingInfo({
           data: billingInfo,
           where: { id: currentCustomerBillingInfo.id }
+        })
+      } else {
+        await ctx.prisma.updateCustomer({
+          data: { billingInfo: { create: billingInfo } },
+          where: { id: customer.id }
         })
       }
     }
