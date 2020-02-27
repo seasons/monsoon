@@ -66,8 +66,8 @@ export async function createShippoShipment(
       }),
     },
     {
-      address_from: customerAddressShippo,
-      address_to: nextCleanersAddressShippo,
+      address_from: nextCleanersAddressShippo,
+      address_to: customerAddressShippo,
       parcels: [parcel],
       extra: { is_return: true },
     },
