@@ -18,7 +18,13 @@ export const Me = {
     )
   },
   activeReservation: async (parent, args, ctx: Context, info) => {
+    // FIXME: Remove reservationWithStatus after we add status to the info object in bag in harvest
     const customer = await getCustomerFromContext(ctx)
+    const reservationWithStatus = await ctx.prisma
+      .customer({ id: customer.id })
+      .reservations({
+        orderBy: "createdAt_DESC",
+      })
     const reservations = await ctx.db.query.reservations(
       {
         where: {
@@ -31,10 +37,12 @@ export const Me = {
       info
     )
 
+    const latestReservationWithStatus = head(reservationWithStatus)
     const latestReservation: ReservationCreateInput = head(reservations)
     if (
       latestReservation &&
-      !["Completed", "Cancelled"].includes(latestReservation.status)
+      latestReservationWithStatus &&
+      !["Completed", "Cancelled"].includes(latestReservationWithStatus.status)
     ) {
       return latestReservation
     }
