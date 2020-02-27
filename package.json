@@ -41,6 +41,7 @@
     "@sendgrid/mail": "^6.4.0",
     "@sentry/node": "^5.10.2",
     "@sentry/types": "^5.10.0",
+    "@slack/web-api": "^5.7.0",
     "@types/auth0": "^2.9.22",
     "@types/request": "^2.48.3",
     "airtable": "^0.7.1",

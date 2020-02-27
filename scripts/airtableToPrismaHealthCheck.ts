@@ -13,7 +13,7 @@ import { db } from "../src/server"
 import { airtableToPrismaInventoryStatus } from "../src/utils"
 import { xor } from "lodash"
 
-async function checkProductsAlignment() {
+export async function checkProductsAlignment() {
   const allAirtableProductVariants = await getAllProductVariants()
   const allAirtablePhysicalProducts = await getAllPhysicalProducts()
   const allAirtableProducts = await getAllProducts()
@@ -168,9 +168,6 @@ async function checkProductsAlignment() {
   console.log(
     `--- PRODUCT VARIANTS ON PRISMA BUT NOT AIRTABLE: ${productVariantsInPrismaButNotAirtable.length}`
   )
-  for (let p of productVariantsInPrismaButNotAirtable) {
-    console.log(p)
-  }
   console.log(
     `--- PRODUCT VARIANTS ON AIRTABLE BUT NOT PRISMA: ${productVariantsInAirtableButNotPrisma.length}`
   )
@@ -219,6 +216,28 @@ async function checkProductsAlignment() {
   )
 
   console.log(`ERRORS: ${errors.length}`)
+
+  return [
+    productsInPrismaButNotAirtable,
+    productsInAirtableButNotPrisma,
+    physicalProductsInPrismaButNotAirtable,
+    physicalProductsInAirtableButNotPrisma,
+    productVariantsInPrismaButNotAirtable,
+    productVariantsInAirtableButNotPrisma,
+    productVariantSKUMismatches,
+    prismaSUIDToSKUMismatches,
+    airtableSUIDToSKUMismatches,
+    countMisalignments,
+    prismaTotalPhysicalProductMisalignment,
+    airtableTotalPhysicalProductMisalignment,
+    mismatchingStatuses,
+    reservationsInPrismaButNotAirtable,
+    reservationsInAirtableButNotPrisma,
+    misalignedSUIDsOnReservations,
+    misalignedStatusOnReservations,
+    reservationsWithMoreThanThreeProducts,
+    errors,
+  ]
 }
 
 checkProductsAlignment()
