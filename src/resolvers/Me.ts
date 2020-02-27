@@ -1,6 +1,7 @@
 import { Context } from "../utils"
 import { head } from "lodash"
 import { getUserRequestObject, getCustomerFromContext } from "../auth/utils"
+import { ReservationCreateInput } from "../prisma"
 
 export const Me = {
   user: async (parent, args, ctx: Context) => {
@@ -17,17 +18,31 @@ export const Me = {
     )
   },
   activeReservation: async (parent, args, ctx: Context, info) => {
+    // FIXME: Remove reservationWithStatus after we add status to the info object in bag in harvest
     const customer = await getCustomerFromContext(ctx)
-    const reservations = await ctx.prisma
+    const reservationWithStatus = await ctx.prisma
       .customer({ id: customer.id })
       .reservations({
         orderBy: "createdAt_DESC",
       })
+    const reservations = await ctx.db.query.reservations(
+      {
+        where: {
+          customer: {
+            id: customer.id,
+          },
+        },
+        orderBy: "createdAt_DESC",
+      },
+      info
+    )
 
-    const latestReservation = head(reservations)
+    const latestReservationWithStatus = head(reservationWithStatus)
+    const latestReservation: ReservationCreateInput = head(reservations)
     if (
       latestReservation &&
-      !["Completed", "Cancelled"].includes(latestReservation.status)
+      latestReservationWithStatus &&
+      !["Completed", "Cancelled"].includes(latestReservationWithStatus.status)
     ) {
       return latestReservation
     }
