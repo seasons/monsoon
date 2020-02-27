@@ -26,6 +26,8 @@ export const HomepageResult = {
   __resolveType(obj, _context, _info) {
     if (obj.brand || obj.colorway) {
       return "Product"
+    } else if (obj.since) {
+      return "Brand"
     } else if (obj.subTitle) {
       return "Collection"
     } else if (obj.name) {
@@ -86,6 +88,27 @@ export const Homepage = async (parent, args, ctx: Context, info) => {
           )
 
           return newProducts
+        },
+      },
+      {
+        type: "Brands",
+        __typename: "HomepageSection",
+        title: "Designers",
+        results: async (args, ctx: Context, info) => {
+          const brands = await ctx.db.query.brands(
+            {
+              ...args,
+              orderBy: "updatedAt_DESC",
+              first: 20,
+            },
+            `{
+              __typename
+              id
+              name
+              since
+            }`
+          )
+          return brands
         },
       },
     ],
