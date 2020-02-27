@@ -3,8 +3,6 @@ import { Identity } from "../utils"
 import { checkProductsAlignment } from "./airtableToPrismaHealthCheck"
 
 export const run = async () => {
-  const web = new WebClient(process.env.SLACK_CANARY_API_TOKEN)
-
   let message = { channel: process.env.SLACK_DEV_CHANNEL_ID, text: "'" }
   try {
     const [
@@ -28,7 +26,6 @@ export const run = async () => {
       reservationsWithMoreThanThreeProducts,
       errors,
     ] = await checkProductsAlignment()
-    throw new Error("yo")
     message = {
       ...message,
       text: "",
@@ -201,7 +198,9 @@ export const run = async () => {
     } as any
   }
 
-  await web.chat.postMessage(message)
+  await new WebClient(process.env.SLACK_CANARY_API_TOKEN).chat.postMessage(
+    message
+  )
 }
 
 interface DataPoint {
