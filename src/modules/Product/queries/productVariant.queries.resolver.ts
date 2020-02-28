@@ -1,10 +1,12 @@
-import { Resolver, Args, Query } from "@nestjs/graphql"
-import { prisma } from "../../../prisma"
+import { Resolver, Args, Query, Info } from "@nestjs/graphql"
+import { DBService } from "../../../prisma/db.service"
 
 @Resolver("ProductVariant")
 export class ProductVariantQueriesResolver {
+  constructor(private readonly db: DBService) {}
+
   @Query()
-  async productVariant(@Args() { where }) {
-    return await prisma.productVariant(where)
+  async productVariant(@Args() args, @Info() info) {
+    return await this.db.query.productVariant(args, info)
   }
 }
