@@ -4,13 +4,11 @@ import {
   ResolveProperty,
   Context,
   Info,
-  Args,
 } from "@nestjs/graphql"
 import { head } from "lodash"
 import { prisma } from "../../prisma"
 import { AuthService } from "./auth.service"
 import { User } from "./user.decorator"
-import { AuthError } from "../../auth/utils"
 import { DBService } from "../../prisma/DB.service"
 
 @Resolver("Me")
@@ -27,9 +25,6 @@ export class MeResolver {
 
   @ResolveProperty()
   async user(@User() requestUser) {
-    if (!requestUser) {
-      return new AuthError()
-    }
     const { id } = requestUser
     return prisma.user({ id })
   }
@@ -52,7 +47,10 @@ export class MeResolver {
       .customer({ id: customer.id })
       .reservations({ orderBy: "createdAt_DESC" })
     const latestReservation = head(reservations)
-    if (latestReservation && latestReservation.status !== "Completed") {
+    if (
+      latestReservation &&
+      !["Completed", "Cancelled"].includes(latestReservation.status)
+    ) {
       return latestReservation
     }
 
@@ -62,7 +60,7 @@ export class MeResolver {
   @ResolveProperty()
   async bag(@Context() ctx, @Info() info) {
     const customer = await this.authService.getCustomerFromContext(ctx)
-    const bag = await this.db.query.bagItems(
+    return await this.db.query.bagItems(
       {
         where: {
           customer: {
@@ -73,7 +71,6 @@ export class MeResolver {
       },
       info
     )
-    return bag
   }
 
   @ResolveProperty()
