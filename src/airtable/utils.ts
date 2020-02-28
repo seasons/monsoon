@@ -25,6 +25,11 @@ export type AirtableModelName =
   | "Users"
   | "Reservations"
 
+export interface AirtableRecord {
+  id: string
+  fields: any
+}
+
 const getAll: (
   name: string,
   filterFormula?: string,
@@ -143,8 +148,8 @@ export const airtableToPrismaObject = record => {
   }
 
   const obj = {}
-  for (let id of Object.keys(record)) {
-    let newKey = camelCase(id)
+  for (const id of Object.keys(record)) {
+    const newKey = camelCase(id)
     obj[newKey] = record[id]
   }
   return obj
@@ -156,7 +161,7 @@ export async function createAirtableReservation(
   shippingError: string,
   returnShippingError: string
 ): Promise<[AirtableData, Function]> {
-  return new Promise(async function(resolve, reject) {
+  return new Promise(async (resolve, reject) => {
     try {
       const itemIDs = (data.products.connect as { seasonsUID: string }[]).map(
         a => a.seasonsUID
@@ -165,14 +170,15 @@ export async function createAirtableReservation(
       const airtableUserRecord = await getAirtableUserRecordByUserEmail(
         userEmail
       )
+      const nextCleanersAirtableRecord = await getAirtableLocationRecordBySlug(
+        process.env.NEXT_CLEANERS_AIRTABLE_SLUG
+      )
       const createData = [
         {
           fields: {
             ID: data.reservationNumber,
             User: [airtableUserRecord.id],
-            "Current Location": [
-              process.env.NEXT_CLEANERS_AIRTABLE_LOCATION_ID,
-            ],
+            "Current Location": [nextCleanersAirtableRecord.id],
             Items: items.map(a => a.id),
             Shipped: false,
             Status: "New",
@@ -265,8 +271,8 @@ export const updateProductVariant = async data => {
 
 export function getAirtableUserRecordByUserEmail(
   email: string
-): Promise<{ id: string; fields: any }> {
-  return new Promise(function retrieveUser(resolve, reject) {
+): Promise<AirtableRecord> {
+  return new Promise((resolve, reject) => {
     base("Users")
       .select({
         view: "Grid view",
@@ -279,6 +285,20 @@ export function getAirtableUserRecordByUserEmail(
         } else {
           reject(err)
         }
+      })
+  })
+}
+
+export const getAirtableLocationRecordBySlug = async (
+  slug: string
+): Promise<AirtableRecord> => {
+  return new Promise((resolve, reject) => {
+    base("Locations")
+      .select({ view: "Grid view", filterByFormula: `{Slug}='${slug}'` })
+      .firstPage((err, records) => {
+        if (err) return reject(err)
+        if (records.length > 0) return resolve(records[0])
+        return reject(`No record found with slug ${slug}`)
       })
   })
 }
