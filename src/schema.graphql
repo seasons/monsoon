@@ -122,6 +122,7 @@ type Query {
   faq: Faq
   homepage: Homepage
   chargebeeCheckout(planID: PlanID!, userIDHash: String!): ChargebeeCheckout
+  chargebeeUpdatePaymentPage(planID: PlanID!): ChargebeeCheckout
   homepageProductRail(
     where: HomepageProductRailWhereUniqueInput!
   ): HomepageProductRail
@@ -167,15 +168,15 @@ type Query {
 }
 
 type ChargebeeCheckout {
-  created_at: Int!
+  created_at: DateTime!
   embed: Boolean!
   expires_at: Int!
   id: String!
   object: String!
-  resource_version: Int!
+  resource_version: DateTime!
   state: String!
   type: String!
-  updated_at: Int!
+  updated_at: DateTime!
   url: String!
 }
 

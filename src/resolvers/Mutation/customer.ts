@@ -126,12 +126,16 @@ export const customer = {
   ) {
     let prismaCustomer
     try {
+      console.log("HOST PAGE ID:", hostedPageID)
       await chargebee.hosted_page
         .acknowledge(hostedPageID)
         .request(async function (error, result) {
+          console.log("ACKNOWLEDGING")
           if (error) {
+            console.log("ERROR:", error)
             throw error
           } else {
+            console.log("NO ERROR")
             var {
               subscription,
               card,

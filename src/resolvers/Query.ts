@@ -1,10 +1,16 @@
 import { Context, getUserIDHash, getCustomerFromUserID } from "../utils"
 import { Homepage } from "./Homepage"
 import { Faq } from "./Faq"
-import { getUserRequestObject } from "../auth/utils"
+import { getUserRequestObject, getUserFromContext, getCustomerFromContext } from "../auth/utils"
 import chargebee from "chargebee"
+import get from "lodash.get"
 import { Search } from "./Search"
 import { Products } from "./Products"
+
+const CHARGEBEE_PLAN_IDS = {
+  "AllAccess": "all-access",
+  "Essential": "essential"
+}
 
 export const Query = {
   ...Products,
@@ -119,6 +125,59 @@ export const Query = {
         plan: planID,
       },
     })
+
+    return hostedPage
+  },
+
+  chargebeeUpdatePaymentPage: async (parent, { planID }, ctx, info) => {
+    const user = await getUserFromContext(ctx)
+    if (!user) {
+      throw new Error("No user found.")
+    }
+
+    const customer = await getCustomerFromContext(ctx)
+    if (!customer) {
+      throw new Error("User is not a customer.")
+    }
+
+    const { email, firstName, lastName } = user
+    const { phoneNumber } = await ctx.prisma
+      .customer({ id: customer.id })
+      .detail()
+
+    const chargebeePlanID = get(CHARGEBEE_PLAN_IDS, planID)
+    if (!chargebeePlanID) {
+      throw new Error("Unrecognized planID")
+    }
+
+    // make the call to chargebee
+    chargebee.configure({
+      site: process.env.CHARGEBEE_SITE,
+      api_key: process.env.CHARGEE_API_KEY,
+    })
+
+    console.log("ABOUT TO GET PAGE")
+
+    const hostedPage = await new Promise((resolve, reject) => {
+      chargebee.hosted_page
+        .manage_payment_sources({
+          customer: {
+            id: user.id,
+          },
+        })
+        .request((error, result) => {
+          console.log("CHARGEEE RESPONSE")
+          if (error) {
+            reject(error)
+          } else {
+            resolve(result.hosted_page)
+          }
+        })
+    }).catch(error => {
+      throw new Error(JSON.stringify(error))
+    })
+
+    console.log("GOT PAGE:", hostedPage)
 
     return hostedPage
   },
