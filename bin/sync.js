@@ -13,11 +13,29 @@ require("yargs")
     "sync:airtable:prisma <table>",
     "sync airtable data to prisma",
     yargs => {
-      yargs.positional("table", {
-        type: "string",
-        describe:
-          "Name of the airtable base to sync (e.g. products, product-variants, categories)",
-      })
+      yargs
+        .positional("table", {
+          type: "string",
+          describe: "Name of the airtable base to sync",
+          choices: [
+            "all",
+            "brands",
+            "categories",
+            "products",
+            "product-variants",
+            "collections",
+            "collection-groups",
+            "homepage-product-rails",
+          ],
+        })
+        .options({
+          e: {
+            default: "staging",
+            describe: "Prisma environment to sync to",
+            choices: ["local", "staging", "production"],
+            type: "string",
+          },
+        })
     },
     async argv => {
       const envFilePath = await downloadFromS3(
@@ -31,7 +49,7 @@ require("yargs")
         const { endpoint, secret } = env.prisma[environment]
         process.env.PRISMA_ENDPOINT = endpoint
         process.env.PRISMA_SECRET = secret
-        console.log(env, endpoint, secret)
+        process.env.AIRTABLE_DATABASE_ID = env.airtable.production.baseID
       } catch (err) {
         console.log(err)
       } finally {
@@ -49,8 +67,20 @@ require("yargs")
         syncHomepageProductRails,
       } = require("../dist/airtable/prismaSync")
       const { syncAll } = require("../dist/airtable/prismaSync/syncAll")
+      readlineSync = require("readline-sync")
 
-      debugger
+      const shouldProceed = readlineSync.keyInYN(
+        `You are about sync ${
+          argv.table === "all" ? "all the tables" : "the " + argv.table
+        } from airtable with baseID ${
+          process.env.AIRTABLE_DATABASE_ID
+        } to prisma at url ${process.env.PRISMA_ENDPOINT}\n. Proceed? (y/n)`
+      )
+      if (!shouldProceed) {
+        console.log("\nExited without running anything\n")
+        return
+      }
+
       switch (argv.table) {
         case "all":
           console.log("syncing all")
@@ -88,7 +118,8 @@ require("yargs")
     yargs => {
       yargs.positional("destination", {
         type: "string",
-        describe: "Prisma environment to sync to: staging | local",
+        describe: "Prisma environment to sync to",
+        choices: ["staging", "local"],
       })
     },
     async argv => {
@@ -134,8 +165,8 @@ require("yargs")
     yargs => {
       yargs.positional("base", {
         type: "string",
-        describe:
-          "human readable name of base to sync to. Options are staging1 | staging2",
+        describe: "human readable name of base to sync to",
+        choices: ["staging1", "staging2"],
       })
     },
     async argv => {
