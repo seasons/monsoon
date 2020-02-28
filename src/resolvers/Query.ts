@@ -14,6 +14,10 @@ export const Query = {
     return ctx.prisma.user({ id })
   },
 
+  brand: (parent, args, ctx: Context, info) => ctx.db.query.brand(args, info),
+
+  brands: (parent, args, ctx: Context, info) => ctx.db.query.brands(args, info),
+
   product: (parent, args, ctx: Context, info) =>
     ctx.db.query.product(args, info),
 
