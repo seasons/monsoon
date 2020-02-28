@@ -11,7 +11,6 @@ import {
 import { AirtableInventoryStatus } from "../airtable/updatePhysicalProduct"
 import { airtableToPrismaInventoryStatus } from "../utils"
 import * as Sentry from "@sentry/node"
-import { SyncError } from "../errors"
 
 const shouldReportErrorsToSentry = process.env.NODE_ENV === "production"
 
@@ -31,20 +30,19 @@ export async function syncPhysicalProductStatus() {
 
   // Update relevant products
   for (const airtablePhysicalProduct of allAirtablePhysicalProducts) {
-    // console.log(airtablePhysicalProduct.fields.SUID["text"])
     // Wrap it in a try/catch so individual sync errors don't stop the whole job
     try {
       if (shouldReportErrorsToSentry) {
         Sentry.configureScope(scope => {
           scope.setExtra(
             "physicalProductSUID",
-            airtablePhysicalProduct.fields.SUID["text"]
+            airtablePhysicalProduct.fields.SUID.text
           )
         })
       }
 
       const prismaPhysicalProduct = await prisma.physicalProduct({
-        seasonsUID: airtablePhysicalProduct.fields.SUID["text"],
+        seasonsUID: airtablePhysicalProduct.fields.SUID.text,
       })
 
       if (!!prismaPhysicalProduct) {
@@ -115,6 +113,8 @@ export async function syncPhysicalProductStatus() {
         )
       }
     } catch (error) {
+      console.log(airtablePhysicalProduct)
+      console.log(error)
       errors.push(error)
       if (shouldReportErrorsToSentry) {
         Sentry.captureException(error)
@@ -170,32 +170,32 @@ function getUpdatedCounts(
   // Decrement the count for whichever status we are moving away from
   switch (currentStatusOnPrisma) {
     case "NonReservable":
-      prismaCounts["nonReservable"] = prismaProductVariant.nonReservable - 1
-      airtableCounts["Non-Reservable Count"] = prismaCounts["nonReservable"]
+      prismaCounts.nonReservable = prismaProductVariant.nonReservable - 1
+      airtableCounts["Non-Reservable Count"] = prismaCounts.nonReservable
       break
     case "Reserved":
-      prismaCounts["reserved"] = prismaProductVariant.reserved - 1
-      airtableCounts["Reserved Count"] = prismaCounts["reserved"]
+      prismaCounts.reserved = prismaProductVariant.reserved - 1
+      airtableCounts["Reserved Count"] = prismaCounts.reserved
       break
     case "Reservable":
-      prismaCounts["reservable"] = prismaProductVariant.reservable - 1
-      airtableCounts["Reservable Count"] = prismaCounts["reservable"]
+      prismaCounts.reservable = prismaProductVariant.reservable - 1
+      airtableCounts["Reservable Count"] = prismaCounts.reservable
       break
   }
 
   // Increment the count for whichever status we are switching on to
   switch (newStatusOnAirtable) {
     case "Non Reservable":
-      prismaCounts["nonReservable"] = prismaProductVariant.nonReservable + 1
-      airtableCounts["Non-Reservable Count"] = prismaCounts["nonReservable"]
+      prismaCounts.nonReservable = prismaProductVariant.nonReservable + 1
+      airtableCounts["Non-Reservable Count"] = prismaCounts.nonReservable
       break
     case "Reserved":
-      prismaCounts["reserved"] = prismaProductVariant.reserved + 1
-      airtableCounts["Reserved Count"] = prismaCounts["reserved"]
+      prismaCounts.reserved = prismaProductVariant.reserved + 1
+      airtableCounts["Reserved Count"] = prismaCounts.reserved
       break
     case "Reservable":
-      prismaCounts["reservable"] = prismaProductVariant.reservable + 1
-      airtableCounts["Reservable Count"] = prismaCounts["reservable"]
+      prismaCounts.reservable = prismaProductVariant.reservable + 1
+      airtableCounts["Reservable Count"] = prismaCounts.reservable
       break
   }
 

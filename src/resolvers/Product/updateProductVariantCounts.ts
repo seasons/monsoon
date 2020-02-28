@@ -15,9 +15,11 @@ export const updateProductVariantCounts = async (
 
   ctx: Context,
   { dryRun } = { dryRun: false }
-): Promise<
-  [PrismaProduct[], PhysicalProductWithReservationSpecificData[], Function]
-> => {
+): Promise<[
+  PrismaProduct[],
+  PhysicalProductWithReservationSpecificData[],
+  Function
+]> => {
   const prismaProductVariants = await ctx.prisma.productVariants({
     where: { id_in: items },
   })
