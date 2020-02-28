@@ -118,7 +118,8 @@ require("yargs")
     yargs => {
       yargs.positional("destination", {
         type: "string",
-        describe: "Prisma environment to sync to: staging | local",
+        describe: "Prisma environment to sync to",
+        choices: ["staging", "local"],
       })
     },
     async argv => {
@@ -164,8 +165,8 @@ require("yargs")
     yargs => {
       yargs.positional("base", {
         type: "string",
-        describe:
-          "human readable name of base to sync to. Options are staging1 | staging2",
+        describe: "human readable name of base to sync to",
+        choices: ["staging1", "staging2"],
       })
     },
     async argv => {
