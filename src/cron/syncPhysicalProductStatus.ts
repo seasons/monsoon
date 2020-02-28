@@ -45,9 +45,6 @@ export async function syncPhysicalProductStatus() {
         seasonsUID: airtablePhysicalProduct.fields.SUID.text,
       })
 
-      if (airtablePhysicalProduct.id === "recEkF6wQCImLehjW") {
-        console.log("yo")
-      }
       if (!!prismaPhysicalProduct) {
         const newStatusOnAirtable =
           airtablePhysicalProduct.fields["Inventory Status"]
