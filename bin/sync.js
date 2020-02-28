@@ -13,11 +13,29 @@ require("yargs")
     "sync:airtable:prisma <table>",
     "sync airtable data to prisma",
     yargs => {
-      yargs.positional("table", {
-        type: "string",
-        describe:
-          "Name of the airtable base to sync (e.g. products, product-variants, categories)",
-      })
+      yargs
+        .positional("table", {
+          type: "string",
+          describe: "Name of the airtable base to sync",
+          choices: [
+            "all",
+            "brands",
+            "categories",
+            "products",
+            "product-variants",
+            "collections",
+            "collection-groups",
+            "homepage-product-rails",
+          ],
+        })
+        .options({
+          e: {
+            default: "staging",
+            describe: "Prisma environment to sync to",
+            choices: ["local", "staging", "production"],
+            type: "string",
+          },
+        })
     },
     async argv => {
       const envFilePath = await downloadFromS3(
