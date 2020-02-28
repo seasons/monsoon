@@ -9,12 +9,12 @@ import { ProductVariantFieldsResolver } from "./fields/productVariant.fields.res
 import { ProductVariantQueriesResolver } from "./queries/productVariant.queries.resolver"
 import { ProductVariantMutationsResolver } from "./mutations/productVariant.mutations.resolver"
 import { ProductUtilsService } from "./services/product.utils.service"
+import { UserModule } from "../User/user.module"
 
 @Module({
-  imports: [PrismaModule],
+  imports: [PrismaModule, UserModule],
   providers: [
     ProductService,
-    AuthService,
     ProductUtilsService,
     ProductFieldsResolver,
     ProductMutationsResolver,
