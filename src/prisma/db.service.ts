@@ -8,6 +8,6 @@ export class DBService extends Prisma {
       secret: process.env.PRISMA_SECRET,
       endpoint: process.env.PRISMA_ENDPOINT,
       debug: false,
-    });
+    })
   }
 }

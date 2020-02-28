@@ -18,6 +18,8 @@ package:
   exclude:
     - node_modules/flow-bin/**
     - node_modules/detective-typescript/**
+    - node_modules/@nestjs/**
+    - node_modules/@angular-devkit/**
     - node_modules/typescript/**
     - node_modules/aws-sdk/**
   include:
