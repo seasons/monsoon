@@ -98,8 +98,30 @@ export const Homepage = async (parent, args, ctx: Context, info) => {
           const brands = await ctx.db.query.brands(
             {
               ...args,
-              orderBy: "updatedAt_DESC",
-              first: 20,
+              where: {
+                slug_in: [
+                  "acne-studios",
+                  "stone-island",
+                  "stussy",
+                  "comme-des-garcons",
+                  "aime-leon-dore",
+                  "noah",
+                  "cavempt",
+                  "brain-dead",
+                  "john-elliot",
+                  "amiri",
+                  "prada",
+                  "craig-green",
+                  "dries-van-noten",
+                  "cactus-plant-flea-market",
+                  "ambush",
+                  "all-saints",
+                  "heron-preston",
+                  "saturdays-nyc",
+                  "y-3",
+                  "our-legacy",
+                ],
+              },
             },
             `{
               __typename
