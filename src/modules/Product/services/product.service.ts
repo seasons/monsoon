@@ -1,15 +1,16 @@
 import { Injectable } from "@nestjs/common"
 import { DBService } from "../../../prisma/DB.service"
 import { prisma, RecentlyViewedProduct, Product } from "../../../prisma"
-import { productsAlphabetically } from "../utils"
 import { AuthService } from "../../User/auth.service"
 import { head } from "lodash"
+import { ProductUtilsService } from "./product.utils.service"
 
 @Injectable()
 export class ProductService {
   constructor(
     private readonly authService: AuthService,
-    private readonly db: DBService
+    private readonly db: DBService,
+    private readonly productUtils: ProductUtilsService
   ) {}
 
   async getProducts(args, info) {
@@ -25,7 +26,11 @@ export class ProductService {
     // If client wants to sort by name, we will assume that they
     // want to sort by brand name as well
     if (orderBy.includes("name_")) {
-      return await productsAlphabetically(this.db, category, orderBy, sizes)
+      return await this.productUtils.productsAlphabetically(
+        category,
+        orderBy,
+        sizes
+      )
     }
 
     if (args.category && args.category !== "all") {
