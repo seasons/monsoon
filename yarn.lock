@@ -1463,7 +1463,7 @@
     tslib "1.10.0"
     uuid "3.4.0"
 
-"@nestjs/graphql@^6.5.4":
+"@nestjs/graphql@^6.6.1":
   version "6.6.1"
   resolved "https://registry.yarnpkg.com/@nestjs/graphql/-/graphql-6.6.1.tgz#cf0d9852a0e646419170243b1fd391f8ba7cf86c"
   integrity sha512-ArZT32D+R/AAAHB9mkO7yS0OUuvO4vbAW+Bj1MO1kXXrlOPkN7f7oMcmPWofy/cLjNC/4Q3dj3m/6gDsSixekw==
