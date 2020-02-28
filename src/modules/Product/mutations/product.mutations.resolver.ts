@@ -1,6 +1,5 @@
 import { Resolver, Args, Context, Mutation } from "@nestjs/graphql"
 import { ProductService } from "../services/product.service"
-import { DBService } from "../../../prisma/DB.service"
 
 @Resolver("Product")
 export class ProductMutationsResolver {
