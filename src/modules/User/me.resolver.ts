@@ -20,6 +20,7 @@ export class MeResolver {
 
   @Query()
   async me() {
+    console.log("hits")
     return {}
   }
 
