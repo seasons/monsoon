@@ -209,11 +209,15 @@ type Mutation {
   deleteProductRequest(requestID: ID!): ProductRequest!
   validateAddress(input: ValidateAddressInput!): ValidationPayload!
   addProductVariantWant(variantID: ID!): ProductVariantWant!
-  updateCustomerInfo(
-    billingInfo: BillingInfoCreateInput
-    detail: CustomerDetailCreateInput
-  ): Customer! @hasRole(roles: ["Customer"])
-  checkChargebeeUpdate: Boolean
+  updatePaymentAndShipping(billingAddress: AddressInput!, shippingAddress: AddressInput!): Boolean
+}
+
+input AddressInput {
+  city: String!
+  postalCode: String!
+  state: String!
+  street1: String!
+  street2: String
 }
 
 input ReserveItemsOptions {

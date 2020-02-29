@@ -8,6 +8,7 @@ import { getCustomerFromContext, getUserFromContext } from "../../auth/utils"
 import { UserInputError } from "apollo-server"
 import chargebee from "chargebee"
 import get from "lodash.get"
+import { shippoValidateAddress } from "./address"
 import { createOrUpdateAirtableUser } from "../../airtable/createOrUpdateUser"
 import sgMail from "@sendgrid/mail"
 import { User } from "../../prisma"
@@ -80,79 +81,51 @@ export const customer = {
     return returnData
   },
 
-  async updateCustomerInfo(
-    obj,
-    { billingInfo, detail },
-    ctx: Context,
-    info
-  ) {
-
-    // Grab the customer off the context
-    const customer = await getCustomerFromContext(ctx)
-
-    if (!customer) {
-      throw new Error('No customer object found for user')
-    }
-
-    const currentCustomer = ctx.prisma.customer({ id: customer.id })
-
-    // Updates the user's billing information.
-    if (billingInfo) {
-      const currentCustomerBillingInfo = await currentCustomer.billingInfo()
-      if (currentCustomerBillingInfo) {
-        await ctx.prisma.updateBillingInfo({
-          data: billingInfo,
-          where: { id: currentCustomerBillingInfo.id }
-        })
-      } else {
-        await ctx.prisma.updateCustomer({
-          data: { billingInfo: { create: billingInfo } },
-          where: { id: customer.id }
-        })
-      }
-    }
-
-    // Return the updated customer object
-    return await ctx.db.query.customer(
-      { where: { id: customer.id } },
-      info
-    )
-  },
-
-  async checkChargebeeUpdate(
-    obj,
-    { },
-    ctx: Context,
-    info
-  ) {
+  async updatePaymentAndShipping(obj, { billingAddress, shippingAddress }, ctx: Context, info) {
     const user = await getUserFromContext(ctx)
     if (!user) {
-      throw new Error("No user found.")
+      throw new Error("Missing user from context.")
     }
 
     const customer = await getCustomerFromContext(ctx)
-
     if (!customer) {
       throw new Error('No customer object found for user')
     }
 
-    // make the call to chargebee
+    const {
+      city: billingCity,
+      postalCode: billingPostalCode,
+      state: billingState,
+      street1: billingStreet1,
+      street2: billingStreet2
+    } = billingAddress
+    const { isValid: billingAddressIsValid } = await shippoValidateAddress({
+      name: user.firstName,
+      street1: billingStreet1,
+      city: billingCity,
+      state: billingState,
+      zip: billingPostalCode
+    })
+    if (!billingAddressIsValid) {
+      throw new Error("Billing address is invalid")
+    }
+
+    // Configure chargebee before making API call
     chargebee.configure({
       site: process.env.CHARGEBEE_SITE,
       api_key: process.env.CHARGEE_API_KEY,
     })
 
     const cardInfo: any = await new Promise((resolve, reject) => {
+      // Get user's payment information from chargebee
       chargebee.payment_source.list({
         limit: 1,
         "customer_id[is]": user.id,
         "type[is]": "card"
       }).request((error, result) => {
-        console.log("RETRIEVE HOSTED PAGE RESPONSE")
         if (error) {
           reject(error)
         } else {
-          console.log(result)
           const card = get(result, "list[0].payment_source.card")
           if (!card) {
             reject("No card found for customer.")
@@ -166,22 +139,26 @@ export const customer = {
 
     const { brand, expiry_month, expiry_year, first_name, last4, last_name } = cardInfo
 
-    const currentCustomer = ctx.prisma.customer({ id: customer.id })
-    const billingInfoId = await currentCustomer.billingInfo().id()
+    // Update user's billing information
+    const billingInfoId = await ctx.prisma.customer({ id: customer.id })
+      .billingInfo()
+      .id()
     const billingInfoData = {
       brand,
-      name: `${first_name} ${last_name}`,
-      last_digits: last4,
+      city: billingCity,
       expiration_month: expiry_month,
       expiration_year: expiry_year,
+      last_digits: last4,
+      name: `${first_name} ${last_name}`,
+      postal_code: billingPostalCode,
+      state: billingState,
+      street1: billingStreet1,
+      street2: billingStreet2
     }
-
     if (billingInfoId) {
       await ctx.prisma.updateBillingInfo({
         data: billingInfoData,
-        where: {
-          id: billingInfoId,
-        }
+        where: { id: billingInfoId }
       })
     } else {
       await ctx.prisma.updateCustomer({
@@ -190,7 +167,72 @@ export const customer = {
       })
     }
 
-    return true
+    const {
+      city: shippingCity,
+      postalCode: shippingPostalCode,
+      state: shippingState,
+      street1: shippingStreet1,
+      street2: shippingStreet2
+    } = shippingAddress
+    const { isValid: shippingAddressIsValid } = await shippoValidateAddress({
+      name: user.firstName,
+      street1: shippingStreet1,
+      city: shippingCity,
+      state: shippingState,
+      zip: shippingPostalCode
+    })
+    if (!shippingAddressIsValid) {
+      throw new Error("Shipping address is invalid")
+    }
+
+    // Update the user's shipping address
+    const detailID = await ctx.prisma.customer({ id: customer.id })
+      .detail()
+      .id()
+    const shippingAddressData = {
+      city: shippingCity,
+      zipCode: shippingPostalCode,
+      state: shippingState,
+      address1: shippingStreet1,
+      address2: shippingStreet2
+    }
+    const createShippingAddressData = {
+      create: {
+        ...shippingAddress,
+        slug: `${user.firstName}-${user.lastName}-shipping-address`,
+        name: `${user.firstName} ${user.lastName}`,
+      }
+    }
+    if (detailID) {
+      const shippingAddressID = await ctx.prisma.customer({ id: customer.id })
+        .detail()
+        .shippingAddress()
+        .id()
+      if (shippingAddressID) {
+        await ctx.prisma.updateLocation({
+          data: shippingAddressData,
+          where: { id: shippingAddressID }
+        })
+      } else {
+        await ctx.prisma.updateCustomerDetail({
+          data: { shippingAddress: createShippingAddressData },
+          where: { id: detailID }
+        })
+      }
+    } else {
+      await ctx.prisma.updateCustomer({
+        data: {
+          detail: {
+            create: {
+              shippingAddress: createShippingAddressData
+            }
+          }
+        },
+        where: { id: customer.id }
+      })
+    }
+
+    return null
   },
 
   async acknowledgeCompletedChargebeeHostedCheckout(
