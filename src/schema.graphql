@@ -121,8 +121,8 @@ type Query {
   collection(where: CollectionWhereUniqueInput!): Collection
   faq: Faq
   homepage: Homepage
-  chargebeeCheckout(planID: PlanID!, userIDHash: String!): ChargebeeCheckout
-  chargebeeUpdatePaymentPage(planID: PlanID!): ChargebeeCheckout
+  chargebeeCheckout(planID: PlanID!, userIDHash: String!): ChargebeeHostedPagePayload
+  chargebeeUpdatePaymentPage(planID: PlanID!): ChargebeeHostedPagePayload
   homepageProductRail(
     where: HomepageProductRailWhereUniqueInput!
   ): HomepageProductRail
@@ -167,7 +167,7 @@ type Query {
   search(query: String!, options: SearchOptions): [SearchResult]!
 }
 
-type ChargebeeCheckout {
+type ChargebeeHostedPagePayload {
   created_at: DateTime!
   embed: Boolean!
   expires_at: Int!
