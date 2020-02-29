@@ -7,6 +7,7 @@ import { sendTransactionalEmail } from "../../sendTransactionalEmail"
 import { getCustomerFromContext, getUserFromContext } from "../../auth/utils"
 import { UserInputError } from "apollo-server"
 import chargebee from "chargebee"
+import zipcodes from "zipcodes"
 import get from "lodash.get"
 import { shippoValidateAddress } from "./address"
 import { createOrUpdateAirtableUser } from "../../airtable/createOrUpdateUser"
@@ -116,6 +117,26 @@ export const customer = {
       api_key: process.env.CHARGEE_API_KEY,
     })
 
+    // Update user's billing address on chargebee
+    chargebee.customer.update_billing_info(user.id, {
+      billing_address: {
+        line1: billingStreet1,
+        line2: billingStreet2,
+        city: billingCity,
+        state: billingState,
+        zip: billingPostalCode,
+      }
+    }).request((error, result) => {
+      if (error) {
+        throw new Error(JSON.stringify(error))
+      } else {
+        const chargebeeBillingAddress = get(result, "customer.billing_address")
+        if (!chargebeeBillingAddress) {
+          throw new Error("Failed to update billing address on chargebee.")
+        }
+      }
+    })
+
     const cardInfo: any = await new Promise((resolve, reject) => {
       // Get user's payment information from chargebee
       chargebee.payment_source.list({
@@ -183,6 +204,12 @@ export const customer = {
     })
     if (!shippingAddressIsValid) {
       throw new Error("Shipping address is invalid")
+    }
+
+    const zipcodesData = zipcodes.lookup(parseInt(shippingPostalCode))
+    const validCities = ["Brooklyn", "New York", "Queens", "The Bronx"]
+    if (zipcodesData?.state !== "NY" || !validCities.includes(zipcodesData?.city)) {
+      throw new Error("SHIPPING_ADDRESS_NOT_NYC")
     }
 
     // Update the user's shipping address
