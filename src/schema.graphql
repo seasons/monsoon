@@ -122,7 +122,6 @@ type Query {
   faq: Faq
   homepage: Homepage
   chargebeeCheckout(planID: PlanID!, userIDHash: String!): ChargebeeCheckout
-  chargebeeHostedPage(hostedPageID: String!): ChargebeeCheckout
   chargebeeUpdatePaymentPage(planID: PlanID!): ChargebeeCheckout
   homepageProductRail(
     where: HomepageProductRailWhereUniqueInput!

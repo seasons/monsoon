@@ -1,19 +1,19 @@
+import { UserInputError } from "apollo-server"
+import chargebee from "chargebee"
+import get from "lodash.get"
+import sgMail from "@sendgrid/mail"
+import zipcodes from "zipcodes"
+import { shippoValidateAddress } from "./address"
+import { createOrUpdateAirtableUser } from "../../airtable/createOrUpdateUser"
+import { getCustomerFromContext, getUserFromContext } from "../../auth/utils"
+import { emails } from "../../emails"
+import { User } from "../../prisma"
+import { sendTransactionalEmail } from "../../sendTransactionalEmail"
 import {
   Context,
   setCustomerPrismaStatus,
   getCustomerFromUserID,
 } from "../../utils"
-import { sendTransactionalEmail } from "../../sendTransactionalEmail"
-import { getCustomerFromContext, getUserFromContext } from "../../auth/utils"
-import { UserInputError } from "apollo-server"
-import chargebee from "chargebee"
-import zipcodes from "zipcodes"
-import get from "lodash.get"
-import { shippoValidateAddress } from "./address"
-import { createOrUpdateAirtableUser } from "../../airtable/createOrUpdateUser"
-import sgMail from "@sendgrid/mail"
-import { User } from "../../prisma"
-import { emails } from "../../emails"
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 chargebee.configure({
@@ -24,7 +24,7 @@ chargebee.configure({
 export const customer = {
   async addCustomerDetails(
     obj,
-    { event, details, status },
+    { details, event, status },
     ctx: Context,
     info
   ) {
@@ -269,22 +269,13 @@ export const customer = {
     info
   ) {
     let prismaCustomer
-    // make the call to chargebee
-    chargebee.configure({
-      site: process.env.CHARGEBEE_SITE,
-      api_key: process.env.CHARGEE_API_KEY,
-    })
     try {
-      console.log("HOST PAGE ID:", hostedPageID)
       await chargebee.hosted_page
         .acknowledge(hostedPageID)
         .request(async function (error, result) {
-          console.log("ACKNOWLEDGING")
           if (error) {
-            console.log("ERROR:", error)
             throw error
           } else {
-            console.log("NO ERROR")
             var {
               subscription,
               card,

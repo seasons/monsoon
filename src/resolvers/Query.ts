@@ -129,43 +129,6 @@ export const Query = {
     return hostedPage
   },
 
-  chargebeeHostedPage: async (parent, { hostedPageID }, ctx, info) => {
-    const user = await getUserFromContext(ctx)
-    if (!user) {
-      throw new Error("No user found.")
-    }
-
-    const customer = await getCustomerFromContext(ctx)
-    if (!customer) {
-      throw new Error("User is not a customer.")
-    }
-
-    // make the call to chargebee
-    chargebee.configure({
-      site: process.env.CHARGEBEE_SITE,
-      api_key: process.env.CHARGEE_API_KEY,
-    })
-
-    const hostedPage = await new Promise((resolve, reject) => {
-      chargebee.hosted_page
-        .retrieve(hostedPageID)
-        .request((error, result) => {
-          console.log("RETRIEVE HOSTED PAGE RESPONSE")
-          if (error) {
-            reject(error)
-          } else {
-            resolve(result.hosted_page)
-          }
-        })
-    }).catch(error => {
-      throw new Error(JSON.stringify(error))
-    })
-
-    console.log("RETRIEVED HOSTED PAGE:", hostedPage)
-
-    return hostedPage
-  },
-
   chargebeeUpdatePaymentPage: async (parent, { planID }, ctx, info) => {
     const user = await getUserFromContext(ctx)
     if (!user) {
