@@ -156,8 +156,6 @@ export const Query = {
       api_key: process.env.CHARGEE_API_KEY,
     })
 
-    console.log("ABOUT TO GET PAGE")
-
     const hostedPage = await new Promise((resolve, reject) => {
       chargebee.hosted_page
         .manage_payment_sources({
@@ -166,7 +164,6 @@ export const Query = {
           }
         })
         .request((error, result) => {
-          console.log("CHARGEEE RESPONSE")
           if (error) {
             reject(error)
           } else {
@@ -176,8 +173,6 @@ export const Query = {
     }).catch(error => {
       throw new Error(JSON.stringify(error))
     })
-
-    console.log("GOT PAGE:", hostedPage)
 
     return hostedPage
   },
