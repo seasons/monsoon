@@ -54,27 +54,36 @@ export const Query = {
     ctx: Context,
     info
   ) => {
-    // Is there a user in the db that corresponds to the given userIDHash?
-    const allUsers = await ctx.prisma.users()
-    let targetUser
-    for (const user of allUsers) {
-      let thisUsersIDHash = getUserIDHash(user.id)
-      if (thisUsersIDHash === userIDHash) {
-        targetUser = user
-      }
-    }
-    if (targetUser === undefined) {
-      throw new Error(`no user found for idHash: ${userIDHash}`)
-    }
+    // // Is there a user in the db that corresponds to the given userIDHash?
+    // const allUsers = await ctx.prisma.users()
+    // let targetUser
+    // for (const user of allUsers) {
+    //   let thisUsersIDHash = getUserIDHash(user.id)
+    //   if (thisUsersIDHash === userIDHash) {
+    //     targetUser = user
+    //   }
+    // }
+    // if (targetUser === undefined) {
+    //   throw new Error(`no user found for idHash: ${userIDHash}`)
+    // }
 
+    const user = await getUserFromContext(ctx)
+    if (!user) {
+      throw new Error("No user found.")
+    }
     // Get email, firstName, lastName, phoneNumber of targetUser
-    const { email, firstName, lastName } = targetUser
-    const correspondingCustomer = await getCustomerFromUserID(
-      ctx.prisma,
-      targetUser.id
-    )
+    const { email, firstName, lastName } = user
+
+    const customer = await getCustomerFromContext(ctx)
+    if (!customer) {
+      throw new Error("User is not a customer.")
+    }
+    // const correspondingCustomer = await getCustomerFromUserID(
+    //   ctx.prisma,
+    //   targetUser.id
+    // )
     const { phoneNumber } = await ctx.prisma
-      .customer({ id: correspondingCustomer.id })
+      .customer({ id: customer.id })
       .detail()
 
     // translate the passed planID into a chargebee-readable version
@@ -99,7 +108,7 @@ export const Query = {
             plan_id: truePlanID,
           },
           customer: {
-            id: targetUser.id,
+            id: user.id,
             email,
             first_name: firstName,
             last_name: lastName,
@@ -117,14 +126,51 @@ export const Query = {
       throw new Error(JSON.stringify(error))
     })
 
-    // Track the selection
-    ctx.analytics.track({
-      userId: targetUser.id,
-      event: "Opened Checkout",
-      properties: {
-        plan: planID,
-      },
+    // // Track the selection
+    // ctx.analytics.track({
+    //   userId: targetUser.id,
+    //   event: "Opened Checkout",
+    //   properties: {
+    //     plan: planID,
+    //   },
+    // })
+
+    return hostedPage
+  },
+
+  chargebeeHostedPage: async (parent, { hostedPageID }, ctx, info) => {
+    const user = await getUserFromContext(ctx)
+    if (!user) {
+      throw new Error("No user found.")
+    }
+
+    const customer = await getCustomerFromContext(ctx)
+    if (!customer) {
+      throw new Error("User is not a customer.")
+    }
+
+    // make the call to chargebee
+    chargebee.configure({
+      site: process.env.CHARGEBEE_SITE,
+      api_key: process.env.CHARGEE_API_KEY,
     })
+
+    const hostedPage = await new Promise((resolve, reject) => {
+      chargebee.hosted_page
+        .retrieve(hostedPageID)
+        .request((error, result) => {
+          console.log("RETRIEVE HOSTED PAGE RESPONSE")
+          if (error) {
+            reject(error)
+          } else {
+            resolve(result.hosted_page)
+          }
+        })
+    }).catch(error => {
+      throw new Error(JSON.stringify(error))
+    })
+
+    console.log("RETRIEVED HOSTED PAGE:", hostedPage)
 
     return hostedPage
   },
@@ -164,6 +210,7 @@ export const Query = {
           customer: {
             id: user.id,
           },
+          redirect_url: "https://google.com"
         })
         .request((error, result) => {
           console.log("CHARGEEE RESPONSE")

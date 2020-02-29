@@ -122,6 +122,7 @@ type Query {
   faq: Faq
   homepage: Homepage
   chargebeeCheckout(planID: PlanID!, userIDHash: String!): ChargebeeCheckout
+  chargebeeHostedPage(hostedPageID: String!): ChargebeeCheckout
   chargebeeUpdatePaymentPage(planID: PlanID!): ChargebeeCheckout
   homepageProductRail(
     where: HomepageProductRailWhereUniqueInput!
@@ -212,6 +213,7 @@ type Mutation {
     billingInfo: BillingInfoCreateInput
     detail: CustomerDetailCreateInput
   ): Customer! @hasRole(roles: ["Customer"])
+  checkChargebeeUpdate: Boolean
 }
 
 input ReserveItemsOptions {

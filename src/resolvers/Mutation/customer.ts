@@ -7,6 +7,7 @@ import { sendTransactionalEmail } from "../../sendTransactionalEmail"
 import { getCustomerFromContext, getUserFromContext } from "../../auth/utils"
 import { UserInputError } from "apollo-server"
 import chargebee from "chargebee"
+import get from "lodash.get"
 import { createOrUpdateAirtableUser } from "../../airtable/createOrUpdateUser"
 import sgMail from "@sendgrid/mail"
 import { User } from "../../prisma"
@@ -118,6 +119,80 @@ export const customer = {
     )
   },
 
+  async checkChargebeeUpdate(
+    obj,
+    { },
+    ctx: Context,
+    info
+  ) {
+    const user = await getUserFromContext(ctx)
+    if (!user) {
+      throw new Error("No user found.")
+    }
+
+    const customer = await getCustomerFromContext(ctx)
+
+    if (!customer) {
+      throw new Error('No customer object found for user')
+    }
+
+    // make the call to chargebee
+    chargebee.configure({
+      site: process.env.CHARGEBEE_SITE,
+      api_key: process.env.CHARGEE_API_KEY,
+    })
+
+    const cardInfo: any = await new Promise((resolve, reject) => {
+      chargebee.payment_source.list({
+        limit: 1,
+        "customer_id[is]": user.id,
+        "type[is]": "card"
+      }).request((error, result) => {
+        console.log("RETRIEVE HOSTED PAGE RESPONSE")
+        if (error) {
+          reject(error)
+        } else {
+          console.log(result)
+          const card = get(result, "list[0].payment_source.card")
+          if (!card) {
+            reject("No card found for customer.")
+          }
+          resolve(card)
+        }
+      })
+    }).catch(error => {
+      throw new Error(JSON.stringify(error))
+    })
+
+    const { brand, expiry_month, expiry_year, first_name, last4, last_name } = cardInfo
+
+    const currentCustomer = ctx.prisma.customer({ id: customer.id })
+    const billingInfoId = await currentCustomer.billingInfo().id()
+    const billingInfoData = {
+      brand,
+      name: `${first_name} ${last_name}`,
+      last_digits: last4,
+      expiration_month: expiry_month,
+      expiration_year: expiry_year,
+    }
+
+    if (billingInfoId) {
+      await ctx.prisma.updateBillingInfo({
+        data: billingInfoData,
+        where: {
+          id: billingInfoId,
+        }
+      })
+    } else {
+      await ctx.prisma.updateCustomer({
+        data: { billingInfo: { create: billingInfoData } },
+        where: { id: customer.id }
+      })
+    }
+
+    return true
+  },
+
   async acknowledgeCompletedChargebeeHostedCheckout(
     obj,
     { hostedPageID },
@@ -125,6 +200,11 @@ export const customer = {
     info
   ) {
     let prismaCustomer
+    // make the call to chargebee
+    chargebee.configure({
+      site: process.env.CHARGEBEE_SITE,
+      api_key: process.env.CHARGEE_API_KEY,
+    })
     try {
       console.log("HOST PAGE ID:", hostedPageID)
       await chargebee.hosted_page
