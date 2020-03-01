@@ -1,7 +1,6 @@
-import { graphqlTestCall } from '../../tests/utils/gqlTestClient';
+import { graphqlTestCall } from '../../../tests/utils/gqlTestClient';
 
 describe('MeResolver', () => {
-
   describe("Me", () => {
     it("allows logged in user fetch their information", async () => {
       const response = await graphqlTestCall(

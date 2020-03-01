@@ -1,5 +1,5 @@
 import { Resolver, ResolveProperty, Context, Parent } from "@nestjs/graphql"
-import { AuthService } from "../../User/auth.service"
+import { AuthService } from "../../User/services/auth.service"
 import { PrismaClientService } from "../../../prisma/client.service"
 
 @Resolver("ProductVariant")
