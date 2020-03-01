@@ -14,7 +14,7 @@
   "scripts": {
     "build": "rimraf dist && tsc",
     "debug": "dotenv -- nodemon -e ts,graphql -x node --inspect -r dotenv/config -r ts-node/register src/index.ts",
-    "healthCheck:production": "node -r dotenv/config -r ts-node/register scripts/airtableToPrismaHealthCheck.ts -- dotenv_config_path=.env.production",
+    "healthCheck:production": "node -r dotenv/config -r ts-node/register src/cron/airtableToPrismaHealthCheck.ts -- dotenv_config_path=.env.production",
     "lint": "yarn tslint -c 'tslint.json' 'src/**/*.ts'",
     "postinstall": "npm run build",
     "prettier-project": "prettier --write 'src/**/*.{js,ts,tsx,md,graphql}'",
@@ -30,7 +30,7 @@
     "sls:deploy-production": "serverless deploy --verbose --stage prod --region us-east-1 --env=production",
     "sls:deploy-staging": "serverless deploy --verbose --stage qa --region us-east-1 --env=staging",
     "sls:login": "serverless login",
-    "sls:start": "serverless offline",
+    "sls:start": "serverless offline --env=staging",
     "start": "dotenv -- nodemon -e ts,graphql -x ts-node src/index.ts",
     "test": "jest"
   },
@@ -41,6 +41,7 @@
     "@sendgrid/mail": "^6.4.0",
     "@sentry/node": "^5.10.2",
     "@sentry/types": "^5.10.0",
+    "@slack/web-api": "^5.7.0",
     "@types/auth0": "^2.9.22",
     "@types/request": "^2.48.3",
     "airtable": "^0.7.1",

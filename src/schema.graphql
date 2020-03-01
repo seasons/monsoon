@@ -78,6 +78,16 @@ type ProductVariant {
 
 type Query {
   me: Me @isAuthenticated
+  brand(where: BrandWhereUniqueInput!): Brand
+  brands(
+    where: BrandWhereInput
+    orderBy: BrandOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Brand]!
   products(
     category: String
     where: ProductWhereInput
@@ -296,12 +306,13 @@ type Me {
   savedItems: [BagItem!]!
 }
 
-union HomepageResult = HomepageProductRail | Product | Collection
+union HomepageResult = Product | Collection | Brand
 
 enum HomePageSectionType {
   CollectionGroups
   Products
   HomepageProductRails
+  Brands
 }
 
 enum PlanID {
