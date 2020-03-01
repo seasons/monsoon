@@ -133,7 +133,7 @@ export const Query = {
     return hostedPage
   },
 
-  chargebeeUpdatePaymentPage: async (parent, { planID }, ctx, info) => {
+  chargebeeUpdatePaymentPage: async (parent, { }, ctx, info) => {
     const user = await getUserFromContext(ctx)
     if (!user) {
       throw new Error("No user found.")
@@ -142,16 +142,6 @@ export const Query = {
     const customer = await getCustomerFromContext(ctx)
     if (!customer) {
       throw new Error("User is not a customer.")
-    }
-
-    const { email, firstName, lastName } = user
-    const { phoneNumber } = await ctx.prisma
-      .customer({ id: customer.id })
-      .detail()
-
-    const chargebeePlanID = get(CHARGEBEE_PLAN_IDS, planID)
-    if (!chargebeePlanID) {
-      throw new Error("Unrecognized planID")
     }
 
     // make the call to chargebee
