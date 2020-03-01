@@ -1,12 +1,18 @@
 import { Module } from "@nestjs/common"
-import { MeResolver } from "./me.resolver"
 import { PrismaModule } from "../../prisma/prisma.module"
-import { AuthResolver } from "./auth.resolver"
-import { AuthService } from "./auth.service"
+import { AuthMutationsResolver } from "./mutations/auth.mutations"
+import { AuthService } from "./services/auth.service"
+import { MeQueriesResolver } from "./queries/me.queries"
+import { MeFieldsResolver } from "./fields/me.fields"
 
 @Module({
   imports: [PrismaModule],
-  providers: [AuthService, MeResolver, AuthResolver],
+  providers: [
+    AuthService,
+    MeFieldsResolver,
+    MeQueriesResolver,
+    AuthMutationsResolver
+  ],
   exports: [AuthService],
 })
 export class UserModule {}

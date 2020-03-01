@@ -6,23 +6,17 @@ import {
   Info,
 } from "@nestjs/graphql"
 import { head } from "lodash"
-import { prisma } from "../../prisma"
-import { AuthService } from "./auth.service"
-import { User } from "./user.decorator"
-import { DBService } from "../../prisma/DB.service"
+import { prisma } from "../../../prisma"
+import { AuthService } from "../services/auth.service"
+import { User } from "../user.decorator"
+import { DBService } from "../../../prisma/DB.service"
 
 @Resolver("Me")
-export class MeResolver {
+export class MeFieldsResolver {
   constructor(
     private readonly authService: AuthService,
     private readonly db: DBService
   ) {}
-
-  @Query()
-  async me() {
-    console.log("hits")
-    return {}
-  }
 
   @ResolveProperty()
   async user(@User() requestUser) {

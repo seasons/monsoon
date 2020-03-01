@@ -1,6 +1,5 @@
 import { Module } from "@nestjs/common"
 import { PrismaModule } from "../../prisma/prisma.module"
-import { AuthService } from "../User/auth.service"
 import { ProductService } from "./services/product.service"
 import { ProductFieldsResolver } from "./fields/product.fields.resolver"
 import { ProductQueriesResolver } from "./queries/product.queries.resolver"
