@@ -5,6 +5,7 @@ import {
   HomepageModule,
   ProductModule,
   CollectionModule,
+  FAQModule,
   directiveResolvers
 } from "./modules"
 import { importSchema } from "graphql-import"
@@ -30,6 +31,7 @@ import { importSchema } from "graphql-import"
     HomepageModule,
     ProductModule,
     CollectionModule,
+    FAQModule,
   ],
 })
 export class AppModule {}
