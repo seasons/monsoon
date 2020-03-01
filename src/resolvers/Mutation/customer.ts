@@ -84,14 +84,7 @@ export const customer = {
 
   async updatePaymentAndShipping(obj, { billingAddress, shippingAddress }, ctx: Context, info) {
     const user = await getUserFromContext(ctx)
-    if (!user) {
-      throw new Error("Missing user from context.")
-    }
-
     const customer = await getCustomerFromContext(ctx)
-    if (!customer) {
-      throw new Error('No customer object found for user')
-    }
 
     const {
       city: billingCity,

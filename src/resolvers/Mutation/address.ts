@@ -27,11 +27,10 @@ export const address = {
     const { email, location } = input
 
     const shippoAddress = locationDataToShippoAddress(location)
-    const result = await shippoValidateAddress({
+    return await shippoValidateAddress({
       ...shippoAddress,
       email,
       name: location.name,
     })
-    return result
   },
 }
