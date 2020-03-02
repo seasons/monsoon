@@ -1,7 +1,7 @@
 import { Resolver, Parent, ResolveProperty, Context, Args } from "@nestjs/graphql"
-import { SectionTitle } from "./homepage.resolver"
-import { DBService } from "../../prisma/DB.service"
-import { prisma } from "../../prisma"
+import { SectionTitle } from "./homepage.fields.resolver"
+import { DBService } from "../../../prisma/DB.service"
+import { prisma } from "../../../prisma"
 
 // FIXME: This is being used because currently info is lacking the __typename, add __typename to info
 const ProductFragment = `{
@@ -25,7 +25,7 @@ const ProductFragment = `{
 }`
 
 @Resolver("HomepageSection")
-export class HomepageSectionResolver {
+export class HomepageSectionFieldsResolver {
   constructor(private readonly dbService: DBService) {}
 
   @ResolveProperty()
