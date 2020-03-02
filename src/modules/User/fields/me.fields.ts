@@ -8,7 +8,7 @@ import {
 import { head } from "lodash"
 import { prisma } from "../../../prisma"
 import { AuthService } from "../services/auth.service"
-import { User } from "../user.decorator"
+import { User } from "../../../nest_decorators"
 import { DBService } from "../../../prisma/DB.service"
 
 @Resolver("Me")

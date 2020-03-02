@@ -1,71 +1,30 @@
 import { Resolver, Query, Args, Context } from "@nestjs/graphql"
 import { PrismaClientService } from "../../../prisma/client.service"
-import { AuthService } from "../../User/auth.service"
-import chargebee from "chargebee"
-import { User } from "../../User/user.decorator"
+import { Customer, User } from "../../../nest_decorators"
+import { PaymentService } from "../services/payment.services"
 
-
-export enum SectionTitle {
-  FeaturedCollection = "Featured collection",
-  JustAdded = "Just added",
-  RecentlyViewed = "Recently viewed",
-}
-
-@Resolver("Chargebee")
+@Resolver()
 export class ChargebeeQueriesResolver {
   constructor(
-    private readonly authService: AuthService,
+    private readonly paymentService: PaymentService,
     private readonly prisma: PrismaClientService
   ) {}
 
   @Query()
-  async chargebeeCheckout(@Args() { planID }, @Context() ctx, @User() user) {
-    // Get email, firstName, lastName, phoneNumber of targetUser
+  async chargebeeCheckout(@Args() { planID }, @Context() ctx, @User() user, @Customer() customer) {
     const { email, firstName, lastName } = user
-    const correspondingCustomer = await this.authService.getCustomerFromUserID(user.id)
     const { phoneNumber } = await this.prisma.client
-      .customer({ id: correspondingCustomer.id })
+      .customer({ id: customer.id })
       .detail()
 
-    // translate the passed planID into a chargebee-readable version
-    let truePlanID
-    if (planID === "AllAccess") {
-      truePlanID = "all-access"
-    } else if (planID === "Essential") {
-      truePlanID = "essential"
-    } else {
-      throw new Error("unrecognized planID")
-    }
-
-    // make the call to chargebee
-    chargebee.configure({
-      site: process.env.CHARGEBEE_SITE,
-      api_key: process.env.CHARGEE_API_KEY,
-    })
-    const hostedPage = await new Promise((resolve, reject) => {
-      chargebee.hosted_page
-        .checkout_new({
-          subscription: {
-            plan_id: truePlanID,
-          },
-          customer: {
-            id: user.id,
-            email,
-            first_name: firstName,
-            last_name: lastName,
-            phone: phoneNumber,
-          },
-        })
-        .request((error, result) => {
-          if (error) {
-            reject(error)
-          } else {
-            resolve(result.hosted_page)
-          }
-        })
-    }).catch(error => {
-      throw new Error(JSON.stringify(error))
-    })
+    const hostedPage = await this.paymentService.getHostedCheckoutPage(
+      planID,
+      user.id,
+      email,
+      firstName,
+      lastName,
+      phoneNumber
+    )
 
     // Track the selection
     ctx.analytics.track({
