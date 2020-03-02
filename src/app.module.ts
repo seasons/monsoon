@@ -5,9 +5,13 @@ import {
   HomepageModule,
   ProductModule,
   CollectionModule,
+  PaymentModule,
   directiveResolvers
 } from "./modules"
 import { importSchema } from "graphql-import"
+import Analytics from "analytics-node"
+
+const analytics = new Analytics(process.env.SEGMENT_MONSOON_WRITE_KEY)
 
 @Module({
   imports: [
@@ -22,7 +26,10 @@ import { importSchema } from "graphql-import"
             requireResolversForResolveType: false,
           },
           directiveResolvers,
-          context: ({ req }) => ({ req }),
+          context: ({ req }) => ({
+            analytics,
+            req
+          }),
         } as GqlModuleOptions
       },
     }),
@@ -30,6 +37,7 @@ import { importSchema } from "graphql-import"
     HomepageModule,
     ProductModule,
     CollectionModule,
+    PaymentModule,
   ],
 })
 export class AppModule {}
