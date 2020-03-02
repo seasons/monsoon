@@ -5,6 +5,7 @@ import {
   HomepageModule,
   ProductModule,
   CollectionModule,
+  FAQModule,
   PaymentModule,
   directiveResolvers
 } from "./modules"
@@ -37,6 +38,7 @@ const analytics = new Analytics(process.env.SEGMENT_MONSOON_WRITE_KEY)
     HomepageModule,
     ProductModule,
     CollectionModule,
+    FAQModule,
     PaymentModule,
   ],
 })
