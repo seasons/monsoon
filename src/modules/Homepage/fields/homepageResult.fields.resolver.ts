@@ -1,9 +1,9 @@
-import { Resolver, ResolveProperty } from "@nestjs/graphql"
+import { Resolver, ResolveProperty, Parent } from "@nestjs/graphql"
 
 @Resolver('HomepageResult')
-export class HomepageResultResolver {
+export class HomepageResultFieldsResolver {
   @ResolveProperty()
-  __resolveType(obj) {
+  __resolveType(@Parent() obj) {
     if (obj.brand || obj.colorway) {
       return "Product"
     } else if (obj.subTitle) {

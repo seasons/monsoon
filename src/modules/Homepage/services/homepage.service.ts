@@ -1,5 +1,5 @@
-import { Resolver, ResolveProperty, Query, Context } from "@nestjs/graphql"
-import { DBService } from "../../prisma/DB.service"
+import { Injectable } from "@nestjs/common"
+import { DBService } from "../../../prisma/DB.service"
 
 export enum SectionTitle {
   FeaturedCollection = "Featured collection",
@@ -7,39 +7,33 @@ export enum SectionTitle {
   RecentlyViewed = "Recently viewed",
 }
 
-@Resolver("Homepage")
-export class HomepageResolver {
-  constructor(private readonly dbService: DBService) {}
+@Injectable()
+export class HomepageService {
+  constructor(private readonly db: DBService) {}
 
-  @Query()
-  async homepage() {
-    return {}
-  }
-
-  @ResolveProperty()
-  async sections() {
-    const productRails = await this.dbService.query.homepageProductRails(
+  async getHomepageSections() {
+    const productRails = await this.db.query.homepageProductRails(
       {},
       `{
         name
       }`
     )
 
-    const sections = [
+    const sections: any = [
       {
         type: "CollectionGroups",
         __typename: "HomepageSection",
-        title: SectionTitle[SectionTitle.FeaturedCollection]
+        title: SectionTitle.FeaturedCollection
       },
       {
         type: "Products",
         __typename: "HomepageSection",
-        title: SectionTitle[SectionTitle.JustAdded]
+        title: SectionTitle.JustAdded
       },
       {
         type: "Products",
         __typename: "HomepageSection",
-        title: SectionTitle[SectionTitle.RecentlyViewed]
+        title: SectionTitle.RecentlyViewed
       },
     ]
 
@@ -54,5 +48,3 @@ export class HomepageResolver {
     return sections
   }
 }
-
-

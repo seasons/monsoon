@@ -1,14 +1,16 @@
 import { graphql } from "graphql"
-import { createPrismaMock } from "./createPrismaMock"
 import { schema } from "../../schema"
-import { userMock } from "../mocks"
+import {
+  userMock,
+  customerMock,
+  detailsMock
+ } from '../mocks'
 
-// add context to this when we have authentication in place
-export const graphqlTestCall = async (
+export async function graphqlTestCall(
   query: any,
   variables?: any,
-  user = userMock
-) => {
+  user = userMock,
+) {
   const prisma = createPrismaMock({ user })
   return graphql(
     schema,
@@ -25,4 +27,23 @@ export const graphqlTestCall = async (
     },
     variables
   )
+}
+
+function createPrismaMock({ user }) {
+  return {
+    user: jest.fn(() => user),
+
+    customer: jest.fn(() => ({
+      ...customerMock,
+      detail: jest.fn(() => detailsMock),
+    })),
+    customers: jest.fn(() => [customerMock]),
+
+    updateCustomerDetail: jest.fn(() => Promise.resolve()),
+    updateCustomer: jest.fn(() => Promise.resolve()),
+
+    $exists: {
+      user: jest.fn(() => true),
+    },
+  }
 }

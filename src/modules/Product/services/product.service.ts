@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common"
 import { DBService } from "../../../prisma/DB.service"
 import { prisma, RecentlyViewedProduct, Product } from "../../../prisma"
-import { AuthService } from "../../User/auth.service"
+import { AuthService } from "../../User/services/auth.service"
 import { head } from "lodash"
 import { ProductUtilsService } from "./product.utils.service"
 

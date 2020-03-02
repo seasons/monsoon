@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import request from "request"
-import { prisma, Customer, User, CustomerDetail } from '../../prisma';
-import { customer } from '../../resolvers/Mutation/customer';
+import { prisma, Customer, User, CustomerDetail } from '../../../prisma';
 
 const PW_STRENGTH_RULES_URL =
   "https://manage.auth0.com/dashboard/us/seasons/connections/database/con_btTULQOf6kAxxbCz/security"

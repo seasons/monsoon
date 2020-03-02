@@ -1,9 +1,9 @@
 import { Module } from "@nestjs/common"
 import { PrismaModule } from "../../prisma/prisma.module"
-import { CollectionResolver } from "./collection.resolver"
+import { CollectionQueriesResolver } from "./queries/collection.queries.resolver"
 
 @Module({
   imports: [PrismaModule],
-  providers: [CollectionResolver],
+  providers: [CollectionQueriesResolver],
 })
 export class CollectionModule {}

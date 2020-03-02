@@ -1,17 +1,23 @@
 import { Module } from "@nestjs/common"
-import { HomepageResolver } from "./homepage.resolver"
-import { HomepageSectionResolver } from "./homepageSection.resolver"
-import { HomepageResultResolver } from "./homepageResult.resolver"
-import { HomepageProductRailResolver } from "./homepageProductRail.resolver"
+import { HomepageFieldsResolver } from "./fields/homepage.fields.resolver"
+import { HomepageQueriesResolver } from "./queries/homepage.queries.resolver"
+import { HomepageSectionFieldsResolver } from "./fields/homepageSection.fields.resolver"
+import { HomepageResultFieldsResolver } from "./fields/homepageResult.fields.resolver"
+import { HomepageProductRailQueriesResolver } from "./queries/homepageProductRail.queries.resolver"
 import { PrismaModule } from "../../prisma/prisma.module"
+import { HomepageService } from "./services/homepage.service"
+import { HomepageSectionService } from "./services/homepageSection.service"
 
 @Module({
   imports: [PrismaModule],
   providers: [
-    HomepageResolver,
-    HomepageSectionResolver,
-    HomepageResultResolver,
-    HomepageProductRailResolver
+    HomepageFieldsResolver,
+    HomepageQueriesResolver,
+    HomepageSectionFieldsResolver,
+    HomepageResultFieldsResolver,
+    HomepageProductRailQueriesResolver,
+    HomepageService,
+    HomepageSectionService
   ],
 })
 export class HomepageModule {}
