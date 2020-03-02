@@ -10,5 +10,3 @@ export class HomepageFieldsResolver {
     return await this.homepageService.getHomepageSections()
   }
 }
-
-

@@ -20,11 +20,7 @@ export class MeResolver {
 
   @Query()
   async me() {
-<<<<<<< HEAD
     console.log("HERE")
-=======
-    console.log("hits")
->>>>>>> Add test to me query
     return {}
   }
 
