@@ -5,6 +5,8 @@ import { HomepageSectionFieldsResolver } from "./fields/homepageSection.fields.r
 import { HomepageResultFieldsResolver } from "./fields/homepageResult.fields.resolver"
 import { HomepageProductRailQueriesResolver } from "./queries/homepageProductRail.queries.resolver"
 import { PrismaModule } from "../../prisma/prisma.module"
+import { HomepageService } from "./services/homepage.service"
+import { HomepageSectionService } from "./services/homepageSection.service"
 
 @Module({
   imports: [PrismaModule],
@@ -13,7 +15,9 @@ import { PrismaModule } from "../../prisma/prisma.module"
     HomepageQueriesResolver,
     HomepageSectionFieldsResolver,
     HomepageResultFieldsResolver,
-    HomepageProductRailQueriesResolver
+    HomepageProductRailQueriesResolver,
+    HomepageService,
+    HomepageSectionService
   ],
 })
 export class HomepageModule {}
