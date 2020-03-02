@@ -1,5 +1,7 @@
-import { isAuthenticated } from "./IsAuthenticated"
+import { isAuthenticated } from "./isAuthenticated"
+import { isOwner } from "./isOwner"
 
 export const directiveResolvers = {
-  isAuthenticated
+  isAuthenticated,
+  isOwner
 }
