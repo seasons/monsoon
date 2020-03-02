@@ -1,7 +1,7 @@
-import { Resolver, Parent, ResolveProperty, Context, Args } from "@nestjs/graphql"
-import { SectionTitle } from "./homepage.resolver"
-import { DBService } from "../../prisma/DB.service"
-import { prisma } from "../../prisma"
+import { Injectable } from "@nestjs/common"
+import { DBService } from "../../../prisma/DB.service"
+import { SectionTitle } from "./homepage.service"
+import { PrismaClientService } from "../../../prisma/client.service"
 
 // FIXME: This is being used because currently info is lacking the __typename, add __typename to info
 const ProductFragment = `{
@@ -24,20 +24,22 @@ const ProductFragment = `{
   retailPrice
 }`
 
-@Resolver("HomepageSection")
-export class HomepageSectionResolver {
-  constructor(private readonly dbService: DBService) {}
+@Injectable()
+export class HomepageSectionService {
+  constructor(
+    private readonly db: DBService,
+    private readonly prisma: PrismaClientService
+  ) {}
 
-  @ResolveProperty()
-  async results(@Parent() section, @Args() args) {
-    switch (section.title) {
+  async getResultsForSection(sectionTitle: SectionTitle, args, user?) {
+    switch (sectionTitle) {
       case SectionTitle.FeaturedCollection:
-        const collections = await prisma
+        const collections = await this.prisma.client
           .collectionGroup({ slug: "homepage-1" })
           .collections()
         return collections
       case SectionTitle.JustAdded:
-        const newProducts = await this.dbService.query.products(
+        const newProducts = await this.db.query.products(
           {
             ...args,
             orderBy: "createdAt_DESC",
@@ -53,10 +55,10 @@ export class HomepageSectionResolver {
         // Will handle once auth stuff is finished
         return []
       default:
-        const rails = await this.dbService.query.homepageProductRails(
+        const rails = await this.db.query.homepageProductRails(
           {
             where: {
-              name: section.title
+              name: sectionTitle
             }
           },
           `{
