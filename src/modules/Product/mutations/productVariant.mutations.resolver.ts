@@ -1,5 +1,5 @@
 import { Resolver, Context, Mutation, Args } from "@nestjs/graphql"
-import { AuthService } from "../../User/auth.service"
+import { AuthService } from "../../User/services/auth.service"
 
 @Resolver("ProductVariant")
 export class ProductVariantMutationsResolver {

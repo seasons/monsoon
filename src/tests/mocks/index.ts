@@ -3,7 +3,7 @@ export const reservationMock = jest.fn(() => {
 })
 
 export const userMock = {
-  id: "12345",
+  id: "ck2ge3byx06c70757us4chh91",
   firstName: "John",
   lastName: "Doe",
   email: "johndoe@gmail.com",
