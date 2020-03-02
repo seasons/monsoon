@@ -1,6 +1,6 @@
 import { Resolver, Query } from "@nestjs/graphql"
 
-@Resolver("Homepage")
+@Resolver()
 export class HomepageQueriesResolver {
   @Query()
   async homepage() {
