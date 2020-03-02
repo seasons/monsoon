@@ -1,8 +1,8 @@
 import { Query, Resolver, Args, Info } from "@nestjs/graphql"
-import { DBService } from "../../prisma/DB.service"
+import { DBService } from "../../../prisma/DB.service"
 
 @Resolver("HomepageProductRail")
-export class HomepageProductRailResolver {
+export class HomepageProductRailQueriesResolver {
   constructor(private readonly dbService: DBService) {}
 
   @Query()

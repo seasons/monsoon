@@ -1,7 +1,7 @@
 import { Resolver, ResolveProperty } from "@nestjs/graphql"
 
 @Resolver('HomepageResult')
-export class HomepageResultResolver {
+export class HomepageResultFieldsResolver {
   @ResolveProperty()
   __resolveType(obj) {
     if (obj.brand || obj.colorway) {

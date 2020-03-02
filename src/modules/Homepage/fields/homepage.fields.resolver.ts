@@ -1,5 +1,5 @@
 import { Resolver, ResolveProperty, Query, Context } from "@nestjs/graphql"
-import { DBService } from "../../prisma/DB.service"
+import { DBService } from "../../../prisma/DB.service"
 
 export enum SectionTitle {
   FeaturedCollection = "Featured collection",
@@ -8,13 +8,8 @@ export enum SectionTitle {
 }
 
 @Resolver("Homepage")
-export class HomepageResolver {
+export class HomepageFieldsResolver {
   constructor(private readonly dbService: DBService) {}
-
-  @Query()
-  async homepage() {
-    return {}
-  }
 
   @ResolveProperty()
   async sections() {
