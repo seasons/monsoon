@@ -8,11 +8,6 @@ import { Payment } from "./Payment"
 import { Search } from "./Search"
 import { Products } from "./Products"
 
-const CHARGEBEE_PLAN_IDS = {
-  "AllAccess": "all-access",
-  "Essential": "essential"
-}
-
 export const Query = {
   ...Products,
 
