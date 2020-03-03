@@ -4,6 +4,8 @@ import { prisma, User } from "../prisma"
 import crypto from "crypto"
 import sgMail from "@sendgrid/mail"
 
+const CHARGEBEE_PAYMENT_UPDATED = "payment_source_updated"
+
 const app = express()
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
@@ -46,6 +48,43 @@ app.post("/airtable_events", async (req, res) => {
   }
 
   res.sendStatus(200)
+})
+
+app.post('/chargebee', async (req, res) => {
+  console.log("REQUEST:", req.body)
+  console.log("CARD:", req.body.content.payment_source.card)
+  const data = req.body
+  const { event_type: eventType } = data
+  switch (eventType) {
+    case CHARGEBEE_PAYMENT_UPDATED:
+      const { first_name, id: userID, last_name } = data.customer
+      const { brand, expiry_month, expiry_year, last4, } = data.content.payment_source.card
+      const user = await prisma.user({ id: userID })
+      const customers = await prisma.customers({
+        where: { user: { id: user.id } },
+      })
+      if (customers?.length) {
+        const customer = customers[0]
+        const billingInfoId = await prisma.customer({ id: customer.id })
+          .billingInfo()
+          .id()
+        if (billingInfoId) {
+          await prisma.updateBillingInfo({
+            data: {
+              brand,
+              expiration_month: expiry_month,
+              expiration_year: expiry_year,
+              last_digits: last4,
+              name: `${first_name} ${last_name}`,
+            },
+            where: { id: billingInfoId }
+          })
+        }
+      }
+    default:
+      console.log("webhooks.ts: Unhandled chargebee event type", eventType)
+  }
+  res.send()
 })
 
 const incrementReservableCount = async (productVariant, physicalProduct) => {
