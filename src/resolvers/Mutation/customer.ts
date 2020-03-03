@@ -297,32 +297,27 @@ async function updateCustomerShippingAddress(ctx, user, customer, shippingAddres
     .detail()
     .id()
   const shippingAddressData = {
+    slug: `${user.firstName}-${user.lastName}-shipping-address`,
+    name: `${user.firstName} ${user.lastName}`,
     city: shippingCity,
     zipCode: shippingPostalCode,
     state: shippingState,
     address1: shippingStreet1,
-    address2: shippingStreet2
-  }
-  const createShippingAddressData = {
-    create: {
-      ...shippingAddress,
-      slug: `${user.firstName}-${user.lastName}-shipping-address`,
-      name: `${user.firstName} ${user.lastName}`,
-    }
+    address2: shippingStreet2,
   }
   if (detailID) {
     const shippingAddressID = await ctx.prisma.customer({ id: customer.id })
       .detail()
       .shippingAddress()
       .id()
-    if (shippingAddressID) {
-      await ctx.prisma.updateLocation({
-        data: shippingAddressData,
-        where: { id: shippingAddressID }
-      })
-    } else {
+    const shippingAddress = await ctx.prisma.upsertLocation({
+      create: shippingAddressData,
+      update: shippingAddressData,
+      where: { id: shippingAddressID }
+    })
+    if (shippingAddress) {
       await ctx.prisma.updateCustomerDetail({
-        data: { shippingAddress: createShippingAddressData },
+        data: { shippingAddress: { connect: { id: shippingAddress.id } } },
         where: { id: detailID }
       })
     }
@@ -331,7 +326,9 @@ async function updateCustomerShippingAddress(ctx, user, customer, shippingAddres
       data: {
         detail: {
           create: {
-            shippingAddress: createShippingAddressData
+            shippingAddress: {
+              create: shippingAddressData
+            }
           }
         }
       },
