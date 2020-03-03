@@ -5,7 +5,7 @@ import { fill, zip } from "lodash"
 import { AirtableUtilsService } from "./airtable.utils.service"
 
 export interface AirtableService {
-  base: any
+  __base: any
 }
 
 export interface AirtableData extends Array<any> {
@@ -27,7 +27,7 @@ export type AirtablePhysicalProductFields = {
 @Injectable()
 export class AirtableService {
   constructor(private readonly utils: AirtableUtilsService) {
-    this.base = Airtable.base(process.env.AIRTABLE_DATABASE_ID)
+    this.__base = Airtable.base(process.env.AIRTABLE_DATABASE_ID)
   }
 
   getAllProductVariants(airtableBase?) {
@@ -114,10 +114,10 @@ export class AirtableService {
             },
           },
         ]
-        const records = await this.base("Reservations").create(createData)
+        const records = await this.__base("Reservations").create(createData)
 
         const rollbackAirtableReservation = async () => {
-          const numDeleted = await this.base("Reservations").destroy([
+          const numDeleted = await this.__base("Reservations").destroy([
             records[0].getId(),
           ])
           return numDeleted
@@ -141,7 +141,7 @@ export class AirtableService {
     airtableBase
   ) => {
     const data = [] as AirtableData
-    const baseToUse = airtableBase || this.base
+    const baseToUse = airtableBase || this.__base
 
     data.findByIds = (ids = []) => {
       return data.find(record => ids.includes(record.id))
@@ -198,7 +198,7 @@ export class AirtableService {
         fields: a[1],
       }
     })
-    const updatedRecords = await this.base("Physical Products").update(
+    const updatedRecords = await this.__base("Physical Products").update(
       formattedUpdateData
     )
     return updatedRecords

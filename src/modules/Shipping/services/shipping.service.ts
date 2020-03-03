@@ -43,7 +43,7 @@ interface ShippoLabelInputs {
 }
 
 export interface ShippingService {
-  shippo: any
+  __shippo: any
 }
 
 @Injectable()
@@ -52,7 +52,7 @@ export class ShippingService {
     private readonly prisma: PrismaClientService,
     private readonly utilsService: UtilsService
   ) {
-    this.shippo = shippo(process.env.SHIPPO_API_KEY)
+    this.__shippo = shippo(process.env.SHIPPO_API_KEY)
   }
 
   async createReservationShippingLabels(
@@ -127,8 +127,8 @@ export class ShippingService {
       process.env.SEASONS_CLEANER_LOCATION_SLUG
     )
     const nextCleanersAddressShippo = {
-      ...locationDataToShippoAddress(nextCleanersAddressPrisma),
-      ...seasonsHQOrCleanersSecondaryAddressFields(),
+      ...this.locationDataToShippoAddress(nextCleanersAddressPrisma),
+      ...this.seasonsHQOrCleanersSecondaryAddressFields(),
     }
 
     // Create customer address object
@@ -145,7 +145,7 @@ export class ShippingService {
       .detail()
       .insureShipment()
     const customerAddressShippo = {
-      ...locationDataToShippoAddress(customerShippingAddressPrisma),
+      ...this.locationDataToShippoAddress(customerShippingAddressPrisma),
       name: `${user.firstName} ${user.lastName}`,
       phone: customerPhoneNumber,
       country: "US",
@@ -190,7 +190,7 @@ export class ShippingService {
     inputs: ShippoLabelInputs
   ): Promise<ShippoTransaction> {
     return new Promise(async (resolve, reject) => {
-      const transaction = await this.shippo.transaction
+      const transaction = await this.__shippo.transaction
         .create(inputs)
         .catch(reject)
 
@@ -209,29 +209,29 @@ export class ShippingService {
       return resolve(transaction)
     })
   }
-}
 
-const locationDataToShippoAddress = (
-  location: Location
-): CoreShippoAddressFields => {
-  if (location == null) {
-    throw new Error("can not extract values from null object")
+  private locationDataToShippoAddress(
+    location: Location
+  ): CoreShippoAddressFields {
+    if (location == null) {
+      throw new Error("can not extract values from null object")
+    }
+    return {
+      name: location.name,
+      company: location.company,
+      street1: location.address1,
+      street2: location.address2,
+      city: location.city,
+      state: location.state,
+      zip: location.zipCode,
+    }
   }
-  return {
-    name: location.name,
-    company: location.company,
-    street1: location.address1,
-    street2: location.address2,
-    city: location.city,
-    state: location.state,
-    zip: location.zipCode,
-  }
-}
 
-const seasonsHQOrCleanersSecondaryAddressFields = () => {
-  return {
-    country: "US",
-    phone: "706-271-7092",
-    email: "reservations@seasons.nyc",
+  private seasonsHQOrCleanersSecondaryAddressFields() {
+    return {
+      country: "US",
+      phone: "706-271-7092",
+      email: "reservations@seasons.nyc",
+    }
   }
 }
