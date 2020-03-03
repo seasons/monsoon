@@ -19,7 +19,7 @@ export const Query = {
   brands: async (parent, args, ctx: Context, info) => {
     const brands = await ctx.db.query.brands(args, info)
     const brandsWithProducts = brands.filter(brand => {
-      return brand.products.length > 0
+      return brand?.products?.length > 0
     })
     return brandsWithProducts
   },
