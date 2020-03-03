@@ -131,7 +131,10 @@ type Query {
   collection(where: CollectionWhereUniqueInput!): Collection
   faq: Faq
   homepage: Homepage
-  chargebeeCheckout(planID: PlanID!, userIDHash: String!): ChargebeeHostedPagePayload
+  chargebeeCheckout(
+    planID: PlanID!
+    userIDHash: String!
+  ): ChargebeeHostedPagePayload
   chargebeeUpdatePaymentPage: ChargebeeHostedPagePayload
   homepageProductRail(
     where: HomepageProductRailWhereUniqueInput!
@@ -218,7 +221,11 @@ type Mutation {
   deleteProductRequest(requestID: ID!): ProductRequest!
   validateAddress(input: ValidateAddressInput!): ValidationPayload!
   addProductVariantWant(variantID: ID!): ProductVariantWant!
-  updatePaymentAndShipping(billingAddress: AddressInput!, shippingAddress: AddressInput!, phoneNumber: String!): Boolean
+  updatePaymentAndShipping(
+    billingAddress: AddressInput!
+    shippingAddress: AddressInput!
+    phoneNumber: String!
+  ): Boolean
 }
 
 input AddressInput {
@@ -243,6 +250,11 @@ type AuthPayload {
   refreshToken: String!
   expiresIn: Int!
   user: User!
+  beamsToken: BeamsToken!
+}
+
+type BeamsToken {
+  token: String!
 }
 
 type ResetPasswordPayload {
