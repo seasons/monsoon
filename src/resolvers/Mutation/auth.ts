@@ -14,6 +14,15 @@ import PushNotifications from "@pusher/push-notifications-server"
 
 export let beamsClient: PushNotifications | null = null
 
+const { PUSHER_INSTANCE_ID, PUSHER_SECRET_KEY } = process.env
+
+if (PUSHER_INSTANCE_ID && PUSHER_SECRET_KEY) {
+  beamsClient = new PushNotifications({
+    instanceId: PUSHER_INSTANCE_ID,
+    secretKey: PUSHER_SECRET_KEY,
+  })
+}
+
 export const auth = {
   // The signup mutation signs up users with a "Customer" role.
   async signup(
@@ -139,22 +148,13 @@ export const auth = {
       throw new Error("User record not found")
     }
 
-    const { PUSHER_INSTANCE_ID, PUSHER_SECRET_KEY } = process.env
-
-    if (PUSHER_INSTANCE_ID && PUSHER_SECRET_KEY) {
-      beamsClient = new PushNotifications({
-        instanceId: PUSHER_INSTANCE_ID,
-        secretKey: PUSHER_SECRET_KEY,
-      })
-    }
-
-    const beamsToken = beamsClient.generateToken(email)
+    const beamsToken = beamsClient?.generateToken(email) as any
 
     return {
       token: tokenData.access_token,
       refreshToken: tokenData.refresh_token,
       expiresIn: tokenData.expires_in,
-      beamsToken,
+      beamsToken: beamsToken.token,
       user,
     }
   },

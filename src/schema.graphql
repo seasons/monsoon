@@ -250,11 +250,7 @@ type AuthPayload {
   refreshToken: String!
   expiresIn: Int!
   user: User!
-  beamsToken: BeamsToken!
-}
-
-type BeamsToken {
-  token: String!
+  beamsToken: String!
 }
 
 type ResetPasswordPayload {
