@@ -4,9 +4,7 @@ export async function isOwner(next, source, { type }, ctx) {
   const { id: typeId } =
     source && source.id
       ? source
-      : ctx.request.body.variables
-      ? ctx.request.body.variables
-      : { id: null }
+      : ctx.request.body.variables || { id: null }
   const { id: userId } = getUserIfExists(ctx)
   const isOwner =
     type === `User`
