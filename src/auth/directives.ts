@@ -54,7 +54,4 @@ export const directiveResolvers = {
     }
     throw new Error(`Unauthorized, not owner or incorrect role`)
   },
-  isCustomerElseFalse: async (next, source, args, ctx) => {
-    const customer = await getCustomerFromContext(ctx)
-  },
 }
