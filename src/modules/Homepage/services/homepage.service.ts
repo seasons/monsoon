@@ -5,13 +5,14 @@ export enum SectionTitle {
   FeaturedCollection = "Featured collection",
   JustAdded = "Just added",
   RecentlyViewed = "Recently viewed",
+  Designers = "Designers"
 }
 
 @Injectable()
 export class HomepageService {
   constructor(private readonly db: DBService) {}
 
-  async getHomepageSections() {
+  async getHomepageSections(customer) {
     const productRails = await this.db.query.homepageProductRails(
       {},
       `{
@@ -23,19 +24,28 @@ export class HomepageService {
       {
         type: "CollectionGroups",
         __typename: "HomepageSection",
-        title: SectionTitle[SectionTitle.FeaturedCollection]
+        title: SectionTitle.FeaturedCollection
       },
       {
         type: "Products",
         __typename: "HomepageSection",
-        title: SectionTitle[SectionTitle.JustAdded]
+        title: SectionTitle.JustAdded
       },
       {
+        type: "Brands",
+        __typename: "HomepageSection",
+        title: SectionTitle.Designers
+      },
+    ]
+
+    if (customer) {
+      sections.push({
         type: "Products",
         __typename: "HomepageSection",
         title: SectionTitle.RecentlyViewed
-      },
-    ]
+      })
+    }
+
 
     productRails.forEach(rail => {
       sections.push({
