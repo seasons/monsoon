@@ -1,7 +1,6 @@
 import { Resolver, Args, Context, Mutation, Info } from "@nestjs/graphql"
 import { ProductService } from "../services/product.service"
-import { User, Customer } from "../../../nest_decorators"
-import { ApolloError } from "apollo-server"
+import { User, Customer, Analytics } from "../../../nest_decorators"
 import { ReservationService } from "../services/reservation.service"
 
 @Resolver("Product")
@@ -21,8 +20,25 @@ export class ProductMutationsResolver {
     @Args() { items },
     @User() user,
     @Customer() customer,
-    @Info() info
+    @Info() info,
+    @Analytics() analytics
   ) {
-    return this.reservationService.reserveItems(items, user, customer, info)
+    const returnData = this.reservationService.reserveItems(
+      items,
+      user,
+      customer,
+      info
+    )
+
+    // Track the selection
+    analytics.track({
+      userId: user.id,
+      event: "Reserved Items",
+      properties: {
+        items,
+      },
+    })
+
+    return returnData
   }
 }
