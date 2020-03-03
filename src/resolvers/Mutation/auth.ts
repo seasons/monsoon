@@ -10,6 +10,18 @@ import { CustomerDetail } from "../../prisma"
 import { UserInputError, ForbiddenError } from "apollo-server"
 import { createOrUpdateAirtableUser } from "../../airtable/createOrUpdateUser"
 import request from "request"
+import PushNotifications from "@pusher/push-notifications-server"
+
+export let beamsClient: PushNotifications | null = null
+
+const { PUSHER_INSTANCE_ID, PUSHER_SECRET_KEY } = process.env
+
+if (PUSHER_INSTANCE_ID && PUSHER_SECRET_KEY) {
+  beamsClient = new PushNotifications({
+    instanceId: PUSHER_INSTANCE_ID,
+    secretKey: PUSHER_SECRET_KEY,
+  })
+}
 
 export const auth = {
   // The signup mutation signs up users with a "Customer" role.
@@ -126,7 +138,8 @@ export const auth = {
         const customer = await getCustomerFromUserID(ctx.prisma, user.id)
         if (
           customer &&
-          customer.status !== "Active" && customer.status !== "Authorized"
+          customer.status !== "Active" &&
+          customer.status !== "Authorized"
         ) {
           throw new Error(`User account has not been approved`)
         }
@@ -135,10 +148,13 @@ export const auth = {
       throw new Error("User record not found")
     }
 
+    const beamsToken = beamsClient?.generateToken(email) as any
+
     return {
       token: tokenData.access_token,
       refreshToken: tokenData.refresh_token,
       expiresIn: tokenData.expires_in,
+      beamsToken: beamsToken.token,
       user,
     }
   },

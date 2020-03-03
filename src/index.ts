@@ -6,7 +6,6 @@ import { createGetUserMiddleware } from "./middleware/user"
 import { prisma } from "./prisma"
 import cors from "cors"
 import { app as webhooks } from "./webhooks"
-import { app as pushNotifications } from "./pushNotifications"
 import bodyParser from "body-parser"
 import * as Sentry from "@sentry/node"
 
@@ -34,8 +33,7 @@ app.use(
     credentials: true,
   }),
   bodyParser.json(),
-  webhooks,
-  pushNotifications
+  webhooks
 )
 server.applyMiddleware({ app, path: "/" })
 app.listen({ port: process.env.PORT || 4000 }, () =>
