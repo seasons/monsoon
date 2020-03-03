@@ -218,7 +218,7 @@ type Mutation {
   deleteProductRequest(requestID: ID!): ProductRequest!
   validateAddress(input: ValidateAddressInput!): ValidationPayload!
   addProductVariantWant(variantID: ID!): ProductVariantWant!
-  updatePaymentAndShipping(billingAddress: AddressInput!, shippingAddress: AddressInput!): Boolean
+  updatePaymentAndShipping(billingAddress: AddressInput!, shippingAddress: AddressInput!, phoneNumber: String!): Boolean
 }
 
 input AddressInput {

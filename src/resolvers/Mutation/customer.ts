@@ -83,7 +83,7 @@ export const customer = {
     return returnData
   },
 
-  async updatePaymentAndShipping(obj, { billingAddress, shippingAddress }, ctx: Context, info) {
+  async updatePaymentAndShipping(obj, { billingAddress, phoneNumber, shippingAddress }, ctx: Context, info) {
     const user = await getUserFromContext(ctx)
     const customer = await getCustomerFromContext(ctx)
 
@@ -118,40 +118,21 @@ export const customer = {
     // Get user's card information from chargebee
     const cardInfo = await getChargebeePaymentSource(user.id)
 
-    const { brand, expiry_month, expiry_year, first_name, last4, last_name } = cardInfo
+    // Update customer's billing information
+    await updateCustomerBillingInfo(
+      ctx,
+      cardInfo,
+      customer.id,
+      billingStreet1,
+      billingStreet2,
+      billingCity,
+      billingState,
+      billingPostalCode
+    )
 
-    // Update user's billing information
-    const billingInfoId = await ctx.prisma.customer({ id: customer.id })
-      .billingInfo()
-      .id()
-    const billingInfoData = {
-      brand,
-      city: billingCity,
-      expiration_month: expiry_month,
-      expiration_year: expiry_year,
-      last_digits: last4,
-      name: `${first_name} ${last_name}`,
-      postal_code: billingPostalCode,
-      state: billingState,
-      street1: billingStreet1,
-      street2: billingStreet2
-    }
-    const billingInfo = await ctx.prisma.upsertBillingInfo({
-      create: billingInfoData,
-      update: billingInfoData,
-      where: { id: billingInfoId }
-    })
-
-    if (billingInfo) {
-      await ctx.prisma.updateCustomer({
-        data: { billingInfo: { connect: { id: billingInfo.id } } },
-        where: { id: customer.id }
-      })
-    }
-
-    // Update customer's shipping address. Will throw an error if
-    // the address is not in NYC
-    await updateCustomerShippingAddress(ctx, user, customer, shippingAddress)
+    // Update customer's shipping address & phone number. Will throw an
+    // error if the address is not in NYC
+    await updateCustomerDetail(ctx, user, customer, shippingAddress, phoneNumber)
 
     return null
   },
@@ -267,7 +248,7 @@ function createBillingInfoObject(card, chargebeeCustomer) {
   }
 }
 
-async function updateCustomerShippingAddress(ctx, user, customer, shippingAddress, ) {
+async function updateCustomerDetail(ctx, user, customer, shippingAddress, phoneNumber) {
   const {
     city: shippingCity,
     postalCode: shippingPostalCode,
@@ -317,7 +298,10 @@ async function updateCustomerShippingAddress(ctx, user, customer, shippingAddres
     })
     if (shippingAddress) {
       await ctx.prisma.updateCustomerDetail({
-        data: { shippingAddress: { connect: { id: shippingAddress.id } } },
+        data: {
+          phoneNumber,
+          shippingAddress: { connect: { id: shippingAddress.id } }
+        },
         where: { id: detailID }
       })
     }
@@ -326,6 +310,7 @@ async function updateCustomerShippingAddress(ctx, user, customer, shippingAddres
       data: {
         detail: {
           create: {
+            phoneNumber,
             shippingAddress: {
               create: shippingAddressData
             }
@@ -333,6 +318,46 @@ async function updateCustomerShippingAddress(ctx, user, customer, shippingAddres
         }
       },
       where: { id: customer.id }
+    })
+  }
+}
+
+async function updateCustomerBillingInfo(
+  ctx,
+  cardInfo,
+  customerID,
+  billingStreet1,
+  billingStreet2,
+  billingCity,
+  billingState,
+  billingPostalCode
+) {
+  const { brand, expiry_month, expiry_year, first_name, last4, last_name } = cardInfo
+  const billingInfoId = await ctx.prisma.customer({ id: customerID })
+    .billingInfo()
+    .id()
+  const billingInfoData = {
+    brand,
+    city: billingCity,
+    expiration_month: expiry_month,
+    expiration_year: expiry_year,
+    last_digits: last4,
+    name: `${first_name} ${last_name}`,
+    postal_code: billingPostalCode,
+    state: billingState,
+    street1: billingStreet1,
+    street2: billingStreet2
+  }
+  const billingInfo = await ctx.prisma.upsertBillingInfo({
+    create: billingInfoData,
+    update: billingInfoData,
+    where: { id: billingInfoId }
+  })
+
+  if (billingInfo) {
+    await ctx.prisma.updateCustomer({
+      data: { billingInfo: { connect: { id: billingInfo.id } } },
+      where: { id: customerID }
     })
   }
 }
