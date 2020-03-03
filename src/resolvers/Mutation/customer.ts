@@ -7,6 +7,7 @@ import { shippoValidateAddress } from "./address"
 import { createOrUpdateAirtableUser } from "../../airtable/createOrUpdateUser"
 import { getCustomerFromContext, getUserFromContext } from "../../auth/utils"
 import { emails } from "../../emails"
+import { getChargebeePaymentSource, updateChargebeeBillingAddress } from "../Payment"
 import { User } from "../../prisma"
 import { sendTransactionalEmail } from "../../sendTransactionalEmail"
 import {
@@ -104,52 +105,18 @@ export const customer = {
       throw new Error("Billing address is invalid")
     }
 
-    // Configure chargebee before making API call
-    chargebee.configure({
-      site: process.env.CHARGEBEE_SITE,
-      api_key: process.env.CHARGEE_API_KEY,
-    })
-
     // Update user's billing address on chargebee
-    chargebee.customer.update_billing_info(user.id, {
-      billing_address: {
-        line1: billingStreet1,
-        line2: billingStreet2,
-        city: billingCity,
-        state: billingState,
-        zip: billingPostalCode,
-      }
-    }).request((error, result) => {
-      if (error) {
-        throw new Error(JSON.stringify(error))
-      } else {
-        const chargebeeBillingAddress = get(result, "customer.billing_address")
-        if (!chargebeeBillingAddress) {
-          throw new Error("Failed to update billing address on chargebee.")
-        }
-      }
-    })
+    await updateChargebeeBillingAddress(
+      user.id,
+      billingStreet1,
+      billingStreet2,
+      billingCity,
+      billingState,
+      billingPostalCode
+    )
 
-    const cardInfo: any = await new Promise((resolve, reject) => {
-      // Get user's payment information from chargebee
-      chargebee.payment_source.list({
-        limit: 1,
-        "customer_id[is]": user.id,
-        "type[is]": "card"
-      }).request((error, result) => {
-        if (error) {
-          reject(error)
-        } else {
-          const card = get(result, "list[0].payment_source.card")
-          if (!card) {
-            reject("No card found for customer.")
-          }
-          resolve(card)
-        }
-      })
-    }).catch(error => {
-      throw new Error(JSON.stringify(error))
-    })
+    // Get user's card information from chargebee
+    const cardInfo = await getChargebeePaymentSource(user.id)
 
     const { brand, expiry_month, expiry_year, first_name, last4, last_name } = cardInfo
 
@@ -169,88 +136,22 @@ export const customer = {
       street1: billingStreet1,
       street2: billingStreet2
     }
-    if (billingInfoId) {
-      await ctx.prisma.updateBillingInfo({
-        data: billingInfoData,
-        where: { id: billingInfoId }
-      })
-    } else {
-      await ctx.prisma.updateCustomer({
-        data: { billingInfo: { create: billingInfoData } },
-        where: { id: customer.id }
-      })
-    }
-
-    const {
-      city: shippingCity,
-      postalCode: shippingPostalCode,
-      state: shippingState,
-      street1: shippingStreet1,
-      street2: shippingStreet2
-    } = shippingAddress
-    const { isValid: shippingAddressIsValid } = await shippoValidateAddress({
-      name: user.firstName,
-      street1: shippingStreet1,
-      city: shippingCity,
-      state: shippingState,
-      zip: shippingPostalCode
+    const billingInfo = await ctx.prisma.upsertBillingInfo({
+      create: billingInfoData,
+      update: billingInfoData,
+      where: { id: billingInfoId }
     })
-    if (!shippingAddressIsValid) {
-      throw new Error("Shipping address is invalid")
-    }
 
-    const zipcodesData = zipcodes.lookup(parseInt(shippingPostalCode))
-    const validCities = ["Brooklyn", "New York", "Queens", "The Bronx"]
-    if (zipcodesData?.state !== "NY" || !validCities.includes(zipcodesData?.city)) {
-      throw new Error("SHIPPING_ADDRESS_NOT_NYC")
-    }
-
-    // Update the user's shipping address
-    const detailID = await ctx.prisma.customer({ id: customer.id })
-      .detail()
-      .id()
-    const shippingAddressData = {
-      city: shippingCity,
-      zipCode: shippingPostalCode,
-      state: shippingState,
-      address1: shippingStreet1,
-      address2: shippingStreet2
-    }
-    const createShippingAddressData = {
-      create: {
-        ...shippingAddress,
-        slug: `${user.firstName}-${user.lastName}-shipping-address`,
-        name: `${user.firstName} ${user.lastName}`,
-      }
-    }
-    if (detailID) {
-      const shippingAddressID = await ctx.prisma.customer({ id: customer.id })
-        .detail()
-        .shippingAddress()
-        .id()
-      if (shippingAddressID) {
-        await ctx.prisma.updateLocation({
-          data: shippingAddressData,
-          where: { id: shippingAddressID }
-        })
-      } else {
-        await ctx.prisma.updateCustomerDetail({
-          data: { shippingAddress: createShippingAddressData },
-          where: { id: detailID }
-        })
-      }
-    } else {
+    if (billingInfo) {
       await ctx.prisma.updateCustomer({
-        data: {
-          detail: {
-            create: {
-              shippingAddress: createShippingAddressData
-            }
-          }
-        },
+        data: { billingInfo: { connect: { id: billingInfo.id } } },
         where: { id: customer.id }
       })
     }
+
+    // Update customer's shipping address. Will throw an error if
+    // the address is not in NYC
+    await updateCustomerShippingAddress(ctx, user, customer, shippingAddress)
 
     return null
   },
@@ -363,5 +264,78 @@ function createBillingInfoObject(card, chargebeeCustomer) {
     state: chargebeeCustomer.billing_address.state,
     country: chargebeeCustomer.billing_address.country,
     postal_code: chargebeeCustomer.billing_address.zip,
+  }
+}
+
+async function updateCustomerShippingAddress(ctx, user, customer, shippingAddress, ) {
+  const {
+    city: shippingCity,
+    postalCode: shippingPostalCode,
+    state: shippingState,
+    street1: shippingStreet1,
+    street2: shippingStreet2
+  } = shippingAddress
+  const { isValid: shippingAddressIsValid } = await shippoValidateAddress({
+    name: user.firstName,
+    street1: shippingStreet1,
+    city: shippingCity,
+    state: shippingState,
+    zip: shippingPostalCode
+  })
+  if (!shippingAddressIsValid) {
+    throw new Error("Shipping address is invalid")
+  }
+
+  const zipcodesData = zipcodes.lookup(parseInt(shippingPostalCode))
+  const validCities = ["Brooklyn", "New York", "Queens", "The Bronx"]
+  if (zipcodesData?.state !== "NY" || !validCities.includes(zipcodesData?.city)) {
+    throw new Error("SHIPPING_ADDRESS_NOT_NYC")
+  }
+
+  // Update the user's shipping address
+  const detailID = await ctx.prisma.customer({ id: customer.id })
+    .detail()
+    .id()
+  const shippingAddressData = {
+    city: shippingCity,
+    zipCode: shippingPostalCode,
+    state: shippingState,
+    address1: shippingStreet1,
+    address2: shippingStreet2
+  }
+  const createShippingAddressData = {
+    create: {
+      ...shippingAddress,
+      slug: `${user.firstName}-${user.lastName}-shipping-address`,
+      name: `${user.firstName} ${user.lastName}`,
+    }
+  }
+  if (detailID) {
+    const shippingAddressID = await ctx.prisma.customer({ id: customer.id })
+      .detail()
+      .shippingAddress()
+      .id()
+    if (shippingAddressID) {
+      await ctx.prisma.updateLocation({
+        data: shippingAddressData,
+        where: { id: shippingAddressID }
+      })
+    } else {
+      await ctx.prisma.updateCustomerDetail({
+        data: { shippingAddress: createShippingAddressData },
+        where: { id: detailID }
+      })
+    }
+  } else {
+    await ctx.prisma.updateCustomer({
+      data: {
+        detail: {
+          create: {
+            shippingAddress: createShippingAddressData
+          }
+        }
+      },
+      where: { id: customer.id }
+    })
   }
 }

@@ -4,6 +4,7 @@ import { Faq } from "./Faq"
 import { getUserRequestObject, getUserFromContext, getCustomerFromContext } from "../auth/utils"
 import chargebee from "chargebee"
 import get from "lodash.get"
+import { Payment } from "./Payment"
 import { Search } from "./Search"
 import { Products } from "./Products"
 
@@ -52,124 +53,7 @@ export const Query = {
 
   faq: Faq,
 
-  chargebeeCheckout: async (
-    parent,
-    { planID, userIDHash },
-    ctx: Context,
-    info
-  ) => {
-    // Is there a user in the db that corresponds to the given userIDHash?
-    const allUsers = await ctx.prisma.users()
-    let targetUser
-    for (const user of allUsers) {
-      let thisUsersIDHash = getUserIDHash(user.id)
-      if (thisUsersIDHash === userIDHash) {
-        targetUser = user
-      }
-    }
-    if (targetUser === undefined) {
-      throw new Error(`no user found for idHash: ${userIDHash}`)
-    }
-
-    // Get email, firstName, lastName, phoneNumber of targetUser
-    const { email, firstName, lastName } = targetUser
-    const correspondingCustomer = await getCustomerFromUserID(
-      ctx.prisma,
-      targetUser.id
-    )
-    const { phoneNumber } = await ctx.prisma
-      .customer({ id: correspondingCustomer.id })
-      .detail()
-
-    // translate the passed planID into a chargebee-readable version
-    let truePlanID
-    if (planID === "AllAccess") {
-      truePlanID = "all-access"
-    } else if (planID === "Essential") {
-      truePlanID = "essential"
-    } else {
-      throw new Error("unrecognized planID")
-    }
-
-    // make the call to chargebee
-    chargebee.configure({
-      site: process.env.CHARGEBEE_SITE,
-      api_key: process.env.CHARGEE_API_KEY,
-    })
-    const hostedPage = await new Promise((resolve, reject) => {
-      chargebee.hosted_page
-        .checkout_new({
-          subscription: {
-            plan_id: truePlanID,
-          },
-          customer: {
-            id: targetUser.id,
-            email,
-            first_name: firstName,
-            last_name: lastName,
-            phone: phoneNumber,
-          },
-        })
-        .request((error, result) => {
-          if (error) {
-            reject(error)
-          } else {
-            resolve(result.hosted_page)
-          }
-        })
-    }).catch(error => {
-      throw new Error(JSON.stringify(error))
-    })
-
-    // Track the selection
-    ctx.analytics.track({
-      userId: targetUser.id,
-      event: "Opened Checkout",
-      properties: {
-        plan: planID,
-      },
-    })
-
-    return hostedPage
-  },
-
-  chargebeeUpdatePaymentPage: async (parent, { }, ctx, info) => {
-    const user = await getUserFromContext(ctx)
-    if (!user) {
-      throw new Error("No user found.")
-    }
-
-    const customer = await getCustomerFromContext(ctx)
-    if (!customer) {
-      throw new Error("User is not a customer.")
-    }
-
-    // make the call to chargebee
-    chargebee.configure({
-      site: process.env.CHARGEBEE_SITE,
-      api_key: process.env.CHARGEE_API_KEY,
-    })
-
-    const hostedPage = await new Promise((resolve, reject) => {
-      chargebee.hosted_page
-        .manage_payment_sources({
-          customer: {
-            id: user.id,
-          }
-        })
-        .request((error, result) => {
-          if (error) {
-            reject(error)
-          } else {
-            resolve(result.hosted_page)
-          }
-        })
-    }).catch(error => {
-      throw new Error(JSON.stringify(error))
-    })
-
-    return hostedPage
-  },
-
   ...Search,
+
+  ...Payment,
 }
