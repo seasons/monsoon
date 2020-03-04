@@ -1,7 +1,7 @@
 import { Query, Resolver, Args, Info } from "@nestjs/graphql"
 import { DBService } from "../../../prisma/DB.service"
 
-@Resolver("Collection")
+@Resolver()
 export class CollectionQueriesResolver {
   constructor(private readonly db: DBService) {}
 
