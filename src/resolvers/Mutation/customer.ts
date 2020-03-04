@@ -353,10 +353,10 @@ async function updateCustomerBillingAddress(
     const billingInfo = await ctx.prisma.createBillingInfo({
       ...billingAddressData,
       brand,
-      last_digits: last4,
       expiration_month: expiry_month,
       expiration_year: expiry_year,
-      name: `${first_name} ${last_name}`
+      last_digits: last4,
+      name: `${first_name} ${last_name}`,
     })
 
     // Connect new billing info to customer object
