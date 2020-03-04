@@ -38,6 +38,7 @@ export const syncPhysicalProducts = async (cliProgressBar?: any) => {
           "Barcode Image URL",
           "Images",
           "Barcode",
+          "Category",
         ]
       ),
     cliProgressBar,
