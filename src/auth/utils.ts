@@ -2,6 +2,7 @@ import * as jwt from "jsonwebtoken"
 import jwksClient from "jwks-rsa"
 import { Context } from "../utils"
 import get from "lodash.get"
+import head from "lodash.head"
 import { Customer, User } from "../prisma"
 
 export const PW_STRENGTH_RULES_URL =
@@ -72,13 +73,11 @@ export async function getCustomerFromContext(ctx: Context): Promise<Customer> {
   }
 
   // Get the customer record corresponding to that user
-  const customer = (
+  return head(
     await ctx.prisma.customers({
       where: { user: { id: user.id } },
     })
-  )[0]
-
-  return customer
+  )
 }
 
 export interface UserRequestObject {
