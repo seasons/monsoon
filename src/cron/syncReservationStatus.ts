@@ -116,6 +116,8 @@ export async function syncReservationStatus() {
         })
       }
     } catch (err) {
+      console.log(airtableReservation)
+      console.log(err)
       errors.push(err)
       if (shouldReportErrorsToSentry) {
         Sentry.captureException(err)
@@ -144,7 +146,7 @@ async function getPrismaReservationWithNeededFields(reservationNumber) {
     {
       where: { reservationNumber },
     },
-    `{ 
+    `{
         id
         status
         reservationNumber

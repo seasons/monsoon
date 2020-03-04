@@ -1,44 +1,86 @@
 #!/usr/bin/env node
 require("dotenv").config()
 
-const startsWith = require("lodash/startsWith")
 const fs = require("fs")
 
-const { syncAll } = require("../dist/airtable/prismaSync/syncAll")
-const {
-  syncAll: syncAllAirtableToAirtable,
-} = require("../dist/airtable/environmentSync/syncAll")
-const { syncPrisma, setDBEnvVarsFromJSON } = require("../dist/syncPrisma")
-const {
-  syncBrands,
-  syncCategories,
-  syncColors,
-  syncLocations,
-  syncProducts,
-  syncProductVariants,
-  syncCollections,
-  syncCollectionGroups,
-  syncHomepageProductRails,
-  syncPhysicalProducts,
-} = require("../dist/airtable/prismaSync")
 const { downloadFromS3 } = require("../dist/downloadFromS3")
 const { readJSONObjectFromFile } = require("../dist/utils")
 
 require("yargs")
   .scriptName("monsoon")
-  .usage("$0 <cmd> <cmd> [args]")
+  .usage("$0 <cmd> <table> -e [environment]")
   .command(
     "sync:airtable:prisma <table>",
     "sync airtable data to prisma",
     yargs => {
-      yargs.positional("table", {
-        type: "string",
-        describe:
-          "Name of the airtable base to sync (e.g. products, product-variants, categories)",
-      })
+      yargs
+        .positional("table", {
+          type: "string",
+          describe: "Name of the airtable base to sync",
+          choices: [
+            "all",
+            "brands",
+            "categories",
+            "products",
+            "product-variants",
+            "collections",
+            "collection-groups",
+            "homepage-product-rails",
+          ],
+        })
+        .options({
+          e: {
+            default: "staging",
+            describe: "Prisma environment to sync to",
+            choices: ["local", "staging", "production"],
+            type: "string",
+          },
+        })
     },
     async argv => {
-      debugger
+      const envFilePath = await downloadFromS3(
+        "/tmp/__monsoon__env.json",
+        "monsoon-scripts",
+        "env.json"
+      )
+      try {
+        const environment = argv.e || "staging"
+        const env = readJSONObjectFromFile(envFilePath)
+        const { endpoint, secret } = env.prisma[environment]
+        process.env.PRISMA_ENDPOINT = endpoint
+        process.env.PRISMA_SECRET = secret
+        process.env.AIRTABLE_DATABASE_ID = env.airtable.production.baseID
+      } catch (err) {
+        console.log(err)
+      } finally {
+        // delete the env file
+        fs.unlinkSync(envFilePath)
+      }
+
+      const {
+        syncBrands,
+        syncCategories,
+        syncProducts,
+        syncProductVariants,
+        syncCollections,
+        syncCollectionGroups,
+        syncHomepageProductRails,
+      } = require("../dist/airtable/prismaSync")
+      const { syncAll } = require("../dist/airtable/prismaSync/syncAll")
+      readlineSync = require("readline-sync")
+
+      const shouldProceed = readlineSync.keyInYN(
+        `You are about sync ${
+          argv.table === "all" ? "all the tables" : "the " + argv.table
+        } from airtable with baseID ${
+          process.env.AIRTABLE_DATABASE_ID
+        } to prisma at url ${process.env.PRISMA_ENDPOINT}\n. Proceed? (y/n)`
+      )
+      if (!shouldProceed) {
+        console.log("\nExited without running anything\n")
+        return
+      }
+
       switch (argv.table) {
         case "all":
           console.log("syncing all")
@@ -76,10 +118,13 @@ require("yargs")
     yargs => {
       yargs.positional("destination", {
         type: "string",
-        describe: "Prisma environment to sync to: staging | local",
+        describe: "Prisma environment to sync to",
+        choices: ["staging", "local"],
       })
     },
     async argv => {
+      const { syncPrisma, setDBEnvVarsFromJSON } = require("../dist/syncPrisma")
+
       if (!["staging", "local"].includes(argv.destination)) {
         console.log("Destination must be one of local, staging")
         return
@@ -120,11 +165,15 @@ require("yargs")
     yargs => {
       yargs.positional("base", {
         type: "string",
-        describe:
-          "human readable name of base to sync to. Options are staging1 | staging2",
+        describe: "human readable name of base to sync to",
+        choices: ["staging1", "staging2"],
       })
     },
     async argv => {
+      const {
+        syncAll: syncAllAirtableToAirtable,
+      } = require("../dist/airtable/environmentSync/syncAll")
+
       const envFilePath = await downloadFromS3(
         "/tmp/__monsoon__env.json",
         "monsoon-scripts",

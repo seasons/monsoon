@@ -26,6 +26,8 @@ export const HomepageResult = {
   __resolveType(obj, _context, _info) {
     if (obj.brand || obj.colorway) {
       return "Product"
+    } else if (obj.since) {
+      return "Brand"
     } else if (obj.subTitle) {
       return "Collection"
     } else if (obj.name) {
@@ -86,6 +88,49 @@ export const Homepage = async (parent, args, ctx: Context, info) => {
           )
 
           return newProducts
+        },
+      },
+      {
+        type: "Brands",
+        __typename: "HomepageSection",
+        title: "Designers",
+        results: async (args, ctx: Context, info) => {
+          const brands = await ctx.db.query.brands(
+            {
+              ...args,
+              where: {
+                slug_in: [
+                  "acne-studios",
+                  "stone-island",
+                  "stussy",
+                  "comme-des-garcons",
+                  "aime-leon-dore",
+                  "noah",
+                  "cavempt",
+                  "brain-dead",
+                  "john-elliot",
+                  "amiri",
+                  "prada",
+                  "craig-green",
+                  "dries-van-noten",
+                  "cactus-plant-flea-market",
+                  "ambush",
+                  "all-saints",
+                  "heron-preston",
+                  "saturdays-nyc",
+                  "y-3",
+                  "our-legacy",
+                ],
+              },
+            },
+            `{
+              __typename
+              id
+              name
+              since
+            }`
+          )
+          return brands
         },
       },
     ],

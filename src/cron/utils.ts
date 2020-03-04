@@ -1,12 +1,13 @@
-import { ProductVariant, Size, PhysicalProduct } from "../src/prisma"
+import { ProductVariant, Size, PhysicalProduct } from "../prisma"
 
 export interface ProductVariantWithNeededFields {
+  yarn
   product: { slug: string }
   size: Size
 }
 export function getCorrespondingAirtableProductVariant(
-  allAirtableProducts: Array<any>,
-  allAirtableProductVariants: Array<any>,
+  allAirtableProducts: any[],
+  allAirtableProductVariants: any[],
   prismaProductVariant: ProductVariantWithNeededFields
 ) {
   const correspondingAirtableProduct = allAirtableProducts.find(

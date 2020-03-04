@@ -3,22 +3,21 @@ import {
   getAllPhysicalProducts,
   getAllProductVariants,
   getAllReservations,
-} from "../src/airtable/utils"
-import { prisma } from "../src/prisma"
+} from "../airtable/utils"
+import { prisma } from "../prisma"
 import {
   getCorrespondingAirtableProductVariant,
   getCorrespondingAirtablePhysicalProduct,
 } from "./utils"
-import { db } from "../src/server"
-import { airtableToPrismaInventoryStatus } from "../src/utils"
+import { db } from "../server"
+import { airtableToPrismaInventoryStatus } from "../utils"
 import { xor } from "lodash"
 
-async function checkProductsAlignment() {
+export async function checkProductsAlignment() {
   const allAirtableProductVariants = await getAllProductVariants()
   const allAirtablePhysicalProducts = await getAllPhysicalProducts()
   const allAirtableProducts = await getAllProducts()
   const allAirtableReservations = await getAllReservations()
-
   const allPrismaProductVariants = await db.query.productVariants(
     {},
     `{
@@ -152,13 +151,13 @@ async function checkProductsAlignment() {
   /* REPORT */
   console.log(`/*********** REPORT ***********/`)
   console.log(
-    `DO PRODUCTS, PHYSICAL PRODUCTS, AND PRODUCT VARIANTS ALIGN IN NUMBER?`
-  )
-  console.log(
     `--- PRODUCTS ON PRISMA BUT NOR AIRTABLE: ${productsInPrismaButNotAirtable.length}`
   )
   console.log(
     `--- PRODUCTS ON AIRTABLE BUT NOT PRISMA: ${productsInAirtableButNotPrisma.length}`
+  )
+  console.log(
+    `DO PRODUCTS, PHYSICAL PRODUCTS, AND PRODUCT VARIANTS ALIGN IN NUMBER?`
   )
   console.log(
     `--- PHYSICAL PRODUCTS ON PRISMA BUT NOT AIRTABLE: ${physicalProductsInPrismaButNotAirtable.length}`
@@ -199,7 +198,6 @@ async function checkProductsAlignment() {
   console.log(
     `---NUMBER OF PHYSICAL PRODUCTS WITH MISMATCHING INVENTORY STATUSES: ${mismatchingStatuses.length}`
   )
-  console.log(``)
   console.log(`ARE THE RESERVATIONS ALIGNED?`)
   console.log(
     `-- RESERVATIONS IN PRISMA BUT NOT AIRTABLE; ${reservationsInPrismaButNotAirtable.length}`
@@ -218,6 +216,28 @@ async function checkProductsAlignment() {
   )
 
   console.log(`ERRORS: ${errors.length}`)
+
+  return [
+    productsInPrismaButNotAirtable,
+    productsInAirtableButNotPrisma,
+    physicalProductsInPrismaButNotAirtable,
+    physicalProductsInAirtableButNotPrisma,
+    productVariantsInPrismaButNotAirtable,
+    productVariantsInAirtableButNotPrisma,
+    productVariantSKUMismatches,
+    prismaSUIDToSKUMismatches,
+    airtableSUIDToSKUMismatches,
+    countMisalignments,
+    prismaTotalPhysicalProductMisalignment,
+    airtableTotalPhysicalProductMisalignment,
+    mismatchingStatuses,
+    reservationsInPrismaButNotAirtable,
+    reservationsInAirtableButNotPrisma,
+    misalignedSUIDsOnReservations,
+    misalignedStatusOnReservations,
+    reservationsWithMoreThanThreeProducts,
+    errors,
+  ]
 }
 
 checkProductsAlignment()
@@ -326,6 +346,13 @@ function checkCounts(
     )
 
     // Are the total, reservable, reserved, and nonreservable counts identical?
+    if (correspondingAirtableProductVariant === undefined) {
+      console.log(
+        "could not find product variant in airtable. sku: ",
+        prismaProductVariant.sku
+      )
+      continue
+    }
     const totalCorrect =
       prismaProductVariant.total ===
       correspondingAirtableProductVariant.fields["Total Count"]

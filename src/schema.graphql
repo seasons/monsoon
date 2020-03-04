@@ -78,6 +78,16 @@ type ProductVariant {
 
 type Query {
   me: Me @isAuthenticated
+  brand(where: BrandWhereUniqueInput!): Brand
+  brands(
+    where: BrandWhereInput
+    orderBy: BrandOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Brand]!
   products(
     category: String
     where: ProductWhereInput
@@ -121,7 +131,8 @@ type Query {
   collection(where: CollectionWhereUniqueInput!): Collection
   faq: Faq
   homepage: Homepage
-  chargebeeCheckout(planID: PlanID!, userIDHash: String!): ChargebeeCheckout
+  chargebeeCheckout(planID: PlanID!, userIDHash: String!): ChargebeeHostedPagePayload
+  chargebeeUpdatePaymentPage: ChargebeeHostedPagePayload
   homepageProductRail(
     where: HomepageProductRailWhereUniqueInput!
   ): HomepageProductRail
@@ -166,16 +177,16 @@ type Query {
   search(query: String!, options: SearchOptions): [SearchResult]!
 }
 
-type ChargebeeCheckout {
-  created_at: Int!
+type ChargebeeHostedPagePayload {
+  created_at: DateTime!
   embed: Boolean!
   expires_at: Int!
   id: String!
   object: String!
-  resource_version: Int!
+  resource_version: DateTime!
   state: String!
   type: String!
-  updated_at: Int!
+  updated_at: DateTime!
   url: String!
 }
 
@@ -207,6 +218,15 @@ type Mutation {
   deleteProductRequest(requestID: ID!): ProductRequest!
   validateAddress(input: ValidateAddressInput!): ValidationPayload!
   addProductVariantWant(variantID: ID!): ProductVariantWant!
+  updatePaymentAndShipping(billingAddress: AddressInput!, shippingAddress: AddressInput!, phoneNumber: String!): Boolean
+}
+
+input AddressInput {
+  city: String!
+  postalCode: String!
+  state: String!
+  street1: String!
+  street2: String
 }
 
 input ReserveItemsOptions {
@@ -286,12 +306,13 @@ type Me {
   savedItems: [BagItem!]!
 }
 
-union HomepageResult = HomepageProductRail | Product | Collection
+union HomepageResult = Product | Collection | Brand
 
 enum HomePageSectionType {
   CollectionGroups
   Products
   HomepageProductRails
+  Brands
 }
 
 enum PlanID {
