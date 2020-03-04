@@ -312,6 +312,7 @@ type Me {
   activeReservation: Reservation
   bag: [BagItem!]!
   savedItems: [BagItem!]!
+  beamsToken: String!
 }
 
 union HomepageResult = Product | Collection | Brand

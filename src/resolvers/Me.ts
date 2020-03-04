@@ -2,8 +2,14 @@ import { Context } from "../utils"
 import { head } from "lodash"
 import { getUserRequestObject, getCustomerFromContext } from "../auth/utils"
 import { ReservationCreateInput } from "../prisma"
+import { beamsClient } from "./Mutation/beamsClient"
 
 export const Me = {
+  beamsToken: async (parent, args, ctx: Context, info) => {
+    const user = await getUserRequestObject(ctx)
+    const beamsToken = beamsClient?.generateToken(user?.email) as any
+    return beamsToken?.token
+  },
   user: async (parent, args, ctx: Context) => {
     const { id } = await getUserRequestObject(ctx)
     return ctx.prisma.user({ id })
