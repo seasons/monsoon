@@ -1,15 +1,9 @@
-import {
-  Context,
-  Mutation,
-  Args,
-  Resolver,
-} from "@nestjs/graphql"
+import { Context, Mutation, Args, Resolver } from "@nestjs/graphql"
 import { AuthService } from "../services/auth.service"
 import { UserInputError, ForbiddenError } from "apollo-server"
 import { prisma } from "../../../prisma"
 import { User } from "../../../nest_decorators"
 import { createOrUpdateAirtableUser } from "../../../airtable/createOrUpdateUser"
-
 
 @Resolver()
 export class AuthMutationsResolver {
@@ -25,7 +19,10 @@ export class AuthMutationsResolver {
     // Get their API access token
     let tokenData
     try {
-      tokenData = await this.authService.getAuth0UserAccessToken(email, password)
+      tokenData = await this.authService.getAuth0UserAccessToken(
+        email,
+        password
+      )
     } catch (err) {
       if (err.message.includes("403")) {
         throw new ForbiddenError(err)
@@ -41,7 +38,8 @@ export class AuthMutationsResolver {
       const customer = await this.authService.getCustomerFromUserID(user.id)
       if (
         customer &&
-        customer.status !== "Active" && customer.status !== "Authorized"
+        customer.status !== "Active" &&
+        customer.status !== "Authorized"
       ) {
         throw new Error(`User account has not been approved`)
       }
@@ -79,7 +77,10 @@ export class AuthMutationsResolver {
     // Get their API access token
     let tokenData
     try {
-      tokenData = await this.authService.getAuth0UserAccessToken(email, password)
+      tokenData = await this.authService.getAuth0UserAccessToken(
+        email,
+        password
+      )
     } catch (err) {
       if (err.message.includes("403")) {
         throw new ForbiddenError(err)
@@ -94,7 +95,7 @@ export class AuthMutationsResolver {
         userAuth0ID,
         email,
         firstName,
-        lastName,
+        lastName
       )
     } catch (err) {
       throw new Error(err)
@@ -105,7 +106,7 @@ export class AuthMutationsResolver {
       await this.authService.createPrismaCustomerForExistingUser(
         user.id,
         details,
-        "Created",
+        "Created"
       )
     } catch (err) {
       throw new Error(err)
@@ -119,7 +120,9 @@ export class AuthMutationsResolver {
     ctx.analytics.identify({
       userId: user.id,
       traits: {
-        ...this.authService.extractSegmentReservedTraitsFromCustomerDetail(details),
+        ...this.authService.extractSegmentReservedTraitsFromCustomerDetail(
+          details
+        ),
         firstName: user.firstName,
         lastName: user.lastName,
         createdAt: now.toISOString(),

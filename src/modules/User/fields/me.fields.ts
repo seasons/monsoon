@@ -19,9 +19,8 @@ export class MeFieldsResolver {
   ) {}
 
   @ResolveProperty()
-  async user(@User() requestUser) {
-    const { id } = requestUser
-    return prisma.user({ id })
+  async user(@User() user) {
+    return user
   }
 
   @ResolveProperty()
