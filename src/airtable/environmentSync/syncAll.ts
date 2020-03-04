@@ -14,6 +14,7 @@ import {
 import cliProgress from "cli-progress"
 import { getNumReadWritesToSyncModel } from "./utils"
 import { AirtableModelName } from "../utils"
+import { checkAllTableAlignment } from "./checkTableAlignment"
 
 export const syncAll = async () => {
   // Note that the order matters here in order to properly link between tables.
@@ -21,6 +22,10 @@ export const syncAll = async () => {
   console.log(
     `\nNote: If you encounter errors, it's probably a field configuration issue on the destination base\n`
   )
+  console.log(
+    `Checking table alignments to surface would-be sync errors early...`
+  )
+  await checkAllTableAlignment()
   const multibar = new cliProgress.MultiBar(
     {
       clearOnComplete: false,
