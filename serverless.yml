@@ -47,6 +47,5 @@ functions:
   airtablePrismaSyncHealth:
     handler: src/cron/reportAirtablePrismaSyncHealth.run
     events:
-      # - schedule: cron(0 14 ? * MON-FRI *) # 2pm UTC, 9AM EST, every monday to friday
-      - schedule: rate(1 minute)
+      - schedule: cron(0 14 ? * MON-FRI *) # 2pm UTC, 9AM EST, every monday to friday
     timeout: 60
