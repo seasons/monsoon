@@ -7,7 +7,7 @@ import { shippoValidateAddress } from "./address"
 import { createOrUpdateAirtableUser } from "../../airtable/createOrUpdateUser"
 import { getCustomerFromContext, getUserFromContext } from "../../auth/utils"
 import { emails } from "../../emails"
-import { getChargebeePaymentSource, updateChargebeeBillingAddress } from "../Payment"
+import { updateChargebeeBillingAddress } from "../Payment"
 import { User } from "../../prisma"
 import { sendTransactionalEmail } from "../../sendTransactionalEmail"
 import {
@@ -115,13 +115,9 @@ export const customer = {
       billingPostalCode
     )
 
-    // Get user's card information from chargebee
-    const cardInfo = await getChargebeePaymentSource(user.id)
-
-    // Update customer's billing information
-    await updateCustomerBillingInfo(
+    // Update customer's billing address
+    await updateCustomerBillingAddress(
       ctx,
-      cardInfo,
       customer.id,
       billingStreet1,
       billingStreet2,
@@ -322,9 +318,8 @@ async function updateCustomerDetail(ctx, user, customer, shippingAddress, phoneN
   }
 }
 
-async function updateCustomerBillingInfo(
+async function updateCustomerBillingAddress(
   ctx,
-  cardInfo,
   customerID,
   billingStreet1,
   billingStreet2,
@@ -332,32 +327,19 @@ async function updateCustomerBillingInfo(
   billingState,
   billingPostalCode
 ) {
-  const { brand, expiry_month, expiry_year, first_name, last4, last_name } = cardInfo
   const billingInfoId = await ctx.prisma.customer({ id: customerID })
     .billingInfo()
     .id()
-  const billingInfoData = {
-    brand,
-    city: billingCity,
-    expiration_month: expiry_month,
-    expiration_year: expiry_year,
-    last_digits: last4,
-    name: `${first_name} ${last_name}`,
-    postal_code: billingPostalCode,
-    state: billingState,
-    street1: billingStreet1,
-    street2: billingStreet2
-  }
-  const billingInfo = await ctx.prisma.upsertBillingInfo({
-    create: billingInfoData,
-    update: billingInfoData,
-    where: { id: billingInfoId }
-  })
-
-  if (billingInfo) {
-    await ctx.prisma.updateCustomer({
-      data: { billingInfo: { connect: { id: billingInfo.id } } },
-      where: { id: customerID }
+  if (billingInfoId) {
+    await ctx.prisma.updateBillingInfo({
+      data: {
+        city: billingCity,
+        postal_code: billingPostalCode,
+        state: billingState,
+        street1: billingStreet1,
+        street2: billingStreet2
+      },
+      where: { id: billingInfoId }
     })
   }
 }
