@@ -331,7 +331,7 @@ async function updateCustomerBillingAddress(
     .billingInfo()
     .id()
   if (billingInfoId) {
-    const billingInfo = await ctx.prisma.updateBillingInfo({
+    await ctx.prisma.updateBillingInfo({
       data: {
         city: billingCity,
         postal_code: billingPostalCode,
@@ -341,12 +341,5 @@ async function updateCustomerBillingAddress(
       },
       where: { id: billingInfoId }
     })
-
-    if (billingInfo) {
-      await ctx.prisma.updateCustomer({
-        data: { billingInfo: { connect: { id: billingInfo.id } } },
-        where: { id: customerID }
-      })
-    }
   }
 }
