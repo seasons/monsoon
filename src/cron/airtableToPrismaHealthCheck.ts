@@ -621,7 +621,7 @@ const checkMisalignmentsBetweenProdVarCountsAndPhysProdStatuses = (
         c => c.fields["Inventory Status"] === "Reservable"
       )
       const physicalProductsWithStatusNonReservable = correspondingAirtablePhysicalProducts.filter(
-        c => c.fields["Inventory Status"] === "NonReservable"
+        c => c.fields["Inventory Status"] === "Non Reservable"
       )
       return (
         !!a.fields.SKU &&
