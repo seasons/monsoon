@@ -7,7 +7,7 @@ import { shippoValidateAddress } from "./address"
 import { createOrUpdateAirtableUser } from "../../airtable/createOrUpdateUser"
 import { getCustomerFromContext, getUserFromContext } from "../../auth/utils"
 import { emails } from "../../emails"
-import { updateChargebeeBillingAddress } from "../Payment"
+import { getChargebeePaymentSource, updateChargebeeBillingAddress } from "../Payment"
 import { User } from "../../prisma"
 import { sendTransactionalEmail } from "../../sendTransactionalEmail"
 import {
@@ -118,6 +118,7 @@ export const customer = {
     // Update customer's billing address
     await updateCustomerBillingAddress(
       ctx,
+      user.id,
       customer.id,
       billingStreet1,
       billingStreet2,
@@ -320,6 +321,7 @@ async function updateCustomerDetail(ctx, user, customer, shippingAddress, phoneN
 
 async function updateCustomerBillingAddress(
   ctx,
+  userID,
   customerID,
   billingStreet1,
   billingStreet2,
@@ -327,19 +329,40 @@ async function updateCustomerBillingAddress(
   billingState,
   billingPostalCode
 ) {
+  const billingAddressData = {
+    city: billingCity,
+    postal_code: billingPostalCode,
+    state: billingState,
+    street1: billingStreet1,
+    street2: billingStreet2
+  }
   const billingInfoId = await ctx.prisma.customer({ id: customerID })
     .billingInfo()
     .id()
   if (billingInfoId) {
     await ctx.prisma.updateBillingInfo({
-      data: {
-        city: billingCity,
-        postal_code: billingPostalCode,
-        state: billingState,
-        street1: billingStreet1,
-        street2: billingStreet2
-      },
+      data: billingAddressData,
       where: { id: billingInfoId }
+    })
+  } else {
+    // Get user's card information from chargebee
+    const cardInfo = await getChargebeePaymentSource(userID)
+    const { brand, expiry_month, expiry_year, first_name, last4, last_name } = cardInfo
+
+    // Create new billing info object
+    const billingInfo = await ctx.prisma.createBillingInfo({
+      ...billingAddressData,
+      brand,
+      expiration_month: expiry_month,
+      expiration_year: expiry_year,
+      last_digits: last4,
+      name: `${first_name} ${last_name}`,
+    })
+
+    // Connect new billing info to customer object
+    await ctx.prisma.updateCustomer({
+      data: { billingInfo: { connect: { id: billingInfo.id } } },
+      where: { id: customerID }
     })
   }
 }
