@@ -5,7 +5,7 @@ import {
   getAllReservations,
   AirtableData,
 } from "../airtable/utils"
-import { prisma, ProductVariant } from "../prisma"
+import { prisma, ProductVariant, Prisma } from "../prisma"
 import {
   getCorrespondingAirtableProductVariant,
   getCorrespondingAirtablePhysicalProduct,
@@ -14,6 +14,7 @@ import { db } from "../server"
 import { airtableToPrismaInventoryStatus, Identity } from "../utils"
 import { xor } from "lodash"
 import util from "util"
+import { CodeStarNotifications } from "aws-sdk"
 
 export async function checkProductsAlignment() {
   const allAirtableProductVariants = await getAllProductVariants()
@@ -37,6 +38,7 @@ export async function checkProductsAlignment() {
           reservable
           reserved
           nonReservable
+          createdAt
       }`
   )
   const allPrismaPhysicalProducts = await prisma.physicalProducts()
@@ -210,16 +212,59 @@ export async function checkProductsAlignment() {
   console.log(
     `-- AIRTABLE: NUMBER OF PRODUCT VARIANTS WITH A COUNT PROFILE THAT DOESN'T MATCH THE STATUSES OF THE ATTACHED PHYSICAL PRODUCTS: ${airtableCountToStatusMisalignments.length}`
   )
-  //   console.log(
-  //     util.inspect(prismaCountToStatusMisalignments, {
-  //       depth: null,
-  //     })
+  prismaCountToStatusMisalignments.forEach(async a => {
+    const trueReserved = a.physicalProducts.filter(b => b.status === "Reserved")
+      .length
+    const trueReservable = a.physicalProducts.filter(
+      b => b.status === "Reservable"
+    ).length
+    const trueNonReservable = a.physicalProducts.filter(
+      b => b.status === "NonReservable"
+    ).length
+    const trueCounts = {
+      reserved: trueReserved,
+      reservable: trueReservable,
+      nonReservable: trueNonReservable,
+    }
+    console.log(a.sku)
+    console.log(trueCounts)
+    console.log(
+      await prisma.updateProductVariant({
+        where: { sku: a.sku },
+        data: trueCounts,
+      })
+    )
+  })
+  //   console.log("PRISMA MISMATCHES")
+  //   prismaCountToStatusMisalignments.forEach(a =>
+  //     console.log(util.inspect(a, { depth: null }))
   //   )
-  //   console.log(
-  //     util.inspect(airtableCountToStatusMisalignments, {
-  //       depth: null,
-  //     })
+  //   prismaCountToStatusMisalignments.forEach(async a =>
+  //     console.log(
+  //       `sku: ${a.sku}. createdAt: ${new Date(a.createdAt)}. reservations: ${(
+  //         await getProductVariantReservationHistory(prisma, a.sku)
+  //       ).map(r => r.reservationNumber)}`
+  //     )
   //   )
+  //   console.log("AIRTABLE MISMATCHES")
+  //   airtableCountToStatusMisalignments.forEach(a =>
+  //     console.log(util.inspect(a, { depth: null }))
+  //   )
+  //   const prodVarsWithImpossibleCounts = allPrismaProductVariants
+  //     .filter(a => a.total !== a.reserved + a.reservable + a.nonReservable)
+  //     .map(a =>
+  //       Identity({
+  //         sku: a.sku,
+  //         total: a.total,
+  //         reserved: a.reserved,
+  //         reservable: a.reservable,
+  //         nonReservable: a.nonReservable,
+  //       })
+  //     )
+  //   console.log(
+  //     `-- PRISMA: NUMBER OF PRODUCT VARIANTS WITH TOTAL != RESERVED + RESERVABLE + NONRESERVABLE: ${prodVarsWithImpossibleCounts.length}`
+  //   )
+  //   console.log(prodVarsWithImpossibleCounts)
   console.log(``)
   console.log(`ARE THE PHYSICAL PRODUCT STATUSES ALIGNED?`)
   console.log(
@@ -593,6 +638,7 @@ const checkMisalignmentsBetweenProdVarCountsAndPhysProdStatuses = (
     .map(c =>
       Identity({
         sku: c.sku,
+        createdAt: c.createdAt,
         counts: {
           total: c.total,
           reservable: c.reservable,
@@ -665,4 +711,13 @@ const getAttachedAirtablePhysicalProducts = (
   return allAirtablePhysicalProducts.filter(a =>
     airtableProductVariant.fields["Physical Products"].includes(a.id)
   )
+}
+
+const getProductVariantReservationHistory = async (
+  prisma: Prisma,
+  prodVarSku
+) => {
+  return await prisma.reservations({
+    where: { products_some: { seasonsUID_contains: prodVarSku } },
+  })
 }
