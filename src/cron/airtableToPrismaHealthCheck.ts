@@ -139,7 +139,7 @@ export async function checkProductsAlignment() {
     allAirtableProductVariants,
     allAirtablePhysicalProducts
   )
-  const prodVarsWithImpossibleCounts = await getProdVarsWithImpossibleCounts(
+  const prismaProdVarsWithImpossibleCounts = await getProdVarsWithImpossibleCounts(
     allPrismaProductVariants
   )
 
@@ -217,7 +217,7 @@ export async function checkProductsAlignment() {
     `-- AIRTABLE: NUMBER OF PRODUCT VARIANTS WITH A COUNT PROFILE THAT DOESN'T MATCH THE STATUSES OF THE ATTACHED PHYSICAL PRODUCTS: ${airtableCountToStatusMisalignments.length}`
   )
   console.log(
-    `-- PRISMA: NUMBER OF PRODUCT VARIANTS WITH TOTAL != RESERVED + RESERVABLE + NONRESERVABLE: ${prodVarsWithImpossibleCounts.length}`
+    `-- PRISMA: NUMBER OF PRODUCT VARIANTS WITH TOTAL != RESERVED + RESERVABLE + NONRESERVABLE: ${prismaProdVarsWithImpossibleCounts.length}`
   )
   console.log(``)
   console.log(`ARE THE PHYSICAL PRODUCT STATUSES ALIGNED?`)
@@ -256,6 +256,9 @@ export async function checkProductsAlignment() {
     countMisalignments,
     prismaTotalPhysicalProductMisalignment,
     airtableTotalPhysicalProductMisalignment,
+    prismaCountToStatusMisalignments,
+    airtableCountToStatusMisalignments,
+    prismaProdVarsWithImpossibleCounts,
     mismatchingStatuses,
     reservationsInPrismaButNotAirtable,
     reservationsInAirtableButNotPrisma,
