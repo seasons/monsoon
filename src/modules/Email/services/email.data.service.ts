@@ -8,7 +8,7 @@ export interface ReservedItem {
 }
 
 @Injectable()
-export class EmailDataService {
+export class EmailDataProvider {
   reservationReturnConfirmation(reservationNumber, itemsReturned, userEmail) {
     return {
       email: {

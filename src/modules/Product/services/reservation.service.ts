@@ -17,14 +17,12 @@ import { ProductUtilsService } from "./product.utils.service"
 import { ProductVariantService } from "./productVariant.service"
 import { PhysicalProductService } from "./physicalProduct.utils.service"
 import { AirtableService } from "../../Airtable/services/airtable.service"
-import {
-  ShippingService,
-  ShippoTransaction,
-} from "../../Shipping/services/shipping.service"
+import { ShippingService } from "../../Shipping/services/shipping.service"
 import { EmailService } from "../../Email/services/email.service"
 import { RollbackError } from "../../../errors"
 import * as Sentry from "@sentry/node"
 import { ReservationUtilsService } from "./reservation.utils.service"
+import { ShippoTransaction } from "../../Shipping/shipping.types"
 
 interface PhysicalProductWithProductVariant extends PhysicalProduct {
   productVariant: { id: ID_Input }

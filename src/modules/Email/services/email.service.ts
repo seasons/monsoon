@@ -7,14 +7,14 @@ import { User, Product, Reservation } from "../../../prisma"
 import { PrismaClientService } from "../../../prisma/client.service"
 import { UtilsService } from "../../Utils/utils.service"
 import { ReservationUtilsService } from "../../Product/services/reservation.utils.service"
-import { EmailDataService } from "./email.data.service"
+import { EmailDataProvider } from "./email.data.service"
 
 @Injectable()
 export class EmailService {
   constructor(
     private readonly prisma: PrismaClientService,
     private readonly utils: UtilsService,
-    private readonly data: EmailDataService
+    private readonly data: EmailDataProvider
   ) {}
 
   async sendReservationConfirmationEmail(
@@ -25,12 +25,12 @@ export class EmailService {
     const reservedItems = [
       await this.getReservationConfirmationDataForProduct(products[0]),
     ]
-    if (!!products[1]) {
+    if (!!products?.[1]) {
       reservedItems.push(
         await this.getReservationConfirmationDataForProduct(products[1])
       )
     }
-    if (!!products[2]) {
+    if (!!products?.[2]) {
       reservedItems.push(
         await this.getReservationConfirmationDataForProduct(products[2])
       )

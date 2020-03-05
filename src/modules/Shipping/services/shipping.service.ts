@@ -3,28 +3,7 @@ import { PrismaClientService } from "../../../prisma/client.service"
 import { User, Customer, ID_Input, Location } from "../../../prisma"
 import { UtilsService } from "../../Utils/utils.service"
 import shippo from "shippo"
-
-export interface ShippoShipment {
-  address_from: any
-  address_to: any
-  parcels: any
-  extra?: any
-}
-export interface ShippoTransaction {
-  label_url: string
-  tracking_number: string
-  tracking_url_provider: string
-  messages: any[]
-  formatted_error?: string
-  status: string
-}
-
-export interface ShippoShipment {
-  address_from: any
-  address_to: any
-  parcels: any
-  extra?: any
-}
+import { ShippoTransaction, ShippoShipment } from "../shipping.types"
 
 interface CoreShippoAddressFields {
   name: string
@@ -120,7 +99,7 @@ export class ShippingService {
   ): Promise<ShippoShipment[]> {
     // Create Next Cleaners Address object
     const nextCleanersAddressPrisma = await this.utilsService.getPrismaLocationFromSlug(
-      process.env.SEASONS_CLEANER_LOCATION_SLUG
+      process.env.SEASONS_CLEANER_LOCATION_SLUG || "seasons-cleaners-official"
     )
     const nextCleanersAddressShippo = {
       ...this.locationDataToShippoAddress(nextCleanersAddressPrisma),
