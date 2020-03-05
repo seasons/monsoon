@@ -1,8 +1,8 @@
 import * as jwt from "jsonwebtoken"
 import jwksClient from "jwks-rsa"
 import { Context } from "../utils"
-import get from "lodash.get"
-import head from "lodash.head"
+import get from "lodash/get"
+import head from "lodash/head"
 import { Customer, User } from "../prisma"
 
 export const PW_STRENGTH_RULES_URL =

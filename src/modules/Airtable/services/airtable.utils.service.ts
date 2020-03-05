@@ -1,10 +1,6 @@
 import { Injectable } from "@nestjs/common"
 import * as Airtable from "airtable"
 
-export interface AirtableUtilsService {
-  __base: any
-}
-
 export interface AirtableRecord {
   id: string
   fields: any
@@ -12,15 +8,13 @@ export interface AirtableRecord {
 
 @Injectable()
 export class AirtableUtilsService {
-  constructor() {
-    this.__base = Airtable.base(process.env.AIRTABLE_DATABASE_ID)
-  }
+  private readonly base = Airtable.base(process.env.AIRTABLE_DATABASE_ID)
 
   getAirtableUserRecordByUserEmail(
     email: string
   ): Promise<{ id: string; fields: any }> {
     return new Promise((resolve, reject) => {
-      this.__base("Users")
+      this.base("Users")
         .select({
           view: "Grid view",
           filterByFormula: `{Email}='${email}'`,
@@ -38,7 +32,7 @@ export class AirtableUtilsService {
 
   async getAirtableLocationRecordBySlug(slug: string): Promise<AirtableRecord> {
     return new Promise((resolve, reject) => {
-      this.__base("Locations")
+      this.base("Locations")
         .select({ view: "Grid view", filterByFormula: `{Slug}='${slug}'` })
         .firstPage((err, records) => {
           if (err) return reject(err)

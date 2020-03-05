@@ -42,18 +42,14 @@ interface ShippoLabelInputs {
   servicelevel_token: string
 }
 
-export interface ShippingService {
-  __shippo: any
-}
-
 @Injectable()
 export class ShippingService {
+  private readonly shippo = shippo(process.env.SHIPPO_API_KEY)
+
   constructor(
     private readonly prisma: PrismaClientService,
     private readonly utilsService: UtilsService
-  ) {
-    this.__shippo = shippo(process.env.SHIPPO_API_KEY)
-  }
+  ) {}
 
   async createReservationShippingLabels(
     newProductVariantsBeingReserved: ID_Input[],
@@ -190,7 +186,7 @@ export class ShippingService {
     inputs: ShippoLabelInputs
   ): Promise<ShippoTransaction> {
     return new Promise(async (resolve, reject) => {
-      const transaction = await this.__shippo.transaction
+      const transaction = await this.shippo.transaction
         .create(inputs)
         .catch(reject)
 
