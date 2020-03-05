@@ -6,6 +6,29 @@ import { BrandOrderByInput } from "../../../prisma"
 export class ProductUtilsService {
   constructor(private readonly db: DBService) {}
 
+  async getReservedBagItems(customer) {
+    const reservedBagItems = await this.db.query.bagItems(
+      {
+        where: {
+          customer: {
+            id: customer.id,
+          },
+          status: "Reserved",
+        },
+      },
+      `{
+          id
+          status
+          position
+          saved
+          productVariant {
+            id
+          }
+      }`
+    )
+    return reservedBagItems
+  }
+
   async productsAlphabetically(
     category: string,
     orderBy: BrandOrderByInput,
