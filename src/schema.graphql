@@ -211,7 +211,7 @@ type Mutation {
   checkItemsAvailability(items: [ID!]!): Boolean!
   reserveItems(items: [ID!]!, options: ReserveItemsOptions): Reservation
   addToBag(item: ID!): BagItem!
-  removeFromBag(item: ID!): BagItem!
+  removeFromBag(item: ID!, saved: Boolean!): BagItem!
   saveProduct(item: ID!, save: Boolean!): BagItem
   addViewedProduct(item: ID!): RecentlyViewedProduct!
   acknowledgeCompletedChargebeeHostedCheckout(
