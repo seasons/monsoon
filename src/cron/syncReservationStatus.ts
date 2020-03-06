@@ -52,54 +52,55 @@ export async function syncReservationStatus() {
       }
 
       // If the reservation has status of "Completed", handle it seperately.
-      if (airtableReservation.fields.Status === "Completed") {
-        if (prismaReservation.status !== "Completed") {
-          // Handle housekeeping
-          updatedReservations.push(prismaReservation.reservationNumber)
-          const prismaUser = await prisma.user({
-            email: airtableReservation.fields["User Email"][0],
-          })
-          const returnedPhysicalProducts = prismaReservation.products.filter(
-            p =>
-              [
-                "Reservable" as InventoryStatus,
-                "NonReservable" as InventoryStatus,
-              ].includes(p.inventoryStatus)
-          )
+      if (
+        airtableReservation.fields.Status === "Completed"
+        && prismaReservation.status !== "Completed"
+      ) {
+        // Handle housekeeping
+        updatedReservations.push(prismaReservation.reservationNumber)
+        const prismaUser = await prisma.user({
+          email: airtableReservation.fields["User Email"][0],
+        })
+        const returnedPhysicalProducts = prismaReservation.products.filter(
+          p =>
+            [
+              "Reservable" as InventoryStatus,
+              "NonReservable" as InventoryStatus,
+            ].includes(p.inventoryStatus)
+        )
 
-          // Update the status
-          await prisma.updateReservation({
-            data: { status: "Completed" },
-            where: { id: prismaReservation.id },
-          })
+        // Update the status
+        await prisma.updateReservation({
+          data: { status: "Completed" },
+          where: { id: prismaReservation.id },
+        })
 
-          // Email the user
-          sendYouCanNowReserveAgainEmail(prismaUser)
+        // Email the user
+        sendYouCanNowReserveAgainEmail(prismaUser)
 
-          //   Update the user's bag
-          await updateUsersBagItemsOnCompletedReservation(
-            prisma,
-            prismaReservation,
-            returnedPhysicalProducts
-          )
+        //   Update the user's bag
+        await updateUsersBagItemsOnCompletedReservation(
+          prisma,
+          prismaReservation,
+          returnedPhysicalProducts
+        )
 
-          // Update the returnPackage on the shipment
-          await updateReturnPackageOnCompletedReservation(
-            prisma,
-            prismaReservation,
-            returnedPhysicalProducts
-          )
+        // Update the returnPackage on the shipment
+        await updateReturnPackageOnCompletedReservation(
+          prisma,
+          prismaReservation,
+          returnedPhysicalProducts
+        )
 
-          // Email an admin a confirmation email
-          sendTransactionalEmail({
-            to: process.env.OPERATIONS_ADMIN_EMAIL,
-            data: emails.reservationReturnConfirmationData(
-              prismaReservation.reservationNumber,
-              returnedPhysicalProducts.map(p => p.seasonsUID),
-              prismaUser.email
-            ),
-          })
-        }
+        // Email an admin a confirmation email
+        sendTransactionalEmail({
+          to: process.env.OPERATIONS_ADMIN_EMAIL,
+          data: emails.reservationReturnConfirmationData(
+            prismaReservation.reservationNumber,
+            returnedPhysicalProducts.map(p => p.seasonsUID),
+            prismaUser.email
+          ),
+        })
       } else if (
         airtableReservation.fields.Status !== prismaReservation.status
       ) {

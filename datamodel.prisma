@@ -152,6 +152,17 @@ enum Plan {
   Essential
 }
 
+enum QuestionType {
+  MultipleChoice
+  FreeResponse
+}
+
+enum Rating {
+  Disliked
+  Meh
+  Loved
+}
+
 type Brand {
   id: ID! @id
   slug: String! @unique
@@ -454,4 +465,28 @@ type ProductVariantWant {
   productVariant: ProductVariant!
   user: User!
   isFulfilled: Boolean!
+}
+
+type Review {
+  id: ID! @id
+  comment: String!
+  feedbacks: [ProductVariantFeedback!]!
+  rating: Rating!
+}
+
+type ProductVariantFeedback {
+  id: ID! @id
+  isCompleted: Boolean!
+  questions: [FeedbackQuestion!]!
+  review: Review!
+  variant: ProductVariant!
+}
+
+type FeedbackQuestion {
+  id: ID! @id
+  options: [String!] @scalarList(strategy: RELATION)
+  question: String!
+  responses: [String!] @scalarList(strategy: RELATION)
+  type: QuestionType!
+  variantFeedback: ProductVariantFeedback!
 }

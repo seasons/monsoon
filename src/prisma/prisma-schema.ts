@@ -38,6 +38,10 @@ type AggregateCustomerDetail {
   count: Int!
 }
 
+type AggregateFeedbackQuestion {
+  count: Int!
+}
+
 type AggregateHomepageProductRail {
   count: Int!
 }
@@ -82,6 +86,10 @@ type AggregateProductVariant {
   count: Int!
 }
 
+type AggregateProductVariantFeedback {
+  count: Int!
+}
+
 type AggregateProductVariantWant {
   count: Int!
 }
@@ -91,6 +99,10 @@ type AggregateRecentlyViewedProduct {
 }
 
 type AggregateReservation {
+  count: Int!
+}
+
+type AggregateReview {
   count: Int!
 }
 
@@ -2615,6 +2627,237 @@ input CustomerWhereUniqueInput {
 
 scalar DateTime
 
+type FeedbackQuestion {
+  id: ID!
+  options: [String!]!
+  question: String!
+  responses: [String!]!
+  type: QuestionType!
+  variantFeedback: ProductVariantFeedback!
+}
+
+type FeedbackQuestionConnection {
+  pageInfo: PageInfo!
+  edges: [FeedbackQuestionEdge]!
+  aggregate: AggregateFeedbackQuestion!
+}
+
+input FeedbackQuestionCreateInput {
+  id: ID
+  options: FeedbackQuestionCreateoptionsInput
+  question: String!
+  responses: FeedbackQuestionCreateresponsesInput
+  type: QuestionType!
+  variantFeedback: ProductVariantFeedbackCreateOneWithoutQuestionsInput!
+}
+
+input FeedbackQuestionCreateManyWithoutVariantFeedbackInput {
+  create: [FeedbackQuestionCreateWithoutVariantFeedbackInput!]
+  connect: [FeedbackQuestionWhereUniqueInput!]
+}
+
+input FeedbackQuestionCreateoptionsInput {
+  set: [String!]
+}
+
+input FeedbackQuestionCreateresponsesInput {
+  set: [String!]
+}
+
+input FeedbackQuestionCreateWithoutVariantFeedbackInput {
+  id: ID
+  options: FeedbackQuestionCreateoptionsInput
+  question: String!
+  responses: FeedbackQuestionCreateresponsesInput
+  type: QuestionType!
+}
+
+type FeedbackQuestionEdge {
+  node: FeedbackQuestion!
+  cursor: String!
+}
+
+enum FeedbackQuestionOrderByInput {
+  id_ASC
+  id_DESC
+  question_ASC
+  question_DESC
+  type_ASC
+  type_DESC
+}
+
+type FeedbackQuestionPreviousValues {
+  id: ID!
+  options: [String!]!
+  question: String!
+  responses: [String!]!
+  type: QuestionType!
+}
+
+input FeedbackQuestionScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  question: String
+  question_not: String
+  question_in: [String!]
+  question_not_in: [String!]
+  question_lt: String
+  question_lte: String
+  question_gt: String
+  question_gte: String
+  question_contains: String
+  question_not_contains: String
+  question_starts_with: String
+  question_not_starts_with: String
+  question_ends_with: String
+  question_not_ends_with: String
+  type: QuestionType
+  type_not: QuestionType
+  type_in: [QuestionType!]
+  type_not_in: [QuestionType!]
+  AND: [FeedbackQuestionScalarWhereInput!]
+  OR: [FeedbackQuestionScalarWhereInput!]
+  NOT: [FeedbackQuestionScalarWhereInput!]
+}
+
+type FeedbackQuestionSubscriptionPayload {
+  mutation: MutationType!
+  node: FeedbackQuestion
+  updatedFields: [String!]
+  previousValues: FeedbackQuestionPreviousValues
+}
+
+input FeedbackQuestionSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: FeedbackQuestionWhereInput
+  AND: [FeedbackQuestionSubscriptionWhereInput!]
+  OR: [FeedbackQuestionSubscriptionWhereInput!]
+  NOT: [FeedbackQuestionSubscriptionWhereInput!]
+}
+
+input FeedbackQuestionUpdateInput {
+  options: FeedbackQuestionUpdateoptionsInput
+  question: String
+  responses: FeedbackQuestionUpdateresponsesInput
+  type: QuestionType
+  variantFeedback: ProductVariantFeedbackUpdateOneRequiredWithoutQuestionsInput
+}
+
+input FeedbackQuestionUpdateManyDataInput {
+  options: FeedbackQuestionUpdateoptionsInput
+  question: String
+  responses: FeedbackQuestionUpdateresponsesInput
+  type: QuestionType
+}
+
+input FeedbackQuestionUpdateManyMutationInput {
+  options: FeedbackQuestionUpdateoptionsInput
+  question: String
+  responses: FeedbackQuestionUpdateresponsesInput
+  type: QuestionType
+}
+
+input FeedbackQuestionUpdateManyWithoutVariantFeedbackInput {
+  create: [FeedbackQuestionCreateWithoutVariantFeedbackInput!]
+  delete: [FeedbackQuestionWhereUniqueInput!]
+  connect: [FeedbackQuestionWhereUniqueInput!]
+  set: [FeedbackQuestionWhereUniqueInput!]
+  disconnect: [FeedbackQuestionWhereUniqueInput!]
+  update: [FeedbackQuestionUpdateWithWhereUniqueWithoutVariantFeedbackInput!]
+  upsert: [FeedbackQuestionUpsertWithWhereUniqueWithoutVariantFeedbackInput!]
+  deleteMany: [FeedbackQuestionScalarWhereInput!]
+  updateMany: [FeedbackQuestionUpdateManyWithWhereNestedInput!]
+}
+
+input FeedbackQuestionUpdateManyWithWhereNestedInput {
+  where: FeedbackQuestionScalarWhereInput!
+  data: FeedbackQuestionUpdateManyDataInput!
+}
+
+input FeedbackQuestionUpdateoptionsInput {
+  set: [String!]
+}
+
+input FeedbackQuestionUpdateresponsesInput {
+  set: [String!]
+}
+
+input FeedbackQuestionUpdateWithoutVariantFeedbackDataInput {
+  options: FeedbackQuestionUpdateoptionsInput
+  question: String
+  responses: FeedbackQuestionUpdateresponsesInput
+  type: QuestionType
+}
+
+input FeedbackQuestionUpdateWithWhereUniqueWithoutVariantFeedbackInput {
+  where: FeedbackQuestionWhereUniqueInput!
+  data: FeedbackQuestionUpdateWithoutVariantFeedbackDataInput!
+}
+
+input FeedbackQuestionUpsertWithWhereUniqueWithoutVariantFeedbackInput {
+  where: FeedbackQuestionWhereUniqueInput!
+  update: FeedbackQuestionUpdateWithoutVariantFeedbackDataInput!
+  create: FeedbackQuestionCreateWithoutVariantFeedbackInput!
+}
+
+input FeedbackQuestionWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  question: String
+  question_not: String
+  question_in: [String!]
+  question_not_in: [String!]
+  question_lt: String
+  question_lte: String
+  question_gt: String
+  question_gte: String
+  question_contains: String
+  question_not_contains: String
+  question_starts_with: String
+  question_not_starts_with: String
+  question_ends_with: String
+  question_not_ends_with: String
+  type: QuestionType
+  type_not: QuestionType
+  type_in: [QuestionType!]
+  type_not_in: [QuestionType!]
+  variantFeedback: ProductVariantFeedbackWhereInput
+  AND: [FeedbackQuestionWhereInput!]
+  OR: [FeedbackQuestionWhereInput!]
+  NOT: [FeedbackQuestionWhereInput!]
+}
+
+input FeedbackQuestionWhereUniqueInput {
+  id: ID
+}
+
 type HomepageProductRail {
   id: ID!
   slug: String!
@@ -3702,6 +3945,12 @@ type Mutation {
   upsertCustomerDetail(where: CustomerDetailWhereUniqueInput!, create: CustomerDetailCreateInput!, update: CustomerDetailUpdateInput!): CustomerDetail!
   deleteCustomerDetail(where: CustomerDetailWhereUniqueInput!): CustomerDetail
   deleteManyCustomerDetails(where: CustomerDetailWhereInput): BatchPayload!
+  createFeedbackQuestion(data: FeedbackQuestionCreateInput!): FeedbackQuestion!
+  updateFeedbackQuestion(data: FeedbackQuestionUpdateInput!, where: FeedbackQuestionWhereUniqueInput!): FeedbackQuestion
+  updateManyFeedbackQuestions(data: FeedbackQuestionUpdateManyMutationInput!, where: FeedbackQuestionWhereInput): BatchPayload!
+  upsertFeedbackQuestion(where: FeedbackQuestionWhereUniqueInput!, create: FeedbackQuestionCreateInput!, update: FeedbackQuestionUpdateInput!): FeedbackQuestion!
+  deleteFeedbackQuestion(where: FeedbackQuestionWhereUniqueInput!): FeedbackQuestion
+  deleteManyFeedbackQuestions(where: FeedbackQuestionWhereInput): BatchPayload!
   createHomepageProductRail(data: HomepageProductRailCreateInput!): HomepageProductRail!
   updateHomepageProductRail(data: HomepageProductRailUpdateInput!, where: HomepageProductRailWhereUniqueInput!): HomepageProductRail
   updateManyHomepageProductRails(data: HomepageProductRailUpdateManyMutationInput!, where: HomepageProductRailWhereInput): BatchPayload!
@@ -3765,6 +4014,12 @@ type Mutation {
   upsertProductVariant(where: ProductVariantWhereUniqueInput!, create: ProductVariantCreateInput!, update: ProductVariantUpdateInput!): ProductVariant!
   deleteProductVariant(where: ProductVariantWhereUniqueInput!): ProductVariant
   deleteManyProductVariants(where: ProductVariantWhereInput): BatchPayload!
+  createProductVariantFeedback(data: ProductVariantFeedbackCreateInput!): ProductVariantFeedback!
+  updateProductVariantFeedback(data: ProductVariantFeedbackUpdateInput!, where: ProductVariantFeedbackWhereUniqueInput!): ProductVariantFeedback
+  updateManyProductVariantFeedbacks(data: ProductVariantFeedbackUpdateManyMutationInput!, where: ProductVariantFeedbackWhereInput): BatchPayload!
+  upsertProductVariantFeedback(where: ProductVariantFeedbackWhereUniqueInput!, create: ProductVariantFeedbackCreateInput!, update: ProductVariantFeedbackUpdateInput!): ProductVariantFeedback!
+  deleteProductVariantFeedback(where: ProductVariantFeedbackWhereUniqueInput!): ProductVariantFeedback
+  deleteManyProductVariantFeedbacks(where: ProductVariantFeedbackWhereInput): BatchPayload!
   createProductVariantWant(data: ProductVariantWantCreateInput!): ProductVariantWant!
   updateProductVariantWant(data: ProductVariantWantUpdateInput!, where: ProductVariantWantWhereUniqueInput!): ProductVariantWant
   updateManyProductVariantWants(data: ProductVariantWantUpdateManyMutationInput!, where: ProductVariantWantWhereInput): BatchPayload!
@@ -3783,6 +4038,12 @@ type Mutation {
   upsertReservation(where: ReservationWhereUniqueInput!, create: ReservationCreateInput!, update: ReservationUpdateInput!): Reservation!
   deleteReservation(where: ReservationWhereUniqueInput!): Reservation
   deleteManyReservations(where: ReservationWhereInput): BatchPayload!
+  createReview(data: ReviewCreateInput!): Review!
+  updateReview(data: ReviewUpdateInput!, where: ReviewWhereUniqueInput!): Review
+  updateManyReviews(data: ReviewUpdateManyMutationInput!, where: ReviewWhereInput): BatchPayload!
+  upsertReview(where: ReviewWhereUniqueInput!, create: ReviewCreateInput!, update: ReviewUpdateInput!): Review!
+  deleteReview(where: ReviewWhereUniqueInput!): Review
+  deleteManyReviews(where: ReviewWhereInput): BatchPayload!
   createUser(data: UserCreateInput!): User!
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   updateManyUsers(data: UserUpdateManyMutationInput!, where: UserWhereInput): BatchPayload!
@@ -5556,6 +5817,207 @@ type ProductVariantEdge {
   cursor: String!
 }
 
+type ProductVariantFeedback {
+  id: ID!
+  isCompleted: Boolean!
+  questions(where: FeedbackQuestionWhereInput, orderBy: FeedbackQuestionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [FeedbackQuestion!]
+  review: Review!
+  variant: ProductVariant!
+}
+
+type ProductVariantFeedbackConnection {
+  pageInfo: PageInfo!
+  edges: [ProductVariantFeedbackEdge]!
+  aggregate: AggregateProductVariantFeedback!
+}
+
+input ProductVariantFeedbackCreateInput {
+  id: ID
+  isCompleted: Boolean!
+  questions: FeedbackQuestionCreateManyWithoutVariantFeedbackInput
+  review: ReviewCreateOneWithoutFeedbacksInput!
+  variant: ProductVariantCreateOneInput!
+}
+
+input ProductVariantFeedbackCreateManyWithoutReviewInput {
+  create: [ProductVariantFeedbackCreateWithoutReviewInput!]
+  connect: [ProductVariantFeedbackWhereUniqueInput!]
+}
+
+input ProductVariantFeedbackCreateOneWithoutQuestionsInput {
+  create: ProductVariantFeedbackCreateWithoutQuestionsInput
+  connect: ProductVariantFeedbackWhereUniqueInput
+}
+
+input ProductVariantFeedbackCreateWithoutQuestionsInput {
+  id: ID
+  isCompleted: Boolean!
+  review: ReviewCreateOneWithoutFeedbacksInput!
+  variant: ProductVariantCreateOneInput!
+}
+
+input ProductVariantFeedbackCreateWithoutReviewInput {
+  id: ID
+  isCompleted: Boolean!
+  questions: FeedbackQuestionCreateManyWithoutVariantFeedbackInput
+  variant: ProductVariantCreateOneInput!
+}
+
+type ProductVariantFeedbackEdge {
+  node: ProductVariantFeedback!
+  cursor: String!
+}
+
+enum ProductVariantFeedbackOrderByInput {
+  id_ASC
+  id_DESC
+  isCompleted_ASC
+  isCompleted_DESC
+}
+
+type ProductVariantFeedbackPreviousValues {
+  id: ID!
+  isCompleted: Boolean!
+}
+
+input ProductVariantFeedbackScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  isCompleted: Boolean
+  isCompleted_not: Boolean
+  AND: [ProductVariantFeedbackScalarWhereInput!]
+  OR: [ProductVariantFeedbackScalarWhereInput!]
+  NOT: [ProductVariantFeedbackScalarWhereInput!]
+}
+
+type ProductVariantFeedbackSubscriptionPayload {
+  mutation: MutationType!
+  node: ProductVariantFeedback
+  updatedFields: [String!]
+  previousValues: ProductVariantFeedbackPreviousValues
+}
+
+input ProductVariantFeedbackSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: ProductVariantFeedbackWhereInput
+  AND: [ProductVariantFeedbackSubscriptionWhereInput!]
+  OR: [ProductVariantFeedbackSubscriptionWhereInput!]
+  NOT: [ProductVariantFeedbackSubscriptionWhereInput!]
+}
+
+input ProductVariantFeedbackUpdateInput {
+  isCompleted: Boolean
+  questions: FeedbackQuestionUpdateManyWithoutVariantFeedbackInput
+  review: ReviewUpdateOneRequiredWithoutFeedbacksInput
+  variant: ProductVariantUpdateOneRequiredInput
+}
+
+input ProductVariantFeedbackUpdateManyDataInput {
+  isCompleted: Boolean
+}
+
+input ProductVariantFeedbackUpdateManyMutationInput {
+  isCompleted: Boolean
+}
+
+input ProductVariantFeedbackUpdateManyWithoutReviewInput {
+  create: [ProductVariantFeedbackCreateWithoutReviewInput!]
+  delete: [ProductVariantFeedbackWhereUniqueInput!]
+  connect: [ProductVariantFeedbackWhereUniqueInput!]
+  set: [ProductVariantFeedbackWhereUniqueInput!]
+  disconnect: [ProductVariantFeedbackWhereUniqueInput!]
+  update: [ProductVariantFeedbackUpdateWithWhereUniqueWithoutReviewInput!]
+  upsert: [ProductVariantFeedbackUpsertWithWhereUniqueWithoutReviewInput!]
+  deleteMany: [ProductVariantFeedbackScalarWhereInput!]
+  updateMany: [ProductVariantFeedbackUpdateManyWithWhereNestedInput!]
+}
+
+input ProductVariantFeedbackUpdateManyWithWhereNestedInput {
+  where: ProductVariantFeedbackScalarWhereInput!
+  data: ProductVariantFeedbackUpdateManyDataInput!
+}
+
+input ProductVariantFeedbackUpdateOneRequiredWithoutQuestionsInput {
+  create: ProductVariantFeedbackCreateWithoutQuestionsInput
+  update: ProductVariantFeedbackUpdateWithoutQuestionsDataInput
+  upsert: ProductVariantFeedbackUpsertWithoutQuestionsInput
+  connect: ProductVariantFeedbackWhereUniqueInput
+}
+
+input ProductVariantFeedbackUpdateWithoutQuestionsDataInput {
+  isCompleted: Boolean
+  review: ReviewUpdateOneRequiredWithoutFeedbacksInput
+  variant: ProductVariantUpdateOneRequiredInput
+}
+
+input ProductVariantFeedbackUpdateWithoutReviewDataInput {
+  isCompleted: Boolean
+  questions: FeedbackQuestionUpdateManyWithoutVariantFeedbackInput
+  variant: ProductVariantUpdateOneRequiredInput
+}
+
+input ProductVariantFeedbackUpdateWithWhereUniqueWithoutReviewInput {
+  where: ProductVariantFeedbackWhereUniqueInput!
+  data: ProductVariantFeedbackUpdateWithoutReviewDataInput!
+}
+
+input ProductVariantFeedbackUpsertWithoutQuestionsInput {
+  update: ProductVariantFeedbackUpdateWithoutQuestionsDataInput!
+  create: ProductVariantFeedbackCreateWithoutQuestionsInput!
+}
+
+input ProductVariantFeedbackUpsertWithWhereUniqueWithoutReviewInput {
+  where: ProductVariantFeedbackWhereUniqueInput!
+  update: ProductVariantFeedbackUpdateWithoutReviewDataInput!
+  create: ProductVariantFeedbackCreateWithoutReviewInput!
+}
+
+input ProductVariantFeedbackWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  isCompleted: Boolean
+  isCompleted_not: Boolean
+  questions_every: FeedbackQuestionWhereInput
+  questions_some: FeedbackQuestionWhereInput
+  questions_none: FeedbackQuestionWhereInput
+  review: ReviewWhereInput
+  variant: ProductVariantWhereInput
+  AND: [ProductVariantFeedbackWhereInput!]
+  OR: [ProductVariantFeedbackWhereInput!]
+  NOT: [ProductVariantFeedbackWhereInput!]
+}
+
+input ProductVariantFeedbackWhereUniqueInput {
+  id: ID
+}
+
 enum ProductVariantOrderByInput {
   id_ASC
   id_DESC
@@ -6307,6 +6769,9 @@ type Query {
   customerDetail(where: CustomerDetailWhereUniqueInput!): CustomerDetail
   customerDetails(where: CustomerDetailWhereInput, orderBy: CustomerDetailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CustomerDetail]!
   customerDetailsConnection(where: CustomerDetailWhereInput, orderBy: CustomerDetailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CustomerDetailConnection!
+  feedbackQuestion(where: FeedbackQuestionWhereUniqueInput!): FeedbackQuestion
+  feedbackQuestions(where: FeedbackQuestionWhereInput, orderBy: FeedbackQuestionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [FeedbackQuestion]!
+  feedbackQuestionsConnection(where: FeedbackQuestionWhereInput, orderBy: FeedbackQuestionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): FeedbackQuestionConnection!
   homepageProductRail(where: HomepageProductRailWhereUniqueInput!): HomepageProductRail
   homepageProductRails(where: HomepageProductRailWhereInput, orderBy: HomepageProductRailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [HomepageProductRail]!
   homepageProductRailsConnection(where: HomepageProductRailWhereInput, orderBy: HomepageProductRailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): HomepageProductRailConnection!
@@ -6340,6 +6805,9 @@ type Query {
   productVariant(where: ProductVariantWhereUniqueInput!): ProductVariant
   productVariants(where: ProductVariantWhereInput, orderBy: ProductVariantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariant]!
   productVariantsConnection(where: ProductVariantWhereInput, orderBy: ProductVariantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductVariantConnection!
+  productVariantFeedback(where: ProductVariantFeedbackWhereUniqueInput!): ProductVariantFeedback
+  productVariantFeedbacks(where: ProductVariantFeedbackWhereInput, orderBy: ProductVariantFeedbackOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariantFeedback]!
+  productVariantFeedbacksConnection(where: ProductVariantFeedbackWhereInput, orderBy: ProductVariantFeedbackOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductVariantFeedbackConnection!
   productVariantWant(where: ProductVariantWantWhereUniqueInput!): ProductVariantWant
   productVariantWants(where: ProductVariantWantWhereInput, orderBy: ProductVariantWantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariantWant]!
   productVariantWantsConnection(where: ProductVariantWantWhereInput, orderBy: ProductVariantWantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductVariantWantConnection!
@@ -6349,10 +6817,24 @@ type Query {
   reservation(where: ReservationWhereUniqueInput!): Reservation
   reservations(where: ReservationWhereInput, orderBy: ReservationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Reservation]!
   reservationsConnection(where: ReservationWhereInput, orderBy: ReservationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ReservationConnection!
+  review(where: ReviewWhereUniqueInput!): Review
+  reviews(where: ReviewWhereInput, orderBy: ReviewOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Review]!
+  reviewsConnection(where: ReviewWhereInput, orderBy: ReviewOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ReviewConnection!
   user(where: UserWhereUniqueInput!): User
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
   node(id: ID!): Node
+}
+
+enum QuestionType {
+  MultipleChoice
+  FreeResponse
+}
+
+enum Rating {
+  Disliked
+  Meh
+  Loved
 }
 
 type RecentlyViewedProduct {
@@ -6842,6 +7324,148 @@ input ReservationWhereUniqueInput {
   reservationNumber: Int
 }
 
+type Review {
+  id: ID!
+  comment: String!
+  feedbacks(where: ProductVariantFeedbackWhereInput, orderBy: ProductVariantFeedbackOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariantFeedback!]
+  rating: Rating!
+}
+
+type ReviewConnection {
+  pageInfo: PageInfo!
+  edges: [ReviewEdge]!
+  aggregate: AggregateReview!
+}
+
+input ReviewCreateInput {
+  id: ID
+  comment: String!
+  feedbacks: ProductVariantFeedbackCreateManyWithoutReviewInput
+  rating: Rating!
+}
+
+input ReviewCreateOneWithoutFeedbacksInput {
+  create: ReviewCreateWithoutFeedbacksInput
+  connect: ReviewWhereUniqueInput
+}
+
+input ReviewCreateWithoutFeedbacksInput {
+  id: ID
+  comment: String!
+  rating: Rating!
+}
+
+type ReviewEdge {
+  node: Review!
+  cursor: String!
+}
+
+enum ReviewOrderByInput {
+  id_ASC
+  id_DESC
+  comment_ASC
+  comment_DESC
+  rating_ASC
+  rating_DESC
+}
+
+type ReviewPreviousValues {
+  id: ID!
+  comment: String!
+  rating: Rating!
+}
+
+type ReviewSubscriptionPayload {
+  mutation: MutationType!
+  node: Review
+  updatedFields: [String!]
+  previousValues: ReviewPreviousValues
+}
+
+input ReviewSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: ReviewWhereInput
+  AND: [ReviewSubscriptionWhereInput!]
+  OR: [ReviewSubscriptionWhereInput!]
+  NOT: [ReviewSubscriptionWhereInput!]
+}
+
+input ReviewUpdateInput {
+  comment: String
+  feedbacks: ProductVariantFeedbackUpdateManyWithoutReviewInput
+  rating: Rating
+}
+
+input ReviewUpdateManyMutationInput {
+  comment: String
+  rating: Rating
+}
+
+input ReviewUpdateOneRequiredWithoutFeedbacksInput {
+  create: ReviewCreateWithoutFeedbacksInput
+  update: ReviewUpdateWithoutFeedbacksDataInput
+  upsert: ReviewUpsertWithoutFeedbacksInput
+  connect: ReviewWhereUniqueInput
+}
+
+input ReviewUpdateWithoutFeedbacksDataInput {
+  comment: String
+  rating: Rating
+}
+
+input ReviewUpsertWithoutFeedbacksInput {
+  update: ReviewUpdateWithoutFeedbacksDataInput!
+  create: ReviewCreateWithoutFeedbacksInput!
+}
+
+input ReviewWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  comment: String
+  comment_not: String
+  comment_in: [String!]
+  comment_not_in: [String!]
+  comment_lt: String
+  comment_lte: String
+  comment_gt: String
+  comment_gte: String
+  comment_contains: String
+  comment_not_contains: String
+  comment_starts_with: String
+  comment_not_starts_with: String
+  comment_ends_with: String
+  comment_not_ends_with: String
+  feedbacks_every: ProductVariantFeedbackWhereInput
+  feedbacks_some: ProductVariantFeedbackWhereInput
+  feedbacks_none: ProductVariantFeedbackWhereInput
+  rating: Rating
+  rating_not: Rating
+  rating_in: [Rating!]
+  rating_not_in: [Rating!]
+  AND: [ReviewWhereInput!]
+  OR: [ReviewWhereInput!]
+  NOT: [ReviewWhereInput!]
+}
+
+input ReviewWhereUniqueInput {
+  id: ID
+}
+
 enum Size {
   XS
   S
@@ -6861,6 +7485,7 @@ type Subscription {
   color(where: ColorSubscriptionWhereInput): ColorSubscriptionPayload
   customer(where: CustomerSubscriptionWhereInput): CustomerSubscriptionPayload
   customerDetail(where: CustomerDetailSubscriptionWhereInput): CustomerDetailSubscriptionPayload
+  feedbackQuestion(where: FeedbackQuestionSubscriptionWhereInput): FeedbackQuestionSubscriptionPayload
   homepageProductRail(where: HomepageProductRailSubscriptionWhereInput): HomepageProductRailSubscriptionPayload
   image(where: ImageSubscriptionWhereInput): ImageSubscriptionPayload
   label(where: LabelSubscriptionWhereInput): LabelSubscriptionPayload
@@ -6872,9 +7497,11 @@ type Subscription {
   productFunction(where: ProductFunctionSubscriptionWhereInput): ProductFunctionSubscriptionPayload
   productRequest(where: ProductRequestSubscriptionWhereInput): ProductRequestSubscriptionPayload
   productVariant(where: ProductVariantSubscriptionWhereInput): ProductVariantSubscriptionPayload
+  productVariantFeedback(where: ProductVariantFeedbackSubscriptionWhereInput): ProductVariantFeedbackSubscriptionPayload
   productVariantWant(where: ProductVariantWantSubscriptionWhereInput): ProductVariantWantSubscriptionPayload
   recentlyViewedProduct(where: RecentlyViewedProductSubscriptionWhereInput): RecentlyViewedProductSubscriptionPayload
   reservation(where: ReservationSubscriptionWhereInput): ReservationSubscriptionPayload
+  review(where: ReviewSubscriptionWhereInput): ReviewSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
 }
 
