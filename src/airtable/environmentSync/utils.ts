@@ -17,7 +17,7 @@ import { Identity } from "../../utils"
 import { getStagingBase, getProductionBase } from "../config"
 import { getNumLinks } from "./getNumLinks"
 
-const airtableModelNameToGetAllFunc = (modelname: AirtableModelName) => {
+export const airtableModelNameToGetAllFunc = (modelname: AirtableModelName) => {
   const func = {
     Colors: getAllColors,
     Brands: getAllBrands,
