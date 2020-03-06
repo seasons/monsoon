@@ -101,7 +101,11 @@ export const syncProductVariants = async () => {
       let data = {
         sku,
         size,
-        internalSize: {} as SizeCreateInput,
+        internalSize: {
+          connect: {
+            id: internalSize.id,
+          },
+        },
         weight: parseFloat(weight) || 0,
         height: parseFloat(height) || 0,
         total: totalCount,
@@ -170,6 +174,7 @@ export const syncProductVariants = async () => {
         "Non-Reservable Count": nonReservableCount,
       })
     } catch (e) {
+      console.log(productVariant)
       console.error(e)
     }
   }

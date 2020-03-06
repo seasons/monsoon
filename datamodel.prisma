@@ -323,6 +323,13 @@ type User {
   role: UserRole! @default(value: Customer)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
+  pushNotifications: PushNotificationStatus! @default(value: Denied)
+}
+
+enum PushNotificationStatus {
+  Blocked
+  Granted
+  Denied
 }
 
 type CustomerDetail {

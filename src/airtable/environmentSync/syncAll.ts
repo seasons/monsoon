@@ -51,10 +51,10 @@ export const syncAll = async () => {
     reservations: await createSubBar(multibar, "Reservations"),
   }
   try {
-    await syncColors(bars.colors)
-    await syncBrands(bars.brands)
-    await syncModels(bars.models)
-    await syncCategories(bars.categories)
+    // await syncColors(bars.colors)
+    // await syncBrands(bars.brands)
+    // await syncModels(bars.models)
+    // await syncCategories(bars.categories)
     await syncLocations(bars.locations)
     await syncProducts(bars.products)
     await syncHomepageProductRails(bars.homepageProductRails)

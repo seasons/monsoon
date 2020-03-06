@@ -12,16 +12,15 @@ import { createOrUpdateAirtableUser } from "../../airtable/createOrUpdateUser"
 import request from "request"
 import PushNotifications from "@pusher/push-notifications-server"
 
-export let beamsClient: PushNotifications | null = null
-
 const { PUSHER_INSTANCE_ID, PUSHER_SECRET_KEY } = process.env
 
-if (PUSHER_INSTANCE_ID && PUSHER_SECRET_KEY) {
-  beamsClient = new PushNotifications({
-    instanceId: PUSHER_INSTANCE_ID,
-    secretKey: PUSHER_SECRET_KEY,
-  })
-}
+export const beamsClient: PushNotifications | null =
+  PUSHER_INSTANCE_ID && PUSHER_SECRET_KEY
+    ? new PushNotifications({
+        instanceId: PUSHER_INSTANCE_ID,
+        secretKey: PUSHER_SECRET_KEY,
+      })
+    : null
 
 export const auth = {
   // The signup mutation signs up users with a "Customer" role.
