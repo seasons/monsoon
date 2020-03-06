@@ -153,7 +153,7 @@ export const updateChargebeeBillingAddress = async (
 
 export const getChargebeePaymentSource = async (userID: string) => {
   const cardInfo: any = await new Promise((resolve, reject) => {
-    // Get user's payment information from chargebee
+    // Get user's payment information from chargebee		
     chargebee.payment_source.list({
       limit: 1,
       "customer_id[is]": userID,
