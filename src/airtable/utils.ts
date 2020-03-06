@@ -170,15 +170,11 @@ export async function createAirtableReservation(
       const airtableUserRecord = await getAirtableUserRecordByUserEmail(
         userEmail
       )
-      const nextCleanersAirtableRecord = await getAirtableLocationRecordBySlug(
-        process.env.NEXT_CLEANERS_AIRTABLE_SLUG
-      )
       const createData = [
         {
           fields: {
             ID: data.reservationNumber,
             User: [airtableUserRecord.id],
-            "Current Location": [nextCleanersAirtableRecord.id],
             Items: items.map(a => a.id),
             Shipped: false,
             Status: "New",
