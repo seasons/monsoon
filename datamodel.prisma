@@ -263,8 +263,8 @@ type Product {
   externalURL: String
   images: Json!
   modelHeight: Int
-  modelSize: Size @relation(name: "ProductModelSize")
   retailPrice: Int
+  modelSize: Size @relation(name: "ProductModelSize")
   color: Color! @relation(name: "ProductPrimaryColor")
   secondaryColor: Color @relation(name: "ProductSecondaryColor")
   tags: Json
@@ -492,6 +492,7 @@ type BottomSize {
 
 type Size {
   id: ID! @id
+  slug: String! @unique
   productType: ProductType
   top: TopSize
   bottom: BottomSize

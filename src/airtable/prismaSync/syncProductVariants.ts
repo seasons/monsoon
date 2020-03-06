@@ -11,6 +11,10 @@ import {
   InventoryStatus,
   PhysicalProductCreateInput,
   ProductVariantCreateInput,
+  SizeCreateInput,
+  ProductType,
+  TopSize,
+  TopSizeCreateOneInput,
 } from "../../prisma"
 import { sizeToSizeCode } from "../../utils"
 import { base } from "../config"
@@ -51,9 +55,53 @@ export const syncProductVariants = async () => {
 
       const { weight, height, size } = model
 
+      const sizeData = {
+        slug: sku,
+        productType: product.model.type,
+        ...(() => {
+          const type: ProductType = product.model.type
+          switch (type) {
+            case "Top":
+              return {
+                top: {
+                  create: {
+                    letter: size,
+                    sleeve: model.sleeveLength,
+                    shoulder: model.shoulderWidth,
+                    chest: model.chestWidth,
+                  },
+                },
+              } as TopSizeCreateOneInput
+            case "Bottom":
+              return {
+                bottom: {
+                  create: {
+                    waist: model.waist,
+                    rise: model.rise,
+                    hem: model.hem,
+                  },
+                },
+              }
+          }
+        })(),
+      } as SizeCreateInput
+
+      const internalSize = await prisma.upsertSize({
+        where: {
+          slug: sku,
+        },
+        create: {
+          ...sizeData,
+        },
+        update: {
+          ...sizeData,
+        },
+      })
+
       let data = {
         sku,
         size,
+        internalSize: {} as SizeCreateInput,
         weight: parseFloat(weight) || 0,
         height: parseFloat(height) || 0,
         total: totalCount,
@@ -182,7 +230,6 @@ const createMorePhysicalProductsIfNeeded: CreateMorePhysicalProductsFunction = a
             text: sku + `-${physicalProductID}`,
           },
           Product: [product.id],
-          Location: [SeasonsLocationID], // Seasons HQ
           "Product Variant": [productVariant.id],
           "Inventory Status": "Non Reservable",
           "Product Status": "New",
@@ -211,3 +258,5 @@ const createMorePhysicalProductsIfNeeded: CreateMorePhysicalProductsFunction = a
       } as PhysicalProductCreateInput)
   )
 }
+
+syncProductVariants()
