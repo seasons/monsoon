@@ -5,30 +5,32 @@ import { ReservationService } from "../services/reservation.service"
 
 @Resolver("Product")
 export class ProductMutationsResolver {
-  constructor(
+  constructor (
     private readonly productService: ProductService,
     private readonly reservationService: ReservationService
   ) {}
 
   @Mutation()
-  async addViewedProduct(@Args() { item }, @Context() ctx) {
+  async addViewedProduct (@Args() { item }, @Context() ctx) {
     return await this.productService.addViewedProduct(item, ctx)
   }
 
   @Mutation()
-  async reserveItems(
+  async reserveItems (
     @Args() { items },
     @User() user,
     @Customer() customer,
     @Info() info,
     @Analytics() analytics
   ) {
-    const returnData = this.reservationService.reserveItems(
+    const returnData = await this.reservationService.reserveItems(
       items,
       user,
       customer,
       info
     )
+
+    console.log(`'returnData in reserveItems resolver: ${returnData}`)
 
     // Track the selection
     analytics.track({

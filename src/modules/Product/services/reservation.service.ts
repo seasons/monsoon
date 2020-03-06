@@ -37,7 +37,7 @@ export interface ReservationWithProductVariantData {
 
 @Injectable()
 export class ReservationService {
-  constructor(
+  constructor (
     private readonly db: DBService,
     private readonly prisma: PrismaClientService,
     private readonly productUtils: ProductUtilsService,
@@ -49,7 +49,8 @@ export class ReservationService {
     private readonly reservationUtils: ReservationUtilsService
   ) {}
 
-  async reserveItems(items: string[], user: User, customer: Customer, info) {
+  async reserveItems (items: string[], user: User, customer: Customer, info) {
+    console.log(`this.prisma at start of reserveItems resolver: ${this.prisma}`)
     let reservationReturnData
     const rollbackFuncs = []
 
@@ -168,10 +169,11 @@ export class ReservationService {
     return reservationReturnData
   }
 
-  private async getLatestReservation(
+  private async getLatestReservation (
     customer: Customer
   ): Promise<ReservationWithProductVariantData | null> {
     return new Promise(async (resolve, reject) => {
+      console.log(`this.prisma in getLatestReservation: ${this.prisma}`)
       const allCustomerReservationsOrderedByCreatedAt = await this.prisma.client
         .customer({ id: customer.id })
         .reservations({
@@ -208,7 +210,7 @@ export class ReservationService {
     })
   }
 
-  private checkLastReservation(
+  private checkLastReservation (
     lastReservation: ReservationWithProductVariantData
   ) {
     if (
@@ -224,7 +226,7 @@ export class ReservationService {
     }
   }
 
-  private async getNewProductVariantsBeingReserved(
+  private async getNewProductVariantsBeingReserved (
     lastReservation: ReservationWithProductVariantData,
     items: ID_Input[]
   ): Promise<ID_Input[]> {
@@ -253,7 +255,7 @@ export class ReservationService {
     })
   }
 
-  private async getHeldPhysicalProducts(
+  private async getHeldPhysicalProducts (
     customer: Customer,
     lastReservation: ReservationWithProductVariantData
   ): Promise<PhysicalProduct[]> {
@@ -273,7 +275,7 @@ export class ReservationService {
       )
   }
 
-  private async markBagItemsReserved(
+  private async markBagItemsReserved (
     customerId: ID_Input,
     productVariantIds: Array<ID_Input>
   ): Promise<() => void> {
@@ -309,7 +311,7 @@ export class ReservationService {
     return rollbackAddedBagItems
   }
 
-  private async createReservationData(
+  private async createReservationData (
     seasonsToCustomerTransaction,
     customerToSeasonsTransaction,
     user: User,
@@ -420,7 +422,7 @@ export class ReservationService {
     }
   }
 
-  private async getUniqueReservationNumber(): Promise<number> {
+  private async getUniqueReservationNumber (): Promise<number> {
     let reservationNumber: number
     let foundUnique = false
     while (!foundUnique) {
@@ -435,7 +437,7 @@ export class ReservationService {
   }
 
   /* Returns [createdReservation, rollbackFunc] */
-  private async createPrismaReservation(
+  private async createPrismaReservation (
     reservationData: ReservationCreateInput
   ): Promise<[Reservation, () => void]> {
     const reservation = await this.prisma.client.createReservation(
