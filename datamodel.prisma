@@ -478,7 +478,7 @@ type ProductVariantFeedback {
   id: ID! @id
   isCompleted: Boolean!
   questions: [FeedbackQuestion!]!
-  review: Review!
+  review: Review! @relation(link: TABLE)
   variant: ProductVariant!
 }
 
@@ -488,5 +488,5 @@ type FeedbackQuestion {
   question: String!
   responses: [String!] @scalarList(strategy: RELATION)
   type: QuestionType!
-  variantFeedback: ProductVariantFeedback!
+  variantFeedback: ProductVariantFeedback! @relation(link: TABLE)
 }
