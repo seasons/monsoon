@@ -55,11 +55,6 @@ export const syncBrands = async () => {
         Slug: slug,
       })
 
-      await elasticsearch.index({
-        index: `brands-${process.env.NODE_ENV}`,
-        body: brand,
-      })
-
       console.log(brand)
     } catch (e) {
       console.error(e)
