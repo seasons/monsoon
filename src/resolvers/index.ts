@@ -9,6 +9,7 @@ import { Reservation } from "./Reservation"
 import { PhysicalProduct } from "./PhysicalProduct"
 import { ProductVariant } from "./ProductVariant"
 import { ProductVariantWantMutations } from "./ProductVariantWant"
+import { UpdateUserPushNotifications } from "./Mutation/user"
 import { bag } from "./Mutation/bag"
 import { address } from "./Mutation/address"
 import { SearchResultType } from "./Search"
@@ -26,6 +27,7 @@ export default {
     ...bag,
     ...address,
     ...recentlyViewedProduct,
+    ...UpdateUserPushNotifications,
   },
   Me,
   Reservation,

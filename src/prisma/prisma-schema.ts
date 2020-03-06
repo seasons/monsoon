@@ -6279,6 +6279,12 @@ input ProductWhereUniqueInput {
   slug: String
 }
 
+enum PushNotificationStatus {
+  Blocked
+  Granted
+  Denied
+}
+
 type Query {
   bagItem(where: BagItemWhereUniqueInput!): BagItem
   bagItems(where: BagItemWhereInput, orderBy: BagItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [BagItem]!
@@ -6887,6 +6893,7 @@ type User {
   role: UserRole!
   createdAt: DateTime!
   updatedAt: DateTime!
+  pushNotifications: PushNotificationStatus!
 }
 
 type UserConnection {
@@ -6902,6 +6909,7 @@ input UserCreateInput {
   firstName: String!
   lastName: String!
   role: UserRole
+  pushNotifications: PushNotificationStatus
 }
 
 input UserCreateOneInput {
@@ -6931,6 +6939,8 @@ enum UserOrderByInput {
   createdAt_DESC
   updatedAt_ASC
   updatedAt_DESC
+  pushNotifications_ASC
+  pushNotifications_DESC
 }
 
 type UserPreviousValues {
@@ -6942,6 +6952,7 @@ type UserPreviousValues {
   role: UserRole!
   createdAt: DateTime!
   updatedAt: DateTime!
+  pushNotifications: PushNotificationStatus!
 }
 
 enum UserRole {
@@ -6974,6 +6985,7 @@ input UserUpdateDataInput {
   firstName: String
   lastName: String
   role: UserRole
+  pushNotifications: PushNotificationStatus
 }
 
 input UserUpdateInput {
@@ -6982,6 +6994,7 @@ input UserUpdateInput {
   firstName: String
   lastName: String
   role: UserRole
+  pushNotifications: PushNotificationStatus
 }
 
 input UserUpdateManyMutationInput {
@@ -6990,6 +7003,7 @@ input UserUpdateManyMutationInput {
   firstName: String
   lastName: String
   role: UserRole
+  pushNotifications: PushNotificationStatus
 }
 
 input UserUpdateOneInput {
@@ -7104,6 +7118,10 @@ input UserWhereInput {
   updatedAt_lte: DateTime
   updatedAt_gt: DateTime
   updatedAt_gte: DateTime
+  pushNotifications: PushNotificationStatus
+  pushNotifications_not: PushNotificationStatus
+  pushNotifications_in: [PushNotificationStatus!]
+  pushNotifications_not_in: [PushNotificationStatus!]
   AND: [UserWhereInput!]
   OR: [UserWhereInput!]
   NOT: [UserWhereInput!]

@@ -2,7 +2,7 @@ import { beamsClient } from "../resolvers/Mutation/auth"
 
 export const sendPushNotifications = () => {
   beamsClient
-    .publishToUsers(["luc@seasons.nyc"], {
+    .publishToUsers(["kieran@seasons.nyc"], {
       apns: {
         aps: {
           alert: {
@@ -12,9 +12,9 @@ export const sendPushNotifications = () => {
           badge: 1,
         },
         data: {
-          route: "Bag",
+          route: "Product",
           params: {
-            id: 123,
+            id: "ck76fflg5x8490768fw9ihwad",
           },
         },
       } as any,
@@ -22,9 +22,9 @@ export const sendPushNotifications = () => {
         notification: {
           title: "We've received your items!",
           body: JSON.stringify({
-            route: "Bag",
+            route: "Product",
             params: {
-              id: 123,
+              id: "ck76fflg5x8490768fw9ihwad",
             },
           }),
         },
