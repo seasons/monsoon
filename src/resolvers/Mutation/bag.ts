@@ -45,7 +45,7 @@ export const bag = {
     })
   },
 
-  async removeFromBag(obj, { item }, ctx: Context, info) {
+  async removeFromBag(obj, { item, saved }, ctx: Context, info) {
     const customer = await getCustomerFromContext(ctx)
 
     const bagItems = await ctx.prisma.bagItems({
@@ -56,10 +56,14 @@ export const bag = {
         productVariant: {
           id: item,
         },
-        saved: false,
+        saved,
       },
     })
     const bagItem = head(bagItems)
+
+    if (!bagItem) {
+      throw new ApolloError("Item can not be found", "514")
+    }
 
     return await ctx.prisma.deleteBagItem({
       id: bagItem.id,

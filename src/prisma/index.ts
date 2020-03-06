@@ -1071,15 +1071,7 @@ export interface ClientConstructor<T> {
  * Types
  */
 
-export type CollectionGroupOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "slug_ASC"
-  | "slug_DESC"
-  | "title_ASC"
-  | "title_DESC"
-  | "collectionCount_ASC"
-  | "collectionCount_DESC";
+export type Size = "XS" | "S" | "M" | "L" | "XL" | "XXL";
 
 export type CategoryOrderByInput =
   | "id_ASC"
@@ -1095,21 +1087,15 @@ export type CategoryOrderByInput =
   | "visible_ASC"
   | "visible_DESC";
 
-export type CollectionOrderByInput =
+export type CollectionGroupOrderByInput =
   | "id_ASC"
   | "id_DESC"
   | "slug_ASC"
   | "slug_DESC"
-  | "images_ASC"
-  | "images_DESC"
   | "title_ASC"
   | "title_DESC"
-  | "subTitle_ASC"
-  | "subTitle_DESC"
-  | "descriptionTop_ASC"
-  | "descriptionTop_DESC"
-  | "descriptionBottom_ASC"
-  | "descriptionBottom_DESC";
+  | "collectionCount_ASC"
+  | "collectionCount_DESC";
 
 export type UserOrderByInput =
   | "id_ASC"
@@ -1127,7 +1113,31 @@ export type UserOrderByInput =
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
-  | "updatedAt_DESC";
+  | "updatedAt_DESC"
+  | "pushNotifications_ASC"
+  | "pushNotifications_DESC";
+
+export type CollectionOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "slug_ASC"
+  | "slug_DESC"
+  | "images_ASC"
+  | "images_DESC"
+  | "title_ASC"
+  | "title_DESC"
+  | "subTitle_ASC"
+  | "subTitle_DESC"
+  | "descriptionTop_ASC"
+  | "descriptionTop_DESC"
+  | "descriptionBottom_ASC"
+  | "descriptionBottom_DESC";
+
+export type ProductVariantWantOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "isFulfilled_ASC"
+  | "isFulfilled_DESC";
 
 export type BrandOrderByInput =
   | "id_ASC"
@@ -1157,23 +1167,6 @@ export type BrandOrderByInput =
   | "updatedAt_ASC"
   | "updatedAt_DESC";
 
-export type ProductVariantWantOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "isFulfilled_ASC"
-  | "isFulfilled_DESC";
-
-export type BrandTier =
-  | "Tier0"
-  | "Tier1"
-  | "Tier2"
-  | "Niche"
-  | "Upcoming"
-  | "Retro"
-  | "Boutique"
-  | "Local"
-  | "Discovery";
-
 export type ProductRequestOrderByInput =
   | "id_ASC"
   | "id_DESC"
@@ -1195,6 +1188,27 @@ export type ProductRequestOrderByInput =
   | "sku_DESC"
   | "url_ASC"
   | "url_DESC";
+
+export type BrandTier =
+  | "Tier0"
+  | "Tier1"
+  | "Tier2"
+  | "Niche"
+  | "Upcoming"
+  | "Retro"
+  | "Boutique"
+  | "Local"
+  | "Discovery";
+
+export type CustomerStatus =
+  | "Invited"
+  | "Created"
+  | "Waitlisted"
+  | "Authorized"
+  | "Active"
+  | "Suspended"
+  | "Paused"
+  | "Deactivated";
 
 export type BillingInfoOrderByInput =
   | "id_ASC"
@@ -1222,15 +1236,7 @@ export type BillingInfoOrderByInput =
   | "postal_code_ASC"
   | "postal_code_DESC";
 
-export type PackageOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "weight_ASC"
-  | "weight_DESC"
-  | "createdAt_ASC"
-  | "createdAt_DESC"
-  | "updatedAt_ASC"
-  | "updatedAt_DESC";
+export type OrderOrderByInput = "id_ASC" | "id_DESC";
 
 export type BagItemOrderByInput =
   | "id_ASC"
@@ -1242,175 +1248,31 @@ export type BagItemOrderByInput =
   | "status_ASC"
   | "status_DESC";
 
-export type LocationOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "slug_ASC"
-  | "slug_DESC"
-  | "name_ASC"
-  | "name_DESC"
-  | "company_ASC"
-  | "company_DESC"
-  | "description_ASC"
-  | "description_DESC"
-  | "address1_ASC"
-  | "address1_DESC"
-  | "address2_ASC"
-  | "address2_DESC"
-  | "city_ASC"
-  | "city_DESC"
-  | "state_ASC"
-  | "state_DESC"
-  | "zipCode_ASC"
-  | "zipCode_DESC"
-  | "locationType_ASC"
-  | "locationType_DESC"
-  | "lat_ASC"
-  | "lat_DESC"
-  | "lng_ASC"
-  | "lng_DESC"
-  | "createdAt_ASC"
-  | "createdAt_DESC"
-  | "updatedAt_ASC"
-  | "updatedAt_DESC";
+export type LocationType = "Office" | "Warehouse" | "Cleaner" | "Customer";
 
 export type ProductStatus = "Available" | "NotAvailable";
 
-export type LabelOrderByInput =
+export type ImageOrderByInput =
   | "id_ASC"
   | "id_DESC"
-  | "name_ASC"
-  | "name_DESC"
-  | "image_ASC"
-  | "image_DESC"
-  | "trackingNumber_ASC"
-  | "trackingNumber_DESC"
-  | "trackingURL_ASC"
-  | "trackingURL_DESC";
+  | "caption_ASC"
+  | "caption_DESC"
+  | "originalHeight_ASC"
+  | "originalHeight_DESC"
+  | "originalUrl_ASC"
+  | "originalUrl_DESC"
+  | "originalWidth_ASC"
+  | "originalWidth_DESC"
+  | "resizedUrl_ASC"
+  | "resizedUrl_DESC"
+  | "title_ASC"
+  | "title_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
 
 export type InventoryStatus = "NonReservable" | "Reservable" | "Reserved";
-
-export type HomepageProductRailOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "slug_ASC"
-  | "slug_DESC"
-  | "name_ASC"
-  | "name_DESC";
-
-export type PhysicalProductStatus =
-  | "New"
-  | "Used"
-  | "Damaged"
-  | "Clean"
-  | "Lost";
-
-export type CustomerOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "status_ASC"
-  | "status_DESC"
-  | "plan_ASC"
-  | "plan_DESC";
-
-export type PhysicalProductOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "seasonsUID_ASC"
-  | "seasonsUID_DESC"
-  | "inventoryStatus_ASC"
-  | "inventoryStatus_DESC"
-  | "productStatus_ASC"
-  | "productStatus_DESC"
-  | "createdAt_ASC"
-  | "createdAt_DESC"
-  | "updatedAt_ASC"
-  | "updatedAt_DESC";
-
-export type Size = "XS" | "S" | "M" | "L" | "XL" | "XXL";
-
-export type BagItemStatus = "Added" | "Reserved" | "Received";
-
-export type RecentlyViewedProductOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "viewCount_ASC"
-  | "viewCount_DESC"
-  | "createdAt_ASC"
-  | "createdAt_DESC"
-  | "updatedAt_ASC"
-  | "updatedAt_DESC";
-
-export type ReservationOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "reservationNumber_ASC"
-  | "reservationNumber_DESC"
-  | "shipped_ASC"
-  | "shipped_DESC"
-  | "status_ASC"
-  | "status_DESC"
-  | "shippedAt_ASC"
-  | "shippedAt_DESC"
-  | "receivedAt_ASC"
-  | "receivedAt_DESC"
-  | "reminderSentAt_ASC"
-  | "reminderSentAt_DESC"
-  | "createdAt_ASC"
-  | "createdAt_DESC"
-  | "updatedAt_ASC"
-  | "updatedAt_DESC";
-
-export type CustomerStatus =
-  | "Invited"
-  | "Created"
-  | "Waitlisted"
-  | "Authorized"
-  | "Active"
-  | "Suspended"
-  | "Paused"
-  | "Deactivated";
-
-export type ReservationStatus =
-  | "New"
-  | "InQueue"
-  | "OnHold"
-  | "Packed"
-  | "Shipped"
-  | "InTransit"
-  | "Received"
-  | "Cancelled"
-  | "Completed";
-
-export type LocationType = "Office" | "Warehouse" | "Cleaner" | "Customer";
-
-export type ProductVariantOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "sku_ASC"
-  | "sku_DESC"
-  | "size_ASC"
-  | "size_DESC"
-  | "weight_ASC"
-  | "weight_DESC"
-  | "height_ASC"
-  | "height_DESC"
-  | "productID_ASC"
-  | "productID_DESC"
-  | "retailPrice_ASC"
-  | "retailPrice_DESC"
-  | "total_ASC"
-  | "total_DESC"
-  | "reservable_ASC"
-  | "reservable_DESC"
-  | "reserved_ASC"
-  | "reserved_DESC"
-  | "nonReservable_ASC"
-  | "nonReservable_DESC"
-  | "createdAt_ASC"
-  | "createdAt_DESC"
-  | "updatedAt_ASC"
-  | "updatedAt_DESC";
 
 export type CustomerDetailOrderByInput =
   | "id_ASC"
@@ -1455,6 +1317,154 @@ export type CustomerDetailOrderByInput =
   | "createdAt_DESC"
   | "updatedAt_ASC"
   | "updatedAt_DESC";
+
+export type PhysicalProductStatus =
+  | "New"
+  | "Used"
+  | "Damaged"
+  | "Clean"
+  | "Lost";
+
+export type ColorOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "slug_ASC"
+  | "slug_DESC"
+  | "name_ASC"
+  | "name_DESC"
+  | "colorCode_ASC"
+  | "colorCode_DESC"
+  | "hexCode_ASC"
+  | "hexCode_DESC";
+
+export type PhysicalProductOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "seasonsUID_ASC"
+  | "seasonsUID_DESC"
+  | "inventoryStatus_ASC"
+  | "inventoryStatus_DESC"
+  | "productStatus_ASC"
+  | "productStatus_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
+
+export type RecentlyViewedProductOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "viewCount_ASC"
+  | "viewCount_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
+
+export type BagItemStatus = "Added" | "Reserved" | "Received";
+
+export type PushNotificationStatus = "Blocked" | "Granted" | "Denied";
+
+export type ReservationOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "reservationNumber_ASC"
+  | "reservationNumber_DESC"
+  | "shipped_ASC"
+  | "shipped_DESC"
+  | "status_ASC"
+  | "status_DESC"
+  | "shippedAt_ASC"
+  | "shippedAt_DESC"
+  | "receivedAt_ASC"
+  | "receivedAt_DESC"
+  | "reminderSentAt_ASC"
+  | "reminderSentAt_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
+
+export type LocationOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "slug_ASC"
+  | "slug_DESC"
+  | "name_ASC"
+  | "name_DESC"
+  | "company_ASC"
+  | "company_DESC"
+  | "description_ASC"
+  | "description_DESC"
+  | "address1_ASC"
+  | "address1_DESC"
+  | "address2_ASC"
+  | "address2_DESC"
+  | "city_ASC"
+  | "city_DESC"
+  | "state_ASC"
+  | "state_DESC"
+  | "zipCode_ASC"
+  | "zipCode_DESC"
+  | "locationType_ASC"
+  | "locationType_DESC"
+  | "lat_ASC"
+  | "lat_DESC"
+  | "lng_ASC"
+  | "lng_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
+
+export type ReservationStatus =
+  | "New"
+  | "InQueue"
+  | "OnHold"
+  | "Packed"
+  | "Shipped"
+  | "InTransit"
+  | "Received"
+  | "Cancelled"
+  | "Completed";
+
+export type HomepageProductRailOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "slug_ASC"
+  | "slug_DESC"
+  | "name_ASC"
+  | "name_DESC";
+
+export type ProductVariantOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "sku_ASC"
+  | "sku_DESC"
+  | "size_ASC"
+  | "size_DESC"
+  | "weight_ASC"
+  | "weight_DESC"
+  | "height_ASC"
+  | "height_DESC"
+  | "productID_ASC"
+  | "productID_DESC"
+  | "retailPrice_ASC"
+  | "retailPrice_DESC"
+  | "total_ASC"
+  | "total_DESC"
+  | "reservable_ASC"
+  | "reservable_DESC"
+  | "reserved_ASC"
+  | "reserved_DESC"
+  | "nonReservable_ASC"
+  | "nonReservable_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
+
+export type MutationType = "CREATED" | "UPDATED" | "DELETED";
 
 export type ProductOrderByInput =
   | "id_ASC"
@@ -1549,51 +1559,41 @@ export type Material =
 
 export type Plan = "AllAccess" | "Essential";
 
-export type ColorOrderByInput =
+export type UserRole = "Admin" | "Customer" | "Partner";
+
+export type CustomerOrderByInput =
   | "id_ASC"
   | "id_DESC"
-  | "slug_ASC"
-  | "slug_DESC"
+  | "status_ASC"
+  | "status_DESC"
+  | "plan_ASC"
+  | "plan_DESC";
+
+export type LabelOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
   | "name_ASC"
   | "name_DESC"
-  | "colorCode_ASC"
-  | "colorCode_DESC"
-  | "hexCode_ASC"
-  | "hexCode_DESC";
+  | "image_ASC"
+  | "image_DESC"
+  | "trackingNumber_ASC"
+  | "trackingNumber_DESC"
+  | "trackingURL_ASC"
+  | "trackingURL_DESC";
 
-export type ImageOrderByInput =
+export type PackageOrderByInput =
   | "id_ASC"
   | "id_DESC"
-  | "caption_ASC"
-  | "caption_DESC"
-  | "originalHeight_ASC"
-  | "originalHeight_DESC"
-  | "originalUrl_ASC"
-  | "originalUrl_DESC"
-  | "originalWidth_ASC"
-  | "originalWidth_DESC"
-  | "resizedUrl_ASC"
-  | "resizedUrl_DESC"
-  | "title_ASC"
-  | "title_DESC"
+  | "weight_ASC"
+  | "weight_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
   | "updatedAt_DESC";
 
-export type OrderOrderByInput = "id_ASC" | "id_DESC";
-
-export type UserRole = "Admin" | "Customer" | "Partner";
-
-export type MutationType = "CREATED" | "UPDATED" | "DELETED";
-
-export interface PhysicalProductUpdateWithoutLocationDataInput {
-  seasonsUID?: Maybe<String>;
-  productVariant?: Maybe<
-    ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
-  >;
-  inventoryStatus?: Maybe<InventoryStatus>;
-  productStatus?: Maybe<PhysicalProductStatus>;
+export interface PhysicalProductUpdateWithWhereUniqueWithoutLocationInput {
+  where: PhysicalProductWhereUniqueInput;
+  data: PhysicalProductUpdateWithoutLocationDataInput;
 }
 
 export type BagItemWhereUniqueInput = AtLeastOne<{
@@ -2416,6 +2416,7 @@ export interface UserUpdateManyMutationInput {
   firstName?: Maybe<String>;
   lastName?: Maybe<String>;
   role?: Maybe<UserRole>;
+  pushNotifications?: Maybe<PushNotificationStatus>;
 }
 
 export interface PhysicalProductCreateManyWithoutProductVariantInput {
@@ -2940,6 +2941,14 @@ export interface UserWhereInput {
   updatedAt_lte?: Maybe<DateTimeInput>;
   updatedAt_gt?: Maybe<DateTimeInput>;
   updatedAt_gte?: Maybe<DateTimeInput>;
+  pushNotifications?: Maybe<PushNotificationStatus>;
+  pushNotifications_not?: Maybe<PushNotificationStatus>;
+  pushNotifications_in?: Maybe<
+    PushNotificationStatus[] | PushNotificationStatus
+  >;
+  pushNotifications_not_in?: Maybe<
+    PushNotificationStatus[] | PushNotificationStatus
+  >;
   AND?: Maybe<UserWhereInput[] | UserWhereInput>;
   OR?: Maybe<UserWhereInput[] | UserWhereInput>;
   NOT?: Maybe<UserWhereInput[] | UserWhereInput>;
@@ -3338,6 +3347,7 @@ export interface UserUpdateDataInput {
   firstName?: Maybe<String>;
   lastName?: Maybe<String>;
   role?: Maybe<UserRole>;
+  pushNotifications?: Maybe<PushNotificationStatus>;
 }
 
 export interface LocationUpdateManyMutationInput {
@@ -3521,16 +3531,6 @@ export interface CustomerDetailUpdateInput {
   insureShipment?: Maybe<Boolean>;
 }
 
-export interface PhysicalProductUpdateWithWhereUniqueWithoutLocationInput {
-  where: PhysicalProductWhereUniqueInput;
-  data: PhysicalProductUpdateWithoutLocationDataInput;
-}
-
-export type ProductFunctionWhereUniqueInput = AtLeastOne<{
-  id: Maybe<ID_Input>;
-  name?: Maybe<String>;
-}>;
-
 export interface ProductUpdateWithoutBrandDataInput {
   slug?: Maybe<String>;
   name?: Maybe<String>;
@@ -3550,6 +3550,20 @@ export interface ProductUpdateWithoutBrandDataInput {
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
   variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
   status?: Maybe<ProductStatus>;
+}
+
+export type ProductFunctionWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+  name?: Maybe<String>;
+}>;
+
+export interface PhysicalProductUpdateWithoutLocationDataInput {
+  seasonsUID?: Maybe<String>;
+  productVariant?: Maybe<
+    ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
+  >;
+  inventoryStatus?: Maybe<InventoryStatus>;
+  productStatus?: Maybe<PhysicalProductStatus>;
 }
 
 export interface ColorUpdateManyMutationInput {
@@ -6848,6 +6862,7 @@ export interface UserUpdateInput {
   firstName?: Maybe<String>;
   lastName?: Maybe<String>;
   role?: Maybe<UserRole>;
+  pushNotifications?: Maybe<PushNotificationStatus>;
 }
 
 export interface ProductVariantUpsertNestedInput {
@@ -7125,6 +7140,7 @@ export interface UserCreateInput {
   firstName: String;
   lastName: String;
   role?: Maybe<UserRole>;
+  pushNotifications?: Maybe<PushNotificationStatus>;
 }
 
 export type ProductVariantWhereUniqueInput = AtLeastOne<{
@@ -7149,6 +7165,7 @@ export interface UserPreviousValues {
   role: UserRole;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
+  pushNotifications: PushNotificationStatus;
 }
 
 export interface UserPreviousValuesPromise
@@ -7162,6 +7179,7 @@ export interface UserPreviousValuesPromise
   role: () => Promise<UserRole>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
+  pushNotifications: () => Promise<PushNotificationStatus>;
 }
 
 export interface UserPreviousValuesSubscription
@@ -7175,6 +7193,7 @@ export interface UserPreviousValuesSubscription
   role: () => Promise<AsyncIterator<UserRole>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  pushNotifications: () => Promise<AsyncIterator<PushNotificationStatus>>;
 }
 
 export interface AggregateCollection {
@@ -9428,6 +9447,7 @@ export interface User {
   role: UserRole;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
+  pushNotifications: PushNotificationStatus;
 }
 
 export interface UserPromise extends Promise<User>, Fragmentable {
@@ -9439,6 +9459,7 @@ export interface UserPromise extends Promise<User>, Fragmentable {
   role: () => Promise<UserRole>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
+  pushNotifications: () => Promise<PushNotificationStatus>;
 }
 
 export interface UserSubscription
@@ -9452,6 +9473,7 @@ export interface UserSubscription
   role: () => Promise<AsyncIterator<UserRole>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  pushNotifications: () => Promise<AsyncIterator<PushNotificationStatus>>;
 }
 
 export interface UserNullablePromise
@@ -9465,6 +9487,7 @@ export interface UserNullablePromise
   role: () => Promise<UserRole>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
+  pushNotifications: () => Promise<PushNotificationStatus>;
 }
 
 export interface BagItemEdge {
@@ -11721,6 +11744,10 @@ export const models: Model[] = [
   },
   {
     name: "User",
+    embedded: false
+  },
+  {
+    name: "PushNotificationStatus",
     embedded: false
   },
   {
