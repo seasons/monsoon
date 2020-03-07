@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common"
 import * as Airtable from "airtable"
+import { LocationCreateInput, BillingInfoCreateInput } from "../../../prisma"
 
 export interface AirtableRecord {
   id: string
@@ -8,7 +9,66 @@ export interface AirtableRecord {
 
 @Injectable()
 export class AirtableUtilsService {
-  private readonly base = Airtable.base(process.env.AIRTABLE_DATABASE_ID)
+  readonly base = Airtable.base(process.env.AIRTABLE_DATABASE_ID)
+
+  keyMap = {
+    phoneNumber: "Phone Number",
+    birthday: "Birthday",
+    height: "Height",
+    weight: "Weight",
+    bodyType: "Body Type",
+    averageTopSize: "Average Top Size",
+    averageWaistSize: "Average Waist Size",
+    averagePantLength: "Average Pant Length",
+    preferredPronouns: "Preferred Pronouns",
+    profession: "Profession",
+    partyFrequency: "Party Frequency",
+    travelFrequency: "Travel Frequency",
+    shoppingFrequency: "Shopping Frequency",
+    averageSpend: "Average Spend",
+    style: "Style",
+    commuteStyle: "Commute Style",
+    shippingAddress: "Shipping Address",
+    phoneOS: "Platform OS",
+    status: "Status",
+    plan: "Plan",
+  }
+
+  async createLocation(user, data: LocationCreateInput) {
+    const createData = [
+      {
+        fields: {
+          Name: data.name,
+          Company: data.company,
+          "Address 1": data.address1,
+          "Address 2": data.address2,
+          City: data.city,
+          State: data.state,
+          "Zip Code": data.zipCode,
+          Slug: data.slug,
+          "Location Type": data.locationType,
+        },
+      },
+    ]
+  
+    return this.base("Locations").create(createData)
+  }
+  
+  async createBillingInfo(data: BillingInfoCreateInput) {
+    return this.base("BillingInfos").create({
+      Brand: data.brand,
+      Name: data.name,
+      LastDigits: data.last_digits,
+      "Expiration Month": data.expiration_month,
+      "Expiration Year": data.expiration_year,
+      "Street 1": data.street1,
+      "Street 2": data.street2,
+      City: data.city,
+      State: data.state,
+      Country: data.country,
+      "Postal Code": data.postal_code,
+    })
+  }
 
   getAirtableUserRecordByUserEmail(
     email: string

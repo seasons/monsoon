@@ -1,8 +1,21 @@
 import * as Airtable from "airtable"
 import { Injectable } from "@nestjs/common"
-import { PhysicalProduct, ReservationCreateInput } from "../../../prisma"
+import { 
+  PhysicalProduct,
+  ReservationCreateInput,
+  CustomerDetailCreateInput,
+  BillingInfoCreateInput,
+  CustomerStatus,
+  User
+} from "../../../prisma"
 import { fill, zip } from "lodash"
 import { AirtableUtilsService } from "./airtable.utils.service"
+
+interface AirtableUserFields extends CustomerDetailCreateInput {
+  plan?: string
+  status?: CustomerStatus
+  billingInfo?: BillingInfoCreateInput
+}
 
 export interface AirtableData extends Array<any> {
   findByIds: (ids?: any) => any
@@ -123,6 +136,61 @@ export class AirtableService {
         return reject(err)
       }
     })
+  }
+
+  async createOrUpdateAirtableUser (
+    user: User,
+    fields: AirtableUserFields
+  ) {
+    // Create the airtable data
+    const { email, firstName, lastName } = user
+    const data = {
+      Email: email,
+      "First Name": firstName,
+      "Last Name": lastName,
+    }
+    for (let key in fields) {
+      if (this.utils.keyMap[key]) {
+        data[this.utils.keyMap[key]] = fields[key]
+      }
+    }
+    // WARNING: shipping address and billingInfo code are still "create" only.
+    if (!!fields.shippingAddress) {
+      const location = await this.utils.createLocation(user, fields.shippingAddress.create)
+      data["Shipping Address"] = location.map(l => l.id)
+    }
+    if (!!fields.billingInfo) {
+      const airtableBillingInfoRecord = await this.utils.createBillingInfo(
+        fields.billingInfo
+      )
+      data["Billing Info"] = [airtableBillingInfoRecord.getId()]
+    }
+  
+    // Create or update the record
+    this.utils.base("Users")
+      .select({
+        view: "Grid view",
+        filterByFormula: `{Email}='${email}'`,
+      })
+      .firstPage((err, records) => {
+        if (err) {
+          throw err
+        }
+        if (records.length > 0) {
+          const user = records[0]
+          this.utils.base("Users").update(user.id, data, function(err, record) {
+            if (err) {
+              throw err
+            }
+          })
+        } else {
+          this.utils.base("Users").create([
+            {
+              fields: data,
+            },
+          ])
+        }
+      })
   }
 
   private getAll: (
