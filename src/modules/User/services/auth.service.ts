@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common"
 import request from "request"
-import { prisma, Customer, User, CustomerDetail } from "../../../prisma"
+import { prisma, CustomerDetail } from "../../../prisma"
+import { head } from "lodash"
 
 const PW_STRENGTH_RULES_URL =
   "https://manage.auth0.com/dashboard/us/seasons/connections/database/con_btTULQOf6kAxxbCz/security"
@@ -118,54 +119,35 @@ export class AuthService {
   }
 
   async getCustomerFromUserID(userID: string) {
-    let customer
-    try {
-      const customerArray = await prisma.customers({
+    return head(
+      await prisma.customers({
         where: { user: { id: userID } },
       })
-      customer = customerArray[0]
-    } catch (err) {
-      throw new Error(err)
-    }
-
-    return customer
+    )
   }
 
-  // retrieves the user indicated by the JWT token on the request.
-  // If no such user exists, throws an error.
-  async getUserFromContext(ctx): Promise<User> {
-    if (!ctx.req.user) {
-      throw new Error("no user on context")
-    }
-
-    // Does such a user exist?
-    const auth0Id = ctx.req.user.sub.split("|")[1] // e.g "auth0|5da61ffdeef18b0c5f5c2c6f"
-    const userExists = await prisma.$exists.user({ auth0Id })
-    if (!userExists) {
-      throw new Error("token does not correspond to any known user")
-    }
-
-    // User exists. Let's return
-    const user = await prisma.user({ auth0Id })
-    return user
-  }
-
-  async getCustomerFromContext(ctx): Promise<Customer> {
-    // Get the user on the context
-    const user = await this.getUserFromContext(ctx) // will throw error if user doesn't exist
-
-    if (user.role !== "Customer") {
-      throw new Error(
-        `token belongs to a user of type ${user.role}, not Customer`
+  async resetPassword(email) {
+    return new Promise((resolve, reject) => {
+      request(
+        {
+          method: "Post",
+          url: `https://${process.env.AUTH0_DOMAIN}/dbconnections/change_password`,
+          headers: { "content-type": "application/json" },
+          body: {
+            client_id: `${process.env.AUTH0_CLIENTID}`,
+            connection: `${process.env.AUTH0_DB_CONNECTION}`,
+            email,
+          },
+          json: true,
+        },
+        async (error, response, body) => {
+          if (error) {
+            reject(error)
+          }
+          resolve({ message: body })
+        }
       )
-    }
-
-    // Get the customer record corresponding to that user
-    const customerArray = await prisma.customers({
-      where: { user: { id: user.id } },
     })
-
-    return customerArray[0]
   }
 
   async createPrismaUser(auth0Id, email, firstName, lastName) {

@@ -1,22 +1,17 @@
 import {
   Resolver,
-  Query,
   ResolveProperty,
   Context,
   Info,
 } from "@nestjs/graphql"
 import { head } from "lodash"
 import { prisma } from "../../../prisma"
-import { AuthService } from "../services/auth.service"
-import { User } from "../../../nest_decorators"
+import { User, Customer } from "../../../nest_decorators"
 import { DBService } from "../../../prisma/DB.service"
 
 @Resolver("Me")
 export class MeFieldsResolver {
-  constructor(
-    private readonly authService: AuthService,
-    private readonly db: DBService
-  ) {}
+  constructor(private readonly db: DBService) {}
 
   @ResolveProperty()
   async user(@User() user) {
@@ -24,19 +19,12 @@ export class MeFieldsResolver {
   }
 
   @ResolveProperty()
-  async customer(@Context() ctx, @Info() info) {
-    const customer = await this.authService.getCustomerFromContext(ctx)
-    return await this.db.query.customer(
-      {
-        where: { id: customer.id },
-      },
-      info
-    )
+  async customer(@Customer() customer) {
+    return customer
   }
 
   @ResolveProperty()
-  async activeReservation(@Context() ctx) {
-    const customer = await this.authService.getCustomerFromContext(ctx)
+  async activeReservation(@Customer() customer) {
     const reservations = await prisma
       .customer({ id: customer.id })
       .reservations({ orderBy: "createdAt_DESC" })
@@ -52,8 +40,7 @@ export class MeFieldsResolver {
   }
 
   @ResolveProperty()
-  async bag(@Context() ctx, @Info() info) {
-    const customer = await this.authService.getCustomerFromContext(ctx)
+  async bag(@Info() info, @Customer() customer) {
     return await this.db.query.bagItems(
       {
         where: {
@@ -68,8 +55,7 @@ export class MeFieldsResolver {
   }
 
   @ResolveProperty()
-  async savedItems(@Context() ctx, @Info() info) {
-    const customer = await this.authService.getCustomerFromContext(ctx)
+  async savedItems(@Context() ctx, @Info() info, @Customer() customer) {
     return await this.db.query.bagItems(
       {
         where: {

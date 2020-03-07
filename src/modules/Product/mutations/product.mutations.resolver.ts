@@ -11,8 +11,8 @@ export class ProductMutationsResolver {
   ) {}
 
   @Mutation()
-  async addViewedProduct(@Args() { item }, @Context() ctx) {
-    return await this.productService.addViewedProduct(item, ctx)
+  async addViewedProduct(@Args() { item }, @Customer() customer) {
+    return await this.productService.addViewedProduct(item, customer)
   }
 
   @Mutation()
