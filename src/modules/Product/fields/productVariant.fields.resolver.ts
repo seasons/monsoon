@@ -1,6 +1,7 @@
 import { Resolver, ResolveProperty, Context, Parent } from "@nestjs/graphql"
 import { AuthService } from "../../User/services/auth.service"
 import { PrismaClientService } from "../../../prisma/client.service"
+import { Customer, User } from "../../../nest_decorators"
 
 @Resolver("ProductVariant")
 export class ProductVariantFieldsResolver {
@@ -10,13 +11,8 @@ export class ProductVariantFieldsResolver {
   ) {}
 
   @ResolveProperty()
-  async isSaved(@Parent() parent, @Context() ctx) {
-    let customer
-    try {
-      customer = await this.authService.getCustomerFromContext(ctx)
-    } catch (error) {
-      return false
-    }
+  async isSaved(@Parent() parent, @Customer() customer) {
+    if (!customer) return false
 
     const bagItems = await this.prisma.client.bagItems({
       where: {
@@ -34,11 +30,8 @@ export class ProductVariantFieldsResolver {
   }
 
   @ResolveProperty()
-  async isWanted(@Parent() parent, @Context() ctx) {
-    const user = await this.authService.getUserFromContext(ctx)
-    if (!user) {
-      return false
-    }
+  async isWanted(@Parent() parent, @User() user) {
+    if (!user) return false
 
     const productVariant = await this.prisma.client.productVariant({
       id: parent.id,

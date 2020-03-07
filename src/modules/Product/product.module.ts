@@ -9,12 +9,29 @@ import { ProductVariantQueriesResolver } from "./queries/productVariant.queries.
 import { ProductVariantMutationsResolver } from "./mutations/productVariant.mutations.resolver"
 import { ProductUtilsService } from "./services/product.utils.service"
 import { UserModule } from "../User/user.module"
+import { PhysicalProductService } from "./services/physicalProduct.utils.service"
+import { ProductVariantService } from "./services/productVariant.service"
+import { AirtableModule } from "../Airtable/airtable.module"
+import { ReservationUtilsService } from "./services/reservation.utils.service"
+import { ReservationService } from "./services/reservation.service"
+import { EmailModule } from "../Email/email.module"
+import { ShippingModule } from "../Shipping/shipping.module"
 
 @Module({
-  imports: [PrismaModule, UserModule],
+  imports: [
+    PrismaModule,
+    UserModule,
+    AirtableModule,
+    EmailModule,
+    ShippingModule,
+  ],
   providers: [
     ProductService,
     ProductUtilsService,
+    PhysicalProductService,
+    ProductVariantService,
+    ReservationService,
+    ReservationUtilsService,
     ProductFieldsResolver,
     ProductMutationsResolver,
     ProductQueriesResolver,
@@ -22,5 +39,6 @@ import { UserModule } from "../User/user.module"
     ProductVariantQueriesResolver,
     ProductVariantMutationsResolver,
   ],
+  exports: [ReservationUtilsService],
 })
 export class ProductModule {}

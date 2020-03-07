@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable } from "@nestjs/common"
 import request from "request"
-import { prisma, Customer, User, CustomerDetail } from '../../../prisma';
+import { prisma, Customer, User, CustomerDetail } from "../../../prisma"
 
 const PW_STRENGTH_RULES_URL =
   "https://manage.auth0.com/dashboard/us/seasons/connections/database/con_btTULQOf6kAxxbCz/security"
@@ -160,7 +160,6 @@ export class AuthService {
       )
     }
 
-
     // Get the customer record corresponding to that user
     const customerArray = await prisma.customers({
       where: { user: { id: user.id } },
@@ -169,12 +168,7 @@ export class AuthService {
     return customerArray[0]
   }
 
-  async createPrismaUser(
-    auth0Id,
-    email,
-    firstName,
-    lastName
-  ) {
+  async createPrismaUser(auth0Id, email, firstName, lastName) {
     const user = await prisma.createUser({
       auth0Id,
       email,
@@ -184,11 +178,7 @@ export class AuthService {
     return user
   }
 
-  async createPrismaCustomerForExistingUser(
-    userID,
-    details = {},
-    status
-  ) {
+  async createPrismaCustomerForExistingUser(userID, details = {}, status) {
     const customer = await prisma.createCustomer({
       user: {
         connect: { id: userID },
@@ -211,5 +201,4 @@ export class AuthService {
     }
     return traits
   }
-
 }

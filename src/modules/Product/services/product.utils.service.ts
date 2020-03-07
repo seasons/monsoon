@@ -7,7 +7,8 @@ import { PrismaClientService } from "../../../prisma/client.service"
 export class ProductUtilsService {
   constructor(
     private readonly db: DBService,
-    private readonly prisma: PrismaClientService) {}
+    private readonly prisma: PrismaClientService
+  ) {}
 
   async queryOptionsForProducts(args) {
     const category = args.category || "all"
@@ -56,6 +57,28 @@ export class ProductUtilsService {
           }
     }
     return {}
+  }
+  async getReservedBagItems(customer) {
+    const reservedBagItems = await this.db.query.bagItems(
+      {
+        where: {
+          customer: {
+            id: customer.id,
+          },
+          status: "Reserved",
+        },
+      },
+      `{
+          id
+          status
+          position
+          saved
+          productVariant {
+            id
+          }
+      }`
+    )
+    return reservedBagItems
   }
 
   private async productsAlphabetically(
