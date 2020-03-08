@@ -6,7 +6,6 @@ import { createGetUserMiddleware } from "./middleware/user"
 import { prisma } from "./prisma"
 import cors from "cors"
 import { app as webhooks } from "./webhooks"
-import { app as pushNotifications } from "./pushNotifications"
 import bodyParser from "body-parser"
 import { ExpressAdapter } from "@nestjs/platform-express"
 import * as Sentry from "@sentry/node"
@@ -35,8 +34,7 @@ server.use(
     credentials: true,
   }),
   bodyParser.json(),
-  webhooks,
-  pushNotifications
+  webhooks
 )
 
 async function bootstrap() {
