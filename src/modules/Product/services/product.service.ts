@@ -4,13 +4,15 @@ import { prisma, RecentlyViewedProduct, Product } from "../../../prisma"
 import { AuthService } from "../../User/services/auth.service"
 import { head } from "lodash"
 import { ProductUtilsService } from "./product.utils.service"
+import { ProductVariantService } from "./productVariant.service"
 
 @Injectable()
 export class ProductService {
   constructor(
     private readonly authService: AuthService,
     private readonly db: DBService,
-    private readonly productUtils: ProductUtilsService
+    private readonly productUtils: ProductUtilsService,
+    private readonly productVariantService: ProductVariantService,
   ) {}
 
   async getProducts(args, info) {
@@ -131,5 +133,35 @@ export class ProductService {
     })
 
     return bagItem.length > 0
+  }
+
+  async checkItemsAvailability(items, customer) {
+    const reservedBagItems = await this.db.query.bagItems(
+      {
+        where: {
+          customer: {
+            id: customer.id,
+          },
+          productVariant: {
+            id_in: items,
+          },
+          status_not: "Added",
+        },
+      },
+      `{
+        productVariant {
+          id
+        }
+      }`
+    )
+  
+    const reservedIds = reservedBagItems.map(a => a.productVariant.id)
+    const newItems = items.filter(a => !reservedIds.includes(a))
+  
+    await this.productVariantService.updateProductVariantCounts(newItems, {
+      dryRun: true,
+    })
+  
+    return true
   }
 }

@@ -39,6 +39,5 @@ import { ShippingModule } from "../Shipping/shipping.module"
     ProductVariantQueriesResolver,
     ProductVariantMutationsResolver,
   ],
-  exports: [ReservationUtilsService],
 })
 export class ProductModule {}
