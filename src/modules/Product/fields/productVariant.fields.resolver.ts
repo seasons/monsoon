@@ -5,10 +5,7 @@ import { Customer, User } from "../../../nest_decorators"
 
 @Resolver("ProductVariant")
 export class ProductVariantFieldsResolver {
-  constructor(
-    private readonly authService: AuthService,
-    private readonly prisma: PrismaClientService
-  ) {}
+  constructor(private readonly prisma: PrismaClientService) {}
 
   @ResolveProperty()
   async isSaved(@Parent() parent, @Customer() customer) {

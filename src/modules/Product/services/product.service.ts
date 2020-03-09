@@ -66,8 +66,7 @@ export class ProductService {
     return result
   }
 
-  async addViewedProduct(item, ctx) {
-    const customer = await this.authService.getCustomerFromContext(ctx)
+  async addViewedProduct(item, customer) {
     const viewedProducts = await prisma.recentlyViewedProducts({
       where: {
         customer: { id: customer.id },
@@ -102,14 +101,7 @@ export class ProductService {
     }
   }
 
-  async isSaved(product, ctx) {
-    let customer
-    try {
-      customer = await this.authService.getCustomerFromContext(ctx)
-    } catch (error) {
-      return false
-    }
-
+  async isSaved(product, customer) {
     const productVariants = await prisma.productVariants({
       where: {
         product: {
