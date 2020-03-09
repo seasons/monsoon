@@ -6,6 +6,7 @@ import {
   BillingInfoCreateInput,
 } from "../prisma"
 import slugify from "slugify"
+import cliProgress from "cli-progress"
 
 export interface AirtableData extends Array<any> {
   findByIds: (ids?: any) => any
@@ -24,6 +25,8 @@ export type AirtableModelName =
   | "Physical Products"
   | "Users"
   | "Reservations"
+  | "Collections"
+  | "Collection Groups"
 
 export interface AirtableRecord {
   id: string
@@ -71,7 +74,7 @@ const getAll: (
           })
           return fetchNextPage()
         },
-        function done(err) {
+        function done (err) {
           if (err) {
             console.error(err)
             reject(err)
@@ -85,6 +88,14 @@ const getAll: (
 
 export const getAllBrands = async (airtableBase?) => {
   return getAll("Brands", "", "", airtableBase)
+}
+
+export const getAllBottomSizes = async (airtableBase?) => {
+  return getAll("Bottom Sizes", "", "", airtableBase)
+}
+
+export const getAllTopSizes = async (airtableBase?) => {
+  return getAll("Top Sizes", "", "", airtableBase)
 }
 
 export const getAllModels = async (airtableBase?) => {
@@ -135,14 +146,18 @@ export const getAllLocations = async (airtableBase?) => {
   return getAll("Locations", "", "", airtableBase)
 }
 
+export const getNumRecords = async (modelName: AirtableModelName) => {
+  return (await getAll(modelName, "", ""))?.length
+}
+
 export const airtableToPrismaObject = record => {
-  function camelCase(str) {
+  function camelCase (str) {
     return str
-      .replace(/\s(.)/g, function(a) {
+      .replace(/\s(.)/g, function (a) {
         return a.toUpperCase()
       })
       .replace(/\s/g, "")
-      .replace(/^(.)/, function(b) {
+      .replace(/^(.)/, function (b) {
         return b.toLowerCase()
       })
   }
@@ -155,7 +170,7 @@ export const airtableToPrismaObject = record => {
   return obj
 }
 
-export async function createAirtableReservation(
+export async function createAirtableReservation (
   userEmail: string,
   data: ReservationCreateInput,
   shippingError: string,
@@ -227,7 +242,7 @@ export const createLocation = async (user, data: LocationCreateInput) => {
   return base("Locations").create(createData)
 }
 
-export async function createBillingInfo(data: BillingInfoCreateInput) {
+export async function createBillingInfo (data: BillingInfoCreateInput) {
   return base("BillingInfos").create({
     Brand: data.brand,
     Name: data.name,
@@ -265,7 +280,7 @@ export const updateProductVariant = async data => {
   })
 }
 
-export function getAirtableUserRecordByUserEmail(
+export function getAirtableUserRecordByUserEmail (
   email: string
 ): Promise<AirtableRecord> {
   return new Promise((resolve, reject) => {
@@ -297,4 +312,15 @@ export const getAirtableLocationRecordBySlug = async (
         return reject(`No record found with slug ${slug}`)
       })
   })
+}
+
+export const makeAirtableSyncCliProgressBar = () => {
+  return new cliProgress.MultiBar(
+    {
+      clearOnComplete: false,
+      hideCursor: true,
+      format: `{modelName} {bar} {percentage}%  ETA: {eta}s  {value}/{total} records`,
+    },
+    cliProgress.Presets.shades_grey
+  )
 }

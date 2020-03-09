@@ -574,6 +574,7 @@ type BottomSize {
   waist: Float
   rise: Float
   hem: Float
+  inseam: Float
 }
 
 type BottomSizeConnection {
@@ -589,6 +590,7 @@ input BottomSizeCreateInput {
   waist: Float
   rise: Float
   hem: Float
+  inseam: Float
 }
 
 input BottomSizeCreateOneInput {
@@ -614,6 +616,8 @@ enum BottomSizeOrderByInput {
   rise_DESC
   hem_ASC
   hem_DESC
+  inseam_ASC
+  inseam_DESC
 }
 
 type BottomSizePreviousValues {
@@ -623,6 +627,7 @@ type BottomSizePreviousValues {
   waist: Float
   rise: Float
   hem: Float
+  inseam: Float
 }
 
 type BottomSizeSubscriptionPayload {
@@ -656,6 +661,7 @@ input BottomSizeUpdateDataInput {
   waist: Float
   rise: Float
   hem: Float
+  inseam: Float
 }
 
 input BottomSizeUpdateInput {
@@ -664,6 +670,7 @@ input BottomSizeUpdateInput {
   waist: Float
   rise: Float
   hem: Float
+  inseam: Float
 }
 
 input BottomSizeUpdateManyMutationInput {
@@ -672,6 +679,7 @@ input BottomSizeUpdateManyMutationInput {
   waist: Float
   rise: Float
   hem: Float
+  inseam: Float
 }
 
 input BottomSizeUpdateOneInput {
@@ -745,6 +753,14 @@ input BottomSizeWhereInput {
   hem_lte: Float
   hem_gt: Float
   hem_gte: Float
+  inseam: Float
+  inseam_not: Float
+  inseam_in: [Float!]
+  inseam_not_in: [Float!]
+  inseam_lt: Float
+  inseam_lte: Float
+  inseam_gt: Float
+  inseam_gte: Float
   AND: [BottomSizeWhereInput!]
   OR: [BottomSizeWhereInput!]
   NOT: [BottomSizeWhereInput!]

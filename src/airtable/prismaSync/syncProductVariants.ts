@@ -96,9 +96,12 @@ export const syncProductVariants = async () => {
               return {
                 bottom: {
                   create: {
+                    type: model.type,
+                    value: model.value,
                     waist: model.waist,
                     rise: model.rise,
                     hem: model.hem,
+                    inseam: model.inseam,
                   },
                 },
               }
@@ -282,4 +285,4 @@ const createMorePhysicalProductsIfNeeded: CreateMorePhysicalProductsFunction = a
   )
 }
 
-syncProductVariants()
+// syncProductVariants()

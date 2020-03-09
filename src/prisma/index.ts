@@ -1320,7 +1320,9 @@ export type BottomSizeOrderByInput =
   | "rise_ASC"
   | "rise_DESC"
   | "hem_ASC"
-  | "hem_DESC";
+  | "hem_DESC"
+  | "inseam_ASC"
+  | "inseam_DESC";
 
 export type CustomerStatus =
   | "Invited"
@@ -2299,6 +2301,7 @@ export interface BottomSizeCreateInput {
   waist?: Maybe<Float>;
   rise?: Maybe<Float>;
   hem?: Maybe<Float>;
+  inseam?: Maybe<Float>;
 }
 
 export interface CategoryWhereInput {
@@ -4108,6 +4111,7 @@ export interface BottomSizeUpdateDataInput {
   waist?: Maybe<Float>;
   rise?: Maybe<Float>;
   hem?: Maybe<Float>;
+  inseam?: Maybe<Float>;
 }
 
 export type ReservationWhereUniqueInput = AtLeastOne<{
@@ -6538,6 +6542,14 @@ export interface BottomSizeWhereInput {
   hem_lte?: Maybe<Float>;
   hem_gt?: Maybe<Float>;
   hem_gte?: Maybe<Float>;
+  inseam?: Maybe<Float>;
+  inseam_not?: Maybe<Float>;
+  inseam_in?: Maybe<Float[] | Float>;
+  inseam_not_in?: Maybe<Float[] | Float>;
+  inseam_lt?: Maybe<Float>;
+  inseam_lte?: Maybe<Float>;
+  inseam_gt?: Maybe<Float>;
+  inseam_gte?: Maybe<Float>;
   AND?: Maybe<BottomSizeWhereInput[] | BottomSizeWhereInput>;
   OR?: Maybe<BottomSizeWhereInput[] | BottomSizeWhereInput>;
   NOT?: Maybe<BottomSizeWhereInput[] | BottomSizeWhereInput>;
@@ -7539,6 +7551,7 @@ export interface BottomSizeUpdateInput {
   waist?: Maybe<Float>;
   rise?: Maybe<Float>;
   hem?: Maybe<Float>;
+  inseam?: Maybe<Float>;
 }
 
 export interface BottomSizeUpdateManyMutationInput {
@@ -7547,6 +7560,7 @@ export interface BottomSizeUpdateManyMutationInput {
   waist?: Maybe<Float>;
   rise?: Maybe<Float>;
   hem?: Maybe<Float>;
+  inseam?: Maybe<Float>;
 }
 
 export interface BagItemUpdateManyMutationInput {
@@ -8793,6 +8807,7 @@ export interface BottomSizePreviousValues {
   waist?: Float;
   rise?: Float;
   hem?: Float;
+  inseam?: Float;
 }
 
 export interface BottomSizePreviousValuesPromise
@@ -8804,6 +8819,7 @@ export interface BottomSizePreviousValuesPromise
   waist: () => Promise<Float>;
   rise: () => Promise<Float>;
   hem: () => Promise<Float>;
+  inseam: () => Promise<Float>;
 }
 
 export interface BottomSizePreviousValuesSubscription
@@ -8815,6 +8831,7 @@ export interface BottomSizePreviousValuesSubscription
   waist: () => Promise<AsyncIterator<Float>>;
   rise: () => Promise<AsyncIterator<Float>>;
   hem: () => Promise<AsyncIterator<Float>>;
+  inseam: () => Promise<AsyncIterator<Float>>;
 }
 
 export interface AggregateProductRequest {
@@ -12379,6 +12396,7 @@ export interface BottomSize {
   waist?: Float;
   rise?: Float;
   hem?: Float;
+  inseam?: Float;
 }
 
 export interface BottomSizePromise extends Promise<BottomSize>, Fragmentable {
@@ -12388,6 +12406,7 @@ export interface BottomSizePromise extends Promise<BottomSize>, Fragmentable {
   waist: () => Promise<Float>;
   rise: () => Promise<Float>;
   hem: () => Promise<Float>;
+  inseam: () => Promise<Float>;
 }
 
 export interface BottomSizeSubscription
@@ -12399,6 +12418,7 @@ export interface BottomSizeSubscription
   waist: () => Promise<AsyncIterator<Float>>;
   rise: () => Promise<AsyncIterator<Float>>;
   hem: () => Promise<AsyncIterator<Float>>;
+  inseam: () => Promise<AsyncIterator<Float>>;
 }
 
 export interface BottomSizeNullablePromise
@@ -12410,6 +12430,7 @@ export interface BottomSizeNullablePromise
   waist: () => Promise<Float>;
   rise: () => Promise<Float>;
   hem: () => Promise<Float>;
+  inseam: () => Promise<Float>;
 }
 
 export interface ReservationPreviousValues {
