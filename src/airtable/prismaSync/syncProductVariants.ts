@@ -19,10 +19,21 @@ import {
 import { sizeToSizeCode } from "../../utils"
 import { base } from "../config"
 import { isEmpty } from "lodash"
+import cliProgress from "cli-progress"
 
 const SeasonsLocationID = "recvzTcW19kdBPqf4"
 
 export const syncProductVariants = async () => {
+  const multibar = new cliProgress.MultiBar(
+    {
+      clearOnComplete: false,
+      hideCursor: true,
+      format: `{modelName}: {bar} {percentage}%  ETA: {eta}s  {value}/{total} records`,
+    },
+    cliProgress.Presets.shades_grey
+  )
+
+  console.log(`Pulling airtable records. Hang tight...`)
   const allBrands = await getAllBrands()
   const allColors = await getAllColors()
   const allProducts = await getAllProducts()
@@ -30,10 +41,19 @@ export const syncProductVariants = async () => {
   const allProductVariants = await getAllProductVariants()
   const allPhysicalProducts = await getAllPhysicalProducts()
 
+  const progressBar = await multibar.create(allProductVariants?.length, 0, {
+    modelName: "Product Variants",
+  })
+
+  console.log(`Syncing product variant data.`)
   for (const productVariant of allProductVariants) {
     try {
+      progressBar.increment()
       const { model } = productVariant
 
+      if (model.sKU === "ENGM-GRN-MM-001") {
+        console.log("yo")
+      }
       const product = allProducts.findByIds(model.product)
       const brand = allBrands.findByIds(product.model.brand)
       const color = allColors.find(x => x.model.name === product.model.color)
@@ -98,7 +118,7 @@ export const syncProductVariants = async () => {
         },
       })
 
-      let data = {
+      const data = {
         sku,
         size,
         internalSize: {
@@ -137,8 +157,6 @@ export const syncProductVariants = async () => {
         },
       })
 
-      console.log(productVariantData)
-
       // Figure out if we need to create new instance of physical products
       // based on the counts and what's available in the database
       const physicalProducts = allPhysicalProducts.filter(a =>
@@ -162,8 +180,6 @@ export const syncProductVariants = async () => {
           create: p,
           update: p,
         })
-
-        console.log(updatePhysicalProduct)
       })
 
       await productVariant.patchUpdate({
@@ -176,21 +192,23 @@ export const syncProductVariants = async () => {
     } catch (e) {
       console.log(productVariant)
       console.error(e)
+    } finally {
+      multibar.stop()
     }
   }
 }
 
 const skuForData = (brand, color, productVariant, styleNumber) => {
-  let brandCode = brand.get("Brand Code")
-  let colorCode = color.get("Color Code")
-  let size = productVariant.get("Size")
-  let sizeCode = sizeToSizeCode(size)
-  let styleCode = styleNumber.toString().padStart(3, "0")
+  const brandCode = brand.get("Brand Code")
+  const colorCode = color.get("Color Code")
+  const size = productVariant.get("Size")
+  const sizeCode = sizeToSizeCode(size)
+  const styleCode = styleNumber.toString().padStart(3, "0")
   return `${brandCode}-${colorCode}-${sizeCode}-${styleCode}`
 }
 
 const countsForVariant = productVariant => {
-  let data = {
+  const data = {
     totalCount: productVariant.get("Total Count") || 0,
     reservedCount: productVariant.get("Reserved Count") || 0,
     nonReservableCount: productVariant.get("Non-Reservable Count") || 0,
