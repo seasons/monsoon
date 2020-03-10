@@ -44,11 +44,11 @@ export const syncAll = async () => {
   }
 
   try {
-    // await syncBrands(bars.brands)
-    // await syncCategories(bars.categories)
-    // await syncColors(bars.colors)
-    // await syncProducts(bars.products)
-    // await syncProductVariants(bars.productVariants)
+    await syncBrands(bars.brands)
+    await syncCategories(bars.categories)
+    await syncColors(bars.colors)
+    await syncProducts(bars.products)
+    await syncProductVariants(bars.productVariants)
     await syncPhysicalProducts(bars.physicalProducts)
     await syncCollections(bars.collections)
     await syncCollectionGroups(bars.collectionGroups)
