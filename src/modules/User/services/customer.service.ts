@@ -27,10 +27,20 @@ export class CustomerService {
   }
 
   async addCustomerDetails({ details, status }, customer, user, info) {
-    this.prisma.client.upsertCustomerDetail({
+    const currentCustomerDetail = await this.prisma.client
+      .customer({ id: customer.id })
+      .detail()
+
+    await this.prisma.client.updateCustomer({
+      data: {
+        detail: {
+          upsert: {
+            update: details,
+            create: details 
+          }
+        }
+      },
       where: { id: customer.id },
-      create: details,
-      update: details
     })
 
     // If a status was passed, update the customer status in prisma
@@ -38,9 +48,6 @@ export class CustomerService {
       await this.setCustomerPrismaStatus(user, status)
     }
 
-    const currentCustomerDetail = await this.prisma.client
-      .customer({ id: customer.id })
-      .detail()
     // Sync with airtable
     await this.airtableService.createOrUpdateAirtableUser(user, {
       ...currentCustomerDetail,
