@@ -486,6 +486,7 @@ type TopSize {
   shoulder: Float
   chest: Float
   neck: Float
+  length: Float
 }
 
 type BottomSize {

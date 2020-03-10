@@ -7376,6 +7376,7 @@ type TopSize {
   shoulder: Float
   chest: Float
   neck: Float
+  length: Float
 }
 
 type TopSizeConnection {
@@ -7391,6 +7392,7 @@ input TopSizeCreateInput {
   shoulder: Float
   chest: Float
   neck: Float
+  length: Float
 }
 
 input TopSizeCreateOneInput {
@@ -7416,6 +7418,8 @@ enum TopSizeOrderByInput {
   chest_DESC
   neck_ASC
   neck_DESC
+  length_ASC
+  length_DESC
 }
 
 type TopSizePreviousValues {
@@ -7425,6 +7429,7 @@ type TopSizePreviousValues {
   shoulder: Float
   chest: Float
   neck: Float
+  length: Float
 }
 
 type TopSizeSubscriptionPayload {
@@ -7451,6 +7456,7 @@ input TopSizeUpdateDataInput {
   shoulder: Float
   chest: Float
   neck: Float
+  length: Float
 }
 
 input TopSizeUpdateInput {
@@ -7459,6 +7465,7 @@ input TopSizeUpdateInput {
   shoulder: Float
   chest: Float
   neck: Float
+  length: Float
 }
 
 input TopSizeUpdateManyMutationInput {
@@ -7467,6 +7474,7 @@ input TopSizeUpdateManyMutationInput {
   shoulder: Float
   chest: Float
   neck: Float
+  length: Float
 }
 
 input TopSizeUpdateOneInput {
@@ -7534,6 +7542,14 @@ input TopSizeWhereInput {
   neck_lte: Float
   neck_gt: Float
   neck_gte: Float
+  length: Float
+  length_not: Float
+  length_in: [Float!]
+  length_not_in: [Float!]
+  length_lt: Float
+  length_lte: Float
+  length_gt: Float
+  length_gte: Float
   AND: [TopSizeWhereInput!]
   OR: [TopSizeWhereInput!]
   NOT: [TopSizeWhereInput!]

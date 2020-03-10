@@ -4,6 +4,8 @@ import {
   LocationCreateInput,
   LocationCreateOneInput,
   BillingInfoCreateInput,
+  TopSizeCreateInput,
+  BottomSizeCreateInput,
 } from "../prisma"
 import slugify from "slugify"
 import cliProgress from "cli-progress"
@@ -240,6 +242,39 @@ export const createLocation = async (user, data: LocationCreateInput) => {
   ]
 
   return base("Locations").create(createData)
+}
+
+export const createTopSize = async (
+  data: TopSizeCreateInput & { name: string }
+) => {
+  return base("Top Sizes").create([
+    {
+      fields: {
+        Name: data.name,
+        LetterSize: data.letter,
+        Sleeve: data.sleeve,
+        Shoulder: data.shoulder,
+        Chest: data.chest,
+        Length: data.length,
+      },
+    },
+  ])
+}
+
+export const createBottomSize = async (
+  data: BottomSizeCreateInput & { name: string }
+) => {
+  return base("Bottom Sizes").create([
+    {
+      fields: {
+        Name: data.name,
+        Hem: data.hem,
+        Inseam: data.inseam,
+        Rise: data.rise,
+        Waist: data.waist,
+      },
+    },
+  ])
 }
 
 export async function createBillingInfo (data: BillingInfoCreateInput) {
