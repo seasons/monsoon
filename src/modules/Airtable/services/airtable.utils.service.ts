@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common"
-import * as Airtable from "airtable"
 import { LocationCreateInput, BillingInfoCreateInput } from "../../../prisma"
+import { AirtableBaseService } from "./airtable.base.service"
 
 export interface AirtableRecord {
   id: string
@@ -9,7 +9,7 @@ export interface AirtableRecord {
 
 @Injectable()
 export class AirtableUtilsService {
-  readonly base = Airtable.base(process.env.AIRTABLE_DATABASE_ID)
+  constructor(private readonly airtableBase: AirtableBaseService) {}
 
   keyMap = {
     phoneNumber: "Phone Number",
@@ -34,7 +34,7 @@ export class AirtableUtilsService {
     plan: "Plan",
   }
 
-  async createLocation(user, data: LocationCreateInput) {
+  async createLocation(data: LocationCreateInput) {
     const createData = [
       {
         fields: {
@@ -51,11 +51,11 @@ export class AirtableUtilsService {
       },
     ]
   
-    return this.base("Locations").create(createData)
+    return this.airtableBase.base("Locations").create(createData)
   }
   
   async createBillingInfo(data: BillingInfoCreateInput) {
-    return this.base("BillingInfos").create({
+    return this.airtableBase.base("BillingInfos").create({
       Brand: data.brand,
       Name: data.name,
       LastDigits: data.last_digits,
@@ -74,7 +74,7 @@ export class AirtableUtilsService {
     email: string
   ): Promise<{ id: string; fields: any }> {
     return new Promise((resolve, reject) => {
-      this.base("Users")
+      this.airtableBase.base("Users")
         .select({
           view: "Grid view",
           filterByFormula: `{Email}='${email}'`,
@@ -92,7 +92,7 @@ export class AirtableUtilsService {
 
   async getAirtableLocationRecordBySlug(slug: string): Promise<AirtableRecord> {
     return new Promise((resolve, reject) => {
-      this.base("Locations")
+      this.airtableBase.base("Locations")
         .select({ view: "Grid view", filterByFormula: `{Slug}='${slug}'` })
         .firstPage((err, records) => {
           if (err) return reject(err)
