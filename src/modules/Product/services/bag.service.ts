@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common"
 import { PrismaClientService } from "../../../prisma/client.service"
 import { ApolloError } from "apollo-server"
+import { head } from "lodash"
 
 const BAG_SIZE = 3
 
@@ -9,11 +10,6 @@ export class BagService {
   constructor(private readonly prisma: PrismaClientService) {}
   
   async addToBag(item, customer) {
-    // Check if the user still can add more items to bag
-    // If not throw error
-
-    // Check if the bag item already exists
-    // Upsert it instead
     const bag = await this.prisma.client.bagItems({
       where: {
         customer: {
@@ -41,6 +37,29 @@ export class BagService {
       position: 0,
       saved: false,
       status: "Added",
+    })
+  }
+
+  async removeFromBag(item, saved, customer) {
+    const bagItems = await this.prisma.client.bagItems({
+      where: {
+        customer: {
+          id: customer.id,
+        },
+        productVariant: {
+          id: item,
+        },
+        saved,
+      },
+    })
+    const bagItem = head(bagItems)
+
+    if (!bagItem) {
+      throw new ApolloError("Item can not be found", "514")
+    }
+
+    return await this.prisma.client.deleteBagItem({
+      id: bagItem.id,
     })
   }
 }

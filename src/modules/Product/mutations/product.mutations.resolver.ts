@@ -14,12 +14,17 @@ export class ProductMutationsResolver {
 
   @Mutation()
   async addToBag(@Args() { item }, @Customer() customer) {
-    this.bagService.addToBag(item, customer)
+    return await this.bagService.addToBag(item, customer)
   }
 
   @Mutation()
   async addViewedProduct(@Args() { item }, @Customer() customer) {
     return await this.productService.addViewedProduct(item, customer)
+  }
+
+  @Mutation()
+  async removeFromBag(@Args() { item, saved }, @Customer() customer) {
+    return await this.bagService.removeFromBag(item, saved, customer)
   }
 
   @Mutation()
