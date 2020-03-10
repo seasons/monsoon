@@ -5,15 +5,25 @@ import {
 } from "../utils"
 import { prisma } from "../../prisma"
 import { isEmpty } from "lodash"
+import { makeSingleSyncFuncMultiBarAndProgressBarIfNeeded } from "./utils"
 
-export const syncPhysicalProducts = async () => {
+export const syncPhysicalProducts = async (cliProgressBar?) => {
   const allLocations = await getAllLocations()
   const allProductVariants = await getAllProductVariants()
   const allPhysicalProducts = await getAllPhysicalProducts()
 
-  let i = 1
+  const [
+    multibar,
+    _cliProgressBar,
+  ] = makeSingleSyncFuncMultiBarAndProgressBarIfNeeded({
+    cliProgressBar,
+    numRecords: allPhysicalProducts.length,
+    modelName: "Physical Products",
+  })
 
   for (const record of allPhysicalProducts) {
+    _cliProgressBar.increment()
+
     try {
       const { model } = record
 
@@ -54,4 +64,6 @@ export const syncPhysicalProducts = async () => {
       break
     }
   }
+
+  multibar?.stop()
 }

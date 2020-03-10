@@ -2,12 +2,23 @@ import slugify from "slugify"
 import { prisma } from "../../prisma"
 import { isEmpty } from "lodash"
 import { getAllCollections, getAllProducts } from "../utils"
+import { makeSingleSyncFuncMultiBarAndProgressBarIfNeeded } from "./utils"
 
-export const syncCollections = async () => {
+export const syncCollections = async (cliProgressBar?) => {
   const records = await getAllCollections()
   const allProducts = await getAllProducts()
 
-  for (let record of records) {
+  const [
+    multibar,
+    _cliProgressBar,
+  ] = makeSingleSyncFuncMultiBarAndProgressBarIfNeeded({
+    cliProgressBar,
+    numRecords: allProducts.length,
+    modelName: "Collections",
+  })
+
+  for (const record of records) {
+    _cliProgressBar.increment()
     try {
       const { model } = record
       const products = allProducts.findMultipleByIds(model.products)
@@ -37,7 +48,7 @@ export const syncCollections = async () => {
         images,
       }
 
-      const collection = await prisma.upsertCollection({
+      await prisma.upsertCollection({
         where: {
           slug,
         },
@@ -51,10 +62,10 @@ export const syncCollections = async () => {
       await record.patchUpdate({
         Slug: slug,
       })
-
-      console.log(collection)
     } catch (e) {
       console.error(e)
     }
   }
+
+  multibar?.stop()
 }

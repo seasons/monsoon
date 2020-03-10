@@ -9,12 +9,7 @@ import {
   syncCollectionGroups,
   syncHomepageProductRails,
 } from "."
-import cliProgress from "cli-progress"
-import {
-  getNumRecords,
-  AirtableModelName,
-  makeAirtableSyncCliProgressBar,
-} from "../utils"
+import { makeAirtableSyncCliProgressBar } from "../utils"
 import { createSubBar } from "./utils"
 
 export const syncAll = async () => {
@@ -53,11 +48,11 @@ export const syncAll = async () => {
     await syncCategories(bars.categories)
     await syncColors(bars.colors)
     await syncProducts(bars.products)
-    // await syncProductVariants()
-    //   await syncPhysicalProducts()
-    //   await syncCollections()
-    //   await syncCollectionGroups()
-    //   await syncHomepageProductRails()
+    await syncProductVariants(bars.productVariants)
+    await syncPhysicalProducts(bars.physicalProducts)
+    await syncCollections(bars.collections)
+    await syncCollectionGroups(bars.collectionGroups)
+    await syncHomepageProductRails(bars.homepageProductRails)
   } catch (e) {
     console.log(e)
   } finally {
@@ -65,4 +60,4 @@ export const syncAll = async () => {
   }
 }
 
-// syncAll()
+syncAll()

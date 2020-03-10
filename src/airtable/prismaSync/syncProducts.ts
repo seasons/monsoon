@@ -15,7 +15,10 @@ import {
 } from "../../prisma"
 import slugify from "slugify"
 import { isEmpty, head } from "lodash"
-import { makeSingleSyncFuncMultiBarAndProgressBarIfNeeded } from "./utils"
+import {
+  makeSingleSyncFuncMultiBarAndProgressBarIfNeeded,
+  deepUpsertSize,
+} from "./utils"
 
 export const syncProducts = async (cliProgressBar?) => {
   const allBrands = await getAllBrands()
@@ -72,12 +75,12 @@ export const syncProducts = async (cliProgressBar?) => {
 
       let modelSizeRecord
       if (!!modelTopSize || !!modelBottomSize) {
-        modelSizeRecord = await deepUpsertSize(
+        modelSizeRecord = await deepUpsertSize({
           slug,
           type,
-          modelTopSize,
-          modelBottomSize
-        )
+          airtableTopSize: modelTopSize,
+          airtableBottomSize: modelBottomSize,
+        })
       }
 
       const data = {
@@ -137,62 +140,4 @@ export const syncProducts = async (cliProgressBar?) => {
     }
   }
   multibar?.stop()
-}
-
-const deepUpsertSize = async (slug, type, modelTopSize, modelBottomSize) => {
-  // Update if needed
-  const modelSizeRecord = await prisma.upsertSize({
-    where: { slug },
-    create: { slug, productType: type },
-    update: { slug, productType: type },
-  })
-  let data
-  switch (type) {
-    case "Top":
-      const prismaTopSize = await prisma.size({ id: modelSizeRecord.id }).top()
-      data = {
-        letter: modelTopSize?.model.letterSize,
-        sleeve: modelTopSize?.model.sleeve,
-        shoulder: modelTopSize?.model.shoulder,
-        chest: modelTopSize?.model.chest,
-        neck: modelTopSize?.model.neck,
-      }
-      const topSize = await prisma.upsertTopSize({
-        where: { id: prismaTopSize?.id || "" },
-        update: { ...data },
-        create: { ...data },
-      })
-      if (!prismaTopSize) {
-        await prisma.updateSize({
-          where: { slug },
-          data: { top: { connect: { id: topSize.id } } },
-        })
-      }
-      break
-    case "Bottom":
-      const prismaBottomSize = await prisma
-        .size({ id: modelSizeRecord?.id })
-        .bottom()
-      data = {
-        type: modelBottomSize?.model.type,
-        value: modelBottomSize?.model.value,
-        waist: modelBottomSize?.model.waist,
-        rise: modelBottomSize?.model.rise,
-        hem: modelBottomSize?.model.hem,
-        inseam: modelBottomSize?.model.inseam,
-      }
-      const bottomSize = await prisma.upsertBottomSize({
-        where: { id: prismaBottomSize?.id || "" },
-        create: { ...data },
-        update: { ...data },
-      })
-      if (!prismaBottomSize) {
-        await prisma.updateSize({
-          where: { slug },
-          data: { bottom: { connect: { id: bottomSize.id } } },
-        })
-      }
-  }
-
-  return modelSizeRecord
 }

@@ -7,7 +7,7 @@ import { isEmpty } from "lodash"
 export const syncLocations = async () => {
   const allLocations = await getAllLocations()
 
-  for (let record of allLocations) {
+  for (const record of allLocations) {
     try {
       const { model } = record
       const { name } = model
@@ -32,7 +32,7 @@ export const syncLocations = async () => {
         slug: slugify(values.name + Date.now() / 1000).toLowerCase(),
       }
 
-      const location = await prisma.upsertLocation({
+      await prisma.upsertLocation({
         where: {
           slug: values.slug,
         },

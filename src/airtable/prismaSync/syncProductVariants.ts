@@ -5,6 +5,8 @@ import {
   getAllBrands,
   getAllColors,
   getAllLocations,
+  getAllTopSizes,
+  getAllBottomSizes,
 } from "../utils"
 import {
   prisma,
@@ -20,51 +22,55 @@ import { sizeToSizeCode } from "../../utils"
 import { base } from "../config"
 import { isEmpty } from "lodash"
 import cliProgress from "cli-progress"
+import {
+  makeSingleSyncFuncMultiBarAndProgressBarIfNeeded,
+  deepUpsertSize,
+} from "./utils"
 
 const SeasonsLocationID = "recvzTcW19kdBPqf4"
 
-export const syncProductVariants = async () => {
-  const multibar = new cliProgress.MultiBar(
-    {
-      clearOnComplete: false,
-      hideCursor: true,
-      format: `{modelName}: {bar} {percentage}%  ETA: {eta}s  {value}/{total} records`,
-    },
-    cliProgress.Presets.shades_grey
-  )
-
-  console.log(`Pulling airtable records. Hang tight...`)
+export const syncProductVariants = async (cliProgressBar?) => {
   const allBrands = await getAllBrands()
   const allColors = await getAllColors()
   const allProducts = await getAllProducts()
   const allLocations = await getAllLocations()
   const allProductVariants = await getAllProductVariants()
   const allPhysicalProducts = await getAllPhysicalProducts()
+  const allTopSizes = await getAllTopSizes()
+  const allBottomSizes = await getAllBottomSizes()
 
-  const progressBar = await multibar.create(allProductVariants?.length, 0, {
+  const [
+    multibar,
+    _cliProgressBar,
+  ] = makeSingleSyncFuncMultiBarAndProgressBarIfNeeded({
+    cliProgressBar,
+    numRecords: allProductVariants.length,
     modelName: "Product Variants",
   })
 
-  console.log(`Syncing product variant data.`)
   for (const productVariant of allProductVariants) {
     try {
-      progressBar.increment()
+      _cliProgressBar.increment()
       const { model } = productVariant
 
-      if (model.sKU === "ENGM-GRN-MM-001") {
-        console.log("yo")
-      }
       const product = allProducts.findByIds(model.product)
+      if (isEmpty(product)) {
+        continue
+      }
+
       const brand = allBrands.findByIds(product.model.brand)
       const color = allColors.find(x => x.model.name === product.model.color)
       const location = allLocations.find(x => x.id === SeasonsLocationID)
       const styleNumber = product.model.styleCode
+      const topSize = allTopSizes.findByIds(model.topSize)
+      const bottomSize = allBottomSizes.findByIds(model.bottomSize)
 
-      if (isEmpty(model) || isEmpty(brand) || isEmpty(product)) {
+      if (isEmpty(model) || isEmpty(brand)) {
         continue
       }
 
       const sku = skuForData(brand, color, productVariant, styleNumber)
+      const { type } = product.model
 
       const {
         totalCount,
@@ -75,58 +81,22 @@ export const syncProductVariants = async () => {
 
       const { weight, height, size } = model
 
-      const sizeData = {
-        slug: sku,
-        productType: product.model.type,
-        ...(() => {
-          const type: ProductType = product.model.type
-          switch (type) {
-            case "Top":
-              return {
-                top: {
-                  create: {
-                    letter: size,
-                    sleeve: model.sleeveLength,
-                    shoulder: model.shoulderWidth,
-                    chest: model.chestWidth,
-                  },
-                },
-              } as TopSizeCreateOneInput
-            case "Bottom":
-              return {
-                bottom: {
-                  create: {
-                    type: model.type,
-                    value: model.value,
-                    waist: model.waist,
-                    rise: model.rise,
-                    hem: model.hem,
-                    inseam: model.inseam,
-                  },
-                },
-              }
-          }
-        })(),
-      } as SizeCreateInput
-
-      const internalSize = await prisma.upsertSize({
-        where: {
+      let internalSizeRecord
+      if (!!topSize || !!bottomSize) {
+        internalSizeRecord = await deepUpsertSize({
           slug: sku,
-        },
-        create: {
-          ...sizeData,
-        },
-        update: {
-          ...sizeData,
-        },
-      })
+          type,
+          airtableTopSize: topSize,
+          airtableBottomSize: bottomSize,
+        })
+      }
 
       const data = {
         sku,
         size,
         internalSize: {
           connect: {
-            id: internalSize.id,
+            id: internalSizeRecord.id,
           },
         },
         weight: parseFloat(weight) || 0,
@@ -148,9 +118,9 @@ export const syncProductVariants = async () => {
         productID: product.model.slug,
       } as ProductVariantCreateInput
 
-      const productVariantData = await prisma.upsertProductVariant({
+      await prisma.upsertProductVariant({
         where: {
-          sku: sku,
+          sku,
         },
         create: {
           ...data,
@@ -195,10 +165,9 @@ export const syncProductVariants = async () => {
     } catch (e) {
       console.log(productVariant)
       console.error(e)
-    } finally {
-      multibar.stop()
     }
   }
+  multibar?.stop()
 }
 
 const skuForData = (brand, color, productVariant, styleNumber) => {
