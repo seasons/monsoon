@@ -9,20 +9,16 @@ import { prisma } from "../../../prisma"
 import { User, Customer } from "../../../nest_decorators"
 import { DBService } from "../../../prisma/DB.service"
 
-@Resolver("Customer")
-export class CustomerFieldsResolver {
+@Resolver("CustomerDetail")
+export class CustomerDetailFieldsResolver {
   constructor(private readonly db: DBService) { }
 
   @ResolveProperty()
-  async user(@User() user) {
-    return user
-  }
-
-  @ResolveProperty()
-  async detail(@Customer() customer) {
-    return await prisma.customer({
+  async shippingAddress(@Customer() customer) {
+    const shippingAddress = await prisma.customer({
       id: customer.id
-    }).detail()
+    }).detail().shippingAddress()
+    return shippingAddress
   }
 
 }

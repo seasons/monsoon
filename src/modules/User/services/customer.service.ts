@@ -12,7 +12,7 @@ export class CustomerService {
     private readonly authService: AuthService,
     private readonly db: DBService,
     private readonly prisma: PrismaClientService
-  ){}
+  ) { }
 
   private async setCustomerPrismaStatus(
     user: User,
@@ -21,26 +21,32 @@ export class CustomerService {
     const customer = await this.authService.getCustomerFromUserID(user.id)
     await this.prisma.client.updateCustomer({
       // @ts-ignore
-      data: { status: status },
+      data: { status },
       where: { id: customer.id },
     })
   }
 
   async addCustomerDetails({ details, status }, customer, user, info) {
-    this.prisma.client.upsertCustomerDetail({
-      where: { id: customer.id },
+    const currentCustomerDetail = await this.prisma.client
+      .customer({ id: customer.id })
+      .detail()
+    const detail = await this.prisma.client.upsertCustomerDetail({
+      where: { id: currentCustomerDetail.id },
       create: details,
       update: details
     })
+    if (detail) {
+      await this.prisma.client.updateCustomer({
+        data: { detail: { connect: { id: detail.id } } },
+        where: { id: customer.id }
+      })
+    }
 
     // If a status was passed, update the customer status in prisma
     if (!!status) {
       await this.setCustomerPrismaStatus(user, status)
     }
 
-    const currentCustomerDetail = await this.prisma.client
-      .customer({ id: customer.id })
-      .detail()
     // Sync with airtable
     await this.airtableService.createOrUpdateAirtableUser(user, {
       ...currentCustomerDetail,
