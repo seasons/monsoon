@@ -306,7 +306,7 @@ type ProductVariant {
 type PhysicalProduct {
   id: ID! @id
   seasonsUID: String! @unique
-  location: Location!
+  location: Location
   productVariant: ProductVariant!
   inventoryStatus: InventoryStatus!
   productStatus: PhysicalProductStatus!

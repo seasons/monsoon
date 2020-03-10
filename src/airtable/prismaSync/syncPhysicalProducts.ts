@@ -1,14 +1,9 @@
-import {
-  getAllProductVariants,
-  getAllPhysicalProducts,
-  getAllLocations,
-} from "../utils"
+import { getAllProductVariants, getAllPhysicalProducts } from "../utils"
 import { prisma } from "../../prisma"
 import { isEmpty } from "lodash"
 import { makeSingleSyncFuncMultiBarAndProgressBarIfNeeded } from "./utils"
 
 export const syncPhysicalProducts = async (cliProgressBar?) => {
-  const allLocations = await getAllLocations()
   const allProductVariants = await getAllProductVariants()
   const allPhysicalProducts = await getAllPhysicalProducts()
 
@@ -28,7 +23,6 @@ export const syncPhysicalProducts = async (cliProgressBar?) => {
       const { model } = record
 
       const productVariant = allProductVariants.findByIds(model.productVariant)
-      const location = allLocations.findByIds(model.location)
 
       if (isEmpty(model)) {
         continue
@@ -42,17 +36,12 @@ export const syncPhysicalProducts = async (cliProgressBar?) => {
             sku: productVariant.model.sKU,
           },
         },
-        location: {
-          connect: {
-            slug: location.model.slug,
-          },
-        },
         seasonsUID: sUID.text,
         inventoryStatus: inventoryStatus.replace(" ", ""),
         productStatus,
       }
 
-      const physicalProduct = await prisma.upsertPhysicalProduct({
+      await prisma.upsertPhysicalProduct({
         where: {
           seasonsUID: sUID.text,
         },

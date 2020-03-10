@@ -3587,10 +3587,12 @@ input LocationUpdateOneRequiredInput {
   connect: LocationWhereUniqueInput
 }
 
-input LocationUpdateOneRequiredWithoutPhysicalProductsInput {
+input LocationUpdateOneWithoutPhysicalProductsInput {
   create: LocationCreateWithoutPhysicalProductsInput
   update: LocationUpdateWithoutPhysicalProductsDataInput
   upsert: LocationUpsertWithoutPhysicalProductsInput
+  delete: Boolean
+  disconnect: Boolean
   connect: LocationWhereUniqueInput
 }
 
@@ -4283,7 +4285,7 @@ type PageInfo {
 type PhysicalProduct {
   id: ID!
   seasonsUID: String!
-  location: Location!
+  location: Location
   productVariant: ProductVariant!
   inventoryStatus: InventoryStatus!
   productStatus: PhysicalProductStatus!
@@ -4300,7 +4302,7 @@ type PhysicalProductConnection {
 input PhysicalProductCreateInput {
   id: ID
   seasonsUID: String!
-  location: LocationCreateOneWithoutPhysicalProductsInput!
+  location: LocationCreateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
   inventoryStatus: InventoryStatus!
   productStatus: PhysicalProductStatus!
@@ -4332,7 +4334,7 @@ input PhysicalProductCreateWithoutLocationInput {
 input PhysicalProductCreateWithoutProductVariantInput {
   id: ID
   seasonsUID: String!
-  location: LocationCreateOneWithoutPhysicalProductsInput!
+  location: LocationCreateOneWithoutPhysicalProductsInput
   inventoryStatus: InventoryStatus!
   productStatus: PhysicalProductStatus!
 }
@@ -4452,7 +4454,7 @@ input PhysicalProductSubscriptionWhereInput {
 
 input PhysicalProductUpdateDataInput {
   seasonsUID: String
-  location: LocationUpdateOneRequiredWithoutPhysicalProductsInput
+  location: LocationUpdateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
   inventoryStatus: InventoryStatus
   productStatus: PhysicalProductStatus
@@ -4460,7 +4462,7 @@ input PhysicalProductUpdateDataInput {
 
 input PhysicalProductUpdateInput {
   seasonsUID: String
-  location: LocationUpdateOneRequiredWithoutPhysicalProductsInput
+  location: LocationUpdateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
   inventoryStatus: InventoryStatus
   productStatus: PhysicalProductStatus
@@ -4528,7 +4530,7 @@ input PhysicalProductUpdateWithoutLocationDataInput {
 
 input PhysicalProductUpdateWithoutProductVariantDataInput {
   seasonsUID: String
-  location: LocationUpdateOneRequiredWithoutPhysicalProductsInput
+  location: LocationUpdateOneWithoutPhysicalProductsInput
   inventoryStatus: InventoryStatus
   productStatus: PhysicalProductStatus
 }
