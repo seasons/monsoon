@@ -11,7 +11,7 @@ import { DBService } from "../../../prisma/DB.service"
 
 @Resolver("Me")
 export class MeFieldsResolver {
-  constructor(private readonly db: DBService) {}
+  constructor(private readonly db: DBService) { }
 
   @ResolveProperty()
   async user(@User() user) {
@@ -20,7 +20,7 @@ export class MeFieldsResolver {
 
   @ResolveProperty()
   async customer(@Customer() customer) {
-    return customer
+    return {}
   }
 
   @ResolveProperty()
