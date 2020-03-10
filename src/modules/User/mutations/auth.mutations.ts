@@ -144,4 +144,9 @@ export class AuthMutationsResolver {
       user,
     }
   }
+
+  @Mutation()
+  async resetPassword(@Args() { email }) {
+    return await this.authService.resetPassword(email)
+  }
 }

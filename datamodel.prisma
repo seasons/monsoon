@@ -327,6 +327,13 @@ type User {
   role: UserRole! @default(value: Customer)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
+  pushNotifications: PushNotificationStatus! @default(value: Denied)
+}
+
+enum PushNotificationStatus {
+  Blocked
+  Granted
+  Denied
 }
 
 type CustomerDetail {
@@ -467,7 +474,7 @@ type ProductVariantWant {
   isFulfilled: Boolean!
 }
 
-type Review {
+type ReservationFeedback {
   id: ID! @id
   comment: String!
   feedbacks: [ProductVariantFeedback!]!
@@ -477,12 +484,12 @@ type Review {
 type ProductVariantFeedback {
   id: ID! @id
   isCompleted: Boolean!
-  questions: [FeedbackQuestion!]!
-  review: Review! @relation(link: TABLE)
+  questions: [ProductVariantFeedbackQuestion!]!
+  reservationFeedback: ReservationFeedback! @relation(link: TABLE)
   variant: ProductVariant!
 }
 
-type FeedbackQuestion {
+type ProductVariantFeedbackQuestion {
   id: ID! @id
   options: [String!] @scalarList(strategy: RELATION)
   question: String!

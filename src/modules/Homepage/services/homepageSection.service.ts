@@ -31,13 +31,14 @@ export class HomepageSectionService {
     private readonly prisma: PrismaClientService
   ) {}
 
-  async getResultsForSection(sectionTitle: SectionTitle, args, user?) {
+  async getResultsForSection(sectionTitle: SectionTitle, args, customerId?) {
     switch (sectionTitle) {
       case SectionTitle.FeaturedCollection:
         const collections = await this.prisma.client
           .collectionGroup({ slug: "homepage-1" })
           .collections()
         return collections
+
       case SectionTitle.JustAdded:
         const newProducts = await this.db.query.products(
           {
@@ -51,9 +52,59 @@ export class HomepageSectionService {
           ProductFragment
         )
         return newProducts
+
       case SectionTitle.RecentlyViewed:
-        // Will handle once auth stuff is finished
-        return []
+        const viewedProducts = await this.db.query.recentlyViewedProducts(
+          {
+            where: { customer: { id: customerId } },
+            orderBy: "updatedAt_DESC",
+            first: 10,
+          },
+          `{
+            updatedAt
+            product ${ProductFragment}
+          }`
+        )
+        return viewedProducts.map(viewedProduct => viewedProduct.product)
+
+      case SectionTitle.Designers:
+        const brands = await this.db.query.brands(
+          {
+            ...args,
+            where: {
+              slug_in: [
+                "acne-studios",
+                "stone-island",
+                "stussy",
+                "comme-des-garcons",
+                "aime-leon-dore",
+                "noah",
+                "cavempt",
+                "brain-dead",
+                "john-elliot",
+                "amiri",
+                "prada",
+                "craig-green",
+                "dries-van-noten",
+                "cactus-plant-flea-market",
+                "ambush",
+                "all-saints",
+                "heron-preston",
+                "saturdays-nyc",
+                "y-3",
+                "our-legacy",
+              ],
+            },
+          },
+          `{
+            __typename
+            id
+            name
+            since
+          }`
+        )
+        return brands
+
       default:
         const rails = await this.db.query.homepageProductRails(
           {

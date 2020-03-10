@@ -131,7 +131,10 @@ type Query {
   collection(where: CollectionWhereUniqueInput!): Collection
   faq: Faq
   homepage: Homepage
-  chargebeeCheckout(planID: PlanID!, userIDHash: String!): ChargebeeHostedPagePayload
+  chargebeeCheckout(
+    planID: PlanID!
+    userIDHash: String!
+  ): ChargebeeHostedPagePayload
   chargebeeUpdatePaymentPage: ChargebeeHostedPagePayload
   homepageProductRail(
     where: HomepageProductRailWhereUniqueInput!
@@ -208,7 +211,7 @@ type Mutation {
   checkItemsAvailability(items: [ID!]!): Boolean!
   reserveItems(items: [ID!]!, options: ReserveItemsOptions): Reservation
   addToBag(item: ID!): BagItem!
-  removeFromBag(item: ID!): BagItem!
+  removeFromBag(item: ID!, saved: Boolean!): BagItem!
   saveProduct(item: ID!, save: Boolean!): BagItem
   addViewedProduct(item: ID!): RecentlyViewedProduct!
   acknowledgeCompletedChargebeeHostedCheckout(
@@ -218,7 +221,12 @@ type Mutation {
   deleteProductRequest(requestID: ID!): ProductRequest!
   validateAddress(input: ValidateAddressInput!): ValidationPayload!
   addProductVariantWant(variantID: ID!): ProductVariantWant!
-  updatePaymentAndShipping(billingAddress: AddressInput!, shippingAddress: AddressInput!, phoneNumber: String!): Boolean
+  updateUserPushNotifications(pushNotificationsStatus: String!): User!
+  updatePaymentAndShipping(
+    billingAddress: AddressInput!
+    shippingAddress: AddressInput!
+    phoneNumber: String!
+  ): Boolean
 }
 
 input AddressInput {
@@ -243,6 +251,7 @@ type AuthPayload {
   refreshToken: String!
   expiresIn: Int!
   user: User!
+  beamsToken: String!
 }
 
 type ResetPasswordPayload {

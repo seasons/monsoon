@@ -18,6 +18,9 @@ export const run = async () => {
       countMisalignments,
       prismaTotalPhysicalProductMisalignment,
       airtableTotalPhysicalProductMisalignment,
+      prismaCountToStatusMisalignments,
+      airtableCountToStatusMisalignments,
+      prismaProdVarsWithImpossibleCounts,
       mismatchingStatuses,
       reservationsInPrismaButNotAirtable,
       reservationsInAirtableButNotPrisma,
@@ -122,6 +125,23 @@ export const run = async () => {
             {
               name: "Mismatched counts",
               number: countMisalignments.length,
+              shouldFlagNum: true,
+            },
+            {
+              name:
+                "Prisma: Number of product variants with mismatching counts/statuses",
+              number: prismaCountToStatusMisalignments.length,
+              shouldFlagNum: true,
+            },
+            {
+              name:
+                "Airtable: Number of product variants with mismatching counts/statuses",
+              number: airtableCountToStatusMisalignments.length,
+              shouldFlagNum: true,
+            },
+            {
+              name: "Prisma: Number of product variants with impossible counts",
+              number: prismaProdVarsWithImpossibleCounts.length,
               shouldFlagNum: true,
             },
           ],
