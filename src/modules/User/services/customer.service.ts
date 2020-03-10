@@ -30,17 +30,18 @@ export class CustomerService {
     const currentCustomerDetail = await this.prisma.client
       .customer({ id: customer.id })
       .detail()
-    const detail = await this.prisma.client.upsertCustomerDetail({
-      where: { id: currentCustomerDetail.id },
-      create: details,
-      update: details
+
+    await this.prisma.client.updateCustomer({
+      data: {
+        detail: {
+          upsert: {
+            update: details,
+            create: details
+          }
+        }
+      },
+      where: { id: customer.id },
     })
-    if (detail) {
-      await this.prisma.client.updateCustomer({
-        data: { detail: { connect: { id: detail.id } } },
-        where: { id: customer.id }
-      })
-    }
 
     // If a status was passed, update the customer status in prisma
     if (!!status) {
