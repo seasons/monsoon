@@ -1,14 +1,21 @@
-import { Resolver, Args, Context, Mutation, Info } from "@nestjs/graphql"
+import { Resolver, Args, Mutation, Info } from "@nestjs/graphql"
 import { ProductService } from "../services/product.service"
 import { User, Customer, Analytics } from "../../../nest_decorators"
 import { ReservationService } from "../services/reservation.service"
+import { BagService } from "../services/bag.service"
 
 @Resolver("Product")
 export class ProductMutationsResolver {
   constructor(
+    private readonly bagService: BagService,
     private readonly productService: ProductService,
     private readonly reservationService: ReservationService
   ) {}
+
+  @Mutation()
+  async addToBag(@Args() { item }, @Customer() customer) {
+    this.bagService.addToBag(item, customer)
+  }
 
   @Mutation()
   async addViewedProduct(@Args() { item }, @Customer() customer) {
