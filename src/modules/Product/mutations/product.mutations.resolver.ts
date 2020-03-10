@@ -10,7 +10,7 @@ export class ProductMutationsResolver {
     private readonly bagService: BagService,
     private readonly productService: ProductService,
     private readonly reservationService: ReservationService
-  ) {}
+  ) { }
 
   @Mutation()
   async addToBag(@Args() { item }, @Customer() customer) {
@@ -52,5 +52,10 @@ export class ProductMutationsResolver {
     })
 
     return returnData
+  }
+
+  @Mutation()
+  async checkItemsAvailability(@Args() { items }, @Customer() customer) {
+    return await this.productService.checkItemsAvailability(items, customer)
   }
 }
