@@ -7033,9 +7033,9 @@ type ReservationEdge {
 
 type ReservationFeedback {
   id: ID!
-  comment: String!
+  comment: String
   feedbacks(where: ProductVariantFeedbackWhereInput, orderBy: ProductVariantFeedbackOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariantFeedback!]
-  rating: Rating!
+  rating: Rating
 }
 
 type ReservationFeedbackConnection {
@@ -7046,9 +7046,9 @@ type ReservationFeedbackConnection {
 
 input ReservationFeedbackCreateInput {
   id: ID
-  comment: String!
+  comment: String
   feedbacks: ProductVariantFeedbackCreateManyWithoutReservationFeedbackInput
-  rating: Rating!
+  rating: Rating
 }
 
 input ReservationFeedbackCreateOneWithoutFeedbacksInput {
@@ -7058,8 +7058,8 @@ input ReservationFeedbackCreateOneWithoutFeedbacksInput {
 
 input ReservationFeedbackCreateWithoutFeedbacksInput {
   id: ID
-  comment: String!
-  rating: Rating!
+  comment: String
+  rating: Rating
 }
 
 type ReservationFeedbackEdge {
@@ -7078,8 +7078,8 @@ enum ReservationFeedbackOrderByInput {
 
 type ReservationFeedbackPreviousValues {
   id: ID!
-  comment: String!
-  rating: Rating!
+  comment: String
+  rating: Rating
 }
 
 type ReservationFeedbackSubscriptionPayload {

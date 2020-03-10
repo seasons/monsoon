@@ -19,6 +19,7 @@ export const UpdateUserPushNotifications = {
       },
       data: { pushNotifications: pushNotificationsStatus },
     })
+
     return updatedUser
   },
 }

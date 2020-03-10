@@ -476,9 +476,9 @@ type ProductVariantWant {
 
 type ReservationFeedback {
   id: ID! @id
-  comment: String!
+  comment: String
   feedbacks: [ProductVariantFeedback!]!
-  rating: Rating!
+  rating: Rating
 }
 
 type ProductVariantFeedback {

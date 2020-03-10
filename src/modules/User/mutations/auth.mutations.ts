@@ -4,10 +4,20 @@ import { UserInputError, ForbiddenError } from "apollo-server"
 import { prisma } from "../../../prisma"
 import { User } from "../../../nest_decorators"
 import { createOrUpdateAirtableUser } from "../../../airtable/createOrUpdateUser"
+import PushNotifications from "@pusher/push-notifications-server"
+
+const { PUSHER_INSTANCE_ID, PUSHER_SECRET_KEY } = process.env
+export const beamsClient: PushNotifications | null =
+  PUSHER_INSTANCE_ID && PUSHER_SECRET_KEY
+    ? new PushNotifications({
+      instanceId: PUSHER_INSTANCE_ID,
+      secretKey: PUSHER_SECRET_KEY,
+    })
+    : null
 
 @Resolver()
 export class AuthMutationsResolver {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
   @Mutation()
   async login(@Args() { email, password }, @User() requestUser) {
@@ -47,10 +57,13 @@ export class AuthMutationsResolver {
       throw new Error("User record not found")
     }
 
+    const beamsToken = beamsClient?.generateToken(email) as any
+
     return {
       token: tokenData.access_token,
       refreshToken: tokenData.refresh_token,
       expiresIn: tokenData.expires_in,
+      beamsToken: beamsToken?.token,
       user,
     }
   }

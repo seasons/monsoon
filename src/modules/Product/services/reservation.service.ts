@@ -13,6 +13,7 @@ import {
 } from "../../../prisma"
 import { head } from "lodash"
 import { PrismaClientService } from "../../../prisma/client.service"
+import { QuestionType } from "../../../prisma"
 import { ProductUtilsService } from "./product.utils.service"
 import { ProductVariantService } from "./productVariant.service"
 import { PhysicalProductService } from "./physicalProduct.utils.service"
@@ -47,7 +48,7 @@ export class ReservationService {
     private readonly shippingService: ShippingService,
     private readonly emails: EmailService,
     private readonly reservationUtils: ReservationUtilsService
-  ) {}
+  ) { }
 
   async reserveItems(items: string[], user: User, customer: Customer, info) {
     let reservationReturnData
@@ -164,6 +165,46 @@ export class ReservationService {
       }
       throw err
     }
+
+    console.log("ABOUT TO MAKE FEEDBACK")
+    const variants = await Promise.all(
+      items.map(async item => {
+        const variant = this.prisma.client.productVariant({ id: item })
+        return {
+          id: await variant.id(),
+          name: await variant.product().name(),
+          retailPrice: await variant.retailPrice(),
+        }
+      })
+    )
+    const reservationFeedback = await this.prisma.client.createReservationFeedback({
+      feedbacks: {
+        create: variants.map(variant => ({
+          isCompleted: false,
+          questions: {
+            create: [
+              {
+                question: `How many times did you wear this ${variant.name}?`,
+                options: { set: ["More than 6 times", "3-5 times", "1-2 times", "0 times"] },
+                type: "MultipleChoice",
+              },
+              {
+                question: `Would you buy it at retail for $${variant.retailPrice}?`,
+                options: { set: ["Would buy at a discount", "Buy below retail", "Buy at retail", "Would only rent"] },
+                type: "MultipleChoice",
+              },
+              {
+                question: `Did it fit as expected?`,
+                options: { set: ["Fit too big", "Fit true to size", "Ran small", "Didn’t fit at all"] },
+                type: "MultipleChoice",
+              },
+            ]
+          },
+          variant: { connect: { id: variant.id } }
+        })),
+      }
+    })
+    console.log("MADE FEEDBACK:", reservationFeedback)
 
     return reservationReturnData
   }

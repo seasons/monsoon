@@ -7690,11 +7690,11 @@ export interface CollectionUpdateManyInput {
 
 export interface ReservationFeedbackCreateInput {
   id?: Maybe<ID_Input>;
-  comment: String;
+  comment?: Maybe<String>;
   feedbacks?: Maybe<
     ProductVariantFeedbackCreateManyWithoutReservationFeedbackInput
   >;
-  rating: Rating;
+  rating?: Maybe<Rating>;
 }
 
 export interface CollectionUpdateWithWhereUniqueNestedInput {
@@ -7719,8 +7719,8 @@ export interface CollectionUpdateDataInput {
 
 export interface ReservationFeedbackCreateWithoutFeedbacksInput {
   id?: Maybe<ID_Input>;
-  comment: String;
-  rating: Rating;
+  comment?: Maybe<String>;
+  rating?: Maybe<Rating>;
 }
 
 export interface CollectionUpsertWithWhereUniqueNestedInput {
@@ -8839,8 +8839,8 @@ export interface BrandPreviousValuesSubscription
 
 export interface ReservationFeedback {
   id: ID_Output;
-  comment: String;
-  rating: Rating;
+  comment?: String;
+  rating?: Rating;
 }
 
 export interface ReservationFeedbackPromise
@@ -9003,8 +9003,8 @@ export interface ProductVariantNullablePromise
 
 export interface ReservationFeedbackPreviousValues {
   id: ID_Output;
-  comment: String;
-  rating: Rating;
+  comment?: String;
+  rating?: Rating;
 }
 
 export interface ReservationFeedbackPreviousValuesPromise
