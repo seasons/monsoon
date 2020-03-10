@@ -1,4 +1,4 @@
-import { Resolver, Args, Context, Mutation, Info } from "@nestjs/graphql"
+import { Resolver, Args, Mutation, Info } from "@nestjs/graphql"
 import { ProductService } from "../services/product.service"
 import { User, Customer, Analytics } from "../../../nest_decorators"
 import { ReservationService } from "../services/reservation.service"
@@ -13,6 +13,15 @@ export class ProductMutationsResolver {
   @Mutation()
   async addViewedProduct(@Args() { item }, @Customer() customer) {
     return await this.productService.addViewedProduct(item, customer)
+  }
+
+  @Mutation()
+  async saveProduct(
+    @Args() { item, save = false },
+    @Info() info,
+    @Customer() customer
+  ) {
+    return await this.productService.saveProduct(item, save, info, customer)
   }
 
   @Mutation()
