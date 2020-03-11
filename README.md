@@ -126,6 +126,23 @@ To make calls to prisma services on the prisma playground or use the prisma admi
 | `└── generated` (_directory_)          | _Contains generated files_                                                                                                                                     |
 | `└── prisma-client` (_directory_)      | The generated Prisma client                                                                                                                                    |
 
+## Sending push notifications with routes
+
+- When sending a push notification with a route to Harvest, the data must match Harvest's navigation convention.
+  E.g. `navigation.navigate("Modal", { screen: "FiltersModal", params: { sizeFilters } })` would appear as:
+
+```
+...
+data: {
+  route: "Modal",
+  screen: "FiltersModal",
+  params: {
+    sizeFilters: ["Medium"],
+  },
+},
+...
+```
+
 ## Resources
 
 - [GraphQL Resolvers: Best Practices](https://medium.com/paypal-engineering/graphql-resolvers-best-practices-cd36fdbcef55)
