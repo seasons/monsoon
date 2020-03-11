@@ -10,13 +10,18 @@ export class ProductQueriesResolver {
   ) {}
 
   @Query()
+  async product(@Args() args, @Info() info) {
+    return await this.db.query.product(args, info)
+  }
+
+  @Query()
   async products(@Args() args, @Info() info) {
     return await this.productService.getProducts(args, info)
   }
 
   @Query()
-  async product(@Args() args, @Info() info) {
-    return await this.db.query.product(args, info)
+  async productsConnection(@Args() args, @Info() info) {
+    return await this.productService.getProductsConnection(args, info)
   }
 
   @Query()
