@@ -41,6 +41,5 @@ import { BagService } from "./services/bag.service"
     ProductVariantQueriesResolver,
     ProductVariantMutationsResolver,
   ],
-  exports: [ReservationUtilsService],
 })
 export class ProductModule {}
