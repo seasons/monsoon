@@ -10,7 +10,7 @@ export const syncPhysicalProducts = async (cliProgressBar?) => {
   const [
     multibar,
     _cliProgressBar,
-  ] = makeSingleSyncFuncMultiBarAndProgressBarIfNeeded({
+  ] = await makeSingleSyncFuncMultiBarAndProgressBarIfNeeded({
     cliProgressBar,
     numRecords: allPhysicalProducts.length,
     modelName: "Physical Products",

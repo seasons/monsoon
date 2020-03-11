@@ -10,7 +10,7 @@ export const syncCategories = async (cliProgressBar?) => {
   const [
     multibar,
     _cliProgressBar,
-  ] = makeSingleSyncFuncMultiBarAndProgressBarIfNeeded({
+  ] = await makeSingleSyncFuncMultiBarAndProgressBarIfNeeded({
     cliProgressBar,
     numRecords: allCategories.length * 2,
     modelName: "Categories",

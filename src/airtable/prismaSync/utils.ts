@@ -5,7 +5,7 @@ import {
 } from "../utils"
 import { ProductType, prisma, Size } from "../../prisma"
 
-export const makeSingleSyncFuncMultiBarAndProgressBarIfNeeded = ({
+export const makeSingleSyncFuncMultiBarAndProgressBarIfNeeded = async ({
   cliProgressBar,
   numRecords,
   modelName,
@@ -18,7 +18,7 @@ export const makeSingleSyncFuncMultiBarAndProgressBarIfNeeded = ({
   let _cliProgressBar = cliProgressBar
   if (!_cliProgressBar) {
     multibar = makeAirtableSyncCliProgressBar()
-    _cliProgressBar = createSubBar({
+    _cliProgressBar = await createSubBar({
       multibar,
       modelName,
       numRecords,
@@ -38,7 +38,11 @@ export const createSubBar = async ({
   numRecords?: number
   numRecordsModifier?: (num: number) => number
 }) => {
-  return multibar.create(numRecords || (await getNumRecords(modelName)), 0, {
+  const _numRecords =
+    !!numRecordsModifier && !!numRecords
+      ? numRecordsModifier(numRecords)
+      : numRecords
+  return multibar.create(_numRecords || (await getNumRecords(modelName)), 0, {
     modelName: `${modelName}`.padEnd("Homepage Product Rails".length + 1, " "),
   })
 }

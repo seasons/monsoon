@@ -11,7 +11,7 @@ export const syncCollectionGroups = async (cliProgressBar?) => {
   const [
     multibar,
     _cliProgressBar,
-  ] = makeSingleSyncFuncMultiBarAndProgressBarIfNeeded({
+  ] = await makeSingleSyncFuncMultiBarAndProgressBarIfNeeded({
     cliProgressBar,
     numRecords: records.length,
     modelName: "Collection Groups",

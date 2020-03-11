@@ -13,15 +13,10 @@ import {
   InventoryStatus,
   PhysicalProductCreateInput,
   ProductVariantCreateInput,
-  SizeCreateInput,
-  ProductType,
-  TopSize,
-  TopSizeCreateOneInput,
 } from "../../prisma"
 import { sizeToSizeCode } from "../../utils"
 import { base } from "../config"
 import { isEmpty } from "lodash"
-import cliProgress from "cli-progress"
 import {
   makeSingleSyncFuncMultiBarAndProgressBarIfNeeded,
   deepUpsertSize,
@@ -30,34 +25,41 @@ import {
 const SeasonsLocationID = "recvzTcW19kdBPqf4"
 
 export const syncProductVariants = async (cliProgressBar?) => {
-  const allBrands = await getAllBrands()
-  const allColors = await getAllColors()
-  const allProducts = await getAllProducts()
-  const allLocations = await getAllLocations()
+  //   Make the progress bar
   const allProductVariants = await getAllProductVariants()
-  const allPhysicalProducts = await getAllPhysicalProducts()
-  const allTopSizes = await getAllTopSizes()
-  const allBottomSizes = await getAllBottomSizes()
-
   const [
     multibar,
     _cliProgressBar,
-  ] = makeSingleSyncFuncMultiBarAndProgressBarIfNeeded({
+  ] = await makeSingleSyncFuncMultiBarAndProgressBarIfNeeded({
     cliProgressBar,
     numRecords: allProductVariants.length,
     modelName: "Product Variants",
   })
 
+  // Get all the relevant airtable records
+  const allBrands = await getAllBrands()
+  const allColors = await getAllColors()
+  const allProducts = await getAllProducts()
+  const allLocations = await getAllLocations()
+  const allPhysicalProducts = await getAllPhysicalProducts()
+  const allTopSizes = await getAllTopSizes()
+  const allBottomSizes = await getAllBottomSizes()
+
   for (const productVariant of allProductVariants) {
     try {
+      // Increment the progress bar
       _cliProgressBar.increment()
+
+      //   Extract the model data from the product variant
       const { model } = productVariant
 
+      //   Get the related product
       const product = allProducts.findByIds(model.product)
       if (isEmpty(product)) {
         continue
       }
 
+      //   Get the related brand, color, location, style, topsize, bottomSize
       const brand = allBrands.findByIds(product.model.brand)
       const color = allColors.find(x => x.model.name === product.model.color)
       const location = allLocations.find(x => x.id === SeasonsLocationID)
@@ -65,10 +67,12 @@ export const syncProductVariants = async (cliProgressBar?) => {
       const topSize = allTopSizes.findByIds(model.topSize)
       const bottomSize = allBottomSizes.findByIds(model.bottomSize)
 
+      //   If there's no model or brand, skip it.
       if (isEmpty(model) || isEmpty(brand)) {
         continue
       }
 
+      //   Calculate the sku
       const sku = skuForData(brand, color, productVariant, styleNumber)
       const { type } = product.model
 
@@ -146,7 +150,7 @@ export const syncProductVariants = async (cliProgressBar?) => {
       })
 
       newPhysicalProducts.forEach(async p => {
-        const updatePhysicalProduct = await prisma.upsertPhysicalProduct({
+        await prisma.upsertPhysicalProduct({
           where: {
             seasonsUID: p.seasonsUID,
           },
@@ -186,10 +190,30 @@ const countsForVariant = productVariant => {
     nonReservableCount: productVariant.get("Non-Reservable Count") || 0,
   }
 
-  return {
+  // Assume all newly added product variants are reservable, and calculate the
+  // number of such product variants as the remainder once reserved and nonReservable
+  // are taken into account
+  const updatedData = {
     ...data,
-    updatedReservableCount: data.totalCount - data.reservedCount,
+    updatedReservableCount:
+      data.totalCount - data.reservedCount - data.nonReservableCount,
   }
+
+  // Make sure these counts make sense
+  if (
+    updatedData.totalCount < 0 ||
+    updatedData.updatedReservableCount < 0 ||
+    updatedData.nonReservableCount < 0 ||
+    updatedData.totalCount < 0 ||
+    updatedData.totalCount !==
+      updatedData.reservedCount +
+        updatedData.nonReservableCount +
+        updatedData.updatedReservableCount
+  ) {
+    throw new Error(`Invalid counts: ${updatedData}`)
+  }
+
+  return updatedData
 }
 
 type CreateMorePhysicalProductsFunction = (data: {
@@ -241,11 +265,6 @@ const createMorePhysicalProductsIfNeeded: CreateMorePhysicalProductsFunction = a
         productVariant: {
           connect: {
             sku,
-          },
-        },
-        location: {
-          connect: {
-            slug: location.model.slug,
           },
         },
         inventoryStatus: "Reservable" as InventoryStatus,

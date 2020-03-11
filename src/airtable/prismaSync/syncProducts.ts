@@ -5,14 +5,7 @@ import {
   getAllTopSizes,
   getAllBottomSizes,
 } from "../utils"
-import {
-  prisma,
-  ProductCreateInput,
-  ProductType,
-  SizeCreateInput,
-  SizeUpdateInput,
-  TopSizeUpdateInput,
-} from "../../prisma"
+import { prisma, ProductCreateInput } from "../../prisma"
 import slugify from "slugify"
 import { isEmpty, head } from "lodash"
 import {
@@ -30,7 +23,7 @@ export const syncProducts = async (cliProgressBar?) => {
   const [
     multibar,
     _cliProgressBar,
-  ] = makeSingleSyncFuncMultiBarAndProgressBarIfNeeded({
+  ] = await makeSingleSyncFuncMultiBarAndProgressBarIfNeeded({
     cliProgressBar,
     numRecords: allProducts.length,
     modelName: "Products",

@@ -1,8 +1,7 @@
 import slugify from "slugify"
 import { prisma, BrandTier } from "../../prisma"
 import { isEmpty } from "lodash"
-import { getAllBrands, makeAirtableSyncCliProgressBar } from "../utils"
-import { elasticsearch } from "../../search"
+import { getAllBrands } from "../utils"
 import { makeSingleSyncFuncMultiBarAndProgressBarIfNeeded } from "./utils"
 
 export const syncBrands = async (cliProgressBar?) => {
@@ -11,7 +10,7 @@ export const syncBrands = async (cliProgressBar?) => {
   const [
     multibar,
     _cliProgressBar,
-  ] = makeSingleSyncFuncMultiBarAndProgressBarIfNeeded({
+  ] = await makeSingleSyncFuncMultiBarAndProgressBarIfNeeded({
     cliProgressBar,
     numRecords: records.length,
     modelName: "Brands",
