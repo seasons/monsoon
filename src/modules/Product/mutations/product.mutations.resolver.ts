@@ -30,6 +30,11 @@ export class ProductMutationsResolver {
   }
 
   @Mutation()
+  async deleteProductRequest(@Args() { requestId }) {
+    return await this.productRequestService.deleteProductRequest(requestId)
+  }
+
+  @Mutation()
   async saveProduct(
     @Args() { item, save = false },
     @Info() info,
