@@ -66,19 +66,29 @@ export const syncProducts = async (cliProgressBar?) => {
         type,
       } = model
 
+      if (isEmpty(images)) {
+        continue
+      }
+
       const slug = slugify(name + " " + color).toLowerCase()
 
       let modelSizeRecord
       if (!!modelSize) {
+        const {
+          display: modelSizeDisplay,
+          type: modelSizeType,
+          name: modelSizeName,
+        } = modelSize.model
         modelSizeRecord = await deepUpsertSize({
           slug,
           type,
+          display: modelSizeDisplay,
           topSizeData: type === "Top" && {
-            letter: modelSize.model.name as LetterSize,
+            letter: modelSizeName as LetterSize,
           },
           bottomSizeData: type === "Bottom" && {
-            type: modelSize.model.type as BottomSizeType,
-            value: modelSize.model.name,
+            type: modelSizeType as BottomSizeType,
+            value: modelSizeName,
           },
         })
       }
@@ -136,8 +146,11 @@ export const syncProducts = async (cliProgressBar?) => {
         Slug: slug,
       })
     } catch (e) {
+      console.log(record)
       console.error(e)
     }
   }
   multibar?.stop()
 }
+
+syncProducts()

@@ -1631,7 +1631,9 @@ export type SizeOrderByInput =
   | "slug_ASC"
   | "slug_DESC"
   | "productType_ASC"
-  | "productType_DESC";
+  | "productType_DESC"
+  | "display_ASC"
+  | "display_DESC";
 
 export type CategoryOrderByInput =
   | "id_ASC"
@@ -2143,6 +2145,7 @@ export interface SizeCreateInput {
   productType?: Maybe<ProductType>;
   top?: Maybe<TopSizeCreateOneInput>;
   bottom?: Maybe<BottomSizeCreateOneInput>;
+  display?: Maybe<String>;
 }
 
 export interface LabelWhereInput {
@@ -2867,6 +2870,7 @@ export interface ProductVariantCreateManyWithoutColorInput {
 export interface SizeUpdateManyMutationInput {
   slug?: Maybe<String>;
   productType?: Maybe<ProductType>;
+  display?: Maybe<String>;
 }
 
 export interface ProductVariantCreateWithoutColorInput {
@@ -4048,6 +4052,7 @@ export interface SizeUpdateDataInput {
   productType?: Maybe<ProductType>;
   top?: Maybe<TopSizeUpdateOneInput>;
   bottom?: Maybe<BottomSizeUpdateOneInput>;
+  display?: Maybe<String>;
 }
 
 export interface CollectionGroupUpdateInput {
@@ -4258,6 +4263,20 @@ export interface SizeScalarWhereInput {
   productType_not?: Maybe<ProductType>;
   productType_in?: Maybe<ProductType[] | ProductType>;
   productType_not_in?: Maybe<ProductType[] | ProductType>;
+  display?: Maybe<String>;
+  display_not?: Maybe<String>;
+  display_in?: Maybe<String[] | String>;
+  display_not_in?: Maybe<String[] | String>;
+  display_lt?: Maybe<String>;
+  display_lte?: Maybe<String>;
+  display_gt?: Maybe<String>;
+  display_gte?: Maybe<String>;
+  display_contains?: Maybe<String>;
+  display_not_contains?: Maybe<String>;
+  display_starts_with?: Maybe<String>;
+  display_not_starts_with?: Maybe<String>;
+  display_ends_with?: Maybe<String>;
+  display_not_ends_with?: Maybe<String>;
   AND?: Maybe<SizeScalarWhereInput[] | SizeScalarWhereInput>;
   OR?: Maybe<SizeScalarWhereInput[] | SizeScalarWhereInput>;
   NOT?: Maybe<SizeScalarWhereInput[] | SizeScalarWhereInput>;
@@ -4297,6 +4316,7 @@ export interface ProductUpdateWithWhereUniqueWithoutBrandInput {
 export interface SizeUpdateManyDataInput {
   slug?: Maybe<String>;
   productType?: Maybe<ProductType>;
+  display?: Maybe<String>;
 }
 
 export interface BrandUpdateInput {
@@ -4957,6 +4977,7 @@ export interface SizeUpdateInput {
   productType?: Maybe<ProductType>;
   top?: Maybe<TopSizeUpdateOneInput>;
   bottom?: Maybe<BottomSizeUpdateOneInput>;
+  display?: Maybe<String>;
 }
 
 export interface ProductVariantUpdateWithoutColorDataInput {
@@ -7791,6 +7812,20 @@ export interface SizeWhereInput {
   productType_not_in?: Maybe<ProductType[] | ProductType>;
   top?: Maybe<TopSizeWhereInput>;
   bottom?: Maybe<BottomSizeWhereInput>;
+  display?: Maybe<String>;
+  display_not?: Maybe<String>;
+  display_in?: Maybe<String[] | String>;
+  display_not_in?: Maybe<String[] | String>;
+  display_lt?: Maybe<String>;
+  display_lte?: Maybe<String>;
+  display_gt?: Maybe<String>;
+  display_gte?: Maybe<String>;
+  display_contains?: Maybe<String>;
+  display_not_contains?: Maybe<String>;
+  display_starts_with?: Maybe<String>;
+  display_not_starts_with?: Maybe<String>;
+  display_ends_with?: Maybe<String>;
+  display_not_ends_with?: Maybe<String>;
   AND?: Maybe<SizeWhereInput[] | SizeWhereInput>;
   OR?: Maybe<SizeWhereInput[] | SizeWhereInput>;
   NOT?: Maybe<SizeWhereInput[] | SizeWhereInput>;
@@ -9716,6 +9751,7 @@ export interface SizePreviousValues {
   id: ID_Output;
   slug: String;
   productType?: ProductType;
+  display?: String;
 }
 
 export interface SizePreviousValuesPromise
@@ -9724,6 +9760,7 @@ export interface SizePreviousValuesPromise
   id: () => Promise<ID_Output>;
   slug: () => Promise<String>;
   productType: () => Promise<ProductType>;
+  display: () => Promise<String>;
 }
 
 export interface SizePreviousValuesSubscription
@@ -9732,6 +9769,7 @@ export interface SizePreviousValuesSubscription
   id: () => Promise<AsyncIterator<ID_Output>>;
   slug: () => Promise<AsyncIterator<String>>;
   productType: () => Promise<AsyncIterator<ProductType>>;
+  display: () => Promise<AsyncIterator<String>>;
 }
 
 export interface AggregateCustomerDetail {
@@ -12007,6 +12045,7 @@ export interface Size {
   id: ID_Output;
   slug: String;
   productType?: ProductType;
+  display?: String;
 }
 
 export interface SizePromise extends Promise<Size>, Fragmentable {
@@ -12015,6 +12054,7 @@ export interface SizePromise extends Promise<Size>, Fragmentable {
   productType: () => Promise<ProductType>;
   top: <T = TopSizePromise>() => T;
   bottom: <T = BottomSizePromise>() => T;
+  display: () => Promise<String>;
 }
 
 export interface SizeSubscription
@@ -12025,6 +12065,7 @@ export interface SizeSubscription
   productType: () => Promise<AsyncIterator<ProductType>>;
   top: <T = TopSizeSubscription>() => T;
   bottom: <T = BottomSizeSubscription>() => T;
+  display: () => Promise<AsyncIterator<String>>;
 }
 
 export interface SizeNullablePromise
@@ -12035,6 +12076,7 @@ export interface SizeNullablePromise
   productType: () => Promise<ProductType>;
   top: <T = TopSizePromise>() => T;
   bottom: <T = BottomSizePromise>() => T;
+  display: () => Promise<String>;
 }
 
 export interface AggregateCollectionGroup {

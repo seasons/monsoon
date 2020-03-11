@@ -103,6 +103,7 @@ export const syncProductVariants = async (cliProgressBar?) => {
         internalSizeRecord = await deepUpsertSize({
           slug: sku,
           type,
+          display: linkedAirtableSize?.model.display,
           topSizeData: type === "Top" &&
             !!topSize && {
               letter: (linkedAirtableSize?.model.name as LetterSize) || null,

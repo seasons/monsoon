@@ -59,19 +59,22 @@ export const createSubBar = async ({
 export const deepUpsertSize = async ({
   slug,
   type,
+  display,
   topSizeData,
   bottomSizeData,
 }: {
   slug: string
   type: ProductType
+  display: string
   topSizeData?: TopSizeCreateInput
   bottomSizeData?: BottomSizeCreateInput
 }): Promise<Size> => {
+  const sizeData = { slug, productType: type, display }
   // Update if needed
   const sizeRecord = await prisma.upsertSize({
     where: { slug },
-    create: { slug, productType: type },
-    update: { slug, productType: type },
+    create: { ...sizeData },
+    update: { ...sizeData },
   })
   switch (type) {
     case "Top":

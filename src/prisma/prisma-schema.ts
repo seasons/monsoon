@@ -7128,6 +7128,7 @@ type Size {
   productType: ProductType
   top: TopSize
   bottom: BottomSize
+  display: String
 }
 
 type SizeConnection {
@@ -7142,6 +7143,7 @@ input SizeCreateInput {
   productType: ProductType
   top: TopSizeCreateOneInput
   bottom: BottomSizeCreateOneInput
+  display: String
 }
 
 input SizeCreateManyInput {
@@ -7166,12 +7168,15 @@ enum SizeOrderByInput {
   slug_DESC
   productType_ASC
   productType_DESC
+  display_ASC
+  display_DESC
 }
 
 type SizePreviousValues {
   id: ID!
   slug: String!
   productType: ProductType
+  display: String
 }
 
 input SizeScalarWhereInput {
@@ -7207,6 +7212,20 @@ input SizeScalarWhereInput {
   productType_not: ProductType
   productType_in: [ProductType!]
   productType_not_in: [ProductType!]
+  display: String
+  display_not: String
+  display_in: [String!]
+  display_not_in: [String!]
+  display_lt: String
+  display_lte: String
+  display_gt: String
+  display_gte: String
+  display_contains: String
+  display_not_contains: String
+  display_starts_with: String
+  display_not_starts_with: String
+  display_ends_with: String
+  display_not_ends_with: String
   AND: [SizeScalarWhereInput!]
   OR: [SizeScalarWhereInput!]
   NOT: [SizeScalarWhereInput!]
@@ -7235,6 +7254,7 @@ input SizeUpdateDataInput {
   productType: ProductType
   top: TopSizeUpdateOneInput
   bottom: BottomSizeUpdateOneInput
+  display: String
 }
 
 input SizeUpdateInput {
@@ -7242,11 +7262,13 @@ input SizeUpdateInput {
   productType: ProductType
   top: TopSizeUpdateOneInput
   bottom: BottomSizeUpdateOneInput
+  display: String
 }
 
 input SizeUpdateManyDataInput {
   slug: String
   productType: ProductType
+  display: String
 }
 
 input SizeUpdateManyInput {
@@ -7264,6 +7286,7 @@ input SizeUpdateManyInput {
 input SizeUpdateManyMutationInput {
   slug: String
   productType: ProductType
+  display: String
 }
 
 input SizeUpdateManyWithWhereNestedInput {
@@ -7331,6 +7354,20 @@ input SizeWhereInput {
   productType_not_in: [ProductType!]
   top: TopSizeWhereInput
   bottom: BottomSizeWhereInput
+  display: String
+  display_not: String
+  display_in: [String!]
+  display_not_in: [String!]
+  display_lt: String
+  display_lte: String
+  display_gt: String
+  display_gte: String
+  display_contains: String
+  display_not_contains: String
+  display_starts_with: String
+  display_not_starts_with: String
+  display_ends_with: String
+  display_not_ends_with: String
   AND: [SizeWhereInput!]
   OR: [SizeWhereInput!]
   NOT: [SizeWhereInput!]

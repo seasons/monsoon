@@ -505,4 +505,5 @@ type Size {
   productType: ProductType
   top: TopSize
   bottom: BottomSize
+  display: String
 }
