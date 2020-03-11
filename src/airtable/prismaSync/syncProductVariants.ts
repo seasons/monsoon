@@ -7,12 +7,15 @@ import {
   getAllLocations,
   getAllTopSizes,
   getAllBottomSizes,
+  getAllSizes,
 } from "../utils"
 import {
   prisma,
   InventoryStatus,
   PhysicalProductCreateInput,
   ProductVariantCreateInput,
+  LetterSize,
+  BottomSizeType,
 } from "../../prisma"
 import { sizeToSizeCode } from "../../utils"
 import { base } from "../config"
@@ -44,6 +47,7 @@ export const syncProductVariants = async (cliProgressBar?) => {
   const allPhysicalProducts = await getAllPhysicalProducts()
   const allTopSizes = await getAllTopSizes()
   const allBottomSizes = await getAllBottomSizes()
+  const allSizes = await getAllSizes()
 
   for (const productVariant of allProductVariants) {
     try {
@@ -87,11 +91,36 @@ export const syncProductVariants = async (cliProgressBar?) => {
 
       let internalSizeRecord
       if (!!topSize || !!bottomSize) {
+        let linkedAirtableSize
+        switch (type) {
+          case "Top":
+            linkedAirtableSize = allSizes.findByIds(topSize.model.size)
+            break
+          case "Bottom":
+            linkedAirtableSize = allSizes.findByIds(bottomSize.model.size)
+            break
+        }
         internalSizeRecord = await deepUpsertSize({
           slug: sku,
           type,
-          airtableTopSize: topSize,
-          airtableBottomSize: bottomSize,
+          topSizeData: type === "Top" &&
+            !!topSize && {
+              letter: (linkedAirtableSize?.model.name as LetterSize) || null,
+              sleeve: topSize.model.sleeve,
+              shoulder: topSize.model.shoulder,
+              chest: topSize.model.chest,
+              neck: topSize.model.neck,
+              length: topSize.model.length,
+            },
+          bottomSizeData: type === "Bottom" &&
+            !!bottomSize && {
+              type: (linkedAirtableSize?.model.type as BottomSizeType) || null,
+              value: linkedAirtableSize?.model.name || "",
+              waist: bottomSize.model.waist,
+              rise: bottomSize.model.rise,
+              hem: bottomSize.model.hem,
+              inseam: bottomSize.model.inseam,
+            },
         })
       }
 
@@ -273,4 +302,4 @@ const createMorePhysicalProductsIfNeeded: CreateMorePhysicalProductsFunction = a
   )
 }
 
-// syncProductVariants()
+syncProductVariants()

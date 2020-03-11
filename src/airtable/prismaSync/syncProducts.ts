@@ -2,10 +2,14 @@ import {
   getAllBrands,
   getAllCategories,
   getAllProducts,
-  getAllTopSizes,
-  getAllBottomSizes,
+  getAllSizes,
 } from "../utils"
-import { prisma, ProductCreateInput } from "../../prisma"
+import {
+  prisma,
+  ProductCreateInput,
+  LetterSize,
+  BottomSizeType,
+} from "../../prisma"
 import slugify from "slugify"
 import { isEmpty, head } from "lodash"
 import {
@@ -17,8 +21,7 @@ export const syncProducts = async (cliProgressBar?) => {
   const allBrands = await getAllBrands()
   const allProducts = await getAllProducts()
   const allCategories = await getAllCategories()
-  const allTopSizes = await getAllTopSizes()
-  const allBottomSizes = await getAllBottomSizes()
+  const allSizes = await getAllSizes()
 
   const [
     multibar,
@@ -38,8 +41,7 @@ export const syncProducts = async (cliProgressBar?) => {
 
       const brand = allBrands.findByIds(model.brand)
       const category = allCategories.findByIds(model.category)
-      const modelTopSize = allTopSizes.findByIds(model.modelTopSize)
-      const modelBottomSize = allBottomSizes.findByIds(model.modelBottomSize)
+      const modelSize = allSizes.findByIds(model.modelSize)
 
       if (
         isEmpty(model) ||
@@ -67,12 +69,17 @@ export const syncProducts = async (cliProgressBar?) => {
       const slug = slugify(name + " " + color).toLowerCase()
 
       let modelSizeRecord
-      if (!!modelTopSize || !!modelBottomSize) {
+      if (!!modelSize) {
         modelSizeRecord = await deepUpsertSize({
           slug,
           type,
-          airtableTopSize: modelTopSize,
-          airtableBottomSize: modelBottomSize,
+          topSizeData: type === "Top" && {
+            letter: modelSize.model.name as LetterSize,
+          },
+          bottomSizeData: type === "Bottom" && {
+            type: modelSize.model.type as BottomSizeType,
+            value: modelSize.model.name,
+          },
         })
       }
 

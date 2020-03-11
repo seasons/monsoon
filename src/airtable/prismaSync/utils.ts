@@ -2,8 +2,17 @@ import {
   AirtableModelName,
   makeAirtableSyncCliProgressBar,
   getNumRecords,
+  AirtableData,
 } from "../utils"
-import { ProductType, prisma, Size } from "../../prisma"
+import {
+  ProductType,
+  prisma,
+  Size,
+  LetterSize,
+  BottomSizeType,
+  TopSizeCreateInput,
+  BottomSizeCreateInput,
+} from "../../prisma"
 
 export const makeSingleSyncFuncMultiBarAndProgressBarIfNeeded = async ({
   cliProgressBar,
@@ -50,36 +59,30 @@ export const createSubBar = async ({
 export const deepUpsertSize = async ({
   slug,
   type,
-  airtableTopSize,
-  airtableBottomSize,
+  topSizeData,
+  bottomSizeData,
 }: {
   slug: string
   type: ProductType
-  airtableTopSize: any
-  airtableBottomSize: any
+  topSizeData?: TopSizeCreateInput
+  bottomSizeData?: BottomSizeCreateInput
 }): Promise<Size> => {
   // Update if needed
-  const modelSizeRecord = await prisma.upsertSize({
+  const sizeRecord = await prisma.upsertSize({
     where: { slug },
     create: { slug, productType: type },
     update: { slug, productType: type },
   })
-  let data
   switch (type) {
     case "Top":
-      const prismaTopSize = await prisma.size({ id: modelSizeRecord.id }).top()
-      data = {
-        letter: airtableTopSize?.model.letterSize,
-        sleeve: airtableTopSize?.model.sleeve,
-        shoulder: airtableTopSize?.model.shoulder,
-        chest: airtableTopSize?.model.chest,
-        neck: airtableTopSize?.model.neck,
-        length: airtableTopSize?.model.length,
+      if (!topSizeData) {
+        throw new Error("topSizeData must be non null if type is Top")
       }
+      const prismaTopSize = await prisma.size({ id: sizeRecord.id }).top()
       const topSize = await prisma.upsertTopSize({
         where: { id: prismaTopSize?.id || "" },
-        update: { ...data },
-        create: { ...data },
+        update: { ...topSizeData },
+        create: { ...topSizeData },
       })
       if (!prismaTopSize) {
         await prisma.updateSize({
@@ -89,24 +92,16 @@ export const deepUpsertSize = async ({
       }
       break
     case "Bottom":
-      const prismaBottomSize = await prisma
-        .size({ id: modelSizeRecord?.id })
-        .bottom()
-      data = {
-        type: airtableBottomSize?.model.type,
-        value:
-          airtableBottomSize?.model.type === "Letter"
-            ? airtableBottomSize.model.letterValue
-            : airtableBottomSize.model.otherValue,
-        waist: airtableBottomSize?.model.waist,
-        rise: airtableBottomSize?.model.rise,
-        hem: airtableBottomSize?.model.hem,
-        inseam: airtableBottomSize?.model.inseam,
+      if (!bottomSizeData) {
+        throw new Error("bottomSizeData must be non null if type is Bottom")
       }
+      const prismaBottomSize = await prisma
+        .size({ id: sizeRecord?.id })
+        .bottom()
       const bottomSize = await prisma.upsertBottomSize({
         where: { id: prismaBottomSize?.id || "" },
-        create: { ...data },
-        update: { ...data },
+        create: { ...bottomSizeData },
+        update: { ...bottomSizeData },
       })
       if (!prismaBottomSize) {
         await prisma.updateSize({
@@ -116,5 +111,5 @@ export const deepUpsertSize = async ({
       }
   }
 
-  return modelSizeRecord
+  return sizeRecord
 }

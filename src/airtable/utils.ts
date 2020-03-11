@@ -120,6 +120,10 @@ export const getAllUsers = async (airtableBase?) => {
   return getAll("Users", "", "", airtableBase)
 }
 
+export const getAllSizes = async (airtableBase?) => {
+  return getAll("Sizes", "", "", airtableBase)
+}
+
 export const getAllCategories = async (airtableBase?) => {
   return getAll("Categories", "", "", airtableBase)
 }
