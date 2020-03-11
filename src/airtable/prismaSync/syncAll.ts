@@ -43,6 +43,7 @@ export const syncAll = async () => {
     }),
   }
 
+  //   ignore locations because of complications with slugs. plus, we dont really use them yet.
   try {
     await syncBrands(bars.brands)
     await syncCategories(bars.categories)
