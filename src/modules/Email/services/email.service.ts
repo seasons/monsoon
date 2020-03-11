@@ -93,4 +93,11 @@ export class EmailService {
       })
     }
   }
+
+  sendWelcomeToSeasonsEmail(user: User) {
+    this.sendTransactionalEmail({
+      to: user.email,
+      data: this.data.welcomeToSeasons(user.firstName),
+    })
+  }
 }
