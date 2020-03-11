@@ -16,6 +16,7 @@ import { ReservationUtilsService } from "./services/reservation.utils.service"
 import { ReservationService } from "./services/reservation.service"
 import { EmailModule } from "../Email/email.module"
 import { ShippingModule } from "../Shipping/shipping.module"
+import { BagService } from "./services/bag.service"
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { ShippingModule } from "../Shipping/shipping.module"
     ShippingModule,
   ],
   providers: [
+    BagService,
     ProductService,
     ProductUtilsService,
     PhysicalProductService,
@@ -39,6 +41,5 @@ import { ShippingModule } from "../Shipping/shipping.module"
     ProductVariantQueriesResolver,
     ProductVariantMutationsResolver,
   ],
-  exports: [ReservationUtilsService],
 })
 export class ProductModule {}

@@ -1,8 +1,21 @@
-import * as Airtable from "airtable"
 import { Injectable } from "@nestjs/common"
-import { PhysicalProduct, ReservationCreateInput } from "../../../prisma"
+import { 
+  PhysicalProduct,
+  ReservationCreateInput,
+  CustomerDetailCreateInput,
+  BillingInfoCreateInput,
+  CustomerStatus,
+  User
+} from "../../../prisma"
 import { fill, zip } from "lodash"
 import { AirtableUtilsService } from "./airtable.utils.service"
+import { AirtableBaseService } from "./airtable.base.service"
+
+interface AirtableUserFields extends CustomerDetailCreateInput {
+  plan?: string
+  status?: CustomerStatus
+  billingInfo?: BillingInfoCreateInput
+}
 
 export interface AirtableData extends Array<any> {
   findByIds: (ids?: any) => any
@@ -22,9 +35,9 @@ export type AirtablePhysicalProductFields = {
 
 @Injectable()
 export class AirtableService {
-  private readonly base = Airtable.base(process.env.AIRTABLE_DATABASE_ID)
-
-  constructor(private readonly utils: AirtableUtilsService) {}
+  constructor(
+    private readonly airtableBase: AirtableBaseService,
+    private readonly utils: AirtableUtilsService) {}
 
   getAllProductVariants(airtableBase?) {
     return this.getAll("Product Variants", "", "", airtableBase)
@@ -110,10 +123,10 @@ export class AirtableService {
             },
           },
         ]
-        const records = await this.base("Reservations").create(createData)
+        const records = await this.airtableBase.base("Reservations").create(createData)
 
         const rollbackAirtableReservation = async () => {
-          const numDeleted = await this.base("Reservations").destroy([
+          const numDeleted = await this.airtableBase.base("Reservations").destroy([
             records[0].getId(),
           ])
           return numDeleted
@@ -123,6 +136,61 @@ export class AirtableService {
         return reject(err)
       }
     })
+  }
+
+  async createOrUpdateAirtableUser (
+    user: User,
+    fields: AirtableUserFields
+  ) {
+    // Create the airtable data
+    const { email, firstName, lastName } = user
+    const data = {
+      Email: email,
+      "First Name": firstName,
+      "Last Name": lastName,
+    }
+    for (let key in fields) {
+      if (this.utils.keyMap[key]) {
+        data[this.utils.keyMap[key]] = fields[key]
+      }
+    }
+    // WARNING: shipping address and billingInfo code are still "create" only.
+    if (!!fields.shippingAddress) {
+      const location = await this.utils.createLocation(fields.shippingAddress.create)
+      data["Shipping Address"] = location.map(l => l.id)
+    }
+    if (!!fields.billingInfo) {
+      const airtableBillingInfoRecord = await this.utils.createBillingInfo(
+        fields.billingInfo
+      )
+      data["Billing Info"] = [airtableBillingInfoRecord.getId()]
+    }
+  
+    // Create or update the record
+    this.airtableBase.base("Users")
+      .select({
+        view: "Grid view",
+        filterByFormula: `{Email}='${email}'`,
+      })
+      .firstPage((err, records) => {
+        if (err) {
+          throw err
+        }
+        if (records.length > 0) {
+          const user = records[0]
+          this.airtableBase.base("Users").update(user.id, data, function(err, record) {
+            if (err) {
+              throw err
+            }
+          })
+        } else {
+          this.airtableBase.base("Users").create([
+            {
+              fields: data,
+            },
+          ])
+        }
+      })
   }
 
   private getAll: (
@@ -137,7 +205,7 @@ export class AirtableService {
     airtableBase
   ) => {
     const data = [] as AirtableData
-    const baseToUse = airtableBase || this.base
+    const baseToUse = airtableBase || this.airtableBase.base
 
     data.findByIds = (ids = []) => {
       return data.find(record => ids.includes(record.id))
@@ -194,7 +262,7 @@ export class AirtableService {
         fields: a[1],
       }
     })
-    const updatedRecords = await this.base("Physical Products").update(
+    const updatedRecords = await this.airtableBase.base("Physical Products").update(
       formattedUpdateData
     )
     return updatedRecords
