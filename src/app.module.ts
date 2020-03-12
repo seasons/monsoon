@@ -7,7 +7,8 @@ import {
   CollectionModule,
   FAQModule,
   PaymentModule,
-  directiveResolvers,
+  SearchModule,
+  directiveResolvers
 } from "./modules"
 import { importSchema } from "graphql-import"
 import Analytics from "analytics-node"
@@ -50,6 +51,7 @@ Airtable.configure({
     PaymentModule,
     EmailModule,
     AirtableModule,
+    SearchModule,
   ],
 })
 export class AppModule {}
