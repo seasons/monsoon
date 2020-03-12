@@ -302,5 +302,3 @@ const createMorePhysicalProductsIfNeeded: CreateMorePhysicalProductsFunction = a
       } as PhysicalProductCreateInput)
   )
 }
-
-syncProductVariants()

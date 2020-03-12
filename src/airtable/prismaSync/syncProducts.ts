@@ -152,5 +152,3 @@ export const syncProducts = async (cliProgressBar?) => {
   }
   multibar?.stop()
 }
-
-syncProducts()

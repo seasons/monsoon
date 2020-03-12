@@ -342,5 +342,4 @@ var createMorePhysicalProductsIfNeeded = function (_a) {
         });
     });
 };
-exports.syncProductVariants();
 //# sourceMappingURL=syncProductVariants.js.map
