@@ -194,6 +194,7 @@ type ChargebeeHostedPagePayload {
 }
 
 type Mutation {
+  beamsData: BeamsData!
   signup(
     email: String!
     password: String!
@@ -239,6 +240,11 @@ input AddressInput {
 
 input ReserveItemsOptions {
   dryRun: Boolean
+}
+
+type BeamsData {
+  email: String!
+  beamsToken: String!
 }
 
 type BillingInfoPayload {
