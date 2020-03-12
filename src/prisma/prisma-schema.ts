@@ -7036,6 +7036,7 @@ type ReservationFeedback {
   comment: String
   feedbacks(where: ProductVariantFeedbackWhereInput, orderBy: ProductVariantFeedbackOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariantFeedback!]
   rating: Rating
+  user: User!
 }
 
 type ReservationFeedbackConnection {
@@ -7049,6 +7050,7 @@ input ReservationFeedbackCreateInput {
   comment: String
   feedbacks: ProductVariantFeedbackCreateManyWithoutReservationFeedbackInput
   rating: Rating
+  user: UserCreateOneInput!
 }
 
 input ReservationFeedbackCreateOneWithoutFeedbacksInput {
@@ -7060,6 +7062,7 @@ input ReservationFeedbackCreateWithoutFeedbacksInput {
   id: ID
   comment: String
   rating: Rating
+  user: UserCreateOneInput!
 }
 
 type ReservationFeedbackEdge {
@@ -7104,6 +7107,7 @@ input ReservationFeedbackUpdateInput {
   comment: String
   feedbacks: ProductVariantFeedbackUpdateManyWithoutReservationFeedbackInput
   rating: Rating
+  user: UserUpdateOneRequiredInput
 }
 
 input ReservationFeedbackUpdateManyMutationInput {
@@ -7121,6 +7125,7 @@ input ReservationFeedbackUpdateOneRequiredWithoutFeedbacksInput {
 input ReservationFeedbackUpdateWithoutFeedbacksDataInput {
   comment: String
   rating: Rating
+  user: UserUpdateOneRequiredInput
 }
 
 input ReservationFeedbackUpsertWithoutFeedbacksInput {
@@ -7164,6 +7169,7 @@ input ReservationFeedbackWhereInput {
   rating_not: Rating
   rating_in: [Rating!]
   rating_not_in: [Rating!]
+  user: UserWhereInput
   AND: [ReservationFeedbackWhereInput!]
   OR: [ReservationFeedbackWhereInput!]
   NOT: [ReservationFeedbackWhereInput!]

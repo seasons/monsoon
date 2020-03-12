@@ -3830,6 +3830,7 @@ export interface ColorUpdateOneRequiredWithoutProductVariantsInput {
 export interface ReservationFeedbackUpdateWithoutFeedbacksDataInput {
   comment?: Maybe<String>;
   rating?: Maybe<Rating>;
+  user?: Maybe<UserUpdateOneRequiredInput>;
 }
 
 export interface ColorUpdateWithoutProductVariantsDataInput {
@@ -6025,6 +6026,7 @@ export interface ReservationFeedbackWhereInput {
   rating_not?: Maybe<Rating>;
   rating_in?: Maybe<Rating[] | Rating>;
   rating_not_in?: Maybe<Rating[] | Rating>;
+  user?: Maybe<UserWhereInput>;
   AND?: Maybe<ReservationFeedbackWhereInput[] | ReservationFeedbackWhereInput>;
   OR?: Maybe<ReservationFeedbackWhereInput[] | ReservationFeedbackWhereInput>;
   NOT?: Maybe<ReservationFeedbackWhereInput[] | ReservationFeedbackWhereInput>;
@@ -6528,6 +6530,7 @@ export interface ReservationFeedbackUpdateInput {
     ProductVariantFeedbackUpdateManyWithoutReservationFeedbackInput
   >;
   rating?: Maybe<Rating>;
+  user?: Maybe<UserUpdateOneRequiredInput>;
 }
 
 export interface CustomerDetailUpdateInput {
@@ -7695,6 +7698,7 @@ export interface ReservationFeedbackCreateInput {
     ProductVariantFeedbackCreateManyWithoutReservationFeedbackInput
   >;
   rating?: Maybe<Rating>;
+  user: UserCreateOneInput;
 }
 
 export interface CollectionUpdateWithWhereUniqueNestedInput {
@@ -7721,6 +7725,7 @@ export interface ReservationFeedbackCreateWithoutFeedbacksInput {
   id?: Maybe<ID_Input>;
   comment?: Maybe<String>;
   rating?: Maybe<Rating>;
+  user: UserCreateOneInput;
 }
 
 export interface CollectionUpsertWithWhereUniqueNestedInput {
@@ -8858,6 +8863,7 @@ export interface ReservationFeedbackPromise
     last?: Int;
   }) => T;
   rating: () => Promise<Rating>;
+  user: <T = UserPromise>() => T;
 }
 
 export interface ReservationFeedbackSubscription
@@ -8877,6 +8883,7 @@ export interface ReservationFeedbackSubscription
     last?: Int;
   }) => T;
   rating: () => Promise<AsyncIterator<Rating>>;
+  user: <T = UserSubscription>() => T;
 }
 
 export interface ReservationFeedbackNullablePromise
@@ -8894,6 +8901,7 @@ export interface ReservationFeedbackNullablePromise
     last?: Int;
   }) => T;
   rating: () => Promise<Rating>;
+  user: <T = UserPromise>() => T;
 }
 
 export interface ProductVariant {

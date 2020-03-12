@@ -479,6 +479,7 @@ type ReservationFeedback {
   comment: String
   feedbacks: [ProductVariantFeedback!]!
   rating: Rating
+  user: User!
 }
 
 type ProductVariantFeedback {
