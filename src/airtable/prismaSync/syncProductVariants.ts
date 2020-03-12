@@ -17,7 +17,7 @@ import {
   LetterSize,
   BottomSizeType,
 } from "../../prisma"
-import { sizeToSizeCode } from "../../utils"
+import { sizeToSizeCode, Identity } from "../../utils"
 import { base } from "../config"
 import { isEmpty } from "lodash"
 import {
@@ -101,9 +101,9 @@ export const syncProductVariants = async (cliProgressBar?) => {
             break
         }
         internalSizeRecord = await deepUpsertSize({
-          slug: sku,
+          slug: `${sku}-internal`,
           type,
-          display: linkedAirtableSize?.model.display,
+          display: linkedAirtableSize?.model.display || "",
           topSizeData: type === "Top" &&
             !!topSize && {
               letter: (linkedAirtableSize?.model.name as LetterSize) || null,
@@ -125,13 +125,58 @@ export const syncProductVariants = async (cliProgressBar?) => {
         })
       }
 
+      // If the product variant is a bottom, then create manufacturer sizes
+      const manufacturerSizeRecords = []
+      if (type === "Bottom") {
+        // Delete all existing manufacturer size records so if an admin removes
+        // a size record from a product variant on airtable, it does not linger on the db record
+        if (sku === "ORSL-BLU-MM-001") {
+          console.log('yo")')
+        }
+        const existingManufacturerSizes = await prisma
+          .productVariant({ sku })
+          .manufacturerSizes()
+        await prisma.deleteManySizes({
+          id_in: existingManufacturerSizes?.map(a => a.id) || [],
+        })
+
+        // For each manufacturer size, store the name, type, and display value
+        if (!!bottomSize?.model.manufacturerSizes) {
+          let i = 0
+          for (const manufacturerSizeId of bottomSize.model.manufacturerSizes) {
+            const manufacturerSizeRecord = allSizes.findByIds(
+              manufacturerSizeId
+            )
+            const { display, type, name: value } = manufacturerSizeRecord.model
+            manufacturerSizeRecords.push(
+              await deepUpsertSize({
+                slug: `${sku}-manu-${type}-${value}`,
+                type: "Bottom",
+                display,
+                topSizeData: null,
+                bottomSizeData: {
+                  type,
+                  value,
+                },
+              })
+            )
+          }
+        }
+      }
+
       const data = {
         sku,
-        size,
         internalSize: {
           connect: {
             id: internalSizeRecord.id,
           },
+        },
+        manufacturerSizes: {
+          connect: manufacturerSizeRecords.map(a =>
+            Identity({
+              id: a.id,
+            })
+          ),
         },
         weight: parseFloat(weight) || 0,
         height: parseFloat(height) || 0,
