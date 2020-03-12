@@ -7,6 +7,7 @@ import { PrismaClientService } from "../../../prisma/client.service"
 const ProductFragment = `{
   __typename
   id
+  slug
   images
   name
   brand {
@@ -29,7 +30,7 @@ export class HomepageSectionService {
   constructor(
     private readonly db: DBService,
     private readonly prisma: PrismaClientService
-  ) {}
+  ) { }
 
   async getResultsForSection(sectionTitle: SectionTitle, args, customerId?) {
     switch (sectionTitle) {
