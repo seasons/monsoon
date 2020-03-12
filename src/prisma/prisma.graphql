@@ -5681,7 +5681,6 @@ type ProductVariant {
   id: ID!
   sku: String
   color: Color!
-  size: LetterSize
   internalSize: Size
   manufacturerSizes(where: SizeWhereInput, orderBy: SizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Size!]
   weight: Float
@@ -5708,7 +5707,6 @@ input ProductVariantCreateInput {
   id: ID
   sku: String
   color: ColorCreateOneWithoutProductVariantsInput!
-  size: LetterSize
   internalSize: SizeCreateOneInput
   manufacturerSizes: SizeCreateManyInput
   weight: Float
@@ -5746,7 +5744,6 @@ input ProductVariantCreateOneWithoutPhysicalProductsInput {
 input ProductVariantCreateWithoutColorInput {
   id: ID
   sku: String
-  size: LetterSize
   internalSize: SizeCreateOneInput
   manufacturerSizes: SizeCreateManyInput
   weight: Float
@@ -5765,7 +5762,6 @@ input ProductVariantCreateWithoutPhysicalProductsInput {
   id: ID
   sku: String
   color: ColorCreateOneWithoutProductVariantsInput!
-  size: LetterSize
   internalSize: SizeCreateOneInput
   manufacturerSizes: SizeCreateManyInput
   weight: Float
@@ -5783,7 +5779,6 @@ input ProductVariantCreateWithoutProductInput {
   id: ID
   sku: String
   color: ColorCreateOneWithoutProductVariantsInput!
-  size: LetterSize
   internalSize: SizeCreateOneInput
   manufacturerSizes: SizeCreateManyInput
   weight: Float
@@ -5807,8 +5802,6 @@ enum ProductVariantOrderByInput {
   id_DESC
   sku_ASC
   sku_DESC
-  size_ASC
-  size_DESC
   weight_ASC
   weight_DESC
   height_ASC
@@ -5834,7 +5827,6 @@ enum ProductVariantOrderByInput {
 type ProductVariantPreviousValues {
   id: ID!
   sku: String
-  size: LetterSize
   weight: Float
   height: Float
   productID: String!
@@ -5876,10 +5868,6 @@ input ProductVariantScalarWhereInput {
   sku_not_starts_with: String
   sku_ends_with: String
   sku_not_ends_with: String
-  size: LetterSize
-  size_not: LetterSize
-  size_in: [LetterSize!]
-  size_not_in: [LetterSize!]
   weight: Float
   weight_not: Float
   weight_in: [Float!]
@@ -5992,7 +5980,6 @@ input ProductVariantSubscriptionWhereInput {
 input ProductVariantUpdateDataInput {
   sku: String
   color: ColorUpdateOneRequiredWithoutProductVariantsInput
-  size: LetterSize
   internalSize: SizeUpdateOneInput
   manufacturerSizes: SizeUpdateManyInput
   weight: Float
@@ -6010,7 +5997,6 @@ input ProductVariantUpdateDataInput {
 input ProductVariantUpdateInput {
   sku: String
   color: ColorUpdateOneRequiredWithoutProductVariantsInput
-  size: LetterSize
   internalSize: SizeUpdateOneInput
   manufacturerSizes: SizeUpdateManyInput
   weight: Float
@@ -6027,7 +6013,6 @@ input ProductVariantUpdateInput {
 
 input ProductVariantUpdateManyDataInput {
   sku: String
-  size: LetterSize
   weight: Float
   height: Float
   productID: String
@@ -6040,7 +6025,6 @@ input ProductVariantUpdateManyDataInput {
 
 input ProductVariantUpdateManyMutationInput {
   sku: String
-  size: LetterSize
   weight: Float
   height: Float
   productID: String
@@ -6096,7 +6080,6 @@ input ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput {
 
 input ProductVariantUpdateWithoutColorDataInput {
   sku: String
-  size: LetterSize
   internalSize: SizeUpdateOneInput
   manufacturerSizes: SizeUpdateManyInput
   weight: Float
@@ -6114,7 +6097,6 @@ input ProductVariantUpdateWithoutColorDataInput {
 input ProductVariantUpdateWithoutPhysicalProductsDataInput {
   sku: String
   color: ColorUpdateOneRequiredWithoutProductVariantsInput
-  size: LetterSize
   internalSize: SizeUpdateOneInput
   manufacturerSizes: SizeUpdateManyInput
   weight: Float
@@ -6131,7 +6113,6 @@ input ProductVariantUpdateWithoutPhysicalProductsDataInput {
 input ProductVariantUpdateWithoutProductDataInput {
   sku: String
   color: ColorUpdateOneRequiredWithoutProductVariantsInput
-  size: LetterSize
   internalSize: SizeUpdateOneInput
   manufacturerSizes: SizeUpdateManyInput
   weight: Float
@@ -6300,10 +6281,6 @@ input ProductVariantWhereInput {
   sku_ends_with: String
   sku_not_ends_with: String
   color: ColorWhereInput
-  size: LetterSize
-  size_not: LetterSize
-  size_in: [LetterSize!]
-  size_not_in: [LetterSize!]
   internalSize: SizeWhereInput
   manufacturerSizes_every: SizeWhereInput
   manufacturerSizes_some: SizeWhereInput
@@ -7124,7 +7101,7 @@ type Size {
   productType: ProductType
   top: TopSize
   bottom: BottomSize
-  display: String
+  display: String!
 }
 
 type SizeConnection {
@@ -7139,7 +7116,7 @@ input SizeCreateInput {
   productType: ProductType
   top: TopSizeCreateOneInput
   bottom: BottomSizeCreateOneInput
-  display: String
+  display: String!
 }
 
 input SizeCreateManyInput {
@@ -7172,7 +7149,7 @@ type SizePreviousValues {
   id: ID!
   slug: String!
   productType: ProductType
-  display: String
+  display: String!
 }
 
 input SizeScalarWhereInput {

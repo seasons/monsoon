@@ -56,12 +56,12 @@ var utils_3 = require("./utils");
 var SeasonsLocationID = "recvzTcW19kdBPqf4";
 exports.syncProductVariants = function (cliProgressBar) { return __awaiter(void 0, void 0, void 0, function () {
     var allProductVariants, _a, multibar, _cliProgressBar, allBrands, allColors, allProducts, allLocations, allPhysicalProducts, allTopSizes, allBottomSizes, allSizes, _loop_1, _i, allProductVariants_1, productVariant;
-    var _b, _c, _d, _e, _f;
-    return __generator(this, function (_g) {
-        switch (_g.label) {
+    var _b, _c, _d, _e, _f, _g, _h;
+    return __generator(this, function (_j) {
+        switch (_j.label) {
             case 0: return [4 /*yield*/, utils_1.getAllProductVariants()];
             case 1:
-                allProductVariants = _g.sent();
+                allProductVariants = _j.sent();
                 return [4 /*yield*/, utils_3.makeSingleSyncFuncMultiBarAndProgressBarIfNeeded({
                         cliProgressBar: cliProgressBar,
                         numRecords: allProductVariants.length,
@@ -70,37 +70,37 @@ exports.syncProductVariants = function (cliProgressBar) { return __awaiter(void 
                     // Get all the relevant airtable records
                 ];
             case 2:
-                _a = _g.sent(), multibar = _a[0], _cliProgressBar = _a[1];
+                _a = _j.sent(), multibar = _a[0], _cliProgressBar = _a[1];
                 return [4 /*yield*/, utils_1.getAllBrands()];
             case 3:
-                allBrands = _g.sent();
+                allBrands = _j.sent();
                 return [4 /*yield*/, utils_1.getAllColors()];
             case 4:
-                allColors = _g.sent();
+                allColors = _j.sent();
                 return [4 /*yield*/, utils_1.getAllProducts()];
             case 5:
-                allProducts = _g.sent();
+                allProducts = _j.sent();
                 return [4 /*yield*/, utils_1.getAllLocations()];
             case 6:
-                allLocations = _g.sent();
+                allLocations = _j.sent();
                 return [4 /*yield*/, utils_1.getAllPhysicalProducts()];
             case 7:
-                allPhysicalProducts = _g.sent();
+                allPhysicalProducts = _j.sent();
                 return [4 /*yield*/, utils_1.getAllTopSizes()];
             case 8:
-                allTopSizes = _g.sent();
+                allTopSizes = _j.sent();
                 return [4 /*yield*/, utils_1.getAllBottomSizes()];
             case 9:
-                allBottomSizes = _g.sent();
+                allBottomSizes = _j.sent();
                 return [4 /*yield*/, utils_1.getAllSizes()];
             case 10:
-                allSizes = _g.sent();
+                allSizes = _j.sent();
                 _loop_1 = function (productVariant) {
-                    var model, product_1, brand, color, location_1, styleNumber, topSize, bottomSize, sku, type, _a, totalCount, nonReservableCount, reservedCount, updatedReservableCount, weight, height, size, internalSizeRecord, linkedAirtableSize, data, physicalProducts, newPhysicalProducts, e_1;
-                    return __generator(this, function (_b) {
-                        switch (_b.label) {
+                    var model, product_1, brand, color, location_1, styleNumber, topSize, bottomSize, sku, type, _a, totalCount, nonReservableCount, reservedCount, updatedReservableCount, weight, height, size, internalSizeRecord, linkedAirtableSize, manufacturerSizeRecords, existingManufacturerSizes, i, _i, _b, manufacturerSizeId, manufacturerSizeRecord, _c, display, type_1, value, _d, _e, data, physicalProducts, newPhysicalProducts, e_1;
+                    return __generator(this, function (_f) {
+                        switch (_f.label) {
                             case 0:
-                                _b.trys.push([0, 6, , 7]);
+                                _f.trys.push([0, 12, , 13]);
                                 // Increment the progress bar
                                 _cliProgressBar.increment();
                                 model = productVariant.model;
@@ -134,9 +134,9 @@ exports.syncProductVariants = function (cliProgressBar) { return __awaiter(void 
                                         break;
                                 }
                                 return [4 /*yield*/, utils_3.deepUpsertSize({
-                                        slug: sku,
+                                        slug: sku + "-internal",
                                         type: type,
-                                        display: (_b = linkedAirtableSize) === null || _b === void 0 ? void 0 : _b.model.display,
+                                        display: ((_b = linkedAirtableSize) === null || _b === void 0 ? void 0 : _b.model.display) || "",
                                         topSizeData: type === "Top" &&
                                             !!topSize && {
                                             letter: ((_c = linkedAirtableSize) === null || _c === void 0 ? void 0 : _c.model.name) || null,
@@ -157,16 +157,68 @@ exports.syncProductVariants = function (cliProgressBar) { return __awaiter(void 
                                         },
                                     })];
                             case 1:
-                                internalSizeRecord = _b.sent();
-                                _b.label = 2;
+                                internalSizeRecord = _f.sent();
+                                _f.label = 2;
                             case 2:
+                                manufacturerSizeRecords = [];
+                                if (!(type === "Bottom")) return [3 /*break*/, 8];
+                                // Delete all existing manufacturer size records so if an admin removes
+                                // a size record from a product variant on airtable, it does not linger on the db record
+                                if (sku === "ORSL-BLU-MM-001") {
+                                    console.log('yo")');
+                                }
+                                return [4 /*yield*/, prisma_1.prisma
+                                        .productVariant({ sku: sku })
+                                        .manufacturerSizes()];
+                            case 3:
+                                existingManufacturerSizes = _f.sent();
+                                return [4 /*yield*/, prisma_1.prisma.deleteManySizes({
+                                        id_in: ((_f = existingManufacturerSizes) === null || _f === void 0 ? void 0 : _f.map(function (a) { return a.id; })) || [],
+                                    })
+                                    // For each manufacturer size, store the name, type, and display value
+                                ];
+                            case 4:
+                                _f.sent();
+                                if (!!!((_g = bottomSize) === null || _g === void 0 ? void 0 : _g.model.manufacturerSizes)) return [3 /*break*/, 8];
+                                i = 0;
+                                _i = 0, _b = bottomSize.model.manufacturerSizes;
+                                _f.label = 5;
+                            case 5:
+                                if (!(_i < _b.length)) return [3 /*break*/, 8];
+                                manufacturerSizeId = _b[_i];
+                                manufacturerSizeRecord = allSizes.findByIds(manufacturerSizeId);
+                                _c = manufacturerSizeRecord.model, display = _c.display, type_1 = _c.type, value = _c.name;
+                                _e = (_d = manufacturerSizeRecords).push;
+                                return [4 /*yield*/, utils_3.deepUpsertSize({
+                                        slug: sku + "-manu-" + type_1 + "-" + value,
+                                        type: "Bottom",
+                                        display: display,
+                                        topSizeData: null,
+                                        bottomSizeData: {
+                                            type: type_1,
+                                            value: value,
+                                        },
+                                    })];
+                            case 6:
+                                _e.apply(_d, [_f.sent()]);
+                                _f.label = 7;
+                            case 7:
+                                _i++;
+                                return [3 /*break*/, 5];
+                            case 8:
                                 data = {
                                     sku: sku,
-                                    size: size,
                                     internalSize: {
                                         connect: {
                                             id: internalSizeRecord.id,
                                         },
+                                    },
+                                    manufacturerSizes: {
+                                        connect: manufacturerSizeRecords.map(function (a) {
+                                            return utils_2.Identity({
+                                                id: a.id,
+                                            });
+                                        }),
                                     },
                                     weight: parseFloat(weight) || 0,
                                     height: parseFloat(height) || 0,
@@ -196,8 +248,8 @@ exports.syncProductVariants = function (cliProgressBar) { return __awaiter(void 
                                     // Figure out if we need to create new instance of physical products
                                     // based on the counts and what's available in the database
                                 ];
-                            case 3:
-                                _b.sent();
+                            case 9:
+                                _f.sent();
                                 physicalProducts = allPhysicalProducts.filter(function (a) {
                                     return (a.get("Product Variant") || []).includes(productVariant.id);
                                 });
@@ -209,8 +261,8 @@ exports.syncProductVariants = function (cliProgressBar) { return __awaiter(void 
                                         physicalProducts: physicalProducts,
                                         totalCount: totalCount,
                                     })];
-                            case 4:
-                                newPhysicalProducts = _b.sent();
+                            case 10:
+                                newPhysicalProducts = _f.sent();
                                 newPhysicalProducts.forEach(function (p) { return __awaiter(void 0, void 0, void 0, function () {
                                     return __generator(this, function (_a) {
                                         switch (_a.label) {
@@ -234,32 +286,32 @@ exports.syncProductVariants = function (cliProgressBar) { return __awaiter(void 
                                         "Reserved Count": reservedCount,
                                         "Non-Reservable Count": nonReservableCount,
                                     })];
-                            case 5:
-                                _b.sent();
-                                return [3 /*break*/, 7];
-                            case 6:
-                                e_1 = _b.sent();
+                            case 11:
+                                _f.sent();
+                                return [3 /*break*/, 13];
+                            case 12:
+                                e_1 = _f.sent();
                                 console.log(productVariant);
                                 console.error(e_1);
-                                return [3 /*break*/, 7];
-                            case 7: return [2 /*return*/];
+                                return [3 /*break*/, 13];
+                            case 13: return [2 /*return*/];
                         }
                     });
                 };
                 _i = 0, allProductVariants_1 = allProductVariants;
-                _g.label = 11;
+                _j.label = 11;
             case 11:
                 if (!(_i < allProductVariants_1.length)) return [3 /*break*/, 14];
                 productVariant = allProductVariants_1[_i];
                 return [5 /*yield**/, _loop_1(productVariant)];
             case 12:
-                _g.sent();
-                _g.label = 13;
+                _j.sent();
+                _j.label = 13;
             case 13:
                 _i++;
                 return [3 /*break*/, 11];
             case 14:
-                (_f = multibar) === null || _f === void 0 ? void 0 : _f.stop();
+                (_h = multibar) === null || _h === void 0 ? void 0 : _h.stop();
                 return [2 /*return*/];
         }
     });

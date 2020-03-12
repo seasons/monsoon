@@ -286,7 +286,6 @@ type ProductVariant {
   id: ID! @id
   sku: String @unique
   color: Color!
-  size: LetterSize
   internalSize: Size @relation(name: "ProductVariantSize")
   manufacturerSizes: [Size!] @relation(name: "ProductVariantManufacturerSize")
   weight: Float
@@ -505,5 +504,5 @@ type Size {
   productType: ProductType
   top: TopSize
   bottom: BottomSize
-  display: String
+  display: String!
 }

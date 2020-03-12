@@ -17,7 +17,7 @@ import {
   LetterSize,
   BottomSizeType,
 } from "../../prisma"
-import { sizeToSizeCode, Identity } from "../../utils"
+import { Identity, sizeNameToSizeCode } from "../../utils"
 import { base } from "../config"
 import { isEmpty } from "lodash"
 import {
@@ -71,14 +71,25 @@ export const syncProductVariants = async (cliProgressBar?) => {
       const topSize = allTopSizes.findByIds(model.topSize)
       const bottomSize = allBottomSizes.findByIds(model.bottomSize)
 
-      //   If there's no model or brand, skip it.
-      if (isEmpty(model) || isEmpty(brand)) {
+      //   If there's no model or brand, or there's not appropriate size data, skip it.
+      const { type } = product.model
+      if (
+        isEmpty(model) ||
+        isEmpty(brand) ||
+        (isEmpty(topSize) && isEmpty(bottomSize)) ||
+        (type === "Top" && isEmpty(topSize)) ||
+        (type === "Bottom" && isEmpty(bottomSize))
+      ) {
         continue
       }
 
       //   Calculate the sku
-      const sku = skuForData(brand, color, productVariant, styleNumber)
-      const { type } = product.model
+      const sku = skuForData(
+        brand,
+        color,
+        sizeNameForProductVariant(type, topSize, bottomSize, allSizes),
+        styleNumber
+      )
 
       const {
         totalCount,
@@ -249,13 +260,23 @@ export const syncProductVariants = async (cliProgressBar?) => {
   multibar?.stop()
 }
 
-const skuForData = (brand, color, productVariant, styleNumber) => {
+const skuForData = (brand, color, sizeName, styleNumber) => {
   const brandCode = brand.get("Brand Code")
   const colorCode = color.get("Color Code")
-  const size = productVariant.get("Size")
-  const sizeCode = sizeToSizeCode(size)
+  const sizeCode = sizeNameToSizeCode(sizeName)
   const styleCode = styleNumber.toString().padStart(3, "0")
   return `${brandCode}-${colorCode}-${sizeCode}-${styleCode}`
+}
+
+const sizeNameForProductVariant = (type, topSize, bottomSize, allSizes) => {
+  switch (type) {
+    case "Top":
+      return allSizes.findByIds(topSize.model.size)?.model.name
+    case "Bottom":
+      return allSizes.findByIds(bottomSize.model.size)?.model.name
+    default:
+      throw new Error(`Invalid product type: ${type}`)
+  }
 }
 
 const countsForVariant = productVariant => {
@@ -347,3 +368,5 @@ const createMorePhysicalProductsIfNeeded: CreateMorePhysicalProductsFunction = a
       } as PhysicalProductCreateInput)
   )
 }
+
+syncProductVariants()
