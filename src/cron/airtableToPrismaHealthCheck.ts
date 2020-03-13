@@ -3,15 +3,19 @@ import {
   getAllPhysicalProducts,
   getAllProductVariants,
   getAllReservations,
+  AirtableData,
 } from "../airtable/utils"
-import { prisma } from "../prisma"
+import { prisma, ProductVariant, Prisma } from "../prisma"
 import {
   getCorrespondingAirtableProductVariant,
   getCorrespondingAirtablePhysicalProduct,
 } from "./utils"
 import { db } from "../server"
-import { airtableToPrismaInventoryStatus } from "../utils"
+import { airtableToPrismaInventoryStatus, Identity } from "../utils"
 import { xor } from "lodash"
+import util from "util"
+import { CodeStarNotifications } from "aws-sdk"
+import { updateProductVariantCounts } from "../airtable/updateProductVariantCounts"
 
 export async function checkProductsAlignment() {
   const allAirtableProductVariants = await getAllProductVariants()
@@ -27,6 +31,7 @@ export async function checkProductsAlignment() {
           }
           physicalProducts {
               seasonsUID
+              inventoryStatus
           }
           size
           sku
@@ -34,6 +39,7 @@ export async function checkProductsAlignment() {
           reservable
           reserved
           nonReservable
+          createdAt
       }`
   )
   const allPrismaPhysicalProducts = await prisma.physicalProducts()
@@ -97,7 +103,7 @@ export async function checkProductsAlignment() {
   /* Are the skus matching between product variants on prisma and airtable?
   (Only considers those product variants in both prisma and airtable)
   */
-  let {
+  const {
     productVariantSKUMismatches,
     errors: prismaAirtableSKUCheckErrors,
   } = getPrismaAirtableProductVariantSKUMismatches(
@@ -109,14 +115,14 @@ export async function checkProductsAlignment() {
   errors = [...errors, ...prismaAirtableSKUCheckErrors]
 
   /* Check SUIDs. Are they correct on prisma? Are the correct on airtable? */
-  let { prismaSUIDToSKUMismatches, airtableSUIDToSKUMismatches } = checkSUIDs(
+  const { prismaSUIDToSKUMismatches, airtableSUIDToSKUMismatches } = checkSUIDs(
     allPrismaProductVariants,
     allAirtableProductVariants,
     allAirtablePhysicalProducts
   )
 
   /* Are the product variant counts matching between prisma and airtable? */
-  let {
+  const {
     countMisalignments,
     prismaTotalPhysicalProductMisalignment,
     airtableTotalPhysicalProductMisalignment,
@@ -125,9 +131,20 @@ export async function checkProductsAlignment() {
     allPrismaProductVariants,
     allAirtableProducts
   )
+  const [
+    prismaCountToStatusMisalignments,
+    airtableCountToStatusMisalignments,
+  ] = checkMisalignmentsBetweenProdVarCountsAndPhysProdStatuses(
+    allPrismaProductVariants,
+    allAirtableProductVariants,
+    allAirtablePhysicalProducts
+  )
+  const prismaProdVarsWithImpossibleCounts = await getProdVarsWithImpossibleCounts(
+    allPrismaProductVariants
+  )
 
   /* Are the physical product statuses matching between prisma and airtable? */
-  let {
+  const {
     mismatchingStatuses,
     physicalProductsOnPrismaButNotAirtable,
   } = checkPhysicalProductStatuses(
@@ -136,7 +153,7 @@ export async function checkProductsAlignment() {
   )
 
   /* Are the reservations aligned? */
-  let {
+  const {
     misalignedSUIDsOnReservations,
     misalignedStatusOnReservations,
     reservationsWithMoreThanThreeProducts,
@@ -193,6 +210,15 @@ export async function checkProductsAlignment() {
   console.log(
     `-- AIRTABLE: NUMBER OF PRODUCT VARIANTS WITH INCORRECT NUMBER OF PHYSICAL PRODUCTS ATTACHED: ${airtableTotalPhysicalProductMisalignment.length}`
   )
+  console.log(
+    `-- PRISMA: NUMBER OF PRODUCT VARIANTS WITH A COUNT PROFILE THAT DOESN'T MATCH THE STATUSES OF THE ATTACHED PHYSICAL PRODUCTS: ${prismaCountToStatusMisalignments.length}`
+  )
+  console.log(
+    `-- AIRTABLE: NUMBER OF PRODUCT VARIANTS WITH A COUNT PROFILE THAT DOESN'T MATCH THE STATUSES OF THE ATTACHED PHYSICAL PRODUCTS: ${airtableCountToStatusMisalignments.length}`
+  )
+  console.log(
+    `-- PRISMA: NUMBER OF PRODUCT VARIANTS WITH TOTAL != RESERVED + RESERVABLE + NONRESERVABLE: ${prismaProdVarsWithImpossibleCounts.length}`
+  )
   console.log(``)
   console.log(`ARE THE PHYSICAL PRODUCT STATUSES ALIGNED?`)
   console.log(
@@ -230,6 +256,9 @@ export async function checkProductsAlignment() {
     countMisalignments,
     prismaTotalPhysicalProductMisalignment,
     airtableTotalPhysicalProductMisalignment,
+    prismaCountToStatusMisalignments,
+    airtableCountToStatusMisalignments,
+    prismaProdVarsWithImpossibleCounts,
     mismatchingStatuses,
     reservationsInPrismaButNotAirtable,
     reservationsInAirtableButNotPrisma,
@@ -249,9 +278,9 @@ function getPrismaAirtableProductVariantSKUMismatches(
   allPrismaProductVariants,
   productVariantsInPrismaButNotAirtable
 ) {
-  let productVariantSKUMismatches = []
-  let errors = []
-  for (let prismaProductVariant of allPrismaProductVariants) {
+  const productVariantSKUMismatches = []
+  const errors = []
+  for (const prismaProductVariant of allPrismaProductVariants) {
     try {
       // If its not in airtable, skip it
       if (
@@ -291,9 +320,9 @@ function checkSUIDs(
   allAirtableProductVariants,
   allAirtablePhysicalProducts
 ) {
-  let prismaSUIDToSKUMismatches = []
-  for (let prismaProductVariant of allPrismaProductVariants) {
-    for (let physProd of prismaProductVariant.physicalProducts) {
+  const prismaSUIDToSKUMismatches = []
+  for (const prismaProductVariant of allPrismaProductVariants) {
+    for (const physProd of prismaProductVariant.physicalProducts) {
       if (!physProd.seasonsUID.startsWith(prismaProductVariant.sku)) {
         prismaSUIDToSKUMismatches.push({
           productVariantSKU: prismaProductVariant.sku,
@@ -302,14 +331,14 @@ function checkSUIDs(
       }
     }
   }
-  let airtableSUIDToSKUMismatches = []
-  for (let airtableProductVariant of allAirtableProductVariants) {
+  const airtableSUIDToSKUMismatches = []
+  for (const airtableProductVariant of allAirtableProductVariants) {
     // If it has no physical products, skip it.
     if (!airtableProductVariant.fields["Physical Products"]) {
       continue
     }
 
-    for (let airtablePhysProdRecordID of airtableProductVariant.fields[
+    for (const airtablePhysProdRecordID of airtableProductVariant.fields[
       "Physical Products"
     ]) {
       const airtablePhysProdRecord = allAirtablePhysicalProducts.find(
@@ -335,10 +364,10 @@ function checkCounts(
   allPrismaProductVariants,
   allAirtableProducts
 ) {
-  let countMisalignments = []
-  let prismaTotalPhysicalProductMisalignment = []
-  let airtableTotalPhysicalProductMisalignment = []
-  for (let prismaProductVariant of allPrismaProductVariants) {
+  const countMisalignments = []
+  const prismaTotalPhysicalProductMisalignment = []
+  const airtableTotalPhysicalProductMisalignment = []
+  for (const prismaProductVariant of allPrismaProductVariants) {
     const correspondingAirtableProductVariant = getCorrespondingAirtableProductVariant(
       allAirtableProducts,
       allAirtableProductVariants,
@@ -429,10 +458,10 @@ function checkPhysicalProductStatuses(
   allPrismaPhysicalProducts,
   allAirtablePhysicalProducts
 ) {
-  let mismatchingStatuses = []
-  let physicalProductsOnPrismaButNotAirtable = []
-  for (let prismaPhysicalProduct of allPrismaPhysicalProducts) {
-    let correspondingAirtablePhysicalProduct = getCorrespondingAirtablePhysicalProduct(
+  const mismatchingStatuses = []
+  const physicalProductsOnPrismaButNotAirtable = []
+  for (const prismaPhysicalProduct of allPrismaPhysicalProducts) {
+    const correspondingAirtablePhysicalProduct = getCorrespondingAirtablePhysicalProduct(
       allAirtablePhysicalProducts,
       prismaPhysicalProduct
     )
@@ -464,13 +493,13 @@ function checkReservations(
   allAirtableReservations,
   allAirtablePhysicalProducts
 ) {
-  let misalignedSUIDsOnReservations = []
-  let misalignedStatusOnReservations = []
-  let reservationsWithMoreThanThreeProducts = []
-  let allPrismaReservationNumbers = allPrismaReservations.map(
+  const misalignedSUIDsOnReservations = []
+  const misalignedStatusOnReservations = []
+  const reservationsWithMoreThanThreeProducts = []
+  const allPrismaReservationNumbers = allPrismaReservations.map(
     resy => resy.reservationNumber
   )
-  let allAirtableReservationNumbers = allAirtableReservations.map(
+  const allAirtableReservationNumbers = allAirtableReservations.map(
     resy => resy.fields.ID
   )
   const reservationsInPrismaButNotAirtable = allPrismaReservationNumbers.filter(
@@ -481,7 +510,7 @@ function checkReservations(
     airtableResyNumber =>
       !allPrismaReservationNumbers.includes(airtableResyNumber)
   )
-  for (let prismaResy of allPrismaReservations) {
+  for (const prismaResy of allPrismaReservations) {
     if (
       reservationsInPrismaButNotAirtable.includes(prismaResy.reservationNumber)
     ) {
@@ -539,4 +568,165 @@ function checkReservations(
     reservationsInAirtableButNotPrisma,
     reservationsInPrismaButNotAirtable,
   }
+}
+
+const checkMisalignmentsBetweenProdVarCountsAndPhysProdStatuses = (
+  allPrismaProductVariants: any[],
+  allAirtableProductVariants: AirtableData,
+  allAirtablePhysicalProducts: AirtableData
+) => {
+  const prismaMisalignments = allPrismaProductVariants
+    .filter(a => {
+      const physicalProductsWithStatusReserved = a.physicalProducts.filter(
+        b => b.inventoryStatus === "Reserved"
+      )
+      const physicalProductsWithStatusReservable = a.physicalProducts.filter(
+        b => b.inventoryStatus === "Reservable"
+      )
+      const physicalProductsWithStatusNonReservable = a.physicalProducts.filter(
+        b => b.inventoryStatus === "NonReservable"
+      )
+      return (
+        a.reservable !== physicalProductsWithStatusReservable.length ||
+        a.reserved !== physicalProductsWithStatusReserved.length ||
+        a.nonReservable !== physicalProductsWithStatusNonReservable.length
+      )
+    })
+    .map(c =>
+      Identity({
+        sku: c.sku,
+        createdAt: c.createdAt,
+        counts: {
+          total: c.total,
+          reservable: c.reservable,
+          reserved: c.reserved,
+          nonReservable: c.nonReservable,
+        },
+        physicalProducts: c.physicalProducts.map(d =>
+          Identity({
+            suid: d.seasonsUID,
+            status: d.inventoryStatus,
+          })
+        ),
+      })
+    )
+
+  const airtableMisalignments = allAirtableProductVariants
+    .filter(a => {
+      const correspondingAirtablePhysicalProducts = getAttachedAirtablePhysicalProducts(
+        allAirtablePhysicalProducts,
+        a
+      )
+      const physicalProductsWithStatusReserved = correspondingAirtablePhysicalProducts.filter(
+        c => c.fields["Inventory Status"] === "Reserved"
+      )
+      const physicalProductsWithStatusReservable = correspondingAirtablePhysicalProducts.filter(
+        c => c.fields["Inventory Status"] === "Reservable"
+      )
+      const physicalProductsWithStatusNonReservable = correspondingAirtablePhysicalProducts.filter(
+        c => c.fields["Inventory Status"] === "Non Reservable"
+      )
+      return (
+        !!a.fields.SKU &&
+        (a.fields["Reservable Count"] !==
+          physicalProductsWithStatusReservable.length ||
+          a.fields["Reserved Count"] !==
+            physicalProductsWithStatusReserved.length ||
+          a.fields["Non-Reservable Count"] !==
+            physicalProductsWithStatusNonReservable.length)
+      )
+    })
+    .map(d =>
+      Identity({
+        sku: d.fields.SKU,
+        counts: {
+          total: d.fields["Total Count"],
+          reservable: d.fields["Reservable Count"],
+          reserved: d.fields["Reserved Count"],
+          nonReservable: d.fields["Non-Reservable Count"],
+        },
+        physicalProducts: getAttachedAirtablePhysicalProducts(
+          allAirtablePhysicalProducts,
+          d
+        ).map(e =>
+          Identity({
+            SUID: e.fields.SUID.text,
+            status: e.fields["Inventory Status"],
+          })
+        ),
+      })
+    )
+  return [prismaMisalignments, airtableMisalignments]
+}
+
+const getAttachedAirtablePhysicalProducts = (
+  allAirtablePhysicalProducts,
+  airtableProductVariant
+) => {
+  if (!airtableProductVariant.fields.SKU) return []
+
+  return allAirtablePhysicalProducts.filter(a =>
+    airtableProductVariant.fields["Physical Products"].includes(a.id)
+  )
+}
+
+const getProductVariantReservationHistory = async (
+  prisma: Prisma,
+  prodVarSku
+) => {
+  return await prisma.reservations({
+    where: { products_some: { seasonsUID_contains: prodVarSku } },
+  })
+}
+
+const setProductVariantCountsByPhysicalProductStatuses = async prodVar => {
+  const trueReserved = prodVar.physicalProducts.filter(
+    b => b.status === "Reserved"
+  ).length
+  const trueReservable = prodVar.physicalProducts.filter(
+    b => b.status === "Reservable"
+  ).length
+  const trueNonReservable = prodVar.physicalProducts.filter(
+    b => b.status === "NonReservable"
+  ).length
+  const trueCounts = {
+    reserved: trueReserved,
+    reservable: trueReservable,
+    nonReservable: trueNonReservable,
+  }
+  await prisma.updateProductVariant({
+    where: { sku: prodVar.sku },
+    data: trueCounts,
+  })
+}
+
+const getProdVarsWithImpossibleCounts = async allPrismaProductVariants => {
+  return allPrismaProductVariants
+    .filter(a => a.total !== a.reserved + a.reservable + a.nonReservable)
+    .map(a =>
+      Identity({
+        sku: a.sku,
+        total: a.total,
+        reserved: a.reserved,
+        reservable: a.reservable,
+        nonReservable: a.nonReservable,
+      })
+    )
+}
+
+const alignAirtableCountsWithPrismaCounts = async (
+  allAirtableProductVariants,
+  allPrismaProductVariants
+) => {
+  allPrismaProductVariants.forEach(async a => {
+    const correspondingAirtableProductVariant = allAirtableProductVariants.find(
+      b => !!b.fields.SKU && b.fields.SKU === a.sku
+    )
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    await updateProductVariantCounts(correspondingAirtableProductVariant.id, {
+      "Reservable Count": a.reservable,
+      "Reserved Count": a.reserved,
+      "Non-Reservable Count": a.nonReservable,
+    })
+  })
 }

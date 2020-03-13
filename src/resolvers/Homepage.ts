@@ -5,6 +5,7 @@ import { getCustomerFromContext } from "../auth/utils"
 const ProductFragment = `{
   __typename
   id
+  slug
   images
   name
   brand {

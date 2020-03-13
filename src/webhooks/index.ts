@@ -4,6 +4,8 @@ import { prisma, User } from "../prisma"
 import crypto from "crypto"
 import sgMail from "@sendgrid/mail"
 
+const CHARGEBEE_CUSTOMER_CHANGED = "customer_changed"
+
 const app = express()
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
@@ -43,6 +45,44 @@ app.post("/airtable_events", async (req, res) => {
       ) {
       }
     }
+  }
+
+  res.sendStatus(200)
+})
+
+app.post('/chargebee_events', async (req, res) => {
+  const data = req.body
+  const { event_type: eventType } = data
+  switch (eventType) {
+    case CHARGEBEE_CUSTOMER_CHANGED:
+      const { content } = data
+      const { id: userID } = content.customer
+      const { card_type: brand, expiry_month, expiry_year, first_name, last_name, last4 } = content.card
+      const user = await prisma.user({ id: userID })
+      const customers = await prisma.customers({
+        where: { user: { id: user.id } },
+      })
+      if (customers?.length) {
+        const customer = customers[0]
+        const billingInfoId = await prisma.customer({ id: customer.id })
+          .billingInfo()
+          .id()
+        if (billingInfoId) {
+          await prisma.updateBillingInfo({
+            data: {
+              brand,
+              expiration_month: expiry_month,
+              expiration_year: expiry_year,
+              last_digits: last4,
+              name: `${first_name} ${last_name}`,
+            },
+            where: { id: billingInfoId }
+          })
+        }
+      }
+      break
+    default:
+      break
   }
 
   res.sendStatus(200)
