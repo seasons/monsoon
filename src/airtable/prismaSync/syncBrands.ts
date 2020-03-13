@@ -38,9 +38,6 @@ export const syncBrands = async (cliProgressBar?) => {
 
       const slug = slugify(name).toLowerCase()
 
-      if (slug === "striped-mohair-cardigan-yellow") {
-        console.log("yo")
-      }
       const data = {
         slug,
         name,
@@ -49,16 +46,15 @@ export const syncBrands = async (cliProgressBar?) => {
         logo,
         description,
         since: since ? `${since}-01-01` : "2019-01-01",
-        isPrimaryBrand: primary,
+        isPrimaryBrand: !!primary,
         brandCode,
       }
 
-      const brand = await prisma.upsertBrand({
+      await prisma.upsertBrand({
         where: {
           slug,
         },
         create: {
-          slug,
           ...data,
         },
         update: data,
@@ -67,9 +63,8 @@ export const syncBrands = async (cliProgressBar?) => {
       await record.patchUpdate({
         Slug: slug,
       })
-
-      //   console.log(brand)
     } catch (e) {
+      console.log(record)
       console.error(e)
     }
   }

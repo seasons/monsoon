@@ -78,7 +78,10 @@ export const syncProductVariants = async (cliProgressBar?) => {
         isEmpty(brand) ||
         (isEmpty(topSize) && isEmpty(bottomSize)) ||
         (type === "Top" && isEmpty(topSize)) ||
-        (type === "Bottom" && isEmpty(bottomSize))
+        (type === "Bottom" &&
+          (isEmpty(bottomSize) ||
+            isEmpty(bottomSize.model.size) ||
+            isEmpty(bottomSize.model.manufacturerSizes)))
       ) {
         continue
       }
