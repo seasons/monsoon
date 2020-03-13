@@ -98,7 +98,7 @@ export const syncProductVariants = async (cliProgressBar?) => {
         updatedReservableCount,
       } = countsForVariant(productVariant)
 
-      const { weight, height, size } = model
+      const { weight, height } = model
 
       let internalSizeRecord
       if (!!topSize || !!bottomSize) {
@@ -141,9 +141,6 @@ export const syncProductVariants = async (cliProgressBar?) => {
       if (type === "Bottom") {
         // Delete all existing manufacturer size records so if an admin removes
         // a size record from a product variant on airtable, it does not linger on the db record
-        if (sku === "ORSL-BLU-MM-001") {
-          console.log('yo")')
-        }
         const existingManufacturerSizes = await prisma
           .productVariant({ sku })
           .manufacturerSizes()
@@ -323,7 +320,6 @@ type CreateMorePhysicalProductsFunction = (data: {
 
 const createMorePhysicalProductsIfNeeded: CreateMorePhysicalProductsFunction = async ({
   sku,
-  location,
   productVariant,
   product,
   physicalProducts,
@@ -368,5 +364,3 @@ const createMorePhysicalProductsIfNeeded: CreateMorePhysicalProductsFunction = a
       } as PhysicalProductCreateInput)
   )
 }
-
-syncProductVariants()
