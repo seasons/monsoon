@@ -18,50 +18,37 @@ import { ProductVariantMutationsResolver } from "../mutations/productVariant.mut
 import { PrismaClientService } from "../../../prisma/client.service"
 import { DBService } from "../../../prisma/db.service"
 import { ReservationService } from "../services/reservation.service"
+import { AirtableService } from "../../Airtable/services/airtable.service"
+import { AirtableUtilsService } from "../../Airtable/services/airtable.utils.service"
+import { ShippingService } from "../../Shipping/services/shipping.service"
+import { EmailService } from "../../Email/services/email.service"
+import { UtilsService } from "../../Utils/utils.service"
+import { EmailDataProvider } from "../../Email/services/email.data.service"
 
 describe("Reservation Service", () => {
   let reservationService: ReservationService
   let prismaService: PrismaClientService
 
   beforeAll(async () => {
-    const prismaModuleRef = await Test.createTestingModule({
-      providers: [DBService, PrismaClientService],
-      exports: [DBService, PrismaClientService],
-    }).compile()
-
-    prismaService = prismaModuleRef.get<PrismaClientService>(
-      PrismaClientService
-    )
-    const reservationModuleRef = await Test.createTestingModule({
-      imports: [
-        PrismaModule,
-        UserModule,
-        AirtableModule,
-        EmailModule,
-        ShippingModule,
-      ],
-      providers: [
-        ProductService,
-        ProductUtilsService,
-        PhysicalProductService,
-        ProductVariantService,
-        ReservationService,
-        ReservationUtilsService,
-        ProductFieldsResolver,
-        ProductMutationsResolver,
-        ProductQueriesResolver,
-        ProductVariantFieldsResolver,
-        ProductVariantQueriesResolver,
-        ProductVariantMutationsResolver,
-      ],
-      exports: [ReservationUtilsService],
-    })
-      .overrideProvider(PrismaClientService)
-      .useValue(prismaService)
-      .compile()
-
-    reservationService = reservationModuleRef.get<ReservationService>(
-      ReservationService
+    const dbService = new DBService()
+    prismaService = new PrismaClientService()
+    const physProdService = new PhysicalProductService(dbService, prismaService)
+    const airtableService = new AirtableService(new AirtableUtilsService())
+    const utilsService = new UtilsService(prismaService)
+    reservationService = new ReservationService(
+      dbService,
+      prismaService,
+      new ProductUtilsService(dbService),
+      new ProductVariantService(
+        prismaService,
+        physProdService,
+        airtableService
+      ),
+      physProdService,
+      airtableService,
+      new ShippingService(prismaService, utilsService),
+      new EmailService(prismaService, utilsService, new EmailDataProvider()),
+      new ReservationUtilsService()
     )
   })
 

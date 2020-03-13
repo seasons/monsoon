@@ -1,11 +1,11 @@
 import { Injectable } from "@nestjs/common"
-import { 
+import {
   PhysicalProduct,
   ReservationCreateInput,
   CustomerDetailCreateInput,
   BillingInfoCreateInput,
   CustomerStatus,
-  User
+  User,
 } from "../../../prisma"
 import { fill, zip } from "lodash"
 import { AirtableUtilsService } from "./airtable.utils.service"
@@ -37,7 +37,8 @@ export type AirtablePhysicalProductFields = {
 export class AirtableService {
   constructor(
     private readonly airtableBase: AirtableBaseService,
-    private readonly utils: AirtableUtilsService) {}
+    private readonly utils: AirtableUtilsService
+  ) {}
 
   getAllProductVariants(airtableBase?) {
     return this.getAll("Product Variants", "", "", airtableBase)
@@ -123,12 +124,14 @@ export class AirtableService {
             },
           },
         ]
-        const records = await this.airtableBase.base("Reservations").create(createData)
+        const records = await this.airtableBase
+          .base("Reservations")
+          .create(createData)
 
         const rollbackAirtableReservation = async () => {
-          const numDeleted = await this.airtableBase.base("Reservations").destroy([
-            records[0].getId(),
-          ])
+          const numDeleted = await this.airtableBase
+            .base("Reservations")
+            .destroy([records[0].getId()])
           return numDeleted
         }
         return resolve([records[0], rollbackAirtableReservation])
@@ -138,10 +141,7 @@ export class AirtableService {
     })
   }
 
-  async createOrUpdateAirtableUser (
-    user: User,
-    fields: AirtableUserFields
-  ) {
+  async createOrUpdateAirtableUser(user: User, fields: AirtableUserFields) {
     // Create the airtable data
     const { email, firstName, lastName } = user
     const data = {
@@ -156,7 +156,9 @@ export class AirtableService {
     }
     // WARNING: shipping address and billingInfo code are still "create" only.
     if (!!fields.shippingAddress) {
-      const location = await this.utils.createLocation(fields.shippingAddress.create)
+      const location = await this.utils.createLocation(
+        fields.shippingAddress.create
+      )
       data["Shipping Address"] = location.map(l => l.id)
     }
     if (!!fields.billingInfo) {
@@ -165,9 +167,10 @@ export class AirtableService {
       )
       data["Billing Info"] = [airtableBillingInfoRecord.getId()]
     }
-  
+
     // Create or update the record
-    this.airtableBase.base("Users")
+    this.airtableBase
+      .base("Users")
       .select({
         view: "Grid view",
         filterByFormula: `{Email}='${email}'`,
@@ -178,11 +181,13 @@ export class AirtableService {
         }
         if (records.length > 0) {
           const user = records[0]
-          this.airtableBase.base("Users").update(user.id, data, function(err, record) {
-            if (err) {
-              throw err
-            }
-          })
+          this.airtableBase
+            .base("Users")
+            .update(user.id, data, function(err, record) {
+              if (err) {
+                throw err
+              }
+            })
         } else {
           this.airtableBase.base("Users").create([
             {
@@ -262,9 +267,9 @@ export class AirtableService {
         fields: a[1],
       }
     })
-    const updatedRecords = await this.airtableBase.base("Physical Products").update(
-      formattedUpdateData
-    )
+    const updatedRecords = await this.airtableBase
+      .base("Physical Products")
+      .update(formattedUpdateData)
     return updatedRecords
   }
 
