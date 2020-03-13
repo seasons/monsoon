@@ -98,15 +98,11 @@ export class AirtableService {
         const airtableUserRecord = await this.utils.getAirtableUserRecordByUserEmail(
           userEmail
         )
-        const nextCleanersAirtableRecord = await this.utils.getAirtableLocationRecordBySlug(
-          process.env.NEXT_CLEANERS_AIRTABLE_SLUG
-        )
         const createData = [
           {
             fields: {
               ID: data.reservationNumber,
               User: [airtableUserRecord.id],
-              "Current Location": [nextCleanersAirtableRecord.id],
               Items: items.map(a => a.id),
               Shipped: false,
               Status: "New",
@@ -149,7 +145,7 @@ export class AirtableService {
       "First Name": firstName,
       "Last Name": lastName,
     }
-    for (let key in fields) {
+    for (const key in fields) {
       if (this.utils.keyMap[key]) {
         data[this.utils.keyMap[key]] = fields[key]
       }
