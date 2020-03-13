@@ -38,9 +38,6 @@ export const syncBrands = async (cliProgressBar?) => {
 
       const slug = slugify(name).toLowerCase()
 
-      if (slug === "striped-mohair-cardigan-yellow") {
-        console.log("yo")
-      }
       const data = {
         slug,
         name,
