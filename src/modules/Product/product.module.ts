@@ -13,6 +13,7 @@ import { PhysicalProductService } from "./services/physicalProduct.utils.service
 import { ProductVariantService } from "./services/productVariant.service"
 import { AirtableModule } from "../Airtable/airtable.module"
 import { ReservationUtilsService } from "./services/reservation.utils.service"
+import { ReservationFeedbackService } from "./services/reservationFeedback.service"
 import { ReservationService } from "./services/reservation.service"
 import { EmailModule } from "../Email/email.module"
 import { ShippingModule } from "../Shipping/shipping.module"
@@ -33,6 +34,7 @@ import { BagService } from "./services/bag.service"
     PhysicalProductService,
     ProductVariantService,
     ReservationService,
+    ReservationFeedbackService,
     ReservationUtilsService,
     ProductFieldsResolver,
     ProductMutationsResolver,
@@ -42,4 +44,4 @@ import { BagService } from "./services/bag.service"
     ProductVariantMutationsResolver,
   ],
 })
-export class ProductModule {}
+export class ProductModule { }

@@ -477,7 +477,7 @@ type ProductVariantWant {
 type ReservationFeedback {
   id: ID! @id
   comment: String
-  feedbacks: [ProductVariantFeedback!]!
+  feedbacks: [ProductVariantFeedback!]! @relation(link: TABLE)
   rating: Rating
   user: User!
 }
@@ -485,8 +485,8 @@ type ReservationFeedback {
 type ProductVariantFeedback {
   id: ID! @id
   isCompleted: Boolean!
-  questions: [ProductVariantFeedbackQuestion!]!
-  reservationFeedback: ReservationFeedback! @relation(link: TABLE)
+  questions: [ProductVariantFeedbackQuestion!]! @relation(link: TABLE)
+  reservationFeedback: ReservationFeedback!
   variant: ProductVariant!
 }
 
@@ -496,5 +496,5 @@ type ProductVariantFeedbackQuestion {
   question: String!
   responses: [String!] @scalarList(strategy: RELATION)
   type: QuestionType!
-  variantFeedback: ProductVariantFeedback! @relation(link: TABLE)
+  variantFeedback: ProductVariantFeedback!
 }

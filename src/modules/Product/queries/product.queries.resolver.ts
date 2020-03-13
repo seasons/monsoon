@@ -1,13 +1,16 @@
 import { Query, Resolver, Args, Info } from "@nestjs/graphql"
 import { ProductService } from "../services/product.service"
+import { ReservationFeedbackService } from "../services/reservationFeedback.service"
 import { DBService } from "../../../prisma/db.service"
+import { User } from "../../../nest_decorators"
 
 @Resolver("Product")
 export class ProductQueriesResolver {
   constructor(
     private readonly db: DBService,
-    private readonly productService: ProductService
-  ) {}
+    private readonly productService: ProductService,
+    private readonly reservationFeedbackService: ReservationFeedbackService,
+  ) { }
 
   @Query()
   async product(@Args() args, @Info() info) {
@@ -37,5 +40,10 @@ export class ProductQueriesResolver {
   @Query()
   async categories(@Args() args, @Info() info) {
     return await this.db.query.categories(args, info)
+  }
+
+  @Query()
+  async reservationFeedback(@User() user) {
+    return await this.reservationFeedbackService.getReservationFeedback(user)
   }
 }
