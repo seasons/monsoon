@@ -7,9 +7,10 @@ import { MeFieldsResolver } from "./fields/me.fields"
 import { CustomerService } from "./services/customer.service"
 import { CustomerMutationsResolver } from "./mutations/customer.mutations"
 import { AirtableModule } from "../Airtable/airtable.module"
+import { ShippingModule } from "../Shipping/shipping.module"
 
 @Module({
-  imports: [AirtableModule, PrismaModule],
+  imports: [AirtableModule, PrismaModule, ShippingModule],
   providers: [
     AuthService,
     CustomerService,
@@ -18,6 +19,6 @@ import { AirtableModule } from "../Airtable/airtable.module"
     AuthMutationsResolver,
     CustomerMutationsResolver
   ],
-  exports: [AuthService],
+  exports: [AuthService, CustomerService],
 })
 export class UserModule {}

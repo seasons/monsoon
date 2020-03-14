@@ -78,6 +78,23 @@ export class ShippingService {
     }, shippingBagWeight)
   }
 
+  async shippoValidateAddress(address) {
+    const result = await shippo.address.create({
+      ...address,
+      country: "US",
+      validate: true,
+    })
+  
+    const validationResults = result.validation_results
+    const isValid = result.validation_results.is_valid
+    const message = validationResults?.messages?.[0]
+    return {
+      isValid,
+      code: message?.code,
+      text: message?.text,
+    }
+  }
+
   private async calcTotalRetailPriceFromProductVariantIDs(
     itemIDs: string[]
   ): Promise<number> {
