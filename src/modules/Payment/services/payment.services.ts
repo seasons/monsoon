@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common"
-import { DBService } from "../../../prisma/DB.service"
+import { DBService } from "../../../prisma/db.service"
 import chargebee from "chargebee"
 
 @Injectable()
@@ -12,9 +12,8 @@ export class PaymentService {
     email,
     firstName,
     lastName,
-    phoneNumber,
+    phoneNumber
   ) {
-
     // translate the passed planID into a chargebee-readable version
     let chargebeePlanId
     if (planId === "AllAccess") {
@@ -53,7 +52,5 @@ export class PaymentService {
     }).catch(error => {
       throw new Error(JSON.stringify(error))
     })
-
   }
-
 }

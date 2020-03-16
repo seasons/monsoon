@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common"
-import { DBService } from "../../../prisma/DB.service"
+import { DBService } from "../../../prisma/db.service"
 import { BrandOrderByInput } from "../../../prisma"
 import { PrismaClientService } from "../../../prisma/client.service"
 
@@ -19,29 +19,31 @@ export class ProductUtilsService {
     if (sizes && sizes.length > 0) {
       where.variants_some = { size_in: sizes }
     }
-  
+
     // If client wants to sort by name, we will assume that they
     // want to sort by brand name as well
     if (orderBy.includes("name_")) {
       return await this.productsAlphabetically(category, orderBy, sizes)
     }
-  
+
     const filters = await this.filtersForCategory(args)
-  
+
     return {
       orderBy,
       where,
       ...filters,
     }
   }
-  
+
   private async filtersForCategory(args) {
     if (args.category && args.category !== "all") {
-      const category = await this.prisma.client.category({ slug: args.category })
+      const category = await this.prisma.client.category({
+        slug: args.category,
+      })
       const children = await this.prisma.client
         .category({ slug: args.category })
         .children()
-  
+
       return children.length > 0
         ? {
             where: {
