@@ -145,6 +145,6 @@ describe("Reservation Service", () => {
       expect(returnData.products.map(a => a.productVariant.id).sort()).toEqual(
         productVariantsToReserve.sort()
       )
-    }, 30000)
+    }, 50000)
   })
 })
