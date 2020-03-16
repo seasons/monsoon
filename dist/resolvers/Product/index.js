@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const isSaved_1 = require("./queries/isSaved");
-const checkItemsAvailability_1 = require("./mutations/checkItemsAvailability");
-const reserveItems_1 = require("./mutations/reserveItems");
+var isSaved_1 = require("./queries/isSaved");
+var checkItemsAvailability_1 = require("./mutations/checkItemsAvailability");
+var reserveItems_1 = require("./mutations/reserveItems");
 exports.Product = {
     isSaved: isSaved_1.isSaved,
 };

@@ -1,25 +1,25 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.emails = {
-    reservationReturnConfirmationData: (reservationNumber, itemsReturned, userEmail) => {
+    reservationReturnConfirmationData: function (reservationNumber, itemsReturned, userEmail) {
         return {
             email: {
-                subject: `Reservation #${reservationNumber} return processed`,
+                subject: "Reservation #" + reservationNumber + " return processed",
                 body: {
                     paragraphs: [
                         {
-                            html: `Items returned: ${itemsReturned}<br></br>User: ${userEmail}`,
+                            html: "Items returned: " + itemsReturned + "<br></br>User: " + userEmail,
                         },
                         {
-                            html: `Please confirm that the reservation was processed as expected. ` +
-                                `If anything looks wrong, please alert a developer.`,
+                            html: "Please confirm that the reservation was processed as expected. " +
+                                "If anything looks wrong, please alert a developer.",
                         },
                     ],
                 },
             },
         };
     },
-    reservationConfirmationData: (reservationNumber, reservedItems, returnDateFormatted) => ({
+    reservationConfirmationData: function (reservationNumber, reservedItems, returnDateFormatted) { return ({
         email: {
             body: {
                 paragraphs: [
@@ -31,13 +31,13 @@ exports.emails = {
             prefooter: {
                 paragraphs: [
                     {
-                        html: `Please return your items no later than ${returnDateFormatted}.`,
+                        html: "Please return your items no later than " + returnDateFormatted + ".",
                     },
-                    { html: `Here's what you'll need to do:` },
+                    { html: "Here's what you'll need to do:" },
                     {
-                        html: `<ol style="margin:0px"><li>Place the items you’re returning into your bag - hangers included!</li>` +
-                            `<li>Insert the return shipping label into the pouch on the outside of the bag.</li>` +
-                            `<li>Drop off at your closest UPS pick up location.</li></ol>`,
+                        html: "<ol style=\"margin:0px\"><li>Place the items you\u2019re returning into your bag - hangers included!</li>" +
+                            "<li>Insert the return shipping label into the pouch on the outside of the bag.</li>" +
+                            "<li>Drop off at your closest UPS pick up location.</li></ol>",
                     },
                     {
                         html: "Once we’ve received and processed your items, we’ll send you an email " +
@@ -45,36 +45,36 @@ exports.emails = {
                             " This typically takes about 2-3 business days.",
                     },
                     {
-                        html: `If you have any questions, reach out to ${process.env.MAIN_CONTACT_EMAIL}`,
+                        html: "If you have any questions, reach out to " + process.env.MAIN_CONTACT_EMAIL,
                     },
                 ],
             },
             title: "We've got your order",
-            reservedItems,
-            subject: `Order #${reservationNumber} | Your Reservation is Confirmed`,
+            reservedItems: reservedItems,
+            subject: "Order #" + reservationNumber + " | Your Reservation is Confirmed",
         },
-    }),
-    completeAccountData: (firstName, url) => {
+    }); },
+    completeAccountData: function (firstName, url) {
         return {
             email: {
                 body: {
                     paragraphs: [
                         {
-                            html: `Hey ${firstName}, thanks for waiting. We're ready for you. ` +
-                                `Tap the button below to choose your membership plan, get the beta app and start reserving.`,
+                            html: "Hey " + firstName + ", thanks for waiting. We're ready for you. " +
+                                "Tap the button below to choose your membership plan, get the beta app and start reserving.",
                         },
                         {
-                            html: `Heads up -- due to demand, we may need to give your spot to someone` +
-                                ` else if you don't choose your plan within the next 48 hours.`,
+                            html: "Heads up -- due to demand, we may need to give your spot to someone" +
+                                " else if you don't choose your plan within the next 48 hours.",
                         },
                         { html: "Thanks,<br>The Seasons Team" },
                     ],
-                    button: { text: "Choose plan", url },
+                    button: { text: "Choose plan", url: url },
                 },
                 prefooter: {
                     paragraphs: [
                         {
-                            html: `If you have any questions, reach out to ${process.env.MAIN_CONTACT_EMAIL}.`,
+                            html: "If you have any questions, reach out to " + process.env.MAIN_CONTACT_EMAIL + ".",
                         },
                     ],
                 },
@@ -83,14 +83,14 @@ exports.emails = {
             },
         };
     },
-    freeToReserveData: () => {
+    freeToReserveData: function () {
         return {
             email: {
                 body: {
                     paragraphs: [
                         {
-                            html: `Good news! Your items made it back to Seasons HQ and we've reset your bag.` +
-                                ` You can now place a new reservation`,
+                            html: "Good news! Your items made it back to Seasons HQ and we've reset your bag." +
+                                " You can now place a new reservation",
                         },
                         {
                             html: "If you have any questions, feel free to reply to this e-mail.",
@@ -102,29 +102,29 @@ exports.emails = {
             },
         };
     },
-    welcomeToSeasonsData: firstName => {
+    welcomeToSeasonsData: function (firstName) {
         return {
             email: {
                 body: {
                     paragraphs: [
                         {
-                            html: `Hey ${firstName}, thank you so much for signing up. We're excited ` +
-                                `you're here. As a Founding Member, you'll be the first to know about` +
-                                ` exclusive features, products and restocks.`,
+                            html: "Hey " + firstName + ", thank you so much for signing up. We're excited " +
+                                "you're here. As a Founding Member, you'll be the first to know about" +
+                                " exclusive features, products and restocks.",
                         },
                         {
-                            html: `We're still actively working on the beta app. If you have any ideas` +
-                                ` or thoughts about the service, give us your feedback! Good or bad.` +
-                                ` Just write to ${process.env.MAIN_CONTACT_EMAIL}`,
+                            html: "We're still actively working on the beta app. If you have any ideas" +
+                                " or thoughts about the service, give us your feedback! Good or bad." +
+                                (" Just write to " + process.env.MAIN_CONTACT_EMAIL),
                         },
                         {
                             html: '<b style="color:#000000">How to install the app and reserve your first three pieces</b>',
                         },
                         {
-                            html: `<ol><li>View this e-mail on your iOS device.</li><li>If you don\'t` +
-                                ` already have it, download the <a href="${process.env.TESTFLIGHT_URL}">testflight app</a>.` +
-                                `</li><li><a href="${process.env.TESTFLIGHT_URL}">Click here</a> to install` +
-                                ` the seasons app on testflight.</li><li>Login and start reserving!</li></ol>`,
+                            html: "<ol><li>View this e-mail on your iOS device.</li><li>If you don't" +
+                                (" already have it, download the <a href=\"" + process.env.TESTFLIGHT_URL + "\">testflight app</a>.") +
+                                ("</li><li><a href=\"" + process.env.TESTFLIGHT_URL + "\">Click here</a> to install") +
+                                " the seasons app on testflight.</li><li>Login and start reserving!</li></ol>",
                         },
                     ],
                 },
@@ -133,33 +133,36 @@ exports.emails = {
             },
         };
     },
-    returnReminderData: ({ name, returnDate }) => ({
-        email: {
-            body: {
-                paragraphs: [
-                    { html: `Hey ${name}!<br><br>It's time to return your items.` },
-                    {
-                        html: `Please <b>drop off</b> your bag no later than <b>${returnDate}</b>. Once we've received and processed your items, we'll send you an email confirmation and your bag will be reset for you to place your next order! This typically takes about 2-3 business days.`,
-                    },
-                    { html: `As a reminder, here's what you need to do:` },
-                    {
-                        html: `<ol style="margin:0px"><li>Place the items you’re returning into your bag - hangers included!</li>` +
-                            `<li>Insert the return shipping label into the pouch on the outside of the bag.</li>` +
-                            `<li>Drop off at your closest UPS pick up location.</li></ol>`,
-                    },
-                    { html: "Thanks,<br>The Seasons Team" },
-                ],
+    returnReminderData: function (_a) {
+        var name = _a.name, returnDate = _a.returnDate;
+        return ({
+            email: {
+                body: {
+                    paragraphs: [
+                        { html: "Hey " + name + "!<br><br>It's time to return your items." },
+                        {
+                            html: "Please <b>drop off</b> your bag no later than <b>" + returnDate + "</b>. Once we've received and processed your items, we'll send you an email confirmation and your bag will be reset for you to place your next order! This typically takes about 2-3 business days.",
+                        },
+                        { html: "As a reminder, here's what you need to do:" },
+                        {
+                            html: "<ol style=\"margin:0px\"><li>Place the items you\u2019re returning into your bag - hangers included!</li>" +
+                                "<li>Insert the return shipping label into the pouch on the outside of the bag.</li>" +
+                                "<li>Drop off at your closest UPS pick up location.</li></ol>",
+                        },
+                        { html: "Thanks,<br>The Seasons Team" },
+                    ],
+                },
+                prefooter: {
+                    paragraphs: [
+                        {
+                            html: "If you have any questions, reach out to " + process.env.MAIN_CONTACT_EMAIL + ".",
+                        },
+                    ],
+                },
+                title: "It's time to return your items",
+                subject: "It's time to return your items",
             },
-            prefooter: {
-                paragraphs: [
-                    {
-                        html: `If you have any questions, reach out to ${process.env.MAIN_CONTACT_EMAIL}.`,
-                    },
-                ],
-            },
-            title: "It's time to return your items",
-            subject: "It's time to return your items",
-        },
-    }),
+        });
+    },
 };
 //# sourceMappingURL=emails.js.map

@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const elasticsearch_1 = require("@elastic/elasticsearch");
-const { ELASTICSEARCH_URL, ELASTICSEARCH_USERNAME, ELASTICSEARCH_PASSWORD, } = process.env;
+var elasticsearch_1 = require("@elastic/elasticsearch");
+var _a = process.env, ELASTICSEARCH_URL = _a.ELASTICSEARCH_URL, ELASTICSEARCH_USERNAME = _a.ELASTICSEARCH_USERNAME, ELASTICSEARCH_PASSWORD = _a.ELASTICSEARCH_PASSWORD;
 exports.elasticsearch = !!ELASTICSEARCH_URL
     ? new elasticsearch_1.Client({
         node: ELASTICSEARCH_URL,

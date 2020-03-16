@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const auth_1 = require("../resolvers/Mutation/auth");
-exports.sendPushNotifications = () => {
+var auth_1 = require("../resolvers/Mutation/auth");
+exports.sendPushNotifications = function () {
     auth_1.beamsClient
         .publishToUsers(["kieran@seasons.nyc"], {
         apns: {
@@ -31,10 +31,10 @@ exports.sendPushNotifications = () => {
             },
         },
     })
-        .then(publishResponse => {
+        .then(function (publishResponse) {
         console.log("Just published:", publishResponse.publishId);
     })
-        .catch(error => {
+        .catch(function (error) {
         console.error("Error:", error);
     });
 };

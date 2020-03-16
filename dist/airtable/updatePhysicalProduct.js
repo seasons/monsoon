@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const config_1 = require("./config");
+var config_1 = require("./config");
 function updatePhysicalProduct(airtableID, fields) {
     config_1.base("Physical Products").update(airtableID, fields);
 }

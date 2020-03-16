@@ -8,31 +8,56 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const lodash_1 = require("lodash");
-const apollo_server_1 = require("apollo-server");
-const utils_1 = require("../../auth/utils");
+var lodash_1 = require("lodash");
+var apollo_server_1 = require("apollo-server");
+var utils_1 = require("../../auth/utils");
 function getPhysicalProductsWithReservationSpecificData(ctx, items) {
-    return __awaiter(this, void 0, void 0, function* () {
-        return yield ctx.db.query.physicalProducts({
-            where: {
-                productVariant: {
-                    id_in: items,
-                },
-            },
-        }, `{ 
-          id
-          seasonsUID
-          inventoryStatus 
-          productVariant { 
-              id 
-          } 
-      }`);
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, ctx.db.query.physicalProducts({
+                        where: {
+                            productVariant: {
+                                id_in: items,
+                            },
+                        },
+                    }, "{ \n          id\n          seasonsUID\n          inventoryStatus \n          productVariant { \n              id \n          } \n      }")];
+                case 1: return [2 /*return*/, _a.sent()];
+            }
+        });
     });
 }
 exports.getPhysicalProductsWithReservationSpecificData = getPhysicalProductsWithReservationSpecificData;
 function extractUniqueReservablePhysicalProducts(physicalProducts) {
-    return lodash_1.uniqBy(physicalProducts.filter(a => a.inventoryStatus === "Reservable"), b => b.productVariant.id);
+    return lodash_1.uniqBy(physicalProducts.filter(function (a) { return a.inventoryStatus === "Reservable"; }), function (b) { return b.productVariant.id; });
 }
 exports.extractUniqueReservablePhysicalProducts = extractUniqueReservablePhysicalProducts;
 function checkLastReservation(lastReservation) {
@@ -41,41 +66,57 @@ function checkLastReservation(lastReservation) {
             "Completed",
             "Cancelled",
         ].includes(lastReservation.status)) {
-        throw new apollo_server_1.ApolloError(`Last reservation has non-completed, non-cancelled status. Last Reservation number, status: ${lastReservation.reservationNumber}, ${lastReservation.status}`);
+        throw new apollo_server_1.ApolloError("Last reservation has non-completed, non-cancelled status. Last Reservation number, status: " + lastReservation.reservationNumber + ", " + lastReservation.status);
     }
 }
 exports.checkLastReservation = checkLastReservation;
 /* Returns [createdReservation, rollbackFunc] */
 function createPrismaReservation(prisma, reservationData) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const reservation = yield prisma.createReservation(reservationData);
-        const rollbackPrismaReservation = () => __awaiter(this, void 0, void 0, function* () {
-            yield prisma.deleteReservation({ id: reservation.id });
+    return __awaiter(this, void 0, void 0, function () {
+        var reservation, rollbackPrismaReservation;
+        var _this = this;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, prisma.createReservation(reservationData)];
+                case 1:
+                    reservation = _a.sent();
+                    rollbackPrismaReservation = function () { return __awaiter(_this, void 0, void 0, function () {
+                        return __generator(this, function (_a) {
+                            switch (_a.label) {
+                                case 0: return [4 /*yield*/, prisma.deleteReservation({ id: reservation.id })];
+                                case 1:
+                                    _a.sent();
+                                    return [2 /*return*/];
+                            }
+                        });
+                    }); };
+                    return [2 /*return*/, [reservation, rollbackPrismaReservation]];
+            }
         });
-        return [reservation, rollbackPrismaReservation];
     });
 }
 exports.createPrismaReservation = createPrismaReservation;
 function getReservedBagItems(ctx) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const customer = yield utils_1.getCustomerFromContext(ctx);
-        const reservedBagItems = yield ctx.db.query.bagItems({
-            where: {
-                customer: {
-                    id: customer.id,
-                },
-                status: "Reserved",
-            },
-        }, `{
-        id
-        status
-        position
-        saved
-        productVariant {
-          id
-        }
-    }`);
-        return reservedBagItems;
+    return __awaiter(this, void 0, void 0, function () {
+        var customer, reservedBagItems;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, utils_1.getCustomerFromContext(ctx)];
+                case 1:
+                    customer = _a.sent();
+                    return [4 /*yield*/, ctx.db.query.bagItems({
+                            where: {
+                                customer: {
+                                    id: customer.id,
+                                },
+                                status: "Reserved",
+                            },
+                        }, "{\n        id\n        status\n        position\n        saved\n        productVariant {\n          id\n        }\n    }")];
+                case 2:
+                    reservedBagItems = _a.sent();
+                    return [2 /*return*/, reservedBagItems];
+            }
+        });
     });
 }
 exports.getReservedBagItems = getReservedBagItems;

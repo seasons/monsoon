@@ -2,6 +2,7 @@ import {
   createPrismaCustomerForExistingUser,
   createPrismaUser,
   isLoggedIn,
+  getUserRequestObject,
 } from "../../auth/utils"
 import { createAuth0User } from "../../auth/createAuth0User"
 import { getAuth0UserAccessToken } from "../../auth/getAuth0UserAccessToken"
@@ -23,6 +24,16 @@ export const beamsClient: PushNotifications | null =
     : null
 
 export const auth = {
+  async beamsData(parent, args, ctx: Context) {
+    const { email } = await getUserRequestObject(ctx)
+    if (email) {
+      const beamsToken = beamsClient?.generateToken(email) as any
+      return {
+        beamsToken: beamsToken.token,
+        email,
+      }
+    }
+  },
   // The signup mutation signs up users with a "Customer" role.
   async signup(
     obj,

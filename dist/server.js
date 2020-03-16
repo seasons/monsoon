@@ -3,21 +3,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const schema_1 = require("./schema");
-const prisma_1 = require("./prisma");
-const prisma_binding_1 = require("prisma-binding");
-const analytics_node_1 = __importDefault(require("analytics-node"));
-const sentryIntegration_1 = require("./apollo/sentryIntegration");
-const analytics = new analytics_node_1.default(process.env.SEGMENT_MONSOON_WRITE_KEY);
-const defaultQuery = `{
-  products {
-    id
-    name
-    description
-    retailPrice
-  }
-}
-`;
+var schema_1 = require("./schema");
+var prisma_1 = require("./prisma");
+var prisma_binding_1 = require("prisma-binding");
+var analytics_node_1 = __importDefault(require("analytics-node"));
+var sentryIntegration_1 = require("./apollo/sentryIntegration");
+var analytics = new analytics_node_1.default(process.env.SEGMENT_MONSOON_WRITE_KEY);
+var defaultQuery = "{\n  products {\n    id\n    name\n    description\n    retailPrice\n  }\n}\n";
 exports.db = new prisma_binding_1.Prisma({
     typeDefs: "./src/prisma/prisma.graphql",
     endpoint: process.env.PRISMA_ENDPOINT || "http://localhost:4466",
@@ -25,16 +17,19 @@ exports.db = new prisma_binding_1.Prisma({
 });
 exports.serverOptions = {
     schema: schema_1.schema,
-    context: ({ req, res }) => ({
-        req,
-        res,
-        prisma: prisma_1.prisma,
-        db: exports.db,
-        /* track events on segment */
-        analytics,
-    }),
+    context: function (_a) {
+        var req = _a.req, res = _a.res;
+        return ({
+            req: req,
+            res: res,
+            prisma: prisma_1.prisma,
+            db: exports.db,
+            /* track events on segment */
+            analytics: analytics,
+        });
+    },
     introspection: true,
-    formatError: error => {
+    formatError: function (error) {
         console.log(error);
         return error;
     },

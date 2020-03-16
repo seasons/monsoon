@@ -2,13 +2,23 @@ import slugify from "slugify"
 import { prisma, BrandTier } from "../../prisma"
 import { isEmpty } from "lodash"
 import { getAllBrands } from "../utils"
-import { elasticsearch } from "../../search"
+import { makeSingleSyncFuncMultiBarAndProgressBarIfNeeded } from "./utils"
 
-export const syncBrands = async () => {
+export const syncBrands = async (cliProgressBar?) => {
   const records = await getAllBrands()
 
-  for (let record of records) {
+  const [
+    multibar,
+    _cliProgressBar,
+  ] = await makeSingleSyncFuncMultiBarAndProgressBarIfNeeded({
+    cliProgressBar,
+    numRecords: records.length,
+    modelName: "Brands",
+  })
+
+  for (const record of records) {
     try {
+      _cliProgressBar.increment()
       const { model } = record
 
       const {
@@ -55,9 +65,10 @@ export const syncBrands = async () => {
         Slug: slug,
       })
 
-      console.log(brand)
+      //   console.log(brand)
     } catch (e) {
       console.error(e)
     }
   }
+  multibar?.stop()
 }

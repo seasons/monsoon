@@ -7,19 +7,21 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const Sentry = __importStar(require("@sentry/node"));
+var Sentry = __importStar(require("@sentry/node"));
 Sentry.init({
     dsn: process.env.SENTRY_DSN,
 });
 exports.apolloServerSentryPlugin = {
     // For plugin definition see the docs: https://www.apollographql.com/docs/apollo-server/integrations/plugins/
     // This code was adapted from: https://gist.github.com/nodkz/d14b236d67251d2df5674cb446843732
-    requestDidStart() {
+    requestDidStart: function () {
         return {
-            didEncounterErrors(rc) {
-                Sentry.withScope(scope => {
-                    scope.addEventProcessor(event => Sentry.Handlers.parseRequest(event, rc.context.req));
-                    rc.errors.forEach(error => {
+            didEncounterErrors: function (rc) {
+                Sentry.withScope(function (scope) {
+                    scope.addEventProcessor(function (event) {
+                        return Sentry.Handlers.parseRequest(event, rc.context.req);
+                    });
+                    rc.errors.forEach(function (error) {
                         if (error.path || error.name !== "GraphQLError") {
                             scope.setExtras({
                                 path: error.path,
@@ -28,7 +30,7 @@ exports.apolloServerSentryPlugin = {
                         }
                         else {
                             scope.setExtras({});
-                            Sentry.captureMessage(`GraphQLWrongQuery: ${error.message}`);
+                            Sentry.captureMessage("GraphQLWrongQuery: " + error.message);
                         }
                     });
                 });

@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const prisma_1 = require("../prisma");
+var prisma_1 = require("../prisma");
 exports.Reservation = {
-    products(parent) {
+    products: function (parent) {
         return prisma_1.prisma
             .reservation({
             id: parent.id,

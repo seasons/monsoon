@@ -3,8 +3,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const express_jwt_1 = __importDefault(require("express-jwt"));
-const jwks_rsa_1 = __importDefault(require("jwks-rsa"));
+var express_jwt_1 = __importDefault(require("express-jwt"));
+var jwks_rsa_1 = __importDefault(require("jwks-rsa"));
 // Authentication middleware. When used, the
 // Access Token must exist and be verified against
 // the Auth0 JSON Web Key Set
@@ -16,13 +16,13 @@ exports.checkJwt = express_jwt_1.default({
         cache: true,
         rateLimit: true,
         jwksRequestsPerMinute: 5,
-        jwksUri: `https://${process.env.AUTH0_DOMAIN}/.well-known/jwks.json`,
+        jwksUri: "https://" + process.env.AUTH0_DOMAIN + "/.well-known/jwks.json",
     }),
     // Validate the audience and the issuer.
     credentialsRequired: false,
     audience: process.env.AUTH0_AUDIENCE,
-    issuer: `https://${process.env.AUTH0_DOMAIN}/`,
-    algorithms: [`RS256`],
+    issuer: "https://" + process.env.AUTH0_DOMAIN + "/",
+    algorithms: ["RS256"],
 });
 // For more information on how this works, see:
 // https://auth0.com/docs/quickstart/backend/nodejs#create-an-api

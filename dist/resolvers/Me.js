@@ -8,71 +8,141 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const lodash_1 = require("lodash");
-const utils_1 = require("../auth/utils");
+var lodash_1 = require("lodash");
+var utils_1 = require("../auth/utils");
 exports.Me = {
-    user: (parent, args, ctx) => __awaiter(void 0, void 0, void 0, function* () {
-        const { id } = yield utils_1.getUserRequestObject(ctx);
-        return ctx.prisma.user({ id });
-    }),
-    customer: (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
-        const customer = yield utils_1.getCustomerFromContext(ctx);
-        return yield ctx.db.query.customer({
-            where: { id: customer.id },
-        }, info);
-    }),
-    activeReservation: (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
-        // FIXME: Remove reservationWithStatus after we add status to the info object in bag in harvest
-        const customer = yield utils_1.getCustomerFromContext(ctx);
-        const reservationWithStatus = yield ctx.prisma
-            .customer({ id: customer.id })
-            .reservations({
-            orderBy: "createdAt_DESC",
+    user: function (parent, args, ctx) { return __awaiter(void 0, void 0, void 0, function () {
+        var id;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, utils_1.getUserRequestObject(ctx)];
+                case 1:
+                    id = (_a.sent()).id;
+                    return [2 /*return*/, ctx.prisma.user({ id: id })];
+            }
         });
-        const reservations = yield ctx.db.query.reservations({
-            where: {
-                customer: {
-                    id: customer.id,
-                },
-            },
-            orderBy: "createdAt_DESC",
-        }, info);
-        const latestReservationWithStatus = lodash_1.head(reservationWithStatus);
-        const latestReservation = lodash_1.head(reservations);
-        if (latestReservation &&
-            latestReservationWithStatus &&
-            !["Completed", "Cancelled"].includes(latestReservationWithStatus.status)) {
-            return latestReservation;
-        }
-        return null;
-    }),
-    bag(parent, args, ctx, info) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const customer = yield utils_1.getCustomerFromContext(ctx);
-            const bagItems = yield ctx.db.query.bagItems({
-                where: {
-                    customer: {
-                        id: customer.id,
-                    },
-                    saved: false,
-                },
-            }, info);
-            return bagItems;
+    }); },
+    customer: function (parent, args, ctx, info) { return __awaiter(void 0, void 0, void 0, function () {
+        var customer;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, utils_1.getCustomerFromContext(ctx)];
+                case 1:
+                    customer = _a.sent();
+                    return [4 /*yield*/, ctx.db.query.customer({
+                            where: { id: customer.id },
+                        }, info)];
+                case 2: return [2 /*return*/, _a.sent()];
+            }
+        });
+    }); },
+    activeReservation: function (parent, args, ctx, info) { return __awaiter(void 0, void 0, void 0, function () {
+        var customer, reservationWithStatus, reservations, latestReservationWithStatus, latestReservation;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, utils_1.getCustomerFromContext(ctx)];
+                case 1:
+                    customer = _a.sent();
+                    return [4 /*yield*/, ctx.prisma
+                            .customer({ id: customer.id })
+                            .reservations({
+                            orderBy: "createdAt_DESC",
+                        })];
+                case 2:
+                    reservationWithStatus = _a.sent();
+                    return [4 /*yield*/, ctx.db.query.reservations({
+                            where: {
+                                customer: {
+                                    id: customer.id,
+                                },
+                            },
+                            orderBy: "createdAt_DESC",
+                        }, info)];
+                case 3:
+                    reservations = _a.sent();
+                    latestReservationWithStatus = lodash_1.head(reservationWithStatus);
+                    latestReservation = lodash_1.head(reservations);
+                    if (latestReservation &&
+                        latestReservationWithStatus &&
+                        !["Completed", "Cancelled"].includes(latestReservationWithStatus.status)) {
+                        return [2 /*return*/, latestReservation];
+                    }
+                    return [2 /*return*/, null];
+            }
+        });
+    }); },
+    bag: function (parent, args, ctx, info) {
+        return __awaiter(this, void 0, void 0, function () {
+            var customer, bagItems;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, utils_1.getCustomerFromContext(ctx)];
+                    case 1:
+                        customer = _a.sent();
+                        return [4 /*yield*/, ctx.db.query.bagItems({
+                                where: {
+                                    customer: {
+                                        id: customer.id,
+                                    },
+                                    saved: false,
+                                },
+                            }, info)];
+                    case 2:
+                        bagItems = _a.sent();
+                        return [2 /*return*/, bagItems];
+                }
+            });
         });
     },
-    savedItems(parent, args, ctx, info) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const customer = yield utils_1.getCustomerFromContext(ctx);
-            const savedItems = yield ctx.db.query.bagItems({
-                where: {
-                    customer: {
-                        id: customer.id,
-                    },
-                    saved: true,
-                },
-            }, info);
-            return savedItems;
+    savedItems: function (parent, args, ctx, info) {
+        return __awaiter(this, void 0, void 0, function () {
+            var customer, savedItems;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, utils_1.getCustomerFromContext(ctx)];
+                    case 1:
+                        customer = _a.sent();
+                        return [4 /*yield*/, ctx.db.query.bagItems({
+                                where: {
+                                    customer: {
+                                        id: customer.id,
+                                    },
+                                    saved: true,
+                                },
+                            }, info)];
+                    case 2:
+                        savedItems = _a.sent();
+                        return [2 /*return*/, savedItems];
+                }
+            });
         });
     },
 };

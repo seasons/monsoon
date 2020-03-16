@@ -48,16 +48,21 @@ export const bag = {
   async removeFromBag(obj, { item, saved }, ctx: Context, info) {
     const customer = await getCustomerFromContext(ctx)
 
-    const bagItems = await ctx.prisma.bagItems({
-      where: {
-        customer: {
-          id: customer.id,
-        },
-        productVariant: {
-          id: item,
-        },
-        saved,
+    const whereData = {
+      customer: {
+        id: customer.id,
       },
+      productVariant: {
+        id: item,
+      },
+    } as any
+
+    if (typeof saved === "boolean") {
+      whereData.saved = saved
+    }
+
+    const bagItems = await ctx.prisma.bagItems({
+      where: whereData,
     })
     const bagItem = head(bagItems)
 

@@ -263,8 +263,8 @@ type Product {
   externalURL: String
   images: Json!
   modelHeight: Int
-  modelSize: Size @relation(name: "ProductModelSize")
   retailPrice: Int
+  modelSize: Size @relation(name: "ProductModelSize")
   color: Color! @relation(name: "ProductPrimaryColor")
   secondaryColor: Color @relation(name: "ProductSecondaryColor")
   tags: Json
@@ -286,7 +286,6 @@ type ProductVariant {
   id: ID! @id
   sku: String @unique
   color: Color!
-  size: LetterSize
   internalSize: Size @relation(name: "ProductVariantSize")
   manufacturerSizes: [Size!] @relation(name: "ProductVariantManufacturerSize")
   weight: Float
@@ -306,7 +305,7 @@ type ProductVariant {
 type PhysicalProduct {
   id: ID! @id
   seasonsUID: String! @unique
-  location: Location!
+  location: Location
   productVariant: ProductVariant!
   inventoryStatus: InventoryStatus!
   productStatus: PhysicalProductStatus!
@@ -486,6 +485,7 @@ type TopSize {
   shoulder: Float
   chest: Float
   neck: Float
+  length: Float
 }
 
 type BottomSize {
@@ -495,11 +495,14 @@ type BottomSize {
   waist: Float
   rise: Float
   hem: Float
+  inseam: Float
 }
 
 type Size {
   id: ID! @id
+  slug: String! @unique
   productType: ProductType
   top: TopSize
   bottom: BottomSize
+  display: String!
 }

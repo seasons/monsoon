@@ -2,12 +2,24 @@ import slugify from "slugify"
 import { prisma } from "../../prisma"
 import { isEmpty } from "lodash"
 import { getAllProducts, getAllHomepageProductRails } from "../utils"
+import { makeSingleSyncFuncMultiBarAndProgressBarIfNeeded } from "./utils"
 
-export const syncHomepageProductRails = async () => {
+export const syncHomepageProductRails = async (cliProgressBar?) => {
   const records = await getAllHomepageProductRails()
   const allProducts = await getAllProducts()
 
-  for (let record of records) {
+  const [
+    multibar,
+    _cliProgressBar,
+  ] = await makeSingleSyncFuncMultiBarAndProgressBarIfNeeded({
+    cliProgressBar,
+    numRecords: allProducts.length,
+    modelName: "Products",
+  })
+
+  for (const record of records) {
+    _cliProgressBar.increment()
+
     try {
       const { model } = record
       const products = allProducts.findMultipleByIds(model.products)
@@ -27,7 +39,7 @@ export const syncHomepageProductRails = async () => {
         name,
       }
 
-      const homepageProductRail = await prisma.upsertHomepageProductRail({
+      await prisma.upsertHomepageProductRail({
         where: {
           slug,
         },
@@ -41,10 +53,10 @@ export const syncHomepageProductRails = async () => {
       await record.patchUpdate({
         Slug: slug,
       })
-
-      console.log(homepageProductRail)
     } catch (e) {
       console.error(e)
     }
   }
+
+  multibar?.stop()
 }

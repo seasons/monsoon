@@ -1,11 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const syncLocations_1 = require("./syncLocations");
-const syncModels_1 = require("./syncModels");
-const syncColors_1 = require("./syncColors");
-const syncBrands_1 = require("./syncBrands");
-const _1 = require(".");
-exports.getNumLinks = (modelName) => {
+var syncLocations_1 = require("./syncLocations");
+var syncModels_1 = require("./syncModels");
+var syncColors_1 = require("./syncColors");
+var syncBrands_1 = require("./syncBrands");
+var _1 = require(".");
+exports.getNumLinks = function (modelName) {
     switch (modelName) {
         case "Colors":
             return syncColors_1.getNumLinksColors();
