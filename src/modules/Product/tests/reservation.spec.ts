@@ -64,9 +64,9 @@ describe("Reservation Service", () => {
       let newCustomer = await prismaService.client.createCustomer({
         user: {
           create: {
-            email: `faiyam+${Date.now()}@seasons.nyc`,
-            firstName: "Faiyam",
-            lastName: "Rahman",
+            email: `membership+${Date.now()}@seasons.nyc`,
+            firstName: "Sam",
+            lastName: "Johnson",
             role: "Customer",
             auth0Id: `auth|${Date.now()}`,
           },
@@ -76,13 +76,13 @@ describe("Reservation Service", () => {
           create: {
             shippingAddress: {
               create: {
-                slug: `faiyam-rahman-sq${Date.now()}`,
-                name: "Faiyam Rahman",
+                slug: `sam-johnson-sq${Date.now()}`,
+                name: "Sam Johnson",
                 company: "",
-                address1: "43 The Intervale",
-                city: "Roslyn Estates",
+                address1: "138 Mulberry St",
+                city: "New York",
                 state: "New York",
-                zipCode: "11576",
+                zipCode: "10013",
                 locationType: "Customer",
               },
             },
