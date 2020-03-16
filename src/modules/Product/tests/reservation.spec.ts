@@ -37,7 +37,7 @@ describe("Reservation Service", () => {
     reservationService = new ReservationService(
       dbService,
       prismaService,
-      new ProductUtilsService(dbService),
+      new ProductUtilsService(dbService, prismaService),
       new ProductVariantService(
         prismaService,
         physProdService,
@@ -52,9 +52,6 @@ describe("Reservation Service", () => {
   })
 
   describe("reserveItems", () => {
-    // TODO: Fill in create prisma customer data
-    // TODO: Get product variant ids of three reservable product variants
-    //   const returnData = reservationService.reserveItems()
     it("should create a reservation", async () => {
       const reservableProductVariants = await prismaService.client.productVariants(
         {
