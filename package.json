@@ -107,6 +107,7 @@
     "ts-node": "^8.4.1",
     "tslint": "^6.0.0",
     "typescript": "^3.7.5",
+    "v8-to-istanbul": "^4.1.2",
     "zipcodes": "^8.0.0"
   },
   "devDependencies": {
