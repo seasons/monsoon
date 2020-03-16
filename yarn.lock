@@ -2300,6 +2300,11 @@
     "@types/koa" "*"
     graphql "^14.5.3"
 
+"@types/graphql@14.0.7":
+  version "14.0.7"
+  resolved "https://registry.yarnpkg.com/@types/graphql/-/graphql-14.0.7.tgz#daa09397220a68ce1cbb3f76a315ff3cd92312f6"
+  integrity sha512-BoLDjdvLQsXPZLJux3lEZANwGr3Xag56Ngy0U3y8uoRSDdeLcn43H3oBcgZlnd++iOQElBpaRVDHPzEDekyvXQ==
+
 "@types/http-assert@*":
   version "1.5.1"
   resolved "https://registry.yarnpkg.com/@types/http-assert/-/http-assert-1.5.1.tgz#d775e93630c2469c2f980fc27e3143240335db3b"
@@ -12466,7 +12471,7 @@ rxjs@6.3.3:
   dependencies:
     tslib "^1.9.0"
 
-rxjs@^6.1.0, rxjs@^6.4.0, rxjs@^6.5.3:
+rxjs@^6.0.0, rxjs@^6.1.0, rxjs@^6.4.0, rxjs@^6.5.3:
   version "6.5.4"
   resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-6.5.4.tgz#e0777fe0d184cec7872df147f303572d414e211c"
   integrity sha512-naMQXcgEo3csAEGvw/NydRA0fuS2nDZJiw1YUWFKU7aPPAPGZEsD4Iimit96qwCieH6y614MCLYwdkrWx7z/7Q==

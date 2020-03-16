@@ -92,8 +92,6 @@
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
     "path": "^0.12.7",
-    "postgraphile": "^4.4.3",
-    "postgraphile-apollo-server": "^0.1.1",
     "prisma": "^1.34.8",
     "prisma-binding": "^2.3.16",
     "prisma-client-lib": "^1.34.8",
@@ -118,6 +116,7 @@
     "@types/jest": "^24.0.24",
     "@types/luxon": "^1.21.0",
     "@types/node": "10.14.17",
+    "@types/graphql": "14.0.7",
     "apollo-server-testing": "^2.9.16",
     "babel-jest": "^24.9.0",
     "dotenv-cli": "1.4.0",
@@ -130,7 +129,8 @@
     "serverless-offline": "^5.10.1",
     "serverless-plugin-include-dependencies": "^3.2.1",
     "serverless-plugin-typescript": "1.1.7",
-    "yargs": "^15.1.0"
+    "yargs": "^15.1.0",
+    "rxjs": "^6.0.0"
   },
   "prettier": {
     "semi": false,
