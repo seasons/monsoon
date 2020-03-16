@@ -1,754 +1,217 @@
--- PRISMA: NUMBER OF PRODUCT VARIANTS WITH A COUNT PROFILE THAT DOESN'T MATCH THE STATUSES OF THE ATTACHED PHYSICAL PRODUCTS: 115
--- AIRTABLE: NUMBER OF PRODUCT VARIANTS WITH A COUNT PROFILE THAT DOESN'T MATCH THE STATUSES OF THE ATTACHED PHYSICAL PRODUCTS: 117
+yarn run v1.16.0
+$ node -r dotenv/config -r ts-node/register src/cron/airtableToPrismaHealthCheck.ts -- dotenv_config_path=.env.production
+/*********** REPORT ***********/
+--- PRODUCTS ON PRISMA BUT NOR AIRTABLE: 2
+--- PRODUCTS ON AIRTABLE BUT NOT PRISMA: 6
+DO PRODUCTS, PHYSICAL PRODUCTS, AND PRODUCT VARIANTS ALIGN IN NUMBER?
+--- PHYSICAL PRODUCTS ON PRISMA BUT NOT AIRTABLE: 0
+--- PHYSICAL PRODUCTS ON AIRTABLE BUT NOT PRISMA: 3
+--- PRODUCT VARIANTS ON PRISMA BUT NOT AIRTABLE: 0
+--- PRODUCT VARIANTS ON AIRTABLE BUT NOT PRISMA: 4
 
-PRISMA MISMATCHES
-{ sku: 'BLAN-BLK-SS-001',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'BLAN-BLK-SS-001-01', status: 'Reservable' } ] }
-{ sku: 'BLAN-BLK-MM-001',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'BLAN-BLK-MM-001-01', status: 'Reservable' } ] }
-{ sku: 'BLAN-BLK-LL-001',
-  counts: { total: 2, reservable: 0, reserved: 2, nonReservable: 0 },
-  physicalProducts:
-   [ { suid: 'BLAN-BLK-LL-001-02', status: 'Reservable' },
-     { suid: 'BLAN-BLK-LL-001-01', status: 'Reservable' } ] }
-{ sku: 'BURB-ORG-LL-001',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'BURB-ORG-LL-001-01', status: 'Reservable' } ] }
-{ sku: 'JOEL-RED-LL-004',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'JOEL-RED-LL-004-01', status: 'Reservable' } ] }
-{ sku: 'CAVE-BWN-SS-002',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'CAVE-BWN-SS-002-01', status: 'Reservable' } ] }
-{ sku: 'CDGS-BLK-SS-005',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'CDGS-BLK-SS-005-01', status: 'NonReservable' } ] }
-{ sku: 'ACNE-BLK-SS-001',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'ACNE-BLK-SS-001-01', status: 'Reservable' } ] }
-{ sku: 'ACNE-BLK-MM-001',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'ACNE-BLK-MM-001-01', status: 'Reservable' } ] }
-{ sku: 'DVNN-BLU-SS-004',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'DVNN-BLU-SS-004-01', status: 'Reservable' } ] }
-{ sku: 'PLTO-GRY-SS-001',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'PLTO-GRY-SS-001-01', status: 'Reservable' } ] }
-{ sku: 'BTWL-WTE-SS-001',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'BTWL-WTE-SS-001-01', status: 'Reservable' } ] }
-{ sku: 'GUCC-BLK-SS-002',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'GUCC-BLK-SS-002-01', status: 'Reservable' } ] }
-{ sku: 'AMBU-BLU-SS-002',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'AMBU-BLU-SS-002-01', status: 'Reservable' } ] }
-{ sku: 'AMBU-BLU-MM-002',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'AMBU-BLU-MM-002-01', status: 'Reservable' } ] }
-{ sku: 'PRDA-PNK-MM-001',
-  counts: { total: 1, reservable: 1, reserved: 0, nonReservable: 1 },
-  physicalProducts: [ { suid: 'PRDA-PNK-MM-001-01', status: 'NonReservable' } ] }
-{ sku: 'PRDA-PNK-LL-001',
-  counts: { total: 1, reservable: 1, reserved: 0, nonReservable: 1 },
-  physicalProducts: [ { suid: 'PRDA-PNK-LL-001-01', status: 'NonReservable' } ] }
-{ sku: 'YZY-BLK-SS-002',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'YZY-BLK-SS-002-01', status: 'Reservable' } ] }
-{ sku: 'YZY-BLK-MM-002',
-  counts: { total: 2, reservable: 0, reserved: 2, nonReservable: 0 },
-  physicalProducts:
-   [ { suid: 'YZY-BLK-MM-002-02', status: 'Reservable' },
-     { suid: 'YZY-BLK-MM-002-01', status: 'Reservable' } ] }
-{ sku: 'HEPR-WTE-SS-001',
-  counts: { total: 2, reservable: 1, reserved: 1, nonReservable: 1 },
-  physicalProducts:
-   [ { suid: 'HEPR-WTE-SS-001-01', status: 'NonReservable' },
-     { suid: 'HEPR-WTE-SS-001-02', status: 'Reserved' } ] }
-{ sku: 'DUVE-RED-MM-002',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'DUVE-RED-MM-002-01', status: 'Reservable' } ] }
-{ sku: 'MAMU-GRY-SS-001',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'MAMU-GRY-SS-001-01', status: 'Reservable' } ] }
-{ sku: 'PLSR-RED-SS-004',
-  counts: { total: 2, reservable: 1, reserved: 1, nonReservable: 0 },
-  physicalProducts:
-   [ { suid: 'PLSR-RED-SS-004-01', status: 'NonReservable' },
-     { suid: 'PLSR-RED-SS-004-02', status: 'Reservable' } ] }
-{ sku: 'STIS-GRN-LL-002',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'STIS-GRN-LL-002-01', status: 'Reservable' } ] }
-{ sku: 'ALIN-BLU-LL-001',
-  counts: { total: 2, reservable: 0, reserved: 2, nonReservable: 0 },
-  physicalProducts:
-   [ { suid: 'ALIN-BLU-LL-001-01', status: 'Reservable' },
-     { suid: 'ALIN-BLU-LL-001-02', status: 'Reservable' } ] }
-{ sku: 'CAVE-GRN-SS-001',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'CAVE-GRN-SS-001-01', status: 'Reservable' } ] }
-{ sku: 'CDGS-BLK-SS-001',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'CDGS-BLK-SS-001-01', status: 'Reservable' } ] }
-{ sku: 'AMIR-BLU-SS-002',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'AMIR-BLU-SS-002-01', status: 'Reservable' } ] }
-{ sku: 'CPFM-YLW-SS-001',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'CPFM-YLW-SS-001-01', status: 'Reservable' } ] }
-{ sku: 'CPFM-GRN-SS-002',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'CPFM-GRN-SS-002-01', status: 'Reservable' } ] }
-{ sku: 'CRGR-BLU-MM-001',
-  counts: { total: 2, reservable: 0, reserved: 2, nonReservable: 0 },
-  physicalProducts:
-   [ { suid: 'CRGR-BLU-MM-001-02', status: 'Reservable' },
-     { suid: 'CRGR-BLU-MM-001-01', status: 'Reservable' } ] }
-{ sku: 'CRGR-BLK-SS-002',
-  counts: { total: 2, reservable: 0, reserved: 2, nonReservable: 0 },
-  physicalProducts:
-   [ { suid: 'CRGR-BLK-SS-002-01', status: 'Reserved' },
-     { suid: 'CRGR-BLK-SS-002-02', status: 'Reservable' } ] }
-{ sku: 'CRGR-BLK-MM-002',
-  counts: { total: 2, reservable: 0, reserved: 2, nonReservable: 0 },
-  physicalProducts:
-   [ { suid: 'CRGR-BLK-MM-002-02', status: 'Reservable' },
-     { suid: 'CRGR-BLK-MM-002-01', status: 'Reservable' } ] }
-{ sku: 'ALDE-RED-SS-001',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'ALDE-RED-SS-001-01', status: 'Reservable' } ] }
-{ sku: 'ALDE-RED-MM-001',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'ALDE-RED-MM-001-01', status: 'Reservable' } ] }
-{ sku: 'ALDE-GRN-SS-002',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'ALDE-GRN-SS-002-01', status: 'Reservable' } ] }
-{ sku: 'BLRS-BWN-SS-001',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'BLRS-BWN-SS-001-01', status: 'Reservable' } ] }
-{ sku: 'ACNE-BLK-SS-003',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'ACNE-BLK-SS-003-01', status: 'Reservable' } ] }
-{ sku: 'ACNE-BLK-LL-003',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'ACNE-BLK-LL-003-01', status: 'Reservable' } ] }
-{ sku: 'DEVA-GRY-MM-001',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'DEVA-GRY-MM-001-01', status: 'Reservable' } ] }
-{ sku: 'DEVA-GRY-LL-001',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'DEVA-GRY-LL-001-01', status: 'Reservable' } ] }
-{ sku: 'STIS-BLK-MM-003',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'STIS-BLK-MM-003-01', status: 'Reservable' } ] }
-{ sku: 'STIS-GRN-SS-001',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'STIS-GRN-SS-001-01', status: 'Reservable' } ] }
-{ sku: 'JOEL-BLK-SS-001',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'JOEL-BLK-SS-001-01', status: 'Reservable' } ] }
-{ sku: 'YZY-BLK-SS-001',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'YZY-BLK-SS-001-01', status: 'NonReservable' } ] }
-{ sku: 'YZY-BLK-MM-001',
-  counts: { total: 2, reservable: 0, reserved: 2, nonReservable: 0 },
-  physicalProducts:
-   [ { suid: 'YZY-BLK-MM-001-01', status: 'Reservable' },
-     { suid: 'YZY-BLK-MM-001-02', status: 'Reservable' } ] }
-{ sku: 'JISA-BWN-SS-001',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'JISA-BWN-SS-001-01', status: 'Reservable' } ] }
-{ sku: 'OFFW-GRY-SS-001',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'OFFW-GRY-SS-001-01', status: 'Reservable' } ] }
-{ sku: 'VLKR-GRY-MM-003',
-  counts: { total: 2, reservable: 0, reserved: 2, nonReservable: 0 },
-  physicalProducts:
-   [ { suid: 'VLKR-GRY-MM-003-01', status: 'Reservable' },
-     { suid: 'VLKR-GRY-MM-003-02', status: 'Reservable' } ] }
-{ sku: 'VLKR-BWN-MM-002',
-  counts: { total: 2, reservable: 0, reserved: 2, nonReservable: 0 },
-  physicalProducts:
-   [ { suid: 'VLKR-BWN-MM-002-02', status: 'Reservable' },
-     { suid: 'VLKR-BWN-MM-002-01', status: 'Reservable' } ] }
-{ sku: 'VLKR-WTE-SS-001',
-  counts: { total: 2, reservable: 0, reserved: 2, nonReservable: 0 },
-  physicalProducts:
-   [ { suid: 'VLKR-WTE-SS-001-02', status: 'Reservable' },
-     { suid: 'VLKR-WTE-SS-001-01', status: 'Reservable' } ] }
-{ sku: 'CDGS-BLK-SS-006',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'CDGS-BLK-SS-006-01', status: 'Reservable' } ] }
-{ sku: 'CDGS-BWN-SS-009',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'CDGS-BWN-SS-009-01', status: 'Reservable' } ] }
-{ sku: 'CDGS-GRN-SS-008',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'CDGS-GRN-SS-008-01', status: 'Reservable' } ] }
-{ sku: 'ALST-BLK-MM-002',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'ALST-BLK-MM-002-01', status: 'Reservable' } ] }
-{ sku: 'ALST-BLK-SS-002',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'ALST-BLK-SS-002-01', status: 'Reservable' } ] }
-{ sku: 'ALST-BLK-MM-001',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'ALST-BLK-MM-001-01', status: 'Reservable' } ] }
-{ sku: 'ALST-BLK-SS-001',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'ALST-BLK-SS-001-01', status: 'Reservable' } ] }
-{ sku: 'ALDE-GRY-LL-003',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'ALDE-GRY-LL-003-01', status: 'Reservable' } ] }
-{ sku: 'SDAY-GRY-SS-002',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'SDAY-GRY-SS-002-01', status: 'Reservable' } ] }
-{ sku: 'LEVI-BLK-LL-001',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'LEVI-BLK-LL-001-01', status: 'Reservable' } ] }
-{ sku: 'CDGS-GRY-LL-004',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'CDGS-GRY-LL-004-01', status: 'Reservable' } ] }
-{ sku: 'CDGS-BLK-MM-003',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'CDGS-BLK-MM-003-01', status: 'Reservable' } ] }
-{ sku: 'CDGS-BLK-SS-003',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'CDGS-BLK-SS-003-01', status: 'Reservable' } ] }
-{ sku: 'ALST-BLK-LL-004',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'ALST-BLK-LL-004-01', status: 'Reservable' } ] }
-{ sku: 'ALST-BLK-MM-004',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'ALST-BLK-MM-004-01', status: 'Reservable' } ] }
-{ sku: 'ENGM-GRN-LL-001',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'ENGM-GRN-LL-001-01', status: 'Reservable' } ] }
-{ sku: 'SCAI-BWN-SS-002',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'SCAI-BWN-SS-002-01', status: 'Reservable' } ] }
-{ sku: 'ACNE-GRN-LL-006',
-  counts: { total: 1, reservable: 1, reserved: 0, nonReservable: 1 },
-  physicalProducts: [ { suid: 'ACNE-GRN-LL-006-01', status: 'NonReservable' } ] }
-{ sku: 'FOGD-PRP-MM-002',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'FOGD-PRP-MM-002-01', status: 'Reservable' } ] }
-{ sku: 'JOEL-GRY-LL-006',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'JOEL-GRY-LL-006-01', status: 'Reservable' } ] }
-{ sku: 'JOEL-GRY-SS-006',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'JOEL-GRY-SS-006-01', status: 'Reservable' } ] }
-{ sku: 'HEPR-YLW-SS-002',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'HEPR-YLW-SS-002-01', status: 'Reservable' } ] }
-{ sku: 'HEPR-YLW-LL-002',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'HEPR-YLW-LL-002-01', status: 'Reservable' } ] }
-{ sku: 'STIS-BLK-LL-008',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'STIS-BLK-LL-008-01', status: 'Reservable' } ] }
-{ sku: 'NOAH-BLK-XXL-001',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 1 },
-  physicalProducts: [ { suid: 'NOAH-BLK-XXL-001-01', status: 'Reserved' } ] }
-{ sku: 'AKOG-GRY-MM-003',
-  counts: { total: 1, reservable: 1, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'AKOG-GRY-MM-003-01', status: 'Reserved' } ] }
-{ sku: 'BRDE-GRN-SS-006',
-  counts: { total: 1, reservable: 1, reserved: 0, nonReservable: 1 },
-  physicalProducts: [ { suid: 'BRDE-GRN-SS-006-01', status: 'NonReservable' } ] }
-{ sku: 'BRDE-GRN-MM-006',
-  counts: { total: 1, reservable: 1, reserved: 0, nonReservable: 1 },
-  physicalProducts: [ { suid: 'BRDE-GRN-MM-006-01', status: 'NonReservable' } ] }
-{ sku: 'BRDE-GRN-LL-006',
-  counts: { total: 1, reservable: 1, reserved: 0, nonReservable: 1 },
-  physicalProducts: [ { suid: 'BRDE-GRN-LL-006-01', status: 'NonReservable' } ] }
-{ sku: 'BRDE-GRN-XL-006',
-  counts: { total: 1, reservable: 1, reserved: 0, nonReservable: 1 },
-  physicalProducts: [ { suid: 'BRDE-GRN-XL-006-01', status: 'NonReservable' } ] }
-{ sku: 'PRDA-BLK-MM-006',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'PRDA-BLK-MM-006-01', status: 'Reservable' } ] }
-{ sku: 'PRDA-BLK-LL-006',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'PRDA-BLK-LL-006-01', status: 'Reservable' } ] }
-{ sku: 'PRDA-BLK-XL-006',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { suid: 'PRDA-BLK-XL-006-01', status: 'Reservable' } ] }
-{ sku: 'CARH-BLK-MM-003',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { suid: 'CARH-BLK-MM-003-01', status: 'Reservable' } ] }
-{ sku: 'ALDE-GRN-MM-007',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { suid: 'ALDE-GRN-MM-007-01', status: 'Reservable' } ] }
-{ sku: 'NOAH-WTE-MM-005',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { suid: 'NOAH-WTE-MM-005-01', status: 'Reservable' } ] }
-{ sku: 'NOAH-BLK-LL-006',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { suid: 'NOAH-BLK-LL-006-01', status: 'Reservable' } ] }
-{ sku: 'NOAH-BLU-SS-008',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { suid: 'NOAH-BLU-SS-008-01', status: 'Reservable' } ] }
-{ sku: 'NOAH-BLK-SS-006',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { suid: 'NOAH-BLK-SS-006-01', status: 'Reservable' } ] }
-{ sku: 'NOAH-BWN-LL-007',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { suid: 'NOAH-BWN-LL-007-01', status: 'Reservable' } ] }
-{ sku: 'MONC-BLK-LL-003',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { suid: 'MONC-BLK-LL-003-01', status: 'Reservable' } ] }
-{ sku: 'NOAH-BLU-XL-008',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { suid: 'NOAH-BLU-XL-008-01', status: 'Reservable' } ] }
-{ sku: 'ENGM-BLK-SS-003',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { suid: 'ENGM-BLK-SS-003-01', status: 'Reservable' } ] }
-{ sku: 'NOAH-BLU-MM-008',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { suid: 'NOAH-BLU-MM-008-01', status: 'Reservable' } ] }
-{ sku: 'NOAH-BLU-LL-008',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { suid: 'NOAH-BLU-LL-008-01', status: 'Reservable' } ] }
-{ sku: 'NOAH-WTE-LL-005',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { suid: 'NOAH-WTE-LL-005-01', status: 'Reservable' } ] }
-{ sku: 'ALDE-GRN-MM-008',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { suid: 'ALDE-GRN-MM-008-01', status: 'Reservable' } ] }
-{ sku: 'CARH-BLK-SS-003',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { suid: 'CARH-BLK-SS-003-01', status: 'Reservable' } ] }
-{ sku: 'ENGM-BLK-XL-003',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { suid: 'ENGM-BLK-XL-003-01', status: 'Reservable' } ] }
-{ sku: 'ALDE-GRN-SS-007',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { suid: 'ALDE-GRN-SS-007-01', status: 'Reservable' } ] }
-{ sku: 'NOAH-BWN-XL-007',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { suid: 'NOAH-BWN-XL-007-01', status: 'Reservable' } ] }
-{ sku: 'CARH-BLK-XL-003',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { suid: 'CARH-BLK-XL-003-01', status: 'Reservable' } ] }
-{ sku: 'ENGM-BLK-LL-003',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { suid: 'ENGM-BLK-LL-003-01', status: 'Reservable' } ] }
-{ sku: 'NOAH-BWN-MM-007',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { suid: 'NOAH-BWN-MM-007-01', status: 'Reservable' } ] }
-{ sku: 'ALDE-GRN-LL-008',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { suid: 'ALDE-GRN-LL-008-01', status: 'Reservable' } ] }
-{ sku: 'ENGM-BLK-MM-003',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { suid: 'ENGM-BLK-MM-003-01', status: 'Reservable' } ] }
-{ sku: 'CARH-BLK-LL-003',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { suid: 'CARH-BLK-LL-003-01', status: 'Reservable' } ] }
-{ sku: 'NOAH-WTE-SS-005',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { suid: 'NOAH-WTE-SS-005-01', status: 'Reservable' } ] }
-{ sku: 'NOAH-WTE-XL-005',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { suid: 'NOAH-WTE-XL-005-01', status: 'Reservable' } ] }
-{ sku: 'ALDE-GRN-SS-008',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { suid: 'ALDE-GRN-SS-008-01', status: 'Reservable' } ] }
-{ sku: 'NOAH-BLK-XL-004',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { suid: 'NOAH-BLK-XL-004-01', status: 'Reservable' } ] }
-{ sku: 'NOAH-BLK-MM-004',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { suid: 'NOAH-BLK-MM-004-01', status: 'Reservable' } ] }
-{ sku: 'NOAH-BLK-SS-004',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { suid: 'NOAH-BLK-SS-004-01', status: 'Reservable' } ] }
-{ sku: 'NOAH-BLK-LL-004',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { suid: 'NOAH-BLK-LL-004-01', status: 'Reservable' } ] }
+DO PRODUCT VARIANT SKUS MATCH ON PRISMA AND AIRTABLE?
+-- MISMATCHED PRODUCT VARIANT SKUS BETWEEN PRISMA/AIRTABLE: 0
 
-  
-AIRTABLE MISMATCHES
-{ sku: 'YZY-BLK-SS-001',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'YZY-BLK-SS-001-01', status: 'Non Reservable' } ] }
-{ sku: 'AMBU-BLU-MM-002',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'AMBU-BLU-MM-002-01', status: 'Reservable' } ] }
-{ sku: 'GUCC-BLK-SS-002',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'GUCC-BLK-SS-002-01', status: 'Reservable' } ] }
-{ sku: 'ACNE-BLK-SS-003',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'ACNE-BLK-SS-003-01', status: 'Reservable' } ] }
-{ sku: 'BLRS-BWN-SS-001',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'BLRS-BWN-SS-001-01', status: 'Reservable' } ] }
-{ sku: 'CARH-BLK-MM-003',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'CARH-BLK-MM-003-01', status: 'Reservable' } ] }
-{ sku: 'HEVO-RED-SS-001',
-  counts: { total: 0, reservable: 1, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'HEVO-RED-SS-001-01', status: 'Non Reservable' } ] }
-{ sku: 'ALDE-GRN-MM-007',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'ALDE-GRN-MM-007-01', status: 'Reservable' } ] }
-{ sku: 'PRDA-PNK-MM-001',
-  counts: { total: 1, reservable: 1, reserved: 0, nonReservable: 1 },
-  physicalProducts: [ { SUID: 'PRDA-PNK-MM-001-01', status: 'Non Reservable' } ] }
-{ sku: 'DUVE-RED-MM-002',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'DUVE-RED-MM-002-01', status: 'Reservable' } ] }
-{ sku: 'NOAH-WTE-MM-005',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'NOAH-WTE-MM-005-01', status: 'Reservable' } ] }
-{ sku: 'BLAN-BLK-SS-001',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'BLAN-BLK-SS-001-01', status: 'Reservable' } ] }
-{ sku: 'CRGR-BLK-MM-002',
-  counts: { total: 2, reservable: 0, reserved: 2, nonReservable: 0 },
-  physicalProducts:
-   [ { SUID: 'CRGR-BLK-MM-002-01', status: 'Reservable' },
-     { SUID: 'CRGR-BLK-MM-002-02', status: 'Reservable' } ] }
-{ sku: 'ALDE-GRY-LL-003',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'ALDE-GRY-LL-003-01', status: 'Reservable' } ] }
-{ sku: 'NOAH-BLK-LL-006',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'NOAH-BLK-LL-006-01', status: 'Reservable' } ] }
-{ sku: 'NOAH-BLU-SS-008',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'NOAH-BLU-SS-008-01', status: 'Reservable' } ] }
-{ sku: 'ALST-BLK-LL-004',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'ALST-BLK-LL-004-01', status: 'Reservable' } ] }
-{ sku: 'ALST-BLK-MM-002',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'ALST-BLK-MM-002-01', status: 'Reservable' } ] }
-{ sku: 'ALDE-GRN-SS-002',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'ALDE-GRN-SS-002-01', status: 'Reservable' } ] }
-{ sku: 'AMBU-BLU-SS-002',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'AMBU-BLU-SS-002-01', status: 'Reservable' } ] }
-{ sku: 'ALST-BLK-SS-002',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'ALST-BLK-SS-002-01', status: 'Reservable' } ] }
-{ sku: 'NOAH-BLK-XL-004',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'NOAH-BLK-XL-004-01', status: 'Reservable' } ] }
-{ sku: 'VLKR-BWN-MM-002',
-  counts: { total: 2, reservable: 0, reserved: 2, nonReservable: 0 },
-  physicalProducts:
-   [ { SUID: 'VLKR-BWN-MM-002-01', status: 'Reservable' },
-     { SUID: 'VLKR-BWN-MM-002-02', status: 'Reservable' } ] }
-{ sku: 'NOAH-BLK-MM-004',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'NOAH-BLK-MM-004-01', status: 'Reservable' } ] }
-{ sku: 'ALST-BLK-SS-001',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'ALST-BLK-SS-001-01', status: 'Reservable' } ] }
-{ sku: 'NOAH-BLK-SS-006',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'NOAH-BLK-SS-006-01', status: 'Reservable' } ] }
-{ sku: 'SCAI-BWN-SS-002',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'SCAI-BWN-SS-002-01', status: 'Reservable' } ] }
-{ sku: 'NOAH-BWN-LL-007',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'NOAH-BWN-LL-007-01', status: 'Reservable' } ] }
-{ sku: 'JOEL-RED-LL-004',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'JOEL-RED-LL-004-01', status: 'Reservable' } ] }
-{ sku: 'CDGS-BLK-SS-003',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'CDGS-BLK-SS-003-01', status: 'Reservable' } ] }
-{ sku: 'PLTO-GRY-SS-001',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'PLTO-GRY-SS-001-01', status: 'Reservable' } ] }
-{ sku: 'MONC-BLK-LL-003',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'MONC-BLK-LL-003-01', status: 'Reservable' } ] }
-{ sku: 'DEVA-GRY-LL-001',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'DEVA-GRY-LL-001-01', status: 'Reservable' } ] }
-{ sku: 'HEPR-YLW-SS-002',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'HEPR-YLW-SS-002-01', status: 'Reservable' } ] }
-{ sku: 'NOAH-BLU-XL-008',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'NOAH-BLU-XL-008-01', status: 'Reservable' } ] }
-{ sku: 'OFFW-GRY-SS-001',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'OFFW-GRY-SS-001-01', status: 'Reservable' } ] }
-{ sku: 'ENGM-BLK-SS-003',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'ENGM-BLK-SS-003-01', status: 'Reservable' } ] }
-{ sku: 'YZY-BLK-MM-001',
-  counts: { total: 2, reservable: 0, reserved: 2, nonReservable: 0 },
-  physicalProducts:
-   [ { SUID: 'YZY-BLK-MM-001-01', status: 'Reservable' },
-     { SUID: 'YZY-BLK-MM-001-02', status: 'Reservable' } ] }
-{ sku: 'NOAH-BLU-MM-008',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'NOAH-BLU-MM-008-01', status: 'Reservable' } ] }
-{ sku: 'CRGR-BLK-SS-002',
-  counts: { total: 2, reservable: 0, reserved: 2, nonReservable: 0 },
-  physicalProducts:
-   [ { SUID: 'CRGR-BLK-SS-002-02', status: 'Reservable' },
-     { SUID: 'CRGR-BLK-SS-002-01', status: 'Reserved' } ] }
-{ sku: 'ACNE-BLK-SS-001',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'ACNE-BLK-SS-001-01', status: 'Reservable' } ] }
-{ sku: 'NOAH-BLU-LL-008',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'NOAH-BLU-LL-008-01', status: 'Reservable' } ] }
-{ sku: 'CDGS-GRY-LL-004',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'CDGS-GRY-LL-004-01', status: 'Reservable' } ] }
-{ sku: 'CPFM-GRN-SS-002',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'CPFM-GRN-SS-002-01', status: 'Reservable' } ] }
-{ sku: 'CDGS-BWN-SS-009',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'CDGS-BWN-SS-009-01', status: 'Reservable' } ] }
-{ sku: 'CAVE-BWN-SS-002',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'CAVE-BWN-SS-002-01', status: 'Reservable' } ] }
-{ sku: 'JOEL-GRY-SS-006',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'JOEL-GRY-SS-006-01', status: 'Reservable' } ] }
-{ sku: 'NOAH-WTE-LL-005',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'NOAH-WTE-LL-005-01', status: 'Reservable' } ] }
-{ sku: 'ALDE-RED-MM-001',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'ALDE-RED-MM-001-01', status: 'Reservable' } ] }
-{ sku: 'ALDE-GRN-MM-008',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'ALDE-GRN-MM-008-01', status: 'Reservable' } ] }
-{ sku: 'JOEL-BLK-SS-001',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'JOEL-BLK-SS-001-01', status: 'Reservable' } ] }
-{ sku: 'CRGR-BLU-MM-001',
-  counts: { total: 2, reservable: 0, reserved: 2, nonReservable: 0 },
-  physicalProducts:
-   [ { SUID: 'CRGR-BLU-MM-001-02', status: 'Reservable' },
-     { SUID: 'CRGR-BLU-MM-001-01', status: 'Reservable' } ] }
-{ sku: 'STIS-GRN-SS-001',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'STIS-GRN-SS-001-01', status: 'Reservable' } ] }
-{ sku: 'DEVA-GRY-MM-001',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'DEVA-GRY-MM-001-01', status: 'Reservable' } ] }
-{ sku: 'CDGS-BLK-MM-003',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'CDGS-BLK-MM-003-01', status: 'Reservable' } ] }
-{ sku: 'CARH-BLK-SS-003',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'CARH-BLK-SS-003-01', status: 'Reservable' } ] }
-{ sku: 'ALST-BLK-MM-001',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'ALST-BLK-MM-001-01', status: 'Reservable' } ] }
-{ sku: 'NOAH-BLK-SS-004',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'NOAH-BLK-SS-004-01', status: 'Reservable' } ] }
-{ sku: 'HEPR-YLW-LL-002',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'HEPR-YLW-LL-002-01', status: 'Reservable' } ] }
-{ sku: 'ENGM-BLK-XL-003',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'ENGM-BLK-XL-003-01', status: 'Reservable' } ] }
-{ sku: 'VLKR-WTE-SS-001',
-  counts: { total: 2, reservable: 0, reserved: 2, nonReservable: 0 },
-  physicalProducts:
-   [ { SUID: 'VLKR-WTE-SS-001-02', status: 'Reservable' },
-     { SUID: 'VLKR-WTE-SS-001-01', status: 'Reservable' } ] }
-{ sku: 'ACNE-BLK-MM-001',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'ACNE-BLK-MM-001-01', status: 'Reservable' } ] }
-{ sku: 'BRDE-GRN-LL-006',
-  counts: { total: 1, reservable: 1, reserved: 0, nonReservable: 1 },
-  physicalProducts: [ { SUID: 'BRDE-GRN-LL-006-01', status: 'Non Reservable' } ] }
-{ sku: 'STIS-BLK-LL-008',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'STIS-BLK-LL-008-01', status: 'Reservable' } ] }
-{ sku: 'ALDE-GRN-SS-007',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'ALDE-GRN-SS-007-01', status: 'Reservable' } ] }
-{ sku: 'AKOG-GRY-MM-003',
-  counts: { total: 1, reservable: 1, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'AKOG-GRY-MM-003-01', status: 'Reserved' } ] }
-{ sku: 'ACNE-GRN-LL-006',
-  counts: { total: 1, reservable: 1, reserved: 0, nonReservable: 1 },
-  physicalProducts: [ { SUID: 'ACNE-GRN-LL-006-01', status: 'Non Reservable' } ] }
-{ sku: 'STIS-GRN-LL-002',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'STIS-GRN-LL-002-01', status: 'Reservable' } ] }
-{ sku: 'AMIR-BLU-SS-002',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'AMIR-BLU-SS-002-01', status: 'Reservable' } ] }
-{ sku: 'STIS-BLK-MM-003',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'STIS-BLK-MM-003-01', status: 'Reservable' } ] }
-{ sku: 'ENGM-GRN-LL-001',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'ENGM-GRN-LL-001-01', status: 'Reservable' } ] }
-{ sku: 'CDGS-BLK-SS-001',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'CDGS-BLK-SS-001-01', status: 'Reservable' } ] }
-{ sku: 'CDGS-GRN-SS-008',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'CDGS-GRN-SS-008-01', status: 'Reservable' } ] }
-{ sku: 'NOAH-BWN-XL-007',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'NOAH-BWN-XL-007-01', status: 'Reservable' } ] }
-{ sku: 'BRDE-GRN-MM-006',
-  counts: { total: 1, reservable: 1, reserved: 0, nonReservable: 1 },
-  physicalProducts: [ { SUID: 'BRDE-GRN-MM-006-01', status: 'Non Reservable' } ] }
-{ sku: 'BLAN-BLK-MM-001',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'BLAN-BLK-MM-001-01', status: 'Reservable' } ] }
-{ sku: 'BTWL-WTE-SS-001',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'BTWL-WTE-SS-001-01', status: 'Reservable' } ] }
-{ sku: 'CDGS-BLK-SS-005',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'CDGS-BLK-SS-005-01', status: 'Non Reservable' } ] }
-{ sku: 'NOAH-BLK-XXL-001',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 1 },
-  physicalProducts: [ { SUID: 'NOAH-BLK-XXL-001-01', status: 'Reserved' } ] }
-{ sku: 'JOEL-GRY-LL-006',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'JOEL-GRY-LL-006-01', status: 'Reservable' } ] }
-{ sku: 'BRDE-GRN-SS-006',
-  counts: { total: 1, reservable: 1, reserved: 0, nonReservable: 1 },
-  physicalProducts: [ { SUID: 'BRDE-GRN-SS-006-01', status: 'Non Reservable' } ] }
-{ sku: 'YZY-BLK-MM-002',
-  counts: { total: 2, reservable: 0, reserved: 2, nonReservable: 0 },
-  physicalProducts:
-   [ { SUID: 'YZY-BLK-MM-002-01', status: 'Reservable' },
-     { SUID: 'YZY-BLK-MM-002-02', status: 'Reservable' } ] }
-{ sku: 'CARH-BLK-XL-003',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'CARH-BLK-XL-003-01', status: 'Reservable' } ] }
-{ sku: 'YZY-BLK-SS-002',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'YZY-BLK-SS-002-01', status: 'Reservable' } ] }
-{ sku: 'ENGM-BLK-LL-003',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'ENGM-BLK-LL-003-01', status: 'Reservable' } ] }
-{ sku: 'PRDA-BLK-LL-006',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'PRDA-BLK-LL-006-01', status: 'Reservable' } ] }
-{ sku: 'BURB-ORG-LL-001',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'BURB-ORG-LL-001-01', status: 'Reservable' } ] }
-{ sku: 'CAVE-GRN-SS-001',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'CAVE-GRN-SS-001-01', status: 'Reservable' } ] }
-{ sku: 'MAMU-GRY-SS-001',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'MAMU-GRY-SS-001-01', status: 'Reservable' } ] }
-{ sku: 'JISA-BWN-SS-001',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'JISA-BWN-SS-001-01', status: 'Reservable' } ] }
-{ sku: 'DVNN-BLU-SS-004',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'DVNN-BLU-SS-004-01', status: 'Reservable' } ] }
-{ sku: 'NOAH-BWN-MM-007',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'NOAH-BWN-MM-007-01', status: 'Reservable' } ] }
-{ sku: 'SDAY-GRY-SS-002',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'SDAY-GRY-SS-002-01', status: 'Reservable' } ] }
-{ sku: 'HEPR-WTE-SS-001',
-  counts: { total: 2, reservable: 1, reserved: 1, nonReservable: 1 },
-  physicalProducts:
-   [ { SUID: 'HEPR-WTE-SS-001-02', status: 'Reserved' },
-     { SUID: 'HEPR-WTE-SS-001-01', status: 'Non Reservable' } ] }
-{ sku: 'PRDA-PNK-LL-001',
-  counts: { total: 1, reservable: 1, reserved: 0, nonReservable: 1 },
-  physicalProducts: [ { SUID: 'PRDA-PNK-LL-001-01', status: 'Non Reservable' } ] }
-{ sku: 'ALDE-GRN-LL-008',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'ALDE-GRN-LL-008-01', status: 'Reservable' } ] }
-{ sku: 'PLSR-RED-SS-004',
-  counts: { total: 2, reservable: 1, reserved: 1, nonReservable: 0 },
-  physicalProducts:
-   [ { SUID: 'PLSR-RED-SS-004-02', status: 'Reservable' },
-     { SUID: 'PLSR-RED-SS-004-01', status: 'Non Reservable' } ] }
-{ sku: 'ENGM-BLK-MM-003',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'ENGM-BLK-MM-003-01', status: 'Reservable' } ] }
-{ sku: 'VLKR-GRY-MM-003',
-  counts: { total: 2, reservable: 0, reserved: 2, nonReservable: 0 },
-  physicalProducts:
-   [ { SUID: 'VLKR-GRY-MM-003-02', status: 'Reservable' },
-     { SUID: 'VLKR-GRY-MM-003-01', status: 'Reservable' } ] }
-{ sku: 'ACNE-BLK-LL-003',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'ACNE-BLK-LL-003-01', status: 'Reservable' } ] }
-{ sku: 'CARH-BLK-LL-003',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'CARH-BLK-LL-003-01', status: 'Reservable' } ] }
-{ sku: 'PRDA-BLK-XL-006',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'PRDA-BLK-XL-006-01', status: 'Reservable' } ] }
-{ sku: 'ALDE-RED-SS-001',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'ALDE-RED-SS-001-01', status: 'Reservable' } ] }
-{ sku: 'ALIN-BLU-LL-001',
-  counts: { total: 2, reservable: 0, reserved: 2, nonReservable: 0 },
-  physicalProducts:
-   [ { SUID: 'ALIN-BLU-LL-001-01', status: 'Reservable' },
-     { SUID: 'ALIN-BLU-LL-001-02', status: 'Reservable' } ] }
-{ sku: 'CDGS-BLK-SS-006',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'CDGS-BLK-SS-006-01', status: 'Reservable' } ] }
-{ sku: 'NOAH-WTE-SS-005',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'NOAH-WTE-SS-005-01', status: 'Reservable' } ] }
-{ sku: 'LEVI-BLK-LL-001',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'LEVI-BLK-LL-001-01', status: 'Reservable' } ] }
-{ sku: 'CPFM-YLW-SS-001',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'CPFM-YLW-SS-001-01', status: 'Reservable' } ] }
-{ sku: 'FOGD-PRP-MM-002',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'FOGD-PRP-MM-002-01', status: 'Reservable' } ] }
-{ sku: 'NOAH-WTE-XL-005',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'NOAH-WTE-XL-005-01', status: 'Reservable' } ] }
-{ sku: 'PRDA-BLK-MM-006',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'PRDA-BLK-MM-006-01', status: 'Reservable' } ] }
-{ sku: 'NOAH-BLK-LL-004',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'NOAH-BLK-LL-004-01', status: 'Reservable' } ] }
-{ sku: 'BLAN-BLK-LL-001',
-  counts: { total: 2, reservable: 0, reserved: 2, nonReservable: 0 },
-  physicalProducts:
-   [ { SUID: 'BLAN-BLK-LL-001-02', status: 'Reservable' },
-     { SUID: 'BLAN-BLK-LL-001-01', status: 'Reservable' } ] }
-{ sku: 'BRDE-GRN-XL-006',
-  counts: { total: 1, reservable: 1, reserved: 0, nonReservable: 1 },
-  physicalProducts: [ { SUID: 'BRDE-GRN-XL-006-01', status: 'Non Reservable' } ] }
-{ sku: 'HEVO-RED-MM-001',
-  counts: { total: 0, reservable: 1, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'HEVO-RED-MM-001-01', status: 'Non Reservable' } ] }
-{ sku: 'ALST-BLK-MM-004',
-  counts: { total: 1, reservable: 0, reserved: 1, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'ALST-BLK-MM-004-01', status: 'Reservable' } ] }
-{ sku: 'ALDE-GRN-SS-008',
-  counts: { total: 1, reservable: 2, reserved: 0, nonReservable: 0 },
-  physicalProducts: [ { SUID: 'ALDE-GRN-SS-008-01', status: 'Reservable' } ] }
+ARE SUIDS CORRECT ON PRISMA AND AIRTABLE?
+-- MISMATCHED SUID/SKU COMBOS ON PRISMA: 0
+-- MISMATCHED SUID/SKU COMBOS ON AIRTABLE: 0
+
+ARE THE COUNTS THE SAME ON PRISMA AND AIRTABLE?
+-- MISMATCHED COUNTS: 63
+[ { sku: 'PRDA-PNK-MM-001',
+    prismaCounts: { total: 1, reserved: 0, reservable: 0, nonReservable: 1 },
+    airtableCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 1 } },
+  { sku: 'PRDA-PNK-LL-001',
+    prismaCounts: { total: 1, reserved: 0, reservable: 0, nonReservable: 1 },
+    airtableCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 1 } },
+  { sku: 'HEPR-WTE-SS-001',
+    prismaCounts: { total: 2, reserved: 1, reservable: 0, nonReservable: 1 },
+    airtableCounts: { total: 2, reserved: 1, reservable: 1, nonReservable: 1 } },
+  { sku: 'PLSR-RED-SS-004',
+    prismaCounts: { total: 2, reserved: 0, reservable: 1, nonReservable: 1 },
+    airtableCounts: { total: 2, reserved: 0, reservable: 2, nonReservable: 1 } },
+  { sku: 'YZY-BLK-SS-001',
+    prismaCounts: { total: 1, reserved: 0, reservable: 0, nonReservable: 1 },
+    airtableCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 1 } },
+  { sku: 'ACNE-GRN-LL-006',
+    prismaCounts: { total: 1, reserved: 0, reservable: 0, nonReservable: 1 },
+    airtableCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 1 } },
+  { sku: 'BRDE-GRN-SS-006',
+    prismaCounts: { total: 1, reserved: 0, reservable: 0, nonReservable: 1 },
+    airtableCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 1 } },
+  { sku: 'BRDE-GRN-MM-006',
+    prismaCounts: { total: 1, reserved: 0, reservable: 0, nonReservable: 1 },
+    airtableCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 1 } },
+  { sku: 'BRDE-GRN-LL-006',
+    prismaCounts: { total: 1, reserved: 0, reservable: 0, nonReservable: 1 },
+    airtableCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 1 } },
+  { sku: 'BRDE-GRN-XL-006',
+    prismaCounts: { total: 1, reserved: 0, reservable: 0, nonReservable: 1 },
+    airtableCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 1 } },
+  { sku: '18ES-RED-XL-005',
+    prismaCounts: { total: 1, reserved: 0, reservable: 0, nonReservable: 1 },
+    airtableCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 1 } },
+  { sku: 'ALDE-YLW-SS-010',
+    prismaCounts: { total: 1, reserved: 0, reservable: 0, nonReservable: 1 },
+    airtableCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 1 } },
+  { sku: 'ACNE-WTE-MM-020',
+    prismaCounts: { total: 1, reserved: 0, reservable: 0, nonReservable: 1 },
+    airtableCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 1 } },
+  { sku: 'STIS-BLU-MM-014',
+    prismaCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 0 },
+    airtableCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 1 } },
+  { sku: 'DVNN-GRN-SS-007',
+    prismaCounts: { total: 1, reserved: 0, reservable: 0, nonReservable: 1 },
+    airtableCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 1 } },
+  { sku: 'DVNN-BLU-MM-008',
+    prismaCounts: { total: 1, reserved: 0, reservable: 0, nonReservable: 1 },
+    airtableCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 1 } },
+  { sku: 'ALDE-BLK-LL-011',
+    prismaCounts: { total: 1, reserved: 0, reservable: 0, nonReservable: 1 },
+    airtableCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 1 } },
+  { sku: '18ES-RED-LL-005',
+    prismaCounts: { total: 1, reserved: 0, reservable: 0, nonReservable: 1 },
+    airtableCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 1 } },
+  { sku: 'NOAH-BWN-MM-009',
+    prismaCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 0 },
+    airtableCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 1 } },
+  { sku: 'NOAH-BWN-SS-009',
+    prismaCounts: { total: 1, reserved: 0, reservable: 0, nonReservable: 1 },
+    airtableCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 1 } },
+  { sku: 'ACNE-BLK-LL-019',
+    prismaCounts: { total: 1, reserved: 0, reservable: 0, nonReservable: 1 },
+    airtableCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 1 } },
+  { sku: 'ALDE-YLW-LL-010',
+    prismaCounts: { total: 1, reserved: 0, reservable: 0, nonReservable: 1 },
+    airtableCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 1 } },
+  { sku: 'PRDA-BLK-LL-007',
+    prismaCounts: { total: 1, reserved: 0, reservable: 0, nonReservable: 1 },
+    airtableCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 1 } },
+  { sku: 'ACNE-WTE-SS-020',
+    prismaCounts: { total: 1, reserved: 0, reservable: 0, nonReservable: 1 },
+    airtableCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 1 } },
+  { sku: '18ES-RED-MM-005',
+    prismaCounts: { total: 1, reserved: 0, reservable: 0, nonReservable: 1 },
+    airtableCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 1 } },
+  { sku: 'ALDE-YLW-MM-010',
+    prismaCounts: { total: 1, reserved: 0, reservable: 0, nonReservable: 1 },
+    airtableCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 1 } },
+  { sku: 'JOEL-GRN-XL-008',
+    prismaCounts: { total: 1, reserved: 0, reservable: 0, nonReservable: 1 },
+    airtableCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 1 } },
+  { sku: 'ACNE-WTE-LL-020',
+    prismaCounts: { total: 1, reserved: 0, reservable: 0, nonReservable: 1 },
+    airtableCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 1 } },
+  { sku: '18ES-RED-SS-005',
+    prismaCounts: { total: 1, reserved: 0, reservable: 0, nonReservable: 1 },
+    airtableCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 1 } },
+  { sku: 'JOEL-GRN-MM-008',
+    prismaCounts: { total: 1, reserved: 0, reservable: 0, nonReservable: 1 },
+    airtableCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 1 } },
+  { sku: 'GUCC-BWN-LL-004',
+    prismaCounts: { total: 1, reserved: 0, reservable: 0, nonReservable: 1 },
+    airtableCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 1 } },
+  { sku: 'ALDE-PNK-MM-012',
+    prismaCounts: { total: 1, reserved: 0, reservable: 0, nonReservable: 1 },
+    airtableCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 1 } },
+  { sku: 'ACNE-BLK-SS-019',
+    prismaCounts: { total: 1, reserved: 0, reservable: 0, nonReservable: 1 },
+    airtableCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 1 } },
+  { sku: 'ACNE-BLK-MM-019',
+    prismaCounts: { total: 1, reserved: 0, reservable: 0, nonReservable: 1 },
+    airtableCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 1 } },
+  { sku: 'DVNN-BLU-SS-008',
+    prismaCounts: { total: 1, reserved: 0, reservable: 0, nonReservable: 1 },
+    airtableCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 1 } },
+  { sku: 'ALDE-BLK-MM-011',
+    prismaCounts: { total: 1, reserved: 0, reservable: 0, nonReservable: 1 },
+    airtableCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 1 } },
+  { sku: 'JOEL-GRN-LL-008',
+    prismaCounts: { total: 1, reserved: 0, reservable: 0, nonReservable: 1 },
+    airtableCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 1 } },
+  { sku: 'ALDE-BLU-SS-009',
+    prismaCounts: { total: 1, reserved: 0, reservable: 0, nonReservable: 1 },
+    airtableCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 1 } },
+  { sku: 'NOAH-BWN-LL-009',
+    prismaCounts: { total: 1, reserved: 0, reservable: 0, nonReservable: 1 },
+    airtableCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 1 } },
+  { sku: 'ALDE-BLU-XL-009',
+    prismaCounts: { total: 1, reserved: 0, reservable: 0, nonReservable: 1 },
+    airtableCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 1 } },
+  { sku: 'ALDE-BLK-SS-011',
+    prismaCounts: { total: 1, reserved: 0, reservable: 0, nonReservable: 1 },
+    airtableCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 1 } },
+  { sku: 'DVNN-GRN-MM-007',
+    prismaCounts: { total: 1, reserved: 0, reservable: 0, nonReservable: 1 },
+    airtableCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 1 } },
+  { sku: 'DVNN-GRN-LL-007',
+    prismaCounts: { total: 1, reserved: 0, reservable: 0, nonReservable: 1 },
+    airtableCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 1 } },
+  { sku: 'ALDE-BLU-LL-009',
+    prismaCounts: { total: 1, reserved: 0, reservable: 0, nonReservable: 1 },
+    airtableCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 1 } },
+  { sku: 'ALDE-PNK-LL-012',
+    prismaCounts: { total: 1, reserved: 0, reservable: 0, nonReservable: 1 },
+    airtableCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 1 } },
+  { sku: 'GUCC-BWN-MM-004',
+    prismaCounts: { total: 1, reserved: 0, reservable: 0, nonReservable: 1 },
+    airtableCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 1 } },
+  { sku: 'ALDE-BLU-MM-009',
+    prismaCounts: { total: 1, reserved: 0, reservable: 0, nonReservable: 1 },
+    airtableCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 1 } },
+  { sku: 'DVNN-BLU-LL-008',
+    prismaCounts: { total: 1, reserved: 0, reservable: 0, nonReservable: 1 },
+    airtableCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 1 } },
+  { sku: 'PRDA-BLK-MM-007',
+    prismaCounts: { total: 1, reserved: 0, reservable: 0, nonReservable: 1 },
+    airtableCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 1 } },
+  { sku: 'ORSL-BLU-MM-002',
+    prismaCounts: { total: 1, reserved: 0, reservable: 0, nonReservable: 1 },
+    airtableCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 1 } },
+  { sku: 'ORSL-BLU-SS-001',
+    prismaCounts: { total: 1, reserved: 0, reservable: 0, nonReservable: 1 },
+    airtableCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 1 } },
+  { sku: 'KLOR-BLU-MM-001',
+    prismaCounts: { total: 1, reserved: 0, reservable: 0, nonReservable: 1 },
+    airtableCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 1 } },
+  { sku: 'HPIM-BLK-SS-001',
+    prismaCounts: { total: 1, reserved: 0, reservable: 0, nonReservable: 1 },
+    airtableCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 1 } },
+  { sku: 'ORSL-BLU-LL-002',
+    prismaCounts: { total: 1, reserved: 0, reservable: 0, nonReservable: 1 },
+    airtableCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 1 } },
+  { sku: 'KLOR-BLU-LL-001',
+    prismaCounts: { total: 1, reserved: 0, reservable: 0, nonReservable: 1 },
+    airtableCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 1 } },
+  { sku: 'NBHD-BLK-SS-001',
+    prismaCounts: { total: 1, reserved: 0, reservable: 0, nonReservable: 1 },
+    airtableCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 1 } },
+  { sku: 'KLOR-BLU-XL-001',
+    prismaCounts: { total: 1, reserved: 0, reservable: 0, nonReservable: 1 },
+    airtableCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 1 } },
+  { sku: 'NBHD-BLK-LL-001',
+    prismaCounts: { total: 1, reserved: 0, reservable: 0, nonReservable: 1 },
+    airtableCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 1 } },
+  { sku: 'NBHD-BLK-MM-001',
+    prismaCounts: { total: 1, reserved: 0, reservable: 0, nonReservable: 1 },
+    airtableCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 1 } },
+  { sku: 'ORSL-BLU-MM-001',
+    prismaCounts: { total: 1, reserved: 0, reservable: 0, nonReservable: 1 },
+    airtableCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 1 } },
+  { sku: 'NBHD-BLK-XL-001',
+    prismaCounts: { total: 1, reserved: 0, reservable: 0, nonReservable: 1 },
+    airtableCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 1 } },
+  { sku: 'HPIM-BLK-MM-001',
+    prismaCounts: { total: 1, reserved: 0, reservable: 0, nonReservable: 1 },
+    airtableCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 1 } },
+  { sku: 'ORSL-BLU-SS-002',
+    prismaCounts: { total: 1, reserved: 0, reservable: 0, nonReservable: 1 },
+    airtableCounts: { total: 1, reserved: 0, reservable: 1, nonReservable: 1 } } ]
+-- PRISMA: NUMBER OF PRODUCT VARIANTS WITH INCORRECT NUMBER OF PHYSICAL PRODUCTS ATTACHED: 0
+-- AIRTABLE: NUMBER OF PRODUCT VARIANTS WITH INCORRECT NUMBER OF PHYSICAL PRODUCTS ATTACHED: 0
+-- PRISMA: NUMBER OF PRODUCT VARIANTS WITH A COUNT PROFILE THAT DOESN'T MATCH THE STATUSES OF THE ATTACHED PHYSICAL PRODUCTS: 2
+-- AIRTABLE: NUMBER OF PRODUCT VARIANTS WITH A COUNT PROFILE THAT DOESN'T MATCH THE STATUSES OF THE ATTACHED PHYSICAL PRODUCTS: 66
+-- PRISMA: NUMBER OF PRODUCT VARIANTS WITH TOTAL != RESERVED + RESERVABLE + NONRESERVABLE: 0
 
 ARE THE PHYSICAL PRODUCT STATUSES ALIGNED?
 ---NUMBER OF PHYSICAL PRODUCTS WITH MISMATCHING INVENTORY STATUSES: 0
@@ -759,4 +222,4 @@ ARE THE RESERVATIONS ALIGNED?
 -- RESERVATIONS WITH MISMATCHING STATUSES: 0
 -- RESERVATIONS WITH MORE THAN 3 PRODUCTS: 0
 ERRORS: 0
-Done in 27.42s.
+Done in 32.93s.

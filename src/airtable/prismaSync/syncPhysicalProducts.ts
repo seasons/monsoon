@@ -1,24 +1,28 @@
-import {
-  getAllProductVariants,
-  getAllPhysicalProducts,
-  getAllLocations,
-} from "../utils"
+import { getAllProductVariants, getAllPhysicalProducts } from "../utils"
 import { prisma } from "../../prisma"
 import { isEmpty } from "lodash"
+import { makeSingleSyncFuncMultiBarAndProgressBarIfNeeded } from "./utils"
 
-export const syncPhysicalProducts = async () => {
-  const allLocations = await getAllLocations()
+export const syncPhysicalProducts = async (cliProgressBar?) => {
   const allProductVariants = await getAllProductVariants()
   const allPhysicalProducts = await getAllPhysicalProducts()
 
-  let i = 1
+  const [
+    multibar,
+    _cliProgressBar,
+  ] = await makeSingleSyncFuncMultiBarAndProgressBarIfNeeded({
+    cliProgressBar,
+    numRecords: allPhysicalProducts.length,
+    modelName: "Physical Products",
+  })
 
   for (const record of allPhysicalProducts) {
+    _cliProgressBar.increment()
+
     try {
       const { model } = record
 
       const productVariant = allProductVariants.findByIds(model.productVariant)
-      const location = allLocations.findByIds(model.location)
 
       if (isEmpty(model)) {
         continue
@@ -26,15 +30,14 @@ export const syncPhysicalProducts = async () => {
 
       const { sUID, inventoryStatus, productStatus } = model
 
+      if (sUID.text.startsWith("HEVO-RED")) {
+        continue
+      }
+
       const data = {
         productVariant: {
           connect: {
             sku: productVariant.model.sKU,
-          },
-        },
-        location: {
-          connect: {
-            slug: location.model.slug,
           },
         },
         seasonsUID: sUID.text,
@@ -42,7 +45,7 @@ export const syncPhysicalProducts = async () => {
         productStatus,
       }
 
-      const physicalProduct = await prisma.upsertPhysicalProduct({
+      await prisma.upsertPhysicalProduct({
         where: {
           seasonsUID: sUID.text,
         },
@@ -51,7 +54,8 @@ export const syncPhysicalProducts = async () => {
       })
     } catch (e) {
       console.error(e)
-      break
     }
   }
+
+  multibar?.stop()
 }
