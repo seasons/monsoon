@@ -7,5 +7,5 @@ export const directiveResolvers = {
   isAuthenticated,
   isOwner,
   isOwnerOrHasRole,
-  hasRole
+  hasRole,
 }
