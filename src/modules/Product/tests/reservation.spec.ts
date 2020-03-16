@@ -13,11 +13,16 @@ import { UtilsService } from "../../Utils/utils.service"
 import { EmailDataProvider } from "../../Email/services/email.data.service"
 import { AirtableBaseService } from "../../Airtable/services/airtable.base.service"
 import * as Airtable from "airtable"
+import { TestUtilsService } from "../../Utils/test.service"
+import { Customer, User } from "../../../prisma"
 
 describe("Reservation Service", () => {
   let reservationService: ReservationService
   let prismaService: PrismaClientService
   let airtableService: AirtableService
+  let testUtilsService: TestUtilsService
+  let testUser: User
+  let testCustomer: Customer
 
   beforeAll(async () => {
     Airtable.configure({
@@ -49,6 +54,13 @@ describe("Reservation Service", () => {
       new EmailService(prismaService, utilsService, new EmailDataProvider()),
       new ReservationUtilsService()
     )
+    testUtilsService = new TestUtilsService(prismaService, airtableService)
+  })
+
+  beforeEach(async () => {
+    const { user, customer } = await testUtilsService.createNewTestingCustomer()
+    testUser = user
+    testCustomer = customer
   })
 
   describe("reserveItems", () => {
@@ -58,49 +70,13 @@ describe("Reservation Service", () => {
           where: { reservable_gt: 0 },
         }
       )
-      let newCustomer = await prismaService.client.createCustomer({
-        user: {
-          create: {
-            email: `membership+${Date.now()}@seasons.nyc`,
-            firstName: "Sam",
-            lastName: "Johnson",
-            role: "Customer",
-            auth0Id: `auth|${Date.now()}`,
-          },
-        },
-        status: "Active",
-        detail: {
-          create: {
-            shippingAddress: {
-              create: {
-                slug: `sam-johnson-sq${Date.now()}`,
-                name: "Sam Johnson",
-                company: "",
-                address1: "138 Mulberry St",
-                city: "New York",
-                state: "New York",
-                zipCode: "10013",
-                locationType: "Customer",
-              },
-            },
-          },
-        },
-      })
-      newCustomer = await prismaService.client.customer({ id: newCustomer.id })
-      const newUser = await prismaService.client.user({
-        id: await prismaService.client
-          .customer({ id: newCustomer.id })
-          .user()
-          .id(),
-      })
-      airtableService.createOrUpdateAirtableUser(newUser, {})
       const productVariantsToReserve = reservableProductVariants
         .slice(0, 3)
         .map(a => a.id)
       const returnData = await reservationService.reserveItems(
         productVariantsToReserve,
-        newUser,
-        newCustomer,
+        testUser,
+        testCustomer,
         `{
             id
             sentPackage {
@@ -145,6 +121,39 @@ describe("Reservation Service", () => {
       expect(returnData.products.map(a => a.productVariant.id).sort()).toEqual(
         productVariantsToReserve.sort()
       )
+    }, 50000)
+
+    it("should throw an error saying the item is not reservable", async () => {
+      const reservableProductVariants = await prismaService.client.productVariants(
+        {
+          where: { reservable_gt: 0 },
+        }
+      )
+      const nonReservableProductVariants = await prismaService.client.productVariants(
+        {
+          where: { reservable: 0 },
+        }
+      )
+      expect(reservableProductVariants.length).toBeGreaterThanOrEqual(2)
+      expect(nonReservableProductVariants.length).toBeGreaterThanOrEqual(1)
+
+      const productVariantsToReserve = reservableProductVariants
+        .slice(0, 2)
+        .map(a => a.id)
+      productVariantsToReserve.push(nonReservableProductVariants[0].id)
+
+      expect(
+        (async () => {
+          return await reservationService.reserveItems(
+            productVariantsToReserve,
+            testUser,
+            testCustomer,
+            `{
+                  id
+              }`
+          )
+        })()
+      ).rejects.toThrow("The following item is not reservable")
     }, 50000)
   })
 })
