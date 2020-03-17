@@ -194,15 +194,17 @@
 
 ```
 
-12.
+12. acknowledgeCompletedChargebeeHostedCheckout
 
-````graphql
-
-```acknowledgeCompletedChargebeeHostedCheckout
-13. addProductRequest
 ```graphql
 
-````
+```
+
+13. addProductRequest
+
+```graphql
+
+```
 
 14. deleteProductRequest
 
