@@ -79,6 +79,23 @@ export class ShippingService {
     }, shippingBagWeight)
   }
 
+  async shippoValidateAddress(address) {
+    const result = await this.shippo.address.create({
+      ...address,
+      country: "US",
+      validate: true,
+    })
+  
+    const validationResults = result.validation_results
+    const isValid = result.validation_results.is_valid
+    const message = validationResults?.messages?.[0]
+    return {
+      isValid,
+      code: message?.code,
+      text: message?.text,
+    }
+  }
+
   async validateAddress(input) {
     const { email, location } = input
 
@@ -222,20 +239,4 @@ export class ShippingService {
     }
   }
 
-  private async  shippoValidateAddress(address) {
-    const result = await this.shippo.address.create({
-      ...address,
-      country: "US",
-      validate: true,
-    })
-  
-    const validationResults = result.validation_results
-    const isValid = result.validation_results.is_valid
-    const message = validationResults?.messages?.[0]
-    return {
-      isValid,
-      code: message?.code,
-      text: message?.text,
-    }
-  }
 }
