@@ -1,5 +1,5 @@
-import { serverOptions } from "./server"
-import { ApolloServer } from "apollo-server-express"
+import { NestFactory } from "@nestjs/core"
+import { AppModule } from "./app.module"
 import express from "express"
 import { checkJwt } from "./middleware/jwt"
 import { createGetUserMiddleware } from "./middleware/user"
@@ -7,20 +7,21 @@ import { prisma } from "./prisma"
 import cors from "cors"
 import { app as webhooks } from "./webhooks"
 import bodyParser from "body-parser"
+import { ExpressAdapter } from "@nestjs/platform-express"
 import * as Sentry from "@sentry/node"
 
 // Set up the server
-const server = new ApolloServer(serverOptions)
-const app = express()
+const server = express()
 
 if (process.env.NODE_ENV === "production") {
+  // Set up Sentry, which automatically reports on uncaught exceptions
   Sentry.init({
     dsn: process.env.SENTRY_DSN,
   })
-  app.use(Sentry.Handlers.requestHandler()) // must be first middleware on app
+  server.use(Sentry.Handlers.requestHandler()) // must be first middleware on app
 }
 
-app.use(
+server.use(
   checkJwt,
   createGetUserMiddleware(prisma),
   cors({
@@ -35,10 +36,14 @@ app.use(
   bodyParser.json(),
   webhooks
 )
-server.applyMiddleware({ app, path: "/" })
-app.listen({ port: process.env.PORT || 4000 }, () =>
-  console.log(`🚀 Server ready at ${process.env.PORT || 4000}`)
-)
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule, new ExpressAdapter(server))
+  await app.listen(process.env.PORT ? process.env.PORT : 4000, () =>
+    console.log(`🚀 Server ready at ${process.env.PORT || 4000}`)
+  )
+}
+bootstrap()
 
 // Note: for more information on using ApolloServer with express, see
 // https://github.com/apollographql/apollo-server/tree/master/packages/apollo-server-express
