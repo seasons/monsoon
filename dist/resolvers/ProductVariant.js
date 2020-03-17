@@ -38,6 +38,23 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = require("../auth/utils");
 exports.ProductVariant = {
+    size: function (parent, _a, ctx, info) {
+        return __awaiter(this, void 0, void 0, function () {
+            var productVariant;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0: return [4 /*yield*/, ctx.db.query.productVariant({
+                            where: {
+                                id: parent.id,
+                            },
+                        }, "\n    {\n      id\n      internalSize {\n        top {\n          letter\n        }\n        bottom {\n          id\n          type\n          value\n        }\n        display\n        productType\n      }\n    }\n    ")];
+                    case 1:
+                        productVariant = _b.sent();
+                        return [2 /*return*/, productVariant.display];
+                }
+            });
+        });
+    },
     isSaved: function (parent, _a, ctx, info) {
         return __awaiter(this, void 0, void 0, function () {
             var customer, bagItems, e_1;

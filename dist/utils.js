@@ -63,9 +63,8 @@ var ProductSize;
     ProductSize["XL"] = "XL";
     ProductSize["XXL"] = "XXL";
 })(ProductSize = exports.ProductSize || (exports.ProductSize = {}));
-exports.seasonsIDFromProductVariant = function (product, productVariant) { };
-exports.sizeToSizeCode = function (size) {
-    switch (size) {
+exports.sizeNameToSizeCode = function (sizeName) {
+    switch (sizeName) {
         case ProductSize.XS:
             return "XS";
         case ProductSize.S:
@@ -79,7 +78,12 @@ exports.sizeToSizeCode = function (size) {
         case ProductSize.XXL:
             return "XXL";
     }
-    return "";
+    // If we get here, we're expecting a bottom with size WxL e.g 32x28
+    // Regex: (start)digit-digit-x-digit-digit(end)
+    if (!sizeName.match(/^\d\dx\d\d$/)) {
+        throw new Error("invalid sizeName: " + sizeName);
+    }
+    return sizeName.toLowerCase().replace("x", ""); // 32x28 => 3238
 };
 function getUserIDHash(userID) {
     return crypto_1.default

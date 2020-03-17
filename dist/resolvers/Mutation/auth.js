@@ -66,6 +66,27 @@ exports.beamsClient = PUSHER_INSTANCE_ID && PUSHER_SECRET_KEY
     })
     : null;
 exports.auth = {
+    beamsData: function (parent, args, ctx) {
+        var _a;
+        return __awaiter(this, void 0, void 0, function () {
+            var email, beamsToken;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0: return [4 /*yield*/, utils_1.getUserRequestObject(ctx)];
+                    case 1:
+                        email = (_b.sent()).email;
+                        if (email) {
+                            beamsToken = (_a = exports.beamsClient) === null || _a === void 0 ? void 0 : _a.generateToken(email);
+                            return [2 /*return*/, {
+                                    beamsToken: beamsToken.token,
+                                    email: email,
+                                }];
+                        }
+                        return [2 /*return*/];
+                }
+            });
+        });
+    },
     // The signup mutation signs up users with a "Customer" role.
     signup: function (obj, _a, ctx, info) {
         var email = _a.email, password = _a.password, firstName = _a.firstName, lastName = _a.lastName, details = _a.details;

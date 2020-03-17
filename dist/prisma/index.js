@@ -66,6 +66,10 @@ exports.models = [
         embedded: false
     },
     {
+        name: "PushNotificationStatus",
+        embedded: false
+    },
+    {
         name: "Brand",
         embedded: false
     },
@@ -115,10 +119,6 @@ exports.models = [
     },
     {
         name: "User",
-        embedded: false
-    },
-    {
-        name: "PushNotificationStatus",
         embedded: false
     },
     {

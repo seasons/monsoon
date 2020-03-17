@@ -55,7 +55,7 @@ var lodash_1 = require("lodash");
 var utils_3 = require("./utils");
 var SeasonsLocationID = "recvzTcW19kdBPqf4";
 exports.syncProductVariants = function (cliProgressBar) { return __awaiter(void 0, void 0, void 0, function () {
-    var allProductVariants, _a, multibar, _cliProgressBar, allBrands, allColors, allProducts, allLocations, allPhysicalProducts, allTopSizes, allBottomSizes, allSizes, _loop_1, _i, allProductVariants_1, productVariant;
+    var allProductVariants, _a, multibar, progressBar, allBrands, allColors, allProducts, allLocations, allPhysicalProducts, allTopSizes, allBottomSizes, allSizes, _loop_1, _i, allProductVariants_1, productVariant;
     var _b, _c, _d, _e, _f, _g, _h;
     return __generator(this, function (_j) {
         switch (_j.label) {
@@ -70,7 +70,7 @@ exports.syncProductVariants = function (cliProgressBar) { return __awaiter(void 
                     // Get all the relevant airtable records
                 ];
             case 2:
-                _a = _j.sent(), multibar = _a[0], _cliProgressBar = _a[1];
+                _a = _j.sent(), multibar = _a[0], progressBar = _a[1];
                 return [4 /*yield*/, utils_1.getAllBrands()];
             case 3:
                 allBrands = _j.sent();
@@ -96,13 +96,13 @@ exports.syncProductVariants = function (cliProgressBar) { return __awaiter(void 
             case 10:
                 allSizes = _j.sent();
                 _loop_1 = function (productVariant) {
-                    var model, product_1, brand, color, location_1, styleNumber, topSize, bottomSize, sku, type, _a, totalCount, nonReservableCount, reservedCount, updatedReservableCount, weight, height, size, internalSizeRecord, linkedAirtableSize, manufacturerSizeRecords, existingManufacturerSizes, i, _i, _b, manufacturerSizeId, manufacturerSizeRecord, _c, display, type_1, value, _d, _e, data, physicalProducts, newPhysicalProducts, e_1;
+                    var model, product_1, brand, color, location_1, styleNumber, topSize, bottomSize, type, sku, _a, totalCount, nonReservableCount, reservedCount, updatedReservableCount, weight, height, internalSizeRecord, linkedAirtableSize, manufacturerSizeRecords, existingManufacturerSizes, i, _i, _b, manufacturerSizeId, manufacturerSizeRecord, _c, display, type_1, value, _d, _e, data, physicalProducts, newPhysicalProducts, e_1;
                     return __generator(this, function (_f) {
                         switch (_f.label) {
                             case 0:
                                 _f.trys.push([0, 12, , 13]);
                                 // Increment the progress bar
-                                _cliProgressBar.increment();
+                                progressBar.increment();
                                 model = productVariant.model;
                                 product_1 = allProducts.findByIds(model.product);
                                 if (lodash_1.isEmpty(product_1)) {
@@ -114,14 +114,17 @@ exports.syncProductVariants = function (cliProgressBar) { return __awaiter(void 
                                 styleNumber = product_1.model.styleCode;
                                 topSize = allTopSizes.findByIds(model.topSize);
                                 bottomSize = allBottomSizes.findByIds(model.bottomSize);
-                                //   If there's no model or brand, skip it.
-                                if (lodash_1.isEmpty(model) || lodash_1.isEmpty(brand)) {
+                                type = product_1.model.type;
+                                if (lodash_1.isEmpty(model) ||
+                                    lodash_1.isEmpty(brand) ||
+                                    (lodash_1.isEmpty(topSize) && lodash_1.isEmpty(bottomSize)) ||
+                                    (type === "Top" && lodash_1.isEmpty(topSize)) ||
+                                    (type === "Bottom" && lodash_1.isEmpty(bottomSize))) {
                                     return [2 /*return*/, "continue"];
                                 }
-                                sku = skuForData(brand, color, productVariant, styleNumber);
-                                type = product_1.model.type;
+                                sku = skuForData(brand, color, sizeNameForProductVariant(type, topSize, bottomSize, allSizes), styleNumber);
                                 _a = countsForVariant(productVariant), totalCount = _a.totalCount, nonReservableCount = _a.nonReservableCount, reservedCount = _a.reservedCount, updatedReservableCount = _a.updatedReservableCount;
-                                weight = model.weight, height = model.height, size = model.size;
+                                weight = model.weight, height = model.height;
                                 internalSizeRecord = void 0;
                                 if (!(!!topSize || !!bottomSize)) return [3 /*break*/, 2];
                                 linkedAirtableSize = void 0;
@@ -162,11 +165,6 @@ exports.syncProductVariants = function (cliProgressBar) { return __awaiter(void 
                             case 2:
                                 manufacturerSizeRecords = [];
                                 if (!(type === "Bottom")) return [3 /*break*/, 8];
-                                // Delete all existing manufacturer size records so if an admin removes
-                                // a size record from a product variant on airtable, it does not linger on the db record
-                                if (sku === "ORSL-BLU-MM-001") {
-                                    console.log('yo")');
-                                }
                                 return [4 /*yield*/, prisma_1.prisma
                                         .productVariant({ sku: sku })
                                         .manufacturerSizes()];
@@ -316,13 +314,23 @@ exports.syncProductVariants = function (cliProgressBar) { return __awaiter(void 
         }
     });
 }); };
-var skuForData = function (brand, color, productVariant, styleNumber) {
+var skuForData = function (brand, color, sizeName, styleNumber) {
     var brandCode = brand.get("Brand Code");
     var colorCode = color.get("Color Code");
-    var size = productVariant.get("Size");
-    var sizeCode = utils_2.sizeToSizeCode(size);
+    var sizeCode = utils_2.sizeNameToSizeCode(sizeName);
     var styleCode = styleNumber.toString().padStart(3, "0");
     return brandCode + "-" + colorCode + "-" + sizeCode + "-" + styleCode;
+};
+var sizeNameForProductVariant = function (type, topSize, bottomSize, allSizes) {
+    var _a, _b;
+    switch (type) {
+        case "Top":
+            return (_a = allSizes.findByIds(topSize.model.size)) === null || _a === void 0 ? void 0 : _a.model.name;
+        case "Bottom":
+            return (_b = allSizes.findByIds(bottomSize.model.size)) === null || _b === void 0 ? void 0 : _b.model.name;
+        default:
+            throw new Error("Invalid product type: " + type);
+    }
 };
 var countsForVariant = function (productVariant) {
     var data = {
@@ -334,21 +342,18 @@ var countsForVariant = function (productVariant) {
     // number of such product variants as the remainder once reserved and nonReservable
     // are taken into account
     var updatedData = __assign(__assign({}, data), { updatedReservableCount: data.totalCount - data.reservedCount - data.nonReservableCount });
+    var totalCount = updatedData.totalCount, updatedReservableCount = updatedData.updatedReservableCount, reservedCount = updatedData.reservedCount, nonReservableCount = updatedData.nonReservableCount;
     // Make sure these counts make sense
-    if (updatedData.totalCount < 0 ||
-        updatedData.updatedReservableCount < 0 ||
-        updatedData.nonReservableCount < 0 ||
-        updatedData.totalCount < 0 ||
-        updatedData.totalCount !==
-            updatedData.reservedCount +
-                updatedData.nonReservableCount +
-                updatedData.updatedReservableCount) {
+    if (totalCount < 0 ||
+        updatedReservableCount < 0 ||
+        nonReservableCount < 0 ||
+        totalCount !== reservedCount + nonReservableCount + updatedReservableCount) {
         throw new Error("Invalid counts: " + updatedData);
     }
     return updatedData;
 };
 var createMorePhysicalProductsIfNeeded = function (_a) {
-    var sku = _a.sku, location = _a.location, productVariant = _a.productVariant, product = _a.product, physicalProducts = _a.physicalProducts, totalCount = _a.totalCount;
+    var sku = _a.sku, productVariant = _a.productVariant, product = _a.product, physicalProducts = _a.physicalProducts, totalCount = _a.totalCount;
     return __awaiter(void 0, void 0, void 0, function () {
         var physicalProductCount, newPhysicalProducts, i, physicalProductID;
         return __generator(this, function (_b) {

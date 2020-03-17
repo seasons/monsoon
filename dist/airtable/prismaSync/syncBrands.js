@@ -85,9 +85,6 @@ exports.syncBrands = function (cliProgressBar) { return __awaiter(void 0, void 0
                     return [3 /*break*/, 8];
                 }
                 slug = slugify_1.default(name_1).toLowerCase();
-                if (slug === "striped-mohair-cardigan-yellow") {
-                    console.log("yo");
-                }
                 data = {
                     slug: slug,
                     name: name_1,

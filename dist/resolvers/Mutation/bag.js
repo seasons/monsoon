@@ -91,22 +91,25 @@ exports.bag = {
     removeFromBag: function (obj, _a, ctx, info) {
         var item = _a.item, saved = _a.saved;
         return __awaiter(this, void 0, void 0, function () {
-            var customer, bagItems, bagItem;
+            var customer, whereData, bagItems, bagItem;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0: return [4 /*yield*/, utils_1.getCustomerFromContext(ctx)];
                     case 1:
                         customer = _b.sent();
+                        whereData = {
+                            customer: {
+                                id: customer.id,
+                            },
+                            productVariant: {
+                                id: item,
+                            },
+                        };
+                        if (typeof saved === "boolean") {
+                            whereData.saved = saved;
+                        }
                         return [4 /*yield*/, ctx.prisma.bagItems({
-                                where: {
-                                    customer: {
-                                        id: customer.id,
-                                    },
-                                    productVariant: {
-                                        id: item,
-                                    },
-                                    saved: saved,
-                                },
+                                where: whereData,
                             })];
                     case 2:
                         bagItems = _b.sent();
