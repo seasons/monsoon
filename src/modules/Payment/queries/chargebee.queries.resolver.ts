@@ -1,7 +1,7 @@
 import { Resolver, Query, Args, Context } from "@nestjs/graphql"
 import { PrismaClientService } from "../../../prisma/client.service"
 import { Customer, User } from "../../../nest_decorators"
-import { PaymentService } from "../services/payment.services"
+import { PaymentService } from "../services/payment.service"
 
 @Resolver()
 export class ChargebeeQueriesResolver {
