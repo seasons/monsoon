@@ -6,7 +6,6 @@ import fs from "fs"
 import { User, Product, Reservation } from "../../../prisma"
 import { PrismaClientService } from "../../../prisma/client.service"
 import { UtilsService } from "../../Utils/utils.service"
-import { ReservationUtilsService } from "../../Product/services/reservation.utils.service"
 import { EmailDataProvider } from "./email.data.service"
 
 @Injectable()

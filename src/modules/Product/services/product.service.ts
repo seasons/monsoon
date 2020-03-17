@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common"
-import { DBService } from "../../../prisma/DB.service"
+import { DBService } from "../../../prisma/db.service"
 import { RecentlyViewedProduct, BagItem } from "../../../prisma"
 import { head } from "lodash"
 import { ProductUtilsService } from "./product.utils.service"
@@ -12,7 +12,7 @@ export class ProductService {
     private readonly db: DBService,
     private readonly prisma: PrismaClientService,
     private readonly productUtils: ProductUtilsService,
-    private readonly productVariantService: ProductVariantService,
+    private readonly productVariantService: ProductVariantService
   ) {}
 
   async getProducts(args, info) {
@@ -161,14 +161,14 @@ export class ProductService {
         }
       }`
     )
-  
+
     const reservedIds = reservedBagItems.map(a => a.productVariant.id)
     const newItems = items.filter(a => !reservedIds.includes(a))
-  
+
     await this.productVariantService.updateProductVariantCounts(newItems, {
       dryRun: true,
     })
-  
+
     return true
   }
 }
