@@ -9,6 +9,7 @@
     "lib": ["esnext", "dom"],
     "esModuleInterop": true,
     "experimentalDecorators": true,
+    "forceConsistentCasingInFileNames": true,
     "emitDecoratorMetadata": true
   },
   "exclude": ["./scripts/"]

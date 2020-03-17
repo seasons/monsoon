@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common"
-import { DBService } from "../../../prisma/DB.service"
+import { DBService } from "../../../prisma/db.service"
 import { SectionTitle } from "./homepage.service"
 import { PrismaClientService } from "../../../prisma/client.service"
 
@@ -109,14 +109,17 @@ export class HomepageSectionService {
         const rails = await this.db.query.homepageProductRails(
           {
             where: {
-              name: sectionTitle
-            }
+              name: sectionTitle,
+            },
           },
           `{
             products ${ProductFragment}
           }`
         )
-        return Array.prototype.concat.apply([], rails.map(rail => rail.products))
+        return Array.prototype.concat.apply(
+          [],
+          rails.map(rail => rail.products)
+        )
     }
   }
 }
