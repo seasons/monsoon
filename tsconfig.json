@@ -1,15 +1,13 @@
 {
   "compilerOptions": {
-    "target": "es6",
+    "target": "es5",
     "moduleResolution": "node",
     "module": "commonjs",
     "sourceMap": true,
     "rootDir": "src",
     "outDir": "dist",
     "lib": ["esnext", "dom"],
-    "esModuleInterop": true,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "esModuleInterop": true
   },
   "exclude": ["./scripts/"]
 }
