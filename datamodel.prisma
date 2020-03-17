@@ -155,6 +155,7 @@ enum BottomSizeType {
   EU
   JP
   Letter
+  WxL
 }
 
 type Brand {
