@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common"
 import request from "request"
 import { prisma, CustomerDetail } from "../../../prisma"
 import { head } from "lodash"
+import PushNotifications from "@pusher/push-notifications-server"
 
 const PW_STRENGTH_RULES_URL =
   "https://manage.auth0.com/dashboard/us/seasons/connections/database/con_btTULQOf6kAxxbCz/security"
@@ -11,8 +12,18 @@ interface SegmentReservedTraitsInCustomerDetail {
   address?: any
 }
 
+const { PUSHER_INSTANCE_ID, PUSHER_SECRET_KEY } = process.env
+
 @Injectable()
 export class AuthService {
+  beamsClient: PushNotifications | null =
+  PUSHER_INSTANCE_ID && PUSHER_SECRET_KEY
+    ? new PushNotifications({
+        instanceId: PUSHER_INSTANCE_ID,
+        secretKey: PUSHER_SECRET_KEY,
+      })
+    : null
+
   async createAuth0User(
     email: string,
     password: string,
