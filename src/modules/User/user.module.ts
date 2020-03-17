@@ -8,6 +8,7 @@ import { CustomerService } from "./services/customer.service"
 import { CustomerMutationsResolver } from "./mutations/customer.mutations"
 import { AirtableModule } from "../Airtable/airtable.module"
 import { ShippingModule } from "../Shipping/shipping.module"
+import { UserMutationsResolver } from "./mutations/user.mutations"
 
 @Module({
   imports: [AirtableModule, PrismaModule, ShippingModule],
@@ -17,7 +18,8 @@ import { ShippingModule } from "../Shipping/shipping.module"
     MeFieldsResolver,
     MeQueriesResolver,
     AuthMutationsResolver,
-    CustomerMutationsResolver
+    CustomerMutationsResolver,
+    UserMutationsResolver
   ],
   exports: [AuthService, CustomerService],
 })

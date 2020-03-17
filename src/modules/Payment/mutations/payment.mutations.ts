@@ -1,6 +1,6 @@
 import { Resolver, Args, Mutation } from "@nestjs/graphql"
 import { Customer, User } from "../../../nest_decorators"
-import { PaymentService } from "../services/payment.services"
+import { PaymentService } from "../services/payment.service"
 import { ShippingService } from "../../Shipping/services/shipping.service"
 import { CustomerService } from "../../User/services/customer.service"
 
