@@ -1,0 +1,645 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for dist/resolvers/Mutation/auth.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../../prettify.css" />
+    <link rel="stylesheet" href="../../../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../../../index.html">All files</a> / <a href="index.html">dist/resolvers/Mutation</a> auth.js
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">5.88% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>9/153</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">7.96% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>9/113</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">0% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>0/21</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">8.41% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>9/107</span>
+      </div>
+    </div>
+    <p class="quiet">
+      Press <em>n</em> or <em>j</em> to go to the next uncovered block, <em>b</em>, <em>p</em> or <em>k</em> for the previous block.
+    </p>
+  </div>
+  <div class='status-line low'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
+<a name='L2'></a><a href='#L2'>2</a>
+<a name='L3'></a><a href='#L3'>3</a>
+<a name='L4'></a><a href='#L4'>4</a>
+<a name='L5'></a><a href='#L5'>5</a>
+<a name='L6'></a><a href='#L6'>6</a>
+<a name='L7'></a><a href='#L7'>7</a>
+<a name='L8'></a><a href='#L8'>8</a>
+<a name='L9'></a><a href='#L9'>9</a>
+<a name='L10'></a><a href='#L10'>10</a>
+<a name='L11'></a><a href='#L11'>11</a>
+<a name='L12'></a><a href='#L12'>12</a>
+<a name='L13'></a><a href='#L13'>13</a>
+<a name='L14'></a><a href='#L14'>14</a>
+<a name='L15'></a><a href='#L15'>15</a>
+<a name='L16'></a><a href='#L16'>16</a>
+<a name='L17'></a><a href='#L17'>17</a>
+<a name='L18'></a><a href='#L18'>18</a>
+<a name='L19'></a><a href='#L19'>19</a>
+<a name='L20'></a><a href='#L20'>20</a>
+<a name='L21'></a><a href='#L21'>21</a>
+<a name='L22'></a><a href='#L22'>22</a>
+<a name='L23'></a><a href='#L23'>23</a>
+<a name='L24'></a><a href='#L24'>24</a>
+<a name='L25'></a><a href='#L25'>25</a>
+<a name='L26'></a><a href='#L26'>26</a>
+<a name='L27'></a><a href='#L27'>27</a>
+<a name='L28'></a><a href='#L28'>28</a>
+<a name='L29'></a><a href='#L29'>29</a>
+<a name='L30'></a><a href='#L30'>30</a>
+<a name='L31'></a><a href='#L31'>31</a>
+<a name='L32'></a><a href='#L32'>32</a>
+<a name='L33'></a><a href='#L33'>33</a>
+<a name='L34'></a><a href='#L34'>34</a>
+<a name='L35'></a><a href='#L35'>35</a>
+<a name='L36'></a><a href='#L36'>36</a>
+<a name='L37'></a><a href='#L37'>37</a>
+<a name='L38'></a><a href='#L38'>38</a>
+<a name='L39'></a><a href='#L39'>39</a>
+<a name='L40'></a><a href='#L40'>40</a>
+<a name='L41'></a><a href='#L41'>41</a>
+<a name='L42'></a><a href='#L42'>42</a>
+<a name='L43'></a><a href='#L43'>43</a>
+<a name='L44'></a><a href='#L44'>44</a>
+<a name='L45'></a><a href='#L45'>45</a>
+<a name='L46'></a><a href='#L46'>46</a>
+<a name='L47'></a><a href='#L47'>47</a>
+<a name='L48'></a><a href='#L48'>48</a>
+<a name='L49'></a><a href='#L49'>49</a>
+<a name='L50'></a><a href='#L50'>50</a>
+<a name='L51'></a><a href='#L51'>51</a>
+<a name='L52'></a><a href='#L52'>52</a>
+<a name='L53'></a><a href='#L53'>53</a>
+<a name='L54'></a><a href='#L54'>54</a>
+<a name='L55'></a><a href='#L55'>55</a>
+<a name='L56'></a><a href='#L56'>56</a>
+<a name='L57'></a><a href='#L57'>57</a>
+<a name='L58'></a><a href='#L58'>58</a>
+<a name='L59'></a><a href='#L59'>59</a>
+<a name='L60'></a><a href='#L60'>60</a>
+<a name='L61'></a><a href='#L61'>61</a>
+<a name='L62'></a><a href='#L62'>62</a>
+<a name='L63'></a><a href='#L63'>63</a>
+<a name='L64'></a><a href='#L64'>64</a>
+<a name='L65'></a><a href='#L65'>65</a>
+<a name='L66'></a><a href='#L66'>66</a>
+<a name='L67'></a><a href='#L67'>67</a>
+<a name='L68'></a><a href='#L68'>68</a>
+<a name='L69'></a><a href='#L69'>69</a>
+<a name='L70'></a><a href='#L70'>70</a>
+<a name='L71'></a><a href='#L71'>71</a>
+<a name='L72'></a><a href='#L72'>72</a>
+<a name='L73'></a><a href='#L73'>73</a>
+<a name='L74'></a><a href='#L74'>74</a>
+<a name='L75'></a><a href='#L75'>75</a>
+<a name='L76'></a><a href='#L76'>76</a>
+<a name='L77'></a><a href='#L77'>77</a>
+<a name='L78'></a><a href='#L78'>78</a>
+<a name='L79'></a><a href='#L79'>79</a>
+<a name='L80'></a><a href='#L80'>80</a>
+<a name='L81'></a><a href='#L81'>81</a>
+<a name='L82'></a><a href='#L82'>82</a>
+<a name='L83'></a><a href='#L83'>83</a>
+<a name='L84'></a><a href='#L84'>84</a>
+<a name='L85'></a><a href='#L85'>85</a>
+<a name='L86'></a><a href='#L86'>86</a>
+<a name='L87'></a><a href='#L87'>87</a>
+<a name='L88'></a><a href='#L88'>88</a>
+<a name='L89'></a><a href='#L89'>89</a>
+<a name='L90'></a><a href='#L90'>90</a>
+<a name='L91'></a><a href='#L91'>91</a>
+<a name='L92'></a><a href='#L92'>92</a>
+<a name='L93'></a><a href='#L93'>93</a>
+<a name='L94'></a><a href='#L94'>94</a>
+<a name='L95'></a><a href='#L95'>95</a>
+<a name='L96'></a><a href='#L96'>96</a>
+<a name='L97'></a><a href='#L97'>97</a>
+<a name='L98'></a><a href='#L98'>98</a>
+<a name='L99'></a><a href='#L99'>99</a>
+<a name='L100'></a><a href='#L100'>100</a>
+<a name='L101'></a><a href='#L101'>101</a>
+<a name='L102'></a><a href='#L102'>102</a>
+<a name='L103'></a><a href='#L103'>103</a>
+<a name='L104'></a><a href='#L104'>104</a>
+<a name='L105'></a><a href='#L105'>105</a>
+<a name='L106'></a><a href='#L106'>106</a>
+<a name='L107'></a><a href='#L107'>107</a>
+<a name='L108'></a><a href='#L108'>108</a>
+<a name='L109'></a><a href='#L109'>109</a>
+<a name='L110'></a><a href='#L110'>110</a>
+<a name='L111'></a><a href='#L111'>111</a>
+<a name='L112'></a><a href='#L112'>112</a>
+<a name='L113'></a><a href='#L113'>113</a>
+<a name='L114'></a><a href='#L114'>114</a>
+<a name='L115'></a><a href='#L115'>115</a>
+<a name='L116'></a><a href='#L116'>116</a>
+<a name='L117'></a><a href='#L117'>117</a>
+<a name='L118'></a><a href='#L118'>118</a>
+<a name='L119'></a><a href='#L119'>119</a>
+<a name='L120'></a><a href='#L120'>120</a>
+<a name='L121'></a><a href='#L121'>121</a>
+<a name='L122'></a><a href='#L122'>122</a>
+<a name='L123'></a><a href='#L123'>123</a>
+<a name='L124'></a><a href='#L124'>124</a>
+<a name='L125'></a><a href='#L125'>125</a>
+<a name='L126'></a><a href='#L126'>126</a>
+<a name='L127'></a><a href='#L127'>127</a>
+<a name='L128'></a><a href='#L128'>128</a>
+<a name='L129'></a><a href='#L129'>129</a>
+<a name='L130'></a><a href='#L130'>130</a>
+<a name='L131'></a><a href='#L131'>131</a>
+<a name='L132'></a><a href='#L132'>132</a>
+<a name='L133'></a><a href='#L133'>133</a>
+<a name='L134'></a><a href='#L134'>134</a>
+<a name='L135'></a><a href='#L135'>135</a>
+<a name='L136'></a><a href='#L136'>136</a>
+<a name='L137'></a><a href='#L137'>137</a>
+<a name='L138'></a><a href='#L138'>138</a>
+<a name='L139'></a><a href='#L139'>139</a>
+<a name='L140'></a><a href='#L140'>140</a>
+<a name='L141'></a><a href='#L141'>141</a>
+<a name='L142'></a><a href='#L142'>142</a>
+<a name='L143'></a><a href='#L143'>143</a>
+<a name='L144'></a><a href='#L144'>144</a>
+<a name='L145'></a><a href='#L145'>145</a>
+<a name='L146'></a><a href='#L146'>146</a>
+<a name='L147'></a><a href='#L147'>147</a>
+<a name='L148'></a><a href='#L148'>148</a>
+<a name='L149'></a><a href='#L149'>149</a>
+<a name='L150'></a><a href='#L150'>150</a>
+<a name='L151'></a><a href='#L151'>151</a>
+<a name='L152'></a><a href='#L152'>152</a>
+<a name='L153'></a><a href='#L153'>153</a>
+<a name='L154'></a><a href='#L154'>154</a>
+<a name='L155'></a><a href='#L155'>155</a>
+<a name='L156'></a><a href='#L156'>156</a>
+<a name='L157'></a><a href='#L157'>157</a>
+<a name='L158'></a><a href='#L158'>158</a>
+<a name='L159'></a><a href='#L159'>159</a>
+<a name='L160'></a><a href='#L160'>160</a>
+<a name='L161'></a><a href='#L161'>161</a>
+<a name='L162'></a><a href='#L162'>162</a>
+<a name='L163'></a><a href='#L163'>163</a>
+<a name='L164'></a><a href='#L164'>164</a>
+<a name='L165'></a><a href='#L165'>165</a>
+<a name='L166'></a><a href='#L166'>166</a>
+<a name='L167'></a><a href='#L167'>167</a>
+<a name='L168'></a><a href='#L168'>168</a>
+<a name='L169'></a><a href='#L169'>169</a>
+<a name='L170'></a><a href='#L170'>170</a>
+<a name='L171'></a><a href='#L171'>171</a>
+<a name='L172'></a><a href='#L172'>172</a>
+<a name='L173'></a><a href='#L173'>173</a>
+<a name='L174'></a><a href='#L174'>174</a>
+<a name='L175'></a><a href='#L175'>175</a>
+<a name='L176'></a><a href='#L176'>176</a>
+<a name='L177'></a><a href='#L177'>177</a>
+<a name='L178'></a><a href='#L178'>178</a>
+<a name='L179'></a><a href='#L179'>179</a>
+<a name='L180'></a><a href='#L180'>180</a>
+<a name='L181'></a><a href='#L181'>181</a>
+<a name='L182'></a><a href='#L182'>182</a>
+<a name='L183'></a><a href='#L183'>183</a>
+<a name='L184'></a><a href='#L184'>184</a>
+<a name='L185'></a><a href='#L185'>185</a>
+<a name='L186'></a><a href='#L186'>186</a>
+<a name='L187'></a><a href='#L187'>187</a>
+<a name='L188'></a><a href='#L188'>188</a>
+<a name='L189'></a><a href='#L189'>189</a>
+<a name='L190'></a><a href='#L190'>190</a>
+<a name='L191'></a><a href='#L191'>191</a>
+<a name='L192'></a><a href='#L192'>192</a>
+<a name='L193'></a><a href='#L193'>193</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">"use strict";
+var __assign = (this &amp;&amp; this.__assign) || <span class="fstat-no" title="function not covered" >fu</span>nction () {
+<span class="cstat-no" title="statement not covered" >    __assign = Object.assign || <span class="fstat-no" title="function not covered" >fu</span>nction(t) {</span>
+<span class="cstat-no" title="statement not covered" >        for (var s, i = <span class="cstat-no" title="statement not covered" >1,</span> n = <span class="cstat-no" title="statement not covered" >arguments.length;</span> i &lt; n; i++) {</span>
+<span class="cstat-no" title="statement not covered" >            s = arguments[i];</span>
+<span class="cstat-no" title="statement not covered" >            for (var p in s) <span class="cstat-no" title="statement not covered" >if (Object.prototype.hasOwnProperty.call(s, p))</span></span>
+<span class="cstat-no" title="statement not covered" >                t[p] = s[p];</span>
+        }
+<span class="cstat-no" title="statement not covered" >        return t;</span>
+    };
+<span class="cstat-no" title="statement not covered" >    return __assign.apply(this, arguments);</span>
+};
+var __awaiter = (this &amp;&amp; this.__awaiter) || <span class="fstat-no" title="function not covered" >fu</span>nction (thisArg, _arguments, P, generator) {
+<span class="cstat-no" title="statement not covered" >    return new (P || (P = Promise))(<span class="fstat-no" title="function not covered" >fu</span>nction (resolve, reject) {</span>
+        function <span class="fstat-no" title="function not covered" >fulfilled(</span>value) { <span class="cstat-no" title="statement not covered" >try { <span class="cstat-no" title="statement not covered" >step(generator.next(value)); </span>} catch (e) { <span class="cstat-no" title="statement not covered" >reject(e); </span>} </span>}
+        function <span class="fstat-no" title="function not covered" >rejected(</span>value) { <span class="cstat-no" title="statement not covered" >try { <span class="cstat-no" title="statement not covered" >step(generator["throw"](value)); </span>} catch (e) { <span class="cstat-no" title="statement not covered" >reject(e); </span>} </span>}
+        function <span class="fstat-no" title="function not covered" >step(</span>result) { <span class="cstat-no" title="statement not covered" >result.done ? resolve(result.value) : new P(<span class="fstat-no" title="function not covered" >fu</span>nction (resolve) { <span class="cstat-no" title="statement not covered" >resolve(result.value); </span>}).then(fulfilled, rejected); </span>}
+<span class="cstat-no" title="statement not covered" >        step((generator = generator.apply(thisArg, _arguments || [])).next());</span>
+    });
+};
+var __generator = (this &amp;&amp; this.__generator) || <span class="fstat-no" title="function not covered" >fu</span>nction (thisArg, body) {
+    var _ = <span class="cstat-no" title="statement not covered" >{ label: 0, sent: <span class="fstat-no" title="function not covered" >fu</span>nction() { <span class="cstat-no" title="statement not covered" >if (t[0] &amp; 1) <span class="cstat-no" title="statement not covered" >throw t[1]; <span class="cstat-no" title="statement not covered" ></span></span>return t[1]; </span>}, trys: [], ops: [] },</span> f, y, t, g;
+<span class="cstat-no" title="statement not covered" >    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" &amp;&amp; (g[Symbol.iterator] = <span class="fstat-no" title="function not covered" >fu</span>nction() { <span class="cstat-no" title="statement not covered" >return this; </span>}), g;</span>
+    function <span class="fstat-no" title="function not covered" >verb(</span>n) { <span class="cstat-no" title="statement not covered" >return <span class="fstat-no" title="function not covered" >fu</span>nction (v) { <span class="cstat-no" title="statement not covered" >return step([n, v]); </span>}; </span>}
+    function <span class="fstat-no" title="function not covered" >step(</span>op) {
+<span class="cstat-no" title="statement not covered" >        if (f) <span class="cstat-no" title="statement not covered" >throw new TypeError("Generator is already executing.");</span></span>
+<span class="cstat-no" title="statement not covered" >        while (_) <span class="cstat-no" title="statement not covered" >try {</span></span>
+<span class="cstat-no" title="statement not covered" >            if (f = 1, y &amp;&amp; (t = op[0] &amp; 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) &amp;&amp; t.call(y), 0) : y.next) &amp;&amp; !(t = t.call(y, op[1])).done) <span class="cstat-no" title="statement not covered" >return t;</span></span>
+<span class="cstat-no" title="statement not covered" >            if (y = 0, t) <span class="cstat-no" title="statement not covered" >op = [op[0] &amp; 2, t.value];</span></span>
+<span class="cstat-no" title="statement not covered" >            switch (op[0]) {</span>
+                case 0: case 1: <span class="cstat-no" title="statement not covered" >t = op; <span class="cstat-no" title="statement not covered" ></span>break;</span>
+                case 4: <span class="cstat-no" title="statement not covered" >_.label++; <span class="cstat-no" title="statement not covered" ></span>return { value: op[1], done: false };</span>
+                case 5: <span class="cstat-no" title="statement not covered" >_.label++; <span class="cstat-no" title="statement not covered" ></span>y = op[1]; <span class="cstat-no" title="statement not covered" ></span>op = [0]; <span class="cstat-no" title="statement not covered" ></span>continue;</span>
+                case 7: <span class="cstat-no" title="statement not covered" >op = _.ops.pop(); <span class="cstat-no" title="statement not covered" ></span>_.trys.pop(); <span class="cstat-no" title="statement not covered" ></span>continue;</span>
+                default:
+<span class="cstat-no" title="statement not covered" >                    if (!(t = _.trys, t = t.length &gt; 0 &amp;&amp; t[t.length - 1]) &amp;&amp; (op[0] === 6 || op[0] === 2)) { <span class="cstat-no" title="statement not covered" >_ = 0; <span class="cstat-no" title="statement not covered" ></span>continue; </span>}</span>
+<span class="cstat-no" title="statement not covered" >                    if (op[0] === 3 &amp;&amp; (!t || (op[1] &gt; t[0] &amp;&amp; op[1] &lt; t[3]))) { <span class="cstat-no" title="statement not covered" >_.label = op[1]; <span class="cstat-no" title="statement not covered" ></span>break; </span>}</span>
+<span class="cstat-no" title="statement not covered" >                    if (op[0] === 6 &amp;&amp; _.label &lt; t[1]) { <span class="cstat-no" title="statement not covered" >_.label = t[1]; <span class="cstat-no" title="statement not covered" ></span>t = op; <span class="cstat-no" title="statement not covered" ></span>break; </span>}</span>
+<span class="cstat-no" title="statement not covered" >                    if (t &amp;&amp; _.label &lt; t[2]) { <span class="cstat-no" title="statement not covered" >_.label = t[2]; <span class="cstat-no" title="statement not covered" ></span>_.ops.push(op); <span class="cstat-no" title="statement not covered" ></span>break; </span>}</span>
+<span class="cstat-no" title="statement not covered" >                    if (t[2]) <span class="cstat-no" title="statement not covered" >_.ops.pop();</span></span>
+<span class="cstat-no" title="statement not covered" >                    _.trys.pop(); <span class="cstat-no" title="statement not covered" ></span>continue;</span>
+            }
+<span class="cstat-no" title="statement not covered" >            op = body.call(thisArg, _);</span>
+        } catch (e) { <span class="cstat-no" title="statement not covered" >op = [6, e]; <span class="cstat-no" title="statement not covered" ></span>y = 0; </span>} finally { <span class="cstat-no" title="statement not covered" >f = t = 0; </span>}
+<span class="cstat-no" title="statement not covered" >        if (op[0] &amp; 5) <span class="cstat-no" title="statement not covered" >throw op[1]; <span class="cstat-no" title="statement not covered" ></span></span>return { value: op[0] ? op[1] : void 0, done: true };</span>
+    }
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var utils_1 = require("../../auth/utils");
+var utils_2 = require("../../utils");
+var apollo_server_1 = require("apollo-server");
+var createOrUpdateUser_1 = require("../../airtable/createOrUpdateUser");
+exports.auth = {
+    // The signup mutation signs up users with a "Customer" role.
+    signup: <span class="fstat-no" title="function not covered" >fu</span>nction (obj, _a, ctx, info) {
+        var email = <span class="cstat-no" title="statement not covered" >_a.email,</span> password = <span class="cstat-no" title="statement not covered" >_a.password,</span> firstName = <span class="cstat-no" title="statement not covered" >_a.firstName,</span> lastName = <span class="cstat-no" title="statement not covered" >_a.lastName,</span> details = <span class="cstat-no" title="statement not covered" >_a.details;</span>
+<span class="cstat-no" title="statement not covered" >        return __awaiter(this, void 0, void 0, <span class="fstat-no" title="function not covered" >fu</span>nction () {</span>
+            var userAuth0ID, err_1, tokenData, err_2, user, err_3, customer, err_4, now;
+<span class="cstat-no" title="statement not covered" >            return __generator(this, <span class="fstat-no" title="function not covered" >fu</span>nction (_b) {</span>
+<span class="cstat-no" title="statement not covered" >                switch (_b.label) {</span>
+                    case 0:
+<span class="cstat-no" title="statement not covered" >                        _b.trys.push([0, 2, , 3]);</span>
+<span class="cstat-no" title="statement not covered" >                        return [4 /*yield*/, utils_1.createAuth0User(email, password, {</span>
+                                firstName: firstName,
+                                lastName: lastName,
+                            })];
+                    case 1:
+<span class="cstat-no" title="statement not covered" >                        userAuth0ID = _b.sent();</span>
+<span class="cstat-no" title="statement not covered" >                        return [3 /*break*/, 3];</span>
+                    case 2:
+<span class="cstat-no" title="statement not covered" >                        err_1 = _b.sent();</span>
+<span class="cstat-no" title="statement not covered" >                        if (err_1.message.includes("400")) {</span>
+<span class="cstat-no" title="statement not covered" >                            throw new apollo_server_1.UserInputError(err_1);</span>
+                        }
+<span class="cstat-no" title="statement not covered" >                        throw new Error(err_1);</span>
+                    case 3:
+<span class="cstat-no" title="statement not covered" >                        _b.trys.push([3, 5, , 6]);</span>
+<span class="cstat-no" title="statement not covered" >                        return [4 /*yield*/, utils_1.getAuth0UserAccessToken(email, password)];</span>
+                    case 4:
+<span class="cstat-no" title="statement not covered" >                        tokenData = _b.sent();</span>
+<span class="cstat-no" title="statement not covered" >                        return [3 /*break*/, 6];</span>
+                    case 5:
+<span class="cstat-no" title="statement not covered" >                        err_2 = _b.sent();</span>
+<span class="cstat-no" title="statement not covered" >                        if (err_2.message.includes("403")) {</span>
+<span class="cstat-no" title="statement not covered" >                            throw new apollo_server_1.ForbiddenError(err_2);</span>
+                        }
+<span class="cstat-no" title="statement not covered" >                        throw new apollo_server_1.UserInputError(err_2);</span>
+                    case 6:
+<span class="cstat-no" title="statement not covered" >                        _b.trys.push([6, 8, , 9]);</span>
+<span class="cstat-no" title="statement not covered" >                        return [4 /*yield*/, utils_1.createPrismaUser(ctx, {</span>
+                                auth0Id: userAuth0ID,
+                                email: email,
+                                firstName: firstName,
+                                lastName: lastName,
+                            })];
+                    case 7:
+<span class="cstat-no" title="statement not covered" >                        user = _b.sent();</span>
+<span class="cstat-no" title="statement not covered" >                        return [3 /*break*/, 9];</span>
+                    case 8:
+<span class="cstat-no" title="statement not covered" >                        err_3 = _b.sent();</span>
+<span class="cstat-no" title="statement not covered" >                        throw new Error(err_3);</span>
+                    case 9:
+<span class="cstat-no" title="statement not covered" >                        _b.trys.push([9, 11, , 12]);</span>
+<span class="cstat-no" title="statement not covered" >                        return [4 /*yield*/, utils_1.createPrismaCustomerForExistingUser(ctx, {</span>
+                                userID: user.id,
+                                details: details,
+                                status: "Created",
+                            })];
+                    case 10:
+<span class="cstat-no" title="statement not covered" >                        customer = _b.sent();</span>
+<span class="cstat-no" title="statement not covered" >                        return [3 /*break*/, 12];</span>
+                    case 11:
+<span class="cstat-no" title="statement not covered" >                        err_4 = _b.sent();</span>
+<span class="cstat-no" title="statement not covered" >                        throw new Error(err_4);</span>
+                    case 12:
+                        // Insert them into airtable
+<span class="cstat-no" title="statement not covered" >                        createOrUpdateUser_1.createOrUpdateAirtableUser(user, __assign({}, details, { status: "Created" }));</span>
+<span class="cstat-no" title="statement not covered" >                        now = new Date();</span>
+<span class="cstat-no" title="statement not covered" >                        ctx.analytics.identify({</span>
+                            userId: user.id,
+                            traits: __assign({}, extractSegmentReservedTraitsFromCustomerDetail(details), { firstName: user.firstName, lastName: user.lastName, createdAt: now.toISOString(), id: user.id, role: user.role, email: user.email, auth0Id: user.auth0Id }),
+                        });
+<span class="cstat-no" title="statement not covered" >                        ctx.analytics.track({</span>
+                            userId: user.id,
+                            event: "Created Account",
+                        });
+<span class="cstat-no" title="statement not covered" >                        return [2 /*return*/, {</span>
+                                token: tokenData.access_token,
+                                refreshToken: tokenData.refresh_token,
+                                expiresIn: tokenData.expires_in,
+                                user: user,
+                            }];
+                }
+            });
+        });
+    },
+    login: <span class="fstat-no" title="function not covered" >fu</span>nction (obj, _a, ctx, info) {
+        var email = <span class="cstat-no" title="statement not covered" >_a.email,</span> password = <span class="cstat-no" title="statement not covered" >_a.password;</span>
+<span class="cstat-no" title="statement not covered" >        return __awaiter(this, void 0, void 0, <span class="fstat-no" title="function not covered" >fu</span>nction () {</span>
+            var tokenData, err_5, user, customer;
+<span class="cstat-no" title="statement not covered" >            return __generator(this, <span class="fstat-no" title="function not covered" >fu</span>nction (_b) {</span>
+<span class="cstat-no" title="statement not covered" >                switch (_b.label) {</span>
+                    case 0:
+                        // If they are already logged in, throw an error
+<span class="cstat-no" title="statement not covered" >                        if (utils_1.isLoggedIn(ctx)) {</span>
+<span class="cstat-no" title="statement not covered" >                            throw new Error("user is already logged in");</span>
+                        }
+<span class="cstat-no" title="statement not covered" >                        _b.label = 1;</span>
+                    case 1:
+<span class="cstat-no" title="statement not covered" >                        _b.trys.push([1, 3, , 4]);</span>
+<span class="cstat-no" title="statement not covered" >                        return [4 /*yield*/, utils_1.getAuth0UserAccessToken(email, password)];</span>
+                    case 2:
+<span class="cstat-no" title="statement not covered" >                        tokenData = _b.sent();</span>
+<span class="cstat-no" title="statement not covered" >                        return [3 /*break*/, 4];</span>
+                    case 3:
+<span class="cstat-no" title="statement not covered" >                        err_5 = _b.sent();</span>
+<span class="cstat-no" title="statement not covered" >                        if (err_5.message.includes("403")) {</span>
+<span class="cstat-no" title="statement not covered" >                            throw new apollo_server_1.ForbiddenError(err_5);</span>
+                        }
+<span class="cstat-no" title="statement not covered" >                        throw new apollo_server_1.UserInputError(err_5);</span>
+                    case 4: <span class="cstat-no" title="statement not covered" >return [4 /*yield*/, ctx.prisma.user({ email: email })</span>
+                        // If the user is a Customer, make sure that the account has been approved
+                    ];
+                    case 5:
+<span class="cstat-no" title="statement not covered" >                        user = _b.sent();</span>
+<span class="cstat-no" title="statement not covered" >                        if (!(user &amp;&amp; user.role == "Customer")) <span class="cstat-no" title="statement not covered" >return [3 /*break*/, 7];</span></span>
+<span class="cstat-no" title="statement not covered" >                        return [4 /*yield*/, utils_2.getCustomerFromUserID(ctx.prisma, user.id)];</span>
+                    case 6:
+<span class="cstat-no" title="statement not covered" >                        customer = _b.sent();</span>
+<span class="cstat-no" title="statement not covered" >                        if (customer &amp;&amp;</span>
+                            (customer.status !== "Active" &amp;&amp; customer.status !== "Authorized")) {
+<span class="cstat-no" title="statement not covered" >                            throw new Error("User account has not been approved");</span>
+                        }
+<span class="cstat-no" title="statement not covered" >                        _b.label = 7;</span>
+                    case 7: <span class="cstat-no" title="statement not covered" >return [2 /*return*/, {</span>
+                            token: tokenData.access_token,
+                            refreshToken: tokenData.refresh_token,
+                            expiresIn: tokenData.expires_in,
+                            user: user,
+                        }];
+                }
+            });
+        });
+    },
+};
+function <span class="fstat-no" title="function not covered" >extractSegmentReservedTraitsFromCustomerDetail(</span>detail) {
+    var traits = <span class="cstat-no" title="statement not covered" >{};</span>
+<span class="cstat-no" title="statement not covered" >    if (!!detail.phoneNumber) {</span>
+<span class="cstat-no" title="statement not covered" >        traits["phone"] = detail.phoneNumber;</span>
+    }
+<span class="cstat-no" title="statement not covered" >    return traits;</span>
+}
+//# sourceMappingURL=auth.js.map</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Thu Jan 16 2020 11:03:28 GMT-0500 (Eastern Standard Time)
+</div>
+</div>
+<script src="../../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../../../sorter.js"></script>
+<script src="../../../block-navigation.js"></script>
+</body>
+</html>

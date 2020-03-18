@@ -2,13 +2,24 @@ import { prisma, CategoryCreateInput, CategoryUpdateInput } from "../../prisma"
 import { getAllCategories } from "../utils"
 import slugify from "slugify"
 import { isEmpty } from "lodash"
+import { makeSingleSyncFuncMultiBarAndProgressBarIfNeeded } from "./utils"
 
-export const syncCategories = async () => {
+export const syncCategories = async (cliProgressBar?) => {
   const allCategories = await getAllCategories()
 
+  const [
+    multibar,
+    _cliProgressBar,
+  ] = await makeSingleSyncFuncMultiBarAndProgressBarIfNeeded({
+    cliProgressBar,
+    numRecords: allCategories.length * 2,
+    modelName: "Categories",
+  })
+
   // First create or update all categories
-  for (let record of allCategories) {
+  for (const record of allCategories) {
     try {
+      _cliProgressBar.increment()
       const { model } = record
       const { name, description, visible, image } = model
 
@@ -26,7 +37,7 @@ export const syncCategories = async () => {
         image,
       } as CategoryCreateInput
 
-      const category = await prisma.upsertCategory({
+      await prisma.upsertCategory({
         where: {
           slug,
         },
@@ -37,8 +48,6 @@ export const syncCategories = async () => {
       await record.patchUpdate({
         Slug: slug,
       })
-
-      console.log(category)
     } catch (e) {
       console.error(e)
     }
@@ -59,8 +68,10 @@ export const syncCategories = async () => {
   const [_tree, childrenMap] = buildHierarchy(categories)
 
   // Then link them to each other
-  for (let record of categories) {
+  for (const record of categories) {
     try {
+      _cliProgressBar.increment()
+
       const slug = record.slug
       const children = childrenMap[slug]
         ? getLeafNodes([childrenMap[slug]])[0]
@@ -79,17 +90,17 @@ export const syncCategories = async () => {
         },
         data,
       })
-
-      console.log(slug, updatedCategory)
     } catch (e) {
       console.error(e)
     }
   }
+
+  multibar?.stop()
 }
 
-function buildHierarchy(items) {
-  let roots = [],
-    children = {}
+function buildHierarchy (items) {
+  const roots = []
+  const children = {}
 
   // find the top level nodes and hash the children based on parent
   for (let i in items) {
@@ -101,7 +112,7 @@ function buildHierarchy(items) {
   }
 
   // function to recursively build the tree
-  const findChildren = function(parent) {
+  const findChildren = function (parent) {
     if (children[parent.slug]) {
       parent.children = children[parent.slug]
       for (let child of parent.children) {
@@ -121,7 +132,7 @@ function buildHierarchy(items) {
   return [result, children]
 }
 
-function getLeafNodes(nodes, result = []) {
+function getLeafNodes (nodes, result = []) {
   for (let node of nodes) {
     if (!node.children) {
       result.push(node)
