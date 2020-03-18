@@ -75,7 +75,7 @@ export async function getCustomerFromContext(ctx: Context): Promise<Customer> {
   // Get the customer record corresponding to that user
   return head(
     await ctx.prisma.customers({
-      where: { user: { id: user.id } },
+      where: { user: { id: user.id } },	  
     })
   )
 }
