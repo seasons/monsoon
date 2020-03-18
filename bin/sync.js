@@ -83,29 +83,21 @@ require("yargs")
 
       switch (argv.table) {
         case "all":
-          console.log("syncing all")
           return await syncAll()
         case "brands":
-          console.log("syncing brands")
           return await syncBrands()
         case "categories":
-          console.log("syncing categories")
           return await syncCategories()
         case "products":
-          console.log("syncing products")
           return await syncProducts()
         case "product-variants":
-          console.log("syncing product variants")
           await syncProducts()
           return await syncProductVariants()
         case "collections":
-          console.log("syncing collections")
           return await syncCollections()
         case "collection-groups":
-          console.log("syncing collection groups")
           return await syncCollectionGroups()
         case "homepage-product-rails":
-          console.log("syncing homepage product rails")
           return await syncHomepageProductRails()
         default:
           throw new Error("invalid table name")

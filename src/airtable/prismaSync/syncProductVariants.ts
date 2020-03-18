@@ -5,42 +5,91 @@ import {
   getAllBrands,
   getAllColors,
   getAllLocations,
+  getAllTopSizes,
+  getAllBottomSizes,
+  getAllSizes,
 } from "../utils"
 import {
   prisma,
   InventoryStatus,
   PhysicalProductCreateInput,
   ProductVariantCreateInput,
+  LetterSize,
+  BottomSizeType,
 } from "../../prisma"
-import { sizeToSizeCode } from "../../utils"
+import { Identity, sizeNameToSizeCode } from "../../utils"
 import { base } from "../config"
 import { isEmpty } from "lodash"
+import {
+  makeSingleSyncFuncMultiBarAndProgressBarIfNeeded,
+  deepUpsertSize,
+} from "./utils"
 
 const SeasonsLocationID = "recvzTcW19kdBPqf4"
 
-export const syncProductVariants = async () => {
+export const syncProductVariants = async (cliProgressBar?) => {
+  //   Make the progress bar
+  const allProductVariants = await getAllProductVariants()
+  const [
+    multibar,
+    progressBar,
+  ] = await makeSingleSyncFuncMultiBarAndProgressBarIfNeeded({
+    cliProgressBar,
+    numRecords: allProductVariants.length,
+    modelName: "Product Variants",
+  })
+
+  // Get all the relevant airtable records
   const allBrands = await getAllBrands()
   const allColors = await getAllColors()
   const allProducts = await getAllProducts()
   const allLocations = await getAllLocations()
-  const allProductVariants = await getAllProductVariants()
   const allPhysicalProducts = await getAllPhysicalProducts()
+  const allTopSizes = await getAllTopSizes()
+  const allBottomSizes = await getAllBottomSizes()
+  const allSizes = await getAllSizes()
 
   for (const productVariant of allProductVariants) {
     try {
+      // Increment the progress bar
+      progressBar.increment()
+
+      //   Extract the model data from the product variant
       const { model } = productVariant
 
+      //   Get the related product
       const product = allProducts.findByIds(model.product)
+      if (isEmpty(product)) {
+        continue
+      }
+
+      //   Get the related brand, color, location, style, topsize, bottomSize
       const brand = allBrands.findByIds(product.model.brand)
       const color = allColors.find(x => x.model.name === product.model.color)
       const location = allLocations.find(x => x.id === SeasonsLocationID)
       const styleNumber = product.model.styleCode
+      const topSize = allTopSizes.findByIds(model.topSize)
+      const bottomSize = allBottomSizes.findByIds(model.bottomSize)
 
-      if (isEmpty(model) || isEmpty(brand) || isEmpty(product)) {
+      //   If there's no model or brand, or there's not appropriate size data, skip it.
+      const { type } = product.model
+      if (
+        isEmpty(model) ||
+        isEmpty(brand) ||
+        (isEmpty(topSize) && isEmpty(bottomSize)) ||
+        (type === "Top" && isEmpty(topSize)) ||
+        (type === "Bottom" && isEmpty(bottomSize))
+      ) {
         continue
       }
 
-      const sku = skuForData(brand, color, productVariant, styleNumber)
+      //   Calculate the sku
+      const sku = skuForData(
+        brand,
+        color,
+        sizeNameForProductVariant(type, topSize, bottomSize, allSizes),
+        styleNumber
+      )
 
       const {
         totalCount,
@@ -49,11 +98,94 @@ export const syncProductVariants = async () => {
         updatedReservableCount,
       } = countsForVariant(productVariant)
 
-      const { weight, height, size } = model
+      const { weight, height } = model
 
-      let data = {
+      let internalSizeRecord
+      if (!!topSize || !!bottomSize) {
+        let linkedAirtableSize
+        switch (type) {
+          case "Top":
+            linkedAirtableSize = allSizes.findByIds(topSize.model.size)
+            break
+          case "Bottom":
+            linkedAirtableSize = allSizes.findByIds(bottomSize.model.size)
+            break
+        }
+        internalSizeRecord = await deepUpsertSize({
+          slug: `${sku}-internal`,
+          type,
+          display: linkedAirtableSize?.model.display || "",
+          topSizeData: type === "Top" &&
+            !!topSize && {
+              letter: (linkedAirtableSize?.model.name as LetterSize) || null,
+              sleeve: topSize.model.sleeve,
+              shoulder: topSize.model.shoulder,
+              chest: topSize.model.chest,
+              neck: topSize.model.neck,
+              length: topSize.model.length,
+            },
+          bottomSizeData: type === "Bottom" &&
+            !!bottomSize && {
+              type: (linkedAirtableSize?.model.type as BottomSizeType) || null,
+              value: linkedAirtableSize?.model.name || "",
+              waist: bottomSize.model.waist,
+              rise: bottomSize.model.rise,
+              hem: bottomSize.model.hem,
+              inseam: bottomSize.model.inseam,
+            },
+        })
+      }
+
+      // If the product variant is a bottom, then create manufacturer sizes
+      const manufacturerSizeRecords = []
+      if (type === "Bottom") {
+        // Delete all existing manufacturer size records so if an admin removes
+        // a size record from a product variant on airtable, it does not linger on the db record
+        const existingManufacturerSizes = await prisma
+          .productVariant({ sku })
+          .manufacturerSizes()
+        await prisma.deleteManySizes({
+          id_in: existingManufacturerSizes?.map(a => a.id) || [],
+        })
+
+        // For each manufacturer size, store the name, type, and display value
+        if (!!bottomSize?.model.manufacturerSizes) {
+          let i = 0
+          for (const manufacturerSizeId of bottomSize.model.manufacturerSizes) {
+            const manufacturerSizeRecord = allSizes.findByIds(
+              manufacturerSizeId
+            )
+            const { display, type, name: value } = manufacturerSizeRecord.model
+            manufacturerSizeRecords.push(
+              await deepUpsertSize({
+                slug: `${sku}-manu-${type}-${value}`,
+                type: "Bottom",
+                display,
+                topSizeData: null,
+                bottomSizeData: {
+                  type,
+                  value,
+                },
+              })
+            )
+          }
+        }
+      }
+
+      const data = {
         sku,
-        size,
+        internalSize: {
+          connect: {
+            id: internalSizeRecord.id,
+          },
+        },
+        manufacturerSizes: {
+          connect: manufacturerSizeRecords.map(a =>
+            Identity({
+              id: a.id,
+            })
+          ),
+        },
         weight: parseFloat(weight) || 0,
         height: parseFloat(height) || 0,
         total: totalCount,
@@ -73,9 +205,9 @@ export const syncProductVariants = async () => {
         productID: product.model.slug,
       } as ProductVariantCreateInput
 
-      const productVariantData = await prisma.upsertProductVariant({
+      await prisma.upsertProductVariant({
         where: {
-          sku: sku,
+          sku,
         },
         create: {
           ...data,
@@ -84,8 +216,6 @@ export const syncProductVariants = async () => {
           ...data,
         },
       })
-
-      console.log(productVariantData)
 
       // Figure out if we need to create new instance of physical products
       // based on the counts and what's available in the database
@@ -103,15 +233,13 @@ export const syncProductVariants = async () => {
       })
 
       newPhysicalProducts.forEach(async p => {
-        const updatePhysicalProduct = await prisma.upsertPhysicalProduct({
+        await prisma.upsertPhysicalProduct({
           where: {
             seasonsUID: p.seasonsUID,
           },
           create: p,
           update: p,
         })
-
-        console.log(updatePhysicalProduct)
       })
 
       await productVariant.patchUpdate({
@@ -122,31 +250,66 @@ export const syncProductVariants = async () => {
         "Non-Reservable Count": nonReservableCount,
       })
     } catch (e) {
+      console.log(productVariant)
       console.error(e)
     }
   }
+  multibar?.stop()
 }
 
-const skuForData = (brand, color, productVariant, styleNumber) => {
-  let brandCode = brand.get("Brand Code")
-  let colorCode = color.get("Color Code")
-  let size = productVariant.get("Size")
-  let sizeCode = sizeToSizeCode(size)
-  let styleCode = styleNumber.toString().padStart(3, "0")
+const skuForData = (brand, color, sizeName, styleNumber) => {
+  const brandCode = brand.get("Brand Code")
+  const colorCode = color.get("Color Code")
+  const sizeCode = sizeNameToSizeCode(sizeName)
+  const styleCode = styleNumber.toString().padStart(3, "0")
   return `${brandCode}-${colorCode}-${sizeCode}-${styleCode}`
 }
 
+const sizeNameForProductVariant = (type, topSize, bottomSize, allSizes) => {
+  switch (type) {
+    case "Top":
+      return allSizes.findByIds(topSize.model.size)?.model.name
+    case "Bottom":
+      return allSizes.findByIds(bottomSize.model.size)?.model.name
+    default:
+      throw new Error(`Invalid product type: ${type}`)
+  }
+}
+
 const countsForVariant = productVariant => {
-  let data = {
+  const data = {
     totalCount: productVariant.get("Total Count") || 0,
     reservedCount: productVariant.get("Reserved Count") || 0,
     nonReservableCount: productVariant.get("Non-Reservable Count") || 0,
   }
 
-  return {
+  // Assume all newly added product variants are reservable, and calculate the
+  // number of such product variants as the remainder once reserved and nonReservable
+  // are taken into account
+  const updatedData = {
     ...data,
-    updatedReservableCount: data.totalCount - data.reservedCount,
+    updatedReservableCount:
+      data.totalCount - data.reservedCount - data.nonReservableCount,
   }
+
+  const {
+    totalCount,
+    updatedReservableCount,
+    reservedCount,
+    nonReservableCount,
+  } = updatedData
+
+  // Make sure these counts make sense
+  if (
+    totalCount < 0 ||
+    updatedReservableCount < 0 ||
+    nonReservableCount < 0 ||
+    totalCount !== reservedCount + nonReservableCount + updatedReservableCount
+  ) {
+    throw new Error(`Invalid counts: ${updatedData}`)
+  }
+
+  return updatedData
 }
 
 type CreateMorePhysicalProductsFunction = (data: {
@@ -160,7 +323,6 @@ type CreateMorePhysicalProductsFunction = (data: {
 
 const createMorePhysicalProductsIfNeeded: CreateMorePhysicalProductsFunction = async ({
   sku,
-  location,
   productVariant,
   product,
   physicalProducts,
@@ -182,7 +344,6 @@ const createMorePhysicalProductsIfNeeded: CreateMorePhysicalProductsFunction = a
             text: sku + `-${physicalProductID}`,
           },
           Product: [product.id],
-          Location: [SeasonsLocationID], // Seasons HQ
           "Product Variant": [productVariant.id],
           "Inventory Status": "Non Reservable",
           "Product Status": "New",
@@ -199,11 +360,6 @@ const createMorePhysicalProductsIfNeeded: CreateMorePhysicalProductsFunction = a
         productVariant: {
           connect: {
             sku,
-          },
-        },
-        location: {
-          connect: {
-            slug: location.model.slug,
           },
         },
         inventoryStatus: "Reservable" as InventoryStatus,
