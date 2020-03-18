@@ -7,7 +7,7 @@ import { BagItem } from "../../prisma"
 const BAG_SIZE = 3
 
 export const bag = {
-  async addToBag (obj, { item }, ctx: Context, info) {
+  async addToBag(obj, { item }, ctx: Context, info) {
     const customer = await getCustomerFromContext(ctx)
 
     // Check if the user still can add more items to bag
@@ -45,7 +45,7 @@ export const bag = {
     })
   },
 
-  async removeFromBag (obj, { item, saved }, ctx: Context, info) {
+  async removeFromBag(obj, { item, saved }, ctx: Context, info) {
     const customer = await getCustomerFromContext(ctx)
 
     const whereData = {
@@ -75,7 +75,7 @@ export const bag = {
     })
   },
 
-  async saveProduct (obj, { item, save = false }, ctx: Context, info) {
+  async saveProduct(obj, { item, save = false }, ctx: Context, info) {
     const customer = await getCustomerFromContext(ctx)
     const bagItems = await ctx.db.query.bagItems(
       {

@@ -1,6 +1,6 @@
 import { Prisma, ID_Input } from "../../prisma"
 
-export async function markBagItemsReserved (
+export async function markBagItemsReserved(
   prisma: Prisma,
   customerId: ID_Input,
   productVariantIds: ID_Input[]
