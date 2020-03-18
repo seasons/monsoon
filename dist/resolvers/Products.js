@@ -83,7 +83,7 @@ var queryOptionsForProducts = function (args, ctx) { return __awaiter(void 0, vo
                 sizes = args.sizes || [];
                 where = args.where || {};
                 if (sizes && sizes.length > 0) {
-                    where.variants_some = { size_in: sizes };
+                    // where.variants_some = { size_in: sizes }
                 }
                 if (!orderBy.includes("name_")) return [3 /*break*/, 2];
                 return [4 /*yield*/, productsAlphabetically(ctx, category, orderBy, sizes)];

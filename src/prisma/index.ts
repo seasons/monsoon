@@ -1335,7 +1335,7 @@ export interface ClientConstructor<T> {
  * Types
  */
 
-export type BottomSizeType = "US" | "EU" | "JP" | "Letter";
+export type BottomSizeType = "WxL" | "US" | "EU" | "JP" | "Letter";
 
 export type CategoryOrderByInput =
   | "id_ASC"
@@ -14104,6 +14104,10 @@ export const models: Model[] = [
     embedded: false
   },
   {
+    name: "PushNotificationStatus",
+    embedded: false
+  },
+  {
     name: "Brand",
     embedded: false
   },
@@ -14153,10 +14157,6 @@ export const models: Model[] = [
   },
   {
     name: "User",
-    embedded: false
-  },
-  {
-    name: "PushNotificationStatus",
     embedded: false
   },
   {

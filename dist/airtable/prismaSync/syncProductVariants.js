@@ -55,7 +55,7 @@ var lodash_1 = require("lodash");
 var utils_3 = require("./utils");
 var SeasonsLocationID = "recvzTcW19kdBPqf4";
 exports.syncProductVariants = function (cliProgressBar) { return __awaiter(void 0, void 0, void 0, function () {
-    var allProductVariants, _a, multibar, _cliProgressBar, allBrands, allColors, allProducts, allLocations, allPhysicalProducts, allTopSizes, allBottomSizes, allSizes, _loop_1, _i, allProductVariants_1, productVariant;
+    var allProductVariants, _a, multibar, progressBar, allBrands, allColors, allProducts, allLocations, allPhysicalProducts, allTopSizes, allBottomSizes, allSizes, _loop_1, _i, allProductVariants_1, productVariant;
     var _b, _c, _d, _e, _f, _g, _h;
     return __generator(this, function (_j) {
         switch (_j.label) {
@@ -70,7 +70,7 @@ exports.syncProductVariants = function (cliProgressBar) { return __awaiter(void 
                     // Get all the relevant airtable records
                 ];
             case 2:
-                _a = _j.sent(), multibar = _a[0], _cliProgressBar = _a[1];
+                _a = _j.sent(), multibar = _a[0], progressBar = _a[1];
                 return [4 /*yield*/, utils_1.getAllBrands()];
             case 3:
                 allBrands = _j.sent();
@@ -102,7 +102,7 @@ exports.syncProductVariants = function (cliProgressBar) { return __awaiter(void 
                             case 0:
                                 _f.trys.push([0, 12, , 13]);
                                 // Increment the progress bar
-                                _cliProgressBar.increment();
+                                progressBar.increment();
                                 model = productVariant.model;
                                 product_1 = allProducts.findByIds(model.product);
                                 if (lodash_1.isEmpty(product_1)) {
@@ -342,15 +342,12 @@ var countsForVariant = function (productVariant) {
     // number of such product variants as the remainder once reserved and nonReservable
     // are taken into account
     var updatedData = __assign(__assign({}, data), { updatedReservableCount: data.totalCount - data.reservedCount - data.nonReservableCount });
+    var totalCount = updatedData.totalCount, updatedReservableCount = updatedData.updatedReservableCount, reservedCount = updatedData.reservedCount, nonReservableCount = updatedData.nonReservableCount;
     // Make sure these counts make sense
-    if (updatedData.totalCount < 0 ||
-        updatedData.updatedReservableCount < 0 ||
-        updatedData.nonReservableCount < 0 ||
-        updatedData.totalCount < 0 ||
-        updatedData.totalCount !==
-            updatedData.reservedCount +
-                updatedData.nonReservableCount +
-                updatedData.updatedReservableCount) {
+    if (totalCount < 0 ||
+        updatedReservableCount < 0 ||
+        nonReservableCount < 0 ||
+        totalCount !== reservedCount + nonReservableCount + updatedReservableCount) {
         throw new Error("Invalid counts: " + updatedData);
     }
     return updatedData;

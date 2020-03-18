@@ -32,7 +32,7 @@ export const syncProductVariants = async (cliProgressBar?) => {
   const allProductVariants = await getAllProductVariants()
   const [
     multibar,
-    _cliProgressBar,
+    progressBar,
   ] = await makeSingleSyncFuncMultiBarAndProgressBarIfNeeded({
     cliProgressBar,
     numRecords: allProductVariants.length,
@@ -52,7 +52,7 @@ export const syncProductVariants = async (cliProgressBar?) => {
   for (const productVariant of allProductVariants) {
     try {
       // Increment the progress bar
-      _cliProgressBar.increment()
+      progressBar.increment()
 
       //   Extract the model data from the product variant
       const { model } = productVariant
@@ -295,16 +295,19 @@ const countsForVariant = productVariant => {
       data.totalCount - data.reservedCount - data.nonReservableCount,
   }
 
+  const {
+    totalCount,
+    updatedReservableCount,
+    reservedCount,
+    nonReservableCount,
+  } = updatedData
+
   // Make sure these counts make sense
   if (
-    updatedData.totalCount < 0 ||
-    updatedData.updatedReservableCount < 0 ||
-    updatedData.nonReservableCount < 0 ||
-    updatedData.totalCount < 0 ||
-    updatedData.totalCount !==
-      updatedData.reservedCount +
-        updatedData.nonReservableCount +
-        updatedData.updatedReservableCount
+    totalCount < 0 ||
+    updatedReservableCount < 0 ||
+    nonReservableCount < 0 ||
+    totalCount !== reservedCount + nonReservableCount + updatedReservableCount
   ) {
     throw new Error(`Invalid counts: ${updatedData}`)
   }

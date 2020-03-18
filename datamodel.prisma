@@ -151,6 +151,7 @@ enum ProductType {
 }
 
 enum BottomSizeType {
+  WxL
   US
   EU
   JP
@@ -166,6 +167,12 @@ enum Rating {
   Disliked
   Meh
   Loved
+}
+
+enum PushNotificationStatus {
+  Blocked
+  Granted
+  Denied
 }
 
 type Brand {
@@ -334,12 +341,6 @@ type User {
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
   pushNotifications: PushNotificationStatus! @default(value: Denied)
-}
-
-enum PushNotificationStatus {
-  Blocked
-  Granted
-  Denied
 }
 
 type CustomerDetail {
@@ -540,5 +541,5 @@ type Size {
   productType: ProductType
   top: TopSize
   bottom: BottomSize
-  display: String!
-}   
+  display: String!   
+}

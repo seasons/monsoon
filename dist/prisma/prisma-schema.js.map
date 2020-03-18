@@ -1,1 +1,1 @@
-{"version":3,"file":"prisma-schema.js","sourceRoot":"","sources":["../../src/prisma/prisma-schema.ts"],"names":[],"mappings":";AAAA,gEAAgE;AAC9D,iFAAiF;AACjF,wFAAwF;;AAE7E,QAAA,QAAQ,GAAiB,guvMA6oPrC,CAAA"}
+{"version":3,"file":"prisma-schema.js","sourceRoot":"","sources":["../../src/prisma/prisma-schema.ts"],"names":[],"mappings":";AAAA,0DAA0D;AACxD,iFAAiF;AACjF,wFAAwF;;AAE7E,QAAA,QAAQ,GAAiB,uuvMA8oPrC,CAAA"}

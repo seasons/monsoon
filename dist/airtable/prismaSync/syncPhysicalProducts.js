@@ -73,9 +73,6 @@ exports.syncPhysicalProducts = function (cliProgressBar) { return __awaiter(void
                     return [3 /*break*/, 8];
                 }
                 sUID = model.sUID, inventoryStatus = model.inventoryStatus, productStatus = model.productStatus;
-                if (sUID.text.startsWith("HEVO-RED")) {
-                    return [3 /*break*/, 8];
-                }
                 data = {
                     productVariant: {
                         connect: {

@@ -49,7 +49,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = require("../auth/utils");
 // FIXME: This is being used because currently info is lacking the __typename, add __typename to info
-var ProductFragment = "{\n  __typename\n  id\n  slug\n  images\n  name\n  brand {\n    id\n    name\n  }\n  variants {\n    id\n    size\n    reservable\n  }\n  color {\n    name\n  }\n  retailPrice\n}";
+var ProductFragment = "\n{\n  __typename\n  id\n  slug\n  images\n  name\n  brand {\n    id\n    name\n  }\n  variants {\n    id\n    reservable\n    internalSize {\n      top {\n        letter\n      }\n      bottom {\n        type\n        value\n      }\n      productType\n      display\n    }\n  }\n  color {\n    name\n  }\n  retailPrice\n}\n";
 exports.HomepageResult = {
     __resolveType: function (obj, _context, _info) {
         if (obj.brand || obj.colorway) {
@@ -110,7 +110,7 @@ exports.Homepage = function (parent, args, ctx, info) { return __awaiter(void 0,
                             type: "Products",
                             __typename: "HomepageSection",
                             title: "Just added",
-                            results: function (args, ctx, info) { return __awaiter(void 0, void 0, void 0, function () {
+                            results: function (args, ctx, localInfo) { return __awaiter(void 0, void 0, void 0, function () {
                                 var newProducts;
                                 return __generator(this, function (_a) {
                                     switch (_a.label) {
@@ -170,7 +170,7 @@ exports.Homepage = function (parent, args, ctx, info) { return __awaiter(void 0,
                         type: "Products",
                         __typename: "HomepageSection",
                         title: "Recently viewed",
-                        results: function (args, ctx, info) { return __awaiter(void 0, void 0, void 0, function () {
+                        results: function (args, ctx, localInfo) { return __awaiter(void 0, void 0, void 0, function () {
                             var viewedProducts;
                             return __generator(this, function (_a) {
                                 switch (_a.label) {
@@ -178,7 +178,7 @@ exports.Homepage = function (parent, args, ctx, info) { return __awaiter(void 0,
                                             where: { customer: { id: customer.id } },
                                             orderBy: "updatedAt_DESC",
                                             limit: 10,
-                                        }, "{ \n            updatedAt\n            product " + ProductFragment + " \n          }")];
+                                        }, "{\n            updatedAt\n            product " + ProductFragment + "\n          }")];
                                     case 1:
                                         viewedProducts = _a.sent();
                                         return [2 /*return*/, viewedProducts.map(function (viewedProduct) { return viewedProduct.product; })];
