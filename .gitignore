@@ -1,3 +1,4 @@
+dist
 package-lock.json
 node_modules
 .idea
@@ -12,5 +13,5 @@ node_modules
 devnotes.txt
 .helpers.md
 .pgpass
-coverage
 log.txt
+coverage/
