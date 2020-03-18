@@ -3,8 +3,8 @@ import { Prisma, ID_Input } from "../../prisma"
 export async function markBagItemsReserved (
   prisma: Prisma,
   customer_id: ID_Input,
-  productVariantIds: Array<ID_Input>
-): Promise<Function> {
+  productVariantIds: ID_Input[]
+): Promise<() => {}> {
   // Update the bag items
   const bagItemsToUpdate = await prisma.bagItems({
     where: {
@@ -19,6 +19,7 @@ export async function markBagItemsReserved (
     },
   })
   const bagItemsToUpdateIds = bagItemsToUpdate.map(a => a.id)
+
   await prisma.updateManyBagItems({
     where: { id_in: bagItemsToUpdateIds },
     data: {
