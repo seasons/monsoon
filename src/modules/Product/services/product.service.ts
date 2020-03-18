@@ -13,7 +13,7 @@ export class ProductService {
     private readonly prisma: PrismaClientService,
     private readonly productUtils: ProductUtilsService,
     private readonly productVariantService: ProductVariantService
-  ) {}
+  ) { }
 
   async getProducts(args, info) {
     const queryOptions = await this.productUtils.queryOptionsForProducts(args)

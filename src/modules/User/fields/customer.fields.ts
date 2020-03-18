@@ -7,7 +7,7 @@ import {
 import { head } from "lodash"
 import { prisma } from "../../../prisma"
 import { User, Customer } from "../../../nest_decorators"
-import { DBService } from "../../../prisma/DB.service"
+import { DBService } from "../../../prisma/db.service"
 
 @Resolver("Customer")
 export class CustomerFieldsResolver {
