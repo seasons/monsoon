@@ -60,3 +60,5 @@ export const syncAll = async () => {
     multibar.stop()
   }
 }
+
+syncAll()

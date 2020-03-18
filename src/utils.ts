@@ -42,14 +42,14 @@ export const sizeNameToSizeCode = (sizeName: ProductSize | string) => {
   return sizeName.toLowerCase().replace("x", "") // 32x28 => 3238
 }
 
-export function getUserIDHash(userID: string): string {
+export function getUserIDHash (userID: string): string {
   return crypto
     .createHash("sha256")
     .update(`${userID}${process.env.HASH_SECRET}`)
     .digest("hex")
 }
 
-export async function getUserFromUserIDHash(
+export async function getUserFromUserIDHash (
   prisma: Prisma,
   userIDHash: string
 ): Promise<User | null> {
@@ -70,7 +70,7 @@ export async function getUserFromUserIDHash(
   })
 }
 
-export async function getCustomerFromUserID(
+export async function getCustomerFromUserID (
   prisma: Prisma,
   userID: string
 ): Promise<Customer> {
@@ -87,7 +87,7 @@ export async function getCustomerFromUserID(
   return customer
 }
 
-export async function getCustomerFromEmail(
+export async function getCustomerFromEmail (
   prisma: Prisma,
   email: string
 ): Promise<Customer> {
@@ -105,7 +105,7 @@ export async function getCustomerFromEmail(
 }
 
 // given the corresponding user object, set the customer status on a customer
-export async function setCustomerPrismaStatus(
+export async function setCustomerPrismaStatus (
   prisma: Prisma,
   user: User,
   status: string
@@ -126,7 +126,7 @@ export interface Context {
   analytics: Analytics
 }
 
-export async function getPrismaLocationFromSlug(
+export async function getPrismaLocationFromSlug (
   prisma: Prisma,
   slug: string
 ): Promise<Location> {
@@ -140,7 +140,7 @@ export async function getPrismaLocationFromSlug(
   return prismaLocation
 }
 
-export async function calcShipmentWeightFromProductVariantIDs(
+export async function calcShipmentWeightFromProductVariantIDs (
   prisma: Prisma,
   itemIDs: string[]
 ): Promise<number> {
@@ -148,12 +148,12 @@ export async function calcShipmentWeightFromProductVariantIDs(
   const productVariants = await prisma.productVariants({
     where: { id_in: itemIDs },
   })
-  return productVariants.reduce(function addProductWeight(acc, curProdVar) {
+  return productVariants.reduce(function addProductWeight (acc, curProdVar) {
     return acc + curProdVar.weight
   }, shippingBagWeight)
 }
 
-export async function calcTotalRetailPriceFromProductVariantIDs(
+export async function calcTotalRetailPriceFromProductVariantIDs (
   prisma: Prisma,
   itemIDs: string[]
 ): Promise<number> {
@@ -167,7 +167,7 @@ export async function calcTotalRetailPriceFromProductVariantIDs(
   return products.reduce((acc, prod) => acc + prod.retailPrice, 0)
 }
 
-export function airtableToPrismaInventoryStatus(
+export function airtableToPrismaInventoryStatus (
   airtableStatus: AirtableInventoryStatus
 ): InventoryStatus {
   let prismaStatus
