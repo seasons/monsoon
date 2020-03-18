@@ -30,10 +30,6 @@ export const syncPhysicalProducts = async (cliProgressBar?) => {
 
       const { sUID, inventoryStatus, productStatus } = model
 
-      if (sUID.text.startsWith("HEVO-RED")) {
-        continue
-      }
-
       const data = {
         productVariant: {
           connect: {

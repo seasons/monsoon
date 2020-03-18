@@ -13,8 +13,8 @@ export const syncHomepageProductRails = async (cliProgressBar?) => {
     _cliProgressBar,
   ] = await makeSingleSyncFuncMultiBarAndProgressBarIfNeeded({
     cliProgressBar,
-    numRecords: allProducts.length,
-    modelName: "Products",
+    numRecords: records.length,
+    modelName: "Homepage Product Rails",
   })
 
   for (const record of records) {

@@ -2,6 +2,34 @@ import { Context } from "../utils"
 import { getCustomerFromContext, getUserFromContext } from "../auth/utils"
 
 export const ProductVariant = {
+  async size(parent, {}, ctx: Context, info) {
+    const productVariant = await ctx.db.query.productVariant(
+      {
+        where: {
+          id: parent.id,
+        },
+      },
+      `
+    {
+      id
+      internalSize {
+        top {
+          letter
+        }
+        bottom {
+          id
+          type
+          value
+        }
+        display
+        productType
+      }
+    }
+    `
+    )
+    return productVariant.display
+  },
+
   async isSaved(parent, {}, ctx: Context, info) {
     try {
       const customer = await getCustomerFromContext(ctx)
