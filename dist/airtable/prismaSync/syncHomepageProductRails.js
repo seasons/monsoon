@@ -68,8 +68,8 @@ exports.syncHomepageProductRails = function (cliProgressBar) { return __awaiter(
                 allProducts = _c.sent();
                 return [4 /*yield*/, utils_2.makeSingleSyncFuncMultiBarAndProgressBarIfNeeded({
                         cliProgressBar: cliProgressBar,
-                        numRecords: allProducts.length,
-                        modelName: "Products",
+                        numRecords: records.length,
+                        modelName: "Homepage Product Rails",
                     })];
             case 3:
                 _a = _c.sent(), multibar = _a[0], _cliProgressBar = _a[1];
