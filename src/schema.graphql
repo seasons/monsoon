@@ -178,7 +178,7 @@ type Query {
     last: Int
   ): [ProductRequest]!
   search(query: String!, options: SearchOptions): [SearchResult]!
-  reservationFeedback: ReservationFeedback
+  reservationFeedback: ReservationFeedback!
 }
 
 type ChargebeeHostedPagePayload {
