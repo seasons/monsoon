@@ -5,11 +5,7 @@ import { syncPhysicalProductStatus } from "./syncPhysicalProductStatus"
 Syncing reservation status requires that we first sync physical product status.
 */
 
-export async function syncPhysicalProductAndReservationStatus (
-  event,
-  context,
-  callback
-) {
+export const run = async () => {
   const physProdReport = await syncPhysicalProductStatus()
   const reservationReport = await syncReservationStatus()
   const allErrors = [...physProdReport.errors, ...reservationReport.errors]
