@@ -12041,7 +12041,8 @@ export interface SizeSubscription
 }
 
 export interface SizeNullablePromise
-  extends Promise<Size | null> {
+  extends Promise<Size | null>,
+    Fragmentable {
   id: () => Promise<ID_Output>;
   slug: () => Promise<String>;
   productType: () => Promise<ProductType>;
@@ -12064,6 +12065,30 @@ export interface AggregateCollectionGroupSubscription
   extends Promise<AsyncIterator<AggregateCollectionGroup>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface ProductVariantWantSubscriptionPayload {
+  mutation: MutationType;
+  node: ProductVariantWant;
+  updatedFields: String[];
+  previousValues: ProductVariantWantPreviousValues;
+}
+
+export interface ProductVariantWantSubscriptionPayloadPromise
+  extends Promise<ProductVariantWantSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = ProductVariantWantPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = ProductVariantWantPreviousValuesPromise>() => T;
+}
+
+export interface ProductVariantWantSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<ProductVariantWantSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = ProductVariantWantSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
   previousValues: <T = ProductVariantWantPreviousValuesSubscription>() => T;
 }
 
@@ -12809,13 +12834,10 @@ export const models: Model[] = [
     embedded: false
   },
   {
-<<<<<<< HEAD
-=======
     name: "PushNotificationStatus",
     embedded: false
   },
   {
->>>>>>> 5fd11919c734301fee70e03ed9a4a739b389c92d
     name: "Brand",
     embedded: false
   },
