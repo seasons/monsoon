@@ -645,6 +645,7 @@ input BottomSizeSubscriptionWhereInput {
 }
 
 enum BottomSizeType {
+  WxL
   US
   EU
   JP
@@ -775,7 +776,15 @@ type Brand {
   logo: Json
   name: String!
   basedIn: String
-  products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
+  products(
+    where: ProductWhereInput
+    orderBy: ProductOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Product!]
   since: DateTime
   tier: BrandTier!
   websiteUrl: String
@@ -1105,8 +1114,24 @@ type Category {
   image: Json
   description: String
   visible: Boolean!
-  products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
-  children(where: CategoryWhereInput, orderBy: CategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Category!]
+  products(
+    where: ProductWhereInput
+    orderBy: ProductOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Product!]
+  children(
+    where: CategoryWhereInput
+    orderBy: CategoryOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Category!]
 }
 
 type CategoryConnection {
@@ -1435,7 +1460,15 @@ type Collection {
   subTitle: String
   descriptionTop: String
   descriptionBottom: String
-  products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
+  products(
+    where: ProductWhereInput
+    orderBy: ProductOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Product!]
 }
 
 type CollectionConnection {
@@ -1470,7 +1503,15 @@ type CollectionGroup {
   slug: String!
   title: String
   collectionCount: Int
-  collections(where: CollectionWhereInput, orderBy: CollectionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Collection!]
+  collections(
+    where: CollectionWhereInput
+    orderBy: CollectionOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Collection!]
 }
 
 type CollectionGroupConnection {
@@ -1910,7 +1951,15 @@ type Color {
   name: String!
   colorCode: String!
   hexCode: String!
-  productVariants(where: ProductVariantWhereInput, orderBy: ProductVariantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariant!]
+  productVariants(
+    where: ProductVariantWhereInput
+    orderBy: ProductVariantOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [ProductVariant!]
 }
 
 type ColorConnection {
@@ -2145,7 +2194,15 @@ type Customer {
   detail: CustomerDetail
   billingInfo: BillingInfo
   plan: Plan
-  reservations(where: ReservationWhereInput, orderBy: ReservationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Reservation!]
+  reservations(
+    where: ReservationWhereInput
+    orderBy: ReservationOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Reservation!]
 }
 
 type CustomerConnection {
@@ -2830,7 +2887,15 @@ type HomepageProductRail {
   id: ID!
   slug: String!
   name: String!
-  products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
+  products(
+    where: ProductWhereInput
+    orderBy: ProductOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Product!]
 }
 
 type HomepageProductRailConnection {
@@ -3381,7 +3446,15 @@ type Location {
   user: User
   lat: Float
   lng: Float
-  physicalProducts(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct!]
+  physicalProducts(
+    where: PhysicalProductWhereInput
+    orderBy: PhysicalProductOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [PhysicalProduct!]
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -3871,162 +3944,428 @@ enum Material {
 
 type Mutation {
   createBagItem(data: BagItemCreateInput!): BagItem!
-  updateBagItem(data: BagItemUpdateInput!, where: BagItemWhereUniqueInput!): BagItem
-  updateManyBagItems(data: BagItemUpdateManyMutationInput!, where: BagItemWhereInput): BatchPayload!
-  upsertBagItem(where: BagItemWhereUniqueInput!, create: BagItemCreateInput!, update: BagItemUpdateInput!): BagItem!
+  updateBagItem(
+    data: BagItemUpdateInput!
+    where: BagItemWhereUniqueInput!
+  ): BagItem
+  updateManyBagItems(
+    data: BagItemUpdateManyMutationInput!
+    where: BagItemWhereInput
+  ): BatchPayload!
+  upsertBagItem(
+    where: BagItemWhereUniqueInput!
+    create: BagItemCreateInput!
+    update: BagItemUpdateInput!
+  ): BagItem!
   deleteBagItem(where: BagItemWhereUniqueInput!): BagItem
   deleteManyBagItems(where: BagItemWhereInput): BatchPayload!
   createBillingInfo(data: BillingInfoCreateInput!): BillingInfo!
-  updateBillingInfo(data: BillingInfoUpdateInput!, where: BillingInfoWhereUniqueInput!): BillingInfo
-  updateManyBillingInfoes(data: BillingInfoUpdateManyMutationInput!, where: BillingInfoWhereInput): BatchPayload!
-  upsertBillingInfo(where: BillingInfoWhereUniqueInput!, create: BillingInfoCreateInput!, update: BillingInfoUpdateInput!): BillingInfo!
+  updateBillingInfo(
+    data: BillingInfoUpdateInput!
+    where: BillingInfoWhereUniqueInput!
+  ): BillingInfo
+  updateManyBillingInfoes(
+    data: BillingInfoUpdateManyMutationInput!
+    where: BillingInfoWhereInput
+  ): BatchPayload!
+  upsertBillingInfo(
+    where: BillingInfoWhereUniqueInput!
+    create: BillingInfoCreateInput!
+    update: BillingInfoUpdateInput!
+  ): BillingInfo!
   deleteBillingInfo(where: BillingInfoWhereUniqueInput!): BillingInfo
   deleteManyBillingInfoes(where: BillingInfoWhereInput): BatchPayload!
   createBottomSize(data: BottomSizeCreateInput!): BottomSize!
-  updateBottomSize(data: BottomSizeUpdateInput!, where: BottomSizeWhereUniqueInput!): BottomSize
-  updateManyBottomSizes(data: BottomSizeUpdateManyMutationInput!, where: BottomSizeWhereInput): BatchPayload!
-  upsertBottomSize(where: BottomSizeWhereUniqueInput!, create: BottomSizeCreateInput!, update: BottomSizeUpdateInput!): BottomSize!
+  updateBottomSize(
+    data: BottomSizeUpdateInput!
+    where: BottomSizeWhereUniqueInput!
+  ): BottomSize
+  updateManyBottomSizes(
+    data: BottomSizeUpdateManyMutationInput!
+    where: BottomSizeWhereInput
+  ): BatchPayload!
+  upsertBottomSize(
+    where: BottomSizeWhereUniqueInput!
+    create: BottomSizeCreateInput!
+    update: BottomSizeUpdateInput!
+  ): BottomSize!
   deleteBottomSize(where: BottomSizeWhereUniqueInput!): BottomSize
   deleteManyBottomSizes(where: BottomSizeWhereInput): BatchPayload!
   createBrand(data: BrandCreateInput!): Brand!
   updateBrand(data: BrandUpdateInput!, where: BrandWhereUniqueInput!): Brand
-  updateManyBrands(data: BrandUpdateManyMutationInput!, where: BrandWhereInput): BatchPayload!
-  upsertBrand(where: BrandWhereUniqueInput!, create: BrandCreateInput!, update: BrandUpdateInput!): Brand!
+  updateManyBrands(
+    data: BrandUpdateManyMutationInput!
+    where: BrandWhereInput
+  ): BatchPayload!
+  upsertBrand(
+    where: BrandWhereUniqueInput!
+    create: BrandCreateInput!
+    update: BrandUpdateInput!
+  ): Brand!
   deleteBrand(where: BrandWhereUniqueInput!): Brand
   deleteManyBrands(where: BrandWhereInput): BatchPayload!
   createCategory(data: CategoryCreateInput!): Category!
-  updateCategory(data: CategoryUpdateInput!, where: CategoryWhereUniqueInput!): Category
-  updateManyCategories(data: CategoryUpdateManyMutationInput!, where: CategoryWhereInput): BatchPayload!
-  upsertCategory(where: CategoryWhereUniqueInput!, create: CategoryCreateInput!, update: CategoryUpdateInput!): Category!
+  updateCategory(
+    data: CategoryUpdateInput!
+    where: CategoryWhereUniqueInput!
+  ): Category
+  updateManyCategories(
+    data: CategoryUpdateManyMutationInput!
+    where: CategoryWhereInput
+  ): BatchPayload!
+  upsertCategory(
+    where: CategoryWhereUniqueInput!
+    create: CategoryCreateInput!
+    update: CategoryUpdateInput!
+  ): Category!
   deleteCategory(where: CategoryWhereUniqueInput!): Category
   deleteManyCategories(where: CategoryWhereInput): BatchPayload!
   createCollection(data: CollectionCreateInput!): Collection!
-  updateCollection(data: CollectionUpdateInput!, where: CollectionWhereUniqueInput!): Collection
-  updateManyCollections(data: CollectionUpdateManyMutationInput!, where: CollectionWhereInput): BatchPayload!
-  upsertCollection(where: CollectionWhereUniqueInput!, create: CollectionCreateInput!, update: CollectionUpdateInput!): Collection!
+  updateCollection(
+    data: CollectionUpdateInput!
+    where: CollectionWhereUniqueInput!
+  ): Collection
+  updateManyCollections(
+    data: CollectionUpdateManyMutationInput!
+    where: CollectionWhereInput
+  ): BatchPayload!
+  upsertCollection(
+    where: CollectionWhereUniqueInput!
+    create: CollectionCreateInput!
+    update: CollectionUpdateInput!
+  ): Collection!
   deleteCollection(where: CollectionWhereUniqueInput!): Collection
   deleteManyCollections(where: CollectionWhereInput): BatchPayload!
   createCollectionGroup(data: CollectionGroupCreateInput!): CollectionGroup!
-  updateCollectionGroup(data: CollectionGroupUpdateInput!, where: CollectionGroupWhereUniqueInput!): CollectionGroup
-  updateManyCollectionGroups(data: CollectionGroupUpdateManyMutationInput!, where: CollectionGroupWhereInput): BatchPayload!
-  upsertCollectionGroup(where: CollectionGroupWhereUniqueInput!, create: CollectionGroupCreateInput!, update: CollectionGroupUpdateInput!): CollectionGroup!
-  deleteCollectionGroup(where: CollectionGroupWhereUniqueInput!): CollectionGroup
+  updateCollectionGroup(
+    data: CollectionGroupUpdateInput!
+    where: CollectionGroupWhereUniqueInput!
+  ): CollectionGroup
+  updateManyCollectionGroups(
+    data: CollectionGroupUpdateManyMutationInput!
+    where: CollectionGroupWhereInput
+  ): BatchPayload!
+  upsertCollectionGroup(
+    where: CollectionGroupWhereUniqueInput!
+    create: CollectionGroupCreateInput!
+    update: CollectionGroupUpdateInput!
+  ): CollectionGroup!
+  deleteCollectionGroup(
+    where: CollectionGroupWhereUniqueInput!
+  ): CollectionGroup
   deleteManyCollectionGroups(where: CollectionGroupWhereInput): BatchPayload!
   createColor(data: ColorCreateInput!): Color!
   updateColor(data: ColorUpdateInput!, where: ColorWhereUniqueInput!): Color
-  updateManyColors(data: ColorUpdateManyMutationInput!, where: ColorWhereInput): BatchPayload!
-  upsertColor(where: ColorWhereUniqueInput!, create: ColorCreateInput!, update: ColorUpdateInput!): Color!
+  updateManyColors(
+    data: ColorUpdateManyMutationInput!
+    where: ColorWhereInput
+  ): BatchPayload!
+  upsertColor(
+    where: ColorWhereUniqueInput!
+    create: ColorCreateInput!
+    update: ColorUpdateInput!
+  ): Color!
   deleteColor(where: ColorWhereUniqueInput!): Color
   deleteManyColors(where: ColorWhereInput): BatchPayload!
   createCustomer(data: CustomerCreateInput!): Customer!
-  updateCustomer(data: CustomerUpdateInput!, where: CustomerWhereUniqueInput!): Customer
-  updateManyCustomers(data: CustomerUpdateManyMutationInput!, where: CustomerWhereInput): BatchPayload!
-  upsertCustomer(where: CustomerWhereUniqueInput!, create: CustomerCreateInput!, update: CustomerUpdateInput!): Customer!
+  updateCustomer(
+    data: CustomerUpdateInput!
+    where: CustomerWhereUniqueInput!
+  ): Customer
+  updateManyCustomers(
+    data: CustomerUpdateManyMutationInput!
+    where: CustomerWhereInput
+  ): BatchPayload!
+  upsertCustomer(
+    where: CustomerWhereUniqueInput!
+    create: CustomerCreateInput!
+    update: CustomerUpdateInput!
+  ): Customer!
   deleteCustomer(where: CustomerWhereUniqueInput!): Customer
   deleteManyCustomers(where: CustomerWhereInput): BatchPayload!
   createCustomerDetail(data: CustomerDetailCreateInput!): CustomerDetail!
-  updateCustomerDetail(data: CustomerDetailUpdateInput!, where: CustomerDetailWhereUniqueInput!): CustomerDetail
-  updateManyCustomerDetails(data: CustomerDetailUpdateManyMutationInput!, where: CustomerDetailWhereInput): BatchPayload!
-  upsertCustomerDetail(where: CustomerDetailWhereUniqueInput!, create: CustomerDetailCreateInput!, update: CustomerDetailUpdateInput!): CustomerDetail!
+  updateCustomerDetail(
+    data: CustomerDetailUpdateInput!
+    where: CustomerDetailWhereUniqueInput!
+  ): CustomerDetail
+  updateManyCustomerDetails(
+    data: CustomerDetailUpdateManyMutationInput!
+    where: CustomerDetailWhereInput
+  ): BatchPayload!
+  upsertCustomerDetail(
+    where: CustomerDetailWhereUniqueInput!
+    create: CustomerDetailCreateInput!
+    update: CustomerDetailUpdateInput!
+  ): CustomerDetail!
   deleteCustomerDetail(where: CustomerDetailWhereUniqueInput!): CustomerDetail
   deleteManyCustomerDetails(where: CustomerDetailWhereInput): BatchPayload!
-  createHomepageProductRail(data: HomepageProductRailCreateInput!): HomepageProductRail!
-  updateHomepageProductRail(data: HomepageProductRailUpdateInput!, where: HomepageProductRailWhereUniqueInput!): HomepageProductRail
-  updateManyHomepageProductRails(data: HomepageProductRailUpdateManyMutationInput!, where: HomepageProductRailWhereInput): BatchPayload!
-  upsertHomepageProductRail(where: HomepageProductRailWhereUniqueInput!, create: HomepageProductRailCreateInput!, update: HomepageProductRailUpdateInput!): HomepageProductRail!
-  deleteHomepageProductRail(where: HomepageProductRailWhereUniqueInput!): HomepageProductRail
-  deleteManyHomepageProductRails(where: HomepageProductRailWhereInput): BatchPayload!
+  createHomepageProductRail(
+    data: HomepageProductRailCreateInput!
+  ): HomepageProductRail!
+  updateHomepageProductRail(
+    data: HomepageProductRailUpdateInput!
+    where: HomepageProductRailWhereUniqueInput!
+  ): HomepageProductRail
+  updateManyHomepageProductRails(
+    data: HomepageProductRailUpdateManyMutationInput!
+    where: HomepageProductRailWhereInput
+  ): BatchPayload!
+  upsertHomepageProductRail(
+    where: HomepageProductRailWhereUniqueInput!
+    create: HomepageProductRailCreateInput!
+    update: HomepageProductRailUpdateInput!
+  ): HomepageProductRail!
+  deleteHomepageProductRail(
+    where: HomepageProductRailWhereUniqueInput!
+  ): HomepageProductRail
+  deleteManyHomepageProductRails(
+    where: HomepageProductRailWhereInput
+  ): BatchPayload!
   createImage(data: ImageCreateInput!): Image!
   updateImage(data: ImageUpdateInput!, where: ImageWhereUniqueInput!): Image
-  updateManyImages(data: ImageUpdateManyMutationInput!, where: ImageWhereInput): BatchPayload!
-  upsertImage(where: ImageWhereUniqueInput!, create: ImageCreateInput!, update: ImageUpdateInput!): Image!
+  updateManyImages(
+    data: ImageUpdateManyMutationInput!
+    where: ImageWhereInput
+  ): BatchPayload!
+  upsertImage(
+    where: ImageWhereUniqueInput!
+    create: ImageCreateInput!
+    update: ImageUpdateInput!
+  ): Image!
   deleteImage(where: ImageWhereUniqueInput!): Image
   deleteManyImages(where: ImageWhereInput): BatchPayload!
   createLabel(data: LabelCreateInput!): Label!
   updateLabel(data: LabelUpdateInput!, where: LabelWhereUniqueInput!): Label
-  updateManyLabels(data: LabelUpdateManyMutationInput!, where: LabelWhereInput): BatchPayload!
-  upsertLabel(where: LabelWhereUniqueInput!, create: LabelCreateInput!, update: LabelUpdateInput!): Label!
+  updateManyLabels(
+    data: LabelUpdateManyMutationInput!
+    where: LabelWhereInput
+  ): BatchPayload!
+  upsertLabel(
+    where: LabelWhereUniqueInput!
+    create: LabelCreateInput!
+    update: LabelUpdateInput!
+  ): Label!
   deleteLabel(where: LabelWhereUniqueInput!): Label
   deleteManyLabels(where: LabelWhereInput): BatchPayload!
   createLocation(data: LocationCreateInput!): Location!
-  updateLocation(data: LocationUpdateInput!, where: LocationWhereUniqueInput!): Location
-  updateManyLocations(data: LocationUpdateManyMutationInput!, where: LocationWhereInput): BatchPayload!
-  upsertLocation(where: LocationWhereUniqueInput!, create: LocationCreateInput!, update: LocationUpdateInput!): Location!
+  updateLocation(
+    data: LocationUpdateInput!
+    where: LocationWhereUniqueInput!
+  ): Location
+  updateManyLocations(
+    data: LocationUpdateManyMutationInput!
+    where: LocationWhereInput
+  ): BatchPayload!
+  upsertLocation(
+    where: LocationWhereUniqueInput!
+    create: LocationCreateInput!
+    update: LocationUpdateInput!
+  ): Location!
   deleteLocation(where: LocationWhereUniqueInput!): Location
   deleteManyLocations(where: LocationWhereInput): BatchPayload!
   createOrder(data: OrderCreateInput!): Order!
   deleteOrder(where: OrderWhereUniqueInput!): Order
   deleteManyOrders(where: OrderWhereInput): BatchPayload!
   createPackage(data: PackageCreateInput!): Package!
-  updatePackage(data: PackageUpdateInput!, where: PackageWhereUniqueInput!): Package
-  updateManyPackages(data: PackageUpdateManyMutationInput!, where: PackageWhereInput): BatchPayload!
-  upsertPackage(where: PackageWhereUniqueInput!, create: PackageCreateInput!, update: PackageUpdateInput!): Package!
+  updatePackage(
+    data: PackageUpdateInput!
+    where: PackageWhereUniqueInput!
+  ): Package
+  updateManyPackages(
+    data: PackageUpdateManyMutationInput!
+    where: PackageWhereInput
+  ): BatchPayload!
+  upsertPackage(
+    where: PackageWhereUniqueInput!
+    create: PackageCreateInput!
+    update: PackageUpdateInput!
+  ): Package!
   deletePackage(where: PackageWhereUniqueInput!): Package
   deleteManyPackages(where: PackageWhereInput): BatchPayload!
   createPhysicalProduct(data: PhysicalProductCreateInput!): PhysicalProduct!
-  updatePhysicalProduct(data: PhysicalProductUpdateInput!, where: PhysicalProductWhereUniqueInput!): PhysicalProduct
-  updateManyPhysicalProducts(data: PhysicalProductUpdateManyMutationInput!, where: PhysicalProductWhereInput): BatchPayload!
-  upsertPhysicalProduct(where: PhysicalProductWhereUniqueInput!, create: PhysicalProductCreateInput!, update: PhysicalProductUpdateInput!): PhysicalProduct!
-  deletePhysicalProduct(where: PhysicalProductWhereUniqueInput!): PhysicalProduct
+  updatePhysicalProduct(
+    data: PhysicalProductUpdateInput!
+    where: PhysicalProductWhereUniqueInput!
+  ): PhysicalProduct
+  updateManyPhysicalProducts(
+    data: PhysicalProductUpdateManyMutationInput!
+    where: PhysicalProductWhereInput
+  ): BatchPayload!
+  upsertPhysicalProduct(
+    where: PhysicalProductWhereUniqueInput!
+    create: PhysicalProductCreateInput!
+    update: PhysicalProductUpdateInput!
+  ): PhysicalProduct!
+  deletePhysicalProduct(
+    where: PhysicalProductWhereUniqueInput!
+  ): PhysicalProduct
   deleteManyPhysicalProducts(where: PhysicalProductWhereInput): BatchPayload!
   createProduct(data: ProductCreateInput!): Product!
-  updateProduct(data: ProductUpdateInput!, where: ProductWhereUniqueInput!): Product
-  updateManyProducts(data: ProductUpdateManyMutationInput!, where: ProductWhereInput): BatchPayload!
-  upsertProduct(where: ProductWhereUniqueInput!, create: ProductCreateInput!, update: ProductUpdateInput!): Product!
+  updateProduct(
+    data: ProductUpdateInput!
+    where: ProductWhereUniqueInput!
+  ): Product
+  updateManyProducts(
+    data: ProductUpdateManyMutationInput!
+    where: ProductWhereInput
+  ): BatchPayload!
+  upsertProduct(
+    where: ProductWhereUniqueInput!
+    create: ProductCreateInput!
+    update: ProductUpdateInput!
+  ): Product!
   deleteProduct(where: ProductWhereUniqueInput!): Product
   deleteManyProducts(where: ProductWhereInput): BatchPayload!
   createProductFunction(data: ProductFunctionCreateInput!): ProductFunction!
-  updateProductFunction(data: ProductFunctionUpdateInput!, where: ProductFunctionWhereUniqueInput!): ProductFunction
-  updateManyProductFunctions(data: ProductFunctionUpdateManyMutationInput!, where: ProductFunctionWhereInput): BatchPayload!
-  upsertProductFunction(where: ProductFunctionWhereUniqueInput!, create: ProductFunctionCreateInput!, update: ProductFunctionUpdateInput!): ProductFunction!
-  deleteProductFunction(where: ProductFunctionWhereUniqueInput!): ProductFunction
+  updateProductFunction(
+    data: ProductFunctionUpdateInput!
+    where: ProductFunctionWhereUniqueInput!
+  ): ProductFunction
+  updateManyProductFunctions(
+    data: ProductFunctionUpdateManyMutationInput!
+    where: ProductFunctionWhereInput
+  ): BatchPayload!
+  upsertProductFunction(
+    where: ProductFunctionWhereUniqueInput!
+    create: ProductFunctionCreateInput!
+    update: ProductFunctionUpdateInput!
+  ): ProductFunction!
+  deleteProductFunction(
+    where: ProductFunctionWhereUniqueInput!
+  ): ProductFunction
   deleteManyProductFunctions(where: ProductFunctionWhereInput): BatchPayload!
   createProductRequest(data: ProductRequestCreateInput!): ProductRequest!
-  updateProductRequest(data: ProductRequestUpdateInput!, where: ProductRequestWhereUniqueInput!): ProductRequest
-  updateManyProductRequests(data: ProductRequestUpdateManyMutationInput!, where: ProductRequestWhereInput): BatchPayload!
-  upsertProductRequest(where: ProductRequestWhereUniqueInput!, create: ProductRequestCreateInput!, update: ProductRequestUpdateInput!): ProductRequest!
+  updateProductRequest(
+    data: ProductRequestUpdateInput!
+    where: ProductRequestWhereUniqueInput!
+  ): ProductRequest
+  updateManyProductRequests(
+    data: ProductRequestUpdateManyMutationInput!
+    where: ProductRequestWhereInput
+  ): BatchPayload!
+  upsertProductRequest(
+    where: ProductRequestWhereUniqueInput!
+    create: ProductRequestCreateInput!
+    update: ProductRequestUpdateInput!
+  ): ProductRequest!
   deleteProductRequest(where: ProductRequestWhereUniqueInput!): ProductRequest
   deleteManyProductRequests(where: ProductRequestWhereInput): BatchPayload!
   createProductVariant(data: ProductVariantCreateInput!): ProductVariant!
-  updateProductVariant(data: ProductVariantUpdateInput!, where: ProductVariantWhereUniqueInput!): ProductVariant
-  updateManyProductVariants(data: ProductVariantUpdateManyMutationInput!, where: ProductVariantWhereInput): BatchPayload!
-  upsertProductVariant(where: ProductVariantWhereUniqueInput!, create: ProductVariantCreateInput!, update: ProductVariantUpdateInput!): ProductVariant!
+  updateProductVariant(
+    data: ProductVariantUpdateInput!
+    where: ProductVariantWhereUniqueInput!
+  ): ProductVariant
+  updateManyProductVariants(
+    data: ProductVariantUpdateManyMutationInput!
+    where: ProductVariantWhereInput
+  ): BatchPayload!
+  upsertProductVariant(
+    where: ProductVariantWhereUniqueInput!
+    create: ProductVariantCreateInput!
+    update: ProductVariantUpdateInput!
+  ): ProductVariant!
   deleteProductVariant(where: ProductVariantWhereUniqueInput!): ProductVariant
   deleteManyProductVariants(where: ProductVariantWhereInput): BatchPayload!
-  createProductVariantWant(data: ProductVariantWantCreateInput!): ProductVariantWant!
-  updateProductVariantWant(data: ProductVariantWantUpdateInput!, where: ProductVariantWantWhereUniqueInput!): ProductVariantWant
-  updateManyProductVariantWants(data: ProductVariantWantUpdateManyMutationInput!, where: ProductVariantWantWhereInput): BatchPayload!
-  upsertProductVariantWant(where: ProductVariantWantWhereUniqueInput!, create: ProductVariantWantCreateInput!, update: ProductVariantWantUpdateInput!): ProductVariantWant!
-  deleteProductVariantWant(where: ProductVariantWantWhereUniqueInput!): ProductVariantWant
-  deleteManyProductVariantWants(where: ProductVariantWantWhereInput): BatchPayload!
-  createRecentlyViewedProduct(data: RecentlyViewedProductCreateInput!): RecentlyViewedProduct!
-  updateRecentlyViewedProduct(data: RecentlyViewedProductUpdateInput!, where: RecentlyViewedProductWhereUniqueInput!): RecentlyViewedProduct
-  updateManyRecentlyViewedProducts(data: RecentlyViewedProductUpdateManyMutationInput!, where: RecentlyViewedProductWhereInput): BatchPayload!
-  upsertRecentlyViewedProduct(where: RecentlyViewedProductWhereUniqueInput!, create: RecentlyViewedProductCreateInput!, update: RecentlyViewedProductUpdateInput!): RecentlyViewedProduct!
-  deleteRecentlyViewedProduct(where: RecentlyViewedProductWhereUniqueInput!): RecentlyViewedProduct
-  deleteManyRecentlyViewedProducts(where: RecentlyViewedProductWhereInput): BatchPayload!
+  createProductVariantWant(
+    data: ProductVariantWantCreateInput!
+  ): ProductVariantWant!
+  updateProductVariantWant(
+    data: ProductVariantWantUpdateInput!
+    where: ProductVariantWantWhereUniqueInput!
+  ): ProductVariantWant
+  updateManyProductVariantWants(
+    data: ProductVariantWantUpdateManyMutationInput!
+    where: ProductVariantWantWhereInput
+  ): BatchPayload!
+  upsertProductVariantWant(
+    where: ProductVariantWantWhereUniqueInput!
+    create: ProductVariantWantCreateInput!
+    update: ProductVariantWantUpdateInput!
+  ): ProductVariantWant!
+  deleteProductVariantWant(
+    where: ProductVariantWantWhereUniqueInput!
+  ): ProductVariantWant
+  deleteManyProductVariantWants(
+    where: ProductVariantWantWhereInput
+  ): BatchPayload!
+  createRecentlyViewedProduct(
+    data: RecentlyViewedProductCreateInput!
+  ): RecentlyViewedProduct!
+  updateRecentlyViewedProduct(
+    data: RecentlyViewedProductUpdateInput!
+    where: RecentlyViewedProductWhereUniqueInput!
+  ): RecentlyViewedProduct
+  updateManyRecentlyViewedProducts(
+    data: RecentlyViewedProductUpdateManyMutationInput!
+    where: RecentlyViewedProductWhereInput
+  ): BatchPayload!
+  upsertRecentlyViewedProduct(
+    where: RecentlyViewedProductWhereUniqueInput!
+    create: RecentlyViewedProductCreateInput!
+    update: RecentlyViewedProductUpdateInput!
+  ): RecentlyViewedProduct!
+  deleteRecentlyViewedProduct(
+    where: RecentlyViewedProductWhereUniqueInput!
+  ): RecentlyViewedProduct
+  deleteManyRecentlyViewedProducts(
+    where: RecentlyViewedProductWhereInput
+  ): BatchPayload!
   createReservation(data: ReservationCreateInput!): Reservation!
-  updateReservation(data: ReservationUpdateInput!, where: ReservationWhereUniqueInput!): Reservation
-  updateManyReservations(data: ReservationUpdateManyMutationInput!, where: ReservationWhereInput): BatchPayload!
-  upsertReservation(where: ReservationWhereUniqueInput!, create: ReservationCreateInput!, update: ReservationUpdateInput!): Reservation!
+  updateReservation(
+    data: ReservationUpdateInput!
+    where: ReservationWhereUniqueInput!
+  ): Reservation
+  updateManyReservations(
+    data: ReservationUpdateManyMutationInput!
+    where: ReservationWhereInput
+  ): BatchPayload!
+  upsertReservation(
+    where: ReservationWhereUniqueInput!
+    create: ReservationCreateInput!
+    update: ReservationUpdateInput!
+  ): Reservation!
   deleteReservation(where: ReservationWhereUniqueInput!): Reservation
   deleteManyReservations(where: ReservationWhereInput): BatchPayload!
   createSize(data: SizeCreateInput!): Size!
   updateSize(data: SizeUpdateInput!, where: SizeWhereUniqueInput!): Size
-  updateManySizes(data: SizeUpdateManyMutationInput!, where: SizeWhereInput): BatchPayload!
-  upsertSize(where: SizeWhereUniqueInput!, create: SizeCreateInput!, update: SizeUpdateInput!): Size!
+  updateManySizes(
+    data: SizeUpdateManyMutationInput!
+    where: SizeWhereInput
+  ): BatchPayload!
+  upsertSize(
+    where: SizeWhereUniqueInput!
+    create: SizeCreateInput!
+    update: SizeUpdateInput!
+  ): Size!
   deleteSize(where: SizeWhereUniqueInput!): Size
   deleteManySizes(where: SizeWhereInput): BatchPayload!
   createTopSize(data: TopSizeCreateInput!): TopSize!
-  updateTopSize(data: TopSizeUpdateInput!, where: TopSizeWhereUniqueInput!): TopSize
-  updateManyTopSizes(data: TopSizeUpdateManyMutationInput!, where: TopSizeWhereInput): BatchPayload!
-  upsertTopSize(where: TopSizeWhereUniqueInput!, create: TopSizeCreateInput!, update: TopSizeUpdateInput!): TopSize!
+  updateTopSize(
+    data: TopSizeUpdateInput!
+    where: TopSizeWhereUniqueInput!
+  ): TopSize
+  updateManyTopSizes(
+    data: TopSizeUpdateManyMutationInput!
+    where: TopSizeWhereInput
+  ): BatchPayload!
+  upsertTopSize(
+    where: TopSizeWhereUniqueInput!
+    create: TopSizeCreateInput!
+    update: TopSizeUpdateInput!
+  ): TopSize!
   deleteTopSize(where: TopSizeWhereUniqueInput!): TopSize
   deleteManyTopSizes(where: TopSizeWhereInput): BatchPayload!
   createUser(data: UserCreateInput!): User!
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
-  updateManyUsers(data: UserUpdateManyMutationInput!, where: UserWhereInput): BatchPayload!
-  upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
+  updateManyUsers(
+    data: UserUpdateManyMutationInput!
+    where: UserWhereInput
+  ): BatchPayload!
+  upsertUser(
+    where: UserWhereUniqueInput!
+    create: UserCreateInput!
+    update: UserUpdateInput!
+  ): User!
   deleteUser(where: UserWhereUniqueInput!): User
   deleteManyUsers(where: UserWhereInput): BatchPayload!
 }
@@ -4113,7 +4452,15 @@ input OrderWhereUniqueInput {
 
 type Package {
   id: ID!
-  items(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct!]
+  items(
+    where: PhysicalProductWhereInput
+    orderBy: PhysicalProductOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [PhysicalProduct!]
   shippingLabel: Label!
   fromAddress: Location!
   toAddress: Location!
@@ -4650,10 +4997,26 @@ type Product {
   color: Color!
   secondaryColor: Color
   tags: Json
-  functions(where: ProductFunctionWhereInput, orderBy: ProductFunctionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductFunction!]
+  functions(
+    where: ProductFunctionWhereInput
+    orderBy: ProductFunctionOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [ProductFunction!]
   innerMaterials: [Material!]!
   outerMaterials: [Material!]!
-  variants(where: ProductVariantWhereInput, orderBy: ProductVariantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariant!]
+  variants(
+    where: ProductVariantWhereInput
+    orderBy: ProductVariantOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [ProductVariant!]
   status: ProductStatus
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -5682,13 +6045,29 @@ type ProductVariant {
   sku: String
   color: Color!
   internalSize: Size
-  manufacturerSizes(where: SizeWhereInput, orderBy: SizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Size!]
+  manufacturerSizes(
+    where: SizeWhereInput
+    orderBy: SizeOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Size!]
   weight: Float
   height: Float
   productID: String!
   product: Product!
   retailPrice: Float
-  physicalProducts(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct!]
+  physicalProducts(
+    where: PhysicalProductWhereInput
+    orderBy: PhysicalProductOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [PhysicalProduct!]
   total: Int!
   reservable: Int!
   reserved: Int!
@@ -6525,86 +6904,524 @@ enum PushNotificationStatus {
 
 type Query {
   bagItem(where: BagItemWhereUniqueInput!): BagItem
-  bagItems(where: BagItemWhereInput, orderBy: BagItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [BagItem]!
-  bagItemsConnection(where: BagItemWhereInput, orderBy: BagItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BagItemConnection!
+  bagItems(
+    where: BagItemWhereInput
+    orderBy: BagItemOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [BagItem]!
+  bagItemsConnection(
+    where: BagItemWhereInput
+    orderBy: BagItemOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): BagItemConnection!
   billingInfo(where: BillingInfoWhereUniqueInput!): BillingInfo
-  billingInfoes(where: BillingInfoWhereInput, orderBy: BillingInfoOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [BillingInfo]!
-  billingInfoesConnection(where: BillingInfoWhereInput, orderBy: BillingInfoOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BillingInfoConnection!
+  billingInfoes(
+    where: BillingInfoWhereInput
+    orderBy: BillingInfoOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [BillingInfo]!
+  billingInfoesConnection(
+    where: BillingInfoWhereInput
+    orderBy: BillingInfoOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): BillingInfoConnection!
   bottomSize(where: BottomSizeWhereUniqueInput!): BottomSize
-  bottomSizes(where: BottomSizeWhereInput, orderBy: BottomSizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [BottomSize]!
-  bottomSizesConnection(where: BottomSizeWhereInput, orderBy: BottomSizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BottomSizeConnection!
+  bottomSizes(
+    where: BottomSizeWhereInput
+    orderBy: BottomSizeOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [BottomSize]!
+  bottomSizesConnection(
+    where: BottomSizeWhereInput
+    orderBy: BottomSizeOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): BottomSizeConnection!
   brand(where: BrandWhereUniqueInput!): Brand
-  brands(where: BrandWhereInput, orderBy: BrandOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Brand]!
-  brandsConnection(where: BrandWhereInput, orderBy: BrandOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BrandConnection!
+  brands(
+    where: BrandWhereInput
+    orderBy: BrandOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Brand]!
+  brandsConnection(
+    where: BrandWhereInput
+    orderBy: BrandOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): BrandConnection!
   category(where: CategoryWhereUniqueInput!): Category
-  categories(where: CategoryWhereInput, orderBy: CategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Category]!
-  categoriesConnection(where: CategoryWhereInput, orderBy: CategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CategoryConnection!
+  categories(
+    where: CategoryWhereInput
+    orderBy: CategoryOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Category]!
+  categoriesConnection(
+    where: CategoryWhereInput
+    orderBy: CategoryOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): CategoryConnection!
   collection(where: CollectionWhereUniqueInput!): Collection
-  collections(where: CollectionWhereInput, orderBy: CollectionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Collection]!
-  collectionsConnection(where: CollectionWhereInput, orderBy: CollectionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CollectionConnection!
+  collections(
+    where: CollectionWhereInput
+    orderBy: CollectionOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Collection]!
+  collectionsConnection(
+    where: CollectionWhereInput
+    orderBy: CollectionOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): CollectionConnection!
   collectionGroup(where: CollectionGroupWhereUniqueInput!): CollectionGroup
-  collectionGroups(where: CollectionGroupWhereInput, orderBy: CollectionGroupOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CollectionGroup]!
-  collectionGroupsConnection(where: CollectionGroupWhereInput, orderBy: CollectionGroupOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CollectionGroupConnection!
+  collectionGroups(
+    where: CollectionGroupWhereInput
+    orderBy: CollectionGroupOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [CollectionGroup]!
+  collectionGroupsConnection(
+    where: CollectionGroupWhereInput
+    orderBy: CollectionGroupOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): CollectionGroupConnection!
   color(where: ColorWhereUniqueInput!): Color
-  colors(where: ColorWhereInput, orderBy: ColorOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Color]!
-  colorsConnection(where: ColorWhereInput, orderBy: ColorOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ColorConnection!
+  colors(
+    where: ColorWhereInput
+    orderBy: ColorOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Color]!
+  colorsConnection(
+    where: ColorWhereInput
+    orderBy: ColorOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): ColorConnection!
   customer(where: CustomerWhereUniqueInput!): Customer
-  customers(where: CustomerWhereInput, orderBy: CustomerOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Customer]!
-  customersConnection(where: CustomerWhereInput, orderBy: CustomerOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CustomerConnection!
+  customers(
+    where: CustomerWhereInput
+    orderBy: CustomerOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Customer]!
+  customersConnection(
+    where: CustomerWhereInput
+    orderBy: CustomerOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): CustomerConnection!
   customerDetail(where: CustomerDetailWhereUniqueInput!): CustomerDetail
-  customerDetails(where: CustomerDetailWhereInput, orderBy: CustomerDetailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CustomerDetail]!
-  customerDetailsConnection(where: CustomerDetailWhereInput, orderBy: CustomerDetailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CustomerDetailConnection!
-  homepageProductRail(where: HomepageProductRailWhereUniqueInput!): HomepageProductRail
-  homepageProductRails(where: HomepageProductRailWhereInput, orderBy: HomepageProductRailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [HomepageProductRail]!
-  homepageProductRailsConnection(where: HomepageProductRailWhereInput, orderBy: HomepageProductRailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): HomepageProductRailConnection!
+  customerDetails(
+    where: CustomerDetailWhereInput
+    orderBy: CustomerDetailOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [CustomerDetail]!
+  customerDetailsConnection(
+    where: CustomerDetailWhereInput
+    orderBy: CustomerDetailOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): CustomerDetailConnection!
+  homepageProductRail(
+    where: HomepageProductRailWhereUniqueInput!
+  ): HomepageProductRail
+  homepageProductRails(
+    where: HomepageProductRailWhereInput
+    orderBy: HomepageProductRailOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [HomepageProductRail]!
+  homepageProductRailsConnection(
+    where: HomepageProductRailWhereInput
+    orderBy: HomepageProductRailOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): HomepageProductRailConnection!
   image(where: ImageWhereUniqueInput!): Image
-  images(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Image]!
-  imagesConnection(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ImageConnection!
+  images(
+    where: ImageWhereInput
+    orderBy: ImageOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Image]!
+  imagesConnection(
+    where: ImageWhereInput
+    orderBy: ImageOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): ImageConnection!
   label(where: LabelWhereUniqueInput!): Label
-  labels(where: LabelWhereInput, orderBy: LabelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Label]!
-  labelsConnection(where: LabelWhereInput, orderBy: LabelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): LabelConnection!
+  labels(
+    where: LabelWhereInput
+    orderBy: LabelOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Label]!
+  labelsConnection(
+    where: LabelWhereInput
+    orderBy: LabelOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): LabelConnection!
   location(where: LocationWhereUniqueInput!): Location
-  locations(where: LocationWhereInput, orderBy: LocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Location]!
-  locationsConnection(where: LocationWhereInput, orderBy: LocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): LocationConnection!
+  locations(
+    where: LocationWhereInput
+    orderBy: LocationOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Location]!
+  locationsConnection(
+    where: LocationWhereInput
+    orderBy: LocationOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): LocationConnection!
   order(where: OrderWhereUniqueInput!): Order
-  orders(where: OrderWhereInput, orderBy: OrderOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Order]!
-  ordersConnection(where: OrderWhereInput, orderBy: OrderOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): OrderConnection!
+  orders(
+    where: OrderWhereInput
+    orderBy: OrderOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Order]!
+  ordersConnection(
+    where: OrderWhereInput
+    orderBy: OrderOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): OrderConnection!
   package(where: PackageWhereUniqueInput!): Package
-  packages(where: PackageWhereInput, orderBy: PackageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Package]!
-  packagesConnection(where: PackageWhereInput, orderBy: PackageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PackageConnection!
+  packages(
+    where: PackageWhereInput
+    orderBy: PackageOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Package]!
+  packagesConnection(
+    where: PackageWhereInput
+    orderBy: PackageOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): PackageConnection!
   physicalProduct(where: PhysicalProductWhereUniqueInput!): PhysicalProduct
-  physicalProducts(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct]!
-  physicalProductsConnection(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PhysicalProductConnection!
+  physicalProducts(
+    where: PhysicalProductWhereInput
+    orderBy: PhysicalProductOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [PhysicalProduct]!
+  physicalProductsConnection(
+    where: PhysicalProductWhereInput
+    orderBy: PhysicalProductOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): PhysicalProductConnection!
   product(where: ProductWhereUniqueInput!): Product
-  products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product]!
-  productsConnection(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductConnection!
+  products(
+    where: ProductWhereInput
+    orderBy: ProductOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Product]!
+  productsConnection(
+    where: ProductWhereInput
+    orderBy: ProductOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): ProductConnection!
   productFunction(where: ProductFunctionWhereUniqueInput!): ProductFunction
-  productFunctions(where: ProductFunctionWhereInput, orderBy: ProductFunctionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductFunction]!
-  productFunctionsConnection(where: ProductFunctionWhereInput, orderBy: ProductFunctionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductFunctionConnection!
+  productFunctions(
+    where: ProductFunctionWhereInput
+    orderBy: ProductFunctionOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [ProductFunction]!
+  productFunctionsConnection(
+    where: ProductFunctionWhereInput
+    orderBy: ProductFunctionOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): ProductFunctionConnection!
   productRequest(where: ProductRequestWhereUniqueInput!): ProductRequest
-  productRequests(where: ProductRequestWhereInput, orderBy: ProductRequestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductRequest]!
-  productRequestsConnection(where: ProductRequestWhereInput, orderBy: ProductRequestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductRequestConnection!
+  productRequests(
+    where: ProductRequestWhereInput
+    orderBy: ProductRequestOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [ProductRequest]!
+  productRequestsConnection(
+    where: ProductRequestWhereInput
+    orderBy: ProductRequestOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): ProductRequestConnection!
   productVariant(where: ProductVariantWhereUniqueInput!): ProductVariant
-  productVariants(where: ProductVariantWhereInput, orderBy: ProductVariantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariant]!
-  productVariantsConnection(where: ProductVariantWhereInput, orderBy: ProductVariantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductVariantConnection!
-  productVariantWant(where: ProductVariantWantWhereUniqueInput!): ProductVariantWant
-  productVariantWants(where: ProductVariantWantWhereInput, orderBy: ProductVariantWantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariantWant]!
-  productVariantWantsConnection(where: ProductVariantWantWhereInput, orderBy: ProductVariantWantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductVariantWantConnection!
-  recentlyViewedProduct(where: RecentlyViewedProductWhereUniqueInput!): RecentlyViewedProduct
-  recentlyViewedProducts(where: RecentlyViewedProductWhereInput, orderBy: RecentlyViewedProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [RecentlyViewedProduct]!
-  recentlyViewedProductsConnection(where: RecentlyViewedProductWhereInput, orderBy: RecentlyViewedProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): RecentlyViewedProductConnection!
+  productVariants(
+    where: ProductVariantWhereInput
+    orderBy: ProductVariantOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [ProductVariant]!
+  productVariantsConnection(
+    where: ProductVariantWhereInput
+    orderBy: ProductVariantOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): ProductVariantConnection!
+  productVariantWant(
+    where: ProductVariantWantWhereUniqueInput!
+  ): ProductVariantWant
+  productVariantWants(
+    where: ProductVariantWantWhereInput
+    orderBy: ProductVariantWantOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [ProductVariantWant]!
+  productVariantWantsConnection(
+    where: ProductVariantWantWhereInput
+    orderBy: ProductVariantWantOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): ProductVariantWantConnection!
+  recentlyViewedProduct(
+    where: RecentlyViewedProductWhereUniqueInput!
+  ): RecentlyViewedProduct
+  recentlyViewedProducts(
+    where: RecentlyViewedProductWhereInput
+    orderBy: RecentlyViewedProductOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [RecentlyViewedProduct]!
+  recentlyViewedProductsConnection(
+    where: RecentlyViewedProductWhereInput
+    orderBy: RecentlyViewedProductOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): RecentlyViewedProductConnection!
   reservation(where: ReservationWhereUniqueInput!): Reservation
-  reservations(where: ReservationWhereInput, orderBy: ReservationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Reservation]!
-  reservationsConnection(where: ReservationWhereInput, orderBy: ReservationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ReservationConnection!
+  reservations(
+    where: ReservationWhereInput
+    orderBy: ReservationOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Reservation]!
+  reservationsConnection(
+    where: ReservationWhereInput
+    orderBy: ReservationOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): ReservationConnection!
   size(where: SizeWhereUniqueInput!): Size
-  sizes(where: SizeWhereInput, orderBy: SizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Size]!
-  sizesConnection(where: SizeWhereInput, orderBy: SizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): SizeConnection!
+  sizes(
+    where: SizeWhereInput
+    orderBy: SizeOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Size]!
+  sizesConnection(
+    where: SizeWhereInput
+    orderBy: SizeOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): SizeConnection!
   topSize(where: TopSizeWhereUniqueInput!): TopSize
-  topSizes(where: TopSizeWhereInput, orderBy: TopSizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [TopSize]!
-  topSizesConnection(where: TopSizeWhereInput, orderBy: TopSizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): TopSizeConnection!
+  topSizes(
+    where: TopSizeWhereInput
+    orderBy: TopSizeOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [TopSize]!
+  topSizesConnection(
+    where: TopSizeWhereInput
+    orderBy: TopSizeOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): TopSizeConnection!
   user(where: UserWhereUniqueInput!): User
-  users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
-  usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
+  users(
+    where: UserWhereInput
+    orderBy: UserOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [User]!
+  usersConnection(
+    where: UserWhereInput
+    orderBy: UserOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): UserConnection!
   node(id: ID!): Node
 }
 
@@ -6738,7 +7555,15 @@ type Reservation {
   sentPackage: Package
   returnedPackage: Package
   location: Location
-  products(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct!]
+  products(
+    where: PhysicalProductWhereInput
+    orderBy: PhysicalProductOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [PhysicalProduct!]
   reservationNumber: Int!
   shipped: Boolean!
   status: ReservationStatus!
@@ -7353,29 +8178,55 @@ input SizeWhereUniqueInput {
 
 type Subscription {
   bagItem(where: BagItemSubscriptionWhereInput): BagItemSubscriptionPayload
-  billingInfo(where: BillingInfoSubscriptionWhereInput): BillingInfoSubscriptionPayload
-  bottomSize(where: BottomSizeSubscriptionWhereInput): BottomSizeSubscriptionPayload
+  billingInfo(
+    where: BillingInfoSubscriptionWhereInput
+  ): BillingInfoSubscriptionPayload
+  bottomSize(
+    where: BottomSizeSubscriptionWhereInput
+  ): BottomSizeSubscriptionPayload
   brand(where: BrandSubscriptionWhereInput): BrandSubscriptionPayload
   category(where: CategorySubscriptionWhereInput): CategorySubscriptionPayload
-  collection(where: CollectionSubscriptionWhereInput): CollectionSubscriptionPayload
-  collectionGroup(where: CollectionGroupSubscriptionWhereInput): CollectionGroupSubscriptionPayload
+  collection(
+    where: CollectionSubscriptionWhereInput
+  ): CollectionSubscriptionPayload
+  collectionGroup(
+    where: CollectionGroupSubscriptionWhereInput
+  ): CollectionGroupSubscriptionPayload
   color(where: ColorSubscriptionWhereInput): ColorSubscriptionPayload
   customer(where: CustomerSubscriptionWhereInput): CustomerSubscriptionPayload
-  customerDetail(where: CustomerDetailSubscriptionWhereInput): CustomerDetailSubscriptionPayload
-  homepageProductRail(where: HomepageProductRailSubscriptionWhereInput): HomepageProductRailSubscriptionPayload
+  customerDetail(
+    where: CustomerDetailSubscriptionWhereInput
+  ): CustomerDetailSubscriptionPayload
+  homepageProductRail(
+    where: HomepageProductRailSubscriptionWhereInput
+  ): HomepageProductRailSubscriptionPayload
   image(where: ImageSubscriptionWhereInput): ImageSubscriptionPayload
   label(where: LabelSubscriptionWhereInput): LabelSubscriptionPayload
   location(where: LocationSubscriptionWhereInput): LocationSubscriptionPayload
   order(where: OrderSubscriptionWhereInput): OrderSubscriptionPayload
   package(where: PackageSubscriptionWhereInput): PackageSubscriptionPayload
-  physicalProduct(where: PhysicalProductSubscriptionWhereInput): PhysicalProductSubscriptionPayload
+  physicalProduct(
+    where: PhysicalProductSubscriptionWhereInput
+  ): PhysicalProductSubscriptionPayload
   product(where: ProductSubscriptionWhereInput): ProductSubscriptionPayload
-  productFunction(where: ProductFunctionSubscriptionWhereInput): ProductFunctionSubscriptionPayload
-  productRequest(where: ProductRequestSubscriptionWhereInput): ProductRequestSubscriptionPayload
-  productVariant(where: ProductVariantSubscriptionWhereInput): ProductVariantSubscriptionPayload
-  productVariantWant(where: ProductVariantWantSubscriptionWhereInput): ProductVariantWantSubscriptionPayload
-  recentlyViewedProduct(where: RecentlyViewedProductSubscriptionWhereInput): RecentlyViewedProductSubscriptionPayload
-  reservation(where: ReservationSubscriptionWhereInput): ReservationSubscriptionPayload
+  productFunction(
+    where: ProductFunctionSubscriptionWhereInput
+  ): ProductFunctionSubscriptionPayload
+  productRequest(
+    where: ProductRequestSubscriptionWhereInput
+  ): ProductRequestSubscriptionPayload
+  productVariant(
+    where: ProductVariantSubscriptionWhereInput
+  ): ProductVariantSubscriptionPayload
+  productVariantWant(
+    where: ProductVariantWantSubscriptionWhereInput
+  ): ProductVariantWantSubscriptionPayload
+  recentlyViewedProduct(
+    where: RecentlyViewedProductSubscriptionWhereInput
+  ): RecentlyViewedProductSubscriptionPayload
+  reservation(
+    where: ReservationSubscriptionWhereInput
+  ): ReservationSubscriptionPayload
   size(where: SizeSubscriptionWhereInput): SizeSubscriptionPayload
   topSize(where: TopSizeSubscriptionWhereInput): TopSizeSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
