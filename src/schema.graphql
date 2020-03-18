@@ -51,7 +51,17 @@ type ProductVariant {
   id: ID!
   sku: String
   color: Color!
-  size: Size!
+  size: String
+  internalSize: Size
+  manufacturerSizes(
+    where: SizeWhereInput
+    orderBy: SizeOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Size!]
   weight: Float
   height: Float
   productID: String!
@@ -92,7 +102,7 @@ type Query {
     category: String
     where: ProductWhereInput
     orderBy: ProductOrderByInput
-    sizes: [Size!]
+    sizes: [String!]
     skip: Int
     after: String
     before: String

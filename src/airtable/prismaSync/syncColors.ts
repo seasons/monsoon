@@ -2,12 +2,24 @@ import slugify from "slugify"
 import { prisma } from "../../prisma"
 import { getAllColors } from "../utils"
 import { isEmpty } from "lodash"
+import { makeSingleSyncFuncMultiBarAndProgressBarIfNeeded } from "./utils"
 
-export const syncColors = async () => {
+export const syncColors = async (cliProgressBar?) => {
   const records = await getAllColors()
 
-  for (let record of records) {
+  const [
+    multibar,
+    _cliProgressBar,
+  ] = await makeSingleSyncFuncMultiBarAndProgressBarIfNeeded({
+    cliProgressBar,
+    numRecords: records.length,
+    modelName: "Colors",
+  })
+
+  for (const record of records) {
     try {
+      _cliProgressBar.increment()
+
       const { model } = record
       const { name, colorCode, rGB } = model
 
@@ -24,7 +36,7 @@ export const syncColors = async () => {
         slug,
       }
 
-      const color = await prisma.upsertColor({
+      await prisma.upsertColor({
         where: {
           slug,
         },
@@ -35,10 +47,9 @@ export const syncColors = async () => {
       await record.patchUpdate({
         Slug: slug,
       })
-
-      console.log(color)
     } catch (e) {
       console.error(e)
     }
   }
+  multibar?.stop()
 }

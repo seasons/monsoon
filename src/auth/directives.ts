@@ -1,4 +1,4 @@
-import { getUserIfExists, getCustomerFromContext } from "./utils"
+import { getUserIfExists } from "./utils"
 
 const isRequestingUserAlsoOwner = ({ ctx, userId, type, typeId }) =>
   ctx.db.exists[type]({ id: typeId, user: { id: userId } })
