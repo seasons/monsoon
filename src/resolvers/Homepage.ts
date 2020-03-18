@@ -1,6 +1,5 @@
 import { Context } from "../utils"
 import { getCustomerFromContext } from "../auth/utils"
-import { addFragmentToInfo } from "graphql-binding"
 
 // FIXME: This is being used because currently info is lacking the __typename, add __typename to info
 const ProductFragment = `
@@ -17,6 +16,17 @@ const ProductFragment = `
   variants {
     id
     reservable
+    internalSize {
+      top {
+        letter
+      }
+      bottom {
+        type
+        value
+      }
+      productType
+      display
+    }
   }
   color {
     name
@@ -78,7 +88,6 @@ export const Homepage = async (parent, args, ctx: Context, info) => {
         __typename: "HomepageSection",
         title: "Just added",
         results: async (args, ctx: Context, localInfo) => {
-          console.log(localInfo)
           const newProducts = await ctx.db.query.products(
             {
               ...args,
@@ -152,11 +161,10 @@ export const Homepage = async (parent, args, ctx: Context, info) => {
             orderBy: "updatedAt_DESC",
             limit: 10,
           },
-          // `{
-          //   updatedAt
-          //   product ${ProductFragment}
-          // }`
-          addFragmentToInfo(localInfo, ProductFragment)
+          `{
+            updatedAt
+            product ${ProductFragment}
+          }`
         )
         return viewedProducts.map(viewedProduct => viewedProduct.product)
       },
@@ -177,24 +185,11 @@ export const Homepage = async (parent, args, ctx: Context, info) => {
               }),
             },
           },
-          // addFragmentToInfo(
-          //   info,
-          //   `
-          //   {
-          //     sections {
-          //       ... on Product {
-          //         ...FullProduct
-          //       }
-          //     }
-          //   }
-          //   ${ProductFragment}
-          // `
-          // )
           ProductFragment
         )
       },
     })
   })
-  console.log(JSON.stringify(homepageSections, null, 2))
+
   return homepageSections
 }
