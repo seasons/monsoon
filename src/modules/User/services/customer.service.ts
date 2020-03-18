@@ -25,7 +25,6 @@ export class CustomerService {
   private async setCustomerPrismaStatus(user: User, status: CustomerStatus) {
     const customer = await this.authService.getCustomerFromUserID(user.id)
     await this.prisma.client.updateCustomer({
-      // @ts-ignore
       data: { status },
       where: { id: customer.id },
     })
