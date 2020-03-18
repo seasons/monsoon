@@ -661,11 +661,11 @@ input BottomSizeSubscriptionWhereInput {
 }
 
 enum BottomSizeType {
+  WxL
   US
   EU
   JP
   Letter
-  WxL
 }
 
 input BottomSizeUpdateDataInput {
