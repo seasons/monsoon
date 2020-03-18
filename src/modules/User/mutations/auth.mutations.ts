@@ -10,6 +10,18 @@ export class AuthMutationsResolver {
   constructor(private readonly authService: AuthService) {}
 
   @Mutation()
+  async beamsData(@User() user) {
+    const { email } = user
+    if (email) {
+      const beamsToken = this.authService.beamsClient?.generateToken(email) as any
+      return {
+        beamsToken: beamsToken.token,
+        email,
+      }
+    }
+  }
+
+  @Mutation()
   async login(@Args() { email, password }, @User() requestUser) {
     // If they are already logged in, throw an error
     if (requestUser) {
