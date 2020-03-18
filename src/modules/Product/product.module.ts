@@ -18,6 +18,8 @@ import { ReservationService } from "./services/reservation.service"
 import { EmailModule } from "../Email/email.module"
 import { ShippingModule } from "../Shipping/shipping.module"
 import { BagService } from "./services/bag.service"
+import { ProductRequestService } from "./services/productRequest.service"
+import { ProductRequestUtilsService } from "./services/productRequest.utils.service"
 
 @Module({
   imports: [
@@ -29,6 +31,8 @@ import { BagService } from "./services/bag.service"
   ],
   providers: [
     BagService,
+    ProductRequestService,
+    ProductRequestUtilsService,
     ProductService,
     ProductUtilsService,
     PhysicalProductService,

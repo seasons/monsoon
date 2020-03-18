@@ -4,6 +4,7 @@ import { User, Customer, ID_Input, Location } from "../../../prisma"
 import { UtilsService } from "../../Utils/utils.service"
 import shippo from "shippo"
 import { ShippoTransaction, ShippoShipment } from "../shipping.types"
+import { Args } from "@nestjs/graphql"
 
 interface CoreShippoAddressFields {
   name: string
@@ -76,6 +77,34 @@ export class ShippingService {
     return productVariants.reduce(function addProductWeight(acc, curProdVar) {
       return acc + curProdVar.weight
     }, shippingBagWeight)
+  }
+
+  async shippoValidateAddress(address) {
+    const result = await this.shippo.address.create({
+      ...address,
+      country: "US",
+      validate: true,
+    })
+  
+    const validationResults = result.validation_results
+    const isValid = result.validation_results.is_valid
+    const message = validationResults?.messages?.[0]
+    return {
+      isValid,
+      code: message?.code,
+      text: message?.text,
+    }
+  }
+
+  async validateAddress(input) {
+    const { email, location } = input
+
+    const shippoAddress = this.locationDataToShippoAddress(location)
+    return await this.shippoValidateAddress({
+      ...shippoAddress,
+      email,
+      name: location.name,
+    })
   }
 
   private async calcTotalRetailPriceFromProductVariantIDs(
@@ -209,4 +238,5 @@ export class ShippingService {
       email: "reservations@seasons.nyc",
     }
   }
+
 }

@@ -1,11 +1,5 @@
 import { Injectable } from "@nestjs/common"
-
-export interface ReservedItem {
-  brand: string
-  url: string
-  name: string
-  price: number
-}
+import { ReservedItem } from "../email.types"
 
 @Injectable()
 export class EmailDataProvider {

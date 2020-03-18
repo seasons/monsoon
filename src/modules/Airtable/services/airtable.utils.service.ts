@@ -50,10 +50,10 @@ export class AirtableUtilsService {
         },
       },
     ]
-  
+
     return this.airtableBase.base("Locations").create(createData)
   }
-  
+
   async createBillingInfo(data: BillingInfoCreateInput) {
     return this.airtableBase.base("BillingInfos").create({
       Brand: data.brand,
@@ -74,7 +74,8 @@ export class AirtableUtilsService {
     email: string
   ): Promise<{ id: string; fields: any }> {
     return new Promise((resolve, reject) => {
-      this.airtableBase.base("Users")
+      this.airtableBase
+        .base("Users")
         .select({
           view: "Grid view",
           filterByFormula: `{Email}='${email}'`,
@@ -92,7 +93,8 @@ export class AirtableUtilsService {
 
   async getAirtableLocationRecordBySlug(slug: string): Promise<AirtableRecord> {
     return new Promise((resolve, reject) => {
-      this.airtableBase.base("Locations")
+      this.airtableBase
+        .base("Locations")
         .select({ view: "Grid view", filterByFormula: `{Slug}='${slug}'` })
         .firstPage((err, records) => {
           if (err) return reject(err)

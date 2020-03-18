@@ -1,7 +1,9 @@
 import { Injectable } from "@nestjs/common"
 import request from "request"
-import { prisma, CustomerDetail } from "../../../prisma"
+import { CustomerDetail } from "../../../prisma"
 import { head } from "lodash"
+import PushNotifications from "@pusher/push-notifications-server"
+import { PrismaClientService } from "../../../prisma/client.service"
 
 const PW_STRENGTH_RULES_URL =
   "https://manage.auth0.com/dashboard/us/seasons/connections/database/con_btTULQOf6kAxxbCz/security"
@@ -13,6 +15,10 @@ interface SegmentReservedTraitsInCustomerDetail {
 
 @Injectable()
 export class AuthService {
+  beamsClient: PushNotifications | null = _instantiateBeamsClient()
+
+  constructor(private readonly prismaService: PrismaClientService) {}
+
   async createAuth0User(
     email: string,
     password: string,
@@ -120,7 +126,7 @@ export class AuthService {
 
   async getCustomerFromUserID(userID: string) {
     return head(
-      await prisma.customers({
+      await this.prismaService.client.customers({
         where: { user: { id: userID } },
       })
     )
@@ -151,7 +157,7 @@ export class AuthService {
   }
 
   async createPrismaUser(auth0Id, email, firstName, lastName) {
-    const user = await prisma.createUser({
+    const user = await this.prismaService.client.createUser({
       auth0Id,
       email,
       firstName,
@@ -161,7 +167,7 @@ export class AuthService {
   }
 
   async createPrismaCustomerForExistingUser(userID, details = {}, status) {
-    const customer = await prisma.createCustomer({
+    const customer = await this.prismaService.client.createCustomer({
       user: {
         connect: { id: userID },
       },
@@ -183,4 +189,15 @@ export class AuthService {
     }
     return traits
   }
+}
+
+const _instantiateBeamsClient = () => {
+  const { PUSHER_INSTANCE_ID, PUSHER_SECRET_KEY } = process.env
+
+  return PUSHER_INSTANCE_ID && PUSHER_SECRET_KEY
+    ? new PushNotifications({
+        instanceId: PUSHER_INSTANCE_ID,
+        secretKey: PUSHER_SECRET_KEY,
+      })
+    : null
 }

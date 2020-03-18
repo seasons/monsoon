@@ -1,12 +1,12 @@
 import { Injectable } from "@nestjs/common"
-import { DBService } from "../../../prisma/DB.service"
 import { PrismaClientService } from "../../../prisma/client.service"
+import { DBService } from "../../../prisma/db.service"
 
 export enum SectionTitle {
   FeaturedCollection = "Featured collection",
   JustAdded = "Just added",
   RecentlyViewed = "Recently viewed",
-  Designers = "Designers"
+  Designers = "Designers",
 }
 
 @Injectable()
@@ -80,17 +80,17 @@ export class HomepageService {
       {
         type: "CollectionGroups",
         __typename: "HomepageSection",
-        title: SectionTitle.FeaturedCollection
+        title: SectionTitle.FeaturedCollection,
       },
       {
         type: "Products",
         __typename: "HomepageSection",
-        title: SectionTitle.JustAdded
+        title: SectionTitle.JustAdded,
       },
       {
         type: "Brands",
         __typename: "HomepageSection",
-        title: SectionTitle.Designers
+        title: SectionTitle.Designers,
       },
     ]
 
@@ -98,16 +98,15 @@ export class HomepageService {
       sections.push({
         type: "Products",
         __typename: "HomepageSection",
-        title: SectionTitle.RecentlyViewed
+        title: SectionTitle.RecentlyViewed,
       })
     }
-
 
     productRails.forEach(rail => {
       sections.push({
         type: "HomepageProductRails",
         __typename: "HomepageSection",
-        title: rail.name
+        title: rail.name,
       })
     })
 

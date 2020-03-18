@@ -195,6 +195,7 @@ type ChargebeeHostedPagePayload {
 }
 
 type Mutation {
+  beamsData: BeamsData!
   signup(
     email: String!
     password: String!
@@ -212,7 +213,7 @@ type Mutation {
   checkItemsAvailability(items: [ID!]!): Boolean!
   reserveItems(items: [ID!]!, options: ReserveItemsOptions): Reservation
   addToBag(item: ID!): BagItem!
-  removeFromBag(item: ID!, saved: Boolean!): BagItem!
+  removeFromBag(item: ID!, saved: Boolean): BagItem!
   saveProduct(item: ID!, save: Boolean!): BagItem
   addViewedProduct(item: ID!): RecentlyViewedProduct!
   acknowledgeCompletedChargebeeHostedCheckout(
@@ -240,6 +241,11 @@ input AddressInput {
 
 input ReserveItemsOptions {
   dryRun: Boolean
+}
+
+type BeamsData {
+  email: String!
+  beamsToken: String!
 }
 
 type BillingInfoPayload {
