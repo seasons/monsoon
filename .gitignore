@@ -12,4 +12,5 @@ node_modules
 devnotes.txt
 .helpers.md
 .pgpass
-coverage/
+coverage
+log.txt

@@ -5,7 +5,7 @@ import { syncPhysicalProductStatus } from "./syncPhysicalProductStatus"
 Syncing reservation status requires that we first sync physical product status.
 */
 
-export async function syncPhysicalProductAndReservationStatus(
+export async function syncPhysicalProductAndReservationStatus (
   event,
   context,
   callback

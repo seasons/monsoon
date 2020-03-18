@@ -23,7 +23,7 @@ if (shouldReportErrorsToSentry) {
   })
 }
 
-export async function syncReservationStatus() {
+export async function syncReservationStatus () {
   const updatedReservations = []
   const errors = []
   const reservationsInAirtableButNotPrisma = []
@@ -134,14 +134,14 @@ export async function syncReservationStatus() {
 
 // *****************************************************************************
 
-function sendYouCanNowReserveAgainEmail(user: User) {
+function sendYouCanNowReserveAgainEmail (user: User) {
   sendTransactionalEmail({
     to: user.email,
     data: emails.freeToReserveData(),
   })
 }
 
-async function getPrismaReservationWithNeededFields(reservationNumber) {
+async function getPrismaReservationWithNeededFields (reservationNumber) {
   const res = await db.query.reservation(
     {
       where: { reservationNumber },
@@ -174,48 +174,27 @@ async function getPrismaReservationWithNeededFields(reservationNumber) {
   return res
 }
 
-function airtableToPrismaReservationStatus(
+function airtableToPrismaReservationStatus (
   airtableStatus: string
 ): ReservationStatus {
   return airtableStatus.replace(" ", "") as ReservationStatus
 }
 
-async function updateUsersBagItemsOnCompletedReservation(
+async function updateUsersBagItemsOnCompletedReservation (
   prisma: Prisma,
   prismaReservation: any, // actually a Prisma Reservation with fields specified in getPrismaReservationWithNeededFields
   returnedPhysicalProducts: any[] // fields specified in getPrismaReservationWithNeededFields
 ) {
-  const returnedPhysicalProductsProductVariantIDs: {
-    id: ID_Input
-  }[] = returnedPhysicalProducts.map(p => p.productVariant.id)
-
-  const customerBagItems = await db.query.bagItems(
-    {
-      where: { customer: { id: prismaReservation.customer.id } },
+  return await prisma.deleteManyBagItems({
+    customer: { id: prismaReservation.customer.id },
+    saved: false,
+    productVariant: {
+      id_in: returnedPhysicalProducts.map(p => p.productVariant.id),
     },
-    `{ 
-        id
-        productVariant {
-            id
-        }
-    }`
-  )
-
-  for (let prodVarId of returnedPhysicalProductsProductVariantIDs) {
-    const bagItem = customerBagItems.find(
-      val => val.productVariant.id === prodVarId
-    )
-
-    if (!bagItem) {
-      throw new Error(
-        `bagItem with productVariant id ${prodVarId} not found for customer w/id ${prismaReservation.customer.id}`
-      )
-    }
-    await prisma.deleteBagItem({ id: bagItem.id })
-  }
+  })
 }
 
-async function updateReturnPackageOnCompletedReservation(
+async function updateReturnPackageOnCompletedReservation (
   prisma: Prisma,
   prismaReservation: any, // actually a Prisma Reservation with fields specified in getPrismaReservationWithNeededFields
   returnedPhysicalProducts: any[] // fields specified in getPrismaReservationWithNeededFields

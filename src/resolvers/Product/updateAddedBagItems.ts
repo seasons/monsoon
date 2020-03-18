@@ -1,6 +1,6 @@
 import { Prisma, ID_Input } from "../../prisma"
 
-export async function markBagItemsReserved(
+export async function markBagItemsReserved (
   prisma: Prisma,
   customer_id: ID_Input,
   productVariantIds: Array<ID_Input>
@@ -15,6 +15,7 @@ export async function markBagItemsReserved(
         id_in: productVariantIds,
       },
       status: "Added",
+      saved: false,
     },
   })
   const bagItemsToUpdateIds = bagItemsToUpdate.map(a => a.id)
