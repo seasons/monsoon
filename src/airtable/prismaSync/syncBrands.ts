@@ -1,4 +1,4 @@
-import slugify from "slugify"
+import   from "slugify"
 import { prisma, BrandTier } from "../../prisma"
 import { isEmpty } from "lodash"
 import { getAllBrands } from "../utils"
@@ -54,9 +54,7 @@ export const syncBrands = async (cliProgressBar?) => {
         where: {
           slug,
         },
-        create: {
-          ...data,
-        },
+        create: data,
         update: data,
       })
 

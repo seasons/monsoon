@@ -1,6 +1,8 @@
 import { db } from "../../src/server"
+import { prisma } from "../../src/prisma"
 
 const run = async () => {
+  let count = 0
   const allNoncompletedReservations = await db.query.reservations(
     { where: { status_not: "Completed" } },
     `
@@ -35,18 +37,21 @@ const run = async () => {
       const customerBagItems = allCustomerBagItems.filter(
         b => b.productVariant.id === reservedPhysProd.productVariant.id
       )
-      console.log(`num: ${customerBagItems.length}`)
       if (customerBagItems.length >= 2) {
-        console.log(
-          `FOUND IT!!!: customer: ${resy.customer.id}. product variant: ${
-            reservedPhysProd.productVariant.id
-          }. Statuses: ${customerBagItems.map(
-            b => b.status
-          )}. Saved: ${customerBagItems.map(b => b.saved)}`
-        )
+        count += 1
       }
     }
   }
+  console.log(`num bagItems to update: ${count}`)
 }
 
-run()
+const fixBagItemStatuses = async () => {
+  const count = await prisma.updateManyBagItems({
+    where: { status: "Reserved", saved: true },
+    data: { status: "Added" },
+  })
+  console.log(`bag Items updated: ${JSON.stringify(count)}`)
+}
+
+// run()
+// fixBagItemStatuses()
