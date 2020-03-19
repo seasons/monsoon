@@ -262,6 +262,23 @@ require("yargs")
         password: argv.password,
         firstName: "Billy",
         lastName: "Bob",
+        details: {
+          phoneNumber: "111-111-1111",
+          //   birthday:
+          height: 62,
+          weight: "152lb",
+          bodyType: "Athletic",
+          shippingAddress: {
+            create: {
+              slug: `billy-bob-test-${Date.now()}`,
+              name: `billy bob`,
+              address1: "138 Mulberry St",
+              city: "New York",
+              state: "NY",
+              zipCode: "10013",
+            },
+          },
+        },
       })
 
       // Set their status to Active
@@ -272,6 +289,16 @@ require("yargs")
       )
       await prisma.client.updateCustomer({
         data: {
+          plan: "Essential",
+          billingInfo: {
+            create: {
+              brand: "Visa",
+              name: "Billy Bob",
+              last_digits: "1234",
+              expiration_month: 04,
+              expiration_year: 2022,
+            },
+          },
           status: "Active",
         },
         where: { id: customer.id },
