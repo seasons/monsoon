@@ -127,7 +127,7 @@ export class AuthService {
           // Give a precise error message if a user tried to sign up with an
           // email that's already in the db
           if (response.statusCode == 400 && body.code === "invalid_signup") {
-            return reject(new Error("400 -- email already in db"))
+            return reject(new Error("400 -- email already in db or auth0"))
           }
           // Give a precise error message if a user tried to sign up with
           // a insufficiently strong password

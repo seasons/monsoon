@@ -223,6 +223,26 @@ require("yargs")
         apiKey: process.env.AIRTABLE_KEY,
       })
 
+      // TODO:  Set the environment
+      const envFilePath = await downloadFromS3(
+        "/tmp/__monsoon__env.json",
+        "monsoon-scripts",
+        "env.json"
+      )
+      try {
+        const environment = argv.e // defaults to local
+        const env = readJSONObjectFromFile(envFilePath)
+        const { endpoint, secret } = env.prisma[environment]
+        process.env.PRISMA_ENDPOINT = endpoint
+        process.env.PRISMA_SECRET = secret
+        process.env.AIRTABLE_DATABASE_ID = env.airtable.staging.baseID
+      } catch (err) {
+        console.log(err)
+      } finally {
+        // delete the env file
+        fs.unlinkSync(envFilePath)
+      }
+
       const {
         AuthService,
       } = require("../dist/modules/User/services/auth.service")
@@ -239,8 +259,6 @@ require("yargs")
       const { PrismaService } = require("../dist/prisma/prisma.service")
       const { head } = require("lodash")
 
-      // TODO:  Set the environment
-
       // Instantiate services
       const airtableBaseService = new AirtableBaseService()
       const auth = new AuthService(
@@ -252,7 +270,7 @@ require("yargs")
       )
       const prisma = new PrismaService()
 
-      //TODO:  Fail gracefully if the user is already in the DB
+      // Fail gracefully if the user is already in the DB
       if (!!(await prisma.client.user({ email: argv.email }))) {
         return console.log("User already in DB")
       }
