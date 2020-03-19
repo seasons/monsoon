@@ -164,6 +164,17 @@ enum PushNotificationStatus {
   Denied
 }
 
+enum QuestionType {
+  MultipleChoice
+  FreeResponse
+}
+
+enum Rating {
+  Disliked
+  Meh
+  Loved
+}
+
 type Brand {
   id: ID! @id
   slug: String! @unique
@@ -507,3 +518,29 @@ type Size {
   bottom: BottomSize
   display: String!
 }
+
+type ReservationFeedback {
+   id: ID! @id
+   comment: String
+   feedbacks: [ProductVariantFeedback!]! @relation(link: TABLE)
+   rating: Rating
+   user: User!
+ }
+
+  type ProductVariantFeedback {
+   id: ID! @id
+   isCompleted: Boolean!
+   questions: [ProductVariantFeedbackQuestion!]! @relation(link: TABLE)
+   reservationFeedback: ReservationFeedback!
+   variant: ProductVariant!
+ }
+
+  type ProductVariantFeedbackQuestion {
+   id: ID! @id
+   options: [String!] @scalarList(strategy: RELATION)
+   question: String!
+   responses: [String!] @scalarList(strategy: RELATION)
+   type: QuestionType!
+   variantFeedback: ProductVariantFeedback!
+ }
+ 

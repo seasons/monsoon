@@ -5,6 +5,7 @@ import { getUserRequestObject, getUserFromContext, getCustomerFromContext } from
 import chargebee from "chargebee"
 import get from "lodash.get"
 import { Payment } from "./Payment"
+import { ReservationFeedback } from "./ReservationFeedback"
 import { Search } from "./Search"
 import { Products } from "./Products"
 
@@ -57,4 +58,6 @@ export const Query = {
   ...Search,
 
   ...Payment,
+
+  ...ReservationFeedback,
 }
