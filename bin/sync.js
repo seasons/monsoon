@@ -216,18 +216,69 @@ require("yargs")
         })
     },
     async argv => {
-      const { PrismaService } = require("../dist/prisma/prisma.service")
+      const Airtable = require("airtable")
 
-      // Set the environment TODO
+      Airtable.configure({
+        endpointUrl: "https://api.airtable.com",
+        apiKey: process.env.AIRTABLE_KEY,
+      })
+
+      const {
+        AuthService,
+      } = require("../dist/modules/User/services/auth.service")
+      const { PrismaClientService } = require("../dist/prisma/client.service")
+      const {
+        AirtableService,
+      } = require("../dist/modules/Airtable/services/airtable.service")
+      const {
+        AirtableBaseService,
+      } = require("../dist/modules/Airtable/services/airtable.base.service")
+      const {
+        AirtableUtilsService,
+      } = require("../dist/modules/Airtable/services/airtable.utils.service")
+      const { PrismaService } = require("../dist/prisma/prisma.service")
+      const { head } = require("lodash")
+
+      // TODO:  Set the environment
+
+      // Instantiate services
+      const airtableBaseService = new AirtableBaseService()
+      const auth = new AuthService(
+        new PrismaClientService(),
+        new AirtableService(
+          airtableBaseService,
+          new AirtableUtilsService(airtableBaseService)
+        )
+      )
       const prisma = new PrismaService()
 
-      // Check that the user does not already exist
+      //TODO:  Fail gracefully if the user is already in the DB
       if (!!(await prisma.client.user({ email: argv.email }))) {
-        throw new Error("User already exists")
+        return console.log("User already in DB")
       }
 
-      // Create the test user with some placeholder customer details
+      const { user, tokenData } = await auth.signupUser({
+        email: argv.email,
+        password: argv.password,
+        firstName: "Billy",
+        lastName: "Bob",
+      })
+
       // Set their status to Active
+      const customer = head(
+        await prisma.client.customers({
+          where: { user: { id: user.id } },
+        })
+      )
+      await prisma.client.updateCustomer({
+        data: {
+          status: "Active",
+        },
+        where: { id: customer.id },
+      })
+
+      console.log(`User with given email, password successfully created`)
+      console.log(`Access token: ${tokenData.access_token}`)
     }
   )
   .help().argv
