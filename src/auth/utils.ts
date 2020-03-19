@@ -1,9 +1,9 @@
 import * as jwt from "jsonwebtoken"
 import jwksClient from "jwks-rsa"
 import { Context } from "../utils"
-import get from "lodash/get"
-import head from "lodash/head"
+import get from "lodash.get"
 import { Customer, User } from "../prisma"
+import { head } from "lodash"
 
 export const PW_STRENGTH_RULES_URL =
   "https://manage.auth0.com/dashboard/us/seasons/connections/database/con_btTULQOf6kAxxbCz/security"
