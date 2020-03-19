@@ -1,9 +1,11 @@
 import { Injectable } from "@nestjs/common"
 import request from "request"
-import { CustomerDetail } from "../../../prisma"
+import { CustomerDetail, CustomerDetailCreateInput } from "../../../prisma"
 import { head } from "lodash"
 import PushNotifications from "@pusher/push-notifications-server"
 import { PrismaClientService } from "../../../prisma/client.service"
+import { UserInputError, ForbiddenError } from "apollo-server"
+import { AirtableService } from "../../Airtable/services/airtable.service"
 
 const PW_STRENGTH_RULES_URL =
   "https://manage.auth0.com/dashboard/us/seasons/connections/database/con_btTULQOf6kAxxbCz/security"
@@ -17,8 +19,81 @@ interface SegmentReservedTraitsInCustomerDetail {
 export class AuthService {
   beamsClient: PushNotifications | null = _instantiateBeamsClient()
 
-  constructor(private readonly prismaService: PrismaClientService) {}
+  constructor(
+    private readonly prismaService: PrismaClientService,
+    private readonly airtable: AirtableService
+  ) {}
 
+  async signupUser({
+    email,
+    password,
+    firstName,
+    lastName,
+    details,
+  }: {
+    email: string
+    password: string
+    firstName: string
+    lastName: string
+    details: CustomerDetailCreateInput
+  }) {
+    // Register the user on Auth0
+    let userAuth0ID
+    try {
+      userAuth0ID = await this.createAuth0User(email, password, {
+        firstName,
+        lastName,
+      })
+    } catch (err) {
+      if (err.message.includes("400")) {
+        throw new UserInputError(err)
+      }
+      throw new Error(err)
+    }
+
+    // Get their API access token
+    let tokenData
+    try {
+      tokenData = await this.getAuth0UserAccessToken(email, password)
+    } catch (err) {
+      if (err.message.includes("403")) {
+        throw new ForbiddenError(err)
+      }
+      throw new UserInputError(err)
+    }
+
+    // Create a user object in our database
+    let user
+    try {
+      user = await this.createPrismaUser(
+        userAuth0ID,
+        email,
+        firstName,
+        lastName
+      )
+    } catch (err) {
+      throw new Error(err)
+    }
+
+    // Create a customer object in our database
+    try {
+      await this.createPrismaCustomerForExistingUser(
+        user.id,
+        details,
+        "Created"
+      )
+    } catch (err) {
+      throw new Error(err)
+    }
+
+    // Insert them into airtable
+    this.airtable.createOrUpdateAirtableUser(user, {
+      ...details,
+      status: "Created",
+    })
+
+    return { user, tokenData }
+  }
   async createAuth0User(
     email: string,
     password: string,
@@ -183,9 +258,9 @@ export class AuthService {
   extractSegmentReservedTraitsFromCustomerDetail(
     detail: CustomerDetail
   ): SegmentReservedTraitsInCustomerDetail {
-    const traits = {}
-    if (!!detail.phoneNumber) {
-      traits["phone"] = detail.phoneNumber
+    const traits = {} as any
+    if (!!detail?.phoneNumber) {
+      traits.phone = detail.phoneNumber
     }
     return traits
   }

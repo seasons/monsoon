@@ -193,4 +193,41 @@ require("yargs")
       }
     }
   )
+  .command(
+    "create:test-user <email> <password>",
+    "creates a test user with the given email and password",
+    yargs => {
+      yargs
+        .positional("email", {
+          type: "string",
+          describe: "Email of the test user",
+        })
+        .positional("password", {
+          type: "string",
+          describe: "Password of the test user",
+        })
+        .options({
+          e: {
+            default: "local",
+            describe: "Prisma environment on which to create the test user",
+            choices: ["local", "staging"],
+            type: "string",
+          },
+        })
+    },
+    async argv => {
+      const { PrismaService } = require("../dist/prisma/prisma.service")
+
+      // Set the environment TODO
+      const prisma = new PrismaService()
+
+      // Check that the user does not already exist
+      if (!!(await prisma.client.user({ email: argv.email }))) {
+        throw new Error("User already exists")
+      }
+
+      // Create the test user with some placeholder customer details
+      // Set their status to Active
+    }
+  )
   .help().argv
