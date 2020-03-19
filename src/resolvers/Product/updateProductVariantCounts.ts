@@ -52,7 +52,7 @@ export const updateProductVariantCounts = async (
 
   // Double check that the product variants have a sufficient number of available
   // physical products
-  let availablePhysicalProducts = extractUniqueReservablePhysicalProducts(
+  const availablePhysicalProducts = extractUniqueReservablePhysicalProducts(
     physicalProducts
   )
   if (availablePhysicalProducts.length < items.length) {
@@ -73,7 +73,7 @@ export const updateProductVariantCounts = async (
   const productsBeingReserved = [] as PrismaProduct[]
   const rollbackFuncs = []
   try {
-    for (let prismaProductVariant of prismaProductVariants) {
+    for (const prismaProductVariant of prismaProductVariants) {
       const iProduct = await ctx.prisma
         .productVariant({ id: prismaProductVariant.id })
         .product()
@@ -126,14 +126,14 @@ export const updateProductVariantCounts = async (
       }
     }
   } catch (err) {
-    for (let rollbackFunc of rollbackFuncs) {
+    for (const rollbackFunc of rollbackFuncs) {
       await rollbackFunc()
     }
     throw err
   }
 
   const rollbackProductVariantCounts = async () => {
-    for (let rollbackFunc of rollbackFuncs) {
+    for (const rollbackFunc of rollbackFuncs) {
       await rollbackFunc()
     }
   }
