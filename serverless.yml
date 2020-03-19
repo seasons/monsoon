@@ -35,7 +35,7 @@ functions:
     events:
       - schedule: rate(1 minute)
   syncPhysicalProductAndReservationStatus:
-    handler: src/cron/syncPhysicalProductAndReservationStatus.syncPhysicalProductAndReservationStatus
+    handler: src/cron/syncPhysicalProductAndReservationStatus.run
     events:
       - schedule: rate(1 minute)
     timeout: 60 # rather than default of 6

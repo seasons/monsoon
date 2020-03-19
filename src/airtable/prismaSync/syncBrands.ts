@@ -1,4 +1,4 @@
-import slugify from "slugify"
+import   from "slugify"
 import { prisma, BrandTier } from "../../prisma"
 import { isEmpty } from "lodash"
 import { getAllBrands } from "../utils"
@@ -46,27 +46,23 @@ export const syncBrands = async (cliProgressBar?) => {
         logo,
         description,
         since: since ? `${since}-01-01` : "2019-01-01",
-        isPrimaryBrand: primary,
+        isPrimaryBrand: !!primary,
         brandCode,
       }
 
-      const brand = await prisma.upsertBrand({
+      await prisma.upsertBrand({
         where: {
           slug,
         },
-        create: {
-          slug,
-          ...data,
-        },
+        create: data,
         update: data,
       })
 
       await record.patchUpdate({
         Slug: slug,
       })
-
-      //   console.log(brand)
     } catch (e) {
+      console.log(record)
       console.error(e)
     }
   }
