@@ -83,6 +83,6 @@ export class ProductVariantFieldsResolver {
     }
     `
     )
-    return productVariant.display
+    return productVariant?.internalSize?.display
   }
 }
