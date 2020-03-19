@@ -3,9 +3,10 @@ import { EmailService } from "./services/email.service"
 import { PrismaModule } from "../../prisma/prisma.module"
 import { UtilsModule } from "../Utils/utils.module"
 import { EmailDataProvider } from "./services/email.data.service"
+import { UserModule } from ".."
 
 @Module({
-  imports: [PrismaModule, UtilsModule],
+  imports: [PrismaModule, UtilsModule, UserModule],
   providers: [EmailService, EmailDataProvider],
   exports: [EmailService],
 })
