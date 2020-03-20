@@ -6,6 +6,8 @@ import {
   BillingInfoCreateInput,
   CustomerStatus,
   User,
+  InventoryStatus,
+  ReservationStatus,
 } from "../../../prisma"
 import { fill, zip } from "lodash"
 import { AirtableUtilsService } from "./airtable.utils.service"
@@ -27,6 +29,12 @@ export type AirtableInventoryStatus =
   | "Reservable"
   | "Non Reservable"
   | "Reserved"
+
+export type AirtableProductVariantCounts = {
+  "Reservable Count": number
+  "Reserved Count": number
+  "Non-Reservable Count": number
+}
 
 // Add to this as needed
 export type AirtablePhysicalProductFields = {
@@ -194,8 +202,46 @@ export class AirtableService {
       })
   }
 
+  async updateProductVariantCounts(
+    airtableID: string,
+    counts: AirtableProductVariantCounts
+  ) {
+    return this.airtableBase.base("Product Variants").update(airtableID, counts)
+  }
+  
+
+  airtableToPrismaInventoryStatus(
+    airtableStatus: AirtableInventoryStatus
+  ): InventoryStatus {
+    let prismaStatus
+    if (airtableStatus === "Reservable") {
+      prismaStatus = "Reservable"
+    }
+    if (airtableStatus === "Non Reservable") {
+      prismaStatus = "NonReservable"
+    }
+    if (airtableStatus === "Reserved") {
+      prismaStatus = "Reserved"
+    }
+    return prismaStatus
+  }
+
+  airtableToPrismaReservationStatus(
+    airtableStatus: string
+  ): ReservationStatus {
+    return airtableStatus.replace(" ", "") as ReservationStatus
+  }
+
   async getAllUsers() {
     return this.getAll("Users", "", "", this.airtableBase.base)
+  }
+
+  async getAllPhysicalProducts() {
+    return this.getAll("Physical Products", "", "", this.airtableBase.base)
+  }
+
+  async getAllReservations() {
+    return this.getAll("Reservations", "", "", this.airtableBase.base)
   }
 
   private getAll: (
