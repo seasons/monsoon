@@ -2,22 +2,24 @@ import { Prisma, ID_Input } from "../../prisma"
 
 export async function markBagItemsReserved(
   prisma: Prisma,
-  customer_id: ID_Input,
-  productVariantIds: Array<ID_Input>
-): Promise<Function> {
+  customerId: ID_Input,
+  productVariantIds: ID_Input[]
+): Promise<() => {}> {
   // Update the bag items
   const bagItemsToUpdate = await prisma.bagItems({
     where: {
       customer: {
-        id: customer_id,
+        id: customerId,
       },
       productVariant: {
         id_in: productVariantIds,
       },
       status: "Added",
+      saved: false,
     },
   })
   const bagItemsToUpdateIds = bagItemsToUpdate.map(a => a.id)
+
   await prisma.updateManyBagItems({
     where: { id_in: bagItemsToUpdateIds },
     data: {
