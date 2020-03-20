@@ -52,7 +52,7 @@ describe("Reservation Service", () => {
       physProdService,
       airtableService,
       new ShippingService(prismaService, utilsService),
-      new EmailService(new AuthService(prismaService), prismaService, utilsService, new EmailDataProvider()),
+      new EmailService(prismaService, utilsService, new EmailDataProvider()),
       new ReservationUtilsService()
     )
     testUtilsService = new TestUtilsService(prismaService, airtableService)
