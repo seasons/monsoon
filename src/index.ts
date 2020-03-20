@@ -39,7 +39,7 @@ server.use(
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, new ExpressAdapter(server), {
-    logger: process.env.NODE_ENV === "production" ? true : ['error', 'warn']
+    logger: ['debug', 'error', 'log', 'warn', 'verbose']
   })
   app
   await app.listen(process.env.PORT ? process.env.PORT : 4000, () =>

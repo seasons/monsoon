@@ -9,7 +9,7 @@ import { EmailService } from '../../Email/services/email.service'
 
 @Injectable()
 export class UsersService {
-  private readonly logger = new Logger(UsersService.name);
+  private readonly logger = new Logger(`Cron: ${UsersService.name}`);
 
   constructor(
     private readonly airtableService: AirtableService,
@@ -21,8 +21,12 @@ export class UsersService {
 
   @Cron(CronExpression.EVERY_MINUTE)
   async checkAndAuthorizeUsers() {
+    this.logger.log("Check and Authorize Users job ran")
     const shouldReportErrorsToSentry = process.env.NODE_ENV === "production"
-    let log
+    let log = {
+      updated: [],
+      usersInAirtableButNotPrisma: [],
+    }
     try {
       // Retrieve emails and statuses of every user on the airtable DB
       let updatedUsers = []
@@ -70,7 +74,9 @@ export class UsersService {
       }
     }
 
-    this.logger.log(log)
+    if (log.updated.length + log.usersInAirtableButNotPrisma.length > 0) {
+      this.logger.log(log)
+    }
   }
   
 }
