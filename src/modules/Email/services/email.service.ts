@@ -77,6 +77,7 @@ export class EmailService {
     })
   }
 
+  
   private getReservationConfirmationDataForProduct = async (product: Product) =>
     this.utils.Identity({
       url: product.images[0].url,
