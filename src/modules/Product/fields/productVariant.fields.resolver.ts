@@ -1,11 +1,14 @@
 import { Resolver, ResolveProperty, Context, Parent } from "@nestjs/graphql"
-import { AuthService } from "../../User/services/auth.service"
 import { PrismaClientService } from "../../../prisma/client.service"
 import { Customer, User } from "../../../nest_decorators"
+import { DBService } from "../../../prisma/db.service"
 
 @Resolver("ProductVariant")
 export class ProductVariantFieldsResolver {
-  constructor(private readonly prisma: PrismaClientService) {}
+  constructor(
+    private readonly db: DBService,
+    private readonly prisma: PrismaClientService
+  ) {}
 
   @ResolveProperty()
   async isSaved(@Parent() parent, @Customer() customer) {
@@ -52,5 +55,34 @@ export class ProductVariantFieldsResolver {
 
     const exists = productVariantWants && productVariantWants.length > 0
     return exists
+  }
+
+  @ResolveProperty()
+  async size(@Parent() parent) {
+    const productVariant = await this.db.query.productVariant(
+      {
+        where: {
+          id: parent.id,
+        },
+      },
+      `
+    {
+      id
+      internalSize {
+        top {
+          letter
+        }
+        bottom {
+          id
+          type
+          value
+        }
+        display
+        productType
+      }
+    }
+    `
+    )
+    return productVariant?.internalSize?.display
   }
 }
