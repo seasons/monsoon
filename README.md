@@ -98,7 +98,9 @@ For details on the arguments and options for each command, use `--help`. e.g `mo
 
 You should have `.env`, `.env.staging`, and `.env.production` that declare the environment variables for your local, and the staging and production environments respectively.
 
-You can copy the staging and production environment variables directly from heroku using the heroku command line tool: `heroku config -s --app monsoon-staging > .env.staging`, `heroku config -s --app monsoon-production > .env.production`.
+You can copy the staging and production environment variables directly from heroku using the heroku command line tool: 
+- `heroku config -s --app monsoon-staging > .env.staging`
+- `heroku config -s --app monsoon-production > .env.production`.
 
 You may need to install the CLI and login using `heroku login` first.
 
