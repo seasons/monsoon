@@ -3,10 +3,11 @@ import sgMail from "@sendgrid/mail"
 import Handlebars from "handlebars"
 import nodemailer from "nodemailer"
 import fs from "fs"
-import { User, Product, Reservation } from "../../../prisma"
+import { User, Product, Reservation as PrismaReservation } from "../../../prisma"
 import { PrismaClientService } from "../../../prisma/client.service"
 import { UtilsService } from "../../Utils/utils.service"
 import { EmailDataProvider } from "./email.data.service"
+import { Reservation } from "../../../prisma/prisma.binding"
 
 @Injectable()
 export class EmailService {
@@ -19,7 +20,7 @@ export class EmailService {
   async sendReservationConfirmationEmail(
     user: User,
     products: Product[],
-    reservation: Reservation
+    reservation: PrismaReservation
   ) {
     const reservedItems = [
       await this.getReservationConfirmationDataForProduct(products[0]),
@@ -64,7 +65,7 @@ export class EmailService {
 
   sendReturnReminderEmail(
     user: User,
-    reservation: Reservation
+    reservation: PrismaReservation
   ) {
     this.sendTransactionalEmail({
       to: user.email,
@@ -77,7 +78,28 @@ export class EmailService {
     })
   }
 
-  
+  sendYouCanNowReserveAgainEmail(user: User) {
+    this.sendTransactionalEmail({
+      to: user.email,
+      data: this.data.freeToReserve(),
+    })
+  }
+
+  sendAdminConfirmationEmail(
+    user: User,
+    products: any[],
+    reservation: Reservation
+  ) {
+    this.sendTransactionalEmail({
+      to: process.env.OPERATIONS_ADMIN_EMAIL,
+      data: this.data.reservationReturnConfirmation(
+        reservation.reservationNumber,
+        products.map(p => p.seasonsUID),
+        user.email
+      ),
+    })
+  }
+
   private getReservationConfirmationDataForProduct = async (product: Product) =>
     this.utils.Identity({
       url: product.images[0].url,
