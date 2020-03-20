@@ -15,6 +15,7 @@ import { AirtableBaseService } from "../../Airtable/services/airtable.base.servi
 import * as Airtable from "airtable"
 import { TestUtilsService } from "../../Utils/test.service"
 import { Customer, User } from "../../../prisma"
+import { AuthService } from "../../User/services/auth.service"
 
 describe("Reservation Service", () => {
   let reservationService: ReservationService
@@ -51,7 +52,7 @@ describe("Reservation Service", () => {
       physProdService,
       airtableService,
       new ShippingService(prismaService, utilsService),
-      new EmailService(prismaService, utilsService, new EmailDataProvider()),
+      new EmailService(new AuthService(prismaService), prismaService, utilsService, new EmailDataProvider()),
       new ReservationUtilsService()
     )
     testUtilsService = new TestUtilsService(prismaService, airtableService)

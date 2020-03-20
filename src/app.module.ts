@@ -38,7 +38,6 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 @Module({
   imports: [
     ScheduleModule.forRoot(),
-    CronModule,
     GraphQLModule.forRootAsync({
       useFactory: async () => {
         const typeDefs = await importSchema("src/schema.graphql")
@@ -66,6 +65,7 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY)
     EmailModule,
     AirtableModule,
     SearchModule,
+    CronModule,
   ],
 })
 export class AppModule {}

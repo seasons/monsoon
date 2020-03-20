@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, Logger } from '@nestjs/common'
 import { Cron, CronExpression } from '@nestjs/schedule'
 import * as Sentry from "@sentry/node"
 import { AirtableService } from '../../Airtable/services/airtable.service'
@@ -8,7 +8,9 @@ import { CustomerService } from '../../User/services/customer.service'
 import { EmailService } from '../../Email/services/email.service'
 
 @Injectable()
-export class CheckAndAuthorizeUsersService {
+export class UsersService {
+  private readonly logger = new Logger(UsersService.name);
+
   constructor(
     private readonly airtableService: AirtableService,
     private readonly authService: AuthService,
@@ -20,7 +22,7 @@ export class CheckAndAuthorizeUsersService {
   @Cron(CronExpression.EVERY_MINUTE)
   async checkAndAuthorizeUsers() {
     const shouldReportErrorsToSentry = process.env.NODE_ENV === "production"
-    let response
+    let log
     try {
       // Retrieve emails and statuses of every user on the airtable DB
       let updatedUsers = []
@@ -58,7 +60,7 @@ export class CheckAndAuthorizeUsersService {
           }
         }
       }
-      response = {
+      log = {
         updated: updatedUsers,
         usersInAirtableButNotPrisma,
       }
@@ -68,7 +70,7 @@ export class CheckAndAuthorizeUsersService {
       }
     }
 
-    return response
+    this.logger.log(log)
   }
   
 }

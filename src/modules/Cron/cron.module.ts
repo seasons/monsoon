@@ -1,5 +1,5 @@
 import { Module, forwardRef } from '@nestjs/common';
-import { CheckAndAuthorizeUsersService } from './services/checkAndAuthorizeUsers.service';
+import { UsersService } from './services/users.service';
 import { AirtableModule, EmailModule, UserModule } from '..';
 import { PrismaModule } from '../../prisma/prisma.module';
 
@@ -10,6 +10,6 @@ import { PrismaModule } from '../../prisma/prisma.module';
     forwardRef(() => PrismaModule),
     forwardRef(() => UserModule)
   ],
-  providers: [CheckAndAuthorizeUsersService],
+  providers: [UsersService],
 })
 export class CronModule {}

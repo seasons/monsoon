@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common"
 import request from "request"
-import crypto from "crypto"
 import { CustomerDetail } from "../../../prisma"
 import { head } from "lodash"
 import PushNotifications from "@pusher/push-notifications-server"
@@ -189,13 +188,6 @@ export class AuthService {
       traits["phone"] = detail.phoneNumber
     }
     return traits
-  }
-
-  getUserIDHash(userID: string): string {
-    return crypto
-      .createHash("sha256")
-      .update(`${userID}${process.env.HASH_SECRET}`)
-      .digest("hex")
   }
 }
 
