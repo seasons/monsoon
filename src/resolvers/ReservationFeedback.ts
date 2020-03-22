@@ -1,32 +1,49 @@
 import { Context } from "../utils"
+import { head } from "lodash"
 import { getCustomerFromContext, getUserFromContext } from "../auth/utils"
 
 export const ReservationFeedback = {
   async reservationFeedback(parent, { }, ctx: Context, info) {
     const user = await getUserFromContext(ctx)
-    const feedbacks = await ctx.prisma.reservationFeedbacks({
-      where: {
-        user: {
-          id: user.id
-        },
-        AND: {
-          feedbacks_some: {
-            isCompleted: false
+    const feedbacks = await ctx.db.query.reservationFeedbacks(
+      {
+        where: {
+          user: { id: user.id },
+          AND: {
+            feedbacks_some: {
+              isCompleted: false
+            }
           }
         }
-      }
-    })
-    // await ctx.db.query.reservationFeedback()
-    if (feedbacks.length > 0) {
-      const f = await ctx.prisma.reservationFeedback({
-        id: feedbacks[0].id
-      })
-      console.log("FOUND F:", f)
-      return f
-    }
-    return null
-    console.log("FEEDBACKS", feedbacks)
-    return feedbacks.length > 0 ? feedbacks[0] : null
+      },
+      `
+        {
+          id
+          comment
+          rating
+          feedbacks {
+            id
+            isCompleted
+            variant {
+              id
+              retailPrice
+              product {
+                name
+                images
+              }
+            }
+            questions {
+              id
+              question
+              options
+              responses
+              type
+            }
+          }
+        }
+      `
+    )
+    return head(feedbacks)
   },
 
 }
