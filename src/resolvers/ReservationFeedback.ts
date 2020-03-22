@@ -16,6 +16,7 @@ export const ReservationFeedback = {
         }
       }
     })
+    // await ctx.db.query.reservationFeedback()
     if (feedbacks.length > 0) {
       const f = await ctx.prisma.reservationFeedback({
         id: feedbacks[0].id
