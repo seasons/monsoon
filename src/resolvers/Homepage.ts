@@ -1,5 +1,5 @@
 import { Context } from "../utils"
-import { getCustomerFromContext } from "../auth/utils"
+import { getCustomerFromContext, getUserFromContext } from "../auth/utils"
 
 // FIXME: This is being used because currently info is lacking the __typename, add __typename to info
 const ProductFragment = `
@@ -53,23 +53,24 @@ export const HomepageResult = {
 
 export const Homepage = async (parent, args, ctx: Context, info) => {
   // console.log("ABOUT TO MAKE FEEDBACK")
+  // const user = await getUserFromContext(ctx)
   // const items = [
-  //   "ck76f6m5twtrf07689yipydzu",
-  //   "ck76f6sjtwu6u0768c6ngqjxq",
-  //   "ck2zebtu30tjn0734400gncvv",
+  //   "ck7z06yy80ne60724ex76we5n",
+  //   "ck7z027rb0eka072417wdwsjn",
+  //   "ck7z02yg90fza0724s4jbnhhc",
   // ]
   // const variants = await Promise.all(
   //   items.map(async item => {
   //     // const variant = this.prisma.client.productVariant({ id: item })
   //     return {
-  //       id: await this.prisma.client.productVariant({ id: item }).id(),
-  //       name: await this.prisma.client.productVariant({ id: item }).product().name(),
-  //       retailPrice: await this.prisma.client.productVariant({ id: item }).retailPrice(),
+  //       id: await ctx.prisma.productVariant({ id: item }).id(),
+  //       name: await ctx.prisma.productVariant({ id: item }).product().name(),
+  //       retailPrice: await ctx.prisma.productVariant({ id: item }).retailPrice(),
   //     }
   //   })
   // )
   // console.log("VARIANTS:", variants)
-  // const reservationFeedback = await this.prisma.client.createReservationFeedback({
+  // const reservationFeedback = await ctx.prisma.createReservationFeedback({
   //   feedbacks: {
   //     create: variants.map(variant => ({
   //       isCompleted: false,

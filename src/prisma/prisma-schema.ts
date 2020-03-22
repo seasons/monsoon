@@ -7091,7 +7091,7 @@ enum QuestionType {
 
 enum Rating {
   Disliked
-  Meh
+  Ok
   Loved
 }
 

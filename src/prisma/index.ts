@@ -1697,7 +1697,7 @@ export type BagItemOrderByInput =
   | "status_ASC"
   | "status_DESC";
 
-export type Rating = "Disliked" | "Meh" | "Loved";
+export type Rating = "Disliked" | "Ok" | "Loved";
 
 export type BagItemStatus = "Added" | "Reserved" | "Received";
 
@@ -14105,14 +14105,6 @@ export const models: Model[] = [
   },
   {
     name: "PushNotificationStatus",
-    embedded: false
-  },
-  {
-    name: "QuestionType",
-    embedded: false
-  },
-  {
-    name: "Rating",
     embedded: false
   },
   {
