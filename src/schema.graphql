@@ -239,7 +239,7 @@ type Mutation {
     shippingAddress: AddressInput!
     phoneNumber: String!
   ): Boolean
-  updateReservationFeedback(feedbackID: ID!, input: ReservationFeedbackUpdateInput!): Boolean!
+  updateReservationFeedback(feedbackID: ID!, input: ReservationFeedbackUpdateInput!): ReservationFeedback!
 }
 
 input AddressInput {
