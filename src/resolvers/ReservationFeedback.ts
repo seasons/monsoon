@@ -26,16 +26,16 @@ export const ReservationFeedback = {
             isCompleted
             variant {
               id
-              retailPrice
               product {
-                name
                 images
+                name
+                retailPrice
               }
             }
             questions {
               id
-              question
               options
+              question
               responses
               type
             }
@@ -45,5 +45,16 @@ export const ReservationFeedback = {
     )
     return head(feedbacks)
   },
+}
 
+export const ReservationFeedbackMutations = {
+  async updateReservationFeedback(parent, { feedbackID, input }, ctx: Context, info) {
+    const reservationFeedback = await ctx.prisma.updateReservationFeedback({
+      where: { id: feedbackID },
+      data: input
+    })
+    console.log("INPUT:", input)
+    console.log("UPDATED:", reservationFeedback)
+    return reservationFeedback !== null
+  },
 }

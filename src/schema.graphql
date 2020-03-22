@@ -188,7 +188,7 @@ type Query {
     last: Int
   ): [ProductRequest]!
   search(query: String!, options: SearchOptions): [SearchResult]!
-  reservationFeedback: ReservationFeedback!
+  reservationFeedback: ReservationFeedback
 }
 
 type ChargebeeHostedPagePayload {
@@ -239,6 +239,7 @@ type Mutation {
     shippingAddress: AddressInput!
     phoneNumber: String!
   ): Boolean
+  updateReservationFeedback(feedbackID: ID!, input: ReservationFeedbackUpdateInput!): Boolean!
 }
 
 input AddressInput {

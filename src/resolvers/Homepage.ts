@@ -65,7 +65,7 @@ export const Homepage = async (parent, args, ctx: Context, info) => {
   //     return {
   //       id: await ctx.prisma.productVariant({ id: item }).id(),
   //       name: await ctx.prisma.productVariant({ id: item }).product().name(),
-  //       retailPrice: await ctx.prisma.productVariant({ id: item }).retailPrice(),
+  //       retailPrice: await ctx.prisma.productVariant({ id: item }).product().retailPrice(),
   //     }
   //   })
   // )

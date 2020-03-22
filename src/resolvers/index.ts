@@ -9,6 +9,7 @@ import { Reservation } from "./Reservation"
 import { PhysicalProduct } from "./PhysicalProduct"
 import { ProductVariant } from "./ProductVariant"
 import { ProductVariantWantMutations } from "./ProductVariantWant"
+import { ReservationFeedbackMutations } from "./ReservationFeedback"
 import { UpdateUserPushNotifications } from "./Mutation/user"
 import { bag } from "./Mutation/bag"
 import { address } from "./Mutation/address"
@@ -23,6 +24,7 @@ export default {
     ...ProductMutations,
     ...ProductRequestMutations,
     ...ProductVariantWantMutations,
+    ...ReservationFeedbackMutations,
     ...customer,
     ...bag,
     ...address,
