@@ -32,7 +32,7 @@ export class ReservationScheduledJobs {
     private readonly shippingService: ShippingService
   ) {}
 
-  @Cron(CronExpression.EVERY_MINUTE)
+  @Cron(CronExpression.EVERY_6_HOURS)
   async sendReturnNotifications() {
     const reservations = await this.prisma.client.reservations({
       orderBy: "createdAt_DESC",

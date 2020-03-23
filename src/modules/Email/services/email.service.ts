@@ -100,21 +100,6 @@ export class EmailService {
     })
   }
 
-  sendReturnReminderEmail(
-    user: User,
-    reservation: Reservation
-  ) {
-    this.sendTransactionalEmail({
-      to: user.email,
-      data: this.data.returnReminder({
-        name: user.firstName,
-        returnDate: this.utils.formatReservationReturnDate(
-          new Date(reservation.createdAt)
-        ),
-      }),
-    })
-  }
-
   private getReservationConfirmationDataForProduct = async (product: Product) =>
     this.utils.Identity({
       url: product.images[0].url,
