@@ -29,13 +29,15 @@ require("yargs")
           ],
         })
         .options({
-          pe: {
+          prisma: {
+            alias: "pe",
             default: "staging",
             describe: "Prisma environment to sync to",
             choices: ["local", "staging", "production"],
             type: "string",
           },
-          ae: {
+          airtable: {
+            alias: "ae",
             default: "staging",
             describe: "Airtable base to sync from",
             choices: ["production", "staging"],
