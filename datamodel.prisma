@@ -158,6 +158,17 @@ enum BottomSizeType {
   Letter
 }
 
+enum QuestionType {
+  MultipleChoice
+  FreeResponse
+}
+
+enum Rating {
+  Disliked
+  Meh
+  Loved
+}
+
 enum PushNotificationStatus {
   Blocked
   Granted
@@ -448,6 +459,31 @@ type BillingInfo {
   postal_code: String
 }
 
+type ReservationFeedback {
+  id: ID! @id
+  comment: String
+  feedbacks: [ProductVariantFeedback!]! @relation(link: TABLE)
+  rating: Rating
+  user: User!
+}
+
+type ProductVariantFeedback {
+  id: ID! @id
+  isCompleted: Boolean!
+  questions: [ProductVariantFeedbackQuestion!]! @relation(link: TABLE)
+  reservationFeedback: ReservationFeedback!
+  variant: ProductVariant!
+}
+
+type ProductVariantFeedbackQuestion {
+  id: ID! @id
+  options: [String!] @scalarList(strategy: RELATION)
+  question: String!
+  responses: [String!] @scalarList(strategy: RELATION)
+  type: QuestionType!
+  variantFeedback: ProductVariantFeedback!
+}
+
 type ProductRequest {
   id: ID! @id
   brand: String
@@ -505,5 +541,5 @@ type Size {
   productType: ProductType
   top: TopSize
   bottom: BottomSize
-  display: String!
+  display: String!   
 }
