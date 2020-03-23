@@ -293,7 +293,7 @@ require("yargs")
   )
   .help().argv
 
-const overrideEnvFromRemoteConfig = async ({prismaEnvironment = "local", airtableEnvironment = "staging"}) {
+async function overrideEnvFromRemoteConfig ({prismaEnvironment = "local", airtableEnvironment = "staging"}) {
   const envFilePath = await downloadFromS3(
     "/tmp/__monsoon__env.json",
     "monsoon-scripts",
