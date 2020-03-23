@@ -15,6 +15,9 @@ import cliProgress from "cli-progress"
 import { getNumReadWritesToSyncModel } from "./utils"
 import { AirtableModelName } from "../utils"
 import { checkAllTableAlignment } from "./checkTableAlignment"
+import { syncSizes } from "./syncSizes"
+import { syncTopSizes } from "./syncTopSizes"
+import { syncBottomSizes } from "./syncBottomSizes"
 
 export const syncAll = async () => {
   // Note that the order matters here in order to properly link between tables.
@@ -25,7 +28,7 @@ export const syncAll = async () => {
   console.log(
     `Checking table alignments to surface would-be sync errors early...`
   )
-  await checkAllTableAlignment()
+  // await checkAllTableAlignment()
   const multibar = new cliProgress.MultiBar(
     {
       clearOnComplete: false,
@@ -35,11 +38,14 @@ export const syncAll = async () => {
     cliProgress.Presets.shades_grey
   )
   const bars = {
-    colors: await createSubBar(multibar, "Colors"),
-    brands: await createSubBar(multibar, "Brands"),
-    models: await createSubBar(multibar, "Models"),
-    categories: await createSubBar(multibar, "Categories"),
-    locations: await createSubBar(multibar, "Locations"),
+    // colors: await createSubBar(multibar, "Colors"),
+    // brands: await createSubBar(multibar, "Brands"),
+    // models: await createSubBar(multibar, "Models"),
+    // categories: await createSubBar(multibar, "Categories"),
+    // locations: await createSubBar(multibar, "Locations"),
+    // sizes: await createSubBar(multibar, "Sizes"),
+    topSizes: await createSubBar(multibar, "Top Sizes"),
+    bottomSizes: await createSubBar(multibar, "Bottom Sizes"),
     products: await createSubBar(multibar, "Products"),
     homepageProductRails: await createSubBar(
       multibar,
@@ -51,11 +57,14 @@ export const syncAll = async () => {
     reservations: await createSubBar(multibar, "Reservations"),
   }
   try {
-    await syncColors(bars.colors)
-    await syncBrands(bars.brands)
-    await syncModels(bars.models)
-    await syncCategories(bars.categories)
-    await syncLocations(bars.locations)
+    // await syncColors(bars.colors)
+    // await syncBrands(bars.brands)
+    // await syncModels(bars.models)
+    // await syncCategories(bars.categories)
+    // await syncLocations(bars.locations)
+    // await syncSizes(bars.sizes)
+    // await syncTopSizes(bars.topSizes)
+    await syncBottomSizes(bars.bottomSizes)
     await syncProducts(bars.products)
     await syncHomepageProductRails(bars.homepageProductRails)
     await syncProductVariants(bars.productVariants)
@@ -74,3 +83,5 @@ const createSubBar = async (multibar, modelName: AirtableModelName) => {
     modelName: `${modelName}:`.padEnd("Homepage Product Rails".length + 1, " "),
   })
 }
+
+syncAll()

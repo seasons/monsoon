@@ -5,6 +5,7 @@ import {
   getAllCategories,
   getAllCollections,
   AirtableData,
+  getAllSizes,
 } from "../utils"
 import { deleteFieldsFromObject } from "../../utils"
 import { getProductionBase, getStagingBase } from "../config"
@@ -15,7 +16,7 @@ import {
   linkStagingRecords,
 } from "."
 
-export const syncProducts = async (cliProgressBar?: any) => {
+export const syncProducts =  async (cliProgressBar?: any) => {
   const allProductsProduction = await getAllProducts(getProductionBase())
   await deleteAllStagingRecords("Products", cliProgressBar)
   await createAllStagingRecordsWithoutLinks({
@@ -52,9 +53,10 @@ export const syncProducts = async (cliProgressBar?: any) => {
     allProductsStaging,
     cliProgressBar
   )
+  await addModelSizeLinks(allProductsProduction, allProductsStaging, cliProgressBar)
 }
 
-export const getNumLinksProducts = () => 4
+export const getNumLinksProducts = () => 5
 
 const addBrandLinks = async (
   allProductionProducts: AirtableData,
@@ -124,6 +126,24 @@ const addCollectionLinks = async (
     allTargetStagingRecords: await getAllCollections(getStagingBase()),
     getRootRecordIdentifer: rec => rec.fields.Slug,
     getTargetRecordIdentifer: rec => rec.fields.Slug,
+    cliProgressBar,
+  })
+}
+
+const addModelSizeLinks = async (
+  allProductionProducts: AirtableData,
+  allStagingProducts: AirtableData,
+  cliProgressBar?: any
+) => {
+  await linkStagingRecords({
+    rootRecordName: "Products",
+    targetFieldNameOnRootRecord: "Model Size",
+    allRootProductionRecords: allProductionProducts,
+    allRootStagingRecords: allStagingProducts,
+    allTargetProductionRecords: await getAllSizes(getProductionBase()),
+    allTargetStagingRecords: await getAllSizes(getStagingBase()),
+    getRootRecordIdentifer: rec => rec.fields.Slug,
+    getTargetRecordIdentifer: rec => `{rec.fields.Name}{rec.fields.Type}`,
     cliProgressBar,
   })
 }

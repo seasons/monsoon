@@ -25,3 +25,6 @@ export {
 } from "./syncProductVariants"
 export { syncReservations, getNumLinksReservations } from "./syncReservations"
 export { syncUsers, getNumLinksUsers } from "./syncUsers"
+export { syncSizes, getNumLinksSizes } from "./syncSizes"
+export { syncTopSizes, getNumLinksTopSizes } from "./syncTopSizes"
+export { syncBottomSizes, getNumLinksBottomSizes } from "./syncBottomSizes"

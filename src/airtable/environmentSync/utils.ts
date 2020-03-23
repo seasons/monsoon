@@ -12,6 +12,9 @@ import {
   getAllPhysicalProducts,
   getAllUsers,
   getAllReservations,
+  getAllSizes,
+  getAllTopSizes,
+  getAllBottomSizes,
 } from "../utils"
 import { Identity } from "../../utils"
 import { getStagingBase, getProductionBase } from "../config"
@@ -30,6 +33,9 @@ export const airtableModelNameToGetAllFunc = (modelname: AirtableModelName) => {
     "Physical Products": getAllPhysicalProducts,
     Users: getAllUsers,
     Reservations: getAllReservations,
+    Sizes: getAllSizes,
+    "Top Sizes": getAllTopSizes,
+    "Bottom Sizes": getAllBottomSizes
   }[modelname]
   if (!func) {
     throw new Error(`Unrecognized model name: ${modelname}`)
