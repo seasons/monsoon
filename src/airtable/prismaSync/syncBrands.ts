@@ -1,4 +1,4 @@
-import   from "slugify"
+import slugify from "slugify"
 import { prisma, BrandTier } from "../../prisma"
 import { isEmpty } from "lodash"
 import { getAllBrands } from "../utils"
