@@ -83,5 +83,3 @@ const createSubBar = async (multibar, modelName: AirtableModelName) => {
     modelName: `${modelName}:`.padEnd("Homepage Product Rails".length + 1, " "),
   })
 }
-
-syncAll()
