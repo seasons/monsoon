@@ -194,26 +194,25 @@ require("yargs")
     }
   )
   .command(
-    "create:test-user <email> <password>",
+    "create:test-user",
     "creates a test user with the given email and password",
     yargs => {
-      yargs
-        .positional("email", {
+      yargs.options({
+        e: {
+          default: "local",
+          describe: "Prisma environment on which to create the test user",
+          choices: ["local", "staging"],
+          type: "string",
+        },
+        email: {
           type: "string",
           describe: "Email of the test user",
-        })
-        .positional("password", {
+        },
+        password: {
           type: "string",
           describe: "Password of the test user",
-        })
-        .options({
-          e: {
-            default: "local",
-            describe: "Prisma environment on which to create the test user",
-            choices: ["local", "staging"],
-            type: "string",
-          },
-        })
+        },
+      })
     },
     async argv => {
       const Airtable = require("airtable")
@@ -258,6 +257,7 @@ require("yargs")
       } = require("../dist/modules/Airtable/services/airtable.utils.service")
       const { PrismaService } = require("../dist/prisma/prisma.service")
       const { head } = require("lodash")
+      const faker = require("faker")
 
       // Instantiate services
       const airtableBaseService = new AirtableBaseService()
@@ -270,30 +270,36 @@ require("yargs")
       )
       const prisma = new PrismaService()
 
+      const firstName = faker.name.firstName()
+      const lastName = faker.name.lastName()
+      const fullName = `${firstName} ${lastName}`
+      const slug = `${firstName}-${lastName}`.toLowerCase()
+      const email = argv.email || `${slug}@seasons.nyc`
+      const password = argv.password || faker.random.alphaNumeric(6)
+
       // Fail gracefully if the user is already in the DB
-      if (!!(await prisma.client.user({ email: argv.email }))) {
+      if (!!(await prisma.client.user({ email }))) {
         return console.log("User already in DB")
       }
 
       const { user, tokenData } = await auth.signupUser({
-        email: argv.email,
-        password: argv.password,
-        firstName: "Billy",
-        lastName: "Bob",
+        email,
+        password,
+        firstName,
+        lastName,
         details: {
-          phoneNumber: "111-111-1111",
-          //   birthday:
-          height: 62,
+          phoneNumber: faker.phone.phoneNumber(),
+          height: 40 + faker.random.number(32),
           weight: "152lb",
           bodyType: "Athletic",
           shippingAddress: {
             create: {
-              slug: `billy-bob-test-${Date.now()}`,
-              name: `billy bob`,
-              address1: "138 Mulberry St",
-              city: "New York",
-              state: "NY",
-              zipCode: "10013",
+              slug,
+              name: `${firstName} ${lastName}`,
+              address1: faker.address.streetAddress(),
+              city: faker.address.city(),
+              state: faker.address.state(),
+              zipCode: faker.address.zipCode(),
             },
           },
         },
@@ -311,8 +317,8 @@ require("yargs")
           billingInfo: {
             create: {
               brand: "Visa",
-              name: "Billy Bob",
-              last_digits: "1234",
+              name: fullName,
+              last_digits: faker.finance.mask(4),
               expiration_month: 04,
               expiration_year: 2022,
             },
@@ -322,7 +328,9 @@ require("yargs")
         where: { id: customer.id },
       })
 
-      console.log(`User with given email, password successfully created`)
+      console.log(
+        `User with email: ${email}, password: ${password} successfully created`
+      )
       console.log(`Access token: ${tokenData.access_token}`)
     }
   )
