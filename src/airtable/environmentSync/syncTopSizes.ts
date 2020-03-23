@@ -40,8 +40,10 @@ const addSizeLinks = async (
       allRootStagingRecords: allTopSizesStaging,
       allTargetProductionRecords: await getAllSizes(getProductionBase()),
       allTargetStagingRecords: await getAllSizes(getStagingBase()),
-      getRootRecordIdentifer: rec => `${rec.fields.Name}${rec.fields.Length}${rec.fields.Sleeve}${rec.fields.Shoulder}${rec.fields.Chest}${rec.fields.Neck}`,
+      getRootRecordIdentifer: getTopSizeRecordIdentifier,
       getTargetRecordIdentifer: rec => `${rec.fields.Name}${rec.fields.Type}`,
       cliProgressBar,
     })
   }
+
+  export const getTopSizeRecordIdentifier = rec => `${rec.fields.Name}${rec.fields.Length}${rec.fields.Sleeve}${rec.fields.Shoulder}${rec.fields.Chest}${rec.fields.Neck}`

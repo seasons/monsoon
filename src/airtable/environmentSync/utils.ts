@@ -90,7 +90,6 @@ export const createAllStagingRecordsWithoutLinks = async ({
 }) => {
   for (const rec of allProductionRecords) {
     cliProgressBar?.increment()
-    // console.log(sanitizeFunc(rec.fields))
     await getStagingBase()(`${modelName}`).create([
       { fields: sanitizeFunc(rec.fields) },
     ])

@@ -42,7 +42,7 @@ const addSizeLinks = async (
       allRootStagingRecords: allBottomSizesStaging,
       allTargetProductionRecords: await getAllSizes(getProductionBase()),
       allTargetStagingRecords: await getAllSizes(getStagingBase()),
-      getRootRecordIdentifer: rec => `${rec.fields.Name}${rec.fields.Waist}${rec.fields.Rise}${rec.fields.Hem}${rec.fields.Inseam}`,
+      getRootRecordIdentifer: getBottomSizeRecordIdentifer,
       getTargetRecordIdentifer: rec => `${rec.fields.Name}${rec.fields.Type}`,
       cliProgressBar,
     })
@@ -60,8 +60,10 @@ const addSizeLinks = async (
       allRootStagingRecords: allBottomSizesStaging,
       allTargetProductionRecords: await getAllSizes(getProductionBase()),
       allTargetStagingRecords: await getAllSizes(getStagingBase()),
-      getRootRecordIdentifer: rec => `${rec.fields.Name}${rec.fields.Waist}${rec.fields.Rise}${rec.fields.Hem}${rec.fields.Inseam}`,
+      getRootRecordIdentifer: getBottomSizeRecordIdentifer,
       getTargetRecordIdentifer: rec => `${rec.fields.Name}${rec.fields.Type}`,
       cliProgressBar,
     })
   }
+
+  export const getBottomSizeRecordIdentifer = rec => `${rec.fields.Name}${rec.fields.Waist}${rec.fields.Rise}${rec.fields.Hem}${rec.fields.Inseam}`
