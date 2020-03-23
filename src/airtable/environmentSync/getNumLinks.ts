@@ -11,7 +11,10 @@ import {
   getNumLinksPhysicalProducts,
   getNumLinksUsers,
   getNumLinksReservations,
+  getNumLinksSizes,
+  getNumLinksTopSizes
 } from "."
+import { getNumLinksBottomSizes } from "./syncBottomSizes"
 
 export const getNumLinks = (modelName: AirtableModelName) => {
   switch (modelName) {
@@ -37,6 +40,12 @@ export const getNumLinks = (modelName: AirtableModelName) => {
       return getNumLinksUsers()
     case "Reservations":
       return getNumLinksReservations()
+    case "Sizes":
+      return getNumLinksSizes()
+    case "Top Sizes":
+      return getNumLinksTopSizes()
+    case "Bottom Sizes":
+      return getNumLinksBottomSizes()
   }
   throw new Error("invalid modelName")
 }
