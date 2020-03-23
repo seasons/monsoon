@@ -46,7 +46,6 @@ require("yargs")
         })
     },
     async argv => {
-      console.log(process.env.PRISMA_SECRET)
       await overrideEnvFromRemoteConfig({
         prismaEnvironment: argv.pe,
         airtableEnvironment: argv.ae,
