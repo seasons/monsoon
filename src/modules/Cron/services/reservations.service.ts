@@ -7,15 +7,14 @@ import { DateTime, Interval } from 'luxon'
 import { Reservation } from '../../../prisma'
 
 @Injectable()
-export class ReservationsService {
-  private readonly logger = new Logger(ReservationsService.name)
+export class ReservationScheduledJobs {
+  private readonly logger = new Logger(`CRON: ${ReservationScheduledJobs.name}`)
 
   constructor(
     private readonly emailService: EmailService,
     private readonly prisma: PrismaClientService
   ) {}
 
-  // TODO: Handle 1 minute timeout (if necessary)
   @Cron(CronExpression.EVERY_MINUTE)
   async sendReturnNotifications() {
     const shouldReportErrorsToSentry = process.env.NODE_ENV === "production"
