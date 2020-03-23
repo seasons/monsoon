@@ -34,6 +34,7 @@ export const syncProducts =  async (cliProgressBar?: any) => {
           Images: sanitizeAttachments(fields.Images),
           "Homepage product rail": [],
           Collections: [],
+          "Model Size": []
         },
         ["Created Date", "Parent", "Model Height"]
       ),
@@ -143,7 +144,7 @@ const addModelSizeLinks = async (
     allTargetProductionRecords: await getAllSizes(getProductionBase()),
     allTargetStagingRecords: await getAllSizes(getStagingBase()),
     getRootRecordIdentifer: rec => rec.fields.Slug,
-    getTargetRecordIdentifer: rec => `{rec.fields.Name}{rec.fields.Type}`,
+    getTargetRecordIdentifer: rec => `${rec.fields.Name}${rec.fields.Type}`,
     cliProgressBar,
   })
 }
