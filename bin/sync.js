@@ -29,12 +29,18 @@ require("yargs")
           ],
         })
         .options({
-          e: {
+          pe: {
             default: "staging",
             describe: "Prisma environment to sync to",
             choices: ["local", "staging", "production"],
             type: "string",
           },
+          ae: {
+            default: "staging",
+            describe: "Airtable base to sync from",
+            choices: ["production", "staging"],
+            type: "string"
+          }
         })
     },
     async argv => {
@@ -44,12 +50,12 @@ require("yargs")
         "env.json"
       )
       try {
-        const environment = argv.e || "staging"
+        console.log(argv.ae)
         const env = readJSONObjectFromFile(envFilePath)
-        const { endpoint, secret } = env.prisma[environment]
+        const { endpoint, secret } = env.prisma[argv.pe]
         process.env.PRISMA_ENDPOINT = endpoint
         process.env.PRISMA_SECRET = secret
-        process.env.AIRTABLE_DATABASE_ID = env.airtable.production.baseID
+        process.env.AIRTABLE_DATABASE_ID = env.airtable[argv.ae].baseID
       } catch (err) {
         console.log(err)
       } finally {
