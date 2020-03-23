@@ -141,7 +141,7 @@ require("yargs")
       yargs.positional("base", {
         type: "string",
         describe: "human readable name of base to sync to",
-        choices: ["staging1", "staging2"],
+        choices: ["staging"],
       })
     },
     async argv => {
@@ -157,11 +157,11 @@ require("yargs")
       try {
         const env = readJSONObjectFromFile(envFilePath)
         if (!(env.airtable[argv.base] && env.airtable[argv.base].baseID)) {
-          throw new Error("invalid base. valid options are staging1 | staging2")
+          throw new Error("invalid base. valid options are staging")
         }
         if (argv.base === "production") {
           throw new Error(
-            "can not sync to production. valid options are staging1 | staging2"
+            "can not sync to production. valid options are staging"
           )
         }
         process.env._PRODUCTION_AIRTABLE_BASEID =
