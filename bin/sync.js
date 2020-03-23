@@ -38,24 +38,7 @@ require("yargs")
         })
     },
     async argv => {
-      const envFilePath = await downloadFromS3(
-        "/tmp/__monsoon__env.json",
-        "monsoon-scripts",
-        "env.json"
-      )
-      try {
-        const environment = argv.e || "staging"
-        const env = readJSONObjectFromFile(envFilePath)
-        const { endpoint, secret } = env.prisma[environment]
-        process.env.PRISMA_ENDPOINT = endpoint
-        process.env.PRISMA_SECRET = secret
-        process.env.AIRTABLE_DATABASE_ID = env.airtable.production.baseID
-      } catch (err) {
-        console.log(err)
-      } finally {
-        // delete the env file
-        fs.unlinkSync(envFilePath)
-      }
+      await overrideEnvFromRemoteConfig(argv.e || "staging")
 
       const {
         syncBrands,
@@ -222,25 +205,7 @@ require("yargs")
         apiKey: process.env.AIRTABLE_KEY,
       })
 
-      // TODO:  Set the environment
-      const envFilePath = await downloadFromS3(
-        "/tmp/__monsoon__env.json",
-        "monsoon-scripts",
-        "env.json"
-      )
-      try {
-        const environment = argv.e // defaults to local
-        const env = readJSONObjectFromFile(envFilePath)
-        const { endpoint, secret } = env.prisma[environment]
-        process.env.PRISMA_ENDPOINT = endpoint
-        process.env.PRISMA_SECRET = secret
-        process.env.AIRTABLE_DATABASE_ID = env.airtable.staging.baseID
-      } catch (err) {
-        console.log(err)
-      } finally {
-        // delete the env file
-        fs.unlinkSync(envFilePath)
-      }
+      await overrideEnvFromRemoteConfig(argv.e)
 
       const {
         AuthService,
@@ -335,3 +300,23 @@ require("yargs")
     }
   )
   .help().argv
+
+async function overrideEnvFromRemoteConfig(environment = "local") {
+  const envFilePath = await downloadFromS3(
+    "/tmp/__monsoon__env.json",
+    "monsoon-scripts",
+    "env.json"
+  )
+  try {
+    const env = readJSONObjectFromFile(envFilePath)
+    const { endpoint, secret } = env.prisma[environment]
+    process.env.PRISMA_ENDPOINT = endpoint
+    process.env.PRISMA_SECRET = secret
+    process.env.AIRTABLE_DATABASE_ID = env.airtable.staging.baseID
+  } catch (err) {
+    console.log(err)
+  } finally {
+    // delete the env file
+    fs.unlinkSync(envFilePath)
+  }
+}
