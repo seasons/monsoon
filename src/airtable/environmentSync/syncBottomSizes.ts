@@ -18,15 +18,17 @@ export const syncBottomSizes = async (cliProgressBar?) => {
       Identity({
         ...fields,
         "Size": [],
-        "Product Variants": []
+        "Product Variants": [],
+        "Manufacturer Sizes": []
       }),
     cliProgressBar,
   })
 
   addSizeLinks(allProductionRecords, await getAllBottomSizes(getStagingBase()), cliProgressBar)
+  addManufacturerSizeLinks(allProductionRecords, await getAllBottomSizes(getStagingBase()), cliProgressBar)
 }
 
-export const getNumLinksBottomSizes = () => 1
+export const getNumLinksBottomSizes = () => 2
 
 const addSizeLinks = async (
     allBottomSizesProduction: AirtableData,
@@ -36,6 +38,24 @@ const addSizeLinks = async (
     await linkStagingRecords({
       rootRecordName: "Bottom Sizes",
       targetFieldNameOnRootRecord: "Size",
+      allRootProductionRecords: allBottomSizesProduction,
+      allRootStagingRecords: allBottomSizesStaging,
+      allTargetProductionRecords: await getAllSizes(getProductionBase()),
+      allTargetStagingRecords: await getAllSizes(getStagingBase()),
+      getRootRecordIdentifer: rec => `${rec.fields.Name}${rec.fields.Waist}${rec.fields.Rise}${rec.fields.Hem}${rec.fields.Inseam}`,
+      getTargetRecordIdentifer: rec => `${rec.fields.Name}${rec.fields.Type}`,
+      cliProgressBar,
+    })
+  }
+
+  const addManufacturerSizeLinks = async (
+    allBottomSizesProduction: AirtableData,
+    allBottomSizesStaging: AirtableData,
+    cliProgressBar?: any
+  ) => {
+    await linkStagingRecords({
+      rootRecordName: "Bottom Sizes",
+      targetFieldNameOnRootRecord: "Manufacturer Sizes",
       allRootProductionRecords: allBottomSizesProduction,
       allRootStagingRecords: allBottomSizesStaging,
       allTargetProductionRecords: await getAllSizes(getProductionBase()),
