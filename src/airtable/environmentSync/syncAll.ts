@@ -38,12 +38,12 @@ export const syncAll = async () => {
     cliProgress.Presets.shades_grey
   )
   const bars = {
-    // colors: await createSubBar(multibar, "Colors"),
-    // brands: await createSubBar(multibar, "Brands"),
-    // models: await createSubBar(multibar, "Models"),
-    // categories: await createSubBar(multibar, "Categories"),
-    // locations: await createSubBar(multibar, "Locations"),
-    // sizes: await createSubBar(multibar, "Sizes"),
+    colors: await createSubBar(multibar, "Colors"),
+    brands: await createSubBar(multibar, "Brands"),
+    models: await createSubBar(multibar, "Models"),
+    categories: await createSubBar(multibar, "Categories"),
+    locations: await createSubBar(multibar, "Locations"),
+    sizes: await createSubBar(multibar, "Sizes"),
     topSizes: await createSubBar(multibar, "Top Sizes"),
     bottomSizes: await createSubBar(multibar, "Bottom Sizes"),
     products: await createSubBar(multibar, "Products"),
@@ -57,16 +57,16 @@ export const syncAll = async () => {
     reservations: await createSubBar(multibar, "Reservations"),
   }
   try {
-    // await syncColors(bars.colors)
-    // await syncBrands(bars.brands)
-    // await syncModels(bars.models)
-    // await syncCategories(bars.categories)
-    // await syncLocations(bars.locations)
-    // await syncSizes(bars.sizes)
-    // await syncTopSizes(bars.topSizes)
-    // await syncBottomSizes(bars.bottomSizes)
-    // await syncProducts(bars.products)
-    // await syncHomepageProductRails(bars.homepageProductRails)
+    await syncColors(bars.colors)
+    await syncBrands(bars.brands)
+    await syncModels(bars.models)
+    await syncCategories(bars.categories)
+    await syncLocations(bars.locations)
+    await syncSizes(bars.sizes)
+    await syncTopSizes(bars.topSizes)
+    await syncBottomSizes(bars.bottomSizes)
+    await syncProducts(bars.products)
+    await syncHomepageProductRails(bars.homepageProductRails)
     await syncProductVariants(bars.productVariants)
     await syncPhysicalProducts(bars.physicalProducts)
     await syncUsers(bars.users)

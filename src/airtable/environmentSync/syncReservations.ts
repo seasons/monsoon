@@ -11,7 +11,9 @@ import {
   deleteAllStagingRecords,
   createAllStagingRecordsWithoutLinks,
   linkStagingRecords,
+  getLocationRecordIdentifier,
 } from "."
+import { getPhysicalProductRecordIdentifier } from "./syncPhysicalProducts"
 
 export const syncReservations = async (cliProgressBar?: any) => {
   const allReservationsProduction = await getAllReservations(
@@ -55,11 +57,6 @@ export const syncReservations = async (cliProgressBar?: any) => {
   })
 
   const allReservationsStaging = await getAllReservations(getStagingBase())
-  await addCurrentLocationLinks(
-    allReservationsProduction,
-    allReservationsStaging,
-    cliProgressBar
-  )
   await addShippingAddressLinks(
     allReservationsProduction,
     allReservationsStaging,
@@ -72,25 +69,7 @@ export const syncReservations = async (cliProgressBar?: any) => {
   )
 }
 
-export const getNumLinksReservations = () => 3
-
-const addCurrentLocationLinks = async (
-  allReservationsProduction: AirtableData,
-  allReservationsStaging: AirtableData,
-  cliProgressBar?: any
-) => {
-  await linkStagingRecords({
-    rootRecordName: "Reservations",
-    targetFieldNameOnRootRecord: "Current Location",
-    allRootProductionRecords: allReservationsProduction,
-    allRootStagingRecords: allReservationsStaging,
-    allTargetProductionRecords: await getAllLocations(getProductionBase()),
-    allTargetStagingRecords: await getAllLocations(getStagingBase()),
-    getRootRecordIdentifer: rec => rec.fields.ID,
-    getTargetRecordIdentifer: rec => rec.fields.Slug,
-    cliProgressBar,
-  })
-}
+export const getNumLinksReservations = () => 2
 
 const addShippingAddressLinks = async (
   allReservationsProduction: AirtableData,
@@ -104,8 +83,8 @@ const addShippingAddressLinks = async (
     allRootStagingRecords: allReservationsStaging,
     allTargetProductionRecords: await getAllLocations(getProductionBase()),
     allTargetStagingRecords: await getAllLocations(getStagingBase()),
-    getRootRecordIdentifer: rec => rec.fields.ID,
-    getTargetRecordIdentifer: rec => rec.fields.Slug,
+    getRootRecordIdentifer: getReservationRecordIdentifer,
+    getTargetRecordIdentifer: getLocationRecordIdentifier,
     cliProgressBar,
   })
 }
@@ -124,8 +103,10 @@ const addItemsLinks = async (
       getProductionBase()
     ),
     allTargetStagingRecords: await getAllPhysicalProducts(getStagingBase()),
-    getRootRecordIdentifer: rec => rec.fields.ID,
-    getTargetRecordIdentifer: rec => rec.fields.SUID.text,
+    getRootRecordIdentifer: getReservationRecordIdentifer,
+    getTargetRecordIdentifer: getPhysicalProductRecordIdentifier,
     cliProgressBar,
   })
 }
+
+const getReservationRecordIdentifer = rec => rec.fields.ID

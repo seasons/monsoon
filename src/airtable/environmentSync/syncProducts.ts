@@ -14,7 +14,9 @@ import {
   createAllStagingRecordsWithoutLinks,
   sanitizeAttachments,
   linkStagingRecords,
+  getCategoryRecordIdentifier,
 } from "."
+import { getSizeRecordIdentifer } from "./syncSizes"
 
 export const syncProducts =  async (cliProgressBar?: any) => {
   const allProductsProduction = await getAllProducts(getProductionBase())
@@ -71,7 +73,7 @@ const addBrandLinks = async (
     allRootStagingRecords: allStagingProducts,
     allTargetProductionRecords: await getAllBrands(getProductionBase()),
     allTargetStagingRecords: await getAllBrands(getStagingBase()),
-    getRootRecordIdentifer: rec => rec.fields.Slug,
+    getRootRecordIdentifer: getProductRecordIdentifer,
     getTargetRecordIdentifer: rec => rec.fields.Name,
     cliProgressBar,
   })
@@ -89,7 +91,7 @@ const addModelLinks = async (
     allRootStagingRecords: allStagingProducts,
     allTargetProductionRecords: await getAllModels(getProductionBase()),
     allTargetStagingRecords: await getAllModels(getStagingBase()),
-    getRootRecordIdentifer: rec => rec.fields.Slug,
+    getRootRecordIdentifer: getProductRecordIdentifer,
     getTargetRecordIdentifer: rec => rec.fields.Name,
     cliProgressBar,
   })
@@ -107,8 +109,8 @@ const addCategoryLinks = async (
     allRootStagingRecords: allStagingProducts,
     allTargetProductionRecords: await getAllCategories(getProductionBase()),
     allTargetStagingRecords: await getAllCategories(getStagingBase()),
-    getRootRecordIdentifer: rec => rec.fields.Slug,
-    getTargetRecordIdentifer: rec => rec.fields.Slug,
+    getRootRecordIdentifer: getProductRecordIdentifer,
+    getTargetRecordIdentifer: getCategoryRecordIdentifier,
     cliProgressBar,
   })
 }
@@ -125,7 +127,7 @@ const addCollectionLinks = async (
     allRootStagingRecords: allStagingProducts,
     allTargetProductionRecords: await getAllCollections(getProductionBase()),
     allTargetStagingRecords: await getAllCollections(getStagingBase()),
-    getRootRecordIdentifer: rec => rec.fields.Slug,
+    getRootRecordIdentifer: getProductRecordIdentifer,
     getTargetRecordIdentifer: rec => rec.fields.Slug,
     cliProgressBar,
   })
@@ -143,8 +145,10 @@ const addModelSizeLinks = async (
     allRootStagingRecords: allStagingProducts,
     allTargetProductionRecords: await getAllSizes(getProductionBase()),
     allTargetStagingRecords: await getAllSizes(getStagingBase()),
-    getRootRecordIdentifer: rec => rec.fields.Slug,
-    getTargetRecordIdentifer: rec => `${rec.fields.Name}${rec.fields.Type}`,
+    getRootRecordIdentifer: getProductRecordIdentifer,
+    getTargetRecordIdentifer: getSizeRecordIdentifer,
     cliProgressBar,
   })
 }
+
+export const getProductRecordIdentifer = rec => rec.fields.Slug

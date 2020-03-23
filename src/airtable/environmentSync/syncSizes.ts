@@ -25,3 +25,5 @@ export const syncSizes = async (cliProgressBar?) => {
   })
 }
 export const getNumLinksSizes = () => 0
+
+export const getSizeRecordIdentifer = rec => `${rec.fields.Name}${rec.fields.Type}`

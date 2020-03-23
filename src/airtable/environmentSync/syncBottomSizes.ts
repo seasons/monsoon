@@ -5,7 +5,7 @@ import {
   deleteAllStagingRecords,
   createAllStagingRecordsWithoutLinks,
 } from "./utils"
-import { linkStagingRecords } from "."
+import { linkStagingRecords, getSizeRecordIdentifer } from "."
 
 
 export const syncBottomSizes = async (cliProgressBar?) => {
@@ -43,7 +43,7 @@ const addSizeLinks = async (
       allTargetProductionRecords: await getAllSizes(getProductionBase()),
       allTargetStagingRecords: await getAllSizes(getStagingBase()),
       getRootRecordIdentifer: getBottomSizeRecordIdentifer,
-      getTargetRecordIdentifer: rec => `${rec.fields.Name}${rec.fields.Type}`,
+      getTargetRecordIdentifer: getSizeRecordIdentifer,
       cliProgressBar,
     })
   }
@@ -61,7 +61,7 @@ const addSizeLinks = async (
       allTargetProductionRecords: await getAllSizes(getProductionBase()),
       allTargetStagingRecords: await getAllSizes(getStagingBase()),
       getRootRecordIdentifer: getBottomSizeRecordIdentifer,
-      getTargetRecordIdentifer: rec => `${rec.fields.Name}${rec.fields.Type}`,
+      getTargetRecordIdentifer: getSizeRecordIdentifer,
       cliProgressBar,
     })
   }

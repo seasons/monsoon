@@ -5,9 +5,10 @@ import {
   deleteAllStagingRecords,
   createAllStagingRecordsWithoutLinks,
   linkStagingRecords,
+  getProductRecordIdentifer,
+  getTopSizeRecordIdentifier,
+  getBottomSizeRecordIdentifer,
 } from "."
-import { getTopSizeRecordIdentifier } from "./syncTopSizes"
-import { getBottomSizeRecordIdentifer } from "./syncBottomSizes"
 
 export const syncProductVariants = async (cliProgressBar?) => {
   const allProductVariantsProduction = await getAllProductVariants(
@@ -66,7 +67,7 @@ const addProductLinks = async (
     allTargetProductionRecords: await getAllProducts(getProductionBase()),
     allTargetStagingRecords: await getAllProducts(getStagingBase()),
     getRootRecordIdentifer: getProductVariantRecordIdentifier,
-    getTargetRecordIdentifer: rec => rec.fields.Slug,
+    getTargetRecordIdentifer: getProductRecordIdentifer,
     cliProgressBar,
   })
 }
@@ -107,4 +108,4 @@ const addBottomSizeLinks = async (
   })
 }
 
-const getProductVariantRecordIdentifier = rec => rec.fields.SKU
+export const getProductVariantRecordIdentifier = rec => rec.fields.SKU

@@ -6,6 +6,7 @@ import {
   createAllStagingRecordsWithoutLinks,
 } from "./utils"
 import { linkStagingRecords } from "."
+import { getSizeRecordIdentifer } from "./syncSizes"
 
 
 export const syncTopSizes = async (cliProgressBar?) => {
@@ -41,7 +42,7 @@ const addSizeLinks = async (
       allTargetProductionRecords: await getAllSizes(getProductionBase()),
       allTargetStagingRecords: await getAllSizes(getStagingBase()),
       getRootRecordIdentifer: getTopSizeRecordIdentifier,
-      getTargetRecordIdentifer: rec => `${rec.fields.Name}${rec.fields.Type}`,
+      getTargetRecordIdentifer: getSizeRecordIdentifer,
       cliProgressBar,
     })
   }
