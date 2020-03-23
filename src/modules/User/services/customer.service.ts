@@ -22,7 +22,7 @@ export class CustomerService {
     private readonly shippingService: ShippingService
   ) {}
 
-  private async setCustomerPrismaStatus(user: User, status: CustomerStatus) {
+  async setCustomerPrismaStatus(user: User, status: CustomerStatus) {
     const customer = await this.authService.getCustomerFromUserID(user.id)
     await this.prisma.client.updateCustomer({
       data: { status },

@@ -1,10 +1,13 @@
-import { getAllProductVariants, getAllProducts, AirtableData } from "../utils"
+import { getAllProductVariants, getAllProducts, AirtableData, getAllTopSizes, getAllBottomSizes } from "../utils"
 import { deleteFieldsFromObject } from "../../utils"
 import { getStagingBase, getProductionBase } from "../config"
 import {
   deleteAllStagingRecords,
   createAllStagingRecordsWithoutLinks,
   linkStagingRecords,
+  getProductRecordIdentifer,
+  getTopSizeRecordIdentifier,
+  getBottomSizeRecordIdentifer,
 } from "."
 
 export const syncProductVariants = async (cliProgressBar?) => {
@@ -22,8 +25,10 @@ export const syncProductVariants = async (cliProgressBar?) => {
           Product: [],
           "Physical Products": [],
           Orders: [],
+          "Top Size": [],
+          "Bottom Size": []
         },
-        ["Variant Number", "Created At", "Images", "Brand", "Color"]
+        ["Variant Number", "Created At", "Images", "Brand", "Color", "Type"]
       ),
     cliProgressBar,
   })
@@ -35,9 +40,19 @@ export const syncProductVariants = async (cliProgressBar?) => {
     allProductVariantsStaging,
     cliProgressBar
   )
+  await addTopSizeLinks(
+    allProductVariantsProduction,
+    allProductVariantsStaging,
+    cliProgressBar
+  )
+  await addBottomSizeLinks(
+    allProductVariantsProduction,
+    allProductVariantsStaging,
+    cliProgressBar
+  )
 }
 
-export const getNumLinksProductVariants = () => 1
+export const getNumLinksProductVariants = () => 3
 
 const addProductLinks = async (
   allProductionProductVariants: AirtableData,
@@ -51,8 +66,46 @@ const addProductLinks = async (
     allRootStagingRecords: allStagingProductVariants,
     allTargetProductionRecords: await getAllProducts(getProductionBase()),
     allTargetStagingRecords: await getAllProducts(getStagingBase()),
-    getRootRecordIdentifer: rec => rec.fields.SKU,
-    getTargetRecordIdentifer: rec => rec.fields.Slug,
+    getRootRecordIdentifer: getProductVariantRecordIdentifier,
+    getTargetRecordIdentifer: getProductRecordIdentifer,
     cliProgressBar,
   })
 }
+
+const addTopSizeLinks = async (
+  allProductionProductVariants: AirtableData,
+  allStagingProductVariants: AirtableData,
+  cliProgressBar?: any
+) => {
+  await linkStagingRecords({
+    rootRecordName: "Product Variants",
+    targetFieldNameOnRootRecord: "Top Size",
+    allRootProductionRecords: allProductionProductVariants,
+    allRootStagingRecords: allStagingProductVariants,
+    allTargetProductionRecords: await getAllTopSizes(getProductionBase()),
+    allTargetStagingRecords: await getAllTopSizes(getStagingBase()),
+    getRootRecordIdentifer: getProductVariantRecordIdentifier,
+    getTargetRecordIdentifer: getTopSizeRecordIdentifier,
+    cliProgressBar,
+  })
+}
+
+const addBottomSizeLinks = async (
+  allProductionProductVariants: AirtableData,
+  allStagingProductVariants: AirtableData,
+  cliProgressBar?: any
+) => {
+  await linkStagingRecords({
+    rootRecordName: "Product Variants",
+    targetFieldNameOnRootRecord: "Bottom Size",
+    allRootProductionRecords: allProductionProductVariants,
+    allRootStagingRecords: allStagingProductVariants,
+    allTargetProductionRecords: await getAllBottomSizes(getProductionBase()),
+    allTargetStagingRecords: await getAllBottomSizes(getStagingBase()),
+    getRootRecordIdentifer: getProductVariantRecordIdentifier,
+    getTargetRecordIdentifer: getBottomSizeRecordIdentifer,
+    cliProgressBar,
+  })
+}
+
+export const getProductVariantRecordIdentifier = rec => rec.fields.SKU

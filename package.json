@@ -6,7 +6,7 @@
   "bin": "bin/sync.js",
   "main": "dist/index.js",
   "engines": {
-    "node": "10.x.x"
+    "node": "13.x.x"
   },
   "resolutions": {
     "graphql": "^14.5.7"
@@ -46,6 +46,7 @@
     "@nestjs/jwt": "^6.1.1",
     "@nestjs/passport": "^6.1.1",
     "@nestjs/platform-express": "^6.11.8",
+    "@nestjs/schedule": "^0.3.0",
     "@nestjs/testing": "^6.11.11",
     "@pusher/push-notifications-server": "^1.2.0",
     "@sendgrid/mail": "^6.4.0",

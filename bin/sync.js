@@ -29,16 +29,24 @@ require("yargs")
           ],
         })
         .options({
-          e: {
+          prisma: {
+            alias: "pe",
             default: "staging",
             describe: "Prisma environment to sync to",
             choices: ["local", "staging", "production"],
             type: "string",
           },
+          airtable: {
+            alias: "ae",
+            default: "staging",
+            describe: "Airtable base to sync from",
+            choices: ["production", "staging"],
+            type: "string"
+          }
         })
     },
     async argv => {
-      await overrideEnvFromRemoteConfig(argv.e || "staging")
+      await overrideEnvFromRemoteConfig({prismaEnvironment: argv.pe, airtableEnvironment: argv.ae})
 
       const {
         syncBrands,
@@ -135,15 +143,9 @@ require("yargs")
     }
   )
   .command(
-    "sync:airtable:airtable <base>",
-    "sync airtable production to secondary environment",
-    yargs => {
-      yargs.positional("base", {
-        type: "string",
-        describe: "human readable name of base to sync to",
-        choices: ["staging1", "staging2"],
-      })
-    },
+    "sync:airtable:airtable",
+    "sync airtable production to staging",
+    yargs => {},
     async argv => {
       const {
         syncAll: syncAllAirtableToAirtable,
@@ -156,17 +158,9 @@ require("yargs")
       )
       try {
         const env = readJSONObjectFromFile(envFilePath)
-        if (!(env.airtable[argv.base] && env.airtable[argv.base].baseID)) {
-          throw new Error("invalid base. valid options are staging1 | staging2")
-        }
-        if (argv.base === "production") {
-          throw new Error(
-            "can not sync to production. valid options are staging1 | staging2"
-          )
-        }
         process.env._PRODUCTION_AIRTABLE_BASEID =
           env.airtable["production"].baseID
-        process.env._STAGING_AIRTABLE_BASEID = env.airtable[argv.base].baseID
+        process.env._STAGING_AIRTABLE_BASEID = env.airtable["staging"].baseID
         await syncAllAirtableToAirtable()
       } catch (err) {
         console.log(err)
@@ -205,7 +199,7 @@ require("yargs")
         apiKey: process.env.AIRTABLE_KEY,
       })
 
-      await overrideEnvFromRemoteConfig(argv.e)
+      await overrideEnvFromRemoteConfig({prismaEnvironment: argv.e})
 
       const {
         AuthService,
@@ -301,7 +295,7 @@ require("yargs")
   )
   .help().argv
 
-async function overrideEnvFromRemoteConfig(environment = "local") {
+async function overrideEnvFromRemoteConfig ({prismaEnvironment = "local", airtableEnvironment = "staging"}) {
   const envFilePath = await downloadFromS3(
     "/tmp/__monsoon__env.json",
     "monsoon-scripts",
@@ -309,10 +303,10 @@ async function overrideEnvFromRemoteConfig(environment = "local") {
   )
   try {
     const env = readJSONObjectFromFile(envFilePath)
-    const { endpoint, secret } = env.prisma[environment]
+    const { endpoint, secret } = env.prisma[prismaEnvironment]
     process.env.PRISMA_ENDPOINT = endpoint
     process.env.PRISMA_SECRET = secret
-    process.env.AIRTABLE_DATABASE_ID = env.airtable.staging.baseID
+    process.env.AIRTABLE_DATABASE_ID = env.airtable[airtableEnvironment].baseID
   } catch (err) {
     console.log(err)
   } finally {

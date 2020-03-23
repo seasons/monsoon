@@ -1,5 +1,6 @@
 import { Module } from "@nestjs/common"
 import { GraphQLModule, GqlModuleOptions } from "@nestjs/graphql"
+import { ScheduleModule } from '@nestjs/schedule';
 import {
   UserModule,
   HomepageModule,
@@ -8,14 +9,16 @@ import {
   FAQModule,
   PaymentModule,
   SearchModule,
+  CronModule,
+  EmailModule,
+  AirtableModule,
   directiveResolvers
 } from "./modules"
 import { importSchema } from "graphql-import"
 import Analytics from "analytics-node"
 import * as Airtable from "airtable"
 import chargebee from "chargebee"
-import { EmailModule } from "./modules/Email/email.module"
-import { AirtableModule } from "./modules/Airtable/airtable.module"
+import sgMail from "@sendgrid/mail"
 
 const analytics = new Analytics(process.env.SEGMENT_MONSOON_WRITE_KEY)
 
@@ -24,14 +27,17 @@ Airtable.configure({
   apiKey: process.env.AIRTABLE_KEY,
 })
 
- // make the call to chargebee
- chargebee.configure({
+// make the call to chargebee
+chargebee.configure({
   site: process.env.CHARGEBEE_SITE,
   api_key: process.env.CHARGEE_API_KEY,
 })
 
+sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     GraphQLModule.forRootAsync({
       useFactory: async () => {
         const typeDefs = await importSchema("src/schema.graphql")
@@ -59,6 +65,7 @@ Airtable.configure({
     EmailModule,
     AirtableModule,
     SearchModule,
+    CronModule,
   ],
 })
 export class AppModule {}

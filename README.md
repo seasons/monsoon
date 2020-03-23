@@ -92,6 +92,8 @@ Monsoon ships with a command line interface. To install it run `yarn link`. Once
 
 For details on the arguments and options for each command, use `--help`. e.g `monsoon sync:airtable:prisma --help`
 
+Note that you may need to run `yarn tsc` to generate the files used by the monsoon cli. 
+
 > **Note**: We recommend that you're using `yarn dev` during development as it will give you access to the GraphQL API or your server (defined by the [application schema](./src/schema.graphql)) as well as to the Prisma API directly (defined by the [Prisma database schema](./generated/prisma.graphql)). If you're starting the server with `yarn start`, you'll only be able to access the API of the application schema.
 
 ### Testing
@@ -108,9 +110,9 @@ If `--email` and/or `--password` are not specified, those values are also genera
 
 You should have `.env`, `.env.staging`, and `.env.production` that declare the environment variables for your local, and the staging and production environments respectively.
 
-You can copy the staging and production environment variables directly from heroku using the heroku command line tool
-
-`heroku config -s --app monsoon-staging > .env.staging`, `heroku config -s --app monsoon-production > .env.production`.
+You can copy the staging and production environment variables directly from heroku using the heroku command line tool: 
+- `heroku config -s --app monsoon-staging > .env.staging`
+- `heroku config -s --app monsoon-production > .env.production`.
 
 You may need to install the CLI and login using `heroku login` first.
 

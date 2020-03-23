@@ -11,6 +11,8 @@ import {
   deleteAllStagingRecords,
   createAllStagingRecordsWithoutLinks,
   linkStagingRecords,
+  getProductRecordIdentifer,
+  getProductVariantRecordIdentifier,
 } from "."
 
 export const syncPhysicalProducts = async (cliProgressBar?: any) => {
@@ -39,6 +41,7 @@ export const syncPhysicalProducts = async (cliProgressBar?: any) => {
           "Images",
           "Barcode",
           "Category",
+          "Type"
         ]
       ),
     cliProgressBar,
@@ -56,14 +59,9 @@ export const syncPhysicalProducts = async (cliProgressBar?: any) => {
     allPhysicalProductsStaging,
     cliProgressBar
   )
-  await addLocationLinks(
-    allPhysicalProductsProduction,
-    allPhysicalProductsStaging,
-    cliProgressBar
-  )
 }
 
-export const getNumLinksPhysicalProducts = () => 3
+export const getNumLinksPhysicalProducts = () => 2
 
 const addProductLinks = async (
   allPhysicalProductsProduction: AirtableData,
@@ -77,8 +75,8 @@ const addProductLinks = async (
     allRootStagingRecords: allPhysicalProductsStaging,
     allTargetProductionRecords: await getAllProducts(getProductionBase()),
     allTargetStagingRecords: await getAllProducts(getStagingBase()),
-    getRootRecordIdentifer: rec => rec.fields.SUID.text,
-    getTargetRecordIdentifer: rec => rec.fields.Slug,
+    getRootRecordIdentifer: getPhysicalProductRecordIdentifier,
+    getTargetRecordIdentifer: getProductRecordIdentifer,
     cliProgressBar,
   })
 }
@@ -97,26 +95,10 @@ const addProductVariantLinks = async (
       getProductionBase()
     ),
     allTargetStagingRecords: await getAllProductVariants(getStagingBase()),
-    getRootRecordIdentifer: rec => rec.fields.SUID.text,
-    getTargetRecordIdentifer: rec => rec.fields.SKU,
+    getRootRecordIdentifer: getPhysicalProductRecordIdentifier,
+    getTargetRecordIdentifer: getProductVariantRecordIdentifier,
     cliProgressBar,
   })
 }
 
-const addLocationLinks = async (
-  allPhysicalProductsProduction: AirtableData,
-  allPhysicalProductsStaging: AirtableData,
-  cliProgressBar?: any
-) => {
-  await linkStagingRecords({
-    rootRecordName: "Physical Products",
-    targetFieldNameOnRootRecord: "Location",
-    allRootProductionRecords: allPhysicalProductsProduction,
-    allRootStagingRecords: allPhysicalProductsStaging,
-    allTargetProductionRecords: await getAllLocations(getProductionBase()),
-    allTargetStagingRecords: await getAllLocations(getStagingBase()),
-    getRootRecordIdentifer: rec => rec.fields.SUID.text,
-    getTargetRecordIdentifer: rec => rec.fields.Slug,
-    cliProgressBar,
-  })
-}
+export const getPhysicalProductRecordIdentifier = rec => rec.fields.SUID.text
