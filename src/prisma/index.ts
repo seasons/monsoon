@@ -1254,7 +1254,7 @@ export type UserOrderByInput =
   | "pushNotifications_ASC"
   | "pushNotifications_DESC";
 
-export type BottomSizeType = "US" | "EU" | "JP" | "Letter";
+export type BottomSizeType = "WxL" | "US" | "EU" | "JP" | "Letter";
 
 export type RecentlyViewedProductOrderByInput =
   | "id_ASC"
@@ -12834,6 +12834,10 @@ export const models: Model[] = [
     embedded: false
   },
   {
+    name: "PushNotificationStatus",
+    embedded: false
+  },
+  {
     name: "Brand",
     embedded: false
   },
@@ -12883,10 +12887,6 @@ export const models: Model[] = [
   },
   {
     name: "User",
-    embedded: false
-  },
-  {
-    name: "PushNotificationStatus",
     embedded: false
   },
   {

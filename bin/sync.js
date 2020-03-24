@@ -29,33 +29,24 @@ require("yargs")
           ],
         })
         .options({
-          e: {
+          prisma: {
+            alias: "pe",
             default: "staging",
             describe: "Prisma environment to sync to",
             choices: ["local", "staging", "production"],
             type: "string",
           },
+          airtable: {
+            alias: "ae",
+            default: "staging",
+            describe: "Airtable base to sync from",
+            choices: ["production", "staging"],
+            type: "string"
+          }
         })
     },
     async argv => {
-      const envFilePath = await downloadFromS3(
-        "/tmp/__monsoon__env.json",
-        "monsoon-scripts",
-        "env.json"
-      )
-      try {
-        const environment = argv.e || "staging"
-        const env = readJSONObjectFromFile(envFilePath)
-        const { endpoint, secret } = env.prisma[environment]
-        process.env.PRISMA_ENDPOINT = endpoint
-        process.env.PRISMA_SECRET = secret
-        process.env.AIRTABLE_DATABASE_ID = env.airtable.production.baseID
-      } catch (err) {
-        console.log(err)
-      } finally {
-        // delete the env file
-        fs.unlinkSync(envFilePath)
-      }
+      await overrideEnvFromRemoteConfig({prismaEnvironment: argv.pe, airtableEnvironment: argv.ae})
 
       const {
         syncBrands,
@@ -83,29 +74,21 @@ require("yargs")
 
       switch (argv.table) {
         case "all":
-          console.log("syncing all")
           return await syncAll()
         case "brands":
-          console.log("syncing brands")
           return await syncBrands()
         case "categories":
-          console.log("syncing categories")
           return await syncCategories()
         case "products":
-          console.log("syncing products")
           return await syncProducts()
         case "product-variants":
-          console.log("syncing product variants")
           await syncProducts()
           return await syncProductVariants()
         case "collections":
-          console.log("syncing collections")
           return await syncCollections()
         case "collection-groups":
-          console.log("syncing collection groups")
           return await syncCollectionGroups()
         case "homepage-product-rails":
-          console.log("syncing homepage product rails")
           return await syncHomepageProductRails()
         default:
           throw new Error("invalid table name")
@@ -160,15 +143,9 @@ require("yargs")
     }
   )
   .command(
-    "sync:airtable:airtable <base>",
-    "sync airtable production to secondary environment",
-    yargs => {
-      yargs.positional("base", {
-        type: "string",
-        describe: "human readable name of base to sync to",
-        choices: ["staging1", "staging2"],
-      })
-    },
+    "sync:airtable:airtable",
+    "sync airtable production to staging",
+    yargs => {},
     async argv => {
       const {
         syncAll: syncAllAirtableToAirtable,
@@ -181,17 +158,9 @@ require("yargs")
       )
       try {
         const env = readJSONObjectFromFile(envFilePath)
-        if (!(env.airtable[argv.base] && env.airtable[argv.base].baseID)) {
-          throw new Error("invalid base. valid options are staging1 | staging2")
-        }
-        if (argv.base === "production") {
-          throw new Error(
-            "can not sync to production. valid options are staging1 | staging2"
-          )
-        }
         process.env._PRODUCTION_AIRTABLE_BASEID =
           env.airtable["production"].baseID
-        process.env._STAGING_AIRTABLE_BASEID = env.airtable[argv.base].baseID
+        process.env._STAGING_AIRTABLE_BASEID = env.airtable["staging"].baseID
         await syncAllAirtableToAirtable()
       } catch (err) {
         console.log(err)
@@ -201,4 +170,147 @@ require("yargs")
       }
     }
   )
+  .command(
+    "create:test-user",
+    "creates a test user with the given email and password",
+    yargs => {
+      yargs.options({
+        e: {
+          default: "local",
+          describe: "Prisma environment on which to create the test user",
+          choices: ["local", "staging"],
+          type: "string",
+        },
+        email: {
+          type: "string",
+          describe: "Email of the test user",
+        },
+        password: {
+          type: "string",
+          describe: "Password of the test user",
+        },
+      })
+    },
+    async argv => {
+      const Airtable = require("airtable")
+
+      Airtable.configure({
+        endpointUrl: "https://api.airtable.com",
+        apiKey: process.env.AIRTABLE_KEY,
+      })
+
+      await overrideEnvFromRemoteConfig({prismaEnvironment: argv.e})
+
+      const {
+        AuthService,
+      } = require("../dist/modules/User/services/auth.service")
+      const { PrismaClientService } = require("../dist/prisma/client.service")
+      const {
+        AirtableService,
+      } = require("../dist/modules/Airtable/services/airtable.service")
+      const {
+        AirtableBaseService,
+      } = require("../dist/modules/Airtable/services/airtable.base.service")
+      const {
+        AirtableUtilsService,
+      } = require("../dist/modules/Airtable/services/airtable.utils.service")
+      const { PrismaService } = require("../dist/prisma/prisma.service")
+      const { head } = require("lodash")
+      const faker = require("faker")
+
+      // Instantiate services
+      const airtableBaseService = new AirtableBaseService()
+      const auth = new AuthService(
+        new PrismaClientService(),
+        new AirtableService(
+          airtableBaseService,
+          new AirtableUtilsService(airtableBaseService)
+        )
+      )
+      const prisma = new PrismaService()
+
+      const firstName = faker.name.firstName()
+      const lastName = faker.name.lastName()
+      const fullName = `${firstName} ${lastName}`
+      const slug = `${firstName}-${lastName}`.toLowerCase()
+      const email = argv.email || `${slug}@seasons.nyc`
+      const password = argv.password || faker.random.alphaNumeric(6)
+
+      // Fail gracefully if the user is already in the DB
+      if (!!(await prisma.client.user({ email }))) {
+        return console.log("User already in DB")
+      }
+
+      const { user, tokenData } = await auth.signupUser({
+        email,
+        password,
+        firstName,
+        lastName,
+        details: {
+          phoneNumber: faker.phone.phoneNumber(),
+          height: 40 + faker.random.number(32),
+          weight: "152lb",
+          bodyType: "Athletic",
+          shippingAddress: {
+            create: {
+              slug,
+              name: `${firstName} ${lastName}`,
+              address1: faker.address.streetAddress(),
+              city: faker.address.city(),
+              state: faker.address.state(),
+              zipCode: faker.address.zipCode(),
+            },
+          },
+        },
+      })
+
+      // Set their status to Active
+      const customer = head(
+        await prisma.client.customers({
+          where: { user: { id: user.id } },
+        })
+      )
+      await prisma.client.updateCustomer({
+        data: {
+          plan: "Essential",
+          billingInfo: {
+            create: {
+              brand: "Visa",
+              name: fullName,
+              last_digits: faker.finance.mask(4),
+              expiration_month: 04,
+              expiration_year: 2022,
+            },
+          },
+          status: "Active",
+        },
+        where: { id: customer.id },
+      })
+
+      console.log(
+        `User with email: ${email}, password: ${password} successfully created`
+      )
+      console.log(`Access token: ${tokenData.access_token}`)
+    }
+  )
   .help().argv
+
+async function overrideEnvFromRemoteConfig ({prismaEnvironment = "local", airtableEnvironment = "staging"}) {
+  const envFilePath = await downloadFromS3(
+    "/tmp/__monsoon__env.json",
+    "monsoon-scripts",
+    "env.json"
+  )
+  try {
+    const env = readJSONObjectFromFile(envFilePath)
+    const { endpoint, secret } = env.prisma[prismaEnvironment]
+    process.env.PRISMA_ENDPOINT = endpoint
+    process.env.PRISMA_SECRET = secret
+    process.env.AIRTABLE_DATABASE_ID = env.airtable[airtableEnvironment].baseID
+  } catch (err) {
+    console.log(err)
+  } finally {
+    // delete the env file
+    fs.unlinkSync(envFilePath)
+  }
+}

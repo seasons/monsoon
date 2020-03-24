@@ -14,6 +14,7 @@ export const linkStagingRecord = async ({
   // Find the staging record that corresponds to the production record
   const correspondingRootStagingRecord = allRootStagingRecords.find(
     rsr =>
+    
       getRootRecordIdentifer(rootProductionRecord) ===
       getRootRecordIdentifer(rsr)
   )

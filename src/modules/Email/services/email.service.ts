@@ -45,6 +45,23 @@ export class EmailService {
     })
   }
 
+  sendWelcomeToSeasonsEmail(user: User) {
+    this.sendTransactionalEmail({
+      to: user.email,
+      data: this.data.welcomeToSeasons(user.firstName),
+    })
+  }
+
+  sendAuthorizedToSubscribeEmail(user: User) {
+    this.sendTransactionalEmail({
+      to: user.email,
+      data: this.data.completeAccount(
+        user.firstName,
+        `${process.env.SEEDLING_URL}/complete?idHash=${this.utils.getUserIDHash(user.id)}`
+      ),
+    })
+  }
+
   private getReservationConfirmationDataForProduct = async (product: Product) =>
     this.utils.Identity({
       url: product.images[0].url,
@@ -91,12 +108,5 @@ export class EmailService {
         ...msg,
       })
     }
-  }
-
-  sendWelcomeToSeasonsEmail(user: User) {
-    this.sendTransactionalEmail({
-      to: user.email,
-      data: this.data.welcomeToSeasons(user.firstName),
-    })
   }
 }

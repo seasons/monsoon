@@ -5,6 +5,7 @@ import {
   deleteAllStagingRecords,
   createAllStagingRecordsWithoutLinks,
   linkStagingRecords,
+  getProductRecordIdentifer,
 } from "."
 
 export const syncHomepageProductRails = async (cliProgressBar?) => {
@@ -41,7 +42,7 @@ const addProductsLinks = async (
     allTargetProductionRecords: await getAllProducts(getProductionBase()),
     allTargetStagingRecords: await getAllProducts(getStagingBase()),
     getRootRecordIdentifer: rec => rec.fields.Slug,
-    getTargetRecordIdentifer: rec => rec.fields.Slug,
+    getTargetRecordIdentifer: getProductRecordIdentifer,
     cliProgressBar,
   })
 }

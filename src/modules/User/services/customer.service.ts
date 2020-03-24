@@ -1,5 +1,10 @@
 import { Injectable } from "@nestjs/common"
-import { User, CustomerStatus } from "../../../prisma"
+import {
+  User,
+  CustomerStatus,
+  BillingInfoUpdateDataInput,
+  ID_Input,
+} from "../../../prisma"
 import { PrismaClientService } from "../../../prisma/client.service"
 import { AuthService } from "./auth.service"
 import { DBService } from "../../../prisma/db.service"
@@ -14,17 +19,13 @@ export class CustomerService {
     private readonly authService: AuthService,
     private readonly db: DBService,
     private readonly prisma: PrismaClientService,
-    private readonly shippingService: ShippingService,
-  ){}
+    private readonly shippingService: ShippingService
+  ) {}
 
-  private async setCustomerPrismaStatus(
-    user: User,
-    status: CustomerStatus
-  ) {
+  async setCustomerPrismaStatus(user: User, status: CustomerStatus) {
     const customer = await this.authService.getCustomerFromUserID(user.id)
     await this.prisma.client.updateCustomer({
-      // @ts-ignore
-      data: { status: status },
+      data: { status },
       where: { id: customer.id },
     })
   }
@@ -39,9 +40,9 @@ export class CustomerService {
         detail: {
           upsert: {
             update: details,
-            create: details 
-          }
-        }
+            create: details,
+          },
+        },
       },
       where: { id: customer.id },
     })
@@ -72,27 +73,33 @@ export class CustomerService {
       postalCode: shippingPostalCode,
       state: shippingState,
       street1: shippingStreet1,
-      street2: shippingStreet2
+      street2: shippingStreet2,
     } = shippingAddress
-    const { isValid: shippingAddressIsValid } = await this.shippingService.shippoValidateAddress({
+    const {
+      isValid: shippingAddressIsValid,
+    } = await this.shippingService.shippoValidateAddress({
       name: user.firstName,
       street1: shippingStreet1,
       city: shippingCity,
       state: shippingState,
-      zip: shippingPostalCode
+      zip: shippingPostalCode,
     })
     if (!shippingAddressIsValid) {
       throw new Error("Shipping address is invalid")
     }
-  
+
     const zipcodesData = zipcodes.lookup(parseInt(shippingPostalCode))
     const validCities = ["Brooklyn", "New York", "Queens", "The Bronx"]
-    if (zipcodesData?.state !== "NY" || !validCities.includes(zipcodesData?.city)) {
+    if (
+      zipcodesData?.state !== "NY" ||
+      !validCities.includes(zipcodesData?.city)
+    ) {
       throw new Error("SHIPPING_ADDRESS_NOT_NYC")
     }
-  
+
     // Update the user's shipping address
-    const detailID = await this.prisma.client.customer({ id: customer.id })
+    const detailID = await this.prisma.client
+      .customer({ id: customer.id })
       .detail()
       .id()
     const shippingAddressData = {
@@ -105,22 +112,23 @@ export class CustomerService {
       address2: shippingStreet2,
     }
     if (detailID) {
-      const shippingAddressID = await this.prisma.client.customer({ id: customer.id })
+      const shippingAddressID = await this.prisma.client
+        .customer({ id: customer.id })
         .detail()
         .shippingAddress()
         .id()
       const shippingAddress = await this.prisma.client.upsertLocation({
         create: shippingAddressData,
         update: shippingAddressData,
-        where: { id: shippingAddressID }
+        where: { id: shippingAddressID },
       })
       if (shippingAddress) {
         await this.prisma.client.updateCustomerDetail({
           data: {
             phoneNumber,
-            shippingAddress: { connect: { id: shippingAddress.id } }
+            shippingAddress: { connect: { id: shippingAddress.id } },
           },
-          where: { id: detailID }
+          where: { id: detailID },
         })
       }
     } else {
@@ -130,12 +138,31 @@ export class CustomerService {
             create: {
               phoneNumber,
               shippingAddress: {
-                create: shippingAddressData
-              }
-            }
-          }
+                create: shippingAddressData,
+              },
+            },
+          },
         },
-        where: { id: customer.id }
+        where: { id: customer.id },
+      })
+    }
+  }
+
+  async updateCustomerBillingInfo({
+    billingInfo,
+    customerId,
+  }: {
+    billingInfo: BillingInfoUpdateDataInput
+    customerId: ID_Input
+  }) {
+    const billingInfoId = await this.prisma.client
+      .customer({ id: customerId })
+      .billingInfo()
+      .id()
+    if (billingInfoId) {
+      await this.prisma.client.updateBillingInfo({
+        data: billingInfo,
+        where: { id: billingInfoId },
       })
     }
   }

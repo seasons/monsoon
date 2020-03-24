@@ -17,7 +17,7 @@ export class ProductUtilsService {
     // Add filtering by sizes in query
     const where = args.where || {}
     if (sizes && sizes.length > 0) {
-      where.variants_some = { size_in: sizes }
+      // where.variants_some = { size_in: sizes }
     }
 
     // If client wants to sort by name, we will assume that they

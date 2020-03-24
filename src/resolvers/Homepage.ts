@@ -2,7 +2,8 @@ import { Context } from "../utils"
 import { getCustomerFromContext } from "../auth/utils"
 
 // FIXME: This is being used because currently info is lacking the __typename, add __typename to info
-const ProductFragment = `{
+const ProductFragment = `
+{
   __typename
   id
   slug
@@ -14,14 +15,25 @@ const ProductFragment = `{
   }
   variants {
     id
-    size
     reservable
+    internalSize {
+      top {
+        letter
+      }
+      bottom {
+        type
+        value
+      }
+      productType
+      display
+    }
   }
   color {
     name
   }
   retailPrice
-}`
+}
+`
 
 export const HomepageResult = {
   __resolveType(obj, _context, _info) {
@@ -75,7 +87,7 @@ export const Homepage = async (parent, args, ctx: Context, info) => {
         type: "Products",
         __typename: "HomepageSection",
         title: "Just added",
-        results: async (args, ctx: Context, info) => {
+        results: async (args, ctx: Context, localInfo) => {
           const newProducts = await ctx.db.query.products(
             {
               ...args,
@@ -142,17 +154,16 @@ export const Homepage = async (parent, args, ctx: Context, info) => {
       type: "Products",
       __typename: "HomepageSection",
       title: "Recently viewed",
-      results: async (args, ctx: Context, info) => {
-        //
+      results: async (args, ctx: Context, localInfo) => {
         const viewedProducts = await ctx.db.query.recentlyViewedProducts(
           {
             where: { customer: { id: customer.id } },
             orderBy: "updatedAt_DESC",
             limit: 10,
           },
-          `{ 
+          `{
             updatedAt
-            product ${ProductFragment} 
+            product ${ProductFragment}
           }`
         )
         return viewedProducts.map(viewedProduct => viewedProduct.product)
@@ -179,5 +190,6 @@ export const Homepage = async (parent, args, ctx: Context, info) => {
       },
     })
   })
+
   return homepageSections
 }

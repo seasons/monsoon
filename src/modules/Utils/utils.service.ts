@@ -1,3 +1,4 @@
+import crypto from "crypto"
 import { Injectable } from "@nestjs/common"
 import { PrismaClientService } from "../../prisma/client.service"
 import { Location } from "../../prisma/"
@@ -26,6 +27,13 @@ export class UtilsService {
       month: "long",
       day: "numeric",
     })
+  }
+
+  getUserIDHash(userID: string): string {
+    return crypto
+      .createHash("sha256")
+      .update(`${userID}${process.env.HASH_SECRET}`)
+      .digest("hex")
   }
 
   Identity(a) {

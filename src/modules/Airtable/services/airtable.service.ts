@@ -194,6 +194,10 @@ export class AirtableService {
       })
   }
 
+  async getAllUsers() {
+    return this.getAll("Users", "", "", this.airtableBase.base)
+  }
+
   private getAll: (
     name: string,
     filterFormula?: string,
