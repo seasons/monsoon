@@ -1,8 +1,8 @@
 import { createParamDecorator } from "@nestjs/common"
-import { PrismaClientService } from "../prisma/client.service"
 import { Customer as PrismaCustomer } from "../prisma"
+import { PrismaService } from "../prisma/prisma.service"
 
-const prisma = new PrismaClientService()
+const prisma = new PrismaService()
 
 export const Customer = createParamDecorator(
   async (data, [root, args, ctx, info]): Promise<PrismaCustomer> => {
