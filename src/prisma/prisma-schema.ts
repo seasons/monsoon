@@ -7289,6 +7289,8 @@ type ReservationFeedback {
   feedbacks(where: ProductVariantFeedbackWhereInput, orderBy: ProductVariantFeedbackOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariantFeedback!]
   rating: Rating
   user: User!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 type ReservationFeedbackConnection {
@@ -7329,12 +7331,18 @@ enum ReservationFeedbackOrderByInput {
   comment_DESC
   rating_ASC
   rating_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
 }
 
 type ReservationFeedbackPreviousValues {
   id: ID!
   comment: String
   rating: Rating
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 type ReservationFeedbackSubscriptionPayload {
@@ -7422,6 +7430,22 @@ input ReservationFeedbackWhereInput {
   rating_in: [Rating!]
   rating_not_in: [Rating!]
   user: UserWhereInput
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
   AND: [ReservationFeedbackWhereInput!]
   OR: [ReservationFeedbackWhereInput!]
   NOT: [ReservationFeedbackWhereInput!]

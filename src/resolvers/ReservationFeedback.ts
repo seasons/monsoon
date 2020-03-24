@@ -46,7 +46,8 @@ export const ReservationFeedback = {
               isCompleted: false
             }
           }
-        }
+        },
+        orderBy: "createdAt_DESC",
       },
       ReservationFeedbackFragment
     )

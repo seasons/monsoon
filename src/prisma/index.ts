@@ -1429,7 +1429,11 @@ export type ReservationFeedbackOrderByInput =
   | "comment_ASC"
   | "comment_DESC"
   | "rating_ASC"
-  | "rating_DESC";
+  | "rating_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
 
 export type ColorOrderByInput =
   | "id_ASC"
@@ -4335,6 +4339,22 @@ export interface ReservationFeedbackWhereInput {
   rating_in?: Maybe<Rating[] | Rating>;
   rating_not_in?: Maybe<Rating[] | Rating>;
   user?: Maybe<UserWhereInput>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
   AND?: Maybe<ReservationFeedbackWhereInput[] | ReservationFeedbackWhereInput>;
   OR?: Maybe<ReservationFeedbackWhereInput[] | ReservationFeedbackWhereInput>;
   NOT?: Maybe<ReservationFeedbackWhereInput[] | ReservationFeedbackWhereInput>;
@@ -9731,6 +9751,8 @@ export interface ReservationFeedback {
   id: ID_Output;
   comment?: String;
   rating?: Rating;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
 }
 
 export interface ReservationFeedbackPromise
@@ -9749,6 +9771,8 @@ export interface ReservationFeedbackPromise
   }) => T;
   rating: () => Promise<Rating>;
   user: <T = UserPromise>() => T;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface ReservationFeedbackSubscription
@@ -9769,6 +9793,8 @@ export interface ReservationFeedbackSubscription
   }) => T;
   rating: () => Promise<AsyncIterator<Rating>>;
   user: <T = UserSubscription>() => T;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
 export interface ReservationFeedbackNullablePromise
@@ -9787,6 +9813,8 @@ export interface ReservationFeedbackNullablePromise
   }) => T;
   rating: () => Promise<Rating>;
   user: <T = UserPromise>() => T;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface CategorySubscriptionPayload {
@@ -13733,6 +13761,8 @@ export interface ReservationFeedbackPreviousValues {
   id: ID_Output;
   comment?: String;
   rating?: Rating;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
 }
 
 export interface ReservationFeedbackPreviousValuesPromise
@@ -13741,6 +13771,8 @@ export interface ReservationFeedbackPreviousValuesPromise
   id: () => Promise<ID_Output>;
   comment: () => Promise<String>;
   rating: () => Promise<Rating>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface ReservationFeedbackPreviousValuesSubscription
@@ -13749,6 +13781,8 @@ export interface ReservationFeedbackPreviousValuesSubscription
   id: () => Promise<AsyncIterator<ID_Output>>;
   comment: () => Promise<AsyncIterator<String>>;
   rating: () => Promise<AsyncIterator<Rating>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
 export interface ReservationFeedbackSubscriptionPayload {
