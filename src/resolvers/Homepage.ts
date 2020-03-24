@@ -55,9 +55,9 @@ export const Homepage = async (parent, args, ctx: Context, info) => {
   // console.log("ABOUT TO MAKE FEEDBACK")
   // const user = await getUserFromContext(ctx)
   // const items = [
-  //   "ck7z06yy80ne60724ex76we5n",
-  //   "ck7z027rb0eka072417wdwsjn",
-  //   "ck7z02yg90fza0724s4jbnhhc",
+  //   "ck7z02dg90evj0724quoegfpp",
+  //   "ck7z06agx0m3h072410oegk27",
+  //   "ck7z0acnr0tuo07242al57d9p",
   // ]
   // const variants = await Promise.all(
   //   items.map(async item => {
