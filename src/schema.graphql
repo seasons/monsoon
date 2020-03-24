@@ -11,6 +11,7 @@ type Product {
   name: String!
   brand: Brand!
   category: Category!
+  type: ProductType
   description: String
   externalURL: String
   images: Json!
