@@ -19,6 +19,7 @@ import { ShippingModule } from "../Shipping/shipping.module"
 import { BagService } from "./services/bag.service"
 import { ProductRequestService } from "./services/productRequest.service"
 import { ProductRequestUtilsService } from "./services/productRequest.utils.service"
+import { BrandQueriesResolver } from "./queries/brand.queries.resolver"
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { ProductRequestUtilsService } from "./services/productRequest.utils.serv
     ProductVariantFieldsResolver,
     ProductVariantQueriesResolver,
     ProductVariantMutationsResolver,
+    BrandQueriesResolver,
   ],
 })
 export class ProductModule {}

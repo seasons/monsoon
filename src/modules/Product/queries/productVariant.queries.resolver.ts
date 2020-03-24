@@ -1,7 +1,7 @@
 import { Resolver, Args, Query, Info } from "@nestjs/graphql"
 import { DBService } from "../../../prisma/db.service"
 
-@Resolver("ProductVariant")
+@Resolver()
 export class ProductVariantQueriesResolver {
   constructor(private readonly db: DBService) {}
 
