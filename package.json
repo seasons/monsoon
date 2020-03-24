@@ -6,7 +6,7 @@
   "bin": "bin/sync.js",
   "main": "dist/index.js",
   "engines": {
-    "node": ">12.x.x"
+    "node": ">=12.x.x"
   },
   "resolutions": {
     "graphql": "^14.5.7"
