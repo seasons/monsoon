@@ -1,5 +1,5 @@
 import { Context } from "../utils"
-import { getCustomerFromContext, getUserFromContext } from "../auth/utils"
+import { getCustomerFromContext } from "../auth/utils"
 
 // FIXME: This is being used because currently info is lacking the __typename, add __typename to info
 const ProductFragment = `
@@ -52,58 +52,6 @@ export const HomepageResult = {
 }
 
 export const Homepage = async (parent, args, ctx: Context, info) => {
-  // TODO: Remove before merging. Currently using to create mock data
-  // console.log("ABOUT TO MAKE FEEDBACK")
-  // const user = await getUserFromContext(ctx)
-  // const items = [
-  //   "ck7z02dg90evj0724quoegfpp",
-  //   "ck7z06agx0m3h072410oegk27",
-  //   "ck7z0acnr0tuo07242al57d9p",
-  // ]
-  // const variants = await Promise.all(
-  //   items.map(async item => {
-  //     // const variant = this.prisma.client.productVariant({ id: item })
-  //     return {
-  //       id: await ctx.prisma.productVariant({ id: item }).id(),
-  //       name: await ctx.prisma.productVariant({ id: item }).product().name(),
-  //       retailPrice: await ctx.prisma.productVariant({ id: item }).product().retailPrice(),
-  //     }
-  //   })
-  // )
-  // console.log("VARIANTS:", variants)
-  // const reservationFeedback = await ctx.prisma.createReservationFeedback({
-  //   feedbacks: {
-  //     create: variants.map(variant => ({
-  //       isCompleted: false,
-  //       questions: {
-  //         create: [
-  //           {
-  //             question: `How many times did you wear this ${variant.name}?`,
-  //             options: { set: ["More than 6 times", "3-5 times", "1-2 times", "0 times"] },
-  //             type: "MultipleChoice",
-  //           },
-  //           {
-  //             question: `Would you buy it at retail for $${variant.retailPrice}?`,
-  //             options: { set: ["Would buy at a discount", "Buy below retail", "Buy at retail", "Would only rent"] },
-  //             type: "MultipleChoice",
-  //           },
-  //           {
-  //             question: `Did it fit as expected?`,
-  //             options: { set: ["Fit too big", "Fit true to size", "Ran small", "Didn’t fit at all"] },
-  //             type: "MultipleChoice",
-  //           },
-  //         ]
-  //       },
-  //       variant: { connect: { id: variant.id } }
-  //     })),
-  //   },
-  //   user: {
-  //     connect: {
-  //       id: user.id
-  //     }
-  //   },
-  // })
-  // console.log("MADE FEEDBACK:", reservationFeedback)
   let customer
   try {
     customer = await getCustomerFromContext(ctx)
