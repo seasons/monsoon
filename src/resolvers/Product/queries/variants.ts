@@ -66,7 +66,6 @@ const sizes = {
 }
 
 export const sortVariants = variants => {
-  // The higher the sortWeight the sooner it will be displayed, e.g. "xxl, xl, l, m"
   const uniqueArray = uniqBy(variants, "internalSize.display")
   return uniqueArray.sort((variantA: any, variantB: any) => {
     const sortWeightA =
