@@ -23,9 +23,8 @@ export class PaymentService {
     email,
     firstName,
     lastName,
-    phoneNumber,
+    phoneNumber
   ) {
-
     // translate the passed planID into a chargebee-readable version
     let chargebeePlanId
     if (planId === "AllAccess") {
@@ -59,7 +58,6 @@ export class PaymentService {
     }).catch(error => {
       throw new Error(JSON.stringify(error))
     })
-
   }
 
   async acknowledgeCompletedChargebeeHostedCheckout(hostedPageID) {
@@ -71,7 +69,7 @@ export class PaymentService {
       try {
         await chargebee.hosted_page
           .acknowledge(hostedPageID)
-          .request(async function (error, result) {
+          .request(async function(error, result) {
             if (error) {
               reject(error)
             } else {
@@ -88,7 +86,10 @@ export class PaymentService {
               if (!plan) {
                 reject(`unexpected plan-id: ${subscription.plan_id}`)
               }
-              let billingInfo = this.paymentUtils.createBillingInfoObject(card, chargebeeCustomer)
+              let billingInfo = this.paymentUtils.createBillingInfoObject(
+                card,
+                chargebeeCustomer
+              )
 
               // Save it to prisma
               let prismaUser = await prisma.client.user({
@@ -122,14 +123,14 @@ export class PaymentService {
               resolve({
                 userId: prismaUser.id,
                 customerId: prismaCustomer.id,
-                planId: plan
+                planId: plan,
               })
             }
           })
       } catch (err) {
         throw err
       }
-    }) 
+    })
   }
 
   async updateChargebeeBillingAddress(
@@ -141,25 +142,30 @@ export class PaymentService {
     billingPostalCode: string
   ) {
     await new Promise((resolve, reject) => {
-      chargebee.customer.update_billing_info(userID, {
-        billing_address: {
-          line1: billingStreet1,
-          line2: billingStreet2,
-          city: billingCity,
-          state: billingState,
-          zip: billingPostalCode,
-        }
-      }).request((error, result) => {
-        if (error) {
-          reject(JSON.stringify(error))
-        } else {
-          const chargebeeBillingAddress = get(result, "customer.billing_address")
-          if (!chargebeeBillingAddress) {
-            reject("Failed to update billing address on chargebee.")
+      chargebee.customer
+        .update_billing_info(userID, {
+          billing_address: {
+            line1: billingStreet1,
+            line2: billingStreet2,
+            city: billingCity,
+            state: billingState,
+            zip: billingPostalCode,
+          },
+        })
+        .request((error, result) => {
+          if (error) {
+            reject(JSON.stringify(error))
+          } else {
+            const chargebeeBillingAddress = get(
+              result,
+              "customer.billing_address"
+            )
+            if (!chargebeeBillingAddress) {
+              reject("Failed to update billing address on chargebee.")
+            }
+            resolve(chargebeeBillingAddress)
           }
-          resolve(chargebeeBillingAddress)
-        }
-      })
+        })
     })
   }
 
@@ -177,21 +183,29 @@ export class PaymentService {
       postal_code: billingPostalCode,
       state: billingState,
       street1: billingStreet1,
-      street2: billingStreet2
+      street2: billingStreet2,
     }
-    const billingInfoId = await this.prisma.client.customer({ id: customerID })
+    const billingInfoId = await this.prisma.client
+      .customer({ id: customerID })
       .billingInfo()
       .id()
     if (billingInfoId) {
       await this.prisma.client.updateBillingInfo({
         data: billingAddressData,
-        where: { id: billingInfoId }
+        where: { id: billingInfoId },
       })
     } else {
       // Get user's card information from chargebee
       const cardInfo = await this.paymentUtils.getChargebeePaymentSource(userID)
-      const { brand, expiry_month, expiry_year, first_name, last4, last_name } = cardInfo
-  
+      const {
+        brand,
+        expiry_month,
+        expiry_year,
+        first_name,
+        last4,
+        last_name,
+      } = cardInfo
+
       // Create new billing info object
       const billingInfo = await this.prisma.client.createBillingInfo({
         ...billingAddressData,
@@ -201,11 +215,11 @@ export class PaymentService {
         last_digits: last4,
         name: `${first_name} ${last_name}`,
       })
-  
+
       // Connect new billing info to customer object
       await this.prisma.client.updateCustomer({
         data: { billingInfo: { connect: { id: billingInfo.id } } },
-        where: { id: customerID }
+        where: { id: customerID },
       })
     }
   }

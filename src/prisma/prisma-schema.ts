@@ -649,6 +649,7 @@ input BottomSizeSubscriptionWhereInput {
 }
 
 enum BottomSizeType {
+  WxL
   US
   EU
   JP

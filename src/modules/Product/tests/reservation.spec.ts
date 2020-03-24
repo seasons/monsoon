@@ -15,6 +15,7 @@ import { AirtableBaseService } from "../../Airtable/services/airtable.base.servi
 import * as Airtable from "airtable"
 import { TestUtilsService } from "../../Utils/test.service"
 import { Customer, User } from "../../../prisma"
+import { AuthService } from "../../User/services/auth.service"
 
 describe("Reservation Service", () => {
   let reservationService: ReservationService

@@ -1,5 +1,0 @@
-Number of mismatched SKUs:  10
-Mapping ACNE-PRP-SS-010 to ACNE-PRP-SS-007
--- prisma product variant: ACNE-PRP-SS-010 --> ACNE-PRP-SS-007
--- prisma physical product: ACNE-PRP-SS-013-01 --> ACNE-PRP-SS-007-01
--- airtable physical product rec61MEW5n48rJ3jn suid set to ACNE-PRP-SS-007-01

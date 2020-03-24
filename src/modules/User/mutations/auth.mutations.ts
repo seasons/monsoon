@@ -13,7 +13,9 @@ export class AuthMutationsResolver {
   async beamsData(@User() user) {
     const { email } = user
     if (email) {
-      const beamsToken = this.authService.beamsClient?.generateToken(email) as any
+      const beamsToken = this.authService.beamsClient?.generateToken(
+        email
+      ) as any
       return {
         beamsToken: beamsToken.token,
         email,
@@ -59,12 +61,18 @@ export class AuthMutationsResolver {
       throw new Error("User record not found")
     }
 
-    return {
+    const { token: beamsToken } = this.authService.beamsClient?.generateToken(
+      email
+    ) as any
+
+    const params = {
       token: tokenData.access_token,
       refreshToken: tokenData.refresh_token,
       expiresIn: tokenData.expires_in,
       user,
+      beamsToken,
     }
+    return params
   }
 
   @Mutation()
@@ -72,60 +80,13 @@ export class AuthMutationsResolver {
     @Args() { email, password, firstName, lastName, details },
     @Context() ctx
   ) {
-    // Register the user on Auth0
-    let userAuth0ID
-    try {
-      userAuth0ID = await this.authService.createAuth0User(email, password, {
-        firstName,
-        lastName,
-      })
-    } catch (err) {
-      if (err.message.includes("400")) {
-        throw new UserInputError(err)
-      }
-      throw new Error(err)
-    }
-
-    // Get their API access token
-    let tokenData
-    try {
-      tokenData = await this.authService.getAuth0UserAccessToken(
-        email,
-        password
-      )
-    } catch (err) {
-      if (err.message.includes("403")) {
-        throw new ForbiddenError(err)
-      }
-      throw new UserInputError(err)
-    }
-
-    // Create a user object in our database
-    let user
-    try {
-      user = await this.authService.createPrismaUser(
-        userAuth0ID,
-        email,
-        firstName,
-        lastName
-      )
-    } catch (err) {
-      throw new Error(err)
-    }
-
-    // Create a customer object in our database
-    try {
-      await this.authService.createPrismaCustomerForExistingUser(
-        user.id,
-        details,
-        "Created"
-      )
-    } catch (err) {
-      throw new Error(err)
-    }
-
-    // Insert them into airtable
-    createOrUpdateAirtableUser(user, { ...details, status: "Created" })
+    const { user, tokenData } = await this.authService.signupUser({
+      email,
+      password,
+      firstName,
+      lastName,
+      details,
+    })
 
     // Add them to segment and track their account creation event
     const now = new Date()

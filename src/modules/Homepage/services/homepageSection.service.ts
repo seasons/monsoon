@@ -4,9 +4,11 @@ import { SectionTitle } from "./homepage.service"
 import { PrismaClientService } from "../../../prisma/client.service"
 
 // FIXME: This is being used because currently info is lacking the __typename, add __typename to info
-const ProductFragment = `{
+const ProductFragment = `
+{
   __typename
   id
+  slug
   images
   name
   brand {
@@ -15,14 +17,25 @@ const ProductFragment = `{
   }
   variants {
     id
-    size
     reservable
+    internalSize {
+      top {
+        letter
+      }
+      bottom {
+        type
+        value
+      }
+      productType
+      display
+    }
   }
   color {
     name
   }
   retailPrice
-}`
+}
+`
 
 @Injectable()
 export class HomepageSectionService {

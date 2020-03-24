@@ -29,6 +29,9 @@ export type AirtableModelName =
   | "Reservations"
   | "Collections"
   | "Collection Groups"
+  | "Sizes"
+  | "Top Sizes"
+  | "Bottom Sizes"
 
 export interface AirtableRecord {
   id: string
