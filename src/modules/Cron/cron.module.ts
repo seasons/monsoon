@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { UsersService } from './services/users.service';
+import { UsersScheduleJob } from './services/users.service';
 import { PrismaModule } from '../../prisma/prisma.module';
 import { ReservationScheduledJobs } from './services/reservations.service';
 import { AirtableModule } from '../Airtable/airtable.module';
@@ -15,6 +15,6 @@ import { ShippingModule } from '../Shipping/shipping.module';
     ShippingModule,
     UserModule
   ],
-  providers: [ReservationScheduledJobs, UsersService],
+  providers: [ReservationScheduledJobs, UsersScheduleJob],
 })
 export class CronModule {}

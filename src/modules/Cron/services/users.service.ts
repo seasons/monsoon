@@ -8,8 +8,8 @@ import { CustomerService } from '../../User/services/customer.service'
 import { EmailService } from '../../Email/services/email.service'
 
 @Injectable()
-export class UsersService {
-  private readonly logger = new Logger(`Cron: ${UsersService.name}`);
+export class UsersScheduleJob {
+  private readonly logger = new Logger(`Cron: ${UsersScheduleJob.name}`);
 
   constructor(
     private readonly airtableService: AirtableService,

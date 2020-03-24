@@ -8,6 +8,7 @@ import {
   User,
   InventoryStatus,
   ReservationStatus,
+  Size,
 } from "../../../prisma"
 import { fill, zip } from "lodash"
 import { AirtableUtilsService } from "./airtable.utils.service"
@@ -22,6 +23,12 @@ interface AirtableUserFields extends CustomerDetailCreateInput {
 
 type AirtablePhysicalProductFields = {
   "Inventory Status": AirtableInventoryStatus
+}
+
+interface ProductVariantWithNeededFields {
+  yarn
+  product: { slug: string }
+  size: Size
 }
 
 @Injectable()
@@ -172,12 +179,44 @@ export class AirtableService {
     return this.getAll("Product Variants", "", "", airtableBase)
   }
 
+  async getAllProducts(airtableBase?) {
+    return this.getAll("Products", "", "", airtableBase)
+  }
+
   async getAllReservations(airtableBase?) {
     return this.getAll("Reservations", "", "", airtableBase)
   }
 
   async getAllUsers(airtableBase?) {
     return this.getAll("Users", "", "", airtableBase)
+  }
+
+  getCorrespondingAirtablePhysicalProduct(
+    allAirtablePhysicalProducts,
+    prismaPhysicalProduct
+  ) {
+    return allAirtablePhysicalProducts.find(
+      physProd => physProd.fields.SUID.text === prismaPhysicalProduct.seasonsUID
+    )
+  }
+
+  getCorrespondingAirtableProductVariant(
+    allAirtableProducts: any[],
+    allAirtableProductVariants: any[],
+    prismaProductVariant: ProductVariantWithNeededFields
+  ) {
+    const correspondingAirtableProduct = allAirtableProducts.find(
+      //@ts-ignore
+      prod => prod.fields.Slug === prismaProductVariant.product.slug
+    )
+    const candidateProductVariants = allAirtableProductVariants.filter(prodVar =>
+      correspondingAirtableProduct.fields["Product Variants"].includes(prodVar.id)
+    )
+    const correspondingAirtableProductVariant = candidateProductVariants.find(
+      prodVar => prodVar.fields.Size === prismaProductVariant.size
+    )
+  
+    return correspondingAirtableProductVariant
   }
 
   async markPhysicalProductsReservedOnAirtable(
@@ -218,8 +257,6 @@ export class AirtableService {
     }
     return rollbackMarkPhysicalProductReservedOnAirtable
   }
-
-  
 
   async updateProductVariantCounts(
     airtableID: string,

@@ -1,11 +1,28 @@
 import crypto from "crypto"
 import { Injectable } from "@nestjs/common"
 import { PrismaClientService } from "../../prisma/client.service"
-import { Location } from "../../prisma/"
+import { Location, InventoryStatus } from "../../prisma/"
+import { AirtableInventoryStatus } from "../Airtable/airtable.types"
 
 @Injectable()
 export class UtilsService {
   constructor(private readonly prisma: PrismaClientService) {}
+
+  airtableToPrismaInventoryStatus(
+    airtableStatus: AirtableInventoryStatus
+  ): InventoryStatus {
+    let prismaStatus
+    if (airtableStatus === "Reservable") {
+      prismaStatus = "Reservable"
+    }
+    if (airtableStatus === "Non Reservable") {
+      prismaStatus = "NonReservable"
+    }
+    if (airtableStatus === "Reserved") {
+      prismaStatus = "Reserved"
+    }
+    return prismaStatus
+  }
 
   async getPrismaLocationFromSlug(slug: string): Promise<Location> {
     const prismaLocation = await this.prisma.client.location({
