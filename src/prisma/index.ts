@@ -1463,6 +1463,8 @@ export type ReservationOrderByInput =
   | "reminderSentAt_DESC"
   | "returnDate_ASC"
   | "returnDate_DESC"
+  | "returnDateDisplay_ASC"
+  | "returnDateDisplay_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -2897,6 +2899,7 @@ export interface ReservationUpdateManyMutationInput {
   receivedAt?: Maybe<DateTimeInput>;
   reminderSentAt?: Maybe<DateTimeInput>;
   returnDate?: Maybe<DateTimeInput>;
+  returnDateDisplay?: Maybe<String>;
 }
 
 export interface PhysicalProductCreateManyWithoutProductVariantInput {
@@ -3057,6 +3060,7 @@ export interface ReservationCreateInput {
   receivedAt?: Maybe<DateTimeInput>;
   reminderSentAt?: Maybe<DateTimeInput>;
   returnDate?: Maybe<DateTimeInput>;
+  returnDateDisplay?: Maybe<String>;
 }
 
 export interface ProductCreateinnerMaterialsInput {
@@ -3345,6 +3349,7 @@ export interface ReservationCreateWithoutCustomerInput {
   receivedAt?: Maybe<DateTimeInput>;
   reminderSentAt?: Maybe<DateTimeInput>;
   returnDate?: Maybe<DateTimeInput>;
+  returnDateDisplay?: Maybe<String>;
 }
 
 export interface ProductVariantWantCreateInput {
@@ -5101,6 +5106,7 @@ export interface ReservationUpdateInput {
   receivedAt?: Maybe<DateTimeInput>;
   reminderSentAt?: Maybe<DateTimeInput>;
   returnDate?: Maybe<DateTimeInput>;
+  returnDateDisplay?: Maybe<String>;
 }
 
 export interface PhysicalProductUpdateWithWhereUniqueWithoutProductVariantInput {
@@ -6221,6 +6227,20 @@ export interface ReservationWhereInput {
   returnDate_lte?: Maybe<DateTimeInput>;
   returnDate_gt?: Maybe<DateTimeInput>;
   returnDate_gte?: Maybe<DateTimeInput>;
+  returnDateDisplay?: Maybe<String>;
+  returnDateDisplay_not?: Maybe<String>;
+  returnDateDisplay_in?: Maybe<String[] | String>;
+  returnDateDisplay_not_in?: Maybe<String[] | String>;
+  returnDateDisplay_lt?: Maybe<String>;
+  returnDateDisplay_lte?: Maybe<String>;
+  returnDateDisplay_gt?: Maybe<String>;
+  returnDateDisplay_gte?: Maybe<String>;
+  returnDateDisplay_contains?: Maybe<String>;
+  returnDateDisplay_not_contains?: Maybe<String>;
+  returnDateDisplay_starts_with?: Maybe<String>;
+  returnDateDisplay_not_starts_with?: Maybe<String>;
+  returnDateDisplay_ends_with?: Maybe<String>;
+  returnDateDisplay_not_ends_with?: Maybe<String>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -6832,6 +6852,7 @@ export interface ReservationUpdateWithoutCustomerDataInput {
   receivedAt?: Maybe<DateTimeInput>;
   reminderSentAt?: Maybe<DateTimeInput>;
   returnDate?: Maybe<DateTimeInput>;
+  returnDateDisplay?: Maybe<String>;
 }
 
 export interface CollectionCreateInput {
@@ -7335,6 +7356,20 @@ export interface ReservationScalarWhereInput {
   returnDate_lte?: Maybe<DateTimeInput>;
   returnDate_gt?: Maybe<DateTimeInput>;
   returnDate_gte?: Maybe<DateTimeInput>;
+  returnDateDisplay?: Maybe<String>;
+  returnDateDisplay_not?: Maybe<String>;
+  returnDateDisplay_in?: Maybe<String[] | String>;
+  returnDateDisplay_not_in?: Maybe<String[] | String>;
+  returnDateDisplay_lt?: Maybe<String>;
+  returnDateDisplay_lte?: Maybe<String>;
+  returnDateDisplay_gt?: Maybe<String>;
+  returnDateDisplay_gte?: Maybe<String>;
+  returnDateDisplay_contains?: Maybe<String>;
+  returnDateDisplay_not_contains?: Maybe<String>;
+  returnDateDisplay_starts_with?: Maybe<String>;
+  returnDateDisplay_not_starts_with?: Maybe<String>;
+  returnDateDisplay_ends_with?: Maybe<String>;
+  returnDateDisplay_not_ends_with?: Maybe<String>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -7441,6 +7476,7 @@ export interface ReservationUpdateManyDataInput {
   receivedAt?: Maybe<DateTimeInput>;
   reminderSentAt?: Maybe<DateTimeInput>;
   returnDate?: Maybe<DateTimeInput>;
+  returnDateDisplay?: Maybe<String>;
 }
 
 export interface TopSizeUpdateManyMutationInput {
@@ -10939,6 +10975,7 @@ export interface Reservation {
   receivedAt?: DateTimeOutput;
   reminderSentAt?: DateTimeOutput;
   returnDate?: DateTimeOutput;
+  returnDateDisplay?: String;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -10966,6 +11003,7 @@ export interface ReservationPromise extends Promise<Reservation>, Fragmentable {
   receivedAt: () => Promise<DateTimeOutput>;
   reminderSentAt: () => Promise<DateTimeOutput>;
   returnDate: () => Promise<DateTimeOutput>;
+  returnDateDisplay: () => Promise<String>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -10995,6 +11033,7 @@ export interface ReservationSubscription
   receivedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   reminderSentAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   returnDate: () => Promise<AsyncIterator<DateTimeOutput>>;
+  returnDateDisplay: () => Promise<AsyncIterator<String>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -11024,6 +11063,7 @@ export interface ReservationNullablePromise
   receivedAt: () => Promise<DateTimeOutput>;
   reminderSentAt: () => Promise<DateTimeOutput>;
   returnDate: () => Promise<DateTimeOutput>;
+  returnDateDisplay: () => Promise<String>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -12503,6 +12543,7 @@ export interface ReservationPreviousValues {
   receivedAt?: DateTimeOutput;
   reminderSentAt?: DateTimeOutput;
   returnDate?: DateTimeOutput;
+  returnDateDisplay?: String;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -12518,6 +12559,7 @@ export interface ReservationPreviousValuesPromise
   receivedAt: () => Promise<DateTimeOutput>;
   reminderSentAt: () => Promise<DateTimeOutput>;
   returnDate: () => Promise<DateTimeOutput>;
+  returnDateDisplay: () => Promise<String>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -12533,6 +12575,7 @@ export interface ReservationPreviousValuesSubscription
   receivedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   reminderSentAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   returnDate: () => Promise<AsyncIterator<DateTimeOutput>>;
+  returnDateDisplay: () => Promise<AsyncIterator<String>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }

@@ -6751,6 +6751,7 @@ type Reservation {
   receivedAt: DateTime
   reminderSentAt: DateTime
   returnDate: DateTime
+  returnDateDisplay: String
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -6776,6 +6777,7 @@ input ReservationCreateInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   returnDate: DateTime
+  returnDateDisplay: String
 }
 
 input ReservationCreateManyWithoutCustomerInput {
@@ -6797,6 +6799,7 @@ input ReservationCreateWithoutCustomerInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   returnDate: DateTime
+  returnDateDisplay: String
 }
 
 type ReservationEdge {
@@ -6821,6 +6824,8 @@ enum ReservationOrderByInput {
   reminderSentAt_DESC
   returnDate_ASC
   returnDate_DESC
+  returnDateDisplay_ASC
+  returnDateDisplay_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -6836,6 +6841,7 @@ type ReservationPreviousValues {
   receivedAt: DateTime
   reminderSentAt: DateTime
   returnDate: DateTime
+  returnDateDisplay: String
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -6901,6 +6907,20 @@ input ReservationScalarWhereInput {
   returnDate_lte: DateTime
   returnDate_gt: DateTime
   returnDate_gte: DateTime
+  returnDateDisplay: String
+  returnDateDisplay_not: String
+  returnDateDisplay_in: [String!]
+  returnDateDisplay_not_in: [String!]
+  returnDateDisplay_lt: String
+  returnDateDisplay_lte: String
+  returnDateDisplay_gt: String
+  returnDateDisplay_gte: String
+  returnDateDisplay_contains: String
+  returnDateDisplay_not_contains: String
+  returnDateDisplay_starts_with: String
+  returnDateDisplay_not_starts_with: String
+  returnDateDisplay_ends_with: String
+  returnDateDisplay_not_ends_with: String
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -6966,6 +6986,7 @@ input ReservationUpdateInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   returnDate: DateTime
+  returnDateDisplay: String
 }
 
 input ReservationUpdateManyDataInput {
@@ -6976,6 +6997,7 @@ input ReservationUpdateManyDataInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   returnDate: DateTime
+  returnDateDisplay: String
 }
 
 input ReservationUpdateManyMutationInput {
@@ -6986,6 +7008,7 @@ input ReservationUpdateManyMutationInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   returnDate: DateTime
+  returnDateDisplay: String
 }
 
 input ReservationUpdateManyWithoutCustomerInput {
@@ -7018,6 +7041,7 @@ input ReservationUpdateWithoutCustomerDataInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   returnDate: DateTime
+  returnDateDisplay: String
 }
 
 input ReservationUpdateWithWhereUniqueWithoutCustomerInput {
@@ -7100,6 +7124,20 @@ input ReservationWhereInput {
   returnDate_lte: DateTime
   returnDate_gt: DateTime
   returnDate_gte: DateTime
+  returnDateDisplay: String
+  returnDateDisplay_not: String
+  returnDateDisplay_in: [String!]
+  returnDateDisplay_not_in: [String!]
+  returnDateDisplay_lt: String
+  returnDateDisplay_lte: String
+  returnDateDisplay_gt: String
+  returnDateDisplay_gte: String
+  returnDateDisplay_contains: String
+  returnDateDisplay_not_contains: String
+  returnDateDisplay_starts_with: String
+  returnDateDisplay_not_starts_with: String
+  returnDateDisplay_ends_with: String
+  returnDateDisplay_not_ends_with: String
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]

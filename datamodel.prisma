@@ -411,6 +411,7 @@ type Reservation {
   receivedAt: DateTime
   reminderSentAt: DateTime
   returnDate: DateTime
+  returnDateDisplay: String
 
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt

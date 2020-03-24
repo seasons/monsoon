@@ -6,7 +6,10 @@ import {
 } from "../../prisma"
 import { UserRequestObject } from "../../auth/utils"
 import { ApolloError } from "apollo-server"
-import { returnDate } from "./formatReservationReturnDate"
+import {
+  returnDate,
+  reservationReturnDateDisplay,
+} from "./formatReservationReturnDate"
 
 export async function createReservationData(
   prisma: Prisma,
@@ -38,6 +41,8 @@ export async function createReservationData(
     id: string
   }
   const uniqueReservationNumber = await getUniqueReservationNumber(prisma)
+
+  const now = new Date(Date.now())
 
   return {
     products: {
@@ -115,7 +120,8 @@ export async function createReservationData(
     },
     shipped: false,
     status: "InQueue",
-    returnDate: returnDate(new Date(Date.now())),
+    returnDate: returnDate(now),
+    returnDateDisplay: reservationReturnDateDisplay(now),
   }
 }
 
