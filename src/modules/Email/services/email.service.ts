@@ -17,6 +17,31 @@ export class EmailService {
     private readonly data: EmailDataProvider
   ) {}
 
+  sendAdminConfirmationEmail(
+    user: User,
+    products: any[],
+    reservation: Reservation
+  ) {
+    this.sendTransactionalEmail({
+      to: process.env.OPERATIONS_ADMIN_EMAIL,
+      data: this.data.reservationReturnConfirmation(
+        reservation.reservationNumber,
+        products.map(p => p.seasonsUID),
+        user.email
+      ),
+    })
+  }
+
+  sendAuthorizedToSubscribeEmail(user: User) {
+    this.sendTransactionalEmail({
+      to: user.email,
+      data: this.data.completeAccount(
+        user.firstName,
+        `${process.env.SEEDLING_URL}/complete?idHash=${this.utils.getUserIDHash(user.id)}`
+      ),
+    })
+  }
+
   async sendReservationConfirmationEmail(
     user: User,
     products: Product[],
@@ -46,23 +71,6 @@ export class EmailService {
     })
   }
 
-  sendWelcomeToSeasonsEmail(user: User) {
-    this.sendTransactionalEmail({
-      to: user.email,
-      data: this.data.welcomeToSeasons(user.firstName),
-    })
-  }
-
-  sendAuthorizedToSubscribeEmail(user: User) {
-    this.sendTransactionalEmail({
-      to: user.email,
-      data: this.data.completeAccount(
-        user.firstName,
-        `${process.env.SEEDLING_URL}/complete?idHash=${this.utils.getUserIDHash(user.id)}`
-      ),
-    })
-  }
-
   sendReturnReminderEmail(
     user: User,
     reservation: PrismaReservation
@@ -78,25 +86,17 @@ export class EmailService {
     })
   }
 
+  sendWelcomeToSeasonsEmail(user: User) {
+    this.sendTransactionalEmail({
+      to: user.email,
+      data: this.data.welcomeToSeasons(user.firstName),
+    })
+  }
+
   sendYouCanNowReserveAgainEmail(user: User) {
     this.sendTransactionalEmail({
       to: user.email,
       data: this.data.freeToReserve(),
-    })
-  }
-
-  sendAdminConfirmationEmail(
-    user: User,
-    products: any[],
-    reservation: Reservation
-  ) {
-    this.sendTransactionalEmail({
-      to: process.env.OPERATIONS_ADMIN_EMAIL,
-      data: this.data.reservationReturnConfirmation(
-        reservation.reservationNumber,
-        products.map(p => p.seasonsUID),
-        user.email
-      ),
     })
   }
 
