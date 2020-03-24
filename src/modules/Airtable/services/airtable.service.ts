@@ -12,6 +12,7 @@ import {
 import { fill, zip } from "lodash"
 import { AirtableUtilsService } from "./airtable.utils.service"
 import { AirtableBaseService } from "./airtable.base.service"
+import { AirtableInventoryStatus, AirtableProductVariantCounts, AirtableData } from "../airtable.types"
 
 interface AirtableUserFields extends CustomerDetailCreateInput {
   plan?: string
@@ -19,25 +20,7 @@ interface AirtableUserFields extends CustomerDetailCreateInput {
   billingInfo?: BillingInfoCreateInput
 }
 
-export interface AirtableData extends Array<any> {
-  findByIds: (ids?: any) => any
-  findMultipleByIds: (ids?: any) => any[]
-  fields: any
-}
-
-export type AirtableInventoryStatus =
-  | "Reservable"
-  | "Non Reservable"
-  | "Reserved"
-
-export type AirtableProductVariantCounts = {
-  "Reservable Count": number
-  "Reserved Count": number
-  "Non-Reservable Count": number
-}
-
-// Add to this as needed
-export type AirtablePhysicalProductFields = {
+type AirtablePhysicalProductFields = {
   "Inventory Status": AirtableInventoryStatus
 }
 
@@ -48,47 +31,26 @@ export class AirtableService {
     private readonly utils: AirtableUtilsService
   ) {}
 
-  getAllProductVariants(airtableBase?) {
-    return this.getAll("Product Variants", "", "", airtableBase)
+  airtableToPrismaInventoryStatus(
+    airtableStatus: AirtableInventoryStatus
+  ): InventoryStatus {
+    let prismaStatus
+    if (airtableStatus === "Reservable") {
+      prismaStatus = "Reservable"
+    }
+    if (airtableStatus === "Non Reservable") {
+      prismaStatus = "NonReservable"
+    }
+    if (airtableStatus === "Reserved") {
+      prismaStatus = "Reserved"
+    }
+    return prismaStatus
   }
 
-  async markPhysicalProductsReservedOnAirtable(
-    physicalProducts: PhysicalProduct[]
-  ): Promise<() => void> {
-    // Get the record ids of all relevant airtable physical products
-    const airtablePhysicalProductRecords = await this.getPhysicalProducts(
-      physicalProducts.map(prod => prod.seasonsUID)
-    )
-    const airtablePhysicalProductRecordIds = airtablePhysicalProductRecords.map(
-      a => a.id
-    ) as [string]
-
-    // Update their statuses on airtable
-    const airtablePhysicalProductRecordsData = fill(
-      new Array(airtablePhysicalProductRecordIds.length),
-      {
-        "Inventory Status": "Reserved",
-      }
-    ) as [AirtablePhysicalProductFields]
-    await this.updatePhysicalProducts(
-      airtablePhysicalProductRecordIds,
-      airtablePhysicalProductRecordsData
-    )
-
-    // Create and return a rollback function
-    const airtablePhysicalProductRecordsRollbackData = fill(
-      new Array(airtablePhysicalProductRecordIds.length),
-      {
-        "Inventory Status": "Reservable",
-      }
-    ) as [AirtablePhysicalProductFields]
-    const rollbackMarkPhysicalProductReservedOnAirtable = async () => {
-      await this.updatePhysicalProducts(
-        airtablePhysicalProductRecordIds,
-        airtablePhysicalProductRecordsRollbackData
-      )
-    }
-    return rollbackMarkPhysicalProductReservedOnAirtable
+  airtableToPrismaReservationStatus(
+    airtableStatus: string
+  ): ReservationStatus {
+    return airtableStatus.replace(" ", "") as ReservationStatus
   }
 
   async createAirtableReservation(
@@ -202,46 +164,68 @@ export class AirtableService {
       })
   }
 
+  async getAllPhysicalProducts(airtableBase?) {
+    return this.getAll("Physical Products", "", "", airtableBase)
+  }
+
+  async getAllProductVariants(airtableBase?) {
+    return this.getAll("Product Variants", "", "", airtableBase)
+  }
+
+  async getAllReservations(airtableBase?) {
+    return this.getAll("Reservations", "", "", airtableBase)
+  }
+
+  async getAllUsers(airtableBase?) {
+    return this.getAll("Users", "", "", airtableBase)
+  }
+
+  async markPhysicalProductsReservedOnAirtable(
+    physicalProducts: PhysicalProduct[]
+  ): Promise<() => void> {
+    // Get the record ids of all relevant airtable physical products
+    const airtablePhysicalProductRecords = await this.getPhysicalProducts(
+      physicalProducts.map(prod => prod.seasonsUID)
+    )
+    const airtablePhysicalProductRecordIds = airtablePhysicalProductRecords.map(
+      a => a.id
+    ) as [string]
+
+    // Update their statuses on airtable
+    const airtablePhysicalProductRecordsData = fill(
+      new Array(airtablePhysicalProductRecordIds.length),
+      {
+        "Inventory Status": "Reserved",
+      }
+    ) as [AirtablePhysicalProductFields]
+    await this.updatePhysicalProducts(
+      airtablePhysicalProductRecordIds,
+      airtablePhysicalProductRecordsData
+    )
+
+    // Create and return a rollback function
+    const airtablePhysicalProductRecordsRollbackData = fill(
+      new Array(airtablePhysicalProductRecordIds.length),
+      {
+        "Inventory Status": "Reservable",
+      }
+    ) as [AirtablePhysicalProductFields]
+    const rollbackMarkPhysicalProductReservedOnAirtable = async () => {
+      await this.updatePhysicalProducts(
+        airtablePhysicalProductRecordIds,
+        airtablePhysicalProductRecordsRollbackData
+      )
+    }
+    return rollbackMarkPhysicalProductReservedOnAirtable
+  }
+
+  
+
   async updateProductVariantCounts(
     airtableID: string,
     counts: AirtableProductVariantCounts
   ) {
     return this.airtableBase.base("Product Variants").update(airtableID, counts)
-  }
-  
-
-  airtableToPrismaInventoryStatus(
-    airtableStatus: AirtableInventoryStatus
-  ): InventoryStatus {
-    let prismaStatus
-    if (airtableStatus === "Reservable") {
-      prismaStatus = "Reservable"
-    }
-    if (airtableStatus === "Non Reservable") {
-      prismaStatus = "NonReservable"
-    }
-    if (airtableStatus === "Reserved") {
-      prismaStatus = "Reserved"
-    }
-    return prismaStatus
-  }
-
-  airtableToPrismaReservationStatus(
-    airtableStatus: string
-  ): ReservationStatus {
-    return airtableStatus.replace(" ", "") as ReservationStatus
-  }
-
-  async getAllUsers() {
-    return this.getAll("Users", "", "", this.airtableBase.base)
-  }
-
-  async getAllPhysicalProducts() {
-    return this.getAll("Physical Products", "", "", this.airtableBase.base)
-  }
-
-  async getAllReservations() {
-    return this.getAll("Reservations", "", "", this.airtableBase.base)
   }
 
   private getAll: (
