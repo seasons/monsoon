@@ -1,3 +1,4 @@
+import { createReservationFeedbacks } from "./createReservationFeedbacks"
 import { syncReservationStatus } from "./syncReservationStatus"
 import { syncPhysicalProductStatus } from "./syncPhysicalProductStatus"
 
@@ -10,5 +11,8 @@ export const run = async () => {
   const reservationReport = await syncReservationStatus()
   const allErrors = [...physProdReport.errors, ...reservationReport.errors]
   console.log({ ...physProdReport, ...reservationReport, errors: allErrors })
+  if (allErrors.length === 0) {
+    await createReservationFeedbacks()
+  }
   return { ...physProdReport, ...reservationReport, errors: allErrors }
 }

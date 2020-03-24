@@ -148,7 +148,7 @@ type productVariantCounts =
   | prismaProductVariantCounts
   | AirtableProductVariantCounts
 
-function physicalProductStatusChanged(
+export function physicalProductStatusChanged(
   newStatusOnAirtable: AirtableInventoryStatus,
   currentStatusOnPrisma: PrismaInventoryStatus
 ): boolean {
