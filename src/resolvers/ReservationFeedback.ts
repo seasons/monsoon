@@ -31,7 +31,12 @@ const ReservationFeedbackFragment = `
 
 export const ReservationFeedback = {
   async reservationFeedback(parent, { }, ctx: Context, info) {
-    const user = await getUserFromContext(ctx)
+    let user
+    try {
+      user = await getUserFromContext(ctx)
+    } catch (error) {
+      return null
+    }
     const feedbacks = await ctx.db.query.reservationFeedbacks(
       {
         where: {
