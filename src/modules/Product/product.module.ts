@@ -20,6 +20,8 @@ import { BagService } from "./services/bag.service"
 import { ProductRequestService } from "./services/productRequest.service"
 import { ProductRequestUtilsService } from "./services/productRequest.utils.service"
 import { BrandQueriesResolver } from "./queries/brand.queries.resolver"
+import { ReservationFeedbackQueriesResolver } from "./queries/reservationFeedback.queries.resolver"
+import { ReservationFeedbackMutationsResolver } from "./mutations/reservationFeedback.mutations.resolver"
 
 @Module({
   imports: [
@@ -46,6 +48,8 @@ import { BrandQueriesResolver } from "./queries/brand.queries.resolver"
     ProductVariantQueriesResolver,
     ProductVariantMutationsResolver,
     BrandQueriesResolver,
+    ReservationFeedbackQueriesResolver,
+    ReservationFeedbackMutationsResolver,
   ],
 })
-export class ProductModule {}
+export class ProductModule { }
