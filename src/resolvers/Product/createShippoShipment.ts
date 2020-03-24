@@ -62,6 +62,7 @@ export async function createShippoShipment(
             amount: insuranceAmount.toString(),
             currency: "USD",
           },
+          saturday_delivery: true,
         },
       }),
     },

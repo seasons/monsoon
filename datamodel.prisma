@@ -10,15 +10,6 @@ enum BrandTier {
   Discovery
 }
 
-enum Size {
-  XS
-  S
-  M
-  L
-  XL
-  XXL
-}
-
 enum Material {
   Acetate
   Acrylic
@@ -152,6 +143,38 @@ enum Plan {
   Essential
 }
 
+enum ProductType {
+  Top
+  Bottom
+  Accessory
+  Shoe
+}
+
+enum BottomSizeType {
+  WxL
+  US
+  EU
+  JP
+  Letter
+}
+
+enum QuestionType {
+  MultipleChoice
+  FreeResponse
+}
+
+enum Rating {
+  Disliked
+  Meh
+  Loved
+}
+
+enum PushNotificationStatus {
+  Blocked
+  Granted
+  Denied
+}
+
 type Brand {
   id: ID! @id
   slug: String! @unique
@@ -253,17 +276,17 @@ type Product {
   name: String!
   brand: Brand!
   category: Category!
+  type: ProductType
   description: String
   externalURL: String
   images: Json!
   modelHeight: Int
-  modelSize: Size
   retailPrice: Int
+  modelSize: Size @relation(name: "ProductModelSize")
   color: Color! @relation(name: "ProductPrimaryColor")
   secondaryColor: Color @relation(name: "ProductSecondaryColor")
   tags: Json
   functions: [ProductFunction!]!
-  availableSizes: [Size!]! @scalarList(strategy: RELATION)
   innerMaterials: [Material!]! @scalarList(strategy: RELATION)
   outerMaterials: [Material!]! @scalarList(strategy: RELATION)
   variants: [ProductVariant!]! @relation(link: TABLE)
@@ -281,7 +304,8 @@ type ProductVariant {
   id: ID! @id
   sku: String @unique
   color: Color!
-  size: Size!
+  internalSize: Size @relation(name: "ProductVariantSize")
+  manufacturerSizes: [Size!] @relation(name: "ProductVariantManufacturerSize")
   weight: Float
   height: Float
   productID: String!
@@ -299,7 +323,7 @@ type ProductVariant {
 type PhysicalProduct {
   id: ID! @id
   seasonsUID: String! @unique
-  location: Location!
+  location: Location
   productVariant: ProductVariant!
   inventoryStatus: InventoryStatus!
   productStatus: PhysicalProductStatus!
@@ -317,12 +341,6 @@ type User {
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
   pushNotifications: PushNotificationStatus! @default(value: Denied)
-}
-
-enum PushNotificationStatus {
-  Blocked
-  Granted
-  Denied
 }
 
 type CustomerDetail {
@@ -441,6 +459,31 @@ type BillingInfo {
   postal_code: String
 }
 
+type ReservationFeedback {
+  id: ID! @id
+  comment: String
+  feedbacks: [ProductVariantFeedback!]! @relation(link: TABLE)
+  rating: Rating
+  user: User!
+}
+
+type ProductVariantFeedback {
+  id: ID! @id
+  isCompleted: Boolean!
+  questions: [ProductVariantFeedbackQuestion!]! @relation(link: TABLE)
+  reservationFeedback: ReservationFeedback!
+  variant: ProductVariant!
+}
+
+type ProductVariantFeedbackQuestion {
+  id: ID! @id
+  options: [String!] @scalarList(strategy: RELATION)
+  question: String!
+  responses: [String!] @scalarList(strategy: RELATION)
+  type: QuestionType!
+  variantFeedback: ProductVariantFeedback!
+}
+
 type ProductRequest {
   id: ID! @id
   brand: String
@@ -461,4 +504,42 @@ type ProductVariantWant {
   productVariant: ProductVariant!
   user: User!
   isFulfilled: Boolean!
+}
+
+enum LetterSize {
+  XS
+  S
+  M
+  L
+  XL
+  XXL
+}
+
+type TopSize {
+  id: ID! @id
+  letter: LetterSize
+  sleeve: Float
+  shoulder: Float
+  chest: Float
+  neck: Float
+  length: Float
+}
+
+type BottomSize {
+  id: ID! @id
+  type: BottomSizeType
+  value: String
+  waist: Float
+  rise: Float
+  hem: Float
+  inseam: Float
+}
+
+type Size {
+  id: ID! @id
+  slug: String! @unique
+  productType: ProductType
+  top: TopSize
+  bottom: BottomSize
+  display: String!   
 }

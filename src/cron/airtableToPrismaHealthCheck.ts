@@ -17,7 +17,7 @@ import util from "util"
 import { CodeStarNotifications } from "aws-sdk"
 import { updateProductVariantCounts } from "../airtable/updateProductVariantCounts"
 
-export async function checkProductsAlignment() {
+export async function checkProductsAlignment () {
   const allAirtableProductVariants = await getAllProductVariants()
   const allAirtablePhysicalProducts = await getAllPhysicalProducts()
   const allAirtableProducts = await getAllProducts()
@@ -204,6 +204,7 @@ export async function checkProductsAlignment() {
   console.log(``)
   console.log(`ARE THE COUNTS THE SAME ON PRISMA AND AIRTABLE?`)
   console.log(`-- MISMATCHED COUNTS: ${countMisalignments.length}`)
+  console.log(countMisalignments)
   console.log(
     `-- PRISMA: NUMBER OF PRODUCT VARIANTS WITH INCORRECT NUMBER OF PHYSICAL PRODUCTS ATTACHED: ${prismaTotalPhysicalProductMisalignment.length}`
   )
@@ -272,7 +273,7 @@ export async function checkProductsAlignment() {
 checkProductsAlignment()
 
 // *****************************************************************************
-function getPrismaAirtableProductVariantSKUMismatches(
+function getPrismaAirtableProductVariantSKUMismatches (
   allAirtableProducts,
   allAirtableProductVariants,
   allPrismaProductVariants,
@@ -315,7 +316,7 @@ function getPrismaAirtableProductVariantSKUMismatches(
   return { productVariantSKUMismatches, errors }
 }
 
-function checkSUIDs(
+function checkSUIDs (
   allPrismaProductVariants,
   allAirtableProductVariants,
   allAirtablePhysicalProducts
@@ -359,7 +360,7 @@ function checkSUIDs(
   return { prismaSUIDToSKUMismatches, airtableSUIDToSKUMismatches }
 }
 
-function checkCounts(
+function checkCounts (
   allAirtableProductVariants,
   allPrismaProductVariants,
   allAirtableProducts
@@ -454,7 +455,7 @@ function checkCounts(
   }
 }
 
-function checkPhysicalProductStatuses(
+function checkPhysicalProductStatuses (
   allPrismaPhysicalProducts,
   allAirtablePhysicalProducts
 ) {
@@ -488,7 +489,7 @@ function checkPhysicalProductStatuses(
   return { mismatchingStatuses, physicalProductsOnPrismaButNotAirtable }
 }
 
-function checkReservations(
+function checkReservations (
   allPrismaReservations,
   allAirtableReservations,
   allAirtablePhysicalProducts

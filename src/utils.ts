@@ -18,10 +18,8 @@ export enum ProductSize {
   XXL = "XXL",
 }
 
-export const seasonsIDFromProductVariant = (product, productVariant) => {}
-
-export const sizeToSizeCode = (size: ProductSize) => {
-  switch (size) {
+export const sizeNameToSizeCode = (sizeName: ProductSize | string) => {
+  switch (sizeName) {
     case ProductSize.XS:
       return "XS"
     case ProductSize.S:
@@ -35,7 +33,13 @@ export const sizeToSizeCode = (size: ProductSize) => {
     case ProductSize.XXL:
       return "XXL"
   }
-  return ""
+
+  // If we get here, we're expecting a bottom with size WxL e.g 32x28
+  // Regex: (start)digit-digit-x-digit-digit(end)
+  if (!sizeName.match(/^\d\dx\d\d$/)) {
+    throw new Error(`invalid sizeName: ${sizeName}`)
+  }
+  return sizeName.toLowerCase().replace("x", "") // 32x28 => 3238
 }
 
 export function getUserIDHash(userID: string): string {

@@ -83,29 +83,21 @@ require("yargs")
 
       switch (argv.table) {
         case "all":
-          console.log("syncing all")
           return await syncAll()
         case "brands":
-          console.log("syncing brands")
           return await syncBrands()
         case "categories":
-          console.log("syncing categories")
           return await syncCategories()
         case "products":
-          console.log("syncing products")
           return await syncProducts()
         case "product-variants":
-          console.log("syncing product variants")
           await syncProducts()
           return await syncProductVariants()
         case "collections":
-          console.log("syncing collections")
           return await syncCollections()
         case "collection-groups":
-          console.log("syncing collection groups")
           return await syncCollectionGroups()
         case "homepage-product-rails":
-          console.log("syncing homepage product rails")
           return await syncHomepageProductRails()
         default:
           throw new Error("invalid table name")
@@ -160,15 +152,8 @@ require("yargs")
     }
   )
   .command(
-    "sync:airtable:airtable <base>",
-    "sync airtable production to secondary environment",
-    yargs => {
-      yargs.positional("base", {
-        type: "string",
-        describe: "human readable name of base to sync to",
-        choices: ["staging1", "staging2"],
-      })
-    },
+    "sync:airtable:airtable",
+    "sync airtable production to staging",
     async argv => {
       const {
         syncAll: syncAllAirtableToAirtable,
@@ -181,17 +166,9 @@ require("yargs")
       )
       try {
         const env = readJSONObjectFromFile(envFilePath)
-        if (!(env.airtable[argv.base] && env.airtable[argv.base].baseID)) {
-          throw new Error("invalid base. valid options are staging1 | staging2")
-        }
-        if (argv.base === "production") {
-          throw new Error(
-            "can not sync to production. valid options are staging1 | staging2"
-          )
-        }
         process.env._PRODUCTION_AIRTABLE_BASEID =
           env.airtable["production"].baseID
-        process.env._STAGING_AIRTABLE_BASEID = env.airtable[argv.base].baseID
+        process.env._STAGING_AIRTABLE_BASEID = env.airtable["staging"].baseID
         await syncAllAirtableToAirtable()
       } catch (err) {
         console.log(err)
