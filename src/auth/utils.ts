@@ -65,7 +65,7 @@ export async function getCustomerFromContext(ctx: Context): Promise<Customer> {
   // Get the user on the context
   const user = await getUserFromContext(ctx) // will throw error if user doesn't exist
 
-  if (user.role !== "Customer") {
+  if (!["Admin", "Customer"].includes(user.role)) {
     throw new Error(
       `token belongs to a user of type ${user.role}, not Customer`
     )
