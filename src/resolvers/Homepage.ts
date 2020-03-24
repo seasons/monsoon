@@ -52,6 +52,7 @@ export const HomepageResult = {
 }
 
 export const Homepage = async (parent, args, ctx: Context, info) => {
+  // TODO: Remove before merging. Currently using to create mock data
   // console.log("ABOUT TO MAKE FEEDBACK")
   // const user = await getUserFromContext(ctx)
   // const items = [
