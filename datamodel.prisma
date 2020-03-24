@@ -410,6 +410,8 @@ type Reservation {
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
+  returnDate: DateTime
+
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }

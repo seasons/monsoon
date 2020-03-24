@@ -6,6 +6,7 @@ import {
 } from "../../prisma"
 import { UserRequestObject } from "../../auth/utils"
 import { ApolloError } from "apollo-server"
+import { returnDate } from "./formatReservationReturnDate"
 
 export async function createReservationData(
   prisma: Prisma,
@@ -114,6 +115,7 @@ export async function createReservationData(
     },
     shipped: false,
     status: "InQueue",
+    returnDate: returnDate(new Date(Date.now())),
   }
 }
 
