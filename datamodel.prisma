@@ -516,7 +516,7 @@ type Size {
   productType: ProductType
   top: TopSize
   bottom: BottomSize
-  display: String!   
+  display: String!
 }
 
 type ReservationFeedback {
