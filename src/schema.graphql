@@ -30,7 +30,6 @@ type Product {
     first: Int
     last: Int
   ): [ProductFunction!]
-  availableSizes: [Size!]!
   innerMaterials: [Material!]!
   outerMaterials: [Material!]!
   variants(
