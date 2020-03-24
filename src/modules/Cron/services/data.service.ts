@@ -6,6 +6,7 @@ import { PrismaService } from '../../../prisma/prisma.service';
 import { xor } from 'lodash';
 import { AirtableData } from '../../Airtable/airtable.types';
 import { AirtableService } from '../../Airtable/services/airtable.service';
+import { SlackService } from '../../Slack/services/slack.service';
 
 interface DataPoint {
   name: string
@@ -18,10 +19,12 @@ export class DataScheduledJobs {
   constructor(
     private readonly airtableService: AirtableService,
     private readonly prisma: PrismaService,
+    private readonly slackService: SlackService,
     private readonly utils: UtilsService
   ) {}
 
-  @Cron(CronExpression.EVERY_MINUTE)
+  // 2pm UTC, 9AM EST, every monday to friday
+  @Cron("0 14 ? * MON-FRI *")
   async airtableToPrismaHealthCheck() {
     let message = { channel: process.env.SLACK_DEV_CHANNEL_ID, text: "'" }
     try {
@@ -238,9 +241,7 @@ export class DataScheduledJobs {
       } as any
     }
 
-    await new WebClient(process.env.SLACK_CANARY_API_TOKEN).chat.postMessage(
-      message
-    )
+    await this.slackService.postMessage(message)
   }
 
   private checkCounts(

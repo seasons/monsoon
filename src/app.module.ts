@@ -12,6 +12,7 @@ import {
   CronModule,
   EmailModule,
   AirtableModule,
+  SlackModule,
   directiveResolvers
 } from "./modules"
 import { importSchema } from "graphql-import"
@@ -66,6 +67,7 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY)
     AirtableModule,
     SearchModule,
     CronModule,
+    SlackModule,
   ],
 })
 export class AppModule {}

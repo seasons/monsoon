@@ -26,7 +26,6 @@ type AirtablePhysicalProductFields = {
 }
 
 interface ProductVariantWithNeededFields {
-  yarn
   product: { slug: string }
   size: Size
 }
@@ -196,7 +195,7 @@ export class AirtableService {
     prismaPhysicalProduct
   ) {
     return allAirtablePhysicalProducts.find(
-      physProd => physProd.fields.SUID.text === prismaPhysicalProduct.seasonsUID
+      physProd => physProd.model.sUID.text === prismaPhysicalProduct.seasonsUID
     )
   }
 
@@ -207,13 +206,13 @@ export class AirtableService {
   ) {
     const correspondingAirtableProduct = allAirtableProducts.find(
       //@ts-ignore
-      prod => prod.fields.Slug === prismaProductVariant.product.slug
+      prod => prod.model.slug === prismaProductVariant.product.slug
     )
     const candidateProductVariants = allAirtableProductVariants.filter(prodVar =>
-      correspondingAirtableProduct.fields["Product Variants"].includes(prodVar.id)
+      correspondingAirtableProduct.model.productVariant.includes(prodVar.id)
     )
     const correspondingAirtableProductVariant = candidateProductVariants.find(
-      prodVar => prodVar.fields.Size === prismaProductVariant.size
+      prodVar => prodVar.model.size === prismaProductVariant.size
     )
   
     return correspondingAirtableProductVariant
