@@ -59,8 +59,6 @@ export const ReservationFeedbackMutations = {
       { where: { id: feedbackID } },
       ReservationFeedbackFragment
     )
-    console.log("INPUT:", input)
-    console.log("UPDATED:", reservationFeedback)
     return reservationFeedback
   },
 }
