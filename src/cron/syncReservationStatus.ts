@@ -13,6 +13,7 @@ import { db } from "../server"
 import * as Sentry from "@sentry/node"
 import { SyncError } from "../errors"
 import { emails } from "../emails"
+import { createReservationFeedbacksForVariants } from "./createReservationFeedbacksForVariants"
 
 const shouldReportErrorsToSentry = process.env.NODE_ENV === "production"
 
@@ -99,6 +100,13 @@ export async function syncReservationStatus() {
               prismaUser.email
             ),
           })
+
+          // Create reservationFeedback datamodels for the returned product variants
+          const returnedProductVariantIDs: ID_Input[] = returnedPhysicalProducts.map(p => p.productVariant.id)
+          const returnedProductVariants = await Promise.all(
+            returnedProductVariantIDs.map(async id => await prisma.productVariant({ id }))
+          )
+          await createReservationFeedbacksForVariants(returnedProductVariants, prismaUser)
         }
       } else if (
         airtableReservation.fields.Status !== prismaReservation.status
