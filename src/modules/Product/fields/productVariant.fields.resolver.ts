@@ -1,4 +1,4 @@
-import { Resolver, ResolveProperty, Context, Parent } from "@nestjs/graphql"
+import { Resolver, Parent, ResolveField } from "@nestjs/graphql"
 import { Customer, User } from "../../../nest_decorators"
 import { PrismaService } from "../../../prisma/prisma.service"
 
@@ -6,7 +6,7 @@ import { PrismaService } from "../../../prisma/prisma.service"
 export class ProductVariantFieldsResolver {
   constructor(private readonly prisma: PrismaService) {}
 
-  @ResolveProperty()
+  @ResolveField()
   async isSaved(@Parent() parent, @Customer() customer) {
     if (!customer) return false
 
@@ -25,7 +25,7 @@ export class ProductVariantFieldsResolver {
     return bagItems.length > 0
   }
 
-  @ResolveProperty()
+  @ResolveField()
   async isWanted(@Parent() parent, @User() user) {
     if (!user) return false
 
@@ -53,7 +53,7 @@ export class ProductVariantFieldsResolver {
     return exists
   }
 
-  @ResolveProperty()
+  @ResolveField()
   async size(@Parent() parent) {
     const productVariant = await this.prisma.binding.query.productVariant(
       {

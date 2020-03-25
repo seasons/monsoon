@@ -1,12 +1,4 @@
-import {
-  Resolver,
-  Parent,
-  ResolveProperty,
-  ResolveField,
-  Args,
-  Context,
-  Root,
-} from "@nestjs/graphql"
+import { Resolver, Parent, ResolveField } from "@nestjs/graphql"
 import { ProductService } from "../services/product.service"
 import { Customer } from "../../../nest_decorators"
 
