@@ -38,6 +38,7 @@ export class ReservationFeedbackService {
   ) { }
 
   async getReservationFeedback(user) {
+    if (!user) return null
     const feedbacks = await this.db.query.reservationFeedbacks(
       {
         where: {
@@ -52,7 +53,7 @@ export class ReservationFeedbackService {
       },
       RESERVATION_FEEDBACK_FRAGMENT
     )
-    return head(feedbacks)
+    return feedbacks.length > 0 ? head(feedbacks) : null
   }
 
   async updateReservationFeedback(feedbackID, input) {
