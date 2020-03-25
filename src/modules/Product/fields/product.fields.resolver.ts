@@ -8,6 +8,8 @@ export class ProductFieldsResolver {
 
   @ResolveProperty()
   async isSaved(@Parent() parent, @Customer() customer) {
+    if (!customer) return false
+
     return this.productService.isSaved(parent, customer)
   }
 }
