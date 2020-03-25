@@ -5,6 +5,8 @@ import {
   User,
 } from "../prisma"
 
+const MULTIPLE_CHOICE = "MultipleChoice"
+
 export const createReservationFeedbacksForVariants = async (
   productVariants: ProductVariant[],
   user: User
@@ -28,17 +30,17 @@ export const createReservationFeedbacksForVariants = async (
             {
               question: `How many times did you wear this ${variantInfo.name}?`,
               options: { set: ["More than 6 times", "3-5 times", "1-2 times", "0 times"] },
-              type: "MultipleChoice",
+              type: MULTIPLE_CHOICE,
             },
             {
               question: `Would you buy it at retail for $${variantInfo.retailPrice}?`,
               options: { set: ["Would buy at a discount", "Buy below retail", "Buy at retail", "Would only rent"] },
-              type: "MultipleChoice",
+              type: MULTIPLE_CHOICE,
             },
             {
               question: `Did it fit as expected?`,
               options: { set: ["Fit too big", "Fit true to size", "Ran small", "Didn’t fit at all"] },
-              type: "MultipleChoice",
+              type: MULTIPLE_CHOICE,
             },
           ]
         },
