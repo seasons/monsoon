@@ -12,8 +12,14 @@ export class ProductQueriesResolver {
 
   @Query()
   async product(@Args() args, @Info() info, @Context() ctx) {
-    const fragment = `fragment EnsureId on Product { id }` // for computed fields
-    return await this.db.query.product(args, addFragmentToInfo(info, fragment))
+    return await this.db.query.product(
+      args,
+      addFragmentToInfo(
+        info,
+        // for computed fields
+        `fragment EnsureId on Product { id }`
+      )
+    )
   }
 
   @Query()
