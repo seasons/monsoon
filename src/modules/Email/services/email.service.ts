@@ -3,16 +3,16 @@ import sgMail from "@sendgrid/mail"
 import Handlebars from "handlebars"
 import nodemailer from "nodemailer"
 import fs from "fs"
-import { User, Product, Reservation as PrismaReservation } from "../../../prisma"
-import { PrismaClientService } from "../../../prisma/client.service"
 import { UtilsService } from "../../Utils/utils.service"
 import { EmailDataProvider } from "./email.data.service"
+import { PrismaService } from "../../../prisma/prisma.service"
+import { User, Product, Reservation as PrismaReservation } from "../../../prisma"
 import { Reservation } from "../../../prisma/prisma.binding"
 
 @Injectable()
 export class EmailService {
   constructor(
-    private readonly prisma: PrismaClientService,
+    private readonly prisma: PrismaService,
     private readonly utils: UtilsService,
     private readonly data: EmailDataProvider
   ) {}
@@ -96,7 +96,16 @@ export class EmailService {
   sendYouCanNowReserveAgainEmail(user: User) {
     this.sendTransactionalEmail({
       to: user.email,
+<<<<<<< HEAD
+      data: this.data.completeAccount(
+        user.firstName,
+        `${process.env.SEEDLING_URL}/complete?idHash=${this.utils.getUserIDHash(
+          user.id
+        )}`
+      ),
+=======
       data: this.data.freeToReserve(),
+>>>>>>> 6f769a51713ccac25a7a22effbfc4f0c0cf5df82
     })
   }
 

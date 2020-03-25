@@ -1,8 +1,7 @@
 import { Injectable } from "@nestjs/common"
 import { ID_Input, PhysicalProduct, ProductVariant } from "../../../prisma"
-import { DBService } from "../../../prisma/db.service"
 import { uniqBy } from "lodash"
-import { PrismaClientService } from "../../../prisma/client.service"
+import { PrismaService } from "../../../prisma/prisma.service"
 
 export interface PhysicalProductWithReservationSpecificData
   extends PhysicalProduct {
@@ -11,15 +10,12 @@ export interface PhysicalProductWithReservationSpecificData
 
 @Injectable()
 export class PhysicalProductService {
-  constructor(
-    private readonly db: DBService,
-    private readonly prisma: PrismaClientService
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   async getPhysicalProductsWithReservationSpecificData(
     items: ID_Input[]
   ): Promise<PhysicalProductWithReservationSpecificData[]> {
-    return await this.db.query.physicalProducts(
+    return await this.prisma.binding.query.physicalProducts(
       {
         where: {
           productVariant: {
