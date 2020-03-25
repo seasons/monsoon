@@ -6,7 +6,7 @@
   "bin": "bin/sync.js",
   "main": "dist/index.js",
   "engines": {
-    "node": "13.x.x"
+    "node": "10.x.x"
   },
   "resolutions": {
     "graphql": "^14.5.7"
@@ -32,6 +32,7 @@
     "sls:login": "serverless login",
     "sls:start": "serverless offline --env=staging",
     "start": "dotenv -- nodemon -e ts,graphql -x ts-node src/index.ts",
+    "check:parity": "node -r dotenv/config -r ts-node/register scripts/queryParity.ts",
     "test": "jest"
   },
   "dependencies": {
@@ -78,6 +79,7 @@
     "cors": "^2.8.5",
     "dotenv": "^8.1.0",
     "exec": "^0.2.1",
+    "expect": "^25.1.0",
     "express": "^4.17.1",
     "express-jwt": "^5.3.1",
     "faker": "^4.1.0",
