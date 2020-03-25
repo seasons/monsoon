@@ -1,13 +1,13 @@
 import { Injectable } from "@nestjs/common"
-import { DBService } from "../../../prisma/db.service"
 import { SectionTitle } from "./homepage.service"
-import { PrismaClientService } from "../../../prisma/client.service"
+import { PrismaService } from "../../../prisma/prisma.service"
 
 // FIXME: This is being used because currently info is lacking the __typename, add __typename to info
 const ProductFragment = `
 {
   __typename
   id
+  slug
   images
   name
   brand {
@@ -38,10 +38,7 @@ const ProductFragment = `
 
 @Injectable()
 export class HomepageSectionService {
-  constructor(
-    private readonly db: DBService,
-    private readonly prisma: PrismaClientService
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   async getResultsForSection(sectionTitle: SectionTitle, args, customerId?) {
     switch (sectionTitle) {
@@ -52,7 +49,7 @@ export class HomepageSectionService {
         return collections
 
       case SectionTitle.JustAdded:
-        const newProducts = await this.db.query.products(
+        const newProducts = await this.prisma.binding.query.products(
           {
             ...args,
             orderBy: "createdAt_DESC",
@@ -66,7 +63,7 @@ export class HomepageSectionService {
         return newProducts
 
       case SectionTitle.RecentlyViewed:
-        const viewedProducts = await this.db.query.recentlyViewedProducts(
+        const viewedProducts = await this.prisma.binding.query.recentlyViewedProducts(
           {
             where: { customer: { id: customerId } },
             orderBy: "updatedAt_DESC",
@@ -80,7 +77,7 @@ export class HomepageSectionService {
         return viewedProducts.map(viewedProduct => viewedProduct.product)
 
       case SectionTitle.Designers:
-        const brands = await this.db.query.brands(
+        const brands = await this.prisma.binding.query.brands(
           {
             ...args,
             where: {
@@ -118,7 +115,7 @@ export class HomepageSectionService {
         return brands
 
       default:
-        const rails = await this.db.query.homepageProductRails(
+        const rails = await this.prisma.binding.query.homepageProductRails(
           {
             where: {
               name: sectionTitle,

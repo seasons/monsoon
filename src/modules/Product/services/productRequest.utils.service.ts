@@ -1,10 +1,10 @@
 import { Injectable } from "@nestjs/common"
 import { User } from "../../../prisma"
-import { PrismaClientService } from "../../../prisma/client.service"
+import { PrismaService } from "../../../prisma/prisma.service"
 
 @Injectable()
 export class ProductRequestUtilsService {
-  constructor(private readonly prisma: PrismaClientService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   async scrapeLDJSON($, reason: string, url: string, user: User) {
     // Search for json+ld in HTML body
@@ -14,7 +14,7 @@ export class ProductRequestUtilsService {
       // Failed to extract json+ld from URL
       return null
     }
-  
+
     // Extract fields from json+ld
     const { description, name, sku } = ldJSON
     const brand = ldJSON.brand ? ldJSON.brand.name : null
@@ -50,7 +50,7 @@ export class ProductRequestUtilsService {
       return null
     }
   }
-  
+
   async scrapeOGTags($, reason: string, url: string, user: User) {
     const ogDescription = $('meta[property="og:description"]').attr("content")
     const ogPriceAmount = parseInt(
@@ -63,12 +63,12 @@ export class ProductRequestUtilsService {
     const ogSiteName = $('meta[property="og:site_name"]').attr("content")
     const ogTitle = $('meta[property="og:title"]').attr("content")
     const productID = $('meta[itemprop="productID"]').attr("content")
-  
+
     let ogImages: string[] = []
     $('meta[property="og:image"]').each((index, elem) => {
       ogImages.push($(elem).attr("content"))
     })
-  
+
     if (
       ogDescription &&
       ogPriceAmount &&
@@ -97,7 +97,7 @@ export class ProductRequestUtilsService {
     }
   }
 
-  async createProductRequest (
+  async createProductRequest(
     user: User,
     brand: string,
     description: string,

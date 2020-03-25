@@ -1,95 +1,94 @@
 import { request } from "graphql-request"
 import expect from "expect"
 
-const productFields = `
+const productScalarFields = `
 id
 slug
 name
+type
+description
+externalURL
+images
+modelHeight
+retailPrice
+tags
+innerMaterials
+outerMaterials
+status
+isSaved
+createdAt
+updatedAt
+`
+
+const productObjectFields = `
 brand {
   id
 }
 category {
   id
 }
-type
-description
-externalURL
-images
-modelHeight
 modelSize {
   id
   display
 }
-retailPrice
 color {
   id
 }
 secondaryColor {
   id
 }
-tags
 functions {
   id
 }
-availableSizes {
-  id
-  slug
-}
-innerMaterials
-outerMaterials
 variants {
   id
 }
-status
-isSaved
-createdAt
-updatedAt`
+`
 
+const brandFields = `
+id
+slug
+brandCode
+description
+isPrimaryBrand
+logo
+name
+basedIn
+products {
+  id
+}
+since
+tier
+websiteUrl
+createdAt
+updatedAt
+`
 const queries = {
   brand: `
   {
     brand(where: {brandCode: "CAVE"}) {
-      id
-      slug
-      brandCode
-      description
-      isPrimaryBrand
-      logo
-      name
-      basedIn
-      products {
-        id
-      }
-      since
-      tier
-      websiteUrl
-      createdAt
-      updatedAt
+      ${brandFields}
     }
   }
   `,
   brands: `
   {
     brands(orderBy: id_ASC) {
-      id
-      slug
-      name
-      products {
-        id
-      }
+      ${brandFields}
     }
   }`,
   product: `
   {
     product(where: {id: "ck7yztt6j01mh07249657q5mm"}) {
-      ${productFields}      
+      ${productScalarFields}      
+      ${productObjectFields}
     }
   }
   `,
   products: `
   {
     products(orderBy: id_ASC) {
-      ${productFields}
+      ${productScalarFields}
     }
   }
   `,

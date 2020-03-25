@@ -1,3 +1,4 @@
+import { PrismaService } from "./../../../prisma/prisma.service"
 import { Injectable } from "@nestjs/common"
 import {
   User,
@@ -5,9 +6,7 @@ import {
   BillingInfoUpdateDataInput,
   ID_Input,
 } from "../../../prisma"
-import { PrismaClientService } from "../../../prisma/client.service"
 import { AuthService } from "./auth.service"
-import { DBService } from "../../../prisma/db.service"
 import { AirtableService } from "../../Airtable/services/airtable.service"
 import { ShippingService } from "../../Shipping/services/shipping.service"
 import zipcodes from "zipcodes"
@@ -17,8 +16,7 @@ export class CustomerService {
   constructor(
     private readonly airtableService: AirtableService,
     private readonly authService: AuthService,
-    private readonly db: DBService,
-    private readonly prisma: PrismaClientService,
+    private readonly prisma: PrismaService,
     private readonly shippingService: ShippingService
   ) {}
 
@@ -60,7 +58,7 @@ export class CustomerService {
     })
 
     // Return the updated customer object
-    const returnData = await this.db.query.customer(
+    const returnData = await this.prisma.binding.query.customer(
       { where: { id: customer.id } },
       info
     )

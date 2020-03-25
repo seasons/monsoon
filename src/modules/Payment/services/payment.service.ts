@@ -1,11 +1,11 @@
 import { Injectable } from "@nestjs/common"
 import chargebee from "chargebee"
-import { PrismaClientService } from "../../../prisma/client.service"
 import { AuthService } from "../../User/services/auth.service"
 import { AirtableService } from "../../Airtable/services/airtable.service"
 import { EmailService } from "../../Email/services/email.service"
 import { get } from "lodash"
 import { PaymentUtilsService } from "./payment.utils.service"
+import { PrismaService } from "../../../prisma/prisma.service"
 
 @Injectable()
 export class PaymentService {
@@ -14,7 +14,7 @@ export class PaymentService {
     private readonly authService: AuthService,
     private readonly emailService: EmailService,
     private readonly paymentUtils: PaymentUtilsService,
-    private readonly prisma: PrismaClientService
+    private readonly prisma: PrismaService
   ) {}
 
   async getHostedCheckoutPage(

@@ -1,11 +1,11 @@
 import crypto from "crypto"
 import { Injectable } from "@nestjs/common"
-import { PrismaClientService } from "../../prisma/client.service"
 import { Location } from "../../prisma/"
+import { PrismaService } from "../../prisma/prisma.service"
 
 @Injectable()
 export class UtilsService {
-  constructor(private readonly prisma: PrismaClientService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   async getPrismaLocationFromSlug(slug: string): Promise<Location> {
     const prismaLocation = await this.prisma.client.location({
