@@ -1,6 +1,12 @@
 import { Injectable } from "@nestjs/common"
 import { DBService } from "../../../prisma/db.service"
-import { RecentlyViewedProduct, BagItem } from "../../../prisma"
+import {
+  RecentlyViewedProduct,
+  BagItem,
+  ID_Input,
+  Product,
+  Customer,
+} from "../../../prisma"
 import { head } from "lodash"
 import { ProductUtilsService } from "./product.utils.service"
 import { PrismaClientService } from "../../../prisma/client.service"
@@ -63,7 +69,13 @@ export class ProductService {
     }
   }
 
-  async isSaved(product, customer) {
+  async isSaved(
+    product: { id: ID_Input } | Product,
+    customer: { id: ID_Input } | Customer
+  ) {
+    if (!customer) {
+      return false
+    }
     const productVariants = await this.prisma.client.productVariants({
       where: {
         product: {
@@ -72,6 +84,7 @@ export class ProductService {
       },
     })
 
+    // console.log(productVariants)
     const bagItem = await this.prisma.client.bagItems({
       where: {
         customer: {

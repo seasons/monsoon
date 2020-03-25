@@ -1,4 +1,12 @@
-import { Resolver, Parent, ResolveProperty } from "@nestjs/graphql"
+import {
+  Resolver,
+  Parent,
+  ResolveProperty,
+  ResolveField,
+  Args,
+  Context,
+  Root,
+} from "@nestjs/graphql"
 import { ProductService } from "../services/product.service"
 import { Customer } from "../../../nest_decorators"
 
@@ -6,8 +14,8 @@ import { Customer } from "../../../nest_decorators"
 export class ProductFieldsResolver {
   constructor(private readonly productService: ProductService) {}
 
-  @ResolveProperty()
-  async isSaved(@Parent() parent, @Customer() customer) {
-    return this.productService.isSaved(parent, customer)
+  @ResolveField()
+  async isSaved(@Parent() product, @Customer() customer) {
+    return this.productService.isSaved(product, customer)
   }
 }
