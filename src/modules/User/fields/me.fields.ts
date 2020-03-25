@@ -1,6 +1,5 @@
-import { Resolver, ResolveProperty, Context, Info } from "@nestjs/graphql"
+import { Resolver, Info, ResolveField } from "@nestjs/graphql"
 import { head } from "lodash"
-import { prisma } from "../../../prisma"
 import { User, Customer } from "../../../nest_decorators"
 import { PrismaService } from "../../../prisma/prisma.service"
 
@@ -8,19 +7,19 @@ import { PrismaService } from "../../../prisma/prisma.service"
 export class MeFieldsResolver {
   constructor(private readonly prisma: PrismaService) {}
 
-  @ResolveProperty()
+  @ResolveField()
   async user(@User() user) {
     return user
   }
 
-  @ResolveProperty()
+  @ResolveField()
   async customer(@Customer() customer) {
     return customer
   }
 
-  @ResolveProperty()
+  @ResolveField()
   async activeReservation(@Customer() customer) {
-    const reservations = await prisma
+    const reservations = await this.prisma.client
       .customer({ id: customer.id })
       .reservations({ orderBy: "createdAt_DESC" })
     const latestReservation = head(reservations)
@@ -34,7 +33,7 @@ export class MeFieldsResolver {
     return null
   }
 
-  @ResolveProperty()
+  @ResolveField()
   async bag(@Info() info, @Customer() customer) {
     return await this.prisma.binding.query.bagItems(
       {
@@ -49,8 +48,8 @@ export class MeFieldsResolver {
     )
   }
 
-  @ResolveProperty()
-  async savedItems(@Context() ctx, @Info() info, @Customer() customer) {
+  @ResolveField()
+  async savedItems(@Info() info, @Customer() customer) {
     return await this.prisma.binding.query.bagItems(
       {
         where: {

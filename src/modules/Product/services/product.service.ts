@@ -1,5 +1,11 @@
 import { Injectable } from "@nestjs/common"
-import { RecentlyViewedProduct, BagItem } from "../../../prisma"
+import {
+  RecentlyViewedProduct,
+  BagItem,
+  ID_Input,
+  Product,
+  Customer,
+} from "../../../prisma"
 import { head } from "lodash"
 import { ProductUtilsService } from "./product.utils.service"
 import { ProductVariantService } from "./productVariant.service"
@@ -64,7 +70,13 @@ export class ProductService {
     }
   }
 
-  async isSaved(product, customer) {
+  async isSaved(
+    product: { id: ID_Input } | Product,
+    customer: { id: ID_Input } | Customer
+  ) {
+    if (!customer) {
+      return false
+    }
     const productVariants = await this.prisma.client.productVariants({
       where: {
         product: {
