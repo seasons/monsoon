@@ -1,14 +1,10 @@
 import { Injectable } from "@nestjs/common"
-import { DBService } from "../../../prisma/db.service"
 import { BrandOrderByInput } from "../../../prisma"
-import { PrismaClientService } from "../../../prisma/client.service"
+import { PrismaService } from "../../../prisma/prisma.service"
 
 @Injectable()
 export class ProductUtilsService {
-  constructor(
-    private readonly db: DBService,
-    private readonly prisma: PrismaClientService
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   async queryOptionsForProducts(args) {
     const category = args.category || "all"
@@ -61,7 +57,7 @@ export class ProductUtilsService {
     return {}
   }
   async getReservedBagItems(customer) {
-    const reservedBagItems = await this.db.query.bagItems(
+    const reservedBagItems = await this.prisma.binding.query.bagItems(
       {
         where: {
           customer: {
@@ -88,7 +84,7 @@ export class ProductUtilsService {
     orderBy: BrandOrderByInput,
     sizes: [string]
   ) {
-    const brands = await this.db.query.brands(
+    const brands = await this.prisma.binding.query.brands(
       { orderBy },
       `
       {

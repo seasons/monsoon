@@ -2,11 +2,11 @@ import { Resolver, ResolveProperty, Context, Info } from "@nestjs/graphql"
 import { head } from "lodash"
 import { prisma } from "../../../prisma"
 import { User, Customer } from "../../../nest_decorators"
-import { DBService } from "../../../prisma/db.service"
+import { PrismaService } from "../../../prisma/prisma.service"
 
 @Resolver("Me")
 export class MeFieldsResolver {
-  constructor(private readonly db: DBService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   @ResolveProperty()
   async user(@User() user) {
@@ -36,7 +36,7 @@ export class MeFieldsResolver {
 
   @ResolveProperty()
   async bag(@Info() info, @Customer() customer) {
-    return await this.db.query.bagItems(
+    return await this.prisma.binding.query.bagItems(
       {
         where: {
           customer: {
@@ -51,7 +51,7 @@ export class MeFieldsResolver {
 
   @ResolveProperty()
   async savedItems(@Context() ctx, @Info() info, @Customer() customer) {
-    return await this.db.query.bagItems(
+    return await this.prisma.binding.query.bagItems(
       {
         where: {
           customer: {

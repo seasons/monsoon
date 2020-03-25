@@ -1,10 +1,10 @@
-import { PrismaClientService } from "../../prisma/client.service"
 import { AirtableService } from "../Airtable/services/airtable.service"
 import { User, Customer } from "../../prisma"
+import { PrismaService } from "../../prisma/prisma.service"
 
 export class TestUtilsService {
   constructor(
-    private readonly prisma: PrismaClientService,
+    private readonly prisma: PrismaService,
     private readonly airtableService: AirtableService
   ) {}
 

@@ -2,8 +2,6 @@ import { ProductUtilsService } from "../services/product.utils.service"
 import { PhysicalProductService } from "../services/physicalProduct.utils.service"
 import { ProductVariantService } from "../services/productVariant.service"
 import { ReservationUtilsService } from "../services/reservation.utils.service"
-import { PrismaClientService } from "../../../prisma/client.service"
-import { DBService } from "../../../prisma/db.service"
 import { ReservationService } from "../services/reservation.service"
 import { AirtableService } from "../../Airtable/services/airtable.service"
 import { AirtableUtilsService } from "../../Airtable/services/airtable.utils.service"
@@ -15,11 +13,11 @@ import { AirtableBaseService } from "../../Airtable/services/airtable.base.servi
 import * as Airtable from "airtable"
 import { TestUtilsService } from "../../Utils/test.service"
 import { Customer, User } from "../../../prisma"
-import { AuthService } from "../../User/services/auth.service"
+import { PrismaService } from "../../../prisma/prisma.service"
 
 describe("Reservation Service", () => {
   let reservationService: ReservationService
-  let prismaService: PrismaClientService
+  let prismaService: PrismaService
   let airtableService: AirtableService
   let testUtilsService: TestUtilsService
   let testUser: User
@@ -31,9 +29,8 @@ describe("Reservation Service", () => {
       apiKey: process.env.AIRTABLE_KEY,
     })
 
-    const dbService = new DBService()
-    prismaService = new PrismaClientService()
-    const physProdService = new PhysicalProductService(dbService, prismaService)
+    prismaService = new PrismaService()
+    const physProdService = new PhysicalProductService(prismaService)
     const airtableBaseService = new AirtableBaseService()
     airtableService = new AirtableService(
       airtableBaseService,
@@ -41,9 +38,8 @@ describe("Reservation Service", () => {
     )
     const utilsService = new UtilsService(prismaService)
     reservationService = new ReservationService(
-      dbService,
       prismaService,
-      new ProductUtilsService(dbService, prismaService),
+      new ProductUtilsService(prismaService),
       new ProductVariantService(
         prismaService,
         physProdService,

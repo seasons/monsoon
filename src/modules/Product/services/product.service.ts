@@ -1,5 +1,4 @@
 import { Injectable } from "@nestjs/common"
-import { DBService } from "../../../prisma/db.service"
 import {
   RecentlyViewedProduct,
   BagItem,
@@ -9,26 +8,28 @@ import {
 } from "../../../prisma"
 import { head } from "lodash"
 import { ProductUtilsService } from "./product.utils.service"
-import { PrismaClientService } from "../../../prisma/client.service"
 import { ProductVariantService } from "./productVariant.service"
+import { PrismaService } from "../../../prisma/prisma.service"
 
 @Injectable()
 export class ProductService {
   constructor(
-    private readonly db: DBService,
-    private readonly prisma: PrismaClientService,
+    private readonly prisma: PrismaService,
     private readonly productUtils: ProductUtilsService,
     private readonly productVariantService: ProductVariantService
   ) {}
 
   async getProducts(args, info) {
     const queryOptions = await this.productUtils.queryOptionsForProducts(args)
-    return await this.db.query.products({ ...args, ...queryOptions }, info)
+    return await this.prisma.binding.query.products(
+      { ...args, ...queryOptions },
+      info
+    )
   }
 
   async getProductsConnection(args, info) {
     const queryOptions = await this.productUtils.queryOptionsForProducts(args)
-    return await this.db.query.productsConnection(
+    return await this.prisma.binding.query.productsConnection(
       { ...args, ...queryOptions },
       info
     )
@@ -84,7 +85,6 @@ export class ProductService {
       },
     })
 
-    // console.log(productVariants)
     const bagItem = await this.prisma.client.bagItems({
       where: {
         customer: {
@@ -101,7 +101,7 @@ export class ProductService {
   }
 
   async saveProduct(item, save, customer, info) {
-    const bagItems = await this.db.query.bagItems(
+    const bagItems = await this.prisma.binding.query.bagItems(
       {
         where: {
           customer: {
@@ -142,7 +142,7 @@ export class ProductService {
     }
 
     if (save) {
-      return this.db.query.bagItem(
+      return this.prisma.binding.query.bagItem(
         {
           where: {
             id: bagItem.id,
@@ -156,7 +156,7 @@ export class ProductService {
   }
 
   async checkItemsAvailability(items, customer) {
-    const reservedBagItems = await this.db.query.bagItems(
+    const reservedBagItems = await this.prisma.binding.query.bagItems(
       {
         where: {
           customer: {

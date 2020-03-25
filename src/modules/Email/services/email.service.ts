@@ -4,14 +4,14 @@ import Handlebars from "handlebars"
 import nodemailer from "nodemailer"
 import fs from "fs"
 import { User, Product, Reservation } from "../../../prisma"
-import { PrismaClientService } from "../../../prisma/client.service"
 import { UtilsService } from "../../Utils/utils.service"
 import { EmailDataProvider } from "./email.data.service"
+import { PrismaService } from "../../../prisma/prisma.service"
 
 @Injectable()
 export class EmailService {
   constructor(
-    private readonly prisma: PrismaClientService,
+    private readonly prisma: PrismaService,
     private readonly utils: UtilsService,
     private readonly data: EmailDataProvider
   ) {}
@@ -57,7 +57,9 @@ export class EmailService {
       to: user.email,
       data: this.data.completeAccount(
         user.firstName,
-        `${process.env.SEEDLING_URL}/complete?idHash=${this.utils.getUserIDHash(user.id)}`
+        `${process.env.SEEDLING_URL}/complete?idHash=${this.utils.getUserIDHash(
+          user.id
+        )}`
       ),
     })
   }

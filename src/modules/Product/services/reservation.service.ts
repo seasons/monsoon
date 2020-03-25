@@ -1,4 +1,3 @@
-import { DBService } from "../../../prisma/db.service"
 import { Injectable } from "@nestjs/common"
 import { ApolloError } from "apollo-server"
 import {
@@ -12,7 +11,6 @@ import {
   ReservationCreateInput,
 } from "../../../prisma"
 import { head } from "lodash"
-import { PrismaClientService } from "../../../prisma/client.service"
 import { ProductUtilsService } from "./product.utils.service"
 import { ProductVariantService } from "./productVariant.service"
 import { PhysicalProductService } from "./physicalProduct.utils.service"
@@ -23,6 +21,7 @@ import { RollbackError } from "../../../errors"
 import * as Sentry from "@sentry/node"
 import { ReservationUtilsService } from "./reservation.utils.service"
 import { ShippoTransaction } from "../../Shipping/shipping.types"
+import { PrismaService } from "../../../prisma/prisma.service"
 
 interface PhysicalProductWithProductVariant extends PhysicalProduct {
   productVariant: { id: ID_Input }
@@ -38,8 +37,7 @@ export interface ReservationWithProductVariantData {
 @Injectable()
 export class ReservationService {
   constructor(
-    private readonly db: DBService,
-    private readonly prisma: PrismaClientService,
+    private readonly prisma: PrismaService,
     private readonly productUtils: ProductUtilsService,
     private readonly productVariantService: ProductVariantService,
     private readonly physicalProductService: PhysicalProductService,
@@ -145,7 +143,7 @@ export class ReservationService {
       )
 
       // Get return data
-      reservationReturnData = await this.db.query.reservation(
+      reservationReturnData = await this.prisma.binding.query.reservation(
         { where: { id: prismaReservation.id } },
         info
       )
@@ -184,7 +182,7 @@ export class ReservationService {
       if (latestReservation == null) {
         return resolve(null)
       } else {
-        const res = (await this.db.query.reservation(
+        const res = (await this.prisma.binding.query.reservation(
           {
             where: { id: latestReservation.id },
           },
