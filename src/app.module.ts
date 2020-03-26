@@ -12,6 +12,7 @@ import {
   CronModule,
   EmailModule,
   AirtableModule,
+  SlackModule,
   directiveResolvers,
 } from "./modules"
 import { importSchema } from "graphql-import"
@@ -72,6 +73,7 @@ if (!_imports[0]) _imports = []
     AirtableModule,
     SearchModule,
     CronModule,
+    SlackModule,
   ],
 })
 export class AppModule {}

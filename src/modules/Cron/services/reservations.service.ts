@@ -1,7 +1,6 @@
 import { Injectable, Logger } from "@nestjs/common"
 import { Cron, CronExpression } from "@nestjs/schedule"
 import * as Sentry from "@sentry/node"
-import { PrismaService } from "../../../prisma/prisma.service"
 import { EmailService } from "../../Email/services/email.service"
 import { DateTime, Interval } from "luxon"
 import {
@@ -17,6 +16,7 @@ import {
   AirtableProductVariantCounts,
   AirtableInventoryStatus,
 } from "../../Airtable/airtable.types"
+import { PrismaService } from "../../../prisma/prisma.service"
 
 type prismaProductVariantCounts = Pick<
   ProductVariant,
@@ -515,7 +515,6 @@ export class ReservationScheduledJobs {
     const returnedPhysicalProductsProductVariantIDs: {
       id: ID_Input
     }[] = returnedPhysicalProducts.map(p => p.productVariant.id)
-
     const customerBagItems = await this.prisma.binding.query.bagItems(
       {
         where: { customer: { id: prismaReservation.customer.id } },
