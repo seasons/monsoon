@@ -15,6 +15,13 @@ interface SegmentReservedTraitsInCustomerDetail {
   address?: any
 }
 
+interface Auth0User {
+  email: string
+  family_name: string
+  given_name: string
+  user_id: string
+}
+
 @Injectable()
 export class AuthService {
   beamsClient: PushNotifications | null = _instantiateBeamsClient()
@@ -194,6 +201,63 @@ export class AuthService {
             )
           }
           return resolve(body)
+        }
+      )
+    })
+  }
+
+  async getAuth0Users(): Promise<Auth0User[]> {
+    const token = await this.getAuth0ManagementAPIToken()
+    return new Promise((resolve, reject) => {
+      request(
+        {
+          method: "Get",
+          url: `https://${process.env.AUTH0_DOMAIN}/api/v2/users`,
+          headers: {
+            "content-type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          json: true,
+        },
+        (error, response, body) => {
+          if (error) {
+            return reject(error)
+          }
+          if (response.statusCode !== 200) {
+            return reject(
+              "Invalid status code <" +
+                response.statusCode +
+                ">" +
+                "Response: " +
+                JSON.stringify(response.body)
+            )
+          }
+          return resolve(body)
+        }
+      )
+    })
+  }
+
+  async getAuth0ManagementAPIToken() {
+    return new Promise((resolve, reject) => {
+      request(
+        {
+          method: "POST",
+          url: `https://${process.env.AUTH0_DOMAIN}/oauth/token`,
+          headers: { "content-type": "application/x-www-form-urlencoded" },
+          form: {
+            grant_type: "client_credentials",
+            client_id: process.env.AUTH0_MACHINE_TO_MACHINE_CLIENT_ID,
+            client_secret: process.env.AUTH0_MACHINE_TO_MACHINE_CLIENT_SECRET,
+            audience: `https://${process.env.AUTH0_DOMAIN}/api/v2/`,
+          },
+        },
+        (error, response, body) => {
+          if (error) return reject(error)
+          if (response.statusCode !== 200) {
+            return reject(response.body)
+          }
+          return resolve(JSON.parse(body).access_token)
         }
       )
     })
