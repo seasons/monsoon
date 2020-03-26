@@ -11,6 +11,7 @@ type Product {
   name: String!
   brand: Brand!
   category: Category!
+  type: ProductType
   description: String
   externalURL: String
   images: Json!
@@ -29,7 +30,6 @@ type Product {
     first: Int
     last: Int
   ): [ProductFunction!]
-  availableSizes: [Size!]!
   innerMaterials: [Material!]!
   outerMaterials: [Material!]!
   variants(

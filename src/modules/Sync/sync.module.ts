@@ -1,5 +1,5 @@
 import { Module } from "@nestjs/common"
-import { PrismaSyncService } from "./services/prisma.service"
+import { PrismaSyncService } from "./services/sync.prisma.service"
 
 @Module({
   exports: [PrismaSyncService],

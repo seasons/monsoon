@@ -5,9 +5,6 @@
   "license": "MIT",
   "bin": "bin/cli.ts",
   "main": "dist/index.js",
-  "engines": {
-    "node": "10.x.x"
-  },
   "resolutions": {
     "graphql": "^14.5.7"
   },
@@ -43,7 +40,7 @@
     "@nestjs/cli": "^6.14.2",
     "@nestjs/common": "^6.11.11",
     "@nestjs/core": "^6.11.5",
-    "@nestjs/graphql": "^6.6.1",
+    "@nestjs/graphql": "^7.0.15",
     "@nestjs/jwt": "^6.1.1",
     "@nestjs/passport": "^6.1.1",
     "@nestjs/platform-express": "^6.11.8",
@@ -60,10 +57,7 @@
     "analytics-node": "^3.4.0-beta.1",
     "apollo-datasource-rest": "^0.6.4",
     "apollo-link-http": "^1.5.15",
-    "apollo-server": "^2.9.3",
-    "apollo-server-express": "^2.9.5",
-    "apollo-server-lambda": "^2.9.3",
-    "apollo-server-plugin-base": "^0.6.10",
+    "apollo-server": "^2.11.0",
     "auth0": "^2.20.0",
     "aws-sdk": "^2.619.0",
     "babel-plugin-parameter-decorator": "^1.0.15",
@@ -84,6 +78,7 @@
     "express-jwt": "^5.3.1",
     "faker": "^4.1.0",
     "graphql": "^14.5.7",
+    "graphql-binding": "^2.5.2",
     "graphql-import": "^0.7.1",
     "graphql-tools": "^4.0.5",
     "handlebars": "^4.7.3",

@@ -1,14 +1,14 @@
 import express from "express"
-import { PrismaClientService } from "../prisma/client.service"
 import { CustomerService } from "../modules/User/services/customer.service"
+import { PrismaService } from "../prisma/prisma.service"
 
 const CHARGEBEE_CUSTOMER_CHANGED = "customer_changed"
 
 const app = express()
 
 app.post("/chargebee_events", async (req, res) => {
-  const prisma = new PrismaClientService()
-  const customerService = new CustomerService(null, null, null, prisma, null)
+  const prisma = new PrismaService()
+  const customerService = new CustomerService(null, null, prisma, null)
 
   const data = req.body
   const { event_type: eventType } = data

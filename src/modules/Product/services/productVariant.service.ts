@@ -1,17 +1,17 @@
 import { Injectable } from "@nestjs/common"
 import { ID_Input, Product } from "../../../prisma"
-import { PrismaClientService } from "../../../prisma/client.service"
 import {
   PhysicalProductWithReservationSpecificData,
   PhysicalProductService,
 } from "./physicalProduct.utils.service"
 import { ApolloError } from "apollo-server"
 import { AirtableService } from "../../Airtable/services/airtable.service"
+import { PrismaService } from "../../../prisma/prisma.service"
 
 @Injectable()
 export class ProductVariantService {
   constructor(
-    private readonly prisma: PrismaClientService,
+    private readonly prisma: PrismaService,
     private readonly physicalProductService: PhysicalProductService,
     private readonly airtableService: AirtableService
   ) {}

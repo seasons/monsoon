@@ -1,9 +1,9 @@
+import { PrismaService } from "./../../../prisma/prisma.service"
 import { Injectable } from "@nestjs/common"
 import request from "request"
 import { CustomerDetail, CustomerDetailCreateInput } from "../../../prisma"
 import { head } from "lodash"
 import PushNotifications from "@pusher/push-notifications-server"
-import { PrismaClientService } from "../../../prisma/client.service"
 import { UserInputError, ForbiddenError } from "apollo-server"
 import { AirtableService } from "../../Airtable/services/airtable.service"
 
@@ -27,7 +27,7 @@ export class AuthService {
   beamsClient: PushNotifications | null = _instantiateBeamsClient()
 
   constructor(
-    private readonly prismaService: PrismaClientService,
+    private readonly prismaService: PrismaService,
     private readonly airtable: AirtableService
   ) {}
 

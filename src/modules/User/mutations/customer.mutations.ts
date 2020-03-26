@@ -1,17 +1,11 @@
 import { Mutation, Args, Resolver, Info } from "@nestjs/graphql"
 import { UserInputError } from "apollo-server"
 import { Analytics, Customer, User } from "../../../nest_decorators"
-import { PrismaClientService } from "../../../prisma/client.service"
 import { CustomerService } from "../services/customer.service"
-import { DBService } from "../../../prisma/db.service"
 
 @Resolver()
 export class CustomerMutationsResolver {
-  constructor(
-    private readonly customerService: CustomerService,
-    private readonly db: DBService,
-    private readonly prisma: PrismaClientService
-  ) {}
+  constructor(private readonly customerService: CustomerService) {}
 
   @Mutation()
   async addCustomerDetails(
@@ -26,7 +20,12 @@ export class CustomerMutationsResolver {
       throw new UserInputError("payload should not include id")
     }
 
-    const returnData = await this.customerService.addCustomerDetails( { details, status }, customer, user, info)
+    const returnData = await this.customerService.addCustomerDetails(
+      { details, status },
+      customer,
+      user,
+      info
+    )
 
     // Track the event, if its been passed
     const eventNameMap = { CompletedWaitlistForm: "Completed Waitlist Form" }
