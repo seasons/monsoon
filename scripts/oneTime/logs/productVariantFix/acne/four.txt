@@ -1,5 +1,0 @@
-Number of mismatched SKUs:  13
-Mapping ACNE-GRN-LL-009 to ACNE-GRN-LL-006
--- prisma product variant: ACNE-GRN-LL-009 --> ACNE-GRN-LL-006
--- prisma physical product: ACNE-GRN-LL-009-01 --> ACNE-GRN-LL-006-01
--- airtable physical product rec94JvGgBuveyXa2 suid set to ACNE-GRN-LL-006-01

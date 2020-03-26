@@ -1,17 +1,17 @@
 import { Query, Resolver, Args, Info } from "@nestjs/graphql"
-import { DBService } from "../../../prisma/db.service"
+import { PrismaService } from "../../../prisma/prisma.service"
 
 @Resolver()
 export class HomepageProductRailQueriesResolver {
-  constructor(private readonly db: DBService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   @Query()
   async homepageProductRails(@Args() args, @Info() info) {
-    return await this.db.query.homepageProductRails(args, info)
+    return await this.prisma.binding.query.homepageProductRails(args, info)
   }
 
   @Query()
   async homepageProductRail(@Args() args, @Info() info) {
-    return await this.db.query.homepageProductRail(args, info)
+    return await this.prisma.binding.query.homepageProductRail(args, info)
   }
 }

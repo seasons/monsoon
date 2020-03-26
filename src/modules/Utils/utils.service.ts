@@ -1,12 +1,12 @@
 import crypto from "crypto"
 import { Injectable } from "@nestjs/common"
-import { PrismaClientService } from "../../prisma/client.service"
 import { Location, InventoryStatus } from "../../prisma/"
 import { AirtableInventoryStatus } from "../Airtable/airtable.types"
+import { PrismaService } from "../../prisma/prisma.service"
 
 @Injectable()
 export class UtilsService {
-  constructor(private readonly prisma: PrismaClientService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   airtableToPrismaInventoryStatus(
     airtableStatus: AirtableInventoryStatus

@@ -41,12 +41,15 @@ require("yargs")
             default: "staging",
             describe: "Airtable base to sync from",
             choices: ["production", "staging"],
-            type: "string"
-          }
+            type: "string",
+          },
         })
     },
     async argv => {
-      await overrideEnvFromRemoteConfig({prismaEnvironment: argv.pe, airtableEnvironment: argv.ae})
+      await overrideEnvFromRemoteConfig({
+        prismaEnvironment: argv.pe,
+        airtableEnvironment: argv.ae,
+      })
 
       const {
         syncBrands,
@@ -199,12 +202,12 @@ require("yargs")
         apiKey: process.env.AIRTABLE_KEY,
       })
 
-      await overrideEnvFromRemoteConfig({prismaEnvironment: argv.e})
+      await overrideEnvFromRemoteConfig({ prismaEnvironment: argv.e })
 
       const {
         AuthService,
       } = require("../dist/modules/User/services/auth.service")
-      const { PrismaClientService } = require("../dist/prisma/client.service")
+      const { PrismaService } = require("../dist/prisma/prisma.service")
       const {
         AirtableService,
       } = require("../dist/modules/Airtable/services/airtable.service")
@@ -221,7 +224,7 @@ require("yargs")
       // Instantiate services
       const airtableBaseService = new AirtableBaseService()
       const auth = new AuthService(
-        new PrismaClientService(),
+        new PrismaService(),
         new AirtableService(
           airtableBaseService,
           new AirtableUtilsService(airtableBaseService)
@@ -295,7 +298,10 @@ require("yargs")
   )
   .help().argv
 
-async function overrideEnvFromRemoteConfig ({prismaEnvironment = "local", airtableEnvironment = "staging"}) {
+async function overrideEnvFromRemoteConfig({
+  prismaEnvironment = "local",
+  airtableEnvironment = "staging",
+}) {
   const envFilePath = await downloadFromS3(
     "/tmp/__monsoon__env.json",
     "monsoon-scripts",

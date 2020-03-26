@@ -1,15 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { Cron, CronExpression } from '@nestjs/schedule'
 import * as Sentry from "@sentry/node"
-import { PrismaClientService } from '../../../prisma/client.service'
 import { EmailService } from '../../Email/services/email.service'
 import { DateTime, Interval } from 'luxon'
 import { Reservation, InventoryStatus, ProductVariant, ID_Input } from '../../../prisma'
 import { AirtableService } from '../../Airtable/services/airtable.service'
 import { SyncError } from '../../../errors'
-import { DBService } from '../../../prisma/db.service'
 import { ShippingService } from '../../Shipping/services/shipping.service'
 import { AirtableProductVariantCounts, AirtableInventoryStatus } from '../../Airtable/airtable.types'
+import { PrismaService } from '../../../prisma/prisma.service'
 
 type prismaProductVariantCounts = Pick<
   ProductVariant,
@@ -26,13 +25,12 @@ export class ReservationScheduledJobs {
 
   constructor(
     private readonly airtableService: AirtableService,
-    private readonly db: DBService,
     private readonly emailService: EmailService,
-    private readonly prisma: PrismaClientService,
+    private readonly prisma: PrismaService,
     private readonly shippingService: ShippingService
   ) {}
 
-  @Cron(CronExpression.EVERY_MINUTE)
+  @Cron(CronExpression.EVERY_6_HOURS)
   async sendReturnNotifications() {
     const reservations = await this.prisma.client.reservations({
       orderBy: "createdAt_DESC",
@@ -90,7 +88,7 @@ export class ReservationScheduledJobs {
   }
 
   private async getPrismaReservationWithNeededFields(reservationNumber) {
-    const res = await this.db.query.reservation(
+    const res = await this.prisma.binding.query.reservation(
       {
         where: { reservationNumber },
       },
@@ -504,7 +502,7 @@ export class ReservationScheduledJobs {
       id: ID_Input
     }[] = returnedPhysicalProducts.map(p => p.productVariant.id)
   
-    const customerBagItems = await this.db.query.bagItems(
+    const customerBagItems = await this.prisma.binding.query.bagItems(
       {
         where: { customer: { id: prismaReservation.customer.id } },
       },
