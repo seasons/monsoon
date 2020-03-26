@@ -28,3 +28,5 @@ export const syncLocations = async (cliProgressBar?) => {
   })
 }
 export const getNumLinksLocations = () => 0
+
+export const getLocationRecordIdentifier = rec => rec.fields.Slug

@@ -14,7 +14,9 @@ import {
 import cliProgress from "cli-progress"
 import { getNumReadWritesToSyncModel } from "./utils"
 import { AirtableModelName } from "../utils"
-import { checkAllTableAlignment } from "./checkTableAlignment"
+import { syncSizes } from "./syncSizes"
+import { syncTopSizes } from "./syncTopSizes"
+import { syncBottomSizes } from "./syncBottomSizes"
 
 export const syncAll = async () => {
   // Note that the order matters here in order to properly link between tables.
@@ -22,10 +24,6 @@ export const syncAll = async () => {
   console.log(
     `\nNote: If you encounter errors, it's probably a field configuration issue on the destination base\n`
   )
-  console.log(
-    `Checking table alignments to surface would-be sync errors early...`
-  )
-  await checkAllTableAlignment()
   const multibar = new cliProgress.MultiBar(
     {
       clearOnComplete: false,
@@ -40,6 +38,9 @@ export const syncAll = async () => {
     models: await createSubBar(multibar, "Models"),
     categories: await createSubBar(multibar, "Categories"),
     locations: await createSubBar(multibar, "Locations"),
+    sizes: await createSubBar(multibar, "Sizes"),
+    topSizes: await createSubBar(multibar, "Top Sizes"),
+    bottomSizes: await createSubBar(multibar, "Bottom Sizes"),
     products: await createSubBar(multibar, "Products"),
     homepageProductRails: await createSubBar(
       multibar,
@@ -56,6 +57,9 @@ export const syncAll = async () => {
     await syncModels(bars.models)
     await syncCategories(bars.categories)
     await syncLocations(bars.locations)
+    await syncSizes(bars.sizes)
+    await syncTopSizes(bars.topSizes)
+    await syncBottomSizes(bars.bottomSizes)
     await syncProducts(bars.products)
     await syncHomepageProductRails(bars.homepageProductRails)
     await syncProductVariants(bars.productVariants)

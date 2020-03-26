@@ -5,6 +5,7 @@ import {
   deleteAllStagingRecords,
   createAllStagingRecordsWithoutLinks,
   linkStagingRecords,
+  getLocationRecordIdentifier,
 } from "."
 
 export const syncUsers = async (cliProgressBar?: any) => {
@@ -49,7 +50,7 @@ const addShippingAddressLinks = async (
     allTargetProductionRecords: await getAllLocations(getProductionBase()),
     allTargetStagingRecords: await getAllLocations(getStagingBase()),
     getRootRecordIdentifer: rec => rec.fields.Email,
-    getTargetRecordIdentifer: rec => rec.fields.Slug,
+    getTargetRecordIdentifer: getLocationRecordIdentifier,
     cliProgressBar,
   })
 }

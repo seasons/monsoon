@@ -54,3 +54,5 @@ const addParentCategoryLinks = async (
     cliProgressBar,
   })
 }
+
+export const getCategoryRecordIdentifier = rec => rec.fields.Name
