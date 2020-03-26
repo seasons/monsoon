@@ -6,7 +6,11 @@ import fs from "fs"
 import { UtilsService } from "../../Utils/utils.service"
 import { EmailDataProvider } from "./email.data.service"
 import { PrismaService } from "../../../prisma/prisma.service"
-import { User, Product, Reservation as PrismaReservation } from "../../../prisma"
+import {
+  User,
+  Product,
+  Reservation as PrismaReservation,
+} from "../../../prisma"
 import { Reservation } from "../../../prisma/prisma.binding"
 
 @Injectable()
@@ -37,7 +41,9 @@ export class EmailService {
       to: user.email,
       data: this.data.completeAccount(
         user.firstName,
-        `${process.env.SEEDLING_URL}/complete?idHash=${this.utils.getUserIDHash(user.id)}`
+        `${process.env.SEEDLING_URL}/complete?idHash=${this.utils.getUserIDHash(
+          user.id
+        )}`
       ),
     })
   }
@@ -71,10 +77,7 @@ export class EmailService {
     })
   }
 
-  sendReturnReminderEmail(
-    user: User,
-    reservation: PrismaReservation
-  ) {
+  sendReturnReminderEmail(user: User, reservation: PrismaReservation) {
     this.sendTransactionalEmail({
       to: user.email,
       data: this.data.returnReminder({
@@ -96,12 +99,7 @@ export class EmailService {
   sendYouCanNowReserveAgainEmail(user: User) {
     this.sendTransactionalEmail({
       to: user.email,
-      data: this.data.completeAccount(
-        user.firstName,
-        `${process.env.SEEDLING_URL}/complete?idHash=${this.utils.getUserIDHash(
-          user.id
-        )}`
-      ),
+      data: this.data.freeToReserve(),
     })
   }
 
