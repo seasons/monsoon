@@ -6,6 +6,7 @@ import { AirtableModule } from '../Airtable/airtable.module';
 import { EmailModule } from '../Email/email.module';
 import { UserModule } from '../User/user.module';
 import { ShippingModule } from '../Shipping/shipping.module';
+import { SlackModule } from '../Slack/slack.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { ShippingModule } from '../Shipping/shipping.module';
     EmailModule,
     PrismaModule,
     ShippingModule,
+    SlackModule,
     UserModule
   ],
   providers: [ReservationScheduledJobs, UsersScheduledJobs],
