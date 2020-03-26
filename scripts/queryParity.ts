@@ -90,34 +90,72 @@ isWanted
 createdAt
 updatedAt
 `
+
+const productRequestFields = `
+id
+brand
+description
+images
+name
+price
+priceCurrency
+productID
+reason
+sku
+url
+user {
+  id
+}
+`
+const collectionFields = `
+id
+slug
+images
+title
+subTitle
+descriptionTop
+descriptionBottom
+products {
+  id
+}
+`
+const collectionGroupFields = `
+id
+title
+slug
+collectionCount
+collections {
+  id
+}
+`
 const queries = {
-  // brand: `
-  // {
-  //   brand(where: {brandCode: "CAVE"}) {
-  //     ${brandFields}
-  //   }
-  // }
-  // `,
-  // brands: `
-  // {
-  //   brands(orderBy: id_ASC) {
-  //     ${brandFields}
-  //   }
-  // }`,
-  // product: `
-  // {
-  //   product(where: {id: "ck7yztt6j01mh07249657q5mm"}) {
-  //     ${productFields}
-  //   }
-  // }
-  // `,
-  // products: `
-  // {
-  //   products(orderBy: id_ASC) {
-  //     ${productFields}
-  //   }
-  // }
-  // `,
+  brand: `
+  {
+    brand(where: {brandCode: "CAVE"}) {
+      ${brandFields}
+    }
+  }
+  `,
+  brands: `
+  {
+    brands(orderBy: id_ASC) {
+      ${brandFields}
+    }
+  }`,
+  product: `
+  {
+    product(where: {id: "ck7yztt6j01mh07249657q5mm"}) {
+      ${productFields}
+    }
+  }
+  `,
+  products: `
+  {
+    products(orderBy: id_ASC) {
+      ${productFields}
+    }
+  }
+  `,
   // Leave out productVariant, because it doesn't work on staging monsoon.
   // productVariant: `
   // {
@@ -152,6 +190,56 @@ const queries = {
       }
     }
     `,
+  productRequests: `
+    {
+      productRequests {
+        ${productRequestFields}
+      }
+    }    
+    `,
+  collection: `
+    {
+      collection(where: {id: "ck7z0hmtd1a0s0724cd1wcew3"}) {
+        ${collectionFields}
+      }
+    }
+    `,
+  collections: `
+    {
+      collections {
+        ${collectionFields}
+      }
+    }
+    `,
+  // TODO: Why does collection group return null on the old monsoon?
+  // collectionGroup: `
+  //   {
+  //     collectionGroup(where: {id: "ck7z0hnyr1a5007244s83mbbm"}) {
+  //       ${collectionGroupFields}
+  //     }
+  //   }
+  //   `,
+  // TODO: ibid.
+  // collectionGroups: `
+  //   {
+  //     collectionGroups {
+  //       ${collectionGroupFields}
+  //     }
+  //   }
+  // `,
+  faq: `
+  {
+    faq {
+      sections {
+        title
+        subsections {
+          title
+          text
+        }
+      }
+    }
+  }
+  `,
 }
 const oURL = "https://monsoon-staging.herokuapp.com"
 const nURL = "https://monsoon-nest-staging.herokuapp.com"
