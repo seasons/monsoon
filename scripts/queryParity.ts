@@ -118,13 +118,32 @@ const queries = {
   //   }
   // }
   // `,
-  productVariant: `
-  {
-    productVariant(where: {id: "ck7z02bis0erv0724lp10lyop"}) {
-      ${productVariantFields}
+  // Leave out productVariant, because it doesn't work on staging monsoon.
+  // productVariant: `
+  // {
+  //   productVariant(where: {id: "ck7z02bis0erv0724lp10lyop"}) {
+  //     ${productVariantFields}
+  //   }
+  // }
+  // `,
+  categories: `
+    {
+      categories {
+        id
+        slug
+        name
+        image
+        description
+        visible
+        products {
+          id
+        }
+        children {
+          id
+        }
+      }
     }
-  }
-  `,
+    `,
 }
 const oURL = "https://monsoon-staging.herokuapp.com"
 const nURL = "https://monsoon-nest-staging.herokuapp.com"
@@ -132,7 +151,6 @@ const nURL = "https://monsoon-nest-staging.herokuapp.com"
 const run = async () => {
   let didError = false
   for (const key of Object.keys(queries)) {
-    console.log(queries[key])
     const oResult = await request(oURL, queries[key])
     const nResult = await request(nURL, queries[key])
     try {
