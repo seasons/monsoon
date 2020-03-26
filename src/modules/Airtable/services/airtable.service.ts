@@ -1,19 +1,24 @@
 import { Injectable } from "@nestjs/common"
+import * as Airtable from "airtable"
+import { fill, zip } from "lodash"
 import {
+  BillingInfoCreateInput,
+  CustomerDetailCreateInput,
+  CustomerStatus,
+  InventoryStatus,
   PhysicalProduct,
   ReservationCreateInput,
-  CustomerDetailCreateInput,
-  BillingInfoCreateInput,
-  CustomerStatus,
-  User,
-  InventoryStatus,
   ReservationStatus,
   Size,
+  User,
 } from "../../../prisma"
-import { fill, zip } from "lodash"
-import { AirtableUtilsService } from "./airtable.utils.service"
+import {
+  AirtableData,
+  AirtableInventoryStatus,
+  AirtableProductVariantCounts,
+} from "../airtable.types"
 import { AirtableBaseService } from "./airtable.base.service"
-import { AirtableInventoryStatus, AirtableProductVariantCounts, AirtableData } from "../airtable.types"
+import { AirtableUtilsService } from "./airtable.utils.service"
 
 interface AirtableUserFields extends CustomerDetailCreateInput {
   plan?: string
@@ -53,9 +58,7 @@ export class AirtableService {
     return prismaStatus
   }
 
-  airtableToPrismaReservationStatus(
-    airtableStatus: string
-  ): ReservationStatus {
+  airtableToPrismaReservationStatus(airtableStatus: string): ReservationStatus {
     return airtableStatus.replace(" ", "") as ReservationStatus
   }
 
@@ -170,6 +173,38 @@ export class AirtableService {
       })
   }
 
+  async getAllBottomSizes(airtableBase?) {
+    return this.getAll("Bottom Sizes", "", "", airtableBase)
+  }
+
+  async getAllBrands(airtableBase?) {
+    return this.getAll("Brands", "", "", airtableBase)
+  }
+
+  async getAllCategories(airtableBase?) {
+    return this.getAll("Categories", "", "", airtableBase)
+  }
+
+  async getAllCollections(airtableBase?) {
+    return this.getAll("Collections", "", "", airtableBase)
+  }
+
+  async getAllColors(airtableBase?) {
+    return this.getAll("Colors", "", "", airtableBase)
+  }
+
+  async getAllHomepageProductRails(airtableBase?) {
+    return this.getAll("Homepage Product Rails", "", "", airtableBase)
+  }
+
+  async getAllLocations(airtableBase?) {
+    return this.getAll("Locations", "", "", airtableBase)
+  }
+
+  async getAllModels(airtableBase?) {
+    return this.getAll("Models", "", "", airtableBase)
+  }
+
   async getAllPhysicalProducts(airtableBase?) {
     return this.getAll("Physical Products", "", "", airtableBase)
   }
@@ -186,8 +221,30 @@ export class AirtableService {
     return this.getAll("Reservations", "", "", airtableBase)
   }
 
+  async getAllSizes(airtableBase?) {
+    return this.getAll("Sizes", "", "", airtableBase)
+  }
+
+  async getAllTopSizes(airtableBase?) {
+    return this.getAll("Top Sizes", "", "", airtableBase)
+  }
+
   async getAllUsers(airtableBase?) {
     return this.getAll("Users", "", "", airtableBase)
+  }
+
+  getProductionBase = () => {
+    if (!process.env._PRODUCTION_AIRTABLE_BASEID) {
+      throw new Error("_PRODUCTION_AIRTABLE_BASEID not set")
+    }
+    return Airtable.base(process.env._PRODUCTION_AIRTABLE_BASEID)
+  }
+
+  getStagingBase = () => {
+    if (!process.env._STAGING_AIRTABLE_BASEID) {
+      throw new Error("_STAGING_AIRTABLE_BASEID not set")
+    }
+    return Airtable.base(process.env._STAGING_AIRTABLE_BASEID)
   }
 
   getCorrespondingAirtablePhysicalProduct(
@@ -208,13 +265,14 @@ export class AirtableService {
       //@ts-ignore
       prod => prod.model.slug === prismaProductVariant.product.slug
     )
-    const candidateProductVariants = allAirtableProductVariants.filter(prodVar =>
-      correspondingAirtableProduct.model.productVariant.includes(prodVar.id)
+    const candidateProductVariants = allAirtableProductVariants.filter(
+      prodVar =>
+        correspondingAirtableProduct.model.productVariant.includes(prodVar.id)
     )
     const correspondingAirtableProductVariant = candidateProductVariants.find(
       prodVar => prodVar.model.size === prismaProductVariant.size
     )
-  
+
     return correspondingAirtableProductVariant
   }
 
