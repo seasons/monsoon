@@ -40,9 +40,6 @@ secondaryColor {
 functions {
   id
 }
-variants {
-  id
-}
 `
 
 const brandFields = `
@@ -89,6 +86,7 @@ const queries = {
   {
     products(orderBy: id_ASC) {
       ${productScalarFields}
+      ${productObjectFields}
     }
   }
   `,
