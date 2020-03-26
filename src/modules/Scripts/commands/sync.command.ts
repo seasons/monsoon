@@ -1,15 +1,41 @@
 import { Injectable } from "@nestjs/common"
 import fs from "fs"
 import { Command, Positional } from "nestjs-command"
+import { AirtableSyncService } from "../../Sync/services/sync.airtable.service"
 import { PrismaSyncService } from "../../Sync/services/sync.prisma.service"
 import { ScriptsService } from "../services/scripts.service"
 
 @Injectable()
 export class SyncCommands {
   constructor(
+    private readonly airtableSyncService: AirtableSyncService,
     private readonly prismaSyncService: PrismaSyncService,
     private readonly scriptsService: ScriptsService
   ) {}
+
+  @Command({
+    command: "sync:airtable:airtable",
+    describe: "sync airtable production to staging",
+  })
+  async syncAirtableToAirtable() {
+    const envFilePath = await this.scriptsService.downloadFromS3(
+      "/tmp/__monsoon__env.json",
+      "monsoon-scripts",
+      "env.json"
+    )
+    try {
+      const env = this.scriptsService.readJSONObjectFromFile(envFilePath)
+      process.env._PRODUCTION_AIRTABLE_BASEID =
+        env.airtable["production"].baseID
+      process.env._STAGING_AIRTABLE_BASEID = env.airtable["staging"].baseID
+      await this.airtableSyncService.syncAirtableToAirtable()
+    } catch (err) {
+      console.log(err)
+    } finally {
+      // delete the env file
+      fs.unlinkSync(envFilePath)
+    }
+  }
 
   @Command({
     command: "sync:prisma:prisma <destination>",
