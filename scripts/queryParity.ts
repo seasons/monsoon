@@ -144,6 +144,14 @@ const queries = {
       }
     }
     `,
+  productFunctions: `
+    {
+      productFunctions {
+        id
+        name
+      }
+    }
+    `,
 }
 const oURL = "https://monsoon-staging.herokuapp.com"
 const nURL = "https://monsoon-nest-staging.herokuapp.com"
