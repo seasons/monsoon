@@ -1,7 +1,7 @@
 import { request } from "graphql-request"
 import expect from "expect"
 
-const productScalarFields = `
+const productFields = `
 id
 slug
 name
@@ -18,9 +18,6 @@ status
 isSaved
 createdAt
 updatedAt
-`
-
-const productObjectFields = `
 brand {
   id
 }
@@ -60,33 +57,71 @@ websiteUrl
 createdAt
 updatedAt
 `
+
+const productVariantFields = `
+id
+sku
+color {
+  id
+}
+size
+internalSize {
+  id
+}
+manufacturerSizes {
+  id
+}
+weight
+height
+productID
+product {
+  id
+}
+retailPrice
+physicalProducts {
+  id
+}
+total
+reservable
+reserved
+nonReservable
+isSaved
+isWanted
+createdAt
+updatedAt
+`
 const queries = {
-  brand: `
+  // brand: `
+  // {
+  //   brand(where: {brandCode: "CAVE"}) {
+  //     ${brandFields}
+  //   }
+  // }
+  // `,
+  // brands: `
+  // {
+  //   brands(orderBy: id_ASC) {
+  //     ${brandFields}
+  //   }
+  // }`,
+  // product: `
+  // {
+  //   product(where: {id: "ck7yztt6j01mh07249657q5mm"}) {
+  //     ${productFields}
+  //   }
+  // }
+  // `,
+  // products: `
+  // {
+  //   products(orderBy: id_ASC) {
+  //     ${productFields}
+  //   }
+  // }
+  // `,
+  productVariant: `
   {
-    brand(where: {brandCode: "CAVE"}) {
-      ${brandFields}
-    }
-  }
-  `,
-  brands: `
-  {
-    brands(orderBy: id_ASC) {
-      ${brandFields}
-    }
-  }`,
-  product: `
-  {
-    product(where: {id: "ck7yztt6j01mh07249657q5mm"}) {
-      ${productScalarFields}      
-      ${productObjectFields}
-    }
-  }
-  `,
-  products: `
-  {
-    products(orderBy: id_ASC) {
-      ${productScalarFields}
-      ${productObjectFields}
+    productVariant(where: {id: "ck7z02bis0erv0724lp10lyop"}) {
+      ${productVariantFields}
     }
   }
   `,
@@ -97,6 +132,7 @@ const nURL = "https://monsoon-nest-staging.herokuapp.com"
 const run = async () => {
   let didError = false
   for (const key of Object.keys(queries)) {
+    console.log(queries[key])
     const oResult = await request(oURL, queries[key])
     const nResult = await request(nURL, queries[key])
     try {
