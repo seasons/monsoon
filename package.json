@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "author": "Luc Succes <l2succes@gmail.com>",
   "license": "MIT",
-  "bin": "bin/sync.js",
+  "bin": "bin/cli.ts",
   "main": "dist/index.js",
   "engines": {
     "node": "10.x.x"
@@ -92,6 +92,7 @@
     "jwks-rsa": "^1.6.0",
     "lodash": "^4.17.15",
     "luxon": "^1.22.0",
+    "nestjs-command": "^1.3.0",
     "nodemailer": "^6.4.2",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
@@ -122,6 +123,7 @@
     "@types/jest": "^24.0.24",
     "@types/luxon": "^1.21.0",
     "@types/node": "10.14.17",
+    "@types/yargs": "^15.0.4",
     "apollo-server-testing": "^2.9.16",
     "babel-jest": "^24.9.0",
     "dotenv-cli": "1.4.0",
