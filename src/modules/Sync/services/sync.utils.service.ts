@@ -1,4 +1,5 @@
 import { Injectable } from "@nestjs/common"
+import cliProgress from "cli-progress"
 import { AirtableData, AirtableModelName } from "../../Airtable/airtable.types"
 import { AirtableService } from "../../Airtable/services/airtable.service"
 import { UtilsService } from "../../Utils/utils.service"
@@ -74,12 +75,21 @@ export class SyncUtilsService {
     }
   }
 
-  createSubBar = async (multibar, modelName: AirtableModelName) => {
+  async createSubBar(
+    multibar: any,
+    modelName: AirtableModelName,
+    numRecords?: number,
+    numRecordsModifier?: (num: number) => number
+  ) {
+    const _numRecords =
+      !!numRecordsModifier && !!numRecords
+        ? numRecordsModifier(numRecords)
+        : numRecords
     return multibar.create(
-      await this.getNumReadWritesToSyncModel(modelName),
+      _numRecords || (await this.airtableService.getNumRecords(modelName)),
       0,
       {
-        modelName: `${modelName}:`.padEnd(
+        modelName: `${modelName}`.padEnd(
           "Homepage Product Rails".length + 1,
           " "
         ),
@@ -135,6 +145,39 @@ export class SyncUtilsService {
         getTargetRecordIdentifer,
       })
     }
+  }
+
+  makeAirtableSyncCliProgressBar() {
+    return new cliProgress.MultiBar(
+      {
+        clearOnComplete: false,
+        hideCursor: true,
+        format: `{modelName} {bar} {percentage}%  ETA: {eta}s  {value}/{total} records`,
+      },
+      cliProgress.Presets.shades_grey
+    )
+  }
+
+  async makeSingleSyncFuncMultiBarAndProgressBarIfNeeded({
+    cliProgressBar,
+    numRecords,
+    modelName,
+  }: {
+    cliProgressBar?: any
+    numRecords: number
+    modelName: AirtableModelName
+  }) {
+    let multibar
+    let _cliProgressBar = cliProgressBar
+    if (!_cliProgressBar) {
+      multibar = this.makeAirtableSyncCliProgressBar()
+      _cliProgressBar = await createSubBar({
+        multibar,
+        modelName,
+        numRecords,
+      })
+    }
+    return [multibar, _cliProgressBar]
   }
 
   sanitizeAttachments = attachments =>

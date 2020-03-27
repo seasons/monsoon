@@ -1,13 +1,13 @@
-import { Command, Option } from 'nestjs-command';
-import { Injectable, Logger } from '@nestjs/common';
-import { ScriptsService } from '../services/scripts.service';
-import { PrismaService } from '../../../prisma/prisma.service';
-import { AuthService } from '../../User/services/auth.service';
-import faker from 'faker';
-import { head } from 'lodash';
- 
+import { Injectable, Logger } from "@nestjs/common"
+import faker from "faker"
+import { head } from "lodash"
+import { Command, Option } from "nestjs-command"
+import { PrismaService } from "../../../prisma/prisma.service"
+import { AuthService } from "../../User/services/auth.service"
+import { ScriptsService } from "../services/scripts.service"
+
 @Injectable()
-export class UserCommands { 
+export class UserCommands {
   private readonly logger = new Logger(UserCommands.name)
 
   constructor(
@@ -17,28 +17,33 @@ export class UserCommands {
   ) {}
 
   @Command({
-    command: 'create:test-user',
-    describe: 'creates a test user with the given email and password',
+    command: "create:test-user",
+    describe: "creates a test user with the given email and password",
   })
   async create(
     @Option({
-      name: 'e',
-      describe: 'Prisma environment on which to create the test user',
-      choices: ['local', 'staging'],
-      type: 'string'
-    }) e,
+      name: "e",
+      describe: "Prisma environment on which to create the test user",
+      choices: ["local", "staging"],
+      type: "string",
+    })
+    e,
     @Option({
-      name: 'email',
-      describe: 'Email of the test user',
-      type: 'string'
-    }) email,
+      name: "email",
+      describe: "Email of the test user",
+      type: "string",
+    })
+    email,
     @Option({
-      name: 'password',
-      describe: 'Password of the test user',
-      type: 'string'
-    }) password
+      name: "password",
+      describe: "Password of the test user",
+      type: "string",
+    })
+    password
   ) {
-    await this.scriptsService.overrideEnvFromRemoteConfig(e)
+    await this.scriptsService.overrideEnvFromRemoteConfig({
+      prismaEnvironment: e,
+    })
 
     const firstName = faker.name.firstName()
     const lastName = faker.name.lastName()

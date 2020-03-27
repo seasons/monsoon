@@ -1,4 +1,6 @@
 import { Injectable } from "@nestjs/common"
+import { isEmpty } from "lodash"
+import { PrismaService } from "../../../prisma/prisma.service"
 import { AirtableData } from "../../Airtable/airtable.types"
 import { AirtableService } from "../../Airtable/services/airtable.service"
 import { SyncUtilsService } from "./sync.utils.service"
@@ -9,6 +11,7 @@ import { SyncProductVariantsService } from "./syncProductVariants.service"
 export class SyncPhysicalProductsService {
   constructor(
     private readonly airtableService: AirtableService,
+    private readonly prisma: PrismaService,
     private readonly syncProductsService: SyncProductsService,
     private readonly syncProductVariantsService: SyncProductVariantsService,
     private readonly syncUtils: SyncUtilsService
@@ -65,6 +68,61 @@ export class SyncPhysicalProductsService {
       allPhysicalProductsStaging,
       cliProgressBar
     )
+  }
+
+  async syncAirtableToPrisma(cliProgressBar?) {
+    const allProductVariants = await this.airtableService.getAllProductVariants()
+    const allPhysicalProducts = await this.airtableService.getAllPhysicalProducts()
+
+    const [
+      multibar,
+      _cliProgressBar,
+    ] = await this.syncUtils.makeSingleSyncFuncMultiBarAndProgressBarIfNeeded({
+      cliProgressBar,
+      numRecords: allPhysicalProducts.length,
+      modelName: "Physical Products",
+    })
+
+    for (const record of allPhysicalProducts) {
+      _cliProgressBar.increment()
+
+      try {
+        const { model } = record
+
+        const productVariant = allProductVariants.findByIds(
+          model.productVariant
+        )
+
+        if (isEmpty(model)) {
+          continue
+        }
+
+        const { sUID, inventoryStatus, productStatus } = model
+
+        const data = {
+          productVariant: {
+            connect: {
+              sku: productVariant.model.sKU,
+            },
+          },
+          seasonsUID: sUID.text,
+          inventoryStatus: inventoryStatus.replace(" ", ""),
+          productStatus,
+        }
+
+        await this.prisma.client.upsertPhysicalProduct({
+          where: {
+            seasonsUID: sUID.text,
+          },
+          create: data,
+          update: data,
+        })
+      } catch (e) {
+        console.error(e)
+      }
+    }
+
+    multibar?.stop()
   }
 
   private async addProductLinks(

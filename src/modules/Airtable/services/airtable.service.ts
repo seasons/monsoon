@@ -15,6 +15,7 @@ import {
 import {
   AirtableData,
   AirtableInventoryStatus,
+  AirtableModelName,
   AirtableProductVariantCounts,
 } from "../airtable.types"
 import { AirtableBaseService } from "./airtable.base.service"
@@ -173,6 +174,12 @@ export class AirtableService {
       })
   }
 
+  async createPhysicalProducts(newPhysicalProducts) {
+    await this.airtableBase
+      .base("Physical Products")
+      .create(newPhysicalProducts)
+  }
+
   async getAllBottomSizes(airtableBase?) {
     return this.getAll("Bottom Sizes", "", "", airtableBase)
   }
@@ -183,6 +190,10 @@ export class AirtableService {
 
   async getAllCategories(airtableBase?) {
     return this.getAll("Categories", "", "", airtableBase)
+  }
+
+  async getAllCollectionGroups(airtableBase?) {
+    return this.getAll("Collection Groups", "", "", airtableBase)
   }
 
   async getAllCollections(airtableBase?) {
@@ -231,6 +242,10 @@ export class AirtableService {
 
   async getAllUsers(airtableBase?) {
     return this.getAll("Users", "", "", airtableBase)
+  }
+
+  async getNumRecords(modelName: AirtableModelName) {
+    return (await this.getAll(modelName, "", ""))?.length
   }
 
   getProductionBase = () => {
