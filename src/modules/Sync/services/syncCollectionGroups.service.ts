@@ -3,32 +3,20 @@ import { isEmpty } from "lodash"
 import slugify from "slugify"
 import { PrismaService } from "../../../prisma/prisma.service"
 import { AirtableService } from "../../Airtable/services/airtable.service"
+import { UtilsService } from "../../Utils/utils.service"
 import { SyncUtilsService } from "./sync.utils.service"
 
 @Injectable()
-export class SyncColorsService {
+export class SyncCollectionGroupsService {
   constructor(
     private readonly airtableService: AirtableService,
     private readonly prisma: PrismaService,
-    private readonly syncUtils: SyncUtilsService
+    private readonly syncUtils: SyncUtilsService,
+    private readonly utils: UtilsService
   ) {}
-
-  getNumLinksColors = () => 0
-
-  async syncAirtableToAirtable(cliProgressBar?) {
-    await this.syncUtils.deleteAllStagingRecords("Colors", cliProgressBar)
-    await this.syncUtils.createAllStagingRecordsWithoutLinks({
-      modelName: "Colors",
-      allProductionRecords: await this.airtableService.getAllColors(
-        this.airtableService.getProductionBase()
-      ),
-      sanitizeFunc: fields => fields,
-      cliProgressBar,
-    })
-  }
-
   async syncAirtableToPrisma(cliProgressBar?) {
-    const records = await this.airtableService.getAllColors()
+    const records = await this.airtableService.getAllCollectionGroups()
+    const allCollections = await this.airtableService.getAllCollections()
 
     const [
       multibar,
@@ -36,30 +24,35 @@ export class SyncColorsService {
     ] = await this.syncUtils.makeSingleSyncFuncMultiBarAndProgressBarIfNeeded({
       cliProgressBar,
       numRecords: records.length,
-      modelName: "Colors",
+      modelName: "Collection Groups",
     })
 
     for (const record of records) {
+      _cliProgressBar.increment()
+
       try {
-        _cliProgressBar.increment()
-
         const { model } = record
-        const { name, colorCode, rGB } = model
+        const collections = allCollections.findMultipleByIds(model.collections)
+        const { title } = model
 
-        if (isEmpty(model) || isEmpty(name)) {
+        if (isEmpty(title)) {
           continue
         }
 
-        const slug = slugify(name).toLowerCase()
+        const slug = slugify(title).toLowerCase()
 
         const data = {
-          colorCode,
-          hexCode: rGB,
-          name,
+          collections: {
+            connect: collections.map(collection => {
+              return { slug: collection.model.slug }
+            }),
+          },
+          collectionCount: collections.length,
+          title,
           slug,
         }
 
-        await this.prisma.client.upsertColor({
+        await this.prisma.client.upsertCollectionGroup({
           where: {
             slug,
           },
@@ -74,6 +67,7 @@ export class SyncColorsService {
         console.error(e)
       }
     }
+
     multibar?.stop()
   }
 }

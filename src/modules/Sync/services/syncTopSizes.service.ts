@@ -64,6 +64,6 @@ export class SyncTopSizesService {
     })
   }
 
-  private getTopSizeRecordIdentifier = rec =>
+  getTopSizeRecordIdentifier = rec =>
     `${rec.fields.Name}${rec.fields.Length}${rec.fields.Sleeve}${rec.fields.Shoulder}${rec.fields.Chest}${rec.fields.Neck}`
 }

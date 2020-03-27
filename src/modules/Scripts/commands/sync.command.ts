@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common"
 import fs from "fs"
-import { Command, Positional } from "nestjs-command"
+import { Command, Option, Positional } from "nestjs-command"
+import readlineSync from "readline-sync"
 import { AirtableSyncService } from "../../Sync/services/sync.airtable.service"
 import { PrismaSyncService } from "../../Sync/services/sync.prisma.service"
 import { ScriptsService } from "../services/scripts.service"
@@ -35,6 +36,66 @@ export class SyncCommands {
       // delete the env file
       fs.unlinkSync(envFilePath)
     }
+  }
+
+  @Command({
+    command: "sync:airtable:prisma <table>",
+    describe: "sync airtable data to prisma",
+  })
+  async syncAirtableToPrisma(
+    @Positional({
+      name: "table",
+      type: "string",
+      describe: "Name of the airtable base to sync",
+      choices: [
+        "all",
+        "brands",
+        "categories",
+        "products",
+        "product-variants",
+        "collections",
+        "collection-groups",
+        "homepage-product-rails",
+      ],
+    })
+    table,
+    @Option({
+      name: "prisma",
+      alias: "pe",
+      default: "staging",
+      describe: "Prisma environment to sync to",
+      choices: ["local", "staging", "production"],
+      type: "string",
+    })
+    pe,
+    @Option({
+      name: "airtable",
+      alias: "ae",
+      default: "staging",
+      describe: "Airtable base to sync from",
+      choices: ["production", "staging"],
+      type: "string",
+    })
+    ae
+  ) {
+    await this.scriptsService.overrideEnvFromRemoteConfig({
+      prismaEnvironment: pe,
+      airtableEnvironment: ae,
+    })
+
+    const shouldProceed = readlineSync.keyInYN(
+      `You are about sync ${
+        table === "all" ? "all the tables" : "the " + table
+      } from airtable with baseID ${
+        process.env.AIRTABLE_DATABASE_ID
+      } to prisma at url ${process.env.PRISMA_ENDPOINT}\n. Proceed? (y/n)`
+    )
+    if (!shouldProceed) {
+      console.log("\nExited without running anything\n")
+      return
+    }
+
+    await this.airtableSyncService.syncAirtableToPrisma(table)
   }
 
   @Command({

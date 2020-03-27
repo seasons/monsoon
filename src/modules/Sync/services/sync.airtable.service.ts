@@ -1,9 +1,10 @@
 import { Injectable } from "@nestjs/common"
-import cliProgress from "cli-progress"
 import { SyncUtilsService } from "./sync.utils.service"
 import { SyncBottomSizesService } from "./syncBottomSizes.service"
 import { SyncBrandsService } from "./syncBrands.service"
 import { SyncCategoriesService } from "./syncCategories.service"
+import { SyncCollectionGroupsService } from "./syncCollectionGroups.service"
+import { SyncCollectionsService } from "./syncCollections.service"
 import { SyncColorsService } from "./syncColors.service"
 import { SyncHomepageProductRailsService } from "./syncHomepageProductRails.service"
 import { SyncLocationsService } from "./syncLocations.service"
@@ -22,6 +23,8 @@ export class AirtableSyncService {
     private readonly syncBottomSizesService: SyncBottomSizesService,
     private readonly syncBrandsService: SyncBrandsService,
     private readonly syncCategoriesService: SyncCategoriesService,
+    private readonly syncCollectionGroupsService: SyncCollectionGroupsService,
+    private readonly syncCollectionsService: SyncCollectionsService,
     private readonly syncColorsService: SyncColorsService,
     private readonly syncHomepageProductRailsService: SyncHomepageProductRailsService,
     private readonly syncLocationsService: SyncLocationsService,
@@ -41,14 +44,7 @@ export class AirtableSyncService {
     console.log(
       `\nNote: If you encounter errors, it's probably a field configuration issue on the destination base\n`
     )
-    const multibar = new cliProgress.MultiBar(
-      {
-        clearOnComplete: false,
-        hideCursor: true,
-        format: `{modelName} {bar} {percentage}%  ETA: {eta}s  {value}/{total} ops`,
-      },
-      cliProgress.Presets.shades_grey
-    )
+    const multibar = this.syncUtils.makeAirtableSyncCliProgressBar()
     const bars = {
       colors: await this.syncUtils.createSubBar(multibar, "Colors"),
       brands: await this.syncUtils.createSubBar(multibar, "Brands"),
@@ -99,6 +95,88 @@ export class AirtableSyncService {
       await this.syncUsersService.syncAirtableToAirtable(bars.users)
     } catch (err) {
       console.log(err)
+    } finally {
+      multibar.stop()
+    }
+  }
+
+  async syncAirtableToPrisma(table) {
+    switch (table) {
+      case "all":
+        return await this.syncAll()
+      case "brands":
+        return await this.syncBrandsService.syncAirtableToPrisma()
+      case "categories":
+        return await this.syncCategoriesService.syncAirtableToPrisma()
+      case "products":
+        return await this.syncProductsService.syncAirtableToPrisma()
+      case "product-variants":
+        await this.syncProductsService.syncAirtableToPrisma()
+        return await this.syncProductVariantsService.syncAirtableToPrisma()
+      case "collections":
+        return await this.syncCollectionsService.syncAirtableToPrisma()
+      case "collection-groups":
+        return await this.syncCollectionGroupsService.syncAirtableToPrisma()
+      case "homepage-product-rails":
+        return await this.syncHomepageProductRailsService.syncAirtableToPrisma()
+      default:
+        throw new Error("invalid table name")
+    }
+  }
+
+  private async syncAll() {
+    const multibar = this.syncUtils.makeAirtableSyncCliProgressBar()
+
+    const bars = {
+      brands: await this.syncUtils.createSubBar(multibar, "Brands"),
+      categories: await this.syncUtils.createSubBar(
+        multibar,
+        "Categories",
+        null,
+        n => n * 2
+      ),
+      colors: await this.syncUtils.createSubBar(multibar, "Colors"),
+      products: await this.syncUtils.createSubBar(multibar, "Products"),
+      productVariants: await this.syncUtils.createSubBar(
+        multibar,
+        "Product Variants"
+      ),
+      physicalProducts: await this.syncUtils.createSubBar(
+        multibar,
+        "Physical Products"
+      ),
+      collections: await this.syncUtils.createSubBar(multibar, "Collections"),
+      collectionGroups: await this.syncUtils.createSubBar(
+        multibar,
+        "Collection Groups"
+      ),
+      homepageProductRails: await this.syncUtils.createSubBar(
+        multibar,
+        "Homepage Product Rails"
+      ),
+    }
+
+    // ignore locations because of complications with slugs. plus, we dont really use them yet.
+    try {
+      await this.syncBrandsService.syncAirtableToPrisma(bars.brands)
+      await this.syncCategoriesService.syncAirtableToPrisma(bars.categories)
+      await this.syncColorsService.syncAirtableToPrisma(bars.colors)
+      await this.syncProductsService.syncAirtableToPrisma(bars.products)
+      await this.syncProductVariantsService.syncAirtableToPrisma(
+        bars.productVariants
+      )
+      await this.syncPhysicalProductsService.syncAirtableToPrisma(
+        bars.physicalProducts
+      )
+      await this.syncCollectionsService.syncAirtableToPrisma(bars.collections)
+      await this.syncCollectionGroupsService.syncAirtableToPrisma(
+        bars.collectionGroups
+      )
+      await this.syncHomepageProductRailsService.syncAirtableToPrisma(
+        bars.homepageProductRails
+      )
+    } catch (e) {
+      console.log(e)
     } finally {
       multibar.stop()
     }
