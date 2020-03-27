@@ -28,8 +28,8 @@ export class ProductMutationsResolver {
   }
 
   @Mutation()
-  async deleteProductRequest(@Args() { requestId }) {
-    return await this.productRequestService.deleteProductRequest(requestId)
+  async deleteProductRequest(@Args() { requestID }) {
+    return await this.productRequestService.deleteProductRequest(requestID)
   }
 
   @Mutation()

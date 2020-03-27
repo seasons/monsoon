@@ -1,17 +1,17 @@
 import { Query, Resolver, Args, Info } from "@nestjs/graphql"
-import { DBService } from "../../../prisma/db.service"
+import { PrismaService } from "../../../prisma/prisma.service"
 
 @Resolver()
 export class CollectionGroupQueriesResolver {
-  constructor(private readonly db: DBService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   @Query()
   async collectionGroup(@Args() args, @Info() info) {
-    return await this.db.query.collectionGroup(args, info)
+    return await this.prisma.binding.query.collectionGroup(args, info)
   }
 
   @Query()
   async collectionGroups(@Args() args, @Info() info) {
-    return await this.db.query.collectionGroups(args, info)
+    return await this.prisma.binding.query.collectionGroups(args, info)
   }
 }

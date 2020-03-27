@@ -85,6 +85,14 @@ type AggregateProductVariant {
   count: Int!
 }
 
+type AggregateProductVariantFeedback {
+  count: Int!
+}
+
+type AggregateProductVariantFeedbackQuestion {
+  count: Int!
+}
+
 type AggregateProductVariantWant {
   count: Int!
 }
@@ -94,6 +102,10 @@ type AggregateRecentlyViewedProduct {
 }
 
 type AggregateReservation {
+  count: Int!
+}
+
+type AggregateReservationFeedback {
   count: Int!
 }
 
@@ -6995,6 +7007,9 @@ type Mutation {
   createReservation(data: ReservationCreateInput!): Reservation!
   createProductRequest(data: ProductRequestCreateInput!): ProductRequest!
   createProductVariantWant(data: ProductVariantWantCreateInput!): ProductVariantWant!
+  createReservationFeedback(data: ReservationFeedbackCreateInput!): ReservationFeedback!
+  createProductVariantFeedback(data: ProductVariantFeedbackCreateInput!): ProductVariantFeedback!
+  createProductVariantFeedbackQuestion(data: ProductVariantFeedbackQuestionCreateInput!): ProductVariantFeedbackQuestion!
   createCollection(data: CollectionCreateInput!): Collection!
   createCategory(data: CategoryCreateInput!): Category!
   createCustomerDetail(data: CustomerDetailCreateInput!): CustomerDetail!
@@ -7021,6 +7036,9 @@ type Mutation {
   updateReservation(data: ReservationUpdateInput!, where: ReservationWhereUniqueInput!): Reservation
   updateProductRequest(data: ProductRequestUpdateInput!, where: ProductRequestWhereUniqueInput!): ProductRequest
   updateProductVariantWant(data: ProductVariantWantUpdateInput!, where: ProductVariantWantWhereUniqueInput!): ProductVariantWant
+  updateReservationFeedback(data: ReservationFeedbackUpdateInput!, where: ReservationFeedbackWhereUniqueInput!): ReservationFeedback
+  updateProductVariantFeedback(data: ProductVariantFeedbackUpdateInput!, where: ProductVariantFeedbackWhereUniqueInput!): ProductVariantFeedback
+  updateProductVariantFeedbackQuestion(data: ProductVariantFeedbackQuestionUpdateInput!, where: ProductVariantFeedbackQuestionWhereUniqueInput!): ProductVariantFeedbackQuestion
   updateCollection(data: CollectionUpdateInput!, where: CollectionWhereUniqueInput!): Collection
   updateCategory(data: CategoryUpdateInput!, where: CategoryWhereUniqueInput!): Category
   updateCustomerDetail(data: CustomerDetailUpdateInput!, where: CustomerDetailWhereUniqueInput!): CustomerDetail
@@ -7048,6 +7066,9 @@ type Mutation {
   deleteReservation(where: ReservationWhereUniqueInput!): Reservation
   deleteProductRequest(where: ProductRequestWhereUniqueInput!): ProductRequest
   deleteProductVariantWant(where: ProductVariantWantWhereUniqueInput!): ProductVariantWant
+  deleteReservationFeedback(where: ReservationFeedbackWhereUniqueInput!): ReservationFeedback
+  deleteProductVariantFeedback(where: ProductVariantFeedbackWhereUniqueInput!): ProductVariantFeedback
+  deleteProductVariantFeedbackQuestion(where: ProductVariantFeedbackQuestionWhereUniqueInput!): ProductVariantFeedbackQuestion
   deleteCollection(where: CollectionWhereUniqueInput!): Collection
   deleteCategory(where: CategoryWhereUniqueInput!): Category
   deleteCustomerDetail(where: CustomerDetailWhereUniqueInput!): CustomerDetail
@@ -7074,6 +7095,9 @@ type Mutation {
   upsertReservation(where: ReservationWhereUniqueInput!, create: ReservationCreateInput!, update: ReservationUpdateInput!): Reservation!
   upsertProductRequest(where: ProductRequestWhereUniqueInput!, create: ProductRequestCreateInput!, update: ProductRequestUpdateInput!): ProductRequest!
   upsertProductVariantWant(where: ProductVariantWantWhereUniqueInput!, create: ProductVariantWantCreateInput!, update: ProductVariantWantUpdateInput!): ProductVariantWant!
+  upsertReservationFeedback(where: ReservationFeedbackWhereUniqueInput!, create: ReservationFeedbackCreateInput!, update: ReservationFeedbackUpdateInput!): ReservationFeedback!
+  upsertProductVariantFeedback(where: ProductVariantFeedbackWhereUniqueInput!, create: ProductVariantFeedbackCreateInput!, update: ProductVariantFeedbackUpdateInput!): ProductVariantFeedback!
+  upsertProductVariantFeedbackQuestion(where: ProductVariantFeedbackQuestionWhereUniqueInput!, create: ProductVariantFeedbackQuestionCreateInput!, update: ProductVariantFeedbackQuestionUpdateInput!): ProductVariantFeedbackQuestion!
   upsertCollection(where: CollectionWhereUniqueInput!, create: CollectionCreateInput!, update: CollectionUpdateInput!): Collection!
   upsertCategory(where: CategoryWhereUniqueInput!, create: CategoryCreateInput!, update: CategoryUpdateInput!): Category!
   upsertCustomerDetail(where: CustomerDetailWhereUniqueInput!, create: CustomerDetailCreateInput!, update: CustomerDetailUpdateInput!): CustomerDetail!
@@ -7100,6 +7124,9 @@ type Mutation {
   updateManyReservations(data: ReservationUpdateManyMutationInput!, where: ReservationWhereInput): BatchPayload!
   updateManyProductRequests(data: ProductRequestUpdateManyMutationInput!, where: ProductRequestWhereInput): BatchPayload!
   updateManyProductVariantWants(data: ProductVariantWantUpdateManyMutationInput!, where: ProductVariantWantWhereInput): BatchPayload!
+  updateManyReservationFeedbacks(data: ReservationFeedbackUpdateManyMutationInput!, where: ReservationFeedbackWhereInput): BatchPayload!
+  updateManyProductVariantFeedbacks(data: ProductVariantFeedbackUpdateManyMutationInput!, where: ProductVariantFeedbackWhereInput): BatchPayload!
+  updateManyProductVariantFeedbackQuestions(data: ProductVariantFeedbackQuestionUpdateManyMutationInput!, where: ProductVariantFeedbackQuestionWhereInput): BatchPayload!
   updateManyCollections(data: CollectionUpdateManyMutationInput!, where: CollectionWhereInput): BatchPayload!
   updateManyCategories(data: CategoryUpdateManyMutationInput!, where: CategoryWhereInput): BatchPayload!
   updateManyCustomerDetails(data: CustomerDetailUpdateManyMutationInput!, where: CustomerDetailWhereInput): BatchPayload!
@@ -7127,6 +7154,9 @@ type Mutation {
   deleteManyReservations(where: ReservationWhereInput): BatchPayload!
   deleteManyProductRequests(where: ProductRequestWhereInput): BatchPayload!
   deleteManyProductVariantWants(where: ProductVariantWantWhereInput): BatchPayload!
+  deleteManyReservationFeedbacks(where: ReservationFeedbackWhereInput): BatchPayload!
+  deleteManyProductVariantFeedbacks(where: ProductVariantFeedbackWhereInput): BatchPayload!
+  deleteManyProductVariantFeedbackQuestions(where: ProductVariantFeedbackQuestionWhereInput): BatchPayload!
   deleteManyCollections(where: CollectionWhereInput): BatchPayload!
   deleteManyCategories(where: CategoryWhereInput): BatchPayload!
   deleteManyCustomerDetails(where: CustomerDetailWhereInput): BatchPayload!
@@ -9960,6 +9990,684 @@ type ProductVariantEdge {
   cursor: String!
 }
 
+type ProductVariantFeedback implements Node {
+  id: ID!
+  isCompleted: Boolean!
+  questions(where: ProductVariantFeedbackQuestionWhereInput, orderBy: ProductVariantFeedbackQuestionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariantFeedbackQuestion!]
+  reservationFeedback: ReservationFeedback!
+  variant: ProductVariant!
+}
+
+"""A connection to a list of items."""
+type ProductVariantFeedbackConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [ProductVariantFeedbackEdge]!
+  aggregate: AggregateProductVariantFeedback!
+}
+
+input ProductVariantFeedbackCreateInput {
+  id: ID
+  isCompleted: Boolean!
+  questions: ProductVariantFeedbackQuestionCreateManyWithoutVariantFeedbackInput
+  reservationFeedback: ReservationFeedbackCreateOneWithoutFeedbacksInput!
+  variant: ProductVariantCreateOneInput!
+}
+
+input ProductVariantFeedbackCreateManyWithoutReservationFeedbackInput {
+  create: [ProductVariantFeedbackCreateWithoutReservationFeedbackInput!]
+  connect: [ProductVariantFeedbackWhereUniqueInput!]
+}
+
+input ProductVariantFeedbackCreateOneWithoutQuestionsInput {
+  create: ProductVariantFeedbackCreateWithoutQuestionsInput
+  connect: ProductVariantFeedbackWhereUniqueInput
+}
+
+input ProductVariantFeedbackCreateWithoutQuestionsInput {
+  id: ID
+  isCompleted: Boolean!
+  reservationFeedback: ReservationFeedbackCreateOneWithoutFeedbacksInput!
+  variant: ProductVariantCreateOneInput!
+}
+
+input ProductVariantFeedbackCreateWithoutReservationFeedbackInput {
+  id: ID
+  isCompleted: Boolean!
+  questions: ProductVariantFeedbackQuestionCreateManyWithoutVariantFeedbackInput
+  variant: ProductVariantCreateOneInput!
+}
+
+"""An edge in a connection."""
+type ProductVariantFeedbackEdge {
+  """The item at the end of the edge."""
+  node: ProductVariantFeedback!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum ProductVariantFeedbackOrderByInput {
+  id_ASC
+  id_DESC
+  isCompleted_ASC
+  isCompleted_DESC
+}
+
+type ProductVariantFeedbackPreviousValues {
+  id: ID!
+  isCompleted: Boolean!
+}
+
+type ProductVariantFeedbackQuestion implements Node {
+  id: ID!
+  options: [String!]!
+  question: String!
+  responses: [String!]!
+  type: QuestionType!
+  variantFeedback: ProductVariantFeedback!
+}
+
+"""A connection to a list of items."""
+type ProductVariantFeedbackQuestionConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [ProductVariantFeedbackQuestionEdge]!
+  aggregate: AggregateProductVariantFeedbackQuestion!
+}
+
+input ProductVariantFeedbackQuestionCreateInput {
+  id: ID
+  question: String!
+  type: QuestionType!
+  options: ProductVariantFeedbackQuestionCreateoptionsInput
+  responses: ProductVariantFeedbackQuestionCreateresponsesInput
+  variantFeedback: ProductVariantFeedbackCreateOneWithoutQuestionsInput!
+}
+
+input ProductVariantFeedbackQuestionCreateManyWithoutVariantFeedbackInput {
+  create: [ProductVariantFeedbackQuestionCreateWithoutVariantFeedbackInput!]
+  connect: [ProductVariantFeedbackQuestionWhereUniqueInput!]
+}
+
+input ProductVariantFeedbackQuestionCreateoptionsInput {
+  set: [String!]
+}
+
+input ProductVariantFeedbackQuestionCreateresponsesInput {
+  set: [String!]
+}
+
+input ProductVariantFeedbackQuestionCreateWithoutVariantFeedbackInput {
+  id: ID
+  question: String!
+  type: QuestionType!
+  options: ProductVariantFeedbackQuestionCreateoptionsInput
+  responses: ProductVariantFeedbackQuestionCreateresponsesInput
+}
+
+"""An edge in a connection."""
+type ProductVariantFeedbackQuestionEdge {
+  """The item at the end of the edge."""
+  node: ProductVariantFeedbackQuestion!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum ProductVariantFeedbackQuestionOrderByInput {
+  id_ASC
+  id_DESC
+  question_ASC
+  question_DESC
+  type_ASC
+  type_DESC
+}
+
+type ProductVariantFeedbackQuestionPreviousValues {
+  id: ID!
+  options: [String!]!
+  question: String!
+  responses: [String!]!
+  type: QuestionType!
+}
+
+input ProductVariantFeedbackQuestionScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ProductVariantFeedbackQuestionScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ProductVariantFeedbackQuestionScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ProductVariantFeedbackQuestionScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  question: String
+
+  """All values that are not equal to given value."""
+  question_not: String
+
+  """All values that are contained in given list."""
+  question_in: [String!]
+
+  """All values that are not contained in given list."""
+  question_not_in: [String!]
+
+  """All values less than the given value."""
+  question_lt: String
+
+  """All values less than or equal the given value."""
+  question_lte: String
+
+  """All values greater than the given value."""
+  question_gt: String
+
+  """All values greater than or equal the given value."""
+  question_gte: String
+
+  """All values containing the given string."""
+  question_contains: String
+
+  """All values not containing the given string."""
+  question_not_contains: String
+
+  """All values starting with the given string."""
+  question_starts_with: String
+
+  """All values not starting with the given string."""
+  question_not_starts_with: String
+
+  """All values ending with the given string."""
+  question_ends_with: String
+
+  """All values not ending with the given string."""
+  question_not_ends_with: String
+  type: QuestionType
+
+  """All values that are not equal to given value."""
+  type_not: QuestionType
+
+  """All values that are contained in given list."""
+  type_in: [QuestionType!]
+
+  """All values that are not contained in given list."""
+  type_not_in: [QuestionType!]
+}
+
+type ProductVariantFeedbackQuestionSubscriptionPayload {
+  mutation: MutationType!
+  node: ProductVariantFeedbackQuestion
+  updatedFields: [String!]
+  previousValues: ProductVariantFeedbackQuestionPreviousValues
+}
+
+input ProductVariantFeedbackQuestionSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ProductVariantFeedbackQuestionSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ProductVariantFeedbackQuestionSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ProductVariantFeedbackQuestionSubscriptionWhereInput!]
+
+  """The subscription event gets dispatched when it's listed in mutation_in"""
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: ProductVariantFeedbackQuestionWhereInput
+}
+
+input ProductVariantFeedbackQuestionUpdateInput {
+  question: String
+  type: QuestionType
+  options: ProductVariantFeedbackQuestionUpdateoptionsInput
+  responses: ProductVariantFeedbackQuestionUpdateresponsesInput
+  variantFeedback: ProductVariantFeedbackUpdateOneRequiredWithoutQuestionsInput
+}
+
+input ProductVariantFeedbackQuestionUpdateManyDataInput {
+  question: String
+  type: QuestionType
+  options: ProductVariantFeedbackQuestionUpdateoptionsInput
+  responses: ProductVariantFeedbackQuestionUpdateresponsesInput
+}
+
+input ProductVariantFeedbackQuestionUpdateManyMutationInput {
+  question: String
+  type: QuestionType
+  options: ProductVariantFeedbackQuestionUpdateoptionsInput
+  responses: ProductVariantFeedbackQuestionUpdateresponsesInput
+}
+
+input ProductVariantFeedbackQuestionUpdateManyWithoutVariantFeedbackInput {
+  create: [ProductVariantFeedbackQuestionCreateWithoutVariantFeedbackInput!]
+  connect: [ProductVariantFeedbackQuestionWhereUniqueInput!]
+  set: [ProductVariantFeedbackQuestionWhereUniqueInput!]
+  disconnect: [ProductVariantFeedbackQuestionWhereUniqueInput!]
+  delete: [ProductVariantFeedbackQuestionWhereUniqueInput!]
+  update: [ProductVariantFeedbackQuestionUpdateWithWhereUniqueWithoutVariantFeedbackInput!]
+  updateMany: [ProductVariantFeedbackQuestionUpdateManyWithWhereNestedInput!]
+  deleteMany: [ProductVariantFeedbackQuestionScalarWhereInput!]
+  upsert: [ProductVariantFeedbackQuestionUpsertWithWhereUniqueWithoutVariantFeedbackInput!]
+}
+
+input ProductVariantFeedbackQuestionUpdateManyWithWhereNestedInput {
+  where: ProductVariantFeedbackQuestionScalarWhereInput!
+  data: ProductVariantFeedbackQuestionUpdateManyDataInput!
+}
+
+input ProductVariantFeedbackQuestionUpdateoptionsInput {
+  set: [String!]
+}
+
+input ProductVariantFeedbackQuestionUpdateresponsesInput {
+  set: [String!]
+}
+
+input ProductVariantFeedbackQuestionUpdateWithoutVariantFeedbackDataInput {
+  question: String
+  type: QuestionType
+  options: ProductVariantFeedbackQuestionUpdateoptionsInput
+  responses: ProductVariantFeedbackQuestionUpdateresponsesInput
+}
+
+input ProductVariantFeedbackQuestionUpdateWithWhereUniqueWithoutVariantFeedbackInput {
+  where: ProductVariantFeedbackQuestionWhereUniqueInput!
+  data: ProductVariantFeedbackQuestionUpdateWithoutVariantFeedbackDataInput!
+}
+
+input ProductVariantFeedbackQuestionUpsertWithWhereUniqueWithoutVariantFeedbackInput {
+  where: ProductVariantFeedbackQuestionWhereUniqueInput!
+  update: ProductVariantFeedbackQuestionUpdateWithoutVariantFeedbackDataInput!
+  create: ProductVariantFeedbackQuestionCreateWithoutVariantFeedbackInput!
+}
+
+input ProductVariantFeedbackQuestionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ProductVariantFeedbackQuestionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ProductVariantFeedbackQuestionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ProductVariantFeedbackQuestionWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  question: String
+
+  """All values that are not equal to given value."""
+  question_not: String
+
+  """All values that are contained in given list."""
+  question_in: [String!]
+
+  """All values that are not contained in given list."""
+  question_not_in: [String!]
+
+  """All values less than the given value."""
+  question_lt: String
+
+  """All values less than or equal the given value."""
+  question_lte: String
+
+  """All values greater than the given value."""
+  question_gt: String
+
+  """All values greater than or equal the given value."""
+  question_gte: String
+
+  """All values containing the given string."""
+  question_contains: String
+
+  """All values not containing the given string."""
+  question_not_contains: String
+
+  """All values starting with the given string."""
+  question_starts_with: String
+
+  """All values not starting with the given string."""
+  question_not_starts_with: String
+
+  """All values ending with the given string."""
+  question_ends_with: String
+
+  """All values not ending with the given string."""
+  question_not_ends_with: String
+  type: QuestionType
+
+  """All values that are not equal to given value."""
+  type_not: QuestionType
+
+  """All values that are contained in given list."""
+  type_in: [QuestionType!]
+
+  """All values that are not contained in given list."""
+  type_not_in: [QuestionType!]
+  variantFeedback: ProductVariantFeedbackWhereInput
+}
+
+input ProductVariantFeedbackQuestionWhereUniqueInput {
+  id: ID
+}
+
+input ProductVariantFeedbackScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ProductVariantFeedbackScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ProductVariantFeedbackScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ProductVariantFeedbackScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  isCompleted: Boolean
+
+  """All values that are not equal to given value."""
+  isCompleted_not: Boolean
+}
+
+type ProductVariantFeedbackSubscriptionPayload {
+  mutation: MutationType!
+  node: ProductVariantFeedback
+  updatedFields: [String!]
+  previousValues: ProductVariantFeedbackPreviousValues
+}
+
+input ProductVariantFeedbackSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ProductVariantFeedbackSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ProductVariantFeedbackSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ProductVariantFeedbackSubscriptionWhereInput!]
+
+  """The subscription event gets dispatched when it's listed in mutation_in"""
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: ProductVariantFeedbackWhereInput
+}
+
+input ProductVariantFeedbackUpdateInput {
+  isCompleted: Boolean
+  questions: ProductVariantFeedbackQuestionUpdateManyWithoutVariantFeedbackInput
+  reservationFeedback: ReservationFeedbackUpdateOneRequiredWithoutFeedbacksInput
+  variant: ProductVariantUpdateOneRequiredInput
+}
+
+input ProductVariantFeedbackUpdateManyDataInput {
+  isCompleted: Boolean
+}
+
+input ProductVariantFeedbackUpdateManyMutationInput {
+  isCompleted: Boolean
+}
+
+input ProductVariantFeedbackUpdateManyWithoutReservationFeedbackInput {
+  create: [ProductVariantFeedbackCreateWithoutReservationFeedbackInput!]
+  connect: [ProductVariantFeedbackWhereUniqueInput!]
+  set: [ProductVariantFeedbackWhereUniqueInput!]
+  disconnect: [ProductVariantFeedbackWhereUniqueInput!]
+  delete: [ProductVariantFeedbackWhereUniqueInput!]
+  update: [ProductVariantFeedbackUpdateWithWhereUniqueWithoutReservationFeedbackInput!]
+  updateMany: [ProductVariantFeedbackUpdateManyWithWhereNestedInput!]
+  deleteMany: [ProductVariantFeedbackScalarWhereInput!]
+  upsert: [ProductVariantFeedbackUpsertWithWhereUniqueWithoutReservationFeedbackInput!]
+}
+
+input ProductVariantFeedbackUpdateManyWithWhereNestedInput {
+  where: ProductVariantFeedbackScalarWhereInput!
+  data: ProductVariantFeedbackUpdateManyDataInput!
+}
+
+input ProductVariantFeedbackUpdateOneRequiredWithoutQuestionsInput {
+  create: ProductVariantFeedbackCreateWithoutQuestionsInput
+  connect: ProductVariantFeedbackWhereUniqueInput
+  update: ProductVariantFeedbackUpdateWithoutQuestionsDataInput
+  upsert: ProductVariantFeedbackUpsertWithoutQuestionsInput
+}
+
+input ProductVariantFeedbackUpdateWithoutQuestionsDataInput {
+  isCompleted: Boolean
+  reservationFeedback: ReservationFeedbackUpdateOneRequiredWithoutFeedbacksInput
+  variant: ProductVariantUpdateOneRequiredInput
+}
+
+input ProductVariantFeedbackUpdateWithoutReservationFeedbackDataInput {
+  isCompleted: Boolean
+  questions: ProductVariantFeedbackQuestionUpdateManyWithoutVariantFeedbackInput
+  variant: ProductVariantUpdateOneRequiredInput
+}
+
+input ProductVariantFeedbackUpdateWithWhereUniqueWithoutReservationFeedbackInput {
+  where: ProductVariantFeedbackWhereUniqueInput!
+  data: ProductVariantFeedbackUpdateWithoutReservationFeedbackDataInput!
+}
+
+input ProductVariantFeedbackUpsertWithoutQuestionsInput {
+  update: ProductVariantFeedbackUpdateWithoutQuestionsDataInput!
+  create: ProductVariantFeedbackCreateWithoutQuestionsInput!
+}
+
+input ProductVariantFeedbackUpsertWithWhereUniqueWithoutReservationFeedbackInput {
+  where: ProductVariantFeedbackWhereUniqueInput!
+  update: ProductVariantFeedbackUpdateWithoutReservationFeedbackDataInput!
+  create: ProductVariantFeedbackCreateWithoutReservationFeedbackInput!
+}
+
+input ProductVariantFeedbackWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ProductVariantFeedbackWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ProductVariantFeedbackWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ProductVariantFeedbackWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  isCompleted: Boolean
+
+  """All values that are not equal to given value."""
+  isCompleted_not: Boolean
+  questions_every: ProductVariantFeedbackQuestionWhereInput
+  questions_some: ProductVariantFeedbackQuestionWhereInput
+  questions_none: ProductVariantFeedbackQuestionWhereInput
+  reservationFeedback: ReservationFeedbackWhereInput
+  variant: ProductVariantWhereInput
+}
+
+input ProductVariantFeedbackWhereUniqueInput {
+  id: ID
+}
+
 enum ProductVariantOrderByInput {
   id_ASC
   id_DESC
@@ -11397,6 +12105,9 @@ type Query {
   reservations(where: ReservationWhereInput, orderBy: ReservationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Reservation]!
   productRequests(where: ProductRequestWhereInput, orderBy: ProductRequestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductRequest]!
   productVariantWants(where: ProductVariantWantWhereInput, orderBy: ProductVariantWantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariantWant]!
+  reservationFeedbacks(where: ReservationFeedbackWhereInput, orderBy: ReservationFeedbackOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ReservationFeedback]!
+  productVariantFeedbacks(where: ProductVariantFeedbackWhereInput, orderBy: ProductVariantFeedbackOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariantFeedback]!
+  productVariantFeedbackQuestions(where: ProductVariantFeedbackQuestionWhereInput, orderBy: ProductVariantFeedbackQuestionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariantFeedbackQuestion]!
   collections(where: CollectionWhereInput, orderBy: CollectionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Collection]!
   categories(where: CategoryWhereInput, orderBy: CategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Category]!
   customerDetails(where: CustomerDetailWhereInput, orderBy: CustomerDetailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CustomerDetail]!
@@ -11424,6 +12135,9 @@ type Query {
   reservation(where: ReservationWhereUniqueInput!): Reservation
   productRequest(where: ProductRequestWhereUniqueInput!): ProductRequest
   productVariantWant(where: ProductVariantWantWhereUniqueInput!): ProductVariantWant
+  reservationFeedback(where: ReservationFeedbackWhereUniqueInput!): ReservationFeedback
+  productVariantFeedback(where: ProductVariantFeedbackWhereUniqueInput!): ProductVariantFeedback
+  productVariantFeedbackQuestion(where: ProductVariantFeedbackQuestionWhereUniqueInput!): ProductVariantFeedbackQuestion
   collection(where: CollectionWhereUniqueInput!): Collection
   category(where: CategoryWhereUniqueInput!): Category
   customerDetail(where: CustomerDetailWhereUniqueInput!): CustomerDetail
@@ -11451,6 +12165,9 @@ type Query {
   reservationsConnection(where: ReservationWhereInput, orderBy: ReservationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ReservationConnection!
   productRequestsConnection(where: ProductRequestWhereInput, orderBy: ProductRequestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductRequestConnection!
   productVariantWantsConnection(where: ProductVariantWantWhereInput, orderBy: ProductVariantWantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductVariantWantConnection!
+  reservationFeedbacksConnection(where: ReservationFeedbackWhereInput, orderBy: ReservationFeedbackOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ReservationFeedbackConnection!
+  productVariantFeedbacksConnection(where: ProductVariantFeedbackWhereInput, orderBy: ProductVariantFeedbackOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductVariantFeedbackConnection!
+  productVariantFeedbackQuestionsConnection(where: ProductVariantFeedbackQuestionWhereInput, orderBy: ProductVariantFeedbackQuestionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductVariantFeedbackQuestionConnection!
   collectionsConnection(where: CollectionWhereInput, orderBy: CollectionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CollectionConnection!
   categoriesConnection(where: CategoryWhereInput, orderBy: CategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CategoryConnection!
   customerDetailsConnection(where: CustomerDetailWhereInput, orderBy: CustomerDetailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CustomerDetailConnection!
@@ -11474,6 +12191,17 @@ type Query {
     """The ID of an object"""
     id: ID!
   ): Node
+}
+
+enum QuestionType {
+  MultipleChoice
+  FreeResponse
+}
+
+enum Rating {
+  Disliked
+  Ok
+  Loved
 }
 
 type RecentlyViewedProduct implements Node {
@@ -11770,6 +12498,296 @@ type ReservationEdge {
 
   """A cursor for use in pagination."""
   cursor: String!
+}
+
+type ReservationFeedback implements Node {
+  id: ID!
+  comment: String
+  feedbacks(where: ProductVariantFeedbackWhereInput, orderBy: ProductVariantFeedbackOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariantFeedback!]
+  rating: Rating
+  user: User!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""A connection to a list of items."""
+type ReservationFeedbackConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [ReservationFeedbackEdge]!
+  aggregate: AggregateReservationFeedback!
+}
+
+input ReservationFeedbackCreateInput {
+  id: ID
+  comment: String
+  rating: Rating
+  feedbacks: ProductVariantFeedbackCreateManyWithoutReservationFeedbackInput
+  user: UserCreateOneInput!
+}
+
+input ReservationFeedbackCreateOneWithoutFeedbacksInput {
+  create: ReservationFeedbackCreateWithoutFeedbacksInput
+  connect: ReservationFeedbackWhereUniqueInput
+}
+
+input ReservationFeedbackCreateWithoutFeedbacksInput {
+  id: ID
+  comment: String
+  rating: Rating
+  user: UserCreateOneInput!
+}
+
+"""An edge in a connection."""
+type ReservationFeedbackEdge {
+  """The item at the end of the edge."""
+  node: ReservationFeedback!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum ReservationFeedbackOrderByInput {
+  id_ASC
+  id_DESC
+  comment_ASC
+  comment_DESC
+  rating_ASC
+  rating_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type ReservationFeedbackPreviousValues {
+  id: ID!
+  comment: String
+  rating: Rating
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type ReservationFeedbackSubscriptionPayload {
+  mutation: MutationType!
+  node: ReservationFeedback
+  updatedFields: [String!]
+  previousValues: ReservationFeedbackPreviousValues
+}
+
+input ReservationFeedbackSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ReservationFeedbackSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ReservationFeedbackSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ReservationFeedbackSubscriptionWhereInput!]
+
+  """The subscription event gets dispatched when it's listed in mutation_in"""
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: ReservationFeedbackWhereInput
+}
+
+input ReservationFeedbackUpdateInput {
+  comment: String
+  rating: Rating
+  feedbacks: ProductVariantFeedbackUpdateManyWithoutReservationFeedbackInput
+  user: UserUpdateOneRequiredInput
+}
+
+input ReservationFeedbackUpdateManyMutationInput {
+  comment: String
+  rating: Rating
+}
+
+input ReservationFeedbackUpdateOneRequiredWithoutFeedbacksInput {
+  create: ReservationFeedbackCreateWithoutFeedbacksInput
+  connect: ReservationFeedbackWhereUniqueInput
+  update: ReservationFeedbackUpdateWithoutFeedbacksDataInput
+  upsert: ReservationFeedbackUpsertWithoutFeedbacksInput
+}
+
+input ReservationFeedbackUpdateWithoutFeedbacksDataInput {
+  comment: String
+  rating: Rating
+  user: UserUpdateOneRequiredInput
+}
+
+input ReservationFeedbackUpsertWithoutFeedbacksInput {
+  update: ReservationFeedbackUpdateWithoutFeedbacksDataInput!
+  create: ReservationFeedbackCreateWithoutFeedbacksInput!
+}
+
+input ReservationFeedbackWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ReservationFeedbackWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ReservationFeedbackWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ReservationFeedbackWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  comment: String
+
+  """All values that are not equal to given value."""
+  comment_not: String
+
+  """All values that are contained in given list."""
+  comment_in: [String!]
+
+  """All values that are not contained in given list."""
+  comment_not_in: [String!]
+
+  """All values less than the given value."""
+  comment_lt: String
+
+  """All values less than or equal the given value."""
+  comment_lte: String
+
+  """All values greater than the given value."""
+  comment_gt: String
+
+  """All values greater than or equal the given value."""
+  comment_gte: String
+
+  """All values containing the given string."""
+  comment_contains: String
+
+  """All values not containing the given string."""
+  comment_not_contains: String
+
+  """All values starting with the given string."""
+  comment_starts_with: String
+
+  """All values not starting with the given string."""
+  comment_not_starts_with: String
+
+  """All values ending with the given string."""
+  comment_ends_with: String
+
+  """All values not ending with the given string."""
+  comment_not_ends_with: String
+  rating: Rating
+
+  """All values that are not equal to given value."""
+  rating_not: Rating
+
+  """All values that are contained in given list."""
+  rating_in: [Rating!]
+
+  """All values that are not contained in given list."""
+  rating_not_in: [Rating!]
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
+  feedbacks_every: ProductVariantFeedbackWhereInput
+  feedbacks_some: ProductVariantFeedbackWhereInput
+  feedbacks_none: ProductVariantFeedbackWhereInput
+  user: UserWhereInput
+}
+
+input ReservationFeedbackWhereUniqueInput {
+  id: ID
 }
 
 enum ReservationOrderByInput {
@@ -12808,6 +13826,9 @@ type Subscription {
   reservation(where: ReservationSubscriptionWhereInput): ReservationSubscriptionPayload
   productRequest(where: ProductRequestSubscriptionWhereInput): ProductRequestSubscriptionPayload
   productVariantWant(where: ProductVariantWantSubscriptionWhereInput): ProductVariantWantSubscriptionPayload
+  reservationFeedback(where: ReservationFeedbackSubscriptionWhereInput): ReservationFeedbackSubscriptionPayload
+  productVariantFeedback(where: ProductVariantFeedbackSubscriptionWhereInput): ProductVariantFeedbackSubscriptionPayload
+  productVariantFeedbackQuestion(where: ProductVariantFeedbackQuestionSubscriptionWhereInput): ProductVariantFeedbackQuestionSubscriptionPayload
   collection(where: CollectionSubscriptionWhereInput): CollectionSubscriptionPayload
   category(where: CategorySubscriptionWhereInput): CategorySubscriptionPayload
   customerDetail(where: CustomerDetailSubscriptionWhereInput): CustomerDetailSubscriptionPayload

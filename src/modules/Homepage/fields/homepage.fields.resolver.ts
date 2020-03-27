@@ -1,4 +1,4 @@
-import { Resolver, ResolveProperty } from "@nestjs/graphql"
+import { Resolver, ResolveField } from "@nestjs/graphql"
 import { HomepageService } from "../services/homepage.service"
 import { Customer } from "../../../nest_decorators"
 
@@ -6,7 +6,7 @@ import { Customer } from "../../../nest_decorators"
 export class HomepageFieldsResolver {
   constructor(private readonly homepageService: HomepageService) {}
 
-  @ResolveProperty()
+  @ResolveField()
   async sections(@Customer() customer) {
     return await this.homepageService.getHomepageSections(customer)
   }

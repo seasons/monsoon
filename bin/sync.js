@@ -207,7 +207,7 @@ require("yargs")
       const {
         AuthService,
       } = require("../dist/modules/User/services/auth.service")
-      const { PrismaClientService } = require("../dist/prisma/client.service")
+      const { PrismaService } = require("../dist/prisma/prisma.service")
       const {
         AirtableService,
       } = require("../dist/modules/Airtable/services/airtable.service")
@@ -224,7 +224,7 @@ require("yargs")
       // Instantiate services
       const airtableBaseService = new AirtableBaseService()
       const auth = new AuthService(
-        new PrismaClientService(),
+        new PrismaService(),
         new AirtableService(
           airtableBaseService,
           new AirtableUtilsService(airtableBaseService)

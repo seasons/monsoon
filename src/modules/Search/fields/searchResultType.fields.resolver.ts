@@ -1,8 +1,8 @@
-import { Resolver, ResolveProperty, Parent } from "@nestjs/graphql"
+import { Resolver, Parent, ResolveField } from "@nestjs/graphql"
 
-@Resolver('SearchResultType')
+@Resolver("SearchResultType")
 export class SearchResultTypeFieldsResolver {
-  @ResolveProperty()
+  @ResolveField()
   __resolveType(@Parent() obj) {
     if (obj.brand) {
       return "Product"

@@ -1,22 +1,22 @@
-import { Injectable, Logger } from '@nestjs/common'
-import { Cron, CronExpression } from '@nestjs/schedule'
+import { Injectable, Logger } from "@nestjs/common"
+import { Cron, CronExpression } from "@nestjs/schedule"
 import * as Sentry from "@sentry/node"
-import { AirtableService } from '../../Airtable/services/airtable.service'
-import { PrismaClientService } from '../../../prisma/client.service'
-import { AuthService } from '../../User/services/auth.service'
-import { CustomerService } from '../../User/services/customer.service'
-import { EmailService } from '../../Email/services/email.service'
+import { AirtableService } from "../../Airtable/services/airtable.service"
+import { AuthService } from "../../User/services/auth.service"
+import { CustomerService } from "../../User/services/customer.service"
+import { EmailService } from "../../Email/services/email.service"
+import { PrismaService } from "../../../prisma/prisma.service"
 
 @Injectable()
-export class UsersService {
-  private readonly logger = new Logger(`Cron: ${UsersService.name}`);
+export class UsersScheduledJobs {
+  private readonly logger = new Logger(`Cron: ${UsersScheduledJobs.name}`)
 
   constructor(
     private readonly airtableService: AirtableService,
     private readonly authService: AuthService,
     private readonly customerService: CustomerService,
     private readonly emailService: EmailService,
-    private readonly prisma: PrismaClientService
+    private readonly prisma: PrismaService
   ) {}
 
   @Cron(CronExpression.EVERY_MINUTE)
@@ -53,7 +53,10 @@ export class UsersService {
               .status()
             if (prismaCustomerStatus !== "Authorized") {
               updatedUsers = [...updatedUsers, prismaUser.email]
-              this.customerService.setCustomerPrismaStatus(prismaUser, "Authorized")
+              this.customerService.setCustomerPrismaStatus(
+                prismaUser,
+                "Authorized"
+              )
               this.emailService.sendAuthorizedToSubscribeEmail(prismaUser)
             }
           } else {
@@ -78,5 +81,4 @@ export class UsersService {
       this.logger.log(log)
     }
   }
-  
 }

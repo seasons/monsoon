@@ -61,12 +61,18 @@ export class AuthMutationsResolver {
       throw new Error("User record not found")
     }
 
-    return {
+    const { token: beamsToken } = this.authService.beamsClient?.generateToken(
+      email
+    ) as any
+
+    const params = {
       token: tokenData.access_token,
       refreshToken: tokenData.refresh_token,
       expiresIn: tokenData.expires_in,
       user,
+      beamsToken,
     }
+    return params
   }
 
   @Mutation()

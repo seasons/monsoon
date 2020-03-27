@@ -1,5 +1,0 @@
-Number of mismatched SKUs:  9
-Mapping ACNE-BLK-LL-011 to ACNE-BLK-LL-008
--- prisma product variant: ACNE-BLK-LL-011 --> ACNE-BLK-LL-008
--- prisma physical product: ACNE-BLK-LL-014-01 --> ACNE-BLK-LL-008-01
--- airtable physical product rec5OlaUEZmRl4obC suid set to ACNE-BLK-LL-008-01

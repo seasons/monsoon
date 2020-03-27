@@ -1,22 +1,27 @@
 import { Resolver, Args, Mutation } from "@nestjs/graphql"
-import { PrismaClientService } from "../../../prisma/client.service"
 import { Analytics } from "../../../nest_decorators"
 import { PaymentService } from "../services/payment.service"
+import { PrismaService } from "../../../prisma/prisma.service"
 
 @Resolver()
 export class ChargebeeMutationsResolver {
   constructor(
     private readonly paymentService: PaymentService,
-    private readonly prisma: PrismaClientService
+    private readonly prisma: PrismaService
   ) {}
 
   @Mutation()
   async acknowledgeCompletedChargebeeHostedCheckout(
     @Args() { hostedPageID },
-    @Analytics() analytics,
+    @Analytics() analytics
   ) {
-
-    const { customerId, userId, planId }: any = await this.paymentService.acknowledgeCompletedChargebeeHostedCheckout(hostedPageID)
+    const {
+      customerId,
+      userId,
+      planId,
+    }: any = await this.paymentService.acknowledgeCompletedChargebeeHostedCheckout(
+      hostedPageID
+    )
 
     analytics.track({
       userId: userId,

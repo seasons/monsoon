@@ -12,5 +12,5 @@
     "forceConsistentCasingInFileNames": true,
     "emitDecoratorMetadata": true
   },
-  "exclude": ["./scripts/"]
+  "exclude": ["./scripts/", "./bin"]
 }

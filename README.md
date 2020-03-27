@@ -44,8 +44,8 @@ docker-compose up -d
 # 4. Deploy prisma
 yarn prisma:deploy
 
-# 5. Install monsoon-cli (command line interface)
-yarn link
+# 4. Install monsoon-cli (command line interface)
+yarn global add ts-node && yarn link
 
 # 6. Seed the database
 monsoon airtable:prisma all --prisma local
