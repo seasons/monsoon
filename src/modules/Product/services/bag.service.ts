@@ -1,14 +1,14 @@
 import { Injectable } from "@nestjs/common"
-import { PrismaClientService } from "../../../prisma/client.service"
 import { ApolloError } from "apollo-server"
 import { head } from "lodash"
+import { PrismaService } from "../../../prisma/prisma.service"
 
 const BAG_SIZE = 3
 
 @Injectable()
 export class BagService {
-  constructor(private readonly prisma: PrismaClientService) {}
-  
+  constructor(private readonly prisma: PrismaService) {}
+
   async addToBag(item, customer) {
     const bag = await this.prisma.client.bagItems({
       where: {

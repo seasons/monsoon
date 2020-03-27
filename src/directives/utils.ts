@@ -1,8 +1,8 @@
 import { get } from "lodash"
-import { DBService } from "../prisma/db.service"
 import { User } from "../prisma"
+import { PrismaService } from "../prisma/prisma.service"
 
-const db = new DBService()
+const prisma = new PrismaService()
 
 class AuthError extends Error {
   constructor() {
@@ -10,8 +10,12 @@ class AuthError extends Error {
   }
 }
 
-const isRequestingUserAlsoOwner = async (userId, type, typeId): Promise<boolean> =>
-  await db.exists[type]({ id: typeId, user: { id: userId } })
+const isRequestingUserAlsoOwner = async (
+  userId,
+  type,
+  typeId
+): Promise<boolean> =>
+  await prisma.binding.exists[type]({ id: typeId, user: { id: userId } })
 
 export const isUserOwner = async (type, typeId, userId): Promise<boolean> => {
   return type === `User`
