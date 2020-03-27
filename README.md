@@ -41,13 +41,16 @@ cp .env.example .env
 # 3. Create your local Prisma Server and Postgres instances
 docker-compose up -d
 
+# 4. Deploy prisma
+yarn prisma:deploy
+
 # 4. Install monsoon-cli (command line interface)
 yarn global add ts-node && yarn link
 
-# 5. Seed the database (make sure you've set your airtable API Key in the .env file first. See https://airtable.com/account. You may need to be added to the seasons airtable workspace first.
-monsoon airtable:prisma all -e local
+# 6. Seed the database
+monsoon airtable:prisma all --prisma local
 
-# 6. Start server (runs on http://localhost:4000/playground) and open GraphQL Playground
+# 7. Start server (runs on http://localhost:4000/playground) and open GraphQL Playground
 yarn start
 ```
 
