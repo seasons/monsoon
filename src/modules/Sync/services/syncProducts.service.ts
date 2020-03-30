@@ -5,6 +5,7 @@ import { BottomSizeType, LetterSize, ProductCreateInput } from "../../../prisma"
 import { PrismaService } from "../../../prisma/prisma.service"
 import { AirtableData } from "../../Airtable/airtable.types"
 import { AirtableService } from "../../Airtable/services/airtable.service"
+import { UtilsService } from "../../Utils/utils.service"
 import { SyncUtilsService } from "./sync.utils.service"
 import { SyncCategoriesService } from "./syncCategories.service"
 import { SyncSizesService } from "./syncSizes.service"
@@ -16,7 +17,8 @@ export class SyncProductsService {
     private readonly prisma: PrismaService,
     private readonly syncCategoriesService: SyncCategoriesService,
     private readonly syncSizesService: SyncSizesService,
-    private readonly syncUtils: SyncUtilsService
+    private readonly syncUtils: SyncUtilsService,
+    private readonly utils: UtilsService
   ) {}
 
   getNumLinksProducts = () => 5
@@ -32,7 +34,7 @@ export class SyncProductsService {
       modelName: "Products",
       allProductionRecords: allProductsProduction,
       sanitizeFunc: fields =>
-        this.syncUtils.deleteFieldsFromObject(
+        this.utils.deleteFieldsFromObject(
           {
             ...fields,
             Brand: [],

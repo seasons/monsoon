@@ -1,4 +1,5 @@
 import { Injectable } from "@nestjs/common"
+import { AirtableModelName } from "../../Airtable/airtable.types"
 import { SyncUtilsService } from "./sync.utils.service"
 import { SyncBottomSizesService } from "./syncBottomSizes.service"
 import { SyncBrandsService } from "./syncBrands.service"
@@ -122,6 +123,10 @@ export class AirtableSyncService {
       default:
         throw new Error("invalid table name")
     }
+  }
+
+  async createSubBar(multibar, modelName: AirtableModelName) {
+    return await this.syncUtils.createSyncAirtableSubBar(multibar, modelName)
   }
 
   private async syncAll() {

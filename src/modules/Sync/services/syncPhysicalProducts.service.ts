@@ -3,6 +3,7 @@ import { isEmpty } from "lodash"
 import { PrismaService } from "../../../prisma/prisma.service"
 import { AirtableData } from "../../Airtable/airtable.types"
 import { AirtableService } from "../../Airtable/services/airtable.service"
+import { UtilsService } from "../../Utils/utils.service"
 import { SyncUtilsService } from "./sync.utils.service"
 import { SyncProductsService } from "./syncProducts.service"
 import { SyncProductVariantsService } from "./syncProductVariants.service"
@@ -14,7 +15,8 @@ export class SyncPhysicalProductsService {
     private readonly prisma: PrismaService,
     private readonly syncProductsService: SyncProductsService,
     private readonly syncProductVariantsService: SyncProductVariantsService,
-    private readonly syncUtils: SyncUtilsService
+    private readonly syncUtils: SyncUtilsService,
+    private readonly utils: UtilsService
   ) {}
 
   getNumLinksPhysicalProducts = () => 2
@@ -33,7 +35,7 @@ export class SyncPhysicalProductsService {
       modelName: "Physical Products",
       allProductionRecords: allPhysicalProductsProduction,
       sanitizeFunc: fields =>
-        this.syncUtils.deleteFieldsFromObject(
+        this.utils.deleteFieldsFromObject(
           {
             ...fields,
             Product: [],

@@ -1,12 +1,14 @@
 import { Injectable } from "@nestjs/common"
 import { AirtableService } from "../../Airtable/services/airtable.service"
+import { UtilsService } from "../../Utils/utils.service"
 import { SyncUtilsService } from "./sync.utils.service"
 
 @Injectable()
 export class SyncLocationsService {
   constructor(
     private readonly airtableService: AirtableService,
-    private readonly syncUtils: SyncUtilsService
+    private readonly syncUtils: SyncUtilsService,
+    private readonly utils: UtilsService
   ) {}
 
   getLocationRecordIdentifier = rec => rec.fields.Slug
@@ -21,7 +23,7 @@ export class SyncLocationsService {
         this.airtableService.getProductionBase()
       ),
       sanitizeFunc: fields =>
-        this.syncUtils.deleteFieldsFromObject(
+        this.utils.deleteFieldsFromObject(
           {
             ...fields,
             "Physical Products": [],

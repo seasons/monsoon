@@ -97,6 +97,19 @@ export class SyncUtilsService {
     )
   }
 
+  async createSyncAirtableSubBar(multibar, modelName: AirtableModelName) {
+    return await multibar.create(
+      await this.getNumReadWritesToSyncModel(modelName),
+      0,
+      {
+        modelName: `${modelName}:`.padEnd(
+          "Homepage Product Rails".length + 1,
+          " "
+        ),
+      }
+    )
+  }
+
   async deleteAllStagingRecords(
     modelName: AirtableModelName,
     cliProgressBar?: any
@@ -110,12 +123,6 @@ export class SyncUtilsService {
         .getStagingBase()(`${modelName}`)
         .destroy([rec.id])
     }
-  }
-
-  deleteFieldsFromObject(obj: object, fieldsToDelete: string[]) {
-    const objCopy = { ...obj }
-    fieldsToDelete.forEach(a => delete objCopy[a])
-    return objCopy
   }
 
   async linkStagingRecords({
@@ -171,11 +178,7 @@ export class SyncUtilsService {
     let _cliProgressBar = cliProgressBar
     if (!_cliProgressBar) {
       multibar = this.makeAirtableSyncCliProgressBar()
-      _cliProgressBar = await createSubBar({
-        multibar,
-        modelName,
-        numRecords,
-      })
+      _cliProgressBar = await this.createSubBar(multibar, modelName, numRecords)
     }
     return [multibar, _cliProgressBar]
   }

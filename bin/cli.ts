@@ -16,9 +16,7 @@ Airtable.configure({
 import { ScriptsModule } from "../src/modules/Scripts/scripts.module"
 
 async function setup() {
-  const app = await NestFactory.createApplicationContext(ScriptsModule, {
-    logger: false,
-  })
+  const app = await NestFactory.createApplicationContext(ScriptsModule)
   app
     .select(CommandModule)
     .get(CommandService)

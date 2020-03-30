@@ -4,6 +4,7 @@ import slugify from "slugify"
 import { CategoryCreateInput, CategoryUpdateInput } from "../../../prisma"
 import { PrismaService } from "../../../prisma/prisma.service"
 import { AirtableService } from "../../Airtable/services/airtable.service"
+import { UtilsService } from "../../Utils/utils.service"
 import { SyncUtilsService } from "./sync.utils.service"
 
 @Injectable()
@@ -11,7 +12,8 @@ export class SyncCategoriesService {
   constructor(
     private readonly airtableService: AirtableService,
     private readonly prisma: PrismaService,
-    private readonly syncUtils: SyncUtilsService
+    private readonly syncUtils: SyncUtilsService,
+    private readonly utils: UtilsService
   ) {}
 
   getCategoryRecordIdentifier = rec => rec.fields.Name
@@ -28,7 +30,7 @@ export class SyncCategoriesService {
       modelName: "Categories",
       allProductionRecords: allProductionCategories,
       sanitizeFunc: fields =>
-        this.syncUtils.deleteFieldsFromObject(
+        this.utils.deleteFieldsFromObject(
           {
             ...fields,
             Image: [],

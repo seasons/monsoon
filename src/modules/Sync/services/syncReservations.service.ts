@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common"
 import { AirtableData } from "../../Airtable/airtable.types"
 import { AirtableService } from "../../Airtable/services/airtable.service"
+import { UtilsService } from "../../Utils/utils.service"
 import { SyncUtilsService } from "./sync.utils.service"
 import { SyncLocationsService } from "./syncLocations.service"
 import { SyncPhysicalProductsService } from "./syncPhysicalProducts.service"
@@ -11,7 +12,8 @@ export class SyncReservationsService {
     private readonly airtableService: AirtableService,
     private readonly syncLocationsService: SyncLocationsService,
     private readonly syncPhysicalProductsService: SyncPhysicalProductsService,
-    private readonly syncUtils: SyncUtilsService
+    private readonly syncUtils: SyncUtilsService,
+    private readonly utils: UtilsService
   ) {}
 
   getNumLinksReservations = () => 2
@@ -25,7 +27,7 @@ export class SyncReservationsService {
       modelName: "Reservations",
       allProductionRecords: allReservationsProduction,
       sanitizeFunc: fields =>
-        this.syncUtils.deleteFieldsFromObject(
+        this.utils.deleteFieldsFromObject(
           {
             ...fields,
             User: [],

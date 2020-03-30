@@ -57,7 +57,7 @@ export class SyncProductVariantsService {
       modelName: "Product Variants",
       allProductionRecords: allProductVariantsProduction,
       sanitizeFunc: fields =>
-        this.syncUtils.deleteFieldsFromObject(
+        this.utils.deleteFieldsFromObject(
           {
             ...fields,
             Product: [],
