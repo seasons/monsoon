@@ -1,7 +1,6 @@
 import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "../../../prisma/prisma.service"
 import { ReservationUtilsService } from "../services/reservationUtils.service"
-// import { formatReservationReturnDate } from "../services/reservationUtils.service"
 
 @Resolver("Reservation")
 export class ReservationFieldsResolver {
