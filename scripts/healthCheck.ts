@@ -20,7 +20,11 @@ const run = async () => {
     null,
     new UtilsService(ps)
   )
-  await dj.checkProductsAlignment()
+  try {
+    await dj.checkAll()
+  } catch (err) {
+    console.log(err)
+  }
 }
 
 run()

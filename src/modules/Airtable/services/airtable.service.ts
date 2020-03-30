@@ -13,7 +13,11 @@ import {
 import { fill, zip } from "lodash"
 import { AirtableUtilsService } from "./airtable.utils.service"
 import { AirtableBaseService } from "./airtable.base.service"
-import { AirtableInventoryStatus, AirtableProductVariantCounts, AirtableData } from "../airtable.types"
+import {
+  AirtableInventoryStatus,
+  AirtableProductVariantCounts,
+  AirtableData,
+} from "../airtable.types"
 
 interface AirtableUserFields extends CustomerDetailCreateInput {
   plan?: string
@@ -23,11 +27,6 @@ interface AirtableUserFields extends CustomerDetailCreateInput {
 
 type AirtablePhysicalProductFields = {
   "Inventory Status": AirtableInventoryStatus
-}
-
-interface ProductVariantWithNeededFields {
-  product: { slug: string }
-  size: Size
 }
 
 @Injectable()
@@ -53,9 +52,7 @@ export class AirtableService {
     return prismaStatus
   }
 
-  airtableToPrismaReservationStatus(
-    airtableStatus: string
-  ): ReservationStatus {
+  airtableToPrismaReservationStatus(airtableStatus: string): ReservationStatus {
     return airtableStatus.replace(" ", "") as ReservationStatus
   }
 
@@ -190,6 +187,18 @@ export class AirtableService {
     return this.getAll("Users", "", "", airtableBase)
   }
 
+  async getAllTopSizes(airtableBase?) {
+    return this.getAll("Top Sizes", "", "", airtableBase)
+  }
+
+  async getAllBottomSizes(airtableBase?) {
+    return this.getAll("Bottom Sizes", "", "", airtableBase)
+  }
+
+  async getAllSizes(airtableBase?) {
+    return this.getAll("Sizes", "", "", airtableBase)
+  }
+
   getCorrespondingAirtablePhysicalProduct(
     allAirtablePhysicalProducts,
     prismaPhysicalProduct
@@ -200,22 +209,12 @@ export class AirtableService {
   }
 
   getCorrespondingAirtableProductVariant(
-    allAirtableProducts: any[],
-    allAirtableProductVariants: any[],
-    prismaProductVariant: ProductVariantWithNeededFields
+    allAirtableProductVariants: AirtableData,
+    prismaProductVariant: any
   ) {
-    const correspondingAirtableProduct = allAirtableProducts.find(
-      //@ts-ignore
-      prod => prod.model.slug === prismaProductVariant.product.slug
+    return allAirtableProductVariants.find(
+      a => a.model.sKU === prismaProductVariant.sku
     )
-    const candidateProductVariants = allAirtableProductVariants.filter(prodVar =>
-      correspondingAirtableProduct.model.productVariant.includes(prodVar.id)
-    )
-    const correspondingAirtableProductVariant = candidateProductVariants.find(
-      prodVar => prodVar.model.size === prismaProductVariant.size
-    )
-  
-    return correspondingAirtableProductVariant
   }
 
   async markPhysicalProductsReservedOnAirtable(
