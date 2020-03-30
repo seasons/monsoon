@@ -1,21 +1,29 @@
-import { Resolver, ResolveField } from "@nestjs/graphql"
+import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "../../../prisma/prisma.service"
-import { formatReservationReturnDate } from "../services/reservationUtils.service"
+import { ReservationUtilsService } from "../services/reservationUtils.service"
+// import { formatReservationReturnDate } from "../services/reservationUtils.service"
 
 @Resolver("Reservation")
 export class ReservationFieldsResolver {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly reservationService: ReservationUtilsService
+  ) {}
 
   @ResolveField()
-  async products(parent) {
-    const reservationProducts = this.prisma.client.reservation({
-      id: parent.id,
-    })
-    reservationProducts.returnDateDisplay = formatReservationReturnDate(
-      new Date(Date.now())
-    )
+  async products(@Parent() parent) {
+    const reservationProducts = this.prisma.client
+      .reservation({
+        id: parent.id,
+      })
+      .products()
     return reservationProducts
   }
+
   @ResolveField()
-  returnDateDisplay
+  returnDateDisplay() {
+    return this.reservationService.formatReservationReturnDate(
+      new Date(Date.now())
+    )
+  }
 }
