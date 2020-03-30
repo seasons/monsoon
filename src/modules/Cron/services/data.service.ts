@@ -1,11 +1,11 @@
-import { Injectable } from '@nestjs/common'
-import { Cron } from '@nestjs/schedule'
-import { UtilsService } from '../../Utils/utils.service'
-import { PrismaService } from '../../../prisma/prisma.service';
-import { xor } from 'lodash';
-import { AirtableData } from '../../Airtable/airtable.types';
-import { AirtableService } from '../../Airtable/services/airtable.service';
-import { SlackService } from '../../Slack/services/slack.service';
+import { Injectable } from "@nestjs/common"
+import { Cron } from "@nestjs/schedule"
+import { UtilsService } from "../../Utils/utils.service"
+import { PrismaService } from "../../../prisma/prisma.service"
+import { xor } from "lodash"
+import { AirtableData } from "../../Airtable/airtable.types"
+import { AirtableService } from "../../Airtable/services/airtable.service"
+import { SlackService } from "../../Slack/services/slack.service"
 
 interface DataPoint {
   name: string
@@ -162,7 +162,8 @@ export class DataScheduledJobs {
                 shouldFlagNum: true,
               },
               {
-                name: "Prisma: Number of product variants with impossible counts",
+                name:
+                  "Prisma: Number of product variants with impossible counts",
                 number: prismaProdVarsWithImpossibleCounts.length,
                 shouldFlagNum: true,
               },
@@ -257,7 +258,7 @@ export class DataScheduledJobs {
         allAirtableProductVariants,
         prismaProductVariant
       )
-  
+
       // Are the total, reservable, reserved, and nonreservable counts identical?
       if (correspondingAirtableProductVariant === undefined) {
         console.log(
@@ -299,11 +300,13 @@ export class DataScheduledJobs {
             reservable:
               correspondingAirtableProductVariant.fields["Reservable Count"],
             nonReservable:
-              correspondingAirtableProductVariant.fields["Non-Reservable Count"],
+              correspondingAirtableProductVariant.fields[
+                "Non-Reservable Count"
+              ],
           },
         })
       }
-  
+
       // Does prisma have the number of physical products it should? ibid, Airtable?
       if (
         prismaProductVariant.physicalProducts.length !==
@@ -312,7 +315,8 @@ export class DataScheduledJobs {
         prismaTotalPhysicalProductMisalignment.push({
           sku: prismaProductVariant.sku,
           totalCount: prismaProductVariant.total,
-          attachedPhysicalProducts: prismaProductVariant.physicalProducts.length,
+          attachedPhysicalProducts:
+            prismaProductVariant.physicalProducts.length,
         })
       }
       const noPhysicalProductsAndMisalignment =
@@ -320,9 +324,12 @@ export class DataScheduledJobs {
         correspondingAirtableProductVariant.fields["Total Count"] !== 0
       const physicalProductsAndMisalignment =
         !!correspondingAirtableProductVariant.fields["Physical Products"] &&
-        correspondingAirtableProductVariant.fields["Physical Products"].length !==
-          correspondingAirtableProductVariant.fields["Total Count"]
-      if (noPhysicalProductsAndMisalignment || physicalProductsAndMisalignment) {
+        correspondingAirtableProductVariant.fields["Physical Products"]
+          .length !== correspondingAirtableProductVariant.fields["Total Count"]
+      if (
+        noPhysicalProductsAndMisalignment ||
+        physicalProductsAndMisalignment
+      ) {
         airtableTotalPhysicalProductMisalignment.push({
           sku: correspondingAirtableProductVariant.fields.SKU,
           totalCount: correspondingAirtableProductVariant.fields["Total Count"],
@@ -378,7 +385,7 @@ export class DataScheduledJobs {
           ),
         })
       )
-  
+
     const airtableMisalignments = allAirtableProductVariants
       .filter(a => {
         const correspondingAirtablePhysicalProducts = this.getAttachedAirtablePhysicalProducts(
@@ -461,7 +468,7 @@ export class DataScheduledJobs {
     return { mismatchingStatuses, physicalProductsOnPrismaButNotAirtable }
   }
 
-  private async checkProductsAlignment() {
+  async checkProductsAlignment() {
     const allAirtableProductVariants = await this.airtableService.getAllProductVariants()
     const allAirtablePhysicalProducts = await this.airtableService.getAllPhysicalProducts()
     const allAirtableProducts = await this.airtableService.getAllProducts()
@@ -501,9 +508,9 @@ export class DataScheduledJobs {
       }
       `
     )
-  
+
     let errors = []
-  
+
     /* Do we have any products on prisma but not airtable? Vice versa? */
     const allPrismaProductSlugs = allPrismaProducts.map(prod => prod.slug)
     const allAirtableProductSlugs = allAirtableProducts.map(
@@ -515,7 +522,7 @@ export class DataScheduledJobs {
     const productsInPrismaButNotAirtable = allPrismaProductSlugs.filter(
       slug => !allAirtableProductSlugs.includes(slug)
     )
-  
+
     /* Do we have any physical products in airtable but not prisma? Vice versa */
     const allPrismaPhysicalProductSUIDs = allPrismaPhysicalProducts.map(
       physProd => physProd.seasonsUID
@@ -529,7 +536,7 @@ export class DataScheduledJobs {
     const physicalProductsInPrismaButNotAirtable = allPrismaPhysicalProductSUIDs.filter(
       suid => !allAirtablePhysicalProductSUIDs.includes(suid)
     )
-  
+
     /* Do we have any product variants in airtable but not prisma? Vice versa? */
     const allPrismaProductVariantSKUs = allPrismaProductVariants.map(
       prodVar => prodVar.sku
@@ -543,7 +550,7 @@ export class DataScheduledJobs {
     const productVariantsInPrismaButNotAirtable = allPrismaProductVariantSKUs.filter(
       sku => !allAirtableProductVariantSKUs.includes(sku)
     )
-  
+
     /* Are the skus matching between product variants on prisma and airtable?
     (Only considers those product variants in both prisma and airtable)
     */
@@ -557,14 +564,17 @@ export class DataScheduledJobs {
       productVariantsInPrismaButNotAirtable
     )
     errors = [...errors, ...prismaAirtableSKUCheckErrors]
-  
+
     /* Check SUIDs. Are they correct on prisma? Are the correct on airtable? */
-    const { prismaSUIDToSKUMismatches, airtableSUIDToSKUMismatches } = this.checkSUIDs(
+    const {
+      prismaSUIDToSKUMismatches,
+      airtableSUIDToSKUMismatches,
+    } = this.checkSUIDs(
       allPrismaProductVariants,
       allAirtableProductVariants,
       allAirtablePhysicalProducts
     )
-  
+
     /* Are the product variant counts matching between prisma and airtable? */
     const {
       countMisalignments,
@@ -586,7 +596,7 @@ export class DataScheduledJobs {
     const prismaProdVarsWithImpossibleCounts = await this.getProdVarsWithImpossibleCounts(
       allPrismaProductVariants
     )
-  
+
     /* Are the physical product statuses matching between prisma and airtable? */
     const {
       mismatchingStatuses,
@@ -595,7 +605,7 @@ export class DataScheduledJobs {
       allPrismaPhysicalProducts,
       allAirtablePhysicalProducts
     )
-  
+
     /* Are the reservations aligned? */
     const {
       misalignedSUIDsOnReservations,
@@ -608,7 +618,7 @@ export class DataScheduledJobs {
       allAirtableReservations,
       allAirtablePhysicalProducts
     )
-  
+
     /* REPORT */
     console.log(`/*********** REPORT ***********/`)
     console.log(
@@ -685,9 +695,9 @@ export class DataScheduledJobs {
     console.log(
       `-- RESERVATIONS WITH MORE THAN 3 PRODUCTS: ${reservationsWithMoreThanThreeProducts.length}`
     )
-  
+
     console.log(`ERRORS: ${errors.length}`)
-  
+
     return [
       productsInPrismaButNotAirtable,
       productsInAirtableButNotPrisma,
@@ -738,15 +748,17 @@ export class DataScheduledJobs {
     )
     for (const prismaResy of allPrismaReservations) {
       if (
-        reservationsInPrismaButNotAirtable.includes(prismaResy.reservationNumber)
+        reservationsInPrismaButNotAirtable.includes(
+          prismaResy.reservationNumber
+        )
       ) {
         continue
       }
-  
+
       const correspondingAirtableReservation = allAirtableReservations.find(
         airtableResy => airtableResy.fields.ID === prismaResy.reservationNumber
       )
-  
+
       // Check SUID match
       const prismaPhysicalProductSUIDs = prismaResy.products.map(
         prod => prod.seasonsUID
@@ -759,7 +771,8 @@ export class DataScheduledJobs {
           )
       ).map(airtablePhysProdRecord => airtablePhysProdRecord.fields.SUID.text)
       if (
-        xor(prismaPhysicalProductSUIDs, airtablePhysicalProductSUIDs).length !== 0
+        xor(prismaPhysicalProductSUIDs, airtablePhysicalProductSUIDs).length !==
+        0
       ) {
         misalignedSUIDsOnReservations.push({
           reservationNumber: prismaResy.reservationNumber,
@@ -767,7 +780,7 @@ export class DataScheduledJobs {
           prismaSUIDs: prismaPhysicalProductSUIDs,
         })
       }
-  
+
       // Check status match
       if (
         prismaResy.status !==
@@ -779,7 +792,7 @@ export class DataScheduledJobs {
           airtableStatus: correspondingAirtableReservation.fields.Status,
         })
       }
-  
+
       // Check item count
       if (prismaPhysicalProductSUIDs.length > 3) {
         reservationsWithMoreThanThreeProducts.push({
@@ -818,7 +831,7 @@ export class DataScheduledJobs {
       if (!airtableProductVariant.fields["Physical Products"]) {
         continue
       }
-  
+
       for (const airtablePhysProdRecordID of airtableProductVariant.fields[
         "Physical Products"
       ]) {
@@ -858,28 +871,31 @@ export class DataScheduledJobs {
         },
       },
     ]
-  
+
     if (datapoints.length >= 1) {
       blocks.push({
         type: "section",
         fields: datapoints.map(p =>
           this.utils.Identity({
             type: "mrkdwn",
-            text: `*${p.name}*\n${this.flagIfNeeded(p.number, !!p.shouldFlagNum)}`,
+            text: `*${p.name}*\n${this.flagIfNeeded(
+              p.number,
+              !!p.shouldFlagNum
+            )}`,
           })
         ),
       } as any)
     }
-  
+
     if (divider) {
       blocks.push({
         type: "divider",
       } as any)
     }
-  
+
     return blocks
   }
-  
+
   private flagIfNeeded = (num, shouldFlag) =>
     shouldFlag && num > 0 ? `\`${num}\`` : `${num}`
 
@@ -888,7 +904,7 @@ export class DataScheduledJobs {
     airtableProductVariant
   ) {
     if (!airtableProductVariant.fields.SKU) return []
-  
+
     return allAirtablePhysicalProducts.filter(a =>
       airtableProductVariant.fields["Physical Products"].includes(a.id)
     )
@@ -906,11 +922,13 @@ export class DataScheduledJobs {
       try {
         // If its not in airtable, skip it
         if (
-          productVariantsInPrismaButNotAirtable.includes(prismaProductVariant.sku)
+          productVariantsInPrismaButNotAirtable.includes(
+            prismaProductVariant.sku
+          )
         ) {
           continue
         }
-  
+
         // Check if the skus match
         const correspondingAirtableProductVariant = this.airtableService.getCorrespondingAirtableProductVariant(
           allAirtableProducts,
