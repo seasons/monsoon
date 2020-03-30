@@ -260,6 +260,8 @@ export class DataScheduledJobs {
             physicalProducts {
                 seasonsUID
                 inventoryStatus
+                createdAt
+                updatedAt
             }
             sku
             total
@@ -277,6 +279,7 @@ export class DataScheduledJobs {
               productType
             }
             createdAt
+            updatedAt
         }`
     )
     const allPrismaPhysicalProducts = await this.prisma.client.physicalProducts()
@@ -449,7 +452,7 @@ export class DataScheduledJobs {
     console.log(
       `-- PRISMA: NUMBER OF PRODUCT VARIANTS WITH A COUNT PROFILE THAT DOESN'T MATCH THE STATUSES OF THE ATTACHED PHYSICAL PRODUCTS: ${prismaCountToStatusMisalignments.length}`
     )
-    // console.log(util.inspect(prismaCountToStatusMisalignments, { depth: null }))
+    console.log(util.inspect(prismaCountToStatusMisalignments, { depth: null }))
     console.log(
       `-- AIRTABLE: NUMBER OF PRODUCT VARIANTS WITH A COUNT PROFILE THAT DOESN'T MATCH THE STATUSES OF THE ATTACHED PHYSICAL PRODUCTS: ${airtableCountToStatusMisalignments.length}`
     )
@@ -634,10 +637,13 @@ export class DataScheduledJobs {
             reserved: c.reserved,
             nonReservable: c.nonReservable,
           },
+          updatedAt: c.updatedAt,
           physicalProducts: c.physicalProducts.map(d =>
             this.utils.Identity({
               suid: d.seasonsUID,
               status: d.inventoryStatus,
+              createdAt: d.createdAt,
+              updatedAt: d.updatedAt,
             })
           ),
         })
