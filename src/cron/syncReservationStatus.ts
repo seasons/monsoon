@@ -13,7 +13,6 @@ import { db } from "../server"
 import * as Sentry from "@sentry/node"
 import { SyncError } from "../errors"
 import { emails } from "../emails"
-import { createReservationFeedbacksForVariants } from "./createReservationFeedbacksForVariants"
 
 const shouldReportErrorsToSentry = process.env.NODE_ENV === "production"
 
