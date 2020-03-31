@@ -110,6 +110,7 @@ type Query {
     last: Int
   ): [Product]!
   productsConnection(
+    sizes: [String!]
     category: String
     where: ProductWhereInput
     orderBy: ProductOrderByInput

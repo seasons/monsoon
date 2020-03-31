@@ -6,7 +6,6 @@ export class ReservationUtilsService {
     const date = this.returnDate(reservationCreatedAtDate)
     const display = date.toLocaleDateString("en-US", {
       weekday: "long",
-      year: "numeric",
       month: "long",
       day: "numeric",
     })
