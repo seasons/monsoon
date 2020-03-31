@@ -4,12 +4,12 @@ import * as Sentry from "@sentry/node"
 import { EmailService } from "../../Email/services/email.service"
 import { DateTime, Interval } from "luxon"
 import {
-  Reservation,
-  InventoryStatus,
-  ProductVariant,
   ID_Input,
-  User,
+  InventoryStatus,
   Product,
+  ProductVariant,
+  Reservation,
+  User,
 } from "../../../prisma"
 import { AirtableService } from "../../Airtable/services/airtable.service"
 import { SyncError } from "../../../errors"
@@ -94,7 +94,6 @@ export class ReservationScheduledJobs {
 
   @Cron(CronExpression.EVERY_MINUTE)
   async syncPhysicalProductAndReservationStatus() {
-    console.log("SYNCING STUFF")
     const physProdReport = await this.syncPhysicalProductStatus()
     const reservationReport = await this.syncReservationStatus()
     const allErrors = [...physProdReport.errors, ...reservationReport.errors]
@@ -316,7 +315,6 @@ export class ReservationScheduledJobs {
     const errors = []
     const reservationsInAirtableButNotPrisma = []
     const allAirtableReservations = await this.airtableService.getAllReservations()
-    console.log("SYNCING RESV STATUS")
 
     for (const airtableReservation of allAirtableReservations) {
       try {
@@ -341,11 +339,8 @@ export class ReservationScheduledJobs {
         }
 
         // If the reservation has status of "Completed", handle it seperately.
-        console.log("ID:", airtableReservation.model.iD)
         if (airtableReservation.model.status === "Completed") {
-          console.log("AIRTABLE RESV IS COMPLETED")
           if (prismaReservation.status !== "Completed") {
-            console.log("UPDATING PRISMA TO COMPLETED")
             // Handle housekeeping
             updatedReservations.push(prismaReservation.reservationNumber)
             const prismaUser = await this.prisma.client.user({
@@ -368,15 +363,6 @@ export class ReservationScheduledJobs {
             // Email the user
             this.emailService.sendYouCanNowReserveAgainEmail(prismaUser)
 
-            // Create reservationFeedback datamodels for the returned product variants
-            const returnedProductVariantIDs: ID_Input[] = returnedPhysicalProducts.map(p => p.productVariant.id)
-            const returnedProductVariants = await Promise.all(
-              returnedProductVariantIDs.map(async id => await this.prisma.client.productVariant({ id }))
-            )
-            console.log("RETURNED IDS:", returnedProductVariantIDs)
-            await this.createReservationFeedbacksForVariants(returnedProductVariants, prismaUser)
-            console.log("CREATED FEEDBACKS")
-
             // Update the user's bag
             await this.updateUsersBagItemsOnCompletedReservation(
               prismaReservation,
@@ -396,14 +382,12 @@ export class ReservationScheduledJobs {
               prismaReservation
             )
 
-            // // Create reservationFeedback datamodels for the returned product variants
-            // const returnedProductVariantIDs: ID_Input[] = returnedPhysicalProducts.map(p => p.productVariant.id)
-            // const returnedProductVariants = await Promise.all(
-            //   returnedProductVariantIDs.map(async id => await this.prisma.client.productVariant({ id }))
-            // )
-            // console.log("RETURNED IDS:", returnedProductVariantIDs)
-            // await this.createReservationFeedbacksForVariants(returnedProductVariants, prismaUser)
-            // console.log("CREATED FEEDBACKS")
+            // Create reservationFeedback datamodels for the returned product variants
+            const returnedProductVariantIDs: ID_Input[] = returnedPhysicalProducts.map(p => p.productVariant.id)
+            const returnedProductVariants = await Promise.all(
+              returnedProductVariantIDs.map(async id => await this.prisma.client.productVariant({ id }))
+            )
+            await this.createReservationFeedbacksForVariants(returnedProductVariants, prismaUser)
           }
         } else if (
           airtableReservation.model.status !== prismaReservation.status
@@ -577,7 +561,6 @@ export class ReservationScheduledJobs {
   ) {
     const variantInfos = await Promise.all(
       productVariants.map(async variant => {
-        console.log("PROD ID:", variant.productID)
         const products: Product[] = await this.prisma.client.products({
           where: {
             variants_some: {
@@ -595,7 +578,7 @@ export class ReservationScheduledJobs {
         }
       })
     )
-    const feedbacks = await this.prisma.client.createReservationFeedback({
+    await this.prisma.client.createReservationFeedback({
       feedbacks: {
         create: variantInfos.map(variantInfo => ({
           isCompleted: false,
@@ -627,6 +610,5 @@ export class ReservationScheduledJobs {
         }
       },
     })
-    console.log("MADE FEEDBACKS:", feedbacks)
   }
 }
