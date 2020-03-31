@@ -315,6 +315,7 @@ export class ReservationScheduledJobs {
     const errors = []
     const reservationsInAirtableButNotPrisma = []
     const allAirtableReservations = await this.airtableService.getAllReservations()
+    console.log("SYNCING RESV STATUS")
 
     for (const airtableReservation of allAirtableReservations) {
       try {
@@ -340,7 +341,9 @@ export class ReservationScheduledJobs {
 
         // If the reservation has status of "Completed", handle it seperately.
         if (airtableReservation.model.status === "Completed") {
+          console.log("AIRTABLE RESV IS COMPLETED")
           if (prismaReservation.status !== "Completed") {
+            console.log("UPDATING PRISMA TO COMPLETED")
             // Handle housekeeping
             updatedReservations.push(prismaReservation.reservationNumber)
             const prismaUser = await this.prisma.client.user({
@@ -394,6 +397,7 @@ export class ReservationScheduledJobs {
         } else if (
           airtableReservation.model.status !== prismaReservation.status
         ) {
+          console.log("AIRTABLE DIFF FROM PRISMA")
           // If the reservation doesn't have a status of "Completed", just check to
           // see if we need to update the prisma reservation status and do so if needed
           updatedReservations.push(prismaReservation.reservationNumber)
@@ -405,6 +409,8 @@ export class ReservationScheduledJobs {
             },
             where: { id: prismaReservation.id },
           })
+        } else {
+          console.log("STATUSES ARE EQUAL ON BOTH")
         }
       } catch (err) {
         console.log(airtableReservation)
