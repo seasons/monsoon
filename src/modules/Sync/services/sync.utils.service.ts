@@ -3,20 +3,6 @@ import cliProgress from "cli-progress"
 import { AirtableData, AirtableModelName } from "../../Airtable/airtable.types"
 import { AirtableService } from "../../Airtable/services/airtable.service"
 import { UtilsService } from "../../Utils/utils.service"
-import { SyncBottomSizesService } from "./syncBottomSizes.service"
-import { SyncBrandsService } from "./syncBrands.service"
-import { SyncCategoriesService } from "./syncCategories.service"
-import { SyncColorsService } from "./syncColors.service"
-import { SyncHomepageProductRailsService } from "./syncHomepageProductRails.service"
-import { SyncLocationsService } from "./syncLocations.service"
-import { SyncModelsService } from "./syncModels.service"
-import { SyncPhysicalProductsService } from "./syncPhysicalProducts.service"
-import { SyncProductsService } from "./syncProducts.service"
-import { SyncProductVariantsService } from "./syncProductVariants.service"
-import { SyncReservationsService } from "./syncReservations.service"
-import { SyncSizesService } from "./syncSizes.service"
-import { SyncTopSizesService } from "./syncTopSizes.service"
-import { SyncUsersService } from "./syncUsers.service"
 
 interface LinkStagingRecordInput {
   rootProductionRecord: any
@@ -39,20 +25,6 @@ interface LinkStagingRecordsInput extends LinkStagingRecordInput {
 export class SyncUtilsService {
   constructor(
     private readonly airtableService: AirtableService,
-    private readonly syncBottomSizesService: SyncBottomSizesService,
-    private readonly syncBrandsService: SyncBrandsService,
-    private readonly syncCategoriesService: SyncCategoriesService,
-    private readonly syncColorsService: SyncColorsService,
-    private readonly syncHomepageProductRailsService: SyncHomepageProductRailsService,
-    private readonly syncLocationsService: SyncLocationsService,
-    private readonly syncModelsService: SyncModelsService,
-    private readonly syncPhysicalProductsService: SyncPhysicalProductsService,
-    private readonly syncProductsService: SyncProductsService,
-    private readonly syncProductVariantsService: SyncProductVariantsService,
-    private readonly syncReservationsService: SyncReservationsService,
-    private readonly syncSizesService: SyncSizesService,
-    private readonly syncTopSizesService: SyncTopSizesService,
-    private readonly syncUsersService: SyncUsersService,
     private readonly utils: UtilsService
   ) {}
 
@@ -212,33 +184,33 @@ export class SyncUtilsService {
   private getNumLinks = (modelName: AirtableModelName) => {
     switch (modelName) {
       case "Bottom Sizes":
-        return this.syncBottomSizesService.getNumLinksBottomSizes()
+        return 2
       case "Brands":
-        return this.syncBrandsService.getNumLinksBrands()
+        return 0
       case "Categories":
-        return this.syncCategoriesService.getNumLinksCategories()
+        return 1
       case "Colors":
-        return this.syncColorsService.getNumLinksColors()
+        return 0
       case "Homepage Product Rails":
-        return this.syncHomepageProductRailsService.getNumLinksHomepageProductRails()
+        return 1
       case "Locations":
-        return this.syncLocationsService.getNumLinksLocations()
+        return 0
       case "Models":
-        return this.syncModelsService.getNumLinksModels()
+        return 0
       case "Physical Products":
-        return this.syncPhysicalProductsService.getNumLinksPhysicalProducts()
+        return 2
       case "Products":
-        return this.syncProductsService.getNumLinksProducts()
+        return 5
       case "Product Variants":
-        return this.syncProductVariantsService.getNumLinksProductVariants()
+        return 3
       case "Reservations":
-        return this.syncReservationsService.getNumLinksReservations()
+        return 2
       case "Sizes":
-        return this.syncSizesService.getNumLinksSizes()
+        return 0
       case "Top Sizes":
-        return this.syncTopSizesService.getNumLinksTopSizes()
+        return 1
       case "Users":
-        return this.syncUsersService.getNumLinksUsers()
+        return 1
     }
     throw new Error("invalid modelName")
   }

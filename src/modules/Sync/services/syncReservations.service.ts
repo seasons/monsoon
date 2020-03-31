@@ -16,8 +16,6 @@ export class SyncReservationsService {
     private readonly utils: UtilsService
   ) {}
 
-  getNumLinksReservations = () => 2
-
   async syncAirtableToAirtable(cliProgressBar?: any) {
     const allReservationsProduction = await this.airtableService.getAllReservations(
       this.airtableService.getProductionBase()

@@ -14,8 +14,6 @@ export class SyncUsersService {
     private readonly utils: UtilsService
   ) {}
 
-  getNumLinksUsers = () => 1
-
   async syncAirtableToAirtable(cliProgressBar?: any) {
     const allUsersProduction = await this.airtableService.getAllUsers(
       this.airtableService.getProductionBase()

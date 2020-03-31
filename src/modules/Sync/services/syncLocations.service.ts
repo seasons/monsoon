@@ -13,8 +13,6 @@ export class SyncLocationsService {
 
   getLocationRecordIdentifier = rec => rec.fields.Slug
 
-  getNumLinksLocations = () => 0
-
   async syncAirtableToAirtable(cliProgressBar?) {
     await this.syncUtils.deleteAllStagingRecords("Locations", cliProgressBar)
     await this.syncUtils.createAllStagingRecordsWithoutLinks({

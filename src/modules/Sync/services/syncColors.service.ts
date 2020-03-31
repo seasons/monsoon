@@ -13,8 +13,6 @@ export class SyncColorsService {
     private readonly syncUtils: SyncUtilsService
   ) {}
 
-  getNumLinksColors = () => 0
-
   async syncAirtableToAirtable(cliProgressBar?) {
     await this.syncUtils.deleteAllStagingRecords("Colors", cliProgressBar)
     await this.syncUtils.createAllStagingRecordsWithoutLinks({

@@ -19,8 +19,6 @@ export class SyncPhysicalProductsService {
     private readonly utils: UtilsService
   ) {}
 
-  getNumLinksPhysicalProducts = () => 2
-
   getPhysicalProductRecordIdentifier = rec => rec.fields.SUID.text
 
   async syncAirtableToAirtable(cliProgressBar?: any) {

@@ -16,8 +16,6 @@ export class SyncBrandsService {
     private readonly utils: UtilsService
   ) {}
 
-  getNumLinksBrands = () => 0
-
   async syncAirtableToAirtable(cliProgressBar?: any) {
     await this.syncUtils.deleteAllStagingRecords("Brands", cliProgressBar)
     await this.syncUtils.createAllStagingRecordsWithoutLinks({

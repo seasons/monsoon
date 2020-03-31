@@ -82,8 +82,6 @@ export class SyncSizesService {
     return sizeRecord
   }
 
-  getNumLinksSizes = () => 0
-
   getSizeRecordIdentifer = rec => `${rec.fields.Name}${rec.fields.Type}`
 
   async syncAirtableToAirtable(cliProgressBar?) {

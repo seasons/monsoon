@@ -18,8 +18,6 @@ export class SyncCategoriesService {
 
   getCategoryRecordIdentifier = rec => rec.fields.Name
 
-  getNumLinksCategories = () => 1
-
   async syncAirtableToAirtable(cliProgressBar?) {
     const allProductionCategories = await this.airtableService.getAllCategories(
       this.airtableService.getProductionBase()

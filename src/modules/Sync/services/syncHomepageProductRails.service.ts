@@ -17,8 +17,6 @@ export class SyncHomepageProductRailsService {
     private readonly utils: UtilsService
   ) {}
 
-  getNumLinksHomepageProductRails = () => 1
-
   async syncAirtableToAirtable(cliProgressBar?) {
     const allProductionRecs = await this.airtableService.getAllHomepageProductRails(
       this.airtableService.getProductionBase()

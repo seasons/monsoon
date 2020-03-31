@@ -17,8 +17,6 @@ export class SyncBottomSizesService {
   getBottomSizeRecordIdentifer = rec =>
     `${rec.fields.Name}${rec.fields.Waist}${rec.fields.Rise}${rec.fields.Hem}${rec.fields.Inseam}`
 
-  getNumLinksBottomSizes = () => 2
-
   async syncAirtableToAirtable(cliProgressBar?) {
     await this.syncUtils.deleteAllStagingRecords("Bottom Sizes", cliProgressBar)
     const allProductionRecords = await this.airtableService.getAllBottomSizes(

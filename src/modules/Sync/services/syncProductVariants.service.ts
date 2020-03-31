@@ -41,8 +41,6 @@ export class SyncProductVariantsService {
     private readonly utils: UtilsService
   ) {}
 
-  getNumLinksProductVariants = () => 3
-
   getProductVariantRecordIdentifier = rec => rec.fields.SKU
 
   async syncAirtableToAirtable(cliProgressBar?) {

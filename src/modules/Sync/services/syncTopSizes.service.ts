@@ -14,8 +14,6 @@ export class SyncTopSizesService {
     private readonly utils: UtilsService
   ) {}
 
-  getNumLinksTopSizes = () => 1
-
   async syncAirtableToAirtable(cliProgressBar?) {
     await this.syncUtils.deleteAllStagingRecords("Top Sizes", cliProgressBar)
     const allProductionRecords = await this.airtableService.getAllTopSizes(

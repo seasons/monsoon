@@ -21,8 +21,6 @@ export class SyncProductsService {
     private readonly utils: UtilsService
   ) {}
 
-  getNumLinksProducts = () => 5
-
   getProductRecordIdentifer = rec => rec.fields.Slug
 
   async syncAirtableToAirtable(cliProgressBar?: any) {
