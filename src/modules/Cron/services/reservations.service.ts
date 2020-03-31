@@ -392,7 +392,6 @@ export class ReservationScheduledJobs {
         } else if (
           airtableReservation.model.status !== prismaReservation.status
         ) {
-          console.log("AIRTABLE DIFF FROM PRISMA")
           // If the reservation doesn't have a status of "Completed", just check to
           // see if we need to update the prisma reservation status and do so if needed
           updatedReservations.push(prismaReservation.reservationNumber)
@@ -404,8 +403,6 @@ export class ReservationScheduledJobs {
             },
             where: { id: prismaReservation.id },
           })
-        } else {
-          console.log("STATUSES ARE EQUAL ON BOTH")
         }
       } catch (err) {
         console.log(airtableReservation)
