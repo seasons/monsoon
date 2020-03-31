@@ -21,7 +21,7 @@ export const createReservationFeedbacksForVariants = async (
       }
     })
   )
-  await prisma.createReservationFeedback({
+  const feedbacks = await prisma.createReservationFeedback({
     feedbacks: {
       create: variantInfos.map(variantInfo => ({
         isCompleted: false,
@@ -53,4 +53,5 @@ export const createReservationFeedbacksForVariants = async (
       }
     },
   })
+  console.log("MADE FEEDBACKS:", feedbacks)
 }

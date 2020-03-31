@@ -8,6 +8,8 @@ import {
   InventoryStatus,
   ProductVariant,
   ID_Input,
+  User,
+  Product,
 } from "../../../prisma"
 import { AirtableService } from "../../Airtable/services/airtable.service"
 import { SyncError } from "../../../errors"
@@ -26,6 +28,8 @@ type productVariantCounts =
   | prismaProductVariantCounts
   | AirtableProductVariantCounts
 
+const MULTIPLE_CHOICE = "MultipleChoice"
+
 @Injectable()
 export class ReservationScheduledJobs {
   private readonly logger = new Logger(`CRON: ${ReservationScheduledJobs.name}`)
@@ -37,7 +41,7 @@ export class ReservationScheduledJobs {
     private readonly emailService: EmailService,
     private readonly prisma: PrismaService,
     private readonly shippingService: ShippingService
-  ) {}
+  ) { }
 
   @Cron(CronExpression.EVERY_6_HOURS)
   async sendReturnNotifications() {
@@ -377,6 +381,15 @@ export class ReservationScheduledJobs {
               returnedPhysicalProducts,
               prismaReservation
             )
+
+            // Create reservationFeedback datamodels for the returned product variants
+            const returnedProductVariantIDs: ID_Input[] = returnedPhysicalProducts.map(p => p.productVariant.id)
+            const returnedProductVariants = await Promise.all(
+              returnedProductVariantIDs.map(async id => await this.prisma.client.productVariant({ id }))
+            )
+            console.log("RETURNED IDS:", returnedProductVariantIDs)
+            await this.createReservationFeedbacksForVariants(returnedProductVariants, prismaUser)
+            console.log("CREATED FEEDBACKS")
           }
         } else if (
           airtableReservation.model.status !== prismaReservation.status
@@ -539,5 +552,54 @@ export class ReservationScheduledJobs {
       }
       await this.prisma.client.deleteBagItem({ id: bagItem.id })
     }
+  }
+
+  private async createReservationFeedbacksForVariants(
+    productVariants: ProductVariant[],
+    user: User
+  ) {
+    const variantInfos = await Promise.all(
+      productVariants.map(async variant => {
+        const product: Product = await this.prisma.client.product({ id: variant.productID })
+        return {
+          id: variant.id,
+          name: product.name,
+          retailPrice: product.retailPrice,
+        }
+      })
+    )
+    const feedbacks = await this.prisma.client.createReservationFeedback({
+      feedbacks: {
+        create: variantInfos.map(variantInfo => ({
+          isCompleted: false,
+          questions: {
+            create: [
+              {
+                question: `How many times did you wear this ${variantInfo.name}?`,
+                options: { set: ["More than 6 times", "3-5 times", "1-2 times", "0 times"] },
+                type: MULTIPLE_CHOICE,
+              },
+              {
+                question: `Would you buy it at retail for $${variantInfo.retailPrice}?`,
+                options: { set: ["Would buy at a discount", "Buy below retail", "Buy at retail", "Would only rent"] },
+                type: MULTIPLE_CHOICE,
+              },
+              {
+                question: `Did it fit as expected?`,
+                options: { set: ["Fit too big", "Fit true to size", "Ran small", "Didn’t fit at all"] },
+                type: MULTIPLE_CHOICE,
+              },
+            ]
+          },
+          variant: { connect: { id: variantInfo.id } }
+        })),
+      },
+      user: {
+        connect: {
+          id: user.id
+        }
+      },
+    })
+    console.log("MADE FEEDBACKS:", feedbacks)
   }
 }

@@ -1,15 +1,13 @@
 import { Injectable } from '@nestjs/common'
-import { DBService } from "../../../prisma/db.service"
 import { RecentlyViewedProduct, BagItem } from "../../../prisma"
 import { head } from "lodash"
-import { PrismaClientService } from "../../../prisma/client.service"
+import { PrismaService } from "../../../prisma/prisma.service"
 
 
 @Injectable()
 export class FAQService {
   constructor(
-    private readonly db: DBService,
-    private readonly prisma: PrismaClientService,
+    private readonly prisma: PrismaService,
   ) { }
 
   async getSections(user) {

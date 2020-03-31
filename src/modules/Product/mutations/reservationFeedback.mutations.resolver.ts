@@ -1,12 +1,11 @@
 import { Resolver, Mutation, Args, Info } from "@nestjs/graphql"
-import { PrismaClientService } from "../../../prisma/client.service"
+import { PrismaService } from "../../../prisma/prisma.service"
 import { User, Customer, Analytics } from "../../../nest_decorators"
 import { ReservationFeedbackService } from "../services/reservationFeedback.service"
 
 @Resolver()
 export class ReservationFeedbackMutationsResolver {
   constructor(
-    private readonly prisma: PrismaClientService,
     private readonly reservationFeedbackService: ReservationFeedbackService,
   ) { }
 

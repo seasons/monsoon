@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common"
-import { DBService } from "../../../prisma/db.service"
-import { PrismaClientService } from "../../../prisma/client.service"
+import { PrismaService } from "../../../prisma/prisma.service"
 import { head } from "lodash"
 
 const RESERVATION_FEEDBACK_FRAGMENT = `
@@ -33,13 +32,12 @@ const RESERVATION_FEEDBACK_FRAGMENT = `
 @Injectable()
 export class ReservationFeedbackService {
   constructor(
-    private readonly db: DBService,
-    private readonly prisma: PrismaClientService
+    private readonly prisma: PrismaService
   ) { }
 
   async getReservationFeedback(user) {
     if (!user) return null
-    const feedbacks = await this.db.query.reservationFeedbacks(
+    const feedbacks = await this.prisma.binding.query.reservationFeedbacks(
       {
         where: {
           user: { id: user.id },
@@ -61,7 +59,7 @@ export class ReservationFeedbackService {
       where: { id: feedbackID },
       data: input
     })
-    const reservationFeedback = await this.db.query.reservationFeedback(
+    const reservationFeedback = await this.prisma.binding.query.reservationFeedback(
       { where: { id: feedbackID } },
       RESERVATION_FEEDBACK_FRAGMENT
     )

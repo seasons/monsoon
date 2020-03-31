@@ -106,7 +106,9 @@ export async function syncReservationStatus() {
           const returnedProductVariants = await Promise.all(
             returnedProductVariantIDs.map(async id => await prisma.productVariant({ id }))
           )
+          console.log("RETURNED IDS:", returnedProductVariantIDs)
           await createReservationFeedbacksForVariants(returnedProductVariants, prismaUser)
+          console.log("CREATED FEEDBACKS")
         }
       } else if (
         airtableReservation.fields.Status !== prismaReservation.status
