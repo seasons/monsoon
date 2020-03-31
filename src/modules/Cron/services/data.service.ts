@@ -452,10 +452,16 @@ export class DataScheduledJobs {
     console.log(
       `-- PRISMA: NUMBER OF PRODUCT VARIANTS WITH A COUNT PROFILE THAT DOESN'T MATCH THE STATUSES OF THE ATTACHED PHYSICAL PRODUCTS: ${prismaCountToStatusMisalignments.length}`
     )
-    console.log(util.inspect(prismaCountToStatusMisalignments, { depth: null }))
+    // console.log(util.inspect(prismaCountToStatusMisalignments, { depth: null }))
     console.log(
       `-- AIRTABLE: NUMBER OF PRODUCT VARIANTS WITH A COUNT PROFILE THAT DOESN'T MATCH THE STATUSES OF THE ATTACHED PHYSICAL PRODUCTS: ${airtableCountToStatusMisalignments.length}`
     )
+    // console.log(
+    //   util.inspect(
+    //     airtableCountToStatusMisalignments.map(a => a.sku),
+    //     { depth: null }
+    //   )
+    // )
     console.log(
       `-- PRISMA: NUMBER OF PRODUCT VARIANTS WITH TOTAL != RESERVED + RESERVABLE + NONRESERVABLE: ${prismaProdVarsWithImpossibleCounts.length}`
     )
@@ -464,6 +470,7 @@ export class DataScheduledJobs {
     console.log(
       `---NUMBER OF PHYSICAL PRODUCTS WITH MISMATCHING INVENTORY STATUSES: ${mismatchingStatuses.length}`
     )
+    console.log(mismatchingStatuses.map(a => a.seasonsUID))
     console.log(`ARE THE RESERVATIONS ALIGNED?`)
     console.log(
       `-- RESERVATIONS IN PRISMA BUT NOT AIRTABLE; ${reservationsInPrismaButNotAirtable.length}`
