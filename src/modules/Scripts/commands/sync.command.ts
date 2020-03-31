@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common"
 import fs from "fs"
 import { Command, Positional } from "nestjs-command"
-import { PrismaSyncService } from "../../Sync/services/prisma.service"
+import { PrismaSyncService } from "../../Sync/services/sync.prisma.service"
 import { ScriptsService } from "../services/scripts.service"
 
 @Injectable()
