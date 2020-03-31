@@ -340,6 +340,7 @@ export class ReservationScheduledJobs {
         }
 
         // If the reservation has status of "Completed", handle it seperately.
+        console.log("ID:", airtableReservation.model.iD)
         if (airtableReservation.model.status === "Completed") {
           console.log("AIRTABLE RESV IS COMPLETED")
           if (prismaReservation.status !== "Completed") {
