@@ -367,6 +367,15 @@ export class ReservationScheduledJobs {
             // Email the user
             this.emailService.sendYouCanNowReserveAgainEmail(prismaUser)
 
+            // Create reservationFeedback datamodels for the returned product variants
+            const returnedProductVariantIDs: ID_Input[] = returnedPhysicalProducts.map(p => p.productVariant.id)
+            const returnedProductVariants = await Promise.all(
+              returnedProductVariantIDs.map(async id => await this.prisma.client.productVariant({ id }))
+            )
+            console.log("RETURNED IDS:", returnedProductVariantIDs)
+            await this.createReservationFeedbacksForVariants(returnedProductVariants, prismaUser)
+            console.log("CREATED FEEDBACKS")
+
             // Update the user's bag
             await this.updateUsersBagItemsOnCompletedReservation(
               prismaReservation,
@@ -386,14 +395,14 @@ export class ReservationScheduledJobs {
               prismaReservation
             )
 
-            // Create reservationFeedback datamodels for the returned product variants
-            const returnedProductVariantIDs: ID_Input[] = returnedPhysicalProducts.map(p => p.productVariant.id)
-            const returnedProductVariants = await Promise.all(
-              returnedProductVariantIDs.map(async id => await this.prisma.client.productVariant({ id }))
-            )
-            console.log("RETURNED IDS:", returnedProductVariantIDs)
-            await this.createReservationFeedbacksForVariants(returnedProductVariants, prismaUser)
-            console.log("CREATED FEEDBACKS")
+            // // Create reservationFeedback datamodels for the returned product variants
+            // const returnedProductVariantIDs: ID_Input[] = returnedPhysicalProducts.map(p => p.productVariant.id)
+            // const returnedProductVariants = await Promise.all(
+            //   returnedProductVariantIDs.map(async id => await this.prisma.client.productVariant({ id }))
+            // )
+            // console.log("RETURNED IDS:", returnedProductVariantIDs)
+            // await this.createReservationFeedbacksForVariants(returnedProductVariants, prismaUser)
+            // console.log("CREATED FEEDBACKS")
           }
         } else if (
           airtableReservation.model.status !== prismaReservation.status
