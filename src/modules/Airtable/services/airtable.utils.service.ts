@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common"
 import { LocationCreateInput, BillingInfoCreateInput } from "../../../prisma"
 import { AirtableBaseService } from "./airtable.base.service"
 
-export interface AirtableRecord {
+interface AirtableRecord {
   id: string
   fields: any
 }
@@ -11,7 +11,7 @@ export interface AirtableRecord {
 export class AirtableUtilsService {
   constructor(private readonly airtableBase: AirtableBaseService) {}
 
-  keyMap = {
+  readonly keyMap = {
     phoneNumber: "Phone Number",
     birthday: "Birthday",
     height: "Height",

@@ -1,15 +1,22 @@
-import { Module, forwardRef } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { UsersScheduledJobs } from './services/users.service';
-import { AirtableModule, EmailModule, UserModule } from '..';
 import { PrismaModule } from '../../prisma/prisma.module';
+import { ReservationScheduledJobs } from './services/reservations.service';
+import { AirtableModule } from '../Airtable/airtable.module';
+import { EmailModule } from '../Email/email.module';
+import { UserModule } from '../User/user.module';
+import { ShippingModule } from '../Shipping/shipping.module';
+import { SlackModule } from '../Slack/slack.module';
 
 @Module({
   imports: [
-    forwardRef(() => AirtableModule),
-    forwardRef(() => EmailModule),
-    forwardRef(() => PrismaModule),
-    forwardRef(() => UserModule)
+    AirtableModule,
+    EmailModule,
+    PrismaModule,
+    ShippingModule,
+    SlackModule,
+    UserModule
   ],
-  providers: [UsersScheduledJobs],
+  providers: [ReservationScheduledJobs, UsersScheduledJobs],
 })
 export class CronModule {}

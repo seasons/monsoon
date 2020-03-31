@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common"
-import { DBService } from "../../../prisma/db.service"
+import { PrismaService } from "../../../prisma/prisma.service"
 
 export enum SectionTitle {
   FeaturedCollection = "Featured collection",
@@ -10,10 +10,10 @@ export enum SectionTitle {
 
 @Injectable()
 export class HomepageService {
-  constructor(private readonly db: DBService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   async getHomepageSections(customer) {
-    const productRails = await this.db.query.homepageProductRails(
+    const productRails = await this.prisma.binding.query.homepageProductRails(
       {},
       `{
         name

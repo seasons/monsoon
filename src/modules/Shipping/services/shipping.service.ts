@@ -1,10 +1,9 @@
 import { Injectable } from "@nestjs/common"
-import { PrismaClientService } from "../../../prisma/client.service"
 import { User, Customer, ID_Input, Location } from "../../../prisma"
 import { UtilsService } from "../../Utils/utils.service"
 import shippo from "shippo"
 import { ShippoTransaction, ShippoShipment } from "../shipping.types"
-import { Args } from "@nestjs/graphql"
+import { PrismaService } from "../../../prisma/prisma.service"
 
 interface CoreShippoAddressFields {
   name: string
@@ -27,7 +26,7 @@ export class ShippingService {
   private readonly shippo = shippo(process.env.SHIPPO_API_KEY)
 
   constructor(
-    private readonly prisma: PrismaClientService,
+    private readonly prisma: PrismaService,
     private readonly utilsService: UtilsService
   ) {}
 
@@ -85,7 +84,7 @@ export class ShippingService {
       country: "US",
       validate: true,
     })
-  
+
     const validationResults = result.validation_results
     const isValid = result.validation_results.is_valid
     const message = validationResults?.messages?.[0]
@@ -238,5 +237,4 @@ export class ShippingService {
       email: "reservations@seasons.nyc",
     }
   }
-
 }

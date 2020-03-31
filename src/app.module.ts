@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common"
 import { GraphQLModule, GqlModuleOptions } from "@nestjs/graphql"
-import { ScheduleModule } from '@nestjs/schedule';
+import { ScheduleModule } from "@nestjs/schedule"
 import {
   UserModule,
   HomepageModule,
@@ -12,7 +12,8 @@ import {
   CronModule,
   EmailModule,
   AirtableModule,
-  directiveResolvers
+  SlackModule,
+  directiveResolvers,
 } from "./modules"
 import { importSchema } from "graphql-import"
 import Analytics from "analytics-node"
@@ -35,9 +36,15 @@ chargebee.configure({
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
+// Don't run cron jobs in dev mode, to keep the console clean
+let _imports = [
+  process.env.NODE_ENV !== "development" ? ScheduleModule.forRoot() : null,
+]
+if (!_imports[0]) _imports = []
+
 @Module({
   imports: [
-    ScheduleModule.forRoot(),
+    ..._imports,
     GraphQLModule.forRootAsync({
       useFactory: async () => {
         const typeDefs = await importSchema("src/schema.graphql")
@@ -66,6 +73,7 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY)
     AirtableModule,
     SearchModule,
     CronModule,
+    SlackModule,
   ],
 })
 export class AppModule {}

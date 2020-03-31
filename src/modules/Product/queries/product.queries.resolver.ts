@@ -1,17 +1,25 @@
-import { Query, Resolver, Args, Info } from "@nestjs/graphql"
+import { Query, Resolver, Args, Info, Context } from "@nestjs/graphql"
 import { ProductService } from "../services/product.service"
-import { DBService } from "../../../prisma/db.service"
+import { addFragmentToInfo } from "graphql-binding"
+import { PrismaService } from "../../../prisma/prisma.service"
 
 @Resolver()
 export class ProductQueriesResolver {
   constructor(
-    private readonly db: DBService,
+    private readonly prisma: PrismaService,
     private readonly productService: ProductService
   ) {}
 
   @Query()
-  async product(@Args() args, @Info() info) {
-    return await this.db.query.product(args, info)
+  async product(@Args() args, @Info() info, @Context() ctx) {
+    return await this.prisma.binding.query.product(
+      args,
+      addFragmentToInfo(
+        info,
+        // for computed fields
+        `fragment EnsureId on Product { id }`
+      )
+    )
   }
 
   @Query()
@@ -26,16 +34,16 @@ export class ProductQueriesResolver {
 
   @Query()
   async productRequests(@Args() args, @Info() info) {
-    return await this.db.query.productRequests(args, info)
+    return await this.prisma.binding.query.productRequests(args, info)
   }
 
   @Query()
   async productFunctions(@Args() args, @Info() info) {
-    return await this.db.query.productFunctions(args, info)
+    return await this.prisma.binding.query.productFunctions(args, info)
   }
 
   @Query()
   async categories(@Args() args, @Info() info) {
-    return await this.db.query.categories(args, info)
+    return await this.prisma.binding.query.categories(args, info)
   }
 }
