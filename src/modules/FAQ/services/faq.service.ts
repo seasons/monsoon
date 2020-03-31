@@ -3,7 +3,8 @@ import { Injectable } from '@nestjs/common'
 
 @Injectable()
 export class FAQService {
-  async getSections() {
+
+  getSections() {
     return [
       {
         title: "Need to return your items?",
