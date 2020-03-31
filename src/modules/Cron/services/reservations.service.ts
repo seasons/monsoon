@@ -94,6 +94,7 @@ export class ReservationScheduledJobs {
 
   @Cron(CronExpression.EVERY_MINUTE)
   async syncPhysicalProductAndReservationStatus() {
+    console.log("SYNCING STUFF")
     const physProdReport = await this.syncPhysicalProductStatus()
     const reservationReport = await this.syncReservationStatus()
     const allErrors = [...physProdReport.errors, ...reservationReport.errors]
@@ -576,11 +577,21 @@ export class ReservationScheduledJobs {
   ) {
     const variantInfos = await Promise.all(
       productVariants.map(async variant => {
-        const product: Product = await this.prisma.client.product({ id: variant.productID })
+        console.log("PROD ID:", variant.productID)
+        const products: Product[] = await this.prisma.client.products({
+          where: {
+            variants_some: {
+              id: variant.id,
+            },
+          },
+        })
+        if (!products || products.length === 0) {
+          throw new Error(`createReservationFeedback error: Unable to find product for product variant id ${variant.id}.`)
+        }
         return {
           id: variant.id,
-          name: product.name,
-          retailPrice: product.retailPrice,
+          name: products[0].name,
+          retailPrice: products[0].retailPrice,
         }
       })
     )
