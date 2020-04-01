@@ -81,11 +81,17 @@ export class AirtableUtilsService {
           filterByFormula: `{Email}='${email}'`,
         })
         .firstPage((err, records) => {
-          if (records.length > 0) {
-            const user = records[0]
-            resolve(user)
-          } else {
+          if (!!err) {
             reject(err)
+          }
+          if (records.length > 0) {
+            resolve(records[0])
+          } else {
+            reject(
+              new Error(
+                `User with email ${email} not found on airtable with id ${process.env.AIRTABLE_DATABASE_ID}`
+              )
+            )
           }
         })
     })
