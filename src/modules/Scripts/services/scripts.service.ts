@@ -14,7 +14,6 @@ export class ScriptsService {
       }
       this.s3.getObject(params, (err, data) => {
         if (err) reject(err)
-        console.log(filePath)
         fs.writeFileSync(filePath, data.Body.toString())
         resolve(filePath)
       })

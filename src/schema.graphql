@@ -121,16 +121,6 @@ type Query {
     first: Int
     last: Int
   ): ProductConnection!
-  collectionGroups(
-    where: CollectionGroupWhereInput
-    orderBy: CollectionGroupOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [CollectionGroup]!
-  collectionGroup(where: CollectionGroupWhereUniqueInput!): CollectionGroup
   collections(
     where: CollectionWhereInput
     orderBy: CollectionOrderByInput
@@ -161,7 +151,6 @@ type Query {
     last: Int
   ): [HomepageProductRail]!
   product(where: ProductWhereUniqueInput!): Product
-  productVariant(where: ProductVariantWhereUniqueInput!): ProductVariant!
   categories(
     where: CategoryWhereInput
     orderBy: CategoryOrderByInput

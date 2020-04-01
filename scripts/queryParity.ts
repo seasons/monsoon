@@ -5,38 +5,39 @@ const productFields = `
 id
 slug
 name
+type
+description
+externalURL
+images
+modelHeight
+retailPrice
+tags
+innerMaterials
+outerMaterials
+status
+isSaved
+createdAt
+updatedAt
 brand {
   id
 }
 category {
   id
 }
-type
-description
-externalURL
-images
-modelHeight
 modelSize {
   id
   display
 }
-retailPrice
 color {
   id
 }
-tags
+secondaryColor {
+  id
+}
 functions {
   id
 }
-innerMaterials
-outerMaterials
-variants {
-  id
-}
-status
-isSaved
-createdAt
-updatedAt`
+`
 
 const brandFields = `
 id
@@ -56,6 +57,36 @@ websiteUrl
 createdAt
 updatedAt
 `
+
+const productRequestFields = `
+id
+brand
+description
+images
+name
+price
+priceCurrency
+productID
+reason
+sku
+url
+user {
+  id
+}
+`
+const collectionFields = `
+id
+slug
+images
+title
+subTitle
+descriptionTop
+descriptionBottom
+products {
+  id
+}
+`
+
 const queries = {
   brand: `
   {
@@ -70,6 +101,80 @@ const queries = {
       ${brandFields}
     }
   }`,
+  product: `
+  {
+    product(where: {id: "ck7yztt6j01mh07249657q5mm"}) {
+      ${productFields}
+    }
+  }
+  `,
+  products: `
+  {
+    products(orderBy: id_ASC) {
+      ${productFields}
+    }
+  }
+  `,
+  categories: `
+    {
+      categories {
+        id
+        slug
+        name
+        image
+        description
+        visible
+        products {
+          id
+        }
+        children {
+          id
+        }
+      }
+    }
+    `,
+  productFunctions: `
+    {
+      productFunctions {
+        id
+        name
+      }
+    }
+    `,
+  productRequests: `
+    {
+      productRequests {
+        ${productRequestFields}
+      }
+    }    
+    `,
+  collection: `
+    {
+      collection(where: {id: "ck7z0hmtd1a0s0724cd1wcew3"}) {
+        ${collectionFields}
+      }
+    }
+    `,
+  collections: `
+    {
+      collections {
+        ${collectionFields}
+      }
+    }
+    `,
+  faq: `
+  {
+    faq {
+      sections {
+        title
+        subsections {
+          title
+          text
+        }
+      }
+    }
+  }
+  `,
 }
 const oURL = "https://monsoon-staging.herokuapp.com"
 const nURL = "https://monsoon-nest-staging.herokuapp.com"

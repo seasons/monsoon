@@ -72,7 +72,7 @@ export class ProductService {
 
   async isSaved(
     product: { id: ID_Input } | Product,
-    customer: { id: ID_Input } | Customer
+    customer: { id: ID_Input } | Customer | null
   ) {
     if (!customer) {
       return false

@@ -26,6 +26,7 @@ export class UserCommands {
       describe: "Prisma environment on which to create the test user",
       choices: ["local", "staging"],
       type: "string",
+      default: "local",
     })
     e,
     @Option({
@@ -43,6 +44,7 @@ export class UserCommands {
   ) {
     await this.scriptsService.overrideEnvFromRemoteConfig({
       prismaEnvironment: e,
+      airtableEnvironment: "staging",
     })
 
     const firstName = faker.name.firstName()
@@ -71,10 +73,10 @@ export class UserCommands {
           create: {
             slug,
             name: `${firstName} ${lastName}`,
-            address1: faker.address.streetAddress(),
-            city: faker.address.city(),
-            state: faker.address.state(),
-            zipCode: faker.address.zipCode(),
+            address1: "138 Mulberry St",
+            city: "New York",
+            state: "NY",
+            zipCode: "10013",
           },
         },
       },
@@ -86,6 +88,8 @@ export class UserCommands {
         where: { user: { id: user.id } },
       })
     )
+
+    // Add some details
     await this.prisma.client.updateCustomer({
       data: {
         plan: "Essential",
