@@ -5,7 +5,6 @@ import { ProductFieldsResolver } from "./fields/product.fields.resolver"
 import { ProductQueriesResolver } from "./queries/product.queries.resolver"
 import { ProductMutationsResolver } from "./mutations/product.mutations.resolver"
 import { ProductVariantFieldsResolver } from "./fields/productVariant.fields.resolver"
-import { ProductVariantQueriesResolver } from "./queries/productVariant.queries.resolver"
 import { ProductVariantMutationsResolver } from "./mutations/productVariant.mutations.resolver"
 import { ProductUtilsService } from "./services/product.utils.service"
 import { UserModule } from "../User/user.module"
@@ -47,11 +46,10 @@ import { ReservationFeedbackMutationsResolver } from "./mutations/reservationFee
     ProductMutationsResolver,
     ProductQueriesResolver,
     ProductVariantFieldsResolver,
-    ProductVariantQueriesResolver,
     ProductVariantMutationsResolver,
     BrandQueriesResolver,
     ReservationFeedbackQueriesResolver,
     ReservationFeedbackMutationsResolver,
   ],
 })
-export class ProductModule { }
+export class ProductModule {}
