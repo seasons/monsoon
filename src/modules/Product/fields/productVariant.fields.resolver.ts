@@ -7,6 +7,25 @@ export class ProductVariantFieldsResolver {
   constructor(private readonly prisma: PrismaService) {}
 
   @ResolveField()
+  async isInBag(@Parent() parent, @Customer() customer) {
+    if (!customer) return false
+
+    const bagItems = await this.prisma.client.bagItems({
+      where: {
+        productVariant: {
+          id: parent.id,
+        },
+        customer: {
+          id: customer.id,
+        },
+        saved: false,
+      },
+    })
+
+    return bagItems.length > 0
+  }
+
+  @ResolveField()
   async isSaved(@Parent() parent, @Customer() customer) {
     if (!customer) return false
 
