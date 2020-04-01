@@ -26,6 +26,7 @@ export class UserCommands {
       describe: "Prisma environment on which to create the test user",
       choices: ["local", "staging"],
       type: "string",
+      default: "local",
     })
     e,
     @Option({
@@ -86,6 +87,8 @@ export class UserCommands {
         where: { user: { id: user.id } },
       })
     )
+
+    // Add some details
     await this.prisma.client.updateCustomer({
       data: {
         plan: "Essential",
