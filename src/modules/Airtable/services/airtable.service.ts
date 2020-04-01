@@ -15,6 +15,7 @@ import {
   AirtableData,
   AirtableInventoryStatus,
   AirtableModelName,
+  AirtableProductVariantCounts,
 } from "../airtable.types"
 import { AirtableBaseService } from "./airtable.base.service"
 import { AirtableUtilsService } from "./airtable.utils.service"
@@ -173,10 +174,6 @@ export class AirtableService {
       .create(newPhysicalProducts)
   }
 
-  async getAllBottomSizes(airtableBase?) {
-    return this.getAll("Bottom Sizes", "", "", airtableBase)
-  }
-
   async getAllBrands(airtableBase?) {
     return this.getAll("Brands", "", "", airtableBase)
   }
@@ -225,20 +222,12 @@ export class AirtableService {
     return this.getAll("Reservations", "", "", airtableBase)
   }
 
-  async getAllSizes(airtableBase?) {
-    return this.getAll("Sizes", "", "", airtableBase)
-  }
-
   async getAllTopSizes(airtableBase?) {
     return this.getAll("Top Sizes", "", "", airtableBase)
   }
 
   async getAllUsers(airtableBase?) {
     return this.getAll("Users", "", "", airtableBase)
-  }
-
-  async getAllTopSizes(airtableBase?) {
-    return this.getAll("Top Sizes", "", "", airtableBase)
   }
 
   async getAllBottomSizes(airtableBase?) {
