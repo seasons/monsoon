@@ -406,13 +406,13 @@ export class DataScheduledJobs {
     /* REPORT */
     console.log(`/*********** REPORT ***********/`)
     console.log(
+      `DO PRODUCTS, PHYSICAL PRODUCTS, AND PRODUCT VARIANTS ALIGN IN NUMBER?`
+    )
+    console.log(
       `--- PRODUCTS ON PRISMA BUT NOR AIRTABLE: ${productsInPrismaButNotAirtable.length}`
     )
     console.log(
       `--- PRODUCTS ON AIRTABLE BUT NOT PRISMA: ${productsInAirtableButNotPrisma.length}`
-    )
-    console.log(
-      `DO PRODUCTS, PHYSICAL PRODUCTS, AND PRODUCT VARIANTS ALIGN IN NUMBER?`
     )
     console.log(
       `--- PHYSICAL PRODUCTS ON PRISMA BUT NOT AIRTABLE: ${physicalProductsInPrismaButNotAirtable.length}`
@@ -456,12 +456,12 @@ export class DataScheduledJobs {
     console.log(
       `-- AIRTABLE: NUMBER OF PRODUCT VARIANTS WITH A COUNT PROFILE THAT DOESN'T MATCH THE STATUSES OF THE ATTACHED PHYSICAL PRODUCTS: ${airtableCountToStatusMisalignments.length}`
     )
-    // console.log(
-    //   util.inspect(
-    //     airtableCountToStatusMisalignments.map(a => a.sku),
-    //     { depth: null }
-    //   )
-    // )
+    console.log(
+      util.inspect(
+        airtableCountToStatusMisalignments.map(a => a.sku),
+        { depth: null }
+      )
+    )
     console.log(
       `-- PRISMA: NUMBER OF PRODUCT VARIANTS WITH TOTAL != RESERVED + RESERVABLE + NONRESERVABLE: ${prismaProdVarsWithImpossibleCounts.length}`
     )
