@@ -9,21 +9,14 @@ import {
   PhysicalProduct,
   ReservationCreateInput,
   ReservationStatus,
-  Size,
   User,
 } from "../../../prisma"
 import {
   AirtableData,
   AirtableInventoryStatus,
   AirtableModelName,
-  AirtableProductVariantCounts,
 } from "../airtable.types"
 import { AirtableBaseService } from "./airtable.base.service"
-import {
-  AirtableInventoryStatus,
-  AirtableProductVariantCounts,
-  AirtableData,
-} from "../airtable.types"
 import { AirtableUtilsService } from "./airtable.utils.service"
 
 interface AirtableUserFields extends CustomerDetailCreateInput {
@@ -254,7 +247,8 @@ export class AirtableService {
 
   async getAllSizes(airtableBase?) {
     return this.getAll("Sizes", "", "", airtableBase)
-    
+  }
+
   async getNumRecords(modelName: AirtableModelName) {
     return (await this.getAll(modelName, "", ""))?.length
   }
