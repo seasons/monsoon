@@ -21,7 +21,10 @@ export class ScriptsService {
     })
   }
 
-  async overrideEnvFromRemoteConfig(environment = "local") {
+  async overrideEnvFromRemoteConfig({
+    prismaEnvironment = "local",
+    airtableEnvironment = "staging",
+  }) {
     const envFilePath = await this.downloadFromS3(
       "/tmp/__monsoon__env.json",
       "monsoon-scripts",
@@ -29,10 +32,11 @@ export class ScriptsService {
     )
     try {
       const env = this.readJSONObjectFromFile(envFilePath)
-      const { endpoint, secret } = env.prisma[environment]
+      const { endpoint, secret } = env.prisma[prismaEnvironment]
       process.env.PRISMA_ENDPOINT = endpoint
       process.env.PRISMA_SECRET = secret
-      process.env.AIRTABLE_DATABASE_ID = env.airtable.staging.baseID
+      process.env.AIRTABLE_DATABASE_ID =
+        env.airtable[airtableEnvironment].baseID
     } catch (err) {
       console.log(err)
     } finally {

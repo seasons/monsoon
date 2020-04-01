@@ -1,25 +1,26 @@
 import { Module } from "@nestjs/common"
-import { GraphQLModule, GqlModuleOptions } from "@nestjs/graphql"
+import { GqlModuleOptions, GraphQLModule } from "@nestjs/graphql"
 import { ScheduleModule } from "@nestjs/schedule"
-import {
-  UserModule,
-  HomepageModule,
-  ProductModule,
-  CollectionModule,
-  FAQModule,
-  PaymentModule,
-  SearchModule,
-  CronModule,
-  EmailModule,
-  AirtableModule,
-  SlackModule,
-  directiveResolvers,
-} from "./modules"
-import { importSchema } from "graphql-import"
-import Analytics from "analytics-node"
-import * as Airtable from "airtable"
-import chargebee from "chargebee"
 import sgMail from "@sendgrid/mail"
+import * as Airtable from "airtable"
+import Analytics from "analytics-node"
+import chargebee from "chargebee"
+import { importSchema } from "graphql-import"
+import {
+  AirtableModule,
+  CollectionModule,
+  CronModule,
+  directiveResolvers,
+  EmailModule,
+  FAQModule,
+  HomepageModule,
+  PaymentModule,
+  ProductModule,
+  ReservationModule,
+  SearchModule,
+  SlackModule,
+  UserModule,
+} from "./modules"
 
 const analytics = new Analytics(process.env.SEGMENT_MONSOON_WRITE_KEY)
 
@@ -74,6 +75,7 @@ if (!_imports[0]) _imports = []
     SearchModule,
     CronModule,
     SlackModule,
+    ReservationModule,
   ],
 })
 export class AppModule {}

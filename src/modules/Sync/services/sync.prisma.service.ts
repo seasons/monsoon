@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common"
 import { execSync } from "child_process"
 import fs from "fs"
 import readlineSync from "readline-sync"
-import { PrismaService } from "../../../prisma/prisma.service"
+import { Prisma } from "../../../prisma/prisma.binding"
 import { AuthService } from "../../User/services/auth.service"
 
 type dbEnv = "staging" | "local" | "production"
@@ -18,10 +18,7 @@ type prismaSyncDestination = "local" | "staging"
 
 @Injectable()
 export class PrismaSyncService {
-  constructor(
-    private readonly authService: AuthService,
-    private readonly prisma: PrismaService
-  ) {}
+  constructor(private readonly authService: AuthService) {}
 
   setDBEnvVarsFromJSON(env: dbEnv, values: DBVars) {
     process.env[`DB_${env.toUpperCase()}_HOST`] = values.host
@@ -157,7 +154,11 @@ export class PrismaSyncService {
     endpoint: string
     secret: string
   }) {
-    const prismaUsers = await this.prisma.binding.query.users(
+    const db = new Prisma({
+      endpoint,
+      secret,
+    })
+    const prismaUsers = await db.query.users(
       {},
       `{
           id
@@ -173,7 +174,7 @@ export class PrismaSyncService {
         console.log(
           `User w/Email: ${prismaUser.email} auth0ID synced with staging`
         )
-        await this.prisma.binding.mutation.updateUser({
+        await db.mutation.updateUser({
           where: { id: prismaUser.id },
           data: { auth0Id: correspondingAuth0User.user_id.split("|")[1] },
         })

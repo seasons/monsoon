@@ -4,10 +4,12 @@ import * as Sentry from "@sentry/node"
 import { EmailService } from "../../Email/services/email.service"
 import { DateTime, Interval } from "luxon"
 import {
-  Reservation,
-  InventoryStatus,
-  ProductVariant,
   ID_Input,
+  InventoryStatus,
+  Product,
+  ProductVariant,
+  Reservation,
+  User,
 } from "../../../prisma"
 import { AirtableService } from "../../Airtable/services/airtable.service"
 import { SyncError } from "../../../errors"
@@ -26,6 +28,8 @@ type productVariantCounts =
   | prismaProductVariantCounts
   | AirtableProductVariantCounts
 
+const MULTIPLE_CHOICE = "MultipleChoice"
+
 @Injectable()
 export class ReservationScheduledJobs {
   private readonly logger = new Logger(`CRON: ${ReservationScheduledJobs.name}`)
@@ -37,7 +41,7 @@ export class ReservationScheduledJobs {
     private readonly emailService: EmailService,
     private readonly prisma: PrismaService,
     private readonly shippingService: ShippingService
-  ) {}
+  ) { }
 
   @Cron(CronExpression.EVERY_6_HOURS)
   async sendReturnNotifications() {
@@ -377,6 +381,13 @@ export class ReservationScheduledJobs {
               returnedPhysicalProducts,
               prismaReservation
             )
+
+            // Create reservationFeedback datamodels for the returned product variants
+            const returnedProductVariantIDs: ID_Input[] = returnedPhysicalProducts.map(p => p.productVariant.id)
+            const returnedProductVariants = await Promise.all(
+              returnedProductVariantIDs.map(async id => await this.prisma.client.productVariant({ id }))
+            )
+            await this.createReservationFeedbacksForVariants(returnedProductVariants, prismaUser)
           }
         } else if (
           airtableReservation.model.status !== prismaReservation.status
@@ -539,5 +550,62 @@ export class ReservationScheduledJobs {
       }
       await this.prisma.client.deleteBagItem({ id: bagItem.id })
     }
+  }
+
+  private async createReservationFeedbacksForVariants(
+    productVariants: ProductVariant[],
+    user: User
+  ) {
+    const variantInfos = await Promise.all(
+      productVariants.map(async variant => {
+        const products: Product[] = await this.prisma.client.products({
+          where: {
+            variants_some: {
+              id: variant.id,
+            },
+          },
+        })
+        if (!products || products.length === 0) {
+          throw new Error(`createReservationFeedback error: Unable to find product for product variant id ${variant.id}.`)
+        }
+        return {
+          id: variant.id,
+          name: products[0].name,
+          retailPrice: products[0].retailPrice,
+        }
+      })
+    )
+    await this.prisma.client.createReservationFeedback({
+      feedbacks: {
+        create: variantInfos.map(variantInfo => ({
+          isCompleted: false,
+          questions: {
+            create: [
+              {
+                question: `How many times did you wear this ${variantInfo.name}?`,
+                options: { set: ["More than 6 times", "3-5 times", "1-2 times", "0 times"] },
+                type: MULTIPLE_CHOICE,
+              },
+              {
+                question: `Would you buy it at retail for $${variantInfo.retailPrice}?`,
+                options: { set: ["Would buy at a discount", "Buy below retail", "Buy at retail", "Would only rent"] },
+                type: MULTIPLE_CHOICE,
+              },
+              {
+                question: `Did it fit as expected?`,
+                options: { set: ["Fit too big", "Fit true to size", "Ran small", "Didn’t fit at all"] },
+                type: MULTIPLE_CHOICE,
+              },
+            ]
+          },
+          variant: { connect: { id: variantInfo.id } }
+        })),
+      },
+      user: {
+        connect: {
+          id: user.id
+        }
+      },
+    })
   }
 }
