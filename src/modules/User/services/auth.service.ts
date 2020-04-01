@@ -94,7 +94,7 @@ export class AuthService {
     }
 
     // Insert them into airtable
-    this.airtable.createOrUpdateAirtableUser(user, {
+    await this.airtable.createOrUpdateAirtableUser(user, {
       ...details,
       status: "Created",
     })
