@@ -1,8 +1,8 @@
-import crypto from "crypto"
 import { Injectable } from "@nestjs/common"
-import { Location, InventoryStatus } from "../../prisma/"
-import { AirtableInventoryStatus } from "../Airtable/airtable.types"
+import crypto from "crypto"
+import { InventoryStatus, Location } from "../../prisma/"
 import { PrismaService } from "../../prisma/prisma.service"
+import { AirtableInventoryStatus } from "../Airtable/airtable.types"
 
 @Injectable()
 export class UtilsService {
@@ -22,6 +22,12 @@ export class UtilsService {
       prismaStatus = "Reserved"
     }
     return prismaStatus
+  }
+
+  deleteFieldsFromObject(obj: object, fieldsToDelete: string[]) {
+    const objCopy = { ...obj }
+    fieldsToDelete.forEach(a => delete objCopy[a])
+    return objCopy
   }
 
   async getPrismaLocationFromSlug(slug: string): Promise<Location> {
