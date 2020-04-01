@@ -67,6 +67,11 @@ describe("Reservation Service", () => {
     })
   })
 
+  afterEach(async () => {
+    await prismaService.client.deleteCustomer({ id: testCustomer.id })
+    await prismaService.client.deleteUser({ id: testUser.id })
+  })
+
   describe("reserveItems", () => {
     it("should create a reservation", async () => {
       const productVariantsToReserve = reservableProductVariants
@@ -99,6 +104,9 @@ describe("Reservation Service", () => {
             }
         }`
       )
+
+      // Delete the reservation
+      await prismaService.client.deleteReservation({ id: returnData.id })
 
       // Id check -- i.e, it went through
       expect(returnData.id).toMatch(/^ck\w{23}/) // string starting with "ck" and of length 25
