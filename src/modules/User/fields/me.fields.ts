@@ -13,8 +13,13 @@ export class MeFieldsResolver {
   }
 
   @ResolveField()
-  async customer(@Customer() customer) {
-    return customer
+  async customer(@Customer() customer, @Info() info) {
+    return this.prisma.binding.query.customer(
+      {
+        where: { id: customer.id },
+      },
+      info
+    )
   }
 
   @ResolveField()
