@@ -22,6 +22,7 @@ describe("Reservation Service", () => {
   let testUtilsService: TestUtilsService
   let testUser: User
   let testCustomer: Customer
+  let reservableProductVariants
 
   beforeAll(async () => {
     Airtable.configure({
@@ -58,15 +59,21 @@ describe("Reservation Service", () => {
     const { user, customer } = await testUtilsService.createNewTestingCustomer()
     testUser = user
     testCustomer = customer
+    reservableProductVariants = await prismaService.client.productVariants({
+      where: {
+        reservable_gt: 0,
+        physicalProducts_every: { inventoryStatus: "Reservable" },
+      },
+    })
+  })
+
+  afterEach(async () => {
+    await prismaService.client.deleteCustomer({ id: testCustomer.id })
+    await prismaService.client.deleteUser({ id: testUser.id })
   })
 
   describe("reserveItems", () => {
     it("should create a reservation", async () => {
-      const reservableProductVariants = await prismaService.client.productVariants(
-        {
-          where: { reservable_gt: 0 },
-        }
-      )
       const productVariantsToReserve = reservableProductVariants
         .slice(0, 3)
         .map(a => a.id)
@@ -98,6 +105,9 @@ describe("Reservation Service", () => {
         }`
       )
 
+      // Delete the reservation
+      await prismaService.client.deleteReservation({ id: returnData.id })
+
       // Id check -- i.e, it went through
       expect(returnData.id).toMatch(/^ck\w{23}/) // string starting with "ck" and of length 25
 
@@ -121,11 +131,6 @@ describe("Reservation Service", () => {
     }, 50000)
 
     it("should throw an error saying the item is not reservable", async () => {
-      const reservableProductVariants = await prismaService.client.productVariants(
-        {
-          where: { reservable_gt: 0 },
-        }
-      )
       const nonReservableProductVariants = await prismaService.client.productVariants(
         {
           where: { reservable: 0 },

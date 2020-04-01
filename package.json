@@ -11,7 +11,7 @@
   "scripts": {
     "build": "rimraf dist && tsc",
     "debug": "dotenv -- nodemon -e ts,graphql -x node --inspect -r dotenv/config -r ts-node/register src/index.ts",
-    "healthCheck:production": "node -r dotenv/config -r ts-node/register src/cron/airtableToPrismaHealthCheck.ts -- dotenv_config_path=.env.production",
+    "healthCheck:production": "node -r dotenv/config -r ts-node/register scripts/healthCheck.ts -- dotenv_config_path=.env.production",
     "lint": "yarn tslint -c 'tslint.json' 'src/**/*.ts'",
     "prettier-project": "prettier --write 'src/**/*.{js,ts,tsx,md,graphql}'",
     "prisma:update-bindings": "graphql get-schema --project database && graphql codegen --project database",
@@ -71,7 +71,7 @@
     "child_process": "^1.0.2",
     "cli-progress": "^3.6.0",
     "cors": "^2.8.5",
-    "dotenv": "^8.1.0",
+    "dotenv": "^8.2.0",
     "exec": "^0.2.1",
     "expect": "^25.1.0",
     "express": "^4.17.1",
