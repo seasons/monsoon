@@ -110,6 +110,7 @@ type Query {
     last: Int
   ): [Product]!
   productsConnection(
+    sizes: [String!]
     category: String
     where: ProductWhereInput
     orderBy: ProductOrderByInput
@@ -361,4 +362,23 @@ type FaqSection {
 type FaqSubsection {
   title: String!
   text: String!
+}
+
+type Reservation {
+  id: ID!
+  user: User!
+  customer: Customer!
+  sentPackage: Package
+  returnedPackage: Package
+  location: Location
+  products: [PhysicalProduct!]!
+  reservationNumber: Int!
+  shipped: Boolean!
+  status: ReservationStatus!
+  shippedAt: DateTime
+  receivedAt: DateTime
+  reminderSentAt: DateTime
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  returnDateDisplay: DateTime
 }
