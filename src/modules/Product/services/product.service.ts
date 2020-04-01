@@ -100,7 +100,7 @@ export class ProductService {
     return bagItem.length > 0
   }
 
-  async saveProduct(item, save, customer, info) {
+  async saveProduct(item, save, info, customer) {
     const bagItems = await this.prisma.binding.query.bagItems(
       {
         where: {
