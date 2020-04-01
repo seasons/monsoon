@@ -44,6 +44,7 @@ export class UserCommands {
   ) {
     await this.scriptsService.overrideEnvFromRemoteConfig({
       prismaEnvironment: e,
+      airtableEnvironment: "staging",
     })
 
     const firstName = faker.name.firstName()

@@ -52,7 +52,7 @@ export class ProductCommands {
     this.logger.log(
       `Reservable product variant ids: [${reservableProductVariants
         .map(a => `"${a.id}"`)
-        .slice(0, 3)}]`
+        .slice(reservableProductVariants.length - 3)}]` // get the last 3, since CircleCI tests make use of the first 3
     )
   }
 }
