@@ -58,39 +58,6 @@ createdAt
 updatedAt
 `
 
-const productVariantFields = `
-id
-sku
-color {
-  id
-}
-size
-internalSize {
-  id
-}
-manufacturerSizes {
-  id
-}
-weight
-height
-productID
-product {
-  id
-}
-retailPrice
-physicalProducts {
-  id
-}
-total
-reservable
-reserved
-nonReservable
-isSaved
-isWanted
-createdAt
-updatedAt
-`
-
 const productRequestFields = `
 id
 brand
@@ -119,15 +86,7 @@ products {
   id
 }
 `
-const collectionGroupFields = `
-id
-title
-slug
-collectionCount
-collections {
-  id
-}
-`
+
 const queries = {
   brand: `
   {
@@ -156,14 +115,6 @@ const queries = {
     }
   }
   `,
-  // Leave out productVariant, because it doesn't work on staging monsoon.
-  // productVariant: `
-  // {
-  //   productVariant(where: {id: "ck7z02bis0erv0724lp10lyop"}) {
-  //     ${productVariantFields}
-  //   }
-  // }
-  // `,
   categories: `
     {
       categories {
@@ -211,22 +162,6 @@ const queries = {
       }
     }
     `,
-  // TODO: Why does collection group return null on the old monsoon?
-  // collectionGroup: `
-  //   {
-  //     collectionGroup(where: {id: "ck7z0hnyr1a5007244s83mbbm"}) {
-  //       ${collectionGroupFields}
-  //     }
-  //   }
-  //   `,
-  // TODO: ibid.
-  // collectionGroups: `
-  //   {
-  //     collectionGroups {
-  //       ${collectionGroupFields}
-  //     }
-  //   }
-  // `,
   faq: `
   {
     faq {
