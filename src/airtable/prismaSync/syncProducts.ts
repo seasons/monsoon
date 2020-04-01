@@ -41,7 +41,15 @@ export const syncProducts = async (cliProgressBar?) => {
 
       const brand = allBrands.findByIds(model.brand)
       const category = allCategories.findByIds(model.category)
-      const modelSize = allSizes.findByIds(model.modelSize)
+      const modelSize = head(
+        allSizes
+          .findMultipleByIds(model.modelSize)
+          .filter(
+            rec =>
+              model.type === "Top" ||
+              (model.type === "Bottom" && rec.model.type === "WxL")
+          )
+      )
 
       if (
         isEmpty(model) ||
