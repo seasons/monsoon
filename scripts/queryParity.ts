@@ -237,6 +237,37 @@ const queries = {
     }
   }
   `,
+  // skip, may have updated in the new app.
+  // homepage: `
+  // {
+  //   homepage {
+  //     sections {
+  //       type
+  //       results {
+  //         __typename
+  //       }
+  //       title
+  //     }
+  //   }
+  // }
+  // `,
+  // throwing an error on the old one, but works on the new one, so don't sweat it.
+  // chargebeeCheckout: `
+  //   {
+  //     chargebeeCheckout(planID: Essential, userIDHash: "6e9b507b06781f453b0463d90d63807a36a17a1c6fdf0b8f2e6676700ff4f96b") {
+  //       created_at
+  //       embed
+  //       expires_at
+  //       id
+  //       object
+  //       resource_version
+  //       state
+  //       type
+  //       updated_at
+  //       url
+  //     }
+  //   }
+  // `,
 }
 const oURL = "https://monsoon-staging.herokuapp.com"
 const nURL = "https://monsoon-nest-staging.herokuapp.com"
