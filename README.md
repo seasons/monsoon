@@ -27,7 +27,13 @@ npm install -g serverless
 ```
 
 2. Docker command line tools. You can get them by visiting the [Docker Website](https://www.docker.com/products/docker-desktop) and downloading the desktop client.
+
 3. Access to the Seasons [Airtable](https://airtable.com/) workspace.
+
+4. Postgres CLI tools.
+
+- Install latest postgres client.
+- run `sudo mkdir -p /etc/paths.d && echo /Applications/Postgres.app/Contents/Versions/latest/bin | sudo tee /etc/paths.d/postgresapp`
 
 ## Getting started
 
