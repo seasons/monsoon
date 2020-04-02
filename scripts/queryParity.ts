@@ -1,4 +1,4 @@
-import { request } from "graphql-request"
+import { request, GraphQLClient } from "graphql-request"
 import expect from "expect"
 
 const productFields = `
@@ -175,15 +175,67 @@ const queries = {
     }
   }
   `,
+  me: `
+  {
+    me {
+      user {
+        id
+        auth0Id
+      }
+      customer {
+        id
+        status 
+        detail {
+          id
+          birthday
+        }
+        reservations {
+          id
+          products {
+            seasonsUID
+          }
+          status
+        }
+      }
+      activeReservation {
+        id
+        products {
+          seasonsUID
+        }
+      }
+      bag {
+        id
+        status
+      }
+      savedItems {
+        id
+        status
+        productVariant {
+          sku
+        }
+      }
+    }
+  }       
+  `,
 }
 const oURL = "https://monsoon-staging.herokuapp.com"
 const nURL = "https://monsoon-nest-staging.herokuapp.com"
 
+// faiyam+g@seasons.nyc, Password10
+const token =
+  "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IlJVSTFPVVl4TURGQlFqYzNSVE5FTURBME1VTXlOa015UkRGRk5rTkJOelJCT1RoR04wSXlOUSJ9.eyJpc3MiOiJodHRwczovL3NlYXNvbnMtc3RhZ2luZy5hdXRoMC5jb20vIiwic3ViIjoiYXV0aDB8NWU4NjQ3ZGY4NWRkOTgwYzY4ZDRjMDJkIiwiYXVkIjoiaHR0cHM6Ly9tb25zb29uLXN0YWdpbmcuaGVyb2t1YXBwLmNvbS8iLCJpYXQiOjE1ODU4NTg1MjcsImV4cCI6MTU4NTk0NDkyNywiYXpwIjoiZmNIUFF4N0tZcXBrcUkyeW4zMWZjTGd0N251VTJTNUQiLCJzY29wZSI6Im9mZmxpbmVfYWNjZXNzIiwiZ3R5IjoicGFzc3dvcmQifQ.N2YAKXI1IUdhcHYdu_vXCa4v0Xt3gnmp33k6nD-wMgNlCpo5oQnueFHbdT9Ntj-9pe_KH6I0WEJqDZp6vEubX2jhrjw3QH3imZiRZGwKsWjPx4DNUFJ8TOW7w0hT6C4n3gPtwTMoJORMQ4UKD0nclM8gGMSp39rpnolSqDPgpw6pqfpQ7UYF6PWyCHpEFkfooZiPNGHYStwPjB9wRCFf4RtPRNwEE1XJY9eFhLVLhi9wXbOIWWXJCAhQZEhE69IOjYfSKJrkQyitdE4i3QdbqyuLNJuQQ5OzFXwcJfXIbyD5e9FkUop6qhEOhAKTgN-O2FIhFkNneGLU9jVEWyMc-Q"
+
 const run = async () => {
   let didError = false
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  }
+  const oClient = new GraphQLClient(oURL, { headers })
+  const nClient = new GraphQLClient(nURL, { headers })
+
   for (const key of Object.keys(queries)) {
-    const oResult = await request(oURL, queries[key])
-    const nResult = await request(nURL, queries[key])
+    const oResult = await oClient.request(queries[key])
+    const nResult = await nClient.request(queries[key])
     try {
       expect(nResult).toStrictEqual(oResult)
       console.log(`"${key}" passes`)
