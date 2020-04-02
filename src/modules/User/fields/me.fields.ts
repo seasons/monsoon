@@ -23,7 +23,7 @@ export class MeFieldsResolver {
   }
 
   @ResolveField()
-  async activeReservation(@Customer() customer) {
+  async activeReservation(@Customer() customer, @Info() info) {
     const reservations = await this.prisma.client
       .customer({ id: customer.id })
       .reservations({ orderBy: "createdAt_DESC" })
@@ -32,7 +32,12 @@ export class MeFieldsResolver {
       latestReservation &&
       !["Completed", "Cancelled"].includes(latestReservation.status)
     ) {
-      return latestReservation
+      return await this.prisma.binding.query.reservation(
+        {
+          where: { id: latestReservation.id },
+        },
+        info
+      )
     }
 
     return null
