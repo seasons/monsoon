@@ -69,31 +69,14 @@ export class AuthService {
       throw new UserInputError(err)
     }
 
-    // Create a user object in our database
-    let user
-    try {
-      user = await this.createPrismaUser(
-        userAuth0ID,
-        email,
-        firstName,
-        lastName
-      )
-    } catch (err) {
-      throw new Error(err)
-    }
-
-    // Create a customer object in our database
-    try {
-      await this.createPrismaCustomerForExistingUser(
-        user.id,
-        details,
-        "Created"
-      )
-    } catch (err) {
-      throw new Error(err)
-    }
-
-    // Insert them into airtable
+    // Create a user object in our database and airtable
+    const user = await this.createPrismaUser(
+      userAuth0ID,
+      email,
+      firstName,
+      lastName
+    )
+    await this.createPrismaCustomerForExistingUser(user.id, details, "Created")
     await this.airtable.createOrUpdateAirtableUser(user, {
       ...details,
       status: "Created",
