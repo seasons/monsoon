@@ -36,7 +36,7 @@ export const ProductRequestMutations = {
           return
         }
 
-        // Otherwise, means we failed to scrape URL so just store 
+        // Otherwise, means we failed to scrape URL so just store
         // the reason and URL itself
         productRequest = await ctx.prisma.createProductRequest({
           reason,
@@ -51,22 +51,15 @@ export const ProductRequestMutations = {
       })
     })
   },
-
-  async deleteProductRequest(parent, { requestID }, ctx: Context, info) {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const productRequest = await ctx.prisma.deleteProductRequest({
-          id: requestID,
-        })
-        resolve(productRequest)
-      } catch (e) {
-        reject(e)
-      }
-    })
-  },
 }
 
-const scrapeLDJSON = async ($, reason: string, url: string, user: User, ctx: Context) => {
+const scrapeLDJSON = async (
+  $,
+  reason: string,
+  url: string,
+  user: User,
+  ctx: Context
+) => {
   // Search for json+ld in HTML body
   const ldJSONHTML = $("script[type='application/ld+json']").html()
   const ldJSON = JSON.parse(ldJSONHTML)
@@ -112,7 +105,13 @@ const scrapeLDJSON = async ($, reason: string, url: string, user: User, ctx: Con
   }
 }
 
-const scrapeOGTags = async ($, reason: string, url: string, user: User, ctx: Context) => {
+const scrapeOGTags = async (
+  $,
+  reason: string,
+  url: string,
+  user: User,
+  ctx: Context
+) => {
   const ogDescription = $('meta[property="og:description"]').attr("content")
   const ogPriceAmount = parseInt(
     $('meta[property="og:price:amount"]').attr("content")

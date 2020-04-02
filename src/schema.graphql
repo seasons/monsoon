@@ -221,7 +221,6 @@ type Mutation {
     hostedPageID: String!
   ): BillingInfoPayload
   addProductRequest(reason: String!, url: String!): ProductRequest!
-  deleteProductRequest(requestID: ID!): ProductRequest!
   validateAddress(input: ValidateAddressInput!): ValidationPayload!
   addProductVariantWant(variantID: ID!): ProductVariantWant!
   updateUserPushNotifications(pushNotificationsStatus: String!): User!
@@ -230,7 +229,10 @@ type Mutation {
     shippingAddress: AddressInput!
     phoneNumber: String!
   ): Boolean
-  updateReservationFeedback(feedbackID: ID!, input: ReservationFeedbackUpdateInput!): ReservationFeedback!
+  updateReservationFeedback(
+    feedbackID: ID!
+    input: ReservationFeedbackUpdateInput!
+  ): ReservationFeedback!
 }
 
 input AddressInput {
