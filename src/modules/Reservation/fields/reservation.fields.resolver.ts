@@ -19,14 +19,4 @@ export class ReservationFieldsResolver {
       new Date(reservation?.createdAt)
     )
   }
-
-  @ResolveField()
-  async customer(@Customer() customer, @Info() info) {
-    return this.prisma.binding.query.customer(
-      {
-        where: { id: customer.id },
-      },
-      info
-    )
-  }
 }
