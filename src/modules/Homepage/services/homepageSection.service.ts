@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common"
-import { SectionTitle } from "./homepage.service"
 import { PrismaService } from "../../../prisma/prisma.service"
+import { SectionTitle } from "./homepage.service"
 
 // FIXME: This is being used because currently info is lacking the __typename, add __typename to info
 const ProductFragment = `
@@ -80,6 +80,7 @@ export class HomepageSectionService {
         const brands = await this.prisma.binding.query.brands(
           {
             ...args,
+            orderBy: "name_ASC",
             where: {
               slug_in: [
                 "acne-studios",
