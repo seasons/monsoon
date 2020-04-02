@@ -42,4 +42,9 @@ export class ChargebeeQueriesResolver {
 
     return hostedPage
   }
+
+  @Query() // pull the customer just to ensure they are a customer
+  async chargebeeUpdatePaymentPage(@Customer() customer, @User() user) {
+    return this.paymentService.getHostedUpdatePaymentPage(user.id)
+  }
 }
