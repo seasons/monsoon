@@ -52,7 +52,7 @@ export class UserCommands {
     const fullName = `${firstName} ${lastName}`
     const slug = `${firstName}-${lastName}`.toLowerCase()
     email = email || `${slug}@seasons.nyc`
-    password = password || `${faker.random.alphaNumeric(10)}P1`
+    password = password || faker.random.alphaNumeric(6)
 
     // Fail gracefully if the user is already in the DB
     if (!!(await this.prisma.client.user({ email }))) {
