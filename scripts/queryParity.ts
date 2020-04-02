@@ -217,6 +217,26 @@ const queries = {
     }
   }       
   `,
+  productsConnection: `
+  {
+    productsConnection(sizes: ["M"], category: "shirts") {
+      edges {
+        node {
+          id
+        }
+      }
+      aggregate {
+        count
+      }
+      pageInfo {
+        hasNextPage
+        hasPreviousPage
+        startCursor
+        endCursor
+      }
+    }
+  }
+  `,
 }
 const oURL = "https://monsoon-staging.herokuapp.com"
 const nURL = "https://monsoon-nest-staging.herokuapp.com"
