@@ -28,11 +28,6 @@ export class ProductMutationsResolver {
   }
 
   @Mutation()
-  async deleteProductRequest(@Args() { requestID }) {
-    return await this.productRequestService.deleteProductRequest(requestID)
-  }
-
-  @Mutation()
   async saveProduct(
     @Args() { item, save = false },
     @Info() info,

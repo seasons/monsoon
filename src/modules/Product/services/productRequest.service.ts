@@ -65,17 +65,4 @@ export class ProductRequestService {
       })
     })
   }
-
-  async deleteProductRequest(requestId) {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const productRequest = await this.prisma.client.deleteProductRequest({
-          id: requestId,
-        })
-        resolve(productRequest)
-      } catch (e) {
-        reject(e)
-      }
-    })
-  }
 }
