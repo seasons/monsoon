@@ -268,6 +268,38 @@ const queries = {
   //     }
   //   }
   // `,
+  HomepageProductRail: `
+  {
+    homepageProductRail(where: {slug: "color-coordinate"}) {
+      id
+      slug
+      name
+      products {
+        id
+        slug
+        brand {
+          id
+        }
+      }
+    }
+  }
+  `,
+  homepageProductRails: `
+  {
+    homepageProductRails {
+      id
+      slug
+      name
+      products {
+        id
+        slug
+        brand {
+          id
+        }
+      }
+    }
+  }
+  `,
 }
 const oURL = "https://monsoon-staging.herokuapp.com"
 const nURL = "https://monsoon-nest-staging.herokuapp.com"
