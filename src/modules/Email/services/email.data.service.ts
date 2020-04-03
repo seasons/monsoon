@@ -26,17 +26,24 @@ export class EmailDataProvider {
   reservationConfirmation(
     reservationNumber: number,
     reservedItems: ReservedItem[],
-    returnDateFormatted: string
+    returnDateFormatted: string,
+    trackingNumber?: string,
+    trackingUrl?: string
   ) {
+    const paragraphs = [
+      {
+        html: "Sit back, relax and we'll let you know when it's on its way.",
+      },
+      trackingNumber && trackingUrl
+        ? {
+            html: `Your tracking number: <a href="${trackingUrl}">${trackingNumber}</a>`,
+          }
+        : null,
+    ]
     return {
       email: {
         body: {
-          paragraphs: [
-            {
-              html:
-                "Sit back, relax and we'll let you know when it's on its way.",
-            },
-          ],
+          paragraphs: paragraphs,
         },
         prefooter: {
           paragraphs: [
