@@ -27,7 +27,13 @@ npm install -g serverless
 ```
 
 2. Docker command line tools. You can get them by visiting the [Docker Website](https://www.docker.com/products/docker-desktop) and downloading the desktop client.
+
 3. Access to the Seasons [Airtable](https://airtable.com/) workspace.
+
+4. Postgres CLI tools.
+
+- Install latest postgres client.
+- run `sudo mkdir -p /etc/paths.d && echo /Applications/Postgres.app/Contents/Versions/latest/bin | sudo tee /etc/paths.d/postgresapp`
 
 ## Getting started
 
@@ -41,13 +47,16 @@ cp .env.example .env
 # 3. Create your local Prisma Server and Postgres instances
 docker-compose up -d
 
+# 4. Deploy prisma
+yarn prisma:deploy
+
 # 4. Install monsoon-cli (command line interface)
-yarn link
+yarn global add ts-node && yarn link
 
-# 5. Seed the database (make sure you've set your airtable API Key in the .env file first. See https://airtable.com/account. You may need to be added to the seasons airtable workspace first.
-monsoon airtable:prisma all -e local
+# 6. Seed the database
+monsoon airtable:prisma all --prisma local
 
-# 6. Start server (runs on http://localhost:4000/playground) and open GraphQL Playground
+# 7. Start server (runs on http://localhost:4000/playground) and open GraphQL Playground
 yarn start
 ```
 
@@ -92,13 +101,28 @@ Monsoon ships with a command line interface. To install it run `yarn link`. Once
 
 For details on the arguments and options for each command, use `--help`. e.g `monsoon sync:airtable:prisma --help`
 
+Note that you may need to run `yarn tsc` to generate the files used by the monsoon cli.
+
 > **Note**: We recommend that you're using `yarn dev` during development as it will give you access to the GraphQL API or your server (defined by the [application schema](./src/schema.graphql)) as well as to the Prisma API directly (defined by the [Prisma database schema](./generated/prisma.graphql)). If you're starting the server with `yarn start`, you'll only be able to access the API of the application schema.
+
+### Testing
+
+#### Generating a random user account
+
+You can generate a random test user using the following command
+
+`monsoon create:test-user --email test@seasons.nyc --password Pass123`
+
+If `--email` and/or `--password` are not specified, those values are also generated. All random values are generated using a library called [faker.js](https://github.com/marak/Faker.js/)
 
 ### Environments
 
 You should have `.env`, `.env.staging`, and `.env.production` that declare the environment variables for your local, and the staging and production environments respectively.
 
-You can copy the staging and production environment variables directly from heroku using the heroku command line tool: `heroku config -s --app monsoon-staging > .env.staging`, `heroku config -s --app monsoon-production > .env.production`.
+You can copy the staging and production environment variables directly from heroku using the heroku command line tool:
+
+- `heroku config -s --app monsoon-staging > .env.staging`
+- `heroku config -s --app monsoon-production > .env.production`.
 
 You may need to install the CLI and login using `heroku login` first.
 
@@ -125,6 +149,23 @@ To make calls to prisma services on the prisma playground or use the prisma admi
 | `├── resolvers` (_directory_)          | _Contains the implementation of the resolvers for the application schema_                                                                                      |
 | `└── generated` (_directory_)          | _Contains generated files_                                                                                                                                     |
 | `└── prisma-client` (_directory_)      | The generated Prisma client                                                                                                                                    |
+
+## Sending push notifications with routes
+
+- When sending a push notification with a route to Harvest, the data must match Harvest's navigation convention.
+  E.g. `navigation.navigate("Modal", { screen: "FiltersModal", params: { sizeFilters } })` would appear as:
+
+```
+...
+data: {
+  route: "Modal",
+  screen: "FiltersModal",
+  params: {
+    sizeFilters: ["Medium"],
+  },
+},
+...
+```
 
 ## Resources
 

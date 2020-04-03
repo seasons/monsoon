@@ -1,28 +1,26 @@
-import { DBService } from "../../../prisma/db.service"
 import { Injectable } from "@nestjs/common"
+import * as Sentry from "@sentry/node"
 import { ApolloError } from "apollo-server"
+import { head } from "lodash"
+import { RollbackError } from "../../../errors"
 import {
   Customer,
-  User,
   ID_Input,
-  ReservationStatus,
   PhysicalProduct,
   Reservation,
-  InventoryStatus,
   ReservationCreateInput,
+  ReservationStatus,
+  User,
 } from "../../../prisma"
-import { head } from "lodash"
-import { PrismaClientService } from "../../../prisma/client.service"
+import { PrismaService } from "../../../prisma/prisma.service"
+import { AirtableService } from "../../Airtable/services/airtable.service"
+import { EmailService } from "../../Email/services/email.service"
+import { ShippingService } from "../../Shipping/services/shipping.service"
+import { ShippoTransaction } from "../../Shipping/shipping.types"
+import { PhysicalProductService } from "./physicalProduct.utils.service"
 import { ProductUtilsService } from "./product.utils.service"
 import { ProductVariantService } from "./productVariant.service"
-import { PhysicalProductService } from "./physicalProduct.utils.service"
-import { AirtableService } from "../../Airtable/services/airtable.service"
-import { ShippingService } from "../../Shipping/services/shipping.service"
-import { EmailService } from "../../Email/services/email.service"
-import { RollbackError } from "../../../errors"
-import * as Sentry from "@sentry/node"
 import { ReservationUtilsService } from "./reservation.utils.service"
-import { ShippoTransaction } from "../../Shipping/shipping.types"
 
 interface PhysicalProductWithProductVariant extends PhysicalProduct {
   productVariant: { id: ID_Input }
@@ -38,8 +36,7 @@ export interface ReservationWithProductVariantData {
 @Injectable()
 export class ReservationService {
   constructor(
-    private readonly db: DBService,
-    private readonly prisma: PrismaClientService,
+    private readonly prisma: PrismaService,
     private readonly productUtils: ProductUtilsService,
     private readonly productVariantService: ProductVariantService,
     private readonly physicalProductService: PhysicalProductService,
@@ -141,11 +138,13 @@ export class ReservationService {
       await this.emails.sendReservationConfirmationEmail(
         user,
         productsBeingReserved,
-        prismaReservation
+        prismaReservation,
+        seasonsToCustomerTransaction.tracking_number,
+        seasonsToCustomerTransaction.tracking_url_provider
       )
 
       // Get return data
-      reservationReturnData = await this.db.query.reservation(
+      reservationReturnData = await this.prisma.binding.query.reservation(
         { where: { id: prismaReservation.id } },
         info
       )
@@ -184,7 +183,7 @@ export class ReservationService {
       if (latestReservation == null) {
         return resolve(null)
       } else {
-        const res = (await this.db.query.reservation(
+        const res = (await this.prisma.binding.query.reservation(
           {
             where: { id: latestReservation.id },
           },

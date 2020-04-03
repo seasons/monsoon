@@ -1,33 +1,265 @@
-import * as Airtable from "airtable"
 import { Injectable } from "@nestjs/common"
-import { PhysicalProduct, ReservationCreateInput } from "../../../prisma"
+import * as Airtable from "airtable"
 import { fill, zip } from "lodash"
+import {
+  BillingInfoCreateInput,
+  CustomerDetailCreateInput,
+  CustomerStatus,
+  InventoryStatus,
+  PhysicalProduct,
+  ReservationCreateInput,
+  ReservationStatus,
+  User,
+} from "../../../prisma"
+import {
+  AirtableData,
+  AirtableInventoryStatus,
+  AirtableModelName,
+  AirtableProductVariantCounts,
+} from "../airtable.types"
+import { AirtableBaseService } from "./airtable.base.service"
 import { AirtableUtilsService } from "./airtable.utils.service"
 
-export interface AirtableData extends Array<any> {
-  findByIds: (ids?: any) => any
-  findMultipleByIds: (ids?: any) => any[]
-  fields: any
+interface AirtableUserFields extends CustomerDetailCreateInput {
+  plan?: string
+  status?: CustomerStatus
+  billingInfo?: BillingInfoCreateInput
 }
 
-export type AirtableInventoryStatus =
-  | "Reservable"
-  | "Non Reservable"
-  | "Reserved"
-
-// Add to this as needed
-export type AirtablePhysicalProductFields = {
+type AirtablePhysicalProductFields = {
   "Inventory Status": AirtableInventoryStatus
 }
 
 @Injectable()
 export class AirtableService {
-  private readonly base = Airtable.base(process.env.AIRTABLE_DATABASE_ID)
+  constructor(
+    private readonly airtableBase: AirtableBaseService,
+    private readonly utils: AirtableUtilsService
+  ) {}
 
-  constructor(private readonly utils: AirtableUtilsService) {}
+  airtableToPrismaInventoryStatus(
+    airtableStatus: AirtableInventoryStatus
+  ): InventoryStatus {
+    let prismaStatus
+    if (airtableStatus === "Reservable") {
+      prismaStatus = "Reservable"
+    }
+    if (airtableStatus === "Non Reservable") {
+      prismaStatus = "NonReservable"
+    }
+    if (airtableStatus === "Reserved") {
+      prismaStatus = "Reserved"
+    }
+    return prismaStatus
+  }
 
-  getAllProductVariants(airtableBase?) {
+  airtableToPrismaReservationStatus(airtableStatus: string): ReservationStatus {
+    return airtableStatus.replace(" ", "") as ReservationStatus
+  }
+
+  async createAirtableReservation(
+    userEmail: string,
+    data: ReservationCreateInput,
+    shippingError: string,
+    returnShippingError: string
+  ): Promise<[AirtableData, () => void]> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const itemIDs = (data.products.connect as { seasonsUID: string }[]).map(
+          a => a.seasonsUID
+        )
+        const items = await this.getPhysicalProducts(itemIDs)
+        const airtableUserRecord = await this.utils.getAirtableUserRecordByUserEmail(
+          userEmail
+        )
+        if (!airtableUserRecord) {
+          return reject(`User with email ${userEmail} not found on airtable`)
+        }
+        const createData = [
+          {
+            fields: {
+              ID: data.reservationNumber,
+              User: [airtableUserRecord.id],
+              Items: items.map(a => a.id),
+              Shipped: false,
+              Status: "New",
+              "Shipping Address": airtableUserRecord.fields["Shipping Address"],
+              "Shipping Label":
+                data.sentPackage.create.shippingLabel.create.image,
+              "Tracking URL":
+                data.sentPackage.create.shippingLabel.create.trackingURL,
+              "Return Label":
+                data.returnedPackage.create.shippingLabel.create.image,
+              "Return Tracking URL":
+                data.returnedPackage.create.shippingLabel.create.trackingURL,
+              "Shipping Error": shippingError,
+              "Return Shipping Error": returnShippingError,
+            },
+          },
+        ]
+        const records = await this.airtableBase
+          .base("Reservations")
+          .create(createData)
+
+        const rollbackAirtableReservation = async () => {
+          const numDeleted = await this.airtableBase
+            .base("Reservations")
+            .destroy([records[0].getId()])
+          return numDeleted
+        }
+        return resolve([records[0], rollbackAirtableReservation])
+      } catch (err) {
+        return reject(err)
+      }
+    })
+  }
+
+  async createOrUpdateAirtableUser(user: User, fields: AirtableUserFields) {
+    // Create the airtable data
+    const { email, firstName, lastName } = user
+    const data = {
+      Email: email,
+      "First Name": firstName,
+      "Last Name": lastName,
+    }
+    for (const key in fields) {
+      if (this.utils.keyMap[key]) {
+        data[this.utils.keyMap[key]] = fields[key]
+      }
+    }
+    // WARNING: shipping address and billingInfo code are still "create" only.
+    if (!!fields.shippingAddress) {
+      const location = await this.utils.createLocation(
+        fields.shippingAddress.create
+      )
+      data["Shipping Address"] = location.map(l => l.id)
+    }
+    if (!!fields.billingInfo) {
+      const airtableBillingInfoRecord = await this.utils.createBillingInfo(
+        fields.billingInfo
+      )
+      data["Billing Info"] = [airtableBillingInfoRecord.getId()]
+    }
+
+    // Create or update the record
+    const airtableUser = await this.utils.getAirtableUserRecordByUserEmail(
+      email
+    )
+    if (!!airtableUser) {
+      return await this.airtableBase.base("Users").update(airtableUser.id, data)
+    }
+
+    return await this.airtableBase.base("Users").create([
+      {
+        fields: data,
+      },
+    ])
+  }
+
+  async createPhysicalProducts(newPhysicalProducts) {
+    await this.airtableBase
+      .base("Physical Products")
+      .create(newPhysicalProducts)
+  }
+
+  async getAllBrands(airtableBase?) {
+    return this.getAll("Brands", "", "", airtableBase)
+  }
+
+  async getAllCategories(airtableBase?) {
+    return this.getAll("Categories", "", "", airtableBase)
+  }
+
+  async getAllCollectionGroups(airtableBase?) {
+    return this.getAll("Collection Groups", "", "", airtableBase)
+  }
+
+  async getAllCollections(airtableBase?) {
+    return this.getAll("Collections", "", "", airtableBase)
+  }
+
+  async getAllColors(airtableBase?) {
+    return this.getAll("Colors", "", "", airtableBase)
+  }
+
+  async getAllHomepageProductRails(airtableBase?) {
+    return this.getAll("Homepage Product Rails", "", "", airtableBase)
+  }
+
+  async getAllLocations(airtableBase?) {
+    return this.getAll("Locations", "", "", airtableBase)
+  }
+
+  async getAllModels(airtableBase?) {
+    return this.getAll("Models", "", "", airtableBase)
+  }
+
+  async getAllPhysicalProducts(airtableBase?) {
+    return this.getAll("Physical Products", "", "", airtableBase)
+  }
+
+  async getAllProductVariants(airtableBase?) {
     return this.getAll("Product Variants", "", "", airtableBase)
+  }
+
+  async getAllProducts(airtableBase?) {
+    return this.getAll("Products", "", "", airtableBase)
+  }
+
+  async getAllReservations(airtableBase?) {
+    return this.getAll("Reservations", "", "", airtableBase)
+  }
+
+  async getAllTopSizes(airtableBase?) {
+    return this.getAll("Top Sizes", "", "", airtableBase)
+  }
+
+  async getAllUsers(airtableBase?) {
+    return this.getAll("Users", "", "", airtableBase)
+  }
+
+  async getAllBottomSizes(airtableBase?) {
+    return this.getAll("Bottom Sizes", "", "", airtableBase)
+  }
+
+  async getAllSizes(airtableBase?) {
+    return this.getAll("Sizes", "", "", airtableBase)
+  }
+
+  async getNumRecords(modelName: AirtableModelName) {
+    return (await this.getAll(modelName, "", ""))?.length
+  }
+
+  getProductionBase = () => {
+    if (!process.env._PRODUCTION_AIRTABLE_BASEID) {
+      throw new Error("_PRODUCTION_AIRTABLE_BASEID not set")
+    }
+    return Airtable.base(process.env._PRODUCTION_AIRTABLE_BASEID)
+  }
+
+  getStagingBase = () => {
+    if (!process.env._STAGING_AIRTABLE_BASEID) {
+      throw new Error("_STAGING_AIRTABLE_BASEID not set")
+    }
+    return Airtable.base(process.env._STAGING_AIRTABLE_BASEID)
+  }
+
+  getCorrespondingAirtablePhysicalProduct(
+    allAirtablePhysicalProducts,
+    prismaPhysicalProduct
+  ) {
+    return allAirtablePhysicalProducts.find(
+      physProd => physProd.model.sUID.text === prismaPhysicalProduct.seasonsUID
+    )
+  }
+
+  getCorrespondingAirtableProductVariant(
+    allAirtableProductVariants: AirtableData,
+    prismaProductVariant: any
+  ) {
+    return allAirtableProductVariants.find(
+      a => a.model.sKU === prismaProductVariant.sku
+    )
   }
 
   async markPhysicalProductsReservedOnAirtable(
@@ -69,60 +301,11 @@ export class AirtableService {
     return rollbackMarkPhysicalProductReservedOnAirtable
   }
 
-  async createAirtableReservation(
-    userEmail: string,
-    data: ReservationCreateInput,
-    shippingError: string,
-    returnShippingError: string
-  ): Promise<[AirtableData, () => void]> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const itemIDs = (data.products.connect as { seasonsUID: string }[]).map(
-          a => a.seasonsUID
-        )
-        const items = await this.getPhysicalProducts(itemIDs)
-        const airtableUserRecord = await this.utils.getAirtableUserRecordByUserEmail(
-          userEmail
-        )
-        const nextCleanersAirtableRecord = await this.utils.getAirtableLocationRecordBySlug(
-          process.env.NEXT_CLEANERS_AIRTABLE_SLUG
-        )
-        const createData = [
-          {
-            fields: {
-              ID: data.reservationNumber,
-              User: [airtableUserRecord.id],
-              "Current Location": [nextCleanersAirtableRecord.id],
-              Items: items.map(a => a.id),
-              Shipped: false,
-              Status: "New",
-              "Shipping Address": airtableUserRecord.fields["Shipping Address"],
-              "Shipping Label":
-                data.sentPackage.create.shippingLabel.create.image,
-              "Tracking URL":
-                data.sentPackage.create.shippingLabel.create.trackingURL,
-              "Return Label":
-                data.returnedPackage.create.shippingLabel.create.image,
-              "Return Tracking URL":
-                data.returnedPackage.create.shippingLabel.create.trackingURL,
-              "Shipping Error": shippingError,
-              "Return Shipping Error": returnShippingError,
-            },
-          },
-        ]
-        const records = await this.base("Reservations").create(createData)
-
-        const rollbackAirtableReservation = async () => {
-          const numDeleted = await this.base("Reservations").destroy([
-            records[0].getId(),
-          ])
-          return numDeleted
-        }
-        return resolve([records[0], rollbackAirtableReservation])
-      } catch (err) {
-        return reject(err)
-      }
-    })
+  async updateProductVariantCounts(
+    airtableID: string,
+    counts: AirtableProductVariantCounts
+  ) {
+    return this.airtableBase.base("Product Variants").update(airtableID, counts)
   }
 
   private getAll: (
@@ -137,7 +320,7 @@ export class AirtableService {
     airtableBase
   ) => {
     const data = [] as AirtableData
-    const baseToUse = airtableBase || this.base
+    const baseToUse = airtableBase || this.airtableBase.base
 
     data.findByIds = (ids = []) => {
       return data.find(record => ids.includes(record.id))
@@ -194,9 +377,9 @@ export class AirtableService {
         fields: a[1],
       }
     })
-    const updatedRecords = await this.base("Physical Products").update(
-      formattedUpdateData
-    )
+    const updatedRecords = await this.airtableBase
+      .base("Physical Products")
+      .update(formattedUpdateData)
     return updatedRecords
   }
 

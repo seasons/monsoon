@@ -8,4 +8,4 @@ import { FAQService } from "./services/faq.service";
     FAQService
   ]
 })
-export class FAQModule {}
+export class FAQModule { }

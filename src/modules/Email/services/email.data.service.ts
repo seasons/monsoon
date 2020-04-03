@@ -1,11 +1,5 @@
 import { Injectable } from "@nestjs/common"
-
-export interface ReservedItem {
-  brand: string
-  url: string
-  name: string
-  price: number
-}
+import { ReservedItem } from "../email.types"
 
 @Injectable()
 export class EmailDataProvider {
@@ -32,17 +26,24 @@ export class EmailDataProvider {
   reservationConfirmation(
     reservationNumber: number,
     reservedItems: ReservedItem[],
-    returnDateFormatted: string
+    returnDateFormatted: string,
+    trackingNumber?: string,
+    trackingUrl?: string
   ) {
+    const paragraphs = [
+      {
+        html: "Sit back, relax and we'll let you know when it's on its way.",
+      },
+      trackingNumber && trackingUrl
+        ? {
+            html: `Your tracking number: <a href="${trackingUrl}">${trackingNumber}</a>`,
+          }
+        : null,
+    ]
     return {
       email: {
         body: {
-          paragraphs: [
-            {
-              html:
-                "Sit back, relax and we'll let you know when it's on its way.",
-            },
-          ],
+          paragraphs: paragraphs,
         },
         prefooter: {
           paragraphs: [

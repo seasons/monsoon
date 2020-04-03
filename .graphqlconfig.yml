@@ -4,7 +4,7 @@ projects:
     extensions:
       prisma: "prisma.yml"
       endpoints:
-        default: https://monsoon-prisma-staging.herokuapp.com/monsoon/staging
+        default: "${env:PRISMA_ENDPOINT}"
       codegen:
         - generator: prisma-binding
           language: typescript

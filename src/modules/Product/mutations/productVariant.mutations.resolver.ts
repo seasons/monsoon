@@ -1,10 +1,14 @@
-import { Resolver, Mutation, Args } from "@nestjs/graphql"
-import { PrismaClientService } from "../../../prisma/client.service"
-import { User } from "../../../nest_decorators"
+import { Resolver, Mutation, Args, Info } from "@nestjs/graphql"
+import { User, Customer, Analytics } from "../../../nest_decorators"
+import { ReservationService } from "../services/reservation.service"
+import { PrismaService } from "../../../prisma/prisma.service"
 
 @Resolver("ProductVariant")
 export class ProductVariantMutationsResolver {
-  constructor(private readonly prisma: PrismaClientService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly reservationService: ReservationService
+  ) {}
 
   @Mutation()
   async addProductVariantWant(@Args() { variantID }, @User() user) {
@@ -33,5 +37,34 @@ export class ProductVariantMutationsResolver {
       }
     )
     return productVariantWant
+  }
+
+  @Mutation()
+  async reserveItems(
+    @Args() { items },
+    @User() user,
+    @Customer() customer,
+    @Info() info,
+    @Analytics() analytics
+  ) {
+    const returnData = await this.reservationService.reserveItems(
+      items,
+      user,
+      customer,
+      info
+    )
+
+    console.log("returnData in reserveItems resolver:", returnData)
+
+    // Track the selection
+    analytics.track({
+      userId: user.id,
+      event: "Reserved Items",
+      properties: {
+        items,
+      },
+    })
+
+    return returnData
   }
 }

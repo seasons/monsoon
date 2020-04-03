@@ -1,32 +1,20 @@
-import {
-  Resolver,
-  Query,
-  ResolveProperty,
-  Context,
-  Info,
-} from "@nestjs/graphql"
+import { Resolver, Info, ResolveField } from "@nestjs/graphql"
 import { head } from "lodash"
-import { prisma } from "../../../prisma"
-import { AuthService } from "../services/auth.service"
-import { User } from "../../../nest_decorators"
-import { DBService } from "../../../prisma/DB.service"
+import { User, Customer } from "../../../nest_decorators"
+import { PrismaService } from "../../../prisma/prisma.service"
 
 @Resolver("Me")
 export class MeFieldsResolver {
-  constructor(
-    private readonly authService: AuthService,
-    private readonly db: DBService
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
-  @ResolveProperty()
+  @ResolveField()
   async user(@User() user) {
     return user
   }
 
-  @ResolveProperty()
-  async customer(@Context() ctx, @Info() info) {
-    const customer = await this.authService.getCustomerFromContext(ctx)
-    return await this.db.query.customer(
+  @ResolveField()
+  async customer(@Customer() customer, @Info() info) {
+    return this.prisma.binding.query.customer(
       {
         where: { id: customer.id },
       },
@@ -34,10 +22,9 @@ export class MeFieldsResolver {
     )
   }
 
-  @ResolveProperty()
-  async activeReservation(@Context() ctx) {
-    const customer = await this.authService.getCustomerFromContext(ctx)
-    const reservations = await prisma
+  @ResolveField()
+  async activeReservation(@Customer() customer, @Info() info) {
+    const reservations = await this.prisma.client
       .customer({ id: customer.id })
       .reservations({ orderBy: "createdAt_DESC" })
     const latestReservation = head(reservations)
@@ -45,16 +32,20 @@ export class MeFieldsResolver {
       latestReservation &&
       !["Completed", "Cancelled"].includes(latestReservation.status)
     ) {
-      return latestReservation
+      return await this.prisma.binding.query.reservation(
+        {
+          where: { id: latestReservation.id },
+        },
+        info
+      )
     }
 
     return null
   }
 
-  @ResolveProperty()
-  async bag(@Context() ctx, @Info() info) {
-    const customer = await this.authService.getCustomerFromContext(ctx)
-    return await this.db.query.bagItems(
+  @ResolveField()
+  async bag(@Info() info, @Customer() customer) {
+    return await this.prisma.binding.query.bagItems(
       {
         where: {
           customer: {
@@ -67,10 +58,9 @@ export class MeFieldsResolver {
     )
   }
 
-  @ResolveProperty()
-  async savedItems(@Context() ctx, @Info() info) {
-    const customer = await this.authService.getCustomerFromContext(ctx)
-    return await this.db.query.bagItems(
+  @ResolveField()
+  async savedItems(@Info() info, @Customer() customer) {
+    return await this.prisma.binding.query.bagItems(
       {
         where: {
           customer: {

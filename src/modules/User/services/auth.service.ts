@@ -1,6 +1,11 @@
+import { PrismaService } from "./../../../prisma/prisma.service"
 import { Injectable } from "@nestjs/common"
 import request from "request"
-import { prisma, Customer, User, CustomerDetail } from "../../../prisma"
+import { CustomerDetail, CustomerDetailCreateInput } from "../../../prisma"
+import { head } from "lodash"
+import PushNotifications from "@pusher/push-notifications-server"
+import { UserInputError, ForbiddenError } from "apollo-server"
+import { AirtableService } from "../../Airtable/services/airtable.service"
 
 const PW_STRENGTH_RULES_URL =
   "https://manage.auth0.com/dashboard/us/seasons/connections/database/con_btTULQOf6kAxxbCz/security"
@@ -10,8 +15,75 @@ interface SegmentReservedTraitsInCustomerDetail {
   address?: any
 }
 
+interface Auth0User {
+  email: string
+  family_name: string
+  given_name: string
+  user_id: string
+}
+
 @Injectable()
 export class AuthService {
+  beamsClient: PushNotifications | null = _instantiateBeamsClient()
+
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly airtable: AirtableService
+  ) {}
+
+  async signupUser({
+    email,
+    password,
+    firstName,
+    lastName,
+    details,
+  }: {
+    email: string
+    password: string
+    firstName: string
+    lastName: string
+    details: CustomerDetailCreateInput
+  }) {
+    // Register the user on Auth0
+    let userAuth0ID
+    try {
+      userAuth0ID = await this.createAuth0User(email, password, {
+        firstName,
+        lastName,
+      })
+    } catch (err) {
+      if (err.message.includes("400")) {
+        throw new UserInputError(err)
+      }
+      throw new Error(err)
+    }
+
+    // Get their API access token
+    let tokenData
+    try {
+      tokenData = await this.getAuth0UserAccessToken(email, password)
+    } catch (err) {
+      if (err.message.includes("403")) {
+        throw new ForbiddenError(err)
+      }
+      throw new UserInputError(err)
+    }
+
+    // Create a user object in our database and airtable
+    const user = await this.createPrismaUser(
+      userAuth0ID,
+      email,
+      firstName,
+      lastName
+    )
+    await this.createPrismaCustomerForExistingUser(user.id, details, "Created")
+    await this.airtable.createOrUpdateAirtableUser(user, {
+      ...details,
+      status: "Created",
+    })
+
+    return { user, tokenData }
+  }
   async createAuth0User(
     email: string,
     password: string,
@@ -45,7 +117,7 @@ export class AuthService {
           // Give a precise error message if a user tried to sign up with an
           // email that's already in the db
           if (response.statusCode == 400 && body.code === "invalid_signup") {
-            return reject(new Error("400 -- email already in db"))
+            return reject(new Error("400 -- email already in db or auth0"))
           }
           // Give a precise error message if a user tried to sign up with
           // a insufficiently strong password
@@ -117,59 +189,97 @@ export class AuthService {
     })
   }
 
+  async getAuth0Users(): Promise<Auth0User[]> {
+    const token = await this.getAuth0ManagementAPIToken()
+    return new Promise((resolve, reject) => {
+      request(
+        {
+          method: "Get",
+          url: `https://${process.env.AUTH0_DOMAIN}/api/v2/users`,
+          headers: {
+            "content-type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          json: true,
+        },
+        (error, response, body) => {
+          if (error) {
+            return reject(error)
+          }
+          if (response.statusCode !== 200) {
+            return reject(
+              "Invalid status code <" +
+                response.statusCode +
+                ">" +
+                "Response: " +
+                JSON.stringify(response.body)
+            )
+          }
+          return resolve(body)
+        }
+      )
+    })
+  }
+
+  async getAuth0ManagementAPIToken() {
+    return new Promise((resolve, reject) => {
+      request(
+        {
+          method: "POST",
+          url: `https://${process.env.AUTH0_DOMAIN}/oauth/token`,
+          headers: { "content-type": "application/x-www-form-urlencoded" },
+          form: {
+            grant_type: "client_credentials",
+            client_id: process.env.AUTH0_MACHINE_TO_MACHINE_CLIENT_ID,
+            client_secret: process.env.AUTH0_MACHINE_TO_MACHINE_CLIENT_SECRET,
+            audience: `https://${process.env.AUTH0_DOMAIN}/api/v2/`,
+          },
+        },
+        (error, response, body) => {
+          if (error) return reject(error)
+          if (response.statusCode !== 200) {
+            return reject(response.body)
+          }
+          return resolve(JSON.parse(body).access_token)
+        }
+      )
+    })
+  }
+
   async getCustomerFromUserID(userID: string) {
-    let customer
-    try {
-      const customerArray = await prisma.customers({
+    return head(
+      await this.prismaService.client.customers({
         where: { user: { id: userID } },
       })
-      customer = customerArray[0]
-    } catch (err) {
-      throw new Error(err)
-    }
-
-    return customer
+    )
   }
 
-  // retrieves the user indicated by the JWT token on the request.
-  // If no such user exists, throws an error.
-  async getUserFromContext(ctx): Promise<User> {
-    if (!ctx.req.user) {
-      throw new Error("no user on context")
-    }
-
-    // Does such a user exist?
-    const auth0Id = ctx.req.user.sub.split("|")[1] // e.g "auth0|5da61ffdeef18b0c5f5c2c6f"
-    const userExists = await prisma.$exists.user({ auth0Id })
-    if (!userExists) {
-      throw new Error("token does not correspond to any known user")
-    }
-
-    // User exists. Let's return
-    const user = await prisma.user({ auth0Id })
-    return user
-  }
-
-  async getCustomerFromContext(ctx): Promise<Customer> {
-    // Get the user on the context
-    const user = await this.getUserFromContext(ctx) // will throw error if user doesn't exist
-
-    if (user.role !== "Customer") {
-      throw new Error(
-        `token belongs to a user of type ${user.role}, not Customer`
+  async resetPassword(email) {
+    return new Promise((resolve, reject) => {
+      request(
+        {
+          method: "Post",
+          url: `https://${process.env.AUTH0_DOMAIN}/dbconnections/change_password`,
+          headers: { "content-type": "application/json" },
+          body: {
+            client_id: `${process.env.AUTH0_CLIENTID}`,
+            connection: `${process.env.AUTH0_DB_CONNECTION}`,
+            email,
+          },
+          json: true,
+        },
+        async (error, response, body) => {
+          if (error) {
+            reject(error)
+          }
+          resolve({ message: body })
+        }
       )
-    }
-
-    // Get the customer record corresponding to that user
-    const customerArray = await prisma.customers({
-      where: { user: { id: user.id } },
     })
-
-    return customerArray[0]
   }
 
   async createPrismaUser(auth0Id, email, firstName, lastName) {
-    const user = await prisma.createUser({
+    const user = await this.prismaService.client.createUser({
       auth0Id,
       email,
       firstName,
@@ -179,7 +289,7 @@ export class AuthService {
   }
 
   async createPrismaCustomerForExistingUser(userID, details = {}, status) {
-    const customer = await prisma.createCustomer({
+    const customer = await this.prismaService.client.createCustomer({
       user: {
         connect: { id: userID },
       },
@@ -195,10 +305,21 @@ export class AuthService {
   extractSegmentReservedTraitsFromCustomerDetail(
     detail: CustomerDetail
   ): SegmentReservedTraitsInCustomerDetail {
-    const traits = {}
-    if (!!detail.phoneNumber) {
-      traits["phone"] = detail.phoneNumber
+    const traits = {} as any
+    if (!!detail?.phoneNumber) {
+      traits.phone = detail.phoneNumber
     }
     return traits
   }
+}
+
+const _instantiateBeamsClient = () => {
+  const { PUSHER_INSTANCE_ID, PUSHER_SECRET_KEY } = process.env
+
+  return PUSHER_INSTANCE_ID && PUSHER_SECRET_KEY
+    ? new PushNotifications({
+        instanceId: PUSHER_INSTANCE_ID,
+        secretKey: PUSHER_SECRET_KEY,
+      })
+    : null
 }

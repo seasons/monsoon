@@ -1,74 +1,42 @@
 import { Injectable } from "@nestjs/common"
-import { DBService } from "../../../prisma/DB.service"
-import { prisma, RecentlyViewedProduct, Product } from "../../../prisma"
-import { AuthService } from "../../User/services/auth.service"
+import {
+  RecentlyViewedProduct,
+  BagItem,
+  ID_Input,
+  Product,
+  Customer,
+} from "../../../prisma"
 import { head } from "lodash"
 import { ProductUtilsService } from "./product.utils.service"
+import { ProductVariantService } from "./productVariant.service"
+import { PrismaService } from "../../../prisma/prisma.service"
 
 @Injectable()
 export class ProductService {
   constructor(
-    private readonly authService: AuthService,
-    private readonly db: DBService,
-    private readonly productUtils: ProductUtilsService
+    private readonly prisma: PrismaService,
+    private readonly productUtils: ProductUtilsService,
+    private readonly productVariantService: ProductVariantService
   ) {}
 
   async getProducts(args, info) {
-    const category = args.category || "all"
-    const orderBy = args.orderBy || "createdAt_DESC"
-    const sizes = args.sizes || []
-    // Add filtering by sizes in query
-    const where = args.where || {}
-    if (sizes && sizes.length > 0) {
-      where.variants_some = { size_in: sizes }
-    }
-
-    // If client wants to sort by name, we will assume that they
-    // want to sort by brand name as well
-    if (orderBy.includes("name_")) {
-      return await this.productUtils.productsAlphabetically(
-        category,
-        orderBy,
-        sizes
-      )
-    }
-
-    if (args.category && args.category !== "all") {
-      const category = await prisma.category({ slug: args.category })
-      const children = await prisma.category({ slug: args.category }).children()
-
-      const filter =
-        children.length > 0
-          ? {
-              where: {
-                ...args.where,
-                OR: children.map(({ slug }) => ({ category: { slug } })),
-              },
-            }
-          : {
-              where: {
-                ...args.where,
-                category: { slug: category.slug },
-              },
-            }
-      const { first, skip } = args
-      const products = await this.db.query.products(
-        { first, skip, orderBy, where, ...filter },
-        info
-      )
-      return products
-    }
-
-    const result = await this.db.query.products(
-      { ...args, orderBy, where },
+    const queryOptions = await this.productUtils.queryOptionsForProducts(args)
+    return await this.prisma.binding.query.products(
+      { ...args, ...queryOptions },
       info
     )
-    return result
   }
 
-  async addViewedProduct(item, ctx) {
-    const customer = await this.authService.getCustomerFromContext(ctx)
-    const viewedProducts = await prisma.recentlyViewedProducts({
+  async getProductsConnection(args, info) {
+    const queryOptions = await this.productUtils.queryOptionsForProducts(args)
+    return await this.prisma.binding.query.productsConnection(
+      { ...args, ...queryOptions },
+      info
+    )
+  }
+
+  async addViewedProduct(item, customer) {
+    const viewedProducts = await this.prisma.client.recentlyViewedProducts({
       where: {
         customer: { id: customer.id },
         product: { id: item },
@@ -77,7 +45,7 @@ export class ProductService {
     const viewedProduct: RecentlyViewedProduct = head(viewedProducts)
 
     if (viewedProduct) {
-      return await prisma.updateRecentlyViewedProduct({
+      return await this.prisma.client.updateRecentlyViewedProduct({
         where: {
           id: viewedProduct.id,
         },
@@ -86,7 +54,7 @@ export class ProductService {
         },
       })
     } else {
-      return await prisma.createRecentlyViewedProduct({
+      return await this.prisma.client.createRecentlyViewedProduct({
         customer: {
           connect: {
             id: customer.id,
@@ -102,15 +70,14 @@ export class ProductService {
     }
   }
 
-  async isSaved(product, ctx) {
-    let customer
-    try {
-      customer = await this.authService.getCustomerFromContext(ctx)
-    } catch (error) {
+  async isSaved(
+    product: { id: ID_Input } | Product,
+    customer: { id: ID_Input } | Customer | null
+  ) {
+    if (!customer) {
       return false
     }
-
-    const productVariants = await prisma.productVariants({
+    const productVariants = await this.prisma.client.productVariants({
       where: {
         product: {
           id: product.id,
@@ -118,7 +85,7 @@ export class ProductService {
       },
     })
 
-    const bagItem = await prisma.bagItems({
+    const bagItem = await this.prisma.client.bagItems({
       where: {
         customer: {
           id: customer.id,
@@ -131,5 +98,90 @@ export class ProductService {
     })
 
     return bagItem.length > 0
+  }
+
+  async saveProduct(item, save, info, customer) {
+    const bagItems = await this.prisma.binding.query.bagItems(
+      {
+        where: {
+          customer: {
+            id: customer.id,
+          },
+          productVariant: {
+            id: item,
+          },
+          saved: true,
+        },
+      },
+      info
+    )
+    let bagItem: BagItem = head(bagItems)
+
+    if (save && !bagItem) {
+      bagItem = await this.prisma.client.createBagItem({
+        customer: {
+          connect: {
+            id: customer.id,
+          },
+        },
+        productVariant: {
+          connect: {
+            id: item,
+          },
+        },
+        position: 0,
+        saved: save,
+        status: "Added",
+      })
+    } else {
+      if (bagItem) {
+        await this.prisma.client.deleteBagItem({
+          id: bagItem.id,
+        })
+      }
+    }
+
+    if (save) {
+      return this.prisma.binding.query.bagItem(
+        {
+          where: {
+            id: bagItem.id,
+          },
+        },
+        info
+      )
+    }
+
+    return bagItem
+  }
+
+  async checkItemsAvailability(items, customer) {
+    const reservedBagItems = await this.prisma.binding.query.bagItems(
+      {
+        where: {
+          customer: {
+            id: customer.id,
+          },
+          productVariant: {
+            id_in: items,
+          },
+          status_not: "Added",
+        },
+      },
+      `{
+        productVariant {
+          id
+        }
+      }`
+    )
+
+    const reservedIds = reservedBagItems.map(a => a.productVariant.id)
+    const newItems = items.filter(a => !reservedIds.includes(a))
+
+    await this.productVariantService.updateProductVariantCounts(newItems, {
+      dryRun: true,
+    })
+
+    return true
   }
 }

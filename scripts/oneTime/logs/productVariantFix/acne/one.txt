@@ -1,7 +1,0 @@
-Number of mismatched SKUs:  16
-16 changes to make.
-skuChangesMap
-STEP 1 changes. Mapping ACNE-BWN-LL-008 to ACNE-BWN-LL-005
--- prisma product variant: ACNE-BWN-LL-008 --> ACNE-BWN-LL-005
--- prisma physical product: [object Object] --> ACNE-BWN-LL-005-01
--- airtable physical product recEKAk5yosWtDzEw suid set to ACNE-BWN-LL-005-01

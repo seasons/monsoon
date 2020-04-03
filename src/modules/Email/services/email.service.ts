@@ -1,26 +1,59 @@
 import { Injectable } from "@nestjs/common"
 import sgMail from "@sendgrid/mail"
+import fs from "fs"
 import Handlebars from "handlebars"
 import nodemailer from "nodemailer"
-import fs from "fs"
-import { User, Product, Reservation } from "../../../prisma"
-import { PrismaClientService } from "../../../prisma/client.service"
+import {
+  Product,
+  Reservation as PrismaReservation,
+  User,
+} from "../../../prisma"
+import { Reservation } from "../../../prisma/prisma.binding"
+import { PrismaService } from "../../../prisma/prisma.service"
 import { UtilsService } from "../../Utils/utils.service"
-import { ReservationUtilsService } from "../../Product/services/reservation.utils.service"
 import { EmailDataProvider } from "./email.data.service"
 
 @Injectable()
 export class EmailService {
   constructor(
-    private readonly prisma: PrismaClientService,
+    private readonly prisma: PrismaService,
     private readonly utils: UtilsService,
     private readonly data: EmailDataProvider
   ) {}
 
+  sendAdminConfirmationEmail(
+    user: User,
+    products: any[],
+    reservation: Reservation
+  ) {
+    this.sendTransactionalEmail({
+      to: process.env.OPERATIONS_ADMIN_EMAIL,
+      data: this.data.reservationReturnConfirmation(
+        reservation.reservationNumber,
+        products.map(p => p.seasonsUID),
+        user.email
+      ),
+    })
+  }
+
+  sendAuthorizedToSubscribeEmail(user: User) {
+    this.sendTransactionalEmail({
+      to: user.email,
+      data: this.data.completeAccount(
+        user.firstName,
+        `${process.env.SEEDLING_URL}/complete?idHash=${this.utils.getUserIDHash(
+          user.id
+        )}`
+      ),
+    })
+  }
+
   async sendReservationConfirmationEmail(
     user: User,
     products: Product[],
-    reservation: Reservation
+    reservation: PrismaReservation,
+    trackingNumber?: string,
+    trackingUrl?: string
   ) {
     const reservedItems = [
       await this.getReservationConfirmationDataForProduct(products[0]),
@@ -41,8 +74,36 @@ export class EmailService {
       data: this.data.reservationConfirmation(
         reservation.reservationNumber,
         reservedItems,
-        this.utils.formatReservationReturnDate(new Date(reservation.createdAt))
+        this.utils.formatReservationReturnDate(new Date(reservation.createdAt)),
+        trackingNumber,
+        trackingUrl
       ),
+    })
+  }
+
+  sendReturnReminderEmail(user: User, reservation: PrismaReservation) {
+    this.sendTransactionalEmail({
+      to: user.email,
+      data: this.data.returnReminder({
+        name: user.firstName,
+        returnDate: this.utils.formatReservationReturnDate(
+          new Date(reservation.createdAt)
+        ),
+      }),
+    })
+  }
+
+  sendWelcomeToSeasonsEmail(user: User) {
+    this.sendTransactionalEmail({
+      to: user.email,
+      data: this.data.welcomeToSeasons(user.firstName),
+    })
+  }
+
+  sendYouCanNowReserveAgainEmail(user: User) {
+    this.sendTransactionalEmail({
+      to: user.email,
+      data: this.data.freeToReserve(),
     })
   }
 
