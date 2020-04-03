@@ -19,6 +19,7 @@ import {
   AirtableInventoryStatus,
 } from "../../Airtable/airtable.types"
 import { PrismaService } from "../../../prisma/prisma.service"
+import { ErrorService } from "../../Error/services/error.service"
 
 type prismaProductVariantCounts = Pick<
   ProductVariant,
@@ -32,7 +33,7 @@ const MULTIPLE_CHOICE = "MultipleChoice"
 
 @Injectable()
 export class ReservationScheduledJobs {
-  private readonly logger = new Logger(`CRON: ${ReservationScheduledJobs.name}`)
+  private readonly logger = new Logger(ReservationScheduledJobs.name)
   private readonly shouldReportErrorsToSentry =
     process.env.NODE_ENV === "production"
 
@@ -40,11 +41,13 @@ export class ReservationScheduledJobs {
     private readonly airtableService: AirtableService,
     private readonly emailService: EmailService,
     private readonly prisma: PrismaService,
-    private readonly shippingService: ShippingService
-  ) { }
+    private readonly shippingService: ShippingService,
+    private readonly errorService: ErrorService
+  ) {}
 
   @Cron(CronExpression.EVERY_6_HOURS)
   async sendReturnNotifications() {
+    this.logger.log("Reservation Return Notifications Job ran")
     const reservations = await this.prisma.client.reservations({
       orderBy: "createdAt_DESC",
     })
@@ -54,15 +57,9 @@ export class ReservationScheduledJobs {
     }
     for (const reservation of reservations) {
       try {
-        if (this.shouldReportErrorsToSentry) {
-          Sentry.configureScope(scope => {
-            scope.setExtra("reservationNumber", reservation.reservationNumber)
-            scope.setExtra("reservation createdAt", reservation.createdAt)
-            scope.setExtra("reservation status", reservation.status)
-          })
-        }
+        this.errorService.setExtraContext(reservation, "reservation")
+
         if (await this.returnNoticeNeeded(reservation)) {
-          //   Remind customer to return items
           const user = await this.prisma.client
             .reservation({
               id: reservation.id,
@@ -83,12 +80,11 @@ export class ReservationScheduledJobs {
         }
       } catch (err) {
         report.errors.push(err)
-        if (this.shouldReportErrorsToSentry) {
-          Sentry.captureException(err)
-        }
+        this.errorService.captureError(err)
       }
     }
 
+    this.logger.log("Reservation Return Notifications Job results:")
     this.logger.log(report)
   }
 
@@ -203,7 +199,6 @@ export class ReservationScheduledJobs {
 
   private async returnNoticeNeeded(reservation: Reservation) {
     const now = DateTime.local()
-    const reservationCreatedAt = DateTime.fromISO(reservation.createdAt)
     const twentyEightToTwentyNineDaysAgo = Interval.fromDateTimes(
       now.minus({ days: 29 }),
       now.minus({ days: 28 })
@@ -215,7 +210,9 @@ export class ReservationScheduledJobs {
       .customer()
 
     return (
-      twentyEightToTwentyNineDaysAgo.contains(reservationCreatedAt) &&
+      twentyEightToTwentyNineDaysAgo.contains(
+        DateTime.fromISO(reservation.createdAt)
+      ) &&
       !reservation.reminderSentAt &&
       customer.plan === "Essential" &&
       !["Cancelled", "Completed"].includes(reservation.status)
@@ -383,11 +380,18 @@ export class ReservationScheduledJobs {
             )
 
             // Create reservationFeedback datamodels for the returned product variants
-            const returnedProductVariantIDs: ID_Input[] = returnedPhysicalProducts.map(p => p.productVariant.id)
-            const returnedProductVariants = await Promise.all(
-              returnedProductVariantIDs.map(async id => await this.prisma.client.productVariant({ id }))
+            const returnedProductVariantIDs: ID_Input[] = returnedPhysicalProducts.map(
+              p => p.productVariant.id
             )
-            await this.createReservationFeedbacksForVariants(returnedProductVariants, prismaUser)
+            const returnedProductVariants = await Promise.all(
+              returnedProductVariantIDs.map(
+                async id => await this.prisma.client.productVariant({ id })
+              )
+            )
+            await this.createReservationFeedbacksForVariants(
+              returnedProductVariants,
+              prismaUser
+            )
           }
         } else if (
           airtableReservation.model.status !== prismaReservation.status
@@ -566,7 +570,9 @@ export class ReservationScheduledJobs {
           },
         })
         if (!products || products.length === 0) {
-          throw new Error(`createReservationFeedback error: Unable to find product for product variant id ${variant.id}.`)
+          throw new Error(
+            `createReservationFeedback error: Unable to find product for product variant id ${variant.id}.`
+          )
         }
         return {
           id: variant.id,
@@ -583,28 +589,49 @@ export class ReservationScheduledJobs {
             create: [
               {
                 question: `How many times did you wear this ${variantInfo.name}?`,
-                options: { set: ["More than 6 times", "3-5 times", "1-2 times", "0 times"] },
+                options: {
+                  set: [
+                    "More than 6 times",
+                    "3-5 times",
+                    "1-2 times",
+                    "0 times",
+                  ],
+                },
                 type: MULTIPLE_CHOICE,
               },
               {
                 question: `Would you buy it at retail for $${variantInfo.retailPrice}?`,
-                options: { set: ["Would buy at a discount", "Buy below retail", "Buy at retail", "Would only rent"] },
+                options: {
+                  set: [
+                    "Would buy at a discount",
+                    "Buy below retail",
+                    "Buy at retail",
+                    "Would only rent",
+                  ],
+                },
                 type: MULTIPLE_CHOICE,
               },
               {
                 question: `Did it fit as expected?`,
-                options: { set: ["Fit too big", "Fit true to size", "Ran small", "Didn’t fit at all"] },
+                options: {
+                  set: [
+                    "Fit too big",
+                    "Fit true to size",
+                    "Ran small",
+                    "Didn’t fit at all",
+                  ],
+                },
                 type: MULTIPLE_CHOICE,
               },
-            ]
+            ],
           },
-          variant: { connect: { id: variantInfo.id } }
+          variant: { connect: { id: variantInfo.id } },
         })),
       },
       user: {
         connect: {
-          id: user.id
-        }
+          id: user.id,
+        },
       },
     })
   }

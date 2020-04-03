@@ -4,8 +4,7 @@ import { User } from "../../../prisma"
 
 @Injectable()
 export class ErrorService {
-  //   private shouldReportErrorsToSentry = process.env.NODE_ENV === "production"
-  private shouldReportErrorsToSentry = true
+  private shouldReportErrorsToSentry = process.env.NODE_ENV === "production"
 
   constructor() {}
 
@@ -13,6 +12,16 @@ export class ErrorService {
     if (this.shouldReportErrorsToSentry) {
       Sentry.configureScope(scope => {
         scope.setUser({ id: prismaUser.id, email: prismaUser.email })
+      })
+    }
+  }
+
+  setExtraContext(dict: Object, keyPrefix?: string) {
+    if (this.shouldReportErrorsToSentry) {
+      Sentry.configureScope(scope => {
+        for (const key of Object.keys(dict)) {
+          scope.setExtra(`${keyPrefix}.${key}`, dict[key])
+        }
       })
     }
   }
