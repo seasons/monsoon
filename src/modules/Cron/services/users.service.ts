@@ -6,6 +6,7 @@ import { AuthService } from "../../User/services/auth.service"
 import { CustomerService } from "../../User/services/customer.service"
 import { EmailService } from "../../Email/services/email.service"
 import { PrismaService } from "../../../prisma/prisma.service"
+import { ErrorService } from "../../Error/services/error.service"
 
 @Injectable()
 export class UsersScheduledJobs {
@@ -16,32 +17,28 @@ export class UsersScheduledJobs {
     private readonly authService: AuthService,
     private readonly customerService: CustomerService,
     private readonly emailService: EmailService,
-    private readonly prisma: PrismaService
+    private readonly prisma: PrismaService,
+    private readonly errorService: ErrorService
   ) {}
 
   @Cron(CronExpression.EVERY_MINUTE)
   async checkAndAuthorizeUsers() {
     this.logger.log("Check and Authorize Users job ran")
-    const shouldReportErrorsToSentry = process.env.NODE_ENV === "production"
     let log = {
-      updated: [],
+      updatedUsers: [],
+      errors: [],
     }
-    try {
-      // Retrieve emails and statuses of every user on the airtable DB
-      let updatedUsers = []
-      const allAirtableUsers = await this.airtableService.getAllUsers()
-      for (const airtableUser of allAirtableUsers) {
+
+    // Retrieve emails and statuses of every user on the airtable DB
+    const allAirtableUsers = await this.airtableService.getAllUsers()
+    for (const airtableUser of allAirtableUsers) {
+      try {
         if (airtableUser.fields.Status === "Authorized") {
           const prismaUser = await this.prisma.client.user({
             email: airtableUser.model.email,
           })
           if (!!prismaUser) {
-            // Add user context on Sentry
-            if (shouldReportErrorsToSentry) {
-              Sentry.configureScope(scope => {
-                scope.setUser({ id: prismaUser.id, email: prismaUser.email })
-              })
-            }
+            this.errorService.setUserContext(prismaUser)
 
             const prismaCustomer = await this.authService.getCustomerFromUserID(
               prismaUser.id
@@ -49,8 +46,9 @@ export class UsersScheduledJobs {
             const prismaCustomerStatus = await this.prisma.client
               .customer({ id: prismaCustomer.id })
               .status()
+
             if (prismaCustomerStatus !== "Authorized") {
-              updatedUsers = [...updatedUsers, prismaUser.email]
+              log.updatedUsers.push(prismaUser.email)
               this.customerService.setCustomerPrismaStatus(
                 prismaUser,
                 "Authorized"
@@ -59,16 +57,13 @@ export class UsersScheduledJobs {
             }
           }
         }
-      }
-      log = {
-        updated: updatedUsers,
-      }
-    } catch (err) {
-      if (shouldReportErrorsToSentry) {
-        Sentry.captureException(err)
+      } catch (err) {
+        this.errorService.captureError(err)
+        log.errors.push(err)
       }
     }
 
+    this.logger.log("Check and Authorize users results: ")
     this.logger.log(log)
   }
 }

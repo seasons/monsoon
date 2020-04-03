@@ -1,12 +1,13 @@
-import { Module } from '@nestjs/common';
-import { UsersScheduledJobs } from './services/users.service';
-import { PrismaModule } from '../../prisma/prisma.module';
-import { ReservationScheduledJobs } from './services/reservations.service';
-import { AirtableModule } from '../Airtable/airtable.module';
-import { EmailModule } from '../Email/email.module';
-import { UserModule } from '../User/user.module';
-import { ShippingModule } from '../Shipping/shipping.module';
-import { SlackModule } from '../Slack/slack.module';
+import { Module } from "@nestjs/common"
+import { UsersScheduledJobs } from "./services/users.service"
+import { PrismaModule } from "../../prisma/prisma.module"
+import { ReservationScheduledJobs } from "./services/reservations.service"
+import { AirtableModule } from "../Airtable/airtable.module"
+import { EmailModule } from "../Email/email.module"
+import { UserModule } from "../User/user.module"
+import { ShippingModule } from "../Shipping/shipping.module"
+import { SlackModule } from "../Slack/slack.module"
+import { ErrorModule } from "../Error/error.module"
 
 @Module({
   imports: [
@@ -15,7 +16,8 @@ import { SlackModule } from '../Slack/slack.module';
     PrismaModule,
     ShippingModule,
     SlackModule,
-    UserModule
+    UserModule,
+    ErrorModule,
   ],
   providers: [ReservationScheduledJobs, UsersScheduledJobs],
 })
