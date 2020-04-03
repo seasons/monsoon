@@ -25,12 +25,10 @@ export class UsersScheduledJobs {
     const shouldReportErrorsToSentry = process.env.NODE_ENV === "production"
     let log = {
       updated: [],
-      usersInAirtableButNotPrisma: [],
     }
     try {
       // Retrieve emails and statuses of every user on the airtable DB
       let updatedUsers = []
-      let usersInAirtableButNotPrisma = []
       const allAirtableUsers = await this.airtableService.getAllUsers()
       for (const airtableUser of allAirtableUsers) {
         if (airtableUser.fields.Status === "Authorized") {
@@ -59,17 +57,11 @@ export class UsersScheduledJobs {
               )
               this.emailService.sendAuthorizedToSubscribeEmail(prismaUser)
             }
-          } else {
-            usersInAirtableButNotPrisma = [
-              ...usersInAirtableButNotPrisma,
-              airtableUser.model.email,
-            ]
           }
         }
       }
       log = {
         updated: updatedUsers,
-        usersInAirtableButNotPrisma,
       }
     } catch (err) {
       if (shouldReportErrorsToSentry) {
@@ -77,8 +69,6 @@ export class UsersScheduledJobs {
       }
     }
 
-    if (log.updated.length + log.usersInAirtableButNotPrisma.length > 0) {
-      this.logger.log(log)
-    }
+    this.logger.log(log)
   }
 }
