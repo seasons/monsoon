@@ -47,7 +47,7 @@ export class SyncUtilsService {
     }
   }
 
-  async createSubBar(
+  async createAirtableToPrismaSubBar(
     multibar: any,
     modelName: AirtableModelName,
     numRecords?: number,
@@ -69,7 +69,7 @@ export class SyncUtilsService {
     )
   }
 
-  async createSyncAirtableSubBar(multibar, modelName: AirtableModelName) {
+  async createAirtableToAirtableSubBar(multibar, modelName: AirtableModelName) {
     return await multibar.create(
       await this.getNumReadWritesToSyncModel(modelName),
       0,
@@ -131,7 +131,7 @@ export class SyncUtilsService {
       {
         clearOnComplete: false,
         hideCursor: true,
-        format: `{modelName} {bar} {percentage}%  ETA: {eta}s  {value}/{total} records`,
+        format: `{modelName} {bar} {percentage}%  ETA: {eta}s  {value}/{total} ops`,
       },
       cliProgress.Presets.shades_grey
     )
@@ -150,7 +150,11 @@ export class SyncUtilsService {
     let _cliProgressBar = cliProgressBar
     if (!_cliProgressBar) {
       multibar = this.makeAirtableSyncCliProgressBar()
-      _cliProgressBar = await this.createSubBar(multibar, modelName, numRecords)
+      _cliProgressBar = await this.createAirtableToPrismaSubBar(
+        multibar,
+        modelName,
+        numRecords
+      )
     }
     return [multibar, _cliProgressBar]
   }
@@ -166,15 +170,14 @@ export class SyncUtilsService {
       Categories: this.airtableService.getAllCategories,
       Locations: this.airtableService.getAllLocations,
       Products: this.airtableService.getAllProducts,
-      "Homepage Product Rails": this.airtableService.getAllHomepageProductRails
-        .bind,
-      "Product Variants": this.airtableService.getAllProductVariants.bind,
-      "Physical Products": this.airtableService.getAllPhysicalProducts.bind,
+      "Homepage Product Rails": this.airtableService.getAllHomepageProductRails,
+      "Product Variants": this.airtableService.getAllProductVariants,
+      "Physical Products": this.airtableService.getAllPhysicalProducts,
       Users: this.airtableService.getAllUsers,
-      Reservations: this.airtableService.getAllReservations.bind,
+      Reservations: this.airtableService.getAllReservations,
       Sizes: this.airtableService.getAllSizes,
-      "Top Sizes": this.airtableService.getAllTopSizes.bind,
-      "Bottom Sizes": this.airtableService.getAllBottomSizes.bind,
+      "Top Sizes": this.airtableService.getAllTopSizes,
+      "Bottom Sizes": this.airtableService.getAllBottomSizes,
     }[modelname]
     if (!func) {
       throw new Error(`Unrecognized model name: ${modelname}`)
