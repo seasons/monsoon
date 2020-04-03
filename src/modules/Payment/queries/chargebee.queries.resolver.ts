@@ -2,22 +2,24 @@ import { Resolver, Query, Args, Context } from "@nestjs/graphql"
 import { Customer, User } from "../../../nest_decorators"
 import { PaymentService } from "../services/payment.service"
 import { PrismaService } from "../../../prisma/prisma.service"
+import { UtilsService } from "../../Utils/utils.service"
+import { AuthService } from "../../User/services/auth.service"
 
 @Resolver()
 export class ChargebeeQueriesResolver {
   constructor(
     private readonly paymentService: PaymentService,
-    private readonly prisma: PrismaService
+    private readonly prisma: PrismaService,
+    private readonly utils: UtilsService,
+    private readonly authService: AuthService
   ) {}
 
   @Query()
-  async chargebeeCheckout(
-    @Args() { planID },
-    @Context() ctx,
-    @User() user,
-    @Customer() customer
-  ) {
+  async chargebeeCheckout(@Args() { planID, userIDHash }, @Context() ctx) {
+    const userID = this.utils.decryptUserIDHash(userIDHash)
+    const user = await this.prisma.client.user({ id: userID })
     const { email, firstName, lastName } = user
+    const customer = await this.authService.getCustomerFromUserID(userID)
     const { phoneNumber } = await this.prisma.client
       .customer({ id: customer.id })
       .detail()
@@ -41,5 +43,13 @@ export class ChargebeeQueriesResolver {
     })
 
     return hostedPage
+  }
+
+  /**
+   * Pulls the customer just to ensure they are a customer
+   */
+  @Query()
+  async chargebeeUpdatePaymentPage(@Customer() customer, @User() user) {
+    return this.paymentService.getHostedUpdatePaymentPage(user.id)
   }
 }

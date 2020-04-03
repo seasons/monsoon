@@ -1,17 +1,17 @@
 import { Injectable } from "@nestjs/common"
 import sgMail from "@sendgrid/mail"
+import fs from "fs"
 import Handlebars from "handlebars"
 import nodemailer from "nodemailer"
-import fs from "fs"
-import { UtilsService } from "../../Utils/utils.service"
-import { EmailDataProvider } from "./email.data.service"
-import { PrismaService } from "../../../prisma/prisma.service"
 import {
-  User,
   Product,
   Reservation as PrismaReservation,
+  User,
 } from "../../../prisma"
 import { Reservation } from "../../../prisma/prisma.binding"
+import { PrismaService } from "../../../prisma/prisma.service"
+import { UtilsService } from "../../Utils/utils.service"
+import { EmailDataProvider } from "./email.data.service"
 
 @Injectable()
 export class EmailService {
@@ -37,13 +37,12 @@ export class EmailService {
   }
 
   sendAuthorizedToSubscribeEmail(user: User) {
+    const idHash = this.utils.encryptUserIDHash(user.id)
     this.sendTransactionalEmail({
       to: user.email,
       data: this.data.completeAccount(
         user.firstName,
-        `${process.env.SEEDLING_URL}/complete?idHash=${this.utils.getUserIDHash(
-          user.id
-        )}`
+        `${process.env.SEEDLING_URL}/complete?idHash=${idHash}`
       ),
     })
   }
@@ -51,7 +50,9 @@ export class EmailService {
   async sendReservationConfirmationEmail(
     user: User,
     products: Product[],
-    reservation: PrismaReservation
+    reservation: PrismaReservation,
+    trackingNumber?: string,
+    trackingUrl?: string
   ) {
     const reservedItems = [
       await this.getReservationConfirmationDataForProduct(products[0]),
@@ -72,7 +73,9 @@ export class EmailService {
       data: this.data.reservationConfirmation(
         reservation.reservationNumber,
         reservedItems,
-        this.utils.formatReservationReturnDate(new Date(reservation.createdAt))
+        this.utils.formatReservationReturnDate(new Date(reservation.createdAt)),
+        trackingNumber,
+        trackingUrl
       ),
     })
   }

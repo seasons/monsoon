@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common"
 import { LocationCreateInput, BillingInfoCreateInput } from "../../../prisma"
 import { AirtableBaseService } from "./airtable.base.service"
+import { head } from "lodash"
 
 interface AirtableRecord {
   id: string
@@ -70,31 +71,18 @@ export class AirtableUtilsService {
     })
   }
 
-  getAirtableUserRecordByUserEmail(
+  async getAirtableUserRecordByUserEmail(
     email: string
   ): Promise<{ id: string; fields: any }> {
-    return new Promise((resolve, reject) => {
-      this.airtableBase
+    return head(
+      await this.airtableBase
         .base("Users")
         .select({
           view: "Grid view",
           filterByFormula: `{Email}='${email}'`,
         })
-        .firstPage((err, records) => {
-          if (!!err) {
-            reject(err)
-          }
-          if (records.length > 0) {
-            resolve(records[0])
-          } else {
-            reject(
-              new Error(
-                `User with email ${email} not found on airtable with id ${process.env.AIRTABLE_DATABASE_ID}`
-              )
-            )
-          }
-        })
-    })
+        .firstPage()
+    )
   }
 
   async getAirtableLocationRecordBySlug(slug: string): Promise<AirtableRecord> {

@@ -1,27 +1,26 @@
 import { Injectable } from "@nestjs/common"
+import * as Sentry from "@sentry/node"
 import { ApolloError } from "apollo-server"
+import { head } from "lodash"
+import { RollbackError } from "../../../errors"
 import {
   Customer,
-  User,
   ID_Input,
-  ReservationStatus,
   PhysicalProduct,
   Reservation,
-  InventoryStatus,
   ReservationCreateInput,
+  ReservationStatus,
+  User,
 } from "../../../prisma"
-import { head } from "lodash"
+import { PrismaService } from "../../../prisma/prisma.service"
+import { AirtableService } from "../../Airtable/services/airtable.service"
+import { EmailService } from "../../Email/services/email.service"
+import { ShippingService } from "../../Shipping/services/shipping.service"
+import { ShippoTransaction } from "../../Shipping/shipping.types"
+import { PhysicalProductService } from "./physicalProduct.utils.service"
 import { ProductUtilsService } from "./product.utils.service"
 import { ProductVariantService } from "./productVariant.service"
-import { PhysicalProductService } from "./physicalProduct.utils.service"
-import { AirtableService } from "../../Airtable/services/airtable.service"
-import { ShippingService } from "../../Shipping/services/shipping.service"
-import { EmailService } from "../../Email/services/email.service"
-import { RollbackError } from "../../../errors"
-import * as Sentry from "@sentry/node"
 import { ReservationUtilsService } from "./reservation.utils.service"
-import { ShippoTransaction } from "../../Shipping/shipping.types"
-import { PrismaService } from "../../../prisma/prisma.service"
 
 interface PhysicalProductWithProductVariant extends PhysicalProduct {
   productVariant: { id: ID_Input }
@@ -139,7 +138,9 @@ export class ReservationService {
       await this.emails.sendReservationConfirmationEmail(
         user,
         productsBeingReserved,
-        prismaReservation
+        prismaReservation,
+        seasonsToCustomerTransaction.tracking_number,
+        seasonsToCustomerTransaction.tracking_url_provider
       )
 
       // Get return data
