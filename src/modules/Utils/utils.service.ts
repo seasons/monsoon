@@ -58,19 +58,19 @@ export class UtilsService {
       "aes-128-ctr",
       `${process.env.HASH_SECRET}`
     )
-    let hex = cipher.update(userID, "utf8", "hex")
-    hex += cipher.final("hex")
-    return hex
+    let hash = cipher.update(userID, "utf8", "hex")
+    hash += cipher.final("hex")
+    return hash
   }
 
-  decryptUserIDHash(hex: string): string {
+  decryptUserIDHash(hash: string): string {
     const decipher = crypto.createDecipher(
       "aes-128-ctr",
       `${process.env.HASH_SECRET}`
     )
-    let idHash = decipher.update(hex, "hex", "utf8")
-    idHash += decipher.final("utf8")
-    return idHash
+    let decryptedHash = decipher.update(hash, "hex", "utf8")
+    decryptedHash += decipher.final("utf8")
+    return decryptedHash
   }
 
   Identity(a) {
