@@ -1,5 +1,4 @@
-
-import { Context, getUserIDHash, getCustomerFromUserID } from "../utils"
+import { Context, encryptUserIDHash, getCustomerFromUserID } from "../utils"
 import { getUserFromContext, getCustomerFromContext } from "../auth/utils"
 import chargebee from "chargebee"
 import get from "lodash.get"
@@ -21,7 +20,7 @@ export const Payment = {
     const allUsers = await ctx.prisma.users()
     let targetUser
     for (const user of allUsers) {
-      let thisUsersIDHash = getUserIDHash(user.id)
+      let thisUsersIDHash = encryptUserIDHash(user.id)
       if (thisUsersIDHash === userIDHash) {
         targetUser = user
       }
@@ -87,7 +86,7 @@ export const Payment = {
     return hostedPage
   },
 
-  chargebeeUpdatePaymentPage: async (parent, { }, ctx, info) => {
+  chargebeeUpdatePaymentPage: async (parent, {}, ctx, info) => {
     const user = await getUserFromContext(ctx)
     if (!user) {
       throw new Error("No user found.")
@@ -103,7 +102,7 @@ export const Payment = {
         .manage_payment_sources({
           customer: {
             id: user.id,
-          }
+          },
         })
         .request((error, result) => {
           if (error) {
@@ -129,46 +128,53 @@ export const updateChargebeeBillingAddress = async (
   billingPostalCode: string
 ) => {
   await new Promise((resolve, reject) => {
-    chargebee.customer.update_billing_info(userID, {
-      billing_address: {
-        line1: billingStreet1,
-        line2: billingStreet2,
-        city: billingCity,
-        state: billingState,
-        zip: billingPostalCode,
-      }
-    }).request((error, result) => {
-      if (error) {
-        reject(JSON.stringify(error))
-      } else {
-        const chargebeeBillingAddress = get(result, "customer.billing_address")
-        if (!chargebeeBillingAddress) {
-          reject("Failed to update billing address on chargebee.")
+    chargebee.customer
+      .update_billing_info(userID, {
+        billing_address: {
+          line1: billingStreet1,
+          line2: billingStreet2,
+          city: billingCity,
+          state: billingState,
+          zip: billingPostalCode,
+        },
+      })
+      .request((error, result) => {
+        if (error) {
+          reject(JSON.stringify(error))
+        } else {
+          const chargebeeBillingAddress = get(
+            result,
+            "customer.billing_address"
+          )
+          if (!chargebeeBillingAddress) {
+            reject("Failed to update billing address on chargebee.")
+          }
+          resolve(chargebeeBillingAddress)
         }
-        resolve(chargebeeBillingAddress)
-      }
-    })
+      })
   })
 }
 
 export const getChargebeePaymentSource = async (userID: string) => {
   const cardInfo: any = await new Promise((resolve, reject) => {
-    // Get user's payment information from chargebee		
-    chargebee.payment_source.list({
-      limit: 1,
-      "customer_id[is]": userID,
-      "type[is]": "card"
-    }).request((error, result) => {
-      if (error) {
-        reject(error)
-      } else {
-        const card = get(result, "list[0].payment_source.card")
-        if (!card) {
-          reject("No card found for customer.")
+    // Get user's payment information from chargebee
+    chargebee.payment_source
+      .list({
+        limit: 1,
+        "customer_id[is]": userID,
+        "type[is]": "card",
+      })
+      .request((error, result) => {
+        if (error) {
+          reject(error)
+        } else {
+          const card = get(result, "list[0].payment_source.card")
+          if (!card) {
+            reject("No card found for customer.")
+          }
+          resolve(card)
         }
-        resolve(card)
-      }
-    })
+      })
   }).catch(error => {
     throw new Error(JSON.stringify(error))
   })

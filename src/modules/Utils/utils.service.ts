@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common"
 import crypto from "crypto"
+import util from "util"
 import { InventoryStatus, Location } from "../../prisma/"
 import { PrismaService } from "../../prisma/prisma.service"
 import { AirtableInventoryStatus } from "../Airtable/airtable.types"
@@ -52,11 +53,24 @@ export class UtilsService {
     })
   }
 
-  getUserIDHash(userID: string): string {
-    return crypto
-      .createHash("sha256")
-      .update(`${userID}${process.env.HASH_SECRET}`)
-      .digest("hex")
+  encryptUserIDHash(userID: string): string {
+    const cipher = crypto.createCipher(
+      "aes-128-ctr",
+      `${process.env.HASH_SECRET}`
+    )
+    let hash = cipher.update(userID, "utf8", "hex")
+    hash += cipher.final("hex")
+    return hash
+  }
+
+  decryptUserIDHash(hash: string): string {
+    const decipher = crypto.createDecipher(
+      "aes-128-ctr",
+      `${process.env.HASH_SECRET}`
+    )
+    let decryptedHash = decipher.update(hash, "hex", "utf8")
+    decryptedHash += decipher.final("utf8")
+    return decryptedHash
   }
 
   Identity(a) {
