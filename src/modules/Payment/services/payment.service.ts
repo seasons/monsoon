@@ -60,6 +60,26 @@ export class PaymentService {
     })
   }
 
+  async getHostedUpdatePaymentPage(customerId) {
+    return await new Promise((resolve, reject) => {
+      chargebee.hosted_page
+        .manage_payment_sources({
+          customer: {
+            id: customerId,
+          },
+        })
+        .request((error, result) => {
+          if (error) {
+            reject(error)
+          } else {
+            resolve(result.hosted_page)
+          }
+        })
+    }).catch(error => {
+      throw new Error(JSON.stringify(error))
+    })
+  }
+
   async acknowledgeCompletedChargebeeHostedCheckout(hostedPageID) {
     const airtableService = this.airtableService
     const authService = this.authService

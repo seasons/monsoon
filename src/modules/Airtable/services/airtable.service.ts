@@ -72,6 +72,9 @@ export class AirtableService {
         const airtableUserRecord = await this.utils.getAirtableUserRecordByUserEmail(
           userEmail
         )
+        if (!airtableUserRecord) {
+          return reject(`User with email ${userEmail} not found on airtable`)
+        }
         const createData = [
           {
             fields: {
@@ -139,33 +142,18 @@ export class AirtableService {
     }
 
     // Create or update the record
-    this.airtableBase
-      .base("Users")
-      .select({
-        view: "Grid view",
-        filterByFormula: `{Email}='${email}'`,
-      })
-      .firstPage((err, records) => {
-        if (err) {
-          throw err
-        }
-        if (records.length > 0) {
-          const user = records[0]
-          this.airtableBase
-            .base("Users")
-            .update(user.id, data, function(err, record) {
-              if (err) {
-                throw err
-              }
-            })
-        } else {
-          this.airtableBase.base("Users").create([
-            {
-              fields: data,
-            },
-          ])
-        }
-      })
+    const airtableUser = await this.utils.getAirtableUserRecordByUserEmail(
+      email
+    )
+    if (!!airtableUser) {
+      return await this.airtableBase.base("Users").update(airtableUser.id, data)
+    }
+
+    return await this.airtableBase.base("Users").create([
+      {
+        fields: data,
+      },
+    ])
   }
 
   async createPhysicalProducts(newPhysicalProducts) {

@@ -56,31 +56,41 @@ export class UserCommands {
 
     // Fail gracefully if the user is already in the DB
     if (!!(await this.prisma.client.user({ email }))) {
-      this.logger.log("User already in DB")
+      this.logger.error("User already in DB")
+      return
     }
 
-    const { user, tokenData } = await this.authService.signupUser({
-      email,
-      password,
-      firstName,
-      lastName,
-      details: {
-        phoneNumber: faker.phone.phoneNumber(),
-        height: 40 + faker.random.number(32),
-        weight: "152lb",
-        bodyType: "Athletic",
-        shippingAddress: {
-          create: {
-            slug,
-            name: `${firstName} ${lastName}`,
-            address1: "138 Mulberry St",
-            city: "New York",
-            state: "NY",
-            zipCode: "10013",
+    let user
+    let tokenData
+    try {
+      ;({ user, tokenData } = await this.authService.signupUser({
+        email,
+        password,
+        firstName,
+        lastName,
+        details: {
+          phoneNumber: faker.phone.phoneNumber(),
+          height: 40 + faker.random.number(32),
+          weight: "152lb",
+          bodyType: "Athletic",
+          shippingAddress: {
+            create: {
+              slug,
+              name: `${firstName} ${lastName}`,
+              address1: "138 Mulberry St",
+              city: "New York",
+              state: "NY",
+              zipCode: "10013",
+            },
           },
         },
-      },
-    })
+      }))
+    } catch (err) {
+      if (err.message.includes("400")) {
+        this.logger.error("User already in staging auth0 environment")
+      }
+      return
+    }
 
     // Set their status to Active
     const customer = head(
@@ -88,8 +98,6 @@ export class UserCommands {
         where: { user: { id: user.id } },
       })
     )
-
-    // Add some details
     await this.prisma.client.updateCustomer({
       data: {
         plan: "Essential",
