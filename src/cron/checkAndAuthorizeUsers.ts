@@ -4,7 +4,7 @@ import { prisma, User } from "../prisma"
 import {
   getCustomerFromUserID,
   setCustomerPrismaStatus,
-  getUserIDHash,
+  encryptUserIDHash,
 } from "../utils"
 import { sendTransactionalEmail } from "../sendTransactionalEmail"
 import * as Sentry from "@sentry/node"
@@ -75,11 +75,12 @@ export async function checkAndAuthorizeUsers(event, context, callback) {
 }
 
 export const sendAuthorizedToSubscribeEmail = (user: User) => {
+  const idHash = encryptUserIDHash(user.id)
   sendTransactionalEmail({
     to: user.email,
     data: emails.completeAccountData(
       user.firstName,
-      `${process.env.SEEDLING_URL}/complete?idHash=${getUserIDHash(user.id)}`
+      `${process.env.SEEDLING_URL}/complete?idHash=${idHash}`
     ),
   })
 }

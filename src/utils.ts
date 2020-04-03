@@ -42,7 +42,7 @@ export const sizeNameToSizeCode = (sizeName: ProductSize | string) => {
   return sizeName.toLowerCase().replace("x", "") // 32x28 => 3238
 }
 
-export function getUserIDHash(userID: string): string {
+export function encryptUserIDHash(userID: string): string {
   return crypto
     .createHash("sha256")
     .update(`${userID}${process.env.HASH_SECRET}`)
@@ -57,7 +57,7 @@ export async function getUserFromUserIDHash(
   return new Promise((resolve, reject) => {
     let targetUser
     for (let user of allUsers) {
-      let thisUsersIDHash = getUserIDHash(user.id)
+      let thisUsersIDHash = encryptUserIDHash(user.id)
       if (thisUsersIDHash === userIDHash) {
         targetUser = user
       }

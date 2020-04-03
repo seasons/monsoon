@@ -37,13 +37,13 @@ export class EmailService {
   }
 
   sendAuthorizedToSubscribeEmail(user: User) {
+    const idHash = this.utils.encryptUserIDHash(user.id)
+    console.log("idhash", idHash)
     this.sendTransactionalEmail({
       to: user.email,
       data: this.data.completeAccount(
         user.firstName,
-        `${process.env.SEEDLING_URL}/complete?idHash=${this.utils.getUserIDHash(
-          user.id
-        )}`
+        `${process.env.SEEDLING_URL}/complete?idHash=${idHash}`
       ),
     })
   }
