@@ -9,6 +9,7 @@ import { PaymentService } from "./services/payment.service"
 import { AirtableModule } from "../Airtable/airtable.module"
 import { EmailModule } from "../Email/email.module"
 import { ChargebeeMutationsResolver } from "./mutations/chargebee.mutations.resolver"
+import { UtilsModule } from "../Utils/utils.module"
 
 @Module({
   imports: [
@@ -16,7 +17,8 @@ import { ChargebeeMutationsResolver } from "./mutations/chargebee.mutations.reso
     EmailModule,
     UserModule,
     PrismaModule,
-    ShippingModule
+    ShippingModule,
+    UtilsModule,
   ],
   providers: [
     ChargebeeMutationsResolver,
