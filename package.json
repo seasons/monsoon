@@ -86,6 +86,7 @@
     "jwks-rsa": "^1.6.0",
     "lodash": "^4.17.15",
     "luxon": "^1.22.0",
+    "module-alias": "^2.2.2",
     "nestjs-command": "^1.3.0",
     "nodemailer": "^6.4.2",
     "passport": "^0.4.1",
@@ -157,5 +158,9 @@
     "globals": {
       "PRISMA_ENDPOINT": "9sdfb9"
     }
+  },
+  "_moduleAliases": {
+    "@modules": "dist/modules",
+    "@prisma": "dist/prisma"
   }
 }

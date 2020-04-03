@@ -4,9 +4,9 @@ import { UtilsService } from "../../Utils/utils.service"
 import { PrismaService } from "../../../prisma/prisma.service"
 import { xor } from "lodash"
 import { AirtableData } from "../../Airtable/airtable.types"
-import { AirtableService } from "../../Airtable/services/airtable.service"
 import { SlackService } from "../../Slack/services/slack.service"
 import * as util from "util"
+import { AirtableService } from "@modules/Airtable"
 
 interface DataPoint {
   name: string
