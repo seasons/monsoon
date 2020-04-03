@@ -72,28 +72,28 @@ export class AirtableSyncService {
       reservations: await this.syncUtils.createSubBar(multibar, "Reservations"),
     }
     try {
-      await this.syncBottomSizesService.syncAirtableToAirtable(bars.bottomSizes)
-      await this.syncBrandsService.syncAirtableToAirtable(bars.brands)
-      await this.syncCategoriesService.syncAirtableToAirtable(bars.categories)
       await this.syncColorsService.syncAirtableToAirtable(bars.colors)
+      await this.syncBrandsService.syncAirtableToAirtable(bars.brands)
+      await this.syncModelsService.syncAirtableToAirtable(bars.models)
+      await this.syncCategoriesService.syncAirtableToAirtable(bars.categories)
+      await this.syncLocationsService.syncAirtableToAirtable(bars.locations)
+      await this.syncSizesService.syncAirtableToAirtable(bars.sizes)
+      await this.syncTopSizesService.syncAirtableToAirtable(bars.topSizes)
+      await this.syncBottomSizesService.syncAirtableToAirtable(bars.bottomSizes)
+      await this.syncProductsService.syncAirtableToAirtable(bars.products)
       await this.syncHomepageProductRailsService.syncAirtableToAirtable(
         bars.homepageProductRails
       )
-      await this.syncLocationsService.syncAirtableToAirtable(bars.locations)
-      await this.syncModelsService.syncAirtableToAirtable(bars.models)
-      await this.syncPhysicalProductsService.syncAirtableToAirtable(
-        bars.physicalProducts
-      )
-      await this.syncProductsService.syncAirtableToAirtable(bars.products)
       await this.syncProductVariantsService.syncAirtableToAirtable(
         bars.productVariants
       )
+      await this.syncPhysicalProductsService.syncAirtableToAirtable(
+        bars.physicalProducts
+      )
+      await this.syncUsersService.syncAirtableToAirtable(bars.users)
       await this.syncReservationsService.syncAirtableToAirtable(
         bars.reservations
       )
-      await this.syncSizesService.syncAirtableToAirtable(bars.sizes)
-      await this.syncTopSizesService.syncAirtableToAirtable(bars.topSizes)
-      await this.syncUsersService.syncAirtableToAirtable(bars.users)
     } catch (err) {
       console.log(err)
     } finally {

@@ -166,19 +166,20 @@ export class SyncUtilsService {
       Categories: this.airtableService.getAllCategories,
       Locations: this.airtableService.getAllLocations,
       Products: this.airtableService.getAllProducts,
-      "Homepage Product Rails": this.airtableService.getAllHomepageProductRails,
-      "Product Variants": this.airtableService.getAllProductVariants,
-      "Physical Products": this.airtableService.getAllPhysicalProducts,
+      "Homepage Product Rails": this.airtableService.getAllHomepageProductRails
+        .bind,
+      "Product Variants": this.airtableService.getAllProductVariants.bind,
+      "Physical Products": this.airtableService.getAllPhysicalProducts.bind,
       Users: this.airtableService.getAllUsers,
-      Reservations: this.airtableService.getAllReservations,
+      Reservations: this.airtableService.getAllReservations.bind,
       Sizes: this.airtableService.getAllSizes,
-      "Top Sizes": this.airtableService.getAllTopSizes,
-      "Bottom Sizes": this.airtableService.getAllBottomSizes,
+      "Top Sizes": this.airtableService.getAllTopSizes.bind,
+      "Bottom Sizes": this.airtableService.getAllBottomSizes.bind,
     }[modelname]
     if (!func) {
       throw new Error(`Unrecognized model name: ${modelname}`)
     }
-    return func
+    return func.bind(this.airtableService)
   }
 
   private getNumLinks = (modelName: AirtableModelName) => {
