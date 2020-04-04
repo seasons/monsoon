@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common"
-import { Cron } from "@nestjs/schedule"
+import { Cron, CronExpression } from "@nestjs/schedule"
 import { UtilsService } from "../../Utils/utils.service"
 import { PrismaService } from "../../../prisma/prisma.service"
 import { xor } from "lodash"

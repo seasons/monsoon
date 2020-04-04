@@ -282,8 +282,6 @@ export class ReservationScheduledJobs {
           )
         }
       } catch (error) {
-        this.logger.log(airtablePhysicalProduct)
-        this.logger.log(error)
         errors.push(error)
         if (this.shouldReportErrorsToSentry) {
           Sentry.captureException(error)

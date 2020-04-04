@@ -148,11 +148,13 @@ export class AirtableSyncService {
         throw new Error("invalid table name")
     }
   }
+  y
 
   private async syncAll() {
-    const _createSubBar = curry(this.syncUtils.createAirtableToPrismaSubBar)(
-      this.syncUtils.makeAirtableSyncCliProgressBar()
-    ).bind(this.syncUtils)
+    const _createSubBar = curry(
+      this.syncUtils.createAirtableToPrismaSubBar,
+      2
+    )(this.syncUtils.makeAirtableSyncCliProgressBar()).bind(this.syncUtils)
 
     const bars = {
       brands: await _createSubBar("Brands"),

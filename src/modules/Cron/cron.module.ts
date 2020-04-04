@@ -8,6 +8,8 @@ import { UserModule } from "../User/user.module"
 import { ShippingModule } from "../Shipping/shipping.module"
 import { SlackModule } from "../Slack/slack.module"
 import { ErrorModule } from "../Error/error.module"
+import { DataScheduledJobs } from "./services/data.service"
+import { UtilsModule } from "../Utils/utils.module"
 
 @Module({
   imports: [
@@ -18,7 +20,8 @@ import { ErrorModule } from "../Error/error.module"
     SlackModule,
     UserModule,
     ErrorModule,
+    UtilsModule,
   ],
-  providers: [ReservationScheduledJobs, UsersScheduledJobs],
+  providers: [ReservationScheduledJobs, UsersScheduledJobs, DataScheduledJobs],
 })
 export class CronModule {}
