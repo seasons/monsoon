@@ -41,7 +41,7 @@ export class AirtableSyncService {
     private readonly syncUtils: SyncUtilsService
   ) {}
 
-  async syncAirtableToAirtable() {
+  async syncAirtableToAirtable(start: AirtableModelName) {
     // Note that the order matters here in order to properly link between tables.
     console.log(
       `\nNote: If you encounter errors, it's probably a field configuration issue on the destination base\n`
@@ -51,46 +51,75 @@ export class AirtableSyncService {
       this.syncUtils.makeAirtableSyncCliProgressBar()
     ).bind(this.syncUtils)
 
-    const bars = {
-      colors: await _createSubBar("Colors"),
-      brands: await _createSubBar("Brands"),
-      models: await _createSubBar("Models"),
-      categories: await _createSubBar("Categories"),
-      locations: await _createSubBar("Locations"),
-      sizes: await _createSubBar("Sizes"),
-      topSizes: await _createSubBar("Top Sizes"),
-      bottomSizes: await _createSubBar("Bottom Sizes"),
-      products: await _createSubBar("Products"),
-      homepageProductRails: await _createSubBar("Homepage Product Rails"),
-      productVariants: await _createSubBar("Product Variants"),
-      physicalProducts: await _createSubBar("Physical Products"),
-      users: await _createSubBar("Users"),
-      reservations: await _createSubBar("Reservations"),
+    let modelsInOrder = [
+      "Colors",
+      "Brands",
+      "Models",
+      "Categories",
+      "Locations",
+      "Sizes",
+      "Top Sizes",
+      "Bottom Sizes",
+      "Products",
+      "Homepage Product Rails",
+      "Product Variants",
+      "Physical Products",
+      "Users",
+      "Reservations",
+    ] as AirtableModelName[]
+    const startIndex = modelsInOrder.findIndex(a => a === start)
+    modelsInOrder = modelsInOrder.slice(startIndex)
+
+    let bars = []
+    for (const model of modelsInOrder) {
+      bars.push(await _createSubBar(model))
     }
 
+    const syncFuncsInOrder = [
+      this.syncColorsService.syncAirtableToAirtable.bind(
+        this.syncColorsService
+      ),
+      this.syncBrandsService.syncAirtableToAirtable.bind(
+        this.syncBrandsService
+      ),
+      this.syncModelsService.syncAirtableToAirtable.bind(
+        this.syncModelsService
+      ),
+      this.syncCategoriesService.syncAirtableToAirtable.bind(
+        this.syncCategoriesService
+      ),
+      this.syncLocationsService.syncAirtableToAirtable.bind(
+        this.syncLocationsService
+      ),
+      this.syncSizesService.syncAirtableToAirtable.bind(this.syncSizesService),
+      this.syncTopSizesService.syncAirtableToAirtable.bind(
+        this.syncTopSizesService
+      ),
+      this.syncBottomSizesService.syncAirtableToAirtable.bind(
+        this.syncBottomSizesService
+      ),
+      this.syncProductsService.syncAirtableToAirtable.bind(
+        this.syncProductsService
+      ),
+      this.syncHomepageProductRailsService.syncAirtableToAirtable.bind(
+        this.syncHomepageProductRailsService
+      ),
+      this.syncProductVariantsService.syncAirtableToAirtable.bind(
+        this.syncProductVariantsService
+      ),
+      this.syncPhysicalProductsService.syncAirtableToAirtable.bind(
+        this.syncPhysicalProductsService
+      ),
+      this.syncUsersService.syncAirtableToAirtable.bind(this.syncUsersService),
+      this.syncReservationsService.syncAirtableToAirtable.bind(
+        this.syncReservationsService
+      ),
+    ].slice(startIndex)
+
     try {
-      await this.syncColorsService.syncAirtableToAirtable(bars.colors)
-      await this.syncBrandsService.syncAirtableToAirtable(bars.brands)
-      await this.syncModelsService.syncAirtableToAirtable(bars.models)
-      await this.syncCategoriesService.syncAirtableToAirtable(bars.categories)
-      await this.syncLocationsService.syncAirtableToAirtable(bars.locations)
-      await this.syncSizesService.syncAirtableToAirtable(bars.sizes)
-      await this.syncTopSizesService.syncAirtableToAirtable(bars.topSizes)
-      await this.syncBottomSizesService.syncAirtableToAirtable(bars.bottomSizes)
-      await this.syncProductsService.syncAirtableToAirtable(bars.products)
-      await this.syncHomepageProductRailsService.syncAirtableToAirtable(
-        bars.homepageProductRails
-      )
-      await this.syncProductVariantsService.syncAirtableToAirtable(
-        bars.productVariants
-      )
-      await this.syncPhysicalProductsService.syncAirtableToAirtable(
-        bars.physicalProducts
-      )
-      await this.syncUsersService.syncAirtableToAirtable(bars.users)
-      await this.syncReservationsService.syncAirtableToAirtable(
-        bars.reservations
-      )
+      for (const [i, syncFunc] of syncFuncsInOrder.entries()) {
+        await syncFunc(bars[i])
+      }
     } catch (err) {
       console.log(err)
     }
