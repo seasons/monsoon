@@ -17,7 +17,7 @@ export class ProductService {
     private readonly prisma: PrismaService,
     private readonly productUtils: ProductUtilsService,
     private readonly productVariantService: ProductVariantService
-  ) {}
+  ) { }
 
   async getProducts(args, info) {
     const queryOptions = await this.productUtils.queryOptionsForProducts(args)
@@ -101,6 +101,7 @@ export class ProductService {
   }
 
   async saveProduct(item, save, info, customer) {
+    console.log("ID:", item)
     const bagItems = await this.prisma.binding.query.bagItems(
       {
         where: {
@@ -110,14 +111,24 @@ export class ProductService {
           productVariant: {
             id: item,
           },
-          saved: true,
         },
       },
       info
     )
     let bagItem: BagItem = head(bagItems)
 
-    if (save && !bagItem) {
+    if (bagItem) {
+      if (save && !bagItem.saved) {
+        bagItem = await this.prisma.client.updateBagItem({
+          data: { saved: true },
+          where: { id: bagItem.id }
+        })
+      } else if (!save) {
+        await this.prisma.client.deleteBagItem({
+          id: bagItem.id,
+        })
+      }
+    } else if (!bagItem && save) {
       bagItem = await this.prisma.client.createBagItem({
         customer: {
           connect: {
@@ -133,12 +144,6 @@ export class ProductService {
         saved: save,
         status: "Added",
       })
-    } else {
-      if (bagItem) {
-        await this.prisma.client.deleteBagItem({
-          id: bagItem.id,
-        })
-      }
     }
 
     if (save) {
@@ -152,7 +157,7 @@ export class ProductService {
       )
     }
 
-    return bagItem
+    return bagItem ? bagItem : null
   }
 
   async checkItemsAvailability(items, customer) {
