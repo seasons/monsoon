@@ -3,7 +3,6 @@ import { AuthService } from "../services/auth.service"
 import { UserInputError, ForbiddenError } from "apollo-server"
 import { prisma } from "../../../prisma"
 import { User } from "../../../nest_decorators"
-import { createOrUpdateAirtableUser } from "../../../airtable/createOrUpdateUser"
 
 @Resolver()
 export class AuthMutationsResolver {
