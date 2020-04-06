@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common"
 import * as Airtable from "airtable"
-import { fill, zip } from "lodash"
+import { fill, zip, compact } from "lodash"
 import {
   BillingInfoCreateInput,
   CustomerDetailCreateInput,
@@ -69,18 +69,17 @@ export class AirtableService {
     const airtableUserRecord = await this.utils.getAirtableUserRecordByUserEmail(
       userEmail
     )
-    if (!airtableUserRecord) {
-      throw new Error(`User with email ${userEmail} not found on airtable`)
-    }
     const records = await this.airtableBase.base("Reservations").create([
       {
         fields: {
           ID: data.reservationNumber,
-          User: [airtableUserRecord.id],
+          User: compact(airtableUserRecord?.id),
           Items: (await this.getPhysicalProducts(itemIDs)).map(a => a.id),
           Shipped: false,
           Status: "New",
-          "Shipping Address": airtableUserRecord.fields["Shipping Address"],
+          "Shipping Address": compact(
+            airtableUserRecord?.fields["Shipping Address"]
+          ),
           "Shipping Label": data.sentPackage.create.shippingLabel.create.image,
           "Tracking URL":
             data.sentPackage.create.shippingLabel.create.trackingURL,
