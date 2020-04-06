@@ -30,6 +30,7 @@
     "sls:login": "serverless login",
     "sls:start": "serverless offline --env=staging",
     "start": "dotenv -- nodemon -e ts,graphql -x ts-node src/index.ts",
+    "start:ccly": "concurrently --kill-others 'yarn start' 'yarn tsc --watch'",
     "check:parity": "node -r dotenv/config -r ts-node/register scripts/queryParity.ts",
     "test": "jest"
   },
