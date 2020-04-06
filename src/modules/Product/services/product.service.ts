@@ -101,7 +101,6 @@ export class ProductService {
   }
 
   async saveProduct(item, save, info, customer) {
-    console.log("ID:", item)
     const bagItems = await this.prisma.binding.query.bagItems(
       {
         where: {
