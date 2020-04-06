@@ -7,7 +7,7 @@ import { SearchService } from "./services/search.service"
   providers: [
     SearchResultTypeFieldsResolver,
     SearchService,
-    SearchQueriesResolver
-  ]
+    SearchQueriesResolver,
+  ],
 })
 export class SearchModule {}

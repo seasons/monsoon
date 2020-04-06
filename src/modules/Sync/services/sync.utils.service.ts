@@ -1,8 +1,11 @@
+import {
+  AirtableData,
+  AirtableModelName,
+} from "@modules/Airtable/airtable.types"
+
+import { AirtableService } from "@modules/Airtable/services/airtable.service"
 import { Injectable } from "@nestjs/common"
-import cliProgress from "cli-progress"
-import { AirtableData, AirtableModelName } from "../../Airtable/airtable.types"
-import { AirtableService } from "../../Airtable/services/airtable.service"
-import { UtilsService } from "../../Utils/utils.service"
+import { UtilsService } from "@modules/Utils/services/utils.service"
 
 interface LinkStagingRecordInput {
   rootProductionRecord: any
@@ -47,7 +50,7 @@ export class SyncUtilsService {
     }
   }
 
-  async createSubBar(
+  async createAirtableToPrismaSubBar(
     multibar: any,
     modelName: AirtableModelName,
     numRecords?: number,
@@ -69,7 +72,7 @@ export class SyncUtilsService {
     )
   }
 
-  async createSyncAirtableSubBar(multibar, modelName: AirtableModelName) {
+  async createAirtableToAirtableSubBar(multibar, modelName: AirtableModelName) {
     return await multibar.create(
       await this.getNumReadWritesToSyncModel(modelName),
       0,
@@ -126,17 +129,6 @@ export class SyncUtilsService {
     }
   }
 
-  makeAirtableSyncCliProgressBar() {
-    return new cliProgress.MultiBar(
-      {
-        clearOnComplete: false,
-        hideCursor: true,
-        format: `{modelName} {bar} {percentage}%  ETA: {eta}s  {value}/{total} records`,
-      },
-      cliProgress.Presets.shades_grey
-    )
-  }
-
   async makeSingleSyncFuncMultiBarAndProgressBarIfNeeded({
     cliProgressBar,
     numRecords,
@@ -149,8 +141,12 @@ export class SyncUtilsService {
     let multibar
     let _cliProgressBar = cliProgressBar
     if (!_cliProgressBar) {
-      multibar = this.makeAirtableSyncCliProgressBar()
-      _cliProgressBar = await this.createSubBar(multibar, modelName, numRecords)
+      multibar = this.utils.makeCLIProgressBar()
+      _cliProgressBar = await this.createAirtableToPrismaSubBar(
+        multibar,
+        modelName,
+        numRecords
+      )
     }
     return [multibar, _cliProgressBar]
   }
@@ -178,7 +174,7 @@ export class SyncUtilsService {
     if (!func) {
       throw new Error(`Unrecognized model name: ${modelname}`)
     }
-    return func
+    return func.bind(this.airtableService)
   }
 
   private getNumLinks = (modelName: AirtableModelName) => {

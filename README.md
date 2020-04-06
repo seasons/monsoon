@@ -75,6 +75,14 @@ To verify the server is setup properly. go open the [playground](http://localhos
 }
 ```
 
+Nota bene: To ensure your local DB is as close as possible to staging and production, go into Postico (a postgres client), and install the following checks in the "Structure" tab
+on the `ProductVariant` model:
+
+- total: `total >= 0` and `total = (reservable + reserved + "nonReservable")`
+- reservable: `reservable >= 0`
+- reserved: `reserved >= 0`
+- nonReservable: `"nonReservable" >= 0`
+
 ## Deployment
 
 All deployments follow the following pattern.

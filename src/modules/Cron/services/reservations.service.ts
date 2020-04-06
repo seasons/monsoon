@@ -1,7 +1,10 @@
-import { Injectable, Logger } from "@nestjs/common"
-import { Cron, CronExpression } from "@nestjs/schedule"
 import * as Sentry from "@sentry/node"
-import { EmailService } from "../../Email/services/email.service"
+
+import {
+  AirtableInventoryStatus,
+  AirtableProductVariantCounts,
+} from "@modules/Airtable/airtable.types"
+import { Cron, CronExpression } from "@nestjs/schedule"
 import { DateTime, Interval } from "luxon"
 import {
   ID_Input,
@@ -10,15 +13,15 @@ import {
   ProductVariant,
   Reservation,
   User,
-} from "../../../prisma"
-import { AirtableService } from "../../Airtable/services/airtable.service"
-import { SyncError } from "../../../errors"
-import { ShippingService } from "../../Shipping/services/shipping.service"
-import {
-  AirtableProductVariantCounts,
-  AirtableInventoryStatus,
-} from "../../Airtable/airtable.types"
-import { PrismaService } from "../../../prisma/prisma.service"
+} from "@prisma/index"
+import { Injectable, Logger } from "@nestjs/common"
+
+import { AirtableService } from "@modules/Airtable/services/airtable.service"
+import { EmailService } from "@modules/Email/services/email.service"
+import { ErrorService } from "@modules/Error/services/error.service"
+import { PrismaService } from "@prisma/prisma.service"
+import { ShippingService } from "@modules/Shipping/services/shipping.service"
+import { SyncError } from "@app/errors"
 
 type prismaProductVariantCounts = Pick<
   ProductVariant,
@@ -32,19 +35,19 @@ const MULTIPLE_CHOICE = "MultipleChoice"
 
 @Injectable()
 export class ReservationScheduledJobs {
-  private readonly logger = new Logger(`CRON: ${ReservationScheduledJobs.name}`)
-  private readonly shouldReportErrorsToSentry =
-    process.env.NODE_ENV === "production"
+  private readonly logger = new Logger(ReservationScheduledJobs.name)
 
   constructor(
     private readonly airtableService: AirtableService,
     private readonly emailService: EmailService,
     private readonly prisma: PrismaService,
-    private readonly shippingService: ShippingService
-  ) { }
+    private readonly shippingService: ShippingService,
+    private readonly errorService: ErrorService
+  ) {}
 
   @Cron(CronExpression.EVERY_6_HOURS)
   async sendReturnNotifications() {
+    this.logger.log("Reservation Return Notifications Job ran")
     const reservations = await this.prisma.client.reservations({
       orderBy: "createdAt_DESC",
     })
@@ -54,15 +57,9 @@ export class ReservationScheduledJobs {
     }
     for (const reservation of reservations) {
       try {
-        if (this.shouldReportErrorsToSentry) {
-          Sentry.configureScope(scope => {
-            scope.setExtra("reservationNumber", reservation.reservationNumber)
-            scope.setExtra("reservation createdAt", reservation.createdAt)
-            scope.setExtra("reservation status", reservation.status)
-          })
-        }
+        this.errorService.setExtraContext(reservation, "reservation")
+
         if (await this.returnNoticeNeeded(reservation)) {
-          //   Remind customer to return items
           const user = await this.prisma.client
             .reservation({
               id: reservation.id,
@@ -83,25 +80,217 @@ export class ReservationScheduledJobs {
         }
       } catch (err) {
         report.errors.push(err)
-        if (this.shouldReportErrorsToSentry) {
-          Sentry.captureException(err)
-        }
+        this.errorService.captureError(err)
       }
     }
 
+    this.logger.log("Reservation Return Notifications Job results:")
     this.logger.log(report)
   }
 
+  // @Cron(CronExpression.EVERY_5_MINUTES)
   @Cron(CronExpression.EVERY_MINUTE)
-  async syncPhysicalProductAndReservationStatus() {
+  async syncPhysicalProductAndReservationStatuses() {
+    this.logger.log("Sync Physical Product and Reservation Statuses ran")
     const physProdReport = await this.syncPhysicalProductStatus()
     const reservationReport = await this.syncReservationStatus()
-    const allErrors = [...physProdReport.errors, ...reservationReport.errors]
+    this.logger.log("Sync Physical Product and Reservation Statuses results")
     this.logger.log({
       ...physProdReport,
       ...reservationReport,
-      errors: allErrors,
+      errors: [...physProdReport.errors, ...reservationReport.errors],
     })
+  }
+
+  private async syncPhysicalProductStatus() {
+    // Get relevant data for airtable, setup containers to hold return data
+    const updatedPhysicalProducts = []
+    const updatedProductVariants = []
+    const errors = []
+    const physicalProductsInAirtableButNotPrisma = []
+    const allAirtablePhysicalProducts = await this.airtableService.getAllPhysicalProducts()
+
+    // Update relevant products
+    for (const airtablePhysicalProduct of allAirtablePhysicalProducts) {
+      // Wrap it in a try/catch so individual sync errors don't stop the whole job
+      try {
+        this.errorService.setExtraContext({
+          physicalProductSUID: airtablePhysicalProduct.model.sUID.text,
+        })
+
+        const prismaPhysicalProduct = await this.prisma.client.physicalProduct({
+          seasonsUID: airtablePhysicalProduct.model.sUID.text,
+        })
+
+        if (!prismaPhysicalProduct) {
+          physicalProductsInAirtableButNotPrisma.push(
+            airtablePhysicalProduct.model.sUID
+          )
+          continue
+        }
+
+        const newStatusOnAirtable =
+          airtablePhysicalProduct.model.inventoryStatus
+        const currentStatusOnPrisma = prismaPhysicalProduct.inventoryStatus
+
+        // If the status has changed, then update prisma and airtable accordingly
+        if (
+          this.physicalProductStatusChanged(
+            newStatusOnAirtable,
+            currentStatusOnPrisma
+          )
+        ) {
+          // Get the associated ProductVariantID, and ProductVariant from prisma
+          const prismaProductVariant = await this.prisma.client
+            .physicalProduct({ id: prismaPhysicalProduct.id })
+            .productVariant()
+
+          await this.updateProductVariantCountAndStatus(
+            airtablePhysicalProduct,
+            prismaPhysicalProduct,
+            prismaProductVariant,
+            currentStatusOnPrisma,
+            newStatusOnAirtable
+          )
+
+          // Store updated ids for reporting
+          updatedPhysicalProducts.push(prismaPhysicalProduct.seasonsUID)
+          updatedProductVariants.push(prismaProductVariant.sku)
+        }
+      } catch (error) {
+        errors.push(error)
+        this.errorService.captureError(error)
+      }
+    }
+
+    // Remove physicalProductSUID from the sentry scope so it doesn't cloud
+    // any errors thrown later
+    this.errorService.setExtraContext({
+      physicalProductSUID: "",
+    })
+
+    return {
+      updatedPhysicalProducts,
+      updatedProductVariants,
+      physicalProductsInAirtableButNotPrisma,
+      errors,
+    }
+  }
+
+  private async syncReservationStatus() {
+    const updatedReservations = []
+    const errors = []
+    const reservationsInAirtableButNotPrisma = []
+    const allAirtableReservations = await this.airtableService.getAllReservations()
+
+    for (const airtableReservation of allAirtableReservations) {
+      try {
+        this.errorService.setExtraContext({
+          reservationNumber: airtableReservation.model.iD,
+        })
+
+        const prismaReservation = await this.getPrismaReservationWithNeededFields(
+          airtableReservation.model.iD
+        )
+
+        if (!prismaReservation) {
+          reservationsInAirtableButNotPrisma.push(airtableReservation.model.iD)
+          this.errorService.captureError(
+            new SyncError("Reservation in airtable but not prisma")
+          )
+          continue
+        }
+
+        // If the reservation has status of "Completed", handle it seperately.
+        if (
+          airtableReservation.model.status === "Completed" &&
+          prismaReservation.status !== "Completed"
+        ) {
+          // Handle housekeeping
+          updatedReservations.push(prismaReservation.reservationNumber)
+
+          const prismaUser = await this.prisma.client.user({
+            email: prismaReservation.user.email,
+          })
+
+          const returnedPhysicalProducts = prismaReservation.products.filter(
+            p =>
+              [
+                "Reservable" as InventoryStatus,
+                "NonReservable" as InventoryStatus,
+              ].includes(p.inventoryStatus)
+          )
+
+          // Update the status
+          await this.prisma.client.updateReservation({
+            data: { status: "Completed" },
+            where: { id: prismaReservation.id },
+          })
+
+          // Email the user
+          await this.emailService.sendYouCanNowReserveAgainEmail(prismaUser)
+
+          // Update the user's bag
+          await this.updateUsersBagItemsOnCompletedReservation(
+            prismaReservation,
+            returnedPhysicalProducts
+          )
+
+          // Update the returnPackage on the shipment
+          await this.updateReturnPackageOnCompletedReservation(
+            prismaReservation,
+            returnedPhysicalProducts
+          )
+
+          // Email an admin a confirmation email
+          await this.emailService.sendAdminConfirmationEmail(
+            prismaUser,
+            returnedPhysicalProducts,
+            prismaReservation
+          )
+
+          // Create reservationFeedback datamodels for the returned product variants
+          const returnedProductVariantIDs: ID_Input[] = returnedPhysicalProducts.map(
+            p => p.productVariant.id
+          )
+          const returnedProductVariants = await Promise.all(
+            returnedProductVariantIDs.map(
+              async id => await this.prisma.client.productVariant({ id })
+            )
+          )
+          await this.createReservationFeedbacksForVariants(
+            returnedProductVariants,
+            prismaUser
+          )
+        } else if (
+          airtableReservation.model.status !== prismaReservation.status
+        ) {
+          // If the reservation doesn't have a status of "Completed", just check to
+          // see if we need to update the prisma reservation status and do so if needed
+          updatedReservations.push(prismaReservation.reservationNumber)
+          await this.prisma.client.updateReservation({
+            data: {
+              status: this.airtableService.airtableToPrismaReservationStatus(
+                airtableReservation.model.status
+              ),
+            },
+            where: { id: prismaReservation.id },
+          })
+        }
+      } catch (err) {
+        errors.push(err)
+        this.errorService.captureError(err)
+      }
+    }
+
+    // Remove the reservation number from the sentry scope
+    this.errorService.setExtraContext({ reservationNumber: null })
+
+    return {
+      updatedReservations,
+      errors,
+      reservationsInAirtableButNotPrisma,
+    }
   }
 
   private async getPrismaReservationWithNeededFields(reservationNumber) {
@@ -128,6 +317,10 @@ export class ReservationScheduledJobs {
                       slug
                   }
               }
+          }
+          user {
+            id
+            email
           }
           returnedPackage {
               id
@@ -203,7 +396,6 @@ export class ReservationScheduledJobs {
 
   private async returnNoticeNeeded(reservation: Reservation) {
     const now = DateTime.local()
-    const reservationCreatedAt = DateTime.fromISO(reservation.createdAt)
     const twentyEightToTwentyNineDaysAgo = Interval.fromDateTimes(
       now.minus({ days: 29 }),
       now.minus({ days: 28 })
@@ -215,210 +407,13 @@ export class ReservationScheduledJobs {
       .customer()
 
     return (
-      twentyEightToTwentyNineDaysAgo.contains(reservationCreatedAt) &&
+      twentyEightToTwentyNineDaysAgo.contains(
+        DateTime.fromISO(reservation.createdAt)
+      ) &&
       !reservation.reminderSentAt &&
       customer.plan === "Essential" &&
       !["Cancelled", "Completed"].includes(reservation.status)
     )
-  }
-
-  private async syncPhysicalProductStatus() {
-    // Get relevant data for airtable, setup containers to hold return data
-    const updatedPhysicalProducts = []
-    const updatedProductVariants = []
-    const errors = []
-    const physicalProductsInAirtableButNotPrisma = []
-    const allAirtablePhysicalProducts = await this.airtableService.getAllPhysicalProducts()
-
-    // Update relevant products
-    for (const airtablePhysicalProduct of allAirtablePhysicalProducts) {
-      // Wrap it in a try/catch so individual sync errors don't stop the whole job
-      try {
-        if (this.shouldReportErrorsToSentry) {
-          Sentry.configureScope(scope => {
-            scope.setExtra(
-              "physicalProductSUID",
-              airtablePhysicalProduct.model.sUID.text
-            )
-          })
-        }
-
-        const prismaPhysicalProduct = await this.prisma.client.physicalProduct({
-          seasonsUID: airtablePhysicalProduct.model.sUID.text,
-        })
-
-        if (!!prismaPhysicalProduct) {
-          const newStatusOnAirtable =
-            airtablePhysicalProduct.model.inventoryStatus
-          const currentStatusOnPrisma = prismaPhysicalProduct.inventoryStatus
-
-          // If the status has changed, then update prisma and airtable accordingly
-          if (
-            this.physicalProductStatusChanged(
-              newStatusOnAirtable,
-              currentStatusOnPrisma
-            )
-          ) {
-            // Pause a second, to avoid hitting the 5 requests/sec airtable rate limit
-            await new Promise(resolve => setTimeout(resolve, 1000))
-
-            // Get the associated ProductVariantID, and ProductVariant from prisma
-            const prismaProductVariant = await this.prisma.client
-              .physicalProduct({ id: prismaPhysicalProduct.id })
-              .productVariant()
-
-            await this.updateProductVariantCountAndStatus(
-              airtablePhysicalProduct,
-              prismaPhysicalProduct,
-              prismaProductVariant,
-              currentStatusOnPrisma,
-              newStatusOnAirtable
-            )
-
-            // Store updated ids for reporting
-            updatedPhysicalProducts.push(prismaPhysicalProduct.seasonsUID)
-            updatedProductVariants.push(prismaProductVariant.sku)
-          }
-        } else {
-          physicalProductsInAirtableButNotPrisma.push(
-            airtablePhysicalProduct.model.sUID
-          )
-        }
-      } catch (error) {
-        this.logger.log(airtablePhysicalProduct)
-        this.logger.log(error)
-        errors.push(error)
-        if (this.shouldReportErrorsToSentry) {
-          Sentry.captureException(error)
-        }
-      }
-    }
-
-    // Remove physicalProductSUID from the sentry scope so it doesn't cloud
-    // any errors thrown later
-    if (this.shouldReportErrorsToSentry) {
-      Sentry.configureScope(scope => {
-        scope.setExtra("physicalProductSUID", "")
-      })
-    }
-
-    return {
-      updatedPhysicalProducts,
-      updatedProductVariants,
-      physicalProductsInAirtableButNotPrisma,
-      errors,
-    }
-  }
-
-  private async syncReservationStatus() {
-    const updatedReservations = []
-    const errors = []
-    const reservationsInAirtableButNotPrisma = []
-    const allAirtableReservations = await this.airtableService.getAllReservations()
-
-    for (const airtableReservation of allAirtableReservations) {
-      try {
-        if (this.shouldReportErrorsToSentry) {
-          Sentry.configureScope(scope => {
-            scope.setExtra("reservationNumber", airtableReservation.model.iD)
-          })
-        }
-
-        const prismaReservation = await this.getPrismaReservationWithNeededFields(
-          airtableReservation.model.iD
-        )
-
-        if (!prismaReservation) {
-          reservationsInAirtableButNotPrisma.push(airtableReservation.model.iD)
-          if (this.shouldReportErrorsToSentry) {
-            Sentry.captureException(
-              new SyncError("Reservation in airtable but not prisma")
-            )
-          }
-          continue
-        }
-
-        // If the reservation has status of "Completed", handle it seperately.
-        if (airtableReservation.model.status === "Completed") {
-          if (prismaReservation.status !== "Completed") {
-            // Handle housekeeping
-            updatedReservations.push(prismaReservation.reservationNumber)
-            const prismaUser = await this.prisma.client.user({
-              email: airtableReservation.model.userEmail[0],
-            })
-            const returnedPhysicalProducts = prismaReservation.products.filter(
-              p =>
-                [
-                  "Reservable" as InventoryStatus,
-                  "NonReservable" as InventoryStatus,
-                ].includes(p.inventoryStatus)
-            )
-
-            // Update the status
-            await this.prisma.client.updateReservation({
-              data: { status: "Completed" },
-              where: { id: prismaReservation.id },
-            })
-
-            // Email the user
-            this.emailService.sendYouCanNowReserveAgainEmail(prismaUser)
-
-            // Update the user's bag
-            await this.updateUsersBagItemsOnCompletedReservation(
-              prismaReservation,
-              returnedPhysicalProducts
-            )
-
-            // Update the returnPackage on the shipment
-            await this.updateReturnPackageOnCompletedReservation(
-              prismaReservation,
-              returnedPhysicalProducts
-            )
-
-            // Email an admin a confirmation email
-            this.emailService.sendAdminConfirmationEmail(
-              prismaUser,
-              returnedPhysicalProducts,
-              prismaReservation
-            )
-
-            // Create reservationFeedback datamodels for the returned product variants
-            const returnedProductVariantIDs: ID_Input[] = returnedPhysicalProducts.map(p => p.productVariant.id)
-            const returnedProductVariants = await Promise.all(
-              returnedProductVariantIDs.map(async id => await this.prisma.client.productVariant({ id }))
-            )
-            await this.createReservationFeedbacksForVariants(returnedProductVariants, prismaUser)
-          }
-        } else if (
-          airtableReservation.model.status !== prismaReservation.status
-        ) {
-          // If the reservation doesn't have a status of "Completed", just check to
-          // see if we need to update the prisma reservation status and do so if needed
-          updatedReservations.push(prismaReservation.reservationNumber)
-          await this.prisma.client.updateReservation({
-            data: {
-              status: this.airtableService.airtableToPrismaReservationStatus(
-                airtableReservation.model.status
-              ),
-            },
-            where: { id: prismaReservation.id },
-          })
-        }
-      } catch (err) {
-        console.log(airtableReservation)
-        console.log(err)
-        errors.push(err)
-        if (this.shouldReportErrorsToSentry) {
-          Sentry.captureException(err)
-        }
-      }
-    }
-
-    return {
-      updatedReservations,
-      errors,
-      reservationsInAirtableButNotPrisma,
-    }
   }
 
   private async updateProductVariantCountAndStatus(
@@ -566,7 +561,9 @@ export class ReservationScheduledJobs {
           },
         })
         if (!products || products.length === 0) {
-          throw new Error(`createReservationFeedback error: Unable to find product for product variant id ${variant.id}.`)
+          throw new Error(
+            `createReservationFeedback error: Unable to find product for product variant id ${variant.id}.`
+          )
         }
         return {
           id: variant.id,
@@ -583,28 +580,49 @@ export class ReservationScheduledJobs {
             create: [
               {
                 question: `How many times did you wear this ${variantInfo.name}?`,
-                options: { set: ["More than 6 times", "3-5 times", "1-2 times", "0 times"] },
+                options: {
+                  set: [
+                    "More than 6 times",
+                    "3-5 times",
+                    "1-2 times",
+                    "0 times",
+                  ],
+                },
                 type: MULTIPLE_CHOICE,
               },
               {
                 question: `Would you buy it at retail for $${variantInfo.retailPrice}?`,
-                options: { set: ["Would buy at a discount", "Buy below retail", "Buy at retail", "Would only rent"] },
+                options: {
+                  set: [
+                    "Would buy at a discount",
+                    "Buy below retail",
+                    "Buy at retail",
+                    "Would only rent",
+                  ],
+                },
                 type: MULTIPLE_CHOICE,
               },
               {
                 question: `Did it fit as expected?`,
-                options: { set: ["Fit too big", "Fit true to size", "Ran small", "Didn’t fit at all"] },
+                options: {
+                  set: [
+                    "Fit too big",
+                    "Fit true to size",
+                    "Ran small",
+                    "Didn’t fit at all",
+                  ],
+                },
                 type: MULTIPLE_CHOICE,
               },
-            ]
+            ],
           },
-          variant: { connect: { id: variantInfo.id } }
+          variant: { connect: { id: variantInfo.id } },
         })),
       },
       user: {
         connect: {
-          id: user.id
-        }
+          id: user.id,
+        },
       },
     })
   }

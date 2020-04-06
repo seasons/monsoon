@@ -1,12 +1,12 @@
-import { Injectable } from "@nestjs/common"
-import { isEmpty } from "lodash"
-import { PrismaService } from "../../../prisma/prisma.service"
 import { AirtableData } from "../../Airtable/airtable.types"
 import { AirtableService } from "../../Airtable/services/airtable.service"
-import { UtilsService } from "../../Utils/utils.service"
-import { SyncUtilsService } from "./sync.utils.service"
-import { SyncProductsService } from "./syncProducts.service"
+import { Injectable } from "@nestjs/common"
+import { PrismaService } from "../../../prisma/prisma.service"
 import { SyncProductVariantsService } from "./syncProductVariants.service"
+import { SyncProductsService } from "./syncProducts.service"
+import { SyncUtilsService } from "./sync.utils.service"
+import { UtilsService } from "../../Utils/services/utils.service"
+import { isEmpty } from "lodash"
 
 @Injectable()
 export class SyncPhysicalProductsService {

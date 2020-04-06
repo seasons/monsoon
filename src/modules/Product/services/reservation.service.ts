@@ -1,8 +1,5 @@
-import { Injectable } from "@nestjs/common"
 import * as Sentry from "@sentry/node"
-import { ApolloError } from "apollo-server"
-import { head } from "lodash"
-import { RollbackError } from "../../../errors"
+
 import {
   Customer,
   ID_Input,
@@ -11,16 +8,21 @@ import {
   ReservationCreateInput,
   ReservationStatus,
   User,
-} from "../../../prisma"
-import { PrismaService } from "../../../prisma/prisma.service"
-import { AirtableService } from "../../Airtable/services/airtable.service"
-import { EmailService } from "../../Email/services/email.service"
-import { ShippingService } from "../../Shipping/services/shipping.service"
-import { ShippoTransaction } from "../../Shipping/shipping.types"
+} from "@prisma/index"
+
+import { AirtableService } from "@modules/Airtable/services/airtable.service"
+import { ApolloError } from "apollo-server"
+import { EmailService } from "@modules/Email/services/email.service"
+import { Injectable } from "@nestjs/common"
 import { PhysicalProductService } from "./physicalProduct.utils.service"
+import { PrismaService } from "@prisma/prisma.service"
 import { ProductUtilsService } from "./product.utils.service"
 import { ProductVariantService } from "./productVariant.service"
 import { ReservationUtilsService } from "./reservation.utils.service"
+import { RollbackError } from "@app/errors"
+import { ShippingService } from "@modules/Shipping/services/shipping.service"
+import { ShippoTransaction } from "@modules/Shipping/shipping.types"
+import { head } from "lodash"
 
 interface PhysicalProductWithProductVariant extends PhysicalProduct {
   productVariant: { id: ID_Input }

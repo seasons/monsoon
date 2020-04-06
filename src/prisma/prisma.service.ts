@@ -1,10 +1,10 @@
 import { Injectable } from "@nestjs/common"
-import { Prisma } from "./prisma.binding"
-import { prisma, Prisma as PrismaClient } from "."
+import { Prisma as PrismaBinding } from "./prisma.binding"
+import { Prisma as PrismaClient, prisma } from "./"
 
 @Injectable()
 export class PrismaService {
-  binding: Prisma = new Prisma({
+  binding: PrismaBinding = new PrismaBinding({
     secret: process.env.PRISMA_SECRET,
     endpoint: process.env.PRISMA_ENDPOINT,
     debug: false,

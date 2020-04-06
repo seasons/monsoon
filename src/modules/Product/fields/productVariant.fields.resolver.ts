@@ -1,6 +1,7 @@
-import { Resolver, Parent, ResolveField } from "@nestjs/graphql"
-import { Customer, User } from "../../../nest_decorators"
-import { PrismaService } from "../../../prisma/prisma.service"
+import { Customer, User } from "@app/nest_decorators"
+import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
+
+import { PrismaService } from "@prisma/prisma.service"
 
 @Resolver("ProductVariant")
 export class ProductVariantFieldsResolver {
