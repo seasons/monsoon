@@ -1,12 +1,13 @@
-import { Injectable } from "@nestjs/common"
-import { Cron } from "@nestjs/schedule"
-import { UtilsService } from "@modules/Utils/utils.service"
-import { PrismaService } from "@prisma/prisma.service"
 import { xor } from "lodash"
+import * as util from "util"
+
+import { AirtableService } from "@modules/Airtable"
 import { AirtableData } from "@modules/Airtable/airtable.types"
 import { SlackService } from "@modules/Slack/services/slack.service"
-import * as util from "util"
-import { AirtableService } from "@modules/Airtable"
+import { UtilsService } from "@modules/Utils/utils.service"
+import { Injectable } from "@nestjs/common"
+import { Cron } from "@nestjs/schedule"
+import { PrismaService } from "@prisma/prisma.service"
 
 interface DataPoint {
   name: string

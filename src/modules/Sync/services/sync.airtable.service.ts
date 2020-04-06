@@ -1,5 +1,6 @@
-import { Injectable } from "@nestjs/common"
 import { AirtableModelName } from "@modules/Airtable/airtable.types"
+import { Injectable } from "@nestjs/common"
+
 import { SyncUtilsService } from "./sync.utils.service"
 import { SyncBottomSizesService } from "./syncBottomSizes.service"
 import { SyncBrandsService } from "./syncBrands.service"

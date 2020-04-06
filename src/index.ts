@@ -1,15 +1,18 @@
 import "module-alias/register"
-import { NestFactory } from "@nestjs/core"
-import { AppModule } from "./app.module"
+
+import bodyParser from "body-parser"
+import cors from "cors"
 import express from "express"
+
+import { NestFactory } from "@nestjs/core"
+import { ExpressAdapter } from "@nestjs/platform-express"
+import * as Sentry from "@sentry/node"
+
+import { AppModule } from "./app.module"
 import { checkJwt } from "./middleware/jwt"
 import { createGetUserMiddleware } from "./middleware/user"
 import { prisma } from "./prisma"
-import cors from "cors"
 import { app as webhooks } from "./webhooks"
-import bodyParser from "body-parser"
-import { ExpressAdapter } from "@nestjs/platform-express"
-import * as Sentry from "@sentry/node"
 
 // Set up the server
 const server = express()

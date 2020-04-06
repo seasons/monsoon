@@ -1,4 +1,4 @@
-import { userHasRole, getEnforcedUser, isUserOwner } from "./utils"
+import { getEnforcedUser, isUserOwner, userHasRole } from "./utils"
 
 export async function isOwnerOrHasRole(next, source, { roles, type }, ctx) {
   const user = getEnforcedUser(ctx)
@@ -7,11 +7,7 @@ export async function isOwnerOrHasRole(next, source, { roles, type }, ctx) {
   }
 
   const { id: typeId } = ctx.request.body.variables
-  const isOwner = await isUserOwner(
-    type,
-    typeId,
-    user.id,
-  )
+  const isOwner = await isUserOwner(type, typeId, user.id)
 
   if (isOwner) {
     return next()

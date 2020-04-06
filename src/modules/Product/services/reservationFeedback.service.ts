@@ -1,6 +1,7 @@
+import { head } from "lodash"
+
 import { Injectable } from "@nestjs/common"
 import { PrismaService } from "@prisma/prisma.service"
-import { head } from "lodash"
 
 const RESERVATION_FEEDBACK_FRAGMENT = `
    {

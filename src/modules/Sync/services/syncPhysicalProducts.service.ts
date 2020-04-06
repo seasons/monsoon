@@ -1,5 +1,7 @@
-import { Injectable } from "@nestjs/common"
 import { isEmpty } from "lodash"
+
+import { Injectable } from "@nestjs/common"
+
 import { PrismaService } from "../../../prisma/prisma.service"
 import { AirtableData } from "../../Airtable/airtable.types"
 import { AirtableService } from "../../Airtable/services/airtable.service"

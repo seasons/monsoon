@@ -1,6 +1,8 @@
-import { Injectable } from "@nestjs/common"
 import * as Airtable from "airtable"
 import { fill, zip } from "lodash"
+
+import { Injectable } from "@nestjs/common"
+
 import {
   BillingInfoCreateInput,
   CustomerDetailCreateInput,

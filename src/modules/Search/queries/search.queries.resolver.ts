@@ -1,4 +1,5 @@
-import { Query, Resolver, Args } from "@nestjs/graphql"
+import { Args, Query, Resolver } from "@nestjs/graphql"
+
 import { SearchService } from "../services/search.service"
 
 @Resolver()

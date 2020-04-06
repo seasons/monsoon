@@ -1,6 +1,8 @@
-import { Injectable, Logger } from "@nestjs/common"
 import { Command, Option } from "nestjs-command"
+
+import { Injectable, Logger } from "@nestjs/common"
 import { PrismaService } from "@prisma/prisma.service"
+
 import { ScriptsService } from "../services/scripts.service"
 
 @Injectable()

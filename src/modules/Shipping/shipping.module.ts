@@ -1,8 +1,9 @@
 import { Module } from "@nestjs/common"
-import { ShippingService } from "./services/shipping.service"
-import { UtilsModule } from "../Utils/utils.module"
 import { PrismaModule } from "@prisma/prisma.module"
+
+import { UtilsModule } from "../Utils/utils.module"
 import { ShippingMutationsResolver } from "./mutations/shipping.mutations"
+import { ShippingService } from "./services/shipping.service"
 
 @Module({
   imports: [UtilsModule, PrismaModule],

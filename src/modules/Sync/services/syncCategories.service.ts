@@ -1,6 +1,8 @@
-import { Injectable } from "@nestjs/common"
 import { isEmpty } from "lodash"
 import slugify from "slugify"
+
+import { Injectable } from "@nestjs/common"
+
 import { CategoryCreateInput, CategoryUpdateInput } from "../../../prisma"
 import { PrismaService } from "../../../prisma/prisma.service"
 import { AirtableService } from "../../Airtable/services/airtable.service"

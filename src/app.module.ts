@@ -1,11 +1,13 @@
-import { Module } from "@nestjs/common"
-import { GqlModuleOptions, GraphQLModule } from "@nestjs/graphql"
-import { ScheduleModule } from "@nestjs/schedule"
-import sgMail from "@sendgrid/mail"
 import * as Airtable from "airtable"
 import Analytics from "analytics-node"
 import chargebee from "chargebee"
 import { importSchema } from "graphql-import"
+
+import { Module } from "@nestjs/common"
+import { GqlModuleOptions, GraphQLModule } from "@nestjs/graphql"
+import { ScheduleModule } from "@nestjs/schedule"
+import sgMail from "@sendgrid/mail"
+
 import {
   AirtableModule,
   CollectionModule,

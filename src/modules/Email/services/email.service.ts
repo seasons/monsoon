@@ -1,8 +1,10 @@
-import { Injectable } from "@nestjs/common"
-import sgMail from "@sendgrid/mail"
 import fs from "fs"
 import Handlebars from "handlebars"
 import nodemailer from "nodemailer"
+
+import { Injectable } from "@nestjs/common"
+import sgMail from "@sendgrid/mail"
+
 import {
   Product,
   Reservation as PrismaReservation,

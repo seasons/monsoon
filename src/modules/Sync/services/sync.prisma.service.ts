@@ -1,9 +1,10 @@
-import { Injectable } from "@nestjs/common"
 import { execSync } from "child_process"
 import fs from "fs"
 import readlineSync from "readline-sync"
-import { Prisma } from "@prisma/prisma.binding"
+
 import { AuthService } from "@modules/User/services/auth.service"
+import { Injectable } from "@nestjs/common"
+import { Prisma } from "@prisma/prisma.binding"
 
 type dbEnv = "staging" | "local" | "production"
 interface DBVars {

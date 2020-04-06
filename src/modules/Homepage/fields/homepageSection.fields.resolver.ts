@@ -1,4 +1,5 @@
-import { Resolver, Parent, Args, ResolveField } from "@nestjs/graphql"
+import { Args, Parent, ResolveField, Resolver } from "@nestjs/graphql"
+
 import { HomepageSectionService } from "../services/homepageSection.service"
 
 @Resolver("HomepageSection")

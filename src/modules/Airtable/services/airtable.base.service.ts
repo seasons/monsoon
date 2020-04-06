@@ -1,4 +1,5 @@
 import * as Airtable from "airtable"
+
 import { Injectable } from "@nestjs/common"
 
 export interface AirtableBaseService {
