@@ -3,7 +3,7 @@ import Analytics from "analytics-node"
 import chargebee from "chargebee"
 import { importSchema } from "graphql-import"
 
-import { Module, forwardRef } from "@nestjs/common"
+import { forwardRef, Module } from "@nestjs/common"
 import { GqlModuleOptions, GraphQLModule } from "@nestjs/graphql"
 import { ScheduleModule } from "@nestjs/schedule"
 import sgMail from "@sendgrid/mail"

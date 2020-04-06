@@ -3,7 +3,6 @@ import { PrismaModule } from "@prisma/prisma.module"
 
 import { UtilsService } from "./services/utils.service"
 
-
 @Module({
   imports: [PrismaModule],
   providers: [UtilsService],

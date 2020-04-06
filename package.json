@@ -143,6 +143,11 @@
     "trailingComma": "es5",
     "bracketSpacing": true
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
+  },
   "jest": {
     "setupFiles": [
       "<rootDir>/src/tests/setupJest.ts"

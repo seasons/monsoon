@@ -1,3 +1,5 @@
+import { curry } from "lodash"
+
 import { AirtableModelName } from "@modules/Airtable/airtable.types"
 import { Injectable } from "@nestjs/common"
 
@@ -18,7 +20,6 @@ import { SyncReservationsService } from "./syncReservations.service"
 import { SyncSizesService } from "./syncSizes.service"
 import { SyncTopSizesService } from "./syncTopSizes.service"
 import { SyncUsersService } from "./syncUsers.service"
-import { curry } from "lodash"
 
 @Injectable()
 export class AirtableSyncService {
