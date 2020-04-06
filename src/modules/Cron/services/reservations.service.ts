@@ -86,7 +86,8 @@ export class ReservationScheduledJobs {
     this.logger.log(report)
   }
 
-  @Cron(CronExpression.EVERY_5_MINUTES)
+  // @Cron(CronExpression.EVERY_5_MINUTES)
+  @Cron(CronExpression.EVERY_MINUTE)
   async syncPhysicalProductAndReservationStatuses() {
     this.logger.log("Sync Physical Product and Reservation Statuses ran")
     const physProdReport = await this.syncPhysicalProductStatus()
@@ -97,129 +98,6 @@ export class ReservationScheduledJobs {
       ...reservationReport,
       errors: [...physProdReport.errors, ...reservationReport.errors],
     })
-  }
-
-  private async getPrismaReservationWithNeededFields(reservationNumber) {
-    const res = await this.prisma.binding.query.reservation(
-      {
-        where: { reservationNumber },
-      },
-      `{
-          id
-          status
-          reservationNumber
-          products {
-              id
-              inventoryStatus
-              seasonsUID
-              productVariant {
-                  id
-              }
-          }
-          customer {
-              id
-              detail {
-                  shippingAddress {
-                      slug
-                  }
-              }
-          }
-          user {
-            id
-            email
-          }
-          returnedPackage {
-              id
-          }
-      }`
-    )
-    return res
-  }
-
-  private getUpdatedCounts(
-    prismaProductVariant: ProductVariant,
-    currentStatusOnPrisma: InventoryStatus,
-    newStatusOnAirtable: AirtableInventoryStatus,
-    format: "prisma" | "airtable"
-  ): productVariantCounts {
-    const prismaCounts = {} as prismaProductVariantCounts
-    const airtableCounts = {} as AirtableProductVariantCounts
-
-    // Decrement the count for whichever status we are moving away from
-    switch (currentStatusOnPrisma) {
-      case "NonReservable":
-        prismaCounts.nonReservable = prismaProductVariant.nonReservable - 1
-        airtableCounts["Non-Reservable Count"] = prismaCounts.nonReservable
-        break
-      case "Reserved":
-        prismaCounts.reserved = prismaProductVariant.reserved - 1
-        airtableCounts["Reserved Count"] = prismaCounts.reserved
-        break
-      case "Reservable":
-        prismaCounts.reservable = prismaProductVariant.reservable - 1
-        airtableCounts["Reservable Count"] = prismaCounts.reservable
-        break
-    }
-
-    // Increment the count for whichever status we are switching on to
-    switch (newStatusOnAirtable) {
-      case "Non Reservable":
-        prismaCounts.nonReservable = prismaProductVariant.nonReservable + 1
-        airtableCounts["Non-Reservable Count"] = prismaCounts.nonReservable
-        break
-      case "Reserved":
-        prismaCounts.reserved = prismaProductVariant.reserved + 1
-        airtableCounts["Reserved Count"] = prismaCounts.reserved
-        break
-      case "Reservable":
-        prismaCounts.reservable = prismaProductVariant.reservable + 1
-        airtableCounts["Reservable Count"] = prismaCounts.reservable
-        break
-    }
-
-    // Get the formatting right
-    let retVal
-    if (format === "prisma") {
-      retVal = prismaCounts
-    }
-    if (format === "airtable") {
-      retVal = airtableCounts
-    }
-
-    return retVal
-  }
-
-  private physicalProductStatusChanged(
-    newStatusOnAirtable: AirtableInventoryStatus,
-    currentStatusOnPrisma: InventoryStatus
-  ): boolean {
-    return (
-      this.airtableService.airtableToPrismaInventoryStatus(
-        newStatusOnAirtable
-      ) !== currentStatusOnPrisma
-    )
-  }
-
-  private async returnNoticeNeeded(reservation: Reservation) {
-    const now = DateTime.local()
-    const twentyEightToTwentyNineDaysAgo = Interval.fromDateTimes(
-      now.minus({ days: 29 }),
-      now.minus({ days: 28 })
-    )
-    const customer = await this.prisma.client
-      .reservation({
-        id: reservation.id,
-      })
-      .customer()
-
-    return (
-      twentyEightToTwentyNineDaysAgo.contains(
-        DateTime.fromISO(reservation.createdAt)
-      ) &&
-      !reservation.reminderSentAt &&
-      customer.plan === "Essential" &&
-      !["Cancelled", "Completed"].includes(reservation.status)
-    )
   }
 
   private async syncPhysicalProductStatus() {
@@ -411,6 +289,129 @@ export class ReservationScheduledJobs {
       errors,
       reservationsInAirtableButNotPrisma,
     }
+  }
+
+  private async getPrismaReservationWithNeededFields(reservationNumber) {
+    const res = await this.prisma.binding.query.reservation(
+      {
+        where: { reservationNumber },
+      },
+      `{
+          id
+          status
+          reservationNumber
+          products {
+              id
+              inventoryStatus
+              seasonsUID
+              productVariant {
+                  id
+              }
+          }
+          customer {
+              id
+              detail {
+                  shippingAddress {
+                      slug
+                  }
+              }
+          }
+          user {
+            id
+            email
+          }
+          returnedPackage {
+              id
+          }
+      }`
+    )
+    return res
+  }
+
+  private getUpdatedCounts(
+    prismaProductVariant: ProductVariant,
+    currentStatusOnPrisma: InventoryStatus,
+    newStatusOnAirtable: AirtableInventoryStatus,
+    format: "prisma" | "airtable"
+  ): productVariantCounts {
+    const prismaCounts = {} as prismaProductVariantCounts
+    const airtableCounts = {} as AirtableProductVariantCounts
+
+    // Decrement the count for whichever status we are moving away from
+    switch (currentStatusOnPrisma) {
+      case "NonReservable":
+        prismaCounts.nonReservable = prismaProductVariant.nonReservable - 1
+        airtableCounts["Non-Reservable Count"] = prismaCounts.nonReservable
+        break
+      case "Reserved":
+        prismaCounts.reserved = prismaProductVariant.reserved - 1
+        airtableCounts["Reserved Count"] = prismaCounts.reserved
+        break
+      case "Reservable":
+        prismaCounts.reservable = prismaProductVariant.reservable - 1
+        airtableCounts["Reservable Count"] = prismaCounts.reservable
+        break
+    }
+
+    // Increment the count for whichever status we are switching on to
+    switch (newStatusOnAirtable) {
+      case "Non Reservable":
+        prismaCounts.nonReservable = prismaProductVariant.nonReservable + 1
+        airtableCounts["Non-Reservable Count"] = prismaCounts.nonReservable
+        break
+      case "Reserved":
+        prismaCounts.reserved = prismaProductVariant.reserved + 1
+        airtableCounts["Reserved Count"] = prismaCounts.reserved
+        break
+      case "Reservable":
+        prismaCounts.reservable = prismaProductVariant.reservable + 1
+        airtableCounts["Reservable Count"] = prismaCounts.reservable
+        break
+    }
+
+    // Get the formatting right
+    let retVal
+    if (format === "prisma") {
+      retVal = prismaCounts
+    }
+    if (format === "airtable") {
+      retVal = airtableCounts
+    }
+
+    return retVal
+  }
+
+  private physicalProductStatusChanged(
+    newStatusOnAirtable: AirtableInventoryStatus,
+    currentStatusOnPrisma: InventoryStatus
+  ): boolean {
+    return (
+      this.airtableService.airtableToPrismaInventoryStatus(
+        newStatusOnAirtable
+      ) !== currentStatusOnPrisma
+    )
+  }
+
+  private async returnNoticeNeeded(reservation: Reservation) {
+    const now = DateTime.local()
+    const twentyEightToTwentyNineDaysAgo = Interval.fromDateTimes(
+      now.minus({ days: 29 }),
+      now.minus({ days: 28 })
+    )
+    const customer = await this.prisma.client
+      .reservation({
+        id: reservation.id,
+      })
+      .customer()
+
+    return (
+      twentyEightToTwentyNineDaysAgo.contains(
+        DateTime.fromISO(reservation.createdAt)
+      ) &&
+      !reservation.reminderSentAt &&
+      customer.plan === "Essential" &&
+      !["Cancelled", "Completed"].includes(reservation.status)
+    )
   }
 
   private async updateProductVariantCountAndStatus(
