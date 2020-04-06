@@ -350,9 +350,9 @@ export class AirtableService {
     })
   }
 
-  private async updatePhysicalProducts(
-    airtableIDs: [string],
-    fields: [AirtablePhysicalProductFields]
+  async updatePhysicalProducts(
+    airtableIDs: string[],
+    fields: AirtablePhysicalProductFields[]
   ) {
     if (airtableIDs.length !== fields.length) {
       throw new Error("airtableIDs and fields must be arrays of equal length")

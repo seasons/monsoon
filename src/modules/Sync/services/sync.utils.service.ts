@@ -6,7 +6,6 @@ import {
 import { AirtableService } from "@modules/Airtable/services/airtable.service"
 import { Injectable } from "@nestjs/common"
 import { UtilsService } from "@modules/Utils/services/utils.service"
-import cliProgress from "cli-progress"
 
 interface LinkStagingRecordInput {
   rootProductionRecord: any
@@ -130,17 +129,6 @@ export class SyncUtilsService {
     }
   }
 
-  makeAirtableSyncCliProgressBar() {
-    return new cliProgress.MultiBar(
-      {
-        clearOnComplete: false,
-        hideCursor: true,
-        format: `{modelName} {bar} {percentage}%  ETA: {eta}s  {value}/{total} ops`,
-      },
-      cliProgress.Presets.shades_grey
-    )
-  }
-
   async makeSingleSyncFuncMultiBarAndProgressBarIfNeeded({
     cliProgressBar,
     numRecords,
@@ -153,7 +141,7 @@ export class SyncUtilsService {
     let multibar
     let _cliProgressBar = cliProgressBar
     if (!_cliProgressBar) {
-      multibar = this.makeAirtableSyncCliProgressBar()
+      multibar = this.utils.makeCLIProgressBar()
       _cliProgressBar = await this.createAirtableToPrismaSubBar(
         multibar,
         modelName,

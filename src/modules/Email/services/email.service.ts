@@ -22,12 +22,12 @@ export class EmailService {
     private readonly data: EmailDataProvider
   ) {}
 
-  sendAdminConfirmationEmail(
+  async sendAdminConfirmationEmail(
     user: User,
     products: any[],
     reservation: Reservation
   ) {
-    this.sendTransactionalEmail({
+    await this.sendTransactionalEmail({
       to: process.env.OPERATIONS_ADMIN_EMAIL,
       data: this.data.reservationReturnConfirmation(
         reservation.reservationNumber,
@@ -100,8 +100,8 @@ export class EmailService {
     })
   }
 
-  sendYouCanNowReserveAgainEmail(user: User) {
-    this.sendTransactionalEmail({
+  async sendYouCanNowReserveAgainEmail(user: User) {
+    await this.sendTransactionalEmail({
       to: user.email,
       data: this.data.freeToReserve(),
     })

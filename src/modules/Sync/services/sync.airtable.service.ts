@@ -18,6 +18,7 @@ import { SyncTopSizesService } from "./syncTopSizes.service"
 import { SyncUsersService } from "./syncUsers.service"
 import { SyncUtilsService } from "./sync.utils.service"
 import { curry } from "lodash"
+import { UtilsService } from "../../Utils/services/utils.service"
 
 @Injectable()
 export class AirtableSyncService {
@@ -38,7 +39,8 @@ export class AirtableSyncService {
     private readonly syncSizesService: SyncSizesService,
     private readonly syncTopSizesService: SyncTopSizesService,
     private readonly syncUsersService: SyncUsersService,
-    private readonly syncUtils: SyncUtilsService
+    private readonly syncUtils: SyncUtilsService,
+    private readonly utilsService: UtilsService
   ) {}
 
   async syncAirtableToAirtable(start: AirtableModelName) {
@@ -48,7 +50,7 @@ export class AirtableSyncService {
     )
 
     const _createSubBar = curry(this.syncUtils.createAirtableToAirtableSubBar)(
-      this.syncUtils.makeAirtableSyncCliProgressBar()
+      this.utilsService.makeCLIProgressBar()
     ).bind(this.syncUtils)
 
     let modelsInOrder = [
@@ -154,7 +156,7 @@ export class AirtableSyncService {
     const _createSubBar = curry(
       this.syncUtils.createAirtableToPrismaSubBar,
       2
-    )(this.syncUtils.makeAirtableSyncCliProgressBar()).bind(this.syncUtils)
+    )(this.utilsService.makeCLIProgressBar()).bind(this.syncUtils)
 
     const bars = {
       brands: await _createSubBar("Brands"),
