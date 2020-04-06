@@ -45,6 +45,3 @@ async function bootstrap() {
   )
 }
 bootstrap()
-
-// Note: for more information on using ApolloServer with express, see
-// https://github.com/apollographql/apollo-server/tree/master/packages/apollo-server-express
