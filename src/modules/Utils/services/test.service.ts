@@ -1,7 +1,16 @@
 import { Customer, User } from "@prisma/index"
 
-import { AirtableService } from "@modules/Airtable/services/airtable.service"
+import { AirtableService } from "@modules/Airtable/index"
 import { PrismaService } from "@prisma/prisma.service"
+import { PhysicalProductService } from "@modules/Product/services/physicalProduct.utils.service"
+import { AirtableBaseService, AirtableUtilsService } from "@modules/Airtable"
+import { UtilsService } from "./utils.service"
+import { ReservationService } from "@modules/Product/services/reservation.service"
+import { ProductUtilsService } from "@modules/Product/services/product.utils.service"
+import { ProductVariantService } from "@modules/Product/services/productVariant.service"
+import { ShippingService } from "@modules/Shipping/services/shipping.service"
+import { EmailService, EmailDataProvider } from "@modules/Email"
+import { ReservationUtilsService } from "@modules/Product/services/reservation.utils.service"
 
 export class TestUtilsService {
   constructor(
@@ -51,5 +60,27 @@ export class TestUtilsService {
     this.airtableService.createOrUpdateAirtableUser(newUser, {})
 
     return { user: newUser, customer: newCustomer }
+  }
+
+  createReservationService() {
+    const physProdService = new PhysicalProductService(this.prisma)
+    const airtableBaseService = new AirtableBaseService()
+    const airtableService = new AirtableService(
+      airtableBaseService,
+      new AirtableUtilsService(airtableBaseService)
+    )
+    const utilsService = new UtilsService(this.prisma)
+    const reservationService = new ReservationService(
+      this.prisma,
+      new ProductUtilsService(this.prisma),
+      new ProductVariantService(this.prisma, physProdService, airtableService),
+      physProdService,
+      airtableService,
+      new ShippingService(this.prisma, utilsService),
+      new EmailService(this.prisma, utilsService, new EmailDataProvider()),
+      new ReservationUtilsService()
+    )
+
+    return { reservationService }
   }
 }
