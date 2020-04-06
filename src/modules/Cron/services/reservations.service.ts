@@ -124,6 +124,10 @@ export class ReservationScheduledJobs {
                   }
               }
           }
+          user {
+            id
+            email
+          }
           returnedPackage {
               id
           }
@@ -324,9 +328,11 @@ export class ReservationScheduledJobs {
         ) {
           // Handle housekeeping
           updatedReservations.push(prismaReservation.reservationNumber)
+
           const prismaUser = await this.prisma.client.user({
-            email: airtableReservation.model.userEmail[0],
+            email: prismaReservation.user.email,
           })
+
           const returnedPhysicalProducts = prismaReservation.products.filter(
             p =>
               [
