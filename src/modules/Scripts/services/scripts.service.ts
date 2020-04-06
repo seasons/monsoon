@@ -24,11 +24,16 @@ export class ScriptsService {
     })
   }
 
-  // Returns [PrismaService, AirtableService]
-  async overrideEnvFromRemoteAndGetUpdatedServices({
+  /**
+   * Returns prisma and airtable services that point to the specified environments
+   */
+  async getUpdatedServices({
     prismaEnvironment = "local",
     airtableEnvironment = "staging",
-  }): Promise<(OverrideablePrismaService | AirtableService)[]> {
+  }): Promise<{
+    prisma: OverrideablePrismaService
+    airtable: AirtableService
+  }> {
     await this.overrideEnvFromRemoteConfig({
       prismaEnvironment,
       airtableEnvironment,
@@ -36,14 +41,14 @@ export class ScriptsService {
     const _abs = new OverridableAirtableBaseService(
       process.env.AIRTABLE_DATABASE_ID
     )
-    return [
-      new OverrideablePrismaService({
+    return {
+      prisma: new OverrideablePrismaService({
         secret: process.env.PRISMA_SECRET,
         endpoint: process.env.PRISMA_ENDPOINT,
         debug: false,
       }),
-      new AirtableService(_abs, new AirtableUtilsService(_abs)),
-    ]
+      airtable: new AirtableService(_abs, new AirtableUtilsService(_abs)),
+    }
   }
 
   async overrideEnvFromRemoteConfig({

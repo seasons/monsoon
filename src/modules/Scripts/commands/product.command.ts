@@ -1,9 +1,7 @@
 import { Command, Option } from "nestjs-command"
 import { Injectable, Logger } from "@nestjs/common"
-import { PrismaService } from "@prisma/prisma.service"
 import { ScriptsService } from "../services/scripts.service"
 import { UtilsService } from "../../Utils/services/utils.service"
-import { AirtableService } from "../../Airtable/services/airtable.service"
 import { compact } from "lodash"
 
 @Injectable()
@@ -30,13 +28,9 @@ export class ProductCommands {
     })
     e
   ) {
-    const [
-      _prisma,
-      _,
-    ] = await this.scriptsService.overrideEnvFromRemoteAndGetUpdatedServices({
+    const { prisma } = await this.scriptsService.getUpdatedServices({
       prismaEnvironment: e,
     })
-    const prisma = _prisma as PrismaService
 
     const reservableProductVariants = await prisma.client.productVariants({
       where: {
@@ -71,14 +65,9 @@ export class ProductCommands {
     })
     e
   ) {
-    const [
-      _prisma,
-      _airtable,
-    ] = await this.scriptsService.overrideEnvFromRemoteAndGetUpdatedServices({
+    const { prisma, airtable } = await this.scriptsService.getUpdatedServices({
       prismaEnvironment: e,
     })
-    const prisma = _prisma as PrismaService
-    const airtable = _airtable as AirtableService
 
     const allPrismaProductVariants = await prisma.binding.query.productVariants(
       {},
