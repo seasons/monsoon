@@ -1,6 +1,6 @@
-import { ApolloServerPlugin } from "apollo-server-plugin-base"
-
 import * as Sentry from "@sentry/node"
+
+import { ApolloServerPlugin } from "apollo-server-plugin-base"
 
 Sentry.init({
   dsn: process.env.SENTRY_DSN,

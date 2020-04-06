@@ -1,7 +1,6 @@
 import AWS from "aws-sdk"
-import fs from "fs"
-
 import { Injectable } from "@nestjs/common"
+import fs from "fs"
 
 @Injectable()
 export class ScriptsService {

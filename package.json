@@ -31,6 +31,7 @@
     "sls:start": "serverless offline --env=staging",
     "start:server": "dotenv -- nodemon -e ts,graphql -x ts-node src/index.ts",
     "start": "concurrently --kill-others 'yarn tsc -w' 'yarn start:server'",
+    "sort-imports": "import-sort --write 'src/**/*.{js,ts,tsx}'",
     "check:parity": "node -r dotenv/config -r ts-node/register scripts/queryParity.ts",
     "test": "jest"
   },
@@ -126,9 +127,12 @@
     "concurrently": "^5.1.0",
     "dotenv-cli": "1.4.0",
     "graceful-fs": "^4.2.2",
+    "husky": "^4.2.3",
+    "import-sort-cli": "^6.0.0",
     "jest": "^24.9.0",
     "nodemon": "^1.19.2",
     "prettier": "^1.18.2",
+    "pretty-quick": "^2.0.1",
     "rimraf": "^3.0.0",
     "rxjs": "^6.0.0",
     "serverless-dotenv-plugin": "^2.1.1",
@@ -145,7 +149,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "pretty-quick --staged"
+      "pre-commit": "yarn sort-imports && pretty-quick --staged"
     }
   },
   "jest": {

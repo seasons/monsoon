@@ -1,18 +1,9 @@
 import * as Airtable from "airtable"
-import Analytics from "analytics-node"
-import chargebee from "chargebee"
-import { importSchema } from "graphql-import"
-
-import { forwardRef, Module } from "@nestjs/common"
-import { GqlModuleOptions, GraphQLModule } from "@nestjs/graphql"
-import { ScheduleModule } from "@nestjs/schedule"
-import sgMail from "@sendgrid/mail"
 
 import {
   AirtableModule,
   CollectionModule,
   CronModule,
-  directiveResolvers,
   EmailModule,
   FAQModule,
   HomepageModule,
@@ -22,7 +13,16 @@ import {
   SearchModule,
   SlackModule,
   UserModule,
+  directiveResolvers,
 } from "./modules"
+import { GqlModuleOptions, GraphQLModule } from "@nestjs/graphql"
+import { Module, forwardRef } from "@nestjs/common"
+
+import Analytics from "analytics-node"
+import { ScheduleModule } from "@nestjs/schedule"
+import chargebee from "chargebee"
+import { importSchema } from "graphql-import"
+import sgMail from "@sendgrid/mail"
 
 const analytics = new Analytics(process.env.SEGMENT_MONSOON_WRITE_KEY)
 

@@ -1,12 +1,12 @@
-import cliProgress from "cli-progress"
-
 import {
   AirtableData,
   AirtableModelName,
 } from "@modules/Airtable/airtable.types"
+
 import { AirtableService } from "@modules/Airtable/services/airtable.service"
-import { UtilsService } from "@modules/Utils/services/utils.service"
 import { Injectable } from "@nestjs/common"
+import { UtilsService } from "@modules/Utils/services/utils.service"
+import cliProgress from "cli-progress"
 
 interface LinkStagingRecordInput {
   rootProductionRecord: any

@@ -1,12 +1,11 @@
-import faker from "faker"
-import { head } from "lodash"
 import { Command, Option } from "nestjs-command"
+import { Injectable, Logger } from "@nestjs/common"
 
 import { AuthService } from "@modules/User/services/auth.service"
-import { Injectable, Logger } from "@nestjs/common"
 import { PrismaService } from "@prisma/prisma.service"
-
 import { ScriptsService } from "../services/scripts.service"
+import faker from "faker"
+import { head } from "lodash"
 
 @Injectable()
 export class UserCommands {

@@ -1,11 +1,10 @@
-import shippo from "shippo"
-
-import { UtilsService } from "@modules/Utils/services/utils.service"
-import { Injectable } from "@nestjs/common"
 import { Customer, ID_Input, Location, User } from "@prisma/index"
-import { PrismaService } from "@prisma/prisma.service"
-
 import { ShippoShipment, ShippoTransaction } from "../shipping.types"
+
+import { Injectable } from "@nestjs/common"
+import { PrismaService } from "@prisma/prisma.service"
+import { UtilsService } from "@modules/Utils/services/utils.service"
+import shippo from "shippo"
 
 interface CoreShippoAddressFields {
   name: string

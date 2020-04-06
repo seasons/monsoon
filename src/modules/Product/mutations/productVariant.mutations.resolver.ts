@@ -1,6 +1,6 @@
+import { Analytics, Customer, User } from "../../../nest_decorators"
 import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
 
-import { Analytics, Customer, User } from "../../../nest_decorators"
 import { PrismaService } from "../../../prisma/prisma.service"
 import { ReservationService } from "../services/reservation.service"
 

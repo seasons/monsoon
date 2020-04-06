@@ -1,8 +1,7 @@
-import { Injectable } from "@nestjs/common"
-
 import { AirtableService } from "../../Airtable/services/airtable.service"
-import { UtilsService } from "../../Utils/services/utils.service"
+import { Injectable } from "@nestjs/common"
 import { SyncUtilsService } from "./sync.utils.service"
+import { UtilsService } from "../../Utils/services/utils.service"
 
 @Injectable()
 export class SyncModelsService {

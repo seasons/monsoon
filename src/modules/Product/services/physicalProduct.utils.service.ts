@@ -1,8 +1,8 @@
-import { uniqBy } from "lodash"
+import { ID_Input, PhysicalProduct, ProductVariant } from "@prisma/index"
 
 import { Injectable } from "@nestjs/common"
-import { ID_Input, PhysicalProduct, ProductVariant } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
+import { uniqBy } from "lodash"
 
 export interface PhysicalProductWithReservationSpecificData
   extends PhysicalProduct {

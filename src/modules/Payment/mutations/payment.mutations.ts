@@ -1,8 +1,9 @@
+import { Args, Mutation, Resolver } from "@nestjs/graphql"
 import { Customer, User } from "@app/nest_decorators"
+
+import { CustomerService } from "@modules/User/services/customer.service"
 import { PaymentService } from "@modules/Payment/services/payment.service"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
-import { CustomerService } from "@modules/User/services/customer.service"
-import { Args, Mutation, Resolver } from "@nestjs/graphql"
 
 @Resolver()
 export class PaymentMutationsResolver {

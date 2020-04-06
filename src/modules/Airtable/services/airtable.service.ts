@@ -1,7 +1,11 @@
 import * as Airtable from "airtable"
-import { compact, fill, zip } from "lodash"
 
-import { Injectable } from "@nestjs/common"
+import {
+  AirtableData,
+  AirtableInventoryStatus,
+  AirtableModelName,
+  AirtableProductVariantCounts,
+} from "../airtable.types"
 import {
   BillingInfoCreateInput,
   CustomerDetailCreateInput,
@@ -12,15 +16,11 @@ import {
   ReservationStatus,
   User,
 } from "@prisma/index"
+import { compact, fill, zip } from "lodash"
 
-import {
-  AirtableData,
-  AirtableInventoryStatus,
-  AirtableModelName,
-  AirtableProductVariantCounts,
-} from "../airtable.types"
 import { AirtableBaseService } from "./airtable.base.service"
 import { AirtableUtilsService } from "./airtable.utils.service"
+import { Injectable } from "@nestjs/common"
 
 interface AirtableUserFields extends CustomerDetailCreateInput {
   plan?: string

@@ -1,5 +1,4 @@
 import { Injectable } from "@nestjs/common"
-
 import { ReservedItem } from "../email.types"
 
 @Injectable()

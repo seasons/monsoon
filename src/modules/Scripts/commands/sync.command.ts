@@ -1,12 +1,11 @@
-import fs from "fs"
 import { Command, Option, Positional } from "nestjs-command"
-import readlineSync from "readline-sync"
 
 import { AirtableSyncService } from "@modules/Sync/services/sync.airtable.service"
-import { PrismaSyncService } from "@modules/Sync/services/sync.prisma.service"
 import { Injectable } from "@nestjs/common"
-
+import { PrismaSyncService } from "@modules/Sync/services/sync.prisma.service"
 import { ScriptsService } from "../services/scripts.service"
+import fs from "fs"
+import readlineSync from "readline-sync"
 
 @Injectable()
 export class SyncCommands {

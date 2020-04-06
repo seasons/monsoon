@@ -1,5 +1,6 @@
-import { AirtableService } from "@modules/Airtable/services/airtable.service"
 import { Customer, User } from "@prisma/index"
+
+import { AirtableService } from "@modules/Airtable/services/airtable.service"
 import { PrismaService } from "@prisma/prisma.service"
 
 export class TestUtilsService {

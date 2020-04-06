@@ -1,21 +1,21 @@
 import * as Airtable from "airtable"
 
+import { Customer, User } from "@prisma/index"
+
 import { AirtableBaseService } from "@modules/Airtable/services/airtable.base.service"
 import { AirtableService } from "@modules/Airtable/services/airtable.service"
 import { AirtableUtilsService } from "@modules/Airtable/services/airtable.utils.service"
 import { EmailDataProvider } from "@modules/Email/services/email.data.service"
 import { EmailService } from "@modules/Email/services/email.service"
-import { ShippingService } from "@modules/Shipping/services/shipping.service"
-import { TestUtilsService } from "@modules/Utils/services/test.service"
-import { UtilsService } from "@modules/Utils/services/utils.service"
-import { Customer, User } from "@prisma/index"
-import { PrismaService } from "@prisma/prisma.service"
-
 import { PhysicalProductService } from "../services/physicalProduct.utils.service"
+import { PrismaService } from "@prisma/prisma.service"
 import { ProductUtilsService } from "../services/product.utils.service"
 import { ProductVariantService } from "../services/productVariant.service"
 import { ReservationService } from "../services/reservation.service"
 import { ReservationUtilsService } from "../services/reservation.utils.service"
+import { ShippingService } from "@modules/Shipping/services/shipping.service"
+import { TestUtilsService } from "@modules/Utils/services/test.service"
+import { UtilsService } from "@modules/Utils/services/utils.service"
 
 describe("Reservation Service", () => {
   let reservationService: ReservationService

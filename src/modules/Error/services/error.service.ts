@@ -1,6 +1,7 @@
+import * as Sentry from "@sentry/node"
+
 import { Injectable } from "@nestjs/common"
 import { User } from "@prisma/index"
-import * as Sentry from "@sentry/node"
 
 @Injectable()
 export class ErrorService {
