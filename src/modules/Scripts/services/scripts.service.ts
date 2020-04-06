@@ -35,10 +35,10 @@ export class ScriptsService {
     })
     const _abs = new ManualAirtableBaseService(process.env.AIRTABLE_DATABASE_ID)
     return [
-      new ManualPrismaService({
-        endpoint: process.env.PRISMA_ENDPOINT,
-        secret: process.env.PRISMA_SECRET,
-      }),
+      {
+        binding: ...,
+        client: ...
+      },
       new AirtableService(_abs, new AirtableUtilsService(_abs)),
     ]
   }

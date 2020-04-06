@@ -1,9 +1,8 @@
+import { InventoryStatus, Location } from "@prisma/index"
+import { AirtableInventoryStatus } from "@modules/Airtable/airtable.types"
 import { Injectable } from "@nestjs/common"
+import { PrismaService } from "@prisma/prisma.service"
 import crypto from "crypto"
-import { InventoryStatus, Location } from "../../../prisma"
-import { PrismaService } from "../../../prisma/prisma.service"
-import { AirtableInventoryStatus } from "../../Airtable/airtable.types"
-import cliProgress from "cli-progress"
 
 @Injectable()
 export class UtilsService {

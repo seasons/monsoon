@@ -1,7 +1,10 @@
-import { Injectable, Logger } from "@nestjs/common"
-import { Cron, CronExpression } from "@nestjs/schedule"
 import * as Sentry from "@sentry/node"
-import { EmailService } from "../../Email/services/email.service"
+
+import {
+  AirtableInventoryStatus,
+  AirtableProductVariantCounts,
+} from "@modules/Airtable/airtable.types"
+import { Cron, CronExpression } from "@nestjs/schedule"
 import { DateTime, Interval } from "luxon"
 import {
   ID_Input,
@@ -10,16 +13,15 @@ import {
   ProductVariant,
   Reservation,
   User,
-} from "../../../prisma"
-import { AirtableService } from "../../Airtable/services/airtable.service"
-import { SyncError } from "../../../errors"
-import { ShippingService } from "../../Shipping/services/shipping.service"
-import {
-  AirtableProductVariantCounts,
-  AirtableInventoryStatus,
-} from "../../Airtable/airtable.types"
-import { PrismaService } from "../../../prisma/prisma.service"
-import { ErrorService } from "../../Error/services/error.service"
+} from "@prisma/index"
+import { Injectable, Logger } from "@nestjs/common"
+
+import { AirtableService } from "@modules/Airtable/services/airtable.service"
+import { EmailService } from "@modules/Email/services/email.service"
+import { ErrorService } from "@modules/Error/services/error.service"
+import { PrismaService } from "@prisma/prisma.service"
+import { ShippingService } from "@modules/Shipping/services/shipping.service"
+import { SyncError } from "@app/errors"
 
 type prismaProductVariantCounts = Pick<
   ProductVariant,

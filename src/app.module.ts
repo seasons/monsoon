@@ -1,16 +1,9 @@
-import { Module } from "@nestjs/common"
-import { GqlModuleOptions, GraphQLModule } from "@nestjs/graphql"
-import { ScheduleModule } from "@nestjs/schedule"
-import sgMail from "@sendgrid/mail"
 import * as Airtable from "airtable"
-import Analytics from "analytics-node"
-import chargebee from "chargebee"
-import { importSchema } from "graphql-import"
+
 import {
   AirtableModule,
   CollectionModule,
   CronModule,
-  directiveResolvers,
   EmailModule,
   FAQModule,
   HomepageModule,
@@ -20,7 +13,16 @@ import {
   SearchModule,
   SlackModule,
   UserModule,
+  directiveResolvers,
 } from "./modules"
+import { GqlModuleOptions, GraphQLModule } from "@nestjs/graphql"
+import { Module, forwardRef } from "@nestjs/common"
+
+import Analytics from "analytics-node"
+import { ScheduleModule } from "@nestjs/schedule"
+import chargebee from "chargebee"
+import { importSchema } from "graphql-import"
+import sgMail from "@sendgrid/mail"
 
 const analytics = new Analytics(process.env.SEGMENT_MONSOON_WRITE_KEY)
 
@@ -38,14 +40,12 @@ chargebee.configure({
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
 // Don't run cron jobs in dev mode, to keep the console clean
-let _imports = [
-  process.env.NODE_ENV !== "development" ? ScheduleModule.forRoot() : null,
-]
-if (!_imports[0]) _imports = []
+const scheduleModule =
+  process.env.NODE_ENV !== "development" ? [ScheduleModule.forRoot()] : []
 
 @Module({
   imports: [
-    ..._imports,
+    ...scheduleModule,
     GraphQLModule.forRootAsync({
       useFactory: async () => {
         const typeDefs = await importSchema("src/schema.graphql")
@@ -73,9 +73,9 @@ if (!_imports[0]) _imports = []
     EmailModule,
     AirtableModule,
     SearchModule,
-    CronModule,
     SlackModule,
     ReservationModule,
+    forwardRef(() => CronModule),
   ],
 })
 export class AppModule {}

@@ -1,14 +1,15 @@
-import { Injectable } from "@nestjs/common"
-import { head, isEmpty } from "lodash"
-import slugify from "slugify"
 import { BottomSizeType, LetterSize, ProductCreateInput } from "../../../prisma"
-import { PrismaService } from "../../../prisma/prisma.service"
+import { head, isEmpty } from "lodash"
+
 import { AirtableData } from "../../Airtable/airtable.types"
 import { AirtableService } from "../../Airtable/services/airtable.service"
-import { UtilsService } from "../../Utils/services/utils.service"
-import { SyncUtilsService } from "./sync.utils.service"
+import { Injectable } from "@nestjs/common"
+import { PrismaService } from "../../../prisma/prisma.service"
 import { SyncCategoriesService } from "./syncCategories.service"
 import { SyncSizesService } from "./syncSizes.service"
+import { SyncUtilsService } from "./sync.utils.service"
+import { UtilsService } from "../../Utils/services/utils.service"
+import slugify from "slugify"
 
 @Injectable()
 export class SyncProductsService {

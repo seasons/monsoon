@@ -1,9 +1,10 @@
-import { Resolver, Query, Args, Context } from "@nestjs/graphql"
-import { Customer, User } from "../../../nest_decorators"
-import { PaymentService } from "../services/payment.service"
-import { PrismaService } from "../../../prisma/prisma.service"
-import { UtilsService } from "../../Utils/services/utils.service"
-import { AuthService } from "../../User/services/auth.service"
+import { Args, Context, Query, Resolver } from "@nestjs/graphql"
+import { Customer, User } from "@app/nest_decorators"
+
+import { AuthService } from "@modules/User/services/auth.service"
+import { PaymentService } from "@modules/Payment/services/payment.service"
+import { PrismaService } from "@prisma/prisma.service"
+import { UtilsService } from "@modules/Utils/services/utils.service"
 
 @Resolver()
 export class ChargebeeQueriesResolver {

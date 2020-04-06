@@ -1,8 +1,8 @@
-import { Injectable, Logger } from "@nestjs/common"
 import { Command, Option } from "nestjs-command"
+import { Injectable, Logger } from "@nestjs/common"
+import { PrismaService } from "@prisma/prisma.service"
 import { ScriptsService } from "../services/scripts.service"
 import { UtilsService } from "../../Utils/services/utils.service"
-import { PrismaService } from "../../../prisma/prisma.service"
 import { AirtableService } from "../../Airtable/services/airtable.service"
 import { compact } from "lodash"
 

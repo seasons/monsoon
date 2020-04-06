@@ -1,11 +1,11 @@
+import { AirtableService } from "@modules/Airtable/services/airtable.service"
+import { AuthService } from "@modules/User/services/auth.service"
+import { EmailService } from "@modules/Email/services/email.service"
 import { Injectable } from "@nestjs/common"
-import chargebee from "chargebee"
-import { AuthService } from "../../User/services/auth.service"
-import { AirtableService } from "../../Airtable/services/airtable.service"
-import { EmailService } from "../../Email/services/email.service"
-import { get } from "lodash"
 import { PaymentUtilsService } from "./payment.utils.service"
-import { PrismaService } from "../../../prisma/prisma.service"
+import { PrismaService } from "@prisma/prisma.service"
+import chargebee from "chargebee"
+import { get } from "lodash"
 
 @Injectable()
 export class PaymentService {

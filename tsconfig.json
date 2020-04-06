@@ -10,7 +10,13 @@
     "esModuleInterop": true,
     "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
-    "emitDecoratorMetadata": true
+    "emitDecoratorMetadata": true,
+    "baseUrl": "./src",
+    "paths": {
+      "@app/*": ["./*"],
+      "@modules/*": ["modules/*"],
+      "@prisma/*": ["prisma/*"]
+    }
   },
   "exclude": ["./scripts/", "./bin"]
 }
