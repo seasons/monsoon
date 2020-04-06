@@ -63,55 +63,44 @@ export class AirtableService {
     shippingError: string,
     returnShippingError: string
   ): Promise<[AirtableData, () => void]> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const itemIDs = (data.products.connect as { seasonsUID: string }[]).map(
-          a => a.seasonsUID
-        )
-        const items = await this.getPhysicalProducts(itemIDs)
-        const airtableUserRecord = await this.utils.getAirtableUserRecordByUserEmail(
-          userEmail
-        )
-        if (!airtableUserRecord) {
-          return reject(`User with email ${userEmail} not found on airtable`)
-        }
-        const createData = [
-          {
-            fields: {
-              ID: data.reservationNumber,
-              User: [airtableUserRecord.id],
-              Items: items.map(a => a.id),
-              Shipped: false,
-              Status: "New",
-              "Shipping Address": airtableUserRecord.fields["Shipping Address"],
-              "Shipping Label":
-                data.sentPackage.create.shippingLabel.create.image,
-              "Tracking URL":
-                data.sentPackage.create.shippingLabel.create.trackingURL,
-              "Return Label":
-                data.returnedPackage.create.shippingLabel.create.image,
-              "Return Tracking URL":
-                data.returnedPackage.create.shippingLabel.create.trackingURL,
-              "Shipping Error": shippingError,
-              "Return Shipping Error": returnShippingError,
-            },
-          },
-        ]
-        const records = await this.airtableBase
-          .base("Reservations")
-          .create(createData)
+    const itemIDs = (data.products.connect as { seasonsUID: string }[]).map(
+      a => a.seasonsUID
+    )
+    const airtableUserRecord = await this.utils.getAirtableUserRecordByUserEmail(
+      userEmail
+    )
+    if (!airtableUserRecord) {
+      throw new Error(`User with email ${userEmail} not found on airtable`)
+    }
+    const records = await this.airtableBase.base("Reservations").create([
+      {
+        fields: {
+          ID: data.reservationNumber,
+          User: [airtableUserRecord.id],
+          Items: (await this.getPhysicalProducts(itemIDs)).map(a => a.id),
+          Shipped: false,
+          Status: "New",
+          "Shipping Address": airtableUserRecord.fields["Shipping Address"],
+          "Shipping Label": data.sentPackage.create.shippingLabel.create.image,
+          "Tracking URL":
+            data.sentPackage.create.shippingLabel.create.trackingURL,
+          "Return Label":
+            data.returnedPackage.create.shippingLabel.create.image,
+          "Return Tracking URL":
+            data.returnedPackage.create.shippingLabel.create.trackingURL,
+          "Shipping Error": shippingError,
+          "Return Shipping Error": returnShippingError,
+        },
+      },
+    ])
 
-        const rollbackAirtableReservation = async () => {
-          const numDeleted = await this.airtableBase
-            .base("Reservations")
-            .destroy([records[0].getId()])
-          return numDeleted
-        }
-        return resolve([records[0], rollbackAirtableReservation])
-      } catch (err) {
-        return reject(err)
-      }
-    })
+    const rollbackAirtableReservation = async () => {
+      const numDeleted = await this.airtableBase
+        .base("Reservations")
+        .destroy([records[0].getId()])
+      return numDeleted
+    }
+    return [records[0], rollbackAirtableReservation]
   }
 
   async createOrUpdateAirtableUser(user: User, fields: AirtableUserFields) {
