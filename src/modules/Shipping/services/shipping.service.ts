@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common"
 import { User, Customer, ID_Input, Location } from "../../../prisma"
-import { UtilsService } from "../../Utils/utils.service"
+import { UtilsService } from "../../Utils/services/utils.service"
 import shippo from "shippo"
 import { ShippoTransaction, ShippoShipment } from "../shipping.types"
 import { PrismaService } from "../../../prisma/prisma.service"

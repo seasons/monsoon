@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common"
 import cliProgress from "cli-progress"
 import { AirtableData, AirtableModelName } from "../../Airtable/airtable.types"
 import { AirtableService } from "../../Airtable/services/airtable.service"
-import { UtilsService } from "../../Utils/utils.service"
+import { UtilsService } from "../../Utils/services/utils.service"
 
 interface LinkStagingRecordInput {
   rootProductionRecord: any

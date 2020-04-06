@@ -2,7 +2,7 @@ import { Resolver, Query, Args, Context } from "@nestjs/graphql"
 import { Customer, User } from "../../../nest_decorators"
 import { PaymentService } from "../services/payment.service"
 import { PrismaService } from "../../../prisma/prisma.service"
-import { UtilsService } from "../../Utils/utils.service"
+import { UtilsService } from "../../Utils/services/utils.service"
 import { AuthService } from "../../User/services/auth.service"
 
 @Resolver()

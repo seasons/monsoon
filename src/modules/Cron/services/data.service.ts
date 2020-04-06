@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common"
 import { Cron, CronExpression } from "@nestjs/schedule"
-import { UtilsService } from "../../Utils/utils.service"
+import { UtilsService } from "../../Utils/services/utils.service"
 import { PrismaService } from "../../../prisma/prisma.service"
 import { xor } from "lodash"
 import { AirtableData } from "../../Airtable/airtable.types"

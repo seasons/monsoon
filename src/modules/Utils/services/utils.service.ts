@@ -1,9 +1,8 @@
 import { Injectable } from "@nestjs/common"
 import crypto from "crypto"
-import util from "util"
-import { InventoryStatus, Location } from "../../prisma/"
-import { PrismaService } from "../../prisma/prisma.service"
-import { AirtableInventoryStatus } from "../Airtable/airtable.types"
+import { InventoryStatus, Location } from "../../../prisma"
+import { PrismaService } from "../../../prisma/prisma.service"
+import { AirtableInventoryStatus } from "../../Airtable/airtable.types"
 
 @Injectable()
 export class UtilsService {
@@ -12,17 +11,7 @@ export class UtilsService {
   airtableToPrismaInventoryStatus(
     airtableStatus: AirtableInventoryStatus
   ): InventoryStatus {
-    let prismaStatus
-    if (airtableStatus === "Reservable") {
-      prismaStatus = "Reservable"
-    }
-    if (airtableStatus === "Non Reservable") {
-      prismaStatus = "NonReservable"
-    }
-    if (airtableStatus === "Reserved") {
-      prismaStatus = "Reserved"
-    }
-    return prismaStatus
+    return airtableStatus.replace(" ", "") as InventoryStatus
   }
 
   deleteFieldsFromObject(obj: object, fieldsToDelete: string[]) {
