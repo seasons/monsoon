@@ -5,11 +5,11 @@ import {
   ID_Input,
   Product,
   Customer,
-} from "../../../prisma"
+} from "@prisma/index"
 import { head } from "lodash"
 import { ProductUtilsService } from "./product.utils.service"
 import { ProductVariantService } from "./productVariant.service"
-import { PrismaService } from "../../../prisma/prisma.service"
+import { PrismaService } from "@prisma/prisma.service"
 
 @Injectable()
 export class ProductService {

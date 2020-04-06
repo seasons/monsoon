@@ -1,5 +1,5 @@
 import { Module } from "@nestjs/common"
-import { PrismaModule } from "../../prisma/prisma.module"
+import { PrismaModule } from "@prisma/prisma.module"
 import { AuthMutationsResolver } from "./mutations/auth.mutations"
 import { AuthService } from "./services/auth.service"
 import { MeQueriesResolver } from "./queries/me.queries"
@@ -19,7 +19,7 @@ import { UserMutationsResolver } from "./mutations/user.mutations"
     MeQueriesResolver,
     AuthMutationsResolver,
     CustomerMutationsResolver,
-    UserMutationsResolver
+    UserMutationsResolver,
   ],
   exports: [AuthService, CustomerService],
 })

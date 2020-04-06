@@ -1,4 +1,4 @@
-export { directiveResolvers } from "../directives"
+export { directiveResolvers } from "@app/directives"
 export { AirtableModule } from "@modules/Airtable"
 export { CollectionModule } from "@modules/Collection"
 export { CronModule } from "./Cron/cron.module"

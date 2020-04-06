@@ -1,7 +1,8 @@
-import { Resolver, Mutation, Args, Info } from "@nestjs/graphql"
-import { User, Customer, Analytics } from "../../../nest_decorators"
-import { ReservationService } from "../services/reservation.service"
+import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
+
+import { Analytics, Customer, User } from "../../../nest_decorators"
 import { PrismaService } from "../../../prisma/prisma.service"
+import { ReservationService } from "../services/reservation.service"
 
 @Resolver("ProductVariant")
 export class ProductVariantMutationsResolver {

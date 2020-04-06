@@ -157,6 +157,11 @@
       "ts",
       "tsx"
     ],
+    "moduleNameMapper": {
+      "^@app/(.*)$": "<rootDir>/src/$1",
+      "^@modules/(.*)$": "<rootDir>/src/modules/$1",
+      "^@prisma/(.*)$": "<rootDir>/src/prisma/$1"
+    },
     "globals": {
       "PRISMA_ENDPOINT": "9sdfb9"
     }

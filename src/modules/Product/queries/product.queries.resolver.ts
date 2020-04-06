@@ -1,7 +1,7 @@
 import { Query, Resolver, Args, Info, Context } from "@nestjs/graphql"
 import { ProductService } from "../services/product.service"
 import { addFragmentToInfo } from "graphql-binding"
-import { PrismaService } from "../../../prisma/prisma.service"
+import { PrismaService } from "@prisma/prisma.service"
 
 @Resolver()
 export class ProductQueriesResolver {
