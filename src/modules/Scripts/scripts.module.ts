@@ -7,9 +7,10 @@ import { SyncCommands } from "./commands/sync.command"
 import { UserCommands } from "./commands/user.command"
 import { ScriptsService } from "./services/scripts.service"
 import { ProductCommands } from "./commands/product.command"
+import { UtilsModule } from ".."
 
 @Module({
-  imports: [CommandModule, SyncModule, PrismaModule, UserModule],
+  imports: [CommandModule, SyncModule, PrismaModule, UserModule, UtilsModule],
   providers: [ScriptsService, UserCommands, SyncCommands, ProductCommands],
 })
 export class ScriptsModule {}

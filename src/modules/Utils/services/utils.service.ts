@@ -3,6 +3,7 @@ import crypto from "crypto"
 import { InventoryStatus, Location } from "../../../prisma"
 import { PrismaService } from "../../../prisma/prisma.service"
 import { AirtableInventoryStatus } from "../../Airtable/airtable.types"
+import cliProgress from "cli-progress"
 
 @Injectable()
 export class UtilsService {
@@ -64,5 +65,25 @@ export class UtilsService {
 
   Identity(a) {
     return a
+  }
+
+  weightedCoinFlip(pHeads) {
+    if (pHeads < 0 || pHeads > 1) {
+      throw new Error("pHeads must be between 0 and 1 exclusive")
+    }
+    return Math.random() < pHeads ? "Heads" : "Tails"
+  }
+
+  makeCLIProgressBar(format?: string) {
+    return new cliProgress.MultiBar(
+      {
+        clearOnComplete: false,
+        hideCursor: true,
+        format:
+          format ||
+          `{modelName} {bar} {percentage}%  ETA: {eta}s  {value}/{total} ops`,
+      },
+      cliProgress.Presets.shades_grey
+    )
   }
 }

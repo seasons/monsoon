@@ -1,6 +1,10 @@
 import { Injectable } from "@nestjs/common"
 import AWS from "aws-sdk"
 import fs from "fs"
+import { ManualPrismaService } from "../../../prisma/prisma.service"
+import { AirtableService } from "../../Airtable/services/airtable.service"
+import { ManualAirtableBaseService } from "../../Airtable/services/airtable.base.service"
+import { AirtableUtilsService } from "../../Airtable/services/airtable.utils.service"
 
 @Injectable()
 export class ScriptsService {
@@ -18,6 +22,25 @@ export class ScriptsService {
         resolve(filePath)
       })
     })
+  }
+
+  // Returns [PrismaService, AirtableService]
+  async overrideEnvFromRemoteAndGetUpdatedServices({
+    prismaEnvironment = "local",
+    airtableEnvironment = "staging",
+  }): Promise<(ManualPrismaService | AirtableService)[]> {
+    await this.overrideEnvFromRemoteConfig({
+      prismaEnvironment,
+      airtableEnvironment,
+    })
+    const _abs = new ManualAirtableBaseService(process.env.AIRTABLE_DATABASE_ID)
+    return [
+      new ManualPrismaService({
+        endpoint: process.env.PRISMA_ENDPOINT,
+        secret: process.env.PRISMA_SECRET,
+      }),
+      new AirtableService(_abs, new AirtableUtilsService(_abs)),
+    ]
   }
 
   async overrideEnvFromRemoteConfig({
