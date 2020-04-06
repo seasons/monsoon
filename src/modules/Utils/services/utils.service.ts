@@ -3,6 +3,7 @@ import { AirtableInventoryStatus } from "@modules/Airtable/airtable.types"
 import { Injectable } from "@nestjs/common"
 import { PrismaService } from "@prisma/prisma.service"
 import crypto from "crypto"
+import cliProgress from "cli-progress"
 
 @Injectable()
 export class UtilsService {

@@ -1,9 +1,8 @@
-
-import { prisma, Prisma as PrismaClient } from "../../../prisma"
-import { Prisma as PrismaBinding} from "../../../prisma/prisma.binding"
+import { Prisma as PrismaClient } from "@prisma/index"
+import { Prisma as PrismaBinding } from "@prisma/prisma.binding"
 
 export class OverrideablePrismaService {
-  binding: Prisma,
+  binding: PrismaBinding
   client: PrismaClient
 
   constructor({ secret, endpoint, debug = false }) {

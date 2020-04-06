@@ -12,11 +12,3 @@ export class AirtableBaseService {
     this.base = Airtable.base(process.env.AIRTABLE_DATABASE_ID)
   }
 }
-
-export class ManualAirtableBaseService {
-  base: any
-
-  constructor(databaseID) {
-    this.base = Airtable.base(databaseID)
-  }
-}
