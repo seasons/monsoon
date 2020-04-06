@@ -12,17 +12,7 @@ export class UtilsService {
   airtableToPrismaInventoryStatus(
     airtableStatus: AirtableInventoryStatus
   ): InventoryStatus {
-    let prismaStatus
-    if (airtableStatus === "Reservable") {
-      prismaStatus = "Reservable"
-    }
-    if (airtableStatus === "Non Reservable") {
-      prismaStatus = "NonReservable"
-    }
-    if (airtableStatus === "Reserved") {
-      prismaStatus = "Reserved"
-    }
-    return prismaStatus
+    return airtableStatus.replace(" ", "") as InventoryStatus
   }
 
   deleteFieldsFromObject(obj: object, fieldsToDelete: string[]) {

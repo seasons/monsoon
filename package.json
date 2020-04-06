@@ -11,6 +11,7 @@
   "scripts": {
     "build": "rimraf dist && tsc",
     "debug": "dotenv -- nodemon -e ts,graphql -x node --inspect -r dotenv/config -r ts-node/register src/index.ts",
+    "debug:cli": "node --inspect -r dotenv/config -r ts-node/register bin/cli.ts",
     "healthCheck:production": "node -r dotenv/config -r ts-node/register scripts/healthCheck.ts -- dotenv_config_path=.env.production",
     "lint": "yarn tslint -c 'tslint.json' 'src/**/*.ts'",
     "prettier": "prettier --write 'src/**/*.{js,ts,tsx,md,graphql}'",

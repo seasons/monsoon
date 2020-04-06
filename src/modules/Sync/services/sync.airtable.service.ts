@@ -18,6 +18,7 @@ import { SyncReservationsService } from "./syncReservations.service"
 import { SyncSizesService } from "./syncSizes.service"
 import { SyncTopSizesService } from "./syncTopSizes.service"
 import { SyncUsersService } from "./syncUsers.service"
+import { curry } from "lodash"
 
 @Injectable()
 export class AirtableSyncService {
@@ -41,64 +42,87 @@ export class AirtableSyncService {
     private readonly syncUtils: SyncUtilsService
   ) {}
 
-  async syncAirtableToAirtable() {
+  async syncAirtableToAirtable(start: AirtableModelName) {
     // Note that the order matters here in order to properly link between tables.
     console.log(
       `\nNote: If you encounter errors, it's probably a field configuration issue on the destination base\n`
     )
-    const multibar = this.syncUtils.makeAirtableSyncCliProgressBar()
-    const bars = {
-      colors: await this.syncUtils.createSubBar(multibar, "Colors"),
-      brands: await this.syncUtils.createSubBar(multibar, "Brands"),
-      models: await this.syncUtils.createSubBar(multibar, "Models"),
-      categories: await this.syncUtils.createSubBar(multibar, "Categories"),
-      locations: await this.syncUtils.createSubBar(multibar, "Locations"),
-      sizes: await this.syncUtils.createSubBar(multibar, "Sizes"),
-      topSizes: await this.syncUtils.createSubBar(multibar, "Top Sizes"),
-      bottomSizes: await this.syncUtils.createSubBar(multibar, "Bottom Sizes"),
-      products: await this.syncUtils.createSubBar(multibar, "Products"),
-      homepageProductRails: await this.syncUtils.createSubBar(
-        multibar,
-        "Homepage Product Rails"
-      ),
-      productVariants: await this.syncUtils.createSubBar(
-        multibar,
-        "Product Variants"
-      ),
-      physicalProducts: await this.syncUtils.createSubBar(
-        multibar,
-        "Physical Products"
-      ),
-      users: await this.syncUtils.createSubBar(multibar, "Users"),
-      reservations: await this.syncUtils.createSubBar(multibar, "Reservations"),
+
+    const _createSubBar = curry(this.syncUtils.createAirtableToAirtableSubBar)(
+      this.syncUtils.makeAirtableSyncCliProgressBar()
+    ).bind(this.syncUtils)
+
+    let modelsInOrder = [
+      "Colors",
+      "Brands",
+      "Models",
+      "Categories",
+      "Locations",
+      "Sizes",
+      "Top Sizes",
+      "Bottom Sizes",
+      "Products",
+      "Homepage Product Rails",
+      "Product Variants",
+      "Physical Products",
+      "Users",
+      "Reservations",
+    ] as AirtableModelName[]
+    const startIndex = modelsInOrder.findIndex(a => a === start)
+    modelsInOrder = modelsInOrder.slice(startIndex)
+
+    let bars = []
+    for (const model of modelsInOrder) {
+      bars.push(await _createSubBar(model))
     }
+
+    const syncFuncsInOrder = [
+      this.syncColorsService.syncAirtableToAirtable.bind(
+        this.syncColorsService
+      ),
+      this.syncBrandsService.syncAirtableToAirtable.bind(
+        this.syncBrandsService
+      ),
+      this.syncModelsService.syncAirtableToAirtable.bind(
+        this.syncModelsService
+      ),
+      this.syncCategoriesService.syncAirtableToAirtable.bind(
+        this.syncCategoriesService
+      ),
+      this.syncLocationsService.syncAirtableToAirtable.bind(
+        this.syncLocationsService
+      ),
+      this.syncSizesService.syncAirtableToAirtable.bind(this.syncSizesService),
+      this.syncTopSizesService.syncAirtableToAirtable.bind(
+        this.syncTopSizesService
+      ),
+      this.syncBottomSizesService.syncAirtableToAirtable.bind(
+        this.syncBottomSizesService
+      ),
+      this.syncProductsService.syncAirtableToAirtable.bind(
+        this.syncProductsService
+      ),
+      this.syncHomepageProductRailsService.syncAirtableToAirtable.bind(
+        this.syncHomepageProductRailsService
+      ),
+      this.syncProductVariantsService.syncAirtableToAirtable.bind(
+        this.syncProductVariantsService
+      ),
+      this.syncPhysicalProductsService.syncAirtableToAirtable.bind(
+        this.syncPhysicalProductsService
+      ),
+      this.syncUsersService.syncAirtableToAirtable.bind(this.syncUsersService),
+      this.syncReservationsService.syncAirtableToAirtable.bind(
+        this.syncReservationsService
+      ),
+    ].slice(startIndex)
+
     try {
-      await this.syncBottomSizesService.syncAirtableToAirtable(bars.bottomSizes)
-      await this.syncBrandsService.syncAirtableToAirtable(bars.brands)
-      await this.syncCategoriesService.syncAirtableToAirtable(bars.categories)
-      await this.syncColorsService.syncAirtableToAirtable(bars.colors)
-      await this.syncHomepageProductRailsService.syncAirtableToAirtable(
-        bars.homepageProductRails
-      )
-      await this.syncLocationsService.syncAirtableToAirtable(bars.locations)
-      await this.syncModelsService.syncAirtableToAirtable(bars.models)
-      await this.syncPhysicalProductsService.syncAirtableToAirtable(
-        bars.physicalProducts
-      )
-      await this.syncProductsService.syncAirtableToAirtable(bars.products)
-      await this.syncProductVariantsService.syncAirtableToAirtable(
-        bars.productVariants
-      )
-      await this.syncReservationsService.syncAirtableToAirtable(
-        bars.reservations
-      )
-      await this.syncSizesService.syncAirtableToAirtable(bars.sizes)
-      await this.syncTopSizesService.syncAirtableToAirtable(bars.topSizes)
-      await this.syncUsersService.syncAirtableToAirtable(bars.users)
+      for (const [i, syncFunc] of syncFuncsInOrder.entries()) {
+        await syncFunc(bars[i])
+      }
     } catch (err) {
       console.log(err)
-    } finally {
-      multibar.stop()
     }
   }
 
@@ -125,41 +149,24 @@ export class AirtableSyncService {
         throw new Error("invalid table name")
     }
   }
-
-  async createSubBar(multibar, modelName: AirtableModelName) {
-    return await this.syncUtils.createSyncAirtableSubBar(multibar, modelName)
-  }
+  y
 
   private async syncAll() {
-    const multibar = this.syncUtils.makeAirtableSyncCliProgressBar()
+    const _createSubBar = curry(
+      this.syncUtils.createAirtableToPrismaSubBar,
+      2
+    )(this.syncUtils.makeAirtableSyncCliProgressBar()).bind(this.syncUtils)
 
     const bars = {
-      brands: await this.syncUtils.createSubBar(multibar, "Brands"),
-      categories: await this.syncUtils.createSubBar(
-        multibar,
-        "Categories",
-        null,
-        n => n * 2
-      ),
-      colors: await this.syncUtils.createSubBar(multibar, "Colors"),
-      products: await this.syncUtils.createSubBar(multibar, "Products"),
-      productVariants: await this.syncUtils.createSubBar(
-        multibar,
-        "Product Variants"
-      ),
-      physicalProducts: await this.syncUtils.createSubBar(
-        multibar,
-        "Physical Products"
-      ),
-      collections: await this.syncUtils.createSubBar(multibar, "Collections"),
-      collectionGroups: await this.syncUtils.createSubBar(
-        multibar,
-        "Collection Groups"
-      ),
-      homepageProductRails: await this.syncUtils.createSubBar(
-        multibar,
-        "Homepage Product Rails"
-      ),
+      brands: await _createSubBar("Brands"),
+      categories: await _createSubBar("Categories", null, n => n * 2),
+      colors: await _createSubBar("Colors"),
+      products: await _createSubBar("Products"),
+      productVariants: await _createSubBar("Product Variants"),
+      physicalProducts: await _createSubBar("Physical Products"),
+      collections: await _createSubBar("Collections"),
+      collectionGroups: await _createSubBar("Collection Groups"),
+      homepageProductRails: await _createSubBar("Homepage Product Rails"),
     }
 
     // ignore locations because of complications with slugs. plus, we dont really use them yet.
@@ -183,8 +190,6 @@ export class AirtableSyncService {
       )
     } catch (e) {
       console.log(e)
-    } finally {
-      multibar.stop()
     }
   }
 }

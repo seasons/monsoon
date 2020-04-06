@@ -20,7 +20,32 @@ export class SyncCommands {
     command: "sync:airtable:airtable",
     describe: "sync airtable production to staging",
   })
-  async syncAirtableToAirtable() {
+  async syncAirtableToAirtable(
+    @Option({
+      name: "start",
+      alias: "s",
+      default: "Colors",
+      describe: "Model to start from",
+      choices: [
+        "Colors",
+        "Brands",
+        "Models",
+        "Categories",
+        "Locations",
+        "Sizes",
+        "Top Sizes",
+        "Bottom Sizes",
+        "Products",
+        "Homepage Product Rails",
+        "Product Variants",
+        "Physical Products",
+        "Users",
+        "Reservations",
+      ],
+      type: "string",
+    })
+    start
+  ) {
     const envFilePath = await this.scriptsService.downloadFromS3(
       "/tmp/__monsoon__env.json",
       "monsoon-scripts",
@@ -31,7 +56,7 @@ export class SyncCommands {
       process.env._PRODUCTION_AIRTABLE_BASEID =
         env.airtable["production"].baseID
       process.env._STAGING_AIRTABLE_BASEID = env.airtable["staging"].baseID
-      await this.airtableSyncService.syncAirtableToAirtable()
+      await this.airtableSyncService.syncAirtableToAirtable(start)
     } catch (err) {
       console.log(err)
     } finally {

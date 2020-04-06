@@ -12,7 +12,7 @@ import {
 } from "../../../prisma"
 import { Reservation } from "../../../prisma/prisma.binding"
 import { PrismaService } from "../../../prisma/prisma.service"
-import { UtilsService } from "../../Utils/utils.service"
+import { UtilsService } from "../../Utils/services/utils.service"
 import { EmailDataProvider } from "./email.data.service"
 
 @Injectable()

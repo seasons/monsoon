@@ -1,7 +1,7 @@
 import { Customer, User } from "@app/nest_decorators"
 import { PaymentService } from "@modules/Payment/services/payment.service"
 import { AuthService } from "@modules/User/services/auth.service"
-import { UtilsService } from "@modules/Utils/utils.service"
+import { UtilsService } from "@modules/Utils/services/utils.service"
 import { Args, Context, Query, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma/prisma.service"
 
