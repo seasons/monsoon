@@ -13,7 +13,7 @@ export class ScriptsService {
         Key: key,
       }
       this.s3.getObject(params, (err, data) => {
-        if (err) reject(err)
+        if (err) return reject(err)
         fs.writeFileSync(filePath, data.Body.toString())
         resolve(filePath)
       })
