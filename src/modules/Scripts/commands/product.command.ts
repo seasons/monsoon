@@ -3,6 +3,8 @@ import { Command, Option } from "nestjs-command"
 import { ScriptsService } from "../services/scripts.service"
 import { UtilsService } from "../../Utils/services/utils.service"
 import { PrismaService } from "../../../prisma/prisma.service"
+import { AirtableService } from "../../Airtable/services/airtable.service"
+import { compact } from "lodash"
 
 @Injectable()
 export class ProductCommands {
@@ -69,16 +71,16 @@ export class ProductCommands {
     })
     e
   ) {
-    // Get environment-specific prisma connection
     const [
       _prisma,
-      _,
+      _airtable,
     ] = await this.scriptsService.overrideEnvFromRemoteAndGetUpdatedServices({
       prismaEnvironment: e,
     })
     const prisma = _prisma as PrismaService
+    const airtable = _airtable as AirtableService
 
-    const allProductVariants = await prisma.binding.query.productVariants(
+    const allPrismaProductVariants = await prisma.binding.query.productVariants(
       {},
       `
       {
@@ -91,16 +93,17 @@ export class ProductCommands {
       }
       `
     )
+    const allAirtableProductVariants = await airtable.getAllProductVariants()
 
     // Set up a progress bar
     const pBar = this.utilsService
       .makeCLIProgressBar()
-      .create(allProductVariants.length, 0, {
+      .create(allPrismaProductVariants.length * 2, 0, {
         modelName: "Product Variants",
       })
     console.log("") // for aesthetics of the progress bar
 
-    for (const pv of allProductVariants) {
+    for (const pv of allPrismaProductVariants) {
       if (pv.total !== pv.physicalProducts.length) {
         console.log(
           `\nANOMALY: Product variant ${pv.sku} has total count of ${pv.total} but has ${pv.physicalProducts.length} physical products. Skipped reset for this product variant.`
@@ -109,41 +112,75 @@ export class ProductCommands {
         continue
       }
 
-      let newPVData
-      let newPPData
+      let newPVPrismaData
+      let newPPPrismaData
+      let newPVAirtableData
+      let newPPAirtableData
       switch (this.utilsService.weightedCoinFlip(0.95)) {
         // Make 95% of all product variants fully reservable
         case "Heads":
-          newPVData = {
-            total: pv.total,
+          newPVPrismaData = {
             reservable: pv.total,
             reserved: 0,
             nonReservable: 0,
           }
-          newPPData = { inventoryStatus: "Reservable" }
+          newPPPrismaData = { inventoryStatus: "Reservable" }
+          newPVAirtableData = {
+            "Reservable Count": pv.total,
+            "Non-Reservable Count": 0,
+            "Reserved Count": 0,
+          }
+          newPPAirtableData = { "Inventory Status": "Reservable" }
           break
         // Make 5% nonReservable
         case "Tails":
-          newPVData = {
+          newPVPrismaData = {
             total: pv.total,
             reservable: 0,
             reserved: 0,
             nonReservable: pv.total,
           }
-          newPPData = { inventoryStatus: "NonReservable" }
+          newPVAirtableData = {
+            "Reservable Count": 0,
+            "Non-Reservable Count": pv.total,
+            "Reserved Count": 0,
+          }
+          newPPPrismaData = { inventoryStatus: "NonReservable" }
+          newPPAirtableData = { "Inventory Status": "NonReservable" }
           break
         default:
           throw new Error("Invalid coin flip result")
       }
 
+      // Prisma ops
       await prisma.client.updateProductVariant({
         where: { id: pv.id },
-        data: newPVData,
+        data: newPVPrismaData,
       })
       await prisma.client.updateManyPhysicalProducts({
         where: { id_in: pv.physicalProducts.map(a => a.id) },
-        data: newPPData,
+        data: newPPPrismaData,
       })
+      pBar.increment()
+
+      // Airtable ops
+      const correspondingAirtableProductVariant = airtable.getCorrespondingAirtableProductVariant(
+        allAirtableProductVariants,
+        pv
+      )
+      if (!!correspondingAirtableProductVariant) {
+        await airtable.updateProductVariantCounts(
+          correspondingAirtableProductVariant.id,
+          newPVAirtableData
+        )
+        const airtablePhysicalProducts = compact(
+          correspondingAirtableProductVariant.model.physicalProducts
+        ) as string[]
+        await airtable.updatePhysicalProducts(
+          airtablePhysicalProducts,
+          airtablePhysicalProducts.map(a => newPPAirtableData)
+        )
+      }
       pBar.increment()
     }
   }
