@@ -1,6 +1,5 @@
-import { prisma } from "./../../../prisma/index"
 import { Query, Resolver, Args, Info } from "@nestjs/graphql"
-import { PrismaService } from "../../../prisma/prisma.service"
+import { PrismaService } from "@prisma/prisma.service"
 
 @Resolver()
 export class CollectionQueriesResolver {

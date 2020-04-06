@@ -28,7 +28,8 @@
     "sls:deploy-staging": "serverless deploy --verbose --stage qa --region us-east-1 --env=staging",
     "sls:login": "serverless login",
     "sls:start": "serverless offline --env=staging",
-    "start": "dotenv -- nodemon -e ts,graphql -x ts-node src/index.ts",
+    "start:server": "dotenv -- nodemon -e ts,graphql -x ts-node src/index.ts",
+    "start": "concurrently --kill-others 'yarn tsc -w' 'yarn start:server'",
     "check:parity": "node -r dotenv/config -r ts-node/register scripts/queryParity.ts",
     "test": "jest"
   },
@@ -121,6 +122,7 @@
     "@types/yargs": "^15.0.4",
     "apollo-server-testing": "^2.9.16",
     "babel-jest": "^24.9.0",
+    "concurrently": "^5.1.0",
     "dotenv-cli": "1.4.0",
     "graceful-fs": "^4.2.2",
     "jest": "^24.9.0",
@@ -160,6 +162,7 @@
     }
   },
   "_moduleAliases": {
+    "@app": "dist",
     "@modules": "dist/modules",
     "@prisma": "dist/prisma"
   }
