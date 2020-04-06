@@ -1,8 +1,10 @@
 import * as cheerio from "cheerio"
 import request from "request"
+
 import { Injectable } from "@nestjs/common"
-import { ProductRequestUtilsService } from "./productRequest.utils.service"
+
 import { PrismaService } from "../../../prisma/prisma.service"
+import { ProductRequestUtilsService } from "./productRequest.utils.service"
 
 @Injectable()
 export class ProductRequestService {

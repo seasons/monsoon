@@ -1,6 +1,7 @@
-import { Resolver, ResolveField } from "@nestjs/graphql"
+import { Customer } from "@app/nest_decorators"
+import { ResolveField, Resolver } from "@nestjs/graphql"
+
 import { HomepageService } from "../services/homepage.service"
-import { Customer } from "../../../nest_decorators"
 
 @Resolver("Homepage")
 export class HomepageFieldsResolver {

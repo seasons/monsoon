@@ -1,6 +1,8 @@
-import { Injectable } from "@nestjs/common"
 import { head, isEmpty } from "lodash"
 import slugify from "slugify"
+
+import { Injectable } from "@nestjs/common"
+
 import { BottomSizeType, LetterSize, ProductCreateInput } from "../../../prisma"
 import { PrismaService } from "../../../prisma/prisma.service"
 import { AirtableData } from "../../Airtable/airtable.types"

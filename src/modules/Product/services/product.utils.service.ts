@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common"
-import { BrandOrderByInput } from "../../../prisma"
-import { PrismaService } from "../../../prisma/prisma.service"
+import { BrandOrderByInput } from "@prisma/index"
+import { PrismaService } from "@prisma/prisma.service"
 
 @Injectable()
 export class ProductUtilsService {

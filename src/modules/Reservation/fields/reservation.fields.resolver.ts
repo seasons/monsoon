@@ -1,7 +1,7 @@
-import { ResolveField, Resolver, Parent, Info } from "@nestjs/graphql"
+import { Info, Parent, ResolveField, Resolver } from "@nestjs/graphql"
+import { PrismaService } from "@prisma/prisma.service"
+
 import { ReservationUtilsService } from "../services/reservation.utils.service"
-import { PrismaService } from "../../../prisma/prisma.service"
-import { Customer } from "../../../nest_decorators"
 
 @Resolver("Reservation")
 export class ReservationFieldsResolver {

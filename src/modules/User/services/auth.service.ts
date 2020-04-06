@@ -1,11 +1,12 @@
-import { PrismaService } from "./../../../prisma/prisma.service"
-import { Injectable } from "@nestjs/common"
-import request from "request"
-import { CustomerDetail, CustomerDetailCreateInput } from "../../../prisma"
+import { ForbiddenError, UserInputError } from "apollo-server"
 import { head } from "lodash"
+import request from "request"
+
+import { AirtableService } from "@modules/Airtable/services/airtable.service"
+import { Injectable } from "@nestjs/common"
+import { CustomerDetail, CustomerDetailCreateInput } from "@prisma/index"
+import { PrismaService } from "@prisma/prisma.service"
 import PushNotifications from "@pusher/push-notifications-server"
-import { UserInputError, ForbiddenError } from "apollo-server"
-import { AirtableService } from "../../Airtable/services/airtable.service"
 
 const PW_STRENGTH_RULES_URL =
   "https://manage.auth0.com/dashboard/us/seasons/connections/database/con_btTULQOf6kAxxbCz/security"

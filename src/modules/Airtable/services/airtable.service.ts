@@ -1,6 +1,7 @@
-import { Injectable } from "@nestjs/common"
 import * as Airtable from "airtable"
-import { fill, zip, compact } from "lodash"
+import { compact, fill, zip } from "lodash"
+
+import { Injectable } from "@nestjs/common"
 import {
   BillingInfoCreateInput,
   CustomerDetailCreateInput,
@@ -10,7 +11,8 @@ import {
   ReservationCreateInput,
   ReservationStatus,
   User,
-} from "../../../prisma"
+} from "@prisma/index"
+
 import {
   AirtableData,
   AirtableInventoryStatus,

@@ -1,12 +1,14 @@
-import { Injectable } from "@nestjs/common"
-import { ID_Input, Product } from "../../../prisma"
-import {
-  PhysicalProductWithReservationSpecificData,
-  PhysicalProductService,
-} from "./physicalProduct.utils.service"
 import { ApolloError } from "apollo-server"
-import { AirtableService } from "../../Airtable/services/airtable.service"
-import { PrismaService } from "../../../prisma/prisma.service"
+
+import { AirtableService } from "@modules/Airtable/services/airtable.service"
+import { Injectable } from "@nestjs/common"
+import { ID_Input, Product } from "@prisma/index"
+import { PrismaService } from "@prisma/prisma.service"
+
+import {
+  PhysicalProductService,
+  PhysicalProductWithReservationSpecificData,
+} from "./physicalProduct.utils.service"
 
 @Injectable()
 export class ProductVariantService {

@@ -1,4 +1,5 @@
 import { Injectable } from "@nestjs/common"
+
 import { AirtableData } from "../../Airtable/airtable.types"
 import { AirtableService } from "../../Airtable/services/airtable.service"
 import { UtilsService } from "../../Utils/services/utils.service"

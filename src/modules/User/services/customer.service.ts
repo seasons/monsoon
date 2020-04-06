@@ -1,15 +1,17 @@
-import { PrismaService } from "./../../../prisma/prisma.service"
+import zipcodes from "zipcodes"
+
+import { AirtableService } from "@modules/Airtable/services/airtable.service"
+import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { Injectable } from "@nestjs/common"
 import {
-  User,
-  CustomerStatus,
   BillingInfoUpdateDataInput,
+  CustomerStatus,
   ID_Input,
-} from "../../../prisma"
+  User,
+} from "@prisma/index"
+import { PrismaService } from "@prisma/prisma.service"
+
 import { AuthService } from "./auth.service"
-import { AirtableService } from "../../Airtable/services/airtable.service"
-import { ShippingService } from "../../Shipping/services/shipping.service"
-import zipcodes from "zipcodes"
 
 @Injectable()
 export class CustomerService {

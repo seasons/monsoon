@@ -1,11 +1,13 @@
-import { Injectable } from "@nestjs/common"
 import chargebee from "chargebee"
-import { AuthService } from "../../User/services/auth.service"
-import { AirtableService } from "../../Airtable/services/airtable.service"
-import { EmailService } from "../../Email/services/email.service"
 import { get } from "lodash"
+
+import { AirtableService } from "@modules/Airtable/services/airtable.service"
+import { EmailService } from "@modules/Email/services/email.service"
+import { AuthService } from "@modules/User/services/auth.service"
+import { Injectable } from "@nestjs/common"
+import { PrismaService } from "@prisma/prisma.service"
+
 import { PaymentUtilsService } from "./payment.utils.service"
-import { PrismaService } from "../../../prisma/prisma.service"
 
 @Injectable()
 export class PaymentService {

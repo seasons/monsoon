@@ -1,8 +1,10 @@
-import { Context, Mutation, Args, Resolver } from "@nestjs/graphql"
+import { ForbiddenError, UserInputError } from "apollo-server"
+
+import { User } from "@app/nest_decorators"
+import { Args, Context, Mutation, Resolver } from "@nestjs/graphql"
+import { prisma } from "@prisma/index"
+
 import { AuthService } from "../services/auth.service"
-import { UserInputError, ForbiddenError } from "apollo-server"
-import { prisma } from "../../../prisma"
-import { User } from "../../../nest_decorators"
 
 @Resolver()
 export class AuthMutationsResolver {

@@ -1,14 +1,18 @@
-import { NestFactory } from "@nestjs/core"
-import { AppModule } from "./app.module"
+import "module-alias/register"
+
+import bodyParser from "body-parser"
+import cors from "cors"
 import express from "express"
+
+import { NestFactory } from "@nestjs/core"
+import { ExpressAdapter } from "@nestjs/platform-express"
+import * as Sentry from "@sentry/node"
+
+import { AppModule } from "./app.module"
 import { checkJwt } from "./middleware/jwt"
 import { createGetUserMiddleware } from "./middleware/user"
 import { prisma } from "./prisma"
-import cors from "cors"
 import { app as webhooks } from "./webhooks"
-import bodyParser from "body-parser"
-import { ExpressAdapter } from "@nestjs/platform-express"
-import * as Sentry from "@sentry/node"
 
 // Set up the server
 const server = express()
@@ -44,6 +48,3 @@ async function bootstrap() {
   )
 }
 bootstrap()
-
-// Note: for more information on using ApolloServer with express, see
-// https://github.com/apollographql/apollo-server/tree/master/packages/apollo-server-express

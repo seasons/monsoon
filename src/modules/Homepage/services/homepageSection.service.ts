@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common"
-import { PrismaService } from "../../../prisma/prisma.service"
+import { PrismaService } from "@prisma/prisma.service"
+
 import { SectionTitle } from "./homepage.service"
 
 // FIXME: This is being used because currently info is lacking the __typename, add __typename to info

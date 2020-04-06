@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common"
+import { ID_Input, InventoryStatus } from "@prisma/index"
+
 import { ReservationWithProductVariantData } from "./reservation.service"
-import { ID_Input, InventoryStatus } from "../../../prisma"
 
 @Injectable()
 export class ReservationUtilsService {

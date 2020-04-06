@@ -1,15 +1,17 @@
+import { head } from "lodash"
+
 import { Injectable } from "@nestjs/common"
 import {
-  RecentlyViewedProduct,
   BagItem,
+  Customer,
   ID_Input,
   Product,
-  Customer,
-} from "../../../prisma"
-import { head } from "lodash"
+  RecentlyViewedProduct,
+} from "@prisma/index"
+import { PrismaService } from "@prisma/prisma.service"
+
 import { ProductUtilsService } from "./product.utils.service"
 import { ProductVariantService } from "./productVariant.service"
-import { PrismaService } from "../../../prisma/prisma.service"
 
 @Injectable()
 export class ProductService {
