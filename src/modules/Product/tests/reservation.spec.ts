@@ -25,6 +25,7 @@ describe("Reservation Service", () => {
   let testUser: User
   let testCustomer: Customer
   let reservableProductVariants
+  let allAirtablePhysicalProductsSUIDs: string[]
 
   beforeAll(async () => {
     Airtable.configure({
@@ -55,17 +56,38 @@ describe("Reservation Service", () => {
       new ReservationUtilsService()
     )
     testUtilsService = new TestUtilsService(prismaService, airtableService)
+
+    allAirtablePhysicalProductsSUIDs = (
+      await airtableService.getAllPhysicalProducts()
+    ).map(a => a.model.sUID.text)
   })
 
   beforeEach(async () => {
     const { user, customer } = await testUtilsService.createNewTestingCustomer()
     testUser = user
     testCustomer = customer
-    reservableProductVariants = await prismaService.client.productVariants({
-      where: {
-        reservable_gt: 0,
-        physicalProducts_every: { inventoryStatus: "Reservable" },
-      },
+    try {
+      reservableProductVariants = await prismaService.binding.query.productVariants(
+        {
+          where: {
+            reservable_gt: 0,
+            physicalProducts_some: { inventoryStatus: "Reservable" },
+          },
+        },
+        `{
+          id
+          physicalProducts {
+              seasonsUID
+          }
+        }`
+      )
+    } catch (err) {
+      console.log(err)
+    }
+    reservableProductVariants = reservableProductVariants.filter(a => {
+      return a.physicalProducts.every(b =>
+        allAirtablePhysicalProductsSUIDs.includes(b.seasonsUID)
+      )
     })
   })
 
