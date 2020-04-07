@@ -163,16 +163,25 @@ enum QuestionType {
   FreeResponse
 }
 
-enum Rating {
-  Disliked
-  Meh
-  Loved
-}
-
 enum PushNotificationStatus {
   Blocked
   Granted
   Denied
+}
+
+enum Rating {
+  Disliked
+  Ok
+  Loved
+}
+
+enum LetterSize {
+  XS
+  S
+  M
+  L
+  XL
+  XXL
 }
 
 type Brand {
@@ -459,31 +468,6 @@ type BillingInfo {
   postal_code: String
 }
 
-type ReservationFeedback {
-  id: ID! @id
-  comment: String
-  feedbacks: [ProductVariantFeedback!]! @relation(link: TABLE)
-  rating: Rating
-  user: User!
-}
-
-type ProductVariantFeedback {
-  id: ID! @id
-  isCompleted: Boolean!
-  questions: [ProductVariantFeedbackQuestion!]! @relation(link: TABLE)
-  reservationFeedback: ReservationFeedback!
-  variant: ProductVariant!
-}
-
-type ProductVariantFeedbackQuestion {
-  id: ID! @id
-  options: [String!] @scalarList(strategy: RELATION)
-  question: String!
-  responses: [String!] @scalarList(strategy: RELATION)
-  type: QuestionType!
-  variantFeedback: ProductVariantFeedback!
-}
-
 type ProductRequest {
   id: ID! @id
   brand: String
@@ -504,15 +488,6 @@ type ProductVariantWant {
   productVariant: ProductVariant!
   user: User!
   isFulfilled: Boolean!
-}
-
-enum LetterSize {
-  XS
-  S
-  M
-  L
-  XL
-  XXL
 }
 
 type TopSize {
@@ -542,4 +517,31 @@ type Size {
   top: TopSize
   bottom: BottomSize
   display: String!
+}
+
+type ReservationFeedback {
+  id: ID! @id
+  comment: String
+  feedbacks: [ProductVariantFeedback!]! @relation(link: TABLE)
+  rating: Rating
+  user: User!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type ProductVariantFeedback {
+  id: ID! @id
+  isCompleted: Boolean!
+  questions: [ProductVariantFeedbackQuestion!]! @relation(link: TABLE)
+  reservationFeedback: ReservationFeedback!
+  variant: ProductVariant!
+}
+
+type ProductVariantFeedbackQuestion {
+  id: ID! @id
+  options: [String!] @scalarList(strategy: RELATION)
+  question: String!
+  responses: [String!] @scalarList(strategy: RELATION)
+  type: QuestionType!
+  variantFeedback: ProductVariantFeedback!
 }

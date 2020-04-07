@@ -30,7 +30,6 @@ type Product {
     first: Int
     last: Int
   ): [ProductFunction!]
-  availableSizes: [Size!]!
   innerMaterials: [Material!]!
   outerMaterials: [Material!]!
   variants(
@@ -82,6 +81,7 @@ type ProductVariant {
   reserved: Int!
   nonReservable: Int!
   isSaved: Boolean!
+  isInBag: Boolean!
   isWanted: Boolean!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -111,6 +111,7 @@ type Query {
     last: Int
   ): [Product]!
   productsConnection(
+    sizes: [String!]
     category: String
     where: ProductWhereInput
     orderBy: ProductOrderByInput
@@ -121,16 +122,6 @@ type Query {
     first: Int
     last: Int
   ): ProductConnection!
-  collectionGroups(
-    where: CollectionGroupWhereInput
-    orderBy: CollectionGroupOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [CollectionGroup]!
-  collectionGroup(where: CollectionGroupWhereUniqueInput!): CollectionGroup
   collections(
     where: CollectionWhereInput
     orderBy: CollectionOrderByInput
@@ -161,7 +152,6 @@ type Query {
     last: Int
   ): [HomepageProductRail]!
   product(where: ProductWhereUniqueInput!): Product
-  productVariant(where: ProductVariantWhereUniqueInput!): ProductVariant!
   categories(
     where: CategoryWhereInput
     orderBy: CategoryOrderByInput
@@ -190,6 +180,7 @@ type Query {
     last: Int
   ): [ProductRequest]!
   search(query: String!, options: SearchOptions): [SearchResult]!
+  reservationFeedback: ReservationFeedback
 }
 
 type ChargebeeHostedPagePayload {
@@ -231,7 +222,6 @@ type Mutation {
     hostedPageID: String!
   ): BillingInfoPayload
   addProductRequest(reason: String!, url: String!): ProductRequest!
-  deleteProductRequest(requestID: ID!): ProductRequest!
   validateAddress(input: ValidateAddressInput!): ValidationPayload!
   addProductVariantWant(variantID: ID!): ProductVariantWant!
   updateUserPushNotifications(pushNotificationsStatus: String!): User!
@@ -240,6 +230,10 @@ type Mutation {
     shippingAddress: AddressInput!
     phoneNumber: String!
   ): Boolean
+  updateReservationFeedback(
+    feedbackID: ID!
+    input: ReservationFeedbackUpdateInput!
+  ): ReservationFeedback!
 }
 
 input AddressInput {
@@ -363,4 +357,23 @@ type FaqSection {
 type FaqSubsection {
   title: String!
   text: String!
+}
+
+type Reservation {
+  id: ID!
+  user: User!
+  customer: Customer!
+  sentPackage: Package
+  returnedPackage: Package
+  location: Location
+  products: [PhysicalProduct!]!
+  reservationNumber: Int!
+  shipped: Boolean!
+  status: ReservationStatus!
+  shippedAt: DateTime
+  receivedAt: DateTime
+  reminderSentAt: DateTime
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  returnDateDisplay: DateTime
 }

@@ -2,7 +2,6 @@ dist
 package-lock.json
 node_modules
 .idea
-.vscode
 *.log
 .env
 .env.staging
@@ -13,5 +12,5 @@ node_modules
 devnotes.txt
 .helpers.md
 .pgpass
-log.txt
+log*.txt
 coverage/
