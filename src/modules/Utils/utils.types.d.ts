@@ -3,5 +3,5 @@ export interface ProductCountAndStatusSummary {
   reserved: number
   reservable: number
   nonReservable: number
-  status: number
+  status: string
 }

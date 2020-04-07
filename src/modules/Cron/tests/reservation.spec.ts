@@ -9,6 +9,7 @@ import { Customer, User } from "@prisma/index"
 import { EmailDataProvider, EmailService } from "@app/modules/Email"
 import { head, isEqual } from "lodash"
 
+import { AirtableInventoryStatus } from "@app/modules/Airtable/airtable.types"
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { PrismaService } from "@prisma/prisma.service"
 import { ReservationScheduledJobs } from ".."
@@ -16,7 +17,7 @@ import { ReservationService } from "@modules/Product/services/reservation.servic
 import { ShippingService } from "@app/modules/Shipping/services/shipping.service"
 import { TestUtilsService } from "@modules/Utils/services/test.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import { AirtableInventoryStatus } from "@app/modules/Airtable/airtable.types"
+import { ProductCountAndStatusSummary } from "@app/modules/Utils/utils.types"
 
 describe("Return Flow Cron Job", () => {
   let reservationService: ReservationService
@@ -81,7 +82,7 @@ describe("Return Flow Cron Job", () => {
   })
 
   describe("sync physical product status", () => {
-    it("update prisma status and counts. update airtable counts", async () => {
+    it("marking a reserved items as reservable works", async () => {
       const reservedProductVariants = await testUtilsService.getTestableReservedProductVariants(`
       {
           id
@@ -98,8 +99,8 @@ describe("Return Flow Cron Job", () => {
       `)
 
       // Ensure the prisma product variant and airtable product variant are synced before running
-      const testPrismaProdVar = head(reservedProductVariants) as any
-      const testPrismaPhysicalProduct = await prismaService.client.physicalProduct(
+      let testPrismaProdVar = head(reservedProductVariants) as any
+      let testPrismaPhysicalProduct = await prismaService.client.physicalProduct(
         { seasonsUID: testPrismaProdVar.physicalProducts[0]?.seasonsUID }
       )
       const getCorrespondingTestProdVar = async () =>
@@ -165,11 +166,42 @@ describe("Return Flow Cron Job", () => {
       await updateTestAirtablePhysicalProduct("Reservable")
 
       // Run the cron job
+      await reservationJobsService.syncPhysicalProductAndReservationStatuses()
+
       // Confirm it changed
-    }, 50000)
+      testPrismaProdVar = await prismaService.client.productVariant({
+        id: testPrismaProdVar.id,
+      })
+      testPrismaPhysicalProduct = await prismaService.client.physicalProduct({
+        id: testPrismaPhysicalProduct.id,
+      })
+      testAirtableProdVar = await getCorrespondingTestProdVar()
+      testAirtablePhysicalProduct = await getCorrespondingTestPhysicalProduct()
+      const expectedFinalState: ProductCountAndStatusSummary = {
+        ...initialPrismaState,
+        reserved: initialPrismaState.reserved - 1,
+        reservable: initialPrismaState.reservable + 1,
+        status: "Reservable",
+      }
+      expect(
+        testUtilsService.summarizeAirtableCountsAndStatus(
+          testAirtableProdVar,
+          testAirtablePhysicalProduct
+        )
+      ).toStrictEqual(expectedFinalState)
+      expect(
+        testUtilsService.summarizePrismaCountsAndStatus(
+          testPrismaProdVar,
+          testPrismaPhysicalProduct
+        )
+      ).toStrictEqual(expectedFinalState)
+      expect(expectedFinalState.reservable).toBeGreaterThanOrEqual(1)
+      expect(expectedFinalState.reserved).toBeGreaterThanOrEqual(0)
+      expect(expectedFinalState.nonReservable).toBeGreaterThanOrEqual(0)
+    }, 500000)
   })
 
-  describe("sync reservation status", () => {
-    it("properly returns an item, including bag item deletions, feedback survey data creation, status updating, return package updating", async () => {})
-  })
+  // describe("sync reservation status", () => {
+  //   it("properly returns an item, including bag item deletions, feedback survey data creation, status updating, return package updating", async () => {})
+  // })
 })

@@ -5,13 +5,13 @@ import { EmailDataProvider, EmailService } from "@modules/Email"
 import { AirtableService } from "@modules/Airtable/index"
 import { PhysicalProductService } from "@modules/Product/services/physicalProduct.utils.service"
 import { PrismaService } from "@prisma/prisma.service"
+import { ProductCountAndStatusSummary } from "../utils.types"
 import { ProductUtilsService } from "@modules/Product/services/product.utils.service"
 import { ProductVariantService } from "@modules/Product/services/productVariant.service"
 import { ReservationService } from "@modules/Product/services/reservation.service"
 import { ReservationUtilsService } from "@modules/Product/services/reservation.utils.service"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { UtilsService } from "./utils.service"
-import { ProductCountAndStatusSummary } from "../utils.types"
 
 export class TestUtilsService {
   constructor(
