@@ -18,5 +18,5 @@
       "@prisma/*": ["prisma/*"]
     }
   },
-  "exclude": ["./scripts/", "./bin"]
+  "exclude": ["src/scripts", "./bin"]
 }
