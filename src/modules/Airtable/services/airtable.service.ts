@@ -42,17 +42,17 @@ export class AirtableService {
   airtableToPrismaInventoryStatus(
     airtableStatus: AirtableInventoryStatus
   ): InventoryStatus {
-    let prismaStatus
-    if (airtableStatus === "Reservable") {
-      prismaStatus = "Reservable"
+    return airtableStatus.replace(" ", "") as InventoryStatus
+  }
+
+  prismaToAirtableInventoryStatus(
+    prismaStatus: InventoryStatus
+  ): AirtableInventoryStatus {
+    let retVal = prismaStatus as AirtableInventoryStatus
+    if (prismaStatus === "NonReservable") {
+      retVal = "Non Reservable"
     }
-    if (airtableStatus === "Non Reservable") {
-      prismaStatus = "NonReservable"
-    }
-    if (airtableStatus === "Reserved") {
-      prismaStatus = "Reserved"
-    }
-    return prismaStatus
+    return retVal
   }
 
   airtableToPrismaReservationStatus(airtableStatus: string): ReservationStatus {

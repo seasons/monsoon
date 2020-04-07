@@ -11,6 +11,7 @@ import { ReservationService } from "@modules/Product/services/reservation.servic
 import { ReservationUtilsService } from "@modules/Product/services/reservation.utils.service"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { UtilsService } from "./utils.service"
+import { ProductCountAndStatusSummary } from "../utils.types"
 
 export class TestUtilsService {
   constructor(
@@ -106,6 +107,32 @@ export class TestUtilsService {
       },
       info
     )
+  }
+
+  summarizePrismaCountsAndStatus(
+    prismaProdVar,
+    prismaPhysicalProduct
+  ): ProductCountAndStatusSummary {
+    return {
+      total: prismaProdVar.total,
+      reserved: prismaProdVar.reserved,
+      reservable: prismaProdVar.reservable,
+      nonReservable: prismaProdVar.nonReservable,
+      status: prismaPhysicalProduct.inventoryStatus,
+    }
+  }
+
+  summarizeAirtableCountsAndStatus(
+    airtableProdVar,
+    airtablePhysicalProduct
+  ): ProductCountAndStatusSummary {
+    return {
+      total: airtableProdVar.model.totalCount,
+      reserved: airtableProdVar.model.reservedCount,
+      reservable: airtableProdVar.model.reservableCount,
+      nonReservable: airtableProdVar.model["non-ReservableCount"],
+      status: airtablePhysicalProduct.model.inventoryStatus,
+    }
   }
 
   /**

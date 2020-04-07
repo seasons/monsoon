@@ -1,19 +1,22 @@
 import * as Airtable from "airtable"
-import { ReservationService } from "@modules/Product/services/reservation.service"
-import { PrismaService } from "@prisma/prisma.service"
-import { TestUtilsService } from "@modules/Utils/services/test.service"
-import { User, Customer } from "@prisma/index"
+
 import {
   AirtableBaseService,
   AirtableService,
   AirtableUtilsService,
 } from "@modules/Airtable"
-import { ReservationScheduledJobs } from ".."
-import { ShippingService } from "@app/modules/Shipping/services/shipping.service"
-import { EmailService, EmailDataProvider } from "@app/modules/Email"
-import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import { ErrorService } from "@app/modules/Error/services/error.service"
+import { Customer, User } from "@prisma/index"
+import { EmailDataProvider, EmailService } from "@app/modules/Email"
 import { head, isEqual } from "lodash"
+
+import { ErrorService } from "@app/modules/Error/services/error.service"
+import { PrismaService } from "@prisma/prisma.service"
+import { ReservationScheduledJobs } from ".."
+import { ReservationService } from "@modules/Product/services/reservation.service"
+import { ShippingService } from "@app/modules/Shipping/services/shipping.service"
+import { TestUtilsService } from "@modules/Utils/services/test.service"
+import { UtilsService } from "@app/modules/Utils/services/utils.service"
+import { AirtableInventoryStatus } from "@app/modules/Airtable/airtable.types"
 
 describe("Return Flow Cron Job", () => {
   let reservationService: ReservationService
@@ -56,20 +59,20 @@ describe("Return Flow Cron Job", () => {
     const { user, customer } = await testUtilsService.createNewTestingCustomer()
     testUser = user
     testCustomer = customer
-    reservableProductVariants = await testUtilsService.getReservableProductVariants(`
-    {
-      id
-      sku
-      total
-      reserved
-      reservable
-      nonReservable
-      physicalProducts {
-        id
-        seasonsUID
-      }
-    }
-    `)
+    // reservableProductVariants = await testUtilsService.getReservableProductVariants(`
+    // {
+    //   id
+    //   sku
+    //   total
+    //   reserved
+    //   reservable
+    //   nonReservable
+    //   physicalProducts {
+    //     id
+    //     seasonsUID
+    //   }
+    // }
+    // `)
   })
 
   afterEach(async () => {
@@ -79,47 +82,91 @@ describe("Return Flow Cron Job", () => {
 
   describe("sync physical product status", () => {
     it("update prisma status and counts. update airtable counts", async () => {
+      const reservedProductVariants = await testUtilsService.getTestableReservedProductVariants(`
+      {
+          id
+          sku
+          total
+          reserved
+          reservable
+          nonReservable
+          physicalProducts {
+            id
+            seasonsUID
+          }
+        }
+      `)
+
       // Ensure the prisma product variant and airtable product variant are synced before running
-      const testPrismaProdVar = head(reservableProductVariants) as any
+      const testPrismaProdVar = head(reservedProductVariants) as any
       const testPrismaPhysicalProduct = await prismaService.client.physicalProduct(
-        { seasonsUID: head(testPrismaProdVar.physicalProducts) }
+        { seasonsUID: testPrismaProdVar.physicalProducts[0]?.seasonsUID }
       )
-      const testAirtableProdVar = airtableService.getCorrespondingAirtableProductVariant(
-        await airtableService.getAllProductVariants(),
-        testPrismaProdVar
-      )
-      const testAirtablePhysicalProduct = await airtableService.getCorrespondingAirtablePhysicalProduct(
-        await airtableService.getAllPhysicalProducts(),
+      const getCorrespondingTestProdVar = async () =>
+        airtableService.getCorrespondingAirtableProductVariant(
+          await airtableService.getAllProductVariants(),
+          testPrismaProdVar
+        )
+      const getCorrespondingTestPhysicalProduct = async () =>
+        await airtableService.getCorrespondingAirtablePhysicalProduct(
+          await airtableService.getAllPhysicalProducts(),
+          testPrismaPhysicalProduct
+        )
+      let testAirtableProdVar = await getCorrespondingTestProdVar()
+      let testAirtablePhysicalProduct = await getCorrespondingTestPhysicalProduct()
+      const updateTestAirtablePhysicalProduct = async (
+        inventoryStatus: AirtableInventoryStatus
+      ) =>
+        await airtableService.updatePhysicalProducts(
+          [testAirtablePhysicalProduct.id],
+          [
+            {
+              "Inventory Status": inventoryStatus,
+            },
+          ]
+        )
+      const initialPrismaState = testUtilsService.summarizePrismaCountsAndStatus(
+        testPrismaProdVar,
         testPrismaPhysicalProduct
       )
-      if (!testAirtableProdVar) {
-        throw new Error(
-          `No airtable record for product variant ${testPrismaProdVar.sku}`
-        )
-      }
       if (
         !isEqual(
-          {
-            total: testPrismaProdVar.total,
-            reserved: testPrismaProdVar.reserved,
-            reservable: testPrismaProdVar.reservable,
-            nonReservabe: testPrismaProdVar.nonReservable,
-            status: testPrismaPhysicalProduct.inventoryStatus,
-          },
-          {
-            total: testAirtableProdVar.model.total,
-            reserved: testAirtableProdVar.model.reserved,
-            reservable: testAirtableProdVar.model.reservable,
-            nonReservable: testAirtableProdVar.model.nonReservable,
-            status: testAirtablePhysicalProduct.model.inventoryStatus,
-          }
+          initialPrismaState,
+          testUtilsService.summarizeAirtableCountsAndStatus(
+            testAirtableProdVar,
+            testAirtablePhysicalProduct
+          )
         )
       ) {
+        await updateTestAirtablePhysicalProduct(
+          airtableService.prismaToAirtableInventoryStatus(
+            testPrismaPhysicalProduct.inventoryStatus
+          )
+        )
+        await airtableService.updateProductVariantCounts(
+          testAirtableProdVar.id,
+          {
+            "Reservable Count": testPrismaProdVar.reservable,
+            "Reserved Count": testPrismaProdVar.reserved,
+            "Non-Reservable Count": testPrismaProdVar.nonReservable,
+          }
+        )
       }
-      // Edit the airtable product variant
+      testAirtableProdVar = await getCorrespondingTestProdVar()
+      testAirtablePhysicalProduct = await getCorrespondingTestPhysicalProduct()
+      expect(
+        testUtilsService.summarizeAirtableCountsAndStatus(
+          testAirtableProdVar,
+          testAirtablePhysicalProduct
+        )
+      ).toStrictEqual(initialPrismaState)
+
+      // Edit the airtable physical product
+      await updateTestAirtablePhysicalProduct("Reservable")
+
       // Run the cron job
       // Confirm it changed
-    })
+    }, 50000)
   })
 
   describe("sync reservation status", () => {
