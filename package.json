@@ -3,16 +3,18 @@
   "version": "0.1.0",
   "author": "Luc Succes <l2succes@gmail.com>",
   "license": "MIT",
-  "bin": "bin/cli.ts",
+  "bin": "bin/cli.js",
   "main": "dist/index.js",
   "resolutions": {
     "graphql": "^14.5.7"
   },
   "scripts": {
     "build": "rimraf dist && tsc",
+    "check:parity": "node -r dotenv/config -r ts-node/register scripts/queryParity.ts",
     "debug": "dotenv -- nodemon -e ts,graphql -x node --inspect -r dotenv/config -r ts-node/register src/index.ts",
     "debug:cli": "node --inspect -r dotenv/config -r ts-node/register bin/cli.ts",
-    "healthCheck:production": "node -r dotenv/config -r ts-node/register src/scripts/healthCheck.ts -- dotenv_config_path=.env.production",
+    "debug:test": "node --inspect-brk node_modules/.bin/jest --runInBand",
+    "healthCheck:production": "node -r dotenv/config -r ts-node/register scripts/healthCheck.ts -- dotenv_config_path=.env.production",
     "lint": "yarn tslint -c 'tslint.json' 'src/**/*.ts'",
     "prettier": "prettier --write 'src/**/*.{js,ts,tsx,md,graphql}'",
     "prisma:update-bindings": "graphql get-schema --project database && graphql codegen --project database",
@@ -32,7 +34,6 @@
     "start:server": "dotenv -- nodemon -e ts,graphql -x ts-node src/index.ts",
     "start": "concurrently --kill-others 'yarn tsc -w' 'yarn start:server'",
     "sort-imports": "import-sort --write 'src/**/*.{js,ts,tsx}'",
-    "check:parity": "node -r dotenv/config -r ts-node/register scripts/queryParity.ts",
     "test": "jest"
   },
   "dependencies": {

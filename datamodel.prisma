@@ -158,21 +158,30 @@ enum BottomSizeType {
   Letter
 }
 
+enum QuestionType {
+  MultipleChoice
+  FreeResponse
+}
+
 enum PushNotificationStatus {
   Blocked
   Granted
   Denied
 }
 
-enum QuestionType {
-  MultipleChoice
-  FreeResponse
-}
-
 enum Rating {
   Disliked
   Ok
   Loved
+}
+
+enum LetterSize {
+  XS
+  S
+  M
+  L
+  XL
+  XXL
 }
 
 type Brand {
@@ -479,15 +488,6 @@ type ProductVariantWant {
   productVariant: ProductVariant!
   user: User!
   isFulfilled: Boolean!
-}
-
-enum LetterSize {
-  XS
-  S
-  M
-  L
-  XL
-  XXL
 }
 
 type TopSize {

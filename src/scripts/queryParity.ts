@@ -1,4 +1,5 @@
-import { request, GraphQLClient } from "graphql-request"
+import { GraphQLClient, request } from "graphql-request"
+
 import expect from "expect"
 
 const productFields = `

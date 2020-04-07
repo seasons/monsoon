@@ -1,5 +1,7 @@
 import * as Airtable from "airtable"
+
 import { Customer, User } from "@prisma/index"
+
 import { AirtableBaseService } from "@modules/Airtable/services/airtable.base.service"
 import { AirtableService } from "@modules/Airtable/services/airtable.service"
 import { AirtableUtilsService } from "@modules/Airtable/services/airtable.utils.service"
@@ -14,6 +16,7 @@ describe("Reservation Service", () => {
   let testUser: User
   let testCustomer: Customer
   let reservableProductVariants
+  let allAirtablePhysicalProductsSUIDs: string[]
 
   beforeAll(async () => {
     Airtable.configure({
@@ -23,25 +26,44 @@ describe("Reservation Service", () => {
 
     prismaService = new PrismaService()
     const airtableBaseService = new AirtableBaseService()
-    testUtilsService = new TestUtilsService(
-      prismaService,
-      new AirtableService(
-        airtableBaseService,
-        new AirtableUtilsService(airtableBaseService)
-      )
+    const airtableService = new AirtableService(
+      airtableBaseService,
+      new AirtableUtilsService(airtableBaseService)
     )
+    testUtilsService = new TestUtilsService(prismaService, airtableService)
     ;({ reservationService } = testUtilsService.createReservationService())
+
+    allAirtablePhysicalProductsSUIDs = (
+      await airtableService.getAllPhysicalProducts()
+    ).map(a => a.model.sUID.text)
   })
 
   beforeEach(async () => {
     const { user, customer } = await testUtilsService.createNewTestingCustomer()
     testUser = user
     testCustomer = customer
-    reservableProductVariants = await prismaService.client.productVariants({
-      where: {
-        reservable_gt: 0,
-        physicalProducts_every: { inventoryStatus: "Reservable" },
-      },
+    try {
+      reservableProductVariants = await prismaService.binding.query.productVariants(
+        {
+          where: {
+            reservable_gt: 0,
+            physicalProducts_some: { inventoryStatus: "Reservable" },
+          },
+        },
+        `{
+          id
+          physicalProducts {
+              seasonsUID
+          }
+        }`
+      )
+    } catch (err) {
+      console.log(err)
+    }
+    reservableProductVariants = reservableProductVariants.filter(a => {
+      return a.physicalProducts.every(b =>
+        allAirtablePhysicalProductsSUIDs.includes(b.seasonsUID)
+      )
     })
   })
 

@@ -1,16 +1,16 @@
+import { AirtableBaseService, AirtableUtilsService } from "@modules/Airtable"
 import { Customer, User } from "@prisma/index"
+import { EmailDataProvider, EmailService } from "@modules/Email"
 
 import { AirtableService } from "@modules/Airtable/index"
-import { PrismaService } from "@prisma/prisma.service"
 import { PhysicalProductService } from "@modules/Product/services/physicalProduct.utils.service"
-import { AirtableBaseService, AirtableUtilsService } from "@modules/Airtable"
-import { UtilsService } from "./utils.service"
-import { ReservationService } from "@modules/Product/services/reservation.service"
+import { PrismaService } from "@prisma/prisma.service"
 import { ProductUtilsService } from "@modules/Product/services/product.utils.service"
 import { ProductVariantService } from "@modules/Product/services/productVariant.service"
-import { ShippingService } from "@modules/Shipping/services/shipping.service"
-import { EmailService, EmailDataProvider } from "@modules/Email"
+import { ReservationService } from "@modules/Product/services/reservation.service"
 import { ReservationUtilsService } from "@modules/Product/services/reservation.utils.service"
+import { ShippingService } from "@modules/Shipping/services/shipping.service"
+import { UtilsService } from "./utils.service"
 
 export class TestUtilsService {
   constructor(

@@ -1,5 +1,3 @@
-import * as Sentry from "@sentry/node"
-
 import {
   AirtableInventoryStatus,
   AirtableProductVariantCounts,
@@ -89,7 +87,7 @@ export class ReservationScheduledJobs {
   }
 
   // @Cron(CronExpression.EVERY_5_MINUTES)
-  @Cron(CronExpression.EVERY_10_SECONDS)
+  // @Cron(CronExpression.EVERY_MINUTE)
   async syncPhysicalProductAndReservationStatuses() {
     this.logger.log("Sync Physical Product and Reservation Statuses ran")
     const physProdReport = await this.syncPhysicalProductStatus()

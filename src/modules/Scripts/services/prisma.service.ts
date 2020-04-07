@@ -1,5 +1,5 @@
-import { Prisma as PrismaClient } from "@prisma/index"
 import { Prisma as PrismaBinding } from "@prisma/prisma.binding"
+import { Prisma as PrismaClient } from "@prisma/index"
 
 export class OverrideablePrismaService {
   binding: PrismaBinding

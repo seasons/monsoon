@@ -1,10 +1,10 @@
-import { Injectable } from "@nestjs/common"
 import AWS from "aws-sdk"
-import fs from "fs"
 import { AirtableService } from "../../Airtable/services/airtable.service"
 import { AirtableUtilsService } from "../../Airtable/services/airtable.utils.service"
-import { OverrideablePrismaService } from "./prisma.service"
+import { Injectable } from "@nestjs/common"
 import { OverridableAirtableBaseService } from "./airtable.service"
+import { OverrideablePrismaService } from "./prisma.service"
+import fs from "fs"
 
 @Injectable()
 export class ScriptsService {
