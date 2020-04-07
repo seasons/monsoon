@@ -3,7 +3,6 @@ import * as Airtable from "airtable"
 import { Customer, User } from "@prisma/index"
 
 import { AirtableBaseService } from "@modules/Airtable/services/airtable.base.service"
-import { AirtableData } from "@modules/Airtable"
 import { AirtableService } from "@modules/Airtable/services/airtable.service"
 import { AirtableUtilsService } from "@modules/Airtable/services/airtable.utils.service"
 import { EmailDataProvider } from "@modules/Email/services/email.data.service"
@@ -76,34 +75,11 @@ describe("Reservation Service", () => {
           },
         },
         `{
-        id
-        product {
-            slug
-        }
-        physicalProducts {
-            seasonsUID
-            inventoryStatus
-            createdAt
-            updatedAt
-        }
-        sku
-        total
-        reservable
-        reserved
-        nonReservable
-        internalSize {
-          top {
-            letter
+          id
+          physicalProducts {
+              seasonsUID
           }
-          bottom {
-            type
-            value
-          }
-          productType
-        }
-        createdAt
-        updatedAt
-    }`
+        }`
       )
     } catch (err) {
       console.log(err)
@@ -113,8 +89,6 @@ describe("Reservation Service", () => {
         allAirtablePhysicalProductsSUIDs.includes(b.seasonsUID)
       )
     })
-
-    console.log(reservableProductVariants.length)
   })
 
   afterEach(async () => {
@@ -180,32 +154,32 @@ describe("Reservation Service", () => {
       )
     }, 50000)
 
-    // it("should throw an error saying the item is not reservable", async () => {
-    //   const nonReservableProductVariants = await prismaService.client.productVariants(
-    //     {
-    //       where: { reservable: 0 },
-    //     }
-    //   )
-    //   expect(reservableProductVariants.length).toBeGreaterThanOrEqual(2)
-    //   expect(nonReservableProductVariants.length).toBeGreaterThanOrEqual(1)
+    it("should throw an error saying the item is not reservable", async () => {
+      const nonReservableProductVariants = await prismaService.client.productVariants(
+        {
+          where: { reservable: 0 },
+        }
+      )
+      expect(reservableProductVariants.length).toBeGreaterThanOrEqual(2)
+      expect(nonReservableProductVariants.length).toBeGreaterThanOrEqual(1)
 
-    //   const productVariantsToReserve = reservableProductVariants
-    //     .slice(0, 2)
-    //     .map(a => a.id)
-    //   productVariantsToReserve.push(nonReservableProductVariants[0].id)
+      const productVariantsToReserve = reservableProductVariants
+        .slice(0, 2)
+        .map(a => a.id)
+      productVariantsToReserve.push(nonReservableProductVariants[0].id)
 
-    //   expect(
-    //     (async () => {
-    //       return await reservationService.reserveItems(
-    //         productVariantsToReserve,
-    //         testUser,
-    //         testCustomer,
-    //         `{
-    //               id
-    //           }`
-    //       )
-    //     })()
-    //   ).rejects.toThrow("The following item is not reservable")
-    // }, 50000)
+      expect(
+        (async () => {
+          return await reservationService.reserveItems(
+            productVariantsToReserve,
+            testUser,
+            testCustomer,
+            `{
+                  id
+              }`
+          )
+        })()
+      ).rejects.toThrow("The following item is not reservable")
+    }, 50000)
   })
 })
