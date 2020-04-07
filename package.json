@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "author": "Luc Succes <l2succes@gmail.com>",
   "license": "MIT",
-  "bin": "bin/cli.ts",
+  "bin": "bin/cli.js",
   "main": "dist/index.js",
   "resolutions": {
     "graphql": "^14.5.7"
@@ -11,7 +11,7 @@
   "scripts": {
     "build": "rimraf dist && tsc",
     "debug": "dotenv -- nodemon -e ts,graphql -x node --inspect -r dotenv/config -r ts-node/register src/index.ts",
-    "debug:cli": "node --inspect -r dotenv/config -r ts-node/register bin/cli.ts",
+    "debug:cli": "node --inspect -r dotenv/config -r ts-node/register src/cli.ts",
     "healthCheck:production": "node -r dotenv/config -r ts-node/register scripts/healthCheck.ts -- dotenv_config_path=.env.production",
     "lint": "yarn tslint -c 'tslint.json' 'src/**/*.ts'",
     "prettier": "prettier --write 'src/**/*.{js,ts,tsx,md,graphql}'",

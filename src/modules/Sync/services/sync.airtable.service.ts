@@ -17,8 +17,8 @@ import { SyncSizesService } from "./syncSizes.service"
 import { SyncTopSizesService } from "./syncTopSizes.service"
 import { SyncUsersService } from "./syncUsers.service"
 import { SyncUtilsService } from "./sync.utils.service"
-import { curry } from "lodash"
 import { UtilsService } from "../../Utils/services/utils.service"
+import { curry } from "lodash"
 
 @Injectable()
 export class AirtableSyncService {
