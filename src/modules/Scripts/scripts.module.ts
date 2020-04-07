@@ -13,13 +13,6 @@ import { UtilsModule } from ".."
 
 @Module({
   imports: [CommandModule, SyncModule, PrismaModule, UserModule, UtilsModule],
-  providers: [
-    ScriptsService,
-    OverrideablePrismaService,
-    OverridableAirtableBaseService,
-    UserCommands,
-    SyncCommands,
-    ProductCommands,
-  ],
+  providers: [ScriptsService, UserCommands, SyncCommands, ProductCommands],
 })
 export class ScriptsModule {}

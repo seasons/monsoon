@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "author": "Luc Succes <l2succes@gmail.com>",
   "license": "MIT",
-  "bin": "bin/cli.ts",
+  "bin": "bin/cli.js",
   "main": "dist/index.js",
   "resolutions": {
     "graphql": "^14.5.7"
