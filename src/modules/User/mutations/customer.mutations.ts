@@ -1,7 +1,8 @@
-import { Mutation, Args, Resolver, Info } from "@nestjs/graphql"
-import { UserInputError } from "apollo-server"
-import { Analytics, Customer, User } from "../../../nest_decorators"
+import { Analytics, Customer, User } from "@app/nest_decorators"
+import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
+
 import { CustomerService } from "../services/customer.service"
+import { UserInputError } from "apollo-server"
 
 @Resolver()
 export class CustomerMutationsResolver {

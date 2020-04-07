@@ -1,7 +1,8 @@
-import { Resolver, Info, ResolveField } from "@nestjs/graphql"
+import { Customer, User } from "@app/nest_decorators"
+import { Info, ResolveField, Resolver } from "@nestjs/graphql"
+
+import { PrismaService } from "@prisma/prisma.service"
 import { head } from "lodash"
-import { User, Customer } from "../../../nest_decorators"
-import { PrismaService } from "../../../prisma/prisma.service"
 
 @Resolver("Me")
 export class MeFieldsResolver {

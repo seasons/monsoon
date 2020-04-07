@@ -1,6 +1,7 @@
-import { Mutation, Args, Resolver } from "@nestjs/graphql"
-import { User } from "../../../nest_decorators"
-import { PrismaService } from "../../../prisma/prisma.service"
+import { Args, Mutation, Resolver } from "@nestjs/graphql"
+
+import { PrismaService } from "@prisma/prisma.service"
+import { User } from "@app/nest_decorators"
 
 @Resolver()
 export class UserMutationsResolver {

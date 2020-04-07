@@ -1,8 +1,9 @@
-import { Resolver, Args, Mutation, Info } from "@nestjs/graphql"
-import { ProductService } from "../services/product.service"
-import { Customer, User } from "../../../nest_decorators"
+import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
+import { Customer, User } from "@app/nest_decorators"
+
 import { BagService } from "../services/bag.service"
 import { ProductRequestService } from "../services/productRequest.service"
+import { ProductService } from "../services/product.service"
 
 @Resolver()
 export class ProductMutationsResolver {

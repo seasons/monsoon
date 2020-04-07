@@ -1,17 +1,18 @@
-import { Injectable } from "@nestjs/common"
-import sgMail from "@sendgrid/mail"
-import fs from "fs"
-import Handlebars from "handlebars"
-import nodemailer from "nodemailer"
 import {
-  Product,
   Reservation as PrismaReservation,
+  Product,
   User,
 } from "../../../prisma"
-import { Reservation } from "../../../prisma/prisma.binding"
-import { PrismaService } from "../../../prisma/prisma.service"
-import { UtilsService } from "../../Utils/utils.service"
+
 import { EmailDataProvider } from "./email.data.service"
+import Handlebars from "handlebars"
+import { Injectable } from "@nestjs/common"
+import { PrismaService } from "../../../prisma/prisma.service"
+import { Reservation } from "../../../prisma/prisma.binding"
+import { UtilsService } from "../../Utils/services/utils.service"
+import fs from "fs"
+import nodemailer from "nodemailer"
+import sgMail from "@sendgrid/mail"
 
 @Injectable()
 export class EmailService {
@@ -21,12 +22,12 @@ export class EmailService {
     private readonly data: EmailDataProvider
   ) {}
 
-  sendAdminConfirmationEmail(
+  async sendAdminConfirmationEmail(
     user: User,
     products: any[],
     reservation: Reservation
   ) {
-    this.sendTransactionalEmail({
+    await this.sendTransactionalEmail({
       to: process.env.OPERATIONS_ADMIN_EMAIL,
       data: this.data.reservationReturnConfirmation(
         reservation.reservationNumber,
@@ -99,8 +100,8 @@ export class EmailService {
     })
   }
 
-  sendYouCanNowReserveAgainEmail(user: User) {
-    this.sendTransactionalEmail({
+  async sendYouCanNowReserveAgainEmail(user: User) {
+    await this.sendTransactionalEmail({
       to: user.email,
       data: this.data.freeToReserve(),
     })
