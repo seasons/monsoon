@@ -110,23 +110,17 @@ export class ProductService {
           productVariant: {
             id: item,
           },
+          saved: true,
         },
       },
       info
     )
     let bagItem: BagItem = head(bagItems)
 
-    if (bagItem) {
-      if (save && !bagItem.saved) {
-        bagItem = await this.prisma.client.updateBagItem({
-          data: { saved: true },
-          where: { id: bagItem.id }
-        })
-      } else if (!save) {
-        await this.prisma.client.deleteBagItem({
-          id: bagItem.id,
-        })
-      }
+    if (bagItem && !save) {
+      await this.prisma.client.deleteBagItem({
+        id: bagItem.id,
+      })
     } else if (!bagItem && save) {
       bagItem = await this.prisma.client.createBagItem({
         customer: {
