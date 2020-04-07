@@ -42,29 +42,8 @@ describe("Reservation Service", () => {
     const { user, customer } = await testUtilsService.createNewTestingCustomer()
     testUser = user
     testCustomer = customer
-    try {
-      reservableProductVariants = await prismaService.binding.query.productVariants(
-        {
-          where: {
-            reservable_gt: 0,
-            physicalProducts_some: { inventoryStatus: "Reservable" },
-          },
-        },
-        `{
-          id
-          physicalProducts {
-              seasonsUID
-          }
-        }`
-      )
-    } catch (err) {
-      console.log(err)
-    }
-    reservableProductVariants = reservableProductVariants.filter(a => {
-      return a.physicalProducts.every(b =>
-        allAirtablePhysicalProductsSUIDs.includes(b.seasonsUID)
-      )
-    })
+
+    reservableProductVariants = await testUtilsService.getTestableReservableProductVariants()
   })
 
   afterEach(async () => {

@@ -83,4 +83,62 @@ export class TestUtilsService {
 
     return { reservationService }
   }
+
+  async getTestableReservableProductVariants(info?) {
+    return await this.getTestableProductVariants(
+      {
+        where: {
+          reservable_gt: 0,
+          physicalProducts_some: { inventoryStatus: "Reservable" },
+        },
+      },
+      info
+    )
+  }
+
+  async getTestableReservedProductVariants(info?) {
+    return await this.getTestableProductVariants(
+      {
+        where: {
+          reserved_gt: 0,
+          physicalProducts_some: { inventoryStatus: "Reserved" },
+        },
+      },
+      info
+    )
+  }
+
+  /**
+   * Returns a list of all product variants which
+   * a) have corresponding records in airtable
+   * b) have physical products that have corresponding records in airtable
+   */
+  private async getTestableProductVariants(args, info) {
+    const allAirtablePhysicalProductsSUIDs = (
+      await this.airtableService.getAllPhysicalProducts()
+    ).map(a => a.model.sUID.text)
+    const allAirtableProductVariantSKUs = (
+      await this.airtableService.getAllProductVariants()
+    ).map(a => a.model.sKU)
+
+    return (
+      await this.prisma.binding.query.productVariants(
+        args,
+        info ||
+          `{
+          id
+          sku
+          physicalProducts {
+              seasonsUID
+          }
+        }`
+      )
+    )
+      .filter(a => allAirtableProductVariantSKUs.includes(a.sku))
+      .filter(a =>
+        a.physicalProducts.every(b =>
+          allAirtablePhysicalProductsSUIDs.includes(b.seasonsUID)
+        )
+      )
+  }
 }
