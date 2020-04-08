@@ -20,6 +20,7 @@ import { ErrorService } from "@modules/Error/services/error.service"
 import { PrismaService } from "@prisma/prisma.service"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { SyncError } from "@app/errors"
+import { head } from "lodash"
 
 type prismaProductVariantCounts = Pick<
   ProductVariant,
@@ -114,7 +115,6 @@ export class ReservationScheduledJobs {
         this.errorService.setExtraContext({
           physicalProductSUID: airtablePhysicalProduct.model.sUID.text,
         })
-
         const prismaPhysicalProduct = await this.prisma.client.physicalProduct({
           seasonsUID: airtablePhysicalProduct.model.sUID.text,
         })
@@ -429,7 +429,7 @@ export class ReservationScheduledJobs {
 
     // Update the counts on the corresponding product variant in airtable
     await this.airtableService.updateProductVariantCounts(
-      airtablePhysicalProduct.model.productVariant[0],
+      head(airtablePhysicalProduct.model.productVariant),
       this.getUpdatedCounts(
         prismaProductVariant,
         currentStatusOnPrisma,

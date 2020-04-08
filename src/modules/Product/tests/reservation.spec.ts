@@ -44,7 +44,7 @@ describe("Reservation Service", () => {
     testCustomer = customer
 
     reservableProductVariants = await testUtilsService.getTestableReservableProductVariants()
-  })
+  }, 50000)
 
   afterEach(async () => {
     await prismaService.client.deleteCustomer({ id: testCustomer.id })
