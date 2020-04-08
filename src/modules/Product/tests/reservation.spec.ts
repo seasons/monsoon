@@ -8,6 +8,7 @@ import { AirtableUtilsService } from "@modules/Airtable/services/airtable.utils.
 import { PrismaService } from "@prisma/prisma.service"
 import { ReservationService } from "../services/reservation.service"
 import { TestUtilsService } from "@modules/Utils/services/test.service"
+import { sampleSize } from "lodash"
 
 describe("Reservation Service", () => {
   let reservationService: ReservationService
@@ -53,9 +54,10 @@ describe("Reservation Service", () => {
 
   describe("reserveItems", () => {
     it("should create a reservation", async () => {
-      const productVariantsToReserve = reservableProductVariants
-        .slice(0, 3)
-        .map(a => a.id)
+      const productVariantsToReserve = sampleSize(
+        reservableProductVariants,
+        3
+      ).map(a => a.id)
       const returnData = await reservationService.reserveItems(
         productVariantsToReserve,
         testUser,
@@ -118,9 +120,9 @@ describe("Reservation Service", () => {
       expect(reservableProductVariants.length).toBeGreaterThanOrEqual(2)
       expect(nonReservableProductVariants.length).toBeGreaterThanOrEqual(1)
 
-      const productVariantsToReserve = reservableProductVariants
-        .slice(0, 2)
-        .map(a => a.id)
+      const productVariantsToReserve = sampleSize(
+        reservableProductVariants
+      ).map(a => a.id)
       productVariantsToReserve.push(nonReservableProductVariants[0].id)
 
       expect(

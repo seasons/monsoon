@@ -499,7 +499,7 @@ export class ReservationScheduledJobs {
     prismaReservation: any,
     returnedPhysicalProducts: any[] // fields specified in getPrismaReservationWithNeededFields
   ) {
-    const x = await this.prisma.client.deleteManyBagItems({
+    return await this.prisma.client.deleteManyBagItems({
       customer: { id: prismaReservation.customer.id },
       saved: false,
       productVariant: {
@@ -507,7 +507,6 @@ export class ReservationScheduledJobs {
       },
       status: "Reserved",
     })
-    console.log(x)
   }
 
   private async createReservationFeedbacksForVariants(

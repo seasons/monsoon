@@ -5,6 +5,7 @@ import {
   AirtableInventoryStatus,
   AirtableModelName,
   AirtableProductVariantCounts,
+  AirtableReservationFields,
   PrismaProductVariantCounts,
 } from "../airtable.types"
 import {
@@ -17,7 +18,7 @@ import {
   ReservationStatus,
   User,
 } from "@prisma/index"
-import { compact, fill, zip } from "lodash"
+import { compact, fill, head, zip } from "lodash"
 
 import { AirtableBaseService } from "./airtable.base.service"
 import { AirtableUtilsService } from "./airtable.utils.service"
@@ -359,6 +360,15 @@ export class AirtableService {
           }
         )
     })
+  }
+
+  async updateReservation(resnum: number, fields: AirtableReservationFields) {
+    const airtableResy = head(
+      await this.getAll("Reservations", `{ID} = '${resnum}'`)
+    )
+    return await this.airtableBase
+      .base("Reservations")
+      .update(airtableResy?.id, fields)
   }
 
   async updatePhysicalProducts(

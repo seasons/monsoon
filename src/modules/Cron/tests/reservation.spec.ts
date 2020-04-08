@@ -7,7 +7,7 @@ import {
 } from "@modules/Airtable"
 import { Customer, User } from "@prisma/index"
 import { EmailDataProvider, EmailService } from "@app/modules/Email"
-import { head, isEqual, sample } from "lodash"
+import { head, isEqual, sample, sampleSize } from "lodash"
 
 import { AirtableInventoryStatus } from "@app/modules/Airtable/airtable.types"
 import { ErrorService } from "@app/modules/Error/services/error.service"
@@ -29,7 +29,6 @@ describe("Return Flow Cron Job", () => {
   let testUtilsService: TestUtilsService
   let testUser: User
   let testCustomer: Customer
-  let reservableProductVariants
   let reservationJobsService: ReservationScheduledJobs
   let airtableService: AirtableService
 
@@ -64,25 +63,11 @@ describe("Return Flow Cron Job", () => {
     const { user, customer } = await testUtilsService.createNewTestingCustomer()
     testUser = user
     testCustomer = customer
-    // reservableProductVariants = await testUtilsService.getReservableProductVariants(`
-    // {
-    //   id
-    //   sku
-    //   total
-    //   reserved
-    //   reservable
-    //   nonReservable
-    //   physicalProducts {
-    //     id
-    //     seasonsUID
-    //   }
-    // }
-    // `)
   })
 
   afterEach(async () => {
-    await prismaService.client.deleteCustomer({ id: testCustomer.id })
-    await prismaService.client.deleteUser({ id: testUser.id })
+    // await prismaService.client.deleteCustomer({ id: testCustomer.id })
+    // await prismaService.client.deleteUser({ id: testUser.id })
   })
 
   describe("sync physical product status", () => {
@@ -209,7 +194,139 @@ describe("Return Flow Cron Job", () => {
     }, 500000)
   })
 
-  // describe("sync reservation status", () => {
-  //   it("properly returns an item, including bag item deletions, feedback survey data creation, status updating, return package updating", async () => {})
-  // })
+  describe("sync reservation status", () => {
+    it("properly returns an item, including bag item deletions, feedback survey data creation, status updating, return package updating", async () => {
+      const productVariantsToReserve = sampleSize(
+        await testUtilsService.getTestableReservableProductVariants(),
+        3
+      ).map(a => a.id)
+      for (const id of productVariantsToReserve) {
+        await prismaService.client.createBagItem({
+          customer: { connect: { id: testCustomer.id } },
+          productVariant: { connect: { id } },
+          saved: false,
+          status: "Added",
+        })
+        await prismaService.client.createBagItem({
+          customer: { connect: { id: testCustomer.id } },
+          productVariant: { connect: { id } },
+          saved: true,
+          status: "Added",
+        })
+      }
+
+      // Create a reservation
+      const createdReservationData = await reservationService.reserveItems(
+        sampleSize(
+          await testUtilsService.getTestableReservableProductVariants(),
+          3
+        ).map(a => a.id),
+        testUser,
+        testCustomer,
+        `{
+          id
+          reservationNumber
+          products {
+            id
+            seasonsUID
+            productVariant {
+              total
+              nonReservable
+              reserved
+              reservable
+            }
+          }
+        }`
+      )
+
+      try {
+        // Return 1 item on airtable
+        const itemToReturn = sample(createdReservationData.products)
+        const correspondingAirtablePhysicalProduct = airtableService.getCorrespondingAirtablePhysicalProduct(
+          await airtableService.getAllPhysicalProducts(),
+          itemToReturn
+        )
+        await airtableService.updatePhysicalProducts(
+          [correspondingAirtablePhysicalProduct.id],
+          [{ "Inventory Status": "Reservable" }]
+        )
+        await airtableService.updateReservation(
+          createdReservationData.reservationNumber,
+          { Status: "Completed" }
+        )
+
+        // Run the cron job
+        await reservationJobsService.syncPhysicalProductAndReservationStatuses()
+
+        // Check the data
+        const updatedReservation = await prismaService.binding.query.reservation(
+          {
+            where: { id: createdReservationData.id },
+          },
+          `{
+          id
+          status
+          returnedPackage {
+            items {
+              id
+              seasonsUID
+            }
+          }
+        }`
+        )
+        const returnedItem = await prismaService.binding.query.physicalProduct(
+          {
+            where: { id: itemToReturn.id },
+          },
+          `{
+          seasonsUID
+          inventoryStatus
+          productVariant {
+            reservable
+            reserved
+          }
+        }`
+        )
+
+        // counts
+        expect(returnedItem.productVariant.reservable).toEqual(
+          itemToReturn.productVariant.reservable + 1
+        )
+        expect(returnedItem.productVariant.reserved).toEqual(
+          itemToReturn.productVariant.reserved - 1
+        )
+
+        // Physical product status
+        expect(returnedItem.inventoryStatus).toBe("Reservable")
+
+        // Reservation status
+        expect(updatedReservation.status).toBe("Completed")
+
+        // Returned package
+        expect(head(updatedReservation.returnedPackage.items)?.seasonsUID).toBe(
+          returnedItem.seasonsUID
+        )
+
+        // Bag Items
+        const relevantBagItems = await prismaService.client.bagItems({
+          where: {
+            productVariant: {
+              sku_in: productVariantsToReserve.map(a => a.sku),
+            },
+          },
+        })
+        expect(relevantBagItems.length).toBe(3)
+        relevantBagItems.forEach(a => expect(a.saved).toBe(true))
+
+        // feedback data created
+        expect(false).toBe(true)
+      } catch (err) {
+        console.log(err)
+      } finally {
+        await prismaService.client.deleteReservation({
+          id: createdReservationData?.id,
+        })
+      }
+    }, 500000)
+  })
 })

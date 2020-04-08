@@ -38,3 +38,16 @@ export type AirtableProductVariantCounts = {
   "Reserved Count": number
   "Non-Reservable Count": number
 }
+
+export type AirtableReservationFields = {
+  Status:
+    | "New"
+    | "In Queue"
+    | "On Hold"
+    | "Packed"
+    | "Shipped"
+    | "In Transit"
+    | "Received"
+    | "Cancelled"
+    | "Completed"
+}
