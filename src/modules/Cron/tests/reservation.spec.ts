@@ -7,17 +7,21 @@ import {
 } from "@modules/Airtable"
 import { Customer, User } from "@prisma/index"
 import { EmailDataProvider, EmailService } from "@app/modules/Email"
-import { head, isEqual } from "lodash"
+import { head, isEqual, sample } from "lodash"
 
 import { AirtableInventoryStatus } from "@app/modules/Airtable/airtable.types"
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { PrismaService } from "@prisma/prisma.service"
+import { ProductCountAndStatusSummary } from "@app/modules/Utils/utils.types"
 import { ReservationScheduledJobs } from ".."
 import { ReservationService } from "@modules/Product/services/reservation.service"
 import { ShippingService } from "@app/modules/Shipping/services/shipping.service"
 import { TestUtilsService } from "@modules/Utils/services/test.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import { ProductCountAndStatusSummary } from "@app/modules/Utils/utils.types"
+
+/*
+TODO: Refactor test utils? 
+*/
 
 describe("Return Flow Cron Job", () => {
   let reservationService: ReservationService
@@ -82,7 +86,7 @@ describe("Return Flow Cron Job", () => {
   })
 
   describe("sync physical product status", () => {
-    it("marking a reserved items as reservable works", async () => {
+    it("marking a reserved physical product as reservable works", async () => {
       const reservedProductVariants = await testUtilsService.getTestableReservedProductVariants(`
       {
           id
@@ -99,12 +103,12 @@ describe("Return Flow Cron Job", () => {
       `)
 
       // Ensure the prisma product variant and airtable product variant are synced before running
-      let testPrismaProdVar = head(reservedProductVariants) as any
+      let testPrismaProdVar = sample(reservedProductVariants) as any
       let testPrismaPhysicalProduct = await prismaService.client.physicalProduct(
         { seasonsUID: testPrismaProdVar.physicalProducts[0]?.seasonsUID }
       )
       const getCorrespondingTestProdVar = async () =>
-        airtableService.getCorrespondingAirtableProductVariant(
+        await airtableService.getCorrespondingAirtableProductVariant(
           await airtableService.getAllProductVariants(),
           testPrismaProdVar
         )
@@ -152,9 +156,9 @@ describe("Return Flow Cron Job", () => {
             "Non-Reservable Count": testPrismaProdVar.nonReservable,
           }
         )
+        testAirtableProdVar = await getCorrespondingTestProdVar()
+        testAirtablePhysicalProduct = await getCorrespondingTestPhysicalProduct()
       }
-      testAirtableProdVar = await getCorrespondingTestProdVar()
-      testAirtablePhysicalProduct = await getCorrespondingTestPhysicalProduct()
       expect(
         testUtilsService.summarizeAirtableCountsAndStatus(
           testAirtableProdVar,
@@ -183,6 +187,8 @@ describe("Return Flow Cron Job", () => {
         reservable: initialPrismaState.reservable + 1,
         status: "Reservable",
       }
+
+      // Airtable and Prisma were updated properly
       expect(
         testUtilsService.summarizeAirtableCountsAndStatus(
           testAirtableProdVar,
@@ -195,6 +201,8 @@ describe("Return Flow Cron Job", () => {
           testPrismaPhysicalProduct
         )
       ).toStrictEqual(expectedFinalState)
+
+      // The counts aren't messed up
       expect(expectedFinalState.reservable).toBeGreaterThanOrEqual(1)
       expect(expectedFinalState.reserved).toBeGreaterThanOrEqual(0)
       expect(expectedFinalState.nonReservable).toBeGreaterThanOrEqual(0)

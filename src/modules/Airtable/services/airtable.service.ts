@@ -5,6 +5,7 @@ import {
   AirtableInventoryStatus,
   AirtableModelName,
   AirtableProductVariantCounts,
+  PrismaProductVariantCounts,
 } from "../airtable.types"
 import {
   BillingInfoCreateInput,
@@ -53,6 +54,16 @@ export class AirtableService {
       retVal = "Non Reservable"
     }
     return retVal
+  }
+
+  prismaToAirtableCounts(
+    prismaCounts: PrismaProductVariantCounts
+  ): AirtableProductVariantCounts {
+    return {
+      "Non-Reservable Count": prismaCounts.nonReservable,
+      "Reservable Count": prismaCounts.reservable,
+      "Reserved Count": prismaCounts.reserved,
+    }
   }
 
   airtableToPrismaReservationStatus(airtableStatus: string): ReservationStatus {
@@ -354,14 +365,21 @@ export class AirtableService {
     airtableIDs: string[],
     fields: AirtablePhysicalProductFields[]
   ) {
-    if (airtableIDs.length !== fields.length) {
-      throw new Error("airtableIDs and fields must be arrays of equal length")
+    if (airtableIDs.length !== fields.length && fields.length !== 1) {
+      throw new Error(
+        "airtableIDs and fields must be arrays of equal length OR fields must be a length 1 array"
+      )
     }
     if (airtableIDs.length < 1 || airtableIDs.length > 10) {
       throw new Error("please include one to ten airtable record IDs")
     }
 
-    const formattedUpdateData = zip(airtableIDs, fields).map(a => {
+    let formattedFields = fields
+    if (fields.length === 1 && airtableIDs.length !== 1) {
+      formattedFields = airtableIDs.map(a => fields[0])
+    }
+
+    const formattedUpdateData = zip(airtableIDs, formattedFields).map(a => {
       return {
         id: a[0],
         fields: a[1],

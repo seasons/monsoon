@@ -1,5 +1,5 @@
 import { AirtableBaseService, AirtableUtilsService } from "@modules/Airtable"
-import { Customer, User } from "@prisma/index"
+import { Customer, InventoryStatus, User } from "@prisma/index"
 import { EmailDataProvider, EmailService } from "@modules/Email"
 
 import { AirtableService } from "@modules/Airtable/index"
@@ -11,9 +11,17 @@ import { ProductVariantService } from "@modules/Product/services/productVariant.
 import { ReservationService } from "@modules/Product/services/reservation.service"
 import { ReservationUtilsService } from "@modules/Product/services/reservation.utils.service"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
-import { UtilsService } from "./utils.service"
+import { UtilsService } from "@modules/Utils/index"
+import { sampleSize } from "lodash"
 
 export class TestUtilsService {
+  private defaultProductVariantInfo = `{
+    id
+    sku
+    physicalProducts {
+        seasonsUID
+    }
+  }`
   constructor(
     private readonly prisma: PrismaService,
     private readonly airtableService: AirtableService
@@ -93,7 +101,8 @@ export class TestUtilsService {
           physicalProducts_some: { inventoryStatus: "Reservable" },
         },
       },
-      info
+      info,
+      "Reservable"
     )
   }
 
@@ -105,7 +114,8 @@ export class TestUtilsService {
           physicalProducts_some: { inventoryStatus: "Reserved" },
         },
       },
-      info
+      info,
+      "Reserved"
     )
   }
 
@@ -135,12 +145,120 @@ export class TestUtilsService {
     }
   }
 
+  private async createTestableProductVariants({
+    inventoryStatus,
+    num = 10,
+    info,
+  }: {
+    inventoryStatus: InventoryStatus
+    num?: number
+    info?
+  }) {
+    if (num > 100) {
+      throw new Error("Can not create more than 100 testable product variants")
+    }
+
+    const prodVars = sampleSize(
+      await this.getProductVariantsWithAirtableRecords(
+        {},
+        `{
+          id
+          sku
+          total
+          reserved
+          nonReservable
+          reservable
+        }`
+      ),
+      num
+    )
+
+    for (const pv of prodVars) {
+      const counts = { reserved: 0, nonReservable: 0, reservable: 0 }
+      counts[this.inventoryStatusToPrismaCountField(inventoryStatus)] = pv.total
+
+      // Set counts on prisma, airtable
+      await this.prisma.client.updateProductVariant({
+        where: { id: pv.id },
+        data: counts,
+      })
+      const correspondingAirtableProdVar = await this.airtableService.getCorrespondingAirtableProductVariant(
+        await this.airtableService.getAllProductVariants(),
+        pv
+      )
+      this.airtableService.updateProductVariantCounts(
+        correspondingAirtableProdVar.id,
+        this.airtableService.prismaToAirtableCounts(counts)
+      )
+
+      // Set appropriate inventory status for related physical products on prisma, airtable
+      const physicalProducts = await this.prisma.client.physicalProducts({
+        where: { productVariant: { sku: pv.sku } },
+      })
+      await this.prisma.client.updateManyPhysicalProducts({
+        where: { id_in: physicalProducts.map(a => a.id) },
+        data: { inventoryStatus },
+      })
+      const allAirtablePhysicalProducts = await this.airtableService.getAllPhysicalProducts()
+      await this.airtableService.updatePhysicalProducts(
+        physicalProducts
+          .map(a =>
+            this.airtableService.getCorrespondingAirtablePhysicalProduct(
+              allAirtablePhysicalProducts,
+              a
+            )
+          )
+          .map(a => a.id),
+        [
+          {
+            "Inventory Status": this.airtableService.prismaToAirtableInventoryStatus(
+              inventoryStatus
+            ),
+          },
+        ]
+      )
+    }
+
+    return await this.prisma.binding.query.productVariants(
+      {
+        where: { id_in: prodVars.map(a => a.id) },
+      },
+      info || this.defaultProductVariantInfo
+    )
+  }
+
   /**
    * Returns a list of all product variants which
    * a) have corresponding records in airtable
    * b) have physical products that have corresponding records in airtable
+   * c) satisfy args
+   *
+   * If needed, creates 20 such records and returns then
    */
-  private async getTestableProductVariants(args, info) {
+  private async getTestableProductVariants(args, info, inventoryStatus) {
+    let prodVarsWithAirtableRecords = await this.getProductVariantsWithAirtableRecords(
+      args,
+      info
+    )
+
+    let res
+    if (prodVarsWithAirtableRecords.length === 0 && !!inventoryStatus) {
+      res = await this.createTestableProductVariants({
+        inventoryStatus,
+        num: 20,
+        info,
+      })
+    } else {
+      res = await this.prisma.binding.query.productVariants(
+        { where: { sku_in: prodVarsWithAirtableRecords.map(a => a.sku) } },
+        info || this.defaultProductVariantInfo
+      )
+    }
+
+    return res
+  }
+
+  private async getProductVariantsWithAirtableRecords(args, info) {
     const allAirtablePhysicalProductsSUIDs = (
       await this.airtableService.getAllPhysicalProducts()
     ).map(a => a.model.sUID.text)
@@ -148,24 +266,40 @@ export class TestUtilsService {
       await this.airtableService.getAllProductVariants()
     ).map(a => a.model.sKU)
 
-    return (
+    const _res = (
       await this.prisma.binding.query.productVariants(
         args,
-        info ||
-          `{
-          id
-          sku
-          physicalProducts {
-              seasonsUID
-          }
-        }`
+        `{
+        sku
+        physicalProducts {
+          seasonsUID
+        }
+      }`
       )
     )
       .filter(a => allAirtableProductVariantSKUs.includes(a.sku))
       .filter(a =>
-        a.physicalProducts.every(b =>
+        a.physicalProducts?.every(b =>
           allAirtablePhysicalProductsSUIDs.includes(b.seasonsUID)
         )
       )
+
+    return await this.prisma.binding.query.productVariants(
+      { where: { sku_in: _res.map(a => a.sku) } },
+      info || this.defaultProductVariantInfo
+    )
+  }
+
+  private inventoryStatusToPrismaCountField(inventoryStatus: InventoryStatus) {
+    switch (inventoryStatus) {
+      case "NonReservable":
+        return "nonReservable"
+      case "Reservable":
+        return "reservable"
+      case "Reserved":
+        return "reserved"
+      default:
+        throw new Error(`Invalid inventory status ${inventoryStatus}`)
+    }
   }
 }
