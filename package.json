@@ -12,7 +12,7 @@
     "build": "rimraf dist && tsc",
     "check:parity": "node -r dotenv/config -r ts-node/register scripts/queryParity.ts",
     "debug": "dotenv -- nodemon -e ts,graphql -x node --inspect -r dotenv/config -r ts-node/register src/index.ts",
-    "debug:cli": "node --inspect -r dotenv/config -r ts-node/register bin/cli.ts",
+    "debug:cli": "node --inspect-brk -r dotenv/config -r ts-node/register src/cli.ts",
     "debug:test": "node --inspect-brk node_modules/.bin/jest --runInBand",
     "healthCheck:production": "node -r dotenv/config -r ts-node/register scripts/healthCheck.ts -- dotenv_config_path=.env.production",
     "lint": "yarn tslint -c 'tslint.json' 'src/**/*.ts'",
