@@ -1,5 +1,6 @@
 import { Command, Option } from "nestjs-command"
 import { Injectable, Logger } from "@nestjs/common"
+
 import { ScriptsService } from "../services/scripts.service"
 import { UtilsService } from "../../Utils/services/utils.service"
 import { compact } from "lodash"
@@ -55,9 +56,8 @@ export class ProductCommands {
 
   @Command({
     command: "reset:counts",
-    describe:
-      `Resets all product variant counts and physical product statuses so 95% of things are reservable.
- Only resets airtable records if a corresponding record exists in prisma.`
+    describe: `Resets all product variant counts and physical product statuses so 95% of things are reservable.
+ Only resets airtable records if a corresponding record exists in prisma.`,
   })
   async reset(
     @Option({
@@ -67,18 +67,20 @@ export class ProductCommands {
       type: "string",
       default: "local",
     })
-    pe
+    pe,
     @Option({
       name: "abid",
       describe: "Airtable base id",
-      type: "string"
+      type: "string",
     })
     abid
   ) {
     if (pe === "local" && !abid) {
-      throw new Error("Must pass desired airtable database id if resetting counts on local prisma")
+      throw new Error(
+        "Must pass desired airtable database id if resetting counts on local prisma"
+      )
     }
-    
+
     const { prisma, airtable } = await this.scriptsService.getUpdatedServices({
       prismaEnvironment: pe,
       airtableBaseId: abid,

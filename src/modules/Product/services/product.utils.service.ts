@@ -1,6 +1,7 @@
 import { BrandOrderByInput } from "@prisma/index"
 import { Injectable } from "@nestjs/common"
 import { PrismaService } from "@prisma/prisma.service"
+import { uniqBy } from "lodash"
 
 @Injectable()
 export class ProductUtilsService {
@@ -77,6 +78,44 @@ export class ProductUtilsService {
       }`
     )
     return reservedBagItems
+  }
+
+  sortVariants(variants) {
+    const sizes = {
+      xs: {
+        sortWeight: 0,
+      },
+      s: {
+        sortWeight: 1,
+      },
+      m: {
+        sortWeight: 2,
+      },
+      l: {
+        sortWeight: 3,
+      },
+      xl: {
+        sortWeight: 4,
+      },
+      xxl: {
+        sortWeight: 5,
+      },
+    }
+
+    const uniqueArray = uniqBy(variants, "internalSize.display")
+    return uniqueArray.sort((variantA: any, variantB: any) => {
+      const sortWeightA =
+        (variantA.internalSize?.display &&
+          sizes[variantA.internalSize?.display.toLowerCase()] &&
+          sizes[variantA.internalSize?.display.toLowerCase()].sortWeight) ||
+        0
+      const sortWeightB =
+        (variantB.internalSize?.display &&
+          sizes[variantB.internalSize?.display.toLowerCase()] &&
+          sizes[variantB.internalSize?.display.toLowerCase()].sortWeight) ||
+        0
+      return sortWeightA - sortWeightB
+    })
   }
 
   private async productsAlphabetically(

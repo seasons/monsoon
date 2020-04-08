@@ -10,7 +10,8 @@
     "no-conditional-assignment": true,
     "no-consecutive-blank-lines": false,
     "max-classes-per-file": [true, 1],
-    "no-shadowed-variable": false
+    "no-shadowed-variable": false,
+    "no-unused-variable": [true, { "ignore-pattern": "^_" }]
   },
   "jsRules": {
     "max-line-length": {

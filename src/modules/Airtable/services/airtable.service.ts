@@ -75,7 +75,7 @@ export class AirtableService {
       {
         fields: {
           ID: data.reservationNumber,
-          User: compact(airtableUserRecord?.id),
+          User: compact([airtableUserRecord?.id]),
           Items: (await this.getPhysicalProducts(itemIDs)).map(a => a.id),
           Shipped: false,
           Status: "New",

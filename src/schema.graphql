@@ -116,6 +116,7 @@ type Query {
     where: ProductWhereInput
     orderBy: ProductOrderByInput
     skip: Int
+    sizes: [String!]
     after: String
     before: String
     first: Int

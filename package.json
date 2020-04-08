@@ -3,15 +3,17 @@
   "version": "0.1.0",
   "author": "Luc Succes <l2succes@gmail.com>",
   "license": "MIT",
-  "bin": "bin/cli.ts",
+  "bin": "bin/cli.js",
   "main": "dist/index.js",
   "resolutions": {
     "graphql": "^14.5.7"
   },
   "scripts": {
     "build": "rimraf dist && tsc",
+    "check:parity": "node -r dotenv/config -r ts-node/register scripts/queryParity.ts",
     "debug": "dotenv -- nodemon -e ts,graphql -x node --inspect -r dotenv/config -r ts-node/register src/index.ts",
     "debug:cli": "node --inspect -r dotenv/config -r ts-node/register bin/cli.ts",
+    "debug:test": "node --inspect-brk node_modules/.bin/jest --runInBand",
     "healthCheck:production": "node -r dotenv/config -r ts-node/register scripts/healthCheck.ts -- dotenv_config_path=.env.production",
     "lint": "yarn tslint -c 'tslint.json' 'src/**/*.ts'",
     "prettier": "prettier --write 'src/**/*.{js,ts,tsx,md,graphql}'",
@@ -22,6 +24,7 @@
     "prisma:token-production": "prisma token -e .env.production",
     "prisma:token-staging": "prisma token -e .env.staging",
     "prisma:token": "prisma token",
+    "postinstall": "yarn build",
     "sls:build": "serverless package",
     "sls:clean": "rm -rf .build && rm -rf .serverless",
     "sls:debug": "export SLS_DEBUG=* && node --inspect ./node_modules/.bin/serverless offline -s dev",
@@ -31,8 +34,8 @@
     "sls:start": "serverless offline --env=staging",
     "start:server": "dotenv -- nodemon -e ts,graphql -x ts-node src/index.ts",
     "start": "concurrently --kill-others 'yarn tsc -w' 'yarn start:server'",
+    "start:production": "node -r dotenv/config dist/index.js",
     "sort-imports": "import-sort --write 'src/**/*.{js,ts,tsx}'",
-    "check:parity": "node -r dotenv/config -r ts-node/register scripts/queryParity.ts",
     "test": "jest"
   },
   "dependencies": {
