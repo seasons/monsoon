@@ -61,16 +61,17 @@ export class ProductCommands {
   })
   async reset(
     @Option({
-      name: "pe",
+      name: "prisma",
+      alias: "pe",
+      default: "local",
       describe: "Prisma environment on which to reset counts",
       choices: ["local", "staging"],
       type: "string",
-      default: "local",
     })
     pe,
     @Option({
       name: "abid",
-      describe: "Airtable base id",
+      describe: "Airtable base id. Required if resetting local prisma",
       type: "string",
     })
     abid
@@ -146,7 +147,6 @@ export class ProductCommands {
           correspondingAirtableProductVariant.id,
           prodVarAirtableResetData
         )
-        console.log(correspondingAirtableProductVariant.model)
         const airtablePhysicalProducts = compact(
           correspondingAirtableProductVariant.model.physicalProducts
         ) as string[]

@@ -44,7 +44,7 @@ export class UserCommands {
     password
   ) {
     await this.scriptsService.overrideEnvFromRemoteConfig({
-      prismaEnvironment: e,
+      prismaEnvironment: e as string,
       airtableEnvironment: "staging",
     })
 

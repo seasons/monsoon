@@ -27,12 +27,12 @@ export class ScriptsService {
           reserved: 0,
           nonReservable: 0,
         }
-        prodVarAirtableResetData = { inventoryStatus: "Reservable" }
-        physProdPrismaResetData = {
+        prodVarAirtableResetData = {
           "Reservable Count": prismaProdVar.total,
           "Non-Reservable Count": 0,
           "Reserved Count": 0,
         }
+        physProdPrismaResetData = { inventoryStatus: "Reservable" }
         physProdAirtableResetData = { "Inventory Status": "Reservable" }
         break
       // Make 5% nonReservable
@@ -108,7 +108,7 @@ export class ScriptsService {
   async overrideEnvFromRemoteConfig({
     prismaEnvironment = "local",
     airtableEnvironment = "staging",
-    airtableBaseId,
+    airtableBaseId = undefined,
   }) {
     const envFilePath = await this.downloadFromS3(
       "/tmp/__monsoon__env.json",
@@ -121,7 +121,7 @@ export class ScriptsService {
       process.env.PRISMA_ENDPOINT = endpoint
       process.env.PRISMA_SECRET = secret
       if (!!airtableBaseId) {
-        process.env.AIRTABLE_DATABASE_ID = airtableEnvironment
+        process.env.AIRTABLE_DATABASE_ID = airtableBaseId
       } else if (["staging", "production"].includes(airtableEnvironment)) {
         process.env.AIRTABLE_DATABASE_ID =
           env.airtable[airtableEnvironment].baseID
