@@ -49,18 +49,14 @@ export class ProductFieldsResolver {
       return this.productUtilsService.sortVariants(productVariants)
     }
 
-    try {
-      const sortedVariants = productVariants.sort((a, b) => {
-        // @ts-ignore
-        return a?.internalSize?.display - b?.internalSize?.display
-      })
-      const uniqueVariants = sortedUniqBy(
-        sortedVariants,
-        (a: any) => a?.internalSize?.display
-      )
-      return uniqueVariants
-    } catch (e) {
-      return []
-    }
+    const sortedVariants = productVariants.sort((a, b) => {
+      // @ts-ignore
+      return a?.internalSize?.display - b?.internalSize?.display
+    })
+    const uniqueVariants = sortedUniqBy(
+      sortedVariants,
+      (a: any) => a?.internalSize?.display
+    )
+    return uniqueVariants
   }
 }
