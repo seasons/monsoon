@@ -8,16 +8,16 @@ import { AirtableUtilsService } from "@modules/Airtable/services/airtable.utils.
 import { PrismaService } from "@prisma/prisma.service"
 import { ReservationService } from "../services/reservation.service"
 import { TestUtilsService } from "@modules/Utils/services/test.service"
-import { sampleSize } from "lodash"
+import { sampleSize, sample, shuffle } from "lodash"
 
-describe("Reservation Service", () => {
+const ONE_MIN = 60000
+
+describe("Reserve Items", () => {
   let reservationService: ReservationService
   let prismaService: PrismaService
   let testUtilsService: TestUtilsService
   let testUser: User
   let testCustomer: Customer
-  let reservableProductVariants
-  let allAirtablePhysicalProductsSUIDs: string[]
 
   beforeAll(async () => {
     Airtable.configure({
@@ -33,110 +33,152 @@ describe("Reservation Service", () => {
     )
     testUtilsService = new TestUtilsService(prismaService, airtableService)
     ;({ reservationService } = testUtilsService.createReservationService())
-
-    allAirtablePhysicalProductsSUIDs = (
-      await airtableService.getAllPhysicalProducts()
-    ).map(a => a.model.sUID.text)
   })
 
-  beforeEach(async () => {
-    const { user, customer } = await testUtilsService.createNewTestingCustomer()
-    testUser = user
-    testCustomer = customer
+  describe("Reservation creation", () => {
+    let productVariantsToReserveIds
+    let returnData
+    let customerBagItemsAfterReservation
 
-    reservableProductVariants = await testUtilsService.getTestableReservableProductVariants()
-  }, 50000)
+    beforeAll(async () => {
+      const {
+        user: testUser,
+        customer: testCustomer,
+      } = await testUtilsService.createNewTestingCustomer()
 
-  afterEach(async () => {
-    await prismaService.client.deleteCustomer({ id: testCustomer.id })
-    await prismaService.client.deleteUser({ id: testUser.id })
-  })
-
-  describe("reserveItems", () => {
-    it("should create a reservation", async () => {
-      const productVariantsToReserve = sampleSize(
-        reservableProductVariants,
+      productVariantsToReserveIds = sampleSize(
+        await testUtilsService.getTestableReservableProductVariants(),
         3
       ).map(a => a.id)
-      const returnData = await reservationService.reserveItems(
-        productVariantsToReserve,
+      testUtilsService.initializePreReservationCustomerBag(
+        productVariantsToReserveIds,
+        testCustomer,
+        true
+      )
+      returnData = await reservationService.reserveItems(
+        productVariantsToReserveIds,
         testUser,
         testCustomer,
         `{
-            id
-            sentPackage {
-                shippingLabel {
-                    image
-                    trackingNumber
-                    trackingURL
-                }
-            }
-            returnedPackage {
-                shippingLabel {
-                    image
-                    trackingNumber
-                    trackingURL
-                }
-            }
-            products {
-                productVariant {
                     id
-                }
+                    sentPackage {
+                        shippingLabel {
+                            image
+                            trackingNumber
+                            trackingURL
+                        }
+                    }
+                    returnedPackage {
+                        shippingLabel {
+                            image
+                            trackingNumber
+                            trackingURL
+                        }
+                    }
+                    products {
+                        productVariant {
+                            id
+                        }
+                    }
+                }`
+      )
+      customerBagItemsAfterReservation = await prismaService.binding.query.bagItems(
+        { where: { customer: { id: testCustomer.id } } },
+        `{
+            id
+            productVariant {
+                id
             }
+            saved
+            status
         }`
       )
+    }, ONE_MIN)
 
-      // Delete the reservation
+    afterAll(async () => {
+      await prismaService.client.deleteManyBagItems({
+        customer: { id: testCustomer.id },
+      })
+      await prismaService.client.deleteCustomer({ id: testCustomer.id })
+      await prismaService.client.deleteUser({ id: testUser.id })
       await prismaService.client.deleteReservation({ id: returnData.id })
+    })
 
-      // Id check -- i.e, it went through
+    it("runs to completion", () => {
       expect(returnData.id).toMatch(/^ck\w{23}/) // string starting with "ck" and of length 25
+    })
 
-      // sentPackage shipping label data looks good
+    it("creates a sent package", () => {
       expect(returnData.sentPackage.shippingLabel.trackingNumber).toBeDefined()
       expect(returnData.sentPackage.shippingLabel.image).toBeDefined()
       expect(returnData.sentPackage.shippingLabel.trackingURL).toBeDefined()
+    })
 
-      // returnedPackage shipping label data looks good
+    it("creates a stub returned package", () => {
       expect(
         returnData.returnedPackage.shippingLabel.trackingNumber
       ).toBeDefined()
       expect(returnData.returnedPackage.shippingLabel.image).toBeDefined()
       expect(returnData.returnedPackage.shippingLabel.trackingURL).toBeDefined()
+    })
 
-      // products is what we expect
+    it("reserved the expected items", () => {
       expect(returnData.products).toHaveLength(3)
       expect(returnData.products.map(a => a.productVariant.id).sort()).toEqual(
-        productVariantsToReserve.sort()
+        productVariantsToReserveIds.sort()
       )
-    }, 50000)
+    })
 
-    it("should throw an error saying the item is not reservable", async () => {
-      const nonReservableProductVariants = await prismaService.client.productVariants(
-        {
-          where: { reservable: 0 },
-        }
+    it("updates the customers bag", () => {
+      const reservedItems = customerBagItemsAfterReservation.filter(
+        a => a.status === "Reserved"
       )
-      expect(reservableProductVariants.length).toBeGreaterThanOrEqual(2)
-      expect(nonReservableProductVariants.length).toBeGreaterThanOrEqual(1)
+      const addedItems = customerBagItemsAfterReservation.filter(
+        a => a.status === "Added"
+      )
+      expect(reservedItems).toHaveLength(3)
+      expect(addedItems).toHaveLength(3)
+      expect(reservedItems.map(a => a.productVariant.id).sort()).toEqual(
+        productVariantsToReserveIds.sort()
+      )
+    })
+  })
 
-      const productVariantsToReserve = sampleSize(
-        reservableProductVariants
-      ).map(a => a.id)
-      productVariantsToReserve.push(nonReservableProductVariants[0].id)
+  describe("Reserving an already-reserved product variant", () => {
+    let productVariantsToReserveIds
 
+    beforeAll(async () => {
+      const {
+        user: testUser,
+        customer: testCustomer,
+      } = await testUtilsService.createNewTestingCustomer()
+
+      productVariantsToReserveIds = shuffle([
+        ...sampleSize(
+          await testUtilsService.getTestableReservableProductVariants(),
+          2
+        ),
+        sample(await testUtilsService.getTestableReservedProductVariants()),
+      ])
+    }, ONE_MIN)
+
+    afterAll(async () => {
+      await prismaService.client.deleteCustomer({ id: testCustomer.id })
+      await prismaService.client.deleteUser({ id: testUser.id })
+    })
+
+    it("throws an error", () => {
       expect(
-        (async () => {
-          return await reservationService.reserveItems(
-            productVariantsToReserve,
+        (async () =>
+          await reservationService.reserveItems(
+            productVariantsToReserveIds,
             testUser,
             testCustomer,
             `{
-                  id
-              }`
-          )
-        })()
+                id
+            }`
+          ))()
       ).rejects.toThrow("The following item is not reservable")
-    }, 50000)
+    })
   })
 })

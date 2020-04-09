@@ -1,5 +1,5 @@
 import { AirtableBaseService, AirtableUtilsService } from "@modules/Airtable"
-import { Customer, InventoryStatus, User } from "@prisma/index"
+import { Customer, ID_Input, InventoryStatus, User } from "@prisma/index"
 import { EmailDataProvider, EmailService } from "@modules/Email"
 
 import { AirtableService } from "@modules/Airtable/index"
@@ -117,6 +117,29 @@ export class TestUtilsService {
       info,
       "Reserved"
     )
+  }
+
+  async initializePreReservationCustomerBag(
+    productVariantsToReserve: ID_Input[],
+    testCustomer,
+    includedSaved = true
+  ) {
+    for (const id of productVariantsToReserve) {
+      await this.prisma.client.createBagItem({
+        customer: { connect: { id: testCustomer.id } },
+        productVariant: { connect: { id } },
+        saved: false,
+        status: "Added",
+      })
+      if (includedSaved) {
+        await this.prisma.client.createBagItem({
+          customer: { connect: { id: testCustomer.id } },
+          productVariant: { connect: { id } },
+          saved: true,
+          status: "Added",
+        })
+      }
+    }
   }
 
   summarizePrismaCountsAndStatus(
