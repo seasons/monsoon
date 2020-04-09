@@ -60,27 +60,27 @@ describe("Reserve Items", () => {
         testUser,
         testCustomer,
         `{
-                    id
-                    sentPackage {
-                        shippingLabel {
-                            image
-                            trackingNumber
-                            trackingURL
-                        }
-                    }
-                    returnedPackage {
-                        shippingLabel {
-                            image
-                            trackingNumber
-                            trackingURL
-                        }
-                    }
-                    products {
-                        productVariant {
-                            id
-                        }
-                    }
-                }`
+          id
+          sentPackage {
+              shippingLabel {
+                  image
+                  trackingNumber
+                  trackingURL
+              }
+          }
+          returnedPackage {
+              shippingLabel {
+                  image
+                  trackingNumber
+                  trackingURL
+              }
+          }
+          products {
+              productVariant {
+                  id
+              }
+          }
+        }`
       )
       customerBagItemsAfterReservation = await prismaService.binding.query.bagItems(
         { where: { customer: { id: testCustomer.id } } },

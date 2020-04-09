@@ -1,3 +1,5 @@
+import "module-alias/register"
+
 import * as Airtable from "airtable"
 
 import { AirtableBaseService } from "../modules/Airtable/services/airtable.base.service"

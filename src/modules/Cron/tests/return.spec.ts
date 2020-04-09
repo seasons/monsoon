@@ -174,7 +174,6 @@ describe("Return Flow Cron Job", () => {
     }, 10 * ONE_MIN)
 
     it("Updates prisma counts and status", () => {
-      // Airtable and Prisma were updated properly
       expect(
         testUtilsService.summarizePrismaCountsAndStatus(
           testPrismaProdVar,
@@ -205,10 +204,7 @@ describe("Return Flow Cron Job", () => {
     let returnedItem
     let updatedReservation
     let createdReservationData
-    /*
-  TODO: Test that reservation feedbacks are created properly
-  TODO: Delete the reservation feedbacks and the test user after the test
-  */
+
     beforeAll(async () => {
       ;({
         user: testUser,
@@ -301,7 +297,10 @@ describe("Return Flow Cron Job", () => {
         customer: { id: testCustomer.id },
       })
       await prismaService.client.deleteCustomer({ id: testCustomer.id })
-      // await prismaService.client.deleteUser({ id: testUser.id })
+      await prismaService.client.deleteManyReservationFeedbacks({
+        user: { id: testUser.id },
+      })
+      await prismaService.client.deleteUser({ id: testUser.id })
     })
 
     it("updates reservation status", () => {
