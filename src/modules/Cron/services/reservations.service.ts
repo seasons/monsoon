@@ -87,8 +87,7 @@ export class ReservationScheduledJobs {
     this.logger.log(report)
   }
 
-  // @Cron(CronExpression.EVERY_5_MINUTES)
-  // @Cron(CronExpression.EVERY_MINUTE)
+  @Cron(CronExpression.EVERY_MINUTE)
   async syncPhysicalProductAndReservationStatuses() {
     this.logger.log("Sync Physical Product and Reservation Statuses ran")
     const physProdReport = await this.syncPhysicalProductStatus()

@@ -55,8 +55,6 @@ export class ProductVariantMutationsResolver {
       info
     )
 
-    console.log("returnData in reserveItems resolver:", returnData)
-
     // Track the selection
     analytics.track({
       userId: user.id,
