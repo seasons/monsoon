@@ -99,9 +99,9 @@ describe("Reserve Items", () => {
       await prismaService.client.deleteManyBagItems({
         customer: { id: testCustomer.id },
       })
+      await prismaService.client.deleteReservation({ id: returnData.id })
       await prismaService.client.deleteCustomer({ id: testCustomer.id })
       await prismaService.client.deleteUser({ id: testUser.id })
-      await prismaService.client.deleteReservation({ id: returnData.id })
     })
 
     it("runs to completion", () => {
@@ -148,10 +148,10 @@ describe("Reserve Items", () => {
     let productVariantsToReserveIds
 
     beforeAll(async () => {
-      const {
+      ;({
         user: testUser,
         customer: testCustomer,
-      } = await testUtilsService.createNewTestingCustomer()
+      } = await testUtilsService.createNewTestingCustomer())
 
       productVariantsToReserveIds = shuffle([
         ...sampleSize(
@@ -159,7 +159,7 @@ describe("Reserve Items", () => {
           2
         ),
         sample(await testUtilsService.getTestableReservedProductVariants()),
-      ])
+      ]).map(a => a.id)
     }, ONE_MIN)
 
     afterAll(async () => {

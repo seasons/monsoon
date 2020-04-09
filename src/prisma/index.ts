@@ -4437,6 +4437,7 @@ export interface ReservationFeedbackWhereInput {
   rating_in?: Maybe<Rating[] | Rating>
   rating_not_in?: Maybe<Rating[] | Rating>
   user?: Maybe<UserWhereInput>
+  reservation?: Maybe<ReservationWhereInput>
   createdAt?: Maybe<DateTimeInput>
   createdAt_not?: Maybe<DateTimeInput>
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>
@@ -7585,6 +7586,42 @@ export interface ReservationFeedbackCreateWithoutFeedbacksInput {
   comment?: Maybe<String>
   rating?: Maybe<Rating>
   user: UserCreateOneInput
+  reservation: ReservationCreateOneInput
+}
+
+export interface ReservationCreateOneInput {
+  create?: Maybe<ReservationCreateInput>
+  connect?: Maybe<ReservationWhereUniqueInput>
+}
+
+export interface ReservationCreateInput {
+  id?: Maybe<ID_Input>
+  user: UserCreateOneInput
+  customer: CustomerCreateOneWithoutReservationsInput
+  sentPackage?: Maybe<PackageCreateOneInput>
+  returnedPackage?: Maybe<PackageCreateOneInput>
+  location?: Maybe<LocationCreateOneInput>
+  products?: Maybe<PhysicalProductCreateManyInput>
+  reservationNumber: Int
+  shipped: Boolean
+  status: ReservationStatus
+  shippedAt?: Maybe<DateTimeInput>
+  receivedAt?: Maybe<DateTimeInput>
+  reminderSentAt?: Maybe<DateTimeInput>
+}
+
+export interface CustomerCreateOneWithoutReservationsInput {
+  create?: Maybe<CustomerCreateWithoutReservationsInput>
+  connect?: Maybe<CustomerWhereUniqueInput>
+}
+
+export interface CustomerCreateWithoutReservationsInput {
+  id?: Maybe<ID_Input>
+  user: UserCreateOneInput
+  status?: Maybe<CustomerStatus>
+  detail?: Maybe<CustomerDetailCreateOneInput>
+  billingInfo?: Maybe<BillingInfoCreateOneInput>
+  plan?: Maybe<Plan>
 }
 
 export interface ProductVariantFeedbackUpdateInput {
@@ -7733,6 +7770,54 @@ export interface ReservationFeedbackUpdateWithoutFeedbacksDataInput {
   comment?: Maybe<String>
   rating?: Maybe<Rating>
   user?: Maybe<UserUpdateOneRequiredInput>
+  reservation?: Maybe<ReservationUpdateOneRequiredInput>
+}
+
+export interface ReservationUpdateOneRequiredInput {
+  create?: Maybe<ReservationCreateInput>
+  update?: Maybe<ReservationUpdateDataInput>
+  upsert?: Maybe<ReservationUpsertNestedInput>
+  connect?: Maybe<ReservationWhereUniqueInput>
+}
+
+export interface ReservationUpdateDataInput {
+  user?: Maybe<UserUpdateOneRequiredInput>
+  customer?: Maybe<CustomerUpdateOneRequiredWithoutReservationsInput>
+  sentPackage?: Maybe<PackageUpdateOneInput>
+  returnedPackage?: Maybe<PackageUpdateOneInput>
+  location?: Maybe<LocationUpdateOneInput>
+  products?: Maybe<PhysicalProductUpdateManyInput>
+  reservationNumber?: Maybe<Int>
+  shipped?: Maybe<Boolean>
+  status?: Maybe<ReservationStatus>
+  shippedAt?: Maybe<DateTimeInput>
+  receivedAt?: Maybe<DateTimeInput>
+  reminderSentAt?: Maybe<DateTimeInput>
+}
+
+export interface CustomerUpdateOneRequiredWithoutReservationsInput {
+  create?: Maybe<CustomerCreateWithoutReservationsInput>
+  update?: Maybe<CustomerUpdateWithoutReservationsDataInput>
+  upsert?: Maybe<CustomerUpsertWithoutReservationsInput>
+  connect?: Maybe<CustomerWhereUniqueInput>
+}
+
+export interface CustomerUpdateWithoutReservationsDataInput {
+  user?: Maybe<UserUpdateOneRequiredInput>
+  status?: Maybe<CustomerStatus>
+  detail?: Maybe<CustomerDetailUpdateOneInput>
+  billingInfo?: Maybe<BillingInfoUpdateOneInput>
+  plan?: Maybe<Plan>
+}
+
+export interface CustomerUpsertWithoutReservationsInput {
+  update: CustomerUpdateWithoutReservationsDataInput
+  create: CustomerCreateWithoutReservationsInput
+}
+
+export interface ReservationUpsertNestedInput {
+  update: ReservationUpdateDataInput
+  create: ReservationCreateInput
 }
 
 export interface ReservationFeedbackUpsertWithoutFeedbacksInput {
@@ -7853,36 +7938,6 @@ export interface RecentlyViewedProductUpdateManyMutationInput {
   viewCount?: Maybe<Int>
 }
 
-export interface ReservationCreateInput {
-  id?: Maybe<ID_Input>
-  user: UserCreateOneInput
-  customer: CustomerCreateOneWithoutReservationsInput
-  sentPackage?: Maybe<PackageCreateOneInput>
-  returnedPackage?: Maybe<PackageCreateOneInput>
-  location?: Maybe<LocationCreateOneInput>
-  products?: Maybe<PhysicalProductCreateManyInput>
-  reservationNumber: Int
-  shipped: Boolean
-  status: ReservationStatus
-  shippedAt?: Maybe<DateTimeInput>
-  receivedAt?: Maybe<DateTimeInput>
-  reminderSentAt?: Maybe<DateTimeInput>
-}
-
-export interface CustomerCreateOneWithoutReservationsInput {
-  create?: Maybe<CustomerCreateWithoutReservationsInput>
-  connect?: Maybe<CustomerWhereUniqueInput>
-}
-
-export interface CustomerCreateWithoutReservationsInput {
-  id?: Maybe<ID_Input>
-  user: UserCreateOneInput
-  status?: Maybe<CustomerStatus>
-  detail?: Maybe<CustomerDetailCreateOneInput>
-  billingInfo?: Maybe<BillingInfoCreateOneInput>
-  plan?: Maybe<Plan>
-}
-
 export interface ReservationUpdateInput {
   user?: Maybe<UserUpdateOneRequiredInput>
   customer?: Maybe<CustomerUpdateOneRequiredWithoutReservationsInput>
@@ -7896,26 +7951,6 @@ export interface ReservationUpdateInput {
   shippedAt?: Maybe<DateTimeInput>
   receivedAt?: Maybe<DateTimeInput>
   reminderSentAt?: Maybe<DateTimeInput>
-}
-
-export interface CustomerUpdateOneRequiredWithoutReservationsInput {
-  create?: Maybe<CustomerCreateWithoutReservationsInput>
-  update?: Maybe<CustomerUpdateWithoutReservationsDataInput>
-  upsert?: Maybe<CustomerUpsertWithoutReservationsInput>
-  connect?: Maybe<CustomerWhereUniqueInput>
-}
-
-export interface CustomerUpdateWithoutReservationsDataInput {
-  user?: Maybe<UserUpdateOneRequiredInput>
-  status?: Maybe<CustomerStatus>
-  detail?: Maybe<CustomerDetailUpdateOneInput>
-  billingInfo?: Maybe<BillingInfoUpdateOneInput>
-  plan?: Maybe<Plan>
-}
-
-export interface CustomerUpsertWithoutReservationsInput {
-  update: CustomerUpdateWithoutReservationsDataInput
-  create: CustomerCreateWithoutReservationsInput
 }
 
 export interface ReservationUpdateManyMutationInput {
@@ -7935,6 +7970,7 @@ export interface ReservationFeedbackCreateInput {
   >
   rating?: Maybe<Rating>
   user: UserCreateOneInput
+  reservation: ReservationCreateOneInput
 }
 
 export interface ProductVariantFeedbackCreateManyWithoutReservationFeedbackInput {
@@ -7964,6 +8000,7 @@ export interface ReservationFeedbackUpdateInput {
   >
   rating?: Maybe<Rating>
   user?: Maybe<UserUpdateOneRequiredInput>
+  reservation?: Maybe<ReservationUpdateOneRequiredInput>
 }
 
 export interface ProductVariantFeedbackUpdateManyWithoutReservationFeedbackInput {
@@ -11581,6 +11618,7 @@ export interface ReservationFeedbackPromise
   }) => T
   rating: () => Promise<Rating>
   user: <T = UserPromise>() => T
+  reservation: <T = ReservationPromise>() => T
   createdAt: () => Promise<DateTimeOutput>
   updatedAt: () => Promise<DateTimeOutput>
 }
@@ -11603,6 +11641,7 @@ export interface ReservationFeedbackSubscription
   }) => T
   rating: () => Promise<AsyncIterator<Rating>>
   user: <T = UserSubscription>() => T
+  reservation: <T = ReservationSubscription>() => T
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>
 }
@@ -11623,6 +11662,7 @@ export interface ReservationFeedbackNullablePromise
   }) => T
   rating: () => Promise<Rating>
   user: <T = UserPromise>() => T
+  reservation: <T = ReservationPromise>() => T
   createdAt: () => Promise<DateTimeOutput>
   updatedAt: () => Promise<DateTimeOutput>
 }

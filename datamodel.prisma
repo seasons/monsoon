@@ -525,6 +525,7 @@ type ReservationFeedback {
   feedbacks: [ProductVariantFeedback!]! @relation(link: TABLE)
   rating: Rating
   user: User!
+  reservation: Reservation!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }

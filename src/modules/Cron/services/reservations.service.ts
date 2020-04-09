@@ -242,7 +242,8 @@ export class ReservationScheduledJobs {
                 id_in: returnedPhysicalProducts.map(p => p.productVariant.id),
               },
             }),
-            prismaUser
+            prismaUser,
+            prismaReservation
           )
         } else if (
           airtableReservation.model.status !== prismaReservation.status
@@ -511,7 +512,8 @@ export class ReservationScheduledJobs {
 
   private async createReservationFeedbacksForVariants(
     productVariants: ProductVariant[],
-    user: User
+    user: User,
+    reservation: Reservation
   ) {
     const variantInfos = await Promise.all(
       productVariants.map(async variant => {
@@ -585,6 +587,9 @@ export class ReservationScheduledJobs {
         connect: {
           id: user.id,
         },
+      },
+      reservation: {
+        connect: { id: reservation.id },
       },
     })
   }

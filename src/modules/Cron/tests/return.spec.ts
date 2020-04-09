@@ -291,7 +291,7 @@ describe("Return Flow Cron Job", () => {
           }
         }`
       )
-    }, 10 * ONE_MIN)
+    }, ONE_MIN)
 
     afterAll(async () => {
       await prismaService.client.deleteReservation({
@@ -342,8 +342,12 @@ describe("Return Flow Cron Job", () => {
       ).toHaveLength(2)
     })
 
-    it("creates feedback questions", () => {
-      expect(false).toBe(true)
+    it("creates reservation feedback object", async () => {
+      expect(
+        await prismaService.client.reservationFeedbacks({
+          where: { reservation: { id: createdReservationData.id } },
+        })
+      ).toBeDefined()
     })
   })
 })
