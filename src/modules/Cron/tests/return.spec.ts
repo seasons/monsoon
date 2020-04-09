@@ -210,10 +210,10 @@ describe("Return Flow Cron Job", () => {
   TODO: Delete the reservation feedbacks and the test user after the test
   */
     beforeAll(async () => {
-      const {
+      ;({
         user: testUser,
         customer: testCustomer,
-      } = await testUtilsService.createNewTestingCustomer()
+      } = await testUtilsService.createNewTestingCustomer())
       productVariantsToReserveIds = sampleSize(
         await testUtilsService.getTestableReservableProductVariants(),
         3
@@ -226,10 +226,7 @@ describe("Return Flow Cron Job", () => {
 
       // Create a reservation
       createdReservationData = await reservationService.reserveItems(
-        sampleSize(
-          await testUtilsService.getTestableReservableProductVariants(),
-          3
-        ).map(a => a.id),
+        productVariantsToReserveIds,
         testUser,
         testCustomer,
         `{
@@ -271,30 +268,30 @@ describe("Return Flow Cron Job", () => {
           where: { id: createdReservationData.id },
         },
         `{
-                  id
-                  status
-                  returnedPackage {
-                    items {
-                      id
-                      seasonsUID
-                    }
-                  }
-                }`
+          id
+          status
+          returnedPackage {
+            items {
+              id
+              seasonsUID
+            }
+          }
+        }`
       )
       returnedItem = await prismaService.binding.query.physicalProduct(
         {
           where: { id: itemToReturn.id },
         },
         `{
-                  seasonsUID
-                  inventoryStatus
-                  productVariant {
-                    reservable
-                    reserved
-                  }
-                }`
+          seasonsUID
+          inventoryStatus
+          productVariant {
+            reservable
+            reserved
+          }
+        }`
       )
-    }, ONE_MIN)
+    }, 10 * ONE_MIN)
 
     afterAll(async () => {
       await prismaService.client.deleteReservation({
@@ -319,18 +316,30 @@ describe("Return Flow Cron Job", () => {
     })
 
     it("deletes bag items", async () => {
-      const relevantBagItems = await prismaService.client.bagItems({
-        where: {
-          productVariant: {
-            id_in: productVariantsToReserveIds,
+      expect(
+        await prismaService.client.bagItems({
+          where: {
+            productVariant: {
+              id_in: productVariantsToReserveIds,
+            },
+            customer: {
+              id: testCustomer.id,
+            },
+            status: "Added",
           },
-          customer: {
-            id: testCustomer.id,
+        })
+      ).toHaveLength(3)
+      expect(
+        await prismaService.client.bagItems({
+          where: {
+            productVariant: { id_in: productVariantsToReserveIds },
+            customer: {
+              id: testCustomer.id,
+            },
+            status: "Reserved",
           },
-        },
-      })
-      expect(relevantBagItems.length).toBe(3)
-      relevantBagItems.forEach(a => expect(a.saved).toBe(true))
+        })
+      ).toHaveLength(2)
     })
 
     it("creates feedback questions", () => {

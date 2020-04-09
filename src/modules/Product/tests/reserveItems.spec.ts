@@ -41,10 +41,10 @@ describe("Reserve Items", () => {
     let customerBagItemsAfterReservation
 
     beforeAll(async () => {
-      const {
+      ;({
         user: testUser,
         customer: testCustomer,
-      } = await testUtilsService.createNewTestingCustomer()
+      } = await testUtilsService.createNewTestingCustomer())
 
       productVariantsToReserveIds = sampleSize(
         await testUtilsService.getTestableReservableProductVariants(),
