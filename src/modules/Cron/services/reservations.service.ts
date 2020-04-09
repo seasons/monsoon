@@ -243,7 +243,7 @@ export class ReservationScheduledJobs {
               },
             }),
             prismaUser,
-            prismaReservation
+            prismaReservation as Reservation
           )
         } else if (
           airtableReservation.model.status !== prismaReservation.status
