@@ -1,6 +1,7 @@
 import * as Airtable from "airtable"
 
 import { Customer, User } from "@prisma/index"
+import { sample, sampleSize, shuffle } from "lodash"
 
 import { AirtableBaseService } from "@modules/Airtable/services/airtable.base.service"
 import { AirtableService } from "@modules/Airtable/services/airtable.service"
@@ -8,7 +9,6 @@ import { AirtableUtilsService } from "@modules/Airtable/services/airtable.utils.
 import { PrismaService } from "@prisma/prisma.service"
 import { ReservationService } from "../services/reservation.service"
 import { TestUtilsService } from "@modules/Utils/services/test.service"
-import { sampleSize, sample, shuffle } from "lodash"
 
 const ONE_MIN = 60000
 
@@ -175,7 +175,7 @@ describe("Reserve Items", () => {
             testUser,
             testCustomer,
             `{
-                id
+            id
             }`
           ))()
       ).rejects.toThrow("The following item is not reservable")
