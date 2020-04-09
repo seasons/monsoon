@@ -171,7 +171,7 @@ describe("Return Flow Cron Job", () => {
         reservable: initialPrismaState.reservable + 1,
         status: "Reservable",
       }
-    }, ONE_MIN)
+    }, 10 * ONE_MIN)
 
     it("Updates prisma counts and status", () => {
       // Airtable and Prisma were updated properly
@@ -291,7 +291,7 @@ describe("Return Flow Cron Job", () => {
           }
         }`
       )
-    }, ONE_MIN)
+    }, 10 * ONE_MIN)
 
     afterAll(async () => {
       await prismaService.client.deleteReservation({
