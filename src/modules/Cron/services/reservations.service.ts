@@ -89,11 +89,22 @@ export class ReservationScheduledJobs {
   }
 
   @Cron(CronExpression.EVERY_MINUTE)
-  async syncPhysicalProductAndReservationStatuses() {
-    this.logger.log("Sync Physical Product and Reservation Statuses ran")
-    const physProdReport = await this.syncPhysicalProductStatus()
+  async syncPhysicalProductAndReservationStatuses(onlyReservation = false) {
+    this.logger.log(
+      `Sync ${
+        !onlyReservation ? "Physical Product and" : ""
+      } Reservation Statuses ran`
+    )
+    let physProdReport = { errors: [] }
+    if (!onlyReservation) {
+      physProdReport = await this.syncPhysicalProductStatus()
+    }
     const reservationReport = await this.syncReservationStatus()
-    this.logger.log("Sync Physical Product and Reservation Statuses results")
+    this.logger.log(
+      `Sync ${
+        !onlyReservation ? "Physical Product and" : "'"
+      } Reservation Statuses results`
+    )
     this.logger.log({
       ...physProdReport,
       ...reservationReport,
