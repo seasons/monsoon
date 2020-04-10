@@ -237,8 +237,6 @@ export class ReservationScheduledJobs {
             where: { id: prismaReservation.id },
           })
 
-          await this.emailService.sendYouCanNowReserveAgainEmail(prismaUser)
-
           await this.updateUsersBagItemsOnCompletedReservation(
             prismaReservation,
             returnedPhysicalProducts
@@ -247,12 +245,6 @@ export class ReservationScheduledJobs {
           await this.updateReturnPackageOnCompletedReservation(
             prismaReservation,
             returnedPhysicalProducts
-          )
-
-          await this.emailService.sendAdminConfirmationEmail(
-            prismaUser,
-            returnedPhysicalProducts,
-            prismaReservation
           )
 
           // Create reservationFeedback datamodels for the returned product variants
@@ -264,6 +256,14 @@ export class ReservationScheduledJobs {
             }),
             prismaUser,
             prismaReservation as Reservation
+          )
+
+          await this.emailService.sendYouCanNowReserveAgainEmail(prismaUser)
+
+          await this.emailService.sendAdminConfirmationEmail(
+            prismaUser,
+            returnedPhysicalProducts,
+            prismaReservation
           )
         } else if (
           airtableReservation.model.status !== prismaReservation.status
