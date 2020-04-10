@@ -75,13 +75,17 @@ To verify the server is setup properly. go open the [playground](http://localhos
 }
 ```
 
-Nota bene: To ensure your local DB is as close as possible to staging and production, go into Postico (a postgres client), and install the following checks in the "Structure" tab
-on the `ProductVariant` model:
+Nota bene: To ensure your local DB is as close as possible to staging and production, go into Postico (a postgres client), and run the following SQL query:
 
-- total: `total >= 0` and `total = (reservable + reserved + "nonReservable")`
-- reservable: `reservable >= 0`
-- reserved: `reserved >= 0`
-- nonReservable: `"nonReservable" >= 0`
+```
+ALTER TABLE "monsoon$dev"."ProductVariant"
+  ADD CHECK (total >= 0),
+  ADD CHECK (reservable >= 0),
+  ADD CHECK (reserved >= 0),
+  ADD CHECK ("nonReservable" >= 0),
+  ADD CHECK (total = reservable + reserved + "nonReservable");
+
+```
 
 ## Deployment
 

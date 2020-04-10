@@ -56,18 +56,35 @@ export class ProductCommands {
 
   @Command({
     command: "reset:counts",
-    describe:
-      "resets all product variant counts and physical product statuses so 90% of things are reservable",
+    describe: `Resets all product variant counts and physical product statuses so 95% of things are reservable.
+ Only resets airtable records if a corresponding record exists in prisma.`,
   })
   async reset(
     @Option({
-      name: "e",
+      name: "prisma",
+      alias: "pe",
+      default: "local",
       describe: "Prisma environment on which to reset counts",
+      choices: ["local", "staging"],
+      type: "string",
     })
-    e
+    pe,
+    @Option({
+      name: "abid",
+      describe: "Airtable base id. Required if resetting local prisma",
+      type: "string",
+    })
+    abid
   ) {
+    if (pe === "local" && !abid) {
+      throw new Error(
+        "Must pass desired airtable database id if resetting counts on local prisma"
+      )
+    }
+
     const { prisma, airtable } = await this.scriptsService.getUpdatedServices({
-      prismaEnvironment: e,
+      prismaEnvironment: pe,
+      airtableBaseId: abid,
     })
 
     const allPrismaProductVariants = await prisma.binding.query.productVariants(
@@ -102,54 +119,21 @@ export class ProductCommands {
         continue
       }
 
-      let newPVPrismaData
-      let newPPPrismaData
-      let newPVAirtableData
-      let newPPAirtableData
-      switch (this.utilsService.weightedCoinFlip(0.95)) {
-        // Make 95% of all product variants fully reservable
-        case "Heads":
-          newPVPrismaData = {
-            reservable: pv.total,
-            reserved: 0,
-            nonReservable: 0,
-          }
-          newPPPrismaData = { inventoryStatus: "Reservable" }
-          newPVAirtableData = {
-            "Reservable Count": pv.total,
-            "Non-Reservable Count": 0,
-            "Reserved Count": 0,
-          }
-          newPPAirtableData = { "Inventory Status": "Reservable" }
-          break
-        // Make 5% nonReservable
-        case "Tails":
-          newPVPrismaData = {
-            total: pv.total,
-            reservable: 0,
-            reserved: 0,
-            nonReservable: pv.total,
-          }
-          newPVAirtableData = {
-            "Reservable Count": 0,
-            "Non-Reservable Count": pv.total,
-            "Reserved Count": 0,
-          }
-          newPPPrismaData = { inventoryStatus: "NonReservable" }
-          newPPAirtableData = { "Inventory Status": "NonReservable" }
-          break
-        default:
-          throw new Error("Invalid coin flip result")
-      }
+      let {
+        prodVarPrismaResetData,
+        prodVarAirtableResetData,
+        physProdPrismaResetData,
+        physProdAirtableResetData,
+      } = this.scriptsService.getResetCountsData(pv)
 
       // Prisma ops
       await prisma.client.updateProductVariant({
         where: { id: pv.id },
-        data: newPVPrismaData,
+        data: prodVarPrismaResetData,
       })
       await prisma.client.updateManyPhysicalProducts({
         where: { id_in: pv.physicalProducts.map(a => a.id) },
-        data: newPPPrismaData,
+        data: physProdPrismaResetData,
       })
       pBar.increment()
 
@@ -161,14 +145,14 @@ export class ProductCommands {
       if (!!correspondingAirtableProductVariant) {
         await airtable.updateProductVariantCounts(
           correspondingAirtableProductVariant.id,
-          newPVAirtableData
+          prodVarAirtableResetData
         )
         const airtablePhysicalProducts = compact(
           correspondingAirtableProductVariant.model.physicalProducts
         ) as string[]
         await airtable.updatePhysicalProducts(
           airtablePhysicalProducts,
-          airtablePhysicalProducts.map(a => newPPAirtableData)
+          airtablePhysicalProducts.map(a => physProdAirtableResetData)
         )
       }
       pBar.increment()
