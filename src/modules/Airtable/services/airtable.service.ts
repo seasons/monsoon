@@ -41,6 +41,13 @@ export class AirtableService {
     private readonly utils: AirtableUtilsService
   ) {}
 
+  async getNextPhysicalProductSequenceNumber() {
+    const sortedSequenceNumbers = (await this.getAllPhysicalProducts())
+      .map(a => parseInt(a.model.sequenceNumber, 10))
+      .sort((a, b) => a - b)
+    return Math.max(...sortedSequenceNumbers) + 1
+  }
+
   airtableToPrismaInventoryStatus(
     airtableStatus: AirtableInventoryStatus
   ): InventoryStatus {
