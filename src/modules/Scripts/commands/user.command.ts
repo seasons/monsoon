@@ -70,7 +70,7 @@ export class UserCommands {
         firstName,
         lastName,
         details: {
-          phoneNumber: faker.phone.phoneNumber(),
+          phoneNumber: "(193) 556-0754",
           height: 40 + faker.random.number(32),
           weight: "152lb",
           bodyType: "Athletic",
