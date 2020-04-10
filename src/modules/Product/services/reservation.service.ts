@@ -278,19 +278,21 @@ export class ReservationService {
     customerId: ID_Input,
     productVariantIds: Array<ID_Input>
   ): Promise<() => void> {
-    // Update the bag items
-    const bagItemsToUpdate = await this.prisma.client.bagItems({
-      where: {
-        customer: {
-          id: customerId,
+    const bagItemsToUpdateIds = (
+      await this.prisma.client.bagItems({
+        where: {
+          customer: {
+            id: customerId,
+          },
+          productVariant: {
+            id_in: productVariantIds,
+          },
+          status: "Added",
+          saved: false,
         },
-        productVariant: {
-          id_in: productVariantIds,
-        },
-        status: "Added",
-      },
-    })
-    const bagItemsToUpdateIds = bagItemsToUpdate.map(a => a.id)
+      })
+    ).map(a => a.id)
+
     await this.prisma.client.updateManyBagItems({
       where: { id_in: bagItemsToUpdateIds },
       data: {
@@ -298,7 +300,6 @@ export class ReservationService {
       },
     })
 
-    // Create and return a rollback function
     const rollbackAddedBagItems = async () => {
       await this.prisma.client.updateManyBagItems({
         where: { id_in: bagItemsToUpdateIds },

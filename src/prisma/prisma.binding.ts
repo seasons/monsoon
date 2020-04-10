@@ -1,2259 +1,328 @@
-import { BasePrismaOptions, makePrismaBindingClass } from "prisma-binding"
-import { GraphQLResolveInfo, GraphQLSchema } from "graphql"
-
-import { IResolvers } from "graphql-tools/dist/Interfaces"
-import { Options } from "graphql-binding"
+import { GraphQLResolveInfo, GraphQLSchema } from 'graphql'
+import { IResolvers } from 'graphql-tools/dist/Interfaces'
+import { Options } from 'graphql-binding'
+import { makePrismaBindingClass, BasePrismaOptions } from 'prisma-binding'
 
 export interface Query {
-  brands: <T = Array<Brand | null>>(
-    args: {
-      where?: BrandWhereInput | null
-      orderBy?: BrandOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  collectionGroups: <T = Array<CollectionGroup | null>>(
-    args: {
-      where?: CollectionGroupWhereInput | null
-      orderBy?: CollectionGroupOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  homepageProductRails: <T = Array<HomepageProductRail | null>>(
-    args: {
-      where?: HomepageProductRailWhereInput | null
-      orderBy?: HomepageProductRailOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  images: <T = Array<Image | null>>(
-    args: {
-      where?: ImageWhereInput | null
-      orderBy?: ImageOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  bagItems: <T = Array<BagItem | null>>(
-    args: {
-      where?: BagItemWhereInput | null
-      orderBy?: BagItemOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  recentlyViewedProducts: <T = Array<RecentlyViewedProduct | null>>(
-    args: {
-      where?: RecentlyViewedProductWhereInput | null
-      orderBy?: RecentlyViewedProductOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  orders: <T = Array<Order | null>>(
-    args: {
-      where?: OrderWhereInput | null
-      orderBy?: OrderOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  reservations: <T = Array<Reservation | null>>(
-    args: {
-      where?: ReservationWhereInput | null
-      orderBy?: ReservationOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  productRequests: <T = Array<ProductRequest | null>>(
-    args: {
-      where?: ProductRequestWhereInput | null
-      orderBy?: ProductRequestOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  productVariantWants: <T = Array<ProductVariantWant | null>>(
-    args: {
-      where?: ProductVariantWantWhereInput | null
-      orderBy?: ProductVariantWantOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  reservationFeedbacks: <T = Array<ReservationFeedback | null>>(
-    args: {
-      where?: ReservationFeedbackWhereInput | null
-      orderBy?: ReservationFeedbackOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  productVariantFeedbacks: <T = Array<ProductVariantFeedback | null>>(
-    args: {
-      where?: ProductVariantFeedbackWhereInput | null
-      orderBy?: ProductVariantFeedbackOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  productVariantFeedbackQuestions: <
-    T = Array<ProductVariantFeedbackQuestion | null>
-  >(
-    args: {
-      where?: ProductVariantFeedbackQuestionWhereInput | null
-      orderBy?: ProductVariantFeedbackQuestionOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  collections: <T = Array<Collection | null>>(
-    args: {
-      where?: CollectionWhereInput | null
-      orderBy?: CollectionOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  categories: <T = Array<Category | null>>(
-    args: {
-      where?: CategoryWhereInput | null
-      orderBy?: CategoryOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  customerDetails: <T = Array<CustomerDetail | null>>(
-    args: {
-      where?: CustomerDetailWhereInput | null
-      orderBy?: CustomerDetailOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  billingInfoes: <T = Array<BillingInfo | null>>(
-    args: {
-      where?: BillingInfoWhereInput | null
-      orderBy?: BillingInfoOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  locations: <T = Array<Location | null>>(
-    args: {
-      where?: LocationWhereInput | null
-      orderBy?: LocationOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  packages: <T = Array<Package | null>>(
-    args: {
-      where?: PackageWhereInput | null
-      orderBy?: PackageOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  sizes: <T = Array<Size | null>>(
-    args: {
-      where?: SizeWhereInput | null
-      orderBy?: SizeOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  productFunctions: <T = Array<ProductFunction | null>>(
-    args: {
-      where?: ProductFunctionWhereInput | null
-      orderBy?: ProductFunctionOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  colors: <T = Array<Color | null>>(
-    args: {
-      where?: ColorWhereInput | null
-      orderBy?: ColorOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  topSizes: <T = Array<TopSize | null>>(
-    args: {
-      where?: TopSizeWhereInput | null
-      orderBy?: TopSizeOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  bottomSizes: <T = Array<BottomSize | null>>(
-    args: {
-      where?: BottomSizeWhereInput | null
-      orderBy?: BottomSizeOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  labels: <T = Array<Label | null>>(
-    args: {
-      where?: LabelWhereInput | null
-      orderBy?: LabelOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  physicalProducts: <T = Array<PhysicalProduct | null>>(
-    args: {
-      where?: PhysicalProductWhereInput | null
-      orderBy?: PhysicalProductOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  customers: <T = Array<Customer | null>>(
-    args: {
-      where?: CustomerWhereInput | null
-      orderBy?: CustomerOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  productVariants: <T = Array<ProductVariant | null>>(
-    args: {
-      where?: ProductVariantWhereInput | null
-      orderBy?: ProductVariantOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  products: <T = Array<Product | null>>(
-    args: {
-      where?: ProductWhereInput | null
-      orderBy?: ProductOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  users: <T = Array<User | null>>(
-    args: {
-      where?: UserWhereInput | null
-      orderBy?: UserOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  brand: <T = Brand | null>(
-    args: { where: BrandWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  collectionGroup: <T = CollectionGroup | null>(
-    args: { where: CollectionGroupWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  homepageProductRail: <T = HomepageProductRail | null>(
-    args: { where: HomepageProductRailWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  image: <T = Image | null>(
-    args: { where: ImageWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  bagItem: <T = BagItem | null>(
-    args: { where: BagItemWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  recentlyViewedProduct: <T = RecentlyViewedProduct | null>(
-    args: { where: RecentlyViewedProductWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  order: <T = Order | null>(
-    args: { where: OrderWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  reservation: <T = Reservation | null>(
-    args: { where: ReservationWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  productRequest: <T = ProductRequest | null>(
-    args: { where: ProductRequestWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  productVariantWant: <T = ProductVariantWant | null>(
-    args: { where: ProductVariantWantWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  reservationFeedback: <T = ReservationFeedback | null>(
-    args: { where: ReservationFeedbackWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  productVariantFeedback: <T = ProductVariantFeedback | null>(
-    args: { where: ProductVariantFeedbackWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  productVariantFeedbackQuestion: <T = ProductVariantFeedbackQuestion | null>(
-    args: { where: ProductVariantFeedbackQuestionWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  collection: <T = Collection | null>(
-    args: { where: CollectionWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  category: <T = Category | null>(
-    args: { where: CategoryWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  customerDetail: <T = CustomerDetail | null>(
-    args: { where: CustomerDetailWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  billingInfo: <T = BillingInfo | null>(
-    args: { where: BillingInfoWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  location: <T = Location | null>(
-    args: { where: LocationWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  package: <T = Package | null>(
-    args: { where: PackageWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  size: <T = Size | null>(
-    args: { where: SizeWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  productFunction: <T = ProductFunction | null>(
-    args: { where: ProductFunctionWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  color: <T = Color | null>(
-    args: { where: ColorWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  topSize: <T = TopSize | null>(
-    args: { where: TopSizeWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  bottomSize: <T = BottomSize | null>(
-    args: { where: BottomSizeWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  label: <T = Label | null>(
-    args: { where: LabelWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  physicalProduct: <T = PhysicalProduct | null>(
-    args: { where: PhysicalProductWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  customer: <T = Customer | null>(
-    args: { where: CustomerWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  productVariant: <T = ProductVariant | null>(
-    args: { where: ProductVariantWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  product: <T = Product | null>(
-    args: { where: ProductWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  user: <T = User | null>(
-    args: { where: UserWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  brandsConnection: <T = BrandConnection>(
-    args: {
-      where?: BrandWhereInput | null
-      orderBy?: BrandOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  collectionGroupsConnection: <T = CollectionGroupConnection>(
-    args: {
-      where?: CollectionGroupWhereInput | null
-      orderBy?: CollectionGroupOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  homepageProductRailsConnection: <T = HomepageProductRailConnection>(
-    args: {
-      where?: HomepageProductRailWhereInput | null
-      orderBy?: HomepageProductRailOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  imagesConnection: <T = ImageConnection>(
-    args: {
-      where?: ImageWhereInput | null
-      orderBy?: ImageOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  bagItemsConnection: <T = BagItemConnection>(
-    args: {
-      where?: BagItemWhereInput | null
-      orderBy?: BagItemOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  recentlyViewedProductsConnection: <T = RecentlyViewedProductConnection>(
-    args: {
-      where?: RecentlyViewedProductWhereInput | null
-      orderBy?: RecentlyViewedProductOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  ordersConnection: <T = OrderConnection>(
-    args: {
-      where?: OrderWhereInput | null
-      orderBy?: OrderOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  reservationsConnection: <T = ReservationConnection>(
-    args: {
-      where?: ReservationWhereInput | null
-      orderBy?: ReservationOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  productRequestsConnection: <T = ProductRequestConnection>(
-    args: {
-      where?: ProductRequestWhereInput | null
-      orderBy?: ProductRequestOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  productVariantWantsConnection: <T = ProductVariantWantConnection>(
-    args: {
-      where?: ProductVariantWantWhereInput | null
-      orderBy?: ProductVariantWantOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  reservationFeedbacksConnection: <T = ReservationFeedbackConnection>(
-    args: {
-      where?: ReservationFeedbackWhereInput | null
-      orderBy?: ReservationFeedbackOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  productVariantFeedbacksConnection: <T = ProductVariantFeedbackConnection>(
-    args: {
-      where?: ProductVariantFeedbackWhereInput | null
-      orderBy?: ProductVariantFeedbackOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  productVariantFeedbackQuestionsConnection: <
-    T = ProductVariantFeedbackQuestionConnection
-  >(
-    args: {
-      where?: ProductVariantFeedbackQuestionWhereInput | null
-      orderBy?: ProductVariantFeedbackQuestionOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  collectionsConnection: <T = CollectionConnection>(
-    args: {
-      where?: CollectionWhereInput | null
-      orderBy?: CollectionOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  categoriesConnection: <T = CategoryConnection>(
-    args: {
-      where?: CategoryWhereInput | null
-      orderBy?: CategoryOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  customerDetailsConnection: <T = CustomerDetailConnection>(
-    args: {
-      where?: CustomerDetailWhereInput | null
-      orderBy?: CustomerDetailOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  billingInfoesConnection: <T = BillingInfoConnection>(
-    args: {
-      where?: BillingInfoWhereInput | null
-      orderBy?: BillingInfoOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  locationsConnection: <T = LocationConnection>(
-    args: {
-      where?: LocationWhereInput | null
-      orderBy?: LocationOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  packagesConnection: <T = PackageConnection>(
-    args: {
-      where?: PackageWhereInput | null
-      orderBy?: PackageOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  sizesConnection: <T = SizeConnection>(
-    args: {
-      where?: SizeWhereInput | null
-      orderBy?: SizeOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  productFunctionsConnection: <T = ProductFunctionConnection>(
-    args: {
-      where?: ProductFunctionWhereInput | null
-      orderBy?: ProductFunctionOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  colorsConnection: <T = ColorConnection>(
-    args: {
-      where?: ColorWhereInput | null
-      orderBy?: ColorOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  topSizesConnection: <T = TopSizeConnection>(
-    args: {
-      where?: TopSizeWhereInput | null
-      orderBy?: TopSizeOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  bottomSizesConnection: <T = BottomSizeConnection>(
-    args: {
-      where?: BottomSizeWhereInput | null
-      orderBy?: BottomSizeOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  labelsConnection: <T = LabelConnection>(
-    args: {
-      where?: LabelWhereInput | null
-      orderBy?: LabelOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  physicalProductsConnection: <T = PhysicalProductConnection>(
-    args: {
-      where?: PhysicalProductWhereInput | null
-      orderBy?: PhysicalProductOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  customersConnection: <T = CustomerConnection>(
-    args: {
-      where?: CustomerWhereInput | null
-      orderBy?: CustomerOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  productVariantsConnection: <T = ProductVariantConnection>(
-    args: {
-      where?: ProductVariantWhereInput | null
-      orderBy?: ProductVariantOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  productsConnection: <T = ProductConnection>(
-    args: {
-      where?: ProductWhereInput | null
-      orderBy?: ProductOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  usersConnection: <T = UserConnection>(
-    args: {
-      where?: UserWhereInput | null
-      orderBy?: UserOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  node: <T = Node | null>(
-    args: { id: ID_Output },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-}
+    brands: <T = Array<Brand | null>>(args: { where?: BrandWhereInput | null, orderBy?: BrandOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    collectionGroups: <T = Array<CollectionGroup | null>>(args: { where?: CollectionGroupWhereInput | null, orderBy?: CollectionGroupOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    homepageProductRails: <T = Array<HomepageProductRail | null>>(args: { where?: HomepageProductRailWhereInput | null, orderBy?: HomepageProductRailOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    images: <T = Array<Image | null>>(args: { where?: ImageWhereInput | null, orderBy?: ImageOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    bagItems: <T = Array<BagItem | null>>(args: { where?: BagItemWhereInput | null, orderBy?: BagItemOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    recentlyViewedProducts: <T = Array<RecentlyViewedProduct | null>>(args: { where?: RecentlyViewedProductWhereInput | null, orderBy?: RecentlyViewedProductOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    orders: <T = Array<Order | null>>(args: { where?: OrderWhereInput | null, orderBy?: OrderOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    productRequests: <T = Array<ProductRequest | null>>(args: { where?: ProductRequestWhereInput | null, orderBy?: ProductRequestOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    productVariantWants: <T = Array<ProductVariantWant | null>>(args: { where?: ProductVariantWantWhereInput | null, orderBy?: ProductVariantWantOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    reservationFeedbacks: <T = Array<ReservationFeedback | null>>(args: { where?: ReservationFeedbackWhereInput | null, orderBy?: ReservationFeedbackOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    productVariantFeedbacks: <T = Array<ProductVariantFeedback | null>>(args: { where?: ProductVariantFeedbackWhereInput | null, orderBy?: ProductVariantFeedbackOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    productVariantFeedbackQuestions: <T = Array<ProductVariantFeedbackQuestion | null>>(args: { where?: ProductVariantFeedbackQuestionWhereInput | null, orderBy?: ProductVariantFeedbackQuestionOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    collections: <T = Array<Collection | null>>(args: { where?: CollectionWhereInput | null, orderBy?: CollectionOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    categories: <T = Array<Category | null>>(args: { where?: CategoryWhereInput | null, orderBy?: CategoryOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    customerDetails: <T = Array<CustomerDetail | null>>(args: { where?: CustomerDetailWhereInput | null, orderBy?: CustomerDetailOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    billingInfoes: <T = Array<BillingInfo | null>>(args: { where?: BillingInfoWhereInput | null, orderBy?: BillingInfoOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    locations: <T = Array<Location | null>>(args: { where?: LocationWhereInput | null, orderBy?: LocationOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    packages: <T = Array<Package | null>>(args: { where?: PackageWhereInput | null, orderBy?: PackageOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    sizes: <T = Array<Size | null>>(args: { where?: SizeWhereInput | null, orderBy?: SizeOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    productFunctions: <T = Array<ProductFunction | null>>(args: { where?: ProductFunctionWhereInput | null, orderBy?: ProductFunctionOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    colors: <T = Array<Color | null>>(args: { where?: ColorWhereInput | null, orderBy?: ColorOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    topSizes: <T = Array<TopSize | null>>(args: { where?: TopSizeWhereInput | null, orderBy?: TopSizeOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    bottomSizes: <T = Array<BottomSize | null>>(args: { where?: BottomSizeWhereInput | null, orderBy?: BottomSizeOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    labels: <T = Array<Label | null>>(args: { where?: LabelWhereInput | null, orderBy?: LabelOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    physicalProducts: <T = Array<PhysicalProduct | null>>(args: { where?: PhysicalProductWhereInput | null, orderBy?: PhysicalProductOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    customers: <T = Array<Customer | null>>(args: { where?: CustomerWhereInput | null, orderBy?: CustomerOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    productVariants: <T = Array<ProductVariant | null>>(args: { where?: ProductVariantWhereInput | null, orderBy?: ProductVariantOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    products: <T = Array<Product | null>>(args: { where?: ProductWhereInput | null, orderBy?: ProductOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    reservations: <T = Array<Reservation | null>>(args: { where?: ReservationWhereInput | null, orderBy?: ReservationOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    users: <T = Array<User | null>>(args: { where?: UserWhereInput | null, orderBy?: UserOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    brand: <T = Brand | null>(args: { where: BrandWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    collectionGroup: <T = CollectionGroup | null>(args: { where: CollectionGroupWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    homepageProductRail: <T = HomepageProductRail | null>(args: { where: HomepageProductRailWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    image: <T = Image | null>(args: { where: ImageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    bagItem: <T = BagItem | null>(args: { where: BagItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    recentlyViewedProduct: <T = RecentlyViewedProduct | null>(args: { where: RecentlyViewedProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    order: <T = Order | null>(args: { where: OrderWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    productRequest: <T = ProductRequest | null>(args: { where: ProductRequestWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    productVariantWant: <T = ProductVariantWant | null>(args: { where: ProductVariantWantWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    reservationFeedback: <T = ReservationFeedback | null>(args: { where: ReservationFeedbackWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    productVariantFeedback: <T = ProductVariantFeedback | null>(args: { where: ProductVariantFeedbackWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    productVariantFeedbackQuestion: <T = ProductVariantFeedbackQuestion | null>(args: { where: ProductVariantFeedbackQuestionWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    collection: <T = Collection | null>(args: { where: CollectionWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    category: <T = Category | null>(args: { where: CategoryWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    customerDetail: <T = CustomerDetail | null>(args: { where: CustomerDetailWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    billingInfo: <T = BillingInfo | null>(args: { where: BillingInfoWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    location: <T = Location | null>(args: { where: LocationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    package: <T = Package | null>(args: { where: PackageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    size: <T = Size | null>(args: { where: SizeWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    productFunction: <T = ProductFunction | null>(args: { where: ProductFunctionWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    color: <T = Color | null>(args: { where: ColorWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    topSize: <T = TopSize | null>(args: { where: TopSizeWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    bottomSize: <T = BottomSize | null>(args: { where: BottomSizeWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    label: <T = Label | null>(args: { where: LabelWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    physicalProduct: <T = PhysicalProduct | null>(args: { where: PhysicalProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    customer: <T = Customer | null>(args: { where: CustomerWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    productVariant: <T = ProductVariant | null>(args: { where: ProductVariantWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    product: <T = Product | null>(args: { where: ProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    reservation: <T = Reservation | null>(args: { where: ReservationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    user: <T = User | null>(args: { where: UserWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    brandsConnection: <T = BrandConnection>(args: { where?: BrandWhereInput | null, orderBy?: BrandOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    collectionGroupsConnection: <T = CollectionGroupConnection>(args: { where?: CollectionGroupWhereInput | null, orderBy?: CollectionGroupOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    homepageProductRailsConnection: <T = HomepageProductRailConnection>(args: { where?: HomepageProductRailWhereInput | null, orderBy?: HomepageProductRailOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    imagesConnection: <T = ImageConnection>(args: { where?: ImageWhereInput | null, orderBy?: ImageOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    bagItemsConnection: <T = BagItemConnection>(args: { where?: BagItemWhereInput | null, orderBy?: BagItemOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    recentlyViewedProductsConnection: <T = RecentlyViewedProductConnection>(args: { where?: RecentlyViewedProductWhereInput | null, orderBy?: RecentlyViewedProductOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    ordersConnection: <T = OrderConnection>(args: { where?: OrderWhereInput | null, orderBy?: OrderOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    productRequestsConnection: <T = ProductRequestConnection>(args: { where?: ProductRequestWhereInput | null, orderBy?: ProductRequestOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    productVariantWantsConnection: <T = ProductVariantWantConnection>(args: { where?: ProductVariantWantWhereInput | null, orderBy?: ProductVariantWantOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    reservationFeedbacksConnection: <T = ReservationFeedbackConnection>(args: { where?: ReservationFeedbackWhereInput | null, orderBy?: ReservationFeedbackOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    productVariantFeedbacksConnection: <T = ProductVariantFeedbackConnection>(args: { where?: ProductVariantFeedbackWhereInput | null, orderBy?: ProductVariantFeedbackOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    productVariantFeedbackQuestionsConnection: <T = ProductVariantFeedbackQuestionConnection>(args: { where?: ProductVariantFeedbackQuestionWhereInput | null, orderBy?: ProductVariantFeedbackQuestionOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    collectionsConnection: <T = CollectionConnection>(args: { where?: CollectionWhereInput | null, orderBy?: CollectionOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    categoriesConnection: <T = CategoryConnection>(args: { where?: CategoryWhereInput | null, orderBy?: CategoryOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    customerDetailsConnection: <T = CustomerDetailConnection>(args: { where?: CustomerDetailWhereInput | null, orderBy?: CustomerDetailOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    billingInfoesConnection: <T = BillingInfoConnection>(args: { where?: BillingInfoWhereInput | null, orderBy?: BillingInfoOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    locationsConnection: <T = LocationConnection>(args: { where?: LocationWhereInput | null, orderBy?: LocationOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    packagesConnection: <T = PackageConnection>(args: { where?: PackageWhereInput | null, orderBy?: PackageOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    sizesConnection: <T = SizeConnection>(args: { where?: SizeWhereInput | null, orderBy?: SizeOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    productFunctionsConnection: <T = ProductFunctionConnection>(args: { where?: ProductFunctionWhereInput | null, orderBy?: ProductFunctionOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    colorsConnection: <T = ColorConnection>(args: { where?: ColorWhereInput | null, orderBy?: ColorOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    topSizesConnection: <T = TopSizeConnection>(args: { where?: TopSizeWhereInput | null, orderBy?: TopSizeOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    bottomSizesConnection: <T = BottomSizeConnection>(args: { where?: BottomSizeWhereInput | null, orderBy?: BottomSizeOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    labelsConnection: <T = LabelConnection>(args: { where?: LabelWhereInput | null, orderBy?: LabelOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    physicalProductsConnection: <T = PhysicalProductConnection>(args: { where?: PhysicalProductWhereInput | null, orderBy?: PhysicalProductOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    customersConnection: <T = CustomerConnection>(args: { where?: CustomerWhereInput | null, orderBy?: CustomerOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    productVariantsConnection: <T = ProductVariantConnection>(args: { where?: ProductVariantWhereInput | null, orderBy?: ProductVariantOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    productsConnection: <T = ProductConnection>(args: { where?: ProductWhereInput | null, orderBy?: ProductOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    reservationsConnection: <T = ReservationConnection>(args: { where?: ReservationWhereInput | null, orderBy?: ReservationOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    usersConnection: <T = UserConnection>(args: { where?: UserWhereInput | null, orderBy?: UserOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    node: <T = Node | null>(args: { id: ID_Output }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> 
+  }
 
 export interface Mutation {
-  createBrand: <T = Brand>(
-    args: { data: BrandCreateInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  createCollectionGroup: <T = CollectionGroup>(
-    args: { data: CollectionGroupCreateInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  createHomepageProductRail: <T = HomepageProductRail>(
-    args: { data: HomepageProductRailCreateInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  createImage: <T = Image>(
-    args: { data: ImageCreateInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  createBagItem: <T = BagItem>(
-    args: { data: BagItemCreateInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  createRecentlyViewedProduct: <T = RecentlyViewedProduct>(
-    args: { data: RecentlyViewedProductCreateInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  createOrder: <T = Order>(
-    args: { data: OrderCreateInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  createReservation: <T = Reservation>(
-    args: { data: ReservationCreateInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  createProductRequest: <T = ProductRequest>(
-    args: { data: ProductRequestCreateInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  createProductVariantWant: <T = ProductVariantWant>(
-    args: { data: ProductVariantWantCreateInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  createReservationFeedback: <T = ReservationFeedback>(
-    args: { data: ReservationFeedbackCreateInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  createProductVariantFeedback: <T = ProductVariantFeedback>(
-    args: { data: ProductVariantFeedbackCreateInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  createProductVariantFeedbackQuestion: <T = ProductVariantFeedbackQuestion>(
-    args: { data: ProductVariantFeedbackQuestionCreateInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  createCollection: <T = Collection>(
-    args: { data: CollectionCreateInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  createCategory: <T = Category>(
-    args: { data: CategoryCreateInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  createCustomerDetail: <T = CustomerDetail>(
-    args: { data: CustomerDetailCreateInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  createBillingInfo: <T = BillingInfo>(
-    args: { data: BillingInfoCreateInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  createLocation: <T = Location>(
-    args: { data: LocationCreateInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  createPackage: <T = Package>(
-    args: { data: PackageCreateInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  createSize: <T = Size>(
-    args: { data: SizeCreateInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  createProductFunction: <T = ProductFunction>(
-    args: { data: ProductFunctionCreateInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  createColor: <T = Color>(
-    args: { data: ColorCreateInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  createTopSize: <T = TopSize>(
-    args: { data: TopSizeCreateInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  createBottomSize: <T = BottomSize>(
-    args: { data: BottomSizeCreateInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  createLabel: <T = Label>(
-    args: { data: LabelCreateInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  createPhysicalProduct: <T = PhysicalProduct>(
-    args: { data: PhysicalProductCreateInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  createCustomer: <T = Customer>(
-    args: { data: CustomerCreateInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  createProductVariant: <T = ProductVariant>(
-    args: { data: ProductVariantCreateInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  createProduct: <T = Product>(
-    args: { data: ProductCreateInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  createUser: <T = User>(
-    args: { data: UserCreateInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  updateBrand: <T = Brand | null>(
-    args: { data: BrandUpdateInput; where: BrandWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  updateCollectionGroup: <T = CollectionGroup | null>(
-    args: {
-      data: CollectionGroupUpdateInput
-      where: CollectionGroupWhereUniqueInput
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  updateHomepageProductRail: <T = HomepageProductRail | null>(
-    args: {
-      data: HomepageProductRailUpdateInput
-      where: HomepageProductRailWhereUniqueInput
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  updateImage: <T = Image | null>(
-    args: { data: ImageUpdateInput; where: ImageWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  updateBagItem: <T = BagItem | null>(
-    args: { data: BagItemUpdateInput; where: BagItemWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  updateRecentlyViewedProduct: <T = RecentlyViewedProduct | null>(
-    args: {
-      data: RecentlyViewedProductUpdateInput
-      where: RecentlyViewedProductWhereUniqueInput
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  updateReservation: <T = Reservation | null>(
-    args: { data: ReservationUpdateInput; where: ReservationWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  updateProductRequest: <T = ProductRequest | null>(
-    args: {
-      data: ProductRequestUpdateInput
-      where: ProductRequestWhereUniqueInput
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  updateProductVariantWant: <T = ProductVariantWant | null>(
-    args: {
-      data: ProductVariantWantUpdateInput
-      where: ProductVariantWantWhereUniqueInput
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  updateReservationFeedback: <T = ReservationFeedback | null>(
-    args: {
-      data: ReservationFeedbackUpdateInput
-      where: ReservationFeedbackWhereUniqueInput
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  updateProductVariantFeedback: <T = ProductVariantFeedback | null>(
-    args: {
-      data: ProductVariantFeedbackUpdateInput
-      where: ProductVariantFeedbackWhereUniqueInput
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  updateProductVariantFeedbackQuestion: <
-    T = ProductVariantFeedbackQuestion | null
-  >(
-    args: {
-      data: ProductVariantFeedbackQuestionUpdateInput
-      where: ProductVariantFeedbackQuestionWhereUniqueInput
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  updateCollection: <T = Collection | null>(
-    args: { data: CollectionUpdateInput; where: CollectionWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  updateCategory: <T = Category | null>(
-    args: { data: CategoryUpdateInput; where: CategoryWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  updateCustomerDetail: <T = CustomerDetail | null>(
-    args: {
-      data: CustomerDetailUpdateInput
-      where: CustomerDetailWhereUniqueInput
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  updateBillingInfo: <T = BillingInfo | null>(
-    args: { data: BillingInfoUpdateInput; where: BillingInfoWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  updateLocation: <T = Location | null>(
-    args: { data: LocationUpdateInput; where: LocationWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  updatePackage: <T = Package | null>(
-    args: { data: PackageUpdateInput; where: PackageWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  updateSize: <T = Size | null>(
-    args: { data: SizeUpdateInput; where: SizeWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  updateProductFunction: <T = ProductFunction | null>(
-    args: {
-      data: ProductFunctionUpdateInput
-      where: ProductFunctionWhereUniqueInput
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  updateColor: <T = Color | null>(
-    args: { data: ColorUpdateInput; where: ColorWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  updateTopSize: <T = TopSize | null>(
-    args: { data: TopSizeUpdateInput; where: TopSizeWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  updateBottomSize: <T = BottomSize | null>(
-    args: { data: BottomSizeUpdateInput; where: BottomSizeWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  updateLabel: <T = Label | null>(
-    args: { data: LabelUpdateInput; where: LabelWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  updatePhysicalProduct: <T = PhysicalProduct | null>(
-    args: {
-      data: PhysicalProductUpdateInput
-      where: PhysicalProductWhereUniqueInput
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  updateCustomer: <T = Customer | null>(
-    args: { data: CustomerUpdateInput; where: CustomerWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  updateProductVariant: <T = ProductVariant | null>(
-    args: {
-      data: ProductVariantUpdateInput
-      where: ProductVariantWhereUniqueInput
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  updateProduct: <T = Product | null>(
-    args: { data: ProductUpdateInput; where: ProductWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  updateUser: <T = User | null>(
-    args: { data: UserUpdateInput; where: UserWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  deleteBrand: <T = Brand | null>(
-    args: { where: BrandWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  deleteCollectionGroup: <T = CollectionGroup | null>(
-    args: { where: CollectionGroupWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  deleteHomepageProductRail: <T = HomepageProductRail | null>(
-    args: { where: HomepageProductRailWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  deleteImage: <T = Image | null>(
-    args: { where: ImageWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  deleteBagItem: <T = BagItem | null>(
-    args: { where: BagItemWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  deleteRecentlyViewedProduct: <T = RecentlyViewedProduct | null>(
-    args: { where: RecentlyViewedProductWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  deleteOrder: <T = Order | null>(
-    args: { where: OrderWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  deleteReservation: <T = Reservation | null>(
-    args: { where: ReservationWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  deleteProductRequest: <T = ProductRequest | null>(
-    args: { where: ProductRequestWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  deleteProductVariantWant: <T = ProductVariantWant | null>(
-    args: { where: ProductVariantWantWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  deleteReservationFeedback: <T = ReservationFeedback | null>(
-    args: { where: ReservationFeedbackWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  deleteProductVariantFeedback: <T = ProductVariantFeedback | null>(
-    args: { where: ProductVariantFeedbackWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  deleteProductVariantFeedbackQuestion: <
-    T = ProductVariantFeedbackQuestion | null
-  >(
-    args: { where: ProductVariantFeedbackQuestionWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  deleteCollection: <T = Collection | null>(
-    args: { where: CollectionWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  deleteCategory: <T = Category | null>(
-    args: { where: CategoryWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  deleteCustomerDetail: <T = CustomerDetail | null>(
-    args: { where: CustomerDetailWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  deleteBillingInfo: <T = BillingInfo | null>(
-    args: { where: BillingInfoWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  deleteLocation: <T = Location | null>(
-    args: { where: LocationWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  deletePackage: <T = Package | null>(
-    args: { where: PackageWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  deleteSize: <T = Size | null>(
-    args: { where: SizeWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  deleteProductFunction: <T = ProductFunction | null>(
-    args: { where: ProductFunctionWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  deleteColor: <T = Color | null>(
-    args: { where: ColorWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  deleteTopSize: <T = TopSize | null>(
-    args: { where: TopSizeWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  deleteBottomSize: <T = BottomSize | null>(
-    args: { where: BottomSizeWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  deleteLabel: <T = Label | null>(
-    args: { where: LabelWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  deletePhysicalProduct: <T = PhysicalProduct | null>(
-    args: { where: PhysicalProductWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  deleteCustomer: <T = Customer | null>(
-    args: { where: CustomerWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  deleteProductVariant: <T = ProductVariant | null>(
-    args: { where: ProductVariantWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  deleteProduct: <T = Product | null>(
-    args: { where: ProductWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  deleteUser: <T = User | null>(
-    args: { where: UserWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  upsertBrand: <T = Brand>(
-    args: {
-      where: BrandWhereUniqueInput
-      create: BrandCreateInput
-      update: BrandUpdateInput
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  upsertCollectionGroup: <T = CollectionGroup>(
-    args: {
-      where: CollectionGroupWhereUniqueInput
-      create: CollectionGroupCreateInput
-      update: CollectionGroupUpdateInput
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  upsertHomepageProductRail: <T = HomepageProductRail>(
-    args: {
-      where: HomepageProductRailWhereUniqueInput
-      create: HomepageProductRailCreateInput
-      update: HomepageProductRailUpdateInput
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  upsertImage: <T = Image>(
-    args: {
-      where: ImageWhereUniqueInput
-      create: ImageCreateInput
-      update: ImageUpdateInput
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  upsertBagItem: <T = BagItem>(
-    args: {
-      where: BagItemWhereUniqueInput
-      create: BagItemCreateInput
-      update: BagItemUpdateInput
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  upsertRecentlyViewedProduct: <T = RecentlyViewedProduct>(
-    args: {
-      where: RecentlyViewedProductWhereUniqueInput
-      create: RecentlyViewedProductCreateInput
-      update: RecentlyViewedProductUpdateInput
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  upsertReservation: <T = Reservation>(
-    args: {
-      where: ReservationWhereUniqueInput
-      create: ReservationCreateInput
-      update: ReservationUpdateInput
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  upsertProductRequest: <T = ProductRequest>(
-    args: {
-      where: ProductRequestWhereUniqueInput
-      create: ProductRequestCreateInput
-      update: ProductRequestUpdateInput
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  upsertProductVariantWant: <T = ProductVariantWant>(
-    args: {
-      where: ProductVariantWantWhereUniqueInput
-      create: ProductVariantWantCreateInput
-      update: ProductVariantWantUpdateInput
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  upsertReservationFeedback: <T = ReservationFeedback>(
-    args: {
-      where: ReservationFeedbackWhereUniqueInput
-      create: ReservationFeedbackCreateInput
-      update: ReservationFeedbackUpdateInput
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  upsertProductVariantFeedback: <T = ProductVariantFeedback>(
-    args: {
-      where: ProductVariantFeedbackWhereUniqueInput
-      create: ProductVariantFeedbackCreateInput
-      update: ProductVariantFeedbackUpdateInput
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  upsertProductVariantFeedbackQuestion: <T = ProductVariantFeedbackQuestion>(
-    args: {
-      where: ProductVariantFeedbackQuestionWhereUniqueInput
-      create: ProductVariantFeedbackQuestionCreateInput
-      update: ProductVariantFeedbackQuestionUpdateInput
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  upsertCollection: <T = Collection>(
-    args: {
-      where: CollectionWhereUniqueInput
-      create: CollectionCreateInput
-      update: CollectionUpdateInput
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  upsertCategory: <T = Category>(
-    args: {
-      where: CategoryWhereUniqueInput
-      create: CategoryCreateInput
-      update: CategoryUpdateInput
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  upsertCustomerDetail: <T = CustomerDetail>(
-    args: {
-      where: CustomerDetailWhereUniqueInput
-      create: CustomerDetailCreateInput
-      update: CustomerDetailUpdateInput
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  upsertBillingInfo: <T = BillingInfo>(
-    args: {
-      where: BillingInfoWhereUniqueInput
-      create: BillingInfoCreateInput
-      update: BillingInfoUpdateInput
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  upsertLocation: <T = Location>(
-    args: {
-      where: LocationWhereUniqueInput
-      create: LocationCreateInput
-      update: LocationUpdateInput
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  upsertPackage: <T = Package>(
-    args: {
-      where: PackageWhereUniqueInput
-      create: PackageCreateInput
-      update: PackageUpdateInput
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  upsertSize: <T = Size>(
-    args: {
-      where: SizeWhereUniqueInput
-      create: SizeCreateInput
-      update: SizeUpdateInput
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  upsertProductFunction: <T = ProductFunction>(
-    args: {
-      where: ProductFunctionWhereUniqueInput
-      create: ProductFunctionCreateInput
-      update: ProductFunctionUpdateInput
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  upsertColor: <T = Color>(
-    args: {
-      where: ColorWhereUniqueInput
-      create: ColorCreateInput
-      update: ColorUpdateInput
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  upsertTopSize: <T = TopSize>(
-    args: {
-      where: TopSizeWhereUniqueInput
-      create: TopSizeCreateInput
-      update: TopSizeUpdateInput
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  upsertBottomSize: <T = BottomSize>(
-    args: {
-      where: BottomSizeWhereUniqueInput
-      create: BottomSizeCreateInput
-      update: BottomSizeUpdateInput
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  upsertLabel: <T = Label>(
-    args: {
-      where: LabelWhereUniqueInput
-      create: LabelCreateInput
-      update: LabelUpdateInput
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  upsertPhysicalProduct: <T = PhysicalProduct>(
-    args: {
-      where: PhysicalProductWhereUniqueInput
-      create: PhysicalProductCreateInput
-      update: PhysicalProductUpdateInput
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  upsertCustomer: <T = Customer>(
-    args: {
-      where: CustomerWhereUniqueInput
-      create: CustomerCreateInput
-      update: CustomerUpdateInput
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  upsertProductVariant: <T = ProductVariant>(
-    args: {
-      where: ProductVariantWhereUniqueInput
-      create: ProductVariantCreateInput
-      update: ProductVariantUpdateInput
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  upsertProduct: <T = Product>(
-    args: {
-      where: ProductWhereUniqueInput
-      create: ProductCreateInput
-      update: ProductUpdateInput
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  upsertUser: <T = User>(
-    args: {
-      where: UserWhereUniqueInput
-      create: UserCreateInput
-      update: UserUpdateInput
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  updateManyBrands: <T = BatchPayload>(
-    args: {
-      data: BrandUpdateManyMutationInput
-      where?: BrandWhereInput | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  updateManyCollectionGroups: <T = BatchPayload>(
-    args: {
-      data: CollectionGroupUpdateManyMutationInput
-      where?: CollectionGroupWhereInput | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  updateManyHomepageProductRails: <T = BatchPayload>(
-    args: {
-      data: HomepageProductRailUpdateManyMutationInput
-      where?: HomepageProductRailWhereInput | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  updateManyImages: <T = BatchPayload>(
-    args: {
-      data: ImageUpdateManyMutationInput
-      where?: ImageWhereInput | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  updateManyBagItems: <T = BatchPayload>(
-    args: {
-      data: BagItemUpdateManyMutationInput
-      where?: BagItemWhereInput | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  updateManyRecentlyViewedProducts: <T = BatchPayload>(
-    args: {
-      data: RecentlyViewedProductUpdateManyMutationInput
-      where?: RecentlyViewedProductWhereInput | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  updateManyReservations: <T = BatchPayload>(
-    args: {
-      data: ReservationUpdateManyMutationInput
-      where?: ReservationWhereInput | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  updateManyProductRequests: <T = BatchPayload>(
-    args: {
-      data: ProductRequestUpdateManyMutationInput
-      where?: ProductRequestWhereInput | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  updateManyProductVariantWants: <T = BatchPayload>(
-    args: {
-      data: ProductVariantWantUpdateManyMutationInput
-      where?: ProductVariantWantWhereInput | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  updateManyReservationFeedbacks: <T = BatchPayload>(
-    args: {
-      data: ReservationFeedbackUpdateManyMutationInput
-      where?: ReservationFeedbackWhereInput | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  updateManyProductVariantFeedbacks: <T = BatchPayload>(
-    args: {
-      data: ProductVariantFeedbackUpdateManyMutationInput
-      where?: ProductVariantFeedbackWhereInput | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  updateManyProductVariantFeedbackQuestions: <T = BatchPayload>(
-    args: {
-      data: ProductVariantFeedbackQuestionUpdateManyMutationInput
-      where?: ProductVariantFeedbackQuestionWhereInput | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  updateManyCollections: <T = BatchPayload>(
-    args: {
-      data: CollectionUpdateManyMutationInput
-      where?: CollectionWhereInput | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  updateManyCategories: <T = BatchPayload>(
-    args: {
-      data: CategoryUpdateManyMutationInput
-      where?: CategoryWhereInput | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  updateManyCustomerDetails: <T = BatchPayload>(
-    args: {
-      data: CustomerDetailUpdateManyMutationInput
-      where?: CustomerDetailWhereInput | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  updateManyBillingInfoes: <T = BatchPayload>(
-    args: {
-      data: BillingInfoUpdateManyMutationInput
-      where?: BillingInfoWhereInput | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  updateManyLocations: <T = BatchPayload>(
-    args: {
-      data: LocationUpdateManyMutationInput
-      where?: LocationWhereInput | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  updateManyPackages: <T = BatchPayload>(
-    args: {
-      data: PackageUpdateManyMutationInput
-      where?: PackageWhereInput | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  updateManySizes: <T = BatchPayload>(
-    args: { data: SizeUpdateManyMutationInput; where?: SizeWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  updateManyProductFunctions: <T = BatchPayload>(
-    args: {
-      data: ProductFunctionUpdateManyMutationInput
-      where?: ProductFunctionWhereInput | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  updateManyColors: <T = BatchPayload>(
-    args: {
-      data: ColorUpdateManyMutationInput
-      where?: ColorWhereInput | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  updateManyTopSizes: <T = BatchPayload>(
-    args: {
-      data: TopSizeUpdateManyMutationInput
-      where?: TopSizeWhereInput | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  updateManyBottomSizes: <T = BatchPayload>(
-    args: {
-      data: BottomSizeUpdateManyMutationInput
-      where?: BottomSizeWhereInput | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  updateManyLabels: <T = BatchPayload>(
-    args: {
-      data: LabelUpdateManyMutationInput
-      where?: LabelWhereInput | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  updateManyPhysicalProducts: <T = BatchPayload>(
-    args: {
-      data: PhysicalProductUpdateManyMutationInput
-      where?: PhysicalProductWhereInput | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  updateManyCustomers: <T = BatchPayload>(
-    args: {
-      data: CustomerUpdateManyMutationInput
-      where?: CustomerWhereInput | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  updateManyProductVariants: <T = BatchPayload>(
-    args: {
-      data: ProductVariantUpdateManyMutationInput
-      where?: ProductVariantWhereInput | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  updateManyProducts: <T = BatchPayload>(
-    args: {
-      data: ProductUpdateManyMutationInput
-      where?: ProductWhereInput | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  updateManyUsers: <T = BatchPayload>(
-    args: { data: UserUpdateManyMutationInput; where?: UserWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  deleteManyBrands: <T = BatchPayload>(
-    args: { where?: BrandWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  deleteManyCollectionGroups: <T = BatchPayload>(
-    args: { where?: CollectionGroupWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  deleteManyHomepageProductRails: <T = BatchPayload>(
-    args: { where?: HomepageProductRailWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  deleteManyImages: <T = BatchPayload>(
-    args: { where?: ImageWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  deleteManyBagItems: <T = BatchPayload>(
-    args: { where?: BagItemWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  deleteManyRecentlyViewedProducts: <T = BatchPayload>(
-    args: { where?: RecentlyViewedProductWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  deleteManyOrders: <T = BatchPayload>(
-    args: { where?: OrderWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  deleteManyReservations: <T = BatchPayload>(
-    args: { where?: ReservationWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  deleteManyProductRequests: <T = BatchPayload>(
-    args: { where?: ProductRequestWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  deleteManyProductVariantWants: <T = BatchPayload>(
-    args: { where?: ProductVariantWantWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  deleteManyReservationFeedbacks: <T = BatchPayload>(
-    args: { where?: ReservationFeedbackWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  deleteManyProductVariantFeedbacks: <T = BatchPayload>(
-    args: { where?: ProductVariantFeedbackWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  deleteManyProductVariantFeedbackQuestions: <T = BatchPayload>(
-    args: { where?: ProductVariantFeedbackQuestionWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  deleteManyCollections: <T = BatchPayload>(
-    args: { where?: CollectionWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  deleteManyCategories: <T = BatchPayload>(
-    args: { where?: CategoryWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  deleteManyCustomerDetails: <T = BatchPayload>(
-    args: { where?: CustomerDetailWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  deleteManyBillingInfoes: <T = BatchPayload>(
-    args: { where?: BillingInfoWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  deleteManyLocations: <T = BatchPayload>(
-    args: { where?: LocationWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  deleteManyPackages: <T = BatchPayload>(
-    args: { where?: PackageWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  deleteManySizes: <T = BatchPayload>(
-    args: { where?: SizeWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  deleteManyProductFunctions: <T = BatchPayload>(
-    args: { where?: ProductFunctionWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  deleteManyColors: <T = BatchPayload>(
-    args: { where?: ColorWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  deleteManyTopSizes: <T = BatchPayload>(
-    args: { where?: TopSizeWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  deleteManyBottomSizes: <T = BatchPayload>(
-    args: { where?: BottomSizeWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  deleteManyLabels: <T = BatchPayload>(
-    args: { where?: LabelWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  deleteManyPhysicalProducts: <T = BatchPayload>(
-    args: { where?: PhysicalProductWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  deleteManyCustomers: <T = BatchPayload>(
-    args: { where?: CustomerWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  deleteManyProductVariants: <T = BatchPayload>(
-    args: { where?: ProductVariantWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  deleteManyProducts: <T = BatchPayload>(
-    args: { where?: ProductWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  deleteManyUsers: <T = BatchPayload>(
-    args: { where?: UserWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-}
+    createBrand: <T = Brand>(args: { data: BrandCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    createCollectionGroup: <T = CollectionGroup>(args: { data: CollectionGroupCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    createHomepageProductRail: <T = HomepageProductRail>(args: { data: HomepageProductRailCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    createImage: <T = Image>(args: { data: ImageCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    createBagItem: <T = BagItem>(args: { data: BagItemCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    createRecentlyViewedProduct: <T = RecentlyViewedProduct>(args: { data: RecentlyViewedProductCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    createOrder: <T = Order>(args: { data: OrderCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    createProductRequest: <T = ProductRequest>(args: { data: ProductRequestCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    createProductVariantWant: <T = ProductVariantWant>(args: { data: ProductVariantWantCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    createReservationFeedback: <T = ReservationFeedback>(args: { data: ReservationFeedbackCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    createProductVariantFeedback: <T = ProductVariantFeedback>(args: { data: ProductVariantFeedbackCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    createProductVariantFeedbackQuestion: <T = ProductVariantFeedbackQuestion>(args: { data: ProductVariantFeedbackQuestionCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    createCollection: <T = Collection>(args: { data: CollectionCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    createCategory: <T = Category>(args: { data: CategoryCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    createCustomerDetail: <T = CustomerDetail>(args: { data: CustomerDetailCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    createBillingInfo: <T = BillingInfo>(args: { data: BillingInfoCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    createLocation: <T = Location>(args: { data: LocationCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    createPackage: <T = Package>(args: { data: PackageCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    createSize: <T = Size>(args: { data: SizeCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    createProductFunction: <T = ProductFunction>(args: { data: ProductFunctionCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    createColor: <T = Color>(args: { data: ColorCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    createTopSize: <T = TopSize>(args: { data: TopSizeCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    createBottomSize: <T = BottomSize>(args: { data: BottomSizeCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    createLabel: <T = Label>(args: { data: LabelCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    createPhysicalProduct: <T = PhysicalProduct>(args: { data: PhysicalProductCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    createCustomer: <T = Customer>(args: { data: CustomerCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    createProductVariant: <T = ProductVariant>(args: { data: ProductVariantCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    createProduct: <T = Product>(args: { data: ProductCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    createReservation: <T = Reservation>(args: { data: ReservationCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    createUser: <T = User>(args: { data: UserCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateBrand: <T = Brand | null>(args: { data: BrandUpdateInput, where: BrandWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    updateCollectionGroup: <T = CollectionGroup | null>(args: { data: CollectionGroupUpdateInput, where: CollectionGroupWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    updateHomepageProductRail: <T = HomepageProductRail | null>(args: { data: HomepageProductRailUpdateInput, where: HomepageProductRailWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    updateImage: <T = Image | null>(args: { data: ImageUpdateInput, where: ImageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    updateBagItem: <T = BagItem | null>(args: { data: BagItemUpdateInput, where: BagItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    updateRecentlyViewedProduct: <T = RecentlyViewedProduct | null>(args: { data: RecentlyViewedProductUpdateInput, where: RecentlyViewedProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    updateProductRequest: <T = ProductRequest | null>(args: { data: ProductRequestUpdateInput, where: ProductRequestWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    updateProductVariantWant: <T = ProductVariantWant | null>(args: { data: ProductVariantWantUpdateInput, where: ProductVariantWantWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    updateReservationFeedback: <T = ReservationFeedback | null>(args: { data: ReservationFeedbackUpdateInput, where: ReservationFeedbackWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    updateProductVariantFeedback: <T = ProductVariantFeedback | null>(args: { data: ProductVariantFeedbackUpdateInput, where: ProductVariantFeedbackWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    updateProductVariantFeedbackQuestion: <T = ProductVariantFeedbackQuestion | null>(args: { data: ProductVariantFeedbackQuestionUpdateInput, where: ProductVariantFeedbackQuestionWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    updateCollection: <T = Collection | null>(args: { data: CollectionUpdateInput, where: CollectionWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    updateCategory: <T = Category | null>(args: { data: CategoryUpdateInput, where: CategoryWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    updateCustomerDetail: <T = CustomerDetail | null>(args: { data: CustomerDetailUpdateInput, where: CustomerDetailWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    updateBillingInfo: <T = BillingInfo | null>(args: { data: BillingInfoUpdateInput, where: BillingInfoWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    updateLocation: <T = Location | null>(args: { data: LocationUpdateInput, where: LocationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    updatePackage: <T = Package | null>(args: { data: PackageUpdateInput, where: PackageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    updateSize: <T = Size | null>(args: { data: SizeUpdateInput, where: SizeWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    updateProductFunction: <T = ProductFunction | null>(args: { data: ProductFunctionUpdateInput, where: ProductFunctionWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    updateColor: <T = Color | null>(args: { data: ColorUpdateInput, where: ColorWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    updateTopSize: <T = TopSize | null>(args: { data: TopSizeUpdateInput, where: TopSizeWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    updateBottomSize: <T = BottomSize | null>(args: { data: BottomSizeUpdateInput, where: BottomSizeWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    updateLabel: <T = Label | null>(args: { data: LabelUpdateInput, where: LabelWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    updatePhysicalProduct: <T = PhysicalProduct | null>(args: { data: PhysicalProductUpdateInput, where: PhysicalProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    updateCustomer: <T = Customer | null>(args: { data: CustomerUpdateInput, where: CustomerWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    updateProductVariant: <T = ProductVariant | null>(args: { data: ProductVariantUpdateInput, where: ProductVariantWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    updateProduct: <T = Product | null>(args: { data: ProductUpdateInput, where: ProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    updateReservation: <T = Reservation | null>(args: { data: ReservationUpdateInput, where: ReservationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    updateUser: <T = User | null>(args: { data: UserUpdateInput, where: UserWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deleteBrand: <T = Brand | null>(args: { where: BrandWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deleteCollectionGroup: <T = CollectionGroup | null>(args: { where: CollectionGroupWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deleteHomepageProductRail: <T = HomepageProductRail | null>(args: { where: HomepageProductRailWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deleteImage: <T = Image | null>(args: { where: ImageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deleteBagItem: <T = BagItem | null>(args: { where: BagItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deleteRecentlyViewedProduct: <T = RecentlyViewedProduct | null>(args: { where: RecentlyViewedProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deleteOrder: <T = Order | null>(args: { where: OrderWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deleteProductRequest: <T = ProductRequest | null>(args: { where: ProductRequestWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deleteProductVariantWant: <T = ProductVariantWant | null>(args: { where: ProductVariantWantWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deleteReservationFeedback: <T = ReservationFeedback | null>(args: { where: ReservationFeedbackWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deleteProductVariantFeedback: <T = ProductVariantFeedback | null>(args: { where: ProductVariantFeedbackWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deleteProductVariantFeedbackQuestion: <T = ProductVariantFeedbackQuestion | null>(args: { where: ProductVariantFeedbackQuestionWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deleteCollection: <T = Collection | null>(args: { where: CollectionWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deleteCategory: <T = Category | null>(args: { where: CategoryWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deleteCustomerDetail: <T = CustomerDetail | null>(args: { where: CustomerDetailWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deleteBillingInfo: <T = BillingInfo | null>(args: { where: BillingInfoWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deleteLocation: <T = Location | null>(args: { where: LocationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deletePackage: <T = Package | null>(args: { where: PackageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deleteSize: <T = Size | null>(args: { where: SizeWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deleteProductFunction: <T = ProductFunction | null>(args: { where: ProductFunctionWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deleteColor: <T = Color | null>(args: { where: ColorWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deleteTopSize: <T = TopSize | null>(args: { where: TopSizeWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deleteBottomSize: <T = BottomSize | null>(args: { where: BottomSizeWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deleteLabel: <T = Label | null>(args: { where: LabelWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deletePhysicalProduct: <T = PhysicalProduct | null>(args: { where: PhysicalProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deleteCustomer: <T = Customer | null>(args: { where: CustomerWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deleteProductVariant: <T = ProductVariant | null>(args: { where: ProductVariantWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deleteProduct: <T = Product | null>(args: { where: ProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deleteReservation: <T = Reservation | null>(args: { where: ReservationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deleteUser: <T = User | null>(args: { where: UserWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    upsertBrand: <T = Brand>(args: { where: BrandWhereUniqueInput, create: BrandCreateInput, update: BrandUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    upsertCollectionGroup: <T = CollectionGroup>(args: { where: CollectionGroupWhereUniqueInput, create: CollectionGroupCreateInput, update: CollectionGroupUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    upsertHomepageProductRail: <T = HomepageProductRail>(args: { where: HomepageProductRailWhereUniqueInput, create: HomepageProductRailCreateInput, update: HomepageProductRailUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    upsertImage: <T = Image>(args: { where: ImageWhereUniqueInput, create: ImageCreateInput, update: ImageUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    upsertBagItem: <T = BagItem>(args: { where: BagItemWhereUniqueInput, create: BagItemCreateInput, update: BagItemUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    upsertRecentlyViewedProduct: <T = RecentlyViewedProduct>(args: { where: RecentlyViewedProductWhereUniqueInput, create: RecentlyViewedProductCreateInput, update: RecentlyViewedProductUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    upsertProductRequest: <T = ProductRequest>(args: { where: ProductRequestWhereUniqueInput, create: ProductRequestCreateInput, update: ProductRequestUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    upsertProductVariantWant: <T = ProductVariantWant>(args: { where: ProductVariantWantWhereUniqueInput, create: ProductVariantWantCreateInput, update: ProductVariantWantUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    upsertReservationFeedback: <T = ReservationFeedback>(args: { where: ReservationFeedbackWhereUniqueInput, create: ReservationFeedbackCreateInput, update: ReservationFeedbackUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    upsertProductVariantFeedback: <T = ProductVariantFeedback>(args: { where: ProductVariantFeedbackWhereUniqueInput, create: ProductVariantFeedbackCreateInput, update: ProductVariantFeedbackUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    upsertProductVariantFeedbackQuestion: <T = ProductVariantFeedbackQuestion>(args: { where: ProductVariantFeedbackQuestionWhereUniqueInput, create: ProductVariantFeedbackQuestionCreateInput, update: ProductVariantFeedbackQuestionUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    upsertCollection: <T = Collection>(args: { where: CollectionWhereUniqueInput, create: CollectionCreateInput, update: CollectionUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    upsertCategory: <T = Category>(args: { where: CategoryWhereUniqueInput, create: CategoryCreateInput, update: CategoryUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    upsertCustomerDetail: <T = CustomerDetail>(args: { where: CustomerDetailWhereUniqueInput, create: CustomerDetailCreateInput, update: CustomerDetailUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    upsertBillingInfo: <T = BillingInfo>(args: { where: BillingInfoWhereUniqueInput, create: BillingInfoCreateInput, update: BillingInfoUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    upsertLocation: <T = Location>(args: { where: LocationWhereUniqueInput, create: LocationCreateInput, update: LocationUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    upsertPackage: <T = Package>(args: { where: PackageWhereUniqueInput, create: PackageCreateInput, update: PackageUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    upsertSize: <T = Size>(args: { where: SizeWhereUniqueInput, create: SizeCreateInput, update: SizeUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    upsertProductFunction: <T = ProductFunction>(args: { where: ProductFunctionWhereUniqueInput, create: ProductFunctionCreateInput, update: ProductFunctionUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    upsertColor: <T = Color>(args: { where: ColorWhereUniqueInput, create: ColorCreateInput, update: ColorUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    upsertTopSize: <T = TopSize>(args: { where: TopSizeWhereUniqueInput, create: TopSizeCreateInput, update: TopSizeUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    upsertBottomSize: <T = BottomSize>(args: { where: BottomSizeWhereUniqueInput, create: BottomSizeCreateInput, update: BottomSizeUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    upsertLabel: <T = Label>(args: { where: LabelWhereUniqueInput, create: LabelCreateInput, update: LabelUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    upsertPhysicalProduct: <T = PhysicalProduct>(args: { where: PhysicalProductWhereUniqueInput, create: PhysicalProductCreateInput, update: PhysicalProductUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    upsertCustomer: <T = Customer>(args: { where: CustomerWhereUniqueInput, create: CustomerCreateInput, update: CustomerUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    upsertProductVariant: <T = ProductVariant>(args: { where: ProductVariantWhereUniqueInput, create: ProductVariantCreateInput, update: ProductVariantUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    upsertProduct: <T = Product>(args: { where: ProductWhereUniqueInput, create: ProductCreateInput, update: ProductUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    upsertReservation: <T = Reservation>(args: { where: ReservationWhereUniqueInput, create: ReservationCreateInput, update: ReservationUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    upsertUser: <T = User>(args: { where: UserWhereUniqueInput, create: UserCreateInput, update: UserUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateManyBrands: <T = BatchPayload>(args: { data: BrandUpdateManyMutationInput, where?: BrandWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateManyCollectionGroups: <T = BatchPayload>(args: { data: CollectionGroupUpdateManyMutationInput, where?: CollectionGroupWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateManyHomepageProductRails: <T = BatchPayload>(args: { data: HomepageProductRailUpdateManyMutationInput, where?: HomepageProductRailWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateManyImages: <T = BatchPayload>(args: { data: ImageUpdateManyMutationInput, where?: ImageWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateManyBagItems: <T = BatchPayload>(args: { data: BagItemUpdateManyMutationInput, where?: BagItemWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateManyRecentlyViewedProducts: <T = BatchPayload>(args: { data: RecentlyViewedProductUpdateManyMutationInput, where?: RecentlyViewedProductWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateManyProductRequests: <T = BatchPayload>(args: { data: ProductRequestUpdateManyMutationInput, where?: ProductRequestWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateManyProductVariantWants: <T = BatchPayload>(args: { data: ProductVariantWantUpdateManyMutationInput, where?: ProductVariantWantWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateManyReservationFeedbacks: <T = BatchPayload>(args: { data: ReservationFeedbackUpdateManyMutationInput, where?: ReservationFeedbackWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateManyProductVariantFeedbacks: <T = BatchPayload>(args: { data: ProductVariantFeedbackUpdateManyMutationInput, where?: ProductVariantFeedbackWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateManyProductVariantFeedbackQuestions: <T = BatchPayload>(args: { data: ProductVariantFeedbackQuestionUpdateManyMutationInput, where?: ProductVariantFeedbackQuestionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateManyCollections: <T = BatchPayload>(args: { data: CollectionUpdateManyMutationInput, where?: CollectionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateManyCategories: <T = BatchPayload>(args: { data: CategoryUpdateManyMutationInput, where?: CategoryWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateManyCustomerDetails: <T = BatchPayload>(args: { data: CustomerDetailUpdateManyMutationInput, where?: CustomerDetailWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateManyBillingInfoes: <T = BatchPayload>(args: { data: BillingInfoUpdateManyMutationInput, where?: BillingInfoWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateManyLocations: <T = BatchPayload>(args: { data: LocationUpdateManyMutationInput, where?: LocationWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateManyPackages: <T = BatchPayload>(args: { data: PackageUpdateManyMutationInput, where?: PackageWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateManySizes: <T = BatchPayload>(args: { data: SizeUpdateManyMutationInput, where?: SizeWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateManyProductFunctions: <T = BatchPayload>(args: { data: ProductFunctionUpdateManyMutationInput, where?: ProductFunctionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateManyColors: <T = BatchPayload>(args: { data: ColorUpdateManyMutationInput, where?: ColorWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateManyTopSizes: <T = BatchPayload>(args: { data: TopSizeUpdateManyMutationInput, where?: TopSizeWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateManyBottomSizes: <T = BatchPayload>(args: { data: BottomSizeUpdateManyMutationInput, where?: BottomSizeWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateManyLabels: <T = BatchPayload>(args: { data: LabelUpdateManyMutationInput, where?: LabelWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateManyPhysicalProducts: <T = BatchPayload>(args: { data: PhysicalProductUpdateManyMutationInput, where?: PhysicalProductWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateManyCustomers: <T = BatchPayload>(args: { data: CustomerUpdateManyMutationInput, where?: CustomerWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateManyProductVariants: <T = BatchPayload>(args: { data: ProductVariantUpdateManyMutationInput, where?: ProductVariantWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateManyProducts: <T = BatchPayload>(args: { data: ProductUpdateManyMutationInput, where?: ProductWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateManyReservations: <T = BatchPayload>(args: { data: ReservationUpdateManyMutationInput, where?: ReservationWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateManyUsers: <T = BatchPayload>(args: { data: UserUpdateManyMutationInput, where?: UserWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteManyBrands: <T = BatchPayload>(args: { where?: BrandWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteManyCollectionGroups: <T = BatchPayload>(args: { where?: CollectionGroupWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteManyHomepageProductRails: <T = BatchPayload>(args: { where?: HomepageProductRailWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteManyImages: <T = BatchPayload>(args: { where?: ImageWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteManyBagItems: <T = BatchPayload>(args: { where?: BagItemWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteManyRecentlyViewedProducts: <T = BatchPayload>(args: { where?: RecentlyViewedProductWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteManyOrders: <T = BatchPayload>(args: { where?: OrderWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteManyProductRequests: <T = BatchPayload>(args: { where?: ProductRequestWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteManyProductVariantWants: <T = BatchPayload>(args: { where?: ProductVariantWantWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteManyReservationFeedbacks: <T = BatchPayload>(args: { where?: ReservationFeedbackWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteManyProductVariantFeedbacks: <T = BatchPayload>(args: { where?: ProductVariantFeedbackWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteManyProductVariantFeedbackQuestions: <T = BatchPayload>(args: { where?: ProductVariantFeedbackQuestionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteManyCollections: <T = BatchPayload>(args: { where?: CollectionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteManyCategories: <T = BatchPayload>(args: { where?: CategoryWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteManyCustomerDetails: <T = BatchPayload>(args: { where?: CustomerDetailWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteManyBillingInfoes: <T = BatchPayload>(args: { where?: BillingInfoWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteManyLocations: <T = BatchPayload>(args: { where?: LocationWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteManyPackages: <T = BatchPayload>(args: { where?: PackageWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteManySizes: <T = BatchPayload>(args: { where?: SizeWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteManyProductFunctions: <T = BatchPayload>(args: { where?: ProductFunctionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteManyColors: <T = BatchPayload>(args: { where?: ColorWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteManyTopSizes: <T = BatchPayload>(args: { where?: TopSizeWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteManyBottomSizes: <T = BatchPayload>(args: { where?: BottomSizeWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteManyLabels: <T = BatchPayload>(args: { where?: LabelWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteManyPhysicalProducts: <T = BatchPayload>(args: { where?: PhysicalProductWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteManyCustomers: <T = BatchPayload>(args: { where?: CustomerWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteManyProductVariants: <T = BatchPayload>(args: { where?: ProductVariantWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteManyProducts: <T = BatchPayload>(args: { where?: ProductWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteManyReservations: <T = BatchPayload>(args: { where?: ReservationWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteManyUsers: <T = BatchPayload>(args: { where?: UserWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> 
+  }
 
 export interface Subscription {
-  brand: <T = BrandSubscriptionPayload | null>(
-    args: { where?: BrandSubscriptionWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<AsyncIterator<T | null>>
-  collectionGroup: <T = CollectionGroupSubscriptionPayload | null>(
-    args: { where?: CollectionGroupSubscriptionWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<AsyncIterator<T | null>>
-  homepageProductRail: <T = HomepageProductRailSubscriptionPayload | null>(
-    args: { where?: HomepageProductRailSubscriptionWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<AsyncIterator<T | null>>
-  image: <T = ImageSubscriptionPayload | null>(
-    args: { where?: ImageSubscriptionWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<AsyncIterator<T | null>>
-  bagItem: <T = BagItemSubscriptionPayload | null>(
-    args: { where?: BagItemSubscriptionWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<AsyncIterator<T | null>>
-  recentlyViewedProduct: <T = RecentlyViewedProductSubscriptionPayload | null>(
-    args: { where?: RecentlyViewedProductSubscriptionWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<AsyncIterator<T | null>>
-  order: <T = OrderSubscriptionPayload | null>(
-    args: { where?: OrderSubscriptionWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<AsyncIterator<T | null>>
-  reservation: <T = ReservationSubscriptionPayload | null>(
-    args: { where?: ReservationSubscriptionWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<AsyncIterator<T | null>>
-  productRequest: <T = ProductRequestSubscriptionPayload | null>(
-    args: { where?: ProductRequestSubscriptionWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<AsyncIterator<T | null>>
-  productVariantWant: <T = ProductVariantWantSubscriptionPayload | null>(
-    args: { where?: ProductVariantWantSubscriptionWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<AsyncIterator<T | null>>
-  reservationFeedback: <T = ReservationFeedbackSubscriptionPayload | null>(
-    args: { where?: ReservationFeedbackSubscriptionWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<AsyncIterator<T | null>>
-  productVariantFeedback: <
-    T = ProductVariantFeedbackSubscriptionPayload | null
-  >(
-    args: { where?: ProductVariantFeedbackSubscriptionWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<AsyncIterator<T | null>>
-  productVariantFeedbackQuestion: <
-    T = ProductVariantFeedbackQuestionSubscriptionPayload | null
-  >(
-    args: {
-      where?: ProductVariantFeedbackQuestionSubscriptionWhereInput | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<AsyncIterator<T | null>>
-  collection: <T = CollectionSubscriptionPayload | null>(
-    args: { where?: CollectionSubscriptionWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<AsyncIterator<T | null>>
-  category: <T = CategorySubscriptionPayload | null>(
-    args: { where?: CategorySubscriptionWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<AsyncIterator<T | null>>
-  customerDetail: <T = CustomerDetailSubscriptionPayload | null>(
-    args: { where?: CustomerDetailSubscriptionWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<AsyncIterator<T | null>>
-  billingInfo: <T = BillingInfoSubscriptionPayload | null>(
-    args: { where?: BillingInfoSubscriptionWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<AsyncIterator<T | null>>
-  location: <T = LocationSubscriptionPayload | null>(
-    args: { where?: LocationSubscriptionWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<AsyncIterator<T | null>>
-  package: <T = PackageSubscriptionPayload | null>(
-    args: { where?: PackageSubscriptionWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<AsyncIterator<T | null>>
-  size: <T = SizeSubscriptionPayload | null>(
-    args: { where?: SizeSubscriptionWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<AsyncIterator<T | null>>
-  productFunction: <T = ProductFunctionSubscriptionPayload | null>(
-    args: { where?: ProductFunctionSubscriptionWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<AsyncIterator<T | null>>
-  color: <T = ColorSubscriptionPayload | null>(
-    args: { where?: ColorSubscriptionWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<AsyncIterator<T | null>>
-  topSize: <T = TopSizeSubscriptionPayload | null>(
-    args: { where?: TopSizeSubscriptionWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<AsyncIterator<T | null>>
-  bottomSize: <T = BottomSizeSubscriptionPayload | null>(
-    args: { where?: BottomSizeSubscriptionWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<AsyncIterator<T | null>>
-  label: <T = LabelSubscriptionPayload | null>(
-    args: { where?: LabelSubscriptionWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<AsyncIterator<T | null>>
-  physicalProduct: <T = PhysicalProductSubscriptionPayload | null>(
-    args: { where?: PhysicalProductSubscriptionWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<AsyncIterator<T | null>>
-  customer: <T = CustomerSubscriptionPayload | null>(
-    args: { where?: CustomerSubscriptionWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<AsyncIterator<T | null>>
-  productVariant: <T = ProductVariantSubscriptionPayload | null>(
-    args: { where?: ProductVariantSubscriptionWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<AsyncIterator<T | null>>
-  product: <T = ProductSubscriptionPayload | null>(
-    args: { where?: ProductSubscriptionWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<AsyncIterator<T | null>>
-  user: <T = UserSubscriptionPayload | null>(
-    args: { where?: UserSubscriptionWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<AsyncIterator<T | null>>
-}
+    brand: <T = BrandSubscriptionPayload | null>(args: { where?: BrandSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
+    collectionGroup: <T = CollectionGroupSubscriptionPayload | null>(args: { where?: CollectionGroupSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
+    homepageProductRail: <T = HomepageProductRailSubscriptionPayload | null>(args: { where?: HomepageProductRailSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
+    image: <T = ImageSubscriptionPayload | null>(args: { where?: ImageSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
+    bagItem: <T = BagItemSubscriptionPayload | null>(args: { where?: BagItemSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
+    recentlyViewedProduct: <T = RecentlyViewedProductSubscriptionPayload | null>(args: { where?: RecentlyViewedProductSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
+    order: <T = OrderSubscriptionPayload | null>(args: { where?: OrderSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
+    productRequest: <T = ProductRequestSubscriptionPayload | null>(args: { where?: ProductRequestSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
+    productVariantWant: <T = ProductVariantWantSubscriptionPayload | null>(args: { where?: ProductVariantWantSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
+    reservationFeedback: <T = ReservationFeedbackSubscriptionPayload | null>(args: { where?: ReservationFeedbackSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
+    productVariantFeedback: <T = ProductVariantFeedbackSubscriptionPayload | null>(args: { where?: ProductVariantFeedbackSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
+    productVariantFeedbackQuestion: <T = ProductVariantFeedbackQuestionSubscriptionPayload | null>(args: { where?: ProductVariantFeedbackQuestionSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
+    collection: <T = CollectionSubscriptionPayload | null>(args: { where?: CollectionSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
+    category: <T = CategorySubscriptionPayload | null>(args: { where?: CategorySubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
+    customerDetail: <T = CustomerDetailSubscriptionPayload | null>(args: { where?: CustomerDetailSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
+    billingInfo: <T = BillingInfoSubscriptionPayload | null>(args: { where?: BillingInfoSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
+    location: <T = LocationSubscriptionPayload | null>(args: { where?: LocationSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
+    package: <T = PackageSubscriptionPayload | null>(args: { where?: PackageSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
+    size: <T = SizeSubscriptionPayload | null>(args: { where?: SizeSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
+    productFunction: <T = ProductFunctionSubscriptionPayload | null>(args: { where?: ProductFunctionSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
+    color: <T = ColorSubscriptionPayload | null>(args: { where?: ColorSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
+    topSize: <T = TopSizeSubscriptionPayload | null>(args: { where?: TopSizeSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
+    bottomSize: <T = BottomSizeSubscriptionPayload | null>(args: { where?: BottomSizeSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
+    label: <T = LabelSubscriptionPayload | null>(args: { where?: LabelSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
+    physicalProduct: <T = PhysicalProductSubscriptionPayload | null>(args: { where?: PhysicalProductSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
+    customer: <T = CustomerSubscriptionPayload | null>(args: { where?: CustomerSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
+    productVariant: <T = ProductVariantSubscriptionPayload | null>(args: { where?: ProductVariantSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
+    product: <T = ProductSubscriptionPayload | null>(args: { where?: ProductSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
+    reservation: <T = ReservationSubscriptionPayload | null>(args: { where?: ReservationSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
+    user: <T = UserSubscriptionPayload | null>(args: { where?: UserSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> 
+  }
 
 export interface Exists {
   Brand: (where?: BrandWhereInput) => Promise<boolean>
   CollectionGroup: (where?: CollectionGroupWhereInput) => Promise<boolean>
-  HomepageProductRail: (
-    where?: HomepageProductRailWhereInput
-  ) => Promise<boolean>
+  HomepageProductRail: (where?: HomepageProductRailWhereInput) => Promise<boolean>
   Image: (where?: ImageWhereInput) => Promise<boolean>
   BagItem: (where?: BagItemWhereInput) => Promise<boolean>
-  RecentlyViewedProduct: (
-    where?: RecentlyViewedProductWhereInput
-  ) => Promise<boolean>
+  RecentlyViewedProduct: (where?: RecentlyViewedProductWhereInput) => Promise<boolean>
   Order: (where?: OrderWhereInput) => Promise<boolean>
-  Reservation: (where?: ReservationWhereInput) => Promise<boolean>
   ProductRequest: (where?: ProductRequestWhereInput) => Promise<boolean>
   ProductVariantWant: (where?: ProductVariantWantWhereInput) => Promise<boolean>
-  ReservationFeedback: (
-    where?: ReservationFeedbackWhereInput
-  ) => Promise<boolean>
-  ProductVariantFeedback: (
-    where?: ProductVariantFeedbackWhereInput
-  ) => Promise<boolean>
-  ProductVariantFeedbackQuestion: (
-    where?: ProductVariantFeedbackQuestionWhereInput
-  ) => Promise<boolean>
+  ReservationFeedback: (where?: ReservationFeedbackWhereInput) => Promise<boolean>
+  ProductVariantFeedback: (where?: ProductVariantFeedbackWhereInput) => Promise<boolean>
+  ProductVariantFeedbackQuestion: (where?: ProductVariantFeedbackQuestionWhereInput) => Promise<boolean>
   Collection: (where?: CollectionWhereInput) => Promise<boolean>
   Category: (where?: CategoryWhereInput) => Promise<boolean>
   CustomerDetail: (where?: CustomerDetailWhereInput) => Promise<boolean>
@@ -2270,6 +339,7 @@ export interface Exists {
   Customer: (where?: CustomerWhereInput) => Promise<boolean>
   ProductVariant: (where?: ProductVariantWhereInput) => Promise<boolean>
   Product: (where?: ProductWhereInput) => Promise<boolean>
+  Reservation: (where?: ReservationWhereInput) => Promise<boolean>
   User: (where?: UserWhereInput) => Promise<boolean>
 }
 
@@ -2278,36 +348,22 @@ export interface Prisma {
   mutation: Mutation
   subscription: Subscription
   exists: Exists
-  request: <T = any>(
-    query: string,
-    variables?: { [key: string]: any }
-  ) => Promise<T>
-  delegate(
-    operation: "query" | "mutation",
-    fieldName: string,
-    args: {
-      [key: string]: any
-    },
-    infoOrQuery?: GraphQLResolveInfo | string,
-    options?: Options
-  ): Promise<any>
-  delegateSubscription(
-    fieldName: string,
-    args?: {
-      [key: string]: any
-    },
-    infoOrQuery?: GraphQLResolveInfo | string,
-    options?: Options
-  ): Promise<AsyncIterator<any>>
-  getAbstractResolvers(filterSchema?: GraphQLSchema | string): IResolvers
+  request: <T = any>(query: string, variables?: {[key: string]: any}) => Promise<T>
+  delegate(operation: 'query' | 'mutation', fieldName: string, args: {
+    [key: string]: any;
+}, infoOrQuery?: GraphQLResolveInfo | string, options?: Options): Promise<any>;
+delegateSubscription(fieldName: string, args?: {
+    [key: string]: any;
+}, infoOrQuery?: GraphQLResolveInfo | string, options?: Options): Promise<AsyncIterator<any>>;
+getAbstractResolvers(filterSchema?: GraphQLSchema | string): IResolvers;
 }
 
 export interface BindingConstructor<T> {
-  new (options: BasePrismaOptions): T
+  new(options: BasePrismaOptions): T
 }
 /**
  * Type Defs
- */
+*/
 
 const typeDefs = `type AggregateBagItem {
   count: Int!
@@ -9312,7 +7368,6 @@ type Mutation {
   createBagItem(data: BagItemCreateInput!): BagItem!
   createRecentlyViewedProduct(data: RecentlyViewedProductCreateInput!): RecentlyViewedProduct!
   createOrder(data: OrderCreateInput!): Order!
-  createReservation(data: ReservationCreateInput!): Reservation!
   createProductRequest(data: ProductRequestCreateInput!): ProductRequest!
   createProductVariantWant(data: ProductVariantWantCreateInput!): ProductVariantWant!
   createReservationFeedback(data: ReservationFeedbackCreateInput!): ReservationFeedback!
@@ -9334,6 +7389,7 @@ type Mutation {
   createCustomer(data: CustomerCreateInput!): Customer!
   createProductVariant(data: ProductVariantCreateInput!): ProductVariant!
   createProduct(data: ProductCreateInput!): Product!
+  createReservation(data: ReservationCreateInput!): Reservation!
   createUser(data: UserCreateInput!): User!
   updateBrand(data: BrandUpdateInput!, where: BrandWhereUniqueInput!): Brand
   updateCollectionGroup(data: CollectionGroupUpdateInput!, where: CollectionGroupWhereUniqueInput!): CollectionGroup
@@ -9341,7 +7397,6 @@ type Mutation {
   updateImage(data: ImageUpdateInput!, where: ImageWhereUniqueInput!): Image
   updateBagItem(data: BagItemUpdateInput!, where: BagItemWhereUniqueInput!): BagItem
   updateRecentlyViewedProduct(data: RecentlyViewedProductUpdateInput!, where: RecentlyViewedProductWhereUniqueInput!): RecentlyViewedProduct
-  updateReservation(data: ReservationUpdateInput!, where: ReservationWhereUniqueInput!): Reservation
   updateProductRequest(data: ProductRequestUpdateInput!, where: ProductRequestWhereUniqueInput!): ProductRequest
   updateProductVariantWant(data: ProductVariantWantUpdateInput!, where: ProductVariantWantWhereUniqueInput!): ProductVariantWant
   updateReservationFeedback(data: ReservationFeedbackUpdateInput!, where: ReservationFeedbackWhereUniqueInput!): ReservationFeedback
@@ -9363,6 +7418,7 @@ type Mutation {
   updateCustomer(data: CustomerUpdateInput!, where: CustomerWhereUniqueInput!): Customer
   updateProductVariant(data: ProductVariantUpdateInput!, where: ProductVariantWhereUniqueInput!): ProductVariant
   updateProduct(data: ProductUpdateInput!, where: ProductWhereUniqueInput!): Product
+  updateReservation(data: ReservationUpdateInput!, where: ReservationWhereUniqueInput!): Reservation
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   deleteBrand(where: BrandWhereUniqueInput!): Brand
   deleteCollectionGroup(where: CollectionGroupWhereUniqueInput!): CollectionGroup
@@ -9371,7 +7427,6 @@ type Mutation {
   deleteBagItem(where: BagItemWhereUniqueInput!): BagItem
   deleteRecentlyViewedProduct(where: RecentlyViewedProductWhereUniqueInput!): RecentlyViewedProduct
   deleteOrder(where: OrderWhereUniqueInput!): Order
-  deleteReservation(where: ReservationWhereUniqueInput!): Reservation
   deleteProductRequest(where: ProductRequestWhereUniqueInput!): ProductRequest
   deleteProductVariantWant(where: ProductVariantWantWhereUniqueInput!): ProductVariantWant
   deleteReservationFeedback(where: ReservationFeedbackWhereUniqueInput!): ReservationFeedback
@@ -9393,6 +7448,7 @@ type Mutation {
   deleteCustomer(where: CustomerWhereUniqueInput!): Customer
   deleteProductVariant(where: ProductVariantWhereUniqueInput!): ProductVariant
   deleteProduct(where: ProductWhereUniqueInput!): Product
+  deleteReservation(where: ReservationWhereUniqueInput!): Reservation
   deleteUser(where: UserWhereUniqueInput!): User
   upsertBrand(where: BrandWhereUniqueInput!, create: BrandCreateInput!, update: BrandUpdateInput!): Brand!
   upsertCollectionGroup(where: CollectionGroupWhereUniqueInput!, create: CollectionGroupCreateInput!, update: CollectionGroupUpdateInput!): CollectionGroup!
@@ -9400,7 +7456,6 @@ type Mutation {
   upsertImage(where: ImageWhereUniqueInput!, create: ImageCreateInput!, update: ImageUpdateInput!): Image!
   upsertBagItem(where: BagItemWhereUniqueInput!, create: BagItemCreateInput!, update: BagItemUpdateInput!): BagItem!
   upsertRecentlyViewedProduct(where: RecentlyViewedProductWhereUniqueInput!, create: RecentlyViewedProductCreateInput!, update: RecentlyViewedProductUpdateInput!): RecentlyViewedProduct!
-  upsertReservation(where: ReservationWhereUniqueInput!, create: ReservationCreateInput!, update: ReservationUpdateInput!): Reservation!
   upsertProductRequest(where: ProductRequestWhereUniqueInput!, create: ProductRequestCreateInput!, update: ProductRequestUpdateInput!): ProductRequest!
   upsertProductVariantWant(where: ProductVariantWantWhereUniqueInput!, create: ProductVariantWantCreateInput!, update: ProductVariantWantUpdateInput!): ProductVariantWant!
   upsertReservationFeedback(where: ReservationFeedbackWhereUniqueInput!, create: ReservationFeedbackCreateInput!, update: ReservationFeedbackUpdateInput!): ReservationFeedback!
@@ -9422,6 +7477,7 @@ type Mutation {
   upsertCustomer(where: CustomerWhereUniqueInput!, create: CustomerCreateInput!, update: CustomerUpdateInput!): Customer!
   upsertProductVariant(where: ProductVariantWhereUniqueInput!, create: ProductVariantCreateInput!, update: ProductVariantUpdateInput!): ProductVariant!
   upsertProduct(where: ProductWhereUniqueInput!, create: ProductCreateInput!, update: ProductUpdateInput!): Product!
+  upsertReservation(where: ReservationWhereUniqueInput!, create: ReservationCreateInput!, update: ReservationUpdateInput!): Reservation!
   upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
   updateManyBrands(data: BrandUpdateManyMutationInput!, where: BrandWhereInput): BatchPayload!
   updateManyCollectionGroups(data: CollectionGroupUpdateManyMutationInput!, where: CollectionGroupWhereInput): BatchPayload!
@@ -9429,7 +7485,6 @@ type Mutation {
   updateManyImages(data: ImageUpdateManyMutationInput!, where: ImageWhereInput): BatchPayload!
   updateManyBagItems(data: BagItemUpdateManyMutationInput!, where: BagItemWhereInput): BatchPayload!
   updateManyRecentlyViewedProducts(data: RecentlyViewedProductUpdateManyMutationInput!, where: RecentlyViewedProductWhereInput): BatchPayload!
-  updateManyReservations(data: ReservationUpdateManyMutationInput!, where: ReservationWhereInput): BatchPayload!
   updateManyProductRequests(data: ProductRequestUpdateManyMutationInput!, where: ProductRequestWhereInput): BatchPayload!
   updateManyProductVariantWants(data: ProductVariantWantUpdateManyMutationInput!, where: ProductVariantWantWhereInput): BatchPayload!
   updateManyReservationFeedbacks(data: ReservationFeedbackUpdateManyMutationInput!, where: ReservationFeedbackWhereInput): BatchPayload!
@@ -9451,6 +7506,7 @@ type Mutation {
   updateManyCustomers(data: CustomerUpdateManyMutationInput!, where: CustomerWhereInput): BatchPayload!
   updateManyProductVariants(data: ProductVariantUpdateManyMutationInput!, where: ProductVariantWhereInput): BatchPayload!
   updateManyProducts(data: ProductUpdateManyMutationInput!, where: ProductWhereInput): BatchPayload!
+  updateManyReservations(data: ReservationUpdateManyMutationInput!, where: ReservationWhereInput): BatchPayload!
   updateManyUsers(data: UserUpdateManyMutationInput!, where: UserWhereInput): BatchPayload!
   deleteManyBrands(where: BrandWhereInput): BatchPayload!
   deleteManyCollectionGroups(where: CollectionGroupWhereInput): BatchPayload!
@@ -9459,7 +7515,6 @@ type Mutation {
   deleteManyBagItems(where: BagItemWhereInput): BatchPayload!
   deleteManyRecentlyViewedProducts(where: RecentlyViewedProductWhereInput): BatchPayload!
   deleteManyOrders(where: OrderWhereInput): BatchPayload!
-  deleteManyReservations(where: ReservationWhereInput): BatchPayload!
   deleteManyProductRequests(where: ProductRequestWhereInput): BatchPayload!
   deleteManyProductVariantWants(where: ProductVariantWantWhereInput): BatchPayload!
   deleteManyReservationFeedbacks(where: ReservationFeedbackWhereInput): BatchPayload!
@@ -9481,6 +7536,7 @@ type Mutation {
   deleteManyCustomers(where: CustomerWhereInput): BatchPayload!
   deleteManyProductVariants(where: ProductVariantWhereInput): BatchPayload!
   deleteManyProducts(where: ProductWhereInput): BatchPayload!
+  deleteManyReservations(where: ReservationWhereInput): BatchPayload!
   deleteManyUsers(where: UserWhereInput): BatchPayload!
 }
 
@@ -14410,7 +12466,6 @@ type Query {
   bagItems(where: BagItemWhereInput, orderBy: BagItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [BagItem]!
   recentlyViewedProducts(where: RecentlyViewedProductWhereInput, orderBy: RecentlyViewedProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [RecentlyViewedProduct]!
   orders(where: OrderWhereInput, orderBy: OrderOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Order]!
-  reservations(where: ReservationWhereInput, orderBy: ReservationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Reservation]!
   productRequests(where: ProductRequestWhereInput, orderBy: ProductRequestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductRequest]!
   productVariantWants(where: ProductVariantWantWhereInput, orderBy: ProductVariantWantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariantWant]!
   reservationFeedbacks(where: ReservationFeedbackWhereInput, orderBy: ReservationFeedbackOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ReservationFeedback]!
@@ -14432,6 +12487,7 @@ type Query {
   customers(where: CustomerWhereInput, orderBy: CustomerOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Customer]!
   productVariants(where: ProductVariantWhereInput, orderBy: ProductVariantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariant]!
   products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product]!
+  reservations(where: ReservationWhereInput, orderBy: ReservationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Reservation]!
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   brand(where: BrandWhereUniqueInput!): Brand
   collectionGroup(where: CollectionGroupWhereUniqueInput!): CollectionGroup
@@ -14440,7 +12496,6 @@ type Query {
   bagItem(where: BagItemWhereUniqueInput!): BagItem
   recentlyViewedProduct(where: RecentlyViewedProductWhereUniqueInput!): RecentlyViewedProduct
   order(where: OrderWhereUniqueInput!): Order
-  reservation(where: ReservationWhereUniqueInput!): Reservation
   productRequest(where: ProductRequestWhereUniqueInput!): ProductRequest
   productVariantWant(where: ProductVariantWantWhereUniqueInput!): ProductVariantWant
   reservationFeedback(where: ReservationFeedbackWhereUniqueInput!): ReservationFeedback
@@ -14462,6 +12517,7 @@ type Query {
   customer(where: CustomerWhereUniqueInput!): Customer
   productVariant(where: ProductVariantWhereUniqueInput!): ProductVariant
   product(where: ProductWhereUniqueInput!): Product
+  reservation(where: ReservationWhereUniqueInput!): Reservation
   user(where: UserWhereUniqueInput!): User
   brandsConnection(where: BrandWhereInput, orderBy: BrandOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BrandConnection!
   collectionGroupsConnection(where: CollectionGroupWhereInput, orderBy: CollectionGroupOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CollectionGroupConnection!
@@ -14470,7 +12526,6 @@ type Query {
   bagItemsConnection(where: BagItemWhereInput, orderBy: BagItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BagItemConnection!
   recentlyViewedProductsConnection(where: RecentlyViewedProductWhereInput, orderBy: RecentlyViewedProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): RecentlyViewedProductConnection!
   ordersConnection(where: OrderWhereInput, orderBy: OrderOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): OrderConnection!
-  reservationsConnection(where: ReservationWhereInput, orderBy: ReservationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ReservationConnection!
   productRequestsConnection(where: ProductRequestWhereInput, orderBy: ProductRequestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductRequestConnection!
   productVariantWantsConnection(where: ProductVariantWantWhereInput, orderBy: ProductVariantWantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductVariantWantConnection!
   reservationFeedbacksConnection(where: ReservationFeedbackWhereInput, orderBy: ReservationFeedbackOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ReservationFeedbackConnection!
@@ -14492,6 +12547,7 @@ type Query {
   customersConnection(where: CustomerWhereInput, orderBy: CustomerOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CustomerConnection!
   productVariantsConnection(where: ProductVariantWhereInput, orderBy: ProductVariantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductVariantConnection!
   productsConnection(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductConnection!
+  reservationsConnection(where: ReservationWhereInput, orderBy: ReservationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ReservationConnection!
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
 
   """Fetches an object given its ID"""
@@ -14784,6 +12840,11 @@ input ReservationCreateManyWithoutCustomerInput {
   connect: [ReservationWhereUniqueInput!]
 }
 
+input ReservationCreateOneInput {
+  create: ReservationCreateInput
+  connect: ReservationWhereUniqueInput
+}
+
 input ReservationCreateWithoutCustomerInput {
   id: ID
   reservationNumber: Int!
@@ -14814,6 +12875,7 @@ type ReservationFeedback implements Node {
   feedbacks(where: ProductVariantFeedbackWhereInput, orderBy: ProductVariantFeedbackOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariantFeedback!]
   rating: Rating
   user: User!
+  reservation: Reservation!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -14834,6 +12896,7 @@ input ReservationFeedbackCreateInput {
   rating: Rating
   feedbacks: ProductVariantFeedbackCreateManyWithoutReservationFeedbackInput
   user: UserCreateOneInput!
+  reservation: ReservationCreateOneInput!
 }
 
 input ReservationFeedbackCreateOneWithoutFeedbacksInput {
@@ -14846,6 +12909,7 @@ input ReservationFeedbackCreateWithoutFeedbacksInput {
   comment: String
   rating: Rating
   user: UserCreateOneInput!
+  reservation: ReservationCreateOneInput!
 }
 
 """An edge in a connection."""
@@ -14920,6 +12984,7 @@ input ReservationFeedbackUpdateInput {
   rating: Rating
   feedbacks: ProductVariantFeedbackUpdateManyWithoutReservationFeedbackInput
   user: UserUpdateOneRequiredInput
+  reservation: ReservationUpdateOneRequiredInput
 }
 
 input ReservationFeedbackUpdateManyMutationInput {
@@ -14938,6 +13003,7 @@ input ReservationFeedbackUpdateWithoutFeedbacksDataInput {
   comment: String
   rating: Rating
   user: UserUpdateOneRequiredInput
+  reservation: ReservationUpdateOneRequiredInput
 }
 
 input ReservationFeedbackUpsertWithoutFeedbacksInput {
@@ -15092,6 +13158,7 @@ input ReservationFeedbackWhereInput {
   feedbacks_some: ProductVariantFeedbackWhereInput
   feedbacks_none: ProductVariantFeedbackWhereInput
   user: UserWhereInput
+  reservation: ReservationWhereInput
 }
 
 input ReservationFeedbackWhereUniqueInput {
@@ -15377,6 +13444,21 @@ input ReservationSubscriptionWhereInput {
   node: ReservationWhereInput
 }
 
+input ReservationUpdateDataInput {
+  reservationNumber: Int
+  shipped: Boolean
+  status: ReservationStatus
+  shippedAt: DateTime
+  receivedAt: DateTime
+  reminderSentAt: DateTime
+  user: UserUpdateOneRequiredInput
+  customer: CustomerUpdateOneRequiredWithoutReservationsInput
+  sentPackage: PackageUpdateOneInput
+  returnedPackage: PackageUpdateOneInput
+  location: LocationUpdateOneInput
+  products: PhysicalProductUpdateManyInput
+}
+
 input ReservationUpdateInput {
   reservationNumber: Int
   shipped: Boolean
@@ -15427,6 +13509,13 @@ input ReservationUpdateManyWithWhereNestedInput {
   data: ReservationUpdateManyDataInput!
 }
 
+input ReservationUpdateOneRequiredInput {
+  create: ReservationCreateInput
+  connect: ReservationWhereUniqueInput
+  update: ReservationUpdateDataInput
+  upsert: ReservationUpsertNestedInput
+}
+
 input ReservationUpdateWithoutCustomerDataInput {
   reservationNumber: Int
   shipped: Boolean
@@ -15444,6 +13533,11 @@ input ReservationUpdateWithoutCustomerDataInput {
 input ReservationUpdateWithWhereUniqueWithoutCustomerInput {
   where: ReservationWhereUniqueInput!
   data: ReservationUpdateWithoutCustomerDataInput!
+}
+
+input ReservationUpsertNestedInput {
+  update: ReservationUpdateDataInput!
+  create: ReservationCreateInput!
 }
 
 input ReservationUpsertWithWhereUniqueWithoutCustomerInput {
@@ -16131,7 +14225,6 @@ type Subscription {
   bagItem(where: BagItemSubscriptionWhereInput): BagItemSubscriptionPayload
   recentlyViewedProduct(where: RecentlyViewedProductSubscriptionWhereInput): RecentlyViewedProductSubscriptionPayload
   order(where: OrderSubscriptionWhereInput): OrderSubscriptionPayload
-  reservation(where: ReservationSubscriptionWhereInput): ReservationSubscriptionPayload
   productRequest(where: ProductRequestSubscriptionWhereInput): ProductRequestSubscriptionPayload
   productVariantWant(where: ProductVariantWantSubscriptionWhereInput): ProductVariantWantSubscriptionPayload
   reservationFeedback(where: ReservationFeedbackSubscriptionWhereInput): ReservationFeedbackSubscriptionPayload
@@ -16153,6 +14246,7 @@ type Subscription {
   customer(where: CustomerSubscriptionWhereInput): CustomerSubscriptionPayload
   productVariant(where: ProductVariantSubscriptionWhereInput): ProductVariantSubscriptionPayload
   product(where: ProductSubscriptionWhereInput): ProductSubscriptionPayload
+  reservation(where: ReservationSubscriptionWhereInput): ReservationSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
 }
 
@@ -16932,607 +15026,602 @@ input UserWhereUniqueInput {
 }
 `
 
-export const Prisma = makePrismaBindingClass<BindingConstructor<Prisma>>({
-  typeDefs,
-})
+export const Prisma = makePrismaBindingClass<BindingConstructor<Prisma>>({typeDefs})
 
 /**
  * Types
- */
+*/
 
-export type BagItemOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "position_ASC"
-  | "position_DESC"
-  | "saved_ASC"
-  | "saved_DESC"
-  | "status_ASC"
-  | "status_DESC"
+export type BagItemOrderByInput =   'id_ASC' |
+  'id_DESC' |
+  'position_ASC' |
+  'position_DESC' |
+  'saved_ASC' |
+  'saved_DESC' |
+  'status_ASC' |
+  'status_DESC'
 
-export type BagItemStatus = "Added" | "Reserved" | "Received"
+export type BagItemStatus =   'Added' |
+  'Reserved' |
+  'Received'
 
-export type BillingInfoOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "brand_ASC"
-  | "brand_DESC"
-  | "name_ASC"
-  | "name_DESC"
-  | "last_digits_ASC"
-  | "last_digits_DESC"
-  | "expiration_month_ASC"
-  | "expiration_month_DESC"
-  | "expiration_year_ASC"
-  | "expiration_year_DESC"
-  | "street1_ASC"
-  | "street1_DESC"
-  | "street2_ASC"
-  | "street2_DESC"
-  | "city_ASC"
-  | "city_DESC"
-  | "state_ASC"
-  | "state_DESC"
-  | "country_ASC"
-  | "country_DESC"
-  | "postal_code_ASC"
-  | "postal_code_DESC"
+export type BillingInfoOrderByInput =   'id_ASC' |
+  'id_DESC' |
+  'brand_ASC' |
+  'brand_DESC' |
+  'name_ASC' |
+  'name_DESC' |
+  'last_digits_ASC' |
+  'last_digits_DESC' |
+  'expiration_month_ASC' |
+  'expiration_month_DESC' |
+  'expiration_year_ASC' |
+  'expiration_year_DESC' |
+  'street1_ASC' |
+  'street1_DESC' |
+  'street2_ASC' |
+  'street2_DESC' |
+  'city_ASC' |
+  'city_DESC' |
+  'state_ASC' |
+  'state_DESC' |
+  'country_ASC' |
+  'country_DESC' |
+  'postal_code_ASC' |
+  'postal_code_DESC'
 
-export type BottomSizeOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "type_ASC"
-  | "type_DESC"
-  | "value_ASC"
-  | "value_DESC"
-  | "waist_ASC"
-  | "waist_DESC"
-  | "rise_ASC"
-  | "rise_DESC"
-  | "hem_ASC"
-  | "hem_DESC"
-  | "inseam_ASC"
-  | "inseam_DESC"
+export type BottomSizeOrderByInput =   'id_ASC' |
+  'id_DESC' |
+  'type_ASC' |
+  'type_DESC' |
+  'value_ASC' |
+  'value_DESC' |
+  'waist_ASC' |
+  'waist_DESC' |
+  'rise_ASC' |
+  'rise_DESC' |
+  'hem_ASC' |
+  'hem_DESC' |
+  'inseam_ASC' |
+  'inseam_DESC'
 
-export type BottomSizeType = "WxL" | "US" | "EU" | "JP" | "Letter"
+export type BottomSizeType =   'WxL' |
+  'US' |
+  'EU' |
+  'JP' |
+  'Letter'
 
-export type BrandOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "slug_ASC"
-  | "slug_DESC"
-  | "brandCode_ASC"
-  | "brandCode_DESC"
-  | "description_ASC"
-  | "description_DESC"
-  | "isPrimaryBrand_ASC"
-  | "isPrimaryBrand_DESC"
-  | "logo_ASC"
-  | "logo_DESC"
-  | "name_ASC"
-  | "name_DESC"
-  | "basedIn_ASC"
-  | "basedIn_DESC"
-  | "since_ASC"
-  | "since_DESC"
-  | "tier_ASC"
-  | "tier_DESC"
-  | "websiteUrl_ASC"
-  | "websiteUrl_DESC"
-  | "createdAt_ASC"
-  | "createdAt_DESC"
-  | "updatedAt_ASC"
-  | "updatedAt_DESC"
+export type BrandOrderByInput =   'id_ASC' |
+  'id_DESC' |
+  'slug_ASC' |
+  'slug_DESC' |
+  'brandCode_ASC' |
+  'brandCode_DESC' |
+  'description_ASC' |
+  'description_DESC' |
+  'isPrimaryBrand_ASC' |
+  'isPrimaryBrand_DESC' |
+  'logo_ASC' |
+  'logo_DESC' |
+  'name_ASC' |
+  'name_DESC' |
+  'basedIn_ASC' |
+  'basedIn_DESC' |
+  'since_ASC' |
+  'since_DESC' |
+  'tier_ASC' |
+  'tier_DESC' |
+  'websiteUrl_ASC' |
+  'websiteUrl_DESC' |
+  'createdAt_ASC' |
+  'createdAt_DESC' |
+  'updatedAt_ASC' |
+  'updatedAt_DESC'
 
-export type BrandTier =
-  | "Tier0"
-  | "Tier1"
-  | "Tier2"
-  | "Niche"
-  | "Upcoming"
-  | "Retro"
-  | "Boutique"
-  | "Local"
-  | "Discovery"
+export type BrandTier =   'Tier0' |
+  'Tier1' |
+  'Tier2' |
+  'Niche' |
+  'Upcoming' |
+  'Retro' |
+  'Boutique' |
+  'Local' |
+  'Discovery'
 
-export type CategoryOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "slug_ASC"
-  | "slug_DESC"
-  | "name_ASC"
-  | "name_DESC"
-  | "image_ASC"
-  | "image_DESC"
-  | "description_ASC"
-  | "description_DESC"
-  | "visible_ASC"
-  | "visible_DESC"
+export type CategoryOrderByInput =   'id_ASC' |
+  'id_DESC' |
+  'slug_ASC' |
+  'slug_DESC' |
+  'name_ASC' |
+  'name_DESC' |
+  'image_ASC' |
+  'image_DESC' |
+  'description_ASC' |
+  'description_DESC' |
+  'visible_ASC' |
+  'visible_DESC'
 
-export type CollectionGroupOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "slug_ASC"
-  | "slug_DESC"
-  | "title_ASC"
-  | "title_DESC"
-  | "collectionCount_ASC"
-  | "collectionCount_DESC"
+export type CollectionGroupOrderByInput =   'id_ASC' |
+  'id_DESC' |
+  'slug_ASC' |
+  'slug_DESC' |
+  'title_ASC' |
+  'title_DESC' |
+  'collectionCount_ASC' |
+  'collectionCount_DESC'
 
-export type CollectionOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "slug_ASC"
-  | "slug_DESC"
-  | "images_ASC"
-  | "images_DESC"
-  | "title_ASC"
-  | "title_DESC"
-  | "subTitle_ASC"
-  | "subTitle_DESC"
-  | "descriptionTop_ASC"
-  | "descriptionTop_DESC"
-  | "descriptionBottom_ASC"
-  | "descriptionBottom_DESC"
+export type CollectionOrderByInput =   'id_ASC' |
+  'id_DESC' |
+  'slug_ASC' |
+  'slug_DESC' |
+  'images_ASC' |
+  'images_DESC' |
+  'title_ASC' |
+  'title_DESC' |
+  'subTitle_ASC' |
+  'subTitle_DESC' |
+  'descriptionTop_ASC' |
+  'descriptionTop_DESC' |
+  'descriptionBottom_ASC' |
+  'descriptionBottom_DESC'
 
-export type ColorOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "slug_ASC"
-  | "slug_DESC"
-  | "name_ASC"
-  | "name_DESC"
-  | "colorCode_ASC"
-  | "colorCode_DESC"
-  | "hexCode_ASC"
-  | "hexCode_DESC"
+export type ColorOrderByInput =   'id_ASC' |
+  'id_DESC' |
+  'slug_ASC' |
+  'slug_DESC' |
+  'name_ASC' |
+  'name_DESC' |
+  'colorCode_ASC' |
+  'colorCode_DESC' |
+  'hexCode_ASC' |
+  'hexCode_DESC'
 
-export type CustomerDetailOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "phoneNumber_ASC"
-  | "phoneNumber_DESC"
-  | "birthday_ASC"
-  | "birthday_DESC"
-  | "height_ASC"
-  | "height_DESC"
-  | "weight_ASC"
-  | "weight_DESC"
-  | "bodyType_ASC"
-  | "bodyType_DESC"
-  | "averageTopSize_ASC"
-  | "averageTopSize_DESC"
-  | "averageWaistSize_ASC"
-  | "averageWaistSize_DESC"
-  | "averagePantLength_ASC"
-  | "averagePantLength_DESC"
-  | "preferredPronouns_ASC"
-  | "preferredPronouns_DESC"
-  | "profession_ASC"
-  | "profession_DESC"
-  | "partyFrequency_ASC"
-  | "partyFrequency_DESC"
-  | "travelFrequency_ASC"
-  | "travelFrequency_DESC"
-  | "shoppingFrequency_ASC"
-  | "shoppingFrequency_DESC"
-  | "averageSpend_ASC"
-  | "averageSpend_DESC"
-  | "style_ASC"
-  | "style_DESC"
-  | "commuteStyle_ASC"
-  | "commuteStyle_DESC"
-  | "phoneOS_ASC"
-  | "phoneOS_DESC"
-  | "insureShipment_ASC"
-  | "insureShipment_DESC"
-  | "createdAt_ASC"
-  | "createdAt_DESC"
-  | "updatedAt_ASC"
-  | "updatedAt_DESC"
+export type CustomerDetailOrderByInput =   'id_ASC' |
+  'id_DESC' |
+  'phoneNumber_ASC' |
+  'phoneNumber_DESC' |
+  'birthday_ASC' |
+  'birthday_DESC' |
+  'height_ASC' |
+  'height_DESC' |
+  'weight_ASC' |
+  'weight_DESC' |
+  'bodyType_ASC' |
+  'bodyType_DESC' |
+  'averageTopSize_ASC' |
+  'averageTopSize_DESC' |
+  'averageWaistSize_ASC' |
+  'averageWaistSize_DESC' |
+  'averagePantLength_ASC' |
+  'averagePantLength_DESC' |
+  'preferredPronouns_ASC' |
+  'preferredPronouns_DESC' |
+  'profession_ASC' |
+  'profession_DESC' |
+  'partyFrequency_ASC' |
+  'partyFrequency_DESC' |
+  'travelFrequency_ASC' |
+  'travelFrequency_DESC' |
+  'shoppingFrequency_ASC' |
+  'shoppingFrequency_DESC' |
+  'averageSpend_ASC' |
+  'averageSpend_DESC' |
+  'style_ASC' |
+  'style_DESC' |
+  'commuteStyle_ASC' |
+  'commuteStyle_DESC' |
+  'phoneOS_ASC' |
+  'phoneOS_DESC' |
+  'insureShipment_ASC' |
+  'insureShipment_DESC' |
+  'createdAt_ASC' |
+  'createdAt_DESC' |
+  'updatedAt_ASC' |
+  'updatedAt_DESC'
 
-export type CustomerOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "status_ASC"
-  | "status_DESC"
-  | "plan_ASC"
-  | "plan_DESC"
+export type CustomerOrderByInput =   'id_ASC' |
+  'id_DESC' |
+  'status_ASC' |
+  'status_DESC' |
+  'plan_ASC' |
+  'plan_DESC'
 
-export type CustomerStatus =
-  | "Invited"
-  | "Created"
-  | "Waitlisted"
-  | "Authorized"
-  | "Active"
-  | "Suspended"
-  | "Paused"
-  | "Deactivated"
+export type CustomerStatus =   'Invited' |
+  'Created' |
+  'Waitlisted' |
+  'Authorized' |
+  'Active' |
+  'Suspended' |
+  'Paused' |
+  'Deactivated'
 
-export type HomepageProductRailOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "slug_ASC"
-  | "slug_DESC"
-  | "name_ASC"
-  | "name_DESC"
+export type HomepageProductRailOrderByInput =   'id_ASC' |
+  'id_DESC' |
+  'slug_ASC' |
+  'slug_DESC' |
+  'name_ASC' |
+  'name_DESC'
 
-export type ImageOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "caption_ASC"
-  | "caption_DESC"
-  | "originalHeight_ASC"
-  | "originalHeight_DESC"
-  | "originalUrl_ASC"
-  | "originalUrl_DESC"
-  | "originalWidth_ASC"
-  | "originalWidth_DESC"
-  | "resizedUrl_ASC"
-  | "resizedUrl_DESC"
-  | "title_ASC"
-  | "title_DESC"
-  | "createdAt_ASC"
-  | "createdAt_DESC"
-  | "updatedAt_ASC"
-  | "updatedAt_DESC"
+export type ImageOrderByInput =   'id_ASC' |
+  'id_DESC' |
+  'caption_ASC' |
+  'caption_DESC' |
+  'originalHeight_ASC' |
+  'originalHeight_DESC' |
+  'originalUrl_ASC' |
+  'originalUrl_DESC' |
+  'originalWidth_ASC' |
+  'originalWidth_DESC' |
+  'resizedUrl_ASC' |
+  'resizedUrl_DESC' |
+  'title_ASC' |
+  'title_DESC' |
+  'createdAt_ASC' |
+  'createdAt_DESC' |
+  'updatedAt_ASC' |
+  'updatedAt_DESC'
 
-export type InventoryStatus = "NonReservable" | "Reservable" | "Reserved"
+export type InventoryStatus =   'NonReservable' |
+  'Reservable' |
+  'Reserved'
 
-export type LabelOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "name_ASC"
-  | "name_DESC"
-  | "image_ASC"
-  | "image_DESC"
-  | "trackingNumber_ASC"
-  | "trackingNumber_DESC"
-  | "trackingURL_ASC"
-  | "trackingURL_DESC"
+export type LabelOrderByInput =   'id_ASC' |
+  'id_DESC' |
+  'name_ASC' |
+  'name_DESC' |
+  'image_ASC' |
+  'image_DESC' |
+  'trackingNumber_ASC' |
+  'trackingNumber_DESC' |
+  'trackingURL_ASC' |
+  'trackingURL_DESC'
 
-export type LetterSize = "XS" | "S" | "M" | "L" | "XL" | "XXL"
+export type LetterSize =   'XS' |
+  'S' |
+  'M' |
+  'L' |
+  'XL' |
+  'XXL'
 
-export type LocationOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "slug_ASC"
-  | "slug_DESC"
-  | "name_ASC"
-  | "name_DESC"
-  | "company_ASC"
-  | "company_DESC"
-  | "description_ASC"
-  | "description_DESC"
-  | "address1_ASC"
-  | "address1_DESC"
-  | "address2_ASC"
-  | "address2_DESC"
-  | "city_ASC"
-  | "city_DESC"
-  | "state_ASC"
-  | "state_DESC"
-  | "zipCode_ASC"
-  | "zipCode_DESC"
-  | "locationType_ASC"
-  | "locationType_DESC"
-  | "lat_ASC"
-  | "lat_DESC"
-  | "lng_ASC"
-  | "lng_DESC"
-  | "createdAt_ASC"
-  | "createdAt_DESC"
-  | "updatedAt_ASC"
-  | "updatedAt_DESC"
+export type LocationOrderByInput =   'id_ASC' |
+  'id_DESC' |
+  'slug_ASC' |
+  'slug_DESC' |
+  'name_ASC' |
+  'name_DESC' |
+  'company_ASC' |
+  'company_DESC' |
+  'description_ASC' |
+  'description_DESC' |
+  'address1_ASC' |
+  'address1_DESC' |
+  'address2_ASC' |
+  'address2_DESC' |
+  'city_ASC' |
+  'city_DESC' |
+  'state_ASC' |
+  'state_DESC' |
+  'zipCode_ASC' |
+  'zipCode_DESC' |
+  'locationType_ASC' |
+  'locationType_DESC' |
+  'lat_ASC' |
+  'lat_DESC' |
+  'lng_ASC' |
+  'lng_DESC' |
+  'createdAt_ASC' |
+  'createdAt_DESC' |
+  'updatedAt_ASC' |
+  'updatedAt_DESC'
 
-export type LocationType = "Office" | "Warehouse" | "Cleaner" | "Customer"
+export type LocationType =   'Office' |
+  'Warehouse' |
+  'Cleaner' |
+  'Customer'
 
-export type Material =
-  | "Acetate"
-  | "Acrylic"
-  | "Alpaca"
-  | "CalfLeather"
-  | "CamelHair"
-  | "Camel"
-  | "Cashmere"
-  | "Cotton"
-  | "CottonPoplin"
-  | "CowLeather"
-  | "Cupro"
-  | "DuckDown"
-  | "Denim"
-  | "DuckFeathers"
-  | "Elastane"
-  | "Esterlane"
-  | "Feather"
-  | "FeatherDown"
-  | "GooseDown"
-  | "LambLeather"
-  | "LambSkin"
-  | "Lambswool"
-  | "Leather"
-  | "Lyocell"
-  | "MerinoWool"
-  | "Modacrylic"
-  | "Mohair"
-  | "Nylon"
-  | "OrganicCotton"
-  | "PolyAcetate"
-  | "Polyamide"
-  | "Polyester"
-  | "Polyethylene"
-  | "PolySatin"
-  | "Polyurethane"
-  | "PolyurethanicResin"
-  | "PVC"
-  | "Rayon"
-  | "RecycledPolyester"
-  | "RecycledWool"
-  | "Silk"
-  | "Suede"
-  | "SheepLeather"
-  | "Spandex"
-  | "Taffeta"
-  | "Tartan"
-  | "Triacetate"
-  | "VirginWool"
-  | "Viscose"
-  | "Velcro"
-  | "WaxCoating"
-  | "WhiteDuckDown"
-  | "WhiteGooseDown"
-  | "Wool"
-  | "Mesh"
+export type Material =   'Acetate' |
+  'Acrylic' |
+  'Alpaca' |
+  'CalfLeather' |
+  'CamelHair' |
+  'Camel' |
+  'Cashmere' |
+  'Cotton' |
+  'CottonPoplin' |
+  'CowLeather' |
+  'Cupro' |
+  'DuckDown' |
+  'Denim' |
+  'DuckFeathers' |
+  'Elastane' |
+  'Esterlane' |
+  'Feather' |
+  'FeatherDown' |
+  'GooseDown' |
+  'LambLeather' |
+  'LambSkin' |
+  'Lambswool' |
+  'Leather' |
+  'Lyocell' |
+  'MerinoWool' |
+  'Modacrylic' |
+  'Mohair' |
+  'Nylon' |
+  'OrganicCotton' |
+  'PolyAcetate' |
+  'Polyamide' |
+  'Polyester' |
+  'Polyethylene' |
+  'PolySatin' |
+  'Polyurethane' |
+  'PolyurethanicResin' |
+  'PVC' |
+  'Rayon' |
+  'RecycledPolyester' |
+  'RecycledWool' |
+  'Silk' |
+  'Suede' |
+  'SheepLeather' |
+  'Spandex' |
+  'Taffeta' |
+  'Tartan' |
+  'Triacetate' |
+  'VirginWool' |
+  'Viscose' |
+  'Velcro' |
+  'WaxCoating' |
+  'WhiteDuckDown' |
+  'WhiteGooseDown' |
+  'Wool' |
+  'Mesh'
 
-export type MutationType = "CREATED" | "UPDATED" | "DELETED"
+export type MutationType =   'CREATED' |
+  'UPDATED' |
+  'DELETED'
 
-export type OrderOrderByInput = "id_ASC" | "id_DESC"
+export type OrderOrderByInput =   'id_ASC' |
+  'id_DESC'
 
-export type PackageOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "weight_ASC"
-  | "weight_DESC"
-  | "createdAt_ASC"
-  | "createdAt_DESC"
-  | "updatedAt_ASC"
-  | "updatedAt_DESC"
+export type PackageOrderByInput =   'id_ASC' |
+  'id_DESC' |
+  'weight_ASC' |
+  'weight_DESC' |
+  'createdAt_ASC' |
+  'createdAt_DESC' |
+  'updatedAt_ASC' |
+  'updatedAt_DESC'
 
-export type PhysicalProductOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "seasonsUID_ASC"
-  | "seasonsUID_DESC"
-  | "inventoryStatus_ASC"
-  | "inventoryStatus_DESC"
-  | "productStatus_ASC"
-  | "productStatus_DESC"
-  | "createdAt_ASC"
-  | "createdAt_DESC"
-  | "updatedAt_ASC"
-  | "updatedAt_DESC"
+export type PhysicalProductOrderByInput =   'id_ASC' |
+  'id_DESC' |
+  'seasonsUID_ASC' |
+  'seasonsUID_DESC' |
+  'inventoryStatus_ASC' |
+  'inventoryStatus_DESC' |
+  'productStatus_ASC' |
+  'productStatus_DESC' |
+  'createdAt_ASC' |
+  'createdAt_DESC' |
+  'updatedAt_ASC' |
+  'updatedAt_DESC'
 
-export type PhysicalProductStatus =
-  | "New"
-  | "Used"
-  | "Damaged"
-  | "Clean"
-  | "Lost"
+export type PhysicalProductStatus =   'New' |
+  'Used' |
+  'Damaged' |
+  'Clean' |
+  'Lost'
 
-export type Plan = "AllAccess" | "Essential"
+export type Plan =   'AllAccess' |
+  'Essential'
 
-export type ProductFunctionOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "name_ASC"
-  | "name_DESC"
+export type ProductFunctionOrderByInput =   'id_ASC' |
+  'id_DESC' |
+  'name_ASC' |
+  'name_DESC'
 
-export type ProductOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "slug_ASC"
-  | "slug_DESC"
-  | "name_ASC"
-  | "name_DESC"
-  | "type_ASC"
-  | "type_DESC"
-  | "description_ASC"
-  | "description_DESC"
-  | "externalURL_ASC"
-  | "externalURL_DESC"
-  | "images_ASC"
-  | "images_DESC"
-  | "modelHeight_ASC"
-  | "modelHeight_DESC"
-  | "retailPrice_ASC"
-  | "retailPrice_DESC"
-  | "tags_ASC"
-  | "tags_DESC"
-  | "status_ASC"
-  | "status_DESC"
-  | "createdAt_ASC"
-  | "createdAt_DESC"
-  | "updatedAt_ASC"
-  | "updatedAt_DESC"
+export type ProductOrderByInput =   'id_ASC' |
+  'id_DESC' |
+  'slug_ASC' |
+  'slug_DESC' |
+  'name_ASC' |
+  'name_DESC' |
+  'type_ASC' |
+  'type_DESC' |
+  'description_ASC' |
+  'description_DESC' |
+  'externalURL_ASC' |
+  'externalURL_DESC' |
+  'images_ASC' |
+  'images_DESC' |
+  'modelHeight_ASC' |
+  'modelHeight_DESC' |
+  'retailPrice_ASC' |
+  'retailPrice_DESC' |
+  'tags_ASC' |
+  'tags_DESC' |
+  'status_ASC' |
+  'status_DESC' |
+  'createdAt_ASC' |
+  'createdAt_DESC' |
+  'updatedAt_ASC' |
+  'updatedAt_DESC'
 
-export type ProductRequestOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "brand_ASC"
-  | "brand_DESC"
-  | "description_ASC"
-  | "description_DESC"
-  | "name_ASC"
-  | "name_DESC"
-  | "price_ASC"
-  | "price_DESC"
-  | "priceCurrency_ASC"
-  | "priceCurrency_DESC"
-  | "productID_ASC"
-  | "productID_DESC"
-  | "reason_ASC"
-  | "reason_DESC"
-  | "sku_ASC"
-  | "sku_DESC"
-  | "url_ASC"
-  | "url_DESC"
+export type ProductRequestOrderByInput =   'id_ASC' |
+  'id_DESC' |
+  'brand_ASC' |
+  'brand_DESC' |
+  'description_ASC' |
+  'description_DESC' |
+  'name_ASC' |
+  'name_DESC' |
+  'price_ASC' |
+  'price_DESC' |
+  'priceCurrency_ASC' |
+  'priceCurrency_DESC' |
+  'productID_ASC' |
+  'productID_DESC' |
+  'reason_ASC' |
+  'reason_DESC' |
+  'sku_ASC' |
+  'sku_DESC' |
+  'url_ASC' |
+  'url_DESC'
 
-export type ProductStatus = "Available" | "NotAvailable"
+export type ProductStatus =   'Available' |
+  'NotAvailable'
 
-export type ProductType = "Top" | "Bottom" | "Accessory" | "Shoe"
+export type ProductType =   'Top' |
+  'Bottom' |
+  'Accessory' |
+  'Shoe'
 
-export type ProductVariantFeedbackOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "isCompleted_ASC"
-  | "isCompleted_DESC"
+export type ProductVariantFeedbackOrderByInput =   'id_ASC' |
+  'id_DESC' |
+  'isCompleted_ASC' |
+  'isCompleted_DESC'
 
-export type ProductVariantFeedbackQuestionOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "question_ASC"
-  | "question_DESC"
-  | "type_ASC"
-  | "type_DESC"
+export type ProductVariantFeedbackQuestionOrderByInput =   'id_ASC' |
+  'id_DESC' |
+  'question_ASC' |
+  'question_DESC' |
+  'type_ASC' |
+  'type_DESC'
 
-export type ProductVariantOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "sku_ASC"
-  | "sku_DESC"
-  | "weight_ASC"
-  | "weight_DESC"
-  | "height_ASC"
-  | "height_DESC"
-  | "productID_ASC"
-  | "productID_DESC"
-  | "retailPrice_ASC"
-  | "retailPrice_DESC"
-  | "total_ASC"
-  | "total_DESC"
-  | "reservable_ASC"
-  | "reservable_DESC"
-  | "reserved_ASC"
-  | "reserved_DESC"
-  | "nonReservable_ASC"
-  | "nonReservable_DESC"
-  | "createdAt_ASC"
-  | "createdAt_DESC"
-  | "updatedAt_ASC"
-  | "updatedAt_DESC"
+export type ProductVariantOrderByInput =   'id_ASC' |
+  'id_DESC' |
+  'sku_ASC' |
+  'sku_DESC' |
+  'weight_ASC' |
+  'weight_DESC' |
+  'height_ASC' |
+  'height_DESC' |
+  'productID_ASC' |
+  'productID_DESC' |
+  'retailPrice_ASC' |
+  'retailPrice_DESC' |
+  'total_ASC' |
+  'total_DESC' |
+  'reservable_ASC' |
+  'reservable_DESC' |
+  'reserved_ASC' |
+  'reserved_DESC' |
+  'nonReservable_ASC' |
+  'nonReservable_DESC' |
+  'createdAt_ASC' |
+  'createdAt_DESC' |
+  'updatedAt_ASC' |
+  'updatedAt_DESC'
 
-export type ProductVariantWantOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "isFulfilled_ASC"
-  | "isFulfilled_DESC"
+export type ProductVariantWantOrderByInput =   'id_ASC' |
+  'id_DESC' |
+  'isFulfilled_ASC' |
+  'isFulfilled_DESC'
 
-export type PushNotificationStatus = "Blocked" | "Granted" | "Denied"
+export type PushNotificationStatus =   'Blocked' |
+  'Granted' |
+  'Denied'
 
-export type QuestionType = "MultipleChoice" | "FreeResponse"
+export type QuestionType =   'MultipleChoice' |
+  'FreeResponse'
 
-export type Rating = "Disliked" | "Ok" | "Loved"
+export type Rating =   'Disliked' |
+  'Ok' |
+  'Loved'
 
-export type RecentlyViewedProductOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "viewCount_ASC"
-  | "viewCount_DESC"
-  | "createdAt_ASC"
-  | "createdAt_DESC"
-  | "updatedAt_ASC"
-  | "updatedAt_DESC"
+export type RecentlyViewedProductOrderByInput =   'id_ASC' |
+  'id_DESC' |
+  'viewCount_ASC' |
+  'viewCount_DESC' |
+  'createdAt_ASC' |
+  'createdAt_DESC' |
+  'updatedAt_ASC' |
+  'updatedAt_DESC'
 
-export type ReservationFeedbackOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "comment_ASC"
-  | "comment_DESC"
-  | "rating_ASC"
-  | "rating_DESC"
-  | "createdAt_ASC"
-  | "createdAt_DESC"
-  | "updatedAt_ASC"
-  | "updatedAt_DESC"
+export type ReservationFeedbackOrderByInput =   'id_ASC' |
+  'id_DESC' |
+  'comment_ASC' |
+  'comment_DESC' |
+  'rating_ASC' |
+  'rating_DESC' |
+  'createdAt_ASC' |
+  'createdAt_DESC' |
+  'updatedAt_ASC' |
+  'updatedAt_DESC'
 
-export type ReservationOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "reservationNumber_ASC"
-  | "reservationNumber_DESC"
-  | "shipped_ASC"
-  | "shipped_DESC"
-  | "status_ASC"
-  | "status_DESC"
-  | "shippedAt_ASC"
-  | "shippedAt_DESC"
-  | "receivedAt_ASC"
-  | "receivedAt_DESC"
-  | "reminderSentAt_ASC"
-  | "reminderSentAt_DESC"
-  | "createdAt_ASC"
-  | "createdAt_DESC"
-  | "updatedAt_ASC"
-  | "updatedAt_DESC"
+export type ReservationOrderByInput =   'id_ASC' |
+  'id_DESC' |
+  'reservationNumber_ASC' |
+  'reservationNumber_DESC' |
+  'shipped_ASC' |
+  'shipped_DESC' |
+  'status_ASC' |
+  'status_DESC' |
+  'shippedAt_ASC' |
+  'shippedAt_DESC' |
+  'receivedAt_ASC' |
+  'receivedAt_DESC' |
+  'reminderSentAt_ASC' |
+  'reminderSentAt_DESC' |
+  'createdAt_ASC' |
+  'createdAt_DESC' |
+  'updatedAt_ASC' |
+  'updatedAt_DESC'
 
-export type ReservationStatus =
-  | "New"
-  | "InQueue"
-  | "OnHold"
-  | "Packed"
-  | "Shipped"
-  | "InTransit"
-  | "Received"
-  | "Cancelled"
-  | "Completed"
+export type ReservationStatus =   'New' |
+  'InQueue' |
+  'OnHold' |
+  'Packed' |
+  'Shipped' |
+  'InTransit' |
+  'Received' |
+  'Cancelled' |
+  'Completed'
 
-export type SizeOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "slug_ASC"
-  | "slug_DESC"
-  | "productType_ASC"
-  | "productType_DESC"
-  | "display_ASC"
-  | "display_DESC"
+export type SizeOrderByInput =   'id_ASC' |
+  'id_DESC' |
+  'slug_ASC' |
+  'slug_DESC' |
+  'productType_ASC' |
+  'productType_DESC' |
+  'display_ASC' |
+  'display_DESC'
 
-export type TopSizeOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "letter_ASC"
-  | "letter_DESC"
-  | "sleeve_ASC"
-  | "sleeve_DESC"
-  | "shoulder_ASC"
-  | "shoulder_DESC"
-  | "chest_ASC"
-  | "chest_DESC"
-  | "neck_ASC"
-  | "neck_DESC"
-  | "length_ASC"
-  | "length_DESC"
+export type TopSizeOrderByInput =   'id_ASC' |
+  'id_DESC' |
+  'letter_ASC' |
+  'letter_DESC' |
+  'sleeve_ASC' |
+  'sleeve_DESC' |
+  'shoulder_ASC' |
+  'shoulder_DESC' |
+  'chest_ASC' |
+  'chest_DESC' |
+  'neck_ASC' |
+  'neck_DESC' |
+  'length_ASC' |
+  'length_DESC'
 
-export type UserOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "auth0Id_ASC"
-  | "auth0Id_DESC"
-  | "email_ASC"
-  | "email_DESC"
-  | "firstName_ASC"
-  | "firstName_DESC"
-  | "lastName_ASC"
-  | "lastName_DESC"
-  | "role_ASC"
-  | "role_DESC"
-  | "createdAt_ASC"
-  | "createdAt_DESC"
-  | "updatedAt_ASC"
-  | "updatedAt_DESC"
-  | "pushNotifications_ASC"
-  | "pushNotifications_DESC"
+export type UserOrderByInput =   'id_ASC' |
+  'id_DESC' |
+  'auth0Id_ASC' |
+  'auth0Id_DESC' |
+  'email_ASC' |
+  'email_DESC' |
+  'firstName_ASC' |
+  'firstName_DESC' |
+  'lastName_ASC' |
+  'lastName_DESC' |
+  'role_ASC' |
+  'role_DESC' |
+  'createdAt_ASC' |
+  'createdAt_DESC' |
+  'updatedAt_ASC' |
+  'updatedAt_DESC' |
+  'pushNotifications_ASC' |
+  'pushNotifications_DESC'
 
-export type UserRole = "Admin" | "Customer" | "Partner"
+export type UserRole =   'Admin' |
+  'Customer' |
+  'Partner'
 
 export interface BagItemCreateInput {
   id?: ID_Input | null
@@ -17629,18 +15718,9 @@ export interface BillingInfoCreateOneInput {
 }
 
 export interface BillingInfoSubscriptionWhereInput {
-  AND?:
-    | BillingInfoSubscriptionWhereInput[]
-    | BillingInfoSubscriptionWhereInput
-    | null
-  OR?:
-    | BillingInfoSubscriptionWhereInput[]
-    | BillingInfoSubscriptionWhereInput
-    | null
-  NOT?:
-    | BillingInfoSubscriptionWhereInput[]
-    | BillingInfoSubscriptionWhereInput
-    | null
+  AND?: BillingInfoSubscriptionWhereInput[] | BillingInfoSubscriptionWhereInput | null
+  OR?: BillingInfoSubscriptionWhereInput[] | BillingInfoSubscriptionWhereInput | null
+  NOT?: BillingInfoSubscriptionWhereInput[] | BillingInfoSubscriptionWhereInput | null
   mutation_in?: MutationType[] | MutationType | null
   updatedFields_contains?: String | null
   updatedFields_contains_every?: String[] | String | null
@@ -17886,18 +15966,9 @@ export interface BottomSizeCreateOneInput {
 }
 
 export interface BottomSizeSubscriptionWhereInput {
-  AND?:
-    | BottomSizeSubscriptionWhereInput[]
-    | BottomSizeSubscriptionWhereInput
-    | null
-  OR?:
-    | BottomSizeSubscriptionWhereInput[]
-    | BottomSizeSubscriptionWhereInput
-    | null
-  NOT?:
-    | BottomSizeSubscriptionWhereInput[]
-    | BottomSizeSubscriptionWhereInput
-    | null
+  AND?: BottomSizeSubscriptionWhereInput[] | BottomSizeSubscriptionWhereInput | null
+  OR?: BottomSizeSubscriptionWhereInput[] | BottomSizeSubscriptionWhereInput | null
+  NOT?: BottomSizeSubscriptionWhereInput[] | BottomSizeSubscriptionWhereInput | null
   mutation_in?: MutationType[] | MutationType | null
   updatedFields_contains?: String | null
   updatedFields_contains_every?: String[] | String | null
@@ -18400,19 +16471,10 @@ export interface CategoryUpdateManyInput {
   set?: CategoryWhereUniqueInput[] | CategoryWhereUniqueInput | null
   disconnect?: CategoryWhereUniqueInput[] | CategoryWhereUniqueInput | null
   delete?: CategoryWhereUniqueInput[] | CategoryWhereUniqueInput | null
-  update?:
-    | CategoryUpdateWithWhereUniqueNestedInput[]
-    | CategoryUpdateWithWhereUniqueNestedInput
-    | null
-  updateMany?:
-    | CategoryUpdateManyWithWhereNestedInput[]
-    | CategoryUpdateManyWithWhereNestedInput
-    | null
+  update?: CategoryUpdateWithWhereUniqueNestedInput[] | CategoryUpdateWithWhereUniqueNestedInput | null
+  updateMany?: CategoryUpdateManyWithWhereNestedInput[] | CategoryUpdateManyWithWhereNestedInput | null
   deleteMany?: CategoryScalarWhereInput[] | CategoryScalarWhereInput | null
-  upsert?:
-    | CategoryUpsertWithWhereUniqueNestedInput[]
-    | CategoryUpsertWithWhereUniqueNestedInput
-    | null
+  upsert?: CategoryUpsertWithWhereUniqueNestedInput[] | CategoryUpsertWithWhereUniqueNestedInput | null
 }
 
 export interface CategoryUpdateManyMutationInput {
@@ -18561,18 +16623,9 @@ export interface CollectionGroupCreateInput {
 }
 
 export interface CollectionGroupSubscriptionWhereInput {
-  AND?:
-    | CollectionGroupSubscriptionWhereInput[]
-    | CollectionGroupSubscriptionWhereInput
-    | null
-  OR?:
-    | CollectionGroupSubscriptionWhereInput[]
-    | CollectionGroupSubscriptionWhereInput
-    | null
-  NOT?:
-    | CollectionGroupSubscriptionWhereInput[]
-    | CollectionGroupSubscriptionWhereInput
-    | null
+  AND?: CollectionGroupSubscriptionWhereInput[] | CollectionGroupSubscriptionWhereInput | null
+  OR?: CollectionGroupSubscriptionWhereInput[] | CollectionGroupSubscriptionWhereInput | null
+  NOT?: CollectionGroupSubscriptionWhereInput[] | CollectionGroupSubscriptionWhereInput | null
   mutation_in?: MutationType[] | MutationType | null
   updatedFields_contains?: String | null
   updatedFields_contains_every?: String[] | String | null
@@ -18748,18 +16801,9 @@ export interface CollectionScalarWhereInput {
 }
 
 export interface CollectionSubscriptionWhereInput {
-  AND?:
-    | CollectionSubscriptionWhereInput[]
-    | CollectionSubscriptionWhereInput
-    | null
-  OR?:
-    | CollectionSubscriptionWhereInput[]
-    | CollectionSubscriptionWhereInput
-    | null
-  NOT?:
-    | CollectionSubscriptionWhereInput[]
-    | CollectionSubscriptionWhereInput
-    | null
+  AND?: CollectionSubscriptionWhereInput[] | CollectionSubscriptionWhereInput | null
+  OR?: CollectionSubscriptionWhereInput[] | CollectionSubscriptionWhereInput | null
+  NOT?: CollectionSubscriptionWhereInput[] | CollectionSubscriptionWhereInput | null
   mutation_in?: MutationType[] | MutationType | null
   updatedFields_contains?: String | null
   updatedFields_contains_every?: String[] | String | null
@@ -18802,19 +16846,10 @@ export interface CollectionUpdateManyInput {
   set?: CollectionWhereUniqueInput[] | CollectionWhereUniqueInput | null
   disconnect?: CollectionWhereUniqueInput[] | CollectionWhereUniqueInput | null
   delete?: CollectionWhereUniqueInput[] | CollectionWhereUniqueInput | null
-  update?:
-    | CollectionUpdateWithWhereUniqueNestedInput[]
-    | CollectionUpdateWithWhereUniqueNestedInput
-    | null
-  updateMany?:
-    | CollectionUpdateManyWithWhereNestedInput[]
-    | CollectionUpdateManyWithWhereNestedInput
-    | null
+  update?: CollectionUpdateWithWhereUniqueNestedInput[] | CollectionUpdateWithWhereUniqueNestedInput | null
+  updateMany?: CollectionUpdateManyWithWhereNestedInput[] | CollectionUpdateManyWithWhereNestedInput | null
   deleteMany?: CollectionScalarWhereInput[] | CollectionScalarWhereInput | null
-  upsert?:
-    | CollectionUpsertWithWhereUniqueNestedInput[]
-    | CollectionUpsertWithWhereUniqueNestedInput
-    | null
+  upsert?: CollectionUpsertWithWhereUniqueNestedInput[] | CollectionUpsertWithWhereUniqueNestedInput | null
 }
 
 export interface CollectionUpdateManyMutationInput {
@@ -19184,18 +17219,9 @@ export interface CustomerDetailCreateOneInput {
 }
 
 export interface CustomerDetailSubscriptionWhereInput {
-  AND?:
-    | CustomerDetailSubscriptionWhereInput[]
-    | CustomerDetailSubscriptionWhereInput
-    | null
-  OR?:
-    | CustomerDetailSubscriptionWhereInput[]
-    | CustomerDetailSubscriptionWhereInput
-    | null
-  NOT?:
-    | CustomerDetailSubscriptionWhereInput[]
-    | CustomerDetailSubscriptionWhereInput
-    | null
+  AND?: CustomerDetailSubscriptionWhereInput[] | CustomerDetailSubscriptionWhereInput | null
+  OR?: CustomerDetailSubscriptionWhereInput[] | CustomerDetailSubscriptionWhereInput | null
+  NOT?: CustomerDetailSubscriptionWhereInput[] | CustomerDetailSubscriptionWhereInput | null
   mutation_in?: MutationType[] | MutationType | null
   updatedFields_contains?: String | null
   updatedFields_contains_every?: String[] | String | null
@@ -19663,18 +17689,9 @@ export interface HomepageProductRailCreateInput {
 }
 
 export interface HomepageProductRailSubscriptionWhereInput {
-  AND?:
-    | HomepageProductRailSubscriptionWhereInput[]
-    | HomepageProductRailSubscriptionWhereInput
-    | null
-  OR?:
-    | HomepageProductRailSubscriptionWhereInput[]
-    | HomepageProductRailSubscriptionWhereInput
-    | null
-  NOT?:
-    | HomepageProductRailSubscriptionWhereInput[]
-    | HomepageProductRailSubscriptionWhereInput
-    | null
+  AND?: HomepageProductRailSubscriptionWhereInput[] | HomepageProductRailSubscriptionWhereInput | null
+  OR?: HomepageProductRailSubscriptionWhereInput[] | HomepageProductRailSubscriptionWhereInput | null
+  NOT?: HomepageProductRailSubscriptionWhereInput[] | HomepageProductRailSubscriptionWhereInput | null
   mutation_in?: MutationType[] | MutationType | null
   updatedFields_contains?: String | null
   updatedFields_contains_every?: String[] | String | null
@@ -20547,32 +18564,17 @@ export interface PhysicalProductCreateInput {
 
 export interface PhysicalProductCreateManyInput {
   create?: PhysicalProductCreateInput[] | PhysicalProductCreateInput | null
-  connect?:
-    | PhysicalProductWhereUniqueInput[]
-    | PhysicalProductWhereUniqueInput
-    | null
+  connect?: PhysicalProductWhereUniqueInput[] | PhysicalProductWhereUniqueInput | null
 }
 
 export interface PhysicalProductCreateManyWithoutLocationInput {
-  create?:
-    | PhysicalProductCreateWithoutLocationInput[]
-    | PhysicalProductCreateWithoutLocationInput
-    | null
-  connect?:
-    | PhysicalProductWhereUniqueInput[]
-    | PhysicalProductWhereUniqueInput
-    | null
+  create?: PhysicalProductCreateWithoutLocationInput[] | PhysicalProductCreateWithoutLocationInput | null
+  connect?: PhysicalProductWhereUniqueInput[] | PhysicalProductWhereUniqueInput | null
 }
 
 export interface PhysicalProductCreateManyWithoutProductVariantInput {
-  create?:
-    | PhysicalProductCreateWithoutProductVariantInput[]
-    | PhysicalProductCreateWithoutProductVariantInput
-    | null
-  connect?:
-    | PhysicalProductWhereUniqueInput[]
-    | PhysicalProductWhereUniqueInput
-    | null
+  create?: PhysicalProductCreateWithoutProductVariantInput[] | PhysicalProductCreateWithoutProductVariantInput | null
+  connect?: PhysicalProductWhereUniqueInput[] | PhysicalProductWhereUniqueInput | null
 }
 
 export interface PhysicalProductCreateWithoutLocationInput {
@@ -20592,18 +18594,9 @@ export interface PhysicalProductCreateWithoutProductVariantInput {
 }
 
 export interface PhysicalProductScalarWhereInput {
-  AND?:
-    | PhysicalProductScalarWhereInput[]
-    | PhysicalProductScalarWhereInput
-    | null
-  OR?:
-    | PhysicalProductScalarWhereInput[]
-    | PhysicalProductScalarWhereInput
-    | null
-  NOT?:
-    | PhysicalProductScalarWhereInput[]
-    | PhysicalProductScalarWhereInput
-    | null
+  AND?: PhysicalProductScalarWhereInput[] | PhysicalProductScalarWhereInput | null
+  OR?: PhysicalProductScalarWhereInput[] | PhysicalProductScalarWhereInput | null
+  NOT?: PhysicalProductScalarWhereInput[] | PhysicalProductScalarWhereInput | null
   id?: ID_Input | null
   id_not?: ID_Input | null
   id_in?: ID_Output[] | ID_Output | null
@@ -20659,18 +18652,9 @@ export interface PhysicalProductScalarWhereInput {
 }
 
 export interface PhysicalProductSubscriptionWhereInput {
-  AND?:
-    | PhysicalProductSubscriptionWhereInput[]
-    | PhysicalProductSubscriptionWhereInput
-    | null
-  OR?:
-    | PhysicalProductSubscriptionWhereInput[]
-    | PhysicalProductSubscriptionWhereInput
-    | null
-  NOT?:
-    | PhysicalProductSubscriptionWhereInput[]
-    | PhysicalProductSubscriptionWhereInput
-    | null
+  AND?: PhysicalProductSubscriptionWhereInput[] | PhysicalProductSubscriptionWhereInput | null
+  OR?: PhysicalProductSubscriptionWhereInput[] | PhysicalProductSubscriptionWhereInput | null
+  NOT?: PhysicalProductSubscriptionWhereInput[] | PhysicalProductSubscriptionWhereInput | null
   mutation_in?: MutationType[] | MutationType | null
   updatedFields_contains?: String | null
   updatedFields_contains_every?: String[] | String | null
@@ -20702,38 +18686,14 @@ export interface PhysicalProductUpdateManyDataInput {
 
 export interface PhysicalProductUpdateManyInput {
   create?: PhysicalProductCreateInput[] | PhysicalProductCreateInput | null
-  connect?:
-    | PhysicalProductWhereUniqueInput[]
-    | PhysicalProductWhereUniqueInput
-    | null
-  set?:
-    | PhysicalProductWhereUniqueInput[]
-    | PhysicalProductWhereUniqueInput
-    | null
-  disconnect?:
-    | PhysicalProductWhereUniqueInput[]
-    | PhysicalProductWhereUniqueInput
-    | null
-  delete?:
-    | PhysicalProductWhereUniqueInput[]
-    | PhysicalProductWhereUniqueInput
-    | null
-  update?:
-    | PhysicalProductUpdateWithWhereUniqueNestedInput[]
-    | PhysicalProductUpdateWithWhereUniqueNestedInput
-    | null
-  updateMany?:
-    | PhysicalProductUpdateManyWithWhereNestedInput[]
-    | PhysicalProductUpdateManyWithWhereNestedInput
-    | null
-  deleteMany?:
-    | PhysicalProductScalarWhereInput[]
-    | PhysicalProductScalarWhereInput
-    | null
-  upsert?:
-    | PhysicalProductUpsertWithWhereUniqueNestedInput[]
-    | PhysicalProductUpsertWithWhereUniqueNestedInput
-    | null
+  connect?: PhysicalProductWhereUniqueInput[] | PhysicalProductWhereUniqueInput | null
+  set?: PhysicalProductWhereUniqueInput[] | PhysicalProductWhereUniqueInput | null
+  disconnect?: PhysicalProductWhereUniqueInput[] | PhysicalProductWhereUniqueInput | null
+  delete?: PhysicalProductWhereUniqueInput[] | PhysicalProductWhereUniqueInput | null
+  update?: PhysicalProductUpdateWithWhereUniqueNestedInput[] | PhysicalProductUpdateWithWhereUniqueNestedInput | null
+  updateMany?: PhysicalProductUpdateManyWithWhereNestedInput[] | PhysicalProductUpdateManyWithWhereNestedInput | null
+  deleteMany?: PhysicalProductScalarWhereInput[] | PhysicalProductScalarWhereInput | null
+  upsert?: PhysicalProductUpsertWithWhereUniqueNestedInput[] | PhysicalProductUpsertWithWhereUniqueNestedInput | null
 }
 
 export interface PhysicalProductUpdateManyMutationInput {
@@ -20743,81 +18703,27 @@ export interface PhysicalProductUpdateManyMutationInput {
 }
 
 export interface PhysicalProductUpdateManyWithoutLocationInput {
-  create?:
-    | PhysicalProductCreateWithoutLocationInput[]
-    | PhysicalProductCreateWithoutLocationInput
-    | null
-  connect?:
-    | PhysicalProductWhereUniqueInput[]
-    | PhysicalProductWhereUniqueInput
-    | null
-  set?:
-    | PhysicalProductWhereUniqueInput[]
-    | PhysicalProductWhereUniqueInput
-    | null
-  disconnect?:
-    | PhysicalProductWhereUniqueInput[]
-    | PhysicalProductWhereUniqueInput
-    | null
-  delete?:
-    | PhysicalProductWhereUniqueInput[]
-    | PhysicalProductWhereUniqueInput
-    | null
-  update?:
-    | PhysicalProductUpdateWithWhereUniqueWithoutLocationInput[]
-    | PhysicalProductUpdateWithWhereUniqueWithoutLocationInput
-    | null
-  updateMany?:
-    | PhysicalProductUpdateManyWithWhereNestedInput[]
-    | PhysicalProductUpdateManyWithWhereNestedInput
-    | null
-  deleteMany?:
-    | PhysicalProductScalarWhereInput[]
-    | PhysicalProductScalarWhereInput
-    | null
-  upsert?:
-    | PhysicalProductUpsertWithWhereUniqueWithoutLocationInput[]
-    | PhysicalProductUpsertWithWhereUniqueWithoutLocationInput
-    | null
+  create?: PhysicalProductCreateWithoutLocationInput[] | PhysicalProductCreateWithoutLocationInput | null
+  connect?: PhysicalProductWhereUniqueInput[] | PhysicalProductWhereUniqueInput | null
+  set?: PhysicalProductWhereUniqueInput[] | PhysicalProductWhereUniqueInput | null
+  disconnect?: PhysicalProductWhereUniqueInput[] | PhysicalProductWhereUniqueInput | null
+  delete?: PhysicalProductWhereUniqueInput[] | PhysicalProductWhereUniqueInput | null
+  update?: PhysicalProductUpdateWithWhereUniqueWithoutLocationInput[] | PhysicalProductUpdateWithWhereUniqueWithoutLocationInput | null
+  updateMany?: PhysicalProductUpdateManyWithWhereNestedInput[] | PhysicalProductUpdateManyWithWhereNestedInput | null
+  deleteMany?: PhysicalProductScalarWhereInput[] | PhysicalProductScalarWhereInput | null
+  upsert?: PhysicalProductUpsertWithWhereUniqueWithoutLocationInput[] | PhysicalProductUpsertWithWhereUniqueWithoutLocationInput | null
 }
 
 export interface PhysicalProductUpdateManyWithoutProductVariantInput {
-  create?:
-    | PhysicalProductCreateWithoutProductVariantInput[]
-    | PhysicalProductCreateWithoutProductVariantInput
-    | null
-  connect?:
-    | PhysicalProductWhereUniqueInput[]
-    | PhysicalProductWhereUniqueInput
-    | null
-  set?:
-    | PhysicalProductWhereUniqueInput[]
-    | PhysicalProductWhereUniqueInput
-    | null
-  disconnect?:
-    | PhysicalProductWhereUniqueInput[]
-    | PhysicalProductWhereUniqueInput
-    | null
-  delete?:
-    | PhysicalProductWhereUniqueInput[]
-    | PhysicalProductWhereUniqueInput
-    | null
-  update?:
-    | PhysicalProductUpdateWithWhereUniqueWithoutProductVariantInput[]
-    | PhysicalProductUpdateWithWhereUniqueWithoutProductVariantInput
-    | null
-  updateMany?:
-    | PhysicalProductUpdateManyWithWhereNestedInput[]
-    | PhysicalProductUpdateManyWithWhereNestedInput
-    | null
-  deleteMany?:
-    | PhysicalProductScalarWhereInput[]
-    | PhysicalProductScalarWhereInput
-    | null
-  upsert?:
-    | PhysicalProductUpsertWithWhereUniqueWithoutProductVariantInput[]
-    | PhysicalProductUpsertWithWhereUniqueWithoutProductVariantInput
-    | null
+  create?: PhysicalProductCreateWithoutProductVariantInput[] | PhysicalProductCreateWithoutProductVariantInput | null
+  connect?: PhysicalProductWhereUniqueInput[] | PhysicalProductWhereUniqueInput | null
+  set?: PhysicalProductWhereUniqueInput[] | PhysicalProductWhereUniqueInput | null
+  disconnect?: PhysicalProductWhereUniqueInput[] | PhysicalProductWhereUniqueInput | null
+  delete?: PhysicalProductWhereUniqueInput[] | PhysicalProductWhereUniqueInput | null
+  update?: PhysicalProductUpdateWithWhereUniqueWithoutProductVariantInput[] | PhysicalProductUpdateWithWhereUniqueWithoutProductVariantInput | null
+  updateMany?: PhysicalProductUpdateManyWithWhereNestedInput[] | PhysicalProductUpdateManyWithWhereNestedInput | null
+  deleteMany?: PhysicalProductScalarWhereInput[] | PhysicalProductScalarWhereInput | null
+  upsert?: PhysicalProductUpsertWithWhereUniqueWithoutProductVariantInput[] | PhysicalProductUpsertWithWhereUniqueWithoutProductVariantInput | null
 }
 
 export interface PhysicalProductUpdateManyWithWhereNestedInput {
@@ -20970,18 +18876,12 @@ export interface ProductCreateManyInput {
 }
 
 export interface ProductCreateManyWithoutBrandInput {
-  create?:
-    | ProductCreateWithoutBrandInput[]
-    | ProductCreateWithoutBrandInput
-    | null
+  create?: ProductCreateWithoutBrandInput[] | ProductCreateWithoutBrandInput | null
   connect?: ProductWhereUniqueInput[] | ProductWhereUniqueInput | null
 }
 
 export interface ProductCreateManyWithoutCategoryInput {
-  create?:
-    | ProductCreateWithoutCategoryInput[]
-    | ProductCreateWithoutCategoryInput
-    | null
+  create?: ProductCreateWithoutCategoryInput[] | ProductCreateWithoutCategoryInput | null
   connect?: ProductWhereUniqueInput[] | ProductWhereUniqueInput | null
 }
 
@@ -21072,25 +18972,13 @@ export interface ProductFunctionCreateInput {
 
 export interface ProductFunctionCreateManyInput {
   create?: ProductFunctionCreateInput[] | ProductFunctionCreateInput | null
-  connect?:
-    | ProductFunctionWhereUniqueInput[]
-    | ProductFunctionWhereUniqueInput
-    | null
+  connect?: ProductFunctionWhereUniqueInput[] | ProductFunctionWhereUniqueInput | null
 }
 
 export interface ProductFunctionScalarWhereInput {
-  AND?:
-    | ProductFunctionScalarWhereInput[]
-    | ProductFunctionScalarWhereInput
-    | null
-  OR?:
-    | ProductFunctionScalarWhereInput[]
-    | ProductFunctionScalarWhereInput
-    | null
-  NOT?:
-    | ProductFunctionScalarWhereInput[]
-    | ProductFunctionScalarWhereInput
-    | null
+  AND?: ProductFunctionScalarWhereInput[] | ProductFunctionScalarWhereInput | null
+  OR?: ProductFunctionScalarWhereInput[] | ProductFunctionScalarWhereInput | null
+  NOT?: ProductFunctionScalarWhereInput[] | ProductFunctionScalarWhereInput | null
   id?: ID_Input | null
   id_not?: ID_Input | null
   id_in?: ID_Output[] | ID_Output | null
@@ -21122,18 +19010,9 @@ export interface ProductFunctionScalarWhereInput {
 }
 
 export interface ProductFunctionSubscriptionWhereInput {
-  AND?:
-    | ProductFunctionSubscriptionWhereInput[]
-    | ProductFunctionSubscriptionWhereInput
-    | null
-  OR?:
-    | ProductFunctionSubscriptionWhereInput[]
-    | ProductFunctionSubscriptionWhereInput
-    | null
-  NOT?:
-    | ProductFunctionSubscriptionWhereInput[]
-    | ProductFunctionSubscriptionWhereInput
-    | null
+  AND?: ProductFunctionSubscriptionWhereInput[] | ProductFunctionSubscriptionWhereInput | null
+  OR?: ProductFunctionSubscriptionWhereInput[] | ProductFunctionSubscriptionWhereInput | null
+  NOT?: ProductFunctionSubscriptionWhereInput[] | ProductFunctionSubscriptionWhereInput | null
   mutation_in?: MutationType[] | MutationType | null
   updatedFields_contains?: String | null
   updatedFields_contains_every?: String[] | String | null
@@ -21155,38 +19034,14 @@ export interface ProductFunctionUpdateManyDataInput {
 
 export interface ProductFunctionUpdateManyInput {
   create?: ProductFunctionCreateInput[] | ProductFunctionCreateInput | null
-  connect?:
-    | ProductFunctionWhereUniqueInput[]
-    | ProductFunctionWhereUniqueInput
-    | null
-  set?:
-    | ProductFunctionWhereUniqueInput[]
-    | ProductFunctionWhereUniqueInput
-    | null
-  disconnect?:
-    | ProductFunctionWhereUniqueInput[]
-    | ProductFunctionWhereUniqueInput
-    | null
-  delete?:
-    | ProductFunctionWhereUniqueInput[]
-    | ProductFunctionWhereUniqueInput
-    | null
-  update?:
-    | ProductFunctionUpdateWithWhereUniqueNestedInput[]
-    | ProductFunctionUpdateWithWhereUniqueNestedInput
-    | null
-  updateMany?:
-    | ProductFunctionUpdateManyWithWhereNestedInput[]
-    | ProductFunctionUpdateManyWithWhereNestedInput
-    | null
-  deleteMany?:
-    | ProductFunctionScalarWhereInput[]
-    | ProductFunctionScalarWhereInput
-    | null
-  upsert?:
-    | ProductFunctionUpsertWithWhereUniqueNestedInput[]
-    | ProductFunctionUpsertWithWhereUniqueNestedInput
-    | null
+  connect?: ProductFunctionWhereUniqueInput[] | ProductFunctionWhereUniqueInput | null
+  set?: ProductFunctionWhereUniqueInput[] | ProductFunctionWhereUniqueInput | null
+  disconnect?: ProductFunctionWhereUniqueInput[] | ProductFunctionWhereUniqueInput | null
+  delete?: ProductFunctionWhereUniqueInput[] | ProductFunctionWhereUniqueInput | null
+  update?: ProductFunctionUpdateWithWhereUniqueNestedInput[] | ProductFunctionUpdateWithWhereUniqueNestedInput | null
+  updateMany?: ProductFunctionUpdateManyWithWhereNestedInput[] | ProductFunctionUpdateManyWithWhereNestedInput | null
+  deleteMany?: ProductFunctionScalarWhereInput[] | ProductFunctionScalarWhereInput | null
+  upsert?: ProductFunctionUpsertWithWhereUniqueNestedInput[] | ProductFunctionUpsertWithWhereUniqueNestedInput | null
 }
 
 export interface ProductFunctionUpdateManyMutationInput {
@@ -21268,18 +19123,9 @@ export interface ProductRequestCreateInput {
 }
 
 export interface ProductRequestSubscriptionWhereInput {
-  AND?:
-    | ProductRequestSubscriptionWhereInput[]
-    | ProductRequestSubscriptionWhereInput
-    | null
-  OR?:
-    | ProductRequestSubscriptionWhereInput[]
-    | ProductRequestSubscriptionWhereInput
-    | null
-  NOT?:
-    | ProductRequestSubscriptionWhereInput[]
-    | ProductRequestSubscriptionWhereInput
-    | null
+  AND?: ProductRequestSubscriptionWhereInput[] | ProductRequestSubscriptionWhereInput | null
+  OR?: ProductRequestSubscriptionWhereInput[] | ProductRequestSubscriptionWhereInput | null
+  NOT?: ProductRequestSubscriptionWhereInput[] | ProductRequestSubscriptionWhereInput | null
   mutation_in?: MutationType[] | MutationType | null
   updatedFields_contains?: String | null
   updatedFields_contains_every?: String[] | String | null
@@ -21659,19 +19505,10 @@ export interface ProductUpdateManyInput {
   set?: ProductWhereUniqueInput[] | ProductWhereUniqueInput | null
   disconnect?: ProductWhereUniqueInput[] | ProductWhereUniqueInput | null
   delete?: ProductWhereUniqueInput[] | ProductWhereUniqueInput | null
-  update?:
-    | ProductUpdateWithWhereUniqueNestedInput[]
-    | ProductUpdateWithWhereUniqueNestedInput
-    | null
-  updateMany?:
-    | ProductUpdateManyWithWhereNestedInput[]
-    | ProductUpdateManyWithWhereNestedInput
-    | null
+  update?: ProductUpdateWithWhereUniqueNestedInput[] | ProductUpdateWithWhereUniqueNestedInput | null
+  updateMany?: ProductUpdateManyWithWhereNestedInput[] | ProductUpdateManyWithWhereNestedInput | null
   deleteMany?: ProductScalarWhereInput[] | ProductScalarWhereInput | null
-  upsert?:
-    | ProductUpsertWithWhereUniqueNestedInput[]
-    | ProductUpsertWithWhereUniqueNestedInput
-    | null
+  upsert?: ProductUpsertWithWhereUniqueNestedInput[] | ProductUpsertWithWhereUniqueNestedInput | null
 }
 
 export interface ProductUpdateManyMutationInput {
@@ -21690,51 +19527,27 @@ export interface ProductUpdateManyMutationInput {
 }
 
 export interface ProductUpdateManyWithoutBrandInput {
-  create?:
-    | ProductCreateWithoutBrandInput[]
-    | ProductCreateWithoutBrandInput
-    | null
+  create?: ProductCreateWithoutBrandInput[] | ProductCreateWithoutBrandInput | null
   connect?: ProductWhereUniqueInput[] | ProductWhereUniqueInput | null
   set?: ProductWhereUniqueInput[] | ProductWhereUniqueInput | null
   disconnect?: ProductWhereUniqueInput[] | ProductWhereUniqueInput | null
   delete?: ProductWhereUniqueInput[] | ProductWhereUniqueInput | null
-  update?:
-    | ProductUpdateWithWhereUniqueWithoutBrandInput[]
-    | ProductUpdateWithWhereUniqueWithoutBrandInput
-    | null
-  updateMany?:
-    | ProductUpdateManyWithWhereNestedInput[]
-    | ProductUpdateManyWithWhereNestedInput
-    | null
+  update?: ProductUpdateWithWhereUniqueWithoutBrandInput[] | ProductUpdateWithWhereUniqueWithoutBrandInput | null
+  updateMany?: ProductUpdateManyWithWhereNestedInput[] | ProductUpdateManyWithWhereNestedInput | null
   deleteMany?: ProductScalarWhereInput[] | ProductScalarWhereInput | null
-  upsert?:
-    | ProductUpsertWithWhereUniqueWithoutBrandInput[]
-    | ProductUpsertWithWhereUniqueWithoutBrandInput
-    | null
+  upsert?: ProductUpsertWithWhereUniqueWithoutBrandInput[] | ProductUpsertWithWhereUniqueWithoutBrandInput | null
 }
 
 export interface ProductUpdateManyWithoutCategoryInput {
-  create?:
-    | ProductCreateWithoutCategoryInput[]
-    | ProductCreateWithoutCategoryInput
-    | null
+  create?: ProductCreateWithoutCategoryInput[] | ProductCreateWithoutCategoryInput | null
   connect?: ProductWhereUniqueInput[] | ProductWhereUniqueInput | null
   set?: ProductWhereUniqueInput[] | ProductWhereUniqueInput | null
   disconnect?: ProductWhereUniqueInput[] | ProductWhereUniqueInput | null
   delete?: ProductWhereUniqueInput[] | ProductWhereUniqueInput | null
-  update?:
-    | ProductUpdateWithWhereUniqueWithoutCategoryInput[]
-    | ProductUpdateWithWhereUniqueWithoutCategoryInput
-    | null
-  updateMany?:
-    | ProductUpdateManyWithWhereNestedInput[]
-    | ProductUpdateManyWithWhereNestedInput
-    | null
+  update?: ProductUpdateWithWhereUniqueWithoutCategoryInput[] | ProductUpdateWithWhereUniqueWithoutCategoryInput | null
+  updateMany?: ProductUpdateManyWithWhereNestedInput[] | ProductUpdateManyWithWhereNestedInput | null
   deleteMany?: ProductScalarWhereInput[] | ProductScalarWhereInput | null
-  upsert?:
-    | ProductUpsertWithWhereUniqueWithoutCategoryInput[]
-    | ProductUpsertWithWhereUniqueWithoutCategoryInput
-    | null
+  upsert?: ProductUpsertWithWhereUniqueWithoutCategoryInput[] | ProductUpsertWithWhereUniqueWithoutCategoryInput | null
 }
 
 export interface ProductUpdateManyWithWhereNestedInput {
@@ -21885,25 +19698,13 @@ export interface ProductVariantCreateInput {
 }
 
 export interface ProductVariantCreateManyWithoutColorInput {
-  create?:
-    | ProductVariantCreateWithoutColorInput[]
-    | ProductVariantCreateWithoutColorInput
-    | null
-  connect?:
-    | ProductVariantWhereUniqueInput[]
-    | ProductVariantWhereUniqueInput
-    | null
+  create?: ProductVariantCreateWithoutColorInput[] | ProductVariantCreateWithoutColorInput | null
+  connect?: ProductVariantWhereUniqueInput[] | ProductVariantWhereUniqueInput | null
 }
 
 export interface ProductVariantCreateManyWithoutProductInput {
-  create?:
-    | ProductVariantCreateWithoutProductInput[]
-    | ProductVariantCreateWithoutProductInput
-    | null
-  connect?:
-    | ProductVariantWhereUniqueInput[]
-    | ProductVariantWhereUniqueInput
-    | null
+  create?: ProductVariantCreateWithoutProductInput[] | ProductVariantCreateWithoutProductInput | null
+  connect?: ProductVariantWhereUniqueInput[] | ProductVariantWhereUniqueInput | null
 }
 
 export interface ProductVariantCreateOneInput {
@@ -21976,14 +19777,8 @@ export interface ProductVariantFeedbackCreateInput {
 }
 
 export interface ProductVariantFeedbackCreateManyWithoutReservationFeedbackInput {
-  create?:
-    | ProductVariantFeedbackCreateWithoutReservationFeedbackInput[]
-    | ProductVariantFeedbackCreateWithoutReservationFeedbackInput
-    | null
-  connect?:
-    | ProductVariantFeedbackWhereUniqueInput[]
-    | ProductVariantFeedbackWhereUniqueInput
-    | null
+  create?: ProductVariantFeedbackCreateWithoutReservationFeedbackInput[] | ProductVariantFeedbackCreateWithoutReservationFeedbackInput | null
+  connect?: ProductVariantFeedbackWhereUniqueInput[] | ProductVariantFeedbackWhereUniqueInput | null
 }
 
 export interface ProductVariantFeedbackCreateOneWithoutQuestionsInput {
@@ -22015,14 +19810,8 @@ export interface ProductVariantFeedbackQuestionCreateInput {
 }
 
 export interface ProductVariantFeedbackQuestionCreateManyWithoutVariantFeedbackInput {
-  create?:
-    | ProductVariantFeedbackQuestionCreateWithoutVariantFeedbackInput[]
-    | ProductVariantFeedbackQuestionCreateWithoutVariantFeedbackInput
-    | null
-  connect?:
-    | ProductVariantFeedbackQuestionWhereUniqueInput[]
-    | ProductVariantFeedbackQuestionWhereUniqueInput
-    | null
+  create?: ProductVariantFeedbackQuestionCreateWithoutVariantFeedbackInput[] | ProductVariantFeedbackQuestionCreateWithoutVariantFeedbackInput | null
+  connect?: ProductVariantFeedbackQuestionWhereUniqueInput[] | ProductVariantFeedbackQuestionWhereUniqueInput | null
 }
 
 export interface ProductVariantFeedbackQuestionCreateoptionsInput {
@@ -22042,18 +19831,9 @@ export interface ProductVariantFeedbackQuestionCreateWithoutVariantFeedbackInput
 }
 
 export interface ProductVariantFeedbackQuestionScalarWhereInput {
-  AND?:
-    | ProductVariantFeedbackQuestionScalarWhereInput[]
-    | ProductVariantFeedbackQuestionScalarWhereInput
-    | null
-  OR?:
-    | ProductVariantFeedbackQuestionScalarWhereInput[]
-    | ProductVariantFeedbackQuestionScalarWhereInput
-    | null
-  NOT?:
-    | ProductVariantFeedbackQuestionScalarWhereInput[]
-    | ProductVariantFeedbackQuestionScalarWhereInput
-    | null
+  AND?: ProductVariantFeedbackQuestionScalarWhereInput[] | ProductVariantFeedbackQuestionScalarWhereInput | null
+  OR?: ProductVariantFeedbackQuestionScalarWhereInput[] | ProductVariantFeedbackQuestionScalarWhereInput | null
+  NOT?: ProductVariantFeedbackQuestionScalarWhereInput[] | ProductVariantFeedbackQuestionScalarWhereInput | null
   id?: ID_Input | null
   id_not?: ID_Input | null
   id_in?: ID_Output[] | ID_Output | null
@@ -22089,18 +19869,9 @@ export interface ProductVariantFeedbackQuestionScalarWhereInput {
 }
 
 export interface ProductVariantFeedbackQuestionSubscriptionWhereInput {
-  AND?:
-    | ProductVariantFeedbackQuestionSubscriptionWhereInput[]
-    | ProductVariantFeedbackQuestionSubscriptionWhereInput
-    | null
-  OR?:
-    | ProductVariantFeedbackQuestionSubscriptionWhereInput[]
-    | ProductVariantFeedbackQuestionSubscriptionWhereInput
-    | null
-  NOT?:
-    | ProductVariantFeedbackQuestionSubscriptionWhereInput[]
-    | ProductVariantFeedbackQuestionSubscriptionWhereInput
-    | null
+  AND?: ProductVariantFeedbackQuestionSubscriptionWhereInput[] | ProductVariantFeedbackQuestionSubscriptionWhereInput | null
+  OR?: ProductVariantFeedbackQuestionSubscriptionWhereInput[] | ProductVariantFeedbackQuestionSubscriptionWhereInput | null
+  NOT?: ProductVariantFeedbackQuestionSubscriptionWhereInput[] | ProductVariantFeedbackQuestionSubscriptionWhereInput | null
   mutation_in?: MutationType[] | MutationType | null
   updatedFields_contains?: String | null
   updatedFields_contains_every?: String[] | String | null
@@ -22131,42 +19902,15 @@ export interface ProductVariantFeedbackQuestionUpdateManyMutationInput {
 }
 
 export interface ProductVariantFeedbackQuestionUpdateManyWithoutVariantFeedbackInput {
-  create?:
-    | ProductVariantFeedbackQuestionCreateWithoutVariantFeedbackInput[]
-    | ProductVariantFeedbackQuestionCreateWithoutVariantFeedbackInput
-    | null
-  connect?:
-    | ProductVariantFeedbackQuestionWhereUniqueInput[]
-    | ProductVariantFeedbackQuestionWhereUniqueInput
-    | null
-  set?:
-    | ProductVariantFeedbackQuestionWhereUniqueInput[]
-    | ProductVariantFeedbackQuestionWhereUniqueInput
-    | null
-  disconnect?:
-    | ProductVariantFeedbackQuestionWhereUniqueInput[]
-    | ProductVariantFeedbackQuestionWhereUniqueInput
-    | null
-  delete?:
-    | ProductVariantFeedbackQuestionWhereUniqueInput[]
-    | ProductVariantFeedbackQuestionWhereUniqueInput
-    | null
-  update?:
-    | ProductVariantFeedbackQuestionUpdateWithWhereUniqueWithoutVariantFeedbackInput[]
-    | ProductVariantFeedbackQuestionUpdateWithWhereUniqueWithoutVariantFeedbackInput
-    | null
-  updateMany?:
-    | ProductVariantFeedbackQuestionUpdateManyWithWhereNestedInput[]
-    | ProductVariantFeedbackQuestionUpdateManyWithWhereNestedInput
-    | null
-  deleteMany?:
-    | ProductVariantFeedbackQuestionScalarWhereInput[]
-    | ProductVariantFeedbackQuestionScalarWhereInput
-    | null
-  upsert?:
-    | ProductVariantFeedbackQuestionUpsertWithWhereUniqueWithoutVariantFeedbackInput[]
-    | ProductVariantFeedbackQuestionUpsertWithWhereUniqueWithoutVariantFeedbackInput
-    | null
+  create?: ProductVariantFeedbackQuestionCreateWithoutVariantFeedbackInput[] | ProductVariantFeedbackQuestionCreateWithoutVariantFeedbackInput | null
+  connect?: ProductVariantFeedbackQuestionWhereUniqueInput[] | ProductVariantFeedbackQuestionWhereUniqueInput | null
+  set?: ProductVariantFeedbackQuestionWhereUniqueInput[] | ProductVariantFeedbackQuestionWhereUniqueInput | null
+  disconnect?: ProductVariantFeedbackQuestionWhereUniqueInput[] | ProductVariantFeedbackQuestionWhereUniqueInput | null
+  delete?: ProductVariantFeedbackQuestionWhereUniqueInput[] | ProductVariantFeedbackQuestionWhereUniqueInput | null
+  update?: ProductVariantFeedbackQuestionUpdateWithWhereUniqueWithoutVariantFeedbackInput[] | ProductVariantFeedbackQuestionUpdateWithWhereUniqueWithoutVariantFeedbackInput | null
+  updateMany?: ProductVariantFeedbackQuestionUpdateManyWithWhereNestedInput[] | ProductVariantFeedbackQuestionUpdateManyWithWhereNestedInput | null
+  deleteMany?: ProductVariantFeedbackQuestionScalarWhereInput[] | ProductVariantFeedbackQuestionScalarWhereInput | null
+  upsert?: ProductVariantFeedbackQuestionUpsertWithWhereUniqueWithoutVariantFeedbackInput[] | ProductVariantFeedbackQuestionUpsertWithWhereUniqueWithoutVariantFeedbackInput | null
 }
 
 export interface ProductVariantFeedbackQuestionUpdateManyWithWhereNestedInput {
@@ -22201,18 +19945,9 @@ export interface ProductVariantFeedbackQuestionUpsertWithWhereUniqueWithoutVaria
 }
 
 export interface ProductVariantFeedbackQuestionWhereInput {
-  AND?:
-    | ProductVariantFeedbackQuestionWhereInput[]
-    | ProductVariantFeedbackQuestionWhereInput
-    | null
-  OR?:
-    | ProductVariantFeedbackQuestionWhereInput[]
-    | ProductVariantFeedbackQuestionWhereInput
-    | null
-  NOT?:
-    | ProductVariantFeedbackQuestionWhereInput[]
-    | ProductVariantFeedbackQuestionWhereInput
-    | null
+  AND?: ProductVariantFeedbackQuestionWhereInput[] | ProductVariantFeedbackQuestionWhereInput | null
+  OR?: ProductVariantFeedbackQuestionWhereInput[] | ProductVariantFeedbackQuestionWhereInput | null
+  NOT?: ProductVariantFeedbackQuestionWhereInput[] | ProductVariantFeedbackQuestionWhereInput | null
   id?: ID_Input | null
   id_not?: ID_Input | null
   id_in?: ID_Output[] | ID_Output | null
@@ -22253,18 +19988,9 @@ export interface ProductVariantFeedbackQuestionWhereUniqueInput {
 }
 
 export interface ProductVariantFeedbackScalarWhereInput {
-  AND?:
-    | ProductVariantFeedbackScalarWhereInput[]
-    | ProductVariantFeedbackScalarWhereInput
-    | null
-  OR?:
-    | ProductVariantFeedbackScalarWhereInput[]
-    | ProductVariantFeedbackScalarWhereInput
-    | null
-  NOT?:
-    | ProductVariantFeedbackScalarWhereInput[]
-    | ProductVariantFeedbackScalarWhereInput
-    | null
+  AND?: ProductVariantFeedbackScalarWhereInput[] | ProductVariantFeedbackScalarWhereInput | null
+  OR?: ProductVariantFeedbackScalarWhereInput[] | ProductVariantFeedbackScalarWhereInput | null
+  NOT?: ProductVariantFeedbackScalarWhereInput[] | ProductVariantFeedbackScalarWhereInput | null
   id?: ID_Input | null
   id_not?: ID_Input | null
   id_in?: ID_Output[] | ID_Output | null
@@ -22284,18 +20010,9 @@ export interface ProductVariantFeedbackScalarWhereInput {
 }
 
 export interface ProductVariantFeedbackSubscriptionWhereInput {
-  AND?:
-    | ProductVariantFeedbackSubscriptionWhereInput[]
-    | ProductVariantFeedbackSubscriptionWhereInput
-    | null
-  OR?:
-    | ProductVariantFeedbackSubscriptionWhereInput[]
-    | ProductVariantFeedbackSubscriptionWhereInput
-    | null
-  NOT?:
-    | ProductVariantFeedbackSubscriptionWhereInput[]
-    | ProductVariantFeedbackSubscriptionWhereInput
-    | null
+  AND?: ProductVariantFeedbackSubscriptionWhereInput[] | ProductVariantFeedbackSubscriptionWhereInput | null
+  OR?: ProductVariantFeedbackSubscriptionWhereInput[] | ProductVariantFeedbackSubscriptionWhereInput | null
+  NOT?: ProductVariantFeedbackSubscriptionWhereInput[] | ProductVariantFeedbackSubscriptionWhereInput | null
   mutation_in?: MutationType[] | MutationType | null
   updatedFields_contains?: String | null
   updatedFields_contains_every?: String[] | String | null
@@ -22319,42 +20036,15 @@ export interface ProductVariantFeedbackUpdateManyMutationInput {
 }
 
 export interface ProductVariantFeedbackUpdateManyWithoutReservationFeedbackInput {
-  create?:
-    | ProductVariantFeedbackCreateWithoutReservationFeedbackInput[]
-    | ProductVariantFeedbackCreateWithoutReservationFeedbackInput
-    | null
-  connect?:
-    | ProductVariantFeedbackWhereUniqueInput[]
-    | ProductVariantFeedbackWhereUniqueInput
-    | null
-  set?:
-    | ProductVariantFeedbackWhereUniqueInput[]
-    | ProductVariantFeedbackWhereUniqueInput
-    | null
-  disconnect?:
-    | ProductVariantFeedbackWhereUniqueInput[]
-    | ProductVariantFeedbackWhereUniqueInput
-    | null
-  delete?:
-    | ProductVariantFeedbackWhereUniqueInput[]
-    | ProductVariantFeedbackWhereUniqueInput
-    | null
-  update?:
-    | ProductVariantFeedbackUpdateWithWhereUniqueWithoutReservationFeedbackInput[]
-    | ProductVariantFeedbackUpdateWithWhereUniqueWithoutReservationFeedbackInput
-    | null
-  updateMany?:
-    | ProductVariantFeedbackUpdateManyWithWhereNestedInput[]
-    | ProductVariantFeedbackUpdateManyWithWhereNestedInput
-    | null
-  deleteMany?:
-    | ProductVariantFeedbackScalarWhereInput[]
-    | ProductVariantFeedbackScalarWhereInput
-    | null
-  upsert?:
-    | ProductVariantFeedbackUpsertWithWhereUniqueWithoutReservationFeedbackInput[]
-    | ProductVariantFeedbackUpsertWithWhereUniqueWithoutReservationFeedbackInput
-    | null
+  create?: ProductVariantFeedbackCreateWithoutReservationFeedbackInput[] | ProductVariantFeedbackCreateWithoutReservationFeedbackInput | null
+  connect?: ProductVariantFeedbackWhereUniqueInput[] | ProductVariantFeedbackWhereUniqueInput | null
+  set?: ProductVariantFeedbackWhereUniqueInput[] | ProductVariantFeedbackWhereUniqueInput | null
+  disconnect?: ProductVariantFeedbackWhereUniqueInput[] | ProductVariantFeedbackWhereUniqueInput | null
+  delete?: ProductVariantFeedbackWhereUniqueInput[] | ProductVariantFeedbackWhereUniqueInput | null
+  update?: ProductVariantFeedbackUpdateWithWhereUniqueWithoutReservationFeedbackInput[] | ProductVariantFeedbackUpdateWithWhereUniqueWithoutReservationFeedbackInput | null
+  updateMany?: ProductVariantFeedbackUpdateManyWithWhereNestedInput[] | ProductVariantFeedbackUpdateManyWithWhereNestedInput | null
+  deleteMany?: ProductVariantFeedbackScalarWhereInput[] | ProductVariantFeedbackScalarWhereInput | null
+  upsert?: ProductVariantFeedbackUpsertWithWhereUniqueWithoutReservationFeedbackInput[] | ProductVariantFeedbackUpsertWithWhereUniqueWithoutReservationFeedbackInput | null
 }
 
 export interface ProductVariantFeedbackUpdateManyWithWhereNestedInput {
@@ -22398,18 +20088,9 @@ export interface ProductVariantFeedbackUpsertWithWhereUniqueWithoutReservationFe
 }
 
 export interface ProductVariantFeedbackWhereInput {
-  AND?:
-    | ProductVariantFeedbackWhereInput[]
-    | ProductVariantFeedbackWhereInput
-    | null
-  OR?:
-    | ProductVariantFeedbackWhereInput[]
-    | ProductVariantFeedbackWhereInput
-    | null
-  NOT?:
-    | ProductVariantFeedbackWhereInput[]
-    | ProductVariantFeedbackWhereInput
-    | null
+  AND?: ProductVariantFeedbackWhereInput[] | ProductVariantFeedbackWhereInput | null
+  OR?: ProductVariantFeedbackWhereInput[] | ProductVariantFeedbackWhereInput | null
+  NOT?: ProductVariantFeedbackWhereInput[] | ProductVariantFeedbackWhereInput | null
   id?: ID_Input | null
   id_not?: ID_Input | null
   id_in?: ID_Output[] | ID_Output | null
@@ -22558,18 +20239,9 @@ export interface ProductVariantScalarWhereInput {
 }
 
 export interface ProductVariantSubscriptionWhereInput {
-  AND?:
-    | ProductVariantSubscriptionWhereInput[]
-    | ProductVariantSubscriptionWhereInput
-    | null
-  OR?:
-    | ProductVariantSubscriptionWhereInput[]
-    | ProductVariantSubscriptionWhereInput
-    | null
-  NOT?:
-    | ProductVariantSubscriptionWhereInput[]
-    | ProductVariantSubscriptionWhereInput
-    | null
+  AND?: ProductVariantSubscriptionWhereInput[] | ProductVariantSubscriptionWhereInput | null
+  OR?: ProductVariantSubscriptionWhereInput[] | ProductVariantSubscriptionWhereInput | null
+  NOT?: ProductVariantSubscriptionWhereInput[] | ProductVariantSubscriptionWhereInput | null
   mutation_in?: MutationType[] | MutationType | null
   updatedFields_contains?: String | null
   updatedFields_contains_every?: String[] | String | null
@@ -22636,75 +20308,27 @@ export interface ProductVariantUpdateManyMutationInput {
 }
 
 export interface ProductVariantUpdateManyWithoutColorInput {
-  create?:
-    | ProductVariantCreateWithoutColorInput[]
-    | ProductVariantCreateWithoutColorInput
-    | null
-  connect?:
-    | ProductVariantWhereUniqueInput[]
-    | ProductVariantWhereUniqueInput
-    | null
+  create?: ProductVariantCreateWithoutColorInput[] | ProductVariantCreateWithoutColorInput | null
+  connect?: ProductVariantWhereUniqueInput[] | ProductVariantWhereUniqueInput | null
   set?: ProductVariantWhereUniqueInput[] | ProductVariantWhereUniqueInput | null
-  disconnect?:
-    | ProductVariantWhereUniqueInput[]
-    | ProductVariantWhereUniqueInput
-    | null
-  delete?:
-    | ProductVariantWhereUniqueInput[]
-    | ProductVariantWhereUniqueInput
-    | null
-  update?:
-    | ProductVariantUpdateWithWhereUniqueWithoutColorInput[]
-    | ProductVariantUpdateWithWhereUniqueWithoutColorInput
-    | null
-  updateMany?:
-    | ProductVariantUpdateManyWithWhereNestedInput[]
-    | ProductVariantUpdateManyWithWhereNestedInput
-    | null
-  deleteMany?:
-    | ProductVariantScalarWhereInput[]
-    | ProductVariantScalarWhereInput
-    | null
-  upsert?:
-    | ProductVariantUpsertWithWhereUniqueWithoutColorInput[]
-    | ProductVariantUpsertWithWhereUniqueWithoutColorInput
-    | null
+  disconnect?: ProductVariantWhereUniqueInput[] | ProductVariantWhereUniqueInput | null
+  delete?: ProductVariantWhereUniqueInput[] | ProductVariantWhereUniqueInput | null
+  update?: ProductVariantUpdateWithWhereUniqueWithoutColorInput[] | ProductVariantUpdateWithWhereUniqueWithoutColorInput | null
+  updateMany?: ProductVariantUpdateManyWithWhereNestedInput[] | ProductVariantUpdateManyWithWhereNestedInput | null
+  deleteMany?: ProductVariantScalarWhereInput[] | ProductVariantScalarWhereInput | null
+  upsert?: ProductVariantUpsertWithWhereUniqueWithoutColorInput[] | ProductVariantUpsertWithWhereUniqueWithoutColorInput | null
 }
 
 export interface ProductVariantUpdateManyWithoutProductInput {
-  create?:
-    | ProductVariantCreateWithoutProductInput[]
-    | ProductVariantCreateWithoutProductInput
-    | null
-  connect?:
-    | ProductVariantWhereUniqueInput[]
-    | ProductVariantWhereUniqueInput
-    | null
+  create?: ProductVariantCreateWithoutProductInput[] | ProductVariantCreateWithoutProductInput | null
+  connect?: ProductVariantWhereUniqueInput[] | ProductVariantWhereUniqueInput | null
   set?: ProductVariantWhereUniqueInput[] | ProductVariantWhereUniqueInput | null
-  disconnect?:
-    | ProductVariantWhereUniqueInput[]
-    | ProductVariantWhereUniqueInput
-    | null
-  delete?:
-    | ProductVariantWhereUniqueInput[]
-    | ProductVariantWhereUniqueInput
-    | null
-  update?:
-    | ProductVariantUpdateWithWhereUniqueWithoutProductInput[]
-    | ProductVariantUpdateWithWhereUniqueWithoutProductInput
-    | null
-  updateMany?:
-    | ProductVariantUpdateManyWithWhereNestedInput[]
-    | ProductVariantUpdateManyWithWhereNestedInput
-    | null
-  deleteMany?:
-    | ProductVariantScalarWhereInput[]
-    | ProductVariantScalarWhereInput
-    | null
-  upsert?:
-    | ProductVariantUpsertWithWhereUniqueWithoutProductInput[]
-    | ProductVariantUpsertWithWhereUniqueWithoutProductInput
-    | null
+  disconnect?: ProductVariantWhereUniqueInput[] | ProductVariantWhereUniqueInput | null
+  delete?: ProductVariantWhereUniqueInput[] | ProductVariantWhereUniqueInput | null
+  update?: ProductVariantUpdateWithWhereUniqueWithoutProductInput[] | ProductVariantUpdateWithWhereUniqueWithoutProductInput | null
+  updateMany?: ProductVariantUpdateManyWithWhereNestedInput[] | ProductVariantUpdateManyWithWhereNestedInput | null
+  deleteMany?: ProductVariantScalarWhereInput[] | ProductVariantScalarWhereInput | null
+  upsert?: ProductVariantUpsertWithWhereUniqueWithoutProductInput[] | ProductVariantUpsertWithWhereUniqueWithoutProductInput | null
 }
 
 export interface ProductVariantUpdateManyWithWhereNestedInput {
@@ -22814,18 +20438,9 @@ export interface ProductVariantWantCreateInput {
 }
 
 export interface ProductVariantWantSubscriptionWhereInput {
-  AND?:
-    | ProductVariantWantSubscriptionWhereInput[]
-    | ProductVariantWantSubscriptionWhereInput
-    | null
-  OR?:
-    | ProductVariantWantSubscriptionWhereInput[]
-    | ProductVariantWantSubscriptionWhereInput
-    | null
-  NOT?:
-    | ProductVariantWantSubscriptionWhereInput[]
-    | ProductVariantWantSubscriptionWhereInput
-    | null
+  AND?: ProductVariantWantSubscriptionWhereInput[] | ProductVariantWantSubscriptionWhereInput | null
+  OR?: ProductVariantWantSubscriptionWhereInput[] | ProductVariantWantSubscriptionWhereInput | null
+  NOT?: ProductVariantWantSubscriptionWhereInput[] | ProductVariantWantSubscriptionWhereInput | null
   mutation_in?: MutationType[] | MutationType | null
   updatedFields_contains?: String | null
   updatedFields_contains_every?: String[] | String | null
@@ -23145,18 +20760,9 @@ export interface RecentlyViewedProductCreateInput {
 }
 
 export interface RecentlyViewedProductSubscriptionWhereInput {
-  AND?:
-    | RecentlyViewedProductSubscriptionWhereInput[]
-    | RecentlyViewedProductSubscriptionWhereInput
-    | null
-  OR?:
-    | RecentlyViewedProductSubscriptionWhereInput[]
-    | RecentlyViewedProductSubscriptionWhereInput
-    | null
-  NOT?:
-    | RecentlyViewedProductSubscriptionWhereInput[]
-    | RecentlyViewedProductSubscriptionWhereInput
-    | null
+  AND?: RecentlyViewedProductSubscriptionWhereInput[] | RecentlyViewedProductSubscriptionWhereInput | null
+  OR?: RecentlyViewedProductSubscriptionWhereInput[] | RecentlyViewedProductSubscriptionWhereInput | null
+  NOT?: RecentlyViewedProductSubscriptionWhereInput[] | RecentlyViewedProductSubscriptionWhereInput | null
   mutation_in?: MutationType[] | MutationType | null
   updatedFields_contains?: String | null
   updatedFields_contains_every?: String[] | String | null
@@ -23175,18 +20781,9 @@ export interface RecentlyViewedProductUpdateManyMutationInput {
 }
 
 export interface RecentlyViewedProductWhereInput {
-  AND?:
-    | RecentlyViewedProductWhereInput[]
-    | RecentlyViewedProductWhereInput
-    | null
-  OR?:
-    | RecentlyViewedProductWhereInput[]
-    | RecentlyViewedProductWhereInput
-    | null
-  NOT?:
-    | RecentlyViewedProductWhereInput[]
-    | RecentlyViewedProductWhereInput
-    | null
+  AND?: RecentlyViewedProductWhereInput[] | RecentlyViewedProductWhereInput | null
+  OR?: RecentlyViewedProductWhereInput[] | RecentlyViewedProductWhereInput | null
+  NOT?: RecentlyViewedProductWhereInput[] | RecentlyViewedProductWhereInput | null
   id?: ID_Input | null
   id_not?: ID_Input | null
   id_in?: ID_Output[] | ID_Output | null
@@ -23250,11 +20847,13 @@ export interface ReservationCreateInput {
 }
 
 export interface ReservationCreateManyWithoutCustomerInput {
-  create?:
-    | ReservationCreateWithoutCustomerInput[]
-    | ReservationCreateWithoutCustomerInput
-    | null
+  create?: ReservationCreateWithoutCustomerInput[] | ReservationCreateWithoutCustomerInput | null
   connect?: ReservationWhereUniqueInput[] | ReservationWhereUniqueInput | null
+}
+
+export interface ReservationCreateOneInput {
+  create?: ReservationCreateInput | null
+  connect?: ReservationWhereUniqueInput | null
 }
 
 export interface ReservationCreateWithoutCustomerInput {
@@ -23278,6 +20877,7 @@ export interface ReservationFeedbackCreateInput {
   rating?: Rating | null
   feedbacks?: ProductVariantFeedbackCreateManyWithoutReservationFeedbackInput | null
   user: UserCreateOneInput
+  reservation: ReservationCreateOneInput
 }
 
 export interface ReservationFeedbackCreateOneWithoutFeedbacksInput {
@@ -23290,21 +20890,13 @@ export interface ReservationFeedbackCreateWithoutFeedbacksInput {
   comment?: String | null
   rating?: Rating | null
   user: UserCreateOneInput
+  reservation: ReservationCreateOneInput
 }
 
 export interface ReservationFeedbackSubscriptionWhereInput {
-  AND?:
-    | ReservationFeedbackSubscriptionWhereInput[]
-    | ReservationFeedbackSubscriptionWhereInput
-    | null
-  OR?:
-    | ReservationFeedbackSubscriptionWhereInput[]
-    | ReservationFeedbackSubscriptionWhereInput
-    | null
-  NOT?:
-    | ReservationFeedbackSubscriptionWhereInput[]
-    | ReservationFeedbackSubscriptionWhereInput
-    | null
+  AND?: ReservationFeedbackSubscriptionWhereInput[] | ReservationFeedbackSubscriptionWhereInput | null
+  OR?: ReservationFeedbackSubscriptionWhereInput[] | ReservationFeedbackSubscriptionWhereInput | null
+  NOT?: ReservationFeedbackSubscriptionWhereInput[] | ReservationFeedbackSubscriptionWhereInput | null
   mutation_in?: MutationType[] | MutationType | null
   updatedFields_contains?: String | null
   updatedFields_contains_every?: String[] | String | null
@@ -23317,6 +20909,7 @@ export interface ReservationFeedbackUpdateInput {
   rating?: Rating | null
   feedbacks?: ProductVariantFeedbackUpdateManyWithoutReservationFeedbackInput | null
   user?: UserUpdateOneRequiredInput | null
+  reservation?: ReservationUpdateOneRequiredInput | null
 }
 
 export interface ReservationFeedbackUpdateManyMutationInput {
@@ -23335,6 +20928,7 @@ export interface ReservationFeedbackUpdateWithoutFeedbacksDataInput {
   comment?: String | null
   rating?: Rating | null
   user?: UserUpdateOneRequiredInput | null
+  reservation?: ReservationUpdateOneRequiredInput | null
 }
 
 export interface ReservationFeedbackUpsertWithoutFeedbacksInput {
@@ -23398,6 +20992,7 @@ export interface ReservationFeedbackWhereInput {
   feedbacks_some?: ProductVariantFeedbackWhereInput | null
   feedbacks_none?: ProductVariantFeedbackWhereInput | null
   user?: UserWhereInput | null
+  reservation?: ReservationWhereInput | null
 }
 
 export interface ReservationFeedbackWhereUniqueInput {
@@ -23479,23 +21074,29 @@ export interface ReservationScalarWhereInput {
 }
 
 export interface ReservationSubscriptionWhereInput {
-  AND?:
-    | ReservationSubscriptionWhereInput[]
-    | ReservationSubscriptionWhereInput
-    | null
-  OR?:
-    | ReservationSubscriptionWhereInput[]
-    | ReservationSubscriptionWhereInput
-    | null
-  NOT?:
-    | ReservationSubscriptionWhereInput[]
-    | ReservationSubscriptionWhereInput
-    | null
+  AND?: ReservationSubscriptionWhereInput[] | ReservationSubscriptionWhereInput | null
+  OR?: ReservationSubscriptionWhereInput[] | ReservationSubscriptionWhereInput | null
+  NOT?: ReservationSubscriptionWhereInput[] | ReservationSubscriptionWhereInput | null
   mutation_in?: MutationType[] | MutationType | null
   updatedFields_contains?: String | null
   updatedFields_contains_every?: String[] | String | null
   updatedFields_contains_some?: String[] | String | null
   node?: ReservationWhereInput | null
+}
+
+export interface ReservationUpdateDataInput {
+  reservationNumber?: Int | null
+  shipped?: Boolean | null
+  status?: ReservationStatus | null
+  shippedAt?: DateTime | null
+  receivedAt?: DateTime | null
+  reminderSentAt?: DateTime | null
+  user?: UserUpdateOneRequiredInput | null
+  customer?: CustomerUpdateOneRequiredWithoutReservationsInput | null
+  sentPackage?: PackageUpdateOneInput | null
+  returnedPackage?: PackageUpdateOneInput | null
+  location?: LocationUpdateOneInput | null
+  products?: PhysicalProductUpdateManyInput | null
 }
 
 export interface ReservationUpdateInput {
@@ -23532,38 +21133,27 @@ export interface ReservationUpdateManyMutationInput {
 }
 
 export interface ReservationUpdateManyWithoutCustomerInput {
-  create?:
-    | ReservationCreateWithoutCustomerInput[]
-    | ReservationCreateWithoutCustomerInput
-    | null
+  create?: ReservationCreateWithoutCustomerInput[] | ReservationCreateWithoutCustomerInput | null
   connect?: ReservationWhereUniqueInput[] | ReservationWhereUniqueInput | null
   set?: ReservationWhereUniqueInput[] | ReservationWhereUniqueInput | null
-  disconnect?:
-    | ReservationWhereUniqueInput[]
-    | ReservationWhereUniqueInput
-    | null
+  disconnect?: ReservationWhereUniqueInput[] | ReservationWhereUniqueInput | null
   delete?: ReservationWhereUniqueInput[] | ReservationWhereUniqueInput | null
-  update?:
-    | ReservationUpdateWithWhereUniqueWithoutCustomerInput[]
-    | ReservationUpdateWithWhereUniqueWithoutCustomerInput
-    | null
-  updateMany?:
-    | ReservationUpdateManyWithWhereNestedInput[]
-    | ReservationUpdateManyWithWhereNestedInput
-    | null
-  deleteMany?:
-    | ReservationScalarWhereInput[]
-    | ReservationScalarWhereInput
-    | null
-  upsert?:
-    | ReservationUpsertWithWhereUniqueWithoutCustomerInput[]
-    | ReservationUpsertWithWhereUniqueWithoutCustomerInput
-    | null
+  update?: ReservationUpdateWithWhereUniqueWithoutCustomerInput[] | ReservationUpdateWithWhereUniqueWithoutCustomerInput | null
+  updateMany?: ReservationUpdateManyWithWhereNestedInput[] | ReservationUpdateManyWithWhereNestedInput | null
+  deleteMany?: ReservationScalarWhereInput[] | ReservationScalarWhereInput | null
+  upsert?: ReservationUpsertWithWhereUniqueWithoutCustomerInput[] | ReservationUpsertWithWhereUniqueWithoutCustomerInput | null
 }
 
 export interface ReservationUpdateManyWithWhereNestedInput {
   where: ReservationScalarWhereInput
   data: ReservationUpdateManyDataInput
+}
+
+export interface ReservationUpdateOneRequiredInput {
+  create?: ReservationCreateInput | null
+  connect?: ReservationWhereUniqueInput | null
+  update?: ReservationUpdateDataInput | null
+  upsert?: ReservationUpsertNestedInput | null
 }
 
 export interface ReservationUpdateWithoutCustomerDataInput {
@@ -23583,6 +21173,11 @@ export interface ReservationUpdateWithoutCustomerDataInput {
 export interface ReservationUpdateWithWhereUniqueWithoutCustomerInput {
   where: ReservationWhereUniqueInput
   data: ReservationUpdateWithoutCustomerDataInput
+}
+
+export interface ReservationUpsertNestedInput {
+  update: ReservationUpdateDataInput
+  create: ReservationCreateInput
 }
 
 export interface ReservationUpsertWithWhereUniqueWithoutCustomerInput {
@@ -23788,19 +21383,10 @@ export interface SizeUpdateManyInput {
   set?: SizeWhereUniqueInput[] | SizeWhereUniqueInput | null
   disconnect?: SizeWhereUniqueInput[] | SizeWhereUniqueInput | null
   delete?: SizeWhereUniqueInput[] | SizeWhereUniqueInput | null
-  update?:
-    | SizeUpdateWithWhereUniqueNestedInput[]
-    | SizeUpdateWithWhereUniqueNestedInput
-    | null
-  updateMany?:
-    | SizeUpdateManyWithWhereNestedInput[]
-    | SizeUpdateManyWithWhereNestedInput
-    | null
+  update?: SizeUpdateWithWhereUniqueNestedInput[] | SizeUpdateWithWhereUniqueNestedInput | null
+  updateMany?: SizeUpdateManyWithWhereNestedInput[] | SizeUpdateManyWithWhereNestedInput | null
   deleteMany?: SizeScalarWhereInput[] | SizeScalarWhereInput | null
-  upsert?:
-    | SizeUpsertWithWhereUniqueNestedInput[]
-    | SizeUpsertWithWhereUniqueNestedInput
-    | null
+  upsert?: SizeUpsertWithWhereUniqueNestedInput[] | SizeUpsertWithWhereUniqueNestedInput | null
 }
 
 export interface SizeUpdateManyMutationInput {
@@ -24203,14 +21789,8 @@ export interface UserWhereInput {
   updatedAt_gte?: DateTime | null
   pushNotifications?: PushNotificationStatus | null
   pushNotifications_not?: PushNotificationStatus | null
-  pushNotifications_in?:
-    | PushNotificationStatus[]
-    | PushNotificationStatus
-    | null
-  pushNotifications_not_in?:
-    | PushNotificationStatus[]
-    | PushNotificationStatus
-    | null
+  pushNotifications_in?: PushNotificationStatus[] | PushNotificationStatus | null
+  pushNotifications_not_in?: PushNotificationStatus[] | PushNotificationStatus | null
 }
 
 export interface UserWhereUniqueInput {
@@ -25604,6 +23184,7 @@ export interface ReservationFeedback extends Node {
   feedbacks?: Array<ProductVariantFeedback> | null
   rating?: Rating | null
   user: User
+  reservation: Reservation
   createdAt: DateTime
   updatedAt: DateTime
 }
