@@ -198,6 +198,160 @@ describe("Return Flow Cron Job", () => {
     })
   })
 
+  describe("mark reservation completed after sync physical product script finishes", () => {
+    let productVariantsToReserveIds
+    let itemToReturn
+    let returnedItem
+    let updatedReservation
+    let createdReservationData
+
+    beforeAll(async () => {
+      ;({
+        user: testUser,
+        customer: testCustomer,
+      } = await testUtilsService.createNewTestingCustomer())
+      productVariantsToReserveIds = sampleSize(
+        await testUtilsService.getTestableReservableProductVariants(),
+        3
+      ).map(a => a.id)
+      testUtilsService.initializePreReservationCustomerBag(
+        productVariantsToReserveIds,
+        testCustomer,
+        true
+      )
+
+      // Create a reservation
+      createdReservationData = await reservationService.reserveItems(
+        productVariantsToReserveIds,
+        testUser,
+        testCustomer,
+        `{
+            id
+            reservationNumber
+            products {
+              id
+              seasonsUID
+              productVariant {
+                total
+                nonReservable
+                reserved
+                reservable
+              }
+            }
+          }`
+      )
+
+      // Return 1 item on airtable
+      itemToReturn = sample(createdReservationData.products)
+      const correspondingAirtablePhysicalProduct = airtableService.getCorrespondingAirtablePhysicalProduct(
+        await airtableService.getAllPhysicalProducts(),
+        itemToReturn
+      )
+      await airtableService.updatePhysicalProducts(
+        [correspondingAirtablePhysicalProduct.id],
+        [{ "Inventory Status": "Reservable" }]
+      )
+      await airtableService.updateReservation(
+        createdReservationData.reservationNumber,
+        { Status: "Completed" }
+      )
+
+      // Run the cron job
+      await reservationJobsService.syncPhysicalProductAndReservationStatuses(
+        true
+      )
+
+      updatedReservation = await prismaService.binding.query.reservation(
+        {
+          where: { id: createdReservationData.id },
+        },
+        `{
+          id
+          status
+          returnedPackage {
+            items {
+              id
+              seasonsUID
+            }
+          }
+        }`
+      )
+      returnedItem = await prismaService.binding.query.physicalProduct(
+        {
+          where: { id: itemToReturn.id },
+        },
+        `{
+          seasonsUID
+          inventoryStatus
+          productVariant {
+            reservable
+            reserved
+          }
+        }`
+      )
+    }, 10 * ONE_MIN)
+
+    afterAll(async () => {
+      await prismaService.client.deleteReservation({
+        id: createdReservationData?.id,
+      })
+      await prismaService.client.deleteManyBagItems({
+        customer: { id: testCustomer.id },
+      })
+      await prismaService.client.deleteCustomer({ id: testCustomer.id })
+      await prismaService.client.deleteManyReservationFeedbacks({
+        user: { id: testUser.id },
+      })
+      await prismaService.client.deleteUser({ id: testUser.id })
+    })
+
+    it("updates reservation status", () => {
+      expect(updatedReservation.status).toBe("Completed")
+    })
+
+    it("updates returned package data", () => {
+      //@ts-ignore
+      expect(head(updatedReservation.returnedPackage.items)?.seasonsUID).toBe(
+        returnedItem.seasonsUID
+      )
+    })
+
+    it("deletes bag items", async () => {
+      expect(
+        await prismaService.client.bagItems({
+          where: {
+            productVariant: {
+              id_in: productVariantsToReserveIds,
+            },
+            customer: {
+              id: testCustomer.id,
+            },
+            status: "Added",
+          },
+        })
+      ).toHaveLength(3)
+      expect(
+        await prismaService.client.bagItems({
+          where: {
+            productVariant: { id_in: productVariantsToReserveIds },
+            customer: {
+              id: testCustomer.id,
+            },
+            status: "Reserved",
+          },
+        })
+      ).toHaveLength(2)
+    })
+
+    it("creates reservation feedback object", async () => {
+      expect(
+        await prismaService.client.reservationFeedbacks({
+          where: { reservation: { id: createdReservationData.id } },
+        })
+      ).toBeDefined()
+    })
+  })
+
   describe("mark reservation completed", () => {
     let productVariantsToReserveIds
     let itemToReturn
