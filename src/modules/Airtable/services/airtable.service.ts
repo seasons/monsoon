@@ -5,6 +5,8 @@ import {
   AirtableInventoryStatus,
   AirtableModelName,
   AirtableProductVariantCounts,
+  AirtableReservationFields,
+  PrismaProductVariantCounts,
 } from "../airtable.types"
 import {
   BillingInfoCreateInput,
@@ -16,7 +18,7 @@ import {
   ReservationStatus,
   User,
 } from "@prisma/index"
-import { compact, fill, zip } from "lodash"
+import { compact, fill, head, zip } from "lodash"
 
 import { AirtableBaseService } from "./airtable.base.service"
 import { AirtableUtilsService } from "./airtable.utils.service"
@@ -39,20 +41,37 @@ export class AirtableService {
     private readonly utils: AirtableUtilsService
   ) {}
 
+  async getNextPhysicalProductSequenceNumber() {
+    const sortedSequenceNumbers = (await this.getAllPhysicalProducts())
+      .map(a => parseInt(a.model.sequenceNumber, 10))
+      .sort((a, b) => a - b)
+    return Math.max(...sortedSequenceNumbers) + 1
+  }
+
   airtableToPrismaInventoryStatus(
     airtableStatus: AirtableInventoryStatus
   ): InventoryStatus {
-    let prismaStatus
-    if (airtableStatus === "Reservable") {
-      prismaStatus = "Reservable"
+    return airtableStatus.replace(" ", "") as InventoryStatus
+  }
+
+  prismaToAirtableInventoryStatus(
+    prismaStatus: InventoryStatus
+  ): AirtableInventoryStatus {
+    let retVal = prismaStatus as AirtableInventoryStatus
+    if (prismaStatus === "NonReservable") {
+      retVal = "Non Reservable"
     }
-    if (airtableStatus === "Non Reservable") {
-      prismaStatus = "NonReservable"
+    return retVal
+  }
+
+  prismaToAirtableCounts(
+    prismaCounts: PrismaProductVariantCounts
+  ): AirtableProductVariantCounts {
+    return {
+      "Non-Reservable Count": prismaCounts.nonReservable,
+      "Reservable Count": prismaCounts.reservable,
+      "Reserved Count": prismaCounts.reserved,
     }
-    if (airtableStatus === "Reserved") {
-      prismaStatus = "Reserved"
-    }
-    return prismaStatus
   }
 
   airtableToPrismaReservationStatus(airtableStatus: string): ReservationStatus {
@@ -350,18 +369,34 @@ export class AirtableService {
     })
   }
 
+  async updateReservation(resnum: number, fields: AirtableReservationFields) {
+    const airtableResy = head(
+      await this.getAll("Reservations", `{ID} = '${resnum}'`)
+    )
+    return await this.airtableBase
+      .base("Reservations")
+      .update(airtableResy?.id, fields)
+  }
+
   async updatePhysicalProducts(
     airtableIDs: string[],
     fields: AirtablePhysicalProductFields[]
   ) {
-    if (airtableIDs.length !== fields.length) {
-      throw new Error("airtableIDs and fields must be arrays of equal length")
+    if (airtableIDs.length !== fields.length && fields.length !== 1) {
+      throw new Error(
+        "airtableIDs and fields must be arrays of equal length OR fields must be a length 1 array"
+      )
     }
     if (airtableIDs.length < 1 || airtableIDs.length > 10) {
       throw new Error("please include one to ten airtable record IDs")
     }
 
-    const formattedUpdateData = zip(airtableIDs, fields).map(a => {
+    let formattedFields = fields
+    if (fields.length === 1 && airtableIDs.length !== 1) {
+      formattedFields = airtableIDs.map(a => fields[0])
+    }
+
+    const formattedUpdateData = zip(airtableIDs, formattedFields).map(a => {
       return {
         id: a[0],
         fields: a[1],
@@ -389,7 +424,7 @@ export class AirtableService {
     return obj
   }
 
-  private getPhysicalProducts(SUIDs: string[]) {
+  getPhysicalProducts(SUIDs: string[]) {
     const formula = `OR(${SUIDs.map(a => `{SUID}='${a}'`).join(",")})`
     return this.getAll("Physical Products", formula)
   }

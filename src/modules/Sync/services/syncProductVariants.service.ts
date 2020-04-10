@@ -457,6 +457,7 @@ export class SyncProductVariantsService {
             "Product Variant": [productVariant.id],
             "Inventory Status": "Non Reservable",
             "Product Status": "New",
+            "Sequence Number": await this.airtableService.getNextPhysicalProductSequenceNumber(),
           },
         })
       }
