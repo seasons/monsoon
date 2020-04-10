@@ -1,5 +1,5 @@
-# source: https://monsoon-prisma-staging.herokuapp.com/monsoon/staging
-# timestamp: Tue Apr 07 2020 16:54:58 GMT-0400 (Eastern Daylight Time)
+# source: http://localhost:4466/monsoon/dev
+# timestamp: Thu Apr 09 2020 18:52:56 GMT-0400 (Eastern Daylight Time)
 
 type AggregateBagItem {
   count: Int!
@@ -10116,7 +10116,6 @@ type Mutation {
     data: RecentlyViewedProductCreateInput!
   ): RecentlyViewedProduct!
   createOrder(data: OrderCreateInput!): Order!
-  createReservation(data: ReservationCreateInput!): Reservation!
   createProductRequest(data: ProductRequestCreateInput!): ProductRequest!
   createProductVariantWant(
     data: ProductVariantWantCreateInput!
@@ -10146,6 +10145,7 @@ type Mutation {
   createCustomer(data: CustomerCreateInput!): Customer!
   createProductVariant(data: ProductVariantCreateInput!): ProductVariant!
   createProduct(data: ProductCreateInput!): Product!
+  createReservation(data: ReservationCreateInput!): Reservation!
   createUser(data: UserCreateInput!): User!
   updateBrand(data: BrandUpdateInput!, where: BrandWhereUniqueInput!): Brand
   updateCollectionGroup(
@@ -10165,10 +10165,6 @@ type Mutation {
     data: RecentlyViewedProductUpdateInput!
     where: RecentlyViewedProductWhereUniqueInput!
   ): RecentlyViewedProduct
-  updateReservation(
-    data: ReservationUpdateInput!
-    where: ReservationWhereUniqueInput!
-  ): Reservation
   updateProductRequest(
     data: ProductRequestUpdateInput!
     where: ProductRequestWhereUniqueInput!
@@ -10244,6 +10240,10 @@ type Mutation {
     data: ProductUpdateInput!
     where: ProductWhereUniqueInput!
   ): Product
+  updateReservation(
+    data: ReservationUpdateInput!
+    where: ReservationWhereUniqueInput!
+  ): Reservation
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   deleteBrand(where: BrandWhereUniqueInput!): Brand
   deleteCollectionGroup(
@@ -10258,7 +10258,6 @@ type Mutation {
     where: RecentlyViewedProductWhereUniqueInput!
   ): RecentlyViewedProduct
   deleteOrder(where: OrderWhereUniqueInput!): Order
-  deleteReservation(where: ReservationWhereUniqueInput!): Reservation
   deleteProductRequest(where: ProductRequestWhereUniqueInput!): ProductRequest
   deleteProductVariantWant(
     where: ProductVariantWantWhereUniqueInput!
@@ -10292,6 +10291,7 @@ type Mutation {
   deleteCustomer(where: CustomerWhereUniqueInput!): Customer
   deleteProductVariant(where: ProductVariantWhereUniqueInput!): ProductVariant
   deleteProduct(where: ProductWhereUniqueInput!): Product
+  deleteReservation(where: ReservationWhereUniqueInput!): Reservation
   deleteUser(where: UserWhereUniqueInput!): User
   upsertBrand(
     where: BrandWhereUniqueInput!
@@ -10323,11 +10323,6 @@ type Mutation {
     create: RecentlyViewedProductCreateInput!
     update: RecentlyViewedProductUpdateInput!
   ): RecentlyViewedProduct!
-  upsertReservation(
-    where: ReservationWhereUniqueInput!
-    create: ReservationCreateInput!
-    update: ReservationUpdateInput!
-  ): Reservation!
   upsertProductRequest(
     where: ProductRequestWhereUniqueInput!
     create: ProductRequestCreateInput!
@@ -10433,6 +10428,11 @@ type Mutation {
     create: ProductCreateInput!
     update: ProductUpdateInput!
   ): Product!
+  upsertReservation(
+    where: ReservationWhereUniqueInput!
+    create: ReservationCreateInput!
+    update: ReservationUpdateInput!
+  ): Reservation!
   upsertUser(
     where: UserWhereUniqueInput!
     create: UserCreateInput!
@@ -10461,10 +10461,6 @@ type Mutation {
   updateManyRecentlyViewedProducts(
     data: RecentlyViewedProductUpdateManyMutationInput!
     where: RecentlyViewedProductWhereInput
-  ): BatchPayload!
-  updateManyReservations(
-    data: ReservationUpdateManyMutationInput!
-    where: ReservationWhereInput
   ): BatchPayload!
   updateManyProductRequests(
     data: ProductRequestUpdateManyMutationInput!
@@ -10550,6 +10546,10 @@ type Mutation {
     data: ProductUpdateManyMutationInput!
     where: ProductWhereInput
   ): BatchPayload!
+  updateManyReservations(
+    data: ReservationUpdateManyMutationInput!
+    where: ReservationWhereInput
+  ): BatchPayload!
   updateManyUsers(
     data: UserUpdateManyMutationInput!
     where: UserWhereInput
@@ -10565,7 +10565,6 @@ type Mutation {
     where: RecentlyViewedProductWhereInput
   ): BatchPayload!
   deleteManyOrders(where: OrderWhereInput): BatchPayload!
-  deleteManyReservations(where: ReservationWhereInput): BatchPayload!
   deleteManyProductRequests(where: ProductRequestWhereInput): BatchPayload!
   deleteManyProductVariantWants(
     where: ProductVariantWantWhereInput
@@ -10595,6 +10594,7 @@ type Mutation {
   deleteManyCustomers(where: CustomerWhereInput): BatchPayload!
   deleteManyProductVariants(where: ProductVariantWhereInput): BatchPayload!
   deleteManyProducts(where: ProductWhereInput): BatchPayload!
+  deleteManyReservations(where: ReservationWhereInput): BatchPayload!
   deleteManyUsers(where: UserWhereInput): BatchPayload!
 }
 
@@ -17572,15 +17572,6 @@ type Query {
     first: Int
     last: Int
   ): [Order]!
-  reservations(
-    where: ReservationWhereInput
-    orderBy: ReservationOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [Reservation]!
   productRequests(
     where: ProductRequestWhereInput
     orderBy: ProductRequestOrderByInput
@@ -17770,6 +17761,15 @@ type Query {
     first: Int
     last: Int
   ): [Product]!
+  reservations(
+    where: ReservationWhereInput
+    orderBy: ReservationOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Reservation]!
   users(
     where: UserWhereInput
     orderBy: UserOrderByInput
@@ -17790,7 +17790,6 @@ type Query {
     where: RecentlyViewedProductWhereUniqueInput!
   ): RecentlyViewedProduct
   order(where: OrderWhereUniqueInput!): Order
-  reservation(where: ReservationWhereUniqueInput!): Reservation
   productRequest(where: ProductRequestWhereUniqueInput!): ProductRequest
   productVariantWant(
     where: ProductVariantWantWhereUniqueInput!
@@ -17820,6 +17819,7 @@ type Query {
   customer(where: CustomerWhereUniqueInput!): Customer
   productVariant(where: ProductVariantWhereUniqueInput!): ProductVariant
   product(where: ProductWhereUniqueInput!): Product
+  reservation(where: ReservationWhereUniqueInput!): Reservation
   user(where: UserWhereUniqueInput!): User
   brandsConnection(
     where: BrandWhereInput
@@ -17884,15 +17884,6 @@ type Query {
     first: Int
     last: Int
   ): OrderConnection!
-  reservationsConnection(
-    where: ReservationWhereInput
-    orderBy: ReservationOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): ReservationConnection!
   productRequestsConnection(
     where: ProductRequestWhereInput
     orderBy: ProductRequestOrderByInput
@@ -18082,6 +18073,15 @@ type Query {
     first: Int
     last: Int
   ): ProductConnection!
+  reservationsConnection(
+    where: ReservationWhereInput
+    orderBy: ReservationOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): ReservationConnection!
   usersConnection(
     where: UserWhereInput
     orderBy: UserOrderByInput
@@ -18494,6 +18494,11 @@ input ReservationCreateManyWithoutCustomerInput {
   connect: [ReservationWhereUniqueInput!]
 }
 
+input ReservationCreateOneInput {
+  create: ReservationCreateInput
+  connect: ReservationWhereUniqueInput
+}
+
 input ReservationCreateWithoutCustomerInput {
   id: ID
   reservationNumber: Int!
@@ -18538,6 +18543,7 @@ type ReservationFeedback implements Node {
   ): [ProductVariantFeedback!]
   rating: Rating
   user: User!
+  reservation: Reservation!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -18564,6 +18570,7 @@ input ReservationFeedbackCreateInput {
   rating: Rating
   feedbacks: ProductVariantFeedbackCreateManyWithoutReservationFeedbackInput
   user: UserCreateOneInput!
+  reservation: ReservationCreateOneInput!
 }
 
 input ReservationFeedbackCreateOneWithoutFeedbacksInput {
@@ -18576,6 +18583,7 @@ input ReservationFeedbackCreateWithoutFeedbacksInput {
   comment: String
   rating: Rating
   user: UserCreateOneInput!
+  reservation: ReservationCreateOneInput!
 }
 
 """
@@ -18664,6 +18672,7 @@ input ReservationFeedbackUpdateInput {
   rating: Rating
   feedbacks: ProductVariantFeedbackUpdateManyWithoutReservationFeedbackInput
   user: UserUpdateOneRequiredInput
+  reservation: ReservationUpdateOneRequiredInput
 }
 
 input ReservationFeedbackUpdateManyMutationInput {
@@ -18682,6 +18691,7 @@ input ReservationFeedbackUpdateWithoutFeedbacksDataInput {
   comment: String
   rating: Rating
   user: UserUpdateOneRequiredInput
+  reservation: ReservationUpdateOneRequiredInput
 }
 
 input ReservationFeedbackUpsertWithoutFeedbacksInput {
@@ -18928,6 +18938,7 @@ input ReservationFeedbackWhereInput {
   feedbacks_some: ProductVariantFeedbackWhereInput
   feedbacks_none: ProductVariantFeedbackWhereInput
   user: UserWhereInput
+  reservation: ReservationWhereInput
 }
 
 input ReservationFeedbackWhereUniqueInput {
@@ -19345,6 +19356,21 @@ input ReservationSubscriptionWhereInput {
   node: ReservationWhereInput
 }
 
+input ReservationUpdateDataInput {
+  reservationNumber: Int
+  shipped: Boolean
+  status: ReservationStatus
+  shippedAt: DateTime
+  receivedAt: DateTime
+  reminderSentAt: DateTime
+  user: UserUpdateOneRequiredInput
+  customer: CustomerUpdateOneRequiredWithoutReservationsInput
+  sentPackage: PackageUpdateOneInput
+  returnedPackage: PackageUpdateOneInput
+  location: LocationUpdateOneInput
+  products: PhysicalProductUpdateManyInput
+}
+
 input ReservationUpdateInput {
   reservationNumber: Int
   shipped: Boolean
@@ -19395,6 +19421,13 @@ input ReservationUpdateManyWithWhereNestedInput {
   data: ReservationUpdateManyDataInput!
 }
 
+input ReservationUpdateOneRequiredInput {
+  create: ReservationCreateInput
+  connect: ReservationWhereUniqueInput
+  update: ReservationUpdateDataInput
+  upsert: ReservationUpsertNestedInput
+}
+
 input ReservationUpdateWithoutCustomerDataInput {
   reservationNumber: Int
   shipped: Boolean
@@ -19412,6 +19445,11 @@ input ReservationUpdateWithoutCustomerDataInput {
 input ReservationUpdateWithWhereUniqueWithoutCustomerInput {
   where: ReservationWhereUniqueInput!
   data: ReservationUpdateWithoutCustomerDataInput!
+}
+
+input ReservationUpsertNestedInput {
+  update: ReservationUpdateDataInput!
+  create: ReservationCreateInput!
 }
 
 input ReservationUpsertWithWhereUniqueWithoutCustomerInput {
@@ -20429,9 +20467,6 @@ type Subscription {
     where: RecentlyViewedProductSubscriptionWhereInput
   ): RecentlyViewedProductSubscriptionPayload
   order(where: OrderSubscriptionWhereInput): OrderSubscriptionPayload
-  reservation(
-    where: ReservationSubscriptionWhereInput
-  ): ReservationSubscriptionPayload
   productRequest(
     where: ProductRequestSubscriptionWhereInput
   ): ProductRequestSubscriptionPayload
@@ -20477,6 +20512,9 @@ type Subscription {
     where: ProductVariantSubscriptionWhereInput
   ): ProductVariantSubscriptionPayload
   product(where: ProductSubscriptionWhereInput): ProductSubscriptionPayload
+  reservation(
+    where: ReservationSubscriptionWhereInput
+  ): ReservationSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
 }
 

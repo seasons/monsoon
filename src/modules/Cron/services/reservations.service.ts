@@ -1,5 +1,3 @@
-import * as Sentry from "@sentry/node"
-
 import {
   AirtableInventoryStatus,
   AirtableProductVariantCounts,
@@ -22,6 +20,7 @@ import { ErrorService } from "@modules/Error/services/error.service"
 import { PrismaService } from "@prisma/prisma.service"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { SyncError } from "@app/errors"
+import { head } from "lodash"
 
 type prismaProductVariantCounts = Pick<
   ProductVariant,
@@ -88,8 +87,7 @@ export class ReservationScheduledJobs {
     this.logger.log(report)
   }
 
-  // @Cron(CronExpression.EVERY_5_MINUTES)
-  // @Cron(CronExpression.EVERY_MINUTE)
+  @Cron(CronExpression.EVERY_MINUTE)
   async syncPhysicalProductAndReservationStatuses() {
     this.logger.log("Sync Physical Product and Reservation Statuses ran")
     const physProdReport = await this.syncPhysicalProductStatus()
@@ -107,7 +105,6 @@ export class ReservationScheduledJobs {
     const updatedPhysicalProducts = []
     const updatedProductVariants = []
     const errors = []
-    const physicalProductsInAirtableButNotPrisma = []
     const allAirtablePhysicalProducts = await this.airtableService.getAllPhysicalProducts()
 
     // Update relevant products
@@ -117,15 +114,11 @@ export class ReservationScheduledJobs {
         this.errorService.setExtraContext({
           physicalProductSUID: airtablePhysicalProduct.model.sUID.text,
         })
-
         const prismaPhysicalProduct = await this.prisma.client.physicalProduct({
           seasonsUID: airtablePhysicalProduct.model.sUID.text,
         })
 
         if (!prismaPhysicalProduct) {
-          physicalProductsInAirtableButNotPrisma.push(
-            airtablePhysicalProduct.model.sUID
-          )
           continue
         }
 
@@ -172,7 +165,6 @@ export class ReservationScheduledJobs {
     return {
       updatedPhysicalProducts,
       updatedProductVariants,
-      physicalProductsInAirtableButNotPrisma,
       errors,
     }
   }
@@ -180,7 +172,6 @@ export class ReservationScheduledJobs {
   private async syncReservationStatus() {
     const updatedReservations = []
     const errors = []
-    const reservationsInAirtableButNotPrisma = []
     const allAirtableReservations = await this.airtableService.getAllReservations()
 
     for (const airtableReservation of allAirtableReservations) {
@@ -194,7 +185,6 @@ export class ReservationScheduledJobs {
         )
 
         if (!prismaReservation) {
-          reservationsInAirtableButNotPrisma.push(airtableReservation.model.iD)
           this.errorService.captureError(
             new SyncError("Reservation in airtable but not prisma")
           )
@@ -221,28 +211,23 @@ export class ReservationScheduledJobs {
               ].includes(p.inventoryStatus)
           )
 
-          // Update the status
           await this.prisma.client.updateReservation({
             data: { status: "Completed" },
             where: { id: prismaReservation.id },
           })
 
-          // Email the user
           await this.emailService.sendYouCanNowReserveAgainEmail(prismaUser)
 
-          // Update the user's bag
           await this.updateUsersBagItemsOnCompletedReservation(
             prismaReservation,
             returnedPhysicalProducts
           )
 
-          // Update the returnPackage on the shipment
           await this.updateReturnPackageOnCompletedReservation(
             prismaReservation,
             returnedPhysicalProducts
           )
 
-          // Email an admin a confirmation email
           await this.emailService.sendAdminConfirmationEmail(
             prismaUser,
             returnedPhysicalProducts,
@@ -250,17 +235,14 @@ export class ReservationScheduledJobs {
           )
 
           // Create reservationFeedback datamodels for the returned product variants
-          const returnedProductVariantIDs: ID_Input[] = returnedPhysicalProducts.map(
-            p => p.productVariant.id
-          )
-          const returnedProductVariants = await Promise.all(
-            returnedProductVariantIDs.map(
-              async id => await this.prisma.client.productVariant({ id })
-            )
-          )
           await this.createReservationFeedbacksForVariants(
-            returnedProductVariants,
-            prismaUser
+            await this.prisma.client.productVariants({
+              where: {
+                id_in: returnedPhysicalProducts.map(p => p.productVariant.id),
+              },
+            }),
+            prismaUser,
+            prismaReservation as Reservation
           )
         } else if (
           airtableReservation.model.status !== prismaReservation.status
@@ -289,7 +271,6 @@ export class ReservationScheduledJobs {
     return {
       updatedReservations,
       errors,
-      reservationsInAirtableButNotPrisma,
     }
   }
 
@@ -448,7 +429,7 @@ export class ReservationScheduledJobs {
 
     // Update the counts on the corresponding product variant in airtable
     await this.airtableService.updateProductVariantCounts(
-      airtablePhysicalProduct.model.productVariant[0],
+      head(airtablePhysicalProduct.model.productVariant),
       this.getUpdatedCounts(
         prismaProductVariant,
         currentStatusOnPrisma,
@@ -518,38 +499,20 @@ export class ReservationScheduledJobs {
     prismaReservation: any,
     returnedPhysicalProducts: any[] // fields specified in getPrismaReservationWithNeededFields
   ) {
-    const returnedPhysicalProductsProductVariantIDs: {
-      id: ID_Input
-    }[] = returnedPhysicalProducts.map(p => p.productVariant.id)
-    const customerBagItems = await this.prisma.binding.query.bagItems(
-      {
-        where: { customer: { id: prismaReservation.customer.id } },
+    return await this.prisma.client.deleteManyBagItems({
+      customer: { id: prismaReservation.customer.id },
+      saved: false,
+      productVariant: {
+        id_in: returnedPhysicalProducts.map(p => p.productVariant.id),
       },
-      `{ 
-          id
-          productVariant {
-              id
-          }
-      }`
-    )
-
-    for (let prodVarId of returnedPhysicalProductsProductVariantIDs) {
-      const bagItem = customerBagItems.find(
-        val => val.productVariant.id === prodVarId.id
-      )
-
-      if (!bagItem) {
-        throw new Error(
-          `bagItem with productVariant id ${prodVarId} not found for customer w/id ${prismaReservation.customer.id}`
-        )
-      }
-      await this.prisma.client.deleteBagItem({ id: bagItem.id })
-    }
+      status: "Reserved",
+    })
   }
 
   private async createReservationFeedbacksForVariants(
     productVariants: ProductVariant[],
-    user: User
+    user: User,
+    reservation: Reservation
   ) {
     const variantInfos = await Promise.all(
       productVariants.map(async variant => {
@@ -623,6 +586,9 @@ export class ReservationScheduledJobs {
         connect: {
           id: user.id,
         },
+      },
+      reservation: {
+        connect: { id: reservation.id },
       },
     })
   }

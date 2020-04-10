@@ -522,9 +522,10 @@ type Size {
 type ReservationFeedback {
   id: ID! @id
   comment: String
-  feedbacks: [ProductVariantFeedback!]! @relation(link: TABLE)
+  feedbacks: [ProductVariantFeedback!]! @relation(link: TABLE, , onDelete: "CASCADE") 
   rating: Rating
   user: User!
+  reservation: Reservation!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }

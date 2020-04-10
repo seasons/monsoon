@@ -8198,6 +8198,11 @@ export const typeDefs = /* GraphQL */ `
     connect: [ReservationWhereUniqueInput!]
   }
 
+  input ReservationCreateOneInput {
+    create: ReservationCreateInput
+    connect: ReservationWhereUniqueInput
+  }
+
   input ReservationCreateWithoutCustomerInput {
     id: ID
     user: UserCreateOneInput!
@@ -8232,6 +8237,7 @@ export const typeDefs = /* GraphQL */ `
     ): [ProductVariantFeedback!]
     rating: Rating
     user: User!
+    reservation: Reservation!
     createdAt: DateTime!
     updatedAt: DateTime!
   }
@@ -8248,6 +8254,7 @@ export const typeDefs = /* GraphQL */ `
     feedbacks: ProductVariantFeedbackCreateManyWithoutReservationFeedbackInput
     rating: Rating
     user: UserCreateOneInput!
+    reservation: ReservationCreateOneInput!
   }
 
   input ReservationFeedbackCreateOneWithoutFeedbacksInput {
@@ -8260,6 +8267,7 @@ export const typeDefs = /* GraphQL */ `
     comment: String
     rating: Rating
     user: UserCreateOneInput!
+    reservation: ReservationCreateOneInput!
   }
 
   type ReservationFeedbackEdge {
@@ -8311,6 +8319,7 @@ export const typeDefs = /* GraphQL */ `
     feedbacks: ProductVariantFeedbackUpdateManyWithoutReservationFeedbackInput
     rating: Rating
     user: UserUpdateOneRequiredInput
+    reservation: ReservationUpdateOneRequiredInput
   }
 
   input ReservationFeedbackUpdateManyMutationInput {
@@ -8329,6 +8338,7 @@ export const typeDefs = /* GraphQL */ `
     comment: String
     rating: Rating
     user: UserUpdateOneRequiredInput
+    reservation: ReservationUpdateOneRequiredInput
   }
 
   input ReservationFeedbackUpsertWithoutFeedbacksInput {
@@ -8373,6 +8383,7 @@ export const typeDefs = /* GraphQL */ `
     rating_in: [Rating!]
     rating_not_in: [Rating!]
     user: UserWhereInput
+    reservation: ReservationWhereInput
     createdAt: DateTime
     createdAt_not: DateTime
     createdAt_in: [DateTime!]
@@ -8535,6 +8546,21 @@ export const typeDefs = /* GraphQL */ `
     NOT: [ReservationSubscriptionWhereInput!]
   }
 
+  input ReservationUpdateDataInput {
+    user: UserUpdateOneRequiredInput
+    customer: CustomerUpdateOneRequiredWithoutReservationsInput
+    sentPackage: PackageUpdateOneInput
+    returnedPackage: PackageUpdateOneInput
+    location: LocationUpdateOneInput
+    products: PhysicalProductUpdateManyInput
+    reservationNumber: Int
+    shipped: Boolean
+    status: ReservationStatus
+    shippedAt: DateTime
+    receivedAt: DateTime
+    reminderSentAt: DateTime
+  }
+
   input ReservationUpdateInput {
     user: UserUpdateOneRequiredInput
     customer: CustomerUpdateOneRequiredWithoutReservationsInput
@@ -8585,6 +8611,13 @@ export const typeDefs = /* GraphQL */ `
     data: ReservationUpdateManyDataInput!
   }
 
+  input ReservationUpdateOneRequiredInput {
+    create: ReservationCreateInput
+    update: ReservationUpdateDataInput
+    upsert: ReservationUpsertNestedInput
+    connect: ReservationWhereUniqueInput
+  }
+
   input ReservationUpdateWithoutCustomerDataInput {
     user: UserUpdateOneRequiredInput
     sentPackage: PackageUpdateOneInput
@@ -8602,6 +8635,11 @@ export const typeDefs = /* GraphQL */ `
   input ReservationUpdateWithWhereUniqueWithoutCustomerInput {
     where: ReservationWhereUniqueInput!
     data: ReservationUpdateWithoutCustomerDataInput!
+  }
+
+  input ReservationUpsertNestedInput {
+    update: ReservationUpdateDataInput!
+    create: ReservationCreateInput!
   }
 
   input ReservationUpsertWithWhereUniqueWithoutCustomerInput {
