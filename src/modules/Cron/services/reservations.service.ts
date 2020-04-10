@@ -7,11 +7,11 @@ import { DateTime, Interval } from "luxon"
 import {
   ID_Input,
   InventoryStatus,
+  PhysicalProduct,
   Product,
   ProductVariant,
   Reservation,
   User,
-  PhysicalProduct,
 } from "@prisma/index"
 import { Injectable, Logger } from "@nestjs/common"
 
