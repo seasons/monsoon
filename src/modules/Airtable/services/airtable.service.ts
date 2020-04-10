@@ -424,7 +424,7 @@ export class AirtableService {
     return obj
   }
 
-  private getPhysicalProducts(SUIDs: string[]) {
+  getPhysicalProducts(SUIDs: string[]) {
     const formula = `OR(${SUIDs.map(a => `{SUID}='${a}'`).join(",")})`
     return this.getAll("Physical Products", formula)
   }

@@ -11,6 +11,7 @@ import {
   ProductVariant,
   Reservation,
   User,
+  PhysicalProduct,
 } from "@prisma/index"
 import { Injectable, Logger } from "@nestjs/common"
 
@@ -180,7 +181,7 @@ export class ReservationScheduledJobs {
           reservationNumber: airtableReservation.model.iD,
         })
 
-        const prismaReservation = await this.getPrismaReservationWithNeededFields(
+        let prismaReservation = await this.getPrismaReservationWithNeededFields(
           airtableReservation.model.iD
         )
 
@@ -196,6 +197,15 @@ export class ReservationScheduledJobs {
           airtableReservation.model.status === "Completed" &&
           prismaReservation.status !== "Completed"
         ) {
+          for (const physProd of prismaReservation.products) {
+            await this.ensurePhysicalProductSynced(physProd)
+          }
+
+          // grab it again, in case we had to update any physical products
+          prismaReservation = await this.getPrismaReservationWithNeededFields(
+            airtableReservation.model.iD
+          )
+
           // Handle housekeeping
           updatedReservations.push(prismaReservation.reservationNumber)
 
@@ -271,6 +281,36 @@ export class ReservationScheduledJobs {
     return {
       updatedReservations,
       errors,
+    }
+  }
+
+  private async ensurePhysicalProductSynced(physicalProduct: any) {
+    const correspondingAirtablePhysProd = head(
+      await this.airtableService.getPhysicalProducts([
+        physicalProduct.seasonsUID,
+      ])
+    )
+    if (!correspondingAirtablePhysProd) {
+      throw new Error(
+        `Physical product ${physicalProduct.seasonsUID} not found on airtable`
+      )
+    }
+
+    if (
+      this.physicalProductStatusChanged(
+        correspondingAirtablePhysProd.model.inventoryStatus,
+        physicalProduct.inventoryStatus
+      )
+    ) {
+      await this.updateProductVariantCountAndStatus(
+        correspondingAirtablePhysProd,
+        physicalProduct,
+        await this.prisma.client.productVariant({
+          id: physicalProduct.productVariant.id,
+        }),
+        physicalProduct.inventoryStatus,
+        correspondingAirtablePhysProd.model.inventoryStatus
+      )
     }
   }
 
