@@ -2,7 +2,6 @@ import { Command, Option } from "nestjs-command"
 import { Injectable, Logger } from "@nestjs/common"
 
 import { AuthService } from "@modules/User/services/auth.service"
-import { PrismaService } from "@prisma/prisma.service"
 import { ScriptsService } from "../services/scripts.service"
 import faker from "faker"
 import { head } from "lodash"
@@ -11,11 +10,7 @@ import { head } from "lodash"
 export class UserCommands {
   private readonly logger = new Logger(UserCommands.name)
 
-  constructor(
-    private readonly authService: AuthService,
-    private readonly prisma: PrismaService,
-    private readonly scriptsService: ScriptsService
-  ) {}
+  constructor(private readonly scriptsService: ScriptsService) {}
 
   @Command({
     command: "create:test-user",
@@ -43,8 +38,8 @@ export class UserCommands {
     })
     password
   ) {
-    await this.scriptsService.overrideEnvFromRemoteConfig({
-      prismaEnvironment: e as string,
+    const { prisma, airtable } = await this.scriptsService.getUpdatedServices({
+      prismaEnvironment: e,
       airtableEnvironment: "staging",
     })
 
@@ -56,7 +51,7 @@ export class UserCommands {
     password = password || faker.random.alphaNumeric(6)
 
     // Fail gracefully if the user is already in the DB
-    if (!!(await this.prisma.client.user({ email }))) {
+    if (!!(await prisma.client.user({ email }))) {
       this.logger.error("User already in DB")
       return
     }
@@ -64,7 +59,10 @@ export class UserCommands {
     let user
     let tokenData
     try {
-      ;({ user, tokenData } = await this.authService.signupUser({
+      ;({ user, tokenData } = await new AuthService(
+        prisma,
+        airtable
+      ).signupUser({
         email,
         password,
         firstName,
@@ -87,19 +85,22 @@ export class UserCommands {
         },
       }))
     } catch (err) {
+      console.log(err)
       if (err.message.includes("400")) {
         this.logger.error("User already in staging auth0 environment")
+      } else {
+        throw err
       }
       return
     }
 
     // Set their status to Active
     const customer = head(
-      await this.prisma.client.customers({
+      await prisma.client.customers({
         where: { user: { id: user.id } },
       })
     )
-    await this.prisma.client.updateCustomer({
+    await prisma.client.updateCustomer({
       data: {
         plan: "Essential",
         billingInfo: {
