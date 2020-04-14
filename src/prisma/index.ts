@@ -38,6 +38,7 @@ export interface Exists {
   physicalProduct: (where?: PhysicalProductWhereInput) => Promise<boolean>
   product: (where?: ProductWhereInput) => Promise<boolean>
   productFunction: (where?: ProductFunctionWhereInput) => Promise<boolean>
+  productModel: (where?: ProductModelWhereInput) => Promise<boolean>
   productRequest: (where?: ProductRequestWhereInput) => Promise<boolean>
   productVariant: (where?: ProductVariantWhereInput) => Promise<boolean>
   productVariantFeedback: (
@@ -451,6 +452,27 @@ export interface Prisma {
     first?: Int
     last?: Int
   }) => ProductFunctionConnectionPromise
+  productModel: (
+    where: ProductModelWhereUniqueInput
+  ) => ProductModelNullablePromise
+  productModels: (args?: {
+    where?: ProductModelWhereInput
+    orderBy?: ProductModelOrderByInput
+    skip?: Int
+    after?: String
+    before?: String
+    first?: Int
+    last?: Int
+  }) => FragmentableArray<ProductModel>
+  productModelsConnection: (args?: {
+    where?: ProductModelWhereInput
+    orderBy?: ProductModelOrderByInput
+    skip?: Int
+    after?: String
+    before?: String
+    first?: Int
+    last?: Int
+  }) => ProductModelConnectionPromise
   productRequest: (
     where: ProductRequestWhereUniqueInput
   ) => ProductRequestNullablePromise
@@ -1005,6 +1027,26 @@ export interface Prisma {
   deleteManyProductFunctions: (
     where?: ProductFunctionWhereInput
   ) => BatchPayloadPromise
+  createProductModel: (data: ProductModelCreateInput) => ProductModelPromise
+  updateProductModel: (args: {
+    data: ProductModelUpdateInput
+    where: ProductModelWhereUniqueInput
+  }) => ProductModelPromise
+  updateManyProductModels: (args: {
+    data: ProductModelUpdateManyMutationInput
+    where?: ProductModelWhereInput
+  }) => BatchPayloadPromise
+  upsertProductModel: (args: {
+    where: ProductModelWhereUniqueInput
+    create: ProductModelCreateInput
+    update: ProductModelUpdateInput
+  }) => ProductModelPromise
+  deleteProductModel: (
+    where: ProductModelWhereUniqueInput
+  ) => ProductModelPromise
+  deleteManyProductModels: (
+    where?: ProductModelWhereInput
+  ) => BatchPayloadPromise
   createProductRequest: (
     data: ProductRequestCreateInput
   ) => ProductRequestPromise
@@ -1289,6 +1331,9 @@ export interface Subscription {
   productFunction: (
     where?: ProductFunctionSubscriptionWhereInput
   ) => ProductFunctionSubscriptionPayloadSubscription
+  productModel: (
+    where?: ProductModelSubscriptionWhereInput
+  ) => ProductModelSubscriptionPayloadSubscription
   productRequest: (
     where?: ProductRequestSubscriptionWhereInput
   ) => ProductRequestSubscriptionPayloadSubscription
@@ -1366,6 +1411,8 @@ export type BrandTier =
   | "Discovery"
 
 export type ProductStatus = "Available" | "NotAvailable"
+
+export type ProductArchitecture = "Fashion" | "Showstopper" | "Staple"
 
 export type InventoryStatus = "NonReservable" | "Reservable" | "Reserved"
 
@@ -1449,6 +1496,10 @@ export type ProductOrderByInput =
   | "tags_DESC"
   | "status_ASC"
   | "status_DESC"
+  | "season_ASC"
+  | "season_DESC"
+  | "architecture_ASC"
+  | "architecture_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -1819,6 +1870,14 @@ export type PackageOrderByInput =
   | "createdAt_DESC"
   | "updatedAt_ASC"
   | "updatedAt_DESC"
+
+export type ProductModelOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "name_ASC"
+  | "name_DESC"
+  | "height_ASC"
+  | "height_DESC"
 
 export type ProductRequestOrderByInput =
   | "id_ASC"
@@ -2769,6 +2828,7 @@ export interface ProductWhereInput {
   retailPrice_lte?: Maybe<Int>
   retailPrice_gt?: Maybe<Int>
   retailPrice_gte?: Maybe<Int>
+  model?: Maybe<ProductModelWhereInput>
   modelSize?: Maybe<SizeWhereInput>
   color?: Maybe<ColorWhereInput>
   secondaryColor?: Maybe<ColorWhereInput>
@@ -2782,6 +2842,24 @@ export interface ProductWhereInput {
   status_not?: Maybe<ProductStatus>
   status_in?: Maybe<ProductStatus[] | ProductStatus>
   status_not_in?: Maybe<ProductStatus[] | ProductStatus>
+  season?: Maybe<String>
+  season_not?: Maybe<String>
+  season_in?: Maybe<String[] | String>
+  season_not_in?: Maybe<String[] | String>
+  season_lt?: Maybe<String>
+  season_lte?: Maybe<String>
+  season_gt?: Maybe<String>
+  season_gte?: Maybe<String>
+  season_contains?: Maybe<String>
+  season_not_contains?: Maybe<String>
+  season_starts_with?: Maybe<String>
+  season_not_starts_with?: Maybe<String>
+  season_ends_with?: Maybe<String>
+  season_not_ends_with?: Maybe<String>
+  architecture?: Maybe<ProductArchitecture>
+  architecture_not?: Maybe<ProductArchitecture>
+  architecture_in?: Maybe<ProductArchitecture[] | ProductArchitecture>
+  architecture_not_in?: Maybe<ProductArchitecture[] | ProductArchitecture>
   createdAt?: Maybe<DateTimeInput>
   createdAt_not?: Maybe<DateTimeInput>
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>
@@ -3008,6 +3086,51 @@ export interface CategoryWhereInput {
   AND?: Maybe<CategoryWhereInput[] | CategoryWhereInput>
   OR?: Maybe<CategoryWhereInput[] | CategoryWhereInput>
   NOT?: Maybe<CategoryWhereInput[] | CategoryWhereInput>
+}
+
+export interface ProductModelWhereInput {
+  id?: Maybe<ID_Input>
+  id_not?: Maybe<ID_Input>
+  id_in?: Maybe<ID_Input[] | ID_Input>
+  id_not_in?: Maybe<ID_Input[] | ID_Input>
+  id_lt?: Maybe<ID_Input>
+  id_lte?: Maybe<ID_Input>
+  id_gt?: Maybe<ID_Input>
+  id_gte?: Maybe<ID_Input>
+  id_contains?: Maybe<ID_Input>
+  id_not_contains?: Maybe<ID_Input>
+  id_starts_with?: Maybe<ID_Input>
+  id_not_starts_with?: Maybe<ID_Input>
+  id_ends_with?: Maybe<ID_Input>
+  id_not_ends_with?: Maybe<ID_Input>
+  name?: Maybe<String>
+  name_not?: Maybe<String>
+  name_in?: Maybe<String[] | String>
+  name_not_in?: Maybe<String[] | String>
+  name_lt?: Maybe<String>
+  name_lte?: Maybe<String>
+  name_gt?: Maybe<String>
+  name_gte?: Maybe<String>
+  name_contains?: Maybe<String>
+  name_not_contains?: Maybe<String>
+  name_starts_with?: Maybe<String>
+  name_not_starts_with?: Maybe<String>
+  name_ends_with?: Maybe<String>
+  name_not_ends_with?: Maybe<String>
+  height?: Maybe<Float>
+  height_not?: Maybe<Float>
+  height_in?: Maybe<Float[] | Float>
+  height_not_in?: Maybe<Float[] | Float>
+  height_lt?: Maybe<Float>
+  height_lte?: Maybe<Float>
+  height_gt?: Maybe<Float>
+  height_gte?: Maybe<Float>
+  products_every?: Maybe<ProductWhereInput>
+  products_some?: Maybe<ProductWhereInput>
+  products_none?: Maybe<ProductWhereInput>
+  AND?: Maybe<ProductModelWhereInput[] | ProductModelWhereInput>
+  OR?: Maybe<ProductModelWhereInput[] | ProductModelWhereInput>
+  NOT?: Maybe<ProductModelWhereInput[] | ProductModelWhereInput>
 }
 
 export interface ProductFunctionWhereInput {
@@ -4165,6 +4288,10 @@ export type ProductFunctionWhereUniqueInput = AtLeastOne<{
   name?: Maybe<String>
 }>
 
+export type ProductModelWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>
+}>
+
 export type ProductRequestWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>
 }>
@@ -4780,6 +4907,7 @@ export interface ProductCreateWithoutVariantsInput {
   images: Json
   modelHeight?: Maybe<Int>
   retailPrice?: Maybe<Int>
+  model?: Maybe<ProductModelCreateOneWithoutProductsInput>
   modelSize?: Maybe<SizeCreateOneInput>
   color: ColorCreateOneInput
   secondaryColor?: Maybe<ColorCreateOneInput>
@@ -4788,6 +4916,8 @@ export interface ProductCreateWithoutVariantsInput {
   innerMaterials?: Maybe<ProductCreateinnerMaterialsInput>
   outerMaterials?: Maybe<ProductCreateouterMaterialsInput>
   status?: Maybe<ProductStatus>
+  season?: Maybe<String>
+  architecture?: Maybe<ProductArchitecture>
 }
 
 export interface BrandCreateOneWithoutProductsInput {
@@ -4859,6 +4989,7 @@ export interface ProductCreateWithoutCategoryInput {
   images: Json
   modelHeight?: Maybe<Int>
   retailPrice?: Maybe<Int>
+  model?: Maybe<ProductModelCreateOneWithoutProductsInput>
   modelSize?: Maybe<SizeCreateOneInput>
   color: ColorCreateOneInput
   secondaryColor?: Maybe<ColorCreateOneInput>
@@ -4868,6 +4999,19 @@ export interface ProductCreateWithoutCategoryInput {
   outerMaterials?: Maybe<ProductCreateouterMaterialsInput>
   variants?: Maybe<ProductVariantCreateManyWithoutProductInput>
   status?: Maybe<ProductStatus>
+  season?: Maybe<String>
+  architecture?: Maybe<ProductArchitecture>
+}
+
+export interface ProductModelCreateOneWithoutProductsInput {
+  create?: Maybe<ProductModelCreateWithoutProductsInput>
+  connect?: Maybe<ProductModelWhereUniqueInput>
+}
+
+export interface ProductModelCreateWithoutProductsInput {
+  id?: Maybe<ID_Input>
+  name: String
+  height: Float
 }
 
 export interface ColorCreateOneInput {
@@ -5488,6 +5632,7 @@ export interface ProductUpdateWithoutVariantsDataInput {
   images?: Maybe<Json>
   modelHeight?: Maybe<Int>
   retailPrice?: Maybe<Int>
+  model?: Maybe<ProductModelUpdateOneWithoutProductsInput>
   modelSize?: Maybe<SizeUpdateOneInput>
   color?: Maybe<ColorUpdateOneRequiredInput>
   secondaryColor?: Maybe<ColorUpdateOneInput>
@@ -5496,6 +5641,8 @@ export interface ProductUpdateWithoutVariantsDataInput {
   innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>
   status?: Maybe<ProductStatus>
+  season?: Maybe<String>
+  architecture?: Maybe<ProductArchitecture>
 }
 
 export interface BrandUpdateOneRequiredWithoutProductsInput {
@@ -5614,6 +5761,7 @@ export interface ProductUpdateWithoutCategoryDataInput {
   images?: Maybe<Json>
   modelHeight?: Maybe<Int>
   retailPrice?: Maybe<Int>
+  model?: Maybe<ProductModelUpdateOneWithoutProductsInput>
   modelSize?: Maybe<SizeUpdateOneInput>
   color?: Maybe<ColorUpdateOneRequiredInput>
   secondaryColor?: Maybe<ColorUpdateOneInput>
@@ -5623,6 +5771,27 @@ export interface ProductUpdateWithoutCategoryDataInput {
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>
   variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>
   status?: Maybe<ProductStatus>
+  season?: Maybe<String>
+  architecture?: Maybe<ProductArchitecture>
+}
+
+export interface ProductModelUpdateOneWithoutProductsInput {
+  create?: Maybe<ProductModelCreateWithoutProductsInput>
+  update?: Maybe<ProductModelUpdateWithoutProductsDataInput>
+  upsert?: Maybe<ProductModelUpsertWithoutProductsInput>
+  delete?: Maybe<Boolean>
+  disconnect?: Maybe<Boolean>
+  connect?: Maybe<ProductModelWhereUniqueInput>
+}
+
+export interface ProductModelUpdateWithoutProductsDataInput {
+  name?: Maybe<String>
+  height?: Maybe<Float>
+}
+
+export interface ProductModelUpsertWithoutProductsInput {
+  update: ProductModelUpdateWithoutProductsDataInput
+  create: ProductModelCreateWithoutProductsInput
 }
 
 export interface ColorUpdateOneRequiredInput {
@@ -6270,6 +6439,24 @@ export interface ProductScalarWhereInput {
   status_not?: Maybe<ProductStatus>
   status_in?: Maybe<ProductStatus[] | ProductStatus>
   status_not_in?: Maybe<ProductStatus[] | ProductStatus>
+  season?: Maybe<String>
+  season_not?: Maybe<String>
+  season_in?: Maybe<String[] | String>
+  season_not_in?: Maybe<String[] | String>
+  season_lt?: Maybe<String>
+  season_lte?: Maybe<String>
+  season_gt?: Maybe<String>
+  season_gte?: Maybe<String>
+  season_contains?: Maybe<String>
+  season_not_contains?: Maybe<String>
+  season_starts_with?: Maybe<String>
+  season_not_starts_with?: Maybe<String>
+  season_ends_with?: Maybe<String>
+  season_not_ends_with?: Maybe<String>
+  architecture?: Maybe<ProductArchitecture>
+  architecture_not?: Maybe<ProductArchitecture>
+  architecture_in?: Maybe<ProductArchitecture[] | ProductArchitecture>
+  architecture_not_in?: Maybe<ProductArchitecture[] | ProductArchitecture>
   createdAt?: Maybe<DateTimeInput>
   createdAt_not?: Maybe<DateTimeInput>
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>
@@ -6309,6 +6496,8 @@ export interface ProductUpdateManyDataInput {
   innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>
   status?: Maybe<ProductStatus>
+  season?: Maybe<String>
+  architecture?: Maybe<ProductArchitecture>
 }
 
 export interface CategoryUpsertWithWhereUniqueWithoutChildrenInput {
@@ -6813,6 +7002,7 @@ export interface ProductCreateWithoutBrandInput {
   images: Json
   modelHeight?: Maybe<Int>
   retailPrice?: Maybe<Int>
+  model?: Maybe<ProductModelCreateOneWithoutProductsInput>
   modelSize?: Maybe<SizeCreateOneInput>
   color: ColorCreateOneInput
   secondaryColor?: Maybe<ColorCreateOneInput>
@@ -6822,6 +7012,8 @@ export interface ProductCreateWithoutBrandInput {
   outerMaterials?: Maybe<ProductCreateouterMaterialsInput>
   variants?: Maybe<ProductVariantCreateManyWithoutProductInput>
   status?: Maybe<ProductStatus>
+  season?: Maybe<String>
+  architecture?: Maybe<ProductArchitecture>
 }
 
 export interface BrandUpdateInput {
@@ -6876,6 +7068,7 @@ export interface ProductUpdateWithoutBrandDataInput {
   images?: Maybe<Json>
   modelHeight?: Maybe<Int>
   retailPrice?: Maybe<Int>
+  model?: Maybe<ProductModelUpdateOneWithoutProductsInput>
   modelSize?: Maybe<SizeUpdateOneInput>
   color?: Maybe<ColorUpdateOneRequiredInput>
   secondaryColor?: Maybe<ColorUpdateOneInput>
@@ -6885,6 +7078,8 @@ export interface ProductUpdateWithoutBrandDataInput {
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>
   variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>
   status?: Maybe<ProductStatus>
+  season?: Maybe<String>
+  architecture?: Maybe<ProductArchitecture>
 }
 
 export interface ProductUpsertWithWhereUniqueWithoutBrandInput {
@@ -6963,6 +7158,7 @@ export interface ProductCreateInput {
   images: Json
   modelHeight?: Maybe<Int>
   retailPrice?: Maybe<Int>
+  model?: Maybe<ProductModelCreateOneWithoutProductsInput>
   modelSize?: Maybe<SizeCreateOneInput>
   color: ColorCreateOneInput
   secondaryColor?: Maybe<ColorCreateOneInput>
@@ -6972,6 +7168,8 @@ export interface ProductCreateInput {
   outerMaterials?: Maybe<ProductCreateouterMaterialsInput>
   variants?: Maybe<ProductVariantCreateManyWithoutProductInput>
   status?: Maybe<ProductStatus>
+  season?: Maybe<String>
+  architecture?: Maybe<ProductArchitecture>
 }
 
 export interface CollectionUpdateInput {
@@ -7021,6 +7219,7 @@ export interface ProductUpdateDataInput {
   images?: Maybe<Json>
   modelHeight?: Maybe<Int>
   retailPrice?: Maybe<Int>
+  model?: Maybe<ProductModelUpdateOneWithoutProductsInput>
   modelSize?: Maybe<SizeUpdateOneInput>
   color?: Maybe<ColorUpdateOneRequiredInput>
   secondaryColor?: Maybe<ColorUpdateOneInput>
@@ -7030,6 +7229,8 @@ export interface ProductUpdateDataInput {
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>
   variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>
   status?: Maybe<ProductStatus>
+  season?: Maybe<String>
+  architecture?: Maybe<ProductArchitecture>
 }
 
 export interface ProductUpsertWithWhereUniqueNestedInput {
@@ -7426,6 +7627,7 @@ export interface ProductUpdateInput {
   images?: Maybe<Json>
   modelHeight?: Maybe<Int>
   retailPrice?: Maybe<Int>
+  model?: Maybe<ProductModelUpdateOneWithoutProductsInput>
   modelSize?: Maybe<SizeUpdateOneInput>
   color?: Maybe<ColorUpdateOneRequiredInput>
   secondaryColor?: Maybe<ColorUpdateOneInput>
@@ -7435,6 +7637,8 @@ export interface ProductUpdateInput {
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>
   variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>
   status?: Maybe<ProductStatus>
+  season?: Maybe<String>
+  architecture?: Maybe<ProductArchitecture>
 }
 
 export interface ProductUpdateManyMutationInput {
@@ -7450,6 +7654,8 @@ export interface ProductUpdateManyMutationInput {
   innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>
   status?: Maybe<ProductStatus>
+  season?: Maybe<String>
+  architecture?: Maybe<ProductArchitecture>
 }
 
 export interface ProductFunctionUpdateInput {
@@ -7458,6 +7664,114 @@ export interface ProductFunctionUpdateInput {
 
 export interface ProductFunctionUpdateManyMutationInput {
   name?: Maybe<String>
+}
+
+export interface ProductModelCreateInput {
+  id?: Maybe<ID_Input>
+  name: String
+  height: Float
+  products?: Maybe<ProductCreateManyWithoutModelInput>
+}
+
+export interface ProductCreateManyWithoutModelInput {
+  create?: Maybe<
+    ProductCreateWithoutModelInput[] | ProductCreateWithoutModelInput
+  >
+  connect?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>
+}
+
+export interface ProductCreateWithoutModelInput {
+  id?: Maybe<ID_Input>
+  slug: String
+  name: String
+  brand: BrandCreateOneWithoutProductsInput
+  category: CategoryCreateOneWithoutProductsInput
+  type?: Maybe<ProductType>
+  description?: Maybe<String>
+  externalURL?: Maybe<String>
+  images: Json
+  modelHeight?: Maybe<Int>
+  retailPrice?: Maybe<Int>
+  modelSize?: Maybe<SizeCreateOneInput>
+  color: ColorCreateOneInput
+  secondaryColor?: Maybe<ColorCreateOneInput>
+  tags?: Maybe<Json>
+  functions?: Maybe<ProductFunctionCreateManyInput>
+  innerMaterials?: Maybe<ProductCreateinnerMaterialsInput>
+  outerMaterials?: Maybe<ProductCreateouterMaterialsInput>
+  variants?: Maybe<ProductVariantCreateManyWithoutProductInput>
+  status?: Maybe<ProductStatus>
+  season?: Maybe<String>
+  architecture?: Maybe<ProductArchitecture>
+}
+
+export interface ProductModelUpdateInput {
+  name?: Maybe<String>
+  height?: Maybe<Float>
+  products?: Maybe<ProductUpdateManyWithoutModelInput>
+}
+
+export interface ProductUpdateManyWithoutModelInput {
+  create?: Maybe<
+    ProductCreateWithoutModelInput[] | ProductCreateWithoutModelInput
+  >
+  delete?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>
+  connect?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>
+  set?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>
+  disconnect?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>
+  update?: Maybe<
+    | ProductUpdateWithWhereUniqueWithoutModelInput[]
+    | ProductUpdateWithWhereUniqueWithoutModelInput
+  >
+  upsert?: Maybe<
+    | ProductUpsertWithWhereUniqueWithoutModelInput[]
+    | ProductUpsertWithWhereUniqueWithoutModelInput
+  >
+  deleteMany?: Maybe<ProductScalarWhereInput[] | ProductScalarWhereInput>
+  updateMany?: Maybe<
+    | ProductUpdateManyWithWhereNestedInput[]
+    | ProductUpdateManyWithWhereNestedInput
+  >
+}
+
+export interface ProductUpdateWithWhereUniqueWithoutModelInput {
+  where: ProductWhereUniqueInput
+  data: ProductUpdateWithoutModelDataInput
+}
+
+export interface ProductUpdateWithoutModelDataInput {
+  slug?: Maybe<String>
+  name?: Maybe<String>
+  brand?: Maybe<BrandUpdateOneRequiredWithoutProductsInput>
+  category?: Maybe<CategoryUpdateOneRequiredWithoutProductsInput>
+  type?: Maybe<ProductType>
+  description?: Maybe<String>
+  externalURL?: Maybe<String>
+  images?: Maybe<Json>
+  modelHeight?: Maybe<Int>
+  retailPrice?: Maybe<Int>
+  modelSize?: Maybe<SizeUpdateOneInput>
+  color?: Maybe<ColorUpdateOneRequiredInput>
+  secondaryColor?: Maybe<ColorUpdateOneInput>
+  tags?: Maybe<Json>
+  functions?: Maybe<ProductFunctionUpdateManyInput>
+  innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>
+  outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>
+  variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>
+  status?: Maybe<ProductStatus>
+  season?: Maybe<String>
+  architecture?: Maybe<ProductArchitecture>
+}
+
+export interface ProductUpsertWithWhereUniqueWithoutModelInput {
+  where: ProductWhereUniqueInput
+  update: ProductUpdateWithoutModelDataInput
+  create: ProductCreateWithoutModelInput
+}
+
+export interface ProductModelUpdateManyMutationInput {
+  name?: Maybe<String>
+  height?: Maybe<Float>
 }
 
 export interface ProductRequestCreateInput {
@@ -8428,6 +8742,23 @@ export interface ProductFunctionSubscriptionWhereInput {
   >
 }
 
+export interface ProductModelSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>
+  updatedFields_contains?: Maybe<String>
+  updatedFields_contains_every?: Maybe<String[] | String>
+  updatedFields_contains_some?: Maybe<String[] | String>
+  node?: Maybe<ProductModelWhereInput>
+  AND?: Maybe<
+    ProductModelSubscriptionWhereInput[] | ProductModelSubscriptionWhereInput
+  >
+  OR?: Maybe<
+    ProductModelSubscriptionWhereInput[] | ProductModelSubscriptionWhereInput
+  >
+  NOT?: Maybe<
+    ProductModelSubscriptionWhereInput[] | ProductModelSubscriptionWhereInput
+  >
+}
+
 export interface ProductRequestSubscriptionWhereInput {
   mutation_in?: Maybe<MutationType[] | MutationType>
   updatedFields_contains?: Maybe<String>
@@ -9373,6 +9704,8 @@ export interface Product {
   innerMaterials: Material[]
   outerMaterials: Material[]
   status?: ProductStatus
+  season?: String
+  architecture?: ProductArchitecture
   createdAt: DateTimeOutput
   updatedAt: DateTimeOutput
 }
@@ -9389,6 +9722,7 @@ export interface ProductPromise extends Promise<Product>, Fragmentable {
   images: () => Promise<Json>
   modelHeight: () => Promise<Int>
   retailPrice: () => Promise<Int>
+  model: <T = ProductModelPromise>() => T
   modelSize: <T = SizePromise>() => T
   color: <T = ColorPromise>() => T
   secondaryColor: <T = ColorPromise>() => T
@@ -9414,6 +9748,8 @@ export interface ProductPromise extends Promise<Product>, Fragmentable {
     last?: Int
   }) => T
   status: () => Promise<ProductStatus>
+  season: () => Promise<String>
+  architecture: () => Promise<ProductArchitecture>
   createdAt: () => Promise<DateTimeOutput>
   updatedAt: () => Promise<DateTimeOutput>
 }
@@ -9432,6 +9768,7 @@ export interface ProductSubscription
   images: () => Promise<AsyncIterator<Json>>
   modelHeight: () => Promise<AsyncIterator<Int>>
   retailPrice: () => Promise<AsyncIterator<Int>>
+  model: <T = ProductModelSubscription>() => T
   modelSize: <T = SizeSubscription>() => T
   color: <T = ColorSubscription>() => T
   secondaryColor: <T = ColorSubscription>() => T
@@ -9457,6 +9794,8 @@ export interface ProductSubscription
     last?: Int
   }) => T
   status: () => Promise<AsyncIterator<ProductStatus>>
+  season: () => Promise<AsyncIterator<String>>
+  architecture: () => Promise<AsyncIterator<ProductArchitecture>>
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>
 }
@@ -9475,6 +9814,7 @@ export interface ProductNullablePromise
   images: () => Promise<Json>
   modelHeight: () => Promise<Int>
   retailPrice: () => Promise<Int>
+  model: <T = ProductModelPromise>() => T
   modelSize: <T = SizePromise>() => T
   color: <T = ColorPromise>() => T
   secondaryColor: <T = ColorPromise>() => T
@@ -9500,6 +9840,8 @@ export interface ProductNullablePromise
     last?: Int
   }) => T
   status: () => Promise<ProductStatus>
+  season: () => Promise<String>
+  architecture: () => Promise<ProductArchitecture>
   createdAt: () => Promise<DateTimeOutput>
   updatedAt: () => Promise<DateTimeOutput>
 }
@@ -9685,6 +10027,63 @@ export interface CategoryNullablePromise
   children: <T = FragmentableArray<Category>>(args?: {
     where?: CategoryWhereInput
     orderBy?: CategoryOrderByInput
+    skip?: Int
+    after?: String
+    before?: String
+    first?: Int
+    last?: Int
+  }) => T
+}
+
+export interface ProductModel {
+  id: ID_Output
+  name: String
+  height: Float
+}
+
+export interface ProductModelPromise
+  extends Promise<ProductModel>,
+    Fragmentable {
+  id: () => Promise<ID_Output>
+  name: () => Promise<String>
+  height: () => Promise<Float>
+  products: <T = FragmentableArray<Product>>(args?: {
+    where?: ProductWhereInput
+    orderBy?: ProductOrderByInput
+    skip?: Int
+    after?: String
+    before?: String
+    first?: Int
+    last?: Int
+  }) => T
+}
+
+export interface ProductModelSubscription
+  extends Promise<AsyncIterator<ProductModel>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>
+  name: () => Promise<AsyncIterator<String>>
+  height: () => Promise<AsyncIterator<Float>>
+  products: <T = Promise<AsyncIterator<ProductSubscription>>>(args?: {
+    where?: ProductWhereInput
+    orderBy?: ProductOrderByInput
+    skip?: Int
+    after?: String
+    before?: String
+    first?: Int
+    last?: Int
+  }) => T
+}
+
+export interface ProductModelNullablePromise
+  extends Promise<ProductModel | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>
+  name: () => Promise<String>
+  height: () => Promise<Float>
+  products: <T = FragmentableArray<Product>>(args?: {
+    where?: ProductWhereInput
+    orderBy?: ProductOrderByInput
     skip?: Int
     after?: String
     before?: String
@@ -11311,6 +11710,62 @@ export interface AggregateProductFunctionPromise
 
 export interface AggregateProductFunctionSubscription
   extends Promise<AsyncIterator<AggregateProductFunction>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>
+}
+
+export interface ProductModelConnection {
+  pageInfo: PageInfo
+  edges: ProductModelEdge[]
+}
+
+export interface ProductModelConnectionPromise
+  extends Promise<ProductModelConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T
+  edges: <T = FragmentableArray<ProductModelEdge>>() => T
+  aggregate: <T = AggregateProductModelPromise>() => T
+}
+
+export interface ProductModelConnectionSubscription
+  extends Promise<AsyncIterator<ProductModelConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T
+  edges: <T = Promise<AsyncIterator<ProductModelEdgeSubscription>>>() => T
+  aggregate: <T = AggregateProductModelSubscription>() => T
+}
+
+export interface ProductModelEdge {
+  node: ProductModel
+  cursor: String
+}
+
+export interface ProductModelEdgePromise
+  extends Promise<ProductModelEdge>,
+    Fragmentable {
+  node: <T = ProductModelPromise>() => T
+  cursor: () => Promise<String>
+}
+
+export interface ProductModelEdgeSubscription
+  extends Promise<AsyncIterator<ProductModelEdge>>,
+    Fragmentable {
+  node: <T = ProductModelSubscription>() => T
+  cursor: () => Promise<AsyncIterator<String>>
+}
+
+export interface AggregateProductModel {
+  count: Int
+}
+
+export interface AggregateProductModelPromise
+  extends Promise<AggregateProductModel>,
+    Fragmentable {
+  count: () => Promise<Int>
+}
+
+export interface AggregateProductModelSubscription
+  extends Promise<AsyncIterator<AggregateProductModel>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>
 }
@@ -13321,6 +13776,8 @@ export interface ProductPreviousValues {
   innerMaterials: Material[]
   outerMaterials: Material[]
   status?: ProductStatus
+  season?: String
+  architecture?: ProductArchitecture
   createdAt: DateTimeOutput
   updatedAt: DateTimeOutput
 }
@@ -13341,6 +13798,8 @@ export interface ProductPreviousValuesPromise
   innerMaterials: () => Promise<Material[]>
   outerMaterials: () => Promise<Material[]>
   status: () => Promise<ProductStatus>
+  season: () => Promise<String>
+  architecture: () => Promise<ProductArchitecture>
   createdAt: () => Promise<DateTimeOutput>
   updatedAt: () => Promise<DateTimeOutput>
 }
@@ -13361,6 +13820,8 @@ export interface ProductPreviousValuesSubscription
   innerMaterials: () => Promise<AsyncIterator<Material[]>>
   outerMaterials: () => Promise<AsyncIterator<Material[]>>
   status: () => Promise<AsyncIterator<ProductStatus>>
+  season: () => Promise<AsyncIterator<String>>
+  architecture: () => Promise<AsyncIterator<ProductArchitecture>>
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>
 }
@@ -13407,6 +13868,53 @@ export interface ProductFunctionPreviousValuesSubscription
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>
   name: () => Promise<AsyncIterator<String>>
+}
+
+export interface ProductModelSubscriptionPayload {
+  mutation: MutationType
+  node: ProductModel
+  updatedFields: String[]
+  previousValues: ProductModelPreviousValues
+}
+
+export interface ProductModelSubscriptionPayloadPromise
+  extends Promise<ProductModelSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>
+  node: <T = ProductModelPromise>() => T
+  updatedFields: () => Promise<String[]>
+  previousValues: <T = ProductModelPreviousValuesPromise>() => T
+}
+
+export interface ProductModelSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<ProductModelSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>
+  node: <T = ProductModelSubscription>() => T
+  updatedFields: () => Promise<AsyncIterator<String[]>>
+  previousValues: <T = ProductModelPreviousValuesSubscription>() => T
+}
+
+export interface ProductModelPreviousValues {
+  id: ID_Output
+  name: String
+  height: Float
+}
+
+export interface ProductModelPreviousValuesPromise
+  extends Promise<ProductModelPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>
+  name: () => Promise<String>
+  height: () => Promise<Float>
+}
+
+export interface ProductModelPreviousValuesSubscription
+  extends Promise<AsyncIterator<ProductModelPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>
+  name: () => Promise<AsyncIterator<String>>
+  height: () => Promise<AsyncIterator<Float>>
 }
 
 export interface ProductRequestSubscriptionPayload {
@@ -14161,6 +14669,10 @@ export const models: Model[] = [
     embedded: false,
   },
   {
+    name: "ProductArchitecture",
+    embedded: false,
+  },
+  {
     name: "Brand",
     embedded: false,
   },
@@ -14194,6 +14706,10 @@ export const models: Model[] = [
   },
   {
     name: "Product",
+    embedded: false,
+  },
+  {
+    name: "ProductModel",
     embedded: false,
   },
   {

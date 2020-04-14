@@ -79,6 +79,10 @@ export const typeDefs = /* GraphQL */ `
     count: Int!
   }
 
+  type AggregateProductModel {
+    count: Int!
+  }
+
   type AggregateProductRequest {
     count: Int!
   }
@@ -4251,6 +4255,22 @@ export const typeDefs = /* GraphQL */ `
       where: ProductFunctionWhereUniqueInput!
     ): ProductFunction
     deleteManyProductFunctions(where: ProductFunctionWhereInput): BatchPayload!
+    createProductModel(data: ProductModelCreateInput!): ProductModel!
+    updateProductModel(
+      data: ProductModelUpdateInput!
+      where: ProductModelWhereUniqueInput!
+    ): ProductModel
+    updateManyProductModels(
+      data: ProductModelUpdateManyMutationInput!
+      where: ProductModelWhereInput
+    ): BatchPayload!
+    upsertProductModel(
+      where: ProductModelWhereUniqueInput!
+      create: ProductModelCreateInput!
+      update: ProductModelUpdateInput!
+    ): ProductModel!
+    deleteProductModel(where: ProductModelWhereUniqueInput!): ProductModel
+    deleteManyProductModels(where: ProductModelWhereInput): BatchPayload!
     createProductRequest(data: ProductRequestCreateInput!): ProductRequest!
     updateProductRequest(
       data: ProductRequestUpdateInput!
@@ -5076,6 +5096,7 @@ export const typeDefs = /* GraphQL */ `
     images: Json!
     modelHeight: Int
     retailPrice: Int
+    model: ProductModel
     modelSize: Size
     color: Color!
     secondaryColor: Color
@@ -5101,8 +5122,16 @@ export const typeDefs = /* GraphQL */ `
       last: Int
     ): [ProductVariant!]
     status: ProductStatus
+    season: String
+    architecture: ProductArchitecture
     createdAt: DateTime!
     updatedAt: DateTime!
+  }
+
+  enum ProductArchitecture {
+    Fashion
+    Showstopper
+    Staple
   }
 
   type ProductConnection {
@@ -5127,6 +5156,7 @@ export const typeDefs = /* GraphQL */ `
     images: Json!
     modelHeight: Int
     retailPrice: Int
+    model: ProductModelCreateOneWithoutProductsInput
     modelSize: SizeCreateOneInput
     color: ColorCreateOneInput!
     secondaryColor: ColorCreateOneInput
@@ -5136,6 +5166,8 @@ export const typeDefs = /* GraphQL */ `
     outerMaterials: ProductCreateouterMaterialsInput
     variants: ProductVariantCreateManyWithoutProductInput
     status: ProductStatus
+    season: String
+    architecture: ProductArchitecture
   }
 
   input ProductCreateManyInput {
@@ -5150,6 +5182,11 @@ export const typeDefs = /* GraphQL */ `
 
   input ProductCreateManyWithoutCategoryInput {
     create: [ProductCreateWithoutCategoryInput!]
+    connect: [ProductWhereUniqueInput!]
+  }
+
+  input ProductCreateManyWithoutModelInput {
+    create: [ProductCreateWithoutModelInput!]
     connect: [ProductWhereUniqueInput!]
   }
 
@@ -5178,6 +5215,7 @@ export const typeDefs = /* GraphQL */ `
     images: Json!
     modelHeight: Int
     retailPrice: Int
+    model: ProductModelCreateOneWithoutProductsInput
     modelSize: SizeCreateOneInput
     color: ColorCreateOneInput!
     secondaryColor: ColorCreateOneInput
@@ -5187,6 +5225,8 @@ export const typeDefs = /* GraphQL */ `
     outerMaterials: ProductCreateouterMaterialsInput
     variants: ProductVariantCreateManyWithoutProductInput
     status: ProductStatus
+    season: String
+    architecture: ProductArchitecture
   }
 
   input ProductCreateWithoutCategoryInput {
@@ -5200,6 +5240,7 @@ export const typeDefs = /* GraphQL */ `
     images: Json!
     modelHeight: Int
     retailPrice: Int
+    model: ProductModelCreateOneWithoutProductsInput
     modelSize: SizeCreateOneInput
     color: ColorCreateOneInput!
     secondaryColor: ColorCreateOneInput
@@ -5209,9 +5250,11 @@ export const typeDefs = /* GraphQL */ `
     outerMaterials: ProductCreateouterMaterialsInput
     variants: ProductVariantCreateManyWithoutProductInput
     status: ProductStatus
+    season: String
+    architecture: ProductArchitecture
   }
 
-  input ProductCreateWithoutVariantsInput {
+  input ProductCreateWithoutModelInput {
     id: ID
     slug: String!
     name: String!
@@ -5230,7 +5273,35 @@ export const typeDefs = /* GraphQL */ `
     functions: ProductFunctionCreateManyInput
     innerMaterials: ProductCreateinnerMaterialsInput
     outerMaterials: ProductCreateouterMaterialsInput
+    variants: ProductVariantCreateManyWithoutProductInput
     status: ProductStatus
+    season: String
+    architecture: ProductArchitecture
+  }
+
+  input ProductCreateWithoutVariantsInput {
+    id: ID
+    slug: String!
+    name: String!
+    brand: BrandCreateOneWithoutProductsInput!
+    category: CategoryCreateOneWithoutProductsInput!
+    type: ProductType
+    description: String
+    externalURL: String
+    images: Json!
+    modelHeight: Int
+    retailPrice: Int
+    model: ProductModelCreateOneWithoutProductsInput
+    modelSize: SizeCreateOneInput
+    color: ColorCreateOneInput!
+    secondaryColor: ColorCreateOneInput
+    tags: Json
+    functions: ProductFunctionCreateManyInput
+    innerMaterials: ProductCreateinnerMaterialsInput
+    outerMaterials: ProductCreateouterMaterialsInput
+    status: ProductStatus
+    season: String
+    architecture: ProductArchitecture
   }
 
   type ProductEdge {
@@ -5411,6 +5482,162 @@ export const typeDefs = /* GraphQL */ `
     name: String
   }
 
+  type ProductModel {
+    id: ID!
+    name: String!
+    height: Float!
+    products(
+      where: ProductWhereInput
+      orderBy: ProductOrderByInput
+      skip: Int
+      after: String
+      before: String
+      first: Int
+      last: Int
+    ): [Product!]
+  }
+
+  type ProductModelConnection {
+    pageInfo: PageInfo!
+    edges: [ProductModelEdge]!
+    aggregate: AggregateProductModel!
+  }
+
+  input ProductModelCreateInput {
+    id: ID
+    name: String!
+    height: Float!
+    products: ProductCreateManyWithoutModelInput
+  }
+
+  input ProductModelCreateOneWithoutProductsInput {
+    create: ProductModelCreateWithoutProductsInput
+    connect: ProductModelWhereUniqueInput
+  }
+
+  input ProductModelCreateWithoutProductsInput {
+    id: ID
+    name: String!
+    height: Float!
+  }
+
+  type ProductModelEdge {
+    node: ProductModel!
+    cursor: String!
+  }
+
+  enum ProductModelOrderByInput {
+    id_ASC
+    id_DESC
+    name_ASC
+    name_DESC
+    height_ASC
+    height_DESC
+  }
+
+  type ProductModelPreviousValues {
+    id: ID!
+    name: String!
+    height: Float!
+  }
+
+  type ProductModelSubscriptionPayload {
+    mutation: MutationType!
+    node: ProductModel
+    updatedFields: [String!]
+    previousValues: ProductModelPreviousValues
+  }
+
+  input ProductModelSubscriptionWhereInput {
+    mutation_in: [MutationType!]
+    updatedFields_contains: String
+    updatedFields_contains_every: [String!]
+    updatedFields_contains_some: [String!]
+    node: ProductModelWhereInput
+    AND: [ProductModelSubscriptionWhereInput!]
+    OR: [ProductModelSubscriptionWhereInput!]
+    NOT: [ProductModelSubscriptionWhereInput!]
+  }
+
+  input ProductModelUpdateInput {
+    name: String
+    height: Float
+    products: ProductUpdateManyWithoutModelInput
+  }
+
+  input ProductModelUpdateManyMutationInput {
+    name: String
+    height: Float
+  }
+
+  input ProductModelUpdateOneWithoutProductsInput {
+    create: ProductModelCreateWithoutProductsInput
+    update: ProductModelUpdateWithoutProductsDataInput
+    upsert: ProductModelUpsertWithoutProductsInput
+    delete: Boolean
+    disconnect: Boolean
+    connect: ProductModelWhereUniqueInput
+  }
+
+  input ProductModelUpdateWithoutProductsDataInput {
+    name: String
+    height: Float
+  }
+
+  input ProductModelUpsertWithoutProductsInput {
+    update: ProductModelUpdateWithoutProductsDataInput!
+    create: ProductModelCreateWithoutProductsInput!
+  }
+
+  input ProductModelWhereInput {
+    id: ID
+    id_not: ID
+    id_in: [ID!]
+    id_not_in: [ID!]
+    id_lt: ID
+    id_lte: ID
+    id_gt: ID
+    id_gte: ID
+    id_contains: ID
+    id_not_contains: ID
+    id_starts_with: ID
+    id_not_starts_with: ID
+    id_ends_with: ID
+    id_not_ends_with: ID
+    name: String
+    name_not: String
+    name_in: [String!]
+    name_not_in: [String!]
+    name_lt: String
+    name_lte: String
+    name_gt: String
+    name_gte: String
+    name_contains: String
+    name_not_contains: String
+    name_starts_with: String
+    name_not_starts_with: String
+    name_ends_with: String
+    name_not_ends_with: String
+    height: Float
+    height_not: Float
+    height_in: [Float!]
+    height_not_in: [Float!]
+    height_lt: Float
+    height_lte: Float
+    height_gt: Float
+    height_gte: Float
+    products_every: ProductWhereInput
+    products_some: ProductWhereInput
+    products_none: ProductWhereInput
+    AND: [ProductModelWhereInput!]
+    OR: [ProductModelWhereInput!]
+    NOT: [ProductModelWhereInput!]
+  }
+
+  input ProductModelWhereUniqueInput {
+    id: ID
+  }
+
   enum ProductOrderByInput {
     id_ASC
     id_DESC
@@ -5434,6 +5661,10 @@ export const typeDefs = /* GraphQL */ `
     tags_DESC
     status_ASC
     status_DESC
+    season_ASC
+    season_DESC
+    architecture_ASC
+    architecture_DESC
     createdAt_ASC
     createdAt_DESC
     updatedAt_ASC
@@ -5454,6 +5685,8 @@ export const typeDefs = /* GraphQL */ `
     innerMaterials: [Material!]!
     outerMaterials: [Material!]!
     status: ProductStatus
+    season: String
+    architecture: ProductArchitecture
     createdAt: DateTime!
     updatedAt: DateTime!
   }
@@ -5829,6 +6062,24 @@ export const typeDefs = /* GraphQL */ `
     status_not: ProductStatus
     status_in: [ProductStatus!]
     status_not_in: [ProductStatus!]
+    season: String
+    season_not: String
+    season_in: [String!]
+    season_not_in: [String!]
+    season_lt: String
+    season_lte: String
+    season_gt: String
+    season_gte: String
+    season_contains: String
+    season_not_contains: String
+    season_starts_with: String
+    season_not_starts_with: String
+    season_ends_with: String
+    season_not_ends_with: String
+    architecture: ProductArchitecture
+    architecture_not: ProductArchitecture
+    architecture_in: [ProductArchitecture!]
+    architecture_not_in: [ProductArchitecture!]
     createdAt: DateTime
     createdAt_not: DateTime
     createdAt_in: [DateTime!]
@@ -5891,6 +6142,7 @@ export const typeDefs = /* GraphQL */ `
     images: Json
     modelHeight: Int
     retailPrice: Int
+    model: ProductModelUpdateOneWithoutProductsInput
     modelSize: SizeUpdateOneInput
     color: ColorUpdateOneRequiredInput
     secondaryColor: ColorUpdateOneInput
@@ -5900,6 +6152,8 @@ export const typeDefs = /* GraphQL */ `
     outerMaterials: ProductUpdateouterMaterialsInput
     variants: ProductVariantUpdateManyWithoutProductInput
     status: ProductStatus
+    season: String
+    architecture: ProductArchitecture
   }
 
   input ProductUpdateinnerMaterialsInput {
@@ -5917,6 +6171,7 @@ export const typeDefs = /* GraphQL */ `
     images: Json
     modelHeight: Int
     retailPrice: Int
+    model: ProductModelUpdateOneWithoutProductsInput
     modelSize: SizeUpdateOneInput
     color: ColorUpdateOneRequiredInput
     secondaryColor: ColorUpdateOneInput
@@ -5926,6 +6181,8 @@ export const typeDefs = /* GraphQL */ `
     outerMaterials: ProductUpdateouterMaterialsInput
     variants: ProductVariantUpdateManyWithoutProductInput
     status: ProductStatus
+    season: String
+    architecture: ProductArchitecture
   }
 
   input ProductUpdateManyDataInput {
@@ -5941,6 +6198,8 @@ export const typeDefs = /* GraphQL */ `
     innerMaterials: ProductUpdateinnerMaterialsInput
     outerMaterials: ProductUpdateouterMaterialsInput
     status: ProductStatus
+    season: String
+    architecture: ProductArchitecture
   }
 
   input ProductUpdateManyInput {
@@ -5968,6 +6227,8 @@ export const typeDefs = /* GraphQL */ `
     innerMaterials: ProductUpdateinnerMaterialsInput
     outerMaterials: ProductUpdateouterMaterialsInput
     status: ProductStatus
+    season: String
+    architecture: ProductArchitecture
   }
 
   input ProductUpdateManyWithoutBrandInput {
@@ -5990,6 +6251,18 @@ export const typeDefs = /* GraphQL */ `
     disconnect: [ProductWhereUniqueInput!]
     update: [ProductUpdateWithWhereUniqueWithoutCategoryInput!]
     upsert: [ProductUpsertWithWhereUniqueWithoutCategoryInput!]
+    deleteMany: [ProductScalarWhereInput!]
+    updateMany: [ProductUpdateManyWithWhereNestedInput!]
+  }
+
+  input ProductUpdateManyWithoutModelInput {
+    create: [ProductCreateWithoutModelInput!]
+    delete: [ProductWhereUniqueInput!]
+    connect: [ProductWhereUniqueInput!]
+    set: [ProductWhereUniqueInput!]
+    disconnect: [ProductWhereUniqueInput!]
+    update: [ProductUpdateWithWhereUniqueWithoutModelInput!]
+    upsert: [ProductUpsertWithWhereUniqueWithoutModelInput!]
     deleteMany: [ProductScalarWhereInput!]
     updateMany: [ProductUpdateManyWithWhereNestedInput!]
   }
@@ -6027,6 +6300,7 @@ export const typeDefs = /* GraphQL */ `
     images: Json
     modelHeight: Int
     retailPrice: Int
+    model: ProductModelUpdateOneWithoutProductsInput
     modelSize: SizeUpdateOneInput
     color: ColorUpdateOneRequiredInput
     secondaryColor: ColorUpdateOneInput
@@ -6036,6 +6310,8 @@ export const typeDefs = /* GraphQL */ `
     outerMaterials: ProductUpdateouterMaterialsInput
     variants: ProductVariantUpdateManyWithoutProductInput
     status: ProductStatus
+    season: String
+    architecture: ProductArchitecture
   }
 
   input ProductUpdateWithoutCategoryDataInput {
@@ -6048,6 +6324,7 @@ export const typeDefs = /* GraphQL */ `
     images: Json
     modelHeight: Int
     retailPrice: Int
+    model: ProductModelUpdateOneWithoutProductsInput
     modelSize: SizeUpdateOneInput
     color: ColorUpdateOneRequiredInput
     secondaryColor: ColorUpdateOneInput
@@ -6057,9 +6334,11 @@ export const typeDefs = /* GraphQL */ `
     outerMaterials: ProductUpdateouterMaterialsInput
     variants: ProductVariantUpdateManyWithoutProductInput
     status: ProductStatus
+    season: String
+    architecture: ProductArchitecture
   }
 
-  input ProductUpdateWithoutVariantsDataInput {
+  input ProductUpdateWithoutModelDataInput {
     slug: String
     name: String
     brand: BrandUpdateOneRequiredWithoutProductsInput
@@ -6077,7 +6356,34 @@ export const typeDefs = /* GraphQL */ `
     functions: ProductFunctionUpdateManyInput
     innerMaterials: ProductUpdateinnerMaterialsInput
     outerMaterials: ProductUpdateouterMaterialsInput
+    variants: ProductVariantUpdateManyWithoutProductInput
     status: ProductStatus
+    season: String
+    architecture: ProductArchitecture
+  }
+
+  input ProductUpdateWithoutVariantsDataInput {
+    slug: String
+    name: String
+    brand: BrandUpdateOneRequiredWithoutProductsInput
+    category: CategoryUpdateOneRequiredWithoutProductsInput
+    type: ProductType
+    description: String
+    externalURL: String
+    images: Json
+    modelHeight: Int
+    retailPrice: Int
+    model: ProductModelUpdateOneWithoutProductsInput
+    modelSize: SizeUpdateOneInput
+    color: ColorUpdateOneRequiredInput
+    secondaryColor: ColorUpdateOneInput
+    tags: Json
+    functions: ProductFunctionUpdateManyInput
+    innerMaterials: ProductUpdateinnerMaterialsInput
+    outerMaterials: ProductUpdateouterMaterialsInput
+    status: ProductStatus
+    season: String
+    architecture: ProductArchitecture
   }
 
   input ProductUpdateWithWhereUniqueNestedInput {
@@ -6093,6 +6399,11 @@ export const typeDefs = /* GraphQL */ `
   input ProductUpdateWithWhereUniqueWithoutCategoryInput {
     where: ProductWhereUniqueInput!
     data: ProductUpdateWithoutCategoryDataInput!
+  }
+
+  input ProductUpdateWithWhereUniqueWithoutModelInput {
+    where: ProductWhereUniqueInput!
+    data: ProductUpdateWithoutModelDataInput!
   }
 
   input ProductUpsertNestedInput {
@@ -6121,6 +6432,12 @@ export const typeDefs = /* GraphQL */ `
     where: ProductWhereUniqueInput!
     update: ProductUpdateWithoutCategoryDataInput!
     create: ProductCreateWithoutCategoryInput!
+  }
+
+  input ProductUpsertWithWhereUniqueWithoutModelInput {
+    where: ProductWhereUniqueInput!
+    update: ProductUpdateWithoutModelDataInput!
+    create: ProductCreateWithoutModelInput!
   }
 
   type ProductVariant {
@@ -7380,6 +7697,7 @@ export const typeDefs = /* GraphQL */ `
     retailPrice_lte: Int
     retailPrice_gt: Int
     retailPrice_gte: Int
+    model: ProductModelWhereInput
     modelSize: SizeWhereInput
     color: ColorWhereInput
     secondaryColor: ColorWhereInput
@@ -7393,6 +7711,24 @@ export const typeDefs = /* GraphQL */ `
     status_not: ProductStatus
     status_in: [ProductStatus!]
     status_not_in: [ProductStatus!]
+    season: String
+    season_not: String
+    season_in: [String!]
+    season_not_in: [String!]
+    season_lt: String
+    season_lte: String
+    season_gt: String
+    season_gte: String
+    season_contains: String
+    season_not_contains: String
+    season_starts_with: String
+    season_not_starts_with: String
+    season_ends_with: String
+    season_not_ends_with: String
+    architecture: ProductArchitecture
+    architecture_not: ProductArchitecture
+    architecture_in: [ProductArchitecture!]
+    architecture_not_in: [ProductArchitecture!]
     createdAt: DateTime
     createdAt_not: DateTime
     createdAt_in: [DateTime!]
@@ -7789,6 +8125,25 @@ export const typeDefs = /* GraphQL */ `
       first: Int
       last: Int
     ): ProductFunctionConnection!
+    productModel(where: ProductModelWhereUniqueInput!): ProductModel
+    productModels(
+      where: ProductModelWhereInput
+      orderBy: ProductModelOrderByInput
+      skip: Int
+      after: String
+      before: String
+      first: Int
+      last: Int
+    ): [ProductModel]!
+    productModelsConnection(
+      where: ProductModelWhereInput
+      orderBy: ProductModelOrderByInput
+      skip: Int
+      after: String
+      before: String
+      first: Int
+      last: Int
+    ): ProductModelConnection!
     productRequest(where: ProductRequestWhereUniqueInput!): ProductRequest
     productRequests(
       where: ProductRequestWhereInput
@@ -9027,6 +9382,9 @@ export const typeDefs = /* GraphQL */ `
     productFunction(
       where: ProductFunctionSubscriptionWhereInput
     ): ProductFunctionSubscriptionPayload
+    productModel(
+      where: ProductModelSubscriptionWhereInput
+    ): ProductModelSubscriptionPayload
     productRequest(
       where: ProductRequestSubscriptionWhereInput
     ): ProductRequestSubscriptionPayload
