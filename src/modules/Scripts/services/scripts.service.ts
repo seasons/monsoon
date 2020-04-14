@@ -1,23 +1,15 @@
-import AWS from "aws-sdk"
-import { AirtableService } from "../../Airtable/services/airtable.service"
-import { AirtableUtilsService } from "../../Airtable/services/airtable.utils.service"
-import { Injectable } from "@nestjs/common"
-import { OverridableAirtableBaseService } from "./airtable.service"
-import { OverrideablePrismaService } from "./prisma.service"
-import { UtilsService } from "@modules/Utils/index"
-import fs from "fs"
 import {
-  EnvironmentSettings,
   UpdateConnectionsInputs,
   UpdateEnvironmentInputs,
 } from "../scripts.types"
-import { AirtableSyncService } from "@app/modules/Sync/services/sync.airtable.service"
-import { SyncUtilsService } from "@app/modules/Sync/services/sync.utils.service"
-import { SyncBottomSizesService } from "@app/modules/Sync/services/syncBottomSizes.service"
-import { SyncSizesService } from "@app/modules/Sync/services/syncSizes.service"
-import { PrismaService } from "@app/prisma/prisma.service"
+
+import AWS from "aws-sdk"
 import { AirtableBaseService } from "@app/modules/Airtable"
+import { Injectable } from "@nestjs/common"
+import { PrismaService } from "@app/prisma/prisma.service"
 import { UpdatableConnection } from "@app/modules/index.types"
+import { UtilsService } from "@modules/Utils/index"
+import fs from "fs"
 
 @Injectable()
 export class ScriptsService {
@@ -100,14 +92,11 @@ export class ScriptsService {
       prisma,
       airtable,
     })
-    const p: UpdatableConnection = await moduleRef.get(PrismaService, {
-      strict: false,
+    ;["PrismaService", "AirtableBaseService"].forEach(a => {
+      ;(moduleRef.get(a, {
+        strict: false,
+      }) as UpdatableConnection).updateConnection(process.env)
     })
-    const a: UpdatableConnection = await moduleRef.get(AirtableBaseService, {
-      strict: false,
-    })
-    p.updateConnection(process.env)
-    a.updateConnection(process.env)
   }
 
   private async overrideEnvFromRemoteConfig({

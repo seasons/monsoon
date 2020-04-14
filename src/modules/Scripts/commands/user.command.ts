@@ -1,12 +1,12 @@
 import { Command, Option } from "nestjs-command"
 import { Injectable, Logger } from "@nestjs/common"
 
+import { AuthService } from "@modules/User"
+import { ModuleRef } from "@nestjs/core"
+import { PrismaService } from "@prisma/prisma.service"
 import { ScriptsService } from "../services/scripts.service"
 import faker from "faker"
 import { head } from "lodash"
-import { ModuleRef } from "@nestjs/core"
-import { AuthService } from "@modules/User"
-import { PrismaService } from "@prisma/prisma.service"
 
 @Injectable()
 export class UserCommands {

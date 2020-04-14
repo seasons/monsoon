@@ -1,6 +1,6 @@
+import { Injectable, Scope } from "@nestjs/common"
 import { Prisma as PrismaClient, prisma } from "./"
 
-import { Injectable, Scope } from "@nestjs/common"
 import { Prisma as PrismaBinding } from "./prisma.binding"
 import { UpdatableConnection } from "@app/modules/index.types"
 
