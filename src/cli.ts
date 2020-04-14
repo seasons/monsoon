@@ -18,8 +18,6 @@ Airtable.configure({
 })
 
 async function setup() {
-  process.env.SCRIPTING = "true"
-
   const app = await NestFactory.createApplicationContext(ScriptsModule)
 
   app
