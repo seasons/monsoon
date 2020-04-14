@@ -184,6 +184,12 @@ enum LetterSize {
   XXL
 }
 
+enum ProductArchitecture {
+  Fashion
+  Showstopper
+  Staple
+}
+
 type Brand {
   id: ID! @id
   slug: String! @unique
@@ -291,6 +297,7 @@ type Product {
   images: Json!
   modelHeight: Int
   retailPrice: Int
+  model: ProductModel
   modelSize: Size @relation(name: "ProductModelSize")
   color: Color! @relation(name: "ProductPrimaryColor")
   secondaryColor: Color @relation(name: "ProductSecondaryColor")
@@ -300,8 +307,17 @@ type Product {
   outerMaterials: [Material!]! @scalarList(strategy: RELATION)
   variants: [ProductVariant!]! @relation(link: TABLE)
   status: ProductStatus @default(value: Available)
+  season: String
+  architecture: ProductArchitecture
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
+}
+
+type ProductModel {
+  id: ID! @id
+  name: String!
+  height: Float!
+  products: [Product!]! @relation(link: TABLE)
 }
 
 type ProductFunction {
