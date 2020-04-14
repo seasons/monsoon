@@ -1,16 +1,23 @@
 import { Command, Option } from "nestjs-command"
 import { Injectable, Logger } from "@nestjs/common"
 
-import { AuthService } from "@modules/User/services/auth.service"
 import { ScriptsService } from "../services/scripts.service"
 import faker from "faker"
 import { head } from "lodash"
+import { ModuleRef } from "@nestjs/core"
+import { AuthService } from "@modules/User"
+import { PrismaService } from "@prisma/prisma.service"
 
 @Injectable()
 export class UserCommands {
   private readonly logger = new Logger(UserCommands.name)
+  private prisma: PrismaService
 
-  constructor(private readonly scriptsService: ScriptsService) {}
+  constructor(
+    private readonly scriptsService: ScriptsService,
+    private readonly authService: AuthService,
+    private moduleRef: ModuleRef
+  ) {}
 
   @Command({
     command: "create:test-user",
@@ -18,13 +25,20 @@ export class UserCommands {
   })
   async create(
     @Option({
-      name: "e",
+      name: "pe",
       describe: "Prisma environment on which to create the test user",
       choices: ["local", "staging"],
       type: "string",
       default: "local",
     })
-    e,
+    pe,
+    @Option({
+      name: "abid",
+      describe:
+        "Airtable base id. If none given, will create user on staging airtable",
+      type: "string",
+    })
+    abid,
     @Option({
       name: "email",
       describe: "Email of the test user",
@@ -38,9 +52,13 @@ export class UserCommands {
     })
     password
   ) {
-    const { prisma, airtable } = await this.scriptsService.getUpdatedServices({
-      prismaEnvironment: e,
-      airtableEnvironment: "staging",
+    this.prisma = await this.moduleRef.get(PrismaService, {
+      strict: false,
+    })
+    await this.scriptsService.updateConnections({
+      prisma: pe,
+      airtable: abid,
+      moduleRef: this.moduleRef,
     })
 
     const firstName = faker.name.firstName()
@@ -51,7 +69,7 @@ export class UserCommands {
     password = password || faker.random.alphaNumeric(6)
 
     // Fail gracefully if the user is already in the DB
-    if (!!(await prisma.client.user({ email }))) {
+    if (!!(await this.prisma.client.user({ email }))) {
       this.logger.error("User already in DB")
       return
     }
@@ -59,10 +77,7 @@ export class UserCommands {
     let user
     let tokenData
     try {
-      ;({ user, tokenData } = await new AuthService(
-        prisma,
-        airtable
-      ).signupUser({
+      ;({ user, tokenData } = await this.authService.signupUser({
         email,
         password,
         firstName,
@@ -96,11 +111,11 @@ export class UserCommands {
 
     // Set their status to Active
     const customer = head(
-      await prisma.client.customers({
+      await this.prisma.client.customers({
         where: { user: { id: user.id } },
       })
     )
-    await prisma.client.updateCustomer({
+    await this.prisma.client.updateCustomer({
       data: {
         plan: "Essential",
         billingInfo: {
