@@ -5,12 +5,12 @@ import {
 import { Command, Option } from "nestjs-command"
 import { Injectable, Logger } from "@nestjs/common"
 
+import { AirtableService } from "@app/modules/Airtable"
 import { ModuleRef } from "@nestjs/core"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { ScriptsService } from "../services/scripts.service"
 import { UtilsService } from "@modules/Utils/index"
 import { compact } from "lodash"
-import { AirtableService } from "@app/modules/Airtable"
 
 @Injectable()
 export class ProductCommands {
