@@ -7,10 +7,17 @@ import { ScriptsService } from "./services/scripts.service"
 import { SyncModule } from "@modules/Sync/sync.module"
 import { UserCommands } from "./commands/user.command"
 import { UserModule } from "@modules/User/user.module"
-import { UtilsModule } from ".."
+import { UtilsModule, AirtableModule } from ".."
 
 @Module({
-  imports: [CommandModule, SyncModule, PrismaModule, UserModule, UtilsModule],
+  imports: [
+    CommandModule,
+    SyncModule,
+    PrismaModule,
+    UserModule,
+    UtilsModule,
+    AirtableModule,
+  ],
   providers: [ScriptsService, UserCommands, ProductCommands],
 })
 export class ScriptsModule {}
