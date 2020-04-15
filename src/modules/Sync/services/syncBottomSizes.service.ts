@@ -35,14 +35,14 @@ export class SyncBottomSizesService {
       cliProgressBar,
     })
 
-    this.addSizeLinks(
+    await this.addSizeLinks(
       allProductionRecords,
       await this.airtableService.getAllBottomSizes(
         this.airtableService.getStagingBase()
       ),
       cliProgressBar
     )
-    this.addManufacturerSizeLinks(
+    await this.addManufacturerSizeLinks(
       allProductionRecords,
       await this.airtableService.getAllBottomSizes(
         this.airtableService.getStagingBase()

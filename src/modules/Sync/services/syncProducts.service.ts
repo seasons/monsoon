@@ -46,7 +46,7 @@ export class SyncProductsService {
             Collections: [],
             "Model Size": [],
           },
-          ["Created Date", "Parent", "Model Height"]
+          ["Created Date", "Parent", "Model Height", "Type Category"]
         ),
       cliProgressBar,
     })
