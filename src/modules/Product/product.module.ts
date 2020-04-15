@@ -15,13 +15,10 @@ import { ProductUtilsService } from "./services/product.utils.service"
 import { ProductVariantFieldsResolver } from "./fields/productVariant.fields.resolver"
 import { ProductVariantMutationsResolver } from "./mutations/productVariant.mutations.resolver"
 import { ProductVariantService } from "./services/productVariant.service"
-import { ReservationFeedbackMutationsResolver } from "./mutations/reservationFeedback.mutations.resolver"
-import { ReservationFeedbackQueriesResolver } from "./queries/reservationFeedback.queries.resolver"
-import { ReservationFeedbackService } from "./services/reservationFeedback.service"
-import { ReservationService } from "./services/reservation.service"
-import { ReservationUtilsService } from "./services/reservation.utils.service"
+
 import { ShippingModule } from "@modules/Shipping/shipping.module"
 import { UserModule } from "@modules/User/user.module"
+import { SizeQueriesResolver } from "./queries/size.queries.resolver"
 
 @Module({
   imports: [
@@ -33,23 +30,20 @@ import { UserModule } from "@modules/User/user.module"
   ],
   providers: [
     BagService,
+    BrandQueriesResolver,
     ProductRequestService,
     ProductRequestUtilsService,
     ProductService,
     ProductUtilsService,
     PhysicalProductService,
     ProductVariantService,
-    ReservationService,
-    ReservationUtilsService,
-    ReservationFeedbackService,
     ProductFieldsResolver,
     ProductMutationsResolver,
     ProductQueriesResolver,
     ProductVariantFieldsResolver,
     ProductVariantMutationsResolver,
-    BrandQueriesResolver,
-    ReservationFeedbackQueriesResolver,
-    ReservationFeedbackMutationsResolver,
+    SizeQueriesResolver,
   ],
+  exports: [ProductUtilsService, ProductVariantService, PhysicalProductService],
 })
 export class ProductModule {}
