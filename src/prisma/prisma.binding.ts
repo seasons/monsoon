@@ -57,6 +57,19 @@ export interface Query {
     info?: GraphQLResolveInfo | string,
     options?: Options
   ) => Promise<T>
+  productModels: <T = Array<ProductModel | null>>(
+    args: {
+      where?: ProductModelWhereInput | null
+      orderBy?: ProductModelOrderByInput | null
+      skip?: Int | null
+      after?: String | null
+      before?: String | null
+      first?: Int | null
+      last?: Int | null
+    },
+    info?: GraphQLResolveInfo | string,
+    options?: Options
+  ) => Promise<T>
   bagItems: <T = Array<BagItem | null>>(
     args: {
       where?: BagItemWhereInput | null
@@ -417,6 +430,11 @@ export interface Query {
     info?: GraphQLResolveInfo | string,
     options?: Options
   ) => Promise<T | null>
+  productModel: <T = ProductModel | null>(
+    args: { where: ProductModelWhereUniqueInput },
+    info?: GraphQLResolveInfo | string,
+    options?: Options
+  ) => Promise<T | null>
   bagItem: <T = BagItem | null>(
     args: { where: BagItemWhereUniqueInput },
     info?: GraphQLResolveInfo | string,
@@ -590,6 +608,19 @@ export interface Query {
     args: {
       where?: ImageWhereInput | null
       orderBy?: ImageOrderByInput | null
+      skip?: Int | null
+      after?: String | null
+      before?: String | null
+      first?: Int | null
+      last?: Int | null
+    },
+    info?: GraphQLResolveInfo | string,
+    options?: Options
+  ) => Promise<T>
+  productModelsConnection: <T = ProductModelConnection>(
+    args: {
+      where?: ProductModelWhereInput | null
+      orderBy?: ProductModelOrderByInput | null
       skip?: Int | null
       after?: String | null
       before?: String | null
@@ -967,6 +998,11 @@ export interface Mutation {
     info?: GraphQLResolveInfo | string,
     options?: Options
   ) => Promise<T>
+  createProductModel: <T = ProductModel>(
+    args: { data: ProductModelCreateInput },
+    info?: GraphQLResolveInfo | string,
+    options?: Options
+  ) => Promise<T>
   createBagItem: <T = BagItem>(
     args: { data: BagItemCreateInput },
     info?: GraphQLResolveInfo | string,
@@ -1120,6 +1156,14 @@ export interface Mutation {
   ) => Promise<T | null>
   updateImage: <T = Image | null>(
     args: { data: ImageUpdateInput; where: ImageWhereUniqueInput },
+    info?: GraphQLResolveInfo | string,
+    options?: Options
+  ) => Promise<T | null>
+  updateProductModel: <T = ProductModel | null>(
+    args: {
+      data: ProductModelUpdateInput
+      where: ProductModelWhereUniqueInput
+    },
     info?: GraphQLResolveInfo | string,
     options?: Options
   ) => Promise<T | null>
@@ -1300,6 +1344,11 @@ export interface Mutation {
     info?: GraphQLResolveInfo | string,
     options?: Options
   ) => Promise<T | null>
+  deleteProductModel: <T = ProductModel | null>(
+    args: { where: ProductModelWhereUniqueInput },
+    info?: GraphQLResolveInfo | string,
+    options?: Options
+  ) => Promise<T | null>
   deleteBagItem: <T = BagItem | null>(
     args: { where: BagItemWhereUniqueInput },
     info?: GraphQLResolveInfo | string,
@@ -1464,6 +1513,15 @@ export interface Mutation {
       where: ImageWhereUniqueInput
       create: ImageCreateInput
       update: ImageUpdateInput
+    },
+    info?: GraphQLResolveInfo | string,
+    options?: Options
+  ) => Promise<T>
+  upsertProductModel: <T = ProductModel>(
+    args: {
+      where: ProductModelWhereUniqueInput
+      create: ProductModelCreateInput
+      update: ProductModelUpdateInput
     },
     info?: GraphQLResolveInfo | string,
     options?: Options
@@ -1725,6 +1783,14 @@ export interface Mutation {
     info?: GraphQLResolveInfo | string,
     options?: Options
   ) => Promise<T>
+  updateManyProductModels: <T = BatchPayload>(
+    args: {
+      data: ProductModelUpdateManyMutationInput
+      where?: ProductModelWhereInput | null
+    },
+    info?: GraphQLResolveInfo | string,
+    options?: Options
+  ) => Promise<T>
   updateManyBagItems: <T = BatchPayload>(
     args: {
       data: BagItemUpdateManyMutationInput
@@ -1939,6 +2005,11 @@ export interface Mutation {
     info?: GraphQLResolveInfo | string,
     options?: Options
   ) => Promise<T>
+  deleteManyProductModels: <T = BatchPayload>(
+    args: { where?: ProductModelWhereInput | null },
+    info?: GraphQLResolveInfo | string,
+    options?: Options
+  ) => Promise<T>
   deleteManyBagItems: <T = BatchPayload>(
     args: { where?: BagItemWhereInput | null },
     info?: GraphQLResolveInfo | string,
@@ -2092,6 +2163,11 @@ export interface Subscription {
     info?: GraphQLResolveInfo | string,
     options?: Options
   ) => Promise<AsyncIterator<T | null>>
+  productModel: <T = ProductModelSubscriptionPayload | null>(
+    args: { where?: ProductModelSubscriptionWhereInput | null },
+    info?: GraphQLResolveInfo | string,
+    options?: Options
+  ) => Promise<AsyncIterator<T | null>>
   bagItem: <T = BagItemSubscriptionPayload | null>(
     args: { where?: BagItemSubscriptionWhereInput | null },
     info?: GraphQLResolveInfo | string,
@@ -2237,6 +2313,7 @@ export interface Exists {
     where?: HomepageProductRailWhereInput
   ) => Promise<boolean>
   Image: (where?: ImageWhereInput) => Promise<boolean>
+  ProductModel: (where?: ProductModelWhereInput) => Promise<boolean>
   BagItem: (where?: BagItemWhereInput) => Promise<boolean>
   RecentlyViewedProduct: (
     where?: RecentlyViewedProductWhereInput
@@ -2382,6 +2459,10 @@ type AggregateProduct {
 }
 
 type AggregateProductFunction {
+  count: Int!
+}
+
+type AggregateProductModel {
   count: Int!
 }
 
@@ -9309,6 +9390,7 @@ type Mutation {
   createCollectionGroup(data: CollectionGroupCreateInput!): CollectionGroup!
   createHomepageProductRail(data: HomepageProductRailCreateInput!): HomepageProductRail!
   createImage(data: ImageCreateInput!): Image!
+  createProductModel(data: ProductModelCreateInput!): ProductModel!
   createBagItem(data: BagItemCreateInput!): BagItem!
   createRecentlyViewedProduct(data: RecentlyViewedProductCreateInput!): RecentlyViewedProduct!
   createOrder(data: OrderCreateInput!): Order!
@@ -9339,6 +9421,7 @@ type Mutation {
   updateCollectionGroup(data: CollectionGroupUpdateInput!, where: CollectionGroupWhereUniqueInput!): CollectionGroup
   updateHomepageProductRail(data: HomepageProductRailUpdateInput!, where: HomepageProductRailWhereUniqueInput!): HomepageProductRail
   updateImage(data: ImageUpdateInput!, where: ImageWhereUniqueInput!): Image
+  updateProductModel(data: ProductModelUpdateInput!, where: ProductModelWhereUniqueInput!): ProductModel
   updateBagItem(data: BagItemUpdateInput!, where: BagItemWhereUniqueInput!): BagItem
   updateRecentlyViewedProduct(data: RecentlyViewedProductUpdateInput!, where: RecentlyViewedProductWhereUniqueInput!): RecentlyViewedProduct
   updateProductRequest(data: ProductRequestUpdateInput!, where: ProductRequestWhereUniqueInput!): ProductRequest
@@ -9368,6 +9451,7 @@ type Mutation {
   deleteCollectionGroup(where: CollectionGroupWhereUniqueInput!): CollectionGroup
   deleteHomepageProductRail(where: HomepageProductRailWhereUniqueInput!): HomepageProductRail
   deleteImage(where: ImageWhereUniqueInput!): Image
+  deleteProductModel(where: ProductModelWhereUniqueInput!): ProductModel
   deleteBagItem(where: BagItemWhereUniqueInput!): BagItem
   deleteRecentlyViewedProduct(where: RecentlyViewedProductWhereUniqueInput!): RecentlyViewedProduct
   deleteOrder(where: OrderWhereUniqueInput!): Order
@@ -9398,6 +9482,7 @@ type Mutation {
   upsertCollectionGroup(where: CollectionGroupWhereUniqueInput!, create: CollectionGroupCreateInput!, update: CollectionGroupUpdateInput!): CollectionGroup!
   upsertHomepageProductRail(where: HomepageProductRailWhereUniqueInput!, create: HomepageProductRailCreateInput!, update: HomepageProductRailUpdateInput!): HomepageProductRail!
   upsertImage(where: ImageWhereUniqueInput!, create: ImageCreateInput!, update: ImageUpdateInput!): Image!
+  upsertProductModel(where: ProductModelWhereUniqueInput!, create: ProductModelCreateInput!, update: ProductModelUpdateInput!): ProductModel!
   upsertBagItem(where: BagItemWhereUniqueInput!, create: BagItemCreateInput!, update: BagItemUpdateInput!): BagItem!
   upsertRecentlyViewedProduct(where: RecentlyViewedProductWhereUniqueInput!, create: RecentlyViewedProductCreateInput!, update: RecentlyViewedProductUpdateInput!): RecentlyViewedProduct!
   upsertProductRequest(where: ProductRequestWhereUniqueInput!, create: ProductRequestCreateInput!, update: ProductRequestUpdateInput!): ProductRequest!
@@ -9427,6 +9512,7 @@ type Mutation {
   updateManyCollectionGroups(data: CollectionGroupUpdateManyMutationInput!, where: CollectionGroupWhereInput): BatchPayload!
   updateManyHomepageProductRails(data: HomepageProductRailUpdateManyMutationInput!, where: HomepageProductRailWhereInput): BatchPayload!
   updateManyImages(data: ImageUpdateManyMutationInput!, where: ImageWhereInput): BatchPayload!
+  updateManyProductModels(data: ProductModelUpdateManyMutationInput!, where: ProductModelWhereInput): BatchPayload!
   updateManyBagItems(data: BagItemUpdateManyMutationInput!, where: BagItemWhereInput): BatchPayload!
   updateManyRecentlyViewedProducts(data: RecentlyViewedProductUpdateManyMutationInput!, where: RecentlyViewedProductWhereInput): BatchPayload!
   updateManyProductRequests(data: ProductRequestUpdateManyMutationInput!, where: ProductRequestWhereInput): BatchPayload!
@@ -9456,6 +9542,7 @@ type Mutation {
   deleteManyCollectionGroups(where: CollectionGroupWhereInput): BatchPayload!
   deleteManyHomepageProductRails(where: HomepageProductRailWhereInput): BatchPayload!
   deleteManyImages(where: ImageWhereInput): BatchPayload!
+  deleteManyProductModels(where: ProductModelWhereInput): BatchPayload!
   deleteManyBagItems(where: BagItemWhereInput): BatchPayload!
   deleteManyRecentlyViewedProducts(where: RecentlyViewedProductWhereInput): BatchPayload!
   deleteManyOrders(where: OrderWhereInput): BatchPayload!
@@ -10488,6 +10575,7 @@ type Product implements Node {
   images: Json!
   modelHeight: Int
   retailPrice: Int
+  model: ProductModel
   modelSize: Size
   color: Color!
   secondaryColor: Color
@@ -10497,8 +10585,16 @@ type Product implements Node {
   outerMaterials: [Material!]!
   variants(where: ProductVariantWhereInput, orderBy: ProductVariantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariant!]
   status: ProductStatus
+  season: String
+  architecture: ProductArchitecture
   createdAt: DateTime!
   updatedAt: DateTime!
+}
+
+enum ProductArchitecture {
+  Fashion
+  Showstopper
+  Staple
 }
 
 """A connection to a list of items."""
@@ -10527,10 +10623,13 @@ input ProductCreateInput {
   retailPrice: Int
   tags: Json
   status: ProductStatus
+  season: String
+  architecture: ProductArchitecture
   innerMaterials: ProductCreateinnerMaterialsInput
   outerMaterials: ProductCreateouterMaterialsInput
   brand: BrandCreateOneWithoutProductsInput!
   category: CategoryCreateOneWithoutProductsInput!
+  model: ProductModelCreateOneWithoutProductsInput
   modelSize: SizeCreateOneInput
   color: ColorCreateOneInput!
   secondaryColor: ColorCreateOneInput
@@ -10550,6 +10649,11 @@ input ProductCreateManyWithoutBrandInput {
 
 input ProductCreateManyWithoutCategoryInput {
   create: [ProductCreateWithoutCategoryInput!]
+  connect: [ProductWhereUniqueInput!]
+}
+
+input ProductCreateManyWithoutModelInput {
+  create: [ProductCreateWithoutModelInput!]
   connect: [ProductWhereUniqueInput!]
 }
 
@@ -10579,9 +10683,12 @@ input ProductCreateWithoutBrandInput {
   retailPrice: Int
   tags: Json
   status: ProductStatus
+  season: String
+  architecture: ProductArchitecture
   innerMaterials: ProductCreateinnerMaterialsInput
   outerMaterials: ProductCreateouterMaterialsInput
   category: CategoryCreateOneWithoutProductsInput!
+  model: ProductModelCreateOneWithoutProductsInput
   modelSize: SizeCreateOneInput
   color: ColorCreateOneInput!
   secondaryColor: ColorCreateOneInput
@@ -10601,9 +10708,37 @@ input ProductCreateWithoutCategoryInput {
   retailPrice: Int
   tags: Json
   status: ProductStatus
+  season: String
+  architecture: ProductArchitecture
   innerMaterials: ProductCreateinnerMaterialsInput
   outerMaterials: ProductCreateouterMaterialsInput
   brand: BrandCreateOneWithoutProductsInput!
+  model: ProductModelCreateOneWithoutProductsInput
+  modelSize: SizeCreateOneInput
+  color: ColorCreateOneInput!
+  secondaryColor: ColorCreateOneInput
+  functions: ProductFunctionCreateManyInput
+  variants: ProductVariantCreateManyWithoutProductInput
+}
+
+input ProductCreateWithoutModelInput {
+  id: ID
+  slug: String!
+  name: String!
+  type: ProductType
+  description: String
+  externalURL: String
+  images: Json!
+  modelHeight: Int
+  retailPrice: Int
+  tags: Json
+  status: ProductStatus
+  season: String
+  architecture: ProductArchitecture
+  innerMaterials: ProductCreateinnerMaterialsInput
+  outerMaterials: ProductCreateouterMaterialsInput
+  brand: BrandCreateOneWithoutProductsInput!
+  category: CategoryCreateOneWithoutProductsInput!
   modelSize: SizeCreateOneInput
   color: ColorCreateOneInput!
   secondaryColor: ColorCreateOneInput
@@ -10623,10 +10758,13 @@ input ProductCreateWithoutVariantsInput {
   retailPrice: Int
   tags: Json
   status: ProductStatus
+  season: String
+  architecture: ProductArchitecture
   innerMaterials: ProductCreateinnerMaterialsInput
   outerMaterials: ProductCreateouterMaterialsInput
   brand: BrandCreateOneWithoutProductsInput!
   category: CategoryCreateOneWithoutProductsInput!
+  model: ProductModelCreateOneWithoutProductsInput
   modelSize: SizeCreateOneInput
   color: ColorCreateOneInput!
   secondaryColor: ColorCreateOneInput
@@ -10956,6 +11094,252 @@ input ProductFunctionWhereUniqueInput {
   name: String
 }
 
+type ProductModel implements Node {
+  id: ID!
+  name: String!
+  height: Float!
+  products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
+}
+
+"""A connection to a list of items."""
+type ProductModelConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [ProductModelEdge]!
+  aggregate: AggregateProductModel!
+}
+
+input ProductModelCreateInput {
+  id: ID
+  name: String!
+  height: Float!
+  products: ProductCreateManyWithoutModelInput
+}
+
+input ProductModelCreateOneWithoutProductsInput {
+  create: ProductModelCreateWithoutProductsInput
+  connect: ProductModelWhereUniqueInput
+}
+
+input ProductModelCreateWithoutProductsInput {
+  id: ID
+  name: String!
+  height: Float!
+}
+
+"""An edge in a connection."""
+type ProductModelEdge {
+  """The item at the end of the edge."""
+  node: ProductModel!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum ProductModelOrderByInput {
+  id_ASC
+  id_DESC
+  name_ASC
+  name_DESC
+  height_ASC
+  height_DESC
+}
+
+type ProductModelPreviousValues {
+  id: ID!
+  name: String!
+  height: Float!
+}
+
+type ProductModelSubscriptionPayload {
+  mutation: MutationType!
+  node: ProductModel
+  updatedFields: [String!]
+  previousValues: ProductModelPreviousValues
+}
+
+input ProductModelSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ProductModelSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ProductModelSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ProductModelSubscriptionWhereInput!]
+
+  """The subscription event gets dispatched when it's listed in mutation_in"""
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: ProductModelWhereInput
+}
+
+input ProductModelUpdateInput {
+  name: String
+  height: Float
+  products: ProductUpdateManyWithoutModelInput
+}
+
+input ProductModelUpdateManyMutationInput {
+  name: String
+  height: Float
+}
+
+input ProductModelUpdateOneWithoutProductsInput {
+  create: ProductModelCreateWithoutProductsInput
+  connect: ProductModelWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: ProductModelUpdateWithoutProductsDataInput
+  upsert: ProductModelUpsertWithoutProductsInput
+}
+
+input ProductModelUpdateWithoutProductsDataInput {
+  name: String
+  height: Float
+}
+
+input ProductModelUpsertWithoutProductsInput {
+  update: ProductModelUpdateWithoutProductsDataInput!
+  create: ProductModelCreateWithoutProductsInput!
+}
+
+input ProductModelWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ProductModelWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ProductModelWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ProductModelWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
+  height: Float
+
+  """All values that are not equal to given value."""
+  height_not: Float
+
+  """All values that are contained in given list."""
+  height_in: [Float!]
+
+  """All values that are not contained in given list."""
+  height_not_in: [Float!]
+
+  """All values less than the given value."""
+  height_lt: Float
+
+  """All values less than or equal the given value."""
+  height_lte: Float
+
+  """All values greater than the given value."""
+  height_gt: Float
+
+  """All values greater than or equal the given value."""
+  height_gte: Float
+  products_every: ProductWhereInput
+  products_some: ProductWhereInput
+  products_none: ProductWhereInput
+}
+
+input ProductModelWhereUniqueInput {
+  id: ID
+}
+
 enum ProductOrderByInput {
   id_ASC
   id_DESC
@@ -10979,6 +11363,10 @@ enum ProductOrderByInput {
   tags_DESC
   status_ASC
   status_DESC
+  season_ASC
+  season_DESC
+  architecture_ASC
+  architecture_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -10999,6 +11387,8 @@ type ProductPreviousValues {
   innerMaterials: [Material!]!
   outerMaterials: [Material!]!
   status: ProductStatus
+  season: String
+  architecture: ProductArchitecture
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -11832,6 +12222,56 @@ input ProductScalarWhereInput {
 
   """All values that are not contained in given list."""
   status_not_in: [ProductStatus!]
+  season: String
+
+  """All values that are not equal to given value."""
+  season_not: String
+
+  """All values that are contained in given list."""
+  season_in: [String!]
+
+  """All values that are not contained in given list."""
+  season_not_in: [String!]
+
+  """All values less than the given value."""
+  season_lt: String
+
+  """All values less than or equal the given value."""
+  season_lte: String
+
+  """All values greater than the given value."""
+  season_gt: String
+
+  """All values greater than or equal the given value."""
+  season_gte: String
+
+  """All values containing the given string."""
+  season_contains: String
+
+  """All values not containing the given string."""
+  season_not_contains: String
+
+  """All values starting with the given string."""
+  season_starts_with: String
+
+  """All values not starting with the given string."""
+  season_not_starts_with: String
+
+  """All values ending with the given string."""
+  season_ends_with: String
+
+  """All values not ending with the given string."""
+  season_not_ends_with: String
+  architecture: ProductArchitecture
+
+  """All values that are not equal to given value."""
+  architecture_not: ProductArchitecture
+
+  """All values that are contained in given list."""
+  architecture_in: [ProductArchitecture!]
+
+  """All values that are not contained in given list."""
+  architecture_not_in: [ProductArchitecture!]
   createdAt: DateTime
 
   """All values that are not equal to given value."""
@@ -11938,10 +12378,13 @@ input ProductUpdateDataInput {
   retailPrice: Int
   tags: Json
   status: ProductStatus
+  season: String
+  architecture: ProductArchitecture
   innerMaterials: ProductUpdateinnerMaterialsInput
   outerMaterials: ProductUpdateouterMaterialsInput
   brand: BrandUpdateOneRequiredWithoutProductsInput
   category: CategoryUpdateOneRequiredWithoutProductsInput
+  model: ProductModelUpdateOneWithoutProductsInput
   modelSize: SizeUpdateOneInput
   color: ColorUpdateOneRequiredInput
   secondaryColor: ColorUpdateOneInput
@@ -11964,10 +12407,13 @@ input ProductUpdateInput {
   retailPrice: Int
   tags: Json
   status: ProductStatus
+  season: String
+  architecture: ProductArchitecture
   innerMaterials: ProductUpdateinnerMaterialsInput
   outerMaterials: ProductUpdateouterMaterialsInput
   brand: BrandUpdateOneRequiredWithoutProductsInput
   category: CategoryUpdateOneRequiredWithoutProductsInput
+  model: ProductModelUpdateOneWithoutProductsInput
   modelSize: SizeUpdateOneInput
   color: ColorUpdateOneRequiredInput
   secondaryColor: ColorUpdateOneInput
@@ -11986,6 +12432,8 @@ input ProductUpdateManyDataInput {
   retailPrice: Int
   tags: Json
   status: ProductStatus
+  season: String
+  architecture: ProductArchitecture
   innerMaterials: ProductUpdateinnerMaterialsInput
   outerMaterials: ProductUpdateouterMaterialsInput
 }
@@ -12013,6 +12461,8 @@ input ProductUpdateManyMutationInput {
   retailPrice: Int
   tags: Json
   status: ProductStatus
+  season: String
+  architecture: ProductArchitecture
   innerMaterials: ProductUpdateinnerMaterialsInput
   outerMaterials: ProductUpdateouterMaterialsInput
 }
@@ -12039,6 +12489,18 @@ input ProductUpdateManyWithoutCategoryInput {
   updateMany: [ProductUpdateManyWithWhereNestedInput!]
   deleteMany: [ProductScalarWhereInput!]
   upsert: [ProductUpsertWithWhereUniqueWithoutCategoryInput!]
+}
+
+input ProductUpdateManyWithoutModelInput {
+  create: [ProductCreateWithoutModelInput!]
+  connect: [ProductWhereUniqueInput!]
+  set: [ProductWhereUniqueInput!]
+  disconnect: [ProductWhereUniqueInput!]
+  delete: [ProductWhereUniqueInput!]
+  update: [ProductUpdateWithWhereUniqueWithoutModelInput!]
+  updateMany: [ProductUpdateManyWithWhereNestedInput!]
+  deleteMany: [ProductScalarWhereInput!]
+  upsert: [ProductUpsertWithWhereUniqueWithoutModelInput!]
 }
 
 input ProductUpdateManyWithWhereNestedInput {
@@ -12075,9 +12537,12 @@ input ProductUpdateWithoutBrandDataInput {
   retailPrice: Int
   tags: Json
   status: ProductStatus
+  season: String
+  architecture: ProductArchitecture
   innerMaterials: ProductUpdateinnerMaterialsInput
   outerMaterials: ProductUpdateouterMaterialsInput
   category: CategoryUpdateOneRequiredWithoutProductsInput
+  model: ProductModelUpdateOneWithoutProductsInput
   modelSize: SizeUpdateOneInput
   color: ColorUpdateOneRequiredInput
   secondaryColor: ColorUpdateOneInput
@@ -12096,9 +12561,36 @@ input ProductUpdateWithoutCategoryDataInput {
   retailPrice: Int
   tags: Json
   status: ProductStatus
+  season: String
+  architecture: ProductArchitecture
   innerMaterials: ProductUpdateinnerMaterialsInput
   outerMaterials: ProductUpdateouterMaterialsInput
   brand: BrandUpdateOneRequiredWithoutProductsInput
+  model: ProductModelUpdateOneWithoutProductsInput
+  modelSize: SizeUpdateOneInput
+  color: ColorUpdateOneRequiredInput
+  secondaryColor: ColorUpdateOneInput
+  functions: ProductFunctionUpdateManyInput
+  variants: ProductVariantUpdateManyWithoutProductInput
+}
+
+input ProductUpdateWithoutModelDataInput {
+  slug: String
+  name: String
+  type: ProductType
+  description: String
+  externalURL: String
+  images: Json
+  modelHeight: Int
+  retailPrice: Int
+  tags: Json
+  status: ProductStatus
+  season: String
+  architecture: ProductArchitecture
+  innerMaterials: ProductUpdateinnerMaterialsInput
+  outerMaterials: ProductUpdateouterMaterialsInput
+  brand: BrandUpdateOneRequiredWithoutProductsInput
+  category: CategoryUpdateOneRequiredWithoutProductsInput
   modelSize: SizeUpdateOneInput
   color: ColorUpdateOneRequiredInput
   secondaryColor: ColorUpdateOneInput
@@ -12117,10 +12609,13 @@ input ProductUpdateWithoutVariantsDataInput {
   retailPrice: Int
   tags: Json
   status: ProductStatus
+  season: String
+  architecture: ProductArchitecture
   innerMaterials: ProductUpdateinnerMaterialsInput
   outerMaterials: ProductUpdateouterMaterialsInput
   brand: BrandUpdateOneRequiredWithoutProductsInput
   category: CategoryUpdateOneRequiredWithoutProductsInput
+  model: ProductModelUpdateOneWithoutProductsInput
   modelSize: SizeUpdateOneInput
   color: ColorUpdateOneRequiredInput
   secondaryColor: ColorUpdateOneInput
@@ -12140,6 +12635,11 @@ input ProductUpdateWithWhereUniqueWithoutBrandInput {
 input ProductUpdateWithWhereUniqueWithoutCategoryInput {
   where: ProductWhereUniqueInput!
   data: ProductUpdateWithoutCategoryDataInput!
+}
+
+input ProductUpdateWithWhereUniqueWithoutModelInput {
+  where: ProductWhereUniqueInput!
+  data: ProductUpdateWithoutModelDataInput!
 }
 
 input ProductUpsertNestedInput {
@@ -12168,6 +12668,12 @@ input ProductUpsertWithWhereUniqueWithoutCategoryInput {
   where: ProductWhereUniqueInput!
   update: ProductUpdateWithoutCategoryDataInput!
   create: ProductCreateWithoutCategoryInput!
+}
+
+input ProductUpsertWithWhereUniqueWithoutModelInput {
+  where: ProductWhereUniqueInput!
+  update: ProductUpdateWithoutModelDataInput!
+  create: ProductCreateWithoutModelInput!
 }
 
 type ProductVariant implements Node {
@@ -14334,6 +14840,56 @@ input ProductWhereInput {
 
   """All values that are not contained in given list."""
   status_not_in: [ProductStatus!]
+  season: String
+
+  """All values that are not equal to given value."""
+  season_not: String
+
+  """All values that are contained in given list."""
+  season_in: [String!]
+
+  """All values that are not contained in given list."""
+  season_not_in: [String!]
+
+  """All values less than the given value."""
+  season_lt: String
+
+  """All values less than or equal the given value."""
+  season_lte: String
+
+  """All values greater than the given value."""
+  season_gt: String
+
+  """All values greater than or equal the given value."""
+  season_gte: String
+
+  """All values containing the given string."""
+  season_contains: String
+
+  """All values not containing the given string."""
+  season_not_contains: String
+
+  """All values starting with the given string."""
+  season_starts_with: String
+
+  """All values not starting with the given string."""
+  season_not_starts_with: String
+
+  """All values ending with the given string."""
+  season_ends_with: String
+
+  """All values not ending with the given string."""
+  season_not_ends_with: String
+  architecture: ProductArchitecture
+
+  """All values that are not equal to given value."""
+  architecture_not: ProductArchitecture
+
+  """All values that are contained in given list."""
+  architecture_in: [ProductArchitecture!]
+
+  """All values that are not contained in given list."""
+  architecture_not_in: [ProductArchitecture!]
   createdAt: DateTime
 
   """All values that are not equal to given value."""
@@ -14380,6 +14936,7 @@ input ProductWhereInput {
   updatedAt_gte: DateTime
   brand: BrandWhereInput
   category: CategoryWhereInput
+  model: ProductModelWhereInput
   modelSize: SizeWhereInput
   color: ColorWhereInput
   secondaryColor: ColorWhereInput
@@ -14407,6 +14964,7 @@ type Query {
   collectionGroups(where: CollectionGroupWhereInput, orderBy: CollectionGroupOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CollectionGroup]!
   homepageProductRails(where: HomepageProductRailWhereInput, orderBy: HomepageProductRailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [HomepageProductRail]!
   images(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Image]!
+  productModels(where: ProductModelWhereInput, orderBy: ProductModelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductModel]!
   bagItems(where: BagItemWhereInput, orderBy: BagItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [BagItem]!
   recentlyViewedProducts(where: RecentlyViewedProductWhereInput, orderBy: RecentlyViewedProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [RecentlyViewedProduct]!
   orders(where: OrderWhereInput, orderBy: OrderOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Order]!
@@ -14437,6 +14995,7 @@ type Query {
   collectionGroup(where: CollectionGroupWhereUniqueInput!): CollectionGroup
   homepageProductRail(where: HomepageProductRailWhereUniqueInput!): HomepageProductRail
   image(where: ImageWhereUniqueInput!): Image
+  productModel(where: ProductModelWhereUniqueInput!): ProductModel
   bagItem(where: BagItemWhereUniqueInput!): BagItem
   recentlyViewedProduct(where: RecentlyViewedProductWhereUniqueInput!): RecentlyViewedProduct
   order(where: OrderWhereUniqueInput!): Order
@@ -14467,6 +15026,7 @@ type Query {
   collectionGroupsConnection(where: CollectionGroupWhereInput, orderBy: CollectionGroupOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CollectionGroupConnection!
   homepageProductRailsConnection(where: HomepageProductRailWhereInput, orderBy: HomepageProductRailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): HomepageProductRailConnection!
   imagesConnection(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ImageConnection!
+  productModelsConnection(where: ProductModelWhereInput, orderBy: ProductModelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductModelConnection!
   bagItemsConnection(where: BagItemWhereInput, orderBy: BagItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BagItemConnection!
   recentlyViewedProductsConnection(where: RecentlyViewedProductWhereInput, orderBy: RecentlyViewedProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): RecentlyViewedProductConnection!
   ordersConnection(where: OrderWhereInput, orderBy: OrderOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): OrderConnection!
@@ -16166,6 +16726,7 @@ type Subscription {
   collectionGroup(where: CollectionGroupSubscriptionWhereInput): CollectionGroupSubscriptionPayload
   homepageProductRail(where: HomepageProductRailSubscriptionWhereInput): HomepageProductRailSubscriptionPayload
   image(where: ImageSubscriptionWhereInput): ImageSubscriptionPayload
+  productModel(where: ProductModelSubscriptionWhereInput): ProductModelSubscriptionPayload
   bagItem(where: BagItemSubscriptionWhereInput): BagItemSubscriptionPayload
   recentlyViewedProduct(where: RecentlyViewedProductSubscriptionWhereInput): RecentlyViewedProductSubscriptionPayload
   order(where: OrderSubscriptionWhereInput): OrderSubscriptionPayload
@@ -17359,11 +17920,21 @@ export type PhysicalProductStatus =
 
 export type Plan = "AllAccess" | "Essential"
 
+export type ProductArchitecture = "Fashion" | "Showstopper" | "Staple"
+
 export type ProductFunctionOrderByInput =
   | "id_ASC"
   | "id_DESC"
   | "name_ASC"
   | "name_DESC"
+
+export type ProductModelOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "name_ASC"
+  | "name_DESC"
+  | "height_ASC"
+  | "height_DESC"
 
 export type ProductOrderByInput =
   | "id_ASC"
@@ -17388,6 +17959,10 @@ export type ProductOrderByInput =
   | "tags_DESC"
   | "status_ASC"
   | "status_DESC"
+  | "season_ASC"
+  | "season_DESC"
+  | "architecture_ASC"
+  | "architecture_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -20991,10 +21566,13 @@ export interface ProductCreateInput {
   retailPrice?: Int | null
   tags?: Json | null
   status?: ProductStatus | null
+  season?: String | null
+  architecture?: ProductArchitecture | null
   innerMaterials?: ProductCreateinnerMaterialsInput | null
   outerMaterials?: ProductCreateouterMaterialsInput | null
   brand: BrandCreateOneWithoutProductsInput
   category: CategoryCreateOneWithoutProductsInput
+  model?: ProductModelCreateOneWithoutProductsInput | null
   modelSize?: SizeCreateOneInput | null
   color: ColorCreateOneInput
   secondaryColor?: ColorCreateOneInput | null
@@ -21019,6 +21597,14 @@ export interface ProductCreateManyWithoutCategoryInput {
   create?:
     | ProductCreateWithoutCategoryInput[]
     | ProductCreateWithoutCategoryInput
+    | null
+  connect?: ProductWhereUniqueInput[] | ProductWhereUniqueInput | null
+}
+
+export interface ProductCreateManyWithoutModelInput {
+  create?:
+    | ProductCreateWithoutModelInput[]
+    | ProductCreateWithoutModelInput
     | null
   connect?: ProductWhereUniqueInput[] | ProductWhereUniqueInput | null
 }
@@ -21049,9 +21635,12 @@ export interface ProductCreateWithoutBrandInput {
   retailPrice?: Int | null
   tags?: Json | null
   status?: ProductStatus | null
+  season?: String | null
+  architecture?: ProductArchitecture | null
   innerMaterials?: ProductCreateinnerMaterialsInput | null
   outerMaterials?: ProductCreateouterMaterialsInput | null
   category: CategoryCreateOneWithoutProductsInput
+  model?: ProductModelCreateOneWithoutProductsInput | null
   modelSize?: SizeCreateOneInput | null
   color: ColorCreateOneInput
   secondaryColor?: ColorCreateOneInput | null
@@ -21071,9 +21660,37 @@ export interface ProductCreateWithoutCategoryInput {
   retailPrice?: Int | null
   tags?: Json | null
   status?: ProductStatus | null
+  season?: String | null
+  architecture?: ProductArchitecture | null
   innerMaterials?: ProductCreateinnerMaterialsInput | null
   outerMaterials?: ProductCreateouterMaterialsInput | null
   brand: BrandCreateOneWithoutProductsInput
+  model?: ProductModelCreateOneWithoutProductsInput | null
+  modelSize?: SizeCreateOneInput | null
+  color: ColorCreateOneInput
+  secondaryColor?: ColorCreateOneInput | null
+  functions?: ProductFunctionCreateManyInput | null
+  variants?: ProductVariantCreateManyWithoutProductInput | null
+}
+
+export interface ProductCreateWithoutModelInput {
+  id?: ID_Input | null
+  slug: String
+  name: String
+  type?: ProductType | null
+  description?: String | null
+  externalURL?: String | null
+  images: Json
+  modelHeight?: Int | null
+  retailPrice?: Int | null
+  tags?: Json | null
+  status?: ProductStatus | null
+  season?: String | null
+  architecture?: ProductArchitecture | null
+  innerMaterials?: ProductCreateinnerMaterialsInput | null
+  outerMaterials?: ProductCreateouterMaterialsInput | null
+  brand: BrandCreateOneWithoutProductsInput
+  category: CategoryCreateOneWithoutProductsInput
   modelSize?: SizeCreateOneInput | null
   color: ColorCreateOneInput
   secondaryColor?: ColorCreateOneInput | null
@@ -21093,10 +21710,13 @@ export interface ProductCreateWithoutVariantsInput {
   retailPrice?: Int | null
   tags?: Json | null
   status?: ProductStatus | null
+  season?: String | null
+  architecture?: ProductArchitecture | null
   innerMaterials?: ProductCreateinnerMaterialsInput | null
   outerMaterials?: ProductCreateouterMaterialsInput | null
   brand: BrandCreateOneWithoutProductsInput
   category: CategoryCreateOneWithoutProductsInput
+  model?: ProductModelCreateOneWithoutProductsInput | null
   modelSize?: SizeCreateOneInput | null
   color: ColorCreateOneInput
   secondaryColor?: ColorCreateOneInput | null
@@ -21284,6 +21904,123 @@ export interface ProductFunctionWhereInput {
 export interface ProductFunctionWhereUniqueInput {
   id?: ID_Input | null
   name?: String | null
+}
+
+export interface ProductModelCreateInput {
+  id?: ID_Input | null
+  name: String
+  height: Float
+  products?: ProductCreateManyWithoutModelInput | null
+}
+
+export interface ProductModelCreateOneWithoutProductsInput {
+  create?: ProductModelCreateWithoutProductsInput | null
+  connect?: ProductModelWhereUniqueInput | null
+}
+
+export interface ProductModelCreateWithoutProductsInput {
+  id?: ID_Input | null
+  name: String
+  height: Float
+}
+
+export interface ProductModelSubscriptionWhereInput {
+  AND?:
+    | ProductModelSubscriptionWhereInput[]
+    | ProductModelSubscriptionWhereInput
+    | null
+  OR?:
+    | ProductModelSubscriptionWhereInput[]
+    | ProductModelSubscriptionWhereInput
+    | null
+  NOT?:
+    | ProductModelSubscriptionWhereInput[]
+    | ProductModelSubscriptionWhereInput
+    | null
+  mutation_in?: MutationType[] | MutationType | null
+  updatedFields_contains?: String | null
+  updatedFields_contains_every?: String[] | String | null
+  updatedFields_contains_some?: String[] | String | null
+  node?: ProductModelWhereInput | null
+}
+
+export interface ProductModelUpdateInput {
+  name?: String | null
+  height?: Float | null
+  products?: ProductUpdateManyWithoutModelInput | null
+}
+
+export interface ProductModelUpdateManyMutationInput {
+  name?: String | null
+  height?: Float | null
+}
+
+export interface ProductModelUpdateOneWithoutProductsInput {
+  create?: ProductModelCreateWithoutProductsInput | null
+  connect?: ProductModelWhereUniqueInput | null
+  disconnect?: Boolean | null
+  delete?: Boolean | null
+  update?: ProductModelUpdateWithoutProductsDataInput | null
+  upsert?: ProductModelUpsertWithoutProductsInput | null
+}
+
+export interface ProductModelUpdateWithoutProductsDataInput {
+  name?: String | null
+  height?: Float | null
+}
+
+export interface ProductModelUpsertWithoutProductsInput {
+  update: ProductModelUpdateWithoutProductsDataInput
+  create: ProductModelCreateWithoutProductsInput
+}
+
+export interface ProductModelWhereInput {
+  AND?: ProductModelWhereInput[] | ProductModelWhereInput | null
+  OR?: ProductModelWhereInput[] | ProductModelWhereInput | null
+  NOT?: ProductModelWhereInput[] | ProductModelWhereInput | null
+  id?: ID_Input | null
+  id_not?: ID_Input | null
+  id_in?: ID_Output[] | ID_Output | null
+  id_not_in?: ID_Output[] | ID_Output | null
+  id_lt?: ID_Input | null
+  id_lte?: ID_Input | null
+  id_gt?: ID_Input | null
+  id_gte?: ID_Input | null
+  id_contains?: ID_Input | null
+  id_not_contains?: ID_Input | null
+  id_starts_with?: ID_Input | null
+  id_not_starts_with?: ID_Input | null
+  id_ends_with?: ID_Input | null
+  id_not_ends_with?: ID_Input | null
+  name?: String | null
+  name_not?: String | null
+  name_in?: String[] | String | null
+  name_not_in?: String[] | String | null
+  name_lt?: String | null
+  name_lte?: String | null
+  name_gt?: String | null
+  name_gte?: String | null
+  name_contains?: String | null
+  name_not_contains?: String | null
+  name_starts_with?: String | null
+  name_not_starts_with?: String | null
+  name_ends_with?: String | null
+  name_not_ends_with?: String | null
+  height?: Float | null
+  height_not?: Float | null
+  height_in?: Float[] | Float | null
+  height_not_in?: Float[] | Float | null
+  height_lt?: Float | null
+  height_lte?: Float | null
+  height_gt?: Float | null
+  height_gte?: Float | null
+  products_every?: ProductWhereInput | null
+  products_some?: ProductWhereInput | null
+  products_none?: ProductWhereInput | null
+}
+
+export interface ProductModelWhereUniqueInput {
+  id?: ID_Input | null
 }
 
 export interface ProductRequestCreateimagesInput {
@@ -21599,6 +22336,24 @@ export interface ProductScalarWhereInput {
   status_not?: ProductStatus | null
   status_in?: ProductStatus[] | ProductStatus | null
   status_not_in?: ProductStatus[] | ProductStatus | null
+  season?: String | null
+  season_not?: String | null
+  season_in?: String[] | String | null
+  season_not_in?: String[] | String | null
+  season_lt?: String | null
+  season_lte?: String | null
+  season_gt?: String | null
+  season_gte?: String | null
+  season_contains?: String | null
+  season_not_contains?: String | null
+  season_starts_with?: String | null
+  season_not_starts_with?: String | null
+  season_ends_with?: String | null
+  season_not_ends_with?: String | null
+  architecture?: ProductArchitecture | null
+  architecture_not?: ProductArchitecture | null
+  architecture_in?: ProductArchitecture[] | ProductArchitecture | null
+  architecture_not_in?: ProductArchitecture[] | ProductArchitecture | null
   createdAt?: DateTime | null
   createdAt_not?: DateTime | null
   createdAt_in?: DateTime[] | DateTime | null
@@ -21639,10 +22394,13 @@ export interface ProductUpdateDataInput {
   retailPrice?: Int | null
   tags?: Json | null
   status?: ProductStatus | null
+  season?: String | null
+  architecture?: ProductArchitecture | null
   innerMaterials?: ProductUpdateinnerMaterialsInput | null
   outerMaterials?: ProductUpdateouterMaterialsInput | null
   brand?: BrandUpdateOneRequiredWithoutProductsInput | null
   category?: CategoryUpdateOneRequiredWithoutProductsInput | null
+  model?: ProductModelUpdateOneWithoutProductsInput | null
   modelSize?: SizeUpdateOneInput | null
   color?: ColorUpdateOneRequiredInput | null
   secondaryColor?: ColorUpdateOneInput | null
@@ -21665,10 +22423,13 @@ export interface ProductUpdateInput {
   retailPrice?: Int | null
   tags?: Json | null
   status?: ProductStatus | null
+  season?: String | null
+  architecture?: ProductArchitecture | null
   innerMaterials?: ProductUpdateinnerMaterialsInput | null
   outerMaterials?: ProductUpdateouterMaterialsInput | null
   brand?: BrandUpdateOneRequiredWithoutProductsInput | null
   category?: CategoryUpdateOneRequiredWithoutProductsInput | null
+  model?: ProductModelUpdateOneWithoutProductsInput | null
   modelSize?: SizeUpdateOneInput | null
   color?: ColorUpdateOneRequiredInput | null
   secondaryColor?: ColorUpdateOneInput | null
@@ -21687,6 +22448,8 @@ export interface ProductUpdateManyDataInput {
   retailPrice?: Int | null
   tags?: Json | null
   status?: ProductStatus | null
+  season?: String | null
+  architecture?: ProductArchitecture | null
   innerMaterials?: ProductUpdateinnerMaterialsInput | null
   outerMaterials?: ProductUpdateouterMaterialsInput | null
 }
@@ -21723,6 +22486,8 @@ export interface ProductUpdateManyMutationInput {
   retailPrice?: Int | null
   tags?: Json | null
   status?: ProductStatus | null
+  season?: String | null
+  architecture?: ProductArchitecture | null
   innerMaterials?: ProductUpdateinnerMaterialsInput | null
   outerMaterials?: ProductUpdateouterMaterialsInput | null
 }
@@ -21775,6 +22540,30 @@ export interface ProductUpdateManyWithoutCategoryInput {
     | null
 }
 
+export interface ProductUpdateManyWithoutModelInput {
+  create?:
+    | ProductCreateWithoutModelInput[]
+    | ProductCreateWithoutModelInput
+    | null
+  connect?: ProductWhereUniqueInput[] | ProductWhereUniqueInput | null
+  set?: ProductWhereUniqueInput[] | ProductWhereUniqueInput | null
+  disconnect?: ProductWhereUniqueInput[] | ProductWhereUniqueInput | null
+  delete?: ProductWhereUniqueInput[] | ProductWhereUniqueInput | null
+  update?:
+    | ProductUpdateWithWhereUniqueWithoutModelInput[]
+    | ProductUpdateWithWhereUniqueWithoutModelInput
+    | null
+  updateMany?:
+    | ProductUpdateManyWithWhereNestedInput[]
+    | ProductUpdateManyWithWhereNestedInput
+    | null
+  deleteMany?: ProductScalarWhereInput[] | ProductScalarWhereInput | null
+  upsert?:
+    | ProductUpsertWithWhereUniqueWithoutModelInput[]
+    | ProductUpsertWithWhereUniqueWithoutModelInput
+    | null
+}
+
 export interface ProductUpdateManyWithWhereNestedInput {
   where: ProductScalarWhereInput
   data: ProductUpdateManyDataInput
@@ -21809,9 +22598,12 @@ export interface ProductUpdateWithoutBrandDataInput {
   retailPrice?: Int | null
   tags?: Json | null
   status?: ProductStatus | null
+  season?: String | null
+  architecture?: ProductArchitecture | null
   innerMaterials?: ProductUpdateinnerMaterialsInput | null
   outerMaterials?: ProductUpdateouterMaterialsInput | null
   category?: CategoryUpdateOneRequiredWithoutProductsInput | null
+  model?: ProductModelUpdateOneWithoutProductsInput | null
   modelSize?: SizeUpdateOneInput | null
   color?: ColorUpdateOneRequiredInput | null
   secondaryColor?: ColorUpdateOneInput | null
@@ -21830,9 +22622,36 @@ export interface ProductUpdateWithoutCategoryDataInput {
   retailPrice?: Int | null
   tags?: Json | null
   status?: ProductStatus | null
+  season?: String | null
+  architecture?: ProductArchitecture | null
   innerMaterials?: ProductUpdateinnerMaterialsInput | null
   outerMaterials?: ProductUpdateouterMaterialsInput | null
   brand?: BrandUpdateOneRequiredWithoutProductsInput | null
+  model?: ProductModelUpdateOneWithoutProductsInput | null
+  modelSize?: SizeUpdateOneInput | null
+  color?: ColorUpdateOneRequiredInput | null
+  secondaryColor?: ColorUpdateOneInput | null
+  functions?: ProductFunctionUpdateManyInput | null
+  variants?: ProductVariantUpdateManyWithoutProductInput | null
+}
+
+export interface ProductUpdateWithoutModelDataInput {
+  slug?: String | null
+  name?: String | null
+  type?: ProductType | null
+  description?: String | null
+  externalURL?: String | null
+  images?: Json | null
+  modelHeight?: Int | null
+  retailPrice?: Int | null
+  tags?: Json | null
+  status?: ProductStatus | null
+  season?: String | null
+  architecture?: ProductArchitecture | null
+  innerMaterials?: ProductUpdateinnerMaterialsInput | null
+  outerMaterials?: ProductUpdateouterMaterialsInput | null
+  brand?: BrandUpdateOneRequiredWithoutProductsInput | null
+  category?: CategoryUpdateOneRequiredWithoutProductsInput | null
   modelSize?: SizeUpdateOneInput | null
   color?: ColorUpdateOneRequiredInput | null
   secondaryColor?: ColorUpdateOneInput | null
@@ -21851,10 +22670,13 @@ export interface ProductUpdateWithoutVariantsDataInput {
   retailPrice?: Int | null
   tags?: Json | null
   status?: ProductStatus | null
+  season?: String | null
+  architecture?: ProductArchitecture | null
   innerMaterials?: ProductUpdateinnerMaterialsInput | null
   outerMaterials?: ProductUpdateouterMaterialsInput | null
   brand?: BrandUpdateOneRequiredWithoutProductsInput | null
   category?: CategoryUpdateOneRequiredWithoutProductsInput | null
+  model?: ProductModelUpdateOneWithoutProductsInput | null
   modelSize?: SizeUpdateOneInput | null
   color?: ColorUpdateOneRequiredInput | null
   secondaryColor?: ColorUpdateOneInput | null
@@ -21874,6 +22696,11 @@ export interface ProductUpdateWithWhereUniqueWithoutBrandInput {
 export interface ProductUpdateWithWhereUniqueWithoutCategoryInput {
   where: ProductWhereUniqueInput
   data: ProductUpdateWithoutCategoryDataInput
+}
+
+export interface ProductUpdateWithWhereUniqueWithoutModelInput {
+  where: ProductWhereUniqueInput
+  data: ProductUpdateWithoutModelDataInput
 }
 
 export interface ProductUpsertNestedInput {
@@ -21902,6 +22729,12 @@ export interface ProductUpsertWithWhereUniqueWithoutCategoryInput {
   where: ProductWhereUniqueInput
   update: ProductUpdateWithoutCategoryDataInput
   create: ProductCreateWithoutCategoryInput
+}
+
+export interface ProductUpsertWithWhereUniqueWithoutModelInput {
+  where: ProductWhereUniqueInput
+  update: ProductUpdateWithoutModelDataInput
+  create: ProductCreateWithoutModelInput
 }
 
 export interface ProductVariantCreateInput {
@@ -23141,6 +23974,24 @@ export interface ProductWhereInput {
   status_not?: ProductStatus | null
   status_in?: ProductStatus[] | ProductStatus | null
   status_not_in?: ProductStatus[] | ProductStatus | null
+  season?: String | null
+  season_not?: String | null
+  season_in?: String[] | String | null
+  season_not_in?: String[] | String | null
+  season_lt?: String | null
+  season_lte?: String | null
+  season_gt?: String | null
+  season_gte?: String | null
+  season_contains?: String | null
+  season_not_contains?: String | null
+  season_starts_with?: String | null
+  season_not_starts_with?: String | null
+  season_ends_with?: String | null
+  season_not_ends_with?: String | null
+  architecture?: ProductArchitecture | null
+  architecture_not?: ProductArchitecture | null
+  architecture_in?: ProductArchitecture[] | ProductArchitecture | null
+  architecture_not_in?: ProductArchitecture[] | ProductArchitecture | null
   createdAt?: DateTime | null
   createdAt_not?: DateTime | null
   createdAt_in?: DateTime[] | DateTime | null
@@ -23159,6 +24010,7 @@ export interface ProductWhereInput {
   updatedAt_gte?: DateTime | null
   brand?: BrandWhereInput | null
   category?: CategoryWhereInput | null
+  model?: ProductModelWhereInput | null
   modelSize?: SizeWhereInput | null
   color?: ColorWhereInput | null
   secondaryColor?: ColorWhereInput | null
@@ -24378,6 +25230,10 @@ export interface AggregateProductFunction {
   count: Int
 }
 
+export interface AggregateProductModel {
+  count: Int
+}
+
 export interface AggregateProductRequest {
   count: Int
 }
@@ -25265,6 +26121,7 @@ export interface Product extends Node {
   images: Json
   modelHeight?: Int | null
   retailPrice?: Int | null
+  model?: ProductModel | null
   modelSize?: Size | null
   color: Color
   secondaryColor?: Color | null
@@ -25274,6 +26131,8 @@ export interface Product extends Node {
   outerMaterials: Array<Material>
   variants?: Array<ProductVariant> | null
   status?: ProductStatus | null
+  season?: String | null
+  architecture?: ProductArchitecture | null
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -25333,6 +26192,45 @@ export interface ProductFunctionSubscriptionPayload {
   previousValues?: ProductFunctionPreviousValues | null
 }
 
+export interface ProductModel extends Node {
+  id: ID_Output
+  name: String
+  height: Float
+  products?: Array<Product> | null
+}
+
+/*
+ * A connection to a list of items.
+
+ */
+export interface ProductModelConnection {
+  pageInfo: PageInfo
+  edges: Array<ProductModelEdge | null>
+  aggregate: AggregateProductModel
+}
+
+/*
+ * An edge in a connection.
+
+ */
+export interface ProductModelEdge {
+  node: ProductModel
+  cursor: String
+}
+
+export interface ProductModelPreviousValues {
+  id: ID_Output
+  name: String
+  height: Float
+}
+
+export interface ProductModelSubscriptionPayload {
+  mutation: MutationType
+  node?: ProductModel | null
+  updatedFields?: Array<String> | null
+  previousValues?: ProductModelPreviousValues | null
+}
+
 export interface ProductPreviousValues {
   id: ID_Output
   slug: String
@@ -25347,6 +26245,8 @@ export interface ProductPreviousValues {
   innerMaterials: Array<Material>
   outerMaterials: Array<Material>
   status?: ProductStatus | null
+  season?: String | null
+  architecture?: ProductArchitecture | null
   createdAt: DateTime
   updatedAt: DateTime
 }

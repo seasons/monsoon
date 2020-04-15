@@ -249,6 +249,15 @@ type Query {
     first: Int
     last: Int
   ): [ProductFunction]!
+  productModels(
+    where: ProductModelWhereInput
+    orderBy: ProductModelOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [ProductModel]!
   productRequests(
     where: ProductRequestWhereInput
     orderBy: ProductRequestOrderByInput
