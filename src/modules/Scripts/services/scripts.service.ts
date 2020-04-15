@@ -92,12 +92,13 @@ export class ScriptsService {
       prisma,
       airtable,
     })
-    const services = ["PrismaService", "AirtableBaseService"].map(a =>
-      moduleRef.get(a, {
-        strict: false,
-      })
-    )
-    services.forEach(a => a.updateConnection(process.env))
+    moduleRef.get(PrismaService, { strict: false }).updateConnection({
+      secret: process.env.PRISMA_SECRET,
+      endpoint: process.env.PRISMA_ENDPOINT,
+    })
+    moduleRef.get(AirtableBaseService, { strict: false }).updateConnection({
+      id: process.env.AIRTABLE_DATABASE_ID,
+    })
   }
 
   private async overrideEnvFromRemoteConfig({

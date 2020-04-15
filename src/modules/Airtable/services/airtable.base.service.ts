@@ -7,7 +7,7 @@ import { UpdatableConnection } from "@app/modules/index.types"
 export class AirtableBaseService implements UpdatableConnection {
   base = Airtable.base(process.env.AIRTABLE_DATABASE_ID)
 
-  updateConnection({ AIRTABLE_DATABASE_ID }) {
-    this.base = Airtable.base(AIRTABLE_DATABASE_ID)
+  updateConnection({ id }) {
+    this.base = Airtable.base(id)
   }
 }

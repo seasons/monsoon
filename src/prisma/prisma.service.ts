@@ -13,21 +13,15 @@ export class PrismaService implements UpdatableConnection {
   })
   client: PrismaClient = prisma
 
-  updateConnection({
-    PRISMA_SECRET,
-    PRISMA_ENDPOINT,
-  }: {
-    PRISMA_SECRET: string
-    PRISMA_ENDPOINT: string
-  }) {
+  updateConnection({ secret, endpoint }: { secret: string; endpoint: string }) {
     this.binding = new PrismaBinding({
-      secret: PRISMA_SECRET,
-      endpoint: PRISMA_ENDPOINT,
+      secret: secret,
+      endpoint: endpoint,
       debug: false,
     })
     this.client = new PrismaClient({
-      secret: PRISMA_SECRET,
-      endpoint: PRISMA_ENDPOINT,
+      secret: secret,
+      endpoint: endpoint,
       debug: false,
     })
   }
