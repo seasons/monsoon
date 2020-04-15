@@ -1,39 +1,45 @@
+import { AirtableIdOption, PrismaEnvOption } from "../scripts.decorators"
 import { Command, Option } from "nestjs-command"
 import { Injectable, Logger } from "@nestjs/common"
 
+import { AirtableService } from "@app/modules/Airtable"
+import { ModuleRef } from "@nestjs/core"
+import { PrismaService } from "@app/prisma/prisma.service"
 import { ScriptsService } from "../services/scripts.service"
-import { UtilsService } from "../../Utils/services/utils.service"
+import { UtilsService } from "@modules/Utils/index"
 import { compact } from "lodash"
 
 @Injectable()
 export class ProductCommands {
   private readonly logger = new Logger(ProductCommands.name)
+  private prisma: PrismaService
 
   constructor(
     private readonly scriptsService: ScriptsService,
-    private readonly utilsService: UtilsService
+    private readonly utilsService: UtilsService,
+    private readonly airtableService: AirtableService,
+    private readonly moduleRef: ModuleRef
   ) {}
 
   @Command({
     command: "get:reservable-items",
     describe:
       "returns an array of product variant ids with status reservable and 1+ available physical products",
+    aliases: "gri",
   })
   async create(
-    @Option({
-      name: "e",
-      describe: "Prisma environment on which to retrieve reservable items",
-      choices: ["local", "staging"],
-      type: "string",
-      default: "local",
-    })
-    e
+    @PrismaEnvOption()
+    prismaEnv
   ) {
-    const { prisma } = await this.scriptsService.getUpdatedServices({
-      prismaEnvironment: e,
+    await this.scriptsService.updateConnections({
+      prismaEnv,
+      moduleRef: this.moduleRef,
+    })
+    this.prisma = this.moduleRef.get(PrismaService, {
+      strict: false,
     })
 
-    const reservableProductVariants = await prisma.client.productVariants({
+    const reservableProductVariants = await this.prisma.client.productVariants({
       where: {
         reservable_gt: 0,
         physicalProducts_some: { inventoryStatus: "Reservable" },
@@ -57,50 +63,43 @@ export class ProductCommands {
   @Command({
     command: "reset:counts",
     describe: `Resets all product variant counts and physical product statuses so 95% of things are reservable.
- Only resets airtable records if a corresponding record exists in prisma.`,
+   Only resets airtable records if a corresponding record exists in prisma.`,
+    aliases: "rc",
   })
   async reset(
-    @Option({
-      name: "prisma",
-      alias: "pe",
-      default: "local",
-      describe: "Prisma environment on which to reset counts",
-      choices: ["local", "staging"],
-      type: "string",
-    })
-    pe,
-    @Option({
-      name: "abid",
-      describe: "Airtable base id. Required if resetting local prisma",
-      type: "string",
-    })
+    @PrismaEnvOption()
+    prismaEnv,
+    @AirtableIdOption()
     abid
   ) {
-    if (pe === "local" && !abid) {
+    if (prismaEnv === "local" && !abid) {
       throw new Error(
         "Must pass desired airtable database id if resetting counts on local prisma"
       )
     }
-
-    const { prisma, airtable } = await this.scriptsService.getUpdatedServices({
-      prismaEnvironment: pe,
-      airtableBaseId: abid,
+    await this.scriptsService.updateConnections({
+      prismaEnv,
+      airtableEnv: abid,
+      moduleRef: this.moduleRef,
+    })
+    this.prisma = this.moduleRef.get(PrismaService, {
+      strict: false,
     })
 
-    const allPrismaProductVariants = await prisma.binding.query.productVariants(
+    const allPrismaProductVariants = await this.prisma.binding.query.productVariants(
       {},
       `
-      {
-        id
-        sku
-        total
-        physicalProducts {
+        {
           id
+          sku
+          total
+          physicalProducts {
+            id
+          }
         }
-      }
-      `
+        `
     )
-    const allAirtableProductVariants = await airtable.getAllProductVariants()
+    const allAirtableProductVariants = await this.airtableService.getAllProductVariants()
 
     // Set up a progress bar
     const pBar = this.utilsService
@@ -127,30 +126,30 @@ export class ProductCommands {
       } = this.scriptsService.getResetCountsData(pv)
 
       // Prisma ops
-      await prisma.client.updateProductVariant({
+      await this.prisma.client.updateProductVariant({
         where: { id: pv.id },
         data: prodVarPrismaResetData,
       })
-      await prisma.client.updateManyPhysicalProducts({
+      await this.prisma.client.updateManyPhysicalProducts({
         where: { id_in: pv.physicalProducts.map(a => a.id) },
         data: physProdPrismaResetData,
       })
       pBar.increment()
 
       // Airtable ops
-      const correspondingAirtableProductVariant = airtable.getCorrespondingAirtableProductVariant(
+      const correspondingAirtableProductVariant = this.airtableService.getCorrespondingAirtableProductVariant(
         allAirtableProductVariants,
         pv
       )
       if (!!correspondingAirtableProductVariant) {
-        await airtable.updateProductVariantCounts(
+        await this.airtableService.updateProductVariantCounts(
           correspondingAirtableProductVariant.id,
           prodVarAirtableResetData
         )
         const airtablePhysicalProducts = compact(
           correspondingAirtableProductVariant.model.physicalProducts
         ) as string[]
-        await airtable.updatePhysicalProducts(
+        await this.airtableService.updatePhysicalProducts(
           airtablePhysicalProducts,
           airtablePhysicalProducts.map(a => physProdAirtableResetData)
         )

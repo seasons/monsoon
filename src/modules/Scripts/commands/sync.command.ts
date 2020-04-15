@@ -1,7 +1,9 @@
+import { AirtableEnvOption, PrismaEnvOption } from "../scripts.decorators"
 import { Command, Option, Positional } from "nestjs-command"
 
 import { AirtableSyncService } from "@modules/Sync/services/sync.airtable.service"
 import { Injectable } from "@nestjs/common"
+import { ModuleRef } from "@nestjs/core"
 import { PrismaSyncService } from "@modules/Sync/services/sync.prisma.service"
 import { ScriptsService } from "../services/scripts.service"
 import fs from "fs"
@@ -12,12 +14,14 @@ export class SyncCommands {
   constructor(
     private readonly airtableSyncService: AirtableSyncService,
     private readonly prismaSyncService: PrismaSyncService,
-    private readonly scriptsService: ScriptsService
+    private readonly scriptsService: ScriptsService,
+    private readonly moduleRef: ModuleRef
   ) {}
 
   @Command({
     command: "sync:airtable:airtable",
     describe: "sync airtable production to staging",
+    aliases: "saa",
   })
   async syncAirtableToAirtable(
     @Option({
@@ -67,6 +71,7 @@ export class SyncCommands {
   @Command({
     command: "sync:airtable:prisma <table>",
     describe: "sync airtable data to prisma",
+    aliases: "sap",
   })
   async syncAirtableToPrisma(
     @Positional({
@@ -85,28 +90,18 @@ export class SyncCommands {
       ],
     })
     table,
-    @Option({
-      name: "prisma",
-      alias: "pe",
-      default: "staging",
-      describe: "Prisma environment to sync to",
+    @PrismaEnvOption({
       choices: ["local", "staging", "production"],
-      type: "string",
-    })
-    pe,
-    @Option({
-      name: "airtable",
-      alias: "ae",
       default: "staging",
-      describe: "Airtable base to sync from",
-      choices: ["production", "staging"],
-      type: "string",
     })
-    ae
+    prismaEnv,
+    @AirtableEnvOption({ choices: ["staging", "production"] })
+    airtableEnv
   ) {
-    await this.scriptsService.overrideEnvFromRemoteConfig({
-      prismaEnvironment: pe,
-      airtableEnvironment: ae,
+    await this.scriptsService.updateConnections({
+      prismaEnv,
+      airtableEnv,
+      moduleRef: this.moduleRef,
     })
 
     const shouldProceed = readlineSync.keyInYN(
@@ -127,6 +122,7 @@ export class SyncCommands {
   // @Command({
   //   command: "sync:prisma:prisma <destination>",
   //   describe: "sync prisma production to staging/local",
+  //   aliases: "spp",
   // })
   async syncPrismaToPrisma(
     @Positional({

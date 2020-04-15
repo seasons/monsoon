@@ -9,7 +9,6 @@ import { NestFactory } from "@nestjs/core"
 import dotenv from "dotenv"
 
 dotenv.config()
-
 // Must be imported after dotenv.configure() to ensure that env vars are being loaded before making module
 import { ScriptsModule } from "./modules/Scripts/scripts.module"
 
@@ -21,10 +20,9 @@ Airtable.configure({
 async function setup() {
   const app = await NestFactory.createApplicationContext(ScriptsModule)
 
-  app
-    .select(CommandModule)
-    .get(CommandService)
-    .exec()
+  const commandService = app.select(CommandModule).get(CommandService)
+  commandService.yargs.scriptName("monsoon")
+  commandService.exec()
 }
 
 setup()
