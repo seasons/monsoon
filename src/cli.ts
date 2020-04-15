@@ -20,14 +20,9 @@ Airtable.configure({
 async function setup() {
   const app = await NestFactory.createApplicationContext(ScriptsModule)
 
-  app
-    .select(CommandModule)
-    .get(CommandService)
-    .yargs.scriptName("monsoon")
-  app
-    .select(CommandModule)
-    .get(CommandService)
-    .exec()
+  const commandService = app.select(CommandModule).get(CommandService)
+  commandService.yargs.scriptName("monsoon")
+  commandService.exec()
 }
 
 setup()
