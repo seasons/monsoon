@@ -1,8 +1,8 @@
 import { ModuleRef } from "@nestjs/core"
 
 export interface UpdateEnvironmentInputs {
-  prisma: PrismaEnvironmentSetting
-  airtable?: AirtableEnvironmentSetting
+  prismaEnv: PrismaEnvironmentSetting
+  airtableEnv?: AirtableEnvironmentSetting
 }
 
 export interface UpdateConnectionsInputs extends UpdateEnvironmentInputs {

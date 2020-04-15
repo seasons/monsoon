@@ -7,6 +7,7 @@ import { PrismaService } from "@prisma/prisma.service"
 import { ScriptsService } from "../services/scripts.service"
 import faker from "faker"
 import { head } from "lodash"
+import { PrismaEnvOption, AirtableIdOption } from "../scripts.decorators"
 
 @Injectable()
 export class UserCommands {
@@ -22,21 +23,13 @@ export class UserCommands {
   @Command({
     command: "create:test-user",
     describe: "creates a test user with the given email and password",
+    aliases: "cts",
   })
   async create(
-    @Option({
-      name: "pe",
-      describe: "Prisma environment on which to create the test user",
-      choices: ["local", "staging"],
-      type: "string",
-      default: "local",
-    })
-    pe,
-    @Option({
-      name: "abid",
-      describe:
-        "Airtable base id. If none given, will create user on staging airtable",
-      type: "string",
+    @PrismaEnvOption()
+    prismaEnv,
+    @AirtableIdOption({
+      describeExtra: "If none given, will use staging",
     })
     abid,
     @Option({
@@ -56,8 +49,8 @@ export class UserCommands {
       strict: false,
     })
     await this.scriptsService.updateConnections({
-      prisma: pe,
-      airtable: abid,
+      prismaEnv,
+      airtableEnv: abid,
       moduleRef: this.moduleRef,
     })
 

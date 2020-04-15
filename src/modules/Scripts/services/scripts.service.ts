@@ -7,7 +7,6 @@ import AWS from "aws-sdk"
 import { AirtableBaseService } from "@app/modules/Airtable"
 import { Injectable } from "@nestjs/common"
 import { PrismaService } from "@app/prisma/prisma.service"
-import { UpdatableConnection } from "@app/modules/index.types"
 import { UtilsService } from "@modules/Utils/index"
 import fs from "fs"
 
@@ -84,13 +83,13 @@ export class ScriptsService {
    * Returns prisma and airtable services that point to the specified environments
    */
   async updateConnections({
-    prisma = "local",
-    airtable = "staging",
+    prismaEnv = "local",
+    airtableEnv = "staging",
     moduleRef,
   }: UpdateConnectionsInputs) {
     await this.overrideEnvFromRemoteConfig({
-      prisma,
-      airtable,
+      prismaEnv,
+      airtableEnv,
     })
     moduleRef.get(PrismaService, { strict: false }).updateConnection({
       secret: process.env.PRISMA_SECRET,
@@ -102,8 +101,8 @@ export class ScriptsService {
   }
 
   private async overrideEnvFromRemoteConfig({
-    prisma = "local",
-    airtable = "staging",
+    prismaEnv = "local",
+    airtableEnv = "staging",
   }: UpdateEnvironmentInputs) {
     const envFilePath = await this.downloadFromS3(
       "/tmp/__monsoon__env.json",
@@ -112,13 +111,13 @@ export class ScriptsService {
     )
     try {
       const env = this.readJSONObjectFromFile(envFilePath)
-      const { endpoint, secret } = env.prisma[prisma]
+      const { endpoint, secret } = env.prisma[prismaEnv]
       process.env.PRISMA_ENDPOINT = endpoint
       process.env.PRISMA_SECRET = secret
-      if (!!airtable && !["staging", "production"].includes(airtable)) {
-        process.env.AIRTABLE_DATABASE_ID = airtable
-      } else if (["staging", "production"].includes(airtable)) {
-        process.env.AIRTABLE_DATABASE_ID = env.airtable[airtable].baseID
+      if (!!airtableEnv && !["staging", "production"].includes(airtableEnv)) {
+        process.env.AIRTABLE_DATABASE_ID = airtableEnv
+      } else if (["staging", "production"].includes(airtableEnv)) {
+        process.env.AIRTABLE_DATABASE_ID = env.airtable[airtableEnv].baseID
       } else {
         throw new Error(
           "Invalid airtable config options. Must pass airtableEnvironment of 'staging' or 'production' OR a valid airtable base id (e.g app702vE3MaQbzciw)"

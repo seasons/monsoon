@@ -7,6 +7,7 @@ import { PrismaSyncService } from "@modules/Sync/services/sync.prisma.service"
 import { ScriptsService } from "../services/scripts.service"
 import fs from "fs"
 import readlineSync from "readline-sync"
+import { PrismaEnvOption, AirtableEnvOption } from "../scripts.decorators"
 
 @Injectable()
 export class SyncCommands {
@@ -20,6 +21,7 @@ export class SyncCommands {
   @Command({
     command: "sync:airtable:airtable",
     describe: "sync airtable production to staging",
+    aliases: "saa",
   })
   async syncAirtableToAirtable(
     @Option({
@@ -69,6 +71,7 @@ export class SyncCommands {
   @Command({
     command: "sync:airtable:prisma <table>",
     describe: "sync airtable data to prisma",
+    aliases: "sap",
   })
   async syncAirtableToPrisma(
     @Positional({
@@ -87,28 +90,17 @@ export class SyncCommands {
       ],
     })
     table,
-    @Option({
-      name: "prisma",
-      alias: "pe",
-      default: "staging",
-      describe: "Prisma environment to sync to",
+    @PrismaEnvOption({
       choices: ["local", "staging", "production"],
-      type: "string",
-    })
-    pe,
-    @Option({
-      name: "airtable",
-      alias: "ae",
       default: "staging",
-      describe: "Airtable base to sync from",
-      choices: ["production", "staging"],
-      type: "string",
     })
-    ae
+    prismaEnv,
+    @AirtableEnvOption()
+    airtableEnv
   ) {
     await this.scriptsService.updateConnections({
-      prisma: pe,
-      airtable: ae,
+      prismaEnv,
+      airtableEnv,
       moduleRef: this.moduleRef,
     })
 
@@ -130,6 +122,7 @@ export class SyncCommands {
   // @Command({
   //   command: "sync:prisma:prisma <destination>",
   //   describe: "sync prisma production to staging/local",
+  //   aliases: "spp",
   // })
   async syncPrismaToPrisma(
     @Positional({

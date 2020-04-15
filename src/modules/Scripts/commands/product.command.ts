@@ -1,7 +1,3 @@
-import {
-  AirtableEnvironmentSetting,
-  PrismaEnvironmentSetting,
-} from "../scripts.types"
 import { Command, Option } from "nestjs-command"
 import { Injectable, Logger } from "@nestjs/common"
 
@@ -11,6 +7,7 @@ import { PrismaService } from "@app/prisma/prisma.service"
 import { ScriptsService } from "../services/scripts.service"
 import { UtilsService } from "@modules/Utils/index"
 import { compact } from "lodash"
+import { PrismaEnvOption, AirtableIdOption } from "../scripts.decorators"
 
 @Injectable()
 export class ProductCommands {
@@ -28,19 +25,14 @@ export class ProductCommands {
     command: "get:reservable-items",
     describe:
       "returns an array of product variant ids with status reservable and 1+ available physical products",
+    aliases: "gri",
   })
   async create(
-    @Option({
-      name: "pe",
-      describe: "Prisma environment on which to retrieve reservable items",
-      choices: ["local", "staging"],
-      type: "string",
-      default: "local",
-    })
-    pe
+    @PrismaEnvOption()
+    prismaEnv
   ) {
     await this.scriptsService.updateConnections({
-      prisma: pe,
+      prismaEnv,
       moduleRef: this.moduleRef,
     })
     this.prisma = this.moduleRef.get(PrismaService, {
@@ -72,32 +64,22 @@ export class ProductCommands {
     command: "reset:counts",
     describe: `Resets all product variant counts and physical product statuses so 95% of things are reservable.
    Only resets airtable records if a corresponding record exists in prisma.`,
+    aliases: "rc",
   })
   async reset(
-    @Option({
-      name: "prisma",
-      alias: "pe",
-      default: "local",
-      describe: "Prisma environment on which to reset counts",
-      choices: ["local", "staging"],
-      type: "string",
-    })
-    pe,
-    @Option({
-      name: "abid",
-      describe: "Airtable base id. Required if resetting local prisma",
-      type: "string",
-    })
+    @PrismaEnvOption()
+    prismaEnv,
+    @AirtableIdOption()
     abid
   ) {
-    if (pe === "local" && !abid) {
+    if (prismaEnv === "local" && !abid) {
       throw new Error(
         "Must pass desired airtable database id if resetting counts on local prisma"
       )
     }
     await this.scriptsService.updateConnections({
-      prisma: pe,
-      airtable: abid,
+      prismaEnv,
+      airtableEnv: abid,
       moduleRef: this.moduleRef,
     })
     this.prisma = this.moduleRef.get(PrismaService, {
