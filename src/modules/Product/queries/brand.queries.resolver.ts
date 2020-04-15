@@ -19,4 +19,9 @@ export class BrandQueriesResolver {
     })
     return brandsWithProducts
   }
+
+  @Query()
+  async brandsConnection(@Args() args, @Info() info) {
+    return this.prisma.binding.query.brandsConnection(args, info)
+  }
 }

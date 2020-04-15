@@ -15,4 +15,9 @@ export class CustomerQueriesResolver {
   async customers(@Args() args, @Info() info) {
     return await this.prisma.binding.query.customers(args, info)
   }
+
+  @Query()
+  async customersConnection(@Args() args, @Info() info) {
+    return await this.prisma.binding.query.customersConnection(args, info)
+  }
 }

@@ -99,6 +99,15 @@ type Query {
     first: Int
     last: Int
   ): [Brand]!
+  brandsConnection(
+    where: BrandWhereInput
+    orderBy: BrandOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): BrandConnection!
   bottomSize(where: BottomSizeWhereUniqueInput!): BottomSize
   bottomSizes(
     where: BottomSizeWhereInput
@@ -148,6 +157,15 @@ type Query {
     first: Int
     last: Int
   ): [Customer]!
+  customersConnection(
+    where: CustomerWhereInput
+    orderBy: CustomerOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): CustomerConnection!
   homepageProductRail(
     where: HomepageProductRailWhereUniqueInput!
   ): HomepageProductRail
