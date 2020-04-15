@@ -1,3 +1,4 @@
+import { AirtableEnvOption, PrismaEnvOption } from "../scripts.decorators"
 import { Command, Option, Positional } from "nestjs-command"
 
 import { AirtableSyncService } from "@modules/Sync/services/sync.airtable.service"
@@ -7,7 +8,6 @@ import { PrismaSyncService } from "@modules/Sync/services/sync.prisma.service"
 import { ScriptsService } from "../services/scripts.service"
 import fs from "fs"
 import readlineSync from "readline-sync"
-import { PrismaEnvOption, AirtableEnvOption } from "../scripts.decorators"
 
 @Injectable()
 export class SyncCommands {
@@ -95,7 +95,7 @@ export class SyncCommands {
       default: "staging",
     })
     prismaEnv,
-    @AirtableEnvOption()
+    @AirtableEnvOption({ choices: ["staging", "production"] })
     airtableEnv
   ) {
     await this.scriptsService.updateConnections({

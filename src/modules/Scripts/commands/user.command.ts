@@ -1,3 +1,4 @@
+import { AirtableIdOption, PrismaEnvOption } from "../scripts.decorators"
 import { Command, Option } from "nestjs-command"
 import { Injectable, Logger } from "@nestjs/common"
 
@@ -7,7 +8,6 @@ import { PrismaService } from "@prisma/prisma.service"
 import { ScriptsService } from "../services/scripts.service"
 import faker from "faker"
 import { head } from "lodash"
-import { PrismaEnvOption, AirtableIdOption } from "../scripts.decorators"
 
 @Injectable()
 export class UserCommands {
