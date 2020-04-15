@@ -44,7 +44,22 @@ export class ProductQueriesResolver {
   }
 
   @Query()
+  async physicalProduct(@Args() args, @Info() info) {
+    return await this.prisma.binding.query.physicalProduct(args, info)
+  }
+
+  @Query()
+  async physicalProducts(@Args() args, @Info() info) {
+    return await this.prisma.binding.query.physicalProducts(args, info)
+  }
+
+  @Query()
   async categories(@Args() args, @Info() info) {
     return await this.prisma.binding.query.categories(args, info)
+  }
+
+  @Query()
+  async categoriesConnection(@Args() args, @Info() info) {
+    return await this.prisma.binding.query.categoriesConnection(args, info)
   }
 }
