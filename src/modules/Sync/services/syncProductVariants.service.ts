@@ -65,7 +65,15 @@ export class SyncProductVariantsService {
             "Top Size": [],
             "Bottom Size": [],
           },
-          ["Variant Number", "Created At", "Images", "Brand", "Color", "Type"]
+          [
+            "Variant Number",
+            "Created At",
+            "Images",
+            "Brand",
+            "Color",
+            "Type",
+            "Product Variant",
+          ]
         ),
       cliProgressBar,
     })
