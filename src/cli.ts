@@ -23,6 +23,10 @@ async function setup() {
   app
     .select(CommandModule)
     .get(CommandService)
+    .yargs.scriptName("monsoon")
+  app
+    .select(CommandModule)
+    .get(CommandService)
     .exec()
 }
 

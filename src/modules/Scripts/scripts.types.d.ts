@@ -1,5 +1,5 @@
-import { ModuleRef } from "@nestjs/core"
 import { CommandOptionsOption } from "nestjs-command"
+import { ModuleRef } from "@nestjs/core"
 
 export interface MonsoonCommandOptions
   extends Omit<CommandOptionsOption, "name"> {
