@@ -128,6 +128,15 @@ type Query {
     first: Int
     last: Int
   ): [Category]!
+  categoriesConnection(
+    where: CategoryWhereInput
+    orderBy: CategoryOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): CategoryConnection!
   collection(where: CollectionWhereUniqueInput!): Collection
   collections(
     where: CollectionWhereInput
@@ -188,6 +197,15 @@ type Query {
     first: Int
     last: Int
   ): [Package]!
+  packagesConnection(
+    where: PackageWhereInput
+    orderBy: PackageOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): PackageConnection!
   physicalProduct(where: PhysicalProductWhereUniqueInput!): PhysicalProduct
   physicalProducts(
     where: PhysicalProductWhereInput
@@ -260,6 +278,15 @@ type Query {
     first: Int
     last: Int
   ): [Reservation]!
+  reservationsConnection(
+    where: ReservationWhereInput
+    orderBy: ReservationOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): ReservationConnection!
   size(where: SizeWhereUniqueInput!): Size
   sizes(
     where: SizeWhereInput
@@ -270,6 +297,15 @@ type Query {
     first: Int
     last: Int
   ): [Size]!
+  sizesConnection(
+    where: SizeWhereInput
+    orderBy: SizeOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): SizeConnection!
   topSize(where: TopSizeWhereUniqueInput!): TopSize
   topSizes(
     where: TopSizeWhereInput
@@ -290,6 +326,15 @@ type Query {
     first: Int
     last: Int
   ): [User]!
+  usersConnection(
+    where: UserWhereInput
+    orderBy: UserOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): UserConnection!
 
   # Custom Fields
   faq: Faq

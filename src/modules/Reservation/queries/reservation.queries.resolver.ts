@@ -17,6 +17,11 @@ export class ReservationQueriesResolver {
   }
 
   @Query()
+  async packagesConnection(@Args() args, @Info() info) {
+    return await this.prisma.binding.query.packagesConnection(args, info)
+  }
+
+  @Query()
   async reservation(@Args() args, @Info() info) {
     return await this.prisma.binding.query.reservation(args, info)
   }
@@ -24,5 +29,10 @@ export class ReservationQueriesResolver {
   @Query()
   async reservations(@Args() args, @Info() info) {
     return await this.prisma.binding.query.reservations(args, info)
+  }
+
+  @Query()
+  async reservationsConnection(@Args() args, @Info() info) {
+    return await this.prisma.binding.query.reservationsConnection(args, info)
   }
 }

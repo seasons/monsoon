@@ -35,4 +35,9 @@ export class SizeQueriesResolver {
   async sizes(@Args() args, @Info() info) {
     return await this.prisma.binding.query.sizes(args, info)
   }
+
+  @Query()
+  async sizesConnection(@Args() args, @Info() info) {
+    return await this.prisma.binding.query.sizesConnection(args, info)
+  }
 }

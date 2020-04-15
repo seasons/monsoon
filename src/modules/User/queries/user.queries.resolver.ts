@@ -15,4 +15,9 @@ export class UserQueriesResolver {
   async users(@Args() args, @Info() info) {
     return await this.prisma.binding.query.users(args, info)
   }
+
+  @Query()
+  async usersConnection(@Args() args, @Info() info) {
+    return await this.prisma.binding.query.usersConnection(args, info)
+  }
 }
