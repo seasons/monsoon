@@ -3,8 +3,8 @@ import * as Airtable from "airtable"
 import {
   AirtableModule,
   CollectionModule,
-  CustomerModule,
   CronModule,
+  CustomerModule,
   EmailModule,
   FAQModule,
   HomepageModule,

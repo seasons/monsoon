@@ -15,10 +15,9 @@ import { ProductUtilsService } from "./services/product.utils.service"
 import { ProductVariantFieldsResolver } from "./fields/productVariant.fields.resolver"
 import { ProductVariantMutationsResolver } from "./mutations/productVariant.mutations.resolver"
 import { ProductVariantService } from "./services/productVariant.service"
-
 import { ShippingModule } from "@modules/Shipping/shipping.module"
-import { UserModule } from "@modules/User/user.module"
 import { SizeQueriesResolver } from "./queries/size.queries.resolver"
+import { UserModule } from "@modules/User/user.module"
 
 @Module({
   imports: [

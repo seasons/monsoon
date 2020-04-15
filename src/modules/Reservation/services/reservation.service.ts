@@ -9,17 +9,17 @@ import {
   ReservationStatus,
   User,
 } from "@prisma/index"
+import {
+  PhysicalProductService,
+  ProductUtilsService,
+  ProductVariantService,
+} from "@modules/Product"
 
 import { AirtableService } from "@modules/Airtable"
 import { ApolloError } from "apollo-server"
 import { EmailService } from "@modules/Email/services/email.service"
 import { Injectable } from "@nestjs/common"
 import { PrismaService } from "@prisma/prisma.service"
-import {
-  ProductUtilsService,
-  ProductVariantService,
-  PhysicalProductService,
-} from "@modules/Product"
 import { ReservationUtilsService } from "./reservation.utils.service"
 import { RollbackError } from "@app/errors"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"

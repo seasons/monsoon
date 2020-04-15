@@ -1,4 +1,5 @@
-import { Resolver, Query, Info, Args } from "@nestjs/graphql"
+import { Args, Info, Query, Resolver } from "@nestjs/graphql"
+
 import { PrismaService } from "@app/prisma/prisma.service"
 
 @Resolver()
