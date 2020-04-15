@@ -89,15 +89,6 @@ type ProductVariant {
 
 type Query {
   me: Me @isAuthenticated
-  bottomSizes(
-    where: BottomSizeWhereInput
-    orderBy: BottomSizeOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [BottomSize]!
   brand(where: BrandWhereUniqueInput!): Brand
   brands(
     where: BrandWhereInput
@@ -108,6 +99,16 @@ type Query {
     first: Int
     last: Int
   ): [Brand]!
+  bottomSize(where: BottomSizeWhereUniqueInput!): BottomSize
+  bottomSizes(
+    where: BottomSizeWhereInput
+    orderBy: BottomSizeOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [BottomSize]!
   category(where: CategoryWhereUniqueInput!): Category
   categories(
     where: CategoryWhereInput
@@ -241,7 +242,17 @@ type Query {
     first: Int
     last: Int
   ): [Reservation]!
-
+  size(where: SizeWhereUniqueInput!): Size
+  sizes(
+    where: SizeWhereInput
+    orderBy: SizeOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Size]!
+  topSize(where: TopSizeWhereUniqueInput!): TopSize
   topSizes(
     where: TopSizeWhereInput
     orderBy: TopSizeOrderByInput
