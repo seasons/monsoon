@@ -1,4 +1,10 @@
 import { ModuleRef } from "@nestjs/core"
+import { CommandOptionsOption } from "nestjs-command"
+
+export interface MonsoonCommandOptions
+  extends Omit<CommandOptionsOption, "name"> {
+  describeExtra?: string
+}
 
 export interface UpdateEnvironmentInputs {
   prismaEnv: PrismaEnvironmentSetting
