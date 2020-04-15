@@ -3930,6 +3930,7 @@ export const typeDefs = /* GraphQL */ `
     Lambswool
     Leather
     Lyocell
+    Linen
     MerinoWool
     Modacrylic
     Mohair

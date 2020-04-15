@@ -1550,6 +1550,7 @@ export type Material =
   | "Lambswool"
   | "Leather"
   | "Lyocell"
+  | "Linen"
   | "MerinoWool"
   | "Modacrylic"
   | "Mohair"

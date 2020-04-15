@@ -1,4 +1,8 @@
-import { AirtableEnvOption, PrismaEnvOption } from "../scripts.decorators"
+import {
+  AirtableEnvOption,
+  AirtableIdOption,
+  PrismaEnvOption,
+} from "../scripts.decorators"
 import { Command, Option, Positional } from "nestjs-command"
 
 import { AirtableSyncService } from "@modules/Sync/services/sync.airtable.service"
@@ -96,11 +100,13 @@ export class SyncCommands {
     })
     prismaEnv,
     @AirtableEnvOption({ choices: ["staging", "production"] })
-    airtableEnv
+    airtableEnv,
+    @AirtableIdOption()
+    abid
   ) {
     await this.scriptsService.updateConnections({
       prismaEnv,
-      airtableEnv,
+      airtableEnv: abid || airtableEnv,
       moduleRef: this.moduleRef,
     })
 

@@ -513,6 +513,13 @@ export class SyncProductVariantsService {
       case ProductSize.XXL:
         return "XXL"
     }
+
+    // If we get here, we're expecting a bottom with size WxL e.g 32x28
+    // Regex: (start)digit-digit-x-digit-digit(end)
+    if (!sizeName.match(/^\d\dx\d\d$/)) {
+      throw new Error(`invalid sizeName: ${sizeName}`)
+    }
+    return sizeName.toLowerCase().replace("x", "") // 32x28 => 3238
   }
 
   private skuForData = (brand, color, sizeName, styleNumber) => {
