@@ -27,8 +27,6 @@ enum ProductSize {
   XXL = "XXL",
 }
 
-const SeasonsLocationID = "recvzTcW19kdBPqf4"
-
 @Injectable()
 export class SyncProductVariantsService {
   constructor(
@@ -113,7 +111,6 @@ export class SyncProductVariantsService {
     const allBrands = await this.airtableService.getAllBrands()
     const allColors = await this.airtableService.getAllColors()
     const allProducts = await this.airtableService.getAllProducts()
-    const allLocations = await this.airtableService.getAllLocations()
     const allPhysicalProducts = await this.airtableService.getAllPhysicalProducts()
     const allTopSizes = await this.airtableService.getAllTopSizes()
     const allBottomSizes = await this.airtableService.getAllBottomSizes()
@@ -136,7 +133,6 @@ export class SyncProductVariantsService {
         // Get the related brand, color, location, style, topsize, bottomSize
         const brand = allBrands.findByIds(product.model.brand)
         const color = allColors.find(x => x.model.name === product.model.color)
-        const location = allLocations.find(x => x.id === SeasonsLocationID)
         const styleNumber = product.model.styleCode
         const topSize = allTopSizes.findByIds(model.topSize)
         const bottomSize = allBottomSizes.findByIds(model.bottomSize)
