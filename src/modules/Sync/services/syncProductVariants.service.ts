@@ -116,6 +116,7 @@ export class SyncProductVariantsService {
     const allBottomSizes = await this.airtableService.getAllBottomSizes()
     const allSizes = await this.airtableService.getAllSizes()
 
+    let numSkipped = 0
     for (const productVariant of allProductVariants) {
       try {
         // Increment the progress bar
@@ -139,13 +140,9 @@ export class SyncProductVariantsService {
 
         // If there's no model or brand, or there's not appropriate size data, skip it.
         const { type } = product.model
-        if (
-          isEmpty(model) ||
-          isEmpty(brand) ||
-          (isEmpty(topSize) && isEmpty(bottomSize)) ||
-          (type === "Top" && isEmpty(topSize)) ||
-          (type === "Bottom" && isEmpty(bottomSize))
-        ) {
+        if (this.missingCriticalData(type, model, brand, topSize, bottomSize)) {
+          numSkipped += 1
+          console.log(`skip: ${productVariant.id}`)
           continue
         }
 
@@ -399,6 +396,22 @@ export class SyncProductVariantsService {
     })
   }
 
+  private missingCriticalData(type, model, brand, topSize, bottomSize) {
+    const noSize = isEmpty(topSize) && isEmpty(bottomSize)
+    const badTopSizeData =
+      (type === "Top" && isEmpty(topSize)) || !topSize?.model?.size
+    const badBottomSizeData =
+      (type === "Top" && isEmpty(topSize)) || !topSize?.model?.size
+
+    return (
+      isEmpty(model) ||
+      isEmpty(brand) ||
+      noSize ||
+      badTopSizeData ||
+      badBottomSizeData
+    )
+  }
+
   private countsForVariant = productVariant => {
     const data = {
       totalCount: productVariant.get("Total Count") || 0,
@@ -486,9 +499,9 @@ export class SyncProductVariantsService {
   private sizeNameForProductVariant = (type, topSize, bottomSize, allSizes) => {
     switch (type) {
       case "Top":
-        return allSizes.findByIds(topSize.model.size)?.model.name
+        return allSizes.findByIds(topSize.model.size).model.name
       case "Bottom":
-        return allSizes.findByIds(bottomSize.model.size)?.model.name
+        return allSizes.findByIds(bottomSize.model.size).model.name
       default:
         throw new Error(`Invalid product type: ${type}`)
     }
