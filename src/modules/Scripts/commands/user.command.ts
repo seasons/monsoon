@@ -8,15 +8,17 @@ import { PrismaService } from "@prisma/prisma.service"
 import { ScriptsService } from "../services/scripts.service"
 import faker from "faker"
 import { head } from "lodash"
+import { AirtableService } from "@modules/Airtable"
 
 @Injectable()
 export class UserCommands {
   private readonly logger = new Logger(UserCommands.name)
-  private prisma: PrismaService
 
   constructor(
     private readonly scriptsService: ScriptsService,
     private readonly authService: AuthService,
+    private readonly prisma: PrismaService,
+    private readonly airtable: AirtableService,
     private moduleRef: ModuleRef
   ) {}
 
@@ -45,9 +47,6 @@ export class UserCommands {
     })
     password
   ) {
-    this.prisma = await this.moduleRef.get(PrismaService, {
-      strict: false,
-    })
     await this.scriptsService.updateConnections({
       prismaEnv,
       airtableEnv: abid,
