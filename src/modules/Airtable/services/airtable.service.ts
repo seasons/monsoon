@@ -1,11 +1,13 @@
 import * as Airtable from "airtable"
 
 import {
+  BottomSizeFields as AirtableBottomSizeFields,
   AirtableData,
   AirtableInventoryStatus,
   AirtableModelName,
   AirtableProductVariantCounts,
   AirtableReservationFields,
+  TopSizeFields as AirtableTopSizeFields,
   PrismaProductVariantCounts,
 } from "../airtable.types"
 import {
@@ -21,9 +23,9 @@ import {
 import { compact, fill, head, zip } from "lodash"
 
 import { AirtableBaseService } from "./airtable.base.service"
+import { AirtableQueriesService } from "./airtable.queries.service"
 import { AirtableUtilsService } from "./airtable.utils.service"
 import { Injectable } from "@nestjs/common"
-import { AirtableQueriesService } from "./airtable.queries.service"
 
 interface AirtableUserFields extends CustomerDetailCreateInput {
   plan?: string
@@ -120,10 +122,19 @@ export class AirtableService extends AirtableQueriesService {
   }
 
   async updateReservation(resnum: number, fields: AirtableReservationFields) {
-    const airtableResy = head(await this.getReservation(resnum))
-    return await this.airtableBase
-      .base("Reservations")
-      .update(airtableResy?.id, fields)
+    return await this.updateRecord(
+      "Reservations",
+      head(await this.getReservation(resnum))?.id,
+      fields
+    )
+  }
+
+  private async updateRecord(
+    modelName: AirtableModelName,
+    recordId: string,
+    fields
+  ) {
+    return await this.airtableBase.base(modelName).update(recordId, fields)
   }
 
   async createOrUpdateAirtableUser(user: User, fields: AirtableUserFields) {

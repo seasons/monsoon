@@ -723,7 +723,7 @@ export class DataScheduledJobs {
         continue
       } else {
         if (
-          this.utils.airtableToPrismaInventoryStatus(
+          this.airtableService.airtableToPrismaInventoryStatus(
             correspondingAirtablePhysicalProduct.fields["Inventory Status"]
           ) !== prismaPhysicalProduct.inventoryStatus
         ) {

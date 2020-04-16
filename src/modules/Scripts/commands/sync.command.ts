@@ -125,11 +125,11 @@ export class SyncCommands {
     await this.airtableSyncService.syncAirtableToPrisma(table)
   }
 
-  // @Command({
-  //   command: "sync:prisma:prisma <destination>",
-  //   describe: "sync prisma production to staging/local",
-  //   aliases: "spp",
-  // })
+  @Command({
+    command: "sync:prisma:prisma <destination>",
+    describe: "sync prisma production to staging/local",
+    aliases: "spp",
+  })
   async syncPrismaToPrisma(
     @Positional({
       name: "destination",
