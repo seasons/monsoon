@@ -123,6 +123,7 @@ export class UserCommands {
       },
       where: { id: customer.id },
     })
+    await this.airtable.createOrUpdateAirtableUser(user, { status: "Active" })
 
     this.logger.log(
       `User with email: ${email}, password: ${password} successfully created`

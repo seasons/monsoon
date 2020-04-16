@@ -7,11 +7,10 @@ import {
   AirtableProductVariantCounts,
   AirtableReservationFields,
   PrismaProductVariantCounts,
+  AirtableUserFields,
+  AirtablePhysicalProductFields,
 } from "../airtable.types"
 import {
-  BillingInfoCreateInput,
-  CustomerDetailCreateInput,
-  CustomerStatus,
   InventoryStatus,
   PhysicalProduct,
   ReservationCreateInput,
@@ -23,16 +22,6 @@ import { compact, fill, head, zip } from "lodash"
 import { AirtableBaseService } from "./airtable.base.service"
 import { AirtableUtilsService } from "./airtable.utils.service"
 import { Injectable } from "@nestjs/common"
-
-interface AirtableUserFields extends CustomerDetailCreateInput {
-  plan?: string
-  status?: CustomerStatus
-  billingInfo?: BillingInfoCreateInput
-}
-
-type AirtablePhysicalProductFields = {
-  "Inventory Status": AirtableInventoryStatus
-}
 
 @Injectable()
 export class AirtableService {

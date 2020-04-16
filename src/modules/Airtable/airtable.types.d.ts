@@ -1,4 +1,9 @@
-import { ProductVariant } from "@prisma/index"
+import {
+  ProductVariant,
+  CustomerStatus,
+  BillingInfoCreateInput,
+  CustomerDetailCreateInput,
+} from "@prisma/index"
 
 export interface AirtableData extends Array<any> {
   findByIds: (ids?: any) => any
@@ -50,4 +55,14 @@ export type AirtableReservationFields = {
     | "Received"
     | "Cancelled"
     | "Completed"
+}
+
+export interface AirtableUserFields extends CustomerDetailCreateInput {
+  plan?: string
+  status?: CustomerStatus
+  billingInfo?: BillingInfoCreateInput
+}
+
+export type AirtablePhysicalProductFields = {
+  "Inventory Status": AirtableInventoryStatus
 }
