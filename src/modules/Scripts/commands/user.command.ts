@@ -23,7 +23,7 @@ export class UserCommands {
   @Command({
     command: "create:test-user",
     describe: "creates a test user with the given email and password",
-    aliases: "cts",
+    aliases: "ctu",
   })
   async create(
     @PrismaEnvOption()

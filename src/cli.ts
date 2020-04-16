@@ -22,6 +22,7 @@ async function setup() {
 
   const commandService = app.select(CommandModule).get(CommandService)
   commandService.yargs.scriptName("monsoon")
+  commandService.yargs.strict() // throw error if user passes in unrecognized command name or option
   commandService.exec()
 }
 
