@@ -1,4 +1,4 @@
-import { AirtableModule, UtilsModule } from ".."
+import { AirtableModule, UtilsModule, PaymentModule } from ".."
 
 import { CommandModule } from "nestjs-command"
 import { Module } from "@nestjs/common"
@@ -18,6 +18,7 @@ import { UserModule } from "@modules/User/user.module"
     UserModule,
     UtilsModule,
     AirtableModule,
+    PaymentModule,
   ],
   providers: [ScriptsService, UserCommands, ProductCommands, SyncCommands],
 })

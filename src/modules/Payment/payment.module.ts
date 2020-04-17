@@ -27,5 +27,6 @@ import { UtilsModule } from "@modules/Utils/utils.module"
     PaymentService,
     PaymentUtilsService,
   ],
+  exports: [PaymentService],
 })
 export class PaymentModule {}

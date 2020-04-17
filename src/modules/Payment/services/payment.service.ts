@@ -6,6 +6,8 @@ import { PaymentUtilsService } from "./payment.utils.service"
 import { PrismaService } from "@prisma/prisma.service"
 import chargebee from "chargebee"
 import { get } from "lodash"
+import { User } from "@app/prisma"
+import { PlanId, BillingAddress, Card } from "../payment.types"
 
 @Injectable()
 export class PaymentService {
@@ -17,6 +19,26 @@ export class PaymentService {
     private readonly prisma: PrismaService
   ) {}
 
+  async createSubscription(
+    planId: PlanId,
+    billingAddress: BillingAddress,
+    user: User,
+    card: Card
+  ) {
+    return await chargebee.subscription
+      .create({
+        plan_id: planId,
+        billingAddress,
+        customer: {
+          first_name: user.firstName,
+          last_name: user.lastName,
+          email: user.email,
+        },
+        card,
+      })
+      .request()
+  }
+
   async getHostedCheckoutPage(
     planId,
     userId,
@@ -26,7 +48,7 @@ export class PaymentService {
     phoneNumber
   ) {
     // translate the passed planID into a chargebee-readable version
-    let chargebeePlanId
+    let chargebeePlanId: PlanId
     if (planId === "AllAccess") {
       chargebeePlanId = "all-access"
     } else if (planId === "Essential") {

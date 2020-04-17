@@ -9,6 +9,9 @@ import { PrismaService } from "@prisma/prisma.service"
 import { ScriptsService } from "../services/scripts.service"
 import faker from "faker"
 import { head } from "lodash"
+import chargebee from "chargebee"
+import { PaymentService } from "@app/modules/Payment/index"
+import { BillingAddress, Card } from "@app/modules/Payment/payment.types"
 
 @Injectable()
 export class UserCommands {
@@ -19,6 +22,7 @@ export class UserCommands {
     private readonly authService: AuthService,
     private readonly prisma: PrismaService,
     private readonly airtable: AirtableService,
+    private readonly paymentService: PaymentService,
     private moduleRef: ModuleRef
   ) {}
 
@@ -52,6 +56,10 @@ export class UserCommands {
       airtableEnv: abid,
       moduleRef: this.moduleRef,
     })
+    chargebee.configure({
+      site: "seasons-test",
+      api_key: "test_fmWkxemy4L3CP1ku1XwPlTYQyJVKajXx",
+    })
 
     const firstName = faker.name.firstName()
     const lastName = faker.name.lastName()
@@ -68,6 +76,16 @@ export class UserCommands {
 
     let user
     let tokenData
+    const address: BillingAddress = {
+      first_name: firstName,
+      last_name: lastName,
+      line1: "138 Mulberry St",
+      city: "New York",
+      state: "NY",
+      zip: "10013",
+      country: "USA",
+    }
+
     try {
       ;({ user, tokenData } = await this.authService.signupUser({
         email,
@@ -83,10 +101,10 @@ export class UserCommands {
             create: {
               slug,
               name: `${firstName} ${lastName}`,
-              address1: "138 Mulberry St",
-              city: "New York",
-              state: "NY",
-              zipCode: "10013",
+              address1: address.line1,
+              city: address.city,
+              state: address.state,
+              zipCode: address.zip,
             },
           },
         },
@@ -107,6 +125,12 @@ export class UserCommands {
         where: { user: { id: user.id } },
       })
     )
+    const card: Card = {
+      number: "4242424242424242",
+      expiry_month: "04",
+      expiry_year: "2022",
+      cvv: "222",
+    }
     await this.prisma.client.updateCustomer({
       data: {
         plan: "Essential",
@@ -114,9 +138,9 @@ export class UserCommands {
           create: {
             brand: "Visa",
             name: fullName,
-            last_digits: faker.finance.mask(4),
-            expiration_month: 0o4,
-            expiration_year: 2022,
+            last_digits: card.number.substr(12),
+            expiration_month: parseInt(card.expiry_month, 10),
+            expiration_year: parseInt(card.expiry_year, 10),
           },
         },
         status: "Active",
@@ -124,9 +148,16 @@ export class UserCommands {
       where: { id: customer.id },
     })
     await this.airtable.createOrUpdateAirtableUser(user, { status: "Active" })
+    await this.paymentService.createSubscription(
+      "all-access",
+      address,
+      user,
+      card
+    )
 
     this.logger.log(
-      `User with email: ${email}, password: ${password} successfully created`
+      `User with email: ${email}, password: ${password} successfully created on ${prismaEnv} prisma and ${abid ||
+        "staging"} airtable`
     )
     this.logger.log(`Access token: ${tokenData.access_token}`)
   }
