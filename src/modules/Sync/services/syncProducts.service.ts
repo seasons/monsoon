@@ -136,7 +136,8 @@ export class SyncProductsService {
           continue
         }
 
-        const slug = slugify(name + " " + color).toLowerCase()
+        const { brandCode } = brand.model
+        const slug = slugify(brandCode + " " + name + " " + color).toLowerCase()
 
         let modelSizeRecord
         if (!!modelSize) {

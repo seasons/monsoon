@@ -18,13 +18,6 @@ const updateSlugs = async () => {
   const abs = new AirtableBaseService()
   const as = new AirtableService(abs, new AirtableUtilsService(abs))
 
-  /*
-  Get all products
-  For each product:
-    -> generate the brandCode-name-color slug in prisma
-    -> set the slug in prisma
-    -> set the slug in airtable
-  */
   const allPrismaProducts = await ps.binding.query.products(
     {},
     `
@@ -41,9 +34,6 @@ const updateSlugs = async () => {
   )
   const allAirtableProducts = await as.getAllProducts()
   for (const prismaProd of allPrismaProducts) {
-    if (prismaProd.slug.includes(prismaProd.brand.brandCode.toLowerCase())) {
-      continue
-    }
     const correspondingAirtableProduct = allAirtableProducts.find(
       a => a.model.slug === prismaProd.slug
     )
