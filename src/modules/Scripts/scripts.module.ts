@@ -1,9 +1,9 @@
 import {
   AirtableModule,
-  UtilsModule,
   CronModule,
-  UserModule,
   SyncModule,
+  UserModule,
+  UtilsModule,
 } from ".."
 
 import { CommandModule } from "nestjs-command"

@@ -6,13 +6,13 @@ import {
 import { Command, Option, Positional } from "nestjs-command"
 
 import { AirtableSyncService } from "@modules/Sync/services/sync.airtable.service"
+import { DataScheduledJobs } from "@app/modules/Cron/services/data.service"
 import { Injectable } from "@nestjs/common"
 import { ModuleRef } from "@nestjs/core"
 import { PrismaSyncService } from "@modules/Sync/services/sync.prisma.service"
 import { ScriptsService } from "../services/scripts.service"
 import fs from "fs"
 import readlineSync from "readline-sync"
-import { DataScheduledJobs } from "@app/modules/Cron/services/data.service"
 
 @Injectable()
 export class SyncCommands {
@@ -187,13 +187,22 @@ export class SyncCommands {
     @AirtableEnvOption({ choices: ["staging", "production"] })
     airtableEnv,
     @AirtableIdOption()
-    abid
+    abid,
+    @Option({
+      name: "withDetails",
+      alias: "wd",
+      type: "boolean",
+      default: false,
+      describe: "show details for nonzero parameters",
+    })
+    withDetails
   ) {
     await this.scriptsService.updateConnections({
       prismaEnv,
       airtableEnv: abid || airtableEnv,
       moduleRef: this.moduleRef,
     })
-    await this.dataJobs.checkAll()
+    console.log("Running health check...")
+    await this.dataJobs.checkAll(withDetails)
   }
 }

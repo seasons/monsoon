@@ -1,4 +1,5 @@
 export { directiveResolvers } from "@app/directives"
+
 import { SyncModule } from "./../../../../../..//src/modules/Sync/sync.module"
 export { AirtableModule } from "@modules/Airtable"
 export { CollectionModule } from "@modules/Collection"
