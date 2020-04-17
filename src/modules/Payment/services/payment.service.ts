@@ -1,13 +1,14 @@
+import { BillingAddress, Card, PlanId } from "../payment.types"
+
 import { AirtableService } from "@modules/Airtable/services/airtable.service"
 import { AuthService } from "@modules/User/services/auth.service"
 import { EmailService } from "@modules/Email/services/email.service"
 import { Injectable } from "@nestjs/common"
 import { PaymentUtilsService } from "./payment.utils.service"
 import { PrismaService } from "@prisma/prisma.service"
+import { User, Plan } from "@app/prisma"
 import chargebee from "chargebee"
 import { get } from "lodash"
-import { User } from "@app/prisma"
-import { PlanId, BillingAddress, Card } from "../payment.types"
 
 @Injectable()
 export class PaymentService {
@@ -20,14 +21,14 @@ export class PaymentService {
   ) {}
 
   async createSubscription(
-    planId: PlanId,
+    plan: Plan,
     billingAddress: BillingAddress,
     user: User,
     card: Card
   ) {
     return await chargebee.subscription
       .create({
-        plan_id: planId,
+        plan_id: this.prismaPlanToChargebeePlanId(plan),
         billingAddress,
         customer: {
           first_name: user.firstName,
@@ -47,20 +48,11 @@ export class PaymentService {
     lastName,
     phoneNumber
   ) {
-    // translate the passed planID into a chargebee-readable version
-    let chargebeePlanId: PlanId
-    if (planId === "AllAccess") {
-      chargebeePlanId = "all-access"
-    } else if (planId === "Essential") {
-      chargebeePlanId = "essential"
-    } else {
-      throw new Error(`unrecognized planID: ${planId}`)
-    }
     return await new Promise((resolve, reject) => {
       chargebee.hosted_page
         .checkout_new({
           subscription: {
-            plan_id: chargebeePlanId,
+            plan_id: this.prismaPlanToChargebeePlanId(planId),
           },
           customer: {
             id: userId,
@@ -264,5 +256,17 @@ export class PaymentService {
         where: { id: customerID },
       })
     }
+  }
+
+  private prismaPlanToChargebeePlanId(plan: Plan) {
+    let chargebeePlanId
+    if (plan === "AllAccess") {
+      chargebeePlanId = "all-access"
+    } else if (plan === "Essential") {
+      chargebeePlanId = "essential"
+    } else {
+      throw new Error(`unrecognized planID: ${plan}`)
+    }
+    return chargebeePlanId
   }
 }

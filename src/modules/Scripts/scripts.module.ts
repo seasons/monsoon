@@ -1,4 +1,4 @@
-import { AirtableModule, UtilsModule, PaymentModule } from ".."
+import { AirtableModule, PaymentModule, UtilsModule } from ".."
 
 import { CommandModule } from "nestjs-command"
 import { Module } from "@nestjs/common"

@@ -1,8 +1,8 @@
 import {
-  ProductVariant,
-  CustomerStatus,
   BillingInfoCreateInput,
   CustomerDetailCreateInput,
+  CustomerStatus,
+  ProductVariant,
 } from "@prisma/index"
 
 export interface AirtableData extends Array<any> {

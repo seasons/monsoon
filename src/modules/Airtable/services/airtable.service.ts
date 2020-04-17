@@ -4,11 +4,11 @@ import {
   AirtableData,
   AirtableInventoryStatus,
   AirtableModelName,
+  AirtablePhysicalProductFields,
   AirtableProductVariantCounts,
   AirtableReservationFields,
-  PrismaProductVariantCounts,
   AirtableUserFields,
-  AirtablePhysicalProductFields,
+  PrismaProductVariantCounts,
 } from "../airtable.types"
 import {
   InventoryStatus,

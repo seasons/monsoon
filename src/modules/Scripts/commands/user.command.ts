@@ -1,17 +1,21 @@
 import { AirtableIdOption, PrismaEnvOption } from "../scripts.decorators"
+import {
+  BillingAddress,
+  Card,
+  PlanId,
+} from "@app/modules/Payment/payment.types"
 import { Command, Option } from "nestjs-command"
 import { Injectable, Logger } from "@nestjs/common"
 
 import { AirtableService } from "@modules/Airtable"
 import { AuthService } from "@modules/User"
 import { ModuleRef } from "@nestjs/core"
+import { PaymentService } from "@app/modules/Payment/index"
 import { PrismaService } from "@prisma/prisma.service"
 import { ScriptsService } from "../services/scripts.service"
+import chargebee from "chargebee"
 import faker from "faker"
 import { head } from "lodash"
-import chargebee from "chargebee"
-import { PaymentService } from "@app/modules/Payment/index"
-import { BillingAddress, Card } from "@app/modules/Payment/payment.types"
 
 @Injectable()
 export class UserCommands {
@@ -49,7 +53,15 @@ export class UserCommands {
       describe: "Password of the test user",
       type: "string",
     })
-    password
+    password,
+    @Option({
+      name: "plan",
+      describe: "Subscription plan of the user",
+      type: "string",
+      default: "Essential",
+      choices: ["AllAccess", "Essential"],
+    })
+    plan
   ) {
     await this.scriptsService.updateConnections({
       prismaEnv,
@@ -133,7 +145,7 @@ export class UserCommands {
     }
     await this.prisma.client.updateCustomer({
       data: {
-        plan: "Essential",
+        plan,
         billingInfo: {
           create: {
             brand: "Visa",
@@ -148,12 +160,7 @@ export class UserCommands {
       where: { id: customer.id },
     })
     await this.airtable.createOrUpdateAirtableUser(user, { status: "Active" })
-    await this.paymentService.createSubscription(
-      "all-access",
-      address,
-      user,
-      card
-    )
+    await this.paymentService.createSubscription(plan, address, user, card)
 
     this.logger.log(
       `User with email: ${email}, password: ${password} successfully created on ${prismaEnv} prisma and ${abid ||

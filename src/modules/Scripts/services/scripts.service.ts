@@ -8,8 +8,8 @@ import { AirtableBaseService } from "@app/modules/Airtable"
 import { Injectable } from "@nestjs/common"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { UtilsService } from "@modules/Utils/index"
-import fs from "fs"
 import chargebee from "chargebee"
+import fs from "fs"
 
 @Injectable()
 export class ScriptsService {
