@@ -239,7 +239,7 @@ export class DataScheduledJobs {
         ...message,
         text:
           `Error while running airtable/prisma health check. Please debug it ` +
-          `locally using \`yarn healthCheck:production\`\n${err}`,
+          `locally using \`monsoon hc --pe production --ae production\`\n${err}`,
       } as any
     }
 

@@ -12,6 +12,7 @@ import { PrismaSyncService } from "@modules/Sync/services/sync.prisma.service"
 import { ScriptsService } from "../services/scripts.service"
 import fs from "fs"
 import readlineSync from "readline-sync"
+import { DataScheduledJobs } from "@app/modules/Cron/services/data.service"
 
 @Injectable()
 export class SyncCommands {
@@ -19,6 +20,7 @@ export class SyncCommands {
     private readonly airtableSyncService: AirtableSyncService,
     private readonly prismaSyncService: PrismaSyncService,
     private readonly scriptsService: ScriptsService,
+    private readonly dataJobs: DataScheduledJobs,
     private readonly moduleRef: ModuleRef
   ) {}
 
@@ -170,5 +172,28 @@ export class SyncCommands {
       fs.unlinkSync(pgpassFilepath)
       fs.unlinkSync(envFilepath)
     }
+  }
+
+  @Command({
+    command: "healthcheck",
+    describe: "check the health of the sync between airtable and prisma",
+    aliases: "hc",
+  })
+  async healthCheck(
+    @PrismaEnvOption({
+      choices: ["local", "staging", "production"],
+    })
+    prismaEnv,
+    @AirtableEnvOption({ choices: ["staging", "production"] })
+    airtableEnv,
+    @AirtableIdOption()
+    abid
+  ) {
+    await this.scriptsService.updateConnections({
+      prismaEnv,
+      airtableEnv: abid || airtableEnv,
+      moduleRef: this.moduleRef,
+    })
+    await this.dataJobs.checkAll()
   }
 }

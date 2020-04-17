@@ -13,7 +13,6 @@
     "debug": "dotenv -- nodemon -e ts,graphql -x node --inspect -r dotenv/config -r ts-node/register src/index.ts",
     "debug:cli": "node --inspect-brk -r dotenv/config -r ts-node/register src/cli.ts",
     "debug:test": "node --inspect-brk -r dotenv/config node_modules/.bin/jest --runInBand",
-    "healthCheck:production": "node -r dotenv/config -r ts-node/register src/scripts/healthCheck.ts -- dotenv_config_path=.env.production",
     "lint": "yarn tslint -c 'tslint.json' 'src/**/*.ts'",
     "prettier": "prettier --write 'src/**/*.{js,ts,tsx,md,graphql}'",
     "prisma:update-bindings": "graphql get-schema --project database && graphql codegen --project database",
