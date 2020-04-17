@@ -947,12 +947,12 @@ export class DataScheduledJobs {
     if (datapoints.length >= 1) {
       blocks.push({
         type: "section",
-        FIELDS: DATAPOINTS.MAP(P =>
+        fields: datapoints.map(p =>
           this.utils.Identity({
             type: "mrkdwn",
             text: `*${p.name}*\n${this.flagIfNeeded(
               p.number,
-              !!P.SHOULDfLAGnUM
+              !!p.shouldFlagNum
             )}`,
           })
         ),
