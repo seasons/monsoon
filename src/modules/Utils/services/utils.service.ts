@@ -5,6 +5,7 @@ import { Injectable } from "@nestjs/common"
 import { PrismaService } from "@prisma/prisma.service"
 import cliProgress from "cli-progress"
 import crypto from "crypto"
+import { upperFirst, camelCase } from "lodash"
 
 @Injectable()
 export class UtilsService {
@@ -86,5 +87,13 @@ export class UtilsService {
       },
       cliProgress.Presets.shades_grey
     )
+  }
+
+  snakeToCapitalizedCamelCase(str: string) {
+    return upperFirst(camelCase(str))
+  }
+
+  secondsSinceEpochToISOString(sec: number): string {
+    return new Date(sec * 1000).toISOString()
   }
 }

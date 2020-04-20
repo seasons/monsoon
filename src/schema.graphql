@@ -542,3 +542,60 @@ type Reservation {
   updatedAt: DateTime!
   returnDateDisplay: DateTime
 }
+
+type Customer {
+  id: ID!
+  user: User!
+  status: CustomerStatus
+  detail: CustomerDetail
+  billingInfo: BillingInfo
+  plan: Plan
+  reservations: [Reservation]
+  invoices: [Invoice]
+}
+
+type Invoice {
+  id: String!
+  subscriptionID: String!
+  recurring: Boolean!
+  status: InvoiceStatus!
+  closingDate: DateTime!
+  dueDate: DateTime!
+  amount: Int!
+  transactions: [Transaction]
+}
+
+type Transaction {
+  id: String!
+  amount: Int!
+  lastFour: String!
+  date: DateTime!
+  status: TransactionStatus!
+  type: TransactionType!
+  settledAt: DateTime
+}
+
+enum TransactionStatus {
+  InProgress
+  Success
+  Voided
+  Failure
+  Timeout
+  NeedsAttention
+}
+
+enum InvoiceStatus {
+  Paid
+  Posted
+  PaymentDue
+  NotPaid
+  Voided
+  Pending
+}
+
+enum TransactionType {
+  Authorization
+  Payment
+  Refund
+  PaymentReversal
+}

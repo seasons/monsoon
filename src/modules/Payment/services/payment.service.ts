@@ -6,6 +6,8 @@ import { PaymentUtilsService } from "./payment.utils.service"
 import { PrismaService } from "@prisma/prisma.service"
 import chargebee from "chargebee"
 import { get } from "lodash"
+import { ID_Input } from "@app/prisma"
+import { UtilsService } from "@modules/Utils"
 
 @Injectable()
 export class PaymentService {
@@ -14,6 +16,7 @@ export class PaymentService {
     private readonly authService: AuthService,
     private readonly emailService: EmailService,
     private readonly paymentUtils: PaymentUtilsService,
+    private readonly utils: UtilsService,
     private readonly prisma: PrismaService
   ) {}
 
@@ -242,5 +245,47 @@ export class PaymentService {
         where: { id: customerID },
       })
     }
+  }
+
+  async getCustomerInvoiceHistory(customer_id: ID_Input) {
+    return ((await Promise.all(
+      (
+        await chargebee.invoice
+          .list({ "customer_id[is]": customer_id })
+          .request()
+      )?.list
+        ?.map(a => a.invoice)
+        ?.map(async b =>
+          this.utils.Identity({
+            ...b,
+            transactions: (
+              await chargebee.transaction.payments_for_invoice(b.id).request()
+            )?.list?.map(c => c.transaction),
+          })
+        )
+    )) as any[]).map(a =>
+      this.utils.Identity({
+        id: a.id,
+        subscriptionID: a.subscription_id,
+        recurring: a.recurring,
+        status: this.utils.snakeToCapitalizedCamelCase(a.status),
+        amount: a.total,
+        closingDate: this.utils.secondsSinceEpochToISOString(a.date),
+        dueDate: this.utils.secondsSinceEpochToISOString(a.due_date),
+        transactions: a.transactions?.map(b =>
+          this.utils.Identity({
+            id: b.id,
+            amount: b.amount,
+            lastFour: b.masked_card_number.replace(/[*]/g, ""),
+            date: this.utils.secondsSinceEpochToISOString(b.date),
+            status: this.utils.snakeToCapitalizedCamelCase(b.status),
+            type: this.utils.snakeToCapitalizedCamelCase(b.type),
+            settledAt: b.settled_at
+              ? this.utils.secondsSinceEpochToISOString(b.settled_at)
+              : null,
+          })
+        ),
+      })
+    )
   }
 }
