@@ -1,5 +1,5 @@
 # source: https://monsoon-prisma-staging.herokuapp.com/monsoon/staging
-# timestamp: Wed Apr 15 2020 17:58:44 GMT-0400 (Eastern Daylight Time)
+# timestamp: Mon Apr 20 2020 11:47:13 GMT-0400 (Eastern Daylight Time)
 
 type AggregateBagItem {
   count: Int!
@@ -155,7 +155,20 @@ input BagItemCreateInput {
   position: Int
   saved: Boolean
   status: BagItemStatus!
-  customer: CustomerCreateOneInput!
+  customer: CustomerCreateOneWithoutBagItemsInput!
+  productVariant: ProductVariantCreateOneInput!
+}
+
+input BagItemCreateManyWithoutCustomerInput {
+  create: [BagItemCreateWithoutCustomerInput!]
+  connect: [BagItemWhereUniqueInput!]
+}
+
+input BagItemCreateWithoutCustomerInput {
+  id: ID
+  position: Int
+  saved: Boolean
+  status: BagItemStatus!
   productVariant: ProductVariantCreateOneInput!
 }
 
@@ -190,6 +203,147 @@ type BagItemPreviousValues {
   position: Int
   saved: Boolean
   status: BagItemStatus!
+}
+
+input BagItemScalarWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [BagItemScalarWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [BagItemScalarWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [BagItemScalarWhereInput!]
+  id: ID
+
+  """
+  All values that are not equal to given value.
+  """
+  id_not: ID
+
+  """
+  All values that are contained in given list.
+  """
+  id_in: [ID!]
+
+  """
+  All values that are not contained in given list.
+  """
+  id_not_in: [ID!]
+
+  """
+  All values less than the given value.
+  """
+  id_lt: ID
+
+  """
+  All values less than or equal the given value.
+  """
+  id_lte: ID
+
+  """
+  All values greater than the given value.
+  """
+  id_gt: ID
+
+  """
+  All values greater than or equal the given value.
+  """
+  id_gte: ID
+
+  """
+  All values containing the given string.
+  """
+  id_contains: ID
+
+  """
+  All values not containing the given string.
+  """
+  id_not_contains: ID
+
+  """
+  All values starting with the given string.
+  """
+  id_starts_with: ID
+
+  """
+  All values not starting with the given string.
+  """
+  id_not_starts_with: ID
+
+  """
+  All values ending with the given string.
+  """
+  id_ends_with: ID
+
+  """
+  All values not ending with the given string.
+  """
+  id_not_ends_with: ID
+  position: Int
+
+  """
+  All values that are not equal to given value.
+  """
+  position_not: Int
+
+  """
+  All values that are contained in given list.
+  """
+  position_in: [Int!]
+
+  """
+  All values that are not contained in given list.
+  """
+  position_not_in: [Int!]
+
+  """
+  All values less than the given value.
+  """
+  position_lt: Int
+
+  """
+  All values less than or equal the given value.
+  """
+  position_lte: Int
+
+  """
+  All values greater than the given value.
+  """
+  position_gt: Int
+
+  """
+  All values greater than or equal the given value.
+  """
+  position_gte: Int
+  saved: Boolean
+
+  """
+  All values that are not equal to given value.
+  """
+  saved_not: Boolean
+  status: BagItemStatus
+
+  """
+  All values that are not equal to given value.
+  """
+  status_not: BagItemStatus
+
+  """
+  All values that are contained in given list.
+  """
+  status_in: [BagItemStatus!]
+
+  """
+  All values that are not contained in given list.
+  """
+  status_not_in: [BagItemStatus!]
 }
 
 enum BagItemStatus {
@@ -247,14 +401,55 @@ input BagItemUpdateInput {
   position: Int
   saved: Boolean
   status: BagItemStatus
-  customer: CustomerUpdateOneRequiredInput
+  customer: CustomerUpdateOneRequiredWithoutBagItemsInput
   productVariant: ProductVariantUpdateOneRequiredInput
+}
+
+input BagItemUpdateManyDataInput {
+  position: Int
+  saved: Boolean
+  status: BagItemStatus
 }
 
 input BagItemUpdateManyMutationInput {
   position: Int
   saved: Boolean
   status: BagItemStatus
+}
+
+input BagItemUpdateManyWithoutCustomerInput {
+  create: [BagItemCreateWithoutCustomerInput!]
+  connect: [BagItemWhereUniqueInput!]
+  set: [BagItemWhereUniqueInput!]
+  disconnect: [BagItemWhereUniqueInput!]
+  delete: [BagItemWhereUniqueInput!]
+  update: [BagItemUpdateWithWhereUniqueWithoutCustomerInput!]
+  updateMany: [BagItemUpdateManyWithWhereNestedInput!]
+  deleteMany: [BagItemScalarWhereInput!]
+  upsert: [BagItemUpsertWithWhereUniqueWithoutCustomerInput!]
+}
+
+input BagItemUpdateManyWithWhereNestedInput {
+  where: BagItemScalarWhereInput!
+  data: BagItemUpdateManyDataInput!
+}
+
+input BagItemUpdateWithoutCustomerDataInput {
+  position: Int
+  saved: Boolean
+  status: BagItemStatus
+  productVariant: ProductVariantUpdateOneRequiredInput
+}
+
+input BagItemUpdateWithWhereUniqueWithoutCustomerInput {
+  where: BagItemWhereUniqueInput!
+  data: BagItemUpdateWithoutCustomerDataInput!
+}
+
+input BagItemUpsertWithWhereUniqueWithoutCustomerInput {
+  where: BagItemWhereUniqueInput!
+  update: BagItemUpdateWithoutCustomerDataInput!
+  create: BagItemCreateWithoutCustomerInput!
 }
 
 input BagItemWhereInput {
@@ -5549,6 +5744,15 @@ type Customer implements Node {
   detail: CustomerDetail
   billingInfo: BillingInfo
   plan: Plan
+  bagItems(
+    where: BagItemWhereInput
+    orderBy: BagItemOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [BagItem!]
   reservations(
     where: ReservationWhereInput
     orderBy: ReservationOrderByInput
@@ -5583,6 +5787,7 @@ input CustomerCreateInput {
   user: UserCreateOneInput!
   detail: CustomerDetailCreateOneInput
   billingInfo: BillingInfoCreateOneInput
+  bagItems: BagItemCreateManyWithoutCustomerInput
   reservations: ReservationCreateManyWithoutCustomerInput
 }
 
@@ -5591,9 +5796,24 @@ input CustomerCreateOneInput {
   connect: CustomerWhereUniqueInput
 }
 
+input CustomerCreateOneWithoutBagItemsInput {
+  create: CustomerCreateWithoutBagItemsInput
+  connect: CustomerWhereUniqueInput
+}
+
 input CustomerCreateOneWithoutReservationsInput {
   create: CustomerCreateWithoutReservationsInput
   connect: CustomerWhereUniqueInput
+}
+
+input CustomerCreateWithoutBagItemsInput {
+  id: ID
+  status: CustomerStatus
+  plan: Plan
+  user: UserCreateOneInput!
+  detail: CustomerDetailCreateOneInput
+  billingInfo: BillingInfoCreateOneInput
+  reservations: ReservationCreateManyWithoutCustomerInput
 }
 
 input CustomerCreateWithoutReservationsInput {
@@ -5603,6 +5823,7 @@ input CustomerCreateWithoutReservationsInput {
   user: UserCreateOneInput!
   detail: CustomerDetailCreateOneInput
   billingInfo: BillingInfoCreateOneInput
+  bagItems: BagItemCreateManyWithoutCustomerInput
 }
 
 type CustomerDetail implements Node {
@@ -7202,6 +7423,7 @@ input CustomerUpdateDataInput {
   user: UserUpdateOneRequiredInput
   detail: CustomerDetailUpdateOneInput
   billingInfo: BillingInfoUpdateOneInput
+  bagItems: BagItemUpdateManyWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
 }
 
@@ -7211,6 +7433,7 @@ input CustomerUpdateInput {
   user: UserUpdateOneRequiredInput
   detail: CustomerDetailUpdateOneInput
   billingInfo: BillingInfoUpdateOneInput
+  bagItems: BagItemUpdateManyWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
 }
 
@@ -7226,11 +7449,27 @@ input CustomerUpdateOneRequiredInput {
   upsert: CustomerUpsertNestedInput
 }
 
+input CustomerUpdateOneRequiredWithoutBagItemsInput {
+  create: CustomerCreateWithoutBagItemsInput
+  connect: CustomerWhereUniqueInput
+  update: CustomerUpdateWithoutBagItemsDataInput
+  upsert: CustomerUpsertWithoutBagItemsInput
+}
+
 input CustomerUpdateOneRequiredWithoutReservationsInput {
   create: CustomerCreateWithoutReservationsInput
   connect: CustomerWhereUniqueInput
   update: CustomerUpdateWithoutReservationsDataInput
   upsert: CustomerUpsertWithoutReservationsInput
+}
+
+input CustomerUpdateWithoutBagItemsDataInput {
+  status: CustomerStatus
+  plan: Plan
+  user: UserUpdateOneRequiredInput
+  detail: CustomerDetailUpdateOneInput
+  billingInfo: BillingInfoUpdateOneInput
+  reservations: ReservationUpdateManyWithoutCustomerInput
 }
 
 input CustomerUpdateWithoutReservationsDataInput {
@@ -7239,11 +7478,17 @@ input CustomerUpdateWithoutReservationsDataInput {
   user: UserUpdateOneRequiredInput
   detail: CustomerDetailUpdateOneInput
   billingInfo: BillingInfoUpdateOneInput
+  bagItems: BagItemUpdateManyWithoutCustomerInput
 }
 
 input CustomerUpsertNestedInput {
   update: CustomerUpdateDataInput!
   create: CustomerCreateInput!
+}
+
+input CustomerUpsertWithoutBagItemsInput {
+  update: CustomerUpdateWithoutBagItemsDataInput!
+  create: CustomerCreateWithoutBagItemsInput!
 }
 
 input CustomerUpsertWithoutReservationsInput {
@@ -7367,6 +7612,9 @@ input CustomerWhereInput {
   user: UserWhereInput
   detail: CustomerDetailWhereInput
   billingInfo: BillingInfoWhereInput
+  bagItems_every: BagItemWhereInput
+  bagItems_some: BagItemWhereInput
+  bagItems_none: BagItemWhereInput
   reservations_every: ReservationWhereInput
   reservations_some: ReservationWhereInput
   reservations_none: ReservationWhereInput
@@ -10144,10 +10392,10 @@ type Mutation {
   createProductFunction(data: ProductFunctionCreateInput!): ProductFunction!
   createColor(data: ColorCreateInput!): Color!
   createTopSize(data: TopSizeCreateInput!): TopSize!
+  createCustomer(data: CustomerCreateInput!): Customer!
   createBottomSize(data: BottomSizeCreateInput!): BottomSize!
   createLabel(data: LabelCreateInput!): Label!
   createPhysicalProduct(data: PhysicalProductCreateInput!): PhysicalProduct!
-  createCustomer(data: CustomerCreateInput!): Customer!
   createProductVariant(data: ProductVariantCreateInput!): ProductVariant!
   createProduct(data: ProductCreateInput!): Product!
   createReservation(data: ReservationCreateInput!): Reservation!
@@ -10228,6 +10476,10 @@ type Mutation {
     data: TopSizeUpdateInput!
     where: TopSizeWhereUniqueInput!
   ): TopSize
+  updateCustomer(
+    data: CustomerUpdateInput!
+    where: CustomerWhereUniqueInput!
+  ): Customer
   updateBottomSize(
     data: BottomSizeUpdateInput!
     where: BottomSizeWhereUniqueInput!
@@ -10237,10 +10489,6 @@ type Mutation {
     data: PhysicalProductUpdateInput!
     where: PhysicalProductWhereUniqueInput!
   ): PhysicalProduct
-  updateCustomer(
-    data: CustomerUpdateInput!
-    where: CustomerWhereUniqueInput!
-  ): Customer
   updateProductVariant(
     data: ProductVariantUpdateInput!
     where: ProductVariantWhereUniqueInput!
@@ -10293,12 +10541,12 @@ type Mutation {
   ): ProductFunction
   deleteColor(where: ColorWhereUniqueInput!): Color
   deleteTopSize(where: TopSizeWhereUniqueInput!): TopSize
+  deleteCustomer(where: CustomerWhereUniqueInput!): Customer
   deleteBottomSize(where: BottomSizeWhereUniqueInput!): BottomSize
   deleteLabel(where: LabelWhereUniqueInput!): Label
   deletePhysicalProduct(
     where: PhysicalProductWhereUniqueInput!
   ): PhysicalProduct
-  deleteCustomer(where: CustomerWhereUniqueInput!): Customer
   deleteProductVariant(where: ProductVariantWhereUniqueInput!): ProductVariant
   deleteProduct(where: ProductWhereUniqueInput!): Product
   deleteReservation(where: ReservationWhereUniqueInput!): Reservation
@@ -10413,6 +10661,11 @@ type Mutation {
     create: TopSizeCreateInput!
     update: TopSizeUpdateInput!
   ): TopSize!
+  upsertCustomer(
+    where: CustomerWhereUniqueInput!
+    create: CustomerCreateInput!
+    update: CustomerUpdateInput!
+  ): Customer!
   upsertBottomSize(
     where: BottomSizeWhereUniqueInput!
     create: BottomSizeCreateInput!
@@ -10428,11 +10681,6 @@ type Mutation {
     create: PhysicalProductCreateInput!
     update: PhysicalProductUpdateInput!
   ): PhysicalProduct!
-  upsertCustomer(
-    where: CustomerWhereUniqueInput!
-    create: CustomerCreateInput!
-    update: CustomerUpdateInput!
-  ): Customer!
   upsertProductVariant(
     where: ProductVariantWhereUniqueInput!
     create: ProductVariantCreateInput!
@@ -10541,6 +10789,10 @@ type Mutation {
     data: TopSizeUpdateManyMutationInput!
     where: TopSizeWhereInput
   ): BatchPayload!
+  updateManyCustomers(
+    data: CustomerUpdateManyMutationInput!
+    where: CustomerWhereInput
+  ): BatchPayload!
   updateManyBottomSizes(
     data: BottomSizeUpdateManyMutationInput!
     where: BottomSizeWhereInput
@@ -10552,10 +10804,6 @@ type Mutation {
   updateManyPhysicalProducts(
     data: PhysicalProductUpdateManyMutationInput!
     where: PhysicalProductWhereInput
-  ): BatchPayload!
-  updateManyCustomers(
-    data: CustomerUpdateManyMutationInput!
-    where: CustomerWhereInput
   ): BatchPayload!
   updateManyProductVariants(
     data: ProductVariantUpdateManyMutationInput!
@@ -10608,10 +10856,10 @@ type Mutation {
   deleteManyProductFunctions(where: ProductFunctionWhereInput): BatchPayload!
   deleteManyColors(where: ColorWhereInput): BatchPayload!
   deleteManyTopSizes(where: TopSizeWhereInput): BatchPayload!
+  deleteManyCustomers(where: CustomerWhereInput): BatchPayload!
   deleteManyBottomSizes(where: BottomSizeWhereInput): BatchPayload!
   deleteManyLabels(where: LabelWhereInput): BatchPayload!
   deleteManyPhysicalProducts(where: PhysicalProductWhereInput): BatchPayload!
-  deleteManyCustomers(where: CustomerWhereInput): BatchPayload!
   deleteManyProductVariants(where: ProductVariantWhereInput): BatchPayload!
   deleteManyProducts(where: ProductWhereInput): BatchPayload!
   deleteManyReservations(where: ReservationWhereInput): BatchPayload!
@@ -18370,6 +18618,15 @@ type Query {
     first: Int
     last: Int
   ): [TopSize]!
+  customers(
+    where: CustomerWhereInput
+    orderBy: CustomerOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Customer]!
   bottomSizes(
     where: BottomSizeWhereInput
     orderBy: BottomSizeOrderByInput
@@ -18397,15 +18654,6 @@ type Query {
     first: Int
     last: Int
   ): [PhysicalProduct]!
-  customers(
-    where: CustomerWhereInput
-    orderBy: CustomerOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [Customer]!
   productVariants(
     where: ProductVariantWhereInput
     orderBy: ProductVariantOrderByInput
@@ -18477,10 +18725,10 @@ type Query {
   productFunction(where: ProductFunctionWhereUniqueInput!): ProductFunction
   color(where: ColorWhereUniqueInput!): Color
   topSize(where: TopSizeWhereUniqueInput!): TopSize
+  customer(where: CustomerWhereUniqueInput!): Customer
   bottomSize(where: BottomSizeWhereUniqueInput!): BottomSize
   label(where: LabelWhereUniqueInput!): Label
   physicalProduct(where: PhysicalProductWhereUniqueInput!): PhysicalProduct
-  customer(where: CustomerWhereUniqueInput!): Customer
   productVariant(where: ProductVariantWhereUniqueInput!): ProductVariant
   product(where: ProductWhereUniqueInput!): Product
   reservation(where: ReservationWhereUniqueInput!): Reservation
@@ -18692,6 +18940,15 @@ type Query {
     first: Int
     last: Int
   ): TopSizeConnection!
+  customersConnection(
+    where: CustomerWhereInput
+    orderBy: CustomerOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): CustomerConnection!
   bottomSizesConnection(
     where: BottomSizeWhereInput
     orderBy: BottomSizeOrderByInput
@@ -18719,15 +18976,6 @@ type Query {
     first: Int
     last: Int
   ): PhysicalProductConnection!
-  customersConnection(
-    where: CustomerWhereInput
-    orderBy: CustomerOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): CustomerConnection!
   productVariantsConnection(
     where: ProductVariantWhereInput
     orderBy: ProductVariantOrderByInput
@@ -21176,6 +21424,7 @@ type Subscription {
   ): ProductFunctionSubscriptionPayload
   color(where: ColorSubscriptionWhereInput): ColorSubscriptionPayload
   topSize(where: TopSizeSubscriptionWhereInput): TopSizeSubscriptionPayload
+  customer(where: CustomerSubscriptionWhereInput): CustomerSubscriptionPayload
   bottomSize(
     where: BottomSizeSubscriptionWhereInput
   ): BottomSizeSubscriptionPayload
@@ -21183,7 +21432,6 @@ type Subscription {
   physicalProduct(
     where: PhysicalProductSubscriptionWhereInput
   ): PhysicalProductSubscriptionPayload
-  customer(where: CustomerSubscriptionWhereInput): CustomerSubscriptionPayload
   productVariant(
     where: ProductVariantSubscriptionWhereInput
   ): ProductVariantSubscriptionPayload
