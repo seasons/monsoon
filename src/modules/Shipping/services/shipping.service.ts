@@ -167,11 +167,14 @@ export class ShippingService {
       mass_unit: "lb",
     }
 
+    const shipmentBase = {
+      address_from: nextCleanersAddressShippo,
+      address_to: customerAddressShippo,
+      parcels: [parcel],
+    }
     return [
       {
-        address_from: nextCleanersAddressShippo,
-        address_to: customerAddressShippo,
-        parcels: [parcel],
+        ...shipmentBase,
         ...(insureShipmentForCustomer && {
           extra: {
             insurance: {
@@ -182,9 +185,7 @@ export class ShippingService {
         }),
       },
       {
-        address_from: nextCleanersAddressShippo,
-        address_to: customerAddressShippo,
-        parcels: [parcel],
+        ...shipmentBase,
         extra: { is_return: true },
       },
     ]
