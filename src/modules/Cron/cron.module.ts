@@ -23,5 +23,6 @@ import { UtilsModule } from "@modules/Utils/utils.module"
     UtilsModule,
   ],
   providers: [ReservationScheduledJobs, UsersScheduledJobs, DataScheduledJobs],
+  exports: [DataScheduledJobs],
 })
 export class CronModule {}

@@ -44,6 +44,11 @@ export class ProductQueriesResolver {
   }
 
   @Query()
+  async productModels(@Args() args, @Info() info) {
+    return await this.prisma.binding.query.productModels(args, info)
+  }
+
+  @Query()
   async physicalProduct(@Args() args, @Info() info) {
     return await this.prisma.binding.query.physicalProduct(args, info)
   }
@@ -61,5 +66,10 @@ export class ProductQueriesResolver {
   @Query()
   async categoriesConnection(@Args() args, @Info() info) {
     return await this.prisma.binding.query.categoriesConnection(args, info)
+  }
+
+  @Query()
+  async colors(@Args() args, @Info() info) {
+    return await this.prisma.binding.query.colors(args, info)
   }
 }

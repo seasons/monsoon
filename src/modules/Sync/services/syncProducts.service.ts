@@ -1,3 +1,5 @@
+import * as fs from "fs"
+
 import { BottomSizeType, LetterSize, ProductCreateInput } from "../../../prisma"
 import { head, isEmpty } from "lodash"
 
@@ -134,7 +136,8 @@ export class SyncProductsService {
           continue
         }
 
-        const slug = slugify(name + " " + color).toLowerCase()
+        const { brandCode } = brand.model
+        const slug = slugify(brandCode + " " + name + " " + color).toLowerCase()
 
         let modelSizeRecord
         if (!!modelSize) {
@@ -188,7 +191,7 @@ export class SyncProductsService {
           description,
           images,
           retailPrice,
-          externalURL,
+          externalURL: externalURL || "",
           ...(() => {
             return !!modelSizeRecord
               ? { modelSize: { connect: { id: modelSizeRecord.id } } }
@@ -198,6 +201,9 @@ export class SyncProductsService {
           status: (status || "Available").replace(" ", ""),
         } as ProductCreateInput
 
+        // if (name == "Kit Shirt") {
+        //   console.log(data)
+        // }
         await this.prisma.client.upsertProduct({
           where: {
             slug,

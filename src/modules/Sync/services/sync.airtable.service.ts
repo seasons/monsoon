@@ -138,7 +138,7 @@ export class AirtableSyncService {
       case "products":
         return await this.syncProductsService.syncAirtableToPrisma()
       case "product-variants":
-        await this.syncProductsService.syncAirtableToPrisma()
+        // await this.syncProductsService.syncAirtableToPrisma()
         return await this.syncProductVariantsService.syncAirtableToPrisma()
       case "collections":
         return await this.syncCollectionsService.syncAirtableToPrisma()
@@ -150,7 +150,6 @@ export class AirtableSyncService {
         throw new Error("invalid table name")
     }
   }
-  y
 
   private async syncAll() {
     const _createSubBar = curry(

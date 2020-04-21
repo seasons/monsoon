@@ -13,4 +13,5 @@ devnotes.txt
 .helpers.md
 .pgpass
 log*.txt
+logs/*.txt
 coverage/

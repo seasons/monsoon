@@ -1,3 +1,5 @@
+import * as fs from "fs"
+
 import {
   BottomSizeType,
   InventoryStatus,
@@ -26,8 +28,6 @@ enum ProductSize {
   XL = "XL",
   XXL = "XXL",
 }
-
-const SeasonsLocationID = "recvzTcW19kdBPqf4"
 
 @Injectable()
 export class SyncProductVariantsService {
@@ -68,6 +68,7 @@ export class SyncProductVariantsService {
           [
             "Variant Number",
             "Created At",
+            "Updated At",
             "Images",
             "Brand",
             "Color",
@@ -113,12 +114,14 @@ export class SyncProductVariantsService {
     const allBrands = await this.airtableService.getAllBrands()
     const allColors = await this.airtableService.getAllColors()
     const allProducts = await this.airtableService.getAllProducts()
-    const allLocations = await this.airtableService.getAllLocations()
     const allPhysicalProducts = await this.airtableService.getAllPhysicalProducts()
     const allTopSizes = await this.airtableService.getAllTopSizes()
     const allBottomSizes = await this.airtableService.getAllBottomSizes()
     const allSizes = await this.airtableService.getAllSizes()
 
+    let numSkipped = 0
+    const logFile = this.utils.openLogFile("syncProductVariants")
+    fs.writeSync(logFile, "Begin Log\n")
     for (const productVariant of allProductVariants) {
       try {
         // Increment the progress bar
@@ -136,20 +139,28 @@ export class SyncProductVariantsService {
         // Get the related brand, color, location, style, topsize, bottomSize
         const brand = allBrands.findByIds(product.model.brand)
         const color = allColors.find(x => x.model.name === product.model.color)
-        const location = allLocations.find(x => x.id === SeasonsLocationID)
         const styleNumber = product.model.styleCode
         const topSize = allTopSizes.findByIds(model.topSize)
         const bottomSize = allBottomSizes.findByIds(model.bottomSize)
 
         // If there's no model or brand, or there's not appropriate size data, skip it.
         const { type } = product.model
-        if (
-          isEmpty(model) ||
-          isEmpty(brand) ||
-          (isEmpty(topSize) && isEmpty(bottomSize)) ||
-          (type === "Top" && isEmpty(topSize)) ||
-          (type === "Bottom" && isEmpty(bottomSize))
-        ) {
+        const { isMissing, explanation } = this.missingCriticalData(
+          type,
+          model,
+          brand,
+          topSize,
+          bottomSize
+        )
+        if (isMissing) {
+          numSkipped += 1
+          this.utils.writeLines(logFile, [
+            "SKIPPED RECORD",
+            `Airtable record id: ${productVariant.id}`,
+            `Explanation: ${explanation}`,
+            "Record:",
+            productVariant,
+          ])
           continue
         }
 
@@ -161,12 +172,15 @@ export class SyncProductVariantsService {
           styleNumber
         )
 
+        const physicalProducts = allPhysicalProducts.filter(a =>
+          (a.get("Product Variant") || []).includes(productVariant.id)
+        )
         const {
           totalCount,
-          nonReservableCount,
+          updatedNonReservableCount,
           reservedCount,
-          updatedReservableCount,
-        } = this.countsForVariant(productVariant)
+          reservableCount,
+        } = this.countsForVariant(productVariant, physicalProducts)
 
         const { weight, height } = model
 
@@ -265,9 +279,9 @@ export class SyncProductVariantsService {
           weight: parseFloat(weight) || 0,
           height: parseFloat(height) || 0,
           total: totalCount,
-          reservable: updatedReservableCount,
+          reservable: reservableCount,
           reserved: reservedCount,
-          nonReservable: nonReservableCount,
+          nonReservable: updatedNonReservableCount,
           color: {
             connect: {
               slug: color.model.slug,
@@ -295,10 +309,6 @@ export class SyncProductVariantsService {
 
         // Figure out if we need to create new instance of physical products
         // based on the counts and what's available in the database
-        const physicalProducts = allPhysicalProducts.filter(a =>
-          (a.get("Product Variant") || []).includes(productVariant.id)
-        )
-
         const newPhysicalProducts = await this.createMorePhysicalProductsIfNeeded(
           {
             sku,
@@ -322,16 +332,25 @@ export class SyncProductVariantsService {
         await productVariant.patchUpdate({
           SKU: sku,
           "Total Count": totalCount,
-          "Reservable Count": updatedReservableCount,
+          "Reservable Count": reservableCount,
           "Reserved Count": reservedCount,
-          "Non-Reservable Count": nonReservableCount,
+          "Non-Reservable Count": updatedNonReservableCount,
         })
+
+        this.updateCategorySizeName(type, topSize, bottomSize, sku)
       } catch (e) {
-        console.log(productVariant)
-        console.error(e)
+        this.utils.writeLines(logFile, [
+          "THREW ERROR",
+          "Record:",
+          productVariant,
+          "Error:",
+          e,
+        ])
       }
     }
+    this.utils.writeLines(logFile, [`Skipped ${numSkipped} records`])
     multibar?.stop()
+    fs.closeSync(logFile)
   }
 
   private async addBottomSizeLinks(
@@ -403,35 +422,59 @@ export class SyncProductVariantsService {
     })
   }
 
-  private countsForVariant = productVariant => {
+  private missingCriticalData(type, model, brand, topSize, bottomSize) {
+    const possibleIssues = {
+      noModel: isEmpty(model),
+      noBrand: isEmpty(brand),
+      noSize: isEmpty(topSize) && isEmpty(bottomSize),
+      isTopButNoTopSize: type === "Top" && isEmpty(topSize),
+      isTopButNoSizeOnTopSize:
+        type === "Top" && !isEmpty(topSize) && !topSize?.model?.size,
+      isBottomButNoBottomSize: type === "Bottom" && isEmpty(bottomSize),
+      isBottomButNoSizeOnBottomSize:
+        type === "Bottom" && !isEmpty(bottomSize) && !bottomSize?.model?.size,
+    }
+
+    const possibleIssue = Object.keys(possibleIssues).find(
+      a => possibleIssues[a]
+    )
+    return {
+      isMissing: !!possibleIssue,
+      explanation: `${possibleIssue || ""}`,
+    }
+  }
+
+  private countsForVariant = (productVariant, physicalProducts) => {
     const data = {
       totalCount: productVariant.get("Total Count") || 0,
       reservedCount: productVariant.get("Reserved Count") || 0,
       nonReservableCount: productVariant.get("Non-Reservable Count") || 0,
+      reservableCount: productVariant.get("Reservable Count") || 0,
     }
 
-    // Assume all newly added product variants are reservable, and calculate the
-    // number of such product variants as the remainder once reserved and nonReservable
+    // Assume all newly added product variants are nonReservable, and calculate the
+    // number of such product variants as the remainder once reserved and reserved
     // are taken into account
     const updatedData = {
       ...data,
-      updatedReservableCount:
-        data.totalCount - data.reservedCount - data.nonReservableCount,
+      updatedNonReservableCount:
+        data.totalCount - data.reservedCount - data.reservableCount,
     }
 
     const {
       totalCount,
-      updatedReservableCount,
+      updatedNonReservableCount,
       reservedCount,
-      nonReservableCount,
+      reservableCount,
     } = updatedData
 
     // Make sure these counts make sense
     if (
       totalCount < 0 ||
-      updatedReservableCount < 0 ||
-      nonReservableCount < 0 ||
-      totalCount !== reservedCount + nonReservableCount + updatedReservableCount
+      updatedNonReservableCount < 0 ||
+      reservedCount < 0 ||
+      reservableCount < 0 ||
+      totalCount !== reservedCount + updatedNonReservableCount + reservableCount
     ) {
       throw new Error(`Invalid counts: ${updatedData}`)
     }
@@ -490,9 +533,20 @@ export class SyncProductVariantsService {
   private sizeNameForProductVariant = (type, topSize, bottomSize, allSizes) => {
     switch (type) {
       case "Top":
-        return allSizes.findByIds(topSize.model.size)?.model.name
+        return allSizes.findByIds(topSize.model.size).model.name
       case "Bottom":
-        return allSizes.findByIds(bottomSize.model.size)?.model.name
+        return allSizes.findByIds(bottomSize.model.size).model.name
+      default:
+        throw new Error(`Invalid product type: ${type}`)
+    }
+  }
+
+  private async updateCategorySizeName(type, topSize, bottomSize, sku) {
+    switch (type) {
+      case "Top":
+        return await topSize?.patchUpdate({ Name: sku })
+      case "Bottom":
+        return await bottomSize?.patchUpdate({ Name: sku })
       default:
         throw new Error(`Invalid product type: ${type}`)
     }
@@ -513,6 +567,13 @@ export class SyncProductVariantsService {
       case ProductSize.XXL:
         return "XXL"
     }
+
+    // If we get here, we're expecting a bottom with size WxL e.g 32x28
+    // Regex: (start)digit-digit-x-digit-digit(end)
+    if (!sizeName.match(/^\d\dx\d\d$/)) {
+      throw new Error(`invalid sizeName: ${sizeName}`)
+    }
+    return sizeName.toLowerCase().replace("x", "") // 32x28 => 3238
   }
 
   private skuForData = (brand, color, sizeName, styleNumber) => {

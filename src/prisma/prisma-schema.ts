@@ -144,7 +144,20 @@ export const typeDefs = /* GraphQL */ `
 
   input BagItemCreateInput {
     id: ID
-    customer: CustomerCreateOneInput!
+    customer: CustomerCreateOneWithoutBagItemsInput!
+    productVariant: ProductVariantCreateOneInput!
+    position: Int
+    saved: Boolean
+    status: BagItemStatus!
+  }
+
+  input BagItemCreateManyWithoutCustomerInput {
+    create: [BagItemCreateWithoutCustomerInput!]
+    connect: [BagItemWhereUniqueInput!]
+  }
+
+  input BagItemCreateWithoutCustomerInput {
+    id: ID
     productVariant: ProductVariantCreateOneInput!
     position: Int
     saved: Boolean
@@ -174,6 +187,40 @@ export const typeDefs = /* GraphQL */ `
     status: BagItemStatus!
   }
 
+  input BagItemScalarWhereInput {
+    id: ID
+    id_not: ID
+    id_in: [ID!]
+    id_not_in: [ID!]
+    id_lt: ID
+    id_lte: ID
+    id_gt: ID
+    id_gte: ID
+    id_contains: ID
+    id_not_contains: ID
+    id_starts_with: ID
+    id_not_starts_with: ID
+    id_ends_with: ID
+    id_not_ends_with: ID
+    position: Int
+    position_not: Int
+    position_in: [Int!]
+    position_not_in: [Int!]
+    position_lt: Int
+    position_lte: Int
+    position_gt: Int
+    position_gte: Int
+    saved: Boolean
+    saved_not: Boolean
+    status: BagItemStatus
+    status_not: BagItemStatus
+    status_in: [BagItemStatus!]
+    status_not_in: [BagItemStatus!]
+    AND: [BagItemScalarWhereInput!]
+    OR: [BagItemScalarWhereInput!]
+    NOT: [BagItemScalarWhereInput!]
+  }
+
   enum BagItemStatus {
     Added
     Reserved
@@ -199,8 +246,14 @@ export const typeDefs = /* GraphQL */ `
   }
 
   input BagItemUpdateInput {
-    customer: CustomerUpdateOneRequiredInput
+    customer: CustomerUpdateOneRequiredWithoutBagItemsInput
     productVariant: ProductVariantUpdateOneRequiredInput
+    position: Int
+    saved: Boolean
+    status: BagItemStatus
+  }
+
+  input BagItemUpdateManyDataInput {
     position: Int
     saved: Boolean
     status: BagItemStatus
@@ -210,6 +263,41 @@ export const typeDefs = /* GraphQL */ `
     position: Int
     saved: Boolean
     status: BagItemStatus
+  }
+
+  input BagItemUpdateManyWithoutCustomerInput {
+    create: [BagItemCreateWithoutCustomerInput!]
+    delete: [BagItemWhereUniqueInput!]
+    connect: [BagItemWhereUniqueInput!]
+    set: [BagItemWhereUniqueInput!]
+    disconnect: [BagItemWhereUniqueInput!]
+    update: [BagItemUpdateWithWhereUniqueWithoutCustomerInput!]
+    upsert: [BagItemUpsertWithWhereUniqueWithoutCustomerInput!]
+    deleteMany: [BagItemScalarWhereInput!]
+    updateMany: [BagItemUpdateManyWithWhereNestedInput!]
+  }
+
+  input BagItemUpdateManyWithWhereNestedInput {
+    where: BagItemScalarWhereInput!
+    data: BagItemUpdateManyDataInput!
+  }
+
+  input BagItemUpdateWithoutCustomerDataInput {
+    productVariant: ProductVariantUpdateOneRequiredInput
+    position: Int
+    saved: Boolean
+    status: BagItemStatus
+  }
+
+  input BagItemUpdateWithWhereUniqueWithoutCustomerInput {
+    where: BagItemWhereUniqueInput!
+    data: BagItemUpdateWithoutCustomerDataInput!
+  }
+
+  input BagItemUpsertWithWhereUniqueWithoutCustomerInput {
+    where: BagItemWhereUniqueInput!
+    update: BagItemUpdateWithoutCustomerDataInput!
+    create: BagItemCreateWithoutCustomerInput!
   }
 
   input BagItemWhereInput {
@@ -2215,6 +2303,15 @@ export const typeDefs = /* GraphQL */ `
     detail: CustomerDetail
     billingInfo: BillingInfo
     plan: Plan
+    bagItems(
+      where: BagItemWhereInput
+      orderBy: BagItemOrderByInput
+      skip: Int
+      after: String
+      before: String
+      first: Int
+      last: Int
+    ): [BagItem!]
     reservations(
       where: ReservationWhereInput
       orderBy: ReservationOrderByInput
@@ -2239,6 +2336,7 @@ export const typeDefs = /* GraphQL */ `
     detail: CustomerDetailCreateOneInput
     billingInfo: BillingInfoCreateOneInput
     plan: Plan
+    bagItems: BagItemCreateManyWithoutCustomerInput
     reservations: ReservationCreateManyWithoutCustomerInput
   }
 
@@ -2247,9 +2345,24 @@ export const typeDefs = /* GraphQL */ `
     connect: CustomerWhereUniqueInput
   }
 
+  input CustomerCreateOneWithoutBagItemsInput {
+    create: CustomerCreateWithoutBagItemsInput
+    connect: CustomerWhereUniqueInput
+  }
+
   input CustomerCreateOneWithoutReservationsInput {
     create: CustomerCreateWithoutReservationsInput
     connect: CustomerWhereUniqueInput
+  }
+
+  input CustomerCreateWithoutBagItemsInput {
+    id: ID
+    user: UserCreateOneInput!
+    status: CustomerStatus
+    detail: CustomerDetailCreateOneInput
+    billingInfo: BillingInfoCreateOneInput
+    plan: Plan
+    reservations: ReservationCreateManyWithoutCustomerInput
   }
 
   input CustomerCreateWithoutReservationsInput {
@@ -2259,6 +2372,7 @@ export const typeDefs = /* GraphQL */ `
     detail: CustomerDetailCreateOneInput
     billingInfo: BillingInfoCreateOneInput
     plan: Plan
+    bagItems: BagItemCreateManyWithoutCustomerInput
   }
 
   type CustomerDetail {
@@ -2815,6 +2929,7 @@ export const typeDefs = /* GraphQL */ `
     detail: CustomerDetailUpdateOneInput
     billingInfo: BillingInfoUpdateOneInput
     plan: Plan
+    bagItems: BagItemUpdateManyWithoutCustomerInput
     reservations: ReservationUpdateManyWithoutCustomerInput
   }
 
@@ -2824,6 +2939,7 @@ export const typeDefs = /* GraphQL */ `
     detail: CustomerDetailUpdateOneInput
     billingInfo: BillingInfoUpdateOneInput
     plan: Plan
+    bagItems: BagItemUpdateManyWithoutCustomerInput
     reservations: ReservationUpdateManyWithoutCustomerInput
   }
 
@@ -2839,11 +2955,27 @@ export const typeDefs = /* GraphQL */ `
     connect: CustomerWhereUniqueInput
   }
 
+  input CustomerUpdateOneRequiredWithoutBagItemsInput {
+    create: CustomerCreateWithoutBagItemsInput
+    update: CustomerUpdateWithoutBagItemsDataInput
+    upsert: CustomerUpsertWithoutBagItemsInput
+    connect: CustomerWhereUniqueInput
+  }
+
   input CustomerUpdateOneRequiredWithoutReservationsInput {
     create: CustomerCreateWithoutReservationsInput
     update: CustomerUpdateWithoutReservationsDataInput
     upsert: CustomerUpsertWithoutReservationsInput
     connect: CustomerWhereUniqueInput
+  }
+
+  input CustomerUpdateWithoutBagItemsDataInput {
+    user: UserUpdateOneRequiredInput
+    status: CustomerStatus
+    detail: CustomerDetailUpdateOneInput
+    billingInfo: BillingInfoUpdateOneInput
+    plan: Plan
+    reservations: ReservationUpdateManyWithoutCustomerInput
   }
 
   input CustomerUpdateWithoutReservationsDataInput {
@@ -2852,11 +2984,17 @@ export const typeDefs = /* GraphQL */ `
     detail: CustomerDetailUpdateOneInput
     billingInfo: BillingInfoUpdateOneInput
     plan: Plan
+    bagItems: BagItemUpdateManyWithoutCustomerInput
   }
 
   input CustomerUpsertNestedInput {
     update: CustomerUpdateDataInput!
     create: CustomerCreateInput!
+  }
+
+  input CustomerUpsertWithoutBagItemsInput {
+    update: CustomerUpdateWithoutBagItemsDataInput!
+    create: CustomerCreateWithoutBagItemsInput!
   }
 
   input CustomerUpsertWithoutReservationsInput {
@@ -2890,6 +3028,9 @@ export const typeDefs = /* GraphQL */ `
     plan_not: Plan
     plan_in: [Plan!]
     plan_not_in: [Plan!]
+    bagItems_every: BagItemWhereInput
+    bagItems_some: BagItemWhereInput
+    bagItems_none: BagItemWhereInput
     reservations_every: ReservationWhereInput
     reservations_some: ReservationWhereInput
     reservations_none: ReservationWhereInput
@@ -3930,6 +4071,7 @@ export const typeDefs = /* GraphQL */ `
     Lambswool
     Leather
     Lyocell
+    Linen
     MerinoWool
     Modacrylic
     Mohair
