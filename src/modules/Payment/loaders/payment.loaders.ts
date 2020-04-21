@@ -10,26 +10,30 @@ import { groupBy } from "lodash"
 @Injectable()
 export class InvoicesLoader implements NestDataLoader {
   generateDataLoader(): InvoicesDataLoader {
-    // it should instantiate a data loader each time
     return new DataLoader<string, Invoice[]>(
       this.loadInvoicesForCustomers.bind(this)
     )
   }
 
   private async loadInvoicesForCustomers(customerIds: string[]) {
-    const x = (async () => {
-      const allInvoices = (
-        await chargebee.invoice
-          .list({ "customer_id[in]": `[${customerIds}]` })
-          .request()
-      )?.list?.map(a => a.invoice)
-      const invoicesByCustomerId = groupBy(allInvoices, a => a.customer_id)
-      const invoiceArraysInOrder = []
-      customerIds.forEach(id => {
-        invoiceArraysInOrder.push(invoicesByCustomerId[id])
-      })
-      return invoiceArraysInOrder
-    })()
-    return x
+    const allInvoices = []
+    let offset = "start"
+    while (true) {
+      let list
+      ;({ next_offset: offset, list } = await chargebee.invoice
+        .list({
+          "customer_id[in]": `[${customerIds}]`,
+          limit: 100,
+          ...(offset === "start" ? {} : { offset }),
+        })
+        .request())
+      allInvoices.push(...list?.map(a => a.invoice))
+      if (!offset) {
+        break
+      }
+    }
+
+    const invoicesByCustomerId = groupBy(allInvoices, a => a.customer_id)
+    return Promise.resolve(customerIds.map(a => invoicesByCustomerId[a]))
   }
 }

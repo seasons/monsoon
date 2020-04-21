@@ -250,23 +250,6 @@ export class PaymentService {
     }
   }
 
-  async loadInvoicesForCustomers(customerIds: string[]) {
-    const x = (async () => {
-      const allInvoices = (
-        await chargebee.invoice
-          .list({ "customer_id[in]": `[${customerIds}]` })
-          .request()
-      )?.list?.map(a => a.invoice)
-      const invoicesByCustomerId = groupBy(allInvoices, a => a.customer_id)
-      const invoiceArraysInOrder = []
-      customerIds.forEach(id => {
-        invoiceArraysInOrder.push(invoicesByCustomerId[id])
-      })
-      return invoiceArraysInOrder
-    })()
-    return x
-  }
-
   async getCustomerInvoiceHistory(
     // payment customer_id is equivalent to prisma user id, NOT prisma customer id
     customer_id: string,
