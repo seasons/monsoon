@@ -7,7 +7,7 @@ import { PaymentUtilsService } from "./payment.utils.service"
 import { PrismaService } from "@prisma/prisma.service"
 import { UtilsService } from "@modules/Utils"
 import chargebee from "chargebee"
-import { get } from "lodash"
+import { get, union } from "lodash"
 
 @Injectable()
 export class PaymentService {
@@ -247,23 +247,40 @@ export class PaymentService {
     }
   }
 
-  async getCustomerInvoiceHistory(customer_id: ID_Input) {
-    return ((await Promise.all(
-      (
-        await chargebee.invoice
-          .list({ "customer_id[is]": customer_id })
-          .request()
-      )?.list
-        ?.map(a => a.invoice)
-        ?.map(async b =>
-          this.utils.Identity({
-            ...b,
-            transactions: (
-              await chargebee.transaction.payments_for_invoice(b.id).request()
-            )?.list?.map(c => c.transaction),
-          })
-        )
-    )) as any[]).map(a =>
+  async getCustomerInvoiceHistory(
+    // payment customer_id is equivalent to prisma user id, NOT prisma customer id
+    customer_id: ID_Input
+  ) {
+    const invoices = (
+      await chargebee.invoice.list({ "customer_id[is]": customer_id }).request()
+    )?.list?.map(a => a.invoice)
+    if (!invoices) {
+      return null
+    }
+
+    // Get transaction details for all transactions on all invoices in one go
+    // to minimize API calls and reduce risk of hitting chargebee API limit
+    const transactionsForAllInvoices = (
+      await chargebee.transaction
+        .list({
+          "id[in]": `[${invoices.reduce(
+            (transactionIds, currentInvoice) =>
+              union(
+                transactionIds,
+                this.getInvoiceTransactionIds(currentInvoice)
+              ),
+            []
+          )}]`,
+        })
+        .request()
+    )?.list?.map(a => a.transaction)
+    invoices.forEach(a => {
+      a.transactions = transactionsForAllInvoices?.filter(b =>
+        this.getInvoiceTransactionIds(a).includes(b.id)
+      )
+    })
+
+    return invoices.map(a =>
       this.utils.Identity({
         id: a.id,
         subscriptionID: a.subscription_id,
@@ -287,5 +304,9 @@ export class PaymentService {
         ),
       })
     )
+  }
+
+  private getInvoiceTransactionIds(invoice) {
+    return invoice.linked_payments.map(a => a.txn_id)
   }
 }

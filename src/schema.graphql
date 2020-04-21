@@ -565,12 +565,12 @@ type Customer {
 
 type Invoice {
   id: String!
-  subscriptionID: String!
-  recurring: Boolean!
-  status: InvoiceStatus!
-  closingDate: DateTime!
-  dueDate: DateTime!
-  amount: Int!
+  subscriptionID: String
+  recurring: Boolean
+  status: InvoiceStatus
+  closingDate: DateTime
+  dueDate: DateTime
+  amount: Int
   transactions: [Transaction]
 }
 
