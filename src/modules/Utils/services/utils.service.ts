@@ -1,21 +1,16 @@
-import { InventoryStatus, Location } from "@prisma/index"
+import * as fs from "fs"
 
-import { AirtableInventoryStatus } from "@modules/Airtable/airtable.types"
+import { camelCase, upperFirst } from "lodash"
+
 import { Injectable } from "@nestjs/common"
+import { Location } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
 import cliProgress from "cli-progress"
 import crypto from "crypto"
-import { upperFirst, camelCase } from "lodash"
 
 @Injectable()
 export class UtilsService {
   constructor(private readonly prisma: PrismaService) {}
-
-  airtableToPrismaInventoryStatus(
-    airtableStatus: AirtableInventoryStatus
-  ): InventoryStatus {
-    return airtableStatus.replace(" ", "") as InventoryStatus
-  }
 
   deleteFieldsFromObject(obj: object, fieldsToDelete: string[]) {
     const objCopy = { ...obj }
@@ -95,5 +90,22 @@ export class UtilsService {
 
   secondsSinceEpochToISOString(sec: number): string {
     return new Date(sec * 1000).toISOString()
+  }
+
+  openLogFile(logName) {
+    return fs.openSync(
+      `logs/${logName}-${require("moment")().format(
+        "MMMM-Do-YYYY-hh:mm:ss"
+      )}.txt`,
+      "a"
+    )
+  }
+
+  writeLines(fileDescriptor, lines: (string | object)[]) {
+    lines.forEach(line => {
+      let formattedLine = typeof line === "object" ? JSON.stringify(line) : line
+      fs.writeSync(fileDescriptor, formattedLine)
+      fs.writeSync(fileDescriptor, `\n`)
+    })
   }
 }
