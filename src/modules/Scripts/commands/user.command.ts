@@ -1,7 +1,9 @@
+import { AirtableIdOption, PrismaEnvOption } from "../scripts.decorators"
 import { Command, Option } from "nestjs-command"
 import { Injectable, Logger } from "@nestjs/common"
 
-import { AuthService } from "@modules/User/services/auth.service"
+import { AuthService } from "@modules/User"
+import { ModuleRef } from "@nestjs/core"
 import { PrismaService } from "@prisma/prisma.service"
 import { ScriptsService } from "../services/scripts.service"
 import faker from "faker"
@@ -10,26 +12,26 @@ import { head } from "lodash"
 @Injectable()
 export class UserCommands {
   private readonly logger = new Logger(UserCommands.name)
+  private prisma: PrismaService
 
   constructor(
+    private readonly scriptsService: ScriptsService,
     private readonly authService: AuthService,
-    private readonly prisma: PrismaService,
-    private readonly scriptsService: ScriptsService
+    private moduleRef: ModuleRef
   ) {}
 
   @Command({
     command: "create:test-user",
     describe: "creates a test user with the given email and password",
+    aliases: "cts",
   })
   async create(
-    @Option({
-      name: "e",
-      describe: "Prisma environment on which to create the test user",
-      choices: ["local", "staging"],
-      type: "string",
-      default: "local",
+    @PrismaEnvOption()
+    prismaEnv,
+    @AirtableIdOption({
+      describeExtra: "If none given, will use staging",
     })
-    e,
+    abid,
     @Option({
       name: "email",
       describe: "Email of the test user",
@@ -43,9 +45,13 @@ export class UserCommands {
     })
     password
   ) {
-    await this.scriptsService.overrideEnvFromRemoteConfig({
-      prismaEnvironment: e as string,
-      airtableEnvironment: "staging",
+    this.prisma = await this.moduleRef.get(PrismaService, {
+      strict: false,
+    })
+    await this.scriptsService.updateConnections({
+      prismaEnv,
+      airtableEnv: abid,
+      moduleRef: this.moduleRef,
     })
 
     const firstName = faker.name.firstName()
@@ -70,7 +76,7 @@ export class UserCommands {
         firstName,
         lastName,
         details: {
-          phoneNumber: "(193) 556-0754",
+          phoneNumber: "(646) 350-2715",
           height: 40 + faker.random.number(32),
           weight: "152lb",
           bodyType: "Athletic",
@@ -87,8 +93,11 @@ export class UserCommands {
         },
       }))
     } catch (err) {
+      console.log(err)
       if (err.message.includes("400")) {
         this.logger.error("User already in staging auth0 environment")
+      } else {
+        throw err
       }
       return
     }

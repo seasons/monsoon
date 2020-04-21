@@ -1,7 +1,14 @@
+import {
+  AirtableEnvOption,
+  AirtableIdOption,
+  PrismaEnvOption,
+} from "../scripts.decorators"
 import { Command, Option, Positional } from "nestjs-command"
 
 import { AirtableSyncService } from "@modules/Sync/services/sync.airtable.service"
+import { DataScheduledJobs } from "@app/modules/Cron/services/data.service"
 import { Injectable } from "@nestjs/common"
+import { ModuleRef } from "@nestjs/core"
 import { PrismaSyncService } from "@modules/Sync/services/sync.prisma.service"
 import { ScriptsService } from "../services/scripts.service"
 import fs from "fs"
@@ -12,12 +19,15 @@ export class SyncCommands {
   constructor(
     private readonly airtableSyncService: AirtableSyncService,
     private readonly prismaSyncService: PrismaSyncService,
-    private readonly scriptsService: ScriptsService
+    private readonly scriptsService: ScriptsService,
+    private readonly dataJobs: DataScheduledJobs,
+    private readonly moduleRef: ModuleRef
   ) {}
 
   @Command({
     command: "sync:airtable:airtable",
     describe: "sync airtable production to staging",
+    aliases: "saa",
   })
   async syncAirtableToAirtable(
     @Option({
@@ -67,6 +77,7 @@ export class SyncCommands {
   @Command({
     command: "sync:airtable:prisma <table>",
     describe: "sync airtable data to prisma",
+    aliases: "sap",
   })
   async syncAirtableToPrisma(
     @Positional({
@@ -85,28 +96,20 @@ export class SyncCommands {
       ],
     })
     table,
-    @Option({
-      name: "prisma",
-      alias: "pe",
-      default: "staging",
-      describe: "Prisma environment to sync to",
+    @PrismaEnvOption({
       choices: ["local", "staging", "production"],
-      type: "string",
-    })
-    pe,
-    @Option({
-      name: "airtable",
-      alias: "ae",
       default: "staging",
-      describe: "Airtable base to sync from",
-      choices: ["production", "staging"],
-      type: "string",
     })
-    ae
+    prismaEnv,
+    @AirtableEnvOption({ choices: ["staging", "production"] })
+    airtableEnv,
+    @AirtableIdOption()
+    abid
   ) {
-    await this.scriptsService.overrideEnvFromRemoteConfig({
-      prismaEnvironment: pe,
-      airtableEnvironment: ae,
+    await this.scriptsService.updateConnections({
+      prismaEnv,
+      airtableEnv: abid || airtableEnv,
+      moduleRef: this.moduleRef,
     })
 
     const shouldProceed = readlineSync.keyInYN(
@@ -124,10 +127,11 @@ export class SyncCommands {
     await this.airtableSyncService.syncAirtableToPrisma(table)
   }
 
-  // @Command({
-  //   command: "sync:prisma:prisma <destination>",
-  //   describe: "sync prisma production to staging/local",
-  // })
+  @Command({
+    command: "sync:prisma:prisma <destination>",
+    describe: "sync prisma production to staging/local",
+    aliases: "spp",
+  })
   async syncPrismaToPrisma(
     @Positional({
       name: "destination",
@@ -168,5 +172,37 @@ export class SyncCommands {
       fs.unlinkSync(pgpassFilepath)
       fs.unlinkSync(envFilepath)
     }
+  }
+
+  @Command({
+    command: "healthcheck",
+    describe: "check the health of the sync between airtable and prisma",
+    aliases: "hc",
+  })
+  async healthCheck(
+    @PrismaEnvOption({
+      choices: ["local", "staging", "production"],
+    })
+    prismaEnv,
+    @AirtableEnvOption({ choices: ["staging", "production"] })
+    airtableEnv,
+    @AirtableIdOption()
+    abid,
+    @Option({
+      name: "withDetails",
+      alias: "wd",
+      type: "boolean",
+      default: false,
+      describe: "show details for nonzero parameters",
+    })
+    withDetails
+  ) {
+    await this.scriptsService.updateConnections({
+      prismaEnv,
+      airtableEnv: abid || airtableEnv,
+      moduleRef: this.moduleRef,
+    })
+    console.log("Running health check...")
+    await this.dataJobs.checkAll(withDetails)
   }
 }

@@ -1,4 +1,4 @@
-# import Category, User, Bag, Collection, CustomerDetail, ProductFunction, SavedProduct from "./prisma/prisma.graphql"
+# import Brand, Category, User, Bag, Collection, CustomerDetail, ProductFunction, SavedProduct from "./prisma/prisma.graphql"
 
 directive @isAuthenticated on FIELD_DEFINITION
 directive @hasRole(roles: [String]) on FIELD_DEFINITION
@@ -99,6 +99,124 @@ type Query {
     first: Int
     last: Int
   ): [Brand]!
+  brandsConnection(
+    where: BrandWhereInput
+    orderBy: BrandOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): BrandConnection!
+  bottomSize(where: BottomSizeWhereUniqueInput!): BottomSize
+  bottomSizes(
+    where: BottomSizeWhereInput
+    orderBy: BottomSizeOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [BottomSize]!
+  category(where: CategoryWhereUniqueInput!): Category
+  categories(
+    where: CategoryWhereInput
+    orderBy: CategoryOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Category]!
+  categoriesConnection(
+    where: CategoryWhereInput
+    orderBy: CategoryOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): CategoryConnection!
+  collection(where: CollectionWhereUniqueInput!): Collection
+  collections(
+    where: CollectionWhereInput
+    orderBy: CollectionOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Collection]!
+  colors(
+    where: ColorWhereInput
+    orderBy: ColorOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Color]!
+  customer(where: CustomerWhereUniqueInput!): Customer
+  customers(
+    where: CustomerWhereInput
+    orderBy: CustomerOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Customer]!
+  customersConnection(
+    where: CustomerWhereInput
+    orderBy: CustomerOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): CustomerConnection!
+  homepageProductRail(
+    where: HomepageProductRailWhereUniqueInput!
+  ): HomepageProductRail
+  homepageProductRails(
+    where: HomepageProductRailWhereInput
+    orderBy: HomepageProductRailOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [HomepageProductRail]!
+  package(where: PackageWhereUniqueInput!): Package
+  packages(
+    where: PackageWhereInput
+    orderBy: PackageOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Package]!
+  packagesConnection(
+    where: PackageWhereInput
+    orderBy: PackageOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): PackageConnection!
+  physicalProduct(where: PhysicalProductWhereUniqueInput!): PhysicalProduct
+  physicalProducts(
+    where: PhysicalProductWhereInput
+    orderBy: PhysicalProductOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [PhysicalProduct]!
+  product(where: ProductWhereUniqueInput!): Product
   products(
     category: String
     where: ProductWhereInput
@@ -122,45 +240,6 @@ type Query {
     first: Int
     last: Int
   ): ProductConnection!
-  collections(
-    where: CollectionWhereInput
-    orderBy: CollectionOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [Collection]!
-  collection(where: CollectionWhereUniqueInput!): Collection
-  faq: Faq
-  homepage: Homepage
-  chargebeeCheckout(
-    planID: PlanID!
-    userIDHash: String!
-  ): ChargebeeHostedPagePayload
-  chargebeeUpdatePaymentPage: ChargebeeHostedPagePayload
-  homepageProductRail(
-    where: HomepageProductRailWhereUniqueInput!
-  ): HomepageProductRail
-  homepageProductRails(
-    where: HomepageProductRailWhereInput
-    orderBy: HomepageProductRailOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [HomepageProductRail]!
-  product(where: ProductWhereUniqueInput!): Product
-  categories(
-    where: CategoryWhereInput
-    orderBy: CategoryOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [Category]!
   productFunctions(
     where: ProductFunctionWhereInput
     orderBy: ProductFunctionOrderByInput
@@ -170,6 +249,15 @@ type Query {
     first: Int
     last: Int
   ): [ProductFunction]!
+  productModels(
+    where: ProductModelWhereInput
+    orderBy: ProductModelOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [ProductModel]!
   productRequests(
     where: ProductRequestWhereInput
     orderBy: ProductRequestOrderByInput
@@ -179,6 +267,92 @@ type Query {
     first: Int
     last: Int
   ): [ProductRequest]!
+  order(where: OrderWhereUniqueInput!): Order
+  orders(
+    where: OrderWhereInput
+    orderBy: OrderOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Order]!
+  reservation(where: ReservationWhereUniqueInput!): Reservation
+  reservations(
+    where: ReservationWhereInput
+    orderBy: ReservationOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Reservation]!
+  reservationsConnection(
+    where: ReservationWhereInput
+    orderBy: ReservationOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): ReservationConnection!
+  size(where: SizeWhereUniqueInput!): Size
+  sizes(
+    where: SizeWhereInput
+    orderBy: SizeOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Size]!
+  sizesConnection(
+    where: SizeWhereInput
+    orderBy: SizeOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): SizeConnection!
+  topSize(where: TopSizeWhereUniqueInput!): TopSize
+  topSizes(
+    where: TopSizeWhereInput
+    orderBy: TopSizeOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [TopSize]!
+  user(where: UserWhereUniqueInput!): User
+  users(
+    where: UserWhereInput
+    orderBy: UserOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [User]!
+  usersConnection(
+    where: UserWhereInput
+    orderBy: UserOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): UserConnection!
+
+  # Custom Fields
+  faq: Faq
+  homepage: Homepage
+  chargebeeCheckout(
+    planID: PlanID!
+    userIDHash: String!
+  ): ChargebeeHostedPagePayload
+  chargebeeUpdatePaymentPage: ChargebeeHostedPagePayload
   search(query: String!, options: SearchOptions): [SearchResult]!
   reservationFeedback: ReservationFeedback
 }

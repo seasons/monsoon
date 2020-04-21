@@ -51,3 +51,11 @@ export type AirtableReservationFields = {
     | "Cancelled"
     | "Completed"
 }
+
+export interface TopSizeFields extends CategorySizeFields {}
+
+export interface BottomSizeFields extends CategorySizeFields {}
+
+type CategorySizeFields = {
+  Name: string
+}

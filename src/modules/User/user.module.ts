@@ -9,6 +9,7 @@ import { Module } from "@nestjs/common"
 import { PrismaModule } from "@prisma/prisma.module"
 import { ShippingModule } from "../Shipping/shipping.module"
 import { UserMutationsResolver } from "./mutations/user.mutations"
+import { UserQueriesResolver } from "./queries/user.queries.resolver"
 
 @Module({
   imports: [AirtableModule, PrismaModule, ShippingModule],
@@ -20,6 +21,7 @@ import { UserMutationsResolver } from "./mutations/user.mutations"
     AuthMutationsResolver,
     CustomerMutationsResolver,
     UserMutationsResolver,
+    UserQueriesResolver,
   ],
   exports: [AuthService, CustomerService],
 })

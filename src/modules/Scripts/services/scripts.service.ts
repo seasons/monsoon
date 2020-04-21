@@ -1,9 +1,12 @@
+import {
+  UpdateConnectionsInputs,
+  UpdateEnvironmentInputs,
+} from "../scripts.types"
+
 import AWS from "aws-sdk"
-import { AirtableService } from "../../Airtable/services/airtable.service"
-import { AirtableUtilsService } from "../../Airtable/services/airtable.utils.service"
+import { AirtableBaseService } from "@app/modules/Airtable"
 import { Injectable } from "@nestjs/common"
-import { OverridableAirtableBaseService } from "./airtable.service"
-import { OverrideablePrismaService } from "./prisma.service"
+import { PrismaService } from "@app/prisma/prisma.service"
 import { UtilsService } from "@modules/Utils/index"
 import fs from "fs"
 
@@ -79,37 +82,28 @@ export class ScriptsService {
   /**
    * Returns prisma and airtable services that point to the specified environments
    */
-  async getUpdatedServices({
-    prismaEnvironment = "local",
-    airtableEnvironment = "staging",
-    airtableBaseId = "",
-  }): Promise<{
-    prisma: OverrideablePrismaService
-    airtable: AirtableService
-  }> {
+  async updateConnections({
+    prismaEnv = "local",
+    airtableEnv = "staging",
+    moduleRef,
+  }: UpdateConnectionsInputs) {
     await this.overrideEnvFromRemoteConfig({
-      prismaEnvironment,
-      airtableEnvironment,
-      airtableBaseId,
+      prismaEnv,
+      airtableEnv,
     })
-    const _abs = new OverridableAirtableBaseService(
-      process.env.AIRTABLE_DATABASE_ID
-    )
-    return {
-      prisma: new OverrideablePrismaService({
-        secret: process.env.PRISMA_SECRET,
-        endpoint: process.env.PRISMA_ENDPOINT,
-        debug: false,
-      }),
-      airtable: new AirtableService(_abs, new AirtableUtilsService(_abs)),
-    }
+    moduleRef.get(PrismaService, { strict: false }).updateConnection({
+      secret: process.env.PRISMA_SECRET,
+      endpoint: process.env.PRISMA_ENDPOINT,
+    })
+    moduleRef.get(AirtableBaseService, { strict: false }).updateConnection({
+      id: process.env.AIRTABLE_DATABASE_ID,
+    })
   }
 
-  async overrideEnvFromRemoteConfig({
-    prismaEnvironment = "local",
-    airtableEnvironment = "staging",
-    airtableBaseId = undefined,
-  }) {
+  private async overrideEnvFromRemoteConfig({
+    prismaEnv = "local",
+    airtableEnv = "staging",
+  }: UpdateEnvironmentInputs) {
     const envFilePath = await this.downloadFromS3(
       "/tmp/__monsoon__env.json",
       "monsoon-scripts",
@@ -117,17 +111,16 @@ export class ScriptsService {
     )
     try {
       const env = this.readJSONObjectFromFile(envFilePath)
-      const { endpoint, secret } = env.prisma[prismaEnvironment]
+      const { endpoint, secret } = env.prisma[prismaEnv]
       process.env.PRISMA_ENDPOINT = endpoint
       process.env.PRISMA_SECRET = secret
-      if (!!airtableBaseId) {
-        process.env.AIRTABLE_DATABASE_ID = airtableBaseId
-      } else if (["staging", "production"].includes(airtableEnvironment)) {
-        process.env.AIRTABLE_DATABASE_ID =
-          env.airtable[airtableEnvironment].baseID
+      if (!!airtableEnv && !["staging", "production"].includes(airtableEnv)) {
+        process.env.AIRTABLE_DATABASE_ID = airtableEnv
+      } else if (["staging", "production"].includes(airtableEnv)) {
+        process.env.AIRTABLE_DATABASE_ID = env.airtable[airtableEnv].baseID
       } else {
         throw new Error(
-          "Invalid airtable config options. Must pass airtableEnvironment of 'staging' or 'production' OR pass a valid airtableBaseId"
+          "Invalid airtable config options. Must pass airtableEnvironment of 'staging' or 'production' OR a valid airtable base id (e.g app702vE3MaQbzciw)"
         )
       }
     } catch (err) {

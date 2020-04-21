@@ -31,7 +31,7 @@ export class SyncTopSizesService {
       cliProgressBar,
     })
 
-    this.addSizeLinks(
+    await this.addSizeLinks(
       allProductionRecords,
       await this.airtableService.getAllTopSizes(
         this.airtableService.getStagingBase()

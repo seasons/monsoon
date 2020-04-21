@@ -1,6 +1,8 @@
 export { directiveResolvers } from "@app/directives"
+
 export { AirtableModule } from "@modules/Airtable"
 export { CollectionModule } from "@modules/Collection"
+export { CustomerModule } from "@modules/Customer"
 export { CronModule } from "./Cron/cron.module"
 export { EmailModule } from "./Email/email.module"
 export { FAQModule } from "./FAQ/faq.module"
@@ -13,3 +15,4 @@ export { SlackModule } from "./Slack/slack.module"
 export { UserModule } from "./User/user.module"
 export { UtilsModule } from "./Utils/utils.module"
 export { ShippingModule } from "./Shipping/shipping.module"
+export { SyncModule } from "./Sync/sync.module"
