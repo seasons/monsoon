@@ -1,15 +1,16 @@
-import { get, union } from "lodash"
+import { Inject, Injectable, forwardRef } from "@nestjs/common"
+import { get, groupBy, union } from "lodash"
 
 import { AirtableService } from "@modules/Airtable/services/airtable.service"
 import { AuthService } from "@modules/User/services/auth.service"
 import { EmailService } from "@modules/Email/services/email.service"
-import { ID_Input } from "@app/prisma"
-import { Injectable } from "@nestjs/common"
-import { InvoicesDataLoader } from "@app/modules/DataLoader/dataloader.types"
+import { InvoicesDataLoader } from "../payment.types"
 import { PaymentUtilsService } from "./payment.utils.service"
 import { PrismaService } from "@prisma/prisma.service"
 import { UtilsService } from "@modules/Utils"
 import chargebee from "chargebee"
+
+// import { InvoicesLoader } from ".."
 
 @Injectable()
 export class PaymentService {
@@ -251,15 +252,18 @@ export class PaymentService {
 
   async loadInvoicesForCustomers(customerIds: string[]) {
     const x = (async () => {
-      return [
-        (
-          await chargebee.invoice
-            .list({ "customer_id[in]": `[${customerIds}]` })
-            .request()
-        )?.list?.map(a => a.invoice),
-      ]
+      const allInvoices = (
+        await chargebee.invoice
+          .list({ "customer_id[in]": `[${customerIds}]` })
+          .request()
+      )?.list?.map(a => a.invoice)
+      const invoicesByCustomerId = groupBy(allInvoices, a => a.customer_id)
+      const invoiceArraysInOrder = []
+      customerIds.forEach(id => {
+        invoiceArraysInOrder.push(invoicesByCustomerId[id])
+      })
+      return invoiceArraysInOrder
     })()
-    const y = await x
     return x
   }
 
@@ -269,6 +273,7 @@ export class PaymentService {
     dataLoader: InvoicesDataLoader
   ) {
     const invoices = await dataLoader.load(customer_id)
+    // const invoices = []
     if (!invoices) {
       return null
     }

@@ -5,7 +5,6 @@ import {
   CollectionModule,
   CronModule,
   CustomerModule,
-  DataLoaderModule,
   EmailModule,
   FAQModule,
   HomepageModule,
@@ -80,7 +79,6 @@ const scheduleModule =
     SearchModule,
     SlackModule,
     UserModule,
-    DataLoaderModule,
     forwardRef(() => CronModule),
   ],
   providers: [

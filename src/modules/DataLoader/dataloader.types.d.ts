@@ -1,5 +1,4 @@
 import DataLoader from "dataloader"
-import { Invoice } from "@modules/Payment/payment.types"
 
 export interface NestDataLoader {
   /**
@@ -7,5 +6,3 @@ export interface NestDataLoader {
    */
   generateDataLoader(): DataLoader<any, any>
 }
-
-export type InvoicesDataLoader = DataLoader<string, Invoice[]>

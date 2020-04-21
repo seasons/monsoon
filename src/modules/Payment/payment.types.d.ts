@@ -1,3 +1,5 @@
+import DataLoader from "dataloader"
+
 /**
  * A subset of all the fields specified in chargebee API.
  * For full list, see: https://apidocs.chargebee.com/docs/api/invoices
@@ -44,3 +46,5 @@ export enum TransactionType {
   refund,
   payment_reversal,
 }
+
+export type InvoicesDataLoader = DataLoader<string, Invoice[]>

@@ -1,8 +1,9 @@
-import { InvoicesLoader, Loader } from "@modules/DataLoader"
+// import { PaymentService, InvoicesLoader } from "@modules/Payment/index"
+import { InvoicesLoader, PaymentService } from "@modules/Payment/index"
 import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
 
-import { InvoicesDataLoader } from "@modules/DataLoader/dataloader.types"
-import { PaymentService } from "@modules/Payment/index"
+import { InvoicesDataLoader } from "@modules/Payment/payment.types"
+import { Loader } from "@modules/DataLoader"
 import { PrismaService } from "@prisma/prisma.service"
 
 @Resolver("Customer")

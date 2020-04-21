@@ -1,10 +1,10 @@
-import { Module, forwardRef } from "@nestjs/common"
+import { Injectable, Module, forwardRef } from "@nestjs/common"
 
 import { AirtableModule } from "@modules/Airtable/airtable.module"
 import { ChargebeeMutationsResolver } from "./mutations/chargebee.mutations.resolver"
 import { ChargebeeQueriesResolver } from "./queries/chargebee.queries.resolver"
-import { DataLoaderModule } from "@app/modules/DataLoader/dataloader.module"
 import { EmailModule } from "@modules/Email/email.module"
+import { InvoicesLoader } from "./loaders/payment.loaders"
 import { PaymentMutationsResolver } from "./mutations/payment.mutations"
 import { PaymentService } from "./services/payment.service"
 import { PaymentUtilsService } from "./services/payment.utils.service"
@@ -21,7 +21,6 @@ import { UtilsModule } from "@modules/Utils/utils.module"
     PrismaModule,
     ShippingModule,
     UtilsModule,
-    DataLoaderModule,
   ],
   providers: [
     ChargebeeMutationsResolver,
@@ -29,6 +28,7 @@ import { UtilsModule } from "@modules/Utils/utils.module"
     PaymentMutationsResolver,
     PaymentService,
     PaymentUtilsService,
+    InvoicesLoader,
   ],
   exports: [PaymentService],
 })

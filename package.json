@@ -28,7 +28,7 @@
     "start:server": "dotenv -- nodemon -e ts,graphql -x ts-node src/index.ts",
     "start": "concurrently --kill-others 'yarn tsc -w' 'yarn start:server'",
     "start:production": "node -r dotenv/config dist/index.js",
-    "sort:imports": "import-sort --write 'src/**/*.{js,ts,tsx}'",
+    "sort-imports": "import-sort --write 'src/**/*.{js,ts,tsx}'",
     "test": "jest"
   },
   "dependencies": {
