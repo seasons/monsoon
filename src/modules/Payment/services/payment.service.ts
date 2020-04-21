@@ -1,13 +1,15 @@
+import { get, union } from "lodash"
+
 import { AirtableService } from "@modules/Airtable/services/airtable.service"
 import { AuthService } from "@modules/User/services/auth.service"
 import { EmailService } from "@modules/Email/services/email.service"
 import { ID_Input } from "@app/prisma"
 import { Injectable } from "@nestjs/common"
+import { InvoicesDataLoader } from "@app/modules/DataLoader/dataloader.types"
 import { PaymentUtilsService } from "./payment.utils.service"
 import { PrismaService } from "@prisma/prisma.service"
 import { UtilsService } from "@modules/Utils"
 import chargebee from "chargebee"
-import { get, union } from "lodash"
 
 @Injectable()
 export class PaymentService {
@@ -247,61 +249,76 @@ export class PaymentService {
     }
   }
 
+  async loadInvoicesForCustomers(customerIds: string[]) {
+    const x = (async () => {
+      return [
+        (
+          await chargebee.invoice
+            .list({ "customer_id[in]": `[${customerIds}]` })
+            .request()
+        )?.list?.map(a => a.invoice),
+      ]
+    })()
+    const y = await x
+    return x
+  }
+
   async getCustomerInvoiceHistory(
     // payment customer_id is equivalent to prisma user id, NOT prisma customer id
-    customer_id: ID_Input
+    customer_id: string,
+    dataLoader: InvoicesDataLoader
   ) {
-    const invoices = (
-      await chargebee.invoice.list({ "customer_id[is]": customer_id }).request()
-    )?.list?.map(a => a.invoice)
+    const invoices = await dataLoader.load(customer_id)
     if (!invoices) {
       return null
     }
 
     // Get transaction details for all transactions on all invoices in one go
     // to minimize API calls and reduce risk of hitting chargebee API limit
-    const transactionsForAllInvoices = (
-      await chargebee.transaction
-        .list({
-          "id[in]": `[${invoices.reduce(
-            (transactionIds, currentInvoice) =>
-              union(
-                transactionIds,
-                this.getInvoiceTransactionIds(currentInvoice)
-              ),
-            []
-          )}]`,
-        })
-        .request()
-    )?.list?.map(a => a.transaction)
-    invoices.forEach(a => {
-      a.transactions = transactionsForAllInvoices?.filter(b =>
-        this.getInvoiceTransactionIds(a).includes(b.id)
-      )
-    })
+    // const transactionsForAllInvoices = (
+    //   await chargebee.transaction
+    //     .list({
+    //       "id[in]": `[${invoices.reduce(
+    //         (transactionIds, currentInvoice) =>
+    //           union(
+    //             transactionIds,
+    //             this.getInvoiceTransactionIds(currentInvoice)
+    //           ),
+    //         []
+    //       )}]`,
+    //     })
+    //     .request()
+    // )?.list?.map(a => a.transaction)
+    // invoices.forEach(a => {
+    //   a.transactions = transactionsForAllInvoices?.filter(b =>
+    //     this.getInvoiceTransactionIds(a).includes(b.id)
+    //   )
+    // })
 
     return invoices.map(a =>
       this.utils.Identity({
         id: a.id,
         subscriptionID: a.subscription_id,
         recurring: a.recurring,
+        // @ts-ignore
         status: this.utils.snakeToCapitalizedCamelCase(a.status),
         amount: a.total,
         closingDate: this.utils.secondsSinceEpochToISOString(a.date),
+        // @ts-ignore
         dueDate: this.utils.secondsSinceEpochToISOString(a.due_date),
-        transactions: a.transactions?.map(b =>
-          this.utils.Identity({
-            id: b.id,
-            amount: b.amount,
-            lastFour: b.masked_card_number.replace(/[*]/g, ""),
-            date: this.utils.secondsSinceEpochToISOString(b.date),
-            status: this.utils.snakeToCapitalizedCamelCase(b.status),
-            type: this.utils.snakeToCapitalizedCamelCase(b.type),
-            settledAt: b.settled_at
-              ? this.utils.secondsSinceEpochToISOString(b.settled_at)
-              : null,
-          })
-        ),
+        // transactions: a.transactions?.map(b =>
+        //   this.utils.Identity({
+        //     id: b.id,
+        //     amount: b.amount,
+        //     lastFour: b.masked_card_number.replace(/[*]/g, ""),
+        //     date: this.utils.secondsSinceEpochToISOString(b.date),
+        //     status: this.utils.snakeToCapitalizedCamelCase(b.status),
+        //     type: this.utils.snakeToCapitalizedCamelCase(b.type),
+        //     settledAt: b.settled_at
+        //       ? this.utils.secondsSinceEpochToISOString(b.settled_at)
+        //       : null,
+        //   })
+        // ),
       })
     )
   }
