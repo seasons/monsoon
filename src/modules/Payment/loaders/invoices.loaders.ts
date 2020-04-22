@@ -1,10 +1,10 @@
 import { Invoice, InvoicesDataLoader } from "@modules/Payment/payment.types"
+import { chunk, concat, groupBy } from "lodash"
 
 import DataLoader from "dataloader"
 import { Injectable } from "@nestjs/common"
 import { NestDataLoader } from "@modules/DataLoader/dataloader.types"
 import chargebee from "chargebee"
-import { groupBy, chunk, concat } from "lodash"
 
 @Injectable()
 export class InvoicesLoader implements NestDataLoader {

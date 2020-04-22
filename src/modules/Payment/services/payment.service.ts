@@ -1,16 +1,14 @@
-import { Inject, Injectable, forwardRef } from "@nestjs/common"
-import { get, groupBy, union } from "lodash"
+import { InvoicesDataLoader, TransactionsDataLoader } from "../payment.types"
 
 import { AirtableService } from "@modules/Airtable/services/airtable.service"
 import { AuthService } from "@modules/User/services/auth.service"
 import { EmailService } from "@modules/Email/services/email.service"
-import { InvoicesDataLoader } from "../payment.types"
+import { Injectable } from "@nestjs/common"
 import { PaymentUtilsService } from "./payment.utils.service"
 import { PrismaService } from "@prisma/prisma.service"
 import { UtilsService } from "@modules/Utils"
 import chargebee from "chargebee"
-
-// import { InvoicesLoader } from ".."
+import { get } from "lodash"
 
 @Injectable()
 export class PaymentService {
@@ -253,61 +251,43 @@ export class PaymentService {
   async getCustomerInvoiceHistory(
     // payment customer_id is equivalent to prisma user id, NOT prisma customer id
     customer_id: string,
-    dataLoader: InvoicesDataLoader
+    invoicesLoader: InvoicesDataLoader,
+    transactionsLoader: TransactionsDataLoader
   ) {
-    const invoices = await dataLoader.load(customer_id)
-    // const invoices = []
+    const invoices = await invoicesLoader.load(customer_id)
     if (!invoices) {
       return null
     }
 
-    // Get transaction details for all transactions on all invoices in one go
-    // to minimize API calls and reduce risk of hitting chargebee API limit
-    // const transactionsForAllInvoices = (
-    //   await chargebee.transaction
-    //     .list({
-    //       "id[in]": `[${invoices.reduce(
-    //         (transactionIds, currentInvoice) =>
-    //           union(
-    //             transactionIds,
-    //             this.getInvoiceTransactionIds(currentInvoice)
-    //           ),
-    //         []
-    //       )}]`,
-    //     })
-    //     .request()
-    // )?.list?.map(a => a.transaction)
-    // invoices.forEach(a => {
-    //   a.transactions = transactionsForAllInvoices?.filter(b =>
-    //     this.getInvoiceTransactionIds(a).includes(b.id)
-    //   )
-    // })
-
-    return invoices.map(a =>
-      this.utils.Identity({
-        id: a.id,
-        subscriptionID: a.subscription_id,
-        recurring: a.recurring,
-        // @ts-ignore
-        status: this.utils.snakeToCapitalizedCamelCase(a.status),
-        amount: a.total,
-        closingDate: this.utils.secondsSinceEpochToISOString(a.date),
-        // @ts-ignore
-        dueDate: this.utils.secondsSinceEpochToISOString(a.due_date),
-        // transactions: a.transactions?.map(b =>
-        //   this.utils.Identity({
-        //     id: b.id,
-        //     amount: b.amount,
-        //     lastFour: b.masked_card_number.replace(/[*]/g, ""),
-        //     date: this.utils.secondsSinceEpochToISOString(b.date),
-        //     status: this.utils.snakeToCapitalizedCamelCase(b.status),
-        //     type: this.utils.snakeToCapitalizedCamelCase(b.type),
-        //     settledAt: b.settled_at
-        //       ? this.utils.secondsSinceEpochToISOString(b.settled_at)
-        //       : null,
-        //   })
-        // ),
-      })
+    return Promise.all(
+      invoices.map(async a =>
+        this.utils.Identity({
+          id: a.id,
+          subscriptionID: a.subscription_id,
+          recurring: a.recurring,
+          // @ts-ignore
+          status: this.utils.snakeToCapitalizedCamelCase(a.status),
+          amount: a.total,
+          closingDate: this.utils.secondsSinceEpochToISOString(a.date),
+          // @ts-ignore
+          dueDate: this.utils.secondsSinceEpochToISOString(a.due_date),
+          transactions: ((await transactionsLoader.loadMany(
+            this.getInvoiceTransactionIds(a)
+          )) as any[])?.map(b =>
+            this.utils.Identity({
+              id: b.id,
+              amount: b.amount,
+              lastFour: b.masked_card_number.replace(/[*]/g, ""),
+              date: this.utils.secondsSinceEpochToISOString(b.date),
+              status: this.utils.snakeToCapitalizedCamelCase(b.status),
+              type: this.utils.snakeToCapitalizedCamelCase(b.type),
+              settledAt: b.settled_at
+                ? this.utils.secondsSinceEpochToISOString(b.settled_at)
+                : null,
+            })
+          ),
+        })
+      )
     )
   }
 

@@ -1,8 +1,15 @@
+import {
+  InvoicesDataLoader,
+  TransactionsDataLoader,
+} from "@modules/Payment/payment.types"
 // import { PaymentService, InvoicesLoader } from "@modules/Payment/index"
-import { InvoicesLoader, PaymentService } from "@modules/Payment/index"
+import {
+  InvoicesLoader,
+  PaymentService,
+  TransactionsLoader,
+} from "@modules/Payment/index"
 import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
 
-import { InvoicesDataLoader } from "@modules/Payment/payment.types"
 import { Loader } from "@modules/DataLoader"
 import { PrismaService } from "@prisma/prisma.service"
 
@@ -16,7 +23,8 @@ export class CustomerFieldsResolver {
   @ResolveField()
   async invoices(
     @Parent() customer,
-    @Loader(InvoicesLoader.name) paymentLoader: InvoicesDataLoader
+    @Loader(InvoicesLoader.name) invoicesLoader: InvoicesDataLoader,
+    @Loader(TransactionsLoader.name) transactionsLoader: TransactionsDataLoader
   ) {
     if (!customer) {
       return null
@@ -28,7 +36,8 @@ export class CustomerFieldsResolver {
         })
         .user()
         .id(),
-      paymentLoader
+      invoicesLoader,
+      transactionsLoader
     )
   }
 }

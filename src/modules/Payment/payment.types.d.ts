@@ -9,7 +9,7 @@ export interface Invoice {
   customer_id: string
   subscription_id?: string
   recurring: boolean
-  status: InvoiceStatus
+  status: string
   //   UTC timestamp in seconds
   date?: number
   net_term_days?: number
@@ -22,29 +22,16 @@ export interface Invoice {
   linked_payments: { txn_id: string }[]
 }
 
-export enum TransactionStatus {
-  in_progress,
-  success,
-  voided,
-  failure,
-  timeout,
-  needs_attention,
-}
-
-export enum InvoiceStatus {
-  paid,
-  posted,
-  paymentDue,
-  not_paid,
-  voided,
-  pending,
-}
-
-export enum TransactionType {
-  authorization,
-  payment,
-  refund,
-  payment_reversal,
+export interface Transaction {
+  id: string
+  amount: number
+  masked_card_number: string
+  //   UTC timestamp in seconds
+  date: number
+  status: string
+  type?: string
+  settled_at?: number
 }
 
 export type InvoicesDataLoader = DataLoader<string, Invoice[]>
+export type TransactionsDataLoader = DataLoader<string, Transaction[]>
