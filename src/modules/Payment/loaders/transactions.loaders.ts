@@ -11,7 +11,7 @@ import chargebee from "chargebee"
 
 @Injectable()
 export class TransactionsLoader implements NestDataLoader {
-  private maxNumTxnIdsInAPICall = 200 // placeholder. TODO: Find the right number
+  private maxNumTxnIdsInAPICall = 200 // placeholder. Can look into adjusting if we hit API issues.
 
   generateDataLoader(): TransactionsDataLoader {
     return new DataLoader<string, Transaction[]>(
@@ -20,7 +20,6 @@ export class TransactionsLoader implements NestDataLoader {
   }
 
   private async loadArbitraryNumberOfTrasnactions(txnIds: string[]) {
-    debugger
     return Promise.resolve(
       concat(
         [],
@@ -38,7 +37,6 @@ export class TransactionsLoader implements NestDataLoader {
   private async loadTransactions(txnIds: string[]) {
     let offset = "start"
     const allTransactions = []
-    debugger
     while (true) {
       let list
       ;({ next_offset: offset, list } = await chargebee.transaction
@@ -48,14 +46,12 @@ export class TransactionsLoader implements NestDataLoader {
           ...(offset === "start" ? {} : { offset }),
         })
         .request())
-      debugger
       allTransactions.push(...list?.map(a => a.transaction))
       if (!offset) {
         break
       }
     }
 
-    debugger
     const transactionsByTxnId = groupBy(allTransactions, a => a.id)
     return txnIds.map(a => head(transactionsByTxnId[a]))
   }

@@ -8,7 +8,7 @@ import { PaymentUtilsService } from "./payment.utils.service"
 import { PrismaService } from "@prisma/prisma.service"
 import { UtilsService } from "@modules/Utils"
 import chargebee from "chargebee"
-import { get } from "lodash"
+import { get, identity } from "lodash"
 
 @Injectable()
 export class PaymentService {
@@ -261,7 +261,7 @@ export class PaymentService {
 
     return Promise.all(
       invoices.map(async a =>
-        this.utils.Identity({
+        identity({
           id: a.id,
           subscriptionID: a.subscription_id,
           recurring: a.recurring,
@@ -274,14 +274,18 @@ export class PaymentService {
           transactions: ((await transactionsLoader.loadMany(
             this.getInvoiceTransactionIds(a)
           )) as any[])?.map(b =>
-            this.utils.Identity({
+            identity({
               id: b.id,
               amount: b.amount,
-              lastFour: b.masked_card_number.replace(/[*]/g, ""),
-              date: this.utils.secondsSinceEpochToISOString(b.date),
-              status: this.utils.snakeToCapitalizedCamelCase(b.status),
+              lastFour: b.masked_card_number?.replace(/[*]/g, ""),
+              date: !!b.date
+                ? this.utils.secondsSinceEpochToISOString(b.date)
+                : null,
+              status: !!b.status
+                ? this.utils.snakeToCapitalizedCamelCase(b.status)
+                : null,
               type: this.utils.snakeToCapitalizedCamelCase(b.type),
-              settledAt: b.settled_at
+              settledAt: !!b.settled_at
                 ? this.utils.secondsSinceEpochToISOString(b.settled_at)
                 : null,
             })

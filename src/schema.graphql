@@ -503,6 +503,31 @@ type Me {
 
 union HomepageResult = Product | Collection | Brand
 
+enum TransactionStatus {
+  InProgress
+  Success
+  Voided
+  Failure
+  Timeout
+  NeedsAttention
+}
+
+enum InvoiceStatus {
+  Paid
+  Posted
+  PaymentDue
+  NotPaid
+  Voided
+  Pending
+}
+
+enum TransactionType {
+  Authorization
+  Payment
+  Refund
+  PaymentReversal
+}
+
 enum HomePageSectionType {
   CollectionGroups
   Products
@@ -577,34 +602,9 @@ type Invoice {
 type Transaction {
   id: String!
   amount: Int!
-  lastFour: String!
+  lastFour: String
   date: DateTime!
   status: TransactionStatus!
   type: TransactionType!
   settledAt: DateTime
-}
-
-enum TransactionStatus {
-  InProgress
-  Success
-  Voided
-  Failure
-  Timeout
-  NeedsAttention
-}
-
-enum InvoiceStatus {
-  Paid
-  Posted
-  PaymentDue
-  NotPaid
-  Voided
-  Pending
-}
-
-enum TransactionType {
-  Authorization
-  Payment
-  Refund
-  PaymentReversal
 }
