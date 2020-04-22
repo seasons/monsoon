@@ -18,6 +18,7 @@ import { ProductVariantService } from "./services/productVariant.service"
 import { ShippingModule } from "@modules/Shipping/shipping.module"
 import { SizeQueriesResolver } from "./queries/size.queries.resolver"
 import { UserModule } from "@modules/User/user.module"
+import { UtilsModule } from "@modules/Utils/utils.module"
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { UserModule } from "@modules/User/user.module"
     AirtableModule,
     EmailModule,
     ShippingModule,
+    UtilsModule,
   ],
   providers: [
     BagService,
