@@ -548,13 +548,15 @@ type Reservation {
   returnedPackage: Package
   location: Location
   products: [PhysicalProduct!]!
+  images: JSON
   reservationNumber: Int!
   shipped: Boolean!
   status: ReservationStatus!
+  returnDateDisplay: DateTime
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
+  returnAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
-  returnDateDisplay: DateTime
 }
