@@ -175,7 +175,7 @@ type Query {
     first: Int
     last: Int
   ): CustomerConnection!
-  generatedVariantSKUs(input: ProductVariantsSKUInput!): [String!]
+  generatedVariantSKUs(input: ProductVariantSKUsInput!): [String!]
   homepageProductRail(
     where: HomepageProductRailWhereUniqueInput!
   ): HomepageProductRail
@@ -423,7 +423,7 @@ input ReserveItemsOptions {
   dryRun: Boolean
 }
 
-input ProductVariantsSKUInput {
+input ProductVariantSKUsInput {
   brandID: String!
   colorID: String!
   sizeNames: [String!]!
