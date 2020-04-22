@@ -23,7 +23,26 @@ export class BagService {
       throw new ApolloError("Bag is full", "514")
     }
 
-    return await this.prisma.client.createBagItem({
+    // If bag item is in saved list delete it
+    const savedBagItems = await this.prisma.client.bagItems({
+      where: {
+        customer: {
+          id: customer.id,
+        },
+        productVariant: {
+          id: item,
+        },
+        saved: true,
+      },
+    })
+    const savedBagItem = head(savedBagItems)
+    if (savedBagItem) {
+      await this.prisma.client.deleteBagItem({
+        id: savedBagItem.id,
+      })
+    }
+
+    const createdBagItem = await this.prisma.client.createBagItem({
       customer: {
         connect: {
           id: customer.id,
@@ -38,6 +57,8 @@ export class BagService {
       saved: false,
       status: "Added",
     })
+
+    return createdBagItem
   }
 
   async removeFromBag(item, saved, customer) {
