@@ -1,0 +1,72 @@
+import {
+  LoadAllRecordsWithListInput,
+  LoadRecordsWithListInput,
+} from "../payment.types"
+import { chunk, concat, curry, groupBy } from "lodash"
+
+import { Injectable } from "@nestjs/common"
+import chargebee from "chargebee"
+
+@Injectable()
+export class LoaderUtilsService {
+  async loadAllRecordsWIthList({
+    maxIds = 200,
+    filterKey,
+    ids,
+    recordName,
+    groupFunc,
+    extractFunc,
+  }: LoadAllRecordsWithListInput) {
+    return Promise.resolve(
+      concat(
+        [],
+        ...(await Promise.all(
+          chunk(ids, maxIds).map(async ids =>
+            this.loadRecordsWithList({
+              filterKey,
+              ids,
+              recordName,
+              groupFunc,
+              extractFunc,
+            })
+          )
+        ))
+      )
+    )
+  }
+
+  private async loadRecordsWithList({
+    filterKey = `id[in]`,
+    ids,
+    recordName,
+    groupFunc = a => a.id,
+    extractFunc = (valsById, id) => valsById[id],
+  }: LoadRecordsWithListInput) {
+    debugger
+    let offset = "start"
+    const allRecords = []
+    while (true) {
+      let list
+      const listParams = {}
+      listParams[filterKey] = this.createInParamVal(ids)
+      ;({ next_offset: offset, list } = await chargebee[recordName]
+        .list({
+          ...listParams,
+          limit: 100,
+          ...(offset === "start" ? {} : { offset }),
+        })
+        .request())
+      allRecords.push(...list?.map(a => a[recordName]))
+      if (!offset) {
+        break
+      }
+    }
+
+    const recordsById = groupBy(allRecords, groupFunc)
+    return ids.map(curry(extractFunc)(recordsById))
+  }
+
+  private createInParamVal(list: string[]) {
+    return `[${list}]`
+  }
+}

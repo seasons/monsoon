@@ -1,4 +1,9 @@
-import { InvoicesDataLoader, TransactionsDataLoader } from "../payment.types"
+import {
+  InvoicesDataLoader,
+  Transaction,
+  TransactionsDataLoader,
+} from "../payment.types"
+import { get, identity } from "lodash"
 
 import { AirtableService } from "@modules/Airtable/services/airtable.service"
 import { AuthService } from "@modules/User/services/auth.service"
@@ -8,7 +13,6 @@ import { PaymentUtilsService } from "./payment.utils.service"
 import { PrismaService } from "@prisma/prisma.service"
 import { UtilsService } from "@modules/Utils"
 import chargebee from "chargebee"
-import { get, identity } from "lodash"
 
 @Injectable()
 export class PaymentService {
@@ -265,31 +269,31 @@ export class PaymentService {
           id: a.id,
           subscriptionID: a.subscription_id,
           recurring: a.recurring,
-          // @ts-ignore
           status: this.utils.snakeToCapitalizedCamelCase(a.status),
           amount: a.total,
           closingDate: this.utils.secondsSinceEpochToISOString(a.date),
-          // @ts-ignore
-          dueDate: this.utils.secondsSinceEpochToISOString(a.due_date),
-          transactions: ((await transactionsLoader.loadMany(
-            this.getInvoiceTransactionIds(a)
-          )) as any[])?.map(b =>
-            identity({
-              id: b.id,
-              amount: b.amount,
-              lastFour: b.masked_card_number?.replace(/[*]/g, ""),
-              date: !!b.date
-                ? this.utils.secondsSinceEpochToISOString(b.date)
-                : null,
-              status: !!b.status
-                ? this.utils.snakeToCapitalizedCamelCase(b.status)
-                : null,
-              type: this.utils.snakeToCapitalizedCamelCase(b.type),
-              settledAt: !!b.settled_at
-                ? this.utils.secondsSinceEpochToISOString(b.settled_at)
-                : null,
-            })
-          ),
+          dueDate: this.utils.secondsSinceEpochToISOString(a.due_date, true),
+          transactions: (
+            await transactionsLoader.loadMany(this.getInvoiceTransactionIds(a))
+          )?.map(b => {
+            if (b instanceof Error) {
+              return null
+            } else {
+              let c = (b as any) as Transaction
+              return {
+                id: c.id,
+                amount: c.amount,
+                lastFour: c.masked_card_number?.replace(/[*]/g, ""),
+                date: this.utils.secondsSinceEpochToISOString(c.date, true),
+                status: this.utils.snakeToCapitalizedCamelCase(c.status),
+                type: this.utils.snakeToCapitalizedCamelCase(c.type),
+                settledAt: this.utils.secondsSinceEpochToISOString(
+                  c.settled_at,
+                  true
+                ),
+              }
+            }
+          }),
         })
       )
     )

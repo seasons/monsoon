@@ -88,8 +88,16 @@ export class UtilsService {
     return upperFirst(camelCase(str))
   }
 
-  secondsSinceEpochToISOString(sec: number): string {
-    return new Date(sec * 1000).toISOString()
+  secondsSinceEpochToISOString(sec: number, nullifError = false): string {
+    try {
+      return new Date(sec * 1000).toISOString()
+    } catch (err) {
+      if (nullifError) {
+        return null
+      } else {
+        throw err
+      }
+    }
   }
 
   openLogFile(logName) {

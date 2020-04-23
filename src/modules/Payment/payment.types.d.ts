@@ -3,6 +3,7 @@ import DataLoader from "dataloader"
 /**
  * A subset of all the fields specified in chargebee API.
  * For full list, see: https://apidocs.chargebee.com/docs/api/invoices
+ * All dates are UTC timestamps in seconds since the Epoch
  */
 export interface Invoice {
   id: string
@@ -10,8 +11,8 @@ export interface Invoice {
   subscription_id?: string
   recurring: boolean
   status: string
-  //   UTC timestamp in seconds
   date?: number
+  due_date?: number
   net_term_days?: number
   currency_code: string
   total?: number
@@ -22,11 +23,15 @@ export interface Invoice {
   linked_payments: { txn_id: string }[]
 }
 
+/**
+ * A subset of all the fields specified in chargebee API.
+ * For full list, see: https://apidocs.chargebee.com/docs/api/transactions
+ * All dates are UTC timestamps in seconds since the Epoch
+ */
 export interface Transaction {
   id: string
   amount: number
   masked_card_number: string
-  //   UTC timestamp in seconds
   date: number
   status: string
   type?: string
@@ -35,3 +40,17 @@ export interface Transaction {
 
 export type InvoicesDataLoader = DataLoader<string, Invoice[]>
 export type TransactionsDataLoader = DataLoader<string, Transaction[]>
+
+export interface LoadRecordsWithListInput {
+  ids: string[]
+  recordName: LoadableRecord
+  filterKey?: string
+  groupFunc?: (any) => string
+  extractFunc?: (valsById: any, id: string) => any
+}
+
+export interface LoadAllRecordsWithListInput extends LoadRecordsWithListInput {
+  maxIds: number
+}
+
+export type LoadableRecord = "invoice" | "transaction"

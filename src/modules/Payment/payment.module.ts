@@ -3,6 +3,7 @@ import { ChargebeeMutationsResolver } from "./mutations/chargebee.mutations.reso
 import { ChargebeeQueriesResolver } from "./queries/chargebee.queries.resolver"
 import { EmailModule } from "@modules/Email/email.module"
 import { InvoicesLoader } from "./loaders/invoices.loaders"
+import { LoaderUtilsService } from "./services/loader.utils.service"
 import { Module } from "@nestjs/common"
 import { PaymentMutationsResolver } from "./mutations/payment.mutations"
 import { PaymentService } from "./services/payment.service"
@@ -30,6 +31,7 @@ import { UtilsModule } from "@modules/Utils/utils.module"
     PaymentUtilsService,
     InvoicesLoader,
     TransactionsLoader,
+    LoaderUtilsService,
   ],
   exports: [PaymentService],
 })
