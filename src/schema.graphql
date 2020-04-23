@@ -474,13 +474,12 @@ type SearchResult {
 }
 
 type Image {
-  href: String
   height: Int
   width: Int
-  imageURL: String
+  url: String
   originalHeight: Int
   originalWidth: Int
-  resized(width: Int, height: Int, version: [String]): ResizedImageUrl
+  resized(width: Int, height: Int, version: String): Image
 }
 
 type ResizedImageUrl {
@@ -540,6 +539,14 @@ type FaqSubsection {
   text: String!
 }
 
+enum ImageSize {
+  Thumb
+  Small
+  Medium
+  Large
+  XLarge
+}
+
 type Reservation {
   id: ID!
   user: User!
@@ -548,7 +555,7 @@ type Reservation {
   returnedPackage: Package
   location: Location
   products: [PhysicalProduct!]!
-  images: JSON
+  images(width: Int, height: Int, size: ImageSize): [Image!]!
   reservationNumber: Int!
   shipped: Boolean!
   status: ReservationStatus!

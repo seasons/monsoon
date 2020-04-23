@@ -3,6 +3,9 @@ import { EmailModule } from "@modules/Email"
 import { Module } from "@nestjs/common"
 import { PrismaModule } from "@prisma/prisma.module"
 import { ProductModule } from "@modules/Product"
+import { UtilsModule } from "@modules/Utils"
+import { ShippingModule } from "@modules/Shipping/shipping.module"
+
 import { ReservationFeedbackMutationsResolver } from "../Reservation/mutations/reservationFeedback.mutations.resolver"
 import { ReservationFeedbackQueriesResolver } from "../Reservation/queries/reservationFeedback.queries.resolver"
 import { ReservationFeedbackService } from "./services/reservationFeedback.service"
@@ -11,7 +14,6 @@ import { ReservationMutationsResolver } from "./mutations/reservation.mutations.
 import { ReservationQueriesResolver } from "./queries/reservation.queries.resolver"
 import { ReservationService } from "./services/reservation.service"
 import { ReservationUtilsService } from "./services/reservation.utils.service"
-import { ShippingModule } from "@modules/Shipping/shipping.module"
 
 @Module({
   imports: [
@@ -20,6 +22,7 @@ import { ShippingModule } from "@modules/Shipping/shipping.module"
     PrismaModule,
     ProductModule,
     ShippingModule,
+    UtilsModule,
   ],
   providers: [
     ReservationFeedbackMutationsResolver,

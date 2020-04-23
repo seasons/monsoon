@@ -1,13 +1,14 @@
-import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
+import { Parent, ResolveField, Resolver, Args } from "@nestjs/graphql"
 
 import { PrismaService } from "@prisma/prisma.service"
 import { ReservationUtilsService } from "../services/reservation.utils.service"
-import head from "lodash"
+import { ImageSize, ImageResizeService } from "@app/modules/Utils"
 
 @Resolver("Reservation")
 export class ReservationFieldsResolver {
   constructor(
     private readonly reservationService: ReservationUtilsService,
+    private readonly imageResizeService: ImageResizeService,
     private readonly prisma: PrismaService
   ) {}
 
@@ -30,7 +31,12 @@ export class ReservationFieldsResolver {
   }
 
   @ResolveField()
-  async images(@Parent() parent) {
+  async images(
+    @Parent() parent,
+    @Args("width") width: number,
+    @Args("height") height: number,
+    @Args("size") size: ImageSize
+  ) {
     const reservation = await this.prisma.binding.query.reservation(
       {
         where: {
@@ -52,7 +58,13 @@ export class ReservationFieldsResolver {
     )
     const products = reservation.products
     const firstImages = products.map(product => {
-      return head(product.productVariant.product.images)
+      const image = product.productVariant.product.images?.[0]
+      return {
+        url: this.imageResizeService.imageResize(image?.url, size, {
+          w: width,
+          h: height,
+        }),
+      }
     })
 
     return firstImages
