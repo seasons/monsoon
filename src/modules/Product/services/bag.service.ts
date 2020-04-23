@@ -37,28 +37,27 @@ export class BagService {
     })
     const savedBagItem = head(savedBagItems)
     if (savedBagItem) {
-      await this.prisma.client.deleteBagItem({
-        id: savedBagItem.id,
+      return await this.prisma.client.updateBagItem({
+        where: { id: savedBagItem.id },
+        data: { saved: false },
+      })
+    } else {
+      return await this.prisma.client.createBagItem({
+        customer: {
+          connect: {
+            id: customer.id,
+          },
+        },
+        productVariant: {
+          connect: {
+            id: item,
+          },
+        },
+        position: 0,
+        saved: false,
+        status: "Added",
       })
     }
-
-    const createdBagItem = await this.prisma.client.createBagItem({
-      customer: {
-        connect: {
-          id: customer.id,
-        },
-      },
-      productVariant: {
-        connect: {
-          id: item,
-        },
-      },
-      position: 0,
-      saved: false,
-      status: "Added",
-    })
-
-    return createdBagItem
   }
 
   async removeFromBag(item, saved, customer) {
