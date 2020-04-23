@@ -601,7 +601,7 @@ type Invoice {
 
 type Transaction {
   id: String!
-  amount: Int!
+  amount: Int
   lastFour: String
   date: DateTime!
   status: TransactionStatus!

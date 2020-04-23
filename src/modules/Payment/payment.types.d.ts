@@ -30,10 +30,10 @@ export interface Invoice {
  */
 export interface Transaction {
   id: string
-  amount: number
-  masked_card_number: string
-  date: number
-  status: string
+  amount?: number
+  masked_card_number?: string
+  date?: number
+  status?: string
   type?: string
   settled_at?: number
 }
