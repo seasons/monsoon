@@ -1,6 +1,6 @@
-import qs from "querystring"
 import { Injectable } from "@nestjs/common"
 import { PrismaService } from "@app/prisma/prisma.service"
+import qs from "querystring"
 
 interface ImageResizerOptions {
   fit?: "clip"

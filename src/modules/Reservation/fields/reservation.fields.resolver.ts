@@ -1,8 +1,8 @@
-import { Parent, ResolveField, Resolver, Args } from "@nestjs/graphql"
+import { Args, Parent, ResolveField, Resolver } from "@nestjs/graphql"
+import { ImageResizeService, ImageSize } from "@app/modules/Utils"
 
 import { PrismaService } from "@prisma/prisma.service"
 import { ReservationUtilsService } from "../services/reservation.utils.service"
-import { ImageSize, ImageResizeService } from "@app/modules/Utils"
 
 @Resolver("Reservation")
 export class ReservationFieldsResolver {
