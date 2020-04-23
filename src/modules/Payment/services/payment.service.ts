@@ -1,9 +1,9 @@
 import {
+  Invoice,
   InvoicesDataLoader,
+  RefundInvoiceInput,
   Transaction,
   TransactionsDataLoader,
-  RefundInvoiceInput,
-  Invoice,
 } from "../payment.types"
 import { get, identity } from "lodash"
 
@@ -280,6 +280,18 @@ export class PaymentService {
     )
   }
 
+  async getCustomerTransactionHistory(
+    // payment customer_id is equivalent to prisma user id, NOT prisma customer id
+    customer_id: string,
+    transactionsForCustomerloader: TransactionsDataLoader
+  ) {
+    return this.utils
+      .filterErrors<Transaction>(
+        await transactionsForCustomerloader.load(customer_id)
+      )
+      ?.map(a => this.formatTransaction(a))
+  }
+
   async refundInvoice(
     {
       invoiceId,
@@ -340,19 +352,21 @@ export class PaymentService {
           this.getInvoiceTransactionIds(invoice)
         )
       )
-      .map(b =>
-        identity({
-          id: b.id,
-          amount: b.amount,
-          lastFour: b.masked_card_number?.replace(/[*]/g, ""),
-          date: this.utils.secondsSinceEpochToISOString(b.date, true),
-          status: this.utils.snakeToCapitalizedCamelCase(b.status),
-          type: this.utils.snakeToCapitalizedCamelCase(b.type),
-          settledAt: this.utils.secondsSinceEpochToISOString(
-            b.settled_at,
-            true
-          ),
-        })
-      )
+      .map(b => this.formatTransaction(b))
+  }
+
+  private async formatTransaction(transaction) {
+    return {
+      id: transaction.id,
+      amount: transaction.amount,
+      lastFour: transaction.masked_card_number?.replace(/[*]/g, ""),
+      date: this.utils.secondsSinceEpochToISOString(transaction.date, true),
+      status: this.utils.snakeToCapitalizedCamelCase(transaction.status),
+      type: this.utils.snakeToCapitalizedCamelCase(transaction.type),
+      settledAt: this.utils.secondsSinceEpochToISOString(
+        transaction.settled_at,
+        true
+      ),
+    }
   }
 }

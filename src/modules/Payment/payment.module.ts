@@ -13,6 +13,7 @@ import { ShippingModule } from "@modules/Shipping/shipping.module"
 import { TransactionsLoader } from "./loaders/transactions.loaders"
 import { UserModule } from "@modules/User/user.module"
 import { UtilsModule } from "@modules/Utils/utils.module"
+import { TransactionsForCustomersLoader } from "./loaders/transactionsForCustomers.loader"
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { UtilsModule } from "@modules/Utils/utils.module"
     PaymentUtilsService,
     InvoicesLoader,
     TransactionsLoader,
+    TransactionsForCustomersLoader,
     LoaderUtilsService,
   ],
   exports: [PaymentService],

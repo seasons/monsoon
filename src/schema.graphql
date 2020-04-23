@@ -175,6 +175,7 @@ type Query {
     first: Int
     last: Int
   ): CustomerConnection!
+  generatedVariantSKUs(input: ProductVariantSKUsInput!): [String!]
   homepageProductRail(
     where: HomepageProductRailWhereUniqueInput!
   ): HomepageProductRail
@@ -431,6 +432,12 @@ input ReserveItemsOptions {
   dryRun: Boolean
 }
 
+input ProductVariantSKUsInput {
+  brandID: String!
+  colorID: String!
+  sizeNames: [String!]!
+}
+
 type BeamsData {
   email: String!
   beamsToken: String!
@@ -604,6 +611,7 @@ type Customer {
   plan: Plan
   reservations: [Reservation]
   invoices: [Invoice]
+  transactions: [Transaction]
 }
 
 type Invoice {

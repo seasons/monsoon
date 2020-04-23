@@ -8,6 +8,15 @@ import { PrismaService } from "@prisma/prisma.service"
 import cliProgress from "cli-progress"
 import crypto from "crypto"
 
+enum ProductSize {
+  XS = "XS",
+  S = "S",
+  M = "M",
+  L = "L",
+  XL = "XL",
+  XXL = "XXL",
+}
+
 @Injectable()
 export class UtilsService {
   constructor(private readonly prisma: PrismaService) {}
@@ -123,5 +132,29 @@ export class UtilsService {
 
   filterErrors<T>(arr: any[]): T[] {
     return arr?.filter(a => !(a instanceof Error))
+  }
+
+  sizeNameToSizeCode(sizeName: ProductSize | string) {
+    switch (sizeName) {
+      case ProductSize.XS:
+        return "XS"
+      case ProductSize.S:
+        return "SS"
+      case ProductSize.M:
+        return "MM"
+      case ProductSize.L:
+        return "LL"
+      case ProductSize.XL:
+        return "XL"
+      case ProductSize.XXL:
+        return "XXL"
+    }
+
+    // If we get here, we're expecting a bottom with size WxL e.g 32x28
+    // Regex: (start)digit-digit-x-digit-digit(end)
+    if (!sizeName.match(/^\d\dx\d\d$/)) {
+      throw new Error(`invalid sizeName: ${sizeName}`)
+    }
+    return sizeName.toLowerCase().replace("x", "") // 32x28 => 3238
   }
 }

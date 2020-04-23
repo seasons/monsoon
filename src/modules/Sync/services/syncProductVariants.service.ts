@@ -20,15 +20,6 @@ import { SyncUtilsService } from "./sync.utils.service"
 import { UtilsService } from "../../Utils/services/utils.service"
 import { isEmpty } from "lodash"
 
-enum ProductSize {
-  XS = "XS",
-  S = "S",
-  M = "M",
-  L = "L",
-  XL = "XL",
-  XXL = "XXL",
-}
-
 @Injectable()
 export class SyncProductVariantsService {
   constructor(
@@ -552,34 +543,10 @@ export class SyncProductVariantsService {
     }
   }
 
-  private sizeNameToSizeCode(sizeName: ProductSize | string) {
-    switch (sizeName) {
-      case ProductSize.XS:
-        return "XS"
-      case ProductSize.S:
-        return "SS"
-      case ProductSize.M:
-        return "MM"
-      case ProductSize.L:
-        return "LL"
-      case ProductSize.XL:
-        return "XL"
-      case ProductSize.XXL:
-        return "XXL"
-    }
-
-    // If we get here, we're expecting a bottom with size WxL e.g 32x28
-    // Regex: (start)digit-digit-x-digit-digit(end)
-    if (!sizeName.match(/^\d\dx\d\d$/)) {
-      throw new Error(`invalid sizeName: ${sizeName}`)
-    }
-    return sizeName.toLowerCase().replace("x", "") // 32x28 => 3238
-  }
-
   private skuForData = (brand, color, sizeName, styleNumber) => {
     const brandCode = brand.get("Brand Code")
     const colorCode = color.get("Color Code")
-    const sizeCode = this.sizeNameToSizeCode(sizeName)
+    const sizeCode = this.utils.sizeNameToSizeCode(sizeName)
     const styleCode = styleNumber.toString().padStart(3, "0")
     return `${brandCode}-${colorCode}-${sizeCode}-${styleCode}`
   }

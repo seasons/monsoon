@@ -10,6 +10,7 @@ import { Injectable } from "@nestjs/common"
 import { PrismaService } from "@prisma/prisma.service"
 import { ProductUtilsService } from "./product.utils.service"
 import { ProductVariantService } from "./productVariant.service"
+import { UtilsService } from "../../Utils/services/utils.service"
 import { head } from "lodash"
 
 @Injectable()
@@ -17,7 +18,8 @@ export class ProductService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly productUtils: ProductUtilsService,
-    private readonly productVariantService: ProductVariantService
+    private readonly productVariantService: ProductVariantService,
+    private readonly utils: UtilsService
   ) {}
 
   async getProducts(args, info) {
@@ -182,5 +184,32 @@ export class ProductService {
     })
 
     return true
+  }
+
+  async getGeneratedVariantSKUs({ input }) {
+    const { brandID, colorID, sizeNames } = input
+    const brand = await this.prisma.client.brand({ id: brandID })
+    const color = await this.prisma.client.color({ id: colorID })
+
+    if (!brand || !color) {
+      return null
+    }
+
+    const brandCount = await this.prisma.client
+      .productsConnection({
+        where: { brand: { id: brandID } },
+      })
+      .aggregate()
+      .count()
+    if (brandCount === null) {
+      return null
+    }
+
+    const styleNumber = brandCount + 1
+    const styleCode = styleNumber.toString().padStart(3, "0")
+    return sizeNames.map(sizeName => {
+      const sizeCode = this.utils.sizeNameToSizeCode(sizeName)
+      return `${brand.brandCode}-${color.colorCode}-${sizeCode}-${styleCode}`
+    })
   }
 }
