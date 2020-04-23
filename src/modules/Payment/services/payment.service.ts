@@ -2,6 +2,8 @@ import {
   InvoicesDataLoader,
   Transaction,
   TransactionsDataLoader,
+  RefundInvoiceInput,
+  Invoice,
 } from "../payment.types"
 import { get, identity } from "lodash"
 
@@ -258,46 +260,99 @@ export class PaymentService {
     invoicesLoader: InvoicesDataLoader,
     transactionsLoader: TransactionsDataLoader
   ) {
-    const invoices = (await invoicesLoader.load(customer_id))?.filter(
-      a => !(a instanceof Error)
+    const invoices = this.utils.filterErrors<Invoice>(
+      await invoicesLoader.load(customer_id)
     )
     if (!invoices) {
       return null
     }
 
     return Promise.all(
-      invoices.map(async a =>
+      invoices.map(async invoice =>
         identity({
-          id: a.id,
-          subscriptionID: a.subscription_id,
-          recurring: a.recurring,
-          status: this.utils.snakeToCapitalizedCamelCase(a.status),
-          amount: a.total,
-          closingDate: this.utils.secondsSinceEpochToISOString(a.date),
-          dueDate: this.utils.secondsSinceEpochToISOString(a.due_date, true),
-          transactions: (((
-            await transactionsLoader.loadMany(this.getInvoiceTransactionIds(a))
-          )?.filter(b => !(b instanceof Error)) as any) as Transaction[]).map(
-            c =>
-              identity({
-                id: c.id,
-                amount: c.amount,
-                lastFour: c.masked_card_number?.replace(/[*]/g, ""),
-                date: this.utils.secondsSinceEpochToISOString(c.date, true),
-                status: this.utils.snakeToCapitalizedCamelCase(c.status),
-                type: this.utils.snakeToCapitalizedCamelCase(c.type),
-                settledAt: this.utils.secondsSinceEpochToISOString(
-                  c.settled_at,
-                  true
-                ),
-              })
-          ),
+          ...this.formatInvoice(invoice),
+          transactions: await this.getFormattedTransactionsForInvoice({
+            invoice,
+            transactionsLoader,
+          }),
         })
       )
     )
   }
 
+  async refundInvoice(
+    {
+      invoiceId,
+      refundAmount,
+      comment,
+      customerNotes,
+      reasonCode,
+    }: RefundInvoiceInput,
+    transactionsLoader: TransactionsDataLoader
+  ) {
+    debugger
+    const { invoice, transaction, credit_note } = await chargebee.invoice
+      .refund(invoiceId, {
+        refund_amount: refundAmount,
+        credit_note: {
+          reason_code: this.utils.camelToSnakeCase(reasonCode),
+        },
+        comment,
+        customer_notes: customerNotes,
+      })
+      .request()
+    debugger
+    return {
+      ...this.formatInvoice(invoice),
+      transactions: await this.getFormattedTransactionsForInvoice({
+        invoice,
+        transactionsLoader,
+      }),
+    }
+  }
+
   private getInvoiceTransactionIds(invoice) {
     return invoice.linked_payments.map(a => a.txn_id)
+  }
+
+  private formatInvoice(invoice: Invoice) {
+    return {
+      id: invoice.id,
+      subscriptionID: invoice.subscription_id,
+      recurring: invoice.recurring,
+      status: this.utils.snakeToCapitalizedCamelCase(invoice.status),
+      amount: invoice.total,
+      closingDate: this.utils.secondsSinceEpochToISOString(invoice.date),
+      dueDate: this.utils.secondsSinceEpochToISOString(invoice.due_date, true),
+    }
+  }
+
+  private async getFormattedTransactionsForInvoice({
+    invoice,
+    transactionsLoader,
+  }: {
+    invoice: Invoice
+    transactionsLoader: TransactionsDataLoader
+  }) {
+    return this.utils
+      .filterErrors<Transaction>(
+        await transactionsLoader.loadMany(
+          this.getInvoiceTransactionIds(invoice)
+        )
+      )
+      .map(b =>
+        identity({
+          id: b.id,
+          amount: b.amount,
+          lastFour: b.masked_card_number?.replace(/[*]/g, ""),
+          date: this.utils.secondsSinceEpochToISOString(b.date, true),
+          status: this.utils.snakeToCapitalizedCamelCase(b.status),
+          type: this.utils.snakeToCapitalizedCamelCase(b.type),
+          settledAt: this.utils.secondsSinceEpochToISOString(
+            b.settled_at,
+            true
+          ),
+        })
+      )
   }
 }

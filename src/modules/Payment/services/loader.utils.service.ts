@@ -42,7 +42,6 @@ export class LoaderUtilsService {
     groupFunc,
     extractFunc,
   }: LoadRecordsWithListInput) {
-    debugger
     let offset = "start"
     const allRecords = []
     while (true) {

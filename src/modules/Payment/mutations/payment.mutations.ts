@@ -4,13 +4,18 @@ import { Customer, User } from "@app/nest_decorators"
 import { CustomerService } from "@modules/User/services/customer.service"
 import { PaymentService } from "@modules/Payment/services/payment.service"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
+import { UtilsService } from "@modules/Utils"
+import { Loader } from "@app/modules/DataLoader"
+import { TransactionsLoader } from "../loaders/transactions.loaders"
+import { TransactionsDataLoader } from "../payment.types"
 
 @Resolver()
 export class PaymentMutationsResolver {
   constructor(
     private readonly customerService: CustomerService,
     private readonly paymentService: PaymentService,
-    private readonly shippingService: ShippingService
+    private readonly shippingService: ShippingService,
+    private readonly utilsService: UtilsService
   ) {}
 
   @Mutation()
@@ -70,5 +75,13 @@ export class PaymentMutationsResolver {
     )
 
     return null
+  }
+
+  @Mutation()
+  async refundInvoice(
+    @Args() { input: args },
+    @Loader(TransactionsLoader.name) transactionsLoader: TransactionsDataLoader
+  ) {
+    return await this.paymentService.refundInvoice(args, transactionsLoader)
   }
 }

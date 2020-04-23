@@ -88,6 +88,10 @@ export class UtilsService {
     return upperFirst(camelCase(str))
   }
 
+  camelToSnakeCase(str: string) {
+    return str?.replace(/[\w]([A-Z])/g, a => a[0] + "_" + a[1])?.toLowerCase()
+  }
+
   secondsSinceEpochToISOString(sec: number, nullifError = false): string {
     try {
       return new Date(sec * 1000).toISOString()
@@ -115,5 +119,9 @@ export class UtilsService {
       fs.writeSync(fileDescriptor, formattedLine)
       fs.writeSync(fileDescriptor, `\n`)
     })
+  }
+
+  filterErrors<T>(arr: any[]): T[] {
+    return arr?.filter(a => !(a instanceof Error))
   }
 }

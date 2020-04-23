@@ -53,4 +53,20 @@ export interface LoadAllRecordsWithListInput extends LoadRecordsWithListInput {
   maxIds: number
 }
 
+export interface RefundInvoiceInput {
+  invoiceId: String
+  refundAmount?: number
+  comment?: String
+  customerNotes?: String
+  reasonCode?: CreditNoteReasonCode
+}
+
+export type CreditNoteReasonCode =
+  | "ProductUnsatisfactory"
+  | "ServiceUnsatisfactory"
+  | "OrderChange"
+  | "OrderCancellation"
+  | "Waiver"
+  | "Other"
+
 export type LoadableRecord = "invoice" | "transaction"

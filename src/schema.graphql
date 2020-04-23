@@ -395,6 +395,7 @@ type Mutation {
   acknowledgeCompletedChargebeeHostedCheckout(
     hostedPageID: String!
   ): BillingInfoPayload
+  refundInvoice(input: RefundInvoiceInput): Invoice!
   addProductRequest(reason: String!, url: String!): ProductRequest!
   validateAddress(input: ValidateAddressInput!): ValidationPayload!
   addProductVariantWant(variantID: ID!): ProductVariantWant!
@@ -408,6 +409,14 @@ type Mutation {
     feedbackID: ID!
     input: ReservationFeedbackUpdateInput!
   ): ReservationFeedback!
+}
+
+input RefundInvoiceInput {
+  invoiceId: String!
+  refundAmount: Int
+  comment: String
+  customerNotes: String
+  reasonCode: CreditNoteReasonCode
 }
 
 input AddressInput {
@@ -542,6 +551,15 @@ enum PlanID {
 
 enum Event {
   CompletedWaitlistForm
+}
+
+enum CreditNoteReasonCode {
+  ProductUnsatisfactory
+  ServiceUnsatisfactory
+  OrderChange
+  OrderCancellation
+  Waiver
+  Other
 }
 
 type Faq {
