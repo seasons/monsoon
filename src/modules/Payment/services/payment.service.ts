@@ -258,7 +258,9 @@ export class PaymentService {
     invoicesLoader: InvoicesDataLoader,
     transactionsLoader: TransactionsDataLoader
   ) {
-    const invoices = await invoicesLoader.load(customer_id)
+    const invoices = (await invoicesLoader.load(customer_id))?.filter(
+      a => !(a instanceof Error)
+    )
     if (!invoices) {
       return null
     }
@@ -273,14 +275,11 @@ export class PaymentService {
           amount: a.total,
           closingDate: this.utils.secondsSinceEpochToISOString(a.date),
           dueDate: this.utils.secondsSinceEpochToISOString(a.due_date, true),
-          transactions: (
+          transactions: (((
             await transactionsLoader.loadMany(this.getInvoiceTransactionIds(a))
-          )?.map(b => {
-            if (b instanceof Error) {
-              return null
-            } else {
-              let c = (b as any) as Transaction
-              return {
+          )?.filter(b => !(b instanceof Error)) as any) as Transaction[]).map(
+            c =>
+              identity({
                 id: c.id,
                 amount: c.amount,
                 lastFour: c.masked_card_number?.replace(/[*]/g, ""),
@@ -291,9 +290,8 @@ export class PaymentService {
                   c.settled_at,
                   true
                 ),
-              }
-            }
-          }),
+              })
+          ),
         })
       )
     )

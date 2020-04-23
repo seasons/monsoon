@@ -10,12 +10,12 @@ import chargebee from "chargebee"
 @Injectable()
 export class LoaderUtilsService {
   async loadAllRecordsWIthList({
-    maxIds = 200,
-    filterKey,
     ids,
     recordName,
-    groupFunc,
-    extractFunc,
+    maxIds = 200,
+    filterKey = `id[in]`,
+    groupFunc = a => a.id,
+    extractFunc = (valsById, id) => valsById[id],
   }: LoadAllRecordsWithListInput) {
     return Promise.resolve(
       concat(
@@ -36,11 +36,11 @@ export class LoaderUtilsService {
   }
 
   private async loadRecordsWithList({
-    filterKey = `id[in]`,
+    filterKey,
     ids,
     recordName,
-    groupFunc = a => a.id,
-    extractFunc = (valsById, id) => valsById[id],
+    groupFunc,
+    extractFunc,
   }: LoadRecordsWithListInput) {
     debugger
     let offset = "start"

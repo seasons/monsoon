@@ -34,7 +34,7 @@ export interface Transaction {
   masked_card_number?: string
   date?: number
   status?: string
-  type?: string
+  type: string
   settled_at?: number
 }
 

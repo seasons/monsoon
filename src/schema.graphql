@@ -603,8 +603,8 @@ type Transaction {
   id: String!
   amount: Int
   lastFour: String
-  date: DateTime!
-  status: TransactionStatus!
+  date: DateTime
+  status: TransactionStatus
   type: TransactionType!
   settledAt: DateTime
 }
