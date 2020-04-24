@@ -1,22 +1,26 @@
-import { InventoryStatus, Location } from "@prisma/index"
-import { camelCase, mapKeys, snakeCase, upperFirst } from "lodash"
+import * as fs from "fs"
 
-import { AirtableInventoryStatus } from "@modules/Airtable/airtable.types"
+import { camelCase, mapKeys, snakeCase } from "lodash"
+
 import { Injectable } from "@nestjs/common"
+import { Location } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
 import cliProgress from "cli-progress"
 import crypto from "crypto"
 import { isObject } from "util"
 
+enum ProductSize {
+  XS = "XS",
+  S = "S",
+  M = "M",
+  L = "L",
+  XL = "XL",
+  XXL = "XXL",
+}
+
 @Injectable()
 export class UtilsService {
   constructor(private readonly prisma: PrismaService) {}
-
-  airtableToPrismaInventoryStatus(
-    airtableStatus: AirtableInventoryStatus
-  ): InventoryStatus {
-    return airtableStatus.replace(" ", "") as InventoryStatus
-  }
 
   deleteFieldsFromObject(obj: object, fieldsToDelete: string[]) {
     const objCopy = { ...obj }
@@ -114,5 +118,46 @@ export class UtilsService {
       }
     }
     return a
+  }
+
+  openLogFile(logName) {
+    return fs.openSync(
+      `logs/${logName}-${require("moment")().format(
+        "MMMM-Do-YYYY-hh:mm:ss"
+      )}.txt`,
+      "a"
+    )
+  }
+
+  writeLines(fileDescriptor, lines: (string | object)[]) {
+    lines.forEach(line => {
+      let formattedLine = typeof line === "object" ? JSON.stringify(line) : line
+      fs.writeSync(fileDescriptor, formattedLine)
+      fs.writeSync(fileDescriptor, `\n`)
+    })
+  }
+
+  sizeNameToSizeCode(sizeName: ProductSize | string) {
+    switch (sizeName) {
+      case ProductSize.XS:
+        return "XS"
+      case ProductSize.S:
+        return "SS"
+      case ProductSize.M:
+        return "MM"
+      case ProductSize.L:
+        return "LL"
+      case ProductSize.XL:
+        return "XL"
+      case ProductSize.XXL:
+        return "XXL"
+    }
+
+    // If we get here, we're expecting a bottom with size WxL e.g 32x28
+    // Regex: (start)digit-digit-x-digit-digit(end)
+    if (!sizeName.match(/^\d\dx\d\d$/)) {
+      throw new Error(`invalid sizeName: ${sizeName}`)
+    }
+    return sizeName.toLowerCase().replace("x", "") // 32x28 => 3238
   }
 }

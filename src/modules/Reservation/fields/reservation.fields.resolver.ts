@@ -1,4 +1,4 @@
-import { Info, Parent, ResolveField, Resolver } from "@nestjs/graphql"
+import { Args, Parent, ResolveField, Resolver } from "@nestjs/graphql"
 
 import { PrismaService } from "@prisma/prisma.service"
 import { ReservationUtilsService } from "../services/reservation.utils.service"
@@ -18,5 +18,27 @@ export class ReservationFieldsResolver {
     return this.reservationService.formatReservationReturnDate(
       new Date(reservation?.createdAt)
     )
+  }
+
+  @ResolveField()
+  async status(@Parent() parent, @Args() args) {
+    const reservation = await this.prisma.client.reservation({
+      id: parent.id,
+    })
+    const status = reservation.status
+    if (args.display === true) {
+      switch (status) {
+        case "InQueue":
+          return "In queue"
+        case "InTransit":
+          return "In transit"
+        case "OnHold":
+          return "On hold"
+        default:
+          return status
+      }
+    } else {
+      return status
+    }
   }
 }

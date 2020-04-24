@@ -16,6 +16,14 @@ interface DataPoint {
   shouldFlagNum?: boolean
 }
 
+interface ReportLine {
+  text: string
+  paramArray?: any[] | null
+  withDetails?: boolean
+  printDetailFunc?: any
+  withGutter?: boolean
+}
+
 @Injectable()
 export class DataScheduledJobs {
   constructor(
@@ -239,14 +247,14 @@ export class DataScheduledJobs {
         ...message,
         text:
           `Error while running airtable/prisma health check. Please debug it ` +
-          `locally using \`yarn healthCheck:production\`\n${err}`,
+          `locally using \`monsoon hc --pe production --ae production\`\n${err}`,
       } as any
     }
 
     await this.slackService.postMessage(message)
   }
 
-  async checkAll() {
+  async checkAll(withDetails = false) {
     const allAirtableProductVariants = await this.airtableService.getAllProductVariants()
     const allAirtablePhysicalProducts = await this.airtableService.getAllPhysicalProducts()
     const allAirtableProducts = await this.airtableService.getAllProducts()
@@ -405,91 +413,140 @@ export class DataScheduledJobs {
     )
 
     /* REPORT */
-    console.log(`/*********** REPORT ***********/`)
-    console.log(
-      `DO PRODUCTS, PHYSICAL PRODUCTS, AND PRODUCT VARIANTS ALIGN IN NUMBER?`
+    this.printReportLines(
+      [
+        { text: `/*********** report ***********/` },
+        {
+          text: `do products, physical products, and product variants align in number?`,
+        },
+        {
+          text: "products on prisma but not airtable",
+          paramArray: productsInPrismaButNotAirtable,
+        },
+        {
+          text: "products on airtable but not prisma",
+          paramArray: productsInAirtableButNotPrisma,
+        },
+        {
+          text: "physical products on prisma but not airtable",
+          paramArray: physicalProductsInPrismaButNotAirtable,
+        },
+        {
+          text: "physical products on airtable but not prisma",
+          paramArray: physicalProductsInAirtableButNotPrisma,
+        },
+        {
+          text: "product variants on prisma but not airtable",
+          paramArray: productVariantsInPrismaButNotAirtable,
+        },
+        {
+          text: "product variants on airtable but not prisma",
+          paramArray: productVariantsInAirtableButNotPrisma,
+          withGutter: true,
+        },
+        {
+          text: "do product variant skus match on prisma and airtable",
+        },
+        {
+          text: "mismatched product variant skus between prisma/airtable",
+          paramArray: productVariantSKUMismatches,
+          withGutter: true,
+        },
+        {
+          text: `are suids correct on prisma and airtable?`,
+        },
+        {
+          text: "mismatched suid/sku combos on prisma",
+          paramArray: prismaSUIDToSKUMismatches,
+        },
+        {
+          text: "mismatched suid/sku combos on airtable",
+          paramArray: airtableSUIDToSKUMismatches,
+          withGutter: true,
+        },
+        {
+          text: "are the counts the same on prisma and airtable?",
+        },
+        {
+          text: "mismatched counts",
+          paramArray: countMisalignments,
+        },
+        {
+          text:
+            "prisma: number of product variants with incorrect number of physical products attached",
+          paramArray: prismaTotalPhysicalProductMisalignment,
+        },
+        {
+          text:
+            "airtable: number of product variants with incorrect number of physical products attached",
+          paramArray: airtableTotalPhysicalProductMisalignment,
+        },
+        {
+          text:
+            "prisma: number of product variants with a count profile that doesn't match the statuses of the attached physical products",
+          paramArray: prismaCountToStatusMisalignments,
+          printDetailFunc: a => {
+            console.log(util.inspect(a, { depth: null }))
+          },
+        },
+        {
+          text:
+            "airtable: number of product variants with a count profile that doesn't match the statuses of the attached physical products",
+          paramArray: airtableCountToStatusMisalignments,
+          printDetailFunc: a => {
+            console.log(
+              util.inspect(
+                a.map(a => a.sku),
+                { depth: null }
+              )
+            )
+          },
+        },
+        {
+          text:
+            "prisma: number of product variants with total != reserved + reservable + nonreservable",
+          paramArray: prismaProdVarsWithImpossibleCounts,
+          withGutter: true,
+        },
+        {
+          text: "are the physical product statuses aligned?",
+        },
+        {
+          text:
+            "number of physical products with mismatching inventory statuses",
+          paramArray: mismatchingStatuses,
+          withGutter: true,
+        },
+        {
+          text: "are the reservations aligned?",
+        },
+        {
+          text: "reservations in prisma but not airtable",
+          paramArray: reservationsInPrismaButNotAirtable,
+        },
+        {
+          text: "reservations in airtable but not prisma",
+          paramArray: reservationsInAirtableButNotPrisma,
+        },
+        {
+          text: "reservations with mismatching products",
+          paramArray: misalignedSUIDsOnReservations,
+        },
+        {
+          text: "reservations with mismatching statuses",
+          paramArray: misalignedStatusOnReservations,
+        },
+        {
+          text: "reservations with more than 3 products",
+          paramArray: reservationsWithMoreThanThreeProducts,
+        },
+        {
+          text: "errors",
+          paramArray: errors,
+        },
+      ],
+      withDetails
     )
-    console.log(
-      `--- PRODUCTS ON PRISMA BUT NOR AIRTABLE: ${productsInPrismaButNotAirtable.length}`
-    )
-    console.log(
-      `--- PRODUCTS ON AIRTABLE BUT NOT PRISMA: ${productsInAirtableButNotPrisma.length}`
-    )
-    console.log(
-      `--- PHYSICAL PRODUCTS ON PRISMA BUT NOT AIRTABLE: ${physicalProductsInPrismaButNotAirtable.length}`
-    )
-    console.log(
-      `--- PHYSICAL PRODUCTS ON AIRTABLE BUT NOT PRISMA: ${physicalProductsInAirtableButNotPrisma.length}`
-    )
-    console.log(
-      `--- PRODUCT VARIANTS ON PRISMA BUT NOT AIRTABLE: ${productVariantsInPrismaButNotAirtable.length}`
-    )
-    console.log(
-      `--- PRODUCT VARIANTS ON AIRTABLE BUT NOT PRISMA: ${productVariantsInAirtableButNotPrisma.length}`
-    )
-    console.log(``)
-    console.log(`DO PRODUCT VARIANT SKUS MATCH ON PRISMA AND AIRTABLE?`)
-    console.log(
-      `-- MISMATCHED PRODUCT VARIANT SKUS BETWEEN PRISMA/AIRTABLE: ${productVariantSKUMismatches.length}`
-    )
-    console.log(``)
-    console.log(`ARE SUIDS CORRECT ON PRISMA AND AIRTABLE?`)
-    console.log(
-      `-- MISMATCHED SUID/SKU COMBOS ON PRISMA: ${prismaSUIDToSKUMismatches.length}`
-    )
-    console.log(
-      `-- MISMATCHED SUID/SKU COMBOS ON AIRTABLE: ${airtableSUIDToSKUMismatches.length}`
-    )
-    console.log(``)
-    console.log(`ARE THE COUNTS THE SAME ON PRISMA AND AIRTABLE?`)
-    console.log(`-- MISMATCHED COUNTS: ${countMisalignments.length}`)
-    console.log(countMisalignments)
-    console.log(
-      `-- PRISMA: NUMBER OF PRODUCT VARIANTS WITH INCORRECT NUMBER OF PHYSICAL PRODUCTS ATTACHED: ${prismaTotalPhysicalProductMisalignment.length}`
-    )
-    console.log(
-      `-- AIRTABLE: NUMBER OF PRODUCT VARIANTS WITH INCORRECT NUMBER OF PHYSICAL PRODUCTS ATTACHED: ${airtableTotalPhysicalProductMisalignment.length}`
-    )
-    console.log(
-      `-- PRISMA: NUMBER OF PRODUCT VARIANTS WITH A COUNT PROFILE THAT DOESN'T MATCH THE STATUSES OF THE ATTACHED PHYSICAL PRODUCTS: ${prismaCountToStatusMisalignments.length}`
-    )
-    // console.log(util.inspect(prismaCountToStatusMisalignments, { depth: null }))
-    console.log(
-      `-- AIRTABLE: NUMBER OF PRODUCT VARIANTS WITH A COUNT PROFILE THAT DOESN'T MATCH THE STATUSES OF THE ATTACHED PHYSICAL PRODUCTS: ${airtableCountToStatusMisalignments.length}`
-    )
-    console.log(
-      util.inspect(
-        airtableCountToStatusMisalignments.map(a => a.sku),
-        { depth: null }
-      )
-    )
-    console.log(
-      `-- PRISMA: NUMBER OF PRODUCT VARIANTS WITH TOTAL != RESERVED + RESERVABLE + NONRESERVABLE: ${prismaProdVarsWithImpossibleCounts.length}`
-    )
-    console.log(``)
-    console.log(`ARE THE PHYSICAL PRODUCT STATUSES ALIGNED?`)
-    console.log(
-      `---NUMBER OF PHYSICAL PRODUCTS WITH MISMATCHING INVENTORY STATUSES: ${mismatchingStatuses.length}`
-    )
-    console.log(mismatchingStatuses.map(a => a.seasonsUID))
-    console.log(`ARE THE RESERVATIONS ALIGNED?`)
-    console.log(
-      `-- RESERVATIONS IN PRISMA BUT NOT AIRTABLE; ${reservationsInPrismaButNotAirtable.length}`
-    )
-    console.log(
-      `-- RESERVATIONS IN AIRTABLE BUT NOT PRISMA: ${reservationsInAirtableButNotPrisma.length}`
-    )
-    console.log(
-      `-- RESERVATIONS WITH MISMATCHING PRODUCTS: ${misalignedSUIDsOnReservations.length}`
-    )
-    console.log(
-      `-- RESERVATIONS WITH MISMATCHING STATUSES: ${misalignedStatusOnReservations.length}`
-    )
-    console.log(
-      `-- RESERVATIONS WITH MORE THAN 3 PRODUCTS: ${reservationsWithMoreThanThreeProducts.length}`
-    )
-
-    console.log(`ERRORS: ${errors.length}`)
 
     return [
       productsInPrismaButNotAirtable,
@@ -723,7 +780,7 @@ export class DataScheduledJobs {
         continue
       } else {
         if (
-          this.utils.airtableToPrismaInventoryStatus(
+          this.airtableService.airtableToPrismaInventoryStatus(
             correspondingAirtablePhysicalProduct.fields["Inventory Status"]
           ) !== prismaPhysicalProduct.inventoryStatus
         ) {
@@ -911,9 +968,42 @@ export class DataScheduledJobs {
     return blocks
   }
 
+  private printReportLines(
+    lines: Omit<ReportLine, "withDetails">[],
+    withDetails: boolean
+  ) {
+    for (const line of lines) {
+      this.printSingleReportLine({ ...line, withDetails })
+    }
+  }
+  private printSingleReportLine({
+    text,
+    paramArray = null,
+    withDetails = false,
+    printDetailFunc = null,
+    withGutter = false,
+  }: ReportLine) {
+    if (!paramArray) {
+      console.log(text.toUpperCase())
+      withGutter && console.log("")
+    } else {
+      console.log(`--- ${text.toLowerCase()}: ${paramArray.length}`)
+      this.printIfRequestedAndNonZero(withDetails, paramArray, printDetailFunc)
+      withGutter && console.log("")
+    }
+  }
   private flagIfNeeded = (num, shouldFlag) =>
     shouldFlag && num > 0 ? `\`${num}\`` : `${num}`
 
+  private printIfRequestedAndNonZero = (
+    withDetails,
+    paramArray,
+    printFunc = null
+  ) => {
+    if (withDetails && paramArray?.length > 0) {
+      !!printFunc ? printFunc(paramArray) : console.log(paramArray)
+    }
+  }
   private getAttachedAirtablePhysicalProducts(
     allAirtablePhysicalProducts,
     airtableProductVariant

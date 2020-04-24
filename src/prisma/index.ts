@@ -1550,6 +1550,7 @@ export type Material =
   | "Lambswool"
   | "Leather"
   | "Lyocell"
+  | "Linen"
   | "MerinoWool"
   | "Modacrylic"
   | "Mohair"
@@ -1595,6 +1596,18 @@ export type ReservationStatus =
   | "Cancelled"
   | "Completed"
 
+export type BagItemStatus = "Added" | "Reserved" | "Received"
+
+export type BagItemOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "position_ASC"
+  | "position_DESC"
+  | "saved_ASC"
+  | "saved_DESC"
+  | "status_ASC"
+  | "status_DESC"
+
 export type ReservationOrderByInput =
   | "id_ASC"
   | "id_DESC"
@@ -1614,18 +1627,6 @@ export type ReservationOrderByInput =
   | "createdAt_DESC"
   | "updatedAt_ASC"
   | "updatedAt_DESC"
-
-export type BagItemStatus = "Added" | "Reserved" | "Received"
-
-export type BagItemOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "position_ASC"
-  | "position_DESC"
-  | "saved_ASC"
-  | "saved_DESC"
-  | "status_ASC"
-  | "status_DESC"
 
 export type BillingInfoOrderByInput =
   | "id_ASC"
@@ -3167,7 +3168,7 @@ export interface ProductFunctionWhereInput {
   NOT?: Maybe<ProductFunctionWhereInput[] | ProductFunctionWhereInput>
 }
 
-export interface ReservationWhereInput {
+export interface BagItemWhereInput {
   id?: Maybe<ID_Input>
   id_not?: Maybe<ID_Input>
   id_in?: Maybe<ID_Input[] | ID_Input>
@@ -3182,71 +3183,25 @@ export interface ReservationWhereInput {
   id_not_starts_with?: Maybe<ID_Input>
   id_ends_with?: Maybe<ID_Input>
   id_not_ends_with?: Maybe<ID_Input>
-  user?: Maybe<UserWhereInput>
   customer?: Maybe<CustomerWhereInput>
-  sentPackage?: Maybe<PackageWhereInput>
-  returnedPackage?: Maybe<PackageWhereInput>
-  location?: Maybe<LocationWhereInput>
-  products_every?: Maybe<PhysicalProductWhereInput>
-  products_some?: Maybe<PhysicalProductWhereInput>
-  products_none?: Maybe<PhysicalProductWhereInput>
-  reservationNumber?: Maybe<Int>
-  reservationNumber_not?: Maybe<Int>
-  reservationNumber_in?: Maybe<Int[] | Int>
-  reservationNumber_not_in?: Maybe<Int[] | Int>
-  reservationNumber_lt?: Maybe<Int>
-  reservationNumber_lte?: Maybe<Int>
-  reservationNumber_gt?: Maybe<Int>
-  reservationNumber_gte?: Maybe<Int>
-  shipped?: Maybe<Boolean>
-  shipped_not?: Maybe<Boolean>
-  status?: Maybe<ReservationStatus>
-  status_not?: Maybe<ReservationStatus>
-  status_in?: Maybe<ReservationStatus[] | ReservationStatus>
-  status_not_in?: Maybe<ReservationStatus[] | ReservationStatus>
-  shippedAt?: Maybe<DateTimeInput>
-  shippedAt_not?: Maybe<DateTimeInput>
-  shippedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>
-  shippedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>
-  shippedAt_lt?: Maybe<DateTimeInput>
-  shippedAt_lte?: Maybe<DateTimeInput>
-  shippedAt_gt?: Maybe<DateTimeInput>
-  shippedAt_gte?: Maybe<DateTimeInput>
-  receivedAt?: Maybe<DateTimeInput>
-  receivedAt_not?: Maybe<DateTimeInput>
-  receivedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>
-  receivedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>
-  receivedAt_lt?: Maybe<DateTimeInput>
-  receivedAt_lte?: Maybe<DateTimeInput>
-  receivedAt_gt?: Maybe<DateTimeInput>
-  receivedAt_gte?: Maybe<DateTimeInput>
-  reminderSentAt?: Maybe<DateTimeInput>
-  reminderSentAt_not?: Maybe<DateTimeInput>
-  reminderSentAt_in?: Maybe<DateTimeInput[] | DateTimeInput>
-  reminderSentAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>
-  reminderSentAt_lt?: Maybe<DateTimeInput>
-  reminderSentAt_lte?: Maybe<DateTimeInput>
-  reminderSentAt_gt?: Maybe<DateTimeInput>
-  reminderSentAt_gte?: Maybe<DateTimeInput>
-  createdAt?: Maybe<DateTimeInput>
-  createdAt_not?: Maybe<DateTimeInput>
-  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>
-  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>
-  createdAt_lt?: Maybe<DateTimeInput>
-  createdAt_lte?: Maybe<DateTimeInput>
-  createdAt_gt?: Maybe<DateTimeInput>
-  createdAt_gte?: Maybe<DateTimeInput>
-  updatedAt?: Maybe<DateTimeInput>
-  updatedAt_not?: Maybe<DateTimeInput>
-  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>
-  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>
-  updatedAt_lt?: Maybe<DateTimeInput>
-  updatedAt_lte?: Maybe<DateTimeInput>
-  updatedAt_gt?: Maybe<DateTimeInput>
-  updatedAt_gte?: Maybe<DateTimeInput>
-  AND?: Maybe<ReservationWhereInput[] | ReservationWhereInput>
-  OR?: Maybe<ReservationWhereInput[] | ReservationWhereInput>
-  NOT?: Maybe<ReservationWhereInput[] | ReservationWhereInput>
+  productVariant?: Maybe<ProductVariantWhereInput>
+  position?: Maybe<Int>
+  position_not?: Maybe<Int>
+  position_in?: Maybe<Int[] | Int>
+  position_not_in?: Maybe<Int[] | Int>
+  position_lt?: Maybe<Int>
+  position_lte?: Maybe<Int>
+  position_gt?: Maybe<Int>
+  position_gte?: Maybe<Int>
+  saved?: Maybe<Boolean>
+  saved_not?: Maybe<Boolean>
+  status?: Maybe<BagItemStatus>
+  status_not?: Maybe<BagItemStatus>
+  status_in?: Maybe<BagItemStatus[] | BagItemStatus>
+  status_not_in?: Maybe<BagItemStatus[] | BagItemStatus>
+  AND?: Maybe<BagItemWhereInput[] | BagItemWhereInput>
+  OR?: Maybe<BagItemWhereInput[] | BagItemWhereInput>
+  NOT?: Maybe<BagItemWhereInput[] | BagItemWhereInput>
 }
 
 export interface CustomerWhereInput {
@@ -3275,6 +3230,9 @@ export interface CustomerWhereInput {
   plan_not?: Maybe<Plan>
   plan_in?: Maybe<Plan[] | Plan>
   plan_not_in?: Maybe<Plan[] | Plan>
+  bagItems_every?: Maybe<BagItemWhereInput>
+  bagItems_some?: Maybe<BagItemWhereInput>
+  bagItems_none?: Maybe<BagItemWhereInput>
   reservations_every?: Maybe<ReservationWhereInput>
   reservations_some?: Maybe<ReservationWhereInput>
   reservations_none?: Maybe<ReservationWhereInput>
@@ -3710,6 +3668,88 @@ export interface BillingInfoWhereInput {
   NOT?: Maybe<BillingInfoWhereInput[] | BillingInfoWhereInput>
 }
 
+export interface ReservationWhereInput {
+  id?: Maybe<ID_Input>
+  id_not?: Maybe<ID_Input>
+  id_in?: Maybe<ID_Input[] | ID_Input>
+  id_not_in?: Maybe<ID_Input[] | ID_Input>
+  id_lt?: Maybe<ID_Input>
+  id_lte?: Maybe<ID_Input>
+  id_gt?: Maybe<ID_Input>
+  id_gte?: Maybe<ID_Input>
+  id_contains?: Maybe<ID_Input>
+  id_not_contains?: Maybe<ID_Input>
+  id_starts_with?: Maybe<ID_Input>
+  id_not_starts_with?: Maybe<ID_Input>
+  id_ends_with?: Maybe<ID_Input>
+  id_not_ends_with?: Maybe<ID_Input>
+  user?: Maybe<UserWhereInput>
+  customer?: Maybe<CustomerWhereInput>
+  sentPackage?: Maybe<PackageWhereInput>
+  returnedPackage?: Maybe<PackageWhereInput>
+  location?: Maybe<LocationWhereInput>
+  products_every?: Maybe<PhysicalProductWhereInput>
+  products_some?: Maybe<PhysicalProductWhereInput>
+  products_none?: Maybe<PhysicalProductWhereInput>
+  reservationNumber?: Maybe<Int>
+  reservationNumber_not?: Maybe<Int>
+  reservationNumber_in?: Maybe<Int[] | Int>
+  reservationNumber_not_in?: Maybe<Int[] | Int>
+  reservationNumber_lt?: Maybe<Int>
+  reservationNumber_lte?: Maybe<Int>
+  reservationNumber_gt?: Maybe<Int>
+  reservationNumber_gte?: Maybe<Int>
+  shipped?: Maybe<Boolean>
+  shipped_not?: Maybe<Boolean>
+  status?: Maybe<ReservationStatus>
+  status_not?: Maybe<ReservationStatus>
+  status_in?: Maybe<ReservationStatus[] | ReservationStatus>
+  status_not_in?: Maybe<ReservationStatus[] | ReservationStatus>
+  shippedAt?: Maybe<DateTimeInput>
+  shippedAt_not?: Maybe<DateTimeInput>
+  shippedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>
+  shippedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>
+  shippedAt_lt?: Maybe<DateTimeInput>
+  shippedAt_lte?: Maybe<DateTimeInput>
+  shippedAt_gt?: Maybe<DateTimeInput>
+  shippedAt_gte?: Maybe<DateTimeInput>
+  receivedAt?: Maybe<DateTimeInput>
+  receivedAt_not?: Maybe<DateTimeInput>
+  receivedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>
+  receivedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>
+  receivedAt_lt?: Maybe<DateTimeInput>
+  receivedAt_lte?: Maybe<DateTimeInput>
+  receivedAt_gt?: Maybe<DateTimeInput>
+  receivedAt_gte?: Maybe<DateTimeInput>
+  reminderSentAt?: Maybe<DateTimeInput>
+  reminderSentAt_not?: Maybe<DateTimeInput>
+  reminderSentAt_in?: Maybe<DateTimeInput[] | DateTimeInput>
+  reminderSentAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>
+  reminderSentAt_lt?: Maybe<DateTimeInput>
+  reminderSentAt_lte?: Maybe<DateTimeInput>
+  reminderSentAt_gt?: Maybe<DateTimeInput>
+  reminderSentAt_gte?: Maybe<DateTimeInput>
+  createdAt?: Maybe<DateTimeInput>
+  createdAt_not?: Maybe<DateTimeInput>
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>
+  createdAt_lt?: Maybe<DateTimeInput>
+  createdAt_lte?: Maybe<DateTimeInput>
+  createdAt_gt?: Maybe<DateTimeInput>
+  createdAt_gte?: Maybe<DateTimeInput>
+  updatedAt?: Maybe<DateTimeInput>
+  updatedAt_not?: Maybe<DateTimeInput>
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>
+  updatedAt_lt?: Maybe<DateTimeInput>
+  updatedAt_lte?: Maybe<DateTimeInput>
+  updatedAt_gt?: Maybe<DateTimeInput>
+  updatedAt_gte?: Maybe<DateTimeInput>
+  AND?: Maybe<ReservationWhereInput[] | ReservationWhereInput>
+  OR?: Maybe<ReservationWhereInput[] | ReservationWhereInput>
+  NOT?: Maybe<ReservationWhereInput[] | ReservationWhereInput>
+}
+
 export interface PackageWhereInput {
   id?: Maybe<ID_Input>
   id_not?: Maybe<ID_Input>
@@ -3834,42 +3874,6 @@ export interface LabelWhereInput {
   AND?: Maybe<LabelWhereInput[] | LabelWhereInput>
   OR?: Maybe<LabelWhereInput[] | LabelWhereInput>
   NOT?: Maybe<LabelWhereInput[] | LabelWhereInput>
-}
-
-export interface BagItemWhereInput {
-  id?: Maybe<ID_Input>
-  id_not?: Maybe<ID_Input>
-  id_in?: Maybe<ID_Input[] | ID_Input>
-  id_not_in?: Maybe<ID_Input[] | ID_Input>
-  id_lt?: Maybe<ID_Input>
-  id_lte?: Maybe<ID_Input>
-  id_gt?: Maybe<ID_Input>
-  id_gte?: Maybe<ID_Input>
-  id_contains?: Maybe<ID_Input>
-  id_not_contains?: Maybe<ID_Input>
-  id_starts_with?: Maybe<ID_Input>
-  id_not_starts_with?: Maybe<ID_Input>
-  id_ends_with?: Maybe<ID_Input>
-  id_not_ends_with?: Maybe<ID_Input>
-  customer?: Maybe<CustomerWhereInput>
-  productVariant?: Maybe<ProductVariantWhereInput>
-  position?: Maybe<Int>
-  position_not?: Maybe<Int>
-  position_in?: Maybe<Int[] | Int>
-  position_not_in?: Maybe<Int[] | Int>
-  position_lt?: Maybe<Int>
-  position_lte?: Maybe<Int>
-  position_gt?: Maybe<Int>
-  position_gte?: Maybe<Int>
-  saved?: Maybe<Boolean>
-  saved_not?: Maybe<Boolean>
-  status?: Maybe<BagItemStatus>
-  status_not?: Maybe<BagItemStatus>
-  status_in?: Maybe<BagItemStatus[] | BagItemStatus>
-  status_not_in?: Maybe<BagItemStatus[] | BagItemStatus>
-  AND?: Maybe<BagItemWhereInput[] | BagItemWhereInput>
-  OR?: Maybe<BagItemWhereInput[] | BagItemWhereInput>
-  NOT?: Maybe<BagItemWhereInput[] | BagItemWhereInput>
 }
 
 export type BillingInfoWhereUniqueInput = AtLeastOne<{
@@ -4700,19 +4704,19 @@ export type UserWhereUniqueInput = AtLeastOne<{
 
 export interface BagItemCreateInput {
   id?: Maybe<ID_Input>
-  customer: CustomerCreateOneInput
+  customer: CustomerCreateOneWithoutBagItemsInput
   productVariant: ProductVariantCreateOneInput
   position?: Maybe<Int>
   saved?: Maybe<Boolean>
   status: BagItemStatus
 }
 
-export interface CustomerCreateOneInput {
-  create?: Maybe<CustomerCreateInput>
+export interface CustomerCreateOneWithoutBagItemsInput {
+  create?: Maybe<CustomerCreateWithoutBagItemsInput>
   connect?: Maybe<CustomerWhereUniqueInput>
 }
 
-export interface CustomerCreateInput {
+export interface CustomerCreateWithoutBagItemsInput {
   id?: Maybe<ID_Input>
   user: UserCreateOneInput
   status?: Maybe<CustomerStatus>
@@ -5252,21 +5256,21 @@ export interface ProductVariantCreateInput {
 }
 
 export interface BagItemUpdateInput {
-  customer?: Maybe<CustomerUpdateOneRequiredInput>
+  customer?: Maybe<CustomerUpdateOneRequiredWithoutBagItemsInput>
   productVariant?: Maybe<ProductVariantUpdateOneRequiredInput>
   position?: Maybe<Int>
   saved?: Maybe<Boolean>
   status?: Maybe<BagItemStatus>
 }
 
-export interface CustomerUpdateOneRequiredInput {
-  create?: Maybe<CustomerCreateInput>
-  update?: Maybe<CustomerUpdateDataInput>
-  upsert?: Maybe<CustomerUpsertNestedInput>
+export interface CustomerUpdateOneRequiredWithoutBagItemsInput {
+  create?: Maybe<CustomerCreateWithoutBagItemsInput>
+  update?: Maybe<CustomerUpdateWithoutBagItemsDataInput>
+  upsert?: Maybe<CustomerUpsertWithoutBagItemsInput>
   connect?: Maybe<CustomerWhereUniqueInput>
 }
 
-export interface CustomerUpdateDataInput {
+export interface CustomerUpdateWithoutBagItemsDataInput {
   user?: Maybe<UserUpdateOneRequiredInput>
   status?: Maybe<CustomerStatus>
   detail?: Maybe<CustomerDetailUpdateOneInput>
@@ -6883,9 +6887,9 @@ export interface ReservationUpdateManyDataInput {
   reminderSentAt?: Maybe<DateTimeInput>
 }
 
-export interface CustomerUpsertNestedInput {
-  update: CustomerUpdateDataInput
-  create: CustomerCreateInput
+export interface CustomerUpsertWithoutBagItemsInput {
+  update: CustomerUpdateWithoutBagItemsDataInput
+  create: CustomerCreateWithoutBagItemsInput
 }
 
 export interface ProductVariantUpdateOneRequiredInput {
@@ -7435,13 +7439,126 @@ export interface ColorUpdateManyMutationInput {
   hexCode?: Maybe<String>
 }
 
+export interface CustomerCreateInput {
+  id?: Maybe<ID_Input>
+  user: UserCreateOneInput
+  status?: Maybe<CustomerStatus>
+  detail?: Maybe<CustomerDetailCreateOneInput>
+  billingInfo?: Maybe<BillingInfoCreateOneInput>
+  plan?: Maybe<Plan>
+  bagItems?: Maybe<BagItemCreateManyWithoutCustomerInput>
+  reservations?: Maybe<ReservationCreateManyWithoutCustomerInput>
+}
+
+export interface BagItemCreateManyWithoutCustomerInput {
+  create?: Maybe<
+    BagItemCreateWithoutCustomerInput[] | BagItemCreateWithoutCustomerInput
+  >
+  connect?: Maybe<BagItemWhereUniqueInput[] | BagItemWhereUniqueInput>
+}
+
+export interface BagItemCreateWithoutCustomerInput {
+  id?: Maybe<ID_Input>
+  productVariant: ProductVariantCreateOneInput
+  position?: Maybe<Int>
+  saved?: Maybe<Boolean>
+  status: BagItemStatus
+}
+
 export interface CustomerUpdateInput {
   user?: Maybe<UserUpdateOneRequiredInput>
   status?: Maybe<CustomerStatus>
   detail?: Maybe<CustomerDetailUpdateOneInput>
   billingInfo?: Maybe<BillingInfoUpdateOneInput>
   plan?: Maybe<Plan>
+  bagItems?: Maybe<BagItemUpdateManyWithoutCustomerInput>
   reservations?: Maybe<ReservationUpdateManyWithoutCustomerInput>
+}
+
+export interface BagItemUpdateManyWithoutCustomerInput {
+  create?: Maybe<
+    BagItemCreateWithoutCustomerInput[] | BagItemCreateWithoutCustomerInput
+  >
+  delete?: Maybe<BagItemWhereUniqueInput[] | BagItemWhereUniqueInput>
+  connect?: Maybe<BagItemWhereUniqueInput[] | BagItemWhereUniqueInput>
+  set?: Maybe<BagItemWhereUniqueInput[] | BagItemWhereUniqueInput>
+  disconnect?: Maybe<BagItemWhereUniqueInput[] | BagItemWhereUniqueInput>
+  update?: Maybe<
+    | BagItemUpdateWithWhereUniqueWithoutCustomerInput[]
+    | BagItemUpdateWithWhereUniqueWithoutCustomerInput
+  >
+  upsert?: Maybe<
+    | BagItemUpsertWithWhereUniqueWithoutCustomerInput[]
+    | BagItemUpsertWithWhereUniqueWithoutCustomerInput
+  >
+  deleteMany?: Maybe<BagItemScalarWhereInput[] | BagItemScalarWhereInput>
+  updateMany?: Maybe<
+    | BagItemUpdateManyWithWhereNestedInput[]
+    | BagItemUpdateManyWithWhereNestedInput
+  >
+}
+
+export interface BagItemUpdateWithWhereUniqueWithoutCustomerInput {
+  where: BagItemWhereUniqueInput
+  data: BagItemUpdateWithoutCustomerDataInput
+}
+
+export interface BagItemUpdateWithoutCustomerDataInput {
+  productVariant?: Maybe<ProductVariantUpdateOneRequiredInput>
+  position?: Maybe<Int>
+  saved?: Maybe<Boolean>
+  status?: Maybe<BagItemStatus>
+}
+
+export interface BagItemUpsertWithWhereUniqueWithoutCustomerInput {
+  where: BagItemWhereUniqueInput
+  update: BagItemUpdateWithoutCustomerDataInput
+  create: BagItemCreateWithoutCustomerInput
+}
+
+export interface BagItemScalarWhereInput {
+  id?: Maybe<ID_Input>
+  id_not?: Maybe<ID_Input>
+  id_in?: Maybe<ID_Input[] | ID_Input>
+  id_not_in?: Maybe<ID_Input[] | ID_Input>
+  id_lt?: Maybe<ID_Input>
+  id_lte?: Maybe<ID_Input>
+  id_gt?: Maybe<ID_Input>
+  id_gte?: Maybe<ID_Input>
+  id_contains?: Maybe<ID_Input>
+  id_not_contains?: Maybe<ID_Input>
+  id_starts_with?: Maybe<ID_Input>
+  id_not_starts_with?: Maybe<ID_Input>
+  id_ends_with?: Maybe<ID_Input>
+  id_not_ends_with?: Maybe<ID_Input>
+  position?: Maybe<Int>
+  position_not?: Maybe<Int>
+  position_in?: Maybe<Int[] | Int>
+  position_not_in?: Maybe<Int[] | Int>
+  position_lt?: Maybe<Int>
+  position_lte?: Maybe<Int>
+  position_gt?: Maybe<Int>
+  position_gte?: Maybe<Int>
+  saved?: Maybe<Boolean>
+  saved_not?: Maybe<Boolean>
+  status?: Maybe<BagItemStatus>
+  status_not?: Maybe<BagItemStatus>
+  status_in?: Maybe<BagItemStatus[] | BagItemStatus>
+  status_not_in?: Maybe<BagItemStatus[] | BagItemStatus>
+  AND?: Maybe<BagItemScalarWhereInput[] | BagItemScalarWhereInput>
+  OR?: Maybe<BagItemScalarWhereInput[] | BagItemScalarWhereInput>
+  NOT?: Maybe<BagItemScalarWhereInput[] | BagItemScalarWhereInput>
+}
+
+export interface BagItemUpdateManyWithWhereNestedInput {
+  where: BagItemScalarWhereInput
+  data: BagItemUpdateManyDataInput
+}
+
+export interface BagItemUpdateManyDataInput {
+  position?: Maybe<Int>
+  saved?: Maybe<Boolean>
+  status?: Maybe<BagItemStatus>
 }
 
 export interface CustomerUpdateManyMutationInput {
@@ -7936,6 +8053,7 @@ export interface CustomerCreateWithoutReservationsInput {
   detail?: Maybe<CustomerDetailCreateOneInput>
   billingInfo?: Maybe<BillingInfoCreateOneInput>
   plan?: Maybe<Plan>
+  bagItems?: Maybe<BagItemCreateManyWithoutCustomerInput>
 }
 
 export interface ProductVariantFeedbackUpdateInput {
@@ -8122,6 +8240,7 @@ export interface CustomerUpdateWithoutReservationsDataInput {
   detail?: Maybe<CustomerDetailUpdateOneInput>
   billingInfo?: Maybe<BillingInfoUpdateOneInput>
   plan?: Maybe<Plan>
+  bagItems?: Maybe<BagItemUpdateManyWithoutCustomerInput>
 }
 
 export interface CustomerUpsertWithoutReservationsInput {
@@ -8230,6 +8349,11 @@ export interface ProductCreateOneInput {
   connect?: Maybe<ProductWhereUniqueInput>
 }
 
+export interface CustomerCreateOneInput {
+  create?: Maybe<CustomerCreateInput>
+  connect?: Maybe<CustomerWhereUniqueInput>
+}
+
 export interface RecentlyViewedProductUpdateInput {
   product?: Maybe<ProductUpdateOneRequiredInput>
   customer?: Maybe<CustomerUpdateOneRequiredInput>
@@ -8246,6 +8370,28 @@ export interface ProductUpdateOneRequiredInput {
 export interface ProductUpsertNestedInput {
   update: ProductUpdateDataInput
   create: ProductCreateInput
+}
+
+export interface CustomerUpdateOneRequiredInput {
+  create?: Maybe<CustomerCreateInput>
+  update?: Maybe<CustomerUpdateDataInput>
+  upsert?: Maybe<CustomerUpsertNestedInput>
+  connect?: Maybe<CustomerWhereUniqueInput>
+}
+
+export interface CustomerUpdateDataInput {
+  user?: Maybe<UserUpdateOneRequiredInput>
+  status?: Maybe<CustomerStatus>
+  detail?: Maybe<CustomerDetailUpdateOneInput>
+  billingInfo?: Maybe<BillingInfoUpdateOneInput>
+  plan?: Maybe<Plan>
+  bagItems?: Maybe<BagItemUpdateManyWithoutCustomerInput>
+  reservations?: Maybe<ReservationUpdateManyWithoutCustomerInput>
+}
+
+export interface CustomerUpsertNestedInput {
+  update: CustomerUpdateDataInput
+  create: CustomerCreateInput
 }
 
 export interface RecentlyViewedProductUpdateManyMutationInput {
@@ -9004,6 +9150,15 @@ export interface CustomerPromise extends Promise<Customer>, Fragmentable {
   detail: <T = CustomerDetailPromise>() => T
   billingInfo: <T = BillingInfoPromise>() => T
   plan: () => Promise<Plan>
+  bagItems: <T = FragmentableArray<BagItem>>(args?: {
+    where?: BagItemWhereInput
+    orderBy?: BagItemOrderByInput
+    skip?: Int
+    after?: String
+    before?: String
+    first?: Int
+    last?: Int
+  }) => T
   reservations: <T = FragmentableArray<Reservation>>(args?: {
     where?: ReservationWhereInput
     orderBy?: ReservationOrderByInput
@@ -9024,6 +9179,15 @@ export interface CustomerSubscription
   detail: <T = CustomerDetailSubscription>() => T
   billingInfo: <T = BillingInfoSubscription>() => T
   plan: () => Promise<AsyncIterator<Plan>>
+  bagItems: <T = Promise<AsyncIterator<BagItemSubscription>>>(args?: {
+    where?: BagItemWhereInput
+    orderBy?: BagItemOrderByInput
+    skip?: Int
+    after?: String
+    before?: String
+    first?: Int
+    last?: Int
+  }) => T
   reservations: <T = Promise<AsyncIterator<ReservationSubscription>>>(args?: {
     where?: ReservationWhereInput
     orderBy?: ReservationOrderByInput
@@ -9044,6 +9208,15 @@ export interface CustomerNullablePromise
   detail: <T = CustomerDetailPromise>() => T
   billingInfo: <T = BillingInfoPromise>() => T
   plan: () => Promise<Plan>
+  bagItems: <T = FragmentableArray<BagItem>>(args?: {
+    where?: BagItemWhereInput
+    orderBy?: BagItemOrderByInput
+    skip?: Int
+    after?: String
+    before?: String
+    first?: Int
+    last?: Int
+  }) => T
   reservations: <T = FragmentableArray<Reservation>>(args?: {
     where?: ReservationWhereInput
     orderBy?: ReservationOrderByInput

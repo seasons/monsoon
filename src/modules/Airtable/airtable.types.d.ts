@@ -66,3 +66,11 @@ export interface AirtableUserFields extends CustomerDetailCreateInput {
 export type AirtablePhysicalProductFields = {
   "Inventory Status": AirtableInventoryStatus
 }
+
+export interface TopSizeFields extends CategorySizeFields {}
+
+export interface BottomSizeFields extends CategorySizeFields {}
+
+type CategorySizeFields = {
+  Name: string
+}
