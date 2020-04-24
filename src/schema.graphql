@@ -396,7 +396,7 @@ type Mutation {
   acknowledgeCompletedChargebeeHostedCheckout(
     hostedPageID: String!
   ): BillingInfoPayload
-  refundInvoice(input: RefundInvoiceInput): Invoice!
+  refundInvoice(input: RefundInvoiceInput): Boolean!
   addProductRequest(reason: String!, url: String!): ProductRequest!
   validateAddress(input: ValidateAddressInput!): ValidationPayload!
   addProductVariantWant(variantID: ID!): ProductVariantWant!
@@ -569,6 +569,13 @@ enum CreditNoteReasonCode {
   Other
 }
 
+enum CreditNoteStatus {
+  Adjusted
+  Refunded
+  RefundDue
+  Voided
+}
+
 type Faq {
   sections: [FaqSection!]!
 }
@@ -623,6 +630,7 @@ type Invoice {
   dueDate: DateTime
   amount: Int
   transactions: [Transaction]
+  creditNotes: [CreditNote]
 }
 
 type Transaction {
@@ -633,4 +641,12 @@ type Transaction {
   status: TransactionStatus
   type: TransactionType!
   settledAt: DateTime
+}
+
+type CreditNote {
+  id: String!
+  reasonCode: CreditNoteReasonCode
+  date: DateTime
+  total: Int
+  status: CreditNoteStatus
 }

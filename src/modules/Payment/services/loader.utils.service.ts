@@ -2,11 +2,11 @@ import {
   LoadAllRecordsWithListInput,
   LoadRecordsWithListInput,
 } from "../payment.types"
-import { chunk, concat, curry, groupBy } from "lodash"
+import { chunk, concat, curry, groupBy, identity } from "lodash"
 
 import { Injectable } from "@nestjs/common"
-import chargebee from "chargebee"
 import { UtilsService } from "@modules/Utils"
+import chargebee from "chargebee"
 
 @Injectable()
 export class LoaderUtilsService {
@@ -14,11 +14,12 @@ export class LoaderUtilsService {
 
   async loadAllRecordsWIthList({
     ids,
-    recordName,
     maxIds = 200,
     filterKey = `id[in]`,
     groupFunc = a => a.id,
     extractFunc = (valsById, id) => valsById[id],
+    transformFunc = identity,
+    ...args
   }: LoadAllRecordsWithListInput) {
     return Promise.resolve(
       concat(
@@ -26,11 +27,12 @@ export class LoaderUtilsService {
         ...(await Promise.all(
           chunk(ids, maxIds).map(async ids =>
             this.loadRecordsWithList({
-              filterKey,
               ids,
-              recordName,
+              filterKey,
               groupFunc,
               extractFunc,
+              transformFunc,
+              ...args,
             })
           )
         ))
@@ -44,6 +46,7 @@ export class LoaderUtilsService {
     recordName,
     groupFunc,
     extractFunc,
+    transformFunc,
   }: LoadRecordsWithListInput) {
     let offset = "start"
     const allRecords = []
@@ -65,7 +68,7 @@ export class LoaderUtilsService {
     }
 
     const recordsById = groupBy(
-      allRecords.map(this.utilsService.camelCaseify),
+      allRecords.map(this.utilsService.camelCaseify).map(transformFunc),
       groupFunc
     )
     return ids.map(curry(extractFunc)(recordsById))

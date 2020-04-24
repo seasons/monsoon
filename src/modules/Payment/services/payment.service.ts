@@ -263,7 +263,6 @@ export class PaymentService {
     const invoices = this.utils.filterErrors<Invoice>(
       await invoicesLoader.load(customerId)
     )
-    debugger
     if (!invoices) {
       return null
     }
@@ -304,7 +303,7 @@ export class PaymentService {
     customerNotes,
     reasonCode,
   }: RefundInvoiceInput) {
-    const { invoice, transaction, credit_note } = await chargebee.invoice
+    await chargebee.invoice
       .refund(invoiceId, {
         refund_amount: refundAmount,
         credit_note: {
@@ -315,7 +314,6 @@ export class PaymentService {
       })
       .request()
     return true
-    // TODO: See if we ever need to return false
   }
 
   private getInvoiceTransactionIds(invoice): string[] {
@@ -325,21 +323,28 @@ export class PaymentService {
   /**
    * Define as arrow func to preserve `this` binding
    */
-  private formatInvoice = (invoice: Invoice) => {
-    return {
+  private formatInvoice = (invoice: Invoice) =>
+    identity({
       ...invoice,
       status: upperFirst(this.utils.snakeToCamelCase(invoice.status, true)),
       amount: invoice.total,
       closingDate: this.utils.secondsSinceEpochToISOString(invoice.date),
       dueDate: this.utils.secondsSinceEpochToISOString(invoice.dueDate, true),
-    }
-  }
+      creditNotes: invoice.issuedCreditNotes.map(a =>
+        identity({
+          ...a,
+          reasonCode: this.utils.snakeToCamelCase(a.reasonCode, true),
+          status: this.utils.snakeToCamelCase(a.status, true),
+          date: this.utils.secondsSinceEpochToISOString(a.date),
+        })
+      ),
+    })
 
   /**
    * Define as arrow func to preserve `this` binding
    */
-  private formatTransaction = (transaction: Transaction) => {
-    return {
+  private formatTransaction = (transaction: Transaction) =>
+    identity({
       ...transaction,
       status: upperFirst(transaction.status),
       type: upperFirst(transaction.type),
@@ -349,6 +354,5 @@ export class PaymentService {
         transaction.settledAt,
         true
       ),
-    }
-  }
+    })
 }

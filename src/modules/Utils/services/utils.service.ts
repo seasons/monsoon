@@ -1,6 +1,6 @@
 import * as fs from "fs"
 
-import { camelCase, upperFirst, mapKeys, isObject } from "lodash"
+import { camelCase, isObject, mapKeys, upperFirst } from "lodash"
 
 import { Injectable } from "@nestjs/common"
 import { Location } from "@prisma/index"

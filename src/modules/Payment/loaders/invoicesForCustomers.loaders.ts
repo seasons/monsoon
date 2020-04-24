@@ -4,6 +4,7 @@ import DataLoader from "dataloader"
 import { Injectable } from "@nestjs/common"
 import { LoaderUtilsService } from "../services/loader.utils.service"
 import { NestDataLoader } from "@modules/DataLoader/dataloader.types"
+import { lowerFirst, mapKeys, identity } from "lodash"
 
 @Injectable()
 export class InvoicesForCustomersLoader implements NestDataLoader {
@@ -19,6 +20,13 @@ export class InvoicesForCustomersLoader implements NestDataLoader {
         ids: customerIds,
         recordName: "invoice",
         groupFunc: a => a.customerId,
+        transformFunc: a =>
+          identity({
+            ...a,
+            issuedCreditNotes: a.issuedCreditNotes?.map(b =>
+              mapKeys(b, (_, key) => lowerFirst(key.replace("cn", "")))
+            ),
+          }),
       })
     )
   }

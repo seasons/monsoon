@@ -2,11 +2,8 @@ import { Args, Mutation, Resolver } from "@nestjs/graphql"
 import { Customer, User } from "@app/nest_decorators"
 
 import { CustomerService } from "@modules/User/services/customer.service"
-import { Loader } from "@app/modules/DataLoader"
 import { PaymentService } from "@modules/Payment/services/payment.service"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
-import { TransactionsDataLoader } from "../payment.types"
-import { TransactionsLoader } from "../loaders/transactions.loaders"
 import { UtilsService } from "@modules/Utils"
 
 @Resolver()

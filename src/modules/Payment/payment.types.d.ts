@@ -20,7 +20,16 @@ export interface Invoice {
   amountAdjusted?: number
   writeOffAmount?: number
   creditsApplied?: number
+  issuedCreditNotes?: CreditNote[]
   linkedPayments: { txnId: string }[]
+}
+
+export interface CreditNote {
+  id: string
+  reasonCode: string
+  date: number
+  total: number
+  status: string
 }
 
 /**
@@ -48,6 +57,7 @@ export interface LoadRecordsWithListInput {
   filterKey?: string
   groupFunc?: (any) => string
   extractFunc?: (valsById: any, id: string) => any
+  transformFunc?: (any) => any
 }
 
 export interface LoadAllRecordsWithListInput extends LoadRecordsWithListInput {
