@@ -2,10 +2,9 @@ import {
   InvoicesDataLoader,
   TransactionsDataLoader,
 } from "@modules/Payment/payment.types"
-// import { PaymentService, InvoicesLoader } from "@modules/Payment/index"
 import {
-  PaymentService,
   InvoicesForCustomersLoader,
+  PaymentService,
 } from "@modules/Payment/index"
 import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
 

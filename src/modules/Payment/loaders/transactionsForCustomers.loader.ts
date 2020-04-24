@@ -21,7 +21,7 @@ export class TransactionsForCustomersLoader implements NestDataLoader {
         ids: customerIds,
         filterKey: `customer_id[in]`,
         recordName: "transaction",
-        groupFunc: a => a.customer_id,
+        groupFunc: a => a.customerId,
       })
     )
   }

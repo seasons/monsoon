@@ -7,20 +7,20 @@ import DataLoader from "dataloader"
  */
 export interface Invoice {
   id: string
-  customer_id: string
-  subscription_id?: string
+  customerId: string
+  subscriptionId?: string
   recurring: boolean
   status: string
   date?: number
-  due_date?: number
-  net_term_days?: number
-  currency_code: string
+  dueDate?: number
+  netTermDays?: number
+  currencyCode: string
   total?: number
-  amount_paid?: number
-  amount_adjusted?: number
-  write_off_amount?: number
-  credits_applied?: number
-  linked_payments: { txn_id: string }[]
+  amountPaid?: number
+  amountAdjusted?: number
+  writeOffAmount?: number
+  creditsApplied?: number
+  linkedPayments: { txnId: string }[]
 }
 
 /**
@@ -31,12 +31,12 @@ export interface Invoice {
 export interface Transaction {
   id: string
   amount?: number
-  masked_card_number?: string
+  maskedCardNumber?: string
   date?: number
   status?: string
   type: string
-  settled_at?: number
-  linked_invoices?: { id: string }[]
+  settledAt?: number
+  linkedInvoices?: { id: string }[]
 }
 
 export type InvoicesDataLoader = DataLoader<string, Invoice[]>

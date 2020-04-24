@@ -5,7 +5,7 @@ import {
   Transaction,
   TransactionsDataLoader,
 } from "../payment.types"
-import { get, identity } from "lodash"
+import { get, identity, upperFirst } from "lodash"
 
 import { AirtableService } from "@modules/Airtable/services/airtable.service"
 import { AuthService } from "@modules/User/services/auth.service"
@@ -255,14 +255,15 @@ export class PaymentService {
   }
 
   async getCustomerInvoiceHistory(
-    // payment customer_id is equivalent to prisma user id, NOT prisma customer id
-    customer_id: string,
+    // payment customerId is equivalent to prisma user id, NOT prisma customer id
+    customerId: string,
     invoicesLoader: InvoicesDataLoader,
     transactionsForCustomerLoader: TransactionsDataLoader
   ) {
     const invoices = this.utils.filterErrors<Invoice>(
-      await invoicesLoader.load(customer_id)
+      await invoicesLoader.load(customerId)
     )
+    debugger
     if (!invoices) {
       return null
     }
@@ -273,40 +274,36 @@ export class PaymentService {
           ...this.formatInvoice(invoice),
           transactions: this.utils
             .filterErrors<Transaction>(
-              await transactionsForCustomerLoader.load(customer_id)
+              await transactionsForCustomerLoader.load(customerId)
             )
             ?.filter(a =>
               this.getInvoiceTransactionIds(invoice)?.includes(a.id)
             )
-            ?.map(c => this.formatTransaction(c)),
+            ?.map(this.formatTransaction),
         })
       )
     )
   }
 
   async getCustomerTransactionHistory(
-    // payment customer_id is equivalent to prisma user id, NOT prisma customer id
-    customer_id: string,
+    // payment customerId is equivalent to prisma user id, NOT prisma customer id
+    customerId: string,
     transactionsForCustomerloader: TransactionsDataLoader
   ) {
     return this.utils
       .filterErrors<Transaction>(
-        await transactionsForCustomerloader.load(customer_id)
+        await transactionsForCustomerloader.load(customerId)
       )
-      ?.map(a => this.formatTransaction(a))
+      ?.map(this.formatTransaction)
   }
 
-  async refundInvoice(
-    {
-      invoiceId,
-      refundAmount,
-      comment,
-      customerNotes,
-      reasonCode,
-    }: RefundInvoiceInput,
-    transactionsLoader: TransactionsDataLoader
-  ) {
-    debugger
+  async refundInvoice({
+    invoiceId,
+    refundAmount,
+    comment,
+    customerNotes,
+    reasonCode,
+  }: RefundInvoiceInput) {
     const { invoice, transaction, credit_note } = await chargebee.invoice
       .refund(invoiceId, {
         refund_amount: refundAmount,
@@ -317,58 +314,39 @@ export class PaymentService {
         customer_notes: customerNotes,
       })
       .request()
-    debugger
-    return {
-      ...this.formatInvoice(invoice),
-      transactions: await this.getFormattedTransactionsForInvoice({
-        invoice,
-        transactionsLoader,
-      }),
-    }
+    return true
+    // TODO: See if we ever need to return false
   }
 
   private getInvoiceTransactionIds(invoice): string[] {
-    return invoice.linked_payments.map(a => a.txn_id)
+    return invoice.linkedPayments.map(a => a.txnId)
   }
 
-  private formatInvoice(invoice: Invoice) {
+  /**
+   * Define as arrow func to preserve `this` binding
+   */
+  private formatInvoice = (invoice: Invoice) => {
     return {
-      id: invoice.id,
-      subscriptionID: invoice.subscription_id,
-      recurring: invoice.recurring,
-      status: this.utils.snakeToCapitalizedCamelCase(invoice.status),
+      ...invoice,
+      status: upperFirst(this.utils.snakeToCamelCase(invoice.status, true)),
       amount: invoice.total,
       closingDate: this.utils.secondsSinceEpochToISOString(invoice.date),
-      dueDate: this.utils.secondsSinceEpochToISOString(invoice.due_date, true),
+      dueDate: this.utils.secondsSinceEpochToISOString(invoice.dueDate, true),
     }
   }
 
-  private async getFormattedTransactionsForInvoice({
-    invoice,
-    transactionsLoader,
-  }: {
-    invoice: Invoice
-    transactionsLoader: TransactionsDataLoader
-  }) {
-    return this.utils
-      .filterErrors<Transaction>(
-        await transactionsLoader.loadMany(
-          this.getInvoiceTransactionIds(invoice)
-        )
-      )
-      .map(b => this.formatTransaction(b))
-  }
-
-  private async formatTransaction(transaction) {
+  /**
+   * Define as arrow func to preserve `this` binding
+   */
+  private formatTransaction = (transaction: Transaction) => {
     return {
-      id: transaction.id,
-      amount: transaction.amount,
-      lastFour: transaction.masked_card_number?.replace(/[*]/g, ""),
+      ...transaction,
+      status: upperFirst(transaction.status),
+      type: upperFirst(transaction.type),
+      lastFour: transaction.maskedCardNumber?.replace(/[*]/g, ""),
       date: this.utils.secondsSinceEpochToISOString(transaction.date, true),
-      status: this.utils.snakeToCapitalizedCamelCase(transaction.status),
-      type: this.utils.snakeToCapitalizedCamelCase(transaction.type),
       settledAt: this.utils.secondsSinceEpochToISOString(
-        transaction.settled_at,
+        transaction.settledAt,
         true
       ),
     }

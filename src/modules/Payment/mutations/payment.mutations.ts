@@ -78,10 +78,7 @@ export class PaymentMutationsResolver {
   }
 
   @Mutation()
-  async refundInvoice(
-    @Args() { input: args },
-    @Loader(TransactionsLoader.name) transactionsLoader: TransactionsDataLoader
-  ) {
-    return await this.paymentService.refundInvoice(args, transactionsLoader)
+  async refundInvoice(@Args() { input: args }) {
+    return await this.paymentService.refundInvoice(args)
   }
 }

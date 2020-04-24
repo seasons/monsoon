@@ -1,6 +1,6 @@
 import * as fs from "fs"
 
-import { camelCase, upperFirst } from "lodash"
+import { camelCase, upperFirst, mapKeys, isObject } from "lodash"
 
 import { Injectable } from "@nestjs/common"
 import { Location } from "@prisma/index"
@@ -93,12 +93,28 @@ export class UtilsService {
     )
   }
 
-  snakeToCapitalizedCamelCase(str: string) {
-    return upperFirst(camelCase(str))
+  snakeToCamelCase(str: string, upperCase = false) {
+    return upperCase ? upperFirst(camelCase(str)) : camelCase(str)
   }
 
   camelToSnakeCase(str: string) {
     return str?.replace(/[\w]([A-Z])/g, a => a[0] + "_" + a[1])?.toLowerCase()
+  }
+
+  /**
+   * Recursively transform all object keys to camelCase
+   * Define as arrow function to maintain `this` binding.
+   */
+  camelCaseify = (obj: any): any => {
+    const a = mapKeys(obj, (_, key) => camelCase(key))
+    for (const [key, val] of Object.entries(a)) {
+      if (Array.isArray(val)) {
+        a[key] = val.map(this.camelCaseify)
+      } else if (isObject(val) && Object.keys(val)?.length !== 0) {
+        a[key] = this.camelCaseify(val)
+      }
+    }
+    return a
   }
 
   secondsSinceEpochToISOString(sec: number, nullifError = false): string {

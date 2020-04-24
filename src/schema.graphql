@@ -616,7 +616,7 @@ type Customer {
 
 type Invoice {
   id: String!
-  subscriptionID: String
+  subscriptionId: String
   recurring: Boolean
   status: InvoiceStatus
   closingDate: DateTime

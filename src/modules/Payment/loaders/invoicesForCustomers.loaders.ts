@@ -18,7 +18,7 @@ export class InvoicesForCustomersLoader implements NestDataLoader {
         filterKey: "customer_id[in]",
         ids: customerIds,
         recordName: "invoice",
-        groupFunc: a => a.customer_id,
+        groupFunc: a => a.customerId,
       })
     )
   }

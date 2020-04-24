@@ -6,9 +6,12 @@ import { chunk, concat, curry, groupBy } from "lodash"
 
 import { Injectable } from "@nestjs/common"
 import chargebee from "chargebee"
+import { UtilsService } from "@modules/Utils"
 
 @Injectable()
 export class LoaderUtilsService {
+  constructor(private readonly utilsService: UtilsService) {}
+
   async loadAllRecordsWIthList({
     ids,
     recordName,
@@ -61,7 +64,10 @@ export class LoaderUtilsService {
       }
     }
 
-    const recordsById = groupBy(allRecords, groupFunc)
+    const recordsById = groupBy(
+      allRecords.map(this.utilsService.camelCaseify),
+      groupFunc
+    )
     return ids.map(curry(extractFunc)(recordsById))
   }
 
