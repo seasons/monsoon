@@ -417,7 +417,7 @@ input RefundInvoiceInput {
   refundAmount: Int
   comment: String
   customerNotes: String
-  reasonCode: CreditNoteReasonCode
+  reasonCode: CreditNoteReasonCodeInput
 }
 
 input AddressInput {
@@ -560,7 +560,17 @@ enum Event {
   CompletedWaitlistForm
 }
 
+enum CreditNoteReasonCodeInput {
+  ProductUnsatisfactory
+  ServiceUnsatisfactory
+  OrderChange
+  OrderCancellation
+  Waiver
+  Other
+}
+
 enum CreditNoteReasonCode {
+  SubscriptionChange
   ProductUnsatisfactory
   ServiceUnsatisfactory
   OrderChange
@@ -600,7 +610,7 @@ type Reservation {
   products: [PhysicalProduct!]!
   reservationNumber: Int!
   shipped: Boolean!
-  status: ReservationStatus!
+  status(display: Boolean): String!
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime

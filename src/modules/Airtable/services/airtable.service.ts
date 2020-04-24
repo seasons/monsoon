@@ -1,19 +1,14 @@
-import * as Airtable from "airtable"
-
 import {
-  BottomSizeFields as AirtableBottomSizeFields,
   AirtableData,
   AirtableInventoryStatus,
   AirtableModelName,
+  AirtablePhysicalProductFields,
   AirtableProductVariantCounts,
   AirtableReservationFields,
-  TopSizeFields as AirtableTopSizeFields,
+  AirtableUserFields,
   PrismaProductVariantCounts,
 } from "../airtable.types"
 import {
-  BillingInfoCreateInput,
-  CustomerDetailCreateInput,
-  CustomerStatus,
   InventoryStatus,
   PhysicalProduct,
   ReservationCreateInput,
@@ -26,16 +21,6 @@ import { AirtableBaseService } from "./airtable.base.service"
 import { AirtableQueriesService } from "./airtable.queries.service"
 import { AirtableUtilsService } from "./airtable.utils.service"
 import { Injectable } from "@nestjs/common"
-
-interface AirtableUserFields extends CustomerDetailCreateInput {
-  plan?: string
-  status?: CustomerStatus
-  billingInfo?: BillingInfoCreateInput
-}
-
-type AirtablePhysicalProductFields = {
-  "Inventory Status": AirtableInventoryStatus
-}
 
 @Injectable()
 export class AirtableService extends AirtableQueriesService {

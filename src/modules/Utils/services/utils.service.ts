@@ -1,6 +1,6 @@
 import * as fs from "fs"
 
-import { camelCase, isObject, mapKeys, upperFirst } from "lodash"
+import { camelCase, isObject, mapKeys, upperFirst, snakeCase } from "lodash"
 
 import { Injectable } from "@nestjs/common"
 import { Location } from "@prisma/index"
@@ -89,7 +89,7 @@ export class UtilsService {
           format ||
           `{modelName} {bar} {percentage}%  ETA: {eta}s  {value}/{total} ops`,
       },
-      cliProgress.Presets.shades_grey
+      cliProgress.Presets.shadues_grey
     )
   }
 
@@ -103,18 +103,16 @@ export class UtilsService {
 
   /**
    * Recursively transform all object keys to camelCase
-   * Define as arrow function to maintain `this` binding.
    */
   camelCaseify = (obj: any): any => {
-    const a = mapKeys(obj, (_, key) => camelCase(key))
-    for (const [key, val] of Object.entries(a)) {
-      if (Array.isArray(val)) {
-        a[key] = val.map(this.camelCaseify)
-      } else if (isObject(val) && Object.keys(val)?.length !== 0) {
-        a[key] = this.camelCaseify(val)
-      }
-    }
-    return a
+    return this.caseify(obj, camelCase)
+  }
+
+  /**
+   * Recursively transform all object keys to snakeCase
+   */
+  snakeCaseify = (obj: any): any => {
+    return this.caseify(obj, snakeCase)
   }
 
   secondsSinceEpochToISOString(sec: number, nullifError = false): string {
@@ -172,5 +170,17 @@ export class UtilsService {
       throw new Error(`invalid sizeName: ${sizeName}`)
     }
     return sizeName.toLowerCase().replace("x", "") // 32x28 => 3238
+  }
+
+  private caseify = (obj: any, caseFunc: (str: string) => string): any => {
+    const a = mapKeys(obj, (_, key) => caseFunc(key))
+    for (const [key, val] of Object.entries(a)) {
+      if (Array.isArray(val)) {
+        a[key] = val.map(b => this.caseify(b, caseFunc))
+      } else if (isObject(val) && Object.keys(val)?.length !== 0) {
+        a[key] = this.caseify(val, caseFunc)
+      }
+    }
+    return a
   }
 }

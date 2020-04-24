@@ -8,6 +8,7 @@ import { AirtableBaseService } from "@app/modules/Airtable"
 import { Injectable } from "@nestjs/common"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { UtilsService } from "@modules/Utils/index"
+import chargebee from "chargebee"
 import fs from "fs"
 
 @Injectable()
@@ -123,6 +124,10 @@ export class ScriptsService {
           "Invalid airtable config options. Must pass airtableEnvironment of 'staging' or 'production' OR a valid airtable base id (e.g app702vE3MaQbzciw)"
         )
       }
+      chargebee.configure({
+        site: env.chargebee.staging.site,
+        api_key: env.chargebee.staging.apiKey,
+      })
     } catch (err) {
       throw err
     } finally {
