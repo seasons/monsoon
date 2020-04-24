@@ -13,10 +13,10 @@ import { ModuleRef } from "@nestjs/core"
 import { PaymentService } from "@app/modules/Payment/index"
 import { PrismaService } from "@prisma/prisma.service"
 import { ScriptsService } from "../services/scripts.service"
+import { UtilsService } from "@app/modules/Utils"
 import chargebee from "chargebee"
 import faker from "faker"
 import { head } from "lodash"
-import { UtilsService } from "@app/modules/Utils"
 
 @Injectable()
 export class UserCommands {

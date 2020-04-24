@@ -1,11 +1,11 @@
 import { InventoryStatus, Location } from "@prisma/index"
+import { camelCase, mapKeys, snakeCase, upperFirst } from "lodash"
 
 import { AirtableInventoryStatus } from "@modules/Airtable/airtable.types"
 import { Injectable } from "@nestjs/common"
 import { PrismaService } from "@prisma/prisma.service"
 import cliProgress from "cli-progress"
 import crypto from "crypto"
-import { upperFirst, camelCase, mapKeys, snakeCase } from "lodash"
 import { isObject } from "util"
 
 @Injectable()
@@ -92,12 +92,14 @@ export class UtilsService {
 
   /**
    * Recursively transform all object keys to camelCase
-   * Define as arrow function to maintain `this` binding.
    */
   camelCaseify = (obj: any): any => {
     return this.caseify(obj, camelCase)
   }
 
+  /**
+   * Recursively transform all object keys to snakeCase
+   */
   snakeCaseify = (obj: any): any => {
     return this.caseify(obj, snakeCase)
   }

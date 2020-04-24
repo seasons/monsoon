@@ -1,4 +1,5 @@
 import { BillingAddress, Card, PlanId } from "../payment.types"
+import { Plan, User } from "@app/prisma"
 
 import { AirtableService } from "@modules/Airtable/services/airtable.service"
 import { AuthService } from "@modules/User/services/auth.service"
@@ -6,7 +7,6 @@ import { EmailService } from "@modules/Email/services/email.service"
 import { Injectable } from "@nestjs/common"
 import { PaymentUtilsService } from "./payment.utils.service"
 import { PrismaService } from "@prisma/prisma.service"
-import { User, Plan } from "@app/prisma"
 import chargebee from "chargebee"
 import { get } from "lodash"
 
