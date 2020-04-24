@@ -36,6 +36,7 @@ export interface Transaction {
   status?: string
   type: string
   settled_at?: number
+  linked_invoices?: { id: string }[]
 }
 
 export type InvoicesDataLoader = DataLoader<string, Invoice[]>

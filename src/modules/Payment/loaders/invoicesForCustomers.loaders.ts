@@ -6,7 +6,7 @@ import { LoaderUtilsService } from "../services/loader.utils.service"
 import { NestDataLoader } from "@modules/DataLoader/dataloader.types"
 
 @Injectable()
-export class InvoicesLoader implements NestDataLoader {
+export class InvoicesForCustomersLoader implements NestDataLoader {
   constructor(private readonly loaderUtils: LoaderUtilsService) {}
 
   private maxNumCustomerIdsInAPICall = 270 // found through trial and error. 280 fails

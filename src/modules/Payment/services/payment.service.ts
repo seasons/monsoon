@@ -258,7 +258,7 @@ export class PaymentService {
     // payment customer_id is equivalent to prisma user id, NOT prisma customer id
     customer_id: string,
     invoicesLoader: InvoicesDataLoader,
-    transactionsLoader: TransactionsDataLoader
+    transactionsForCustomerLoader: TransactionsDataLoader
   ) {
     const invoices = this.utils.filterErrors<Invoice>(
       await invoicesLoader.load(customer_id)
@@ -271,10 +271,14 @@ export class PaymentService {
       invoices.map(async invoice =>
         identity({
           ...this.formatInvoice(invoice),
-          transactions: await this.getFormattedTransactionsForInvoice({
-            invoice,
-            transactionsLoader,
-          }),
+          transactions: this.utils
+            .filterErrors<Transaction>(
+              await transactionsForCustomerLoader.load(customer_id)
+            )
+            ?.filter(a =>
+              this.getInvoiceTransactionIds(invoice)?.includes(a.id)
+            )
+            ?.map(c => this.formatTransaction(c)),
         })
       )
     )
@@ -323,7 +327,7 @@ export class PaymentService {
     }
   }
 
-  private getInvoiceTransactionIds(invoice) {
+  private getInvoiceTransactionIds(invoice): string[] {
     return invoice.linked_payments.map(a => a.txn_id)
   }
 

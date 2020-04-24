@@ -4,9 +4,8 @@ import {
 } from "@modules/Payment/payment.types"
 // import { PaymentService, InvoicesLoader } from "@modules/Payment/index"
 import {
-  InvoicesLoader,
   PaymentService,
-  TransactionsLoader,
+  InvoicesForCustomersLoader,
 } from "@modules/Payment/index"
 import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
 
@@ -44,8 +43,9 @@ export class CustomerFieldsResolver {
   @ResolveField()
   async invoices(
     @Parent() customer,
-    @Loader(InvoicesLoader.name) invoicesLoader: InvoicesDataLoader,
-    @Loader(TransactionsLoader.name) transactionsLoader: TransactionsDataLoader
+    @Loader(InvoicesForCustomersLoader.name) invoicesLoader: InvoicesDataLoader,
+    @Loader(TransactionsForCustomersLoader.name)
+    transactionsForCustomerLoader: TransactionsDataLoader
   ) {
     if (!customer) {
       return null
@@ -58,7 +58,7 @@ export class CustomerFieldsResolver {
         .user()
         .id(),
       invoicesLoader,
-      transactionsLoader
+      transactionsForCustomerLoader
     )
   }
 }
