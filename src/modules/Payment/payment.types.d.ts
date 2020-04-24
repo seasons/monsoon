@@ -1,8 +1,8 @@
 export type PlanId = "all-access" | "essential"
 
 export interface BillingAddress {
-  first_name: string
-  last_name: string
+  firstName: string
+  lastName: string
   line1: string
   line2?: string
   city: string
@@ -13,7 +13,7 @@ export interface BillingAddress {
 
 export interface Card {
   number: string
-  expiry_month: string
-  expiry_year: string
+  expiryMonth: string
+  expiryYear: string
   cvv: string
 }

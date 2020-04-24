@@ -5,6 +5,8 @@ import { Injectable } from "@nestjs/common"
 import { PrismaService } from "@prisma/prisma.service"
 import cliProgress from "cli-progress"
 import crypto from "crypto"
+import { upperFirst, camelCase, mapKeys, snakeCase } from "lodash"
+import { isObject } from "util"
 
 @Injectable()
 export class UtilsService {
@@ -86,5 +88,29 @@ export class UtilsService {
       },
       cliProgress.Presets.shades_grey
     )
+  }
+
+  /**
+   * Recursively transform all object keys to camelCase
+   * Define as arrow function to maintain `this` binding.
+   */
+  camelCaseify = (obj: any): any => {
+    return this.caseify(obj, camelCase)
+  }
+
+  snakeCaseify = (obj: any): any => {
+    return this.caseify(obj, snakeCase)
+  }
+
+  private caseify = (obj: any, caseFunc: (str: string) => string): any => {
+    const a = mapKeys(obj, (_, key) => caseFunc(key))
+    for (const [key, val] of Object.entries(a)) {
+      if (Array.isArray(val)) {
+        a[key] = val.map(b => this.caseify(b, caseFunc))
+      } else if (isObject(val) && Object.keys(val)?.length !== 0) {
+        a[key] = this.caseify(a, caseFunc)
+      }
+    }
+    return a
   }
 }

@@ -16,6 +16,7 @@ import { ScriptsService } from "../services/scripts.service"
 import chargebee from "chargebee"
 import faker from "faker"
 import { head } from "lodash"
+import { UtilsService } from "@app/modules/Utils"
 
 @Injectable()
 export class UserCommands {
@@ -27,6 +28,7 @@ export class UserCommands {
     private readonly prisma: PrismaService,
     private readonly airtable: AirtableService,
     private readonly paymentService: PaymentService,
+    private readonly utilsService: UtilsService,
     private moduleRef: ModuleRef
   ) {}
 
@@ -89,8 +91,8 @@ export class UserCommands {
     let user
     let tokenData
     const address: BillingAddress = {
-      first_name: firstName,
-      last_name: lastName,
+      firstName: firstName,
+      lastName: lastName,
       line1: "138 Mulberry St",
       city: "New York",
       state: "NY",
@@ -139,8 +141,8 @@ export class UserCommands {
     )
     const card: Card = {
       number: "4242424242424242",
-      expiry_month: "04",
-      expiry_year: "2022",
+      expiryMonth: "04",
+      expiryYear: "2022",
       cvv: "222",
     }
     await this.prisma.client.updateCustomer({
@@ -151,8 +153,8 @@ export class UserCommands {
             brand: "Visa",
             name: fullName,
             last_digits: card.number.substr(12),
-            expiration_month: parseInt(card.expiry_month, 10),
-            expiration_year: parseInt(card.expiry_year, 10),
+            expiration_month: parseInt(card.expiryMonth, 10),
+            expiration_year: parseInt(card.expiryYear, 10),
           },
         },
         status: "Active",
@@ -160,7 +162,12 @@ export class UserCommands {
       where: { id: customer.id },
     })
     await this.airtable.createOrUpdateAirtableUser(user, { status: "Active" })
-    await this.paymentService.createSubscription(plan, address, user, card)
+    await this.paymentService.createSubscription(
+      plan,
+      this.utilsService.snakeCaseify(address),
+      user,
+      this.utilsService.snakeCaseify(card)
+    )
 
     this.logger.log(
       `User with email: ${email}, password: ${password} successfully created on ${prismaEnv} prisma and ${abid ||
