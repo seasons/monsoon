@@ -27,7 +27,7 @@ export class ReservationFieldsResolver {
     const reservation = await this.prisma.client.reservation({
       id: parent.id,
     })
-    return new Date(reservation?.createdAt).toUTCString()
+    return this.reservationService.returnDate(new Date(reservation?.createdAt))
   }
 
   @ResolveField()
@@ -59,11 +59,9 @@ export class ReservationFieldsResolver {
     const products = reservation.products
     const firstImages = products.map(product => {
       const image = product.productVariant.product.images?.[0]
+
       return {
-        url: this.imageResizeService.imageResize(image?.url, size, {
-          w: width,
-          h: height,
-        }),
+        url: this.imageResizeService.imageResize(image?.url, size),
       }
     })
 

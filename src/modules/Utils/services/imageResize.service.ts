@@ -20,23 +20,23 @@ const IMGIX_BASE = "https://seasons-nyc.imgix.net/"
 const AIRTABLE_BASE = "https://dl.airtable.com/.attachments/"
 
 export const sizes = {
-  thumb: {
+  Thumb: {
     w: 200,
     fit: "clip",
   },
-  small: {
+  Small: {
     w: 400,
     fit: "clip",
   },
-  medium: {
+  Medium: {
     w: 500,
     fit: "clip",
   },
-  large: {
+  Large: {
     w: 800,
     fit: "clip",
   },
-  "x-large": {
+  XLarge: {
     w: 640,
     fit: "clip",
   },
