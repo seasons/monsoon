@@ -89,7 +89,7 @@ export class UtilsService {
           format ||
           `{modelName} {bar} {percentage}%  ETA: {eta}s  {value}/{total} ops`,
       },
-      cliProgress.Presets.shadues_grey
+      cliProgress.Presets.shades_grey
     )
   }
 
