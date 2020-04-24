@@ -1,14 +1,14 @@
 import {
+  BillingAddress,
+  Card,
   Invoice,
   InvoicesDataLoader,
   RefundInvoiceInput,
   Transaction,
   TransactionsDataLoader,
-  BillingAddress,
-  Card,
 } from "../payment.types"
-import { get, identity, upperFirst } from "lodash"
 import { Plan, User } from "@app/prisma"
+import { camelCase, get, identity, snakeCase, upperFirst } from "lodash"
 
 import { AirtableService } from "@modules/Airtable/services/airtable.service"
 import { AuthService } from "@modules/User/services/auth.service"
@@ -321,7 +321,7 @@ export class PaymentService {
       .refund(invoiceId, {
         refund_amount: refundAmount,
         credit_note: {
-          reason_code: this.utils.camelToSnakeCase(reasonCode),
+          reason_code: snakeCase(reasonCode),
         },
         comment,
         customer_notes: customerNotes,
@@ -340,15 +340,15 @@ export class PaymentService {
   private formatInvoice = (invoice: Invoice) =>
     identity({
       ...invoice,
-      status: upperFirst(this.utils.snakeToCamelCase(invoice.status, true)),
+      status: upperFirst(camelCase(invoice.status)),
       amount: invoice.total,
       closingDate: this.utils.secondsSinceEpochToISOString(invoice.date),
       dueDate: this.utils.secondsSinceEpochToISOString(invoice.dueDate, true),
       creditNotes: invoice.issuedCreditNotes.map(a =>
         identity({
           ...a,
-          reasonCode: this.utils.snakeToCamelCase(a.reasonCode, true),
-          status: this.utils.snakeToCamelCase(a.status, true),
+          reasonCode: upperFirst(camelCase(a.reasonCode)),
+          status: upperFirst(camelCase(a.status)),
           date: this.utils.secondsSinceEpochToISOString(a.date),
         })
       ),

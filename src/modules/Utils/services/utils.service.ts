@@ -1,6 +1,6 @@
 import * as fs from "fs"
 
-import { camelCase, isObject, mapKeys, upperFirst, snakeCase } from "lodash"
+import { camelCase, isObject, mapKeys, snakeCase, upperFirst } from "lodash"
 
 import { Injectable } from "@nestjs/common"
 import { Location } from "@prisma/index"
@@ -91,14 +91,6 @@ export class UtilsService {
       },
       cliProgress.Presets.shadues_grey
     )
-  }
-
-  snakeToCamelCase(str: string, upperCase = false) {
-    return upperCase ? upperFirst(camelCase(str)) : camelCase(str)
-  }
-
-  camelToSnakeCase(str: string) {
-    return str?.replace(/[\w]([A-Z])/g, a => a[0] + "_" + a[1])?.toLowerCase()
   }
 
   /**
