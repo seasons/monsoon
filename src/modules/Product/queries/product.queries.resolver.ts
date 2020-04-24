@@ -72,4 +72,9 @@ export class ProductQueriesResolver {
   async colors(@Args() args, @Info() info) {
     return await this.prisma.binding.query.colors(args, info)
   }
+
+  @Query()
+  async generatedVariantSKUs(@Args() args, @Info() info) {
+    return await this.productService.getGeneratedVariantSKUs(args)
+  }
 }
