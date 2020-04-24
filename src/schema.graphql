@@ -534,7 +534,7 @@ type Reservation {
   products: [PhysicalProduct!]!
   reservationNumber: Int!
   shipped: Boolean!
-  status: ReservationStatus!
+  status(display: Boolean): String!
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
