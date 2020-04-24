@@ -1,4 +1,4 @@
-import { Parent, ResolveField, Resolver, Args } from "@nestjs/graphql"
+import { Args, Parent, ResolveField, Resolver } from "@nestjs/graphql"
 
 import { PrismaService } from "@prisma/prisma.service"
 import { ReservationUtilsService } from "../services/reservation.utils.service"
@@ -26,8 +26,8 @@ export class ReservationFieldsResolver {
       id: parent.id,
     })
     const status = reservation.status
-    if(args.display === true){
-      switch(status) {
+    if (args.display === true) {
+      switch (status) {
         case "InQueue":
           return "In queue"
         case "InTransit":

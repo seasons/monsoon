@@ -1,3 +1,6 @@
+import { BillingAddress, Card, PlanId } from "../payment.types"
+import { Plan, User } from "@app/prisma"
+
 import { AirtableService } from "@modules/Airtable/services/airtable.service"
 import { AuthService } from "@modules/User/services/auth.service"
 import { EmailService } from "@modules/Email/services/email.service"
@@ -17,6 +20,26 @@ export class PaymentService {
     private readonly prisma: PrismaService
   ) {}
 
+  async createSubscription(
+    plan: Plan,
+    billingAddress: BillingAddress,
+    user: User,
+    card: Card
+  ) {
+    return await chargebee.subscription
+      .create({
+        plan_id: this.prismaPlanToChargebeePlanId(plan),
+        billingAddress,
+        customer: {
+          first_name: user.firstName,
+          last_name: user.lastName,
+          email: user.email,
+        },
+        card,
+      })
+      .request()
+  }
+
   async getHostedCheckoutPage(
     planId,
     userId,
@@ -25,20 +48,11 @@ export class PaymentService {
     lastName,
     phoneNumber
   ) {
-    // translate the passed planID into a chargebee-readable version
-    let chargebeePlanId
-    if (planId === "AllAccess") {
-      chargebeePlanId = "all-access"
-    } else if (planId === "Essential") {
-      chargebeePlanId = "essential"
-    } else {
-      throw new Error(`unrecognized planID: ${planId}`)
-    }
     return await new Promise((resolve, reject) => {
       chargebee.hosted_page
         .checkout_new({
           subscription: {
-            plan_id: chargebeePlanId,
+            plan_id: this.prismaPlanToChargebeePlanId(planId),
           },
           customer: {
             id: userId,
@@ -242,5 +256,17 @@ export class PaymentService {
         where: { id: customerID },
       })
     }
+  }
+
+  private prismaPlanToChargebeePlanId(plan: Plan) {
+    let chargebeePlanId
+    if (plan === "AllAccess") {
+      chargebeePlanId = "all-access"
+    } else if (plan === "Essential") {
+      chargebeePlanId = "essential"
+    } else {
+      throw new Error(`unrecognized planID: ${plan}`)
+    }
+    return chargebeePlanId
   }
 }

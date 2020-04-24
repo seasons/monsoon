@@ -1,6 +1,7 @@
 import {
   AirtableModule,
   CronModule,
+  PaymentModule,
   SyncModule,
   UserModule,
   UtilsModule,
@@ -22,6 +23,7 @@ import { UserCommands } from "./commands/user.command"
     UserModule,
     UtilsModule,
     AirtableModule,
+    PaymentModule,
     CronModule,
   ],
   providers: [ScriptsService, UserCommands, ProductCommands, SyncCommands],

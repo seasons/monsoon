@@ -1,10 +1,13 @@
 import * as fs from "fs"
 
+import { camelCase, mapKeys, snakeCase } from "lodash"
+
 import { Injectable } from "@nestjs/common"
 import { Location } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
 import cliProgress from "cli-progress"
 import crypto from "crypto"
+import { isObject } from "util"
 
 enum ProductSize {
   XS = "XS",
@@ -89,6 +92,32 @@ export class UtilsService {
       },
       cliProgress.Presets.shades_grey
     )
+  }
+
+  /**
+   * Recursively transform all object keys to camelCase
+   */
+  camelCaseify = (obj: any): any => {
+    return this.caseify(obj, camelCase)
+  }
+
+  /**
+   * Recursively transform all object keys to snakeCase
+   */
+  snakeCaseify = (obj: any): any => {
+    return this.caseify(obj, snakeCase)
+  }
+
+  private caseify = (obj: any, caseFunc: (str: string) => string): any => {
+    const a = mapKeys(obj, (_, key) => caseFunc(key))
+    for (const [key, val] of Object.entries(a)) {
+      if (Array.isArray(val)) {
+        a[key] = val.map(b => this.caseify(b, caseFunc))
+      } else if (isObject(val) && Object.keys(val)?.length !== 0) {
+        a[key] = this.caseify(a, caseFunc)
+      }
+    }
+    return a
   }
 
   openLogFile(logName) {
