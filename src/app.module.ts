@@ -19,7 +19,9 @@ import {
 import { GqlModuleOptions, GraphQLModule } from "@nestjs/graphql"
 import { Module, forwardRef } from "@nestjs/common"
 
+import { APP_INTERCEPTOR } from "@nestjs/core"
 import Analytics from "analytics-node"
+import { DataLoaderInterceptor } from "@modules/DataLoader/index"
 import { ScheduleModule } from "@nestjs/schedule"
 import chargebee from "chargebee"
 import { importSchema } from "graphql-import"
@@ -78,6 +80,12 @@ const scheduleModule =
     SlackModule,
     UserModule,
     forwardRef(() => CronModule),
+  ],
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: DataLoaderInterceptor,
+    },
   ],
 })
 export class AppModule {}

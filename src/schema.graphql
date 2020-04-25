@@ -175,7 +175,7 @@ type Query {
     first: Int
     last: Int
   ): CustomerConnection!
-  generatedVariantSKUs(input: ProductVariantsSKUInput!): [String!]
+  generatedVariantSKUs(input: ProductVariantSKUsInput!): [String!]
   homepageProductRail(
     where: HomepageProductRailWhereUniqueInput!
   ): HomepageProductRail
@@ -396,6 +396,7 @@ type Mutation {
   acknowledgeCompletedChargebeeHostedCheckout(
     hostedPageID: String!
   ): BillingInfoPayload
+  refundInvoice(input: RefundInvoiceInput): Boolean!
   addProductRequest(reason: String!, url: String!): ProductRequest!
   validateAddress(input: ValidateAddressInput!): ValidationPayload!
   addProductVariantWant(variantID: ID!): ProductVariantWant!
@@ -411,6 +412,14 @@ type Mutation {
   ): ReservationFeedback!
 }
 
+input RefundInvoiceInput {
+  invoiceId: String!
+  refundAmount: Int
+  comment: String
+  customerNotes: String
+  reasonCode: CreditNoteReasonCodeInput
+}
+
 input AddressInput {
   city: String!
   postalCode: String!
@@ -423,7 +432,7 @@ input ReserveItemsOptions {
   dryRun: Boolean
 }
 
-input ProductVariantsSKUInput {
+input ProductVariantSKUsInput {
   brandID: String!
   colorID: String!
   sizeNames: [String!]!
@@ -509,6 +518,31 @@ type Me {
 
 union HomepageResult = Product | Collection | Brand
 
+enum TransactionStatus {
+  InProgress
+  Success
+  Voided
+  Failure
+  Timeout
+  NeedsAttention
+}
+
+enum InvoiceStatus {
+  Paid
+  Posted
+  PaymentDue
+  NotPaid
+  Voided
+  Pending
+}
+
+enum TransactionType {
+  Authorization
+  Payment
+  Refund
+  PaymentReversal
+}
+
 enum HomePageSectionType {
   CollectionGroups
   Products
@@ -523,6 +557,32 @@ enum PlanID {
 
 enum Event {
   CompletedWaitlistForm
+}
+
+enum CreditNoteReasonCodeInput {
+  ProductUnsatisfactory
+  ServiceUnsatisfactory
+  OrderChange
+  OrderCancellation
+  Waiver
+  Other
+}
+
+enum CreditNoteReasonCode {
+  SubscriptionChange
+  ProductUnsatisfactory
+  ServiceUnsatisfactory
+  OrderChange
+  OrderCancellation
+  Waiver
+  Other
+}
+
+enum CreditNoteStatus {
+  Adjusted
+  Refunded
+  RefundDue
+  Voided
 }
 
 type Faq {
@@ -558,12 +618,53 @@ type Reservation {
   images(width: Int, height: Int, size: ImageSize): [Image!]!
   reservationNumber: Int!
   shipped: Boolean!
-  status: ReservationStatus!
-  returnDateDisplay: DateTime
+  status(display: Boolean): String!
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
   returnAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
+}
+
+type Customer {
+  id: ID!
+  user: User!
+  status: CustomerStatus
+  detail: CustomerDetail
+  billingInfo: BillingInfo
+  plan: Plan
+  reservations: [Reservation]
+  invoices: [Invoice]
+  transactions: [Transaction]
+}
+
+type Invoice {
+  id: String!
+  subscriptionId: String
+  recurring: Boolean
+  status: InvoiceStatus
+  closingDate: DateTime
+  dueDate: DateTime
+  amount: Int
+  transactions: [Transaction]
+  creditNotes: [CreditNote]
+}
+
+type Transaction {
+  id: String!
+  amount: Int
+  lastFour: String
+  date: DateTime
+  status: TransactionStatus
+  type: TransactionType!
+  settledAt: DateTime
+}
+
+type CreditNote {
+  id: String!
+  reasonCode: CreditNoteReasonCode
+  date: DateTime
+  total: Int
+  status: CreditNoteStatus
 }

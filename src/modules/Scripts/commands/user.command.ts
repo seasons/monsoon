@@ -1,29 +1,41 @@
 import { AirtableIdOption, PrismaEnvOption } from "../scripts.decorators"
+import {
+  BillingAddress,
+  Card,
+  PlanId,
+} from "@app/modules/Payment/payment.types"
 import { Command, Option } from "nestjs-command"
 import { Injectable, Logger } from "@nestjs/common"
 
+import { AirtableService } from "@modules/Airtable"
 import { AuthService } from "@modules/User"
 import { ModuleRef } from "@nestjs/core"
+import { PaymentService } from "@app/modules/Payment/index"
 import { PrismaService } from "@prisma/prisma.service"
 import { ScriptsService } from "../services/scripts.service"
+import { UtilsService } from "@app/modules/Utils"
+import chargebee from "chargebee"
 import faker from "faker"
 import { head } from "lodash"
 
 @Injectable()
 export class UserCommands {
   private readonly logger = new Logger(UserCommands.name)
-  private prisma: PrismaService
 
   constructor(
     private readonly scriptsService: ScriptsService,
     private readonly authService: AuthService,
+    private readonly prisma: PrismaService,
+    private readonly airtable: AirtableService,
+    private readonly paymentService: PaymentService,
+    private readonly utilsService: UtilsService,
     private moduleRef: ModuleRef
   ) {}
 
   @Command({
     command: "create:test-user",
     describe: "creates a test user with the given email and password",
-    aliases: "cts",
+    aliases: "ctu",
   })
   async create(
     @PrismaEnvOption()
@@ -43,15 +55,24 @@ export class UserCommands {
       describe: "Password of the test user",
       type: "string",
     })
-    password
-  ) {
-    this.prisma = await this.moduleRef.get(PrismaService, {
-      strict: false,
+    password,
+    @Option({
+      name: "plan",
+      describe: "Subscription plan of the user",
+      type: "string",
+      default: "Essential",
+      choices: ["AllAccess", "Essential"],
     })
+    plan
+  ) {
     await this.scriptsService.updateConnections({
       prismaEnv,
       airtableEnv: abid,
       moduleRef: this.moduleRef,
+    })
+    chargebee.configure({
+      site: "seasons-test",
+      api_key: "test_fmWkxemy4L3CP1ku1XwPlTYQyJVKajXx",
     })
 
     const firstName = faker.name.firstName()
@@ -69,6 +90,16 @@ export class UserCommands {
 
     let user
     let tokenData
+    const address: BillingAddress = {
+      firstName: firstName,
+      lastName: lastName,
+      line1: "138 Mulberry St",
+      city: "New York",
+      state: "NY",
+      zip: "10013",
+      country: "USA",
+    }
+
     try {
       ;({ user, tokenData } = await this.authService.signupUser({
         email,
@@ -84,10 +115,10 @@ export class UserCommands {
             create: {
               slug,
               name: `${firstName} ${lastName}`,
-              address1: "138 Mulberry St",
-              city: "New York",
-              state: "NY",
-              zipCode: "10013",
+              address1: address.line1,
+              city: address.city,
+              state: address.state,
+              zipCode: address.zip,
             },
           },
         },
@@ -108,25 +139,39 @@ export class UserCommands {
         where: { user: { id: user.id } },
       })
     )
+    const card: Card = {
+      number: "4242424242424242",
+      expiryMonth: "04",
+      expiryYear: "2022",
+      cvv: "222",
+    }
     await this.prisma.client.updateCustomer({
       data: {
-        plan: "Essential",
+        plan,
         billingInfo: {
           create: {
             brand: "Visa",
             name: fullName,
-            last_digits: faker.finance.mask(4),
-            expiration_month: 0o4,
-            expiration_year: 2022,
+            last_digits: card.number.substr(12),
+            expiration_month: parseInt(card.expiryMonth, 10),
+            expiration_year: parseInt(card.expiryYear, 10),
           },
         },
         status: "Active",
       },
       where: { id: customer.id },
     })
+    await this.airtable.createOrUpdateAirtableUser(user, { status: "Active" })
+    await this.paymentService.createSubscription(
+      plan,
+      this.utilsService.snakeCaseify(address),
+      user,
+      this.utilsService.snakeCaseify(card)
+    )
 
     this.logger.log(
-      `User with email: ${email}, password: ${password} successfully created`
+      `User with email: ${email}, password: ${password} successfully created on ${prismaEnv} prisma and ${abid ||
+        "staging"} airtable`
     )
     this.logger.log(`Access token: ${tokenData.access_token}`)
   }

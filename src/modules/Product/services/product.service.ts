@@ -201,7 +201,7 @@ export class ProductService {
       })
       .aggregate()
       .count()
-    if (!brandCount) {
+    if (brandCount === null) {
       return null
     }
 

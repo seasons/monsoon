@@ -1,8 +1,8 @@
 import { AirtableIdOption, PrismaEnvOption } from "../scripts.decorators"
-import { Command, Option } from "nestjs-command"
 import { Injectable, Logger } from "@nestjs/common"
 
 import { AirtableService } from "@app/modules/Airtable"
+import { Command } from "nestjs-command"
 import { ModuleRef } from "@nestjs/core"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { ScriptsService } from "../services/scripts.service"
@@ -12,12 +12,12 @@ import { compact } from "lodash"
 @Injectable()
 export class ProductCommands {
   private readonly logger = new Logger(ProductCommands.name)
-  private prisma: PrismaService
 
   constructor(
     private readonly scriptsService: ScriptsService,
     private readonly utilsService: UtilsService,
     private readonly airtableService: AirtableService,
+    private readonly prisma: PrismaService,
     private readonly moduleRef: ModuleRef
   ) {}
 
@@ -34,9 +34,6 @@ export class ProductCommands {
     await this.scriptsService.updateConnections({
       prismaEnv,
       moduleRef: this.moduleRef,
-    })
-    this.prisma = this.moduleRef.get(PrismaService, {
-      strict: false,
     })
 
     const reservableProductVariants = await this.prisma.client.productVariants({
@@ -81,9 +78,6 @@ export class ProductCommands {
       prismaEnv,
       airtableEnv: abid,
       moduleRef: this.moduleRef,
-    })
-    this.prisma = this.moduleRef.get(PrismaService, {
-      strict: false,
     })
 
     const allPrismaProductVariants = await this.prisma.binding.query.productVariants(
