@@ -1,13 +1,12 @@
 import * as fs from "fs"
 
-import { camelCase, mapKeys, snakeCase } from "lodash"
+import { camelCase, isObject, mapKeys, snakeCase, upperFirst } from "lodash"
 
 import { Injectable } from "@nestjs/common"
 import { Location } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
 import cliProgress from "cli-progress"
 import crypto from "crypto"
-import { isObject } from "util"
 
 enum ProductSize {
   XS = "XS",
@@ -108,16 +107,16 @@ export class UtilsService {
     return this.caseify(obj, snakeCase)
   }
 
-  private caseify = (obj: any, caseFunc: (str: string) => string): any => {
-    const a = mapKeys(obj, (_, key) => caseFunc(key))
-    for (const [key, val] of Object.entries(a)) {
-      if (Array.isArray(val)) {
-        a[key] = val.map(b => this.caseify(b, caseFunc))
-      } else if (isObject(val) && Object.keys(val)?.length !== 0) {
-        a[key] = this.caseify(a, caseFunc)
+  secondsSinceEpochToISOString(sec: number, nullifError = false): string {
+    try {
+      return new Date(sec * 1000).toISOString()
+    } catch (err) {
+      if (nullifError) {
+        return null
+      } else {
+        throw err
       }
     }
-    return a
   }
 
   openLogFile(logName) {
@@ -135,6 +134,10 @@ export class UtilsService {
       fs.writeSync(fileDescriptor, formattedLine)
       fs.writeSync(fileDescriptor, `\n`)
     })
+  }
+
+  filterErrors<T>(arr: any[]): T[] {
+    return arr?.filter(a => !(a instanceof Error))
   }
 
   sizeNameToSizeCode(sizeName: ProductSize | string) {
@@ -159,5 +162,17 @@ export class UtilsService {
       throw new Error(`invalid sizeName: ${sizeName}`)
     }
     return sizeName.toLowerCase().replace("x", "") // 32x28 => 3238
+  }
+
+  private caseify = (obj: any, caseFunc: (str: string) => string): any => {
+    const a = mapKeys(obj, (_, key) => caseFunc(key))
+    for (const [key, val] of Object.entries(a)) {
+      if (Array.isArray(val)) {
+        a[key] = val.map(b => this.caseify(b, caseFunc))
+      } else if (isObject(val) && Object.keys(val)?.length !== 0) {
+        a[key] = this.caseify(val, caseFunc)
+      }
+    }
+    return a
   }
 }
