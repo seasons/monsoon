@@ -1,11 +1,23 @@
+import {
+  BillingAddress,
+  Card,
+  Invoice,
+  InvoicesDataLoader,
+  RefundInvoiceInput,
+  Transaction,
+  TransactionsDataLoader,
+} from "../payment.types"
+import { Plan, User } from "@app/prisma"
+import { camelCase, get, identity, snakeCase, upperFirst } from "lodash"
+
 import { AirtableService } from "@modules/Airtable/services/airtable.service"
 import { AuthService } from "@modules/User/services/auth.service"
 import { EmailService } from "@modules/Email/services/email.service"
 import { Injectable } from "@nestjs/common"
 import { PaymentUtilsService } from "./payment.utils.service"
 import { PrismaService } from "@prisma/prisma.service"
+import { UtilsService } from "@modules/Utils"
 import chargebee from "chargebee"
-import { get } from "lodash"
 
 @Injectable()
 export class PaymentService {
@@ -14,8 +26,29 @@ export class PaymentService {
     private readonly authService: AuthService,
     private readonly emailService: EmailService,
     private readonly paymentUtils: PaymentUtilsService,
+    private readonly utils: UtilsService,
     private readonly prisma: PrismaService
   ) {}
+
+  async createSubscription(
+    plan: Plan,
+    billingAddress: BillingAddress,
+    user: User,
+    card: Card
+  ) {
+    return await chargebee.subscription
+      .create({
+        plan_id: this.prismaPlanToChargebeePlanId(plan),
+        billingAddress,
+        customer: {
+          first_name: user.firstName,
+          last_name: user.lastName,
+          email: user.email,
+        },
+        card,
+      })
+      .request()
+  }
 
   async getHostedCheckoutPage(
     planId,
@@ -25,20 +58,11 @@ export class PaymentService {
     lastName,
     phoneNumber
   ) {
-    // translate the passed planID into a chargebee-readable version
-    let chargebeePlanId
-    if (planId === "AllAccess") {
-      chargebeePlanId = "all-access"
-    } else if (planId === "Essential") {
-      chargebeePlanId = "essential"
-    } else {
-      throw new Error(`unrecognized planID: ${planId}`)
-    }
     return await new Promise((resolve, reject) => {
       chargebee.hosted_page
         .checkout_new({
           subscription: {
-            plan_id: chargebeePlanId,
+            plan_id: this.prismaPlanToChargebeePlanId(planId),
           },
           customer: {
             id: userId,
@@ -242,5 +266,119 @@ export class PaymentService {
         where: { id: customerID },
       })
     }
+  }
+
+  async getCustomerInvoiceHistory(
+    // payment customerId is equivalent to prisma user id, NOT prisma customer id
+    customerId: string,
+    invoicesLoader: InvoicesDataLoader,
+    transactionsForCustomerLoader: TransactionsDataLoader
+  ) {
+    const invoices = this.utils.filterErrors<Invoice>(
+      await invoicesLoader.load(customerId)
+    )
+    if (!invoices) {
+      return null
+    }
+
+    return Promise.all(
+      invoices.map(async invoice =>
+        identity({
+          ...this.formatInvoice(invoice),
+          transactions: this.utils
+            .filterErrors<Transaction>(
+              await transactionsForCustomerLoader.load(customerId)
+            )
+            ?.filter(a =>
+              this.getInvoiceTransactionIds(invoice)?.includes(a.id)
+            )
+            ?.map(this.formatTransaction),
+        })
+      )
+    )
+  }
+
+  async getCustomerTransactionHistory(
+    // payment customerId is equivalent to prisma user id, NOT prisma customer id
+    customerId: string,
+    transactionsForCustomerloader: TransactionsDataLoader
+  ) {
+    return this.utils
+      .filterErrors<Transaction>(
+        await transactionsForCustomerloader.load(customerId)
+      )
+      ?.map(this.formatTransaction)
+  }
+
+  async refundInvoice({
+    invoiceId,
+    refundAmount,
+    comment,
+    customerNotes,
+    reasonCode,
+  }: RefundInvoiceInput) {
+    await chargebee.invoice
+      .refund(invoiceId, {
+        refund_amount: refundAmount,
+        credit_note: {
+          reason_code: snakeCase(reasonCode),
+        },
+        comment,
+        customer_notes: customerNotes,
+      })
+      .request()
+    return true
+  }
+
+  private getInvoiceTransactionIds(invoice): string[] {
+    return invoice.linkedPayments.map(a => a.txnId)
+  }
+
+  /**
+   * Define as arrow func to preserve `this` binding
+   */
+  private formatInvoice = (invoice: Invoice) =>
+    identity({
+      ...invoice,
+      status: upperFirst(camelCase(invoice.status)),
+      amount: invoice.total,
+      closingDate: this.utils.secondsSinceEpochToISOString(invoice.date),
+      dueDate: this.utils.secondsSinceEpochToISOString(invoice.dueDate, true),
+      creditNotes: invoice.issuedCreditNotes.map(a =>
+        identity({
+          ...a,
+          reasonCode: upperFirst(camelCase(a.reasonCode)),
+          status: upperFirst(camelCase(a.status)),
+          date: this.utils.secondsSinceEpochToISOString(a.date),
+        })
+      ),
+    })
+
+  /**
+   * Define as arrow func to preserve `this` binding
+   */
+  private formatTransaction = (transaction: Transaction) =>
+    identity({
+      ...transaction,
+      status: upperFirst(transaction.status),
+      type: upperFirst(transaction.type),
+      lastFour: transaction.maskedCardNumber?.replace(/[*]/g, ""),
+      date: this.utils.secondsSinceEpochToISOString(transaction.date, true),
+      settledAt: this.utils.secondsSinceEpochToISOString(
+        transaction.settledAt,
+        true
+      ),
+    })
+
+  private prismaPlanToChargebeePlanId(plan: Plan) {
+    let chargebeePlanId
+    if (plan === "AllAccess") {
+      chargebeePlanId = "all-access"
+    } else if (plan === "Essential") {
+      chargebeePlanId = "essential"
+    } else {
+      throw new Error(`unrecognized planID: ${plan}`)
+    }
+    return chargebeePlanId
   }
 }

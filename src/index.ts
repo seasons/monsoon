@@ -24,8 +24,15 @@ if (process.env.NODE_ENV === "production") {
   server.use(Sentry.Handlers.requestHandler()) // must be first middleware on app
 }
 
+const handleErrors = (err, req, res, next) => {
+  if (err.name === "UnauthorizedError") {
+    res.send(401, err)
+  }
+}
+
 server.use(
   checkJwt,
+  handleErrors,
   createGetUserMiddleware(prisma),
   cors({
     origin: [

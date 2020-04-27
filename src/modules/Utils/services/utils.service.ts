@@ -1,5 +1,7 @@
 import * as fs from "fs"
 
+import { camelCase, isObject, mapKeys, snakeCase, upperFirst } from "lodash"
+
 import { Injectable } from "@nestjs/common"
 import { Location } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
@@ -91,6 +93,32 @@ export class UtilsService {
     )
   }
 
+  /**
+   * Recursively transform all object keys to camelCase
+   */
+  camelCaseify = (obj: any): any => {
+    return this.caseify(obj, camelCase)
+  }
+
+  /**
+   * Recursively transform all object keys to snakeCase
+   */
+  snakeCaseify = (obj: any): any => {
+    return this.caseify(obj, snakeCase)
+  }
+
+  secondsSinceEpochToISOString(sec: number, nullifError = false): string {
+    try {
+      return new Date(sec * 1000).toISOString()
+    } catch (err) {
+      if (nullifError) {
+        return null
+      } else {
+        throw err
+      }
+    }
+  }
+
   openLogFile(logName) {
     return fs.openSync(
       `logs/${logName}-${require("moment")().format(
@@ -106,6 +134,10 @@ export class UtilsService {
       fs.writeSync(fileDescriptor, formattedLine)
       fs.writeSync(fileDescriptor, `\n`)
     })
+  }
+
+  filterErrors<T>(arr: any[]): T[] {
+    return arr?.filter(a => !(a instanceof Error))
   }
 
   sizeNameToSizeCode(sizeName: ProductSize | string) {
@@ -130,5 +162,17 @@ export class UtilsService {
       throw new Error(`invalid sizeName: ${sizeName}`)
     }
     return sizeName.toLowerCase().replace("x", "") // 32x28 => 3238
+  }
+
+  private caseify = (obj: any, caseFunc: (str: string) => string): any => {
+    const a = mapKeys(obj, (_, key) => caseFunc(key))
+    for (const [key, val] of Object.entries(a)) {
+      if (Array.isArray(val)) {
+        a[key] = val.map(b => this.caseify(b, caseFunc))
+      } else if (isObject(val) && Object.keys(val)?.length !== 0) {
+        a[key] = this.caseify(val, caseFunc)
+      }
+    }
+    return a
   }
 }

@@ -396,6 +396,7 @@ type Mutation {
   acknowledgeCompletedChargebeeHostedCheckout(
     hostedPageID: String!
   ): BillingInfoPayload
+  refundInvoice(input: RefundInvoiceInput): Boolean!
   addProductRequest(reason: String!, url: String!): ProductRequest!
   validateAddress(input: ValidateAddressInput!): ValidationPayload!
   addProductVariantWant(variantID: ID!): ProductVariantWant!
@@ -409,6 +410,14 @@ type Mutation {
     feedbackID: ID!
     input: ReservationFeedbackUpdateInput!
   ): ReservationFeedback!
+}
+
+input RefundInvoiceInput {
+  invoiceId: String!
+  refundAmount: Int
+  comment: String
+  customerNotes: String
+  reasonCode: CreditNoteReasonCodeInput
 }
 
 input AddressInput {
@@ -510,6 +519,31 @@ type Me {
 
 union HomepageResult = Product | Collection | Brand
 
+enum TransactionStatus {
+  InProgress
+  Success
+  Voided
+  Failure
+  Timeout
+  NeedsAttention
+}
+
+enum InvoiceStatus {
+  Paid
+  Posted
+  PaymentDue
+  NotPaid
+  Voided
+  Pending
+}
+
+enum TransactionType {
+  Authorization
+  Payment
+  Refund
+  PaymentReversal
+}
+
 enum HomePageSectionType {
   CollectionGroups
   Products
@@ -524,6 +558,32 @@ enum PlanID {
 
 enum Event {
   CompletedWaitlistForm
+}
+
+enum CreditNoteReasonCodeInput {
+  ProductUnsatisfactory
+  ServiceUnsatisfactory
+  OrderChange
+  OrderCancellation
+  Waiver
+  Other
+}
+
+enum CreditNoteReasonCode {
+  SubscriptionChange
+  ProductUnsatisfactory
+  ServiceUnsatisfactory
+  OrderChange
+  OrderCancellation
+  Waiver
+  Other
+}
+
+enum CreditNoteStatus {
+  Adjusted
+  Refunded
+  RefundDue
+  Voided
 }
 
 type Faq {
@@ -557,4 +617,46 @@ type Reservation {
   createdAt: DateTime!
   updatedAt: DateTime!
   returnDateDisplay: DateTime
+}
+
+type Customer {
+  id: ID!
+  user: User!
+  status: CustomerStatus
+  detail: CustomerDetail
+  billingInfo: BillingInfo
+  plan: Plan
+  reservations: [Reservation]
+  invoices: [Invoice]
+  transactions: [Transaction]
+}
+
+type Invoice {
+  id: String!
+  subscriptionId: String
+  recurring: Boolean
+  status: InvoiceStatus
+  closingDate: DateTime
+  dueDate: DateTime
+  amount: Int
+  transactions: [Transaction]
+  creditNotes: [CreditNote]
+}
+
+type Transaction {
+  id: String!
+  amount: Int
+  lastFour: String
+  date: DateTime
+  status: TransactionStatus
+  type: TransactionType!
+  settledAt: DateTime
+}
+
+type CreditNote {
+  id: String!
+  reasonCode: CreditNoteReasonCode
+  date: DateTime
+  total: Int
+  status: CreditNoteStatus
 }
