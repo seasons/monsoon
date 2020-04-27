@@ -13,16 +13,6 @@ export class ReservationFieldsResolver {
   ) {}
 
   @ResolveField()
-  async returnDateDisplay(@Parent() parent) {
-    const reservation = await this.prisma.client.reservation({
-      id: parent.id,
-    })
-    return this.reservationService.formatReservationReturnDate(
-      new Date(reservation?.createdAt)
-    )
-  }
-
-  @ResolveField()
   async returnAt(@Parent() parent) {
     const reservation = await this.prisma.client.reservation({
       id: parent.id,

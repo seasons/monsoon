@@ -14,13 +14,13 @@ type Product {
   type: ProductType
   description: String
   externalURL: String
-  images: Json!
   modelHeight: Int
   modelSize: Size
   retailPrice: Int
   color: Color!
   secondaryColor: Color
   tags: Json
+  images(width: Int, height: Int, size: ImageSize): [Image!]!
   functions(
     where: ProductFunctionWhereInput
     orderBy: ProductFunctionOrderByInput
