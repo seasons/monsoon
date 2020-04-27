@@ -15,6 +15,8 @@ import {
   SlackModule,
   UserModule,
   directiveResolvers,
+  UtilsModule,
+  ShippingModule,
 } from "./modules"
 import { GqlModuleOptions, GraphQLModule } from "@nestjs/graphql"
 import { Module, forwardRef } from "@nestjs/common"
@@ -69,16 +71,18 @@ const scheduleModule =
     }),
     AirtableModule,
     CollectionModule,
-    CustomerModule,
     EmailModule,
+    UtilsModule,
     FAQModule,
     HomepageModule,
     PaymentModule,
     ProductModule,
     ReservationModule,
+    ShippingModule,
     SearchModule,
     SlackModule,
     UserModule,
+    CustomerModule,
     forwardRef(() => CronModule),
   ],
   providers: [
