@@ -13,6 +13,7 @@ const RESERVATION_FEEDBACK_FRAGMENT = `
        variant {
          id
          product {
+           id
            images
            name
            retailPrice
