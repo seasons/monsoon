@@ -14,23 +14,21 @@ export function createGetUserMiddleware(prisma) {
     // Get user from prisma
     const { sub } = auth0User
     const auth0Id = sub.split("|")[1]
-    prisma
-      .user({ auth0Id })
-      .then(function putUserOnRequestAndAddUserToSentryContext(prismaUser) {
-        req.user = { ...req.user, ...prismaUser }
+    prisma.user({ auth0Id }).then(prismaUser => {
+      req.user = { ...req.user, ...prismaUser }
 
-        try {
-          // Add user context on Sentry
-          if (prismaUser) {
-            Sentry.configureScope(scope => {
-              scope.setUser({ id: prismaUser.id, email: prismaUser.email })
-            })
-          }
-        } catch (e) {
-          console.error(e)
+      try {
+        // Add user context on Sentry
+        if (prismaUser) {
+          Sentry.configureScope(scope => {
+            scope.setUser({ id: prismaUser.id, email: prismaUser.email })
+          })
         }
+      } catch (e) {
+        console.error(e)
+      }
 
-        return next()
-      })
+      return next()
+    })
   }
 }
