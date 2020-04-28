@@ -1,5 +1,4 @@
 import { Injectable } from "@nestjs/common"
-import { PrismaService } from "@app/prisma/prisma.service"
 import qs from "querystring"
 
 interface ImageResizerOptions {
@@ -19,7 +18,7 @@ export enum ImageSize {
 const IMGIX_BASE = "https://seasons-nyc.imgix.net/"
 const AIRTABLE_BASE = "https://dl.airtable.com/.attachments/"
 
-export const sizes = {
+const sizes = {
   Thumb: {
     w: 200,
     fit: "clip",
@@ -44,8 +43,6 @@ export const sizes = {
 
 @Injectable()
 export class ImageResizeService {
-  constructor(private readonly prisma: PrismaService) {}
-
   imageResize(
     url: string,
     sizeName: ImageSize,
@@ -53,7 +50,7 @@ export class ImageResizeService {
   ) {
     const newURL = url.replace(AIRTABLE_BASE, IMGIX_BASE)
 
-    let params: any = {
+    const params: any = {
       ...options,
       ...sizes[sizeName],
     }

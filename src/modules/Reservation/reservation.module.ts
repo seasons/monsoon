@@ -1,5 +1,6 @@
 import { AirtableModule } from "@modules/Airtable"
 import { EmailModule } from "@modules/Email"
+import { ImageModule } from "@modules/Image"
 import { Module } from "@nestjs/common"
 import { PrismaModule } from "@prisma/prisma.module"
 import { ProductModule } from "@modules/Product"
@@ -12,16 +13,15 @@ import { ReservationQueriesResolver } from "./queries/reservation.queries.resolv
 import { ReservationService } from "./services/reservation.service"
 import { ReservationUtilsService } from "./services/reservation.utils.service"
 import { ShippingModule } from "@modules/Shipping/shipping.module"
-import { UtilsModule } from "@modules/Utils"
 
 @Module({
   imports: [
     AirtableModule,
     EmailModule,
+    ImageModule,
     PrismaModule,
     ProductModule,
     ShippingModule,
-    UtilsModule,
   ],
   providers: [
     ReservationFeedbackMutationsResolver,
