@@ -1011,7 +1011,7 @@ export class DataScheduledJobs {
     if (!airtableProductVariant.fields.SKU) return []
 
     return allAirtablePhysicalProducts.filter(a =>
-      airtableProductVariant.fields["Physical Products"].includes(a.id)
+      airtableProductVariant.fields["Physical Products"]?.includes(a.id)
     )
   }
 
