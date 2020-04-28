@@ -15,8 +15,8 @@ export enum ImageSize {
   XLarge = "x-large",
 }
 
-const IMGIX_BASE = "https://seasons-nyc.imgix.net/"
-const AIRTABLE_BASE = "https://dl.airtable.com/.attachments/"
+export const IMGIX_BASE = "https://seasons-nyc.imgix.net/"
+export const AIRTABLE_BASE = "https://dl.airtable.com/.attachments/"
 
 export const sizes = {
   Thumb: {
@@ -50,7 +50,7 @@ export class ImageResizeService {
   ) {
     const newURL = url.replace(AIRTABLE_BASE, IMGIX_BASE)
 
-    let params: any = {
+    const params: any = {
       ...options,
       ...sizes[sizeName],
     }

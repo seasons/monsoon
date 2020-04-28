@@ -10,11 +10,12 @@ import { sortedUniqBy } from "lodash"
 
 @Resolver("Product")
 export class ProductFieldsResolver {
+  private imageResizeService = new ImageResizeService()
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly productService: ProductService,
-    private readonly productUtilsService: ProductUtilsService,
-    private readonly imageResizeService: ImageResizeService
+    private readonly productUtilsService: ProductUtilsService
   ) {}
 
   @ResolveField()
