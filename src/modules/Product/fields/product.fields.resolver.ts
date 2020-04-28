@@ -10,9 +10,10 @@ import { sortedUniqBy } from "lodash"
 
 @Resolver("Product")
 export class ProductFieldsResolver {
+  private imageResizeService = new ImageResizeService()
+
   constructor(
     private readonly prisma: PrismaService,
-    // private readonly imageResizeService: ImageResizeService,
     private readonly productService: ProductService,
     private readonly productUtilsService: ProductUtilsService
   ) {}
@@ -93,7 +94,7 @@ export class ProductFieldsResolver {
       const image = product.productVariant.product.images?.[0]
 
       return {
-        // url: this.imageResizeService.imageResize(image?.url, size),
+        url: this.imageResizeService.imageResize(image?.url, size),
       }
     })
 
