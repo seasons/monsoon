@@ -15,10 +15,10 @@ export enum ImageSize {
   XLarge = "x-large",
 }
 
-export const IMGIX_BASE = "https://seasons-nyc.imgix.net/"
-export const AIRTABLE_BASE = "https://dl.airtable.com/.attachments/"
+const IMGIX_BASE = "https://seasons-nyc.imgix.net/"
+const AIRTABLE_BASE = "https://dl.airtable.com/.attachments/"
 
-export const sizes = {
+const sizes = {
   Thumb: {
     w: 200,
     fit: "clip",

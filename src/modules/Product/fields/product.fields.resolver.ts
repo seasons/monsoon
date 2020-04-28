@@ -1,5 +1,5 @@
 import { Args, Info, Parent, ResolveField, Resolver } from "@nestjs/graphql"
-import { ImageResizeService, ImageSize } from "@app/modules/Utils"
+import { ImageResizeService, ImageSize } from "@modules/Image"
 
 import { Customer } from "@app/nest_decorators"
 import { PrismaService } from "@prisma/prisma.service"

@@ -488,14 +488,6 @@ type Image {
   url: String
   originalHeight: Int
   originalWidth: Int
-  resized(width: Int, height: Int, version: String): Image
-}
-
-type ResizedImageUrl {
-  factor: Float
-  width: Int
-  height: Int
-  url: String
 }
 
 type Homepage {
