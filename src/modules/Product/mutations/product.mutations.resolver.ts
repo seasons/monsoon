@@ -46,4 +46,11 @@ export class ProductMutationsResolver {
   async checkItemsAvailability(@Args() { items }, @Customer() customer) {
     return await this.productService.checkItemsAvailability(items, customer)
   }
+
+  @Mutation()
+  async updateProduct(
+    @Args() { item, input },
+    @Info() info,
+    @Customer() customer
+  ) {}
 }

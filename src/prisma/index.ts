@@ -1410,7 +1410,7 @@ export type BrandTier =
   | "Local"
   | "Discovery"
 
-export type ProductStatus = "Available" | "NotAvailable"
+export type ProductStatus = "Available" | "NotAvailable" | "Stored"
 
 export type ProductArchitecture = "Fashion" | "Showstopper" | "Staple"
 
@@ -1422,6 +1422,7 @@ export type PhysicalProductStatus =
   | "Damaged"
   | "Clean"
   | "Lost"
+  | "Stored"
 
 export type PhysicalProductOrderByInput =
   | "id_ASC"

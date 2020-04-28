@@ -392,6 +392,7 @@ type Mutation {
   addToBag(item: ID!): BagItem!
   removeFromBag(item: ID!, saved: Boolean): BagItem!
   saveProduct(item: ID!, save: Boolean!): BagItem
+  updateProduct(item: ID!, input: ProductUpdateInput!): Product!
   addViewedProduct(item: ID!): RecentlyViewedProduct!
   acknowledgeCompletedChargebeeHostedCheckout(
     hostedPageID: String!

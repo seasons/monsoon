@@ -113,11 +113,13 @@ enum PhysicalProductStatus {
   Damaged
   Clean
   Lost
+  Stored
 }
 
 enum ProductStatus {
   Available
   NotAvailable
+  Stored
 }
 
 enum ReservationStatus {

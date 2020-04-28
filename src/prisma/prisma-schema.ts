@@ -5020,6 +5020,7 @@ export const typeDefs = /* GraphQL */ `
     Damaged
     Clean
     Lost
+    Stored
   }
 
   type PhysicalProductSubscriptionPayload {
@@ -6246,6 +6247,7 @@ export const typeDefs = /* GraphQL */ `
   enum ProductStatus {
     Available
     NotAvailable
+    Stored
   }
 
   type ProductSubscriptionPayload {
