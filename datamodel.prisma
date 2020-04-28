@@ -304,8 +304,8 @@ type Product {
   secondaryColor: Color @relation(name: "ProductSecondaryColor")
   tags: Json
   functions: [ProductFunction!]!
-  innerMaterials: [Material!]! @scalarList(strategy: RELATION)
-  outerMaterials: [Material!]! @scalarList(strategy: RELATION)
+  innerMaterials: [String!]! @scalarList(strategy: RELATION)
+  outerMaterials: [String!]! @scalarList(strategy: RELATION)
   variants: [ProductVariant!]! @relation(link: TABLE)
   status: ProductStatus @default(value: Available)
   season: String

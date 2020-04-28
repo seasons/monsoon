@@ -30,8 +30,8 @@ type Product {
     first: Int
     last: Int
   ): [ProductFunction!]
-  innerMaterials: [Material!]!
-  outerMaterials: [Material!]!
+  innerMaterials: [String!]!
+  outerMaterials: [String!]!
   variants(
     where: ProductVariantWhereInput
     orderBy: ProductVariantOrderByInput

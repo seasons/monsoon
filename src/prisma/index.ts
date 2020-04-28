@@ -1525,64 +1525,6 @@ export type ProductFunctionOrderByInput =
   | "name_ASC"
   | "name_DESC"
 
-export type Material =
-  | "Acetate"
-  | "Acrylic"
-  | "Alpaca"
-  | "CalfLeather"
-  | "CamelHair"
-  | "Camel"
-  | "Cashmere"
-  | "Cotton"
-  | "CottonPoplin"
-  | "CowLeather"
-  | "Cupro"
-  | "DuckDown"
-  | "Denim"
-  | "DuckFeathers"
-  | "Elastane"
-  | "Esterlane"
-  | "Feather"
-  | "FeatherDown"
-  | "GooseDown"
-  | "LambLeather"
-  | "LambSkin"
-  | "Lambswool"
-  | "Leather"
-  | "Lyocell"
-  | "Linen"
-  | "MerinoWool"
-  | "Modacrylic"
-  | "Mohair"
-  | "Nylon"
-  | "OrganicCotton"
-  | "PolyAcetate"
-  | "Polyamide"
-  | "Polyester"
-  | "Polyethylene"
-  | "PolySatin"
-  | "Polyurethane"
-  | "PolyurethanicResin"
-  | "PVC"
-  | "Rayon"
-  | "RecycledPolyester"
-  | "RecycledWool"
-  | "Silk"
-  | "Suede"
-  | "SheepLeather"
-  | "Spandex"
-  | "Taffeta"
-  | "Tartan"
-  | "Triacetate"
-  | "VirginWool"
-  | "Viscose"
-  | "Velcro"
-  | "WaxCoating"
-  | "WhiteDuckDown"
-  | "WhiteGooseDown"
-  | "Wool"
-  | "Mesh"
-
 export type Plan = "AllAccess" | "Essential"
 
 export type ReservationStatus =
@@ -5112,11 +5054,11 @@ export interface ProductFunctionCreateInput {
 }
 
 export interface ProductCreateinnerMaterialsInput {
-  set?: Maybe<Material[] | Material>
+  set?: Maybe<String[] | String>
 }
 
 export interface ProductCreateouterMaterialsInput {
-  set?: Maybe<Material[] | Material>
+  set?: Maybe<String[] | String>
 }
 
 export interface ProductVariantCreateManyWithoutProductInput {
@@ -6276,11 +6218,11 @@ export interface ProductFunctionUpdateManyDataInput {
 }
 
 export interface ProductUpdateinnerMaterialsInput {
-  set?: Maybe<Material[] | Material>
+  set?: Maybe<String[] | String>
 }
 
 export interface ProductUpdateouterMaterialsInput {
-  set?: Maybe<Material[] | Material>
+  set?: Maybe<String[] | String>
 }
 
 export interface ProductVariantUpdateManyWithoutProductInput {
@@ -9874,8 +9816,8 @@ export interface Product {
   modelHeight?: Int
   retailPrice?: Int
   tags?: Json
-  innerMaterials: Material[]
-  outerMaterials: Material[]
+  innerMaterials: String[]
+  outerMaterials: String[]
   status?: ProductStatus
   season?: String
   architecture?: ProductArchitecture
@@ -9909,8 +9851,8 @@ export interface ProductPromise extends Promise<Product>, Fragmentable {
     first?: Int
     last?: Int
   }) => T
-  innerMaterials: () => Promise<Material[]>
-  outerMaterials: () => Promise<Material[]>
+  innerMaterials: () => Promise<String[]>
+  outerMaterials: () => Promise<String[]>
   variants: <T = FragmentableArray<ProductVariant>>(args?: {
     where?: ProductVariantWhereInput
     orderBy?: ProductVariantOrderByInput
@@ -9955,8 +9897,8 @@ export interface ProductSubscription
     first?: Int
     last?: Int
   }) => T
-  innerMaterials: () => Promise<AsyncIterator<Material[]>>
-  outerMaterials: () => Promise<AsyncIterator<Material[]>>
+  innerMaterials: () => Promise<AsyncIterator<String[]>>
+  outerMaterials: () => Promise<AsyncIterator<String[]>>
   variants: <T = Promise<AsyncIterator<ProductVariantSubscription>>>(args?: {
     where?: ProductVariantWhereInput
     orderBy?: ProductVariantOrderByInput
@@ -10001,8 +9943,8 @@ export interface ProductNullablePromise
     first?: Int
     last?: Int
   }) => T
-  innerMaterials: () => Promise<Material[]>
-  outerMaterials: () => Promise<Material[]>
+  innerMaterials: () => Promise<String[]>
+  outerMaterials: () => Promise<String[]>
   variants: <T = FragmentableArray<ProductVariant>>(args?: {
     where?: ProductVariantWhereInput
     orderBy?: ProductVariantOrderByInput
@@ -13946,8 +13888,8 @@ export interface ProductPreviousValues {
   modelHeight?: Int
   retailPrice?: Int
   tags?: Json
-  innerMaterials: Material[]
-  outerMaterials: Material[]
+  innerMaterials: String[]
+  outerMaterials: String[]
   status?: ProductStatus
   season?: String
   architecture?: ProductArchitecture
@@ -13968,8 +13910,8 @@ export interface ProductPreviousValuesPromise
   modelHeight: () => Promise<Int>
   retailPrice: () => Promise<Int>
   tags: () => Promise<Json>
-  innerMaterials: () => Promise<Material[]>
-  outerMaterials: () => Promise<Material[]>
+  innerMaterials: () => Promise<String[]>
+  outerMaterials: () => Promise<String[]>
   status: () => Promise<ProductStatus>
   season: () => Promise<String>
   architecture: () => Promise<ProductArchitecture>
@@ -13990,8 +13932,8 @@ export interface ProductPreviousValuesSubscription
   modelHeight: () => Promise<AsyncIterator<Int>>
   retailPrice: () => Promise<AsyncIterator<Int>>
   tags: () => Promise<AsyncIterator<Json>>
-  innerMaterials: () => Promise<AsyncIterator<Material[]>>
-  outerMaterials: () => Promise<AsyncIterator<Material[]>>
+  innerMaterials: () => Promise<AsyncIterator<String[]>>
+  outerMaterials: () => Promise<AsyncIterator<String[]>>
   status: () => Promise<AsyncIterator<ProductStatus>>
   season: () => Promise<AsyncIterator<String>>
   architecture: () => Promise<AsyncIterator<ProductArchitecture>>

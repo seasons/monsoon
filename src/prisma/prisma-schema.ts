@@ -4046,65 +4046,6 @@ export const typeDefs = /* GraphQL */ `
 
   scalar Long
 
-  enum Material {
-    Acetate
-    Acrylic
-    Alpaca
-    CalfLeather
-    CamelHair
-    Camel
-    Cashmere
-    Cotton
-    CottonPoplin
-    CowLeather
-    Cupro
-    DuckDown
-    Denim
-    DuckFeathers
-    Elastane
-    Esterlane
-    Feather
-    FeatherDown
-    GooseDown
-    LambLeather
-    LambSkin
-    Lambswool
-    Leather
-    Lyocell
-    Linen
-    MerinoWool
-    Modacrylic
-    Mohair
-    Nylon
-    OrganicCotton
-    PolyAcetate
-    Polyamide
-    Polyester
-    Polyethylene
-    PolySatin
-    Polyurethane
-    PolyurethanicResin
-    PVC
-    Rayon
-    RecycledPolyester
-    RecycledWool
-    Silk
-    Suede
-    SheepLeather
-    Spandex
-    Taffeta
-    Tartan
-    Triacetate
-    VirginWool
-    Viscose
-    Velcro
-    WaxCoating
-    WhiteDuckDown
-    WhiteGooseDown
-    Wool
-    Mesh
-  }
-
   type Mutation {
     createBagItem(data: BagItemCreateInput!): BagItem!
     updateBagItem(
@@ -5252,8 +5193,8 @@ export const typeDefs = /* GraphQL */ `
       first: Int
       last: Int
     ): [ProductFunction!]
-    innerMaterials: [Material!]!
-    outerMaterials: [Material!]!
+    innerMaterials: [String!]!
+    outerMaterials: [String!]!
     variants(
       where: ProductVariantWhereInput
       orderBy: ProductVariantOrderByInput
@@ -5283,7 +5224,7 @@ export const typeDefs = /* GraphQL */ `
   }
 
   input ProductCreateinnerMaterialsInput {
-    set: [Material!]
+    set: [String!]
   }
 
   input ProductCreateInput {
@@ -5343,7 +5284,7 @@ export const typeDefs = /* GraphQL */ `
   }
 
   input ProductCreateouterMaterialsInput {
-    set: [Material!]
+    set: [String!]
   }
 
   input ProductCreateWithoutBrandInput {
@@ -5824,8 +5765,8 @@ export const typeDefs = /* GraphQL */ `
     modelHeight: Int
     retailPrice: Int
     tags: Json
-    innerMaterials: [Material!]!
-    outerMaterials: [Material!]!
+    innerMaterials: [String!]!
+    outerMaterials: [String!]!
     status: ProductStatus
     season: String
     architecture: ProductArchitecture
@@ -6299,7 +6240,7 @@ export const typeDefs = /* GraphQL */ `
   }
 
   input ProductUpdateinnerMaterialsInput {
-    set: [Material!]
+    set: [String!]
   }
 
   input ProductUpdateInput {
@@ -6429,7 +6370,7 @@ export const typeDefs = /* GraphQL */ `
   }
 
   input ProductUpdateouterMaterialsInput {
-    set: [Material!]
+    set: [String!]
   }
 
   input ProductUpdateWithoutBrandDataInput {
