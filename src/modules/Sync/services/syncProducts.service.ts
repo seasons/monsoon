@@ -7,6 +7,7 @@ import { AirtableData } from "../../Airtable/airtable.types"
 import { AirtableService } from "../../Airtable/services/airtable.service"
 import { Injectable } from "@nestjs/common"
 import { PrismaService } from "../../../prisma/prisma.service"
+import { ProductUtilsService } from "../../Product/services/product.utils.service"
 import { SyncCategoriesService } from "./syncCategories.service"
 import { SyncSizesService } from "./syncSizes.service"
 import { SyncUtilsService } from "./sync.utils.service"
@@ -18,6 +19,7 @@ export class SyncProductsService {
   constructor(
     private readonly airtableService: AirtableService,
     private readonly prisma: PrismaService,
+    private readonly productUtils: ProductUtilsService,
     private readonly syncCategoriesService: SyncCategoriesService,
     private readonly syncSizesService: SyncSizesService,
     private readonly syncUtils: SyncUtilsService,
@@ -137,7 +139,7 @@ export class SyncProductsService {
         }
 
         const { brandCode } = brand.model
-        const slug = slugify(brandCode + " " + name + " " + color).toLowerCase()
+        const slug = this.productUtils.getProductSlug(brandCode, name, color)
 
         let modelSizeRecord
         if (!!modelSize) {

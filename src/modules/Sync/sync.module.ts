@@ -3,6 +3,7 @@ import { AirtableSyncService } from "./services/sync.airtable.service"
 import { Module } from "@nestjs/common"
 import { PrismaModule } from "../../prisma/prisma.module"
 import { PrismaSyncService } from "./services/sync.prisma.service"
+import { ProductUtilsService } from "../Product/services/product.utils.service"
 import { SyncBottomSizesService } from "./services/syncBottomSizes.service"
 import { SyncBrandsService } from "./services/syncBrands.service"
 import { SyncCategoriesService } from "./services/syncCategories.service"
@@ -24,7 +25,13 @@ import { UserModule } from "../User/user.module"
 import { UtilsModule } from "../Utils/utils.module"
 
 @Module({
-  imports: [AirtableModule, PrismaModule, UserModule, UtilsModule],
+  imports: [
+    AirtableModule,
+    PrismaModule,
+    ProductUtilsService,
+    UserModule,
+    UtilsModule,
+  ],
   exports: [AirtableSyncService, PrismaSyncService],
   providers: [
     AirtableSyncService,

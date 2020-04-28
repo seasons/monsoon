@@ -29,6 +29,11 @@ export class ProductMutationsResolver {
   }
 
   @Mutation()
+  async createProduct(@Args() { input }, @User() user) {
+    return await this.productService.createProduct(input)
+  }
+
+  @Mutation()
   async saveProduct(
     @Args() { item, save = false },
     @Info() info,

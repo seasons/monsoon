@@ -12,11 +12,11 @@ import {
   ProductModule,
   ReservationModule,
   SearchModule,
+  ShippingModule,
   SlackModule,
   UserModule,
-  directiveResolvers,
   UtilsModule,
-  ShippingModule,
+  directiveResolvers,
 } from "./modules"
 import { GqlModuleOptions, GraphQLModule } from "@nestjs/graphql"
 import { Module, forwardRef } from "@nestjs/common"

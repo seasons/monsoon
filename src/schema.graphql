@@ -410,6 +410,7 @@ type Mutation {
     feedbackID: ID!
     input: ReservationFeedbackUpdateInput!
   ): ReservationFeedback!
+  createProduct(input: CreateProductInput): Product
 }
 
 input RefundInvoiceInput {
@@ -436,6 +437,44 @@ input ProductVariantSKUsInput {
   brandID: String!
   colorID: String!
   sizeNames: [String!]!
+}
+
+input CreateProductInput {
+  name: String!
+  brandID: String!
+  categoryID: String!
+  type: ProductType!
+  description: String!
+  modelID: String!
+  retailPrice: Int!
+  modelSizeID: String!
+  colorID: String!
+  secondaryColorID: String
+  tags: [String!]!
+  functions: [String!]!
+  innerMaterials: [String!]!
+  outerMaterials: [String!]!
+  status: ProductStatus!
+  season: String!
+  architectureID: String!
+  variants: [CreateVariantInput!]!
+}
+
+input CreateVariantInput {
+  sku: String!
+  colorID: String!
+  internalSizeID: String!
+  weight: Float!
+  total: Int!
+  reservable: Int!
+  nonReservable: Int!
+  physicalProducts: [CreatePhysicalProductInput!]!
+}
+
+input CreatePhysicalProductInput {
+  seasonsUID: String!
+  inventoryStatusID: String!
+  physicalProductStatusID: String!
 }
 
 type BeamsData {

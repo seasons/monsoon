@@ -1,6 +1,7 @@
 import { BrandOrderByInput } from "@prisma/index"
 import { Injectable } from "@nestjs/common"
 import { PrismaService } from "@prisma/prisma.service"
+import slugify from "slugify"
 import { uniqBy } from "lodash"
 
 @Injectable()
@@ -116,6 +117,10 @@ export class ProductUtilsService {
         0
       return sortWeightA - sortWeightB
     })
+  }
+
+  getProductSlug(brandCode: string, name: string, color: string) {
+    return slugify(brandCode + " " + name + " " + color).toLowerCase()
   }
 
   private async productsAlphabetically(

@@ -3,6 +3,7 @@ import {
   Customer,
   ID_Input,
   Product,
+  ProductFunction,
   RecentlyViewedProduct,
 } from "@prisma/index"
 
@@ -101,6 +102,91 @@ export class ProductService {
     })
 
     return bagItem.length > 0
+  }
+
+  async createProduct(input) {
+    const {
+      name,
+      brandID,
+      categoryID,
+      type,
+      description,
+      modelID,
+      retailPrice,
+      modelSizeID,
+      colorID,
+      secondaryColorID,
+      tags,
+      functions,
+      innerMaterials,
+      outerMaterials,
+      status,
+      season,
+      architectureID,
+      variants,
+    } = input
+    const brand = await this.prisma.client.brand({ id: brandID })
+    const color = await this.prisma.client.color({ id: colorID })
+    const model = await this.prisma.client.productModel({ id: modelID })
+    const productFunctions = await Promise.all(
+      functions.map(
+        async functionName =>
+          await this.prisma.client.upsertProductFunction({
+            create: { name: functionName },
+            update: { name: functionName },
+            where: { name: functionName },
+          })
+      )
+    )
+    const functionIDs = productFunctions
+      .filter(Boolean)
+      .map((func: ProductFunction) => ({ id: func.id }))
+    // const innerMaterials = await Promise.all(innerMaterials.map(async material =>
+    //   await this.prisma.client.upsertMat({
+    //   })
+    // ))
+    // const functionIDs = productFunctions
+    //   .filter(Boolean)
+    //   .map((func: ProductFunction) => ({ id: func.id }))
+    const slug = await this.productUtils.getProductSlug(
+      brand.brandCode,
+      name,
+      color.name
+    )
+    // const product = await this.prisma.client.createProduct({
+    //   slug,
+    //   name,
+    //   brand: {
+    //     connect: { id: brandID }
+    //   },
+    //   category: {
+    //     connect: { id: categoryID }
+    //   },
+    //   type,
+    //   description,
+    //   modelHeight: model.height,
+    //   retailPrice,
+    //   model: {
+    //     connect: { id: model.id }
+    //   },
+    //   modelSize: {
+    //     connect: { id: modelSizeID }
+    //   },
+    //   color: {
+    //     connect: { id: colorID }
+    //   },
+    //   secondaryColor: {
+    //     connect: { id: secondaryColorID }
+    //   },
+    //   tags: {
+    //     set: tags
+    //   },
+    //   functions: {
+    //     connect: functionIDs
+    //   },
+
+    // })
+    return null
   }
 
   async saveProduct(item, save, info, customer) {
