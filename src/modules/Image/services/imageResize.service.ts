@@ -48,13 +48,11 @@ export class ImageResizeService {
     sizeName: ImageSize,
     options: ImageResizerOptions = { fit: "clip" }
   ) {
-    const newURL = url.replace(AIRTABLE_BASE, IMGIX_BASE)
-
     const params: any = {
       ...options,
       ...sizes[sizeName],
     }
 
-    return newURL + "?" + qs.stringify(params)
+    return url.replace(AIRTABLE_BASE, IMGIX_BASE) + "?" + qs.stringify(params)
   }
 }

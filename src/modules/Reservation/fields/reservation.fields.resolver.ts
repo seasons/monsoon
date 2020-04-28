@@ -46,16 +46,14 @@ export class ReservationFieldsResolver {
       }
       `
     )
-    const products = reservation.products
-    const firstImages = products.map(product => {
+
+    return reservation.products.map(product => {
       const image = product.productVariant.product.images?.[0]
 
       return {
         url: this.imageResizeService.imageResize(image?.url, size),
       }
     })
-
-    return firstImages
   }
 
   @ResolveField()

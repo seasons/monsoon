@@ -19,13 +19,13 @@ import { ProductVariantService } from "./services/productVariant.service"
 import { ShippingModule } from "@modules/Shipping/shipping.module"
 import { SizeQueriesResolver } from "./queries/size.queries.resolver"
 import { UserModule } from "@modules/User/user.module"
-import { UtilsModule } from "@modules/Utils"
+import { UtilsModule } from "@modules/Utils/utils.module"
 
 @Module({
   imports: [
     AirtableModule,
     EmailModule,
-    // ImageModule,
+    ImageModule,
     PrismaModule,
     ShippingModule,
     UtilsModule,
