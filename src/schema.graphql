@@ -20,7 +20,7 @@ type Product {
   color: Color!
   secondaryColor: Color
   tags: Json
-  images: Json!
+  images: [Image!]!
   resizedImages(width: Int, height: Int, size: ImageSize): [Image!]!
   functions(
     where: ProductFunctionWhereInput

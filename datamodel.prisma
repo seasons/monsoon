@@ -296,7 +296,8 @@ type Product {
   type: ProductType
   description: String
   externalURL: String
-  images: Json
+  imagesJSON: Json
+  imagesData: [Image!] @relation(link: TABLE)
   modelHeight: Int
   retailPrice: Int
   model: ProductModel

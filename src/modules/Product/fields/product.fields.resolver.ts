@@ -1,8 +1,8 @@
 import { Args, Info, Parent, ResolveField, Resolver } from "@nestjs/graphql"
-import { ImageResizeService } from "@modules/Image"
-import { ImageSize } from "@modules/Image/image.types"
 
 import { Customer } from "@app/nest_decorators"
+import { ImageResizeService } from "@modules/Image"
+import { ImageSize } from "@modules/Image/image.types"
 import { PrismaService } from "@prisma/prisma.service"
 import { ProductService } from "@modules/Product/services/product.service"
 import { ProductUtilsService } from "@modules/Product/services/product.utils.service"
@@ -68,7 +68,8 @@ export class ProductFieldsResolver {
     @Parent() parent,
     @Args("width") width: number,
     @Args("height") height: number,
-    @Args("size") size: ImageSize = "Medium"
+    @Args("size") size: ImageSize = "Medium",
+    @Info() info
   ) {
     const product = await this.prisma.binding.query.product(
       {
@@ -83,7 +84,8 @@ export class ProductFieldsResolver {
       }
       `
     )
-    return product?.images.map(image => {
+    const images = await this.images(parent, info)
+    return images.map(image => {
       return {
         url: this.imageResizeService.imageResize(image?.url, size, {
           w: width,
@@ -93,5 +95,23 @@ export class ProductFieldsResolver {
         entityID: product?.id,
       }
     })
+  }
+
+  @ResolveField()
+  async images(@Parent() parent, @Info() info) {
+    const product = await this.prisma.binding.query.product({
+      where: { id: parent.id },
+    })
+    if (!product) {
+      return []
+    }
+    if (product.imagesJSON) {
+      return product.imagesJSON.map(imageJSON => ({
+        url: imageJSON.url,
+        entityType: "Product",
+        entityID: product?.id,
+      }))
+    }
+    return product.imagesData || []
   }
 }

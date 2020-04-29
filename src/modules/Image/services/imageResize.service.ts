@@ -1,8 +1,8 @@
 import { identity, pickBy } from "lodash"
 
+import { ImageSize } from "../image.types"
 import { Injectable } from "@nestjs/common"
 import qs from "querystring"
-import { ImageSize } from "../image.types"
 
 interface ImageResizerOptions {
   fit?: "clip"

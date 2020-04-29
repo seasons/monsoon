@@ -1486,8 +1486,8 @@ export type ProductOrderByInput =
   | "description_DESC"
   | "externalURL_ASC"
   | "externalURL_DESC"
-  | "images_ASC"
-  | "images_DESC"
+  | "imagesJSON_ASC"
+  | "imagesJSON_DESC"
   | "modelHeight_ASC"
   | "modelHeight_DESC"
   | "retailPrice_ASC"
@@ -1518,6 +1518,28 @@ export type CategoryOrderByInput =
   | "description_DESC"
   | "visible_ASC"
   | "visible_DESC"
+
+export type ImageOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "caption_ASC"
+  | "caption_DESC"
+  | "url_ASC"
+  | "url_DESC"
+  | "originalHeight_ASC"
+  | "originalHeight_DESC"
+  | "originalUrl_ASC"
+  | "originalUrl_DESC"
+  | "originalWidth_ASC"
+  | "originalWidth_DESC"
+  | "resizedUrl_ASC"
+  | "resizedUrl_DESC"
+  | "title_ASC"
+  | "title_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC"
 
 export type ProductFunctionOrderByInput =
   | "id_ASC"
@@ -1795,26 +1817,6 @@ export type HomepageProductRailOrderByInput =
   | "slug_DESC"
   | "name_ASC"
   | "name_DESC"
-
-export type ImageOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "caption_ASC"
-  | "caption_DESC"
-  | "originalHeight_ASC"
-  | "originalHeight_DESC"
-  | "originalUrl_ASC"
-  | "originalUrl_DESC"
-  | "originalWidth_ASC"
-  | "originalWidth_DESC"
-  | "resizedUrl_ASC"
-  | "resizedUrl_DESC"
-  | "title_ASC"
-  | "title_DESC"
-  | "createdAt_ASC"
-  | "createdAt_DESC"
-  | "updatedAt_ASC"
-  | "updatedAt_DESC"
 
 export type LabelOrderByInput =
   | "id_ASC"
@@ -2813,6 +2815,9 @@ export interface ProductWhereInput {
   externalURL_not_starts_with?: Maybe<String>
   externalURL_ends_with?: Maybe<String>
   externalURL_not_ends_with?: Maybe<String>
+  imagesData_every?: Maybe<ImageWhereInput>
+  imagesData_some?: Maybe<ImageWhereInput>
+  imagesData_none?: Maybe<ImageWhereInput>
   modelHeight?: Maybe<Int>
   modelHeight_not?: Maybe<Int>
   modelHeight_in?: Maybe<Int[] | Int>
@@ -3087,6 +3092,128 @@ export interface CategoryWhereInput {
   AND?: Maybe<CategoryWhereInput[] | CategoryWhereInput>
   OR?: Maybe<CategoryWhereInput[] | CategoryWhereInput>
   NOT?: Maybe<CategoryWhereInput[] | CategoryWhereInput>
+}
+
+export interface ImageWhereInput {
+  id?: Maybe<ID_Input>
+  id_not?: Maybe<ID_Input>
+  id_in?: Maybe<ID_Input[] | ID_Input>
+  id_not_in?: Maybe<ID_Input[] | ID_Input>
+  id_lt?: Maybe<ID_Input>
+  id_lte?: Maybe<ID_Input>
+  id_gt?: Maybe<ID_Input>
+  id_gte?: Maybe<ID_Input>
+  id_contains?: Maybe<ID_Input>
+  id_not_contains?: Maybe<ID_Input>
+  id_starts_with?: Maybe<ID_Input>
+  id_not_starts_with?: Maybe<ID_Input>
+  id_ends_with?: Maybe<ID_Input>
+  id_not_ends_with?: Maybe<ID_Input>
+  caption?: Maybe<String>
+  caption_not?: Maybe<String>
+  caption_in?: Maybe<String[] | String>
+  caption_not_in?: Maybe<String[] | String>
+  caption_lt?: Maybe<String>
+  caption_lte?: Maybe<String>
+  caption_gt?: Maybe<String>
+  caption_gte?: Maybe<String>
+  caption_contains?: Maybe<String>
+  caption_not_contains?: Maybe<String>
+  caption_starts_with?: Maybe<String>
+  caption_not_starts_with?: Maybe<String>
+  caption_ends_with?: Maybe<String>
+  caption_not_ends_with?: Maybe<String>
+  url?: Maybe<String>
+  url_not?: Maybe<String>
+  url_in?: Maybe<String[] | String>
+  url_not_in?: Maybe<String[] | String>
+  url_lt?: Maybe<String>
+  url_lte?: Maybe<String>
+  url_gt?: Maybe<String>
+  url_gte?: Maybe<String>
+  url_contains?: Maybe<String>
+  url_not_contains?: Maybe<String>
+  url_starts_with?: Maybe<String>
+  url_not_starts_with?: Maybe<String>
+  url_ends_with?: Maybe<String>
+  url_not_ends_with?: Maybe<String>
+  originalHeight?: Maybe<Int>
+  originalHeight_not?: Maybe<Int>
+  originalHeight_in?: Maybe<Int[] | Int>
+  originalHeight_not_in?: Maybe<Int[] | Int>
+  originalHeight_lt?: Maybe<Int>
+  originalHeight_lte?: Maybe<Int>
+  originalHeight_gt?: Maybe<Int>
+  originalHeight_gte?: Maybe<Int>
+  originalUrl?: Maybe<String>
+  originalUrl_not?: Maybe<String>
+  originalUrl_in?: Maybe<String[] | String>
+  originalUrl_not_in?: Maybe<String[] | String>
+  originalUrl_lt?: Maybe<String>
+  originalUrl_lte?: Maybe<String>
+  originalUrl_gt?: Maybe<String>
+  originalUrl_gte?: Maybe<String>
+  originalUrl_contains?: Maybe<String>
+  originalUrl_not_contains?: Maybe<String>
+  originalUrl_starts_with?: Maybe<String>
+  originalUrl_not_starts_with?: Maybe<String>
+  originalUrl_ends_with?: Maybe<String>
+  originalUrl_not_ends_with?: Maybe<String>
+  originalWidth?: Maybe<Int>
+  originalWidth_not?: Maybe<Int>
+  originalWidth_in?: Maybe<Int[] | Int>
+  originalWidth_not_in?: Maybe<Int[] | Int>
+  originalWidth_lt?: Maybe<Int>
+  originalWidth_lte?: Maybe<Int>
+  originalWidth_gt?: Maybe<Int>
+  originalWidth_gte?: Maybe<Int>
+  resizedUrl?: Maybe<String>
+  resizedUrl_not?: Maybe<String>
+  resizedUrl_in?: Maybe<String[] | String>
+  resizedUrl_not_in?: Maybe<String[] | String>
+  resizedUrl_lt?: Maybe<String>
+  resizedUrl_lte?: Maybe<String>
+  resizedUrl_gt?: Maybe<String>
+  resizedUrl_gte?: Maybe<String>
+  resizedUrl_contains?: Maybe<String>
+  resizedUrl_not_contains?: Maybe<String>
+  resizedUrl_starts_with?: Maybe<String>
+  resizedUrl_not_starts_with?: Maybe<String>
+  resizedUrl_ends_with?: Maybe<String>
+  resizedUrl_not_ends_with?: Maybe<String>
+  title?: Maybe<String>
+  title_not?: Maybe<String>
+  title_in?: Maybe<String[] | String>
+  title_not_in?: Maybe<String[] | String>
+  title_lt?: Maybe<String>
+  title_lte?: Maybe<String>
+  title_gt?: Maybe<String>
+  title_gte?: Maybe<String>
+  title_contains?: Maybe<String>
+  title_not_contains?: Maybe<String>
+  title_starts_with?: Maybe<String>
+  title_not_starts_with?: Maybe<String>
+  title_ends_with?: Maybe<String>
+  title_not_ends_with?: Maybe<String>
+  createdAt?: Maybe<DateTimeInput>
+  createdAt_not?: Maybe<DateTimeInput>
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>
+  createdAt_lt?: Maybe<DateTimeInput>
+  createdAt_lte?: Maybe<DateTimeInput>
+  createdAt_gt?: Maybe<DateTimeInput>
+  createdAt_gte?: Maybe<DateTimeInput>
+  updatedAt?: Maybe<DateTimeInput>
+  updatedAt_not?: Maybe<DateTimeInput>
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>
+  updatedAt_lt?: Maybe<DateTimeInput>
+  updatedAt_lte?: Maybe<DateTimeInput>
+  updatedAt_gt?: Maybe<DateTimeInput>
+  updatedAt_gte?: Maybe<DateTimeInput>
+  AND?: Maybe<ImageWhereInput[] | ImageWhereInput>
+  OR?: Maybe<ImageWhereInput[] | ImageWhereInput>
+  NOT?: Maybe<ImageWhereInput[] | ImageWhereInput>
 }
 
 export interface ProductModelWhereInput {
@@ -4132,114 +4259,6 @@ export type ImageWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>
 }>
 
-export interface ImageWhereInput {
-  id?: Maybe<ID_Input>
-  id_not?: Maybe<ID_Input>
-  id_in?: Maybe<ID_Input[] | ID_Input>
-  id_not_in?: Maybe<ID_Input[] | ID_Input>
-  id_lt?: Maybe<ID_Input>
-  id_lte?: Maybe<ID_Input>
-  id_gt?: Maybe<ID_Input>
-  id_gte?: Maybe<ID_Input>
-  id_contains?: Maybe<ID_Input>
-  id_not_contains?: Maybe<ID_Input>
-  id_starts_with?: Maybe<ID_Input>
-  id_not_starts_with?: Maybe<ID_Input>
-  id_ends_with?: Maybe<ID_Input>
-  id_not_ends_with?: Maybe<ID_Input>
-  caption?: Maybe<String>
-  caption_not?: Maybe<String>
-  caption_in?: Maybe<String[] | String>
-  caption_not_in?: Maybe<String[] | String>
-  caption_lt?: Maybe<String>
-  caption_lte?: Maybe<String>
-  caption_gt?: Maybe<String>
-  caption_gte?: Maybe<String>
-  caption_contains?: Maybe<String>
-  caption_not_contains?: Maybe<String>
-  caption_starts_with?: Maybe<String>
-  caption_not_starts_with?: Maybe<String>
-  caption_ends_with?: Maybe<String>
-  caption_not_ends_with?: Maybe<String>
-  originalHeight?: Maybe<Int>
-  originalHeight_not?: Maybe<Int>
-  originalHeight_in?: Maybe<Int[] | Int>
-  originalHeight_not_in?: Maybe<Int[] | Int>
-  originalHeight_lt?: Maybe<Int>
-  originalHeight_lte?: Maybe<Int>
-  originalHeight_gt?: Maybe<Int>
-  originalHeight_gte?: Maybe<Int>
-  originalUrl?: Maybe<String>
-  originalUrl_not?: Maybe<String>
-  originalUrl_in?: Maybe<String[] | String>
-  originalUrl_not_in?: Maybe<String[] | String>
-  originalUrl_lt?: Maybe<String>
-  originalUrl_lte?: Maybe<String>
-  originalUrl_gt?: Maybe<String>
-  originalUrl_gte?: Maybe<String>
-  originalUrl_contains?: Maybe<String>
-  originalUrl_not_contains?: Maybe<String>
-  originalUrl_starts_with?: Maybe<String>
-  originalUrl_not_starts_with?: Maybe<String>
-  originalUrl_ends_with?: Maybe<String>
-  originalUrl_not_ends_with?: Maybe<String>
-  originalWidth?: Maybe<Int>
-  originalWidth_not?: Maybe<Int>
-  originalWidth_in?: Maybe<Int[] | Int>
-  originalWidth_not_in?: Maybe<Int[] | Int>
-  originalWidth_lt?: Maybe<Int>
-  originalWidth_lte?: Maybe<Int>
-  originalWidth_gt?: Maybe<Int>
-  originalWidth_gte?: Maybe<Int>
-  resizedUrl?: Maybe<String>
-  resizedUrl_not?: Maybe<String>
-  resizedUrl_in?: Maybe<String[] | String>
-  resizedUrl_not_in?: Maybe<String[] | String>
-  resizedUrl_lt?: Maybe<String>
-  resizedUrl_lte?: Maybe<String>
-  resizedUrl_gt?: Maybe<String>
-  resizedUrl_gte?: Maybe<String>
-  resizedUrl_contains?: Maybe<String>
-  resizedUrl_not_contains?: Maybe<String>
-  resizedUrl_starts_with?: Maybe<String>
-  resizedUrl_not_starts_with?: Maybe<String>
-  resizedUrl_ends_with?: Maybe<String>
-  resizedUrl_not_ends_with?: Maybe<String>
-  title?: Maybe<String>
-  title_not?: Maybe<String>
-  title_in?: Maybe<String[] | String>
-  title_not_in?: Maybe<String[] | String>
-  title_lt?: Maybe<String>
-  title_lte?: Maybe<String>
-  title_gt?: Maybe<String>
-  title_gte?: Maybe<String>
-  title_contains?: Maybe<String>
-  title_not_contains?: Maybe<String>
-  title_starts_with?: Maybe<String>
-  title_not_starts_with?: Maybe<String>
-  title_ends_with?: Maybe<String>
-  title_not_ends_with?: Maybe<String>
-  createdAt?: Maybe<DateTimeInput>
-  createdAt_not?: Maybe<DateTimeInput>
-  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>
-  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>
-  createdAt_lt?: Maybe<DateTimeInput>
-  createdAt_lte?: Maybe<DateTimeInput>
-  createdAt_gt?: Maybe<DateTimeInput>
-  createdAt_gte?: Maybe<DateTimeInput>
-  updatedAt?: Maybe<DateTimeInput>
-  updatedAt_not?: Maybe<DateTimeInput>
-  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>
-  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>
-  updatedAt_lt?: Maybe<DateTimeInput>
-  updatedAt_lte?: Maybe<DateTimeInput>
-  updatedAt_gt?: Maybe<DateTimeInput>
-  updatedAt_gte?: Maybe<DateTimeInput>
-  AND?: Maybe<ImageWhereInput[] | ImageWhereInput>
-  OR?: Maybe<ImageWhereInput[] | ImageWhereInput>
-  NOT?: Maybe<ImageWhereInput[] | ImageWhereInput>
-}
-
 export type LabelWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>
 }>
@@ -4908,7 +4927,8 @@ export interface ProductCreateWithoutVariantsInput {
   type?: Maybe<ProductType>
   description?: Maybe<String>
   externalURL?: Maybe<String>
-  images: Json
+  imagesJSON?: Maybe<Json>
+  imagesData?: Maybe<ImageCreateManyInput>
   modelHeight?: Maybe<Int>
   retailPrice?: Maybe<Int>
   model?: Maybe<ProductModelCreateOneWithoutProductsInput>
@@ -4990,7 +5010,8 @@ export interface ProductCreateWithoutCategoryInput {
   type?: Maybe<ProductType>
   description?: Maybe<String>
   externalURL?: Maybe<String>
-  images: Json
+  imagesJSON?: Maybe<Json>
+  imagesData?: Maybe<ImageCreateManyInput>
   modelHeight?: Maybe<Int>
   retailPrice?: Maybe<Int>
   model?: Maybe<ProductModelCreateOneWithoutProductsInput>
@@ -5005,6 +5026,22 @@ export interface ProductCreateWithoutCategoryInput {
   status?: Maybe<ProductStatus>
   season?: Maybe<String>
   architecture?: Maybe<ProductArchitecture>
+}
+
+export interface ImageCreateManyInput {
+  create?: Maybe<ImageCreateInput[] | ImageCreateInput>
+  connect?: Maybe<ImageWhereUniqueInput[] | ImageWhereUniqueInput>
+}
+
+export interface ImageCreateInput {
+  id?: Maybe<ID_Input>
+  caption?: Maybe<String>
+  url?: Maybe<String>
+  originalHeight?: Maybe<Int>
+  originalUrl: String
+  originalWidth?: Maybe<Int>
+  resizedUrl: String
+  title?: Maybe<String>
 }
 
 export interface ProductModelCreateOneWithoutProductsInput {
@@ -5633,7 +5670,8 @@ export interface ProductUpdateWithoutVariantsDataInput {
   type?: Maybe<ProductType>
   description?: Maybe<String>
   externalURL?: Maybe<String>
-  images?: Maybe<Json>
+  imagesJSON?: Maybe<Json>
+  imagesData?: Maybe<ImageUpdateManyInput>
   modelHeight?: Maybe<Int>
   retailPrice?: Maybe<Int>
   model?: Maybe<ProductModelUpdateOneWithoutProductsInput>
@@ -5762,7 +5800,8 @@ export interface ProductUpdateWithoutCategoryDataInput {
   type?: Maybe<ProductType>
   description?: Maybe<String>
   externalURL?: Maybe<String>
-  images?: Maybe<Json>
+  imagesJSON?: Maybe<Json>
+  imagesData?: Maybe<ImageUpdateManyInput>
   modelHeight?: Maybe<Int>
   retailPrice?: Maybe<Int>
   model?: Maybe<ProductModelUpdateOneWithoutProductsInput>
@@ -5777,6 +5816,184 @@ export interface ProductUpdateWithoutCategoryDataInput {
   status?: Maybe<ProductStatus>
   season?: Maybe<String>
   architecture?: Maybe<ProductArchitecture>
+}
+
+export interface ImageUpdateManyInput {
+  create?: Maybe<ImageCreateInput[] | ImageCreateInput>
+  update?: Maybe<
+    | ImageUpdateWithWhereUniqueNestedInput[]
+    | ImageUpdateWithWhereUniqueNestedInput
+  >
+  upsert?: Maybe<
+    | ImageUpsertWithWhereUniqueNestedInput[]
+    | ImageUpsertWithWhereUniqueNestedInput
+  >
+  delete?: Maybe<ImageWhereUniqueInput[] | ImageWhereUniqueInput>
+  connect?: Maybe<ImageWhereUniqueInput[] | ImageWhereUniqueInput>
+  set?: Maybe<ImageWhereUniqueInput[] | ImageWhereUniqueInput>
+  disconnect?: Maybe<ImageWhereUniqueInput[] | ImageWhereUniqueInput>
+  deleteMany?: Maybe<ImageScalarWhereInput[] | ImageScalarWhereInput>
+  updateMany?: Maybe<
+    ImageUpdateManyWithWhereNestedInput[] | ImageUpdateManyWithWhereNestedInput
+  >
+}
+
+export interface ImageUpdateWithWhereUniqueNestedInput {
+  where: ImageWhereUniqueInput
+  data: ImageUpdateDataInput
+}
+
+export interface ImageUpdateDataInput {
+  caption?: Maybe<String>
+  url?: Maybe<String>
+  originalHeight?: Maybe<Int>
+  originalUrl?: Maybe<String>
+  originalWidth?: Maybe<Int>
+  resizedUrl?: Maybe<String>
+  title?: Maybe<String>
+}
+
+export interface ImageUpsertWithWhereUniqueNestedInput {
+  where: ImageWhereUniqueInput
+  update: ImageUpdateDataInput
+  create: ImageCreateInput
+}
+
+export interface ImageScalarWhereInput {
+  id?: Maybe<ID_Input>
+  id_not?: Maybe<ID_Input>
+  id_in?: Maybe<ID_Input[] | ID_Input>
+  id_not_in?: Maybe<ID_Input[] | ID_Input>
+  id_lt?: Maybe<ID_Input>
+  id_lte?: Maybe<ID_Input>
+  id_gt?: Maybe<ID_Input>
+  id_gte?: Maybe<ID_Input>
+  id_contains?: Maybe<ID_Input>
+  id_not_contains?: Maybe<ID_Input>
+  id_starts_with?: Maybe<ID_Input>
+  id_not_starts_with?: Maybe<ID_Input>
+  id_ends_with?: Maybe<ID_Input>
+  id_not_ends_with?: Maybe<ID_Input>
+  caption?: Maybe<String>
+  caption_not?: Maybe<String>
+  caption_in?: Maybe<String[] | String>
+  caption_not_in?: Maybe<String[] | String>
+  caption_lt?: Maybe<String>
+  caption_lte?: Maybe<String>
+  caption_gt?: Maybe<String>
+  caption_gte?: Maybe<String>
+  caption_contains?: Maybe<String>
+  caption_not_contains?: Maybe<String>
+  caption_starts_with?: Maybe<String>
+  caption_not_starts_with?: Maybe<String>
+  caption_ends_with?: Maybe<String>
+  caption_not_ends_with?: Maybe<String>
+  url?: Maybe<String>
+  url_not?: Maybe<String>
+  url_in?: Maybe<String[] | String>
+  url_not_in?: Maybe<String[] | String>
+  url_lt?: Maybe<String>
+  url_lte?: Maybe<String>
+  url_gt?: Maybe<String>
+  url_gte?: Maybe<String>
+  url_contains?: Maybe<String>
+  url_not_contains?: Maybe<String>
+  url_starts_with?: Maybe<String>
+  url_not_starts_with?: Maybe<String>
+  url_ends_with?: Maybe<String>
+  url_not_ends_with?: Maybe<String>
+  originalHeight?: Maybe<Int>
+  originalHeight_not?: Maybe<Int>
+  originalHeight_in?: Maybe<Int[] | Int>
+  originalHeight_not_in?: Maybe<Int[] | Int>
+  originalHeight_lt?: Maybe<Int>
+  originalHeight_lte?: Maybe<Int>
+  originalHeight_gt?: Maybe<Int>
+  originalHeight_gte?: Maybe<Int>
+  originalUrl?: Maybe<String>
+  originalUrl_not?: Maybe<String>
+  originalUrl_in?: Maybe<String[] | String>
+  originalUrl_not_in?: Maybe<String[] | String>
+  originalUrl_lt?: Maybe<String>
+  originalUrl_lte?: Maybe<String>
+  originalUrl_gt?: Maybe<String>
+  originalUrl_gte?: Maybe<String>
+  originalUrl_contains?: Maybe<String>
+  originalUrl_not_contains?: Maybe<String>
+  originalUrl_starts_with?: Maybe<String>
+  originalUrl_not_starts_with?: Maybe<String>
+  originalUrl_ends_with?: Maybe<String>
+  originalUrl_not_ends_with?: Maybe<String>
+  originalWidth?: Maybe<Int>
+  originalWidth_not?: Maybe<Int>
+  originalWidth_in?: Maybe<Int[] | Int>
+  originalWidth_not_in?: Maybe<Int[] | Int>
+  originalWidth_lt?: Maybe<Int>
+  originalWidth_lte?: Maybe<Int>
+  originalWidth_gt?: Maybe<Int>
+  originalWidth_gte?: Maybe<Int>
+  resizedUrl?: Maybe<String>
+  resizedUrl_not?: Maybe<String>
+  resizedUrl_in?: Maybe<String[] | String>
+  resizedUrl_not_in?: Maybe<String[] | String>
+  resizedUrl_lt?: Maybe<String>
+  resizedUrl_lte?: Maybe<String>
+  resizedUrl_gt?: Maybe<String>
+  resizedUrl_gte?: Maybe<String>
+  resizedUrl_contains?: Maybe<String>
+  resizedUrl_not_contains?: Maybe<String>
+  resizedUrl_starts_with?: Maybe<String>
+  resizedUrl_not_starts_with?: Maybe<String>
+  resizedUrl_ends_with?: Maybe<String>
+  resizedUrl_not_ends_with?: Maybe<String>
+  title?: Maybe<String>
+  title_not?: Maybe<String>
+  title_in?: Maybe<String[] | String>
+  title_not_in?: Maybe<String[] | String>
+  title_lt?: Maybe<String>
+  title_lte?: Maybe<String>
+  title_gt?: Maybe<String>
+  title_gte?: Maybe<String>
+  title_contains?: Maybe<String>
+  title_not_contains?: Maybe<String>
+  title_starts_with?: Maybe<String>
+  title_not_starts_with?: Maybe<String>
+  title_ends_with?: Maybe<String>
+  title_not_ends_with?: Maybe<String>
+  createdAt?: Maybe<DateTimeInput>
+  createdAt_not?: Maybe<DateTimeInput>
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>
+  createdAt_lt?: Maybe<DateTimeInput>
+  createdAt_lte?: Maybe<DateTimeInput>
+  createdAt_gt?: Maybe<DateTimeInput>
+  createdAt_gte?: Maybe<DateTimeInput>
+  updatedAt?: Maybe<DateTimeInput>
+  updatedAt_not?: Maybe<DateTimeInput>
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>
+  updatedAt_lt?: Maybe<DateTimeInput>
+  updatedAt_lte?: Maybe<DateTimeInput>
+  updatedAt_gt?: Maybe<DateTimeInput>
+  updatedAt_gte?: Maybe<DateTimeInput>
+  AND?: Maybe<ImageScalarWhereInput[] | ImageScalarWhereInput>
+  OR?: Maybe<ImageScalarWhereInput[] | ImageScalarWhereInput>
+  NOT?: Maybe<ImageScalarWhereInput[] | ImageScalarWhereInput>
+}
+
+export interface ImageUpdateManyWithWhereNestedInput {
+  where: ImageScalarWhereInput
+  data: ImageUpdateManyDataInput
+}
+
+export interface ImageUpdateManyDataInput {
+  caption?: Maybe<String>
+  url?: Maybe<String>
+  originalHeight?: Maybe<Int>
+  originalUrl?: Maybe<String>
+  originalWidth?: Maybe<Int>
+  resizedUrl?: Maybe<String>
+  title?: Maybe<String>
 }
 
 export interface ProductModelUpdateOneWithoutProductsInput {
@@ -6493,7 +6710,7 @@ export interface ProductUpdateManyDataInput {
   type?: Maybe<ProductType>
   description?: Maybe<String>
   externalURL?: Maybe<String>
-  images?: Maybe<Json>
+  imagesJSON?: Maybe<Json>
   modelHeight?: Maybe<Int>
   retailPrice?: Maybe<Int>
   tags?: Maybe<Json>
@@ -7003,7 +7220,8 @@ export interface ProductCreateWithoutBrandInput {
   type?: Maybe<ProductType>
   description?: Maybe<String>
   externalURL?: Maybe<String>
-  images: Json
+  imagesJSON?: Maybe<Json>
+  imagesData?: Maybe<ImageCreateManyInput>
   modelHeight?: Maybe<Int>
   retailPrice?: Maybe<Int>
   model?: Maybe<ProductModelCreateOneWithoutProductsInput>
@@ -7069,7 +7287,8 @@ export interface ProductUpdateWithoutBrandDataInput {
   type?: Maybe<ProductType>
   description?: Maybe<String>
   externalURL?: Maybe<String>
-  images?: Maybe<Json>
+  imagesJSON?: Maybe<Json>
+  imagesData?: Maybe<ImageUpdateManyInput>
   modelHeight?: Maybe<Int>
   retailPrice?: Maybe<Int>
   model?: Maybe<ProductModelUpdateOneWithoutProductsInput>
@@ -7159,7 +7378,8 @@ export interface ProductCreateInput {
   type?: Maybe<ProductType>
   description?: Maybe<String>
   externalURL?: Maybe<String>
-  images: Json
+  imagesJSON?: Maybe<Json>
+  imagesData?: Maybe<ImageCreateManyInput>
   modelHeight?: Maybe<Int>
   retailPrice?: Maybe<Int>
   model?: Maybe<ProductModelCreateOneWithoutProductsInput>
@@ -7220,7 +7440,8 @@ export interface ProductUpdateDataInput {
   type?: Maybe<ProductType>
   description?: Maybe<String>
   externalURL?: Maybe<String>
-  images?: Maybe<Json>
+  imagesJSON?: Maybe<Json>
+  imagesData?: Maybe<ImageUpdateManyInput>
   modelHeight?: Maybe<Int>
   retailPrice?: Maybe<Int>
   model?: Maybe<ProductModelUpdateOneWithoutProductsInput>
@@ -7627,18 +7848,9 @@ export interface HomepageProductRailUpdateManyMutationInput {
   name?: Maybe<String>
 }
 
-export interface ImageCreateInput {
-  id?: Maybe<ID_Input>
-  caption?: Maybe<String>
-  originalHeight?: Maybe<Int>
-  originalUrl: String
-  originalWidth?: Maybe<Int>
-  resizedUrl: String
-  title?: Maybe<String>
-}
-
 export interface ImageUpdateInput {
   caption?: Maybe<String>
+  url?: Maybe<String>
   originalHeight?: Maybe<Int>
   originalUrl?: Maybe<String>
   originalWidth?: Maybe<Int>
@@ -7648,6 +7860,7 @@ export interface ImageUpdateInput {
 
 export interface ImageUpdateManyMutationInput {
   caption?: Maybe<String>
+  url?: Maybe<String>
   originalHeight?: Maybe<Int>
   originalUrl?: Maybe<String>
   originalWidth?: Maybe<Int>
@@ -7741,7 +7954,8 @@ export interface ProductUpdateInput {
   type?: Maybe<ProductType>
   description?: Maybe<String>
   externalURL?: Maybe<String>
-  images?: Maybe<Json>
+  imagesJSON?: Maybe<Json>
+  imagesData?: Maybe<ImageUpdateManyInput>
   modelHeight?: Maybe<Int>
   retailPrice?: Maybe<Int>
   model?: Maybe<ProductModelUpdateOneWithoutProductsInput>
@@ -7764,7 +7978,7 @@ export interface ProductUpdateManyMutationInput {
   type?: Maybe<ProductType>
   description?: Maybe<String>
   externalURL?: Maybe<String>
-  images?: Maybe<Json>
+  imagesJSON?: Maybe<Json>
   modelHeight?: Maybe<Int>
   retailPrice?: Maybe<Int>
   tags?: Maybe<Json>
@@ -7806,7 +8020,8 @@ export interface ProductCreateWithoutModelInput {
   type?: Maybe<ProductType>
   description?: Maybe<String>
   externalURL?: Maybe<String>
-  images: Json
+  imagesJSON?: Maybe<Json>
+  imagesData?: Maybe<ImageCreateManyInput>
   modelHeight?: Maybe<Int>
   retailPrice?: Maybe<Int>
   modelSize?: Maybe<SizeCreateOneInput>
@@ -7864,7 +8079,8 @@ export interface ProductUpdateWithoutModelDataInput {
   type?: Maybe<ProductType>
   description?: Maybe<String>
   externalURL?: Maybe<String>
-  images?: Maybe<Json>
+  imagesJSON?: Maybe<Json>
+  imagesData?: Maybe<ImageUpdateManyInput>
   modelHeight?: Maybe<Int>
   retailPrice?: Maybe<Int>
   modelSize?: Maybe<SizeUpdateOneInput>
@@ -9870,7 +10086,7 @@ export interface Product {
   type?: ProductType
   description?: String
   externalURL?: String
-  images: Json
+  imagesJSON?: Json
   modelHeight?: Int
   retailPrice?: Int
   tags?: Json
@@ -9892,7 +10108,16 @@ export interface ProductPromise extends Promise<Product>, Fragmentable {
   type: () => Promise<ProductType>
   description: () => Promise<String>
   externalURL: () => Promise<String>
-  images: () => Promise<Json>
+  imagesJSON: () => Promise<Json>
+  imagesData: <T = FragmentableArray<Image>>(args?: {
+    where?: ImageWhereInput
+    orderBy?: ImageOrderByInput
+    skip?: Int
+    after?: String
+    before?: String
+    first?: Int
+    last?: Int
+  }) => T
   modelHeight: () => Promise<Int>
   retailPrice: () => Promise<Int>
   model: <T = ProductModelPromise>() => T
@@ -9938,7 +10163,16 @@ export interface ProductSubscription
   type: () => Promise<AsyncIterator<ProductType>>
   description: () => Promise<AsyncIterator<String>>
   externalURL: () => Promise<AsyncIterator<String>>
-  images: () => Promise<AsyncIterator<Json>>
+  imagesJSON: () => Promise<AsyncIterator<Json>>
+  imagesData: <T = Promise<AsyncIterator<ImageSubscription>>>(args?: {
+    where?: ImageWhereInput
+    orderBy?: ImageOrderByInput
+    skip?: Int
+    after?: String
+    before?: String
+    first?: Int
+    last?: Int
+  }) => T
   modelHeight: () => Promise<AsyncIterator<Int>>
   retailPrice: () => Promise<AsyncIterator<Int>>
   model: <T = ProductModelSubscription>() => T
@@ -9984,7 +10218,16 @@ export interface ProductNullablePromise
   type: () => Promise<ProductType>
   description: () => Promise<String>
   externalURL: () => Promise<String>
-  images: () => Promise<Json>
+  imagesJSON: () => Promise<Json>
+  imagesData: <T = FragmentableArray<Image>>(args?: {
+    where?: ImageWhereInput
+    orderBy?: ImageOrderByInput
+    skip?: Int
+    after?: String
+    before?: String
+    first?: Int
+    last?: Int
+  }) => T
   modelHeight: () => Promise<Int>
   retailPrice: () => Promise<Int>
   model: <T = ProductModelPromise>() => T
@@ -10206,6 +10449,62 @@ export interface CategoryNullablePromise
     first?: Int
     last?: Int
   }) => T
+}
+
+export interface Image {
+  id: ID_Output
+  caption?: String
+  url?: String
+  originalHeight?: Int
+  originalUrl: String
+  originalWidth?: Int
+  resizedUrl: String
+  title?: String
+  createdAt: DateTimeOutput
+  updatedAt: DateTimeOutput
+}
+
+export interface ImagePromise extends Promise<Image>, Fragmentable {
+  id: () => Promise<ID_Output>
+  caption: () => Promise<String>
+  url: () => Promise<String>
+  originalHeight: () => Promise<Int>
+  originalUrl: () => Promise<String>
+  originalWidth: () => Promise<Int>
+  resizedUrl: () => Promise<String>
+  title: () => Promise<String>
+  createdAt: () => Promise<DateTimeOutput>
+  updatedAt: () => Promise<DateTimeOutput>
+}
+
+export interface ImageSubscription
+  extends Promise<AsyncIterator<Image>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>
+  caption: () => Promise<AsyncIterator<String>>
+  url: () => Promise<AsyncIterator<String>>
+  originalHeight: () => Promise<AsyncIterator<Int>>
+  originalUrl: () => Promise<AsyncIterator<String>>
+  originalWidth: () => Promise<AsyncIterator<Int>>
+  resizedUrl: () => Promise<AsyncIterator<String>>
+  title: () => Promise<AsyncIterator<String>>
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>
+}
+
+export interface ImageNullablePromise
+  extends Promise<Image | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>
+  caption: () => Promise<String>
+  url: () => Promise<String>
+  originalHeight: () => Promise<Int>
+  originalUrl: () => Promise<String>
+  originalWidth: () => Promise<Int>
+  resizedUrl: () => Promise<String>
+  title: () => Promise<String>
+  createdAt: () => Promise<DateTimeOutput>
+  updatedAt: () => Promise<DateTimeOutput>
 }
 
 export interface ProductModel {
@@ -11375,58 +11674,6 @@ export interface AggregateHomepageProductRailSubscription
   extends Promise<AsyncIterator<AggregateHomepageProductRail>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>
-}
-
-export interface Image {
-  id: ID_Output
-  caption?: String
-  originalHeight?: Int
-  originalUrl: String
-  originalWidth?: Int
-  resizedUrl: String
-  title?: String
-  createdAt: DateTimeOutput
-  updatedAt: DateTimeOutput
-}
-
-export interface ImagePromise extends Promise<Image>, Fragmentable {
-  id: () => Promise<ID_Output>
-  caption: () => Promise<String>
-  originalHeight: () => Promise<Int>
-  originalUrl: () => Promise<String>
-  originalWidth: () => Promise<Int>
-  resizedUrl: () => Promise<String>
-  title: () => Promise<String>
-  createdAt: () => Promise<DateTimeOutput>
-  updatedAt: () => Promise<DateTimeOutput>
-}
-
-export interface ImageSubscription
-  extends Promise<AsyncIterator<Image>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>
-  caption: () => Promise<AsyncIterator<String>>
-  originalHeight: () => Promise<AsyncIterator<Int>>
-  originalUrl: () => Promise<AsyncIterator<String>>
-  originalWidth: () => Promise<AsyncIterator<Int>>
-  resizedUrl: () => Promise<AsyncIterator<String>>
-  title: () => Promise<AsyncIterator<String>>
-  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>
-  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>
-}
-
-export interface ImageNullablePromise
-  extends Promise<Image | null>,
-    Fragmentable {
-  id: () => Promise<ID_Output>
-  caption: () => Promise<String>
-  originalHeight: () => Promise<Int>
-  originalUrl: () => Promise<String>
-  originalWidth: () => Promise<Int>
-  resizedUrl: () => Promise<String>
-  title: () => Promise<String>
-  createdAt: () => Promise<DateTimeOutput>
-  updatedAt: () => Promise<DateTimeOutput>
 }
 
 export interface ImageConnection {
@@ -13590,6 +13837,7 @@ export interface ImageSubscriptionPayloadSubscription
 export interface ImagePreviousValues {
   id: ID_Output
   caption?: String
+  url?: String
   originalHeight?: Int
   originalUrl: String
   originalWidth?: Int
@@ -13604,6 +13852,7 @@ export interface ImagePreviousValuesPromise
     Fragmentable {
   id: () => Promise<ID_Output>
   caption: () => Promise<String>
+  url: () => Promise<String>
   originalHeight: () => Promise<Int>
   originalUrl: () => Promise<String>
   originalWidth: () => Promise<Int>
@@ -13618,6 +13867,7 @@ export interface ImagePreviousValuesSubscription
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>
   caption: () => Promise<AsyncIterator<String>>
+  url: () => Promise<AsyncIterator<String>>
   originalHeight: () => Promise<AsyncIterator<Int>>
   originalUrl: () => Promise<AsyncIterator<String>>
   originalWidth: () => Promise<AsyncIterator<Int>>
@@ -13942,7 +14192,7 @@ export interface ProductPreviousValues {
   type?: ProductType
   description?: String
   externalURL?: String
-  images: Json
+  imagesJSON?: Json
   modelHeight?: Int
   retailPrice?: Int
   tags?: Json
@@ -13964,7 +14214,7 @@ export interface ProductPreviousValuesPromise
   type: () => Promise<ProductType>
   description: () => Promise<String>
   externalURL: () => Promise<String>
-  images: () => Promise<Json>
+  imagesJSON: () => Promise<Json>
   modelHeight: () => Promise<Int>
   retailPrice: () => Promise<Int>
   tags: () => Promise<Json>
@@ -13986,7 +14236,7 @@ export interface ProductPreviousValuesSubscription
   type: () => Promise<AsyncIterator<ProductType>>
   description: () => Promise<AsyncIterator<String>>
   externalURL: () => Promise<AsyncIterator<String>>
-  images: () => Promise<AsyncIterator<Json>>
+  imagesJSON: () => Promise<AsyncIterator<Json>>
   modelHeight: () => Promise<AsyncIterator<Int>>
   retailPrice: () => Promise<AsyncIterator<Int>>
   tags: () => Promise<AsyncIterator<Json>>

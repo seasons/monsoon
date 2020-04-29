@@ -107,8 +107,10 @@ export class EmailService {
     })
   }
 
-  private getReservationConfirmationDataForProduct = async (product: Product) =>
-    this.utils.Identity({
+  private getReservationConfirmationDataForProduct = async (
+    product: Product
+  ) => {
+    return this.utils.Identity({
       url: product.images[0].url,
       brand: await this.prisma.client
         .product({ id: product.id })
@@ -117,6 +119,7 @@ export class EmailService {
       name: product.name,
       price: product.retailPrice,
     })
+  }
 
   private async sendTransactionalEmail({
     to,

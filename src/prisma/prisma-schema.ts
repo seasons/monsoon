@@ -3181,6 +3181,7 @@ export const typeDefs = /* GraphQL */ `
   type Image {
     id: ID!
     caption: String
+    url: String
     originalHeight: Int
     originalUrl: String!
     originalWidth: Int
@@ -3199,11 +3200,17 @@ export const typeDefs = /* GraphQL */ `
   input ImageCreateInput {
     id: ID
     caption: String
+    url: String
     originalHeight: Int
     originalUrl: String!
     originalWidth: Int
     resizedUrl: String!
     title: String
+  }
+
+  input ImageCreateManyInput {
+    create: [ImageCreateInput!]
+    connect: [ImageWhereUniqueInput!]
   }
 
   type ImageEdge {
@@ -3216,6 +3223,8 @@ export const typeDefs = /* GraphQL */ `
     id_DESC
     caption_ASC
     caption_DESC
+    url_ASC
+    url_DESC
     originalHeight_ASC
     originalHeight_DESC
     originalUrl_ASC
@@ -3235,6 +3244,7 @@ export const typeDefs = /* GraphQL */ `
   type ImagePreviousValues {
     id: ID!
     caption: String
+    url: String
     originalHeight: Int
     originalUrl: String!
     originalWidth: Int
@@ -3242,6 +3252,128 @@ export const typeDefs = /* GraphQL */ `
     title: String
     createdAt: DateTime!
     updatedAt: DateTime!
+  }
+
+  input ImageScalarWhereInput {
+    id: ID
+    id_not: ID
+    id_in: [ID!]
+    id_not_in: [ID!]
+    id_lt: ID
+    id_lte: ID
+    id_gt: ID
+    id_gte: ID
+    id_contains: ID
+    id_not_contains: ID
+    id_starts_with: ID
+    id_not_starts_with: ID
+    id_ends_with: ID
+    id_not_ends_with: ID
+    caption: String
+    caption_not: String
+    caption_in: [String!]
+    caption_not_in: [String!]
+    caption_lt: String
+    caption_lte: String
+    caption_gt: String
+    caption_gte: String
+    caption_contains: String
+    caption_not_contains: String
+    caption_starts_with: String
+    caption_not_starts_with: String
+    caption_ends_with: String
+    caption_not_ends_with: String
+    url: String
+    url_not: String
+    url_in: [String!]
+    url_not_in: [String!]
+    url_lt: String
+    url_lte: String
+    url_gt: String
+    url_gte: String
+    url_contains: String
+    url_not_contains: String
+    url_starts_with: String
+    url_not_starts_with: String
+    url_ends_with: String
+    url_not_ends_with: String
+    originalHeight: Int
+    originalHeight_not: Int
+    originalHeight_in: [Int!]
+    originalHeight_not_in: [Int!]
+    originalHeight_lt: Int
+    originalHeight_lte: Int
+    originalHeight_gt: Int
+    originalHeight_gte: Int
+    originalUrl: String
+    originalUrl_not: String
+    originalUrl_in: [String!]
+    originalUrl_not_in: [String!]
+    originalUrl_lt: String
+    originalUrl_lte: String
+    originalUrl_gt: String
+    originalUrl_gte: String
+    originalUrl_contains: String
+    originalUrl_not_contains: String
+    originalUrl_starts_with: String
+    originalUrl_not_starts_with: String
+    originalUrl_ends_with: String
+    originalUrl_not_ends_with: String
+    originalWidth: Int
+    originalWidth_not: Int
+    originalWidth_in: [Int!]
+    originalWidth_not_in: [Int!]
+    originalWidth_lt: Int
+    originalWidth_lte: Int
+    originalWidth_gt: Int
+    originalWidth_gte: Int
+    resizedUrl: String
+    resizedUrl_not: String
+    resizedUrl_in: [String!]
+    resizedUrl_not_in: [String!]
+    resizedUrl_lt: String
+    resizedUrl_lte: String
+    resizedUrl_gt: String
+    resizedUrl_gte: String
+    resizedUrl_contains: String
+    resizedUrl_not_contains: String
+    resizedUrl_starts_with: String
+    resizedUrl_not_starts_with: String
+    resizedUrl_ends_with: String
+    resizedUrl_not_ends_with: String
+    title: String
+    title_not: String
+    title_in: [String!]
+    title_not_in: [String!]
+    title_lt: String
+    title_lte: String
+    title_gt: String
+    title_gte: String
+    title_contains: String
+    title_not_contains: String
+    title_starts_with: String
+    title_not_starts_with: String
+    title_ends_with: String
+    title_not_ends_with: String
+    createdAt: DateTime
+    createdAt_not: DateTime
+    createdAt_in: [DateTime!]
+    createdAt_not_in: [DateTime!]
+    createdAt_lt: DateTime
+    createdAt_lte: DateTime
+    createdAt_gt: DateTime
+    createdAt_gte: DateTime
+    updatedAt: DateTime
+    updatedAt_not: DateTime
+    updatedAt_in: [DateTime!]
+    updatedAt_not_in: [DateTime!]
+    updatedAt_lt: DateTime
+    updatedAt_lte: DateTime
+    updatedAt_gt: DateTime
+    updatedAt_gte: DateTime
+    AND: [ImageScalarWhereInput!]
+    OR: [ImageScalarWhereInput!]
+    NOT: [ImageScalarWhereInput!]
   }
 
   type ImageSubscriptionPayload {
@@ -3262,8 +3394,9 @@ export const typeDefs = /* GraphQL */ `
     NOT: [ImageSubscriptionWhereInput!]
   }
 
-  input ImageUpdateInput {
+  input ImageUpdateDataInput {
     caption: String
+    url: String
     originalHeight: Int
     originalUrl: String
     originalWidth: Int
@@ -3271,13 +3404,62 @@ export const typeDefs = /* GraphQL */ `
     title: String
   }
 
-  input ImageUpdateManyMutationInput {
+  input ImageUpdateInput {
     caption: String
+    url: String
     originalHeight: Int
     originalUrl: String
     originalWidth: Int
     resizedUrl: String
     title: String
+  }
+
+  input ImageUpdateManyDataInput {
+    caption: String
+    url: String
+    originalHeight: Int
+    originalUrl: String
+    originalWidth: Int
+    resizedUrl: String
+    title: String
+  }
+
+  input ImageUpdateManyInput {
+    create: [ImageCreateInput!]
+    update: [ImageUpdateWithWhereUniqueNestedInput!]
+    upsert: [ImageUpsertWithWhereUniqueNestedInput!]
+    delete: [ImageWhereUniqueInput!]
+    connect: [ImageWhereUniqueInput!]
+    set: [ImageWhereUniqueInput!]
+    disconnect: [ImageWhereUniqueInput!]
+    deleteMany: [ImageScalarWhereInput!]
+    updateMany: [ImageUpdateManyWithWhereNestedInput!]
+  }
+
+  input ImageUpdateManyMutationInput {
+    caption: String
+    url: String
+    originalHeight: Int
+    originalUrl: String
+    originalWidth: Int
+    resizedUrl: String
+    title: String
+  }
+
+  input ImageUpdateManyWithWhereNestedInput {
+    where: ImageScalarWhereInput!
+    data: ImageUpdateManyDataInput!
+  }
+
+  input ImageUpdateWithWhereUniqueNestedInput {
+    where: ImageWhereUniqueInput!
+    data: ImageUpdateDataInput!
+  }
+
+  input ImageUpsertWithWhereUniqueNestedInput {
+    where: ImageWhereUniqueInput!
+    update: ImageUpdateDataInput!
+    create: ImageCreateInput!
   }
 
   input ImageWhereInput {
@@ -3309,6 +3491,20 @@ export const typeDefs = /* GraphQL */ `
     caption_not_starts_with: String
     caption_ends_with: String
     caption_not_ends_with: String
+    url: String
+    url_not: String
+    url_in: [String!]
+    url_not_in: [String!]
+    url_lt: String
+    url_lte: String
+    url_gt: String
+    url_gte: String
+    url_contains: String
+    url_not_contains: String
+    url_starts_with: String
+    url_not_starts_with: String
+    url_ends_with: String
+    url_not_ends_with: String
     originalHeight: Int
     originalHeight_not: Int
     originalHeight_in: [Int!]
@@ -5235,7 +5431,16 @@ export const typeDefs = /* GraphQL */ `
     type: ProductType
     description: String
     externalURL: String
-    images: Json!
+    imagesJSON: Json
+    imagesData(
+      where: ImageWhereInput
+      orderBy: ImageOrderByInput
+      skip: Int
+      after: String
+      before: String
+      first: Int
+      last: Int
+    ): [Image!]
     modelHeight: Int
     retailPrice: Int
     model: ProductModel
@@ -5295,7 +5500,8 @@ export const typeDefs = /* GraphQL */ `
     type: ProductType
     description: String
     externalURL: String
-    images: Json!
+    imagesJSON: Json
+    imagesData: ImageCreateManyInput
     modelHeight: Int
     retailPrice: Int
     model: ProductModelCreateOneWithoutProductsInput
@@ -5354,7 +5560,8 @@ export const typeDefs = /* GraphQL */ `
     type: ProductType
     description: String
     externalURL: String
-    images: Json!
+    imagesJSON: Json
+    imagesData: ImageCreateManyInput
     modelHeight: Int
     retailPrice: Int
     model: ProductModelCreateOneWithoutProductsInput
@@ -5379,7 +5586,8 @@ export const typeDefs = /* GraphQL */ `
     type: ProductType
     description: String
     externalURL: String
-    images: Json!
+    imagesJSON: Json
+    imagesData: ImageCreateManyInput
     modelHeight: Int
     retailPrice: Int
     model: ProductModelCreateOneWithoutProductsInput
@@ -5405,7 +5613,8 @@ export const typeDefs = /* GraphQL */ `
     type: ProductType
     description: String
     externalURL: String
-    images: Json!
+    imagesJSON: Json
+    imagesData: ImageCreateManyInput
     modelHeight: Int
     retailPrice: Int
     modelSize: SizeCreateOneInput
@@ -5430,7 +5639,8 @@ export const typeDefs = /* GraphQL */ `
     type: ProductType
     description: String
     externalURL: String
-    images: Json!
+    imagesJSON: Json
+    imagesData: ImageCreateManyInput
     modelHeight: Int
     retailPrice: Int
     model: ProductModelCreateOneWithoutProductsInput
@@ -5793,8 +6003,8 @@ export const typeDefs = /* GraphQL */ `
     description_DESC
     externalURL_ASC
     externalURL_DESC
-    images_ASC
-    images_DESC
+    imagesJSON_ASC
+    imagesJSON_DESC
     modelHeight_ASC
     modelHeight_DESC
     retailPrice_ASC
@@ -5820,7 +6030,7 @@ export const typeDefs = /* GraphQL */ `
     type: ProductType
     description: String
     externalURL: String
-    images: Json!
+    imagesJSON: Json
     modelHeight: Int
     retailPrice: Int
     tags: Json
@@ -6281,7 +6491,8 @@ export const typeDefs = /* GraphQL */ `
     type: ProductType
     description: String
     externalURL: String
-    images: Json
+    imagesJSON: Json
+    imagesData: ImageUpdateManyInput
     modelHeight: Int
     retailPrice: Int
     model: ProductModelUpdateOneWithoutProductsInput
@@ -6310,7 +6521,8 @@ export const typeDefs = /* GraphQL */ `
     type: ProductType
     description: String
     externalURL: String
-    images: Json
+    imagesJSON: Json
+    imagesData: ImageUpdateManyInput
     modelHeight: Int
     retailPrice: Int
     model: ProductModelUpdateOneWithoutProductsInput
@@ -6333,7 +6545,7 @@ export const typeDefs = /* GraphQL */ `
     type: ProductType
     description: String
     externalURL: String
-    images: Json
+    imagesJSON: Json
     modelHeight: Int
     retailPrice: Int
     tags: Json
@@ -6362,7 +6574,7 @@ export const typeDefs = /* GraphQL */ `
     type: ProductType
     description: String
     externalURL: String
-    images: Json
+    imagesJSON: Json
     modelHeight: Int
     retailPrice: Int
     tags: Json
@@ -6439,7 +6651,8 @@ export const typeDefs = /* GraphQL */ `
     type: ProductType
     description: String
     externalURL: String
-    images: Json
+    imagesJSON: Json
+    imagesData: ImageUpdateManyInput
     modelHeight: Int
     retailPrice: Int
     model: ProductModelUpdateOneWithoutProductsInput
@@ -6463,7 +6676,8 @@ export const typeDefs = /* GraphQL */ `
     type: ProductType
     description: String
     externalURL: String
-    images: Json
+    imagesJSON: Json
+    imagesData: ImageUpdateManyInput
     modelHeight: Int
     retailPrice: Int
     model: ProductModelUpdateOneWithoutProductsInput
@@ -6488,7 +6702,8 @@ export const typeDefs = /* GraphQL */ `
     type: ProductType
     description: String
     externalURL: String
-    images: Json
+    imagesJSON: Json
+    imagesData: ImageUpdateManyInput
     modelHeight: Int
     retailPrice: Int
     modelSize: SizeUpdateOneInput
@@ -6512,7 +6727,8 @@ export const typeDefs = /* GraphQL */ `
     type: ProductType
     description: String
     externalURL: String
-    images: Json
+    imagesJSON: Json
+    imagesData: ImageUpdateManyInput
     modelHeight: Int
     retailPrice: Int
     model: ProductModelUpdateOneWithoutProductsInput
@@ -7823,6 +8039,9 @@ export const typeDefs = /* GraphQL */ `
     externalURL_not_starts_with: String
     externalURL_ends_with: String
     externalURL_not_ends_with: String
+    imagesData_every: ImageWhereInput
+    imagesData_some: ImageWhereInput
+    imagesData_none: ImageWhereInput
     modelHeight: Int
     modelHeight_not: Int
     modelHeight_in: [Int!]

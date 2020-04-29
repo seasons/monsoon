@@ -44,19 +44,6 @@ export interface Query {
     info?: GraphQLResolveInfo | string,
     options?: Options
   ) => Promise<T>
-  images: <T = Array<Image | null>>(
-    args: {
-      where?: ImageWhereInput | null
-      orderBy?: ImageOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
   productModels: <T = Array<ProductModel | null>>(
     args: {
       where?: ProductModelWhereInput | null
@@ -232,6 +219,19 @@ export interface Query {
     args: {
       where?: LocationWhereInput | null
       orderBy?: LocationOrderByInput | null
+      skip?: Int | null
+      after?: String | null
+      before?: String | null
+      first?: Int | null
+      last?: Int | null
+    },
+    info?: GraphQLResolveInfo | string,
+    options?: Options
+  ) => Promise<T>
+  images: <T = Array<Image | null>>(
+    args: {
+      where?: ImageWhereInput | null
+      orderBy?: ImageOrderByInput | null
       skip?: Int | null
       after?: String | null
       before?: String | null
@@ -425,11 +425,6 @@ export interface Query {
     info?: GraphQLResolveInfo | string,
     options?: Options
   ) => Promise<T | null>
-  image: <T = Image | null>(
-    args: { where: ImageWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
   productModel: <T = ProductModel | null>(
     args: { where: ProductModelWhereUniqueInput },
     info?: GraphQLResolveInfo | string,
@@ -497,6 +492,11 @@ export interface Query {
   ) => Promise<T | null>
   location: <T = Location | null>(
     args: { where: LocationWhereUniqueInput },
+    info?: GraphQLResolveInfo | string,
+    options?: Options
+  ) => Promise<T | null>
+  image: <T = Image | null>(
+    args: { where: ImageWhereUniqueInput },
     info?: GraphQLResolveInfo | string,
     options?: Options
   ) => Promise<T | null>
@@ -595,19 +595,6 @@ export interface Query {
     args: {
       where?: HomepageProductRailWhereInput | null
       orderBy?: HomepageProductRailOrderByInput | null
-      skip?: Int | null
-      after?: String | null
-      before?: String | null
-      first?: Int | null
-      last?: Int | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  imagesConnection: <T = ImageConnection>(
-    args: {
-      where?: ImageWhereInput | null
-      orderBy?: ImageOrderByInput | null
       skip?: Int | null
       after?: String | null
       before?: String | null
@@ -792,6 +779,19 @@ export interface Query {
     args: {
       where?: LocationWhereInput | null
       orderBy?: LocationOrderByInput | null
+      skip?: Int | null
+      after?: String | null
+      before?: String | null
+      first?: Int | null
+      last?: Int | null
+    },
+    info?: GraphQLResolveInfo | string,
+    options?: Options
+  ) => Promise<T>
+  imagesConnection: <T = ImageConnection>(
+    args: {
+      where?: ImageWhereInput | null
+      orderBy?: ImageOrderByInput | null
       skip?: Int | null
       after?: String | null
       before?: String | null
@@ -993,11 +993,6 @@ export interface Mutation {
     info?: GraphQLResolveInfo | string,
     options?: Options
   ) => Promise<T>
-  createImage: <T = Image>(
-    args: { data: ImageCreateInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
   createProductModel: <T = ProductModel>(
     args: { data: ProductModelCreateInput },
     info?: GraphQLResolveInfo | string,
@@ -1065,6 +1060,11 @@ export interface Mutation {
   ) => Promise<T>
   createLocation: <T = Location>(
     args: { data: LocationCreateInput },
+    info?: GraphQLResolveInfo | string,
+    options?: Options
+  ) => Promise<T>
+  createImage: <T = Image>(
+    args: { data: ImageCreateInput },
     info?: GraphQLResolveInfo | string,
     options?: Options
   ) => Promise<T>
@@ -1151,11 +1151,6 @@ export interface Mutation {
       data: HomepageProductRailUpdateInput
       where: HomepageProductRailWhereUniqueInput
     },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
-  updateImage: <T = Image | null>(
-    args: { data: ImageUpdateInput; where: ImageWhereUniqueInput },
     info?: GraphQLResolveInfo | string,
     options?: Options
   ) => Promise<T | null>
@@ -1250,6 +1245,11 @@ export interface Mutation {
     info?: GraphQLResolveInfo | string,
     options?: Options
   ) => Promise<T | null>
+  updateImage: <T = Image | null>(
+    args: { data: ImageUpdateInput; where: ImageWhereUniqueInput },
+    info?: GraphQLResolveInfo | string,
+    options?: Options
+  ) => Promise<T | null>
   updatePackage: <T = Package | null>(
     args: { data: PackageUpdateInput; where: PackageWhereUniqueInput },
     info?: GraphQLResolveInfo | string,
@@ -1339,11 +1339,6 @@ export interface Mutation {
     info?: GraphQLResolveInfo | string,
     options?: Options
   ) => Promise<T | null>
-  deleteImage: <T = Image | null>(
-    args: { where: ImageWhereUniqueInput },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T | null>
   deleteProductModel: <T = ProductModel | null>(
     args: { where: ProductModelWhereUniqueInput },
     info?: GraphQLResolveInfo | string,
@@ -1413,6 +1408,11 @@ export interface Mutation {
   ) => Promise<T | null>
   deleteLocation: <T = Location | null>(
     args: { where: LocationWhereUniqueInput },
+    info?: GraphQLResolveInfo | string,
+    options?: Options
+  ) => Promise<T | null>
+  deleteImage: <T = Image | null>(
+    args: { where: ImageWhereUniqueInput },
     info?: GraphQLResolveInfo | string,
     options?: Options
   ) => Promise<T | null>
@@ -1504,15 +1504,6 @@ export interface Mutation {
       where: HomepageProductRailWhereUniqueInput
       create: HomepageProductRailCreateInput
       update: HomepageProductRailUpdateInput
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
-  upsertImage: <T = Image>(
-    args: {
-      where: ImageWhereUniqueInput
-      create: ImageCreateInput
-      update: ImageUpdateInput
     },
     info?: GraphQLResolveInfo | string,
     options?: Options
@@ -1630,6 +1621,15 @@ export interface Mutation {
       where: LocationWhereUniqueInput
       create: LocationCreateInput
       update: LocationUpdateInput
+    },
+    info?: GraphQLResolveInfo | string,
+    options?: Options
+  ) => Promise<T>
+  upsertImage: <T = Image>(
+    args: {
+      where: ImageWhereUniqueInput
+      create: ImageCreateInput
+      update: ImageUpdateInput
     },
     info?: GraphQLResolveInfo | string,
     options?: Options
@@ -1775,14 +1775,6 @@ export interface Mutation {
     info?: GraphQLResolveInfo | string,
     options?: Options
   ) => Promise<T>
-  updateManyImages: <T = BatchPayload>(
-    args: {
-      data: ImageUpdateManyMutationInput
-      where?: ImageWhereInput | null
-    },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
   updateManyProductModels: <T = BatchPayload>(
     args: {
       data: ProductModelUpdateManyMutationInput
@@ -1883,6 +1875,14 @@ export interface Mutation {
     args: {
       data: LocationUpdateManyMutationInput
       where?: LocationWhereInput | null
+    },
+    info?: GraphQLResolveInfo | string,
+    options?: Options
+  ) => Promise<T>
+  updateManyImages: <T = BatchPayload>(
+    args: {
+      data: ImageUpdateManyMutationInput
+      where?: ImageWhereInput | null
     },
     info?: GraphQLResolveInfo | string,
     options?: Options
@@ -2000,11 +2000,6 @@ export interface Mutation {
     info?: GraphQLResolveInfo | string,
     options?: Options
   ) => Promise<T>
-  deleteManyImages: <T = BatchPayload>(
-    args: { where?: ImageWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<T>
   deleteManyProductModels: <T = BatchPayload>(
     args: { where?: ProductModelWhereInput | null },
     info?: GraphQLResolveInfo | string,
@@ -2072,6 +2067,11 @@ export interface Mutation {
   ) => Promise<T>
   deleteManyLocations: <T = BatchPayload>(
     args: { where?: LocationWhereInput | null },
+    info?: GraphQLResolveInfo | string,
+    options?: Options
+  ) => Promise<T>
+  deleteManyImages: <T = BatchPayload>(
+    args: { where?: ImageWhereInput | null },
     info?: GraphQLResolveInfo | string,
     options?: Options
   ) => Promise<T>
@@ -2158,11 +2158,6 @@ export interface Subscription {
     info?: GraphQLResolveInfo | string,
     options?: Options
   ) => Promise<AsyncIterator<T | null>>
-  image: <T = ImageSubscriptionPayload | null>(
-    args: { where?: ImageSubscriptionWhereInput | null },
-    info?: GraphQLResolveInfo | string,
-    options?: Options
-  ) => Promise<AsyncIterator<T | null>>
   productModel: <T = ProductModelSubscriptionPayload | null>(
     args: { where?: ProductModelSubscriptionWhereInput | null },
     info?: GraphQLResolveInfo | string,
@@ -2239,6 +2234,11 @@ export interface Subscription {
     info?: GraphQLResolveInfo | string,
     options?: Options
   ) => Promise<AsyncIterator<T | null>>
+  image: <T = ImageSubscriptionPayload | null>(
+    args: { where?: ImageSubscriptionWhereInput | null },
+    info?: GraphQLResolveInfo | string,
+    options?: Options
+  ) => Promise<AsyncIterator<T | null>>
   package: <T = PackageSubscriptionPayload | null>(
     args: { where?: PackageSubscriptionWhereInput | null },
     info?: GraphQLResolveInfo | string,
@@ -2312,7 +2312,6 @@ export interface Exists {
   HomepageProductRail: (
     where?: HomepageProductRailWhereInput
   ) => Promise<boolean>
-  Image: (where?: ImageWhereInput) => Promise<boolean>
   ProductModel: (where?: ProductModelWhereInput) => Promise<boolean>
   BagItem: (where?: BagItemWhereInput) => Promise<boolean>
   RecentlyViewedProduct: (
@@ -2335,6 +2334,7 @@ export interface Exists {
   CustomerDetail: (where?: CustomerDetailWhereInput) => Promise<boolean>
   BillingInfo: (where?: BillingInfoWhereInput) => Promise<boolean>
   Location: (where?: LocationWhereInput) => Promise<boolean>
+  Image: (where?: ImageWhereInput) => Promise<boolean>
   Package: (where?: PackageWhereInput) => Promise<boolean>
   Size: (where?: SizeWhereInput) => Promise<boolean>
   ProductFunction: (where?: ProductFunctionWhereInput) => Promise<boolean>
@@ -7917,6 +7917,7 @@ input HomepageProductRailWhereUniqueInput {
 type Image implements Node {
   id: ID!
   caption: String
+  url: String
   originalHeight: Int
   originalUrl: String!
   originalWidth: Int
@@ -7939,11 +7940,17 @@ type ImageConnection {
 input ImageCreateInput {
   id: ID
   caption: String
+  url: String
   originalHeight: Int
   originalUrl: String!
   originalWidth: Int
   resizedUrl: String!
   title: String
+}
+
+input ImageCreateManyInput {
+  create: [ImageCreateInput!]
+  connect: [ImageWhereUniqueInput!]
 }
 
 """An edge in a connection."""
@@ -7960,6 +7967,8 @@ enum ImageOrderByInput {
   id_DESC
   caption_ASC
   caption_DESC
+  url_ASC
+  url_DESC
   originalHeight_ASC
   originalHeight_DESC
   originalUrl_ASC
@@ -7979,6 +7988,7 @@ enum ImageOrderByInput {
 type ImagePreviousValues {
   id: ID!
   caption: String
+  url: String
   originalHeight: Int
   originalUrl: String!
   originalWidth: Int
@@ -7986,6 +7996,345 @@ type ImagePreviousValues {
   title: String
   createdAt: DateTime!
   updatedAt: DateTime!
+}
+
+input ImageScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ImageScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ImageScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ImageScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  caption: String
+
+  """All values that are not equal to given value."""
+  caption_not: String
+
+  """All values that are contained in given list."""
+  caption_in: [String!]
+
+  """All values that are not contained in given list."""
+  caption_not_in: [String!]
+
+  """All values less than the given value."""
+  caption_lt: String
+
+  """All values less than or equal the given value."""
+  caption_lte: String
+
+  """All values greater than the given value."""
+  caption_gt: String
+
+  """All values greater than or equal the given value."""
+  caption_gte: String
+
+  """All values containing the given string."""
+  caption_contains: String
+
+  """All values not containing the given string."""
+  caption_not_contains: String
+
+  """All values starting with the given string."""
+  caption_starts_with: String
+
+  """All values not starting with the given string."""
+  caption_not_starts_with: String
+
+  """All values ending with the given string."""
+  caption_ends_with: String
+
+  """All values not ending with the given string."""
+  caption_not_ends_with: String
+  url: String
+
+  """All values that are not equal to given value."""
+  url_not: String
+
+  """All values that are contained in given list."""
+  url_in: [String!]
+
+  """All values that are not contained in given list."""
+  url_not_in: [String!]
+
+  """All values less than the given value."""
+  url_lt: String
+
+  """All values less than or equal the given value."""
+  url_lte: String
+
+  """All values greater than the given value."""
+  url_gt: String
+
+  """All values greater than or equal the given value."""
+  url_gte: String
+
+  """All values containing the given string."""
+  url_contains: String
+
+  """All values not containing the given string."""
+  url_not_contains: String
+
+  """All values starting with the given string."""
+  url_starts_with: String
+
+  """All values not starting with the given string."""
+  url_not_starts_with: String
+
+  """All values ending with the given string."""
+  url_ends_with: String
+
+  """All values not ending with the given string."""
+  url_not_ends_with: String
+  originalHeight: Int
+
+  """All values that are not equal to given value."""
+  originalHeight_not: Int
+
+  """All values that are contained in given list."""
+  originalHeight_in: [Int!]
+
+  """All values that are not contained in given list."""
+  originalHeight_not_in: [Int!]
+
+  """All values less than the given value."""
+  originalHeight_lt: Int
+
+  """All values less than or equal the given value."""
+  originalHeight_lte: Int
+
+  """All values greater than the given value."""
+  originalHeight_gt: Int
+
+  """All values greater than or equal the given value."""
+  originalHeight_gte: Int
+  originalUrl: String
+
+  """All values that are not equal to given value."""
+  originalUrl_not: String
+
+  """All values that are contained in given list."""
+  originalUrl_in: [String!]
+
+  """All values that are not contained in given list."""
+  originalUrl_not_in: [String!]
+
+  """All values less than the given value."""
+  originalUrl_lt: String
+
+  """All values less than or equal the given value."""
+  originalUrl_lte: String
+
+  """All values greater than the given value."""
+  originalUrl_gt: String
+
+  """All values greater than or equal the given value."""
+  originalUrl_gte: String
+
+  """All values containing the given string."""
+  originalUrl_contains: String
+
+  """All values not containing the given string."""
+  originalUrl_not_contains: String
+
+  """All values starting with the given string."""
+  originalUrl_starts_with: String
+
+  """All values not starting with the given string."""
+  originalUrl_not_starts_with: String
+
+  """All values ending with the given string."""
+  originalUrl_ends_with: String
+
+  """All values not ending with the given string."""
+  originalUrl_not_ends_with: String
+  originalWidth: Int
+
+  """All values that are not equal to given value."""
+  originalWidth_not: Int
+
+  """All values that are contained in given list."""
+  originalWidth_in: [Int!]
+
+  """All values that are not contained in given list."""
+  originalWidth_not_in: [Int!]
+
+  """All values less than the given value."""
+  originalWidth_lt: Int
+
+  """All values less than or equal the given value."""
+  originalWidth_lte: Int
+
+  """All values greater than the given value."""
+  originalWidth_gt: Int
+
+  """All values greater than or equal the given value."""
+  originalWidth_gte: Int
+  resizedUrl: String
+
+  """All values that are not equal to given value."""
+  resizedUrl_not: String
+
+  """All values that are contained in given list."""
+  resizedUrl_in: [String!]
+
+  """All values that are not contained in given list."""
+  resizedUrl_not_in: [String!]
+
+  """All values less than the given value."""
+  resizedUrl_lt: String
+
+  """All values less than or equal the given value."""
+  resizedUrl_lte: String
+
+  """All values greater than the given value."""
+  resizedUrl_gt: String
+
+  """All values greater than or equal the given value."""
+  resizedUrl_gte: String
+
+  """All values containing the given string."""
+  resizedUrl_contains: String
+
+  """All values not containing the given string."""
+  resizedUrl_not_contains: String
+
+  """All values starting with the given string."""
+  resizedUrl_starts_with: String
+
+  """All values not starting with the given string."""
+  resizedUrl_not_starts_with: String
+
+  """All values ending with the given string."""
+  resizedUrl_ends_with: String
+
+  """All values not ending with the given string."""
+  resizedUrl_not_ends_with: String
+  title: String
+
+  """All values that are not equal to given value."""
+  title_not: String
+
+  """All values that are contained in given list."""
+  title_in: [String!]
+
+  """All values that are not contained in given list."""
+  title_not_in: [String!]
+
+  """All values less than the given value."""
+  title_lt: String
+
+  """All values less than or equal the given value."""
+  title_lte: String
+
+  """All values greater than the given value."""
+  title_gt: String
+
+  """All values greater than or equal the given value."""
+  title_gte: String
+
+  """All values containing the given string."""
+  title_contains: String
+
+  """All values not containing the given string."""
+  title_not_contains: String
+
+  """All values starting with the given string."""
+  title_starts_with: String
+
+  """All values not starting with the given string."""
+  title_not_starts_with: String
+
+  """All values ending with the given string."""
+  title_ends_with: String
+
+  """All values not ending with the given string."""
+  title_not_ends_with: String
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
 }
 
 type ImageSubscriptionPayload {
@@ -8025,8 +8374,9 @@ input ImageSubscriptionWhereInput {
   node: ImageWhereInput
 }
 
-input ImageUpdateInput {
+input ImageUpdateDataInput {
   caption: String
+  url: String
   originalHeight: Int
   originalUrl: String
   originalWidth: Int
@@ -8034,13 +8384,62 @@ input ImageUpdateInput {
   title: String
 }
 
-input ImageUpdateManyMutationInput {
+input ImageUpdateInput {
   caption: String
+  url: String
   originalHeight: Int
   originalUrl: String
   originalWidth: Int
   resizedUrl: String
   title: String
+}
+
+input ImageUpdateManyDataInput {
+  caption: String
+  url: String
+  originalHeight: Int
+  originalUrl: String
+  originalWidth: Int
+  resizedUrl: String
+  title: String
+}
+
+input ImageUpdateManyInput {
+  create: [ImageCreateInput!]
+  connect: [ImageWhereUniqueInput!]
+  set: [ImageWhereUniqueInput!]
+  disconnect: [ImageWhereUniqueInput!]
+  delete: [ImageWhereUniqueInput!]
+  update: [ImageUpdateWithWhereUniqueNestedInput!]
+  updateMany: [ImageUpdateManyWithWhereNestedInput!]
+  deleteMany: [ImageScalarWhereInput!]
+  upsert: [ImageUpsertWithWhereUniqueNestedInput!]
+}
+
+input ImageUpdateManyMutationInput {
+  caption: String
+  url: String
+  originalHeight: Int
+  originalUrl: String
+  originalWidth: Int
+  resizedUrl: String
+  title: String
+}
+
+input ImageUpdateManyWithWhereNestedInput {
+  where: ImageScalarWhereInput!
+  data: ImageUpdateManyDataInput!
+}
+
+input ImageUpdateWithWhereUniqueNestedInput {
+  where: ImageWhereUniqueInput!
+  data: ImageUpdateDataInput!
+}
+
+input ImageUpsertWithWhereUniqueNestedInput {
+  where: ImageWhereUniqueInput!
+  update: ImageUpdateDataInput!
+  create: ImageCreateInput!
 }
 
 input ImageWhereInput {
@@ -8132,6 +8531,46 @@ input ImageWhereInput {
 
   """All values not ending with the given string."""
   caption_not_ends_with: String
+  url: String
+
+  """All values that are not equal to given value."""
+  url_not: String
+
+  """All values that are contained in given list."""
+  url_in: [String!]
+
+  """All values that are not contained in given list."""
+  url_not_in: [String!]
+
+  """All values less than the given value."""
+  url_lt: String
+
+  """All values less than or equal the given value."""
+  url_lte: String
+
+  """All values greater than the given value."""
+  url_gt: String
+
+  """All values greater than or equal the given value."""
+  url_gte: String
+
+  """All values containing the given string."""
+  url_contains: String
+
+  """All values not containing the given string."""
+  url_not_contains: String
+
+  """All values starting with the given string."""
+  url_starts_with: String
+
+  """All values not starting with the given string."""
+  url_not_starts_with: String
+
+  """All values ending with the given string."""
+  url_ends_with: String
+
+  """All values not ending with the given string."""
+  url_not_ends_with: String
   originalHeight: Int
 
   """All values that are not equal to given value."""
@@ -9576,7 +10015,6 @@ type Mutation {
   createBrand(data: BrandCreateInput!): Brand!
   createCollectionGroup(data: CollectionGroupCreateInput!): CollectionGroup!
   createHomepageProductRail(data: HomepageProductRailCreateInput!): HomepageProductRail!
-  createImage(data: ImageCreateInput!): Image!
   createProductModel(data: ProductModelCreateInput!): ProductModel!
   createBagItem(data: BagItemCreateInput!): BagItem!
   createRecentlyViewedProduct(data: RecentlyViewedProductCreateInput!): RecentlyViewedProduct!
@@ -9591,6 +10029,7 @@ type Mutation {
   createCustomerDetail(data: CustomerDetailCreateInput!): CustomerDetail!
   createBillingInfo(data: BillingInfoCreateInput!): BillingInfo!
   createLocation(data: LocationCreateInput!): Location!
+  createImage(data: ImageCreateInput!): Image!
   createPackage(data: PackageCreateInput!): Package!
   createSize(data: SizeCreateInput!): Size!
   createProductFunction(data: ProductFunctionCreateInput!): ProductFunction!
@@ -9607,7 +10046,6 @@ type Mutation {
   updateBrand(data: BrandUpdateInput!, where: BrandWhereUniqueInput!): Brand
   updateCollectionGroup(data: CollectionGroupUpdateInput!, where: CollectionGroupWhereUniqueInput!): CollectionGroup
   updateHomepageProductRail(data: HomepageProductRailUpdateInput!, where: HomepageProductRailWhereUniqueInput!): HomepageProductRail
-  updateImage(data: ImageUpdateInput!, where: ImageWhereUniqueInput!): Image
   updateProductModel(data: ProductModelUpdateInput!, where: ProductModelWhereUniqueInput!): ProductModel
   updateBagItem(data: BagItemUpdateInput!, where: BagItemWhereUniqueInput!): BagItem
   updateRecentlyViewedProduct(data: RecentlyViewedProductUpdateInput!, where: RecentlyViewedProductWhereUniqueInput!): RecentlyViewedProduct
@@ -9621,6 +10059,7 @@ type Mutation {
   updateCustomerDetail(data: CustomerDetailUpdateInput!, where: CustomerDetailWhereUniqueInput!): CustomerDetail
   updateBillingInfo(data: BillingInfoUpdateInput!, where: BillingInfoWhereUniqueInput!): BillingInfo
   updateLocation(data: LocationUpdateInput!, where: LocationWhereUniqueInput!): Location
+  updateImage(data: ImageUpdateInput!, where: ImageWhereUniqueInput!): Image
   updatePackage(data: PackageUpdateInput!, where: PackageWhereUniqueInput!): Package
   updateSize(data: SizeUpdateInput!, where: SizeWhereUniqueInput!): Size
   updateProductFunction(data: ProductFunctionUpdateInput!, where: ProductFunctionWhereUniqueInput!): ProductFunction
@@ -9637,7 +10076,6 @@ type Mutation {
   deleteBrand(where: BrandWhereUniqueInput!): Brand
   deleteCollectionGroup(where: CollectionGroupWhereUniqueInput!): CollectionGroup
   deleteHomepageProductRail(where: HomepageProductRailWhereUniqueInput!): HomepageProductRail
-  deleteImage(where: ImageWhereUniqueInput!): Image
   deleteProductModel(where: ProductModelWhereUniqueInput!): ProductModel
   deleteBagItem(where: BagItemWhereUniqueInput!): BagItem
   deleteRecentlyViewedProduct(where: RecentlyViewedProductWhereUniqueInput!): RecentlyViewedProduct
@@ -9652,6 +10090,7 @@ type Mutation {
   deleteCustomerDetail(where: CustomerDetailWhereUniqueInput!): CustomerDetail
   deleteBillingInfo(where: BillingInfoWhereUniqueInput!): BillingInfo
   deleteLocation(where: LocationWhereUniqueInput!): Location
+  deleteImage(where: ImageWhereUniqueInput!): Image
   deletePackage(where: PackageWhereUniqueInput!): Package
   deleteSize(where: SizeWhereUniqueInput!): Size
   deleteProductFunction(where: ProductFunctionWhereUniqueInput!): ProductFunction
@@ -9668,7 +10107,6 @@ type Mutation {
   upsertBrand(where: BrandWhereUniqueInput!, create: BrandCreateInput!, update: BrandUpdateInput!): Brand!
   upsertCollectionGroup(where: CollectionGroupWhereUniqueInput!, create: CollectionGroupCreateInput!, update: CollectionGroupUpdateInput!): CollectionGroup!
   upsertHomepageProductRail(where: HomepageProductRailWhereUniqueInput!, create: HomepageProductRailCreateInput!, update: HomepageProductRailUpdateInput!): HomepageProductRail!
-  upsertImage(where: ImageWhereUniqueInput!, create: ImageCreateInput!, update: ImageUpdateInput!): Image!
   upsertProductModel(where: ProductModelWhereUniqueInput!, create: ProductModelCreateInput!, update: ProductModelUpdateInput!): ProductModel!
   upsertBagItem(where: BagItemWhereUniqueInput!, create: BagItemCreateInput!, update: BagItemUpdateInput!): BagItem!
   upsertRecentlyViewedProduct(where: RecentlyViewedProductWhereUniqueInput!, create: RecentlyViewedProductCreateInput!, update: RecentlyViewedProductUpdateInput!): RecentlyViewedProduct!
@@ -9682,6 +10120,7 @@ type Mutation {
   upsertCustomerDetail(where: CustomerDetailWhereUniqueInput!, create: CustomerDetailCreateInput!, update: CustomerDetailUpdateInput!): CustomerDetail!
   upsertBillingInfo(where: BillingInfoWhereUniqueInput!, create: BillingInfoCreateInput!, update: BillingInfoUpdateInput!): BillingInfo!
   upsertLocation(where: LocationWhereUniqueInput!, create: LocationCreateInput!, update: LocationUpdateInput!): Location!
+  upsertImage(where: ImageWhereUniqueInput!, create: ImageCreateInput!, update: ImageUpdateInput!): Image!
   upsertPackage(where: PackageWhereUniqueInput!, create: PackageCreateInput!, update: PackageUpdateInput!): Package!
   upsertSize(where: SizeWhereUniqueInput!, create: SizeCreateInput!, update: SizeUpdateInput!): Size!
   upsertProductFunction(where: ProductFunctionWhereUniqueInput!, create: ProductFunctionCreateInput!, update: ProductFunctionUpdateInput!): ProductFunction!
@@ -9698,7 +10137,6 @@ type Mutation {
   updateManyBrands(data: BrandUpdateManyMutationInput!, where: BrandWhereInput): BatchPayload!
   updateManyCollectionGroups(data: CollectionGroupUpdateManyMutationInput!, where: CollectionGroupWhereInput): BatchPayload!
   updateManyHomepageProductRails(data: HomepageProductRailUpdateManyMutationInput!, where: HomepageProductRailWhereInput): BatchPayload!
-  updateManyImages(data: ImageUpdateManyMutationInput!, where: ImageWhereInput): BatchPayload!
   updateManyProductModels(data: ProductModelUpdateManyMutationInput!, where: ProductModelWhereInput): BatchPayload!
   updateManyBagItems(data: BagItemUpdateManyMutationInput!, where: BagItemWhereInput): BatchPayload!
   updateManyRecentlyViewedProducts(data: RecentlyViewedProductUpdateManyMutationInput!, where: RecentlyViewedProductWhereInput): BatchPayload!
@@ -9712,6 +10150,7 @@ type Mutation {
   updateManyCustomerDetails(data: CustomerDetailUpdateManyMutationInput!, where: CustomerDetailWhereInput): BatchPayload!
   updateManyBillingInfoes(data: BillingInfoUpdateManyMutationInput!, where: BillingInfoWhereInput): BatchPayload!
   updateManyLocations(data: LocationUpdateManyMutationInput!, where: LocationWhereInput): BatchPayload!
+  updateManyImages(data: ImageUpdateManyMutationInput!, where: ImageWhereInput): BatchPayload!
   updateManyPackages(data: PackageUpdateManyMutationInput!, where: PackageWhereInput): BatchPayload!
   updateManySizes(data: SizeUpdateManyMutationInput!, where: SizeWhereInput): BatchPayload!
   updateManyProductFunctions(data: ProductFunctionUpdateManyMutationInput!, where: ProductFunctionWhereInput): BatchPayload!
@@ -9728,7 +10167,6 @@ type Mutation {
   deleteManyBrands(where: BrandWhereInput): BatchPayload!
   deleteManyCollectionGroups(where: CollectionGroupWhereInput): BatchPayload!
   deleteManyHomepageProductRails(where: HomepageProductRailWhereInput): BatchPayload!
-  deleteManyImages(where: ImageWhereInput): BatchPayload!
   deleteManyProductModels(where: ProductModelWhereInput): BatchPayload!
   deleteManyBagItems(where: BagItemWhereInput): BatchPayload!
   deleteManyRecentlyViewedProducts(where: RecentlyViewedProductWhereInput): BatchPayload!
@@ -9743,6 +10181,7 @@ type Mutation {
   deleteManyCustomerDetails(where: CustomerDetailWhereInput): BatchPayload!
   deleteManyBillingInfoes(where: BillingInfoWhereInput): BatchPayload!
   deleteManyLocations(where: LocationWhereInput): BatchPayload!
+  deleteManyImages(where: ImageWhereInput): BatchPayload!
   deleteManyPackages(where: PackageWhereInput): BatchPayload!
   deleteManySizes(where: SizeWhereInput): BatchPayload!
   deleteManyProductFunctions(where: ProductFunctionWhereInput): BatchPayload!
@@ -10759,7 +11198,8 @@ type Product implements Node {
   type: ProductType
   description: String
   externalURL: String
-  images: Json!
+  imagesJSON: Json
+  imagesData(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Image!]
   modelHeight: Int
   retailPrice: Int
   model: ProductModel
@@ -10805,7 +11245,7 @@ input ProductCreateInput {
   type: ProductType
   description: String
   externalURL: String
-  images: Json!
+  imagesJSON: Json
   modelHeight: Int
   retailPrice: Int
   tags: Json
@@ -10816,6 +11256,7 @@ input ProductCreateInput {
   outerMaterials: ProductCreateouterMaterialsInput
   brand: BrandCreateOneWithoutProductsInput!
   category: CategoryCreateOneWithoutProductsInput!
+  imagesData: ImageCreateManyInput
   model: ProductModelCreateOneWithoutProductsInput
   modelSize: SizeCreateOneInput
   color: ColorCreateOneInput!
@@ -10865,7 +11306,7 @@ input ProductCreateWithoutBrandInput {
   type: ProductType
   description: String
   externalURL: String
-  images: Json!
+  imagesJSON: Json
   modelHeight: Int
   retailPrice: Int
   tags: Json
@@ -10875,6 +11316,7 @@ input ProductCreateWithoutBrandInput {
   innerMaterials: ProductCreateinnerMaterialsInput
   outerMaterials: ProductCreateouterMaterialsInput
   category: CategoryCreateOneWithoutProductsInput!
+  imagesData: ImageCreateManyInput
   model: ProductModelCreateOneWithoutProductsInput
   modelSize: SizeCreateOneInput
   color: ColorCreateOneInput!
@@ -10890,7 +11332,7 @@ input ProductCreateWithoutCategoryInput {
   type: ProductType
   description: String
   externalURL: String
-  images: Json!
+  imagesJSON: Json
   modelHeight: Int
   retailPrice: Int
   tags: Json
@@ -10900,6 +11342,7 @@ input ProductCreateWithoutCategoryInput {
   innerMaterials: ProductCreateinnerMaterialsInput
   outerMaterials: ProductCreateouterMaterialsInput
   brand: BrandCreateOneWithoutProductsInput!
+  imagesData: ImageCreateManyInput
   model: ProductModelCreateOneWithoutProductsInput
   modelSize: SizeCreateOneInput
   color: ColorCreateOneInput!
@@ -10915,7 +11358,7 @@ input ProductCreateWithoutModelInput {
   type: ProductType
   description: String
   externalURL: String
-  images: Json!
+  imagesJSON: Json
   modelHeight: Int
   retailPrice: Int
   tags: Json
@@ -10926,6 +11369,7 @@ input ProductCreateWithoutModelInput {
   outerMaterials: ProductCreateouterMaterialsInput
   brand: BrandCreateOneWithoutProductsInput!
   category: CategoryCreateOneWithoutProductsInput!
+  imagesData: ImageCreateManyInput
   modelSize: SizeCreateOneInput
   color: ColorCreateOneInput!
   secondaryColor: ColorCreateOneInput
@@ -10940,7 +11384,7 @@ input ProductCreateWithoutVariantsInput {
   type: ProductType
   description: String
   externalURL: String
-  images: Json!
+  imagesJSON: Json
   modelHeight: Int
   retailPrice: Int
   tags: Json
@@ -10951,6 +11395,7 @@ input ProductCreateWithoutVariantsInput {
   outerMaterials: ProductCreateouterMaterialsInput
   brand: BrandCreateOneWithoutProductsInput!
   category: CategoryCreateOneWithoutProductsInput!
+  imagesData: ImageCreateManyInput
   model: ProductModelCreateOneWithoutProductsInput
   modelSize: SizeCreateOneInput
   color: ColorCreateOneInput!
@@ -11540,8 +11985,8 @@ enum ProductOrderByInput {
   description_DESC
   externalURL_ASC
   externalURL_DESC
-  images_ASC
-  images_DESC
+  imagesJSON_ASC
+  imagesJSON_DESC
   modelHeight_ASC
   modelHeight_DESC
   retailPrice_ASC
@@ -11567,7 +12012,7 @@ type ProductPreviousValues {
   type: ProductType
   description: String
   externalURL: String
-  images: Json!
+  imagesJSON: Json
   modelHeight: Int
   retailPrice: Int
   tags: Json
@@ -12560,7 +13005,7 @@ input ProductUpdateDataInput {
   type: ProductType
   description: String
   externalURL: String
-  images: Json
+  imagesJSON: Json
   modelHeight: Int
   retailPrice: Int
   tags: Json
@@ -12571,6 +13016,7 @@ input ProductUpdateDataInput {
   outerMaterials: ProductUpdateouterMaterialsInput
   brand: BrandUpdateOneRequiredWithoutProductsInput
   category: CategoryUpdateOneRequiredWithoutProductsInput
+  imagesData: ImageUpdateManyInput
   model: ProductModelUpdateOneWithoutProductsInput
   modelSize: SizeUpdateOneInput
   color: ColorUpdateOneRequiredInput
@@ -12589,7 +13035,7 @@ input ProductUpdateInput {
   type: ProductType
   description: String
   externalURL: String
-  images: Json
+  imagesJSON: Json
   modelHeight: Int
   retailPrice: Int
   tags: Json
@@ -12600,6 +13046,7 @@ input ProductUpdateInput {
   outerMaterials: ProductUpdateouterMaterialsInput
   brand: BrandUpdateOneRequiredWithoutProductsInput
   category: CategoryUpdateOneRequiredWithoutProductsInput
+  imagesData: ImageUpdateManyInput
   model: ProductModelUpdateOneWithoutProductsInput
   modelSize: SizeUpdateOneInput
   color: ColorUpdateOneRequiredInput
@@ -12614,7 +13061,7 @@ input ProductUpdateManyDataInput {
   type: ProductType
   description: String
   externalURL: String
-  images: Json
+  imagesJSON: Json
   modelHeight: Int
   retailPrice: Int
   tags: Json
@@ -12643,7 +13090,7 @@ input ProductUpdateManyMutationInput {
   type: ProductType
   description: String
   externalURL: String
-  images: Json
+  imagesJSON: Json
   modelHeight: Int
   retailPrice: Int
   tags: Json
@@ -12719,7 +13166,7 @@ input ProductUpdateWithoutBrandDataInput {
   type: ProductType
   description: String
   externalURL: String
-  images: Json
+  imagesJSON: Json
   modelHeight: Int
   retailPrice: Int
   tags: Json
@@ -12729,6 +13176,7 @@ input ProductUpdateWithoutBrandDataInput {
   innerMaterials: ProductUpdateinnerMaterialsInput
   outerMaterials: ProductUpdateouterMaterialsInput
   category: CategoryUpdateOneRequiredWithoutProductsInput
+  imagesData: ImageUpdateManyInput
   model: ProductModelUpdateOneWithoutProductsInput
   modelSize: SizeUpdateOneInput
   color: ColorUpdateOneRequiredInput
@@ -12743,7 +13191,7 @@ input ProductUpdateWithoutCategoryDataInput {
   type: ProductType
   description: String
   externalURL: String
-  images: Json
+  imagesJSON: Json
   modelHeight: Int
   retailPrice: Int
   tags: Json
@@ -12753,6 +13201,7 @@ input ProductUpdateWithoutCategoryDataInput {
   innerMaterials: ProductUpdateinnerMaterialsInput
   outerMaterials: ProductUpdateouterMaterialsInput
   brand: BrandUpdateOneRequiredWithoutProductsInput
+  imagesData: ImageUpdateManyInput
   model: ProductModelUpdateOneWithoutProductsInput
   modelSize: SizeUpdateOneInput
   color: ColorUpdateOneRequiredInput
@@ -12767,7 +13216,7 @@ input ProductUpdateWithoutModelDataInput {
   type: ProductType
   description: String
   externalURL: String
-  images: Json
+  imagesJSON: Json
   modelHeight: Int
   retailPrice: Int
   tags: Json
@@ -12778,6 +13227,7 @@ input ProductUpdateWithoutModelDataInput {
   outerMaterials: ProductUpdateouterMaterialsInput
   brand: BrandUpdateOneRequiredWithoutProductsInput
   category: CategoryUpdateOneRequiredWithoutProductsInput
+  imagesData: ImageUpdateManyInput
   modelSize: SizeUpdateOneInput
   color: ColorUpdateOneRequiredInput
   secondaryColor: ColorUpdateOneInput
@@ -12791,7 +13241,7 @@ input ProductUpdateWithoutVariantsDataInput {
   type: ProductType
   description: String
   externalURL: String
-  images: Json
+  imagesJSON: Json
   modelHeight: Int
   retailPrice: Int
   tags: Json
@@ -12802,6 +13252,7 @@ input ProductUpdateWithoutVariantsDataInput {
   outerMaterials: ProductUpdateouterMaterialsInput
   brand: BrandUpdateOneRequiredWithoutProductsInput
   category: CategoryUpdateOneRequiredWithoutProductsInput
+  imagesData: ImageUpdateManyInput
   model: ProductModelUpdateOneWithoutProductsInput
   modelSize: SizeUpdateOneInput
   color: ColorUpdateOneRequiredInput
@@ -15123,6 +15574,9 @@ input ProductWhereInput {
   updatedAt_gte: DateTime
   brand: BrandWhereInput
   category: CategoryWhereInput
+  imagesData_every: ImageWhereInput
+  imagesData_some: ImageWhereInput
+  imagesData_none: ImageWhereInput
   model: ProductModelWhereInput
   modelSize: SizeWhereInput
   color: ColorWhereInput
@@ -15150,7 +15604,6 @@ type Query {
   brands(where: BrandWhereInput, orderBy: BrandOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Brand]!
   collectionGroups(where: CollectionGroupWhereInput, orderBy: CollectionGroupOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CollectionGroup]!
   homepageProductRails(where: HomepageProductRailWhereInput, orderBy: HomepageProductRailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [HomepageProductRail]!
-  images(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Image]!
   productModels(where: ProductModelWhereInput, orderBy: ProductModelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductModel]!
   bagItems(where: BagItemWhereInput, orderBy: BagItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [BagItem]!
   recentlyViewedProducts(where: RecentlyViewedProductWhereInput, orderBy: RecentlyViewedProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [RecentlyViewedProduct]!
@@ -15165,6 +15618,7 @@ type Query {
   customerDetails(where: CustomerDetailWhereInput, orderBy: CustomerDetailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CustomerDetail]!
   billingInfoes(where: BillingInfoWhereInput, orderBy: BillingInfoOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [BillingInfo]!
   locations(where: LocationWhereInput, orderBy: LocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Location]!
+  images(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Image]!
   packages(where: PackageWhereInput, orderBy: PackageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Package]!
   sizes(where: SizeWhereInput, orderBy: SizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Size]!
   productFunctions(where: ProductFunctionWhereInput, orderBy: ProductFunctionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductFunction]!
@@ -15181,7 +15635,6 @@ type Query {
   brand(where: BrandWhereUniqueInput!): Brand
   collectionGroup(where: CollectionGroupWhereUniqueInput!): CollectionGroup
   homepageProductRail(where: HomepageProductRailWhereUniqueInput!): HomepageProductRail
-  image(where: ImageWhereUniqueInput!): Image
   productModel(where: ProductModelWhereUniqueInput!): ProductModel
   bagItem(where: BagItemWhereUniqueInput!): BagItem
   recentlyViewedProduct(where: RecentlyViewedProductWhereUniqueInput!): RecentlyViewedProduct
@@ -15196,6 +15649,7 @@ type Query {
   customerDetail(where: CustomerDetailWhereUniqueInput!): CustomerDetail
   billingInfo(where: BillingInfoWhereUniqueInput!): BillingInfo
   location(where: LocationWhereUniqueInput!): Location
+  image(where: ImageWhereUniqueInput!): Image
   package(where: PackageWhereUniqueInput!): Package
   size(where: SizeWhereUniqueInput!): Size
   productFunction(where: ProductFunctionWhereUniqueInput!): ProductFunction
@@ -15212,7 +15666,6 @@ type Query {
   brandsConnection(where: BrandWhereInput, orderBy: BrandOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BrandConnection!
   collectionGroupsConnection(where: CollectionGroupWhereInput, orderBy: CollectionGroupOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CollectionGroupConnection!
   homepageProductRailsConnection(where: HomepageProductRailWhereInput, orderBy: HomepageProductRailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): HomepageProductRailConnection!
-  imagesConnection(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ImageConnection!
   productModelsConnection(where: ProductModelWhereInput, orderBy: ProductModelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductModelConnection!
   bagItemsConnection(where: BagItemWhereInput, orderBy: BagItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BagItemConnection!
   recentlyViewedProductsConnection(where: RecentlyViewedProductWhereInput, orderBy: RecentlyViewedProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): RecentlyViewedProductConnection!
@@ -15227,6 +15680,7 @@ type Query {
   customerDetailsConnection(where: CustomerDetailWhereInput, orderBy: CustomerDetailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CustomerDetailConnection!
   billingInfoesConnection(where: BillingInfoWhereInput, orderBy: BillingInfoOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BillingInfoConnection!
   locationsConnection(where: LocationWhereInput, orderBy: LocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): LocationConnection!
+  imagesConnection(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ImageConnection!
   packagesConnection(where: PackageWhereInput, orderBy: PackageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PackageConnection!
   sizesConnection(where: SizeWhereInput, orderBy: SizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): SizeConnection!
   productFunctionsConnection(where: ProductFunctionWhereInput, orderBy: ProductFunctionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductFunctionConnection!
@@ -16912,7 +17366,6 @@ type Subscription {
   brand(where: BrandSubscriptionWhereInput): BrandSubscriptionPayload
   collectionGroup(where: CollectionGroupSubscriptionWhereInput): CollectionGroupSubscriptionPayload
   homepageProductRail(where: HomepageProductRailSubscriptionWhereInput): HomepageProductRailSubscriptionPayload
-  image(where: ImageSubscriptionWhereInput): ImageSubscriptionPayload
   productModel(where: ProductModelSubscriptionWhereInput): ProductModelSubscriptionPayload
   bagItem(where: BagItemSubscriptionWhereInput): BagItemSubscriptionPayload
   recentlyViewedProduct(where: RecentlyViewedProductSubscriptionWhereInput): RecentlyViewedProductSubscriptionPayload
@@ -16927,6 +17380,7 @@ type Subscription {
   customerDetail(where: CustomerDetailSubscriptionWhereInput): CustomerDetailSubscriptionPayload
   billingInfo(where: BillingInfoSubscriptionWhereInput): BillingInfoSubscriptionPayload
   location(where: LocationSubscriptionWhereInput): LocationSubscriptionPayload
+  image(where: ImageSubscriptionWhereInput): ImageSubscriptionPayload
   package(where: PackageSubscriptionWhereInput): PackageSubscriptionPayload
   size(where: SizeSubscriptionWhereInput): SizeSubscriptionPayload
   productFunction(where: ProductFunctionSubscriptionWhereInput): ProductFunctionSubscriptionPayload
@@ -17948,6 +18402,8 @@ export type ImageOrderByInput =
   | "id_DESC"
   | "caption_ASC"
   | "caption_DESC"
+  | "url_ASC"
+  | "url_DESC"
   | "originalHeight_ASC"
   | "originalHeight_DESC"
   | "originalUrl_ASC"
@@ -18137,8 +18593,8 @@ export type ProductOrderByInput =
   | "description_DESC"
   | "externalURL_ASC"
   | "externalURL_DESC"
-  | "images_ASC"
-  | "images_DESC"
+  | "imagesJSON_ASC"
+  | "imagesJSON_DESC"
   | "modelHeight_ASC"
   | "modelHeight_DESC"
   | "retailPrice_ASC"
@@ -20700,11 +21156,139 @@ export interface HomepageProductRailWhereUniqueInput {
 export interface ImageCreateInput {
   id?: ID_Input | null
   caption?: String | null
+  url?: String | null
   originalHeight?: Int | null
   originalUrl: String
   originalWidth?: Int | null
   resizedUrl: String
   title?: String | null
+}
+
+export interface ImageCreateManyInput {
+  create?: ImageCreateInput[] | ImageCreateInput | null
+  connect?: ImageWhereUniqueInput[] | ImageWhereUniqueInput | null
+}
+
+export interface ImageScalarWhereInput {
+  AND?: ImageScalarWhereInput[] | ImageScalarWhereInput | null
+  OR?: ImageScalarWhereInput[] | ImageScalarWhereInput | null
+  NOT?: ImageScalarWhereInput[] | ImageScalarWhereInput | null
+  id?: ID_Input | null
+  id_not?: ID_Input | null
+  id_in?: ID_Output[] | ID_Output | null
+  id_not_in?: ID_Output[] | ID_Output | null
+  id_lt?: ID_Input | null
+  id_lte?: ID_Input | null
+  id_gt?: ID_Input | null
+  id_gte?: ID_Input | null
+  id_contains?: ID_Input | null
+  id_not_contains?: ID_Input | null
+  id_starts_with?: ID_Input | null
+  id_not_starts_with?: ID_Input | null
+  id_ends_with?: ID_Input | null
+  id_not_ends_with?: ID_Input | null
+  caption?: String | null
+  caption_not?: String | null
+  caption_in?: String[] | String | null
+  caption_not_in?: String[] | String | null
+  caption_lt?: String | null
+  caption_lte?: String | null
+  caption_gt?: String | null
+  caption_gte?: String | null
+  caption_contains?: String | null
+  caption_not_contains?: String | null
+  caption_starts_with?: String | null
+  caption_not_starts_with?: String | null
+  caption_ends_with?: String | null
+  caption_not_ends_with?: String | null
+  url?: String | null
+  url_not?: String | null
+  url_in?: String[] | String | null
+  url_not_in?: String[] | String | null
+  url_lt?: String | null
+  url_lte?: String | null
+  url_gt?: String | null
+  url_gte?: String | null
+  url_contains?: String | null
+  url_not_contains?: String | null
+  url_starts_with?: String | null
+  url_not_starts_with?: String | null
+  url_ends_with?: String | null
+  url_not_ends_with?: String | null
+  originalHeight?: Int | null
+  originalHeight_not?: Int | null
+  originalHeight_in?: Int[] | Int | null
+  originalHeight_not_in?: Int[] | Int | null
+  originalHeight_lt?: Int | null
+  originalHeight_lte?: Int | null
+  originalHeight_gt?: Int | null
+  originalHeight_gte?: Int | null
+  originalUrl?: String | null
+  originalUrl_not?: String | null
+  originalUrl_in?: String[] | String | null
+  originalUrl_not_in?: String[] | String | null
+  originalUrl_lt?: String | null
+  originalUrl_lte?: String | null
+  originalUrl_gt?: String | null
+  originalUrl_gte?: String | null
+  originalUrl_contains?: String | null
+  originalUrl_not_contains?: String | null
+  originalUrl_starts_with?: String | null
+  originalUrl_not_starts_with?: String | null
+  originalUrl_ends_with?: String | null
+  originalUrl_not_ends_with?: String | null
+  originalWidth?: Int | null
+  originalWidth_not?: Int | null
+  originalWidth_in?: Int[] | Int | null
+  originalWidth_not_in?: Int[] | Int | null
+  originalWidth_lt?: Int | null
+  originalWidth_lte?: Int | null
+  originalWidth_gt?: Int | null
+  originalWidth_gte?: Int | null
+  resizedUrl?: String | null
+  resizedUrl_not?: String | null
+  resizedUrl_in?: String[] | String | null
+  resizedUrl_not_in?: String[] | String | null
+  resizedUrl_lt?: String | null
+  resizedUrl_lte?: String | null
+  resizedUrl_gt?: String | null
+  resizedUrl_gte?: String | null
+  resizedUrl_contains?: String | null
+  resizedUrl_not_contains?: String | null
+  resizedUrl_starts_with?: String | null
+  resizedUrl_not_starts_with?: String | null
+  resizedUrl_ends_with?: String | null
+  resizedUrl_not_ends_with?: String | null
+  title?: String | null
+  title_not?: String | null
+  title_in?: String[] | String | null
+  title_not_in?: String[] | String | null
+  title_lt?: String | null
+  title_lte?: String | null
+  title_gt?: String | null
+  title_gte?: String | null
+  title_contains?: String | null
+  title_not_contains?: String | null
+  title_starts_with?: String | null
+  title_not_starts_with?: String | null
+  title_ends_with?: String | null
+  title_not_ends_with?: String | null
+  createdAt?: DateTime | null
+  createdAt_not?: DateTime | null
+  createdAt_in?: DateTime[] | DateTime | null
+  createdAt_not_in?: DateTime[] | DateTime | null
+  createdAt_lt?: DateTime | null
+  createdAt_lte?: DateTime | null
+  createdAt_gt?: DateTime | null
+  createdAt_gte?: DateTime | null
+  updatedAt?: DateTime | null
+  updatedAt_not?: DateTime | null
+  updatedAt_in?: DateTime[] | DateTime | null
+  updatedAt_not_in?: DateTime[] | DateTime | null
+  updatedAt_lt?: DateTime | null
+  updatedAt_lte?: DateTime | null
+  updatedAt_gt?: DateTime | null
+  updatedAt_gte?: DateTime | null
 }
 
 export interface ImageSubscriptionWhereInput {
@@ -20718,8 +21302,9 @@ export interface ImageSubscriptionWhereInput {
   node?: ImageWhereInput | null
 }
 
-export interface ImageUpdateInput {
+export interface ImageUpdateDataInput {
   caption?: String | null
+  url?: String | null
   originalHeight?: Int | null
   originalUrl?: String | null
   originalWidth?: Int | null
@@ -20727,13 +21312,71 @@ export interface ImageUpdateInput {
   title?: String | null
 }
 
-export interface ImageUpdateManyMutationInput {
+export interface ImageUpdateInput {
   caption?: String | null
+  url?: String | null
   originalHeight?: Int | null
   originalUrl?: String | null
   originalWidth?: Int | null
   resizedUrl?: String | null
   title?: String | null
+}
+
+export interface ImageUpdateManyDataInput {
+  caption?: String | null
+  url?: String | null
+  originalHeight?: Int | null
+  originalUrl?: String | null
+  originalWidth?: Int | null
+  resizedUrl?: String | null
+  title?: String | null
+}
+
+export interface ImageUpdateManyInput {
+  create?: ImageCreateInput[] | ImageCreateInput | null
+  connect?: ImageWhereUniqueInput[] | ImageWhereUniqueInput | null
+  set?: ImageWhereUniqueInput[] | ImageWhereUniqueInput | null
+  disconnect?: ImageWhereUniqueInput[] | ImageWhereUniqueInput | null
+  delete?: ImageWhereUniqueInput[] | ImageWhereUniqueInput | null
+  update?:
+    | ImageUpdateWithWhereUniqueNestedInput[]
+    | ImageUpdateWithWhereUniqueNestedInput
+    | null
+  updateMany?:
+    | ImageUpdateManyWithWhereNestedInput[]
+    | ImageUpdateManyWithWhereNestedInput
+    | null
+  deleteMany?: ImageScalarWhereInput[] | ImageScalarWhereInput | null
+  upsert?:
+    | ImageUpsertWithWhereUniqueNestedInput[]
+    | ImageUpsertWithWhereUniqueNestedInput
+    | null
+}
+
+export interface ImageUpdateManyMutationInput {
+  caption?: String | null
+  url?: String | null
+  originalHeight?: Int | null
+  originalUrl?: String | null
+  originalWidth?: Int | null
+  resizedUrl?: String | null
+  title?: String | null
+}
+
+export interface ImageUpdateManyWithWhereNestedInput {
+  where: ImageScalarWhereInput
+  data: ImageUpdateManyDataInput
+}
+
+export interface ImageUpdateWithWhereUniqueNestedInput {
+  where: ImageWhereUniqueInput
+  data: ImageUpdateDataInput
+}
+
+export interface ImageUpsertWithWhereUniqueNestedInput {
+  where: ImageWhereUniqueInput
+  update: ImageUpdateDataInput
+  create: ImageCreateInput
 }
 
 export interface ImageWhereInput {
@@ -20768,6 +21411,20 @@ export interface ImageWhereInput {
   caption_not_starts_with?: String | null
   caption_ends_with?: String | null
   caption_not_ends_with?: String | null
+  url?: String | null
+  url_not?: String | null
+  url_in?: String[] | String | null
+  url_not_in?: String[] | String | null
+  url_lt?: String | null
+  url_lte?: String | null
+  url_gt?: String | null
+  url_gte?: String | null
+  url_contains?: String | null
+  url_not_contains?: String | null
+  url_starts_with?: String | null
+  url_not_starts_with?: String | null
+  url_ends_with?: String | null
+  url_not_ends_with?: String | null
   originalHeight?: Int | null
   originalHeight_not?: Int | null
   originalHeight_in?: Int[] | Int | null
@@ -21896,7 +22553,7 @@ export interface ProductCreateInput {
   type?: ProductType | null
   description?: String | null
   externalURL?: String | null
-  images: Json
+  imagesJSON?: Json | null
   modelHeight?: Int | null
   retailPrice?: Int | null
   tags?: Json | null
@@ -21907,6 +22564,7 @@ export interface ProductCreateInput {
   outerMaterials?: ProductCreateouterMaterialsInput | null
   brand: BrandCreateOneWithoutProductsInput
   category: CategoryCreateOneWithoutProductsInput
+  imagesData?: ImageCreateManyInput | null
   model?: ProductModelCreateOneWithoutProductsInput | null
   modelSize?: SizeCreateOneInput | null
   color: ColorCreateOneInput
@@ -21965,7 +22623,7 @@ export interface ProductCreateWithoutBrandInput {
   type?: ProductType | null
   description?: String | null
   externalURL?: String | null
-  images: Json
+  imagesJSON?: Json | null
   modelHeight?: Int | null
   retailPrice?: Int | null
   tags?: Json | null
@@ -21975,6 +22633,7 @@ export interface ProductCreateWithoutBrandInput {
   innerMaterials?: ProductCreateinnerMaterialsInput | null
   outerMaterials?: ProductCreateouterMaterialsInput | null
   category: CategoryCreateOneWithoutProductsInput
+  imagesData?: ImageCreateManyInput | null
   model?: ProductModelCreateOneWithoutProductsInput | null
   modelSize?: SizeCreateOneInput | null
   color: ColorCreateOneInput
@@ -21990,7 +22649,7 @@ export interface ProductCreateWithoutCategoryInput {
   type?: ProductType | null
   description?: String | null
   externalURL?: String | null
-  images: Json
+  imagesJSON?: Json | null
   modelHeight?: Int | null
   retailPrice?: Int | null
   tags?: Json | null
@@ -22000,6 +22659,7 @@ export interface ProductCreateWithoutCategoryInput {
   innerMaterials?: ProductCreateinnerMaterialsInput | null
   outerMaterials?: ProductCreateouterMaterialsInput | null
   brand: BrandCreateOneWithoutProductsInput
+  imagesData?: ImageCreateManyInput | null
   model?: ProductModelCreateOneWithoutProductsInput | null
   modelSize?: SizeCreateOneInput | null
   color: ColorCreateOneInput
@@ -22015,7 +22675,7 @@ export interface ProductCreateWithoutModelInput {
   type?: ProductType | null
   description?: String | null
   externalURL?: String | null
-  images: Json
+  imagesJSON?: Json | null
   modelHeight?: Int | null
   retailPrice?: Int | null
   tags?: Json | null
@@ -22026,6 +22686,7 @@ export interface ProductCreateWithoutModelInput {
   outerMaterials?: ProductCreateouterMaterialsInput | null
   brand: BrandCreateOneWithoutProductsInput
   category: CategoryCreateOneWithoutProductsInput
+  imagesData?: ImageCreateManyInput | null
   modelSize?: SizeCreateOneInput | null
   color: ColorCreateOneInput
   secondaryColor?: ColorCreateOneInput | null
@@ -22040,7 +22701,7 @@ export interface ProductCreateWithoutVariantsInput {
   type?: ProductType | null
   description?: String | null
   externalURL?: String | null
-  images: Json
+  imagesJSON?: Json | null
   modelHeight?: Int | null
   retailPrice?: Int | null
   tags?: Json | null
@@ -22051,6 +22712,7 @@ export interface ProductCreateWithoutVariantsInput {
   outerMaterials?: ProductCreateouterMaterialsInput | null
   brand: BrandCreateOneWithoutProductsInput
   category: CategoryCreateOneWithoutProductsInput
+  imagesData?: ImageCreateManyInput | null
   model?: ProductModelCreateOneWithoutProductsInput | null
   modelSize?: SizeCreateOneInput | null
   color: ColorCreateOneInput
@@ -22724,7 +23386,7 @@ export interface ProductUpdateDataInput {
   type?: ProductType | null
   description?: String | null
   externalURL?: String | null
-  images?: Json | null
+  imagesJSON?: Json | null
   modelHeight?: Int | null
   retailPrice?: Int | null
   tags?: Json | null
@@ -22735,6 +23397,7 @@ export interface ProductUpdateDataInput {
   outerMaterials?: ProductUpdateouterMaterialsInput | null
   brand?: BrandUpdateOneRequiredWithoutProductsInput | null
   category?: CategoryUpdateOneRequiredWithoutProductsInput | null
+  imagesData?: ImageUpdateManyInput | null
   model?: ProductModelUpdateOneWithoutProductsInput | null
   modelSize?: SizeUpdateOneInput | null
   color?: ColorUpdateOneRequiredInput | null
@@ -22753,7 +23416,7 @@ export interface ProductUpdateInput {
   type?: ProductType | null
   description?: String | null
   externalURL?: String | null
-  images?: Json | null
+  imagesJSON?: Json | null
   modelHeight?: Int | null
   retailPrice?: Int | null
   tags?: Json | null
@@ -22764,6 +23427,7 @@ export interface ProductUpdateInput {
   outerMaterials?: ProductUpdateouterMaterialsInput | null
   brand?: BrandUpdateOneRequiredWithoutProductsInput | null
   category?: CategoryUpdateOneRequiredWithoutProductsInput | null
+  imagesData?: ImageUpdateManyInput | null
   model?: ProductModelUpdateOneWithoutProductsInput | null
   modelSize?: SizeUpdateOneInput | null
   color?: ColorUpdateOneRequiredInput | null
@@ -22778,7 +23442,7 @@ export interface ProductUpdateManyDataInput {
   type?: ProductType | null
   description?: String | null
   externalURL?: String | null
-  images?: Json | null
+  imagesJSON?: Json | null
   modelHeight?: Int | null
   retailPrice?: Int | null
   tags?: Json | null
@@ -22816,7 +23480,7 @@ export interface ProductUpdateManyMutationInput {
   type?: ProductType | null
   description?: String | null
   externalURL?: String | null
-  images?: Json | null
+  imagesJSON?: Json | null
   modelHeight?: Int | null
   retailPrice?: Int | null
   tags?: Json | null
@@ -22928,7 +23592,7 @@ export interface ProductUpdateWithoutBrandDataInput {
   type?: ProductType | null
   description?: String | null
   externalURL?: String | null
-  images?: Json | null
+  imagesJSON?: Json | null
   modelHeight?: Int | null
   retailPrice?: Int | null
   tags?: Json | null
@@ -22938,6 +23602,7 @@ export interface ProductUpdateWithoutBrandDataInput {
   innerMaterials?: ProductUpdateinnerMaterialsInput | null
   outerMaterials?: ProductUpdateouterMaterialsInput | null
   category?: CategoryUpdateOneRequiredWithoutProductsInput | null
+  imagesData?: ImageUpdateManyInput | null
   model?: ProductModelUpdateOneWithoutProductsInput | null
   modelSize?: SizeUpdateOneInput | null
   color?: ColorUpdateOneRequiredInput | null
@@ -22952,7 +23617,7 @@ export interface ProductUpdateWithoutCategoryDataInput {
   type?: ProductType | null
   description?: String | null
   externalURL?: String | null
-  images?: Json | null
+  imagesJSON?: Json | null
   modelHeight?: Int | null
   retailPrice?: Int | null
   tags?: Json | null
@@ -22962,6 +23627,7 @@ export interface ProductUpdateWithoutCategoryDataInput {
   innerMaterials?: ProductUpdateinnerMaterialsInput | null
   outerMaterials?: ProductUpdateouterMaterialsInput | null
   brand?: BrandUpdateOneRequiredWithoutProductsInput | null
+  imagesData?: ImageUpdateManyInput | null
   model?: ProductModelUpdateOneWithoutProductsInput | null
   modelSize?: SizeUpdateOneInput | null
   color?: ColorUpdateOneRequiredInput | null
@@ -22976,7 +23642,7 @@ export interface ProductUpdateWithoutModelDataInput {
   type?: ProductType | null
   description?: String | null
   externalURL?: String | null
-  images?: Json | null
+  imagesJSON?: Json | null
   modelHeight?: Int | null
   retailPrice?: Int | null
   tags?: Json | null
@@ -22987,6 +23653,7 @@ export interface ProductUpdateWithoutModelDataInput {
   outerMaterials?: ProductUpdateouterMaterialsInput | null
   brand?: BrandUpdateOneRequiredWithoutProductsInput | null
   category?: CategoryUpdateOneRequiredWithoutProductsInput | null
+  imagesData?: ImageUpdateManyInput | null
   modelSize?: SizeUpdateOneInput | null
   color?: ColorUpdateOneRequiredInput | null
   secondaryColor?: ColorUpdateOneInput | null
@@ -23000,7 +23667,7 @@ export interface ProductUpdateWithoutVariantsDataInput {
   type?: ProductType | null
   description?: String | null
   externalURL?: String | null
-  images?: Json | null
+  imagesJSON?: Json | null
   modelHeight?: Int | null
   retailPrice?: Int | null
   tags?: Json | null
@@ -23011,6 +23678,7 @@ export interface ProductUpdateWithoutVariantsDataInput {
   outerMaterials?: ProductUpdateouterMaterialsInput | null
   brand?: BrandUpdateOneRequiredWithoutProductsInput | null
   category?: CategoryUpdateOneRequiredWithoutProductsInput | null
+  imagesData?: ImageUpdateManyInput | null
   model?: ProductModelUpdateOneWithoutProductsInput | null
   modelSize?: SizeUpdateOneInput | null
   color?: ColorUpdateOneRequiredInput | null
@@ -24345,6 +25013,9 @@ export interface ProductWhereInput {
   updatedAt_gte?: DateTime | null
   brand?: BrandWhereInput | null
   category?: CategoryWhereInput | null
+  imagesData_every?: ImageWhereInput | null
+  imagesData_some?: ImageWhereInput | null
+  imagesData_none?: ImageWhereInput | null
   model?: ProductModelWhereInput | null
   modelSize?: SizeWhereInput | null
   color?: ColorWhereInput | null
@@ -26157,6 +26828,7 @@ export interface HomepageProductRailSubscriptionPayload {
 export interface Image extends Node {
   id: ID_Output
   caption?: String | null
+  url?: String | null
   originalHeight?: Int | null
   originalUrl: String
   originalWidth?: Int | null
@@ -26188,6 +26860,7 @@ export interface ImageEdge {
 export interface ImagePreviousValues {
   id: ID_Output
   caption?: String | null
+  url?: String | null
   originalHeight?: Int | null
   originalUrl: String
   originalWidth?: Int | null
@@ -26454,7 +27127,8 @@ export interface Product extends Node {
   type?: ProductType | null
   description?: String | null
   externalURL?: String | null
-  images: Json
+  imagesJSON?: Json | null
+  imagesData?: Array<Image> | null
   modelHeight?: Int | null
   retailPrice?: Int | null
   model?: ProductModel | null
@@ -26574,7 +27248,7 @@ export interface ProductPreviousValues {
   type?: ProductType | null
   description?: String | null
   externalURL?: String | null
-  images: Json
+  imagesJSON?: Json | null
   modelHeight?: Int | null
   retailPrice?: Int | null
   tags?: Json | null
