@@ -269,16 +269,6 @@ type Query {
     first: Int
     last: Int
   ): [ProductRequest]!
-  order(where: OrderWhereUniqueInput!): Order
-  orders(
-    where: OrderWhereInput
-    orderBy: OrderOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [Order]!
   reservation(where: ReservationWhereUniqueInput!): Reservation
   reservations(
     where: ReservationWhereInput
