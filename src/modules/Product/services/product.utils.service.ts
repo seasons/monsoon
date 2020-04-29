@@ -1,5 +1,5 @@
-import { BrandOrderByInput } from "@prisma/index"
 import { Injectable } from "@nestjs/common"
+import { BrandOrderByInput } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
 import { uniqBy } from "lodash"
 

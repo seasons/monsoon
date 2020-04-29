@@ -1,16 +1,14 @@
-import * as Airtable from "airtable"
-
 import {
   AirtableBaseService,
   AirtableService,
   AirtableUtilsService,
 } from "@modules/Airtable"
-import { Customer, User } from "@prisma/index"
-import { sample, sampleSize, shuffle } from "lodash"
-
-import { PrismaService } from "@prisma/prisma.service"
 import { ReservationService } from "@modules/Reservation"
 import { TestUtilsService } from "@modules/Utils/services/test.service"
+import { Customer, User } from "@prisma/index"
+import { PrismaService } from "@prisma/prisma.service"
+import * as Airtable from "airtable"
+import { sample, sampleSize, shuffle } from "lodash"
 
 const ONE_MIN = 60000
 

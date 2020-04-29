@@ -1,18 +1,19 @@
+import fs from "fs"
+
+import { DataScheduledJobs } from "@app/modules/Cron/services/data.service"
+import { AirtableSyncService } from "@modules/Sync/services/sync.airtable.service"
+import { PrismaSyncService } from "@modules/Sync/services/sync.prisma.service"
+import { Injectable } from "@nestjs/common"
+import { ModuleRef } from "@nestjs/core"
+import { Command, Option, Positional } from "nestjs-command"
+import readlineSync from "readline-sync"
+
 import {
   AirtableEnvOption,
   AirtableIdOption,
   PrismaEnvOption,
 } from "../scripts.decorators"
-import { Command, Option, Positional } from "nestjs-command"
-
-import { AirtableSyncService } from "@modules/Sync/services/sync.airtable.service"
-import { DataScheduledJobs } from "@app/modules/Cron/services/data.service"
-import { Injectable } from "@nestjs/common"
-import { ModuleRef } from "@nestjs/core"
-import { PrismaSyncService } from "@modules/Sync/services/sync.prisma.service"
 import { ScriptsService } from "../services/scripts.service"
-import fs from "fs"
-import readlineSync from "readline-sync"
 
 @Injectable()
 export class SyncCommands {

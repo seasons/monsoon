@@ -1,23 +1,22 @@
-import * as Airtable from "airtable"
-
+import { AirtableInventoryStatus } from "@app/modules/Airtable/airtable.types"
+import { EmailDataProvider, EmailService } from "@app/modules/Email"
+import { ErrorService } from "@app/modules/Error/services/error.service"
+import { ReservationService } from "@app/modules/Reservation/services/reservation.service"
+import { ShippingService } from "@app/modules/Shipping/services/shipping.service"
+import { UtilsService } from "@app/modules/Utils/services/utils.service"
+import { ProductCountAndStatusSummary } from "@app/modules/Utils/utils.types"
 import {
   AirtableBaseService,
   AirtableService,
   AirtableUtilsService,
 } from "@modules/Airtable"
+import { TestUtilsService } from "@modules/Utils/services/test.service"
 import { Customer, User } from "@prisma/index"
-import { EmailDataProvider, EmailService } from "@app/modules/Email"
+import { PrismaService } from "@prisma/prisma.service"
+import * as Airtable from "airtable"
 import { head, isEqual, sample, sampleSize } from "lodash"
 
-import { AirtableInventoryStatus } from "@app/modules/Airtable/airtable.types"
-import { ErrorService } from "@app/modules/Error/services/error.service"
-import { PrismaService } from "@prisma/prisma.service"
-import { ProductCountAndStatusSummary } from "@app/modules/Utils/utils.types"
 import { ReservationScheduledJobs } from ".."
-import { ReservationService } from "@app/modules/Reservation/services/reservation.service"
-import { ShippingService } from "@app/modules/Shipping/services/shipping.service"
-import { TestUtilsService } from "@modules/Utils/services/test.service"
-import { UtilsService } from "@app/modules/Utils/services/utils.service"
 
 const ONE_MIN = 60000
 

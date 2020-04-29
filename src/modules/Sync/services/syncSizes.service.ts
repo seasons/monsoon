@@ -1,15 +1,15 @@
+import { Injectable } from "@nestjs/common"
+
 import {
   BottomSizeCreateInput,
   ProductType,
   Size,
   TopSizeCreateInput,
 } from "../../../prisma"
-
-import { AirtableService } from "../../Airtable/services/airtable.service"
-import { Injectable } from "@nestjs/common"
 import { PrismaService } from "../../../prisma/prisma.service"
-import { SyncUtilsService } from "./sync.utils.service"
+import { AirtableService } from "../../Airtable/services/airtable.service"
 import { UtilsService } from "../../Utils/services/utils.service"
+import { SyncUtilsService } from "./sync.utils.service"
 
 @Injectable()
 export class SyncSizesService {

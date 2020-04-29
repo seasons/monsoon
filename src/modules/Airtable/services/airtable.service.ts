@@ -1,3 +1,13 @@
+import { Injectable } from "@nestjs/common"
+import {
+  InventoryStatus,
+  PhysicalProduct,
+  ReservationCreateInput,
+  ReservationStatus,
+  User,
+} from "@prisma/index"
+import { compact, fill, head, zip } from "lodash"
+
 import {
   AirtableData,
   AirtableInventoryStatus,
@@ -8,19 +18,9 @@ import {
   AirtableUserFields,
   PrismaProductVariantCounts,
 } from "../airtable.types"
-import {
-  InventoryStatus,
-  PhysicalProduct,
-  ReservationCreateInput,
-  ReservationStatus,
-  User,
-} from "@prisma/index"
-import { compact, fill, head, zip } from "lodash"
-
 import { AirtableBaseService } from "./airtable.base.service"
 import { AirtableQueriesService } from "./airtable.queries.service"
 import { AirtableUtilsService } from "./airtable.utils.service"
-import { Injectable } from "@nestjs/common"
 
 @Injectable()
 export class AirtableService extends AirtableQueriesService {

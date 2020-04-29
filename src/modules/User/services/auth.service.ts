@@ -1,10 +1,9 @@
-import { CustomerDetail, CustomerDetailCreateInput } from "@prisma/index"
-import { ForbiddenError, UserInputError } from "apollo-server"
-
 import { AirtableService } from "@modules/Airtable/services/airtable.service"
 import { Injectable } from "@nestjs/common"
+import { CustomerDetail, CustomerDetailCreateInput } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
 import PushNotifications from "@pusher/push-notifications-server"
+import { ForbiddenError, UserInputError } from "apollo-server"
 import { head } from "lodash"
 import request from "request"
 

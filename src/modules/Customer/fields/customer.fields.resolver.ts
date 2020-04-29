@@ -1,16 +1,15 @@
-import {
-  InvoicesDataLoader,
-  TransactionsDataLoader,
-} from "@modules/Payment/payment.types"
+import { TransactionsForCustomersLoader } from "@app/modules/Payment/loaders/transactionsForCustomers.loader"
+import { Loader } from "@modules/DataLoader"
 import {
   InvoicesForCustomersLoader,
   PaymentService,
 } from "@modules/Payment/index"
+import {
+  InvoicesDataLoader,
+  TransactionsDataLoader,
+} from "@modules/Payment/payment.types"
 import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
-
-import { Loader } from "@modules/DataLoader"
 import { PrismaService } from "@prisma/prisma.service"
-import { TransactionsForCustomersLoader } from "@app/modules/Payment/loaders/transactionsForCustomers.loader"
 
 @Resolver("Customer")
 export class CustomerFieldsResolver {

@@ -1,13 +1,13 @@
 import {
-  DataLoaderInterceptor,
-  GET_LOADER_CONTEXT_KEY,
-} from "../interceptors/dataloader.interceptor"
-import {
   InternalServerErrorException,
   createParamDecorator,
 } from "@nestjs/common"
-
 import { APP_INTERCEPTOR } from "@nestjs/core"
+
+import {
+  DataLoaderInterceptor,
+  GET_LOADER_CONTEXT_KEY,
+} from "../interceptors/dataloader.interceptor"
 
 export const Loader: (
   type: string

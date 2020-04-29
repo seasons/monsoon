@@ -1,7 +1,6 @@
-import * as Airtable from "airtable"
-
-import { Injectable } from "@nestjs/common"
 import { UpdatableConnection } from "@app/modules/index.types"
+import { Injectable } from "@nestjs/common"
+import * as Airtable from "airtable"
 
 @Injectable()
 export class AirtableBaseService implements UpdatableConnection {

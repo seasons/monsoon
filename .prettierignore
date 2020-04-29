@@ -1,0 +1,2 @@
+src/prisma/*.ts
+src/prisma/prisma.graphql
