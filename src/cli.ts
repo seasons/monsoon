@@ -7,8 +7,10 @@ import dotenv from "dotenv"
 import { CommandModule, CommandService } from "nestjs-command"
 
 // Must be imported after dotenv.configure() to ensure that env vars are being loaded before making module
+// prettier-ignore
 import { ScriptsModule } from "./modules/Scripts/scripts.module"
 
+// prettier-ignore
 dotenv.config()
 
 Airtable.configure({
