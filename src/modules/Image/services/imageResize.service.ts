@@ -1,6 +1,7 @@
+import { identity, pickBy } from "lodash"
+
 import { Injectable } from "@nestjs/common"
 import qs from "querystring"
-import { pickBy, identity } from "lodash"
 
 interface ImageResizerOptions {
   fit?: "clip"
