@@ -7538,65 +7538,6 @@ Long can represent values between -(2^63) and 2^63 - 1.
 """
 scalar Long
 
-enum Material {
-  Acetate
-  Acrylic
-  Alpaca
-  CalfLeather
-  CamelHair
-  Camel
-  Cashmere
-  Cotton
-  CottonPoplin
-  CowLeather
-  Cupro
-  DuckDown
-  Denim
-  DuckFeathers
-  Elastane
-  Esterlane
-  Feather
-  FeatherDown
-  GooseDown
-  LambLeather
-  LambSkin
-  Lambswool
-  Leather
-  Lyocell
-  Linen
-  MerinoWool
-  Modacrylic
-  Mohair
-  Nylon
-  OrganicCotton
-  PolyAcetate
-  Polyamide
-  Polyester
-  Polyethylene
-  PolySatin
-  Polyurethane
-  PolyurethanicResin
-  PVC
-  Rayon
-  RecycledPolyester
-  RecycledWool
-  Silk
-  Suede
-  SheepLeather
-  Spandex
-  Taffeta
-  Tartan
-  Triacetate
-  VirginWool
-  Viscose
-  Velcro
-  WaxCoating
-  WhiteDuckDown
-  WhiteGooseDown
-  Wool
-  Mesh
-}
-
 type Mutation {
   createBrand(data: BrandCreateInput!): Brand!
   createCollectionGroup(data: CollectionGroupCreateInput!): CollectionGroup!
@@ -8662,8 +8603,8 @@ type Product implements Node {
   secondaryColor: Color
   tags: Json
   functions(where: ProductFunctionWhereInput, orderBy: ProductFunctionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductFunction!]
-  innerMaterials: [Material!]!
-  outerMaterials: [Material!]!
+  innerMaterials: [String!]!
+  outerMaterials: [String!]!
   variants(where: ProductVariantWhereInput, orderBy: ProductVariantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariant!]
   status: ProductStatus
   season: String
@@ -8689,7 +8630,7 @@ type ProductConnection {
 }
 
 input ProductCreateinnerMaterialsInput {
-  set: [Material!]
+  set: [String!]
 }
 
 input ProductCreateInput {
@@ -8749,7 +8690,7 @@ input ProductCreateOneWithoutVariantsInput {
 }
 
 input ProductCreateouterMaterialsInput {
-  set: [Material!]
+  set: [String!]
 }
 
 input ProductCreateWithoutBrandInput {
@@ -9465,8 +9406,8 @@ type ProductPreviousValues {
   modelHeight: Int
   retailPrice: Int
   tags: Json
-  innerMaterials: [Material!]!
-  outerMaterials: [Material!]!
+  innerMaterials: [String!]!
+  outerMaterials: [String!]!
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
@@ -10474,7 +10415,7 @@ input ProductUpdateDataInput {
 }
 
 input ProductUpdateinnerMaterialsInput {
-  set: [Material!]
+  set: [String!]
 }
 
 input ProductUpdateInput {
@@ -10604,7 +10545,7 @@ input ProductUpdateOneRequiredWithoutVariantsInput {
 }
 
 input ProductUpdateouterMaterialsInput {
-  set: [Material!]
+  set: [String!]
 }
 
 input ProductUpdateWithoutBrandDataInput {
@@ -15934,63 +15875,6 @@ export type LocationType =   'Office' |
   'Cleaner' |
   'Customer'
 
-export type Material =   'Acetate' |
-  'Acrylic' |
-  'Alpaca' |
-  'CalfLeather' |
-  'CamelHair' |
-  'Camel' |
-  'Cashmere' |
-  'Cotton' |
-  'CottonPoplin' |
-  'CowLeather' |
-  'Cupro' |
-  'DuckDown' |
-  'Denim' |
-  'DuckFeathers' |
-  'Elastane' |
-  'Esterlane' |
-  'Feather' |
-  'FeatherDown' |
-  'GooseDown' |
-  'LambLeather' |
-  'LambSkin' |
-  'Lambswool' |
-  'Leather' |
-  'Lyocell' |
-  'Linen' |
-  'MerinoWool' |
-  'Modacrylic' |
-  'Mohair' |
-  'Nylon' |
-  'OrganicCotton' |
-  'PolyAcetate' |
-  'Polyamide' |
-  'Polyester' |
-  'Polyethylene' |
-  'PolySatin' |
-  'Polyurethane' |
-  'PolyurethanicResin' |
-  'PVC' |
-  'Rayon' |
-  'RecycledPolyester' |
-  'RecycledWool' |
-  'Silk' |
-  'Suede' |
-  'SheepLeather' |
-  'Spandex' |
-  'Taffeta' |
-  'Tartan' |
-  'Triacetate' |
-  'VirginWool' |
-  'Viscose' |
-  'Velcro' |
-  'WaxCoating' |
-  'WhiteDuckDown' |
-  'WhiteGooseDown' |
-  'Wool' |
-  'Mesh'
-
 export type MutationType =   'CREATED' |
   'UPDATED' |
   'DELETED'
@@ -19584,7 +19468,7 @@ export interface PhysicalProductWhereUniqueInput {
 }
 
 export interface ProductCreateinnerMaterialsInput {
-  set?: Material[] | Material | null
+  set?: String[] | String | null
 }
 
 export interface ProductCreateInput {
@@ -19644,7 +19528,7 @@ export interface ProductCreateOneWithoutVariantsInput {
 }
 
 export interface ProductCreateouterMaterialsInput {
-  set?: Material[] | Material | null
+  set?: String[] | String | null
 }
 
 export interface ProductCreateWithoutBrandInput {
@@ -20370,7 +20254,7 @@ export interface ProductUpdateDataInput {
 }
 
 export interface ProductUpdateinnerMaterialsInput {
-  set?: Material[] | Material | null
+  set?: String[] | String | null
 }
 
 export interface ProductUpdateInput {
@@ -20500,7 +20384,7 @@ export interface ProductUpdateOneRequiredWithoutVariantsInput {
 }
 
 export interface ProductUpdateouterMaterialsInput {
-  set?: Material[] | Material | null
+  set?: String[] | String | null
 }
 
 export interface ProductUpdateWithoutBrandDataInput {
@@ -23751,8 +23635,8 @@ export interface Product extends Node {
   secondaryColor?: Color | null
   tags?: Json | null
   functions?: Array<ProductFunction> | null
-  innerMaterials: Array<Material>
-  outerMaterials: Array<Material>
+  innerMaterials: Array<String>
+  outerMaterials: Array<String>
   variants?: Array<ProductVariant> | null
   status?: ProductStatus | null
   season?: String | null
@@ -23866,8 +23750,8 @@ export interface ProductPreviousValues {
   modelHeight?: Int | null
   retailPrice?: Int | null
   tags?: Json | null
-  innerMaterials: Array<Material>
-  outerMaterials: Array<Material>
+  innerMaterials: Array<String>
+  outerMaterials: Array<String>
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null

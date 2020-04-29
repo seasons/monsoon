@@ -6,9 +6,9 @@ import * as Airtable from "airtable"
 import dotenv from "dotenv"
 import { CommandModule, CommandService } from "nestjs-command"
 
-// Must be imported after dotenv.configure() to ensure that env vars are being loaded before making module
 dotenv.config()
 
+// Must be imported after dotenv.configure() to ensure that env vars are being loaded before making module
 import { ScriptsModule } from "./modules/Scripts/scripts.module"
 
 Airtable.configure({

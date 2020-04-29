@@ -3982,65 +3982,6 @@ input LocationWhereUniqueInput {
 
 scalar Long
 
-enum Material {
-  Acetate
-  Acrylic
-  Alpaca
-  CalfLeather
-  CamelHair
-  Camel
-  Cashmere
-  Cotton
-  CottonPoplin
-  CowLeather
-  Cupro
-  DuckDown
-  Denim
-  DuckFeathers
-  Elastane
-  Esterlane
-  Feather
-  FeatherDown
-  GooseDown
-  LambLeather
-  LambSkin
-  Lambswool
-  Leather
-  Lyocell
-  Linen
-  MerinoWool
-  Modacrylic
-  Mohair
-  Nylon
-  OrganicCotton
-  PolyAcetate
-  Polyamide
-  Polyester
-  Polyethylene
-  PolySatin
-  Polyurethane
-  PolyurethanicResin
-  PVC
-  Rayon
-  RecycledPolyester
-  RecycledWool
-  Silk
-  Suede
-  SheepLeather
-  Spandex
-  Taffeta
-  Tartan
-  Triacetate
-  VirginWool
-  Viscose
-  Velcro
-  WaxCoating
-  WhiteDuckDown
-  WhiteGooseDown
-  Wool
-  Mesh
-}
-
 type Mutation {
   createBagItem(data: BagItemCreateInput!): BagItem!
   updateBagItem(data: BagItemUpdateInput!, where: BagItemWhereUniqueInput!): BagItem
@@ -4775,8 +4716,8 @@ type Product {
   secondaryColor: Color
   tags: Json
   functions(where: ProductFunctionWhereInput, orderBy: ProductFunctionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductFunction!]
-  innerMaterials: [Material!]!
-  outerMaterials: [Material!]!
+  innerMaterials: [String!]!
+  outerMaterials: [String!]!
   variants(where: ProductVariantWhereInput, orderBy: ProductVariantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariant!]
   status: ProductStatus
   season: String
@@ -4798,7 +4739,7 @@ type ProductConnection {
 }
 
 input ProductCreateinnerMaterialsInput {
-  set: [Material!]
+  set: [String!]
 }
 
 input ProductCreateInput {
@@ -4858,7 +4799,7 @@ input ProductCreateOneWithoutVariantsInput {
 }
 
 input ProductCreateouterMaterialsInput {
-  set: [Material!]
+  set: [String!]
 }
 
 input ProductCreateWithoutBrandInput {
@@ -5331,8 +5272,8 @@ type ProductPreviousValues {
   modelHeight: Int
   retailPrice: Int
   tags: Json
-  innerMaterials: [Material!]!
-  outerMaterials: [Material!]!
+  innerMaterials: [String!]!
+  outerMaterials: [String!]!
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
@@ -5806,7 +5747,7 @@ input ProductUpdateDataInput {
 }
 
 input ProductUpdateinnerMaterialsInput {
-  set: [Material!]
+  set: [String!]
 }
 
 input ProductUpdateInput {
@@ -5936,7 +5877,7 @@ input ProductUpdateOneRequiredWithoutVariantsInput {
 }
 
 input ProductUpdateouterMaterialsInput {
-  set: [Material!]
+  set: [String!]
 }
 
 input ProductUpdateWithoutBrandDataInput {
