@@ -257,6 +257,7 @@ type HomepageProductRail {
 type Image {
   id: ID! @id
   caption: String
+  url: String
   originalHeight: Int
   originalUrl: String!
   originalWidth: Int
@@ -295,7 +296,7 @@ type Product {
   type: ProductType
   description: String
   externalURL: String
-  images: Json!
+  images: Json
   modelHeight: Int
   retailPrice: Int
   model: ProductModel
