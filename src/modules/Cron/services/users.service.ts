@@ -1,12 +1,11 @@
-import { Cron, CronExpression } from "@nestjs/schedule"
-import { Injectable, Logger } from "@nestjs/common"
-
+import { PrismaService } from "@modules/../prisma/prisma.service"
 import { AirtableService } from "@modules/Airtable/services/airtable.service"
-import { AuthService } from "@modules/User/services/auth.service"
-import { CustomerService } from "@modules/User/services/customer.service"
 import { EmailService } from "@modules/Email/services/email.service"
 import { ErrorService } from "@modules/Error/services/error.service"
-import { PrismaService } from "@modules/../prisma/prisma.service"
+import { AuthService } from "@modules/User/services/auth.service"
+import { CustomerService } from "@modules/User/services/customer.service"
+import { Injectable, Logger } from "@nestjs/common"
+import { Cron, CronExpression } from "@nestjs/schedule"
 
 @Injectable()
 export class UsersScheduledJobs {

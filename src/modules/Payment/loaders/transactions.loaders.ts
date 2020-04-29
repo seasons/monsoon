@@ -1,13 +1,13 @@
+import { NestDataLoader } from "@modules/DataLoader/dataloader.types"
 import {
   Transaction,
   TransactionsDataLoader,
 } from "@modules/Payment/payment.types"
-
-import DataLoader from "dataloader"
 import { Injectable } from "@nestjs/common"
-import { LoaderUtilsService } from "../services/loader.utils.service"
-import { NestDataLoader } from "@modules/DataLoader/dataloader.types"
+import DataLoader from "dataloader"
 import { head } from "lodash"
+
+import { LoaderUtilsService } from "../services/loader.utils.service"
 
 @Injectable()
 export class TransactionsLoader implements NestDataLoader {

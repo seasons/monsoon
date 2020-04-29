@@ -1,11 +1,12 @@
-import { AirtableService } from "../../Airtable/services/airtable.service"
-import { BrandTier } from "../../../prisma"
 import { Injectable } from "@nestjs/common"
-import { PrismaService } from "../../../prisma/prisma.service"
-import { SyncUtilsService } from "./sync.utils.service"
-import { UtilsService } from "../../Utils/services/utils.service"
 import { isEmpty } from "lodash"
 import slugify from "slugify"
+
+import { BrandTier } from "../../../prisma"
+import { PrismaService } from "../../../prisma/prisma.service"
+import { AirtableService } from "../../Airtable/services/airtable.service"
+import { UtilsService } from "../../Utils/services/utils.service"
+import { SyncUtilsService } from "./sync.utils.service"
 
 @Injectable()
 export class SyncBrandsService {
@@ -23,7 +24,7 @@ export class SyncBrandsService {
       allProductionRecords: await this.airtableService.getAllBrands(
         this.airtableService.getProductionBase()
       ),
-      sanitizeFunc: fields =>
+      sanitizeFunc: (fields) =>
         this.utils.Identity({
           ...fields,
           Logo: this.syncUtils.sanitizeAttachments(fields.Logo),

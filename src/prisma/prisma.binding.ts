@@ -1,8 +1,7 @@
-import { BasePrismaOptions, makePrismaBindingClass } from "prisma-binding"
 import { GraphQLResolveInfo, GraphQLSchema } from "graphql"
-
-import { IResolvers } from "graphql-tools/dist/Interfaces"
 import { Options } from "graphql-binding"
+import { IResolvers } from "graphql-tools/dist/Interfaces"
+import { BasePrismaOptions, makePrismaBindingClass } from "prisma-binding"
 
 export interface Query {
   brands: <T = Array<Brand | null>>(

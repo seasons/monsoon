@@ -1,12 +1,12 @@
-import { CategoryCreateInput, CategoryUpdateInput } from "../../../prisma"
-
-import { AirtableService } from "../../Airtable/services/airtable.service"
 import { Injectable } from "@nestjs/common"
-import { PrismaService } from "../../../prisma/prisma.service"
-import { SyncUtilsService } from "./sync.utils.service"
-import { UtilsService } from "../../Utils/services/utils.service"
 import { isEmpty } from "lodash"
 import slugify from "slugify"
+
+import { CategoryCreateInput, CategoryUpdateInput } from "../../../prisma"
+import { PrismaService } from "../../../prisma/prisma.service"
+import { AirtableService } from "../../Airtable/services/airtable.service"
+import { UtilsService } from "../../Utils/services/utils.service"
+import { SyncUtilsService } from "./sync.utils.service"
 
 @Injectable()
 export class SyncCategoriesService {
@@ -17,7 +17,7 @@ export class SyncCategoriesService {
     private readonly utils: UtilsService
   ) {}
 
-  getCategoryRecordIdentifier = rec => rec.fields.Name
+  getCategoryRecordIdentifier = (rec) => rec.fields.Name
 
   async syncAirtableToAirtable(cliProgressBar?) {
     const allProductionCategories = await this.airtableService.getAllCategories(
@@ -28,7 +28,7 @@ export class SyncCategoriesService {
     await this.syncUtils.createAllStagingRecordsWithoutLinks({
       modelName: "Categories",
       allProductionRecords: allProductionCategories,
-      sanitizeFunc: fields =>
+      sanitizeFunc: (fields) =>
         this.utils.deleteFieldsFromObject(
           {
             ...fields,
@@ -100,7 +100,7 @@ export class SyncCategoriesService {
       }
     }
 
-    const categories = allCategories.map(category => {
+    const categories = allCategories.map((category) => {
       const parent = allCategories.findByIds(category.model.parent)
       const model = parent && parent.model
       return {
@@ -157,8 +157,8 @@ export class SyncCategoriesService {
       allRootStagingRecords: allStagingCategories,
       allTargetProductionRecords: allProductionCategories,
       allTargetStagingRecords: allStagingCategories,
-      getRootRecordIdentifer: rec => rec.fields.Name,
-      getTargetRecordIdentifer: rec => rec.fields.Name,
+      getRootRecordIdentifer: (rec) => rec.fields.Name,
+      getTargetRecordIdentifer: (rec) => rec.fields.Name,
       cliProgressBar,
     })
   }
@@ -177,7 +177,7 @@ export class SyncCategoriesService {
     }
 
     // function to recursively build the tree
-    const findChildren = function(parent) {
+    const findChildren = function (parent) {
       if (children[parent.slug]) {
         parent.children = children[parent.slug]
         for (let child of parent.children) {

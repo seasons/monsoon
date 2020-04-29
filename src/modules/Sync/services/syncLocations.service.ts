@@ -1,7 +1,8 @@
-import { AirtableService } from "../../Airtable/services/airtable.service"
 import { Injectable } from "@nestjs/common"
-import { SyncUtilsService } from "./sync.utils.service"
+
+import { AirtableService } from "../../Airtable/services/airtable.service"
 import { UtilsService } from "../../Utils/services/utils.service"
+import { SyncUtilsService } from "./sync.utils.service"
 
 @Injectable()
 export class SyncLocationsService {
@@ -11,7 +12,7 @@ export class SyncLocationsService {
     private readonly utils: UtilsService
   ) {}
 
-  getLocationRecordIdentifier = rec => rec.fields.Slug
+  getLocationRecordIdentifier = (rec) => rec.fields.Slug
 
   async syncAirtableToAirtable(cliProgressBar?) {
     await this.syncUtils.deleteAllStagingRecords("Locations", cliProgressBar)
@@ -20,7 +21,7 @@ export class SyncLocationsService {
       allProductionRecords: await this.airtableService.getAllLocations(
         this.airtableService.getProductionBase()
       ),
-      sanitizeFunc: fields =>
+      sanitizeFunc: (fields) =>
         this.utils.deleteFieldsFromObject(
           {
             ...fields,

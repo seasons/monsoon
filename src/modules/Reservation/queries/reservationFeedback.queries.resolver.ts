@@ -1,7 +1,7 @@
+import { User } from "@app/nest_decorators"
 import { Query, Resolver } from "@nestjs/graphql"
 
 import { ReservationFeedbackService } from "../services/reservationFeedback.service"
-import { User } from "@app/nest_decorators"
 
 @Resolver()
 export class ReservationFeedbackQueriesResolver {

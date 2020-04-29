@@ -1,5 +1,5 @@
-import jwksRsa from "jwks-rsa"
 import jwt from "express-jwt"
+import jwksRsa from "jwks-rsa"
 
 // Authentication middleware. When used, the
 // Access Token must exist and be verified against

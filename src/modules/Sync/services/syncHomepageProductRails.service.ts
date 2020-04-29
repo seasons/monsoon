@@ -1,11 +1,12 @@
-import { AirtableService } from "../../Airtable/services/airtable.service"
 import { Injectable } from "@nestjs/common"
-import { PrismaService } from "../../../prisma/prisma.service"
-import { SyncProductsService } from "./syncProducts.service"
-import { SyncUtilsService } from "./sync.utils.service"
-import { UtilsService } from "../../Utils/services/utils.service"
 import { isEmpty } from "lodash"
 import slugify from "slugify"
+
+import { PrismaService } from "../../../prisma/prisma.service"
+import { AirtableService } from "../../Airtable/services/airtable.service"
+import { UtilsService } from "../../Utils/services/utils.service"
+import { SyncUtilsService } from "./sync.utils.service"
+import { SyncProductsService } from "./syncProducts.service"
 
 @Injectable()
 export class SyncHomepageProductRailsService {
@@ -28,7 +29,8 @@ export class SyncHomepageProductRailsService {
     await this.syncUtils.createAllStagingRecordsWithoutLinks({
       modelName: "Homepage Product Rails",
       allProductionRecords: allProductionRecs,
-      sanitizeFunc: fields => this.utils.Identity({ ...fields, Products: [] }),
+      sanitizeFunc: (fields) =>
+        this.utils.Identity({ ...fields, Products: [] }),
       cliProgressBar,
     })
 
@@ -70,7 +72,7 @@ export class SyncHomepageProductRailsService {
 
         const data = {
           products: {
-            connect: products.map(product => ({ slug: product.model.slug })),
+            connect: products.map((product) => ({ slug: product.model.slug })),
           },
           slug,
           name,
@@ -114,7 +116,7 @@ export class SyncHomepageProductRailsService {
       allTargetStagingRecords: await this.airtableService.getAllProducts(
         this.airtableService.getStagingBase()
       ),
-      getRootRecordIdentifer: rec => rec.fields.Slug,
+      getRootRecordIdentifer: (rec) => rec.fields.Slug,
       getTargetRecordIdentifer: this.syncProductsService
         .getProductRecordIdentifer,
       cliProgressBar,

@@ -1,9 +1,10 @@
+import { Injectable } from "@nestjs/common"
+
 import { AirtableData } from "../../Airtable/airtable.types"
 import { AirtableService } from "../../Airtable/services/airtable.service"
-import { Injectable } from "@nestjs/common"
-import { SyncSizesService } from "./syncSizes.service"
-import { SyncUtilsService } from "./sync.utils.service"
 import { UtilsService } from "../../Utils/services/utils.service"
+import { SyncUtilsService } from "./sync.utils.service"
+import { SyncSizesService } from "./syncSizes.service"
 
 @Injectable()
 export class SyncBottomSizesService {
@@ -14,7 +15,7 @@ export class SyncBottomSizesService {
     private readonly utils: UtilsService
   ) {}
 
-  getBottomSizeRecordIdentifer = rec =>
+  getBottomSizeRecordIdentifer = (rec) =>
     `${rec.fields.Name}${rec.fields.Waist}${rec.fields.Rise}${rec.fields.Hem}${rec.fields.Inseam}`
 
   async syncAirtableToAirtable(cliProgressBar?) {
@@ -25,7 +26,7 @@ export class SyncBottomSizesService {
     await this.syncUtils.createAllStagingRecordsWithoutLinks({
       modelName: "Bottom Sizes",
       allProductionRecords: allProductionRecords,
-      sanitizeFunc: fields =>
+      sanitizeFunc: (fields) =>
         this.utils.Identity({
           ...fields,
           Size: [],

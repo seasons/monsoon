@@ -1,12 +1,12 @@
 import "module-alias/register"
 
 import * as Airtable from "airtable"
+import slugify from "slugify"
 
 import { AirtableBaseService } from "../modules/Airtable/services/airtable.base.service"
 import { AirtableService } from "../modules/Airtable/services/airtable.service"
 import { AirtableUtilsService } from "../modules/Airtable/services/airtable.utils.service"
 import { PrismaService } from "../prisma/prisma.service"
-import slugify from "slugify"
 
 Airtable.configure({
   endpointUrl: "https://api.airtable.com",
@@ -35,7 +35,7 @@ const updateSlugs = async () => {
   const allAirtableProducts = await as.getAllProducts()
   for (const prismaProd of allPrismaProducts) {
     const correspondingAirtableProduct = allAirtableProducts.find(
-      a => a.model.slug === prismaProd.slug
+      (a) => a.model.slug === prismaProd.slug
     )
     const newSlug = slugify(
       prismaProd.brand.brandCode + " " + prismaProd.slug

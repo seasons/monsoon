@@ -1,7 +1,8 @@
-import { identity, pickBy } from "lodash"
+import qs from "querystring"
 
 import { Injectable } from "@nestjs/common"
-import qs from "querystring"
+import { identity, pickBy } from "lodash"
+
 import { ImageSize } from "../image.types"
 
 interface ImageResizerOptions {

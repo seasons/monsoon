@@ -1,9 +1,10 @@
+import { Injectable } from "@nestjs/common"
+
 import { AirtableData } from "../../Airtable/airtable.types"
 import { AirtableService } from "../../Airtable/services/airtable.service"
-import { Injectable } from "@nestjs/common"
-import { SyncLocationsService } from "./syncLocations.service"
-import { SyncUtilsService } from "./sync.utils.service"
 import { UtilsService } from "../../Utils/services/utils.service"
+import { SyncUtilsService } from "./sync.utils.service"
+import { SyncLocationsService } from "./syncLocations.service"
 
 @Injectable()
 export class SyncUsersService {
@@ -22,7 +23,7 @@ export class SyncUsersService {
     await this.syncUtils.createAllStagingRecordsWithoutLinks({
       modelName: "Users",
       allProductionRecords: allUsersProduction,
-      sanitizeFunc: fields =>
+      sanitizeFunc: (fields) =>
         this.utils.deleteFieldsFromObject(
           {
             ...fields,
@@ -61,7 +62,7 @@ export class SyncUsersService {
       allTargetStagingRecords: await this.airtableService.getAllLocations(
         this.airtableService.getStagingBase()
       ),
-      getRootRecordIdentifer: rec => rec.fields.Email,
+      getRootRecordIdentifer: (rec) => rec.fields.Email,
       getTargetRecordIdentifer: this.syncLocationsService
         .getLocationRecordIdentifier,
       cliProgressBar,

@@ -1,8 +1,9 @@
+import { execSync } from "child_process"
+import fs from "fs"
+
 import { AuthService } from "@modules/User/services/auth.service"
 import { Injectable } from "@nestjs/common"
 import { Prisma } from "@prisma/prisma.binding"
-import { execSync } from "child_process"
-import fs from "fs"
 import readlineSync from "readline-sync"
 
 type dbEnv = "staging" | "local" | "production"
@@ -168,7 +169,7 @@ export class PrismaSyncService {
     const auth0Users = await this.authService.getAuth0Users()
     for (const prismaUser of prismaUsers) {
       const correspondingAuth0User = auth0Users.find(
-        a => a.email === prismaUser.email
+        (a) => a.email === prismaUser.email
       )
       if (!!correspondingAuth0User) {
         console.log(

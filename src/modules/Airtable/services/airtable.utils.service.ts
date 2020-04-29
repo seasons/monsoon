@@ -1,8 +1,8 @@
+import { Injectable } from "@nestjs/common"
 import { BillingInfoCreateInput, LocationCreateInput } from "@prisma/index"
+import { head } from "lodash"
 
 import { AirtableBaseService } from "./airtable.base.service"
-import { Injectable } from "@nestjs/common"
-import { head } from "lodash"
 
 interface AirtableRecord {
   id: string

@@ -1,8 +1,8 @@
-import { Args, Mutation, Resolver } from "@nestjs/graphql"
-
 import { Analytics } from "@app/nest_decorators"
-import { PaymentService } from "../services/payment.service"
+import { Args, Mutation, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma/prisma.service"
+
+import { PaymentService } from "../services/payment.service"
 
 @Resolver()
 export class ChargebeeMutationsResolver {

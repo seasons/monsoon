@@ -1,5 +1,14 @@
-import * as Sentry from "@sentry/node"
-
+import { RollbackError } from "@app/errors"
+import { AirtableService } from "@modules/Airtable"
+import { EmailService } from "@modules/Email/services/email.service"
+import {
+  PhysicalProductService,
+  ProductUtilsService,
+  ProductVariantService,
+} from "@modules/Product"
+import { ShippingService } from "@modules/Shipping/services/shipping.service"
+import { ShippoTransaction } from "@modules/Shipping/shipping.types"
+import { Injectable } from "@nestjs/common"
 import {
   Customer,
   ID_Input,
@@ -9,22 +18,12 @@ import {
   ReservationStatus,
   User,
 } from "@prisma/index"
-import {
-  PhysicalProductService,
-  ProductUtilsService,
-  ProductVariantService,
-} from "@modules/Product"
-
-import { AirtableService } from "@modules/Airtable"
-import { ApolloError } from "apollo-server"
-import { EmailService } from "@modules/Email/services/email.service"
-import { Injectable } from "@nestjs/common"
 import { PrismaService } from "@prisma/prisma.service"
-import { ReservationUtilsService } from "./reservation.utils.service"
-import { RollbackError } from "@app/errors"
-import { ShippingService } from "@modules/Shipping/services/shipping.service"
-import { ShippoTransaction } from "@modules/Shipping/shipping.types"
+import * as Sentry from "@sentry/node"
+import { ApolloError } from "apollo-server"
 import { head } from "lodash"
+
+import { ReservationUtilsService } from "./reservation.utils.service"
 
 interface PhysicalProductWithProductVariant extends PhysicalProduct {
   productVariant: { id: ID_Input }
@@ -157,7 +156,7 @@ export class ReservationService {
         try {
           await rollbackFunc()
         } catch (err2) {
-          Sentry.configureScope(scope => {
+          Sentry.configureScope((scope) => {
             scope.setTag("flag", "data-corruption")
             scope.setExtra(`item ids`, `${items}`)
             scope.setExtra(`original error`, err)
@@ -236,9 +235,9 @@ export class ReservationService {
         return resolve(items)
       }
       const productVariantsInLastReservation = lastReservation.products.map(
-        prod => prod.productVariant.id
+        (prod) => prod.productVariant.id
       )
-      const newProductVariantBeingReserved = items.filter(prodVarId => {
+      const newProductVariantBeingReserved = items.filter((prodVarId) => {
         const notInLastReservation = !productVariantsInLastReservation.includes(
           prodVarId as string
         )
@@ -266,12 +265,12 @@ export class ReservationService {
       customer
     )
     const reservedProductVariantIds = reservedBagItems.map(
-      a => a.productVariant.id
+      (a) => a.productVariant.id
     )
 
     return lastReservation.products
-      .filter(prod => prod.inventoryStatus === "Reserved")
-      .filter(a =>
+      .filter((prod) => prod.inventoryStatus === "Reserved")
+      .filter((a) =>
         reservedProductVariantIds.includes(a.productVariant.id as string)
       )
   }
@@ -293,7 +292,7 @@ export class ReservationService {
           saved: false,
         },
       })
-    ).map(a => a.id)
+    ).map((a) => a.id)
 
     await this.prisma.client.updateManyBagItems({
       where: { id_in: bagItemsToUpdateIds },
@@ -329,7 +328,7 @@ export class ReservationService {
     if (allPhysicalProductsInReservation.length > 3) {
       throw new ApolloError("Can not reserve more than 3 items at a time")
     }
-    const physicalProductSUIDs = allPhysicalProductsInReservation.map(p => ({
+    const physicalProductSUIDs = allPhysicalProductsInReservation.map((p) => ({
       seasonsUID: p.seasonsUID,
     }))
 

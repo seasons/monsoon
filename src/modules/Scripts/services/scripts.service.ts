@@ -1,15 +1,16 @@
+import fs from "fs"
+
+import { AirtableBaseService } from "@app/modules/Airtable"
+import { PrismaService } from "@app/prisma/prisma.service"
+import { UtilsService } from "@modules/Utils/index"
+import { Injectable } from "@nestjs/common"
+import AWS from "aws-sdk"
+import chargebee from "chargebee"
+
 import {
   UpdateConnectionsInputs,
   UpdateEnvironmentInputs,
 } from "../scripts.types"
-
-import AWS from "aws-sdk"
-import { AirtableBaseService } from "@app/modules/Airtable"
-import { Injectable } from "@nestjs/common"
-import { PrismaService } from "@app/prisma/prisma.service"
-import { UtilsService } from "@modules/Utils/index"
-import chargebee from "chargebee"
-import fs from "fs"
 
 @Injectable()
 export class ScriptsService {

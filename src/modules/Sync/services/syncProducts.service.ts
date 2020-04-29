@@ -1,17 +1,17 @@
 import * as fs from "fs"
 
-import { BottomSizeType, LetterSize, ProductCreateInput } from "../../../prisma"
+import { Injectable } from "@nestjs/common"
 import { head, isEmpty } from "lodash"
+import slugify from "slugify"
 
+import { BottomSizeType, LetterSize, ProductCreateInput } from "../../../prisma"
+import { PrismaService } from "../../../prisma/prisma.service"
 import { AirtableData } from "../../Airtable/airtable.types"
 import { AirtableService } from "../../Airtable/services/airtable.service"
-import { Injectable } from "@nestjs/common"
-import { PrismaService } from "../../../prisma/prisma.service"
+import { UtilsService } from "../../Utils/services/utils.service"
+import { SyncUtilsService } from "./sync.utils.service"
 import { SyncCategoriesService } from "./syncCategories.service"
 import { SyncSizesService } from "./syncSizes.service"
-import { SyncUtilsService } from "./sync.utils.service"
-import { UtilsService } from "../../Utils/services/utils.service"
-import slugify from "slugify"
 
 @Injectable()
 export class SyncProductsService {
@@ -24,7 +24,7 @@ export class SyncProductsService {
     private readonly utils: UtilsService
   ) {}
 
-  getProductRecordIdentifer = rec => rec.fields.Slug
+  getProductRecordIdentifer = (rec) => rec.fields.Slug
 
   async syncAirtableToAirtable(cliProgressBar?: any) {
     const allProductsProduction = await this.airtableService.getAllProducts(
@@ -34,7 +34,7 @@ export class SyncProductsService {
     await this.syncUtils.createAllStagingRecordsWithoutLinks({
       modelName: "Products",
       allProductionRecords: allProductsProduction,
-      sanitizeFunc: fields =>
+      sanitizeFunc: (fields) =>
         this.utils.deleteFieldsFromObject(
           {
             ...fields,
@@ -177,10 +177,10 @@ export class SyncProductsService {
             },
           },
           innerMaterials: {
-            set: (innerMaterials || []).map(a => a.replace(/\ /g, "")),
+            set: (innerMaterials || []).map((a) => a.replace(/\ /g, "")),
           },
           outerMaterials: {
-            set: (outerMaterials || []).map(a => a.replace(/\ /g, "")),
+            set: (outerMaterials || []).map((a) => a.replace(/\ /g, "")),
           },
           tags: {
             set: tags,
@@ -240,7 +240,7 @@ export class SyncProductsService {
         this.airtableService.getStagingBase()
       ),
       getRootRecordIdentifer: this.getProductRecordIdentifer,
-      getTargetRecordIdentifer: rec => rec.fields.Name,
+      getTargetRecordIdentifer: (rec) => rec.fields.Name,
       cliProgressBar,
     })
   }
@@ -285,7 +285,7 @@ export class SyncProductsService {
         this.airtableService.getStagingBase()
       ),
       getRootRecordIdentifer: this.getProductRecordIdentifer,
-      getTargetRecordIdentifer: rec => rec.fields.Slug,
+      getTargetRecordIdentifer: (rec) => rec.fields.Slug,
       cliProgressBar,
     })
   }
@@ -307,7 +307,7 @@ export class SyncProductsService {
         this.airtableService.getStagingBase()
       ),
       getRootRecordIdentifer: this.getProductRecordIdentifer,
-      getTargetRecordIdentifer: rec => rec.fields.Name,
+      getTargetRecordIdentifer: (rec) => rec.fields.Name,
       cliProgressBar,
     })
   }

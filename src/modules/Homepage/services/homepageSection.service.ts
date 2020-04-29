@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common"
 import { PrismaService } from "@prisma/prisma.service"
+
 import { SectionTitle } from "./homepage.service"
 
 // FIXME: This is being used because currently info is lacking the __typename, add __typename to info
@@ -74,7 +75,7 @@ export class HomepageSectionService {
             product ${ProductFragment}
           }`
         )
-        return viewedProducts.map(viewedProduct => viewedProduct.product)
+        return viewedProducts.map((viewedProduct) => viewedProduct.product)
 
       case SectionTitle.Designers:
         const brands = await this.prisma.binding.query.brands(
@@ -128,7 +129,7 @@ export class HomepageSectionService {
         )
         return Array.prototype.concat.apply(
           [],
-          rails.map(rail => rail.products)
+          rails.map((rail) => rail.products)
         )
     }
   }

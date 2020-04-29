@@ -1,11 +1,10 @@
-import { Args, Info, Parent, ResolveField, Resolver } from "@nestjs/graphql"
+import { Customer } from "@app/nest_decorators"
 import { ImageResizeService } from "@modules/Image"
 import { ImageSize } from "@modules/Image/image.types"
-
-import { Customer } from "@app/nest_decorators"
-import { PrismaService } from "@prisma/prisma.service"
 import { ProductService } from "@modules/Product/services/product.service"
 import { ProductUtilsService } from "@modules/Product/services/product.utils.service"
+import { Args, Info, Parent, ResolveField, Resolver } from "@nestjs/graphql"
+import { PrismaService } from "@prisma/prisma.service"
 import { addFragmentToInfo } from "graphql-binding"
 import { sortedUniqBy } from "lodash"
 
@@ -83,7 +82,7 @@ export class ProductFieldsResolver {
       }
       `
     )
-    return product?.images.map(image => {
+    return product?.images.map((image) => {
       return {
         url: this.imageResizeService.imageResize(image?.url, size, {
           w: width,

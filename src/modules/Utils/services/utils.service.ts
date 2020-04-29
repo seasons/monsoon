@@ -1,12 +1,11 @@
+import crypto from "crypto"
 import * as fs from "fs"
-
-import { camelCase, isObject, mapKeys, snakeCase } from "lodash"
 
 import { Injectable } from "@nestjs/common"
 import { Location } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
 import cliProgress from "cli-progress"
-import crypto from "crypto"
+import { camelCase, isObject, mapKeys, snakeCase } from "lodash"
 
 enum ProductSize {
   XS = "XS",
@@ -23,7 +22,7 @@ export class UtilsService {
 
   deleteFieldsFromObject(obj: object, fieldsToDelete: string[]) {
     const objCopy = { ...obj }
-    fieldsToDelete.forEach(a => delete objCopy[a])
+    fieldsToDelete.forEach((a) => delete objCopy[a])
     return objCopy
   }
 
@@ -129,7 +128,7 @@ export class UtilsService {
   }
 
   writeLines(fileDescriptor, lines: (string | object)[]) {
-    lines.forEach(line => {
+    lines.forEach((line) => {
       let formattedLine = typeof line === "object" ? JSON.stringify(line) : line
       fs.writeSync(fileDescriptor, formattedLine)
       fs.writeSync(fileDescriptor, `\n`)
@@ -137,7 +136,7 @@ export class UtilsService {
   }
 
   filterErrors<T>(arr: any[]): T[] {
-    return arr?.filter(a => !(a instanceof Error))
+    return arr?.filter((a) => !(a instanceof Error))
   }
 
   sizeNameToSizeCode(sizeName: ProductSize | string) {
@@ -168,7 +167,7 @@ export class UtilsService {
     const a = mapKeys(obj, (_, key) => caseFunc(key))
     for (const [key, val] of Object.entries(a)) {
       if (Array.isArray(val)) {
-        a[key] = val.map(b => this.caseify(b, caseFunc))
+        a[key] = val.map((b) => this.caseify(b, caseFunc))
       } else if (isObject(val) && Object.keys(val)?.length !== 0) {
         a[key] = this.caseify(val, caseFunc)
       }

@@ -1,3 +1,13 @@
+import { Plan, User } from "@app/prisma"
+import { AirtableService } from "@modules/Airtable/services/airtable.service"
+import { EmailService } from "@modules/Email/services/email.service"
+import { AuthService } from "@modules/User/services/auth.service"
+import { UtilsService } from "@modules/Utils"
+import { Injectable } from "@nestjs/common"
+import { PrismaService } from "@prisma/prisma.service"
+import chargebee from "chargebee"
+import { camelCase, get, identity, snakeCase, upperFirst } from "lodash"
+
 import {
   BillingAddress,
   Card,
@@ -7,17 +17,7 @@ import {
   Transaction,
   TransactionsDataLoader,
 } from "../payment.types"
-import { Plan, User } from "@app/prisma"
-import { camelCase, get, identity, snakeCase, upperFirst } from "lodash"
-
-import { AirtableService } from "@modules/Airtable/services/airtable.service"
-import { AuthService } from "@modules/User/services/auth.service"
-import { EmailService } from "@modules/Email/services/email.service"
-import { Injectable } from "@nestjs/common"
 import { PaymentUtilsService } from "./payment.utils.service"
-import { PrismaService } from "@prisma/prisma.service"
-import { UtilsService } from "@modules/Utils"
-import chargebee from "chargebee"
 
 @Injectable()
 export class PaymentService {
@@ -79,7 +79,7 @@ export class PaymentService {
             resolve(result.hosted_page)
           }
         })
-    }).catch(error => {
+    }).catch((error) => {
       throw new Error(JSON.stringify(error))
     })
   }
@@ -99,7 +99,7 @@ export class PaymentService {
             resolve(result.hosted_page)
           }
         })
-    }).catch(error => {
+    }).catch((error) => {
       throw new Error(JSON.stringify(error))
     })
   }
@@ -113,7 +113,7 @@ export class PaymentService {
       try {
         await chargebee.hosted_page
           .acknowledge(hostedPageID)
-          .request(async function(error, result) {
+          .request(async function (error, result) {
             if (error) {
               reject(error)
             } else {
@@ -282,14 +282,14 @@ export class PaymentService {
     }
 
     return Promise.all(
-      invoices.map(async invoice =>
+      invoices.map(async (invoice) =>
         identity({
           ...this.formatInvoice(invoice),
           transactions: this.utils
             .filterErrors<Transaction>(
               await transactionsForCustomerLoader.load(customerId)
             )
-            ?.filter(a =>
+            ?.filter((a) =>
               this.getInvoiceTransactionIds(invoice)?.includes(a.id)
             )
             ?.map(this.formatTransaction),
@@ -331,7 +331,7 @@ export class PaymentService {
   }
 
   private getInvoiceTransactionIds(invoice): string[] {
-    return invoice.linkedPayments.map(a => a.txnId)
+    return invoice.linkedPayments.map((a) => a.txnId)
   }
 
   /**
@@ -344,7 +344,7 @@ export class PaymentService {
       amount: invoice.total,
       closingDate: this.utils.secondsSinceEpochToISOString(invoice.date),
       dueDate: this.utils.secondsSinceEpochToISOString(invoice.dueDate, true),
-      creditNotes: invoice.issuedCreditNotes.map(a =>
+      creditNotes: invoice.issuedCreditNotes.map((a) =>
         identity({
           ...a,
           reasonCode: upperFirst(camelCase(a.reasonCode)),

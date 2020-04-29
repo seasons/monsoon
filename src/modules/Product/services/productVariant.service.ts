@@ -1,13 +1,13 @@
+import { AirtableService } from "@modules/Airtable/services/airtable.service"
+import { Injectable } from "@nestjs/common"
 import { ID_Input, Product } from "@prisma/index"
+import { PrismaService } from "@prisma/prisma.service"
+import { ApolloError } from "apollo-server"
+
 import {
   PhysicalProductService,
   PhysicalProductWithReservationSpecificData,
 } from "./physicalProduct.utils.service"
-
-import { AirtableService } from "@modules/Airtable/services/airtable.service"
-import { ApolloError } from "apollo-server"
-import { Injectable } from "@nestjs/common"
-import { PrismaService } from "@prisma/prisma.service"
 
 @Injectable()
 export class ProductVariantService {
@@ -34,13 +34,13 @@ export class ProductVariantService {
 
     // Are there any unavailable variants? If so, throw an error
     const unavailableVariants = prismaProductVariants.filter(
-      v => v.reservable <= 0
+      (v) => v.reservable <= 0
     )
     if (unavailableVariants.length > 0) {
       // Remove items in the bag that are not available anymore
       await this.prisma.client.deleteManyBagItems({
         productVariant: {
-          id_in: unavailableVariants.map(a => a.id),
+          id_in: unavailableVariants.map((a) => a.id),
         },
         saved: false,
         status: "Added",
@@ -68,8 +68,10 @@ export class ProductVariantService {
 
     // Get the corresponding product variant records from airtable
     const allAirtableProductVariants = await this.airtableService.getAllProductVariants()
-    const allAirtableProductVariantSlugs = prismaProductVariants.map(a => a.sku)
-    const airtableProductVariants = allAirtableProductVariants.filter(a =>
+    const allAirtableProductVariantSlugs = prismaProductVariants.map(
+      (a) => a.sku
+    )
+    const airtableProductVariants = allAirtableProductVariants.filter((a) =>
       allAirtableProductVariantSlugs.includes(a.model.sKU)
     )
 
@@ -111,7 +113,7 @@ export class ProductVariantService {
 
           // Airtable record of product variant
           const airtableProductVariant = airtableProductVariants.find(
-            a => a.model.sKU === prismaProductVariant.sku
+            (a) => a.model.sKU === prismaProductVariant.sku
           )
           if (airtableProductVariant) {
             await airtableProductVariant.patchUpdate({

@@ -1,6 +1,5 @@
-import { ID_Input, PhysicalProduct, ProductVariant } from "@prisma/index"
-
 import { Injectable } from "@nestjs/common"
+import { ID_Input, PhysicalProduct, ProductVariant } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
 import { uniqBy } from "lodash"
 
@@ -39,15 +38,15 @@ export class PhysicalProductService {
     physicalProducts: PhysicalProductWithReservationSpecificData[]
   ): PhysicalProductWithReservationSpecificData[] {
     return uniqBy(
-      physicalProducts.filter(a => a.inventoryStatus === "Reservable"),
-      b => b.productVariant.id
+      physicalProducts.filter((a) => a.inventoryStatus === "Reservable"),
+      (b) => b.productVariant.id
     )
   }
 
   async markPhysicalProductsReservedOnPrisma(
     physicalProducts: PhysicalProduct[]
   ): Promise<() => void> {
-    const physicalProductIDs = physicalProducts.map(a => a.id)
+    const physicalProductIDs = physicalProducts.map((a) => a.id)
     await this.prisma.client.updateManyPhysicalProducts({
       where: { id_in: physicalProductIDs },
       data: { inventoryStatus: "Reserved" },

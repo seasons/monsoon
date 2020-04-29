@@ -1,6 +1,6 @@
 import { ID_Input, InventoryStatus } from "@app/prisma"
-
 import { Injectable } from "@nestjs/common"
+
 import { ReservationWithProductVariantData } from "./reservation.service"
 
 @Injectable()
@@ -9,7 +9,7 @@ export class ReservationUtilsService {
     res: ReservationWithProductVariantData,
     prodVarId: ID_Input
   ): InventoryStatus => {
-    return res.products.find(prod => prod.productVariant.id === prodVarId)
+    return res.products.find((prod) => prod.productVariant.id === prodVarId)
       .inventoryStatus
   }
 

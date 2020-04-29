@@ -1,9 +1,10 @@
+import { Injectable } from "@nestjs/common"
+
 import { AirtableData } from "../../Airtable/airtable.types"
 import { AirtableService } from "../../Airtable/services/airtable.service"
-import { Injectable } from "@nestjs/common"
-import { SyncSizesService } from "./syncSizes.service"
-import { SyncUtilsService } from "./sync.utils.service"
 import { UtilsService } from "../../Utils/services/utils.service"
+import { SyncUtilsService } from "./sync.utils.service"
+import { SyncSizesService } from "./syncSizes.service"
 
 @Injectable()
 export class SyncTopSizesService {
@@ -22,7 +23,7 @@ export class SyncTopSizesService {
     await this.syncUtils.createAllStagingRecordsWithoutLinks({
       modelName: "Top Sizes",
       allProductionRecords: allProductionRecords,
-      sanitizeFunc: fields =>
+      sanitizeFunc: (fields) =>
         this.utils.Identity({
           ...fields,
           Size: [],
@@ -62,6 +63,6 @@ export class SyncTopSizesService {
     })
   }
 
-  getTopSizeRecordIdentifier = rec =>
+  getTopSizeRecordIdentifier = (rec) =>
     `${rec.fields.Name}${rec.fields.Length}${rec.fields.Sleeve}${rec.fields.Shoulder}${rec.fields.Chest}${rec.fields.Neck}`
 }
