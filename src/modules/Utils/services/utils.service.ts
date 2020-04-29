@@ -1,12 +1,11 @@
+import crypto from "crypto"
 import * as fs from "fs"
-
-import { camelCase, isObject, mapKeys, snakeCase } from "lodash"
 
 import { Injectable } from "@nestjs/common"
 import { Location } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
 import cliProgress from "cli-progress"
-import crypto from "crypto"
+import { camelCase, isObject, mapKeys, snakeCase } from "lodash"
 
 enum ProductSize {
   XS = "XS",

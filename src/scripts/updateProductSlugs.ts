@@ -1,12 +1,12 @@
 import "module-alias/register"
 
 import * as Airtable from "airtable"
+import slugify from "slugify"
 
 import { AirtableBaseService } from "../modules/Airtable/services/airtable.base.service"
 import { AirtableService } from "../modules/Airtable/services/airtable.service"
 import { AirtableUtilsService } from "../modules/Airtable/services/airtable.utils.service"
 import { PrismaService } from "../prisma/prisma.service"
-import slugify from "slugify"
 
 Airtable.configure({
   endpointUrl: "https://api.airtable.com",

@@ -1,10 +1,11 @@
+import { Injectable } from "@nestjs/common"
+
 import { AirtableData } from "../../Airtable/airtable.types"
 import { AirtableService } from "../../Airtable/services/airtable.service"
-import { Injectable } from "@nestjs/common"
+import { UtilsService } from "../../Utils/services/utils.service"
+import { SyncUtilsService } from "./sync.utils.service"
 import { SyncLocationsService } from "./syncLocations.service"
 import { SyncPhysicalProductsService } from "./syncPhysicalProducts.service"
-import { SyncUtilsService } from "./sync.utils.service"
-import { UtilsService } from "../../Utils/services/utils.service"
 
 @Injectable()
 export class SyncReservationsService {

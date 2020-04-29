@@ -16,7 +16,7 @@
     "debug:cli": "node --inspect-brk -r dotenv/config -r ts-node/register src/cli.ts",
     "debug:test": "node --inspect-brk -r dotenv/config node_modules/.bin/jest --runInBand",
     "lint": "yarn tslint -c 'tslint.json' 'src/**/*.ts'",
-    "prettier": "prettier --write 'src/**/*.{js,ts,tsx,md,graphql}'",
+    "prettier": "prettier --write 'src/**/*.{js,ts,tsx,md,graphql}' --ignore-path ./.prettierignore",
     "prisma:update-bindings": "graphql get-schema --project database && graphql codegen --project database",
     "prisma:deploy-production": "prisma deploy -e .env.production && yarn prisma:update-bindings",
     "prisma:deploy-staging": "prisma deploy -e .env.staging  && yarn prisma:update-bindings",
@@ -28,7 +28,6 @@
     "start:server": "dotenv -- nodemon -e ts,graphql -x ts-node src/index.ts",
     "start": "concurrently --kill-others 'yarn tsc -w' 'yarn start:server'",
     "start:production": "node -r dotenv/config dist/index.js",
-    "sort-imports": "import-sort --write 'src/**/*.{js,ts,tsx}'",
     "test": "jest"
   },
   "dependencies": {
@@ -126,9 +125,11 @@
     "graceful-fs": "^4.2.2",
     "husky": "^4.2.3",
     "import-sort-cli": "^6.0.0",
+    "import-sort-style-module": "^6.0.0",
     "jest": "^24.9.0",
     "nodemon": "^1.19.2",
-    "prettier": "^1.18.2",
+    "prettier": "^2.0.0",
+    "prettier-plugin-import-sort": "^0.0.4",
     "pretty-quick": "^2.0.1",
     "rimraf": "^3.0.0",
     "rxjs": "^6.0.0",
@@ -139,6 +140,7 @@
     "yargs": "^15.1.0"
   },
   "prettier": {
+    "arrowParens": "avoid",
     "semi": false,
     "singleQuote": false,
     "trailingComma": "es5",
@@ -146,7 +148,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "yarn sort-imports && pretty-quick --staged"
+      "pre-commit": "pretty-quick --staged"
     }
   },
   "jest": {
@@ -174,5 +176,11 @@
     "@app": "dist",
     "@modules": "dist/modules",
     "@prisma": "dist/prisma"
+  },
+  "importSort": {
+    ".js, .jsx, .ts, .tsx": {
+      "style": "module",
+      "parser": "typescript"
+    }
   }
 }

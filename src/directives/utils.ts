@@ -1,6 +1,7 @@
-import { PrismaService } from "../prisma/prisma.service"
-import { User } from "../prisma"
 import { get } from "lodash"
+
+import { User } from "../prisma"
+import { PrismaService } from "../prisma/prisma.service"
 
 const prisma = new PrismaService()
 

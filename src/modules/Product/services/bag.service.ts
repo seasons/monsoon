@@ -1,6 +1,6 @@
-import { ApolloError } from "apollo-server"
 import { Injectable } from "@nestjs/common"
 import { PrismaService } from "@prisma/prisma.service"
+import { ApolloError } from "apollo-server"
 import { head } from "lodash"
 
 const BAG_SIZE = 3
