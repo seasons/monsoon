@@ -1865,7 +1865,9 @@ export type ReservationFeedbackOrderByInput =
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
-  | "updatedAt_DESC";
+  | "updatedAt_DESC"
+  | "respondedAt_ASC"
+  | "respondedAt_DESC";
 
 export type TopSizeOrderByInput =
   | "id_ASC"
@@ -4494,6 +4496,14 @@ export interface ReservationFeedbackWhereInput {
   updatedAt_lte?: Maybe<DateTimeInput>;
   updatedAt_gt?: Maybe<DateTimeInput>;
   updatedAt_gte?: Maybe<DateTimeInput>;
+  respondedAt?: Maybe<DateTimeInput>;
+  respondedAt_not?: Maybe<DateTimeInput>;
+  respondedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  respondedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  respondedAt_lt?: Maybe<DateTimeInput>;
+  respondedAt_lte?: Maybe<DateTimeInput>;
+  respondedAt_gt?: Maybe<DateTimeInput>;
+  respondedAt_gte?: Maybe<DateTimeInput>;
   AND?: Maybe<ReservationFeedbackWhereInput[] | ReservationFeedbackWhereInput>;
   OR?: Maybe<ReservationFeedbackWhereInput[] | ReservationFeedbackWhereInput>;
   NOT?: Maybe<ReservationFeedbackWhereInput[] | ReservationFeedbackWhereInput>;
@@ -7934,6 +7944,7 @@ export interface ReservationFeedbackCreateWithoutFeedbacksInput {
   rating?: Maybe<Rating>;
   user: UserCreateOneInput;
   reservation: ReservationCreateOneInput;
+  respondedAt?: Maybe<DateTimeInput>;
 }
 
 export interface ReservationCreateOneInput {
@@ -8119,6 +8130,7 @@ export interface ReservationFeedbackUpdateWithoutFeedbacksDataInput {
   rating?: Maybe<Rating>;
   user?: Maybe<UserUpdateOneRequiredInput>;
   reservation?: Maybe<ReservationUpdateOneRequiredInput>;
+  respondedAt?: Maybe<DateTimeInput>;
 }
 
 export interface ReservationUpdateOneRequiredInput {
@@ -8347,6 +8359,7 @@ export interface ReservationFeedbackCreateInput {
   rating?: Maybe<Rating>;
   user: UserCreateOneInput;
   reservation: ReservationCreateOneInput;
+  respondedAt?: Maybe<DateTimeInput>;
 }
 
 export interface ProductVariantFeedbackCreateManyWithoutReservationFeedbackInput {
@@ -8377,6 +8390,7 @@ export interface ReservationFeedbackUpdateInput {
   rating?: Maybe<Rating>;
   user?: Maybe<UserUpdateOneRequiredInput>;
   reservation?: Maybe<ReservationUpdateOneRequiredInput>;
+  respondedAt?: Maybe<DateTimeInput>;
 }
 
 export interface ProductVariantFeedbackUpdateManyWithoutReservationFeedbackInput {
@@ -8480,6 +8494,7 @@ export interface ProductVariantFeedbackUpdateManyDataInput {
 export interface ReservationFeedbackUpdateManyMutationInput {
   comment?: Maybe<String>;
   rating?: Maybe<Rating>;
+  respondedAt?: Maybe<DateTimeInput>;
 }
 
 export interface SizeUpdateInput {
@@ -12075,6 +12090,7 @@ export interface ReservationFeedback {
   rating?: Rating;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
+  respondedAt?: DateTimeOutput;
 }
 
 export interface ReservationFeedbackPromise
@@ -12096,6 +12112,7 @@ export interface ReservationFeedbackPromise
   reservation: <T = ReservationPromise>() => T;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
+  respondedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface ReservationFeedbackSubscription
@@ -12119,6 +12136,7 @@ export interface ReservationFeedbackSubscription
   reservation: <T = ReservationSubscription>() => T;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  respondedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
 export interface ReservationFeedbackNullablePromise
@@ -12140,6 +12158,7 @@ export interface ReservationFeedbackNullablePromise
   reservation: <T = ReservationPromise>() => T;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
+  respondedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface ProductVariantFeedbackConnection {
@@ -14339,6 +14358,7 @@ export interface ReservationFeedbackPreviousValues {
   rating?: Rating;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
+  respondedAt?: DateTimeOutput;
 }
 
 export interface ReservationFeedbackPreviousValuesPromise
@@ -14349,6 +14369,7 @@ export interface ReservationFeedbackPreviousValuesPromise
   rating: () => Promise<Rating>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
+  respondedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface ReservationFeedbackPreviousValuesSubscription
@@ -14359,6 +14380,7 @@ export interface ReservationFeedbackPreviousValuesSubscription
   rating: () => Promise<AsyncIterator<Rating>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  respondedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
 export interface SizeSubscriptionPayload {

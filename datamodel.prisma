@@ -544,6 +544,7 @@ type ReservationFeedback {
   reservation: Reservation!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
+  respondedAt: DateTime
 }
 
 type ProductVariantFeedback {

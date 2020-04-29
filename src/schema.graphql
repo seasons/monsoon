@@ -615,6 +615,7 @@ type Reservation {
 type Customer {
   id: ID!
   user: User!
+  shouldRequestFeedback: Boolean
   status: CustomerStatus
   detail: CustomerDetail
   billingInfo: BillingInfo

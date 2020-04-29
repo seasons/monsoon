@@ -7634,6 +7634,7 @@ type ReservationFeedback {
   reservation: Reservation!
   createdAt: DateTime!
   updatedAt: DateTime!
+  respondedAt: DateTime
 }
 
 type ReservationFeedbackConnection {
@@ -7649,6 +7650,7 @@ input ReservationFeedbackCreateInput {
   rating: Rating
   user: UserCreateOneInput!
   reservation: ReservationCreateOneInput!
+  respondedAt: DateTime
 }
 
 input ReservationFeedbackCreateOneWithoutFeedbacksInput {
@@ -7662,6 +7664,7 @@ input ReservationFeedbackCreateWithoutFeedbacksInput {
   rating: Rating
   user: UserCreateOneInput!
   reservation: ReservationCreateOneInput!
+  respondedAt: DateTime
 }
 
 type ReservationFeedbackEdge {
@@ -7680,6 +7683,8 @@ enum ReservationFeedbackOrderByInput {
   createdAt_DESC
   updatedAt_ASC
   updatedAt_DESC
+  respondedAt_ASC
+  respondedAt_DESC
 }
 
 type ReservationFeedbackPreviousValues {
@@ -7688,6 +7693,7 @@ type ReservationFeedbackPreviousValues {
   rating: Rating
   createdAt: DateTime!
   updatedAt: DateTime!
+  respondedAt: DateTime
 }
 
 type ReservationFeedbackSubscriptionPayload {
@@ -7714,11 +7720,13 @@ input ReservationFeedbackUpdateInput {
   rating: Rating
   user: UserUpdateOneRequiredInput
   reservation: ReservationUpdateOneRequiredInput
+  respondedAt: DateTime
 }
 
 input ReservationFeedbackUpdateManyMutationInput {
   comment: String
   rating: Rating
+  respondedAt: DateTime
 }
 
 input ReservationFeedbackUpdateOneRequiredWithoutFeedbacksInput {
@@ -7733,6 +7741,7 @@ input ReservationFeedbackUpdateWithoutFeedbacksDataInput {
   rating: Rating
   user: UserUpdateOneRequiredInput
   reservation: ReservationUpdateOneRequiredInput
+  respondedAt: DateTime
 }
 
 input ReservationFeedbackUpsertWithoutFeedbacksInput {
@@ -7794,6 +7803,14 @@ input ReservationFeedbackWhereInput {
   updatedAt_lte: DateTime
   updatedAt_gt: DateTime
   updatedAt_gte: DateTime
+  respondedAt: DateTime
+  respondedAt_not: DateTime
+  respondedAt_in: [DateTime!]
+  respondedAt_not_in: [DateTime!]
+  respondedAt_lt: DateTime
+  respondedAt_lte: DateTime
+  respondedAt_gt: DateTime
+  respondedAt_gte: DateTime
   AND: [ReservationFeedbackWhereInput!]
   OR: [ReservationFeedbackWhereInput!]
   NOT: [ReservationFeedbackWhereInput!]

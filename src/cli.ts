@@ -7,6 +7,7 @@ import dotenv from "dotenv"
 import { CommandModule, CommandService } from "nestjs-command"
 
 dotenv.config()
+
 // Must be imported after dotenv.configure() to ensure that env vars are being loaded before making module
 import { ScriptsModule } from "./modules/Scripts/scripts.module"
 
