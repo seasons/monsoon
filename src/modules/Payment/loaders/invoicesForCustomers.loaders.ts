@@ -19,11 +19,11 @@ export class InvoicesForCustomersLoader implements NestDataLoader {
         filterKey: "customer_id[in]",
         ids: customerIds,
         recordName: "invoice",
-        groupFunc: (a) => a.customerId,
-        transformFunc: (a) =>
+        groupFunc: a => a.customerId,
+        transformFunc: a =>
           identity({
             ...a,
-            issuedCreditNotes: a.issuedCreditNotes?.map((b) =>
+            issuedCreditNotes: a.issuedCreditNotes?.map(b =>
               mapKeys(b, (_, key) => lowerFirst(key.replace("cn", "")))
             ),
           }),

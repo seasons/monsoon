@@ -21,7 +21,7 @@ export class SyncColorsService {
       allProductionRecords: await this.airtableService.getAllColors(
         this.airtableService.getProductionBase()
       ),
-      sanitizeFunc: (fields) => fields,
+      sanitizeFunc: fields => fields,
       cliProgressBar,
     })
   }

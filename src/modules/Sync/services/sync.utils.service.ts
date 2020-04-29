@@ -150,8 +150,8 @@ export class SyncUtilsService {
     return [multibar, _cliProgressBar]
   }
 
-  sanitizeAttachments = (attachments) =>
-    attachments?.map((a) => this.utils.Identity({ url: a.url }))
+  sanitizeAttachments = attachments =>
+    attachments?.map(a => this.utils.Identity({ url: a.url }))
 
   private airtableModelNameToGetAllFunc(modelname: AirtableModelName) {
     const func = {
@@ -242,17 +242,17 @@ export class SyncUtilsService {
   }: LinkStagingRecordInput) {
     // Find the staging record that corresponds to the production record
     const correspondingRootStagingRecord = allRootStagingRecords.find(
-      (rsr) =>
+      rsr =>
         getRootRecordIdentifer(rootProductionRecord) ===
         getRootRecordIdentifer(rsr)
     )
     // Find the linked record(s) id(s) on staging
-    const targetProductionRecords = allTargetProductionRecords.filter((r) =>
+    const targetProductionRecords = allTargetProductionRecords.filter(r =>
       rootProductionRecord.fields[`${targetFieldNameOnRootRecord}`].includes(
         r.id
       )
     )
-    const targetStagingRecords = allTargetStagingRecords.filter((r) =>
+    const targetStagingRecords = allTargetStagingRecords.filter(r =>
       targetProductionRecords.reduce(
         (acc, curVal) =>
           acc ||
@@ -267,9 +267,7 @@ export class SyncUtilsService {
         {
           id: correspondingRootStagingRecord.id,
           fields: {
-            [targetFieldNameOnRootRecord]: targetStagingRecords.map(
-              (r) => r.id
-            ),
+            [targetFieldNameOnRootRecord]: targetStagingRecords.map(r => r.id),
           },
         },
       ])

@@ -19,7 +19,7 @@ export class SyncModelsService {
       allProductionRecords: await this.airtableService.getAllModels(
         this.airtableService.getProductionBase()
       ),
-      sanitizeFunc: (fields) =>
+      sanitizeFunc: fields =>
         this.utils.Identity({
           ...fields,
           Products: [],

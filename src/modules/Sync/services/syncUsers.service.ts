@@ -23,7 +23,7 @@ export class SyncUsersService {
     await this.syncUtils.createAllStagingRecordsWithoutLinks({
       modelName: "Users",
       allProductionRecords: allUsersProduction,
-      sanitizeFunc: (fields) =>
+      sanitizeFunc: fields =>
         this.utils.deleteFieldsFromObject(
           {
             ...fields,
@@ -62,7 +62,7 @@ export class SyncUsersService {
       allTargetStagingRecords: await this.airtableService.getAllLocations(
         this.airtableService.getStagingBase()
       ),
-      getRootRecordIdentifer: (rec) => rec.fields.Email,
+      getRootRecordIdentifer: rec => rec.fields.Email,
       getTargetRecordIdentifer: this.syncLocationsService
         .getLocationRecordIdentifier,
       cliProgressBar,

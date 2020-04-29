@@ -9,7 +9,7 @@ export class ReservationUtilsService {
     res: ReservationWithProductVariantData,
     prodVarId: ID_Input
   ): InventoryStatus => {
-    return res.products.find((prod) => prod.productVariant.id === prodVarId)
+    return res.products.find(prod => prod.productVariant.id === prodVarId)
       .inventoryStatus
   }
 

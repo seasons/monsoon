@@ -14,13 +14,13 @@ export function createGetUserMiddleware(prisma) {
     // Get user from prisma
     const { sub } = auth0User
     const auth0Id = sub.split("|")[1]
-    prisma.user({ auth0Id }).then((prismaUser) => {
+    prisma.user({ auth0Id }).then(prismaUser => {
       req.user = { ...req.user, ...prismaUser }
 
       try {
         // Add user context on Sentry
         if (prismaUser) {
-          Sentry.configureScope((scope) => {
+          Sentry.configureScope(scope => {
             scope.setUser({ id: prismaUser.id, email: prismaUser.email })
           })
         }

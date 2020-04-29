@@ -20,7 +20,7 @@ export class SyncPhysicalProductsService {
     private readonly utils: UtilsService
   ) {}
 
-  getPhysicalProductRecordIdentifier = (rec) => rec.fields.SUID.text
+  getPhysicalProductRecordIdentifier = rec => rec.fields.SUID.text
 
   async syncAirtableToAirtable(cliProgressBar?: any) {
     const allPhysicalProductsProduction = await this.airtableService.getAllPhysicalProducts(
@@ -33,7 +33,7 @@ export class SyncPhysicalProductsService {
     await this.syncUtils.createAllStagingRecordsWithoutLinks({
       modelName: "Physical Products",
       allProductionRecords: allPhysicalProductsProduction,
-      sanitizeFunc: (fields) =>
+      sanitizeFunc: fields =>
         this.utils.deleteFieldsFromObject(
           {
             ...fields,

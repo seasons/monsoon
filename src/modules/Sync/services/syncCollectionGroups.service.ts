@@ -44,7 +44,7 @@ export class SyncCollectionGroupsService {
 
         const data = {
           collections: {
-            connect: collections.map((collection) => {
+            connect: collections.map(collection => {
               return { slug: collection.model.slug }
             }),
           },

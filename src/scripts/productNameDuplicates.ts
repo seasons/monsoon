@@ -19,12 +19,12 @@ const duplicateNames = async () => {
   const as = new AirtableService(abs, new AirtableUtilsService(abs))
 
   const allProducts = await as.getAllProducts()
-  const groupedByName = groupBy(allProducts, (a) => a.model.name)
+  const groupedByName = groupBy(allProducts, a => a.model.name)
   let count = 0
   for (const key of Object.keys(groupedByName)) {
     if (groupedByName[key].length == 2) {
       count++
-      console.log(`${key}: ${groupedByName[key].map((a) => a.model.name)}`)
+      console.log(`${key}: ${groupedByName[key].map(a => a.model.name)}`)
     }
   }
   console.log(`num duplicates: ${count}`)
@@ -36,12 +36,12 @@ const duplicateSlugs = async () => {
   const as = new AirtableService(abs, new AirtableUtilsService(abs))
 
   const allProducts = await as.getAllProducts()
-  const groupedBySlug = groupBy(allProducts, (a) => a.model.slug)
+  const groupedBySlug = groupBy(allProducts, a => a.model.slug)
   let count = 0
   for (const key of Object.keys(groupedBySlug)) {
     if (groupedBySlug[key].length == 2) {
       count++
-      console.log(`${key}: ${groupedBySlug[key].map((a) => a.model.slug)}`)
+      console.log(`${key}: ${groupedBySlug[key].map(a => a.model.slug)}`)
     }
   }
   console.log(`num duplicates: ${count}`)

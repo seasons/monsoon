@@ -83,7 +83,7 @@ export class SyncSizesService {
     return sizeRecord
   }
 
-  getSizeRecordIdentifer = (rec) => `${rec.fields.Name}${rec.fields.Type}`
+  getSizeRecordIdentifer = rec => `${rec.fields.Name}${rec.fields.Type}`
 
   async syncAirtableToAirtable(cliProgressBar?) {
     await this.syncUtils.deleteAllStagingRecords("Sizes", cliProgressBar)
@@ -92,7 +92,7 @@ export class SyncSizesService {
       allProductionRecords: await this.airtableService.getAllSizes(
         this.airtableService.getProductionBase()
       ),
-      sanitizeFunc: (fields) =>
+      sanitizeFunc: fields =>
         this.utils.Identity({
           ...fields,
           "Top Sizes": [],

@@ -29,8 +29,7 @@ export class SyncHomepageProductRailsService {
     await this.syncUtils.createAllStagingRecordsWithoutLinks({
       modelName: "Homepage Product Rails",
       allProductionRecords: allProductionRecs,
-      sanitizeFunc: (fields) =>
-        this.utils.Identity({ ...fields, Products: [] }),
+      sanitizeFunc: fields => this.utils.Identity({ ...fields, Products: [] }),
       cliProgressBar,
     })
 
@@ -72,7 +71,7 @@ export class SyncHomepageProductRailsService {
 
         const data = {
           products: {
-            connect: products.map((product) => ({ slug: product.model.slug })),
+            connect: products.map(product => ({ slug: product.model.slug })),
           },
           slug,
           name,
@@ -116,7 +115,7 @@ export class SyncHomepageProductRailsService {
       allTargetStagingRecords: await this.airtableService.getAllProducts(
         this.airtableService.getStagingBase()
       ),
-      getRootRecordIdentifer: (rec) => rec.fields.Slug,
+      getRootRecordIdentifer: rec => rec.fields.Slug,
       getTargetRecordIdentifer: this.syncProductsService
         .getProductRecordIdentifer,
       cliProgressBar,

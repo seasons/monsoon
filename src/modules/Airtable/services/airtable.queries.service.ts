@@ -10,7 +10,7 @@ export class AirtableQueriesService {
 
   async getNextPhysicalProductSequenceNumber() {
     const sortedSequenceNumbers = (await this.getAllPhysicalProducts())
-      .map((a) => parseInt(a.model.sequenceNumber, 10))
+      .map(a => parseInt(a.model.sequenceNumber, 10))
       .sort((a, b) => a - b)
     return Math.max(...sortedSequenceNumbers) + 1
   }
@@ -55,7 +55,7 @@ export class AirtableQueriesService {
   }
 
   getPhysicalProducts(SUIDs: string[]) {
-    const formula = `OR(${SUIDs.map((a) => `{SUID}='${a}'`).join(",")})`
+    const formula = `OR(${SUIDs.map(a => `{SUID}='${a}'`).join(",")})`
     return this.getAll("Physical Products", formula)
   }
 
@@ -64,8 +64,7 @@ export class AirtableQueriesService {
     prismaPhysicalProduct
   ) {
     return allAirtablePhysicalProducts.find(
-      (physProd) =>
-        physProd.model.sUID.text === prismaPhysicalProduct.seasonsUID
+      physProd => physProd.model.sUID.text === prismaPhysicalProduct.seasonsUID
     )
   }
 
@@ -78,7 +77,7 @@ export class AirtableQueriesService {
     prismaProductVariant: any
   ) {
     return allAirtableProductVariants.find(
-      (a) => a.model.sKU === prismaProductVariant.sku
+      a => a.model.sKU === prismaProductVariant.sku
     )
   }
 
@@ -147,11 +146,11 @@ export class AirtableQueriesService {
     const baseToUse = airtableBase || this.airtableBase.base
 
     data.findByIds = (ids = []) => {
-      return data.find((record) => ids.includes(record.id))
+      return data.find(record => ids.includes(record.id))
     }
 
     data.findMultipleByIds = (ids = []) => {
-      return data.filter((record) => ids.includes(record.id))
+      return data.filter(record => ids.includes(record.id))
     }
 
     return new Promise((resolve, reject) => {
@@ -167,7 +166,7 @@ export class AirtableQueriesService {
         .select(options)
         .eachPage(
           (records, fetchNextPage) => {
-            records.forEach((record) => {
+            records.forEach(record => {
               record.model = this.airtableToPrismaObject(record.fields)
               data.push(record)
             })
@@ -187,9 +186,9 @@ export class AirtableQueriesService {
   private airtableToPrismaObject(record) {
     function camelCase(str) {
       return str
-        .replace(/\s(.)/g, (a) => a.toUpperCase())
+        .replace(/\s(.)/g, a => a.toUpperCase())
         .replace(/\s/g, "")
-        .replace(/^(.)/, (b) => b.toLowerCase())
+        .replace(/^(.)/, b => b.toLowerCase())
     }
 
     const obj = {}

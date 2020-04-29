@@ -12,7 +12,7 @@ export class SyncLocationsService {
     private readonly utils: UtilsService
   ) {}
 
-  getLocationRecordIdentifier = (rec) => rec.fields.Slug
+  getLocationRecordIdentifier = rec => rec.fields.Slug
 
   async syncAirtableToAirtable(cliProgressBar?) {
     await this.syncUtils.deleteAllStagingRecords("Locations", cliProgressBar)
@@ -21,7 +21,7 @@ export class SyncLocationsService {
       allProductionRecords: await this.airtableService.getAllLocations(
         this.airtableService.getProductionBase()
       ),
-      sanitizeFunc: (fields) =>
+      sanitizeFunc: fields =>
         this.utils.deleteFieldsFromObject(
           {
             ...fields,

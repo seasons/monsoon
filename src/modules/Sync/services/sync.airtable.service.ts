@@ -70,7 +70,7 @@ export class AirtableSyncService {
       "Users",
       "Reservations",
     ] as AirtableModelName[]
-    const startIndex = modelsInOrder.findIndex((a) => a === start)
+    const startIndex = modelsInOrder.findIndex(a => a === start)
     modelsInOrder = modelsInOrder.slice(startIndex)
 
     let bars = []
@@ -160,7 +160,7 @@ export class AirtableSyncService {
 
     const bars = {
       brands: await _createSubBar("Brands"),
-      categories: await _createSubBar("Categories", null, (n) => n * 2),
+      categories: await _createSubBar("Categories", null, n => n * 2),
       colors: await _createSubBar("Colors"),
       products: await _createSubBar("Products"),
       productVariants: await _createSubBar("Product Variants"),

@@ -75,7 +75,7 @@ export class HomepageSectionService {
             product ${ProductFragment}
           }`
         )
-        return viewedProducts.map((viewedProduct) => viewedProduct.product)
+        return viewedProducts.map(viewedProduct => viewedProduct.product)
 
       case SectionTitle.Designers:
         const brands = await this.prisma.binding.query.brands(
@@ -129,7 +129,7 @@ export class HomepageSectionService {
         )
         return Array.prototype.concat.apply(
           [],
-          rails.map((rail) => rail.products)
+          rails.map(rail => rail.products)
         )
     }
   }

@@ -15,7 +15,7 @@ export class SyncBottomSizesService {
     private readonly utils: UtilsService
   ) {}
 
-  getBottomSizeRecordIdentifer = (rec) =>
+  getBottomSizeRecordIdentifer = rec =>
     `${rec.fields.Name}${rec.fields.Waist}${rec.fields.Rise}${rec.fields.Hem}${rec.fields.Inseam}`
 
   async syncAirtableToAirtable(cliProgressBar?) {
@@ -26,7 +26,7 @@ export class SyncBottomSizesService {
     await this.syncUtils.createAllStagingRecordsWithoutLinks({
       modelName: "Bottom Sizes",
       allProductionRecords: allProductionRecords,
-      sanitizeFunc: (fields) =>
+      sanitizeFunc: fields =>
         this.utils.Identity({
           ...fields,
           Size: [],

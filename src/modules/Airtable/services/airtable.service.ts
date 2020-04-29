@@ -68,7 +68,7 @@ export class AirtableService extends AirtableQueriesService {
     returnShippingError: string
   ): Promise<[AirtableData, () => void]> {
     const itemIDs = (data.products.connect as { seasonsUID: string }[]).map(
-      (a) => a.seasonsUID
+      a => a.seasonsUID
     )
     const airtableUserRecord = await this.utils.getAirtableUserRecordByUserEmail(
       userEmail
@@ -78,7 +78,7 @@ export class AirtableService extends AirtableQueriesService {
         fields: {
           ID: data.reservationNumber,
           User: compact([airtableUserRecord?.id]),
-          Items: (await this.getPhysicalProducts(itemIDs)).map((a) => a.id),
+          Items: (await this.getPhysicalProducts(itemIDs)).map(a => a.id),
           Shipped: false,
           Status: "New",
           "Shipping Address": compact(
@@ -140,7 +140,7 @@ export class AirtableService extends AirtableQueriesService {
       const location = await this.utils.createLocation(
         fields.shippingAddress.create
       )
-      data["Shipping Address"] = location.map((l) => l.id)
+      data["Shipping Address"] = location.map(l => l.id)
     }
     if (!!fields.billingInfo) {
       const airtableBillingInfoRecord = await this.utils.createBillingInfo(
@@ -185,10 +185,10 @@ export class AirtableService extends AirtableQueriesService {
 
     let formattedFields = fields
     if (fields.length === 1 && airtableIDs.length !== 1) {
-      formattedFields = airtableIDs.map((a) => fields[0])
+      formattedFields = airtableIDs.map(a => fields[0])
     }
 
-    const formattedUpdateData = zip(airtableIDs, formattedFields).map((a) => {
+    const formattedUpdateData = zip(airtableIDs, formattedFields).map(a => {
       return {
         id: a[0],
         fields: a[1],
@@ -205,10 +205,10 @@ export class AirtableService extends AirtableQueriesService {
   ): Promise<() => void> {
     // Get the record ids of all relevant airtable physical products
     const airtablePhysicalProductRecords = await this.getPhysicalProducts(
-      physicalProducts.map((prod) => prod.seasonsUID)
+      physicalProducts.map(prod => prod.seasonsUID)
     )
     const airtablePhysicalProductRecordIds = airtablePhysicalProductRecords.map(
-      (a) => a.id
+      a => a.id
     ) as [string]
 
     // Update their statuses on airtable

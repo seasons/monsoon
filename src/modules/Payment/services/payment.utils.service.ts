@@ -24,7 +24,7 @@ export class PaymentUtilsService {
             resolve(card)
           }
         })
-    }).catch((error) => {
+    }).catch(error => {
       throw new Error(JSON.stringify(error))
     })
     return cardInfo

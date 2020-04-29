@@ -25,7 +25,7 @@ export class SyncReservationsService {
     await this.syncUtils.createAllStagingRecordsWithoutLinks({
       modelName: "Reservations",
       allProductionRecords: allReservationsProduction,
-      sanitizeFunc: (fields) =>
+      sanitizeFunc: fields =>
         this.utils.deleteFieldsFromObject(
           {
             ...fields,
@@ -119,5 +119,5 @@ export class SyncReservationsService {
     })
   }
 
-  private getReservationRecordIdentifer = (rec) => rec.fields.ID
+  private getReservationRecordIdentifer = rec => rec.fields.ID
 }

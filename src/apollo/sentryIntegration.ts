@@ -11,12 +11,12 @@ export const apolloServerSentryPlugin = {
   requestDidStart() {
     return {
       didEncounterErrors(rc) {
-        Sentry.withScope((scope) => {
-          scope.addEventProcessor((event) =>
+        Sentry.withScope(scope => {
+          scope.addEventProcessor(event =>
             Sentry.Handlers.parseRequest(event, (rc.context as any).req)
           )
 
-          rc.errors.forEach((error) => {
+          rc.errors.forEach(error => {
             if (error.path || error.name !== "GraphQLError") {
               scope.setExtras({
                 path: error.path,

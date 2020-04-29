@@ -20,17 +20,17 @@ const run = async () => {
 
   const allPhysProds = await as.getAllPhysicalProducts()
   const allSequenceNumbers = allPhysProds
-    .map((a) => parseInt(a.model.sequenceNumber, 10))
+    .map(a => parseInt(a.model.sequenceNumber, 10))
     .sort((a, b) => a - b)
   console.log(Math.max(...allSequenceNumbers) + 1)
   console.log(allPhysProds.length + 1)
-  const groupedByBarcodes = groupBy(allPhysProds, (a) => a.model.barcode)
+  const groupedByBarcodes = groupBy(allPhysProds, a => a.model.barcode)
   let count = 0
   for (const key of Object.keys(groupedByBarcodes)) {
     if (groupedByBarcodes[key].length == 2) {
       count++
       console.log(
-        `${key}: ${groupedByBarcodes[key].map((a) => a.model.sUID.text)}`
+        `${key}: ${groupedByBarcodes[key].map(a => a.model.sUID.text)}`
       )
     }
   }

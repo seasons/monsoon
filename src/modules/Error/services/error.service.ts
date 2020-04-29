@@ -10,7 +10,7 @@ export class ErrorService {
 
   setUserContext(prismaUser: User) {
     if (this.shouldReportErrorsToSentry) {
-      Sentry.configureScope((scope) => {
+      Sentry.configureScope(scope => {
         scope.setUser({ id: prismaUser.id, email: prismaUser.email })
       })
     }
@@ -18,7 +18,7 @@ export class ErrorService {
 
   setExtraContext(dict: Object, keyPrefix?: string) {
     if (this.shouldReportErrorsToSentry) {
-      Sentry.configureScope((scope) => {
+      Sentry.configureScope(scope => {
         for (const key of Object.keys(dict)) {
           scope.setExtra(`${keyPrefix}.${key}`, dict[key])
         }

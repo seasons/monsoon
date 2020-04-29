@@ -35,7 +35,7 @@ const updateSlugs = async () => {
   const allAirtableProducts = await as.getAllProducts()
   for (const prismaProd of allPrismaProducts) {
     const correspondingAirtableProduct = allAirtableProducts.find(
-      (a) => a.model.slug === prismaProd.slug
+      a => a.model.slug === prismaProd.slug
     )
     const newSlug = slugify(
       prismaProd.brand.brandCode + " " + prismaProd.slug

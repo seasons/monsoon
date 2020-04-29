@@ -23,7 +23,7 @@ export class SyncTopSizesService {
     await this.syncUtils.createAllStagingRecordsWithoutLinks({
       modelName: "Top Sizes",
       allProductionRecords: allProductionRecords,
-      sanitizeFunc: (fields) =>
+      sanitizeFunc: fields =>
         this.utils.Identity({
           ...fields,
           Size: [],
@@ -63,6 +63,6 @@ export class SyncTopSizesService {
     })
   }
 
-  getTopSizeRecordIdentifier = (rec) =>
+  getTopSizeRecordIdentifier = rec =>
     `${rec.fields.Name}${rec.fields.Length}${rec.fields.Sleeve}${rec.fields.Shoulder}${rec.fields.Chest}${rec.fields.Neck}`
 }

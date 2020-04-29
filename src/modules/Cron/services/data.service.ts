@@ -309,43 +309,43 @@ export class DataScheduledJobs {
     let errors = []
 
     /* Do we have any products on prisma but not airtable? Vice versa? */
-    const allPrismaProductSlugs = allPrismaProducts.map((prod) => prod.slug)
+    const allPrismaProductSlugs = allPrismaProducts.map(prod => prod.slug)
     const allAirtableProductSlugs = allAirtableProducts.map(
-      (prod) => prod.fields.Slug
+      prod => prod.fields.Slug
     )
     const productsInAirtableButNotPrisma = allAirtableProductSlugs.filter(
-      (slug) => !allPrismaProductSlugs.includes(slug)
+      slug => !allPrismaProductSlugs.includes(slug)
     )
     const productsInPrismaButNotAirtable = allPrismaProductSlugs.filter(
-      (slug) => !allAirtableProductSlugs.includes(slug)
+      slug => !allAirtableProductSlugs.includes(slug)
     )
 
     /* Do we have any physical products in airtable but not prisma? Vice versa */
     const allPrismaPhysicalProductSUIDs = allPrismaPhysicalProducts.map(
-      (physProd) => physProd.seasonsUID
+      physProd => physProd.seasonsUID
     )
     const allAirtablePhysicalProductSUIDs = allAirtablePhysicalProducts.map(
-      (physProd) => physProd.fields.SUID.text
+      physProd => physProd.fields.SUID.text
     )
     const physicalProductsInAirtableButNotPrisma = allAirtablePhysicalProductSUIDs.filter(
-      (suid) => !allPrismaPhysicalProductSUIDs.includes(suid)
+      suid => !allPrismaPhysicalProductSUIDs.includes(suid)
     )
     const physicalProductsInPrismaButNotAirtable = allPrismaPhysicalProductSUIDs.filter(
-      (suid) => !allAirtablePhysicalProductSUIDs.includes(suid)
+      suid => !allAirtablePhysicalProductSUIDs.includes(suid)
     )
 
     /* Do we have any product variants in airtable but not prisma? Vice versa? */
     const allPrismaProductVariantSKUs = allPrismaProductVariants.map(
-      (prodVar) => prodVar.sku
+      prodVar => prodVar.sku
     )
     const allAirtableProductVariantSKUs = allAirtableProductVariants.map(
-      (prodVar) => prodVar.fields.SKU
+      prodVar => prodVar.fields.SKU
     )
     const productVariantsInAirtableButNotPrisma = allAirtableProductVariantSKUs.filter(
-      (sku) => !allPrismaProductVariantSKUs.includes(sku)
+      sku => !allPrismaProductVariantSKUs.includes(sku)
     )
     const productVariantsInPrismaButNotAirtable = allPrismaProductVariantSKUs.filter(
-      (sku) => !allAirtableProductVariantSKUs.includes(sku)
+      sku => !allAirtableProductVariantSKUs.includes(sku)
     )
 
     /* Are the skus matching between product variants on prisma and airtable?
@@ -484,7 +484,7 @@ export class DataScheduledJobs {
           text:
             "prisma: number of product variants with a count profile that doesn't match the statuses of the attached physical products",
           paramArray: prismaCountToStatusMisalignments,
-          printDetailFunc: (a) => {
+          printDetailFunc: a => {
             console.log(util.inspect(a, { depth: null }))
           },
         },
@@ -492,10 +492,10 @@ export class DataScheduledJobs {
           text:
             "airtable: number of product variants with a count profile that doesn't match the statuses of the attached physical products",
           paramArray: airtableCountToStatusMisalignments,
-          printDetailFunc: (a) => {
+          printDetailFunc: a => {
             console.log(
               util.inspect(
-                a.map((a) => a.sku),
+                a.map(a => a.sku),
                 { depth: null }
               )
             )
@@ -675,15 +675,15 @@ export class DataScheduledJobs {
     allAirtablePhysicalProducts: AirtableData
   ) {
     const prismaMisalignments = allPrismaProductVariants
-      .filter((a) => {
+      .filter(a => {
         const physicalProductsWithStatusReserved = a.physicalProducts.filter(
-          (b) => b.inventoryStatus === "Reserved"
+          b => b.inventoryStatus === "Reserved"
         )
         const physicalProductsWithStatusReservable = a.physicalProducts.filter(
-          (b) => b.inventoryStatus === "Reservable"
+          b => b.inventoryStatus === "Reservable"
         )
         const physicalProductsWithStatusNonReservable = a.physicalProducts.filter(
-          (b) => b.inventoryStatus === "NonReservable"
+          b => b.inventoryStatus === "NonReservable"
         )
         return (
           a.reservable !== physicalProductsWithStatusReservable.length ||
@@ -691,7 +691,7 @@ export class DataScheduledJobs {
           a.nonReservable !== physicalProductsWithStatusNonReservable.length
         )
       })
-      .map((c) =>
+      .map(c =>
         this.utils.Identity({
           sku: c.sku,
           createdAt: c.createdAt,
@@ -702,7 +702,7 @@ export class DataScheduledJobs {
             nonReservable: c.nonReservable,
           },
           updatedAt: c.updatedAt,
-          physicalProducts: c.physicalProducts.map((d) =>
+          physicalProducts: c.physicalProducts.map(d =>
             this.utils.Identity({
               suid: d.seasonsUID,
               status: d.inventoryStatus,
@@ -714,19 +714,19 @@ export class DataScheduledJobs {
       )
 
     const airtableMisalignments = allAirtableProductVariants
-      .filter((a) => {
+      .filter(a => {
         const correspondingAirtablePhysicalProducts = this.getAttachedAirtablePhysicalProducts(
           allAirtablePhysicalProducts,
           a
         )
         const physicalProductsWithStatusReserved = correspondingAirtablePhysicalProducts.filter(
-          (c) => c.fields["Inventory Status"] === "Reserved"
+          c => c.fields["Inventory Status"] === "Reserved"
         )
         const physicalProductsWithStatusReservable = correspondingAirtablePhysicalProducts.filter(
-          (c) => c.fields["Inventory Status"] === "Reservable"
+          c => c.fields["Inventory Status"] === "Reservable"
         )
         const physicalProductsWithStatusNonReservable = correspondingAirtablePhysicalProducts.filter(
-          (c) => c.fields["Inventory Status"] === "Non Reservable"
+          c => c.fields["Inventory Status"] === "Non Reservable"
         )
         return (
           !!a.fields.SKU &&
@@ -738,7 +738,7 @@ export class DataScheduledJobs {
               physicalProductsWithStatusNonReservable.length)
         )
       })
-      .map((d) =>
+      .map(d =>
         this.utils.Identity({
           sku: d.fields.SKU,
           counts: {
@@ -750,7 +750,7 @@ export class DataScheduledJobs {
           physicalProducts: this.getAttachedAirtablePhysicalProducts(
             allAirtablePhysicalProducts,
             d
-          ).map((e) =>
+          ).map(e =>
             this.utils.Identity({
               SUID: e.fields.SUID.text,
               status: e.fields["Inventory Status"],
@@ -804,17 +804,17 @@ export class DataScheduledJobs {
     const misalignedStatusOnReservations = []
     const reservationsWithMoreThanThreeProducts = []
     const allPrismaReservationNumbers = allPrismaReservations.map(
-      (resy) => resy.reservationNumber
+      resy => resy.reservationNumber
     )
     const allAirtableReservationNumbers = allAirtableReservations.map(
-      (resy) => resy.fields.ID
+      resy => resy.fields.ID
     )
     const reservationsInPrismaButNotAirtable = allPrismaReservationNumbers.filter(
-      (prismaResyNumber) =>
+      prismaResyNumber =>
         !allAirtableReservationNumbers.includes(prismaResyNumber)
     )
     const reservationsInAirtableButNotPrisma = allAirtableReservationNumbers.filter(
-      (airtableResyNumber) =>
+      airtableResyNumber =>
         !allPrismaReservationNumbers.includes(airtableResyNumber)
     )
     for (const prismaResy of allPrismaReservations) {
@@ -827,21 +827,20 @@ export class DataScheduledJobs {
       }
 
       const correspondingAirtableReservation = allAirtableReservations.find(
-        (airtableResy) =>
-          airtableResy.fields.ID === prismaResy.reservationNumber
+        airtableResy => airtableResy.fields.ID === prismaResy.reservationNumber
       )
 
       // Check SUID match
       const prismaPhysicalProductSUIDs = prismaResy.products.map(
-        (prod) => prod.seasonsUID
+        prod => prod.seasonsUID
       )
       const airtablePhysicalProductSUIDs = correspondingAirtableReservation.fields.Items.map(
-        (airtablePhysicalProductRecordID) =>
+        airtablePhysicalProductRecordID =>
           allAirtablePhysicalProducts.find(
-            (airtablePhysProd) =>
+            airtablePhysProd =>
               airtablePhysProd.id === airtablePhysicalProductRecordID
           )
-      ).map((airtablePhysProdRecord) => airtablePhysProdRecord.fields.SUID.text)
+      ).map(airtablePhysProdRecord => airtablePhysProdRecord.fields.SUID.text)
       if (
         xor(prismaPhysicalProductSUIDs, airtablePhysicalProductSUIDs).length !==
         0
@@ -908,7 +907,7 @@ export class DataScheduledJobs {
         "Physical Products"
       ]) {
         const airtablePhysProdRecord = allAirtablePhysicalProducts.find(
-          (rec) => rec.id == airtablePhysProdRecordID
+          rec => rec.id == airtablePhysProdRecordID
         )
         if (
           !airtablePhysProdRecord.fields.SUID.text.startsWith(
@@ -947,7 +946,7 @@ export class DataScheduledJobs {
     if (datapoints.length >= 1) {
       blocks.push({
         type: "section",
-        fields: datapoints.map((p) =>
+        fields: datapoints.map(p =>
           this.utils.Identity({
             type: "mrkdwn",
             text: `*${p.name}*\n${this.flagIfNeeded(
@@ -1010,7 +1009,7 @@ export class DataScheduledJobs {
   ) {
     if (!airtableProductVariant.fields.SKU) return []
 
-    return allAirtablePhysicalProducts.filter((a) =>
+    return allAirtablePhysicalProducts.filter(a =>
       airtableProductVariant.fields["Physical Products"].includes(a.id)
     )
   }
@@ -1060,8 +1059,8 @@ export class DataScheduledJobs {
 
   private async getProdVarsWithImpossibleCounts(allPrismaProductVariants) {
     return allPrismaProductVariants
-      .filter((a) => a.total !== a.reserved + a.reservable + a.nonReservable)
-      .map((a) =>
+      .filter(a => a.total !== a.reserved + a.reservable + a.nonReservable)
+      .map(a =>
         this.utils.Identity({
           sku: a.sku,
           total: a.total,

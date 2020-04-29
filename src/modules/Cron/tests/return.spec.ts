@@ -212,7 +212,7 @@ describe("Return Flow Cron Job", () => {
       productVariantsToReserveIds = sampleSize(
         await testUtilsService.getTestableReservableProductVariants(),
         3
-      ).map((a) => a.id)
+      ).map(a => a.id)
       testUtilsService.initializePreReservationCustomerBag(
         productVariantsToReserveIds,
         testCustomer,
@@ -366,7 +366,7 @@ describe("Return Flow Cron Job", () => {
       productVariantsToReserveIds = sampleSize(
         await testUtilsService.getTestableReservableProductVariants(),
         3
-      ).map((a) => a.id)
+      ).map(a => a.id)
       testUtilsService.initializePreReservationCustomerBag(
         productVariantsToReserveIds,
         testCustomer,

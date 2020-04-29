@@ -49,7 +49,7 @@ describe("Reserve Items", () => {
       productVariantsToReserveIds = sampleSize(
         await testUtilsService.getTestableReservableProductVariants(),
         3
-      ).map((a) => a.id)
+      ).map(a => a.id)
       testUtilsService.initializePreReservationCustomerBag(
         productVariantsToReserveIds,
         testCustomer,
@@ -124,21 +124,21 @@ describe("Reserve Items", () => {
 
     it("reserved the expected items", () => {
       expect(returnData.products).toHaveLength(3)
-      expect(
-        returnData.products.map((a) => a.productVariant.id).sort()
-      ).toEqual(productVariantsToReserveIds.sort())
+      expect(returnData.products.map(a => a.productVariant.id).sort()).toEqual(
+        productVariantsToReserveIds.sort()
+      )
     })
 
     it("updates the customers bag", () => {
       const reservedItems = customerBagItemsAfterReservation.filter(
-        (a) => a.status === "Reserved"
+        a => a.status === "Reserved"
       )
       const addedItems = customerBagItemsAfterReservation.filter(
-        (a) => a.status === "Added"
+        a => a.status === "Added"
       )
       expect(reservedItems).toHaveLength(3)
       expect(addedItems).toHaveLength(3)
-      expect(reservedItems.map((a) => a.productVariant.id).sort()).toEqual(
+      expect(reservedItems.map(a => a.productVariant.id).sort()).toEqual(
         productVariantsToReserveIds.sort()
       )
     })
@@ -159,7 +159,7 @@ describe("Reserve Items", () => {
           2
         ),
         sample(await testUtilsService.getTestableReservedProductVariants()),
-      ]).map((a) => a.id)
+      ]).map(a => a.id)
     }, ONE_MIN)
 
     afterAll(async () => {

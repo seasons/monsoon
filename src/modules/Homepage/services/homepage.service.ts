@@ -46,7 +46,7 @@ export class HomepageService {
       })
     }
 
-    productRails.forEach((rail) => {
+    productRails.forEach(rail => {
       sections.push({
         type: "HomepageProductRails",
         __typename: "HomepageSection",

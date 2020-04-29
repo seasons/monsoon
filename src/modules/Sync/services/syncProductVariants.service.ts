@@ -33,7 +33,7 @@ export class SyncProductVariantsService {
     private readonly utils: UtilsService
   ) {}
 
-  getProductVariantRecordIdentifier = (rec) => rec.fields.SKU
+  getProductVariantRecordIdentifier = rec => rec.fields.SKU
 
   async syncAirtableToAirtable(cliProgressBar?) {
     const allProductVariantsProduction = await this.airtableService.getAllProductVariants(
@@ -46,7 +46,7 @@ export class SyncProductVariantsService {
     await this.syncUtils.createAllStagingRecordsWithoutLinks({
       modelName: "Product Variants",
       allProductionRecords: allProductVariantsProduction,
-      sanitizeFunc: (fields) =>
+      sanitizeFunc: fields =>
         this.utils.deleteFieldsFromObject(
           {
             ...fields,
@@ -129,9 +129,7 @@ export class SyncProductVariantsService {
 
         // Get the related brand, color, location, style, topsize, bottomSize
         const brand = allBrands.findByIds(product.model.brand)
-        const color = allColors.find(
-          (x) => x.model.name === product.model.color
-        )
+        const color = allColors.find(x => x.model.name === product.model.color)
         const styleNumber = product.model.styleCode
         const topSize = allTopSizes.findByIds(model.topSize)
         const bottomSize = allBottomSizes.findByIds(model.bottomSize)
@@ -165,7 +163,7 @@ export class SyncProductVariantsService {
           styleNumber
         )
 
-        const physicalProducts = allPhysicalProducts.filter((a) =>
+        const physicalProducts = allPhysicalProducts.filter(a =>
           (a.get("Product Variant") || []).includes(productVariant.id)
         )
         const {
@@ -223,7 +221,7 @@ export class SyncProductVariantsService {
             .productVariant({ sku })
             .manufacturerSizes()
           await this.prisma.client.deleteManySizes({
-            id_in: existingManufacturerSizes?.map((a) => a.id) || [],
+            id_in: existingManufacturerSizes?.map(a => a.id) || [],
           })
 
           // For each manufacturer size, store the name, type, and display value
@@ -263,7 +261,7 @@ export class SyncProductVariantsService {
             },
           },
           manufacturerSizes: {
-            connect: manufacturerSizeRecords.map((a) =>
+            connect: manufacturerSizeRecords.map(a =>
               this.utils.Identity({
                 id: a.id,
               })
@@ -312,7 +310,7 @@ export class SyncProductVariantsService {
           }
         )
 
-        newPhysicalProducts.forEach(async (p) => {
+        newPhysicalProducts.forEach(async p => {
           await this.prisma.client.upsertPhysicalProduct({
             where: {
               seasonsUID: p.seasonsUID,
@@ -429,7 +427,7 @@ export class SyncProductVariantsService {
     }
 
     const possibleIssue = Object.keys(possibleIssues).find(
-      (a) => possibleIssues[a]
+      a => possibleIssues[a]
     )
     return {
       isMissing: !!possibleIssue,

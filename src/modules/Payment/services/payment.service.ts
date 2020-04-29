@@ -79,7 +79,7 @@ export class PaymentService {
             resolve(result.hosted_page)
           }
         })
-    }).catch((error) => {
+    }).catch(error => {
       throw new Error(JSON.stringify(error))
     })
   }
@@ -99,7 +99,7 @@ export class PaymentService {
             resolve(result.hosted_page)
           }
         })
-    }).catch((error) => {
+    }).catch(error => {
       throw new Error(JSON.stringify(error))
     })
   }
@@ -282,14 +282,14 @@ export class PaymentService {
     }
 
     return Promise.all(
-      invoices.map(async (invoice) =>
+      invoices.map(async invoice =>
         identity({
           ...this.formatInvoice(invoice),
           transactions: this.utils
             .filterErrors<Transaction>(
               await transactionsForCustomerLoader.load(customerId)
             )
-            ?.filter((a) =>
+            ?.filter(a =>
               this.getInvoiceTransactionIds(invoice)?.includes(a.id)
             )
             ?.map(this.formatTransaction),
@@ -331,7 +331,7 @@ export class PaymentService {
   }
 
   private getInvoiceTransactionIds(invoice): string[] {
-    return invoice.linkedPayments.map((a) => a.txnId)
+    return invoice.linkedPayments.map(a => a.txnId)
   }
 
   /**
@@ -344,7 +344,7 @@ export class PaymentService {
       amount: invoice.total,
       closingDate: this.utils.secondsSinceEpochToISOString(invoice.date),
       dueDate: this.utils.secondsSinceEpochToISOString(invoice.dueDate, true),
-      creditNotes: invoice.issuedCreditNotes.map((a) =>
+      creditNotes: invoice.issuedCreditNotes.map(a =>
         identity({
           ...a,
           reasonCode: upperFirst(camelCase(a.reasonCode)),

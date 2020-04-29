@@ -94,7 +94,7 @@ export class ProductService {
           id: customer.id,
         },
         productVariant: {
-          id_in: productVariants.map((a) => a.id),
+          id_in: productVariants.map(a => a.id),
         },
         saved: true,
       },
@@ -176,8 +176,8 @@ export class ProductService {
       }`
     )
 
-    const reservedIds = reservedBagItems.map((a) => a.productVariant.id)
-    const newItems = items.filter((a) => !reservedIds.includes(a))
+    const reservedIds = reservedBagItems.map(a => a.productVariant.id)
+    const newItems = items.filter(a => !reservedIds.includes(a))
 
     await this.productVariantService.updateProductVariantCounts(newItems, {
       dryRun: true,
@@ -207,7 +207,7 @@ export class ProductService {
 
     const styleNumber = brandCount + 1
     const styleCode = styleNumber.toString().padStart(3, "0")
-    return sizeNames.map((sizeName) => {
+    return sizeNames.map(sizeName => {
       const sizeCode = this.utils.sizeNameToSizeCode(sizeName)
       return `${brand.brandCode}-${color.colorCode}-${sizeCode}-${styleCode}`
     })

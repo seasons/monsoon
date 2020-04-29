@@ -224,7 +224,7 @@ export class ReservationScheduledJobs {
           })
 
           const returnedPhysicalProducts = prismaReservation.products.filter(
-            (p) =>
+            p =>
               [
                 "Reservable" as InventoryStatus,
                 "NonReservable" as InventoryStatus,
@@ -250,7 +250,7 @@ export class ReservationScheduledJobs {
           await this.createReservationFeedbacksForVariants(
             await this.prisma.client.productVariants({
               where: {
-                id_in: returnedPhysicalProducts.map((p) => p.productVariant.id),
+                id_in: returnedPhysicalProducts.map(p => p.productVariant.id),
               },
             }),
             prismaUser,
@@ -497,12 +497,12 @@ export class ReservationScheduledJobs {
   ) {
     const returnedPhysicalProductIDs: {
       id: ID_Input
-    }[] = returnedPhysicalProducts.map((p) => {
+    }[] = returnedPhysicalProducts.map(p => {
       return { id: p.id }
     })
     const returnedProductVariantIDs: string[] = prismaReservation.products
-      .filter((p) => p.inventoryStatus === "Reservable")
-      .map((prod) => prod.productVariant.id)
+      .filter(p => p.inventoryStatus === "Reservable")
+      .map(prod => prod.productVariant.id)
     const weight = await this.shippingService.calcShipmentWeightFromProductVariantIDs(
       returnedProductVariantIDs
     )
@@ -553,7 +553,7 @@ export class ReservationScheduledJobs {
       customer: { id: prismaReservation.customer.id },
       saved: false,
       productVariant: {
-        id_in: returnedPhysicalProducts.map((p) => p.productVariant.id),
+        id_in: returnedPhysicalProducts.map(p => p.productVariant.id),
       },
       status: "Reserved",
     })
@@ -565,7 +565,7 @@ export class ReservationScheduledJobs {
     reservation: Reservation
   ) {
     const variantInfos = await Promise.all(
-      productVariants.map(async (variant) => {
+      productVariants.map(async variant => {
         const products: Product[] = await this.prisma.client.products({
           where: {
             variants_some: {
@@ -587,7 +587,7 @@ export class ReservationScheduledJobs {
     )
     await this.prisma.client.createReservationFeedback({
       feedbacks: {
-        create: variantInfos.map((variantInfo) => ({
+        create: variantInfos.map(variantInfo => ({
           isCompleted: false,
           questions: {
             create: [

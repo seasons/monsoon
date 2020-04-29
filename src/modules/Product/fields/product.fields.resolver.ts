@@ -82,7 +82,7 @@ export class ProductFieldsResolver {
       }
       `
     )
-    return product?.images.map((image) => {
+    return product?.images.map(image => {
       return {
         url: this.imageResizeService.imageResize(image?.url, size, {
           w: width,

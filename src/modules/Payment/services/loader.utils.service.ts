@@ -16,7 +16,7 @@ export class LoaderUtilsService {
     ids,
     maxIds = 200,
     filterKey = `id[in]`,
-    groupFunc = (a) => a.id,
+    groupFunc = a => a.id,
     extractFunc = (valsById, id) => valsById[id],
     transformFunc = identity,
     ...args
@@ -25,7 +25,7 @@ export class LoaderUtilsService {
       concat(
         [],
         ...(await Promise.all(
-          chunk(ids, maxIds).map(async (ids) =>
+          chunk(ids, maxIds).map(async ids =>
             this.loadRecordsWithList({
               ids,
               filterKey,
@@ -61,7 +61,7 @@ export class LoaderUtilsService {
           ...(offset === "start" ? {} : { offset }),
         })
         .request())
-      allRecords.push(...list?.map((a) => a[recordName]))
+      allRecords.push(...list?.map(a => a[recordName]))
       if (!offset) {
         break
       }

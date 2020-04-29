@@ -11,7 +11,7 @@ export class SearchQueriesResolver {
     const indexes = ["brands", "products"]
     const result = await this.searchService.elasticsearch.search({
       index: indexes
-        .map((a) => `${a}-${process.env.NODE_ENV ?? "staging"}`)
+        .map(a => `${a}-${process.env.NODE_ENV ?? "staging"}`)
         .join(","),
       body: {
         query: {

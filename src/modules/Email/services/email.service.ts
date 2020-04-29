@@ -32,7 +32,7 @@ export class EmailService {
       to: process.env.OPERATIONS_ADMIN_EMAIL,
       data: this.data.reservationReturnConfirmation(
         reservation.reservationNumber,
-        products.map((p) => p.seasonsUID),
+        products.map(p => p.seasonsUID),
         user.email
       ),
     })

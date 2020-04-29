@@ -216,19 +216,19 @@ export class TestUtilsService {
         where: { productVariant: { sku: pv.sku } },
       })
       await this.prisma.client.updateManyPhysicalProducts({
-        where: { id_in: physicalProducts.map((a) => a.id) },
+        where: { id_in: physicalProducts.map(a => a.id) },
         data: { inventoryStatus },
       })
       const allAirtablePhysicalProducts = await this.airtableService.getAllPhysicalProducts()
       await this.airtableService.updatePhysicalProducts(
         physicalProducts
-          .map((a) =>
+          .map(a =>
             this.airtableService.getCorrespondingAirtablePhysicalProduct(
               allAirtablePhysicalProducts,
               a
             )
           )
-          .map((a) => a.id),
+          .map(a => a.id),
         [
           {
             "Inventory Status": this.airtableService.prismaToAirtableInventoryStatus(
@@ -241,7 +241,7 @@ export class TestUtilsService {
 
     return await this.prisma.binding.query.productVariants(
       {
-        where: { id_in: prodVars.map((a) => a.id) },
+        where: { id_in: prodVars.map(a => a.id) },
       },
       info || this.defaultProductVariantInfo
     )
@@ -270,7 +270,7 @@ export class TestUtilsService {
       })
     } else {
       res = await this.prisma.binding.query.productVariants(
-        { where: { sku_in: prodVarsWithAirtableRecords.map((a) => a.sku) } },
+        { where: { sku_in: prodVarsWithAirtableRecords.map(a => a.sku) } },
         info || this.defaultProductVariantInfo
       )
     }
@@ -281,10 +281,10 @@ export class TestUtilsService {
   private async getProductVariantsWithAirtableRecords(args, info) {
     const allAirtablePhysicalProductsSUIDs = (
       await this.airtableService.getAllPhysicalProducts()
-    ).map((a) => a.model.sUID.text)
+    ).map(a => a.model.sUID.text)
     const allAirtableProductVariantSKUs = (
       await this.airtableService.getAllProductVariants()
-    ).map((a) => a.model.sKU)
+    ).map(a => a.model.sKU)
 
     const _res = (
       await this.prisma.binding.query.productVariants(
@@ -297,15 +297,15 @@ export class TestUtilsService {
       }`
       )
     )
-      .filter((a) => allAirtableProductVariantSKUs.includes(a.sku))
-      .filter((a) =>
-        a.physicalProducts?.every((b) =>
+      .filter(a => allAirtableProductVariantSKUs.includes(a.sku))
+      .filter(a =>
+        a.physicalProducts?.every(b =>
           allAirtablePhysicalProductsSUIDs.includes(b.seasonsUID)
         )
       )
 
     return await this.prisma.binding.query.productVariants(
-      { where: { sku_in: _res.map((a) => a.sku) } },
+      { where: { sku_in: _res.map(a => a.sku) } },
       info || this.defaultProductVariantInfo
     )
   }

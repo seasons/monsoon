@@ -164,7 +164,7 @@ export class ProductUtilsService {
       }
       `
     )
-    const products = brands.map((b) => b.products).flat()
+    const products = brands.map(b => b.products).flat()
     return products
   }
 }

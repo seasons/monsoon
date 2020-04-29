@@ -140,6 +140,7 @@
     "yargs": "^15.1.0"
   },
   "prettier": {
+    "arrowParens": "avoid",
     "semi": false,
     "singleQuote": false,
     "trailingComma": "es5",

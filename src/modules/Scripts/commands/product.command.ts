@@ -52,7 +52,7 @@ export class ProductCommands {
 
     this.logger.log(
       `Reservable product variant ids: [${reservableProductVariants
-        .map((a) => `"${a.id}"`)
+        .map(a => `"${a.id}"`)
         .slice(reservableProductVariants.length - 3)}]` // get the last 3, since CircleCI tests make use of the first 3
     )
   }
@@ -125,7 +125,7 @@ export class ProductCommands {
         data: prodVarPrismaResetData,
       })
       await this.prisma.client.updateManyPhysicalProducts({
-        where: { id_in: pv.physicalProducts.map((a) => a.id) },
+        where: { id_in: pv.physicalProducts.map(a => a.id) },
         data: physProdPrismaResetData,
       })
       pBar.increment()
@@ -145,7 +145,7 @@ export class ProductCommands {
         ) as string[]
         await this.airtableService.updatePhysicalProducts(
           airtablePhysicalProducts,
-          airtablePhysicalProducts.map((a) => physProdAirtableResetData)
+          airtablePhysicalProducts.map(a => physProdAirtableResetData)
         )
       }
       pBar.increment()

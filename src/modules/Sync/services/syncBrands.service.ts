@@ -24,7 +24,7 @@ export class SyncBrandsService {
       allProductionRecords: await this.airtableService.getAllBrands(
         this.airtableService.getProductionBase()
       ),
-      sanitizeFunc: (fields) =>
+      sanitizeFunc: fields =>
         this.utils.Identity({
           ...fields,
           Logo: this.syncUtils.sanitizeAttachments(fields.Logo),

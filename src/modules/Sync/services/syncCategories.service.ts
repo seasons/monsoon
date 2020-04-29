@@ -17,7 +17,7 @@ export class SyncCategoriesService {
     private readonly utils: UtilsService
   ) {}
 
-  getCategoryRecordIdentifier = (rec) => rec.fields.Name
+  getCategoryRecordIdentifier = rec => rec.fields.Name
 
   async syncAirtableToAirtable(cliProgressBar?) {
     const allProductionCategories = await this.airtableService.getAllCategories(
@@ -28,7 +28,7 @@ export class SyncCategoriesService {
     await this.syncUtils.createAllStagingRecordsWithoutLinks({
       modelName: "Categories",
       allProductionRecords: allProductionCategories,
-      sanitizeFunc: (fields) =>
+      sanitizeFunc: fields =>
         this.utils.deleteFieldsFromObject(
           {
             ...fields,
@@ -100,7 +100,7 @@ export class SyncCategoriesService {
       }
     }
 
-    const categories = allCategories.map((category) => {
+    const categories = allCategories.map(category => {
       const parent = allCategories.findByIds(category.model.parent)
       const model = parent && parent.model
       return {
@@ -157,8 +157,8 @@ export class SyncCategoriesService {
       allRootStagingRecords: allStagingCategories,
       allTargetProductionRecords: allProductionCategories,
       allTargetStagingRecords: allStagingCategories,
-      getRootRecordIdentifer: (rec) => rec.fields.Name,
-      getTargetRecordIdentifer: (rec) => rec.fields.Name,
+      getRootRecordIdentifer: rec => rec.fields.Name,
+      getTargetRecordIdentifer: rec => rec.fields.Name,
       cliProgressBar,
     })
   }

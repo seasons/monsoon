@@ -49,7 +49,7 @@ export class SyncCollectionsService {
 
         const data = {
           products: {
-            connect: products.map((product) => ({ slug: product.model.slug })),
+            connect: products.map(product => ({ slug: product.model.slug })),
           },
           slug,
           title,

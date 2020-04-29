@@ -169,7 +169,7 @@ export class PrismaSyncService {
     const auth0Users = await this.authService.getAuth0Users()
     for (const prismaUser of prismaUsers) {
       const correspondingAuth0User = auth0Users.find(
-        (a) => a.email === prismaUser.email
+        a => a.email === prismaUser.email
       )
       if (!!correspondingAuth0User) {
         console.log(
