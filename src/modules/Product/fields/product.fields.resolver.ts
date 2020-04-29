@@ -1,5 +1,6 @@
 import { Args, Info, Parent, ResolveField, Resolver } from "@nestjs/graphql"
-import { ImageResizeService, ImageSize } from "@modules/Image"
+import { ImageResizeService } from "@modules/Image"
+import { ImageSize } from "@modules/Image/image.types"
 
 import { Customer } from "@app/nest_decorators"
 import { PrismaService } from "@prisma/prisma.service"
@@ -67,7 +68,7 @@ export class ProductFieldsResolver {
     @Parent() parent,
     @Args("width") width: number,
     @Args("height") height: number,
-    @Args("size") size: ImageSize = ImageSize.Medium
+    @Args("size") size: ImageSize = "Medium"
   ) {
     const product = await this.prisma.binding.query.product(
       {

@@ -2,19 +2,12 @@ import { identity, pickBy } from "lodash"
 
 import { Injectable } from "@nestjs/common"
 import qs from "querystring"
+import { ImageSize } from "../image.types"
 
 interface ImageResizerOptions {
   fit?: "clip"
   w?: number
   h?: number
-}
-
-export enum ImageSize {
-  Thumb = "thumb",
-  Small = "small",
-  Medium = "medium",
-  Large = "large",
-  XLarge = "x-large",
 }
 
 const IMGIX_BASE = "https://seasons-nyc.imgix.net/"

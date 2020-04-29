@@ -1,2 +1,2 @@
-export { ImageSize, ImageResizeService } from "./services/imageResize.service"
+export { ImageResizeService } from "./services/imageResize.service"
 export { ImageModule } from "./image.module"
