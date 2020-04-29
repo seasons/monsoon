@@ -1,5 +1,6 @@
 import { AirtableModule } from "@modules/Airtable"
 import { EmailModule } from "@modules/Email"
+import { ImageModule } from "@modules/Image"
 import { Module } from "@nestjs/common"
 import { PrismaModule } from "@prisma/prisma.module"
 import { ProductModule } from "@modules/Product"
@@ -17,6 +18,7 @@ import { ShippingModule } from "@modules/Shipping/shipping.module"
   imports: [
     AirtableModule,
     EmailModule,
+    ImageModule,
     PrismaModule,
     ProductModule,
     ShippingModule,
