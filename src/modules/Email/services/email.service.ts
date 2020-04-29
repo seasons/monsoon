@@ -114,7 +114,7 @@ export class EmailService {
   ) => {
     const images = await this.productUtils.getProductImages(product)
     return this.utils.Identity({
-      url: images[0].url,
+      url: images?.[0]?.url,
       brand: await this.prisma.client
         .product({ id: product.id })
         .brand()

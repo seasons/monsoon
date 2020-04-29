@@ -50,19 +50,21 @@ export class ReservationFieldsResolver {
       `
     )
 
-    return reservation.products.map(async physicalProduct => {
-      const images = await this.productUtils.getProductImagesByID(
-        physicalProduct.productVariant.product.id
-      )
-      const image = images?.[0]
+    return await Promise.all(
+      reservation.products.map(async physicalProduct => {
+        const images = await this.productUtils.getProductImagesByID(
+          physicalProduct.productVariant.product.id
+        )
+        const imageURL = images?.[0]?.url || ""
 
-      return {
-        url: this.imageResizeService.imageResize(image?.url, size, {
-          w: width,
-          h: height,
-        }),
-      }
-    })
+        return {
+          url: this.imageResizeService.imageResize(imageURL, size, {
+            w: width,
+            h: height,
+          }),
+        }
+      })
+    )
   }
 
   @ResolveField()
