@@ -15568,6 +15568,7 @@ type ReservationFeedback implements Node {
   reservation: Reservation!
   createdAt: DateTime!
   updatedAt: DateTime!
+  respondedAt: DateTime
 }
 
 """A connection to a list of items."""
@@ -15584,6 +15585,7 @@ input ReservationFeedbackCreateInput {
   id: ID
   comment: String
   rating: Rating
+  respondedAt: DateTime
   feedbacks: ProductVariantFeedbackCreateManyWithoutReservationFeedbackInput
   user: UserCreateOneInput!
   reservation: ReservationCreateOneInput!
@@ -15598,6 +15600,7 @@ input ReservationFeedbackCreateWithoutFeedbacksInput {
   id: ID
   comment: String
   rating: Rating
+  respondedAt: DateTime
   user: UserCreateOneInput!
   reservation: ReservationCreateOneInput!
 }
@@ -15622,6 +15625,8 @@ enum ReservationFeedbackOrderByInput {
   createdAt_DESC
   updatedAt_ASC
   updatedAt_DESC
+  respondedAt_ASC
+  respondedAt_DESC
 }
 
 type ReservationFeedbackPreviousValues {
@@ -15630,6 +15635,7 @@ type ReservationFeedbackPreviousValues {
   rating: Rating
   createdAt: DateTime!
   updatedAt: DateTime!
+  respondedAt: DateTime
 }
 
 type ReservationFeedbackSubscriptionPayload {
@@ -15672,6 +15678,7 @@ input ReservationFeedbackSubscriptionWhereInput {
 input ReservationFeedbackUpdateInput {
   comment: String
   rating: Rating
+  respondedAt: DateTime
   feedbacks: ProductVariantFeedbackUpdateManyWithoutReservationFeedbackInput
   user: UserUpdateOneRequiredInput
   reservation: ReservationUpdateOneRequiredInput
@@ -15680,6 +15687,7 @@ input ReservationFeedbackUpdateInput {
 input ReservationFeedbackUpdateManyMutationInput {
   comment: String
   rating: Rating
+  respondedAt: DateTime
 }
 
 input ReservationFeedbackUpdateOneRequiredWithoutFeedbacksInput {
@@ -15692,6 +15700,7 @@ input ReservationFeedbackUpdateOneRequiredWithoutFeedbacksInput {
 input ReservationFeedbackUpdateWithoutFeedbacksDataInput {
   comment: String
   rating: Rating
+  respondedAt: DateTime
   user: UserUpdateOneRequiredInput
   reservation: ReservationUpdateOneRequiredInput
 }
@@ -15844,6 +15853,28 @@ input ReservationFeedbackWhereInput {
 
   """All values greater than or equal the given value."""
   updatedAt_gte: DateTime
+  respondedAt: DateTime
+
+  """All values that are not equal to given value."""
+  respondedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  respondedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  respondedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  respondedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  respondedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  respondedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  respondedAt_gte: DateTime
   feedbacks_every: ProductVariantFeedbackWhereInput
   feedbacks_some: ProductVariantFeedbackWhereInput
   feedbacks_none: ProductVariantFeedbackWhereInput
@@ -18254,6 +18285,8 @@ export type ReservationFeedbackOrderByInput =
   | "createdAt_DESC"
   | "updatedAt_ASC"
   | "updatedAt_DESC"
+  | "respondedAt_ASC"
+  | "respondedAt_DESC"
 
 export type ReservationOrderByInput =
   | "id_ASC"
@@ -24505,6 +24538,7 @@ export interface ReservationFeedbackCreateInput {
   id?: ID_Input | null
   comment?: String | null
   rating?: Rating | null
+  respondedAt?: DateTime | null
   feedbacks?: ProductVariantFeedbackCreateManyWithoutReservationFeedbackInput | null
   user: UserCreateOneInput
   reservation: ReservationCreateOneInput
@@ -24519,6 +24553,7 @@ export interface ReservationFeedbackCreateWithoutFeedbacksInput {
   id?: ID_Input | null
   comment?: String | null
   rating?: Rating | null
+  respondedAt?: DateTime | null
   user: UserCreateOneInput
   reservation: ReservationCreateOneInput
 }
@@ -24546,6 +24581,7 @@ export interface ReservationFeedbackSubscriptionWhereInput {
 export interface ReservationFeedbackUpdateInput {
   comment?: String | null
   rating?: Rating | null
+  respondedAt?: DateTime | null
   feedbacks?: ProductVariantFeedbackUpdateManyWithoutReservationFeedbackInput | null
   user?: UserUpdateOneRequiredInput | null
   reservation?: ReservationUpdateOneRequiredInput | null
@@ -24554,6 +24590,7 @@ export interface ReservationFeedbackUpdateInput {
 export interface ReservationFeedbackUpdateManyMutationInput {
   comment?: String | null
   rating?: Rating | null
+  respondedAt?: DateTime | null
 }
 
 export interface ReservationFeedbackUpdateOneRequiredWithoutFeedbacksInput {
@@ -24566,6 +24603,7 @@ export interface ReservationFeedbackUpdateOneRequiredWithoutFeedbacksInput {
 export interface ReservationFeedbackUpdateWithoutFeedbacksDataInput {
   comment?: String | null
   rating?: Rating | null
+  respondedAt?: DateTime | null
   user?: UserUpdateOneRequiredInput | null
   reservation?: ReservationUpdateOneRequiredInput | null
 }
@@ -24627,6 +24665,14 @@ export interface ReservationFeedbackWhereInput {
   updatedAt_lte?: DateTime | null
   updatedAt_gt?: DateTime | null
   updatedAt_gte?: DateTime | null
+  respondedAt?: DateTime | null
+  respondedAt_not?: DateTime | null
+  respondedAt_in?: DateTime[] | DateTime | null
+  respondedAt_not_in?: DateTime[] | DateTime | null
+  respondedAt_lt?: DateTime | null
+  respondedAt_lte?: DateTime | null
+  respondedAt_gt?: DateTime | null
+  respondedAt_gte?: DateTime | null
   feedbacks_every?: ProductVariantFeedbackWhereInput | null
   feedbacks_some?: ProductVariantFeedbackWhereInput | null
   feedbacks_none?: ProductVariantFeedbackWhereInput | null
@@ -26917,6 +26963,7 @@ export interface ReservationFeedback extends Node {
   reservation: Reservation
   createdAt: DateTime
   updatedAt: DateTime
+  respondedAt?: DateTime | null
 }
 
 /*
@@ -26944,6 +26991,7 @@ export interface ReservationFeedbackPreviousValues {
   rating?: Rating | null
   createdAt: DateTime
   updatedAt: DateTime
+  respondedAt?: DateTime | null
 }
 
 export interface ReservationFeedbackSubscriptionPayload {

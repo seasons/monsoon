@@ -1,4 +1,5 @@
 import { TransactionsForCustomersLoader } from "@app/modules/Payment/loaders/transactionsForCustomers.loader"
+import { User } from "@app/nest_decorators"
 import { Loader } from "@modules/DataLoader"
 import {
   InvoicesForCustomersLoader,
@@ -10,6 +11,7 @@ import {
 } from "@modules/Payment/payment.types"
 import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma/prisma.service"
+import { head } from "lodash"
 
 @Resolver("Customer")
 export class CustomerFieldsResolver {
@@ -17,6 +19,38 @@ export class CustomerFieldsResolver {
     private readonly prisma: PrismaService,
     private readonly paymentService: PaymentService
   ) {}
+
+  @ResolveField()
+  async shouldRequestFeedback(@User() user) {
+    if (!user) return null
+    const feedbacks = await this.prisma.binding.query.reservationFeedbacks(
+      {
+        where: {
+          user: { id: user.id },
+        },
+        orderBy: "respondedAt_DESC",
+      },
+      `
+        {
+          id
+          respondedAt 
+        }
+      `
+    )
+    const yesterday = new Date(new Date().setDate(new Date().getDate() - 1))
+    if (!feedbacks?.length) {
+      return false
+    } else {
+      const feedback = head(feedbacks)
+      const respondedAtDate =
+        feedback?.respondedAt && new Date(feedback.respondedAt)
+      if (!respondedAtDate || yesterday > respondedAtDate) {
+        return true
+      } else {
+        return false
+      }
+    }
+  }
 
   @ResolveField()
   async transactions(

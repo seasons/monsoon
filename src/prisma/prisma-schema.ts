@@ -8737,6 +8737,7 @@ export const typeDefs = /* GraphQL */ `
     reservation: Reservation!
     createdAt: DateTime!
     updatedAt: DateTime!
+    respondedAt: DateTime
   }
 
   type ReservationFeedbackConnection {
@@ -8752,6 +8753,7 @@ export const typeDefs = /* GraphQL */ `
     rating: Rating
     user: UserCreateOneInput!
     reservation: ReservationCreateOneInput!
+    respondedAt: DateTime
   }
 
   input ReservationFeedbackCreateOneWithoutFeedbacksInput {
@@ -8765,6 +8767,7 @@ export const typeDefs = /* GraphQL */ `
     rating: Rating
     user: UserCreateOneInput!
     reservation: ReservationCreateOneInput!
+    respondedAt: DateTime
   }
 
   type ReservationFeedbackEdge {
@@ -8783,6 +8786,8 @@ export const typeDefs = /* GraphQL */ `
     createdAt_DESC
     updatedAt_ASC
     updatedAt_DESC
+    respondedAt_ASC
+    respondedAt_DESC
   }
 
   type ReservationFeedbackPreviousValues {
@@ -8791,6 +8796,7 @@ export const typeDefs = /* GraphQL */ `
     rating: Rating
     createdAt: DateTime!
     updatedAt: DateTime!
+    respondedAt: DateTime
   }
 
   type ReservationFeedbackSubscriptionPayload {
@@ -8817,11 +8823,13 @@ export const typeDefs = /* GraphQL */ `
     rating: Rating
     user: UserUpdateOneRequiredInput
     reservation: ReservationUpdateOneRequiredInput
+    respondedAt: DateTime
   }
 
   input ReservationFeedbackUpdateManyMutationInput {
     comment: String
     rating: Rating
+    respondedAt: DateTime
   }
 
   input ReservationFeedbackUpdateOneRequiredWithoutFeedbacksInput {
@@ -8836,6 +8844,7 @@ export const typeDefs = /* GraphQL */ `
     rating: Rating
     user: UserUpdateOneRequiredInput
     reservation: ReservationUpdateOneRequiredInput
+    respondedAt: DateTime
   }
 
   input ReservationFeedbackUpsertWithoutFeedbacksInput {
@@ -8897,6 +8906,14 @@ export const typeDefs = /* GraphQL */ `
     updatedAt_lte: DateTime
     updatedAt_gt: DateTime
     updatedAt_gte: DateTime
+    respondedAt: DateTime
+    respondedAt_not: DateTime
+    respondedAt_in: [DateTime!]
+    respondedAt_not_in: [DateTime!]
+    respondedAt_lt: DateTime
+    respondedAt_lte: DateTime
+    respondedAt_gt: DateTime
+    respondedAt_gte: DateTime
     AND: [ReservationFeedbackWhereInput!]
     OR: [ReservationFeedbackWhereInput!]
     NOT: [ReservationFeedbackWhereInput!]
