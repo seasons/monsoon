@@ -51,7 +51,10 @@ export class ReservationFieldsResolver {
       const image = product.productVariant.product.images?.[0]
 
       return {
-        url: this.imageResizeService.imageResize(image?.url, size),
+        url: this.imageResizeService.imageResize(image?.url, size, {
+          w: width,
+          h: height,
+        }),
       }
     })
   }

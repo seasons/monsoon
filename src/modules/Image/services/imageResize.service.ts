@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common"
 import qs from "querystring"
+import { pickBy, identity } from "lodash"
 
 interface ImageResizerOptions {
   fit?: "clip"
@@ -48,10 +49,13 @@ export class ImageResizeService {
     sizeName: ImageSize,
     options: ImageResizerOptions = { fit: "clip" }
   ) {
-    const params: any = {
-      ...options,
-      ...sizes[sizeName],
-    }
+    const params: any = pickBy(
+      {
+        ...options,
+        ...sizes[sizeName],
+      },
+      identity
+    )
 
     return url.replace(AIRTABLE_BASE, IMGIX_BASE) + "?" + qs.stringify(params)
   }

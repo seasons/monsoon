@@ -20,7 +20,8 @@ type Product {
   color: Color!
   secondaryColor: Color
   tags: Json
-  images(width: Int, height: Int, size: ImageSize): [Image!]!
+  images: Json!
+  resizedImages(width: Int, height: Int, size: ImageSize): [Image!]!
   functions(
     where: ProductFunctionWhereInput
     orderBy: ProductFunctionOrderByInput
@@ -488,6 +489,8 @@ type Image {
   url: String
   originalHeight: Int
   originalWidth: Int
+  entityID: String
+  entityType: String
 }
 
 type Homepage {

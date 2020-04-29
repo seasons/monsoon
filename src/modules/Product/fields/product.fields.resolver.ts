@@ -63,13 +63,13 @@ export class ProductFieldsResolver {
   }
 
   @ResolveField()
-  async images(
+  async resizedImages(
     @Parent() parent,
     @Args("width") width: number,
     @Args("height") height: number,
-    @Args("size") size: ImageSize
+    @Args("size") size: ImageSize = ImageSize.Medium
   ) {
-    const reservation = await this.prisma.binding.query.reservation(
+    const product = await this.prisma.binding.query.product(
       {
         where: {
           id: parent.id,
@@ -77,23 +77,19 @@ export class ProductFieldsResolver {
       },
       `
       {
-        products {
-          id
-          productVariant {
-            product {
-              images
-            }
-          }
-        }
+        id
+        images
       }
       `
     )
-
-    return reservation.products.map(product => {
-      const image = product.productVariant.product.images?.[0]
-
+    return product?.images.map(image => {
       return {
-        url: this.imageResizeService.imageResize(image?.url, size),
+        url: this.imageResizeService.imageResize(image?.url, size, {
+          w: width,
+          h: height,
+        }),
+        entityType: "Product",
+        entityID: product?.id,
       }
     })
   }
