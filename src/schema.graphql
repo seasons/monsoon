@@ -626,6 +626,15 @@ type Customer {
   detail: CustomerDetail
   billingInfo: BillingInfo
   plan: Plan
+  bagItems(
+    where: BagItemWhereInput
+    orderBy: BagItemOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [BagItem!]
   reservations(
     where: ReservationWhereInput
     orderBy: ReservationOrderByInput

@@ -428,10 +428,6 @@ type RecentlyViewedProduct {
   updatedAt: DateTime! @updatedAt
 }
 
-type Order {
-  id: ID! @id
-}
-
 type Reservation {
   id: ID! @id
   user: User!
