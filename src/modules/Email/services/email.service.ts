@@ -1,4 +1,3 @@
-import { Inject, Injectable, forwardRef } from "@nestjs/common"
 import {
   Reservation as PrismaReservation,
   Product,
@@ -7,6 +6,7 @@ import {
 
 import { EmailDataProvider } from "./email.data.service"
 import Handlebars from "handlebars"
+import { Injectable } from "@nestjs/common"
 import { PrismaService } from "../../../prisma/prisma.service"
 import { ProductUtilsService } from "@modules/Product"
 import { Reservation } from "../../../prisma/prisma.binding"
