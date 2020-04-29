@@ -8747,7 +8747,6 @@ type ReservationFeedbackConnection {
 input ReservationFeedbackCreateInput {
   id: ID
   comment: String
-  rating: Rating
   respondedAt: DateTime
   feedbacks: ProductVariantFeedbackCreateManyWithoutReservationFeedbackInput
   rating: Rating
@@ -8818,7 +8817,6 @@ input ReservationFeedbackSubscriptionWhereInput {
 
 input ReservationFeedbackUpdateInput {
   comment: String
-  rating: Rating
   respondedAt: DateTime
   feedbacks: ProductVariantFeedbackUpdateManyWithoutReservationFeedbackInput
   rating: Rating
