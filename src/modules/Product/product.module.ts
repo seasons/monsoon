@@ -1,7 +1,6 @@
 import { AirtableModule } from "@modules/Airtable/airtable.module"
 import { BagService } from "./services/bag.service"
 import { BrandQueriesResolver } from "./queries/brand.queries.resolver"
-import { EmailModule } from "@modules/Email/email.module"
 import { ImageModule } from "@modules/Image"
 import { Module } from "@nestjs/common"
 import { PhysicalProductService } from "./services/physicalProduct.utils.service"
@@ -24,7 +23,6 @@ import { UtilsModule } from "@modules/Utils/utils.module"
 @Module({
   imports: [
     AirtableModule,
-    EmailModule,
     ImageModule,
     PrismaModule,
     ShippingModule,

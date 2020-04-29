@@ -78,15 +78,21 @@ export class TestUtilsService {
       airtableBaseService,
       new AirtableUtilsService(airtableBaseService)
     )
+    const productUtilsService = new ProductUtilsService(this.prisma)
     const utilsService = new UtilsService(this.prisma)
     const reservationService = new ReservationService(
       this.prisma,
-      new ProductUtilsService(this.prisma),
+      productUtilsService,
       new ProductVariantService(this.prisma, physProdService, airtableService),
       physProdService,
       airtableService,
       new ShippingService(this.prisma, utilsService),
-      new EmailService(this.prisma, utilsService, new EmailDataProvider()),
+      new EmailService(
+        this.prisma,
+        productUtilsService,
+        utilsService,
+        new EmailDataProvider()
+      ),
       new ReservationUtilsService()
     )
 

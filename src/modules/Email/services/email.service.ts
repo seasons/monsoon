@@ -1,3 +1,4 @@
+import { Inject, Injectable, forwardRef } from "@nestjs/common"
 import {
   Reservation as PrismaReservation,
   Product,
@@ -6,8 +7,8 @@ import {
 
 import { EmailDataProvider } from "./email.data.service"
 import Handlebars from "handlebars"
-import { Injectable } from "@nestjs/common"
 import { PrismaService } from "../../../prisma/prisma.service"
+import { ProductUtilsService } from "@modules/Product"
 import { Reservation } from "../../../prisma/prisma.binding"
 import { UtilsService } from "../../Utils/services/utils.service"
 import fs from "fs"
@@ -18,6 +19,7 @@ import sgMail from "@sendgrid/mail"
 export class EmailService {
   constructor(
     private readonly prisma: PrismaService,
+    private readonly productUtils: ProductUtilsService,
     private readonly utils: UtilsService,
     private readonly data: EmailDataProvider
   ) {}
@@ -110,8 +112,9 @@ export class EmailService {
   private getReservationConfirmationDataForProduct = async (
     product: Product
   ) => {
+    const images = await this.productUtils.getProductImages(product)
     return this.utils.Identity({
-      url: product.images[0].url,
+      url: images[0].url,
       brand: await this.prisma.client
         .product({ id: product.id })
         .brand()

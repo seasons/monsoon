@@ -3,11 +3,13 @@ import { Args, Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { ImageResizeService } from "@modules/Image"
 import { ImageSize } from "@modules/Image/image.types"
 import { PrismaService } from "@prisma/prisma.service"
+import { ProductUtilsService } from "@modules/Product"
 import { ReservationUtilsService } from "../services/reservation.utils.service"
 
 @Resolver("Reservation")
 export class ReservationFieldsResolver {
   constructor(
+    private readonly productUtils: ProductUtilsService,
     private readonly reservationService: ReservationUtilsService,
     private readonly imageResizeService: ImageResizeService,
     private readonly prisma: PrismaService
@@ -48,8 +50,11 @@ export class ReservationFieldsResolver {
       `
     )
 
-    return reservation.products.map(product => {
-      const image = product.productVariant.product.images?.[0]
+    return reservation.products.map(async physicalProduct => {
+      const images = await this.productUtils.getProductImagesByID(
+        physicalProduct.productVariant.product.id
+      )
+      const image = images?.[0]
 
       return {
         url: this.imageResizeService.imageResize(image?.url, size, {

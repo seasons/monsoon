@@ -13,6 +13,7 @@ import { AirtableInventoryStatus } from "@app/modules/Airtable/airtable.types"
 import { ErrorService } from "@app/modules/Error/services/error.service"
 import { PrismaService } from "@prisma/prisma.service"
 import { ProductCountAndStatusSummary } from "@app/modules/Utils/utils.types"
+import { ProductUtilsService } from "@app/modules/Product/services/product.utils.service"
 import { ReservationScheduledJobs } from ".."
 import { ReservationService } from "@app/modules/Reservation/services/reservation.service"
 import { ShippingService } from "@app/modules/Shipping/services/shipping.service"
@@ -23,6 +24,7 @@ const ONE_MIN = 60000
 
 describe("Return Flow Cron Job", () => {
   let reservationService: ReservationService
+  let productUtilsService: ProductUtilsService
   let prismaService: PrismaService
   let testUtilsService: TestUtilsService
   let testUser: User
@@ -47,10 +49,16 @@ describe("Return Flow Cron Job", () => {
     testUtilsService = new TestUtilsService(prismaService, airtableService)
     ;({ reservationService } = testUtilsService.createReservationService())
 
+    const productUtilsService = new ProductUtilsService(prismaService)
     const utilsService = new UtilsService(prismaService)
     reservationJobsService = new ReservationScheduledJobs(
       airtableService,
-      new EmailService(prismaService, utilsService, new EmailDataProvider()),
+      new EmailService(
+        prismaService,
+        productUtilsService,
+        utilsService,
+        new EmailDataProvider()
+      ),
       prismaService,
       new ShippingService(prismaService, utilsService),
       new ErrorService()

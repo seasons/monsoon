@@ -1,6 +1,7 @@
 import { BrandOrderByInput } from "@prisma/index"
 import { Injectable } from "@nestjs/common"
 import { PrismaService } from "@prisma/prisma.service"
+import { Product } from "../../../prisma"
 import { uniqBy } from "lodash"
 
 @Injectable()
@@ -116,6 +117,19 @@ export class ProductUtilsService {
         0
       return sortWeightA - sortWeightB
     })
+  }
+
+  async getProductImages(product: Product) {
+    if (product.imagesJSON) {
+      return product.imagesJSON
+    } else {
+      return await this.prisma.client.product({ id: product.id }).imagesData()
+    }
+  }
+
+  async getProductImagesByID(productID: string) {
+    const product = await this.prisma.client.product({ id: productID })
+    return product ? this.getProductImages(product) : null
   }
 
   private async productsAlphabetically(

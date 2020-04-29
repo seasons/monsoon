@@ -189,7 +189,7 @@ export class SyncProductsService {
           slug,
           type,
           description,
-          images,
+          imagesJSON: images,
           retailPrice,
           externalURL: externalURL || "",
           ...(() => {
