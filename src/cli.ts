@@ -6,10 +6,9 @@ import * as Airtable from "airtable"
 import dotenv from "dotenv"
 import { CommandModule, CommandService } from "nestjs-command"
 
+dotenv.config()
 // Must be imported after dotenv.configure() to ensure that env vars are being loaded before making module
 import { ScriptsModule } from "./modules/Scripts/scripts.module"
-
-dotenv.config()
 
 Airtable.configure({
   endpointUrl: "https://api.airtable.com",
