@@ -10428,6 +10428,8 @@ enum PhysicalProductStatus {
   Damaged
   Clean
   Lost
+  Stored
+  Offloaded
 }
 
 type PhysicalProductSubscriptionPayload {
@@ -12508,6 +12510,7 @@ input ProductScalarWhereInput {
 enum ProductStatus {
   Available
   NotAvailable
+  Stored
 }
 
 type ProductSubscriptionPayload {
@@ -12879,6 +12882,7 @@ type ProductVariant implements Node {
   reservable: Int!
   reserved: Int!
   nonReservable: Int!
+  offloaded: Int!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -12904,6 +12908,7 @@ input ProductVariantCreateInput {
   reservable: Int!
   reserved: Int!
   nonReservable: Int!
+  offloaded: Int!
   color: ColorCreateOneWithoutProductVariantsInput!
   internalSize: SizeCreateOneInput
   manufacturerSizes: SizeCreateManyInput
@@ -12942,6 +12947,7 @@ input ProductVariantCreateWithoutColorInput {
   reservable: Int!
   reserved: Int!
   nonReservable: Int!
+  offloaded: Int!
   internalSize: SizeCreateOneInput
   manufacturerSizes: SizeCreateManyInput
   product: ProductCreateOneWithoutVariantsInput!
@@ -12959,6 +12965,7 @@ input ProductVariantCreateWithoutPhysicalProductsInput {
   reservable: Int!
   reserved: Int!
   nonReservable: Int!
+  offloaded: Int!
   color: ColorCreateOneWithoutProductVariantsInput!
   internalSize: SizeCreateOneInput
   manufacturerSizes: SizeCreateManyInput
@@ -12976,6 +12983,7 @@ input ProductVariantCreateWithoutProductInput {
   reservable: Int!
   reserved: Int!
   nonReservable: Int!
+  offloaded: Int!
   color: ColorCreateOneWithoutProductVariantsInput!
   internalSize: SizeCreateOneInput
   manufacturerSizes: SizeCreateManyInput
@@ -13690,6 +13698,8 @@ enum ProductVariantOrderByInput {
   reserved_DESC
   nonReservable_ASC
   nonReservable_DESC
+  offloaded_ASC
+  offloaded_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -13707,6 +13717,7 @@ type ProductVariantPreviousValues {
   reservable: Int!
   reserved: Int!
   nonReservable: Int!
+  offloaded: Int!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -13994,6 +14005,28 @@ input ProductVariantScalarWhereInput {
 
   """All values greater than or equal the given value."""
   nonReservable_gte: Int
+  offloaded: Int
+
+  """All values that are not equal to given value."""
+  offloaded_not: Int
+
+  """All values that are contained in given list."""
+  offloaded_in: [Int!]
+
+  """All values that are not contained in given list."""
+  offloaded_not_in: [Int!]
+
+  """All values less than the given value."""
+  offloaded_lt: Int
+
+  """All values less than or equal the given value."""
+  offloaded_lte: Int
+
+  """All values greater than the given value."""
+  offloaded_gt: Int
+
+  """All values greater than or equal the given value."""
+  offloaded_gte: Int
   createdAt: DateTime
 
   """All values that are not equal to given value."""
@@ -14087,6 +14120,7 @@ input ProductVariantUpdateDataInput {
   reservable: Int
   reserved: Int
   nonReservable: Int
+  offloaded: Int
   color: ColorUpdateOneRequiredWithoutProductVariantsInput
   internalSize: SizeUpdateOneInput
   manufacturerSizes: SizeUpdateManyInput
@@ -14104,6 +14138,7 @@ input ProductVariantUpdateInput {
   reservable: Int
   reserved: Int
   nonReservable: Int
+  offloaded: Int
   color: ColorUpdateOneRequiredWithoutProductVariantsInput
   internalSize: SizeUpdateOneInput
   manufacturerSizes: SizeUpdateManyInput
@@ -14121,6 +14156,7 @@ input ProductVariantUpdateManyDataInput {
   reservable: Int
   reserved: Int
   nonReservable: Int
+  offloaded: Int
 }
 
 input ProductVariantUpdateManyMutationInput {
@@ -14133,6 +14169,7 @@ input ProductVariantUpdateManyMutationInput {
   reservable: Int
   reserved: Int
   nonReservable: Int
+  offloaded: Int
 }
 
 input ProductVariantUpdateManyWithoutColorInput {
@@ -14188,6 +14225,7 @@ input ProductVariantUpdateWithoutColorDataInput {
   reservable: Int
   reserved: Int
   nonReservable: Int
+  offloaded: Int
   internalSize: SizeUpdateOneInput
   manufacturerSizes: SizeUpdateManyInput
   product: ProductUpdateOneRequiredWithoutVariantsInput
@@ -14204,6 +14242,7 @@ input ProductVariantUpdateWithoutPhysicalProductsDataInput {
   reservable: Int
   reserved: Int
   nonReservable: Int
+  offloaded: Int
   color: ColorUpdateOneRequiredWithoutProductVariantsInput
   internalSize: SizeUpdateOneInput
   manufacturerSizes: SizeUpdateManyInput
@@ -14220,6 +14259,7 @@ input ProductVariantUpdateWithoutProductDataInput {
   reservable: Int
   reserved: Int
   nonReservable: Int
+  offloaded: Int
   color: ColorUpdateOneRequiredWithoutProductVariantsInput
   internalSize: SizeUpdateOneInput
   manufacturerSizes: SizeUpdateManyInput
@@ -14694,6 +14734,28 @@ input ProductVariantWhereInput {
 
   """All values greater than or equal the given value."""
   nonReservable_gte: Int
+  offloaded: Int
+
+  """All values that are not equal to given value."""
+  offloaded_not: Int
+
+  """All values that are contained in given list."""
+  offloaded_in: [Int!]
+
+  """All values that are not contained in given list."""
+  offloaded_not_in: [Int!]
+
+  """All values less than the given value."""
+  offloaded_lt: Int
+
+  """All values less than or equal the given value."""
+  offloaded_lte: Int
+
+  """All values greater than the given value."""
+  offloaded_gt: Int
+
+  """All values greater than or equal the given value."""
+  offloaded_gte: Int
   createdAt: DateTime
 
   """All values that are not equal to given value."""
@@ -18105,6 +18167,8 @@ export type PhysicalProductStatus =
   | "Damaged"
   | "Clean"
   | "Lost"
+  | "Stored"
+  | "Offloaded"
 
 export type Plan = "AllAccess" | "Essential"
 
@@ -18178,7 +18242,7 @@ export type ProductRequestOrderByInput =
   | "url_ASC"
   | "url_DESC"
 
-export type ProductStatus = "Available" | "NotAvailable"
+export type ProductStatus = "Available" | "NotAvailable" | "Stored"
 
 export type ProductType = "Top" | "Bottom" | "Accessory" | "Shoe"
 
@@ -18217,6 +18281,8 @@ export type ProductVariantOrderByInput =
   | "reserved_DESC"
   | "nonReservable_ASC"
   | "nonReservable_DESC"
+  | "offloaded_ASC"
+  | "offloaded_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -23083,6 +23149,7 @@ export interface ProductVariantCreateInput {
   reservable: Int
   reserved: Int
   nonReservable: Int
+  offloaded: Int
   color: ColorCreateOneWithoutProductVariantsInput
   internalSize?: SizeCreateOneInput | null
   manufacturerSizes?: SizeCreateManyInput | null
@@ -23133,6 +23200,7 @@ export interface ProductVariantCreateWithoutColorInput {
   reservable: Int
   reserved: Int
   nonReservable: Int
+  offloaded: Int
   internalSize?: SizeCreateOneInput | null
   manufacturerSizes?: SizeCreateManyInput | null
   product: ProductCreateOneWithoutVariantsInput
@@ -23150,6 +23218,7 @@ export interface ProductVariantCreateWithoutPhysicalProductsInput {
   reservable: Int
   reserved: Int
   nonReservable: Int
+  offloaded: Int
   color: ColorCreateOneWithoutProductVariantsInput
   internalSize?: SizeCreateOneInput | null
   manufacturerSizes?: SizeCreateManyInput | null
@@ -23167,6 +23236,7 @@ export interface ProductVariantCreateWithoutProductInput {
   reservable: Int
   reserved: Int
   nonReservable: Int
+  offloaded: Int
   color: ColorCreateOneWithoutProductVariantsInput
   internalSize?: SizeCreateOneInput | null
   manufacturerSizes?: SizeCreateManyInput | null
@@ -23745,6 +23815,14 @@ export interface ProductVariantScalarWhereInput {
   nonReservable_lte?: Int | null
   nonReservable_gt?: Int | null
   nonReservable_gte?: Int | null
+  offloaded?: Int | null
+  offloaded_not?: Int | null
+  offloaded_in?: Int[] | Int | null
+  offloaded_not_in?: Int[] | Int | null
+  offloaded_lt?: Int | null
+  offloaded_lte?: Int | null
+  offloaded_gt?: Int | null
+  offloaded_gte?: Int | null
   createdAt?: DateTime | null
   createdAt_not?: DateTime | null
   createdAt_in?: DateTime[] | DateTime | null
@@ -23793,6 +23871,7 @@ export interface ProductVariantUpdateDataInput {
   reservable?: Int | null
   reserved?: Int | null
   nonReservable?: Int | null
+  offloaded?: Int | null
   color?: ColorUpdateOneRequiredWithoutProductVariantsInput | null
   internalSize?: SizeUpdateOneInput | null
   manufacturerSizes?: SizeUpdateManyInput | null
@@ -23810,6 +23889,7 @@ export interface ProductVariantUpdateInput {
   reservable?: Int | null
   reserved?: Int | null
   nonReservable?: Int | null
+  offloaded?: Int | null
   color?: ColorUpdateOneRequiredWithoutProductVariantsInput | null
   internalSize?: SizeUpdateOneInput | null
   manufacturerSizes?: SizeUpdateManyInput | null
@@ -23827,6 +23907,7 @@ export interface ProductVariantUpdateManyDataInput {
   reservable?: Int | null
   reserved?: Int | null
   nonReservable?: Int | null
+  offloaded?: Int | null
 }
 
 export interface ProductVariantUpdateManyMutationInput {
@@ -23839,6 +23920,7 @@ export interface ProductVariantUpdateManyMutationInput {
   reservable?: Int | null
   reserved?: Int | null
   nonReservable?: Int | null
+  offloaded?: Int | null
 }
 
 export interface ProductVariantUpdateManyWithoutColorInput {
@@ -23942,6 +24024,7 @@ export interface ProductVariantUpdateWithoutColorDataInput {
   reservable?: Int | null
   reserved?: Int | null
   nonReservable?: Int | null
+  offloaded?: Int | null
   internalSize?: SizeUpdateOneInput | null
   manufacturerSizes?: SizeUpdateManyInput | null
   product?: ProductUpdateOneRequiredWithoutVariantsInput | null
@@ -23958,6 +24041,7 @@ export interface ProductVariantUpdateWithoutPhysicalProductsDataInput {
   reservable?: Int | null
   reserved?: Int | null
   nonReservable?: Int | null
+  offloaded?: Int | null
   color?: ColorUpdateOneRequiredWithoutProductVariantsInput | null
   internalSize?: SizeUpdateOneInput | null
   manufacturerSizes?: SizeUpdateManyInput | null
@@ -23974,6 +24058,7 @@ export interface ProductVariantUpdateWithoutProductDataInput {
   reservable?: Int | null
   reserved?: Int | null
   nonReservable?: Int | null
+  offloaded?: Int | null
   color?: ColorUpdateOneRequiredWithoutProductVariantsInput | null
   internalSize?: SizeUpdateOneInput | null
   manufacturerSizes?: SizeUpdateManyInput | null
@@ -24179,6 +24264,14 @@ export interface ProductVariantWhereInput {
   nonReservable_lte?: Int | null
   nonReservable_gt?: Int | null
   nonReservable_gte?: Int | null
+  offloaded?: Int | null
+  offloaded_not?: Int | null
+  offloaded_in?: Int[] | Int | null
+  offloaded_not_in?: Int[] | Int | null
+  offloaded_lt?: Int | null
+  offloaded_lte?: Int | null
+  offloaded_gt?: Int | null
+  offloaded_gte?: Int | null
   createdAt?: DateTime | null
   createdAt_not?: DateTime | null
   createdAt_in?: DateTime[] | DateTime | null
@@ -26665,6 +26758,7 @@ export interface ProductVariant extends Node {
   reservable: Int
   reserved: Int
   nonReservable: Int
+  offloaded: Int
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -26781,6 +26875,7 @@ export interface ProductVariantPreviousValues {
   reservable: Int
   reserved: Int
   nonReservable: Int
+  offloaded: Int
   createdAt: DateTime
   updatedAt: DateTime
 }

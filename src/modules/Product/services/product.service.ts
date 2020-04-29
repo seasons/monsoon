@@ -3,15 +3,21 @@ import {
   Customer,
   ID_Input,
   Product,
+  ProductStatus,
   RecentlyViewedProduct,
 } from "@prisma/index"
+import {
+  ProductUpdateInput,
+  ProductWhereUniqueInput,
+} from "@prisma/prisma.binding"
+import { head, union } from "lodash"
 
+import { GraphQLResolveInfo } from "graphql"
 import { Injectable } from "@nestjs/common"
 import { PrismaService } from "@prisma/prisma.service"
 import { ProductUtilsService } from "./product.utils.service"
 import { ProductVariantService } from "./productVariant.service"
 import { UtilsService } from "../../Utils/services/utils.service"
-import { head } from "lodash"
 
 @Injectable()
 export class ProductService {
@@ -211,5 +217,74 @@ export class ProductService {
       const sizeCode = this.utils.sizeNameToSizeCode(sizeName)
       return `${brand.brandCode}-${color.colorCode}-${sizeCode}-${styleCode}`
     })
+  }
+
+  async updateProduct(
+    where: ProductWhereUniqueInput,
+    { status, ...data }: ProductUpdateInput,
+    info: GraphQLResolveInfo
+  ) {
+    await this.storeProductIfNeeded(where, status)
+    return await this.prisma.binding.mutation.updateProduct(
+      {
+        where,
+        data: { status, ...data },
+      },
+      info
+    )
+  }
+
+  async yo() {
+    console.log(await this.prisma.client.products())
+  }
+  private async storeProductIfNeeded(
+    where: ProductWhereUniqueInput,
+    status: ProductStatus
+  ) {
+    const productBeforeUpdate = await this.prisma.binding.query.product(
+      {
+        where,
+      },
+      `{
+          id
+          status
+          variants {
+            id
+            total
+            offloaded
+            physicalProducts {
+              productStatus
+              seasonsUID
+            }
+          }
+        }`
+    )
+    if (status === "Stored" && productBeforeUpdate.status !== "Stored") {
+      // Update counts on downstream product variants
+      for (const prodVar of productBeforeUpdate.variants) {
+        await this.prisma.client.updateProductVariant({
+          where: { id: prodVar.id },
+          data: {
+            nonReservable: prodVar.total - prodVar.offloaded,
+            reservable: 0,
+            reserved: 0,
+          },
+        })
+      }
+
+      // Update statuses on downstream physical products
+      const downstreamPhysProds = productBeforeUpdate.variants.reduce(
+        (acc, curVal) => union(acc, curVal.physicalProducts),
+        []
+      )
+      for (const { productStatus, seasonsUID } of downstreamPhysProds) {
+        if (productStatus !== "Offloaded") {
+          await this.prisma.client.updatePhysicalProduct({
+            where: { seasonsUID },
+            data: { productStatus: "Stored", inventoryStatus: "NonReservable" },
+          })
+        }
+      }
+    }
   }
 }

@@ -5021,6 +5021,7 @@ export const typeDefs = /* GraphQL */ `
     Clean
     Lost
     Stored
+    Offloaded
   }
 
   type PhysicalProductSubscriptionPayload {
@@ -6616,6 +6617,7 @@ export const typeDefs = /* GraphQL */ `
     reservable: Int!
     reserved: Int!
     nonReservable: Int!
+    offloaded: Int!
     createdAt: DateTime!
     updatedAt: DateTime!
   }
@@ -6642,6 +6644,7 @@ export const typeDefs = /* GraphQL */ `
     reservable: Int!
     reserved: Int!
     nonReservable: Int!
+    offloaded: Int!
   }
 
   input ProductVariantCreateManyWithoutColorInput {
@@ -6679,6 +6682,7 @@ export const typeDefs = /* GraphQL */ `
     reservable: Int!
     reserved: Int!
     nonReservable: Int!
+    offloaded: Int!
   }
 
   input ProductVariantCreateWithoutPhysicalProductsInput {
@@ -6696,6 +6700,7 @@ export const typeDefs = /* GraphQL */ `
     reservable: Int!
     reserved: Int!
     nonReservable: Int!
+    offloaded: Int!
   }
 
   input ProductVariantCreateWithoutProductInput {
@@ -6713,6 +6718,7 @@ export const typeDefs = /* GraphQL */ `
     reservable: Int!
     reserved: Int!
     nonReservable: Int!
+    offloaded: Int!
   }
 
   type ProductVariantEdge {
@@ -7181,6 +7187,8 @@ export const typeDefs = /* GraphQL */ `
     reserved_DESC
     nonReservable_ASC
     nonReservable_DESC
+    offloaded_ASC
+    offloaded_DESC
     createdAt_ASC
     createdAt_DESC
     updatedAt_ASC
@@ -7198,6 +7206,7 @@ export const typeDefs = /* GraphQL */ `
     reservable: Int!
     reserved: Int!
     nonReservable: Int!
+    offloaded: Int!
     createdAt: DateTime!
     updatedAt: DateTime!
   }
@@ -7301,6 +7310,14 @@ export const typeDefs = /* GraphQL */ `
     nonReservable_lte: Int
     nonReservable_gt: Int
     nonReservable_gte: Int
+    offloaded: Int
+    offloaded_not: Int
+    offloaded_in: [Int!]
+    offloaded_not_in: [Int!]
+    offloaded_lt: Int
+    offloaded_lte: Int
+    offloaded_gt: Int
+    offloaded_gte: Int
     createdAt: DateTime
     createdAt_not: DateTime
     createdAt_in: [DateTime!]
@@ -7355,6 +7372,7 @@ export const typeDefs = /* GraphQL */ `
     reservable: Int
     reserved: Int
     nonReservable: Int
+    offloaded: Int
   }
 
   input ProductVariantUpdateInput {
@@ -7372,6 +7390,7 @@ export const typeDefs = /* GraphQL */ `
     reservable: Int
     reserved: Int
     nonReservable: Int
+    offloaded: Int
   }
 
   input ProductVariantUpdateManyDataInput {
@@ -7384,6 +7403,7 @@ export const typeDefs = /* GraphQL */ `
     reservable: Int
     reserved: Int
     nonReservable: Int
+    offloaded: Int
   }
 
   input ProductVariantUpdateManyMutationInput {
@@ -7396,6 +7416,7 @@ export const typeDefs = /* GraphQL */ `
     reservable: Int
     reserved: Int
     nonReservable: Int
+    offloaded: Int
   }
 
   input ProductVariantUpdateManyWithoutColorInput {
@@ -7455,6 +7476,7 @@ export const typeDefs = /* GraphQL */ `
     reservable: Int
     reserved: Int
     nonReservable: Int
+    offloaded: Int
   }
 
   input ProductVariantUpdateWithoutPhysicalProductsDataInput {
@@ -7471,6 +7493,7 @@ export const typeDefs = /* GraphQL */ `
     reservable: Int
     reserved: Int
     nonReservable: Int
+    offloaded: Int
   }
 
   input ProductVariantUpdateWithoutProductDataInput {
@@ -7487,6 +7510,7 @@ export const typeDefs = /* GraphQL */ `
     reservable: Int
     reserved: Int
     nonReservable: Int
+    offloaded: Int
   }
 
   input ProductVariantUpdateWithWhereUniqueWithoutColorInput {
@@ -7722,6 +7746,14 @@ export const typeDefs = /* GraphQL */ `
     nonReservable_lte: Int
     nonReservable_gt: Int
     nonReservable_gte: Int
+    offloaded: Int
+    offloaded_not: Int
+    offloaded_in: [Int!]
+    offloaded_not_in: [Int!]
+    offloaded_lt: Int
+    offloaded_lte: Int
+    offloaded_gt: Int
+    offloaded_gte: Int
     createdAt: DateTime
     createdAt_not: DateTime
     createdAt_in: [DateTime!]

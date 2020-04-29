@@ -114,6 +114,7 @@ enum PhysicalProductStatus {
   Clean
   Lost
   Stored
+  Offloaded
 }
 
 enum ProductStatus {
@@ -344,6 +345,7 @@ type ProductVariant {
   reservable: Int!
   reserved: Int!
   nonReservable: Int!
+  offloaded: Int!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }

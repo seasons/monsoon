@@ -6,6 +6,7 @@ import { AirtableService } from "@modules/Airtable/index"
 import { PhysicalProductService } from "@modules/Product/services/physicalProduct.utils.service"
 import { PrismaService } from "@prisma/prisma.service"
 import { ProductCountAndStatusSummary } from "../utils.types"
+import { ProductService } from "@app/modules/Product"
 import { ProductUtilsService } from "@modules/Product/services/product.utils.service"
 import { ProductVariantService } from "@modules/Product/services/productVariant.service"
 import { ReservationService } from "@app/modules/Reservation/services/reservation.service"
@@ -20,6 +21,16 @@ export class TestUtilsService {
     sku
     physicalProducts {
         seasonsUID
+    }
+  }`
+  private defaultProductInfo = `{
+    id
+    slug
+    variants {
+      sku
+      physicalProducts {
+        seasonsUID
+      }
     }
   }`
   constructor(
@@ -91,6 +102,19 @@ export class TestUtilsService {
     )
 
     return { reservationService }
+  }
+
+  createProductService() {
+    return new ProductService(
+      this.prisma,
+      new ProductUtilsService(this.prisma),
+      new ProductVariantService(
+        this.prisma,
+        new PhysicalProductService(this.prisma),
+        this.airtableService
+      ),
+      new UtilsService(this.prisma)
+    )
   }
 
   async getTestableReservableProductVariants(info?) {
@@ -166,6 +190,27 @@ export class TestUtilsService {
       nonReservable: airtableProdVar.model["non-ReservableCount"],
       status: airtablePhysicalProduct.model.inventoryStatus,
     }
+  }
+
+  async getTestableReservableNotOffloadedProducts(info?) {
+    // TODO: If there are no such products, create them
+    return await this.prisma.binding.query.products(
+      {
+        where: {
+          variants_every: {
+            AND: [
+              { reserved: 0 },
+              {
+                physicalProducts_every: {
+                  productStatus_not_in: ["Stored", "Offloaded"],
+                },
+              },
+            ],
+          },
+        },
+      },
+      info || this.defaultProductInfo
+    )
   }
 
   private async createTestableProductVariants({

@@ -1423,6 +1423,7 @@ export type PhysicalProductStatus =
   | "Clean"
   | "Lost"
   | "Stored"
+  | "Offloaded"
 
 export type PhysicalProductOrderByInput =
   | "id_ASC"
@@ -1459,6 +1460,8 @@ export type ProductVariantOrderByInput =
   | "reserved_DESC"
   | "nonReservable_ASC"
   | "nonReservable_DESC"
+  | "offloaded_ASC"
+  | "offloaded_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -2449,6 +2452,14 @@ export interface ProductVariantWhereInput {
   nonReservable_lte?: Maybe<Int>
   nonReservable_gt?: Maybe<Int>
   nonReservable_gte?: Maybe<Int>
+  offloaded?: Maybe<Int>
+  offloaded_not?: Maybe<Int>
+  offloaded_in?: Maybe<Int[] | Int>
+  offloaded_not_in?: Maybe<Int[] | Int>
+  offloaded_lt?: Maybe<Int>
+  offloaded_lte?: Maybe<Int>
+  offloaded_gt?: Maybe<Int>
+  offloaded_gte?: Maybe<Int>
   createdAt?: Maybe<DateTimeInput>
   createdAt_not?: Maybe<DateTimeInput>
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>
@@ -4831,6 +4842,7 @@ export interface ProductVariantCreateWithoutPhysicalProductsInput {
   reservable: Int
   reserved: Int
   nonReservable: Int
+  offloaded: Int
 }
 
 export interface ColorCreateOneWithoutProductVariantsInput {
@@ -5058,6 +5070,7 @@ export interface ProductVariantCreateWithoutColorInput {
   reservable: Int
   reserved: Int
   nonReservable: Int
+  offloaded: Int
 }
 
 export interface PhysicalProductCreateManyWithoutProductVariantInput {
@@ -5145,6 +5158,7 @@ export interface ProductVariantCreateWithoutProductInput {
   reservable: Int
   reserved: Int
   nonReservable: Int
+  offloaded: Int
 }
 
 export interface BillingInfoCreateOneInput {
@@ -5254,6 +5268,7 @@ export interface ProductVariantCreateInput {
   reservable: Int
   reserved: Int
   nonReservable: Int
+  offloaded: Int
 }
 
 export interface BagItemUpdateInput {
@@ -5436,6 +5451,7 @@ export interface ProductVariantUpdateWithoutPhysicalProductsDataInput {
   reservable?: Maybe<Int>
   reserved?: Maybe<Int>
   nonReservable?: Maybe<Int>
+  offloaded?: Maybe<Int>
 }
 
 export interface ColorUpdateOneRequiredWithoutProductVariantsInput {
@@ -5865,6 +5881,7 @@ export interface ProductVariantUpdateWithoutColorDataInput {
   reservable?: Maybe<Int>
   reserved?: Maybe<Int>
   nonReservable?: Maybe<Int>
+  offloaded?: Maybe<Int>
 }
 
 export interface PhysicalProductUpdateManyWithoutProductVariantInput {
@@ -6129,6 +6146,14 @@ export interface ProductVariantScalarWhereInput {
   nonReservable_lte?: Maybe<Int>
   nonReservable_gt?: Maybe<Int>
   nonReservable_gte?: Maybe<Int>
+  offloaded?: Maybe<Int>
+  offloaded_not?: Maybe<Int>
+  offloaded_in?: Maybe<Int[] | Int>
+  offloaded_not_in?: Maybe<Int[] | Int>
+  offloaded_lt?: Maybe<Int>
+  offloaded_lte?: Maybe<Int>
+  offloaded_gt?: Maybe<Int>
+  offloaded_gte?: Maybe<Int>
   createdAt?: Maybe<DateTimeInput>
   createdAt_not?: Maybe<DateTimeInput>
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>
@@ -6165,6 +6190,7 @@ export interface ProductVariantUpdateManyDataInput {
   reservable?: Maybe<Int>
   reserved?: Maybe<Int>
   nonReservable?: Maybe<Int>
+  offloaded?: Maybe<Int>
 }
 
 export interface ColorUpsertNestedInput {
@@ -6335,6 +6361,7 @@ export interface ProductVariantUpdateWithoutProductDataInput {
   reservable?: Maybe<Int>
   reserved?: Maybe<Int>
   nonReservable?: Maybe<Int>
+  offloaded?: Maybe<Int>
 }
 
 export interface ProductVariantUpsertWithWhereUniqueWithoutProductInput {
@@ -6915,6 +6942,7 @@ export interface ProductVariantUpdateDataInput {
   reservable?: Maybe<Int>
   reserved?: Maybe<Int>
   nonReservable?: Maybe<Int>
+  offloaded?: Maybe<Int>
 }
 
 export interface ProductVariantUpsertNestedInput {
@@ -7957,6 +7985,7 @@ export interface ProductVariantUpdateInput {
   reservable?: Maybe<Int>
   reserved?: Maybe<Int>
   nonReservable?: Maybe<Int>
+  offloaded?: Maybe<Int>
 }
 
 export interface ProductVariantUpdateManyMutationInput {
@@ -7969,6 +7998,7 @@ export interface ProductVariantUpdateManyMutationInput {
   reservable?: Maybe<Int>
   reserved?: Maybe<Int>
   nonReservable?: Maybe<Int>
+  offloaded?: Maybe<Int>
 }
 
 export interface ProductVariantFeedbackCreateInput {
@@ -9553,6 +9583,7 @@ export interface ProductVariant {
   reservable: Int
   reserved: Int
   nonReservable: Int
+  offloaded: Int
   createdAt: DateTimeOutput
   updatedAt: DateTimeOutput
 }
@@ -9591,6 +9622,7 @@ export interface ProductVariantPromise
   reservable: () => Promise<Int>
   reserved: () => Promise<Int>
   nonReservable: () => Promise<Int>
+  offloaded: () => Promise<Int>
   createdAt: () => Promise<DateTimeOutput>
   updatedAt: () => Promise<DateTimeOutput>
 }
@@ -9631,6 +9663,7 @@ export interface ProductVariantSubscription
   reservable: () => Promise<AsyncIterator<Int>>
   reserved: () => Promise<AsyncIterator<Int>>
   nonReservable: () => Promise<AsyncIterator<Int>>
+  offloaded: () => Promise<AsyncIterator<Int>>
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>
 }
@@ -9669,6 +9702,7 @@ export interface ProductVariantNullablePromise
   reservable: () => Promise<Int>
   reserved: () => Promise<Int>
   nonReservable: () => Promise<Int>
+  offloaded: () => Promise<Int>
   createdAt: () => Promise<DateTimeOutput>
   updatedAt: () => Promise<DateTimeOutput>
 }
@@ -14198,6 +14232,7 @@ export interface ProductVariantPreviousValues {
   reservable: Int
   reserved: Int
   nonReservable: Int
+  offloaded: Int
   createdAt: DateTimeOutput
   updatedAt: DateTimeOutput
 }
@@ -14215,6 +14250,7 @@ export interface ProductVariantPreviousValuesPromise
   reservable: () => Promise<Int>
   reserved: () => Promise<Int>
   nonReservable: () => Promise<Int>
+  offloaded: () => Promise<Int>
   createdAt: () => Promise<DateTimeOutput>
   updatedAt: () => Promise<DateTimeOutput>
 }
@@ -14232,6 +14268,7 @@ export interface ProductVariantPreviousValuesSubscription
   reservable: () => Promise<AsyncIterator<Int>>
   reserved: () => Promise<AsyncIterator<Int>>
   nonReservable: () => Promise<AsyncIterator<Int>>
+  offloaded: () => Promise<AsyncIterator<Int>>
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>
 }

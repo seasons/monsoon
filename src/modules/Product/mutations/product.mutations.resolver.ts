@@ -2,15 +2,18 @@ import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
 import { Customer, User } from "@app/nest_decorators"
 
 import { BagService } from "../services/bag.service"
+import { PrismaService } from "@prisma/prisma.service"
 import { ProductRequestService } from "../services/productRequest.service"
 import { ProductService } from "../services/product.service"
+import { union } from "lodash"
 
 @Resolver()
 export class ProductMutationsResolver {
   constructor(
     private readonly bagService: BagService,
     private readonly productRequestService: ProductRequestService,
-    private readonly productService: ProductService
+    private readonly productService: ProductService,
+    private readonly prisma: PrismaService
   ) {}
 
   @Mutation()
@@ -48,9 +51,7 @@ export class ProductMutationsResolver {
   }
 
   @Mutation()
-  async updateProduct(
-    @Args() { item, input },
-    @Info() info,
-    @Customer() customer
-  ) {}
+  async updateProduct(@Args() { where, data }, @Info() info) {
+    return await this.productService.updateProduct(where, data, info)
+  }
 }
