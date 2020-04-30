@@ -122,7 +122,7 @@ export class ProductService {
       outerMaterials,
       status,
       season,
-      architectureID,
+      architecture,
       variants,
     } = input
     const brand = await this.prisma.client.brand({ id: brandID })
@@ -141,51 +141,48 @@ export class ProductService {
     const functionIDs = productFunctions
       .filter(Boolean)
       .map((func: ProductFunction) => ({ id: func.id }))
-    // const innerMaterials = await Promise.all(innerMaterials.map(async material =>
-    //   await this.prisma.client.upsertMat({
-    //   })
-    // ))
-    // const functionIDs = productFunctions
-    //   .filter(Boolean)
-    //   .map((func: ProductFunction) => ({ id: func.id }))
     const slug = await this.productUtils.getProductSlug(
       brand.brandCode,
       name,
       color.name
     )
-    // const product = await this.prisma.client.createProduct({
-    //   slug,
-    //   name,
-    //   brand: {
-    //     connect: { id: brandID }
-    //   },
-    //   category: {
-    //     connect: { id: categoryID }
-    //   },
-    //   type,
-    //   description,
-    //   modelHeight: model.height,
-    //   retailPrice,
-    //   model: {
-    //     connect: { id: model.id }
-    //   },
-    //   modelSize: {
-    //     connect: { id: modelSizeID }
-    //   },
-    //   color: {
-    //     connect: { id: colorID }
-    //   },
-    //   secondaryColor: {
-    //     connect: { id: secondaryColorID }
-    //   },
-    //   tags: {
-    //     set: tags
-    //   },
-    //   functions: {
-    //     connect: functionIDs
-    //   },
-
-    // })
+    const product = await this.prisma.client.createProduct({
+      slug,
+      name,
+      brand: {
+        connect: { id: brandID },
+      },
+      category: {
+        connect: { id: categoryID },
+      },
+      type,
+      description,
+      modelHeight: model.height,
+      retailPrice,
+      model: {
+        connect: { id: model.id },
+      },
+      modelSize: {
+        connect: { id: modelSizeID },
+      },
+      color: {
+        connect: { id: colorID },
+      },
+      secondaryColor: {
+        connect: { id: secondaryColorID },
+      },
+      tags: {
+        set: tags,
+      },
+      functions: {
+        connect: functionIDs,
+      },
+      innerMaterials: { set: innerMaterials },
+      outerMaterials: { set: outerMaterials },
+      status,
+      season,
+      architecture,
+    })
     return null
   }
 

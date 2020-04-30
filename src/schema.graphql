@@ -447,7 +447,7 @@ input CreateProductInput {
   outerMaterials: [String!]!
   status: ProductStatus!
   season: String!
-  architectureID: String!
+  architecture: String!
   variants: [CreateVariantInput!]!
 }
 
