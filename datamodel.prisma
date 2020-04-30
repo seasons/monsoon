@@ -105,6 +105,8 @@ enum InventoryStatus {
   NonReservable
   Reservable
   Reserved
+  Stored
+  Offloaded
 }
 
 enum PhysicalProductStatus {
@@ -113,8 +115,6 @@ enum PhysicalProductStatus {
   Damaged
   Clean
   Lost
-  Stored
-  Offloaded
 }
 
 enum ProductStatus {
@@ -310,7 +310,7 @@ type Product {
   functions: [ProductFunction!]!
   innerMaterials: [String!]! @scalarList(strategy: RELATION)
   outerMaterials: [String!]! @scalarList(strategy: RELATION)
-  variants: [ProductVariant!]! @relation(link: TABLE)
+  variants: [ProductVariant!]! @relation(link: TABLE, onDelete: "CASCADE")
   status: ProductStatus @default(value: Available)
   season: String
   architecture: ProductArchitecture
@@ -339,14 +339,15 @@ type ProductVariant {
   weight: Float
   height: Float
   productID: String!
-  product: Product!
+  product: Product! @relation(onDelete: SET_NULL)
   retailPrice: Float
-  physicalProducts: [PhysicalProduct!]! @relation(link: TABLE)
+  physicalProducts: [PhysicalProduct!]! @relation(link: TABLE, onDelete: CASCADE)
   total: Int!
   reservable: Int!
   reserved: Int!
   nonReservable: Int!
   offloaded: Int!
+  stored: Int!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
@@ -355,7 +356,7 @@ type PhysicalProduct {
   id: ID! @id
   seasonsUID: String! @unique
   location: Location
-  productVariant: ProductVariant!
+  productVariant: ProductVariant! @relation(onDelete: SET_NULL)
   inventoryStatus: InventoryStatus!
   productStatus: PhysicalProductStatus!
   createdAt: DateTime! @createdAt

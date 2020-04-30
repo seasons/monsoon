@@ -1,7 +1,8 @@
 import { Injectable } from "@nestjs/common"
 import { BrandOrderByInput } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
-import { uniqBy } from "lodash"
+import { uniqBy, union } from "lodash"
+import { ProductWithPhysicalProducts } from "../product.types"
 
 @Injectable()
 export class ProductUtilsService {
@@ -116,6 +117,13 @@ export class ProductUtilsService {
         0
       return sortWeightA - sortWeightB
     })
+  }
+
+  physicalProductsForProduct(product: ProductWithPhysicalProducts) {
+    return product.variants.reduce(
+      (acc, curVal) => union(acc, curVal.physicalProducts),
+      []
+    )
   }
 
   private async productsAlphabetically(

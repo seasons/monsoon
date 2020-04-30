@@ -236,9 +236,6 @@ export class ProductService {
     )
   }
 
-  async yo() {
-    console.log(await this.prisma.client.products())
-  }
   private async storeProductIfNeeded(
     where: ProductWhereUniqueInput,
     status: ProductStatus

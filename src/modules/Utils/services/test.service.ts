@@ -192,23 +192,39 @@ export class TestUtilsService {
     }
   }
 
-  async getTestableReservableNotOffloadedProducts(info?) {
-    // TODO: If there are no such products, create them
+  async productsWithXProductVariantsEachWithYPhysicalProducts(x, y, info?) {
+    const prods = await this.prisma.binding.query.products(
+      { where: {} },
+      `{
+        id
+        variants {
+          id
+          sku
+          physicalProducts {
+            id
+            seasonsUID
+          }
+        }
+      }`
+    )
+    const prodsWithXProductVariants = prods.filter(
+      a => a.variants?.length === x
+    )
+    console.log(
+      prodsWithXProductVariants.map(b =>
+        b.variants.reduce((acc, curVal) => {
+          return acc && curVal.physicalProducts?.length === y
+        }, true)
+      )
+    )
+    const final = prodsWithXProductVariants.filter(b =>
+      b.variants.reduce((acc, curVal) => {
+        return acc && curVal.physicalProducts?.length === y
+      }, true)
+    )
+
     return await this.prisma.binding.query.products(
-      {
-        where: {
-          variants_every: {
-            AND: [
-              { reserved: 0 },
-              {
-                physicalProducts_every: {
-                  productStatus_not_in: ["Stored", "Offloaded"],
-                },
-              },
-            ],
-          },
-        },
-      },
+      { where: { id_in: prods.map(a => a.id) } },
       info || this.defaultProductInfo
     )
   }
