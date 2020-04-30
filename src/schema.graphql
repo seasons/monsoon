@@ -89,7 +89,7 @@ type ProductVariant {
 }
 
 type Query {
-  me: Me @isAuthenticated
+  me: Me
   brand(where: BrandWhereUniqueInput!): Brand
   brands(
     where: BrandWhereInput
@@ -494,11 +494,11 @@ type HomepageSection {
 }
 
 type Me {
-  user: User!
-  customer: Customer!
+  user: User
+  customer: Customer
   activeReservation: Reservation
-  bag: [BagItem!]!
-  savedItems: [BagItem!]!
+  bag: [BagItem!]
+  savedItems: [BagItem!]
 }
 
 union HomepageResult = Product | Collection | Brand
