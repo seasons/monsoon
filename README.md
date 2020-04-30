@@ -83,8 +83,9 @@ ALTER TABLE "monsoon$dev"."ProductVariant"
   ADD CHECK (reservable >= 0),
   ADD CHECK (reserved >= 0),
   ADD CHECK ("nonReservable" >= 0),
-  ADD CHECK (total = reservable + reserved + "nonReservable");
-
+  ADD CHECK (stored >= 0),
+  ADD CHECK (offloaded >= 0),
+  ADD CHECK (total = reservable + reserved + "nonReservable" + stored + offloaded);
 ```
 
 ## Deployment
