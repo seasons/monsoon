@@ -80,6 +80,7 @@
     "graphql-binding": "^2.5.2",
     "graphql-import": "^0.7.1",
     "graphql-tools": "^4.0.5",
+    "graphql-upload": "^10.0.0",
     "handlebars": "^4.7.3",
     "jsonwebtoken": "8.5.1",
     "jwks-rsa": "^1.6.0",
