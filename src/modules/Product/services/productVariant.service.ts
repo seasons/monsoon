@@ -70,7 +70,7 @@ export class ProductVariantService {
     const allAirtableProductVariants = await this.airtableService.getAllProductVariants()
     const allAirtableProductVariantSlugs = prismaProductVariants.map(a => a.sku)
     const airtableProductVariants = allAirtableProductVariants.filter(a =>
-      allAirtableProductVariantSlugs.includes(a.model.sKU)
+      allAirtableProductVariantSlugs.includes(a.model.sku)
     )
 
     const productsBeingReserved = [] as Product[]
@@ -111,7 +111,7 @@ export class ProductVariantService {
 
           // Airtable record of product variant
           const airtableProductVariant = airtableProductVariants.find(
-            a => a.model.sKU === prismaProductVariant.sku
+            a => a.model.sku === prismaProductVariant.sku
           )
           if (airtableProductVariant) {
             await airtableProductVariant.patchUpdate({

@@ -113,7 +113,7 @@ export class SyncPhysicalProductsService {
         const data = {
           productVariant: {
             connect: {
-              sku: productVariant.model.sKU,
+              sku: productVariant.model.sku,
             },
           },
           seasonsUID: sUID.text,

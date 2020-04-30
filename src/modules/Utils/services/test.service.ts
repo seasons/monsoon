@@ -308,10 +308,10 @@ export class TestUtilsService {
   private async getProductVariantsWithAirtableRecords(args, info) {
     const allAirtablePhysicalProductsSUIDs = (
       await this.airtableService.getAllPhysicalProducts()
-    ).map(a => a.model.sUID.text)
+    ).map(a => a.model.suid.text)
     const allAirtableProductVariantSKUs = (
       await this.airtableService.getAllProductVariants()
-    ).map(a => a.model.sKU)
+    ).map(a => a.model.sku)
 
     const _res = (
       await this.prisma.binding.query.productVariants(
