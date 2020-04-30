@@ -192,43 +192,6 @@ export class TestUtilsService {
     }
   }
 
-  async productsWithXProductVariantsEachWithYPhysicalProducts(x, y, info?) {
-    const prods = await this.prisma.binding.query.products(
-      { where: {} },
-      `{
-        id
-        variants {
-          id
-          sku
-          physicalProducts {
-            id
-            seasonsUID
-          }
-        }
-      }`
-    )
-    const prodsWithXProductVariants = prods.filter(
-      a => a.variants?.length === x
-    )
-    console.log(
-      prodsWithXProductVariants.map(b =>
-        b.variants.reduce((acc, curVal) => {
-          return acc && curVal.physicalProducts?.length === y
-        }, true)
-      )
-    )
-    const final = prodsWithXProductVariants.filter(b =>
-      b.variants.reduce((acc, curVal) => {
-        return acc && curVal.physicalProducts?.length === y
-      }, true)
-    )
-
-    return await this.prisma.binding.query.products(
-      { where: { id_in: prods.map(a => a.id) } },
-      info || this.defaultProductInfo
-    )
-  }
-
   private async createTestableProductVariants({
     inventoryStatus,
     num = 10,
