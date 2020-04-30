@@ -23,6 +23,6 @@ export class ImageMutationsResolver {
     const result = await this.s3.upload(uploadParams).promise()
 
     console.log(result)
-    return "Nice !"
+    return result.Location
   }
 }
