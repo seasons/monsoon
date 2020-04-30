@@ -10,66 +10,6 @@ enum BrandTier {
   Discovery
 }
 
-enum Material {
-  Acetate
-  Acrylic
-  Alpaca
-  CalfLeather
-  CamelHair
-  Camel
-  Cashmere
-  Cotton
-  CottonPoplin
-  CowLeather
-  Cupro
-  DuckDown
-  Denim
-  DuckFeathers
-  Elastane
-  Esterlane
-  Feather
-  FeatherDown
-  GooseDown
-  LambLeather
-  LambSkin
-  Lambswool
-  Leather
-  Lyocell
-  Linen
-  MerinoWool
-  Modacrylic
-  Mohair
-  Nylon
-  OrganicCotton
-  PolyAcetate
-  Polyamide
-  Polyester
-  Polyethylene
-  PolySatin
-  Polyurethane
-  PolyurethanicResin
-  PVC
-  Rayon
-  RecycledPolyester
-  RecycledWool
-  Silk
-  Suede
-  SheepLeather
-  Spandex
-  Taffeta
-  Tartan
-  Triacetate
-  VirginWool
-  Viscose
-  Velcro
-  WaxCoating
-  WhiteDuckDown
-  WhiteGooseDown
-  Wool
-  Mesh
-  Wool
-}
-
 enum Department {
   Clothes
   Bags

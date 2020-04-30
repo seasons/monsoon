@@ -13,6 +13,7 @@ import {
 import { PrismaService } from "@prisma/prisma.service"
 import { head } from "lodash"
 
+import { ImageService } from "../../Image/services/image.service"
 import { UtilsService } from "../../Utils/services/utils.service"
 import { ProductUtilsService } from "./product.utils.service"
 import { ProductVariantService } from "./productVariant.service"
@@ -21,6 +22,7 @@ import { ProductVariantService } from "./productVariant.service"
 export class ProductService {
   constructor(
     private readonly prisma: PrismaService,
+    private readonly imageService: ImageService,
     private readonly productUtils: ProductUtilsService,
     private readonly productVariantService: ProductVariantService,
     private readonly utils: UtilsService
@@ -110,6 +112,7 @@ export class ProductService {
   async createProduct(input) {
     const {
       name,
+      images,
       brandID,
       categoryID,
       type,
@@ -149,6 +152,7 @@ export class ProductService {
       name,
       color.name
     )
+    const imageURLs = await this.imageService.uploadImages(images)
     const variantsCreateInput: ProductVariantCreateWithoutProductInput[] = await Promise.all(
       variants.map(async variant => {
         const {

@@ -5,6 +5,8 @@ directive @hasRole(roles: [String]) on FIELD_DEFINITION
 directive @isOwner(type: String) on FIELD_DEFINITION
 directive @isOwnerOrHasRole(type: String, roles: [String]) on FIELD_DEFINITION
 
+scalar Upload
+
 type Product {
   id: ID!
   slug: String!
@@ -402,6 +404,7 @@ type Mutation {
     input: ReservationFeedbackUpdateInput!
   ): ReservationFeedback!
   createProduct(input: CreateProductInput): Product
+  uploadImage(image: Upload!): String
 }
 
 input RefundInvoiceInput {
@@ -432,6 +435,7 @@ input ProductVariantSKUsInput {
 
 input CreateProductInput {
   name: String!
+  images: [Upload!]!
   brandID: String!
   categoryID: String!
   type: ProductType!
