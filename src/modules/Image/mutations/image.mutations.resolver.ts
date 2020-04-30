@@ -7,8 +7,6 @@ export class ImageMutationsResolver {
 
   @Mutation()
   async uploadImage(@Args("image") image) {
-    console.log("Hello file", image)
-
     const file = await image
     const { createReadStream, filename, mimetype } = file
     const fileStream = createReadStream()
@@ -16,6 +14,7 @@ export class ImageMutationsResolver {
     // Here stream it to S3
     // Enter your bucket name here next to "Bucket: "
     const uploadParams = {
+      ACL: "public-read",
       Bucket: "seasons-images",
       Key: filename,
       Body: fileStream,
