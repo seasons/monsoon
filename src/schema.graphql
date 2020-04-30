@@ -453,7 +453,6 @@ input CreateProductInput {
 
 input CreateVariantInput {
   sku: String!
-  colorID: String!
   internalSizeID: String!
   weight: Float!
   total: Int!

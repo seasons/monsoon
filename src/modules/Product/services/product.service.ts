@@ -146,43 +146,65 @@ export class ProductService {
       name,
       color.name
     )
-    const product = await this.prisma.client.createProduct({
-      slug,
-      name,
-      brand: {
-        connect: { id: brandID },
-      },
-      category: {
-        connect: { id: categoryID },
-      },
-      type,
-      description,
-      modelHeight: model.height,
-      retailPrice,
-      model: {
-        connect: { id: model.id },
-      },
-      modelSize: {
-        connect: { id: modelSizeID },
-      },
-      color: {
-        connect: { id: colorID },
-      },
-      secondaryColor: {
-        connect: { id: secondaryColorID },
-      },
-      tags: {
-        set: tags,
-      },
-      functions: {
-        connect: functionIDs,
-      },
-      innerMaterials: { set: innerMaterials },
-      outerMaterials: { set: outerMaterials },
-      status,
-      season,
-      architecture,
+    const variantsCreateInput = variants.map(variant => {
+      const {
+        sku,
+        internalSizeID,
+        weight,
+        total,
+        reservable,
+        nonReservable,
+        physicalProducts,
+      } = variant
+      return {
+        sku,
+        color: {
+          connect: { id: colorID },
+        },
+      }
     })
+    // const product = await this.prisma.client.createProduct({
+    //   slug,
+    //   name,
+    //   brand: {
+    //     connect: { id: brandID },
+    //   },
+    //   category: {
+    //     connect: { id: categoryID },
+    //   },
+    //   type,
+    //   description,
+    //   modelHeight: model.height,
+    //   retailPrice,
+    //   model: {
+    //     connect: { id: model.id },
+    //   },
+    //   modelSize: {
+    //     connect: { id: modelSizeID },
+    //   },
+    //   color: {
+    //     connect: { id: colorID },
+    //   },
+    //   secondaryColor: {
+    //     connect: { id: secondaryColorID },
+    //   },
+    //   tags: {
+    //     set: tags,
+    //   },
+    //   functions: {
+    //     connect: functionIDs,
+    //   },
+    //   innerMaterials: { set: innerMaterials },
+    //   outerMaterials: { set: outerMaterials },
+    //   status,
+    //   season,
+    //   architecture,
+    //   variants: {
+    //     create: {
+
+    //     }
+    //   }
+    // })
     return null
   }
 
