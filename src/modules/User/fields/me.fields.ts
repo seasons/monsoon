@@ -14,6 +14,9 @@ export class MeFieldsResolver {
 
   @ResolveField()
   async customer(@Customer() customer, @Info() info) {
+    if (!customer) {
+      return null
+    }
     return this.prisma.binding.query.customer(
       {
         where: { id: customer.id },
@@ -24,6 +27,9 @@ export class MeFieldsResolver {
 
   @ResolveField()
   async activeReservation(@Customer() customer, @Info() info) {
+    if (!customer) {
+      return null
+    }
     const reservations = await this.prisma.client
       .customer({ id: customer.id })
       .reservations({ orderBy: "createdAt_DESC" })
@@ -45,6 +51,9 @@ export class MeFieldsResolver {
 
   @ResolveField()
   async bag(@Info() info, @Customer() customer) {
+    if (!customer) {
+      return null
+    }
     return await this.prisma.binding.query.bagItems(
       {
         where: {
@@ -60,6 +69,9 @@ export class MeFieldsResolver {
 
   @ResolveField()
   async savedItems(@Info() info, @Customer() customer) {
+    if (!customer) {
+      return null
+    }
     return await this.prisma.binding.query.bagItems(
       {
         where: {
