@@ -1,8 +1,8 @@
-import { BrandOrderByInput } from "@prisma/index"
 import { Injectable } from "@nestjs/common"
+import { BrandOrderByInput } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
-import slugify from "slugify"
 import { uniqBy } from "lodash"
+import slugify from "slugify"
 
 @Injectable()
 export class ProductUtilsService {

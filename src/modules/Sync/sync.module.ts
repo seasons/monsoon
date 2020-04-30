@@ -1,9 +1,13 @@
-import { AirtableModule } from "../Airtable/airtable.module"
-import { AirtableSyncService } from "./services/sync.airtable.service"
 import { Module } from "@nestjs/common"
+
 import { PrismaModule } from "../../prisma/prisma.module"
+import { AirtableModule } from "../Airtable/airtable.module"
+import { ProductModule } from "../Product/product.module"
+import { UserModule } from "../User/user.module"
+import { UtilsModule } from "../Utils/utils.module"
+import { AirtableSyncService } from "./services/sync.airtable.service"
 import { PrismaSyncService } from "./services/sync.prisma.service"
-import { ProductUtilsService } from "../Product/services/product.utils.service"
+import { SyncUtilsService } from "./services/sync.utils.service"
 import { SyncBottomSizesService } from "./services/syncBottomSizes.service"
 import { SyncBrandsService } from "./services/syncBrands.service"
 import { SyncCategoriesService } from "./services/syncCategories.service"
@@ -14,21 +18,18 @@ import { SyncHomepageProductRailsService } from "./services/syncHomepageProductR
 import { SyncLocationsService } from "./services/syncLocations.service"
 import { SyncModelsService } from "./services/syncModels.service"
 import { SyncPhysicalProductsService } from "./services/syncPhysicalProducts.service"
-import { SyncProductVariantsService } from "./services/syncProductVariants.service"
 import { SyncProductsService } from "./services/syncProducts.service"
+import { SyncProductVariantsService } from "./services/syncProductVariants.service"
 import { SyncReservationsService } from "./services/syncReservations.service"
 import { SyncSizesService } from "./services/syncSizes.service"
 import { SyncTopSizesService } from "./services/syncTopSizes.service"
 import { SyncUsersService } from "./services/syncUsers.service"
-import { SyncUtilsService } from "./services/sync.utils.service"
-import { UserModule } from "../User/user.module"
-import { UtilsModule } from "../Utils/utils.module"
 
 @Module({
   imports: [
     AirtableModule,
     PrismaModule,
-    ProductUtilsService,
+    ProductModule,
     UserModule,
     UtilsModule,
   ],

@@ -1,7 +1,6 @@
 import * as Airtable from "airtable"
 
 import { AirtableData, AirtableModelName } from "../airtable.types"
-
 import { AirtableBaseService } from "./airtable.base.service"
 
 export class AirtableQueriesService {

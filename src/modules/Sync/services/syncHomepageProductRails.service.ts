@@ -1,11 +1,12 @@
-import { AirtableService } from "../../Airtable/services/airtable.service"
 import { Injectable } from "@nestjs/common"
-import { PrismaService } from "../../../prisma/prisma.service"
-import { SyncProductsService } from "./syncProducts.service"
-import { SyncUtilsService } from "./sync.utils.service"
-import { UtilsService } from "../../Utils/services/utils.service"
 import { isEmpty } from "lodash"
 import slugify from "slugify"
+
+import { PrismaService } from "../../../prisma/prisma.service"
+import { AirtableService } from "../../Airtable/services/airtable.service"
+import { UtilsService } from "../../Utils/services/utils.service"
+import { SyncUtilsService } from "./sync.utils.service"
+import { SyncProductsService } from "./syncProducts.service"
 
 @Injectable()
 export class SyncHomepageProductRailsService {
