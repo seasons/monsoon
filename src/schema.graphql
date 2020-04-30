@@ -453,18 +453,28 @@ input CreateProductInput {
 
 input CreateVariantInput {
   sku: String!
-  internalSizeID: String!
+  internalSizeName: String!
+  # Top Size values
+  sleeve: Float
+  shoulder: Float
+  chest: Float
+  neck: Float
+  length: Float
+  # Bottom Size values
+  bottomSizeType: BottomSizeType
+  waist: Float
+  rise: Float
+  hem: Float
+  inseam: Float
   weight: Float!
   total: Int!
-  reservable: Int!
-  nonReservable: Int!
   physicalProducts: [CreatePhysicalProductInput!]!
 }
 
 input CreatePhysicalProductInput {
   seasonsUID: String!
-  inventoryStatusID: String!
-  physicalProductStatusID: String!
+  inventoryStatus: String!
+  physicalProductStatus: String!
 }
 
 type BeamsData {

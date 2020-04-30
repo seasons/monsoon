@@ -1,10 +1,13 @@
 import { Injectable } from "@nestjs/common"
 import {
   BagItem,
+  BottomSizeType,
   Customer,
   ID_Input,
+  LetterSize,
   Product,
   ProductFunction,
+  ProductVariantCreateWithoutProductInput,
   RecentlyViewedProduct,
 } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
@@ -146,66 +149,122 @@ export class ProductService {
       name,
       color.name
     )
-    const variantsCreateInput = variants.map(variant => {
-      const {
-        sku,
-        internalSizeID,
-        weight,
-        total,
-        reservable,
-        nonReservable,
-        physicalProducts,
-      } = variant
-      return {
-        sku,
-        color: {
-          connect: { id: colorID },
-        },
-      }
+    const variantsCreateInput: ProductVariantCreateWithoutProductInput[] = await Promise.all(
+      variants.map(async variant => {
+        const {
+          sku,
+          internalSizeName,
+          weight,
+          total,
+          physicalProducts,
+          sleeve,
+          shoulder,
+          chest,
+          neck,
+          length,
+          bottomSizeType,
+          waist,
+          rise,
+          hem,
+          inseam,
+        } = variant
+        const internalSize = await this.productUtils.deepUpsertSize({
+          slug: `${sku}-internal`,
+          type,
+          display: internalSizeName,
+          topSizeData: type === "Top" && {
+            letter: (internalSizeName as LetterSize) || null,
+            sleeve,
+            shoulder,
+            chest,
+            neck,
+            length,
+          },
+          bottomSizeData: type === "Bottom" && {
+            type: (bottomSizeType as BottomSizeType) || null,
+            value: internalSizeName || "",
+            waist,
+            rise,
+            hem,
+            inseam,
+          },
+        })
+        const physicalProductsCreateInput = physicalProducts.map(
+          physicalProduct => {
+            const {
+              seasonsUID,
+              inventoryStatus,
+              physicalProductStatus,
+            } = physicalProduct
+            return {
+              seasonsUID,
+              inventoryStatus,
+              physicalProductStatus,
+            }
+          }
+        )
+        return {
+          sku,
+          color: {
+            connect: { id: colorID },
+          },
+          internalSize: {
+            connect: { id: internalSize.id },
+          },
+          weight,
+          productID: slug,
+          retailPrice,
+          total,
+          reservable: status === "Available" ? total : 0,
+          reserved: 0,
+          nonReservable: status === "NotAvailable" ? total : 0,
+          physicalProducts: {
+            create: physicalProductsCreateInput,
+          },
+        }
+      })
+    )
+    const product = await this.prisma.client.createProduct({
+      slug,
+      name,
+      brand: {
+        connect: { id: brandID },
+      },
+      category: {
+        connect: { id: categoryID },
+      },
+      type,
+      description,
+      modelHeight: model.height,
+      retailPrice,
+      model: {
+        connect: { id: model.id },
+      },
+      modelSize: {
+        connect: { id: modelSizeID },
+      },
+      color: {
+        connect: { id: colorID },
+      },
+      secondaryColor: {
+        connect: { id: secondaryColorID },
+      },
+      tags: {
+        set: tags,
+      },
+      functions: {
+        connect: functionIDs,
+      },
+      innerMaterials: { set: innerMaterials },
+      outerMaterials: { set: outerMaterials },
+      status,
+      season,
+      architecture,
+      variants: {
+        create: variantsCreateInput,
+      },
     })
-    // const product = await this.prisma.client.createProduct({
-    //   slug,
-    //   name,
-    //   brand: {
-    //     connect: { id: brandID },
-    //   },
-    //   category: {
-    //     connect: { id: categoryID },
-    //   },
-    //   type,
-    //   description,
-    //   modelHeight: model.height,
-    //   retailPrice,
-    //   model: {
-    //     connect: { id: model.id },
-    //   },
-    //   modelSize: {
-    //     connect: { id: modelSizeID },
-    //   },
-    //   color: {
-    //     connect: { id: colorID },
-    //   },
-    //   secondaryColor: {
-    //     connect: { id: secondaryColorID },
-    //   },
-    //   tags: {
-    //     set: tags,
-    //   },
-    //   functions: {
-    //     connect: functionIDs,
-    //   },
-    //   innerMaterials: { set: innerMaterials },
-    //   outerMaterials: { set: outerMaterials },
-    //   status,
-    //   season,
-    //   architecture,
-    //   variants: {
-    //     create: {
-
-    //     }
-    //   }
-    // })
-    return null
+    return product
   }
 
   async saveProduct(item, save, info, customer) {
