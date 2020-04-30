@@ -1,19 +1,17 @@
-import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
 import { Customer, User } from "@app/nest_decorators"
+import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
 
 import { BagService } from "../services/bag.service"
 import { PrismaService } from "@prisma/prisma.service"
 import { ProductRequestService } from "../services/productRequest.service"
 import { ProductService } from "../services/product.service"
-import { union } from "lodash"
 
 @Resolver()
 export class ProductMutationsResolver {
   constructor(
     private readonly bagService: BagService,
     private readonly productRequestService: ProductRequestService,
-    private readonly productService: ProductService,
-    private readonly prisma: PrismaService
+    private readonly productService: ProductService
   ) {}
 
   @Mutation()

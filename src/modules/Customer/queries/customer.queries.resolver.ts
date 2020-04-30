@@ -1,6 +1,5 @@
-import { Args, Info, Query, Resolver } from "@nestjs/graphql"
-
 import { PrismaService } from "@app/prisma/prisma.service"
+import { Args, Info, Query, Resolver } from "@nestjs/graphql"
 import { addFragmentToInfo } from "graphql-binding"
 
 @Resolver()

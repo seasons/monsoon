@@ -1,22 +1,22 @@
-import { AirtableIdOption, PrismaEnvOption } from "../scripts.decorators"
+import { PaymentService } from "@app/modules/Payment/index"
 import {
   BillingAddress,
   Card,
   PlanId,
 } from "@app/modules/Payment/payment.types"
-import { Command, Option } from "nestjs-command"
-import { Injectable, Logger } from "@nestjs/common"
-
+import { UtilsService } from "@app/modules/Utils"
 import { AirtableService } from "@modules/Airtable"
 import { AuthService } from "@modules/User"
+import { Injectable, Logger } from "@nestjs/common"
 import { ModuleRef } from "@nestjs/core"
-import { PaymentService } from "@app/modules/Payment/index"
 import { PrismaService } from "@prisma/prisma.service"
-import { ScriptsService } from "../services/scripts.service"
-import { UtilsService } from "@app/modules/Utils"
 import chargebee from "chargebee"
 import faker from "faker"
 import { head } from "lodash"
+import { Command, Option } from "nestjs-command"
+
+import { AirtableIdOption, PrismaEnvOption } from "../scripts.decorators"
+import { ScriptsService } from "../services/scripts.service"
 
 @Injectable()
 export class UserCommands {

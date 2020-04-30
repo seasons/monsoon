@@ -1,3 +1,13 @@
+import { Plan, User } from "@app/prisma"
+import { AirtableService } from "@modules/Airtable/services/airtable.service"
+import { EmailService } from "@modules/Email/services/email.service"
+import { AuthService } from "@modules/User/services/auth.service"
+import { UtilsService } from "@modules/Utils"
+import { Injectable } from "@nestjs/common"
+import { PrismaService } from "@prisma/prisma.service"
+import chargebee from "chargebee"
+import { camelCase, get, identity, snakeCase, upperFirst } from "lodash"
+
 import {
   BillingAddress,
   Card,
@@ -7,17 +17,7 @@ import {
   Transaction,
   TransactionsDataLoader,
 } from "../payment.types"
-import { Plan, User } from "@app/prisma"
-import { camelCase, get, identity, snakeCase, upperFirst } from "lodash"
-
-import { AirtableService } from "@modules/Airtable/services/airtable.service"
-import { AuthService } from "@modules/User/services/auth.service"
-import { EmailService } from "@modules/Email/services/email.service"
-import { Injectable } from "@nestjs/common"
 import { PaymentUtilsService } from "./payment.utils.service"
-import { PrismaService } from "@prisma/prisma.service"
-import { UtilsService } from "@modules/Utils"
-import chargebee from "chargebee"
 
 @Injectable()
 export class PaymentService {

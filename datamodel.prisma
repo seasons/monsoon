@@ -260,6 +260,7 @@ type HomepageProductRail {
 type Image {
   id: ID! @id
   caption: String
+  url: String
   originalHeight: Int
   originalUrl: String!
   originalWidth: Int
@@ -298,7 +299,7 @@ type Product {
   type: ProductType
   description: String
   externalURL: String
-  images: Json!
+  images: Json
   modelHeight: Int
   retailPrice: Int
   model: ProductModel
@@ -307,8 +308,8 @@ type Product {
   secondaryColor: Color @relation(name: "ProductSecondaryColor")
   tags: Json
   functions: [ProductFunction!]!
-  innerMaterials: [Material!]! @scalarList(strategy: RELATION)
-  outerMaterials: [Material!]! @scalarList(strategy: RELATION)
+  innerMaterials: [String!]! @scalarList(strategy: RELATION)
+  outerMaterials: [String!]! @scalarList(strategy: RELATION)
   variants: [ProductVariant!]! @relation(link: TABLE)
   status: ProductStatus @default(value: Available)
   season: String
@@ -432,10 +433,6 @@ type RecentlyViewedProduct {
   updatedAt: DateTime! @updatedAt
 }
 
-type Order {
-  id: ID! @id
-}
-
 type Reservation {
   id: ID! @id
   user: User!
@@ -551,6 +548,7 @@ type ReservationFeedback {
   reservation: Reservation!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
+  respondedAt: DateTime
 }
 
 type ProductVariantFeedback {

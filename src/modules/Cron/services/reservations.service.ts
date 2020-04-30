@@ -1,9 +1,14 @@
+import { SyncError } from "@app/errors"
 import {
   AirtableInventoryStatus,
   AirtableProductVariantCounts,
 } from "@modules/Airtable/airtable.types"
+import { AirtableService } from "@modules/Airtable/services/airtable.service"
+import { EmailService } from "@modules/Email/services/email.service"
+import { ErrorService } from "@modules/Error/services/error.service"
+import { ShippingService } from "@modules/Shipping/services/shipping.service"
+import { Injectable, Logger } from "@nestjs/common"
 import { Cron, CronExpression } from "@nestjs/schedule"
-import { DateTime, Interval } from "luxon"
 import {
   ID_Input,
   InventoryStatus,
@@ -13,15 +18,9 @@ import {
   Reservation,
   User,
 } from "@prisma/index"
-import { Injectable, Logger } from "@nestjs/common"
-
-import { AirtableService } from "@modules/Airtable/services/airtable.service"
-import { EmailService } from "@modules/Email/services/email.service"
-import { ErrorService } from "@modules/Error/services/error.service"
 import { PrismaService } from "@prisma/prisma.service"
-import { ShippingService } from "@modules/Shipping/services/shipping.service"
-import { SyncError } from "@app/errors"
 import { head } from "lodash"
+import { DateTime, Interval } from "luxon"
 
 type prismaProductVariantCounts = Pick<
   ProductVariant,

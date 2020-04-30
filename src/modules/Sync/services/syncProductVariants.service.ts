@@ -1,5 +1,8 @@
 import * as fs from "fs"
 
+import { Injectable } from "@nestjs/common"
+import { isEmpty } from "lodash"
+
 import {
   BottomSizeType,
   InventoryStatus,
@@ -7,18 +10,15 @@ import {
   PhysicalProductCreateInput,
   ProductVariantCreateInput,
 } from "../../../prisma"
-
+import { PrismaService } from "../../../prisma/prisma.service"
 import { AirtableData } from "../../Airtable/airtable.types"
 import { AirtableService } from "../../Airtable/services/airtable.service"
-import { Injectable } from "@nestjs/common"
-import { PrismaService } from "../../../prisma/prisma.service"
+import { UtilsService } from "../../Utils/services/utils.service"
+import { SyncUtilsService } from "./sync.utils.service"
 import { SyncBottomSizesService } from "./syncBottomSizes.service"
 import { SyncProductsService } from "./syncProducts.service"
 import { SyncSizesService } from "./syncSizes.service"
 import { SyncTopSizesService } from "./syncTopSizes.service"
-import { SyncUtilsService } from "./sync.utils.service"
-import { UtilsService } from "../../Utils/services/utils.service"
-import { isEmpty } from "lodash"
 
 @Injectable()
 export class SyncProductVariantsService {

@@ -1,13 +1,13 @@
-import { AirtableIdOption, PrismaEnvOption } from "../scripts.decorators"
-import { Injectable, Logger } from "@nestjs/common"
-
 import { AirtableService } from "@app/modules/Airtable"
-import { Command } from "nestjs-command"
-import { ModuleRef } from "@nestjs/core"
 import { PrismaService } from "@app/prisma/prisma.service"
-import { ScriptsService } from "../services/scripts.service"
 import { UtilsService } from "@modules/Utils/index"
+import { Injectable, Logger } from "@nestjs/common"
+import { ModuleRef } from "@nestjs/core"
 import { compact } from "lodash"
+import { Command } from "nestjs-command"
+
+import { AirtableIdOption, PrismaEnvOption } from "../scripts.decorators"
+import { ScriptsService } from "../services/scripts.service"
 
 @Injectable()
 export class ProductCommands {

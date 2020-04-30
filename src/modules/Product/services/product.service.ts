@@ -1,3 +1,4 @@
+import { Injectable } from "@nestjs/common"
 import {
   BagItem,
   Customer,
@@ -13,11 +14,11 @@ import {
 import { head, union } from "lodash"
 
 import { GraphQLResolveInfo } from "graphql"
-import { Injectable } from "@nestjs/common"
 import { PrismaService } from "@prisma/prisma.service"
+
+import { UtilsService } from "../../Utils/services/utils.service"
 import { ProductUtilsService } from "./product.utils.service"
 import { ProductVariantService } from "./productVariant.service"
-import { UtilsService } from "../../Utils/services/utils.service"
 
 @Injectable()
 export class ProductService {

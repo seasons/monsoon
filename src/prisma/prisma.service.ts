@@ -1,8 +1,8 @@
-import { Injectable, Scope } from "@nestjs/common"
-import { Prisma as PrismaClient, prisma } from "./"
-
-import { Prisma as PrismaBinding } from "./prisma.binding"
 import { UpdatableConnection } from "@app/modules/index.types"
+import { Injectable, Scope } from "@nestjs/common"
+
+import { Prisma as PrismaClient, prisma } from "./"
+import { Prisma as PrismaBinding } from "./prisma.binding"
 
 @Injectable()
 export class PrismaService implements UpdatableConnection {
@@ -15,13 +15,13 @@ export class PrismaService implements UpdatableConnection {
 
   updateConnection({ secret, endpoint }: { secret: string; endpoint: string }) {
     this.binding = new PrismaBinding({
-      secret: secret,
-      endpoint: endpoint,
+      secret,
+      endpoint,
       debug: false,
     })
     this.client = new PrismaClient({
-      secret: secret,
-      endpoint: endpoint,
+      secret,
+      endpoint,
       debug: false,
     })
   }

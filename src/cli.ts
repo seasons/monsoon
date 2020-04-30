@@ -1,14 +1,13 @@
 // import-sort-ignore
 import "module-alias/register"
 
+import { NestFactory } from "@nestjs/core"
 import * as Airtable from "airtable"
-
+import dotenv from "dotenv"
 import { CommandModule, CommandService } from "nestjs-command"
 
-import { NestFactory } from "@nestjs/core"
-import dotenv from "dotenv"
-
 dotenv.config()
+
 // Must be imported after dotenv.configure() to ensure that env vars are being loaded before making module
 import { ScriptsModule } from "./modules/Scripts/scripts.module"
 

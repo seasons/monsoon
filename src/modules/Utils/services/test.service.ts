@@ -1,19 +1,19 @@
+import { ReservationService } from "@app/modules/Reservation/services/reservation.service"
 import { AirtableBaseService, AirtableUtilsService } from "@modules/Airtable"
-import { Customer, ID_Input, InventoryStatus, User } from "@prisma/index"
-import { EmailDataProvider, EmailService } from "@modules/Email"
-
 import { AirtableService } from "@modules/Airtable/index"
+import { EmailDataProvider, EmailService } from "@modules/Email"
 import { PhysicalProductService } from "@modules/Product/services/physicalProduct.utils.service"
-import { PrismaService } from "@prisma/prisma.service"
-import { ProductCountAndStatusSummary } from "../utils.types"
 import { ProductService } from "@app/modules/Product"
 import { ProductUtilsService } from "@modules/Product/services/product.utils.service"
 import { ProductVariantService } from "@modules/Product/services/productVariant.service"
-import { ReservationService } from "@app/modules/Reservation/services/reservation.service"
 import { ReservationUtilsService } from "@modules/Reservation/services/reservation.utils.service"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { UtilsService } from "@modules/Utils/index"
+import { Customer, ID_Input, InventoryStatus, User } from "@prisma/index"
+import { PrismaService } from "@prisma/prisma.service"
 import { sampleSize } from "lodash"
+
+import { ProductCountAndStatusSummary } from "../utils.types"
 
 export class TestUtilsService {
   private defaultProductVariantInfo = `{

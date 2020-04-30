@@ -1,5 +1,4 @@
 import * as Sentry from "@sentry/node"
-
 import { ApolloServerPlugin } from "apollo-server-plugin-base"
 
 Sentry.init({
