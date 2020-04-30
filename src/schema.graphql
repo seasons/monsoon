@@ -14,13 +14,14 @@ type Product {
   type: ProductType
   description: String
   externalURL: String
-  images: Json!
   modelHeight: Int
   modelSize: Size
   retailPrice: Int
   color: Color!
   secondaryColor: Color
   tags: Json
+  images: Json!
+  resizedImages(width: Int, height: Int, size: ImageSize): [Image!]!
   functions(
     where: ProductFunctionWhereInput
     orderBy: ProductFunctionOrderByInput
@@ -30,8 +31,8 @@ type Product {
     first: Int
     last: Int
   ): [ProductFunction!]
-  innerMaterials: [Material!]!
-  outerMaterials: [Material!]!
+  innerMaterials: [String!]!
+  outerMaterials: [String!]!
   variants(
     where: ProductVariantWhereInput
     orderBy: ProductVariantOrderByInput
@@ -268,16 +269,6 @@ type Query {
     first: Int
     last: Int
   ): [ProductRequest]!
-  order(where: OrderWhereUniqueInput!): Order
-  orders(
-    where: OrderWhereInput
-    orderBy: OrderOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [Order]!
   reservation(where: ReservationWhereUniqueInput!): Reservation
   reservations(
     where: ReservationWhereInput
@@ -483,20 +474,13 @@ type SearchResult {
 }
 
 type Image {
-  href: String
   height: Int
   width: Int
-  imageURL: String
+  url: String
   originalHeight: Int
   originalWidth: Int
-  resized(width: Int, height: Int, version: [String]): ResizedImageUrl
-}
-
-type ResizedImageUrl {
-  factor: Float
-  width: Int
-  height: Int
-  url: String
+  entityID: String
+  entityType: String
 }
 
 type Homepage {
@@ -600,6 +584,14 @@ type FaqSubsection {
   text: String!
 }
 
+enum ImageSize {
+  Thumb
+  Small
+  Medium
+  Large
+  XLarge
+}
+
 type Reservation {
   id: ID!
   user: User!
@@ -608,24 +600,35 @@ type Reservation {
   returnedPackage: Package
   location: Location
   products: [PhysicalProduct!]!
+  images(width: Int, height: Int, size: ImageSize): [Image!]!
   reservationNumber: Int!
   shipped: Boolean!
   status(display: Boolean): String!
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
+  returnAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
-  returnDateDisplay: DateTime
 }
 
 type Customer {
   id: ID!
   user: User!
+  shouldRequestFeedback: Boolean
   status: CustomerStatus
   detail: CustomerDetail
   billingInfo: BillingInfo
   plan: Plan
+  bagItems(
+    where: BagItemWhereInput
+    orderBy: BagItemOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [BagItem!]
   reservations(
     where: ReservationWhereInput
     orderBy: ReservationOrderByInput

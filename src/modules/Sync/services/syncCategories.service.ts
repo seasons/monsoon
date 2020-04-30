@@ -1,12 +1,12 @@
-import { CategoryCreateInput, CategoryUpdateInput } from "../../../prisma"
-
-import { AirtableService } from "../../Airtable/services/airtable.service"
 import { Injectable } from "@nestjs/common"
-import { PrismaService } from "../../../prisma/prisma.service"
-import { SyncUtilsService } from "./sync.utils.service"
-import { UtilsService } from "../../Utils/services/utils.service"
 import { isEmpty } from "lodash"
 import slugify from "slugify"
+
+import { CategoryCreateInput, CategoryUpdateInput } from "../../../prisma"
+import { PrismaService } from "../../../prisma/prisma.service"
+import { AirtableService } from "../../Airtable/services/airtable.service"
+import { UtilsService } from "../../Utils/services/utils.service"
+import { SyncUtilsService } from "./sync.utils.service"
 
 @Injectable()
 export class SyncCategoriesService {
@@ -177,7 +177,7 @@ export class SyncCategoriesService {
     }
 
     // function to recursively build the tree
-    const findChildren = function(parent) {
+    const findChildren = function (parent) {
       if (children[parent.slug]) {
         parent.children = children[parent.slug]
         for (let child of parent.children) {

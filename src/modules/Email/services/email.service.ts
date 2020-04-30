@@ -1,18 +1,19 @@
+import fs from "fs"
+
+import { Injectable } from "@nestjs/common"
+import sgMail from "@sendgrid/mail"
+import Handlebars from "handlebars"
+import nodemailer from "nodemailer"
+
 import {
   Reservation as PrismaReservation,
   Product,
   User,
 } from "../../../prisma"
-
-import { EmailDataProvider } from "./email.data.service"
-import Handlebars from "handlebars"
-import { Injectable } from "@nestjs/common"
-import { PrismaService } from "../../../prisma/prisma.service"
 import { Reservation } from "../../../prisma/prisma.binding"
+import { PrismaService } from "../../../prisma/prisma.service"
 import { UtilsService } from "../../Utils/services/utils.service"
-import fs from "fs"
-import nodemailer from "nodemailer"
-import sgMail from "@sendgrid/mail"
+import { EmailDataProvider } from "./email.data.service"
 
 @Injectable()
 export class EmailService {

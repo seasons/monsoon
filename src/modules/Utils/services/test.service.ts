@@ -1,18 +1,18 @@
+import { ReservationService } from "@app/modules/Reservation/services/reservation.service"
 import { AirtableBaseService, AirtableUtilsService } from "@modules/Airtable"
-import { Customer, ID_Input, InventoryStatus, User } from "@prisma/index"
-import { EmailDataProvider, EmailService } from "@modules/Email"
-
 import { AirtableService } from "@modules/Airtable/index"
+import { EmailDataProvider, EmailService } from "@modules/Email"
 import { PhysicalProductService } from "@modules/Product/services/physicalProduct.utils.service"
-import { PrismaService } from "@prisma/prisma.service"
-import { ProductCountAndStatusSummary } from "../utils.types"
 import { ProductUtilsService } from "@modules/Product/services/product.utils.service"
 import { ProductVariantService } from "@modules/Product/services/productVariant.service"
-import { ReservationService } from "@app/modules/Reservation/services/reservation.service"
 import { ReservationUtilsService } from "@modules/Reservation/services/reservation.utils.service"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { UtilsService } from "@modules/Utils/index"
+import { Customer, ID_Input, InventoryStatus, User } from "@prisma/index"
+import { PrismaService } from "@prisma/prisma.service"
 import { sampleSize } from "lodash"
+
+import { ProductCountAndStatusSummary } from "../utils.types"
 
 export class TestUtilsService {
   private defaultProductVariantInfo = `{
@@ -61,10 +61,7 @@ export class TestUtilsService {
     })
     newCustomer = await this.prisma.client.customer({ id: newCustomer.id })
     const newUser = await this.prisma.client.user({
-      id: await this.prisma.client
-        .customer({ id: newCustomer.id })
-        .user()
-        .id(),
+      id: await this.prisma.client.customer({ id: newCustomer.id }).user().id(),
     })
     this.airtableService.createOrUpdateAirtableUser(newUser, {})
 

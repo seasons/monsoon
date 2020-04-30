@@ -1,6 +1,5 @@
 import { Customer, User } from "@app/nest_decorators"
 import { Info, ResolveField, Resolver } from "@nestjs/graphql"
-
 import { PrismaService } from "@prisma/prisma.service"
 import { head } from "lodash"
 

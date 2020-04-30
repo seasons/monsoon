@@ -1,5 +1,9 @@
 import { AirtableModelName } from "@modules/Airtable/airtable.types"
 import { Injectable } from "@nestjs/common"
+import { curry } from "lodash"
+
+import { UtilsService } from "../../Utils/services/utils.service"
+import { SyncUtilsService } from "./sync.utils.service"
 import { SyncBottomSizesService } from "./syncBottomSizes.service"
 import { SyncBrandsService } from "./syncBrands.service"
 import { SyncCategoriesService } from "./syncCategories.service"
@@ -10,15 +14,12 @@ import { SyncHomepageProductRailsService } from "./syncHomepageProductRails.serv
 import { SyncLocationsService } from "./syncLocations.service"
 import { SyncModelsService } from "./syncModels.service"
 import { SyncPhysicalProductsService } from "./syncPhysicalProducts.service"
-import { SyncProductVariantsService } from "./syncProductVariants.service"
 import { SyncProductsService } from "./syncProducts.service"
+import { SyncProductVariantsService } from "./syncProductVariants.service"
 import { SyncReservationsService } from "./syncReservations.service"
 import { SyncSizesService } from "./syncSizes.service"
 import { SyncTopSizesService } from "./syncTopSizes.service"
 import { SyncUsersService } from "./syncUsers.service"
-import { SyncUtilsService } from "./sync.utils.service"
-import { UtilsService } from "../../Utils/services/utils.service"
-import { curry } from "lodash"
 
 @Injectable()
 export class AirtableSyncService {

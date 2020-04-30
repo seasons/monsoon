@@ -1,9 +1,10 @@
-import { Info, Parent, ResolveField, Resolver } from "@nestjs/graphql"
-
 import { Customer } from "@app/nest_decorators"
-import { PrismaService } from "@prisma/prisma.service"
+import { ImageResizeService } from "@modules/Image"
+import { ImageSize } from "@modules/Image/image.types"
 import { ProductService } from "@modules/Product/services/product.service"
 import { ProductUtilsService } from "@modules/Product/services/product.utils.service"
+import { Args, Info, Parent, ResolveField, Resolver } from "@nestjs/graphql"
+import { PrismaService } from "@prisma/prisma.service"
 import { addFragmentToInfo } from "graphql-binding"
 import { sortedUniqBy } from "lodash"
 
@@ -12,7 +13,8 @@ export class ProductFieldsResolver {
   constructor(
     private readonly prisma: PrismaService,
     private readonly productService: ProductService,
-    private readonly productUtilsService: ProductUtilsService
+    private readonly productUtilsService: ProductUtilsService,
+    private readonly imageResizeService: ImageResizeService
   ) {}
 
   @ResolveField()
@@ -58,5 +60,37 @@ export class ProductFieldsResolver {
       (a: any) => a?.internalSize?.display
     )
     return uniqueVariants
+  }
+
+  @ResolveField()
+  async resizedImages(
+    @Parent() parent,
+    @Args("width") width: number,
+    @Args("height") height: number,
+    @Args("size") size: ImageSize = "Medium"
+  ) {
+    const product = await this.prisma.binding.query.product(
+      {
+        where: {
+          id: parent.id,
+        },
+      },
+      `
+      {
+        id
+        images
+      }
+      `
+    )
+    return product?.images.map(image => {
+      return {
+        url: this.imageResizeService.imageResize(image?.url, size, {
+          w: width,
+          h: height,
+        }),
+        entityType: "Product",
+        entityID: product?.id,
+      }
+    })
   }
 }

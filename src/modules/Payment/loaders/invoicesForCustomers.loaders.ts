@@ -1,10 +1,10 @@
-import { Invoice, InvoicesDataLoader } from "../payment.types"
+import { NestDataLoader } from "@modules/DataLoader/dataloader.types"
+import { Injectable } from "@nestjs/common"
+import DataLoader from "dataloader"
 import { identity, lowerFirst, mapKeys } from "lodash"
 
-import DataLoader from "dataloader"
-import { Injectable } from "@nestjs/common"
+import { Invoice, InvoicesDataLoader } from "../payment.types"
 import { LoaderUtilsService } from "../services/loader.utils.service"
-import { NestDataLoader } from "@modules/DataLoader/dataloader.types"
 
 @Injectable()
 export class InvoicesForCustomersLoader implements NestDataLoader {

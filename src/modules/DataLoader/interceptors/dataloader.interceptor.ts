@@ -5,11 +5,11 @@ import {
   InternalServerErrorException,
   NestInterceptor,
 } from "@nestjs/common"
-import { GqlExecutionContext, GraphQLExecutionContext } from "@nestjs/graphql"
-
 import { ModuleRef } from "@nestjs/core"
-import { NestDataLoader } from "../dataloader.types"
+import { GqlExecutionContext, GraphQLExecutionContext } from "@nestjs/graphql"
 import { Observable } from "rxjs"
+
+import { NestDataLoader } from "../dataloader.types"
 
 /**
  * Context key where get loader function will be store
