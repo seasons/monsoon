@@ -1,6 +1,7 @@
 import qs from "querystring"
 
 import { Injectable } from "@nestjs/common"
+import AWS from "aws-sdk"
 import { identity, pickBy } from "lodash"
 
 import { ImageSize } from "../image.types"
@@ -38,7 +39,9 @@ const sizes = {
 }
 
 @Injectable()
-export class ImageResizeService {
+export class ImageService {
+  private s3 = new AWS.S3()
+
   imageResize(
     url: string,
     sizeName: ImageSize,
@@ -53,5 +56,31 @@ export class ImageResizeService {
     )
 
     return url.replace(AIRTABLE_BASE, IMGIX_BASE) + "?" + qs.stringify(params)
+  }
+
+  async uploadImage(image) {
+    const file = await image
+    const { createReadStream, filename, mimetype } = file
+    const fileStream = createReadStream()
+
+    // Here stream it to S3
+    // Enter your bucket name here next to "Bucket: "
+    const uploadParams = {
+      ACL: "public-read",
+      Bucket: "seasons-images",
+      Key: filename,
+      Body: fileStream,
+    }
+    const result = await this.s3.upload(uploadParams).promise()
+
+    console.log(result)
+    return result.Location
+  }
+
+  async uploadImages(images) {
+    const imageLocations = await Promise.all(
+      images.map(async image => await this.uploadImage(image))
+    )
+    return imageLocations
   }
 }

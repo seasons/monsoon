@@ -2,10 +2,10 @@ import { Module } from "@nestjs/common"
 
 import { Upload } from "./models/Upload.model"
 import { ImageMutationsResolver } from "./mutations/image.mutations.resolver"
-import { ImageResizeService } from "./services/imageResize.service"
+import { ImageService } from "./services/image.service"
 
 @Module({
-  providers: [ImageResizeService, ImageMutationsResolver, Upload],
-  exports: [ImageResizeService],
+  providers: [ImageService, ImageMutationsResolver, Upload],
+  exports: [ImageService],
 })
 export class ImageModule {}
