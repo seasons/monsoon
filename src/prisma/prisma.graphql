@@ -6073,8 +6073,11 @@ input ProductVariantCreateInput {
   reservable: Int!
   reserved: Int!
   nonReservable: Int!
+<<<<<<< Updated upstream
   offloaded: Int!
   stored: Int!
+=======
+>>>>>>> Stashed changes
 }
 
 input ProductVariantCreateManyWithoutColorInput {
@@ -6112,8 +6115,11 @@ input ProductVariantCreateWithoutColorInput {
   reservable: Int!
   reserved: Int!
   nonReservable: Int!
+<<<<<<< Updated upstream
   offloaded: Int!
   stored: Int!
+=======
+>>>>>>> Stashed changes
 }
 
 input ProductVariantCreateWithoutPhysicalProductsInput {
@@ -6131,8 +6137,11 @@ input ProductVariantCreateWithoutPhysicalProductsInput {
   reservable: Int!
   reserved: Int!
   nonReservable: Int!
+<<<<<<< Updated upstream
   offloaded: Int!
   stored: Int!
+=======
+>>>>>>> Stashed changes
 }
 
 input ProductVariantCreateWithoutProductInput {
@@ -6150,8 +6159,11 @@ input ProductVariantCreateWithoutProductInput {
   reservable: Int!
   reserved: Int!
   nonReservable: Int!
+<<<<<<< Updated upstream
   offloaded: Int!
   stored: Int!
+=======
+>>>>>>> Stashed changes
 }
 
 type ProductVariantEdge {
@@ -6808,8 +6820,11 @@ input ProductVariantUpdateDataInput {
   reservable: Int
   reserved: Int
   nonReservable: Int
+<<<<<<< Updated upstream
   offloaded: Int
   stored: Int
+=======
+>>>>>>> Stashed changes
 }
 
 input ProductVariantUpdateInput {
@@ -6827,8 +6842,11 @@ input ProductVariantUpdateInput {
   reservable: Int
   reserved: Int
   nonReservable: Int
+<<<<<<< Updated upstream
   offloaded: Int
   stored: Int
+=======
+>>>>>>> Stashed changes
 }
 
 input ProductVariantUpdateManyDataInput {
@@ -6916,8 +6934,11 @@ input ProductVariantUpdateWithoutColorDataInput {
   reservable: Int
   reserved: Int
   nonReservable: Int
+<<<<<<< Updated upstream
   offloaded: Int
   stored: Int
+=======
+>>>>>>> Stashed changes
 }
 
 input ProductVariantUpdateWithoutPhysicalProductsDataInput {
@@ -6934,8 +6955,11 @@ input ProductVariantUpdateWithoutPhysicalProductsDataInput {
   reservable: Int
   reserved: Int
   nonReservable: Int
+<<<<<<< Updated upstream
   offloaded: Int
   stored: Int
+=======
+>>>>>>> Stashed changes
 }
 
 input ProductVariantUpdateWithoutProductDataInput {
@@ -6952,8 +6976,11 @@ input ProductVariantUpdateWithoutProductDataInput {
   reservable: Int
   reserved: Int
   nonReservable: Int
+<<<<<<< Updated upstream
   offloaded: Int
   stored: Int
+=======
+>>>>>>> Stashed changes
 }
 
 input ProductVariantUpdateWithWhereUniqueWithoutColorInput {
