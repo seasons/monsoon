@@ -6375,6 +6375,8 @@ enum InventoryStatus {
   NonReservable
   Reservable
   Reserved
+  Stored
+  Offloaded
 }
 
 """Raw JSON value"""
@@ -8263,8 +8265,6 @@ enum PhysicalProductStatus {
   Damaged
   Clean
   Lost
-  Stored
-  Offloaded
 }
 
 type PhysicalProductSubscriptionPayload {
@@ -10718,6 +10718,7 @@ type ProductVariant implements Node {
   reserved: Int!
   nonReservable: Int!
   offloaded: Int!
+  stored: Int!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -10744,6 +10745,7 @@ input ProductVariantCreateInput {
   reserved: Int!
   nonReservable: Int!
   offloaded: Int!
+  stored: Int!
   color: ColorCreateOneWithoutProductVariantsInput!
   internalSize: SizeCreateOneInput
   manufacturerSizes: SizeCreateManyInput
@@ -10783,6 +10785,7 @@ input ProductVariantCreateWithoutColorInput {
   reserved: Int!
   nonReservable: Int!
   offloaded: Int!
+  stored: Int!
   internalSize: SizeCreateOneInput
   manufacturerSizes: SizeCreateManyInput
   product: ProductCreateOneWithoutVariantsInput!
@@ -10801,6 +10804,7 @@ input ProductVariantCreateWithoutPhysicalProductsInput {
   reserved: Int!
   nonReservable: Int!
   offloaded: Int!
+  stored: Int!
   color: ColorCreateOneWithoutProductVariantsInput!
   internalSize: SizeCreateOneInput
   manufacturerSizes: SizeCreateManyInput
@@ -10819,6 +10823,7 @@ input ProductVariantCreateWithoutProductInput {
   reserved: Int!
   nonReservable: Int!
   offloaded: Int!
+  stored: Int!
   color: ColorCreateOneWithoutProductVariantsInput!
   internalSize: SizeCreateOneInput
   manufacturerSizes: SizeCreateManyInput
@@ -11535,6 +11540,8 @@ enum ProductVariantOrderByInput {
   nonReservable_DESC
   offloaded_ASC
   offloaded_DESC
+  stored_ASC
+  stored_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -11553,6 +11560,7 @@ type ProductVariantPreviousValues {
   reserved: Int!
   nonReservable: Int!
   offloaded: Int!
+  stored: Int!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -11862,6 +11870,28 @@ input ProductVariantScalarWhereInput {
 
   """All values greater than or equal the given value."""
   offloaded_gte: Int
+  stored: Int
+
+  """All values that are not equal to given value."""
+  stored_not: Int
+
+  """All values that are contained in given list."""
+  stored_in: [Int!]
+
+  """All values that are not contained in given list."""
+  stored_not_in: [Int!]
+
+  """All values less than the given value."""
+  stored_lt: Int
+
+  """All values less than or equal the given value."""
+  stored_lte: Int
+
+  """All values greater than the given value."""
+  stored_gt: Int
+
+  """All values greater than or equal the given value."""
+  stored_gte: Int
   createdAt: DateTime
 
   """All values that are not equal to given value."""
@@ -11956,6 +11986,7 @@ input ProductVariantUpdateDataInput {
   reserved: Int
   nonReservable: Int
   offloaded: Int
+  stored: Int
   color: ColorUpdateOneRequiredWithoutProductVariantsInput
   internalSize: SizeUpdateOneInput
   manufacturerSizes: SizeUpdateManyInput
@@ -11974,6 +12005,7 @@ input ProductVariantUpdateInput {
   reserved: Int
   nonReservable: Int
   offloaded: Int
+  stored: Int
   color: ColorUpdateOneRequiredWithoutProductVariantsInput
   internalSize: SizeUpdateOneInput
   manufacturerSizes: SizeUpdateManyInput
@@ -11992,6 +12024,7 @@ input ProductVariantUpdateManyDataInput {
   reserved: Int
   nonReservable: Int
   offloaded: Int
+  stored: Int
 }
 
 input ProductVariantUpdateManyMutationInput {
@@ -12005,6 +12038,7 @@ input ProductVariantUpdateManyMutationInput {
   reserved: Int
   nonReservable: Int
   offloaded: Int
+  stored: Int
 }
 
 input ProductVariantUpdateManyWithoutColorInput {
@@ -12061,6 +12095,7 @@ input ProductVariantUpdateWithoutColorDataInput {
   reserved: Int
   nonReservable: Int
   offloaded: Int
+  stored: Int
   internalSize: SizeUpdateOneInput
   manufacturerSizes: SizeUpdateManyInput
   product: ProductUpdateOneRequiredWithoutVariantsInput
@@ -12078,6 +12113,7 @@ input ProductVariantUpdateWithoutPhysicalProductsDataInput {
   reserved: Int
   nonReservable: Int
   offloaded: Int
+  stored: Int
   color: ColorUpdateOneRequiredWithoutProductVariantsInput
   internalSize: SizeUpdateOneInput
   manufacturerSizes: SizeUpdateManyInput
@@ -12095,6 +12131,7 @@ input ProductVariantUpdateWithoutProductDataInput {
   reserved: Int
   nonReservable: Int
   offloaded: Int
+  stored: Int
   color: ColorUpdateOneRequiredWithoutProductVariantsInput
   internalSize: SizeUpdateOneInput
   manufacturerSizes: SizeUpdateManyInput
@@ -12591,6 +12628,28 @@ input ProductVariantWhereInput {
 
   """All values greater than or equal the given value."""
   offloaded_gte: Int
+  stored: Int
+
+  """All values that are not equal to given value."""
+  stored_not: Int
+
+  """All values that are contained in given list."""
+  stored_in: [Int!]
+
+  """All values that are not contained in given list."""
+  stored_not_in: [Int!]
+
+  """All values less than the given value."""
+  stored_lt: Int
+
+  """All values less than or equal the given value."""
+  stored_lte: Int
+
+  """All values greater than the given value."""
+  stored_gt: Int
+
+  """All values greater than or equal the given value."""
+  stored_gte: Int
   createdAt: DateTime
 
   """All values that are not equal to given value."""
@@ -15648,620 +15707,6 @@ export const Prisma = makePrismaBindingClass<BindingConstructor<Prisma>>({typeDe
  * Types
 */
 
-<<<<<<< HEAD
-export type BagItemOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "position_ASC"
-  | "position_DESC"
-  | "saved_ASC"
-  | "saved_DESC"
-  | "status_ASC"
-  | "status_DESC"
-
-export type BagItemStatus = "Added" | "Reserved" | "Received"
-
-export type BillingInfoOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "brand_ASC"
-  | "brand_DESC"
-  | "name_ASC"
-  | "name_DESC"
-  | "last_digits_ASC"
-  | "last_digits_DESC"
-  | "expiration_month_ASC"
-  | "expiration_month_DESC"
-  | "expiration_year_ASC"
-  | "expiration_year_DESC"
-  | "street1_ASC"
-  | "street1_DESC"
-  | "street2_ASC"
-  | "street2_DESC"
-  | "city_ASC"
-  | "city_DESC"
-  | "state_ASC"
-  | "state_DESC"
-  | "country_ASC"
-  | "country_DESC"
-  | "postal_code_ASC"
-  | "postal_code_DESC"
-
-export type BottomSizeOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "type_ASC"
-  | "type_DESC"
-  | "value_ASC"
-  | "value_DESC"
-  | "waist_ASC"
-  | "waist_DESC"
-  | "rise_ASC"
-  | "rise_DESC"
-  | "hem_ASC"
-  | "hem_DESC"
-  | "inseam_ASC"
-  | "inseam_DESC"
-
-export type BottomSizeType = "WxL" | "US" | "EU" | "JP" | "Letter"
-
-export type BrandOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "slug_ASC"
-  | "slug_DESC"
-  | "brandCode_ASC"
-  | "brandCode_DESC"
-  | "description_ASC"
-  | "description_DESC"
-  | "isPrimaryBrand_ASC"
-  | "isPrimaryBrand_DESC"
-  | "logo_ASC"
-  | "logo_DESC"
-  | "name_ASC"
-  | "name_DESC"
-  | "basedIn_ASC"
-  | "basedIn_DESC"
-  | "since_ASC"
-  | "since_DESC"
-  | "tier_ASC"
-  | "tier_DESC"
-  | "websiteUrl_ASC"
-  | "websiteUrl_DESC"
-  | "createdAt_ASC"
-  | "createdAt_DESC"
-  | "updatedAt_ASC"
-  | "updatedAt_DESC"
-
-export type BrandTier =
-  | "Tier0"
-  | "Tier1"
-  | "Tier2"
-  | "Niche"
-  | "Upcoming"
-  | "Retro"
-  | "Boutique"
-  | "Local"
-  | "Discovery"
-
-export type CategoryOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "slug_ASC"
-  | "slug_DESC"
-  | "name_ASC"
-  | "name_DESC"
-  | "image_ASC"
-  | "image_DESC"
-  | "description_ASC"
-  | "description_DESC"
-  | "visible_ASC"
-  | "visible_DESC"
-
-export type CollectionGroupOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "slug_ASC"
-  | "slug_DESC"
-  | "title_ASC"
-  | "title_DESC"
-  | "collectionCount_ASC"
-  | "collectionCount_DESC"
-
-export type CollectionOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "slug_ASC"
-  | "slug_DESC"
-  | "images_ASC"
-  | "images_DESC"
-  | "title_ASC"
-  | "title_DESC"
-  | "subTitle_ASC"
-  | "subTitle_DESC"
-  | "descriptionTop_ASC"
-  | "descriptionTop_DESC"
-  | "descriptionBottom_ASC"
-  | "descriptionBottom_DESC"
-
-export type ColorOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "slug_ASC"
-  | "slug_DESC"
-  | "name_ASC"
-  | "name_DESC"
-  | "colorCode_ASC"
-  | "colorCode_DESC"
-  | "hexCode_ASC"
-  | "hexCode_DESC"
-
-export type CustomerDetailOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "phoneNumber_ASC"
-  | "phoneNumber_DESC"
-  | "birthday_ASC"
-  | "birthday_DESC"
-  | "height_ASC"
-  | "height_DESC"
-  | "weight_ASC"
-  | "weight_DESC"
-  | "bodyType_ASC"
-  | "bodyType_DESC"
-  | "averageTopSize_ASC"
-  | "averageTopSize_DESC"
-  | "averageWaistSize_ASC"
-  | "averageWaistSize_DESC"
-  | "averagePantLength_ASC"
-  | "averagePantLength_DESC"
-  | "preferredPronouns_ASC"
-  | "preferredPronouns_DESC"
-  | "profession_ASC"
-  | "profession_DESC"
-  | "partyFrequency_ASC"
-  | "partyFrequency_DESC"
-  | "travelFrequency_ASC"
-  | "travelFrequency_DESC"
-  | "shoppingFrequency_ASC"
-  | "shoppingFrequency_DESC"
-  | "averageSpend_ASC"
-  | "averageSpend_DESC"
-  | "style_ASC"
-  | "style_DESC"
-  | "commuteStyle_ASC"
-  | "commuteStyle_DESC"
-  | "phoneOS_ASC"
-  | "phoneOS_DESC"
-  | "insureShipment_ASC"
-  | "insureShipment_DESC"
-  | "createdAt_ASC"
-  | "createdAt_DESC"
-  | "updatedAt_ASC"
-  | "updatedAt_DESC"
-
-export type CustomerOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "status_ASC"
-  | "status_DESC"
-  | "plan_ASC"
-  | "plan_DESC"
-
-export type CustomerStatus =
-  | "Invited"
-  | "Created"
-  | "Waitlisted"
-  | "Authorized"
-  | "Active"
-  | "Suspended"
-  | "Paused"
-  | "Deactivated"
-
-export type HomepageProductRailOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "slug_ASC"
-  | "slug_DESC"
-  | "name_ASC"
-  | "name_DESC"
-
-export type ImageOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "caption_ASC"
-  | "caption_DESC"
-  | "originalHeight_ASC"
-  | "originalHeight_DESC"
-  | "originalUrl_ASC"
-  | "originalUrl_DESC"
-  | "originalWidth_ASC"
-  | "originalWidth_DESC"
-  | "resizedUrl_ASC"
-  | "resizedUrl_DESC"
-  | "title_ASC"
-  | "title_DESC"
-  | "createdAt_ASC"
-  | "createdAt_DESC"
-  | "updatedAt_ASC"
-  | "updatedAt_DESC"
-
-export type InventoryStatus = "NonReservable" | "Reservable" | "Reserved"
-
-export type LabelOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "name_ASC"
-  | "name_DESC"
-  | "image_ASC"
-  | "image_DESC"
-  | "trackingNumber_ASC"
-  | "trackingNumber_DESC"
-  | "trackingURL_ASC"
-  | "trackingURL_DESC"
-
-export type LetterSize = "XS" | "S" | "M" | "L" | "XL" | "XXL"
-
-export type LocationOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "slug_ASC"
-  | "slug_DESC"
-  | "name_ASC"
-  | "name_DESC"
-  | "company_ASC"
-  | "company_DESC"
-  | "description_ASC"
-  | "description_DESC"
-  | "address1_ASC"
-  | "address1_DESC"
-  | "address2_ASC"
-  | "address2_DESC"
-  | "city_ASC"
-  | "city_DESC"
-  | "state_ASC"
-  | "state_DESC"
-  | "zipCode_ASC"
-  | "zipCode_DESC"
-  | "locationType_ASC"
-  | "locationType_DESC"
-  | "lat_ASC"
-  | "lat_DESC"
-  | "lng_ASC"
-  | "lng_DESC"
-  | "createdAt_ASC"
-  | "createdAt_DESC"
-  | "updatedAt_ASC"
-  | "updatedAt_DESC"
-
-export type LocationType = "Office" | "Warehouse" | "Cleaner" | "Customer"
-
-export type Material =
-  | "Acetate"
-  | "Acrylic"
-  | "Alpaca"
-  | "CalfLeather"
-  | "CamelHair"
-  | "Camel"
-  | "Cashmere"
-  | "Cotton"
-  | "CottonPoplin"
-  | "CowLeather"
-  | "Cupro"
-  | "DuckDown"
-  | "Denim"
-  | "DuckFeathers"
-  | "Elastane"
-  | "Esterlane"
-  | "Feather"
-  | "FeatherDown"
-  | "GooseDown"
-  | "LambLeather"
-  | "LambSkin"
-  | "Lambswool"
-  | "Leather"
-  | "Lyocell"
-  | "Linen"
-  | "MerinoWool"
-  | "Modacrylic"
-  | "Mohair"
-  | "Nylon"
-  | "OrganicCotton"
-  | "PolyAcetate"
-  | "Polyamide"
-  | "Polyester"
-  | "Polyethylene"
-  | "PolySatin"
-  | "Polyurethane"
-  | "PolyurethanicResin"
-  | "PVC"
-  | "Rayon"
-  | "RecycledPolyester"
-  | "RecycledWool"
-  | "Silk"
-  | "Suede"
-  | "SheepLeather"
-  | "Spandex"
-  | "Taffeta"
-  | "Tartan"
-  | "Triacetate"
-  | "VirginWool"
-  | "Viscose"
-  | "Velcro"
-  | "WaxCoating"
-  | "WhiteDuckDown"
-  | "WhiteGooseDown"
-  | "Wool"
-  | "Mesh"
-
-export type MutationType = "CREATED" | "UPDATED" | "DELETED"
-
-export type OrderOrderByInput = "id_ASC" | "id_DESC"
-
-export type PackageOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "weight_ASC"
-  | "weight_DESC"
-  | "createdAt_ASC"
-  | "createdAt_DESC"
-  | "updatedAt_ASC"
-  | "updatedAt_DESC"
-
-export type PhysicalProductOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "seasonsUID_ASC"
-  | "seasonsUID_DESC"
-  | "inventoryStatus_ASC"
-  | "inventoryStatus_DESC"
-  | "productStatus_ASC"
-  | "productStatus_DESC"
-  | "createdAt_ASC"
-  | "createdAt_DESC"
-  | "updatedAt_ASC"
-  | "updatedAt_DESC"
-
-export type PhysicalProductStatus =
-  | "New"
-  | "Used"
-  | "Damaged"
-  | "Clean"
-  | "Lost"
-  | "Stored"
-  | "Offloaded"
-
-export type Plan = "AllAccess" | "Essential"
-
-export type ProductArchitecture = "Fashion" | "Showstopper" | "Staple"
-
-export type ProductFunctionOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "name_ASC"
-  | "name_DESC"
-
-export type ProductModelOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "name_ASC"
-  | "name_DESC"
-  | "height_ASC"
-  | "height_DESC"
-
-export type ProductOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "slug_ASC"
-  | "slug_DESC"
-  | "name_ASC"
-  | "name_DESC"
-  | "type_ASC"
-  | "type_DESC"
-  | "description_ASC"
-  | "description_DESC"
-  | "externalURL_ASC"
-  | "externalURL_DESC"
-  | "images_ASC"
-  | "images_DESC"
-  | "modelHeight_ASC"
-  | "modelHeight_DESC"
-  | "retailPrice_ASC"
-  | "retailPrice_DESC"
-  | "tags_ASC"
-  | "tags_DESC"
-  | "status_ASC"
-  | "status_DESC"
-  | "season_ASC"
-  | "season_DESC"
-  | "architecture_ASC"
-  | "architecture_DESC"
-  | "createdAt_ASC"
-  | "createdAt_DESC"
-  | "updatedAt_ASC"
-  | "updatedAt_DESC"
-
-export type ProductRequestOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "brand_ASC"
-  | "brand_DESC"
-  | "description_ASC"
-  | "description_DESC"
-  | "name_ASC"
-  | "name_DESC"
-  | "price_ASC"
-  | "price_DESC"
-  | "priceCurrency_ASC"
-  | "priceCurrency_DESC"
-  | "productID_ASC"
-  | "productID_DESC"
-  | "reason_ASC"
-  | "reason_DESC"
-  | "sku_ASC"
-  | "sku_DESC"
-  | "url_ASC"
-  | "url_DESC"
-
-export type ProductStatus = "Available" | "NotAvailable" | "Stored"
-
-export type ProductType = "Top" | "Bottom" | "Accessory" | "Shoe"
-
-export type ProductVariantFeedbackOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "isCompleted_ASC"
-  | "isCompleted_DESC"
-
-export type ProductVariantFeedbackQuestionOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "question_ASC"
-  | "question_DESC"
-  | "type_ASC"
-  | "type_DESC"
-
-export type ProductVariantOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "sku_ASC"
-  | "sku_DESC"
-  | "weight_ASC"
-  | "weight_DESC"
-  | "height_ASC"
-  | "height_DESC"
-  | "productID_ASC"
-  | "productID_DESC"
-  | "retailPrice_ASC"
-  | "retailPrice_DESC"
-  | "total_ASC"
-  | "total_DESC"
-  | "reservable_ASC"
-  | "reservable_DESC"
-  | "reserved_ASC"
-  | "reserved_DESC"
-  | "nonReservable_ASC"
-  | "nonReservable_DESC"
-  | "offloaded_ASC"
-  | "offloaded_DESC"
-  | "createdAt_ASC"
-  | "createdAt_DESC"
-  | "updatedAt_ASC"
-  | "updatedAt_DESC"
-
-export type ProductVariantWantOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "isFulfilled_ASC"
-  | "isFulfilled_DESC"
-
-export type PushNotificationStatus = "Blocked" | "Granted" | "Denied"
-
-export type QuestionType = "MultipleChoice" | "FreeResponse"
-
-export type Rating = "Disliked" | "Ok" | "Loved"
-
-export type RecentlyViewedProductOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "viewCount_ASC"
-  | "viewCount_DESC"
-  | "createdAt_ASC"
-  | "createdAt_DESC"
-  | "updatedAt_ASC"
-  | "updatedAt_DESC"
-
-export type ReservationFeedbackOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "comment_ASC"
-  | "comment_DESC"
-  | "rating_ASC"
-  | "rating_DESC"
-  | "createdAt_ASC"
-  | "createdAt_DESC"
-  | "updatedAt_ASC"
-  | "updatedAt_DESC"
-
-export type ReservationOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "reservationNumber_ASC"
-  | "reservationNumber_DESC"
-  | "shipped_ASC"
-  | "shipped_DESC"
-  | "status_ASC"
-  | "status_DESC"
-  | "shippedAt_ASC"
-  | "shippedAt_DESC"
-  | "receivedAt_ASC"
-  | "receivedAt_DESC"
-  | "reminderSentAt_ASC"
-  | "reminderSentAt_DESC"
-  | "createdAt_ASC"
-  | "createdAt_DESC"
-  | "updatedAt_ASC"
-  | "updatedAt_DESC"
-
-export type ReservationStatus =
-  | "New"
-  | "InQueue"
-  | "OnHold"
-  | "Packed"
-  | "Shipped"
-  | "InTransit"
-  | "Received"
-  | "Cancelled"
-  | "Completed"
-
-export type SizeOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "slug_ASC"
-  | "slug_DESC"
-  | "productType_ASC"
-  | "productType_DESC"
-  | "display_ASC"
-  | "display_DESC"
-
-export type TopSizeOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "letter_ASC"
-  | "letter_DESC"
-  | "sleeve_ASC"
-  | "sleeve_DESC"
-  | "shoulder_ASC"
-  | "shoulder_DESC"
-  | "chest_ASC"
-  | "chest_DESC"
-  | "neck_ASC"
-  | "neck_DESC"
-  | "length_ASC"
-  | "length_DESC"
-
-export type UserOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "auth0Id_ASC"
-  | "auth0Id_DESC"
-  | "email_ASC"
-  | "email_DESC"
-  | "firstName_ASC"
-  | "firstName_DESC"
-  | "lastName_ASC"
-  | "lastName_DESC"
-  | "role_ASC"
-  | "role_DESC"
-  | "createdAt_ASC"
-  | "createdAt_DESC"
-  | "updatedAt_ASC"
-  | "updatedAt_DESC"
-  | "pushNotifications_ASC"
-  | "pushNotifications_DESC"
-
-export type UserRole = "Admin" | "Customer" | "Partner"
-=======
 export type BagItemOrderByInput =   'id_ASC' |
   'id_DESC' |
   'position_ASC' |
@@ -16495,7 +15940,9 @@ export type ImageOrderByInput =   'id_ASC' |
 
 export type InventoryStatus =   'NonReservable' |
   'Reservable' |
-  'Reserved'
+  'Reserved' |
+  'Stored' |
+  'Offloaded'
 
 export type LabelOrderByInput =   'id_ASC' |
   'id_DESC' |
@@ -16655,7 +16102,8 @@ export type ProductRequestOrderByInput =   'id_ASC' |
   'url_DESC'
 
 export type ProductStatus =   'Available' |
-  'NotAvailable'
+  'NotAvailable' |
+  'Stored'
 
 export type ProductType =   'Top' |
   'Bottom' |
@@ -16694,6 +16142,10 @@ export type ProductVariantOrderByInput =   'id_ASC' |
   'reserved_DESC' |
   'nonReservable_ASC' |
   'nonReservable_DESC' |
+  'offloaded_ASC' |
+  'offloaded_DESC' |
+  'stored_ASC' |
+  'stored_DESC' |
   'createdAt_ASC' |
   'createdAt_DESC' |
   'updatedAt_ASC' |
@@ -16812,7 +16264,6 @@ export type UserOrderByInput =   'id_ASC' |
 export type UserRole =   'Admin' |
   'Customer' |
   'Partner'
->>>>>>> caafd7aaf3010e2ad15c43015976dae4c3c5db0e
 
 export interface BagItemCreateInput {
   id?: ID_Input | null
@@ -21226,6 +20677,7 @@ export interface ProductVariantCreateInput {
   reserved: Int
   nonReservable: Int
   offloaded: Int
+  stored: Int
   color: ColorCreateOneWithoutProductVariantsInput
   internalSize?: SizeCreateOneInput | null
   manufacturerSizes?: SizeCreateManyInput | null
@@ -21265,6 +20717,7 @@ export interface ProductVariantCreateWithoutColorInput {
   reserved: Int
   nonReservable: Int
   offloaded: Int
+  stored: Int
   internalSize?: SizeCreateOneInput | null
   manufacturerSizes?: SizeCreateManyInput | null
   product: ProductCreateOneWithoutVariantsInput
@@ -21283,6 +20736,7 @@ export interface ProductVariantCreateWithoutPhysicalProductsInput {
   reserved: Int
   nonReservable: Int
   offloaded: Int
+  stored: Int
   color: ColorCreateOneWithoutProductVariantsInput
   internalSize?: SizeCreateOneInput | null
   manufacturerSizes?: SizeCreateManyInput | null
@@ -21301,6 +20755,7 @@ export interface ProductVariantCreateWithoutProductInput {
   reserved: Int
   nonReservable: Int
   offloaded: Int
+  stored: Int
   color: ColorCreateOneWithoutProductVariantsInput
   internalSize?: SizeCreateOneInput | null
   manufacturerSizes?: SizeCreateManyInput | null
@@ -21767,6 +21222,14 @@ export interface ProductVariantScalarWhereInput {
   offloaded_lte?: Int | null
   offloaded_gt?: Int | null
   offloaded_gte?: Int | null
+  stored?: Int | null
+  stored_not?: Int | null
+  stored_in?: Int[] | Int | null
+  stored_not_in?: Int[] | Int | null
+  stored_lt?: Int | null
+  stored_lte?: Int | null
+  stored_gt?: Int | null
+  stored_gte?: Int | null
   createdAt?: DateTime | null
   createdAt_not?: DateTime | null
   createdAt_in?: DateTime[] | DateTime | null
@@ -21807,6 +21270,7 @@ export interface ProductVariantUpdateDataInput {
   reserved?: Int | null
   nonReservable?: Int | null
   offloaded?: Int | null
+  stored?: Int | null
   color?: ColorUpdateOneRequiredWithoutProductVariantsInput | null
   internalSize?: SizeUpdateOneInput | null
   manufacturerSizes?: SizeUpdateManyInput | null
@@ -21825,6 +21289,7 @@ export interface ProductVariantUpdateInput {
   reserved?: Int | null
   nonReservable?: Int | null
   offloaded?: Int | null
+  stored?: Int | null
   color?: ColorUpdateOneRequiredWithoutProductVariantsInput | null
   internalSize?: SizeUpdateOneInput | null
   manufacturerSizes?: SizeUpdateManyInput | null
@@ -21843,6 +21308,7 @@ export interface ProductVariantUpdateManyDataInput {
   reserved?: Int | null
   nonReservable?: Int | null
   offloaded?: Int | null
+  stored?: Int | null
 }
 
 export interface ProductVariantUpdateManyMutationInput {
@@ -21856,6 +21322,7 @@ export interface ProductVariantUpdateManyMutationInput {
   reserved?: Int | null
   nonReservable?: Int | null
   offloaded?: Int | null
+  stored?: Int | null
 }
 
 export interface ProductVariantUpdateManyWithoutColorInput {
@@ -21912,6 +21379,7 @@ export interface ProductVariantUpdateWithoutColorDataInput {
   reserved?: Int | null
   nonReservable?: Int | null
   offloaded?: Int | null
+  stored?: Int | null
   internalSize?: SizeUpdateOneInput | null
   manufacturerSizes?: SizeUpdateManyInput | null
   product?: ProductUpdateOneRequiredWithoutVariantsInput | null
@@ -21929,6 +21397,7 @@ export interface ProductVariantUpdateWithoutPhysicalProductsDataInput {
   reserved?: Int | null
   nonReservable?: Int | null
   offloaded?: Int | null
+  stored?: Int | null
   color?: ColorUpdateOneRequiredWithoutProductVariantsInput | null
   internalSize?: SizeUpdateOneInput | null
   manufacturerSizes?: SizeUpdateManyInput | null
@@ -21946,6 +21415,7 @@ export interface ProductVariantUpdateWithoutProductDataInput {
   reserved?: Int | null
   nonReservable?: Int | null
   offloaded?: Int | null
+  stored?: Int | null
   color?: ColorUpdateOneRequiredWithoutProductVariantsInput | null
   internalSize?: SizeUpdateOneInput | null
   manufacturerSizes?: SizeUpdateManyInput | null
@@ -22150,6 +21620,14 @@ export interface ProductVariantWhereInput {
   offloaded_lte?: Int | null
   offloaded_gt?: Int | null
   offloaded_gte?: Int | null
+  stored?: Int | null
+  stored_not?: Int | null
+  stored_in?: Int[] | Int | null
+  stored_not_in?: Int[] | Int | null
+  stored_lt?: Int | null
+  stored_lte?: Int | null
+  stored_gt?: Int | null
+  stored_gte?: Int | null
   createdAt?: DateTime | null
   createdAt_not?: DateTime | null
   createdAt_in?: DateTime[] | DateTime | null
@@ -24542,6 +24020,7 @@ export interface ProductVariant extends Node {
   reserved: Int
   nonReservable: Int
   offloaded: Int
+  stored: Int
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -24659,6 +24138,7 @@ export interface ProductVariantPreviousValues {
   reserved: Int
   nonReservable: Int
   offloaded: Int
+  stored: Int
   createdAt: DateTime
   updatedAt: DateTime
 }

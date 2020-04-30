@@ -1387,28 +1387,23 @@ export type BrandTier =
   | "Local"
   | "Discovery";
 
-<<<<<<< HEAD
-export type ProductStatus = "Available" | "NotAvailable" | "Stored"
-=======
-export type ProductStatus = "Available" | "NotAvailable";
->>>>>>> caafd7aaf3010e2ad15c43015976dae4c3c5db0e
+export type ProductStatus = "Available" | "NotAvailable" | "Stored";
 
 export type ProductArchitecture = "Fashion" | "Showstopper" | "Staple";
 
-export type InventoryStatus = "NonReservable" | "Reservable" | "Reserved";
+export type InventoryStatus =
+  | "NonReservable"
+  | "Reservable"
+  | "Reserved"
+  | "Stored"
+  | "Offloaded";
 
 export type PhysicalProductStatus =
   | "New"
   | "Used"
   | "Damaged"
   | "Clean"
-<<<<<<< HEAD
-  | "Lost"
-  | "Stored"
-  | "Offloaded"
-=======
   | "Lost";
->>>>>>> caafd7aaf3010e2ad15c43015976dae4c3c5db0e
 
 export type PhysicalProductOrderByInput =
   | "id_ASC"
@@ -1447,6 +1442,8 @@ export type ProductVariantOrderByInput =
   | "nonReservable_DESC"
   | "offloaded_ASC"
   | "offloaded_DESC"
+  | "stored_ASC"
+  | "stored_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -2274,142 +2271,6 @@ export interface UserWhereInput {
 }
 
 export interface ProductVariantWhereInput {
-<<<<<<< HEAD
-  id?: Maybe<ID_Input>
-  id_not?: Maybe<ID_Input>
-  id_in?: Maybe<ID_Input[] | ID_Input>
-  id_not_in?: Maybe<ID_Input[] | ID_Input>
-  id_lt?: Maybe<ID_Input>
-  id_lte?: Maybe<ID_Input>
-  id_gt?: Maybe<ID_Input>
-  id_gte?: Maybe<ID_Input>
-  id_contains?: Maybe<ID_Input>
-  id_not_contains?: Maybe<ID_Input>
-  id_starts_with?: Maybe<ID_Input>
-  id_not_starts_with?: Maybe<ID_Input>
-  id_ends_with?: Maybe<ID_Input>
-  id_not_ends_with?: Maybe<ID_Input>
-  sku?: Maybe<String>
-  sku_not?: Maybe<String>
-  sku_in?: Maybe<String[] | String>
-  sku_not_in?: Maybe<String[] | String>
-  sku_lt?: Maybe<String>
-  sku_lte?: Maybe<String>
-  sku_gt?: Maybe<String>
-  sku_gte?: Maybe<String>
-  sku_contains?: Maybe<String>
-  sku_not_contains?: Maybe<String>
-  sku_starts_with?: Maybe<String>
-  sku_not_starts_with?: Maybe<String>
-  sku_ends_with?: Maybe<String>
-  sku_not_ends_with?: Maybe<String>
-  color?: Maybe<ColorWhereInput>
-  internalSize?: Maybe<SizeWhereInput>
-  manufacturerSizes_every?: Maybe<SizeWhereInput>
-  manufacturerSizes_some?: Maybe<SizeWhereInput>
-  manufacturerSizes_none?: Maybe<SizeWhereInput>
-  weight?: Maybe<Float>
-  weight_not?: Maybe<Float>
-  weight_in?: Maybe<Float[] | Float>
-  weight_not_in?: Maybe<Float[] | Float>
-  weight_lt?: Maybe<Float>
-  weight_lte?: Maybe<Float>
-  weight_gt?: Maybe<Float>
-  weight_gte?: Maybe<Float>
-  height?: Maybe<Float>
-  height_not?: Maybe<Float>
-  height_in?: Maybe<Float[] | Float>
-  height_not_in?: Maybe<Float[] | Float>
-  height_lt?: Maybe<Float>
-  height_lte?: Maybe<Float>
-  height_gt?: Maybe<Float>
-  height_gte?: Maybe<Float>
-  productID?: Maybe<String>
-  productID_not?: Maybe<String>
-  productID_in?: Maybe<String[] | String>
-  productID_not_in?: Maybe<String[] | String>
-  productID_lt?: Maybe<String>
-  productID_lte?: Maybe<String>
-  productID_gt?: Maybe<String>
-  productID_gte?: Maybe<String>
-  productID_contains?: Maybe<String>
-  productID_not_contains?: Maybe<String>
-  productID_starts_with?: Maybe<String>
-  productID_not_starts_with?: Maybe<String>
-  productID_ends_with?: Maybe<String>
-  productID_not_ends_with?: Maybe<String>
-  product?: Maybe<ProductWhereInput>
-  retailPrice?: Maybe<Float>
-  retailPrice_not?: Maybe<Float>
-  retailPrice_in?: Maybe<Float[] | Float>
-  retailPrice_not_in?: Maybe<Float[] | Float>
-  retailPrice_lt?: Maybe<Float>
-  retailPrice_lte?: Maybe<Float>
-  retailPrice_gt?: Maybe<Float>
-  retailPrice_gte?: Maybe<Float>
-  physicalProducts_every?: Maybe<PhysicalProductWhereInput>
-  physicalProducts_some?: Maybe<PhysicalProductWhereInput>
-  physicalProducts_none?: Maybe<PhysicalProductWhereInput>
-  total?: Maybe<Int>
-  total_not?: Maybe<Int>
-  total_in?: Maybe<Int[] | Int>
-  total_not_in?: Maybe<Int[] | Int>
-  total_lt?: Maybe<Int>
-  total_lte?: Maybe<Int>
-  total_gt?: Maybe<Int>
-  total_gte?: Maybe<Int>
-  reservable?: Maybe<Int>
-  reservable_not?: Maybe<Int>
-  reservable_in?: Maybe<Int[] | Int>
-  reservable_not_in?: Maybe<Int[] | Int>
-  reservable_lt?: Maybe<Int>
-  reservable_lte?: Maybe<Int>
-  reservable_gt?: Maybe<Int>
-  reservable_gte?: Maybe<Int>
-  reserved?: Maybe<Int>
-  reserved_not?: Maybe<Int>
-  reserved_in?: Maybe<Int[] | Int>
-  reserved_not_in?: Maybe<Int[] | Int>
-  reserved_lt?: Maybe<Int>
-  reserved_lte?: Maybe<Int>
-  reserved_gt?: Maybe<Int>
-  reserved_gte?: Maybe<Int>
-  nonReservable?: Maybe<Int>
-  nonReservable_not?: Maybe<Int>
-  nonReservable_in?: Maybe<Int[] | Int>
-  nonReservable_not_in?: Maybe<Int[] | Int>
-  nonReservable_lt?: Maybe<Int>
-  nonReservable_lte?: Maybe<Int>
-  nonReservable_gt?: Maybe<Int>
-  nonReservable_gte?: Maybe<Int>
-  offloaded?: Maybe<Int>
-  offloaded_not?: Maybe<Int>
-  offloaded_in?: Maybe<Int[] | Int>
-  offloaded_not_in?: Maybe<Int[] | Int>
-  offloaded_lt?: Maybe<Int>
-  offloaded_lte?: Maybe<Int>
-  offloaded_gt?: Maybe<Int>
-  offloaded_gte?: Maybe<Int>
-  createdAt?: Maybe<DateTimeInput>
-  createdAt_not?: Maybe<DateTimeInput>
-  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>
-  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>
-  createdAt_lt?: Maybe<DateTimeInput>
-  createdAt_lte?: Maybe<DateTimeInput>
-  createdAt_gt?: Maybe<DateTimeInput>
-  createdAt_gte?: Maybe<DateTimeInput>
-  updatedAt?: Maybe<DateTimeInput>
-  updatedAt_not?: Maybe<DateTimeInput>
-  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>
-  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>
-  updatedAt_lt?: Maybe<DateTimeInput>
-  updatedAt_lte?: Maybe<DateTimeInput>
-  updatedAt_gt?: Maybe<DateTimeInput>
-  updatedAt_gte?: Maybe<DateTimeInput>
-  AND?: Maybe<ProductVariantWhereInput[] | ProductVariantWhereInput>
-  OR?: Maybe<ProductVariantWhereInput[] | ProductVariantWhereInput>
-  NOT?: Maybe<ProductVariantWhereInput[] | ProductVariantWhereInput>
-=======
   id?: Maybe<ID_Input>;
   id_not?: Maybe<ID_Input>;
   id_in?: Maybe<ID_Input[] | ID_Input>;
@@ -2517,6 +2378,22 @@ export interface ProductVariantWhereInput {
   nonReservable_lte?: Maybe<Int>;
   nonReservable_gt?: Maybe<Int>;
   nonReservable_gte?: Maybe<Int>;
+  offloaded?: Maybe<Int>;
+  offloaded_not?: Maybe<Int>;
+  offloaded_in?: Maybe<Int[] | Int>;
+  offloaded_not_in?: Maybe<Int[] | Int>;
+  offloaded_lt?: Maybe<Int>;
+  offloaded_lte?: Maybe<Int>;
+  offloaded_gt?: Maybe<Int>;
+  offloaded_gte?: Maybe<Int>;
+  stored?: Maybe<Int>;
+  stored_not?: Maybe<Int>;
+  stored_in?: Maybe<Int[] | Int>;
+  stored_not_in?: Maybe<Int[] | Int>;
+  stored_lt?: Maybe<Int>;
+  stored_lte?: Maybe<Int>;
+  stored_gt?: Maybe<Int>;
+  stored_gte?: Maybe<Int>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -2536,7 +2413,6 @@ export interface ProductVariantWhereInput {
   AND?: Maybe<ProductVariantWhereInput[] | ProductVariantWhereInput>;
   OR?: Maybe<ProductVariantWhereInput[] | ProductVariantWhereInput>;
   NOT?: Maybe<ProductVariantWhereInput[] | ProductVariantWhereInput>;
->>>>>>> caafd7aaf3010e2ad15c43015976dae4c3c5db0e
 }
 
 export interface ColorWhereInput {
@@ -4884,23 +4760,6 @@ export interface ProductVariantCreateOneWithoutPhysicalProductsInput {
 }
 
 export interface ProductVariantCreateWithoutPhysicalProductsInput {
-<<<<<<< HEAD
-  id?: Maybe<ID_Input>
-  sku?: Maybe<String>
-  color: ColorCreateOneWithoutProductVariantsInput
-  internalSize?: Maybe<SizeCreateOneInput>
-  manufacturerSizes?: Maybe<SizeCreateManyInput>
-  weight?: Maybe<Float>
-  height?: Maybe<Float>
-  productID: String
-  product: ProductCreateOneWithoutVariantsInput
-  retailPrice?: Maybe<Float>
-  total: Int
-  reservable: Int
-  reserved: Int
-  nonReservable: Int
-  offloaded: Int
-=======
   id?: Maybe<ID_Input>;
   sku?: Maybe<String>;
   color: ColorCreateOneWithoutProductVariantsInput;
@@ -4915,7 +4774,8 @@ export interface ProductVariantCreateWithoutPhysicalProductsInput {
   reservable: Int;
   reserved: Int;
   nonReservable: Int;
->>>>>>> caafd7aaf3010e2ad15c43015976dae4c3c5db0e
+  offloaded: Int;
+  stored: Int;
 }
 
 export interface ColorCreateOneWithoutProductVariantsInput {
@@ -5129,23 +4989,6 @@ export interface ProductVariantCreateManyWithoutColorInput {
 }
 
 export interface ProductVariantCreateWithoutColorInput {
-<<<<<<< HEAD
-  id?: Maybe<ID_Input>
-  sku?: Maybe<String>
-  internalSize?: Maybe<SizeCreateOneInput>
-  manufacturerSizes?: Maybe<SizeCreateManyInput>
-  weight?: Maybe<Float>
-  height?: Maybe<Float>
-  productID: String
-  product: ProductCreateOneWithoutVariantsInput
-  retailPrice?: Maybe<Float>
-  physicalProducts?: Maybe<PhysicalProductCreateManyWithoutProductVariantInput>
-  total: Int
-  reservable: Int
-  reserved: Int
-  nonReservable: Int
-  offloaded: Int
-=======
   id?: Maybe<ID_Input>;
   sku?: Maybe<String>;
   internalSize?: Maybe<SizeCreateOneInput>;
@@ -5160,7 +5003,8 @@ export interface ProductVariantCreateWithoutColorInput {
   reservable: Int;
   reserved: Int;
   nonReservable: Int;
->>>>>>> caafd7aaf3010e2ad15c43015976dae4c3c5db0e
+  offloaded: Int;
+  stored: Int;
 }
 
 export interface PhysicalProductCreateManyWithoutProductVariantInput {
@@ -5234,23 +5078,6 @@ export interface ProductVariantCreateManyWithoutProductInput {
 }
 
 export interface ProductVariantCreateWithoutProductInput {
-<<<<<<< HEAD
-  id?: Maybe<ID_Input>
-  sku?: Maybe<String>
-  color: ColorCreateOneWithoutProductVariantsInput
-  internalSize?: Maybe<SizeCreateOneInput>
-  manufacturerSizes?: Maybe<SizeCreateManyInput>
-  weight?: Maybe<Float>
-  height?: Maybe<Float>
-  productID: String
-  retailPrice?: Maybe<Float>
-  physicalProducts?: Maybe<PhysicalProductCreateManyWithoutProductVariantInput>
-  total: Int
-  reservable: Int
-  reserved: Int
-  nonReservable: Int
-  offloaded: Int
-=======
   id?: Maybe<ID_Input>;
   sku?: Maybe<String>;
   color: ColorCreateOneWithoutProductVariantsInput;
@@ -5265,7 +5092,8 @@ export interface ProductVariantCreateWithoutProductInput {
   reservable: Int;
   reserved: Int;
   nonReservable: Int;
->>>>>>> caafd7aaf3010e2ad15c43015976dae4c3c5db0e
+  offloaded: Int;
+  stored: Int;
 }
 
 export interface BillingInfoCreateOneInput {
@@ -5360,24 +5188,6 @@ export interface ProductVariantCreateOneInput {
 }
 
 export interface ProductVariantCreateInput {
-<<<<<<< HEAD
-  id?: Maybe<ID_Input>
-  sku?: Maybe<String>
-  color: ColorCreateOneWithoutProductVariantsInput
-  internalSize?: Maybe<SizeCreateOneInput>
-  manufacturerSizes?: Maybe<SizeCreateManyInput>
-  weight?: Maybe<Float>
-  height?: Maybe<Float>
-  productID: String
-  product: ProductCreateOneWithoutVariantsInput
-  retailPrice?: Maybe<Float>
-  physicalProducts?: Maybe<PhysicalProductCreateManyWithoutProductVariantInput>
-  total: Int
-  reservable: Int
-  reserved: Int
-  nonReservable: Int
-  offloaded: Int
-=======
   id?: Maybe<ID_Input>;
   sku?: Maybe<String>;
   color: ColorCreateOneWithoutProductVariantsInput;
@@ -5393,7 +5203,8 @@ export interface ProductVariantCreateInput {
   reservable: Int;
   reserved: Int;
   nonReservable: Int;
->>>>>>> caafd7aaf3010e2ad15c43015976dae4c3c5db0e
+  offloaded: Int;
+  stored: Int;
 }
 
 export interface BagItemUpdateInput {
@@ -5563,22 +5374,6 @@ export interface ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput {
 }
 
 export interface ProductVariantUpdateWithoutPhysicalProductsDataInput {
-<<<<<<< HEAD
-  sku?: Maybe<String>
-  color?: Maybe<ColorUpdateOneRequiredWithoutProductVariantsInput>
-  internalSize?: Maybe<SizeUpdateOneInput>
-  manufacturerSizes?: Maybe<SizeUpdateManyInput>
-  weight?: Maybe<Float>
-  height?: Maybe<Float>
-  productID?: Maybe<String>
-  product?: Maybe<ProductUpdateOneRequiredWithoutVariantsInput>
-  retailPrice?: Maybe<Float>
-  total?: Maybe<Int>
-  reservable?: Maybe<Int>
-  reserved?: Maybe<Int>
-  nonReservable?: Maybe<Int>
-  offloaded?: Maybe<Int>
-=======
   sku?: Maybe<String>;
   color?: Maybe<ColorUpdateOneRequiredWithoutProductVariantsInput>;
   internalSize?: Maybe<SizeUpdateOneInput>;
@@ -5592,7 +5387,8 @@ export interface ProductVariantUpdateWithoutPhysicalProductsDataInput {
   reservable?: Maybe<Int>;
   reserved?: Maybe<Int>;
   nonReservable?: Maybe<Int>;
->>>>>>> caafd7aaf3010e2ad15c43015976dae4c3c5db0e
+  offloaded?: Maybe<Int>;
+  stored?: Maybe<Int>;
 }
 
 export interface ColorUpdateOneRequiredWithoutProductVariantsInput {
@@ -6011,22 +5807,6 @@ export interface ProductVariantUpdateWithWhereUniqueWithoutColorInput {
 }
 
 export interface ProductVariantUpdateWithoutColorDataInput {
-<<<<<<< HEAD
-  sku?: Maybe<String>
-  internalSize?: Maybe<SizeUpdateOneInput>
-  manufacturerSizes?: Maybe<SizeUpdateManyInput>
-  weight?: Maybe<Float>
-  height?: Maybe<Float>
-  productID?: Maybe<String>
-  product?: Maybe<ProductUpdateOneRequiredWithoutVariantsInput>
-  retailPrice?: Maybe<Float>
-  physicalProducts?: Maybe<PhysicalProductUpdateManyWithoutProductVariantInput>
-  total?: Maybe<Int>
-  reservable?: Maybe<Int>
-  reserved?: Maybe<Int>
-  nonReservable?: Maybe<Int>
-  offloaded?: Maybe<Int>
-=======
   sku?: Maybe<String>;
   internalSize?: Maybe<SizeUpdateOneInput>;
   manufacturerSizes?: Maybe<SizeUpdateManyInput>;
@@ -6040,7 +5820,8 @@ export interface ProductVariantUpdateWithoutColorDataInput {
   reservable?: Maybe<Int>;
   reserved?: Maybe<Int>;
   nonReservable?: Maybe<Int>;
->>>>>>> caafd7aaf3010e2ad15c43015976dae4c3c5db0e
+  offloaded?: Maybe<Int>;
+  stored?: Maybe<Int>;
 }
 
 export interface PhysicalProductUpdateManyWithoutProductVariantInput {
@@ -6207,133 +5988,6 @@ export interface ProductVariantUpsertWithWhereUniqueWithoutColorInput {
 }
 
 export interface ProductVariantScalarWhereInput {
-<<<<<<< HEAD
-  id?: Maybe<ID_Input>
-  id_not?: Maybe<ID_Input>
-  id_in?: Maybe<ID_Input[] | ID_Input>
-  id_not_in?: Maybe<ID_Input[] | ID_Input>
-  id_lt?: Maybe<ID_Input>
-  id_lte?: Maybe<ID_Input>
-  id_gt?: Maybe<ID_Input>
-  id_gte?: Maybe<ID_Input>
-  id_contains?: Maybe<ID_Input>
-  id_not_contains?: Maybe<ID_Input>
-  id_starts_with?: Maybe<ID_Input>
-  id_not_starts_with?: Maybe<ID_Input>
-  id_ends_with?: Maybe<ID_Input>
-  id_not_ends_with?: Maybe<ID_Input>
-  sku?: Maybe<String>
-  sku_not?: Maybe<String>
-  sku_in?: Maybe<String[] | String>
-  sku_not_in?: Maybe<String[] | String>
-  sku_lt?: Maybe<String>
-  sku_lte?: Maybe<String>
-  sku_gt?: Maybe<String>
-  sku_gte?: Maybe<String>
-  sku_contains?: Maybe<String>
-  sku_not_contains?: Maybe<String>
-  sku_starts_with?: Maybe<String>
-  sku_not_starts_with?: Maybe<String>
-  sku_ends_with?: Maybe<String>
-  sku_not_ends_with?: Maybe<String>
-  weight?: Maybe<Float>
-  weight_not?: Maybe<Float>
-  weight_in?: Maybe<Float[] | Float>
-  weight_not_in?: Maybe<Float[] | Float>
-  weight_lt?: Maybe<Float>
-  weight_lte?: Maybe<Float>
-  weight_gt?: Maybe<Float>
-  weight_gte?: Maybe<Float>
-  height?: Maybe<Float>
-  height_not?: Maybe<Float>
-  height_in?: Maybe<Float[] | Float>
-  height_not_in?: Maybe<Float[] | Float>
-  height_lt?: Maybe<Float>
-  height_lte?: Maybe<Float>
-  height_gt?: Maybe<Float>
-  height_gte?: Maybe<Float>
-  productID?: Maybe<String>
-  productID_not?: Maybe<String>
-  productID_in?: Maybe<String[] | String>
-  productID_not_in?: Maybe<String[] | String>
-  productID_lt?: Maybe<String>
-  productID_lte?: Maybe<String>
-  productID_gt?: Maybe<String>
-  productID_gte?: Maybe<String>
-  productID_contains?: Maybe<String>
-  productID_not_contains?: Maybe<String>
-  productID_starts_with?: Maybe<String>
-  productID_not_starts_with?: Maybe<String>
-  productID_ends_with?: Maybe<String>
-  productID_not_ends_with?: Maybe<String>
-  retailPrice?: Maybe<Float>
-  retailPrice_not?: Maybe<Float>
-  retailPrice_in?: Maybe<Float[] | Float>
-  retailPrice_not_in?: Maybe<Float[] | Float>
-  retailPrice_lt?: Maybe<Float>
-  retailPrice_lte?: Maybe<Float>
-  retailPrice_gt?: Maybe<Float>
-  retailPrice_gte?: Maybe<Float>
-  total?: Maybe<Int>
-  total_not?: Maybe<Int>
-  total_in?: Maybe<Int[] | Int>
-  total_not_in?: Maybe<Int[] | Int>
-  total_lt?: Maybe<Int>
-  total_lte?: Maybe<Int>
-  total_gt?: Maybe<Int>
-  total_gte?: Maybe<Int>
-  reservable?: Maybe<Int>
-  reservable_not?: Maybe<Int>
-  reservable_in?: Maybe<Int[] | Int>
-  reservable_not_in?: Maybe<Int[] | Int>
-  reservable_lt?: Maybe<Int>
-  reservable_lte?: Maybe<Int>
-  reservable_gt?: Maybe<Int>
-  reservable_gte?: Maybe<Int>
-  reserved?: Maybe<Int>
-  reserved_not?: Maybe<Int>
-  reserved_in?: Maybe<Int[] | Int>
-  reserved_not_in?: Maybe<Int[] | Int>
-  reserved_lt?: Maybe<Int>
-  reserved_lte?: Maybe<Int>
-  reserved_gt?: Maybe<Int>
-  reserved_gte?: Maybe<Int>
-  nonReservable?: Maybe<Int>
-  nonReservable_not?: Maybe<Int>
-  nonReservable_in?: Maybe<Int[] | Int>
-  nonReservable_not_in?: Maybe<Int[] | Int>
-  nonReservable_lt?: Maybe<Int>
-  nonReservable_lte?: Maybe<Int>
-  nonReservable_gt?: Maybe<Int>
-  nonReservable_gte?: Maybe<Int>
-  offloaded?: Maybe<Int>
-  offloaded_not?: Maybe<Int>
-  offloaded_in?: Maybe<Int[] | Int>
-  offloaded_not_in?: Maybe<Int[] | Int>
-  offloaded_lt?: Maybe<Int>
-  offloaded_lte?: Maybe<Int>
-  offloaded_gt?: Maybe<Int>
-  offloaded_gte?: Maybe<Int>
-  createdAt?: Maybe<DateTimeInput>
-  createdAt_not?: Maybe<DateTimeInput>
-  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>
-  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>
-  createdAt_lt?: Maybe<DateTimeInput>
-  createdAt_lte?: Maybe<DateTimeInput>
-  createdAt_gt?: Maybe<DateTimeInput>
-  createdAt_gte?: Maybe<DateTimeInput>
-  updatedAt?: Maybe<DateTimeInput>
-  updatedAt_not?: Maybe<DateTimeInput>
-  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>
-  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>
-  updatedAt_lt?: Maybe<DateTimeInput>
-  updatedAt_lte?: Maybe<DateTimeInput>
-  updatedAt_gt?: Maybe<DateTimeInput>
-  updatedAt_gte?: Maybe<DateTimeInput>
-  AND?: Maybe<ProductVariantScalarWhereInput[] | ProductVariantScalarWhereInput>
-  OR?: Maybe<ProductVariantScalarWhereInput[] | ProductVariantScalarWhereInput>
-  NOT?: Maybe<ProductVariantScalarWhereInput[] | ProductVariantScalarWhereInput>
-=======
   id?: Maybe<ID_Input>;
   id_not?: Maybe<ID_Input>;
   id_in?: Maybe<ID_Input[] | ID_Input>;
@@ -6432,6 +6086,22 @@ export interface ProductVariantScalarWhereInput {
   nonReservable_lte?: Maybe<Int>;
   nonReservable_gt?: Maybe<Int>;
   nonReservable_gte?: Maybe<Int>;
+  offloaded?: Maybe<Int>;
+  offloaded_not?: Maybe<Int>;
+  offloaded_in?: Maybe<Int[] | Int>;
+  offloaded_not_in?: Maybe<Int[] | Int>;
+  offloaded_lt?: Maybe<Int>;
+  offloaded_lte?: Maybe<Int>;
+  offloaded_gt?: Maybe<Int>;
+  offloaded_gte?: Maybe<Int>;
+  stored?: Maybe<Int>;
+  stored_not?: Maybe<Int>;
+  stored_in?: Maybe<Int[] | Int>;
+  stored_not_in?: Maybe<Int[] | Int>;
+  stored_lt?: Maybe<Int>;
+  stored_lte?: Maybe<Int>;
+  stored_gt?: Maybe<Int>;
+  stored_gte?: Maybe<Int>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -6455,7 +6125,6 @@ export interface ProductVariantScalarWhereInput {
   NOT?: Maybe<
     ProductVariantScalarWhereInput[] | ProductVariantScalarWhereInput
   >;
->>>>>>> caafd7aaf3010e2ad15c43015976dae4c3c5db0e
 }
 
 export interface ProductVariantUpdateManyWithWhereNestedInput {
@@ -6464,18 +6133,6 @@ export interface ProductVariantUpdateManyWithWhereNestedInput {
 }
 
 export interface ProductVariantUpdateManyDataInput {
-<<<<<<< HEAD
-  sku?: Maybe<String>
-  weight?: Maybe<Float>
-  height?: Maybe<Float>
-  productID?: Maybe<String>
-  retailPrice?: Maybe<Float>
-  total?: Maybe<Int>
-  reservable?: Maybe<Int>
-  reserved?: Maybe<Int>
-  nonReservable?: Maybe<Int>
-  offloaded?: Maybe<Int>
-=======
   sku?: Maybe<String>;
   weight?: Maybe<Float>;
   height?: Maybe<Float>;
@@ -6485,7 +6142,8 @@ export interface ProductVariantUpdateManyDataInput {
   reservable?: Maybe<Int>;
   reserved?: Maybe<Int>;
   nonReservable?: Maybe<Int>;
->>>>>>> caafd7aaf3010e2ad15c43015976dae4c3c5db0e
+  offloaded?: Maybe<Int>;
+  stored?: Maybe<Int>;
 }
 
 export interface ColorUpsertNestedInput {
@@ -6645,22 +6303,6 @@ export interface ProductVariantUpdateWithWhereUniqueWithoutProductInput {
 }
 
 export interface ProductVariantUpdateWithoutProductDataInput {
-<<<<<<< HEAD
-  sku?: Maybe<String>
-  color?: Maybe<ColorUpdateOneRequiredWithoutProductVariantsInput>
-  internalSize?: Maybe<SizeUpdateOneInput>
-  manufacturerSizes?: Maybe<SizeUpdateManyInput>
-  weight?: Maybe<Float>
-  height?: Maybe<Float>
-  productID?: Maybe<String>
-  retailPrice?: Maybe<Float>
-  physicalProducts?: Maybe<PhysicalProductUpdateManyWithoutProductVariantInput>
-  total?: Maybe<Int>
-  reservable?: Maybe<Int>
-  reserved?: Maybe<Int>
-  nonReservable?: Maybe<Int>
-  offloaded?: Maybe<Int>
-=======
   sku?: Maybe<String>;
   color?: Maybe<ColorUpdateOneRequiredWithoutProductVariantsInput>;
   internalSize?: Maybe<SizeUpdateOneInput>;
@@ -6674,7 +6316,8 @@ export interface ProductVariantUpdateWithoutProductDataInput {
   reservable?: Maybe<Int>;
   reserved?: Maybe<Int>;
   nonReservable?: Maybe<Int>;
->>>>>>> caafd7aaf3010e2ad15c43015976dae4c3c5db0e
+  offloaded?: Maybe<Int>;
+  stored?: Maybe<Int>;
 }
 
 export interface ProductVariantUpsertWithWhereUniqueWithoutProductInput {
@@ -7241,23 +6884,6 @@ export interface ProductVariantUpdateOneRequiredInput {
 }
 
 export interface ProductVariantUpdateDataInput {
-<<<<<<< HEAD
-  sku?: Maybe<String>
-  color?: Maybe<ColorUpdateOneRequiredWithoutProductVariantsInput>
-  internalSize?: Maybe<SizeUpdateOneInput>
-  manufacturerSizes?: Maybe<SizeUpdateManyInput>
-  weight?: Maybe<Float>
-  height?: Maybe<Float>
-  productID?: Maybe<String>
-  product?: Maybe<ProductUpdateOneRequiredWithoutVariantsInput>
-  retailPrice?: Maybe<Float>
-  physicalProducts?: Maybe<PhysicalProductUpdateManyWithoutProductVariantInput>
-  total?: Maybe<Int>
-  reservable?: Maybe<Int>
-  reserved?: Maybe<Int>
-  nonReservable?: Maybe<Int>
-  offloaded?: Maybe<Int>
-=======
   sku?: Maybe<String>;
   color?: Maybe<ColorUpdateOneRequiredWithoutProductVariantsInput>;
   internalSize?: Maybe<SizeUpdateOneInput>;
@@ -7272,7 +6898,8 @@ export interface ProductVariantUpdateDataInput {
   reservable?: Maybe<Int>;
   reserved?: Maybe<Int>;
   nonReservable?: Maybe<Int>;
->>>>>>> caafd7aaf3010e2ad15c43015976dae4c3c5db0e
+  offloaded?: Maybe<Int>;
+  stored?: Maybe<Int>;
 }
 
 export interface ProductVariantUpsertNestedInput {
@@ -8300,36 +7927,6 @@ export interface ProductRequestUpdateManyMutationInput {
 }
 
 export interface ProductVariantUpdateInput {
-<<<<<<< HEAD
-  sku?: Maybe<String>
-  color?: Maybe<ColorUpdateOneRequiredWithoutProductVariantsInput>
-  internalSize?: Maybe<SizeUpdateOneInput>
-  manufacturerSizes?: Maybe<SizeUpdateManyInput>
-  weight?: Maybe<Float>
-  height?: Maybe<Float>
-  productID?: Maybe<String>
-  product?: Maybe<ProductUpdateOneRequiredWithoutVariantsInput>
-  retailPrice?: Maybe<Float>
-  physicalProducts?: Maybe<PhysicalProductUpdateManyWithoutProductVariantInput>
-  total?: Maybe<Int>
-  reservable?: Maybe<Int>
-  reserved?: Maybe<Int>
-  nonReservable?: Maybe<Int>
-  offloaded?: Maybe<Int>
-}
-
-export interface ProductVariantUpdateManyMutationInput {
-  sku?: Maybe<String>
-  weight?: Maybe<Float>
-  height?: Maybe<Float>
-  productID?: Maybe<String>
-  retailPrice?: Maybe<Float>
-  total?: Maybe<Int>
-  reservable?: Maybe<Int>
-  reserved?: Maybe<Int>
-  nonReservable?: Maybe<Int>
-  offloaded?: Maybe<Int>
-=======
   sku?: Maybe<String>;
   color?: Maybe<ColorUpdateOneRequiredWithoutProductVariantsInput>;
   internalSize?: Maybe<SizeUpdateOneInput>;
@@ -8344,6 +7941,8 @@ export interface ProductVariantUpdateManyMutationInput {
   reservable?: Maybe<Int>;
   reserved?: Maybe<Int>;
   nonReservable?: Maybe<Int>;
+  offloaded?: Maybe<Int>;
+  stored?: Maybe<Int>;
 }
 
 export interface ProductVariantUpdateManyMutationInput {
@@ -8356,7 +7955,8 @@ export interface ProductVariantUpdateManyMutationInput {
   reservable?: Maybe<Int>;
   reserved?: Maybe<Int>;
   nonReservable?: Maybe<Int>;
->>>>>>> caafd7aaf3010e2ad15c43015976dae4c3c5db0e
+  offloaded?: Maybe<Int>;
+  stored?: Maybe<Int>;
 }
 
 export interface ProductVariantFeedbackCreateInput {
@@ -9937,21 +9537,6 @@ export interface PhysicalProductNullablePromise
 }
 
 export interface ProductVariant {
-<<<<<<< HEAD
-  id: ID_Output
-  sku?: String
-  weight?: Float
-  height?: Float
-  productID: String
-  retailPrice?: Float
-  total: Int
-  reservable: Int
-  reserved: Int
-  nonReservable: Int
-  offloaded: Int
-  createdAt: DateTimeOutput
-  updatedAt: DateTimeOutput
-=======
   id: ID_Output;
   sku?: String;
   weight?: Float;
@@ -9962,9 +9547,10 @@ export interface ProductVariant {
   reservable: Int;
   reserved: Int;
   nonReservable: Int;
+  offloaded: Int;
+  stored: Int;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
->>>>>>> caafd7aaf3010e2ad15c43015976dae4c3c5db0e
 }
 
 export interface ProductVariantPromise
@@ -9989,23 +9575,6 @@ export interface ProductVariantPromise
   product: <T = ProductPromise>() => T;
   retailPrice: () => Promise<Float>;
   physicalProducts: <T = FragmentableArray<PhysicalProduct>>(args?: {
-<<<<<<< HEAD
-    where?: PhysicalProductWhereInput
-    orderBy?: PhysicalProductOrderByInput
-    skip?: Int
-    after?: String
-    before?: String
-    first?: Int
-    last?: Int
-  }) => T
-  total: () => Promise<Int>
-  reservable: () => Promise<Int>
-  reserved: () => Promise<Int>
-  nonReservable: () => Promise<Int>
-  offloaded: () => Promise<Int>
-  createdAt: () => Promise<DateTimeOutput>
-  updatedAt: () => Promise<DateTimeOutput>
-=======
     where?: PhysicalProductWhereInput;
     orderBy?: PhysicalProductOrderByInput;
     skip?: Int;
@@ -10018,9 +9587,10 @@ export interface ProductVariantPromise
   reservable: () => Promise<Int>;
   reserved: () => Promise<Int>;
   nonReservable: () => Promise<Int>;
+  offloaded: () => Promise<Int>;
+  stored: () => Promise<Int>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
->>>>>>> caafd7aaf3010e2ad15c43015976dae4c3c5db0e
 }
 
 export interface ProductVariantSubscription
@@ -10047,23 +9617,6 @@ export interface ProductVariantSubscription
   physicalProducts: <
     T = Promise<AsyncIterator<PhysicalProductSubscription>>
   >(args?: {
-<<<<<<< HEAD
-    where?: PhysicalProductWhereInput
-    orderBy?: PhysicalProductOrderByInput
-    skip?: Int
-    after?: String
-    before?: String
-    first?: Int
-    last?: Int
-  }) => T
-  total: () => Promise<AsyncIterator<Int>>
-  reservable: () => Promise<AsyncIterator<Int>>
-  reserved: () => Promise<AsyncIterator<Int>>
-  nonReservable: () => Promise<AsyncIterator<Int>>
-  offloaded: () => Promise<AsyncIterator<Int>>
-  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>
-  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>
-=======
     where?: PhysicalProductWhereInput;
     orderBy?: PhysicalProductOrderByInput;
     skip?: Int;
@@ -10076,9 +9629,10 @@ export interface ProductVariantSubscription
   reservable: () => Promise<AsyncIterator<Int>>;
   reserved: () => Promise<AsyncIterator<Int>>;
   nonReservable: () => Promise<AsyncIterator<Int>>;
+  offloaded: () => Promise<AsyncIterator<Int>>;
+  stored: () => Promise<AsyncIterator<Int>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
->>>>>>> caafd7aaf3010e2ad15c43015976dae4c3c5db0e
 }
 
 export interface ProductVariantNullablePromise
@@ -10103,23 +9657,6 @@ export interface ProductVariantNullablePromise
   product: <T = ProductPromise>() => T;
   retailPrice: () => Promise<Float>;
   physicalProducts: <T = FragmentableArray<PhysicalProduct>>(args?: {
-<<<<<<< HEAD
-    where?: PhysicalProductWhereInput
-    orderBy?: PhysicalProductOrderByInput
-    skip?: Int
-    after?: String
-    before?: String
-    first?: Int
-    last?: Int
-  }) => T
-  total: () => Promise<Int>
-  reservable: () => Promise<Int>
-  reserved: () => Promise<Int>
-  nonReservable: () => Promise<Int>
-  offloaded: () => Promise<Int>
-  createdAt: () => Promise<DateTimeOutput>
-  updatedAt: () => Promise<DateTimeOutput>
-=======
     where?: PhysicalProductWhereInput;
     orderBy?: PhysicalProductOrderByInput;
     skip?: Int;
@@ -10132,9 +9669,10 @@ export interface ProductVariantNullablePromise
   reservable: () => Promise<Int>;
   reserved: () => Promise<Int>;
   nonReservable: () => Promise<Int>;
+  offloaded: () => Promise<Int>;
+  stored: () => Promise<Int>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
->>>>>>> caafd7aaf3010e2ad15c43015976dae4c3c5db0e
 }
 
 export interface Color {
@@ -14550,21 +14088,6 @@ export interface ProductVariantSubscriptionPayloadSubscription
 }
 
 export interface ProductVariantPreviousValues {
-<<<<<<< HEAD
-  id: ID_Output
-  sku?: String
-  weight?: Float
-  height?: Float
-  productID: String
-  retailPrice?: Float
-  total: Int
-  reservable: Int
-  reserved: Int
-  nonReservable: Int
-  offloaded: Int
-  createdAt: DateTimeOutput
-  updatedAt: DateTimeOutput
-=======
   id: ID_Output;
   sku?: String;
   weight?: Float;
@@ -14575,29 +14098,15 @@ export interface ProductVariantPreviousValues {
   reservable: Int;
   reserved: Int;
   nonReservable: Int;
+  offloaded: Int;
+  stored: Int;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
->>>>>>> caafd7aaf3010e2ad15c43015976dae4c3c5db0e
 }
 
 export interface ProductVariantPreviousValuesPromise
   extends Promise<ProductVariantPreviousValues>,
     Fragmentable {
-<<<<<<< HEAD
-  id: () => Promise<ID_Output>
-  sku: () => Promise<String>
-  weight: () => Promise<Float>
-  height: () => Promise<Float>
-  productID: () => Promise<String>
-  retailPrice: () => Promise<Float>
-  total: () => Promise<Int>
-  reservable: () => Promise<Int>
-  reserved: () => Promise<Int>
-  nonReservable: () => Promise<Int>
-  offloaded: () => Promise<Int>
-  createdAt: () => Promise<DateTimeOutput>
-  updatedAt: () => Promise<DateTimeOutput>
-=======
   id: () => Promise<ID_Output>;
   sku: () => Promise<String>;
   weight: () => Promise<Float>;
@@ -14608,29 +14117,15 @@ export interface ProductVariantPreviousValuesPromise
   reservable: () => Promise<Int>;
   reserved: () => Promise<Int>;
   nonReservable: () => Promise<Int>;
+  offloaded: () => Promise<Int>;
+  stored: () => Promise<Int>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
->>>>>>> caafd7aaf3010e2ad15c43015976dae4c3c5db0e
 }
 
 export interface ProductVariantPreviousValuesSubscription
   extends Promise<AsyncIterator<ProductVariantPreviousValues>>,
     Fragmentable {
-<<<<<<< HEAD
-  id: () => Promise<AsyncIterator<ID_Output>>
-  sku: () => Promise<AsyncIterator<String>>
-  weight: () => Promise<AsyncIterator<Float>>
-  height: () => Promise<AsyncIterator<Float>>
-  productID: () => Promise<AsyncIterator<String>>
-  retailPrice: () => Promise<AsyncIterator<Float>>
-  total: () => Promise<AsyncIterator<Int>>
-  reservable: () => Promise<AsyncIterator<Int>>
-  reserved: () => Promise<AsyncIterator<Int>>
-  nonReservable: () => Promise<AsyncIterator<Int>>
-  offloaded: () => Promise<AsyncIterator<Int>>
-  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>
-  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>
-=======
   id: () => Promise<AsyncIterator<ID_Output>>;
   sku: () => Promise<AsyncIterator<String>>;
   weight: () => Promise<AsyncIterator<Float>>;
@@ -14641,9 +14136,10 @@ export interface ProductVariantPreviousValuesSubscription
   reservable: () => Promise<AsyncIterator<Int>>;
   reserved: () => Promise<AsyncIterator<Int>>;
   nonReservable: () => Promise<AsyncIterator<Int>>;
+  offloaded: () => Promise<AsyncIterator<Int>>;
+  stored: () => Promise<AsyncIterator<Int>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
->>>>>>> caafd7aaf3010e2ad15c43015976dae4c3c5db0e
 }
 
 export interface ProductVariantFeedbackSubscriptionPayload {
