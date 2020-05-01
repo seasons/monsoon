@@ -387,6 +387,10 @@ type Mutation {
     where: ProductWhereUniqueInput!
     data: ProductUpdateInput!
   ): Product!
+  updatePhysicalProduct(
+    where: PhysicalProductWhereUniqueInput!
+    data: PhysicalProductUpdateInput!
+  ): PhysicalProduct
   addViewedProduct(item: ID!): RecentlyViewedProduct!
   acknowledgeCompletedChargebeeHostedCheckout(
     hostedPageID: String!

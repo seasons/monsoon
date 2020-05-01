@@ -2,7 +2,7 @@ import { ReservationService } from "@app/modules/Reservation/services/reservatio
 import { AirtableBaseService, AirtableUtilsService } from "@modules/Airtable"
 import { AirtableService } from "@modules/Airtable/index"
 import { EmailDataProvider, EmailService } from "@modules/Email"
-import { PhysicalProductService } from "@modules/Product/services/physicalProduct.utils.service"
+import { PhysicalProductUtilsService } from "@modules/Product/services/physicalProduct.utils.service"
 import { ProductService } from "@app/modules/Product"
 import { ProductUtilsService } from "@modules/Product/services/product.utils.service"
 import { ProductVariantService } from "@modules/Product/services/productVariant.service"
@@ -83,7 +83,7 @@ export class TestUtilsService {
   }
 
   createReservationService() {
-    const physProdService = new PhysicalProductService(this.prisma)
+    const physProdService = new PhysicalProductUtilsService(this.prisma)
     const airtableBaseService = new AirtableBaseService()
     const airtableService = new AirtableService(
       airtableBaseService,
@@ -110,7 +110,7 @@ export class TestUtilsService {
       new ProductUtilsService(this.prisma),
       new ProductVariantService(
         this.prisma,
-        new PhysicalProductService(this.prisma),
+        new PhysicalProductUtilsService(this.prisma),
         this.airtableService
       ),
       new UtilsService(this.prisma)

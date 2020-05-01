@@ -8017,6 +8017,8 @@ type PhysicalProduct implements Node {
   productVariant: ProductVariant!
   inventoryStatus: InventoryStatus!
   productStatus: PhysicalProductStatus!
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -8036,6 +8038,8 @@ input PhysicalProductCreateInput {
   seasonsUID: String!
   inventoryStatus: InventoryStatus!
   productStatus: PhysicalProductStatus!
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
   location: LocationCreateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
 }
@@ -8060,6 +8064,8 @@ input PhysicalProductCreateWithoutLocationInput {
   seasonsUID: String!
   inventoryStatus: InventoryStatus!
   productStatus: PhysicalProductStatus!
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
 }
 
@@ -8068,6 +8074,8 @@ input PhysicalProductCreateWithoutProductVariantInput {
   seasonsUID: String!
   inventoryStatus: InventoryStatus!
   productStatus: PhysicalProductStatus!
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
   location: LocationCreateOneWithoutPhysicalProductsInput
 }
 
@@ -8080,6 +8088,14 @@ type PhysicalProductEdge {
   cursor: String!
 }
 
+enum PhysicalProductOffloadMethod {
+  SoldToUser
+  SoldToThirdParty
+  ReturnedToVendor
+  Recycled
+  Unknown
+}
+
 enum PhysicalProductOrderByInput {
   id_ASC
   id_DESC
@@ -8089,6 +8105,10 @@ enum PhysicalProductOrderByInput {
   inventoryStatus_DESC
   productStatus_ASC
   productStatus_DESC
+  offloadMethod_ASC
+  offloadMethod_DESC
+  offloadNotes_ASC
+  offloadNotes_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -8100,6 +8120,8 @@ type PhysicalProductPreviousValues {
   seasonsUID: String!
   inventoryStatus: InventoryStatus!
   productStatus: PhysicalProductStatus!
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -8213,6 +8235,56 @@ input PhysicalProductScalarWhereInput {
 
   """All values that are not contained in given list."""
   productStatus_not_in: [PhysicalProductStatus!]
+  offloadMethod: PhysicalProductOffloadMethod
+
+  """All values that are not equal to given value."""
+  offloadMethod_not: PhysicalProductOffloadMethod
+
+  """All values that are contained in given list."""
+  offloadMethod_in: [PhysicalProductOffloadMethod!]
+
+  """All values that are not contained in given list."""
+  offloadMethod_not_in: [PhysicalProductOffloadMethod!]
+  offloadNotes: String
+
+  """All values that are not equal to given value."""
+  offloadNotes_not: String
+
+  """All values that are contained in given list."""
+  offloadNotes_in: [String!]
+
+  """All values that are not contained in given list."""
+  offloadNotes_not_in: [String!]
+
+  """All values less than the given value."""
+  offloadNotes_lt: String
+
+  """All values less than or equal the given value."""
+  offloadNotes_lte: String
+
+  """All values greater than the given value."""
+  offloadNotes_gt: String
+
+  """All values greater than or equal the given value."""
+  offloadNotes_gte: String
+
+  """All values containing the given string."""
+  offloadNotes_contains: String
+
+  """All values not containing the given string."""
+  offloadNotes_not_contains: String
+
+  """All values starting with the given string."""
+  offloadNotes_starts_with: String
+
+  """All values not starting with the given string."""
+  offloadNotes_not_starts_with: String
+
+  """All values ending with the given string."""
+  offloadNotes_ends_with: String
+
+  """All values not ending with the given string."""
+  offloadNotes_not_ends_with: String
   createdAt: DateTime
 
   """All values that are not equal to given value."""
@@ -8308,6 +8380,8 @@ input PhysicalProductUpdateDataInput {
   seasonsUID: String
   inventoryStatus: InventoryStatus
   productStatus: PhysicalProductStatus
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
   location: LocationUpdateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
 }
@@ -8316,6 +8390,8 @@ input PhysicalProductUpdateInput {
   seasonsUID: String
   inventoryStatus: InventoryStatus
   productStatus: PhysicalProductStatus
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
   location: LocationUpdateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
 }
@@ -8324,6 +8400,8 @@ input PhysicalProductUpdateManyDataInput {
   seasonsUID: String
   inventoryStatus: InventoryStatus
   productStatus: PhysicalProductStatus
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
 }
 
 input PhysicalProductUpdateManyInput {
@@ -8342,6 +8420,8 @@ input PhysicalProductUpdateManyMutationInput {
   seasonsUID: String
   inventoryStatus: InventoryStatus
   productStatus: PhysicalProductStatus
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
 }
 
 input PhysicalProductUpdateManyWithoutLocationInput {
@@ -8377,6 +8457,8 @@ input PhysicalProductUpdateWithoutLocationDataInput {
   seasonsUID: String
   inventoryStatus: InventoryStatus
   productStatus: PhysicalProductStatus
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
 }
 
@@ -8384,6 +8466,8 @@ input PhysicalProductUpdateWithoutProductVariantDataInput {
   seasonsUID: String
   inventoryStatus: InventoryStatus
   productStatus: PhysicalProductStatus
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
   location: LocationUpdateOneWithoutPhysicalProductsInput
 }
 
@@ -8529,6 +8613,56 @@ input PhysicalProductWhereInput {
 
   """All values that are not contained in given list."""
   productStatus_not_in: [PhysicalProductStatus!]
+  offloadMethod: PhysicalProductOffloadMethod
+
+  """All values that are not equal to given value."""
+  offloadMethod_not: PhysicalProductOffloadMethod
+
+  """All values that are contained in given list."""
+  offloadMethod_in: [PhysicalProductOffloadMethod!]
+
+  """All values that are not contained in given list."""
+  offloadMethod_not_in: [PhysicalProductOffloadMethod!]
+  offloadNotes: String
+
+  """All values that are not equal to given value."""
+  offloadNotes_not: String
+
+  """All values that are contained in given list."""
+  offloadNotes_in: [String!]
+
+  """All values that are not contained in given list."""
+  offloadNotes_not_in: [String!]
+
+  """All values less than the given value."""
+  offloadNotes_lt: String
+
+  """All values less than or equal the given value."""
+  offloadNotes_lte: String
+
+  """All values greater than the given value."""
+  offloadNotes_gt: String
+
+  """All values greater than or equal the given value."""
+  offloadNotes_gte: String
+
+  """All values containing the given string."""
+  offloadNotes_contains: String
+
+  """All values not containing the given string."""
+  offloadNotes_not_contains: String
+
+  """All values starting with the given string."""
+  offloadNotes_starts_with: String
+
+  """All values not starting with the given string."""
+  offloadNotes_not_starts_with: String
+
+  """All values ending with the given string."""
+  offloadNotes_ends_with: String
+
+  """All values not ending with the given string."""
+  offloadNotes_not_ends_with: String
   createdAt: DateTime
 
   """All values that are not equal to given value."""
@@ -10346,6 +10480,7 @@ enum ProductStatus {
   Available
   NotAvailable
   Stored
+  Offloaded
 }
 
 type ProductSubscriptionPayload {
@@ -16011,6 +16146,12 @@ export type PackageOrderByInput =   'id_ASC' |
   'updatedAt_ASC' |
   'updatedAt_DESC'
 
+export type PhysicalProductOffloadMethod =   'SoldToUser' |
+  'SoldToThirdParty' |
+  'ReturnedToVendor' |
+  'Recycled' |
+  'Unknown'
+
 export type PhysicalProductOrderByInput =   'id_ASC' |
   'id_DESC' |
   'seasonsUID_ASC' |
@@ -16019,6 +16160,10 @@ export type PhysicalProductOrderByInput =   'id_ASC' |
   'inventoryStatus_DESC' |
   'productStatus_ASC' |
   'productStatus_DESC' |
+  'offloadMethod_ASC' |
+  'offloadMethod_DESC' |
+  'offloadNotes_ASC' |
+  'offloadNotes_DESC' |
   'createdAt_ASC' |
   'createdAt_DESC' |
   'updatedAt_ASC' |
@@ -16103,7 +16248,8 @@ export type ProductRequestOrderByInput =   'id_ASC' |
 
 export type ProductStatus =   'Available' |
   'NotAvailable' |
-  'Stored'
+  'Stored' |
+  'Offloaded'
 
 export type ProductType =   'Top' |
   'Bottom' |
@@ -19310,6 +19456,8 @@ export interface PhysicalProductCreateInput {
   seasonsUID: String
   inventoryStatus: InventoryStatus
   productStatus: PhysicalProductStatus
+  offloadMethod?: PhysicalProductOffloadMethod | null
+  offloadNotes?: String | null
   location?: LocationCreateOneWithoutPhysicalProductsInput | null
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput
 }
@@ -19334,6 +19482,8 @@ export interface PhysicalProductCreateWithoutLocationInput {
   seasonsUID: String
   inventoryStatus: InventoryStatus
   productStatus: PhysicalProductStatus
+  offloadMethod?: PhysicalProductOffloadMethod | null
+  offloadNotes?: String | null
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput
 }
 
@@ -19342,6 +19492,8 @@ export interface PhysicalProductCreateWithoutProductVariantInput {
   seasonsUID: String
   inventoryStatus: InventoryStatus
   productStatus: PhysicalProductStatus
+  offloadMethod?: PhysicalProductOffloadMethod | null
+  offloadNotes?: String | null
   location?: LocationCreateOneWithoutPhysicalProductsInput | null
 }
 
@@ -19385,6 +19537,24 @@ export interface PhysicalProductScalarWhereInput {
   productStatus_not?: PhysicalProductStatus | null
   productStatus_in?: PhysicalProductStatus[] | PhysicalProductStatus | null
   productStatus_not_in?: PhysicalProductStatus[] | PhysicalProductStatus | null
+  offloadMethod?: PhysicalProductOffloadMethod | null
+  offloadMethod_not?: PhysicalProductOffloadMethod | null
+  offloadMethod_in?: PhysicalProductOffloadMethod[] | PhysicalProductOffloadMethod | null
+  offloadMethod_not_in?: PhysicalProductOffloadMethod[] | PhysicalProductOffloadMethod | null
+  offloadNotes?: String | null
+  offloadNotes_not?: String | null
+  offloadNotes_in?: String[] | String | null
+  offloadNotes_not_in?: String[] | String | null
+  offloadNotes_lt?: String | null
+  offloadNotes_lte?: String | null
+  offloadNotes_gt?: String | null
+  offloadNotes_gte?: String | null
+  offloadNotes_contains?: String | null
+  offloadNotes_not_contains?: String | null
+  offloadNotes_starts_with?: String | null
+  offloadNotes_not_starts_with?: String | null
+  offloadNotes_ends_with?: String | null
+  offloadNotes_not_ends_with?: String | null
   createdAt?: DateTime | null
   createdAt_not?: DateTime | null
   createdAt_in?: DateTime[] | DateTime | null
@@ -19418,6 +19588,8 @@ export interface PhysicalProductUpdateDataInput {
   seasonsUID?: String | null
   inventoryStatus?: InventoryStatus | null
   productStatus?: PhysicalProductStatus | null
+  offloadMethod?: PhysicalProductOffloadMethod | null
+  offloadNotes?: String | null
   location?: LocationUpdateOneWithoutPhysicalProductsInput | null
   productVariant?: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput | null
 }
@@ -19426,6 +19598,8 @@ export interface PhysicalProductUpdateInput {
   seasonsUID?: String | null
   inventoryStatus?: InventoryStatus | null
   productStatus?: PhysicalProductStatus | null
+  offloadMethod?: PhysicalProductOffloadMethod | null
+  offloadNotes?: String | null
   location?: LocationUpdateOneWithoutPhysicalProductsInput | null
   productVariant?: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput | null
 }
@@ -19434,6 +19608,8 @@ export interface PhysicalProductUpdateManyDataInput {
   seasonsUID?: String | null
   inventoryStatus?: InventoryStatus | null
   productStatus?: PhysicalProductStatus | null
+  offloadMethod?: PhysicalProductOffloadMethod | null
+  offloadNotes?: String | null
 }
 
 export interface PhysicalProductUpdateManyInput {
@@ -19452,6 +19628,8 @@ export interface PhysicalProductUpdateManyMutationInput {
   seasonsUID?: String | null
   inventoryStatus?: InventoryStatus | null
   productStatus?: PhysicalProductStatus | null
+  offloadMethod?: PhysicalProductOffloadMethod | null
+  offloadNotes?: String | null
 }
 
 export interface PhysicalProductUpdateManyWithoutLocationInput {
@@ -19487,6 +19665,8 @@ export interface PhysicalProductUpdateWithoutLocationDataInput {
   seasonsUID?: String | null
   inventoryStatus?: InventoryStatus | null
   productStatus?: PhysicalProductStatus | null
+  offloadMethod?: PhysicalProductOffloadMethod | null
+  offloadNotes?: String | null
   productVariant?: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput | null
 }
 
@@ -19494,6 +19674,8 @@ export interface PhysicalProductUpdateWithoutProductVariantDataInput {
   seasonsUID?: String | null
   inventoryStatus?: InventoryStatus | null
   productStatus?: PhysicalProductStatus | null
+  offloadMethod?: PhysicalProductOffloadMethod | null
+  offloadNotes?: String | null
   location?: LocationUpdateOneWithoutPhysicalProductsInput | null
 }
 
@@ -19570,6 +19752,24 @@ export interface PhysicalProductWhereInput {
   productStatus_not?: PhysicalProductStatus | null
   productStatus_in?: PhysicalProductStatus[] | PhysicalProductStatus | null
   productStatus_not_in?: PhysicalProductStatus[] | PhysicalProductStatus | null
+  offloadMethod?: PhysicalProductOffloadMethod | null
+  offloadMethod_not?: PhysicalProductOffloadMethod | null
+  offloadMethod_in?: PhysicalProductOffloadMethod[] | PhysicalProductOffloadMethod | null
+  offloadMethod_not_in?: PhysicalProductOffloadMethod[] | PhysicalProductOffloadMethod | null
+  offloadNotes?: String | null
+  offloadNotes_not?: String | null
+  offloadNotes_in?: String[] | String | null
+  offloadNotes_not_in?: String[] | String | null
+  offloadNotes_lt?: String | null
+  offloadNotes_lte?: String | null
+  offloadNotes_gt?: String | null
+  offloadNotes_gte?: String | null
+  offloadNotes_contains?: String | null
+  offloadNotes_not_contains?: String | null
+  offloadNotes_starts_with?: String | null
+  offloadNotes_not_starts_with?: String | null
+  offloadNotes_ends_with?: String | null
+  offloadNotes_not_ends_with?: String | null
   createdAt?: DateTime | null
   createdAt_not?: DateTime | null
   createdAt_in?: DateTime[] | DateTime | null
@@ -23760,6 +23960,8 @@ export interface PhysicalProduct extends Node {
   productVariant: ProductVariant
   inventoryStatus: InventoryStatus
   productStatus: PhysicalProductStatus
+  offloadMethod?: PhysicalProductOffloadMethod | null
+  offloadNotes?: String | null
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -23788,6 +23990,8 @@ export interface PhysicalProductPreviousValues {
   seasonsUID: String
   inventoryStatus: InventoryStatus
   productStatus: PhysicalProductStatus
+  offloadMethod?: PhysicalProductOffloadMethod | null
+  offloadNotes?: String | null
   createdAt: DateTime
   updatedAt: DateTime
 }

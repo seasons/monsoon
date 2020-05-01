@@ -6,6 +6,7 @@ import {
   Product,
   ProductStatus,
   RecentlyViewedProduct,
+  InventoryStatus,
 } from "@prisma/index"
 import {
   ProductUpdateInput,
@@ -236,6 +237,36 @@ export class ProductService {
     )
   }
 
+  /**
+   * Checks if all downstream physical products have been offloaded.
+   * If so, marks the product as offloaded.
+   */
+  async offloadProductIfAppropriate(id: ID_Input) {
+    const downstreamPhysProds = this.productUtils.physicalProductsForProduct(
+      await this.prisma.binding.query.product(
+        { where: { id } },
+        `{
+          variants {
+            physicalProducts {
+              inventoryStatus
+            }
+          }
+         }`
+      )
+    )
+    const allPhysProdsOffloaded = downstreamPhysProds.reduce(
+      (acc, curPhysProd: { inventoryStatus: InventoryStatus }) =>
+        acc && curPhysProd.inventoryStatus === "Offloaded",
+      true
+    )
+    if (allPhysProdsOffloaded) {
+      await this.prisma.client.updateProduct({
+        where: { id },
+        data: { status: "Offloaded" },
+      })
+    }
+  }
+
   private async storeProductIfNeeded(
     where: ProductWhereUniqueInput,
     status: ProductStatus
@@ -260,6 +291,12 @@ export class ProductService {
         }`
     )
     if (status === "Stored" && productBeforeUpdate.status !== "Stored") {
+      // Update product status
+      await this.prisma.client.updateProduct({
+        where: { id: productBeforeUpdate.id },
+        data: { status: "Stored" },
+      })
+
       // Update statuses on downstream physical products
       for (const {
         inventoryStatus,

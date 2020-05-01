@@ -117,10 +117,19 @@ enum PhysicalProductStatus {
   Lost
 }
 
+enum PhysicalProductOffloadMethod {
+  SoldToUser
+  SoldToThirdParty
+  ReturnedToVendor
+  Recycled
+  Unknown
+}
+
 enum ProductStatus {
   Available
   NotAvailable
   Stored
+  Offloaded
 }
 
 enum ReservationStatus {
@@ -133,7 +142,6 @@ enum ReservationStatus {
   Received
   Cancelled
   Completed
-  Cancelled
 }
 
 enum BagItemStatus {
@@ -337,7 +345,7 @@ type ProductVariant {
   internalSize: Size @relation(name: "ProductVariantSize")
   manufacturerSizes: [Size!] @relation(name: "ProductVariantManufacturerSize")
   weight: Float
-  height: Float
+  height: Floats
   productID: String!
   product: Product! @relation(onDelete: SET_NULL)
   retailPrice: Float
@@ -359,6 +367,8 @@ type PhysicalProduct {
   productVariant: ProductVariant! @relation(onDelete: SET_NULL)
   inventoryStatus: InventoryStatus!
   productStatus: PhysicalProductStatus!
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
