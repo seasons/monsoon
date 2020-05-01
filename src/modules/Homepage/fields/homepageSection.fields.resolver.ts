@@ -12,9 +12,9 @@ export class HomepageSectionFieldsResolver {
   @ResolveField()
   async results(@Parent() section, @Args() args, @Customer() customer) {
     return await this.homepageSectionService.getResultsForSection(
-      section.title,
+      section?.title,
       args,
-      customer.id
+      customer?.id
     )
   }
 }
