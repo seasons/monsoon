@@ -109,33 +109,12 @@ export class ProductService {
     return bagItem.length > 0
   }
 
-  async createProduct(input) {
-    const {
-      name,
-      images,
-      brandID,
-      categoryID,
-      type,
-      description,
-      modelID,
-      retailPrice,
-      modelSizeID,
-      colorID,
-      secondaryColorID,
-      tags,
-      functions,
-      innerMaterials,
-      outerMaterials,
-      status,
-      season,
-      architecture,
-      variants,
-    } = input
-    const brand = await this.prisma.client.brand({ id: brandID })
-    const color = await this.prisma.client.color({ id: colorID })
-    const model = await this.prisma.client.productModel({ id: modelID })
+  async upsertProduct(input) {
+    const brand = await this.prisma.client.brand({ id: input.brandID })
+    const color = await this.prisma.client.color({ id: input.colorID })
+    const model = await this.prisma.client.productModel({ id: input.modelID })
     const productFunctions = await Promise.all(
-      functions.map(
+      input.functions.map(
         async functionName =>
           await this.prisma.client.upsertProductFunction({
             create: { name: functionName },
@@ -149,126 +128,153 @@ export class ProductService {
       .map((func: ProductFunction) => ({ id: func.id }))
     const slug = await this.productUtils.getProductSlug(
       brand.brandCode,
-      name,
+      input.name,
       color.name
     )
-    const imageURLs = await this.imageService.uploadImages(images)
-    const variantsCreateInput: ProductVariantCreateWithoutProductInput[] = await Promise.all(
-      variants.map(async variant => {
-        const {
-          sku,
-          internalSizeName,
-          weight,
-          total,
-          physicalProducts,
-          sleeve,
-          shoulder,
-          chest,
-          neck,
-          length,
-          bottomSizeType,
-          waist,
-          rise,
-          hem,
-          inseam,
-        } = variant
-        const internalSize = await this.productUtils.deepUpsertSize({
-          slug: `${sku}-internal`,
-          type,
-          display: internalSizeName,
-          topSizeData: type === "Top" && {
-            letter: (internalSizeName as LetterSize) || null,
-            sleeve,
-            shoulder,
-            chest,
-            neck,
-            length,
-          },
-          bottomSizeData: type === "Bottom" && {
-            type: (bottomSizeType as BottomSizeType) || null,
-            value: internalSizeName || "",
-            waist,
-            rise,
-            hem,
-            inseam,
-          },
-        })
-        const physicalProductsCreateInput = physicalProducts.map(
-          physicalProduct => {
-            const {
-              seasonsUID,
-              inventoryStatus,
-              physicalProductStatus,
-            } = physicalProduct
-            return {
-              seasonsUID,
-              inventoryStatus,
-              physicalProductStatus,
-            }
-          }
-        )
-        return {
-          sku,
-          color: {
-            connect: { id: colorID },
-          },
-          internalSize: {
-            connect: { id: internalSize.id },
-          },
-          weight,
-          productID: slug,
-          retailPrice,
-          total,
-          reservable: status === "Available" ? total : 0,
-          reserved: 0,
-          nonReservable: status === "NotAvailable" ? total : 0,
-          physicalProducts: {
-            create: physicalProductsCreateInput,
-          },
-        }
-      })
-    )
-    const product = await this.prisma.client.createProduct({
+    const imageURLs = await this.imageService.uploadImages(input.images)
+    const productData = {
       slug,
       name,
       brand: {
-        connect: { id: brandID },
+        connect: { id: input.brandID },
       },
       category: {
-        connect: { id: categoryID },
+        connect: { id: input.categoryID },
       },
-      type,
-      description,
+      type: input.type,
+      description: input.description,
       modelHeight: model.height,
-      retailPrice,
+      retailPrice: input.retailPrice,
       model: {
         connect: { id: model.id },
       },
       modelSize: {
-        connect: { id: modelSizeID },
+        connect: { id: input.modelSizeID },
       },
       color: {
-        connect: { id: colorID },
+        connect: { id: input.colorID },
       },
       secondaryColor: {
-        connect: { id: secondaryColorID },
+        connect: { id: input.secondaryColorID },
       },
       tags: {
-        set: tags,
+        set: input.tags,
       },
       functions: {
         connect: functionIDs,
       },
-      innerMaterials: { set: innerMaterials },
-      outerMaterials: { set: outerMaterials },
-      status,
-      season,
-      architecture,
+      innerMaterials: { set: input.innerMaterials },
+      outerMaterials: { set: input.outerMaterials },
+      status: input.status,
+      season: input.season,
+      architecture: input.architecture,
+    }
+    const productCreateData = {
+      ...productData,
       variants: {
-        create: variantsCreateInput,
+        create: input.variants.map(variant =>
+          this.getVariantData(
+            variant,
+            "CREATE",
+            input.type,
+            input.colorID,
+            input.slug,
+            input.retailPrice
+          )
+        ),
       },
+    }
+    const productUpdateData = {
+      ...productData,
+      variants: {
+        upsert: input.variants.map(variant => ({
+          create: this.getVariantData(
+            variant,
+            "CREATE",
+            input.type,
+            input.colorID,
+            input.slug,
+            input.retailPrice
+          ),
+          update: this.getVariantData(
+            variant,
+            "UPDATE",
+            input.type,
+            input.colorID,
+            input.slug,
+            input.retailPrice
+          ),
+          where: { sku: variant.sku },
+        })),
+      },
+    }
+    const product = await this.prisma.client.upsertProduct({
+      create: productCreateData,
+      update: productUpdateData,
+      where: { slug },
     })
     return product
+  }
+
+  async getVariantData(variant, operation, type, colorID, slug, retailPrice) {
+    const internalSize = await this.productUtils.deepUpsertSize({
+      slug: `${variant.sku}-internal`,
+      type,
+      display: variant.internalSizeName,
+      topSizeData: type === "Top" && {
+        letter: (variant.internalSizeName as LetterSize) || null,
+        sleeve: variant.sleeve,
+        shoulder: variant.shoulder,
+        chest: variant.chest,
+        neck: variant.neck,
+        length: variant.length,
+      },
+      bottomSizeData: type === "Bottom" && {
+        type: (variant.bottomSizeType as BottomSizeType) || null,
+        value: variant.internalSizeName || "",
+        waist: variant.waist,
+        rise: variant.rise,
+        hem: variant.hem,
+        inseam: variant.inseam,
+      },
+    })
+
+    let physicalProductsInput
+    switch (operation) {
+      case "CREATE":
+        physicalProductsInput = {
+          create: variant.physicalProducts,
+        }
+        break
+      case "UPDATE":
+        physicalProductsInput = {
+          upsert: variant.physicalProducts.map(physicalProduct => ({
+            create: physicalProduct,
+            update: physicalProduct,
+            where: { seasonsUID: physicalProduct.seasonsUID },
+          })),
+        }
+        break
+      default:
+        physicalProductsInput = {}
+    }
+    return {
+      sku: variant.sku,
+      color: {
+        connect: { id: colorID },
+      },
+      internalSize: {
+        connect: { id: internalSize.id },
+      },
+      weight: variant.weight,
+      productID: slug,
+      retailPrice,
+      total: variant.total,
+      reservable: status === "Available" ? variant.total : 0,
+      reserved: 0,
+      nonReservable: status === "NotAvailable" ? variant.total : 0,
+      physicalProducts: physicalProductsInput,
+    }
   }
 
   async saveProduct(item, save, info, customer) {
