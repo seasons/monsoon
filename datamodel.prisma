@@ -318,7 +318,7 @@ type Product {
   functions: [ProductFunction!]!
   innerMaterials: [String!]! @scalarList(strategy: RELATION)
   outerMaterials: [String!]! @scalarList(strategy: RELATION)
-  variants: [ProductVariant!]! @relation(link: TABLE, onDelete: "CASCADE")
+  variants: [ProductVariant!]! @relation(link: TABLE, onDelete: CASCADE)
   status: ProductStatus @default(value: Available)
   season: String
   architecture: ProductArchitecture
@@ -345,7 +345,7 @@ type ProductVariant {
   internalSize: Size @relation(name: "ProductVariantSize")
   manufacturerSizes: [Size!] @relation(name: "ProductVariantManufacturerSize")
   weight: Float
-  height: Floats
+  height: Float
   productID: String!
   product: Product! @relation(onDelete: SET_NULL)
   retailPrice: Float
