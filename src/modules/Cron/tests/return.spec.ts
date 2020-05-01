@@ -20,7 +20,7 @@ import { ReservationScheduledJobs } from ".."
 
 const ONE_MIN = 60000
 
-describe("Return Flow Cron Job", () => {
+xdescribe("Return Flow Cron Job", () => {
   let reservationService: ReservationService
   let prismaService: PrismaService
   let testUtilsService: TestUtilsService
