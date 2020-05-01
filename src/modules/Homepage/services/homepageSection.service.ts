@@ -64,6 +64,9 @@ export class HomepageSectionService {
         return newProducts
 
       case SectionTitle.RecentlyViewed:
+        if (!customerId) {
+          return []
+        }
         const viewedProducts = await this.prisma.binding.query.recentlyViewedProducts(
           {
             where: { customer: { id: customerId } },
