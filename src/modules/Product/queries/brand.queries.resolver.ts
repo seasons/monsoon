@@ -13,10 +13,6 @@ export class BrandQueriesResolver {
   @Query()
   async brands(@Args() args, @Info() info) {
     return this.prisma.binding.query.brands(args, info)
-    // const brandsWithProducts = brands.filter(brand => {
-    //   return brand?.products?.length > 0
-    // })
-    // return brandsWithProducts
   }
 
   @Query()
