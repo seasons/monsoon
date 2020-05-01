@@ -1,3 +1,4 @@
+import { Customer } from "@app/decorators"
 import { Args, Parent, ResolveField, Resolver } from "@nestjs/graphql"
 
 import { HomepageSectionService } from "../services/homepageSection.service"
@@ -9,10 +10,11 @@ export class HomepageSectionFieldsResolver {
   ) {}
 
   @ResolveField()
-  async results(@Parent() section, @Args() args) {
+  async results(@Parent() section, @Args() args, @Customer() customer) {
     return await this.homepageSectionService.getResultsForSection(
       section.title,
-      args
+      args,
+      customer.id
     )
   }
 }
