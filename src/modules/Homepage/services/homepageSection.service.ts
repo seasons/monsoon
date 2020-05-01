@@ -65,7 +65,7 @@ export class HomepageSectionService {
 
       case SectionTitle.RecentlyViewed:
         if (!customerId) {
-          return null
+          return []
         }
         const viewedProducts = await this.prisma.binding.query.recentlyViewedProducts(
           {
