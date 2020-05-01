@@ -7,11 +7,9 @@ import {
   ProductStatus,
   RecentlyViewedProduct,
   InventoryStatus,
-} from "@prisma/index"
-import {
   ProductUpdateInput,
   ProductWhereUniqueInput,
-} from "@prisma/prisma.binding"
+} from "@prisma/index"
 import { head } from "lodash"
 
 import { GraphQLResolveInfo } from "graphql"
@@ -228,13 +226,8 @@ export class ProductService {
     info: GraphQLResolveInfo
   ) {
     await this.storeProductIfNeeded(where, status)
-    return await this.prisma.binding.mutation.updateProduct(
-      {
-        where,
-        data: { status, ...data },
-      },
-      info
-    )
+    await this.prisma.client.updateProduct({ where, data: { status, ...data } })
+    return await this.prisma.binding.query.product({ where }, info)
   }
 
   /**
