@@ -2,7 +2,7 @@ import { RollbackError } from "@app/errors"
 import { AirtableService } from "@modules/Airtable"
 import { EmailService } from "@modules/Email/services/email.service"
 import {
-  PhysicalProductService,
+  PhysicalProductUtilsService,
   ProductUtilsService,
   ProductVariantService,
 } from "@modules/Product"
@@ -42,7 +42,7 @@ export class ReservationService {
     private readonly prisma: PrismaService,
     private readonly productUtils: ProductUtilsService,
     private readonly productVariantService: ProductVariantService,
-    private readonly physicalProductService: PhysicalProductService,
+    private readonly physicalProductUtilsService: PhysicalProductUtilsService,
     private readonly airtableService: AirtableService,
     private readonly shippingService: ShippingService,
     private readonly emails: EmailService,
@@ -84,7 +84,7 @@ export class ReservationService {
       )
       rollbackFuncs.push(rollbackUpdateProductVariantCounts)
       // tslint:disable-next-line:max-line-length
-      const rollbackPrismaPhysicalProductStatuses = await this.physicalProductService.markPhysicalProductsReservedOnPrisma(
+      const rollbackPrismaPhysicalProductStatuses = await this.physicalProductUtilsService.markPhysicalProductsReservedOnPrisma(
         physicalProductsBeingReserved
       )
       rollbackFuncs.push(rollbackPrismaPhysicalProductStatuses)

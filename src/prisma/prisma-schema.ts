@@ -3340,6 +3340,8 @@ enum InventoryStatus {
   NonReservable
   Reservable
   Reserved
+  Stored
+  Offloaded
 }
 
 scalar Json
@@ -4349,6 +4351,8 @@ type PhysicalProduct {
   productVariant: ProductVariant!
   inventoryStatus: InventoryStatus!
   productStatus: PhysicalProductStatus!
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -4366,6 +4370,8 @@ input PhysicalProductCreateInput {
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
   inventoryStatus: InventoryStatus!
   productStatus: PhysicalProductStatus!
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
 }
 
 input PhysicalProductCreateManyInput {
@@ -4389,6 +4395,8 @@ input PhysicalProductCreateWithoutLocationInput {
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
   inventoryStatus: InventoryStatus!
   productStatus: PhysicalProductStatus!
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
 }
 
 input PhysicalProductCreateWithoutProductVariantInput {
@@ -4397,11 +4405,21 @@ input PhysicalProductCreateWithoutProductVariantInput {
   location: LocationCreateOneWithoutPhysicalProductsInput
   inventoryStatus: InventoryStatus!
   productStatus: PhysicalProductStatus!
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
 }
 
 type PhysicalProductEdge {
   node: PhysicalProduct!
   cursor: String!
+}
+
+enum PhysicalProductOffloadMethod {
+  SoldToUser
+  SoldToThirdParty
+  ReturnedToVendor
+  Recycled
+  Unknown
 }
 
 enum PhysicalProductOrderByInput {
@@ -4413,6 +4431,10 @@ enum PhysicalProductOrderByInput {
   inventoryStatus_DESC
   productStatus_ASC
   productStatus_DESC
+  offloadMethod_ASC
+  offloadMethod_DESC
+  offloadNotes_ASC
+  offloadNotes_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -4424,6 +4446,8 @@ type PhysicalProductPreviousValues {
   seasonsUID: String!
   inventoryStatus: InventoryStatus!
   productStatus: PhysicalProductStatus!
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -4465,6 +4489,24 @@ input PhysicalProductScalarWhereInput {
   productStatus_not: PhysicalProductStatus
   productStatus_in: [PhysicalProductStatus!]
   productStatus_not_in: [PhysicalProductStatus!]
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadMethod_not: PhysicalProductOffloadMethod
+  offloadMethod_in: [PhysicalProductOffloadMethod!]
+  offloadMethod_not_in: [PhysicalProductOffloadMethod!]
+  offloadNotes: String
+  offloadNotes_not: String
+  offloadNotes_in: [String!]
+  offloadNotes_not_in: [String!]
+  offloadNotes_lt: String
+  offloadNotes_lte: String
+  offloadNotes_gt: String
+  offloadNotes_gte: String
+  offloadNotes_contains: String
+  offloadNotes_not_contains: String
+  offloadNotes_starts_with: String
+  offloadNotes_not_starts_with: String
+  offloadNotes_ends_with: String
+  offloadNotes_not_ends_with: String
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -4518,6 +4560,8 @@ input PhysicalProductUpdateDataInput {
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
   inventoryStatus: InventoryStatus
   productStatus: PhysicalProductStatus
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
 }
 
 input PhysicalProductUpdateInput {
@@ -4526,12 +4570,16 @@ input PhysicalProductUpdateInput {
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
   inventoryStatus: InventoryStatus
   productStatus: PhysicalProductStatus
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
 }
 
 input PhysicalProductUpdateManyDataInput {
   seasonsUID: String
   inventoryStatus: InventoryStatus
   productStatus: PhysicalProductStatus
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
 }
 
 input PhysicalProductUpdateManyInput {
@@ -4550,6 +4598,8 @@ input PhysicalProductUpdateManyMutationInput {
   seasonsUID: String
   inventoryStatus: InventoryStatus
   productStatus: PhysicalProductStatus
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
 }
 
 input PhysicalProductUpdateManyWithoutLocationInput {
@@ -4586,6 +4636,8 @@ input PhysicalProductUpdateWithoutLocationDataInput {
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
   inventoryStatus: InventoryStatus
   productStatus: PhysicalProductStatus
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
 }
 
 input PhysicalProductUpdateWithoutProductVariantDataInput {
@@ -4593,6 +4645,8 @@ input PhysicalProductUpdateWithoutProductVariantDataInput {
   location: LocationUpdateOneWithoutPhysicalProductsInput
   inventoryStatus: InventoryStatus
   productStatus: PhysicalProductStatus
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
 }
 
 input PhysicalProductUpdateWithWhereUniqueNestedInput {
@@ -4667,6 +4721,24 @@ input PhysicalProductWhereInput {
   productStatus_not: PhysicalProductStatus
   productStatus_in: [PhysicalProductStatus!]
   productStatus_not_in: [PhysicalProductStatus!]
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadMethod_not: PhysicalProductOffloadMethod
+  offloadMethod_in: [PhysicalProductOffloadMethod!]
+  offloadMethod_not_in: [PhysicalProductOffloadMethod!]
+  offloadNotes: String
+  offloadNotes_not: String
+  offloadNotes_in: [String!]
+  offloadNotes_not_in: [String!]
+  offloadNotes_lt: String
+  offloadNotes_lte: String
+  offloadNotes_gt: String
+  offloadNotes_gte: String
+  offloadNotes_contains: String
+  offloadNotes_not_contains: String
+  offloadNotes_starts_with: String
+  offloadNotes_not_starts_with: String
+  offloadNotes_ends_with: String
+  offloadNotes_not_ends_with: String
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -5694,6 +5766,8 @@ input ProductScalarWhereInput {
 enum ProductStatus {
   Available
   NotAvailable
+  Stored
+  Offloaded
 }
 
 type ProductSubscriptionPayload {
@@ -6046,6 +6120,8 @@ type ProductVariant {
   reservable: Int!
   reserved: Int!
   nonReservable: Int!
+  offloaded: Int!
+  stored: Int!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -6072,6 +6148,8 @@ input ProductVariantCreateInput {
   reservable: Int!
   reserved: Int!
   nonReservable: Int!
+  offloaded: Int!
+  stored: Int!
 }
 
 input ProductVariantCreateManyWithoutColorInput {
@@ -6109,6 +6187,8 @@ input ProductVariantCreateWithoutColorInput {
   reservable: Int!
   reserved: Int!
   nonReservable: Int!
+  offloaded: Int!
+  stored: Int!
 }
 
 input ProductVariantCreateWithoutPhysicalProductsInput {
@@ -6126,6 +6206,8 @@ input ProductVariantCreateWithoutPhysicalProductsInput {
   reservable: Int!
   reserved: Int!
   nonReservable: Int!
+  offloaded: Int!
+  stored: Int!
 }
 
 input ProductVariantCreateWithoutProductInput {
@@ -6143,6 +6225,8 @@ input ProductVariantCreateWithoutProductInput {
   reservable: Int!
   reserved: Int!
   nonReservable: Int!
+  offloaded: Int!
+  stored: Int!
 }
 
 type ProductVariantEdge {
@@ -6603,6 +6687,10 @@ enum ProductVariantOrderByInput {
   reserved_DESC
   nonReservable_ASC
   nonReservable_DESC
+  offloaded_ASC
+  offloaded_DESC
+  stored_ASC
+  stored_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -6620,6 +6708,8 @@ type ProductVariantPreviousValues {
   reservable: Int!
   reserved: Int!
   nonReservable: Int!
+  offloaded: Int!
+  stored: Int!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -6723,6 +6813,22 @@ input ProductVariantScalarWhereInput {
   nonReservable_lte: Int
   nonReservable_gt: Int
   nonReservable_gte: Int
+  offloaded: Int
+  offloaded_not: Int
+  offloaded_in: [Int!]
+  offloaded_not_in: [Int!]
+  offloaded_lt: Int
+  offloaded_lte: Int
+  offloaded_gt: Int
+  offloaded_gte: Int
+  stored: Int
+  stored_not: Int
+  stored_in: [Int!]
+  stored_not_in: [Int!]
+  stored_lt: Int
+  stored_lte: Int
+  stored_gt: Int
+  stored_gte: Int
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -6777,6 +6883,8 @@ input ProductVariantUpdateDataInput {
   reservable: Int
   reserved: Int
   nonReservable: Int
+  offloaded: Int
+  stored: Int
 }
 
 input ProductVariantUpdateInput {
@@ -6794,6 +6902,8 @@ input ProductVariantUpdateInput {
   reservable: Int
   reserved: Int
   nonReservable: Int
+  offloaded: Int
+  stored: Int
 }
 
 input ProductVariantUpdateManyDataInput {
@@ -6806,6 +6916,8 @@ input ProductVariantUpdateManyDataInput {
   reservable: Int
   reserved: Int
   nonReservable: Int
+  offloaded: Int
+  stored: Int
 }
 
 input ProductVariantUpdateManyMutationInput {
@@ -6818,6 +6930,8 @@ input ProductVariantUpdateManyMutationInput {
   reservable: Int
   reserved: Int
   nonReservable: Int
+  offloaded: Int
+  stored: Int
 }
 
 input ProductVariantUpdateManyWithoutColorInput {
@@ -6877,6 +6991,8 @@ input ProductVariantUpdateWithoutColorDataInput {
   reservable: Int
   reserved: Int
   nonReservable: Int
+  offloaded: Int
+  stored: Int
 }
 
 input ProductVariantUpdateWithoutPhysicalProductsDataInput {
@@ -6893,6 +7009,8 @@ input ProductVariantUpdateWithoutPhysicalProductsDataInput {
   reservable: Int
   reserved: Int
   nonReservable: Int
+  offloaded: Int
+  stored: Int
 }
 
 input ProductVariantUpdateWithoutProductDataInput {
@@ -6909,6 +7027,8 @@ input ProductVariantUpdateWithoutProductDataInput {
   reservable: Int
   reserved: Int
   nonReservable: Int
+  offloaded: Int
+  stored: Int
 }
 
 input ProductVariantUpdateWithWhereUniqueWithoutColorInput {
@@ -7144,6 +7264,22 @@ input ProductVariantWhereInput {
   nonReservable_lte: Int
   nonReservable_gt: Int
   nonReservable_gte: Int
+  offloaded: Int
+  offloaded_not: Int
+  offloaded_in: [Int!]
+  offloaded_not_in: [Int!]
+  offloaded_lt: Int
+  offloaded_lte: Int
+  offloaded_gt: Int
+  offloaded_gte: Int
+  stored: Int
+  stored_not: Int
+  stored_in: [Int!]
+  stored_not_in: [Int!]
+  stored_lt: Int
+  stored_lte: Int
+  stored_gt: Int
+  stored_gte: Int
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]

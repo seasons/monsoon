@@ -20,6 +20,12 @@ enum ProductSize {
 export class UtilsService {
   constructor(private readonly prisma: PrismaService) {}
 
+  randomString() {
+    return Math.random()
+      .toString(36)
+      .slice(2)
+  }
+
   deleteFieldsFromObject(obj: object, fieldsToDelete: string[]) {
     const objCopy = { ...obj }
     fieldsToDelete.forEach(a => delete objCopy[a])
