@@ -216,6 +216,7 @@ export class SyncProductsService {
           })(),
           modelHeight: head(modelHeight) ?? 0,
           status: (status || "Available").replace(" ", ""),
+          season: model.season,
         } as ProductCreateInput
 
         await this.prisma.client.upsertProduct({
