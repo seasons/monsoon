@@ -379,6 +379,7 @@ type PhysicalProduct {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   barcode: String!
+  sequenceNumber: Int!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }

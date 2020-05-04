@@ -4364,6 +4364,7 @@ type PhysicalProduct {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   barcode: String!
+  sequenceNumber: Int!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -4384,6 +4385,7 @@ input PhysicalProductCreateInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   barcode: String!
+  sequenceNumber: Int!
 }
 
 input PhysicalProductCreateManyInput {
@@ -4410,6 +4412,7 @@ input PhysicalProductCreateWithoutLocationInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   barcode: String!
+  sequenceNumber: Int!
 }
 
 input PhysicalProductCreateWithoutProductVariantInput {
@@ -4421,6 +4424,7 @@ input PhysicalProductCreateWithoutProductVariantInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   barcode: String!
+  sequenceNumber: Int!
 }
 
 type PhysicalProductEdge {
@@ -4451,6 +4455,8 @@ enum PhysicalProductOrderByInput {
   offloadNotes_DESC
   barcode_ASC
   barcode_DESC
+  sequenceNumber_ASC
+  sequenceNumber_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -4465,6 +4471,7 @@ type PhysicalProductPreviousValues {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   barcode: String!
+  sequenceNumber: Int!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -4538,6 +4545,14 @@ input PhysicalProductScalarWhereInput {
   barcode_not_starts_with: String
   barcode_ends_with: String
   barcode_not_ends_with: String
+  sequenceNumber: Int
+  sequenceNumber_not: Int
+  sequenceNumber_in: [Int!]
+  sequenceNumber_not_in: [Int!]
+  sequenceNumber_lt: Int
+  sequenceNumber_lte: Int
+  sequenceNumber_gt: Int
+  sequenceNumber_gte: Int
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -4594,6 +4609,7 @@ input PhysicalProductUpdateDataInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   barcode: String
+  sequenceNumber: Int
 }
 
 input PhysicalProductUpdateInput {
@@ -4605,6 +4621,7 @@ input PhysicalProductUpdateInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   barcode: String
+  sequenceNumber: Int
 }
 
 input PhysicalProductUpdateManyDataInput {
@@ -4614,6 +4631,7 @@ input PhysicalProductUpdateManyDataInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   barcode: String
+  sequenceNumber: Int
 }
 
 input PhysicalProductUpdateManyInput {
@@ -4635,6 +4653,7 @@ input PhysicalProductUpdateManyMutationInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   barcode: String
+  sequenceNumber: Int
 }
 
 input PhysicalProductUpdateManyWithoutLocationInput {
@@ -4674,6 +4693,7 @@ input PhysicalProductUpdateWithoutLocationDataInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   barcode: String
+  sequenceNumber: Int
 }
 
 input PhysicalProductUpdateWithoutProductVariantDataInput {
@@ -4684,6 +4704,7 @@ input PhysicalProductUpdateWithoutProductVariantDataInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   barcode: String
+  sequenceNumber: Int
 }
 
 input PhysicalProductUpdateWithWhereUniqueNestedInput {
@@ -4790,6 +4811,14 @@ input PhysicalProductWhereInput {
   barcode_not_starts_with: String
   barcode_ends_with: String
   barcode_not_ends_with: String
+  sequenceNumber: Int
+  sequenceNumber_not: Int
+  sequenceNumber_in: [Int!]
+  sequenceNumber_not_in: [Int!]
+  sequenceNumber_lt: Int
+  sequenceNumber_lte: Int
+  sequenceNumber_gt: Int
+  sequenceNumber_gte: Int
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]

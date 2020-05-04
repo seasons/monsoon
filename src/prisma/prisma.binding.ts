@@ -8041,6 +8041,7 @@ type PhysicalProduct implements Node {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   barcode: String!
+  sequenceNumber: Int!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -8063,6 +8064,7 @@ input PhysicalProductCreateInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   barcode: String!
+  sequenceNumber: Int!
   location: LocationCreateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
 }
@@ -8090,6 +8092,7 @@ input PhysicalProductCreateWithoutLocationInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   barcode: String!
+  sequenceNumber: Int!
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
 }
 
@@ -8101,6 +8104,7 @@ input PhysicalProductCreateWithoutProductVariantInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   barcode: String!
+  sequenceNumber: Int!
   location: LocationCreateOneWithoutPhysicalProductsInput
 }
 
@@ -8136,6 +8140,8 @@ enum PhysicalProductOrderByInput {
   offloadNotes_DESC
   barcode_ASC
   barcode_DESC
+  sequenceNumber_ASC
+  sequenceNumber_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -8150,6 +8156,7 @@ type PhysicalProductPreviousValues {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   barcode: String!
+  sequenceNumber: Int!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -8353,6 +8360,28 @@ input PhysicalProductScalarWhereInput {
 
   """All values not ending with the given string."""
   barcode_not_ends_with: String
+  sequenceNumber: Int
+
+  """All values that are not equal to given value."""
+  sequenceNumber_not: Int
+
+  """All values that are contained in given list."""
+  sequenceNumber_in: [Int!]
+
+  """All values that are not contained in given list."""
+  sequenceNumber_not_in: [Int!]
+
+  """All values less than the given value."""
+  sequenceNumber_lt: Int
+
+  """All values less than or equal the given value."""
+  sequenceNumber_lte: Int
+
+  """All values greater than the given value."""
+  sequenceNumber_gt: Int
+
+  """All values greater than or equal the given value."""
+  sequenceNumber_gte: Int
   createdAt: DateTime
 
   """All values that are not equal to given value."""
@@ -8451,6 +8480,7 @@ input PhysicalProductUpdateDataInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   barcode: String
+  sequenceNumber: Int
   location: LocationUpdateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
 }
@@ -8462,6 +8492,7 @@ input PhysicalProductUpdateInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   barcode: String
+  sequenceNumber: Int
   location: LocationUpdateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
 }
@@ -8473,6 +8504,7 @@ input PhysicalProductUpdateManyDataInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   barcode: String
+  sequenceNumber: Int
 }
 
 input PhysicalProductUpdateManyInput {
@@ -8494,6 +8526,7 @@ input PhysicalProductUpdateManyMutationInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   barcode: String
+  sequenceNumber: Int
 }
 
 input PhysicalProductUpdateManyWithoutLocationInput {
@@ -8532,6 +8565,7 @@ input PhysicalProductUpdateWithoutLocationDataInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   barcode: String
+  sequenceNumber: Int
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
 }
 
@@ -8542,6 +8576,7 @@ input PhysicalProductUpdateWithoutProductVariantDataInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   barcode: String
+  sequenceNumber: Int
   location: LocationUpdateOneWithoutPhysicalProductsInput
 }
 
@@ -8777,6 +8812,28 @@ input PhysicalProductWhereInput {
 
   """All values not ending with the given string."""
   barcode_not_ends_with: String
+  sequenceNumber: Int
+
+  """All values that are not equal to given value."""
+  sequenceNumber_not: Int
+
+  """All values that are contained in given list."""
+  sequenceNumber_in: [Int!]
+
+  """All values that are not contained in given list."""
+  sequenceNumber_not_in: [Int!]
+
+  """All values less than the given value."""
+  sequenceNumber_lt: Int
+
+  """All values less than or equal the given value."""
+  sequenceNumber_lte: Int
+
+  """All values greater than the given value."""
+  sequenceNumber_gt: Int
+
+  """All values greater than or equal the given value."""
+  sequenceNumber_gte: Int
   createdAt: DateTime
 
   """All values that are not equal to given value."""
@@ -16870,6 +16927,8 @@ export type PhysicalProductOrderByInput =   'id_ASC' |
   'offloadNotes_DESC' |
   'barcode_ASC' |
   'barcode_DESC' |
+  'sequenceNumber_ASC' |
+  'sequenceNumber_DESC' |
   'createdAt_ASC' |
   'createdAt_DESC' |
   'updatedAt_ASC' |
@@ -20174,6 +20233,7 @@ export interface PhysicalProductCreateInput {
   offloadMethod?: PhysicalProductOffloadMethod | null
   offloadNotes?: String | null
   barcode: String
+  sequenceNumber: Int
   location?: LocationCreateOneWithoutPhysicalProductsInput | null
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput
 }
@@ -20201,6 +20261,7 @@ export interface PhysicalProductCreateWithoutLocationInput {
   offloadMethod?: PhysicalProductOffloadMethod | null
   offloadNotes?: String | null
   barcode: String
+  sequenceNumber: Int
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput
 }
 
@@ -20212,6 +20273,7 @@ export interface PhysicalProductCreateWithoutProductVariantInput {
   offloadMethod?: PhysicalProductOffloadMethod | null
   offloadNotes?: String | null
   barcode: String
+  sequenceNumber: Int
   location?: LocationCreateOneWithoutPhysicalProductsInput | null
 }
 
@@ -20287,6 +20349,14 @@ export interface PhysicalProductScalarWhereInput {
   barcode_not_starts_with?: String | null
   barcode_ends_with?: String | null
   barcode_not_ends_with?: String | null
+  sequenceNumber?: Int | null
+  sequenceNumber_not?: Int | null
+  sequenceNumber_in?: Int[] | Int | null
+  sequenceNumber_not_in?: Int[] | Int | null
+  sequenceNumber_lt?: Int | null
+  sequenceNumber_lte?: Int | null
+  sequenceNumber_gt?: Int | null
+  sequenceNumber_gte?: Int | null
   createdAt?: DateTime | null
   createdAt_not?: DateTime | null
   createdAt_in?: DateTime[] | DateTime | null
@@ -20323,6 +20393,7 @@ export interface PhysicalProductUpdateDataInput {
   offloadMethod?: PhysicalProductOffloadMethod | null
   offloadNotes?: String | null
   barcode?: String | null
+  sequenceNumber?: Int | null
   location?: LocationUpdateOneWithoutPhysicalProductsInput | null
   productVariant?: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput | null
 }
@@ -20334,6 +20405,7 @@ export interface PhysicalProductUpdateInput {
   offloadMethod?: PhysicalProductOffloadMethod | null
   offloadNotes?: String | null
   barcode?: String | null
+  sequenceNumber?: Int | null
   location?: LocationUpdateOneWithoutPhysicalProductsInput | null
   productVariant?: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput | null
 }
@@ -20345,6 +20417,7 @@ export interface PhysicalProductUpdateManyDataInput {
   offloadMethod?: PhysicalProductOffloadMethod | null
   offloadNotes?: String | null
   barcode?: String | null
+  sequenceNumber?: Int | null
 }
 
 export interface PhysicalProductUpdateManyInput {
@@ -20366,6 +20439,7 @@ export interface PhysicalProductUpdateManyMutationInput {
   offloadMethod?: PhysicalProductOffloadMethod | null
   offloadNotes?: String | null
   barcode?: String | null
+  sequenceNumber?: Int | null
 }
 
 export interface PhysicalProductUpdateManyWithoutLocationInput {
@@ -20404,6 +20478,7 @@ export interface PhysicalProductUpdateWithoutLocationDataInput {
   offloadMethod?: PhysicalProductOffloadMethod | null
   offloadNotes?: String | null
   barcode?: String | null
+  sequenceNumber?: Int | null
   productVariant?: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput | null
 }
 
@@ -20414,6 +20489,7 @@ export interface PhysicalProductUpdateWithoutProductVariantDataInput {
   offloadMethod?: PhysicalProductOffloadMethod | null
   offloadNotes?: String | null
   barcode?: String | null
+  sequenceNumber?: Int | null
   location?: LocationUpdateOneWithoutPhysicalProductsInput | null
 }
 
@@ -20522,6 +20598,14 @@ export interface PhysicalProductWhereInput {
   barcode_not_starts_with?: String | null
   barcode_ends_with?: String | null
   barcode_not_ends_with?: String | null
+  sequenceNumber?: Int | null
+  sequenceNumber_not?: Int | null
+  sequenceNumber_in?: Int[] | Int | null
+  sequenceNumber_not_in?: Int[] | Int | null
+  sequenceNumber_lt?: Int | null
+  sequenceNumber_lte?: Int | null
+  sequenceNumber_gt?: Int | null
+  sequenceNumber_gte?: Int | null
   createdAt?: DateTime | null
   createdAt_not?: DateTime | null
   createdAt_in?: DateTime[] | DateTime | null
@@ -25011,6 +25095,7 @@ export interface PhysicalProduct extends Node {
   offloadMethod?: PhysicalProductOffloadMethod | null
   offloadNotes?: String | null
   barcode: String
+  sequenceNumber: Int
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -25042,6 +25127,7 @@ export interface PhysicalProductPreviousValues {
   offloadMethod?: PhysicalProductOffloadMethod | null
   offloadNotes?: String | null
   barcode: String
+  sequenceNumber: Int
   createdAt: DateTime
   updatedAt: DateTime
 }

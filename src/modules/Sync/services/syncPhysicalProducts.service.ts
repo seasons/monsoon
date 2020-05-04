@@ -122,6 +122,7 @@ export class SyncPhysicalProductsService {
           inventoryStatus: inventoryStatus.replace(" ", ""),
           productStatus,
           barcode: model.barcode,
+          sequenceNumber: model.sequenceNumber,
         }
 
         await this.prisma.client.upsertPhysicalProduct({
