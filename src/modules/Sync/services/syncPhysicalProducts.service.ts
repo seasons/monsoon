@@ -1,3 +1,4 @@
+import * as fs from "fs"
 import { Injectable } from "@nestjs/common"
 import { isEmpty } from "lodash"
 
@@ -94,6 +95,7 @@ export class SyncPhysicalProductsService {
       modelName: "Physical Products",
     })
 
+    const logFile = this.utils.openLogFile("syncPhysicalProducts")
     for (const record of allPhysicalProducts) {
       _cliProgressBar.increment()
 
@@ -108,7 +110,7 @@ export class SyncPhysicalProductsService {
           continue
         }
 
-        const { sUID, inventoryStatus, productStatus } = model
+        const { suid, inventoryStatus, productStatus } = model
 
         const data = {
           productVariant: {
@@ -116,24 +118,26 @@ export class SyncPhysicalProductsService {
               sku: productVariant.model.sku,
             },
           },
-          seasonsUID: sUID.text,
+          seasonsUID: suid.text,
           inventoryStatus: inventoryStatus.replace(" ", ""),
           productStatus,
+          barcode: model.barcode,
         }
 
         await this.prisma.client.upsertPhysicalProduct({
           where: {
-            seasonsUID: sUID.text,
+            seasonsUID: suid.text,
           },
           create: data,
           update: data,
         })
       } catch (e) {
-        console.error(e)
+        this.syncUtils.logSyncError(logFile, record, e)
       }
     }
 
     multibar?.stop()
+    fs.closeSync(logFile)
   }
 
   private async addProductLinks(

@@ -4363,6 +4363,7 @@ type PhysicalProduct {
   productStatus: PhysicalProductStatus!
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
+  barcode: String!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -4382,6 +4383,7 @@ input PhysicalProductCreateInput {
   productStatus: PhysicalProductStatus!
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
+  barcode: String!
 }
 
 input PhysicalProductCreateManyInput {
@@ -4407,6 +4409,7 @@ input PhysicalProductCreateWithoutLocationInput {
   productStatus: PhysicalProductStatus!
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
+  barcode: String!
 }
 
 input PhysicalProductCreateWithoutProductVariantInput {
@@ -4417,6 +4420,7 @@ input PhysicalProductCreateWithoutProductVariantInput {
   productStatus: PhysicalProductStatus!
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
+  barcode: String!
 }
 
 type PhysicalProductEdge {
@@ -4445,6 +4449,8 @@ enum PhysicalProductOrderByInput {
   offloadMethod_DESC
   offloadNotes_ASC
   offloadNotes_DESC
+  barcode_ASC
+  barcode_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -4458,6 +4464,7 @@ type PhysicalProductPreviousValues {
   productStatus: PhysicalProductStatus!
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
+  barcode: String!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -4517,6 +4524,20 @@ input PhysicalProductScalarWhereInput {
   offloadNotes_not_starts_with: String
   offloadNotes_ends_with: String
   offloadNotes_not_ends_with: String
+  barcode: String
+  barcode_not: String
+  barcode_in: [String!]
+  barcode_not_in: [String!]
+  barcode_lt: String
+  barcode_lte: String
+  barcode_gt: String
+  barcode_gte: String
+  barcode_contains: String
+  barcode_not_contains: String
+  barcode_starts_with: String
+  barcode_not_starts_with: String
+  barcode_ends_with: String
+  barcode_not_ends_with: String
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -4572,6 +4593,7 @@ input PhysicalProductUpdateDataInput {
   productStatus: PhysicalProductStatus
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
+  barcode: String
 }
 
 input PhysicalProductUpdateInput {
@@ -4582,6 +4604,7 @@ input PhysicalProductUpdateInput {
   productStatus: PhysicalProductStatus
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
+  barcode: String
 }
 
 input PhysicalProductUpdateManyDataInput {
@@ -4590,6 +4613,7 @@ input PhysicalProductUpdateManyDataInput {
   productStatus: PhysicalProductStatus
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
+  barcode: String
 }
 
 input PhysicalProductUpdateManyInput {
@@ -4610,6 +4634,7 @@ input PhysicalProductUpdateManyMutationInput {
   productStatus: PhysicalProductStatus
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
+  barcode: String
 }
 
 input PhysicalProductUpdateManyWithoutLocationInput {
@@ -4648,6 +4673,7 @@ input PhysicalProductUpdateWithoutLocationDataInput {
   productStatus: PhysicalProductStatus
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
+  barcode: String
 }
 
 input PhysicalProductUpdateWithoutProductVariantDataInput {
@@ -4657,6 +4683,7 @@ input PhysicalProductUpdateWithoutProductVariantDataInput {
   productStatus: PhysicalProductStatus
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
+  barcode: String
 }
 
 input PhysicalProductUpdateWithWhereUniqueNestedInput {
@@ -4749,6 +4776,20 @@ input PhysicalProductWhereInput {
   offloadNotes_not_starts_with: String
   offloadNotes_ends_with: String
   offloadNotes_not_ends_with: String
+  barcode: String
+  barcode_not: String
+  barcode_in: [String!]
+  barcode_not_in: [String!]
+  barcode_lt: String
+  barcode_lte: String
+  barcode_gt: String
+  barcode_gte: String
+  barcode_contains: String
+  barcode_not_contains: String
+  barcode_starts_with: String
+  barcode_not_starts_with: String
+  barcode_ends_with: String
+  barcode_not_ends_with: String
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]

@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Mon May 04 2020 17:12:26 GMT-0400 (Eastern Daylight Time)
+# timestamp: Mon May 04 2020 17:47:13 GMT-0400 (Eastern Daylight Time)
 
 type AggregateBagItem {
   count: Int!
@@ -7662,6 +7662,7 @@ type PhysicalProduct implements Node {
   productStatus: PhysicalProductStatus!
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
+  barcode: String!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -7683,6 +7684,7 @@ input PhysicalProductCreateInput {
   productStatus: PhysicalProductStatus!
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
+  barcode: String!
   location: LocationCreateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
 }
@@ -7709,6 +7711,7 @@ input PhysicalProductCreateWithoutLocationInput {
   productStatus: PhysicalProductStatus!
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
+  barcode: String!
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
 }
 
@@ -7719,6 +7722,7 @@ input PhysicalProductCreateWithoutProductVariantInput {
   productStatus: PhysicalProductStatus!
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
+  barcode: String!
   location: LocationCreateOneWithoutPhysicalProductsInput
 }
 
@@ -7752,6 +7756,8 @@ enum PhysicalProductOrderByInput {
   offloadMethod_DESC
   offloadNotes_ASC
   offloadNotes_DESC
+  barcode_ASC
+  barcode_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -7765,6 +7771,7 @@ type PhysicalProductPreviousValues {
   productStatus: PhysicalProductStatus!
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
+  barcode: String!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -7928,6 +7935,46 @@ input PhysicalProductScalarWhereInput {
 
   """All values not ending with the given string."""
   offloadNotes_not_ends_with: String
+  barcode: String
+
+  """All values that are not equal to given value."""
+  barcode_not: String
+
+  """All values that are contained in given list."""
+  barcode_in: [String!]
+
+  """All values that are not contained in given list."""
+  barcode_not_in: [String!]
+
+  """All values less than the given value."""
+  barcode_lt: String
+
+  """All values less than or equal the given value."""
+  barcode_lte: String
+
+  """All values greater than the given value."""
+  barcode_gt: String
+
+  """All values greater than or equal the given value."""
+  barcode_gte: String
+
+  """All values containing the given string."""
+  barcode_contains: String
+
+  """All values not containing the given string."""
+  barcode_not_contains: String
+
+  """All values starting with the given string."""
+  barcode_starts_with: String
+
+  """All values not starting with the given string."""
+  barcode_not_starts_with: String
+
+  """All values ending with the given string."""
+  barcode_ends_with: String
+
+  """All values not ending with the given string."""
+  barcode_not_ends_with: String
   createdAt: DateTime
 
   """All values that are not equal to given value."""
@@ -8025,6 +8072,7 @@ input PhysicalProductUpdateDataInput {
   productStatus: PhysicalProductStatus
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
+  barcode: String
   location: LocationUpdateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
 }
@@ -8035,6 +8083,7 @@ input PhysicalProductUpdateInput {
   productStatus: PhysicalProductStatus
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
+  barcode: String
   location: LocationUpdateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
 }
@@ -8045,6 +8094,7 @@ input PhysicalProductUpdateManyDataInput {
   productStatus: PhysicalProductStatus
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
+  barcode: String
 }
 
 input PhysicalProductUpdateManyInput {
@@ -8065,6 +8115,7 @@ input PhysicalProductUpdateManyMutationInput {
   productStatus: PhysicalProductStatus
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
+  barcode: String
 }
 
 input PhysicalProductUpdateManyWithoutLocationInput {
@@ -8102,6 +8153,7 @@ input PhysicalProductUpdateWithoutLocationDataInput {
   productStatus: PhysicalProductStatus
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
+  barcode: String
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
 }
 
@@ -8111,6 +8163,7 @@ input PhysicalProductUpdateWithoutProductVariantDataInput {
   productStatus: PhysicalProductStatus
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
+  barcode: String
   location: LocationUpdateOneWithoutPhysicalProductsInput
 }
 
@@ -8306,6 +8359,46 @@ input PhysicalProductWhereInput {
 
   """All values not ending with the given string."""
   offloadNotes_not_ends_with: String
+  barcode: String
+
+  """All values that are not equal to given value."""
+  barcode_not: String
+
+  """All values that are contained in given list."""
+  barcode_in: [String!]
+
+  """All values that are not contained in given list."""
+  barcode_not_in: [String!]
+
+  """All values less than the given value."""
+  barcode_lt: String
+
+  """All values less than or equal the given value."""
+  barcode_lte: String
+
+  """All values greater than the given value."""
+  barcode_gt: String
+
+  """All values greater than or equal the given value."""
+  barcode_gte: String
+
+  """All values containing the given string."""
+  barcode_contains: String
+
+  """All values not containing the given string."""
+  barcode_not_contains: String
+
+  """All values starting with the given string."""
+  barcode_starts_with: String
+
+  """All values not starting with the given string."""
+  barcode_not_starts_with: String
+
+  """All values ending with the given string."""
+  barcode_ends_with: String
+
+  """All values not ending with the given string."""
+  barcode_not_ends_with: String
   createdAt: DateTime
 
   """All values that are not equal to given value."""

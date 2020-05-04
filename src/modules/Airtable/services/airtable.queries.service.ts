@@ -64,7 +64,6 @@ export class AirtableQueriesService {
     allAirtablePhysicalProducts,
     prismaPhysicalProduct
   ) {
-    debugger
     return allAirtablePhysicalProducts.find(
       physProd => physProd.model.suid.text === prismaPhysicalProduct.seasonsUID
     )
@@ -78,7 +77,6 @@ export class AirtableQueriesService {
     allAirtableProductVariants: AirtableData,
     prismaProductVariant: any
   ) {
-    debugger
     return allAirtableProductVariants.find(
       a => a.model.sku === prismaProductVariant.sku
     )

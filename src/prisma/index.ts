@@ -1468,6 +1468,8 @@ export type PhysicalProductOrderByInput =
   | "offloadMethod_DESC"
   | "offloadNotes_ASC"
   | "offloadNotes_DESC"
+  | "barcode_ASC"
+  | "barcode_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -2045,6 +2047,20 @@ export interface PhysicalProductWhereInput {
   offloadNotes_not_starts_with?: Maybe<String>;
   offloadNotes_ends_with?: Maybe<String>;
   offloadNotes_not_ends_with?: Maybe<String>;
+  barcode?: Maybe<String>;
+  barcode_not?: Maybe<String>;
+  barcode_in?: Maybe<String[] | String>;
+  barcode_not_in?: Maybe<String[] | String>;
+  barcode_lt?: Maybe<String>;
+  barcode_lte?: Maybe<String>;
+  barcode_gt?: Maybe<String>;
+  barcode_gte?: Maybe<String>;
+  barcode_contains?: Maybe<String>;
+  barcode_not_contains?: Maybe<String>;
+  barcode_starts_with?: Maybe<String>;
+  barcode_not_starts_with?: Maybe<String>;
+  barcode_ends_with?: Maybe<String>;
+  barcode_not_ends_with?: Maybe<String>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -4915,6 +4931,7 @@ export interface PhysicalProductCreateWithoutLocationInput {
   productStatus: PhysicalProductStatus;
   offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
   offloadNotes?: Maybe<String>;
+  barcode: String;
 }
 
 export interface ProductVariantCreateOneWithoutPhysicalProductsInput {
@@ -5188,6 +5205,7 @@ export interface PhysicalProductCreateWithoutProductVariantInput {
   productStatus: PhysicalProductStatus;
   offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
   offloadNotes?: Maybe<String>;
+  barcode: String;
 }
 
 export interface LocationCreateOneWithoutPhysicalProductsInput {
@@ -5347,6 +5365,7 @@ export interface PhysicalProductCreateInput {
   productStatus: PhysicalProductStatus;
   offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
   offloadNotes?: Maybe<String>;
+  barcode: String;
 }
 
 export interface LabelCreateOneInput {
@@ -5546,6 +5565,7 @@ export interface PhysicalProductUpdateWithoutLocationDataInput {
   productStatus?: Maybe<PhysicalProductStatus>;
   offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
   offloadNotes?: Maybe<String>;
+  barcode?: Maybe<String>;
 }
 
 export interface ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput {
@@ -6052,6 +6072,7 @@ export interface PhysicalProductUpdateWithoutProductVariantDataInput {
   productStatus?: Maybe<PhysicalProductStatus>;
   offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
   offloadNotes?: Maybe<String>;
+  barcode?: Maybe<String>;
 }
 
 export interface LocationUpdateOneWithoutPhysicalProductsInput {
@@ -6149,6 +6170,20 @@ export interface PhysicalProductScalarWhereInput {
   offloadNotes_not_starts_with?: Maybe<String>;
   offloadNotes_ends_with?: Maybe<String>;
   offloadNotes_not_ends_with?: Maybe<String>;
+  barcode?: Maybe<String>;
+  barcode_not?: Maybe<String>;
+  barcode_in?: Maybe<String[] | String>;
+  barcode_not_in?: Maybe<String[] | String>;
+  barcode_lt?: Maybe<String>;
+  barcode_lte?: Maybe<String>;
+  barcode_gt?: Maybe<String>;
+  barcode_gte?: Maybe<String>;
+  barcode_contains?: Maybe<String>;
+  barcode_not_contains?: Maybe<String>;
+  barcode_starts_with?: Maybe<String>;
+  barcode_not_starts_with?: Maybe<String>;
+  barcode_ends_with?: Maybe<String>;
+  barcode_not_ends_with?: Maybe<String>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -6187,6 +6222,7 @@ export interface PhysicalProductUpdateManyDataInput {
   productStatus?: Maybe<PhysicalProductStatus>;
   offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
   offloadNotes?: Maybe<String>;
+  barcode?: Maybe<String>;
 }
 
 export interface ProductVariantUpsertWithWhereUniqueWithoutColorInput {
@@ -7059,6 +7095,7 @@ export interface PhysicalProductUpdateDataInput {
   productStatus?: Maybe<PhysicalProductStatus>;
   offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
   offloadNotes?: Maybe<String>;
+  barcode?: Maybe<String>;
 }
 
 export interface PhysicalProductUpsertWithWhereUniqueNestedInput {
@@ -8033,6 +8070,7 @@ export interface PhysicalProductUpdateInput {
   productStatus?: Maybe<PhysicalProductStatus>;
   offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
   offloadNotes?: Maybe<String>;
+  barcode?: Maybe<String>;
 }
 
 export interface PhysicalProductUpdateManyMutationInput {
@@ -8041,6 +8079,7 @@ export interface PhysicalProductUpdateManyMutationInput {
   productStatus?: Maybe<PhysicalProductStatus>;
   offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
   offloadNotes?: Maybe<String>;
+  barcode?: Maybe<String>;
 }
 
 export interface ProductUpdateInput {
@@ -9938,6 +9977,7 @@ export interface PhysicalProduct {
   productStatus: PhysicalProductStatus;
   offloadMethod?: PhysicalProductOffloadMethod;
   offloadNotes?: String;
+  barcode: String;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -9953,6 +9993,7 @@ export interface PhysicalProductPromise
   productStatus: () => Promise<PhysicalProductStatus>;
   offloadMethod: () => Promise<PhysicalProductOffloadMethod>;
   offloadNotes: () => Promise<String>;
+  barcode: () => Promise<String>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -9968,6 +10009,7 @@ export interface PhysicalProductSubscription
   productStatus: () => Promise<AsyncIterator<PhysicalProductStatus>>;
   offloadMethod: () => Promise<AsyncIterator<PhysicalProductOffloadMethod>>;
   offloadNotes: () => Promise<AsyncIterator<String>>;
+  barcode: () => Promise<AsyncIterator<String>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -9983,6 +10025,7 @@ export interface PhysicalProductNullablePromise
   productStatus: () => Promise<PhysicalProductStatus>;
   offloadMethod: () => Promise<PhysicalProductOffloadMethod>;
   offloadNotes: () => Promise<String>;
+  barcode: () => Promise<String>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -14376,6 +14419,7 @@ export interface PhysicalProductPreviousValues {
   productStatus: PhysicalProductStatus;
   offloadMethod?: PhysicalProductOffloadMethod;
   offloadNotes?: String;
+  barcode: String;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -14389,6 +14433,7 @@ export interface PhysicalProductPreviousValuesPromise
   productStatus: () => Promise<PhysicalProductStatus>;
   offloadMethod: () => Promise<PhysicalProductOffloadMethod>;
   offloadNotes: () => Promise<String>;
+  barcode: () => Promise<String>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -14402,6 +14447,7 @@ export interface PhysicalProductPreviousValuesSubscription
   productStatus: () => Promise<AsyncIterator<PhysicalProductStatus>>;
   offloadMethod: () => Promise<AsyncIterator<PhysicalProductOffloadMethod>>;
   offloadNotes: () => Promise<AsyncIterator<String>>;
+  barcode: () => Promise<AsyncIterator<String>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }

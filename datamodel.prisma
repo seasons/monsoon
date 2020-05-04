@@ -378,6 +378,7 @@ type PhysicalProduct {
   productStatus: PhysicalProductStatus!
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
+  barcode: String!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
