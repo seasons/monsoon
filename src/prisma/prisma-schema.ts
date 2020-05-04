@@ -114,6 +114,10 @@ type AggregateSize {
   count: Int!
 }
 
+type AggregateTag {
+  count: Int!
+}
+
 type AggregateTopSize {
   count: Int!
 }
@@ -4153,6 +4157,12 @@ type Mutation {
   upsertSize(where: SizeWhereUniqueInput!, create: SizeCreateInput!, update: SizeUpdateInput!): Size!
   deleteSize(where: SizeWhereUniqueInput!): Size
   deleteManySizes(where: SizeWhereInput): BatchPayload!
+  createTag(data: TagCreateInput!): Tag!
+  updateTag(data: TagUpdateInput!, where: TagWhereUniqueInput!): Tag
+  updateManyTags(data: TagUpdateManyMutationInput!, where: TagWhereInput): BatchPayload!
+  upsertTag(where: TagWhereUniqueInput!, create: TagCreateInput!, update: TagUpdateInput!): Tag!
+  deleteTag(where: TagWhereUniqueInput!): Tag
+  deleteManyTags(where: TagWhereInput): BatchPayload!
   createTopSize(data: TopSizeCreateInput!): TopSize!
   updateTopSize(data: TopSizeUpdateInput!, where: TopSizeWhereUniqueInput!): TopSize
   updateManyTopSizes(data: TopSizeUpdateManyMutationInput!, where: TopSizeWhereInput): BatchPayload!
@@ -4786,7 +4796,7 @@ type Product {
   modelSize: Size
   color: Color!
   secondaryColor: Color
-  tags: Json
+  tags(where: TagWhereInput, orderBy: TagOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Tag!]
   functions(where: ProductFunctionWhereInput, orderBy: ProductFunctionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductFunction!]
   innerMaterials: [String!]!
   outerMaterials: [String!]!
@@ -4830,7 +4840,7 @@ input ProductCreateInput {
   modelSize: SizeCreateOneInput
   color: ColorCreateOneInput!
   secondaryColor: ColorCreateOneInput
-  tags: Json
+  tags: TagCreateManyWithoutProductsInput
   functions: ProductFunctionCreateManyInput
   innerMaterials: ProductCreateinnerMaterialsInput
   outerMaterials: ProductCreateouterMaterialsInput
@@ -4857,6 +4867,11 @@ input ProductCreateManyWithoutCategoryInput {
 
 input ProductCreateManyWithoutModelInput {
   create: [ProductCreateWithoutModelInput!]
+  connect: [ProductWhereUniqueInput!]
+}
+
+input ProductCreateManyWithoutTagsInput {
+  create: [ProductCreateWithoutTagsInput!]
   connect: [ProductWhereUniqueInput!]
 }
 
@@ -4889,7 +4904,7 @@ input ProductCreateWithoutBrandInput {
   modelSize: SizeCreateOneInput
   color: ColorCreateOneInput!
   secondaryColor: ColorCreateOneInput
-  tags: Json
+  tags: TagCreateManyWithoutProductsInput
   functions: ProductFunctionCreateManyInput
   innerMaterials: ProductCreateinnerMaterialsInput
   outerMaterials: ProductCreateouterMaterialsInput
@@ -4914,7 +4929,7 @@ input ProductCreateWithoutCategoryInput {
   modelSize: SizeCreateOneInput
   color: ColorCreateOneInput!
   secondaryColor: ColorCreateOneInput
-  tags: Json
+  tags: TagCreateManyWithoutProductsInput
   functions: ProductFunctionCreateManyInput
   innerMaterials: ProductCreateinnerMaterialsInput
   outerMaterials: ProductCreateouterMaterialsInput
@@ -4939,7 +4954,32 @@ input ProductCreateWithoutModelInput {
   modelSize: SizeCreateOneInput
   color: ColorCreateOneInput!
   secondaryColor: ColorCreateOneInput
-  tags: Json
+  tags: TagCreateManyWithoutProductsInput
+  functions: ProductFunctionCreateManyInput
+  innerMaterials: ProductCreateinnerMaterialsInput
+  outerMaterials: ProductCreateouterMaterialsInput
+  variants: ProductVariantCreateManyWithoutProductInput
+  status: ProductStatus
+  season: String
+  architecture: ProductArchitecture
+}
+
+input ProductCreateWithoutTagsInput {
+  id: ID
+  slug: String!
+  name: String!
+  brand: BrandCreateOneWithoutProductsInput!
+  category: CategoryCreateOneWithoutProductsInput!
+  type: ProductType
+  description: String
+  externalURL: String
+  images: Json
+  modelHeight: Int
+  retailPrice: Int
+  model: ProductModelCreateOneWithoutProductsInput
+  modelSize: SizeCreateOneInput
+  color: ColorCreateOneInput!
+  secondaryColor: ColorCreateOneInput
   functions: ProductFunctionCreateManyInput
   innerMaterials: ProductCreateinnerMaterialsInput
   outerMaterials: ProductCreateouterMaterialsInput
@@ -4965,7 +5005,7 @@ input ProductCreateWithoutVariantsInput {
   modelSize: SizeCreateOneInput
   color: ColorCreateOneInput!
   secondaryColor: ColorCreateOneInput
-  tags: Json
+  tags: TagCreateManyWithoutProductsInput
   functions: ProductFunctionCreateManyInput
   innerMaterials: ProductCreateinnerMaterialsInput
   outerMaterials: ProductCreateouterMaterialsInput
@@ -5319,8 +5359,6 @@ enum ProductOrderByInput {
   modelHeight_DESC
   retailPrice_ASC
   retailPrice_DESC
-  tags_ASC
-  tags_DESC
   status_ASC
   status_DESC
   season_ASC
@@ -5343,7 +5381,6 @@ type ProductPreviousValues {
   images: Json
   modelHeight: Int
   retailPrice: Int
-  tags: Json
   innerMaterials: [String!]!
   outerMaterials: [String!]!
   status: ProductStatus
@@ -5810,7 +5847,7 @@ input ProductUpdateDataInput {
   modelSize: SizeUpdateOneInput
   color: ColorUpdateOneRequiredInput
   secondaryColor: ColorUpdateOneInput
-  tags: Json
+  tags: TagUpdateManyWithoutProductsInput
   functions: ProductFunctionUpdateManyInput
   innerMaterials: ProductUpdateinnerMaterialsInput
   outerMaterials: ProductUpdateouterMaterialsInput
@@ -5839,7 +5876,7 @@ input ProductUpdateInput {
   modelSize: SizeUpdateOneInput
   color: ColorUpdateOneRequiredInput
   secondaryColor: ColorUpdateOneInput
-  tags: Json
+  tags: TagUpdateManyWithoutProductsInput
   functions: ProductFunctionUpdateManyInput
   innerMaterials: ProductUpdateinnerMaterialsInput
   outerMaterials: ProductUpdateouterMaterialsInput
@@ -5858,7 +5895,6 @@ input ProductUpdateManyDataInput {
   images: Json
   modelHeight: Int
   retailPrice: Int
-  tags: Json
   innerMaterials: ProductUpdateinnerMaterialsInput
   outerMaterials: ProductUpdateouterMaterialsInput
   status: ProductStatus
@@ -5887,7 +5923,6 @@ input ProductUpdateManyMutationInput {
   images: Json
   modelHeight: Int
   retailPrice: Int
-  tags: Json
   innerMaterials: ProductUpdateinnerMaterialsInput
   outerMaterials: ProductUpdateouterMaterialsInput
   status: ProductStatus
@@ -5931,6 +5966,18 @@ input ProductUpdateManyWithoutModelInput {
   updateMany: [ProductUpdateManyWithWhereNestedInput!]
 }
 
+input ProductUpdateManyWithoutTagsInput {
+  create: [ProductCreateWithoutTagsInput!]
+  delete: [ProductWhereUniqueInput!]
+  connect: [ProductWhereUniqueInput!]
+  set: [ProductWhereUniqueInput!]
+  disconnect: [ProductWhereUniqueInput!]
+  update: [ProductUpdateWithWhereUniqueWithoutTagsInput!]
+  upsert: [ProductUpsertWithWhereUniqueWithoutTagsInput!]
+  deleteMany: [ProductScalarWhereInput!]
+  updateMany: [ProductUpdateManyWithWhereNestedInput!]
+}
+
 input ProductUpdateManyWithWhereNestedInput {
   where: ProductScalarWhereInput!
   data: ProductUpdateManyDataInput!
@@ -5968,7 +6015,7 @@ input ProductUpdateWithoutBrandDataInput {
   modelSize: SizeUpdateOneInput
   color: ColorUpdateOneRequiredInput
   secondaryColor: ColorUpdateOneInput
-  tags: Json
+  tags: TagUpdateManyWithoutProductsInput
   functions: ProductFunctionUpdateManyInput
   innerMaterials: ProductUpdateinnerMaterialsInput
   outerMaterials: ProductUpdateouterMaterialsInput
@@ -5992,7 +6039,7 @@ input ProductUpdateWithoutCategoryDataInput {
   modelSize: SizeUpdateOneInput
   color: ColorUpdateOneRequiredInput
   secondaryColor: ColorUpdateOneInput
-  tags: Json
+  tags: TagUpdateManyWithoutProductsInput
   functions: ProductFunctionUpdateManyInput
   innerMaterials: ProductUpdateinnerMaterialsInput
   outerMaterials: ProductUpdateouterMaterialsInput
@@ -6016,7 +6063,31 @@ input ProductUpdateWithoutModelDataInput {
   modelSize: SizeUpdateOneInput
   color: ColorUpdateOneRequiredInput
   secondaryColor: ColorUpdateOneInput
-  tags: Json
+  tags: TagUpdateManyWithoutProductsInput
+  functions: ProductFunctionUpdateManyInput
+  innerMaterials: ProductUpdateinnerMaterialsInput
+  outerMaterials: ProductUpdateouterMaterialsInput
+  variants: ProductVariantUpdateManyWithoutProductInput
+  status: ProductStatus
+  season: String
+  architecture: ProductArchitecture
+}
+
+input ProductUpdateWithoutTagsDataInput {
+  slug: String
+  name: String
+  brand: BrandUpdateOneRequiredWithoutProductsInput
+  category: CategoryUpdateOneRequiredWithoutProductsInput
+  type: ProductType
+  description: String
+  externalURL: String
+  images: Json
+  modelHeight: Int
+  retailPrice: Int
+  model: ProductModelUpdateOneWithoutProductsInput
+  modelSize: SizeUpdateOneInput
+  color: ColorUpdateOneRequiredInput
+  secondaryColor: ColorUpdateOneInput
   functions: ProductFunctionUpdateManyInput
   innerMaterials: ProductUpdateinnerMaterialsInput
   outerMaterials: ProductUpdateouterMaterialsInput
@@ -6041,7 +6112,7 @@ input ProductUpdateWithoutVariantsDataInput {
   modelSize: SizeUpdateOneInput
   color: ColorUpdateOneRequiredInput
   secondaryColor: ColorUpdateOneInput
-  tags: Json
+  tags: TagUpdateManyWithoutProductsInput
   functions: ProductFunctionUpdateManyInput
   innerMaterials: ProductUpdateinnerMaterialsInput
   outerMaterials: ProductUpdateouterMaterialsInput
@@ -6068,6 +6139,11 @@ input ProductUpdateWithWhereUniqueWithoutCategoryInput {
 input ProductUpdateWithWhereUniqueWithoutModelInput {
   where: ProductWhereUniqueInput!
   data: ProductUpdateWithoutModelDataInput!
+}
+
+input ProductUpdateWithWhereUniqueWithoutTagsInput {
+  where: ProductWhereUniqueInput!
+  data: ProductUpdateWithoutTagsDataInput!
 }
 
 input ProductUpsertNestedInput {
@@ -6102,6 +6178,12 @@ input ProductUpsertWithWhereUniqueWithoutModelInput {
   where: ProductWhereUniqueInput!
   update: ProductUpdateWithoutModelDataInput!
   create: ProductCreateWithoutModelInput!
+}
+
+input ProductUpsertWithWhereUniqueWithoutTagsInput {
+  where: ProductWhereUniqueInput!
+  update: ProductUpdateWithoutTagsDataInput!
+  create: ProductCreateWithoutTagsInput!
 }
 
 type ProductVariant {
@@ -7403,6 +7485,9 @@ input ProductWhereInput {
   modelSize: SizeWhereInput
   color: ColorWhereInput
   secondaryColor: ColorWhereInput
+  tags_every: TagWhereInput
+  tags_some: TagWhereInput
+  tags_none: TagWhereInput
   functions_every: ProductFunctionWhereInput
   functions_some: ProductFunctionWhereInput
   functions_none: ProductFunctionWhereInput
@@ -7548,6 +7633,9 @@ type Query {
   size(where: SizeWhereUniqueInput!): Size
   sizes(where: SizeWhereInput, orderBy: SizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Size]!
   sizesConnection(where: SizeWhereInput, orderBy: SizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): SizeConnection!
+  tag(where: TagWhereUniqueInput!): Tag
+  tags(where: TagWhereInput, orderBy: TagOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Tag]!
+  tagsConnection(where: TagWhereInput, orderBy: TagOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): TagConnection!
   topSize(where: TopSizeWhereUniqueInput!): TopSize
   topSizes(where: TopSizeWhereInput, orderBy: TopSizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [TopSize]!
   topSizesConnection(where: TopSizeWhereInput, orderBy: TopSizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): TopSizeConnection!
@@ -8567,8 +8655,271 @@ type Subscription {
   reservation(where: ReservationSubscriptionWhereInput): ReservationSubscriptionPayload
   reservationFeedback(where: ReservationFeedbackSubscriptionWhereInput): ReservationFeedbackSubscriptionPayload
   size(where: SizeSubscriptionWhereInput): SizeSubscriptionPayload
+  tag(where: TagSubscriptionWhereInput): TagSubscriptionPayload
   topSize(where: TopSizeSubscriptionWhereInput): TopSizeSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
+}
+
+type Tag {
+  id: ID!
+  name: String!
+  description: String
+  products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type TagConnection {
+  pageInfo: PageInfo!
+  edges: [TagEdge]!
+  aggregate: AggregateTag!
+}
+
+input TagCreateInput {
+  id: ID
+  name: String!
+  description: String
+  products: ProductCreateManyWithoutTagsInput
+}
+
+input TagCreateManyWithoutProductsInput {
+  create: [TagCreateWithoutProductsInput!]
+  connect: [TagWhereUniqueInput!]
+}
+
+input TagCreateWithoutProductsInput {
+  id: ID
+  name: String!
+  description: String
+}
+
+type TagEdge {
+  node: Tag!
+  cursor: String!
+}
+
+enum TagOrderByInput {
+  id_ASC
+  id_DESC
+  name_ASC
+  name_DESC
+  description_ASC
+  description_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type TagPreviousValues {
+  id: ID!
+  name: String!
+  description: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+input TagScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  name: String
+  name_not: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_lt: String
+  name_lte: String
+  name_gt: String
+  name_gte: String
+  name_contains: String
+  name_not_contains: String
+  name_starts_with: String
+  name_not_starts_with: String
+  name_ends_with: String
+  name_not_ends_with: String
+  description: String
+  description_not: String
+  description_in: [String!]
+  description_not_in: [String!]
+  description_lt: String
+  description_lte: String
+  description_gt: String
+  description_gte: String
+  description_contains: String
+  description_not_contains: String
+  description_starts_with: String
+  description_not_starts_with: String
+  description_ends_with: String
+  description_not_ends_with: String
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [TagScalarWhereInput!]
+  OR: [TagScalarWhereInput!]
+  NOT: [TagScalarWhereInput!]
+}
+
+type TagSubscriptionPayload {
+  mutation: MutationType!
+  node: Tag
+  updatedFields: [String!]
+  previousValues: TagPreviousValues
+}
+
+input TagSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: TagWhereInput
+  AND: [TagSubscriptionWhereInput!]
+  OR: [TagSubscriptionWhereInput!]
+  NOT: [TagSubscriptionWhereInput!]
+}
+
+input TagUpdateInput {
+  name: String
+  description: String
+  products: ProductUpdateManyWithoutTagsInput
+}
+
+input TagUpdateManyDataInput {
+  name: String
+  description: String
+}
+
+input TagUpdateManyMutationInput {
+  name: String
+  description: String
+}
+
+input TagUpdateManyWithoutProductsInput {
+  create: [TagCreateWithoutProductsInput!]
+  delete: [TagWhereUniqueInput!]
+  connect: [TagWhereUniqueInput!]
+  set: [TagWhereUniqueInput!]
+  disconnect: [TagWhereUniqueInput!]
+  update: [TagUpdateWithWhereUniqueWithoutProductsInput!]
+  upsert: [TagUpsertWithWhereUniqueWithoutProductsInput!]
+  deleteMany: [TagScalarWhereInput!]
+  updateMany: [TagUpdateManyWithWhereNestedInput!]
+}
+
+input TagUpdateManyWithWhereNestedInput {
+  where: TagScalarWhereInput!
+  data: TagUpdateManyDataInput!
+}
+
+input TagUpdateWithoutProductsDataInput {
+  name: String
+  description: String
+}
+
+input TagUpdateWithWhereUniqueWithoutProductsInput {
+  where: TagWhereUniqueInput!
+  data: TagUpdateWithoutProductsDataInput!
+}
+
+input TagUpsertWithWhereUniqueWithoutProductsInput {
+  where: TagWhereUniqueInput!
+  update: TagUpdateWithoutProductsDataInput!
+  create: TagCreateWithoutProductsInput!
+}
+
+input TagWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  name: String
+  name_not: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_lt: String
+  name_lte: String
+  name_gt: String
+  name_gte: String
+  name_contains: String
+  name_not_contains: String
+  name_starts_with: String
+  name_not_starts_with: String
+  name_ends_with: String
+  name_not_ends_with: String
+  description: String
+  description_not: String
+  description_in: [String!]
+  description_not_in: [String!]
+  description_lt: String
+  description_lte: String
+  description_gt: String
+  description_gte: String
+  description_contains: String
+  description_not_contains: String
+  description_starts_with: String
+  description_not_starts_with: String
+  description_ends_with: String
+  description_not_ends_with: String
+  products_every: ProductWhereInput
+  products_some: ProductWhereInput
+  products_none: ProductWhereInput
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [TagWhereInput!]
+  OR: [TagWhereInput!]
+  NOT: [TagWhereInput!]
+}
+
+input TagWhereUniqueInput {
+  id: ID
+  name: String
 }
 
 type TopSize {

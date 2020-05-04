@@ -298,6 +298,15 @@ type Location {
   updatedAt: DateTime! @updatedAt
 }
 
+type Tag {
+  id: ID! @id
+  name: String! @unique
+  description: String
+  products: [Product!]!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
 type Product {
   id: ID! @id
   slug: String! @unique
@@ -314,7 +323,7 @@ type Product {
   modelSize: Size @relation(name: "ProductModelSize")
   color: Color! @relation(name: "ProductPrimaryColor")
   secondaryColor: Color @relation(name: "ProductSecondaryColor")
-  tags: Json
+  tags: [Tag!]!
   functions: [ProductFunction!]!
   innerMaterials: [String!]! @scalarList(strategy: RELATION)
   outerMaterials: [String!]! @scalarList(strategy: RELATION)
@@ -578,3 +587,4 @@ type ProductVariantFeedbackQuestion {
   type: QuestionType!
   variantFeedback: ProductVariantFeedback!
 }
+
