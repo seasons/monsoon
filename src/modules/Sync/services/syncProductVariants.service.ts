@@ -112,7 +112,6 @@ export class SyncProductVariantsService {
 
     let numSkipped = 0
     const logFile = this.utils.openLogFile("syncProductVariants")
-    fs.writeSync(logFile, "Begin Log\n")
     for (const productVariant of allProductVariants) {
       try {
         // Increment the progress bar
@@ -334,13 +333,7 @@ export class SyncProductVariantsService {
 
         this.updateCategorySizeName(type, topSize, bottomSize, sku)
       } catch (e) {
-        this.utils.writeLines(logFile, [
-          "THREW ERROR",
-          "Record:",
-          productVariant,
-          "Error:",
-          e,
-        ])
+        this.syncUtils.logSyncError(logFile, productVariant, e)
       }
     }
     this.utils.writeLines(logFile, [`Skipped ${numSkipped} records`])

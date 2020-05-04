@@ -98,6 +98,7 @@ export class SyncProductsService {
       modelName: "Products",
     })
 
+    const logFile = this.utils.openLogFile("syncProducts")
     for (const record of allProducts) {
       try {
         _cliProgressBar.increment()
@@ -230,11 +231,11 @@ export class SyncProductsService {
           Slug: slug,
         })
       } catch (e) {
-        console.log(record)
-        console.error(e)
+        this.syncUtils.logSyncError(logFile, record, e)
       }
     }
     multibar?.stop()
+    fs.closeSync(logFile)
   }
 
   private async addBrandLinks(
