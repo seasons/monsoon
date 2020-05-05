@@ -1,5 +1,5 @@
-# source: http://localhost:4466/monsoon/dev
-# timestamp: Wed Apr 29 2020 17:58:23 GMT-0400 (Eastern Daylight Time)
+# source: https://monsoon-prisma-staging.herokuapp.com/monsoon/staging
+# timestamp: Mon May 04 2020 13:48:25 GMT-0400 (Eastern Daylight Time)
 
 type AggregateBagItem {
   count: Int!
@@ -6008,6 +6008,8 @@ enum InventoryStatus {
   NonReservable
   Reservable
   Reserved
+  Stored
+  Offloaded
 }
 
 """Raw JSON value"""
@@ -7648,6 +7650,8 @@ type PhysicalProduct implements Node {
   productVariant: ProductVariant!
   inventoryStatus: InventoryStatus!
   productStatus: PhysicalProductStatus!
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -7667,6 +7671,8 @@ input PhysicalProductCreateInput {
   seasonsUID: String!
   inventoryStatus: InventoryStatus!
   productStatus: PhysicalProductStatus!
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
   location: LocationCreateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
 }
@@ -7691,6 +7697,8 @@ input PhysicalProductCreateWithoutLocationInput {
   seasonsUID: String!
   inventoryStatus: InventoryStatus!
   productStatus: PhysicalProductStatus!
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
 }
 
@@ -7699,6 +7707,8 @@ input PhysicalProductCreateWithoutProductVariantInput {
   seasonsUID: String!
   inventoryStatus: InventoryStatus!
   productStatus: PhysicalProductStatus!
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
   location: LocationCreateOneWithoutPhysicalProductsInput
 }
 
@@ -7711,6 +7721,14 @@ type PhysicalProductEdge {
   cursor: String!
 }
 
+enum PhysicalProductOffloadMethod {
+  SoldToUser
+  SoldToThirdParty
+  ReturnedToVendor
+  Recycled
+  Unknown
+}
+
 enum PhysicalProductOrderByInput {
   id_ASC
   id_DESC
@@ -7720,6 +7738,10 @@ enum PhysicalProductOrderByInput {
   inventoryStatus_DESC
   productStatus_ASC
   productStatus_DESC
+  offloadMethod_ASC
+  offloadMethod_DESC
+  offloadNotes_ASC
+  offloadNotes_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -7731,6 +7753,8 @@ type PhysicalProductPreviousValues {
   seasonsUID: String!
   inventoryStatus: InventoryStatus!
   productStatus: PhysicalProductStatus!
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -7844,6 +7868,56 @@ input PhysicalProductScalarWhereInput {
 
   """All values that are not contained in given list."""
   productStatus_not_in: [PhysicalProductStatus!]
+  offloadMethod: PhysicalProductOffloadMethod
+
+  """All values that are not equal to given value."""
+  offloadMethod_not: PhysicalProductOffloadMethod
+
+  """All values that are contained in given list."""
+  offloadMethod_in: [PhysicalProductOffloadMethod!]
+
+  """All values that are not contained in given list."""
+  offloadMethod_not_in: [PhysicalProductOffloadMethod!]
+  offloadNotes: String
+
+  """All values that are not equal to given value."""
+  offloadNotes_not: String
+
+  """All values that are contained in given list."""
+  offloadNotes_in: [String!]
+
+  """All values that are not contained in given list."""
+  offloadNotes_not_in: [String!]
+
+  """All values less than the given value."""
+  offloadNotes_lt: String
+
+  """All values less than or equal the given value."""
+  offloadNotes_lte: String
+
+  """All values greater than the given value."""
+  offloadNotes_gt: String
+
+  """All values greater than or equal the given value."""
+  offloadNotes_gte: String
+
+  """All values containing the given string."""
+  offloadNotes_contains: String
+
+  """All values not containing the given string."""
+  offloadNotes_not_contains: String
+
+  """All values starting with the given string."""
+  offloadNotes_starts_with: String
+
+  """All values not starting with the given string."""
+  offloadNotes_not_starts_with: String
+
+  """All values ending with the given string."""
+  offloadNotes_ends_with: String
+
+  """All values not ending with the given string."""
+  offloadNotes_not_ends_with: String
   createdAt: DateTime
 
   """All values that are not equal to given value."""
@@ -7939,6 +8013,8 @@ input PhysicalProductUpdateDataInput {
   seasonsUID: String
   inventoryStatus: InventoryStatus
   productStatus: PhysicalProductStatus
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
   location: LocationUpdateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
 }
@@ -7947,6 +8023,8 @@ input PhysicalProductUpdateInput {
   seasonsUID: String
   inventoryStatus: InventoryStatus
   productStatus: PhysicalProductStatus
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
   location: LocationUpdateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
 }
@@ -7955,6 +8033,8 @@ input PhysicalProductUpdateManyDataInput {
   seasonsUID: String
   inventoryStatus: InventoryStatus
   productStatus: PhysicalProductStatus
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
 }
 
 input PhysicalProductUpdateManyInput {
@@ -7973,6 +8053,8 @@ input PhysicalProductUpdateManyMutationInput {
   seasonsUID: String
   inventoryStatus: InventoryStatus
   productStatus: PhysicalProductStatus
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
 }
 
 input PhysicalProductUpdateManyWithoutLocationInput {
@@ -8008,6 +8090,8 @@ input PhysicalProductUpdateWithoutLocationDataInput {
   seasonsUID: String
   inventoryStatus: InventoryStatus
   productStatus: PhysicalProductStatus
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
 }
 
@@ -8015,6 +8099,8 @@ input PhysicalProductUpdateWithoutProductVariantDataInput {
   seasonsUID: String
   inventoryStatus: InventoryStatus
   productStatus: PhysicalProductStatus
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
   location: LocationUpdateOneWithoutPhysicalProductsInput
 }
 
@@ -8160,6 +8246,56 @@ input PhysicalProductWhereInput {
 
   """All values that are not contained in given list."""
   productStatus_not_in: [PhysicalProductStatus!]
+  offloadMethod: PhysicalProductOffloadMethod
+
+  """All values that are not equal to given value."""
+  offloadMethod_not: PhysicalProductOffloadMethod
+
+  """All values that are contained in given list."""
+  offloadMethod_in: [PhysicalProductOffloadMethod!]
+
+  """All values that are not contained in given list."""
+  offloadMethod_not_in: [PhysicalProductOffloadMethod!]
+  offloadNotes: String
+
+  """All values that are not equal to given value."""
+  offloadNotes_not: String
+
+  """All values that are contained in given list."""
+  offloadNotes_in: [String!]
+
+  """All values that are not contained in given list."""
+  offloadNotes_not_in: [String!]
+
+  """All values less than the given value."""
+  offloadNotes_lt: String
+
+  """All values less than or equal the given value."""
+  offloadNotes_lte: String
+
+  """All values greater than the given value."""
+  offloadNotes_gt: String
+
+  """All values greater than or equal the given value."""
+  offloadNotes_gte: String
+
+  """All values containing the given string."""
+  offloadNotes_contains: String
+
+  """All values not containing the given string."""
+  offloadNotes_not_contains: String
+
+  """All values starting with the given string."""
+  offloadNotes_starts_with: String
+
+  """All values not starting with the given string."""
+  offloadNotes_not_starts_with: String
+
+  """All values ending with the given string."""
+  offloadNotes_ends_with: String
+
+  """All values not ending with the given string."""
+  offloadNotes_not_ends_with: String
   createdAt: DateTime
 
   """All values that are not equal to given value."""
@@ -9976,6 +10112,8 @@ input ProductScalarWhereInput {
 enum ProductStatus {
   Available
   NotAvailable
+  Stored
+  Offloaded
 }
 
 type ProductSubscriptionPayload {
@@ -10347,6 +10485,8 @@ type ProductVariant implements Node {
   reservable: Int!
   reserved: Int!
   nonReservable: Int!
+  offloaded: Int!
+  stored: Int!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -10372,6 +10512,8 @@ input ProductVariantCreateInput {
   reservable: Int!
   reserved: Int!
   nonReservable: Int!
+  offloaded: Int!
+  stored: Int!
   color: ColorCreateOneWithoutProductVariantsInput!
   internalSize: SizeCreateOneInput
   manufacturerSizes: SizeCreateManyInput
@@ -10410,6 +10552,8 @@ input ProductVariantCreateWithoutColorInput {
   reservable: Int!
   reserved: Int!
   nonReservable: Int!
+  offloaded: Int!
+  stored: Int!
   internalSize: SizeCreateOneInput
   manufacturerSizes: SizeCreateManyInput
   product: ProductCreateOneWithoutVariantsInput!
@@ -10427,6 +10571,8 @@ input ProductVariantCreateWithoutPhysicalProductsInput {
   reservable: Int!
   reserved: Int!
   nonReservable: Int!
+  offloaded: Int!
+  stored: Int!
   color: ColorCreateOneWithoutProductVariantsInput!
   internalSize: SizeCreateOneInput
   manufacturerSizes: SizeCreateManyInput
@@ -10444,6 +10590,8 @@ input ProductVariantCreateWithoutProductInput {
   reservable: Int!
   reserved: Int!
   nonReservable: Int!
+  offloaded: Int!
+  stored: Int!
   color: ColorCreateOneWithoutProductVariantsInput!
   internalSize: SizeCreateOneInput
   manufacturerSizes: SizeCreateManyInput
@@ -11158,6 +11306,10 @@ enum ProductVariantOrderByInput {
   reserved_DESC
   nonReservable_ASC
   nonReservable_DESC
+  offloaded_ASC
+  offloaded_DESC
+  stored_ASC
+  stored_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -11175,6 +11327,8 @@ type ProductVariantPreviousValues {
   reservable: Int!
   reserved: Int!
   nonReservable: Int!
+  offloaded: Int!
+  stored: Int!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -11462,6 +11616,50 @@ input ProductVariantScalarWhereInput {
 
   """All values greater than or equal the given value."""
   nonReservable_gte: Int
+  offloaded: Int
+
+  """All values that are not equal to given value."""
+  offloaded_not: Int
+
+  """All values that are contained in given list."""
+  offloaded_in: [Int!]
+
+  """All values that are not contained in given list."""
+  offloaded_not_in: [Int!]
+
+  """All values less than the given value."""
+  offloaded_lt: Int
+
+  """All values less than or equal the given value."""
+  offloaded_lte: Int
+
+  """All values greater than the given value."""
+  offloaded_gt: Int
+
+  """All values greater than or equal the given value."""
+  offloaded_gte: Int
+  stored: Int
+
+  """All values that are not equal to given value."""
+  stored_not: Int
+
+  """All values that are contained in given list."""
+  stored_in: [Int!]
+
+  """All values that are not contained in given list."""
+  stored_not_in: [Int!]
+
+  """All values less than the given value."""
+  stored_lt: Int
+
+  """All values less than or equal the given value."""
+  stored_lte: Int
+
+  """All values greater than the given value."""
+  stored_gt: Int
+
+  """All values greater than or equal the given value."""
+  stored_gte: Int
   createdAt: DateTime
 
   """All values that are not equal to given value."""
@@ -11555,6 +11753,8 @@ input ProductVariantUpdateDataInput {
   reservable: Int
   reserved: Int
   nonReservable: Int
+  offloaded: Int
+  stored: Int
   color: ColorUpdateOneRequiredWithoutProductVariantsInput
   internalSize: SizeUpdateOneInput
   manufacturerSizes: SizeUpdateManyInput
@@ -11572,6 +11772,8 @@ input ProductVariantUpdateInput {
   reservable: Int
   reserved: Int
   nonReservable: Int
+  offloaded: Int
+  stored: Int
   color: ColorUpdateOneRequiredWithoutProductVariantsInput
   internalSize: SizeUpdateOneInput
   manufacturerSizes: SizeUpdateManyInput
@@ -11589,6 +11791,8 @@ input ProductVariantUpdateManyDataInput {
   reservable: Int
   reserved: Int
   nonReservable: Int
+  offloaded: Int
+  stored: Int
 }
 
 input ProductVariantUpdateManyMutationInput {
@@ -11601,6 +11805,8 @@ input ProductVariantUpdateManyMutationInput {
   reservable: Int
   reserved: Int
   nonReservable: Int
+  offloaded: Int
+  stored: Int
 }
 
 input ProductVariantUpdateManyWithoutColorInput {
@@ -11656,6 +11862,8 @@ input ProductVariantUpdateWithoutColorDataInput {
   reservable: Int
   reserved: Int
   nonReservable: Int
+  offloaded: Int
+  stored: Int
   internalSize: SizeUpdateOneInput
   manufacturerSizes: SizeUpdateManyInput
   product: ProductUpdateOneRequiredWithoutVariantsInput
@@ -11672,6 +11880,8 @@ input ProductVariantUpdateWithoutPhysicalProductsDataInput {
   reservable: Int
   reserved: Int
   nonReservable: Int
+  offloaded: Int
+  stored: Int
   color: ColorUpdateOneRequiredWithoutProductVariantsInput
   internalSize: SizeUpdateOneInput
   manufacturerSizes: SizeUpdateManyInput
@@ -11688,6 +11898,8 @@ input ProductVariantUpdateWithoutProductDataInput {
   reservable: Int
   reserved: Int
   nonReservable: Int
+  offloaded: Int
+  stored: Int
   color: ColorUpdateOneRequiredWithoutProductVariantsInput
   internalSize: SizeUpdateOneInput
   manufacturerSizes: SizeUpdateManyInput
@@ -12162,6 +12374,50 @@ input ProductVariantWhereInput {
 
   """All values greater than or equal the given value."""
   nonReservable_gte: Int
+  offloaded: Int
+
+  """All values that are not equal to given value."""
+  offloaded_not: Int
+
+  """All values that are contained in given list."""
+  offloaded_in: [Int!]
+
+  """All values that are not contained in given list."""
+  offloaded_not_in: [Int!]
+
+  """All values less than the given value."""
+  offloaded_lt: Int
+
+  """All values less than or equal the given value."""
+  offloaded_lte: Int
+
+  """All values greater than the given value."""
+  offloaded_gt: Int
+
+  """All values greater than or equal the given value."""
+  offloaded_gte: Int
+  stored: Int
+
+  """All values that are not equal to given value."""
+  stored_not: Int
+
+  """All values that are contained in given list."""
+  stored_in: [Int!]
+
+  """All values that are not contained in given list."""
+  stored_not_in: [Int!]
+
+  """All values less than the given value."""
+  stored_lt: Int
+
+  """All values less than or equal the given value."""
+  stored_lte: Int
+
+  """All values greater than the given value."""
+  stored_gt: Int
+
+  """All values greater than or equal the given value."""
+  stored_gte: Int
   createdAt: DateTime
 
   """All values that are not equal to given value."""

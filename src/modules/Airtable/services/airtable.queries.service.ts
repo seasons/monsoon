@@ -2,6 +2,7 @@ import * as Airtable from "airtable"
 
 import { AirtableData, AirtableModelName } from "../airtable.types"
 import { AirtableBaseService } from "./airtable.base.service"
+import { camelCase } from "lodash"
 
 export class AirtableQueriesService {
   constructor(readonly airtableBase: AirtableBaseService) {
@@ -64,7 +65,7 @@ export class AirtableQueriesService {
     prismaPhysicalProduct
   ) {
     return allAirtablePhysicalProducts.find(
-      physProd => physProd.model.sUID.text === prismaPhysicalProduct.seasonsUID
+      physProd => physProd.model.suid.text === prismaPhysicalProduct.seasonsUID
     )
   }
 
@@ -77,7 +78,7 @@ export class AirtableQueriesService {
     prismaProductVariant: any
   ) {
     return allAirtableProductVariants.find(
-      a => a.model.sKU === prismaProductVariant.sku
+      a => a.model.sku === prismaProductVariant.sku
     )
   }
 
@@ -184,13 +185,6 @@ export class AirtableQueriesService {
   }
 
   private airtableToPrismaObject(record) {
-    function camelCase(str) {
-      return str
-        .replace(/\s(.)/g, a => a.toUpperCase())
-        .replace(/\s/g, "")
-        .replace(/^(.)/, b => b.toLowerCase())
-    }
-
     const obj = {}
     for (const id of Object.keys(record)) {
       const newKey = camelCase(id)

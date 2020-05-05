@@ -383,6 +383,14 @@ type Mutation {
   addToBag(item: ID!): BagItem!
   removeFromBag(item: ID!, saved: Boolean): BagItem!
   saveProduct(item: ID!, save: Boolean!): BagItem
+  updateProduct(
+    where: ProductWhereUniqueInput!
+    data: ProductUpdateInput!
+  ): Product!
+  updatePhysicalProduct(
+    where: PhysicalProductWhereUniqueInput!
+    data: PhysicalProductUpdateInput!
+  ): PhysicalProduct
   addViewedProduct(item: ID!): RecentlyViewedProduct!
   acknowledgeCompletedChargebeeHostedCheckout(
     hostedPageID: String!
