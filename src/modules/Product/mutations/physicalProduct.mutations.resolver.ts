@@ -1,7 +1,7 @@
 import { Args, Mutation, Resolver, Info } from "@nestjs/graphql"
 import { PhysicalProductService } from "../services/physicalProduct.service"
 
-@Resolver("")
+@Resolver()
 export class PhysicalProductMutationsResolver {
   constructor(
     private readonly physicalProductService: PhysicalProductService
