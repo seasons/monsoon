@@ -2,7 +2,8 @@ import { ReservationService } from "@app/modules/Reservation/services/reservatio
 import { AirtableBaseService, AirtableUtilsService } from "@modules/Airtable"
 import { AirtableService } from "@modules/Airtable/index"
 import { EmailDataProvider, EmailService } from "@modules/Email"
-import { PhysicalProductService } from "@modules/Product/services/physicalProduct.utils.service"
+import { PhysicalProductUtilsService } from "@modules/Product/services/physicalProduct.utils.service"
+import { ProductService } from "@app/modules/Product"
 import { ProductUtilsService } from "@modules/Product/services/product.utils.service"
 import { ProductVariantService } from "@modules/Product/services/productVariant.service"
 import { ReservationUtilsService } from "@modules/Reservation/services/reservation.utils.service"
@@ -20,6 +21,16 @@ export class TestUtilsService {
     sku
     physicalProducts {
         seasonsUID
+    }
+  }`
+  private defaultProductInfo = `{
+    id
+    slug
+    variants {
+      sku
+      physicalProducts {
+        seasonsUID
+      }
     }
   }`
   constructor(
@@ -61,7 +72,10 @@ export class TestUtilsService {
     })
     newCustomer = await this.prisma.client.customer({ id: newCustomer.id })
     const newUser = await this.prisma.client.user({
-      id: await this.prisma.client.customer({ id: newCustomer.id }).user().id(),
+      id: await this.prisma.client
+        .customer({ id: newCustomer.id })
+        .user()
+        .id(),
     })
     this.airtableService.createOrUpdateAirtableUser(newUser, {})
 
@@ -69,7 +83,7 @@ export class TestUtilsService {
   }
 
   createReservationService() {
-    const physProdService = new PhysicalProductService(this.prisma)
+    const physProdService = new PhysicalProductUtilsService(this.prisma)
     const airtableBaseService = new AirtableBaseService()
     const airtableService = new AirtableService(
       airtableBaseService,
@@ -88,6 +102,19 @@ export class TestUtilsService {
     )
 
     return { reservationService }
+  }
+
+  createProductService() {
+    return new ProductService(
+      this.prisma,
+      new ProductUtilsService(this.prisma),
+      new ProductVariantService(
+        this.prisma,
+        new PhysicalProductUtilsService(this.prisma),
+        this.airtableService
+      ),
+      new UtilsService(this.prisma)
+    )
   }
 
   async getTestableReservableProductVariants(info?) {
@@ -281,10 +308,10 @@ export class TestUtilsService {
   private async getProductVariantsWithAirtableRecords(args, info) {
     const allAirtablePhysicalProductsSUIDs = (
       await this.airtableService.getAllPhysicalProducts()
-    ).map(a => a.model.sUID.text)
+    ).map(a => a.model.suid.text)
     const allAirtableProductVariantSKUs = (
       await this.airtableService.getAllProductVariants()
-    ).map(a => a.model.sKU)
+    ).map(a => a.model.sku)
 
     const _res = (
       await this.prisma.binding.query.productVariants(

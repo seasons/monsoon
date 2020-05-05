@@ -9,7 +9,7 @@ export interface PhysicalProductWithReservationSpecificData
 }
 
 @Injectable()
-export class PhysicalProductService {
+export class PhysicalProductUtilsService {
   constructor(private readonly prisma: PrismaService) {}
 
   async getPhysicalProductsWithReservationSpecificData(

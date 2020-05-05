@@ -170,9 +170,8 @@ export class UserCommands {
     )
 
     this.logger.log(
-      `User with email: ${email}, password: ${password} successfully created on ${prismaEnv} prisma and ${
-        abid || "staging"
-      } airtable`
+      `User with email: ${email}, password: ${password} successfully created on ${prismaEnv} prisma and ${abid ||
+        "staging"} airtable`
     )
     this.logger.log(`Access token: ${tokenData.access_token}`)
   }

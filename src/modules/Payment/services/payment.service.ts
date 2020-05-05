@@ -113,7 +113,7 @@ export class PaymentService {
       try {
         await chargebee.hosted_page
           .acknowledge(hostedPageID)
-          .request(async function (error, result) {
+          .request(async function(error, result) {
             if (error) {
               reject(error)
             } else {
