@@ -202,6 +202,12 @@ enum ProductArchitecture {
   Staple
 }
 
+enum WarehouseLocationType {
+	Conveyor
+  Rail
+  Bin
+}
+
 type Brand {
   id: ID! @id
   slug: String! @unique
@@ -380,6 +386,28 @@ type PhysicalProduct {
   offloadNotes: String
   barcode: String!
   sequenceNumber: Int!
+  warehouseLocation: WarehouseLocation
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type WarehouseLocationConstraint {
+  id: ID! @id
+  category: Category!
+  limit: Int!
+  locations: [WarehouseLocation!]
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type WarehouseLocation {
+	id: ID! @id
+  type: WarehouseLocationType
+  barcode: String @unique
+  locationCode: String
+  itemCode: String
+	physicalProducts: [PhysicalProduct!]!
+  constraints: [WarehouseLocationConstraint!]
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
@@ -454,6 +482,7 @@ type RecentlyViewedProduct {
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
+
 
 type Reservation {
   id: ID! @id
