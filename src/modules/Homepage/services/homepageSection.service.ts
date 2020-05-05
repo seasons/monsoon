@@ -64,6 +64,9 @@ export class HomepageSectionService {
         return newProducts
 
       case SectionTitle.RecentlyViewed:
+        if (!customerId) {
+          return []
+        }
         const viewedProducts = await this.prisma.binding.query.recentlyViewedProducts(
           {
             where: { customer: { id: customerId } },
@@ -89,17 +92,23 @@ export class HomepageSectionService {
                 "stussy",
                 "comme-des-garcons",
                 "aime-leon-dore",
+                "john-elliot",
                 "noah",
                 "cavempt",
+                "fear-of-god",
                 "brain-dead",
-                "john-elliot",
+                "john-elliott",
                 "amiri",
+                "cav-empt",
+                "deveaux",
+                "gucci",
                 "prada",
+                "engineered-garments",
                 "craig-green",
                 "dries-van-noten",
                 "cactus-plant-flea-market",
                 "ambush",
-                "all-saints",
+                "rhude",
                 "heron-preston",
                 "saturdays-nyc",
                 "y-3",

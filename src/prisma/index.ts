@@ -1387,11 +1387,20 @@ export type BrandTier =
   | "Local"
   | "Discovery";
 
-export type ProductStatus = "Available" | "NotAvailable";
+export type ProductStatus =
+  | "Available"
+  | "NotAvailable"
+  | "Stored"
+  | "Offloaded";
 
 export type ProductArchitecture = "Fashion" | "Showstopper" | "Staple";
 
-export type InventoryStatus = "NonReservable" | "Reservable" | "Reserved";
+export type InventoryStatus =
+  | "NonReservable"
+  | "Reservable"
+  | "Reserved"
+  | "Stored"
+  | "Offloaded";
 
 export type PhysicalProductStatus =
   | "New"
@@ -1399,6 +1408,13 @@ export type PhysicalProductStatus =
   | "Damaged"
   | "Clean"
   | "Lost";
+
+export type PhysicalProductOffloadMethod =
+  | "SoldToUser"
+  | "SoldToThirdParty"
+  | "ReturnedToVendor"
+  | "Recycled"
+  | "Unknown";
 
 export type PhysicalProductOrderByInput =
   | "id_ASC"
@@ -1409,6 +1425,10 @@ export type PhysicalProductOrderByInput =
   | "inventoryStatus_DESC"
   | "productStatus_ASC"
   | "productStatus_DESC"
+  | "offloadMethod_ASC"
+  | "offloadMethod_DESC"
+  | "offloadNotes_ASC"
+  | "offloadNotes_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -1435,6 +1455,10 @@ export type ProductVariantOrderByInput =
   | "reserved_DESC"
   | "nonReservable_ASC"
   | "nonReservable_DESC"
+  | "offloaded_ASC"
+  | "offloaded_DESC"
+  | "stored_ASC"
+  | "stored_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -1950,6 +1974,28 @@ export interface PhysicalProductWhereInput {
   productStatus_not?: Maybe<PhysicalProductStatus>;
   productStatus_in?: Maybe<PhysicalProductStatus[] | PhysicalProductStatus>;
   productStatus_not_in?: Maybe<PhysicalProductStatus[] | PhysicalProductStatus>;
+  offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
+  offloadMethod_not?: Maybe<PhysicalProductOffloadMethod>;
+  offloadMethod_in?: Maybe<
+    PhysicalProductOffloadMethod[] | PhysicalProductOffloadMethod
+  >;
+  offloadMethod_not_in?: Maybe<
+    PhysicalProductOffloadMethod[] | PhysicalProductOffloadMethod
+  >;
+  offloadNotes?: Maybe<String>;
+  offloadNotes_not?: Maybe<String>;
+  offloadNotes_in?: Maybe<String[] | String>;
+  offloadNotes_not_in?: Maybe<String[] | String>;
+  offloadNotes_lt?: Maybe<String>;
+  offloadNotes_lte?: Maybe<String>;
+  offloadNotes_gt?: Maybe<String>;
+  offloadNotes_gte?: Maybe<String>;
+  offloadNotes_contains?: Maybe<String>;
+  offloadNotes_not_contains?: Maybe<String>;
+  offloadNotes_starts_with?: Maybe<String>;
+  offloadNotes_not_starts_with?: Maybe<String>;
+  offloadNotes_ends_with?: Maybe<String>;
+  offloadNotes_not_ends_with?: Maybe<String>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -2369,6 +2415,22 @@ export interface ProductVariantWhereInput {
   nonReservable_lte?: Maybe<Int>;
   nonReservable_gt?: Maybe<Int>;
   nonReservable_gte?: Maybe<Int>;
+  offloaded?: Maybe<Int>;
+  offloaded_not?: Maybe<Int>;
+  offloaded_in?: Maybe<Int[] | Int>;
+  offloaded_not_in?: Maybe<Int[] | Int>;
+  offloaded_lt?: Maybe<Int>;
+  offloaded_lte?: Maybe<Int>;
+  offloaded_gt?: Maybe<Int>;
+  offloaded_gte?: Maybe<Int>;
+  stored?: Maybe<Int>;
+  stored_not?: Maybe<Int>;
+  stored_in?: Maybe<Int[] | Int>;
+  stored_not_in?: Maybe<Int[] | Int>;
+  stored_lt?: Maybe<Int>;
+  stored_lte?: Maybe<Int>;
+  stored_gt?: Maybe<Int>;
+  stored_gte?: Maybe<Int>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -4727,6 +4789,8 @@ export interface PhysicalProductCreateWithoutLocationInput {
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput;
   inventoryStatus: InventoryStatus;
   productStatus: PhysicalProductStatus;
+  offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
+  offloadNotes?: Maybe<String>;
 }
 
 export interface ProductVariantCreateOneWithoutPhysicalProductsInput {
@@ -4749,6 +4813,8 @@ export interface ProductVariantCreateWithoutPhysicalProductsInput {
   reservable: Int;
   reserved: Int;
   nonReservable: Int;
+  offloaded: Int;
+  stored: Int;
 }
 
 export interface ColorCreateOneWithoutProductVariantsInput {
@@ -4976,6 +5042,8 @@ export interface ProductVariantCreateWithoutColorInput {
   reservable: Int;
   reserved: Int;
   nonReservable: Int;
+  offloaded: Int;
+  stored: Int;
 }
 
 export interface PhysicalProductCreateManyWithoutProductVariantInput {
@@ -4994,6 +5062,8 @@ export interface PhysicalProductCreateWithoutProductVariantInput {
   location?: Maybe<LocationCreateOneWithoutPhysicalProductsInput>;
   inventoryStatus: InventoryStatus;
   productStatus: PhysicalProductStatus;
+  offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
+  offloadNotes?: Maybe<String>;
 }
 
 export interface LocationCreateOneWithoutPhysicalProductsInput {
@@ -5063,6 +5133,8 @@ export interface ProductVariantCreateWithoutProductInput {
   reservable: Int;
   reserved: Int;
   nonReservable: Int;
+  offloaded: Int;
+  stored: Int;
 }
 
 export interface BillingInfoCreateOneInput {
@@ -5136,6 +5208,8 @@ export interface PhysicalProductCreateInput {
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput;
   inventoryStatus: InventoryStatus;
   productStatus: PhysicalProductStatus;
+  offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
+  offloadNotes?: Maybe<String>;
 }
 
 export interface LabelCreateOneInput {
@@ -5172,6 +5246,8 @@ export interface ProductVariantCreateInput {
   reservable: Int;
   reserved: Int;
   nonReservable: Int;
+  offloaded: Int;
+  stored: Int;
 }
 
 export interface BagItemUpdateInput {
@@ -5331,6 +5407,8 @@ export interface PhysicalProductUpdateWithoutLocationDataInput {
   >;
   inventoryStatus?: Maybe<InventoryStatus>;
   productStatus?: Maybe<PhysicalProductStatus>;
+  offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
+  offloadNotes?: Maybe<String>;
 }
 
 export interface ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput {
@@ -5354,6 +5432,8 @@ export interface ProductVariantUpdateWithoutPhysicalProductsDataInput {
   reservable?: Maybe<Int>;
   reserved?: Maybe<Int>;
   nonReservable?: Maybe<Int>;
+  offloaded?: Maybe<Int>;
+  stored?: Maybe<Int>;
 }
 
 export interface ColorUpdateOneRequiredWithoutProductVariantsInput {
@@ -5785,6 +5865,8 @@ export interface ProductVariantUpdateWithoutColorDataInput {
   reservable?: Maybe<Int>;
   reserved?: Maybe<Int>;
   nonReservable?: Maybe<Int>;
+  offloaded?: Maybe<Int>;
+  stored?: Maybe<Int>;
 }
 
 export interface PhysicalProductUpdateManyWithoutProductVariantInput {
@@ -5831,6 +5913,8 @@ export interface PhysicalProductUpdateWithoutProductVariantDataInput {
   location?: Maybe<LocationUpdateOneWithoutPhysicalProductsInput>;
   inventoryStatus?: Maybe<InventoryStatus>;
   productStatus?: Maybe<PhysicalProductStatus>;
+  offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
+  offloadNotes?: Maybe<String>;
 }
 
 export interface LocationUpdateOneWithoutPhysicalProductsInput {
@@ -5906,6 +5990,28 @@ export interface PhysicalProductScalarWhereInput {
   productStatus_not?: Maybe<PhysicalProductStatus>;
   productStatus_in?: Maybe<PhysicalProductStatus[] | PhysicalProductStatus>;
   productStatus_not_in?: Maybe<PhysicalProductStatus[] | PhysicalProductStatus>;
+  offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
+  offloadMethod_not?: Maybe<PhysicalProductOffloadMethod>;
+  offloadMethod_in?: Maybe<
+    PhysicalProductOffloadMethod[] | PhysicalProductOffloadMethod
+  >;
+  offloadMethod_not_in?: Maybe<
+    PhysicalProductOffloadMethod[] | PhysicalProductOffloadMethod
+  >;
+  offloadNotes?: Maybe<String>;
+  offloadNotes_not?: Maybe<String>;
+  offloadNotes_in?: Maybe<String[] | String>;
+  offloadNotes_not_in?: Maybe<String[] | String>;
+  offloadNotes_lt?: Maybe<String>;
+  offloadNotes_lte?: Maybe<String>;
+  offloadNotes_gt?: Maybe<String>;
+  offloadNotes_gte?: Maybe<String>;
+  offloadNotes_contains?: Maybe<String>;
+  offloadNotes_not_contains?: Maybe<String>;
+  offloadNotes_starts_with?: Maybe<String>;
+  offloadNotes_not_starts_with?: Maybe<String>;
+  offloadNotes_ends_with?: Maybe<String>;
+  offloadNotes_not_ends_with?: Maybe<String>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -5942,6 +6048,8 @@ export interface PhysicalProductUpdateManyDataInput {
   seasonsUID?: Maybe<String>;
   inventoryStatus?: Maybe<InventoryStatus>;
   productStatus?: Maybe<PhysicalProductStatus>;
+  offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
+  offloadNotes?: Maybe<String>;
 }
 
 export interface ProductVariantUpsertWithWhereUniqueWithoutColorInput {
@@ -6049,6 +6157,22 @@ export interface ProductVariantScalarWhereInput {
   nonReservable_lte?: Maybe<Int>;
   nonReservable_gt?: Maybe<Int>;
   nonReservable_gte?: Maybe<Int>;
+  offloaded?: Maybe<Int>;
+  offloaded_not?: Maybe<Int>;
+  offloaded_in?: Maybe<Int[] | Int>;
+  offloaded_not_in?: Maybe<Int[] | Int>;
+  offloaded_lt?: Maybe<Int>;
+  offloaded_lte?: Maybe<Int>;
+  offloaded_gt?: Maybe<Int>;
+  offloaded_gte?: Maybe<Int>;
+  stored?: Maybe<Int>;
+  stored_not?: Maybe<Int>;
+  stored_in?: Maybe<Int[] | Int>;
+  stored_not_in?: Maybe<Int[] | Int>;
+  stored_lt?: Maybe<Int>;
+  stored_lte?: Maybe<Int>;
+  stored_gt?: Maybe<Int>;
+  stored_gte?: Maybe<Int>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -6089,6 +6213,8 @@ export interface ProductVariantUpdateManyDataInput {
   reservable?: Maybe<Int>;
   reserved?: Maybe<Int>;
   nonReservable?: Maybe<Int>;
+  offloaded?: Maybe<Int>;
+  stored?: Maybe<Int>;
 }
 
 export interface ColorUpsertNestedInput {
@@ -6261,6 +6387,8 @@ export interface ProductVariantUpdateWithoutProductDataInput {
   reservable?: Maybe<Int>;
   reserved?: Maybe<Int>;
   nonReservable?: Maybe<Int>;
+  offloaded?: Maybe<Int>;
+  stored?: Maybe<Int>;
 }
 
 export interface ProductVariantUpsertWithWhereUniqueWithoutProductInput {
@@ -6681,6 +6809,8 @@ export interface PhysicalProductUpdateDataInput {
   >;
   inventoryStatus?: Maybe<InventoryStatus>;
   productStatus?: Maybe<PhysicalProductStatus>;
+  offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
+  offloadNotes?: Maybe<String>;
 }
 
 export interface PhysicalProductUpsertWithWhereUniqueNestedInput {
@@ -6841,6 +6971,8 @@ export interface ProductVariantUpdateDataInput {
   reservable?: Maybe<Int>;
   reserved?: Maybe<Int>;
   nonReservable?: Maybe<Int>;
+  offloaded?: Maybe<Int>;
+  stored?: Maybe<Int>;
 }
 
 export interface ProductVariantUpsertNestedInput {
@@ -7651,12 +7783,16 @@ export interface PhysicalProductUpdateInput {
   >;
   inventoryStatus?: Maybe<InventoryStatus>;
   productStatus?: Maybe<PhysicalProductStatus>;
+  offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
+  offloadNotes?: Maybe<String>;
 }
 
 export interface PhysicalProductUpdateManyMutationInput {
   seasonsUID?: Maybe<String>;
   inventoryStatus?: Maybe<InventoryStatus>;
   productStatus?: Maybe<PhysicalProductStatus>;
+  offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
+  offloadNotes?: Maybe<String>;
 }
 
 export interface ProductUpdateInput {
@@ -7882,6 +8018,8 @@ export interface ProductVariantUpdateInput {
   reservable?: Maybe<Int>;
   reserved?: Maybe<Int>;
   nonReservable?: Maybe<Int>;
+  offloaded?: Maybe<Int>;
+  stored?: Maybe<Int>;
 }
 
 export interface ProductVariantUpdateManyMutationInput {
@@ -7894,6 +8032,8 @@ export interface ProductVariantUpdateManyMutationInput {
   reservable?: Maybe<Int>;
   reserved?: Maybe<Int>;
   nonReservable?: Maybe<Int>;
+  offloaded?: Maybe<Int>;
+  stored?: Maybe<Int>;
 }
 
 export interface ProductVariantFeedbackCreateInput {
@@ -9430,6 +9570,8 @@ export interface PhysicalProduct {
   seasonsUID: String;
   inventoryStatus: InventoryStatus;
   productStatus: PhysicalProductStatus;
+  offloadMethod?: PhysicalProductOffloadMethod;
+  offloadNotes?: String;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -9443,6 +9585,8 @@ export interface PhysicalProductPromise
   productVariant: <T = ProductVariantPromise>() => T;
   inventoryStatus: () => Promise<InventoryStatus>;
   productStatus: () => Promise<PhysicalProductStatus>;
+  offloadMethod: () => Promise<PhysicalProductOffloadMethod>;
+  offloadNotes: () => Promise<String>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -9456,6 +9600,8 @@ export interface PhysicalProductSubscription
   productVariant: <T = ProductVariantSubscription>() => T;
   inventoryStatus: () => Promise<AsyncIterator<InventoryStatus>>;
   productStatus: () => Promise<AsyncIterator<PhysicalProductStatus>>;
+  offloadMethod: () => Promise<AsyncIterator<PhysicalProductOffloadMethod>>;
+  offloadNotes: () => Promise<AsyncIterator<String>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -9469,6 +9615,8 @@ export interface PhysicalProductNullablePromise
   productVariant: <T = ProductVariantPromise>() => T;
   inventoryStatus: () => Promise<InventoryStatus>;
   productStatus: () => Promise<PhysicalProductStatus>;
+  offloadMethod: () => Promise<PhysicalProductOffloadMethod>;
+  offloadNotes: () => Promise<String>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -9484,6 +9632,8 @@ export interface ProductVariant {
   reservable: Int;
   reserved: Int;
   nonReservable: Int;
+  offloaded: Int;
+  stored: Int;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -9522,6 +9672,8 @@ export interface ProductVariantPromise
   reservable: () => Promise<Int>;
   reserved: () => Promise<Int>;
   nonReservable: () => Promise<Int>;
+  offloaded: () => Promise<Int>;
+  stored: () => Promise<Int>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -9562,6 +9714,8 @@ export interface ProductVariantSubscription
   reservable: () => Promise<AsyncIterator<Int>>;
   reserved: () => Promise<AsyncIterator<Int>>;
   nonReservable: () => Promise<AsyncIterator<Int>>;
+  offloaded: () => Promise<AsyncIterator<Int>>;
+  stored: () => Promise<AsyncIterator<Int>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -9600,6 +9754,8 @@ export interface ProductVariantNullablePromise
   reservable: () => Promise<Int>;
   reserved: () => Promise<Int>;
   nonReservable: () => Promise<Int>;
+  offloaded: () => Promise<Int>;
+  stored: () => Promise<Int>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -13714,6 +13870,8 @@ export interface PhysicalProductPreviousValues {
   seasonsUID: String;
   inventoryStatus: InventoryStatus;
   productStatus: PhysicalProductStatus;
+  offloadMethod?: PhysicalProductOffloadMethod;
+  offloadNotes?: String;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -13725,6 +13883,8 @@ export interface PhysicalProductPreviousValuesPromise
   seasonsUID: () => Promise<String>;
   inventoryStatus: () => Promise<InventoryStatus>;
   productStatus: () => Promise<PhysicalProductStatus>;
+  offloadMethod: () => Promise<PhysicalProductOffloadMethod>;
+  offloadNotes: () => Promise<String>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -13736,6 +13896,8 @@ export interface PhysicalProductPreviousValuesSubscription
   seasonsUID: () => Promise<AsyncIterator<String>>;
   inventoryStatus: () => Promise<AsyncIterator<InventoryStatus>>;
   productStatus: () => Promise<AsyncIterator<PhysicalProductStatus>>;
+  offloadMethod: () => Promise<AsyncIterator<PhysicalProductOffloadMethod>>;
+  offloadNotes: () => Promise<AsyncIterator<String>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -14027,6 +14189,8 @@ export interface ProductVariantPreviousValues {
   reservable: Int;
   reserved: Int;
   nonReservable: Int;
+  offloaded: Int;
+  stored: Int;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -14044,6 +14208,8 @@ export interface ProductVariantPreviousValuesPromise
   reservable: () => Promise<Int>;
   reserved: () => Promise<Int>;
   nonReservable: () => Promise<Int>;
+  offloaded: () => Promise<Int>;
+  stored: () => Promise<Int>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -14061,6 +14227,8 @@ export interface ProductVariantPreviousValuesSubscription
   reservable: () => Promise<AsyncIterator<Int>>;
   reserved: () => Promise<AsyncIterator<Int>>;
   nonReservable: () => Promise<AsyncIterator<Int>>;
+  offloaded: () => Promise<AsyncIterator<Int>>;
+  stored: () => Promise<AsyncIterator<Int>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -14632,6 +14800,10 @@ export const models: Model[] = [
   },
   {
     name: "PhysicalProductStatus",
+    embedded: false
+  },
+  {
+    name: "PhysicalProductOffloadMethod",
     embedded: false
   },
   {

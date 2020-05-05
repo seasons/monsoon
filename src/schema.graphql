@@ -91,7 +91,7 @@ type ProductVariant {
 }
 
 type Query {
-  me: Me @isAuthenticated
+  me: Me
   brand(where: BrandWhereUniqueInput!): Brand
   brands(
     where: BrandWhereInput
@@ -385,6 +385,14 @@ type Mutation {
   addToBag(item: ID!): BagItem!
   removeFromBag(item: ID!, saved: Boolean): BagItem!
   saveProduct(item: ID!, save: Boolean!): BagItem
+  updateProduct(
+    where: ProductWhereUniqueInput!
+    data: ProductUpdateInput!
+  ): Product!
+  updatePhysicalProduct(
+    where: PhysicalProductWhereUniqueInput!
+    data: PhysicalProductUpdateInput!
+  ): PhysicalProduct
   addViewedProduct(item: ID!): RecentlyViewedProduct!
   acknowledgeCompletedChargebeeHostedCheckout(
     hostedPageID: String!
@@ -404,6 +412,10 @@ type Mutation {
     input: ReservationFeedbackUpdateInput!
   ): ReservationFeedback!
   uploadImage(image: Upload!): String
+  updateCustomer(
+    data: CustomerUpdateInput!
+    where: CustomerWhereUniqueInput!
+  ): Customer
 }
 
 input RefundInvoiceInput {
@@ -497,11 +509,11 @@ type HomepageSection {
 }
 
 type Me {
-  user: User!
-  customer: Customer!
+  user: User
+  customer: Customer
   activeReservation: Reservation
-  bag: [BagItem!]!
-  savedItems: [BagItem!]!
+  bag: [BagItem!]
+  savedItems: [BagItem!]
 }
 
 union HomepageResult = Product | Collection | Brand
