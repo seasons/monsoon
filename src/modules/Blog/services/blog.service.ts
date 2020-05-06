@@ -1,32 +1,32 @@
-import { Injectable } from "@nestjs/common"
-import Webflow from "webflow-api"
+import { HttpService, Injectable } from "@nestjs/common"
 
-const { WEBFLOW_KEY, WEBFLOW_SITE_ID } = process.env
+const { WEBFLOW_KEY } = process.env
 
 @Injectable()
 export class BlogService {
-  private webflow = new Webflow({ token: WEBFLOW_KEY })
-
-  async getCollections() {
-    const result = await this.webflow.collections({ siteId: WEBFLOW_SITE_ID })
-    return result
-  }
+  constructor(private httpService: HttpService) {}
 
   async getPosts({
     collectionId,
-    skip,
     limit,
   }: {
     collectionId: string
-    skip: number
-    limit: number
+    limit?: number
   }) {
-    const posts = await this.webflow.items({
-      collectionId,
-      skip,
-      limit,
+    const query = await this.httpService
+      .get(
+        `https://api.webflow.com/collections/${collectionId}/items?access_token=${WEBFLOW_KEY}&api_version=1.0.0`
+      )
+      .toPromise()
+
+    const publishedPosts = query?.data?.items?.filter(post => {
+      return !post._archived && !post._draft
     })
 
-    return posts
+    if (limit) {
+      return publishedPosts?.slice(0, limit)
+    }
+
+    return publishedPosts
   }
 }

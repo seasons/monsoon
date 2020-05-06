@@ -11,17 +11,18 @@ type BlogCollection {
 type BlogPost {
   id: ID!
   slug: String!
-  name: String!
-  body: String!
-  summary: String!
-  thumbnailURL: String!
-  imageURL: String!
-  url: String!
-  tags: [String!]!
+  name: String
+  body: String
+  summary: String
+  thumbnailURL: String
+  imageURL: String
+  imageAlt: String
+  url: String
+  tags: [String]
   createdAt: DateTime!
   updatedAt: DateTime!
   publishedOn: DateTime!
-  author: String!
+  author: String
 }
 
 type Query {

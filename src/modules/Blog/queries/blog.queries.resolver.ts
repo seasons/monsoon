@@ -11,17 +11,16 @@ export class BlogQueriesResolver {
     const data = await this.blogService.getPosts({
       collectionId: "5e72a4bad1075fcf7313bf38",
       limit: args.count,
-      skip: args.skip,
     })
-    console.log(args, data)
 
-    return data?.items.map(item => {
+    return data?.map(item => {
       return {
         id: item._id,
         name: item.name,
         slug: item.slug,
-        imageURL: item["article-image"].url,
-        thumbnailURL: item["article-header-image"].url,
+        imageURL: item["article-image"]?.url,
+        imageAlt: item["article-image"]?.alt,
+        thumbnailURL: item["article-header-image"]?.url,
         url: `https://blog.seasons.nyc/posts/${item.slug}`,
         tags: item.tags,
         createdAt: item["created-on"],
