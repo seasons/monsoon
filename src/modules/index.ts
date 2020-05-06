@@ -1,6 +1,7 @@
 export { directiveResolvers } from "@app/directives"
 
 export { AirtableModule } from "@modules/Airtable"
+export { BlogModule } from "@modules/Blog"
 export { CollectionModule } from "@modules/Collection"
 export { CustomerModule } from "@modules/Customer"
 export { CronModule } from "./Cron/cron.module"

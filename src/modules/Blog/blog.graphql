@@ -1,0 +1,32 @@
+type BlogCollection {
+  id: ID!
+  slug: String!
+  url: String
+  fields: Json
+  posts: [BlogPost!]!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type BlogPost {
+  id: ID!
+  slug: String!
+  name: String
+  body: String
+  summary: String
+  thumbnailURL: String
+  imageURL: String
+  imageAlt: String
+  url: String
+  tags: [String]
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  publishedOn: DateTime!
+  author: String
+}
+
+type Query {
+  blogCollections: [BlogCollection!]!
+  blogPosts(collection: String!, skip: Int, count: Int): [BlogPost!]!
+  blogPost(id: String): BlogPost
+}

@@ -1,4 +1,5 @@
 # import Brand, Category, User, Bag, Collection, CustomerDetail, ProductFunction, SavedProduct from "./prisma/prisma.graphql"
+# import BlogCollection, BlogPost, Query from "./modules/Blog/blog.graphql"
 
 directive @isAuthenticated on FIELD_DEFINITION
 directive @hasRole(roles: [String]) on FIELD_DEFINITION
