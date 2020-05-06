@@ -59,14 +59,6 @@ export class PhysicalProductService {
       ...pick(data, ["inventoryStatus", "offloadMethod", "offloadNotes"]),
     } as OffloadPhysicalProductIfNeededInput)
 
-    // Validate warehouse location data if its on there
-    if (!!data.warehouseLocation) {
-      await this.validateWarehouseLocationOnPhysicalProductUpateInput(
-        where,
-        data.warehouseLocation
-      )
-    }
-
     // Use two separate queries because the schema for update data differs
     // between the client and the binding, and we expose the client's schema
     await this.prisma.client.updatePhysicalProduct({ where, data })
@@ -83,73 +75,6 @@ export class PhysicalProductService {
           ],
         },
       })
-    )
-  }
-
-  private async validateWarehouseLocationOnPhysicalProductUpateInput(
-    where: PhysicalProductWhereUniqueInput,
-    data: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
-  ) {
-    // To avoid needless complexity, we do not alow the setting of constraints through the updating of a physical product
-    if (
-      !!data?.create?.constraints ||
-      !!data?.update?.constraints ||
-      !!data?.upsert?.create?.constraints ||
-      data?.upsert?.update?.constraints
-    ) {
-      throw new Error(
-        "Can not create or update warehouse location constraints on a call to updatePhysicalProducts"
-      )
-    }
-
-    // Validate if they are creating
-    if (!!data.create) await this.validateFromInput(where, data.create)
-
-    // Validate if they are updating
-    if (!!data.update) await this.validateFromInput(where, data.update)
-
-    // Validate if they are upserting
-    if (!!data.upsert) {
-      await this.validateFromInput(where, data.upsert.create)
-      await this.validateFromInput(where, data.upsert.update)
-    }
-
-    return true
-  }
-
-  private async validateFromInput(
-    where: PhysicalProductWhereUniqueInput,
-    input:
-      | WarehouseLocationCreateWithoutPhysicalProductsInput
-      | WarehouseLocationUpdateWithoutPhysicalProductsDataInput
-  ) {
-    const existingWarehouseLocation = head(
-      await this.prisma.binding.query.warehouseLocations(
-        {
-          where: { barcode: input.barcode },
-        },
-        `{
-         constraints {
-           id
-           category {
-             name
-           }
-           limit
-         }
-       }`
-      )
-    ) as any
-    if (!!existingWarehouseLocation.constraints) {
-      await this.validateWarehouseLocationConstraints(
-        await this.prisma.client.physicalProduct(where),
-        input.barcode,
-        existingWarehouseLocation.constraints
-      )
-    }
-    await this.validateWarehouseLocationStructure(
-      pick(input, [
-        "type, barcode, locationCode, itemCode",
-      ]) as ValidateWarehouseLocationStructureInput
     )
   }
 
