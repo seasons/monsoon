@@ -12,7 +12,6 @@ export class BlogQueriesResolver {
       collectionId: "5e72a4bad1075fcf7313bf38",
       limit: args.count,
     })
-    console.log(args, data)
 
     return data?.map(item => {
       return {
