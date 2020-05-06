@@ -14775,10 +14775,6 @@ export const models: Model[] = [
     embedded: false
   },
   {
-    name: "Material",
-    embedded: false
-  },
-  {
     name: "Department",
     embedded: false
   },
