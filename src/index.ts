@@ -26,7 +26,7 @@ if (process.env.NODE_ENV === "production") {
 
 const handleErrors = (err, req, res, next) => {
   if (err.name === "UnauthorizedError") {
-    res.status(401).send(err)
+    return res.status(401).send(err)
   }
 }
 
