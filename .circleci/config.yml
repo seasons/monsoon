@@ -5,14 +5,14 @@
 version: 2
 jobs:
   build:
-    docker:
-      # specify the version you desire here
-      - image: circleci/node:latest
+    # docker:
+    #   # specify the version you desire here
+    #   - image: circleci/node:latest
 
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/mongo:3.4.4
+    #   # Specify service dependencies here if necessary
+    #   # CircleCI maintains a library of pre-built images
+    #   # documented at https://circleci.com/docs/2.0/circleci-images/
+    #   # - image: circleci/mongo:3.4.4
 
     machine: true
     working_directory: ~/monsoon
