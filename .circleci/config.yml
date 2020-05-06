@@ -5,14 +5,14 @@
 version: 2
 jobs:
   build:
-    docker:
-      # specify the version you desire here
-      - image: circleci/node:latest
+    # docker:
+    #   # specify the version you desire here
+    #   - image: circleci/node:latest
 
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/mongo:3.4.4
+    #   # Specify service dependencies here if necessary
+    #   # CircleCI maintains a library of pre-built images
+    #   # documented at https://circleci.com/docs/2.0/circleci-images/
+    #   # - image: circleci/mongo:3.4.4
 
     machine: true
     working_directory: ~/monsoon
@@ -34,19 +34,20 @@ jobs:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
 
-      - setup_remote_docker
+      # - setup_remote_docker
 
-      - run:
-          name: Start container and verify it is working
-          command: |
-            set -x
-            docker-compose up -d
-            docker run --network container:prisma \
-              appropriate/curl --retry 10 --retry-delay 1 --retry-connrefused http://localhost:4466/
+      # - run:
+      #     name: Start container and verify it is working
+      #     command: |
+      #       set -x
+      #       docker-compose up -d
+      #       docker run --network container:prisma \
+      #         appropriate/curl --retry 10 --retry-delay 1 --retry-connrefused http://localhost:4466/
 
       - run:
           name: Start Prisma server
           command: |
+            docker-compose up -d
             sleep 20
             export PRISMA_ENDPOINT='http://localhost:4466'
             yarn prisma deploy
