@@ -36,11 +36,11 @@ jobs:
       - run:
           name: Start Prisma server
           command: |
-            yarn install && yarn add -g prisma
+            yarn install && yarn add prisma -g
             docker-compose up -d
             sleep 20
             export PRISMA_ENDPOINT='http://localhost:4466'
-            yarn prisma deploy
+            prisma deploy
 
       # run tests!
       - run: yarn test --verbose
