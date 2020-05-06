@@ -5,6 +5,8 @@ directive @hasRole(roles: [String]) on FIELD_DEFINITION
 directive @isOwner(type: String) on FIELD_DEFINITION
 directive @isOwnerOrHasRole(type: String, roles: [String]) on FIELD_DEFINITION
 
+scalar Upload
+
 type Product {
   id: ID!
   slug: String!
@@ -383,6 +385,14 @@ type Mutation {
   addToBag(item: ID!): BagItem!
   removeFromBag(item: ID!, saved: Boolean): BagItem!
   saveProduct(item: ID!, save: Boolean!): BagItem
+  updateProduct(
+    where: ProductWhereUniqueInput!
+    data: ProductUpdateInput!
+  ): Product!
+  updatePhysicalProduct(
+    where: PhysicalProductWhereUniqueInput!
+    data: PhysicalProductUpdateInput!
+  ): PhysicalProduct
   addViewedProduct(item: ID!): RecentlyViewedProduct!
   acknowledgeCompletedChargebeeHostedCheckout(
     hostedPageID: String!
@@ -401,6 +411,11 @@ type Mutation {
     feedbackID: ID!
     input: ReservationFeedbackUpdateInput!
   ): ReservationFeedback!
+  uploadImage(image: Upload!): String
+  updateCustomer(
+    data: CustomerUpdateInput!
+    where: CustomerWhereUniqueInput!
+  ): Customer
 }
 
 input RefundInvoiceInput {

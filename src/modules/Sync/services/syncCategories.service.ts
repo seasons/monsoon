@@ -177,7 +177,7 @@ export class SyncCategoriesService {
     }
 
     // function to recursively build the tree
-    const findChildren = function (parent) {
+    const findChildren = function(parent) {
       if (children[parent.slug]) {
         parent.children = children[parent.slug]
         for (let child of parent.children) {

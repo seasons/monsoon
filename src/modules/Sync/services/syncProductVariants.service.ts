@@ -171,6 +171,8 @@ export class SyncProductVariantsService {
           updatedNonReservableCount,
           reservedCount,
           reservableCount,
+          storedCount,
+          offloadedCount,
         } = this.countsForVariant(productVariant, physicalProducts)
 
         const { weight, height } = model
@@ -272,6 +274,8 @@ export class SyncProductVariantsService {
           total: totalCount,
           reservable: reservableCount,
           reserved: reservedCount,
+          offloaded: offloadedCount,
+          stored: storedCount,
           nonReservable: updatedNonReservableCount,
           color: {
             connect: {
@@ -441,15 +445,21 @@ export class SyncProductVariantsService {
       reservedCount: productVariant.get("Reserved Count") || 0,
       nonReservableCount: productVariant.get("Non-Reservable Count") || 0,
       reservableCount: productVariant.get("Reservable Count") || 0,
+      storedCount: productVariant.get("Stored Count") || 0,
+      offloadedCount: productVariant.get("Offloaded Count") || 0,
     }
 
     // Assume all newly added product variants are nonReservable, and calculate the
-    // number of such product variants as the remainder once reserved and reserved
-    // are taken into account
+    // number of such product variants as the remainder once all other counts are
+    // taken into account
     const updatedData = {
       ...data,
       updatedNonReservableCount:
-        data.totalCount - data.reservedCount - data.reservableCount,
+        data.totalCount -
+        data.reservedCount -
+        data.reservableCount -
+        data.storedCount -
+        data.offloadedCount,
     }
 
     const {
@@ -457,6 +467,8 @@ export class SyncProductVariantsService {
       updatedNonReservableCount,
       reservedCount,
       reservableCount,
+      storedCount,
+      offloadedCount,
     } = updatedData
 
     // Make sure these counts make sense
@@ -465,7 +477,14 @@ export class SyncProductVariantsService {
       updatedNonReservableCount < 0 ||
       reservedCount < 0 ||
       reservableCount < 0 ||
-      totalCount !== reservedCount + updatedNonReservableCount + reservableCount
+      storedCount < 0 ||
+      offloadedCount < 0 ||
+      totalCount !==
+        reservedCount +
+          updatedNonReservableCount +
+          reservableCount +
+          storedCount +
+          offloadedCount
     ) {
       throw new Error(`Invalid counts: ${updatedData}`)
     }
