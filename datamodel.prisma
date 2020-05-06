@@ -402,11 +402,11 @@ type WarehouseLocationConstraint {
 
 type WarehouseLocation {
 	id: ID! @id
-  type: WarehouseLocationType
-  barcode: String @unique
-  locationCode: String
-  itemCode: String
-	physicalProducts: [PhysicalProduct!]!
+  type: WarehouseLocationType!
+  barcode: String! @unique«
+  locationCode: String!
+  itemCode: String!
+	physicalProducts: [PhysicalProduct!]
   constraints: [WarehouseLocationConstraint!]
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt

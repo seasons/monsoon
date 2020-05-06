@@ -5534,10 +5534,10 @@ export interface WarehouseLocationCreateOneWithoutPhysicalProductsInput {
 
 export interface WarehouseLocationCreateWithoutPhysicalProductsInput {
   id?: Maybe<ID_Input>;
-  type?: Maybe<WarehouseLocationType>;
-  barcode?: Maybe<String>;
-  locationCode?: Maybe<String>;
-  itemCode?: Maybe<String>;
+  type: WarehouseLocationType;
+  barcode: String;
+  locationCode: String;
+  itemCode: String;
   constraints?: Maybe<
     WarehouseLocationConstraintCreateManyWithoutLocationsInput
   >;
@@ -9611,10 +9611,10 @@ export interface UserUpdateManyMutationInput {
 
 export interface WarehouseLocationCreateInput {
   id?: Maybe<ID_Input>;
-  type?: Maybe<WarehouseLocationType>;
-  barcode?: Maybe<String>;
-  locationCode?: Maybe<String>;
-  itemCode?: Maybe<String>;
+  type: WarehouseLocationType;
+  barcode: String;
+  locationCode: String;
+  itemCode: String;
   physicalProducts?: Maybe<
     PhysicalProductCreateManyWithoutWarehouseLocationInput
   >;
@@ -9744,10 +9744,10 @@ export interface WarehouseLocationCreateManyWithoutConstraintsInput {
 
 export interface WarehouseLocationCreateWithoutConstraintsInput {
   id?: Maybe<ID_Input>;
-  type?: Maybe<WarehouseLocationType>;
-  barcode?: Maybe<String>;
-  locationCode?: Maybe<String>;
-  itemCode?: Maybe<String>;
+  type: WarehouseLocationType;
+  barcode: String;
+  locationCode: String;
+  itemCode: String;
   physicalProducts?: Maybe<
     PhysicalProductCreateManyWithoutWarehouseLocationInput
   >;
@@ -11758,10 +11758,10 @@ export interface ProductFunctionNullablePromise
 
 export interface WarehouseLocation {
   id: ID_Output;
-  type?: WarehouseLocationType;
-  barcode?: String;
-  locationCode?: String;
-  itemCode?: String;
+  type: WarehouseLocationType;
+  barcode: String;
+  locationCode: String;
+  itemCode: String;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -16523,10 +16523,10 @@ export interface WarehouseLocationSubscriptionPayloadSubscription
 
 export interface WarehouseLocationPreviousValues {
   id: ID_Output;
-  type?: WarehouseLocationType;
-  barcode?: String;
-  locationCode?: String;
-  itemCode?: String;
+  type: WarehouseLocationType;
+  barcode: String;
+  locationCode: String;
+  itemCode: String;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }

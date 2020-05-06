@@ -83,7 +83,10 @@ export class TestUtilsService {
   }
 
   createReservationService() {
-    const physProdService = new PhysicalProductUtilsService(this.prisma)
+    const physProdService = new PhysicalProductUtilsService(
+      this.prisma,
+      new ProductUtilsService(this.prisma)
+    )
     const airtableBaseService = new AirtableBaseService()
     const airtableService = new AirtableService(
       airtableBaseService,
@@ -110,7 +113,10 @@ export class TestUtilsService {
       new ProductUtilsService(this.prisma),
       new ProductVariantService(
         this.prisma,
-        new PhysicalProductUtilsService(this.prisma),
+        new PhysicalProductUtilsService(
+          this.prisma,
+          new ProductUtilsService(this.prisma)
+        ),
         this.airtableService
       ),
       new UtilsService(this.prisma)

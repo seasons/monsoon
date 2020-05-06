@@ -16727,10 +16727,10 @@ input UserWhereUniqueInput {
 
 type WarehouseLocation implements Node {
   id: ID!
-  type: WarehouseLocationType
-  barcode: String
-  locationCode: String
-  itemCode: String
+  type: WarehouseLocationType!
+  barcode: String!
+  locationCode: String!
+  itemCode: String!
   physicalProducts(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct!]
   constraints(where: WarehouseLocationConstraintWhereInput, orderBy: WarehouseLocationConstraintOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [WarehouseLocationConstraint!]
   createdAt: DateTime!
@@ -17139,10 +17139,10 @@ input WarehouseLocationConstraintWhereUniqueInput {
 
 input WarehouseLocationCreateInput {
   id: ID
-  type: WarehouseLocationType
-  barcode: String
-  locationCode: String
-  itemCode: String
+  type: WarehouseLocationType!
+  barcode: String!
+  locationCode: String!
+  itemCode: String!
   physicalProducts: PhysicalProductCreateManyWithoutWarehouseLocationInput
   constraints: WarehouseLocationConstraintCreateManyWithoutLocationsInput
 }
@@ -17159,19 +17159,19 @@ input WarehouseLocationCreateOneWithoutPhysicalProductsInput {
 
 input WarehouseLocationCreateWithoutConstraintsInput {
   id: ID
-  type: WarehouseLocationType
-  barcode: String
-  locationCode: String
-  itemCode: String
+  type: WarehouseLocationType!
+  barcode: String!
+  locationCode: String!
+  itemCode: String!
   physicalProducts: PhysicalProductCreateManyWithoutWarehouseLocationInput
 }
 
 input WarehouseLocationCreateWithoutPhysicalProductsInput {
   id: ID
-  type: WarehouseLocationType
-  barcode: String
-  locationCode: String
-  itemCode: String
+  type: WarehouseLocationType!
+  barcode: String!
+  locationCode: String!
+  itemCode: String!
   constraints: WarehouseLocationConstraintCreateManyWithoutLocationsInput
 }
 
@@ -17203,10 +17203,10 @@ enum WarehouseLocationOrderByInput {
 
 type WarehouseLocationPreviousValues {
   id: ID!
-  type: WarehouseLocationType
-  barcode: String
-  locationCode: String
-  itemCode: String
+  type: WarehouseLocationType!
+  barcode: String!
+  locationCode: String!
+  itemCode: String!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -25679,10 +25679,10 @@ export interface WarehouseLocationConstraintWhereUniqueInput {
 
 export interface WarehouseLocationCreateInput {
   id?: ID_Input | null
-  type?: WarehouseLocationType | null
-  barcode?: String | null
-  locationCode?: String | null
-  itemCode?: String | null
+  type: WarehouseLocationType
+  barcode: String
+  locationCode: String
+  itemCode: String
   physicalProducts?: PhysicalProductCreateManyWithoutWarehouseLocationInput | null
   constraints?: WarehouseLocationConstraintCreateManyWithoutLocationsInput | null
 }
@@ -25699,19 +25699,19 @@ export interface WarehouseLocationCreateOneWithoutPhysicalProductsInput {
 
 export interface WarehouseLocationCreateWithoutConstraintsInput {
   id?: ID_Input | null
-  type?: WarehouseLocationType | null
-  barcode?: String | null
-  locationCode?: String | null
-  itemCode?: String | null
+  type: WarehouseLocationType
+  barcode: String
+  locationCode: String
+  itemCode: String
   physicalProducts?: PhysicalProductCreateManyWithoutWarehouseLocationInput | null
 }
 
 export interface WarehouseLocationCreateWithoutPhysicalProductsInput {
   id?: ID_Input | null
-  type?: WarehouseLocationType | null
-  barcode?: String | null
-  locationCode?: String | null
-  itemCode?: String | null
+  type: WarehouseLocationType
+  barcode: String
+  locationCode: String
+  itemCode: String
   constraints?: WarehouseLocationConstraintCreateManyWithoutLocationsInput | null
 }
 
@@ -27647,10 +27647,10 @@ export interface UserSubscriptionPayload {
 
 export interface WarehouseLocation extends Node {
   id: ID_Output
-  type?: WarehouseLocationType | null
-  barcode?: String | null
-  locationCode?: String | null
-  itemCode?: String | null
+  type: WarehouseLocationType
+  barcode: String
+  locationCode: String
+  itemCode: String
   physicalProducts?: Array<PhysicalProduct> | null
   constraints?: Array<WarehouseLocationConstraint> | null
   createdAt: DateTime
@@ -27720,10 +27720,10 @@ export interface WarehouseLocationEdge {
 
 export interface WarehouseLocationPreviousValues {
   id: ID_Output
-  type?: WarehouseLocationType | null
-  barcode?: String | null
-  locationCode?: String | null
-  itemCode?: String | null
+  type: WarehouseLocationType
+  barcode: String
+  locationCode: String
+  itemCode: String
   createdAt: DateTime
   updatedAt: DateTime
 }

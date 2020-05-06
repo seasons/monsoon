@@ -9550,10 +9550,10 @@ input UserWhereUniqueInput {
 
 type WarehouseLocation {
   id: ID!
-  type: WarehouseLocationType
-  barcode: String
-  locationCode: String
-  itemCode: String
+  type: WarehouseLocationType!
+  barcode: String!
+  locationCode: String!
+  itemCode: String!
   physicalProducts(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct!]
   constraints(where: WarehouseLocationConstraintWhereInput, orderBy: WarehouseLocationConstraintOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [WarehouseLocationConstraint!]
   createdAt: DateTime!
@@ -9785,10 +9785,10 @@ input WarehouseLocationConstraintWhereUniqueInput {
 
 input WarehouseLocationCreateInput {
   id: ID
-  type: WarehouseLocationType
-  barcode: String
-  locationCode: String
-  itemCode: String
+  type: WarehouseLocationType!
+  barcode: String!
+  locationCode: String!
+  itemCode: String!
   physicalProducts: PhysicalProductCreateManyWithoutWarehouseLocationInput
   constraints: WarehouseLocationConstraintCreateManyWithoutLocationsInput
 }
@@ -9805,19 +9805,19 @@ input WarehouseLocationCreateOneWithoutPhysicalProductsInput {
 
 input WarehouseLocationCreateWithoutConstraintsInput {
   id: ID
-  type: WarehouseLocationType
-  barcode: String
-  locationCode: String
-  itemCode: String
+  type: WarehouseLocationType!
+  barcode: String!
+  locationCode: String!
+  itemCode: String!
   physicalProducts: PhysicalProductCreateManyWithoutWarehouseLocationInput
 }
 
 input WarehouseLocationCreateWithoutPhysicalProductsInput {
   id: ID
-  type: WarehouseLocationType
-  barcode: String
-  locationCode: String
-  itemCode: String
+  type: WarehouseLocationType!
+  barcode: String!
+  locationCode: String!
+  itemCode: String!
   constraints: WarehouseLocationConstraintCreateManyWithoutLocationsInput
 }
 
@@ -9845,10 +9845,10 @@ enum WarehouseLocationOrderByInput {
 
 type WarehouseLocationPreviousValues {
   id: ID!
-  type: WarehouseLocationType
-  barcode: String
-  locationCode: String
-  itemCode: String
+  type: WarehouseLocationType!
+  barcode: String!
+  locationCode: String!
+  itemCode: String!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
