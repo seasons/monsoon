@@ -1,4 +1,4 @@
-import { ImageResizeService } from "@modules/Image"
+import { ImageService } from "@modules/Image"
 import { ImageSize } from "@modules/Image/image.types"
 import { Args, Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma/prisma.service"
@@ -9,7 +9,7 @@ import { ReservationUtilsService } from "../services/reservation.utils.service"
 export class ReservationFieldsResolver {
   constructor(
     private readonly reservationService: ReservationUtilsService,
-    private readonly imageResizeService: ImageResizeService,
+    private readonly imageService: ImageService,
     private readonly prisma: PrismaService
   ) {}
 
@@ -52,7 +52,7 @@ export class ReservationFieldsResolver {
       const image = product.productVariant.product.images?.[0]
 
       return {
-        url: this.imageResizeService.imageResize(image?.url, size, {
+        url: this.imageService.imageResize(image?.url, size, {
           w: width,
           h: height,
         }),

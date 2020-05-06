@@ -1,5 +1,5 @@
 import { Customer } from "@app/nest_decorators"
-import { ImageResizeService } from "@modules/Image"
+import { ImageService } from "@modules/Image"
 import { ImageSize } from "@modules/Image/image.types"
 import { ProductService } from "@modules/Product/services/product.service"
 import { ProductUtilsService } from "@modules/Product/services/product.utils.service"
@@ -14,7 +14,7 @@ export class ProductFieldsResolver {
     private readonly prisma: PrismaService,
     private readonly productService: ProductService,
     private readonly productUtilsService: ProductUtilsService,
-    private readonly imageResizeService: ImageResizeService
+    private readonly imageService: ImageService
   ) {}
 
   @ResolveField()
@@ -84,7 +84,7 @@ export class ProductFieldsResolver {
     )
     return product?.images.map(image => {
       return {
-        url: this.imageResizeService.imageResize(image?.url, size, {
+        url: this.imageService.imageResize(image?.url, size, {
           w: width,
           h: height,
         }),
