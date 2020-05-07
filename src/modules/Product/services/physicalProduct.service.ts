@@ -102,7 +102,7 @@ export class PhysicalProductService {
     if (
       !/^C$|^SR$|^DB$/.test(typePrefix) || // type prefix is C, SR, or DB
       !/^\w{4}$/.test(barcodeLocationCode) || // locationCode is 4 alphanumeric chars
-      !/^\w{4}$/.test(barcodeItemCode) // barcode is 4 alphanumeric chars
+      !/^[A-Za-z0-9.]{3,5}$/.test(barcodeItemCode) // barcode is 3-5 alphanumeric chars
     ) {
       throw new Error(
         "Invalid barcode. Must be of form typeprefix-locationcode-itemcode e.g SR-A200-ABES"
