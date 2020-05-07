@@ -333,4 +333,147 @@ export class SyncProductsService {
       cliProgressBar,
     })
   }
+
+  async syncAirtableToS3(cliProgressBar?) {
+    const allBrands = await this.airtableService.getAllBrands()
+    const allProducts = await this.airtableService.getAllProducts()
+    const allCategories = await this.airtableService.getAllCategories()
+    const allSizes = await this.airtableService.getAllSizes()
+
+    const [
+      multibar,
+      _cliProgressBar,
+    ] = await this.syncUtils.makeSingleSyncFuncMultiBarAndProgressBarIfNeeded({
+      cliProgressBar,
+      numRecords: allProducts.length,
+      modelName: "Products",
+    })
+
+    for (const record of allProducts) {
+      try {
+        _cliProgressBar.increment()
+
+        const { model } = record
+        const { name } = model
+
+        const brand = allBrands.findByIds(model.brand)
+        const category = allCategories.findByIds(model.category)
+        const modelSize = allSizes.findByIds(model.modelSize)
+
+        if (
+          isEmpty(model) ||
+          isEmpty(name) ||
+          isEmpty(brand) ||
+          isEmpty(category)
+        ) {
+          continue
+        }
+
+        const {
+          color,
+          description,
+          images,
+          modelHeight,
+          externalURL,
+          tags,
+          retailPrice,
+          innerMaterials,
+          outerMaterials,
+          status,
+          type,
+        } = model
+
+        if (isEmpty(images)) {
+          continue
+        } else {
+          console.log(images)
+          return
+        }
+
+        const { brandCode } = brand.model
+        const slug = slugify(brandCode + " " + name + " " + color).toLowerCase()
+
+        let modelSizeRecord
+        if (!!modelSize) {
+          const {
+            display: modelSizeDisplay,
+            type: modelSizeType,
+            name: modelSizeName,
+          } = modelSize.model
+          modelSizeRecord = await this.syncSizesService.deepUpsertSize({
+            slug,
+            type,
+            display: modelSizeDisplay,
+            topSizeData: type === "Top" && {
+              letter: modelSizeName as LetterSize,
+            },
+            bottomSizeData: type === "Bottom" && {
+              type: modelSizeType as BottomSizeType,
+              value: modelSizeName,
+            },
+          })
+        }
+
+        const data = {
+          brand: {
+            connect: {
+              slug: brand.model.slug,
+            },
+          },
+          category: {
+            connect: {
+              slug: category.model.slug,
+            },
+          },
+          color: {
+            connect: {
+              slug: slugify(color).toLowerCase(),
+            },
+          },
+          innerMaterials: {
+            set: (innerMaterials || []).map(a => a.replace(/\ /g, "")),
+          },
+          outerMaterials: {
+            set: (outerMaterials || []).map(a => a.replace(/\ /g, "")),
+          },
+          tags: {
+            set: tags,
+          },
+          name,
+          slug,
+          type,
+          description,
+          images,
+          retailPrice,
+          externalURL: externalURL || "",
+          ...(() => {
+            return !!modelSizeRecord
+              ? { modelSize: { connect: { id: modelSizeRecord.id } } }
+              : {}
+          })(),
+          modelHeight: head(modelHeight) ?? 0,
+          status: (status || "Available").replace(" ", ""),
+        } as ProductCreateInput
+
+        // if (name == "Kit Shirt") {
+        //   console.log(data)
+        // }
+        await this.prisma.client.upsertProduct({
+          where: {
+            slug,
+          },
+          create: data,
+          update: data,
+        })
+
+        await record.patchUpdate({
+          Slug: slug,
+        })
+      } catch (e) {
+        console.log(record)
+        console.error(e)
+      }
+    }
+    multibar?.stop()
+  }
 }
