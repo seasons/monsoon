@@ -1,12 +1,9 @@
-import { Injectable, Head } from "@nestjs/common"
+import * as fs from "fs"
+import { Injectable } from "@nestjs/common"
 import { isEmpty } from "lodash"
 import slugify from "slugify"
 
-import {
-  BrandTier,
-  WarehouseLocation,
-  WarehouseLocationCreateInput,
-} from "../../../prisma"
+import { BrandTier, WarehouseLocationCreateInput } from "../../../prisma"
 import { PrismaService } from "../../../prisma/prisma.service"
 import { AirtableService } from "../../Airtable/services/airtable.service"
 import { UtilsService } from "../../Utils/services/utils.service"
@@ -52,6 +49,7 @@ export class SyncBrandsService {
       modelName: "Brands",
     })
 
+    const logFile = this.utils.openLogFile("syncBrands")
     for (const record of records) {
       try {
         _cliProgressBar.increment()
@@ -86,11 +84,6 @@ export class SyncBrandsService {
           brandCode,
         }
 
-        // Create new warehouse location records if its a new brand
-        if (!(await this.prisma.client.brand({ slug }))) {
-          await this.generateNewSlickRailRecords({ brandCode })
-        }
-
         await this.prisma.client.upsertBrand({
           where: {
             slug,
@@ -102,17 +95,31 @@ export class SyncBrandsService {
           update: data,
         })
 
+        await this.generateNewSlickRailRecordsIfNeeded(brandCode)
+
         await record.patchUpdate({
           Slug: slug,
         })
       } catch (e) {
-        console.error(e)
+        console.log(`Check ${logFile}`)
+        this.syncUtils.logSyncError(logFile, record, e)
       }
     }
     multibar?.stop()
+    fs.closeSync(logFile)
   }
 
-  private async generateNewSlickRailRecords(brandCode) {
+  private async generateNewSlickRailRecordsIfNeeded(brandCode) {
+    const needed =
+      (
+        await this.prisma.client.warehouseLocations({
+          where: { itemCode: brandCode },
+        })
+      )?.length === 0
+    if (!needed) {
+      return
+    }
+
     for (const locationCode of ["A100", "A200"]) {
       const input = {
         type: "Rail",
