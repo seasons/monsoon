@@ -42,7 +42,6 @@ const run = async () => {
   let i
   let type: WarehouseLocationType
 
-  // TODO: Run it through the validator
   const printAndCreateRecord = async (
     a: Omit<WarehouseLocationCreateInput, "barcode">
   ) => {
