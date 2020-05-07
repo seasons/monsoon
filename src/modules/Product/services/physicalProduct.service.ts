@@ -8,15 +8,11 @@ import {
   PhysicalProductUpdateInput,
   ID_Input,
   WarehouseLocationType,
-  WarehouseLocationUpdateOneWithoutPhysicalProductsInput,
-  WarehouseLocationCreateWithoutPhysicalProductsInput,
-  WarehouseLocationUpdateWithoutPhysicalProductsDataInput,
   PhysicalProduct,
-  WarehouseLocationConstraint,
-  Category,
+  WarehouseLocationWhereUniqueInput,
 } from "@app/prisma"
 import { GraphQLResolveInfo } from "graphql"
-import { pick, head, curryRight, assign, identity } from "lodash"
+import { pick, head, identity } from "lodash"
 import { ApolloError } from "apollo-server"
 import { ProductVariantService } from "./productVariant.service"
 import { ProductService } from "./product.service"
@@ -59,6 +55,12 @@ export class PhysicalProductService {
       ...pick(data, ["inventoryStatus", "offloadMethod", "offloadNotes"]),
     } as OffloadPhysicalProductIfNeededInput)
 
+    if (!!data.warehouseLocation) {
+      await this.validateWarehouseLocationConstraints(
+        await this.prisma.client.physicalProduct(where),
+        data.warehouseLocation.connect
+      )
+    }
     // Use two separate queries because the schema for update data differs
     // between the client and the binding, and we expose the client's schema
     await this.prisma.client.updatePhysicalProduct({ where, data })
@@ -171,35 +173,50 @@ export class PhysicalProductService {
     return true
   }
 
+  /**
+   * Checks to ensure that adding the given physical product to the designated
+   * warehouse location does not violate any warehouse location constraints.
+   * Throws an error if it does.
+   *
+   * Assumes constraints can apply to leaf, parent, or ancestral categories.
+   */
   private async validateWarehouseLocationConstraints(
     physProd: PhysicalProduct,
-    locationBarcode: string,
-    constraints: WarehouseLocationConstraint[]
+    where: WarehouseLocationWhereUniqueInput
   ) {
-    const allCategoriesOnPhysProd = (
-      await this.physicalProductUtils.getAllCategories(physProd)
-    ).map(a => a.name)
-
-    const applicableConstraints = (
-      await this.prisma.binding.query.warehouseLocationConstraints(
-        { where: { id_in: constraints.map(a => a.id) } },
-        `{
+    const warehouseLocation = await this.prisma.binding.query.warehouseLocation(
+      { where },
+      `{
+        id
+        barcode
+        constraints {
           category {
             name
           }
           limit
-        }`
-      )
+        }
+      }`
     )
+    if (warehouseLocation.constraints.length === 0) {
+      return true
+    }
+
+    // Proceed to validate against constraints
+    const allCategoriesOnPhysProd = (
+      await this.physicalProductUtils.getAllCategories(physProd)
+    ).map(a => a.name)
+
+    const applicableConstraints = warehouseLocation.constraints
       .map(a => identity({ limit: a.limit, name: a.category.name }))
       .filter(b => allCategoriesOnPhysProd.includes(b.name))
 
     for (const { name, limit } of applicableConstraints) {
       const otherUnitsAtLocation = (
         await this.prisma.client.physicalProducts({
-          where: { warehouseLocation: { barcode: locationBarcode } },
+          where: { warehouseLocation: { barcode: warehouseLocation.barcode } },
         })
       ).filter(a => a.seasonsUID !== physProd.seasonsUID) // other products at the location
+
       const otherUnitsAlreadyConstrained = (
         await Promise.all(
           otherUnitsAtLocation.map(async a =>
@@ -211,9 +228,9 @@ export class PhysicalProductService {
         )
       ).filter(b => b.categories.map(c => c.name).includes(name)) // with the same cateogry
 
-      if (otherUnitsAlreadyConstrained?.length || 0 > limit - 1) {
+      if (otherUnitsAlreadyConstrained.length === limit) {
         throw new Error(
-          `Cannot add ${physProd.seasonsUID} to ${locationBarcode} due to constraint (${name}, ${limit}).` +
+          `Cannot add ${physProd.seasonsUID} to ${warehouseLocation.barcode} due to constraint (${name}, ${limit}).` +
             ` Other units there: ${otherUnitsAlreadyConstrained.map(
               a => a.seasonsUID
             )} `
