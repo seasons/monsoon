@@ -232,6 +232,7 @@ export class SyncProductsService {
           Slug: slug,
         })
       } catch (e) {
+        console.log(`Check ${logFile}`)
         this.syncUtils.logSyncError(logFile, record, e)
       }
     }
