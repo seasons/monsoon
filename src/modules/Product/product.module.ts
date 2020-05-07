@@ -56,6 +56,7 @@ import { PhysicalProductService } from "./services/physicalProduct.service"
     ProductUtilsService,
     ProductVariantService,
     PhysicalProductUtilsService,
+    PhysicalProductService,
   ],
 })
 export class ProductModule {}
