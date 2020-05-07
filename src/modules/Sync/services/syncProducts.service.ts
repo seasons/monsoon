@@ -385,13 +385,21 @@ export class SyncProductsService {
 
         if (isEmpty(images)) {
           continue
-        } else {
-          console.log(images)
-          return
         }
 
+        console.log(images)
         const { brandCode } = brand.model
+
         const slug = slugify(brandCode + " " + name + " " + color).toLowerCase()
+
+        images.forEach((image, index) => {
+          const imageURL = `${brandCode}/${name.replace(/ /g, "_")}/${
+            index + 1
+          }.png`.toLowerCase()
+          console.log("IMAGE PATH:", imageURL)
+        })
+
+        return
 
         let modelSizeRecord
         if (!!modelSize) {
