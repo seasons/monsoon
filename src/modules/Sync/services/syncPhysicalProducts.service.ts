@@ -9,6 +9,7 @@ import { UtilsService } from "../../Utils/services/utils.service"
 import { SyncUtilsService } from "./sync.utils.service"
 import { SyncProductsService } from "./syncProducts.service"
 import { SyncProductVariantsService } from "./syncProductVariants.service"
+import { PhysicalProductUpdateInput } from "@app/prisma"
 
 @Injectable()
 export class SyncPhysicalProductsService {
@@ -110,7 +111,12 @@ export class SyncPhysicalProductsService {
           continue
         }
 
-        const { suid, inventoryStatus, productStatus } = model
+        const {
+          suid,
+          inventoryStatus,
+          productStatus,
+          warehouseLocationId,
+        } = model
 
         const data = {
           productVariant: {
@@ -123,6 +129,9 @@ export class SyncPhysicalProductsService {
           productStatus,
           barcode: model.barcode,
           sequenceNumber: model.sequenceNumber,
+          warehouseLocation: !!warehouseLocationId
+            ? { connect: { barcode: warehouseLocationId } }
+            : null,
         }
 
         await this.prisma.client.upsertPhysicalProduct({
