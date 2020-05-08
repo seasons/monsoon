@@ -3,7 +3,6 @@ import { BrandOrderByInput } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
 import { union, uniqBy } from "lodash"
 
-import { Product } from "../../../prisma"
 import { ProductWithPhysicalProducts } from "../product.types"
 
 @Injectable()

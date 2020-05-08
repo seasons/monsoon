@@ -350,13 +350,7 @@ export class SyncProductsService {
       modelName: "Products",
     })
 
-    let index = 0
-
     for (const record of allProducts) {
-      if (index !== 0) {
-        return
-      }
-      index += 1
       try {
         _cliProgressBar.increment()
 
@@ -409,15 +403,13 @@ export class SyncProductsService {
           id: image.id,
         }))
 
-        const product = await this.prisma.client.updateProduct({
+        await this.prisma.client.updateProduct({
           data: { images: { set: imageIDs } },
           where: { slug },
         })
-
-        console.log("IMAGE URLS:", imageURLs)
-        console.log("NEW PRODUCT:", product)
       } catch (e) {
-        console.error("CAUGHT", e)
+        console.log(record)
+        console.error(e)
       }
     }
     multibar?.stop()
