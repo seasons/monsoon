@@ -1,5 +1,6 @@
 # import Brand, Category, User, Bag, Collection, CustomerDetail, ProductFunction, SavedProduct from "./prisma/prisma.graphql"
 # import BlogCollection, BlogPost, Query from "./modules/Blog/blog.graphql"
+# import SearchOptions, SearchResultType, SearchResult, Query from "./modules/Search/search.graphql"
 
 directive @isAuthenticated on FIELD_DEFINITION
 directive @hasRole(roles: [String]) on FIELD_DEFINITION
@@ -348,7 +349,6 @@ type Query {
     userIDHash: String!
   ): ChargebeeHostedPagePayload
   chargebeeUpdatePaymentPage: ChargebeeHostedPagePayload
-  search(query: String!, options: SearchOptions): [SearchResult]!
   reservationFeedback: ReservationFeedback
 }
 
@@ -476,17 +476,6 @@ type ValidationPayload {
   isValid: Boolean!
   code: String
   text: String
-}
-
-input SearchOptions {
-  includeTypes: [String]
-}
-
-union SearchResultType = Product | Brand
-
-type SearchResult {
-  data: SearchResultType!
-  score: Float
 }
 
 type Image {
