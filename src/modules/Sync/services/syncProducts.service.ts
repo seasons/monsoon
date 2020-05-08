@@ -340,8 +340,6 @@ export class SyncProductsService {
   async syncAirtableToS3(cliProgressBar?) {
     const allBrands = await this.airtableService.getAllBrands()
     const allProducts = await this.airtableService.getAllProducts()
-    const allCategories = await this.airtableService.getAllCategories()
-    const allSizes = await this.airtableService.getAllSizes()
 
     const [
       multibar,
@@ -366,31 +364,12 @@ export class SyncProductsService {
         const { name } = model
 
         const brand = allBrands.findByIds(model.brand)
-        const category = allCategories.findByIds(model.category)
-        const modelSize = allSizes.findByIds(model.modelSize)
 
-        if (
-          isEmpty(model) ||
-          isEmpty(name) ||
-          isEmpty(brand) ||
-          isEmpty(category)
-        ) {
+        if (isEmpty(model) || isEmpty(name) || isEmpty(brand)) {
           continue
         }
 
-        const {
-          color,
-          description,
-          images,
-          modelHeight,
-          externalURL,
-          tags,
-          retailPrice,
-          innerMaterials,
-          outerMaterials,
-          status,
-          type,
-        } = model
+        const { color, images } = model
 
         if (isEmpty(images)) {
           continue
@@ -401,7 +380,7 @@ export class SyncProductsService {
 
         const slug = slugify(brandCode + " " + name + " " + color).toLowerCase()
 
-        const imageURLs = await Promise.all(
+        const imageURLs: string[] = await Promise.all(
           images.map(async (image, index) => {
             const s3ImageName = `${brandCode}/${name.replace(/ /g, "_")}/${
               index + 1
@@ -411,20 +390,32 @@ export class SyncProductsService {
               image.url,
               s3ImageName
             )
-            // request({
-            //   url: image.url,
-            //   encoding: null,
-            // }, (err, res, body) => {
-            //   if (err) {
-            //     console.log("ERROR", err)
-            //   } else {
-            //     console.log("UPLOADING:", s3ImageName)
-            //     this.imageService.uploadImage(body, { imageName: s3ImageName })
-            //   }
-            // })
           })
         )
+
+        const prismaImages = await Promise.all(
+          imageURLs.map(async imageURL => {
+            const imageData = { originalUrl: imageURL }
+            console.log("IMAGE URL:", typeof imageURL, imageURL)
+            return await this.prisma.client.upsertImage({
+              create: imageData,
+              update: imageData,
+              where: imageData,
+            })
+          })
+        )
+
+        const imageIDs = prismaImages.map(image => ({
+          id: image.id,
+        }))
+
+        const product = await this.prisma.client.updateProduct({
+          data: { images: { set: imageIDs } },
+          where: { slug },
+        })
+
         console.log("IMAGE URLS:", imageURLs)
+        console.log("NEW PRODUCT:", product)
       } catch (e) {
         console.error("CAUGHT", e)
       }
