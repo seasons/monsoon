@@ -156,7 +156,6 @@ export class SyncProductsService {
               const s3ImageName = `${brandCode}/${name.replace(/ /g, "_")}/${
                 index + 1
               }.png`.toLowerCase()
-              console.log("ABOUT TO UPLOAD:", s3ImageName)
               return await this.imageService.uploadImageFromURL(
                 image.url,
                 s3ImageName
