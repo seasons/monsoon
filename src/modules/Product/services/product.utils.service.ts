@@ -1,12 +1,34 @@
 import { Injectable } from "@nestjs/common"
-import { BrandOrderByInput } from "@prisma/index"
+import { BrandOrderByInput, Product, Category } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
-import { uniqBy, union } from "lodash"
+import { uniqBy, union, head } from "lodash"
 import { ProductWithPhysicalProducts } from "../product.types"
 
 @Injectable()
 export class ProductUtilsService {
   constructor(private readonly prisma: PrismaService) {}
+
+  async getAllCategories(prod: Product): Promise<Category[]> {
+    const thisCategory = await this.prisma.client
+      .product({ id: prod.id })
+      .category()
+    return [...(await this.getAllParentCategories(thisCategory)), thisCategory]
+  }
+
+  private async getAllParentCategories(
+    category: Category
+  ): Promise<Category[]> {
+    const parent = head(
+      await this.prisma.client.categories({
+        where: { children_some: { id: category.id } },
+      })
+    )
+    if (!parent) {
+      return []
+    } else {
+      return [...(await this.getAllParentCategories(parent)), parent]
+    }
+  }
 
   async queryOptionsForProducts(args) {
     const category = args.category || "all"

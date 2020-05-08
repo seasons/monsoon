@@ -23,9 +23,16 @@ import { SyncReservationsService } from "./services/syncReservations.service"
 import { SyncSizesService } from "./services/syncSizes.service"
 import { SyncTopSizesService } from "./services/syncTopSizes.service"
 import { SyncUsersService } from "./services/syncUsers.service"
+import { ProductModule } from ".."
 
 @Module({
-  imports: [AirtableModule, PrismaModule, UserModule, UtilsModule],
+  imports: [
+    AirtableModule,
+    PrismaModule,
+    UserModule,
+    UtilsModule,
+    ProductModule,
+  ],
   exports: [AirtableSyncService, PrismaSyncService],
   providers: [
     AirtableSyncService,

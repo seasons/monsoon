@@ -125,12 +125,17 @@ export class UtilsService {
   }
 
   openLogFile(logName) {
-    return fs.openSync(
+    if (!fs.existsSync(`logs`)) {
+      fs.mkdirSync(`logs`)
+    }
+    const a = fs.openSync(
       `logs/${logName}-${require("moment")().format(
         "MMMM-Do-YYYY-hh:mm:ss"
       )}.txt`,
       "a"
     )
+    fs.writeSync(a, "Begin Log\n")
+    return a
   }
 
   writeLines(fileDescriptor, lines: (string | object)[]) {
