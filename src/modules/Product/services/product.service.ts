@@ -137,7 +137,19 @@ export class ProductService {
       input.name,
       color.name
     )
-    const imageURLs = await this.imageService.uploadImages(input.images)
+    const imageURLs: string[] = await Promise.all(
+      input.images.map(async (image, index) => {
+        const s3ImageName = await this.productUtils.getProductImageName(
+          brand.brandCode,
+          input.name,
+          index + 1
+        )
+        return await this.imageService.uploadImage(image, {
+          imageName: s3ImageName,
+        })
+      })
+    )
+    const imageIDs = await this.productUtils.getImageIDsForURLs(imageURLs)
     const productData = {
       slug,
       name,
@@ -149,6 +161,9 @@ export class ProductService {
       },
       type: input.type,
       description: input.description,
+      images: {
+        connect: imageIDs,
+      },
       modelHeight: model.height,
       retailPrice: input.retailPrice,
       model: {

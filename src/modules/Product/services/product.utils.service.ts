@@ -272,4 +272,22 @@ export class ProductUtilsService {
 
     return sizeRecord
   }
+
+  getProductImageName(brandCode: string, name: string, index: number) {
+    return `${brandCode}/${name.replace(/ /g, "_")}/${index}.png`.toLowerCase()
+  }
+
+  async getImageIDsForURLs(imageURLs: string[]) {
+    const prismaImages = await Promise.all(
+      imageURLs.map(async imageURL => {
+        const imageData = { originalUrl: imageURL }
+        return await this.prisma.client.upsertImage({
+          where: imageData,
+          create: imageData,
+          update: imageData,
+        })
+      })
+    )
+    return prismaImages.map(image => ({ id: image.id }))
+  }
 }
