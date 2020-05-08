@@ -137,6 +137,7 @@ export class ProductService {
       input.name,
       color.name
     )
+
     const imageURLs: string[] = await Promise.all(
       input.images.map(async (image, index) => {
         const s3ImageName = await this.productUtils.getProductImageName(
@@ -150,6 +151,18 @@ export class ProductService {
       })
     )
     const imageIDs = await this.productUtils.getImageIDsForURLs(imageURLs)
+
+    const tagIDs: { id: string }[] = await Promise.all(
+      input.tags.map(async tag => {
+        const prismaTag = await this.prisma.client.upsertTag({
+          create: { name: tag },
+          update: { name: tag },
+          where: { name: tag },
+        })
+        return { id: prismaTag.id }
+      })
+    )
+
     const productData = {
       slug,
       name,
@@ -179,7 +192,7 @@ export class ProductService {
         connect: { id: input.secondaryColorID },
       },
       tags: {
-        set: input.tags,
+        connect: tagIDs,
       },
       functions: {
         connect: functionIDs,
