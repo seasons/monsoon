@@ -216,9 +216,8 @@ type Image {
   caption: String
   url: String
   originalHeight: Int
-  originalUrl: String!
+  originalUrl: String! @unique
   originalWidth: Int
-  resizedUrl: String!
   title: String
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
@@ -262,7 +261,7 @@ type Product {
   type: ProductType
   description: String
   externalURL: String
-  images: Json
+  images: [Image!]
   modelHeight: Int
   retailPrice: Int
   model: ProductModel
@@ -341,9 +340,9 @@ type WarehouseLocationConstraint {
 }
 
 type WarehouseLocation {
-	id: ID! @id
+  id: ID! @id
   type: WarehouseLocationType!
-  barcode: String! @unique«
+  barcode: String! @unique
   locationCode: String!
   itemCode: String!
 	physicalProducts: [PhysicalProduct!]

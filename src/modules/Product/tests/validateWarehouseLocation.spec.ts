@@ -1,9 +1,10 @@
-import { PhysicalProductService } from "../services/physicalProduct.service"
-import { PrismaService } from "@app/prisma/prisma.service"
-import { ProductService, ProductUtilsService, ProductVariantService } from ".."
-import { PhysicalProductUtilsService } from "../services/physicalProduct.utils.service"
 import { UtilsService } from "@app/modules/Utils"
 import { Brand } from "@app/prisma"
+import { PrismaService } from "@app/prisma/prisma.service"
+
+import { PhysicalProductService } from "../services/physicalProduct.service"
+import { PhysicalProductUtilsService } from "../services/physicalProduct.utils.service"
+import { ProductService, ProductUtilsService, ProductVariantService } from ".."
 
 describe("Validate Warehouse Location", () => {
   let physicalProductsService: PhysicalProductService
