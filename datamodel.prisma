@@ -341,9 +341,9 @@ type WarehouseLocationConstraint {
 }
 
 type WarehouseLocation {
-	id: ID! @id
+  id: ID! @id
   type: WarehouseLocationType!
-  barcode: String! @unique«
+  barcode: String! @unique
   locationCode: String!
   itemCode: String!
 	physicalProducts: [PhysicalProduct!]
