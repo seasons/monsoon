@@ -1,20 +1,26 @@
+import { ImageService } from "@modules/Image/services/image.service"
 import { Injectable } from "@nestjs/common"
 import {
   BagItem,
   BottomSizeType,
   Customer,
   ID_Input,
+  InventoryStatus,
   LetterSize,
   Product,
   ProductFunction,
+  ProductStatus,
+  ProductUpdateInput,
   ProductVariantCreateWithoutProductInput,
+  ProductWhereUniqueInput,
   RecentlyViewedProduct,
 } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
+import { GraphQLResolveInfo } from "graphql"
 import { head } from "lodash"
 
-import { ImageService } from "../../Image/services/image.service"
 import { UtilsService } from "../../Utils/services/utils.service"
+import { ProductWithPhysicalProducts } from "../product.types"
 import { ProductUtilsService } from "./product.utils.service"
 import { ProductVariantService } from "./productVariant.service"
 
@@ -385,5 +391,118 @@ export class ProductService {
       const sizeCode = this.utils.sizeNameToSizeCode(sizeName)
       return `${brand.brandCode}-${color.colorCode}-${sizeCode}-${styleCode}`
     })
+  }
+
+  async updateProduct(
+    where: ProductWhereUniqueInput,
+    { status, ...data }: ProductUpdateInput,
+    info: GraphQLResolveInfo
+  ) {
+    await this.storeProductIfNeeded(where, status)
+    await this.prisma.client.updateProduct({ where, data: { status, ...data } })
+    return await this.prisma.binding.query.product({ where }, info)
+  }
+
+  /**
+   * Checks if all downstream physical products have been offloaded.
+   * If so, marks the product as offloaded.
+   */
+  async offloadProductIfAppropriate(id: ID_Input) {
+    const downstreamPhysProds = this.productUtils.physicalProductsForProduct(
+      await this.prisma.binding.query.product(
+        { where: { id } },
+        `{
+          variants {
+            physicalProducts {
+              inventoryStatus
+            }
+          }
+         }`
+      )
+    )
+    const allPhysProdsOffloaded = downstreamPhysProds.reduce(
+      (acc, curPhysProd: { inventoryStatus: InventoryStatus }) =>
+        acc && curPhysProd.inventoryStatus === "Offloaded",
+      true
+    )
+    if (allPhysProdsOffloaded) {
+      await this.prisma.client.updateProduct({
+        where: { id },
+        data: { status: "Offloaded" },
+      })
+    }
+  }
+
+  private async storeProductIfNeeded(
+    where: ProductWhereUniqueInput,
+    status: ProductStatus
+  ) {
+    const productBeforeUpdate = await this.prisma.binding.query.product(
+      {
+        where,
+      },
+      `{
+          id
+          status
+          variants {
+            id
+            total
+            offloaded
+            reserved
+            physicalProducts {
+              inventoryStatus
+              seasonsUID
+            }
+          }
+        }`
+    )
+    if (status === "Stored" && productBeforeUpdate.status !== "Stored") {
+      // Update product status
+      await this.prisma.client.updateProduct({
+        where: { id: productBeforeUpdate.id },
+        data: { status: "Stored" },
+      })
+
+      // Update statuses on downstream physical products
+      for (const {
+        inventoryStatus,
+        seasonsUID,
+      } of this.productUtils.physicalProductsForProduct(
+        productBeforeUpdate as ProductWithPhysicalProducts
+      )) {
+        if (!["Offloaded", "Reserved"].includes(inventoryStatus)) {
+          await this.prisma.client.updatePhysicalProduct({
+            where: { seasonsUID },
+            data: { inventoryStatus: "Stored" },
+          })
+        }
+      }
+
+      // Update counts on downstream product variants
+      for (const prodVar of productBeforeUpdate.variants) {
+        const numUnitsStored = (
+          await this.prisma.client.physicalProducts({
+            where: {
+              AND: [
+                { productVariant: { id: prodVar.id } },
+                { inventoryStatus: "Stored" },
+              ],
+            },
+          })
+        ).length
+        await this.prisma.client.updateProductVariant({
+          where: { id: prodVar.id },
+          data: {
+            nonReservable:
+              prodVar.total -
+              prodVar.offloaded -
+              prodVar.reserved -
+              numUnitsStored,
+            stored: numUnitsStored,
+            reservable: 0,
+          },
+        })
+      }
+    }
   }
 }

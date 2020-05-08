@@ -11,6 +11,7 @@ import { importSchema } from "graphql-import"
 
 import {
   AirtableModule,
+  BlogModule,
   CollectionModule,
   CronModule,
   CustomerModule,
@@ -74,6 +75,7 @@ const scheduleModule =
       },
     }),
     AirtableModule,
+    BlogModule,
     CollectionModule,
     EmailModule,
     ImageModule,

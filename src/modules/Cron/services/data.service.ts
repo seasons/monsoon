@@ -7,7 +7,7 @@ import { UtilsService } from "@modules/Utils/services/utils.service"
 import { Injectable } from "@nestjs/common"
 import { Cron, CronExpression } from "@nestjs/schedule"
 import { PrismaService } from "@prisma/prisma.service"
-import { xor } from "lodash"
+import { identity, pick, xor } from "lodash"
 
 interface DataPoint {
   name: string
@@ -276,6 +276,8 @@ export class DataScheduledJobs {
             reservable
             reserved
             nonReservable
+            stored
+            offloaded
             internalSize {
               top {
                 letter
@@ -503,7 +505,7 @@ export class DataScheduledJobs {
         },
         {
           text:
-            "prisma: number of product variants with total != reserved + reservable + nonreservable",
+            "prisma: number of product variants with total != reserved + reservable + nonreservable + stored + offloaded",
           paramArray: prismaProdVarsWithImpossibleCounts,
           withGutter: true,
         },
@@ -583,7 +585,7 @@ export class DataScheduledJobs {
         prismaProductVariant
       )
 
-      // Are the total, reservable, reserved, and nonreservable counts identical?
+      // Are all counts identical
       if (correspondingAirtableProductVariant === undefined) {
         console.log(
           "could not find product variant in airtable. sku: ",
@@ -593,40 +595,49 @@ export class DataScheduledJobs {
       }
       const totalCorrect =
         prismaProductVariant.total ===
-        correspondingAirtableProductVariant.fields["Total Count"]
+        correspondingAirtableProductVariant.model.totalCount
       const reservableCorrect =
         prismaProductVariant.reservable ===
-        correspondingAirtableProductVariant.fields["Reservable Count"]
+        correspondingAirtableProductVariant.model.reservableCount
       const reservedCorrect =
         prismaProductVariant.reserved ===
-        correspondingAirtableProductVariant.fields["Reserved Count"]
+        correspondingAirtableProductVariant.model.reservedCount
       const nonReservableCorrect =
         prismaProductVariant.nonReservable ===
-        correspondingAirtableProductVariant.fields["Non-Reservable Count"]
+        correspondingAirtableProductVariant.model.nonReservableCount
+      const storedCorrect =
+        prismaProductVariant.stored ===
+        correspondingAirtableProductVariant.model.storedCount
+      const offloadedCorrect =
+        prismaProductVariant.offloaded ===
+        correspondingAirtableProductVariant.model.offloadedCount
       if (
         !totalCorrect ||
         !reservableCorrect ||
         !reservedCorrect ||
-        !nonReservableCorrect
+        !nonReservableCorrect ||
+        !storedCorrect ||
+        !offloadedCorrect
       ) {
         countMisalignments.push({
           sku: prismaProductVariant.sku,
-          prismaCounts: {
-            total: prismaProductVariant.total,
-            reserved: prismaProductVariant.reserved,
-            reservable: prismaProductVariant.reservable,
-            nonReservable: prismaProductVariant.nonReservable,
-          },
+          prismaCounts: pick(prismaProductVariant, [
+            "total",
+            "reserved",
+            "reservable",
+            "nonReservable",
+            "stored",
+            "offloaded",
+          ]),
           airtableCounts: {
-            total: correspondingAirtableProductVariant.fields["Total Count"],
-            reserved:
-              correspondingAirtableProductVariant.fields["Reserved Count"],
+            total: correspondingAirtableProductVariant.model.totalCount,
+            reserved: correspondingAirtableProductVariant.model.reservedCount,
             reservable:
-              correspondingAirtableProductVariant.fields["Reservable Count"],
+              correspondingAirtableProductVariant.model.reservableCount,
             nonReservable:
-              correspondingAirtableProductVariant.fields[
-                "Non-Reservable Count"
-              ],
+              correspondingAirtableProductVariant.model.nonReservableCount,
+            stored: correspondingAirtableProductVariant.model.storedCount,
+            offloaded: correspondingAirtableProductVariant.model.offloadedCount,
           },
         })
       }
@@ -685,10 +696,18 @@ export class DataScheduledJobs {
         const physicalProductsWithStatusNonReservable = a.physicalProducts.filter(
           b => b.inventoryStatus === "NonReservable"
         )
+        const physicalProductsWithStatusOffloaded = a.physicalProducts.filter(
+          b => b.inventoryStatus === "Offloaded"
+        )
+        const physicalProductsWithStatusStored = a.physicalProducts.filter(
+          b => b.inventoryStatus === "Stored"
+        )
         return (
           a.reservable !== physicalProductsWithStatusReservable.length ||
           a.reserved !== physicalProductsWithStatusReserved.length ||
-          a.nonReservable !== physicalProductsWithStatusNonReservable.length
+          a.nonReservable !== physicalProductsWithStatusNonReservable.length ||
+          a.stored !== physicalProductsWithStatusStored.length ||
+          a.offloaded !== physicalProductsWithStatusOffloaded.length
         )
       })
       .map(c =>
@@ -700,6 +719,8 @@ export class DataScheduledJobs {
             reservable: c.reservable,
             reserved: c.reserved,
             nonReservable: c.nonReservable,
+            stored: c.stored,
+            offloaded: c.offloaded,
           },
           updatedAt: c.updatedAt,
           physicalProducts: c.physicalProducts.map(d =>
@@ -730,11 +751,11 @@ export class DataScheduledJobs {
         )
         return (
           !!a.fields.SKU &&
-          (a.fields["Reservable Count"] !==
+          (a.model.reservableCount !==
             physicalProductsWithStatusReservable.length ||
-            a.fields["Reserved Count"] !==
+            a.model.reservedCount !==
               physicalProductsWithStatusReserved.length ||
-            a.fields["Non-Reservable Count"] !==
+            a.model.nonReservableCount !==
               physicalProductsWithStatusNonReservable.length)
         )
       })
@@ -743,9 +764,9 @@ export class DataScheduledJobs {
           sku: d.fields.SKU,
           counts: {
             total: d.fields["Total Count"],
-            reservable: d.fields["Reservable Count"],
-            reserved: d.fields["Reserved Count"],
-            nonReservable: d.fields["Non-Reservable Count"],
+            reservable: d.model.reservableCount,
+            reserved: d.model.reservedCount,
+            nonReservable: d.model.nonReservableCount,
           },
           physicalProducts: this.getAttachedAirtablePhysicalProducts(
             allAirtablePhysicalProducts,
@@ -780,13 +801,13 @@ export class DataScheduledJobs {
       } else {
         if (
           this.airtableService.airtableToPrismaInventoryStatus(
-            correspondingAirtablePhysicalProduct.fields["Inventory Status"]
+            correspondingAirtablePhysicalProduct.model.inventoryStatus
           ) !== prismaPhysicalProduct.inventoryStatus
         ) {
           mismatchingStatuses.push({
             seasonsUID: prismaPhysicalProduct.seasonsUID,
             airtableInventoryStatus:
-              correspondingAirtablePhysicalProduct.fields["Inventory Status"],
+              correspondingAirtablePhysicalProduct.model.inventoryStatus,
             prismaInventoryStatus: prismaPhysicalProduct.inventoryStatus,
           })
         }
@@ -1010,7 +1031,7 @@ export class DataScheduledJobs {
     if (!airtableProductVariant.fields.SKU) return []
 
     return allAirtablePhysicalProducts.filter(a =>
-      airtableProductVariant.fields["Physical Products"].includes(a.id)
+      airtableProductVariant.model?.physicalProducts?.includes(a.id)
     )
   }
 
@@ -1059,15 +1080,21 @@ export class DataScheduledJobs {
 
   private async getProdVarsWithImpossibleCounts(allPrismaProductVariants) {
     return allPrismaProductVariants
-      .filter(a => a.total !== a.reserved + a.reservable + a.nonReservable)
+      .filter(
+        a =>
+          a.total !==
+          a.reserved + a.reservable + a.nonReservable + a.stored + a.offloaded
+      )
       .map(a =>
-        this.utils.Identity({
-          sku: a.sku,
-          total: a.total,
-          reserved: a.reserved,
-          reservable: a.reservable,
-          nonReservable: a.nonReservable,
-        })
+        pick(a, [
+          "sku",
+          "total",
+          "reserved",
+          "reservable",
+          "nonReservable",
+          "stored",
+          "offloaded",
+        ])
       )
   }
 }

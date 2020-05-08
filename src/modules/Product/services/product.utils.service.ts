@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common"
-import { BrandOrderByInput } from "@prisma/index"
+import { BrandOrderByInput, Category, Product } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
-import { uniqBy } from "lodash"
+import { head, union, uniqBy } from "lodash"
 import slugify from "slugify"
 
 import {
@@ -10,10 +10,33 @@ import {
   Size,
   TopSizeCreateInput,
 } from "../../../prisma"
+import { ProductWithPhysicalProducts } from "../product.types"
 
 @Injectable()
 export class ProductUtilsService {
   constructor(private readonly prisma: PrismaService) {}
+
+  async getAllCategories(prod: Product): Promise<Category[]> {
+    const thisCategory = await this.prisma.client
+      .product({ id: prod.id })
+      .category()
+    return [...(await this.getAllParentCategories(thisCategory)), thisCategory]
+  }
+
+  private async getAllParentCategories(
+    category: Category
+  ): Promise<Category[]> {
+    const parent = head(
+      await this.prisma.client.categories({
+        where: { children_some: { id: category.id } },
+      })
+    )
+    if (!parent) {
+      return []
+    } else {
+      return [...(await this.getAllParentCategories(parent)), parent]
+    }
+  }
 
   async queryOptionsForProducts(args) {
     const category = args.category || "all"
@@ -128,6 +151,13 @@ export class ProductUtilsService {
 
   getProductSlug(brandCode: string, name: string, color: string) {
     return slugify(brandCode + " " + name + " " + color).toLowerCase()
+  }
+
+  physicalProductsForProduct(product: ProductWithPhysicalProducts) {
+    return product.variants.reduce(
+      (acc, curVal) => union(acc, curVal.physicalProducts),
+      []
+    )
   }
 
   private async productsAlphabetically(

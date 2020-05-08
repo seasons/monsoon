@@ -1,0 +1,14 @@
+input SearchOptions {
+  includeTypes: [String]
+}
+
+union SearchResultType = Product | Brand
+
+type SearchResult {
+  data: SearchResultType!
+  score: Float
+}
+
+type Query {
+  search(query: String!, options: SearchOptions): [SearchResult]!
+}

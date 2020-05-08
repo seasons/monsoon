@@ -1,3 +1,6 @@
+import * as fs from "fs"
+
+import { UtilsService } from "@app/modules/Utils"
 import { Injectable } from "@nestjs/common"
 import { isEmpty } from "lodash"
 import slugify from "slugify"
@@ -11,7 +14,8 @@ export class SyncColorsService {
   constructor(
     private readonly airtableService: AirtableService,
     private readonly prisma: PrismaService,
-    private readonly syncUtils: SyncUtilsService
+    private readonly syncUtils: SyncUtilsService,
+    private readonly utils: UtilsService
   ) {}
 
   async syncAirtableToAirtable(cliProgressBar?) {
@@ -38,12 +42,13 @@ export class SyncColorsService {
       modelName: "Colors",
     })
 
+    const logFile = this.utils.openLogFile("syncColors")
     for (const record of records) {
       try {
         _cliProgressBar.increment()
 
         const { model } = record
-        const { name, colorCode, rGB } = model
+        const { name, colorCode, rgb } = model
 
         if (isEmpty(model) || isEmpty(name)) {
           continue
@@ -53,7 +58,7 @@ export class SyncColorsService {
 
         const data = {
           colorCode,
-          hexCode: rGB,
+          hexCode: rgb,
           name,
           slug,
         }
@@ -70,9 +75,11 @@ export class SyncColorsService {
           Slug: slug,
         })
       } catch (e) {
-        console.error(e)
+        console.log(`Check ${logFile}`)
+        this.syncUtils.logSyncError(logFile, record, e)
       }
     }
     multibar?.stop()
+    fs.closeSync(logFile)
   }
 }

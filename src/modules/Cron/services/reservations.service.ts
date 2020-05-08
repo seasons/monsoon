@@ -123,10 +123,10 @@ export class ReservationScheduledJobs {
       // Wrap it in a try/catch so individual sync errors don't stop the whole job
       try {
         this.errorService.setExtraContext({
-          physicalProductSUID: airtablePhysicalProduct.model.sUID.text,
+          physicalProductSUID: airtablePhysicalProduct.model.suid.text,
         })
         const prismaPhysicalProduct = await this.prisma.client.physicalProduct({
-          seasonsUID: airtablePhysicalProduct.model.sUID.text,
+          seasonsUID: airtablePhysicalProduct.model.suid.text,
         })
 
         if (!prismaPhysicalProduct) {

@@ -1,11 +1,12 @@
 import { AirtableService } from "@modules/Airtable/services/airtable.service"
 import { Injectable } from "@nestjs/common"
-import { ID_Input, Product } from "@prisma/index"
+import { ID_Input, InventoryStatus, Product } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
 import { ApolloError } from "apollo-server"
+import { lowerFirst } from "lodash"
 
 import {
-  PhysicalProductService,
+  PhysicalProductUtilsService,
   PhysicalProductWithReservationSpecificData,
 } from "./physicalProduct.utils.service"
 
@@ -13,7 +14,7 @@ import {
 export class ProductVariantService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly physicalProductService: PhysicalProductService,
+    private readonly physicalProductUtilsService: PhysicalProductUtilsService,
     private readonly airtableService: AirtableService
   ) {}
 
@@ -28,7 +29,7 @@ export class ProductVariantService {
       where: { id_in: items },
     })
 
-    const physicalProducts = await this.physicalProductService.getPhysicalProductsWithReservationSpecificData(
+    const physicalProducts = await this.physicalProductUtilsService.getPhysicalProductsWithReservationSpecificData(
       items
     )
 
@@ -55,7 +56,7 @@ export class ProductVariantService {
 
     // Double check that the product variants have a sufficient number of available
     // physical products
-    const availablePhysicalProducts = this.physicalProductService.extractUniqueReservablePhysicalProducts(
+    const availablePhysicalProducts = this.physicalProductUtilsService.extractUniqueReservablePhysicalProducts(
       physicalProducts
     )
     if (availablePhysicalProducts.length < items.length) {
@@ -70,7 +71,7 @@ export class ProductVariantService {
     const allAirtableProductVariants = await this.airtableService.getAllProductVariants()
     const allAirtableProductVariantSlugs = prismaProductVariants.map(a => a.sku)
     const airtableProductVariants = allAirtableProductVariants.filter(a =>
-      allAirtableProductVariantSlugs.includes(a.model.sKU)
+      allAirtableProductVariantSlugs.includes(a.model.sku)
     )
 
     const productsBeingReserved = [] as Product[]
@@ -111,7 +112,7 @@ export class ProductVariantService {
 
           // Airtable record of product variant
           const airtableProductVariant = airtableProductVariants.find(
-            a => a.model.sKU === prismaProductVariant.sku
+            a => a.model.sku === prismaProductVariant.sku
           )
           if (airtableProductVariant) {
             await airtableProductVariant.patchUpdate({
@@ -146,5 +147,27 @@ export class ProductVariantService {
       availablePhysicalProducts,
       rollbackProductVariantCounts,
     ]
+  }
+
+  async updateCountsForStatusChange({
+    id,
+    oldInventoryStatus,
+    newInventoryStatus,
+  }: {
+    id: ID_Input
+    oldInventoryStatus: InventoryStatus
+    newInventoryStatus: InventoryStatus
+  }) {
+    const prodVar = await this.prisma.client.productVariant({ id })
+    const data = {}
+    const oldInventoryCountKey = lowerFirst(oldInventoryStatus)
+    const newInventoryCountKey = lowerFirst(newInventoryStatus)
+    data[oldInventoryCountKey] = prodVar[oldInventoryCountKey] - 1
+    data[newInventoryCountKey] = prodVar[newInventoryCountKey] + 1
+
+    await this.prisma.client.updateProductVariant({
+      where: { id },
+      data,
+    })
   }
 }

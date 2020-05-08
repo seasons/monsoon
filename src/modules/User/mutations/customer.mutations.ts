@@ -1,4 +1,5 @@
 import { Analytics, Customer, User } from "@app/nest_decorators"
+import { PrismaService } from "@app/prisma/prisma.service"
 import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
 import { UserInputError } from "apollo-server"
 
@@ -6,7 +7,10 @@ import { CustomerService } from "../services/customer.service"
 
 @Resolver()
 export class CustomerMutationsResolver {
-  constructor(private readonly customerService: CustomerService) {}
+  constructor(
+    private readonly customerService: CustomerService,
+    private readonly prisma: PrismaService
+  ) {}
 
   @Mutation()
   async addCustomerDetails(
@@ -38,5 +42,16 @@ export class CustomerMutationsResolver {
     }
 
     return returnData
+  }
+
+  @Mutation()
+  async updateCustomer(
+    @Args() args,
+    @Info() info,
+    @Analytics() analytics,
+    @Customer() sessionCustomer,
+    @User() user
+  ) {
+    return this.prisma.binding.mutation.updateCustomer(args, info)
   }
 }
