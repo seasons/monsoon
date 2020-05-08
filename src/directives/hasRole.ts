@@ -1,11 +1,17 @@
+import { PrismaService } from "@app/prisma/prisma.service"
+import { intersection } from "lodash"
+
 import { getEnforcedUser } from "./utils"
 
-export function hasRole(next, source, { roles }, ctx) {
-  // Todo: test when addCustomerDetails mutation is complete
-  const user = getEnforcedUser(ctx)
+export async function hasRole(next, _, { roles: permissibleRoles }, ctx) {
+  const userRoles = await new PrismaService().client
+    .user({ id: getEnforcedUser(ctx).id })
+    .roles()
 
-  if (!roles.includes(user.role)) {
-    throw new Error(`Unauthorized, incorrect role`)
+  if (intersection(permissibleRoles, userRoles).length === 0) {
+    throw new Error(
+      `Unauthorized. Permissible role(s): ${permissibleRoles}. User role(s): ${userRoles}`
+    )
   }
   return next()
 }
