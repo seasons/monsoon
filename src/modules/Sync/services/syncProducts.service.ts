@@ -143,41 +143,7 @@ export class SyncProductsService {
         const { brandCode } = brand.model
         const slug = slugify(brandCode + " " + name + " " + color).toLowerCase()
 
-        const productImages = await this.prisma.client
-          .product({ slug })
-          .images()
-        let imageIDs
-        if (productImages && productImages.length > 0) {
-          // We've already uploaded these images to S3
-          imageIDs = productImages.map(image => ({ id: image.id }))
-        } else {
-          // We have yet to upload these images to S3
-          const imageURLs: string[] = await Promise.all(
-            images.map(async (image, index) => {
-              const s3ImageName = `${brandCode}/${name.replace(/ /g, "_")}/${
-                index + 1
-              }.png`.toLowerCase()
-              return await this.imageService.uploadImageFromURL(
-                image.url,
-                s3ImageName
-              )
-            })
-          )
-
-          // We should only have one Image object for each imageURL so use an upsert
-          const prismaImages = await Promise.all(
-            imageURLs.map(async imageURL => {
-              const imageData = { originalUrl: imageURL }
-              return await this.prisma.client.upsertImage({
-                where: imageData,
-                create: imageData,
-                update: imageData,
-              })
-            })
-          )
-
-          imageIDs = prismaImages.map(image => ({ id: image.id }))
-        }
+        const imageIDs = await this.syncImages(images, slug, brandCode, name)
 
         // Sync model size records
         let modelSizeRecord
@@ -387,5 +353,47 @@ export class SyncProductsService {
       getTargetRecordIdentifer: this.syncSizesService.getSizeRecordIdentifer,
       cliProgressBar,
     })
+  }
+
+  private async syncImages(
+    images: any,
+    slug: string,
+    brandCode: string,
+    name: string
+  ) {
+    const productImages = await this.prisma.client.product({ slug }).images()
+    let imageIDs
+    if (productImages && productImages.length > 0) {
+      // We've already uploaded these images to S3
+      imageIDs = productImages.map(image => ({ id: image.id }))
+    } else {
+      // We have yet to upload these images to S3
+      const imageURLs: string[] = await Promise.all(
+        images.map(async (image, index) => {
+          const s3ImageName = `${brandCode}/${name.replace(/ /g, "_")}/${
+            index + 1
+          }.png`.toLowerCase()
+          return await this.imageService.uploadImageFromURL(
+            image.url,
+            s3ImageName
+          )
+        })
+      )
+
+      // We should only have one Image object for each imageURL so use an upsert
+      const prismaImages = await Promise.all(
+        imageURLs.map(async imageURL => {
+          const imageData = { originalUrl: imageURL }
+          return await this.prisma.client.upsertImage({
+            where: imageData,
+            create: imageData,
+            update: imageData,
+          })
+        })
+      )
+
+      imageIDs = prismaImages.map(image => ({ id: image.id }))
+    }
+    return imageIDs
   }
 }
