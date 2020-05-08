@@ -65,7 +65,7 @@ export interface Exists {
   ) => Promise<boolean>;
 }
 
-export interface Node {}
+export interface Node { }
 
 export type FragmentableArray<T> = Promise<Array<T>> & Fragmentable;
 
@@ -1482,7 +1482,7 @@ export interface Subscription {
 }
 
 export interface ClientConstructor<T> {
-  new (options?: BaseClientOptions): T;
+  new(options?: BaseClientOptions): T;
 }
 
 /**
@@ -1628,6 +1628,8 @@ export type ProductOrderByInput =
   | "description_DESC"
   | "externalURL_ASC"
   | "externalURL_DESC"
+  | "images_ASC"
+  | "images_DESC"
   | "modelHeight_ASC"
   | "modelHeight_DESC"
   | "retailPrice_ASC"
@@ -1657,23 +1659,6 @@ export type CategoryOrderByInput =
   | "visible_ASC"
   | "visible_DESC";
 
-<<<<<<< HEAD
-export type ImageOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "caption_ASC"
-  | "caption_DESC"
-  | "url_ASC"
-  | "url_DESC"
-  | "originalHeight_ASC"
-  | "originalHeight_DESC"
-  | "originalUrl_ASC"
-  | "originalUrl_DESC"
-  | "originalWidth_ASC"
-  | "originalWidth_DESC"
-  | "title_ASC"
-  | "title_DESC"
-=======
 export type TagOrderByInput =
   | "id_ASC"
   | "id_DESC"
@@ -1681,7 +1666,6 @@ export type TagOrderByInput =
   | "name_DESC"
   | "description_ASC"
   | "description_DESC"
->>>>>>> master
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -1931,6 +1915,28 @@ export type HomepageProductRailOrderByInput =
   | "slug_DESC"
   | "name_ASC"
   | "name_DESC";
+
+export type ImageOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "caption_ASC"
+  | "caption_DESC"
+  | "url_ASC"
+  | "url_DESC"
+  | "originalHeight_ASC"
+  | "originalHeight_DESC"
+  | "originalUrl_ASC"
+  | "originalUrl_DESC"
+  | "originalWidth_ASC"
+  | "originalWidth_DESC"
+  | "resizedUrl_ASC"
+  | "resizedUrl_DESC"
+  | "title_ASC"
+  | "title_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
 
 export type LabelOrderByInput =
   | "id_ASC"
@@ -2990,9 +2996,6 @@ export interface ProductWhereInput {
   externalURL_not_starts_with?: Maybe<String>;
   externalURL_ends_with?: Maybe<String>;
   externalURL_not_ends_with?: Maybe<String>;
-  images_every?: Maybe<ImageWhereInput>;
-  images_some?: Maybe<ImageWhereInput>;
-  images_none?: Maybe<ImageWhereInput>;
   modelHeight?: Maybe<Int>;
   modelHeight_not?: Maybe<Int>;
   modelHeight_in?: Maybe<Int[] | Int>;
@@ -3270,114 +3273,6 @@ export interface CategoryWhereInput {
   AND?: Maybe<CategoryWhereInput[] | CategoryWhereInput>;
   OR?: Maybe<CategoryWhereInput[] | CategoryWhereInput>;
   NOT?: Maybe<CategoryWhereInput[] | CategoryWhereInput>;
-}
-
-export interface ImageWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  caption?: Maybe<String>;
-  caption_not?: Maybe<String>;
-  caption_in?: Maybe<String[] | String>;
-  caption_not_in?: Maybe<String[] | String>;
-  caption_lt?: Maybe<String>;
-  caption_lte?: Maybe<String>;
-  caption_gt?: Maybe<String>;
-  caption_gte?: Maybe<String>;
-  caption_contains?: Maybe<String>;
-  caption_not_contains?: Maybe<String>;
-  caption_starts_with?: Maybe<String>;
-  caption_not_starts_with?: Maybe<String>;
-  caption_ends_with?: Maybe<String>;
-  caption_not_ends_with?: Maybe<String>;
-  url?: Maybe<String>;
-  url_not?: Maybe<String>;
-  url_in?: Maybe<String[] | String>;
-  url_not_in?: Maybe<String[] | String>;
-  url_lt?: Maybe<String>;
-  url_lte?: Maybe<String>;
-  url_gt?: Maybe<String>;
-  url_gte?: Maybe<String>;
-  url_contains?: Maybe<String>;
-  url_not_contains?: Maybe<String>;
-  url_starts_with?: Maybe<String>;
-  url_not_starts_with?: Maybe<String>;
-  url_ends_with?: Maybe<String>;
-  url_not_ends_with?: Maybe<String>;
-  originalHeight?: Maybe<Int>;
-  originalHeight_not?: Maybe<Int>;
-  originalHeight_in?: Maybe<Int[] | Int>;
-  originalHeight_not_in?: Maybe<Int[] | Int>;
-  originalHeight_lt?: Maybe<Int>;
-  originalHeight_lte?: Maybe<Int>;
-  originalHeight_gt?: Maybe<Int>;
-  originalHeight_gte?: Maybe<Int>;
-  originalUrl?: Maybe<String>;
-  originalUrl_not?: Maybe<String>;
-  originalUrl_in?: Maybe<String[] | String>;
-  originalUrl_not_in?: Maybe<String[] | String>;
-  originalUrl_lt?: Maybe<String>;
-  originalUrl_lte?: Maybe<String>;
-  originalUrl_gt?: Maybe<String>;
-  originalUrl_gte?: Maybe<String>;
-  originalUrl_contains?: Maybe<String>;
-  originalUrl_not_contains?: Maybe<String>;
-  originalUrl_starts_with?: Maybe<String>;
-  originalUrl_not_starts_with?: Maybe<String>;
-  originalUrl_ends_with?: Maybe<String>;
-  originalUrl_not_ends_with?: Maybe<String>;
-  originalWidth?: Maybe<Int>;
-  originalWidth_not?: Maybe<Int>;
-  originalWidth_in?: Maybe<Int[] | Int>;
-  originalWidth_not_in?: Maybe<Int[] | Int>;
-  originalWidth_lt?: Maybe<Int>;
-  originalWidth_lte?: Maybe<Int>;
-  originalWidth_gt?: Maybe<Int>;
-  originalWidth_gte?: Maybe<Int>;
-  title?: Maybe<String>;
-  title_not?: Maybe<String>;
-  title_in?: Maybe<String[] | String>;
-  title_not_in?: Maybe<String[] | String>;
-  title_lt?: Maybe<String>;
-  title_lte?: Maybe<String>;
-  title_gt?: Maybe<String>;
-  title_gte?: Maybe<String>;
-  title_contains?: Maybe<String>;
-  title_not_contains?: Maybe<String>;
-  title_starts_with?: Maybe<String>;
-  title_not_starts_with?: Maybe<String>;
-  title_ends_with?: Maybe<String>;
-  title_not_ends_with?: Maybe<String>;
-  createdAt?: Maybe<DateTimeInput>;
-  createdAt_not?: Maybe<DateTimeInput>;
-  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_lt?: Maybe<DateTimeInput>;
-  createdAt_lte?: Maybe<DateTimeInput>;
-  createdAt_gt?: Maybe<DateTimeInput>;
-  createdAt_gte?: Maybe<DateTimeInput>;
-  updatedAt?: Maybe<DateTimeInput>;
-  updatedAt_not?: Maybe<DateTimeInput>;
-  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_lt?: Maybe<DateTimeInput>;
-  updatedAt_lte?: Maybe<DateTimeInput>;
-  updatedAt_gt?: Maybe<DateTimeInput>;
-  updatedAt_gte?: Maybe<DateTimeInput>;
-  AND?: Maybe<ImageWhereInput[] | ImageWhereInput>;
-  OR?: Maybe<ImageWhereInput[] | ImageWhereInput>;
-  NOT?: Maybe<ImageWhereInput[] | ImageWhereInput>;
 }
 
 export interface ProductModelWhereInput {
@@ -4633,8 +4528,129 @@ export interface HomepageProductRailWhereInput {
 
 export type ImageWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
-  originalUrl?: Maybe<String>;
 }>;
+
+export interface ImageWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  caption?: Maybe<String>;
+  caption_not?: Maybe<String>;
+  caption_in?: Maybe<String[] | String>;
+  caption_not_in?: Maybe<String[] | String>;
+  caption_lt?: Maybe<String>;
+  caption_lte?: Maybe<String>;
+  caption_gt?: Maybe<String>;
+  caption_gte?: Maybe<String>;
+  caption_contains?: Maybe<String>;
+  caption_not_contains?: Maybe<String>;
+  caption_starts_with?: Maybe<String>;
+  caption_not_starts_with?: Maybe<String>;
+  caption_ends_with?: Maybe<String>;
+  caption_not_ends_with?: Maybe<String>;
+  url?: Maybe<String>;
+  url_not?: Maybe<String>;
+  url_in?: Maybe<String[] | String>;
+  url_not_in?: Maybe<String[] | String>;
+  url_lt?: Maybe<String>;
+  url_lte?: Maybe<String>;
+  url_gt?: Maybe<String>;
+  url_gte?: Maybe<String>;
+  url_contains?: Maybe<String>;
+  url_not_contains?: Maybe<String>;
+  url_starts_with?: Maybe<String>;
+  url_not_starts_with?: Maybe<String>;
+  url_ends_with?: Maybe<String>;
+  url_not_ends_with?: Maybe<String>;
+  originalHeight?: Maybe<Int>;
+  originalHeight_not?: Maybe<Int>;
+  originalHeight_in?: Maybe<Int[] | Int>;
+  originalHeight_not_in?: Maybe<Int[] | Int>;
+  originalHeight_lt?: Maybe<Int>;
+  originalHeight_lte?: Maybe<Int>;
+  originalHeight_gt?: Maybe<Int>;
+  originalHeight_gte?: Maybe<Int>;
+  originalUrl?: Maybe<String>;
+  originalUrl_not?: Maybe<String>;
+  originalUrl_in?: Maybe<String[] | String>;
+  originalUrl_not_in?: Maybe<String[] | String>;
+  originalUrl_lt?: Maybe<String>;
+  originalUrl_lte?: Maybe<String>;
+  originalUrl_gt?: Maybe<String>;
+  originalUrl_gte?: Maybe<String>;
+  originalUrl_contains?: Maybe<String>;
+  originalUrl_not_contains?: Maybe<String>;
+  originalUrl_starts_with?: Maybe<String>;
+  originalUrl_not_starts_with?: Maybe<String>;
+  originalUrl_ends_with?: Maybe<String>;
+  originalUrl_not_ends_with?: Maybe<String>;
+  originalWidth?: Maybe<Int>;
+  originalWidth_not?: Maybe<Int>;
+  originalWidth_in?: Maybe<Int[] | Int>;
+  originalWidth_not_in?: Maybe<Int[] | Int>;
+  originalWidth_lt?: Maybe<Int>;
+  originalWidth_lte?: Maybe<Int>;
+  originalWidth_gt?: Maybe<Int>;
+  originalWidth_gte?: Maybe<Int>;
+  resizedUrl?: Maybe<String>;
+  resizedUrl_not?: Maybe<String>;
+  resizedUrl_in?: Maybe<String[] | String>;
+  resizedUrl_not_in?: Maybe<String[] | String>;
+  resizedUrl_lt?: Maybe<String>;
+  resizedUrl_lte?: Maybe<String>;
+  resizedUrl_gt?: Maybe<String>;
+  resizedUrl_gte?: Maybe<String>;
+  resizedUrl_contains?: Maybe<String>;
+  resizedUrl_not_contains?: Maybe<String>;
+  resizedUrl_starts_with?: Maybe<String>;
+  resizedUrl_not_starts_with?: Maybe<String>;
+  resizedUrl_ends_with?: Maybe<String>;
+  resizedUrl_not_ends_with?: Maybe<String>;
+  title?: Maybe<String>;
+  title_not?: Maybe<String>;
+  title_in?: Maybe<String[] | String>;
+  title_not_in?: Maybe<String[] | String>;
+  title_lt?: Maybe<String>;
+  title_lte?: Maybe<String>;
+  title_gt?: Maybe<String>;
+  title_gte?: Maybe<String>;
+  title_contains?: Maybe<String>;
+  title_not_contains?: Maybe<String>;
+  title_starts_with?: Maybe<String>;
+  title_not_starts_with?: Maybe<String>;
+  title_ends_with?: Maybe<String>;
+  title_not_ends_with?: Maybe<String>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<ImageWhereInput[] | ImageWhereInput>;
+  OR?: Maybe<ImageWhereInput[] | ImageWhereInput>;
+  NOT?: Maybe<ImageWhereInput[] | ImageWhereInput>;
+}
 
 export type LabelWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
@@ -5311,7 +5327,7 @@ export interface ProductCreateWithoutVariantsInput {
   type?: Maybe<ProductType>;
   description?: Maybe<String>;
   externalURL?: Maybe<String>;
-  images?: Maybe<ImageCreateManyInput>;
+  images?: Maybe<Json>;
   modelHeight?: Maybe<Int>;
   retailPrice?: Maybe<Int>;
   model?: Maybe<ProductModelCreateOneWithoutProductsInput>;
@@ -5393,7 +5409,7 @@ export interface ProductCreateWithoutCategoryInput {
   type?: Maybe<ProductType>;
   description?: Maybe<String>;
   externalURL?: Maybe<String>;
-  images?: Maybe<ImageCreateManyInput>;
+  images?: Maybe<Json>;
   modelHeight?: Maybe<Int>;
   retailPrice?: Maybe<Int>;
   model?: Maybe<ProductModelCreateOneWithoutProductsInput>;
@@ -5408,21 +5424,6 @@ export interface ProductCreateWithoutCategoryInput {
   status?: Maybe<ProductStatus>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
-}
-
-export interface ImageCreateManyInput {
-  create?: Maybe<ImageCreateInput[] | ImageCreateInput>;
-  connect?: Maybe<ImageWhereUniqueInput[] | ImageWhereUniqueInput>;
-}
-
-export interface ImageCreateInput {
-  id?: Maybe<ID_Input>;
-  caption?: Maybe<String>;
-  url?: Maybe<String>;
-  originalHeight?: Maybe<Int>;
-  originalUrl: String;
-  originalWidth?: Maybe<Int>;
-  title?: Maybe<String>;
 }
 
 export interface ProductModelCreateOneWithoutProductsInput {
@@ -6142,7 +6143,7 @@ export interface ProductUpdateWithoutVariantsDataInput {
   type?: Maybe<ProductType>;
   description?: Maybe<String>;
   externalURL?: Maybe<String>;
-  images?: Maybe<ImageUpdateManyInput>;
+  images?: Maybe<Json>;
   modelHeight?: Maybe<Int>;
   retailPrice?: Maybe<Int>;
   model?: Maybe<ProductModelUpdateOneWithoutProductsInput>;
@@ -6271,192 +6272,6 @@ export interface ProductUpdateWithoutCategoryDataInput {
   type?: Maybe<ProductType>;
   description?: Maybe<String>;
   externalURL?: Maybe<String>;
-  images?: Maybe<ImageUpdateManyInput>;
-  modelHeight?: Maybe<Int>;
-  retailPrice?: Maybe<Int>;
-  model?: Maybe<ProductModelUpdateOneWithoutProductsInput>;
-  modelSize?: Maybe<SizeUpdateOneInput>;
-  color?: Maybe<ColorUpdateOneRequiredInput>;
-  secondaryColor?: Maybe<ColorUpdateOneInput>;
-  tags?: Maybe<Json>;
-  functions?: Maybe<ProductFunctionUpdateManyInput>;
-  innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
-  outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
-  variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
-  status?: Maybe<ProductStatus>;
-  season?: Maybe<String>;
-  architecture?: Maybe<ProductArchitecture>;
-}
-
-export interface ImageUpdateManyInput {
-  create?: Maybe<ImageCreateInput[] | ImageCreateInput>;
-  update?: Maybe<
-    | ImageUpdateWithWhereUniqueNestedInput[]
-    | ImageUpdateWithWhereUniqueNestedInput
-  >;
-  upsert?: Maybe<
-    | ImageUpsertWithWhereUniqueNestedInput[]
-    | ImageUpsertWithWhereUniqueNestedInput
-  >;
-  delete?: Maybe<ImageWhereUniqueInput[] | ImageWhereUniqueInput>;
-  connect?: Maybe<ImageWhereUniqueInput[] | ImageWhereUniqueInput>;
-  set?: Maybe<ImageWhereUniqueInput[] | ImageWhereUniqueInput>;
-  disconnect?: Maybe<ImageWhereUniqueInput[] | ImageWhereUniqueInput>;
-  deleteMany?: Maybe<ImageScalarWhereInput[] | ImageScalarWhereInput>;
-  updateMany?: Maybe<
-    ImageUpdateManyWithWhereNestedInput[] | ImageUpdateManyWithWhereNestedInput
-  >;
-}
-
-export interface ImageUpdateWithWhereUniqueNestedInput {
-  where: ImageWhereUniqueInput;
-  data: ImageUpdateDataInput;
-}
-
-export interface ImageUpdateDataInput {
-  caption?: Maybe<String>;
-  url?: Maybe<String>;
-  originalHeight?: Maybe<Int>;
-  originalUrl?: Maybe<String>;
-  originalWidth?: Maybe<Int>;
-  title?: Maybe<String>;
-}
-
-export interface ImageUpsertWithWhereUniqueNestedInput {
-  where: ImageWhereUniqueInput;
-  update: ImageUpdateDataInput;
-  create: ImageCreateInput;
-}
-
-export interface ImageScalarWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  caption?: Maybe<String>;
-  caption_not?: Maybe<String>;
-  caption_in?: Maybe<String[] | String>;
-  caption_not_in?: Maybe<String[] | String>;
-  caption_lt?: Maybe<String>;
-  caption_lte?: Maybe<String>;
-  caption_gt?: Maybe<String>;
-  caption_gte?: Maybe<String>;
-  caption_contains?: Maybe<String>;
-  caption_not_contains?: Maybe<String>;
-  caption_starts_with?: Maybe<String>;
-  caption_not_starts_with?: Maybe<String>;
-  caption_ends_with?: Maybe<String>;
-  caption_not_ends_with?: Maybe<String>;
-  url?: Maybe<String>;
-  url_not?: Maybe<String>;
-  url_in?: Maybe<String[] | String>;
-  url_not_in?: Maybe<String[] | String>;
-  url_lt?: Maybe<String>;
-  url_lte?: Maybe<String>;
-  url_gt?: Maybe<String>;
-  url_gte?: Maybe<String>;
-  url_contains?: Maybe<String>;
-  url_not_contains?: Maybe<String>;
-  url_starts_with?: Maybe<String>;
-  url_not_starts_with?: Maybe<String>;
-  url_ends_with?: Maybe<String>;
-  url_not_ends_with?: Maybe<String>;
-  originalHeight?: Maybe<Int>;
-  originalHeight_not?: Maybe<Int>;
-  originalHeight_in?: Maybe<Int[] | Int>;
-  originalHeight_not_in?: Maybe<Int[] | Int>;
-  originalHeight_lt?: Maybe<Int>;
-  originalHeight_lte?: Maybe<Int>;
-  originalHeight_gt?: Maybe<Int>;
-  originalHeight_gte?: Maybe<Int>;
-  originalUrl?: Maybe<String>;
-  originalUrl_not?: Maybe<String>;
-  originalUrl_in?: Maybe<String[] | String>;
-  originalUrl_not_in?: Maybe<String[] | String>;
-  originalUrl_lt?: Maybe<String>;
-  originalUrl_lte?: Maybe<String>;
-  originalUrl_gt?: Maybe<String>;
-  originalUrl_gte?: Maybe<String>;
-  originalUrl_contains?: Maybe<String>;
-  originalUrl_not_contains?: Maybe<String>;
-  originalUrl_starts_with?: Maybe<String>;
-  originalUrl_not_starts_with?: Maybe<String>;
-  originalUrl_ends_with?: Maybe<String>;
-  originalUrl_not_ends_with?: Maybe<String>;
-  originalWidth?: Maybe<Int>;
-  originalWidth_not?: Maybe<Int>;
-  originalWidth_in?: Maybe<Int[] | Int>;
-  originalWidth_not_in?: Maybe<Int[] | Int>;
-  originalWidth_lt?: Maybe<Int>;
-  originalWidth_lte?: Maybe<Int>;
-  originalWidth_gt?: Maybe<Int>;
-  originalWidth_gte?: Maybe<Int>;
-  title?: Maybe<String>;
-  title_not?: Maybe<String>;
-  title_in?: Maybe<String[] | String>;
-  title_not_in?: Maybe<String[] | String>;
-  title_lt?: Maybe<String>;
-  title_lte?: Maybe<String>;
-  title_gt?: Maybe<String>;
-  title_gte?: Maybe<String>;
-  title_contains?: Maybe<String>;
-  title_not_contains?: Maybe<String>;
-  title_starts_with?: Maybe<String>;
-  title_not_starts_with?: Maybe<String>;
-  title_ends_with?: Maybe<String>;
-  title_not_ends_with?: Maybe<String>;
-  createdAt?: Maybe<DateTimeInput>;
-  createdAt_not?: Maybe<DateTimeInput>;
-  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_lt?: Maybe<DateTimeInput>;
-  createdAt_lte?: Maybe<DateTimeInput>;
-  createdAt_gt?: Maybe<DateTimeInput>;
-  createdAt_gte?: Maybe<DateTimeInput>;
-  updatedAt?: Maybe<DateTimeInput>;
-  updatedAt_not?: Maybe<DateTimeInput>;
-  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_lt?: Maybe<DateTimeInput>;
-  updatedAt_lte?: Maybe<DateTimeInput>;
-  updatedAt_gt?: Maybe<DateTimeInput>;
-  updatedAt_gte?: Maybe<DateTimeInput>;
-  AND?: Maybe<ImageScalarWhereInput[] | ImageScalarWhereInput>;
-  OR?: Maybe<ImageScalarWhereInput[] | ImageScalarWhereInput>;
-  NOT?: Maybe<ImageScalarWhereInput[] | ImageScalarWhereInput>;
-}
-
-export interface ImageUpdateManyWithWhereNestedInput {
-  where: ImageScalarWhereInput;
-  data: ImageUpdateManyDataInput;
-}
-
-<<<<<<< HEAD
-export interface ImageUpdateManyDataInput {
-  caption?: Maybe<String>;
-  url?: Maybe<String>;
-  originalHeight?: Maybe<Int>;
-  originalUrl?: Maybe<String>;
-  originalWidth?: Maybe<Int>;
-  title?: Maybe<String>;
-=======
-export interface ProductUpdateWithoutCategoryDataInput {
-  slug?: Maybe<String>;
-  name?: Maybe<String>;
-  brand?: Maybe<BrandUpdateOneRequiredWithoutProductsInput>;
-  type?: Maybe<ProductType>;
-  description?: Maybe<String>;
-  externalURL?: Maybe<String>;
   images?: Maybe<Json>;
   modelHeight?: Maybe<Int>;
   retailPrice?: Maybe<Int>;
@@ -6472,7 +6287,6 @@ export interface ProductUpdateWithoutCategoryDataInput {
   status?: Maybe<ProductStatus>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
->>>>>>> master
 }
 
 export interface ProductModelUpdateOneWithoutProductsInput {
@@ -7549,6 +7363,7 @@ export interface ProductUpdateManyDataInput {
   type?: Maybe<ProductType>;
   description?: Maybe<String>;
   externalURL?: Maybe<String>;
+  images?: Maybe<Json>;
   modelHeight?: Maybe<Int>;
   retailPrice?: Maybe<Int>;
   innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
@@ -8066,7 +7881,7 @@ export interface ProductCreateWithoutBrandInput {
   type?: Maybe<ProductType>;
   description?: Maybe<String>;
   externalURL?: Maybe<String>;
-  images?: Maybe<ImageCreateManyInput>;
+  images?: Maybe<Json>;
   modelHeight?: Maybe<Int>;
   retailPrice?: Maybe<Int>;
   model?: Maybe<ProductModelCreateOneWithoutProductsInput>;
@@ -8132,7 +7947,7 @@ export interface ProductUpdateWithoutBrandDataInput {
   type?: Maybe<ProductType>;
   description?: Maybe<String>;
   externalURL?: Maybe<String>;
-  images?: Maybe<ImageUpdateManyInput>;
+  images?: Maybe<Json>;
   modelHeight?: Maybe<Int>;
   retailPrice?: Maybe<Int>;
   model?: Maybe<ProductModelUpdateOneWithoutProductsInput>;
@@ -8211,7 +8026,7 @@ export interface ProductCreateInput {
   type?: Maybe<ProductType>;
   description?: Maybe<String>;
   externalURL?: Maybe<String>;
-  images?: Maybe<ImageCreateManyInput>;
+  images?: Maybe<Json>;
   modelHeight?: Maybe<Int>;
   retailPrice?: Maybe<Int>;
   model?: Maybe<ProductModelCreateOneWithoutProductsInput>;
@@ -8272,7 +8087,7 @@ export interface ProductUpdateDataInput {
   type?: Maybe<ProductType>;
   description?: Maybe<String>;
   externalURL?: Maybe<String>;
-  images?: Maybe<ImageUpdateManyInput>;
+  images?: Maybe<Json>;
   modelHeight?: Maybe<Int>;
   retailPrice?: Maybe<Int>;
   model?: Maybe<ProductModelUpdateOneWithoutProductsInput>;
@@ -8679,12 +8494,24 @@ export interface HomepageProductRailUpdateManyMutationInput {
   name?: Maybe<String>;
 }
 
+export interface ImageCreateInput {
+  id?: Maybe<ID_Input>;
+  caption?: Maybe<String>;
+  url?: Maybe<String>;
+  originalHeight?: Maybe<Int>;
+  originalUrl: String;
+  originalWidth?: Maybe<Int>;
+  resizedUrl: String;
+  title?: Maybe<String>;
+}
+
 export interface ImageUpdateInput {
   caption?: Maybe<String>;
   url?: Maybe<String>;
   originalHeight?: Maybe<Int>;
   originalUrl?: Maybe<String>;
   originalWidth?: Maybe<Int>;
+  resizedUrl?: Maybe<String>;
   title?: Maybe<String>;
 }
 
@@ -8694,6 +8521,7 @@ export interface ImageUpdateManyMutationInput {
   originalHeight?: Maybe<Int>;
   originalUrl?: Maybe<String>;
   originalWidth?: Maybe<Int>;
+  resizedUrl?: Maybe<String>;
   title?: Maybe<String>;
 }
 
@@ -8790,7 +8618,7 @@ export interface ProductUpdateInput {
   type?: Maybe<ProductType>;
   description?: Maybe<String>;
   externalURL?: Maybe<String>;
-  images?: Maybe<ImageUpdateManyInput>;
+  images?: Maybe<Json>;
   modelHeight?: Maybe<Int>;
   retailPrice?: Maybe<Int>;
   model?: Maybe<ProductModelUpdateOneWithoutProductsInput>;
@@ -8813,6 +8641,7 @@ export interface ProductUpdateManyMutationInput {
   type?: Maybe<ProductType>;
   description?: Maybe<String>;
   externalURL?: Maybe<String>;
+  images?: Maybe<Json>;
   modelHeight?: Maybe<Int>;
   retailPrice?: Maybe<Int>;
   innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
@@ -8853,7 +8682,7 @@ export interface ProductCreateWithoutModelInput {
   type?: Maybe<ProductType>;
   description?: Maybe<String>;
   externalURL?: Maybe<String>;
-  images?: Maybe<ImageCreateManyInput>;
+  images?: Maybe<Json>;
   modelHeight?: Maybe<Int>;
   retailPrice?: Maybe<Int>;
   modelSize?: Maybe<SizeCreateOneInput>;
@@ -8911,7 +8740,7 @@ export interface ProductUpdateWithoutModelDataInput {
   type?: Maybe<ProductType>;
   description?: Maybe<String>;
   externalURL?: Maybe<String>;
-  images?: Maybe<ImageUpdateManyInput>;
+  images?: Maybe<Json>;
   modelHeight?: Maybe<Int>;
   retailPrice?: Maybe<Int>;
   modelSize?: Maybe<SizeUpdateOneInput>;
@@ -10642,7 +10471,7 @@ export interface BagItemPromise extends Promise<BagItem>, Fragmentable {
 
 export interface BagItemSubscription
   extends Promise<AsyncIterator<BagItem>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   customer: <T = CustomerSubscription>() => T;
   productVariant: <T = ProductVariantSubscription>() => T;
@@ -10653,7 +10482,7 @@ export interface BagItemSubscription
 
 export interface BagItemNullablePromise
   extends Promise<BagItem | null>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   customer: <T = CustomerPromise>() => T;
   productVariant: <T = ProductVariantPromise>() => T;
@@ -10697,7 +10526,7 @@ export interface CustomerPromise extends Promise<Customer>, Fragmentable {
 
 export interface CustomerSubscription
   extends Promise<AsyncIterator<Customer>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   user: <T = UserSubscription>() => T;
   status: () => Promise<AsyncIterator<CustomerStatus>>;
@@ -10726,7 +10555,7 @@ export interface CustomerSubscription
 
 export interface CustomerNullablePromise
   extends Promise<Customer | null>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   user: <T = UserPromise>() => T;
   status: () => Promise<CustomerStatus>;
@@ -10779,7 +10608,7 @@ export interface UserPromise extends Promise<User>, Fragmentable {
 
 export interface UserSubscription
   extends Promise<AsyncIterator<User>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   auth0Id: () => Promise<AsyncIterator<String>>;
   email: () => Promise<AsyncIterator<String>>;
@@ -10793,7 +10622,7 @@ export interface UserSubscription
 
 export interface UserNullablePromise
   extends Promise<User | null>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   auth0Id: () => Promise<String>;
   email: () => Promise<String>;
@@ -10831,7 +10660,7 @@ export interface CustomerDetail {
 
 export interface CustomerDetailPromise
   extends Promise<CustomerDetail>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   phoneNumber: () => Promise<String>;
   birthday: () => Promise<DateTimeOutput>;
@@ -10858,7 +10687,7 @@ export interface CustomerDetailPromise
 
 export interface CustomerDetailSubscription
   extends Promise<AsyncIterator<CustomerDetail>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   phoneNumber: () => Promise<AsyncIterator<String>>;
   birthday: () => Promise<AsyncIterator<DateTimeOutput>>;
@@ -10885,7 +10714,7 @@ export interface CustomerDetailSubscription
 
 export interface CustomerDetailNullablePromise
   extends Promise<CustomerDetail | null>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   phoneNumber: () => Promise<String>;
   birthday: () => Promise<DateTimeOutput>;
@@ -10958,7 +10787,7 @@ export interface LocationPromise extends Promise<Location>, Fragmentable {
 
 export interface LocationSubscription
   extends Promise<AsyncIterator<Location>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   slug: () => Promise<AsyncIterator<String>>;
   name: () => Promise<AsyncIterator<String>>;
@@ -10975,22 +10804,22 @@ export interface LocationSubscription
   lng: () => Promise<AsyncIterator<Float>>;
   physicalProducts: <
     T = Promise<AsyncIterator<PhysicalProductSubscription>>
-  >(args?: {
-    where?: PhysicalProductWhereInput;
-    orderBy?: PhysicalProductOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
+    >(args?: {
+      where?: PhysicalProductWhereInput;
+      orderBy?: PhysicalProductOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }) => T;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
 export interface LocationNullablePromise
   extends Promise<Location | null>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   slug: () => Promise<String>;
   name: () => Promise<String>;
@@ -11033,7 +10862,7 @@ export interface PhysicalProduct {
 
 export interface PhysicalProductPromise
   extends Promise<PhysicalProduct>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   seasonsUID: () => Promise<String>;
   location: <T = LocationPromise>() => T;
@@ -11051,7 +10880,7 @@ export interface PhysicalProductPromise
 
 export interface PhysicalProductSubscription
   extends Promise<AsyncIterator<PhysicalProduct>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   seasonsUID: () => Promise<AsyncIterator<String>>;
   location: <T = LocationSubscription>() => T;
@@ -11069,7 +10898,7 @@ export interface PhysicalProductSubscription
 
 export interface PhysicalProductNullablePromise
   extends Promise<PhysicalProduct | null>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   seasonsUID: () => Promise<String>;
   location: <T = LocationPromise>() => T;
@@ -11104,7 +10933,7 @@ export interface ProductVariant {
 
 export interface ProductVariantPromise
   extends Promise<ProductVariant>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   sku: () => Promise<String>;
   color: <T = ColorPromise>() => T;
@@ -11144,7 +10973,7 @@ export interface ProductVariantPromise
 
 export interface ProductVariantSubscription
   extends Promise<AsyncIterator<ProductVariant>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   sku: () => Promise<AsyncIterator<String>>;
   color: <T = ColorSubscription>() => T;
@@ -11165,15 +10994,15 @@ export interface ProductVariantSubscription
   retailPrice: () => Promise<AsyncIterator<Float>>;
   physicalProducts: <
     T = Promise<AsyncIterator<PhysicalProductSubscription>>
-  >(args?: {
-    where?: PhysicalProductWhereInput;
-    orderBy?: PhysicalProductOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
+    >(args?: {
+      where?: PhysicalProductWhereInput;
+      orderBy?: PhysicalProductOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }) => T;
   total: () => Promise<AsyncIterator<Int>>;
   reservable: () => Promise<AsyncIterator<Int>>;
   reserved: () => Promise<AsyncIterator<Int>>;
@@ -11186,7 +11015,7 @@ export interface ProductVariantSubscription
 
 export interface ProductVariantNullablePromise
   extends Promise<ProductVariant | null>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   sku: () => Promise<String>;
   color: <T = ColorPromise>() => T;
@@ -11251,7 +11080,7 @@ export interface ColorPromise extends Promise<Color>, Fragmentable {
 
 export interface ColorSubscription
   extends Promise<AsyncIterator<Color>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   slug: () => Promise<AsyncIterator<String>>;
   name: () => Promise<AsyncIterator<String>>;
@@ -11259,20 +11088,20 @@ export interface ColorSubscription
   hexCode: () => Promise<AsyncIterator<String>>;
   productVariants: <
     T = Promise<AsyncIterator<ProductVariantSubscription>>
-  >(args?: {
-    where?: ProductVariantWhereInput;
-    orderBy?: ProductVariantOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
+    >(args?: {
+      where?: ProductVariantWhereInput;
+      orderBy?: ProductVariantOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }) => T;
 }
 
 export interface ColorNullablePromise
   extends Promise<Color | null>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   slug: () => Promise<String>;
   name: () => Promise<String>;
@@ -11307,7 +11136,7 @@ export interface SizePromise extends Promise<Size>, Fragmentable {
 
 export interface SizeSubscription
   extends Promise<AsyncIterator<Size>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   slug: () => Promise<AsyncIterator<String>>;
   productType: () => Promise<AsyncIterator<ProductType>>;
@@ -11318,7 +11147,7 @@ export interface SizeSubscription
 
 export interface SizeNullablePromise
   extends Promise<Size | null>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   slug: () => Promise<String>;
   productType: () => Promise<ProductType>;
@@ -11349,7 +11178,7 @@ export interface TopSizePromise extends Promise<TopSize>, Fragmentable {
 
 export interface TopSizeSubscription
   extends Promise<AsyncIterator<TopSize>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   letter: () => Promise<AsyncIterator<LetterSize>>;
   sleeve: () => Promise<AsyncIterator<Float>>;
@@ -11361,7 +11190,7 @@ export interface TopSizeSubscription
 
 export interface TopSizeNullablePromise
   extends Promise<TopSize | null>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   letter: () => Promise<LetterSize>;
   sleeve: () => Promise<Float>;
@@ -11393,7 +11222,7 @@ export interface BottomSizePromise extends Promise<BottomSize>, Fragmentable {
 
 export interface BottomSizeSubscription
   extends Promise<AsyncIterator<BottomSize>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   type: () => Promise<AsyncIterator<BottomSizeType>>;
   value: () => Promise<AsyncIterator<String>>;
@@ -11405,7 +11234,7 @@ export interface BottomSizeSubscription
 
 export interface BottomSizeNullablePromise
   extends Promise<BottomSize | null>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   type: () => Promise<BottomSizeType>;
   value: () => Promise<String>;
@@ -11422,6 +11251,7 @@ export interface Product {
   type?: ProductType;
   description?: String;
   externalURL?: String;
+  images?: Json;
   modelHeight?: Int;
   retailPrice?: Int;
   innerMaterials: String[];
@@ -11442,15 +11272,7 @@ export interface ProductPromise extends Promise<Product>, Fragmentable {
   type: () => Promise<ProductType>;
   description: () => Promise<String>;
   externalURL: () => Promise<String>;
-  images: <T = FragmentableArray<Image>>(args?: {
-    where?: ImageWhereInput;
-    orderBy?: ImageOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
+  images: () => Promise<Json>;
   modelHeight: () => Promise<Int>;
   retailPrice: () => Promise<Int>;
   model: <T = ProductModelPromise>() => T;
@@ -11495,7 +11317,7 @@ export interface ProductPromise extends Promise<Product>, Fragmentable {
 
 export interface ProductSubscription
   extends Promise<AsyncIterator<Product>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   slug: () => Promise<AsyncIterator<String>>;
   name: () => Promise<AsyncIterator<String>>;
@@ -11504,15 +11326,7 @@ export interface ProductSubscription
   type: () => Promise<AsyncIterator<ProductType>>;
   description: () => Promise<AsyncIterator<String>>;
   externalURL: () => Promise<AsyncIterator<String>>;
-  images: <T = Promise<AsyncIterator<ImageSubscription>>>(args?: {
-    where?: ImageWhereInput;
-    orderBy?: ImageOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
+  images: () => Promise<AsyncIterator<Json>>;
   modelHeight: () => Promise<AsyncIterator<Int>>;
   retailPrice: () => Promise<AsyncIterator<Int>>;
   model: <T = ProductModelSubscription>() => T;
@@ -11557,7 +11371,7 @@ export interface ProductSubscription
 
 export interface ProductNullablePromise
   extends Promise<Product | null>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   slug: () => Promise<String>;
   name: () => Promise<String>;
@@ -11566,15 +11380,7 @@ export interface ProductNullablePromise
   type: () => Promise<ProductType>;
   description: () => Promise<String>;
   externalURL: () => Promise<String>;
-  images: <T = FragmentableArray<Image>>(args?: {
-    where?: ImageWhereInput;
-    orderBy?: ImageOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
+  images: () => Promise<Json>;
   modelHeight: () => Promise<Int>;
   retailPrice: () => Promise<Int>;
   model: <T = ProductModelPromise>() => T;
@@ -11660,7 +11466,7 @@ export interface BrandPromise extends Promise<Brand>, Fragmentable {
 
 export interface BrandSubscription
   extends Promise<AsyncIterator<Brand>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   slug: () => Promise<AsyncIterator<String>>;
   brandCode: () => Promise<AsyncIterator<String>>;
@@ -11687,7 +11493,7 @@ export interface BrandSubscription
 
 export interface BrandNullablePromise
   extends Promise<Brand | null>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   slug: () => Promise<String>;
   brandCode: () => Promise<String>;
@@ -11750,7 +11556,7 @@ export interface CategoryPromise extends Promise<Category>, Fragmentable {
 
 export interface CategorySubscription
   extends Promise<AsyncIterator<Category>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   slug: () => Promise<AsyncIterator<String>>;
   name: () => Promise<AsyncIterator<String>>;
@@ -11779,7 +11585,7 @@ export interface CategorySubscription
 
 export interface CategoryNullablePromise
   extends Promise<Category | null>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   slug: () => Promise<String>;
   name: () => Promise<String>;
@@ -11806,58 +11612,6 @@ export interface CategoryNullablePromise
   }) => T;
 }
 
-export interface Image {
-  id: ID_Output;
-  caption?: String;
-  url?: String;
-  originalHeight?: Int;
-  originalUrl: String;
-  originalWidth?: Int;
-  title?: String;
-  createdAt: DateTimeOutput;
-  updatedAt: DateTimeOutput;
-}
-
-export interface ImagePromise extends Promise<Image>, Fragmentable {
-  id: () => Promise<ID_Output>;
-  caption: () => Promise<String>;
-  url: () => Promise<String>;
-  originalHeight: () => Promise<Int>;
-  originalUrl: () => Promise<String>;
-  originalWidth: () => Promise<Int>;
-  title: () => Promise<String>;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
-}
-
-export interface ImageSubscription
-  extends Promise<AsyncIterator<Image>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  caption: () => Promise<AsyncIterator<String>>;
-  url: () => Promise<AsyncIterator<String>>;
-  originalHeight: () => Promise<AsyncIterator<Int>>;
-  originalUrl: () => Promise<AsyncIterator<String>>;
-  originalWidth: () => Promise<AsyncIterator<Int>>;
-  title: () => Promise<AsyncIterator<String>>;
-  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-}
-
-export interface ImageNullablePromise
-  extends Promise<Image | null>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  caption: () => Promise<String>;
-  url: () => Promise<String>;
-  originalHeight: () => Promise<Int>;
-  originalUrl: () => Promise<String>;
-  originalWidth: () => Promise<Int>;
-  title: () => Promise<String>;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
-}
-
 export interface ProductModel {
   id: ID_Output;
   name: String;
@@ -11866,7 +11620,7 @@ export interface ProductModel {
 
 export interface ProductModelPromise
   extends Promise<ProductModel>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   name: () => Promise<String>;
   height: () => Promise<Float>;
@@ -11883,7 +11637,7 @@ export interface ProductModelPromise
 
 export interface ProductModelSubscription
   extends Promise<AsyncIterator<ProductModel>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   name: () => Promise<AsyncIterator<String>>;
   height: () => Promise<AsyncIterator<Float>>;
@@ -11900,7 +11654,7 @@ export interface ProductModelSubscription
 
 export interface ProductModelNullablePromise
   extends Promise<ProductModel | null>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   name: () => Promise<String>;
   height: () => Promise<Float>;
@@ -11942,7 +11696,7 @@ export interface TagPromise extends Promise<Tag>, Fragmentable {
 
 export interface TagSubscription
   extends Promise<AsyncIterator<Tag>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   name: () => Promise<AsyncIterator<String>>;
   description: () => Promise<AsyncIterator<String>>;
@@ -11983,21 +11737,21 @@ export interface ProductFunction {
 
 export interface ProductFunctionPromise
   extends Promise<ProductFunction>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   name: () => Promise<String>;
 }
 
 export interface ProductFunctionSubscription
   extends Promise<AsyncIterator<ProductFunction>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   name: () => Promise<AsyncIterator<String>>;
 }
 
 export interface ProductFunctionNullablePromise
   extends Promise<ProductFunction | null>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   name: () => Promise<String>;
 }
@@ -12014,7 +11768,7 @@ export interface WarehouseLocation {
 
 export interface WarehouseLocationPromise
   extends Promise<WarehouseLocation>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   type: () => Promise<WarehouseLocationType>;
   barcode: () => Promise<String>;
@@ -12044,7 +11798,7 @@ export interface WarehouseLocationPromise
 
 export interface WarehouseLocationSubscription
   extends Promise<AsyncIterator<WarehouseLocation>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   type: () => Promise<AsyncIterator<WarehouseLocationType>>;
   barcode: () => Promise<AsyncIterator<String>>;
@@ -12052,33 +11806,33 @@ export interface WarehouseLocationSubscription
   itemCode: () => Promise<AsyncIterator<String>>;
   physicalProducts: <
     T = Promise<AsyncIterator<PhysicalProductSubscription>>
-  >(args?: {
-    where?: PhysicalProductWhereInput;
-    orderBy?: PhysicalProductOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
+    >(args?: {
+      where?: PhysicalProductWhereInput;
+      orderBy?: PhysicalProductOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }) => T;
   constraints: <
     T = Promise<AsyncIterator<WarehouseLocationConstraintSubscription>>
-  >(args?: {
-    where?: WarehouseLocationConstraintWhereInput;
-    orderBy?: WarehouseLocationConstraintOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
+    >(args?: {
+      where?: WarehouseLocationConstraintWhereInput;
+      orderBy?: WarehouseLocationConstraintOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }) => T;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
 export interface WarehouseLocationNullablePromise
   extends Promise<WarehouseLocation | null>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   type: () => Promise<WarehouseLocationType>;
   barcode: () => Promise<String>;
@@ -12115,7 +11869,7 @@ export interface WarehouseLocationConstraint {
 
 export interface WarehouseLocationConstraintPromise
   extends Promise<WarehouseLocationConstraint>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   category: <T = CategoryPromise>() => T;
   limit: () => Promise<Int>;
@@ -12134,28 +11888,28 @@ export interface WarehouseLocationConstraintPromise
 
 export interface WarehouseLocationConstraintSubscription
   extends Promise<AsyncIterator<WarehouseLocationConstraint>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   category: <T = CategorySubscription>() => T;
   limit: () => Promise<AsyncIterator<Int>>;
   locations: <
     T = Promise<AsyncIterator<WarehouseLocationSubscription>>
-  >(args?: {
-    where?: WarehouseLocationWhereInput;
-    orderBy?: WarehouseLocationOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
+    >(args?: {
+      where?: WarehouseLocationWhereInput;
+      orderBy?: WarehouseLocationOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }) => T;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
 export interface WarehouseLocationConstraintNullablePromise
   extends Promise<WarehouseLocationConstraint | null>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   category: <T = CategoryPromise>() => T;
   limit: () => Promise<Int>;
@@ -12204,7 +11958,7 @@ export interface BillingInfoPromise extends Promise<BillingInfo>, Fragmentable {
 
 export interface BillingInfoSubscription
   extends Promise<AsyncIterator<BillingInfo>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   brand: () => Promise<AsyncIterator<String>>;
   name: () => Promise<AsyncIterator<String>>;
@@ -12221,7 +11975,7 @@ export interface BillingInfoSubscription
 
 export interface BillingInfoNullablePromise
   extends Promise<BillingInfo | null>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   brand: () => Promise<String>;
   name: () => Promise<String>;
@@ -12276,7 +12030,7 @@ export interface ReservationPromise extends Promise<Reservation>, Fragmentable {
 
 export interface ReservationSubscription
   extends Promise<AsyncIterator<Reservation>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   user: <T = UserSubscription>() => T;
   customer: <T = CustomerSubscription>() => T;
@@ -12304,7 +12058,7 @@ export interface ReservationSubscription
 
 export interface ReservationNullablePromise
   extends Promise<Reservation | null>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   user: <T = UserPromise>() => T;
   customer: <T = CustomerPromise>() => T;
@@ -12358,7 +12112,7 @@ export interface PackagePromise extends Promise<Package>, Fragmentable {
 
 export interface PackageSubscription
   extends Promise<AsyncIterator<Package>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   items: <T = Promise<AsyncIterator<PhysicalProductSubscription>>>(args?: {
     where?: PhysicalProductWhereInput;
@@ -12379,7 +12133,7 @@ export interface PackageSubscription
 
 export interface PackageNullablePromise
   extends Promise<Package | null>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   items: <T = FragmentableArray<PhysicalProduct>>(args?: {
     where?: PhysicalProductWhereInput;
@@ -12416,7 +12170,7 @@ export interface LabelPromise extends Promise<Label>, Fragmentable {
 
 export interface LabelSubscription
   extends Promise<AsyncIterator<Label>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   name: () => Promise<AsyncIterator<String>>;
   image: () => Promise<AsyncIterator<String>>;
@@ -12426,7 +12180,7 @@ export interface LabelSubscription
 
 export interface LabelNullablePromise
   extends Promise<Label | null>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   name: () => Promise<String>;
   image: () => Promise<String>;
@@ -12441,7 +12195,7 @@ export interface BagItemConnection {
 
 export interface BagItemConnectionPromise
   extends Promise<BagItemConnection>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoPromise>() => T;
   edges: <T = FragmentableArray<BagItemEdge>>() => T;
   aggregate: <T = AggregateBagItemPromise>() => T;
@@ -12449,7 +12203,7 @@ export interface BagItemConnectionPromise
 
 export interface BagItemConnectionSubscription
   extends Promise<AsyncIterator<BagItemConnection>>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoSubscription>() => T;
   edges: <T = Promise<AsyncIterator<BagItemEdgeSubscription>>>() => T;
   aggregate: <T = AggregateBagItemSubscription>() => T;
@@ -12471,7 +12225,7 @@ export interface PageInfoPromise extends Promise<PageInfo>, Fragmentable {
 
 export interface PageInfoSubscription
   extends Promise<AsyncIterator<PageInfo>>,
-    Fragmentable {
+  Fragmentable {
   hasNextPage: () => Promise<AsyncIterator<Boolean>>;
   hasPreviousPage: () => Promise<AsyncIterator<Boolean>>;
   startCursor: () => Promise<AsyncIterator<String>>;
@@ -12490,7 +12244,7 @@ export interface BagItemEdgePromise extends Promise<BagItemEdge>, Fragmentable {
 
 export interface BagItemEdgeSubscription
   extends Promise<AsyncIterator<BagItemEdge>>,
-    Fragmentable {
+  Fragmentable {
   node: <T = BagItemSubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
 }
@@ -12501,13 +12255,13 @@ export interface AggregateBagItem {
 
 export interface AggregateBagItemPromise
   extends Promise<AggregateBagItem>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<Int>;
 }
 
 export interface AggregateBagItemSubscription
   extends Promise<AsyncIterator<AggregateBagItem>>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
 
@@ -12518,7 +12272,7 @@ export interface BillingInfoConnection {
 
 export interface BillingInfoConnectionPromise
   extends Promise<BillingInfoConnection>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoPromise>() => T;
   edges: <T = FragmentableArray<BillingInfoEdge>>() => T;
   aggregate: <T = AggregateBillingInfoPromise>() => T;
@@ -12526,7 +12280,7 @@ export interface BillingInfoConnectionPromise
 
 export interface BillingInfoConnectionSubscription
   extends Promise<AsyncIterator<BillingInfoConnection>>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoSubscription>() => T;
   edges: <T = Promise<AsyncIterator<BillingInfoEdgeSubscription>>>() => T;
   aggregate: <T = AggregateBillingInfoSubscription>() => T;
@@ -12539,14 +12293,14 @@ export interface BillingInfoEdge {
 
 export interface BillingInfoEdgePromise
   extends Promise<BillingInfoEdge>,
-    Fragmentable {
+  Fragmentable {
   node: <T = BillingInfoPromise>() => T;
   cursor: () => Promise<String>;
 }
 
 export interface BillingInfoEdgeSubscription
   extends Promise<AsyncIterator<BillingInfoEdge>>,
-    Fragmentable {
+  Fragmentable {
   node: <T = BillingInfoSubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
 }
@@ -12557,13 +12311,13 @@ export interface AggregateBillingInfo {
 
 export interface AggregateBillingInfoPromise
   extends Promise<AggregateBillingInfo>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<Int>;
 }
 
 export interface AggregateBillingInfoSubscription
   extends Promise<AsyncIterator<AggregateBillingInfo>>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
 
@@ -12574,7 +12328,7 @@ export interface BottomSizeConnection {
 
 export interface BottomSizeConnectionPromise
   extends Promise<BottomSizeConnection>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoPromise>() => T;
   edges: <T = FragmentableArray<BottomSizeEdge>>() => T;
   aggregate: <T = AggregateBottomSizePromise>() => T;
@@ -12582,7 +12336,7 @@ export interface BottomSizeConnectionPromise
 
 export interface BottomSizeConnectionSubscription
   extends Promise<AsyncIterator<BottomSizeConnection>>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoSubscription>() => T;
   edges: <T = Promise<AsyncIterator<BottomSizeEdgeSubscription>>>() => T;
   aggregate: <T = AggregateBottomSizeSubscription>() => T;
@@ -12595,14 +12349,14 @@ export interface BottomSizeEdge {
 
 export interface BottomSizeEdgePromise
   extends Promise<BottomSizeEdge>,
-    Fragmentable {
+  Fragmentable {
   node: <T = BottomSizePromise>() => T;
   cursor: () => Promise<String>;
 }
 
 export interface BottomSizeEdgeSubscription
   extends Promise<AsyncIterator<BottomSizeEdge>>,
-    Fragmentable {
+  Fragmentable {
   node: <T = BottomSizeSubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
 }
@@ -12613,13 +12367,13 @@ export interface AggregateBottomSize {
 
 export interface AggregateBottomSizePromise
   extends Promise<AggregateBottomSize>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<Int>;
 }
 
 export interface AggregateBottomSizeSubscription
   extends Promise<AsyncIterator<AggregateBottomSize>>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
 
@@ -12630,7 +12384,7 @@ export interface BrandConnection {
 
 export interface BrandConnectionPromise
   extends Promise<BrandConnection>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoPromise>() => T;
   edges: <T = FragmentableArray<BrandEdge>>() => T;
   aggregate: <T = AggregateBrandPromise>() => T;
@@ -12638,7 +12392,7 @@ export interface BrandConnectionPromise
 
 export interface BrandConnectionSubscription
   extends Promise<AsyncIterator<BrandConnection>>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoSubscription>() => T;
   edges: <T = Promise<AsyncIterator<BrandEdgeSubscription>>>() => T;
   aggregate: <T = AggregateBrandSubscription>() => T;
@@ -12656,7 +12410,7 @@ export interface BrandEdgePromise extends Promise<BrandEdge>, Fragmentable {
 
 export interface BrandEdgeSubscription
   extends Promise<AsyncIterator<BrandEdge>>,
-    Fragmentable {
+  Fragmentable {
   node: <T = BrandSubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
 }
@@ -12667,13 +12421,13 @@ export interface AggregateBrand {
 
 export interface AggregateBrandPromise
   extends Promise<AggregateBrand>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<Int>;
 }
 
 export interface AggregateBrandSubscription
   extends Promise<AsyncIterator<AggregateBrand>>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
 
@@ -12684,7 +12438,7 @@ export interface CategoryConnection {
 
 export interface CategoryConnectionPromise
   extends Promise<CategoryConnection>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoPromise>() => T;
   edges: <T = FragmentableArray<CategoryEdge>>() => T;
   aggregate: <T = AggregateCategoryPromise>() => T;
@@ -12692,7 +12446,7 @@ export interface CategoryConnectionPromise
 
 export interface CategoryConnectionSubscription
   extends Promise<AsyncIterator<CategoryConnection>>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoSubscription>() => T;
   edges: <T = Promise<AsyncIterator<CategoryEdgeSubscription>>>() => T;
   aggregate: <T = AggregateCategorySubscription>() => T;
@@ -12705,14 +12459,14 @@ export interface CategoryEdge {
 
 export interface CategoryEdgePromise
   extends Promise<CategoryEdge>,
-    Fragmentable {
+  Fragmentable {
   node: <T = CategoryPromise>() => T;
   cursor: () => Promise<String>;
 }
 
 export interface CategoryEdgeSubscription
   extends Promise<AsyncIterator<CategoryEdge>>,
-    Fragmentable {
+  Fragmentable {
   node: <T = CategorySubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
 }
@@ -12723,13 +12477,13 @@ export interface AggregateCategory {
 
 export interface AggregateCategoryPromise
   extends Promise<AggregateCategory>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<Int>;
 }
 
 export interface AggregateCategorySubscription
   extends Promise<AsyncIterator<AggregateCategory>>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
 
@@ -12764,7 +12518,7 @@ export interface CollectionPromise extends Promise<Collection>, Fragmentable {
 
 export interface CollectionSubscription
   extends Promise<AsyncIterator<Collection>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   slug: () => Promise<AsyncIterator<String>>;
   images: () => Promise<AsyncIterator<Json>>;
@@ -12785,7 +12539,7 @@ export interface CollectionSubscription
 
 export interface CollectionNullablePromise
   extends Promise<Collection | null>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   slug: () => Promise<String>;
   images: () => Promise<Json>;
@@ -12811,7 +12565,7 @@ export interface CollectionConnection {
 
 export interface CollectionConnectionPromise
   extends Promise<CollectionConnection>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoPromise>() => T;
   edges: <T = FragmentableArray<CollectionEdge>>() => T;
   aggregate: <T = AggregateCollectionPromise>() => T;
@@ -12819,7 +12573,7 @@ export interface CollectionConnectionPromise
 
 export interface CollectionConnectionSubscription
   extends Promise<AsyncIterator<CollectionConnection>>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoSubscription>() => T;
   edges: <T = Promise<AsyncIterator<CollectionEdgeSubscription>>>() => T;
   aggregate: <T = AggregateCollectionSubscription>() => T;
@@ -12832,14 +12586,14 @@ export interface CollectionEdge {
 
 export interface CollectionEdgePromise
   extends Promise<CollectionEdge>,
-    Fragmentable {
+  Fragmentable {
   node: <T = CollectionPromise>() => T;
   cursor: () => Promise<String>;
 }
 
 export interface CollectionEdgeSubscription
   extends Promise<AsyncIterator<CollectionEdge>>,
-    Fragmentable {
+  Fragmentable {
   node: <T = CollectionSubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
 }
@@ -12850,13 +12604,13 @@ export interface AggregateCollection {
 
 export interface AggregateCollectionPromise
   extends Promise<AggregateCollection>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<Int>;
 }
 
 export interface AggregateCollectionSubscription
   extends Promise<AsyncIterator<AggregateCollection>>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
 
@@ -12869,7 +12623,7 @@ export interface CollectionGroup {
 
 export interface CollectionGroupPromise
   extends Promise<CollectionGroup>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   slug: () => Promise<String>;
   title: () => Promise<String>;
@@ -12887,7 +12641,7 @@ export interface CollectionGroupPromise
 
 export interface CollectionGroupSubscription
   extends Promise<AsyncIterator<CollectionGroup>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   slug: () => Promise<AsyncIterator<String>>;
   title: () => Promise<AsyncIterator<String>>;
@@ -12905,7 +12659,7 @@ export interface CollectionGroupSubscription
 
 export interface CollectionGroupNullablePromise
   extends Promise<CollectionGroup | null>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   slug: () => Promise<String>;
   title: () => Promise<String>;
@@ -12928,7 +12682,7 @@ export interface CollectionGroupConnection {
 
 export interface CollectionGroupConnectionPromise
   extends Promise<CollectionGroupConnection>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoPromise>() => T;
   edges: <T = FragmentableArray<CollectionGroupEdge>>() => T;
   aggregate: <T = AggregateCollectionGroupPromise>() => T;
@@ -12936,7 +12690,7 @@ export interface CollectionGroupConnectionPromise
 
 export interface CollectionGroupConnectionSubscription
   extends Promise<AsyncIterator<CollectionGroupConnection>>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoSubscription>() => T;
   edges: <T = Promise<AsyncIterator<CollectionGroupEdgeSubscription>>>() => T;
   aggregate: <T = AggregateCollectionGroupSubscription>() => T;
@@ -12949,14 +12703,14 @@ export interface CollectionGroupEdge {
 
 export interface CollectionGroupEdgePromise
   extends Promise<CollectionGroupEdge>,
-    Fragmentable {
+  Fragmentable {
   node: <T = CollectionGroupPromise>() => T;
   cursor: () => Promise<String>;
 }
 
 export interface CollectionGroupEdgeSubscription
   extends Promise<AsyncIterator<CollectionGroupEdge>>,
-    Fragmentable {
+  Fragmentable {
   node: <T = CollectionGroupSubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
 }
@@ -12967,13 +12721,13 @@ export interface AggregateCollectionGroup {
 
 export interface AggregateCollectionGroupPromise
   extends Promise<AggregateCollectionGroup>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<Int>;
 }
 
 export interface AggregateCollectionGroupSubscription
   extends Promise<AsyncIterator<AggregateCollectionGroup>>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
 
@@ -12984,7 +12738,7 @@ export interface ColorConnection {
 
 export interface ColorConnectionPromise
   extends Promise<ColorConnection>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoPromise>() => T;
   edges: <T = FragmentableArray<ColorEdge>>() => T;
   aggregate: <T = AggregateColorPromise>() => T;
@@ -12992,7 +12746,7 @@ export interface ColorConnectionPromise
 
 export interface ColorConnectionSubscription
   extends Promise<AsyncIterator<ColorConnection>>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoSubscription>() => T;
   edges: <T = Promise<AsyncIterator<ColorEdgeSubscription>>>() => T;
   aggregate: <T = AggregateColorSubscription>() => T;
@@ -13010,7 +12764,7 @@ export interface ColorEdgePromise extends Promise<ColorEdge>, Fragmentable {
 
 export interface ColorEdgeSubscription
   extends Promise<AsyncIterator<ColorEdge>>,
-    Fragmentable {
+  Fragmentable {
   node: <T = ColorSubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
 }
@@ -13021,13 +12775,13 @@ export interface AggregateColor {
 
 export interface AggregateColorPromise
   extends Promise<AggregateColor>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<Int>;
 }
 
 export interface AggregateColorSubscription
   extends Promise<AsyncIterator<AggregateColor>>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
 
@@ -13038,7 +12792,7 @@ export interface CustomerConnection {
 
 export interface CustomerConnectionPromise
   extends Promise<CustomerConnection>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoPromise>() => T;
   edges: <T = FragmentableArray<CustomerEdge>>() => T;
   aggregate: <T = AggregateCustomerPromise>() => T;
@@ -13046,7 +12800,7 @@ export interface CustomerConnectionPromise
 
 export interface CustomerConnectionSubscription
   extends Promise<AsyncIterator<CustomerConnection>>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoSubscription>() => T;
   edges: <T = Promise<AsyncIterator<CustomerEdgeSubscription>>>() => T;
   aggregate: <T = AggregateCustomerSubscription>() => T;
@@ -13059,14 +12813,14 @@ export interface CustomerEdge {
 
 export interface CustomerEdgePromise
   extends Promise<CustomerEdge>,
-    Fragmentable {
+  Fragmentable {
   node: <T = CustomerPromise>() => T;
   cursor: () => Promise<String>;
 }
 
 export interface CustomerEdgeSubscription
   extends Promise<AsyncIterator<CustomerEdge>>,
-    Fragmentable {
+  Fragmentable {
   node: <T = CustomerSubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
 }
@@ -13077,13 +12831,13 @@ export interface AggregateCustomer {
 
 export interface AggregateCustomerPromise
   extends Promise<AggregateCustomer>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<Int>;
 }
 
 export interface AggregateCustomerSubscription
   extends Promise<AsyncIterator<AggregateCustomer>>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
 
@@ -13094,7 +12848,7 @@ export interface CustomerDetailConnection {
 
 export interface CustomerDetailConnectionPromise
   extends Promise<CustomerDetailConnection>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoPromise>() => T;
   edges: <T = FragmentableArray<CustomerDetailEdge>>() => T;
   aggregate: <T = AggregateCustomerDetailPromise>() => T;
@@ -13102,7 +12856,7 @@ export interface CustomerDetailConnectionPromise
 
 export interface CustomerDetailConnectionSubscription
   extends Promise<AsyncIterator<CustomerDetailConnection>>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoSubscription>() => T;
   edges: <T = Promise<AsyncIterator<CustomerDetailEdgeSubscription>>>() => T;
   aggregate: <T = AggregateCustomerDetailSubscription>() => T;
@@ -13115,14 +12869,14 @@ export interface CustomerDetailEdge {
 
 export interface CustomerDetailEdgePromise
   extends Promise<CustomerDetailEdge>,
-    Fragmentable {
+  Fragmentable {
   node: <T = CustomerDetailPromise>() => T;
   cursor: () => Promise<String>;
 }
 
 export interface CustomerDetailEdgeSubscription
   extends Promise<AsyncIterator<CustomerDetailEdge>>,
-    Fragmentable {
+  Fragmentable {
   node: <T = CustomerDetailSubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
 }
@@ -13133,13 +12887,13 @@ export interface AggregateCustomerDetail {
 
 export interface AggregateCustomerDetailPromise
   extends Promise<AggregateCustomerDetail>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<Int>;
 }
 
 export interface AggregateCustomerDetailSubscription
   extends Promise<AsyncIterator<AggregateCustomerDetail>>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
 
@@ -13151,7 +12905,7 @@ export interface HomepageProductRail {
 
 export interface HomepageProductRailPromise
   extends Promise<HomepageProductRail>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   slug: () => Promise<String>;
   name: () => Promise<String>;
@@ -13168,7 +12922,7 @@ export interface HomepageProductRailPromise
 
 export interface HomepageProductRailSubscription
   extends Promise<AsyncIterator<HomepageProductRail>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   slug: () => Promise<AsyncIterator<String>>;
   name: () => Promise<AsyncIterator<String>>;
@@ -13185,7 +12939,7 @@ export interface HomepageProductRailSubscription
 
 export interface HomepageProductRailNullablePromise
   extends Promise<HomepageProductRail | null>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   slug: () => Promise<String>;
   name: () => Promise<String>;
@@ -13207,7 +12961,7 @@ export interface HomepageProductRailConnection {
 
 export interface HomepageProductRailConnectionPromise
   extends Promise<HomepageProductRailConnection>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoPromise>() => T;
   edges: <T = FragmentableArray<HomepageProductRailEdge>>() => T;
   aggregate: <T = AggregateHomepageProductRailPromise>() => T;
@@ -13215,11 +12969,11 @@ export interface HomepageProductRailConnectionPromise
 
 export interface HomepageProductRailConnectionSubscription
   extends Promise<AsyncIterator<HomepageProductRailConnection>>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoSubscription>() => T;
   edges: <
     T = Promise<AsyncIterator<HomepageProductRailEdgeSubscription>>
-  >() => T;
+    >() => T;
   aggregate: <T = AggregateHomepageProductRailSubscription>() => T;
 }
 
@@ -13230,14 +12984,14 @@ export interface HomepageProductRailEdge {
 
 export interface HomepageProductRailEdgePromise
   extends Promise<HomepageProductRailEdge>,
-    Fragmentable {
+  Fragmentable {
   node: <T = HomepageProductRailPromise>() => T;
   cursor: () => Promise<String>;
 }
 
 export interface HomepageProductRailEdgeSubscription
   extends Promise<AsyncIterator<HomepageProductRailEdge>>,
-    Fragmentable {
+  Fragmentable {
   node: <T = HomepageProductRailSubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
 }
@@ -13248,14 +13002,70 @@ export interface AggregateHomepageProductRail {
 
 export interface AggregateHomepageProductRailPromise
   extends Promise<AggregateHomepageProductRail>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<Int>;
 }
 
 export interface AggregateHomepageProductRailSubscription
   extends Promise<AsyncIterator<AggregateHomepageProductRail>>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface Image {
+  id: ID_Output;
+  caption?: String;
+  url?: String;
+  originalHeight?: Int;
+  originalUrl: String;
+  originalWidth?: Int;
+  resizedUrl: String;
+  title?: String;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface ImagePromise extends Promise<Image>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  caption: () => Promise<String>;
+  url: () => Promise<String>;
+  originalHeight: () => Promise<Int>;
+  originalUrl: () => Promise<String>;
+  originalWidth: () => Promise<Int>;
+  resizedUrl: () => Promise<String>;
+  title: () => Promise<String>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface ImageSubscription
+  extends Promise<AsyncIterator<Image>>,
+  Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  caption: () => Promise<AsyncIterator<String>>;
+  url: () => Promise<AsyncIterator<String>>;
+  originalHeight: () => Promise<AsyncIterator<Int>>;
+  originalUrl: () => Promise<AsyncIterator<String>>;
+  originalWidth: () => Promise<AsyncIterator<Int>>;
+  resizedUrl: () => Promise<AsyncIterator<String>>;
+  title: () => Promise<AsyncIterator<String>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface ImageNullablePromise
+  extends Promise<Image | null>,
+  Fragmentable {
+  id: () => Promise<ID_Output>;
+  caption: () => Promise<String>;
+  url: () => Promise<String>;
+  originalHeight: () => Promise<Int>;
+  originalUrl: () => Promise<String>;
+  originalWidth: () => Promise<Int>;
+  resizedUrl: () => Promise<String>;
+  title: () => Promise<String>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface ImageConnection {
@@ -13265,7 +13075,7 @@ export interface ImageConnection {
 
 export interface ImageConnectionPromise
   extends Promise<ImageConnection>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoPromise>() => T;
   edges: <T = FragmentableArray<ImageEdge>>() => T;
   aggregate: <T = AggregateImagePromise>() => T;
@@ -13273,7 +13083,7 @@ export interface ImageConnectionPromise
 
 export interface ImageConnectionSubscription
   extends Promise<AsyncIterator<ImageConnection>>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoSubscription>() => T;
   edges: <T = Promise<AsyncIterator<ImageEdgeSubscription>>>() => T;
   aggregate: <T = AggregateImageSubscription>() => T;
@@ -13291,7 +13101,7 @@ export interface ImageEdgePromise extends Promise<ImageEdge>, Fragmentable {
 
 export interface ImageEdgeSubscription
   extends Promise<AsyncIterator<ImageEdge>>,
-    Fragmentable {
+  Fragmentable {
   node: <T = ImageSubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
 }
@@ -13302,13 +13112,13 @@ export interface AggregateImage {
 
 export interface AggregateImagePromise
   extends Promise<AggregateImage>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<Int>;
 }
 
 export interface AggregateImageSubscription
   extends Promise<AsyncIterator<AggregateImage>>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
 
@@ -13319,7 +13129,7 @@ export interface LabelConnection {
 
 export interface LabelConnectionPromise
   extends Promise<LabelConnection>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoPromise>() => T;
   edges: <T = FragmentableArray<LabelEdge>>() => T;
   aggregate: <T = AggregateLabelPromise>() => T;
@@ -13327,7 +13137,7 @@ export interface LabelConnectionPromise
 
 export interface LabelConnectionSubscription
   extends Promise<AsyncIterator<LabelConnection>>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoSubscription>() => T;
   edges: <T = Promise<AsyncIterator<LabelEdgeSubscription>>>() => T;
   aggregate: <T = AggregateLabelSubscription>() => T;
@@ -13345,7 +13155,7 @@ export interface LabelEdgePromise extends Promise<LabelEdge>, Fragmentable {
 
 export interface LabelEdgeSubscription
   extends Promise<AsyncIterator<LabelEdge>>,
-    Fragmentable {
+  Fragmentable {
   node: <T = LabelSubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
 }
@@ -13356,13 +13166,13 @@ export interface AggregateLabel {
 
 export interface AggregateLabelPromise
   extends Promise<AggregateLabel>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<Int>;
 }
 
 export interface AggregateLabelSubscription
   extends Promise<AsyncIterator<AggregateLabel>>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
 
@@ -13373,7 +13183,7 @@ export interface LocationConnection {
 
 export interface LocationConnectionPromise
   extends Promise<LocationConnection>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoPromise>() => T;
   edges: <T = FragmentableArray<LocationEdge>>() => T;
   aggregate: <T = AggregateLocationPromise>() => T;
@@ -13381,7 +13191,7 @@ export interface LocationConnectionPromise
 
 export interface LocationConnectionSubscription
   extends Promise<AsyncIterator<LocationConnection>>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoSubscription>() => T;
   edges: <T = Promise<AsyncIterator<LocationEdgeSubscription>>>() => T;
   aggregate: <T = AggregateLocationSubscription>() => T;
@@ -13394,14 +13204,14 @@ export interface LocationEdge {
 
 export interface LocationEdgePromise
   extends Promise<LocationEdge>,
-    Fragmentable {
+  Fragmentable {
   node: <T = LocationPromise>() => T;
   cursor: () => Promise<String>;
 }
 
 export interface LocationEdgeSubscription
   extends Promise<AsyncIterator<LocationEdge>>,
-    Fragmentable {
+  Fragmentable {
   node: <T = LocationSubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
 }
@@ -13412,13 +13222,13 @@ export interface AggregateLocation {
 
 export interface AggregateLocationPromise
   extends Promise<AggregateLocation>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<Int>;
 }
 
 export interface AggregateLocationSubscription
   extends Promise<AsyncIterator<AggregateLocation>>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
 
@@ -13429,7 +13239,7 @@ export interface PackageConnection {
 
 export interface PackageConnectionPromise
   extends Promise<PackageConnection>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoPromise>() => T;
   edges: <T = FragmentableArray<PackageEdge>>() => T;
   aggregate: <T = AggregatePackagePromise>() => T;
@@ -13437,7 +13247,7 @@ export interface PackageConnectionPromise
 
 export interface PackageConnectionSubscription
   extends Promise<AsyncIterator<PackageConnection>>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoSubscription>() => T;
   edges: <T = Promise<AsyncIterator<PackageEdgeSubscription>>>() => T;
   aggregate: <T = AggregatePackageSubscription>() => T;
@@ -13455,7 +13265,7 @@ export interface PackageEdgePromise extends Promise<PackageEdge>, Fragmentable {
 
 export interface PackageEdgeSubscription
   extends Promise<AsyncIterator<PackageEdge>>,
-    Fragmentable {
+  Fragmentable {
   node: <T = PackageSubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
 }
@@ -13466,13 +13276,13 @@ export interface AggregatePackage {
 
 export interface AggregatePackagePromise
   extends Promise<AggregatePackage>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<Int>;
 }
 
 export interface AggregatePackageSubscription
   extends Promise<AsyncIterator<AggregatePackage>>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
 
@@ -13483,7 +13293,7 @@ export interface PhysicalProductConnection {
 
 export interface PhysicalProductConnectionPromise
   extends Promise<PhysicalProductConnection>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoPromise>() => T;
   edges: <T = FragmentableArray<PhysicalProductEdge>>() => T;
   aggregate: <T = AggregatePhysicalProductPromise>() => T;
@@ -13491,7 +13301,7 @@ export interface PhysicalProductConnectionPromise
 
 export interface PhysicalProductConnectionSubscription
   extends Promise<AsyncIterator<PhysicalProductConnection>>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoSubscription>() => T;
   edges: <T = Promise<AsyncIterator<PhysicalProductEdgeSubscription>>>() => T;
   aggregate: <T = AggregatePhysicalProductSubscription>() => T;
@@ -13504,14 +13314,14 @@ export interface PhysicalProductEdge {
 
 export interface PhysicalProductEdgePromise
   extends Promise<PhysicalProductEdge>,
-    Fragmentable {
+  Fragmentable {
   node: <T = PhysicalProductPromise>() => T;
   cursor: () => Promise<String>;
 }
 
 export interface PhysicalProductEdgeSubscription
   extends Promise<AsyncIterator<PhysicalProductEdge>>,
-    Fragmentable {
+  Fragmentable {
   node: <T = PhysicalProductSubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
 }
@@ -13522,13 +13332,13 @@ export interface AggregatePhysicalProduct {
 
 export interface AggregatePhysicalProductPromise
   extends Promise<AggregatePhysicalProduct>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<Int>;
 }
 
 export interface AggregatePhysicalProductSubscription
   extends Promise<AsyncIterator<AggregatePhysicalProduct>>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
 
@@ -13539,7 +13349,7 @@ export interface ProductConnection {
 
 export interface ProductConnectionPromise
   extends Promise<ProductConnection>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoPromise>() => T;
   edges: <T = FragmentableArray<ProductEdge>>() => T;
   aggregate: <T = AggregateProductPromise>() => T;
@@ -13547,7 +13357,7 @@ export interface ProductConnectionPromise
 
 export interface ProductConnectionSubscription
   extends Promise<AsyncIterator<ProductConnection>>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoSubscription>() => T;
   edges: <T = Promise<AsyncIterator<ProductEdgeSubscription>>>() => T;
   aggregate: <T = AggregateProductSubscription>() => T;
@@ -13565,7 +13375,7 @@ export interface ProductEdgePromise extends Promise<ProductEdge>, Fragmentable {
 
 export interface ProductEdgeSubscription
   extends Promise<AsyncIterator<ProductEdge>>,
-    Fragmentable {
+  Fragmentable {
   node: <T = ProductSubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
 }
@@ -13576,13 +13386,13 @@ export interface AggregateProduct {
 
 export interface AggregateProductPromise
   extends Promise<AggregateProduct>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<Int>;
 }
 
 export interface AggregateProductSubscription
   extends Promise<AsyncIterator<AggregateProduct>>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
 
@@ -13593,7 +13403,7 @@ export interface ProductFunctionConnection {
 
 export interface ProductFunctionConnectionPromise
   extends Promise<ProductFunctionConnection>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoPromise>() => T;
   edges: <T = FragmentableArray<ProductFunctionEdge>>() => T;
   aggregate: <T = AggregateProductFunctionPromise>() => T;
@@ -13601,7 +13411,7 @@ export interface ProductFunctionConnectionPromise
 
 export interface ProductFunctionConnectionSubscription
   extends Promise<AsyncIterator<ProductFunctionConnection>>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoSubscription>() => T;
   edges: <T = Promise<AsyncIterator<ProductFunctionEdgeSubscription>>>() => T;
   aggregate: <T = AggregateProductFunctionSubscription>() => T;
@@ -13614,14 +13424,14 @@ export interface ProductFunctionEdge {
 
 export interface ProductFunctionEdgePromise
   extends Promise<ProductFunctionEdge>,
-    Fragmentable {
+  Fragmentable {
   node: <T = ProductFunctionPromise>() => T;
   cursor: () => Promise<String>;
 }
 
 export interface ProductFunctionEdgeSubscription
   extends Promise<AsyncIterator<ProductFunctionEdge>>,
-    Fragmentable {
+  Fragmentable {
   node: <T = ProductFunctionSubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
 }
@@ -13632,13 +13442,13 @@ export interface AggregateProductFunction {
 
 export interface AggregateProductFunctionPromise
   extends Promise<AggregateProductFunction>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<Int>;
 }
 
 export interface AggregateProductFunctionSubscription
   extends Promise<AsyncIterator<AggregateProductFunction>>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
 
@@ -13649,7 +13459,7 @@ export interface ProductModelConnection {
 
 export interface ProductModelConnectionPromise
   extends Promise<ProductModelConnection>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoPromise>() => T;
   edges: <T = FragmentableArray<ProductModelEdge>>() => T;
   aggregate: <T = AggregateProductModelPromise>() => T;
@@ -13657,7 +13467,7 @@ export interface ProductModelConnectionPromise
 
 export interface ProductModelConnectionSubscription
   extends Promise<AsyncIterator<ProductModelConnection>>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoSubscription>() => T;
   edges: <T = Promise<AsyncIterator<ProductModelEdgeSubscription>>>() => T;
   aggregate: <T = AggregateProductModelSubscription>() => T;
@@ -13670,14 +13480,14 @@ export interface ProductModelEdge {
 
 export interface ProductModelEdgePromise
   extends Promise<ProductModelEdge>,
-    Fragmentable {
+  Fragmentable {
   node: <T = ProductModelPromise>() => T;
   cursor: () => Promise<String>;
 }
 
 export interface ProductModelEdgeSubscription
   extends Promise<AsyncIterator<ProductModelEdge>>,
-    Fragmentable {
+  Fragmentable {
   node: <T = ProductModelSubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
 }
@@ -13688,13 +13498,13 @@ export interface AggregateProductModel {
 
 export interface AggregateProductModelPromise
   extends Promise<AggregateProductModel>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<Int>;
 }
 
 export interface AggregateProductModelSubscription
   extends Promise<AsyncIterator<AggregateProductModel>>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
 
@@ -13714,7 +13524,7 @@ export interface ProductRequest {
 
 export interface ProductRequestPromise
   extends Promise<ProductRequest>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   brand: () => Promise<String>;
   description: () => Promise<String>;
@@ -13731,7 +13541,7 @@ export interface ProductRequestPromise
 
 export interface ProductRequestSubscription
   extends Promise<AsyncIterator<ProductRequest>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   brand: () => Promise<AsyncIterator<String>>;
   description: () => Promise<AsyncIterator<String>>;
@@ -13748,7 +13558,7 @@ export interface ProductRequestSubscription
 
 export interface ProductRequestNullablePromise
   extends Promise<ProductRequest | null>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   brand: () => Promise<String>;
   description: () => Promise<String>;
@@ -13770,7 +13580,7 @@ export interface ProductRequestConnection {
 
 export interface ProductRequestConnectionPromise
   extends Promise<ProductRequestConnection>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoPromise>() => T;
   edges: <T = FragmentableArray<ProductRequestEdge>>() => T;
   aggregate: <T = AggregateProductRequestPromise>() => T;
@@ -13778,7 +13588,7 @@ export interface ProductRequestConnectionPromise
 
 export interface ProductRequestConnectionSubscription
   extends Promise<AsyncIterator<ProductRequestConnection>>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoSubscription>() => T;
   edges: <T = Promise<AsyncIterator<ProductRequestEdgeSubscription>>>() => T;
   aggregate: <T = AggregateProductRequestSubscription>() => T;
@@ -13791,14 +13601,14 @@ export interface ProductRequestEdge {
 
 export interface ProductRequestEdgePromise
   extends Promise<ProductRequestEdge>,
-    Fragmentable {
+  Fragmentable {
   node: <T = ProductRequestPromise>() => T;
   cursor: () => Promise<String>;
 }
 
 export interface ProductRequestEdgeSubscription
   extends Promise<AsyncIterator<ProductRequestEdge>>,
-    Fragmentable {
+  Fragmentable {
   node: <T = ProductRequestSubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
 }
@@ -13809,13 +13619,13 @@ export interface AggregateProductRequest {
 
 export interface AggregateProductRequestPromise
   extends Promise<AggregateProductRequest>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<Int>;
 }
 
 export interface AggregateProductRequestSubscription
   extends Promise<AsyncIterator<AggregateProductRequest>>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
 
@@ -13826,7 +13636,7 @@ export interface ProductVariantConnection {
 
 export interface ProductVariantConnectionPromise
   extends Promise<ProductVariantConnection>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoPromise>() => T;
   edges: <T = FragmentableArray<ProductVariantEdge>>() => T;
   aggregate: <T = AggregateProductVariantPromise>() => T;
@@ -13834,7 +13644,7 @@ export interface ProductVariantConnectionPromise
 
 export interface ProductVariantConnectionSubscription
   extends Promise<AsyncIterator<ProductVariantConnection>>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoSubscription>() => T;
   edges: <T = Promise<AsyncIterator<ProductVariantEdgeSubscription>>>() => T;
   aggregate: <T = AggregateProductVariantSubscription>() => T;
@@ -13847,14 +13657,14 @@ export interface ProductVariantEdge {
 
 export interface ProductVariantEdgePromise
   extends Promise<ProductVariantEdge>,
-    Fragmentable {
+  Fragmentable {
   node: <T = ProductVariantPromise>() => T;
   cursor: () => Promise<String>;
 }
 
 export interface ProductVariantEdgeSubscription
   extends Promise<AsyncIterator<ProductVariantEdge>>,
-    Fragmentable {
+  Fragmentable {
   node: <T = ProductVariantSubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
 }
@@ -13865,13 +13675,13 @@ export interface AggregateProductVariant {
 
 export interface AggregateProductVariantPromise
   extends Promise<AggregateProductVariant>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<Int>;
 }
 
 export interface AggregateProductVariantSubscription
   extends Promise<AsyncIterator<AggregateProductVariant>>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
 
@@ -13882,7 +13692,7 @@ export interface ProductVariantFeedback {
 
 export interface ProductVariantFeedbackPromise
   extends Promise<ProductVariantFeedback>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   isCompleted: () => Promise<Boolean>;
   questions: <T = FragmentableArray<ProductVariantFeedbackQuestion>>(args?: {
@@ -13900,27 +13710,27 @@ export interface ProductVariantFeedbackPromise
 
 export interface ProductVariantFeedbackSubscription
   extends Promise<AsyncIterator<ProductVariantFeedback>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   isCompleted: () => Promise<AsyncIterator<Boolean>>;
   questions: <
     T = Promise<AsyncIterator<ProductVariantFeedbackQuestionSubscription>>
-  >(args?: {
-    where?: ProductVariantFeedbackQuestionWhereInput;
-    orderBy?: ProductVariantFeedbackQuestionOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
+    >(args?: {
+      where?: ProductVariantFeedbackQuestionWhereInput;
+      orderBy?: ProductVariantFeedbackQuestionOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }) => T;
   reservationFeedback: <T = ReservationFeedbackSubscription>() => T;
   variant: <T = ProductVariantSubscription>() => T;
 }
 
 export interface ProductVariantFeedbackNullablePromise
   extends Promise<ProductVariantFeedback | null>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   isCompleted: () => Promise<Boolean>;
   questions: <T = FragmentableArray<ProductVariantFeedbackQuestion>>(args?: {
@@ -13946,7 +13756,7 @@ export interface ProductVariantFeedbackQuestion {
 
 export interface ProductVariantFeedbackQuestionPromise
   extends Promise<ProductVariantFeedbackQuestion>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   options: () => Promise<String[]>;
   question: () => Promise<String>;
@@ -13957,7 +13767,7 @@ export interface ProductVariantFeedbackQuestionPromise
 
 export interface ProductVariantFeedbackQuestionSubscription
   extends Promise<AsyncIterator<ProductVariantFeedbackQuestion>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   options: () => Promise<AsyncIterator<String[]>>;
   question: () => Promise<AsyncIterator<String>>;
@@ -13968,7 +13778,7 @@ export interface ProductVariantFeedbackQuestionSubscription
 
 export interface ProductVariantFeedbackQuestionNullablePromise
   extends Promise<ProductVariantFeedbackQuestion | null>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   options: () => Promise<String[]>;
   question: () => Promise<String>;
@@ -13988,7 +13798,7 @@ export interface ReservationFeedback {
 
 export interface ReservationFeedbackPromise
   extends Promise<ReservationFeedback>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   comment: () => Promise<String>;
   feedbacks: <T = FragmentableArray<ProductVariantFeedback>>(args?: {
@@ -14010,20 +13820,20 @@ export interface ReservationFeedbackPromise
 
 export interface ReservationFeedbackSubscription
   extends Promise<AsyncIterator<ReservationFeedback>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   comment: () => Promise<AsyncIterator<String>>;
   feedbacks: <
     T = Promise<AsyncIterator<ProductVariantFeedbackSubscription>>
-  >(args?: {
-    where?: ProductVariantFeedbackWhereInput;
-    orderBy?: ProductVariantFeedbackOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
+    >(args?: {
+      where?: ProductVariantFeedbackWhereInput;
+      orderBy?: ProductVariantFeedbackOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }) => T;
   rating: () => Promise<AsyncIterator<Rating>>;
   user: <T = UserSubscription>() => T;
   reservation: <T = ReservationSubscription>() => T;
@@ -14034,7 +13844,7 @@ export interface ReservationFeedbackSubscription
 
 export interface ReservationFeedbackNullablePromise
   extends Promise<ReservationFeedback | null>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   comment: () => Promise<String>;
   feedbacks: <T = FragmentableArray<ProductVariantFeedback>>(args?: {
@@ -14061,7 +13871,7 @@ export interface ProductVariantFeedbackConnection {
 
 export interface ProductVariantFeedbackConnectionPromise
   extends Promise<ProductVariantFeedbackConnection>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoPromise>() => T;
   edges: <T = FragmentableArray<ProductVariantFeedbackEdge>>() => T;
   aggregate: <T = AggregateProductVariantFeedbackPromise>() => T;
@@ -14069,11 +13879,11 @@ export interface ProductVariantFeedbackConnectionPromise
 
 export interface ProductVariantFeedbackConnectionSubscription
   extends Promise<AsyncIterator<ProductVariantFeedbackConnection>>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoSubscription>() => T;
   edges: <
     T = Promise<AsyncIterator<ProductVariantFeedbackEdgeSubscription>>
-  >() => T;
+    >() => T;
   aggregate: <T = AggregateProductVariantFeedbackSubscription>() => T;
 }
 
@@ -14084,14 +13894,14 @@ export interface ProductVariantFeedbackEdge {
 
 export interface ProductVariantFeedbackEdgePromise
   extends Promise<ProductVariantFeedbackEdge>,
-    Fragmentable {
+  Fragmentable {
   node: <T = ProductVariantFeedbackPromise>() => T;
   cursor: () => Promise<String>;
 }
 
 export interface ProductVariantFeedbackEdgeSubscription
   extends Promise<AsyncIterator<ProductVariantFeedbackEdge>>,
-    Fragmentable {
+  Fragmentable {
   node: <T = ProductVariantFeedbackSubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
 }
@@ -14102,13 +13912,13 @@ export interface AggregateProductVariantFeedback {
 
 export interface AggregateProductVariantFeedbackPromise
   extends Promise<AggregateProductVariantFeedback>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<Int>;
 }
 
 export interface AggregateProductVariantFeedbackSubscription
   extends Promise<AsyncIterator<AggregateProductVariantFeedback>>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
 
@@ -14119,7 +13929,7 @@ export interface ProductVariantFeedbackQuestionConnection {
 
 export interface ProductVariantFeedbackQuestionConnectionPromise
   extends Promise<ProductVariantFeedbackQuestionConnection>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoPromise>() => T;
   edges: <T = FragmentableArray<ProductVariantFeedbackQuestionEdge>>() => T;
   aggregate: <T = AggregateProductVariantFeedbackQuestionPromise>() => T;
@@ -14127,11 +13937,11 @@ export interface ProductVariantFeedbackQuestionConnectionPromise
 
 export interface ProductVariantFeedbackQuestionConnectionSubscription
   extends Promise<AsyncIterator<ProductVariantFeedbackQuestionConnection>>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoSubscription>() => T;
   edges: <
     T = Promise<AsyncIterator<ProductVariantFeedbackQuestionEdgeSubscription>>
-  >() => T;
+    >() => T;
   aggregate: <T = AggregateProductVariantFeedbackQuestionSubscription>() => T;
 }
 
@@ -14142,14 +13952,14 @@ export interface ProductVariantFeedbackQuestionEdge {
 
 export interface ProductVariantFeedbackQuestionEdgePromise
   extends Promise<ProductVariantFeedbackQuestionEdge>,
-    Fragmentable {
+  Fragmentable {
   node: <T = ProductVariantFeedbackQuestionPromise>() => T;
   cursor: () => Promise<String>;
 }
 
 export interface ProductVariantFeedbackQuestionEdgeSubscription
   extends Promise<AsyncIterator<ProductVariantFeedbackQuestionEdge>>,
-    Fragmentable {
+  Fragmentable {
   node: <T = ProductVariantFeedbackQuestionSubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
 }
@@ -14160,13 +13970,13 @@ export interface AggregateProductVariantFeedbackQuestion {
 
 export interface AggregateProductVariantFeedbackQuestionPromise
   extends Promise<AggregateProductVariantFeedbackQuestion>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<Int>;
 }
 
 export interface AggregateProductVariantFeedbackQuestionSubscription
   extends Promise<AsyncIterator<AggregateProductVariantFeedbackQuestion>>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
 
@@ -14177,7 +13987,7 @@ export interface ProductVariantWant {
 
 export interface ProductVariantWantPromise
   extends Promise<ProductVariantWant>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   productVariant: <T = ProductVariantPromise>() => T;
   user: <T = UserPromise>() => T;
@@ -14186,7 +13996,7 @@ export interface ProductVariantWantPromise
 
 export interface ProductVariantWantSubscription
   extends Promise<AsyncIterator<ProductVariantWant>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   productVariant: <T = ProductVariantSubscription>() => T;
   user: <T = UserSubscription>() => T;
@@ -14195,7 +14005,7 @@ export interface ProductVariantWantSubscription
 
 export interface ProductVariantWantNullablePromise
   extends Promise<ProductVariantWant | null>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   productVariant: <T = ProductVariantPromise>() => T;
   user: <T = UserPromise>() => T;
@@ -14209,7 +14019,7 @@ export interface ProductVariantWantConnection {
 
 export interface ProductVariantWantConnectionPromise
   extends Promise<ProductVariantWantConnection>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoPromise>() => T;
   edges: <T = FragmentableArray<ProductVariantWantEdge>>() => T;
   aggregate: <T = AggregateProductVariantWantPromise>() => T;
@@ -14217,11 +14027,11 @@ export interface ProductVariantWantConnectionPromise
 
 export interface ProductVariantWantConnectionSubscription
   extends Promise<AsyncIterator<ProductVariantWantConnection>>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoSubscription>() => T;
   edges: <
     T = Promise<AsyncIterator<ProductVariantWantEdgeSubscription>>
-  >() => T;
+    >() => T;
   aggregate: <T = AggregateProductVariantWantSubscription>() => T;
 }
 
@@ -14232,14 +14042,14 @@ export interface ProductVariantWantEdge {
 
 export interface ProductVariantWantEdgePromise
   extends Promise<ProductVariantWantEdge>,
-    Fragmentable {
+  Fragmentable {
   node: <T = ProductVariantWantPromise>() => T;
   cursor: () => Promise<String>;
 }
 
 export interface ProductVariantWantEdgeSubscription
   extends Promise<AsyncIterator<ProductVariantWantEdge>>,
-    Fragmentable {
+  Fragmentable {
   node: <T = ProductVariantWantSubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
 }
@@ -14250,13 +14060,13 @@ export interface AggregateProductVariantWant {
 
 export interface AggregateProductVariantWantPromise
   extends Promise<AggregateProductVariantWant>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<Int>;
 }
 
 export interface AggregateProductVariantWantSubscription
   extends Promise<AsyncIterator<AggregateProductVariantWant>>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
 
@@ -14269,7 +14079,7 @@ export interface RecentlyViewedProduct {
 
 export interface RecentlyViewedProductPromise
   extends Promise<RecentlyViewedProduct>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   product: <T = ProductPromise>() => T;
   customer: <T = CustomerPromise>() => T;
@@ -14280,7 +14090,7 @@ export interface RecentlyViewedProductPromise
 
 export interface RecentlyViewedProductSubscription
   extends Promise<AsyncIterator<RecentlyViewedProduct>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   product: <T = ProductSubscription>() => T;
   customer: <T = CustomerSubscription>() => T;
@@ -14291,7 +14101,7 @@ export interface RecentlyViewedProductSubscription
 
 export interface RecentlyViewedProductNullablePromise
   extends Promise<RecentlyViewedProduct | null>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   product: <T = ProductPromise>() => T;
   customer: <T = CustomerPromise>() => T;
@@ -14307,7 +14117,7 @@ export interface RecentlyViewedProductConnection {
 
 export interface RecentlyViewedProductConnectionPromise
   extends Promise<RecentlyViewedProductConnection>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoPromise>() => T;
   edges: <T = FragmentableArray<RecentlyViewedProductEdge>>() => T;
   aggregate: <T = AggregateRecentlyViewedProductPromise>() => T;
@@ -14315,11 +14125,11 @@ export interface RecentlyViewedProductConnectionPromise
 
 export interface RecentlyViewedProductConnectionSubscription
   extends Promise<AsyncIterator<RecentlyViewedProductConnection>>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoSubscription>() => T;
   edges: <
     T = Promise<AsyncIterator<RecentlyViewedProductEdgeSubscription>>
-  >() => T;
+    >() => T;
   aggregate: <T = AggregateRecentlyViewedProductSubscription>() => T;
 }
 
@@ -14330,14 +14140,14 @@ export interface RecentlyViewedProductEdge {
 
 export interface RecentlyViewedProductEdgePromise
   extends Promise<RecentlyViewedProductEdge>,
-    Fragmentable {
+  Fragmentable {
   node: <T = RecentlyViewedProductPromise>() => T;
   cursor: () => Promise<String>;
 }
 
 export interface RecentlyViewedProductEdgeSubscription
   extends Promise<AsyncIterator<RecentlyViewedProductEdge>>,
-    Fragmentable {
+  Fragmentable {
   node: <T = RecentlyViewedProductSubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
 }
@@ -14348,13 +14158,13 @@ export interface AggregateRecentlyViewedProduct {
 
 export interface AggregateRecentlyViewedProductPromise
   extends Promise<AggregateRecentlyViewedProduct>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<Int>;
 }
 
 export interface AggregateRecentlyViewedProductSubscription
   extends Promise<AsyncIterator<AggregateRecentlyViewedProduct>>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
 
@@ -14365,7 +14175,7 @@ export interface ReservationConnection {
 
 export interface ReservationConnectionPromise
   extends Promise<ReservationConnection>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoPromise>() => T;
   edges: <T = FragmentableArray<ReservationEdge>>() => T;
   aggregate: <T = AggregateReservationPromise>() => T;
@@ -14373,7 +14183,7 @@ export interface ReservationConnectionPromise
 
 export interface ReservationConnectionSubscription
   extends Promise<AsyncIterator<ReservationConnection>>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoSubscription>() => T;
   edges: <T = Promise<AsyncIterator<ReservationEdgeSubscription>>>() => T;
   aggregate: <T = AggregateReservationSubscription>() => T;
@@ -14386,14 +14196,14 @@ export interface ReservationEdge {
 
 export interface ReservationEdgePromise
   extends Promise<ReservationEdge>,
-    Fragmentable {
+  Fragmentable {
   node: <T = ReservationPromise>() => T;
   cursor: () => Promise<String>;
 }
 
 export interface ReservationEdgeSubscription
   extends Promise<AsyncIterator<ReservationEdge>>,
-    Fragmentable {
+  Fragmentable {
   node: <T = ReservationSubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
 }
@@ -14404,13 +14214,13 @@ export interface AggregateReservation {
 
 export interface AggregateReservationPromise
   extends Promise<AggregateReservation>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<Int>;
 }
 
 export interface AggregateReservationSubscription
   extends Promise<AsyncIterator<AggregateReservation>>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
 
@@ -14421,7 +14231,7 @@ export interface ReservationFeedbackConnection {
 
 export interface ReservationFeedbackConnectionPromise
   extends Promise<ReservationFeedbackConnection>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoPromise>() => T;
   edges: <T = FragmentableArray<ReservationFeedbackEdge>>() => T;
   aggregate: <T = AggregateReservationFeedbackPromise>() => T;
@@ -14429,11 +14239,11 @@ export interface ReservationFeedbackConnectionPromise
 
 export interface ReservationFeedbackConnectionSubscription
   extends Promise<AsyncIterator<ReservationFeedbackConnection>>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoSubscription>() => T;
   edges: <
     T = Promise<AsyncIterator<ReservationFeedbackEdgeSubscription>>
-  >() => T;
+    >() => T;
   aggregate: <T = AggregateReservationFeedbackSubscription>() => T;
 }
 
@@ -14444,14 +14254,14 @@ export interface ReservationFeedbackEdge {
 
 export interface ReservationFeedbackEdgePromise
   extends Promise<ReservationFeedbackEdge>,
-    Fragmentable {
+  Fragmentable {
   node: <T = ReservationFeedbackPromise>() => T;
   cursor: () => Promise<String>;
 }
 
 export interface ReservationFeedbackEdgeSubscription
   extends Promise<AsyncIterator<ReservationFeedbackEdge>>,
-    Fragmentable {
+  Fragmentable {
   node: <T = ReservationFeedbackSubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
 }
@@ -14462,13 +14272,13 @@ export interface AggregateReservationFeedback {
 
 export interface AggregateReservationFeedbackPromise
   extends Promise<AggregateReservationFeedback>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<Int>;
 }
 
 export interface AggregateReservationFeedbackSubscription
   extends Promise<AsyncIterator<AggregateReservationFeedback>>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
 
@@ -14479,7 +14289,7 @@ export interface SizeConnection {
 
 export interface SizeConnectionPromise
   extends Promise<SizeConnection>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoPromise>() => T;
   edges: <T = FragmentableArray<SizeEdge>>() => T;
   aggregate: <T = AggregateSizePromise>() => T;
@@ -14487,7 +14297,7 @@ export interface SizeConnectionPromise
 
 export interface SizeConnectionSubscription
   extends Promise<AsyncIterator<SizeConnection>>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoSubscription>() => T;
   edges: <T = Promise<AsyncIterator<SizeEdgeSubscription>>>() => T;
   aggregate: <T = AggregateSizeSubscription>() => T;
@@ -14505,7 +14315,7 @@ export interface SizeEdgePromise extends Promise<SizeEdge>, Fragmentable {
 
 export interface SizeEdgeSubscription
   extends Promise<AsyncIterator<SizeEdge>>,
-    Fragmentable {
+  Fragmentable {
   node: <T = SizeSubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
 }
@@ -14516,13 +14326,13 @@ export interface AggregateSize {
 
 export interface AggregateSizePromise
   extends Promise<AggregateSize>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<Int>;
 }
 
 export interface AggregateSizeSubscription
   extends Promise<AsyncIterator<AggregateSize>>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
 
@@ -14533,7 +14343,7 @@ export interface TagConnection {
 
 export interface TagConnectionPromise
   extends Promise<TagConnection>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoPromise>() => T;
   edges: <T = FragmentableArray<TagEdge>>() => T;
   aggregate: <T = AggregateTagPromise>() => T;
@@ -14541,7 +14351,7 @@ export interface TagConnectionPromise
 
 export interface TagConnectionSubscription
   extends Promise<AsyncIterator<TagConnection>>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoSubscription>() => T;
   edges: <T = Promise<AsyncIterator<TagEdgeSubscription>>>() => T;
   aggregate: <T = AggregateTagSubscription>() => T;
@@ -14559,7 +14369,7 @@ export interface TagEdgePromise extends Promise<TagEdge>, Fragmentable {
 
 export interface TagEdgeSubscription
   extends Promise<AsyncIterator<TagEdge>>,
-    Fragmentable {
+  Fragmentable {
   node: <T = TagSubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
 }
@@ -14570,13 +14380,13 @@ export interface AggregateTag {
 
 export interface AggregateTagPromise
   extends Promise<AggregateTag>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<Int>;
 }
 
 export interface AggregateTagSubscription
   extends Promise<AsyncIterator<AggregateTag>>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
 
@@ -14587,7 +14397,7 @@ export interface TopSizeConnection {
 
 export interface TopSizeConnectionPromise
   extends Promise<TopSizeConnection>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoPromise>() => T;
   edges: <T = FragmentableArray<TopSizeEdge>>() => T;
   aggregate: <T = AggregateTopSizePromise>() => T;
@@ -14595,7 +14405,7 @@ export interface TopSizeConnectionPromise
 
 export interface TopSizeConnectionSubscription
   extends Promise<AsyncIterator<TopSizeConnection>>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoSubscription>() => T;
   edges: <T = Promise<AsyncIterator<TopSizeEdgeSubscription>>>() => T;
   aggregate: <T = AggregateTopSizeSubscription>() => T;
@@ -14613,7 +14423,7 @@ export interface TopSizeEdgePromise extends Promise<TopSizeEdge>, Fragmentable {
 
 export interface TopSizeEdgeSubscription
   extends Promise<AsyncIterator<TopSizeEdge>>,
-    Fragmentable {
+  Fragmentable {
   node: <T = TopSizeSubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
 }
@@ -14624,13 +14434,13 @@ export interface AggregateTopSize {
 
 export interface AggregateTopSizePromise
   extends Promise<AggregateTopSize>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<Int>;
 }
 
 export interface AggregateTopSizeSubscription
   extends Promise<AsyncIterator<AggregateTopSize>>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
 
@@ -14641,7 +14451,7 @@ export interface UserConnection {
 
 export interface UserConnectionPromise
   extends Promise<UserConnection>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoPromise>() => T;
   edges: <T = FragmentableArray<UserEdge>>() => T;
   aggregate: <T = AggregateUserPromise>() => T;
@@ -14649,7 +14459,7 @@ export interface UserConnectionPromise
 
 export interface UserConnectionSubscription
   extends Promise<AsyncIterator<UserConnection>>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoSubscription>() => T;
   edges: <T = Promise<AsyncIterator<UserEdgeSubscription>>>() => T;
   aggregate: <T = AggregateUserSubscription>() => T;
@@ -14667,7 +14477,7 @@ export interface UserEdgePromise extends Promise<UserEdge>, Fragmentable {
 
 export interface UserEdgeSubscription
   extends Promise<AsyncIterator<UserEdge>>,
-    Fragmentable {
+  Fragmentable {
   node: <T = UserSubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
 }
@@ -14678,13 +14488,13 @@ export interface AggregateUser {
 
 export interface AggregateUserPromise
   extends Promise<AggregateUser>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<Int>;
 }
 
 export interface AggregateUserSubscription
   extends Promise<AsyncIterator<AggregateUser>>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
 
@@ -14695,7 +14505,7 @@ export interface WarehouseLocationConnection {
 
 export interface WarehouseLocationConnectionPromise
   extends Promise<WarehouseLocationConnection>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoPromise>() => T;
   edges: <T = FragmentableArray<WarehouseLocationEdge>>() => T;
   aggregate: <T = AggregateWarehouseLocationPromise>() => T;
@@ -14703,7 +14513,7 @@ export interface WarehouseLocationConnectionPromise
 
 export interface WarehouseLocationConnectionSubscription
   extends Promise<AsyncIterator<WarehouseLocationConnection>>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoSubscription>() => T;
   edges: <T = Promise<AsyncIterator<WarehouseLocationEdgeSubscription>>>() => T;
   aggregate: <T = AggregateWarehouseLocationSubscription>() => T;
@@ -14716,14 +14526,14 @@ export interface WarehouseLocationEdge {
 
 export interface WarehouseLocationEdgePromise
   extends Promise<WarehouseLocationEdge>,
-    Fragmentable {
+  Fragmentable {
   node: <T = WarehouseLocationPromise>() => T;
   cursor: () => Promise<String>;
 }
 
 export interface WarehouseLocationEdgeSubscription
   extends Promise<AsyncIterator<WarehouseLocationEdge>>,
-    Fragmentable {
+  Fragmentable {
   node: <T = WarehouseLocationSubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
 }
@@ -14734,13 +14544,13 @@ export interface AggregateWarehouseLocation {
 
 export interface AggregateWarehouseLocationPromise
   extends Promise<AggregateWarehouseLocation>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<Int>;
 }
 
 export interface AggregateWarehouseLocationSubscription
   extends Promise<AsyncIterator<AggregateWarehouseLocation>>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
 
@@ -14751,7 +14561,7 @@ export interface WarehouseLocationConstraintConnection {
 
 export interface WarehouseLocationConstraintConnectionPromise
   extends Promise<WarehouseLocationConstraintConnection>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoPromise>() => T;
   edges: <T = FragmentableArray<WarehouseLocationConstraintEdge>>() => T;
   aggregate: <T = AggregateWarehouseLocationConstraintPromise>() => T;
@@ -14759,11 +14569,11 @@ export interface WarehouseLocationConstraintConnectionPromise
 
 export interface WarehouseLocationConstraintConnectionSubscription
   extends Promise<AsyncIterator<WarehouseLocationConstraintConnection>>,
-    Fragmentable {
+  Fragmentable {
   pageInfo: <T = PageInfoSubscription>() => T;
   edges: <
     T = Promise<AsyncIterator<WarehouseLocationConstraintEdgeSubscription>>
-  >() => T;
+    >() => T;
   aggregate: <T = AggregateWarehouseLocationConstraintSubscription>() => T;
 }
 
@@ -14774,14 +14584,14 @@ export interface WarehouseLocationConstraintEdge {
 
 export interface WarehouseLocationConstraintEdgePromise
   extends Promise<WarehouseLocationConstraintEdge>,
-    Fragmentable {
+  Fragmentable {
   node: <T = WarehouseLocationConstraintPromise>() => T;
   cursor: () => Promise<String>;
 }
 
 export interface WarehouseLocationConstraintEdgeSubscription
   extends Promise<AsyncIterator<WarehouseLocationConstraintEdge>>,
-    Fragmentable {
+  Fragmentable {
   node: <T = WarehouseLocationConstraintSubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
 }
@@ -14792,13 +14602,13 @@ export interface AggregateWarehouseLocationConstraint {
 
 export interface AggregateWarehouseLocationConstraintPromise
   extends Promise<AggregateWarehouseLocationConstraint>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<Int>;
 }
 
 export interface AggregateWarehouseLocationConstraintSubscription
   extends Promise<AsyncIterator<AggregateWarehouseLocationConstraint>>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
 
@@ -14808,13 +14618,13 @@ export interface BatchPayload {
 
 export interface BatchPayloadPromise
   extends Promise<BatchPayload>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<Long>;
 }
 
 export interface BatchPayloadSubscription
   extends Promise<AsyncIterator<BatchPayload>>,
-    Fragmentable {
+  Fragmentable {
   count: () => Promise<AsyncIterator<Long>>;
 }
 
@@ -14827,7 +14637,7 @@ export interface BagItemSubscriptionPayload {
 
 export interface BagItemSubscriptionPayloadPromise
   extends Promise<BagItemSubscriptionPayload>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<MutationType>;
   node: <T = BagItemPromise>() => T;
   updatedFields: () => Promise<String[]>;
@@ -14836,7 +14646,7 @@ export interface BagItemSubscriptionPayloadPromise
 
 export interface BagItemSubscriptionPayloadSubscription
   extends Promise<AsyncIterator<BagItemSubscriptionPayload>>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<AsyncIterator<MutationType>>;
   node: <T = BagItemSubscription>() => T;
   updatedFields: () => Promise<AsyncIterator<String[]>>;
@@ -14852,7 +14662,7 @@ export interface BagItemPreviousValues {
 
 export interface BagItemPreviousValuesPromise
   extends Promise<BagItemPreviousValues>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   position: () => Promise<Int>;
   saved: () => Promise<Boolean>;
@@ -14861,7 +14671,7 @@ export interface BagItemPreviousValuesPromise
 
 export interface BagItemPreviousValuesSubscription
   extends Promise<AsyncIterator<BagItemPreviousValues>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   position: () => Promise<AsyncIterator<Int>>;
   saved: () => Promise<AsyncIterator<Boolean>>;
@@ -14877,7 +14687,7 @@ export interface BillingInfoSubscriptionPayload {
 
 export interface BillingInfoSubscriptionPayloadPromise
   extends Promise<BillingInfoSubscriptionPayload>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<MutationType>;
   node: <T = BillingInfoPromise>() => T;
   updatedFields: () => Promise<String[]>;
@@ -14886,7 +14696,7 @@ export interface BillingInfoSubscriptionPayloadPromise
 
 export interface BillingInfoSubscriptionPayloadSubscription
   extends Promise<AsyncIterator<BillingInfoSubscriptionPayload>>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<AsyncIterator<MutationType>>;
   node: <T = BillingInfoSubscription>() => T;
   updatedFields: () => Promise<AsyncIterator<String[]>>;
@@ -14910,7 +14720,7 @@ export interface BillingInfoPreviousValues {
 
 export interface BillingInfoPreviousValuesPromise
   extends Promise<BillingInfoPreviousValues>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   brand: () => Promise<String>;
   name: () => Promise<String>;
@@ -14927,7 +14737,7 @@ export interface BillingInfoPreviousValuesPromise
 
 export interface BillingInfoPreviousValuesSubscription
   extends Promise<AsyncIterator<BillingInfoPreviousValues>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   brand: () => Promise<AsyncIterator<String>>;
   name: () => Promise<AsyncIterator<String>>;
@@ -14951,7 +14761,7 @@ export interface BottomSizeSubscriptionPayload {
 
 export interface BottomSizeSubscriptionPayloadPromise
   extends Promise<BottomSizeSubscriptionPayload>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<MutationType>;
   node: <T = BottomSizePromise>() => T;
   updatedFields: () => Promise<String[]>;
@@ -14960,7 +14770,7 @@ export interface BottomSizeSubscriptionPayloadPromise
 
 export interface BottomSizeSubscriptionPayloadSubscription
   extends Promise<AsyncIterator<BottomSizeSubscriptionPayload>>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<AsyncIterator<MutationType>>;
   node: <T = BottomSizeSubscription>() => T;
   updatedFields: () => Promise<AsyncIterator<String[]>>;
@@ -14979,7 +14789,7 @@ export interface BottomSizePreviousValues {
 
 export interface BottomSizePreviousValuesPromise
   extends Promise<BottomSizePreviousValues>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   type: () => Promise<BottomSizeType>;
   value: () => Promise<String>;
@@ -14991,7 +14801,7 @@ export interface BottomSizePreviousValuesPromise
 
 export interface BottomSizePreviousValuesSubscription
   extends Promise<AsyncIterator<BottomSizePreviousValues>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   type: () => Promise<AsyncIterator<BottomSizeType>>;
   value: () => Promise<AsyncIterator<String>>;
@@ -15010,7 +14820,7 @@ export interface BrandSubscriptionPayload {
 
 export interface BrandSubscriptionPayloadPromise
   extends Promise<BrandSubscriptionPayload>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<MutationType>;
   node: <T = BrandPromise>() => T;
   updatedFields: () => Promise<String[]>;
@@ -15019,7 +14829,7 @@ export interface BrandSubscriptionPayloadPromise
 
 export interface BrandSubscriptionPayloadSubscription
   extends Promise<AsyncIterator<BrandSubscriptionPayload>>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<AsyncIterator<MutationType>>;
   node: <T = BrandSubscription>() => T;
   updatedFields: () => Promise<AsyncIterator<String[]>>;
@@ -15044,7 +14854,7 @@ export interface BrandPreviousValues {
 
 export interface BrandPreviousValuesPromise
   extends Promise<BrandPreviousValues>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   slug: () => Promise<String>;
   brandCode: () => Promise<String>;
@@ -15062,7 +14872,7 @@ export interface BrandPreviousValuesPromise
 
 export interface BrandPreviousValuesSubscription
   extends Promise<AsyncIterator<BrandPreviousValues>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   slug: () => Promise<AsyncIterator<String>>;
   brandCode: () => Promise<AsyncIterator<String>>;
@@ -15087,7 +14897,7 @@ export interface CategorySubscriptionPayload {
 
 export interface CategorySubscriptionPayloadPromise
   extends Promise<CategorySubscriptionPayload>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<MutationType>;
   node: <T = CategoryPromise>() => T;
   updatedFields: () => Promise<String[]>;
@@ -15096,7 +14906,7 @@ export interface CategorySubscriptionPayloadPromise
 
 export interface CategorySubscriptionPayloadSubscription
   extends Promise<AsyncIterator<CategorySubscriptionPayload>>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<AsyncIterator<MutationType>>;
   node: <T = CategorySubscription>() => T;
   updatedFields: () => Promise<AsyncIterator<String[]>>;
@@ -15114,7 +14924,7 @@ export interface CategoryPreviousValues {
 
 export interface CategoryPreviousValuesPromise
   extends Promise<CategoryPreviousValues>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   slug: () => Promise<String>;
   name: () => Promise<String>;
@@ -15125,7 +14935,7 @@ export interface CategoryPreviousValuesPromise
 
 export interface CategoryPreviousValuesSubscription
   extends Promise<AsyncIterator<CategoryPreviousValues>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   slug: () => Promise<AsyncIterator<String>>;
   name: () => Promise<AsyncIterator<String>>;
@@ -15143,7 +14953,7 @@ export interface CollectionSubscriptionPayload {
 
 export interface CollectionSubscriptionPayloadPromise
   extends Promise<CollectionSubscriptionPayload>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<MutationType>;
   node: <T = CollectionPromise>() => T;
   updatedFields: () => Promise<String[]>;
@@ -15152,7 +14962,7 @@ export interface CollectionSubscriptionPayloadPromise
 
 export interface CollectionSubscriptionPayloadSubscription
   extends Promise<AsyncIterator<CollectionSubscriptionPayload>>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<AsyncIterator<MutationType>>;
   node: <T = CollectionSubscription>() => T;
   updatedFields: () => Promise<AsyncIterator<String[]>>;
@@ -15171,7 +14981,7 @@ export interface CollectionPreviousValues {
 
 export interface CollectionPreviousValuesPromise
   extends Promise<CollectionPreviousValues>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   slug: () => Promise<String>;
   images: () => Promise<Json>;
@@ -15183,7 +14993,7 @@ export interface CollectionPreviousValuesPromise
 
 export interface CollectionPreviousValuesSubscription
   extends Promise<AsyncIterator<CollectionPreviousValues>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   slug: () => Promise<AsyncIterator<String>>;
   images: () => Promise<AsyncIterator<Json>>;
@@ -15202,7 +15012,7 @@ export interface CollectionGroupSubscriptionPayload {
 
 export interface CollectionGroupSubscriptionPayloadPromise
   extends Promise<CollectionGroupSubscriptionPayload>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<MutationType>;
   node: <T = CollectionGroupPromise>() => T;
   updatedFields: () => Promise<String[]>;
@@ -15211,7 +15021,7 @@ export interface CollectionGroupSubscriptionPayloadPromise
 
 export interface CollectionGroupSubscriptionPayloadSubscription
   extends Promise<AsyncIterator<CollectionGroupSubscriptionPayload>>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<AsyncIterator<MutationType>>;
   node: <T = CollectionGroupSubscription>() => T;
   updatedFields: () => Promise<AsyncIterator<String[]>>;
@@ -15227,7 +15037,7 @@ export interface CollectionGroupPreviousValues {
 
 export interface CollectionGroupPreviousValuesPromise
   extends Promise<CollectionGroupPreviousValues>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   slug: () => Promise<String>;
   title: () => Promise<String>;
@@ -15236,7 +15046,7 @@ export interface CollectionGroupPreviousValuesPromise
 
 export interface CollectionGroupPreviousValuesSubscription
   extends Promise<AsyncIterator<CollectionGroupPreviousValues>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   slug: () => Promise<AsyncIterator<String>>;
   title: () => Promise<AsyncIterator<String>>;
@@ -15252,7 +15062,7 @@ export interface ColorSubscriptionPayload {
 
 export interface ColorSubscriptionPayloadPromise
   extends Promise<ColorSubscriptionPayload>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<MutationType>;
   node: <T = ColorPromise>() => T;
   updatedFields: () => Promise<String[]>;
@@ -15261,7 +15071,7 @@ export interface ColorSubscriptionPayloadPromise
 
 export interface ColorSubscriptionPayloadSubscription
   extends Promise<AsyncIterator<ColorSubscriptionPayload>>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<AsyncIterator<MutationType>>;
   node: <T = ColorSubscription>() => T;
   updatedFields: () => Promise<AsyncIterator<String[]>>;
@@ -15278,7 +15088,7 @@ export interface ColorPreviousValues {
 
 export interface ColorPreviousValuesPromise
   extends Promise<ColorPreviousValues>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   slug: () => Promise<String>;
   name: () => Promise<String>;
@@ -15288,7 +15098,7 @@ export interface ColorPreviousValuesPromise
 
 export interface ColorPreviousValuesSubscription
   extends Promise<AsyncIterator<ColorPreviousValues>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   slug: () => Promise<AsyncIterator<String>>;
   name: () => Promise<AsyncIterator<String>>;
@@ -15305,7 +15115,7 @@ export interface CustomerSubscriptionPayload {
 
 export interface CustomerSubscriptionPayloadPromise
   extends Promise<CustomerSubscriptionPayload>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<MutationType>;
   node: <T = CustomerPromise>() => T;
   updatedFields: () => Promise<String[]>;
@@ -15314,7 +15124,7 @@ export interface CustomerSubscriptionPayloadPromise
 
 export interface CustomerSubscriptionPayloadSubscription
   extends Promise<AsyncIterator<CustomerSubscriptionPayload>>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<AsyncIterator<MutationType>>;
   node: <T = CustomerSubscription>() => T;
   updatedFields: () => Promise<AsyncIterator<String[]>>;
@@ -15329,7 +15139,7 @@ export interface CustomerPreviousValues {
 
 export interface CustomerPreviousValuesPromise
   extends Promise<CustomerPreviousValues>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   status: () => Promise<CustomerStatus>;
   plan: () => Promise<Plan>;
@@ -15337,7 +15147,7 @@ export interface CustomerPreviousValuesPromise
 
 export interface CustomerPreviousValuesSubscription
   extends Promise<AsyncIterator<CustomerPreviousValues>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   status: () => Promise<AsyncIterator<CustomerStatus>>;
   plan: () => Promise<AsyncIterator<Plan>>;
@@ -15352,7 +15162,7 @@ export interface CustomerDetailSubscriptionPayload {
 
 export interface CustomerDetailSubscriptionPayloadPromise
   extends Promise<CustomerDetailSubscriptionPayload>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<MutationType>;
   node: <T = CustomerDetailPromise>() => T;
   updatedFields: () => Promise<String[]>;
@@ -15361,7 +15171,7 @@ export interface CustomerDetailSubscriptionPayloadPromise
 
 export interface CustomerDetailSubscriptionPayloadSubscription
   extends Promise<AsyncIterator<CustomerDetailSubscriptionPayload>>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<AsyncIterator<MutationType>>;
   node: <T = CustomerDetailSubscription>() => T;
   updatedFields: () => Promise<AsyncIterator<String[]>>;
@@ -15394,7 +15204,7 @@ export interface CustomerDetailPreviousValues {
 
 export interface CustomerDetailPreviousValuesPromise
   extends Promise<CustomerDetailPreviousValues>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   phoneNumber: () => Promise<String>;
   birthday: () => Promise<DateTimeOutput>;
@@ -15420,7 +15230,7 @@ export interface CustomerDetailPreviousValuesPromise
 
 export interface CustomerDetailPreviousValuesSubscription
   extends Promise<AsyncIterator<CustomerDetailPreviousValues>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   phoneNumber: () => Promise<AsyncIterator<String>>;
   birthday: () => Promise<AsyncIterator<DateTimeOutput>>;
@@ -15453,7 +15263,7 @@ export interface HomepageProductRailSubscriptionPayload {
 
 export interface HomepageProductRailSubscriptionPayloadPromise
   extends Promise<HomepageProductRailSubscriptionPayload>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<MutationType>;
   node: <T = HomepageProductRailPromise>() => T;
   updatedFields: () => Promise<String[]>;
@@ -15462,7 +15272,7 @@ export interface HomepageProductRailSubscriptionPayloadPromise
 
 export interface HomepageProductRailSubscriptionPayloadSubscription
   extends Promise<AsyncIterator<HomepageProductRailSubscriptionPayload>>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<AsyncIterator<MutationType>>;
   node: <T = HomepageProductRailSubscription>() => T;
   updatedFields: () => Promise<AsyncIterator<String[]>>;
@@ -15477,7 +15287,7 @@ export interface HomepageProductRailPreviousValues {
 
 export interface HomepageProductRailPreviousValuesPromise
   extends Promise<HomepageProductRailPreviousValues>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   slug: () => Promise<String>;
   name: () => Promise<String>;
@@ -15485,7 +15295,7 @@ export interface HomepageProductRailPreviousValuesPromise
 
 export interface HomepageProductRailPreviousValuesSubscription
   extends Promise<AsyncIterator<HomepageProductRailPreviousValues>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   slug: () => Promise<AsyncIterator<String>>;
   name: () => Promise<AsyncIterator<String>>;
@@ -15500,7 +15310,7 @@ export interface ImageSubscriptionPayload {
 
 export interface ImageSubscriptionPayloadPromise
   extends Promise<ImageSubscriptionPayload>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<MutationType>;
   node: <T = ImagePromise>() => T;
   updatedFields: () => Promise<String[]>;
@@ -15509,7 +15319,7 @@ export interface ImageSubscriptionPayloadPromise
 
 export interface ImageSubscriptionPayloadSubscription
   extends Promise<AsyncIterator<ImageSubscriptionPayload>>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<AsyncIterator<MutationType>>;
   node: <T = ImageSubscription>() => T;
   updatedFields: () => Promise<AsyncIterator<String[]>>;
@@ -15523,6 +15333,7 @@ export interface ImagePreviousValues {
   originalHeight?: Int;
   originalUrl: String;
   originalWidth?: Int;
+  resizedUrl: String;
   title?: String;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
@@ -15530,13 +15341,14 @@ export interface ImagePreviousValues {
 
 export interface ImagePreviousValuesPromise
   extends Promise<ImagePreviousValues>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   caption: () => Promise<String>;
   url: () => Promise<String>;
   originalHeight: () => Promise<Int>;
   originalUrl: () => Promise<String>;
   originalWidth: () => Promise<Int>;
+  resizedUrl: () => Promise<String>;
   title: () => Promise<String>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
@@ -15544,13 +15356,14 @@ export interface ImagePreviousValuesPromise
 
 export interface ImagePreviousValuesSubscription
   extends Promise<AsyncIterator<ImagePreviousValues>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   caption: () => Promise<AsyncIterator<String>>;
   url: () => Promise<AsyncIterator<String>>;
   originalHeight: () => Promise<AsyncIterator<Int>>;
   originalUrl: () => Promise<AsyncIterator<String>>;
   originalWidth: () => Promise<AsyncIterator<Int>>;
+  resizedUrl: () => Promise<AsyncIterator<String>>;
   title: () => Promise<AsyncIterator<String>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
@@ -15565,7 +15378,7 @@ export interface LabelSubscriptionPayload {
 
 export interface LabelSubscriptionPayloadPromise
   extends Promise<LabelSubscriptionPayload>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<MutationType>;
   node: <T = LabelPromise>() => T;
   updatedFields: () => Promise<String[]>;
@@ -15574,7 +15387,7 @@ export interface LabelSubscriptionPayloadPromise
 
 export interface LabelSubscriptionPayloadSubscription
   extends Promise<AsyncIterator<LabelSubscriptionPayload>>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<AsyncIterator<MutationType>>;
   node: <T = LabelSubscription>() => T;
   updatedFields: () => Promise<AsyncIterator<String[]>>;
@@ -15591,7 +15404,7 @@ export interface LabelPreviousValues {
 
 export interface LabelPreviousValuesPromise
   extends Promise<LabelPreviousValues>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   name: () => Promise<String>;
   image: () => Promise<String>;
@@ -15601,7 +15414,7 @@ export interface LabelPreviousValuesPromise
 
 export interface LabelPreviousValuesSubscription
   extends Promise<AsyncIterator<LabelPreviousValues>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   name: () => Promise<AsyncIterator<String>>;
   image: () => Promise<AsyncIterator<String>>;
@@ -15618,7 +15431,7 @@ export interface LocationSubscriptionPayload {
 
 export interface LocationSubscriptionPayloadPromise
   extends Promise<LocationSubscriptionPayload>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<MutationType>;
   node: <T = LocationPromise>() => T;
   updatedFields: () => Promise<String[]>;
@@ -15627,7 +15440,7 @@ export interface LocationSubscriptionPayloadPromise
 
 export interface LocationSubscriptionPayloadSubscription
   extends Promise<AsyncIterator<LocationSubscriptionPayload>>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<AsyncIterator<MutationType>>;
   node: <T = LocationSubscription>() => T;
   updatedFields: () => Promise<AsyncIterator<String[]>>;
@@ -15654,7 +15467,7 @@ export interface LocationPreviousValues {
 
 export interface LocationPreviousValuesPromise
   extends Promise<LocationPreviousValues>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   slug: () => Promise<String>;
   name: () => Promise<String>;
@@ -15674,7 +15487,7 @@ export interface LocationPreviousValuesPromise
 
 export interface LocationPreviousValuesSubscription
   extends Promise<AsyncIterator<LocationPreviousValues>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   slug: () => Promise<AsyncIterator<String>>;
   name: () => Promise<AsyncIterator<String>>;
@@ -15701,7 +15514,7 @@ export interface PackageSubscriptionPayload {
 
 export interface PackageSubscriptionPayloadPromise
   extends Promise<PackageSubscriptionPayload>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<MutationType>;
   node: <T = PackagePromise>() => T;
   updatedFields: () => Promise<String[]>;
@@ -15710,7 +15523,7 @@ export interface PackageSubscriptionPayloadPromise
 
 export interface PackageSubscriptionPayloadSubscription
   extends Promise<AsyncIterator<PackageSubscriptionPayload>>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<AsyncIterator<MutationType>>;
   node: <T = PackageSubscription>() => T;
   updatedFields: () => Promise<AsyncIterator<String[]>>;
@@ -15726,7 +15539,7 @@ export interface PackagePreviousValues {
 
 export interface PackagePreviousValuesPromise
   extends Promise<PackagePreviousValues>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   weight: () => Promise<Float>;
   createdAt: () => Promise<DateTimeOutput>;
@@ -15735,7 +15548,7 @@ export interface PackagePreviousValuesPromise
 
 export interface PackagePreviousValuesSubscription
   extends Promise<AsyncIterator<PackagePreviousValues>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   weight: () => Promise<AsyncIterator<Float>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
@@ -15751,7 +15564,7 @@ export interface PhysicalProductSubscriptionPayload {
 
 export interface PhysicalProductSubscriptionPayloadPromise
   extends Promise<PhysicalProductSubscriptionPayload>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<MutationType>;
   node: <T = PhysicalProductPromise>() => T;
   updatedFields: () => Promise<String[]>;
@@ -15760,7 +15573,7 @@ export interface PhysicalProductSubscriptionPayloadPromise
 
 export interface PhysicalProductSubscriptionPayloadSubscription
   extends Promise<AsyncIterator<PhysicalProductSubscriptionPayload>>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<AsyncIterator<MutationType>>;
   node: <T = PhysicalProductSubscription>() => T;
   updatedFields: () => Promise<AsyncIterator<String[]>>;
@@ -15782,7 +15595,7 @@ export interface PhysicalProductPreviousValues {
 
 export interface PhysicalProductPreviousValuesPromise
   extends Promise<PhysicalProductPreviousValues>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   seasonsUID: () => Promise<String>;
   inventoryStatus: () => Promise<InventoryStatus>;
@@ -15797,7 +15610,7 @@ export interface PhysicalProductPreviousValuesPromise
 
 export interface PhysicalProductPreviousValuesSubscription
   extends Promise<AsyncIterator<PhysicalProductPreviousValues>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   seasonsUID: () => Promise<AsyncIterator<String>>;
   inventoryStatus: () => Promise<AsyncIterator<InventoryStatus>>;
@@ -15819,7 +15632,7 @@ export interface ProductSubscriptionPayload {
 
 export interface ProductSubscriptionPayloadPromise
   extends Promise<ProductSubscriptionPayload>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<MutationType>;
   node: <T = ProductPromise>() => T;
   updatedFields: () => Promise<String[]>;
@@ -15828,7 +15641,7 @@ export interface ProductSubscriptionPayloadPromise
 
 export interface ProductSubscriptionPayloadSubscription
   extends Promise<AsyncIterator<ProductSubscriptionPayload>>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<AsyncIterator<MutationType>>;
   node: <T = ProductSubscription>() => T;
   updatedFields: () => Promise<AsyncIterator<String[]>>;
@@ -15842,6 +15655,7 @@ export interface ProductPreviousValues {
   type?: ProductType;
   description?: String;
   externalURL?: String;
+  images?: Json;
   modelHeight?: Int;
   retailPrice?: Int;
   innerMaterials: String[];
@@ -15855,13 +15669,14 @@ export interface ProductPreviousValues {
 
 export interface ProductPreviousValuesPromise
   extends Promise<ProductPreviousValues>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   slug: () => Promise<String>;
   name: () => Promise<String>;
   type: () => Promise<ProductType>;
   description: () => Promise<String>;
   externalURL: () => Promise<String>;
+  images: () => Promise<Json>;
   modelHeight: () => Promise<Int>;
   retailPrice: () => Promise<Int>;
   innerMaterials: () => Promise<String[]>;
@@ -15875,13 +15690,14 @@ export interface ProductPreviousValuesPromise
 
 export interface ProductPreviousValuesSubscription
   extends Promise<AsyncIterator<ProductPreviousValues>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   slug: () => Promise<AsyncIterator<String>>;
   name: () => Promise<AsyncIterator<String>>;
   type: () => Promise<AsyncIterator<ProductType>>;
   description: () => Promise<AsyncIterator<String>>;
   externalURL: () => Promise<AsyncIterator<String>>;
+  images: () => Promise<AsyncIterator<Json>>;
   modelHeight: () => Promise<AsyncIterator<Int>>;
   retailPrice: () => Promise<AsyncIterator<Int>>;
   innerMaterials: () => Promise<AsyncIterator<String[]>>;
@@ -15902,7 +15718,7 @@ export interface ProductFunctionSubscriptionPayload {
 
 export interface ProductFunctionSubscriptionPayloadPromise
   extends Promise<ProductFunctionSubscriptionPayload>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<MutationType>;
   node: <T = ProductFunctionPromise>() => T;
   updatedFields: () => Promise<String[]>;
@@ -15911,7 +15727,7 @@ export interface ProductFunctionSubscriptionPayloadPromise
 
 export interface ProductFunctionSubscriptionPayloadSubscription
   extends Promise<AsyncIterator<ProductFunctionSubscriptionPayload>>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<AsyncIterator<MutationType>>;
   node: <T = ProductFunctionSubscription>() => T;
   updatedFields: () => Promise<AsyncIterator<String[]>>;
@@ -15925,14 +15741,14 @@ export interface ProductFunctionPreviousValues {
 
 export interface ProductFunctionPreviousValuesPromise
   extends Promise<ProductFunctionPreviousValues>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   name: () => Promise<String>;
 }
 
 export interface ProductFunctionPreviousValuesSubscription
   extends Promise<AsyncIterator<ProductFunctionPreviousValues>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   name: () => Promise<AsyncIterator<String>>;
 }
@@ -15946,7 +15762,7 @@ export interface ProductModelSubscriptionPayload {
 
 export interface ProductModelSubscriptionPayloadPromise
   extends Promise<ProductModelSubscriptionPayload>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<MutationType>;
   node: <T = ProductModelPromise>() => T;
   updatedFields: () => Promise<String[]>;
@@ -15955,7 +15771,7 @@ export interface ProductModelSubscriptionPayloadPromise
 
 export interface ProductModelSubscriptionPayloadSubscription
   extends Promise<AsyncIterator<ProductModelSubscriptionPayload>>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<AsyncIterator<MutationType>>;
   node: <T = ProductModelSubscription>() => T;
   updatedFields: () => Promise<AsyncIterator<String[]>>;
@@ -15970,7 +15786,7 @@ export interface ProductModelPreviousValues {
 
 export interface ProductModelPreviousValuesPromise
   extends Promise<ProductModelPreviousValues>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   name: () => Promise<String>;
   height: () => Promise<Float>;
@@ -15978,7 +15794,7 @@ export interface ProductModelPreviousValuesPromise
 
 export interface ProductModelPreviousValuesSubscription
   extends Promise<AsyncIterator<ProductModelPreviousValues>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   name: () => Promise<AsyncIterator<String>>;
   height: () => Promise<AsyncIterator<Float>>;
@@ -15993,7 +15809,7 @@ export interface ProductRequestSubscriptionPayload {
 
 export interface ProductRequestSubscriptionPayloadPromise
   extends Promise<ProductRequestSubscriptionPayload>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<MutationType>;
   node: <T = ProductRequestPromise>() => T;
   updatedFields: () => Promise<String[]>;
@@ -16002,7 +15818,7 @@ export interface ProductRequestSubscriptionPayloadPromise
 
 export interface ProductRequestSubscriptionPayloadSubscription
   extends Promise<AsyncIterator<ProductRequestSubscriptionPayload>>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<AsyncIterator<MutationType>>;
   node: <T = ProductRequestSubscription>() => T;
   updatedFields: () => Promise<AsyncIterator<String[]>>;
@@ -16025,7 +15841,7 @@ export interface ProductRequestPreviousValues {
 
 export interface ProductRequestPreviousValuesPromise
   extends Promise<ProductRequestPreviousValues>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   brand: () => Promise<String>;
   description: () => Promise<String>;
@@ -16041,7 +15857,7 @@ export interface ProductRequestPreviousValuesPromise
 
 export interface ProductRequestPreviousValuesSubscription
   extends Promise<AsyncIterator<ProductRequestPreviousValues>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   brand: () => Promise<AsyncIterator<String>>;
   description: () => Promise<AsyncIterator<String>>;
@@ -16064,7 +15880,7 @@ export interface ProductVariantSubscriptionPayload {
 
 export interface ProductVariantSubscriptionPayloadPromise
   extends Promise<ProductVariantSubscriptionPayload>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<MutationType>;
   node: <T = ProductVariantPromise>() => T;
   updatedFields: () => Promise<String[]>;
@@ -16073,7 +15889,7 @@ export interface ProductVariantSubscriptionPayloadPromise
 
 export interface ProductVariantSubscriptionPayloadSubscription
   extends Promise<AsyncIterator<ProductVariantSubscriptionPayload>>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<AsyncIterator<MutationType>>;
   node: <T = ProductVariantSubscription>() => T;
   updatedFields: () => Promise<AsyncIterator<String[]>>;
@@ -16099,7 +15915,7 @@ export interface ProductVariantPreviousValues {
 
 export interface ProductVariantPreviousValuesPromise
   extends Promise<ProductVariantPreviousValues>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   sku: () => Promise<String>;
   weight: () => Promise<Float>;
@@ -16118,7 +15934,7 @@ export interface ProductVariantPreviousValuesPromise
 
 export interface ProductVariantPreviousValuesSubscription
   extends Promise<AsyncIterator<ProductVariantPreviousValues>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   sku: () => Promise<AsyncIterator<String>>;
   weight: () => Promise<AsyncIterator<Float>>;
@@ -16144,7 +15960,7 @@ export interface ProductVariantFeedbackSubscriptionPayload {
 
 export interface ProductVariantFeedbackSubscriptionPayloadPromise
   extends Promise<ProductVariantFeedbackSubscriptionPayload>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<MutationType>;
   node: <T = ProductVariantFeedbackPromise>() => T;
   updatedFields: () => Promise<String[]>;
@@ -16153,7 +15969,7 @@ export interface ProductVariantFeedbackSubscriptionPayloadPromise
 
 export interface ProductVariantFeedbackSubscriptionPayloadSubscription
   extends Promise<AsyncIterator<ProductVariantFeedbackSubscriptionPayload>>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<AsyncIterator<MutationType>>;
   node: <T = ProductVariantFeedbackSubscription>() => T;
   updatedFields: () => Promise<AsyncIterator<String[]>>;
@@ -16167,14 +15983,14 @@ export interface ProductVariantFeedbackPreviousValues {
 
 export interface ProductVariantFeedbackPreviousValuesPromise
   extends Promise<ProductVariantFeedbackPreviousValues>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   isCompleted: () => Promise<Boolean>;
 }
 
 export interface ProductVariantFeedbackPreviousValuesSubscription
   extends Promise<AsyncIterator<ProductVariantFeedbackPreviousValues>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   isCompleted: () => Promise<AsyncIterator<Boolean>>;
 }
@@ -16188,26 +16004,26 @@ export interface ProductVariantFeedbackQuestionSubscriptionPayload {
 
 export interface ProductVariantFeedbackQuestionSubscriptionPayloadPromise
   extends Promise<ProductVariantFeedbackQuestionSubscriptionPayload>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<MutationType>;
   node: <T = ProductVariantFeedbackQuestionPromise>() => T;
   updatedFields: () => Promise<String[]>;
   previousValues: <
     T = ProductVariantFeedbackQuestionPreviousValuesPromise
-  >() => T;
+    >() => T;
 }
 
 export interface ProductVariantFeedbackQuestionSubscriptionPayloadSubscription
   extends Promise<
-      AsyncIterator<ProductVariantFeedbackQuestionSubscriptionPayload>
-    >,
-    Fragmentable {
+  AsyncIterator<ProductVariantFeedbackQuestionSubscriptionPayload>
+  >,
+  Fragmentable {
   mutation: () => Promise<AsyncIterator<MutationType>>;
   node: <T = ProductVariantFeedbackQuestionSubscription>() => T;
   updatedFields: () => Promise<AsyncIterator<String[]>>;
   previousValues: <
     T = ProductVariantFeedbackQuestionPreviousValuesSubscription
-  >() => T;
+    >() => T;
 }
 
 export interface ProductVariantFeedbackQuestionPreviousValues {
@@ -16220,7 +16036,7 @@ export interface ProductVariantFeedbackQuestionPreviousValues {
 
 export interface ProductVariantFeedbackQuestionPreviousValuesPromise
   extends Promise<ProductVariantFeedbackQuestionPreviousValues>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   options: () => Promise<String[]>;
   question: () => Promise<String>;
@@ -16230,7 +16046,7 @@ export interface ProductVariantFeedbackQuestionPreviousValuesPromise
 
 export interface ProductVariantFeedbackQuestionPreviousValuesSubscription
   extends Promise<AsyncIterator<ProductVariantFeedbackQuestionPreviousValues>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   options: () => Promise<AsyncIterator<String[]>>;
   question: () => Promise<AsyncIterator<String>>;
@@ -16247,7 +16063,7 @@ export interface ProductVariantWantSubscriptionPayload {
 
 export interface ProductVariantWantSubscriptionPayloadPromise
   extends Promise<ProductVariantWantSubscriptionPayload>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<MutationType>;
   node: <T = ProductVariantWantPromise>() => T;
   updatedFields: () => Promise<String[]>;
@@ -16256,7 +16072,7 @@ export interface ProductVariantWantSubscriptionPayloadPromise
 
 export interface ProductVariantWantSubscriptionPayloadSubscription
   extends Promise<AsyncIterator<ProductVariantWantSubscriptionPayload>>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<AsyncIterator<MutationType>>;
   node: <T = ProductVariantWantSubscription>() => T;
   updatedFields: () => Promise<AsyncIterator<String[]>>;
@@ -16270,14 +16086,14 @@ export interface ProductVariantWantPreviousValues {
 
 export interface ProductVariantWantPreviousValuesPromise
   extends Promise<ProductVariantWantPreviousValues>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   isFulfilled: () => Promise<Boolean>;
 }
 
 export interface ProductVariantWantPreviousValuesSubscription
   extends Promise<AsyncIterator<ProductVariantWantPreviousValues>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   isFulfilled: () => Promise<AsyncIterator<Boolean>>;
 }
@@ -16291,7 +16107,7 @@ export interface RecentlyViewedProductSubscriptionPayload {
 
 export interface RecentlyViewedProductSubscriptionPayloadPromise
   extends Promise<RecentlyViewedProductSubscriptionPayload>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<MutationType>;
   node: <T = RecentlyViewedProductPromise>() => T;
   updatedFields: () => Promise<String[]>;
@@ -16300,7 +16116,7 @@ export interface RecentlyViewedProductSubscriptionPayloadPromise
 
 export interface RecentlyViewedProductSubscriptionPayloadSubscription
   extends Promise<AsyncIterator<RecentlyViewedProductSubscriptionPayload>>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<AsyncIterator<MutationType>>;
   node: <T = RecentlyViewedProductSubscription>() => T;
   updatedFields: () => Promise<AsyncIterator<String[]>>;
@@ -16316,7 +16132,7 @@ export interface RecentlyViewedProductPreviousValues {
 
 export interface RecentlyViewedProductPreviousValuesPromise
   extends Promise<RecentlyViewedProductPreviousValues>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   viewCount: () => Promise<Int>;
   createdAt: () => Promise<DateTimeOutput>;
@@ -16325,7 +16141,7 @@ export interface RecentlyViewedProductPreviousValuesPromise
 
 export interface RecentlyViewedProductPreviousValuesSubscription
   extends Promise<AsyncIterator<RecentlyViewedProductPreviousValues>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   viewCount: () => Promise<AsyncIterator<Int>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
@@ -16341,7 +16157,7 @@ export interface ReservationSubscriptionPayload {
 
 export interface ReservationSubscriptionPayloadPromise
   extends Promise<ReservationSubscriptionPayload>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<MutationType>;
   node: <T = ReservationPromise>() => T;
   updatedFields: () => Promise<String[]>;
@@ -16350,7 +16166,7 @@ export interface ReservationSubscriptionPayloadPromise
 
 export interface ReservationSubscriptionPayloadSubscription
   extends Promise<AsyncIterator<ReservationSubscriptionPayload>>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<AsyncIterator<MutationType>>;
   node: <T = ReservationSubscription>() => T;
   updatedFields: () => Promise<AsyncIterator<String[]>>;
@@ -16371,7 +16187,7 @@ export interface ReservationPreviousValues {
 
 export interface ReservationPreviousValuesPromise
   extends Promise<ReservationPreviousValues>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   reservationNumber: () => Promise<Int>;
   shipped: () => Promise<Boolean>;
@@ -16385,7 +16201,7 @@ export interface ReservationPreviousValuesPromise
 
 export interface ReservationPreviousValuesSubscription
   extends Promise<AsyncIterator<ReservationPreviousValues>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   reservationNumber: () => Promise<AsyncIterator<Int>>;
   shipped: () => Promise<AsyncIterator<Boolean>>;
@@ -16406,7 +16222,7 @@ export interface ReservationFeedbackSubscriptionPayload {
 
 export interface ReservationFeedbackSubscriptionPayloadPromise
   extends Promise<ReservationFeedbackSubscriptionPayload>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<MutationType>;
   node: <T = ReservationFeedbackPromise>() => T;
   updatedFields: () => Promise<String[]>;
@@ -16415,7 +16231,7 @@ export interface ReservationFeedbackSubscriptionPayloadPromise
 
 export interface ReservationFeedbackSubscriptionPayloadSubscription
   extends Promise<AsyncIterator<ReservationFeedbackSubscriptionPayload>>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<AsyncIterator<MutationType>>;
   node: <T = ReservationFeedbackSubscription>() => T;
   updatedFields: () => Promise<AsyncIterator<String[]>>;
@@ -16433,7 +16249,7 @@ export interface ReservationFeedbackPreviousValues {
 
 export interface ReservationFeedbackPreviousValuesPromise
   extends Promise<ReservationFeedbackPreviousValues>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   comment: () => Promise<String>;
   rating: () => Promise<Rating>;
@@ -16444,7 +16260,7 @@ export interface ReservationFeedbackPreviousValuesPromise
 
 export interface ReservationFeedbackPreviousValuesSubscription
   extends Promise<AsyncIterator<ReservationFeedbackPreviousValues>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   comment: () => Promise<AsyncIterator<String>>;
   rating: () => Promise<AsyncIterator<Rating>>;
@@ -16462,7 +16278,7 @@ export interface SizeSubscriptionPayload {
 
 export interface SizeSubscriptionPayloadPromise
   extends Promise<SizeSubscriptionPayload>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<MutationType>;
   node: <T = SizePromise>() => T;
   updatedFields: () => Promise<String[]>;
@@ -16471,7 +16287,7 @@ export interface SizeSubscriptionPayloadPromise
 
 export interface SizeSubscriptionPayloadSubscription
   extends Promise<AsyncIterator<SizeSubscriptionPayload>>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<AsyncIterator<MutationType>>;
   node: <T = SizeSubscription>() => T;
   updatedFields: () => Promise<AsyncIterator<String[]>>;
@@ -16487,7 +16303,7 @@ export interface SizePreviousValues {
 
 export interface SizePreviousValuesPromise
   extends Promise<SizePreviousValues>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   slug: () => Promise<String>;
   productType: () => Promise<ProductType>;
@@ -16496,7 +16312,7 @@ export interface SizePreviousValuesPromise
 
 export interface SizePreviousValuesSubscription
   extends Promise<AsyncIterator<SizePreviousValues>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   slug: () => Promise<AsyncIterator<String>>;
   productType: () => Promise<AsyncIterator<ProductType>>;
@@ -16512,7 +16328,7 @@ export interface TagSubscriptionPayload {
 
 export interface TagSubscriptionPayloadPromise
   extends Promise<TagSubscriptionPayload>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<MutationType>;
   node: <T = TagPromise>() => T;
   updatedFields: () => Promise<String[]>;
@@ -16521,7 +16337,7 @@ export interface TagSubscriptionPayloadPromise
 
 export interface TagSubscriptionPayloadSubscription
   extends Promise<AsyncIterator<TagSubscriptionPayload>>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<AsyncIterator<MutationType>>;
   node: <T = TagSubscription>() => T;
   updatedFields: () => Promise<AsyncIterator<String[]>>;
@@ -16538,7 +16354,7 @@ export interface TagPreviousValues {
 
 export interface TagPreviousValuesPromise
   extends Promise<TagPreviousValues>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   name: () => Promise<String>;
   description: () => Promise<String>;
@@ -16548,7 +16364,7 @@ export interface TagPreviousValuesPromise
 
 export interface TagPreviousValuesSubscription
   extends Promise<AsyncIterator<TagPreviousValues>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   name: () => Promise<AsyncIterator<String>>;
   description: () => Promise<AsyncIterator<String>>;
@@ -16565,7 +16381,7 @@ export interface TopSizeSubscriptionPayload {
 
 export interface TopSizeSubscriptionPayloadPromise
   extends Promise<TopSizeSubscriptionPayload>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<MutationType>;
   node: <T = TopSizePromise>() => T;
   updatedFields: () => Promise<String[]>;
@@ -16574,7 +16390,7 @@ export interface TopSizeSubscriptionPayloadPromise
 
 export interface TopSizeSubscriptionPayloadSubscription
   extends Promise<AsyncIterator<TopSizeSubscriptionPayload>>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<AsyncIterator<MutationType>>;
   node: <T = TopSizeSubscription>() => T;
   updatedFields: () => Promise<AsyncIterator<String[]>>;
@@ -16593,7 +16409,7 @@ export interface TopSizePreviousValues {
 
 export interface TopSizePreviousValuesPromise
   extends Promise<TopSizePreviousValues>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   letter: () => Promise<LetterSize>;
   sleeve: () => Promise<Float>;
@@ -16605,7 +16421,7 @@ export interface TopSizePreviousValuesPromise
 
 export interface TopSizePreviousValuesSubscription
   extends Promise<AsyncIterator<TopSizePreviousValues>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   letter: () => Promise<AsyncIterator<LetterSize>>;
   sleeve: () => Promise<AsyncIterator<Float>>;
@@ -16624,7 +16440,7 @@ export interface UserSubscriptionPayload {
 
 export interface UserSubscriptionPayloadPromise
   extends Promise<UserSubscriptionPayload>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<MutationType>;
   node: <T = UserPromise>() => T;
   updatedFields: () => Promise<String[]>;
@@ -16633,7 +16449,7 @@ export interface UserSubscriptionPayloadPromise
 
 export interface UserSubscriptionPayloadSubscription
   extends Promise<AsyncIterator<UserSubscriptionPayload>>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<AsyncIterator<MutationType>>;
   node: <T = UserSubscription>() => T;
   updatedFields: () => Promise<AsyncIterator<String[]>>;
@@ -16654,7 +16470,7 @@ export interface UserPreviousValues {
 
 export interface UserPreviousValuesPromise
   extends Promise<UserPreviousValues>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   auth0Id: () => Promise<String>;
   email: () => Promise<String>;
@@ -16668,7 +16484,7 @@ export interface UserPreviousValuesPromise
 
 export interface UserPreviousValuesSubscription
   extends Promise<AsyncIterator<UserPreviousValues>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   auth0Id: () => Promise<AsyncIterator<String>>;
   email: () => Promise<AsyncIterator<String>>;
@@ -16689,7 +16505,7 @@ export interface WarehouseLocationSubscriptionPayload {
 
 export interface WarehouseLocationSubscriptionPayloadPromise
   extends Promise<WarehouseLocationSubscriptionPayload>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<MutationType>;
   node: <T = WarehouseLocationPromise>() => T;
   updatedFields: () => Promise<String[]>;
@@ -16698,7 +16514,7 @@ export interface WarehouseLocationSubscriptionPayloadPromise
 
 export interface WarehouseLocationSubscriptionPayloadSubscription
   extends Promise<AsyncIterator<WarehouseLocationSubscriptionPayload>>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<AsyncIterator<MutationType>>;
   node: <T = WarehouseLocationSubscription>() => T;
   updatedFields: () => Promise<AsyncIterator<String[]>>;
@@ -16717,7 +16533,7 @@ export interface WarehouseLocationPreviousValues {
 
 export interface WarehouseLocationPreviousValuesPromise
   extends Promise<WarehouseLocationPreviousValues>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   type: () => Promise<WarehouseLocationType>;
   barcode: () => Promise<String>;
@@ -16729,7 +16545,7 @@ export interface WarehouseLocationPreviousValuesPromise
 
 export interface WarehouseLocationPreviousValuesSubscription
   extends Promise<AsyncIterator<WarehouseLocationPreviousValues>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   type: () => Promise<AsyncIterator<WarehouseLocationType>>;
   barcode: () => Promise<AsyncIterator<String>>;
@@ -16748,7 +16564,7 @@ export interface WarehouseLocationConstraintSubscriptionPayload {
 
 export interface WarehouseLocationConstraintSubscriptionPayloadPromise
   extends Promise<WarehouseLocationConstraintSubscriptionPayload>,
-    Fragmentable {
+  Fragmentable {
   mutation: () => Promise<MutationType>;
   node: <T = WarehouseLocationConstraintPromise>() => T;
   updatedFields: () => Promise<String[]>;
@@ -16757,15 +16573,15 @@ export interface WarehouseLocationConstraintSubscriptionPayloadPromise
 
 export interface WarehouseLocationConstraintSubscriptionPayloadSubscription
   extends Promise<
-      AsyncIterator<WarehouseLocationConstraintSubscriptionPayload>
-    >,
-    Fragmentable {
+  AsyncIterator<WarehouseLocationConstraintSubscriptionPayload>
+  >,
+  Fragmentable {
   mutation: () => Promise<AsyncIterator<MutationType>>;
   node: <T = WarehouseLocationConstraintSubscription>() => T;
   updatedFields: () => Promise<AsyncIterator<String[]>>;
   previousValues: <
     T = WarehouseLocationConstraintPreviousValuesSubscription
-  >() => T;
+    >() => T;
 }
 
 export interface WarehouseLocationConstraintPreviousValues {
@@ -16777,7 +16593,7 @@ export interface WarehouseLocationConstraintPreviousValues {
 
 export interface WarehouseLocationConstraintPreviousValuesPromise
   extends Promise<WarehouseLocationConstraintPreviousValues>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<ID_Output>;
   limit: () => Promise<Int>;
   createdAt: () => Promise<DateTimeOutput>;
@@ -16786,7 +16602,7 @@ export interface WarehouseLocationConstraintPreviousValuesPromise
 
 export interface WarehouseLocationConstraintPreviousValuesSubscription
   extends Promise<AsyncIterator<WarehouseLocationConstraintPreviousValues>>,
-    Fragmentable {
+  Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   limit: () => Promise<AsyncIterator<Int>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
@@ -16840,6 +16656,10 @@ export type Long = string;
 export const models: Model[] = [
   {
     name: "BrandTier",
+    embedded: false
+  },
+  {
+    name: "Material",
     embedded: false
   },
   {
