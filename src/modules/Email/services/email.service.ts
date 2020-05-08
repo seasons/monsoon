@@ -112,7 +112,7 @@ export class EmailService {
     product: Product
   ) => {
     const images = await this.prisma.client.product({ id: product.id }).images()
-    return this.utils.Identity({
+    return {
       url: images?.[0]?.originalUrl,
       brand: await this.prisma.client
         .product({ id: product.id })
@@ -120,7 +120,7 @@ export class EmailService {
         .name(),
       name: product.name,
       price: product.retailPrice,
-    })
+    }
   }
 
   private async sendTransactionalEmail({

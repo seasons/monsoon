@@ -213,44 +213,4 @@ export class SyncCommands {
     console.log("Running health check...")
     await this.dataJobs.checkAll(withDetails)
   }
-
-  @Command({
-    command: "sync:airtable:s3:images",
-    describe: "sync airtable product images to s3",
-    aliases: "sasi",
-  })
-  async syncAirtableImagesToS3(
-    @PrismaEnvOption({
-      choices: ["local", "staging", "production"],
-      default: "staging",
-    })
-    prismaEnv,
-    @AirtableEnvOption({ choices: ["staging", "production"] })
-    airtableEnv,
-    @AirtableIdOption()
-    abid
-  ) {
-    await this.scriptsService.updateConnections({
-      prismaEnv,
-      airtableEnv: abid || airtableEnv,
-      moduleRef: this.moduleRef,
-    })
-
-    const shouldProceed = readlineSync.keyInYN(
-      `You are about sync product images from airtable with baseID ${process.env.AIRTABLE_DATABASE_ID} to S3.\n` +
-        `${
-          airtableEnv === "production"
-            ? "WARNING: You should NOT run against production for dev purposes." +
-              " You should instead run against staging or a duplicate of production."
-            : ""
-        }\n` +
-        `Proceed? (y/n)`
-    )
-    if (!shouldProceed) {
-      console.log("\nExited without running anything\n")
-      return
-    }
-
-    await this.airtableSyncService.syncAirtableToS3()
-  }
 }

@@ -76,7 +76,6 @@ export class ImageService {
     }
     const result = await this.s3.upload(uploadParams).promise()
 
-    console.log(result)
     return result.Location
   }
 

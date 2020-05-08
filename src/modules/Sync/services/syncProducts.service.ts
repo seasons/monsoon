@@ -1,5 +1,9 @@
 import * as fs from "fs"
 
+import { AirtableData } from "@modules/Airtable/airtable.types"
+import { AirtableService } from "@modules/Airtable/services/airtable.service"
+import { ImageService } from "@modules/Image/services/image.service"
+import { UtilsService } from "@modules/Utils/services/utils.service"
 import { Injectable } from "@nestjs/common"
 import { head, isEmpty } from "lodash"
 import request from "request"
@@ -7,10 +11,6 @@ import slugify from "slugify"
 
 import { BottomSizeType, LetterSize, ProductCreateInput } from "../../../prisma"
 import { PrismaService } from "../../../prisma/prisma.service"
-import { AirtableData } from "../../Airtable/airtable.types"
-import { AirtableService } from "../../Airtable/services/airtable.service"
-import { ImageService } from "../../Image/services/image.service"
-import { UtilsService } from "../../Utils/services/utils.service"
 import { SyncUtilsService } from "./sync.utils.service"
 import { SyncCategoriesService } from "./syncCategories.service"
 import { SyncSizesService } from "./syncSizes.service"
@@ -142,6 +142,44 @@ export class SyncProductsService {
         const { brandCode } = brand.model
         const slug = slugify(brandCode + " " + name + " " + color).toLowerCase()
 
+        const productImages = await this.prisma.client
+          .product({ slug })
+          .images()
+        let imageIDs
+        if (productImages && productImages.length > 0) {
+          // We've already uploaded these images to S3
+          imageIDs = productImages.map(image => image.id)
+        } else {
+          // We have yet to upload these images to S3
+          const imageURLs: string[] = await Promise.all(
+            images.map(async (image, index) => {
+              const s3ImageName = `${brandCode}/${name.replace(/ /g, "_")}/${
+                index + 1
+              }.png`.toLowerCase()
+              console.log("ABOUT TO UPLOAD:", s3ImageName)
+              return await this.imageService.uploadImageFromURL(
+                image.url,
+                s3ImageName
+              )
+            })
+          )
+
+          // We should only have one Image object for each imageURL so use an upsert
+          const prismaImages = await Promise.all(
+            imageURLs.map(async imageURL => {
+              const imageData = { originalUrl: imageURL }
+              console.log("IMAGE URL:", typeof imageURL, imageURL)
+              return await this.prisma.client.upsertImage({
+                where: imageData,
+                create: imageData,
+                update: {},
+              })
+            })
+          )
+
+          imageIDs = prismaImages.map(image => ({ id: image.id }))
+        }
+
         let modelSizeRecord
         if (!!modelSize) {
           const {
@@ -192,6 +230,7 @@ export class SyncProductsService {
           slug,
           type,
           description,
+          images: { connect: imageIDs },
           retailPrice,
           externalURL: externalURL || "",
           ...(() => {
@@ -203,9 +242,6 @@ export class SyncProductsService {
           status: (status || "Available").replace(" ", ""),
         } as ProductCreateInput
 
-        // if (name == "Kit Shirt") {
-        //   console.log(data)
-        // }
         await this.prisma.client.upsertProduct({
           where: {
             slug,
@@ -334,83 +370,5 @@ export class SyncProductsService {
       getTargetRecordIdentifer: this.syncSizesService.getSizeRecordIdentifer,
       cliProgressBar,
     })
-  }
-
-  async syncAirtableToS3(cliProgressBar?) {
-    const allBrands = await this.airtableService.getAllBrands()
-    const allProducts = await this.airtableService.getAllProducts()
-
-    const [
-      multibar,
-      _cliProgressBar,
-    ] = await this.syncUtils.makeSingleSyncFuncMultiBarAndProgressBarIfNeeded({
-      cliProgressBar,
-      numRecords: allProducts.length,
-      modelName: "Products",
-    })
-
-    for (const record of allProducts) {
-      try {
-        _cliProgressBar.increment()
-
-        const { model } = record
-        const { name } = model
-
-        const brand = allBrands.findByIds(model.brand)
-
-        if (isEmpty(model) || isEmpty(name) || isEmpty(brand)) {
-          continue
-        }
-
-        const { color, images } = model
-
-        if (isEmpty(images)) {
-          continue
-        }
-
-        console.log(images)
-        const { brandCode } = brand.model
-
-        const slug = slugify(brandCode + " " + name + " " + color).toLowerCase()
-
-        const imageURLs: string[] = await Promise.all(
-          images.map(async (image, index) => {
-            const s3ImageName = `${brandCode}/${name.replace(/ /g, "_")}/${
-              index + 1
-            }.png`.toLowerCase()
-            console.log("ABOUT TO UPLOAD:", s3ImageName)
-            return await this.imageService.uploadImageFromURL(
-              image.url,
-              s3ImageName
-            )
-          })
-        )
-
-        const prismaImages = await Promise.all(
-          imageURLs.map(async imageURL => {
-            const imageData = { originalUrl: imageURL }
-            console.log("IMAGE URL:", typeof imageURL, imageURL)
-            return await this.prisma.client.upsertImage({
-              create: imageData,
-              update: imageData,
-              where: imageData,
-            })
-          })
-        )
-
-        const imageIDs = prismaImages.map(image => ({
-          id: image.id,
-        }))
-
-        await this.prisma.client.updateProduct({
-          data: { images: { set: imageIDs } },
-          where: { slug },
-        })
-      } catch (e) {
-        console.log(record)
-        console.error(e)
-      }
-    }
-    multibar?.stop()
   }
 }
