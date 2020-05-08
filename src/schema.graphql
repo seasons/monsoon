@@ -23,7 +23,7 @@ type Product {
   retailPrice: Int
   color: Color!
   secondaryColor: Color
-  tags: Json
+  tags: [Tag!]!
   images: Json!
   resizedImages(width: Int, height: Int, size: ImageSize): [Image!]!
   functions(
