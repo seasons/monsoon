@@ -88,10 +88,8 @@ export class ImageService {
         },
         async (err, res, body) => {
           if (err) {
-            console.log("ERROR", err)
             reject(err)
           } else {
-            console.log("UPLOADING:", imageName)
             const uploadParams = {
               ACL: "public-read",
               Bucket: "seasons-images",

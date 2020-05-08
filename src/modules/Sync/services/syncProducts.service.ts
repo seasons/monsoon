@@ -148,7 +148,7 @@ export class SyncProductsService {
         let imageIDs
         if (productImages && productImages.length > 0) {
           // We've already uploaded these images to S3
-          imageIDs = productImages.map(image => image.id)
+          imageIDs = productImages.map(image => ({ id: image.id }))
         } else {
           // We have yet to upload these images to S3
           const imageURLs: string[] = await Promise.all(
@@ -168,11 +168,10 @@ export class SyncProductsService {
           const prismaImages = await Promise.all(
             imageURLs.map(async imageURL => {
               const imageData = { originalUrl: imageURL }
-              console.log("IMAGE URL:", typeof imageURL, imageURL)
               return await this.prisma.client.upsertImage({
                 where: imageData,
                 create: imageData,
-                update: {},
+                update: imageData,
               })
             })
           )

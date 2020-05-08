@@ -152,10 +152,6 @@ export class AirtableSyncService {
     }
   }
 
-  async syncAirtableToS3() {
-    return await this.syncProductsService.syncAirtableToS3()
-  }
-
   private async syncAll() {
     const _createSubBar = curry(
       this.syncUtils.createAirtableToPrismaSubBar,
