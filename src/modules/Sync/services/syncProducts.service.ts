@@ -2,12 +2,14 @@ import * as fs from "fs"
 
 import { Injectable } from "@nestjs/common"
 import { head, isEmpty } from "lodash"
+import request from "request"
 import slugify from "slugify"
 
 import { BottomSizeType, LetterSize, ProductCreateInput } from "../../../prisma"
 import { PrismaService } from "../../../prisma/prisma.service"
 import { AirtableData } from "../../Airtable/airtable.types"
 import { AirtableService } from "../../Airtable/services/airtable.service"
+import { ImageService } from "../../Image/services/image.service"
 import { UtilsService } from "../../Utils/services/utils.service"
 import { SyncUtilsService } from "./sync.utils.service"
 import { SyncCategoriesService } from "./syncCategories.service"
@@ -18,6 +20,7 @@ export class SyncProductsService {
   constructor(
     private readonly airtableService: AirtableService,
     private readonly prisma: PrismaService,
+    private readonly imageService: ImageService,
     private readonly syncCategoriesService: SyncCategoriesService,
     private readonly syncSizesService: SyncSizesService,
     private readonly syncUtils: SyncUtilsService,
@@ -349,7 +352,13 @@ export class SyncProductsService {
       modelName: "Products",
     })
 
+    let index = 0
+
     for (const record of allProducts) {
+      if (index !== 0) {
+        return
+      }
+      index += 1
       try {
         _cliProgressBar.increment()
 
@@ -392,94 +401,32 @@ export class SyncProductsService {
 
         const slug = slugify(brandCode + " " + name + " " + color).toLowerCase()
 
-        images.forEach((image, index) => {
-          const imageURL = `${brandCode}/${name.replace(/ /g, "_")}/${
-            index + 1
-          }.png`.toLowerCase()
-          console.log("IMAGE PATH:", imageURL)
-        })
-
-        return
-
-        let modelSizeRecord
-        if (!!modelSize) {
-          const {
-            display: modelSizeDisplay,
-            type: modelSizeType,
-            name: modelSizeName,
-          } = modelSize.model
-          modelSizeRecord = await this.syncSizesService.deepUpsertSize({
-            slug,
-            type,
-            display: modelSizeDisplay,
-            topSizeData: type === "Top" && {
-              letter: modelSizeName as LetterSize,
-            },
-            bottomSizeData: type === "Bottom" && {
-              type: modelSizeType as BottomSizeType,
-              value: modelSizeName,
-            },
+        const imageURLs = await Promise.all(
+          images.map(async (image, index) => {
+            const s3ImageName = `${brandCode}/${name.replace(/ /g, "_")}/${
+              index + 1
+            }.png`.toLowerCase()
+            console.log("ABOUT TO UPLOAD:", s3ImageName)
+            return await this.imageService.uploadImageFromURL(
+              image.url,
+              s3ImageName
+            )
+            // request({
+            //   url: image.url,
+            //   encoding: null,
+            // }, (err, res, body) => {
+            //   if (err) {
+            //     console.log("ERROR", err)
+            //   } else {
+            //     console.log("UPLOADING:", s3ImageName)
+            //     this.imageService.uploadImage(body, { imageName: s3ImageName })
+            //   }
+            // })
           })
-        }
-
-        const data = {
-          brand: {
-            connect: {
-              slug: brand.model.slug,
-            },
-          },
-          category: {
-            connect: {
-              slug: category.model.slug,
-            },
-          },
-          color: {
-            connect: {
-              slug: slugify(color).toLowerCase(),
-            },
-          },
-          innerMaterials: {
-            set: (innerMaterials || []).map(a => a.replace(/\ /g, "")),
-          },
-          outerMaterials: {
-            set: (outerMaterials || []).map(a => a.replace(/\ /g, "")),
-          },
-          tags: {
-            set: tags,
-          },
-          name,
-          slug,
-          type,
-          description,
-          images,
-          retailPrice,
-          externalURL: externalURL || "",
-          ...(() => {
-            return !!modelSizeRecord
-              ? { modelSize: { connect: { id: modelSizeRecord.id } } }
-              : {}
-          })(),
-          modelHeight: head(modelHeight) ?? 0,
-          status: (status || "Available").replace(" ", ""),
-        } as ProductCreateInput
-
-        // if (name == "Kit Shirt") {
-        //   console.log(data)
-        // }
-        await this.prisma.client.upsertProduct({
-          where: {
-            slug,
-          },
-          create: data,
-          update: data,
-        })
-
-        await record.patchUpdate({
-          Slug: slug,
-        })
+        )
+        console.log("IMAGE URLS:", imageURLs)
       } catch (e) {
-        console.log(record)
-        console.error(e)
+        console.error("CAUGHT", e)
       }
     }
     multibar?.stop()

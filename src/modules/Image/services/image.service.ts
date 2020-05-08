@@ -3,6 +3,7 @@ import qs from "querystring"
 import { Injectable } from "@nestjs/common"
 import AWS from "aws-sdk"
 import { identity, pickBy } from "lodash"
+import request from "request"
 
 import { ImageSize } from "../image.types"
 
@@ -58,17 +59,19 @@ export class ImageService {
     return url.replace(AIRTABLE_BASE, IMGIX_BASE) + "?" + qs.stringify(params)
   }
 
-  async uploadImage(image) {
+  async uploadImage(image, options: { imageName?: string }) {
     const file = await image
     const { createReadStream, filename, mimetype } = file
     const fileStream = createReadStream()
+
+    const name = options.imageName || filename
 
     // Here stream it to S3
     // Enter your bucket name here next to "Bucket: "
     const uploadParams = {
       ACL: "public-read",
       Bucket: "seasons-images",
-      Key: filename,
+      Key: name,
       Body: fileStream,
     }
     const result = await this.s3.upload(uploadParams).promise()
@@ -77,9 +80,37 @@ export class ImageService {
     return result.Location
   }
 
+  async uploadImageFromURL(imageURL: string, imageName: string) {
+    return new Promise((resolve, reject) => {
+      request(
+        {
+          url: imageURL,
+          encoding: null,
+        },
+        async (err, res, body) => {
+          if (err) {
+            console.log("ERROR", err)
+            reject(err)
+          } else {
+            console.log("UPLOADING:", imageName)
+            const uploadParams = {
+              ACL: "public-read",
+              Bucket: "seasons-images",
+              Key: imageName,
+              Body: body,
+            }
+            const result = await this.s3.upload(uploadParams).promise()
+
+            resolve(result.Location)
+          }
+        }
+      )
+    })
+  }
+
   async uploadImages(images) {
     const imageLocations = await Promise.all(
-      images.map(async image => await this.uploadImage(image))
+      images.map(async image => await this.uploadImage(image, {}))
     )
     return imageLocations
   }
