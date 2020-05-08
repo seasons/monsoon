@@ -320,6 +320,7 @@ type User {
   firstName: String!
   lastName: String!
   role: UserRole! @default(value: Customer)
+  roles: [UserRole!]! @scalarList(strategy: RELATION)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
   pushNotifications: PushNotificationStatus! @default(value: Denied)

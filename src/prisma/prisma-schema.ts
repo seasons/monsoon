@@ -8768,6 +8768,7 @@ type User {
   firstName: String!
   lastName: String!
   role: UserRole!
+  roles: [UserRole!]!
   createdAt: DateTime!
   updatedAt: DateTime!
   pushNotifications: PushNotificationStatus!
@@ -8786,12 +8787,17 @@ input UserCreateInput {
   firstName: String!
   lastName: String!
   role: UserRole
+  roles: UserCreaterolesInput
   pushNotifications: PushNotificationStatus
 }
 
 input UserCreateOneInput {
   create: UserCreateInput
   connect: UserWhereUniqueInput
+}
+
+input UserCreaterolesInput {
+  set: [UserRole!]
 }
 
 type UserEdge {
@@ -8827,6 +8833,7 @@ type UserPreviousValues {
   firstName: String!
   lastName: String!
   role: UserRole!
+  roles: [UserRole!]!
   createdAt: DateTime!
   updatedAt: DateTime!
   pushNotifications: PushNotificationStatus!
@@ -8862,6 +8869,7 @@ input UserUpdateDataInput {
   firstName: String
   lastName: String
   role: UserRole
+  roles: UserUpdaterolesInput
   pushNotifications: PushNotificationStatus
 }
 
@@ -8871,6 +8879,7 @@ input UserUpdateInput {
   firstName: String
   lastName: String
   role: UserRole
+  roles: UserUpdaterolesInput
   pushNotifications: PushNotificationStatus
 }
 
@@ -8880,6 +8889,7 @@ input UserUpdateManyMutationInput {
   firstName: String
   lastName: String
   role: UserRole
+  roles: UserUpdaterolesInput
   pushNotifications: PushNotificationStatus
 }
 
@@ -8897,6 +8907,10 @@ input UserUpdateOneRequiredInput {
   update: UserUpdateDataInput
   upsert: UserUpsertNestedInput
   connect: UserWhereUniqueInput
+}
+
+input UserUpdaterolesInput {
+  set: [UserRole!]
 }
 
 input UserUpsertNestedInput {

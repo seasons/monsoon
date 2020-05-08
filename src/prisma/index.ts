@@ -4719,7 +4719,12 @@ export interface UserCreateInput {
   firstName: String;
   lastName: String;
   role?: Maybe<UserRole>;
+  roles?: Maybe<UserCreaterolesInput>;
   pushNotifications?: Maybe<PushNotificationStatus>;
+}
+
+export interface UserCreaterolesInput {
+  set?: Maybe<UserRole[] | UserRole>;
 }
 
 export interface CustomerDetailCreateOneInput {
@@ -5287,7 +5292,12 @@ export interface UserUpdateDataInput {
   firstName?: Maybe<String>;
   lastName?: Maybe<String>;
   role?: Maybe<UserRole>;
+  roles?: Maybe<UserUpdaterolesInput>;
   pushNotifications?: Maybe<PushNotificationStatus>;
+}
+
+export interface UserUpdaterolesInput {
+  set?: Maybe<UserRole[] | UserRole>;
 }
 
 export interface UserUpsertNestedInput {
@@ -8675,6 +8685,7 @@ export interface UserUpdateInput {
   firstName?: Maybe<String>;
   lastName?: Maybe<String>;
   role?: Maybe<UserRole>;
+  roles?: Maybe<UserUpdaterolesInput>;
   pushNotifications?: Maybe<PushNotificationStatus>;
 }
 
@@ -8684,6 +8695,7 @@ export interface UserUpdateManyMutationInput {
   firstName?: Maybe<String>;
   lastName?: Maybe<String>;
   role?: Maybe<UserRole>;
+  roles?: Maybe<UserUpdaterolesInput>;
   pushNotifications?: Maybe<PushNotificationStatus>;
 }
 
@@ -9307,6 +9319,7 @@ export interface User {
   firstName: String;
   lastName: String;
   role: UserRole;
+  roles: UserRole[];
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
   pushNotifications: PushNotificationStatus;
@@ -9319,6 +9332,7 @@ export interface UserPromise extends Promise<User>, Fragmentable {
   firstName: () => Promise<String>;
   lastName: () => Promise<String>;
   role: () => Promise<UserRole>;
+  roles: () => Promise<UserRole[]>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
   pushNotifications: () => Promise<PushNotificationStatus>;
@@ -9333,6 +9347,7 @@ export interface UserSubscription
   firstName: () => Promise<AsyncIterator<String>>;
   lastName: () => Promise<AsyncIterator<String>>;
   role: () => Promise<AsyncIterator<UserRole>>;
+  roles: () => Promise<AsyncIterator<UserRole[]>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   pushNotifications: () => Promise<AsyncIterator<PushNotificationStatus>>;
@@ -9347,6 +9362,7 @@ export interface UserNullablePromise
   firstName: () => Promise<String>;
   lastName: () => Promise<String>;
   role: () => Promise<UserRole>;
+  roles: () => Promise<UserRole[]>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
   pushNotifications: () => Promise<PushNotificationStatus>;
@@ -14692,6 +14708,7 @@ export interface UserPreviousValues {
   firstName: String;
   lastName: String;
   role: UserRole;
+  roles: UserRole[];
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
   pushNotifications: PushNotificationStatus;
@@ -14706,6 +14723,7 @@ export interface UserPreviousValuesPromise
   firstName: () => Promise<String>;
   lastName: () => Promise<String>;
   role: () => Promise<UserRole>;
+  roles: () => Promise<UserRole[]>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
   pushNotifications: () => Promise<PushNotificationStatus>;
@@ -14720,6 +14738,7 @@ export interface UserPreviousValuesSubscription
   firstName: () => Promise<AsyncIterator<String>>;
   lastName: () => Promise<AsyncIterator<String>>;
   role: () => Promise<AsyncIterator<UserRole>>;
+  roles: () => Promise<AsyncIterator<UserRole[]>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   pushNotifications: () => Promise<AsyncIterator<PushNotificationStatus>>;
@@ -14772,10 +14791,6 @@ export type Long = string;
 export const models: Model[] = [
   {
     name: "BrandTier",
-    embedded: false
-  },
-  {
-    name: "Material",
     embedded: false
   },
   {
@@ -14979,7 +14994,7 @@ export const models: Model[] = [
 export const Prisma = makePrismaClientClass<ClientConstructor<Prisma>>({
   typeDefs,
   models,
-  endpoint: `${process.env["PRISMA_ENDPOINT"]}`,
+  endpoint: `http://localhost:4466/monsoon/dev`,
   secret: `${process.env["PRISMA_SECRET"]}`
 });
 export const prisma = new Prisma();
