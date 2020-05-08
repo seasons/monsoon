@@ -92,6 +92,23 @@ type ProductVariant {
   updatedAt: DateTime!
 }
 
+input WarehouseLocationConnectWhereUniqueInput {
+  connect: WarehouseLocationWhereUniqueInput
+}
+
+input PhysicalProductUpdateInput {
+  seasonsUID: String
+  location: LocationUpdateOneWithoutPhysicalProductsInput
+  productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
+  inventoryStatus: InventoryStatus
+  productStatus: PhysicalProductStatus
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
+  barcode: String
+  sequenceNumber: Int
+  warehouseLocation: WarehouseLocationConnectWhereUniqueInput
+}
+
 type Query {
   me: Me
   brand(where: BrandWhereUniqueInput!): Brand

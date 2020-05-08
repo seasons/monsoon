@@ -1,3 +1,5 @@
+import * as fs from "fs"
+
 import {
   AirtableData,
   AirtableModelName,
@@ -29,6 +31,16 @@ export class SyncUtilsService {
     private readonly airtableService: AirtableService,
     private readonly utils: UtilsService
   ) {}
+
+  logSyncError(logFile: number, record, error: Error) {
+    this.utils.writeLines(logFile, [
+      "THREW ERROR",
+      "Record:",
+      record,
+      "Error:",
+      error,
+    ])
+  }
 
   async createAllStagingRecordsWithoutLinks({
     modelName,

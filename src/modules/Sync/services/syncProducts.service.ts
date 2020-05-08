@@ -5,11 +5,10 @@ import { AirtableService } from "@modules/Airtable/services/airtable.service"
 import { ImageService } from "@modules/Image/services/image.service"
 import { UtilsService } from "@modules/Utils/services/utils.service"
 import { Injectable } from "@nestjs/common"
-import { head, isEmpty } from "lodash"
-import request from "request"
+import { BottomSizeType, LetterSize, ProductCreateInput } from "@prisma/index"
+import { head, identity, isEmpty } from "lodash"
 import slugify from "slugify"
 
-import { BottomSizeType, LetterSize, ProductCreateInput } from "../../../prisma"
 import { PrismaService } from "../../../prisma/prisma.service"
 import { SyncUtilsService } from "./sync.utils.service"
 import { SyncCategoriesService } from "./syncCategories.service"
@@ -101,6 +100,7 @@ export class SyncProductsService {
       modelName: "Products",
     })
 
+    const logFile = this.utils.openLogFile("syncProducts")
     for (const record of allProducts) {
       try {
         _cliProgressBar.increment()
@@ -139,6 +139,7 @@ export class SyncProductsService {
           continue
         }
 
+        // Get the slug
         const { brandCode } = brand.model
         const slug = slugify(brandCode + " " + name + " " + color).toLowerCase()
 
@@ -178,6 +179,7 @@ export class SyncProductsService {
           imageIDs = prismaImages.map(image => ({ id: image.id }))
         }
 
+        // Sync model size records
         let modelSizeRecord
         if (!!modelSize) {
           const {
@@ -199,6 +201,16 @@ export class SyncProductsService {
           })
         }
 
+        // Upsert the tags
+        for (const name of model.tags) {
+          await this.prisma.client.upsertTag({
+            where: { name },
+            create: { name },
+            update: { name },
+          })
+        }
+
+        // Upsert the product
         const data = {
           brand: {
             connect: {
@@ -222,7 +234,11 @@ export class SyncProductsService {
             set: (outerMaterials || []).map(a => a.replace(/\ /g, "")),
           },
           tags: {
-            set: tags,
+            connect: model.tags.map(name =>
+              identity({
+                name,
+              })
+            ),
           },
           name,
           slug,
@@ -238,6 +254,7 @@ export class SyncProductsService {
           })(),
           modelHeight: head(modelHeight) ?? 0,
           status: (status || "Available").replace(" ", ""),
+          season: model.season,
         } as ProductCreateInput
 
         await this.prisma.client.upsertProduct({
@@ -248,15 +265,17 @@ export class SyncProductsService {
           update: data,
         })
 
+        // Update airtable
         await record.patchUpdate({
           Slug: slug,
         })
       } catch (e) {
-        console.log(record)
-        console.error(e)
+        console.log(`Check ${logFile}`)
+        this.syncUtils.logSyncError(logFile, record, e)
       }
     }
     multibar?.stop()
+    fs.closeSync(logFile)
   }
 
   private async addBrandLinks(

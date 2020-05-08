@@ -56,8 +56,13 @@ export interface Exists {
     where?: ReservationFeedbackWhereInput
   ) => Promise<boolean>;
   size: (where?: SizeWhereInput) => Promise<boolean>;
+  tag: (where?: TagWhereInput) => Promise<boolean>;
   topSize: (where?: TopSizeWhereInput) => Promise<boolean>;
   user: (where?: UserWhereInput) => Promise<boolean>;
+  warehouseLocation: (where?: WarehouseLocationWhereInput) => Promise<boolean>;
+  warehouseLocationConstraint: (
+    where?: WarehouseLocationConstraintWhereInput
+  ) => Promise<boolean>;
 }
 
 export interface Node {}
@@ -641,6 +646,25 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => SizeConnectionPromise;
+  tag: (where: TagWhereUniqueInput) => TagNullablePromise;
+  tags: (args?: {
+    where?: TagWhereInput;
+    orderBy?: TagOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<Tag>;
+  tagsConnection: (args?: {
+    where?: TagWhereInput;
+    orderBy?: TagOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => TagConnectionPromise;
   topSize: (where: TopSizeWhereUniqueInput) => TopSizeNullablePromise;
   topSizes: (args?: {
     where?: TopSizeWhereInput;
@@ -679,6 +703,48 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => UserConnectionPromise;
+  warehouseLocation: (
+    where: WarehouseLocationWhereUniqueInput
+  ) => WarehouseLocationNullablePromise;
+  warehouseLocations: (args?: {
+    where?: WarehouseLocationWhereInput;
+    orderBy?: WarehouseLocationOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<WarehouseLocation>;
+  warehouseLocationsConnection: (args?: {
+    where?: WarehouseLocationWhereInput;
+    orderBy?: WarehouseLocationOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => WarehouseLocationConnectionPromise;
+  warehouseLocationConstraint: (
+    where: WarehouseLocationConstraintWhereUniqueInput
+  ) => WarehouseLocationConstraintNullablePromise;
+  warehouseLocationConstraints: (args?: {
+    where?: WarehouseLocationConstraintWhereInput;
+    orderBy?: WarehouseLocationConstraintOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<WarehouseLocationConstraint>;
+  warehouseLocationConstraintsConnection: (args?: {
+    where?: WarehouseLocationConstraintWhereInput;
+    orderBy?: WarehouseLocationConstraintOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => WarehouseLocationConstraintConnectionPromise;
   node: (args: { id: ID_Output }) => Node;
 
   /**
@@ -1213,6 +1279,22 @@ export interface Prisma {
   }) => SizePromise;
   deleteSize: (where: SizeWhereUniqueInput) => SizePromise;
   deleteManySizes: (where?: SizeWhereInput) => BatchPayloadPromise;
+  createTag: (data: TagCreateInput) => TagPromise;
+  updateTag: (args: {
+    data: TagUpdateInput;
+    where: TagWhereUniqueInput;
+  }) => TagPromise;
+  updateManyTags: (args: {
+    data: TagUpdateManyMutationInput;
+    where?: TagWhereInput;
+  }) => BatchPayloadPromise;
+  upsertTag: (args: {
+    where: TagWhereUniqueInput;
+    create: TagCreateInput;
+    update: TagUpdateInput;
+  }) => TagPromise;
+  deleteTag: (where: TagWhereUniqueInput) => TagPromise;
+  deleteManyTags: (where?: TagWhereInput) => BatchPayloadPromise;
   createTopSize: (data: TopSizeCreateInput) => TopSizePromise;
   updateTopSize: (args: {
     data: TopSizeUpdateInput;
@@ -1245,6 +1327,50 @@ export interface Prisma {
   }) => UserPromise;
   deleteUser: (where: UserWhereUniqueInput) => UserPromise;
   deleteManyUsers: (where?: UserWhereInput) => BatchPayloadPromise;
+  createWarehouseLocation: (
+    data: WarehouseLocationCreateInput
+  ) => WarehouseLocationPromise;
+  updateWarehouseLocation: (args: {
+    data: WarehouseLocationUpdateInput;
+    where: WarehouseLocationWhereUniqueInput;
+  }) => WarehouseLocationPromise;
+  updateManyWarehouseLocations: (args: {
+    data: WarehouseLocationUpdateManyMutationInput;
+    where?: WarehouseLocationWhereInput;
+  }) => BatchPayloadPromise;
+  upsertWarehouseLocation: (args: {
+    where: WarehouseLocationWhereUniqueInput;
+    create: WarehouseLocationCreateInput;
+    update: WarehouseLocationUpdateInput;
+  }) => WarehouseLocationPromise;
+  deleteWarehouseLocation: (
+    where: WarehouseLocationWhereUniqueInput
+  ) => WarehouseLocationPromise;
+  deleteManyWarehouseLocations: (
+    where?: WarehouseLocationWhereInput
+  ) => BatchPayloadPromise;
+  createWarehouseLocationConstraint: (
+    data: WarehouseLocationConstraintCreateInput
+  ) => WarehouseLocationConstraintPromise;
+  updateWarehouseLocationConstraint: (args: {
+    data: WarehouseLocationConstraintUpdateInput;
+    where: WarehouseLocationConstraintWhereUniqueInput;
+  }) => WarehouseLocationConstraintPromise;
+  updateManyWarehouseLocationConstraints: (args: {
+    data: WarehouseLocationConstraintUpdateManyMutationInput;
+    where?: WarehouseLocationConstraintWhereInput;
+  }) => BatchPayloadPromise;
+  upsertWarehouseLocationConstraint: (args: {
+    where: WarehouseLocationConstraintWhereUniqueInput;
+    create: WarehouseLocationConstraintCreateInput;
+    update: WarehouseLocationConstraintUpdateInput;
+  }) => WarehouseLocationConstraintPromise;
+  deleteWarehouseLocationConstraint: (
+    where: WarehouseLocationConstraintWhereUniqueInput
+  ) => WarehouseLocationConstraintPromise;
+  deleteManyWarehouseLocationConstraints: (
+    where?: WarehouseLocationConstraintWhereInput
+  ) => BatchPayloadPromise;
 
   /**
    * Subscriptions
@@ -1338,12 +1464,21 @@ export interface Subscription {
   size: (
     where?: SizeSubscriptionWhereInput
   ) => SizeSubscriptionPayloadSubscription;
+  tag: (
+    where?: TagSubscriptionWhereInput
+  ) => TagSubscriptionPayloadSubscription;
   topSize: (
     where?: TopSizeSubscriptionWhereInput
   ) => TopSizeSubscriptionPayloadSubscription;
   user: (
     where?: UserSubscriptionWhereInput
   ) => UserSubscriptionPayloadSubscription;
+  warehouseLocation: (
+    where?: WarehouseLocationSubscriptionWhereInput
+  ) => WarehouseLocationSubscriptionPayloadSubscription;
+  warehouseLocationConstraint: (
+    where?: WarehouseLocationConstraintSubscriptionWhereInput
+  ) => WarehouseLocationConstraintSubscriptionPayloadSubscription;
 }
 
 export interface ClientConstructor<T> {
@@ -1416,6 +1551,8 @@ export type PhysicalProductOffloadMethod =
   | "Recycled"
   | "Unknown";
 
+export type WarehouseLocationType = "Conveyor" | "Rail" | "Bin";
+
 export type PhysicalProductOrderByInput =
   | "id_ASC"
   | "id_DESC"
@@ -1429,6 +1566,10 @@ export type PhysicalProductOrderByInput =
   | "offloadMethod_DESC"
   | "offloadNotes_ASC"
   | "offloadNotes_DESC"
+  | "barcode_ASC"
+  | "barcode_DESC"
+  | "sequenceNumber_ASC"
+  | "sequenceNumber_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -1491,8 +1632,6 @@ export type ProductOrderByInput =
   | "modelHeight_DESC"
   | "retailPrice_ASC"
   | "retailPrice_DESC"
-  | "tags_ASC"
-  | "tags_DESC"
   | "status_ASC"
   | "status_DESC"
   | "season_ASC"
@@ -1518,6 +1657,7 @@ export type CategoryOrderByInput =
   | "visible_ASC"
   | "visible_DESC";
 
+<<<<<<< HEAD
 export type ImageOrderByInput =
   | "id_ASC"
   | "id_DESC"
@@ -1533,6 +1673,15 @@ export type ImageOrderByInput =
   | "originalWidth_DESC"
   | "title_ASC"
   | "title_DESC"
+=======
+export type TagOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "name_ASC"
+  | "name_DESC"
+  | "description_ASC"
+  | "description_DESC"
+>>>>>>> master
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -1543,6 +1692,32 @@ export type ProductFunctionOrderByInput =
   | "id_DESC"
   | "name_ASC"
   | "name_DESC";
+
+export type WarehouseLocationConstraintOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "limit_ASC"
+  | "limit_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
+
+export type WarehouseLocationOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "type_ASC"
+  | "type_DESC"
+  | "barcode_ASC"
+  | "barcode_DESC"
+  | "locationCode_ASC"
+  | "locationCode_DESC"
+  | "itemCode_ASC"
+  | "itemCode_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
 
 export type Plan = "AllAccess" | "Essential";
 
@@ -1992,6 +2167,29 @@ export interface PhysicalProductWhereInput {
   offloadNotes_not_starts_with?: Maybe<String>;
   offloadNotes_ends_with?: Maybe<String>;
   offloadNotes_not_ends_with?: Maybe<String>;
+  barcode?: Maybe<String>;
+  barcode_not?: Maybe<String>;
+  barcode_in?: Maybe<String[] | String>;
+  barcode_not_in?: Maybe<String[] | String>;
+  barcode_lt?: Maybe<String>;
+  barcode_lte?: Maybe<String>;
+  barcode_gt?: Maybe<String>;
+  barcode_gte?: Maybe<String>;
+  barcode_contains?: Maybe<String>;
+  barcode_not_contains?: Maybe<String>;
+  barcode_starts_with?: Maybe<String>;
+  barcode_not_starts_with?: Maybe<String>;
+  barcode_ends_with?: Maybe<String>;
+  barcode_not_ends_with?: Maybe<String>;
+  sequenceNumber?: Maybe<Int>;
+  sequenceNumber_not?: Maybe<Int>;
+  sequenceNumber_in?: Maybe<Int[] | Int>;
+  sequenceNumber_not_in?: Maybe<Int[] | Int>;
+  sequenceNumber_lt?: Maybe<Int>;
+  sequenceNumber_lte?: Maybe<Int>;
+  sequenceNumber_gt?: Maybe<Int>;
+  sequenceNumber_gte?: Maybe<Int>;
+  warehouseLocation?: Maybe<WarehouseLocationWhereInput>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -2815,6 +3013,9 @@ export interface ProductWhereInput {
   modelSize?: Maybe<SizeWhereInput>;
   color?: Maybe<ColorWhereInput>;
   secondaryColor?: Maybe<ColorWhereInput>;
+  tags_every?: Maybe<TagWhereInput>;
+  tags_some?: Maybe<TagWhereInput>;
+  tags_none?: Maybe<TagWhereInput>;
   functions_every?: Maybe<ProductFunctionWhereInput>;
   functions_some?: Maybe<ProductFunctionWhereInput>;
   functions_none?: Maybe<ProductFunctionWhereInput>;
@@ -3224,6 +3425,73 @@ export interface ProductModelWhereInput {
   NOT?: Maybe<ProductModelWhereInput[] | ProductModelWhereInput>;
 }
 
+export interface TagWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  name?: Maybe<String>;
+  name_not?: Maybe<String>;
+  name_in?: Maybe<String[] | String>;
+  name_not_in?: Maybe<String[] | String>;
+  name_lt?: Maybe<String>;
+  name_lte?: Maybe<String>;
+  name_gt?: Maybe<String>;
+  name_gte?: Maybe<String>;
+  name_contains?: Maybe<String>;
+  name_not_contains?: Maybe<String>;
+  name_starts_with?: Maybe<String>;
+  name_not_starts_with?: Maybe<String>;
+  name_ends_with?: Maybe<String>;
+  name_not_ends_with?: Maybe<String>;
+  description?: Maybe<String>;
+  description_not?: Maybe<String>;
+  description_in?: Maybe<String[] | String>;
+  description_not_in?: Maybe<String[] | String>;
+  description_lt?: Maybe<String>;
+  description_lte?: Maybe<String>;
+  description_gt?: Maybe<String>;
+  description_gte?: Maybe<String>;
+  description_contains?: Maybe<String>;
+  description_not_contains?: Maybe<String>;
+  description_starts_with?: Maybe<String>;
+  description_not_starts_with?: Maybe<String>;
+  description_ends_with?: Maybe<String>;
+  description_not_ends_with?: Maybe<String>;
+  products_every?: Maybe<ProductWhereInput>;
+  products_some?: Maybe<ProductWhereInput>;
+  products_none?: Maybe<ProductWhereInput>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<TagWhereInput[] | TagWhereInput>;
+  OR?: Maybe<TagWhereInput[] | TagWhereInput>;
+  NOT?: Maybe<TagWhereInput[] | TagWhereInput>;
+}
+
 export interface ProductFunctionWhereInput {
   id?: Maybe<ID_Input>;
   id_not?: Maybe<ID_Input>;
@@ -3256,6 +3524,151 @@ export interface ProductFunctionWhereInput {
   AND?: Maybe<ProductFunctionWhereInput[] | ProductFunctionWhereInput>;
   OR?: Maybe<ProductFunctionWhereInput[] | ProductFunctionWhereInput>;
   NOT?: Maybe<ProductFunctionWhereInput[] | ProductFunctionWhereInput>;
+}
+
+export interface WarehouseLocationWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  type?: Maybe<WarehouseLocationType>;
+  type_not?: Maybe<WarehouseLocationType>;
+  type_in?: Maybe<WarehouseLocationType[] | WarehouseLocationType>;
+  type_not_in?: Maybe<WarehouseLocationType[] | WarehouseLocationType>;
+  barcode?: Maybe<String>;
+  barcode_not?: Maybe<String>;
+  barcode_in?: Maybe<String[] | String>;
+  barcode_not_in?: Maybe<String[] | String>;
+  barcode_lt?: Maybe<String>;
+  barcode_lte?: Maybe<String>;
+  barcode_gt?: Maybe<String>;
+  barcode_gte?: Maybe<String>;
+  barcode_contains?: Maybe<String>;
+  barcode_not_contains?: Maybe<String>;
+  barcode_starts_with?: Maybe<String>;
+  barcode_not_starts_with?: Maybe<String>;
+  barcode_ends_with?: Maybe<String>;
+  barcode_not_ends_with?: Maybe<String>;
+  locationCode?: Maybe<String>;
+  locationCode_not?: Maybe<String>;
+  locationCode_in?: Maybe<String[] | String>;
+  locationCode_not_in?: Maybe<String[] | String>;
+  locationCode_lt?: Maybe<String>;
+  locationCode_lte?: Maybe<String>;
+  locationCode_gt?: Maybe<String>;
+  locationCode_gte?: Maybe<String>;
+  locationCode_contains?: Maybe<String>;
+  locationCode_not_contains?: Maybe<String>;
+  locationCode_starts_with?: Maybe<String>;
+  locationCode_not_starts_with?: Maybe<String>;
+  locationCode_ends_with?: Maybe<String>;
+  locationCode_not_ends_with?: Maybe<String>;
+  itemCode?: Maybe<String>;
+  itemCode_not?: Maybe<String>;
+  itemCode_in?: Maybe<String[] | String>;
+  itemCode_not_in?: Maybe<String[] | String>;
+  itemCode_lt?: Maybe<String>;
+  itemCode_lte?: Maybe<String>;
+  itemCode_gt?: Maybe<String>;
+  itemCode_gte?: Maybe<String>;
+  itemCode_contains?: Maybe<String>;
+  itemCode_not_contains?: Maybe<String>;
+  itemCode_starts_with?: Maybe<String>;
+  itemCode_not_starts_with?: Maybe<String>;
+  itemCode_ends_with?: Maybe<String>;
+  itemCode_not_ends_with?: Maybe<String>;
+  physicalProducts_every?: Maybe<PhysicalProductWhereInput>;
+  physicalProducts_some?: Maybe<PhysicalProductWhereInput>;
+  physicalProducts_none?: Maybe<PhysicalProductWhereInput>;
+  constraints_every?: Maybe<WarehouseLocationConstraintWhereInput>;
+  constraints_some?: Maybe<WarehouseLocationConstraintWhereInput>;
+  constraints_none?: Maybe<WarehouseLocationConstraintWhereInput>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<WarehouseLocationWhereInput[] | WarehouseLocationWhereInput>;
+  OR?: Maybe<WarehouseLocationWhereInput[] | WarehouseLocationWhereInput>;
+  NOT?: Maybe<WarehouseLocationWhereInput[] | WarehouseLocationWhereInput>;
+}
+
+export interface WarehouseLocationConstraintWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  category?: Maybe<CategoryWhereInput>;
+  limit?: Maybe<Int>;
+  limit_not?: Maybe<Int>;
+  limit_in?: Maybe<Int[] | Int>;
+  limit_not_in?: Maybe<Int[] | Int>;
+  limit_lt?: Maybe<Int>;
+  limit_lte?: Maybe<Int>;
+  limit_gt?: Maybe<Int>;
+  limit_gte?: Maybe<Int>;
+  locations_every?: Maybe<WarehouseLocationWhereInput>;
+  locations_some?: Maybe<WarehouseLocationWhereInput>;
+  locations_none?: Maybe<WarehouseLocationWhereInput>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<
+    | WarehouseLocationConstraintWhereInput[]
+    | WarehouseLocationConstraintWhereInput
+  >;
+  OR?: Maybe<
+    | WarehouseLocationConstraintWhereInput[]
+    | WarehouseLocationConstraintWhereInput
+  >;
+  NOT?: Maybe<
+    | WarehouseLocationConstraintWhereInput[]
+    | WarehouseLocationConstraintWhereInput
+  >;
 }
 
 export interface BagItemWhereInput {
@@ -4659,6 +5072,11 @@ export type SizeWhereUniqueInput = AtLeastOne<{
   slug?: Maybe<String>;
 }>;
 
+export type TagWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+  name?: Maybe<String>;
+}>;
+
 export type TopSizeWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
@@ -4667,6 +5085,15 @@ export type UserWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
   auth0Id?: Maybe<String>;
   email?: Maybe<String>;
+}>;
+
+export type WarehouseLocationWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+  barcode?: Maybe<String>;
+}>;
+
+export type WarehouseLocationConstraintWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
 }>;
 
 export interface BagItemCreateInput {
@@ -4777,6 +5204,11 @@ export interface PhysicalProductCreateWithoutLocationInput {
   productStatus: PhysicalProductStatus;
   offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
   offloadNotes?: Maybe<String>;
+  barcode: String;
+  sequenceNumber: Int;
+  warehouseLocation?: Maybe<
+    WarehouseLocationCreateOneWithoutPhysicalProductsInput
+  >;
 }
 
 export interface ProductVariantCreateOneWithoutPhysicalProductsInput {
@@ -4886,7 +5318,7 @@ export interface ProductCreateWithoutVariantsInput {
   modelSize?: Maybe<SizeCreateOneInput>;
   color: ColorCreateOneInput;
   secondaryColor?: Maybe<ColorCreateOneInput>;
-  tags?: Maybe<Json>;
+  tags?: Maybe<TagCreateManyWithoutProductsInput>;
   functions?: Maybe<ProductFunctionCreateManyInput>;
   innerMaterials?: Maybe<ProductCreateinnerMaterialsInput>;
   outerMaterials?: Maybe<ProductCreateouterMaterialsInput>;
@@ -4968,7 +5400,7 @@ export interface ProductCreateWithoutCategoryInput {
   modelSize?: Maybe<SizeCreateOneInput>;
   color: ColorCreateOneInput;
   secondaryColor?: Maybe<ColorCreateOneInput>;
-  tags?: Maybe<Json>;
+  tags?: Maybe<TagCreateManyWithoutProductsInput>;
   functions?: Maybe<ProductFunctionCreateManyInput>;
   innerMaterials?: Maybe<ProductCreateinnerMaterialsInput>;
   outerMaterials?: Maybe<ProductCreateouterMaterialsInput>;
@@ -5065,6 +5497,11 @@ export interface PhysicalProductCreateWithoutProductVariantInput {
   productStatus: PhysicalProductStatus;
   offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
   offloadNotes?: Maybe<String>;
+  barcode: String;
+  sequenceNumber: Int;
+  warehouseLocation?: Maybe<
+    WarehouseLocationCreateOneWithoutPhysicalProductsInput
+  >;
 }
 
 export interface LocationCreateOneWithoutPhysicalProductsInput {
@@ -5087,6 +5524,68 @@ export interface LocationCreateWithoutPhysicalProductsInput {
   user?: Maybe<UserCreateOneInput>;
   lat?: Maybe<Float>;
   lng?: Maybe<Float>;
+}
+
+export interface WarehouseLocationCreateOneWithoutPhysicalProductsInput {
+  create?: Maybe<WarehouseLocationCreateWithoutPhysicalProductsInput>;
+  connect?: Maybe<WarehouseLocationWhereUniqueInput>;
+}
+
+export interface WarehouseLocationCreateWithoutPhysicalProductsInput {
+  id?: Maybe<ID_Input>;
+  type: WarehouseLocationType;
+  barcode: String;
+  locationCode: String;
+  itemCode: String;
+  constraints?: Maybe<
+    WarehouseLocationConstraintCreateManyWithoutLocationsInput
+  >;
+}
+
+export interface WarehouseLocationConstraintCreateManyWithoutLocationsInput {
+  create?: Maybe<
+    | WarehouseLocationConstraintCreateWithoutLocationsInput[]
+    | WarehouseLocationConstraintCreateWithoutLocationsInput
+  >;
+  connect?: Maybe<
+    | WarehouseLocationConstraintWhereUniqueInput[]
+    | WarehouseLocationConstraintWhereUniqueInput
+  >;
+}
+
+export interface WarehouseLocationConstraintCreateWithoutLocationsInput {
+  id?: Maybe<ID_Input>;
+  category: CategoryCreateOneInput;
+  limit: Int;
+}
+
+export interface CategoryCreateOneInput {
+  create?: Maybe<CategoryCreateInput>;
+  connect?: Maybe<CategoryWhereUniqueInput>;
+}
+
+export interface CategoryCreateInput {
+  id?: Maybe<ID_Input>;
+  slug: String;
+  name: String;
+  image?: Maybe<Json>;
+  description?: Maybe<String>;
+  visible?: Maybe<Boolean>;
+  products?: Maybe<ProductCreateManyWithoutCategoryInput>;
+  children?: Maybe<CategoryCreateManyWithoutChildrenInput>;
+}
+
+export interface TagCreateManyWithoutProductsInput {
+  create?: Maybe<
+    TagCreateWithoutProductsInput[] | TagCreateWithoutProductsInput
+  >;
+  connect?: Maybe<TagWhereUniqueInput[] | TagWhereUniqueInput>;
+}
+
+export interface TagCreateWithoutProductsInput {
+  id?: Maybe<ID_Input>;
+  name: String;
+  description?: Maybe<String>;
 }
 
 export interface ProductFunctionCreateManyInput {
@@ -5211,6 +5710,11 @@ export interface PhysicalProductCreateInput {
   productStatus: PhysicalProductStatus;
   offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
   offloadNotes?: Maybe<String>;
+  barcode: String;
+  sequenceNumber: Int;
+  warehouseLocation?: Maybe<
+    WarehouseLocationCreateOneWithoutPhysicalProductsInput
+  >;
 }
 
 export interface LabelCreateOneInput {
@@ -5410,6 +5914,11 @@ export interface PhysicalProductUpdateWithoutLocationDataInput {
   productStatus?: Maybe<PhysicalProductStatus>;
   offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
   offloadNotes?: Maybe<String>;
+  barcode?: Maybe<String>;
+  sequenceNumber?: Maybe<Int>;
+  warehouseLocation?: Maybe<
+    WarehouseLocationUpdateOneWithoutPhysicalProductsInput
+  >;
 }
 
 export interface ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput {
@@ -5640,7 +6149,7 @@ export interface ProductUpdateWithoutVariantsDataInput {
   modelSize?: Maybe<SizeUpdateOneInput>;
   color?: Maybe<ColorUpdateOneRequiredInput>;
   secondaryColor?: Maybe<ColorUpdateOneInput>;
-  tags?: Maybe<Json>;
+  tags?: Maybe<TagUpdateManyWithoutProductsInput>;
   functions?: Maybe<ProductFunctionUpdateManyInput>;
   innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
@@ -5932,6 +6441,7 @@ export interface ImageUpdateManyWithWhereNestedInput {
   data: ImageUpdateManyDataInput;
 }
 
+<<<<<<< HEAD
 export interface ImageUpdateManyDataInput {
   caption?: Maybe<String>;
   url?: Maybe<String>;
@@ -5939,6 +6449,30 @@ export interface ImageUpdateManyDataInput {
   originalUrl?: Maybe<String>;
   originalWidth?: Maybe<Int>;
   title?: Maybe<String>;
+=======
+export interface ProductUpdateWithoutCategoryDataInput {
+  slug?: Maybe<String>;
+  name?: Maybe<String>;
+  brand?: Maybe<BrandUpdateOneRequiredWithoutProductsInput>;
+  type?: Maybe<ProductType>;
+  description?: Maybe<String>;
+  externalURL?: Maybe<String>;
+  images?: Maybe<Json>;
+  modelHeight?: Maybe<Int>;
+  retailPrice?: Maybe<Int>;
+  model?: Maybe<ProductModelUpdateOneWithoutProductsInput>;
+  modelSize?: Maybe<SizeUpdateOneInput>;
+  color?: Maybe<ColorUpdateOneRequiredInput>;
+  secondaryColor?: Maybe<ColorUpdateOneInput>;
+  tags?: Maybe<TagUpdateManyWithoutProductsInput>;
+  functions?: Maybe<ProductFunctionUpdateManyInput>;
+  innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
+  outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
+  variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
+  status?: Maybe<ProductStatus>;
+  season?: Maybe<String>;
+  architecture?: Maybe<ProductArchitecture>;
+>>>>>>> master
 }
 
 export interface ProductModelUpdateOneWithoutProductsInput {
@@ -6078,6 +6612,11 @@ export interface PhysicalProductUpdateWithoutProductVariantDataInput {
   productStatus?: Maybe<PhysicalProductStatus>;
   offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
   offloadNotes?: Maybe<String>;
+  barcode?: Maybe<String>;
+  sequenceNumber?: Maybe<Int>;
+  warehouseLocation?: Maybe<
+    WarehouseLocationUpdateOneWithoutPhysicalProductsInput
+  >;
 }
 
 export interface LocationUpdateOneWithoutPhysicalProductsInput {
@@ -6108,6 +6647,169 @@ export interface LocationUpdateWithoutPhysicalProductsDataInput {
 export interface LocationUpsertWithoutPhysicalProductsInput {
   update: LocationUpdateWithoutPhysicalProductsDataInput;
   create: LocationCreateWithoutPhysicalProductsInput;
+}
+
+export interface WarehouseLocationUpdateOneWithoutPhysicalProductsInput {
+  create?: Maybe<WarehouseLocationCreateWithoutPhysicalProductsInput>;
+  update?: Maybe<WarehouseLocationUpdateWithoutPhysicalProductsDataInput>;
+  upsert?: Maybe<WarehouseLocationUpsertWithoutPhysicalProductsInput>;
+  delete?: Maybe<Boolean>;
+  disconnect?: Maybe<Boolean>;
+  connect?: Maybe<WarehouseLocationWhereUniqueInput>;
+}
+
+export interface WarehouseLocationUpdateWithoutPhysicalProductsDataInput {
+  type?: Maybe<WarehouseLocationType>;
+  barcode?: Maybe<String>;
+  locationCode?: Maybe<String>;
+  itemCode?: Maybe<String>;
+  constraints?: Maybe<
+    WarehouseLocationConstraintUpdateManyWithoutLocationsInput
+  >;
+}
+
+export interface WarehouseLocationConstraintUpdateManyWithoutLocationsInput {
+  create?: Maybe<
+    | WarehouseLocationConstraintCreateWithoutLocationsInput[]
+    | WarehouseLocationConstraintCreateWithoutLocationsInput
+  >;
+  delete?: Maybe<
+    | WarehouseLocationConstraintWhereUniqueInput[]
+    | WarehouseLocationConstraintWhereUniqueInput
+  >;
+  connect?: Maybe<
+    | WarehouseLocationConstraintWhereUniqueInput[]
+    | WarehouseLocationConstraintWhereUniqueInput
+  >;
+  set?: Maybe<
+    | WarehouseLocationConstraintWhereUniqueInput[]
+    | WarehouseLocationConstraintWhereUniqueInput
+  >;
+  disconnect?: Maybe<
+    | WarehouseLocationConstraintWhereUniqueInput[]
+    | WarehouseLocationConstraintWhereUniqueInput
+  >;
+  update?: Maybe<
+    | WarehouseLocationConstraintUpdateWithWhereUniqueWithoutLocationsInput[]
+    | WarehouseLocationConstraintUpdateWithWhereUniqueWithoutLocationsInput
+  >;
+  upsert?: Maybe<
+    | WarehouseLocationConstraintUpsertWithWhereUniqueWithoutLocationsInput[]
+    | WarehouseLocationConstraintUpsertWithWhereUniqueWithoutLocationsInput
+  >;
+  deleteMany?: Maybe<
+    | WarehouseLocationConstraintScalarWhereInput[]
+    | WarehouseLocationConstraintScalarWhereInput
+  >;
+  updateMany?: Maybe<
+    | WarehouseLocationConstraintUpdateManyWithWhereNestedInput[]
+    | WarehouseLocationConstraintUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface WarehouseLocationConstraintUpdateWithWhereUniqueWithoutLocationsInput {
+  where: WarehouseLocationConstraintWhereUniqueInput;
+  data: WarehouseLocationConstraintUpdateWithoutLocationsDataInput;
+}
+
+export interface WarehouseLocationConstraintUpdateWithoutLocationsDataInput {
+  category?: Maybe<CategoryUpdateOneRequiredInput>;
+  limit?: Maybe<Int>;
+}
+
+export interface CategoryUpdateOneRequiredInput {
+  create?: Maybe<CategoryCreateInput>;
+  update?: Maybe<CategoryUpdateDataInput>;
+  upsert?: Maybe<CategoryUpsertNestedInput>;
+  connect?: Maybe<CategoryWhereUniqueInput>;
+}
+
+export interface CategoryUpdateDataInput {
+  slug?: Maybe<String>;
+  name?: Maybe<String>;
+  image?: Maybe<Json>;
+  description?: Maybe<String>;
+  visible?: Maybe<Boolean>;
+  products?: Maybe<ProductUpdateManyWithoutCategoryInput>;
+  children?: Maybe<CategoryUpdateManyWithoutChildrenInput>;
+}
+
+export interface CategoryUpsertNestedInput {
+  update: CategoryUpdateDataInput;
+  create: CategoryCreateInput;
+}
+
+export interface WarehouseLocationConstraintUpsertWithWhereUniqueWithoutLocationsInput {
+  where: WarehouseLocationConstraintWhereUniqueInput;
+  update: WarehouseLocationConstraintUpdateWithoutLocationsDataInput;
+  create: WarehouseLocationConstraintCreateWithoutLocationsInput;
+}
+
+export interface WarehouseLocationConstraintScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  limit?: Maybe<Int>;
+  limit_not?: Maybe<Int>;
+  limit_in?: Maybe<Int[] | Int>;
+  limit_not_in?: Maybe<Int[] | Int>;
+  limit_lt?: Maybe<Int>;
+  limit_lte?: Maybe<Int>;
+  limit_gt?: Maybe<Int>;
+  limit_gte?: Maybe<Int>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<
+    | WarehouseLocationConstraintScalarWhereInput[]
+    | WarehouseLocationConstraintScalarWhereInput
+  >;
+  OR?: Maybe<
+    | WarehouseLocationConstraintScalarWhereInput[]
+    | WarehouseLocationConstraintScalarWhereInput
+  >;
+  NOT?: Maybe<
+    | WarehouseLocationConstraintScalarWhereInput[]
+    | WarehouseLocationConstraintScalarWhereInput
+  >;
+}
+
+export interface WarehouseLocationConstraintUpdateManyWithWhereNestedInput {
+  where: WarehouseLocationConstraintScalarWhereInput;
+  data: WarehouseLocationConstraintUpdateManyDataInput;
+}
+
+export interface WarehouseLocationConstraintUpdateManyDataInput {
+  limit?: Maybe<Int>;
+}
+
+export interface WarehouseLocationUpsertWithoutPhysicalProductsInput {
+  update: WarehouseLocationUpdateWithoutPhysicalProductsDataInput;
+  create: WarehouseLocationCreateWithoutPhysicalProductsInput;
 }
 
 export interface PhysicalProductUpsertWithWhereUniqueWithoutProductVariantInput {
@@ -6175,6 +6877,28 @@ export interface PhysicalProductScalarWhereInput {
   offloadNotes_not_starts_with?: Maybe<String>;
   offloadNotes_ends_with?: Maybe<String>;
   offloadNotes_not_ends_with?: Maybe<String>;
+  barcode?: Maybe<String>;
+  barcode_not?: Maybe<String>;
+  barcode_in?: Maybe<String[] | String>;
+  barcode_not_in?: Maybe<String[] | String>;
+  barcode_lt?: Maybe<String>;
+  barcode_lte?: Maybe<String>;
+  barcode_gt?: Maybe<String>;
+  barcode_gte?: Maybe<String>;
+  barcode_contains?: Maybe<String>;
+  barcode_not_contains?: Maybe<String>;
+  barcode_starts_with?: Maybe<String>;
+  barcode_not_starts_with?: Maybe<String>;
+  barcode_ends_with?: Maybe<String>;
+  barcode_not_ends_with?: Maybe<String>;
+  sequenceNumber?: Maybe<Int>;
+  sequenceNumber_not?: Maybe<Int>;
+  sequenceNumber_in?: Maybe<Int[] | Int>;
+  sequenceNumber_not_in?: Maybe<Int[] | Int>;
+  sequenceNumber_lt?: Maybe<Int>;
+  sequenceNumber_lte?: Maybe<Int>;
+  sequenceNumber_gt?: Maybe<Int>;
+  sequenceNumber_gte?: Maybe<Int>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -6213,6 +6937,8 @@ export interface PhysicalProductUpdateManyDataInput {
   productStatus?: Maybe<PhysicalProductStatus>;
   offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
   offloadNotes?: Maybe<String>;
+  barcode?: Maybe<String>;
+  sequenceNumber?: Maybe<Int>;
 }
 
 export interface ProductVariantUpsertWithWhereUniqueWithoutColorInput {
@@ -6392,6 +7118,118 @@ export interface ColorUpdateOneInput {
   delete?: Maybe<Boolean>;
   disconnect?: Maybe<Boolean>;
   connect?: Maybe<ColorWhereUniqueInput>;
+}
+
+export interface TagUpdateManyWithoutProductsInput {
+  create?: Maybe<
+    TagCreateWithoutProductsInput[] | TagCreateWithoutProductsInput
+  >;
+  delete?: Maybe<TagWhereUniqueInput[] | TagWhereUniqueInput>;
+  connect?: Maybe<TagWhereUniqueInput[] | TagWhereUniqueInput>;
+  set?: Maybe<TagWhereUniqueInput[] | TagWhereUniqueInput>;
+  disconnect?: Maybe<TagWhereUniqueInput[] | TagWhereUniqueInput>;
+  update?: Maybe<
+    | TagUpdateWithWhereUniqueWithoutProductsInput[]
+    | TagUpdateWithWhereUniqueWithoutProductsInput
+  >;
+  upsert?: Maybe<
+    | TagUpsertWithWhereUniqueWithoutProductsInput[]
+    | TagUpsertWithWhereUniqueWithoutProductsInput
+  >;
+  deleteMany?: Maybe<TagScalarWhereInput[] | TagScalarWhereInput>;
+  updateMany?: Maybe<
+    TagUpdateManyWithWhereNestedInput[] | TagUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface TagUpdateWithWhereUniqueWithoutProductsInput {
+  where: TagWhereUniqueInput;
+  data: TagUpdateWithoutProductsDataInput;
+}
+
+export interface TagUpdateWithoutProductsDataInput {
+  name?: Maybe<String>;
+  description?: Maybe<String>;
+}
+
+export interface TagUpsertWithWhereUniqueWithoutProductsInput {
+  where: TagWhereUniqueInput;
+  update: TagUpdateWithoutProductsDataInput;
+  create: TagCreateWithoutProductsInput;
+}
+
+export interface TagScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  name?: Maybe<String>;
+  name_not?: Maybe<String>;
+  name_in?: Maybe<String[] | String>;
+  name_not_in?: Maybe<String[] | String>;
+  name_lt?: Maybe<String>;
+  name_lte?: Maybe<String>;
+  name_gt?: Maybe<String>;
+  name_gte?: Maybe<String>;
+  name_contains?: Maybe<String>;
+  name_not_contains?: Maybe<String>;
+  name_starts_with?: Maybe<String>;
+  name_not_starts_with?: Maybe<String>;
+  name_ends_with?: Maybe<String>;
+  name_not_ends_with?: Maybe<String>;
+  description?: Maybe<String>;
+  description_not?: Maybe<String>;
+  description_in?: Maybe<String[] | String>;
+  description_not_in?: Maybe<String[] | String>;
+  description_lt?: Maybe<String>;
+  description_lte?: Maybe<String>;
+  description_gt?: Maybe<String>;
+  description_gte?: Maybe<String>;
+  description_contains?: Maybe<String>;
+  description_not_contains?: Maybe<String>;
+  description_starts_with?: Maybe<String>;
+  description_not_starts_with?: Maybe<String>;
+  description_ends_with?: Maybe<String>;
+  description_not_ends_with?: Maybe<String>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<TagScalarWhereInput[] | TagScalarWhereInput>;
+  OR?: Maybe<TagScalarWhereInput[] | TagScalarWhereInput>;
+  NOT?: Maybe<TagScalarWhereInput[] | TagScalarWhereInput>;
+}
+
+export interface TagUpdateManyWithWhereNestedInput {
+  where: TagScalarWhereInput;
+  data: TagUpdateManyDataInput;
+}
+
+export interface TagUpdateManyDataInput {
+  name?: Maybe<String>;
+  description?: Maybe<String>;
 }
 
 export interface ProductFunctionUpdateManyInput {
@@ -6713,7 +7551,6 @@ export interface ProductUpdateManyDataInput {
   externalURL?: Maybe<String>;
   modelHeight?: Maybe<Int>;
   retailPrice?: Maybe<Int>;
-  tags?: Maybe<Json>;
   innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
   status?: Maybe<ProductStatus>;
@@ -6973,6 +7810,11 @@ export interface PhysicalProductUpdateDataInput {
   productStatus?: Maybe<PhysicalProductStatus>;
   offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
   offloadNotes?: Maybe<String>;
+  barcode?: Maybe<String>;
+  sequenceNumber?: Maybe<Int>;
+  warehouseLocation?: Maybe<
+    WarehouseLocationUpdateOneWithoutPhysicalProductsInput
+  >;
 }
 
 export interface PhysicalProductUpsertWithWhereUniqueNestedInput {
@@ -7231,7 +8073,7 @@ export interface ProductCreateWithoutBrandInput {
   modelSize?: Maybe<SizeCreateOneInput>;
   color: ColorCreateOneInput;
   secondaryColor?: Maybe<ColorCreateOneInput>;
-  tags?: Maybe<Json>;
+  tags?: Maybe<TagCreateManyWithoutProductsInput>;
   functions?: Maybe<ProductFunctionCreateManyInput>;
   innerMaterials?: Maybe<ProductCreateinnerMaterialsInput>;
   outerMaterials?: Maybe<ProductCreateouterMaterialsInput>;
@@ -7297,7 +8139,7 @@ export interface ProductUpdateWithoutBrandDataInput {
   modelSize?: Maybe<SizeUpdateOneInput>;
   color?: Maybe<ColorUpdateOneRequiredInput>;
   secondaryColor?: Maybe<ColorUpdateOneInput>;
-  tags?: Maybe<Json>;
+  tags?: Maybe<TagUpdateManyWithoutProductsInput>;
   functions?: Maybe<ProductFunctionUpdateManyInput>;
   innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
@@ -7324,17 +8166,6 @@ export interface BrandUpdateManyMutationInput {
   since?: Maybe<DateTimeInput>;
   tier?: Maybe<BrandTier>;
   websiteUrl?: Maybe<String>;
-}
-
-export interface CategoryCreateInput {
-  id?: Maybe<ID_Input>;
-  slug: String;
-  name: String;
-  image?: Maybe<Json>;
-  description?: Maybe<String>;
-  visible?: Maybe<Boolean>;
-  products?: Maybe<ProductCreateManyWithoutCategoryInput>;
-  children?: Maybe<CategoryCreateManyWithoutChildrenInput>;
 }
 
 export interface CategoryUpdateInput {
@@ -7387,7 +8218,7 @@ export interface ProductCreateInput {
   modelSize?: Maybe<SizeCreateOneInput>;
   color: ColorCreateOneInput;
   secondaryColor?: Maybe<ColorCreateOneInput>;
-  tags?: Maybe<Json>;
+  tags?: Maybe<TagCreateManyWithoutProductsInput>;
   functions?: Maybe<ProductFunctionCreateManyInput>;
   innerMaterials?: Maybe<ProductCreateinnerMaterialsInput>;
   outerMaterials?: Maybe<ProductCreateouterMaterialsInput>;
@@ -7448,7 +8279,7 @@ export interface ProductUpdateDataInput {
   modelSize?: Maybe<SizeUpdateOneInput>;
   color?: Maybe<ColorUpdateOneRequiredInput>;
   secondaryColor?: Maybe<ColorUpdateOneInput>;
-  tags?: Maybe<Json>;
+  tags?: Maybe<TagUpdateManyWithoutProductsInput>;
   functions?: Maybe<ProductFunctionUpdateManyInput>;
   innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
@@ -7934,6 +8765,11 @@ export interface PhysicalProductUpdateInput {
   productStatus?: Maybe<PhysicalProductStatus>;
   offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
   offloadNotes?: Maybe<String>;
+  barcode?: Maybe<String>;
+  sequenceNumber?: Maybe<Int>;
+  warehouseLocation?: Maybe<
+    WarehouseLocationUpdateOneWithoutPhysicalProductsInput
+  >;
 }
 
 export interface PhysicalProductUpdateManyMutationInput {
@@ -7942,6 +8778,8 @@ export interface PhysicalProductUpdateManyMutationInput {
   productStatus?: Maybe<PhysicalProductStatus>;
   offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
   offloadNotes?: Maybe<String>;
+  barcode?: Maybe<String>;
+  sequenceNumber?: Maybe<Int>;
 }
 
 export interface ProductUpdateInput {
@@ -7959,7 +8797,7 @@ export interface ProductUpdateInput {
   modelSize?: Maybe<SizeUpdateOneInput>;
   color?: Maybe<ColorUpdateOneRequiredInput>;
   secondaryColor?: Maybe<ColorUpdateOneInput>;
-  tags?: Maybe<Json>;
+  tags?: Maybe<TagUpdateManyWithoutProductsInput>;
   functions?: Maybe<ProductFunctionUpdateManyInput>;
   innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
@@ -7977,7 +8815,6 @@ export interface ProductUpdateManyMutationInput {
   externalURL?: Maybe<String>;
   modelHeight?: Maybe<Int>;
   retailPrice?: Maybe<Int>;
-  tags?: Maybe<Json>;
   innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
   status?: Maybe<ProductStatus>;
@@ -8022,7 +8859,7 @@ export interface ProductCreateWithoutModelInput {
   modelSize?: Maybe<SizeCreateOneInput>;
   color: ColorCreateOneInput;
   secondaryColor?: Maybe<ColorCreateOneInput>;
-  tags?: Maybe<Json>;
+  tags?: Maybe<TagCreateManyWithoutProductsInput>;
   functions?: Maybe<ProductFunctionCreateManyInput>;
   innerMaterials?: Maybe<ProductCreateinnerMaterialsInput>;
   outerMaterials?: Maybe<ProductCreateouterMaterialsInput>;
@@ -8080,7 +8917,7 @@ export interface ProductUpdateWithoutModelDataInput {
   modelSize?: Maybe<SizeUpdateOneInput>;
   color?: Maybe<ColorUpdateOneRequiredInput>;
   secondaryColor?: Maybe<ColorUpdateOneInput>;
-  tags?: Maybe<Json>;
+  tags?: Maybe<TagUpdateManyWithoutProductsInput>;
   functions?: Maybe<ProductFunctionUpdateManyInput>;
   innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
@@ -8799,6 +9636,114 @@ export interface SizeUpdateManyMutationInput {
   display?: Maybe<String>;
 }
 
+export interface TagCreateInput {
+  id?: Maybe<ID_Input>;
+  name: String;
+  description?: Maybe<String>;
+  products?: Maybe<ProductCreateManyWithoutTagsInput>;
+}
+
+export interface ProductCreateManyWithoutTagsInput {
+  create?: Maybe<
+    ProductCreateWithoutTagsInput[] | ProductCreateWithoutTagsInput
+  >;
+  connect?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
+}
+
+export interface ProductCreateWithoutTagsInput {
+  id?: Maybe<ID_Input>;
+  slug: String;
+  name: String;
+  brand: BrandCreateOneWithoutProductsInput;
+  category: CategoryCreateOneWithoutProductsInput;
+  type?: Maybe<ProductType>;
+  description?: Maybe<String>;
+  externalURL?: Maybe<String>;
+  images?: Maybe<Json>;
+  modelHeight?: Maybe<Int>;
+  retailPrice?: Maybe<Int>;
+  model?: Maybe<ProductModelCreateOneWithoutProductsInput>;
+  modelSize?: Maybe<SizeCreateOneInput>;
+  color: ColorCreateOneInput;
+  secondaryColor?: Maybe<ColorCreateOneInput>;
+  functions?: Maybe<ProductFunctionCreateManyInput>;
+  innerMaterials?: Maybe<ProductCreateinnerMaterialsInput>;
+  outerMaterials?: Maybe<ProductCreateouterMaterialsInput>;
+  variants?: Maybe<ProductVariantCreateManyWithoutProductInput>;
+  status?: Maybe<ProductStatus>;
+  season?: Maybe<String>;
+  architecture?: Maybe<ProductArchitecture>;
+}
+
+export interface TagUpdateInput {
+  name?: Maybe<String>;
+  description?: Maybe<String>;
+  products?: Maybe<ProductUpdateManyWithoutTagsInput>;
+}
+
+export interface ProductUpdateManyWithoutTagsInput {
+  create?: Maybe<
+    ProductCreateWithoutTagsInput[] | ProductCreateWithoutTagsInput
+  >;
+  delete?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
+  connect?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
+  set?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
+  disconnect?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
+  update?: Maybe<
+    | ProductUpdateWithWhereUniqueWithoutTagsInput[]
+    | ProductUpdateWithWhereUniqueWithoutTagsInput
+  >;
+  upsert?: Maybe<
+    | ProductUpsertWithWhereUniqueWithoutTagsInput[]
+    | ProductUpsertWithWhereUniqueWithoutTagsInput
+  >;
+  deleteMany?: Maybe<ProductScalarWhereInput[] | ProductScalarWhereInput>;
+  updateMany?: Maybe<
+    | ProductUpdateManyWithWhereNestedInput[]
+    | ProductUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface ProductUpdateWithWhereUniqueWithoutTagsInput {
+  where: ProductWhereUniqueInput;
+  data: ProductUpdateWithoutTagsDataInput;
+}
+
+export interface ProductUpdateWithoutTagsDataInput {
+  slug?: Maybe<String>;
+  name?: Maybe<String>;
+  brand?: Maybe<BrandUpdateOneRequiredWithoutProductsInput>;
+  category?: Maybe<CategoryUpdateOneRequiredWithoutProductsInput>;
+  type?: Maybe<ProductType>;
+  description?: Maybe<String>;
+  externalURL?: Maybe<String>;
+  images?: Maybe<Json>;
+  modelHeight?: Maybe<Int>;
+  retailPrice?: Maybe<Int>;
+  model?: Maybe<ProductModelUpdateOneWithoutProductsInput>;
+  modelSize?: Maybe<SizeUpdateOneInput>;
+  color?: Maybe<ColorUpdateOneRequiredInput>;
+  secondaryColor?: Maybe<ColorUpdateOneInput>;
+  functions?: Maybe<ProductFunctionUpdateManyInput>;
+  innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
+  outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
+  variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
+  status?: Maybe<ProductStatus>;
+  season?: Maybe<String>;
+  architecture?: Maybe<ProductArchitecture>;
+}
+
+export interface ProductUpsertWithWhereUniqueWithoutTagsInput {
+  where: ProductWhereUniqueInput;
+  update: ProductUpdateWithoutTagsDataInput;
+  create: ProductCreateWithoutTagsInput;
+}
+
+export interface TagUpdateManyMutationInput {
+  name?: Maybe<String>;
+  description?: Maybe<String>;
+}
+
 export interface TopSizeUpdateInput {
   letter?: Maybe<LetterSize>;
   sleeve?: Maybe<Float>;
@@ -8833,6 +9778,315 @@ export interface UserUpdateManyMutationInput {
   lastName?: Maybe<String>;
   role?: Maybe<UserRole>;
   pushNotifications?: Maybe<PushNotificationStatus>;
+}
+
+export interface WarehouseLocationCreateInput {
+  id?: Maybe<ID_Input>;
+  type: WarehouseLocationType;
+  barcode: String;
+  locationCode: String;
+  itemCode: String;
+  physicalProducts?: Maybe<
+    PhysicalProductCreateManyWithoutWarehouseLocationInput
+  >;
+  constraints?: Maybe<
+    WarehouseLocationConstraintCreateManyWithoutLocationsInput
+  >;
+}
+
+export interface PhysicalProductCreateManyWithoutWarehouseLocationInput {
+  create?: Maybe<
+    | PhysicalProductCreateWithoutWarehouseLocationInput[]
+    | PhysicalProductCreateWithoutWarehouseLocationInput
+  >;
+  connect?: Maybe<
+    PhysicalProductWhereUniqueInput[] | PhysicalProductWhereUniqueInput
+  >;
+}
+
+export interface PhysicalProductCreateWithoutWarehouseLocationInput {
+  id?: Maybe<ID_Input>;
+  seasonsUID: String;
+  location?: Maybe<LocationCreateOneWithoutPhysicalProductsInput>;
+  productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput;
+  inventoryStatus: InventoryStatus;
+  productStatus: PhysicalProductStatus;
+  offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
+  offloadNotes?: Maybe<String>;
+  barcode: String;
+  sequenceNumber: Int;
+}
+
+export interface WarehouseLocationUpdateInput {
+  type?: Maybe<WarehouseLocationType>;
+  barcode?: Maybe<String>;
+  locationCode?: Maybe<String>;
+  itemCode?: Maybe<String>;
+  physicalProducts?: Maybe<
+    PhysicalProductUpdateManyWithoutWarehouseLocationInput
+  >;
+  constraints?: Maybe<
+    WarehouseLocationConstraintUpdateManyWithoutLocationsInput
+  >;
+}
+
+export interface PhysicalProductUpdateManyWithoutWarehouseLocationInput {
+  create?: Maybe<
+    | PhysicalProductCreateWithoutWarehouseLocationInput[]
+    | PhysicalProductCreateWithoutWarehouseLocationInput
+  >;
+  delete?: Maybe<
+    PhysicalProductWhereUniqueInput[] | PhysicalProductWhereUniqueInput
+  >;
+  connect?: Maybe<
+    PhysicalProductWhereUniqueInput[] | PhysicalProductWhereUniqueInput
+  >;
+  set?: Maybe<
+    PhysicalProductWhereUniqueInput[] | PhysicalProductWhereUniqueInput
+  >;
+  disconnect?: Maybe<
+    PhysicalProductWhereUniqueInput[] | PhysicalProductWhereUniqueInput
+  >;
+  update?: Maybe<
+    | PhysicalProductUpdateWithWhereUniqueWithoutWarehouseLocationInput[]
+    | PhysicalProductUpdateWithWhereUniqueWithoutWarehouseLocationInput
+  >;
+  upsert?: Maybe<
+    | PhysicalProductUpsertWithWhereUniqueWithoutWarehouseLocationInput[]
+    | PhysicalProductUpsertWithWhereUniqueWithoutWarehouseLocationInput
+  >;
+  deleteMany?: Maybe<
+    PhysicalProductScalarWhereInput[] | PhysicalProductScalarWhereInput
+  >;
+  updateMany?: Maybe<
+    | PhysicalProductUpdateManyWithWhereNestedInput[]
+    | PhysicalProductUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface PhysicalProductUpdateWithWhereUniqueWithoutWarehouseLocationInput {
+  where: PhysicalProductWhereUniqueInput;
+  data: PhysicalProductUpdateWithoutWarehouseLocationDataInput;
+}
+
+export interface PhysicalProductUpdateWithoutWarehouseLocationDataInput {
+  seasonsUID?: Maybe<String>;
+  location?: Maybe<LocationUpdateOneWithoutPhysicalProductsInput>;
+  productVariant?: Maybe<
+    ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
+  >;
+  inventoryStatus?: Maybe<InventoryStatus>;
+  productStatus?: Maybe<PhysicalProductStatus>;
+  offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
+  offloadNotes?: Maybe<String>;
+  barcode?: Maybe<String>;
+  sequenceNumber?: Maybe<Int>;
+}
+
+export interface PhysicalProductUpsertWithWhereUniqueWithoutWarehouseLocationInput {
+  where: PhysicalProductWhereUniqueInput;
+  update: PhysicalProductUpdateWithoutWarehouseLocationDataInput;
+  create: PhysicalProductCreateWithoutWarehouseLocationInput;
+}
+
+export interface WarehouseLocationUpdateManyMutationInput {
+  type?: Maybe<WarehouseLocationType>;
+  barcode?: Maybe<String>;
+  locationCode?: Maybe<String>;
+  itemCode?: Maybe<String>;
+}
+
+export interface WarehouseLocationConstraintCreateInput {
+  id?: Maybe<ID_Input>;
+  category: CategoryCreateOneInput;
+  limit: Int;
+  locations?: Maybe<WarehouseLocationCreateManyWithoutConstraintsInput>;
+}
+
+export interface WarehouseLocationCreateManyWithoutConstraintsInput {
+  create?: Maybe<
+    | WarehouseLocationCreateWithoutConstraintsInput[]
+    | WarehouseLocationCreateWithoutConstraintsInput
+  >;
+  connect?: Maybe<
+    WarehouseLocationWhereUniqueInput[] | WarehouseLocationWhereUniqueInput
+  >;
+}
+
+export interface WarehouseLocationCreateWithoutConstraintsInput {
+  id?: Maybe<ID_Input>;
+  type: WarehouseLocationType;
+  barcode: String;
+  locationCode: String;
+  itemCode: String;
+  physicalProducts?: Maybe<
+    PhysicalProductCreateManyWithoutWarehouseLocationInput
+  >;
+}
+
+export interface WarehouseLocationConstraintUpdateInput {
+  category?: Maybe<CategoryUpdateOneRequiredInput>;
+  limit?: Maybe<Int>;
+  locations?: Maybe<WarehouseLocationUpdateManyWithoutConstraintsInput>;
+}
+
+export interface WarehouseLocationUpdateManyWithoutConstraintsInput {
+  create?: Maybe<
+    | WarehouseLocationCreateWithoutConstraintsInput[]
+    | WarehouseLocationCreateWithoutConstraintsInput
+  >;
+  delete?: Maybe<
+    WarehouseLocationWhereUniqueInput[] | WarehouseLocationWhereUniqueInput
+  >;
+  connect?: Maybe<
+    WarehouseLocationWhereUniqueInput[] | WarehouseLocationWhereUniqueInput
+  >;
+  set?: Maybe<
+    WarehouseLocationWhereUniqueInput[] | WarehouseLocationWhereUniqueInput
+  >;
+  disconnect?: Maybe<
+    WarehouseLocationWhereUniqueInput[] | WarehouseLocationWhereUniqueInput
+  >;
+  update?: Maybe<
+    | WarehouseLocationUpdateWithWhereUniqueWithoutConstraintsInput[]
+    | WarehouseLocationUpdateWithWhereUniqueWithoutConstraintsInput
+  >;
+  upsert?: Maybe<
+    | WarehouseLocationUpsertWithWhereUniqueWithoutConstraintsInput[]
+    | WarehouseLocationUpsertWithWhereUniqueWithoutConstraintsInput
+  >;
+  deleteMany?: Maybe<
+    WarehouseLocationScalarWhereInput[] | WarehouseLocationScalarWhereInput
+  >;
+  updateMany?: Maybe<
+    | WarehouseLocationUpdateManyWithWhereNestedInput[]
+    | WarehouseLocationUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface WarehouseLocationUpdateWithWhereUniqueWithoutConstraintsInput {
+  where: WarehouseLocationWhereUniqueInput;
+  data: WarehouseLocationUpdateWithoutConstraintsDataInput;
+}
+
+export interface WarehouseLocationUpdateWithoutConstraintsDataInput {
+  type?: Maybe<WarehouseLocationType>;
+  barcode?: Maybe<String>;
+  locationCode?: Maybe<String>;
+  itemCode?: Maybe<String>;
+  physicalProducts?: Maybe<
+    PhysicalProductUpdateManyWithoutWarehouseLocationInput
+  >;
+}
+
+export interface WarehouseLocationUpsertWithWhereUniqueWithoutConstraintsInput {
+  where: WarehouseLocationWhereUniqueInput;
+  update: WarehouseLocationUpdateWithoutConstraintsDataInput;
+  create: WarehouseLocationCreateWithoutConstraintsInput;
+}
+
+export interface WarehouseLocationScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  type?: Maybe<WarehouseLocationType>;
+  type_not?: Maybe<WarehouseLocationType>;
+  type_in?: Maybe<WarehouseLocationType[] | WarehouseLocationType>;
+  type_not_in?: Maybe<WarehouseLocationType[] | WarehouseLocationType>;
+  barcode?: Maybe<String>;
+  barcode_not?: Maybe<String>;
+  barcode_in?: Maybe<String[] | String>;
+  barcode_not_in?: Maybe<String[] | String>;
+  barcode_lt?: Maybe<String>;
+  barcode_lte?: Maybe<String>;
+  barcode_gt?: Maybe<String>;
+  barcode_gte?: Maybe<String>;
+  barcode_contains?: Maybe<String>;
+  barcode_not_contains?: Maybe<String>;
+  barcode_starts_with?: Maybe<String>;
+  barcode_not_starts_with?: Maybe<String>;
+  barcode_ends_with?: Maybe<String>;
+  barcode_not_ends_with?: Maybe<String>;
+  locationCode?: Maybe<String>;
+  locationCode_not?: Maybe<String>;
+  locationCode_in?: Maybe<String[] | String>;
+  locationCode_not_in?: Maybe<String[] | String>;
+  locationCode_lt?: Maybe<String>;
+  locationCode_lte?: Maybe<String>;
+  locationCode_gt?: Maybe<String>;
+  locationCode_gte?: Maybe<String>;
+  locationCode_contains?: Maybe<String>;
+  locationCode_not_contains?: Maybe<String>;
+  locationCode_starts_with?: Maybe<String>;
+  locationCode_not_starts_with?: Maybe<String>;
+  locationCode_ends_with?: Maybe<String>;
+  locationCode_not_ends_with?: Maybe<String>;
+  itemCode?: Maybe<String>;
+  itemCode_not?: Maybe<String>;
+  itemCode_in?: Maybe<String[] | String>;
+  itemCode_not_in?: Maybe<String[] | String>;
+  itemCode_lt?: Maybe<String>;
+  itemCode_lte?: Maybe<String>;
+  itemCode_gt?: Maybe<String>;
+  itemCode_gte?: Maybe<String>;
+  itemCode_contains?: Maybe<String>;
+  itemCode_not_contains?: Maybe<String>;
+  itemCode_starts_with?: Maybe<String>;
+  itemCode_not_starts_with?: Maybe<String>;
+  itemCode_ends_with?: Maybe<String>;
+  itemCode_not_ends_with?: Maybe<String>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<
+    WarehouseLocationScalarWhereInput[] | WarehouseLocationScalarWhereInput
+  >;
+  OR?: Maybe<
+    WarehouseLocationScalarWhereInput[] | WarehouseLocationScalarWhereInput
+  >;
+  NOT?: Maybe<
+    WarehouseLocationScalarWhereInput[] | WarehouseLocationScalarWhereInput
+  >;
+}
+
+export interface WarehouseLocationUpdateManyWithWhereNestedInput {
+  where: WarehouseLocationScalarWhereInput;
+  data: WarehouseLocationUpdateManyDataInput;
+}
+
+export interface WarehouseLocationUpdateManyDataInput {
+  type?: Maybe<WarehouseLocationType>;
+  barcode?: Maybe<String>;
+  locationCode?: Maybe<String>;
+  itemCode?: Maybe<String>;
+}
+
+export interface WarehouseLocationConstraintUpdateManyMutationInput {
+  limit?: Maybe<Int>;
 }
 
 export interface BagItemSubscriptionWhereInput {
@@ -9293,6 +10547,17 @@ export interface SizeSubscriptionWhereInput {
   NOT?: Maybe<SizeSubscriptionWhereInput[] | SizeSubscriptionWhereInput>;
 }
 
+export interface TagSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<TagWhereInput>;
+  AND?: Maybe<TagSubscriptionWhereInput[] | TagSubscriptionWhereInput>;
+  OR?: Maybe<TagSubscriptionWhereInput[] | TagSubscriptionWhereInput>;
+  NOT?: Maybe<TagSubscriptionWhereInput[] | TagSubscriptionWhereInput>;
+}
+
 export interface TopSizeSubscriptionWhereInput {
   mutation_in?: Maybe<MutationType[] | MutationType>;
   updatedFields_contains?: Maybe<String>;
@@ -9313,6 +10578,46 @@ export interface UserSubscriptionWhereInput {
   AND?: Maybe<UserSubscriptionWhereInput[] | UserSubscriptionWhereInput>;
   OR?: Maybe<UserSubscriptionWhereInput[] | UserSubscriptionWhereInput>;
   NOT?: Maybe<UserSubscriptionWhereInput[] | UserSubscriptionWhereInput>;
+}
+
+export interface WarehouseLocationSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<WarehouseLocationWhereInput>;
+  AND?: Maybe<
+    | WarehouseLocationSubscriptionWhereInput[]
+    | WarehouseLocationSubscriptionWhereInput
+  >;
+  OR?: Maybe<
+    | WarehouseLocationSubscriptionWhereInput[]
+    | WarehouseLocationSubscriptionWhereInput
+  >;
+  NOT?: Maybe<
+    | WarehouseLocationSubscriptionWhereInput[]
+    | WarehouseLocationSubscriptionWhereInput
+  >;
+}
+
+export interface WarehouseLocationConstraintSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<WarehouseLocationConstraintWhereInput>;
+  AND?: Maybe<
+    | WarehouseLocationConstraintSubscriptionWhereInput[]
+    | WarehouseLocationConstraintSubscriptionWhereInput
+  >;
+  OR?: Maybe<
+    | WarehouseLocationConstraintSubscriptionWhereInput[]
+    | WarehouseLocationConstraintSubscriptionWhereInput
+  >;
+  NOT?: Maybe<
+    | WarehouseLocationConstraintSubscriptionWhereInput[]
+    | WarehouseLocationConstraintSubscriptionWhereInput
+  >;
 }
 
 export interface NodeNode {
@@ -9720,6 +11025,8 @@ export interface PhysicalProduct {
   productStatus: PhysicalProductStatus;
   offloadMethod?: PhysicalProductOffloadMethod;
   offloadNotes?: String;
+  barcode: String;
+  sequenceNumber: Int;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -9735,6 +11042,9 @@ export interface PhysicalProductPromise
   productStatus: () => Promise<PhysicalProductStatus>;
   offloadMethod: () => Promise<PhysicalProductOffloadMethod>;
   offloadNotes: () => Promise<String>;
+  barcode: () => Promise<String>;
+  sequenceNumber: () => Promise<Int>;
+  warehouseLocation: <T = WarehouseLocationPromise>() => T;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -9750,6 +11060,9 @@ export interface PhysicalProductSubscription
   productStatus: () => Promise<AsyncIterator<PhysicalProductStatus>>;
   offloadMethod: () => Promise<AsyncIterator<PhysicalProductOffloadMethod>>;
   offloadNotes: () => Promise<AsyncIterator<String>>;
+  barcode: () => Promise<AsyncIterator<String>>;
+  sequenceNumber: () => Promise<AsyncIterator<Int>>;
+  warehouseLocation: <T = WarehouseLocationSubscription>() => T;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -9765,6 +11078,9 @@ export interface PhysicalProductNullablePromise
   productStatus: () => Promise<PhysicalProductStatus>;
   offloadMethod: () => Promise<PhysicalProductOffloadMethod>;
   offloadNotes: () => Promise<String>;
+  barcode: () => Promise<String>;
+  sequenceNumber: () => Promise<Int>;
+  warehouseLocation: <T = WarehouseLocationPromise>() => T;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -10108,7 +11424,6 @@ export interface Product {
   externalURL?: String;
   modelHeight?: Int;
   retailPrice?: Int;
-  tags?: Json;
   innerMaterials: String[];
   outerMaterials: String[];
   status?: ProductStatus;
@@ -10142,7 +11457,15 @@ export interface ProductPromise extends Promise<Product>, Fragmentable {
   modelSize: <T = SizePromise>() => T;
   color: <T = ColorPromise>() => T;
   secondaryColor: <T = ColorPromise>() => T;
-  tags: () => Promise<Json>;
+  tags: <T = FragmentableArray<Tag>>(args?: {
+    where?: TagWhereInput;
+    orderBy?: TagOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
   functions: <T = FragmentableArray<ProductFunction>>(args?: {
     where?: ProductFunctionWhereInput;
     orderBy?: ProductFunctionOrderByInput;
@@ -10196,7 +11519,15 @@ export interface ProductSubscription
   modelSize: <T = SizeSubscription>() => T;
   color: <T = ColorSubscription>() => T;
   secondaryColor: <T = ColorSubscription>() => T;
-  tags: () => Promise<AsyncIterator<Json>>;
+  tags: <T = Promise<AsyncIterator<TagSubscription>>>(args?: {
+    where?: TagWhereInput;
+    orderBy?: TagOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
   functions: <T = Promise<AsyncIterator<ProductFunctionSubscription>>>(args?: {
     where?: ProductFunctionWhereInput;
     orderBy?: ProductFunctionOrderByInput;
@@ -10250,7 +11581,15 @@ export interface ProductNullablePromise
   modelSize: <T = SizePromise>() => T;
   color: <T = ColorPromise>() => T;
   secondaryColor: <T = ColorPromise>() => T;
-  tags: () => Promise<Json>;
+  tags: <T = FragmentableArray<Tag>>(args?: {
+    where?: TagWhereInput;
+    orderBy?: TagOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
   functions: <T = FragmentableArray<ProductFunction>>(args?: {
     where?: ProductFunctionWhereInput;
     orderBy?: ProductFunctionOrderByInput;
@@ -10576,6 +11915,67 @@ export interface ProductModelNullablePromise
   }) => T;
 }
 
+export interface Tag {
+  id: ID_Output;
+  name: String;
+  description?: String;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface TagPromise extends Promise<Tag>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  name: () => Promise<String>;
+  description: () => Promise<String>;
+  products: <T = FragmentableArray<Product>>(args?: {
+    where?: ProductWhereInput;
+    orderBy?: ProductOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface TagSubscription
+  extends Promise<AsyncIterator<Tag>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  name: () => Promise<AsyncIterator<String>>;
+  description: () => Promise<AsyncIterator<String>>;
+  products: <T = Promise<AsyncIterator<ProductSubscription>>>(args?: {
+    where?: ProductWhereInput;
+    orderBy?: ProductOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface TagNullablePromise extends Promise<Tag | null>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  name: () => Promise<String>;
+  description: () => Promise<String>;
+  products: <T = FragmentableArray<Product>>(args?: {
+    where?: ProductWhereInput;
+    orderBy?: ProductOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
 export interface ProductFunction {
   id: ID_Output;
   name?: String;
@@ -10600,6 +12000,176 @@ export interface ProductFunctionNullablePromise
     Fragmentable {
   id: () => Promise<ID_Output>;
   name: () => Promise<String>;
+}
+
+export interface WarehouseLocation {
+  id: ID_Output;
+  type: WarehouseLocationType;
+  barcode: String;
+  locationCode: String;
+  itemCode: String;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface WarehouseLocationPromise
+  extends Promise<WarehouseLocation>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  type: () => Promise<WarehouseLocationType>;
+  barcode: () => Promise<String>;
+  locationCode: () => Promise<String>;
+  itemCode: () => Promise<String>;
+  physicalProducts: <T = FragmentableArray<PhysicalProduct>>(args?: {
+    where?: PhysicalProductWhereInput;
+    orderBy?: PhysicalProductOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  constraints: <T = FragmentableArray<WarehouseLocationConstraint>>(args?: {
+    where?: WarehouseLocationConstraintWhereInput;
+    orderBy?: WarehouseLocationConstraintOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface WarehouseLocationSubscription
+  extends Promise<AsyncIterator<WarehouseLocation>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  type: () => Promise<AsyncIterator<WarehouseLocationType>>;
+  barcode: () => Promise<AsyncIterator<String>>;
+  locationCode: () => Promise<AsyncIterator<String>>;
+  itemCode: () => Promise<AsyncIterator<String>>;
+  physicalProducts: <
+    T = Promise<AsyncIterator<PhysicalProductSubscription>>
+  >(args?: {
+    where?: PhysicalProductWhereInput;
+    orderBy?: PhysicalProductOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  constraints: <
+    T = Promise<AsyncIterator<WarehouseLocationConstraintSubscription>>
+  >(args?: {
+    where?: WarehouseLocationConstraintWhereInput;
+    orderBy?: WarehouseLocationConstraintOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface WarehouseLocationNullablePromise
+  extends Promise<WarehouseLocation | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  type: () => Promise<WarehouseLocationType>;
+  barcode: () => Promise<String>;
+  locationCode: () => Promise<String>;
+  itemCode: () => Promise<String>;
+  physicalProducts: <T = FragmentableArray<PhysicalProduct>>(args?: {
+    where?: PhysicalProductWhereInput;
+    orderBy?: PhysicalProductOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  constraints: <T = FragmentableArray<WarehouseLocationConstraint>>(args?: {
+    where?: WarehouseLocationConstraintWhereInput;
+    orderBy?: WarehouseLocationConstraintOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface WarehouseLocationConstraint {
+  id: ID_Output;
+  limit: Int;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface WarehouseLocationConstraintPromise
+  extends Promise<WarehouseLocationConstraint>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  category: <T = CategoryPromise>() => T;
+  limit: () => Promise<Int>;
+  locations: <T = FragmentableArray<WarehouseLocation>>(args?: {
+    where?: WarehouseLocationWhereInput;
+    orderBy?: WarehouseLocationOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface WarehouseLocationConstraintSubscription
+  extends Promise<AsyncIterator<WarehouseLocationConstraint>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  category: <T = CategorySubscription>() => T;
+  limit: () => Promise<AsyncIterator<Int>>;
+  locations: <
+    T = Promise<AsyncIterator<WarehouseLocationSubscription>>
+  >(args?: {
+    where?: WarehouseLocationWhereInput;
+    orderBy?: WarehouseLocationOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface WarehouseLocationConstraintNullablePromise
+  extends Promise<WarehouseLocationConstraint | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  category: <T = CategoryPromise>() => T;
+  limit: () => Promise<Int>;
+  locations: <T = FragmentableArray<WarehouseLocation>>(args?: {
+    where?: WarehouseLocationWhereInput;
+    orderBy?: WarehouseLocationOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface BillingInfo {
@@ -12956,6 +14526,60 @@ export interface AggregateSizeSubscription
   count: () => Promise<AsyncIterator<Int>>;
 }
 
+export interface TagConnection {
+  pageInfo: PageInfo;
+  edges: TagEdge[];
+}
+
+export interface TagConnectionPromise
+  extends Promise<TagConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<TagEdge>>() => T;
+  aggregate: <T = AggregateTagPromise>() => T;
+}
+
+export interface TagConnectionSubscription
+  extends Promise<AsyncIterator<TagConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<TagEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateTagSubscription>() => T;
+}
+
+export interface TagEdge {
+  node: Tag;
+  cursor: String;
+}
+
+export interface TagEdgePromise extends Promise<TagEdge>, Fragmentable {
+  node: <T = TagPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface TagEdgeSubscription
+  extends Promise<AsyncIterator<TagEdge>>,
+    Fragmentable {
+  node: <T = TagSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateTag {
+  count: Int;
+}
+
+export interface AggregateTagPromise
+  extends Promise<AggregateTag>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateTagSubscription
+  extends Promise<AsyncIterator<AggregateTag>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
 export interface TopSizeConnection {
   pageInfo: PageInfo;
   edges: TopSizeEdge[];
@@ -13060,6 +14684,120 @@ export interface AggregateUserPromise
 
 export interface AggregateUserSubscription
   extends Promise<AsyncIterator<AggregateUser>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface WarehouseLocationConnection {
+  pageInfo: PageInfo;
+  edges: WarehouseLocationEdge[];
+}
+
+export interface WarehouseLocationConnectionPromise
+  extends Promise<WarehouseLocationConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<WarehouseLocationEdge>>() => T;
+  aggregate: <T = AggregateWarehouseLocationPromise>() => T;
+}
+
+export interface WarehouseLocationConnectionSubscription
+  extends Promise<AsyncIterator<WarehouseLocationConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<WarehouseLocationEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateWarehouseLocationSubscription>() => T;
+}
+
+export interface WarehouseLocationEdge {
+  node: WarehouseLocation;
+  cursor: String;
+}
+
+export interface WarehouseLocationEdgePromise
+  extends Promise<WarehouseLocationEdge>,
+    Fragmentable {
+  node: <T = WarehouseLocationPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface WarehouseLocationEdgeSubscription
+  extends Promise<AsyncIterator<WarehouseLocationEdge>>,
+    Fragmentable {
+  node: <T = WarehouseLocationSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateWarehouseLocation {
+  count: Int;
+}
+
+export interface AggregateWarehouseLocationPromise
+  extends Promise<AggregateWarehouseLocation>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateWarehouseLocationSubscription
+  extends Promise<AsyncIterator<AggregateWarehouseLocation>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface WarehouseLocationConstraintConnection {
+  pageInfo: PageInfo;
+  edges: WarehouseLocationConstraintEdge[];
+}
+
+export interface WarehouseLocationConstraintConnectionPromise
+  extends Promise<WarehouseLocationConstraintConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<WarehouseLocationConstraintEdge>>() => T;
+  aggregate: <T = AggregateWarehouseLocationConstraintPromise>() => T;
+}
+
+export interface WarehouseLocationConstraintConnectionSubscription
+  extends Promise<AsyncIterator<WarehouseLocationConstraintConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <
+    T = Promise<AsyncIterator<WarehouseLocationConstraintEdgeSubscription>>
+  >() => T;
+  aggregate: <T = AggregateWarehouseLocationConstraintSubscription>() => T;
+}
+
+export interface WarehouseLocationConstraintEdge {
+  node: WarehouseLocationConstraint;
+  cursor: String;
+}
+
+export interface WarehouseLocationConstraintEdgePromise
+  extends Promise<WarehouseLocationConstraintEdge>,
+    Fragmentable {
+  node: <T = WarehouseLocationConstraintPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface WarehouseLocationConstraintEdgeSubscription
+  extends Promise<AsyncIterator<WarehouseLocationConstraintEdge>>,
+    Fragmentable {
+  node: <T = WarehouseLocationConstraintSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateWarehouseLocationConstraint {
+  count: Int;
+}
+
+export interface AggregateWarehouseLocationConstraintPromise
+  extends Promise<AggregateWarehouseLocationConstraint>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateWarehouseLocationConstraintSubscription
+  extends Promise<AsyncIterator<AggregateWarehouseLocationConstraint>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
@@ -14036,6 +15774,8 @@ export interface PhysicalProductPreviousValues {
   productStatus: PhysicalProductStatus;
   offloadMethod?: PhysicalProductOffloadMethod;
   offloadNotes?: String;
+  barcode: String;
+  sequenceNumber: Int;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -14049,6 +15789,8 @@ export interface PhysicalProductPreviousValuesPromise
   productStatus: () => Promise<PhysicalProductStatus>;
   offloadMethod: () => Promise<PhysicalProductOffloadMethod>;
   offloadNotes: () => Promise<String>;
+  barcode: () => Promise<String>;
+  sequenceNumber: () => Promise<Int>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -14062,6 +15804,8 @@ export interface PhysicalProductPreviousValuesSubscription
   productStatus: () => Promise<AsyncIterator<PhysicalProductStatus>>;
   offloadMethod: () => Promise<AsyncIterator<PhysicalProductOffloadMethod>>;
   offloadNotes: () => Promise<AsyncIterator<String>>;
+  barcode: () => Promise<AsyncIterator<String>>;
+  sequenceNumber: () => Promise<AsyncIterator<Int>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -14100,7 +15844,6 @@ export interface ProductPreviousValues {
   externalURL?: String;
   modelHeight?: Int;
   retailPrice?: Int;
-  tags?: Json;
   innerMaterials: String[];
   outerMaterials: String[];
   status?: ProductStatus;
@@ -14121,7 +15864,6 @@ export interface ProductPreviousValuesPromise
   externalURL: () => Promise<String>;
   modelHeight: () => Promise<Int>;
   retailPrice: () => Promise<Int>;
-  tags: () => Promise<Json>;
   innerMaterials: () => Promise<String[]>;
   outerMaterials: () => Promise<String[]>;
   status: () => Promise<ProductStatus>;
@@ -14142,7 +15884,6 @@ export interface ProductPreviousValuesSubscription
   externalURL: () => Promise<AsyncIterator<String>>;
   modelHeight: () => Promise<AsyncIterator<Int>>;
   retailPrice: () => Promise<AsyncIterator<Int>>;
-  tags: () => Promise<AsyncIterator<Json>>;
   innerMaterials: () => Promise<AsyncIterator<String[]>>;
   outerMaterials: () => Promise<AsyncIterator<String[]>>;
   status: () => Promise<AsyncIterator<ProductStatus>>;
@@ -14762,6 +16503,59 @@ export interface SizePreviousValuesSubscription
   display: () => Promise<AsyncIterator<String>>;
 }
 
+export interface TagSubscriptionPayload {
+  mutation: MutationType;
+  node: Tag;
+  updatedFields: String[];
+  previousValues: TagPreviousValues;
+}
+
+export interface TagSubscriptionPayloadPromise
+  extends Promise<TagSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = TagPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = TagPreviousValuesPromise>() => T;
+}
+
+export interface TagSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<TagSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = TagSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = TagPreviousValuesSubscription>() => T;
+}
+
+export interface TagPreviousValues {
+  id: ID_Output;
+  name: String;
+  description?: String;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface TagPreviousValuesPromise
+  extends Promise<TagPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  name: () => Promise<String>;
+  description: () => Promise<String>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface TagPreviousValuesSubscription
+  extends Promise<AsyncIterator<TagPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  name: () => Promise<AsyncIterator<String>>;
+  description: () => Promise<AsyncIterator<String>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
 export interface TopSizeSubscriptionPayload {
   mutation: MutationType;
   node: TopSize;
@@ -14886,6 +16680,119 @@ export interface UserPreviousValuesSubscription
   pushNotifications: () => Promise<AsyncIterator<PushNotificationStatus>>;
 }
 
+export interface WarehouseLocationSubscriptionPayload {
+  mutation: MutationType;
+  node: WarehouseLocation;
+  updatedFields: String[];
+  previousValues: WarehouseLocationPreviousValues;
+}
+
+export interface WarehouseLocationSubscriptionPayloadPromise
+  extends Promise<WarehouseLocationSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = WarehouseLocationPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = WarehouseLocationPreviousValuesPromise>() => T;
+}
+
+export interface WarehouseLocationSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<WarehouseLocationSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = WarehouseLocationSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = WarehouseLocationPreviousValuesSubscription>() => T;
+}
+
+export interface WarehouseLocationPreviousValues {
+  id: ID_Output;
+  type: WarehouseLocationType;
+  barcode: String;
+  locationCode: String;
+  itemCode: String;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface WarehouseLocationPreviousValuesPromise
+  extends Promise<WarehouseLocationPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  type: () => Promise<WarehouseLocationType>;
+  barcode: () => Promise<String>;
+  locationCode: () => Promise<String>;
+  itemCode: () => Promise<String>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface WarehouseLocationPreviousValuesSubscription
+  extends Promise<AsyncIterator<WarehouseLocationPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  type: () => Promise<AsyncIterator<WarehouseLocationType>>;
+  barcode: () => Promise<AsyncIterator<String>>;
+  locationCode: () => Promise<AsyncIterator<String>>;
+  itemCode: () => Promise<AsyncIterator<String>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface WarehouseLocationConstraintSubscriptionPayload {
+  mutation: MutationType;
+  node: WarehouseLocationConstraint;
+  updatedFields: String[];
+  previousValues: WarehouseLocationConstraintPreviousValues;
+}
+
+export interface WarehouseLocationConstraintSubscriptionPayloadPromise
+  extends Promise<WarehouseLocationConstraintSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = WarehouseLocationConstraintPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = WarehouseLocationConstraintPreviousValuesPromise>() => T;
+}
+
+export interface WarehouseLocationConstraintSubscriptionPayloadSubscription
+  extends Promise<
+      AsyncIterator<WarehouseLocationConstraintSubscriptionPayload>
+    >,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = WarehouseLocationConstraintSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <
+    T = WarehouseLocationConstraintPreviousValuesSubscription
+  >() => T;
+}
+
+export interface WarehouseLocationConstraintPreviousValues {
+  id: ID_Output;
+  limit: Int;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface WarehouseLocationConstraintPreviousValuesPromise
+  extends Promise<WarehouseLocationConstraintPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  limit: () => Promise<Int>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface WarehouseLocationConstraintPreviousValuesSubscription
+  extends Promise<AsyncIterator<WarehouseLocationConstraintPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  limit: () => Promise<AsyncIterator<Int>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
 /*
 The `ID` scalar type represents a unique identifier, often used to refetch an object or as key for a cache. The ID type appears in a JSON response as a String; however, it is not intended to be human-readable. When expected as an input type, any string (such as `"4"`) or integer (such as `4`) input value will be accepted as an ID.
 */
@@ -15008,6 +16915,10 @@ export const models: Model[] = [
     embedded: false
   },
   {
+    name: "WarehouseLocationType",
+    embedded: false
+  },
+  {
     name: "Brand",
     embedded: false
   },
@@ -15040,6 +16951,10 @@ export const models: Model[] = [
     embedded: false
   },
   {
+    name: "Tag",
+    embedded: false
+  },
+  {
     name: "Product",
     embedded: false
   },
@@ -15057,6 +16972,14 @@ export const models: Model[] = [
   },
   {
     name: "PhysicalProduct",
+    embedded: false
+  },
+  {
+    name: "WarehouseLocationConstraint",
+    embedded: false
+  },
+  {
+    name: "WarehouseLocation",
     embedded: false
   },
   {
