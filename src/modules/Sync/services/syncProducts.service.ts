@@ -1,10 +1,10 @@
 import * as fs from "fs"
 
 import { Injectable } from "@nestjs/common"
-import { head, isEmpty } from "lodash"
+import { head, isEmpty, identity } from "lodash"
 import slugify from "slugify"
 
-import { BottomSizeType, LetterSize, ProductCreateInput } from "../../../prisma"
+import { BottomSizeType, LetterSize, ProductCreateInput } from "@prisma/index"
 import { PrismaService } from "../../../prisma/prisma.service"
 import { AirtableData } from "../../Airtable/airtable.types"
 import { AirtableService } from "../../Airtable/services/airtable.service"
@@ -98,6 +98,7 @@ export class SyncProductsService {
       modelName: "Products",
     })
 
+    const logFile = this.utils.openLogFile("syncProducts")
     for (const record of allProducts) {
       try {
         _cliProgressBar.increment()
@@ -136,9 +137,11 @@ export class SyncProductsService {
           continue
         }
 
+        // Get the slug
         const { brandCode } = brand.model
         const slug = slugify(brandCode + " " + name + " " + color).toLowerCase()
 
+        // Sync model size records
         let modelSizeRecord
         if (!!modelSize) {
           const {
@@ -160,6 +163,16 @@ export class SyncProductsService {
           })
         }
 
+        // Upsert the tags
+        for (const name of model.tags) {
+          await this.prisma.client.upsertTag({
+            where: { name },
+            create: { name },
+            update: { name },
+          })
+        }
+
+        // Upsert the product
         const data = {
           brand: {
             connect: {
@@ -183,7 +196,11 @@ export class SyncProductsService {
             set: (outerMaterials || []).map(a => a.replace(/\ /g, "")),
           },
           tags: {
-            set: tags,
+            connect: model.tags.map(name =>
+              identity({
+                name,
+              })
+            ),
           },
           name,
           slug,
@@ -199,11 +216,9 @@ export class SyncProductsService {
           })(),
           modelHeight: head(modelHeight) ?? 0,
           status: (status || "Available").replace(" ", ""),
+          season: model.season,
         } as ProductCreateInput
 
-        // if (name == "Kit Shirt") {
-        //   console.log(data)
-        // }
         await this.prisma.client.upsertProduct({
           where: {
             slug,
@@ -212,15 +227,17 @@ export class SyncProductsService {
           update: data,
         })
 
+        // Update airtable
         await record.patchUpdate({
           Slug: slug,
         })
       } catch (e) {
-        console.log(record)
-        console.error(e)
+        console.log(`Check ${logFile}`)
+        this.syncUtils.logSyncError(logFile, record, e)
       }
     }
     multibar?.stop()
+    fs.closeSync(logFile)
   }
 
   private async addBrandLinks(

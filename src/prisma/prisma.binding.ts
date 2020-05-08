@@ -8,7 +8,10 @@ export interface Query {
     collectionGroups: <T = Array<CollectionGroup | null>>(args: { where?: CollectionGroupWhereInput | null, orderBy?: CollectionGroupOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     homepageProductRails: <T = Array<HomepageProductRail | null>>(args: { where?: HomepageProductRailWhereInput | null, orderBy?: HomepageProductRailOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     images: <T = Array<Image | null>>(args: { where?: ImageWhereInput | null, orderBy?: ImageOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    tags: <T = Array<Tag | null>>(args: { where?: TagWhereInput | null, orderBy?: TagOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     productModels: <T = Array<ProductModel | null>>(args: { where?: ProductModelWhereInput | null, orderBy?: ProductModelOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    warehouseLocationConstraints: <T = Array<WarehouseLocationConstraint | null>>(args: { where?: WarehouseLocationConstraintWhereInput | null, orderBy?: WarehouseLocationConstraintOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    warehouseLocations: <T = Array<WarehouseLocation | null>>(args: { where?: WarehouseLocationWhereInput | null, orderBy?: WarehouseLocationOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     bagItems: <T = Array<BagItem | null>>(args: { where?: BagItemWhereInput | null, orderBy?: BagItemOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     recentlyViewedProducts: <T = Array<RecentlyViewedProduct | null>>(args: { where?: RecentlyViewedProductWhereInput | null, orderBy?: RecentlyViewedProductOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     productRequests: <T = Array<ProductRequest | null>>(args: { where?: ProductRequestWhereInput | null, orderBy?: ProductRequestOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -17,9 +20,9 @@ export interface Query {
     productVariantFeedbacks: <T = Array<ProductVariantFeedback | null>>(args: { where?: ProductVariantFeedbackWhereInput | null, orderBy?: ProductVariantFeedbackOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     productVariantFeedbackQuestions: <T = Array<ProductVariantFeedbackQuestion | null>>(args: { where?: ProductVariantFeedbackQuestionWhereInput | null, orderBy?: ProductVariantFeedbackQuestionOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     collections: <T = Array<Collection | null>>(args: { where?: CollectionWhereInput | null, orderBy?: CollectionOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    categories: <T = Array<Category | null>>(args: { where?: CategoryWhereInput | null, orderBy?: CategoryOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     customerDetails: <T = Array<CustomerDetail | null>>(args: { where?: CustomerDetailWhereInput | null, orderBy?: CustomerDetailOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     billingInfoes: <T = Array<BillingInfo | null>>(args: { where?: BillingInfoWhereInput | null, orderBy?: BillingInfoOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    categories: <T = Array<Category | null>>(args: { where?: CategoryWhereInput | null, orderBy?: CategoryOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     locations: <T = Array<Location | null>>(args: { where?: LocationWhereInput | null, orderBy?: LocationOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     packages: <T = Array<Package | null>>(args: { where?: PackageWhereInput | null, orderBy?: PackageOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     sizes: <T = Array<Size | null>>(args: { where?: SizeWhereInput | null, orderBy?: SizeOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -38,7 +41,10 @@ export interface Query {
     collectionGroup: <T = CollectionGroup | null>(args: { where: CollectionGroupWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     homepageProductRail: <T = HomepageProductRail | null>(args: { where: HomepageProductRailWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     image: <T = Image | null>(args: { where: ImageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    tag: <T = Tag | null>(args: { where: TagWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     productModel: <T = ProductModel | null>(args: { where: ProductModelWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    warehouseLocationConstraint: <T = WarehouseLocationConstraint | null>(args: { where: WarehouseLocationConstraintWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    warehouseLocation: <T = WarehouseLocation | null>(args: { where: WarehouseLocationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     bagItem: <T = BagItem | null>(args: { where: BagItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     recentlyViewedProduct: <T = RecentlyViewedProduct | null>(args: { where: RecentlyViewedProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     productRequest: <T = ProductRequest | null>(args: { where: ProductRequestWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -47,9 +53,9 @@ export interface Query {
     productVariantFeedback: <T = ProductVariantFeedback | null>(args: { where: ProductVariantFeedbackWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     productVariantFeedbackQuestion: <T = ProductVariantFeedbackQuestion | null>(args: { where: ProductVariantFeedbackQuestionWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     collection: <T = Collection | null>(args: { where: CollectionWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    category: <T = Category | null>(args: { where: CategoryWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     customerDetail: <T = CustomerDetail | null>(args: { where: CustomerDetailWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     billingInfo: <T = BillingInfo | null>(args: { where: BillingInfoWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    category: <T = Category | null>(args: { where: CategoryWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     location: <T = Location | null>(args: { where: LocationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     package: <T = Package | null>(args: { where: PackageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     size: <T = Size | null>(args: { where: SizeWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -68,7 +74,10 @@ export interface Query {
     collectionGroupsConnection: <T = CollectionGroupConnection>(args: { where?: CollectionGroupWhereInput | null, orderBy?: CollectionGroupOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     homepageProductRailsConnection: <T = HomepageProductRailConnection>(args: { where?: HomepageProductRailWhereInput | null, orderBy?: HomepageProductRailOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     imagesConnection: <T = ImageConnection>(args: { where?: ImageWhereInput | null, orderBy?: ImageOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    tagsConnection: <T = TagConnection>(args: { where?: TagWhereInput | null, orderBy?: TagOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     productModelsConnection: <T = ProductModelConnection>(args: { where?: ProductModelWhereInput | null, orderBy?: ProductModelOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    warehouseLocationConstraintsConnection: <T = WarehouseLocationConstraintConnection>(args: { where?: WarehouseLocationConstraintWhereInput | null, orderBy?: WarehouseLocationConstraintOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    warehouseLocationsConnection: <T = WarehouseLocationConnection>(args: { where?: WarehouseLocationWhereInput | null, orderBy?: WarehouseLocationOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     bagItemsConnection: <T = BagItemConnection>(args: { where?: BagItemWhereInput | null, orderBy?: BagItemOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     recentlyViewedProductsConnection: <T = RecentlyViewedProductConnection>(args: { where?: RecentlyViewedProductWhereInput | null, orderBy?: RecentlyViewedProductOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     productRequestsConnection: <T = ProductRequestConnection>(args: { where?: ProductRequestWhereInput | null, orderBy?: ProductRequestOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -77,9 +86,9 @@ export interface Query {
     productVariantFeedbacksConnection: <T = ProductVariantFeedbackConnection>(args: { where?: ProductVariantFeedbackWhereInput | null, orderBy?: ProductVariantFeedbackOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     productVariantFeedbackQuestionsConnection: <T = ProductVariantFeedbackQuestionConnection>(args: { where?: ProductVariantFeedbackQuestionWhereInput | null, orderBy?: ProductVariantFeedbackQuestionOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     collectionsConnection: <T = CollectionConnection>(args: { where?: CollectionWhereInput | null, orderBy?: CollectionOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    categoriesConnection: <T = CategoryConnection>(args: { where?: CategoryWhereInput | null, orderBy?: CategoryOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     customerDetailsConnection: <T = CustomerDetailConnection>(args: { where?: CustomerDetailWhereInput | null, orderBy?: CustomerDetailOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     billingInfoesConnection: <T = BillingInfoConnection>(args: { where?: BillingInfoWhereInput | null, orderBy?: BillingInfoOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    categoriesConnection: <T = CategoryConnection>(args: { where?: CategoryWhereInput | null, orderBy?: CategoryOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     locationsConnection: <T = LocationConnection>(args: { where?: LocationWhereInput | null, orderBy?: LocationOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     packagesConnection: <T = PackageConnection>(args: { where?: PackageWhereInput | null, orderBy?: PackageOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     sizesConnection: <T = SizeConnection>(args: { where?: SizeWhereInput | null, orderBy?: SizeOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -102,7 +111,10 @@ export interface Mutation {
     createCollectionGroup: <T = CollectionGroup>(args: { data: CollectionGroupCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createHomepageProductRail: <T = HomepageProductRail>(args: { data: HomepageProductRailCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createImage: <T = Image>(args: { data: ImageCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    createTag: <T = Tag>(args: { data: TagCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createProductModel: <T = ProductModel>(args: { data: ProductModelCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    createWarehouseLocationConstraint: <T = WarehouseLocationConstraint>(args: { data: WarehouseLocationConstraintCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    createWarehouseLocation: <T = WarehouseLocation>(args: { data: WarehouseLocationCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createBagItem: <T = BagItem>(args: { data: BagItemCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createRecentlyViewedProduct: <T = RecentlyViewedProduct>(args: { data: RecentlyViewedProductCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createProductRequest: <T = ProductRequest>(args: { data: ProductRequestCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -111,9 +123,9 @@ export interface Mutation {
     createProductVariantFeedback: <T = ProductVariantFeedback>(args: { data: ProductVariantFeedbackCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createProductVariantFeedbackQuestion: <T = ProductVariantFeedbackQuestion>(args: { data: ProductVariantFeedbackQuestionCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createCollection: <T = Collection>(args: { data: CollectionCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    createCategory: <T = Category>(args: { data: CategoryCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createCustomerDetail: <T = CustomerDetail>(args: { data: CustomerDetailCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createBillingInfo: <T = BillingInfo>(args: { data: BillingInfoCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    createCategory: <T = Category>(args: { data: CategoryCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createLocation: <T = Location>(args: { data: LocationCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createPackage: <T = Package>(args: { data: PackageCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createSize: <T = Size>(args: { data: SizeCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -132,7 +144,10 @@ export interface Mutation {
     updateCollectionGroup: <T = CollectionGroup | null>(args: { data: CollectionGroupUpdateInput, where: CollectionGroupWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateHomepageProductRail: <T = HomepageProductRail | null>(args: { data: HomepageProductRailUpdateInput, where: HomepageProductRailWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateImage: <T = Image | null>(args: { data: ImageUpdateInput, where: ImageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    updateTag: <T = Tag | null>(args: { data: TagUpdateInput, where: TagWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateProductModel: <T = ProductModel | null>(args: { data: ProductModelUpdateInput, where: ProductModelWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    updateWarehouseLocationConstraint: <T = WarehouseLocationConstraint | null>(args: { data: WarehouseLocationConstraintUpdateInput, where: WarehouseLocationConstraintWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    updateWarehouseLocation: <T = WarehouseLocation | null>(args: { data: WarehouseLocationUpdateInput, where: WarehouseLocationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateBagItem: <T = BagItem | null>(args: { data: BagItemUpdateInput, where: BagItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateRecentlyViewedProduct: <T = RecentlyViewedProduct | null>(args: { data: RecentlyViewedProductUpdateInput, where: RecentlyViewedProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateProductRequest: <T = ProductRequest | null>(args: { data: ProductRequestUpdateInput, where: ProductRequestWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -141,9 +156,9 @@ export interface Mutation {
     updateProductVariantFeedback: <T = ProductVariantFeedback | null>(args: { data: ProductVariantFeedbackUpdateInput, where: ProductVariantFeedbackWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateProductVariantFeedbackQuestion: <T = ProductVariantFeedbackQuestion | null>(args: { data: ProductVariantFeedbackQuestionUpdateInput, where: ProductVariantFeedbackQuestionWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateCollection: <T = Collection | null>(args: { data: CollectionUpdateInput, where: CollectionWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    updateCategory: <T = Category | null>(args: { data: CategoryUpdateInput, where: CategoryWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateCustomerDetail: <T = CustomerDetail | null>(args: { data: CustomerDetailUpdateInput, where: CustomerDetailWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateBillingInfo: <T = BillingInfo | null>(args: { data: BillingInfoUpdateInput, where: BillingInfoWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    updateCategory: <T = Category | null>(args: { data: CategoryUpdateInput, where: CategoryWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateLocation: <T = Location | null>(args: { data: LocationUpdateInput, where: LocationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updatePackage: <T = Package | null>(args: { data: PackageUpdateInput, where: PackageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateSize: <T = Size | null>(args: { data: SizeUpdateInput, where: SizeWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -162,7 +177,10 @@ export interface Mutation {
     deleteCollectionGroup: <T = CollectionGroup | null>(args: { where: CollectionGroupWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteHomepageProductRail: <T = HomepageProductRail | null>(args: { where: HomepageProductRailWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteImage: <T = Image | null>(args: { where: ImageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deleteTag: <T = Tag | null>(args: { where: TagWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteProductModel: <T = ProductModel | null>(args: { where: ProductModelWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deleteWarehouseLocationConstraint: <T = WarehouseLocationConstraint | null>(args: { where: WarehouseLocationConstraintWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deleteWarehouseLocation: <T = WarehouseLocation | null>(args: { where: WarehouseLocationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteBagItem: <T = BagItem | null>(args: { where: BagItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteRecentlyViewedProduct: <T = RecentlyViewedProduct | null>(args: { where: RecentlyViewedProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteProductRequest: <T = ProductRequest | null>(args: { where: ProductRequestWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -171,9 +189,9 @@ export interface Mutation {
     deleteProductVariantFeedback: <T = ProductVariantFeedback | null>(args: { where: ProductVariantFeedbackWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteProductVariantFeedbackQuestion: <T = ProductVariantFeedbackQuestion | null>(args: { where: ProductVariantFeedbackQuestionWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteCollection: <T = Collection | null>(args: { where: CollectionWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    deleteCategory: <T = Category | null>(args: { where: CategoryWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteCustomerDetail: <T = CustomerDetail | null>(args: { where: CustomerDetailWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteBillingInfo: <T = BillingInfo | null>(args: { where: BillingInfoWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deleteCategory: <T = Category | null>(args: { where: CategoryWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteLocation: <T = Location | null>(args: { where: LocationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deletePackage: <T = Package | null>(args: { where: PackageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteSize: <T = Size | null>(args: { where: SizeWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -192,7 +210,10 @@ export interface Mutation {
     upsertCollectionGroup: <T = CollectionGroup>(args: { where: CollectionGroupWhereUniqueInput, create: CollectionGroupCreateInput, update: CollectionGroupUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertHomepageProductRail: <T = HomepageProductRail>(args: { where: HomepageProductRailWhereUniqueInput, create: HomepageProductRailCreateInput, update: HomepageProductRailUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertImage: <T = Image>(args: { where: ImageWhereUniqueInput, create: ImageCreateInput, update: ImageUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    upsertTag: <T = Tag>(args: { where: TagWhereUniqueInput, create: TagCreateInput, update: TagUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertProductModel: <T = ProductModel>(args: { where: ProductModelWhereUniqueInput, create: ProductModelCreateInput, update: ProductModelUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    upsertWarehouseLocationConstraint: <T = WarehouseLocationConstraint>(args: { where: WarehouseLocationConstraintWhereUniqueInput, create: WarehouseLocationConstraintCreateInput, update: WarehouseLocationConstraintUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    upsertWarehouseLocation: <T = WarehouseLocation>(args: { where: WarehouseLocationWhereUniqueInput, create: WarehouseLocationCreateInput, update: WarehouseLocationUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertBagItem: <T = BagItem>(args: { where: BagItemWhereUniqueInput, create: BagItemCreateInput, update: BagItemUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertRecentlyViewedProduct: <T = RecentlyViewedProduct>(args: { where: RecentlyViewedProductWhereUniqueInput, create: RecentlyViewedProductCreateInput, update: RecentlyViewedProductUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertProductRequest: <T = ProductRequest>(args: { where: ProductRequestWhereUniqueInput, create: ProductRequestCreateInput, update: ProductRequestUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -201,9 +222,9 @@ export interface Mutation {
     upsertProductVariantFeedback: <T = ProductVariantFeedback>(args: { where: ProductVariantFeedbackWhereUniqueInput, create: ProductVariantFeedbackCreateInput, update: ProductVariantFeedbackUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertProductVariantFeedbackQuestion: <T = ProductVariantFeedbackQuestion>(args: { where: ProductVariantFeedbackQuestionWhereUniqueInput, create: ProductVariantFeedbackQuestionCreateInput, update: ProductVariantFeedbackQuestionUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertCollection: <T = Collection>(args: { where: CollectionWhereUniqueInput, create: CollectionCreateInput, update: CollectionUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    upsertCategory: <T = Category>(args: { where: CategoryWhereUniqueInput, create: CategoryCreateInput, update: CategoryUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertCustomerDetail: <T = CustomerDetail>(args: { where: CustomerDetailWhereUniqueInput, create: CustomerDetailCreateInput, update: CustomerDetailUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertBillingInfo: <T = BillingInfo>(args: { where: BillingInfoWhereUniqueInput, create: BillingInfoCreateInput, update: BillingInfoUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    upsertCategory: <T = Category>(args: { where: CategoryWhereUniqueInput, create: CategoryCreateInput, update: CategoryUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertLocation: <T = Location>(args: { where: LocationWhereUniqueInput, create: LocationCreateInput, update: LocationUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertPackage: <T = Package>(args: { where: PackageWhereUniqueInput, create: PackageCreateInput, update: PackageUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertSize: <T = Size>(args: { where: SizeWhereUniqueInput, create: SizeCreateInput, update: SizeUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -222,7 +243,10 @@ export interface Mutation {
     updateManyCollectionGroups: <T = BatchPayload>(args: { data: CollectionGroupUpdateManyMutationInput, where?: CollectionGroupWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyHomepageProductRails: <T = BatchPayload>(args: { data: HomepageProductRailUpdateManyMutationInput, where?: HomepageProductRailWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyImages: <T = BatchPayload>(args: { data: ImageUpdateManyMutationInput, where?: ImageWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateManyTags: <T = BatchPayload>(args: { data: TagUpdateManyMutationInput, where?: TagWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyProductModels: <T = BatchPayload>(args: { data: ProductModelUpdateManyMutationInput, where?: ProductModelWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateManyWarehouseLocationConstraints: <T = BatchPayload>(args: { data: WarehouseLocationConstraintUpdateManyMutationInput, where?: WarehouseLocationConstraintWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateManyWarehouseLocations: <T = BatchPayload>(args: { data: WarehouseLocationUpdateManyMutationInput, where?: WarehouseLocationWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyBagItems: <T = BatchPayload>(args: { data: BagItemUpdateManyMutationInput, where?: BagItemWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyRecentlyViewedProducts: <T = BatchPayload>(args: { data: RecentlyViewedProductUpdateManyMutationInput, where?: RecentlyViewedProductWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyProductRequests: <T = BatchPayload>(args: { data: ProductRequestUpdateManyMutationInput, where?: ProductRequestWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -231,9 +255,9 @@ export interface Mutation {
     updateManyProductVariantFeedbacks: <T = BatchPayload>(args: { data: ProductVariantFeedbackUpdateManyMutationInput, where?: ProductVariantFeedbackWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyProductVariantFeedbackQuestions: <T = BatchPayload>(args: { data: ProductVariantFeedbackQuestionUpdateManyMutationInput, where?: ProductVariantFeedbackQuestionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyCollections: <T = BatchPayload>(args: { data: CollectionUpdateManyMutationInput, where?: CollectionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    updateManyCategories: <T = BatchPayload>(args: { data: CategoryUpdateManyMutationInput, where?: CategoryWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyCustomerDetails: <T = BatchPayload>(args: { data: CustomerDetailUpdateManyMutationInput, where?: CustomerDetailWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyBillingInfoes: <T = BatchPayload>(args: { data: BillingInfoUpdateManyMutationInput, where?: BillingInfoWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateManyCategories: <T = BatchPayload>(args: { data: CategoryUpdateManyMutationInput, where?: CategoryWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyLocations: <T = BatchPayload>(args: { data: LocationUpdateManyMutationInput, where?: LocationWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyPackages: <T = BatchPayload>(args: { data: PackageUpdateManyMutationInput, where?: PackageWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManySizes: <T = BatchPayload>(args: { data: SizeUpdateManyMutationInput, where?: SizeWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -252,7 +276,10 @@ export interface Mutation {
     deleteManyCollectionGroups: <T = BatchPayload>(args: { where?: CollectionGroupWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyHomepageProductRails: <T = BatchPayload>(args: { where?: HomepageProductRailWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyImages: <T = BatchPayload>(args: { where?: ImageWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteManyTags: <T = BatchPayload>(args: { where?: TagWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyProductModels: <T = BatchPayload>(args: { where?: ProductModelWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteManyWarehouseLocationConstraints: <T = BatchPayload>(args: { where?: WarehouseLocationConstraintWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteManyWarehouseLocations: <T = BatchPayload>(args: { where?: WarehouseLocationWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyBagItems: <T = BatchPayload>(args: { where?: BagItemWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyRecentlyViewedProducts: <T = BatchPayload>(args: { where?: RecentlyViewedProductWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyProductRequests: <T = BatchPayload>(args: { where?: ProductRequestWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -261,9 +288,9 @@ export interface Mutation {
     deleteManyProductVariantFeedbacks: <T = BatchPayload>(args: { where?: ProductVariantFeedbackWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyProductVariantFeedbackQuestions: <T = BatchPayload>(args: { where?: ProductVariantFeedbackQuestionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyCollections: <T = BatchPayload>(args: { where?: CollectionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    deleteManyCategories: <T = BatchPayload>(args: { where?: CategoryWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyCustomerDetails: <T = BatchPayload>(args: { where?: CustomerDetailWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyBillingInfoes: <T = BatchPayload>(args: { where?: BillingInfoWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteManyCategories: <T = BatchPayload>(args: { where?: CategoryWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyLocations: <T = BatchPayload>(args: { where?: LocationWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyPackages: <T = BatchPayload>(args: { where?: PackageWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManySizes: <T = BatchPayload>(args: { where?: SizeWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -285,7 +312,10 @@ export interface Subscription {
     collectionGroup: <T = CollectionGroupSubscriptionPayload | null>(args: { where?: CollectionGroupSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     homepageProductRail: <T = HomepageProductRailSubscriptionPayload | null>(args: { where?: HomepageProductRailSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     image: <T = ImageSubscriptionPayload | null>(args: { where?: ImageSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
+    tag: <T = TagSubscriptionPayload | null>(args: { where?: TagSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     productModel: <T = ProductModelSubscriptionPayload | null>(args: { where?: ProductModelSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
+    warehouseLocationConstraint: <T = WarehouseLocationConstraintSubscriptionPayload | null>(args: { where?: WarehouseLocationConstraintSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
+    warehouseLocation: <T = WarehouseLocationSubscriptionPayload | null>(args: { where?: WarehouseLocationSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     bagItem: <T = BagItemSubscriptionPayload | null>(args: { where?: BagItemSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     recentlyViewedProduct: <T = RecentlyViewedProductSubscriptionPayload | null>(args: { where?: RecentlyViewedProductSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     productRequest: <T = ProductRequestSubscriptionPayload | null>(args: { where?: ProductRequestSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
@@ -294,9 +324,9 @@ export interface Subscription {
     productVariantFeedback: <T = ProductVariantFeedbackSubscriptionPayload | null>(args: { where?: ProductVariantFeedbackSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     productVariantFeedbackQuestion: <T = ProductVariantFeedbackQuestionSubscriptionPayload | null>(args: { where?: ProductVariantFeedbackQuestionSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     collection: <T = CollectionSubscriptionPayload | null>(args: { where?: CollectionSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
-    category: <T = CategorySubscriptionPayload | null>(args: { where?: CategorySubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     customerDetail: <T = CustomerDetailSubscriptionPayload | null>(args: { where?: CustomerDetailSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     billingInfo: <T = BillingInfoSubscriptionPayload | null>(args: { where?: BillingInfoSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
+    category: <T = CategorySubscriptionPayload | null>(args: { where?: CategorySubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     location: <T = LocationSubscriptionPayload | null>(args: { where?: LocationSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     package: <T = PackageSubscriptionPayload | null>(args: { where?: PackageSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     size: <T = SizeSubscriptionPayload | null>(args: { where?: SizeSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
@@ -318,7 +348,10 @@ export interface Exists {
   CollectionGroup: (where?: CollectionGroupWhereInput) => Promise<boolean>
   HomepageProductRail: (where?: HomepageProductRailWhereInput) => Promise<boolean>
   Image: (where?: ImageWhereInput) => Promise<boolean>
+  Tag: (where?: TagWhereInput) => Promise<boolean>
   ProductModel: (where?: ProductModelWhereInput) => Promise<boolean>
+  WarehouseLocationConstraint: (where?: WarehouseLocationConstraintWhereInput) => Promise<boolean>
+  WarehouseLocation: (where?: WarehouseLocationWhereInput) => Promise<boolean>
   BagItem: (where?: BagItemWhereInput) => Promise<boolean>
   RecentlyViewedProduct: (where?: RecentlyViewedProductWhereInput) => Promise<boolean>
   ProductRequest: (where?: ProductRequestWhereInput) => Promise<boolean>
@@ -327,9 +360,9 @@ export interface Exists {
   ProductVariantFeedback: (where?: ProductVariantFeedbackWhereInput) => Promise<boolean>
   ProductVariantFeedbackQuestion: (where?: ProductVariantFeedbackQuestionWhereInput) => Promise<boolean>
   Collection: (where?: CollectionWhereInput) => Promise<boolean>
-  Category: (where?: CategoryWhereInput) => Promise<boolean>
   CustomerDetail: (where?: CustomerDetailWhereInput) => Promise<boolean>
   BillingInfo: (where?: BillingInfoWhereInput) => Promise<boolean>
+  Category: (where?: CategoryWhereInput) => Promise<boolean>
   Location: (where?: LocationWhereInput) => Promise<boolean>
   Package: (where?: PackageWhereInput) => Promise<boolean>
   Size: (where?: SizeWhereInput) => Promise<boolean>
@@ -480,11 +513,23 @@ type AggregateSize {
   count: Int!
 }
 
+type AggregateTag {
+  count: Int!
+}
+
 type AggregateTopSize {
   count: Int!
 }
 
 type AggregateUser {
+  count: Int!
+}
+
+type AggregateWarehouseLocation {
+  count: Int!
+}
+
+type AggregateWarehouseLocationConstraint {
   count: Int!
 }
 
@@ -2470,6 +2515,11 @@ input CategoryCreateManyInput {
   connect: [CategoryWhereUniqueInput!]
 }
 
+input CategoryCreateOneInput {
+  create: CategoryCreateInput
+  connect: CategoryWhereUniqueInput
+}
+
 input CategoryCreateOneWithoutProductsInput {
   create: CategoryCreateWithoutProductsInput
   connect: CategoryWhereUniqueInput
@@ -2783,6 +2833,13 @@ input CategoryUpdateManyWithWhereNestedInput {
   data: CategoryUpdateManyDataInput!
 }
 
+input CategoryUpdateOneRequiredInput {
+  create: CategoryCreateInput
+  connect: CategoryWhereUniqueInput
+  update: CategoryUpdateDataInput
+  upsert: CategoryUpsertNestedInput
+}
+
 input CategoryUpdateOneRequiredWithoutProductsInput {
   create: CategoryCreateWithoutProductsInput
   connect: CategoryWhereUniqueInput
@@ -2802,6 +2859,11 @@ input CategoryUpdateWithoutProductsDataInput {
 input CategoryUpdateWithWhereUniqueNestedInput {
   where: CategoryWhereUniqueInput!
   data: CategoryUpdateDataInput!
+}
+
+input CategoryUpsertNestedInput {
+  update: CategoryUpdateDataInput!
+  create: CategoryCreateInput!
 }
 
 input CategoryUpsertWithoutProductsInput {
@@ -6375,6 +6437,8 @@ enum InventoryStatus {
   NonReservable
   Reservable
   Reserved
+  Stored
+  Offloaded
 }
 
 """Raw JSON value"""
@@ -7543,7 +7607,10 @@ type Mutation {
   createCollectionGroup(data: CollectionGroupCreateInput!): CollectionGroup!
   createHomepageProductRail(data: HomepageProductRailCreateInput!): HomepageProductRail!
   createImage(data: ImageCreateInput!): Image!
+  createTag(data: TagCreateInput!): Tag!
   createProductModel(data: ProductModelCreateInput!): ProductModel!
+  createWarehouseLocationConstraint(data: WarehouseLocationConstraintCreateInput!): WarehouseLocationConstraint!
+  createWarehouseLocation(data: WarehouseLocationCreateInput!): WarehouseLocation!
   createBagItem(data: BagItemCreateInput!): BagItem!
   createRecentlyViewedProduct(data: RecentlyViewedProductCreateInput!): RecentlyViewedProduct!
   createProductRequest(data: ProductRequestCreateInput!): ProductRequest!
@@ -7552,9 +7619,9 @@ type Mutation {
   createProductVariantFeedback(data: ProductVariantFeedbackCreateInput!): ProductVariantFeedback!
   createProductVariantFeedbackQuestion(data: ProductVariantFeedbackQuestionCreateInput!): ProductVariantFeedbackQuestion!
   createCollection(data: CollectionCreateInput!): Collection!
-  createCategory(data: CategoryCreateInput!): Category!
   createCustomerDetail(data: CustomerDetailCreateInput!): CustomerDetail!
   createBillingInfo(data: BillingInfoCreateInput!): BillingInfo!
+  createCategory(data: CategoryCreateInput!): Category!
   createLocation(data: LocationCreateInput!): Location!
   createPackage(data: PackageCreateInput!): Package!
   createSize(data: SizeCreateInput!): Size!
@@ -7573,7 +7640,10 @@ type Mutation {
   updateCollectionGroup(data: CollectionGroupUpdateInput!, where: CollectionGroupWhereUniqueInput!): CollectionGroup
   updateHomepageProductRail(data: HomepageProductRailUpdateInput!, where: HomepageProductRailWhereUniqueInput!): HomepageProductRail
   updateImage(data: ImageUpdateInput!, where: ImageWhereUniqueInput!): Image
+  updateTag(data: TagUpdateInput!, where: TagWhereUniqueInput!): Tag
   updateProductModel(data: ProductModelUpdateInput!, where: ProductModelWhereUniqueInput!): ProductModel
+  updateWarehouseLocationConstraint(data: WarehouseLocationConstraintUpdateInput!, where: WarehouseLocationConstraintWhereUniqueInput!): WarehouseLocationConstraint
+  updateWarehouseLocation(data: WarehouseLocationUpdateInput!, where: WarehouseLocationWhereUniqueInput!): WarehouseLocation
   updateBagItem(data: BagItemUpdateInput!, where: BagItemWhereUniqueInput!): BagItem
   updateRecentlyViewedProduct(data: RecentlyViewedProductUpdateInput!, where: RecentlyViewedProductWhereUniqueInput!): RecentlyViewedProduct
   updateProductRequest(data: ProductRequestUpdateInput!, where: ProductRequestWhereUniqueInput!): ProductRequest
@@ -7582,9 +7652,9 @@ type Mutation {
   updateProductVariantFeedback(data: ProductVariantFeedbackUpdateInput!, where: ProductVariantFeedbackWhereUniqueInput!): ProductVariantFeedback
   updateProductVariantFeedbackQuestion(data: ProductVariantFeedbackQuestionUpdateInput!, where: ProductVariantFeedbackQuestionWhereUniqueInput!): ProductVariantFeedbackQuestion
   updateCollection(data: CollectionUpdateInput!, where: CollectionWhereUniqueInput!): Collection
-  updateCategory(data: CategoryUpdateInput!, where: CategoryWhereUniqueInput!): Category
   updateCustomerDetail(data: CustomerDetailUpdateInput!, where: CustomerDetailWhereUniqueInput!): CustomerDetail
   updateBillingInfo(data: BillingInfoUpdateInput!, where: BillingInfoWhereUniqueInput!): BillingInfo
+  updateCategory(data: CategoryUpdateInput!, where: CategoryWhereUniqueInput!): Category
   updateLocation(data: LocationUpdateInput!, where: LocationWhereUniqueInput!): Location
   updatePackage(data: PackageUpdateInput!, where: PackageWhereUniqueInput!): Package
   updateSize(data: SizeUpdateInput!, where: SizeWhereUniqueInput!): Size
@@ -7603,7 +7673,10 @@ type Mutation {
   deleteCollectionGroup(where: CollectionGroupWhereUniqueInput!): CollectionGroup
   deleteHomepageProductRail(where: HomepageProductRailWhereUniqueInput!): HomepageProductRail
   deleteImage(where: ImageWhereUniqueInput!): Image
+  deleteTag(where: TagWhereUniqueInput!): Tag
   deleteProductModel(where: ProductModelWhereUniqueInput!): ProductModel
+  deleteWarehouseLocationConstraint(where: WarehouseLocationConstraintWhereUniqueInput!): WarehouseLocationConstraint
+  deleteWarehouseLocation(where: WarehouseLocationWhereUniqueInput!): WarehouseLocation
   deleteBagItem(where: BagItemWhereUniqueInput!): BagItem
   deleteRecentlyViewedProduct(where: RecentlyViewedProductWhereUniqueInput!): RecentlyViewedProduct
   deleteProductRequest(where: ProductRequestWhereUniqueInput!): ProductRequest
@@ -7612,9 +7685,9 @@ type Mutation {
   deleteProductVariantFeedback(where: ProductVariantFeedbackWhereUniqueInput!): ProductVariantFeedback
   deleteProductVariantFeedbackQuestion(where: ProductVariantFeedbackQuestionWhereUniqueInput!): ProductVariantFeedbackQuestion
   deleteCollection(where: CollectionWhereUniqueInput!): Collection
-  deleteCategory(where: CategoryWhereUniqueInput!): Category
   deleteCustomerDetail(where: CustomerDetailWhereUniqueInput!): CustomerDetail
   deleteBillingInfo(where: BillingInfoWhereUniqueInput!): BillingInfo
+  deleteCategory(where: CategoryWhereUniqueInput!): Category
   deleteLocation(where: LocationWhereUniqueInput!): Location
   deletePackage(where: PackageWhereUniqueInput!): Package
   deleteSize(where: SizeWhereUniqueInput!): Size
@@ -7633,7 +7706,10 @@ type Mutation {
   upsertCollectionGroup(where: CollectionGroupWhereUniqueInput!, create: CollectionGroupCreateInput!, update: CollectionGroupUpdateInput!): CollectionGroup!
   upsertHomepageProductRail(where: HomepageProductRailWhereUniqueInput!, create: HomepageProductRailCreateInput!, update: HomepageProductRailUpdateInput!): HomepageProductRail!
   upsertImage(where: ImageWhereUniqueInput!, create: ImageCreateInput!, update: ImageUpdateInput!): Image!
+  upsertTag(where: TagWhereUniqueInput!, create: TagCreateInput!, update: TagUpdateInput!): Tag!
   upsertProductModel(where: ProductModelWhereUniqueInput!, create: ProductModelCreateInput!, update: ProductModelUpdateInput!): ProductModel!
+  upsertWarehouseLocationConstraint(where: WarehouseLocationConstraintWhereUniqueInput!, create: WarehouseLocationConstraintCreateInput!, update: WarehouseLocationConstraintUpdateInput!): WarehouseLocationConstraint!
+  upsertWarehouseLocation(where: WarehouseLocationWhereUniqueInput!, create: WarehouseLocationCreateInput!, update: WarehouseLocationUpdateInput!): WarehouseLocation!
   upsertBagItem(where: BagItemWhereUniqueInput!, create: BagItemCreateInput!, update: BagItemUpdateInput!): BagItem!
   upsertRecentlyViewedProduct(where: RecentlyViewedProductWhereUniqueInput!, create: RecentlyViewedProductCreateInput!, update: RecentlyViewedProductUpdateInput!): RecentlyViewedProduct!
   upsertProductRequest(where: ProductRequestWhereUniqueInput!, create: ProductRequestCreateInput!, update: ProductRequestUpdateInput!): ProductRequest!
@@ -7642,9 +7718,9 @@ type Mutation {
   upsertProductVariantFeedback(where: ProductVariantFeedbackWhereUniqueInput!, create: ProductVariantFeedbackCreateInput!, update: ProductVariantFeedbackUpdateInput!): ProductVariantFeedback!
   upsertProductVariantFeedbackQuestion(where: ProductVariantFeedbackQuestionWhereUniqueInput!, create: ProductVariantFeedbackQuestionCreateInput!, update: ProductVariantFeedbackQuestionUpdateInput!): ProductVariantFeedbackQuestion!
   upsertCollection(where: CollectionWhereUniqueInput!, create: CollectionCreateInput!, update: CollectionUpdateInput!): Collection!
-  upsertCategory(where: CategoryWhereUniqueInput!, create: CategoryCreateInput!, update: CategoryUpdateInput!): Category!
   upsertCustomerDetail(where: CustomerDetailWhereUniqueInput!, create: CustomerDetailCreateInput!, update: CustomerDetailUpdateInput!): CustomerDetail!
   upsertBillingInfo(where: BillingInfoWhereUniqueInput!, create: BillingInfoCreateInput!, update: BillingInfoUpdateInput!): BillingInfo!
+  upsertCategory(where: CategoryWhereUniqueInput!, create: CategoryCreateInput!, update: CategoryUpdateInput!): Category!
   upsertLocation(where: LocationWhereUniqueInput!, create: LocationCreateInput!, update: LocationUpdateInput!): Location!
   upsertPackage(where: PackageWhereUniqueInput!, create: PackageCreateInput!, update: PackageUpdateInput!): Package!
   upsertSize(where: SizeWhereUniqueInput!, create: SizeCreateInput!, update: SizeUpdateInput!): Size!
@@ -7663,7 +7739,10 @@ type Mutation {
   updateManyCollectionGroups(data: CollectionGroupUpdateManyMutationInput!, where: CollectionGroupWhereInput): BatchPayload!
   updateManyHomepageProductRails(data: HomepageProductRailUpdateManyMutationInput!, where: HomepageProductRailWhereInput): BatchPayload!
   updateManyImages(data: ImageUpdateManyMutationInput!, where: ImageWhereInput): BatchPayload!
+  updateManyTags(data: TagUpdateManyMutationInput!, where: TagWhereInput): BatchPayload!
   updateManyProductModels(data: ProductModelUpdateManyMutationInput!, where: ProductModelWhereInput): BatchPayload!
+  updateManyWarehouseLocationConstraints(data: WarehouseLocationConstraintUpdateManyMutationInput!, where: WarehouseLocationConstraintWhereInput): BatchPayload!
+  updateManyWarehouseLocations(data: WarehouseLocationUpdateManyMutationInput!, where: WarehouseLocationWhereInput): BatchPayload!
   updateManyBagItems(data: BagItemUpdateManyMutationInput!, where: BagItemWhereInput): BatchPayload!
   updateManyRecentlyViewedProducts(data: RecentlyViewedProductUpdateManyMutationInput!, where: RecentlyViewedProductWhereInput): BatchPayload!
   updateManyProductRequests(data: ProductRequestUpdateManyMutationInput!, where: ProductRequestWhereInput): BatchPayload!
@@ -7672,9 +7751,9 @@ type Mutation {
   updateManyProductVariantFeedbacks(data: ProductVariantFeedbackUpdateManyMutationInput!, where: ProductVariantFeedbackWhereInput): BatchPayload!
   updateManyProductVariantFeedbackQuestions(data: ProductVariantFeedbackQuestionUpdateManyMutationInput!, where: ProductVariantFeedbackQuestionWhereInput): BatchPayload!
   updateManyCollections(data: CollectionUpdateManyMutationInput!, where: CollectionWhereInput): BatchPayload!
-  updateManyCategories(data: CategoryUpdateManyMutationInput!, where: CategoryWhereInput): BatchPayload!
   updateManyCustomerDetails(data: CustomerDetailUpdateManyMutationInput!, where: CustomerDetailWhereInput): BatchPayload!
   updateManyBillingInfoes(data: BillingInfoUpdateManyMutationInput!, where: BillingInfoWhereInput): BatchPayload!
+  updateManyCategories(data: CategoryUpdateManyMutationInput!, where: CategoryWhereInput): BatchPayload!
   updateManyLocations(data: LocationUpdateManyMutationInput!, where: LocationWhereInput): BatchPayload!
   updateManyPackages(data: PackageUpdateManyMutationInput!, where: PackageWhereInput): BatchPayload!
   updateManySizes(data: SizeUpdateManyMutationInput!, where: SizeWhereInput): BatchPayload!
@@ -7693,7 +7772,10 @@ type Mutation {
   deleteManyCollectionGroups(where: CollectionGroupWhereInput): BatchPayload!
   deleteManyHomepageProductRails(where: HomepageProductRailWhereInput): BatchPayload!
   deleteManyImages(where: ImageWhereInput): BatchPayload!
+  deleteManyTags(where: TagWhereInput): BatchPayload!
   deleteManyProductModels(where: ProductModelWhereInput): BatchPayload!
+  deleteManyWarehouseLocationConstraints(where: WarehouseLocationConstraintWhereInput): BatchPayload!
+  deleteManyWarehouseLocations(where: WarehouseLocationWhereInput): BatchPayload!
   deleteManyBagItems(where: BagItemWhereInput): BatchPayload!
   deleteManyRecentlyViewedProducts(where: RecentlyViewedProductWhereInput): BatchPayload!
   deleteManyProductRequests(where: ProductRequestWhereInput): BatchPayload!
@@ -7702,9 +7784,9 @@ type Mutation {
   deleteManyProductVariantFeedbacks(where: ProductVariantFeedbackWhereInput): BatchPayload!
   deleteManyProductVariantFeedbackQuestions(where: ProductVariantFeedbackQuestionWhereInput): BatchPayload!
   deleteManyCollections(where: CollectionWhereInput): BatchPayload!
-  deleteManyCategories(where: CategoryWhereInput): BatchPayload!
   deleteManyCustomerDetails(where: CustomerDetailWhereInput): BatchPayload!
   deleteManyBillingInfoes(where: BillingInfoWhereInput): BatchPayload!
+  deleteManyCategories(where: CategoryWhereInput): BatchPayload!
   deleteManyLocations(where: LocationWhereInput): BatchPayload!
   deleteManyPackages(where: PackageWhereInput): BatchPayload!
   deleteManySizes(where: SizeWhereInput): BatchPayload!
@@ -8015,6 +8097,11 @@ type PhysicalProduct implements Node {
   productVariant: ProductVariant!
   inventoryStatus: InventoryStatus!
   productStatus: PhysicalProductStatus!
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
+  barcode: String!
+  sequenceNumber: Int!
+  warehouseLocation: WarehouseLocation
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -8034,8 +8121,13 @@ input PhysicalProductCreateInput {
   seasonsUID: String!
   inventoryStatus: InventoryStatus!
   productStatus: PhysicalProductStatus!
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
+  barcode: String!
+  sequenceNumber: Int!
   location: LocationCreateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
+  warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
 }
 
 input PhysicalProductCreateManyInput {
@@ -8053,12 +8145,22 @@ input PhysicalProductCreateManyWithoutProductVariantInput {
   connect: [PhysicalProductWhereUniqueInput!]
 }
 
+input PhysicalProductCreateManyWithoutWarehouseLocationInput {
+  create: [PhysicalProductCreateWithoutWarehouseLocationInput!]
+  connect: [PhysicalProductWhereUniqueInput!]
+}
+
 input PhysicalProductCreateWithoutLocationInput {
   id: ID
   seasonsUID: String!
   inventoryStatus: InventoryStatus!
   productStatus: PhysicalProductStatus!
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
+  barcode: String!
+  sequenceNumber: Int!
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
+  warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
 }
 
 input PhysicalProductCreateWithoutProductVariantInput {
@@ -8066,7 +8168,25 @@ input PhysicalProductCreateWithoutProductVariantInput {
   seasonsUID: String!
   inventoryStatus: InventoryStatus!
   productStatus: PhysicalProductStatus!
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
+  barcode: String!
+  sequenceNumber: Int!
   location: LocationCreateOneWithoutPhysicalProductsInput
+  warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
+}
+
+input PhysicalProductCreateWithoutWarehouseLocationInput {
+  id: ID
+  seasonsUID: String!
+  inventoryStatus: InventoryStatus!
+  productStatus: PhysicalProductStatus!
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
+  barcode: String!
+  sequenceNumber: Int!
+  location: LocationCreateOneWithoutPhysicalProductsInput
+  productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
 }
 
 """An edge in a connection."""
@@ -8078,6 +8198,14 @@ type PhysicalProductEdge {
   cursor: String!
 }
 
+enum PhysicalProductOffloadMethod {
+  SoldToUser
+  SoldToThirdParty
+  ReturnedToVendor
+  Recycled
+  Unknown
+}
+
 enum PhysicalProductOrderByInput {
   id_ASC
   id_DESC
@@ -8087,6 +8215,14 @@ enum PhysicalProductOrderByInput {
   inventoryStatus_DESC
   productStatus_ASC
   productStatus_DESC
+  offloadMethod_ASC
+  offloadMethod_DESC
+  offloadNotes_ASC
+  offloadNotes_DESC
+  barcode_ASC
+  barcode_DESC
+  sequenceNumber_ASC
+  sequenceNumber_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -8098,6 +8234,10 @@ type PhysicalProductPreviousValues {
   seasonsUID: String!
   inventoryStatus: InventoryStatus!
   productStatus: PhysicalProductStatus!
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
+  barcode: String!
+  sequenceNumber: Int!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -8211,6 +8351,118 @@ input PhysicalProductScalarWhereInput {
 
   """All values that are not contained in given list."""
   productStatus_not_in: [PhysicalProductStatus!]
+  offloadMethod: PhysicalProductOffloadMethod
+
+  """All values that are not equal to given value."""
+  offloadMethod_not: PhysicalProductOffloadMethod
+
+  """All values that are contained in given list."""
+  offloadMethod_in: [PhysicalProductOffloadMethod!]
+
+  """All values that are not contained in given list."""
+  offloadMethod_not_in: [PhysicalProductOffloadMethod!]
+  offloadNotes: String
+
+  """All values that are not equal to given value."""
+  offloadNotes_not: String
+
+  """All values that are contained in given list."""
+  offloadNotes_in: [String!]
+
+  """All values that are not contained in given list."""
+  offloadNotes_not_in: [String!]
+
+  """All values less than the given value."""
+  offloadNotes_lt: String
+
+  """All values less than or equal the given value."""
+  offloadNotes_lte: String
+
+  """All values greater than the given value."""
+  offloadNotes_gt: String
+
+  """All values greater than or equal the given value."""
+  offloadNotes_gte: String
+
+  """All values containing the given string."""
+  offloadNotes_contains: String
+
+  """All values not containing the given string."""
+  offloadNotes_not_contains: String
+
+  """All values starting with the given string."""
+  offloadNotes_starts_with: String
+
+  """All values not starting with the given string."""
+  offloadNotes_not_starts_with: String
+
+  """All values ending with the given string."""
+  offloadNotes_ends_with: String
+
+  """All values not ending with the given string."""
+  offloadNotes_not_ends_with: String
+  barcode: String
+
+  """All values that are not equal to given value."""
+  barcode_not: String
+
+  """All values that are contained in given list."""
+  barcode_in: [String!]
+
+  """All values that are not contained in given list."""
+  barcode_not_in: [String!]
+
+  """All values less than the given value."""
+  barcode_lt: String
+
+  """All values less than or equal the given value."""
+  barcode_lte: String
+
+  """All values greater than the given value."""
+  barcode_gt: String
+
+  """All values greater than or equal the given value."""
+  barcode_gte: String
+
+  """All values containing the given string."""
+  barcode_contains: String
+
+  """All values not containing the given string."""
+  barcode_not_contains: String
+
+  """All values starting with the given string."""
+  barcode_starts_with: String
+
+  """All values not starting with the given string."""
+  barcode_not_starts_with: String
+
+  """All values ending with the given string."""
+  barcode_ends_with: String
+
+  """All values not ending with the given string."""
+  barcode_not_ends_with: String
+  sequenceNumber: Int
+
+  """All values that are not equal to given value."""
+  sequenceNumber_not: Int
+
+  """All values that are contained in given list."""
+  sequenceNumber_in: [Int!]
+
+  """All values that are not contained in given list."""
+  sequenceNumber_not_in: [Int!]
+
+  """All values less than the given value."""
+  sequenceNumber_lt: Int
+
+  """All values less than or equal the given value."""
+  sequenceNumber_lte: Int
+
+  """All values greater than the given value."""
+  sequenceNumber_gt: Int
+
+  """All values greater than or equal the given value."""
+  sequenceNumber_gte: Int
   createdAt: DateTime
 
   """All values that are not equal to given value."""
@@ -8306,22 +8558,36 @@ input PhysicalProductUpdateDataInput {
   seasonsUID: String
   inventoryStatus: InventoryStatus
   productStatus: PhysicalProductStatus
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
+  barcode: String
+  sequenceNumber: Int
   location: LocationUpdateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
+  warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
 }
 
 input PhysicalProductUpdateInput {
   seasonsUID: String
   inventoryStatus: InventoryStatus
   productStatus: PhysicalProductStatus
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
+  barcode: String
+  sequenceNumber: Int
   location: LocationUpdateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
+  warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
 }
 
 input PhysicalProductUpdateManyDataInput {
   seasonsUID: String
   inventoryStatus: InventoryStatus
   productStatus: PhysicalProductStatus
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
+  barcode: String
+  sequenceNumber: Int
 }
 
 input PhysicalProductUpdateManyInput {
@@ -8340,6 +8606,10 @@ input PhysicalProductUpdateManyMutationInput {
   seasonsUID: String
   inventoryStatus: InventoryStatus
   productStatus: PhysicalProductStatus
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
+  barcode: String
+  sequenceNumber: Int
 }
 
 input PhysicalProductUpdateManyWithoutLocationInput {
@@ -8366,6 +8636,18 @@ input PhysicalProductUpdateManyWithoutProductVariantInput {
   upsert: [PhysicalProductUpsertWithWhereUniqueWithoutProductVariantInput!]
 }
 
+input PhysicalProductUpdateManyWithoutWarehouseLocationInput {
+  create: [PhysicalProductCreateWithoutWarehouseLocationInput!]
+  connect: [PhysicalProductWhereUniqueInput!]
+  set: [PhysicalProductWhereUniqueInput!]
+  disconnect: [PhysicalProductWhereUniqueInput!]
+  delete: [PhysicalProductWhereUniqueInput!]
+  update: [PhysicalProductUpdateWithWhereUniqueWithoutWarehouseLocationInput!]
+  updateMany: [PhysicalProductUpdateManyWithWhereNestedInput!]
+  deleteMany: [PhysicalProductScalarWhereInput!]
+  upsert: [PhysicalProductUpsertWithWhereUniqueWithoutWarehouseLocationInput!]
+}
+
 input PhysicalProductUpdateManyWithWhereNestedInput {
   where: PhysicalProductScalarWhereInput!
   data: PhysicalProductUpdateManyDataInput!
@@ -8375,14 +8657,36 @@ input PhysicalProductUpdateWithoutLocationDataInput {
   seasonsUID: String
   inventoryStatus: InventoryStatus
   productStatus: PhysicalProductStatus
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
+  barcode: String
+  sequenceNumber: Int
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
+  warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
 }
 
 input PhysicalProductUpdateWithoutProductVariantDataInput {
   seasonsUID: String
   inventoryStatus: InventoryStatus
   productStatus: PhysicalProductStatus
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
+  barcode: String
+  sequenceNumber: Int
   location: LocationUpdateOneWithoutPhysicalProductsInput
+  warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
+}
+
+input PhysicalProductUpdateWithoutWarehouseLocationDataInput {
+  seasonsUID: String
+  inventoryStatus: InventoryStatus
+  productStatus: PhysicalProductStatus
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
+  barcode: String
+  sequenceNumber: Int
+  location: LocationUpdateOneWithoutPhysicalProductsInput
+  productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
 }
 
 input PhysicalProductUpdateWithWhereUniqueNestedInput {
@@ -8398,6 +8702,11 @@ input PhysicalProductUpdateWithWhereUniqueWithoutLocationInput {
 input PhysicalProductUpdateWithWhereUniqueWithoutProductVariantInput {
   where: PhysicalProductWhereUniqueInput!
   data: PhysicalProductUpdateWithoutProductVariantDataInput!
+}
+
+input PhysicalProductUpdateWithWhereUniqueWithoutWarehouseLocationInput {
+  where: PhysicalProductWhereUniqueInput!
+  data: PhysicalProductUpdateWithoutWarehouseLocationDataInput!
 }
 
 input PhysicalProductUpsertWithWhereUniqueNestedInput {
@@ -8416,6 +8725,12 @@ input PhysicalProductUpsertWithWhereUniqueWithoutProductVariantInput {
   where: PhysicalProductWhereUniqueInput!
   update: PhysicalProductUpdateWithoutProductVariantDataInput!
   create: PhysicalProductCreateWithoutProductVariantInput!
+}
+
+input PhysicalProductUpsertWithWhereUniqueWithoutWarehouseLocationInput {
+  where: PhysicalProductWhereUniqueInput!
+  update: PhysicalProductUpdateWithoutWarehouseLocationDataInput!
+  create: PhysicalProductCreateWithoutWarehouseLocationInput!
 }
 
 input PhysicalProductWhereInput {
@@ -8527,6 +8842,118 @@ input PhysicalProductWhereInput {
 
   """All values that are not contained in given list."""
   productStatus_not_in: [PhysicalProductStatus!]
+  offloadMethod: PhysicalProductOffloadMethod
+
+  """All values that are not equal to given value."""
+  offloadMethod_not: PhysicalProductOffloadMethod
+
+  """All values that are contained in given list."""
+  offloadMethod_in: [PhysicalProductOffloadMethod!]
+
+  """All values that are not contained in given list."""
+  offloadMethod_not_in: [PhysicalProductOffloadMethod!]
+  offloadNotes: String
+
+  """All values that are not equal to given value."""
+  offloadNotes_not: String
+
+  """All values that are contained in given list."""
+  offloadNotes_in: [String!]
+
+  """All values that are not contained in given list."""
+  offloadNotes_not_in: [String!]
+
+  """All values less than the given value."""
+  offloadNotes_lt: String
+
+  """All values less than or equal the given value."""
+  offloadNotes_lte: String
+
+  """All values greater than the given value."""
+  offloadNotes_gt: String
+
+  """All values greater than or equal the given value."""
+  offloadNotes_gte: String
+
+  """All values containing the given string."""
+  offloadNotes_contains: String
+
+  """All values not containing the given string."""
+  offloadNotes_not_contains: String
+
+  """All values starting with the given string."""
+  offloadNotes_starts_with: String
+
+  """All values not starting with the given string."""
+  offloadNotes_not_starts_with: String
+
+  """All values ending with the given string."""
+  offloadNotes_ends_with: String
+
+  """All values not ending with the given string."""
+  offloadNotes_not_ends_with: String
+  barcode: String
+
+  """All values that are not equal to given value."""
+  barcode_not: String
+
+  """All values that are contained in given list."""
+  barcode_in: [String!]
+
+  """All values that are not contained in given list."""
+  barcode_not_in: [String!]
+
+  """All values less than the given value."""
+  barcode_lt: String
+
+  """All values less than or equal the given value."""
+  barcode_lte: String
+
+  """All values greater than the given value."""
+  barcode_gt: String
+
+  """All values greater than or equal the given value."""
+  barcode_gte: String
+
+  """All values containing the given string."""
+  barcode_contains: String
+
+  """All values not containing the given string."""
+  barcode_not_contains: String
+
+  """All values starting with the given string."""
+  barcode_starts_with: String
+
+  """All values not starting with the given string."""
+  barcode_not_starts_with: String
+
+  """All values ending with the given string."""
+  barcode_ends_with: String
+
+  """All values not ending with the given string."""
+  barcode_not_ends_with: String
+  sequenceNumber: Int
+
+  """All values that are not equal to given value."""
+  sequenceNumber_not: Int
+
+  """All values that are contained in given list."""
+  sequenceNumber_in: [Int!]
+
+  """All values that are not contained in given list."""
+  sequenceNumber_not_in: [Int!]
+
+  """All values less than the given value."""
+  sequenceNumber_lt: Int
+
+  """All values less than or equal the given value."""
+  sequenceNumber_lte: Int
+
+  """All values greater than the given value."""
+  sequenceNumber_gt: Int
+
+  """All values greater than or equal the given value."""
+  sequenceNumber_gte: Int
   createdAt: DateTime
 
   """All values that are not equal to given value."""
@@ -8573,6 +9000,7 @@ input PhysicalProductWhereInput {
   updatedAt_gte: DateTime
   location: LocationWhereInput
   productVariant: ProductVariantWhereInput
+  warehouseLocation: WarehouseLocationWhereInput
 }
 
 input PhysicalProductWhereUniqueInput {
@@ -8601,7 +9029,7 @@ type Product implements Node {
   modelSize: Size
   color: Color!
   secondaryColor: Color
-  tags: Json
+  tags(where: TagWhereInput, orderBy: TagOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Tag!]
   functions(where: ProductFunctionWhereInput, orderBy: ProductFunctionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductFunction!]
   innerMaterials: [String!]!
   outerMaterials: [String!]!
@@ -8643,7 +9071,6 @@ input ProductCreateInput {
   images: Json
   modelHeight: Int
   retailPrice: Int
-  tags: Json
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
@@ -8655,6 +9082,7 @@ input ProductCreateInput {
   modelSize: SizeCreateOneInput
   color: ColorCreateOneInput!
   secondaryColor: ColorCreateOneInput
+  tags: TagCreateManyWithoutProductsInput
   functions: ProductFunctionCreateManyInput
   variants: ProductVariantCreateManyWithoutProductInput
 }
@@ -8676,6 +9104,11 @@ input ProductCreateManyWithoutCategoryInput {
 
 input ProductCreateManyWithoutModelInput {
   create: [ProductCreateWithoutModelInput!]
+  connect: [ProductWhereUniqueInput!]
+}
+
+input ProductCreateManyWithoutTagsInput {
+  create: [ProductCreateWithoutTagsInput!]
   connect: [ProductWhereUniqueInput!]
 }
 
@@ -8703,7 +9136,6 @@ input ProductCreateWithoutBrandInput {
   images: Json
   modelHeight: Int
   retailPrice: Int
-  tags: Json
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
@@ -8714,6 +9146,7 @@ input ProductCreateWithoutBrandInput {
   modelSize: SizeCreateOneInput
   color: ColorCreateOneInput!
   secondaryColor: ColorCreateOneInput
+  tags: TagCreateManyWithoutProductsInput
   functions: ProductFunctionCreateManyInput
   variants: ProductVariantCreateManyWithoutProductInput
 }
@@ -8728,7 +9161,6 @@ input ProductCreateWithoutCategoryInput {
   images: Json
   modelHeight: Int
   retailPrice: Int
-  tags: Json
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
@@ -8739,6 +9171,7 @@ input ProductCreateWithoutCategoryInput {
   modelSize: SizeCreateOneInput
   color: ColorCreateOneInput!
   secondaryColor: ColorCreateOneInput
+  tags: TagCreateManyWithoutProductsInput
   functions: ProductFunctionCreateManyInput
   variants: ProductVariantCreateManyWithoutProductInput
 }
@@ -8753,7 +9186,6 @@ input ProductCreateWithoutModelInput {
   images: Json
   modelHeight: Int
   retailPrice: Int
-  tags: Json
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
@@ -8761,6 +9193,32 @@ input ProductCreateWithoutModelInput {
   outerMaterials: ProductCreateouterMaterialsInput
   brand: BrandCreateOneWithoutProductsInput!
   category: CategoryCreateOneWithoutProductsInput!
+  modelSize: SizeCreateOneInput
+  color: ColorCreateOneInput!
+  secondaryColor: ColorCreateOneInput
+  tags: TagCreateManyWithoutProductsInput
+  functions: ProductFunctionCreateManyInput
+  variants: ProductVariantCreateManyWithoutProductInput
+}
+
+input ProductCreateWithoutTagsInput {
+  id: ID
+  slug: String!
+  name: String!
+  type: ProductType
+  description: String
+  externalURL: String
+  images: Json
+  modelHeight: Int
+  retailPrice: Int
+  status: ProductStatus
+  season: String
+  architecture: ProductArchitecture
+  innerMaterials: ProductCreateinnerMaterialsInput
+  outerMaterials: ProductCreateouterMaterialsInput
+  brand: BrandCreateOneWithoutProductsInput!
+  category: CategoryCreateOneWithoutProductsInput!
+  model: ProductModelCreateOneWithoutProductsInput
   modelSize: SizeCreateOneInput
   color: ColorCreateOneInput!
   secondaryColor: ColorCreateOneInput
@@ -8778,7 +9236,6 @@ input ProductCreateWithoutVariantsInput {
   images: Json
   modelHeight: Int
   retailPrice: Int
-  tags: Json
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
@@ -8790,6 +9247,7 @@ input ProductCreateWithoutVariantsInput {
   modelSize: SizeCreateOneInput
   color: ColorCreateOneInput!
   secondaryColor: ColorCreateOneInput
+  tags: TagCreateManyWithoutProductsInput
   functions: ProductFunctionCreateManyInput
 }
 
@@ -9381,8 +9839,6 @@ enum ProductOrderByInput {
   modelHeight_DESC
   retailPrice_ASC
   retailPrice_DESC
-  tags_ASC
-  tags_DESC
   status_ASC
   status_DESC
   season_ASC
@@ -9405,7 +9861,6 @@ type ProductPreviousValues {
   images: Json
   modelHeight: Int
   retailPrice: Int
-  tags: Json
   innerMaterials: [String!]!
   outerMaterials: [String!]!
   status: ProductStatus
@@ -10343,6 +10798,8 @@ input ProductScalarWhereInput {
 enum ProductStatus {
   Available
   NotAvailable
+  Stored
+  Offloaded
 }
 
 type ProductSubscriptionPayload {
@@ -10398,7 +10855,6 @@ input ProductUpdateDataInput {
   images: Json
   modelHeight: Int
   retailPrice: Int
-  tags: Json
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
@@ -10410,6 +10866,7 @@ input ProductUpdateDataInput {
   modelSize: SizeUpdateOneInput
   color: ColorUpdateOneRequiredInput
   secondaryColor: ColorUpdateOneInput
+  tags: TagUpdateManyWithoutProductsInput
   functions: ProductFunctionUpdateManyInput
   variants: ProductVariantUpdateManyWithoutProductInput
 }
@@ -10427,7 +10884,6 @@ input ProductUpdateInput {
   images: Json
   modelHeight: Int
   retailPrice: Int
-  tags: Json
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
@@ -10439,6 +10895,7 @@ input ProductUpdateInput {
   modelSize: SizeUpdateOneInput
   color: ColorUpdateOneRequiredInput
   secondaryColor: ColorUpdateOneInput
+  tags: TagUpdateManyWithoutProductsInput
   functions: ProductFunctionUpdateManyInput
   variants: ProductVariantUpdateManyWithoutProductInput
 }
@@ -10452,7 +10909,6 @@ input ProductUpdateManyDataInput {
   images: Json
   modelHeight: Int
   retailPrice: Int
-  tags: Json
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
@@ -10481,7 +10937,6 @@ input ProductUpdateManyMutationInput {
   images: Json
   modelHeight: Int
   retailPrice: Int
-  tags: Json
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
@@ -10525,6 +10980,18 @@ input ProductUpdateManyWithoutModelInput {
   upsert: [ProductUpsertWithWhereUniqueWithoutModelInput!]
 }
 
+input ProductUpdateManyWithoutTagsInput {
+  create: [ProductCreateWithoutTagsInput!]
+  connect: [ProductWhereUniqueInput!]
+  set: [ProductWhereUniqueInput!]
+  disconnect: [ProductWhereUniqueInput!]
+  delete: [ProductWhereUniqueInput!]
+  update: [ProductUpdateWithWhereUniqueWithoutTagsInput!]
+  updateMany: [ProductUpdateManyWithWhereNestedInput!]
+  deleteMany: [ProductScalarWhereInput!]
+  upsert: [ProductUpsertWithWhereUniqueWithoutTagsInput!]
+}
+
 input ProductUpdateManyWithWhereNestedInput {
   where: ProductScalarWhereInput!
   data: ProductUpdateManyDataInput!
@@ -10557,7 +11024,6 @@ input ProductUpdateWithoutBrandDataInput {
   images: Json
   modelHeight: Int
   retailPrice: Int
-  tags: Json
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
@@ -10568,6 +11034,7 @@ input ProductUpdateWithoutBrandDataInput {
   modelSize: SizeUpdateOneInput
   color: ColorUpdateOneRequiredInput
   secondaryColor: ColorUpdateOneInput
+  tags: TagUpdateManyWithoutProductsInput
   functions: ProductFunctionUpdateManyInput
   variants: ProductVariantUpdateManyWithoutProductInput
 }
@@ -10581,7 +11048,6 @@ input ProductUpdateWithoutCategoryDataInput {
   images: Json
   modelHeight: Int
   retailPrice: Int
-  tags: Json
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
@@ -10592,6 +11058,7 @@ input ProductUpdateWithoutCategoryDataInput {
   modelSize: SizeUpdateOneInput
   color: ColorUpdateOneRequiredInput
   secondaryColor: ColorUpdateOneInput
+  tags: TagUpdateManyWithoutProductsInput
   functions: ProductFunctionUpdateManyInput
   variants: ProductVariantUpdateManyWithoutProductInput
 }
@@ -10605,7 +11072,6 @@ input ProductUpdateWithoutModelDataInput {
   images: Json
   modelHeight: Int
   retailPrice: Int
-  tags: Json
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
@@ -10613,6 +11079,31 @@ input ProductUpdateWithoutModelDataInput {
   outerMaterials: ProductUpdateouterMaterialsInput
   brand: BrandUpdateOneRequiredWithoutProductsInput
   category: CategoryUpdateOneRequiredWithoutProductsInput
+  modelSize: SizeUpdateOneInput
+  color: ColorUpdateOneRequiredInput
+  secondaryColor: ColorUpdateOneInput
+  tags: TagUpdateManyWithoutProductsInput
+  functions: ProductFunctionUpdateManyInput
+  variants: ProductVariantUpdateManyWithoutProductInput
+}
+
+input ProductUpdateWithoutTagsDataInput {
+  slug: String
+  name: String
+  type: ProductType
+  description: String
+  externalURL: String
+  images: Json
+  modelHeight: Int
+  retailPrice: Int
+  status: ProductStatus
+  season: String
+  architecture: ProductArchitecture
+  innerMaterials: ProductUpdateinnerMaterialsInput
+  outerMaterials: ProductUpdateouterMaterialsInput
+  brand: BrandUpdateOneRequiredWithoutProductsInput
+  category: CategoryUpdateOneRequiredWithoutProductsInput
+  model: ProductModelUpdateOneWithoutProductsInput
   modelSize: SizeUpdateOneInput
   color: ColorUpdateOneRequiredInput
   secondaryColor: ColorUpdateOneInput
@@ -10629,7 +11120,6 @@ input ProductUpdateWithoutVariantsDataInput {
   images: Json
   modelHeight: Int
   retailPrice: Int
-  tags: Json
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
@@ -10641,6 +11131,7 @@ input ProductUpdateWithoutVariantsDataInput {
   modelSize: SizeUpdateOneInput
   color: ColorUpdateOneRequiredInput
   secondaryColor: ColorUpdateOneInput
+  tags: TagUpdateManyWithoutProductsInput
   functions: ProductFunctionUpdateManyInput
 }
 
@@ -10662,6 +11153,11 @@ input ProductUpdateWithWhereUniqueWithoutCategoryInput {
 input ProductUpdateWithWhereUniqueWithoutModelInput {
   where: ProductWhereUniqueInput!
   data: ProductUpdateWithoutModelDataInput!
+}
+
+input ProductUpdateWithWhereUniqueWithoutTagsInput {
+  where: ProductWhereUniqueInput!
+  data: ProductUpdateWithoutTagsDataInput!
 }
 
 input ProductUpsertNestedInput {
@@ -10698,6 +11194,12 @@ input ProductUpsertWithWhereUniqueWithoutModelInput {
   create: ProductCreateWithoutModelInput!
 }
 
+input ProductUpsertWithWhereUniqueWithoutTagsInput {
+  where: ProductWhereUniqueInput!
+  update: ProductUpdateWithoutTagsDataInput!
+  create: ProductCreateWithoutTagsInput!
+}
+
 type ProductVariant implements Node {
   id: ID!
   sku: String
@@ -10714,6 +11216,8 @@ type ProductVariant implements Node {
   reservable: Int!
   reserved: Int!
   nonReservable: Int!
+  offloaded: Int!
+  stored: Int!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -10739,6 +11243,8 @@ input ProductVariantCreateInput {
   reservable: Int!
   reserved: Int!
   nonReservable: Int!
+  offloaded: Int!
+  stored: Int!
   color: ColorCreateOneWithoutProductVariantsInput!
   internalSize: SizeCreateOneInput
   manufacturerSizes: SizeCreateManyInput
@@ -10777,6 +11283,8 @@ input ProductVariantCreateWithoutColorInput {
   reservable: Int!
   reserved: Int!
   nonReservable: Int!
+  offloaded: Int!
+  stored: Int!
   internalSize: SizeCreateOneInput
   manufacturerSizes: SizeCreateManyInput
   product: ProductCreateOneWithoutVariantsInput!
@@ -10794,6 +11302,8 @@ input ProductVariantCreateWithoutPhysicalProductsInput {
   reservable: Int!
   reserved: Int!
   nonReservable: Int!
+  offloaded: Int!
+  stored: Int!
   color: ColorCreateOneWithoutProductVariantsInput!
   internalSize: SizeCreateOneInput
   manufacturerSizes: SizeCreateManyInput
@@ -10811,6 +11321,8 @@ input ProductVariantCreateWithoutProductInput {
   reservable: Int!
   reserved: Int!
   nonReservable: Int!
+  offloaded: Int!
+  stored: Int!
   color: ColorCreateOneWithoutProductVariantsInput!
   internalSize: SizeCreateOneInput
   manufacturerSizes: SizeCreateManyInput
@@ -11525,6 +12037,10 @@ enum ProductVariantOrderByInput {
   reserved_DESC
   nonReservable_ASC
   nonReservable_DESC
+  offloaded_ASC
+  offloaded_DESC
+  stored_ASC
+  stored_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -11542,6 +12058,8 @@ type ProductVariantPreviousValues {
   reservable: Int!
   reserved: Int!
   nonReservable: Int!
+  offloaded: Int!
+  stored: Int!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -11829,6 +12347,50 @@ input ProductVariantScalarWhereInput {
 
   """All values greater than or equal the given value."""
   nonReservable_gte: Int
+  offloaded: Int
+
+  """All values that are not equal to given value."""
+  offloaded_not: Int
+
+  """All values that are contained in given list."""
+  offloaded_in: [Int!]
+
+  """All values that are not contained in given list."""
+  offloaded_not_in: [Int!]
+
+  """All values less than the given value."""
+  offloaded_lt: Int
+
+  """All values less than or equal the given value."""
+  offloaded_lte: Int
+
+  """All values greater than the given value."""
+  offloaded_gt: Int
+
+  """All values greater than or equal the given value."""
+  offloaded_gte: Int
+  stored: Int
+
+  """All values that are not equal to given value."""
+  stored_not: Int
+
+  """All values that are contained in given list."""
+  stored_in: [Int!]
+
+  """All values that are not contained in given list."""
+  stored_not_in: [Int!]
+
+  """All values less than the given value."""
+  stored_lt: Int
+
+  """All values less than or equal the given value."""
+  stored_lte: Int
+
+  """All values greater than the given value."""
+  stored_gt: Int
+
+  """All values greater than or equal the given value."""
+  stored_gte: Int
   createdAt: DateTime
 
   """All values that are not equal to given value."""
@@ -11922,6 +12484,8 @@ input ProductVariantUpdateDataInput {
   reservable: Int
   reserved: Int
   nonReservable: Int
+  offloaded: Int
+  stored: Int
   color: ColorUpdateOneRequiredWithoutProductVariantsInput
   internalSize: SizeUpdateOneInput
   manufacturerSizes: SizeUpdateManyInput
@@ -11939,6 +12503,8 @@ input ProductVariantUpdateInput {
   reservable: Int
   reserved: Int
   nonReservable: Int
+  offloaded: Int
+  stored: Int
   color: ColorUpdateOneRequiredWithoutProductVariantsInput
   internalSize: SizeUpdateOneInput
   manufacturerSizes: SizeUpdateManyInput
@@ -11956,6 +12522,8 @@ input ProductVariantUpdateManyDataInput {
   reservable: Int
   reserved: Int
   nonReservable: Int
+  offloaded: Int
+  stored: Int
 }
 
 input ProductVariantUpdateManyMutationInput {
@@ -11968,6 +12536,8 @@ input ProductVariantUpdateManyMutationInput {
   reservable: Int
   reserved: Int
   nonReservable: Int
+  offloaded: Int
+  stored: Int
 }
 
 input ProductVariantUpdateManyWithoutColorInput {
@@ -12023,6 +12593,8 @@ input ProductVariantUpdateWithoutColorDataInput {
   reservable: Int
   reserved: Int
   nonReservable: Int
+  offloaded: Int
+  stored: Int
   internalSize: SizeUpdateOneInput
   manufacturerSizes: SizeUpdateManyInput
   product: ProductUpdateOneRequiredWithoutVariantsInput
@@ -12039,6 +12611,8 @@ input ProductVariantUpdateWithoutPhysicalProductsDataInput {
   reservable: Int
   reserved: Int
   nonReservable: Int
+  offloaded: Int
+  stored: Int
   color: ColorUpdateOneRequiredWithoutProductVariantsInput
   internalSize: SizeUpdateOneInput
   manufacturerSizes: SizeUpdateManyInput
@@ -12055,6 +12629,8 @@ input ProductVariantUpdateWithoutProductDataInput {
   reservable: Int
   reserved: Int
   nonReservable: Int
+  offloaded: Int
+  stored: Int
   color: ColorUpdateOneRequiredWithoutProductVariantsInput
   internalSize: SizeUpdateOneInput
   manufacturerSizes: SizeUpdateManyInput
@@ -12529,6 +13105,50 @@ input ProductVariantWhereInput {
 
   """All values greater than or equal the given value."""
   nonReservable_gte: Int
+  offloaded: Int
+
+  """All values that are not equal to given value."""
+  offloaded_not: Int
+
+  """All values that are contained in given list."""
+  offloaded_in: [Int!]
+
+  """All values that are not contained in given list."""
+  offloaded_not_in: [Int!]
+
+  """All values less than the given value."""
+  offloaded_lt: Int
+
+  """All values less than or equal the given value."""
+  offloaded_lte: Int
+
+  """All values greater than the given value."""
+  offloaded_gt: Int
+
+  """All values greater than or equal the given value."""
+  offloaded_gte: Int
+  stored: Int
+
+  """All values that are not equal to given value."""
+  stored_not: Int
+
+  """All values that are contained in given list."""
+  stored_in: [Int!]
+
+  """All values that are not contained in given list."""
+  stored_not_in: [Int!]
+
+  """All values less than the given value."""
+  stored_lt: Int
+
+  """All values less than or equal the given value."""
+  stored_lte: Int
+
+  """All values greater than the given value."""
+  stored_gt: Int
+
+  """All values greater than or equal the given value."""
+  stored_gte: Int
   createdAt: DateTime
 
   """All values that are not equal to given value."""
@@ -12962,6 +13582,9 @@ input ProductWhereInput {
   modelSize: SizeWhereInput
   color: ColorWhereInput
   secondaryColor: ColorWhereInput
+  tags_every: TagWhereInput
+  tags_some: TagWhereInput
+  tags_none: TagWhereInput
   functions_every: ProductFunctionWhereInput
   functions_some: ProductFunctionWhereInput
   functions_none: ProductFunctionWhereInput
@@ -12986,7 +13609,10 @@ type Query {
   collectionGroups(where: CollectionGroupWhereInput, orderBy: CollectionGroupOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CollectionGroup]!
   homepageProductRails(where: HomepageProductRailWhereInput, orderBy: HomepageProductRailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [HomepageProductRail]!
   images(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Image]!
+  tags(where: TagWhereInput, orderBy: TagOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Tag]!
   productModels(where: ProductModelWhereInput, orderBy: ProductModelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductModel]!
+  warehouseLocationConstraints(where: WarehouseLocationConstraintWhereInput, orderBy: WarehouseLocationConstraintOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [WarehouseLocationConstraint]!
+  warehouseLocations(where: WarehouseLocationWhereInput, orderBy: WarehouseLocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [WarehouseLocation]!
   bagItems(where: BagItemWhereInput, orderBy: BagItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [BagItem]!
   recentlyViewedProducts(where: RecentlyViewedProductWhereInput, orderBy: RecentlyViewedProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [RecentlyViewedProduct]!
   productRequests(where: ProductRequestWhereInput, orderBy: ProductRequestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductRequest]!
@@ -12995,9 +13621,9 @@ type Query {
   productVariantFeedbacks(where: ProductVariantFeedbackWhereInput, orderBy: ProductVariantFeedbackOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariantFeedback]!
   productVariantFeedbackQuestions(where: ProductVariantFeedbackQuestionWhereInput, orderBy: ProductVariantFeedbackQuestionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariantFeedbackQuestion]!
   collections(where: CollectionWhereInput, orderBy: CollectionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Collection]!
-  categories(where: CategoryWhereInput, orderBy: CategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Category]!
   customerDetails(where: CustomerDetailWhereInput, orderBy: CustomerDetailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CustomerDetail]!
   billingInfoes(where: BillingInfoWhereInput, orderBy: BillingInfoOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [BillingInfo]!
+  categories(where: CategoryWhereInput, orderBy: CategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Category]!
   locations(where: LocationWhereInput, orderBy: LocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Location]!
   packages(where: PackageWhereInput, orderBy: PackageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Package]!
   sizes(where: SizeWhereInput, orderBy: SizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Size]!
@@ -13016,7 +13642,10 @@ type Query {
   collectionGroup(where: CollectionGroupWhereUniqueInput!): CollectionGroup
   homepageProductRail(where: HomepageProductRailWhereUniqueInput!): HomepageProductRail
   image(where: ImageWhereUniqueInput!): Image
+  tag(where: TagWhereUniqueInput!): Tag
   productModel(where: ProductModelWhereUniqueInput!): ProductModel
+  warehouseLocationConstraint(where: WarehouseLocationConstraintWhereUniqueInput!): WarehouseLocationConstraint
+  warehouseLocation(where: WarehouseLocationWhereUniqueInput!): WarehouseLocation
   bagItem(where: BagItemWhereUniqueInput!): BagItem
   recentlyViewedProduct(where: RecentlyViewedProductWhereUniqueInput!): RecentlyViewedProduct
   productRequest(where: ProductRequestWhereUniqueInput!): ProductRequest
@@ -13025,9 +13654,9 @@ type Query {
   productVariantFeedback(where: ProductVariantFeedbackWhereUniqueInput!): ProductVariantFeedback
   productVariantFeedbackQuestion(where: ProductVariantFeedbackQuestionWhereUniqueInput!): ProductVariantFeedbackQuestion
   collection(where: CollectionWhereUniqueInput!): Collection
-  category(where: CategoryWhereUniqueInput!): Category
   customerDetail(where: CustomerDetailWhereUniqueInput!): CustomerDetail
   billingInfo(where: BillingInfoWhereUniqueInput!): BillingInfo
+  category(where: CategoryWhereUniqueInput!): Category
   location(where: LocationWhereUniqueInput!): Location
   package(where: PackageWhereUniqueInput!): Package
   size(where: SizeWhereUniqueInput!): Size
@@ -13046,7 +13675,10 @@ type Query {
   collectionGroupsConnection(where: CollectionGroupWhereInput, orderBy: CollectionGroupOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CollectionGroupConnection!
   homepageProductRailsConnection(where: HomepageProductRailWhereInput, orderBy: HomepageProductRailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): HomepageProductRailConnection!
   imagesConnection(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ImageConnection!
+  tagsConnection(where: TagWhereInput, orderBy: TagOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): TagConnection!
   productModelsConnection(where: ProductModelWhereInput, orderBy: ProductModelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductModelConnection!
+  warehouseLocationConstraintsConnection(where: WarehouseLocationConstraintWhereInput, orderBy: WarehouseLocationConstraintOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): WarehouseLocationConstraintConnection!
+  warehouseLocationsConnection(where: WarehouseLocationWhereInput, orderBy: WarehouseLocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): WarehouseLocationConnection!
   bagItemsConnection(where: BagItemWhereInput, orderBy: BagItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BagItemConnection!
   recentlyViewedProductsConnection(where: RecentlyViewedProductWhereInput, orderBy: RecentlyViewedProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): RecentlyViewedProductConnection!
   productRequestsConnection(where: ProductRequestWhereInput, orderBy: ProductRequestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductRequestConnection!
@@ -13055,9 +13687,9 @@ type Query {
   productVariantFeedbacksConnection(where: ProductVariantFeedbackWhereInput, orderBy: ProductVariantFeedbackOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductVariantFeedbackConnection!
   productVariantFeedbackQuestionsConnection(where: ProductVariantFeedbackQuestionWhereInput, orderBy: ProductVariantFeedbackQuestionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductVariantFeedbackQuestionConnection!
   collectionsConnection(where: CollectionWhereInput, orderBy: CollectionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CollectionConnection!
-  categoriesConnection(where: CategoryWhereInput, orderBy: CategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CategoryConnection!
   customerDetailsConnection(where: CustomerDetailWhereInput, orderBy: CustomerDetailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CustomerDetailConnection!
   billingInfoesConnection(where: BillingInfoWhereInput, orderBy: BillingInfoOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BillingInfoConnection!
+  categoriesConnection(where: CategoryWhereInput, orderBy: CategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CategoryConnection!
   locationsConnection(where: LocationWhereInput, orderBy: LocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): LocationConnection!
   packagesConnection(where: PackageWhereInput, orderBy: PackageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PackageConnection!
   sizesConnection(where: SizeWhereInput, orderBy: SizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): SizeConnection!
@@ -14776,7 +15408,10 @@ type Subscription {
   collectionGroup(where: CollectionGroupSubscriptionWhereInput): CollectionGroupSubscriptionPayload
   homepageProductRail(where: HomepageProductRailSubscriptionWhereInput): HomepageProductRailSubscriptionPayload
   image(where: ImageSubscriptionWhereInput): ImageSubscriptionPayload
+  tag(where: TagSubscriptionWhereInput): TagSubscriptionPayload
   productModel(where: ProductModelSubscriptionWhereInput): ProductModelSubscriptionPayload
+  warehouseLocationConstraint(where: WarehouseLocationConstraintSubscriptionWhereInput): WarehouseLocationConstraintSubscriptionPayload
+  warehouseLocation(where: WarehouseLocationSubscriptionWhereInput): WarehouseLocationSubscriptionPayload
   bagItem(where: BagItemSubscriptionWhereInput): BagItemSubscriptionPayload
   recentlyViewedProduct(where: RecentlyViewedProductSubscriptionWhereInput): RecentlyViewedProductSubscriptionPayload
   productRequest(where: ProductRequestSubscriptionWhereInput): ProductRequestSubscriptionPayload
@@ -14785,9 +15420,9 @@ type Subscription {
   productVariantFeedback(where: ProductVariantFeedbackSubscriptionWhereInput): ProductVariantFeedbackSubscriptionPayload
   productVariantFeedbackQuestion(where: ProductVariantFeedbackQuestionSubscriptionWhereInput): ProductVariantFeedbackQuestionSubscriptionPayload
   collection(where: CollectionSubscriptionWhereInput): CollectionSubscriptionPayload
-  category(where: CategorySubscriptionWhereInput): CategorySubscriptionPayload
   customerDetail(where: CustomerDetailSubscriptionWhereInput): CustomerDetailSubscriptionPayload
   billingInfo(where: BillingInfoSubscriptionWhereInput): BillingInfoSubscriptionPayload
+  category(where: CategorySubscriptionWhereInput): CategorySubscriptionPayload
   location(where: LocationSubscriptionWhereInput): LocationSubscriptionPayload
   package(where: PackageSubscriptionWhereInput): PackageSubscriptionPayload
   size(where: SizeSubscriptionWhereInput): SizeSubscriptionPayload
@@ -14802,6 +15437,517 @@ type Subscription {
   product(where: ProductSubscriptionWhereInput): ProductSubscriptionPayload
   reservation(where: ReservationSubscriptionWhereInput): ReservationSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
+}
+
+type Tag implements Node {
+  id: ID!
+  name: String!
+  description: String
+  products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""A connection to a list of items."""
+type TagConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [TagEdge]!
+  aggregate: AggregateTag!
+}
+
+input TagCreateInput {
+  id: ID
+  name: String!
+  description: String
+  products: ProductCreateManyWithoutTagsInput
+}
+
+input TagCreateManyWithoutProductsInput {
+  create: [TagCreateWithoutProductsInput!]
+  connect: [TagWhereUniqueInput!]
+}
+
+input TagCreateWithoutProductsInput {
+  id: ID
+  name: String!
+  description: String
+}
+
+"""An edge in a connection."""
+type TagEdge {
+  """The item at the end of the edge."""
+  node: Tag!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum TagOrderByInput {
+  id_ASC
+  id_DESC
+  name_ASC
+  name_DESC
+  description_ASC
+  description_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type TagPreviousValues {
+  id: ID!
+  name: String!
+  description: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+input TagScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [TagScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [TagScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [TagScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
+  description: String
+
+  """All values that are not equal to given value."""
+  description_not: String
+
+  """All values that are contained in given list."""
+  description_in: [String!]
+
+  """All values that are not contained in given list."""
+  description_not_in: [String!]
+
+  """All values less than the given value."""
+  description_lt: String
+
+  """All values less than or equal the given value."""
+  description_lte: String
+
+  """All values greater than the given value."""
+  description_gt: String
+
+  """All values greater than or equal the given value."""
+  description_gte: String
+
+  """All values containing the given string."""
+  description_contains: String
+
+  """All values not containing the given string."""
+  description_not_contains: String
+
+  """All values starting with the given string."""
+  description_starts_with: String
+
+  """All values not starting with the given string."""
+  description_not_starts_with: String
+
+  """All values ending with the given string."""
+  description_ends_with: String
+
+  """All values not ending with the given string."""
+  description_not_ends_with: String
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
+}
+
+type TagSubscriptionPayload {
+  mutation: MutationType!
+  node: Tag
+  updatedFields: [String!]
+  previousValues: TagPreviousValues
+}
+
+input TagSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [TagSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [TagSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [TagSubscriptionWhereInput!]
+
+  """The subscription event gets dispatched when it's listed in mutation_in"""
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: TagWhereInput
+}
+
+input TagUpdateInput {
+  name: String
+  description: String
+  products: ProductUpdateManyWithoutTagsInput
+}
+
+input TagUpdateManyDataInput {
+  name: String
+  description: String
+}
+
+input TagUpdateManyMutationInput {
+  name: String
+  description: String
+}
+
+input TagUpdateManyWithoutProductsInput {
+  create: [TagCreateWithoutProductsInput!]
+  connect: [TagWhereUniqueInput!]
+  set: [TagWhereUniqueInput!]
+  disconnect: [TagWhereUniqueInput!]
+  delete: [TagWhereUniqueInput!]
+  update: [TagUpdateWithWhereUniqueWithoutProductsInput!]
+  updateMany: [TagUpdateManyWithWhereNestedInput!]
+  deleteMany: [TagScalarWhereInput!]
+  upsert: [TagUpsertWithWhereUniqueWithoutProductsInput!]
+}
+
+input TagUpdateManyWithWhereNestedInput {
+  where: TagScalarWhereInput!
+  data: TagUpdateManyDataInput!
+}
+
+input TagUpdateWithoutProductsDataInput {
+  name: String
+  description: String
+}
+
+input TagUpdateWithWhereUniqueWithoutProductsInput {
+  where: TagWhereUniqueInput!
+  data: TagUpdateWithoutProductsDataInput!
+}
+
+input TagUpsertWithWhereUniqueWithoutProductsInput {
+  where: TagWhereUniqueInput!
+  update: TagUpdateWithoutProductsDataInput!
+  create: TagCreateWithoutProductsInput!
+}
+
+input TagWhereInput {
+  """Logical AND on all given filters."""
+  AND: [TagWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [TagWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [TagWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
+  description: String
+
+  """All values that are not equal to given value."""
+  description_not: String
+
+  """All values that are contained in given list."""
+  description_in: [String!]
+
+  """All values that are not contained in given list."""
+  description_not_in: [String!]
+
+  """All values less than the given value."""
+  description_lt: String
+
+  """All values less than or equal the given value."""
+  description_lte: String
+
+  """All values greater than the given value."""
+  description_gt: String
+
+  """All values greater than or equal the given value."""
+  description_gte: String
+
+  """All values containing the given string."""
+  description_contains: String
+
+  """All values not containing the given string."""
+  description_not_contains: String
+
+  """All values starting with the given string."""
+  description_starts_with: String
+
+  """All values not starting with the given string."""
+  description_not_starts_with: String
+
+  """All values ending with the given string."""
+  description_ends_with: String
+
+  """All values not ending with the given string."""
+  description_not_ends_with: String
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
+  products_every: ProductWhereInput
+  products_some: ProductWhereInput
+  products_none: ProductWhereInput
+}
+
+input TagWhereUniqueInput {
+  id: ID
+  name: String
 }
 
 type TopSize implements Node {
@@ -15578,6 +16724,1077 @@ input UserWhereUniqueInput {
   auth0Id: String
   email: String
 }
+
+type WarehouseLocation implements Node {
+  id: ID!
+  type: WarehouseLocationType!
+  barcode: String!
+  locationCode: String!
+  itemCode: String!
+  physicalProducts(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct!]
+  constraints(where: WarehouseLocationConstraintWhereInput, orderBy: WarehouseLocationConstraintOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [WarehouseLocationConstraint!]
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""A connection to a list of items."""
+type WarehouseLocationConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [WarehouseLocationEdge]!
+  aggregate: AggregateWarehouseLocation!
+}
+
+type WarehouseLocationConstraint implements Node {
+  id: ID!
+  category: Category!
+  limit: Int!
+  locations(where: WarehouseLocationWhereInput, orderBy: WarehouseLocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [WarehouseLocation!]
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""A connection to a list of items."""
+type WarehouseLocationConstraintConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [WarehouseLocationConstraintEdge]!
+  aggregate: AggregateWarehouseLocationConstraint!
+}
+
+input WarehouseLocationConstraintCreateInput {
+  id: ID
+  limit: Int!
+  category: CategoryCreateOneInput!
+  locations: WarehouseLocationCreateManyWithoutConstraintsInput
+}
+
+input WarehouseLocationConstraintCreateManyWithoutLocationsInput {
+  create: [WarehouseLocationConstraintCreateWithoutLocationsInput!]
+  connect: [WarehouseLocationConstraintWhereUniqueInput!]
+}
+
+input WarehouseLocationConstraintCreateWithoutLocationsInput {
+  id: ID
+  limit: Int!
+  category: CategoryCreateOneInput!
+}
+
+"""An edge in a connection."""
+type WarehouseLocationConstraintEdge {
+  """The item at the end of the edge."""
+  node: WarehouseLocationConstraint!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum WarehouseLocationConstraintOrderByInput {
+  id_ASC
+  id_DESC
+  limit_ASC
+  limit_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type WarehouseLocationConstraintPreviousValues {
+  id: ID!
+  limit: Int!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+input WarehouseLocationConstraintScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [WarehouseLocationConstraintScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [WarehouseLocationConstraintScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [WarehouseLocationConstraintScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  limit: Int
+
+  """All values that are not equal to given value."""
+  limit_not: Int
+
+  """All values that are contained in given list."""
+  limit_in: [Int!]
+
+  """All values that are not contained in given list."""
+  limit_not_in: [Int!]
+
+  """All values less than the given value."""
+  limit_lt: Int
+
+  """All values less than or equal the given value."""
+  limit_lte: Int
+
+  """All values greater than the given value."""
+  limit_gt: Int
+
+  """All values greater than or equal the given value."""
+  limit_gte: Int
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
+}
+
+type WarehouseLocationConstraintSubscriptionPayload {
+  mutation: MutationType!
+  node: WarehouseLocationConstraint
+  updatedFields: [String!]
+  previousValues: WarehouseLocationConstraintPreviousValues
+}
+
+input WarehouseLocationConstraintSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [WarehouseLocationConstraintSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [WarehouseLocationConstraintSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [WarehouseLocationConstraintSubscriptionWhereInput!]
+
+  """The subscription event gets dispatched when it's listed in mutation_in"""
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: WarehouseLocationConstraintWhereInput
+}
+
+input WarehouseLocationConstraintUpdateInput {
+  limit: Int
+  category: CategoryUpdateOneRequiredInput
+  locations: WarehouseLocationUpdateManyWithoutConstraintsInput
+}
+
+input WarehouseLocationConstraintUpdateManyDataInput {
+  limit: Int
+}
+
+input WarehouseLocationConstraintUpdateManyMutationInput {
+  limit: Int
+}
+
+input WarehouseLocationConstraintUpdateManyWithoutLocationsInput {
+  create: [WarehouseLocationConstraintCreateWithoutLocationsInput!]
+  connect: [WarehouseLocationConstraintWhereUniqueInput!]
+  set: [WarehouseLocationConstraintWhereUniqueInput!]
+  disconnect: [WarehouseLocationConstraintWhereUniqueInput!]
+  delete: [WarehouseLocationConstraintWhereUniqueInput!]
+  update: [WarehouseLocationConstraintUpdateWithWhereUniqueWithoutLocationsInput!]
+  updateMany: [WarehouseLocationConstraintUpdateManyWithWhereNestedInput!]
+  deleteMany: [WarehouseLocationConstraintScalarWhereInput!]
+  upsert: [WarehouseLocationConstraintUpsertWithWhereUniqueWithoutLocationsInput!]
+}
+
+input WarehouseLocationConstraintUpdateManyWithWhereNestedInput {
+  where: WarehouseLocationConstraintScalarWhereInput!
+  data: WarehouseLocationConstraintUpdateManyDataInput!
+}
+
+input WarehouseLocationConstraintUpdateWithoutLocationsDataInput {
+  limit: Int
+  category: CategoryUpdateOneRequiredInput
+}
+
+input WarehouseLocationConstraintUpdateWithWhereUniqueWithoutLocationsInput {
+  where: WarehouseLocationConstraintWhereUniqueInput!
+  data: WarehouseLocationConstraintUpdateWithoutLocationsDataInput!
+}
+
+input WarehouseLocationConstraintUpsertWithWhereUniqueWithoutLocationsInput {
+  where: WarehouseLocationConstraintWhereUniqueInput!
+  update: WarehouseLocationConstraintUpdateWithoutLocationsDataInput!
+  create: WarehouseLocationConstraintCreateWithoutLocationsInput!
+}
+
+input WarehouseLocationConstraintWhereInput {
+  """Logical AND on all given filters."""
+  AND: [WarehouseLocationConstraintWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [WarehouseLocationConstraintWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [WarehouseLocationConstraintWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  limit: Int
+
+  """All values that are not equal to given value."""
+  limit_not: Int
+
+  """All values that are contained in given list."""
+  limit_in: [Int!]
+
+  """All values that are not contained in given list."""
+  limit_not_in: [Int!]
+
+  """All values less than the given value."""
+  limit_lt: Int
+
+  """All values less than or equal the given value."""
+  limit_lte: Int
+
+  """All values greater than the given value."""
+  limit_gt: Int
+
+  """All values greater than or equal the given value."""
+  limit_gte: Int
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
+  category: CategoryWhereInput
+  locations_every: WarehouseLocationWhereInput
+  locations_some: WarehouseLocationWhereInput
+  locations_none: WarehouseLocationWhereInput
+}
+
+input WarehouseLocationConstraintWhereUniqueInput {
+  id: ID
+}
+
+input WarehouseLocationCreateInput {
+  id: ID
+  type: WarehouseLocationType!
+  barcode: String!
+  locationCode: String!
+  itemCode: String!
+  physicalProducts: PhysicalProductCreateManyWithoutWarehouseLocationInput
+  constraints: WarehouseLocationConstraintCreateManyWithoutLocationsInput
+}
+
+input WarehouseLocationCreateManyWithoutConstraintsInput {
+  create: [WarehouseLocationCreateWithoutConstraintsInput!]
+  connect: [WarehouseLocationWhereUniqueInput!]
+}
+
+input WarehouseLocationCreateOneWithoutPhysicalProductsInput {
+  create: WarehouseLocationCreateWithoutPhysicalProductsInput
+  connect: WarehouseLocationWhereUniqueInput
+}
+
+input WarehouseLocationCreateWithoutConstraintsInput {
+  id: ID
+  type: WarehouseLocationType!
+  barcode: String!
+  locationCode: String!
+  itemCode: String!
+  physicalProducts: PhysicalProductCreateManyWithoutWarehouseLocationInput
+}
+
+input WarehouseLocationCreateWithoutPhysicalProductsInput {
+  id: ID
+  type: WarehouseLocationType!
+  barcode: String!
+  locationCode: String!
+  itemCode: String!
+  constraints: WarehouseLocationConstraintCreateManyWithoutLocationsInput
+}
+
+"""An edge in a connection."""
+type WarehouseLocationEdge {
+  """The item at the end of the edge."""
+  node: WarehouseLocation!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum WarehouseLocationOrderByInput {
+  id_ASC
+  id_DESC
+  type_ASC
+  type_DESC
+  barcode_ASC
+  barcode_DESC
+  locationCode_ASC
+  locationCode_DESC
+  itemCode_ASC
+  itemCode_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type WarehouseLocationPreviousValues {
+  id: ID!
+  type: WarehouseLocationType!
+  barcode: String!
+  locationCode: String!
+  itemCode: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+input WarehouseLocationScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [WarehouseLocationScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [WarehouseLocationScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [WarehouseLocationScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  type: WarehouseLocationType
+
+  """All values that are not equal to given value."""
+  type_not: WarehouseLocationType
+
+  """All values that are contained in given list."""
+  type_in: [WarehouseLocationType!]
+
+  """All values that are not contained in given list."""
+  type_not_in: [WarehouseLocationType!]
+  barcode: String
+
+  """All values that are not equal to given value."""
+  barcode_not: String
+
+  """All values that are contained in given list."""
+  barcode_in: [String!]
+
+  """All values that are not contained in given list."""
+  barcode_not_in: [String!]
+
+  """All values less than the given value."""
+  barcode_lt: String
+
+  """All values less than or equal the given value."""
+  barcode_lte: String
+
+  """All values greater than the given value."""
+  barcode_gt: String
+
+  """All values greater than or equal the given value."""
+  barcode_gte: String
+
+  """All values containing the given string."""
+  barcode_contains: String
+
+  """All values not containing the given string."""
+  barcode_not_contains: String
+
+  """All values starting with the given string."""
+  barcode_starts_with: String
+
+  """All values not starting with the given string."""
+  barcode_not_starts_with: String
+
+  """All values ending with the given string."""
+  barcode_ends_with: String
+
+  """All values not ending with the given string."""
+  barcode_not_ends_with: String
+  locationCode: String
+
+  """All values that are not equal to given value."""
+  locationCode_not: String
+
+  """All values that are contained in given list."""
+  locationCode_in: [String!]
+
+  """All values that are not contained in given list."""
+  locationCode_not_in: [String!]
+
+  """All values less than the given value."""
+  locationCode_lt: String
+
+  """All values less than or equal the given value."""
+  locationCode_lte: String
+
+  """All values greater than the given value."""
+  locationCode_gt: String
+
+  """All values greater than or equal the given value."""
+  locationCode_gte: String
+
+  """All values containing the given string."""
+  locationCode_contains: String
+
+  """All values not containing the given string."""
+  locationCode_not_contains: String
+
+  """All values starting with the given string."""
+  locationCode_starts_with: String
+
+  """All values not starting with the given string."""
+  locationCode_not_starts_with: String
+
+  """All values ending with the given string."""
+  locationCode_ends_with: String
+
+  """All values not ending with the given string."""
+  locationCode_not_ends_with: String
+  itemCode: String
+
+  """All values that are not equal to given value."""
+  itemCode_not: String
+
+  """All values that are contained in given list."""
+  itemCode_in: [String!]
+
+  """All values that are not contained in given list."""
+  itemCode_not_in: [String!]
+
+  """All values less than the given value."""
+  itemCode_lt: String
+
+  """All values less than or equal the given value."""
+  itemCode_lte: String
+
+  """All values greater than the given value."""
+  itemCode_gt: String
+
+  """All values greater than or equal the given value."""
+  itemCode_gte: String
+
+  """All values containing the given string."""
+  itemCode_contains: String
+
+  """All values not containing the given string."""
+  itemCode_not_contains: String
+
+  """All values starting with the given string."""
+  itemCode_starts_with: String
+
+  """All values not starting with the given string."""
+  itemCode_not_starts_with: String
+
+  """All values ending with the given string."""
+  itemCode_ends_with: String
+
+  """All values not ending with the given string."""
+  itemCode_not_ends_with: String
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
+}
+
+type WarehouseLocationSubscriptionPayload {
+  mutation: MutationType!
+  node: WarehouseLocation
+  updatedFields: [String!]
+  previousValues: WarehouseLocationPreviousValues
+}
+
+input WarehouseLocationSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [WarehouseLocationSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [WarehouseLocationSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [WarehouseLocationSubscriptionWhereInput!]
+
+  """The subscription event gets dispatched when it's listed in mutation_in"""
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: WarehouseLocationWhereInput
+}
+
+enum WarehouseLocationType {
+  Conveyor
+  Rail
+  Bin
+}
+
+input WarehouseLocationUpdateInput {
+  type: WarehouseLocationType
+  barcode: String
+  locationCode: String
+  itemCode: String
+  physicalProducts: PhysicalProductUpdateManyWithoutWarehouseLocationInput
+  constraints: WarehouseLocationConstraintUpdateManyWithoutLocationsInput
+}
+
+input WarehouseLocationUpdateManyDataInput {
+  type: WarehouseLocationType
+  barcode: String
+  locationCode: String
+  itemCode: String
+}
+
+input WarehouseLocationUpdateManyMutationInput {
+  type: WarehouseLocationType
+  barcode: String
+  locationCode: String
+  itemCode: String
+}
+
+input WarehouseLocationUpdateManyWithoutConstraintsInput {
+  create: [WarehouseLocationCreateWithoutConstraintsInput!]
+  connect: [WarehouseLocationWhereUniqueInput!]
+  set: [WarehouseLocationWhereUniqueInput!]
+  disconnect: [WarehouseLocationWhereUniqueInput!]
+  delete: [WarehouseLocationWhereUniqueInput!]
+  update: [WarehouseLocationUpdateWithWhereUniqueWithoutConstraintsInput!]
+  updateMany: [WarehouseLocationUpdateManyWithWhereNestedInput!]
+  deleteMany: [WarehouseLocationScalarWhereInput!]
+  upsert: [WarehouseLocationUpsertWithWhereUniqueWithoutConstraintsInput!]
+}
+
+input WarehouseLocationUpdateManyWithWhereNestedInput {
+  where: WarehouseLocationScalarWhereInput!
+  data: WarehouseLocationUpdateManyDataInput!
+}
+
+input WarehouseLocationUpdateOneWithoutPhysicalProductsInput {
+  create: WarehouseLocationCreateWithoutPhysicalProductsInput
+  connect: WarehouseLocationWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: WarehouseLocationUpdateWithoutPhysicalProductsDataInput
+  upsert: WarehouseLocationUpsertWithoutPhysicalProductsInput
+}
+
+input WarehouseLocationUpdateWithoutConstraintsDataInput {
+  type: WarehouseLocationType
+  barcode: String
+  locationCode: String
+  itemCode: String
+  physicalProducts: PhysicalProductUpdateManyWithoutWarehouseLocationInput
+}
+
+input WarehouseLocationUpdateWithoutPhysicalProductsDataInput {
+  type: WarehouseLocationType
+  barcode: String
+  locationCode: String
+  itemCode: String
+  constraints: WarehouseLocationConstraintUpdateManyWithoutLocationsInput
+}
+
+input WarehouseLocationUpdateWithWhereUniqueWithoutConstraintsInput {
+  where: WarehouseLocationWhereUniqueInput!
+  data: WarehouseLocationUpdateWithoutConstraintsDataInput!
+}
+
+input WarehouseLocationUpsertWithoutPhysicalProductsInput {
+  update: WarehouseLocationUpdateWithoutPhysicalProductsDataInput!
+  create: WarehouseLocationCreateWithoutPhysicalProductsInput!
+}
+
+input WarehouseLocationUpsertWithWhereUniqueWithoutConstraintsInput {
+  where: WarehouseLocationWhereUniqueInput!
+  update: WarehouseLocationUpdateWithoutConstraintsDataInput!
+  create: WarehouseLocationCreateWithoutConstraintsInput!
+}
+
+input WarehouseLocationWhereInput {
+  """Logical AND on all given filters."""
+  AND: [WarehouseLocationWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [WarehouseLocationWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [WarehouseLocationWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  type: WarehouseLocationType
+
+  """All values that are not equal to given value."""
+  type_not: WarehouseLocationType
+
+  """All values that are contained in given list."""
+  type_in: [WarehouseLocationType!]
+
+  """All values that are not contained in given list."""
+  type_not_in: [WarehouseLocationType!]
+  barcode: String
+
+  """All values that are not equal to given value."""
+  barcode_not: String
+
+  """All values that are contained in given list."""
+  barcode_in: [String!]
+
+  """All values that are not contained in given list."""
+  barcode_not_in: [String!]
+
+  """All values less than the given value."""
+  barcode_lt: String
+
+  """All values less than or equal the given value."""
+  barcode_lte: String
+
+  """All values greater than the given value."""
+  barcode_gt: String
+
+  """All values greater than or equal the given value."""
+  barcode_gte: String
+
+  """All values containing the given string."""
+  barcode_contains: String
+
+  """All values not containing the given string."""
+  barcode_not_contains: String
+
+  """All values starting with the given string."""
+  barcode_starts_with: String
+
+  """All values not starting with the given string."""
+  barcode_not_starts_with: String
+
+  """All values ending with the given string."""
+  barcode_ends_with: String
+
+  """All values not ending with the given string."""
+  barcode_not_ends_with: String
+  locationCode: String
+
+  """All values that are not equal to given value."""
+  locationCode_not: String
+
+  """All values that are contained in given list."""
+  locationCode_in: [String!]
+
+  """All values that are not contained in given list."""
+  locationCode_not_in: [String!]
+
+  """All values less than the given value."""
+  locationCode_lt: String
+
+  """All values less than or equal the given value."""
+  locationCode_lte: String
+
+  """All values greater than the given value."""
+  locationCode_gt: String
+
+  """All values greater than or equal the given value."""
+  locationCode_gte: String
+
+  """All values containing the given string."""
+  locationCode_contains: String
+
+  """All values not containing the given string."""
+  locationCode_not_contains: String
+
+  """All values starting with the given string."""
+  locationCode_starts_with: String
+
+  """All values not starting with the given string."""
+  locationCode_not_starts_with: String
+
+  """All values ending with the given string."""
+  locationCode_ends_with: String
+
+  """All values not ending with the given string."""
+  locationCode_not_ends_with: String
+  itemCode: String
+
+  """All values that are not equal to given value."""
+  itemCode_not: String
+
+  """All values that are contained in given list."""
+  itemCode_in: [String!]
+
+  """All values that are not contained in given list."""
+  itemCode_not_in: [String!]
+
+  """All values less than the given value."""
+  itemCode_lt: String
+
+  """All values less than or equal the given value."""
+  itemCode_lte: String
+
+  """All values greater than the given value."""
+  itemCode_gt: String
+
+  """All values greater than or equal the given value."""
+  itemCode_gte: String
+
+  """All values containing the given string."""
+  itemCode_contains: String
+
+  """All values not containing the given string."""
+  itemCode_not_contains: String
+
+  """All values starting with the given string."""
+  itemCode_starts_with: String
+
+  """All values not starting with the given string."""
+  itemCode_not_starts_with: String
+
+  """All values ending with the given string."""
+  itemCode_ends_with: String
+
+  """All values not ending with the given string."""
+  itemCode_not_ends_with: String
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
+  physicalProducts_every: PhysicalProductWhereInput
+  physicalProducts_some: PhysicalProductWhereInput
+  physicalProducts_none: PhysicalProductWhereInput
+  constraints_every: WarehouseLocationConstraintWhereInput
+  constraints_some: WarehouseLocationConstraintWhereInput
+  constraints_none: WarehouseLocationConstraintWhereInput
+}
+
+input WarehouseLocationWhereUniqueInput {
+  id: ID
+  barcode: String
+}
 `
 
 export const Prisma = makePrismaBindingClass<BindingConstructor<Prisma>>({typeDefs})
@@ -15819,7 +18036,9 @@ export type ImageOrderByInput =   'id_ASC' |
 
 export type InventoryStatus =   'NonReservable' |
   'Reservable' |
-  'Reserved'
+  'Reserved' |
+  'Stored' |
+  'Offloaded'
 
 export type LabelOrderByInput =   'id_ASC' |
   'id_DESC' |
@@ -15888,6 +18107,12 @@ export type PackageOrderByInput =   'id_ASC' |
   'updatedAt_ASC' |
   'updatedAt_DESC'
 
+export type PhysicalProductOffloadMethod =   'SoldToUser' |
+  'SoldToThirdParty' |
+  'ReturnedToVendor' |
+  'Recycled' |
+  'Unknown'
+
 export type PhysicalProductOrderByInput =   'id_ASC' |
   'id_DESC' |
   'seasonsUID_ASC' |
@@ -15896,6 +18121,14 @@ export type PhysicalProductOrderByInput =   'id_ASC' |
   'inventoryStatus_DESC' |
   'productStatus_ASC' |
   'productStatus_DESC' |
+  'offloadMethod_ASC' |
+  'offloadMethod_DESC' |
+  'offloadNotes_ASC' |
+  'offloadNotes_DESC' |
+  'barcode_ASC' |
+  'barcode_DESC' |
+  'sequenceNumber_ASC' |
+  'sequenceNumber_DESC' |
   'createdAt_ASC' |
   'createdAt_DESC' |
   'updatedAt_ASC' |
@@ -15944,8 +18177,6 @@ export type ProductOrderByInput =   'id_ASC' |
   'modelHeight_DESC' |
   'retailPrice_ASC' |
   'retailPrice_DESC' |
-  'tags_ASC' |
-  'tags_DESC' |
   'status_ASC' |
   'status_DESC' |
   'season_ASC' |
@@ -15979,7 +18210,9 @@ export type ProductRequestOrderByInput =   'id_ASC' |
   'url_DESC'
 
 export type ProductStatus =   'Available' |
-  'NotAvailable'
+  'NotAvailable' |
+  'Stored' |
+  'Offloaded'
 
 export type ProductType =   'Top' |
   'Bottom' |
@@ -16018,6 +18251,10 @@ export type ProductVariantOrderByInput =   'id_ASC' |
   'reserved_DESC' |
   'nonReservable_ASC' |
   'nonReservable_DESC' |
+  'offloaded_ASC' |
+  'offloaded_DESC' |
+  'stored_ASC' |
+  'stored_DESC' |
   'createdAt_ASC' |
   'createdAt_DESC' |
   'updatedAt_ASC' |
@@ -16099,6 +18336,17 @@ export type SizeOrderByInput =   'id_ASC' |
   'display_ASC' |
   'display_DESC'
 
+export type TagOrderByInput =   'id_ASC' |
+  'id_DESC' |
+  'name_ASC' |
+  'name_DESC' |
+  'description_ASC' |
+  'description_DESC' |
+  'createdAt_ASC' |
+  'createdAt_DESC' |
+  'updatedAt_ASC' |
+  'updatedAt_DESC'
+
 export type TopSizeOrderByInput =   'id_ASC' |
   'id_DESC' |
   'letter_ASC' |
@@ -16136,6 +18384,34 @@ export type UserOrderByInput =   'id_ASC' |
 export type UserRole =   'Admin' |
   'Customer' |
   'Partner'
+
+export type WarehouseLocationConstraintOrderByInput =   'id_ASC' |
+  'id_DESC' |
+  'limit_ASC' |
+  'limit_DESC' |
+  'createdAt_ASC' |
+  'createdAt_DESC' |
+  'updatedAt_ASC' |
+  'updatedAt_DESC'
+
+export type WarehouseLocationOrderByInput =   'id_ASC' |
+  'id_DESC' |
+  'type_ASC' |
+  'type_DESC' |
+  'barcode_ASC' |
+  'barcode_DESC' |
+  'locationCode_ASC' |
+  'locationCode_DESC' |
+  'itemCode_ASC' |
+  'itemCode_DESC' |
+  'createdAt_ASC' |
+  'createdAt_DESC' |
+  'updatedAt_ASC' |
+  'updatedAt_DESC'
+
+export type WarehouseLocationType =   'Conveyor' |
+  'Rail' |
+  'Bin'
 
 export interface BagItemCreateInput {
   id?: ID_Input | null
@@ -16949,6 +19225,11 @@ export interface CategoryCreateManyInput {
   connect?: CategoryWhereUniqueInput[] | CategoryWhereUniqueInput | null
 }
 
+export interface CategoryCreateOneInput {
+  create?: CategoryCreateInput | null
+  connect?: CategoryWhereUniqueInput | null
+}
+
 export interface CategoryCreateOneWithoutProductsInput {
   create?: CategoryCreateWithoutProductsInput | null
   connect?: CategoryWhereUniqueInput | null
@@ -17092,6 +19373,13 @@ export interface CategoryUpdateManyWithWhereNestedInput {
   data: CategoryUpdateManyDataInput
 }
 
+export interface CategoryUpdateOneRequiredInput {
+  create?: CategoryCreateInput | null
+  connect?: CategoryWhereUniqueInput | null
+  update?: CategoryUpdateDataInput | null
+  upsert?: CategoryUpsertNestedInput | null
+}
+
 export interface CategoryUpdateOneRequiredWithoutProductsInput {
   create?: CategoryCreateWithoutProductsInput | null
   connect?: CategoryWhereUniqueInput | null
@@ -17111,6 +19399,11 @@ export interface CategoryUpdateWithoutProductsDataInput {
 export interface CategoryUpdateWithWhereUniqueNestedInput {
   where: CategoryWhereUniqueInput
   data: CategoryUpdateDataInput
+}
+
+export interface CategoryUpsertNestedInput {
+  update: CategoryUpdateDataInput
+  create: CategoryCreateInput
 }
 
 export interface CategoryUpsertWithoutProductsInput {
@@ -19182,8 +21475,13 @@ export interface PhysicalProductCreateInput {
   seasonsUID: String
   inventoryStatus: InventoryStatus
   productStatus: PhysicalProductStatus
+  offloadMethod?: PhysicalProductOffloadMethod | null
+  offloadNotes?: String | null
+  barcode: String
+  sequenceNumber: Int
   location?: LocationCreateOneWithoutPhysicalProductsInput | null
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput
+  warehouseLocation?: WarehouseLocationCreateOneWithoutPhysicalProductsInput | null
 }
 
 export interface PhysicalProductCreateManyInput {
@@ -19201,12 +21499,22 @@ export interface PhysicalProductCreateManyWithoutProductVariantInput {
   connect?: PhysicalProductWhereUniqueInput[] | PhysicalProductWhereUniqueInput | null
 }
 
+export interface PhysicalProductCreateManyWithoutWarehouseLocationInput {
+  create?: PhysicalProductCreateWithoutWarehouseLocationInput[] | PhysicalProductCreateWithoutWarehouseLocationInput | null
+  connect?: PhysicalProductWhereUniqueInput[] | PhysicalProductWhereUniqueInput | null
+}
+
 export interface PhysicalProductCreateWithoutLocationInput {
   id?: ID_Input | null
   seasonsUID: String
   inventoryStatus: InventoryStatus
   productStatus: PhysicalProductStatus
+  offloadMethod?: PhysicalProductOffloadMethod | null
+  offloadNotes?: String | null
+  barcode: String
+  sequenceNumber: Int
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput
+  warehouseLocation?: WarehouseLocationCreateOneWithoutPhysicalProductsInput | null
 }
 
 export interface PhysicalProductCreateWithoutProductVariantInput {
@@ -19214,7 +21522,25 @@ export interface PhysicalProductCreateWithoutProductVariantInput {
   seasonsUID: String
   inventoryStatus: InventoryStatus
   productStatus: PhysicalProductStatus
+  offloadMethod?: PhysicalProductOffloadMethod | null
+  offloadNotes?: String | null
+  barcode: String
+  sequenceNumber: Int
   location?: LocationCreateOneWithoutPhysicalProductsInput | null
+  warehouseLocation?: WarehouseLocationCreateOneWithoutPhysicalProductsInput | null
+}
+
+export interface PhysicalProductCreateWithoutWarehouseLocationInput {
+  id?: ID_Input | null
+  seasonsUID: String
+  inventoryStatus: InventoryStatus
+  productStatus: PhysicalProductStatus
+  offloadMethod?: PhysicalProductOffloadMethod | null
+  offloadNotes?: String | null
+  barcode: String
+  sequenceNumber: Int
+  location?: LocationCreateOneWithoutPhysicalProductsInput | null
+  productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput
 }
 
 export interface PhysicalProductScalarWhereInput {
@@ -19257,6 +21583,46 @@ export interface PhysicalProductScalarWhereInput {
   productStatus_not?: PhysicalProductStatus | null
   productStatus_in?: PhysicalProductStatus[] | PhysicalProductStatus | null
   productStatus_not_in?: PhysicalProductStatus[] | PhysicalProductStatus | null
+  offloadMethod?: PhysicalProductOffloadMethod | null
+  offloadMethod_not?: PhysicalProductOffloadMethod | null
+  offloadMethod_in?: PhysicalProductOffloadMethod[] | PhysicalProductOffloadMethod | null
+  offloadMethod_not_in?: PhysicalProductOffloadMethod[] | PhysicalProductOffloadMethod | null
+  offloadNotes?: String | null
+  offloadNotes_not?: String | null
+  offloadNotes_in?: String[] | String | null
+  offloadNotes_not_in?: String[] | String | null
+  offloadNotes_lt?: String | null
+  offloadNotes_lte?: String | null
+  offloadNotes_gt?: String | null
+  offloadNotes_gte?: String | null
+  offloadNotes_contains?: String | null
+  offloadNotes_not_contains?: String | null
+  offloadNotes_starts_with?: String | null
+  offloadNotes_not_starts_with?: String | null
+  offloadNotes_ends_with?: String | null
+  offloadNotes_not_ends_with?: String | null
+  barcode?: String | null
+  barcode_not?: String | null
+  barcode_in?: String[] | String | null
+  barcode_not_in?: String[] | String | null
+  barcode_lt?: String | null
+  barcode_lte?: String | null
+  barcode_gt?: String | null
+  barcode_gte?: String | null
+  barcode_contains?: String | null
+  barcode_not_contains?: String | null
+  barcode_starts_with?: String | null
+  barcode_not_starts_with?: String | null
+  barcode_ends_with?: String | null
+  barcode_not_ends_with?: String | null
+  sequenceNumber?: Int | null
+  sequenceNumber_not?: Int | null
+  sequenceNumber_in?: Int[] | Int | null
+  sequenceNumber_not_in?: Int[] | Int | null
+  sequenceNumber_lt?: Int | null
+  sequenceNumber_lte?: Int | null
+  sequenceNumber_gt?: Int | null
+  sequenceNumber_gte?: Int | null
   createdAt?: DateTime | null
   createdAt_not?: DateTime | null
   createdAt_in?: DateTime[] | DateTime | null
@@ -19290,22 +21656,36 @@ export interface PhysicalProductUpdateDataInput {
   seasonsUID?: String | null
   inventoryStatus?: InventoryStatus | null
   productStatus?: PhysicalProductStatus | null
+  offloadMethod?: PhysicalProductOffloadMethod | null
+  offloadNotes?: String | null
+  barcode?: String | null
+  sequenceNumber?: Int | null
   location?: LocationUpdateOneWithoutPhysicalProductsInput | null
   productVariant?: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput | null
+  warehouseLocation?: WarehouseLocationUpdateOneWithoutPhysicalProductsInput | null
 }
 
 export interface PhysicalProductUpdateInput {
   seasonsUID?: String | null
   inventoryStatus?: InventoryStatus | null
   productStatus?: PhysicalProductStatus | null
+  offloadMethod?: PhysicalProductOffloadMethod | null
+  offloadNotes?: String | null
+  barcode?: String | null
+  sequenceNumber?: Int | null
   location?: LocationUpdateOneWithoutPhysicalProductsInput | null
   productVariant?: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput | null
+  warehouseLocation?: WarehouseLocationUpdateOneWithoutPhysicalProductsInput | null
 }
 
 export interface PhysicalProductUpdateManyDataInput {
   seasonsUID?: String | null
   inventoryStatus?: InventoryStatus | null
   productStatus?: PhysicalProductStatus | null
+  offloadMethod?: PhysicalProductOffloadMethod | null
+  offloadNotes?: String | null
+  barcode?: String | null
+  sequenceNumber?: Int | null
 }
 
 export interface PhysicalProductUpdateManyInput {
@@ -19324,6 +21704,10 @@ export interface PhysicalProductUpdateManyMutationInput {
   seasonsUID?: String | null
   inventoryStatus?: InventoryStatus | null
   productStatus?: PhysicalProductStatus | null
+  offloadMethod?: PhysicalProductOffloadMethod | null
+  offloadNotes?: String | null
+  barcode?: String | null
+  sequenceNumber?: Int | null
 }
 
 export interface PhysicalProductUpdateManyWithoutLocationInput {
@@ -19350,6 +21734,18 @@ export interface PhysicalProductUpdateManyWithoutProductVariantInput {
   upsert?: PhysicalProductUpsertWithWhereUniqueWithoutProductVariantInput[] | PhysicalProductUpsertWithWhereUniqueWithoutProductVariantInput | null
 }
 
+export interface PhysicalProductUpdateManyWithoutWarehouseLocationInput {
+  create?: PhysicalProductCreateWithoutWarehouseLocationInput[] | PhysicalProductCreateWithoutWarehouseLocationInput | null
+  connect?: PhysicalProductWhereUniqueInput[] | PhysicalProductWhereUniqueInput | null
+  set?: PhysicalProductWhereUniqueInput[] | PhysicalProductWhereUniqueInput | null
+  disconnect?: PhysicalProductWhereUniqueInput[] | PhysicalProductWhereUniqueInput | null
+  delete?: PhysicalProductWhereUniqueInput[] | PhysicalProductWhereUniqueInput | null
+  update?: PhysicalProductUpdateWithWhereUniqueWithoutWarehouseLocationInput[] | PhysicalProductUpdateWithWhereUniqueWithoutWarehouseLocationInput | null
+  updateMany?: PhysicalProductUpdateManyWithWhereNestedInput[] | PhysicalProductUpdateManyWithWhereNestedInput | null
+  deleteMany?: PhysicalProductScalarWhereInput[] | PhysicalProductScalarWhereInput | null
+  upsert?: PhysicalProductUpsertWithWhereUniqueWithoutWarehouseLocationInput[] | PhysicalProductUpsertWithWhereUniqueWithoutWarehouseLocationInput | null
+}
+
 export interface PhysicalProductUpdateManyWithWhereNestedInput {
   where: PhysicalProductScalarWhereInput
   data: PhysicalProductUpdateManyDataInput
@@ -19359,14 +21755,36 @@ export interface PhysicalProductUpdateWithoutLocationDataInput {
   seasonsUID?: String | null
   inventoryStatus?: InventoryStatus | null
   productStatus?: PhysicalProductStatus | null
+  offloadMethod?: PhysicalProductOffloadMethod | null
+  offloadNotes?: String | null
+  barcode?: String | null
+  sequenceNumber?: Int | null
   productVariant?: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput | null
+  warehouseLocation?: WarehouseLocationUpdateOneWithoutPhysicalProductsInput | null
 }
 
 export interface PhysicalProductUpdateWithoutProductVariantDataInput {
   seasonsUID?: String | null
   inventoryStatus?: InventoryStatus | null
   productStatus?: PhysicalProductStatus | null
+  offloadMethod?: PhysicalProductOffloadMethod | null
+  offloadNotes?: String | null
+  barcode?: String | null
+  sequenceNumber?: Int | null
   location?: LocationUpdateOneWithoutPhysicalProductsInput | null
+  warehouseLocation?: WarehouseLocationUpdateOneWithoutPhysicalProductsInput | null
+}
+
+export interface PhysicalProductUpdateWithoutWarehouseLocationDataInput {
+  seasonsUID?: String | null
+  inventoryStatus?: InventoryStatus | null
+  productStatus?: PhysicalProductStatus | null
+  offloadMethod?: PhysicalProductOffloadMethod | null
+  offloadNotes?: String | null
+  barcode?: String | null
+  sequenceNumber?: Int | null
+  location?: LocationUpdateOneWithoutPhysicalProductsInput | null
+  productVariant?: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput | null
 }
 
 export interface PhysicalProductUpdateWithWhereUniqueNestedInput {
@@ -19382,6 +21800,11 @@ export interface PhysicalProductUpdateWithWhereUniqueWithoutLocationInput {
 export interface PhysicalProductUpdateWithWhereUniqueWithoutProductVariantInput {
   where: PhysicalProductWhereUniqueInput
   data: PhysicalProductUpdateWithoutProductVariantDataInput
+}
+
+export interface PhysicalProductUpdateWithWhereUniqueWithoutWarehouseLocationInput {
+  where: PhysicalProductWhereUniqueInput
+  data: PhysicalProductUpdateWithoutWarehouseLocationDataInput
 }
 
 export interface PhysicalProductUpsertWithWhereUniqueNestedInput {
@@ -19400,6 +21823,12 @@ export interface PhysicalProductUpsertWithWhereUniqueWithoutProductVariantInput 
   where: PhysicalProductWhereUniqueInput
   update: PhysicalProductUpdateWithoutProductVariantDataInput
   create: PhysicalProductCreateWithoutProductVariantInput
+}
+
+export interface PhysicalProductUpsertWithWhereUniqueWithoutWarehouseLocationInput {
+  where: PhysicalProductWhereUniqueInput
+  update: PhysicalProductUpdateWithoutWarehouseLocationDataInput
+  create: PhysicalProductCreateWithoutWarehouseLocationInput
 }
 
 export interface PhysicalProductWhereInput {
@@ -19442,6 +21871,46 @@ export interface PhysicalProductWhereInput {
   productStatus_not?: PhysicalProductStatus | null
   productStatus_in?: PhysicalProductStatus[] | PhysicalProductStatus | null
   productStatus_not_in?: PhysicalProductStatus[] | PhysicalProductStatus | null
+  offloadMethod?: PhysicalProductOffloadMethod | null
+  offloadMethod_not?: PhysicalProductOffloadMethod | null
+  offloadMethod_in?: PhysicalProductOffloadMethod[] | PhysicalProductOffloadMethod | null
+  offloadMethod_not_in?: PhysicalProductOffloadMethod[] | PhysicalProductOffloadMethod | null
+  offloadNotes?: String | null
+  offloadNotes_not?: String | null
+  offloadNotes_in?: String[] | String | null
+  offloadNotes_not_in?: String[] | String | null
+  offloadNotes_lt?: String | null
+  offloadNotes_lte?: String | null
+  offloadNotes_gt?: String | null
+  offloadNotes_gte?: String | null
+  offloadNotes_contains?: String | null
+  offloadNotes_not_contains?: String | null
+  offloadNotes_starts_with?: String | null
+  offloadNotes_not_starts_with?: String | null
+  offloadNotes_ends_with?: String | null
+  offloadNotes_not_ends_with?: String | null
+  barcode?: String | null
+  barcode_not?: String | null
+  barcode_in?: String[] | String | null
+  barcode_not_in?: String[] | String | null
+  barcode_lt?: String | null
+  barcode_lte?: String | null
+  barcode_gt?: String | null
+  barcode_gte?: String | null
+  barcode_contains?: String | null
+  barcode_not_contains?: String | null
+  barcode_starts_with?: String | null
+  barcode_not_starts_with?: String | null
+  barcode_ends_with?: String | null
+  barcode_not_ends_with?: String | null
+  sequenceNumber?: Int | null
+  sequenceNumber_not?: Int | null
+  sequenceNumber_in?: Int[] | Int | null
+  sequenceNumber_not_in?: Int[] | Int | null
+  sequenceNumber_lt?: Int | null
+  sequenceNumber_lte?: Int | null
+  sequenceNumber_gt?: Int | null
+  sequenceNumber_gte?: Int | null
   createdAt?: DateTime | null
   createdAt_not?: DateTime | null
   createdAt_in?: DateTime[] | DateTime | null
@@ -19460,6 +21929,7 @@ export interface PhysicalProductWhereInput {
   updatedAt_gte?: DateTime | null
   location?: LocationWhereInput | null
   productVariant?: ProductVariantWhereInput | null
+  warehouseLocation?: WarehouseLocationWhereInput | null
 }
 
 export interface PhysicalProductWhereUniqueInput {
@@ -19481,7 +21951,6 @@ export interface ProductCreateInput {
   images?: Json | null
   modelHeight?: Int | null
   retailPrice?: Int | null
-  tags?: Json | null
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
@@ -19493,6 +21962,7 @@ export interface ProductCreateInput {
   modelSize?: SizeCreateOneInput | null
   color: ColorCreateOneInput
   secondaryColor?: ColorCreateOneInput | null
+  tags?: TagCreateManyWithoutProductsInput | null
   functions?: ProductFunctionCreateManyInput | null
   variants?: ProductVariantCreateManyWithoutProductInput | null
 }
@@ -19514,6 +21984,11 @@ export interface ProductCreateManyWithoutCategoryInput {
 
 export interface ProductCreateManyWithoutModelInput {
   create?: ProductCreateWithoutModelInput[] | ProductCreateWithoutModelInput | null
+  connect?: ProductWhereUniqueInput[] | ProductWhereUniqueInput | null
+}
+
+export interface ProductCreateManyWithoutTagsInput {
+  create?: ProductCreateWithoutTagsInput[] | ProductCreateWithoutTagsInput | null
   connect?: ProductWhereUniqueInput[] | ProductWhereUniqueInput | null
 }
 
@@ -19541,7 +22016,6 @@ export interface ProductCreateWithoutBrandInput {
   images?: Json | null
   modelHeight?: Int | null
   retailPrice?: Int | null
-  tags?: Json | null
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
@@ -19552,6 +22026,7 @@ export interface ProductCreateWithoutBrandInput {
   modelSize?: SizeCreateOneInput | null
   color: ColorCreateOneInput
   secondaryColor?: ColorCreateOneInput | null
+  tags?: TagCreateManyWithoutProductsInput | null
   functions?: ProductFunctionCreateManyInput | null
   variants?: ProductVariantCreateManyWithoutProductInput | null
 }
@@ -19566,7 +22041,6 @@ export interface ProductCreateWithoutCategoryInput {
   images?: Json | null
   modelHeight?: Int | null
   retailPrice?: Int | null
-  tags?: Json | null
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
@@ -19577,6 +22051,7 @@ export interface ProductCreateWithoutCategoryInput {
   modelSize?: SizeCreateOneInput | null
   color: ColorCreateOneInput
   secondaryColor?: ColorCreateOneInput | null
+  tags?: TagCreateManyWithoutProductsInput | null
   functions?: ProductFunctionCreateManyInput | null
   variants?: ProductVariantCreateManyWithoutProductInput | null
 }
@@ -19591,7 +22066,6 @@ export interface ProductCreateWithoutModelInput {
   images?: Json | null
   modelHeight?: Int | null
   retailPrice?: Int | null
-  tags?: Json | null
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
@@ -19599,6 +22073,32 @@ export interface ProductCreateWithoutModelInput {
   outerMaterials?: ProductCreateouterMaterialsInput | null
   brand: BrandCreateOneWithoutProductsInput
   category: CategoryCreateOneWithoutProductsInput
+  modelSize?: SizeCreateOneInput | null
+  color: ColorCreateOneInput
+  secondaryColor?: ColorCreateOneInput | null
+  tags?: TagCreateManyWithoutProductsInput | null
+  functions?: ProductFunctionCreateManyInput | null
+  variants?: ProductVariantCreateManyWithoutProductInput | null
+}
+
+export interface ProductCreateWithoutTagsInput {
+  id?: ID_Input | null
+  slug: String
+  name: String
+  type?: ProductType | null
+  description?: String | null
+  externalURL?: String | null
+  images?: Json | null
+  modelHeight?: Int | null
+  retailPrice?: Int | null
+  status?: ProductStatus | null
+  season?: String | null
+  architecture?: ProductArchitecture | null
+  innerMaterials?: ProductCreateinnerMaterialsInput | null
+  outerMaterials?: ProductCreateouterMaterialsInput | null
+  brand: BrandCreateOneWithoutProductsInput
+  category: CategoryCreateOneWithoutProductsInput
+  model?: ProductModelCreateOneWithoutProductsInput | null
   modelSize?: SizeCreateOneInput | null
   color: ColorCreateOneInput
   secondaryColor?: ColorCreateOneInput | null
@@ -19616,7 +22116,6 @@ export interface ProductCreateWithoutVariantsInput {
   images?: Json | null
   modelHeight?: Int | null
   retailPrice?: Int | null
-  tags?: Json | null
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
@@ -19628,6 +22127,7 @@ export interface ProductCreateWithoutVariantsInput {
   modelSize?: SizeCreateOneInput | null
   color: ColorCreateOneInput
   secondaryColor?: ColorCreateOneInput | null
+  tags?: TagCreateManyWithoutProductsInput | null
   functions?: ProductFunctionCreateManyInput | null
 }
 
@@ -20237,7 +22737,6 @@ export interface ProductUpdateDataInput {
   images?: Json | null
   modelHeight?: Int | null
   retailPrice?: Int | null
-  tags?: Json | null
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
@@ -20249,6 +22748,7 @@ export interface ProductUpdateDataInput {
   modelSize?: SizeUpdateOneInput | null
   color?: ColorUpdateOneRequiredInput | null
   secondaryColor?: ColorUpdateOneInput | null
+  tags?: TagUpdateManyWithoutProductsInput | null
   functions?: ProductFunctionUpdateManyInput | null
   variants?: ProductVariantUpdateManyWithoutProductInput | null
 }
@@ -20266,7 +22766,6 @@ export interface ProductUpdateInput {
   images?: Json | null
   modelHeight?: Int | null
   retailPrice?: Int | null
-  tags?: Json | null
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
@@ -20278,6 +22777,7 @@ export interface ProductUpdateInput {
   modelSize?: SizeUpdateOneInput | null
   color?: ColorUpdateOneRequiredInput | null
   secondaryColor?: ColorUpdateOneInput | null
+  tags?: TagUpdateManyWithoutProductsInput | null
   functions?: ProductFunctionUpdateManyInput | null
   variants?: ProductVariantUpdateManyWithoutProductInput | null
 }
@@ -20291,7 +22791,6 @@ export interface ProductUpdateManyDataInput {
   images?: Json | null
   modelHeight?: Int | null
   retailPrice?: Int | null
-  tags?: Json | null
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
@@ -20320,7 +22819,6 @@ export interface ProductUpdateManyMutationInput {
   images?: Json | null
   modelHeight?: Int | null
   retailPrice?: Int | null
-  tags?: Json | null
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
@@ -20364,6 +22862,18 @@ export interface ProductUpdateManyWithoutModelInput {
   upsert?: ProductUpsertWithWhereUniqueWithoutModelInput[] | ProductUpsertWithWhereUniqueWithoutModelInput | null
 }
 
+export interface ProductUpdateManyWithoutTagsInput {
+  create?: ProductCreateWithoutTagsInput[] | ProductCreateWithoutTagsInput | null
+  connect?: ProductWhereUniqueInput[] | ProductWhereUniqueInput | null
+  set?: ProductWhereUniqueInput[] | ProductWhereUniqueInput | null
+  disconnect?: ProductWhereUniqueInput[] | ProductWhereUniqueInput | null
+  delete?: ProductWhereUniqueInput[] | ProductWhereUniqueInput | null
+  update?: ProductUpdateWithWhereUniqueWithoutTagsInput[] | ProductUpdateWithWhereUniqueWithoutTagsInput | null
+  updateMany?: ProductUpdateManyWithWhereNestedInput[] | ProductUpdateManyWithWhereNestedInput | null
+  deleteMany?: ProductScalarWhereInput[] | ProductScalarWhereInput | null
+  upsert?: ProductUpsertWithWhereUniqueWithoutTagsInput[] | ProductUpsertWithWhereUniqueWithoutTagsInput | null
+}
+
 export interface ProductUpdateManyWithWhereNestedInput {
   where: ProductScalarWhereInput
   data: ProductUpdateManyDataInput
@@ -20396,7 +22906,6 @@ export interface ProductUpdateWithoutBrandDataInput {
   images?: Json | null
   modelHeight?: Int | null
   retailPrice?: Int | null
-  tags?: Json | null
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
@@ -20407,6 +22916,7 @@ export interface ProductUpdateWithoutBrandDataInput {
   modelSize?: SizeUpdateOneInput | null
   color?: ColorUpdateOneRequiredInput | null
   secondaryColor?: ColorUpdateOneInput | null
+  tags?: TagUpdateManyWithoutProductsInput | null
   functions?: ProductFunctionUpdateManyInput | null
   variants?: ProductVariantUpdateManyWithoutProductInput | null
 }
@@ -20420,7 +22930,6 @@ export interface ProductUpdateWithoutCategoryDataInput {
   images?: Json | null
   modelHeight?: Int | null
   retailPrice?: Int | null
-  tags?: Json | null
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
@@ -20431,6 +22940,7 @@ export interface ProductUpdateWithoutCategoryDataInput {
   modelSize?: SizeUpdateOneInput | null
   color?: ColorUpdateOneRequiredInput | null
   secondaryColor?: ColorUpdateOneInput | null
+  tags?: TagUpdateManyWithoutProductsInput | null
   functions?: ProductFunctionUpdateManyInput | null
   variants?: ProductVariantUpdateManyWithoutProductInput | null
 }
@@ -20444,7 +22954,6 @@ export interface ProductUpdateWithoutModelDataInput {
   images?: Json | null
   modelHeight?: Int | null
   retailPrice?: Int | null
-  tags?: Json | null
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
@@ -20452,6 +22961,31 @@ export interface ProductUpdateWithoutModelDataInput {
   outerMaterials?: ProductUpdateouterMaterialsInput | null
   brand?: BrandUpdateOneRequiredWithoutProductsInput | null
   category?: CategoryUpdateOneRequiredWithoutProductsInput | null
+  modelSize?: SizeUpdateOneInput | null
+  color?: ColorUpdateOneRequiredInput | null
+  secondaryColor?: ColorUpdateOneInput | null
+  tags?: TagUpdateManyWithoutProductsInput | null
+  functions?: ProductFunctionUpdateManyInput | null
+  variants?: ProductVariantUpdateManyWithoutProductInput | null
+}
+
+export interface ProductUpdateWithoutTagsDataInput {
+  slug?: String | null
+  name?: String | null
+  type?: ProductType | null
+  description?: String | null
+  externalURL?: String | null
+  images?: Json | null
+  modelHeight?: Int | null
+  retailPrice?: Int | null
+  status?: ProductStatus | null
+  season?: String | null
+  architecture?: ProductArchitecture | null
+  innerMaterials?: ProductUpdateinnerMaterialsInput | null
+  outerMaterials?: ProductUpdateouterMaterialsInput | null
+  brand?: BrandUpdateOneRequiredWithoutProductsInput | null
+  category?: CategoryUpdateOneRequiredWithoutProductsInput | null
+  model?: ProductModelUpdateOneWithoutProductsInput | null
   modelSize?: SizeUpdateOneInput | null
   color?: ColorUpdateOneRequiredInput | null
   secondaryColor?: ColorUpdateOneInput | null
@@ -20468,7 +23002,6 @@ export interface ProductUpdateWithoutVariantsDataInput {
   images?: Json | null
   modelHeight?: Int | null
   retailPrice?: Int | null
-  tags?: Json | null
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
@@ -20480,6 +23013,7 @@ export interface ProductUpdateWithoutVariantsDataInput {
   modelSize?: SizeUpdateOneInput | null
   color?: ColorUpdateOneRequiredInput | null
   secondaryColor?: ColorUpdateOneInput | null
+  tags?: TagUpdateManyWithoutProductsInput | null
   functions?: ProductFunctionUpdateManyInput | null
 }
 
@@ -20501,6 +23035,11 @@ export interface ProductUpdateWithWhereUniqueWithoutCategoryInput {
 export interface ProductUpdateWithWhereUniqueWithoutModelInput {
   where: ProductWhereUniqueInput
   data: ProductUpdateWithoutModelDataInput
+}
+
+export interface ProductUpdateWithWhereUniqueWithoutTagsInput {
+  where: ProductWhereUniqueInput
+  data: ProductUpdateWithoutTagsDataInput
 }
 
 export interface ProductUpsertNestedInput {
@@ -20537,6 +23076,12 @@ export interface ProductUpsertWithWhereUniqueWithoutModelInput {
   create: ProductCreateWithoutModelInput
 }
 
+export interface ProductUpsertWithWhereUniqueWithoutTagsInput {
+  where: ProductWhereUniqueInput
+  update: ProductUpdateWithoutTagsDataInput
+  create: ProductCreateWithoutTagsInput
+}
+
 export interface ProductVariantCreateInput {
   id?: ID_Input | null
   sku?: String | null
@@ -20548,6 +23093,8 @@ export interface ProductVariantCreateInput {
   reservable: Int
   reserved: Int
   nonReservable: Int
+  offloaded: Int
+  stored: Int
   color: ColorCreateOneWithoutProductVariantsInput
   internalSize?: SizeCreateOneInput | null
   manufacturerSizes?: SizeCreateManyInput | null
@@ -20586,6 +23133,8 @@ export interface ProductVariantCreateWithoutColorInput {
   reservable: Int
   reserved: Int
   nonReservable: Int
+  offloaded: Int
+  stored: Int
   internalSize?: SizeCreateOneInput | null
   manufacturerSizes?: SizeCreateManyInput | null
   product: ProductCreateOneWithoutVariantsInput
@@ -20603,6 +23152,8 @@ export interface ProductVariantCreateWithoutPhysicalProductsInput {
   reservable: Int
   reserved: Int
   nonReservable: Int
+  offloaded: Int
+  stored: Int
   color: ColorCreateOneWithoutProductVariantsInput
   internalSize?: SizeCreateOneInput | null
   manufacturerSizes?: SizeCreateManyInput | null
@@ -20620,6 +23171,8 @@ export interface ProductVariantCreateWithoutProductInput {
   reservable: Int
   reserved: Int
   nonReservable: Int
+  offloaded: Int
+  stored: Int
   color: ColorCreateOneWithoutProductVariantsInput
   internalSize?: SizeCreateOneInput | null
   manufacturerSizes?: SizeCreateManyInput | null
@@ -21078,6 +23631,22 @@ export interface ProductVariantScalarWhereInput {
   nonReservable_lte?: Int | null
   nonReservable_gt?: Int | null
   nonReservable_gte?: Int | null
+  offloaded?: Int | null
+  offloaded_not?: Int | null
+  offloaded_in?: Int[] | Int | null
+  offloaded_not_in?: Int[] | Int | null
+  offloaded_lt?: Int | null
+  offloaded_lte?: Int | null
+  offloaded_gt?: Int | null
+  offloaded_gte?: Int | null
+  stored?: Int | null
+  stored_not?: Int | null
+  stored_in?: Int[] | Int | null
+  stored_not_in?: Int[] | Int | null
+  stored_lt?: Int | null
+  stored_lte?: Int | null
+  stored_gt?: Int | null
+  stored_gte?: Int | null
   createdAt?: DateTime | null
   createdAt_not?: DateTime | null
   createdAt_in?: DateTime[] | DateTime | null
@@ -21117,6 +23686,8 @@ export interface ProductVariantUpdateDataInput {
   reservable?: Int | null
   reserved?: Int | null
   nonReservable?: Int | null
+  offloaded?: Int | null
+  stored?: Int | null
   color?: ColorUpdateOneRequiredWithoutProductVariantsInput | null
   internalSize?: SizeUpdateOneInput | null
   manufacturerSizes?: SizeUpdateManyInput | null
@@ -21134,6 +23705,8 @@ export interface ProductVariantUpdateInput {
   reservable?: Int | null
   reserved?: Int | null
   nonReservable?: Int | null
+  offloaded?: Int | null
+  stored?: Int | null
   color?: ColorUpdateOneRequiredWithoutProductVariantsInput | null
   internalSize?: SizeUpdateOneInput | null
   manufacturerSizes?: SizeUpdateManyInput | null
@@ -21151,6 +23724,8 @@ export interface ProductVariantUpdateManyDataInput {
   reservable?: Int | null
   reserved?: Int | null
   nonReservable?: Int | null
+  offloaded?: Int | null
+  stored?: Int | null
 }
 
 export interface ProductVariantUpdateManyMutationInput {
@@ -21163,6 +23738,8 @@ export interface ProductVariantUpdateManyMutationInput {
   reservable?: Int | null
   reserved?: Int | null
   nonReservable?: Int | null
+  offloaded?: Int | null
+  stored?: Int | null
 }
 
 export interface ProductVariantUpdateManyWithoutColorInput {
@@ -21218,6 +23795,8 @@ export interface ProductVariantUpdateWithoutColorDataInput {
   reservable?: Int | null
   reserved?: Int | null
   nonReservable?: Int | null
+  offloaded?: Int | null
+  stored?: Int | null
   internalSize?: SizeUpdateOneInput | null
   manufacturerSizes?: SizeUpdateManyInput | null
   product?: ProductUpdateOneRequiredWithoutVariantsInput | null
@@ -21234,6 +23813,8 @@ export interface ProductVariantUpdateWithoutPhysicalProductsDataInput {
   reservable?: Int | null
   reserved?: Int | null
   nonReservable?: Int | null
+  offloaded?: Int | null
+  stored?: Int | null
   color?: ColorUpdateOneRequiredWithoutProductVariantsInput | null
   internalSize?: SizeUpdateOneInput | null
   manufacturerSizes?: SizeUpdateManyInput | null
@@ -21250,6 +23831,8 @@ export interface ProductVariantUpdateWithoutProductDataInput {
   reservable?: Int | null
   reserved?: Int | null
   nonReservable?: Int | null
+  offloaded?: Int | null
+  stored?: Int | null
   color?: ColorUpdateOneRequiredWithoutProductVariantsInput | null
   internalSize?: SizeUpdateOneInput | null
   manufacturerSizes?: SizeUpdateManyInput | null
@@ -21446,6 +24029,22 @@ export interface ProductVariantWhereInput {
   nonReservable_lte?: Int | null
   nonReservable_gt?: Int | null
   nonReservable_gte?: Int | null
+  offloaded?: Int | null
+  offloaded_not?: Int | null
+  offloaded_in?: Int[] | Int | null
+  offloaded_not_in?: Int[] | Int | null
+  offloaded_lt?: Int | null
+  offloaded_lte?: Int | null
+  offloaded_gt?: Int | null
+  offloaded_gte?: Int | null
+  stored?: Int | null
+  stored_not?: Int | null
+  stored_in?: Int[] | Int | null
+  stored_not_in?: Int[] | Int | null
+  stored_lt?: Int | null
+  stored_lte?: Int | null
+  stored_gt?: Int | null
+  stored_gte?: Int | null
   createdAt?: DateTime | null
   createdAt_not?: DateTime | null
   createdAt_in?: DateTime[] | DateTime | null
@@ -21616,6 +24215,9 @@ export interface ProductWhereInput {
   modelSize?: SizeWhereInput | null
   color?: ColorWhereInput | null
   secondaryColor?: ColorWhereInput | null
+  tags_every?: TagWhereInput | null
+  tags_some?: TagWhereInput | null
+  tags_none?: TagWhereInput | null
   functions_every?: ProductFunctionWhereInput | null
   functions_some?: ProductFunctionWhereInput | null
   functions_none?: ProductFunctionWhereInput | null
@@ -22374,6 +24976,220 @@ export interface SizeWhereUniqueInput {
   slug?: String | null
 }
 
+export interface TagCreateInput {
+  id?: ID_Input | null
+  name: String
+  description?: String | null
+  products?: ProductCreateManyWithoutTagsInput | null
+}
+
+export interface TagCreateManyWithoutProductsInput {
+  create?: TagCreateWithoutProductsInput[] | TagCreateWithoutProductsInput | null
+  connect?: TagWhereUniqueInput[] | TagWhereUniqueInput | null
+}
+
+export interface TagCreateWithoutProductsInput {
+  id?: ID_Input | null
+  name: String
+  description?: String | null
+}
+
+export interface TagScalarWhereInput {
+  AND?: TagScalarWhereInput[] | TagScalarWhereInput | null
+  OR?: TagScalarWhereInput[] | TagScalarWhereInput | null
+  NOT?: TagScalarWhereInput[] | TagScalarWhereInput | null
+  id?: ID_Input | null
+  id_not?: ID_Input | null
+  id_in?: ID_Output[] | ID_Output | null
+  id_not_in?: ID_Output[] | ID_Output | null
+  id_lt?: ID_Input | null
+  id_lte?: ID_Input | null
+  id_gt?: ID_Input | null
+  id_gte?: ID_Input | null
+  id_contains?: ID_Input | null
+  id_not_contains?: ID_Input | null
+  id_starts_with?: ID_Input | null
+  id_not_starts_with?: ID_Input | null
+  id_ends_with?: ID_Input | null
+  id_not_ends_with?: ID_Input | null
+  name?: String | null
+  name_not?: String | null
+  name_in?: String[] | String | null
+  name_not_in?: String[] | String | null
+  name_lt?: String | null
+  name_lte?: String | null
+  name_gt?: String | null
+  name_gte?: String | null
+  name_contains?: String | null
+  name_not_contains?: String | null
+  name_starts_with?: String | null
+  name_not_starts_with?: String | null
+  name_ends_with?: String | null
+  name_not_ends_with?: String | null
+  description?: String | null
+  description_not?: String | null
+  description_in?: String[] | String | null
+  description_not_in?: String[] | String | null
+  description_lt?: String | null
+  description_lte?: String | null
+  description_gt?: String | null
+  description_gte?: String | null
+  description_contains?: String | null
+  description_not_contains?: String | null
+  description_starts_with?: String | null
+  description_not_starts_with?: String | null
+  description_ends_with?: String | null
+  description_not_ends_with?: String | null
+  createdAt?: DateTime | null
+  createdAt_not?: DateTime | null
+  createdAt_in?: DateTime[] | DateTime | null
+  createdAt_not_in?: DateTime[] | DateTime | null
+  createdAt_lt?: DateTime | null
+  createdAt_lte?: DateTime | null
+  createdAt_gt?: DateTime | null
+  createdAt_gte?: DateTime | null
+  updatedAt?: DateTime | null
+  updatedAt_not?: DateTime | null
+  updatedAt_in?: DateTime[] | DateTime | null
+  updatedAt_not_in?: DateTime[] | DateTime | null
+  updatedAt_lt?: DateTime | null
+  updatedAt_lte?: DateTime | null
+  updatedAt_gt?: DateTime | null
+  updatedAt_gte?: DateTime | null
+}
+
+export interface TagSubscriptionWhereInput {
+  AND?: TagSubscriptionWhereInput[] | TagSubscriptionWhereInput | null
+  OR?: TagSubscriptionWhereInput[] | TagSubscriptionWhereInput | null
+  NOT?: TagSubscriptionWhereInput[] | TagSubscriptionWhereInput | null
+  mutation_in?: MutationType[] | MutationType | null
+  updatedFields_contains?: String | null
+  updatedFields_contains_every?: String[] | String | null
+  updatedFields_contains_some?: String[] | String | null
+  node?: TagWhereInput | null
+}
+
+export interface TagUpdateInput {
+  name?: String | null
+  description?: String | null
+  products?: ProductUpdateManyWithoutTagsInput | null
+}
+
+export interface TagUpdateManyDataInput {
+  name?: String | null
+  description?: String | null
+}
+
+export interface TagUpdateManyMutationInput {
+  name?: String | null
+  description?: String | null
+}
+
+export interface TagUpdateManyWithoutProductsInput {
+  create?: TagCreateWithoutProductsInput[] | TagCreateWithoutProductsInput | null
+  connect?: TagWhereUniqueInput[] | TagWhereUniqueInput | null
+  set?: TagWhereUniqueInput[] | TagWhereUniqueInput | null
+  disconnect?: TagWhereUniqueInput[] | TagWhereUniqueInput | null
+  delete?: TagWhereUniqueInput[] | TagWhereUniqueInput | null
+  update?: TagUpdateWithWhereUniqueWithoutProductsInput[] | TagUpdateWithWhereUniqueWithoutProductsInput | null
+  updateMany?: TagUpdateManyWithWhereNestedInput[] | TagUpdateManyWithWhereNestedInput | null
+  deleteMany?: TagScalarWhereInput[] | TagScalarWhereInput | null
+  upsert?: TagUpsertWithWhereUniqueWithoutProductsInput[] | TagUpsertWithWhereUniqueWithoutProductsInput | null
+}
+
+export interface TagUpdateManyWithWhereNestedInput {
+  where: TagScalarWhereInput
+  data: TagUpdateManyDataInput
+}
+
+export interface TagUpdateWithoutProductsDataInput {
+  name?: String | null
+  description?: String | null
+}
+
+export interface TagUpdateWithWhereUniqueWithoutProductsInput {
+  where: TagWhereUniqueInput
+  data: TagUpdateWithoutProductsDataInput
+}
+
+export interface TagUpsertWithWhereUniqueWithoutProductsInput {
+  where: TagWhereUniqueInput
+  update: TagUpdateWithoutProductsDataInput
+  create: TagCreateWithoutProductsInput
+}
+
+export interface TagWhereInput {
+  AND?: TagWhereInput[] | TagWhereInput | null
+  OR?: TagWhereInput[] | TagWhereInput | null
+  NOT?: TagWhereInput[] | TagWhereInput | null
+  id?: ID_Input | null
+  id_not?: ID_Input | null
+  id_in?: ID_Output[] | ID_Output | null
+  id_not_in?: ID_Output[] | ID_Output | null
+  id_lt?: ID_Input | null
+  id_lte?: ID_Input | null
+  id_gt?: ID_Input | null
+  id_gte?: ID_Input | null
+  id_contains?: ID_Input | null
+  id_not_contains?: ID_Input | null
+  id_starts_with?: ID_Input | null
+  id_not_starts_with?: ID_Input | null
+  id_ends_with?: ID_Input | null
+  id_not_ends_with?: ID_Input | null
+  name?: String | null
+  name_not?: String | null
+  name_in?: String[] | String | null
+  name_not_in?: String[] | String | null
+  name_lt?: String | null
+  name_lte?: String | null
+  name_gt?: String | null
+  name_gte?: String | null
+  name_contains?: String | null
+  name_not_contains?: String | null
+  name_starts_with?: String | null
+  name_not_starts_with?: String | null
+  name_ends_with?: String | null
+  name_not_ends_with?: String | null
+  description?: String | null
+  description_not?: String | null
+  description_in?: String[] | String | null
+  description_not_in?: String[] | String | null
+  description_lt?: String | null
+  description_lte?: String | null
+  description_gt?: String | null
+  description_gte?: String | null
+  description_contains?: String | null
+  description_not_contains?: String | null
+  description_starts_with?: String | null
+  description_not_starts_with?: String | null
+  description_ends_with?: String | null
+  description_not_ends_with?: String | null
+  createdAt?: DateTime | null
+  createdAt_not?: DateTime | null
+  createdAt_in?: DateTime[] | DateTime | null
+  createdAt_not_in?: DateTime[] | DateTime | null
+  createdAt_lt?: DateTime | null
+  createdAt_lte?: DateTime | null
+  createdAt_gt?: DateTime | null
+  createdAt_gte?: DateTime | null
+  updatedAt?: DateTime | null
+  updatedAt_not?: DateTime | null
+  updatedAt_in?: DateTime[] | DateTime | null
+  updatedAt_not_in?: DateTime[] | DateTime | null
+  updatedAt_lt?: DateTime | null
+  updatedAt_lte?: DateTime | null
+  updatedAt_gt?: DateTime | null
+  updatedAt_gte?: DateTime | null
+  products_every?: ProductWhereInput | null
+  products_some?: ProductWhereInput | null
+  products_none?: ProductWhereInput | null
+}
+
+export interface TagWhereUniqueInput {
+  id?: ID_Input | null
+  name?: String | null
+}
+
 export interface TopSizeCreateInput {
   id?: ID_Input | null
   letter?: LetterSize | null
@@ -22689,6 +25505,483 @@ export interface UserWhereUniqueInput {
   email?: String | null
 }
 
+export interface WarehouseLocationConstraintCreateInput {
+  id?: ID_Input | null
+  limit: Int
+  category: CategoryCreateOneInput
+  locations?: WarehouseLocationCreateManyWithoutConstraintsInput | null
+}
+
+export interface WarehouseLocationConstraintCreateManyWithoutLocationsInput {
+  create?: WarehouseLocationConstraintCreateWithoutLocationsInput[] | WarehouseLocationConstraintCreateWithoutLocationsInput | null
+  connect?: WarehouseLocationConstraintWhereUniqueInput[] | WarehouseLocationConstraintWhereUniqueInput | null
+}
+
+export interface WarehouseLocationConstraintCreateWithoutLocationsInput {
+  id?: ID_Input | null
+  limit: Int
+  category: CategoryCreateOneInput
+}
+
+export interface WarehouseLocationConstraintScalarWhereInput {
+  AND?: WarehouseLocationConstraintScalarWhereInput[] | WarehouseLocationConstraintScalarWhereInput | null
+  OR?: WarehouseLocationConstraintScalarWhereInput[] | WarehouseLocationConstraintScalarWhereInput | null
+  NOT?: WarehouseLocationConstraintScalarWhereInput[] | WarehouseLocationConstraintScalarWhereInput | null
+  id?: ID_Input | null
+  id_not?: ID_Input | null
+  id_in?: ID_Output[] | ID_Output | null
+  id_not_in?: ID_Output[] | ID_Output | null
+  id_lt?: ID_Input | null
+  id_lte?: ID_Input | null
+  id_gt?: ID_Input | null
+  id_gte?: ID_Input | null
+  id_contains?: ID_Input | null
+  id_not_contains?: ID_Input | null
+  id_starts_with?: ID_Input | null
+  id_not_starts_with?: ID_Input | null
+  id_ends_with?: ID_Input | null
+  id_not_ends_with?: ID_Input | null
+  limit?: Int | null
+  limit_not?: Int | null
+  limit_in?: Int[] | Int | null
+  limit_not_in?: Int[] | Int | null
+  limit_lt?: Int | null
+  limit_lte?: Int | null
+  limit_gt?: Int | null
+  limit_gte?: Int | null
+  createdAt?: DateTime | null
+  createdAt_not?: DateTime | null
+  createdAt_in?: DateTime[] | DateTime | null
+  createdAt_not_in?: DateTime[] | DateTime | null
+  createdAt_lt?: DateTime | null
+  createdAt_lte?: DateTime | null
+  createdAt_gt?: DateTime | null
+  createdAt_gte?: DateTime | null
+  updatedAt?: DateTime | null
+  updatedAt_not?: DateTime | null
+  updatedAt_in?: DateTime[] | DateTime | null
+  updatedAt_not_in?: DateTime[] | DateTime | null
+  updatedAt_lt?: DateTime | null
+  updatedAt_lte?: DateTime | null
+  updatedAt_gt?: DateTime | null
+  updatedAt_gte?: DateTime | null
+}
+
+export interface WarehouseLocationConstraintSubscriptionWhereInput {
+  AND?: WarehouseLocationConstraintSubscriptionWhereInput[] | WarehouseLocationConstraintSubscriptionWhereInput | null
+  OR?: WarehouseLocationConstraintSubscriptionWhereInput[] | WarehouseLocationConstraintSubscriptionWhereInput | null
+  NOT?: WarehouseLocationConstraintSubscriptionWhereInput[] | WarehouseLocationConstraintSubscriptionWhereInput | null
+  mutation_in?: MutationType[] | MutationType | null
+  updatedFields_contains?: String | null
+  updatedFields_contains_every?: String[] | String | null
+  updatedFields_contains_some?: String[] | String | null
+  node?: WarehouseLocationConstraintWhereInput | null
+}
+
+export interface WarehouseLocationConstraintUpdateInput {
+  limit?: Int | null
+  category?: CategoryUpdateOneRequiredInput | null
+  locations?: WarehouseLocationUpdateManyWithoutConstraintsInput | null
+}
+
+export interface WarehouseLocationConstraintUpdateManyDataInput {
+  limit?: Int | null
+}
+
+export interface WarehouseLocationConstraintUpdateManyMutationInput {
+  limit?: Int | null
+}
+
+export interface WarehouseLocationConstraintUpdateManyWithoutLocationsInput {
+  create?: WarehouseLocationConstraintCreateWithoutLocationsInput[] | WarehouseLocationConstraintCreateWithoutLocationsInput | null
+  connect?: WarehouseLocationConstraintWhereUniqueInput[] | WarehouseLocationConstraintWhereUniqueInput | null
+  set?: WarehouseLocationConstraintWhereUniqueInput[] | WarehouseLocationConstraintWhereUniqueInput | null
+  disconnect?: WarehouseLocationConstraintWhereUniqueInput[] | WarehouseLocationConstraintWhereUniqueInput | null
+  delete?: WarehouseLocationConstraintWhereUniqueInput[] | WarehouseLocationConstraintWhereUniqueInput | null
+  update?: WarehouseLocationConstraintUpdateWithWhereUniqueWithoutLocationsInput[] | WarehouseLocationConstraintUpdateWithWhereUniqueWithoutLocationsInput | null
+  updateMany?: WarehouseLocationConstraintUpdateManyWithWhereNestedInput[] | WarehouseLocationConstraintUpdateManyWithWhereNestedInput | null
+  deleteMany?: WarehouseLocationConstraintScalarWhereInput[] | WarehouseLocationConstraintScalarWhereInput | null
+  upsert?: WarehouseLocationConstraintUpsertWithWhereUniqueWithoutLocationsInput[] | WarehouseLocationConstraintUpsertWithWhereUniqueWithoutLocationsInput | null
+}
+
+export interface WarehouseLocationConstraintUpdateManyWithWhereNestedInput {
+  where: WarehouseLocationConstraintScalarWhereInput
+  data: WarehouseLocationConstraintUpdateManyDataInput
+}
+
+export interface WarehouseLocationConstraintUpdateWithoutLocationsDataInput {
+  limit?: Int | null
+  category?: CategoryUpdateOneRequiredInput | null
+}
+
+export interface WarehouseLocationConstraintUpdateWithWhereUniqueWithoutLocationsInput {
+  where: WarehouseLocationConstraintWhereUniqueInput
+  data: WarehouseLocationConstraintUpdateWithoutLocationsDataInput
+}
+
+export interface WarehouseLocationConstraintUpsertWithWhereUniqueWithoutLocationsInput {
+  where: WarehouseLocationConstraintWhereUniqueInput
+  update: WarehouseLocationConstraintUpdateWithoutLocationsDataInput
+  create: WarehouseLocationConstraintCreateWithoutLocationsInput
+}
+
+export interface WarehouseLocationConstraintWhereInput {
+  AND?: WarehouseLocationConstraintWhereInput[] | WarehouseLocationConstraintWhereInput | null
+  OR?: WarehouseLocationConstraintWhereInput[] | WarehouseLocationConstraintWhereInput | null
+  NOT?: WarehouseLocationConstraintWhereInput[] | WarehouseLocationConstraintWhereInput | null
+  id?: ID_Input | null
+  id_not?: ID_Input | null
+  id_in?: ID_Output[] | ID_Output | null
+  id_not_in?: ID_Output[] | ID_Output | null
+  id_lt?: ID_Input | null
+  id_lte?: ID_Input | null
+  id_gt?: ID_Input | null
+  id_gte?: ID_Input | null
+  id_contains?: ID_Input | null
+  id_not_contains?: ID_Input | null
+  id_starts_with?: ID_Input | null
+  id_not_starts_with?: ID_Input | null
+  id_ends_with?: ID_Input | null
+  id_not_ends_with?: ID_Input | null
+  limit?: Int | null
+  limit_not?: Int | null
+  limit_in?: Int[] | Int | null
+  limit_not_in?: Int[] | Int | null
+  limit_lt?: Int | null
+  limit_lte?: Int | null
+  limit_gt?: Int | null
+  limit_gte?: Int | null
+  createdAt?: DateTime | null
+  createdAt_not?: DateTime | null
+  createdAt_in?: DateTime[] | DateTime | null
+  createdAt_not_in?: DateTime[] | DateTime | null
+  createdAt_lt?: DateTime | null
+  createdAt_lte?: DateTime | null
+  createdAt_gt?: DateTime | null
+  createdAt_gte?: DateTime | null
+  updatedAt?: DateTime | null
+  updatedAt_not?: DateTime | null
+  updatedAt_in?: DateTime[] | DateTime | null
+  updatedAt_not_in?: DateTime[] | DateTime | null
+  updatedAt_lt?: DateTime | null
+  updatedAt_lte?: DateTime | null
+  updatedAt_gt?: DateTime | null
+  updatedAt_gte?: DateTime | null
+  category?: CategoryWhereInput | null
+  locations_every?: WarehouseLocationWhereInput | null
+  locations_some?: WarehouseLocationWhereInput | null
+  locations_none?: WarehouseLocationWhereInput | null
+}
+
+export interface WarehouseLocationConstraintWhereUniqueInput {
+  id?: ID_Input | null
+}
+
+export interface WarehouseLocationCreateInput {
+  id?: ID_Input | null
+  type: WarehouseLocationType
+  barcode: String
+  locationCode: String
+  itemCode: String
+  physicalProducts?: PhysicalProductCreateManyWithoutWarehouseLocationInput | null
+  constraints?: WarehouseLocationConstraintCreateManyWithoutLocationsInput | null
+}
+
+export interface WarehouseLocationCreateManyWithoutConstraintsInput {
+  create?: WarehouseLocationCreateWithoutConstraintsInput[] | WarehouseLocationCreateWithoutConstraintsInput | null
+  connect?: WarehouseLocationWhereUniqueInput[] | WarehouseLocationWhereUniqueInput | null
+}
+
+export interface WarehouseLocationCreateOneWithoutPhysicalProductsInput {
+  create?: WarehouseLocationCreateWithoutPhysicalProductsInput | null
+  connect?: WarehouseLocationWhereUniqueInput | null
+}
+
+export interface WarehouseLocationCreateWithoutConstraintsInput {
+  id?: ID_Input | null
+  type: WarehouseLocationType
+  barcode: String
+  locationCode: String
+  itemCode: String
+  physicalProducts?: PhysicalProductCreateManyWithoutWarehouseLocationInput | null
+}
+
+export interface WarehouseLocationCreateWithoutPhysicalProductsInput {
+  id?: ID_Input | null
+  type: WarehouseLocationType
+  barcode: String
+  locationCode: String
+  itemCode: String
+  constraints?: WarehouseLocationConstraintCreateManyWithoutLocationsInput | null
+}
+
+export interface WarehouseLocationScalarWhereInput {
+  AND?: WarehouseLocationScalarWhereInput[] | WarehouseLocationScalarWhereInput | null
+  OR?: WarehouseLocationScalarWhereInput[] | WarehouseLocationScalarWhereInput | null
+  NOT?: WarehouseLocationScalarWhereInput[] | WarehouseLocationScalarWhereInput | null
+  id?: ID_Input | null
+  id_not?: ID_Input | null
+  id_in?: ID_Output[] | ID_Output | null
+  id_not_in?: ID_Output[] | ID_Output | null
+  id_lt?: ID_Input | null
+  id_lte?: ID_Input | null
+  id_gt?: ID_Input | null
+  id_gte?: ID_Input | null
+  id_contains?: ID_Input | null
+  id_not_contains?: ID_Input | null
+  id_starts_with?: ID_Input | null
+  id_not_starts_with?: ID_Input | null
+  id_ends_with?: ID_Input | null
+  id_not_ends_with?: ID_Input | null
+  type?: WarehouseLocationType | null
+  type_not?: WarehouseLocationType | null
+  type_in?: WarehouseLocationType[] | WarehouseLocationType | null
+  type_not_in?: WarehouseLocationType[] | WarehouseLocationType | null
+  barcode?: String | null
+  barcode_not?: String | null
+  barcode_in?: String[] | String | null
+  barcode_not_in?: String[] | String | null
+  barcode_lt?: String | null
+  barcode_lte?: String | null
+  barcode_gt?: String | null
+  barcode_gte?: String | null
+  barcode_contains?: String | null
+  barcode_not_contains?: String | null
+  barcode_starts_with?: String | null
+  barcode_not_starts_with?: String | null
+  barcode_ends_with?: String | null
+  barcode_not_ends_with?: String | null
+  locationCode?: String | null
+  locationCode_not?: String | null
+  locationCode_in?: String[] | String | null
+  locationCode_not_in?: String[] | String | null
+  locationCode_lt?: String | null
+  locationCode_lte?: String | null
+  locationCode_gt?: String | null
+  locationCode_gte?: String | null
+  locationCode_contains?: String | null
+  locationCode_not_contains?: String | null
+  locationCode_starts_with?: String | null
+  locationCode_not_starts_with?: String | null
+  locationCode_ends_with?: String | null
+  locationCode_not_ends_with?: String | null
+  itemCode?: String | null
+  itemCode_not?: String | null
+  itemCode_in?: String[] | String | null
+  itemCode_not_in?: String[] | String | null
+  itemCode_lt?: String | null
+  itemCode_lte?: String | null
+  itemCode_gt?: String | null
+  itemCode_gte?: String | null
+  itemCode_contains?: String | null
+  itemCode_not_contains?: String | null
+  itemCode_starts_with?: String | null
+  itemCode_not_starts_with?: String | null
+  itemCode_ends_with?: String | null
+  itemCode_not_ends_with?: String | null
+  createdAt?: DateTime | null
+  createdAt_not?: DateTime | null
+  createdAt_in?: DateTime[] | DateTime | null
+  createdAt_not_in?: DateTime[] | DateTime | null
+  createdAt_lt?: DateTime | null
+  createdAt_lte?: DateTime | null
+  createdAt_gt?: DateTime | null
+  createdAt_gte?: DateTime | null
+  updatedAt?: DateTime | null
+  updatedAt_not?: DateTime | null
+  updatedAt_in?: DateTime[] | DateTime | null
+  updatedAt_not_in?: DateTime[] | DateTime | null
+  updatedAt_lt?: DateTime | null
+  updatedAt_lte?: DateTime | null
+  updatedAt_gt?: DateTime | null
+  updatedAt_gte?: DateTime | null
+}
+
+export interface WarehouseLocationSubscriptionWhereInput {
+  AND?: WarehouseLocationSubscriptionWhereInput[] | WarehouseLocationSubscriptionWhereInput | null
+  OR?: WarehouseLocationSubscriptionWhereInput[] | WarehouseLocationSubscriptionWhereInput | null
+  NOT?: WarehouseLocationSubscriptionWhereInput[] | WarehouseLocationSubscriptionWhereInput | null
+  mutation_in?: MutationType[] | MutationType | null
+  updatedFields_contains?: String | null
+  updatedFields_contains_every?: String[] | String | null
+  updatedFields_contains_some?: String[] | String | null
+  node?: WarehouseLocationWhereInput | null
+}
+
+export interface WarehouseLocationUpdateInput {
+  type?: WarehouseLocationType | null
+  barcode?: String | null
+  locationCode?: String | null
+  itemCode?: String | null
+  physicalProducts?: PhysicalProductUpdateManyWithoutWarehouseLocationInput | null
+  constraints?: WarehouseLocationConstraintUpdateManyWithoutLocationsInput | null
+}
+
+export interface WarehouseLocationUpdateManyDataInput {
+  type?: WarehouseLocationType | null
+  barcode?: String | null
+  locationCode?: String | null
+  itemCode?: String | null
+}
+
+export interface WarehouseLocationUpdateManyMutationInput {
+  type?: WarehouseLocationType | null
+  barcode?: String | null
+  locationCode?: String | null
+  itemCode?: String | null
+}
+
+export interface WarehouseLocationUpdateManyWithoutConstraintsInput {
+  create?: WarehouseLocationCreateWithoutConstraintsInput[] | WarehouseLocationCreateWithoutConstraintsInput | null
+  connect?: WarehouseLocationWhereUniqueInput[] | WarehouseLocationWhereUniqueInput | null
+  set?: WarehouseLocationWhereUniqueInput[] | WarehouseLocationWhereUniqueInput | null
+  disconnect?: WarehouseLocationWhereUniqueInput[] | WarehouseLocationWhereUniqueInput | null
+  delete?: WarehouseLocationWhereUniqueInput[] | WarehouseLocationWhereUniqueInput | null
+  update?: WarehouseLocationUpdateWithWhereUniqueWithoutConstraintsInput[] | WarehouseLocationUpdateWithWhereUniqueWithoutConstraintsInput | null
+  updateMany?: WarehouseLocationUpdateManyWithWhereNestedInput[] | WarehouseLocationUpdateManyWithWhereNestedInput | null
+  deleteMany?: WarehouseLocationScalarWhereInput[] | WarehouseLocationScalarWhereInput | null
+  upsert?: WarehouseLocationUpsertWithWhereUniqueWithoutConstraintsInput[] | WarehouseLocationUpsertWithWhereUniqueWithoutConstraintsInput | null
+}
+
+export interface WarehouseLocationUpdateManyWithWhereNestedInput {
+  where: WarehouseLocationScalarWhereInput
+  data: WarehouseLocationUpdateManyDataInput
+}
+
+export interface WarehouseLocationUpdateOneWithoutPhysicalProductsInput {
+  create?: WarehouseLocationCreateWithoutPhysicalProductsInput | null
+  connect?: WarehouseLocationWhereUniqueInput | null
+  disconnect?: Boolean | null
+  delete?: Boolean | null
+  update?: WarehouseLocationUpdateWithoutPhysicalProductsDataInput | null
+  upsert?: WarehouseLocationUpsertWithoutPhysicalProductsInput | null
+}
+
+export interface WarehouseLocationUpdateWithoutConstraintsDataInput {
+  type?: WarehouseLocationType | null
+  barcode?: String | null
+  locationCode?: String | null
+  itemCode?: String | null
+  physicalProducts?: PhysicalProductUpdateManyWithoutWarehouseLocationInput | null
+}
+
+export interface WarehouseLocationUpdateWithoutPhysicalProductsDataInput {
+  type?: WarehouseLocationType | null
+  barcode?: String | null
+  locationCode?: String | null
+  itemCode?: String | null
+  constraints?: WarehouseLocationConstraintUpdateManyWithoutLocationsInput | null
+}
+
+export interface WarehouseLocationUpdateWithWhereUniqueWithoutConstraintsInput {
+  where: WarehouseLocationWhereUniqueInput
+  data: WarehouseLocationUpdateWithoutConstraintsDataInput
+}
+
+export interface WarehouseLocationUpsertWithoutPhysicalProductsInput {
+  update: WarehouseLocationUpdateWithoutPhysicalProductsDataInput
+  create: WarehouseLocationCreateWithoutPhysicalProductsInput
+}
+
+export interface WarehouseLocationUpsertWithWhereUniqueWithoutConstraintsInput {
+  where: WarehouseLocationWhereUniqueInput
+  update: WarehouseLocationUpdateWithoutConstraintsDataInput
+  create: WarehouseLocationCreateWithoutConstraintsInput
+}
+
+export interface WarehouseLocationWhereInput {
+  AND?: WarehouseLocationWhereInput[] | WarehouseLocationWhereInput | null
+  OR?: WarehouseLocationWhereInput[] | WarehouseLocationWhereInput | null
+  NOT?: WarehouseLocationWhereInput[] | WarehouseLocationWhereInput | null
+  id?: ID_Input | null
+  id_not?: ID_Input | null
+  id_in?: ID_Output[] | ID_Output | null
+  id_not_in?: ID_Output[] | ID_Output | null
+  id_lt?: ID_Input | null
+  id_lte?: ID_Input | null
+  id_gt?: ID_Input | null
+  id_gte?: ID_Input | null
+  id_contains?: ID_Input | null
+  id_not_contains?: ID_Input | null
+  id_starts_with?: ID_Input | null
+  id_not_starts_with?: ID_Input | null
+  id_ends_with?: ID_Input | null
+  id_not_ends_with?: ID_Input | null
+  type?: WarehouseLocationType | null
+  type_not?: WarehouseLocationType | null
+  type_in?: WarehouseLocationType[] | WarehouseLocationType | null
+  type_not_in?: WarehouseLocationType[] | WarehouseLocationType | null
+  barcode?: String | null
+  barcode_not?: String | null
+  barcode_in?: String[] | String | null
+  barcode_not_in?: String[] | String | null
+  barcode_lt?: String | null
+  barcode_lte?: String | null
+  barcode_gt?: String | null
+  barcode_gte?: String | null
+  barcode_contains?: String | null
+  barcode_not_contains?: String | null
+  barcode_starts_with?: String | null
+  barcode_not_starts_with?: String | null
+  barcode_ends_with?: String | null
+  barcode_not_ends_with?: String | null
+  locationCode?: String | null
+  locationCode_not?: String | null
+  locationCode_in?: String[] | String | null
+  locationCode_not_in?: String[] | String | null
+  locationCode_lt?: String | null
+  locationCode_lte?: String | null
+  locationCode_gt?: String | null
+  locationCode_gte?: String | null
+  locationCode_contains?: String | null
+  locationCode_not_contains?: String | null
+  locationCode_starts_with?: String | null
+  locationCode_not_starts_with?: String | null
+  locationCode_ends_with?: String | null
+  locationCode_not_ends_with?: String | null
+  itemCode?: String | null
+  itemCode_not?: String | null
+  itemCode_in?: String[] | String | null
+  itemCode_not_in?: String[] | String | null
+  itemCode_lt?: String | null
+  itemCode_lte?: String | null
+  itemCode_gt?: String | null
+  itemCode_gte?: String | null
+  itemCode_contains?: String | null
+  itemCode_not_contains?: String | null
+  itemCode_starts_with?: String | null
+  itemCode_not_starts_with?: String | null
+  itemCode_ends_with?: String | null
+  itemCode_not_ends_with?: String | null
+  createdAt?: DateTime | null
+  createdAt_not?: DateTime | null
+  createdAt_in?: DateTime[] | DateTime | null
+  createdAt_not_in?: DateTime[] | DateTime | null
+  createdAt_lt?: DateTime | null
+  createdAt_lte?: DateTime | null
+  createdAt_gt?: DateTime | null
+  createdAt_gte?: DateTime | null
+  updatedAt?: DateTime | null
+  updatedAt_not?: DateTime | null
+  updatedAt_in?: DateTime[] | DateTime | null
+  updatedAt_not_in?: DateTime[] | DateTime | null
+  updatedAt_lt?: DateTime | null
+  updatedAt_lte?: DateTime | null
+  updatedAt_gt?: DateTime | null
+  updatedAt_gte?: DateTime | null
+  physicalProducts_every?: PhysicalProductWhereInput | null
+  physicalProducts_some?: PhysicalProductWhereInput | null
+  physicalProducts_none?: PhysicalProductWhereInput | null
+  constraints_every?: WarehouseLocationConstraintWhereInput | null
+  constraints_some?: WarehouseLocationConstraintWhereInput | null
+  constraints_none?: WarehouseLocationConstraintWhereInput | null
+}
+
+export interface WarehouseLocationWhereUniqueInput {
+  id?: ID_Input | null
+  barcode?: String | null
+}
+
 /*
  * An object with an ID
 
@@ -22809,11 +26102,23 @@ export interface AggregateSize {
   count: Int
 }
 
+export interface AggregateTag {
+  count: Int
+}
+
 export interface AggregateTopSize {
   count: Int
 }
 
 export interface AggregateUser {
+  count: Int
+}
+
+export interface AggregateWarehouseLocation {
+  count: Int
+}
+
+export interface AggregateWarehouseLocationConstraint {
   count: Int
 }
 
@@ -23578,6 +26883,11 @@ export interface PhysicalProduct extends Node {
   productVariant: ProductVariant
   inventoryStatus: InventoryStatus
   productStatus: PhysicalProductStatus
+  offloadMethod?: PhysicalProductOffloadMethod | null
+  offloadNotes?: String | null
+  barcode: String
+  sequenceNumber: Int
+  warehouseLocation?: WarehouseLocation | null
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -23606,6 +26916,10 @@ export interface PhysicalProductPreviousValues {
   seasonsUID: String
   inventoryStatus: InventoryStatus
   productStatus: PhysicalProductStatus
+  offloadMethod?: PhysicalProductOffloadMethod | null
+  offloadNotes?: String | null
+  barcode: String
+  sequenceNumber: Int
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -23633,7 +26947,7 @@ export interface Product extends Node {
   modelSize?: Size | null
   color: Color
   secondaryColor?: Color | null
-  tags?: Json | null
+  tags?: Array<Tag> | null
   functions?: Array<ProductFunction> | null
   innerMaterials: Array<String>
   outerMaterials: Array<String>
@@ -23749,7 +27063,6 @@ export interface ProductPreviousValues {
   images?: Json | null
   modelHeight?: Int | null
   retailPrice?: Int | null
-  tags?: Json | null
   innerMaterials: Array<String>
   outerMaterials: Array<String>
   status?: ProductStatus | null
@@ -23837,6 +27150,8 @@ export interface ProductVariant extends Node {
   reservable: Int
   reserved: Int
   nonReservable: Int
+  offloaded: Int
+  stored: Int
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -23953,6 +27268,8 @@ export interface ProductVariantPreviousValues {
   reservable: Int
   reserved: Int
   nonReservable: Int
+  offloaded: Int
+  stored: Int
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -24189,6 +27506,49 @@ export interface SizeSubscriptionPayload {
   previousValues?: SizePreviousValues | null
 }
 
+export interface Tag extends Node {
+  id: ID_Output
+  name: String
+  description?: String | null
+  products?: Array<Product> | null
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+/*
+ * A connection to a list of items.
+
+ */
+export interface TagConnection {
+  pageInfo: PageInfo
+  edges: Array<TagEdge | null>
+  aggregate: AggregateTag
+}
+
+/*
+ * An edge in a connection.
+
+ */
+export interface TagEdge {
+  node: Tag
+  cursor: String
+}
+
+export interface TagPreviousValues {
+  id: ID_Output
+  name: String
+  description?: String | null
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+export interface TagSubscriptionPayload {
+  mutation: MutationType
+  node?: Tag | null
+  updatedFields?: Array<String> | null
+  previousValues?: TagPreviousValues | null
+}
+
 export interface TopSize extends Node {
   id: ID_Output
   letter?: LetterSize | null
@@ -24283,6 +27643,96 @@ export interface UserSubscriptionPayload {
   node?: User | null
   updatedFields?: Array<String> | null
   previousValues?: UserPreviousValues | null
+}
+
+export interface WarehouseLocation extends Node {
+  id: ID_Output
+  type: WarehouseLocationType
+  barcode: String
+  locationCode: String
+  itemCode: String
+  physicalProducts?: Array<PhysicalProduct> | null
+  constraints?: Array<WarehouseLocationConstraint> | null
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+/*
+ * A connection to a list of items.
+
+ */
+export interface WarehouseLocationConnection {
+  pageInfo: PageInfo
+  edges: Array<WarehouseLocationEdge | null>
+  aggregate: AggregateWarehouseLocation
+}
+
+export interface WarehouseLocationConstraint extends Node {
+  id: ID_Output
+  category: Category
+  limit: Int
+  locations?: Array<WarehouseLocation> | null
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+/*
+ * A connection to a list of items.
+
+ */
+export interface WarehouseLocationConstraintConnection {
+  pageInfo: PageInfo
+  edges: Array<WarehouseLocationConstraintEdge | null>
+  aggregate: AggregateWarehouseLocationConstraint
+}
+
+/*
+ * An edge in a connection.
+
+ */
+export interface WarehouseLocationConstraintEdge {
+  node: WarehouseLocationConstraint
+  cursor: String
+}
+
+export interface WarehouseLocationConstraintPreviousValues {
+  id: ID_Output
+  limit: Int
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+export interface WarehouseLocationConstraintSubscriptionPayload {
+  mutation: MutationType
+  node?: WarehouseLocationConstraint | null
+  updatedFields?: Array<String> | null
+  previousValues?: WarehouseLocationConstraintPreviousValues | null
+}
+
+/*
+ * An edge in a connection.
+
+ */
+export interface WarehouseLocationEdge {
+  node: WarehouseLocation
+  cursor: String
+}
+
+export interface WarehouseLocationPreviousValues {
+  id: ID_Output
+  type: WarehouseLocationType
+  barcode: String
+  locationCode: String
+  itemCode: String
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+export interface WarehouseLocationSubscriptionPayload {
+  mutation: MutationType
+  node?: WarehouseLocation | null
+  updatedFields?: Array<String> | null
+  previousValues?: WarehouseLocationPreviousValues | null
 }
 
 /*

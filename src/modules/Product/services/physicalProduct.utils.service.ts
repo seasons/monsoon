@@ -1,7 +1,13 @@
 import { Injectable } from "@nestjs/common"
-import { ID_Input, PhysicalProduct, ProductVariant } from "@prisma/index"
+import {
+  ID_Input,
+  PhysicalProduct,
+  ProductVariant,
+  Category,
+} from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
-import { uniqBy } from "lodash"
+import { uniqBy, head } from "lodash"
+import { ProductUtilsService } from "./product.utils.service"
 
 export interface PhysicalProductWithReservationSpecificData
   extends PhysicalProduct {
@@ -9,8 +15,11 @@ export interface PhysicalProductWithReservationSpecificData
 }
 
 @Injectable()
-export class PhysicalProductService {
-  constructor(private readonly prisma: PrismaService) {}
+export class PhysicalProductUtilsService {
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly productUtils: ProductUtilsService
+  ) {}
 
   async getPhysicalProductsWithReservationSpecificData(
     items: ID_Input[]
@@ -58,5 +67,19 @@ export class PhysicalProductService {
       })
     }
     return rollbackMarkPhysicalProductReservedOnPrisma
+  }
+
+  async getAllCategories(physProd: PhysicalProduct): Promise<Category[]> {
+    return await this.productUtils.getAllCategories(
+      head(
+        await this.prisma.client.products({
+          where: {
+            variants_some: {
+              physicalProducts_some: { seasonsUID: physProd.seasonsUID },
+            },
+          },
+        })
+      )
+    )
   }
 }

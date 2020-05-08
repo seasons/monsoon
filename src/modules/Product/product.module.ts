@@ -15,12 +15,14 @@ import { BrandQueriesResolver } from "./queries/brand.queries.resolver"
 import { ProductQueriesResolver } from "./queries/product.queries.resolver"
 import { SizeQueriesResolver } from "./queries/size.queries.resolver"
 import { BagService } from "./services/bag.service"
-import { PhysicalProductService } from "./services/physicalProduct.utils.service"
+import { PhysicalProductUtilsService } from "./services/physicalProduct.utils.service"
 import { ProductService } from "./services/product.service"
 import { ProductUtilsService } from "./services/product.utils.service"
 import { ProductRequestService } from "./services/productRequest.service"
 import { ProductRequestUtilsService } from "./services/productRequest.utils.service"
 import { ProductVariantService } from "./services/productVariant.service"
+import { PhysicalProductMutationsResolver } from "./mutations/physicalProduct.mutations.resolver"
+import { PhysicalProductService } from "./services/physicalProduct.service"
 
 @Module({
   imports: [
@@ -39,6 +41,7 @@ import { ProductVariantService } from "./services/productVariant.service"
     ProductRequestUtilsService,
     ProductService,
     ProductUtilsService,
+    PhysicalProductUtilsService,
     PhysicalProductService,
     ProductVariantService,
     ProductFieldsResolver,
@@ -46,8 +49,14 @@ import { ProductVariantService } from "./services/productVariant.service"
     ProductQueriesResolver,
     ProductVariantFieldsResolver,
     ProductVariantMutationsResolver,
+    PhysicalProductMutationsResolver,
     SizeQueriesResolver,
   ],
-  exports: [ProductUtilsService, ProductVariantService, PhysicalProductService],
+  exports: [
+    ProductUtilsService,
+    ProductVariantService,
+    PhysicalProductUtilsService,
+    PhysicalProductService,
+  ],
 })
 export class ProductModule {}

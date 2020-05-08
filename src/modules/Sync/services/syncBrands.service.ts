@@ -1,12 +1,14 @@
+import * as fs from "fs"
 import { Injectable } from "@nestjs/common"
 import { isEmpty } from "lodash"
 import slugify from "slugify"
 
-import { BrandTier } from "../../../prisma"
+import { BrandTier, WarehouseLocationCreateInput } from "../../../prisma"
 import { PrismaService } from "../../../prisma/prisma.service"
 import { AirtableService } from "../../Airtable/services/airtable.service"
 import { UtilsService } from "../../Utils/services/utils.service"
 import { SyncUtilsService } from "./sync.utils.service"
+import { PhysicalProductService } from "@modules/Product/index"
 
 @Injectable()
 export class SyncBrandsService {
@@ -14,7 +16,8 @@ export class SyncBrandsService {
     private readonly airtableService: AirtableService,
     private readonly prisma: PrismaService,
     private readonly syncUtils: SyncUtilsService,
-    private readonly utils: UtilsService
+    private readonly utils: UtilsService,
+    private readonly physicalProductsService: PhysicalProductService
   ) {}
 
   async syncAirtableToAirtable(cliProgressBar?: any) {
@@ -46,6 +49,7 @@ export class SyncBrandsService {
       modelName: "Brands",
     })
 
+    const logFile = this.utils.openLogFile("syncBrands")
     for (const record of records) {
       try {
         _cliProgressBar.increment()
@@ -91,15 +95,45 @@ export class SyncBrandsService {
           update: data,
         })
 
+        await this.generateNewSlickRailRecordsIfNeeded(brandCode)
+
         await record.patchUpdate({
           Slug: slug,
         })
-
-        //   console.log(brand)
       } catch (e) {
-        console.error(e)
+        console.log(`Check ${logFile}`)
+        this.syncUtils.logSyncError(logFile, record, e)
       }
     }
     multibar?.stop()
+    fs.closeSync(logFile)
+  }
+
+  private async generateNewSlickRailRecordsIfNeeded(brandCode) {
+    const needed =
+      (
+        await this.prisma.client.warehouseLocations({
+          where: { itemCode: brandCode },
+        })
+      )?.length === 0
+    if (!needed) {
+      return
+    }
+
+    for (const locationCode of ["A100", "A200"]) {
+      const input = {
+        type: "Rail",
+        itemCode: brandCode,
+        locationCode,
+        barcode: `SR-${locationCode}-${brandCode}`,
+      } as WarehouseLocationCreateInput
+      if (
+        await this.physicalProductsService.validateWarehouseLocationStructure(
+          input
+        )
+      ) {
+        await this.prisma.client.createWarehouseLocation(input)
+      }
+    }
   }
 }

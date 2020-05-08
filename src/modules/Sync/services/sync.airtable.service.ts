@@ -141,6 +141,8 @@ export class AirtableSyncService {
       case "product-variants":
         // await this.syncProductsService.syncAirtableToPrisma()
         return await this.syncProductVariantsService.syncAirtableToPrisma()
+      case "physical-products":
+        return await this.syncPhysicalProductsService.syncAirtableToPrisma()
       case "collections":
         return await this.syncCollectionsService.syncAirtableToPrisma()
       case "collection-groups":

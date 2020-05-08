@@ -2,8 +2,9 @@ import { Customer, User } from "@app/nest_decorators"
 import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
 
 import { BagService } from "../services/bag.service"
-import { ProductService } from "../services/product.service"
+import { PrismaService } from "@prisma/prisma.service"
 import { ProductRequestService } from "../services/productRequest.service"
+import { ProductService } from "../services/product.service"
 
 @Resolver()
 export class ProductMutationsResolver {
@@ -45,5 +46,10 @@ export class ProductMutationsResolver {
   @Mutation()
   async checkItemsAvailability(@Args() { items }, @Customer() customer) {
     return await this.productService.checkItemsAvailability(items, customer)
+  }
+
+  @Mutation()
+  async updateProduct(@Args() { where, data }, @Info() info) {
+    return await this.productService.updateProduct(where, data, info)
   }
 }
