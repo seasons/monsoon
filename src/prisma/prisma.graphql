@@ -1,3 +1,9 @@
+<<<<<<< HEAD
+=======
+# source: http://localhost:4466/monsoon/dev
+# timestamp: Fri May 08 2020 15:12:21 GMT-0400 (Eastern Daylight Time)
+
+>>>>>>> kevin/images-airtable-s3
 type AggregateBagItem {
   count: Int!
 }
@@ -3143,7 +3149,6 @@ type Image {
   originalHeight: Int
   originalUrl: String!
   originalWidth: Int
-  resizedUrl: String!
   title: String
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -3162,10 +3167,18 @@ input ImageCreateInput {
   originalHeight: Int
   originalUrl: String!
   originalWidth: Int
-  resizedUrl: String!
   title: String
 }
 
+<<<<<<< HEAD
+=======
+input ImageCreateManyInput {
+  create: [ImageCreateInput!]
+  connect: [ImageWhereUniqueInput!]
+}
+
+"""An edge in a connection."""
+>>>>>>> kevin/images-airtable-s3
 type ImageEdge {
   node: Image!
   cursor: String!
@@ -3184,8 +3197,6 @@ enum ImageOrderByInput {
   originalUrl_DESC
   originalWidth_ASC
   originalWidth_DESC
-  resizedUrl_ASC
-  resizedUrl_DESC
   title_ASC
   title_DESC
   createdAt_ASC
@@ -3201,10 +3212,308 @@ type ImagePreviousValues {
   originalHeight: Int
   originalUrl: String!
   originalWidth: Int
-  resizedUrl: String!
   title: String
   createdAt: DateTime!
   updatedAt: DateTime!
+}
+
+input ImageScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ImageScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ImageScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ImageScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  caption: String
+
+  """All values that are not equal to given value."""
+  caption_not: String
+
+  """All values that are contained in given list."""
+  caption_in: [String!]
+
+  """All values that are not contained in given list."""
+  caption_not_in: [String!]
+
+  """All values less than the given value."""
+  caption_lt: String
+
+  """All values less than or equal the given value."""
+  caption_lte: String
+
+  """All values greater than the given value."""
+  caption_gt: String
+
+  """All values greater than or equal the given value."""
+  caption_gte: String
+
+  """All values containing the given string."""
+  caption_contains: String
+
+  """All values not containing the given string."""
+  caption_not_contains: String
+
+  """All values starting with the given string."""
+  caption_starts_with: String
+
+  """All values not starting with the given string."""
+  caption_not_starts_with: String
+
+  """All values ending with the given string."""
+  caption_ends_with: String
+
+  """All values not ending with the given string."""
+  caption_not_ends_with: String
+  url: String
+
+  """All values that are not equal to given value."""
+  url_not: String
+
+  """All values that are contained in given list."""
+  url_in: [String!]
+
+  """All values that are not contained in given list."""
+  url_not_in: [String!]
+
+  """All values less than the given value."""
+  url_lt: String
+
+  """All values less than or equal the given value."""
+  url_lte: String
+
+  """All values greater than the given value."""
+  url_gt: String
+
+  """All values greater than or equal the given value."""
+  url_gte: String
+
+  """All values containing the given string."""
+  url_contains: String
+
+  """All values not containing the given string."""
+  url_not_contains: String
+
+  """All values starting with the given string."""
+  url_starts_with: String
+
+  """All values not starting with the given string."""
+  url_not_starts_with: String
+
+  """All values ending with the given string."""
+  url_ends_with: String
+
+  """All values not ending with the given string."""
+  url_not_ends_with: String
+  originalHeight: Int
+
+  """All values that are not equal to given value."""
+  originalHeight_not: Int
+
+  """All values that are contained in given list."""
+  originalHeight_in: [Int!]
+
+  """All values that are not contained in given list."""
+  originalHeight_not_in: [Int!]
+
+  """All values less than the given value."""
+  originalHeight_lt: Int
+
+  """All values less than or equal the given value."""
+  originalHeight_lte: Int
+
+  """All values greater than the given value."""
+  originalHeight_gt: Int
+
+  """All values greater than or equal the given value."""
+  originalHeight_gte: Int
+  originalUrl: String
+
+  """All values that are not equal to given value."""
+  originalUrl_not: String
+
+  """All values that are contained in given list."""
+  originalUrl_in: [String!]
+
+  """All values that are not contained in given list."""
+  originalUrl_not_in: [String!]
+
+  """All values less than the given value."""
+  originalUrl_lt: String
+
+  """All values less than or equal the given value."""
+  originalUrl_lte: String
+
+  """All values greater than the given value."""
+  originalUrl_gt: String
+
+  """All values greater than or equal the given value."""
+  originalUrl_gte: String
+
+  """All values containing the given string."""
+  originalUrl_contains: String
+
+  """All values not containing the given string."""
+  originalUrl_not_contains: String
+
+  """All values starting with the given string."""
+  originalUrl_starts_with: String
+
+  """All values not starting with the given string."""
+  originalUrl_not_starts_with: String
+
+  """All values ending with the given string."""
+  originalUrl_ends_with: String
+
+  """All values not ending with the given string."""
+  originalUrl_not_ends_with: String
+  originalWidth: Int
+
+  """All values that are not equal to given value."""
+  originalWidth_not: Int
+
+  """All values that are contained in given list."""
+  originalWidth_in: [Int!]
+
+  """All values that are not contained in given list."""
+  originalWidth_not_in: [Int!]
+
+  """All values less than the given value."""
+  originalWidth_lt: Int
+
+  """All values less than or equal the given value."""
+  originalWidth_lte: Int
+
+  """All values greater than the given value."""
+  originalWidth_gt: Int
+
+  """All values greater than or equal the given value."""
+  originalWidth_gte: Int
+  title: String
+
+  """All values that are not equal to given value."""
+  title_not: String
+
+  """All values that are contained in given list."""
+  title_in: [String!]
+
+  """All values that are not contained in given list."""
+  title_not_in: [String!]
+
+  """All values less than the given value."""
+  title_lt: String
+
+  """All values less than or equal the given value."""
+  title_lte: String
+
+  """All values greater than the given value."""
+  title_gt: String
+
+  """All values greater than or equal the given value."""
+  title_gte: String
+
+  """All values containing the given string."""
+  title_contains: String
+
+  """All values not containing the given string."""
+  title_not_contains: String
+
+  """All values starting with the given string."""
+  title_starts_with: String
+
+  """All values not starting with the given string."""
+  title_not_starts_with: String
+
+  """All values ending with the given string."""
+  title_ends_with: String
+
+  """All values not ending with the given string."""
+  title_not_ends_with: String
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
 }
 
 type ImageSubscriptionPayload {
@@ -3225,14 +3534,43 @@ input ImageSubscriptionWhereInput {
   NOT: [ImageSubscriptionWhereInput!]
 }
 
+input ImageUpdateDataInput {
+  caption: String
+  url: String
+  originalHeight: Int
+  originalUrl: String
+  originalWidth: Int
+  title: String
+}
+
 input ImageUpdateInput {
   caption: String
   url: String
   originalHeight: Int
   originalUrl: String
   originalWidth: Int
-  resizedUrl: String
   title: String
+}
+
+input ImageUpdateManyDataInput {
+  caption: String
+  url: String
+  originalHeight: Int
+  originalUrl: String
+  originalWidth: Int
+  title: String
+}
+
+input ImageUpdateManyInput {
+  create: [ImageCreateInput!]
+  connect: [ImageWhereUniqueInput!]
+  set: [ImageWhereUniqueInput!]
+  disconnect: [ImageWhereUniqueInput!]
+  delete: [ImageWhereUniqueInput!]
+  update: [ImageUpdateWithWhereUniqueNestedInput!]
+  updateMany: [ImageUpdateManyWithWhereNestedInput!]
+  deleteMany: [ImageScalarWhereInput!]
+  upsert: [ImageUpsertWithWhereUniqueNestedInput!]
 }
 
 input ImageUpdateManyMutationInput {
@@ -3241,8 +3579,23 @@ input ImageUpdateManyMutationInput {
   originalHeight: Int
   originalUrl: String
   originalWidth: Int
-  resizedUrl: String
   title: String
+}
+
+input ImageUpdateManyWithWhereNestedInput {
+  where: ImageScalarWhereInput!
+  data: ImageUpdateManyDataInput!
+}
+
+input ImageUpdateWithWhereUniqueNestedInput {
+  where: ImageWhereUniqueInput!
+  data: ImageUpdateDataInput!
+}
+
+input ImageUpsertWithWhereUniqueNestedInput {
+  where: ImageWhereUniqueInput!
+  update: ImageUpdateDataInput!
+  create: ImageCreateInput!
 }
 
 input ImageWhereInput {
@@ -3318,6 +3671,7 @@ input ImageWhereInput {
   originalWidth_lte: Int
   originalWidth_gt: Int
   originalWidth_gte: Int
+<<<<<<< HEAD
   resizedUrl: String
   resizedUrl_not: String
   resizedUrl_in: [String!]
@@ -3332,6 +3686,8 @@ input ImageWhereInput {
   resizedUrl_not_starts_with: String
   resizedUrl_ends_with: String
   resizedUrl_not_ends_with: String
+=======
+>>>>>>> kevin/images-airtable-s3
   title: String
   title_not: String
   title_in: [String!]
@@ -3369,6 +3725,7 @@ input ImageWhereInput {
 
 input ImageWhereUniqueInput {
   id: ID
+  originalUrl: String
 }
 
 enum InventoryStatus {
@@ -4020,10 +4377,86 @@ input LocationWhereUniqueInput {
 scalar Long
 
 type Mutation {
+<<<<<<< HEAD
   createBagItem(data: BagItemCreateInput!): BagItem!
   updateBagItem(data: BagItemUpdateInput!, where: BagItemWhereUniqueInput!): BagItem
   updateManyBagItems(data: BagItemUpdateManyMutationInput!, where: BagItemWhereInput): BatchPayload!
   upsertBagItem(where: BagItemWhereUniqueInput!, create: BagItemCreateInput!, update: BagItemUpdateInput!): BagItem!
+=======
+  createBrand(data: BrandCreateInput!): Brand!
+  createCollectionGroup(data: CollectionGroupCreateInput!): CollectionGroup!
+  createHomepageProductRail(data: HomepageProductRailCreateInput!): HomepageProductRail!
+  createTag(data: TagCreateInput!): Tag!
+  createProductModel(data: ProductModelCreateInput!): ProductModel!
+  createWarehouseLocationConstraint(data: WarehouseLocationConstraintCreateInput!): WarehouseLocationConstraint!
+  createWarehouseLocation(data: WarehouseLocationCreateInput!): WarehouseLocation!
+  createBagItem(data: BagItemCreateInput!): BagItem!
+  createRecentlyViewedProduct(data: RecentlyViewedProductCreateInput!): RecentlyViewedProduct!
+  createProductRequest(data: ProductRequestCreateInput!): ProductRequest!
+  createProductVariantWant(data: ProductVariantWantCreateInput!): ProductVariantWant!
+  createReservationFeedback(data: ReservationFeedbackCreateInput!): ReservationFeedback!
+  createProductVariantFeedback(data: ProductVariantFeedbackCreateInput!): ProductVariantFeedback!
+  createProductVariantFeedbackQuestion(data: ProductVariantFeedbackQuestionCreateInput!): ProductVariantFeedbackQuestion!
+  createCollection(data: CollectionCreateInput!): Collection!
+  createCustomerDetail(data: CustomerDetailCreateInput!): CustomerDetail!
+  createBillingInfo(data: BillingInfoCreateInput!): BillingInfo!
+  createCategory(data: CategoryCreateInput!): Category!
+  createLocation(data: LocationCreateInput!): Location!
+  createImage(data: ImageCreateInput!): Image!
+  createPackage(data: PackageCreateInput!): Package!
+  createSize(data: SizeCreateInput!): Size!
+  createProductFunction(data: ProductFunctionCreateInput!): ProductFunction!
+  createColor(data: ColorCreateInput!): Color!
+  createTopSize(data: TopSizeCreateInput!): TopSize!
+  createCustomer(data: CustomerCreateInput!): Customer!
+  createBottomSize(data: BottomSizeCreateInput!): BottomSize!
+  createLabel(data: LabelCreateInput!): Label!
+  createPhysicalProduct(data: PhysicalProductCreateInput!): PhysicalProduct!
+  createProductVariant(data: ProductVariantCreateInput!): ProductVariant!
+  createProduct(data: ProductCreateInput!): Product!
+  createReservation(data: ReservationCreateInput!): Reservation!
+  createUser(data: UserCreateInput!): User!
+  updateBrand(data: BrandUpdateInput!, where: BrandWhereUniqueInput!): Brand
+  updateCollectionGroup(data: CollectionGroupUpdateInput!, where: CollectionGroupWhereUniqueInput!): CollectionGroup
+  updateHomepageProductRail(data: HomepageProductRailUpdateInput!, where: HomepageProductRailWhereUniqueInput!): HomepageProductRail
+  updateTag(data: TagUpdateInput!, where: TagWhereUniqueInput!): Tag
+  updateProductModel(data: ProductModelUpdateInput!, where: ProductModelWhereUniqueInput!): ProductModel
+  updateWarehouseLocationConstraint(data: WarehouseLocationConstraintUpdateInput!, where: WarehouseLocationConstraintWhereUniqueInput!): WarehouseLocationConstraint
+  updateWarehouseLocation(data: WarehouseLocationUpdateInput!, where: WarehouseLocationWhereUniqueInput!): WarehouseLocation
+  updateBagItem(data: BagItemUpdateInput!, where: BagItemWhereUniqueInput!): BagItem
+  updateRecentlyViewedProduct(data: RecentlyViewedProductUpdateInput!, where: RecentlyViewedProductWhereUniqueInput!): RecentlyViewedProduct
+  updateProductRequest(data: ProductRequestUpdateInput!, where: ProductRequestWhereUniqueInput!): ProductRequest
+  updateProductVariantWant(data: ProductVariantWantUpdateInput!, where: ProductVariantWantWhereUniqueInput!): ProductVariantWant
+  updateReservationFeedback(data: ReservationFeedbackUpdateInput!, where: ReservationFeedbackWhereUniqueInput!): ReservationFeedback
+  updateProductVariantFeedback(data: ProductVariantFeedbackUpdateInput!, where: ProductVariantFeedbackWhereUniqueInput!): ProductVariantFeedback
+  updateProductVariantFeedbackQuestion(data: ProductVariantFeedbackQuestionUpdateInput!, where: ProductVariantFeedbackQuestionWhereUniqueInput!): ProductVariantFeedbackQuestion
+  updateCollection(data: CollectionUpdateInput!, where: CollectionWhereUniqueInput!): Collection
+  updateCustomerDetail(data: CustomerDetailUpdateInput!, where: CustomerDetailWhereUniqueInput!): CustomerDetail
+  updateBillingInfo(data: BillingInfoUpdateInput!, where: BillingInfoWhereUniqueInput!): BillingInfo
+  updateCategory(data: CategoryUpdateInput!, where: CategoryWhereUniqueInput!): Category
+  updateLocation(data: LocationUpdateInput!, where: LocationWhereUniqueInput!): Location
+  updateImage(data: ImageUpdateInput!, where: ImageWhereUniqueInput!): Image
+  updatePackage(data: PackageUpdateInput!, where: PackageWhereUniqueInput!): Package
+  updateSize(data: SizeUpdateInput!, where: SizeWhereUniqueInput!): Size
+  updateProductFunction(data: ProductFunctionUpdateInput!, where: ProductFunctionWhereUniqueInput!): ProductFunction
+  updateColor(data: ColorUpdateInput!, where: ColorWhereUniqueInput!): Color
+  updateTopSize(data: TopSizeUpdateInput!, where: TopSizeWhereUniqueInput!): TopSize
+  updateCustomer(data: CustomerUpdateInput!, where: CustomerWhereUniqueInput!): Customer
+  updateBottomSize(data: BottomSizeUpdateInput!, where: BottomSizeWhereUniqueInput!): BottomSize
+  updateLabel(data: LabelUpdateInput!, where: LabelWhereUniqueInput!): Label
+  updatePhysicalProduct(data: PhysicalProductUpdateInput!, where: PhysicalProductWhereUniqueInput!): PhysicalProduct
+  updateProductVariant(data: ProductVariantUpdateInput!, where: ProductVariantWhereUniqueInput!): ProductVariant
+  updateProduct(data: ProductUpdateInput!, where: ProductWhereUniqueInput!): Product
+  updateReservation(data: ReservationUpdateInput!, where: ReservationWhereUniqueInput!): Reservation
+  updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
+  deleteBrand(where: BrandWhereUniqueInput!): Brand
+  deleteCollectionGroup(where: CollectionGroupWhereUniqueInput!): CollectionGroup
+  deleteHomepageProductRail(where: HomepageProductRailWhereUniqueInput!): HomepageProductRail
+  deleteTag(where: TagWhereUniqueInput!): Tag
+  deleteProductModel(where: ProductModelWhereUniqueInput!): ProductModel
+  deleteWarehouseLocationConstraint(where: WarehouseLocationConstraintWhereUniqueInput!): WarehouseLocationConstraint
+  deleteWarehouseLocation(where: WarehouseLocationWhereUniqueInput!): WarehouseLocation
+>>>>>>> kevin/images-airtable-s3
   deleteBagItem(where: BagItemWhereUniqueInput!): BagItem
   deleteManyBagItems(where: BagItemWhereInput): BatchPayload!
   createBillingInfo(data: BillingInfoCreateInput!): BillingInfo!
@@ -4031,17 +4464,30 @@ type Mutation {
   updateManyBillingInfoes(data: BillingInfoUpdateManyMutationInput!, where: BillingInfoWhereInput): BatchPayload!
   upsertBillingInfo(where: BillingInfoWhereUniqueInput!, create: BillingInfoCreateInput!, update: BillingInfoUpdateInput!): BillingInfo!
   deleteBillingInfo(where: BillingInfoWhereUniqueInput!): BillingInfo
+<<<<<<< HEAD
   deleteManyBillingInfoes(where: BillingInfoWhereInput): BatchPayload!
   createBottomSize(data: BottomSizeCreateInput!): BottomSize!
   updateBottomSize(data: BottomSizeUpdateInput!, where: BottomSizeWhereUniqueInput!): BottomSize
   updateManyBottomSizes(data: BottomSizeUpdateManyMutationInput!, where: BottomSizeWhereInput): BatchPayload!
   upsertBottomSize(where: BottomSizeWhereUniqueInput!, create: BottomSizeCreateInput!, update: BottomSizeUpdateInput!): BottomSize!
+=======
+  deleteCategory(where: CategoryWhereUniqueInput!): Category
+  deleteLocation(where: LocationWhereUniqueInput!): Location
+  deleteImage(where: ImageWhereUniqueInput!): Image
+  deletePackage(where: PackageWhereUniqueInput!): Package
+  deleteSize(where: SizeWhereUniqueInput!): Size
+  deleteProductFunction(where: ProductFunctionWhereUniqueInput!): ProductFunction
+  deleteColor(where: ColorWhereUniqueInput!): Color
+  deleteTopSize(where: TopSizeWhereUniqueInput!): TopSize
+  deleteCustomer(where: CustomerWhereUniqueInput!): Customer
+>>>>>>> kevin/images-airtable-s3
   deleteBottomSize(where: BottomSizeWhereUniqueInput!): BottomSize
   deleteManyBottomSizes(where: BottomSizeWhereInput): BatchPayload!
   createBrand(data: BrandCreateInput!): Brand!
   updateBrand(data: BrandUpdateInput!, where: BrandWhereUniqueInput!): Brand
   updateManyBrands(data: BrandUpdateManyMutationInput!, where: BrandWhereInput): BatchPayload!
   upsertBrand(where: BrandWhereUniqueInput!, create: BrandCreateInput!, update: BrandUpdateInput!): Brand!
+<<<<<<< HEAD
   deleteBrand(where: BrandWhereUniqueInput!): Brand
   deleteManyBrands(where: BrandWhereInput): BatchPayload!
   createCategory(data: CategoryCreateInput!): Category!
@@ -4058,6 +4504,41 @@ type Mutation {
   deleteManyCollections(where: CollectionWhereInput): BatchPayload!
   createCollectionGroup(data: CollectionGroupCreateInput!): CollectionGroup!
   updateCollectionGroup(data: CollectionGroupUpdateInput!, where: CollectionGroupWhereUniqueInput!): CollectionGroup
+=======
+  upsertCollectionGroup(where: CollectionGroupWhereUniqueInput!, create: CollectionGroupCreateInput!, update: CollectionGroupUpdateInput!): CollectionGroup!
+  upsertHomepageProductRail(where: HomepageProductRailWhereUniqueInput!, create: HomepageProductRailCreateInput!, update: HomepageProductRailUpdateInput!): HomepageProductRail!
+  upsertTag(where: TagWhereUniqueInput!, create: TagCreateInput!, update: TagUpdateInput!): Tag!
+  upsertProductModel(where: ProductModelWhereUniqueInput!, create: ProductModelCreateInput!, update: ProductModelUpdateInput!): ProductModel!
+  upsertWarehouseLocationConstraint(where: WarehouseLocationConstraintWhereUniqueInput!, create: WarehouseLocationConstraintCreateInput!, update: WarehouseLocationConstraintUpdateInput!): WarehouseLocationConstraint!
+  upsertWarehouseLocation(where: WarehouseLocationWhereUniqueInput!, create: WarehouseLocationCreateInput!, update: WarehouseLocationUpdateInput!): WarehouseLocation!
+  upsertBagItem(where: BagItemWhereUniqueInput!, create: BagItemCreateInput!, update: BagItemUpdateInput!): BagItem!
+  upsertRecentlyViewedProduct(where: RecentlyViewedProductWhereUniqueInput!, create: RecentlyViewedProductCreateInput!, update: RecentlyViewedProductUpdateInput!): RecentlyViewedProduct!
+  upsertProductRequest(where: ProductRequestWhereUniqueInput!, create: ProductRequestCreateInput!, update: ProductRequestUpdateInput!): ProductRequest!
+  upsertProductVariantWant(where: ProductVariantWantWhereUniqueInput!, create: ProductVariantWantCreateInput!, update: ProductVariantWantUpdateInput!): ProductVariantWant!
+  upsertReservationFeedback(where: ReservationFeedbackWhereUniqueInput!, create: ReservationFeedbackCreateInput!, update: ReservationFeedbackUpdateInput!): ReservationFeedback!
+  upsertProductVariantFeedback(where: ProductVariantFeedbackWhereUniqueInput!, create: ProductVariantFeedbackCreateInput!, update: ProductVariantFeedbackUpdateInput!): ProductVariantFeedback!
+  upsertProductVariantFeedbackQuestion(where: ProductVariantFeedbackQuestionWhereUniqueInput!, create: ProductVariantFeedbackQuestionCreateInput!, update: ProductVariantFeedbackQuestionUpdateInput!): ProductVariantFeedbackQuestion!
+  upsertCollection(where: CollectionWhereUniqueInput!, create: CollectionCreateInput!, update: CollectionUpdateInput!): Collection!
+  upsertCustomerDetail(where: CustomerDetailWhereUniqueInput!, create: CustomerDetailCreateInput!, update: CustomerDetailUpdateInput!): CustomerDetail!
+  upsertBillingInfo(where: BillingInfoWhereUniqueInput!, create: BillingInfoCreateInput!, update: BillingInfoUpdateInput!): BillingInfo!
+  upsertCategory(where: CategoryWhereUniqueInput!, create: CategoryCreateInput!, update: CategoryUpdateInput!): Category!
+  upsertLocation(where: LocationWhereUniqueInput!, create: LocationCreateInput!, update: LocationUpdateInput!): Location!
+  upsertImage(where: ImageWhereUniqueInput!, create: ImageCreateInput!, update: ImageUpdateInput!): Image!
+  upsertPackage(where: PackageWhereUniqueInput!, create: PackageCreateInput!, update: PackageUpdateInput!): Package!
+  upsertSize(where: SizeWhereUniqueInput!, create: SizeCreateInput!, update: SizeUpdateInput!): Size!
+  upsertProductFunction(where: ProductFunctionWhereUniqueInput!, create: ProductFunctionCreateInput!, update: ProductFunctionUpdateInput!): ProductFunction!
+  upsertColor(where: ColorWhereUniqueInput!, create: ColorCreateInput!, update: ColorUpdateInput!): Color!
+  upsertTopSize(where: TopSizeWhereUniqueInput!, create: TopSizeCreateInput!, update: TopSizeUpdateInput!): TopSize!
+  upsertCustomer(where: CustomerWhereUniqueInput!, create: CustomerCreateInput!, update: CustomerUpdateInput!): Customer!
+  upsertBottomSize(where: BottomSizeWhereUniqueInput!, create: BottomSizeCreateInput!, update: BottomSizeUpdateInput!): BottomSize!
+  upsertLabel(where: LabelWhereUniqueInput!, create: LabelCreateInput!, update: LabelUpdateInput!): Label!
+  upsertPhysicalProduct(where: PhysicalProductWhereUniqueInput!, create: PhysicalProductCreateInput!, update: PhysicalProductUpdateInput!): PhysicalProduct!
+  upsertProductVariant(where: ProductVariantWhereUniqueInput!, create: ProductVariantCreateInput!, update: ProductVariantUpdateInput!): ProductVariant!
+  upsertProduct(where: ProductWhereUniqueInput!, create: ProductCreateInput!, update: ProductUpdateInput!): Product!
+  upsertReservation(where: ReservationWhereUniqueInput!, create: ReservationCreateInput!, update: ReservationUpdateInput!): Reservation!
+  upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
+  updateManyBrands(data: BrandUpdateManyMutationInput!, where: BrandWhereInput): BatchPayload!
+>>>>>>> kevin/images-airtable-s3
   updateManyCollectionGroups(data: CollectionGroupUpdateManyMutationInput!, where: CollectionGroupWhereInput): BatchPayload!
   upsertCollectionGroup(where: CollectionGroupWhereUniqueInput!, create: CollectionGroupCreateInput!, update: CollectionGroupUpdateInput!): CollectionGroup!
   deleteCollectionGroup(where: CollectionGroupWhereUniqueInput!): CollectionGroup
@@ -4083,6 +4564,7 @@ type Mutation {
   createHomepageProductRail(data: HomepageProductRailCreateInput!): HomepageProductRail!
   updateHomepageProductRail(data: HomepageProductRailUpdateInput!, where: HomepageProductRailWhereUniqueInput!): HomepageProductRail
   updateManyHomepageProductRails(data: HomepageProductRailUpdateManyMutationInput!, where: HomepageProductRailWhereInput): BatchPayload!
+<<<<<<< HEAD
   upsertHomepageProductRail(where: HomepageProductRailWhereUniqueInput!, create: HomepageProductRailCreateInput!, update: HomepageProductRailUpdateInput!): HomepageProductRail!
   deleteHomepageProductRail(where: HomepageProductRailWhereUniqueInput!): HomepageProductRail
   deleteManyHomepageProductRails(where: HomepageProductRailWhereInput): BatchPayload!
@@ -4106,6 +4588,25 @@ type Mutation {
   deleteManyLocations(where: LocationWhereInput): BatchPayload!
   createPackage(data: PackageCreateInput!): Package!
   updatePackage(data: PackageUpdateInput!, where: PackageWhereUniqueInput!): Package
+=======
+  updateManyTags(data: TagUpdateManyMutationInput!, where: TagWhereInput): BatchPayload!
+  updateManyProductModels(data: ProductModelUpdateManyMutationInput!, where: ProductModelWhereInput): BatchPayload!
+  updateManyWarehouseLocationConstraints(data: WarehouseLocationConstraintUpdateManyMutationInput!, where: WarehouseLocationConstraintWhereInput): BatchPayload!
+  updateManyWarehouseLocations(data: WarehouseLocationUpdateManyMutationInput!, where: WarehouseLocationWhereInput): BatchPayload!
+  updateManyBagItems(data: BagItemUpdateManyMutationInput!, where: BagItemWhereInput): BatchPayload!
+  updateManyRecentlyViewedProducts(data: RecentlyViewedProductUpdateManyMutationInput!, where: RecentlyViewedProductWhereInput): BatchPayload!
+  updateManyProductRequests(data: ProductRequestUpdateManyMutationInput!, where: ProductRequestWhereInput): BatchPayload!
+  updateManyProductVariantWants(data: ProductVariantWantUpdateManyMutationInput!, where: ProductVariantWantWhereInput): BatchPayload!
+  updateManyReservationFeedbacks(data: ReservationFeedbackUpdateManyMutationInput!, where: ReservationFeedbackWhereInput): BatchPayload!
+  updateManyProductVariantFeedbacks(data: ProductVariantFeedbackUpdateManyMutationInput!, where: ProductVariantFeedbackWhereInput): BatchPayload!
+  updateManyProductVariantFeedbackQuestions(data: ProductVariantFeedbackQuestionUpdateManyMutationInput!, where: ProductVariantFeedbackQuestionWhereInput): BatchPayload!
+  updateManyCollections(data: CollectionUpdateManyMutationInput!, where: CollectionWhereInput): BatchPayload!
+  updateManyCustomerDetails(data: CustomerDetailUpdateManyMutationInput!, where: CustomerDetailWhereInput): BatchPayload!
+  updateManyBillingInfoes(data: BillingInfoUpdateManyMutationInput!, where: BillingInfoWhereInput): BatchPayload!
+  updateManyCategories(data: CategoryUpdateManyMutationInput!, where: CategoryWhereInput): BatchPayload!
+  updateManyLocations(data: LocationUpdateManyMutationInput!, where: LocationWhereInput): BatchPayload!
+  updateManyImages(data: ImageUpdateManyMutationInput!, where: ImageWhereInput): BatchPayload!
+>>>>>>> kevin/images-airtable-s3
   updateManyPackages(data: PackageUpdateManyMutationInput!, where: PackageWhereInput): BatchPayload!
   upsertPackage(where: PackageWhereUniqueInput!, create: PackageCreateInput!, update: PackageUpdateInput!): Package!
   deletePackage(where: PackageWhereUniqueInput!): Package
@@ -4119,6 +4620,7 @@ type Mutation {
   createProduct(data: ProductCreateInput!): Product!
   updateProduct(data: ProductUpdateInput!, where: ProductWhereUniqueInput!): Product
   updateManyProducts(data: ProductUpdateManyMutationInput!, where: ProductWhereInput): BatchPayload!
+<<<<<<< HEAD
   upsertProduct(where: ProductWhereUniqueInput!, create: ProductCreateInput!, update: ProductUpdateInput!): Product!
   deleteProduct(where: ProductWhereUniqueInput!): Product
   deleteManyProducts(where: ProductWhereInput): BatchPayload!
@@ -4133,6 +4635,14 @@ type Mutation {
   updateManyProductModels(data: ProductModelUpdateManyMutationInput!, where: ProductModelWhereInput): BatchPayload!
   upsertProductModel(where: ProductModelWhereUniqueInput!, create: ProductModelCreateInput!, update: ProductModelUpdateInput!): ProductModel!
   deleteProductModel(where: ProductModelWhereUniqueInput!): ProductModel
+=======
+  updateManyReservations(data: ReservationUpdateManyMutationInput!, where: ReservationWhereInput): BatchPayload!
+  updateManyUsers(data: UserUpdateManyMutationInput!, where: UserWhereInput): BatchPayload!
+  deleteManyBrands(where: BrandWhereInput): BatchPayload!
+  deleteManyCollectionGroups(where: CollectionGroupWhereInput): BatchPayload!
+  deleteManyHomepageProductRails(where: HomepageProductRailWhereInput): BatchPayload!
+  deleteManyTags(where: TagWhereInput): BatchPayload!
+>>>>>>> kevin/images-airtable-s3
   deleteManyProductModels(where: ProductModelWhereInput): BatchPayload!
   createProductRequest(data: ProductRequestCreateInput!): ProductRequest!
   updateProductRequest(data: ProductRequestUpdateInput!, where: ProductRequestWhereUniqueInput!): ProductRequest
@@ -4158,6 +4668,7 @@ type Mutation {
   upsertProductVariantFeedbackQuestion(where: ProductVariantFeedbackQuestionWhereUniqueInput!, create: ProductVariantFeedbackQuestionCreateInput!, update: ProductVariantFeedbackQuestionUpdateInput!): ProductVariantFeedbackQuestion!
   deleteProductVariantFeedbackQuestion(where: ProductVariantFeedbackQuestionWhereUniqueInput!): ProductVariantFeedbackQuestion
   deleteManyProductVariantFeedbackQuestions(where: ProductVariantFeedbackQuestionWhereInput): BatchPayload!
+<<<<<<< HEAD
   createProductVariantWant(data: ProductVariantWantCreateInput!): ProductVariantWant!
   updateProductVariantWant(data: ProductVariantWantUpdateInput!, where: ProductVariantWantWhereUniqueInput!): ProductVariantWant
   updateManyProductVariantWants(data: ProductVariantWantUpdateManyMutationInput!, where: ProductVariantWantWhereInput): BatchPayload!
@@ -4187,6 +4698,15 @@ type Mutation {
   updateManySizes(data: SizeUpdateManyMutationInput!, where: SizeWhereInput): BatchPayload!
   upsertSize(where: SizeWhereUniqueInput!, create: SizeCreateInput!, update: SizeUpdateInput!): Size!
   deleteSize(where: SizeWhereUniqueInput!): Size
+=======
+  deleteManyCollections(where: CollectionWhereInput): BatchPayload!
+  deleteManyCustomerDetails(where: CustomerDetailWhereInput): BatchPayload!
+  deleteManyBillingInfoes(where: BillingInfoWhereInput): BatchPayload!
+  deleteManyCategories(where: CategoryWhereInput): BatchPayload!
+  deleteManyLocations(where: LocationWhereInput): BatchPayload!
+  deleteManyImages(where: ImageWhereInput): BatchPayload!
+  deleteManyPackages(where: PackageWhereInput): BatchPayload!
+>>>>>>> kevin/images-airtable-s3
   deleteManySizes(where: SizeWhereInput): BatchPayload!
   createTag(data: TagCreateInput!): Tag!
   updateTag(data: TagUpdateInput!, where: TagWhereUniqueInput!): Tag
@@ -4964,7 +5484,7 @@ type Product {
   type: ProductType
   description: String
   externalURL: String
-  images: Json
+  images(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Image!]
   modelHeight: Int
   retailPrice: Int
   model: ProductModel
@@ -5008,9 +5528,19 @@ input ProductCreateInput {
   type: ProductType
   description: String
   externalURL: String
-  images: Json
   modelHeight: Int
   retailPrice: Int
+<<<<<<< HEAD
+=======
+  status: ProductStatus
+  season: String
+  architecture: ProductArchitecture
+  innerMaterials: ProductCreateinnerMaterialsInput
+  outerMaterials: ProductCreateouterMaterialsInput
+  brand: BrandCreateOneWithoutProductsInput!
+  category: CategoryCreateOneWithoutProductsInput!
+  images: ImageCreateManyInput
+>>>>>>> kevin/images-airtable-s3
   model: ProductModelCreateOneWithoutProductsInput
   modelSize: SizeCreateOneInput
   color: ColorCreateOneInput!
@@ -5072,9 +5602,18 @@ input ProductCreateWithoutBrandInput {
   type: ProductType
   description: String
   externalURL: String
-  images: Json
   modelHeight: Int
   retailPrice: Int
+<<<<<<< HEAD
+=======
+  status: ProductStatus
+  season: String
+  architecture: ProductArchitecture
+  innerMaterials: ProductCreateinnerMaterialsInput
+  outerMaterials: ProductCreateouterMaterialsInput
+  category: CategoryCreateOneWithoutProductsInput!
+  images: ImageCreateManyInput
+>>>>>>> kevin/images-airtable-s3
   model: ProductModelCreateOneWithoutProductsInput
   modelSize: SizeCreateOneInput
   color: ColorCreateOneInput!
@@ -5097,9 +5636,18 @@ input ProductCreateWithoutCategoryInput {
   type: ProductType
   description: String
   externalURL: String
-  images: Json
   modelHeight: Int
   retailPrice: Int
+<<<<<<< HEAD
+=======
+  status: ProductStatus
+  season: String
+  architecture: ProductArchitecture
+  innerMaterials: ProductCreateinnerMaterialsInput
+  outerMaterials: ProductCreateouterMaterialsInput
+  brand: BrandCreateOneWithoutProductsInput!
+  images: ImageCreateManyInput
+>>>>>>> kevin/images-airtable-s3
   model: ProductModelCreateOneWithoutProductsInput
   modelSize: SizeCreateOneInput
   color: ColorCreateOneInput!
@@ -5123,9 +5671,19 @@ input ProductCreateWithoutModelInput {
   type: ProductType
   description: String
   externalURL: String
-  images: Json
   modelHeight: Int
   retailPrice: Int
+<<<<<<< HEAD
+=======
+  status: ProductStatus
+  season: String
+  architecture: ProductArchitecture
+  innerMaterials: ProductCreateinnerMaterialsInput
+  outerMaterials: ProductCreateouterMaterialsInput
+  brand: BrandCreateOneWithoutProductsInput!
+  category: CategoryCreateOneWithoutProductsInput!
+  images: ImageCreateManyInput
+>>>>>>> kevin/images-airtable-s3
   modelSize: SizeCreateOneInput
   color: ColorCreateOneInput!
   secondaryColor: ColorCreateOneInput
@@ -5148,9 +5706,19 @@ input ProductCreateWithoutTagsInput {
   type: ProductType
   description: String
   externalURL: String
-  images: Json
   modelHeight: Int
   retailPrice: Int
+<<<<<<< HEAD
+=======
+  status: ProductStatus
+  season: String
+  architecture: ProductArchitecture
+  innerMaterials: ProductCreateinnerMaterialsInput
+  outerMaterials: ProductCreateouterMaterialsInput
+  brand: BrandCreateOneWithoutProductsInput!
+  category: CategoryCreateOneWithoutProductsInput!
+  images: ImageCreateManyInput
+>>>>>>> kevin/images-airtable-s3
   model: ProductModelCreateOneWithoutProductsInput
   modelSize: SizeCreateOneInput
   color: ColorCreateOneInput!
@@ -5173,9 +5741,19 @@ input ProductCreateWithoutVariantsInput {
   type: ProductType
   description: String
   externalURL: String
-  images: Json
   modelHeight: Int
   retailPrice: Int
+<<<<<<< HEAD
+=======
+  status: ProductStatus
+  season: String
+  architecture: ProductArchitecture
+  innerMaterials: ProductCreateinnerMaterialsInput
+  outerMaterials: ProductCreateouterMaterialsInput
+  brand: BrandCreateOneWithoutProductsInput!
+  category: CategoryCreateOneWithoutProductsInput!
+  images: ImageCreateManyInput
+>>>>>>> kevin/images-airtable-s3
   model: ProductModelCreateOneWithoutProductsInput
   modelSize: SizeCreateOneInput
   color: ColorCreateOneInput!
@@ -5528,8 +6106,6 @@ enum ProductOrderByInput {
   description_DESC
   externalURL_ASC
   externalURL_DESC
-  images_ASC
-  images_DESC
   modelHeight_ASC
   modelHeight_DESC
   retailPrice_ASC
@@ -5553,7 +6129,6 @@ type ProductPreviousValues {
   type: ProductType
   description: String
   externalURL: String
-  images: Json
   modelHeight: Int
   retailPrice: Int
   innerMaterials: [String!]!
@@ -6015,9 +6590,19 @@ input ProductUpdateDataInput {
   type: ProductType
   description: String
   externalURL: String
-  images: Json
   modelHeight: Int
   retailPrice: Int
+<<<<<<< HEAD
+=======
+  status: ProductStatus
+  season: String
+  architecture: ProductArchitecture
+  innerMaterials: ProductUpdateinnerMaterialsInput
+  outerMaterials: ProductUpdateouterMaterialsInput
+  brand: BrandUpdateOneRequiredWithoutProductsInput
+  category: CategoryUpdateOneRequiredWithoutProductsInput
+  images: ImageUpdateManyInput
+>>>>>>> kevin/images-airtable-s3
   model: ProductModelUpdateOneWithoutProductsInput
   modelSize: SizeUpdateOneInput
   color: ColorUpdateOneRequiredInput
@@ -6044,9 +6629,19 @@ input ProductUpdateInput {
   type: ProductType
   description: String
   externalURL: String
-  images: Json
   modelHeight: Int
   retailPrice: Int
+<<<<<<< HEAD
+=======
+  status: ProductStatus
+  season: String
+  architecture: ProductArchitecture
+  innerMaterials: ProductUpdateinnerMaterialsInput
+  outerMaterials: ProductUpdateouterMaterialsInput
+  brand: BrandUpdateOneRequiredWithoutProductsInput
+  category: CategoryUpdateOneRequiredWithoutProductsInput
+  images: ImageUpdateManyInput
+>>>>>>> kevin/images-airtable-s3
   model: ProductModelUpdateOneWithoutProductsInput
   modelSize: SizeUpdateOneInput
   color: ColorUpdateOneRequiredInput
@@ -6067,7 +6662,6 @@ input ProductUpdateManyDataInput {
   type: ProductType
   description: String
   externalURL: String
-  images: Json
   modelHeight: Int
   retailPrice: Int
   innerMaterials: ProductUpdateinnerMaterialsInput
@@ -6095,7 +6689,6 @@ input ProductUpdateManyMutationInput {
   type: ProductType
   description: String
   externalURL: String
-  images: Json
   modelHeight: Int
   retailPrice: Int
   innerMaterials: ProductUpdateinnerMaterialsInput
@@ -6183,9 +6776,18 @@ input ProductUpdateWithoutBrandDataInput {
   type: ProductType
   description: String
   externalURL: String
-  images: Json
   modelHeight: Int
   retailPrice: Int
+<<<<<<< HEAD
+=======
+  status: ProductStatus
+  season: String
+  architecture: ProductArchitecture
+  innerMaterials: ProductUpdateinnerMaterialsInput
+  outerMaterials: ProductUpdateouterMaterialsInput
+  category: CategoryUpdateOneRequiredWithoutProductsInput
+  images: ImageUpdateManyInput
+>>>>>>> kevin/images-airtable-s3
   model: ProductModelUpdateOneWithoutProductsInput
   modelSize: SizeUpdateOneInput
   color: ColorUpdateOneRequiredInput
@@ -6207,9 +6809,18 @@ input ProductUpdateWithoutCategoryDataInput {
   type: ProductType
   description: String
   externalURL: String
-  images: Json
   modelHeight: Int
   retailPrice: Int
+<<<<<<< HEAD
+=======
+  status: ProductStatus
+  season: String
+  architecture: ProductArchitecture
+  innerMaterials: ProductUpdateinnerMaterialsInput
+  outerMaterials: ProductUpdateouterMaterialsInput
+  brand: BrandUpdateOneRequiredWithoutProductsInput
+  images: ImageUpdateManyInput
+>>>>>>> kevin/images-airtable-s3
   model: ProductModelUpdateOneWithoutProductsInput
   modelSize: SizeUpdateOneInput
   color: ColorUpdateOneRequiredInput
@@ -6232,9 +6843,19 @@ input ProductUpdateWithoutModelDataInput {
   type: ProductType
   description: String
   externalURL: String
-  images: Json
   modelHeight: Int
   retailPrice: Int
+<<<<<<< HEAD
+=======
+  status: ProductStatus
+  season: String
+  architecture: ProductArchitecture
+  innerMaterials: ProductUpdateinnerMaterialsInput
+  outerMaterials: ProductUpdateouterMaterialsInput
+  brand: BrandUpdateOneRequiredWithoutProductsInput
+  category: CategoryUpdateOneRequiredWithoutProductsInput
+  images: ImageUpdateManyInput
+>>>>>>> kevin/images-airtable-s3
   modelSize: SizeUpdateOneInput
   color: ColorUpdateOneRequiredInput
   secondaryColor: ColorUpdateOneInput
@@ -6256,9 +6877,19 @@ input ProductUpdateWithoutTagsDataInput {
   type: ProductType
   description: String
   externalURL: String
-  images: Json
   modelHeight: Int
   retailPrice: Int
+<<<<<<< HEAD
+=======
+  status: ProductStatus
+  season: String
+  architecture: ProductArchitecture
+  innerMaterials: ProductUpdateinnerMaterialsInput
+  outerMaterials: ProductUpdateouterMaterialsInput
+  brand: BrandUpdateOneRequiredWithoutProductsInput
+  category: CategoryUpdateOneRequiredWithoutProductsInput
+  images: ImageUpdateManyInput
+>>>>>>> kevin/images-airtable-s3
   model: ProductModelUpdateOneWithoutProductsInput
   modelSize: SizeUpdateOneInput
   color: ColorUpdateOneRequiredInput
@@ -6280,9 +6911,19 @@ input ProductUpdateWithoutVariantsDataInput {
   type: ProductType
   description: String
   externalURL: String
-  images: Json
   modelHeight: Int
   retailPrice: Int
+<<<<<<< HEAD
+=======
+  status: ProductStatus
+  season: String
+  architecture: ProductArchitecture
+  innerMaterials: ProductUpdateinnerMaterialsInput
+  outerMaterials: ProductUpdateouterMaterialsInput
+  brand: BrandUpdateOneRequiredWithoutProductsInput
+  category: CategoryUpdateOneRequiredWithoutProductsInput
+  images: ImageUpdateManyInput
+>>>>>>> kevin/images-airtable-s3
   model: ProductModelUpdateOneWithoutProductsInput
   modelSize: SizeUpdateOneInput
   color: ColorUpdateOneRequiredInput
@@ -7707,9 +8348,30 @@ input ProductWhereInput {
   updatedAt_lte: DateTime
   updatedAt_gt: DateTime
   updatedAt_gte: DateTime
+<<<<<<< HEAD
   AND: [ProductWhereInput!]
   OR: [ProductWhereInput!]
   NOT: [ProductWhereInput!]
+=======
+  brand: BrandWhereInput
+  category: CategoryWhereInput
+  images_every: ImageWhereInput
+  images_some: ImageWhereInput
+  images_none: ImageWhereInput
+  model: ProductModelWhereInput
+  modelSize: SizeWhereInput
+  color: ColorWhereInput
+  secondaryColor: ColorWhereInput
+  tags_every: TagWhereInput
+  tags_some: TagWhereInput
+  tags_none: TagWhereInput
+  functions_every: ProductFunctionWhereInput
+  functions_some: ProductFunctionWhereInput
+  functions_none: ProductFunctionWhereInput
+  variants_every: ProductVariantWhereInput
+  variants_some: ProductVariantWhereInput
+  variants_none: ProductVariantWhereInput
+>>>>>>> kevin/images-airtable-s3
 }
 
 input ProductWhereUniqueInput {
@@ -7724,13 +8386,35 @@ enum PushNotificationStatus {
 }
 
 type Query {
+<<<<<<< HEAD
   bagItem(where: BagItemWhereUniqueInput!): BagItem
+=======
+  brands(where: BrandWhereInput, orderBy: BrandOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Brand]!
+  collectionGroups(where: CollectionGroupWhereInput, orderBy: CollectionGroupOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CollectionGroup]!
+  homepageProductRails(where: HomepageProductRailWhereInput, orderBy: HomepageProductRailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [HomepageProductRail]!
+  tags(where: TagWhereInput, orderBy: TagOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Tag]!
+  productModels(where: ProductModelWhereInput, orderBy: ProductModelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductModel]!
+  warehouseLocationConstraints(where: WarehouseLocationConstraintWhereInput, orderBy: WarehouseLocationConstraintOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [WarehouseLocationConstraint]!
+  warehouseLocations(where: WarehouseLocationWhereInput, orderBy: WarehouseLocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [WarehouseLocation]!
+>>>>>>> kevin/images-airtable-s3
   bagItems(where: BagItemWhereInput, orderBy: BagItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [BagItem]!
   bagItemsConnection(where: BagItemWhereInput, orderBy: BagItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BagItemConnection!
   billingInfo(where: BillingInfoWhereUniqueInput!): BillingInfo
   billingInfoes(where: BillingInfoWhereInput, orderBy: BillingInfoOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [BillingInfo]!
+<<<<<<< HEAD
   billingInfoesConnection(where: BillingInfoWhereInput, orderBy: BillingInfoOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BillingInfoConnection!
   bottomSize(where: BottomSizeWhereUniqueInput!): BottomSize
+=======
+  categories(where: CategoryWhereInput, orderBy: CategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Category]!
+  locations(where: LocationWhereInput, orderBy: LocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Location]!
+  images(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Image]!
+  packages(where: PackageWhereInput, orderBy: PackageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Package]!
+  sizes(where: SizeWhereInput, orderBy: SizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Size]!
+  productFunctions(where: ProductFunctionWhereInput, orderBy: ProductFunctionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductFunction]!
+  colors(where: ColorWhereInput, orderBy: ColorOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Color]!
+  topSizes(where: TopSizeWhereInput, orderBy: TopSizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [TopSize]!
+  customers(where: CustomerWhereInput, orderBy: CustomerOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Customer]!
+>>>>>>> kevin/images-airtable-s3
   bottomSizes(where: BottomSizeWhereInput, orderBy: BottomSizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [BottomSize]!
   bottomSizesConnection(where: BottomSizeWhereInput, orderBy: BottomSizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BottomSizeConnection!
   brand(where: BrandWhereUniqueInput!): Brand
@@ -7755,6 +8439,7 @@ type Query {
   customerDetails(where: CustomerDetailWhereInput, orderBy: CustomerDetailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CustomerDetail]!
   customerDetailsConnection(where: CustomerDetailWhereInput, orderBy: CustomerDetailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CustomerDetailConnection!
   homepageProductRail(where: HomepageProductRailWhereUniqueInput!): HomepageProductRail
+<<<<<<< HEAD
   homepageProductRails(where: HomepageProductRailWhereInput, orderBy: HomepageProductRailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [HomepageProductRail]!
   homepageProductRailsConnection(where: HomepageProductRailWhereInput, orderBy: HomepageProductRailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): HomepageProductRailConnection!
   image(where: ImageWhereUniqueInput!): Image
@@ -7766,6 +8451,25 @@ type Query {
   location(where: LocationWhereUniqueInput!): Location
   locations(where: LocationWhereInput, orderBy: LocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Location]!
   locationsConnection(where: LocationWhereInput, orderBy: LocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): LocationConnection!
+=======
+  tag(where: TagWhereUniqueInput!): Tag
+  productModel(where: ProductModelWhereUniqueInput!): ProductModel
+  warehouseLocationConstraint(where: WarehouseLocationConstraintWhereUniqueInput!): WarehouseLocationConstraint
+  warehouseLocation(where: WarehouseLocationWhereUniqueInput!): WarehouseLocation
+  bagItem(where: BagItemWhereUniqueInput!): BagItem
+  recentlyViewedProduct(where: RecentlyViewedProductWhereUniqueInput!): RecentlyViewedProduct
+  productRequest(where: ProductRequestWhereUniqueInput!): ProductRequest
+  productVariantWant(where: ProductVariantWantWhereUniqueInput!): ProductVariantWant
+  reservationFeedback(where: ReservationFeedbackWhereUniqueInput!): ReservationFeedback
+  productVariantFeedback(where: ProductVariantFeedbackWhereUniqueInput!): ProductVariantFeedback
+  productVariantFeedbackQuestion(where: ProductVariantFeedbackQuestionWhereUniqueInput!): ProductVariantFeedbackQuestion
+  collection(where: CollectionWhereUniqueInput!): Collection
+  customerDetail(where: CustomerDetailWhereUniqueInput!): CustomerDetail
+  billingInfo(where: BillingInfoWhereUniqueInput!): BillingInfo
+  category(where: CategoryWhereUniqueInput!): Category
+  location(where: LocationWhereUniqueInput!): Location
+  image(where: ImageWhereUniqueInput!): Image
+>>>>>>> kevin/images-airtable-s3
   package(where: PackageWhereUniqueInput!): Package
   packages(where: PackageWhereInput, orderBy: PackageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Package]!
   packagesConnection(where: PackageWhereInput, orderBy: PackageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PackageConnection!
@@ -7773,6 +8477,7 @@ type Query {
   physicalProducts(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct]!
   physicalProductsConnection(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PhysicalProductConnection!
   product(where: ProductWhereUniqueInput!): Product
+<<<<<<< HEAD
   products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product]!
   productsConnection(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductConnection!
   productFunction(where: ProductFunctionWhereUniqueInput!): ProductFunction
@@ -7780,6 +8485,14 @@ type Query {
   productFunctionsConnection(where: ProductFunctionWhereInput, orderBy: ProductFunctionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductFunctionConnection!
   productModel(where: ProductModelWhereUniqueInput!): ProductModel
   productModels(where: ProductModelWhereInput, orderBy: ProductModelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductModel]!
+=======
+  reservation(where: ReservationWhereUniqueInput!): Reservation
+  user(where: UserWhereUniqueInput!): User
+  brandsConnection(where: BrandWhereInput, orderBy: BrandOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BrandConnection!
+  collectionGroupsConnection(where: CollectionGroupWhereInput, orderBy: CollectionGroupOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CollectionGroupConnection!
+  homepageProductRailsConnection(where: HomepageProductRailWhereInput, orderBy: HomepageProductRailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): HomepageProductRailConnection!
+  tagsConnection(where: TagWhereInput, orderBy: TagOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): TagConnection!
+>>>>>>> kevin/images-airtable-s3
   productModelsConnection(where: ProductModelWhereInput, orderBy: ProductModelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductModelConnection!
   productRequest(where: ProductRequestWhereUniqueInput!): ProductRequest
   productRequests(where: ProductRequestWhereInput, orderBy: ProductRequestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductRequest]!
@@ -7793,6 +8506,7 @@ type Query {
   productVariantFeedbackQuestion(where: ProductVariantFeedbackQuestionWhereUniqueInput!): ProductVariantFeedbackQuestion
   productVariantFeedbackQuestions(where: ProductVariantFeedbackQuestionWhereInput, orderBy: ProductVariantFeedbackQuestionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariantFeedbackQuestion]!
   productVariantFeedbackQuestionsConnection(where: ProductVariantFeedbackQuestionWhereInput, orderBy: ProductVariantFeedbackQuestionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductVariantFeedbackQuestionConnection!
+<<<<<<< HEAD
   productVariantWant(where: ProductVariantWantWhereUniqueInput!): ProductVariantWant
   productVariantWants(where: ProductVariantWantWhereInput, orderBy: ProductVariantWantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariantWant]!
   productVariantWantsConnection(where: ProductVariantWantWhereInput, orderBy: ProductVariantWantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductVariantWantConnection!
@@ -7807,6 +8521,15 @@ type Query {
   reservationFeedbacksConnection(where: ReservationFeedbackWhereInput, orderBy: ReservationFeedbackOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ReservationFeedbackConnection!
   size(where: SizeWhereUniqueInput!): Size
   sizes(where: SizeWhereInput, orderBy: SizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Size]!
+=======
+  collectionsConnection(where: CollectionWhereInput, orderBy: CollectionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CollectionConnection!
+  customerDetailsConnection(where: CustomerDetailWhereInput, orderBy: CustomerDetailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CustomerDetailConnection!
+  billingInfoesConnection(where: BillingInfoWhereInput, orderBy: BillingInfoOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BillingInfoConnection!
+  categoriesConnection(where: CategoryWhereInput, orderBy: CategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CategoryConnection!
+  locationsConnection(where: LocationWhereInput, orderBy: LocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): LocationConnection!
+  imagesConnection(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ImageConnection!
+  packagesConnection(where: PackageWhereInput, orderBy: PackageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PackageConnection!
+>>>>>>> kevin/images-airtable-s3
   sizesConnection(where: SizeWhereInput, orderBy: SizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): SizeConnection!
   tag(where: TagWhereUniqueInput!): Tag
   tags(where: TagWhereInput, orderBy: TagOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Tag]!
@@ -8819,6 +9542,7 @@ type Subscription {
   customer(where: CustomerSubscriptionWhereInput): CustomerSubscriptionPayload
   customerDetail(where: CustomerDetailSubscriptionWhereInput): CustomerDetailSubscriptionPayload
   homepageProductRail(where: HomepageProductRailSubscriptionWhereInput): HomepageProductRailSubscriptionPayload
+<<<<<<< HEAD
   image(where: ImageSubscriptionWhereInput): ImageSubscriptionPayload
   label(where: LabelSubscriptionWhereInput): LabelSubscriptionPayload
   location(where: LocationSubscriptionWhereInput): LocationSubscriptionPayload
@@ -8826,15 +9550,28 @@ type Subscription {
   physicalProduct(where: PhysicalProductSubscriptionWhereInput): PhysicalProductSubscriptionPayload
   product(where: ProductSubscriptionWhereInput): ProductSubscriptionPayload
   productFunction(where: ProductFunctionSubscriptionWhereInput): ProductFunctionSubscriptionPayload
+=======
+  tag(where: TagSubscriptionWhereInput): TagSubscriptionPayload
+>>>>>>> kevin/images-airtable-s3
   productModel(where: ProductModelSubscriptionWhereInput): ProductModelSubscriptionPayload
   productRequest(where: ProductRequestSubscriptionWhereInput): ProductRequestSubscriptionPayload
   productVariant(where: ProductVariantSubscriptionWhereInput): ProductVariantSubscriptionPayload
   productVariantFeedback(where: ProductVariantFeedbackSubscriptionWhereInput): ProductVariantFeedbackSubscriptionPayload
   productVariantFeedbackQuestion(where: ProductVariantFeedbackQuestionSubscriptionWhereInput): ProductVariantFeedbackQuestionSubscriptionPayload
+<<<<<<< HEAD
   productVariantWant(where: ProductVariantWantSubscriptionWhereInput): ProductVariantWantSubscriptionPayload
   recentlyViewedProduct(where: RecentlyViewedProductSubscriptionWhereInput): RecentlyViewedProductSubscriptionPayload
   reservation(where: ReservationSubscriptionWhereInput): ReservationSubscriptionPayload
   reservationFeedback(where: ReservationFeedbackSubscriptionWhereInput): ReservationFeedbackSubscriptionPayload
+=======
+  collection(where: CollectionSubscriptionWhereInput): CollectionSubscriptionPayload
+  customerDetail(where: CustomerDetailSubscriptionWhereInput): CustomerDetailSubscriptionPayload
+  billingInfo(where: BillingInfoSubscriptionWhereInput): BillingInfoSubscriptionPayload
+  category(where: CategorySubscriptionWhereInput): CategorySubscriptionPayload
+  location(where: LocationSubscriptionWhereInput): LocationSubscriptionPayload
+  image(where: ImageSubscriptionWhereInput): ImageSubscriptionPayload
+  package(where: PackageSubscriptionWhereInput): PackageSubscriptionPayload
+>>>>>>> kevin/images-airtable-s3
   size(where: SizeSubscriptionWhereInput): SizeSubscriptionPayload
   tag(where: TagSubscriptionWhereInput): TagSubscriptionPayload
   topSize(where: TopSizeSubscriptionWhereInput): TopSizeSubscriptionPayload
