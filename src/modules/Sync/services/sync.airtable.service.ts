@@ -149,6 +149,8 @@ export class AirtableSyncService {
         return await this.syncCollectionGroupsService.syncAirtableToPrisma()
       case "homepage-product-rails":
         return await this.syncHomepageProductRailsService.syncAirtableToPrisma()
+      case "models":
+        return await this.syncModelsService.syncAirtableToPrisma()
       default:
         throw new Error("invalid table name")
     }

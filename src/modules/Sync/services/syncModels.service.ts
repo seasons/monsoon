@@ -27,4 +27,9 @@ export class SyncModelsService {
       cliProgressBar,
     })
   }
+
+  async syncAirtableToPrisma(cliProgressBar?) {
+    const allModels = await this.airtableService.getAllModels()
+    console.log("ALL MODELS", allModels)
+  }
 }
