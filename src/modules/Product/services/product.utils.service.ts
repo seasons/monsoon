@@ -6,6 +6,8 @@ import slugify from "slugify"
 
 import {
   BottomSizeCreateInput,
+  BottomSizeType,
+  LetterSize,
   ProductType,
   Size,
   TopSizeCreateInput,
@@ -289,5 +291,32 @@ export class ProductUtilsService {
       })
     )
     return prismaImages.map(image => ({ id: image.id }))
+  }
+
+  async getModelSize({
+    slug,
+    type,
+    modelSizeName,
+    modelSizeDisplay,
+    bottomSizeType,
+  }: {
+    slug: string
+    type: ProductType
+    modelSizeName: string
+    modelSizeDisplay: string
+    bottomSizeType?: BottomSizeType
+  }) {
+    return await this.deepUpsertSize({
+      slug,
+      type,
+      display: modelSizeDisplay,
+      topSizeData: type === "Top" && {
+        letter: modelSizeName as LetterSize,
+      },
+      bottomSizeData: type === "Bottom" && {
+        type: bottomSizeType as BottomSizeType,
+        value: modelSizeName,
+      },
+    })
   }
 }

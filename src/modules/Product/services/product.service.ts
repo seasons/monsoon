@@ -152,6 +152,14 @@ export class ProductService {
     )
     const imageIDs = await this.productUtils.getImageIDsForURLs(imageURLs)
 
+    const modelSize = await this.productUtils.getModelSize({
+      slug,
+      type: input.type,
+      modelSizeName: input.modelSizeName,
+      modelSizeDisplay: input.modelSizeDisplay,
+      bottomSizeType: input.bottomSizeType,
+    })
+
     const tagIDs: { id: string }[] = await Promise.all(
       input.tags.map(async tag => {
         const prismaTag = await this.prisma.client.upsertTag({
@@ -183,7 +191,7 @@ export class ProductService {
         connect: { id: model.id },
       },
       modelSize: {
-        connect: { id: input.modelSizeID },
+        connect: { id: modelSize.id },
       },
       color: {
         connect: { id: input.colorID },

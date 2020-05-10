@@ -472,7 +472,9 @@ input CreateProductInput {
   description: String!
   modelID: String!
   retailPrice: Int!
-  modelSizeID: String!
+  modelSizeName: String!
+  modelSizeDisplay: String!
+  bottomSizeType: BottomSizeType
   colorID: String!
   secondaryColorID: String
   tags: [String!]!
@@ -507,8 +509,8 @@ input CreateVariantInput {
 
 input CreatePhysicalProductInput {
   seasonsUID: String!
-  inventoryStatus: String!
-  physicalProductStatus: String!
+  inventoryStatus: InventoryStatus!
+  physicalProductStatus: PhysicalProductStatus!
 }
 
 type BeamsData {
