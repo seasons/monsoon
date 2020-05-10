@@ -5656,6 +5656,7 @@ input ProductModelWhereInput {
 
 input ProductModelWhereUniqueInput {
   id: ID
+  name: String
 }
 
 enum ProductOrderByInput {

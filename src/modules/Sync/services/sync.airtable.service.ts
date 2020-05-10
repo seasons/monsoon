@@ -172,6 +172,7 @@ export class AirtableSyncService {
       collections: await _createSubBar("Collections"),
       collectionGroups: await _createSubBar("Collection Groups"),
       homepageProductRails: await _createSubBar("Homepage Product Rails"),
+      models: await _createSubBar("Models"),
     }
 
     // ignore locations because of complications with slugs. plus, we dont really use them yet.
@@ -193,6 +194,7 @@ export class AirtableSyncService {
       await this.syncHomepageProductRailsService.syncAirtableToPrisma(
         bars.homepageProductRails
       )
+      await this.syncModelsService.syncAirtableToPrisma(bars.models)
     } catch (e) {
       console.log(e)
     }

@@ -282,7 +282,7 @@ type Product {
 
 type ProductModel {
   id: ID! @id
-  name: String!
+  name: String! @unique
   height: Float!
   products: [Product!]! @relation(link: TABLE)
 }

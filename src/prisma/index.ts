@@ -4668,6 +4668,7 @@ export type ProductFunctionWhereUniqueInput = AtLeastOne<{
 
 export type ProductModelWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
+  name?: Maybe<String>;
 }>;
 
 export type ProductRequestWhereUniqueInput = AtLeastOne<{

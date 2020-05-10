@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Fri May 08 2020 16:03:07 GMT-0400 (Eastern Daylight Time)
+# timestamp: Sun May 10 2020 16:17:10 GMT-0400 (Eastern Daylight Time)
 
 type AggregateBagItem {
   count: Int!
@@ -9722,6 +9722,7 @@ input ProductModelWhereInput {
 
 input ProductModelWhereUniqueInput {
   id: ID
+  name: String
 }
 
 enum ProductOrderByInput {
