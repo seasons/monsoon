@@ -13,6 +13,7 @@ import {
 import { PrismaService } from "../../../prisma/prisma.service"
 import { AirtableData } from "../../Airtable/airtable.types"
 import { AirtableService } from "../../Airtable/services/airtable.service"
+import { ProductUtilsService } from "../../Product/services/product.utils.service"
 import { UtilsService } from "../../Utils/services/utils.service"
 import { SyncUtilsService } from "./sync.utils.service"
 import { SyncBottomSizesService } from "./syncBottomSizes.service"
@@ -25,6 +26,7 @@ export class SyncProductVariantsService {
   constructor(
     private readonly airtableService: AirtableService,
     private readonly prisma: PrismaService,
+    private readonly productUtils: ProductUtilsService,
     private readonly syncBottomSizesService: SyncBottomSizesService,
     private readonly syncProductsService: SyncProductsService,
     private readonly syncSizesService: SyncSizesService,
@@ -112,7 +114,6 @@ export class SyncProductVariantsService {
 
     let numSkipped = 0
     const logFile = this.utils.openLogFile("syncProductVariants")
-    fs.writeSync(logFile, "Begin Log\n")
     for (const productVariant of allProductVariants) {
       try {
         // Increment the progress bar
@@ -188,7 +189,7 @@ export class SyncProductVariantsService {
               linkedAirtableSize = allSizes.findByIds(bottomSize.model.size)
               break
           }
-          internalSizeRecord = await this.syncSizesService.deepUpsertSize({
+          internalSizeRecord = await this.productUtils.deepUpsertSize({
             slug: `${sku}-internal`,
             type,
             display: linkedAirtableSize?.model.display || "",
@@ -240,7 +241,7 @@ export class SyncProductVariantsService {
                 name: value,
               } = manufacturerSizeRecord.model
               manufacturerSizeRecords.push(
-                await this.syncSizesService.deepUpsertSize({
+                await this.productUtils.deepUpsertSize({
                   slug: `${sku}-manu-${type}-${value}`,
                   type: "Bottom",
                   display,
@@ -334,13 +335,7 @@ export class SyncProductVariantsService {
 
         this.updateCategorySizeName(type, topSize, bottomSize, sku)
       } catch (e) {
-        this.utils.writeLines(logFile, [
-          "THREW ERROR",
-          "Record:",
-          productVariant,
-          "Error:",
-          e,
-        ])
+        this.syncUtils.logSyncError(logFile, productVariant, e)
       }
     }
     this.utils.writeLines(logFile, [`Skipped ${numSkipped} records`])

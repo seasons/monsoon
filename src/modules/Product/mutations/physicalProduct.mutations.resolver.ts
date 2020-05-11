@@ -1,4 +1,5 @@
-import { Args, Mutation, Resolver, Info } from "@nestjs/graphql"
+import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
+
 import { PhysicalProductService } from "../services/physicalProduct.service"
 
 @Resolver()

@@ -1,14 +1,16 @@
 import * as fs from "fs"
 
+import { AirtableData } from "@modules/Airtable/airtable.types"
+import { AirtableService } from "@modules/Airtable/services/airtable.service"
+import { ImageService } from "@modules/Image/services/image.service"
+import { UtilsService } from "@modules/Utils/services/utils.service"
 import { Injectable } from "@nestjs/common"
-import { head, isEmpty } from "lodash"
+import { BottomSizeType, LetterSize, ProductCreateInput } from "@prisma/index"
+import { head, identity, isEmpty } from "lodash"
 import slugify from "slugify"
 
-import { BottomSizeType, LetterSize, ProductCreateInput } from "../../../prisma"
 import { PrismaService } from "../../../prisma/prisma.service"
-import { AirtableData } from "../../Airtable/airtable.types"
-import { AirtableService } from "../../Airtable/services/airtable.service"
-import { UtilsService } from "../../Utils/services/utils.service"
+import { ProductUtilsService } from "../../Product/services/product.utils.service"
 import { SyncUtilsService } from "./sync.utils.service"
 import { SyncCategoriesService } from "./syncCategories.service"
 import { SyncSizesService } from "./syncSizes.service"
@@ -18,6 +20,8 @@ export class SyncProductsService {
   constructor(
     private readonly airtableService: AirtableService,
     private readonly prisma: PrismaService,
+    private readonly productUtils: ProductUtilsService,
+    private readonly imageService: ImageService,
     private readonly syncCategoriesService: SyncCategoriesService,
     private readonly syncSizesService: SyncSizesService,
     private readonly syncUtils: SyncUtilsService,
@@ -98,6 +102,7 @@ export class SyncProductsService {
       modelName: "Products",
     })
 
+    const logFile = this.utils.openLogFile("syncProducts")
     for (const record of allProducts) {
       try {
         _cliProgressBar.increment()
@@ -136,9 +141,13 @@ export class SyncProductsService {
           continue
         }
 
+        // Get the slug
         const { brandCode } = brand.model
-        const slug = slugify(brandCode + " " + name + " " + color).toLowerCase()
+        const slug = this.productUtils.getProductSlug(brandCode, name, color)
 
+        const imageIDs = await this.syncImages(images, slug, brandCode, name)
+
+        // Sync model size records
         let modelSizeRecord
         if (!!modelSize) {
           const {
@@ -146,20 +155,25 @@ export class SyncProductsService {
             type: modelSizeType,
             name: modelSizeName,
           } = modelSize.model
-          modelSizeRecord = await this.syncSizesService.deepUpsertSize({
+          modelSizeRecord = await this.productUtils.upsertModelSize({
             slug,
             type,
-            display: modelSizeDisplay,
-            topSizeData: type === "Top" && {
-              letter: modelSizeName as LetterSize,
-            },
-            bottomSizeData: type === "Bottom" && {
-              type: modelSizeType as BottomSizeType,
-              value: modelSizeName,
-            },
+            modelSizeName,
+            modelSizeDisplay,
+            bottomSizeType: modelSizeType,
           })
         }
 
+        // Upsert the tags
+        for (const name of model.tags) {
+          await this.prisma.client.upsertTag({
+            where: { name },
+            create: { name },
+            update: { name },
+          })
+        }
+
+        // Upsert the product
         const data = {
           brand: {
             connect: {
@@ -183,13 +197,17 @@ export class SyncProductsService {
             set: (outerMaterials || []).map(a => a.replace(/\ /g, "")),
           },
           tags: {
-            set: tags,
+            connect: model.tags.map(name =>
+              identity({
+                name,
+              })
+            ),
           },
           name,
           slug,
           type,
           description,
-          images,
+          images: { connect: imageIDs },
           retailPrice,
           externalURL: externalURL || "",
           ...(() => {
@@ -199,11 +217,9 @@ export class SyncProductsService {
           })(),
           modelHeight: head(modelHeight) ?? 0,
           status: (status || "Available").replace(" ", ""),
+          season: model.season,
         } as ProductCreateInput
 
-        // if (name == "Kit Shirt") {
-        //   console.log(data)
-        // }
         await this.prisma.client.upsertProduct({
           where: {
             slug,
@@ -212,15 +228,17 @@ export class SyncProductsService {
           update: data,
         })
 
+        // Update airtable
         await record.patchUpdate({
           Slug: slug,
         })
       } catch (e) {
-        console.log(record)
-        console.error(e)
+        console.log(`Check ${logFile}`)
+        this.syncUtils.logSyncError(logFile, record, e)
       }
     }
     multibar?.stop()
+    fs.closeSync(logFile)
   }
 
   private async addBrandLinks(
@@ -332,5 +350,36 @@ export class SyncProductsService {
       getTargetRecordIdentifer: this.syncSizesService.getSizeRecordIdentifer,
       cliProgressBar,
     })
+  }
+
+  private async syncImages(
+    images: any,
+    slug: string,
+    brandCode: string,
+    name: string
+  ) {
+    const productImages = await this.prisma.client.product({ slug }).images()
+    let imageIDs
+    if (productImages && productImages.length > 0) {
+      // We've already uploaded these images to S3
+      imageIDs = productImages.map(image => ({ id: image.id }))
+    } else {
+      // We have yet to upload these images to S3
+      const imageURLs: string[] = await Promise.all(
+        images.map(async (image, index) => {
+          const s3ImageName = this.productUtils.getProductImageName(
+            brandCode,
+            name,
+            index + 1
+          )
+          return await this.imageService.uploadImageFromURL(
+            image.url,
+            s3ImageName
+          )
+        })
+      )
+      imageIDs = this.productUtils.getImageIDsForURLs(imageURLs)
+    }
+    return imageIDs
   }
 }

@@ -1,17 +1,16 @@
-import * as Airtable from "airtable"
-
 import {
   AirtableBaseService,
   AirtableService,
   AirtableUtilsService,
 } from "@app/modules/Airtable"
 import { TestUtilsService, UtilsService } from "@app/modules/Utils"
-
-import { PrismaService } from "@app/prisma/prisma.service"
-import { ProductService } from "../services/product.service"
 import { ID_Input, InventoryStatus, ProductCreateInput } from "@app/prisma"
-import { ProductUtilsService } from "../services/product.utils.service"
+import { PrismaService } from "@app/prisma/prisma.service"
+import * as Airtable from "airtable"
+
 import { ProductWithPhysicalProducts } from "../product.types"
+import { ProductService } from "../services/product.service"
+import { ProductUtilsService } from "../services/product.utils.service"
 
 Airtable.configure({
   endpointUrl: "https://api.airtable.com",
@@ -201,11 +200,15 @@ async function createTestProduct({
                     seasonsUID: utilsService.randomString(),
                     inventoryStatus: "Reserved",
                     productStatus: "New",
+                    barcode: "C-A100-0001",
+                    sequenceNumber: 0,
                   },
                   {
                     seasonsUID: utilsService.randomString(),
                     inventoryStatus: "Reservable",
                     productStatus: "New",
+                    barcode: "C-A100-0001",
+                    sequenceNumber: 0,
                   },
                 ],
               },
@@ -225,11 +228,15 @@ async function createTestProduct({
                     seasonsUID: utilsService.randomString(),
                     inventoryStatus: "NonReservable",
                     productStatus: "New",
+                    barcode: "C-A100-0001",
+                    sequenceNumber: 0,
                   },
                   {
                     seasonsUID: utilsService.randomString(),
                     inventoryStatus: "Offloaded",
                     productStatus: "New",
+                    barcode: "C-A100-0001",
+                    sequenceNumber: 0,
                   },
                 ],
               },

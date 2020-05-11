@@ -142,6 +142,12 @@ enum ProductArchitecture {
   Staple
 }
 
+enum WarehouseLocationType {
+	Conveyor
+  Rail
+  Bin
+}
+
 type Brand {
   id: ID! @id
   slug: String! @unique
@@ -210,9 +216,8 @@ type Image {
   caption: String
   url: String
   originalHeight: Int
-  originalUrl: String!
+  originalUrl: String! @unique
   originalWidth: Int
-  resizedUrl: String!
   title: String
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
@@ -238,6 +243,15 @@ type Location {
   updatedAt: DateTime! @updatedAt
 }
 
+type Tag {
+  id: ID! @id
+  name: String! @unique
+  description: String
+  products: [Product!]!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
 type Product {
   id: ID! @id
   slug: String! @unique
@@ -247,14 +261,14 @@ type Product {
   type: ProductType
   description: String
   externalURL: String
-  images: Json
+  images: [Image!]
   modelHeight: Int
   retailPrice: Int
   model: ProductModel
   modelSize: Size @relation(name: "ProductModelSize")
   color: Color! @relation(name: "ProductPrimaryColor")
   secondaryColor: Color @relation(name: "ProductSecondaryColor")
-  tags: Json
+  tags: [Tag!]!
   functions: [ProductFunction!]!
   innerMaterials: [String!]! @scalarList(strategy: RELATION)
   outerMaterials: [String!]! @scalarList(strategy: RELATION)
@@ -268,7 +282,7 @@ type Product {
 
 type ProductModel {
   id: ID! @id
-  name: String!
+  name: String! @unique
   height: Float!
   products: [Product!]! @relation(link: TABLE)
 }
@@ -309,6 +323,30 @@ type PhysicalProduct {
   productStatus: PhysicalProductStatus!
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
+  barcode: String!
+  sequenceNumber: Int!
+  warehouseLocation: WarehouseLocation
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type WarehouseLocationConstraint {
+  id: ID! @id
+  category: Category!
+  limit: Int!
+  locations: [WarehouseLocation!]
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type WarehouseLocation {
+  id: ID! @id
+  type: WarehouseLocationType!
+  barcode: String! @unique
+  locationCode: String!
+  itemCode: String!
+	physicalProducts: [PhysicalProduct!]
+  constraints: [WarehouseLocationConstraint!]
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
@@ -384,6 +422,7 @@ type RecentlyViewedProduct {
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
+
 
 type Reservation {
   id: ID! @id
@@ -519,3 +558,4 @@ type ProductVariantFeedbackQuestion {
   type: QuestionType!
   variantFeedback: ProductVariantFeedback!
 }
+
