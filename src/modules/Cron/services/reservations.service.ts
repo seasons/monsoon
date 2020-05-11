@@ -12,7 +12,6 @@ import { Cron, CronExpression } from "@nestjs/schedule"
 import {
   ID_Input,
   InventoryStatus,
-  PhysicalProduct,
   Product,
   ProductVariant,
   Reservation,
@@ -44,7 +43,7 @@ export class ReservationScheduledJobs {
     private readonly errorService: ErrorService
   ) {}
 
-  // @Cron(CronExpression.EVERY_6_HOURS)
+  @Cron(CronExpression.EVERY_6_HOURS)
   async sendReturnNotifications() {
     this.logger.log("Reservation Return Notifications Job ran")
     const reservations = await this.prisma.client.reservations({

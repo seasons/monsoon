@@ -32,7 +32,7 @@ export class DataScheduledJobs {
     private readonly utils: UtilsService
   ) {}
 
-  // @Cron(CronExpression.MONDAY_TO_FRIDAY_AT_9AM)
+  @Cron(CronExpression.MONDAY_TO_FRIDAY_AT_9AM)
   async airtableToPrismaHealthCheck() {
     let message = { channel: process.env.SLACK_DEV_CHANNEL_ID, text: "'" }
     try {
