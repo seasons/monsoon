@@ -1,6 +1,7 @@
 import { UtilsService } from "@app/modules/Utils"
 import { Brand } from "@app/prisma"
 import { PrismaService } from "@app/prisma/prisma.service"
+import { ImageService } from "@modules/Image/services/image.service"
 
 import { PhysicalProductService } from "../services/physicalProduct.service"
 import { PhysicalProductUtilsService } from "../services/physicalProduct.utils.service"
@@ -30,6 +31,7 @@ describe("Validate Warehouse Location", () => {
       productVariantService,
       new ProductService(
         prismaService,
+        new ImageService(),
         productUtilsService,
         productVariantService,
         utilsService
