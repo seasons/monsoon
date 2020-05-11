@@ -2,6 +2,7 @@ import { Module } from "@nestjs/common"
 
 import { PrismaModule } from "../../prisma/prisma.module"
 import { AirtableModule } from "../Airtable/airtable.module"
+import { ImageModule } from "../Image/image.module"
 import { UserModule } from "../User/user.module"
 import { UtilsModule } from "../Utils/utils.module"
 import { AirtableSyncService } from "./services/sync.airtable.service"
@@ -28,6 +29,7 @@ import { ProductModule } from ".."
 @Module({
   imports: [
     AirtableModule,
+    ImageModule,
     PrismaModule,
     UserModule,
     UtilsModule,
