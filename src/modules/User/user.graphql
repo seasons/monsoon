@@ -1,4 +1,4 @@
-# import Reservation from "../modules/Reservation/reservation.graphql"
+# import Reservation from "../Reservation/reservation.graphql"
 
 type Query {
   me: Me @isAuthenticated
