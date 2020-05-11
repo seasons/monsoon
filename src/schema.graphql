@@ -53,12 +53,12 @@ type Product {
 }
 
 type Image {
-  id: ID! @id
+  id: ID!
   caption: String
   url: String
   originalHeight: Int
   originalWidth: Int
-  originalUrl: String! @unique
+  originalUrl: String!
   height: Int
   width: Int
   title: String
@@ -507,16 +507,6 @@ type ValidationPayload {
   isValid: Boolean!
   code: String
   text: String
-}
-
-type Image {
-  height: Int
-  width: Int
-  url: String
-  originalHeight: Int
-  originalWidth: Int
-  entityID: String
-  entityType: String
 }
 
 type Homepage {
