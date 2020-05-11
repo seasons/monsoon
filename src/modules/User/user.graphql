@@ -1,0 +1,17 @@
+type Query {
+  me: Me @isAuthenticated
+}
+
+type Mutation {
+  signup(
+    email: String!
+    password: String!
+    firstName: String!
+    lastName: String!
+    details: CustomerDetailCreateInput
+  ): AuthPayload!
+  login(email: String!, password: String!): AuthPayload!
+  updateUserPushNotifications(pushNotificationsStatus: String!): User!
+    @hasRole(roles: ["Customer"])
+  resetPassword(email: String!): ResetPasswordPayload! @isAuthenticated
+}
