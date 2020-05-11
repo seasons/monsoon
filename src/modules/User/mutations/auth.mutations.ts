@@ -103,7 +103,7 @@ export class AuthMutationsResolver {
         lastName: user.lastName,
         createdAt: now.toISOString(),
         id: user.id,
-        role: user.role,
+        roles: user.roles,
         email: user.email,
         auth0Id: user.auth0Id,
       },
