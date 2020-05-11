@@ -429,7 +429,7 @@ type Mutation {
     feedbackID: ID!
     input: ReservationFeedbackUpdateInput!
   ): ReservationFeedback!
-  upsertProduct(input: CreateProductInput!): Product
+  upsertProduct(input: UpsertProductInput!): Product
   uploadImage(image: Upload!): String
   updateCustomer(
     data: CustomerUpdateInput!
@@ -463,7 +463,7 @@ input ProductVariantSKUsInput {
   sizeNames: [String!]!
 }
 
-input CreateProductInput {
+input UpsertProductInput {
   name: String!
   images: [Upload!]!
   brandID: String!
@@ -484,10 +484,10 @@ input CreateProductInput {
   status: ProductStatus!
   season: String!
   architecture: String!
-  variants: [CreateVariantInput!]!
+  variants: [UpsertVariantInput!]!
 }
 
-input CreateVariantInput {
+input UpsertVariantInput {
   sku: String!
   internalSizeName: String!
   # Top Size values
@@ -504,10 +504,10 @@ input CreateVariantInput {
   inseam: Float
   weight: Float!
   total: Int!
-  physicalProducts: [CreatePhysicalProductInput!]!
+  physicalProducts: [UpsertPhysicalProductInput!]!
 }
 
-input CreatePhysicalProductInput {
+input UpsertPhysicalProductInput {
   seasonsUID: String!
   inventoryStatus: InventoryStatus!
   physicalProductStatus: PhysicalProductStatus!
