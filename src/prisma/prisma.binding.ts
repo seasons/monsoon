@@ -5958,9 +5958,8 @@ type Image implements Node {
   id: ID!
   caption: String
   url: String
-  originalHeight: Int
-  originalUrl: String!
-  originalWidth: Int
+  height: Int
+  width: Int
   title: String
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -5980,9 +5979,8 @@ input ImageCreateInput {
   id: ID
   caption: String
   url: String
-  originalHeight: Int
-  originalUrl: String!
-  originalWidth: Int
+  height: Int
+  width: Int
   title: String
 }
 
@@ -6007,12 +6005,10 @@ enum ImageOrderByInput {
   caption_DESC
   url_ASC
   url_DESC
-  originalHeight_ASC
-  originalHeight_DESC
-  originalUrl_ASC
-  originalUrl_DESC
-  originalWidth_ASC
-  originalWidth_DESC
+  height_ASC
+  height_DESC
+  width_ASC
+  width_DESC
   title_ASC
   title_DESC
   createdAt_ASC
@@ -6025,9 +6021,8 @@ type ImagePreviousValues {
   id: ID!
   caption: String
   url: String
-  originalHeight: Int
-  originalUrl: String!
-  originalWidth: Int
+  height: Int
+  width: Int
   title: String
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -6162,90 +6157,50 @@ input ImageScalarWhereInput {
 
   """All values not ending with the given string."""
   url_not_ends_with: String
-  originalHeight: Int
+  height: Int
 
   """All values that are not equal to given value."""
-  originalHeight_not: Int
+  height_not: Int
 
   """All values that are contained in given list."""
-  originalHeight_in: [Int!]
+  height_in: [Int!]
 
   """All values that are not contained in given list."""
-  originalHeight_not_in: [Int!]
+  height_not_in: [Int!]
 
   """All values less than the given value."""
-  originalHeight_lt: Int
+  height_lt: Int
 
   """All values less than or equal the given value."""
-  originalHeight_lte: Int
+  height_lte: Int
 
   """All values greater than the given value."""
-  originalHeight_gt: Int
+  height_gt: Int
 
   """All values greater than or equal the given value."""
-  originalHeight_gte: Int
-  originalUrl: String
+  height_gte: Int
+  width: Int
 
   """All values that are not equal to given value."""
-  originalUrl_not: String
+  width_not: Int
 
   """All values that are contained in given list."""
-  originalUrl_in: [String!]
+  width_in: [Int!]
 
   """All values that are not contained in given list."""
-  originalUrl_not_in: [String!]
+  width_not_in: [Int!]
 
   """All values less than the given value."""
-  originalUrl_lt: String
+  width_lt: Int
 
   """All values less than or equal the given value."""
-  originalUrl_lte: String
+  width_lte: Int
 
   """All values greater than the given value."""
-  originalUrl_gt: String
+  width_gt: Int
 
   """All values greater than or equal the given value."""
-  originalUrl_gte: String
-
-  """All values containing the given string."""
-  originalUrl_contains: String
-
-  """All values not containing the given string."""
-  originalUrl_not_contains: String
-
-  """All values starting with the given string."""
-  originalUrl_starts_with: String
-
-  """All values not starting with the given string."""
-  originalUrl_not_starts_with: String
-
-  """All values ending with the given string."""
-  originalUrl_ends_with: String
-
-  """All values not ending with the given string."""
-  originalUrl_not_ends_with: String
-  originalWidth: Int
-
-  """All values that are not equal to given value."""
-  originalWidth_not: Int
-
-  """All values that are contained in given list."""
-  originalWidth_in: [Int!]
-
-  """All values that are not contained in given list."""
-  originalWidth_not_in: [Int!]
-
-  """All values less than the given value."""
-  originalWidth_lt: Int
-
-  """All values less than or equal the given value."""
-  originalWidth_lte: Int
-
-  """All values greater than the given value."""
-  originalWidth_gt: Int
-
-  """All values greater than or equal the given value."""
-  originalWidth_gte: Int
+  width_gte: Int
   title: String
 
   """All values that are not equal to given value."""
@@ -6372,27 +6327,24 @@ input ImageSubscriptionWhereInput {
 input ImageUpdateDataInput {
   caption: String
   url: String
-  originalHeight: Int
-  originalUrl: String
-  originalWidth: Int
+  height: Int
+  width: Int
   title: String
 }
 
 input ImageUpdateInput {
   caption: String
   url: String
-  originalHeight: Int
-  originalUrl: String
-  originalWidth: Int
+  height: Int
+  width: Int
   title: String
 }
 
 input ImageUpdateManyDataInput {
   caption: String
   url: String
-  originalHeight: Int
-  originalUrl: String
-  originalWidth: Int
+  height: Int
+  width: Int
   title: String
 }
 
@@ -6411,9 +6363,8 @@ input ImageUpdateManyInput {
 input ImageUpdateManyMutationInput {
   caption: String
   url: String
-  originalHeight: Int
-  originalUrl: String
-  originalWidth: Int
+  height: Int
+  width: Int
   title: String
 }
 
@@ -6562,90 +6513,50 @@ input ImageWhereInput {
 
   """All values not ending with the given string."""
   url_not_ends_with: String
-  originalHeight: Int
+  height: Int
 
   """All values that are not equal to given value."""
-  originalHeight_not: Int
+  height_not: Int
 
   """All values that are contained in given list."""
-  originalHeight_in: [Int!]
+  height_in: [Int!]
 
   """All values that are not contained in given list."""
-  originalHeight_not_in: [Int!]
+  height_not_in: [Int!]
 
   """All values less than the given value."""
-  originalHeight_lt: Int
+  height_lt: Int
 
   """All values less than or equal the given value."""
-  originalHeight_lte: Int
+  height_lte: Int
 
   """All values greater than the given value."""
-  originalHeight_gt: Int
+  height_gt: Int
 
   """All values greater than or equal the given value."""
-  originalHeight_gte: Int
-  originalUrl: String
+  height_gte: Int
+  width: Int
 
   """All values that are not equal to given value."""
-  originalUrl_not: String
+  width_not: Int
 
   """All values that are contained in given list."""
-  originalUrl_in: [String!]
+  width_in: [Int!]
 
   """All values that are not contained in given list."""
-  originalUrl_not_in: [String!]
+  width_not_in: [Int!]
 
   """All values less than the given value."""
-  originalUrl_lt: String
+  width_lt: Int
 
   """All values less than or equal the given value."""
-  originalUrl_lte: String
+  width_lte: Int
 
   """All values greater than the given value."""
-  originalUrl_gt: String
+  width_gt: Int
 
   """All values greater than or equal the given value."""
-  originalUrl_gte: String
-
-  """All values containing the given string."""
-  originalUrl_contains: String
-
-  """All values not containing the given string."""
-  originalUrl_not_contains: String
-
-  """All values starting with the given string."""
-  originalUrl_starts_with: String
-
-  """All values not starting with the given string."""
-  originalUrl_not_starts_with: String
-
-  """All values ending with the given string."""
-  originalUrl_ends_with: String
-
-  """All values not ending with the given string."""
-  originalUrl_not_ends_with: String
-  originalWidth: Int
-
-  """All values that are not equal to given value."""
-  originalWidth_not: Int
-
-  """All values that are contained in given list."""
-  originalWidth_in: [Int!]
-
-  """All values that are not contained in given list."""
-  originalWidth_not_in: [Int!]
-
-  """All values less than the given value."""
-  originalWidth_lt: Int
-
-  """All values less than or equal the given value."""
-  originalWidth_lte: Int
-
-  """All values greater than the given value."""
-  originalWidth_gt: Int
-
-  """All values greater than or equal the given value."""
-  originalWidth_gte: Int
+  width_gte: Int
   title: String
 
   """All values that are not equal to given value."""
@@ -6734,7 +6645,7 @@ input ImageWhereInput {
 
 input ImageWhereUniqueInput {
   id: ID
-  originalUrl: String
+  url: String
 }
 
 enum InventoryStatus {
@@ -18322,12 +18233,10 @@ export type ImageOrderByInput =   'id_ASC' |
   'caption_DESC' |
   'url_ASC' |
   'url_DESC' |
-  'originalHeight_ASC' |
-  'originalHeight_DESC' |
-  'originalUrl_ASC' |
-  'originalUrl_DESC' |
-  'originalWidth_ASC' |
-  'originalWidth_DESC' |
+  'height_ASC' |
+  'height_DESC' |
+  'width_ASC' |
+  'width_DESC' |
   'title_ASC' |
   'title_DESC' |
   'createdAt_ASC' |
@@ -21008,9 +20917,8 @@ export interface ImageCreateInput {
   id?: ID_Input | null
   caption?: String | null
   url?: String | null
-  originalHeight?: Int | null
-  originalUrl: String
-  originalWidth?: Int | null
+  height?: Int | null
+  width?: Int | null
   title?: String | null
 }
 
@@ -21065,36 +20973,22 @@ export interface ImageScalarWhereInput {
   url_not_starts_with?: String | null
   url_ends_with?: String | null
   url_not_ends_with?: String | null
-  originalHeight?: Int | null
-  originalHeight_not?: Int | null
-  originalHeight_in?: Int[] | Int | null
-  originalHeight_not_in?: Int[] | Int | null
-  originalHeight_lt?: Int | null
-  originalHeight_lte?: Int | null
-  originalHeight_gt?: Int | null
-  originalHeight_gte?: Int | null
-  originalUrl?: String | null
-  originalUrl_not?: String | null
-  originalUrl_in?: String[] | String | null
-  originalUrl_not_in?: String[] | String | null
-  originalUrl_lt?: String | null
-  originalUrl_lte?: String | null
-  originalUrl_gt?: String | null
-  originalUrl_gte?: String | null
-  originalUrl_contains?: String | null
-  originalUrl_not_contains?: String | null
-  originalUrl_starts_with?: String | null
-  originalUrl_not_starts_with?: String | null
-  originalUrl_ends_with?: String | null
-  originalUrl_not_ends_with?: String | null
-  originalWidth?: Int | null
-  originalWidth_not?: Int | null
-  originalWidth_in?: Int[] | Int | null
-  originalWidth_not_in?: Int[] | Int | null
-  originalWidth_lt?: Int | null
-  originalWidth_lte?: Int | null
-  originalWidth_gt?: Int | null
-  originalWidth_gte?: Int | null
+  height?: Int | null
+  height_not?: Int | null
+  height_in?: Int[] | Int | null
+  height_not_in?: Int[] | Int | null
+  height_lt?: Int | null
+  height_lte?: Int | null
+  height_gt?: Int | null
+  height_gte?: Int | null
+  width?: Int | null
+  width_not?: Int | null
+  width_in?: Int[] | Int | null
+  width_not_in?: Int[] | Int | null
+  width_lt?: Int | null
+  width_lte?: Int | null
+  width_gt?: Int | null
+  width_gte?: Int | null
   title?: String | null
   title_not?: String | null
   title_in?: String[] | String | null
@@ -21141,27 +21035,24 @@ export interface ImageSubscriptionWhereInput {
 export interface ImageUpdateDataInput {
   caption?: String | null
   url?: String | null
-  originalHeight?: Int | null
-  originalUrl?: String | null
-  originalWidth?: Int | null
+  height?: Int | null
+  width?: Int | null
   title?: String | null
 }
 
 export interface ImageUpdateInput {
   caption?: String | null
   url?: String | null
-  originalHeight?: Int | null
-  originalUrl?: String | null
-  originalWidth?: Int | null
+  height?: Int | null
+  width?: Int | null
   title?: String | null
 }
 
 export interface ImageUpdateManyDataInput {
   caption?: String | null
   url?: String | null
-  originalHeight?: Int | null
-  originalUrl?: String | null
-  originalWidth?: Int | null
+  height?: Int | null
+  width?: Int | null
   title?: String | null
 }
 
@@ -21180,9 +21071,8 @@ export interface ImageUpdateManyInput {
 export interface ImageUpdateManyMutationInput {
   caption?: String | null
   url?: String | null
-  originalHeight?: Int | null
-  originalUrl?: String | null
-  originalWidth?: Int | null
+  height?: Int | null
+  width?: Int | null
   title?: String | null
 }
 
@@ -21248,36 +21138,22 @@ export interface ImageWhereInput {
   url_not_starts_with?: String | null
   url_ends_with?: String | null
   url_not_ends_with?: String | null
-  originalHeight?: Int | null
-  originalHeight_not?: Int | null
-  originalHeight_in?: Int[] | Int | null
-  originalHeight_not_in?: Int[] | Int | null
-  originalHeight_lt?: Int | null
-  originalHeight_lte?: Int | null
-  originalHeight_gt?: Int | null
-  originalHeight_gte?: Int | null
-  originalUrl?: String | null
-  originalUrl_not?: String | null
-  originalUrl_in?: String[] | String | null
-  originalUrl_not_in?: String[] | String | null
-  originalUrl_lt?: String | null
-  originalUrl_lte?: String | null
-  originalUrl_gt?: String | null
-  originalUrl_gte?: String | null
-  originalUrl_contains?: String | null
-  originalUrl_not_contains?: String | null
-  originalUrl_starts_with?: String | null
-  originalUrl_not_starts_with?: String | null
-  originalUrl_ends_with?: String | null
-  originalUrl_not_ends_with?: String | null
-  originalWidth?: Int | null
-  originalWidth_not?: Int | null
-  originalWidth_in?: Int[] | Int | null
-  originalWidth_not_in?: Int[] | Int | null
-  originalWidth_lt?: Int | null
-  originalWidth_lte?: Int | null
-  originalWidth_gt?: Int | null
-  originalWidth_gte?: Int | null
+  height?: Int | null
+  height_not?: Int | null
+  height_in?: Int[] | Int | null
+  height_not_in?: Int[] | Int | null
+  height_lt?: Int | null
+  height_lte?: Int | null
+  height_gt?: Int | null
+  height_gte?: Int | null
+  width?: Int | null
+  width_not?: Int | null
+  width_in?: Int[] | Int | null
+  width_not_in?: Int[] | Int | null
+  width_lt?: Int | null
+  width_lte?: Int | null
+  width_gt?: Int | null
+  width_gte?: Int | null
   title?: String | null
   title_not?: String | null
   title_in?: String[] | String | null
@@ -21312,7 +21188,7 @@ export interface ImageWhereInput {
 
 export interface ImageWhereUniqueInput {
   id?: ID_Input | null
-  originalUrl?: String | null
+  url?: String | null
 }
 
 export interface LabelCreateInput {
@@ -27111,9 +26987,8 @@ export interface Image extends Node {
   id: ID_Output
   caption?: String | null
   url?: String | null
-  originalHeight?: Int | null
-  originalUrl: String
-  originalWidth?: Int | null
+  height?: Int | null
+  width?: Int | null
   title?: String | null
   createdAt: DateTime
   updatedAt: DateTime
@@ -27142,9 +27017,8 @@ export interface ImagePreviousValues {
   id: ID_Output
   caption?: String | null
   url?: String | null
-  originalHeight?: Int | null
-  originalUrl: String
-  originalWidth?: Int | null
+  height?: Int | null
+  width?: Int | null
   title?: String | null
   createdAt: DateTime
   updatedAt: DateTime

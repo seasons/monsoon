@@ -2,6 +2,7 @@ import * as fs from "fs"
 
 import { AirtableData } from "@modules/Airtable/airtable.types"
 import { AirtableService } from "@modules/Airtable/services/airtable.service"
+import { ImageData } from "@modules/Image/image.types"
 import { ImageService } from "@modules/Image/services/image.service"
 import { UtilsService } from "@modules/Utils/services/utils.service"
 import { Injectable } from "@nestjs/common"
@@ -92,6 +93,7 @@ export class SyncProductsService {
     const allProducts = await this.airtableService.getAllProducts()
     const allCategories = await this.airtableService.getAllCategories()
     const allSizes = await this.airtableService.getAllSizes()
+    console.log("STARTED")
 
     const [
       multibar,
@@ -102,8 +104,13 @@ export class SyncProductsService {
       modelName: "Products",
     })
 
+    let index = 0
     const logFile = this.utils.openLogFile("syncProducts")
     for (const record of allProducts) {
+      if (index >= 2) {
+        break
+      }
+      index += 1
       try {
         _cliProgressBar.increment()
 
@@ -140,12 +147,15 @@ export class SyncProductsService {
         if (isEmpty(images)) {
           continue
         }
+        // console.log("IMAGES:", images)
+        console.log("THUMBNAILS:", images[0].thumbnails.full)
 
         // Get the slug
         const { brandCode } = brand.model
         const slug = this.productUtils.getProductSlug(brandCode, name, color)
 
         const imageIDs = await this.syncImages(images, slug, brandCode, name)
+        continue
 
         // Sync model size records
         let modelSizeRecord
@@ -365,7 +375,7 @@ export class SyncProductsService {
       imageIDs = productImages.map(image => ({ id: image.id }))
     } else {
       // We have yet to upload these images to S3
-      const imageURLs: string[] = await Promise.all(
+      const imageDatas: ImageData[] = await Promise.all(
         images.map(async (image, index) => {
           const s3ImageName = this.productUtils.getProductImageName(
             brandCode,
@@ -378,7 +388,7 @@ export class SyncProductsService {
           )
         })
       )
-      imageIDs = this.productUtils.getImageIDsForURLs(imageURLs)
+      imageIDs = this.productUtils.getImageIDs(imageDatas)
     }
     return imageIDs
   }
