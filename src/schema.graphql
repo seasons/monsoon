@@ -3,6 +3,7 @@
 # import SearchOptions, SearchResultType, SearchResult, Query from "./modules/Search/search.graphql"
 # import Query, Mutation from "./modules/Customer/customer.graphql"
 # import Query, Mutation from "./modules/User/user.graphql"
+# import Reservation, Query, Mutation from "./modules/Reservation/reservation.graphql"
 
 directive @isAuthenticated on FIELD_DEFINITION
 directive @hasRole(roles: [String]) on FIELD_DEFINITION
@@ -272,25 +273,6 @@ type Query {
     first: Int
     last: Int
   ): [ProductRequest]!
-  reservation(where: ReservationWhereUniqueInput!): Reservation
-  reservations(
-    where: ReservationWhereInput
-    orderBy: ReservationOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [Reservation]!
-  reservationsConnection(
-    where: ReservationWhereInput
-    orderBy: ReservationOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): ReservationConnection!
   size(where: SizeWhereUniqueInput!): Size
   sizes(
     where: SizeWhereInput
@@ -366,9 +348,7 @@ type ChargebeeHostedPagePayload {
 
 type Mutation {
   beamsData: BeamsData!
-  checkItemsAvailability(items: [ID!]!): Boolean!
-  reserveItems(items: [ID!]!, options: ReserveItemsOptions): Reservation
-    @hasRole(roles: ["Customer"])
+  checkItemsAvailability(items: [ID!]!): Boolean! @hasRole(roles: ["Customer"])
   addToBag(item: ID!): BagItem! @hasRole(roles: ["Customer"])
   removeFromBag(item: ID!, saved: Boolean): BagItem!
     @hasRole(roles: ["Customer"])
@@ -526,14 +506,6 @@ type HomepageSection {
   title: String
 }
 
-type Me {
-  user: User
-  customer: Customer
-  activeReservation: Reservation
-  bag: [BagItem!]
-  savedItems: [BagItem!]
-}
-
 union HomepageResult = Product | Collection | Brand
 
 enum TransactionStatus {
@@ -623,56 +595,6 @@ enum ImageSize {
   Medium
   Large
   XLarge
-}
-
-type Reservation {
-  id: ID!
-  user: User!
-  customer: Customer!
-  sentPackage: Package
-  returnedPackage: Package
-  location: Location
-  products: [PhysicalProduct!]!
-  images(width: Int, height: Int, size: ImageSize): [Image!]!
-  reservationNumber: Int!
-  shipped: Boolean!
-  status(display: Boolean): String!
-  shippedAt: DateTime
-  receivedAt: DateTime
-  reminderSentAt: DateTime
-  returnAt: DateTime
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
-type Customer {
-  id: ID!
-  user: User!
-  shouldRequestFeedback: Boolean
-  status: CustomerStatus
-  detail: CustomerDetail
-  billingInfo: BillingInfo
-  plan: Plan
-  bagItems(
-    where: BagItemWhereInput
-    orderBy: BagItemOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [BagItem!]
-  reservations(
-    where: ReservationWhereInput
-    orderBy: ReservationOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [Reservation!]
-  invoices: [Invoice]
-  transactions: [Transaction]
 }
 
 type Invoice {

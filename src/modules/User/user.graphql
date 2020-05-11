@@ -1,3 +1,5 @@
+# import Reservation from "../modules/Reservation/reservation.graphql"
+
 type Query {
   me: Me @isAuthenticated
 }
@@ -14,4 +16,42 @@ type Mutation {
   updateUserPushNotifications(pushNotificationsStatus: String!): User!
     @hasRole(roles: ["Customer"])
   resetPassword(email: String!): ResetPasswordPayload! @isAuthenticated
+}
+
+type Me {
+  user: User
+  customer: Customer
+  activeReservation: Reservation
+  bag: [BagItem!]
+  savedItems: [BagItem!]
+}
+
+type Customer {
+  id: ID!
+  user: User!
+  shouldRequestFeedback: Boolean
+  status: CustomerStatus
+  detail: CustomerDetail
+  billingInfo: BillingInfo
+  plan: Plan
+  bagItems(
+    where: BagItemWhereInput
+    orderBy: BagItemOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [BagItem!]
+  reservations(
+    where: ReservationWhereInput
+    orderBy: ReservationOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Reservation!]
+  invoices: [Invoice]
+  transactions: [Transaction]
 }
