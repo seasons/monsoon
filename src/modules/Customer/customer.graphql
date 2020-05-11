@@ -37,7 +37,7 @@ type Mutation {
   ): Boolean @hasRole(roles: ["Customer"])
 }
 
-type AddressInput {
+input AddressInput {
   city: String!
   postalCode: String!
   state: String!
