@@ -44,7 +44,7 @@ export class ReservationScheduledJobs {
     private readonly errorService: ErrorService
   ) {}
 
-  @Cron(CronExpression.EVERY_6_HOURS)
+  // @Cron(CronExpression.EVERY_6_HOURS)
   async sendReturnNotifications() {
     this.logger.log("Reservation Return Notifications Job ran")
     const reservations = await this.prisma.client.reservations({
@@ -188,11 +188,11 @@ export class ReservationScheduledJobs {
     for (const airtableReservation of allAirtableReservations) {
       try {
         this.errorService.setExtraContext({
-          reservationNumber: airtableReservation.model.iD,
+          reservationNumber: airtableReservation.model.id,
         })
 
         let prismaReservation = await this.getPrismaReservationWithNeededFields(
-          airtableReservation.model.iD
+          airtableReservation.model.id
         )
 
         if (!prismaReservation) {
@@ -213,7 +213,7 @@ export class ReservationScheduledJobs {
 
           // grab it again, in case we had to update any physical products
           prismaReservation = await this.getPrismaReservationWithNeededFields(
-            airtableReservation.model.iD
+            airtableReservation.model.id
           )
 
           // Handle housekeeping
@@ -280,6 +280,7 @@ export class ReservationScheduledJobs {
           })
         }
       } catch (err) {
+        debugger
         errors.push(err)
         this.errorService.captureError(err)
       }
