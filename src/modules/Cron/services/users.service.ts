@@ -20,7 +20,7 @@ export class UsersScheduledJobs {
     private readonly errorService: ErrorService
   ) {}
 
-  // @Cron(CronExpression.EVERY_MINUTE)
+  @Cron(CronExpression.EVERY_MINUTE)
   async checkAndAuthorizeUsers() {
     this.logger.log("Check and Authorize Users job ran")
     let log = {
