@@ -10122,6 +10122,7 @@ input ProductModelWhereInput {
 
 input ProductModelWhereUniqueInput {
   id: ID
+  name: String
 }
 
 enum ProductOrderByInput {
@@ -22816,6 +22817,7 @@ export interface ProductModelWhereInput {
 
 export interface ProductModelWhereUniqueInput {
   id?: ID_Input | null
+  name?: String | null
 }
 
 export interface ProductRequestCreateimagesInput {
