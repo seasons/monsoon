@@ -1,9 +1,9 @@
-import { ProductService } from "@app/modules/Product"
 import { ReservationService } from "@app/modules/Reservation/services/reservation.service"
 import { AirtableBaseService, AirtableUtilsService } from "@modules/Airtable"
 import { AirtableService } from "@modules/Airtable/index"
 import { EmailDataProvider, EmailService } from "@modules/Email"
 import { PhysicalProductUtilsService } from "@modules/Product/services/physicalProduct.utils.service"
+import { ProductService } from "@app/modules/Product"
 import { ProductUtilsService } from "@modules/Product/services/product.utils.service"
 import { ProductVariantService } from "@modules/Product/services/productVariant.service"
 import { ReservationUtilsService } from "@modules/Reservation/services/reservation.utils.service"
@@ -72,7 +72,10 @@ export class TestUtilsService {
     })
     newCustomer = await this.prisma.client.customer({ id: newCustomer.id })
     const newUser = await this.prisma.client.user({
-      id: await this.prisma.client.customer({ id: newCustomer.id }).user().id(),
+      id: await this.prisma.client
+        .customer({ id: newCustomer.id })
+        .user()
+        .id(),
     })
     this.airtableService.createOrUpdateAirtableUser(newUser, {})
 

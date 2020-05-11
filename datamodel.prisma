@@ -216,8 +216,9 @@ type Image {
   caption: String
   url: String
   originalHeight: Int
-  originalUrl: String! @unique
+  originalUrl: String!
   originalWidth: Int
+  resizedUrl: String!
   title: String
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
@@ -261,7 +262,7 @@ type Product {
   type: ProductType
   description: String
   externalURL: String
-  images: [Image!]
+  images: Json
   modelHeight: Int
   retailPrice: Int
   model: ProductModel

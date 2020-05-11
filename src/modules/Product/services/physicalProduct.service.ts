@@ -1,22 +1,22 @@
-import {
-  ID_Input,
-  InventoryStatus,
-  PhysicalProduct,
-  PhysicalProductOffloadMethod,
-  PhysicalProductUpdateInput,
-  PhysicalProductWhereUniqueInput,
-  WarehouseLocationType,
-  WarehouseLocationWhereUniqueInput,
-} from "@app/prisma"
 import { Injectable } from "@nestjs/common"
 import { PrismaService } from "@prisma/prisma.service"
-import { ApolloError } from "apollo-server"
-import { GraphQLResolveInfo } from "graphql"
-import { head, identity, pick } from "lodash"
 
-import { PhysicalProductUtilsService } from "./physicalProduct.utils.service"
-import { ProductService } from "./product.service"
+import {
+  PhysicalProductOffloadMethod,
+  PhysicalProductWhereUniqueInput,
+  InventoryStatus,
+  PhysicalProductUpdateInput,
+  ID_Input,
+  WarehouseLocationType,
+  PhysicalProduct,
+  WarehouseLocationWhereUniqueInput,
+} from "@app/prisma"
+import { GraphQLResolveInfo } from "graphql"
+import { pick, head, identity } from "lodash"
+import { ApolloError } from "apollo-server"
 import { ProductVariantService } from "./productVariant.service"
+import { ProductService } from "./product.service"
+import { PhysicalProductUtilsService } from "./physicalProduct.utils.service"
 
 interface OffloadPhysicalProductIfNeededInput {
   where: PhysicalProductWhereUniqueInput
