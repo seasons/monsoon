@@ -385,18 +385,6 @@ input RefundInvoiceInput {
   reasonCode: CreditNoteReasonCodeInput
 }
 
-input AddressInput {
-  city: String!
-  postalCode: String!
-  state: String!
-  street1: String!
-  street2: String
-}
-
-input ReserveItemsOptions {
-  dryRun: Boolean
-}
-
 input ProductVariantSKUsInput {
   brandID: String!
   colorID: String!
@@ -461,18 +449,6 @@ type BeamsData {
 type BillingInfoPayload {
   billingInfo: BillingInfo
   plan: Plan
-}
-
-type AuthPayload {
-  token: String!
-  refreshToken: String!
-  expiresIn: Int!
-  user: User!
-  beamsToken: String!
-}
-
-type ResetPasswordPayload {
-  message: String!
 }
 
 input ValidateAddressInput {

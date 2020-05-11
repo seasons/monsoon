@@ -26,6 +26,10 @@ type Mutation {
     @hasRole(roles: ["Customer"])
 }
 
+input ReserveItemsOptions {
+  dryRun: Boolean
+}
+
 type Reservation {
   id: ID!
   user: User!

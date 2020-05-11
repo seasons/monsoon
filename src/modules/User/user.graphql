@@ -18,6 +18,18 @@ type Mutation {
   resetPassword(email: String!): ResetPasswordPayload! @isAuthenticated
 }
 
+type AuthPayload {
+  token: String!
+  refreshToken: String!
+  expiresIn: Int!
+  user: User!
+  beamsToken: String!
+}
+
+type ResetPasswordPayload {
+  message: String!
+}
+
 type Me {
   user: User
   customer: Customer

@@ -36,3 +36,11 @@ type Mutation {
     phoneNumber: String!
   ): Boolean @hasRole(roles: ["Customer"])
 }
+
+type AddressInput {
+  city: String!
+  postalCode: String!
+  state: String!
+  street1: String!
+  street2: String
+}
