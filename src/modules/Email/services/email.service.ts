@@ -108,20 +108,16 @@ export class EmailService {
     })
   }
 
-  private getReservationConfirmationDataForProduct = async (
-    product: Product
-  ) => {
-    const images = await this.prisma.client.product({ id: product.id }).images()
-    return {
-      url: images?.[0]?.originalUrl,
+  private getReservationConfirmationDataForProduct = async (product: Product) =>
+    this.utils.Identity({
+      url: product.images[0].url,
       brand: await this.prisma.client
         .product({ id: product.id })
         .brand()
         .name(),
       name: product.name,
       price: product.retailPrice,
-    }
-  }
+    })
 
   private async sendTransactionalEmail({
     to,

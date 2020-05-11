@@ -12,6 +12,7 @@ import { Cron, CronExpression } from "@nestjs/schedule"
 import {
   ID_Input,
   InventoryStatus,
+  PhysicalProduct,
   Product,
   ProductVariant,
   Reservation,
@@ -187,11 +188,11 @@ export class ReservationScheduledJobs {
     for (const airtableReservation of allAirtableReservations) {
       try {
         this.errorService.setExtraContext({
-          reservationNumber: airtableReservation.model.id,
+          reservationNumber: airtableReservation.model.iD,
         })
 
         let prismaReservation = await this.getPrismaReservationWithNeededFields(
-          airtableReservation.model.id
+          airtableReservation.model.iD
         )
 
         if (!prismaReservation) {
@@ -212,7 +213,7 @@ export class ReservationScheduledJobs {
 
           // grab it again, in case we had to update any physical products
           prismaReservation = await this.getPrismaReservationWithNeededFields(
-            airtableReservation.model.id
+            airtableReservation.model.iD
           )
 
           // Handle housekeeping

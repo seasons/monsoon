@@ -1,15 +1,15 @@
 import "module-alias/register"
 
-import {
-  PhysicalProductUtilsService,
-  ProductService,
-  ProductUtilsService,
-  ProductVariantService,
-} from "../modules/Product/index"
-import { PhysicalProductService } from "../modules/Product/services/physicalProduct.service"
-import { UtilsService } from "../modules/Utils/services/utils.service"
-import { WarehouseLocationCreateInput, WarehouseLocationType } from "../prisma"
 import { PrismaService } from "../prisma/prisma.service"
+import {
+  ProductUtilsService,
+  PhysicalProductUtilsService,
+  ProductVariantService,
+  ProductService,
+} from "../modules/Product/index"
+import { WarehouseLocationCreateInput, WarehouseLocationType } from "../prisma"
+import { UtilsService } from "../modules/Utils/services/utils.service"
+import { PhysicalProductService } from "../modules/Product/services/physicalProduct.service"
 
 const run = async () => {
   const ps = new PrismaService()

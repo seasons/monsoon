@@ -8,6 +8,6 @@ export class ImageMutationsResolver {
 
   @Mutation()
   async uploadImage(@Args("image") image) {
-    return await this.imageService.uploadImage(image, {})
+    return await this.imageService.uploadImage(image)
   }
 }

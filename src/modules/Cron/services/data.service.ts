@@ -7,7 +7,7 @@ import { UtilsService } from "@modules/Utils/services/utils.service"
 import { Injectable } from "@nestjs/common"
 import { Cron, CronExpression } from "@nestjs/schedule"
 import { PrismaService } from "@prisma/prisma.service"
-import { identity, pick, xor } from "lodash"
+import { xor, identity, pick } from "lodash"
 
 interface DataPoint {
   name: string

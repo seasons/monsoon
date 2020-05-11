@@ -1,6 +1,4 @@
 import * as fs from "fs"
-
-import { PhysicalProductUpdateInput } from "@app/prisma"
 import { Injectable } from "@nestjs/common"
 import { isEmpty } from "lodash"
 
@@ -11,6 +9,7 @@ import { UtilsService } from "../../Utils/services/utils.service"
 import { SyncUtilsService } from "./sync.utils.service"
 import { SyncProductsService } from "./syncProducts.service"
 import { SyncProductVariantsService } from "./syncProductVariants.service"
+import { PhysicalProductUpdateInput } from "@app/prisma"
 
 @Injectable()
 export class SyncPhysicalProductsService {
