@@ -111,11 +111,4 @@ export class ImageService {
       )
     })
   }
-
-  async uploadImages(images) {
-    const imageLocations = await Promise.all(
-      images.map(async image => await this.uploadImage(image, {}))
-    )
-    return imageLocations
-  }
 }

@@ -10,6 +10,7 @@ import { head, identity, isEmpty } from "lodash"
 import slugify from "slugify"
 
 import { PrismaService } from "../../../prisma/prisma.service"
+import { ProductUtilsService } from "../../Product/services/product.utils.service"
 import { SyncUtilsService } from "./sync.utils.service"
 import { SyncCategoriesService } from "./syncCategories.service"
 import { SyncSizesService } from "./syncSizes.service"
@@ -19,6 +20,7 @@ export class SyncProductsService {
   constructor(
     private readonly airtableService: AirtableService,
     private readonly prisma: PrismaService,
+    private readonly productUtils: ProductUtilsService,
     private readonly imageService: ImageService,
     private readonly syncCategoriesService: SyncCategoriesService,
     private readonly syncSizesService: SyncSizesService,
@@ -141,7 +143,7 @@ export class SyncProductsService {
 
         // Get the slug
         const { brandCode } = brand.model
-        const slug = slugify(brandCode + " " + name + " " + color).toLowerCase()
+        const slug = this.productUtils.getProductSlug(brandCode, name, color)
 
         const imageIDs = await this.syncImages(images, slug, brandCode, name)
 
@@ -153,17 +155,12 @@ export class SyncProductsService {
             type: modelSizeType,
             name: modelSizeName,
           } = modelSize.model
-          modelSizeRecord = await this.syncSizesService.deepUpsertSize({
+          modelSizeRecord = await this.productUtils.upsertModelSize({
             slug,
             type,
-            display: modelSizeDisplay,
-            topSizeData: type === "Top" && {
-              letter: modelSizeName as LetterSize,
-            },
-            bottomSizeData: type === "Bottom" && {
-              type: modelSizeType as BottomSizeType,
-              value: modelSizeName,
-            },
+            modelSizeName,
+            modelSizeDisplay,
+            bottomSizeType: modelSizeType,
           })
         }
 
@@ -370,29 +367,18 @@ export class SyncProductsService {
       // We have yet to upload these images to S3
       const imageURLs: string[] = await Promise.all(
         images.map(async (image, index) => {
-          const s3ImageName = `${brandCode}/${name.replace(/ /g, "_")}/${
+          const s3ImageName = this.productUtils.getProductImageName(
+            brandCode,
+            name,
             index + 1
-          }.png`.toLowerCase()
+          )
           return await this.imageService.uploadImageFromURL(
             image.url,
             s3ImageName
           )
         })
       )
-
-      // We should only have one Image object for each imageURL so use an upsert
-      const prismaImages = await Promise.all(
-        imageURLs.map(async imageURL => {
-          const imageData = { originalUrl: imageURL }
-          return await this.prisma.client.upsertImage({
-            where: imageData,
-            create: imageData,
-            update: imageData,
-          })
-        })
-      )
-
-      imageIDs = prismaImages.map(image => ({ id: image.id }))
+      imageIDs = this.productUtils.getImageIDsForURLs(imageURLs)
     }
     return imageIDs
   }

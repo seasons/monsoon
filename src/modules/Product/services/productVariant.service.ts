@@ -1,6 +1,6 @@
 import { AirtableService } from "@modules/Airtable/services/airtable.service"
 import { Injectable } from "@nestjs/common"
-import { ID_Input, Product, InventoryStatus } from "@prisma/index"
+import { ID_Input, InventoryStatus, Product } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
 import { ApolloError } from "apollo-server"
 import { lowerFirst } from "lodash"

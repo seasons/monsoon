@@ -3,6 +3,7 @@ import { ReservationService } from "@app/modules/Reservation/services/reservatio
 import { AirtableBaseService, AirtableUtilsService } from "@modules/Airtable"
 import { AirtableService } from "@modules/Airtable/index"
 import { EmailDataProvider, EmailService } from "@modules/Email"
+import { ImageService } from "@modules/Image/services/image.service"
 import { PhysicalProductUtilsService } from "@modules/Product/services/physicalProduct.utils.service"
 import { ProductUtilsService } from "@modules/Product/services/product.utils.service"
 import { ProductVariantService } from "@modules/Product/services/productVariant.service"
@@ -107,6 +108,7 @@ export class TestUtilsService {
   createProductService() {
     return new ProductService(
       this.prisma,
+      new ImageService(),
       new ProductUtilsService(this.prisma),
       new ProductVariantService(
         this.prisma,
