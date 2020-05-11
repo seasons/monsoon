@@ -43,7 +43,6 @@ jobs:
           command: |
             docker-compose up -d
             sleep 20
-            export PRISMA_ENDPOINT='http://localhost:4466'
             yarn prisma deploy
 
       # run tests!

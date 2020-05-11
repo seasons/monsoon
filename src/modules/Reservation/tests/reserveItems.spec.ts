@@ -26,6 +26,10 @@ describe("Reserve Items", () => {
     })
 
     prismaService = new PrismaService()
+    prismaService.updateConnection({
+      secret: process.env.PRISMA_SECRET,
+      endpoint: "http://localhost:4466",
+    })
     const airtableBaseService = new AirtableBaseService()
     const airtableService = new AirtableService(
       airtableBaseService,
