@@ -429,7 +429,7 @@ type Mutation {
     feedbackID: ID!
     input: ReservationFeedbackUpdateInput!
   ): ReservationFeedback!
-  upsertProduct(input: CreateProductInput): Product
+  upsertProduct(input: CreateProductInput!): Product
   uploadImage(image: Upload!): String
   updateCustomer(
     data: CustomerUpdateInput!
