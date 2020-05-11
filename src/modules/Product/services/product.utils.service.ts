@@ -276,7 +276,7 @@ export class ProductUtilsService {
   }
 
   getProductImageName(brandCode: string, name: string, index: number) {
-    return `${brandCode}/${name.replace(/ /g, "_")}/${index}.png`.toLowerCase()
+    return `${brandCode}/${name.replace(/ /g, "-")}/${index}.png`.toLowerCase()
   }
 
   async getImageIDsForURLs(imageURLs: string[]) {
