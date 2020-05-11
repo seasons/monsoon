@@ -1,4 +1,6 @@
 import * as fs from "fs"
+
+import { UtilsService } from "@app/modules/Utils"
 import { Injectable } from "@nestjs/common"
 import { isEmpty } from "lodash"
 import slugify from "slugify"
@@ -6,7 +8,6 @@ import slugify from "slugify"
 import { PrismaService } from "../../../prisma/prisma.service"
 import { AirtableService } from "../../Airtable/services/airtable.service"
 import { SyncUtilsService } from "./sync.utils.service"
-import { UtilsService } from "@app/modules/Utils"
 
 @Injectable()
 export class SyncColorsService {
