@@ -293,7 +293,7 @@ export class ProductUtilsService {
     return prismaImages.map(image => ({ id: image.id }))
   }
 
-  async getModelSize({
+  async upsertModelSize({
     slug,
     type,
     modelSizeName,

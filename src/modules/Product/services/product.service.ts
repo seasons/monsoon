@@ -152,7 +152,7 @@ export class ProductService {
     )
     const imageIDs = await this.productUtils.getImageIDsForURLs(imageURLs)
 
-    const modelSize = await this.productUtils.getModelSize({
+    const modelSize = await this.productUtils.upsertModelSize({
       slug,
       type: input.type,
       modelSizeName: input.modelSizeName,
@@ -217,11 +217,11 @@ export class ProductService {
         create: input.variants.map(variant =>
           this.getVariantData(
             variant,
-            "CREATE",
             input.type,
             input.colorID,
             input.slug,
-            input.retailPrice
+            input.retailPrice,
+            true
           )
         ),
       },
@@ -232,19 +232,19 @@ export class ProductService {
         upsert: input.variants.map(variant => ({
           create: this.getVariantData(
             variant,
-            "CREATE",
             input.type,
             input.colorID,
             input.slug,
-            input.retailPrice
+            input.retailPrice,
+            true
           ),
           update: this.getVariantData(
             variant,
-            "UPDATE",
             input.type,
             input.colorID,
             input.slug,
-            input.retailPrice
+            input.retailPrice,
+            false
           ),
           where: { sku: variant.sku },
         })),
@@ -258,7 +258,7 @@ export class ProductService {
     return product
   }
 
-  async getVariantData(variant, operation, type, colorID, slug, retailPrice) {
+  async getVariantData(variant, type, colorID, slug, retailPrice, isCreate) {
     const internalSize = await this.productUtils.deepUpsertSize({
       slug: `${variant.sku}-internal`,
       type,
@@ -281,25 +281,19 @@ export class ProductService {
       },
     })
 
-    let physicalProductsInput
-    switch (operation) {
-      case "CREATE":
-        physicalProductsInput = {
-          create: variant.physicalProducts,
-        }
-        break
-      case "UPDATE":
-        physicalProductsInput = {
-          upsert: variant.physicalProducts.map(physicalProduct => ({
-            create: physicalProduct,
-            update: physicalProduct,
-            where: { seasonsUID: physicalProduct.seasonsUID },
-          })),
-        }
-        break
-      default:
-        physicalProductsInput = {}
+    let physicalProductsData
+    if (isCreate) {
+      physicalProductsData = { create: variant.physicalProducts }
+    } else {
+      physicalProductsData = {
+        upsert: variant.physicalProducts.map(physicalProduct => ({
+          create: physicalProduct,
+          update: physicalProduct,
+          where: { seasonsUID: physicalProduct.seasonsUID },
+        })),
+      }
     }
+
     return {
       sku: variant.sku,
       color: {
@@ -315,7 +309,7 @@ export class ProductService {
       reservable: status === "Available" ? variant.total : 0,
       reserved: 0,
       nonReservable: status === "NotAvailable" ? variant.total : 0,
-      physicalProducts: physicalProductsInput,
+      physicalProducts: physicalProductsData,
     }
   }
 

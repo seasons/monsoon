@@ -155,7 +155,7 @@ export class SyncProductsService {
             type: modelSizeType,
             name: modelSizeName,
           } = modelSize.model
-          modelSizeRecord = await this.productUtils.getModelSize({
+          modelSizeRecord = await this.productUtils.upsertModelSize({
             slug,
             type,
             modelSizeName,
