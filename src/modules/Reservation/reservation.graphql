@@ -1,5 +1,6 @@
 type Query {
-  reservation(where: ReservationWhereUniqueInput!): Reservation @hasRole(roles: ["Customer", "Admin", "Partner"])
+  reservation(where: ReservationWhereUniqueInput!): Reservation
+    @hasRole(roles: ["Customer", "Admin", "Partner"])
   reservations(
     where: ReservationWhereInput
     orderBy: ReservationOrderByInput
@@ -21,7 +22,8 @@ type Query {
 }
 
 type Mutation {
-    reserveItems(items: [ID!]!, options: ReserveItemsOptions): Reservation @hasRole(["Customer"])
+  reserveItems(items: [ID!]!, options: ReserveItemsOptions): Reservation
+    @hasRole(roles: ["Customer"])
 }
 
 type Reservation {
