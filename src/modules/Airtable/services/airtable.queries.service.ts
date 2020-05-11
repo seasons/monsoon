@@ -1,8 +1,8 @@
 import * as Airtable from "airtable"
+import { camelCase } from "lodash"
 
 import { AirtableData, AirtableModelName } from "../airtable.types"
 import { AirtableBaseService } from "./airtable.base.service"
-import { camelCase } from "lodash"
 
 export class AirtableQueriesService {
   constructor(readonly airtableBase: AirtableBaseService) {

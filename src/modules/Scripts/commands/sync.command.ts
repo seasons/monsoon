@@ -95,6 +95,7 @@ export class SyncCommands {
         "collection-groups",
         "homepage-product-rails",
         "physical-products",
+        "models",
       ],
     })
     table,

@@ -429,6 +429,7 @@ type Mutation {
     feedbackID: ID!
     input: ReservationFeedbackUpdateInput!
   ): ReservationFeedback!
+  upsertProduct(input: UpsertProductInput!): Product
   uploadImage(image: Upload!): String
   updateCustomer(
     data: CustomerUpdateInput!
@@ -460,6 +461,56 @@ input ProductVariantSKUsInput {
   brandID: String!
   colorID: String!
   sizeNames: [String!]!
+}
+
+input UpsertProductInput {
+  name: String!
+  images: [Upload!]!
+  brandID: String!
+  categoryID: String!
+  type: ProductType!
+  description: String!
+  modelID: String!
+  retailPrice: Int!
+  modelSizeName: String!
+  modelSizeDisplay: String!
+  bottomSizeType: BottomSizeType
+  colorID: String!
+  secondaryColorID: String
+  tags: [String!]!
+  functions: [String!]!
+  innerMaterials: [String!]!
+  outerMaterials: [String!]!
+  status: ProductStatus!
+  season: String!
+  architecture: String!
+  variants: [UpsertVariantInput!]!
+}
+
+input UpsertVariantInput {
+  sku: String!
+  internalSizeName: String!
+  # Top Size values
+  sleeve: Float
+  shoulder: Float
+  chest: Float
+  neck: Float
+  length: Float
+  # Bottom Size values
+  bottomSizeType: BottomSizeType
+  waist: Float
+  rise: Float
+  hem: Float
+  inseam: Float
+  weight: Float!
+  total: Int!
+  physicalProducts: [UpsertPhysicalProductInput!]!
+}
+
+input UpsertPhysicalProductInput {
+  seasonsUID: String!
+  inventoryStatus: InventoryStatus!
+  physicalProductStatus: PhysicalProductStatus!
 }
 
 type BeamsData {
