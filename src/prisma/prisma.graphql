@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Mon May 11 2020 13:28:51 GMT-0400 (Eastern Daylight Time)
+# timestamp: Mon May 11 2020 17:00:04 GMT-0400 (Eastern Daylight Time)
 
 type AggregateBagItem {
   count: Int!
@@ -5558,9 +5558,8 @@ type Image implements Node {
   id: ID!
   caption: String
   url: String
-  originalHeight: Int
-  originalUrl: String!
-  originalWidth: Int
+  height: Int
+  width: Int
   title: String
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -5580,9 +5579,8 @@ input ImageCreateInput {
   id: ID
   caption: String
   url: String
-  originalHeight: Int
-  originalUrl: String!
-  originalWidth: Int
+  height: Int
+  width: Int
   title: String
 }
 
@@ -5607,12 +5605,10 @@ enum ImageOrderByInput {
   caption_DESC
   url_ASC
   url_DESC
-  originalHeight_ASC
-  originalHeight_DESC
-  originalUrl_ASC
-  originalUrl_DESC
-  originalWidth_ASC
-  originalWidth_DESC
+  height_ASC
+  height_DESC
+  width_ASC
+  width_DESC
   title_ASC
   title_DESC
   createdAt_ASC
@@ -5625,9 +5621,8 @@ type ImagePreviousValues {
   id: ID!
   caption: String
   url: String
-  originalHeight: Int
-  originalUrl: String!
-  originalWidth: Int
+  height: Int
+  width: Int
   title: String
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -5762,90 +5757,50 @@ input ImageScalarWhereInput {
 
   """All values not ending with the given string."""
   url_not_ends_with: String
-  originalHeight: Int
+  height: Int
 
   """All values that are not equal to given value."""
-  originalHeight_not: Int
+  height_not: Int
 
   """All values that are contained in given list."""
-  originalHeight_in: [Int!]
+  height_in: [Int!]
 
   """All values that are not contained in given list."""
-  originalHeight_not_in: [Int!]
+  height_not_in: [Int!]
 
   """All values less than the given value."""
-  originalHeight_lt: Int
+  height_lt: Int
 
   """All values less than or equal the given value."""
-  originalHeight_lte: Int
+  height_lte: Int
 
   """All values greater than the given value."""
-  originalHeight_gt: Int
+  height_gt: Int
 
   """All values greater than or equal the given value."""
-  originalHeight_gte: Int
-  originalUrl: String
+  height_gte: Int
+  width: Int
 
   """All values that are not equal to given value."""
-  originalUrl_not: String
+  width_not: Int
 
   """All values that are contained in given list."""
-  originalUrl_in: [String!]
+  width_in: [Int!]
 
   """All values that are not contained in given list."""
-  originalUrl_not_in: [String!]
+  width_not_in: [Int!]
 
   """All values less than the given value."""
-  originalUrl_lt: String
+  width_lt: Int
 
   """All values less than or equal the given value."""
-  originalUrl_lte: String
+  width_lte: Int
 
   """All values greater than the given value."""
-  originalUrl_gt: String
+  width_gt: Int
 
   """All values greater than or equal the given value."""
-  originalUrl_gte: String
-
-  """All values containing the given string."""
-  originalUrl_contains: String
-
-  """All values not containing the given string."""
-  originalUrl_not_contains: String
-
-  """All values starting with the given string."""
-  originalUrl_starts_with: String
-
-  """All values not starting with the given string."""
-  originalUrl_not_starts_with: String
-
-  """All values ending with the given string."""
-  originalUrl_ends_with: String
-
-  """All values not ending with the given string."""
-  originalUrl_not_ends_with: String
-  originalWidth: Int
-
-  """All values that are not equal to given value."""
-  originalWidth_not: Int
-
-  """All values that are contained in given list."""
-  originalWidth_in: [Int!]
-
-  """All values that are not contained in given list."""
-  originalWidth_not_in: [Int!]
-
-  """All values less than the given value."""
-  originalWidth_lt: Int
-
-  """All values less than or equal the given value."""
-  originalWidth_lte: Int
-
-  """All values greater than the given value."""
-  originalWidth_gt: Int
-
-  """All values greater than or equal the given value."""
-  originalWidth_gte: Int
+  width_gte: Int
   title: String
 
   """All values that are not equal to given value."""
@@ -5972,27 +5927,24 @@ input ImageSubscriptionWhereInput {
 input ImageUpdateDataInput {
   caption: String
   url: String
-  originalHeight: Int
-  originalUrl: String
-  originalWidth: Int
+  height: Int
+  width: Int
   title: String
 }
 
 input ImageUpdateInput {
   caption: String
   url: String
-  originalHeight: Int
-  originalUrl: String
-  originalWidth: Int
+  height: Int
+  width: Int
   title: String
 }
 
 input ImageUpdateManyDataInput {
   caption: String
   url: String
-  originalHeight: Int
-  originalUrl: String
-  originalWidth: Int
+  height: Int
+  width: Int
   title: String
 }
 
@@ -6011,9 +5963,8 @@ input ImageUpdateManyInput {
 input ImageUpdateManyMutationInput {
   caption: String
   url: String
-  originalHeight: Int
-  originalUrl: String
-  originalWidth: Int
+  height: Int
+  width: Int
   title: String
 }
 
@@ -6162,90 +6113,50 @@ input ImageWhereInput {
 
   """All values not ending with the given string."""
   url_not_ends_with: String
-  originalHeight: Int
+  height: Int
 
   """All values that are not equal to given value."""
-  originalHeight_not: Int
+  height_not: Int
 
   """All values that are contained in given list."""
-  originalHeight_in: [Int!]
+  height_in: [Int!]
 
   """All values that are not contained in given list."""
-  originalHeight_not_in: [Int!]
+  height_not_in: [Int!]
 
   """All values less than the given value."""
-  originalHeight_lt: Int
+  height_lt: Int
 
   """All values less than or equal the given value."""
-  originalHeight_lte: Int
+  height_lte: Int
 
   """All values greater than the given value."""
-  originalHeight_gt: Int
+  height_gt: Int
 
   """All values greater than or equal the given value."""
-  originalHeight_gte: Int
-  originalUrl: String
+  height_gte: Int
+  width: Int
 
   """All values that are not equal to given value."""
-  originalUrl_not: String
+  width_not: Int
 
   """All values that are contained in given list."""
-  originalUrl_in: [String!]
+  width_in: [Int!]
 
   """All values that are not contained in given list."""
-  originalUrl_not_in: [String!]
+  width_not_in: [Int!]
 
   """All values less than the given value."""
-  originalUrl_lt: String
+  width_lt: Int
 
   """All values less than or equal the given value."""
-  originalUrl_lte: String
+  width_lte: Int
 
   """All values greater than the given value."""
-  originalUrl_gt: String
+  width_gt: Int
 
   """All values greater than or equal the given value."""
-  originalUrl_gte: String
-
-  """All values containing the given string."""
-  originalUrl_contains: String
-
-  """All values not containing the given string."""
-  originalUrl_not_contains: String
-
-  """All values starting with the given string."""
-  originalUrl_starts_with: String
-
-  """All values not starting with the given string."""
-  originalUrl_not_starts_with: String
-
-  """All values ending with the given string."""
-  originalUrl_ends_with: String
-
-  """All values not ending with the given string."""
-  originalUrl_not_ends_with: String
-  originalWidth: Int
-
-  """All values that are not equal to given value."""
-  originalWidth_not: Int
-
-  """All values that are contained in given list."""
-  originalWidth_in: [Int!]
-
-  """All values that are not contained in given list."""
-  originalWidth_not_in: [Int!]
-
-  """All values less than the given value."""
-  originalWidth_lt: Int
-
-  """All values less than or equal the given value."""
-  originalWidth_lte: Int
-
-  """All values greater than the given value."""
-  originalWidth_gt: Int
-
-  """All values greater than or equal the given value."""
-  originalWidth_gte: Int
+  width_gte: Int
   title: String
 
   """All values that are not equal to given value."""
@@ -6334,7 +6245,7 @@ input ImageWhereInput {
 
 input ImageWhereUniqueInput {
   id: ID
-  originalUrl: String
+  url: String
 }
 
 enum InventoryStatus {

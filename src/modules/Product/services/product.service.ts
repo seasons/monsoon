@@ -1,3 +1,4 @@
+import { ImageData } from "@modules/Image/image.types"
 import { ImageService } from "@modules/Image/services/image.service"
 import { Injectable } from "@nestjs/common"
 import {
@@ -138,7 +139,7 @@ export class ProductService {
       color.name
     )
 
-    const imageURLs: string[] = await Promise.all(
+    const imageDatas: ImageData[] = await Promise.all(
       input.images.map(async (image, index) => {
         const s3ImageName = await this.productUtils.getProductImageName(
           brand.brandCode,
@@ -150,7 +151,7 @@ export class ProductService {
         })
       })
     )
-    const imageIDs = await this.productUtils.getImageIDsForURLs(imageURLs)
+    const imageIDs = await this.productUtils.getImageIDs(imageDatas)
 
     const modelSize = await this.productUtils.upsertModelSize({
       slug,

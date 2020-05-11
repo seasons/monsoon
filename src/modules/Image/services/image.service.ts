@@ -2,10 +2,11 @@ import qs from "querystring"
 
 import { Injectable } from "@nestjs/common"
 import AWS from "aws-sdk"
+import { imageSize } from "image-size"
 import { identity, pickBy } from "lodash"
 import request from "request"
 
-import { ImageSize } from "../image.types"
+import { ImageData, ImageSize } from "../image.types"
 
 interface ImageResizerOptions {
   fit?: "clip"
@@ -62,31 +63,37 @@ export class ImageService {
     return url.replace(AIRTABLE_BASE, IMGIX_BASE) + "?" + qs.stringify(params)
   }
 
-  async uploadImage(image, options: { imageName?: string }) {
+  async uploadImage(
+    image,
+    options: { imageName?: string }
+  ): Promise<ImageData> {
     const file = await image
     const { createReadStream, filename, mimetype } = file
     const fileStream = createReadStream()
 
     const name = options.imageName || filename
 
-    const bucketName =
-      process.env.NODE_ENV === "production"
-        ? "seasons-images"
-        : "seasons-images-staging"
     // Here stream it to S3
-    // Enter your bucket name here next to "Bucket: "
     const uploadParams = {
       ACL: "public-read",
-      Bucket: bucketName,
+      Bucket: process.env.AWS_S3_IMAGES_BUCKET,
       Key: name,
       Body: fileStream,
     }
     const result = await this.s3.upload(uploadParams).promise()
+    const { width, height } = imageSize(fileStream)
 
-    return result.Location
+    return {
+      height,
+      url: result.Location,
+      width,
+    }
   }
 
-  async uploadImageFromURL(imageURL: string, imageName: string) {
+  async uploadImageFromURL(
+    imageURL: string,
+    imageName: string
+  ): Promise<ImageData> {
     return new Promise((resolve, reject) => {
       request(
         {
@@ -99,13 +106,19 @@ export class ImageService {
           } else {
             const uploadParams = {
               ACL: "public-read",
-              Bucket: "seasons-images",
+              Bucket: process.env.AWS_S3_IMAGES_BUCKET,
               Key: imageName,
               Body: body,
             }
             const result = await this.s3.upload(uploadParams).promise()
+            const { width, height } = imageSize(body)
+            console.log("SIZE of :", imageURL, width, height)
 
-            resolve(result.Location)
+            resolve({
+              height,
+              url: result.Location,
+              width,
+            })
           }
         }
       )
