@@ -24,7 +24,7 @@ type Product {
   color: Color!
   secondaryColor: Color
   tags: [Tag!]!
-  images: Json!
+  images(width: Int, height: Int, size: ImageSize): [Image!]!
   resizedImages(width: Int, height: Int, size: ImageSize): [Image!]!
   functions(
     where: ProductFunctionWhereInput
@@ -48,6 +48,20 @@ type Product {
   ): [ProductVariant!]
   status: ProductStatus
   isSaved: Boolean
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type Image {
+  id: ID! @id
+  caption: String
+  url: String
+  originalHeight: Int
+  originalWidth: Int
+  originalUrl: String! @unique
+  height: Int
+  width: Int
+  title: String
   createdAt: DateTime!
   updatedAt: DateTime!
 }

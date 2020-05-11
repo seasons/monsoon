@@ -63,7 +63,7 @@ export class ProductFieldsResolver {
   }
 
   @ResolveField()
-  async resizedImages(
+  async images(
     @Parent() parent,
     @Args("width") width: number,
     @Args("height") height: number,
@@ -78,7 +78,13 @@ export class ProductFieldsResolver {
       `
       {
         id
-        images
+        images {
+          id
+          url
+          originalHeight
+          originalWidth
+          originalUrl
+        }
       }
       `
     )

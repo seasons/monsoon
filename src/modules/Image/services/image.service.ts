@@ -11,9 +11,12 @@ interface ImageResizerOptions {
   fit?: "clip"
   w?: number
   h?: number
+  retina?: boolean
 }
 
-const IMGIX_BASE = "https://seasons-nyc.imgix.net/"
+const IMGIX_NAME =
+  process.env.NODE_ENV === "production" ? "seasons-s3" : "seasons-s3-staging"
+const IMGIX_BASE = `https://${IMGIX_NAME}.imgix.net/`
 const AIRTABLE_BASE = "https://dl.airtable.com/.attachments/"
 
 const sizes = {
@@ -46,7 +49,7 @@ export class ImageService {
   imageResize(
     url: string,
     sizeName: ImageSize,
-    options: ImageResizerOptions = { fit: "clip" }
+    options: ImageResizerOptions = { fit: "clip", retina: true }
   ) {
     const params: any = pickBy(
       {
@@ -66,11 +69,15 @@ export class ImageService {
 
     const name = options.imageName || filename
 
+    const bucketName =
+      process.env.NODE_ENV === "production"
+        ? "seasons-images"
+        : "seasons-images-staging"
     // Here stream it to S3
     // Enter your bucket name here next to "Bucket: "
     const uploadParams = {
       ACL: "public-read",
-      Bucket: "seasons-images",
+      Bucket: bucketName,
       Key: name,
       Body: fileStream,
     }
