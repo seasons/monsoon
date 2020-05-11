@@ -69,15 +69,10 @@ export class ImageService {
 
     const name = options.imageName || filename
 
-    const bucketName =
-      process.env.NODE_ENV === "production"
-        ? "seasons-images"
-        : "seasons-images-staging"
     // Here stream it to S3
-    // Enter your bucket name here next to "Bucket: "
     const uploadParams = {
       ACL: "public-read",
-      Bucket: bucketName,
+      Bucket: process.env.AWS_S3_IMAGES_BUCKET,
       Key: name,
       Body: fileStream,
     }
@@ -99,7 +94,7 @@ export class ImageService {
           } else {
             const uploadParams = {
               ACL: "public-read",
-              Bucket: "seasons-images",
+              Bucket: process.env.AWS_S3_IMAGES_BUCKET,
               Key: imageName,
               Body: body,
             }
