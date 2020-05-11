@@ -279,7 +279,6 @@ export class ReservationScheduledJobs {
           })
         }
       } catch (err) {
-        debugger
         errors.push(err)
         this.errorService.captureError(err)
       }
