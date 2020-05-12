@@ -1,13 +1,16 @@
 import { User } from "@app/nest_decorators"
+import { PrismaService } from "@app/prisma/prisma.service"
 import { Args, Context, Mutation, Resolver } from "@nestjs/graphql"
-import { prisma } from "@prisma/index"
 import { ForbiddenError, UserInputError } from "apollo-server"
 
 import { AuthService } from "../services/auth.service"
 
 @Resolver()
 export class AuthMutationsResolver {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly prisma: PrismaService
+  ) {}
 
   @Mutation()
   async beamsData(@User() user) {
@@ -45,10 +48,10 @@ export class AuthMutationsResolver {
     }
 
     // Get user with this email
-    const user = await prisma.user({ email })
+    const user = await this.prisma.client.user({ email })
 
     // If the user is a Customer, make sure that the account has been approved
-    if (user && user.role === "Customer") {
+    if (user && user.roles.includes("Customer")) {
       const customer = await this.authService.getCustomerFromUserID(user.id)
       if (
         customer &&
@@ -100,7 +103,7 @@ export class AuthMutationsResolver {
         lastName: user.lastName,
         createdAt: now.toISOString(),
         id: user.id,
-        role: user.role,
+        roles: user.roles,
         email: user.email,
         auth0Id: user.auth0Id,
       },

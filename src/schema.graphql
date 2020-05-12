@@ -1,11 +1,12 @@
 # import Brand, Category, User, Bag, Collection, CustomerDetail, ProductFunction, SavedProduct from "./prisma/prisma.graphql"
 # import BlogCollection, BlogPost, Query from "./modules/Blog/blog.graphql"
 # import SearchOptions, SearchResultType, SearchResult, Query from "./modules/Search/search.graphql"
+# import Query, Mutation from "./modules/Customer/customer.graphql"
+# import Query, Mutation from "./modules/User/user.graphql"
+# import Reservation, Query, Mutation from "./modules/Reservation/reservation.graphql"
 
 directive @isAuthenticated on FIELD_DEFINITION
 directive @hasRole(roles: [String]) on FIELD_DEFINITION
-directive @isOwner(type: String) on FIELD_DEFINITION
-directive @isOwnerOrHasRole(type: String, roles: [String]) on FIELD_DEFINITION
 
 scalar Upload
 
@@ -110,7 +111,6 @@ input PhysicalProductUpdateInput {
 }
 
 type Query {
-  me: Me
   brand(where: BrandWhereUniqueInput!): Brand
   brands(
     where: BrandWhereInput
@@ -178,25 +178,6 @@ type Query {
     first: Int
     last: Int
   ): [Color]!
-  customer(where: CustomerWhereUniqueInput!): Customer
-  customers(
-    where: CustomerWhereInput
-    orderBy: CustomerOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [Customer]!
-  customersConnection(
-    where: CustomerWhereInput
-    orderBy: CustomerOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): CustomerConnection!
   generatedVariantSKUs(input: ProductVariantSKUsInput!): [String!]
   homepageProductRail(
     where: HomepageProductRailWhereUniqueInput!
@@ -290,25 +271,6 @@ type Query {
     first: Int
     last: Int
   ): [ProductRequest]!
-  reservation(where: ReservationWhereUniqueInput!): Reservation
-  reservations(
-    where: ReservationWhereInput
-    orderBy: ReservationOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [Reservation]!
-  reservationsConnection(
-    where: ReservationWhereInput
-    orderBy: ReservationOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): ReservationConnection!
   size(where: SizeWhereUniqueInput!): Size
   sizes(
     where: SizeWhereInput
@@ -347,7 +309,7 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): [User]!
+  ): [User]! @hasRole(roles: ["Admin"])
   usersConnection(
     where: UserWhereInput
     orderBy: UserOrderByInput
@@ -384,57 +346,33 @@ type ChargebeeHostedPagePayload {
 
 type Mutation {
   beamsData: BeamsData!
-  signup(
-    email: String!
-    password: String!
-    firstName: String!
-    lastName: String!
-    details: CustomerDetailCreateInput
-  ): AuthPayload!
-  login(email: String!, password: String!): AuthPayload!
-  resetPassword(email: String!): ResetPasswordPayload!
-  addCustomerDetails(
-    details: CustomerDetailCreateInput!
-    status: CustomerStatus
-    event: Event
-  ): Customer! @hasRole(roles: ["Customer"])
-  checkItemsAvailability(items: [ID!]!): Boolean!
-  reserveItems(items: [ID!]!, options: ReserveItemsOptions): Reservation
-  addToBag(item: ID!): BagItem!
+  checkItemsAvailability(items: [ID!]!): Boolean! @hasRole(roles: ["Customer"])
+  addToBag(item: ID!): BagItem! @hasRole(roles: ["Customer"])
   removeFromBag(item: ID!, saved: Boolean): BagItem!
-  saveProduct(item: ID!, save: Boolean!): BagItem
+    @hasRole(roles: ["Customer"])
+  saveProduct(item: ID!, save: Boolean!): BagItem @hasRole(roles: ["Customer"])
   updateProduct(
     where: ProductWhereUniqueInput!
     data: ProductUpdateInput!
-  ): Product!
+  ): Product! @hasRole(roles: ["Admin"])
   updatePhysicalProduct(
     where: PhysicalProductWhereUniqueInput!
     data: PhysicalProductUpdateInput!
-  ): PhysicalProduct
+  ): PhysicalProduct @hasRole(roles: ["Admin"])
   addViewedProduct(item: ID!): RecentlyViewedProduct!
   acknowledgeCompletedChargebeeHostedCheckout(
     hostedPageID: String!
-  ): BillingInfoPayload
-  refundInvoice(input: RefundInvoiceInput): Boolean!
+  ): BillingInfoPayload @hasRole(roles: ["Customer"])
+  refundInvoice(input: RefundInvoiceInput): Boolean! @hasRole(roles: ["Admin"])
   addProductRequest(reason: String!, url: String!): ProductRequest!
   validateAddress(input: ValidateAddressInput!): ValidationPayload!
   addProductVariantWant(variantID: ID!): ProductVariantWant!
-  updateUserPushNotifications(pushNotificationsStatus: String!): User!
-  updatePaymentAndShipping(
-    billingAddress: AddressInput!
-    shippingAddress: AddressInput!
-    phoneNumber: String!
-  ): Boolean
   updateReservationFeedback(
     feedbackID: ID!
     input: ReservationFeedbackUpdateInput!
-  ): ReservationFeedback!
-  upsertProduct(input: UpsertProductInput!): Product
-  uploadImage(image: Upload!): String
-  updateCustomer(
-    data: CustomerUpdateInput!
-    where: CustomerWhereUniqueInput!
-  ): Customer
+  ): ReservationFeedback! @hasRole(roles: ["Admin"])
+  upsertProduct(input: UpsertProductInput!): Product @hasRole(roles: ["Admin"])
+  uploadImage(image: Upload!): String @hasRole(roles: ["Admin"])
 }
 
 input RefundInvoiceInput {
@@ -443,18 +381,6 @@ input RefundInvoiceInput {
   comment: String
   customerNotes: String
   reasonCode: CreditNoteReasonCodeInput
-}
-
-input AddressInput {
-  city: String!
-  postalCode: String!
-  state: String!
-  street1: String!
-  street2: String
-}
-
-input ReserveItemsOptions {
-  dryRun: Boolean
 }
 
 input ProductVariantSKUsInput {
@@ -523,18 +449,6 @@ type BillingInfoPayload {
   plan: Plan
 }
 
-type AuthPayload {
-  token: String!
-  refreshToken: String!
-  expiresIn: Int!
-  user: User!
-  beamsToken: String!
-}
-
-type ResetPasswordPayload {
-  message: String!
-}
-
 input ValidateAddressInput {
   location: LocationCreateInput!
   email: String!
@@ -564,14 +478,6 @@ type HomepageSection {
   type: HomePageSectionType!
   results: [HomepageResult!]!
   title: String
-}
-
-type Me {
-  user: User
-  customer: Customer
-  activeReservation: Reservation
-  bag: [BagItem!]
-  savedItems: [BagItem!]
 }
 
 union HomepageResult = Product | Collection | Brand
@@ -663,56 +569,6 @@ enum ImageSize {
   Medium
   Large
   XLarge
-}
-
-type Reservation {
-  id: ID!
-  user: User!
-  customer: Customer!
-  sentPackage: Package
-  returnedPackage: Package
-  location: Location
-  products: [PhysicalProduct!]!
-  images(width: Int, height: Int, size: ImageSize): [Image!]!
-  reservationNumber: Int!
-  shipped: Boolean!
-  status(display: Boolean): String!
-  shippedAt: DateTime
-  receivedAt: DateTime
-  reminderSentAt: DateTime
-  returnAt: DateTime
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
-type Customer {
-  id: ID!
-  user: User!
-  shouldRequestFeedback: Boolean
-  status: CustomerStatus
-  detail: CustomerDetail
-  billingInfo: BillingInfo
-  plan: Plan
-  bagItems(
-    where: BagItemWhereInput
-    orderBy: BagItemOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [BagItem!]
-  reservations(
-    where: ReservationWhereInput
-    orderBy: ReservationOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [Reservation!]
-  invoices: [Invoice]
-  transactions: [Transaction]
 }
 
 type Invoice {
