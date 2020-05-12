@@ -171,6 +171,9 @@
       "^@app/(.*)$": "<rootDir>/src/$1",
       "^@modules/(.*)$": "<rootDir>/src/modules/$1",
       "^@prisma/(.*)$": "<rootDir>/src/prisma/$1"
+    },
+    "globals": {
+      "TESTING_ENDPOINT": "http://localhost:4466"
     }
   },
   "_moduleAliases": {
