@@ -25,15 +25,12 @@ if (process.env.NODE_ENV === "production") {
 }
 
 const handleErrors = (err, req, res, next) => {
-  if (err.name === "UnauthorizedError") {
-    res.send(401, err)
+  if (err) {
+    return res.status(err.status).json(err)
   }
 }
 
 server.use(
-  checkJwt,
-  handleErrors,
-  createGetUserMiddleware(prisma),
   cors({
     origin: [
       "seedling-staging.herokuapp.com",
@@ -43,8 +40,11 @@ server.use(
     ],
     credentials: true,
   }),
+  checkJwt,
+  createGetUserMiddleware(prisma),
   bodyParser.json(),
-  webhooks
+  webhooks,
+  handleErrors
 )
 
 async function bootstrap() {

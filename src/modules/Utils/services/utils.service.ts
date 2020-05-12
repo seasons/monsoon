@@ -20,6 +20,10 @@ enum ProductSize {
 export class UtilsService {
   constructor(private readonly prisma: PrismaService) {}
 
+  randomString() {
+    return Math.random().toString(36).slice(2)
+  }
+
   deleteFieldsFromObject(obj: object, fieldsToDelete: string[]) {
     const objCopy = { ...obj }
     fieldsToDelete.forEach(a => delete objCopy[a])
@@ -119,12 +123,17 @@ export class UtilsService {
   }
 
   openLogFile(logName) {
-    return fs.openSync(
+    if (!fs.existsSync(`logs`)) {
+      fs.mkdirSync(`logs`)
+    }
+    const a = fs.openSync(
       `logs/${logName}-${require("moment")().format(
         "MMMM-Do-YYYY-hh:mm:ss"
       )}.txt`,
       "a"
     )
+    fs.writeSync(a, "Begin Log\n")
+    return a
   }
 
   writeLines(fileDescriptor, lines: (string | object)[]) {

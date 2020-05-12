@@ -10,66 +10,6 @@ enum BrandTier {
   Discovery
 }
 
-enum Material {
-  Acetate
-  Acrylic
-  Alpaca
-  CalfLeather
-  CamelHair
-  Camel
-  Cashmere
-  Cotton
-  CottonPoplin
-  CowLeather
-  Cupro
-  DuckDown
-  Denim
-  DuckFeathers
-  Elastane
-  Esterlane
-  Feather
-  FeatherDown
-  GooseDown
-  LambLeather
-  LambSkin
-  Lambswool
-  Leather
-  Lyocell
-  Linen
-  MerinoWool
-  Modacrylic
-  Mohair
-  Nylon
-  OrganicCotton
-  PolyAcetate
-  Polyamide
-  Polyester
-  Polyethylene
-  PolySatin
-  Polyurethane
-  PolyurethanicResin
-  PVC
-  Rayon
-  RecycledPolyester
-  RecycledWool
-  Silk
-  Suede
-  SheepLeather
-  Spandex
-  Taffeta
-  Tartan
-  Triacetate
-  VirginWool
-  Viscose
-  Velcro
-  WaxCoating
-  WhiteDuckDown
-  WhiteGooseDown
-  Wool
-  Mesh
-  Wool
-}
-
 enum Department {
   Clothes
   Bags
@@ -105,6 +45,8 @@ enum InventoryStatus {
   NonReservable
   Reservable
   Reserved
+  Stored
+  Offloaded
 }
 
 enum PhysicalProductStatus {
@@ -115,9 +57,19 @@ enum PhysicalProductStatus {
   Lost
 }
 
+enum PhysicalProductOffloadMethod {
+  SoldToUser
+  SoldToThirdParty
+  ReturnedToVendor
+  Recycled
+  Unknown
+}
+
 enum ProductStatus {
   Available
   NotAvailable
+  Stored
+  Offloaded
 }
 
 enum ReservationStatus {
@@ -130,7 +82,6 @@ enum ReservationStatus {
   Received
   Cancelled
   Completed
-  Cancelled
 }
 
 enum BagItemStatus {
@@ -189,6 +140,12 @@ enum ProductArchitecture {
   Fashion
   Showstopper
   Staple
+}
+
+enum WarehouseLocationType {
+	Conveyor
+  Rail
+  Bin
 }
 
 type Brand {
@@ -259,9 +216,8 @@ type Image {
   caption: String
   url: String
   originalHeight: Int
-  originalUrl: String!
+  originalUrl: String! @unique
   originalWidth: Int
-  resizedUrl: String!
   title: String
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
@@ -287,6 +243,15 @@ type Location {
   updatedAt: DateTime! @updatedAt
 }
 
+type Tag {
+  id: ID! @id
+  name: String! @unique
+  description: String
+  products: [Product!]!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
 type Product {
   id: ID! @id
   slug: String! @unique
@@ -296,18 +261,18 @@ type Product {
   type: ProductType
   description: String
   externalURL: String
-  images: Json
+  images: [Image!]
   modelHeight: Int
   retailPrice: Int
   model: ProductModel
   modelSize: Size @relation(name: "ProductModelSize")
   color: Color! @relation(name: "ProductPrimaryColor")
   secondaryColor: Color @relation(name: "ProductSecondaryColor")
-  tags: Json
+  tags: [Tag!]!
   functions: [ProductFunction!]!
   innerMaterials: [String!]! @scalarList(strategy: RELATION)
   outerMaterials: [String!]! @scalarList(strategy: RELATION)
-  variants: [ProductVariant!]! @relation(link: TABLE)
+  variants: [ProductVariant!]! @relation(link: TABLE, onDelete: CASCADE)
   status: ProductStatus @default(value: Available)
   season: String
   architecture: ProductArchitecture
@@ -317,7 +282,7 @@ type Product {
 
 type ProductModel {
   id: ID! @id
-  name: String!
+  name: String! @unique
   height: Float!
   products: [Product!]! @relation(link: TABLE)
 }
@@ -336,13 +301,15 @@ type ProductVariant {
   weight: Float
   height: Float
   productID: String!
-  product: Product!
+  product: Product! @relation(onDelete: SET_NULL)
   retailPrice: Float
-  physicalProducts: [PhysicalProduct!]! @relation(link: TABLE)
+  physicalProducts: [PhysicalProduct!]! @relation(link: TABLE, onDelete: CASCADE)
   total: Int!
   reservable: Int!
   reserved: Int!
   nonReservable: Int!
+  offloaded: Int!
+  stored: Int!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
@@ -351,9 +318,35 @@ type PhysicalProduct {
   id: ID! @id
   seasonsUID: String! @unique
   location: Location
-  productVariant: ProductVariant!
+  productVariant: ProductVariant! @relation(onDelete: SET_NULL)
   inventoryStatus: InventoryStatus!
   productStatus: PhysicalProductStatus!
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
+  barcode: String!
+  sequenceNumber: Int!
+  warehouseLocation: WarehouseLocation
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type WarehouseLocationConstraint {
+  id: ID! @id
+  category: Category!
+  limit: Int!
+  locations: [WarehouseLocation!]
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type WarehouseLocation {
+  id: ID! @id
+  type: WarehouseLocationType!
+  barcode: String! @unique
+  locationCode: String!
+  itemCode: String!
+	physicalProducts: [PhysicalProduct!]
+  constraints: [WarehouseLocationConstraint!]
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
@@ -429,14 +422,15 @@ type RecentlyViewedProduct {
   updatedAt: DateTime! @updatedAt
 }
 
+
 type Reservation {
   id: ID! @id
   user: User!
   customer: Customer! @relation(name: "CustomerToReservation")
   sentPackage: Package
-    @relation(name: "SeasonsToCustomerPackage", onDelete: "CASCADE")
+    @relation(name: "SeasonsToCustomerPackage", onDelete: CASCADE)
   returnedPackage: Package
-    @relation(name: "CustomerToSeasonsPackage", onDelete: "CASCADE")
+    @relation(name: "CustomerToSeasonsPackage", onDelete: CASCADE)
   location: Location
   products: [PhysicalProduct!]!
   reservationNumber: Int! @unique
@@ -538,7 +532,7 @@ type ReservationFeedback {
   id: ID! @id
   comment: String
   feedbacks: [ProductVariantFeedback!]!
-    @relation(link: TABLE, onDelete: "CASCADE")
+    @relation(link: TABLE, onDelete: CASCADE)
   rating: Rating
   user: User!
   reservation: Reservation!
@@ -563,3 +557,4 @@ type ProductVariantFeedbackQuestion {
   type: QuestionType!
   variantFeedback: ProductVariantFeedback!
 }
+

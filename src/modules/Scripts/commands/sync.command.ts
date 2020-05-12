@@ -94,6 +94,8 @@ export class SyncCommands {
         "collections",
         "collection-groups",
         "homepage-product-rails",
+        "physical-products",
+        "models",
       ],
     })
     table,
@@ -118,7 +120,14 @@ export class SyncCommands {
         table === "all" ? "all the tables" : "the " + table
       } from airtable with baseID ${
         process.env.AIRTABLE_DATABASE_ID
-      } to prisma at url ${process.env.PRISMA_ENDPOINT}\n. Proceed? (y/n)`
+      } to prisma at url ${process.env.PRISMA_ENDPOINT}.\n` +
+        `${
+          airtableEnv === "production"
+            ? "WARNING: You should NOT run against production for dev purposes." +
+              " You should instead run against staging or a duplicate of production."
+            : ""
+        }\n` +
+        `Proceed? (y/n)`
     )
     if (!shouldProceed) {
       console.log("\nExited without running anything\n")

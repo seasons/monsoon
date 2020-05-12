@@ -1,9 +1,13 @@
 # import Brand, Category, User, Bag, Collection, CustomerDetail, ProductFunction, SavedProduct from "./prisma/prisma.graphql"
+# import BlogCollection, BlogPost, Query from "./modules/Blog/blog.graphql"
+# import SearchOptions, SearchResultType, SearchResult, Query from "./modules/Search/search.graphql"
 
 directive @isAuthenticated on FIELD_DEFINITION
 directive @hasRole(roles: [String]) on FIELD_DEFINITION
 directive @isOwner(type: String) on FIELD_DEFINITION
 directive @isOwnerOrHasRole(type: String, roles: [String]) on FIELD_DEFINITION
+
+scalar Upload
 
 type Product {
   id: ID!
@@ -19,7 +23,7 @@ type Product {
   retailPrice: Int
   color: Color!
   secondaryColor: Color
-  tags: Json
+  tags: [Tag!]!
   images: Json!
   resizedImages(width: Int, height: Int, size: ImageSize): [Image!]!
   functions(
@@ -86,6 +90,23 @@ type ProductVariant {
   isWanted: Boolean!
   createdAt: DateTime!
   updatedAt: DateTime!
+}
+
+input WarehouseLocationConnectWhereUniqueInput {
+  connect: WarehouseLocationWhereUniqueInput
+}
+
+input PhysicalProductUpdateInput {
+  seasonsUID: String
+  location: LocationUpdateOneWithoutPhysicalProductsInput
+  productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
+  inventoryStatus: InventoryStatus
+  productStatus: PhysicalProductStatus
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
+  barcode: String
+  sequenceNumber: Int
+  warehouseLocation: WarehouseLocationConnectWhereUniqueInput
 }
 
 type Query {
@@ -345,7 +366,6 @@ type Query {
     userIDHash: String!
   ): ChargebeeHostedPagePayload
   chargebeeUpdatePaymentPage: ChargebeeHostedPagePayload
-  search(query: String!, options: SearchOptions): [SearchResult]!
   reservationFeedback: ReservationFeedback
 }
 
@@ -383,6 +403,14 @@ type Mutation {
   addToBag(item: ID!): BagItem!
   removeFromBag(item: ID!, saved: Boolean): BagItem!
   saveProduct(item: ID!, save: Boolean!): BagItem
+  updateProduct(
+    where: ProductWhereUniqueInput!
+    data: ProductUpdateInput!
+  ): Product!
+  updatePhysicalProduct(
+    where: PhysicalProductWhereUniqueInput!
+    data: PhysicalProductUpdateInput!
+  ): PhysicalProduct
   addViewedProduct(item: ID!): RecentlyViewedProduct!
   acknowledgeCompletedChargebeeHostedCheckout(
     hostedPageID: String!
@@ -401,6 +429,12 @@ type Mutation {
     feedbackID: ID!
     input: ReservationFeedbackUpdateInput!
   ): ReservationFeedback!
+  upsertProduct(input: UpsertProductInput!): Product
+  uploadImage(image: Upload!): String
+  updateCustomer(
+    data: CustomerUpdateInput!
+    where: CustomerWhereUniqueInput!
+  ): Customer
 }
 
 input RefundInvoiceInput {
@@ -427,6 +461,56 @@ input ProductVariantSKUsInput {
   brandID: String!
   colorID: String!
   sizeNames: [String!]!
+}
+
+input UpsertProductInput {
+  name: String!
+  images: [Upload!]!
+  brandID: String!
+  categoryID: String!
+  type: ProductType!
+  description: String!
+  modelID: String!
+  retailPrice: Int!
+  modelSizeName: String!
+  modelSizeDisplay: String!
+  bottomSizeType: BottomSizeType
+  colorID: String!
+  secondaryColorID: String
+  tags: [String!]!
+  functions: [String!]!
+  innerMaterials: [String!]!
+  outerMaterials: [String!]!
+  status: ProductStatus!
+  season: String!
+  architecture: String!
+  variants: [UpsertVariantInput!]!
+}
+
+input UpsertVariantInput {
+  sku: String!
+  internalSizeName: String!
+  # Top Size values
+  sleeve: Float
+  shoulder: Float
+  chest: Float
+  neck: Float
+  length: Float
+  # Bottom Size values
+  bottomSizeType: BottomSizeType
+  waist: Float
+  rise: Float
+  hem: Float
+  inseam: Float
+  weight: Float!
+  total: Int!
+  physicalProducts: [UpsertPhysicalProductInput!]!
+}
+
+input UpsertPhysicalProductInput {
+  seasonsUID: String!
+  inventoryStatus: InventoryStatus!
+  physicalProductStatus: PhysicalProductStatus!
 }
 
 type BeamsData {
@@ -460,17 +544,6 @@ type ValidationPayload {
   isValid: Boolean!
   code: String
   text: String
-}
-
-input SearchOptions {
-  includeTypes: [String]
-}
-
-union SearchResultType = Product | Brand
-
-type SearchResult {
-  data: SearchResultType!
-  score: Float
 }
 
 type Image {

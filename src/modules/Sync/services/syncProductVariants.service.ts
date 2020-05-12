@@ -13,6 +13,7 @@ import {
 import { PrismaService } from "../../../prisma/prisma.service"
 import { AirtableData } from "../../Airtable/airtable.types"
 import { AirtableService } from "../../Airtable/services/airtable.service"
+import { ProductUtilsService } from "../../Product/services/product.utils.service"
 import { UtilsService } from "../../Utils/services/utils.service"
 import { SyncUtilsService } from "./sync.utils.service"
 import { SyncBottomSizesService } from "./syncBottomSizes.service"
@@ -25,6 +26,7 @@ export class SyncProductVariantsService {
   constructor(
     private readonly airtableService: AirtableService,
     private readonly prisma: PrismaService,
+    private readonly productUtils: ProductUtilsService,
     private readonly syncBottomSizesService: SyncBottomSizesService,
     private readonly syncProductsService: SyncProductsService,
     private readonly syncSizesService: SyncSizesService,
@@ -112,7 +114,6 @@ export class SyncProductVariantsService {
 
     let numSkipped = 0
     const logFile = this.utils.openLogFile("syncProductVariants")
-    fs.writeSync(logFile, "Begin Log\n")
     for (const productVariant of allProductVariants) {
       try {
         // Increment the progress bar
@@ -171,6 +172,8 @@ export class SyncProductVariantsService {
           updatedNonReservableCount,
           reservedCount,
           reservableCount,
+          storedCount,
+          offloadedCount,
         } = this.countsForVariant(productVariant, physicalProducts)
 
         const { weight, height } = model
@@ -186,7 +189,7 @@ export class SyncProductVariantsService {
               linkedAirtableSize = allSizes.findByIds(bottomSize.model.size)
               break
           }
-          internalSizeRecord = await this.syncSizesService.deepUpsertSize({
+          internalSizeRecord = await this.productUtils.deepUpsertSize({
             slug: `${sku}-internal`,
             type,
             display: linkedAirtableSize?.model.display || "",
@@ -238,7 +241,7 @@ export class SyncProductVariantsService {
                 name: value,
               } = manufacturerSizeRecord.model
               manufacturerSizeRecords.push(
-                await this.syncSizesService.deepUpsertSize({
+                await this.productUtils.deepUpsertSize({
                   slug: `${sku}-manu-${type}-${value}`,
                   type: "Bottom",
                   display,
@@ -272,6 +275,8 @@ export class SyncProductVariantsService {
           total: totalCount,
           reservable: reservableCount,
           reserved: reservedCount,
+          offloaded: offloadedCount,
+          stored: storedCount,
           nonReservable: updatedNonReservableCount,
           color: {
             connect: {
@@ -330,13 +335,7 @@ export class SyncProductVariantsService {
 
         this.updateCategorySizeName(type, topSize, bottomSize, sku)
       } catch (e) {
-        this.utils.writeLines(logFile, [
-          "THREW ERROR",
-          "Record:",
-          productVariant,
-          "Error:",
-          e,
-        ])
+        this.syncUtils.logSyncError(logFile, productVariant, e)
       }
     }
     this.utils.writeLines(logFile, [`Skipped ${numSkipped} records`])
@@ -441,15 +440,21 @@ export class SyncProductVariantsService {
       reservedCount: productVariant.get("Reserved Count") || 0,
       nonReservableCount: productVariant.get("Non-Reservable Count") || 0,
       reservableCount: productVariant.get("Reservable Count") || 0,
+      storedCount: productVariant.get("Stored Count") || 0,
+      offloadedCount: productVariant.get("Offloaded Count") || 0,
     }
 
     // Assume all newly added product variants are nonReservable, and calculate the
-    // number of such product variants as the remainder once reserved and reserved
-    // are taken into account
+    // number of such product variants as the remainder once all other counts are
+    // taken into account
     const updatedData = {
       ...data,
       updatedNonReservableCount:
-        data.totalCount - data.reservedCount - data.reservableCount,
+        data.totalCount -
+        data.reservedCount -
+        data.reservableCount -
+        data.storedCount -
+        data.offloadedCount,
     }
 
     const {
@@ -457,6 +462,8 @@ export class SyncProductVariantsService {
       updatedNonReservableCount,
       reservedCount,
       reservableCount,
+      storedCount,
+      offloadedCount,
     } = updatedData
 
     // Make sure these counts make sense
@@ -465,7 +472,14 @@ export class SyncProductVariantsService {
       updatedNonReservableCount < 0 ||
       reservedCount < 0 ||
       reservableCount < 0 ||
-      totalCount !== reservedCount + updatedNonReservableCount + reservableCount
+      storedCount < 0 ||
+      offloadedCount < 0 ||
+      totalCount !==
+        reservedCount +
+          updatedNonReservableCount +
+          reservableCount +
+          storedCount +
+          offloadedCount
     ) {
       throw new Error(`Invalid counts: ${updatedData}`)
     }

@@ -145,6 +145,8 @@ export class CustomerService {
         where: { id: customer.id },
       })
     }
+
+    return await this.prisma.client.customer({ id: customer.id })
   }
 
   async updateCustomerBillingInfo({
