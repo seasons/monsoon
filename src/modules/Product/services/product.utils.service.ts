@@ -100,8 +100,9 @@ export class ProductUtilsService {
               category: { slug: category.slug },
             },
           }
+    } else {
+      return brandFilter
     }
-    return {}
   }
   async getReservedBagItems(customer) {
     const reservedBagItems = await this.prisma.binding.query.bagItems(
