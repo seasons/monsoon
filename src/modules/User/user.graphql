@@ -2,6 +2,25 @@
 
 type Query {
   me: Me @isAuthenticated
+  user(where: UserWhereUniqueInput!): User @hasRole(roles: ["Admin"])
+  users(
+    where: UserWhereInput
+    orderBy: UserOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [User]! @hasRole(roles: ["Admin"])
+  usersConnection(
+    where: UserWhereInput
+    orderBy: UserOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): UserConnection! @hasRole(roles: ["Admin"])
 }
 
 type Mutation {

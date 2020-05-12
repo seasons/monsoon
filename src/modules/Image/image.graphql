@@ -1,0 +1,27 @@
+scalar Upload
+
+type Image {
+  id: ID!
+  caption: String
+  url: String
+  originalHeight: Int
+  originalWidth: Int
+  originalUrl: String!
+  height: Int
+  width: Int
+  title: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type Mutation {
+  uploadImage(image: Upload!): String @hasRole(roles: ["Admin"])
+}
+
+enum ImageSize {
+  Thumb
+  Small
+  Medium
+  Large
+  XLarge
+}

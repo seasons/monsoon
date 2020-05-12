@@ -1,0 +1,205 @@
+# import ProductVariant, Query, Mutation, UpsertVariantInput from "./productVariant.graphql"
+# import * from "./physicalProduct.graphql"
+
+type Query {
+  brand(where: BrandWhereUniqueInput!): Brand
+  brands(
+    where: BrandWhereInput
+    orderBy: BrandOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Brand]!
+  brandsConnection(
+    where: BrandWhereInput
+    orderBy: BrandOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): BrandConnection!
+  category(where: CategoryWhereUniqueInput!): Category
+  categories(
+    where: CategoryWhereInput
+    orderBy: CategoryOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Category]!
+  categoriesConnection(
+    where: CategoryWhereInput
+    orderBy: CategoryOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): CategoryConnection!
+  collection(where: CollectionWhereUniqueInput!): Collection
+  collections(
+    where: CollectionWhereInput
+    orderBy: CollectionOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Collection]!
+  colors(
+    where: ColorWhereInput
+    orderBy: ColorOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Color]!
+  physicalProduct(where: PhysicalProductWhereUniqueInput!): PhysicalProduct
+  physicalProducts(
+    where: PhysicalProductWhereInput
+    orderBy: PhysicalProductOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [PhysicalProduct]!
+  product(where: ProductWhereUniqueInput!): Product
+  products(
+    category: String
+    where: ProductWhereInput
+    orderBy: ProductOrderByInput
+    sizes: [String!]
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Product]!
+  productsConnection(
+    sizes: [String!]
+    category: String
+    where: ProductWhereInput
+    orderBy: ProductOrderByInput
+    skip: Int
+    sizes: [String!]
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): ProductConnection!
+  productFunctions(
+    where: ProductFunctionWhereInput
+    orderBy: ProductFunctionOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [ProductFunction]!
+  productModels(
+    where: ProductModelWhereInput
+    orderBy: ProductModelOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [ProductModel]!
+  productRequests(
+    where: ProductRequestWhereInput
+    orderBy: ProductRequestOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [ProductRequest]!
+}
+
+type Mutation {
+  saveProduct(item: ID!, save: Boolean!): BagItem @hasRole(roles: ["Customer"])
+  updateProduct(
+    where: ProductWhereUniqueInput!
+    data: ProductUpdateInput!
+  ): Product! @hasRole(roles: ["Admin"])
+  updatePhysicalProduct(
+    where: PhysicalProductWhereUniqueInput!
+    data: PhysicalProductUpdateInput!
+  ): PhysicalProduct @hasRole(roles: ["Admin"])
+  addViewedProduct(item: ID!): RecentlyViewedProduct!
+  upsertProduct(input: UpsertProductInput!): Product @hasRole(roles: ["Admin"])
+  addProductRequest(reason: String!, url: String!): ProductRequest!
+}
+
+type Product {
+  id: ID!
+  slug: String!
+  name: String!
+  brand: Brand!
+  category: Category!
+  type: ProductType
+  description: String
+  externalURL: String
+  modelHeight: Int
+  modelSize: Size
+  retailPrice: Int
+  color: Color!
+  secondaryColor: Color
+  tags: [Tag!]!
+  images(width: Int, height: Int, size: ImageSize): [Image!]!
+  resizedImages(width: Int, height: Int, size: ImageSize): [Image!]!
+  functions(
+    where: ProductFunctionWhereInput
+    orderBy: ProductFunctionOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [ProductFunction!]
+  innerMaterials: [String!]!
+  outerMaterials: [String!]!
+  variants(
+    where: ProductVariantWhereInput
+    orderBy: ProductVariantOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [ProductVariant!]
+  status: ProductStatus
+  isSaved: Boolean
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+input UpsertProductInput {
+  name: String!
+  images: [Upload!]!
+  brandID: String!
+  categoryID: String!
+  type: ProductType!
+  description: String!
+  modelID: String!
+  retailPrice: Int!
+  modelSizeName: String!
+  modelSizeDisplay: String!
+  bottomSizeType: BottomSizeType
+  colorID: String!
+  secondaryColorID: String
+  tags: [String!]!
+  functions: [String!]!
+  innerMaterials: [String!]!
+  outerMaterials: [String!]!
+  status: ProductStatus!
+  season: String!
+  architecture: String!
+  variants: [UpsertVariantInput!]!
+}

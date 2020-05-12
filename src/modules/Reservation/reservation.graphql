@@ -19,11 +19,17 @@ type Query {
     first: Int
     last: Int
   ): ReservationConnection! @hasRole(roles: ["Customer", "Admin", "Partner"])
+  reservationFeedback: ReservationFeedback @hasRole(roles: ["Customer"])
 }
 
 type Mutation {
   reserveItems(items: [ID!]!, options: ReserveItemsOptions): Reservation
     @hasRole(roles: ["Customer"])
+  checkItemsAvailability(items: [ID!]!): Boolean! @hasRole(roles: ["Customer"])
+  updateReservationFeedback(
+    feedbackID: ID!
+    input: ReservationFeedbackUpdateInput!
+  ): ReservationFeedback! @hasRole(roles: ["Admin"])
 }
 
 input ReserveItemsOptions {
