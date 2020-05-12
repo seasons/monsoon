@@ -277,7 +277,8 @@ export class ProductUtilsService {
   }
 
   getProductImageName(brandCode: string, name: string, index: number) {
-    return `${brandCode}/${name.replace(/ /g, "-")}/${index}.png`.toLowerCase()
+    const slug = slugify(name)
+    return `${brandCode}/${slug}/${slug}-${index}.png`.toLowerCase()
   }
 
   async getImageIDs(imageDatas: ImageData[]) {

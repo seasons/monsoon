@@ -108,7 +108,8 @@ export class ImageService {
 
   async uploadImageFromURL(
     imageURL: string,
-    imageName: string
+    imageName: string,
+    title?: string
   ): Promise<ImageData> {
     return new Promise((resolve, reject) => {
       request(
@@ -133,6 +134,7 @@ export class ImageService {
               height,
               url: result.Location,
               width,
+              title,
             })
           }
         }
