@@ -1,0 +1,34 @@
+type Query {
+  homepage: Homepage
+  homepageProductRail(
+    where: HomepageProductRailWhereUniqueInput!
+  ): HomepageProductRail
+  homepageProductRails(
+    where: HomepageProductRailWhereInput
+    orderBy: HomepageProductRailOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [HomepageProductRail]!
+}
+
+type Homepage {
+  sections: [HomepageSection!]!
+}
+
+type HomepageSection {
+  type: HomePageSectionType!
+  results: [HomepageResult!]!
+  title: String
+}
+
+union HomepageResult = Product | Collection | Brand
+
+enum HomePageSectionType {
+  CollectionGroups
+  Products
+  HomepageProductRails
+  Brands
+}

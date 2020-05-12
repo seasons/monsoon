@@ -17,7 +17,7 @@ export class ImageResolver {
     @Args("height") height: number,
     @Args("version") version: string
   ) {
-    const url = this.imageService.imageResize(image.url, null, {
+    const url = this.imageService.resizeImage(image.url, null, {
       w: width,
       h: height,
     })

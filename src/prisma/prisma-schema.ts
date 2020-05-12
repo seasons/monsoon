@@ -3144,9 +3144,8 @@ type Image {
   id: ID!
   caption: String
   url: String
-  originalHeight: Int
-  originalUrl: String!
-  originalWidth: Int
+  height: Int
+  width: Int
   title: String
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -3162,9 +3161,8 @@ input ImageCreateInput {
   id: ID
   caption: String
   url: String
-  originalHeight: Int
-  originalUrl: String!
-  originalWidth: Int
+  height: Int
+  width: Int
   title: String
 }
 
@@ -3185,12 +3183,10 @@ enum ImageOrderByInput {
   caption_DESC
   url_ASC
   url_DESC
-  originalHeight_ASC
-  originalHeight_DESC
-  originalUrl_ASC
-  originalUrl_DESC
-  originalWidth_ASC
-  originalWidth_DESC
+  height_ASC
+  height_DESC
+  width_ASC
+  width_DESC
   title_ASC
   title_DESC
   createdAt_ASC
@@ -3203,9 +3199,8 @@ type ImagePreviousValues {
   id: ID!
   caption: String
   url: String
-  originalHeight: Int
-  originalUrl: String!
-  originalWidth: Int
+  height: Int
+  width: Int
   title: String
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -3254,36 +3249,22 @@ input ImageScalarWhereInput {
   url_not_starts_with: String
   url_ends_with: String
   url_not_ends_with: String
-  originalHeight: Int
-  originalHeight_not: Int
-  originalHeight_in: [Int!]
-  originalHeight_not_in: [Int!]
-  originalHeight_lt: Int
-  originalHeight_lte: Int
-  originalHeight_gt: Int
-  originalHeight_gte: Int
-  originalUrl: String
-  originalUrl_not: String
-  originalUrl_in: [String!]
-  originalUrl_not_in: [String!]
-  originalUrl_lt: String
-  originalUrl_lte: String
-  originalUrl_gt: String
-  originalUrl_gte: String
-  originalUrl_contains: String
-  originalUrl_not_contains: String
-  originalUrl_starts_with: String
-  originalUrl_not_starts_with: String
-  originalUrl_ends_with: String
-  originalUrl_not_ends_with: String
-  originalWidth: Int
-  originalWidth_not: Int
-  originalWidth_in: [Int!]
-  originalWidth_not_in: [Int!]
-  originalWidth_lt: Int
-  originalWidth_lte: Int
-  originalWidth_gt: Int
-  originalWidth_gte: Int
+  height: Int
+  height_not: Int
+  height_in: [Int!]
+  height_not_in: [Int!]
+  height_lt: Int
+  height_lte: Int
+  height_gt: Int
+  height_gte: Int
+  width: Int
+  width_not: Int
+  width_in: [Int!]
+  width_not_in: [Int!]
+  width_lt: Int
+  width_lte: Int
+  width_gt: Int
+  width_gte: Int
   title: String
   title_not: String
   title_in: [String!]
@@ -3340,27 +3321,24 @@ input ImageSubscriptionWhereInput {
 input ImageUpdateDataInput {
   caption: String
   url: String
-  originalHeight: Int
-  originalUrl: String
-  originalWidth: Int
+  height: Int
+  width: Int
   title: String
 }
 
 input ImageUpdateInput {
   caption: String
   url: String
-  originalHeight: Int
-  originalUrl: String
-  originalWidth: Int
+  height: Int
+  width: Int
   title: String
 }
 
 input ImageUpdateManyDataInput {
   caption: String
   url: String
-  originalHeight: Int
-  originalUrl: String
-  originalWidth: Int
+  height: Int
+  width: Int
   title: String
 }
 
@@ -3379,9 +3357,8 @@ input ImageUpdateManyInput {
 input ImageUpdateManyMutationInput {
   caption: String
   url: String
-  originalHeight: Int
-  originalUrl: String
-  originalWidth: Int
+  height: Int
+  width: Int
   title: String
 }
 
@@ -3444,36 +3421,22 @@ input ImageWhereInput {
   url_not_starts_with: String
   url_ends_with: String
   url_not_ends_with: String
-  originalHeight: Int
-  originalHeight_not: Int
-  originalHeight_in: [Int!]
-  originalHeight_not_in: [Int!]
-  originalHeight_lt: Int
-  originalHeight_lte: Int
-  originalHeight_gt: Int
-  originalHeight_gte: Int
-  originalUrl: String
-  originalUrl_not: String
-  originalUrl_in: [String!]
-  originalUrl_not_in: [String!]
-  originalUrl_lt: String
-  originalUrl_lte: String
-  originalUrl_gt: String
-  originalUrl_gte: String
-  originalUrl_contains: String
-  originalUrl_not_contains: String
-  originalUrl_starts_with: String
-  originalUrl_not_starts_with: String
-  originalUrl_ends_with: String
-  originalUrl_not_ends_with: String
-  originalWidth: Int
-  originalWidth_not: Int
-  originalWidth_in: [Int!]
-  originalWidth_not_in: [Int!]
-  originalWidth_lt: Int
-  originalWidth_lte: Int
-  originalWidth_gt: Int
-  originalWidth_gte: Int
+  height: Int
+  height_not: Int
+  height_in: [Int!]
+  height_not_in: [Int!]
+  height_lt: Int
+  height_lte: Int
+  height_gt: Int
+  height_gte: Int
+  width: Int
+  width_not: Int
+  width_in: [Int!]
+  width_not_in: [Int!]
+  width_lt: Int
+  width_lte: Int
+  width_gt: Int
+  width_gte: Int
   title: String
   title_not: String
   title_in: [String!]
@@ -3511,7 +3474,7 @@ input ImageWhereInput {
 
 input ImageWhereUniqueInput {
   id: ID
-  originalUrl: String
+  url: String
 }
 
 enum InventoryStatus {
@@ -4549,7 +4512,6 @@ type PhysicalProduct {
   productStatus: PhysicalProductStatus!
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
-  barcode: String!
   sequenceNumber: Int!
   warehouseLocation: WarehouseLocation
   createdAt: DateTime!
@@ -4571,7 +4533,6 @@ input PhysicalProductCreateInput {
   productStatus: PhysicalProductStatus!
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
-  barcode: String!
   sequenceNumber: Int!
   warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
 }
@@ -4604,7 +4565,6 @@ input PhysicalProductCreateWithoutLocationInput {
   productStatus: PhysicalProductStatus!
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
-  barcode: String!
   sequenceNumber: Int!
   warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
 }
@@ -4617,7 +4577,6 @@ input PhysicalProductCreateWithoutProductVariantInput {
   productStatus: PhysicalProductStatus!
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
-  barcode: String!
   sequenceNumber: Int!
   warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
 }
@@ -4631,7 +4590,6 @@ input PhysicalProductCreateWithoutWarehouseLocationInput {
   productStatus: PhysicalProductStatus!
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
-  barcode: String!
   sequenceNumber: Int!
 }
 
@@ -4661,8 +4619,6 @@ enum PhysicalProductOrderByInput {
   offloadMethod_DESC
   offloadNotes_ASC
   offloadNotes_DESC
-  barcode_ASC
-  barcode_DESC
   sequenceNumber_ASC
   sequenceNumber_DESC
   createdAt_ASC
@@ -4678,7 +4634,6 @@ type PhysicalProductPreviousValues {
   productStatus: PhysicalProductStatus!
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
-  barcode: String!
   sequenceNumber: Int!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -4739,20 +4694,6 @@ input PhysicalProductScalarWhereInput {
   offloadNotes_not_starts_with: String
   offloadNotes_ends_with: String
   offloadNotes_not_ends_with: String
-  barcode: String
-  barcode_not: String
-  barcode_in: [String!]
-  barcode_not_in: [String!]
-  barcode_lt: String
-  barcode_lte: String
-  barcode_gt: String
-  barcode_gte: String
-  barcode_contains: String
-  barcode_not_contains: String
-  barcode_starts_with: String
-  barcode_not_starts_with: String
-  barcode_ends_with: String
-  barcode_not_ends_with: String
   sequenceNumber: Int
   sequenceNumber_not: Int
   sequenceNumber_in: [Int!]
@@ -4816,7 +4757,6 @@ input PhysicalProductUpdateDataInput {
   productStatus: PhysicalProductStatus
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
-  barcode: String
   sequenceNumber: Int
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
 }
@@ -4829,7 +4769,6 @@ input PhysicalProductUpdateInput {
   productStatus: PhysicalProductStatus
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
-  barcode: String
   sequenceNumber: Int
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
 }
@@ -4840,7 +4779,6 @@ input PhysicalProductUpdateManyDataInput {
   productStatus: PhysicalProductStatus
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
-  barcode: String
   sequenceNumber: Int
 }
 
@@ -4862,7 +4800,6 @@ input PhysicalProductUpdateManyMutationInput {
   productStatus: PhysicalProductStatus
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
-  barcode: String
   sequenceNumber: Int
 }
 
@@ -4914,7 +4851,6 @@ input PhysicalProductUpdateWithoutLocationDataInput {
   productStatus: PhysicalProductStatus
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
-  barcode: String
   sequenceNumber: Int
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
 }
@@ -4926,7 +4862,6 @@ input PhysicalProductUpdateWithoutProductVariantDataInput {
   productStatus: PhysicalProductStatus
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
-  barcode: String
   sequenceNumber: Int
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
 }
@@ -4939,7 +4874,6 @@ input PhysicalProductUpdateWithoutWarehouseLocationDataInput {
   productStatus: PhysicalProductStatus
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
-  barcode: String
   sequenceNumber: Int
 }
 
@@ -5044,20 +4978,6 @@ input PhysicalProductWhereInput {
   offloadNotes_not_starts_with: String
   offloadNotes_ends_with: String
   offloadNotes_not_ends_with: String
-  barcode: String
-  barcode_not: String
-  barcode_in: [String!]
-  barcode_not_in: [String!]
-  barcode_lt: String
-  barcode_lte: String
-  barcode_gt: String
-  barcode_gte: String
-  barcode_contains: String
-  barcode_not_contains: String
-  barcode_starts_with: String
-  barcode_not_starts_with: String
-  barcode_ends_with: String
-  barcode_not_ends_with: String
   sequenceNumber: Int
   sequenceNumber_not: Int
   sequenceNumber_in: [Int!]
