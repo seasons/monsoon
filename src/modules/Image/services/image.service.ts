@@ -15,9 +15,7 @@ interface ImageResizerOptions {
   retina?: boolean
 }
 
-const IMGIX_NAME =
-  process.env.NODE_ENV === "production" ? "seasons-s3" : "seasons-s3-staging"
-const IMGIX_BASE = `https://${IMGIX_NAME}.imgix.net/`
+const IMGIX_BASE = `https://${process.env.IMGIX_NAME}.imgix.net/`
 const AIRTABLE_BASE = "https://dl.airtable.com/.attachments/"
 
 const sizes = {
@@ -73,6 +71,16 @@ export class ImageService {
 
     const name = options.imageName || filename
 
+    const { width, height } = await new Promise((resolve, reject) => {
+      let buff = Buffer.alloc(0)
+      let length = 0
+      fileStream.on("data", chunk => {
+        length += chunk.length
+        buff = Buffer.concat([buff, chunk], length)
+        const { width, height } = imageSize(buff)
+        resolve({ width, height })
+      })
+    })
     // Here stream it to S3
     const uploadParams = {
       ACL: "public-read",
@@ -81,7 +89,6 @@ export class ImageService {
       Body: fileStream,
     }
     const result = await this.s3.upload(uploadParams).promise()
-    const { width, height } = imageSize(fileStream)
 
     return {
       height,
