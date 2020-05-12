@@ -4512,7 +4512,6 @@ type PhysicalProduct {
   productStatus: PhysicalProductStatus!
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
-  barcode: String!
   sequenceNumber: Int!
   warehouseLocation: WarehouseLocation
   createdAt: DateTime!
@@ -4534,7 +4533,6 @@ input PhysicalProductCreateInput {
   productStatus: PhysicalProductStatus!
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
-  barcode: String!
   sequenceNumber: Int!
   warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
 }
@@ -4567,7 +4565,6 @@ input PhysicalProductCreateWithoutLocationInput {
   productStatus: PhysicalProductStatus!
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
-  barcode: String!
   sequenceNumber: Int!
   warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
 }
@@ -4580,7 +4577,6 @@ input PhysicalProductCreateWithoutProductVariantInput {
   productStatus: PhysicalProductStatus!
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
-  barcode: String!
   sequenceNumber: Int!
   warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
 }
@@ -4594,7 +4590,6 @@ input PhysicalProductCreateWithoutWarehouseLocationInput {
   productStatus: PhysicalProductStatus!
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
-  barcode: String!
   sequenceNumber: Int!
 }
 
@@ -4624,8 +4619,6 @@ enum PhysicalProductOrderByInput {
   offloadMethod_DESC
   offloadNotes_ASC
   offloadNotes_DESC
-  barcode_ASC
-  barcode_DESC
   sequenceNumber_ASC
   sequenceNumber_DESC
   createdAt_ASC
@@ -4641,7 +4634,6 @@ type PhysicalProductPreviousValues {
   productStatus: PhysicalProductStatus!
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
-  barcode: String!
   sequenceNumber: Int!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -4702,20 +4694,6 @@ input PhysicalProductScalarWhereInput {
   offloadNotes_not_starts_with: String
   offloadNotes_ends_with: String
   offloadNotes_not_ends_with: String
-  barcode: String
-  barcode_not: String
-  barcode_in: [String!]
-  barcode_not_in: [String!]
-  barcode_lt: String
-  barcode_lte: String
-  barcode_gt: String
-  barcode_gte: String
-  barcode_contains: String
-  barcode_not_contains: String
-  barcode_starts_with: String
-  barcode_not_starts_with: String
-  barcode_ends_with: String
-  barcode_not_ends_with: String
   sequenceNumber: Int
   sequenceNumber_not: Int
   sequenceNumber_in: [Int!]
@@ -4779,7 +4757,6 @@ input PhysicalProductUpdateDataInput {
   productStatus: PhysicalProductStatus
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
-  barcode: String
   sequenceNumber: Int
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
 }
@@ -4792,7 +4769,6 @@ input PhysicalProductUpdateInput {
   productStatus: PhysicalProductStatus
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
-  barcode: String
   sequenceNumber: Int
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
 }
@@ -4803,7 +4779,6 @@ input PhysicalProductUpdateManyDataInput {
   productStatus: PhysicalProductStatus
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
-  barcode: String
   sequenceNumber: Int
 }
 
@@ -4825,7 +4800,6 @@ input PhysicalProductUpdateManyMutationInput {
   productStatus: PhysicalProductStatus
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
-  barcode: String
   sequenceNumber: Int
 }
 
@@ -4877,7 +4851,6 @@ input PhysicalProductUpdateWithoutLocationDataInput {
   productStatus: PhysicalProductStatus
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
-  barcode: String
   sequenceNumber: Int
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
 }
@@ -4889,7 +4862,6 @@ input PhysicalProductUpdateWithoutProductVariantDataInput {
   productStatus: PhysicalProductStatus
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
-  barcode: String
   sequenceNumber: Int
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
 }
@@ -4902,7 +4874,6 @@ input PhysicalProductUpdateWithoutWarehouseLocationDataInput {
   productStatus: PhysicalProductStatus
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
-  barcode: String
   sequenceNumber: Int
 }
 
@@ -5007,20 +4978,6 @@ input PhysicalProductWhereInput {
   offloadNotes_not_starts_with: String
   offloadNotes_ends_with: String
   offloadNotes_not_ends_with: String
-  barcode: String
-  barcode_not: String
-  barcode_in: [String!]
-  barcode_not_in: [String!]
-  barcode_lt: String
-  barcode_lte: String
-  barcode_gt: String
-  barcode_gte: String
-  barcode_contains: String
-  barcode_not_contains: String
-  barcode_starts_with: String
-  barcode_not_starts_with: String
-  barcode_ends_with: String
-  barcode_not_ends_with: String
   sequenceNumber: Int
   sequenceNumber_not: Int
   sequenceNumber_in: [Int!]

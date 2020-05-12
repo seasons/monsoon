@@ -1,5 +1,5 @@
 # import ProductVariant, Query, Mutation, UpsertVariantInput from "./productVariant.graphql"
-# import * from "./physicalProduct.graphql"
+# import Query from "./physicalProduct.graphql"
 
 type Query {
   brand(where: BrandWhereUniqueInput!): Brand
@@ -59,16 +59,6 @@ type Query {
     first: Int
     last: Int
   ): [Color]!
-  physicalProduct(where: PhysicalProductWhereUniqueInput!): PhysicalProduct
-  physicalProducts(
-    where: PhysicalProductWhereInput
-    orderBy: PhysicalProductOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [PhysicalProduct]!
   product(where: ProductWhereUniqueInput!): Product
   products(
     category: String
