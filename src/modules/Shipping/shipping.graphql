@@ -1,0 +1,44 @@
+type Query {
+  package(where: PackageWhereUniqueInput!): Package @hasRole(roles: ["Admin"])
+  packages(
+    where: PackageWhereInput
+    orderBy: PackageOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Package]! @hasRole(roles: ["Admin"])
+  packagesConnection(
+    where: PackageWhereInput
+    orderBy: PackageOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): PackageConnection! @hasRole(roles: ["Admin"])
+}
+
+type Mutation {
+  validateAddress(input: ValidateAddressInput!): ValidationPayload!
+}
+
+input AddressInput {
+  city: String!
+  postalCode: String!
+  state: String!
+  street1: String!
+  street2: String
+}
+
+input ValidateAddressInput {
+  location: LocationCreateInput!
+  email: String!
+}
+
+type ValidationPayload {
+  isValid: Boolean!
+  code: String
+  text: String
+}

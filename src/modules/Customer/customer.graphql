@@ -32,7 +32,7 @@ type Mutation {
   addCustomerDetails(
     details: CustomerDetailCreateInput!
     status: CustomerStatus
-    event: Event
+    event: CustomerAnalyticsEvent
   ): Customer! @hasRole(roles: ["Customer"])
   updatePaymentAndShipping(
     billingAddress: AddressInput!
@@ -47,4 +47,8 @@ input AddressInput {
   state: String!
   street1: String!
   street2: String
+}
+
+enum CustomerAnalyticsEvent {
+  CompletedWaitlistForm
 }

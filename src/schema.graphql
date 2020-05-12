@@ -7,160 +7,23 @@
 # import Product, ProductVariant, Query, Mutation from "./modules/Product/product.graphql"
 # import Image, Mutation from "./modules/Image/image.graphql"
 # import Query from "./modules/Homepage/homepage.graphql"
+# import CreditNoteReasonCodeInput, CreditNoteReasonCode, CreditNoteStatus, TransactionStatus, InvoiceStatus,TransactionType, Invoice, Transaction, CreditNote, BillingInfoPayload, ChargebeeHostedPagePayload, RefundInvoiceInput, Query, Mutation from "./modules/Payment/payment.graphql"
+# import Query from "./modules/Shipping/shipping.graphql"
 
 directive @isAuthenticated on FIELD_DEFINITION
 directive @hasRole(roles: [String]) on FIELD_DEFINITION
 
 type Query {
   faq: Faq
-  chargebeeCheckout(
-    planID: PlanID!
-    userIDHash: String!
-  ): ChargebeeHostedPagePayload
-  chargebeeUpdatePaymentPage: ChargebeeHostedPagePayload
-
-  package(where: PackageWhereUniqueInput!): Package
-  packages(
-    where: PackageWhereInput
-    orderBy: PackageOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [Package]!
-  packagesConnection(
-    where: PackageWhereInput
-    orderBy: PackageOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): PackageConnection!
-}
-
-type ChargebeeHostedPagePayload {
-  created_at: DateTime!
-  embed: Boolean!
-  expires_at: Int!
-  id: String!
-  object: String!
-  resource_version: DateTime!
-  state: String!
-  type: String!
-  updated_at: DateTime!
-  url: String!
 }
 
 type Mutation {
   beamsData: BeamsData!
-  acknowledgeCompletedChargebeeHostedCheckout(
-    hostedPageID: String!
-  ): BillingInfoPayload @hasRole(roles: ["Customer"])
-  refundInvoice(input: RefundInvoiceInput): Boolean! @hasRole(roles: ["Admin"])
-  validateAddress(input: ValidateAddressInput!): ValidationPayload!
-}
-
-input RefundInvoiceInput {
-  invoiceId: String!
-  refundAmount: Int
-  comment: String
-  customerNotes: String
-  reasonCode: CreditNoteReasonCodeInput
-}
-
-input AddressInput {
-  city: String!
-  postalCode: String!
-  state: String!
-  street1: String!
-  street2: String
-}
-
-input ReserveItemsOptions {
-  dryRun: Boolean
 }
 
 type BeamsData {
   email: String!
   beamsToken: String!
-}
-
-type BillingInfoPayload {
-  billingInfo: BillingInfo
-  plan: Plan
-}
-
-input ValidateAddressInput {
-  location: LocationCreateInput!
-  email: String!
-}
-
-type ValidationPayload {
-  isValid: Boolean!
-  code: String
-  text: String
-}
-
-enum TransactionStatus {
-  InProgress
-  Success
-  Voided
-  Failure
-  Timeout
-  NeedsAttention
-}
-
-enum InvoiceStatus {
-  Paid
-  Posted
-  PaymentDue
-  NotPaid
-  Voided
-  Pending
-}
-
-enum TransactionType {
-  Authorization
-  Payment
-  Refund
-  PaymentReversal
-}
-
-enum PlanID {
-  AllAccess
-  Essential
-}
-
-enum Event {
-  CompletedWaitlistForm
-}
-
-enum CreditNoteReasonCodeInput {
-  ProductUnsatisfactory
-  ServiceUnsatisfactory
-  OrderChange
-  OrderCancellation
-  Waiver
-  Other
-}
-
-enum CreditNoteReasonCode {
-  SubscriptionChange
-  ProductUnsatisfactory
-  ServiceUnsatisfactory
-  OrderChange
-  OrderCancellation
-  Waiver
-  Other
-}
-
-enum CreditNoteStatus {
-  Adjusted
-  Refunded
-  RefundDue
-  Voided
 }
 
 type Faq {
@@ -175,34 +38,4 @@ type FaqSection {
 type FaqSubsection {
   title: String!
   text: String!
-}
-
-type Invoice {
-  id: String!
-  subscriptionId: String
-  recurring: Boolean
-  status: InvoiceStatus
-  closingDate: DateTime
-  dueDate: DateTime
-  amount: Int
-  transactions: [Transaction]
-  creditNotes: [CreditNote]
-}
-
-type Transaction {
-  id: String!
-  amount: Int
-  lastFour: String
-  date: DateTime
-  status: TransactionStatus
-  type: TransactionType!
-  settledAt: DateTime
-}
-
-type CreditNote {
-  id: String!
-  reasonCode: CreditNoteReasonCode
-  date: DateTime
-  total: Int
-  status: CreditNoteStatus
 }

@@ -1,0 +1,127 @@
+type Query {
+  chargebeeCheckout(
+    planID: PlanID!
+    userIDHash: String!
+  ): ChargebeeHostedPagePayload
+  chargebeeUpdatePaymentPage: ChargebeeHostedPagePayload
+    @hasRole(roles: ["Customer"])
+}
+
+type Mutation {
+  acknowledgeCompletedChargebeeHostedCheckout(
+    hostedPageID: String!
+  ): BillingInfoPayload
+  refundInvoice(input: RefundInvoiceInput): Boolean! @hasRole(roles: ["Admin"])
+}
+
+enum CreditNoteReasonCodeInput {
+  ProductUnsatisfactory
+  ServiceUnsatisfactory
+  OrderChange
+  OrderCancellation
+  Waiver
+  Other
+}
+
+enum CreditNoteReasonCode {
+  SubscriptionChange
+  ProductUnsatisfactory
+  ServiceUnsatisfactory
+  OrderChange
+  OrderCancellation
+  Waiver
+  Other
+}
+
+enum CreditNoteStatus {
+  Adjusted
+  Refunded
+  RefundDue
+  Voided
+}
+
+enum TransactionStatus {
+  InProgress
+  Success
+  Voided
+  Failure
+  Timeout
+  NeedsAttention
+}
+
+enum InvoiceStatus {
+  Paid
+  Posted
+  PaymentDue
+  NotPaid
+  Voided
+  Pending
+}
+
+enum TransactionType {
+  Authorization
+  Payment
+  Refund
+  PaymentReversal
+}
+
+enum PlanID {
+  AllAccess
+  Essential
+}
+
+type Invoice {
+  id: String!
+  subscriptionId: String
+  recurring: Boolean
+  status: InvoiceStatus
+  closingDate: DateTime
+  dueDate: DateTime
+  amount: Int
+  transactions: [Transaction]
+  creditNotes: [CreditNote]
+}
+
+type Transaction {
+  id: String!
+  amount: Int
+  lastFour: String
+  date: DateTime
+  status: TransactionStatus
+  type: TransactionType!
+  settledAt: DateTime
+}
+
+type CreditNote {
+  id: String!
+  reasonCode: CreditNoteReasonCode
+  date: DateTime
+  total: Int
+  status: CreditNoteStatus
+}
+
+type BillingInfoPayload {
+  billingInfo: BillingInfo
+  plan: Plan
+}
+
+type ChargebeeHostedPagePayload {
+  created_at: DateTime!
+  embed: Boolean!
+  expires_at: Int!
+  id: String!
+  object: String!
+  resource_version: DateTime!
+  state: String!
+  type: String!
+  updated_at: DateTime!
+  url: String!
+}
+
+input RefundInvoiceInput {
+  invoiceId: String!
+  refundAmount: Int
+  comment: String
+  customerNotes: String
+  reasonCode: CreditNoteReasonCodeInput
+}
