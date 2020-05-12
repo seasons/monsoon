@@ -53,10 +53,9 @@ const scheduleModule =
   imports: [
     ...scheduleModule,
     GraphQLModule.forRootAsync({
-      useFactory: async () => {
-        const typeDefs = await importSchema("src/schema.graphql")
-        return {
-          typeDefs,
+      useFactory: async () =>
+        ({
+          typeDefs: await importSchema("src/schema.graphql"),
           path: "/",
           installSubscriptionHandlers: true,
           resolverValidationOptions: {
@@ -71,8 +70,7 @@ const scheduleModule =
             maxFileSize: 125000000, // 125 MB
             maxFiles: 5,
           },
-        } as GqlModuleOptions
-      },
+        } as GqlModuleOptions),
     }),
     AirtableModule,
     BlogModule,

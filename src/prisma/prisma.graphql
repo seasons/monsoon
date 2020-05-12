@@ -16095,6 +16095,7 @@ type User implements Node {
   firstName: String!
   lastName: String!
   role: UserRole!
+  roles: [UserRole!]!
   createdAt: DateTime!
   updatedAt: DateTime!
   pushNotifications: PushNotificationStatus!
@@ -16118,11 +16119,16 @@ input UserCreateInput {
   lastName: String!
   role: UserRole
   pushNotifications: PushNotificationStatus
+  roles: UserCreaterolesInput
 }
 
 input UserCreateOneInput {
   create: UserCreateInput
   connect: UserWhereUniqueInput
+}
+
+input UserCreaterolesInput {
+  set: [UserRole!]
 }
 
 """An edge in a connection."""
@@ -16162,6 +16168,7 @@ type UserPreviousValues {
   firstName: String!
   lastName: String!
   role: UserRole!
+  roles: [UserRole!]!
   createdAt: DateTime!
   updatedAt: DateTime!
   pushNotifications: PushNotificationStatus!
@@ -16217,6 +16224,7 @@ input UserUpdateDataInput {
   lastName: String
   role: UserRole
   pushNotifications: PushNotificationStatus
+  roles: UserUpdaterolesInput
 }
 
 input UserUpdateInput {
@@ -16226,6 +16234,7 @@ input UserUpdateInput {
   lastName: String
   role: UserRole
   pushNotifications: PushNotificationStatus
+  roles: UserUpdaterolesInput
 }
 
 input UserUpdateManyMutationInput {
@@ -16235,6 +16244,7 @@ input UserUpdateManyMutationInput {
   lastName: String
   role: UserRole
   pushNotifications: PushNotificationStatus
+  roles: UserUpdaterolesInput
 }
 
 input UserUpdateOneInput {
@@ -16251,6 +16261,10 @@ input UserUpdateOneRequiredInput {
   connect: UserWhereUniqueInput
   update: UserUpdateDataInput
   upsert: UserUpsertNestedInput
+}
+
+input UserUpdaterolesInput {
+  set: [UserRole!]
 }
 
 input UserUpsertNestedInput {
