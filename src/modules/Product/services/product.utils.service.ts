@@ -2,7 +2,7 @@ import { ImageData } from "@modules/Image/image.types"
 import { Injectable } from "@nestjs/common"
 import { BrandOrderByInput, Category, Product } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
-import { head, union, uniqBy } from "lodash"
+import { head, identity, pickBy, union, uniqBy } from "lodash"
 import slugify from "slugify"
 
 import {
@@ -70,12 +70,15 @@ export class ProductUtilsService {
 
     const filters = await this.filtersForCategory(args)
 
-    return {
-      orderBy,
-      where,
-      ...filters,
-      ...brandFilter,
-    }
+    return pickBy(
+      {
+        orderBy,
+        where,
+        ...filters,
+        ...brandFilter,
+      },
+      identity
+    )
   }
 
   private async filtersForCategory(args) {
