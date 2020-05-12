@@ -9,6 +9,7 @@ import {
   InventoryStatus,
   LetterSize,
   Product,
+  ProductCreateInput,
   ProductFunction,
   ProductStatus,
   ProductUpdateInput,
@@ -117,6 +118,7 @@ export class ProductService {
   }
 
   async upsertProduct(input) {
+    console.log("INPUT", input)
     const brand = await this.prisma.client.brand({ id: input.brandID })
     const color = await this.prisma.client.color({ id: input.colorID })
     const model = await this.prisma.client.productModel({ id: input.modelID })
@@ -174,7 +176,7 @@ export class ProductService {
 
     const productData = {
       slug,
-      name,
+      name: input.name,
       brand: {
         connect: { id: input.brandID },
       },
@@ -215,51 +217,79 @@ export class ProductService {
     const productCreateData = {
       ...productData,
       variants: {
-        create: input.variants.map(variant =>
-          this.getVariantData(
-            variant,
-            input.type,
-            input.colorID,
-            input.slug,
-            input.retailPrice,
-            true
+        create: await Promise.all(
+          input.variants.map(
+            async variant =>
+              await this.getVariantData(
+                variant,
+                input.type,
+                input.colorID,
+                slug,
+                input.retailPrice,
+                input.status,
+                true
+              )
           )
         ),
       },
-    }
+    } as ProductCreateInput
     const productUpdateData = {
       ...productData,
       variants: {
-        upsert: input.variants.map(variant => ({
-          create: this.getVariantData(
-            variant,
-            input.type,
-            input.colorID,
-            input.slug,
-            input.retailPrice,
-            true
-          ),
-          update: this.getVariantData(
-            variant,
-            input.type,
-            input.colorID,
-            input.slug,
-            input.retailPrice,
-            false
-          ),
-          where: { sku: variant.sku },
-        })),
+        upsert: await Promise.all(
+          input.variants.map(async variant => ({
+            create: await this.getVariantData(
+              variant,
+              input.type,
+              input.colorID,
+              slug,
+              input.retailPrice,
+              input.status,
+              true
+            ),
+            update: await this.getVariantData(
+              variant,
+              input.type,
+              input.colorID,
+              slug,
+              input.retailPrice,
+              input.status,
+              false
+            ),
+            where: { sku: variant.sku },
+          }))
+        ),
       },
-    }
+    } as ProductUpdateInput
+    console.log("UPSERTING PRODUCT")
+    console.log(
+      "PRODUCT CREATE",
+      productCreateData,
+      productCreateData.variants.create
+    )
+    console.log(
+      "PRODUCT UPDATE",
+      productUpdateData,
+      productUpdateData.variants.upsert
+    )
     const product = await this.prisma.client.upsertProduct({
       create: productCreateData,
       update: productUpdateData,
       where: { slug },
     })
+    console.log("PROD:", product)
     return product
   }
 
-  async getVariantData(variant, type, colorID, slug, retailPrice, isCreate) {
+  async getVariantData(
+    variant,
+    type,
+    colorID,
+    slug,
+    retailPrice,
+    status,
+    isCreate
+  ) {
     const internalSize = await this.productUtils.deepUpsertSize({
       slug: `${variant.sku}-internal`,
       type,
@@ -283,11 +313,16 @@ export class ProductService {
     })
 
     let physicalProductsData
+    const physicalProducts = variant.physicalProducts.map(physicalProduct => ({
+      ...physicalProduct,
+      barcode: "",
+      sequenceNumber: -1,
+    }))
     if (isCreate) {
-      physicalProductsData = { create: variant.physicalProducts }
+      physicalProductsData = { create: physicalProducts }
     } else {
       physicalProductsData = {
-        upsert: variant.physicalProducts.map(physicalProduct => ({
+        upsert: physicalProducts.map(physicalProduct => ({
           create: physicalProduct,
           update: physicalProduct,
           where: { seasonsUID: physicalProduct.seasonsUID },
@@ -310,6 +345,8 @@ export class ProductService {
       reservable: status === "Available" ? variant.total : 0,
       reserved: 0,
       nonReservable: status === "NotAvailable" ? variant.total : 0,
+      offloaded: 0,
+      stored: 0,
       physicalProducts: physicalProductsData,
     }
   }
