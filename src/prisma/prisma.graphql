@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Mon May 11 2020 10:31:18 GMT-0400 (Eastern Daylight Time)
+# timestamp: Mon May 11 2020 15:40:06 GMT-0400 (Eastern Daylight Time)
 
 type AggregateBagItem {
   count: Int!
@@ -9722,6 +9722,7 @@ input ProductModelWhereInput {
 
 input ProductModelWhereUniqueInput {
   id: ID
+  name: String
 }
 
 enum ProductOrderByInput {
@@ -16183,6 +16184,7 @@ type User implements Node {
   firstName: String!
   lastName: String!
   role: UserRole!
+  roles: [UserRole!]!
   createdAt: DateTime!
   updatedAt: DateTime!
   pushNotifications: PushNotificationStatus!
@@ -16206,11 +16208,16 @@ input UserCreateInput {
   lastName: String!
   role: UserRole
   pushNotifications: PushNotificationStatus
+  roles: UserCreaterolesInput
 }
 
 input UserCreateOneInput {
   create: UserCreateInput
   connect: UserWhereUniqueInput
+}
+
+input UserCreaterolesInput {
+  set: [UserRole!]
 }
 
 """An edge in a connection."""
@@ -16250,6 +16257,7 @@ type UserPreviousValues {
   firstName: String!
   lastName: String!
   role: UserRole!
+  roles: [UserRole!]!
   createdAt: DateTime!
   updatedAt: DateTime!
   pushNotifications: PushNotificationStatus!
@@ -16305,6 +16313,7 @@ input UserUpdateDataInput {
   lastName: String
   role: UserRole
   pushNotifications: PushNotificationStatus
+  roles: UserUpdaterolesInput
 }
 
 input UserUpdateInput {
@@ -16314,6 +16323,7 @@ input UserUpdateInput {
   lastName: String
   role: UserRole
   pushNotifications: PushNotificationStatus
+  roles: UserUpdaterolesInput
 }
 
 input UserUpdateManyMutationInput {
@@ -16323,6 +16333,7 @@ input UserUpdateManyMutationInput {
   lastName: String
   role: UserRole
   pushNotifications: PushNotificationStatus
+  roles: UserUpdaterolesInput
 }
 
 input UserUpdateOneInput {
@@ -16339,6 +16350,10 @@ input UserUpdateOneRequiredInput {
   connect: UserWhereUniqueInput
   update: UserUpdateDataInput
   upsert: UserUpsertNestedInput
+}
+
+input UserUpdaterolesInput {
+  set: [UserRole!]
 }
 
 input UserUpsertNestedInput {

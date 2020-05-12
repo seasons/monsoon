@@ -282,7 +282,7 @@ type Product {
 
 type ProductModel {
   id: ID! @id
-  name: String!
+  name: String! @unique
   height: Float!
   products: [Product!]! @relation(link: TABLE)
 }
@@ -358,6 +358,7 @@ type User {
   firstName: String!
   lastName: String!
   role: UserRole! @default(value: Customer)
+  roles: [UserRole!]! @scalarList(strategy: RELATION)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
   pushNotifications: PushNotificationStatus! @default(value: Denied)

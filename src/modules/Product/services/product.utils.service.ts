@@ -2,7 +2,16 @@ import { Injectable } from "@nestjs/common"
 import { BrandOrderByInput, Category, Product } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
 import { head, union, uniqBy } from "lodash"
+import slugify from "slugify"
 
+import {
+  BottomSizeCreateInput,
+  BottomSizeType,
+  LetterSize,
+  ProductType,
+  Size,
+  TopSizeCreateInput,
+} from "../../../prisma"
 import { ProductWithPhysicalProducts } from "../product.types"
 
 @Injectable()
@@ -154,6 +163,10 @@ export class ProductUtilsService {
     })
   }
 
+  getProductSlug(brandCode: string, name: string, color: string) {
+    return slugify(brandCode + " " + name + " " + color).toLowerCase()
+  }
+
   physicalProductsForProduct(product: ProductWithPhysicalProducts) {
     return product.variants.reduce(
       (acc, curVal) => union(acc, curVal.physicalProducts),
@@ -211,5 +224,113 @@ export class ProductUtilsService {
     )
     const products = brands.map(b => b.products).flat()
     return products
+  }
+
+  async deepUpsertSize({
+    slug,
+    type,
+    display,
+    topSizeData,
+    bottomSizeData,
+  }: {
+    slug: string
+    type: ProductType
+    display: string
+    topSizeData?: TopSizeCreateInput
+    bottomSizeData?: BottomSizeCreateInput
+  }): Promise<Size> {
+    const sizeData = { slug, productType: type, display }
+    // Update if needed
+    const sizeRecord = await this.prisma.client.upsertSize({
+      where: { slug },
+      create: { ...sizeData },
+      update: { ...sizeData },
+    })
+    switch (type) {
+      case "Top":
+        if (!topSizeData) {
+          throw new Error("topSizeData must be non null if type is Top")
+        }
+        const prismaTopSize = await this.prisma.client
+          .size({ id: sizeRecord.id })
+          .top()
+        const topSize = await this.prisma.client.upsertTopSize({
+          where: { id: prismaTopSize?.id || "" },
+          update: { ...topSizeData },
+          create: { ...topSizeData },
+        })
+        if (!prismaTopSize) {
+          await this.prisma.client.updateSize({
+            where: { slug },
+            data: { top: { connect: { id: topSize.id } } },
+          })
+        }
+        break
+      case "Bottom":
+        if (!bottomSizeData) {
+          throw new Error("bottomSizeData must be non null if type is Bottom")
+        }
+        const prismaBottomSize = await this.prisma.client
+          .size({ id: sizeRecord?.id })
+          .bottom()
+        const bottomSize = await this.prisma.client.upsertBottomSize({
+          where: { id: prismaBottomSize?.id || "" },
+          create: { ...bottomSizeData },
+          update: { ...bottomSizeData },
+        })
+        if (!prismaBottomSize) {
+          await this.prisma.client.updateSize({
+            where: { slug },
+            data: { bottom: { connect: { id: bottomSize.id } } },
+          })
+        }
+    }
+
+    return sizeRecord
+  }
+
+  getProductImageName(brandCode: string, name: string, index: number) {
+    return `${brandCode}/${name.replace(/ /g, "_")}/${index}.png`.toLowerCase()
+  }
+
+  async getImageIDsForURLs(imageURLs: string[]) {
+    const prismaImages = await Promise.all(
+      imageURLs.map(async imageURL => {
+        const imageData = { originalUrl: imageURL }
+        return await this.prisma.client.upsertImage({
+          where: imageData,
+          create: imageData,
+          update: imageData,
+        })
+      })
+    )
+    return prismaImages.map(image => ({ id: image.id }))
+  }
+
+  async upsertModelSize({
+    slug,
+    type,
+    modelSizeName,
+    modelSizeDisplay,
+    bottomSizeType,
+  }: {
+    slug: string
+    type: ProductType
+    modelSizeName: string
+    modelSizeDisplay: string
+    bottomSizeType?: BottomSizeType
+  }) {
+    return await this.deepUpsertSize({
+      slug,
+      type,
+      display: modelSizeDisplay,
+      topSizeData: type === "Top" && {
+        letter: modelSizeName as LetterSize,
+      },
+      bottomSizeData: type === "Bottom" && {
+        type: bottomSizeType as BottomSizeType,
+        value: modelSizeName,
+      },
+    })
   }
 }

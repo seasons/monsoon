@@ -1,0 +1,51 @@
+type Query {
+  reservation(where: ReservationWhereUniqueInput!): Reservation
+    @hasRole(roles: ["Customer", "Admin", "Partner"])
+  reservations(
+    where: ReservationWhereInput
+    orderBy: ReservationOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Reservation]! @hasRole(roles: ["Customer", "Admin", "Partner"])
+  reservationsConnection(
+    where: ReservationWhereInput
+    orderBy: ReservationOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): ReservationConnection! @hasRole(roles: ["Customer", "Admin", "Partner"])
+}
+
+type Mutation {
+  reserveItems(items: [ID!]!, options: ReserveItemsOptions): Reservation
+    @hasRole(roles: ["Customer"])
+}
+
+input ReserveItemsOptions {
+  dryRun: Boolean
+}
+
+type Reservation {
+  id: ID!
+  user: User!
+  customer: Customer!
+  sentPackage: Package
+  returnedPackage: Package
+  location: Location
+  products: [PhysicalProduct!]!
+  images(width: Int, height: Int, size: ImageSize): [Image!]!
+  reservationNumber: Int!
+  shipped: Boolean!
+  status(display: Boolean): String!
+  shippedAt: DateTime
+  receivedAt: DateTime
+  reminderSentAt: DateTime
+  returnAt: DateTime
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}

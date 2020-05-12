@@ -1,0 +1,46 @@
+type Query {
+  customer(where: CustomerWhereUniqueInput!): Customer
+  customers(
+    where: CustomerWhereInput
+    orderBy: CustomerOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Customer]!
+  customersConnection(
+    where: CustomerWhereInput
+    orderBy: CustomerOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): CustomerConnection!
+}
+
+type Mutation {
+  updateCustomer(
+    data: CustomerUpdateInput!
+    where: CustomerWhereUniqueInput!
+  ): Customer @hasRole(roles: ["Admin"])
+  addCustomerDetails(
+    details: CustomerDetailCreateInput!
+    status: CustomerStatus
+    event: Event
+  ): Customer! @hasRole(roles: ["Customer"])
+  updatePaymentAndShipping(
+    billingAddress: AddressInput!
+    shippingAddress: AddressInput!
+    phoneNumber: String!
+  ): Boolean @hasRole(roles: ["Customer"])
+}
+
+input AddressInput {
+  city: String!
+  postalCode: String!
+  state: String!
+  street1: String!
+  street2: String
+}

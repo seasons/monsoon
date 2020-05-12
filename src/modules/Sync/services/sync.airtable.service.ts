@@ -149,6 +149,8 @@ export class AirtableSyncService {
         return await this.syncCollectionGroupsService.syncAirtableToPrisma()
       case "homepage-product-rails":
         return await this.syncHomepageProductRailsService.syncAirtableToPrisma()
+      case "models":
+        return await this.syncModelsService.syncAirtableToPrisma()
       default:
         throw new Error("invalid table name")
     }
@@ -170,6 +172,7 @@ export class AirtableSyncService {
       collections: await _createSubBar("Collections"),
       collectionGroups: await _createSubBar("Collection Groups"),
       homepageProductRails: await _createSubBar("Homepage Product Rails"),
+      models: await _createSubBar("Models"),
     }
 
     // ignore locations because of complications with slugs. plus, we dont really use them yet.
@@ -191,6 +194,7 @@ export class AirtableSyncService {
       await this.syncHomepageProductRailsService.syncAirtableToPrisma(
         bars.homepageProductRails
       )
+      await this.syncModelsService.syncAirtableToPrisma(bars.models)
     } catch (e) {
       console.log(e)
     }

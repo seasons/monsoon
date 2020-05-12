@@ -284,6 +284,7 @@ export class AuthService {
       email,
       firstName,
       lastName,
+      roles: { set: ["Customer"] }, // defaults to customer
     })
     return user
   }

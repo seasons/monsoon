@@ -10122,6 +10122,7 @@ input ProductModelWhereInput {
 
 input ProductModelWhereUniqueInput {
   id: ID
+  name: String
 }
 
 enum ProductOrderByInput {
@@ -16583,6 +16584,7 @@ type User implements Node {
   firstName: String!
   lastName: String!
   role: UserRole!
+  roles: [UserRole!]!
   createdAt: DateTime!
   updatedAt: DateTime!
   pushNotifications: PushNotificationStatus!
@@ -16606,11 +16608,16 @@ input UserCreateInput {
   lastName: String!
   role: UserRole
   pushNotifications: PushNotificationStatus
+  roles: UserCreaterolesInput
 }
 
 input UserCreateOneInput {
   create: UserCreateInput
   connect: UserWhereUniqueInput
+}
+
+input UserCreaterolesInput {
+  set: [UserRole!]
 }
 
 """An edge in a connection."""
@@ -16650,6 +16657,7 @@ type UserPreviousValues {
   firstName: String!
   lastName: String!
   role: UserRole!
+  roles: [UserRole!]!
   createdAt: DateTime!
   updatedAt: DateTime!
   pushNotifications: PushNotificationStatus!
@@ -16705,6 +16713,7 @@ input UserUpdateDataInput {
   lastName: String
   role: UserRole
   pushNotifications: PushNotificationStatus
+  roles: UserUpdaterolesInput
 }
 
 input UserUpdateInput {
@@ -16714,6 +16723,7 @@ input UserUpdateInput {
   lastName: String
   role: UserRole
   pushNotifications: PushNotificationStatus
+  roles: UserUpdaterolesInput
 }
 
 input UserUpdateManyMutationInput {
@@ -16723,6 +16733,7 @@ input UserUpdateManyMutationInput {
   lastName: String
   role: UserRole
   pushNotifications: PushNotificationStatus
+  roles: UserUpdaterolesInput
 }
 
 input UserUpdateOneInput {
@@ -16739,6 +16750,10 @@ input UserUpdateOneRequiredInput {
   connect: UserWhereUniqueInput
   update: UserUpdateDataInput
   upsert: UserUpsertNestedInput
+}
+
+input UserUpdaterolesInput {
+  set: [UserRole!]
 }
 
 input UserUpsertNestedInput {
@@ -22816,6 +22831,7 @@ export interface ProductModelWhereInput {
 
 export interface ProductModelWhereUniqueInput {
   id?: ID_Input | null
+  name?: String | null
 }
 
 export interface ProductRequestCreateimagesInput {
@@ -25775,11 +25791,16 @@ export interface UserCreateInput {
   lastName: String
   role?: UserRole | null
   pushNotifications?: PushNotificationStatus | null
+  roles?: UserCreaterolesInput | null
 }
 
 export interface UserCreateOneInput {
   create?: UserCreateInput | null
   connect?: UserWhereUniqueInput | null
+}
+
+export interface UserCreaterolesInput {
+  set?: UserRole[] | UserRole | null
 }
 
 export interface UserSubscriptionWhereInput {
@@ -25800,6 +25821,7 @@ export interface UserUpdateDataInput {
   lastName?: String | null
   role?: UserRole | null
   pushNotifications?: PushNotificationStatus | null
+  roles?: UserUpdaterolesInput | null
 }
 
 export interface UserUpdateInput {
@@ -25809,6 +25831,7 @@ export interface UserUpdateInput {
   lastName?: String | null
   role?: UserRole | null
   pushNotifications?: PushNotificationStatus | null
+  roles?: UserUpdaterolesInput | null
 }
 
 export interface UserUpdateManyMutationInput {
@@ -25818,6 +25841,7 @@ export interface UserUpdateManyMutationInput {
   lastName?: String | null
   role?: UserRole | null
   pushNotifications?: PushNotificationStatus | null
+  roles?: UserUpdaterolesInput | null
 }
 
 export interface UserUpdateOneInput {
@@ -25834,6 +25858,10 @@ export interface UserUpdateOneRequiredInput {
   connect?: UserWhereUniqueInput | null
   update?: UserUpdateDataInput | null
   upsert?: UserUpsertNestedInput | null
+}
+
+export interface UserUpdaterolesInput {
+  set?: UserRole[] | UserRole | null
 }
 
 export interface UserUpsertNestedInput {
@@ -28041,6 +28069,7 @@ export interface User extends Node {
   firstName: String
   lastName: String
   role: UserRole
+  roles: Array<UserRole>
   createdAt: DateTime
   updatedAt: DateTime
   pushNotifications: PushNotificationStatus
@@ -28072,6 +28101,7 @@ export interface UserPreviousValues {
   firstName: String
   lastName: String
   role: UserRole
+  roles: Array<UserRole>
   createdAt: DateTime
   updatedAt: DateTime
   pushNotifications: PushNotificationStatus
