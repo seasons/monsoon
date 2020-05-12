@@ -1,6 +1,6 @@
 type Query {
   reservation(where: ReservationWhereUniqueInput!): Reservation
-    @hasRole(roles: ["Customer", "Admin", "Partner"])
+    @hasRole(roles: [Customer, Admin, Partner])
   reservations(
     where: ReservationWhereInput
     orderBy: ReservationOrderByInput
@@ -9,7 +9,7 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): [Reservation]! @hasRole(roles: ["Customer", "Admin", "Partner"])
+  ): [Reservation]! @hasRole(roles: [Customer, Admin, Partner])
   reservationsConnection(
     where: ReservationWhereInput
     orderBy: ReservationOrderByInput
@@ -18,18 +18,18 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): ReservationConnection! @hasRole(roles: ["Customer", "Admin", "Partner"])
-  reservationFeedback: ReservationFeedback @hasRole(roles: ["Customer"])
+  ): ReservationConnection! @hasRole(roles: [Customer, Admin, Partner])
+  reservationFeedback: ReservationFeedback @hasRole(roles: [Customer])
 }
 
 type Mutation {
   reserveItems(items: [ID!]!, options: ReserveItemsOptions): Reservation
-    @hasRole(roles: ["Customer"])
-  checkItemsAvailability(items: [ID!]!): Boolean! @hasRole(roles: ["Customer"])
+    @hasRole(roles: [Customer])
+  checkItemsAvailability(items: [ID!]!): Boolean! @hasRole(roles: [Customer])
   updateReservationFeedback(
     feedbackID: ID!
     input: ReservationFeedbackUpdateInput!
-  ): ReservationFeedback! @hasRole(roles: ["Admin"])
+  ): ReservationFeedback! @hasRole(roles: [Admin])
 }
 
 input ReserveItemsOptions {

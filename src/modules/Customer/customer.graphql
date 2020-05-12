@@ -1,6 +1,5 @@
 type Query {
-  customer(where: CustomerWhereUniqueInput!): Customer
-    @hasRole(roles: ["Admin"])
+  customer(where: CustomerWhereUniqueInput!): Customer @hasRole(roles: [Admin])
   customers(
     where: CustomerWhereInput
     orderBy: CustomerOrderByInput
@@ -9,7 +8,7 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): [Customer]! @hasRole(roles: ["Admin"])
+  ): [Customer]! @hasRole(roles: [Admin])
   customersConnection(
     where: CustomerWhereInput
     orderBy: CustomerOrderByInput
@@ -18,27 +17,26 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): CustomerConnection! @hasRole(roles: ["Admin"])
+  ): CustomerConnection! @hasRole(roles: [Admin])
 }
 
 type Mutation {
-  addToBag(item: ID!): BagItem! @hasRole(roles: ["Customer"])
-  removeFromBag(item: ID!, saved: Boolean): BagItem!
-    @hasRole(roles: ["Customer"])
+  addToBag(item: ID!): BagItem! @hasRole(roles: [Customer])
+  removeFromBag(item: ID!, saved: Boolean): BagItem! @hasRole(roles: [Customer])
   updateCustomer(
     data: CustomerUpdateInput!
     where: CustomerWhereUniqueInput!
-  ): Customer @hasRole(roles: ["Admin"])
+  ): Customer @hasRole(roles: [Admin])
   addCustomerDetails(
     details: CustomerDetailCreateInput!
     status: CustomerStatus
     event: CustomerAnalyticsEvent
-  ): Customer! @hasRole(roles: ["Customer"])
+  ): Customer! @hasRole(roles: [Customer])
   updatePaymentAndShipping(
     billingAddress: AddressInput!
     shippingAddress: AddressInput!
     phoneNumber: String!
-  ): Boolean @hasRole(roles: ["Customer"])
+  ): Boolean @hasRole(roles: [Customer])
 }
 
 input AddressInput {

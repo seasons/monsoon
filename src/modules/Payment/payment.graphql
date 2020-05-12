@@ -4,14 +4,14 @@ type Query {
     userIDHash: String!
   ): ChargebeeHostedPagePayload
   chargebeeUpdatePaymentPage: ChargebeeHostedPagePayload
-    @hasRole(roles: ["Customer"])
+    @hasRole(roles: [Customer])
 }
 
 type Mutation {
   acknowledgeCompletedChargebeeHostedCheckout(
     hostedPageID: String!
   ): BillingInfoPayload
-  refundInvoice(input: RefundInvoiceInput): Boolean! @hasRole(roles: ["Admin"])
+  refundInvoice(input: RefundInvoiceInput): Boolean! @hasRole(roles: [Admin])
 }
 
 enum CreditNoteReasonCodeInput {

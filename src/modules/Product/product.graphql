@@ -123,17 +123,17 @@ type Query {
 }
 
 type Mutation {
-  saveProduct(item: ID!, save: Boolean!): BagItem @hasRole(roles: ["Customer"])
+  saveProduct(item: ID!, save: Boolean!): BagItem @hasRole(roles: [Customer])
   updateProduct(
     where: ProductWhereUniqueInput!
     data: ProductUpdateInput!
-  ): Product! @hasRole(roles: ["Admin"])
+  ): Product! @hasRole(roles: [Admin])
   updatePhysicalProduct(
     where: PhysicalProductWhereUniqueInput!
     data: PhysicalProductUpdateInput!
-  ): PhysicalProduct @hasRole(roles: ["Admin"])
+  ): PhysicalProduct @hasRole(roles: [Admin])
   addViewedProduct(item: ID!): RecentlyViewedProduct!
-  upsertProduct(input: UpsertProductInput!): Product @hasRole(roles: ["Admin"])
+  upsertProduct(input: UpsertProductInput!): Product @hasRole(roles: [Admin])
   addProductRequest(reason: String!, url: String!): ProductRequest!
 }
 

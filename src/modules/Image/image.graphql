@@ -15,7 +15,7 @@ type Image {
 }
 
 type Mutation {
-  uploadImage(image: Upload!): String @hasRole(roles: ["Admin"])
+  uploadImage(image: Upload!): String @hasRole(roles: [Admin])
 }
 
 enum ImageSize {

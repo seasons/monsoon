@@ -2,7 +2,7 @@
 
 type Query {
   me: Me @isAuthenticated
-  user(where: UserWhereUniqueInput!): User @hasRole(roles: ["Admin"])
+  user(where: UserWhereUniqueInput!): User @hasRole(roles: [Admin])
   users(
     where: UserWhereInput
     orderBy: UserOrderByInput
@@ -11,7 +11,7 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): [User]! @hasRole(roles: ["Admin"])
+  ): [User]! @hasRole(roles: [Admin])
   usersConnection(
     where: UserWhereInput
     orderBy: UserOrderByInput
@@ -20,7 +20,7 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): UserConnection! @hasRole(roles: ["Admin"])
+  ): UserConnection! @hasRole(roles: [Admin])
 }
 
 type Mutation {
@@ -33,7 +33,7 @@ type Mutation {
   ): AuthPayload!
   login(email: String!, password: String!): AuthPayload!
   updateUserPushNotifications(pushNotificationsStatus: String!): User!
-    @hasRole(roles: ["Customer"])
+    @hasRole(roles: [Customer])
   resetPassword(email: String!): ResetPasswordPayload! @isAuthenticated
 }
 
