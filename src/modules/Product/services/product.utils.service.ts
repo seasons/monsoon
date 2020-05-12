@@ -284,7 +284,7 @@ export class ProductUtilsService {
     const prismaImages = await Promise.all(
       imageDatas.map(async imageData => {
         return await this.prisma.client.upsertImage({
-          where: imageData,
+          where: { url: imageData.url },
           create: imageData,
           update: imageData,
         })

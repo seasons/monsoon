@@ -81,9 +81,6 @@ export class ProductFieldsResolver {
         images {
           id
           url
-          originalHeight
-          originalWidth
-          originalUrl
         }
       }
       `
