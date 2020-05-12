@@ -60,11 +60,14 @@ export class ProductUtilsService {
 
     const filters = await this.filters(args)
 
-    return {
-      orderBy,
-      where,
-      ...filters,
-    }
+    return pickBy(
+      {
+        orderBy,
+        where,
+        ...filters,
+      },
+      identity
+    )
   }
 
   private async filters(args) {
