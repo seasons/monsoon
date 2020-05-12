@@ -31,7 +31,7 @@ export class ProductMutationsResolver {
 
   @Mutation()
   async upsertProduct(@Args() { input }, @User() user) {
-    return await this.productService.upsertProduct(input)
+    return await this.productService.deepUpsertProduct(input)
   }
 
   @Mutation()

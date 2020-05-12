@@ -106,18 +106,17 @@ export class TestUtilsService {
   }
 
   createProductService() {
+    const productUtilsService = new ProductUtilsService(this.prisma)
     return new ProductService(
       this.prisma,
       new ImageService(),
-      new ProductUtilsService(this.prisma),
+      productUtilsService,
       new ProductVariantService(
         this.prisma,
-        new PhysicalProductUtilsService(
-          this.prisma,
-          new ProductUtilsService(this.prisma)
-        ),
+        new PhysicalProductUtilsService(this.prisma, productUtilsService),
         this.airtableService
       ),
+      new PhysicalProductUtilsService(this.prisma, productUtilsService),
       new UtilsService(this.prisma)
     )
   }

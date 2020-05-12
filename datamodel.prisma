@@ -323,7 +323,6 @@ type PhysicalProduct {
   productStatus: PhysicalProductStatus!
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
-  barcode: String!
   sequenceNumber: Int!
   warehouseLocation: WarehouseLocation
   createdAt: DateTime! @createdAt
