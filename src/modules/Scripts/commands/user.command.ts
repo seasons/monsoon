@@ -66,6 +66,7 @@ export class UserCommands {
     plan,
     @Option({
       name: "roles",
+      alias: "r",
       describe: "Roles of the user",
       type: "array",
       default: "Customer",
