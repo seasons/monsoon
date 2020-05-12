@@ -1,0 +1,51 @@
+type Query {
+  physicalProduct(where: PhysicalProductWhereUniqueInput!): PhysicalProduct
+  physicalProducts(
+    where: PhysicalProductWhereInput
+    orderBy: PhysicalProductOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [PhysicalProduct]!
+}
+
+type PhysicalProduct {
+  id: ID!
+  seasonsUID: String!
+  location: Location
+  warehouseLocation: WarehouseLocation
+  productVariant: ProductVariant!
+  inventoryStatus: InventoryStatus!
+  productStatus: PhysicalProductStatus!
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
+  sequenceNumber: Int!
+  barcode: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+input WarehouseLocationConnectWhereUniqueInput {
+  connect: WarehouseLocationWhereUniqueInput
+}
+
+input PhysicalProductUpdateInput {
+  seasonsUID: String
+  location: LocationUpdateOneWithoutPhysicalProductsInput
+  productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
+  inventoryStatus: InventoryStatus
+  productStatus: PhysicalProductStatus
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
+  barcode: String
+  sequenceNumber: Int
+  warehouseLocation: WarehouseLocationConnectWhereUniqueInput
+}
+
+input UpsertPhysicalProductInput {
+  seasonsUID: String!
+  inventoryStatus: InventoryStatus!
+  productStatus: PhysicalProductStatus!
+}

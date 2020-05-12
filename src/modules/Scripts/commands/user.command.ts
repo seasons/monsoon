@@ -63,7 +63,16 @@ export class UserCommands {
       default: "Essential",
       choices: ["AllAccess", "Essential"],
     })
-    plan
+    plan,
+    @Option({
+      name: "roles",
+      alias: "r",
+      describe: "Roles of the user",
+      type: "array",
+      default: "Customer",
+      choices: ["Customer", "Admin", "Partner"],
+    })
+    roles
   ) {
     await this.scriptsService.updateConnections({
       prismaEnv,
@@ -158,6 +167,7 @@ export class UserCommands {
           },
         },
         status: "Active",
+        user: { update: { roles: { set: roles } } },
       },
       where: { id: customer.id },
     })

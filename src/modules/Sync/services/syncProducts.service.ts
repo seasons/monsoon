@@ -2,6 +2,7 @@ import * as fs from "fs"
 
 import { AirtableData } from "@modules/Airtable/airtable.types"
 import { AirtableService } from "@modules/Airtable/services/airtable.service"
+import { ImageData } from "@modules/Image/image.types"
 import { ImageService } from "@modules/Image/services/image.service"
 import { UtilsService } from "@modules/Utils/services/utils.service"
 import { Injectable } from "@nestjs/common"
@@ -365,7 +366,7 @@ export class SyncProductsService {
       imageIDs = productImages.map(image => ({ id: image.id }))
     } else {
       // We have yet to upload these images to S3
-      const imageURLs: string[] = await Promise.all(
+      const imageDatas: ImageData[] = await Promise.all(
         images.map(async (image, index) => {
           const s3ImageName = this.productUtils.getProductImageName(
             brandCode,
@@ -374,11 +375,12 @@ export class SyncProductsService {
           )
           return await this.imageService.uploadImageFromURL(
             image.url,
-            s3ImageName
+            s3ImageName,
+            name
           )
         })
       )
-      imageIDs = this.productUtils.getImageIDsForURLs(imageURLs)
+      imageIDs = this.productUtils.getImageIDs(imageDatas)
     }
     return imageIDs
   }

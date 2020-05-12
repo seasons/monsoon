@@ -63,7 +63,7 @@ export class ProductFieldsResolver {
   }
 
   @ResolveField()
-  async resizedImages(
+  async images(
     @Parent() parent,
     @Args("width") width: number,
     @Args("height") height: number,
@@ -78,13 +78,16 @@ export class ProductFieldsResolver {
       `
       {
         id
-        images
+        images {
+          id
+          url
+        }
       }
       `
     )
     return product?.images.map(image => {
       return {
-        url: this.imageService.imageResize(image?.url, size, {
+        url: this.imageService.resizeImage(image?.url, size, {
           w: width,
           h: height,
         }),

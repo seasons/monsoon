@@ -1566,8 +1566,6 @@ export type PhysicalProductOrderByInput =
   | "offloadMethod_DESC"
   | "offloadNotes_ASC"
   | "offloadNotes_DESC"
-  | "barcode_ASC"
-  | "barcode_DESC"
   | "sequenceNumber_ASC"
   | "sequenceNumber_DESC"
   | "createdAt_ASC"
@@ -1664,12 +1662,10 @@ export type ImageOrderByInput =
   | "caption_DESC"
   | "url_ASC"
   | "url_DESC"
-  | "originalHeight_ASC"
-  | "originalHeight_DESC"
-  | "originalUrl_ASC"
-  | "originalUrl_DESC"
-  | "originalWidth_ASC"
-  | "originalWidth_DESC"
+  | "height_ASC"
+  | "height_DESC"
+  | "width_ASC"
+  | "width_DESC"
   | "title_ASC"
   | "title_DESC"
   | "createdAt_ASC"
@@ -2169,20 +2165,6 @@ export interface PhysicalProductWhereInput {
   offloadNotes_not_starts_with?: Maybe<String>;
   offloadNotes_ends_with?: Maybe<String>;
   offloadNotes_not_ends_with?: Maybe<String>;
-  barcode?: Maybe<String>;
-  barcode_not?: Maybe<String>;
-  barcode_in?: Maybe<String[] | String>;
-  barcode_not_in?: Maybe<String[] | String>;
-  barcode_lt?: Maybe<String>;
-  barcode_lte?: Maybe<String>;
-  barcode_gt?: Maybe<String>;
-  barcode_gte?: Maybe<String>;
-  barcode_contains?: Maybe<String>;
-  barcode_not_contains?: Maybe<String>;
-  barcode_starts_with?: Maybe<String>;
-  barcode_not_starts_with?: Maybe<String>;
-  barcode_ends_with?: Maybe<String>;
-  barcode_not_ends_with?: Maybe<String>;
   sequenceNumber?: Maybe<Int>;
   sequenceNumber_not?: Maybe<Int>;
   sequenceNumber_in?: Maybe<Int[] | Int>;
@@ -3317,36 +3299,22 @@ export interface ImageWhereInput {
   url_not_starts_with?: Maybe<String>;
   url_ends_with?: Maybe<String>;
   url_not_ends_with?: Maybe<String>;
-  originalHeight?: Maybe<Int>;
-  originalHeight_not?: Maybe<Int>;
-  originalHeight_in?: Maybe<Int[] | Int>;
-  originalHeight_not_in?: Maybe<Int[] | Int>;
-  originalHeight_lt?: Maybe<Int>;
-  originalHeight_lte?: Maybe<Int>;
-  originalHeight_gt?: Maybe<Int>;
-  originalHeight_gte?: Maybe<Int>;
-  originalUrl?: Maybe<String>;
-  originalUrl_not?: Maybe<String>;
-  originalUrl_in?: Maybe<String[] | String>;
-  originalUrl_not_in?: Maybe<String[] | String>;
-  originalUrl_lt?: Maybe<String>;
-  originalUrl_lte?: Maybe<String>;
-  originalUrl_gt?: Maybe<String>;
-  originalUrl_gte?: Maybe<String>;
-  originalUrl_contains?: Maybe<String>;
-  originalUrl_not_contains?: Maybe<String>;
-  originalUrl_starts_with?: Maybe<String>;
-  originalUrl_not_starts_with?: Maybe<String>;
-  originalUrl_ends_with?: Maybe<String>;
-  originalUrl_not_ends_with?: Maybe<String>;
-  originalWidth?: Maybe<Int>;
-  originalWidth_not?: Maybe<Int>;
-  originalWidth_in?: Maybe<Int[] | Int>;
-  originalWidth_not_in?: Maybe<Int[] | Int>;
-  originalWidth_lt?: Maybe<Int>;
-  originalWidth_lte?: Maybe<Int>;
-  originalWidth_gt?: Maybe<Int>;
-  originalWidth_gte?: Maybe<Int>;
+  height?: Maybe<Int>;
+  height_not?: Maybe<Int>;
+  height_in?: Maybe<Int[] | Int>;
+  height_not_in?: Maybe<Int[] | Int>;
+  height_lt?: Maybe<Int>;
+  height_lte?: Maybe<Int>;
+  height_gt?: Maybe<Int>;
+  height_gte?: Maybe<Int>;
+  width?: Maybe<Int>;
+  width_not?: Maybe<Int>;
+  width_in?: Maybe<Int[] | Int>;
+  width_not_in?: Maybe<Int[] | Int>;
+  width_lt?: Maybe<Int>;
+  width_lte?: Maybe<Int>;
+  width_gt?: Maybe<Int>;
+  width_gte?: Maybe<Int>;
   title?: Maybe<String>;
   title_not?: Maybe<String>;
   title_in?: Maybe<String[] | String>;
@@ -4635,7 +4603,7 @@ export interface HomepageProductRailWhereInput {
 
 export type ImageWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
-  originalUrl?: Maybe<String>;
+  url?: Maybe<String>;
 }>;
 
 export type LabelWhereUniqueInput = AtLeastOne<{
@@ -5212,7 +5180,6 @@ export interface PhysicalProductCreateWithoutLocationInput {
   productStatus: PhysicalProductStatus;
   offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
   offloadNotes?: Maybe<String>;
-  barcode: String;
   sequenceNumber: Int;
   warehouseLocation?: Maybe<
     WarehouseLocationCreateOneWithoutPhysicalProductsInput
@@ -5427,9 +5394,8 @@ export interface ImageCreateInput {
   id?: Maybe<ID_Input>;
   caption?: Maybe<String>;
   url?: Maybe<String>;
-  originalHeight?: Maybe<Int>;
-  originalUrl: String;
-  originalWidth?: Maybe<Int>;
+  height?: Maybe<Int>;
+  width?: Maybe<Int>;
   title?: Maybe<String>;
 }
 
@@ -5505,7 +5471,6 @@ export interface PhysicalProductCreateWithoutProductVariantInput {
   productStatus: PhysicalProductStatus;
   offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
   offloadNotes?: Maybe<String>;
-  barcode: String;
   sequenceNumber: Int;
   warehouseLocation?: Maybe<
     WarehouseLocationCreateOneWithoutPhysicalProductsInput
@@ -5718,7 +5683,6 @@ export interface PhysicalProductCreateInput {
   productStatus: PhysicalProductStatus;
   offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
   offloadNotes?: Maybe<String>;
-  barcode: String;
   sequenceNumber: Int;
   warehouseLocation?: Maybe<
     WarehouseLocationCreateOneWithoutPhysicalProductsInput
@@ -5927,7 +5891,6 @@ export interface PhysicalProductUpdateWithoutLocationDataInput {
   productStatus?: Maybe<PhysicalProductStatus>;
   offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
   offloadNotes?: Maybe<String>;
-  barcode?: Maybe<String>;
   sequenceNumber?: Maybe<Int>;
   warehouseLocation?: Maybe<
     WarehouseLocationUpdateOneWithoutPhysicalProductsInput
@@ -6329,9 +6292,8 @@ export interface ImageUpdateWithWhereUniqueNestedInput {
 export interface ImageUpdateDataInput {
   caption?: Maybe<String>;
   url?: Maybe<String>;
-  originalHeight?: Maybe<Int>;
-  originalUrl?: Maybe<String>;
-  originalWidth?: Maybe<Int>;
+  height?: Maybe<Int>;
+  width?: Maybe<Int>;
   title?: Maybe<String>;
 }
 
@@ -6384,36 +6346,22 @@ export interface ImageScalarWhereInput {
   url_not_starts_with?: Maybe<String>;
   url_ends_with?: Maybe<String>;
   url_not_ends_with?: Maybe<String>;
-  originalHeight?: Maybe<Int>;
-  originalHeight_not?: Maybe<Int>;
-  originalHeight_in?: Maybe<Int[] | Int>;
-  originalHeight_not_in?: Maybe<Int[] | Int>;
-  originalHeight_lt?: Maybe<Int>;
-  originalHeight_lte?: Maybe<Int>;
-  originalHeight_gt?: Maybe<Int>;
-  originalHeight_gte?: Maybe<Int>;
-  originalUrl?: Maybe<String>;
-  originalUrl_not?: Maybe<String>;
-  originalUrl_in?: Maybe<String[] | String>;
-  originalUrl_not_in?: Maybe<String[] | String>;
-  originalUrl_lt?: Maybe<String>;
-  originalUrl_lte?: Maybe<String>;
-  originalUrl_gt?: Maybe<String>;
-  originalUrl_gte?: Maybe<String>;
-  originalUrl_contains?: Maybe<String>;
-  originalUrl_not_contains?: Maybe<String>;
-  originalUrl_starts_with?: Maybe<String>;
-  originalUrl_not_starts_with?: Maybe<String>;
-  originalUrl_ends_with?: Maybe<String>;
-  originalUrl_not_ends_with?: Maybe<String>;
-  originalWidth?: Maybe<Int>;
-  originalWidth_not?: Maybe<Int>;
-  originalWidth_in?: Maybe<Int[] | Int>;
-  originalWidth_not_in?: Maybe<Int[] | Int>;
-  originalWidth_lt?: Maybe<Int>;
-  originalWidth_lte?: Maybe<Int>;
-  originalWidth_gt?: Maybe<Int>;
-  originalWidth_gte?: Maybe<Int>;
+  height?: Maybe<Int>;
+  height_not?: Maybe<Int>;
+  height_in?: Maybe<Int[] | Int>;
+  height_not_in?: Maybe<Int[] | Int>;
+  height_lt?: Maybe<Int>;
+  height_lte?: Maybe<Int>;
+  height_gt?: Maybe<Int>;
+  height_gte?: Maybe<Int>;
+  width?: Maybe<Int>;
+  width_not?: Maybe<Int>;
+  width_in?: Maybe<Int[] | Int>;
+  width_not_in?: Maybe<Int[] | Int>;
+  width_lt?: Maybe<Int>;
+  width_lte?: Maybe<Int>;
+  width_gt?: Maybe<Int>;
+  width_gte?: Maybe<Int>;
   title?: Maybe<String>;
   title_not?: Maybe<String>;
   title_in?: Maybe<String[] | String>;
@@ -6457,9 +6405,8 @@ export interface ImageUpdateManyWithWhereNestedInput {
 export interface ImageUpdateManyDataInput {
   caption?: Maybe<String>;
   url?: Maybe<String>;
-  originalHeight?: Maybe<Int>;
-  originalUrl?: Maybe<String>;
-  originalWidth?: Maybe<Int>;
+  height?: Maybe<Int>;
+  width?: Maybe<Int>;
   title?: Maybe<String>;
 }
 
@@ -6600,7 +6547,6 @@ export interface PhysicalProductUpdateWithoutProductVariantDataInput {
   productStatus?: Maybe<PhysicalProductStatus>;
   offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
   offloadNotes?: Maybe<String>;
-  barcode?: Maybe<String>;
   sequenceNumber?: Maybe<Int>;
   warehouseLocation?: Maybe<
     WarehouseLocationUpdateOneWithoutPhysicalProductsInput
@@ -6865,20 +6811,6 @@ export interface PhysicalProductScalarWhereInput {
   offloadNotes_not_starts_with?: Maybe<String>;
   offloadNotes_ends_with?: Maybe<String>;
   offloadNotes_not_ends_with?: Maybe<String>;
-  barcode?: Maybe<String>;
-  barcode_not?: Maybe<String>;
-  barcode_in?: Maybe<String[] | String>;
-  barcode_not_in?: Maybe<String[] | String>;
-  barcode_lt?: Maybe<String>;
-  barcode_lte?: Maybe<String>;
-  barcode_gt?: Maybe<String>;
-  barcode_gte?: Maybe<String>;
-  barcode_contains?: Maybe<String>;
-  barcode_not_contains?: Maybe<String>;
-  barcode_starts_with?: Maybe<String>;
-  barcode_not_starts_with?: Maybe<String>;
-  barcode_ends_with?: Maybe<String>;
-  barcode_not_ends_with?: Maybe<String>;
   sequenceNumber?: Maybe<Int>;
   sequenceNumber_not?: Maybe<Int>;
   sequenceNumber_in?: Maybe<Int[] | Int>;
@@ -6925,7 +6857,6 @@ export interface PhysicalProductUpdateManyDataInput {
   productStatus?: Maybe<PhysicalProductStatus>;
   offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
   offloadNotes?: Maybe<String>;
-  barcode?: Maybe<String>;
   sequenceNumber?: Maybe<Int>;
 }
 
@@ -7798,7 +7729,6 @@ export interface PhysicalProductUpdateDataInput {
   productStatus?: Maybe<PhysicalProductStatus>;
   offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
   offloadNotes?: Maybe<String>;
-  barcode?: Maybe<String>;
   sequenceNumber?: Maybe<Int>;
   warehouseLocation?: Maybe<
     WarehouseLocationUpdateOneWithoutPhysicalProductsInput
@@ -8670,18 +8600,16 @@ export interface HomepageProductRailUpdateManyMutationInput {
 export interface ImageUpdateInput {
   caption?: Maybe<String>;
   url?: Maybe<String>;
-  originalHeight?: Maybe<Int>;
-  originalUrl?: Maybe<String>;
-  originalWidth?: Maybe<Int>;
+  height?: Maybe<Int>;
+  width?: Maybe<Int>;
   title?: Maybe<String>;
 }
 
 export interface ImageUpdateManyMutationInput {
   caption?: Maybe<String>;
   url?: Maybe<String>;
-  originalHeight?: Maybe<Int>;
-  originalUrl?: Maybe<String>;
-  originalWidth?: Maybe<Int>;
+  height?: Maybe<Int>;
+  width?: Maybe<Int>;
   title?: Maybe<String>;
 }
 
@@ -8753,7 +8681,6 @@ export interface PhysicalProductUpdateInput {
   productStatus?: Maybe<PhysicalProductStatus>;
   offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
   offloadNotes?: Maybe<String>;
-  barcode?: Maybe<String>;
   sequenceNumber?: Maybe<Int>;
   warehouseLocation?: Maybe<
     WarehouseLocationUpdateOneWithoutPhysicalProductsInput
@@ -8766,7 +8693,6 @@ export interface PhysicalProductUpdateManyMutationInput {
   productStatus?: Maybe<PhysicalProductStatus>;
   offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
   offloadNotes?: Maybe<String>;
-  barcode?: Maybe<String>;
   sequenceNumber?: Maybe<Int>;
 }
 
@@ -9803,7 +9729,6 @@ export interface PhysicalProductCreateWithoutWarehouseLocationInput {
   productStatus: PhysicalProductStatus;
   offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
   offloadNotes?: Maybe<String>;
-  barcode: String;
   sequenceNumber: Int;
 }
 
@@ -9869,7 +9794,6 @@ export interface PhysicalProductUpdateWithoutWarehouseLocationDataInput {
   productStatus?: Maybe<PhysicalProductStatus>;
   offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
   offloadNotes?: Maybe<String>;
-  barcode?: Maybe<String>;
   sequenceNumber?: Maybe<Int>;
 }
 
@@ -11019,7 +10943,6 @@ export interface PhysicalProduct {
   productStatus: PhysicalProductStatus;
   offloadMethod?: PhysicalProductOffloadMethod;
   offloadNotes?: String;
-  barcode: String;
   sequenceNumber: Int;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
@@ -11036,7 +10959,6 @@ export interface PhysicalProductPromise
   productStatus: () => Promise<PhysicalProductStatus>;
   offloadMethod: () => Promise<PhysicalProductOffloadMethod>;
   offloadNotes: () => Promise<String>;
-  barcode: () => Promise<String>;
   sequenceNumber: () => Promise<Int>;
   warehouseLocation: <T = WarehouseLocationPromise>() => T;
   createdAt: () => Promise<DateTimeOutput>;
@@ -11054,7 +10976,6 @@ export interface PhysicalProductSubscription
   productStatus: () => Promise<AsyncIterator<PhysicalProductStatus>>;
   offloadMethod: () => Promise<AsyncIterator<PhysicalProductOffloadMethod>>;
   offloadNotes: () => Promise<AsyncIterator<String>>;
-  barcode: () => Promise<AsyncIterator<String>>;
   sequenceNumber: () => Promise<AsyncIterator<Int>>;
   warehouseLocation: <T = WarehouseLocationSubscription>() => T;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
@@ -11072,7 +10993,6 @@ export interface PhysicalProductNullablePromise
   productStatus: () => Promise<PhysicalProductStatus>;
   offloadMethod: () => Promise<PhysicalProductOffloadMethod>;
   offloadNotes: () => Promise<String>;
-  barcode: () => Promise<String>;
   sequenceNumber: () => Promise<Int>;
   warehouseLocation: <T = WarehouseLocationPromise>() => T;
   createdAt: () => Promise<DateTimeOutput>;
@@ -11804,9 +11724,8 @@ export interface Image {
   id: ID_Output;
   caption?: String;
   url?: String;
-  originalHeight?: Int;
-  originalUrl: String;
-  originalWidth?: Int;
+  height?: Int;
+  width?: Int;
   title?: String;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
@@ -11816,9 +11735,8 @@ export interface ImagePromise extends Promise<Image>, Fragmentable {
   id: () => Promise<ID_Output>;
   caption: () => Promise<String>;
   url: () => Promise<String>;
-  originalHeight: () => Promise<Int>;
-  originalUrl: () => Promise<String>;
-  originalWidth: () => Promise<Int>;
+  height: () => Promise<Int>;
+  width: () => Promise<Int>;
   title: () => Promise<String>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
@@ -11830,9 +11748,8 @@ export interface ImageSubscription
   id: () => Promise<AsyncIterator<ID_Output>>;
   caption: () => Promise<AsyncIterator<String>>;
   url: () => Promise<AsyncIterator<String>>;
-  originalHeight: () => Promise<AsyncIterator<Int>>;
-  originalUrl: () => Promise<AsyncIterator<String>>;
-  originalWidth: () => Promise<AsyncIterator<Int>>;
+  height: () => Promise<AsyncIterator<Int>>;
+  width: () => Promise<AsyncIterator<Int>>;
   title: () => Promise<AsyncIterator<String>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
@@ -11844,9 +11761,8 @@ export interface ImageNullablePromise
   id: () => Promise<ID_Output>;
   caption: () => Promise<String>;
   url: () => Promise<String>;
-  originalHeight: () => Promise<Int>;
-  originalUrl: () => Promise<String>;
-  originalWidth: () => Promise<Int>;
+  height: () => Promise<Int>;
+  width: () => Promise<Int>;
   title: () => Promise<String>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
@@ -15514,9 +15430,8 @@ export interface ImagePreviousValues {
   id: ID_Output;
   caption?: String;
   url?: String;
-  originalHeight?: Int;
-  originalUrl: String;
-  originalWidth?: Int;
+  height?: Int;
+  width?: Int;
   title?: String;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
@@ -15528,9 +15443,8 @@ export interface ImagePreviousValuesPromise
   id: () => Promise<ID_Output>;
   caption: () => Promise<String>;
   url: () => Promise<String>;
-  originalHeight: () => Promise<Int>;
-  originalUrl: () => Promise<String>;
-  originalWidth: () => Promise<Int>;
+  height: () => Promise<Int>;
+  width: () => Promise<Int>;
   title: () => Promise<String>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
@@ -15542,9 +15456,8 @@ export interface ImagePreviousValuesSubscription
   id: () => Promise<AsyncIterator<ID_Output>>;
   caption: () => Promise<AsyncIterator<String>>;
   url: () => Promise<AsyncIterator<String>>;
-  originalHeight: () => Promise<AsyncIterator<Int>>;
-  originalUrl: () => Promise<AsyncIterator<String>>;
-  originalWidth: () => Promise<AsyncIterator<Int>>;
+  height: () => Promise<AsyncIterator<Int>>;
+  width: () => Promise<AsyncIterator<Int>>;
   title: () => Promise<AsyncIterator<String>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
@@ -15768,7 +15681,6 @@ export interface PhysicalProductPreviousValues {
   productStatus: PhysicalProductStatus;
   offloadMethod?: PhysicalProductOffloadMethod;
   offloadNotes?: String;
-  barcode: String;
   sequenceNumber: Int;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
@@ -15783,7 +15695,6 @@ export interface PhysicalProductPreviousValuesPromise
   productStatus: () => Promise<PhysicalProductStatus>;
   offloadMethod: () => Promise<PhysicalProductOffloadMethod>;
   offloadNotes: () => Promise<String>;
-  barcode: () => Promise<String>;
   sequenceNumber: () => Promise<Int>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
@@ -15798,7 +15709,6 @@ export interface PhysicalProductPreviousValuesSubscription
   productStatus: () => Promise<AsyncIterator<PhysicalProductStatus>>;
   offloadMethod: () => Promise<AsyncIterator<PhysicalProductOffloadMethod>>;
   offloadNotes: () => Promise<AsyncIterator<String>>;
-  barcode: () => Promise<AsyncIterator<String>>;
   sequenceNumber: () => Promise<AsyncIterator<Int>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;

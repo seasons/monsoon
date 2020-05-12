@@ -143,7 +143,7 @@ enum ProductArchitecture {
 }
 
 enum WarehouseLocationType {
-	Conveyor
+  Conveyor
   Rail
   Bin
 }
@@ -214,10 +214,9 @@ type HomepageProductRail {
 type Image {
   id: ID! @id
   caption: String
-  url: String
-  originalHeight: Int
-  originalUrl: String! @unique
-  originalWidth: Int
+  url: String @unique
+  height: Int
+  width: Int
   title: String
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
@@ -303,7 +302,8 @@ type ProductVariant {
   productID: String!
   product: Product! @relation(onDelete: SET_NULL)
   retailPrice: Float
-  physicalProducts: [PhysicalProduct!]! @relation(link: TABLE, onDelete: CASCADE)
+  physicalProducts: [PhysicalProduct!]!
+    @relation(link: TABLE, onDelete: CASCADE)
   total: Int!
   reservable: Int!
   reserved: Int!
@@ -323,7 +323,6 @@ type PhysicalProduct {
   productStatus: PhysicalProductStatus!
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
-  barcode: String!
   sequenceNumber: Int!
   warehouseLocation: WarehouseLocation
   createdAt: DateTime! @createdAt
@@ -345,7 +344,7 @@ type WarehouseLocation {
   barcode: String! @unique
   locationCode: String!
   itemCode: String!
-	physicalProducts: [PhysicalProduct!]
+  physicalProducts: [PhysicalProduct!]
   constraints: [WarehouseLocationConstraint!]
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
@@ -422,7 +421,6 @@ type RecentlyViewedProduct {
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
-
 
 type Reservation {
   id: ID! @id
@@ -558,4 +556,3 @@ type ProductVariantFeedbackQuestion {
   type: QuestionType!
   variantFeedback: ProductVariantFeedback!
 }
-

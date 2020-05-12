@@ -8,6 +8,7 @@ export class ImageMutationsResolver {
 
   @Mutation()
   async uploadImage(@Args("image") image) {
-    return await this.imageService.uploadImage(image, {})
+    const { url } = await this.imageService.uploadImage(image, {})
+    return url
   }
 }

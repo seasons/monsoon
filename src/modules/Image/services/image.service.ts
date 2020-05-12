@@ -2,39 +2,51 @@ import qs from "querystring"
 
 import { Injectable } from "@nestjs/common"
 import AWS from "aws-sdk"
+import { imageSize } from "image-size"
 import { identity, pickBy } from "lodash"
 import request from "request"
 
-import { ImageSize } from "../image.types"
+import { ImageData, ImageSize } from "../image.types"
+
+const S3_BUCKET = process.env.AWS_S3_IMAGES_BUCKET
+const IMGIX_BASE = `https://${process.env.IMGIX_NAME}.imgix.net/`
+const S3_BASE = `https://${S3_BUCKET}.s3.amazonaws.com/`
 
 interface ImageResizerOptions {
   fit?: "clip"
   w?: number
   h?: number
+  retina?: boolean
+}
+interface ImageSizeOptions {
+  w?: number
+  h?: number
+  fit?: "clip"
 }
 
-const IMGIX_BASE = "https://seasons-nyc.imgix.net/"
-const AIRTABLE_BASE = "https://dl.airtable.com/.attachments/"
+type ImageSizeMap = {
+  [key in ImageSize]: ImageSizeOptions
+}
 
-const sizes = {
+const sizes: ImageSizeMap = {
   Thumb: {
-    w: 200,
+    w: 208,
     fit: "clip",
   },
   Small: {
-    w: 400,
+    w: 288,
     fit: "clip",
   },
   Medium: {
-    w: 500,
+    w: 372,
     fit: "clip",
   },
   Large: {
-    w: 800,
+    w: 560,
     fit: "clip",
   },
   XLarge: {
-    w: 640,
+    w: 702,
     fit: "clip",
   },
 }
@@ -43,43 +55,85 @@ const sizes = {
 export class ImageService {
   private s3 = new AWS.S3()
 
-  imageResize(
+  resizeImage(
     url: string,
     sizeName: ImageSize,
-    options: ImageResizerOptions = { fit: "clip" }
+    passedOptions: ImageResizerOptions
   ) {
-    const params: any = pickBy(
+    const options: ImageResizerOptions = pickBy(
       {
-        ...options,
-        ...sizes[sizeName],
+        fit: "clip",
+        retina: true,
+        ...passedOptions,
       },
       identity
     )
 
-    return url.replace(AIRTABLE_BASE, IMGIX_BASE) + "?" + qs.stringify(params)
+    const { retina, ...remainingOptions } = options
+    const size = sizes[sizeName]
+    const params: any = pickBy(
+      {
+        ...remainingOptions,
+        ...sizes[sizeName],
+        ...(options.retina && size.w ? { w: size.w * 2 } : {}),
+        ...(options.retina && size.h ? { h: size.h * 2 } : {}),
+      },
+      identity
+    )
+
+    return url.replace(S3_BASE, IMGIX_BASE) + "?" + qs.stringify(params)
   }
 
-  async uploadImage(image, options: { imageName?: string }) {
+  async uploadImage(
+    image,
+    options: { imageName?: string }
+  ): Promise<ImageData> {
     const file = await image
-    const { createReadStream, filename, mimetype } = file
+    const { createReadStream, filename } = file
     const fileStream = createReadStream()
 
     const name = options.imageName || filename
 
     // Here stream it to S3
-    // Enter your bucket name here next to "Bucket: "
     const uploadParams = {
       ACL: "public-read",
-      Bucket: "seasons-images",
+      Bucket: process.env.AWS_S3_IMAGES_BUCKET,
       Key: name,
       Body: fileStream,
     }
     const result = await this.s3.upload(uploadParams).promise()
+    const url = result.Location
 
-    return result.Location
+    // Get image size
+    const { width, height } = await new Promise((resolve, reject) => {
+      request({ url, encoding: null }, async (err, res, body) => {
+        if (err) {
+          reject(err)
+        } else {
+          const { width, height } = imageSize(body)
+
+          resolve({
+            height,
+            width,
+          })
+        }
+      })
+    })
+
+    fileStream.destroy()
+
+    return {
+      height,
+      url: result.Location,
+      width,
+    }
   }
 
-  async uploadImageFromURL(imageURL: string, imageName: string) {
+  async uploadImageFromURL(
+    imageURL: string,
+    imageName: string,
+    title?: string
+  ): Promise<ImageData> {
     return new Promise((resolve, reject) => {
       request(
         {
@@ -92,13 +146,19 @@ export class ImageService {
           } else {
             const uploadParams = {
               ACL: "public-read",
-              Bucket: "seasons-images",
+              Bucket: process.env.AWS_S3_IMAGES_BUCKET,
               Key: imageName,
               Body: body,
             }
             const result = await this.s3.upload(uploadParams).promise()
+            const { width, height } = imageSize(body)
 
-            resolve(result.Location)
+            resolve({
+              height,
+              url: result.Location,
+              width,
+              title,
+            })
           }
         }
       )

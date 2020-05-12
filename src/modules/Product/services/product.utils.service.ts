@@ -1,3 +1,4 @@
+import { ImageData } from "@modules/Image/image.types"
 import { Injectable } from "@nestjs/common"
 import { BrandOrderByInput, Category, Product } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
@@ -290,15 +291,15 @@ export class ProductUtilsService {
   }
 
   getProductImageName(brandCode: string, name: string, index: number) {
-    return `${brandCode}/${name.replace(/ /g, "_")}/${index}.png`.toLowerCase()
+    const slug = slugify(name)
+    return `${brandCode}/${slug}/${slug}-${index}.png`.toLowerCase()
   }
 
-  async getImageIDsForURLs(imageURLs: string[]) {
+  async getImageIDs(imageDatas: ImageData[]) {
     const prismaImages = await Promise.all(
-      imageURLs.map(async imageURL => {
-        const imageData = { originalUrl: imageURL }
+      imageDatas.map(async imageData => {
         return await this.prisma.client.upsertImage({
-          where: imageData,
+          where: { url: imageData.url },
           create: imageData,
           update: imageData,
         })
