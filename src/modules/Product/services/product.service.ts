@@ -118,7 +118,6 @@ export class ProductService {
   }
 
   async upsertProduct(input) {
-    console.log("INPUT", input)
     const brand = await this.prisma.client.brand({ id: input.brandID })
     const color = await this.prisma.client.color({ id: input.colorID })
     const model = await this.prisma.client.productModel({ id: input.modelID })
@@ -261,23 +260,11 @@ export class ProductService {
         ),
       },
     } as ProductUpdateInput
-    console.log("UPSERTING PRODUCT")
-    console.log(
-      "PRODUCT CREATE",
-      productCreateData,
-      productCreateData.variants.create
-    )
-    console.log(
-      "PRODUCT UPDATE",
-      productUpdateData,
-      productUpdateData.variants.upsert
-    )
     const product = await this.prisma.client.upsertProduct({
       create: productCreateData,
       update: productUpdateData,
       where: { slug },
     })
-    console.log("PROD:", product)
     return product
   }
 

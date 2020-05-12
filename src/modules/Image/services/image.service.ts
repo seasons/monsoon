@@ -1,5 +1,4 @@
 import qs from "querystring"
-import { PassThrough } from "stream"
 
 import { Injectable } from "@nestjs/common"
 import AWS from "aws-sdk"
@@ -72,7 +71,6 @@ export class ImageService {
 
     const name = options.imageName || filename
 
-    console.log("UPLOADING IMAGE")
     // Here stream it to S3
     const uploadParams = {
       ACL: "public-read",
@@ -82,15 +80,14 @@ export class ImageService {
     }
     const result = await this.s3.upload(uploadParams).promise()
     const url = result.Location
-    console.log("GOT URL", url)
+
+    // Get image size
     const { width, height } = await new Promise((resolve, reject) => {
       request({ url, encoding: null }, async (err, res, body) => {
         if (err) {
-          console.log("ERRR", err)
           reject(err)
         } else {
           const { width, height } = imageSize(body)
-          console.log("SIZE of :", url, width, height)
 
           resolve({
             height,
@@ -131,7 +128,6 @@ export class ImageService {
             }
             const result = await this.s3.upload(uploadParams).promise()
             const { width, height } = imageSize(body)
-            console.log("SIZE of :", imageURL, width, height)
 
             resolve({
               height,
