@@ -141,15 +141,12 @@ export class SyncProductsService {
         if (isEmpty(images)) {
           continue
         }
-        // console.log("IMAGES:", images)
-        console.log("THUMBNAILS:", images[0].thumbnails.full)
 
         // Get the slug
         const { brandCode } = brand.model
         const slug = this.productUtils.getProductSlug(brandCode, name, color)
 
         const imageIDs = await this.syncImages(images, slug, brandCode, name)
-        continue
 
         // Sync model size records
         let modelSizeRecord
@@ -378,7 +375,8 @@ export class SyncProductsService {
           )
           return await this.imageService.uploadImageFromURL(
             image.url,
-            s3ImageName
+            s3ImageName,
+            name
           )
         })
       )
