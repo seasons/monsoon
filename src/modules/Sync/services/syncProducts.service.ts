@@ -93,7 +93,6 @@ export class SyncProductsService {
     const allProducts = await this.airtableService.getAllProducts()
     const allCategories = await this.airtableService.getAllCategories()
     const allSizes = await this.airtableService.getAllSizes()
-    console.log("STARTED")
 
     const [
       multibar,
@@ -104,13 +103,8 @@ export class SyncProductsService {
       modelName: "Products",
     })
 
-    let index = 0
     const logFile = this.utils.openLogFile("syncProducts")
     for (const record of allProducts) {
-      if (index >= 2) {
-        break
-      }
-      index += 1
       try {
         _cliProgressBar.increment()
 
