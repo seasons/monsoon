@@ -42,7 +42,7 @@ export class ProductQueriesResolver {
       addFragmentToInfo(
         info,
         // for computed fields
-        `fragment EnsureId on Product { id }`
+        `fragment EnsureId on ProductConnection { edges { node { id } } }`
       )
     )
   }
