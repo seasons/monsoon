@@ -524,7 +524,7 @@ input UpsertVariantInput {
 input UpsertPhysicalProductInput {
   seasonsUID: String!
   inventoryStatus: InventoryStatus!
-  physicalProductStatus: PhysicalProductStatus!
+  productStatus: PhysicalProductStatus!
 }
 
 type BeamsData {

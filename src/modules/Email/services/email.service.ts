@@ -113,7 +113,7 @@ export class EmailService {
   ) => {
     const images = await this.prisma.client.product({ id: product.id }).images()
     return {
-      url: images?.[0]?.originalUrl,
+      url: images?.[0]?.url,
       brand: await this.prisma.client
         .product({ id: product.id })
         .brand()
