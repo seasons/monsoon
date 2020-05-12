@@ -42,6 +42,7 @@ export class ProductUtilsService {
 
   async queryOptionsForProducts(args) {
     const category = args.category || "all"
+    const brand = args.brand || "all"
     const orderBy = args.orderBy || "createdAt_DESC"
     const sizes = args.sizes || []
     // Add filtering by sizes in query
@@ -50,10 +51,20 @@ export class ProductUtilsService {
       where.variants_some = { internalSize: { display_in: sizes } }
     }
 
+    let brandFilter = {}
+    if (brand !== "all") {
+      brandFilter = {
+        where: {
+          ...args.where,
+          brand: { slug: brand },
+        },
+      }
+    }
+
     // If client wants to sort by name, we will assume that they
     // want to sort by brand name as well
     if (orderBy.includes("name_")) {
-      return await this.productsAlphabetically(category, orderBy, sizes)
+      return await this.productsAlphabetically(category, orderBy, sizes, brand)
     }
 
     const filters = await this.filtersForCategory(args)
@@ -62,6 +73,7 @@ export class ProductUtilsService {
       orderBy,
       where,
       ...filters,
+      ...brandFilter,
     }
   }
 
@@ -165,7 +177,8 @@ export class ProductUtilsService {
   private async productsAlphabetically(
     category: string,
     orderBy: BrandOrderByInput,
-    sizes: [string]
+    sizes: [string],
+    brand: string
   ) {
     const brands = await this.prisma.binding.query.brands(
       { orderBy },
@@ -176,6 +189,7 @@ export class ProductUtilsService {
           orderBy: name_ASC,
           where: {
             ${category !== "all" ? `category: { slug: "${category}" },` : ""}
+            ${brand !== "all" ? `brand: { slug: "${brand}" },` : ""}
             status: Available,
             variants_some: { size_in: [${sizes}] }
           }

@@ -235,6 +235,7 @@ type Query {
   productsConnection(
     sizes: [String!]
     category: String
+    brand: String
     where: ProductWhereInput
     orderBy: ProductOrderByInput
     skip: Int
