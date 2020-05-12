@@ -8,17 +8,16 @@ import request from "request"
 
 import { ImageData, ImageSize } from "../image.types"
 
+const S3_BUCKET = process.env.AWS_S3_IMAGES_BUCKET
+const IMGIX_BASE = `https://${process.env.IMGIX_NAME}.imgix.net/`
+const S3_BASE = `https://${S3_BUCKET}.s3.amazonaws.com/`
+
 interface ImageResizerOptions {
   fit?: "clip"
   w?: number
   h?: number
   retina?: boolean
 }
-
-const S3_BUCKET = process.env.AWS_S3_IMAGES_BUCKET
-const IMGIX_BASE = `https://${process.env.IMGIX_NAME}.imgix.net/`
-const S3_BASE = `https://${S3_BUCKET}.s3.amazonaws.com/`
-
 interface ImageSizeOptions {
   w?: number
   h?: number
@@ -59,8 +58,17 @@ export class ImageService {
   resizeImage(
     url: string,
     sizeName: ImageSize,
-    options: ImageResizerOptions = { fit: "clip", retina: true }
+    passedOptions: ImageResizerOptions
   ) {
+    const options: ImageResizerOptions = pickBy(
+      {
+        fit: "clip",
+        retina: true,
+        ...passedOptions,
+      },
+      identity
+    )
+
     const { retina, ...remainingOptions } = options
     const size = sizes[sizeName]
     const params: any = pickBy(
