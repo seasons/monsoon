@@ -25,12 +25,26 @@ export class ProductQueriesResolver {
 
   @Query()
   async products(@Args() args, @Info() info) {
-    return await this.productService.getProducts(args, info)
+    return await this.productService.getProducts(
+      args,
+      addFragmentToInfo(
+        info,
+        // for computed fields
+        `fragment EnsureId on Product { id }`
+      )
+    )
   }
 
   @Query()
   async productsConnection(@Args() args, @Info() info) {
-    return await this.productService.getProductsConnection(args, info)
+    return await this.productService.getProductsConnection(
+      args,
+      addFragmentToInfo(
+        info,
+        // for computed fields
+        `fragment EnsureId on Product { id }`
+      )
+    )
   }
 
   @Query()
