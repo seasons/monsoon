@@ -23,6 +23,7 @@ import { head } from "lodash"
 
 import { UtilsService } from "../../Utils/services/utils.service"
 import { ProductWithPhysicalProducts } from "../product.types"
+import { PhysicalProductUtilsService } from "./physicalProduct.utils.service"
 import { ProductUtilsService } from "./product.utils.service"
 import { ProductVariantService } from "./productVariant.service"
 
@@ -33,6 +34,7 @@ export class ProductService {
     private readonly imageService: ImageService,
     private readonly productUtils: ProductUtilsService,
     private readonly productVariantService: ProductVariantService,
+    private readonly physicalProductUtils: PhysicalProductUtilsService,
     private readonly utils: UtilsService
   ) {}
 
@@ -268,7 +270,7 @@ export class ProductService {
     return product
   }
 
-  async getVariantData(
+  private async getVariantData(
     variant,
     type,
     colorID,
@@ -299,23 +301,10 @@ export class ProductService {
       },
     })
 
-    let physicalProductsData
-    const physicalProducts = variant.physicalProducts.map(physicalProduct => ({
-      ...physicalProduct,
-      barcode: "",
-      sequenceNumber: -1,
-    }))
-    if (isCreate) {
-      physicalProductsData = { create: physicalProducts }
-    } else {
-      physicalProductsData = {
-        upsert: physicalProducts.map(physicalProduct => ({
-          create: physicalProduct,
-          update: physicalProduct,
-          where: { seasonsUID: physicalProduct.seasonsUID },
-        })),
-      }
-    }
+    let physicalProductsData = this.getUpsertPhysicalProductsData(
+      variant,
+      isCreate
+    )
 
     return {
       sku: variant.sku,
@@ -335,6 +324,23 @@ export class ProductService {
       offloaded: 0,
       stored: 0,
       physicalProducts: physicalProductsData,
+    }
+  }
+
+  async getUpsertPhysicalProductsData(variant, isCreate: boolean) {
+    const nextSequenceNumber = await this.physicalProductUtils.nextSequenceNumber()
+
+    const physicalProducts = variant.physicalProducts.map(physicalProduct => ({
+      ...physicalProduct,
+      sequenceNumber: nextSequenceNumber,
+    }))
+
+    return {
+      upsert: physicalProducts.map(physicalProduct => ({
+        create: physicalProduct,
+        update: physicalProduct,
+        where: { seasonsUID: physicalProduct.seasonsUID },
+      })),
     }
   }
 
