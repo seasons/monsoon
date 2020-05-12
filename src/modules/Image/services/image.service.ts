@@ -15,28 +15,39 @@ interface ImageResizerOptions {
   retina?: boolean
 }
 
+const S3_BUCKET = process.env.AWS_S3_IMAGES_BUCKET
 const IMGIX_BASE = `https://${process.env.IMGIX_NAME}.imgix.net/`
-const AIRTABLE_BASE = "https://dl.airtable.com/.attachments/"
+const S3_BASE = `https://${S3_BUCKET}.s3.amazonaws.com/`
 
-const sizes = {
+interface ImageSizeOptions {
+  w?: number
+  h?: number
+  fit?: "clip"
+}
+
+type ImageSizeMap = {
+  [key in ImageSize]: ImageSizeOptions
+}
+
+const sizes: ImageSizeMap = {
   Thumb: {
-    w: 200,
+    w: 208,
     fit: "clip",
   },
   Small: {
-    w: 400,
+    w: 288,
     fit: "clip",
   },
   Medium: {
-    w: 500,
+    w: 372,
     fit: "clip",
   },
   Large: {
-    w: 800,
+    w: 560,
     fit: "clip",
   },
   XLarge: {
-    w: 640,
+    w: 702,
     fit: "clip",
   },
 }
@@ -45,20 +56,24 @@ const sizes = {
 export class ImageService {
   private s3 = new AWS.S3()
 
-  imageResize(
+  resizeImage(
     url: string,
     sizeName: ImageSize,
     options: ImageResizerOptions = { fit: "clip", retina: true }
   ) {
+    const { retina, ...remainingOptions } = options
+    const size = sizes[sizeName]
     const params: any = pickBy(
       {
-        ...options,
+        ...remainingOptions,
         ...sizes[sizeName],
+        ...(options.retina && size.w ? { w: size.w * 2 } : {}),
+        ...(options.retina && size.h ? { h: size.h * 2 } : {}),
       },
       identity
     )
 
-    return url.replace(AIRTABLE_BASE, IMGIX_BASE) + "?" + qs.stringify(params)
+    return url.replace(S3_BASE, IMGIX_BASE) + "?" + qs.stringify(params)
   }
 
   async uploadImage(
@@ -66,7 +81,7 @@ export class ImageService {
     options: { imageName?: string }
   ): Promise<ImageData> {
     const file = await image
-    const { createReadStream, filename, mimetype } = file
+    const { createReadStream, filename } = file
     const fileStream = createReadStream()
 
     const name = options.imageName || filename
