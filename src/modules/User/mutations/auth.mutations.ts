@@ -51,7 +51,11 @@ export class AuthMutationsResolver {
     const user = await this.prisma.client.user({ email })
 
     // If the user is a Customer, make sure that the account has been approved
-    if (user && user.roles.includes("Customer")) {
+    if (!user) {
+      throw new Error("User record not found")
+    }
+
+    if (user.roles.includes("Customer")) {
       const customer = await this.authService.getCustomerFromUserID(user.id)
       if (
         customer &&
@@ -60,8 +64,6 @@ export class AuthMutationsResolver {
       ) {
         throw new Error(`User account has not been approved`)
       }
-    } else {
-      throw new Error("User record not found")
     }
 
     const { token: beamsToken } = this.authService.beamsClient?.generateToken(
