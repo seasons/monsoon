@@ -94,7 +94,7 @@ export class PrismaSyncService {
 
     DANGER ALERT. Please review the change you are about to make.
 
-    Source DB:
+    Source DB (Always production):
     -- Host: ${process.env.DB_PRODUCTION_HOST}
     -- Port: ${process.env.DB_PRODUCTION_PORT}
     -- DBname: ${process.env.DB_PRODUCTION_DBNAME}
@@ -108,6 +108,14 @@ export class PrismaSyncService {
 
     All data on the destination DB will be irreversibly (unless you have a backup)
     replaced with the data from source.
+
+    DOUBLE DANGER: If the schema on the target DB does not match the schema on the source (production) db, 
+    this will irrevocably damage your target DB. You will then need to recreate it from scratch. 
+
+    Please ensure before proceeding that your target DB's schema matches production's.
+    You can do so as follows:
+    1. Get the latest commit to be deployed to production here: https://dashboard.heroku.com/apps/monsoon-production/activity
+    2. Checkout that commit and deploy prisma to your target DB
 
     Proceed?
     `
