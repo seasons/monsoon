@@ -5393,7 +5393,7 @@ export interface ImageCreateManyInput {
 export interface ImageCreateInput {
   id?: Maybe<ID_Input>;
   caption?: Maybe<String>;
-  url?: Maybe<String>;
+  url: String;
   height?: Maybe<Int>;
   width?: Maybe<Int>;
   title?: Maybe<String>;
@@ -11723,7 +11723,7 @@ export interface CategoryNullablePromise
 export interface Image {
   id: ID_Output;
   caption?: String;
-  url?: String;
+  url: String;
   height?: Int;
   width?: Int;
   title?: String;
@@ -15429,7 +15429,7 @@ export interface ImageSubscriptionPayloadSubscription
 export interface ImagePreviousValues {
   id: ID_Output;
   caption?: String;
-  url?: String;
+  url: String;
   height?: Int;
   width?: Int;
   title?: String;
