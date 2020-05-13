@@ -1,4 +1,4 @@
-import { User } from "@app/nest_decorators"
+import { User } from "@app/decorators"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Args, Context, Mutation, Resolver } from "@nestjs/graphql"
 import { ForbiddenError, UserInputError } from "apollo-server"

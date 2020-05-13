@@ -1,4 +1,4 @@
-import { Customer, User } from "@app/nest_decorators"
+import { Customer, User } from "@app/decorators"
 import { PaymentService } from "@modules/Payment/services/payment.service"
 import { AuthService } from "@modules/User/services/auth.service"
 import { UtilsService } from "@modules/Utils/services/utils.service"
