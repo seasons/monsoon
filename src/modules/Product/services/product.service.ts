@@ -433,8 +433,6 @@ export class ProductService {
       },
     })
 
-    const nextSequenceNumber = await this.physicalProductUtils.nextSequenceNumber()
-
     const data = {
       productID,
       product: { connect: { id: productID } },
@@ -451,17 +449,6 @@ export class ProductService {
       offloaded: 0,
       stored: 0,
       ...pick(variant, ["weight", "total", "sku"]),
-      physicalProducts: {
-        connect: await Promise.all(
-          variant.physicalProducts.map((a, index) =>
-            this.prisma.client.upsertPhysicalProduct({
-              where: { seasonsUID: a.seasonsUID },
-              create: { ...a, sequenceNumber: nextSequenceNumber + index },
-              update: a,
-            })
-          )
-        ),
-      },
     }
 
     const prodVar = await this.prisma.client.upsertProductVariant({
@@ -469,6 +456,24 @@ export class ProductService {
       create: data,
       update: data,
     })
+
+    const nextSequenceNumber = await this.physicalProductUtils.nextSequenceNumber()
+    const physicalProducts = await Promise.all(
+      variant.physicalProducts.map(async (a, index) => {
+        const physicalProductData = {
+          ...a,
+          productVariant: { connect: { id: prodVar.id } },
+        }
+        return await this.prisma.client.upsertPhysicalProduct({
+          where: { seasonsUID: physicalProductData.seasonsUID },
+          create: {
+            ...physicalProductData,
+            sequenceNumber: nextSequenceNumber + index,
+          },
+          update: physicalProductData,
+        })
+      })
+    )
 
     return prodVar
   }
