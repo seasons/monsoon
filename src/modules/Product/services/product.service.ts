@@ -433,6 +433,8 @@ export class ProductService {
       },
     })
 
+    const nextSequenceNumber = await this.physicalProductUtils.nextSequenceNumber()
+
     const data = {
       productID,
       product: { connect: { id: productID } },
@@ -451,10 +453,10 @@ export class ProductService {
       ...pick(variant, ["weight", "total", "sku"]),
       physicalProducts: {
         connect: await Promise.all(
-          variant.physicalProducts.map(a =>
+          variant.physicalProducts.map((a, index) =>
             this.prisma.client.upsertPhysicalProduct({
               where: { seasonsUID: a.seasonsUID },
-              create: a,
+              create: { ...a, sequenceNumber: nextSequenceNumber + index },
               update: a,
             })
           )
