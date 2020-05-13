@@ -5957,7 +5957,7 @@ input HomepageProductRailWhereUniqueInput {
 type Image implements Node {
   id: ID!
   caption: String
-  url: String
+  url: String!
   height: Int
   width: Int
   title: String
@@ -5978,7 +5978,7 @@ type ImageConnection {
 input ImageCreateInput {
   id: ID
   caption: String
-  url: String
+  url: String!
   height: Int
   width: Int
   title: String
@@ -6020,7 +6020,7 @@ enum ImageOrderByInput {
 type ImagePreviousValues {
   id: ID!
   caption: String
-  url: String
+  url: String!
   height: Int
   width: Int
   title: String
@@ -20833,7 +20833,7 @@ export interface HomepageProductRailWhereUniqueInput {
 export interface ImageCreateInput {
   id?: ID_Input | null
   caption?: String | null
-  url?: String | null
+  url: String
   height?: Int | null
   width?: Int | null
   title?: String | null
@@ -26876,7 +26876,7 @@ export interface HomepageProductRailSubscriptionPayload {
 export interface Image extends Node {
   id: ID_Output
   caption?: String | null
-  url?: String | null
+  url: String
   height?: Int | null
   width?: Int | null
   title?: String | null
@@ -26906,7 +26906,7 @@ export interface ImageEdge {
 export interface ImagePreviousValues {
   id: ID_Output
   caption?: String | null
-  url?: String | null
+  url: String
   height?: Int | null
   width?: Int | null
   title?: String | null

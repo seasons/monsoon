@@ -110,6 +110,15 @@ type Query {
     first: Int
     last: Int
   ): [ProductRequest]!
+  tags(
+    where: TagWhereInput
+    orderBy: TagOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Tag]!
 }
 
 type Mutation {

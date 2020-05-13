@@ -3143,7 +3143,7 @@ input HomepageProductRailWhereUniqueInput {
 type Image {
   id: ID!
   caption: String
-  url: String
+  url: String!
   height: Int
   width: Int
   title: String
@@ -3160,7 +3160,7 @@ type ImageConnection {
 input ImageCreateInput {
   id: ID
   caption: String
-  url: String
+  url: String!
   height: Int
   width: Int
   title: String
@@ -3198,7 +3198,7 @@ enum ImageOrderByInput {
 type ImagePreviousValues {
   id: ID!
   caption: String
-  url: String
+  url: String!
   height: Int
   width: Int
   title: String

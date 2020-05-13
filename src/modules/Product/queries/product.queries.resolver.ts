@@ -105,4 +105,9 @@ export class ProductQueriesResolver {
   async generatedVariantSKUs(@Args() args, @Info() info) {
     return await this.productService.getGeneratedVariantSKUs(args)
   }
+
+  @Query()
+  async tags(@Args() args, @Info() info) {
+    return await this.prisma.binding.query.tags(args, info)
+  }
 }
