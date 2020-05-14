@@ -42,18 +42,20 @@ export class ProductService {
 
   async getProducts(args, info) {
     const queryOptions = await this.productUtils.queryOptionsForProducts(args)
-    return await this.prisma.binding.query.products(
+    const products = await this.prisma.binding.query.products(
       { ...args, ...queryOptions },
       info
     )
+    return products
   }
 
   async getProductsConnection(args, info) {
     const queryOptions = await this.productUtils.queryOptionsForProducts(args)
-    return await this.prisma.binding.query.productsConnection(
+    const products = await this.prisma.binding.query.productsConnection(
       { ...args, ...queryOptions },
       info
     )
+    return products
   }
 
   async addViewedProduct(item, customer) {

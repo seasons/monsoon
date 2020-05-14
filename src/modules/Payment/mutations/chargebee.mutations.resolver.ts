@@ -1,4 +1,4 @@
-import { Analytics } from "@app/nest_decorators"
+import { Analytics } from "@app/decorators"
 import { Args, Mutation, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma/prisma.service"
 
