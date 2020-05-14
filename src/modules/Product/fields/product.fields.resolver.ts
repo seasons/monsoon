@@ -71,7 +71,7 @@ export class ProductFieldsResolver {
   ) {
     // Fetch the product's images sorted by updatedAt because if
     // we sorted by createdAt, anytime we updated a product's image,
-    // it would be returned as the last image
+    // it would be returned as the last one regardless of index
     const product = await this.prisma.binding.query.product(
       {
         where: {

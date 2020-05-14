@@ -534,6 +534,12 @@ export class ProductService {
     return prismaTags.filter(Boolean).map((tag: Tag) => ({ id: tag.id }))
   }
 
+  /**
+   * Upserts images for a given product, uploading new ones to S3 when needed.
+   * The [images] argument is either an imageURL or an image file object
+   * @param images of type (string | File)[]
+   * @param product: of type Product as is defined in prisma.binding
+   */
   private async upsertImages(
     images: any[],
     product: PrismaBindingProduct
