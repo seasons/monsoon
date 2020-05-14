@@ -440,7 +440,7 @@ type Reservation {
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
-  receipt: ReservationReceipt
+  receipt: ReservationReceipt @relation(link: INLINE, onDelete: CASCADE)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
@@ -448,7 +448,7 @@ type Reservation {
 type ReservationReceipt {
   id: ID! @id
   reservation: Reservation!
-  items: ReservationReceiptItem!
+  items: [ReservationReceiptItem!] @relation(link: TABLE, onDelete: CASCADE)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
