@@ -1,5 +1,5 @@
+import { User } from "@app/decorators"
 import { TransactionsForCustomersLoader } from "@app/modules/Payment/loaders/transactionsForCustomers.loader"
-import { User } from "@app/nest_decorators"
 import { Loader } from "@modules/DataLoader"
 import {
   InvoicesForCustomersLoader,

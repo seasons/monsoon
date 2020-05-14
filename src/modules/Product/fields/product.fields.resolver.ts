@@ -1,4 +1,4 @@
-import { Customer } from "@app/nest_decorators"
+import { Customer } from "@app/decorators"
 import { ImageService } from "@modules/Image"
 import { ImageSize } from "@modules/Image/image.types"
 import { ProductService } from "@modules/Product/services/product.service"
