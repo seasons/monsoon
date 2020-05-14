@@ -440,8 +440,24 @@ type Reservation {
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
+  receipt: ReservationReceipt
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
+}
+
+type ReservationReceipt {
+  id: ID! @id
+  reservation: Reservation!
+  items: ReservationReceiptItem!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type ReservationReceiptItem {
+  id: ID! @id
+  product: PhysicalProduct!
+  productStatus: PhysicalProductStatus!
+  notes: String
 }
 
 type Package {
