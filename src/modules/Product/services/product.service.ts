@@ -20,6 +20,7 @@ import {
   RecentlyViewedProduct,
   Tag,
 } from "@prisma/index"
+import { Product as PrismaBindingProduct } from "@prisma/prisma.binding"
 import { PrismaService } from "@prisma/prisma.service"
 import { GraphQLResolveInfo } from "graphql"
 import { head, pick } from "lodash"
@@ -342,19 +343,42 @@ export class ProductService {
     customData,
     info: GraphQLResolveInfo
   ) {
-    console.log("DATA:", data)
-    console.log("CUSTOM DATA", customData)
     let functionIDs
-    let tagIDs
     let imageIDs
-    if (customData) {
-      functionIDs = await this.upsertFunctions(customData?.functions || [])
-      tagIDs = await this.upsertTags(customData?.tags || [])
-      imageIDs =
-        customData?.images &&
-        (await this.upsertImages(customData?.images, where))
+    let modelSizeID
+    let tagIDs
+    const product: PrismaBindingProduct = await this.prisma.binding.query.product(
+      { where },
+      `{
+          id
+          name
+          slug
+          type
+          brand {
+            id
+            brandCode
+          }
+        }`
+    )
+    if (customData?.functions) {
+      functionIDs = await this.upsertFunctions(customData.functions)
     }
-    console.log("CUSTOM INPUTS", functionIDs, tagIDs, imageIDs)
+    if (customData?.tags) {
+      tagIDs = await this.upsertTags(customData.tags)
+    }
+    if (customData?.modelSizeName && customData?.modelSizeDisplay) {
+      const modelSize = await this.productUtils.upsertModelSize({
+        slug: product.slug,
+        type: product.type,
+        modelSizeName: customData.modelSizeName,
+        modelSizeDisplay: customData.modelSizeDisplay,
+        bottomSizeType: customData.bottomSizeType,
+      })
+      modelSizeID = modelSize.id
+    }
+    if (customData?.images) {
+      imageIDs = await this.upsertImages(customData.images, product)
+    }
     await this.storeProductIfNeeded(where, status)
     await this.prisma.client.updateProduct({
       where,
@@ -362,6 +386,7 @@ export class ProductService {
         ...data,
         functions: functionIDs && { set: functionIDs },
         images: imageIDs && { set: imageIDs },
+        modelSize: modelSizeID && { connect: { id: modelSizeID } },
         tags: tagIDs && { set: tagIDs },
         status,
       },
@@ -511,7 +536,7 @@ export class ProductService {
 
   private async upsertImages(
     images: any[],
-    where: ProductWhereUniqueInput
+    product: PrismaBindingProduct
   ): Promise<{ id: ID_Input }[]> {
     const imageDatas = []
     for (let index = 0; index < images.length; index++) {
@@ -528,18 +553,6 @@ export class ProductService {
       } else {
         // This means that we received a new image in the form of
         // a file in which case we have to upload the image to S3
-        // and then perform an upsertImage
-        const product = await this.prisma.binding.query.product(
-          { where },
-          `{
-              id
-              name
-              brand {
-                id
-                brandCode
-              }
-            }`
-        )
 
         // Form appropriate image name
         const s3ImageName = await this.productUtils.getProductImageName(

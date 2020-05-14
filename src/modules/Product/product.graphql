@@ -210,9 +210,10 @@ input UpsertProductInput {
 }
 
 input CustomUpdateProductInput {
-  functions: [String!]!
+  functions: [String!]
   images: [Upload!]
   modelSizeDisplay: String
   modelSizeName: String
-  tags: [String!]!
+  bottomSizeType: BottomSizeType
+  tags: [String!]
 }
