@@ -40,7 +40,9 @@ export class ReservationFieldsResolver {
           id
           productVariant {
             product {
-              images
+              images { 
+                url
+              }
             }
           }
         }
