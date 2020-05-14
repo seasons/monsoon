@@ -69,6 +69,7 @@ export class ProductFieldsResolver {
     @Args("height") height: number,
     @Args("size") size: ImageSize = "Medium"
   ) {
+    // Fetch the product's images sorted by updatedAt
     const product = await this.prisma.binding.query.product(
       {
         where: {
@@ -78,7 +79,7 @@ export class ProductFieldsResolver {
       `
       {
         id
-        images {
+        images(orderBy: updatedAt_ASC) {
           id
           url
         }

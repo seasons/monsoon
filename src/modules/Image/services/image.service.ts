@@ -164,4 +164,31 @@ export class ImageService {
       )
     })
   }
+
+  async purgeS3ImageFromImgix(s3ImageURL: string) {
+    const imgixImageURL = s3ImageURL.replace(S3_BASE, IMGIX_BASE)
+    const authHeaderToken = Buffer.from(
+      `${process.env.IMGIX_API_KEY}:`
+    ).toString("base64")
+    return await new Promise((resolve, reject) => {
+      request(
+        {
+          url: "https://api.imgix.com/v2/image/purger",
+          method: "POST",
+          headers: {
+            Authorization: `Basic ${authHeaderToken}`,
+          },
+          json: {
+            url: imgixImageURL,
+          },
+        },
+        (err, res, body) => {
+          if (err) {
+            reject(err)
+          }
+          resolve(body)
+        }
+      )
+    })
+  }
 }

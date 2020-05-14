@@ -18,6 +18,7 @@ import {
   ProductVariantCreateWithoutProductInput,
   ProductWhereUniqueInput,
   RecentlyViewedProduct,
+  Tag,
 } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
 import { GraphQLResolveInfo } from "graphql"
@@ -343,15 +344,25 @@ export class ProductService {
   ) {
     console.log("DATA:", data)
     console.log("CUSTOM DATA", customData)
-    const functionIDs = await this.upsertFunctions(customData?.functions || [])
-    const tagIDs = await this.upsertTags(customData?.tags || [])
+    let functionIDs
+    let tagIDs
+    let imageIDs
+    if (customData) {
+      functionIDs = await this.upsertFunctions(customData?.functions || [])
+      tagIDs = await this.upsertTags(customData?.tags || [])
+      imageIDs =
+        customData?.images &&
+        (await this.upsertImages(customData?.images, where))
+    }
+    console.log("CUSTOM INPUTS", functionIDs, tagIDs, imageIDs)
     await this.storeProductIfNeeded(where, status)
     await this.prisma.client.updateProduct({
       where,
       data: {
         ...data,
-        functions: customData && { set: functionIDs },
-        tags: customData && { set: tagIDs },
+        functions: functionIDs && { set: functionIDs },
+        images: imageIDs && { set: imageIDs },
+        tags: tagIDs && { set: tagIDs },
         status,
       },
     })
@@ -486,16 +497,78 @@ export class ProductService {
 
   private async upsertTags(tags: string[]): Promise<{ id: ID_Input }[]> {
     const prismaTags = await Promise.all(
-      tags.map(async tag => {
-        const prismaTag = await this.prisma.client.upsertTag({
-          create: { name: tag },
-          update: { name: tag },
-          where: { name: tag },
-        })
-        return { id: prismaTag.id }
-      })
+      tags.map(
+        async tag =>
+          await this.prisma.client.upsertTag({
+            create: { name: tag },
+            update: { name: tag },
+            where: { name: tag },
+          })
+      )
     )
-    return prismaTags.filter(Boolean)
+    return prismaTags.filter(Boolean).map((tag: Tag) => ({ id: tag.id }))
+  }
+
+  private async upsertImages(
+    images: any[],
+    where: ProductWhereUniqueInput
+  ): Promise<{ id: ID_Input }[]> {
+    const imageDatas = []
+    for (let index = 0; index < images.length; index++) {
+      const data = await images[index]
+      if (typeof data === "string") {
+        // This means that we received an image URL in which case
+        // we just have perfom an upsertImage with the url
+        const prismaImage = await this.prisma.client.upsertImage({
+          create: { url: data },
+          update: {},
+          where: { url: data },
+        })
+        imageDatas.push({ id: prismaImage.id })
+      } else {
+        // This means that we received a new image in the form of
+        // a file in which case we have to upload the image to S3
+        // and then perform an upsertImage
+        const product = await this.prisma.binding.query.product(
+          { where },
+          `{
+              id
+              name
+              brand {
+                id
+                brandCode
+              }
+            }`
+        )
+
+        // Form appropriate image name
+        const s3ImageName = await this.productUtils.getProductImageName(
+          product.brand.brandCode,
+          product.name,
+          index + 1
+        )
+
+        // Upload to S3 and retrieve metadata
+        const { height, url, width } = await this.imageService.uploadImage(
+          data,
+          {
+            imageName: s3ImageName,
+          }
+        )
+
+        // Purge this image url in imgix cache
+        await this.imageService.purgeS3ImageFromImgix(url)
+
+        // Upsert the image with the s3 image url
+        const prismaImage = await this.prisma.client.upsertImage({
+          create: { height, url, width },
+          update: { height, width },
+          where: { url },
+        })
+        imageDatas.push({ id: prismaImage.id })
+      }
+    }
+    return imageDatas
   }
 
   private async storeProductIfNeeded(
