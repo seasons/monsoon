@@ -140,15 +140,18 @@ type Product {
   id: ID!
   slug: String!
   name: String!
+  architecture: ProductArchitecture
   brand: Brand!
   category: Category!
   type: ProductType
   description: String
   externalURL: String
+  model: ProductModel
   modelHeight: Int
   modelSize: Size
   retailPrice: Int
   color: Color!
+  season: String
   secondaryColor: Color
   tags: [Tag!]!
   images(width: Int, height: Int, size: ImageSize): [Image!]!
