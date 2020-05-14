@@ -1,4 +1,4 @@
-import { Analytics, Customer, User } from "@app/nest_decorators"
+import { Analytics, Customer, User } from "@app/decorators"
 import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
 
 import { ReservationService } from ".."

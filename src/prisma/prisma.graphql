@@ -1,5 +1,5 @@
-# source: https://monsoon-prisma-staging.herokuapp.com/monsoon/staging
-# timestamp: Tue May 12 2020 16:23:51 GMT-0400 (Eastern Daylight Time)
+# source: http://localhost:4466/monsoon/dev
+# timestamp: Wed May 13 2020 13:50:55 GMT-0400 (Eastern Daylight Time)
 
 type AggregateBagItem {
   count: Int!
@@ -5557,7 +5557,7 @@ input HomepageProductRailWhereUniqueInput {
 type Image implements Node {
   id: ID!
   caption: String
-  url: String
+  url: String!
   height: Int
   width: Int
   title: String
@@ -5578,7 +5578,7 @@ type ImageConnection {
 input ImageCreateInput {
   id: ID
   caption: String
-  url: String
+  url: String!
   height: Int
   width: Int
   title: String
@@ -5620,7 +5620,7 @@ enum ImageOrderByInput {
 type ImagePreviousValues {
   id: ID!
   caption: String
-  url: String
+  url: String!
   height: Int
   width: Int
   title: String
