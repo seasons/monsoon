@@ -1,4 +1,4 @@
-import { Customer } from "@app/nest_decorators"
+import { Customer } from "@app/decorators"
 import { ResolveField, Resolver } from "@nestjs/graphql"
 
 import { HomepageService } from "../services/homepage.service"

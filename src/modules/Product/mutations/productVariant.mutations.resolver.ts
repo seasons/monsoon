@@ -1,4 +1,4 @@
-import { User } from "@app/nest_decorators"
+import { User } from "@app/decorators"
 import { ReservationService } from "@modules/Reservation"
 import { Args, Mutation, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma/prisma.service"

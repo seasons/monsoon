@@ -216,7 +216,7 @@ type HomepageProductRail {
 type Image {
   id: ID! @id
   caption: String
-  url: String @unique
+  url: String! @unique
   height: Int
   width: Int
   title: String

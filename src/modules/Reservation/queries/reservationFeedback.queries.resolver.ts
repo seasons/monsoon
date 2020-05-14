@@ -1,4 +1,4 @@
-import { User } from "@app/nest_decorators"
+import { User } from "@app/decorators"
 import { Query, Resolver } from "@nestjs/graphql"
 
 import { ReservationFeedbackService } from "../services/reservationFeedback.service"

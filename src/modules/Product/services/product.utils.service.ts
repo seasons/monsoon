@@ -52,36 +52,34 @@ export class ProductUtilsService {
       where.variants_some = { internalSize: { display_in: sizes } }
     }
 
-    let brandFilter = {}
-    if (brand !== "all") {
-      brandFilter = {
-        where: {
-          ...args.where,
-          brand: { slug: brand },
-        },
-      }
-    }
-
     // If client wants to sort by name, we will assume that they
     // want to sort by brand name as well
     if (orderBy.includes("name_")) {
       return await this.productsAlphabetically(category, orderBy, sizes, brand)
     }
 
-    const filters = await this.filtersForCategory(args)
+    const filters = await this.filters(args)
 
     return pickBy(
       {
         orderBy,
         where,
         ...filters,
-        ...brandFilter,
       },
       identity
     )
   }
 
-  private async filtersForCategory(args) {
+  private async filters(args) {
+    let brandFilter = { where: {} }
+    if (args.brand && args.brand !== "all") {
+      brandFilter = {
+        where: {
+          brand: { slug: args.brand },
+        },
+      }
+    }
+
     if (args.category && args.category !== "all") {
       const category = await this.prisma.client.category({
         slug: args.category,
@@ -94,17 +92,20 @@ export class ProductUtilsService {
         ? {
             where: {
               ...args.where,
+              ...brandFilter.where,
               OR: children.map(({ slug }) => ({ category: { slug } })),
             },
           }
         : {
             where: {
               ...args.where,
+              ...brandFilter.where,
               category: { slug: category.slug },
             },
           }
+    } else {
+      return brandFilter
     }
-    return {}
   }
   async getReservedBagItems(customer) {
     const reservedBagItems = await this.prisma.binding.query.bagItems(
