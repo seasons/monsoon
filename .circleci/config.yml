@@ -38,13 +38,5 @@ jobs:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
 
-      - run:
-          name: Start Prisma server
-          command: |
-            docker-compose up -d
-            export PRISMA_ENDPOINT='http://localhost:4477'
-            sleep 20
-            yarn prisma deploy
-
       # run tests!
-      - run: yarn test --verbose
+      - run: yarn test
