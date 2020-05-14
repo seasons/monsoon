@@ -9,8 +9,8 @@ import request from "request"
 import { ImageData, ImageSize } from "../image.types"
 
 const S3_BUCKET = process.env.AWS_S3_IMAGES_BUCKET
-const IMGIX_BASE = `https://${process.env.IMGIX_NAME}.imgix.net/`
-const S3_BASE = `https://${S3_BUCKET}.s3.amazonaws.com/`
+export const IMGIX_BASE = `https://${process.env.IMGIX_NAME}.imgix.net/`
+export const S3_BASE = `https://${S3_BUCKET}.s3.amazonaws.com/`
 
 interface ImageResizerOptions {
   fit?: "clip"

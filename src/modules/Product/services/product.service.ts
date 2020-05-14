@@ -1,5 +1,8 @@
+import * as url from "url"
+
 import { ImageData } from "@modules/Image/image.types"
 import { ImageService } from "@modules/Image/services/image.service"
+import { S3_BASE } from "@modules/Image/services/image.service"
 import { Injectable } from "@nestjs/common"
 import {
   BagItem,
@@ -550,10 +553,14 @@ export class ProductService {
       if (typeof data === "string") {
         // This means that we received an image URL in which case
         // we just have perfom an upsertImage with the url
+
+        // This URL is sent by the client which means it an Imgix URL.
+        // Thus, we need to convert it to s3 format and strip any query params as needed
+        const s3ImageURL = `${S3_BASE}${url.parse(data).pathname}`
         const prismaImage = await this.prisma.client.upsertImage({
-          create: { url: data },
-          update: {},
-          where: { url: data },
+          create: { url: s3ImageURL },
+          update: { url: s3ImageURL },
+          where: { url: s3ImageURL },
         })
         imageDatas.push({ id: prismaImage.id })
       } else {
