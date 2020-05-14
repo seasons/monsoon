@@ -30,6 +30,21 @@ type Mutation {
     feedbackID: ID!
     input: ReservationFeedbackUpdateInput!
   ): ReservationFeedback! @hasRole(roles: [Admin])
+  processReservation(data: ReservationProcessReturnInput!): Reservation
+    @hasRole(roles: [Admin])
+}
+
+input ReservationProcessReturnInput {
+  reservationNumber: Int!
+  productStates: [ProductStateInput!]!
+  # receipt: ReservationReceiptUpdateInput
+}
+
+input ProductStateInput {
+  productUID: String!
+  returned: Boolean!
+  productStatus: PhysicalProductStatus!
+  notes: String
 }
 
 input ReserveItemsOptions {
