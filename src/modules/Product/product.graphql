@@ -128,6 +128,7 @@ type Mutation {
   updateProduct(
     where: ProductWhereUniqueInput!
     data: ProductUpdateInput!
+    customData: CustomUpdateProductInput!
   ): Product! @hasRole(roles: [Admin])
   updatePhysicalProduct(
     where: PhysicalProductWhereUniqueInput!
@@ -206,4 +207,12 @@ input UpsertProductInput {
   season: String!
   architecture: String!
   variants: [UpsertVariantInput!]!
+}
+
+input CustomUpdateProductInput {
+  functions: [String!]!
+  images: [Upload!]
+  modelSizeDisplay: String
+  modelSizeName: String
+  tags: [String!]!
 }

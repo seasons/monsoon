@@ -130,19 +130,7 @@ export class ProductService {
     const model = await this.prisma.client.productModel({ id: input.modelID })
 
     // Get the functionIDs which we will connect to the product
-    const productFunctions = await Promise.all(
-      input.functions.map(
-        async functionName =>
-          await this.prisma.client.upsertProductFunction({
-            create: { name: functionName },
-            update: { name: functionName },
-            where: { name: functionName },
-          })
-      )
-    )
-    const functionIDs = productFunctions
-      .filter(Boolean)
-      .map((func: ProductFunction) => ({ id: func.id }))
+    const functionIDs = await this.upsertFunctions(input.functions)
 
     // Generate the product slug
     const slug = await this.productUtils.getProductSlug(
@@ -176,16 +164,7 @@ export class ProductService {
     })
 
     // Create all necessary tag records
-    const tagIDs: { id: string }[] = await Promise.all(
-      input.tags.map(async tag => {
-        const prismaTag = await this.prisma.client.upsertTag({
-          create: { name: tag },
-          update: { name: tag },
-          where: { name: tag },
-        })
-        return { id: prismaTag.id }
-      })
-    )
+    const tagIDs = await this.upsertTags(input.tags)
 
     const data = {
       slug,
@@ -359,10 +338,23 @@ export class ProductService {
   async updateProduct(
     where: ProductWhereUniqueInput,
     { status, ...data }: ProductUpdateInput,
+    customData,
     info: GraphQLResolveInfo
   ) {
+    console.log("DATA:", data)
+    console.log("CUSTOM DATA", customData)
+    const functionIDs = await this.upsertFunctions(customData?.functions || [])
+    const tagIDs = await this.upsertTags(customData?.tags || [])
     await this.storeProductIfNeeded(where, status)
-    await this.prisma.client.updateProduct({ where, data: { status, ...data } })
+    await this.prisma.client.updateProduct({
+      where,
+      data: {
+        ...data,
+        functions: customData && { set: functionIDs },
+        tags: customData && { set: tagIDs },
+        status,
+      },
+    })
     return await this.prisma.binding.query.product({ where }, info)
   }
 
@@ -472,6 +464,38 @@ export class ProductService {
     }
 
     return prodVar
+  }
+
+  private async upsertFunctions(
+    functions: string[]
+  ): Promise<{ id: ID_Input }[]> {
+    const productFunctions = await Promise.all(
+      functions.map(
+        async functionName =>
+          await this.prisma.client.upsertProductFunction({
+            create: { name: functionName },
+            update: { name: functionName },
+            where: { name: functionName },
+          })
+      )
+    )
+    return productFunctions
+      .filter(Boolean)
+      .map((func: ProductFunction) => ({ id: func.id }))
+  }
+
+  private async upsertTags(tags: string[]): Promise<{ id: ID_Input }[]> {
+    const prismaTags = await Promise.all(
+      tags.map(async tag => {
+        const prismaTag = await this.prisma.client.upsertTag({
+          create: { name: tag },
+          update: { name: tag },
+          where: { name: tag },
+        })
+        return { id: prismaTag.id }
+      })
+    )
+    return prismaTags.filter(Boolean)
   }
 
   private async storeProductIfNeeded(
