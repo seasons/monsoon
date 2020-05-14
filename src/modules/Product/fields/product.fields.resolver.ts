@@ -69,7 +69,9 @@ export class ProductFieldsResolver {
     @Args("height") height: number,
     @Args("size") size: ImageSize = "Medium"
   ) {
-    // Fetch the product's images sorted by updatedAt
+    // Fetch the product's images sorted by updatedAt because if
+    // we sorted by createdAt, anytime we updated a product's image,
+    // it would be returned as the last image
     const product = await this.prisma.binding.query.product(
       {
         where: {
