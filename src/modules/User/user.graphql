@@ -57,6 +57,20 @@ type Me {
   savedItems: [BagItem!]
 }
 
+type User {
+  id: ID!
+  auth0Id: String!
+  email: String!
+  firstName: String!
+  lastName: String!
+  role: UserRole!
+  roles: [UserRole!]!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  pushNotifications: PushNotificationStatus!
+  beamsToken: String!
+}
+
 type Customer {
   id: ID!
   user: User!

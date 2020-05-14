@@ -1,3 +1,4 @@
+import { PushNotificationsService } from "@app/modules/PushNotifications/services/pushNotifications.service"
 import { AirtableService } from "@modules/Airtable/services/airtable.service"
 import { Injectable } from "@nestjs/common"
 import { CustomerDetail, CustomerDetailCreateInput } from "@prisma/index"
@@ -27,8 +28,9 @@ export class AuthService {
   beamsClient: PushNotifications | null = _instantiateBeamsClient()
 
   constructor(
-    private readonly prismaService: PrismaService,
-    private readonly airtable: AirtableService
+    private readonly prisma: PrismaService,
+    private readonly airtable: AirtableService,
+    private readonly pushNotifications: PushNotificationsService
   ) {}
 
   async signupUser({
@@ -84,7 +86,179 @@ export class AuthService {
 
     return { user, tokenData }
   }
-  async createAuth0User(
+
+  async loginUser({ email, password, requestUser }) {
+    if (!!requestUser) {
+      throw new Error(`user is already logged in`)
+    }
+
+    // Get their API access token
+    let tokenData
+    try {
+      tokenData = await this.getAuth0UserAccessToken(email, password)
+    } catch (err) {
+      if (err.message.includes("403")) {
+        throw new ForbiddenError(err)
+      }
+      throw new UserInputError(err)
+    }
+
+    const user = await this.prisma.client.user({ email })
+
+    // If the user is a Customer, make sure that the account has been approved
+    if (!user) {
+      throw new Error("User record not found")
+    }
+
+    if (user.roles.includes("Customer")) {
+      const customer = await this.getCustomerFromUserID(user.id)
+      if (
+        customer &&
+        customer.status !== "Active" &&
+        customer.status !== "Authorized"
+      ) {
+        throw new Error(`User account has not been approved`)
+      }
+    }
+
+    return {
+      token: tokenData.access_token,
+      refreshToken: tokenData.refresh_token,
+      expiresIn: tokenData.expires_in,
+      user,
+      beamsToken: this.pushNotifications.generateToken(email),
+    }
+  }
+
+  async getAuth0Users(): Promise<Auth0User[]> {
+    const token = await this.getAuth0ManagementAPIToken()
+    return new Promise((resolve, reject) => {
+      request(
+        {
+          method: "Get",
+          url: `https://${process.env.AUTH0_DOMAIN}/api/v2/users`,
+          headers: {
+            "content-type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          json: true,
+        },
+        (error, response, body) => {
+          if (error) {
+            return reject(error)
+          }
+          if (response.statusCode !== 200) {
+            return reject(
+              "Invalid status code <" +
+                response.statusCode +
+                ">" +
+                "Response: " +
+                JSON.stringify(response.body)
+            )
+          }
+          return resolve(body)
+        }
+      )
+    })
+  }
+
+  async getCustomerFromUserID(userID: string) {
+    return head(
+      await this.prisma.client.customers({
+        where: { user: { id: userID } },
+      })
+    )
+  }
+
+  async resetPassword(email) {
+    return new Promise((resolve, reject) => {
+      request(
+        {
+          method: "Post",
+          url: `https://${process.env.AUTH0_DOMAIN}/dbconnections/change_password`,
+          headers: { "content-type": "application/json" },
+          body: {
+            client_id: `${process.env.AUTH0_CLIENTID}`,
+            connection: `${process.env.AUTH0_DB_CONNECTION}`,
+            email,
+          },
+          json: true,
+        },
+        async (error, response, body) => {
+          if (error) {
+            reject(error)
+          }
+          resolve({ message: body })
+        }
+      )
+    })
+  }
+
+  extractSegmentReservedTraitsFromCustomerDetail(
+    detail: CustomerDetail
+  ): SegmentReservedTraitsInCustomerDetail {
+    const traits = {} as any
+    if (!!detail?.phoneNumber) {
+      traits.phone = detail.phoneNumber
+    }
+    return traits
+  }
+
+  private async getAuth0ManagementAPIToken() {
+    return new Promise((resolve, reject) => {
+      request(
+        {
+          method: "POST",
+          url: `https://${process.env.AUTH0_DOMAIN}/oauth/token`,
+          headers: { "content-type": "application/x-www-form-urlencoded" },
+          form: {
+            grant_type: "client_credentials",
+            client_id: process.env.AUTH0_MACHINE_TO_MACHINE_CLIENT_ID,
+            client_secret: process.env.AUTH0_MACHINE_TO_MACHINE_CLIENT_SECRET,
+            audience: `https://${process.env.AUTH0_DOMAIN}/api/v2/`,
+          },
+        },
+        (error, response, body) => {
+          if (error) return reject(error)
+          if (response.statusCode !== 200) {
+            return reject(response.body)
+          }
+          return resolve(JSON.parse(body).access_token)
+        }
+      )
+    })
+  }
+
+  private async createPrismaUser(auth0Id, email, firstName, lastName) {
+    const user = await this.prisma.client.createUser({
+      auth0Id,
+      email,
+      firstName,
+      lastName,
+      roles: { set: ["Customer"] }, // defaults to customer
+    })
+    return user
+  }
+
+  private async createPrismaCustomerForExistingUser(
+    userID,
+    details = {},
+    status
+  ) {
+    const customer = await this.prisma.client.createCustomer({
+      user: {
+        connect: { id: userID },
+      },
+      detail: { create: details },
+      status: status || "Waitlisted",
+    })
+
+    // TODO: update airtable with customer data
+
+    return customer
+  }
+
+  private async createAuth0User(
     email: string,
     password: string,
     details: {
@@ -146,7 +320,7 @@ export class AuthService {
     })
   }
 
-  async getAuth0UserAccessToken(
+  private async getAuth0UserAccessToken(
     email,
     password
   ): Promise<{
@@ -187,130 +361,6 @@ export class AuthService {
         }
       )
     })
-  }
-
-  async getAuth0Users(): Promise<Auth0User[]> {
-    const token = await this.getAuth0ManagementAPIToken()
-    return new Promise((resolve, reject) => {
-      request(
-        {
-          method: "Get",
-          url: `https://${process.env.AUTH0_DOMAIN}/api/v2/users`,
-          headers: {
-            "content-type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          json: true,
-        },
-        (error, response, body) => {
-          if (error) {
-            return reject(error)
-          }
-          if (response.statusCode !== 200) {
-            return reject(
-              "Invalid status code <" +
-                response.statusCode +
-                ">" +
-                "Response: " +
-                JSON.stringify(response.body)
-            )
-          }
-          return resolve(body)
-        }
-      )
-    })
-  }
-
-  async getAuth0ManagementAPIToken() {
-    return new Promise((resolve, reject) => {
-      request(
-        {
-          method: "POST",
-          url: `https://${process.env.AUTH0_DOMAIN}/oauth/token`,
-          headers: { "content-type": "application/x-www-form-urlencoded" },
-          form: {
-            grant_type: "client_credentials",
-            client_id: process.env.AUTH0_MACHINE_TO_MACHINE_CLIENT_ID,
-            client_secret: process.env.AUTH0_MACHINE_TO_MACHINE_CLIENT_SECRET,
-            audience: `https://${process.env.AUTH0_DOMAIN}/api/v2/`,
-          },
-        },
-        (error, response, body) => {
-          if (error) return reject(error)
-          if (response.statusCode !== 200) {
-            return reject(response.body)
-          }
-          return resolve(JSON.parse(body).access_token)
-        }
-      )
-    })
-  }
-
-  async getCustomerFromUserID(userID: string) {
-    return head(
-      await this.prismaService.client.customers({
-        where: { user: { id: userID } },
-      })
-    )
-  }
-
-  async resetPassword(email) {
-    return new Promise((resolve, reject) => {
-      request(
-        {
-          method: "Post",
-          url: `https://${process.env.AUTH0_DOMAIN}/dbconnections/change_password`,
-          headers: { "content-type": "application/json" },
-          body: {
-            client_id: `${process.env.AUTH0_CLIENTID}`,
-            connection: `${process.env.AUTH0_DB_CONNECTION}`,
-            email,
-          },
-          json: true,
-        },
-        async (error, response, body) => {
-          if (error) {
-            reject(error)
-          }
-          resolve({ message: body })
-        }
-      )
-    })
-  }
-
-  async createPrismaUser(auth0Id, email, firstName, lastName) {
-    const user = await this.prismaService.client.createUser({
-      auth0Id,
-      email,
-      firstName,
-      lastName,
-      roles: { set: ["Customer"] }, // defaults to customer
-    })
-    return user
-  }
-
-  async createPrismaCustomerForExistingUser(userID, details = {}, status) {
-    const customer = await this.prismaService.client.createCustomer({
-      user: {
-        connect: { id: userID },
-      },
-      detail: { create: details },
-      status: status || "Waitlisted",
-    })
-
-    // TODO: update airtable with customer data
-
-    return customer
-  }
-
-  extractSegmentReservedTraitsFromCustomerDetail(
-    detail: CustomerDetail
-  ): SegmentReservedTraitsInCustomerDetail {
-    const traits = {} as any
-    if (!!detail?.phoneNumber) {
-      traits.phone = detail.phoneNumber
-    }
-    return traits
   }
 }
 
