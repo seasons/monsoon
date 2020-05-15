@@ -342,10 +342,19 @@ export class ProductService {
 
   async updateProduct(
     where: ProductWhereUniqueInput,
-    { status, ...data }: ProductUpdateInput,
-    customData,
+    { status, ...data },
     info: GraphQLResolveInfo
   ) {
+    // Extract custom fields out
+    const {
+      bottomSizeType,
+      functions,
+      images,
+      modelSizeDisplay,
+      modelSizeName,
+      tags,
+      ...updateData
+    } = data
     let functionIDs
     let imageIDs
     let modelSizeID
@@ -363,30 +372,30 @@ export class ProductService {
           }
         }`
     )
-    if (customData?.functions) {
-      functionIDs = await this.upsertFunctions(customData.functions)
+    if (functions) {
+      functionIDs = await this.upsertFunctions(functions)
     }
-    if (customData?.tags) {
-      tagIDs = await this.upsertTags(customData.tags)
+    if (tags) {
+      tagIDs = await this.upsertTags(tags)
     }
-    if (customData?.modelSizeName && customData?.modelSizeDisplay) {
+    if (modelSizeName && modelSizeDisplay) {
       const modelSize = await this.productUtils.upsertModelSize({
         slug: product.slug,
         type: product.type,
-        modelSizeName: customData.modelSizeName,
-        modelSizeDisplay: customData.modelSizeDisplay,
-        bottomSizeType: customData.bottomSizeType,
+        modelSizeName,
+        modelSizeDisplay,
+        bottomSizeType,
       })
       modelSizeID = modelSize.id
     }
-    if (customData?.images) {
-      imageIDs = await this.upsertImages(customData.images, product)
+    if (images) {
+      imageIDs = await this.upsertImages(images, product)
     }
     await this.storeProductIfNeeded(where, status)
     await this.prisma.client.updateProduct({
       where,
       data: {
-        ...data,
+        ...updateData,
         functions: functionIDs && { set: functionIDs },
         images: imageIDs && { set: imageIDs },
         modelSize: modelSizeID && { connect: { id: modelSizeID } },

@@ -127,8 +127,7 @@ type Mutation {
   saveProduct(item: ID!, save: Boolean!): BagItem @hasRole(roles: [Customer])
   updateProduct(
     where: ProductWhereUniqueInput!
-    data: ProductUpdateInput!
-    customData: CustomUpdateProductInput!
+    data: CustomProductUpdateInput!
   ): Product! @hasRole(roles: [Admin])
   updatePhysicalProduct(
     where: PhysicalProductWhereUniqueInput!
@@ -209,11 +208,32 @@ input UpsertProductInput {
   variants: [UpsertVariantInput!]!
 }
 
-input CustomUpdateProductInput {
+input CustomProductUpdateInput {
+  # Fields from ProductUpdateInput
+  architecture: ProductArchitecture
+  brand: BrandUpdateOneRequiredWithoutProductsInput
+  category: CategoryUpdateOneRequiredWithoutProductsInput
+  color: ColorUpdateOneRequiredInput
+  description: String
+  externalURL: String
+  innerMaterials: ProductUpdateinnerMaterialsInput
+  model: ProductModelUpdateOneWithoutProductsInput
+  modelHeight: Int
+  name: String
+  outerMaterials: ProductUpdateouterMaterialsInput
+  retailPrice: Int
+  season: String
+  secondaryColor: ColorUpdateOneInput
+  slug: String
+  status: ProductStatus
+  type: ProductType
+  variants: ProductVariantUpdateManyWithoutProductInput
+
+  # Custom fields
+  bottomSizeType: BottomSizeType
   functions: [String!]
   images: [Upload!]
   modelSizeDisplay: String
   modelSizeName: String
-  bottomSizeType: BottomSizeType
   tags: [String!]
 }

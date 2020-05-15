@@ -89,7 +89,6 @@ describe("Store Product", () => {
       await productService.updateProduct(
         { id: testProduct.id },
         { status: "Stored" },
-        null,
         null
       )
 
