@@ -9,7 +9,10 @@ const ProductFragment = `
   __typename
   id
   slug
-  images
+  images {
+    id
+    url
+  }
   name
   brand {
     id
