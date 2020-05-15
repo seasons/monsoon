@@ -202,7 +202,10 @@ export class ProductUtilsService {
           id
           name
           description
-          images
+          images {
+            id
+            url
+          }
           modelSize
           modelHeight
           externalURL
