@@ -302,13 +302,13 @@ export class ProductUtilsService {
     return `${brandCode}/${slug}/${slug}-${index}.png`.toLowerCase()
   }
 
-  async getImageIDs(imageDatas: ImageData[]) {
+  async getImageIDs(imageDatas: ImageData[], slug: string) {
     const prismaImages = await Promise.all(
       imageDatas.map(async imageData => {
         return await this.prisma.client.upsertImage({
           where: { url: imageData.url },
-          create: imageData,
-          update: imageData,
+          create: { ...imageData, title: slug },
+          update: { ...imageData, title: slug },
         })
       })
     )
