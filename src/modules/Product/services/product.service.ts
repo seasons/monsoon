@@ -157,7 +157,7 @@ export class ProductService {
         })
       })
     )
-    const imageIDs = await this.productUtils.getImageIDs(imageDatas)
+    const imageIDs = await this.productUtils.getImageIDs(imageDatas, slug)
 
     // Deep upsert the model size
     const modelSize = await this.productUtils.upsertModelSize({
@@ -558,8 +558,8 @@ export class ProductService {
         // Thus, we need to convert it to s3 format and strip any query params as needed
         const s3ImageURL = `${S3_BASE}${url.parse(data).pathname}`
         const prismaImage = await this.prisma.client.upsertImage({
-          create: { url: s3ImageURL },
-          update: { url: s3ImageURL },
+          create: { url: s3ImageURL, title: product.slug },
+          update: { url: s3ImageURL, title: product.slug },
           where: { url: s3ImageURL },
         })
         imageDatas.push({ id: prismaImage.id })
@@ -587,8 +587,8 @@ export class ProductService {
 
         // Upsert the image with the s3 image url
         const prismaImage = await this.prisma.client.upsertImage({
-          create: { height, url, width },
-          update: { height, width },
+          create: { height, url, width, title: product.slug },
+          update: { height, width, title: product.slug },
           where: { url },
         })
         imageDatas.push({ id: prismaImage.id })

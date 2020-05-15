@@ -380,7 +380,7 @@ export class SyncProductsService {
           )
         })
       )
-      imageIDs = this.productUtils.getImageIDs(imageDatas)
+      imageIDs = this.productUtils.getImageIDs(imageDatas, slug)
     }
     return imageIDs
   }
