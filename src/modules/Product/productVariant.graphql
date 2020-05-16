@@ -11,6 +11,7 @@ type Query {
     first: Int
     last: Int
   ): [BottomSize]!
+  productVariant(where: ProductVariantWhereUniqueInput!): ProductVariant
   size(where: SizeWhereUniqueInput!): Size
   sizes(
     where: SizeWhereInput
