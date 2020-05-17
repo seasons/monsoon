@@ -1,5 +1,8 @@
+import * as url from "url"
+
 import { ImageData } from "@modules/Image/image.types"
 import { ImageService } from "@modules/Image/services/image.service"
+import { S3_BASE } from "@modules/Image/services/image.service"
 import { Injectable } from "@nestjs/common"
 import {
   BagItem,
@@ -18,7 +21,9 @@ import {
   ProductVariantCreateWithoutProductInput,
   ProductWhereUniqueInput,
   RecentlyViewedProduct,
+  Tag,
 } from "@prisma/index"
+import { Product as PrismaBindingProduct } from "@prisma/prisma.binding"
 import { PrismaService } from "@prisma/prisma.service"
 import { GraphQLResolveInfo } from "graphql"
 import { head, pick } from "lodash"
@@ -130,19 +135,7 @@ export class ProductService {
     const model = await this.prisma.client.productModel({ id: input.modelID })
 
     // Get the functionIDs which we will connect to the product
-    const productFunctions = await Promise.all(
-      input.functions.map(
-        async functionName =>
-          await this.prisma.client.upsertProductFunction({
-            create: { name: functionName },
-            update: { name: functionName },
-            where: { name: functionName },
-          })
-      )
-    )
-    const functionIDs = productFunctions
-      .filter(Boolean)
-      .map((func: ProductFunction) => ({ id: func.id }))
+    const functionIDs = await this.upsertFunctions(input.functions)
 
     // Generate the product slug
     const slug = await this.productUtils.getProductSlug(
@@ -164,7 +157,7 @@ export class ProductService {
         })
       })
     )
-    const imageIDs = await this.productUtils.getImageIDs(imageDatas)
+    const imageIDs = await this.productUtils.getImageIDs(imageDatas, slug)
 
     // Deep upsert the model size
     const modelSize = await this.productUtils.upsertModelSize({
@@ -176,16 +169,7 @@ export class ProductService {
     })
 
     // Create all necessary tag records
-    const tagIDs: { id: string }[] = await Promise.all(
-      input.tags.map(async tag => {
-        const prismaTag = await this.prisma.client.upsertTag({
-          create: { name: tag },
-          update: { name: tag },
-          where: { name: tag },
-        })
-        return { id: prismaTag.id }
-      })
-    )
+    const tagIDs = await this.upsertTags(input.tags)
 
     const data = {
       slug,
@@ -358,11 +342,67 @@ export class ProductService {
 
   async updateProduct(
     where: ProductWhereUniqueInput,
-    { status, ...data }: ProductUpdateInput,
+    { status, ...data },
     info: GraphQLResolveInfo
   ) {
+    // Extract custom fields out
+    const {
+      bottomSizeType,
+      functions,
+      images,
+      modelSizeDisplay,
+      modelSizeName,
+      tags,
+      ...updateData
+    } = data
+    let functionIDs
+    let imageIDs
+    let modelSizeID
+    let tagIDs
+    const product: PrismaBindingProduct = await this.prisma.binding.query.product(
+      { where },
+      `{
+          id
+          name
+          slug
+          type
+          brand {
+            id
+            brandCode
+          }
+        }`
+    )
+    if (functions) {
+      functionIDs = await this.upsertFunctions(functions)
+    }
+    if (tags) {
+      tagIDs = await this.upsertTags(tags)
+    }
+    if (modelSizeName && modelSizeDisplay) {
+      const modelSize = await this.productUtils.upsertModelSize({
+        slug: product.slug,
+        type: product.type,
+        modelSizeName,
+        modelSizeDisplay,
+        bottomSizeType,
+      })
+      modelSizeID = modelSize.id
+    }
+    if (images) {
+      imageIDs = await this.upsertImages(images, product)
+    }
     await this.storeProductIfNeeded(where, status)
-    await this.prisma.client.updateProduct({ where, data: { status, ...data } })
+    await this.prisma.client.updateProduct({
+      where,
+      data: {
+        ...updateData,
+        functions: functionIDs && { set: functionIDs },
+        images: imageIDs && { set: imageIDs },
+        modelSize: modelSizeID && { connect: { id: modelSizeID } },
+        tags: tagIDs && { set: tagIDs },
+        status,
+      },
+    })
     return await this.prisma.binding.query.product({ where }, info)
   }
 
@@ -472,6 +512,99 @@ export class ProductService {
     }
 
     return prodVar
+  }
+
+  private async upsertFunctions(
+    functions: string[]
+  ): Promise<{ id: ID_Input }[]> {
+    const productFunctions = await Promise.all(
+      functions.map(
+        async functionName =>
+          await this.prisma.client.upsertProductFunction({
+            create: { name: functionName },
+            update: { name: functionName },
+            where: { name: functionName },
+          })
+      )
+    )
+    return productFunctions
+      .filter(Boolean)
+      .map((func: ProductFunction) => ({ id: func.id }))
+  }
+
+  private async upsertTags(tags: string[]): Promise<{ id: ID_Input }[]> {
+    const prismaTags = await Promise.all(
+      tags.map(
+        async tag =>
+          await this.prisma.client.upsertTag({
+            create: { name: tag },
+            update: { name: tag },
+            where: { name: tag },
+          })
+      )
+    )
+    return prismaTags.filter(Boolean).map((tag: Tag) => ({ id: tag.id }))
+  }
+
+  /**
+   * Upserts images for a given product, uploading new ones to S3 when needed.
+   * The [images] argument is either an imageURL or an image file object
+   * @param images of type (string | File)[]
+   * @param product: of type Product as is defined in prisma.binding
+   */
+  private async upsertImages(
+    images: any[],
+    product: PrismaBindingProduct
+  ): Promise<{ id: ID_Input }[]> {
+    const imageDatas = await Promise.all(
+      images.map(async (image, index) => {
+        const data = await image
+        if (typeof data === "string") {
+          // This means that we received an image URL in which case
+          // we just have perfom an upsertImage with the url
+
+          // This URL is sent by the client which means it an Imgix URL.
+          // Thus, we need to convert it to s3 format and strip any query params as needed
+          const s3ImageURL = `${S3_BASE}${url.parse(data).pathname}`
+          const prismaImage = await this.prisma.client.upsertImage({
+            create: { url: s3ImageURL, title: product.slug },
+            update: { url: s3ImageURL, title: product.slug },
+            where: { url: s3ImageURL },
+          })
+          return { id: prismaImage.id }
+        } else {
+          // This means that we received a new image in the form of
+          // a file in which case we have to upload the image to S3
+
+          // Form appropriate image name
+          const s3ImageName = await this.productUtils.getProductImageName(
+            product.brand.brandCode,
+            product.name,
+            index + 1
+          )
+
+          // Upload to S3 and retrieve metadata
+          const { height, url, width } = await this.imageService.uploadImage(
+            data,
+            {
+              imageName: s3ImageName,
+            }
+          )
+
+          // Purge this image url in imgix cache
+          await this.imageService.purgeS3ImageFromImgix(url)
+
+          // Upsert the image with the s3 image url
+          const prismaImage = await this.prisma.client.upsertImage({
+            create: { height, url, width, title: product.slug },
+            update: { height, width, title: product.slug },
+            where: { url },
+          })
+          return { id: prismaImage.id }
+        }
+      })
+    )
+    return imageDatas
   }
 
   private async storeProductIfNeeded(

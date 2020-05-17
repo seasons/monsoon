@@ -19,7 +19,7 @@ type Query {
     first: Int
     last: Int
   ): ReservationConnection! @hasRole(roles: [Customer, Admin, Partner])
-  reservationFeedback: ReservationFeedback @hasRole(roles: [Customer])
+  reservationFeedback: ReservationFeedback
 }
 
 type Mutation {
