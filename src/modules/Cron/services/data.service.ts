@@ -1,5 +1,6 @@
 import * as util from "util"
 
+import { PhysicalProduct } from "@app/prisma"
 import { AirtableService } from "@modules/Airtable"
 import { AirtableData } from "@modules/Airtable/airtable.types"
 import { SlackService } from "@modules/Slack/services/slack.service"
@@ -53,6 +54,7 @@ export class DataScheduledJobs {
         airtableCountToStatusMisalignments,
         prismaProdVarsWithImpossibleCounts,
         mismatchingStatuses,
+        mismatchingSequenceNumbers,
         reservationsInPrismaButNotAirtable,
         reservationsInAirtableButNotPrisma,
         misalignedSUIDsOnReservations,
@@ -179,12 +181,19 @@ export class DataScheduledJobs {
             ],
           }),
           ...this.createReportSection({
-            title: "Are physical product inventory statuses aligned?",
+            title:
+              "Are physical product inventory statuses and sequence numbers aligned?",
             datapoints: [
               {
                 name:
                   "Number of physical products with mismatching inventory statuses",
                 number: mismatchingStatuses.length,
+                shouldFlagNum: true,
+              },
+              {
+                name:
+                  "Number of physical products with mismatching sequence numbers",
+                number: mismatchingSequenceNumbers.length,
                 shouldFlagNum: true,
               },
             ],
@@ -391,13 +400,17 @@ export class DataScheduledJobs {
       allPrismaProductVariants
     )
 
-    /* Are the physical product statuses matching between prisma and airtable? */
+    /* Are the physical product statuses and sequenceNumbers matching between prisma and airtable? */
     const {
       mismatchingStatuses,
       physicalProductsOnPrismaButNotAirtable,
     } = this.checkPhysicalProductStatuses(
       allPrismaPhysicalProducts,
       allAirtablePhysicalProducts
+    )
+    const mismatchingSequenceNumbers = this.checkSequenceNumberSync(
+      allAirtablePhysicalProducts,
+      allPrismaPhysicalProducts
     )
 
     /* Are the reservations aligned? */
@@ -510,12 +523,18 @@ export class DataScheduledJobs {
           withGutter: true,
         },
         {
-          text: "are the physical product statuses aligned?",
+          text:
+            "are the physical product statuses and sequenceNumbers aligned?",
         },
         {
           text:
             "number of physical products with mismatching inventory statuses",
           paramArray: mismatchingStatuses,
+          withGutter: false,
+        },
+        {
+          text: "number of physical products with mismatching sequence numbers",
+          paramArray: mismatchingSequenceNumbers,
           withGutter: true,
         },
         {
@@ -566,6 +585,7 @@ export class DataScheduledJobs {
       airtableCountToStatusMisalignments,
       prismaProdVarsWithImpossibleCounts,
       mismatchingStatuses,
+      mismatchingSequenceNumbers,
       reservationsInPrismaButNotAirtable,
       reservationsInAirtableButNotPrisma,
       misalignedSUIDsOnReservations,
@@ -1096,5 +1116,28 @@ export class DataScheduledJobs {
           "offloaded",
         ])
       )
+  }
+
+  private checkSequenceNumberSync(
+    allAirtablePhysicalProducts: AirtableData,
+    allPrismaPhysicalProducts: PhysicalProduct[]
+  ) {
+    const mismatchingSequenceNumbers = []
+    for (const prismaPP of allPrismaPhysicalProducts) {
+      const correspondingAirtablePP = this.airtableService.getCorrespondingAirtablePhysicalProduct(
+        allAirtablePhysicalProducts,
+        prismaPP
+      )
+      if (
+        prismaPP.sequenceNumber !== correspondingAirtablePP.model.sequenceNumber
+      ) {
+        mismatchingSequenceNumbers.push({
+          seasonsUID: prismaPP.seasonsUID,
+          prismaSequenceNumber: prismaPP.sequenceNumber,
+          airtableSequenceNumber: correspondingAirtablePP.model.sequenceNumber,
+        })
+      }
+    }
+    return mismatchingSequenceNumbers
   }
 }
