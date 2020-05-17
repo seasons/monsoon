@@ -30,7 +30,7 @@ type Mutation {
     feedbackID: ID!
     input: ReservationFeedbackUpdateInput!
   ): ReservationFeedback! @hasRole(roles: [Admin])
-  processReservation(data: ReservationProcessReturnInput!): Reservation
+  processReservation(data: ReservationProcessReturnInput!): ReservationReceipt
     @hasRole(roles: [Admin])
 }
 

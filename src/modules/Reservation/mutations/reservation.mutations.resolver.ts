@@ -46,48 +46,53 @@ export class ReservationMutationsResolver {
     @Info() info,
     @Analytics() analytics
   ) {
-    console.log(JSON.stringify(data, null, 2))
+    const { reservationNumber, productStates } = data
 
-    // TODO: update status on product variants
-    const { receipt } = data
+    const receiptData = {
+      reservation: {
+        connect: {
+          reservationNumber,
+        },
+      },
+      items: {
+        create: productStates
+          .filter(a => a.returned)
+          .map(productState => {
+            return {
+              product: {
+                connect: {
+                  seasonsUID: productState.productUID,
+                },
+              },
+              productStatus: productState.productStatus,
+              notes: productState.notes,
+            }
+          }),
+      },
+    }
 
-    // receipt: {
-    //   reservation: {
-    //     connect: {
-    //       reservationNumber: data.reservationNumber,
-    //     },
-    //   },
-    //   items: {
-    //     create: data.products.map(product => {
-    //       const productState = productStates[product.barcode]
-    //       return {
-    //         product: {
-    //           connect: {
-    //             seasonsUID: product.seasonsUID,
-    //           },
-    //         },
-    //         productStatus: productState.productStatus,
-    //         notes: productState.notes,
-    //       }
-    //     }),
-    //   },
-    // },
-
+    // Update status on physical products depending on whether
+    // the item was returned
     Promise.all(
-      receipt.items.create.forEach(({ product, productStatus }) => {
-        const seasonsUID = product.connect.seasonsUID
-
-        return this.prisma.client.updatePhysicalProduct({
-          where: { seasonsUID },
-          data: {
-            productStatus,
-            inventoryStatus: "Reservable",
-          },
-        })
+      productStates.forEach(({ productUID, productStatus, returned }) => {
+        const seasonsUID = productUID
+        const updateData: any = {
+          productStatus,
+        }
+        if (returned) {
+          updateData.inventoryStatus = "Reservable"
+          return this.prisma.client.updatePhysicalProduct({
+            where: { seasonsUID },
+            data: updateData,
+          })
+        }
       })
     )
 
-    const result = await this.prisma.client.createReservationReceipt(receipt)
-    console.log(result)
+    const result = await this.prisma.client.createReservationReceipt(
+      receiptData
+    )
+
+    return result
   }
 }
