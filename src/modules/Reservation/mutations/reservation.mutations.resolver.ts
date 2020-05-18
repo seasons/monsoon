@@ -80,6 +80,8 @@ export class ReservationMutationsResolver {
           productStatus,
         }
         if (returned) {
+          // TODO: allow inventory status to be overriden from admin but derive value
+          // from automated criteria
           updateData.inventoryStatus = "Reservable"
           return this.prisma.client.updatePhysicalProduct({
             where: { seasonsUID },
