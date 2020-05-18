@@ -365,8 +365,7 @@ export class SyncProductsService {
     colorName: string,
     name: string
   ) {
-    const productImages = await this.prisma.client.product({ slug }).images()
-    // We have yet to upload these images to S3
+    // Upload images to S3 and then upsert them as image objects
     const imageDatas: ImageData[] = await Promise.all(
       images.map(async (image, index) => {
         const s3ImageName = this.productUtils.getProductImageName(
