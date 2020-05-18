@@ -4533,6 +4533,9 @@ type PhysicalProduct {
   offloadNotes: String
   sequenceNumber: Int!
   warehouseLocation: WarehouseLocation
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -4554,6 +4557,9 @@ input PhysicalProductCreateInput {
   offloadNotes: String
   sequenceNumber: Int!
   warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
 }
 
 input PhysicalProductCreateManyInput {
@@ -4591,6 +4597,9 @@ input PhysicalProductCreateWithoutLocationInput {
   offloadNotes: String
   sequenceNumber: Int!
   warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
 }
 
 input PhysicalProductCreateWithoutProductVariantInput {
@@ -4603,6 +4612,9 @@ input PhysicalProductCreateWithoutProductVariantInput {
   offloadNotes: String
   sequenceNumber: Int!
   warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
 }
 
 input PhysicalProductCreateWithoutWarehouseLocationInput {
@@ -4615,6 +4627,9 @@ input PhysicalProductCreateWithoutWarehouseLocationInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   sequenceNumber: Int!
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
 }
 
 type PhysicalProductEdge {
@@ -4645,6 +4660,12 @@ enum PhysicalProductOrderByInput {
   offloadNotes_DESC
   sequenceNumber_ASC
   sequenceNumber_DESC
+  dateOrdered_ASC
+  dateOrdered_DESC
+  dateReceived_ASC
+  dateReceived_DESC
+  unitCost_ASC
+  unitCost_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -4659,6 +4680,9 @@ type PhysicalProductPreviousValues {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   sequenceNumber: Int!
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -4726,6 +4750,30 @@ input PhysicalProductScalarWhereInput {
   sequenceNumber_lte: Int
   sequenceNumber_gt: Int
   sequenceNumber_gte: Int
+  dateOrdered: DateTime
+  dateOrdered_not: DateTime
+  dateOrdered_in: [DateTime!]
+  dateOrdered_not_in: [DateTime!]
+  dateOrdered_lt: DateTime
+  dateOrdered_lte: DateTime
+  dateOrdered_gt: DateTime
+  dateOrdered_gte: DateTime
+  dateReceived: DateTime
+  dateReceived_not: DateTime
+  dateReceived_in: [DateTime!]
+  dateReceived_not_in: [DateTime!]
+  dateReceived_lt: DateTime
+  dateReceived_lte: DateTime
+  dateReceived_gt: DateTime
+  dateReceived_gte: DateTime
+  unitCost: Float
+  unitCost_not: Float
+  unitCost_in: [Float!]
+  unitCost_not_in: [Float!]
+  unitCost_lt: Float
+  unitCost_lte: Float
+  unitCost_gt: Float
+  unitCost_gte: Float
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -4785,6 +4833,9 @@ input PhysicalProductUpdateDataInput {
   offloadNotes: String
   sequenceNumber: Int
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
 }
 
 input PhysicalProductUpdateInput {
@@ -4797,6 +4848,9 @@ input PhysicalProductUpdateInput {
   offloadNotes: String
   sequenceNumber: Int
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
 }
 
 input PhysicalProductUpdateManyDataInput {
@@ -4806,6 +4860,9 @@ input PhysicalProductUpdateManyDataInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   sequenceNumber: Int
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
 }
 
 input PhysicalProductUpdateManyInput {
@@ -4827,6 +4884,9 @@ input PhysicalProductUpdateManyMutationInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   sequenceNumber: Int
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
 }
 
 input PhysicalProductUpdateManyWithoutLocationInput {
@@ -4886,6 +4946,9 @@ input PhysicalProductUpdateWithoutLocationDataInput {
   offloadNotes: String
   sequenceNumber: Int
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
 }
 
 input PhysicalProductUpdateWithoutProductVariantDataInput {
@@ -4897,6 +4960,9 @@ input PhysicalProductUpdateWithoutProductVariantDataInput {
   offloadNotes: String
   sequenceNumber: Int
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
 }
 
 input PhysicalProductUpdateWithoutWarehouseLocationDataInput {
@@ -4908,6 +4974,9 @@ input PhysicalProductUpdateWithoutWarehouseLocationDataInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   sequenceNumber: Int
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
 }
 
 input PhysicalProductUpdateWithWhereUniqueNestedInput {
@@ -5025,6 +5094,30 @@ input PhysicalProductWhereInput {
   sequenceNumber_gt: Int
   sequenceNumber_gte: Int
   warehouseLocation: WarehouseLocationWhereInput
+  dateOrdered: DateTime
+  dateOrdered_not: DateTime
+  dateOrdered_in: [DateTime!]
+  dateOrdered_not_in: [DateTime!]
+  dateOrdered_lt: DateTime
+  dateOrdered_lte: DateTime
+  dateOrdered_gt: DateTime
+  dateOrdered_gte: DateTime
+  dateReceived: DateTime
+  dateReceived_not: DateTime
+  dateReceived_in: [DateTime!]
+  dateReceived_not_in: [DateTime!]
+  dateReceived_lt: DateTime
+  dateReceived_lte: DateTime
+  dateReceived_gt: DateTime
+  dateReceived_gte: DateTime
+  unitCost: Float
+  unitCost_not: Float
+  unitCost_in: [Float!]
+  unitCost_not_in: [Float!]
+  unitCost_lt: Float
+  unitCost_lte: Float
+  unitCost_gt: Float
+  unitCost_gte: Float
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]

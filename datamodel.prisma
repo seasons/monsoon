@@ -327,6 +327,9 @@ type PhysicalProduct {
   offloadNotes: String
   sequenceNumber: Int!
   warehouseLocation: WarehouseLocation
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
