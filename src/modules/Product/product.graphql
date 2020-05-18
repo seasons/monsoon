@@ -127,7 +127,7 @@ type Mutation {
   saveProduct(item: ID!, save: Boolean!): BagItem @hasRole(roles: [Customer])
   updateProduct(
     where: ProductWhereUniqueInput!
-    data: ProductUpdateInput!
+    data: CustomProductUpdateInput!
   ): Product! @hasRole(roles: [Admin])
   updatePhysicalProduct(
     where: PhysicalProductWhereUniqueInput!
@@ -142,15 +142,18 @@ type Product {
   id: ID!
   slug: String!
   name: String!
+  architecture: ProductArchitecture
   brand: Brand!
   category: Category!
   type: ProductType
   description: String
   externalURL: String
+  model: ProductModel
   modelHeight: Int
   modelSize: Size
   retailPrice: Int
   color: Color!
+  season: String
   secondaryColor: Color
   tags: [Tag!]!
   images(width: Int, height: Int, size: ImageSize): [Image!]!
@@ -203,4 +206,34 @@ input UpsertProductInput {
   season: String!
   architecture: String!
   variants: [UpsertVariantInput!]!
+}
+
+input CustomProductUpdateInput {
+  # Fields from ProductUpdateInput
+  architecture: ProductArchitecture
+  brand: BrandUpdateOneRequiredWithoutProductsInput
+  category: CategoryUpdateOneRequiredWithoutProductsInput
+  color: ColorUpdateOneRequiredInput
+  description: String
+  externalURL: String
+  innerMaterials: ProductUpdateinnerMaterialsInput
+  model: ProductModelUpdateOneWithoutProductsInput
+  modelHeight: Int
+  name: String
+  outerMaterials: ProductUpdateouterMaterialsInput
+  retailPrice: Int
+  season: String
+  secondaryColor: ColorUpdateOneInput
+  slug: String
+  status: ProductStatus
+  type: ProductType
+  variants: ProductVariantUpdateManyWithoutProductInput
+
+  # Custom fields
+  bottomSizeType: BottomSizeType
+  functions: [String!]
+  images: [Upload!]
+  modelSizeDisplay: String
+  modelSizeName: String
+  tags: [String!]
 }

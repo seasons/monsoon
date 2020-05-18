@@ -1,7 +1,7 @@
 # import Reservation from "../Reservation/reservation.graphql"
 
 type Query {
-  me: Me @isAuthenticated
+  me: Me
   user(where: UserWhereUniqueInput!): User @hasRole(roles: [Admin])
   users(
     where: UserWhereInput
