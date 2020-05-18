@@ -23,6 +23,9 @@ type PhysicalProduct {
   offloadNotes: String
   sequenceNumber: Int!
   barcode: String!
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
   createdAt: DateTime!
   updatedAt: DateTime!
 }
