@@ -63,8 +63,10 @@ export class ProductUtilsService {
     return pickBy(
       {
         orderBy,
-        where,
-        ...filters,
+        where: {
+          ...where,
+          ...filters?.where,
+        },
       },
       identity
     )
