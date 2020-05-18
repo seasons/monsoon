@@ -234,7 +234,6 @@ export class SyncProductsService {
           create: data,
           update: { ...data, images: { set: imageIDs } },
         })
-        console.log("SLUG:", slug)
         // Update airtable
         await record.patchUpdate({
           Slug: slug,
