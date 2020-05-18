@@ -1636,7 +1636,7 @@ export type PhysicalProductStatus =
   | "Used"
   | "Dirty"
   | "Damaged"
-  | "PermenantlyDamaged"
+  | "PermanentlyDamaged"
   | "Clean"
   | "Lost";
 

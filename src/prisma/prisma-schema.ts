@@ -4752,7 +4752,7 @@ enum PhysicalProductStatus {
   Used
   Dirty
   Damaged
-  PermenantlyDamaged
+  PermanentlyDamaged
   Clean
   Lost
 }

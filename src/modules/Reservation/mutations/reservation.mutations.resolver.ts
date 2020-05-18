@@ -73,7 +73,7 @@ export class ReservationMutationsResolver {
 
     // Update status on physical products depending on whether
     // the item was returned
-    Promise.all(
+    await Promise.all(
       productStates.forEach(({ productUID, productStatus, returned }) => {
         const seasonsUID = productUID
         const updateData: any = {
