@@ -4726,7 +4726,9 @@ input PhysicalProductScalarWhereInput {
 enum PhysicalProductStatus {
   New
   Used
+  Dirty
   Damaged
+  PermenantlyDamaged
   Clean
   Lost
 }

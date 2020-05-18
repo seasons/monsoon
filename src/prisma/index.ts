@@ -1540,7 +1540,9 @@ export type InventoryStatus =
 export type PhysicalProductStatus =
   | "New"
   | "Used"
+  | "Dirty"
   | "Damaged"
+  | "PermenantlyDamaged"
   | "Clean"
   | "Lost";
 

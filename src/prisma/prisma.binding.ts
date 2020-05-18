@@ -8679,7 +8679,9 @@ input PhysicalProductScalarWhereInput {
 enum PhysicalProductStatus {
   New
   Used
+  Dirty
   Damaged
+  PermenantlyDamaged
   Clean
   Lost
 }
@@ -18263,7 +18265,9 @@ export type PhysicalProductOrderByInput =   'id_ASC' |
 
 export type PhysicalProductStatus =   'New' |
   'Used' |
+  'Dirty' |
   'Damaged' |
+  'PermenantlyDamaged' |
   'Clean' |
   'Lost'
 
