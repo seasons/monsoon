@@ -146,7 +146,13 @@ export class SyncProductsService {
         const { brandCode } = brand.model
         const slug = this.productUtils.getProductSlug(brandCode, name, color)
 
-        const imageIDs = await this.syncImages(images, slug, brandCode, name)
+        const imageIDs = await this.syncImages(
+          images,
+          slug,
+          brandCode,
+          color,
+          name
+        )
 
         // Sync model size records
         let modelSizeRecord
@@ -357,6 +363,7 @@ export class SyncProductsService {
     images: any,
     slug: string,
     brandCode: string,
+    colorName: string,
     name: string
   ) {
     const productImages = await this.prisma.client.product({ slug }).images()
@@ -371,6 +378,7 @@ export class SyncProductsService {
           const s3ImageName = this.productUtils.getProductImageName(
             brandCode,
             name,
+            colorName,
             index + 1
           )
           return await this.imageService.uploadImageFromURL(

@@ -150,6 +150,7 @@ export class ProductService {
         const s3ImageName = await this.productUtils.getProductImageName(
           brand.brandCode,
           input.name,
+          color.name,
           index + 1
         )
         return await this.imageService.uploadImage(image, {
@@ -580,6 +581,7 @@ export class ProductService {
           const s3ImageName = await this.productUtils.getProductImageName(
             product.brand.brandCode,
             product.name,
+            product.color.name,
             index + 1
           )
 
