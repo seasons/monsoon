@@ -52,7 +52,9 @@ enum InventoryStatus {
 enum PhysicalProductStatus {
   New
   Used
+  Dirty
   Damaged
+  PermenantlyDamaged
   Clean
   Lost
 }
