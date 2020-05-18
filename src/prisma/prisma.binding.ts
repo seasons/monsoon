@@ -8726,7 +8726,7 @@ enum PhysicalProductStatus {
   Used
   Dirty
   Damaged
-  PermenantlyDamaged
+  PermanentlyDamaged
   Clean
   Lost
 }
@@ -18955,7 +18955,7 @@ export type PhysicalProductStatus =   'New' |
   'Used' |
   'Dirty' |
   'Damaged' |
-  'PermenantlyDamaged' |
+  'PermanentlyDamaged' |
   'Clean' |
   'Lost'
 
