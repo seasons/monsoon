@@ -232,7 +232,7 @@ export class SyncProductsService {
             slug,
           },
           create: data,
-          update: data,
+          update: { ...data, images: { set: imageIDs } },
         })
 
         // Update airtable
@@ -367,29 +367,23 @@ export class SyncProductsService {
     name: string
   ) {
     const productImages = await this.prisma.client.product({ slug }).images()
-    let imageIDs
-    if (productImages && productImages.length > 0) {
-      // We've already uploaded these images to S3
-      imageIDs = productImages.map(image => ({ id: image.id }))
-    } else {
-      // We have yet to upload these images to S3
-      const imageDatas: ImageData[] = await Promise.all(
-        images.map(async (image, index) => {
-          const s3ImageName = this.productUtils.getProductImageName(
-            brandCode,
-            name,
-            colorName,
-            index + 1
-          )
-          return await this.imageService.uploadImageFromURL(
-            image.url,
-            s3ImageName,
-            name
-          )
-        })
-      )
-      imageIDs = this.productUtils.getImageIDs(imageDatas, slug)
-    }
+    // We have yet to upload these images to S3
+    const imageDatas: ImageData[] = await Promise.all(
+      images.map(async (image, index) => {
+        const s3ImageName = this.productUtils.getProductImageName(
+          brandCode,
+          name,
+          colorName,
+          index + 1
+        )
+        return await this.imageService.uploadImageFromURL(
+          image.url,
+          s3ImageName,
+          name
+        )
+      })
+    )
+    const imageIDs = this.productUtils.getImageIDs(imageDatas, slug)
     return imageIDs
   }
 }
