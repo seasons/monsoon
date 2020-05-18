@@ -39,13 +39,7 @@ export class ReservationMutationsResolver {
   }
 
   @Mutation()
-  async processReservation(
-    @Args() { data },
-    @User() user,
-    @Customer() customer,
-    @Info() info,
-    @Analytics() analytics
-  ) {
+  async processReservation(@Args() { data }) {
     const { reservationNumber, productStates } = data
 
     const receiptData = {
