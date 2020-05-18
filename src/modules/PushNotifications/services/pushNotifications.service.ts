@@ -29,8 +29,6 @@ export class PushNotificationsService {
     if (process.env.NODE_ENV === "production") {
       targetEmail = email
     }
-
-    // Send the push notification
     await this.pusher.client.publishToUsers(
       [targetEmail],
       this.data.getPushNotifData(pushNotifID)

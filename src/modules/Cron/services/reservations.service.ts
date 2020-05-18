@@ -1,5 +1,9 @@
 import { SyncError } from "@app/errors"
 import {
+  PushNotificationID,
+  PushNotificationsService,
+} from "@app/modules/PushNotifications"
+import {
   AirtableInventoryStatus,
   AirtableProductVariantCounts,
 } from "@modules/Airtable/airtable.types"
@@ -40,7 +44,8 @@ export class ReservationScheduledJobs {
     private readonly emailService: EmailService,
     private readonly prisma: PrismaService,
     private readonly shippingService: ShippingService,
-    private readonly errorService: ErrorService
+    private readonly errorService: ErrorService,
+    private readonly pushNotifs: PushNotificationsService
   ) {}
 
   @Cron(CronExpression.EVERY_6_HOURS)
@@ -257,6 +262,10 @@ export class ReservationScheduledJobs {
           )
 
           await this.emailService.sendYouCanNowReserveAgainEmail(prismaUser)
+          await this.pushNotifs.pushNotifyUser({
+            email: prismaUser.email,
+            pushNotifID: PushNotificationID.ResetBag,
+          })
 
           await this.emailService.sendAdminConfirmationEmail(
             prismaUser,
