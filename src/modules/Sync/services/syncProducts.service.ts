@@ -367,14 +367,14 @@ export class SyncProductsService {
   ) {
     // Upload images to S3 and then upsert them as image objects
     const imageDatas: ImageData[] = await Promise.all(
-      images.map(async (image, index) => {
+      images.map((image, index) => {
         const s3ImageName = this.productUtils.getProductImageName(
           brandCode,
           name,
           colorName,
           index + 1
         )
-        return await this.imageService.uploadImageFromURL(
+        return this.imageService.uploadImageFromURL(
           image.url,
           s3ImageName,
           name
