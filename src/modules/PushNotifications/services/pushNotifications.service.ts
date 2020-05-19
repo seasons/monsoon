@@ -1,3 +1,4 @@
+import { PrismaService } from "@app/prisma/prisma.service"
 import { Injectable } from "@nestjs/common"
 import { Token } from "@pusher/push-notifications-server"
 
@@ -11,7 +12,8 @@ import {
 export class PushNotificationsService {
   constructor(
     private readonly pusher: PusherService,
-    private readonly data: PushNotificationsDataProvider
+    private readonly data: PushNotificationsDataProvider,
+    private readonly prisma: PrismaService
   ) {}
 
   generateToken(email: string): Token {
@@ -29,11 +31,14 @@ export class PushNotificationsService {
     if (process.env.NODE_ENV === "production") {
       targetEmail = email
     }
-    await this.pusher.client.publishToUsers(
-      [targetEmail],
-      this.data.getPushNotifData(pushNotifID)
-    )
 
-    // TODO: Create a push notification receipt
+    const { receiptPayload, notificationPayload } = this.data.getPushNotifData(
+      pushNotifID
+    )
+    await this.pusher.client.publishToUsers([targetEmail], notificationPayload)
+    await this.prisma.client.createPushNotificationReceipt({
+      ...receiptPayload,
+      users: { connect: [{ email: email }] },
+    })
   }
 }

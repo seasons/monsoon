@@ -1,4 +1,7 @@
 import { Injectable } from "@nestjs/common"
+import { pick } from "lodash"
+
+import { PushNotificationData } from "../pushNotifications.types"
 
 export enum PushNotificationID {
   ResetBag,
@@ -7,8 +10,16 @@ export enum PushNotificationID {
 
 @Injectable()
 export class PushNotificationsDataProvider {
-  getPushNotifData(pushNotifID: PushNotificationID) {
-    return this.wrapAPNsData(this.pushNotifDefinitions[pushNotifID])
+  getPushNotifData(pushNotifID: PushNotificationID): PushNotificationData {
+    const now = new Date()
+    const alert = this.pushNotifDefinitions[pushNotifID]
+    return {
+      notificationPayload: this.wrapAPNsData(alert),
+      receiptPayload: {
+        ...pick(alert, ["title", "body"]),
+        sentAt: now.toISOString(),
+      },
+    }
   }
 
   private wrapAPNsData = a => ({ apns: { aps: { alert: a } } })

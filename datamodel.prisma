@@ -350,6 +350,24 @@ type WarehouseLocation {
   updatedAt: DateTime! @updatedAt
 }
 
+type PushNotificationReceipt {
+  #id of the notification
+  id: ID! @id
+  #(e.g. /product/slug, or /brand/slug)
+  entitySlug: String
+  # url = (e.g /home, /browse)
+  url: String
+  # user = which customer to send message to
+  users: [User!]!
+  # body = body of the message
+  body: String!
+  # title = title of the message
+  title: String
+  sentAt: DateTime!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
 type User {
   id: ID! @id
   auth0Id: String! @unique
