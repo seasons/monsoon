@@ -529,7 +529,9 @@ export class SyncProductVariantsService {
               sku,
             },
           },
-          inventoryStatus: "Reservable" as InventoryStatus,
+          inventoryStatus: this.airtableService.airtableToPrismaInventoryStatus(
+            fields["Inventory Status"]
+          ),
           productStatus: fields["Product Status"],
         } as PhysicalProductCreateInput)
     )
