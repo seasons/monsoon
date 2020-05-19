@@ -1,5 +1,5 @@
 # import ProductVariant, Query, Mutation, UpsertVariantInput from "./productVariant.graphql"
-# import Query from "./physicalProduct.graphql"
+# import PhysicalProduct, Query, Mutation from "./physicalProduct.graphql"
 
 type Query {
   brand(where: BrandWhereUniqueInput!): Brand
@@ -129,10 +129,6 @@ type Mutation {
     where: ProductWhereUniqueInput!
     data: CustomProductUpdateInput!
   ): Product! @hasRole(roles: [Admin])
-  updatePhysicalProduct(
-    where: PhysicalProductWhereUniqueInput!
-    data: PhysicalProductUpdateInput!
-  ): PhysicalProduct @hasRole(roles: [Admin])
   addViewedProduct(item: ID!): RecentlyViewedProduct!
   upsertProduct(input: UpsertProductInput!): Product @hasRole(roles: [Admin])
   addProductRequest(reason: String!, url: String!): ProductRequest!

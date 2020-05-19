@@ -11,6 +11,13 @@ type Query {
   ): [PhysicalProduct]!
 }
 
+type Mutation {
+  updatePhysicalProduct(
+    where: PhysicalProductWhereUniqueInput!
+    data: PhysicalProductUpdateInput!
+  ): PhysicalProduct @hasRole(roles: [Admin])
+}
+
 type PhysicalProduct {
   id: ID!
   seasonsUID: String!
@@ -45,10 +52,16 @@ input PhysicalProductUpdateInput {
   barcode: String
   sequenceNumber: Int
   warehouseLocation: WarehouseLocationConnectWhereUniqueInput
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
 }
 
 input UpsertPhysicalProductInput {
-  seasonsUID: String!
+  dateOrdered: DateTime
+  dateReceived: DateTime
   inventoryStatus: InventoryStatus!
   productStatus: PhysicalProductStatus!
+  seasonsUID: String!
+  unitCost: Float
 }
