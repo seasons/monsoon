@@ -72,6 +72,10 @@ export class ReservationScheduledJobs {
 
           this.emailService.sendReturnReminderEmail(user, reservation)
 
+          await this.pushNotifs.pushNotifyUser({
+            email: user.email,
+            pushNotifID: PushNotificationID.ReturnDue,
+          })
           await this.prisma.client.updateReservation({
             where: { id: reservation.id },
             data: { reminderSentAt: DateTime.local().toString() },
