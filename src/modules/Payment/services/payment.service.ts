@@ -30,6 +30,67 @@ export class PaymentService {
     private readonly prisma: PrismaService
   ) {}
 
+  async pauseSubscription(subscriptionID) {
+    await chargebee.subscription
+      .pause(subscriptionID, {
+        pause_option: "end_of_term",
+      })
+      .request(async (error, result) => {
+        if (error) {
+          //handle error
+          console.log("Error pausing subscription: ", error)
+        } else {
+          console.log("Success pausing subscription: ", result)
+          const chargbeeUser = result.customer
+          const prismaCustomer = await this.authService.getCustomerFromUserID(
+            chargbeeUser.id
+          )
+          await this.prisma.client.updateCustomer({
+            data: {
+              status: "Paused",
+            },
+            where: { id: prismaCustomer.id },
+          })
+          // const subscription = result.subscription
+          // const customer = result.customer
+          // const card = result.card
+          // const invoice = result.invoice
+          // const unbilled_charges = result.unbilled_charges
+          // const credit_notes = result.credit_notes
+        }
+      })
+  }
+
+  async resumeSubscription(subscriptionID) {
+    await chargebee.subscription
+      .resume(subscriptionID, {
+        resume_option: "immediately",
+        unpaid_invoices_handling: "schedule_payment_collection",
+      })
+      .request(async (error, result) => {
+        if (error) {
+          //handle error
+          console.log(error)
+          return false
+        } else {
+          console.log(result)
+          const chargbeeUser = result.customer
+          const prismaCustomer = await this.authService.getCustomerFromUserID(
+            chargbeeUser.id
+          )
+          await this.prisma.client.updateCustomer({
+            data: {
+              status: "Active",
+            },
+            where: { id: prismaCustomer.id },
+          })
+          return true
+        }
+      })
+
+    return null
+  }
+
   async createSubscription(
     plan: Plan,
     billingAddress: BillingAddress,
@@ -41,6 +102,7 @@ export class PaymentService {
         plan_id: this.prismaPlanToChargebeePlanId(plan),
         billingAddress,
         customer: {
+          id: user.id,
           first_name: user.firstName,
           last_name: user.lastName,
           email: user.email,
