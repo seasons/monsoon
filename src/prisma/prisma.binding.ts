@@ -8356,6 +8356,9 @@ type PhysicalProduct implements Node {
   offloadNotes: String
   sequenceNumber: Int!
   warehouseLocation: WarehouseLocation
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -8378,6 +8381,9 @@ input PhysicalProductCreateInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   sequenceNumber: Int!
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
   location: LocationCreateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
   warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
@@ -8416,6 +8422,9 @@ input PhysicalProductCreateWithoutLocationInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   sequenceNumber: Int!
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
   warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
 }
@@ -8428,6 +8437,9 @@ input PhysicalProductCreateWithoutProductVariantInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   sequenceNumber: Int!
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
   location: LocationCreateOneWithoutPhysicalProductsInput
   warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
 }
@@ -8440,6 +8452,9 @@ input PhysicalProductCreateWithoutWarehouseLocationInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   sequenceNumber: Int!
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
   location: LocationCreateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
 }
@@ -8476,6 +8491,12 @@ enum PhysicalProductOrderByInput {
   offloadNotes_DESC
   sequenceNumber_ASC
   sequenceNumber_DESC
+  dateOrdered_ASC
+  dateOrdered_DESC
+  dateReceived_ASC
+  dateReceived_DESC
+  unitCost_ASC
+  unitCost_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -8490,6 +8511,9 @@ type PhysicalProductPreviousValues {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   sequenceNumber: Int!
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -8675,6 +8699,72 @@ input PhysicalProductScalarWhereInput {
 
   """All values greater than or equal the given value."""
   sequenceNumber_gte: Int
+  dateOrdered: DateTime
+
+  """All values that are not equal to given value."""
+  dateOrdered_not: DateTime
+
+  """All values that are contained in given list."""
+  dateOrdered_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  dateOrdered_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  dateOrdered_lt: DateTime
+
+  """All values less than or equal the given value."""
+  dateOrdered_lte: DateTime
+
+  """All values greater than the given value."""
+  dateOrdered_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  dateOrdered_gte: DateTime
+  dateReceived: DateTime
+
+  """All values that are not equal to given value."""
+  dateReceived_not: DateTime
+
+  """All values that are contained in given list."""
+  dateReceived_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  dateReceived_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  dateReceived_lt: DateTime
+
+  """All values less than or equal the given value."""
+  dateReceived_lte: DateTime
+
+  """All values greater than the given value."""
+  dateReceived_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  dateReceived_gte: DateTime
+  unitCost: Float
+
+  """All values that are not equal to given value."""
+  unitCost_not: Float
+
+  """All values that are contained in given list."""
+  unitCost_in: [Float!]
+
+  """All values that are not contained in given list."""
+  unitCost_not_in: [Float!]
+
+  """All values less than the given value."""
+  unitCost_lt: Float
+
+  """All values less than or equal the given value."""
+  unitCost_lte: Float
+
+  """All values greater than the given value."""
+  unitCost_gt: Float
+
+  """All values greater than or equal the given value."""
+  unitCost_gte: Float
   createdAt: DateTime
 
   """All values that are not equal to given value."""
@@ -8775,6 +8865,9 @@ input PhysicalProductUpdateDataInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   sequenceNumber: Int
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
   location: LocationUpdateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
@@ -8787,6 +8880,9 @@ input PhysicalProductUpdateInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   sequenceNumber: Int
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
   location: LocationUpdateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
@@ -8799,6 +8895,9 @@ input PhysicalProductUpdateManyDataInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   sequenceNumber: Int
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
 }
 
 input PhysicalProductUpdateManyInput {
@@ -8820,6 +8919,9 @@ input PhysicalProductUpdateManyMutationInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   sequenceNumber: Int
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
 }
 
 input PhysicalProductUpdateManyWithoutLocationInput {
@@ -8877,6 +8979,9 @@ input PhysicalProductUpdateWithoutLocationDataInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   sequenceNumber: Int
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
 }
@@ -8888,6 +8993,9 @@ input PhysicalProductUpdateWithoutProductVariantDataInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   sequenceNumber: Int
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
   location: LocationUpdateOneWithoutPhysicalProductsInput
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
 }
@@ -8899,6 +9007,9 @@ input PhysicalProductUpdateWithoutWarehouseLocationDataInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   sequenceNumber: Int
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
   location: LocationUpdateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
 }
@@ -9133,6 +9244,72 @@ input PhysicalProductWhereInput {
 
   """All values greater than or equal the given value."""
   sequenceNumber_gte: Int
+  dateOrdered: DateTime
+
+  """All values that are not equal to given value."""
+  dateOrdered_not: DateTime
+
+  """All values that are contained in given list."""
+  dateOrdered_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  dateOrdered_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  dateOrdered_lt: DateTime
+
+  """All values less than or equal the given value."""
+  dateOrdered_lte: DateTime
+
+  """All values greater than the given value."""
+  dateOrdered_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  dateOrdered_gte: DateTime
+  dateReceived: DateTime
+
+  """All values that are not equal to given value."""
+  dateReceived_not: DateTime
+
+  """All values that are contained in given list."""
+  dateReceived_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  dateReceived_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  dateReceived_lt: DateTime
+
+  """All values less than or equal the given value."""
+  dateReceived_lte: DateTime
+
+  """All values greater than the given value."""
+  dateReceived_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  dateReceived_gte: DateTime
+  unitCost: Float
+
+  """All values that are not equal to given value."""
+  unitCost_not: Float
+
+  """All values that are contained in given list."""
+  unitCost_in: [Float!]
+
+  """All values that are not contained in given list."""
+  unitCost_not_in: [Float!]
+
+  """All values less than the given value."""
+  unitCost_lt: Float
+
+  """All values less than or equal the given value."""
+  unitCost_lte: Float
+
+  """All values greater than the given value."""
+  unitCost_gt: Float
+
+  """All values greater than or equal the given value."""
+  unitCost_gte: Float
   createdAt: DateTime
 
   """All values that are not equal to given value."""
@@ -18946,6 +19123,12 @@ export type PhysicalProductOrderByInput =   'id_ASC' |
   'offloadNotes_DESC' |
   'sequenceNumber_ASC' |
   'sequenceNumber_DESC' |
+  'dateOrdered_ASC' |
+  'dateOrdered_DESC' |
+  'dateReceived_ASC' |
+  'dateReceived_DESC' |
+  'unitCost_ASC' |
+  'unitCost_DESC' |
   'createdAt_ASC' |
   'createdAt_DESC' |
   'updatedAt_ASC' |
@@ -22419,6 +22602,9 @@ export interface PhysicalProductCreateInput {
   offloadMethod?: PhysicalProductOffloadMethod | null
   offloadNotes?: String | null
   sequenceNumber: Int
+  dateOrdered?: DateTime | null
+  dateReceived?: DateTime | null
+  unitCost?: Float | null
   location?: LocationCreateOneWithoutPhysicalProductsInput | null
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput
   warehouseLocation?: WarehouseLocationCreateOneWithoutPhysicalProductsInput | null
@@ -22457,6 +22643,9 @@ export interface PhysicalProductCreateWithoutLocationInput {
   offloadMethod?: PhysicalProductOffloadMethod | null
   offloadNotes?: String | null
   sequenceNumber: Int
+  dateOrdered?: DateTime | null
+  dateReceived?: DateTime | null
+  unitCost?: Float | null
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput
   warehouseLocation?: WarehouseLocationCreateOneWithoutPhysicalProductsInput | null
 }
@@ -22469,6 +22658,9 @@ export interface PhysicalProductCreateWithoutProductVariantInput {
   offloadMethod?: PhysicalProductOffloadMethod | null
   offloadNotes?: String | null
   sequenceNumber: Int
+  dateOrdered?: DateTime | null
+  dateReceived?: DateTime | null
+  unitCost?: Float | null
   location?: LocationCreateOneWithoutPhysicalProductsInput | null
   warehouseLocation?: WarehouseLocationCreateOneWithoutPhysicalProductsInput | null
 }
@@ -22481,6 +22673,9 @@ export interface PhysicalProductCreateWithoutWarehouseLocationInput {
   offloadMethod?: PhysicalProductOffloadMethod | null
   offloadNotes?: String | null
   sequenceNumber: Int
+  dateOrdered?: DateTime | null
+  dateReceived?: DateTime | null
+  unitCost?: Float | null
   location?: LocationCreateOneWithoutPhysicalProductsInput | null
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput
 }
@@ -22551,6 +22746,30 @@ export interface PhysicalProductScalarWhereInput {
   sequenceNumber_lte?: Int | null
   sequenceNumber_gt?: Int | null
   sequenceNumber_gte?: Int | null
+  dateOrdered?: DateTime | null
+  dateOrdered_not?: DateTime | null
+  dateOrdered_in?: DateTime[] | DateTime | null
+  dateOrdered_not_in?: DateTime[] | DateTime | null
+  dateOrdered_lt?: DateTime | null
+  dateOrdered_lte?: DateTime | null
+  dateOrdered_gt?: DateTime | null
+  dateOrdered_gte?: DateTime | null
+  dateReceived?: DateTime | null
+  dateReceived_not?: DateTime | null
+  dateReceived_in?: DateTime[] | DateTime | null
+  dateReceived_not_in?: DateTime[] | DateTime | null
+  dateReceived_lt?: DateTime | null
+  dateReceived_lte?: DateTime | null
+  dateReceived_gt?: DateTime | null
+  dateReceived_gte?: DateTime | null
+  unitCost?: Float | null
+  unitCost_not?: Float | null
+  unitCost_in?: Float[] | Float | null
+  unitCost_not_in?: Float[] | Float | null
+  unitCost_lt?: Float | null
+  unitCost_lte?: Float | null
+  unitCost_gt?: Float | null
+  unitCost_gte?: Float | null
   createdAt?: DateTime | null
   createdAt_not?: DateTime | null
   createdAt_in?: DateTime[] | DateTime | null
@@ -22587,6 +22806,9 @@ export interface PhysicalProductUpdateDataInput {
   offloadMethod?: PhysicalProductOffloadMethod | null
   offloadNotes?: String | null
   sequenceNumber?: Int | null
+  dateOrdered?: DateTime | null
+  dateReceived?: DateTime | null
+  unitCost?: Float | null
   location?: LocationUpdateOneWithoutPhysicalProductsInput | null
   productVariant?: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput | null
   warehouseLocation?: WarehouseLocationUpdateOneWithoutPhysicalProductsInput | null
@@ -22599,6 +22821,9 @@ export interface PhysicalProductUpdateInput {
   offloadMethod?: PhysicalProductOffloadMethod | null
   offloadNotes?: String | null
   sequenceNumber?: Int | null
+  dateOrdered?: DateTime | null
+  dateReceived?: DateTime | null
+  unitCost?: Float | null
   location?: LocationUpdateOneWithoutPhysicalProductsInput | null
   productVariant?: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput | null
   warehouseLocation?: WarehouseLocationUpdateOneWithoutPhysicalProductsInput | null
@@ -22611,6 +22836,9 @@ export interface PhysicalProductUpdateManyDataInput {
   offloadMethod?: PhysicalProductOffloadMethod | null
   offloadNotes?: String | null
   sequenceNumber?: Int | null
+  dateOrdered?: DateTime | null
+  dateReceived?: DateTime | null
+  unitCost?: Float | null
 }
 
 export interface PhysicalProductUpdateManyInput {
@@ -22632,6 +22860,9 @@ export interface PhysicalProductUpdateManyMutationInput {
   offloadMethod?: PhysicalProductOffloadMethod | null
   offloadNotes?: String | null
   sequenceNumber?: Int | null
+  dateOrdered?: DateTime | null
+  dateReceived?: DateTime | null
+  unitCost?: Float | null
 }
 
 export interface PhysicalProductUpdateManyWithoutLocationInput {
@@ -22689,6 +22920,9 @@ export interface PhysicalProductUpdateWithoutLocationDataInput {
   offloadMethod?: PhysicalProductOffloadMethod | null
   offloadNotes?: String | null
   sequenceNumber?: Int | null
+  dateOrdered?: DateTime | null
+  dateReceived?: DateTime | null
+  unitCost?: Float | null
   productVariant?: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput | null
   warehouseLocation?: WarehouseLocationUpdateOneWithoutPhysicalProductsInput | null
 }
@@ -22700,6 +22934,9 @@ export interface PhysicalProductUpdateWithoutProductVariantDataInput {
   offloadMethod?: PhysicalProductOffloadMethod | null
   offloadNotes?: String | null
   sequenceNumber?: Int | null
+  dateOrdered?: DateTime | null
+  dateReceived?: DateTime | null
+  unitCost?: Float | null
   location?: LocationUpdateOneWithoutPhysicalProductsInput | null
   warehouseLocation?: WarehouseLocationUpdateOneWithoutPhysicalProductsInput | null
 }
@@ -22711,6 +22948,9 @@ export interface PhysicalProductUpdateWithoutWarehouseLocationDataInput {
   offloadMethod?: PhysicalProductOffloadMethod | null
   offloadNotes?: String | null
   sequenceNumber?: Int | null
+  dateOrdered?: DateTime | null
+  dateReceived?: DateTime | null
+  unitCost?: Float | null
   location?: LocationUpdateOneWithoutPhysicalProductsInput | null
   productVariant?: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput | null
 }
@@ -22830,6 +23070,30 @@ export interface PhysicalProductWhereInput {
   sequenceNumber_lte?: Int | null
   sequenceNumber_gt?: Int | null
   sequenceNumber_gte?: Int | null
+  dateOrdered?: DateTime | null
+  dateOrdered_not?: DateTime | null
+  dateOrdered_in?: DateTime[] | DateTime | null
+  dateOrdered_not_in?: DateTime[] | DateTime | null
+  dateOrdered_lt?: DateTime | null
+  dateOrdered_lte?: DateTime | null
+  dateOrdered_gt?: DateTime | null
+  dateOrdered_gte?: DateTime | null
+  dateReceived?: DateTime | null
+  dateReceived_not?: DateTime | null
+  dateReceived_in?: DateTime[] | DateTime | null
+  dateReceived_not_in?: DateTime[] | DateTime | null
+  dateReceived_lt?: DateTime | null
+  dateReceived_lte?: DateTime | null
+  dateReceived_gt?: DateTime | null
+  dateReceived_gte?: DateTime | null
+  unitCost?: Float | null
+  unitCost_not?: Float | null
+  unitCost_in?: Float[] | Float | null
+  unitCost_not_in?: Float[] | Float | null
+  unitCost_lt?: Float | null
+  unitCost_lte?: Float | null
+  unitCost_gt?: Float | null
+  unitCost_gte?: Float | null
   createdAt?: DateTime | null
   createdAt_not?: DateTime | null
   createdAt_in?: DateTime[] | DateTime | null
@@ -28126,6 +28390,9 @@ export interface PhysicalProduct extends Node {
   offloadNotes?: String | null
   sequenceNumber: Int
   warehouseLocation?: WarehouseLocation | null
+  dateOrdered?: DateTime | null
+  dateReceived?: DateTime | null
+  unitCost?: Float | null
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -28157,6 +28424,9 @@ export interface PhysicalProductPreviousValues {
   offloadMethod?: PhysicalProductOffloadMethod | null
   offloadNotes?: String | null
   sequenceNumber: Int
+  dateOrdered?: DateTime | null
+  dateReceived?: DateTime | null
+  unitCost?: Float | null
   createdAt: DateTime
   updatedAt: DateTime
 }

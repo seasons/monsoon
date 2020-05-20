@@ -5,6 +5,7 @@ node_modules
 .vscode
 *.log
 .env
+.env.local
 .env.staging
 .env.production
 .serverless

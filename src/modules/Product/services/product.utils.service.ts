@@ -299,8 +299,13 @@ export class ProductUtilsService {
     return sizeRecord
   }
 
-  getProductImageName(brandCode: string, name: string, index: number) {
-    const slug = slugify(name)
+  getProductImageName(
+    brandCode: string,
+    name: string,
+    colorName: string,
+    index: number
+  ) {
+    const slug = slugify(name + " " + colorName).toLowerCase()
     return `${brandCode}/${slug}/${slug}-${index}.png`.toLowerCase()
   }
 
