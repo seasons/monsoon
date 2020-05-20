@@ -15,6 +15,20 @@ export class PaymentMutationsResolver {
   ) {}
 
   @Mutation()
+  async pauseMembership(@Args() { subscriptionID }) {
+    console.log("pauseMembership", subscriptionID)
+    await this.paymentService.pauseSubscription(subscriptionID)
+    return true
+  }
+
+  @Mutation()
+  async resumeMembership(@Args() { subscriptionID }) {
+    console.log("resumeSubscription", subscriptionID)
+    await this.paymentService.resumeSubscription(subscriptionID)
+    return true
+  }
+
+  @Mutation()
   async updatePaymentAndShipping(
     @Args() { billingAddress, phoneNumber, shippingAddress },
     @Customer() customer,

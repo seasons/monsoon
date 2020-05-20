@@ -11,17 +11,6 @@ export class ChargebeeMutationsResolver {
     private readonly prisma: PrismaService
   ) {}
 
-  @Mutation()
-  async pauseMembership(@Args() { subscriptionID }) {
-    console.log("pauseMembership", subscriptionID)
-    return await this.paymentService.pauseSubscription(subscriptionID)
-  }
-
-  async resumeMembership(@Args() { subscriptionID }) {
-    console.log("resumeSubscription", subscriptionID)
-    return await this.paymentService.resumeSubscription(subscriptionID)
-  }
-
   async acknowledgeCompletedChargebeeHostedCheckout(
     @Args() { hostedPageID },
     @Analytics() analytics

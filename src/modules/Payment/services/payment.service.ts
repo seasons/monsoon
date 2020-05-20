@@ -31,64 +31,42 @@ export class PaymentService {
   ) {}
 
   async pauseSubscription(subscriptionID) {
-    await chargebee.subscription
+    const result = await chargebee.subscription
       .pause(subscriptionID, {
         pause_option: "end_of_term",
       })
-      .request(async (error, result) => {
-        if (error) {
-          //handle error
-          console.log("Error pausing subscription: ", error)
-        } else {
-          console.log("Success pausing subscription: ", result)
-          const chargbeeUser = result.customer
-          const prismaCustomer = await this.authService.getCustomerFromUserID(
-            chargbeeUser.id
-          )
-          await this.prisma.client.updateCustomer({
-            data: {
-              status: "Paused",
-            },
-            where: { id: prismaCustomer.id },
-          })
-          // const subscription = result.subscription
-          // const customer = result.customer
-          // const card = result.card
-          // const invoice = result.invoice
-          // const unbilled_charges = result.unbilled_charges
-          // const credit_notes = result.credit_notes
-        }
-      })
+      .request()
+    const chargbeeUser = result.customer
+    const prismaCustomer = await this.authService.getCustomerFromUserID(
+      chargbeeUser.id
+    )
+    console.log("result success", result)
+    await this.prisma.client.updateCustomer({
+      data: {
+        status: "Paused",
+      },
+      where: { id: prismaCustomer.id },
+    })
   }
 
   async resumeSubscription(subscriptionID) {
-    await chargebee.subscription
+    const result = await chargebee.subscription
       .resume(subscriptionID, {
         resume_option: "immediately",
         unpaid_invoices_handling: "schedule_payment_collection",
       })
-      .request(async (error, result) => {
-        if (error) {
-          //handle error
-          console.log(error)
-          return false
-        } else {
-          console.log(result)
-          const chargbeeUser = result.customer
-          const prismaCustomer = await this.authService.getCustomerFromUserID(
-            chargbeeUser.id
-          )
-          await this.prisma.client.updateCustomer({
-            data: {
-              status: "Active",
-            },
-            where: { id: prismaCustomer.id },
-          })
-          return true
-        }
-      })
-
-    return null
+      .request()
+    console.log(result)
+    const chargbeeUser = result.customer
+    const prismaCustomer = await this.authService.getCustomerFromUserID(
+      chargbeeUser.id
+    )
+    await this.prisma.client.updateCustomer({
+      data: {
+        status: "Active",
+      },
+      where: { id: prismaCustomer.id },
+    })
   }
 
   async createSubscription(
