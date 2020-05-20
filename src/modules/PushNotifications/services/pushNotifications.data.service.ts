@@ -11,6 +11,9 @@ export enum PushNotificationID {
   ReturnDue,
 }
 
+const maxTitleLength = 50
+const maxBodyLength = 100
+
 @Injectable()
 export class PushNotificationsDataProvider {
   getPushNotifData(pushNotifID: PushNotificationID): PushNotificationData {
@@ -34,11 +37,11 @@ export class PushNotificationsDataProvider {
 
   private enforceLengths(alert: AlertPayload): AlertPayload {
     debugger
-    if (alert.title?.length > 50) {
+    if (alert.title?.length > maxTitleLength) {
       throw new Error("Push notification title exceeds max length of 50 chars")
     }
     debugger
-    if (alert.body?.length > 100) {
+    if (alert.body?.length > maxBodyLength) {
       throw new Error("Push notification body exceeds max length of 100 chars")
     }
     debugger
