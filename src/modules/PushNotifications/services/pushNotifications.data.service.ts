@@ -1,3 +1,5 @@
+import fs from "fs"
+
 import { Injectable } from "@nestjs/common"
 import { pick } from "lodash"
 
@@ -12,7 +14,12 @@ export enum PushNotificationID {
 export class PushNotificationsDataProvider {
   getPushNotifData(pushNotifID: PushNotificationID): PushNotificationData {
     const now = new Date()
-    const alert = this.pushNotifDefinitions[pushNotifID]
+    const alert = JSON.parse(
+      fs.readFileSync(
+        process.cwd() + "/src/modules/PushNotifications/data.json",
+        "utf-8"
+      )
+    )[PushNotificationID[pushNotifID]]
     return {
       notificationPayload: this.wrapAPNsData(alert),
       receiptPayload: {
@@ -23,17 +30,4 @@ export class PushNotificationsDataProvider {
   }
 
   private wrapAPNsData = a => ({ apns: { aps: { alert: a } } })
-
-  private pushNotifDefinitions = {
-    [PushNotificationID.ResetBag]: {
-      title: "Your bag has been reset!",
-      body:
-        "Your bag has been reset. You are now free to place another reservation.",
-    },
-    [PushNotificationID.ReturnDue]: {
-      title: "Your return is due soon",
-      body:
-        "Your return is due in 3 days. Please ensure to ship back your items.",
-    },
-  }
 }

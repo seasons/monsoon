@@ -1,0 +1,10 @@
+{
+  "ResetBag": {
+    "title": "It's time to choose something new",
+    "body": "Your bag has been reset and you're ready to reserve your next order"
+  },
+  "ReturnDue": {
+    "title": "Your items are due back in 3 days",
+    "body": "Pack your bag, attach the pre-paid shipping label, and drop off at your nearest UPS pick-up location."
+  }
+}
