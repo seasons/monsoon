@@ -147,6 +147,7 @@ export class EmailService {
     const msg = {
       from: { email: "membership@seasons.nyc", name: "Seasons NYC" },
       to,
+      bcc: "emails@seasons.nyc",
       subject: data.email.subject,
       html: rendered,
     }
