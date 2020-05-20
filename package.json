@@ -9,6 +9,7 @@
     "graphql": "^14.5.7"
   },
   "scripts": {
+    "apollo": "apollo service:push",
     "build": "rimraf dist && tsc",
     "check:parity": "node -r dotenv/config -r ts-node/register src/scripts/queryParity.ts",
     "debug": "concurrently --kill-others 'yarn tsc -w' 'yarn debug:server'",
@@ -83,6 +84,7 @@
     "graphql-upload": "^10.0.0",
     "handlebars": "^4.7.3",
     "image-size": "^0.8.3",
+    "jsbarcode": "^3.11.0",
     "jsonwebtoken": "8.5.1",
     "jwks-rsa": "^1.6.0",
     "lodash": "^4.17.15",
