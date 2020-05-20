@@ -4,7 +4,7 @@
 # import Query, Mutation from "./modules/Customer/customer.graphql"
 # import Query, Mutation from "./modules/User/user.graphql"
 # import Reservation, Query, Mutation from "./modules/Reservation/reservation.graphql"
-# import Product, ProductVariant, Query, Mutation from "./modules/Product/product.graphql"
+# import Query, Mutation from "./modules/Product/product.graphql"
 # import Image, Mutation from "./modules/Image/image.graphql"
 # import Query from "./modules/Homepage/homepage.graphql"
 # import Query, Mutation from "./modules/Payment/payment.graphql"
