@@ -7960,12 +7960,9 @@ input PhysicalProductCreateInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   sequenceNumber: Int!
-<<<<<<< HEAD
-=======
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
->>>>>>> 0f609d4ad21f716bb598db3e15458ed819c652bd
   location: LocationCreateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
   warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
@@ -8004,12 +8001,9 @@ input PhysicalProductCreateWithoutLocationInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   sequenceNumber: Int!
-<<<<<<< HEAD
-=======
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
->>>>>>> 0f609d4ad21f716bb598db3e15458ed819c652bd
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
   warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
 }
@@ -8022,12 +8016,9 @@ input PhysicalProductCreateWithoutProductVariantInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   sequenceNumber: Int!
-<<<<<<< HEAD
-=======
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
->>>>>>> 0f609d4ad21f716bb598db3e15458ed819c652bd
   location: LocationCreateOneWithoutPhysicalProductsInput
   warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
 }
@@ -8040,12 +8031,9 @@ input PhysicalProductCreateWithoutWarehouseLocationInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   sequenceNumber: Int!
-<<<<<<< HEAD
-=======
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
->>>>>>> 0f609d4ad21f716bb598db3e15458ed819c652bd
   location: LocationCreateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
 }
@@ -8456,12 +8444,9 @@ input PhysicalProductUpdateDataInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   sequenceNumber: Int
-<<<<<<< HEAD
-=======
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
->>>>>>> 0f609d4ad21f716bb598db3e15458ed819c652bd
   location: LocationUpdateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
@@ -8474,12 +8459,9 @@ input PhysicalProductUpdateInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   sequenceNumber: Int
-<<<<<<< HEAD
-=======
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
->>>>>>> 0f609d4ad21f716bb598db3e15458ed819c652bd
   location: LocationUpdateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
@@ -8576,12 +8558,9 @@ input PhysicalProductUpdateWithoutLocationDataInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   sequenceNumber: Int
-<<<<<<< HEAD
-=======
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
->>>>>>> 0f609d4ad21f716bb598db3e15458ed819c652bd
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
 }
@@ -8593,12 +8572,9 @@ input PhysicalProductUpdateWithoutProductVariantDataInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   sequenceNumber: Int
-<<<<<<< HEAD
-=======
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
->>>>>>> 0f609d4ad21f716bb598db3e15458ed819c652bd
   location: LocationUpdateOneWithoutPhysicalProductsInput
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
 }
@@ -8610,12 +8586,9 @@ input PhysicalProductUpdateWithoutWarehouseLocationDataInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   sequenceNumber: Int
-<<<<<<< HEAD
-=======
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
->>>>>>> 0f609d4ad21f716bb598db3e15458ed819c652bd
   location: LocationUpdateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
 }
@@ -8850,8 +8823,6 @@ input PhysicalProductWhereInput {
 
   """All values greater than or equal the given value."""
   sequenceNumber_gte: Int
-<<<<<<< HEAD
-=======
   dateOrdered: DateTime
 
   """All values that are not equal to given value."""
@@ -8918,7 +8889,6 @@ input PhysicalProductWhereInput {
 
   """All values greater than or equal the given value."""
   unitCost_gte: Float
->>>>>>> 0f609d4ad21f716bb598db3e15458ed819c652bd
   createdAt: DateTime
 
   """All values that are not equal to given value."""
