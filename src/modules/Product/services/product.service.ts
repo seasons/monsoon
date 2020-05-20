@@ -146,14 +146,14 @@ export class ProductService {
 
     // Store images and get their record ids to connect to the product
     const imageDatas: ImageData[] = await Promise.all(
-      input.images.map(async (image, index) => {
-        const s3ImageName = await this.productUtils.getProductImageName(
+      input.images.map((image, index) => {
+        const s3ImageName = this.productUtils.getProductImageName(
           brand.brandCode,
           input.name,
           color.name,
           index + 1
         )
-        return await this.imageService.uploadImage(image, {
+        return this.imageService.uploadImage(image, {
           imageName: s3ImageName,
         })
       })
@@ -202,7 +202,7 @@ export class ProductService {
       color: {
         connect: { id: input.colorID },
       },
-      secondaryColor: {
+      secondaryColor: input.secondaryColorID && {
         connect: { id: input.secondaryColorID },
       },
       tags: {
