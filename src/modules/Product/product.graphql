@@ -196,7 +196,7 @@ input UpsertProductInput {
   name: String!
   outerMaterials: [String!]!
   retailPrice: Int!
-  season: String!
+  season: String
   secondaryColorCode: String
   status: ProductStatus!
   tags: [String!]!
