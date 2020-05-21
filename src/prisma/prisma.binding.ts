@@ -88,6 +88,12 @@ export interface Query {
     reservationFeedback: <T = ReservationFeedback | null>(args: { where: ReservationFeedbackWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     reservationFeedbacks: <T = Array<ReservationFeedback | null>>(args: { where?: ReservationFeedbackWhereInput | null, orderBy?: ReservationFeedbackOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     reservationFeedbacksConnection: <T = ReservationFeedbackConnection>(args: { where?: ReservationFeedbackWhereInput | null, orderBy?: ReservationFeedbackOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    reservationReceipt: <T = ReservationReceipt | null>(args: { where: ReservationReceiptWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    reservationReceipts: <T = Array<ReservationReceipt | null>>(args: { where?: ReservationReceiptWhereInput | null, orderBy?: ReservationReceiptOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    reservationReceiptsConnection: <T = ReservationReceiptConnection>(args: { where?: ReservationReceiptWhereInput | null, orderBy?: ReservationReceiptOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    reservationReceiptItem: <T = ReservationReceiptItem | null>(args: { where: ReservationReceiptItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    reservationReceiptItems: <T = Array<ReservationReceiptItem | null>>(args: { where?: ReservationReceiptItemWhereInput | null, orderBy?: ReservationReceiptItemOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    reservationReceiptItemsConnection: <T = ReservationReceiptItemConnection>(args: { where?: ReservationReceiptItemWhereInput | null, orderBy?: ReservationReceiptItemOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     size: <T = Size | null>(args: { where: SizeWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     sizes: <T = Array<Size | null>>(args: { where?: SizeWhereInput | null, orderBy?: SizeOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     sizesConnection: <T = SizeConnection>(args: { where?: SizeWhereInput | null, orderBy?: SizeOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -278,6 +284,17 @@ export interface Mutation {
     upsertReservationFeedback: <T = ReservationFeedback>(args: { where: ReservationFeedbackWhereUniqueInput, create: ReservationFeedbackCreateInput, update: ReservationFeedbackUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteReservationFeedback: <T = ReservationFeedback | null>(args: { where: ReservationFeedbackWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteManyReservationFeedbacks: <T = BatchPayload>(args: { where?: ReservationFeedbackWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    createReservationReceipt: <T = ReservationReceipt>(args: { data: ReservationReceiptCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateReservationReceipt: <T = ReservationReceipt | null>(args: { data: ReservationReceiptUpdateInput, where: ReservationReceiptWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    upsertReservationReceipt: <T = ReservationReceipt>(args: { where: ReservationReceiptWhereUniqueInput, create: ReservationReceiptCreateInput, update: ReservationReceiptUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteReservationReceipt: <T = ReservationReceipt | null>(args: { where: ReservationReceiptWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deleteManyReservationReceipts: <T = BatchPayload>(args: { where?: ReservationReceiptWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    createReservationReceiptItem: <T = ReservationReceiptItem>(args: { data: ReservationReceiptItemCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateReservationReceiptItem: <T = ReservationReceiptItem | null>(args: { data: ReservationReceiptItemUpdateInput, where: ReservationReceiptItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    updateManyReservationReceiptItems: <T = BatchPayload>(args: { data: ReservationReceiptItemUpdateManyMutationInput, where?: ReservationReceiptItemWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    upsertReservationReceiptItem: <T = ReservationReceiptItem>(args: { where: ReservationReceiptItemWhereUniqueInput, create: ReservationReceiptItemCreateInput, update: ReservationReceiptItemUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteReservationReceiptItem: <T = ReservationReceiptItem | null>(args: { where: ReservationReceiptItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deleteManyReservationReceiptItems: <T = BatchPayload>(args: { where?: ReservationReceiptItemWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createSize: <T = Size>(args: { data: SizeCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateSize: <T = Size | null>(args: { data: SizeUpdateInput, where: SizeWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateManySizes: <T = BatchPayload>(args: { data: SizeUpdateManyMutationInput, where?: SizeWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -345,6 +362,8 @@ export interface Subscription {
     recentlyViewedProduct: <T = RecentlyViewedProductSubscriptionPayload | null>(args: { where?: RecentlyViewedProductSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     reservation: <T = ReservationSubscriptionPayload | null>(args: { where?: ReservationSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     reservationFeedback: <T = ReservationFeedbackSubscriptionPayload | null>(args: { where?: ReservationFeedbackSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
+    reservationReceipt: <T = ReservationReceiptSubscriptionPayload | null>(args: { where?: ReservationReceiptSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
+    reservationReceiptItem: <T = ReservationReceiptItemSubscriptionPayload | null>(args: { where?: ReservationReceiptItemSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     size: <T = SizeSubscriptionPayload | null>(args: { where?: SizeSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     tag: <T = TagSubscriptionPayload | null>(args: { where?: TagSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     topSize: <T = TopSizeSubscriptionPayload | null>(args: { where?: TopSizeSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
@@ -382,6 +401,8 @@ export interface Exists {
   RecentlyViewedProduct: (where?: RecentlyViewedProductWhereInput) => Promise<boolean>
   Reservation: (where?: ReservationWhereInput) => Promise<boolean>
   ReservationFeedback: (where?: ReservationFeedbackWhereInput) => Promise<boolean>
+  ReservationReceipt: (where?: ReservationReceiptWhereInput) => Promise<boolean>
+  ReservationReceiptItem: (where?: ReservationReceiptItemWhereInput) => Promise<boolean>
   Size: (where?: SizeWhereInput) => Promise<boolean>
   Tag: (where?: TagWhereInput) => Promise<boolean>
   TopSize: (where?: TopSizeWhereInput) => Promise<boolean>
@@ -521,6 +542,14 @@ type AggregateReservation {
 }
 
 type AggregateReservationFeedback {
+  count: Int!
+}
+
+type AggregateReservationReceipt {
+  count: Int!
+}
+
+type AggregateReservationReceiptItem {
   count: Int!
 }
 
@@ -4708,6 +4737,17 @@ type Mutation {
   upsertReservationFeedback(where: ReservationFeedbackWhereUniqueInput!, create: ReservationFeedbackCreateInput!, update: ReservationFeedbackUpdateInput!): ReservationFeedback!
   deleteReservationFeedback(where: ReservationFeedbackWhereUniqueInput!): ReservationFeedback
   deleteManyReservationFeedbacks(where: ReservationFeedbackWhereInput): BatchPayload!
+  createReservationReceipt(data: ReservationReceiptCreateInput!): ReservationReceipt!
+  updateReservationReceipt(data: ReservationReceiptUpdateInput!, where: ReservationReceiptWhereUniqueInput!): ReservationReceipt
+  upsertReservationReceipt(where: ReservationReceiptWhereUniqueInput!, create: ReservationReceiptCreateInput!, update: ReservationReceiptUpdateInput!): ReservationReceipt!
+  deleteReservationReceipt(where: ReservationReceiptWhereUniqueInput!): ReservationReceipt
+  deleteManyReservationReceipts(where: ReservationReceiptWhereInput): BatchPayload!
+  createReservationReceiptItem(data: ReservationReceiptItemCreateInput!): ReservationReceiptItem!
+  updateReservationReceiptItem(data: ReservationReceiptItemUpdateInput!, where: ReservationReceiptItemWhereUniqueInput!): ReservationReceiptItem
+  updateManyReservationReceiptItems(data: ReservationReceiptItemUpdateManyMutationInput!, where: ReservationReceiptItemWhereInput): BatchPayload!
+  upsertReservationReceiptItem(where: ReservationReceiptItemWhereUniqueInput!, create: ReservationReceiptItemCreateInput!, update: ReservationReceiptItemUpdateInput!): ReservationReceiptItem!
+  deleteReservationReceiptItem(where: ReservationReceiptItemWhereUniqueInput!): ReservationReceiptItem
+  deleteManyReservationReceiptItems(where: ReservationReceiptItemWhereInput): BatchPayload!
   createSize(data: SizeCreateInput!): Size!
   updateSize(data: SizeUpdateInput!, where: SizeWhereUniqueInput!): Size
   updateManySizes(data: SizeUpdateManyMutationInput!, where: SizeWhereInput): BatchPayload!
@@ -4934,6 +4974,9 @@ type PhysicalProduct {
   offloadNotes: String
   sequenceNumber: Int!
   warehouseLocation: WarehouseLocation
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -4955,6 +4998,9 @@ input PhysicalProductCreateInput {
   offloadNotes: String
   sequenceNumber: Int!
   warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
 }
 
 input PhysicalProductCreateManyInput {
@@ -4977,6 +5023,11 @@ input PhysicalProductCreateManyWithoutWarehouseLocationInput {
   connect: [PhysicalProductWhereUniqueInput!]
 }
 
+input PhysicalProductCreateOneInput {
+  create: PhysicalProductCreateInput
+  connect: PhysicalProductWhereUniqueInput
+}
+
 input PhysicalProductCreateWithoutLocationInput {
   id: ID
   seasonsUID: String!
@@ -4987,6 +5038,9 @@ input PhysicalProductCreateWithoutLocationInput {
   offloadNotes: String
   sequenceNumber: Int!
   warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
 }
 
 input PhysicalProductCreateWithoutProductVariantInput {
@@ -4999,6 +5053,9 @@ input PhysicalProductCreateWithoutProductVariantInput {
   offloadNotes: String
   sequenceNumber: Int!
   warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
 }
 
 input PhysicalProductCreateWithoutWarehouseLocationInput {
@@ -5011,6 +5068,9 @@ input PhysicalProductCreateWithoutWarehouseLocationInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   sequenceNumber: Int!
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
 }
 
 type PhysicalProductEdge {
@@ -5041,6 +5101,12 @@ enum PhysicalProductOrderByInput {
   offloadNotes_DESC
   sequenceNumber_ASC
   sequenceNumber_DESC
+  dateOrdered_ASC
+  dateOrdered_DESC
+  dateReceived_ASC
+  dateReceived_DESC
+  unitCost_ASC
+  unitCost_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -5055,6 +5121,9 @@ type PhysicalProductPreviousValues {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   sequenceNumber: Int!
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -5122,6 +5191,30 @@ input PhysicalProductScalarWhereInput {
   sequenceNumber_lte: Int
   sequenceNumber_gt: Int
   sequenceNumber_gte: Int
+  dateOrdered: DateTime
+  dateOrdered_not: DateTime
+  dateOrdered_in: [DateTime!]
+  dateOrdered_not_in: [DateTime!]
+  dateOrdered_lt: DateTime
+  dateOrdered_lte: DateTime
+  dateOrdered_gt: DateTime
+  dateOrdered_gte: DateTime
+  dateReceived: DateTime
+  dateReceived_not: DateTime
+  dateReceived_in: [DateTime!]
+  dateReceived_not_in: [DateTime!]
+  dateReceived_lt: DateTime
+  dateReceived_lte: DateTime
+  dateReceived_gt: DateTime
+  dateReceived_gte: DateTime
+  unitCost: Float
+  unitCost_not: Float
+  unitCost_in: [Float!]
+  unitCost_not_in: [Float!]
+  unitCost_lt: Float
+  unitCost_lte: Float
+  unitCost_gt: Float
+  unitCost_gte: Float
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -5146,7 +5239,9 @@ input PhysicalProductScalarWhereInput {
 enum PhysicalProductStatus {
   New
   Used
+  Dirty
   Damaged
+  PermanentlyDamaged
   Clean
   Lost
 }
@@ -5179,6 +5274,9 @@ input PhysicalProductUpdateDataInput {
   offloadNotes: String
   sequenceNumber: Int
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
 }
 
 input PhysicalProductUpdateInput {
@@ -5191,6 +5289,9 @@ input PhysicalProductUpdateInput {
   offloadNotes: String
   sequenceNumber: Int
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
 }
 
 input PhysicalProductUpdateManyDataInput {
@@ -5200,6 +5301,9 @@ input PhysicalProductUpdateManyDataInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   sequenceNumber: Int
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
 }
 
 input PhysicalProductUpdateManyInput {
@@ -5221,6 +5325,9 @@ input PhysicalProductUpdateManyMutationInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   sequenceNumber: Int
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
 }
 
 input PhysicalProductUpdateManyWithoutLocationInput {
@@ -5264,6 +5371,13 @@ input PhysicalProductUpdateManyWithWhereNestedInput {
   data: PhysicalProductUpdateManyDataInput!
 }
 
+input PhysicalProductUpdateOneRequiredInput {
+  create: PhysicalProductCreateInput
+  update: PhysicalProductUpdateDataInput
+  upsert: PhysicalProductUpsertNestedInput
+  connect: PhysicalProductWhereUniqueInput
+}
+
 input PhysicalProductUpdateWithoutLocationDataInput {
   seasonsUID: String
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
@@ -5273,6 +5387,9 @@ input PhysicalProductUpdateWithoutLocationDataInput {
   offloadNotes: String
   sequenceNumber: Int
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
 }
 
 input PhysicalProductUpdateWithoutProductVariantDataInput {
@@ -5284,6 +5401,9 @@ input PhysicalProductUpdateWithoutProductVariantDataInput {
   offloadNotes: String
   sequenceNumber: Int
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
 }
 
 input PhysicalProductUpdateWithoutWarehouseLocationDataInput {
@@ -5295,6 +5415,9 @@ input PhysicalProductUpdateWithoutWarehouseLocationDataInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   sequenceNumber: Int
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
 }
 
 input PhysicalProductUpdateWithWhereUniqueNestedInput {
@@ -5315,6 +5438,11 @@ input PhysicalProductUpdateWithWhereUniqueWithoutProductVariantInput {
 input PhysicalProductUpdateWithWhereUniqueWithoutWarehouseLocationInput {
   where: PhysicalProductWhereUniqueInput!
   data: PhysicalProductUpdateWithoutWarehouseLocationDataInput!
+}
+
+input PhysicalProductUpsertNestedInput {
+  update: PhysicalProductUpdateDataInput!
+  create: PhysicalProductCreateInput!
 }
 
 input PhysicalProductUpsertWithWhereUniqueNestedInput {
@@ -5407,6 +5535,30 @@ input PhysicalProductWhereInput {
   sequenceNumber_gt: Int
   sequenceNumber_gte: Int
   warehouseLocation: WarehouseLocationWhereInput
+  dateOrdered: DateTime
+  dateOrdered_not: DateTime
+  dateOrdered_in: [DateTime!]
+  dateOrdered_not_in: [DateTime!]
+  dateOrdered_lt: DateTime
+  dateOrdered_lte: DateTime
+  dateOrdered_gt: DateTime
+  dateOrdered_gte: DateTime
+  dateReceived: DateTime
+  dateReceived_not: DateTime
+  dateReceived_in: [DateTime!]
+  dateReceived_not_in: [DateTime!]
+  dateReceived_lt: DateTime
+  dateReceived_lte: DateTime
+  dateReceived_gt: DateTime
+  dateReceived_gte: DateTime
+  unitCost: Float
+  unitCost_not: Float
+  unitCost_in: [Float!]
+  unitCost_not_in: [Float!]
+  unitCost_lt: Float
+  unitCost_lte: Float
+  unitCost_gt: Float
+  unitCost_gte: Float
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -8495,6 +8647,12 @@ type Query {
   reservationFeedback(where: ReservationFeedbackWhereUniqueInput!): ReservationFeedback
   reservationFeedbacks(where: ReservationFeedbackWhereInput, orderBy: ReservationFeedbackOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ReservationFeedback]!
   reservationFeedbacksConnection(where: ReservationFeedbackWhereInput, orderBy: ReservationFeedbackOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ReservationFeedbackConnection!
+  reservationReceipt(where: ReservationReceiptWhereUniqueInput!): ReservationReceipt
+  reservationReceipts(where: ReservationReceiptWhereInput, orderBy: ReservationReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ReservationReceipt]!
+  reservationReceiptsConnection(where: ReservationReceiptWhereInput, orderBy: ReservationReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ReservationReceiptConnection!
+  reservationReceiptItem(where: ReservationReceiptItemWhereUniqueInput!): ReservationReceiptItem
+  reservationReceiptItems(where: ReservationReceiptItemWhereInput, orderBy: ReservationReceiptItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ReservationReceiptItem]!
+  reservationReceiptItemsConnection(where: ReservationReceiptItemWhereInput, orderBy: ReservationReceiptItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ReservationReceiptItemConnection!
   size(where: SizeWhereUniqueInput!): Size
   sizes(where: SizeWhereInput, orderBy: SizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Size]!
   sizesConnection(where: SizeWhereInput, orderBy: SizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): SizeConnection!
@@ -8664,6 +8822,7 @@ type Reservation {
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
+  receipt: ReservationReceipt
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -8688,6 +8847,7 @@ input ReservationCreateInput {
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
+  receipt: ReservationReceiptCreateOneWithoutReservationInput
 }
 
 input ReservationCreateManyWithoutCustomerInput {
@@ -8700,9 +8860,31 @@ input ReservationCreateOneInput {
   connect: ReservationWhereUniqueInput
 }
 
+input ReservationCreateOneWithoutReceiptInput {
+  create: ReservationCreateWithoutReceiptInput
+  connect: ReservationWhereUniqueInput
+}
+
 input ReservationCreateWithoutCustomerInput {
   id: ID
   user: UserCreateOneInput!
+  sentPackage: PackageCreateOneInput
+  returnedPackage: PackageCreateOneInput
+  location: LocationCreateOneInput
+  products: PhysicalProductCreateManyInput
+  reservationNumber: Int!
+  shipped: Boolean!
+  status: ReservationStatus!
+  shippedAt: DateTime
+  receivedAt: DateTime
+  reminderSentAt: DateTime
+  receipt: ReservationReceiptCreateOneWithoutReservationInput
+}
+
+input ReservationCreateWithoutReceiptInput {
+  id: ID
+  user: UserCreateOneInput!
+  customer: CustomerCreateOneWithoutReservationsInput!
   sentPackage: PackageCreateOneInput
   returnedPackage: PackageCreateOneInput
   location: LocationCreateOneInput
@@ -8948,6 +9130,335 @@ type ReservationPreviousValues {
   updatedAt: DateTime!
 }
 
+type ReservationReceipt {
+  id: ID!
+  reservation: Reservation!
+  items(where: ReservationReceiptItemWhereInput, orderBy: ReservationReceiptItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ReservationReceiptItem!]
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type ReservationReceiptConnection {
+  pageInfo: PageInfo!
+  edges: [ReservationReceiptEdge]!
+  aggregate: AggregateReservationReceipt!
+}
+
+input ReservationReceiptCreateInput {
+  id: ID
+  reservation: ReservationCreateOneWithoutReceiptInput!
+  items: ReservationReceiptItemCreateManyInput
+}
+
+input ReservationReceiptCreateOneWithoutReservationInput {
+  create: ReservationReceiptCreateWithoutReservationInput
+  connect: ReservationReceiptWhereUniqueInput
+}
+
+input ReservationReceiptCreateWithoutReservationInput {
+  id: ID
+  items: ReservationReceiptItemCreateManyInput
+}
+
+type ReservationReceiptEdge {
+  node: ReservationReceipt!
+  cursor: String!
+}
+
+type ReservationReceiptItem {
+  id: ID!
+  product: PhysicalProduct!
+  productStatus: PhysicalProductStatus!
+  notes: String
+}
+
+type ReservationReceiptItemConnection {
+  pageInfo: PageInfo!
+  edges: [ReservationReceiptItemEdge]!
+  aggregate: AggregateReservationReceiptItem!
+}
+
+input ReservationReceiptItemCreateInput {
+  id: ID
+  product: PhysicalProductCreateOneInput!
+  productStatus: PhysicalProductStatus!
+  notes: String
+}
+
+input ReservationReceiptItemCreateManyInput {
+  create: [ReservationReceiptItemCreateInput!]
+  connect: [ReservationReceiptItemWhereUniqueInput!]
+}
+
+type ReservationReceiptItemEdge {
+  node: ReservationReceiptItem!
+  cursor: String!
+}
+
+enum ReservationReceiptItemOrderByInput {
+  id_ASC
+  id_DESC
+  productStatus_ASC
+  productStatus_DESC
+  notes_ASC
+  notes_DESC
+}
+
+type ReservationReceiptItemPreviousValues {
+  id: ID!
+  productStatus: PhysicalProductStatus!
+  notes: String
+}
+
+input ReservationReceiptItemScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  productStatus: PhysicalProductStatus
+  productStatus_not: PhysicalProductStatus
+  productStatus_in: [PhysicalProductStatus!]
+  productStatus_not_in: [PhysicalProductStatus!]
+  notes: String
+  notes_not: String
+  notes_in: [String!]
+  notes_not_in: [String!]
+  notes_lt: String
+  notes_lte: String
+  notes_gt: String
+  notes_gte: String
+  notes_contains: String
+  notes_not_contains: String
+  notes_starts_with: String
+  notes_not_starts_with: String
+  notes_ends_with: String
+  notes_not_ends_with: String
+  AND: [ReservationReceiptItemScalarWhereInput!]
+  OR: [ReservationReceiptItemScalarWhereInput!]
+  NOT: [ReservationReceiptItemScalarWhereInput!]
+}
+
+type ReservationReceiptItemSubscriptionPayload {
+  mutation: MutationType!
+  node: ReservationReceiptItem
+  updatedFields: [String!]
+  previousValues: ReservationReceiptItemPreviousValues
+}
+
+input ReservationReceiptItemSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: ReservationReceiptItemWhereInput
+  AND: [ReservationReceiptItemSubscriptionWhereInput!]
+  OR: [ReservationReceiptItemSubscriptionWhereInput!]
+  NOT: [ReservationReceiptItemSubscriptionWhereInput!]
+}
+
+input ReservationReceiptItemUpdateDataInput {
+  product: PhysicalProductUpdateOneRequiredInput
+  productStatus: PhysicalProductStatus
+  notes: String
+}
+
+input ReservationReceiptItemUpdateInput {
+  product: PhysicalProductUpdateOneRequiredInput
+  productStatus: PhysicalProductStatus
+  notes: String
+}
+
+input ReservationReceiptItemUpdateManyDataInput {
+  productStatus: PhysicalProductStatus
+  notes: String
+}
+
+input ReservationReceiptItemUpdateManyInput {
+  create: [ReservationReceiptItemCreateInput!]
+  update: [ReservationReceiptItemUpdateWithWhereUniqueNestedInput!]
+  upsert: [ReservationReceiptItemUpsertWithWhereUniqueNestedInput!]
+  delete: [ReservationReceiptItemWhereUniqueInput!]
+  connect: [ReservationReceiptItemWhereUniqueInput!]
+  set: [ReservationReceiptItemWhereUniqueInput!]
+  disconnect: [ReservationReceiptItemWhereUniqueInput!]
+  deleteMany: [ReservationReceiptItemScalarWhereInput!]
+  updateMany: [ReservationReceiptItemUpdateManyWithWhereNestedInput!]
+}
+
+input ReservationReceiptItemUpdateManyMutationInput {
+  productStatus: PhysicalProductStatus
+  notes: String
+}
+
+input ReservationReceiptItemUpdateManyWithWhereNestedInput {
+  where: ReservationReceiptItemScalarWhereInput!
+  data: ReservationReceiptItemUpdateManyDataInput!
+}
+
+input ReservationReceiptItemUpdateWithWhereUniqueNestedInput {
+  where: ReservationReceiptItemWhereUniqueInput!
+  data: ReservationReceiptItemUpdateDataInput!
+}
+
+input ReservationReceiptItemUpsertWithWhereUniqueNestedInput {
+  where: ReservationReceiptItemWhereUniqueInput!
+  update: ReservationReceiptItemUpdateDataInput!
+  create: ReservationReceiptItemCreateInput!
+}
+
+input ReservationReceiptItemWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  product: PhysicalProductWhereInput
+  productStatus: PhysicalProductStatus
+  productStatus_not: PhysicalProductStatus
+  productStatus_in: [PhysicalProductStatus!]
+  productStatus_not_in: [PhysicalProductStatus!]
+  notes: String
+  notes_not: String
+  notes_in: [String!]
+  notes_not_in: [String!]
+  notes_lt: String
+  notes_lte: String
+  notes_gt: String
+  notes_gte: String
+  notes_contains: String
+  notes_not_contains: String
+  notes_starts_with: String
+  notes_not_starts_with: String
+  notes_ends_with: String
+  notes_not_ends_with: String
+  AND: [ReservationReceiptItemWhereInput!]
+  OR: [ReservationReceiptItemWhereInput!]
+  NOT: [ReservationReceiptItemWhereInput!]
+}
+
+input ReservationReceiptItemWhereUniqueInput {
+  id: ID
+}
+
+enum ReservationReceiptOrderByInput {
+  id_ASC
+  id_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type ReservationReceiptPreviousValues {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type ReservationReceiptSubscriptionPayload {
+  mutation: MutationType!
+  node: ReservationReceipt
+  updatedFields: [String!]
+  previousValues: ReservationReceiptPreviousValues
+}
+
+input ReservationReceiptSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: ReservationReceiptWhereInput
+  AND: [ReservationReceiptSubscriptionWhereInput!]
+  OR: [ReservationReceiptSubscriptionWhereInput!]
+  NOT: [ReservationReceiptSubscriptionWhereInput!]
+}
+
+input ReservationReceiptUpdateInput {
+  reservation: ReservationUpdateOneRequiredWithoutReceiptInput
+  items: ReservationReceiptItemUpdateManyInput
+}
+
+input ReservationReceiptUpdateOneWithoutReservationInput {
+  create: ReservationReceiptCreateWithoutReservationInput
+  update: ReservationReceiptUpdateWithoutReservationDataInput
+  upsert: ReservationReceiptUpsertWithoutReservationInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: ReservationReceiptWhereUniqueInput
+}
+
+input ReservationReceiptUpdateWithoutReservationDataInput {
+  items: ReservationReceiptItemUpdateManyInput
+}
+
+input ReservationReceiptUpsertWithoutReservationInput {
+  update: ReservationReceiptUpdateWithoutReservationDataInput!
+  create: ReservationReceiptCreateWithoutReservationInput!
+}
+
+input ReservationReceiptWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  reservation: ReservationWhereInput
+  items_every: ReservationReceiptItemWhereInput
+  items_some: ReservationReceiptItemWhereInput
+  items_none: ReservationReceiptItemWhereInput
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [ReservationReceiptWhereInput!]
+  OR: [ReservationReceiptWhereInput!]
+  NOT: [ReservationReceiptWhereInput!]
+}
+
+input ReservationReceiptWhereUniqueInput {
+  id: ID
+}
+
 input ReservationScalarWhereInput {
   id: ID
   id_not: ID
@@ -9065,6 +9576,7 @@ input ReservationUpdateDataInput {
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
+  receipt: ReservationReceiptUpdateOneWithoutReservationInput
 }
 
 input ReservationUpdateInput {
@@ -9080,6 +9592,7 @@ input ReservationUpdateInput {
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
+  receipt: ReservationReceiptUpdateOneWithoutReservationInput
 }
 
 input ReservationUpdateManyDataInput {
@@ -9124,8 +9637,31 @@ input ReservationUpdateOneRequiredInput {
   connect: ReservationWhereUniqueInput
 }
 
+input ReservationUpdateOneRequiredWithoutReceiptInput {
+  create: ReservationCreateWithoutReceiptInput
+  update: ReservationUpdateWithoutReceiptDataInput
+  upsert: ReservationUpsertWithoutReceiptInput
+  connect: ReservationWhereUniqueInput
+}
+
 input ReservationUpdateWithoutCustomerDataInput {
   user: UserUpdateOneRequiredInput
+  sentPackage: PackageUpdateOneInput
+  returnedPackage: PackageUpdateOneInput
+  location: LocationUpdateOneInput
+  products: PhysicalProductUpdateManyInput
+  reservationNumber: Int
+  shipped: Boolean
+  status: ReservationStatus
+  shippedAt: DateTime
+  receivedAt: DateTime
+  reminderSentAt: DateTime
+  receipt: ReservationReceiptUpdateOneWithoutReservationInput
+}
+
+input ReservationUpdateWithoutReceiptDataInput {
+  user: UserUpdateOneRequiredInput
+  customer: CustomerUpdateOneRequiredWithoutReservationsInput
   sentPackage: PackageUpdateOneInput
   returnedPackage: PackageUpdateOneInput
   location: LocationUpdateOneInput
@@ -9146,6 +9682,11 @@ input ReservationUpdateWithWhereUniqueWithoutCustomerInput {
 input ReservationUpsertNestedInput {
   update: ReservationUpdateDataInput!
   create: ReservationCreateInput!
+}
+
+input ReservationUpsertWithoutReceiptInput {
+  update: ReservationUpdateWithoutReceiptDataInput!
+  create: ReservationCreateWithoutReceiptInput!
 }
 
 input ReservationUpsertWithWhereUniqueWithoutCustomerInput {
@@ -9215,6 +9756,7 @@ input ReservationWhereInput {
   reminderSentAt_lte: DateTime
   reminderSentAt_gt: DateTime
   reminderSentAt_gte: DateTime
+  receipt: ReservationReceiptWhereInput
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -9526,6 +10068,8 @@ type Subscription {
   recentlyViewedProduct(where: RecentlyViewedProductSubscriptionWhereInput): RecentlyViewedProductSubscriptionPayload
   reservation(where: ReservationSubscriptionWhereInput): ReservationSubscriptionPayload
   reservationFeedback(where: ReservationFeedbackSubscriptionWhereInput): ReservationFeedbackSubscriptionPayload
+  reservationReceipt(where: ReservationReceiptSubscriptionWhereInput): ReservationReceiptSubscriptionPayload
+  reservationReceiptItem(where: ReservationReceiptItemSubscriptionWhereInput): ReservationReceiptItemSubscriptionPayload
   size(where: SizeSubscriptionWhereInput): SizeSubscriptionPayload
   tag(where: TagSubscriptionWhereInput): TagSubscriptionPayload
   topSize(where: TopSizeSubscriptionWhereInput): TopSizeSubscriptionPayload
@@ -11304,6 +11848,12 @@ export type PhysicalProductOrderByInput =   'id_ASC' |
   'offloadNotes_DESC' |
   'sequenceNumber_ASC' |
   'sequenceNumber_DESC' |
+  'dateOrdered_ASC' |
+  'dateOrdered_DESC' |
+  'dateReceived_ASC' |
+  'dateReceived_DESC' |
+  'unitCost_ASC' |
+  'unitCost_DESC' |
   'createdAt_ASC' |
   'createdAt_DESC' |
   'updatedAt_ASC' |
@@ -11311,7 +11861,9 @@ export type PhysicalProductOrderByInput =   'id_ASC' |
 
 export type PhysicalProductStatus =   'New' |
   'Used' |
+  'Dirty' |
   'Damaged' |
+  'PermanentlyDamaged' |
   'Clean' |
   'Lost'
 
@@ -11502,6 +12054,20 @@ export type ReservationOrderByInput =   'id_ASC' |
   'receivedAt_DESC' |
   'reminderSentAt_ASC' |
   'reminderSentAt_DESC' |
+  'createdAt_ASC' |
+  'createdAt_DESC' |
+  'updatedAt_ASC' |
+  'updatedAt_DESC'
+
+export type ReservationReceiptItemOrderByInput =   'id_ASC' |
+  'id_DESC' |
+  'productStatus_ASC' |
+  'productStatus_DESC' |
+  'notes_ASC' |
+  'notes_DESC'
+
+export type ReservationReceiptOrderByInput =   'id_ASC' |
+  'id_DESC' |
   'createdAt_ASC' |
   'createdAt_DESC' |
   'updatedAt_ASC' |
@@ -14800,6 +15366,9 @@ export interface PhysicalProductCreateInput {
   offloadNotes?: String | null
   sequenceNumber: Int
   warehouseLocation?: WarehouseLocationCreateOneWithoutPhysicalProductsInput | null
+  dateOrdered?: DateTime | null
+  dateReceived?: DateTime | null
+  unitCost?: Float | null
 }
 
 export interface PhysicalProductCreateManyInput {
@@ -14822,6 +15391,11 @@ export interface PhysicalProductCreateManyWithoutWarehouseLocationInput {
   connect?: PhysicalProductWhereUniqueInput[] | PhysicalProductWhereUniqueInput | null
 }
 
+export interface PhysicalProductCreateOneInput {
+  create?: PhysicalProductCreateInput | null
+  connect?: PhysicalProductWhereUniqueInput | null
+}
+
 export interface PhysicalProductCreateWithoutLocationInput {
   id?: ID_Input | null
   seasonsUID: String
@@ -14832,6 +15406,9 @@ export interface PhysicalProductCreateWithoutLocationInput {
   offloadNotes?: String | null
   sequenceNumber: Int
   warehouseLocation?: WarehouseLocationCreateOneWithoutPhysicalProductsInput | null
+  dateOrdered?: DateTime | null
+  dateReceived?: DateTime | null
+  unitCost?: Float | null
 }
 
 export interface PhysicalProductCreateWithoutProductVariantInput {
@@ -14844,6 +15421,9 @@ export interface PhysicalProductCreateWithoutProductVariantInput {
   offloadNotes?: String | null
   sequenceNumber: Int
   warehouseLocation?: WarehouseLocationCreateOneWithoutPhysicalProductsInput | null
+  dateOrdered?: DateTime | null
+  dateReceived?: DateTime | null
+  unitCost?: Float | null
 }
 
 export interface PhysicalProductCreateWithoutWarehouseLocationInput {
@@ -14856,6 +15436,9 @@ export interface PhysicalProductCreateWithoutWarehouseLocationInput {
   offloadMethod?: PhysicalProductOffloadMethod | null
   offloadNotes?: String | null
   sequenceNumber: Int
+  dateOrdered?: DateTime | null
+  dateReceived?: DateTime | null
+  unitCost?: Float | null
 }
 
 export interface PhysicalProductScalarWhereInput {
@@ -14921,6 +15504,30 @@ export interface PhysicalProductScalarWhereInput {
   sequenceNumber_lte?: Int | null
   sequenceNumber_gt?: Int | null
   sequenceNumber_gte?: Int | null
+  dateOrdered?: DateTime | null
+  dateOrdered_not?: DateTime | null
+  dateOrdered_in?: DateTime[] | DateTime | null
+  dateOrdered_not_in?: DateTime[] | DateTime | null
+  dateOrdered_lt?: DateTime | null
+  dateOrdered_lte?: DateTime | null
+  dateOrdered_gt?: DateTime | null
+  dateOrdered_gte?: DateTime | null
+  dateReceived?: DateTime | null
+  dateReceived_not?: DateTime | null
+  dateReceived_in?: DateTime[] | DateTime | null
+  dateReceived_not_in?: DateTime[] | DateTime | null
+  dateReceived_lt?: DateTime | null
+  dateReceived_lte?: DateTime | null
+  dateReceived_gt?: DateTime | null
+  dateReceived_gte?: DateTime | null
+  unitCost?: Float | null
+  unitCost_not?: Float | null
+  unitCost_in?: Float[] | Float | null
+  unitCost_not_in?: Float[] | Float | null
+  unitCost_lt?: Float | null
+  unitCost_lte?: Float | null
+  unitCost_gt?: Float | null
+  unitCost_gte?: Float | null
   createdAt?: DateTime | null
   createdAt_not?: DateTime | null
   createdAt_in?: DateTime[] | DateTime | null
@@ -14963,6 +15570,9 @@ export interface PhysicalProductUpdateDataInput {
   offloadNotes?: String | null
   sequenceNumber?: Int | null
   warehouseLocation?: WarehouseLocationUpdateOneWithoutPhysicalProductsInput | null
+  dateOrdered?: DateTime | null
+  dateReceived?: DateTime | null
+  unitCost?: Float | null
 }
 
 export interface PhysicalProductUpdateInput {
@@ -14975,6 +15585,9 @@ export interface PhysicalProductUpdateInput {
   offloadNotes?: String | null
   sequenceNumber?: Int | null
   warehouseLocation?: WarehouseLocationUpdateOneWithoutPhysicalProductsInput | null
+  dateOrdered?: DateTime | null
+  dateReceived?: DateTime | null
+  unitCost?: Float | null
 }
 
 export interface PhysicalProductUpdateManyDataInput {
@@ -14984,6 +15597,9 @@ export interface PhysicalProductUpdateManyDataInput {
   offloadMethod?: PhysicalProductOffloadMethod | null
   offloadNotes?: String | null
   sequenceNumber?: Int | null
+  dateOrdered?: DateTime | null
+  dateReceived?: DateTime | null
+  unitCost?: Float | null
 }
 
 export interface PhysicalProductUpdateManyInput {
@@ -15005,6 +15621,9 @@ export interface PhysicalProductUpdateManyMutationInput {
   offloadMethod?: PhysicalProductOffloadMethod | null
   offloadNotes?: String | null
   sequenceNumber?: Int | null
+  dateOrdered?: DateTime | null
+  dateReceived?: DateTime | null
+  unitCost?: Float | null
 }
 
 export interface PhysicalProductUpdateManyWithoutLocationInput {
@@ -15048,6 +15667,13 @@ export interface PhysicalProductUpdateManyWithWhereNestedInput {
   data: PhysicalProductUpdateManyDataInput
 }
 
+export interface PhysicalProductUpdateOneRequiredInput {
+  create?: PhysicalProductCreateInput | null
+  update?: PhysicalProductUpdateDataInput | null
+  upsert?: PhysicalProductUpsertNestedInput | null
+  connect?: PhysicalProductWhereUniqueInput | null
+}
+
 export interface PhysicalProductUpdateWithoutLocationDataInput {
   seasonsUID?: String | null
   productVariant?: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput | null
@@ -15057,6 +15683,9 @@ export interface PhysicalProductUpdateWithoutLocationDataInput {
   offloadNotes?: String | null
   sequenceNumber?: Int | null
   warehouseLocation?: WarehouseLocationUpdateOneWithoutPhysicalProductsInput | null
+  dateOrdered?: DateTime | null
+  dateReceived?: DateTime | null
+  unitCost?: Float | null
 }
 
 export interface PhysicalProductUpdateWithoutProductVariantDataInput {
@@ -15068,6 +15697,9 @@ export interface PhysicalProductUpdateWithoutProductVariantDataInput {
   offloadNotes?: String | null
   sequenceNumber?: Int | null
   warehouseLocation?: WarehouseLocationUpdateOneWithoutPhysicalProductsInput | null
+  dateOrdered?: DateTime | null
+  dateReceived?: DateTime | null
+  unitCost?: Float | null
 }
 
 export interface PhysicalProductUpdateWithoutWarehouseLocationDataInput {
@@ -15079,6 +15711,9 @@ export interface PhysicalProductUpdateWithoutWarehouseLocationDataInput {
   offloadMethod?: PhysicalProductOffloadMethod | null
   offloadNotes?: String | null
   sequenceNumber?: Int | null
+  dateOrdered?: DateTime | null
+  dateReceived?: DateTime | null
+  unitCost?: Float | null
 }
 
 export interface PhysicalProductUpdateWithWhereUniqueNestedInput {
@@ -15099,6 +15734,11 @@ export interface PhysicalProductUpdateWithWhereUniqueWithoutProductVariantInput 
 export interface PhysicalProductUpdateWithWhereUniqueWithoutWarehouseLocationInput {
   where: PhysicalProductWhereUniqueInput
   data: PhysicalProductUpdateWithoutWarehouseLocationDataInput
+}
+
+export interface PhysicalProductUpsertNestedInput {
+  update: PhysicalProductUpdateDataInput
+  create: PhysicalProductCreateInput
 }
 
 export interface PhysicalProductUpsertWithWhereUniqueNestedInput {
@@ -15191,6 +15831,30 @@ export interface PhysicalProductWhereInput {
   sequenceNumber_gt?: Int | null
   sequenceNumber_gte?: Int | null
   warehouseLocation?: WarehouseLocationWhereInput | null
+  dateOrdered?: DateTime | null
+  dateOrdered_not?: DateTime | null
+  dateOrdered_in?: DateTime[] | DateTime | null
+  dateOrdered_not_in?: DateTime[] | DateTime | null
+  dateOrdered_lt?: DateTime | null
+  dateOrdered_lte?: DateTime | null
+  dateOrdered_gt?: DateTime | null
+  dateOrdered_gte?: DateTime | null
+  dateReceived?: DateTime | null
+  dateReceived_not?: DateTime | null
+  dateReceived_in?: DateTime[] | DateTime | null
+  dateReceived_not_in?: DateTime[] | DateTime | null
+  dateReceived_lt?: DateTime | null
+  dateReceived_lte?: DateTime | null
+  dateReceived_gt?: DateTime | null
+  dateReceived_gte?: DateTime | null
+  unitCost?: Float | null
+  unitCost_not?: Float | null
+  unitCost_in?: Float[] | Float | null
+  unitCost_not_in?: Float[] | Float | null
+  unitCost_lt?: Float | null
+  unitCost_lte?: Float | null
+  unitCost_gt?: Float | null
+  unitCost_gte?: Float | null
   createdAt?: DateTime | null
   createdAt_not?: DateTime | null
   createdAt_in?: DateTime[] | DateTime | null
@@ -17750,6 +18414,7 @@ export interface ReservationCreateInput {
   shippedAt?: DateTime | null
   receivedAt?: DateTime | null
   reminderSentAt?: DateTime | null
+  receipt?: ReservationReceiptCreateOneWithoutReservationInput | null
 }
 
 export interface ReservationCreateManyWithoutCustomerInput {
@@ -17762,9 +18427,31 @@ export interface ReservationCreateOneInput {
   connect?: ReservationWhereUniqueInput | null
 }
 
+export interface ReservationCreateOneWithoutReceiptInput {
+  create?: ReservationCreateWithoutReceiptInput | null
+  connect?: ReservationWhereUniqueInput | null
+}
+
 export interface ReservationCreateWithoutCustomerInput {
   id?: ID_Input | null
   user: UserCreateOneInput
+  sentPackage?: PackageCreateOneInput | null
+  returnedPackage?: PackageCreateOneInput | null
+  location?: LocationCreateOneInput | null
+  products?: PhysicalProductCreateManyInput | null
+  reservationNumber: Int
+  shipped: Boolean
+  status: ReservationStatus
+  shippedAt?: DateTime | null
+  receivedAt?: DateTime | null
+  reminderSentAt?: DateTime | null
+  receipt?: ReservationReceiptCreateOneWithoutReservationInput | null
+}
+
+export interface ReservationCreateWithoutReceiptInput {
+  id?: ID_Input | null
+  user: UserCreateOneInput
+  customer: CustomerCreateOneWithoutReservationsInput
   sentPackage?: PackageCreateOneInput | null
   returnedPackage?: PackageCreateOneInput | null
   location?: LocationCreateOneInput | null
@@ -17918,6 +18605,254 @@ export interface ReservationFeedbackWhereUniqueInput {
   id?: ID_Input | null
 }
 
+export interface ReservationReceiptCreateInput {
+  id?: ID_Input | null
+  reservation: ReservationCreateOneWithoutReceiptInput
+  items?: ReservationReceiptItemCreateManyInput | null
+}
+
+export interface ReservationReceiptCreateOneWithoutReservationInput {
+  create?: ReservationReceiptCreateWithoutReservationInput | null
+  connect?: ReservationReceiptWhereUniqueInput | null
+}
+
+export interface ReservationReceiptCreateWithoutReservationInput {
+  id?: ID_Input | null
+  items?: ReservationReceiptItemCreateManyInput | null
+}
+
+export interface ReservationReceiptItemCreateInput {
+  id?: ID_Input | null
+  product: PhysicalProductCreateOneInput
+  productStatus: PhysicalProductStatus
+  notes?: String | null
+}
+
+export interface ReservationReceiptItemCreateManyInput {
+  create?: ReservationReceiptItemCreateInput[] | ReservationReceiptItemCreateInput | null
+  connect?: ReservationReceiptItemWhereUniqueInput[] | ReservationReceiptItemWhereUniqueInput | null
+}
+
+export interface ReservationReceiptItemScalarWhereInput {
+  id?: ID_Input | null
+  id_not?: ID_Input | null
+  id_in?: ID_Output[] | ID_Output | null
+  id_not_in?: ID_Output[] | ID_Output | null
+  id_lt?: ID_Input | null
+  id_lte?: ID_Input | null
+  id_gt?: ID_Input | null
+  id_gte?: ID_Input | null
+  id_contains?: ID_Input | null
+  id_not_contains?: ID_Input | null
+  id_starts_with?: ID_Input | null
+  id_not_starts_with?: ID_Input | null
+  id_ends_with?: ID_Input | null
+  id_not_ends_with?: ID_Input | null
+  productStatus?: PhysicalProductStatus | null
+  productStatus_not?: PhysicalProductStatus | null
+  productStatus_in?: PhysicalProductStatus[] | PhysicalProductStatus | null
+  productStatus_not_in?: PhysicalProductStatus[] | PhysicalProductStatus | null
+  notes?: String | null
+  notes_not?: String | null
+  notes_in?: String[] | String | null
+  notes_not_in?: String[] | String | null
+  notes_lt?: String | null
+  notes_lte?: String | null
+  notes_gt?: String | null
+  notes_gte?: String | null
+  notes_contains?: String | null
+  notes_not_contains?: String | null
+  notes_starts_with?: String | null
+  notes_not_starts_with?: String | null
+  notes_ends_with?: String | null
+  notes_not_ends_with?: String | null
+  AND?: ReservationReceiptItemScalarWhereInput[] | ReservationReceiptItemScalarWhereInput | null
+  OR?: ReservationReceiptItemScalarWhereInput[] | ReservationReceiptItemScalarWhereInput | null
+  NOT?: ReservationReceiptItemScalarWhereInput[] | ReservationReceiptItemScalarWhereInput | null
+}
+
+export interface ReservationReceiptItemSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType | null
+  updatedFields_contains?: String | null
+  updatedFields_contains_every?: String[] | String | null
+  updatedFields_contains_some?: String[] | String | null
+  node?: ReservationReceiptItemWhereInput | null
+  AND?: ReservationReceiptItemSubscriptionWhereInput[] | ReservationReceiptItemSubscriptionWhereInput | null
+  OR?: ReservationReceiptItemSubscriptionWhereInput[] | ReservationReceiptItemSubscriptionWhereInput | null
+  NOT?: ReservationReceiptItemSubscriptionWhereInput[] | ReservationReceiptItemSubscriptionWhereInput | null
+}
+
+export interface ReservationReceiptItemUpdateDataInput {
+  product?: PhysicalProductUpdateOneRequiredInput | null
+  productStatus?: PhysicalProductStatus | null
+  notes?: String | null
+}
+
+export interface ReservationReceiptItemUpdateInput {
+  product?: PhysicalProductUpdateOneRequiredInput | null
+  productStatus?: PhysicalProductStatus | null
+  notes?: String | null
+}
+
+export interface ReservationReceiptItemUpdateManyDataInput {
+  productStatus?: PhysicalProductStatus | null
+  notes?: String | null
+}
+
+export interface ReservationReceiptItemUpdateManyInput {
+  create?: ReservationReceiptItemCreateInput[] | ReservationReceiptItemCreateInput | null
+  update?: ReservationReceiptItemUpdateWithWhereUniqueNestedInput[] | ReservationReceiptItemUpdateWithWhereUniqueNestedInput | null
+  upsert?: ReservationReceiptItemUpsertWithWhereUniqueNestedInput[] | ReservationReceiptItemUpsertWithWhereUniqueNestedInput | null
+  delete?: ReservationReceiptItemWhereUniqueInput[] | ReservationReceiptItemWhereUniqueInput | null
+  connect?: ReservationReceiptItemWhereUniqueInput[] | ReservationReceiptItemWhereUniqueInput | null
+  set?: ReservationReceiptItemWhereUniqueInput[] | ReservationReceiptItemWhereUniqueInput | null
+  disconnect?: ReservationReceiptItemWhereUniqueInput[] | ReservationReceiptItemWhereUniqueInput | null
+  deleteMany?: ReservationReceiptItemScalarWhereInput[] | ReservationReceiptItemScalarWhereInput | null
+  updateMany?: ReservationReceiptItemUpdateManyWithWhereNestedInput[] | ReservationReceiptItemUpdateManyWithWhereNestedInput | null
+}
+
+export interface ReservationReceiptItemUpdateManyMutationInput {
+  productStatus?: PhysicalProductStatus | null
+  notes?: String | null
+}
+
+export interface ReservationReceiptItemUpdateManyWithWhereNestedInput {
+  where: ReservationReceiptItemScalarWhereInput
+  data: ReservationReceiptItemUpdateManyDataInput
+}
+
+export interface ReservationReceiptItemUpdateWithWhereUniqueNestedInput {
+  where: ReservationReceiptItemWhereUniqueInput
+  data: ReservationReceiptItemUpdateDataInput
+}
+
+export interface ReservationReceiptItemUpsertWithWhereUniqueNestedInput {
+  where: ReservationReceiptItemWhereUniqueInput
+  update: ReservationReceiptItemUpdateDataInput
+  create: ReservationReceiptItemCreateInput
+}
+
+export interface ReservationReceiptItemWhereInput {
+  id?: ID_Input | null
+  id_not?: ID_Input | null
+  id_in?: ID_Output[] | ID_Output | null
+  id_not_in?: ID_Output[] | ID_Output | null
+  id_lt?: ID_Input | null
+  id_lte?: ID_Input | null
+  id_gt?: ID_Input | null
+  id_gte?: ID_Input | null
+  id_contains?: ID_Input | null
+  id_not_contains?: ID_Input | null
+  id_starts_with?: ID_Input | null
+  id_not_starts_with?: ID_Input | null
+  id_ends_with?: ID_Input | null
+  id_not_ends_with?: ID_Input | null
+  product?: PhysicalProductWhereInput | null
+  productStatus?: PhysicalProductStatus | null
+  productStatus_not?: PhysicalProductStatus | null
+  productStatus_in?: PhysicalProductStatus[] | PhysicalProductStatus | null
+  productStatus_not_in?: PhysicalProductStatus[] | PhysicalProductStatus | null
+  notes?: String | null
+  notes_not?: String | null
+  notes_in?: String[] | String | null
+  notes_not_in?: String[] | String | null
+  notes_lt?: String | null
+  notes_lte?: String | null
+  notes_gt?: String | null
+  notes_gte?: String | null
+  notes_contains?: String | null
+  notes_not_contains?: String | null
+  notes_starts_with?: String | null
+  notes_not_starts_with?: String | null
+  notes_ends_with?: String | null
+  notes_not_ends_with?: String | null
+  AND?: ReservationReceiptItemWhereInput[] | ReservationReceiptItemWhereInput | null
+  OR?: ReservationReceiptItemWhereInput[] | ReservationReceiptItemWhereInput | null
+  NOT?: ReservationReceiptItemWhereInput[] | ReservationReceiptItemWhereInput | null
+}
+
+export interface ReservationReceiptItemWhereUniqueInput {
+  id?: ID_Input | null
+}
+
+export interface ReservationReceiptSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType | null
+  updatedFields_contains?: String | null
+  updatedFields_contains_every?: String[] | String | null
+  updatedFields_contains_some?: String[] | String | null
+  node?: ReservationReceiptWhereInput | null
+  AND?: ReservationReceiptSubscriptionWhereInput[] | ReservationReceiptSubscriptionWhereInput | null
+  OR?: ReservationReceiptSubscriptionWhereInput[] | ReservationReceiptSubscriptionWhereInput | null
+  NOT?: ReservationReceiptSubscriptionWhereInput[] | ReservationReceiptSubscriptionWhereInput | null
+}
+
+export interface ReservationReceiptUpdateInput {
+  reservation?: ReservationUpdateOneRequiredWithoutReceiptInput | null
+  items?: ReservationReceiptItemUpdateManyInput | null
+}
+
+export interface ReservationReceiptUpdateOneWithoutReservationInput {
+  create?: ReservationReceiptCreateWithoutReservationInput | null
+  update?: ReservationReceiptUpdateWithoutReservationDataInput | null
+  upsert?: ReservationReceiptUpsertWithoutReservationInput | null
+  delete?: Boolean | null
+  disconnect?: Boolean | null
+  connect?: ReservationReceiptWhereUniqueInput | null
+}
+
+export interface ReservationReceiptUpdateWithoutReservationDataInput {
+  items?: ReservationReceiptItemUpdateManyInput | null
+}
+
+export interface ReservationReceiptUpsertWithoutReservationInput {
+  update: ReservationReceiptUpdateWithoutReservationDataInput
+  create: ReservationReceiptCreateWithoutReservationInput
+}
+
+export interface ReservationReceiptWhereInput {
+  id?: ID_Input | null
+  id_not?: ID_Input | null
+  id_in?: ID_Output[] | ID_Output | null
+  id_not_in?: ID_Output[] | ID_Output | null
+  id_lt?: ID_Input | null
+  id_lte?: ID_Input | null
+  id_gt?: ID_Input | null
+  id_gte?: ID_Input | null
+  id_contains?: ID_Input | null
+  id_not_contains?: ID_Input | null
+  id_starts_with?: ID_Input | null
+  id_not_starts_with?: ID_Input | null
+  id_ends_with?: ID_Input | null
+  id_not_ends_with?: ID_Input | null
+  reservation?: ReservationWhereInput | null
+  items_every?: ReservationReceiptItemWhereInput | null
+  items_some?: ReservationReceiptItemWhereInput | null
+  items_none?: ReservationReceiptItemWhereInput | null
+  createdAt?: DateTime | null
+  createdAt_not?: DateTime | null
+  createdAt_in?: DateTime[] | DateTime | null
+  createdAt_not_in?: DateTime[] | DateTime | null
+  createdAt_lt?: DateTime | null
+  createdAt_lte?: DateTime | null
+  createdAt_gt?: DateTime | null
+  createdAt_gte?: DateTime | null
+  updatedAt?: DateTime | null
+  updatedAt_not?: DateTime | null
+  updatedAt_in?: DateTime[] | DateTime | null
+  updatedAt_not_in?: DateTime[] | DateTime | null
+  updatedAt_lt?: DateTime | null
+  updatedAt_lte?: DateTime | null
+  updatedAt_gt?: DateTime | null
+  updatedAt_gte?: DateTime | null
+  AND?: ReservationReceiptWhereInput[] | ReservationReceiptWhereInput | null
+  OR?: ReservationReceiptWhereInput[] | ReservationReceiptWhereInput | null
+  NOT?: ReservationReceiptWhereInput[] | ReservationReceiptWhereInput | null
+}
+
+export interface ReservationReceiptWhereUniqueInput {
+  id?: ID_Input | null
+}
+
 export interface ReservationScalarWhereInput {
   id?: ID_Input | null
   id_not?: ID_Input | null
@@ -18016,6 +18951,7 @@ export interface ReservationUpdateDataInput {
   shippedAt?: DateTime | null
   receivedAt?: DateTime | null
   reminderSentAt?: DateTime | null
+  receipt?: ReservationReceiptUpdateOneWithoutReservationInput | null
 }
 
 export interface ReservationUpdateInput {
@@ -18031,6 +18967,7 @@ export interface ReservationUpdateInput {
   shippedAt?: DateTime | null
   receivedAt?: DateTime | null
   reminderSentAt?: DateTime | null
+  receipt?: ReservationReceiptUpdateOneWithoutReservationInput | null
 }
 
 export interface ReservationUpdateManyDataInput {
@@ -18075,8 +19012,31 @@ export interface ReservationUpdateOneRequiredInput {
   connect?: ReservationWhereUniqueInput | null
 }
 
+export interface ReservationUpdateOneRequiredWithoutReceiptInput {
+  create?: ReservationCreateWithoutReceiptInput | null
+  update?: ReservationUpdateWithoutReceiptDataInput | null
+  upsert?: ReservationUpsertWithoutReceiptInput | null
+  connect?: ReservationWhereUniqueInput | null
+}
+
 export interface ReservationUpdateWithoutCustomerDataInput {
   user?: UserUpdateOneRequiredInput | null
+  sentPackage?: PackageUpdateOneInput | null
+  returnedPackage?: PackageUpdateOneInput | null
+  location?: LocationUpdateOneInput | null
+  products?: PhysicalProductUpdateManyInput | null
+  reservationNumber?: Int | null
+  shipped?: Boolean | null
+  status?: ReservationStatus | null
+  shippedAt?: DateTime | null
+  receivedAt?: DateTime | null
+  reminderSentAt?: DateTime | null
+  receipt?: ReservationReceiptUpdateOneWithoutReservationInput | null
+}
+
+export interface ReservationUpdateWithoutReceiptDataInput {
+  user?: UserUpdateOneRequiredInput | null
+  customer?: CustomerUpdateOneRequiredWithoutReservationsInput | null
   sentPackage?: PackageUpdateOneInput | null
   returnedPackage?: PackageUpdateOneInput | null
   location?: LocationUpdateOneInput | null
@@ -18097,6 +19057,11 @@ export interface ReservationUpdateWithWhereUniqueWithoutCustomerInput {
 export interface ReservationUpsertNestedInput {
   update: ReservationUpdateDataInput
   create: ReservationCreateInput
+}
+
+export interface ReservationUpsertWithoutReceiptInput {
+  update: ReservationUpdateWithoutReceiptDataInput
+  create: ReservationCreateWithoutReceiptInput
 }
 
 export interface ReservationUpsertWithWhereUniqueWithoutCustomerInput {
@@ -18166,6 +19131,7 @@ export interface ReservationWhereInput {
   reminderSentAt_lte?: DateTime | null
   reminderSentAt_gt?: DateTime | null
   reminderSentAt_gte?: DateTime | null
+  receipt?: ReservationReceiptWhereInput | null
   createdAt?: DateTime | null
   createdAt_not?: DateTime | null
   createdAt_in?: DateTime[] | DateTime | null
@@ -19680,6 +20646,14 @@ export interface AggregateReservationFeedback {
   count: Int
 }
 
+export interface AggregateReservationReceipt {
+  count: Int
+}
+
+export interface AggregateReservationReceiptItem {
+  count: Int
+}
+
 export interface AggregateSize {
   count: Int
 }
@@ -20341,6 +21315,9 @@ export interface PhysicalProduct {
   offloadNotes?: String | null
   sequenceNumber: Int
   warehouseLocation?: WarehouseLocation | null
+  dateOrdered?: DateTime | null
+  dateReceived?: DateTime | null
+  unitCost?: Float | null
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -20364,6 +21341,9 @@ export interface PhysicalProductPreviousValues {
   offloadMethod?: PhysicalProductOffloadMethod | null
   offloadNotes?: String | null
   sequenceNumber: Int
+  dateOrdered?: DateTime | null
+  dateReceived?: DateTime | null
+  unitCost?: Float | null
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -20787,6 +21767,7 @@ export interface Reservation {
   shippedAt?: DateTime | null
   receivedAt?: DateTime | null
   reminderSentAt?: DateTime | null
+  receipt?: ReservationReceipt | null
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -20851,6 +21832,69 @@ export interface ReservationPreviousValues {
   reminderSentAt?: DateTime | null
   createdAt: DateTime
   updatedAt: DateTime
+}
+
+export interface ReservationReceipt {
+  id: ID_Output
+  reservation: Reservation
+  items?: Array<ReservationReceiptItem> | null
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+export interface ReservationReceiptConnection {
+  pageInfo: PageInfo
+  edges: Array<ReservationReceiptEdge | null>
+  aggregate: AggregateReservationReceipt
+}
+
+export interface ReservationReceiptEdge {
+  node: ReservationReceipt
+  cursor: String
+}
+
+export interface ReservationReceiptItem {
+  id: ID_Output
+  product: PhysicalProduct
+  productStatus: PhysicalProductStatus
+  notes?: String | null
+}
+
+export interface ReservationReceiptItemConnection {
+  pageInfo: PageInfo
+  edges: Array<ReservationReceiptItemEdge | null>
+  aggregate: AggregateReservationReceiptItem
+}
+
+export interface ReservationReceiptItemEdge {
+  node: ReservationReceiptItem
+  cursor: String
+}
+
+export interface ReservationReceiptItemPreviousValues {
+  id: ID_Output
+  productStatus: PhysicalProductStatus
+  notes?: String | null
+}
+
+export interface ReservationReceiptItemSubscriptionPayload {
+  mutation: MutationType
+  node?: ReservationReceiptItem | null
+  updatedFields?: Array<String> | null
+  previousValues?: ReservationReceiptItemPreviousValues | null
+}
+
+export interface ReservationReceiptPreviousValues {
+  id: ID_Output
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+export interface ReservationReceiptSubscriptionPayload {
+  mutation: MutationType
+  node?: ReservationReceipt | null
+  updatedFields?: Array<String> | null
+  previousValues?: ReservationReceiptPreviousValues | null
 }
 
 export interface ReservationSubscriptionPayload {

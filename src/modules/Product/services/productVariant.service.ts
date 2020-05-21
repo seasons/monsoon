@@ -1,9 +1,14 @@
 import { AirtableService } from "@modules/Airtable/services/airtable.service"
 import { Injectable } from "@nestjs/common"
-import { ID_Input, InventoryStatus, Product } from "@prisma/index"
+import {
+  ID_Input,
+  InventoryStatus,
+  Product,
+  ProductVariant,
+} from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
 import { ApolloError } from "apollo-server"
-import { lowerFirst } from "lodash"
+import { lowerFirst, pick } from "lodash"
 
 import {
   PhysicalProductUtilsService,
@@ -169,5 +174,43 @@ export class ProductVariantService {
       where: { id },
       data,
     })
+  }
+
+  async updateProductVariant(input, info): Promise<ProductVariant> {
+    const { id, productType, weight } = input
+    const prodVarSize = await this.prisma.client
+      .productVariant({ id })
+      .internalSize()
+    if (!prodVarSize) {
+      return null
+    }
+    switch (productType) {
+      case "Top":
+        const topSizeValues = {
+          ...pick(input, ["sleeve", "shoulder", "chest", "neck", "length"]),
+        }
+        await this.prisma.client.updateSize({
+          data: { top: { update: topSizeValues } },
+          where: { id: prodVarSize.id },
+        })
+        break
+      case "Bottom":
+        const bottomSizeValues = {
+          ...pick(input, ["waist", "rise", "hem", "inseam"]),
+        }
+        await this.prisma.client.updateSize({
+          data: { bottom: { update: bottomSizeValues } },
+          where: { id: prodVarSize.id },
+        })
+        break
+    }
+    const prodVar = await this.prisma.client.updateProductVariant({
+      data: { weight },
+      where: { id },
+    })
+    return await this.prisma.binding.query.productVariant(
+      { where: { id: prodVar.id } },
+      info
+    )
   }
 }

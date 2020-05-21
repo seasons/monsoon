@@ -146,7 +146,13 @@ export class SyncProductsService {
         const { brandCode } = brand.model
         const slug = this.productUtils.getProductSlug(brandCode, name, color)
 
-        const imageIDs = await this.syncImages(images, slug, brandCode, name)
+        const imageIDs = await this.syncImages(
+          images,
+          slug,
+          brandCode,
+          color,
+          name
+        )
 
         // Sync model size records
         let modelSizeRecord
@@ -226,9 +232,8 @@ export class SyncProductsService {
             slug,
           },
           create: data,
-          update: data,
+          update: { ...data, images: { set: imageIDs } },
         })
-
         // Update airtable
         await record.patchUpdate({
           Slug: slug,
@@ -357,31 +362,26 @@ export class SyncProductsService {
     images: any,
     slug: string,
     brandCode: string,
+    colorName: string,
     name: string
   ) {
-    const productImages = await this.prisma.client.product({ slug }).images()
-    let imageIDs
-    if (productImages && productImages.length > 0) {
-      // We've already uploaded these images to S3
-      imageIDs = productImages.map(image => ({ id: image.id }))
-    } else {
-      // We have yet to upload these images to S3
-      const imageDatas: ImageData[] = await Promise.all(
-        images.map(async (image, index) => {
-          const s3ImageName = this.productUtils.getProductImageName(
-            brandCode,
-            name,
-            index + 1
-          )
-          return await this.imageService.uploadImageFromURL(
-            image.url,
-            s3ImageName,
-            name
-          )
-        })
-      )
-      imageIDs = this.productUtils.getImageIDs(imageDatas)
-    }
+    // Upload images to S3 and then upsert them as image objects
+    const imageDatas: ImageData[] = await Promise.all(
+      images.map((image, index) => {
+        const s3ImageName = this.productUtils.getProductImageName(
+          brandCode,
+          name,
+          colorName,
+          index + 1
+        )
+        return this.imageService.uploadImageFromURL(
+          image.url,
+          s3ImageName,
+          name
+        )
+      })
+    )
+    const imageIDs = this.productUtils.getImageIDs(imageDatas, slug)
     return imageIDs
   }
 }

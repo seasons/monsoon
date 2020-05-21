@@ -19,7 +19,7 @@ type Query {
     first: Int
     last: Int
   ): ReservationConnection! @hasRole(roles: [Customer, Admin, Partner])
-  reservationFeedback: ReservationFeedback @hasRole(roles: [Customer])
+  reservationFeedback: ReservationFeedback
 }
 
 type Mutation {
@@ -30,6 +30,20 @@ type Mutation {
     feedbackID: ID!
     input: ReservationFeedbackUpdateInput!
   ): ReservationFeedback! @hasRole(roles: [Admin])
+  processReservation(data: ReservationProcessReturnInput!): ReservationReceipt
+    @hasRole(roles: [Admin])
+}
+
+input ReservationProcessReturnInput {
+  reservationNumber: Int!
+  productStates: [ProductStateInput!]!
+}
+
+input ProductStateInput {
+  productUID: String!
+  returned: Boolean!
+  productStatus: PhysicalProductStatus!
+  notes: String
 }
 
 input ReserveItemsOptions {

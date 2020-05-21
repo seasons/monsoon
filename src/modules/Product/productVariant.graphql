@@ -11,6 +11,7 @@ type Query {
     first: Int
     last: Int
   ): [BottomSize]!
+  productVariant(where: ProductVariantWhereUniqueInput!): ProductVariant
   size(where: SizeWhereUniqueInput!): Size
   sizes(
     where: SizeWhereInput
@@ -45,6 +46,8 @@ type Query {
 type Mutation {
   addProductVariantWant(variantID: ID!): ProductVariantWant!
     @hasRole(roles: [Customer])
+  updateProductVariant(input: UpdateVariantInput!): ProductVariant
+    @hasRole(roles: [Admin])
 }
 
 type ProductVariant {
@@ -105,6 +108,23 @@ input UpsertVariantInput {
   weight: Float!
   total: Int!
   physicalProducts: [UpsertPhysicalProductInput!]!
+}
+
+input UpdateVariantInput {
+  id: ID!
+  productType: ProductType!
+  weight: Float!
+  # Top Size values
+  sleeve: Float
+  shoulder: Float
+  chest: Float
+  neck: Float
+  length: Float
+  # Bottom Size values
+  waist: Float
+  rise: Float
+  hem: Float
+  inseam: Float
 }
 
 input ProductVariantSKUsInput {

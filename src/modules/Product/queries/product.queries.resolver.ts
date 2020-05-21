@@ -63,6 +63,18 @@ export class ProductQueriesResolver {
   }
 
   @Query()
+  async productVariant(@Args() args, @Info() info, @Context() ctx) {
+    return await this.prisma.binding.query.productVariant(
+      args,
+      addFragmentToInfo(
+        info,
+        // for computed fields
+        `fragment EnsureId on ProductVariant { id }`
+      )
+    )
+  }
+
+  @Query()
   async physicalProduct(@Args() args, @Info() info) {
     return await this.prisma.binding.query.physicalProduct(
       args,

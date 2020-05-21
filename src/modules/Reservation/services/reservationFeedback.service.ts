@@ -14,7 +14,10 @@ const RESERVATION_FEEDBACK_FRAGMENT = `
          id
          product {
            id
-           images
+           images {
+             id
+             url
+           }
            name
            retailPrice
          }
@@ -50,7 +53,8 @@ export class ReservationFeedbackService {
       },
       RESERVATION_FEEDBACK_FRAGMENT
     )
-    return feedbacks.length > 0 ? head(feedbacks) : null
+    const reservationFeedbacks = feedbacks.length > 0 ? head(feedbacks) : null
+    return reservationFeedbacks
   }
 
   async updateReservationFeedback(feedbackID, input) {

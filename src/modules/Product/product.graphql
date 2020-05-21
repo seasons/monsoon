@@ -1,5 +1,5 @@
 # import ProductVariant, Query, Mutation, UpsertVariantInput from "./productVariant.graphql"
-# import Query from "./physicalProduct.graphql"
+# import PhysicalProduct, Query, Mutation from "./physicalProduct.graphql"
 
 type Query {
   brand(where: BrandWhereUniqueInput!): Brand
@@ -127,12 +127,8 @@ type Mutation {
   saveProduct(item: ID!, save: Boolean!): BagItem @hasRole(roles: [Customer])
   updateProduct(
     where: ProductWhereUniqueInput!
-    data: ProductUpdateInput!
+    data: CustomProductUpdateInput!
   ): Product! @hasRole(roles: [Admin])
-  updatePhysicalProduct(
-    where: PhysicalProductWhereUniqueInput!
-    data: PhysicalProductUpdateInput!
-  ): PhysicalProduct @hasRole(roles: [Admin])
   addViewedProduct(item: ID!): RecentlyViewedProduct!
   upsertProduct(input: UpsertProductInput!): Product @hasRole(roles: [Admin])
   addProductRequest(reason: String!, url: String!): ProductRequest!
@@ -142,15 +138,18 @@ type Product {
   id: ID!
   slug: String!
   name: String!
+  architecture: ProductArchitecture
   brand: Brand!
   category: Category!
   type: ProductType
   description: String
   externalURL: String
+  model: ProductModel
   modelHeight: Int
   modelSize: Size
   retailPrice: Int
   color: Color!
+  season: String
   secondaryColor: Color
   tags: [Tag!]!
   images(width: Int, height: Int, size: ImageSize): [Image!]!
@@ -182,25 +181,55 @@ type Product {
 }
 
 input UpsertProductInput {
-  name: String!
-  images: [Upload!]!
+  architecture: String
+  bottomSizeType: BottomSizeType
   brandID: String!
   categoryID: String!
-  type: ProductType!
-  description: String!
-  modelID: String!
-  retailPrice: Int!
-  modelSizeName: String!
-  modelSizeDisplay: String!
-  bottomSizeType: BottomSizeType
   colorID: String!
-  secondaryColorID: String
-  tags: [String!]!
+  description: String!
   functions: [String!]!
+  images: [Upload!]!
   innerMaterials: [String!]!
+  modelID: String!
+  modelSizeDisplay: String!
+  modelSizeName: String!
+  name: String!
   outerMaterials: [String!]!
-  status: ProductStatus!
+  retailPrice: Int!
   season: String!
-  architecture: String!
+  secondaryColorID: String
+  status: ProductStatus!
+  tags: [String!]!
+  type: ProductType!
   variants: [UpsertVariantInput!]!
+}
+
+input CustomProductUpdateInput {
+  # Fields from ProductUpdateInput
+  architecture: ProductArchitecture
+  brand: BrandUpdateOneRequiredWithoutProductsInput
+  category: CategoryUpdateOneRequiredWithoutProductsInput
+  color: ColorUpdateOneRequiredInput
+  description: String
+  externalURL: String
+  innerMaterials: ProductUpdateinnerMaterialsInput
+  model: ProductModelUpdateOneWithoutProductsInput
+  modelHeight: Int
+  name: String
+  outerMaterials: ProductUpdateouterMaterialsInput
+  retailPrice: Int
+  season: String
+  secondaryColor: ColorUpdateOneInput
+  slug: String
+  status: ProductStatus
+  type: ProductType
+  variants: ProductVariantUpdateManyWithoutProductInput
+
+  # Custom fields
+  bottomSizeType: BottomSizeType
+  functions: [String!]
+  images: [Upload!]
+  modelSizeDisplay: String
+  modelSizeName: String
+  tags: [String!]
 }

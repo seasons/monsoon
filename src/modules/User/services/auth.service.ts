@@ -3,7 +3,6 @@ import { AirtableService } from "@modules/Airtable/services/airtable.service"
 import { Injectable } from "@nestjs/common"
 import { CustomerDetail, CustomerDetailCreateInput } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
-import PushNotifications from "@pusher/push-notifications-server"
 import { ForbiddenError, UserInputError } from "apollo-server"
 import { head } from "lodash"
 import request from "request"
@@ -25,8 +24,6 @@ interface Auth0User {
 
 @Injectable()
 export class AuthService {
-  beamsClient: PushNotifications | null = _instantiateBeamsClient()
-
   constructor(
     private readonly prisma: PrismaService,
     private readonly airtable: AirtableService,
@@ -362,15 +359,29 @@ export class AuthService {
       )
     })
   }
-}
 
-const _instantiateBeamsClient = () => {
-  const { PUSHER_INSTANCE_ID, PUSHER_SECRET_KEY } = process.env
-
-  return PUSHER_INSTANCE_ID && PUSHER_SECRET_KEY
-    ? new PushNotifications({
-        instanceId: PUSHER_INSTANCE_ID,
-        secretKey: PUSHER_SECRET_KEY,
-      })
-    : null
+  async refreshToken(refreshToken) {
+    return new Promise((resolve, reject) => {
+      request(
+        {
+          method: "Post",
+          url: `https://${process.env.AUTH0_DOMAIN}/oauth/token`,
+          headers: { "content-type": "application/x-www-form-urlencoded" },
+          form: {
+            grant_type: "refresh_token",
+            client_id: process.env.AUTH0_CLIENTID,
+            client_secret: process.env.AUTH0_CLIENT_SECRET,
+            refresh_token: refreshToken,
+          },
+          json: true,
+        },
+        async (error, response, body) => {
+          if (error) {
+            reject(error)
+          }
+          resolve(body.access_token)
+        }
+      )
+    })
+  }
 }

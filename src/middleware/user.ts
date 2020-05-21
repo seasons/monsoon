@@ -14,7 +14,7 @@ export function createGetUserMiddleware(prisma) {
     // Get user from prisma
     const { sub } = auth0User
     const auth0Id = sub.split("|")[1]
-    prisma.user({ auth0Id }).then(prismaUser => {
+    return prisma.user({ auth0Id }).then(prismaUser => {
       req.user = { ...req.user, ...prismaUser }
 
       try {

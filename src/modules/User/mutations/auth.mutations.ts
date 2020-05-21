@@ -59,4 +59,9 @@ export class AuthMutationsResolver {
   async resetPassword(@Args() { email }) {
     return await this.authService.resetPassword(email)
   }
+
+  @Mutation()
+  async refreshToken(@Args() { refreshToken }) {
+    return await this.authService.refreshToken(refreshToken)
+  }
 }

@@ -63,8 +63,10 @@ export class ProductUtilsService {
     return pickBy(
       {
         orderBy,
-        where,
-        ...filters,
+        where: {
+          ...where,
+          ...filters?.where,
+        },
       },
       identity
     )
@@ -202,7 +204,10 @@ export class ProductUtilsService {
           id
           name
           description
-          images
+          images {
+            id
+            url
+          }
           modelSize
           modelHeight
           externalURL
@@ -294,18 +299,23 @@ export class ProductUtilsService {
     return sizeRecord
   }
 
-  getProductImageName(brandCode: string, name: string, index: number) {
-    const slug = slugify(name)
+  getProductImageName(
+    brandCode: string,
+    name: string,
+    colorName: string,
+    index: number
+  ) {
+    const slug = slugify(name + " " + colorName).toLowerCase()
     return `${brandCode}/${slug}/${slug}-${index}.png`.toLowerCase()
   }
 
-  async getImageIDs(imageDatas: ImageData[]) {
+  async getImageIDs(imageDatas: ImageData[], slug: string) {
     const prismaImages = await Promise.all(
       imageDatas.map(async imageData => {
         return await this.prisma.client.upsertImage({
           where: { url: imageData.url },
-          create: imageData,
-          update: imageData,
+          create: { ...imageData, title: slug },
+          update: { ...imageData, title: slug },
         })
       })
     )

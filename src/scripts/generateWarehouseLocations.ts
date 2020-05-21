@@ -50,7 +50,11 @@ const run = async () => {
     console.log(barcode)
     try {
       await physicalProductsService.validateWarehouseLocationStructure(input)
-      await ps.client.createWarehouseLocation(input)
+      await ps.client.upsertWarehouseLocation({
+        where: { barcode },
+        create: input,
+        update: input,
+      })
     } catch (err) {
       console.log(err)
     }

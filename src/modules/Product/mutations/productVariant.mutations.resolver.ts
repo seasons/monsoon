@@ -1,11 +1,16 @@
 import { User } from "@app/decorators"
 import { ReservationService } from "@modules/Reservation"
-import { Args, Mutation, Resolver } from "@nestjs/graphql"
+import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma/prisma.service"
+
+import { ProductVariantService } from "../services/productVariant.service"
 
 @Resolver("ProductVariant")
 export class ProductVariantMutationsResolver {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly productVariantService: ProductVariantService
+  ) {}
 
   @Mutation()
   async addProductVariantWant(@Args() { variantID }, @User() user) {
@@ -34,5 +39,10 @@ export class ProductVariantMutationsResolver {
       }
     )
     return productVariantWant
+  }
+
+  @Mutation()
+  async updateProductVariant(@Args() { input }, @Info() info) {
+    return await this.productVariantService.updateProductVariant(input, info)
   }
 }
