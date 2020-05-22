@@ -7922,8 +7922,9 @@ input ProductWhereUniqueInput {
 
 type PushNotificationReceipt {
   id: ID!
-  entitySlug: String
-  url: String
+  route: String
+  screen: String
+  uri: String
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User!]
   body: String!
   title: String
@@ -7940,8 +7941,9 @@ type PushNotificationReceiptConnection {
 
 input PushNotificationReceiptCreateInput {
   id: ID
-  entitySlug: String
-  url: String
+  route: String
+  screen: String
+  uri: String
   users: UserCreateManyInput
   body: String!
   title: String
@@ -7956,10 +7958,12 @@ type PushNotificationReceiptEdge {
 enum PushNotificationReceiptOrderByInput {
   id_ASC
   id_DESC
-  entitySlug_ASC
-  entitySlug_DESC
-  url_ASC
-  url_DESC
+  route_ASC
+  route_DESC
+  screen_ASC
+  screen_DESC
+  uri_ASC
+  uri_DESC
   body_ASC
   body_DESC
   title_ASC
@@ -7974,8 +7978,9 @@ enum PushNotificationReceiptOrderByInput {
 
 type PushNotificationReceiptPreviousValues {
   id: ID!
-  entitySlug: String
-  url: String
+  route: String
+  screen: String
+  uri: String
   body: String!
   title: String
   sentAt: DateTime!
@@ -8002,8 +8007,9 @@ input PushNotificationReceiptSubscriptionWhereInput {
 }
 
 input PushNotificationReceiptUpdateInput {
-  entitySlug: String
-  url: String
+  route: String
+  screen: String
+  uri: String
   users: UserUpdateManyInput
   body: String
   title: String
@@ -8011,8 +8017,9 @@ input PushNotificationReceiptUpdateInput {
 }
 
 input PushNotificationReceiptUpdateManyMutationInput {
-  entitySlug: String
-  url: String
+  route: String
+  screen: String
+  uri: String
   body: String
   title: String
   sentAt: DateTime
@@ -8033,34 +8040,48 @@ input PushNotificationReceiptWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
-  entitySlug: String
-  entitySlug_not: String
-  entitySlug_in: [String!]
-  entitySlug_not_in: [String!]
-  entitySlug_lt: String
-  entitySlug_lte: String
-  entitySlug_gt: String
-  entitySlug_gte: String
-  entitySlug_contains: String
-  entitySlug_not_contains: String
-  entitySlug_starts_with: String
-  entitySlug_not_starts_with: String
-  entitySlug_ends_with: String
-  entitySlug_not_ends_with: String
-  url: String
-  url_not: String
-  url_in: [String!]
-  url_not_in: [String!]
-  url_lt: String
-  url_lte: String
-  url_gt: String
-  url_gte: String
-  url_contains: String
-  url_not_contains: String
-  url_starts_with: String
-  url_not_starts_with: String
-  url_ends_with: String
-  url_not_ends_with: String
+  route: String
+  route_not: String
+  route_in: [String!]
+  route_not_in: [String!]
+  route_lt: String
+  route_lte: String
+  route_gt: String
+  route_gte: String
+  route_contains: String
+  route_not_contains: String
+  route_starts_with: String
+  route_not_starts_with: String
+  route_ends_with: String
+  route_not_ends_with: String
+  screen: String
+  screen_not: String
+  screen_in: [String!]
+  screen_not_in: [String!]
+  screen_lt: String
+  screen_lte: String
+  screen_gt: String
+  screen_gte: String
+  screen_contains: String
+  screen_not_contains: String
+  screen_starts_with: String
+  screen_not_starts_with: String
+  screen_ends_with: String
+  screen_not_ends_with: String
+  uri: String
+  uri_not: String
+  uri_in: [String!]
+  uri_not_in: [String!]
+  uri_lt: String
+  uri_lte: String
+  uri_gt: String
+  uri_gte: String
+  uri_contains: String
+  uri_not_contains: String
+  uri_starts_with: String
+  uri_not_starts_with: String
+  uri_ends_with: String
+  uri_not_ends_with: String
   users_every: UserWhereInput
   users_some: UserWhereInput
   users_none: UserWhereInput

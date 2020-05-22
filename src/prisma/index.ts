@@ -2220,10 +2220,12 @@ export type UserOrderByInput =
 export type PushNotificationReceiptOrderByInput =
   | "id_ASC"
   | "id_DESC"
-  | "entitySlug_ASC"
-  | "entitySlug_DESC"
-  | "url_ASC"
-  | "url_DESC"
+  | "route_ASC"
+  | "route_DESC"
+  | "screen_ASC"
+  | "screen_DESC"
+  | "uri_ASC"
+  | "uri_DESC"
   | "body_ASC"
   | "body_DESC"
   | "title_ASC"
@@ -5287,34 +5289,48 @@ export interface PushNotificationReceiptWhereInput {
   id_not_starts_with?: Maybe<ID_Input>;
   id_ends_with?: Maybe<ID_Input>;
   id_not_ends_with?: Maybe<ID_Input>;
-  entitySlug?: Maybe<String>;
-  entitySlug_not?: Maybe<String>;
-  entitySlug_in?: Maybe<String[] | String>;
-  entitySlug_not_in?: Maybe<String[] | String>;
-  entitySlug_lt?: Maybe<String>;
-  entitySlug_lte?: Maybe<String>;
-  entitySlug_gt?: Maybe<String>;
-  entitySlug_gte?: Maybe<String>;
-  entitySlug_contains?: Maybe<String>;
-  entitySlug_not_contains?: Maybe<String>;
-  entitySlug_starts_with?: Maybe<String>;
-  entitySlug_not_starts_with?: Maybe<String>;
-  entitySlug_ends_with?: Maybe<String>;
-  entitySlug_not_ends_with?: Maybe<String>;
-  url?: Maybe<String>;
-  url_not?: Maybe<String>;
-  url_in?: Maybe<String[] | String>;
-  url_not_in?: Maybe<String[] | String>;
-  url_lt?: Maybe<String>;
-  url_lte?: Maybe<String>;
-  url_gt?: Maybe<String>;
-  url_gte?: Maybe<String>;
-  url_contains?: Maybe<String>;
-  url_not_contains?: Maybe<String>;
-  url_starts_with?: Maybe<String>;
-  url_not_starts_with?: Maybe<String>;
-  url_ends_with?: Maybe<String>;
-  url_not_ends_with?: Maybe<String>;
+  route?: Maybe<String>;
+  route_not?: Maybe<String>;
+  route_in?: Maybe<String[] | String>;
+  route_not_in?: Maybe<String[] | String>;
+  route_lt?: Maybe<String>;
+  route_lte?: Maybe<String>;
+  route_gt?: Maybe<String>;
+  route_gte?: Maybe<String>;
+  route_contains?: Maybe<String>;
+  route_not_contains?: Maybe<String>;
+  route_starts_with?: Maybe<String>;
+  route_not_starts_with?: Maybe<String>;
+  route_ends_with?: Maybe<String>;
+  route_not_ends_with?: Maybe<String>;
+  screen?: Maybe<String>;
+  screen_not?: Maybe<String>;
+  screen_in?: Maybe<String[] | String>;
+  screen_not_in?: Maybe<String[] | String>;
+  screen_lt?: Maybe<String>;
+  screen_lte?: Maybe<String>;
+  screen_gt?: Maybe<String>;
+  screen_gte?: Maybe<String>;
+  screen_contains?: Maybe<String>;
+  screen_not_contains?: Maybe<String>;
+  screen_starts_with?: Maybe<String>;
+  screen_not_starts_with?: Maybe<String>;
+  screen_ends_with?: Maybe<String>;
+  screen_not_ends_with?: Maybe<String>;
+  uri?: Maybe<String>;
+  uri_not?: Maybe<String>;
+  uri_in?: Maybe<String[] | String>;
+  uri_not_in?: Maybe<String[] | String>;
+  uri_lt?: Maybe<String>;
+  uri_lte?: Maybe<String>;
+  uri_gt?: Maybe<String>;
+  uri_gte?: Maybe<String>;
+  uri_contains?: Maybe<String>;
+  uri_not_contains?: Maybe<String>;
+  uri_starts_with?: Maybe<String>;
+  uri_not_starts_with?: Maybe<String>;
+  uri_ends_with?: Maybe<String>;
+  uri_not_ends_with?: Maybe<String>;
   users_every?: Maybe<UserWhereInput>;
   users_some?: Maybe<UserWhereInput>;
   users_none?: Maybe<UserWhereInput>;
@@ -9951,8 +9967,9 @@ export interface ProductVariantWantUpdateManyMutationInput {
 
 export interface PushNotificationReceiptCreateInput {
   id?: Maybe<ID_Input>;
-  entitySlug?: Maybe<String>;
-  url?: Maybe<String>;
+  route?: Maybe<String>;
+  screen?: Maybe<String>;
+  uri?: Maybe<String>;
   users?: Maybe<UserCreateManyInput>;
   body: String;
   title?: Maybe<String>;
@@ -9965,8 +9982,9 @@ export interface UserCreateManyInput {
 }
 
 export interface PushNotificationReceiptUpdateInput {
-  entitySlug?: Maybe<String>;
-  url?: Maybe<String>;
+  route?: Maybe<String>;
+  screen?: Maybe<String>;
+  uri?: Maybe<String>;
   users?: Maybe<UserUpdateManyInput>;
   body?: Maybe<String>;
   title?: Maybe<String>;
@@ -10124,8 +10142,9 @@ export interface UserUpdateManyDataInput {
 }
 
 export interface PushNotificationReceiptUpdateManyMutationInput {
-  entitySlug?: Maybe<String>;
-  url?: Maybe<String>;
+  route?: Maybe<String>;
+  screen?: Maybe<String>;
+  uri?: Maybe<String>;
   body?: Maybe<String>;
   title?: Maybe<String>;
   sentAt?: Maybe<DateTimeInput>;
@@ -15246,8 +15265,9 @@ export interface AggregateProductVariantWantSubscription
 
 export interface PushNotificationReceipt {
   id: ID_Output;
-  entitySlug?: String;
-  url?: String;
+  route?: String;
+  screen?: String;
+  uri?: String;
   body: String;
   title?: String;
   sentAt: DateTimeOutput;
@@ -15259,8 +15279,9 @@ export interface PushNotificationReceiptPromise
   extends Promise<PushNotificationReceipt>,
     Fragmentable {
   id: () => Promise<ID_Output>;
-  entitySlug: () => Promise<String>;
-  url: () => Promise<String>;
+  route: () => Promise<String>;
+  screen: () => Promise<String>;
+  uri: () => Promise<String>;
   users: <T = FragmentableArray<User>>(args?: {
     where?: UserWhereInput;
     orderBy?: UserOrderByInput;
@@ -15281,8 +15302,9 @@ export interface PushNotificationReceiptSubscription
   extends Promise<AsyncIterator<PushNotificationReceipt>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
-  entitySlug: () => Promise<AsyncIterator<String>>;
-  url: () => Promise<AsyncIterator<String>>;
+  route: () => Promise<AsyncIterator<String>>;
+  screen: () => Promise<AsyncIterator<String>>;
+  uri: () => Promise<AsyncIterator<String>>;
   users: <T = Promise<AsyncIterator<UserSubscription>>>(args?: {
     where?: UserWhereInput;
     orderBy?: UserOrderByInput;
@@ -15303,8 +15325,9 @@ export interface PushNotificationReceiptNullablePromise
   extends Promise<PushNotificationReceipt | null>,
     Fragmentable {
   id: () => Promise<ID_Output>;
-  entitySlug: () => Promise<String>;
-  url: () => Promise<String>;
+  route: () => Promise<String>;
+  screen: () => Promise<String>;
+  uri: () => Promise<String>;
   users: <T = FragmentableArray<User>>(args?: {
     where?: UserWhereInput;
     orderBy?: UserOrderByInput;
@@ -17549,8 +17572,9 @@ export interface PushNotificationReceiptSubscriptionPayloadSubscription
 
 export interface PushNotificationReceiptPreviousValues {
   id: ID_Output;
-  entitySlug?: String;
-  url?: String;
+  route?: String;
+  screen?: String;
+  uri?: String;
   body: String;
   title?: String;
   sentAt: DateTimeOutput;
@@ -17562,8 +17586,9 @@ export interface PushNotificationReceiptPreviousValuesPromise
   extends Promise<PushNotificationReceiptPreviousValues>,
     Fragmentable {
   id: () => Promise<ID_Output>;
-  entitySlug: () => Promise<String>;
-  url: () => Promise<String>;
+  route: () => Promise<String>;
+  screen: () => Promise<String>;
+  uri: () => Promise<String>;
   body: () => Promise<String>;
   title: () => Promise<String>;
   sentAt: () => Promise<DateTimeOutput>;
@@ -17575,8 +17600,9 @@ export interface PushNotificationReceiptPreviousValuesSubscription
   extends Promise<AsyncIterator<PushNotificationReceiptPreviousValues>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
-  entitySlug: () => Promise<AsyncIterator<String>>;
-  url: () => Promise<AsyncIterator<String>>;
+  route: () => Promise<AsyncIterator<String>>;
+  screen: () => Promise<AsyncIterator<String>>;
+  uri: () => Promise<AsyncIterator<String>>;
   body: () => Promise<AsyncIterator<String>>;
   title: () => Promise<AsyncIterator<String>>;
   sentAt: () => Promise<AsyncIterator<DateTimeOutput>>;

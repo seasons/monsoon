@@ -358,10 +358,12 @@ type WarehouseLocation {
 type PushNotificationReceipt {
   #id of the notification
   id: ID! @id
-  #(e.g. /product/slug, or /brand/slug)
-  entitySlug: String
-  # url = (e.g /home, /browse)
-  url: String
+  # e.g BagStack, Faq, Webview
+  route: String
+  # screen on the route
+  screen: String
+  # uri, e.g https://blog.seasons.nyc/posts/can-the-industry-fix-seasons
+  uri: String
   # user = which customer to send message to
   users: [User!]!
   # body = body of the message

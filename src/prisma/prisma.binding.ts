@@ -8353,8 +8353,9 @@ input ProductWhereUniqueInput {
 
 type PushNotificationReceipt {
   id: ID!
-  entitySlug: String
-  url: String
+  route: String
+  screen: String
+  uri: String
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User!]
   body: String!
   title: String
@@ -8371,8 +8372,9 @@ type PushNotificationReceiptConnection {
 
 input PushNotificationReceiptCreateInput {
   id: ID
-  entitySlug: String
-  url: String
+  route: String
+  screen: String
+  uri: String
   users: UserCreateManyInput
   body: String!
   title: String
@@ -8387,10 +8389,12 @@ type PushNotificationReceiptEdge {
 enum PushNotificationReceiptOrderByInput {
   id_ASC
   id_DESC
-  entitySlug_ASC
-  entitySlug_DESC
-  url_ASC
-  url_DESC
+  route_ASC
+  route_DESC
+  screen_ASC
+  screen_DESC
+  uri_ASC
+  uri_DESC
   body_ASC
   body_DESC
   title_ASC
@@ -8405,8 +8409,9 @@ enum PushNotificationReceiptOrderByInput {
 
 type PushNotificationReceiptPreviousValues {
   id: ID!
-  entitySlug: String
-  url: String
+  route: String
+  screen: String
+  uri: String
   body: String!
   title: String
   sentAt: DateTime!
@@ -8433,8 +8438,9 @@ input PushNotificationReceiptSubscriptionWhereInput {
 }
 
 input PushNotificationReceiptUpdateInput {
-  entitySlug: String
-  url: String
+  route: String
+  screen: String
+  uri: String
   users: UserUpdateManyInput
   body: String
   title: String
@@ -8442,8 +8448,9 @@ input PushNotificationReceiptUpdateInput {
 }
 
 input PushNotificationReceiptUpdateManyMutationInput {
-  entitySlug: String
-  url: String
+  route: String
+  screen: String
+  uri: String
   body: String
   title: String
   sentAt: DateTime
@@ -8464,34 +8471,48 @@ input PushNotificationReceiptWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
-  entitySlug: String
-  entitySlug_not: String
-  entitySlug_in: [String!]
-  entitySlug_not_in: [String!]
-  entitySlug_lt: String
-  entitySlug_lte: String
-  entitySlug_gt: String
-  entitySlug_gte: String
-  entitySlug_contains: String
-  entitySlug_not_contains: String
-  entitySlug_starts_with: String
-  entitySlug_not_starts_with: String
-  entitySlug_ends_with: String
-  entitySlug_not_ends_with: String
-  url: String
-  url_not: String
-  url_in: [String!]
-  url_not_in: [String!]
-  url_lt: String
-  url_lte: String
-  url_gt: String
-  url_gte: String
-  url_contains: String
-  url_not_contains: String
-  url_starts_with: String
-  url_not_starts_with: String
-  url_ends_with: String
-  url_not_ends_with: String
+  route: String
+  route_not: String
+  route_in: [String!]
+  route_not_in: [String!]
+  route_lt: String
+  route_lte: String
+  route_gt: String
+  route_gte: String
+  route_contains: String
+  route_not_contains: String
+  route_starts_with: String
+  route_not_starts_with: String
+  route_ends_with: String
+  route_not_ends_with: String
+  screen: String
+  screen_not: String
+  screen_in: [String!]
+  screen_not_in: [String!]
+  screen_lt: String
+  screen_lte: String
+  screen_gt: String
+  screen_gte: String
+  screen_contains: String
+  screen_not_contains: String
+  screen_starts_with: String
+  screen_not_starts_with: String
+  screen_ends_with: String
+  screen_not_ends_with: String
+  uri: String
+  uri_not: String
+  uri_in: [String!]
+  uri_not_in: [String!]
+  uri_lt: String
+  uri_lte: String
+  uri_gt: String
+  uri_gte: String
+  uri_contains: String
+  uri_not_contains: String
+  uri_starts_with: String
+  uri_not_starts_with: String
+  uri_ends_with: String
+  uri_not_ends_with: String
   users_every: UserWhereInput
   users_some: UserWhereInput
   users_none: UserWhereInput
@@ -11992,10 +12013,12 @@ export type ProductVariantWantOrderByInput =   'id_ASC' |
 
 export type PushNotificationReceiptOrderByInput =   'id_ASC' |
   'id_DESC' |
-  'entitySlug_ASC' |
-  'entitySlug_DESC' |
-  'url_ASC' |
-  'url_DESC' |
+  'route_ASC' |
+  'route_DESC' |
+  'screen_ASC' |
+  'screen_DESC' |
+  'uri_ASC' |
+  'uri_DESC' |
   'body_ASC' |
   'body_DESC' |
   'title_ASC' |
@@ -18179,8 +18202,9 @@ export interface ProductWhereUniqueInput {
 
 export interface PushNotificationReceiptCreateInput {
   id?: ID_Input | null
-  entitySlug?: String | null
-  url?: String | null
+  route?: String | null
+  screen?: String | null
+  uri?: String | null
   users?: UserCreateManyInput | null
   body: String
   title?: String | null
@@ -18199,8 +18223,9 @@ export interface PushNotificationReceiptSubscriptionWhereInput {
 }
 
 export interface PushNotificationReceiptUpdateInput {
-  entitySlug?: String | null
-  url?: String | null
+  route?: String | null
+  screen?: String | null
+  uri?: String | null
   users?: UserUpdateManyInput | null
   body?: String | null
   title?: String | null
@@ -18208,8 +18233,9 @@ export interface PushNotificationReceiptUpdateInput {
 }
 
 export interface PushNotificationReceiptUpdateManyMutationInput {
-  entitySlug?: String | null
-  url?: String | null
+  route?: String | null
+  screen?: String | null
+  uri?: String | null
   body?: String | null
   title?: String | null
   sentAt?: DateTime | null
@@ -18230,34 +18256,48 @@ export interface PushNotificationReceiptWhereInput {
   id_not_starts_with?: ID_Input | null
   id_ends_with?: ID_Input | null
   id_not_ends_with?: ID_Input | null
-  entitySlug?: String | null
-  entitySlug_not?: String | null
-  entitySlug_in?: String[] | String | null
-  entitySlug_not_in?: String[] | String | null
-  entitySlug_lt?: String | null
-  entitySlug_lte?: String | null
-  entitySlug_gt?: String | null
-  entitySlug_gte?: String | null
-  entitySlug_contains?: String | null
-  entitySlug_not_contains?: String | null
-  entitySlug_starts_with?: String | null
-  entitySlug_not_starts_with?: String | null
-  entitySlug_ends_with?: String | null
-  entitySlug_not_ends_with?: String | null
-  url?: String | null
-  url_not?: String | null
-  url_in?: String[] | String | null
-  url_not_in?: String[] | String | null
-  url_lt?: String | null
-  url_lte?: String | null
-  url_gt?: String | null
-  url_gte?: String | null
-  url_contains?: String | null
-  url_not_contains?: String | null
-  url_starts_with?: String | null
-  url_not_starts_with?: String | null
-  url_ends_with?: String | null
-  url_not_ends_with?: String | null
+  route?: String | null
+  route_not?: String | null
+  route_in?: String[] | String | null
+  route_not_in?: String[] | String | null
+  route_lt?: String | null
+  route_lte?: String | null
+  route_gt?: String | null
+  route_gte?: String | null
+  route_contains?: String | null
+  route_not_contains?: String | null
+  route_starts_with?: String | null
+  route_not_starts_with?: String | null
+  route_ends_with?: String | null
+  route_not_ends_with?: String | null
+  screen?: String | null
+  screen_not?: String | null
+  screen_in?: String[] | String | null
+  screen_not_in?: String[] | String | null
+  screen_lt?: String | null
+  screen_lte?: String | null
+  screen_gt?: String | null
+  screen_gte?: String | null
+  screen_contains?: String | null
+  screen_not_contains?: String | null
+  screen_starts_with?: String | null
+  screen_not_starts_with?: String | null
+  screen_ends_with?: String | null
+  screen_not_ends_with?: String | null
+  uri?: String | null
+  uri_not?: String | null
+  uri_in?: String[] | String | null
+  uri_not_in?: String[] | String | null
+  uri_lt?: String | null
+  uri_lte?: String | null
+  uri_gt?: String | null
+  uri_gte?: String | null
+  uri_contains?: String | null
+  uri_not_contains?: String | null
+  uri_starts_with?: String | null
+  uri_not_starts_with?: String | null
+  uri_ends_with?: String | null
+  uri_not_ends_with?: String | null
   users_every?: UserWhereInput | null
   users_some?: UserWhereInput | null
   users_none?: UserWhereInput | null
@@ -21680,8 +21720,9 @@ export interface ProductVariantWantSubscriptionPayload {
 
 export interface PushNotificationReceipt {
   id: ID_Output
-  entitySlug?: String | null
-  url?: String | null
+  route?: String | null
+  screen?: String | null
+  uri?: String | null
   users?: Array<User> | null
   body: String
   title?: String | null
@@ -21703,8 +21744,9 @@ export interface PushNotificationReceiptEdge {
 
 export interface PushNotificationReceiptPreviousValues {
   id: ID_Output
-  entitySlug?: String | null
-  url?: String | null
+  route?: String | null
+  screen?: String | null
+  uri?: String | null
   body: String
   title?: String | null
   sentAt: DateTime

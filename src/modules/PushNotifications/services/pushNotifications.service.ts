@@ -35,7 +35,10 @@ export class PushNotificationsService {
     const { receiptPayload, notificationPayload } = this.data.getPushNotifData(
       pushNotifID
     )
-    await this.pusher.client.publishToUsers([targetEmail], notificationPayload)
+    await this.pusher.client.publishToUsers(
+      [targetEmail],
+      notificationPayload as any
+    )
     await this.prisma.client.createPushNotificationReceipt({
       ...receiptPayload,
       users: { connect: [{ email: email }] },
