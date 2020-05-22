@@ -185,7 +185,7 @@ input UpsertProductInput {
   bottomSizeType: BottomSizeType
   brandID: String!
   categoryID: String!
-  colorID: String!
+  colorCode: String!
   description: String!
   functions: [String!]!
   images: [Upload!]!
@@ -196,8 +196,8 @@ input UpsertProductInput {
   name: String!
   outerMaterials: [String!]!
   retailPrice: Int!
-  season: String!
-  secondaryColorID: String
+  season: String
+  secondaryColorCode: String
   status: ProductStatus!
   tags: [String!]!
   type: ProductType!
