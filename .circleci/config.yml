@@ -11,7 +11,9 @@ jobs:
     steps:
       - checkout
 
-      - run: curl -o- -L https://yarnpkg.com/install.sh | bash
+      - run:
+          name: Install Yarn
+          command: curl -o- -L https://yarnpkg.com/install.sh | bash
 
       - run:
           name: Install Node Version Manager
@@ -31,12 +33,18 @@ jobs:
             # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
 
-      - run: yarn install
+      - run:
+          name: Install Dependencies
+          command: yarn install
 
-      - run: bash src/tests/create_testing_env_file.sh
+      - run:
+          name: Create Testing File
+          command: bash src/tests/create_testing_env_file.sh
 
       # Setup docker but don't start (Will be started from other scripts if needed)
-      - run: docker-compose build; docker-compose create;
+      - run:
+          name: Build and Create docker containers (Not run yet)
+          command: docker-compose build; docker-compose create;
 
       - save_cache:
           paths:
@@ -44,4 +52,6 @@ jobs:
           key: v1-dependencies-{{ checksum "package.json" }}
 
       # run tests!
-      - run: yarn test
+      - run:
+          name: Run tests
+          command: yarn test

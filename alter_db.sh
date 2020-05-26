@@ -36,3 +36,5 @@ PGPASSWORD=$password psql -h localhost -p 9876 -U prisma -d $database_name -c "A
   ADD CHECK (stored >= 0),
   ADD CHECK (offloaded >= 0),
   ADD CHECK (total = reservable + reserved + \"nonReservable\" + stored + offloaded);"
+
+echo "Added constraints Added product variant constraints to DB"
