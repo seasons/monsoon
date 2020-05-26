@@ -3,6 +3,7 @@ import {
   PushNotificationID,
   PushNotificationsService,
 } from "@app/modules/PushNotifications"
+import { UtilsService } from "@app/modules/Utils"
 import {
   AirtableInventoryStatus,
   AirtableProductVariantCounts,
@@ -23,7 +24,7 @@ import {
 } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
 import { head } from "lodash"
-import { DateTime, Interval } from "luxon"
+import moment from "moment"
 
 type prismaProductVariantCounts = Pick<
   ProductVariant,
@@ -45,7 +46,8 @@ export class ReservationScheduledJobs {
     private readonly prisma: PrismaService,
     private readonly shippingService: ShippingService,
     private readonly errorService: ErrorService,
-    private readonly pushNotifs: PushNotificationsService
+    private readonly pushNotifs: PushNotificationsService,
+    private readonly utils: UtilsService
   ) {}
 
   @Cron(CronExpression.EVERY_6_HOURS)
@@ -72,13 +74,14 @@ export class ReservationScheduledJobs {
 
           this.emailService.sendReturnReminderEmail(user, reservation)
 
+          const now = new Date()
           await this.pushNotifs.pushNotifyUser({
             email: user.email,
             pushNotifID: PushNotificationID.ReturnDue,
           })
           await this.prisma.client.updateReservation({
             where: { id: reservation.id },
-            data: { reminderSentAt: DateTime.local().toString() },
+            data: { reminderSentAt: now.toISOString() },
           })
 
           report.reservationsForWhichRemindersWereSent.push(
@@ -438,21 +441,23 @@ export class ReservationScheduledJobs {
   }
 
   private async returnNoticeNeeded(reservation: Reservation) {
-    const now = DateTime.local()
-    const twentyEightToTwentyNineDaysAgo = Interval.fromDateTimes(
-      now.minus({ days: 29 }),
-      now.minus({ days: 28 })
-    )
     const customer = await this.prisma.client
       .reservation({
         id: reservation.id,
       })
       .customer()
-
+    const reservationCreatedAt = moment(reservation.createdAt)
     return (
-      twentyEightToTwentyNineDaysAgo.contains(
-        DateTime.fromISO(reservation.createdAt)
-      ) &&
+      this.utils.isXDaysBefore({
+        beforeDate: new Date(
+          reservationCreatedAt.year(),
+          reservationCreatedAt.month(),
+          reservationCreatedAt.date()
+        ),
+        // now
+        afterDate: new Date(),
+        numDays: 27,
+      }) &&
       !reservation.reminderSentAt &&
       customer.plan === "Essential" &&
       !["Cancelled", "Completed"].includes(reservation.status)

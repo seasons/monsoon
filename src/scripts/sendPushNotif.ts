@@ -8,7 +8,7 @@ const run = async () => {
     secretKey: process.env.PUSHER_SECRET_KEY,
   })
 
-  const y = await client.publishToUsers(["laura-collins@seasons.nyc"], {
+  const y = await client.publishToUsers(["faiyam+1@faiyamrahman.com"], {
     apns: {
       aps: { alert: { title: "yo", body: "yo" } },
       data: { route: "Faq" },
