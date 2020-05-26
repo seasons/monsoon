@@ -150,6 +150,15 @@ enum WarehouseLocationType {
   Bin
 }
 
+enum EmailId {
+  ReservationReturnConfirmation
+  ReservationConfirmation
+  CompleteAccount
+  FreeToReserve
+  WelcomeToSeasons
+  ReturnReminder
+}
+
 type Brand {
   id: ID! @id
   slug: String! @unique
@@ -352,6 +361,14 @@ type WarehouseLocation {
   itemCode: String!
   physicalProducts: [PhysicalProduct!]
   constraints: [WarehouseLocationConstraint!]
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type EmailReceipt {
+  id: ID! @id
+  emailId: EmailId!
+  user: User!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }

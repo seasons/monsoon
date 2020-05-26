@@ -34,6 +34,9 @@ export interface Query {
     customerDetail: <T = CustomerDetail | null>(args: { where: CustomerDetailWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     customerDetails: <T = Array<CustomerDetail | null>>(args: { where?: CustomerDetailWhereInput | null, orderBy?: CustomerDetailOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     customerDetailsConnection: <T = CustomerDetailConnection>(args: { where?: CustomerDetailWhereInput | null, orderBy?: CustomerDetailOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    emailReceipt: <T = EmailReceipt | null>(args: { where: EmailReceiptWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    emailReceipts: <T = Array<EmailReceipt | null>>(args: { where?: EmailReceiptWhereInput | null, orderBy?: EmailReceiptOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    emailReceiptsConnection: <T = EmailReceiptConnection>(args: { where?: EmailReceiptWhereInput | null, orderBy?: EmailReceiptOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     homepageProductRail: <T = HomepageProductRail | null>(args: { where: HomepageProductRailWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     homepageProductRails: <T = Array<HomepageProductRail | null>>(args: { where?: HomepageProductRailWhereInput | null, orderBy?: HomepageProductRailOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     homepageProductRailsConnection: <T = HomepageProductRailConnection>(args: { where?: HomepageProductRailWhereInput | null, orderBy?: HomepageProductRailOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -176,6 +179,12 @@ export interface Mutation {
     upsertCustomerDetail: <T = CustomerDetail>(args: { where: CustomerDetailWhereUniqueInput, create: CustomerDetailCreateInput, update: CustomerDetailUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteCustomerDetail: <T = CustomerDetail | null>(args: { where: CustomerDetailWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteManyCustomerDetails: <T = BatchPayload>(args: { where?: CustomerDetailWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    createEmailReceipt: <T = EmailReceipt>(args: { data: EmailReceiptCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateEmailReceipt: <T = EmailReceipt | null>(args: { data: EmailReceiptUpdateInput, where: EmailReceiptWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    updateManyEmailReceipts: <T = BatchPayload>(args: { data: EmailReceiptUpdateManyMutationInput, where?: EmailReceiptWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    upsertEmailReceipt: <T = EmailReceipt>(args: { where: EmailReceiptWhereUniqueInput, create: EmailReceiptCreateInput, update: EmailReceiptUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteEmailReceipt: <T = EmailReceipt | null>(args: { where: EmailReceiptWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deleteManyEmailReceipts: <T = BatchPayload>(args: { where?: EmailReceiptWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createHomepageProductRail: <T = HomepageProductRail>(args: { data: HomepageProductRailCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateHomepageProductRail: <T = HomepageProductRail | null>(args: { data: HomepageProductRailUpdateInput, where: HomepageProductRailWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateManyHomepageProductRails: <T = BatchPayload>(args: { data: HomepageProductRailUpdateManyMutationInput, where?: HomepageProductRailWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -344,6 +353,7 @@ export interface Subscription {
     color: <T = ColorSubscriptionPayload | null>(args: { where?: ColorSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     customer: <T = CustomerSubscriptionPayload | null>(args: { where?: CustomerSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     customerDetail: <T = CustomerDetailSubscriptionPayload | null>(args: { where?: CustomerDetailSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
+    emailReceipt: <T = EmailReceiptSubscriptionPayload | null>(args: { where?: EmailReceiptSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     homepageProductRail: <T = HomepageProductRailSubscriptionPayload | null>(args: { where?: HomepageProductRailSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     image: <T = ImageSubscriptionPayload | null>(args: { where?: ImageSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     label: <T = LabelSubscriptionPayload | null>(args: { where?: LabelSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
@@ -383,6 +393,7 @@ export interface Exists {
   Color: (where?: ColorWhereInput) => Promise<boolean>
   Customer: (where?: CustomerWhereInput) => Promise<boolean>
   CustomerDetail: (where?: CustomerDetailWhereInput) => Promise<boolean>
+  EmailReceipt: (where?: EmailReceiptWhereInput) => Promise<boolean>
   HomepageProductRail: (where?: HomepageProductRailWhereInput) => Promise<boolean>
   Image: (where?: ImageWhereInput) => Promise<boolean>
   Label: (where?: LabelWhereInput) => Promise<boolean>
@@ -470,6 +481,10 @@ type AggregateCustomer {
 }
 
 type AggregateCustomerDetail {
+  count: Int!
+}
+
+type AggregateEmailReceipt {
   count: Int!
 }
 
@@ -3458,6 +3473,130 @@ input CustomerWhereUniqueInput {
 
 scalar DateTime
 
+enum EmailId {
+  ReservationReturnConfirmation
+  ReservationConfirmation
+  CompleteAccount
+  FreeToReserve
+  WelcomeToSeasons
+  ReturnReminder
+}
+
+type EmailReceipt {
+  id: ID!
+  emailId: EmailId!
+  user: User!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type EmailReceiptConnection {
+  pageInfo: PageInfo!
+  edges: [EmailReceiptEdge]!
+  aggregate: AggregateEmailReceipt!
+}
+
+input EmailReceiptCreateInput {
+  id: ID
+  emailId: EmailId!
+  user: UserCreateOneInput!
+}
+
+type EmailReceiptEdge {
+  node: EmailReceipt!
+  cursor: String!
+}
+
+enum EmailReceiptOrderByInput {
+  id_ASC
+  id_DESC
+  emailId_ASC
+  emailId_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type EmailReceiptPreviousValues {
+  id: ID!
+  emailId: EmailId!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type EmailReceiptSubscriptionPayload {
+  mutation: MutationType!
+  node: EmailReceipt
+  updatedFields: [String!]
+  previousValues: EmailReceiptPreviousValues
+}
+
+input EmailReceiptSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: EmailReceiptWhereInput
+  AND: [EmailReceiptSubscriptionWhereInput!]
+  OR: [EmailReceiptSubscriptionWhereInput!]
+  NOT: [EmailReceiptSubscriptionWhereInput!]
+}
+
+input EmailReceiptUpdateInput {
+  emailId: EmailId
+  user: UserUpdateOneRequiredInput
+}
+
+input EmailReceiptUpdateManyMutationInput {
+  emailId: EmailId
+}
+
+input EmailReceiptWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  emailId: EmailId
+  emailId_not: EmailId
+  emailId_in: [EmailId!]
+  emailId_not_in: [EmailId!]
+  user: UserWhereInput
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [EmailReceiptWhereInput!]
+  OR: [EmailReceiptWhereInput!]
+  NOT: [EmailReceiptWhereInput!]
+}
+
+input EmailReceiptWhereUniqueInput {
+  id: ID
+}
+
 type HomepageProductRail {
   id: ID!
   slug: String!
@@ -4629,6 +4768,12 @@ type Mutation {
   upsertCustomerDetail(where: CustomerDetailWhereUniqueInput!, create: CustomerDetailCreateInput!, update: CustomerDetailUpdateInput!): CustomerDetail!
   deleteCustomerDetail(where: CustomerDetailWhereUniqueInput!): CustomerDetail
   deleteManyCustomerDetails(where: CustomerDetailWhereInput): BatchPayload!
+  createEmailReceipt(data: EmailReceiptCreateInput!): EmailReceipt!
+  updateEmailReceipt(data: EmailReceiptUpdateInput!, where: EmailReceiptWhereUniqueInput!): EmailReceipt
+  updateManyEmailReceipts(data: EmailReceiptUpdateManyMutationInput!, where: EmailReceiptWhereInput): BatchPayload!
+  upsertEmailReceipt(where: EmailReceiptWhereUniqueInput!, create: EmailReceiptCreateInput!, update: EmailReceiptUpdateInput!): EmailReceipt!
+  deleteEmailReceipt(where: EmailReceiptWhereUniqueInput!): EmailReceipt
+  deleteManyEmailReceipts(where: EmailReceiptWhereInput): BatchPayload!
   createHomepageProductRail(data: HomepageProductRailCreateInput!): HomepageProductRail!
   updateHomepageProductRail(data: HomepageProductRailUpdateInput!, where: HomepageProductRailWhereUniqueInput!): HomepageProductRail
   updateManyHomepageProductRails(data: HomepageProductRailUpdateManyMutationInput!, where: HomepageProductRailWhereInput): BatchPayload!
@@ -5614,6 +5759,7 @@ type Product {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  publishedAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -5658,6 +5804,7 @@ input ProductCreateInput {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  publishedAt: DateTime
 }
 
 input ProductCreateManyInput {
@@ -5722,6 +5869,7 @@ input ProductCreateWithoutBrandInput {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  publishedAt: DateTime
 }
 
 input ProductCreateWithoutCategoryInput {
@@ -5747,6 +5895,7 @@ input ProductCreateWithoutCategoryInput {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  publishedAt: DateTime
 }
 
 input ProductCreateWithoutModelInput {
@@ -5772,6 +5921,7 @@ input ProductCreateWithoutModelInput {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  publishedAt: DateTime
 }
 
 input ProductCreateWithoutTagsInput {
@@ -5797,6 +5947,7 @@ input ProductCreateWithoutTagsInput {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  publishedAt: DateTime
 }
 
 input ProductCreateWithoutVariantsInput {
@@ -5822,6 +5973,7 @@ input ProductCreateWithoutVariantsInput {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  publishedAt: DateTime
 }
 
 type ProductEdge {
@@ -6174,6 +6326,8 @@ enum ProductOrderByInput {
   season_DESC
   architecture_ASC
   architecture_DESC
+  publishedAt_ASC
+  publishedAt_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -6194,6 +6348,7 @@ type ProductPreviousValues {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  publishedAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -6587,6 +6742,14 @@ input ProductScalarWhereInput {
   architecture_not: ProductArchitecture
   architecture_in: [ProductArchitecture!]
   architecture_not_in: [ProductArchitecture!]
+  publishedAt: DateTime
+  publishedAt_not: DateTime
+  publishedAt_in: [DateTime!]
+  publishedAt_not_in: [DateTime!]
+  publishedAt_lt: DateTime
+  publishedAt_lte: DateTime
+  publishedAt_gt: DateTime
+  publishedAt_gte: DateTime
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -6663,6 +6826,7 @@ input ProductUpdateDataInput {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  publishedAt: DateTime
 }
 
 input ProductUpdateinnerMaterialsInput {
@@ -6692,6 +6856,7 @@ input ProductUpdateInput {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  publishedAt: DateTime
 }
 
 input ProductUpdateManyDataInput {
@@ -6707,6 +6872,7 @@ input ProductUpdateManyDataInput {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  publishedAt: DateTime
 }
 
 input ProductUpdateManyInput {
@@ -6734,6 +6900,7 @@ input ProductUpdateManyMutationInput {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  publishedAt: DateTime
 }
 
 input ProductUpdateManyWithoutBrandInput {
@@ -6829,6 +6996,7 @@ input ProductUpdateWithoutBrandDataInput {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  publishedAt: DateTime
 }
 
 input ProductUpdateWithoutCategoryDataInput {
@@ -6853,6 +7021,7 @@ input ProductUpdateWithoutCategoryDataInput {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  publishedAt: DateTime
 }
 
 input ProductUpdateWithoutModelDataInput {
@@ -6877,6 +7046,7 @@ input ProductUpdateWithoutModelDataInput {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  publishedAt: DateTime
 }
 
 input ProductUpdateWithoutTagsDataInput {
@@ -6901,6 +7071,7 @@ input ProductUpdateWithoutTagsDataInput {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  publishedAt: DateTime
 }
 
 input ProductUpdateWithoutVariantsDataInput {
@@ -6925,6 +7096,7 @@ input ProductUpdateWithoutVariantsDataInput {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  publishedAt: DateTime
 }
 
 input ProductUpdateWithWhereUniqueNestedInput {
@@ -8325,6 +8497,14 @@ input ProductWhereInput {
   architecture_not: ProductArchitecture
   architecture_in: [ProductArchitecture!]
   architecture_not_in: [ProductArchitecture!]
+  publishedAt: DateTime
+  publishedAt_not: DateTime
+  publishedAt_in: [DateTime!]
+  publishedAt_not_in: [DateTime!]
+  publishedAt_lt: DateTime
+  publishedAt_lte: DateTime
+  publishedAt_gt: DateTime
+  publishedAt_gte: DateTime
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -8614,6 +8794,9 @@ type Query {
   customerDetail(where: CustomerDetailWhereUniqueInput!): CustomerDetail
   customerDetails(where: CustomerDetailWhereInput, orderBy: CustomerDetailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CustomerDetail]!
   customerDetailsConnection(where: CustomerDetailWhereInput, orderBy: CustomerDetailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CustomerDetailConnection!
+  emailReceipt(where: EmailReceiptWhereUniqueInput!): EmailReceipt
+  emailReceipts(where: EmailReceiptWhereInput, orderBy: EmailReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [EmailReceipt]!
+  emailReceiptsConnection(where: EmailReceiptWhereInput, orderBy: EmailReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): EmailReceiptConnection!
   homepageProductRail(where: HomepageProductRailWhereUniqueInput!): HomepageProductRail
   homepageProductRails(where: HomepageProductRailWhereInput, orderBy: HomepageProductRailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [HomepageProductRail]!
   homepageProductRailsConnection(where: HomepageProductRailWhereInput, orderBy: HomepageProductRailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): HomepageProductRailConnection!
@@ -10071,6 +10254,7 @@ type Subscription {
   color(where: ColorSubscriptionWhereInput): ColorSubscriptionPayload
   customer(where: CustomerSubscriptionWhereInput): CustomerSubscriptionPayload
   customerDetail(where: CustomerDetailSubscriptionWhereInput): CustomerDetailSubscriptionPayload
+  emailReceipt(where: EmailReceiptSubscriptionWhereInput): EmailReceiptSubscriptionPayload
   homepageProductRail(where: HomepageProductRailSubscriptionWhereInput): HomepageProductRailSubscriptionPayload
   image(where: ImageSubscriptionWhereInput): ImageSubscriptionPayload
   label(where: LabelSubscriptionWhereInput): LabelSubscriptionPayload
@@ -11752,6 +11936,22 @@ export type CustomerStatus =   'Invited' |
   'Paused' |
   'Deactivated'
 
+export type EmailId =   'ReservationReturnConfirmation' |
+  'ReservationConfirmation' |
+  'CompleteAccount' |
+  'FreeToReserve' |
+  'WelcomeToSeasons' |
+  'ReturnReminder'
+
+export type EmailReceiptOrderByInput =   'id_ASC' |
+  'id_DESC' |
+  'emailId_ASC' |
+  'emailId_DESC' |
+  'createdAt_ASC' |
+  'createdAt_DESC' |
+  'updatedAt_ASC' |
+  'updatedAt_DESC'
+
 export type HomepageProductRailOrderByInput =   'id_ASC' |
   'id_DESC' |
   'slug_ASC' |
@@ -11929,6 +12129,8 @@ export type ProductOrderByInput =   'id_ASC' |
   'season_DESC' |
   'architecture_ASC' |
   'architecture_DESC' |
+  'publishedAt_ASC' |
+  'publishedAt_DESC' |
   'createdAt_ASC' |
   'createdAt_DESC' |
   'updatedAt_ASC' |
@@ -14418,6 +14620,77 @@ export interface CustomerWhereUniqueInput {
   id?: ID_Input | null
 }
 
+export interface EmailReceiptCreateInput {
+  id?: ID_Input | null
+  emailId: EmailId
+  user: UserCreateOneInput
+}
+
+export interface EmailReceiptSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType | null
+  updatedFields_contains?: String | null
+  updatedFields_contains_every?: String[] | String | null
+  updatedFields_contains_some?: String[] | String | null
+  node?: EmailReceiptWhereInput | null
+  AND?: EmailReceiptSubscriptionWhereInput[] | EmailReceiptSubscriptionWhereInput | null
+  OR?: EmailReceiptSubscriptionWhereInput[] | EmailReceiptSubscriptionWhereInput | null
+  NOT?: EmailReceiptSubscriptionWhereInput[] | EmailReceiptSubscriptionWhereInput | null
+}
+
+export interface EmailReceiptUpdateInput {
+  emailId?: EmailId | null
+  user?: UserUpdateOneRequiredInput | null
+}
+
+export interface EmailReceiptUpdateManyMutationInput {
+  emailId?: EmailId | null
+}
+
+export interface EmailReceiptWhereInput {
+  id?: ID_Input | null
+  id_not?: ID_Input | null
+  id_in?: ID_Output[] | ID_Output | null
+  id_not_in?: ID_Output[] | ID_Output | null
+  id_lt?: ID_Input | null
+  id_lte?: ID_Input | null
+  id_gt?: ID_Input | null
+  id_gte?: ID_Input | null
+  id_contains?: ID_Input | null
+  id_not_contains?: ID_Input | null
+  id_starts_with?: ID_Input | null
+  id_not_starts_with?: ID_Input | null
+  id_ends_with?: ID_Input | null
+  id_not_ends_with?: ID_Input | null
+  emailId?: EmailId | null
+  emailId_not?: EmailId | null
+  emailId_in?: EmailId[] | EmailId | null
+  emailId_not_in?: EmailId[] | EmailId | null
+  user?: UserWhereInput | null
+  createdAt?: DateTime | null
+  createdAt_not?: DateTime | null
+  createdAt_in?: DateTime[] | DateTime | null
+  createdAt_not_in?: DateTime[] | DateTime | null
+  createdAt_lt?: DateTime | null
+  createdAt_lte?: DateTime | null
+  createdAt_gt?: DateTime | null
+  createdAt_gte?: DateTime | null
+  updatedAt?: DateTime | null
+  updatedAt_not?: DateTime | null
+  updatedAt_in?: DateTime[] | DateTime | null
+  updatedAt_not_in?: DateTime[] | DateTime | null
+  updatedAt_lt?: DateTime | null
+  updatedAt_lte?: DateTime | null
+  updatedAt_gt?: DateTime | null
+  updatedAt_gte?: DateTime | null
+  AND?: EmailReceiptWhereInput[] | EmailReceiptWhereInput | null
+  OR?: EmailReceiptWhereInput[] | EmailReceiptWhereInput | null
+  NOT?: EmailReceiptWhereInput[] | EmailReceiptWhereInput | null
+}
+
+export interface EmailReceiptWhereUniqueInput {
+  id?: ID_Input | null
+}
+
 export interface HomepageProductRailCreateInput {
   id?: ID_Input | null
   slug: String
@@ -15932,6 +16205,7 @@ export interface ProductCreateInput {
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
+  publishedAt?: DateTime | null
 }
 
 export interface ProductCreateManyInput {
@@ -15996,6 +16270,7 @@ export interface ProductCreateWithoutBrandInput {
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
+  publishedAt?: DateTime | null
 }
 
 export interface ProductCreateWithoutCategoryInput {
@@ -16021,6 +16296,7 @@ export interface ProductCreateWithoutCategoryInput {
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
+  publishedAt?: DateTime | null
 }
 
 export interface ProductCreateWithoutModelInput {
@@ -16046,6 +16322,7 @@ export interface ProductCreateWithoutModelInput {
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
+  publishedAt?: DateTime | null
 }
 
 export interface ProductCreateWithoutTagsInput {
@@ -16071,6 +16348,7 @@ export interface ProductCreateWithoutTagsInput {
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
+  publishedAt?: DateTime | null
 }
 
 export interface ProductCreateWithoutVariantsInput {
@@ -16096,6 +16374,7 @@ export interface ProductCreateWithoutVariantsInput {
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
+  publishedAt?: DateTime | null
 }
 
 export interface ProductFunctionCreateInput {
@@ -16664,6 +16943,14 @@ export interface ProductScalarWhereInput {
   architecture_not?: ProductArchitecture | null
   architecture_in?: ProductArchitecture[] | ProductArchitecture | null
   architecture_not_in?: ProductArchitecture[] | ProductArchitecture | null
+  publishedAt?: DateTime | null
+  publishedAt_not?: DateTime | null
+  publishedAt_in?: DateTime[] | DateTime | null
+  publishedAt_not_in?: DateTime[] | DateTime | null
+  publishedAt_lt?: DateTime | null
+  publishedAt_lte?: DateTime | null
+  publishedAt_gt?: DateTime | null
+  publishedAt_gte?: DateTime | null
   createdAt?: DateTime | null
   createdAt_not?: DateTime | null
   createdAt_in?: DateTime[] | DateTime | null
@@ -16719,6 +17006,7 @@ export interface ProductUpdateDataInput {
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
+  publishedAt?: DateTime | null
 }
 
 export interface ProductUpdateinnerMaterialsInput {
@@ -16748,6 +17036,7 @@ export interface ProductUpdateInput {
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
+  publishedAt?: DateTime | null
 }
 
 export interface ProductUpdateManyDataInput {
@@ -16763,6 +17052,7 @@ export interface ProductUpdateManyDataInput {
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
+  publishedAt?: DateTime | null
 }
 
 export interface ProductUpdateManyInput {
@@ -16790,6 +17080,7 @@ export interface ProductUpdateManyMutationInput {
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
+  publishedAt?: DateTime | null
 }
 
 export interface ProductUpdateManyWithoutBrandInput {
@@ -16885,6 +17176,7 @@ export interface ProductUpdateWithoutBrandDataInput {
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
+  publishedAt?: DateTime | null
 }
 
 export interface ProductUpdateWithoutCategoryDataInput {
@@ -16909,6 +17201,7 @@ export interface ProductUpdateWithoutCategoryDataInput {
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
+  publishedAt?: DateTime | null
 }
 
 export interface ProductUpdateWithoutModelDataInput {
@@ -16933,6 +17226,7 @@ export interface ProductUpdateWithoutModelDataInput {
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
+  publishedAt?: DateTime | null
 }
 
 export interface ProductUpdateWithoutTagsDataInput {
@@ -16957,6 +17251,7 @@ export interface ProductUpdateWithoutTagsDataInput {
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
+  publishedAt?: DateTime | null
 }
 
 export interface ProductUpdateWithoutVariantsDataInput {
@@ -16981,6 +17276,7 @@ export interface ProductUpdateWithoutVariantsDataInput {
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
+  publishedAt?: DateTime | null
 }
 
 export interface ProductUpdateWithWhereUniqueNestedInput {
@@ -18174,6 +18470,14 @@ export interface ProductWhereInput {
   architecture_not?: ProductArchitecture | null
   architecture_in?: ProductArchitecture[] | ProductArchitecture | null
   architecture_not_in?: ProductArchitecture[] | ProductArchitecture | null
+  publishedAt?: DateTime | null
+  publishedAt_not?: DateTime | null
+  publishedAt_in?: DateTime[] | DateTime | null
+  publishedAt_not_in?: DateTime[] | DateTime | null
+  publishedAt_lt?: DateTime | null
+  publishedAt_lte?: DateTime | null
+  publishedAt_gt?: DateTime | null
+  publishedAt_gte?: DateTime | null
   createdAt?: DateTime | null
   createdAt_not?: DateTime | null
   createdAt_in?: DateTime[] | DateTime | null
@@ -20614,6 +20918,10 @@ export interface AggregateCustomerDetail {
   count: Int
 }
 
+export interface AggregateEmailReceipt {
+  count: Int
+}
+
 export interface AggregateHomepageProductRail {
   count: Int
 }
@@ -21140,6 +21448,39 @@ export interface CustomerSubscriptionPayload {
   previousValues?: CustomerPreviousValues | null
 }
 
+export interface EmailReceipt {
+  id: ID_Output
+  emailId: EmailId
+  user: User
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+export interface EmailReceiptConnection {
+  pageInfo: PageInfo
+  edges: Array<EmailReceiptEdge | null>
+  aggregate: AggregateEmailReceipt
+}
+
+export interface EmailReceiptEdge {
+  node: EmailReceipt
+  cursor: String
+}
+
+export interface EmailReceiptPreviousValues {
+  id: ID_Output
+  emailId: EmailId
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+export interface EmailReceiptSubscriptionPayload {
+  mutation: MutationType
+  node?: EmailReceipt | null
+  updatedFields?: Array<String> | null
+  previousValues?: EmailReceiptPreviousValues | null
+}
+
 export interface HomepageProductRail {
   id: ID_Output
   slug: String
@@ -21419,6 +21760,7 @@ export interface Product {
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
+  publishedAt?: DateTime | null
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -21507,6 +21849,7 @@ export interface ProductPreviousValues {
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
+  publishedAt?: DateTime | null
   createdAt: DateTime
   updatedAt: DateTime
 }
