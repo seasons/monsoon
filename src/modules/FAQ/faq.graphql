@@ -1,0 +1,17 @@
+type Query {
+  faq: Faq
+}
+
+type Faq {
+  sections: [FaqSection!]!
+}
+
+type FaqSection {
+  title: String!
+  subsections: [FaqSubsection!]!
+}
+
+type FaqSubsection {
+  title: String!
+  text: String!
+}
