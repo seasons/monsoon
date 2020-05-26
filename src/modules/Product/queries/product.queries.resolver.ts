@@ -25,12 +25,26 @@ export class ProductQueriesResolver {
 
   @Query()
   async products(@Args() args, @Info() info) {
-    return await this.productService.getProducts(args, info)
+    return await this.productService.getProducts(
+      args,
+      addFragmentToInfo(
+        info,
+        // for computed fields
+        `fragment EnsureId on Product { id }`
+      )
+    )
   }
 
   @Query()
   async productsConnection(@Args() args, @Info() info) {
-    return await this.productService.getProductsConnection(args, info)
+    return await this.productService.getProductsConnection(
+      args,
+      addFragmentToInfo(
+        info,
+        // for computed fields
+        `fragment EnsureId on ProductConnection { edges { node { id } } }`
+      )
+    )
   }
 
   @Query()
@@ -49,13 +63,39 @@ export class ProductQueriesResolver {
   }
 
   @Query()
+  async productVariant(@Args() args, @Info() info, @Context() ctx) {
+    return await this.prisma.binding.query.productVariant(
+      args,
+      addFragmentToInfo(
+        info,
+        // for computed fields
+        `fragment EnsureId on ProductVariant { id }`
+      )
+    )
+  }
+
+  @Query()
   async physicalProduct(@Args() args, @Info() info) {
-    return await this.prisma.binding.query.physicalProduct(args, info)
+    return await this.prisma.binding.query.physicalProduct(
+      args,
+      addFragmentToInfo(
+        info,
+        // for computed fields
+        `fragment EnsureId on PhysicalProduct { id }`
+      )
+    )
   }
 
   @Query()
   async physicalProducts(@Args() args, @Info() info) {
-    return await this.prisma.binding.query.physicalProducts(args, info)
+    return await this.prisma.binding.query.physicalProducts(
+      args,
+      addFragmentToInfo(
+        info,
+        // for computed fields
+        `fragment EnsureId on PhysicalProduct { id }`
+      )
+    )
   }
 
   @Query()
@@ -76,5 +116,10 @@ export class ProductQueriesResolver {
   @Query()
   async generatedVariantSKUs(@Args() args, @Info() info) {
     return await this.productService.getGeneratedVariantSKUs(args)
+  }
+
+  @Query()
+  async tags(@Args() args, @Info() info) {
+    return await this.prisma.binding.query.tags(args, info)
   }
 }

@@ -1,7 +1,8 @@
+import { ImageData } from "@modules/Image/image.types"
 import { Injectable } from "@nestjs/common"
 import { BrandOrderByInput, Category, Product } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
-import { head, union, uniqBy } from "lodash"
+import { head, identity, pickBy, union, uniqBy } from "lodash"
 import slugify from "slugify"
 
 import {
@@ -42,6 +43,7 @@ export class ProductUtilsService {
 
   async queryOptionsForProducts(args) {
     const category = args.category || "all"
+    const brand = args.brand || "all"
     const orderBy = args.orderBy || "createdAt_DESC"
     const sizes = args.sizes || []
     // Add filtering by sizes in query
@@ -53,19 +55,33 @@ export class ProductUtilsService {
     // If client wants to sort by name, we will assume that they
     // want to sort by brand name as well
     if (orderBy.includes("name_")) {
-      return await this.productsAlphabetically(category, orderBy, sizes)
+      return await this.productsAlphabetically(category, orderBy, sizes, brand)
     }
 
-    const filters = await this.filtersForCategory(args)
+    const filters = await this.filters(args)
 
-    return {
-      orderBy,
-      where,
-      ...filters,
-    }
+    return pickBy(
+      {
+        orderBy,
+        where: {
+          ...where,
+          ...filters?.where,
+        },
+      },
+      identity
+    )
   }
 
-  private async filtersForCategory(args) {
+  private async filters(args) {
+    let brandFilter = { where: {} }
+    if (args.brand && args.brand !== "all") {
+      brandFilter = {
+        where: {
+          brand: { slug: args.brand },
+        },
+      }
+    }
+
     if (args.category && args.category !== "all") {
       const category = await this.prisma.client.category({
         slug: args.category,
@@ -78,17 +94,20 @@ export class ProductUtilsService {
         ? {
             where: {
               ...args.where,
+              ...brandFilter.where,
               OR: children.map(({ slug }) => ({ category: { slug } })),
             },
           }
         : {
             where: {
               ...args.where,
+              ...brandFilter.where,
               category: { slug: category.slug },
             },
           }
+    } else {
+      return brandFilter
     }
-    return {}
   }
   async getReservedBagItems(customer) {
     const reservedBagItems = await this.prisma.binding.query.bagItems(
@@ -165,7 +184,8 @@ export class ProductUtilsService {
   private async productsAlphabetically(
     category: string,
     orderBy: BrandOrderByInput,
-    sizes: [string]
+    sizes: [string],
+    brand: string
   ) {
     const brands = await this.prisma.binding.query.brands(
       { orderBy },
@@ -176,6 +196,7 @@ export class ProductUtilsService {
           orderBy: name_ASC,
           where: {
             ${category !== "all" ? `category: { slug: "${category}" },` : ""}
+            ${brand !== "all" ? `brand: { slug: "${brand}" },` : ""}
             status: Available,
             variants_some: { size_in: [${sizes}] }
           }
@@ -183,7 +204,10 @@ export class ProductUtilsService {
           id
           name
           description
-          images
+          images {
+            id
+            url
+          }
           modelSize
           modelHeight
           externalURL
@@ -275,18 +299,23 @@ export class ProductUtilsService {
     return sizeRecord
   }
 
-  getProductImageName(brandCode: string, name: string, index: number) {
-    return `${brandCode}/${name.replace(/ /g, "_")}/${index}.png`.toLowerCase()
+  getProductImageName(
+    brandCode: string,
+    name: string,
+    colorName: string,
+    index: number
+  ) {
+    const slug = slugify(name + " " + colorName).toLowerCase()
+    return `${brandCode}/${slug}/${slug}-${index}.png`.toLowerCase()
   }
 
-  async getImageIDsForURLs(imageURLs: string[]) {
+  async getImageIDs(imageDatas: ImageData[], slug: string) {
     const prismaImages = await Promise.all(
-      imageURLs.map(async imageURL => {
-        const imageData = { originalUrl: imageURL }
+      imageDatas.map(async imageData => {
         return await this.prisma.client.upsertImage({
-          where: imageData,
-          create: imageData,
-          update: imageData,
+          where: { url: imageData.url },
+          create: { ...imageData, title: slug },
+          update: { ...imageData, title: slug },
         })
       })
     )

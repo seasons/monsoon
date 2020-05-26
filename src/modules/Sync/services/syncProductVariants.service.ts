@@ -18,7 +18,6 @@ import { UtilsService } from "../../Utils/services/utils.service"
 import { SyncUtilsService } from "./sync.utils.service"
 import { SyncBottomSizesService } from "./syncBottomSizes.service"
 import { SyncProductsService } from "./syncProducts.service"
-import { SyncSizesService } from "./syncSizes.service"
 import { SyncTopSizesService } from "./syncTopSizes.service"
 
 @Injectable()
@@ -29,7 +28,6 @@ export class SyncProductVariantsService {
     private readonly productUtils: ProductUtilsService,
     private readonly syncBottomSizesService: SyncBottomSizesService,
     private readonly syncProductsService: SyncProductsService,
-    private readonly syncSizesService: SyncSizesService,
     private readonly syncTopSizesService: SyncTopSizesService,
     private readonly syncUtils: SyncUtilsService,
     private readonly utils: UtilsService
@@ -124,7 +122,7 @@ export class SyncProductVariantsService {
 
         // Get the related product
         const product = allProducts.findByIds(model.product)
-        if (isEmpty(product)) {
+        if (isEmpty(product) || isEmpty(product.model.slug)) {
           continue
         }
 
@@ -315,7 +313,7 @@ export class SyncProductVariantsService {
           }
         )
 
-        newPhysicalProducts.forEach(async p => {
+        for (const p of newPhysicalProducts) {
           await this.prisma.client.upsertPhysicalProduct({
             where: {
               seasonsUID: p.seasonsUID,
@@ -323,7 +321,7 @@ export class SyncProductVariantsService {
             create: p,
             update: p,
           })
-        })
+        }
 
         await productVariant.patchUpdate({
           SKU: sku,
@@ -529,8 +527,11 @@ export class SyncProductVariantsService {
               sku,
             },
           },
-          inventoryStatus: "Reservable" as InventoryStatus,
+          inventoryStatus: this.airtableService.airtableToPrismaInventoryStatus(
+            fields["Inventory Status"]
+          ),
           productStatus: fields["Product Status"],
+          sequenceNumber: fields["Sequence Number"],
         } as PhysicalProductCreateInput)
     )
   }

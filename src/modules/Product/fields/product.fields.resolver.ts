@@ -1,6 +1,6 @@
-import { Customer } from "@app/nest_decorators"
+import { Customer } from "@app/decorators"
 import { ImageService } from "@modules/Image"
-import { ImageSize } from "@modules/Image/image.types"
+import { ImageOptions, ImageSize } from "@modules/Image/image.types"
 import { ProductService } from "@modules/Product/services/product.service"
 import { ProductUtilsService } from "@modules/Product/services/product.utils.service"
 import { Args, Info, Parent, ResolveField, Resolver } from "@nestjs/graphql"
@@ -63,12 +63,15 @@ export class ProductFieldsResolver {
   }
 
   @ResolveField()
-  async resizedImages(
+  async images(
     @Parent() parent,
     @Args("width") width: number,
     @Args("height") height: number,
-    @Args("size") size: ImageSize = "Medium"
+    @Args("size") size: ImageSize = "Medium",
+    @Args("options") options: ImageOptions
   ) {
+    // Fetch the product's images sorted by url to ensure order is maintained
+    // since image URLs for a product are the same except for the index at the end
     const product = await this.prisma.binding.query.product(
       {
         where: {
@@ -78,13 +81,18 @@ export class ProductFieldsResolver {
       `
       {
         id
-        images
+        images(orderBy: url_ASC) {
+          id
+          url
+        }
       }
       `
     )
     return product?.images.map(image => {
       return {
-        url: this.imageService.imageResize(image?.url, size, {
+        id: image?.id,
+        url: this.imageService.resizeImage(image?.url, size, {
+          ...options,
           w: width,
           h: height,
         }),

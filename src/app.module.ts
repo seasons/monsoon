@@ -47,16 +47,15 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
 // Don't run cron jobs in dev mode, to keep the console clean
 const scheduleModule =
-  process.env.NODE_ENV !== "development" ? [ScheduleModule.forRoot()] : []
+  process.env.NODE_ENV === "production" ? [ScheduleModule.forRoot()] : []
 
 @Module({
   imports: [
     ...scheduleModule,
     GraphQLModule.forRootAsync({
-      useFactory: async () => {
-        const typeDefs = await importSchema("src/schema.graphql")
-        return {
-          typeDefs,
+      useFactory: async () =>
+        ({
+          typeDefs: await importSchema("src/schema.graphql"),
           path: "/",
           installSubscriptionHandlers: true,
           resolverValidationOptions: {
@@ -71,8 +70,7 @@ const scheduleModule =
             maxFileSize: 125000000, // 125 MB
             maxFiles: 5,
           },
-        } as GqlModuleOptions
-      },
+        } as GqlModuleOptions),
     }),
     AirtableModule,
     BlogModule,

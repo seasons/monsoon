@@ -1,0 +1,134 @@
+type Query {
+  generatedVariantSKUs(input: ProductVariantSKUsInput!): [String!]
+
+  bottomSize(where: BottomSizeWhereUniqueInput!): BottomSize
+  bottomSizes(
+    where: BottomSizeWhereInput
+    orderBy: BottomSizeOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [BottomSize]!
+  productVariant(where: ProductVariantWhereUniqueInput!): ProductVariant
+  size(where: SizeWhereUniqueInput!): Size
+  sizes(
+    where: SizeWhereInput
+    orderBy: SizeOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Size]!
+  sizesConnection(
+    where: SizeWhereInput
+    orderBy: SizeOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): SizeConnection!
+  topSize(where: TopSizeWhereUniqueInput!): TopSize
+  topSizes(
+    where: TopSizeWhereInput
+    orderBy: TopSizeOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [TopSize]!
+}
+
+type Mutation {
+  addProductVariantWant(variantID: ID!): ProductVariantWant!
+    @hasRole(roles: [Customer])
+  updateProductVariant(input: UpdateVariantInput!): ProductVariant
+    @hasRole(roles: [Admin])
+}
+
+type ProductVariant {
+  id: ID!
+  sku: String
+  color: Color!
+  size: String
+  internalSize: Size
+  manufacturerSizes(
+    where: SizeWhereInput
+    orderBy: SizeOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Size!]
+  weight: Float
+  height: Float
+  productID: String!
+  product: Product!
+  retailPrice: Float
+  physicalProducts(
+    where: PhysicalProductWhereInput
+    orderBy: PhysicalProductOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [PhysicalProduct!]
+  total: Int!
+  reservable: Int!
+  reserved: Int!
+  nonReservable: Int!
+  isSaved: Boolean!
+  isInBag: Boolean!
+  isWanted: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+input UpsertVariantInput {
+  sku: String!
+  internalSizeName: String!
+  # Top Size values
+  sleeve: Float
+  shoulder: Float
+  chest: Float
+  neck: Float
+  length: Float
+  # Bottom Size values
+  bottomSizeType: BottomSizeType
+  waist: Float
+  rise: Float
+  hem: Float
+  inseam: Float
+  weight: Float!
+  total: Int!
+  physicalProducts: [UpsertPhysicalProductInput!]!
+}
+
+input UpdateVariantInput {
+  id: ID!
+  productType: ProductType!
+  weight: Float!
+  # Top Size values
+  sleeve: Float
+  shoulder: Float
+  chest: Float
+  neck: Float
+  length: Float
+  # Bottom Size values
+  waist: Float
+  rise: Float
+  hem: Float
+  inseam: Float
+}
+
+input ProductVariantSKUsInput {
+  brandID: String!
+  colorID: String!
+  sizeNames: [String!]!
+}

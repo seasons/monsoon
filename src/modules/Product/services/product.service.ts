@@ -1,26 +1,36 @@
+import * as url from "url"
+
+import { ImageData } from "@modules/Image/image.types"
 import { ImageService } from "@modules/Image/services/image.service"
+import { S3_BASE } from "@modules/Image/services/image.service"
 import { Injectable } from "@nestjs/common"
 import {
   BagItem,
+  BottomSizeCreateInput,
   BottomSizeType,
   Customer,
   ID_Input,
   InventoryStatus,
   LetterSize,
   Product,
+  ProductCreateInput,
   ProductFunction,
   ProductStatus,
+  ProductType,
   ProductUpdateInput,
   ProductVariantCreateWithoutProductInput,
   ProductWhereUniqueInput,
   RecentlyViewedProduct,
+  Tag,
 } from "@prisma/index"
+import { Product as PrismaBindingProduct } from "@prisma/prisma.binding"
 import { PrismaService } from "@prisma/prisma.service"
 import { GraphQLResolveInfo } from "graphql"
-import { head } from "lodash"
+import { head, pick } from "lodash"
 
 import { UtilsService } from "../../Utils/services/utils.service"
 import { ProductWithPhysicalProducts } from "../product.types"
+import { PhysicalProductUtilsService } from "./physicalProduct.utils.service"
 import { ProductUtilsService } from "./product.utils.service"
 import { ProductVariantService } from "./productVariant.service"
 
@@ -31,23 +41,26 @@ export class ProductService {
     private readonly imageService: ImageService,
     private readonly productUtils: ProductUtilsService,
     private readonly productVariantService: ProductVariantService,
+    private readonly physicalProductUtils: PhysicalProductUtilsService,
     private readonly utils: UtilsService
   ) {}
 
   async getProducts(args, info) {
     const queryOptions = await this.productUtils.queryOptionsForProducts(args)
-    return await this.prisma.binding.query.products(
+    const products = await this.prisma.binding.query.products(
       { ...args, ...queryOptions },
       info
     )
+    return products
   }
 
   async getProductsConnection(args, info) {
     const queryOptions = await this.productUtils.queryOptionsForProducts(args)
-    return await this.prisma.binding.query.productsConnection(
+    const products = await this.prisma.binding.query.productsConnection(
       { ...args, ...queryOptions },
       info
     )
+    return products
   }
 
   async addViewedProduct(item, customer) {
@@ -115,43 +128,39 @@ export class ProductService {
     return bagItem.length > 0
   }
 
-  async upsertProduct(input) {
+  async deepUpsertProduct(input) {
+    // get records whose associated data we need for other parts of the upsert
     const brand = await this.prisma.client.brand({ id: input.brandID })
-    const color = await this.prisma.client.color({ id: input.colorID })
+    const color = await this.prisma.client.color({ colorCode: input.colorCode })
     const model = await this.prisma.client.productModel({ id: input.modelID })
-    const productFunctions = await Promise.all(
-      input.functions.map(
-        async functionName =>
-          await this.prisma.client.upsertProductFunction({
-            create: { name: functionName },
-            update: { name: functionName },
-            where: { name: functionName },
-          })
-      )
-    )
-    const functionIDs = productFunctions
-      .filter(Boolean)
-      .map((func: ProductFunction) => ({ id: func.id }))
+
+    // Get the functionIDs which we will connect to the product
+    const functionIDs = await this.upsertFunctions(input.functions)
+
+    // Generate the product slug
     const slug = await this.productUtils.getProductSlug(
       brand.brandCode,
       input.name,
       color.name
     )
 
-    const imageURLs: string[] = await Promise.all(
-      input.images.map(async (image, index) => {
-        const s3ImageName = await this.productUtils.getProductImageName(
+    // Store images and get their record ids to connect to the product
+    const imageDatas: ImageData[] = await Promise.all(
+      input.images.map((image, index) => {
+        const s3ImageName = this.productUtils.getProductImageName(
           brand.brandCode,
           input.name,
+          color.name,
           index + 1
         )
-        return await this.imageService.uploadImage(image, {
+        return this.imageService.uploadImage(image, {
           imageName: s3ImageName,
         })
       })
     )
-    const imageIDs = await this.productUtils.getImageIDsForURLs(imageURLs)
+    const imageIDs = await this.productUtils.getImageIDs(imageDatas, slug)
 
+    // Deep upsert the model size
     const modelSize = await this.productUtils.upsertModelSize({
       slug,
       type: input.type,
@@ -160,33 +169,30 @@ export class ProductService {
       bottomSizeType: input.bottomSizeType,
     })
 
-    const tagIDs: { id: string }[] = await Promise.all(
-      input.tags.map(async tag => {
-        const prismaTag = await this.prisma.client.upsertTag({
-          create: { name: tag },
-          update: { name: tag },
-          where: { name: tag },
-        })
-        return { id: prismaTag.id }
-      })
-    )
+    // Create all necessary tag records
+    const tagIDs = await this.upsertTags(input.tags)
 
-    const productData = {
+    const data = {
       slug,
-      name,
+      ...pick(input, [
+        "name",
+        "type",
+        "description",
+        "retailPrice",
+        "status",
+        "season",
+        "architecture",
+      ]),
       brand: {
         connect: { id: input.brandID },
       },
       category: {
         connect: { id: input.categoryID },
       },
-      type: input.type,
-      description: input.description,
       images: {
         connect: imageIDs,
       },
       modelHeight: model.height,
-      retailPrice: input.retailPrice,
       model: {
         connect: { id: model.id },
       },
@@ -194,10 +200,10 @@ export class ProductService {
         connect: { id: modelSize.id },
       },
       color: {
-        connect: { id: input.colorID },
+        connect: { colorCode: input.colorCode },
       },
-      secondaryColor: {
-        connect: { id: input.secondaryColorID },
+      secondaryColor: input.secondaryColorCode && {
+        connect: { colorCode: input.secondaryColorCode },
       },
       tags: {
         connect: tagIDs,
@@ -207,110 +213,22 @@ export class ProductService {
       },
       innerMaterials: { set: input.innerMaterials },
       outerMaterials: { set: input.outerMaterials },
-      status: input.status,
-      season: input.season,
-      architecture: input.architecture,
-    }
-    const productCreateData = {
-      ...productData,
-      variants: {
-        create: input.variants.map(variant =>
-          this.getVariantData(
-            variant,
-            input.type,
-            input.colorID,
-            input.slug,
-            input.retailPrice,
-            true
-          )
-        ),
-      },
-    }
-    const productUpdateData = {
-      ...productData,
-      variants: {
-        upsert: input.variants.map(variant => ({
-          create: this.getVariantData(
-            variant,
-            input.type,
-            input.colorID,
-            input.slug,
-            input.retailPrice,
-            true
-          ),
-          update: this.getVariantData(
-            variant,
-            input.type,
-            input.colorID,
-            input.slug,
-            input.retailPrice,
-            false
-          ),
-          where: { sku: variant.sku },
-        })),
-      },
     }
     const product = await this.prisma.client.upsertProduct({
-      create: productCreateData,
-      update: productUpdateData,
+      create: data,
+      update: data,
       where: { slug },
     })
+    await Promise.all(
+      input.variants.map(a =>
+        this.deepUpsertProductVariant({
+          variant: a,
+          productID: product.id,
+          ...pick(input, ["type", "colorID", "retailPrice", "status"]),
+        })
+      )
+    )
     return product
-  }
-
-  async getVariantData(variant, type, colorID, slug, retailPrice, isCreate) {
-    const internalSize = await this.productUtils.deepUpsertSize({
-      slug: `${variant.sku}-internal`,
-      type,
-      display: variant.internalSizeName,
-      topSizeData: type === "Top" && {
-        letter: (variant.internalSizeName as LetterSize) || null,
-        sleeve: variant.sleeve,
-        shoulder: variant.shoulder,
-        chest: variant.chest,
-        neck: variant.neck,
-        length: variant.length,
-      },
-      bottomSizeData: type === "Bottom" && {
-        type: (variant.bottomSizeType as BottomSizeType) || null,
-        value: variant.internalSizeName || "",
-        waist: variant.waist,
-        rise: variant.rise,
-        hem: variant.hem,
-        inseam: variant.inseam,
-      },
-    })
-
-    let physicalProductsData
-    if (isCreate) {
-      physicalProductsData = { create: variant.physicalProducts }
-    } else {
-      physicalProductsData = {
-        upsert: variant.physicalProducts.map(physicalProduct => ({
-          create: physicalProduct,
-          update: physicalProduct,
-          where: { seasonsUID: physicalProduct.seasonsUID },
-        })),
-      }
-    }
-
-    return {
-      sku: variant.sku,
-      color: {
-        connect: { id: colorID },
-      },
-      internalSize: {
-        connect: { id: internalSize.id },
-      },
-      weight: variant.weight,
-      productID: slug,
-      retailPrice,
-      total: variant.total,
-      reservable: status === "Available" ? variant.total : 0,
-      reserved: 0,
-      nonReservable: status === "NotAvailable" ? variant.total : 0,
-      physicalProducts: physicalProductsData,
-    }
   }
 
   async saveProduct(item, save, info, customer) {
@@ -425,11 +343,67 @@ export class ProductService {
 
   async updateProduct(
     where: ProductWhereUniqueInput,
-    { status, ...data }: ProductUpdateInput,
+    { status, ...data },
     info: GraphQLResolveInfo
   ) {
+    // Extract custom fields out
+    const {
+      bottomSizeType,
+      functions,
+      images,
+      modelSizeDisplay,
+      modelSizeName,
+      tags,
+      ...updateData
+    } = data
+    let functionIDs
+    let imageIDs
+    let modelSizeID
+    let tagIDs
+    const product: PrismaBindingProduct = await this.prisma.binding.query.product(
+      { where },
+      `{
+          id
+          name
+          slug
+          type
+          brand {
+            id
+            brandCode
+          }
+        }`
+    )
+    if (functions) {
+      functionIDs = await this.upsertFunctions(functions)
+    }
+    if (tags) {
+      tagIDs = await this.upsertTags(tags)
+    }
+    if (modelSizeName && modelSizeDisplay) {
+      const modelSize = await this.productUtils.upsertModelSize({
+        slug: product.slug,
+        type: product.type,
+        modelSizeName,
+        modelSizeDisplay,
+        bottomSizeType,
+      })
+      modelSizeID = modelSize.id
+    }
+    if (images) {
+      imageIDs = await this.upsertImages(images, product)
+    }
     await this.storeProductIfNeeded(where, status)
-    await this.prisma.client.updateProduct({ where, data: { status, ...data } })
+    await this.prisma.client.updateProduct({
+      where,
+      data: {
+        ...updateData,
+        functions: functionIDs && { set: functionIDs },
+        images: imageIDs && { set: imageIDs },
+        modelSize: modelSizeID && { connect: { id: modelSizeID } },
+        tags: tagIDs && { set: tagIDs },
+        status,
+      },
+    })
     return await this.prisma.binding.query.product({ where }, info)
   }
 
@@ -461,6 +435,179 @@ export class ProductService {
         data: { status: "Offloaded" },
       })
     }
+  }
+
+  /**
+   * Deep upserts a product variant, including deep upserts for the child size record
+   * and upsert for the child physical product records
+   * @param variant of type UpsertVariantInput from productVariant.graphql
+   * @param type type of the parent Product
+   * @param colorID: colorID for the color record to attach
+   * @param retailPrice: retailPrice of the product variant
+   * @param productID: id of the parent product
+   */
+  private async deepUpsertProductVariant({
+    variant,
+    type,
+    colorID,
+    retailPrice,
+    productID,
+    status,
+  }: {
+    variant
+    type: ProductType
+    colorID: ID_Input
+    retailPrice: number
+    productID: string
+    status: ProductStatus
+  }) {
+    const internalSize = await this.productUtils.deepUpsertSize({
+      slug: `${variant.sku}-internal`,
+      type,
+      display: variant.internalSizeName,
+      topSizeData: type === "Top" && {
+        letter: (variant.internalSizeName as LetterSize) || null,
+        ...pick(variant, ["sleeve", "shoulder", "bamboo", "neck", "length"]),
+      },
+      bottomSizeData: type === "Bottom" && {
+        type: (variant.bottomSizeType as BottomSizeType) || null,
+        value: variant.internalSizeName || "",
+        ...pick(variant, ["waist", "rise", "hem", "inseam"]),
+      },
+    })
+
+    const data = {
+      productID,
+      product: { connect: { id: productID } },
+      color: {
+        connect: { id: colorID },
+      },
+      internalSize: {
+        connect: { id: internalSize.id },
+      },
+      retailPrice,
+      reservable: status === "Available" ? variant.total : 0,
+      reserved: 0,
+      nonReservable: status === "NotAvailable" ? variant.total : 0,
+      offloaded: 0,
+      stored: 0,
+      ...pick(variant, ["weight", "total", "sku"]),
+    }
+
+    const prodVar = await this.prisma.client.upsertProductVariant({
+      where: { sku: variant.sku },
+      create: data,
+      update: data,
+    })
+
+    for (const physProdData of variant.physicalProducts) {
+      await this.prisma.client.upsertPhysicalProduct({
+        where: { seasonsUID: physProdData.seasonsUID },
+        create: {
+          ...physProdData,
+          sequenceNumber: await this.physicalProductUtils.nextSequenceNumber(),
+          productVariant: { connect: { id: prodVar.id } },
+        },
+        update: physProdData,
+      })
+    }
+
+    return prodVar
+  }
+
+  private async upsertFunctions(
+    functions: string[]
+  ): Promise<{ id: ID_Input }[]> {
+    const productFunctions = await Promise.all(
+      functions.map(
+        async functionName =>
+          await this.prisma.client.upsertProductFunction({
+            create: { name: functionName },
+            update: { name: functionName },
+            where: { name: functionName },
+          })
+      )
+    )
+    return productFunctions
+      .filter(Boolean)
+      .map((func: ProductFunction) => ({ id: func.id }))
+  }
+
+  private async upsertTags(tags: string[]): Promise<{ id: ID_Input }[]> {
+    const prismaTags = await Promise.all(
+      tags.map(
+        async tag =>
+          await this.prisma.client.upsertTag({
+            create: { name: tag },
+            update: { name: tag },
+            where: { name: tag },
+          })
+      )
+    )
+    return prismaTags.filter(Boolean).map((tag: Tag) => ({ id: tag.id }))
+  }
+
+  /**
+   * Upserts images for a given product, uploading new ones to S3 when needed.
+   * The [images] argument is either an imageURL or an image file object
+   * @param images of type (string | File)[]
+   * @param product: of type Product as is defined in prisma.binding
+   */
+  private async upsertImages(
+    images: any[],
+    product: PrismaBindingProduct
+  ): Promise<{ id: ID_Input }[]> {
+    const imageDatas = await Promise.all(
+      images.map(async (image, index) => {
+        const data = await image
+        if (typeof data === "string") {
+          // This means that we received an image URL in which case
+          // we just have perfom an upsertImage with the url
+
+          // This URL is sent by the client which means it an Imgix URL.
+          // Thus, we need to convert it to s3 format and strip any query params as needed.
+          const s3BaseURL = S3_BASE.replace(/\/$/, "") // Remove trailing slash
+          const s3ImageURL = `${s3BaseURL}${url.parse(data).pathname}`
+          const prismaImage = await this.prisma.client.upsertImage({
+            create: { url: s3ImageURL, title: product.slug },
+            update: { url: s3ImageURL, title: product.slug },
+            where: { url: s3ImageURL },
+          })
+          return { id: prismaImage.id }
+        } else {
+          // This means that we received a new image in the form of
+          // a file in which case we have to upload the image to S3
+
+          // Form appropriate image name
+          const s3ImageName = await this.productUtils.getProductImageName(
+            product.brand.brandCode,
+            product.name,
+            product.color.name,
+            index + 1
+          )
+
+          // Upload to S3 and retrieve metadata
+          const { height, url, width } = await this.imageService.uploadImage(
+            data,
+            {
+              imageName: s3ImageName,
+            }
+          )
+
+          // Purge this image url in imgix cache
+          await this.imageService.purgeS3ImageFromImgix(url)
+
+          // Upsert the image with the s3 image url
+          const prismaImage = await this.prisma.client.upsertImage({
+            create: { height, url, width, title: product.slug },
+            update: { height, width, title: product.slug },
+            where: { url },
+          })
+          return { id: prismaImage.id }
+        }
+      })
+    )
+    return imageDatas
   }
 
   private async storeProductIfNeeded(

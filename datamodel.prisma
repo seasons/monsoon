@@ -52,7 +52,9 @@ enum InventoryStatus {
 enum PhysicalProductStatus {
   New
   Used
+  Dirty
   Damaged
+  PermanentlyDamaged
   Clean
   Lost
 }
@@ -143,7 +145,7 @@ enum ProductArchitecture {
 }
 
 enum WarehouseLocationType {
-	Conveyor
+  Conveyor
   Rail
   Bin
 }
@@ -214,10 +216,9 @@ type HomepageProductRail {
 type Image {
   id: ID! @id
   caption: String
-  url: String
-  originalHeight: Int
-  originalUrl: String! @unique
-  originalWidth: Int
+  url: String! @unique
+  height: Int
+  width: Int
   title: String
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
@@ -276,6 +277,7 @@ type Product {
   status: ProductStatus @default(value: Available)
   season: String
   architecture: ProductArchitecture
+  publishedAt: DateTime
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
@@ -303,7 +305,8 @@ type ProductVariant {
   productID: String!
   product: Product! @relation(onDelete: SET_NULL)
   retailPrice: Float
-  physicalProducts: [PhysicalProduct!]! @relation(link: TABLE, onDelete: CASCADE)
+  physicalProducts: [PhysicalProduct!]!
+    @relation(link: TABLE, onDelete: CASCADE)
   total: Int!
   reservable: Int!
   reserved: Int!
@@ -323,9 +326,11 @@ type PhysicalProduct {
   productStatus: PhysicalProductStatus!
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
-  barcode: String!
   sequenceNumber: Int!
   warehouseLocation: WarehouseLocation
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
@@ -345,7 +350,7 @@ type WarehouseLocation {
   barcode: String! @unique
   locationCode: String!
   itemCode: String!
-	physicalProducts: [PhysicalProduct!]
+  physicalProducts: [PhysicalProduct!]
   constraints: [WarehouseLocationConstraint!]
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
@@ -358,6 +363,7 @@ type User {
   firstName: String!
   lastName: String!
   role: UserRole! @default(value: Customer)
+  roles: [UserRole!]! @scalarList(strategy: RELATION)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
   pushNotifications: PushNotificationStatus! @default(value: Denied)
@@ -422,7 +428,6 @@ type RecentlyViewedProduct {
   updatedAt: DateTime! @updatedAt
 }
 
-
 type Reservation {
   id: ID! @id
   user: User!
@@ -439,8 +444,24 @@ type Reservation {
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
+  receipt: ReservationReceipt @relation(link: INLINE, onDelete: CASCADE)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
+}
+
+type ReservationReceipt {
+  id: ID! @id
+  reservation: Reservation!
+  items: [ReservationReceiptItem!] @relation(link: TABLE, onDelete: CASCADE)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type ReservationReceiptItem {
+  id: ID! @id
+  product: PhysicalProduct!
+  productStatus: PhysicalProductStatus!
+  notes: String
 }
 
 type Package {
@@ -557,4 +578,3 @@ type ProductVariantFeedbackQuestion {
   type: QuestionType!
   variantFeedback: ProductVariantFeedback!
 }
-

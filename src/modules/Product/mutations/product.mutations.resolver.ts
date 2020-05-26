@@ -1,4 +1,4 @@
-import { Customer, User } from "@app/nest_decorators"
+import { Customer, User } from "@app/decorators"
 import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma/prisma.service"
 
@@ -31,7 +31,7 @@ export class ProductMutationsResolver {
 
   @Mutation()
   async upsertProduct(@Args() { input }, @User() user) {
-    return await this.productService.upsertProduct(input)
+    return await this.productService.deepUpsertProduct(input)
   }
 
   @Mutation()

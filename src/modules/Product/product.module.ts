@@ -7,6 +7,7 @@ import { UtilsModule } from "@modules/Utils/utils.module"
 import { Module } from "@nestjs/common"
 import { PrismaModule } from "@prisma/prisma.module"
 
+import { PhysicalProductFieldsResolver } from "./fields/physicalProduct.fields.resolver"
 import { ProductFieldsResolver } from "./fields/product.fields.resolver"
 import { ProductVariantFieldsResolver } from "./fields/productVariant.fields.resolver"
 import { PhysicalProductMutationsResolver } from "./mutations/physicalProduct.mutations.resolver"
@@ -49,6 +50,7 @@ import { ProductVariantService } from "./services/productVariant.service"
     ProductQueriesResolver,
     ProductVariantFieldsResolver,
     ProductVariantMutationsResolver,
+    PhysicalProductFieldsResolver,
     PhysicalProductMutationsResolver,
     SizeQueriesResolver,
   ],

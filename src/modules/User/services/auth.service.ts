@@ -278,12 +278,38 @@ export class AuthService {
     })
   }
 
+  async refreshToken(refreshToken) {
+    return new Promise((resolve, reject) => {
+      request(
+        {
+          method: "Post",
+          url: `https://${process.env.AUTH0_DOMAIN}/oauth/token`,
+          headers: { "content-type": "application/x-www-form-urlencoded" },
+          form: {
+            grant_type: "refresh_token",
+            client_id: process.env.AUTH0_CLIENTID,
+            client_secret: process.env.AUTH0_CLIENT_SECRET,
+            refresh_token: refreshToken,
+          },
+          json: true,
+        },
+        async (error, response, body) => {
+          if (error) {
+            reject(error)
+          }
+          resolve(body.access_token)
+        }
+      )
+    })
+  }
+
   async createPrismaUser(auth0Id, email, firstName, lastName) {
     const user = await this.prismaService.client.createUser({
       auth0Id,
       email,
       firstName,
       lastName,
+      roles: { set: ["Customer"] }, // defaults to customer
     })
     return user
   }

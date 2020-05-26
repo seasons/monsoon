@@ -55,6 +55,12 @@ export interface Exists {
   reservationFeedback: (
     where?: ReservationFeedbackWhereInput
   ) => Promise<boolean>;
+  reservationReceipt: (
+    where?: ReservationReceiptWhereInput
+  ) => Promise<boolean>;
+  reservationReceiptItem: (
+    where?: ReservationReceiptItemWhereInput
+  ) => Promise<boolean>;
   size: (where?: SizeWhereInput) => Promise<boolean>;
   tag: (where?: TagWhereInput) => Promise<boolean>;
   topSize: (where?: TopSizeWhereInput) => Promise<boolean>;
@@ -627,6 +633,48 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => ReservationFeedbackConnectionPromise;
+  reservationReceipt: (
+    where: ReservationReceiptWhereUniqueInput
+  ) => ReservationReceiptNullablePromise;
+  reservationReceipts: (args?: {
+    where?: ReservationReceiptWhereInput;
+    orderBy?: ReservationReceiptOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<ReservationReceipt>;
+  reservationReceiptsConnection: (args?: {
+    where?: ReservationReceiptWhereInput;
+    orderBy?: ReservationReceiptOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => ReservationReceiptConnectionPromise;
+  reservationReceiptItem: (
+    where: ReservationReceiptItemWhereUniqueInput
+  ) => ReservationReceiptItemNullablePromise;
+  reservationReceiptItems: (args?: {
+    where?: ReservationReceiptItemWhereInput;
+    orderBy?: ReservationReceiptItemOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<ReservationReceiptItem>;
+  reservationReceiptItemsConnection: (args?: {
+    where?: ReservationReceiptItemWhereInput;
+    orderBy?: ReservationReceiptItemOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => ReservationReceiptItemConnectionPromise;
   size: (where: SizeWhereUniqueInput) => SizeNullablePromise;
   sizes: (args?: {
     where?: SizeWhereInput;
@@ -1263,6 +1311,46 @@ export interface Prisma {
   deleteManyReservationFeedbacks: (
     where?: ReservationFeedbackWhereInput
   ) => BatchPayloadPromise;
+  createReservationReceipt: (
+    data: ReservationReceiptCreateInput
+  ) => ReservationReceiptPromise;
+  updateReservationReceipt: (args: {
+    data: ReservationReceiptUpdateInput;
+    where: ReservationReceiptWhereUniqueInput;
+  }) => ReservationReceiptPromise;
+  upsertReservationReceipt: (args: {
+    where: ReservationReceiptWhereUniqueInput;
+    create: ReservationReceiptCreateInput;
+    update: ReservationReceiptUpdateInput;
+  }) => ReservationReceiptPromise;
+  deleteReservationReceipt: (
+    where: ReservationReceiptWhereUniqueInput
+  ) => ReservationReceiptPromise;
+  deleteManyReservationReceipts: (
+    where?: ReservationReceiptWhereInput
+  ) => BatchPayloadPromise;
+  createReservationReceiptItem: (
+    data: ReservationReceiptItemCreateInput
+  ) => ReservationReceiptItemPromise;
+  updateReservationReceiptItem: (args: {
+    data: ReservationReceiptItemUpdateInput;
+    where: ReservationReceiptItemWhereUniqueInput;
+  }) => ReservationReceiptItemPromise;
+  updateManyReservationReceiptItems: (args: {
+    data: ReservationReceiptItemUpdateManyMutationInput;
+    where?: ReservationReceiptItemWhereInput;
+  }) => BatchPayloadPromise;
+  upsertReservationReceiptItem: (args: {
+    where: ReservationReceiptItemWhereUniqueInput;
+    create: ReservationReceiptItemCreateInput;
+    update: ReservationReceiptItemUpdateInput;
+  }) => ReservationReceiptItemPromise;
+  deleteReservationReceiptItem: (
+    where: ReservationReceiptItemWhereUniqueInput
+  ) => ReservationReceiptItemPromise;
+  deleteManyReservationReceiptItems: (
+    where?: ReservationReceiptItemWhereInput
+  ) => BatchPayloadPromise;
   createSize: (data: SizeCreateInput) => SizePromise;
   updateSize: (args: {
     data: SizeUpdateInput;
@@ -1461,6 +1549,12 @@ export interface Subscription {
   reservationFeedback: (
     where?: ReservationFeedbackSubscriptionWhereInput
   ) => ReservationFeedbackSubscriptionPayloadSubscription;
+  reservationReceipt: (
+    where?: ReservationReceiptSubscriptionWhereInput
+  ) => ReservationReceiptSubscriptionPayloadSubscription;
+  reservationReceiptItem: (
+    where?: ReservationReceiptItemSubscriptionWhereInput
+  ) => ReservationReceiptItemSubscriptionPayloadSubscription;
   size: (
     where?: SizeSubscriptionWhereInput
   ) => SizeSubscriptionPayloadSubscription;
@@ -1540,7 +1634,9 @@ export type InventoryStatus =
 export type PhysicalProductStatus =
   | "New"
   | "Used"
+  | "Dirty"
   | "Damaged"
+  | "PermanentlyDamaged"
   | "Clean"
   | "Lost";
 
@@ -1566,10 +1662,14 @@ export type PhysicalProductOrderByInput =
   | "offloadMethod_DESC"
   | "offloadNotes_ASC"
   | "offloadNotes_DESC"
-  | "barcode_ASC"
-  | "barcode_DESC"
   | "sequenceNumber_ASC"
   | "sequenceNumber_DESC"
+  | "dateOrdered_ASC"
+  | "dateOrdered_DESC"
+  | "dateReceived_ASC"
+  | "dateReceived_DESC"
+  | "unitCost_ASC"
+  | "unitCost_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -1664,12 +1764,10 @@ export type ImageOrderByInput =
   | "caption_DESC"
   | "url_ASC"
   | "url_DESC"
-  | "originalHeight_ASC"
-  | "originalHeight_DESC"
-  | "originalUrl_ASC"
-  | "originalUrl_DESC"
-  | "originalWidth_ASC"
-  | "originalWidth_DESC"
+  | "height_ASC"
+  | "height_DESC"
+  | "width_ASC"
+  | "width_DESC"
   | "title_ASC"
   | "title_DESC"
   | "createdAt_ASC"
@@ -1765,6 +1863,14 @@ export type ReservationOrderByInput =
   | "createdAt_DESC"
   | "updatedAt_ASC"
   | "updatedAt_DESC";
+
+export type ReservationReceiptItemOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "productStatus_ASC"
+  | "productStatus_DESC"
+  | "notes_ASC"
+  | "notes_DESC";
 
 export type BillingInfoOrderByInput =
   | "id_ASC"
@@ -2066,6 +2172,14 @@ export type ReservationFeedbackOrderByInput =
   | "respondedAt_ASC"
   | "respondedAt_DESC";
 
+export type ReservationReceiptOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
+
 export type TopSizeOrderByInput =
   | "id_ASC"
   | "id_DESC"
@@ -2169,20 +2283,6 @@ export interface PhysicalProductWhereInput {
   offloadNotes_not_starts_with?: Maybe<String>;
   offloadNotes_ends_with?: Maybe<String>;
   offloadNotes_not_ends_with?: Maybe<String>;
-  barcode?: Maybe<String>;
-  barcode_not?: Maybe<String>;
-  barcode_in?: Maybe<String[] | String>;
-  barcode_not_in?: Maybe<String[] | String>;
-  barcode_lt?: Maybe<String>;
-  barcode_lte?: Maybe<String>;
-  barcode_gt?: Maybe<String>;
-  barcode_gte?: Maybe<String>;
-  barcode_contains?: Maybe<String>;
-  barcode_not_contains?: Maybe<String>;
-  barcode_starts_with?: Maybe<String>;
-  barcode_not_starts_with?: Maybe<String>;
-  barcode_ends_with?: Maybe<String>;
-  barcode_not_ends_with?: Maybe<String>;
   sequenceNumber?: Maybe<Int>;
   sequenceNumber_not?: Maybe<Int>;
   sequenceNumber_in?: Maybe<Int[] | Int>;
@@ -2192,6 +2292,30 @@ export interface PhysicalProductWhereInput {
   sequenceNumber_gt?: Maybe<Int>;
   sequenceNumber_gte?: Maybe<Int>;
   warehouseLocation?: Maybe<WarehouseLocationWhereInput>;
+  dateOrdered?: Maybe<DateTimeInput>;
+  dateOrdered_not?: Maybe<DateTimeInput>;
+  dateOrdered_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  dateOrdered_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  dateOrdered_lt?: Maybe<DateTimeInput>;
+  dateOrdered_lte?: Maybe<DateTimeInput>;
+  dateOrdered_gt?: Maybe<DateTimeInput>;
+  dateOrdered_gte?: Maybe<DateTimeInput>;
+  dateReceived?: Maybe<DateTimeInput>;
+  dateReceived_not?: Maybe<DateTimeInput>;
+  dateReceived_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  dateReceived_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  dateReceived_lt?: Maybe<DateTimeInput>;
+  dateReceived_lte?: Maybe<DateTimeInput>;
+  dateReceived_gt?: Maybe<DateTimeInput>;
+  dateReceived_gte?: Maybe<DateTimeInput>;
+  unitCost?: Maybe<Float>;
+  unitCost_not?: Maybe<Float>;
+  unitCost_in?: Maybe<Float[] | Float>;
+  unitCost_not_in?: Maybe<Float[] | Float>;
+  unitCost_lt?: Maybe<Float>;
+  unitCost_lte?: Maybe<Float>;
+  unitCost_gt?: Maybe<Float>;
+  unitCost_gte?: Maybe<Float>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -3317,36 +3441,22 @@ export interface ImageWhereInput {
   url_not_starts_with?: Maybe<String>;
   url_ends_with?: Maybe<String>;
   url_not_ends_with?: Maybe<String>;
-  originalHeight?: Maybe<Int>;
-  originalHeight_not?: Maybe<Int>;
-  originalHeight_in?: Maybe<Int[] | Int>;
-  originalHeight_not_in?: Maybe<Int[] | Int>;
-  originalHeight_lt?: Maybe<Int>;
-  originalHeight_lte?: Maybe<Int>;
-  originalHeight_gt?: Maybe<Int>;
-  originalHeight_gte?: Maybe<Int>;
-  originalUrl?: Maybe<String>;
-  originalUrl_not?: Maybe<String>;
-  originalUrl_in?: Maybe<String[] | String>;
-  originalUrl_not_in?: Maybe<String[] | String>;
-  originalUrl_lt?: Maybe<String>;
-  originalUrl_lte?: Maybe<String>;
-  originalUrl_gt?: Maybe<String>;
-  originalUrl_gte?: Maybe<String>;
-  originalUrl_contains?: Maybe<String>;
-  originalUrl_not_contains?: Maybe<String>;
-  originalUrl_starts_with?: Maybe<String>;
-  originalUrl_not_starts_with?: Maybe<String>;
-  originalUrl_ends_with?: Maybe<String>;
-  originalUrl_not_ends_with?: Maybe<String>;
-  originalWidth?: Maybe<Int>;
-  originalWidth_not?: Maybe<Int>;
-  originalWidth_in?: Maybe<Int[] | Int>;
-  originalWidth_not_in?: Maybe<Int[] | Int>;
-  originalWidth_lt?: Maybe<Int>;
-  originalWidth_lte?: Maybe<Int>;
-  originalWidth_gt?: Maybe<Int>;
-  originalWidth_gte?: Maybe<Int>;
+  height?: Maybe<Int>;
+  height_not?: Maybe<Int>;
+  height_in?: Maybe<Int[] | Int>;
+  height_not_in?: Maybe<Int[] | Int>;
+  height_lt?: Maybe<Int>;
+  height_lte?: Maybe<Int>;
+  height_gt?: Maybe<Int>;
+  height_gte?: Maybe<Int>;
+  width?: Maybe<Int>;
+  width_not?: Maybe<Int>;
+  width_in?: Maybe<Int[] | Int>;
+  width_not_in?: Maybe<Int[] | Int>;
+  width_lt?: Maybe<Int>;
+  width_lte?: Maybe<Int>;
+  width_gt?: Maybe<Int>;
+  width_gte?: Maybe<Int>;
   title?: Maybe<String>;
   title_not?: Maybe<String>;
   title_in?: Maybe<String[] | String>;
@@ -4234,6 +4344,7 @@ export interface ReservationWhereInput {
   reminderSentAt_lte?: Maybe<DateTimeInput>;
   reminderSentAt_gt?: Maybe<DateTimeInput>;
   reminderSentAt_gte?: Maybe<DateTimeInput>;
+  receipt?: Maybe<ReservationReceiptWhereInput>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -4379,6 +4490,91 @@ export interface LabelWhereInput {
   AND?: Maybe<LabelWhereInput[] | LabelWhereInput>;
   OR?: Maybe<LabelWhereInput[] | LabelWhereInput>;
   NOT?: Maybe<LabelWhereInput[] | LabelWhereInput>;
+}
+
+export interface ReservationReceiptWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  reservation?: Maybe<ReservationWhereInput>;
+  items_every?: Maybe<ReservationReceiptItemWhereInput>;
+  items_some?: Maybe<ReservationReceiptItemWhereInput>;
+  items_none?: Maybe<ReservationReceiptItemWhereInput>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<ReservationReceiptWhereInput[] | ReservationReceiptWhereInput>;
+  OR?: Maybe<ReservationReceiptWhereInput[] | ReservationReceiptWhereInput>;
+  NOT?: Maybe<ReservationReceiptWhereInput[] | ReservationReceiptWhereInput>;
+}
+
+export interface ReservationReceiptItemWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  product?: Maybe<PhysicalProductWhereInput>;
+  productStatus?: Maybe<PhysicalProductStatus>;
+  productStatus_not?: Maybe<PhysicalProductStatus>;
+  productStatus_in?: Maybe<PhysicalProductStatus[] | PhysicalProductStatus>;
+  productStatus_not_in?: Maybe<PhysicalProductStatus[] | PhysicalProductStatus>;
+  notes?: Maybe<String>;
+  notes_not?: Maybe<String>;
+  notes_in?: Maybe<String[] | String>;
+  notes_not_in?: Maybe<String[] | String>;
+  notes_lt?: Maybe<String>;
+  notes_lte?: Maybe<String>;
+  notes_gt?: Maybe<String>;
+  notes_gte?: Maybe<String>;
+  notes_contains?: Maybe<String>;
+  notes_not_contains?: Maybe<String>;
+  notes_starts_with?: Maybe<String>;
+  notes_not_starts_with?: Maybe<String>;
+  notes_ends_with?: Maybe<String>;
+  notes_not_ends_with?: Maybe<String>;
+  AND?: Maybe<
+    ReservationReceiptItemWhereInput[] | ReservationReceiptItemWhereInput
+  >;
+  OR?: Maybe<
+    ReservationReceiptItemWhereInput[] | ReservationReceiptItemWhereInput
+  >;
+  NOT?: Maybe<
+    ReservationReceiptItemWhereInput[] | ReservationReceiptItemWhereInput
+  >;
 }
 
 export type BillingInfoWhereUniqueInput = AtLeastOne<{
@@ -4635,7 +4831,7 @@ export interface HomepageProductRailWhereInput {
 
 export type ImageWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
-  originalUrl?: Maybe<String>;
+  url?: Maybe<String>;
 }>;
 
 export type LabelWhereUniqueInput = AtLeastOne<{
@@ -5070,6 +5266,14 @@ export type ReservationFeedbackWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
 
+export type ReservationReceiptWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
+export type ReservationReceiptItemWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
 export type SizeWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
   slug?: Maybe<String>;
@@ -5135,7 +5339,12 @@ export interface UserCreateInput {
   firstName: String;
   lastName: String;
   role?: Maybe<UserRole>;
+  roles?: Maybe<UserCreaterolesInput>;
   pushNotifications?: Maybe<PushNotificationStatus>;
+}
+
+export interface UserCreaterolesInput {
+  set?: Maybe<UserRole[] | UserRole>;
 }
 
 export interface CustomerDetailCreateOneInput {
@@ -5207,11 +5416,13 @@ export interface PhysicalProductCreateWithoutLocationInput {
   productStatus: PhysicalProductStatus;
   offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
   offloadNotes?: Maybe<String>;
-  barcode: String;
   sequenceNumber: Int;
   warehouseLocation?: Maybe<
     WarehouseLocationCreateOneWithoutPhysicalProductsInput
   >;
+  dateOrdered?: Maybe<DateTimeInput>;
+  dateReceived?: Maybe<DateTimeInput>;
+  unitCost?: Maybe<Float>;
 }
 
 export interface ProductVariantCreateOneWithoutPhysicalProductsInput {
@@ -5421,10 +5632,9 @@ export interface ImageCreateManyInput {
 export interface ImageCreateInput {
   id?: Maybe<ID_Input>;
   caption?: Maybe<String>;
-  url?: Maybe<String>;
-  originalHeight?: Maybe<Int>;
-  originalUrl: String;
-  originalWidth?: Maybe<Int>;
+  url: String;
+  height?: Maybe<Int>;
+  width?: Maybe<Int>;
   title?: Maybe<String>;
 }
 
@@ -5500,11 +5710,13 @@ export interface PhysicalProductCreateWithoutProductVariantInput {
   productStatus: PhysicalProductStatus;
   offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
   offloadNotes?: Maybe<String>;
-  barcode: String;
   sequenceNumber: Int;
   warehouseLocation?: Maybe<
     WarehouseLocationCreateOneWithoutPhysicalProductsInput
   >;
+  dateOrdered?: Maybe<DateTimeInput>;
+  dateReceived?: Maybe<DateTimeInput>;
+  unitCost?: Maybe<Float>;
 }
 
 export interface LocationCreateOneWithoutPhysicalProductsInput {
@@ -5681,6 +5893,7 @@ export interface ReservationCreateWithoutCustomerInput {
   shippedAt?: Maybe<DateTimeInput>;
   receivedAt?: Maybe<DateTimeInput>;
   reminderSentAt?: Maybe<DateTimeInput>;
+  receipt?: Maybe<ReservationReceiptCreateOneWithoutReservationInput>;
 }
 
 export interface PackageCreateOneInput {
@@ -5713,11 +5926,13 @@ export interface PhysicalProductCreateInput {
   productStatus: PhysicalProductStatus;
   offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
   offloadNotes?: Maybe<String>;
-  barcode: String;
   sequenceNumber: Int;
   warehouseLocation?: Maybe<
     WarehouseLocationCreateOneWithoutPhysicalProductsInput
   >;
+  dateOrdered?: Maybe<DateTimeInput>;
+  dateReceived?: Maybe<DateTimeInput>;
+  unitCost?: Maybe<Float>;
 }
 
 export interface LabelCreateOneInput {
@@ -5731,6 +5946,38 @@ export interface LabelCreateInput {
   image?: Maybe<String>;
   trackingNumber?: Maybe<String>;
   trackingURL?: Maybe<String>;
+}
+
+export interface ReservationReceiptCreateOneWithoutReservationInput {
+  create?: Maybe<ReservationReceiptCreateWithoutReservationInput>;
+  connect?: Maybe<ReservationReceiptWhereUniqueInput>;
+}
+
+export interface ReservationReceiptCreateWithoutReservationInput {
+  id?: Maybe<ID_Input>;
+  items?: Maybe<ReservationReceiptItemCreateManyInput>;
+}
+
+export interface ReservationReceiptItemCreateManyInput {
+  create?: Maybe<
+    ReservationReceiptItemCreateInput[] | ReservationReceiptItemCreateInput
+  >;
+  connect?: Maybe<
+    | ReservationReceiptItemWhereUniqueInput[]
+    | ReservationReceiptItemWhereUniqueInput
+  >;
+}
+
+export interface ReservationReceiptItemCreateInput {
+  id?: Maybe<ID_Input>;
+  product: PhysicalProductCreateOneInput;
+  productStatus: PhysicalProductStatus;
+  notes?: Maybe<String>;
+}
+
+export interface PhysicalProductCreateOneInput {
+  create?: Maybe<PhysicalProductCreateInput>;
+  connect?: Maybe<PhysicalProductWhereUniqueInput>;
 }
 
 export interface ProductVariantCreateOneInput {
@@ -5795,7 +6042,12 @@ export interface UserUpdateDataInput {
   firstName?: Maybe<String>;
   lastName?: Maybe<String>;
   role?: Maybe<UserRole>;
+  roles?: Maybe<UserUpdaterolesInput>;
   pushNotifications?: Maybe<PushNotificationStatus>;
+}
+
+export interface UserUpdaterolesInput {
+  set?: Maybe<UserRole[] | UserRole>;
 }
 
 export interface UserUpsertNestedInput {
@@ -5917,11 +6169,13 @@ export interface PhysicalProductUpdateWithoutLocationDataInput {
   productStatus?: Maybe<PhysicalProductStatus>;
   offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
   offloadNotes?: Maybe<String>;
-  barcode?: Maybe<String>;
   sequenceNumber?: Maybe<Int>;
   warehouseLocation?: Maybe<
     WarehouseLocationUpdateOneWithoutPhysicalProductsInput
   >;
+  dateOrdered?: Maybe<DateTimeInput>;
+  dateReceived?: Maybe<DateTimeInput>;
+  unitCost?: Maybe<Float>;
 }
 
 export interface ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput {
@@ -6319,9 +6573,8 @@ export interface ImageUpdateWithWhereUniqueNestedInput {
 export interface ImageUpdateDataInput {
   caption?: Maybe<String>;
   url?: Maybe<String>;
-  originalHeight?: Maybe<Int>;
-  originalUrl?: Maybe<String>;
-  originalWidth?: Maybe<Int>;
+  height?: Maybe<Int>;
+  width?: Maybe<Int>;
   title?: Maybe<String>;
 }
 
@@ -6374,36 +6627,22 @@ export interface ImageScalarWhereInput {
   url_not_starts_with?: Maybe<String>;
   url_ends_with?: Maybe<String>;
   url_not_ends_with?: Maybe<String>;
-  originalHeight?: Maybe<Int>;
-  originalHeight_not?: Maybe<Int>;
-  originalHeight_in?: Maybe<Int[] | Int>;
-  originalHeight_not_in?: Maybe<Int[] | Int>;
-  originalHeight_lt?: Maybe<Int>;
-  originalHeight_lte?: Maybe<Int>;
-  originalHeight_gt?: Maybe<Int>;
-  originalHeight_gte?: Maybe<Int>;
-  originalUrl?: Maybe<String>;
-  originalUrl_not?: Maybe<String>;
-  originalUrl_in?: Maybe<String[] | String>;
-  originalUrl_not_in?: Maybe<String[] | String>;
-  originalUrl_lt?: Maybe<String>;
-  originalUrl_lte?: Maybe<String>;
-  originalUrl_gt?: Maybe<String>;
-  originalUrl_gte?: Maybe<String>;
-  originalUrl_contains?: Maybe<String>;
-  originalUrl_not_contains?: Maybe<String>;
-  originalUrl_starts_with?: Maybe<String>;
-  originalUrl_not_starts_with?: Maybe<String>;
-  originalUrl_ends_with?: Maybe<String>;
-  originalUrl_not_ends_with?: Maybe<String>;
-  originalWidth?: Maybe<Int>;
-  originalWidth_not?: Maybe<Int>;
-  originalWidth_in?: Maybe<Int[] | Int>;
-  originalWidth_not_in?: Maybe<Int[] | Int>;
-  originalWidth_lt?: Maybe<Int>;
-  originalWidth_lte?: Maybe<Int>;
-  originalWidth_gt?: Maybe<Int>;
-  originalWidth_gte?: Maybe<Int>;
+  height?: Maybe<Int>;
+  height_not?: Maybe<Int>;
+  height_in?: Maybe<Int[] | Int>;
+  height_not_in?: Maybe<Int[] | Int>;
+  height_lt?: Maybe<Int>;
+  height_lte?: Maybe<Int>;
+  height_gt?: Maybe<Int>;
+  height_gte?: Maybe<Int>;
+  width?: Maybe<Int>;
+  width_not?: Maybe<Int>;
+  width_in?: Maybe<Int[] | Int>;
+  width_not_in?: Maybe<Int[] | Int>;
+  width_lt?: Maybe<Int>;
+  width_lte?: Maybe<Int>;
+  width_gt?: Maybe<Int>;
+  width_gte?: Maybe<Int>;
   title?: Maybe<String>;
   title_not?: Maybe<String>;
   title_in?: Maybe<String[] | String>;
@@ -6447,9 +6686,8 @@ export interface ImageUpdateManyWithWhereNestedInput {
 export interface ImageUpdateManyDataInput {
   caption?: Maybe<String>;
   url?: Maybe<String>;
-  originalHeight?: Maybe<Int>;
-  originalUrl?: Maybe<String>;
-  originalWidth?: Maybe<Int>;
+  height?: Maybe<Int>;
+  width?: Maybe<Int>;
   title?: Maybe<String>;
 }
 
@@ -6590,11 +6828,13 @@ export interface PhysicalProductUpdateWithoutProductVariantDataInput {
   productStatus?: Maybe<PhysicalProductStatus>;
   offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
   offloadNotes?: Maybe<String>;
-  barcode?: Maybe<String>;
   sequenceNumber?: Maybe<Int>;
   warehouseLocation?: Maybe<
     WarehouseLocationUpdateOneWithoutPhysicalProductsInput
   >;
+  dateOrdered?: Maybe<DateTimeInput>;
+  dateReceived?: Maybe<DateTimeInput>;
+  unitCost?: Maybe<Float>;
 }
 
 export interface LocationUpdateOneWithoutPhysicalProductsInput {
@@ -6855,20 +7095,6 @@ export interface PhysicalProductScalarWhereInput {
   offloadNotes_not_starts_with?: Maybe<String>;
   offloadNotes_ends_with?: Maybe<String>;
   offloadNotes_not_ends_with?: Maybe<String>;
-  barcode?: Maybe<String>;
-  barcode_not?: Maybe<String>;
-  barcode_in?: Maybe<String[] | String>;
-  barcode_not_in?: Maybe<String[] | String>;
-  barcode_lt?: Maybe<String>;
-  barcode_lte?: Maybe<String>;
-  barcode_gt?: Maybe<String>;
-  barcode_gte?: Maybe<String>;
-  barcode_contains?: Maybe<String>;
-  barcode_not_contains?: Maybe<String>;
-  barcode_starts_with?: Maybe<String>;
-  barcode_not_starts_with?: Maybe<String>;
-  barcode_ends_with?: Maybe<String>;
-  barcode_not_ends_with?: Maybe<String>;
   sequenceNumber?: Maybe<Int>;
   sequenceNumber_not?: Maybe<Int>;
   sequenceNumber_in?: Maybe<Int[] | Int>;
@@ -6877,6 +7103,30 @@ export interface PhysicalProductScalarWhereInput {
   sequenceNumber_lte?: Maybe<Int>;
   sequenceNumber_gt?: Maybe<Int>;
   sequenceNumber_gte?: Maybe<Int>;
+  dateOrdered?: Maybe<DateTimeInput>;
+  dateOrdered_not?: Maybe<DateTimeInput>;
+  dateOrdered_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  dateOrdered_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  dateOrdered_lt?: Maybe<DateTimeInput>;
+  dateOrdered_lte?: Maybe<DateTimeInput>;
+  dateOrdered_gt?: Maybe<DateTimeInput>;
+  dateOrdered_gte?: Maybe<DateTimeInput>;
+  dateReceived?: Maybe<DateTimeInput>;
+  dateReceived_not?: Maybe<DateTimeInput>;
+  dateReceived_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  dateReceived_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  dateReceived_lt?: Maybe<DateTimeInput>;
+  dateReceived_lte?: Maybe<DateTimeInput>;
+  dateReceived_gt?: Maybe<DateTimeInput>;
+  dateReceived_gte?: Maybe<DateTimeInput>;
+  unitCost?: Maybe<Float>;
+  unitCost_not?: Maybe<Float>;
+  unitCost_in?: Maybe<Float[] | Float>;
+  unitCost_not_in?: Maybe<Float[] | Float>;
+  unitCost_lt?: Maybe<Float>;
+  unitCost_lte?: Maybe<Float>;
+  unitCost_gt?: Maybe<Float>;
+  unitCost_gte?: Maybe<Float>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -6915,8 +7165,10 @@ export interface PhysicalProductUpdateManyDataInput {
   productStatus?: Maybe<PhysicalProductStatus>;
   offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
   offloadNotes?: Maybe<String>;
-  barcode?: Maybe<String>;
   sequenceNumber?: Maybe<Int>;
+  dateOrdered?: Maybe<DateTimeInput>;
+  dateReceived?: Maybe<DateTimeInput>;
+  unitCost?: Maybe<Float>;
 }
 
 export interface ProductVariantUpsertWithWhereUniqueWithoutColorInput {
@@ -7723,6 +7975,7 @@ export interface ReservationUpdateWithoutCustomerDataInput {
   shippedAt?: Maybe<DateTimeInput>;
   receivedAt?: Maybe<DateTimeInput>;
   reminderSentAt?: Maybe<DateTimeInput>;
+  receipt?: Maybe<ReservationReceiptUpdateOneWithoutReservationInput>;
 }
 
 export interface PackageUpdateOneInput {
@@ -7788,11 +8041,13 @@ export interface PhysicalProductUpdateDataInput {
   productStatus?: Maybe<PhysicalProductStatus>;
   offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
   offloadNotes?: Maybe<String>;
-  barcode?: Maybe<String>;
   sequenceNumber?: Maybe<Int>;
   warehouseLocation?: Maybe<
     WarehouseLocationUpdateOneWithoutPhysicalProductsInput
   >;
+  dateOrdered?: Maybe<DateTimeInput>;
+  dateReceived?: Maybe<DateTimeInput>;
+  unitCost?: Maybe<Float>;
 }
 
 export interface PhysicalProductUpsertWithWhereUniqueNestedInput {
@@ -7830,6 +8085,148 @@ export interface LocationUpdateOneRequiredInput {
 export interface PackageUpsertNestedInput {
   update: PackageUpdateDataInput;
   create: PackageCreateInput;
+}
+
+export interface ReservationReceiptUpdateOneWithoutReservationInput {
+  create?: Maybe<ReservationReceiptCreateWithoutReservationInput>;
+  update?: Maybe<ReservationReceiptUpdateWithoutReservationDataInput>;
+  upsert?: Maybe<ReservationReceiptUpsertWithoutReservationInput>;
+  delete?: Maybe<Boolean>;
+  disconnect?: Maybe<Boolean>;
+  connect?: Maybe<ReservationReceiptWhereUniqueInput>;
+}
+
+export interface ReservationReceiptUpdateWithoutReservationDataInput {
+  items?: Maybe<ReservationReceiptItemUpdateManyInput>;
+}
+
+export interface ReservationReceiptItemUpdateManyInput {
+  create?: Maybe<
+    ReservationReceiptItemCreateInput[] | ReservationReceiptItemCreateInput
+  >;
+  update?: Maybe<
+    | ReservationReceiptItemUpdateWithWhereUniqueNestedInput[]
+    | ReservationReceiptItemUpdateWithWhereUniqueNestedInput
+  >;
+  upsert?: Maybe<
+    | ReservationReceiptItemUpsertWithWhereUniqueNestedInput[]
+    | ReservationReceiptItemUpsertWithWhereUniqueNestedInput
+  >;
+  delete?: Maybe<
+    | ReservationReceiptItemWhereUniqueInput[]
+    | ReservationReceiptItemWhereUniqueInput
+  >;
+  connect?: Maybe<
+    | ReservationReceiptItemWhereUniqueInput[]
+    | ReservationReceiptItemWhereUniqueInput
+  >;
+  set?: Maybe<
+    | ReservationReceiptItemWhereUniqueInput[]
+    | ReservationReceiptItemWhereUniqueInput
+  >;
+  disconnect?: Maybe<
+    | ReservationReceiptItemWhereUniqueInput[]
+    | ReservationReceiptItemWhereUniqueInput
+  >;
+  deleteMany?: Maybe<
+    | ReservationReceiptItemScalarWhereInput[]
+    | ReservationReceiptItemScalarWhereInput
+  >;
+  updateMany?: Maybe<
+    | ReservationReceiptItemUpdateManyWithWhereNestedInput[]
+    | ReservationReceiptItemUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface ReservationReceiptItemUpdateWithWhereUniqueNestedInput {
+  where: ReservationReceiptItemWhereUniqueInput;
+  data: ReservationReceiptItemUpdateDataInput;
+}
+
+export interface ReservationReceiptItemUpdateDataInput {
+  product?: Maybe<PhysicalProductUpdateOneRequiredInput>;
+  productStatus?: Maybe<PhysicalProductStatus>;
+  notes?: Maybe<String>;
+}
+
+export interface PhysicalProductUpdateOneRequiredInput {
+  create?: Maybe<PhysicalProductCreateInput>;
+  update?: Maybe<PhysicalProductUpdateDataInput>;
+  upsert?: Maybe<PhysicalProductUpsertNestedInput>;
+  connect?: Maybe<PhysicalProductWhereUniqueInput>;
+}
+
+export interface PhysicalProductUpsertNestedInput {
+  update: PhysicalProductUpdateDataInput;
+  create: PhysicalProductCreateInput;
+}
+
+export interface ReservationReceiptItemUpsertWithWhereUniqueNestedInput {
+  where: ReservationReceiptItemWhereUniqueInput;
+  update: ReservationReceiptItemUpdateDataInput;
+  create: ReservationReceiptItemCreateInput;
+}
+
+export interface ReservationReceiptItemScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  productStatus?: Maybe<PhysicalProductStatus>;
+  productStatus_not?: Maybe<PhysicalProductStatus>;
+  productStatus_in?: Maybe<PhysicalProductStatus[] | PhysicalProductStatus>;
+  productStatus_not_in?: Maybe<PhysicalProductStatus[] | PhysicalProductStatus>;
+  notes?: Maybe<String>;
+  notes_not?: Maybe<String>;
+  notes_in?: Maybe<String[] | String>;
+  notes_not_in?: Maybe<String[] | String>;
+  notes_lt?: Maybe<String>;
+  notes_lte?: Maybe<String>;
+  notes_gt?: Maybe<String>;
+  notes_gte?: Maybe<String>;
+  notes_contains?: Maybe<String>;
+  notes_not_contains?: Maybe<String>;
+  notes_starts_with?: Maybe<String>;
+  notes_not_starts_with?: Maybe<String>;
+  notes_ends_with?: Maybe<String>;
+  notes_not_ends_with?: Maybe<String>;
+  AND?: Maybe<
+    | ReservationReceiptItemScalarWhereInput[]
+    | ReservationReceiptItemScalarWhereInput
+  >;
+  OR?: Maybe<
+    | ReservationReceiptItemScalarWhereInput[]
+    | ReservationReceiptItemScalarWhereInput
+  >;
+  NOT?: Maybe<
+    | ReservationReceiptItemScalarWhereInput[]
+    | ReservationReceiptItemScalarWhereInput
+  >;
+}
+
+export interface ReservationReceiptItemUpdateManyWithWhereNestedInput {
+  where: ReservationReceiptItemScalarWhereInput;
+  data: ReservationReceiptItemUpdateManyDataInput;
+}
+
+export interface ReservationReceiptItemUpdateManyDataInput {
+  productStatus?: Maybe<PhysicalProductStatus>;
+  notes?: Maybe<String>;
+}
+
+export interface ReservationReceiptUpsertWithoutReservationInput {
+  update: ReservationReceiptUpdateWithoutReservationDataInput;
+  create: ReservationReceiptCreateWithoutReservationInput;
 }
 
 export interface ReservationUpsertWithWhereUniqueWithoutCustomerInput {
@@ -8660,18 +9057,16 @@ export interface HomepageProductRailUpdateManyMutationInput {
 export interface ImageUpdateInput {
   caption?: Maybe<String>;
   url?: Maybe<String>;
-  originalHeight?: Maybe<Int>;
-  originalUrl?: Maybe<String>;
-  originalWidth?: Maybe<Int>;
+  height?: Maybe<Int>;
+  width?: Maybe<Int>;
   title?: Maybe<String>;
 }
 
 export interface ImageUpdateManyMutationInput {
   caption?: Maybe<String>;
   url?: Maybe<String>;
-  originalHeight?: Maybe<Int>;
-  originalUrl?: Maybe<String>;
-  originalWidth?: Maybe<Int>;
+  height?: Maybe<Int>;
+  width?: Maybe<Int>;
   title?: Maybe<String>;
 }
 
@@ -8743,11 +9138,13 @@ export interface PhysicalProductUpdateInput {
   productStatus?: Maybe<PhysicalProductStatus>;
   offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
   offloadNotes?: Maybe<String>;
-  barcode?: Maybe<String>;
   sequenceNumber?: Maybe<Int>;
   warehouseLocation?: Maybe<
     WarehouseLocationUpdateOneWithoutPhysicalProductsInput
   >;
+  dateOrdered?: Maybe<DateTimeInput>;
+  dateReceived?: Maybe<DateTimeInput>;
+  unitCost?: Maybe<Float>;
 }
 
 export interface PhysicalProductUpdateManyMutationInput {
@@ -8756,8 +9153,10 @@ export interface PhysicalProductUpdateManyMutationInput {
   productStatus?: Maybe<PhysicalProductStatus>;
   offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
   offloadNotes?: Maybe<String>;
-  barcode?: Maybe<String>;
   sequenceNumber?: Maybe<Int>;
+  dateOrdered?: Maybe<DateTimeInput>;
+  dateReceived?: Maybe<DateTimeInput>;
+  unitCost?: Maybe<Float>;
 }
 
 export interface ProductUpdateInput {
@@ -9069,6 +9468,7 @@ export interface ReservationCreateInput {
   shippedAt?: Maybe<DateTimeInput>;
   receivedAt?: Maybe<DateTimeInput>;
   reminderSentAt?: Maybe<DateTimeInput>;
+  receipt?: Maybe<ReservationReceiptCreateOneWithoutReservationInput>;
 }
 
 export interface CustomerCreateOneWithoutReservationsInput {
@@ -9256,6 +9656,7 @@ export interface ReservationUpdateDataInput {
   shippedAt?: Maybe<DateTimeInput>;
   receivedAt?: Maybe<DateTimeInput>;
   reminderSentAt?: Maybe<DateTimeInput>;
+  receipt?: Maybe<ReservationReceiptUpdateOneWithoutReservationInput>;
 }
 
 export interface CustomerUpdateOneRequiredWithoutReservationsInput {
@@ -9442,6 +9843,7 @@ export interface ReservationUpdateInput {
   shippedAt?: Maybe<DateTimeInput>;
   receivedAt?: Maybe<DateTimeInput>;
   reminderSentAt?: Maybe<DateTimeInput>;
+  receipt?: Maybe<ReservationReceiptUpdateOneWithoutReservationInput>;
 }
 
 export interface ReservationUpdateManyMutationInput {
@@ -9600,6 +10002,76 @@ export interface ReservationFeedbackUpdateManyMutationInput {
   respondedAt?: Maybe<DateTimeInput>;
 }
 
+export interface ReservationReceiptCreateInput {
+  id?: Maybe<ID_Input>;
+  reservation: ReservationCreateOneWithoutReceiptInput;
+  items?: Maybe<ReservationReceiptItemCreateManyInput>;
+}
+
+export interface ReservationCreateOneWithoutReceiptInput {
+  create?: Maybe<ReservationCreateWithoutReceiptInput>;
+  connect?: Maybe<ReservationWhereUniqueInput>;
+}
+
+export interface ReservationCreateWithoutReceiptInput {
+  id?: Maybe<ID_Input>;
+  user: UserCreateOneInput;
+  customer: CustomerCreateOneWithoutReservationsInput;
+  sentPackage?: Maybe<PackageCreateOneInput>;
+  returnedPackage?: Maybe<PackageCreateOneInput>;
+  location?: Maybe<LocationCreateOneInput>;
+  products?: Maybe<PhysicalProductCreateManyInput>;
+  reservationNumber: Int;
+  shipped: Boolean;
+  status: ReservationStatus;
+  shippedAt?: Maybe<DateTimeInput>;
+  receivedAt?: Maybe<DateTimeInput>;
+  reminderSentAt?: Maybe<DateTimeInput>;
+}
+
+export interface ReservationReceiptUpdateInput {
+  reservation?: Maybe<ReservationUpdateOneRequiredWithoutReceiptInput>;
+  items?: Maybe<ReservationReceiptItemUpdateManyInput>;
+}
+
+export interface ReservationUpdateOneRequiredWithoutReceiptInput {
+  create?: Maybe<ReservationCreateWithoutReceiptInput>;
+  update?: Maybe<ReservationUpdateWithoutReceiptDataInput>;
+  upsert?: Maybe<ReservationUpsertWithoutReceiptInput>;
+  connect?: Maybe<ReservationWhereUniqueInput>;
+}
+
+export interface ReservationUpdateWithoutReceiptDataInput {
+  user?: Maybe<UserUpdateOneRequiredInput>;
+  customer?: Maybe<CustomerUpdateOneRequiredWithoutReservationsInput>;
+  sentPackage?: Maybe<PackageUpdateOneInput>;
+  returnedPackage?: Maybe<PackageUpdateOneInput>;
+  location?: Maybe<LocationUpdateOneInput>;
+  products?: Maybe<PhysicalProductUpdateManyInput>;
+  reservationNumber?: Maybe<Int>;
+  shipped?: Maybe<Boolean>;
+  status?: Maybe<ReservationStatus>;
+  shippedAt?: Maybe<DateTimeInput>;
+  receivedAt?: Maybe<DateTimeInput>;
+  reminderSentAt?: Maybe<DateTimeInput>;
+}
+
+export interface ReservationUpsertWithoutReceiptInput {
+  update: ReservationUpdateWithoutReceiptDataInput;
+  create: ReservationCreateWithoutReceiptInput;
+}
+
+export interface ReservationReceiptItemUpdateInput {
+  product?: Maybe<PhysicalProductUpdateOneRequiredInput>;
+  productStatus?: Maybe<PhysicalProductStatus>;
+  notes?: Maybe<String>;
+}
+
+export interface ReservationReceiptItemUpdateManyMutationInput {
+  productStatus?: Maybe<PhysicalProductStatus>;
+  notes?: Maybe<String>;
+}
+
 export interface SizeUpdateInput {
   slug?: Maybe<String>;
   productType?: Maybe<ProductType>;
@@ -9746,6 +10218,7 @@ export interface UserUpdateInput {
   firstName?: Maybe<String>;
   lastName?: Maybe<String>;
   role?: Maybe<UserRole>;
+  roles?: Maybe<UserUpdaterolesInput>;
   pushNotifications?: Maybe<PushNotificationStatus>;
 }
 
@@ -9755,6 +10228,7 @@ export interface UserUpdateManyMutationInput {
   firstName?: Maybe<String>;
   lastName?: Maybe<String>;
   role?: Maybe<UserRole>;
+  roles?: Maybe<UserUpdaterolesInput>;
   pushNotifications?: Maybe<PushNotificationStatus>;
 }
 
@@ -9791,8 +10265,10 @@ export interface PhysicalProductCreateWithoutWarehouseLocationInput {
   productStatus: PhysicalProductStatus;
   offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
   offloadNotes?: Maybe<String>;
-  barcode: String;
   sequenceNumber: Int;
+  dateOrdered?: Maybe<DateTimeInput>;
+  dateReceived?: Maybe<DateTimeInput>;
+  unitCost?: Maybe<Float>;
 }
 
 export interface WarehouseLocationUpdateInput {
@@ -9857,8 +10333,10 @@ export interface PhysicalProductUpdateWithoutWarehouseLocationDataInput {
   productStatus?: Maybe<PhysicalProductStatus>;
   offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
   offloadNotes?: Maybe<String>;
-  barcode?: Maybe<String>;
   sequenceNumber?: Maybe<Int>;
+  dateOrdered?: Maybe<DateTimeInput>;
+  dateReceived?: Maybe<DateTimeInput>;
+  unitCost?: Maybe<Float>;
 }
 
 export interface PhysicalProductUpsertWithWhereUniqueWithoutWarehouseLocationInput {
@@ -10514,6 +10992,46 @@ export interface ReservationFeedbackSubscriptionWhereInput {
   >;
 }
 
+export interface ReservationReceiptSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<ReservationReceiptWhereInput>;
+  AND?: Maybe<
+    | ReservationReceiptSubscriptionWhereInput[]
+    | ReservationReceiptSubscriptionWhereInput
+  >;
+  OR?: Maybe<
+    | ReservationReceiptSubscriptionWhereInput[]
+    | ReservationReceiptSubscriptionWhereInput
+  >;
+  NOT?: Maybe<
+    | ReservationReceiptSubscriptionWhereInput[]
+    | ReservationReceiptSubscriptionWhereInput
+  >;
+}
+
+export interface ReservationReceiptItemSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<ReservationReceiptItemWhereInput>;
+  AND?: Maybe<
+    | ReservationReceiptItemSubscriptionWhereInput[]
+    | ReservationReceiptItemSubscriptionWhereInput
+  >;
+  OR?: Maybe<
+    | ReservationReceiptItemSubscriptionWhereInput[]
+    | ReservationReceiptItemSubscriptionWhereInput
+  >;
+  NOT?: Maybe<
+    | ReservationReceiptItemSubscriptionWhereInput[]
+    | ReservationReceiptItemSubscriptionWhereInput
+  >;
+}
+
 export interface SizeSubscriptionWhereInput {
   mutation_in?: Maybe<MutationType[] | MutationType>;
   updatedFields_contains?: Maybe<String>;
@@ -10738,6 +11256,7 @@ export interface User {
   firstName: String;
   lastName: String;
   role: UserRole;
+  roles: UserRole[];
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
   pushNotifications: PushNotificationStatus;
@@ -10750,6 +11269,7 @@ export interface UserPromise extends Promise<User>, Fragmentable {
   firstName: () => Promise<String>;
   lastName: () => Promise<String>;
   role: () => Promise<UserRole>;
+  roles: () => Promise<UserRole[]>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
   pushNotifications: () => Promise<PushNotificationStatus>;
@@ -10764,6 +11284,7 @@ export interface UserSubscription
   firstName: () => Promise<AsyncIterator<String>>;
   lastName: () => Promise<AsyncIterator<String>>;
   role: () => Promise<AsyncIterator<UserRole>>;
+  roles: () => Promise<AsyncIterator<UserRole[]>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   pushNotifications: () => Promise<AsyncIterator<PushNotificationStatus>>;
@@ -10778,6 +11299,7 @@ export interface UserNullablePromise
   firstName: () => Promise<String>;
   lastName: () => Promise<String>;
   role: () => Promise<UserRole>;
+  roles: () => Promise<UserRole[]>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
   pushNotifications: () => Promise<PushNotificationStatus>;
@@ -11003,8 +11525,10 @@ export interface PhysicalProduct {
   productStatus: PhysicalProductStatus;
   offloadMethod?: PhysicalProductOffloadMethod;
   offloadNotes?: String;
-  barcode: String;
   sequenceNumber: Int;
+  dateOrdered?: DateTimeOutput;
+  dateReceived?: DateTimeOutput;
+  unitCost?: Float;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -11020,9 +11544,11 @@ export interface PhysicalProductPromise
   productStatus: () => Promise<PhysicalProductStatus>;
   offloadMethod: () => Promise<PhysicalProductOffloadMethod>;
   offloadNotes: () => Promise<String>;
-  barcode: () => Promise<String>;
   sequenceNumber: () => Promise<Int>;
   warehouseLocation: <T = WarehouseLocationPromise>() => T;
+  dateOrdered: () => Promise<DateTimeOutput>;
+  dateReceived: () => Promise<DateTimeOutput>;
+  unitCost: () => Promise<Float>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -11038,9 +11564,11 @@ export interface PhysicalProductSubscription
   productStatus: () => Promise<AsyncIterator<PhysicalProductStatus>>;
   offloadMethod: () => Promise<AsyncIterator<PhysicalProductOffloadMethod>>;
   offloadNotes: () => Promise<AsyncIterator<String>>;
-  barcode: () => Promise<AsyncIterator<String>>;
   sequenceNumber: () => Promise<AsyncIterator<Int>>;
   warehouseLocation: <T = WarehouseLocationSubscription>() => T;
+  dateOrdered: () => Promise<AsyncIterator<DateTimeOutput>>;
+  dateReceived: () => Promise<AsyncIterator<DateTimeOutput>>;
+  unitCost: () => Promise<AsyncIterator<Float>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -11056,9 +11584,11 @@ export interface PhysicalProductNullablePromise
   productStatus: () => Promise<PhysicalProductStatus>;
   offloadMethod: () => Promise<PhysicalProductOffloadMethod>;
   offloadNotes: () => Promise<String>;
-  barcode: () => Promise<String>;
   sequenceNumber: () => Promise<Int>;
   warehouseLocation: <T = WarehouseLocationPromise>() => T;
+  dateOrdered: () => Promise<DateTimeOutput>;
+  dateReceived: () => Promise<DateTimeOutput>;
+  unitCost: () => Promise<Float>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -11787,10 +12317,9 @@ export interface CategoryNullablePromise
 export interface Image {
   id: ID_Output;
   caption?: String;
-  url?: String;
-  originalHeight?: Int;
-  originalUrl: String;
-  originalWidth?: Int;
+  url: String;
+  height?: Int;
+  width?: Int;
   title?: String;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
@@ -11800,9 +12329,8 @@ export interface ImagePromise extends Promise<Image>, Fragmentable {
   id: () => Promise<ID_Output>;
   caption: () => Promise<String>;
   url: () => Promise<String>;
-  originalHeight: () => Promise<Int>;
-  originalUrl: () => Promise<String>;
-  originalWidth: () => Promise<Int>;
+  height: () => Promise<Int>;
+  width: () => Promise<Int>;
   title: () => Promise<String>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
@@ -11814,9 +12342,8 @@ export interface ImageSubscription
   id: () => Promise<AsyncIterator<ID_Output>>;
   caption: () => Promise<AsyncIterator<String>>;
   url: () => Promise<AsyncIterator<String>>;
-  originalHeight: () => Promise<AsyncIterator<Int>>;
-  originalUrl: () => Promise<AsyncIterator<String>>;
-  originalWidth: () => Promise<AsyncIterator<Int>>;
+  height: () => Promise<AsyncIterator<Int>>;
+  width: () => Promise<AsyncIterator<Int>>;
   title: () => Promise<AsyncIterator<String>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
@@ -11828,9 +12355,8 @@ export interface ImageNullablePromise
   id: () => Promise<ID_Output>;
   caption: () => Promise<String>;
   url: () => Promise<String>;
-  originalHeight: () => Promise<Int>;
-  originalUrl: () => Promise<String>;
-  originalWidth: () => Promise<Int>;
+  height: () => Promise<Int>;
+  width: () => Promise<Int>;
   title: () => Promise<String>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
@@ -12248,6 +12774,7 @@ export interface ReservationPromise extends Promise<Reservation>, Fragmentable {
   shippedAt: () => Promise<DateTimeOutput>;
   receivedAt: () => Promise<DateTimeOutput>;
   reminderSentAt: () => Promise<DateTimeOutput>;
+  receipt: <T = ReservationReceiptPromise>() => T;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -12276,6 +12803,7 @@ export interface ReservationSubscription
   shippedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   receivedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   reminderSentAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  receipt: <T = ReservationReceiptSubscription>() => T;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -12304,6 +12832,7 @@ export interface ReservationNullablePromise
   shippedAt: () => Promise<DateTimeOutput>;
   receivedAt: () => Promise<DateTimeOutput>;
   reminderSentAt: () => Promise<DateTimeOutput>;
+  receipt: <T = ReservationReceiptPromise>() => T;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -12410,6 +12939,101 @@ export interface LabelNullablePromise
   image: () => Promise<String>;
   trackingNumber: () => Promise<String>;
   trackingURL: () => Promise<String>;
+}
+
+export interface ReservationReceipt {
+  id: ID_Output;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface ReservationReceiptPromise
+  extends Promise<ReservationReceipt>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  reservation: <T = ReservationPromise>() => T;
+  items: <T = FragmentableArray<ReservationReceiptItem>>(args?: {
+    where?: ReservationReceiptItemWhereInput;
+    orderBy?: ReservationReceiptItemOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface ReservationReceiptSubscription
+  extends Promise<AsyncIterator<ReservationReceipt>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  reservation: <T = ReservationSubscription>() => T;
+  items: <
+    T = Promise<AsyncIterator<ReservationReceiptItemSubscription>>
+  >(args?: {
+    where?: ReservationReceiptItemWhereInput;
+    orderBy?: ReservationReceiptItemOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface ReservationReceiptNullablePromise
+  extends Promise<ReservationReceipt | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  reservation: <T = ReservationPromise>() => T;
+  items: <T = FragmentableArray<ReservationReceiptItem>>(args?: {
+    where?: ReservationReceiptItemWhereInput;
+    orderBy?: ReservationReceiptItemOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface ReservationReceiptItem {
+  id: ID_Output;
+  productStatus: PhysicalProductStatus;
+  notes?: String;
+}
+
+export interface ReservationReceiptItemPromise
+  extends Promise<ReservationReceiptItem>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  product: <T = PhysicalProductPromise>() => T;
+  productStatus: () => Promise<PhysicalProductStatus>;
+  notes: () => Promise<String>;
+}
+
+export interface ReservationReceiptItemSubscription
+  extends Promise<AsyncIterator<ReservationReceiptItem>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  product: <T = PhysicalProductSubscription>() => T;
+  productStatus: () => Promise<AsyncIterator<PhysicalProductStatus>>;
+  notes: () => Promise<AsyncIterator<String>>;
+}
+
+export interface ReservationReceiptItemNullablePromise
+  extends Promise<ReservationReceiptItem | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  product: <T = PhysicalProductPromise>() => T;
+  productStatus: () => Promise<PhysicalProductStatus>;
+  notes: () => Promise<String>;
 }
 
 export interface BagItemConnection {
@@ -14450,6 +15074,122 @@ export interface AggregateReservationFeedbackSubscription
   count: () => Promise<AsyncIterator<Int>>;
 }
 
+export interface ReservationReceiptConnection {
+  pageInfo: PageInfo;
+  edges: ReservationReceiptEdge[];
+}
+
+export interface ReservationReceiptConnectionPromise
+  extends Promise<ReservationReceiptConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<ReservationReceiptEdge>>() => T;
+  aggregate: <T = AggregateReservationReceiptPromise>() => T;
+}
+
+export interface ReservationReceiptConnectionSubscription
+  extends Promise<AsyncIterator<ReservationReceiptConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <
+    T = Promise<AsyncIterator<ReservationReceiptEdgeSubscription>>
+  >() => T;
+  aggregate: <T = AggregateReservationReceiptSubscription>() => T;
+}
+
+export interface ReservationReceiptEdge {
+  node: ReservationReceipt;
+  cursor: String;
+}
+
+export interface ReservationReceiptEdgePromise
+  extends Promise<ReservationReceiptEdge>,
+    Fragmentable {
+  node: <T = ReservationReceiptPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface ReservationReceiptEdgeSubscription
+  extends Promise<AsyncIterator<ReservationReceiptEdge>>,
+    Fragmentable {
+  node: <T = ReservationReceiptSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateReservationReceipt {
+  count: Int;
+}
+
+export interface AggregateReservationReceiptPromise
+  extends Promise<AggregateReservationReceipt>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateReservationReceiptSubscription
+  extends Promise<AsyncIterator<AggregateReservationReceipt>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface ReservationReceiptItemConnection {
+  pageInfo: PageInfo;
+  edges: ReservationReceiptItemEdge[];
+}
+
+export interface ReservationReceiptItemConnectionPromise
+  extends Promise<ReservationReceiptItemConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<ReservationReceiptItemEdge>>() => T;
+  aggregate: <T = AggregateReservationReceiptItemPromise>() => T;
+}
+
+export interface ReservationReceiptItemConnectionSubscription
+  extends Promise<AsyncIterator<ReservationReceiptItemConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <
+    T = Promise<AsyncIterator<ReservationReceiptItemEdgeSubscription>>
+  >() => T;
+  aggregate: <T = AggregateReservationReceiptItemSubscription>() => T;
+}
+
+export interface ReservationReceiptItemEdge {
+  node: ReservationReceiptItem;
+  cursor: String;
+}
+
+export interface ReservationReceiptItemEdgePromise
+  extends Promise<ReservationReceiptItemEdge>,
+    Fragmentable {
+  node: <T = ReservationReceiptItemPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface ReservationReceiptItemEdgeSubscription
+  extends Promise<AsyncIterator<ReservationReceiptItemEdge>>,
+    Fragmentable {
+  node: <T = ReservationReceiptItemSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateReservationReceiptItem {
+  count: Int;
+}
+
+export interface AggregateReservationReceiptItemPromise
+  extends Promise<AggregateReservationReceiptItem>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateReservationReceiptItemSubscription
+  extends Promise<AsyncIterator<AggregateReservationReceiptItem>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
 export interface SizeConnection {
   pageInfo: PageInfo;
   edges: SizeEdge[];
@@ -15497,10 +16237,9 @@ export interface ImageSubscriptionPayloadSubscription
 export interface ImagePreviousValues {
   id: ID_Output;
   caption?: String;
-  url?: String;
-  originalHeight?: Int;
-  originalUrl: String;
-  originalWidth?: Int;
+  url: String;
+  height?: Int;
+  width?: Int;
   title?: String;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
@@ -15512,9 +16251,8 @@ export interface ImagePreviousValuesPromise
   id: () => Promise<ID_Output>;
   caption: () => Promise<String>;
   url: () => Promise<String>;
-  originalHeight: () => Promise<Int>;
-  originalUrl: () => Promise<String>;
-  originalWidth: () => Promise<Int>;
+  height: () => Promise<Int>;
+  width: () => Promise<Int>;
   title: () => Promise<String>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
@@ -15526,9 +16264,8 @@ export interface ImagePreviousValuesSubscription
   id: () => Promise<AsyncIterator<ID_Output>>;
   caption: () => Promise<AsyncIterator<String>>;
   url: () => Promise<AsyncIterator<String>>;
-  originalHeight: () => Promise<AsyncIterator<Int>>;
-  originalUrl: () => Promise<AsyncIterator<String>>;
-  originalWidth: () => Promise<AsyncIterator<Int>>;
+  height: () => Promise<AsyncIterator<Int>>;
+  width: () => Promise<AsyncIterator<Int>>;
   title: () => Promise<AsyncIterator<String>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
@@ -15752,8 +16489,10 @@ export interface PhysicalProductPreviousValues {
   productStatus: PhysicalProductStatus;
   offloadMethod?: PhysicalProductOffloadMethod;
   offloadNotes?: String;
-  barcode: String;
   sequenceNumber: Int;
+  dateOrdered?: DateTimeOutput;
+  dateReceived?: DateTimeOutput;
+  unitCost?: Float;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -15767,8 +16506,10 @@ export interface PhysicalProductPreviousValuesPromise
   productStatus: () => Promise<PhysicalProductStatus>;
   offloadMethod: () => Promise<PhysicalProductOffloadMethod>;
   offloadNotes: () => Promise<String>;
-  barcode: () => Promise<String>;
   sequenceNumber: () => Promise<Int>;
+  dateOrdered: () => Promise<DateTimeOutput>;
+  dateReceived: () => Promise<DateTimeOutput>;
+  unitCost: () => Promise<Float>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -15782,8 +16523,10 @@ export interface PhysicalProductPreviousValuesSubscription
   productStatus: () => Promise<AsyncIterator<PhysicalProductStatus>>;
   offloadMethod: () => Promise<AsyncIterator<PhysicalProductOffloadMethod>>;
   offloadNotes: () => Promise<AsyncIterator<String>>;
-  barcode: () => Promise<AsyncIterator<String>>;
   sequenceNumber: () => Promise<AsyncIterator<Int>>;
+  dateOrdered: () => Promise<AsyncIterator<DateTimeOutput>>;
+  dateReceived: () => Promise<AsyncIterator<DateTimeOutput>>;
+  unitCost: () => Promise<AsyncIterator<Float>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -16431,6 +17174,100 @@ export interface ReservationFeedbackPreviousValuesSubscription
   respondedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
+export interface ReservationReceiptSubscriptionPayload {
+  mutation: MutationType;
+  node: ReservationReceipt;
+  updatedFields: String[];
+  previousValues: ReservationReceiptPreviousValues;
+}
+
+export interface ReservationReceiptSubscriptionPayloadPromise
+  extends Promise<ReservationReceiptSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = ReservationReceiptPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = ReservationReceiptPreviousValuesPromise>() => T;
+}
+
+export interface ReservationReceiptSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<ReservationReceiptSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = ReservationReceiptSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = ReservationReceiptPreviousValuesSubscription>() => T;
+}
+
+export interface ReservationReceiptPreviousValues {
+  id: ID_Output;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface ReservationReceiptPreviousValuesPromise
+  extends Promise<ReservationReceiptPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface ReservationReceiptPreviousValuesSubscription
+  extends Promise<AsyncIterator<ReservationReceiptPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface ReservationReceiptItemSubscriptionPayload {
+  mutation: MutationType;
+  node: ReservationReceiptItem;
+  updatedFields: String[];
+  previousValues: ReservationReceiptItemPreviousValues;
+}
+
+export interface ReservationReceiptItemSubscriptionPayloadPromise
+  extends Promise<ReservationReceiptItemSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = ReservationReceiptItemPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = ReservationReceiptItemPreviousValuesPromise>() => T;
+}
+
+export interface ReservationReceiptItemSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<ReservationReceiptItemSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = ReservationReceiptItemSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = ReservationReceiptItemPreviousValuesSubscription>() => T;
+}
+
+export interface ReservationReceiptItemPreviousValues {
+  id: ID_Output;
+  productStatus: PhysicalProductStatus;
+  notes?: String;
+}
+
+export interface ReservationReceiptItemPreviousValuesPromise
+  extends Promise<ReservationReceiptItemPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  productStatus: () => Promise<PhysicalProductStatus>;
+  notes: () => Promise<String>;
+}
+
+export interface ReservationReceiptItemPreviousValuesSubscription
+  extends Promise<AsyncIterator<ReservationReceiptItemPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  productStatus: () => Promise<AsyncIterator<PhysicalProductStatus>>;
+  notes: () => Promise<AsyncIterator<String>>;
+}
+
 export interface SizeSubscriptionPayload {
   mutation: MutationType;
   node: Size;
@@ -16625,6 +17462,7 @@ export interface UserPreviousValues {
   firstName: String;
   lastName: String;
   role: UserRole;
+  roles: UserRole[];
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
   pushNotifications: PushNotificationStatus;
@@ -16639,6 +17477,7 @@ export interface UserPreviousValuesPromise
   firstName: () => Promise<String>;
   lastName: () => Promise<String>;
   role: () => Promise<UserRole>;
+  roles: () => Promise<UserRole[]>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
   pushNotifications: () => Promise<PushNotificationStatus>;
@@ -16653,6 +17492,7 @@ export interface UserPreviousValuesSubscription
   firstName: () => Promise<AsyncIterator<String>>;
   lastName: () => Promise<AsyncIterator<String>>;
   role: () => Promise<AsyncIterator<UserRole>>;
+  roles: () => Promise<AsyncIterator<UserRole[]>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   pushNotifications: () => Promise<AsyncIterator<PushNotificationStatus>>;
@@ -16982,6 +17822,14 @@ export const models: Model[] = [
   },
   {
     name: "Reservation",
+    embedded: false
+  },
+  {
+    name: "ReservationReceipt",
+    embedded: false
+  },
+  {
+    name: "ReservationReceiptItem",
     embedded: false
   },
   {
