@@ -13,6 +13,7 @@ export interface Query {
     warehouseLocations: <T = Array<WarehouseLocation | null>>(args: { where?: WarehouseLocationWhereInput | null, orderBy?: WarehouseLocationOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     bagItems: <T = Array<BagItem | null>>(args: { where?: BagItemWhereInput | null, orderBy?: BagItemOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     recentlyViewedProducts: <T = Array<RecentlyViewedProduct | null>>(args: { where?: RecentlyViewedProductWhereInput | null, orderBy?: RecentlyViewedProductOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    reservationReceipts: <T = Array<ReservationReceipt | null>>(args: { where?: ReservationReceiptWhereInput | null, orderBy?: ReservationReceiptOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     productRequests: <T = Array<ProductRequest | null>>(args: { where?: ProductRequestWhereInput | null, orderBy?: ProductRequestOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     productVariantWants: <T = Array<ProductVariantWant | null>>(args: { where?: ProductVariantWantWhereInput | null, orderBy?: ProductVariantWantOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     reservationFeedbacks: <T = Array<ReservationFeedback | null>>(args: { where?: ReservationFeedbackWhereInput | null, orderBy?: ReservationFeedbackOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -21,6 +22,7 @@ export interface Query {
     collections: <T = Array<Collection | null>>(args: { where?: CollectionWhereInput | null, orderBy?: CollectionOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     customerDetails: <T = Array<CustomerDetail | null>>(args: { where?: CustomerDetailWhereInput | null, orderBy?: CustomerDetailOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     billingInfoes: <T = Array<BillingInfo | null>>(args: { where?: BillingInfoWhereInput | null, orderBy?: BillingInfoOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    reservationReceiptItems: <T = Array<ReservationReceiptItem | null>>(args: { where?: ReservationReceiptItemWhereInput | null, orderBy?: ReservationReceiptItemOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     categories: <T = Array<Category | null>>(args: { where?: CategoryWhereInput | null, orderBy?: CategoryOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     locations: <T = Array<Location | null>>(args: { where?: LocationWhereInput | null, orderBy?: LocationOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     images: <T = Array<Image | null>>(args: { where?: ImageWhereInput | null, orderBy?: ImageOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -46,6 +48,7 @@ export interface Query {
     warehouseLocation: <T = WarehouseLocation | null>(args: { where: WarehouseLocationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     bagItem: <T = BagItem | null>(args: { where: BagItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     recentlyViewedProduct: <T = RecentlyViewedProduct | null>(args: { where: RecentlyViewedProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    reservationReceipt: <T = ReservationReceipt | null>(args: { where: ReservationReceiptWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     productRequest: <T = ProductRequest | null>(args: { where: ProductRequestWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     productVariantWant: <T = ProductVariantWant | null>(args: { where: ProductVariantWantWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     reservationFeedback: <T = ReservationFeedback | null>(args: { where: ReservationFeedbackWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -54,6 +57,7 @@ export interface Query {
     collection: <T = Collection | null>(args: { where: CollectionWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     customerDetail: <T = CustomerDetail | null>(args: { where: CustomerDetailWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     billingInfo: <T = BillingInfo | null>(args: { where: BillingInfoWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    reservationReceiptItem: <T = ReservationReceiptItem | null>(args: { where: ReservationReceiptItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     category: <T = Category | null>(args: { where: CategoryWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     location: <T = Location | null>(args: { where: LocationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     image: <T = Image | null>(args: { where: ImageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -79,6 +83,7 @@ export interface Query {
     warehouseLocationsConnection: <T = WarehouseLocationConnection>(args: { where?: WarehouseLocationWhereInput | null, orderBy?: WarehouseLocationOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     bagItemsConnection: <T = BagItemConnection>(args: { where?: BagItemWhereInput | null, orderBy?: BagItemOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     recentlyViewedProductsConnection: <T = RecentlyViewedProductConnection>(args: { where?: RecentlyViewedProductWhereInput | null, orderBy?: RecentlyViewedProductOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    reservationReceiptsConnection: <T = ReservationReceiptConnection>(args: { where?: ReservationReceiptWhereInput | null, orderBy?: ReservationReceiptOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     productRequestsConnection: <T = ProductRequestConnection>(args: { where?: ProductRequestWhereInput | null, orderBy?: ProductRequestOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     productVariantWantsConnection: <T = ProductVariantWantConnection>(args: { where?: ProductVariantWantWhereInput | null, orderBy?: ProductVariantWantOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     reservationFeedbacksConnection: <T = ReservationFeedbackConnection>(args: { where?: ReservationFeedbackWhereInput | null, orderBy?: ReservationFeedbackOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -87,6 +92,7 @@ export interface Query {
     collectionsConnection: <T = CollectionConnection>(args: { where?: CollectionWhereInput | null, orderBy?: CollectionOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     customerDetailsConnection: <T = CustomerDetailConnection>(args: { where?: CustomerDetailWhereInput | null, orderBy?: CustomerDetailOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     billingInfoesConnection: <T = BillingInfoConnection>(args: { where?: BillingInfoWhereInput | null, orderBy?: BillingInfoOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    reservationReceiptItemsConnection: <T = ReservationReceiptItemConnection>(args: { where?: ReservationReceiptItemWhereInput | null, orderBy?: ReservationReceiptItemOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     categoriesConnection: <T = CategoryConnection>(args: { where?: CategoryWhereInput | null, orderBy?: CategoryOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     locationsConnection: <T = LocationConnection>(args: { where?: LocationWhereInput | null, orderBy?: LocationOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     imagesConnection: <T = ImageConnection>(args: { where?: ImageWhereInput | null, orderBy?: ImageOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -116,6 +122,7 @@ export interface Mutation {
     createWarehouseLocation: <T = WarehouseLocation>(args: { data: WarehouseLocationCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createBagItem: <T = BagItem>(args: { data: BagItemCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createRecentlyViewedProduct: <T = RecentlyViewedProduct>(args: { data: RecentlyViewedProductCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    createReservationReceipt: <T = ReservationReceipt>(args: { data: ReservationReceiptCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createProductRequest: <T = ProductRequest>(args: { data: ProductRequestCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createProductVariantWant: <T = ProductVariantWant>(args: { data: ProductVariantWantCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createReservationFeedback: <T = ReservationFeedback>(args: { data: ReservationFeedbackCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -124,6 +131,7 @@ export interface Mutation {
     createCollection: <T = Collection>(args: { data: CollectionCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createCustomerDetail: <T = CustomerDetail>(args: { data: CustomerDetailCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createBillingInfo: <T = BillingInfo>(args: { data: BillingInfoCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    createReservationReceiptItem: <T = ReservationReceiptItem>(args: { data: ReservationReceiptItemCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createCategory: <T = Category>(args: { data: CategoryCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createLocation: <T = Location>(args: { data: LocationCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createImage: <T = Image>(args: { data: ImageCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -149,6 +157,7 @@ export interface Mutation {
     updateWarehouseLocation: <T = WarehouseLocation | null>(args: { data: WarehouseLocationUpdateInput, where: WarehouseLocationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateBagItem: <T = BagItem | null>(args: { data: BagItemUpdateInput, where: BagItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateRecentlyViewedProduct: <T = RecentlyViewedProduct | null>(args: { data: RecentlyViewedProductUpdateInput, where: RecentlyViewedProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    updateReservationReceipt: <T = ReservationReceipt | null>(args: { data: ReservationReceiptUpdateInput, where: ReservationReceiptWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateProductRequest: <T = ProductRequest | null>(args: { data: ProductRequestUpdateInput, where: ProductRequestWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateProductVariantWant: <T = ProductVariantWant | null>(args: { data: ProductVariantWantUpdateInput, where: ProductVariantWantWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateReservationFeedback: <T = ReservationFeedback | null>(args: { data: ReservationFeedbackUpdateInput, where: ReservationFeedbackWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -157,6 +166,7 @@ export interface Mutation {
     updateCollection: <T = Collection | null>(args: { data: CollectionUpdateInput, where: CollectionWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateCustomerDetail: <T = CustomerDetail | null>(args: { data: CustomerDetailUpdateInput, where: CustomerDetailWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateBillingInfo: <T = BillingInfo | null>(args: { data: BillingInfoUpdateInput, where: BillingInfoWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    updateReservationReceiptItem: <T = ReservationReceiptItem | null>(args: { data: ReservationReceiptItemUpdateInput, where: ReservationReceiptItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateCategory: <T = Category | null>(args: { data: CategoryUpdateInput, where: CategoryWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateLocation: <T = Location | null>(args: { data: LocationUpdateInput, where: LocationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateImage: <T = Image | null>(args: { data: ImageUpdateInput, where: ImageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -182,6 +192,7 @@ export interface Mutation {
     deleteWarehouseLocation: <T = WarehouseLocation | null>(args: { where: WarehouseLocationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteBagItem: <T = BagItem | null>(args: { where: BagItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteRecentlyViewedProduct: <T = RecentlyViewedProduct | null>(args: { where: RecentlyViewedProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deleteReservationReceipt: <T = ReservationReceipt | null>(args: { where: ReservationReceiptWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteProductRequest: <T = ProductRequest | null>(args: { where: ProductRequestWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteProductVariantWant: <T = ProductVariantWant | null>(args: { where: ProductVariantWantWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteReservationFeedback: <T = ReservationFeedback | null>(args: { where: ReservationFeedbackWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -190,6 +201,7 @@ export interface Mutation {
     deleteCollection: <T = Collection | null>(args: { where: CollectionWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteCustomerDetail: <T = CustomerDetail | null>(args: { where: CustomerDetailWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteBillingInfo: <T = BillingInfo | null>(args: { where: BillingInfoWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deleteReservationReceiptItem: <T = ReservationReceiptItem | null>(args: { where: ReservationReceiptItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteCategory: <T = Category | null>(args: { where: CategoryWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteLocation: <T = Location | null>(args: { where: LocationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteImage: <T = Image | null>(args: { where: ImageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -215,6 +227,7 @@ export interface Mutation {
     upsertWarehouseLocation: <T = WarehouseLocation>(args: { where: WarehouseLocationWhereUniqueInput, create: WarehouseLocationCreateInput, update: WarehouseLocationUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertBagItem: <T = BagItem>(args: { where: BagItemWhereUniqueInput, create: BagItemCreateInput, update: BagItemUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertRecentlyViewedProduct: <T = RecentlyViewedProduct>(args: { where: RecentlyViewedProductWhereUniqueInput, create: RecentlyViewedProductCreateInput, update: RecentlyViewedProductUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    upsertReservationReceipt: <T = ReservationReceipt>(args: { where: ReservationReceiptWhereUniqueInput, create: ReservationReceiptCreateInput, update: ReservationReceiptUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertProductRequest: <T = ProductRequest>(args: { where: ProductRequestWhereUniqueInput, create: ProductRequestCreateInput, update: ProductRequestUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertProductVariantWant: <T = ProductVariantWant>(args: { where: ProductVariantWantWhereUniqueInput, create: ProductVariantWantCreateInput, update: ProductVariantWantUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertReservationFeedback: <T = ReservationFeedback>(args: { where: ReservationFeedbackWhereUniqueInput, create: ReservationFeedbackCreateInput, update: ReservationFeedbackUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -223,6 +236,7 @@ export interface Mutation {
     upsertCollection: <T = Collection>(args: { where: CollectionWhereUniqueInput, create: CollectionCreateInput, update: CollectionUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertCustomerDetail: <T = CustomerDetail>(args: { where: CustomerDetailWhereUniqueInput, create: CustomerDetailCreateInput, update: CustomerDetailUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertBillingInfo: <T = BillingInfo>(args: { where: BillingInfoWhereUniqueInput, create: BillingInfoCreateInput, update: BillingInfoUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    upsertReservationReceiptItem: <T = ReservationReceiptItem>(args: { where: ReservationReceiptItemWhereUniqueInput, create: ReservationReceiptItemCreateInput, update: ReservationReceiptItemUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertCategory: <T = Category>(args: { where: CategoryWhereUniqueInput, create: CategoryCreateInput, update: CategoryUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertLocation: <T = Location>(args: { where: LocationWhereUniqueInput, create: LocationCreateInput, update: LocationUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertImage: <T = Image>(args: { where: ImageWhereUniqueInput, create: ImageCreateInput, update: ImageUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -256,6 +270,7 @@ export interface Mutation {
     updateManyCollections: <T = BatchPayload>(args: { data: CollectionUpdateManyMutationInput, where?: CollectionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyCustomerDetails: <T = BatchPayload>(args: { data: CustomerDetailUpdateManyMutationInput, where?: CustomerDetailWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyBillingInfoes: <T = BatchPayload>(args: { data: BillingInfoUpdateManyMutationInput, where?: BillingInfoWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateManyReservationReceiptItems: <T = BatchPayload>(args: { data: ReservationReceiptItemUpdateManyMutationInput, where?: ReservationReceiptItemWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyCategories: <T = BatchPayload>(args: { data: CategoryUpdateManyMutationInput, where?: CategoryWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyLocations: <T = BatchPayload>(args: { data: LocationUpdateManyMutationInput, where?: LocationWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyImages: <T = BatchPayload>(args: { data: ImageUpdateManyMutationInput, where?: ImageWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -281,6 +296,7 @@ export interface Mutation {
     deleteManyWarehouseLocations: <T = BatchPayload>(args: { where?: WarehouseLocationWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyBagItems: <T = BatchPayload>(args: { where?: BagItemWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyRecentlyViewedProducts: <T = BatchPayload>(args: { where?: RecentlyViewedProductWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteManyReservationReceipts: <T = BatchPayload>(args: { where?: ReservationReceiptWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyProductRequests: <T = BatchPayload>(args: { where?: ProductRequestWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyProductVariantWants: <T = BatchPayload>(args: { where?: ProductVariantWantWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyReservationFeedbacks: <T = BatchPayload>(args: { where?: ReservationFeedbackWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -289,6 +305,7 @@ export interface Mutation {
     deleteManyCollections: <T = BatchPayload>(args: { where?: CollectionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyCustomerDetails: <T = BatchPayload>(args: { where?: CustomerDetailWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyBillingInfoes: <T = BatchPayload>(args: { where?: BillingInfoWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteManyReservationReceiptItems: <T = BatchPayload>(args: { where?: ReservationReceiptItemWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyCategories: <T = BatchPayload>(args: { where?: CategoryWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyLocations: <T = BatchPayload>(args: { where?: LocationWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyImages: <T = BatchPayload>(args: { where?: ImageWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -317,6 +334,7 @@ export interface Subscription {
     warehouseLocation: <T = WarehouseLocationSubscriptionPayload | null>(args: { where?: WarehouseLocationSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     bagItem: <T = BagItemSubscriptionPayload | null>(args: { where?: BagItemSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     recentlyViewedProduct: <T = RecentlyViewedProductSubscriptionPayload | null>(args: { where?: RecentlyViewedProductSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
+    reservationReceipt: <T = ReservationReceiptSubscriptionPayload | null>(args: { where?: ReservationReceiptSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     productRequest: <T = ProductRequestSubscriptionPayload | null>(args: { where?: ProductRequestSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     productVariantWant: <T = ProductVariantWantSubscriptionPayload | null>(args: { where?: ProductVariantWantSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     reservationFeedback: <T = ReservationFeedbackSubscriptionPayload | null>(args: { where?: ReservationFeedbackSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
@@ -325,6 +343,7 @@ export interface Subscription {
     collection: <T = CollectionSubscriptionPayload | null>(args: { where?: CollectionSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     customerDetail: <T = CustomerDetailSubscriptionPayload | null>(args: { where?: CustomerDetailSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     billingInfo: <T = BillingInfoSubscriptionPayload | null>(args: { where?: BillingInfoSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
+    reservationReceiptItem: <T = ReservationReceiptItemSubscriptionPayload | null>(args: { where?: ReservationReceiptItemSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     category: <T = CategorySubscriptionPayload | null>(args: { where?: CategorySubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     location: <T = LocationSubscriptionPayload | null>(args: { where?: LocationSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     image: <T = ImageSubscriptionPayload | null>(args: { where?: ImageSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
@@ -353,6 +372,7 @@ export interface Exists {
   WarehouseLocation: (where?: WarehouseLocationWhereInput) => Promise<boolean>
   BagItem: (where?: BagItemWhereInput) => Promise<boolean>
   RecentlyViewedProduct: (where?: RecentlyViewedProductWhereInput) => Promise<boolean>
+  ReservationReceipt: (where?: ReservationReceiptWhereInput) => Promise<boolean>
   ProductRequest: (where?: ProductRequestWhereInput) => Promise<boolean>
   ProductVariantWant: (where?: ProductVariantWantWhereInput) => Promise<boolean>
   ReservationFeedback: (where?: ReservationFeedbackWhereInput) => Promise<boolean>
@@ -361,6 +381,7 @@ export interface Exists {
   Collection: (where?: CollectionWhereInput) => Promise<boolean>
   CustomerDetail: (where?: CustomerDetailWhereInput) => Promise<boolean>
   BillingInfo: (where?: BillingInfoWhereInput) => Promise<boolean>
+  ReservationReceiptItem: (where?: ReservationReceiptItemWhereInput) => Promise<boolean>
   Category: (where?: CategoryWhereInput) => Promise<boolean>
   Location: (where?: LocationWhereInput) => Promise<boolean>
   Image: (where?: ImageWhereInput) => Promise<boolean>
@@ -506,6 +527,14 @@ type AggregateReservation {
 }
 
 type AggregateReservationFeedback {
+  count: Int!
+}
+
+type AggregateReservationReceipt {
+  count: Int!
+}
+
+type AggregateReservationReceiptItem {
   count: Int!
 }
 
@@ -5957,10 +5986,9 @@ input HomepageProductRailWhereUniqueInput {
 type Image implements Node {
   id: ID!
   caption: String
-  url: String
-  originalHeight: Int
-  originalUrl: String!
-  originalWidth: Int
+  url: String!
+  height: Int
+  width: Int
   title: String
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -5979,10 +6007,9 @@ type ImageConnection {
 input ImageCreateInput {
   id: ID
   caption: String
-  url: String
-  originalHeight: Int
-  originalUrl: String!
-  originalWidth: Int
+  url: String!
+  height: Int
+  width: Int
   title: String
 }
 
@@ -6007,12 +6034,10 @@ enum ImageOrderByInput {
   caption_DESC
   url_ASC
   url_DESC
-  originalHeight_ASC
-  originalHeight_DESC
-  originalUrl_ASC
-  originalUrl_DESC
-  originalWidth_ASC
-  originalWidth_DESC
+  height_ASC
+  height_DESC
+  width_ASC
+  width_DESC
   title_ASC
   title_DESC
   createdAt_ASC
@@ -6024,10 +6049,9 @@ enum ImageOrderByInput {
 type ImagePreviousValues {
   id: ID!
   caption: String
-  url: String
-  originalHeight: Int
-  originalUrl: String!
-  originalWidth: Int
+  url: String!
+  height: Int
+  width: Int
   title: String
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -6162,90 +6186,50 @@ input ImageScalarWhereInput {
 
   """All values not ending with the given string."""
   url_not_ends_with: String
-  originalHeight: Int
+  height: Int
 
   """All values that are not equal to given value."""
-  originalHeight_not: Int
+  height_not: Int
 
   """All values that are contained in given list."""
-  originalHeight_in: [Int!]
+  height_in: [Int!]
 
   """All values that are not contained in given list."""
-  originalHeight_not_in: [Int!]
+  height_not_in: [Int!]
 
   """All values less than the given value."""
-  originalHeight_lt: Int
+  height_lt: Int
 
   """All values less than or equal the given value."""
-  originalHeight_lte: Int
+  height_lte: Int
 
   """All values greater than the given value."""
-  originalHeight_gt: Int
+  height_gt: Int
 
   """All values greater than or equal the given value."""
-  originalHeight_gte: Int
-  originalUrl: String
+  height_gte: Int
+  width: Int
 
   """All values that are not equal to given value."""
-  originalUrl_not: String
+  width_not: Int
 
   """All values that are contained in given list."""
-  originalUrl_in: [String!]
+  width_in: [Int!]
 
   """All values that are not contained in given list."""
-  originalUrl_not_in: [String!]
+  width_not_in: [Int!]
 
   """All values less than the given value."""
-  originalUrl_lt: String
+  width_lt: Int
 
   """All values less than or equal the given value."""
-  originalUrl_lte: String
+  width_lte: Int
 
   """All values greater than the given value."""
-  originalUrl_gt: String
+  width_gt: Int
 
   """All values greater than or equal the given value."""
-  originalUrl_gte: String
-
-  """All values containing the given string."""
-  originalUrl_contains: String
-
-  """All values not containing the given string."""
-  originalUrl_not_contains: String
-
-  """All values starting with the given string."""
-  originalUrl_starts_with: String
-
-  """All values not starting with the given string."""
-  originalUrl_not_starts_with: String
-
-  """All values ending with the given string."""
-  originalUrl_ends_with: String
-
-  """All values not ending with the given string."""
-  originalUrl_not_ends_with: String
-  originalWidth: Int
-
-  """All values that are not equal to given value."""
-  originalWidth_not: Int
-
-  """All values that are contained in given list."""
-  originalWidth_in: [Int!]
-
-  """All values that are not contained in given list."""
-  originalWidth_not_in: [Int!]
-
-  """All values less than the given value."""
-  originalWidth_lt: Int
-
-  """All values less than or equal the given value."""
-  originalWidth_lte: Int
-
-  """All values greater than the given value."""
-  originalWidth_gt: Int
-
-  """All values greater than or equal the given value."""
-  originalWidth_gte: Int
+  width_gte: Int
   title: String
 
   """All values that are not equal to given value."""
@@ -6372,27 +6356,24 @@ input ImageSubscriptionWhereInput {
 input ImageUpdateDataInput {
   caption: String
   url: String
-  originalHeight: Int
-  originalUrl: String
-  originalWidth: Int
+  height: Int
+  width: Int
   title: String
 }
 
 input ImageUpdateInput {
   caption: String
   url: String
-  originalHeight: Int
-  originalUrl: String
-  originalWidth: Int
+  height: Int
+  width: Int
   title: String
 }
 
 input ImageUpdateManyDataInput {
   caption: String
   url: String
-  originalHeight: Int
-  originalUrl: String
-  originalWidth: Int
+  height: Int
+  width: Int
   title: String
 }
 
@@ -6411,9 +6392,8 @@ input ImageUpdateManyInput {
 input ImageUpdateManyMutationInput {
   caption: String
   url: String
-  originalHeight: Int
-  originalUrl: String
-  originalWidth: Int
+  height: Int
+  width: Int
   title: String
 }
 
@@ -6562,90 +6542,50 @@ input ImageWhereInput {
 
   """All values not ending with the given string."""
   url_not_ends_with: String
-  originalHeight: Int
+  height: Int
 
   """All values that are not equal to given value."""
-  originalHeight_not: Int
+  height_not: Int
 
   """All values that are contained in given list."""
-  originalHeight_in: [Int!]
+  height_in: [Int!]
 
   """All values that are not contained in given list."""
-  originalHeight_not_in: [Int!]
+  height_not_in: [Int!]
 
   """All values less than the given value."""
-  originalHeight_lt: Int
+  height_lt: Int
 
   """All values less than or equal the given value."""
-  originalHeight_lte: Int
+  height_lte: Int
 
   """All values greater than the given value."""
-  originalHeight_gt: Int
+  height_gt: Int
 
   """All values greater than or equal the given value."""
-  originalHeight_gte: Int
-  originalUrl: String
+  height_gte: Int
+  width: Int
 
   """All values that are not equal to given value."""
-  originalUrl_not: String
+  width_not: Int
 
   """All values that are contained in given list."""
-  originalUrl_in: [String!]
+  width_in: [Int!]
 
   """All values that are not contained in given list."""
-  originalUrl_not_in: [String!]
+  width_not_in: [Int!]
 
   """All values less than the given value."""
-  originalUrl_lt: String
+  width_lt: Int
 
   """All values less than or equal the given value."""
-  originalUrl_lte: String
+  width_lte: Int
 
   """All values greater than the given value."""
-  originalUrl_gt: String
+  width_gt: Int
 
   """All values greater than or equal the given value."""
-  originalUrl_gte: String
-
-  """All values containing the given string."""
-  originalUrl_contains: String
-
-  """All values not containing the given string."""
-  originalUrl_not_contains: String
-
-  """All values starting with the given string."""
-  originalUrl_starts_with: String
-
-  """All values not starting with the given string."""
-  originalUrl_not_starts_with: String
-
-  """All values ending with the given string."""
-  originalUrl_ends_with: String
-
-  """All values not ending with the given string."""
-  originalUrl_not_ends_with: String
-  originalWidth: Int
-
-  """All values that are not equal to given value."""
-  originalWidth_not: Int
-
-  """All values that are contained in given list."""
-  originalWidth_in: [Int!]
-
-  """All values that are not contained in given list."""
-  originalWidth_not_in: [Int!]
-
-  """All values less than the given value."""
-  originalWidth_lt: Int
-
-  """All values less than or equal the given value."""
-  originalWidth_lte: Int
-
-  """All values greater than the given value."""
-  originalWidth_gt: Int
-
-  """All values greater than or equal the given value."""
-  originalWidth_gte: Int
+  width_gte: Int
   title: String
 
   """All values that are not equal to given value."""
@@ -6734,7 +6674,7 @@ input ImageWhereInput {
 
 input ImageWhereUniqueInput {
   id: ID
-  originalUrl: String
+  url: String
 }
 
 enum InventoryStatus {
@@ -7916,6 +7856,7 @@ type Mutation {
   createWarehouseLocation(data: WarehouseLocationCreateInput!): WarehouseLocation!
   createBagItem(data: BagItemCreateInput!): BagItem!
   createRecentlyViewedProduct(data: RecentlyViewedProductCreateInput!): RecentlyViewedProduct!
+  createReservationReceipt(data: ReservationReceiptCreateInput!): ReservationReceipt!
   createProductRequest(data: ProductRequestCreateInput!): ProductRequest!
   createProductVariantWant(data: ProductVariantWantCreateInput!): ProductVariantWant!
   createReservationFeedback(data: ReservationFeedbackCreateInput!): ReservationFeedback!
@@ -7924,6 +7865,7 @@ type Mutation {
   createCollection(data: CollectionCreateInput!): Collection!
   createCustomerDetail(data: CustomerDetailCreateInput!): CustomerDetail!
   createBillingInfo(data: BillingInfoCreateInput!): BillingInfo!
+  createReservationReceiptItem(data: ReservationReceiptItemCreateInput!): ReservationReceiptItem!
   createCategory(data: CategoryCreateInput!): Category!
   createLocation(data: LocationCreateInput!): Location!
   createImage(data: ImageCreateInput!): Image!
@@ -7949,6 +7891,7 @@ type Mutation {
   updateWarehouseLocation(data: WarehouseLocationUpdateInput!, where: WarehouseLocationWhereUniqueInput!): WarehouseLocation
   updateBagItem(data: BagItemUpdateInput!, where: BagItemWhereUniqueInput!): BagItem
   updateRecentlyViewedProduct(data: RecentlyViewedProductUpdateInput!, where: RecentlyViewedProductWhereUniqueInput!): RecentlyViewedProduct
+  updateReservationReceipt(data: ReservationReceiptUpdateInput!, where: ReservationReceiptWhereUniqueInput!): ReservationReceipt
   updateProductRequest(data: ProductRequestUpdateInput!, where: ProductRequestWhereUniqueInput!): ProductRequest
   updateProductVariantWant(data: ProductVariantWantUpdateInput!, where: ProductVariantWantWhereUniqueInput!): ProductVariantWant
   updateReservationFeedback(data: ReservationFeedbackUpdateInput!, where: ReservationFeedbackWhereUniqueInput!): ReservationFeedback
@@ -7957,6 +7900,7 @@ type Mutation {
   updateCollection(data: CollectionUpdateInput!, where: CollectionWhereUniqueInput!): Collection
   updateCustomerDetail(data: CustomerDetailUpdateInput!, where: CustomerDetailWhereUniqueInput!): CustomerDetail
   updateBillingInfo(data: BillingInfoUpdateInput!, where: BillingInfoWhereUniqueInput!): BillingInfo
+  updateReservationReceiptItem(data: ReservationReceiptItemUpdateInput!, where: ReservationReceiptItemWhereUniqueInput!): ReservationReceiptItem
   updateCategory(data: CategoryUpdateInput!, where: CategoryWhereUniqueInput!): Category
   updateLocation(data: LocationUpdateInput!, where: LocationWhereUniqueInput!): Location
   updateImage(data: ImageUpdateInput!, where: ImageWhereUniqueInput!): Image
@@ -7982,6 +7926,7 @@ type Mutation {
   deleteWarehouseLocation(where: WarehouseLocationWhereUniqueInput!): WarehouseLocation
   deleteBagItem(where: BagItemWhereUniqueInput!): BagItem
   deleteRecentlyViewedProduct(where: RecentlyViewedProductWhereUniqueInput!): RecentlyViewedProduct
+  deleteReservationReceipt(where: ReservationReceiptWhereUniqueInput!): ReservationReceipt
   deleteProductRequest(where: ProductRequestWhereUniqueInput!): ProductRequest
   deleteProductVariantWant(where: ProductVariantWantWhereUniqueInput!): ProductVariantWant
   deleteReservationFeedback(where: ReservationFeedbackWhereUniqueInput!): ReservationFeedback
@@ -7990,6 +7935,7 @@ type Mutation {
   deleteCollection(where: CollectionWhereUniqueInput!): Collection
   deleteCustomerDetail(where: CustomerDetailWhereUniqueInput!): CustomerDetail
   deleteBillingInfo(where: BillingInfoWhereUniqueInput!): BillingInfo
+  deleteReservationReceiptItem(where: ReservationReceiptItemWhereUniqueInput!): ReservationReceiptItem
   deleteCategory(where: CategoryWhereUniqueInput!): Category
   deleteLocation(where: LocationWhereUniqueInput!): Location
   deleteImage(where: ImageWhereUniqueInput!): Image
@@ -8015,6 +7961,7 @@ type Mutation {
   upsertWarehouseLocation(where: WarehouseLocationWhereUniqueInput!, create: WarehouseLocationCreateInput!, update: WarehouseLocationUpdateInput!): WarehouseLocation!
   upsertBagItem(where: BagItemWhereUniqueInput!, create: BagItemCreateInput!, update: BagItemUpdateInput!): BagItem!
   upsertRecentlyViewedProduct(where: RecentlyViewedProductWhereUniqueInput!, create: RecentlyViewedProductCreateInput!, update: RecentlyViewedProductUpdateInput!): RecentlyViewedProduct!
+  upsertReservationReceipt(where: ReservationReceiptWhereUniqueInput!, create: ReservationReceiptCreateInput!, update: ReservationReceiptUpdateInput!): ReservationReceipt!
   upsertProductRequest(where: ProductRequestWhereUniqueInput!, create: ProductRequestCreateInput!, update: ProductRequestUpdateInput!): ProductRequest!
   upsertProductVariantWant(where: ProductVariantWantWhereUniqueInput!, create: ProductVariantWantCreateInput!, update: ProductVariantWantUpdateInput!): ProductVariantWant!
   upsertReservationFeedback(where: ReservationFeedbackWhereUniqueInput!, create: ReservationFeedbackCreateInput!, update: ReservationFeedbackUpdateInput!): ReservationFeedback!
@@ -8023,6 +7970,7 @@ type Mutation {
   upsertCollection(where: CollectionWhereUniqueInput!, create: CollectionCreateInput!, update: CollectionUpdateInput!): Collection!
   upsertCustomerDetail(where: CustomerDetailWhereUniqueInput!, create: CustomerDetailCreateInput!, update: CustomerDetailUpdateInput!): CustomerDetail!
   upsertBillingInfo(where: BillingInfoWhereUniqueInput!, create: BillingInfoCreateInput!, update: BillingInfoUpdateInput!): BillingInfo!
+  upsertReservationReceiptItem(where: ReservationReceiptItemWhereUniqueInput!, create: ReservationReceiptItemCreateInput!, update: ReservationReceiptItemUpdateInput!): ReservationReceiptItem!
   upsertCategory(where: CategoryWhereUniqueInput!, create: CategoryCreateInput!, update: CategoryUpdateInput!): Category!
   upsertLocation(where: LocationWhereUniqueInput!, create: LocationCreateInput!, update: LocationUpdateInput!): Location!
   upsertImage(where: ImageWhereUniqueInput!, create: ImageCreateInput!, update: ImageUpdateInput!): Image!
@@ -8056,6 +8004,7 @@ type Mutation {
   updateManyCollections(data: CollectionUpdateManyMutationInput!, where: CollectionWhereInput): BatchPayload!
   updateManyCustomerDetails(data: CustomerDetailUpdateManyMutationInput!, where: CustomerDetailWhereInput): BatchPayload!
   updateManyBillingInfoes(data: BillingInfoUpdateManyMutationInput!, where: BillingInfoWhereInput): BatchPayload!
+  updateManyReservationReceiptItems(data: ReservationReceiptItemUpdateManyMutationInput!, where: ReservationReceiptItemWhereInput): BatchPayload!
   updateManyCategories(data: CategoryUpdateManyMutationInput!, where: CategoryWhereInput): BatchPayload!
   updateManyLocations(data: LocationUpdateManyMutationInput!, where: LocationWhereInput): BatchPayload!
   updateManyImages(data: ImageUpdateManyMutationInput!, where: ImageWhereInput): BatchPayload!
@@ -8081,6 +8030,7 @@ type Mutation {
   deleteManyWarehouseLocations(where: WarehouseLocationWhereInput): BatchPayload!
   deleteManyBagItems(where: BagItemWhereInput): BatchPayload!
   deleteManyRecentlyViewedProducts(where: RecentlyViewedProductWhereInput): BatchPayload!
+  deleteManyReservationReceipts(where: ReservationReceiptWhereInput): BatchPayload!
   deleteManyProductRequests(where: ProductRequestWhereInput): BatchPayload!
   deleteManyProductVariantWants(where: ProductVariantWantWhereInput): BatchPayload!
   deleteManyReservationFeedbacks(where: ReservationFeedbackWhereInput): BatchPayload!
@@ -8089,6 +8039,7 @@ type Mutation {
   deleteManyCollections(where: CollectionWhereInput): BatchPayload!
   deleteManyCustomerDetails(where: CustomerDetailWhereInput): BatchPayload!
   deleteManyBillingInfoes(where: BillingInfoWhereInput): BatchPayload!
+  deleteManyReservationReceiptItems(where: ReservationReceiptItemWhereInput): BatchPayload!
   deleteManyCategories(where: CategoryWhereInput): BatchPayload!
   deleteManyLocations(where: LocationWhereInput): BatchPayload!
   deleteManyImages(where: ImageWhereInput): BatchPayload!
@@ -8403,9 +8354,11 @@ type PhysicalProduct implements Node {
   productStatus: PhysicalProductStatus!
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
-  barcode: String!
   sequenceNumber: Int!
   warehouseLocation: WarehouseLocation
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -8427,8 +8380,10 @@ input PhysicalProductCreateInput {
   productStatus: PhysicalProductStatus!
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
-  barcode: String!
   sequenceNumber: Int!
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
   location: LocationCreateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
   warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
@@ -8454,6 +8409,11 @@ input PhysicalProductCreateManyWithoutWarehouseLocationInput {
   connect: [PhysicalProductWhereUniqueInput!]
 }
 
+input PhysicalProductCreateOneInput {
+  create: PhysicalProductCreateInput
+  connect: PhysicalProductWhereUniqueInput
+}
+
 input PhysicalProductCreateWithoutLocationInput {
   id: ID
   seasonsUID: String!
@@ -8461,8 +8421,10 @@ input PhysicalProductCreateWithoutLocationInput {
   productStatus: PhysicalProductStatus!
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
-  barcode: String!
   sequenceNumber: Int!
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
   warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
 }
@@ -8474,8 +8436,10 @@ input PhysicalProductCreateWithoutProductVariantInput {
   productStatus: PhysicalProductStatus!
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
-  barcode: String!
   sequenceNumber: Int!
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
   location: LocationCreateOneWithoutPhysicalProductsInput
   warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
 }
@@ -8487,8 +8451,10 @@ input PhysicalProductCreateWithoutWarehouseLocationInput {
   productStatus: PhysicalProductStatus!
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
-  barcode: String!
   sequenceNumber: Int!
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
   location: LocationCreateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
 }
@@ -8523,10 +8489,14 @@ enum PhysicalProductOrderByInput {
   offloadMethod_DESC
   offloadNotes_ASC
   offloadNotes_DESC
-  barcode_ASC
-  barcode_DESC
   sequenceNumber_ASC
   sequenceNumber_DESC
+  dateOrdered_ASC
+  dateOrdered_DESC
+  dateReceived_ASC
+  dateReceived_DESC
+  unitCost_ASC
+  unitCost_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -8540,8 +8510,10 @@ type PhysicalProductPreviousValues {
   productStatus: PhysicalProductStatus!
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
-  barcode: String!
   sequenceNumber: Int!
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -8705,46 +8677,6 @@ input PhysicalProductScalarWhereInput {
 
   """All values not ending with the given string."""
   offloadNotes_not_ends_with: String
-  barcode: String
-
-  """All values that are not equal to given value."""
-  barcode_not: String
-
-  """All values that are contained in given list."""
-  barcode_in: [String!]
-
-  """All values that are not contained in given list."""
-  barcode_not_in: [String!]
-
-  """All values less than the given value."""
-  barcode_lt: String
-
-  """All values less than or equal the given value."""
-  barcode_lte: String
-
-  """All values greater than the given value."""
-  barcode_gt: String
-
-  """All values greater than or equal the given value."""
-  barcode_gte: String
-
-  """All values containing the given string."""
-  barcode_contains: String
-
-  """All values not containing the given string."""
-  barcode_not_contains: String
-
-  """All values starting with the given string."""
-  barcode_starts_with: String
-
-  """All values not starting with the given string."""
-  barcode_not_starts_with: String
-
-  """All values ending with the given string."""
-  barcode_ends_with: String
-
-  """All values not ending with the given string."""
-  barcode_not_ends_with: String
   sequenceNumber: Int
 
   """All values that are not equal to given value."""
@@ -8767,6 +8699,72 @@ input PhysicalProductScalarWhereInput {
 
   """All values greater than or equal the given value."""
   sequenceNumber_gte: Int
+  dateOrdered: DateTime
+
+  """All values that are not equal to given value."""
+  dateOrdered_not: DateTime
+
+  """All values that are contained in given list."""
+  dateOrdered_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  dateOrdered_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  dateOrdered_lt: DateTime
+
+  """All values less than or equal the given value."""
+  dateOrdered_lte: DateTime
+
+  """All values greater than the given value."""
+  dateOrdered_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  dateOrdered_gte: DateTime
+  dateReceived: DateTime
+
+  """All values that are not equal to given value."""
+  dateReceived_not: DateTime
+
+  """All values that are contained in given list."""
+  dateReceived_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  dateReceived_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  dateReceived_lt: DateTime
+
+  """All values less than or equal the given value."""
+  dateReceived_lte: DateTime
+
+  """All values greater than the given value."""
+  dateReceived_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  dateReceived_gte: DateTime
+  unitCost: Float
+
+  """All values that are not equal to given value."""
+  unitCost_not: Float
+
+  """All values that are contained in given list."""
+  unitCost_in: [Float!]
+
+  """All values that are not contained in given list."""
+  unitCost_not_in: [Float!]
+
+  """All values less than the given value."""
+  unitCost_lt: Float
+
+  """All values less than or equal the given value."""
+  unitCost_lte: Float
+
+  """All values greater than the given value."""
+  unitCost_gt: Float
+
+  """All values greater than or equal the given value."""
+  unitCost_gte: Float
   createdAt: DateTime
 
   """All values that are not equal to given value."""
@@ -8816,7 +8814,9 @@ input PhysicalProductScalarWhereInput {
 enum PhysicalProductStatus {
   New
   Used
+  Dirty
   Damaged
+  PermanentlyDamaged
   Clean
   Lost
 }
@@ -8864,8 +8864,10 @@ input PhysicalProductUpdateDataInput {
   productStatus: PhysicalProductStatus
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
-  barcode: String
   sequenceNumber: Int
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
   location: LocationUpdateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
@@ -8877,8 +8879,10 @@ input PhysicalProductUpdateInput {
   productStatus: PhysicalProductStatus
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
-  barcode: String
   sequenceNumber: Int
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
   location: LocationUpdateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
@@ -8890,8 +8894,10 @@ input PhysicalProductUpdateManyDataInput {
   productStatus: PhysicalProductStatus
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
-  barcode: String
   sequenceNumber: Int
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
 }
 
 input PhysicalProductUpdateManyInput {
@@ -8912,8 +8918,10 @@ input PhysicalProductUpdateManyMutationInput {
   productStatus: PhysicalProductStatus
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
-  barcode: String
   sequenceNumber: Int
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
 }
 
 input PhysicalProductUpdateManyWithoutLocationInput {
@@ -8957,14 +8965,23 @@ input PhysicalProductUpdateManyWithWhereNestedInput {
   data: PhysicalProductUpdateManyDataInput!
 }
 
+input PhysicalProductUpdateOneRequiredInput {
+  create: PhysicalProductCreateInput
+  connect: PhysicalProductWhereUniqueInput
+  update: PhysicalProductUpdateDataInput
+  upsert: PhysicalProductUpsertNestedInput
+}
+
 input PhysicalProductUpdateWithoutLocationDataInput {
   seasonsUID: String
   inventoryStatus: InventoryStatus
   productStatus: PhysicalProductStatus
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
-  barcode: String
   sequenceNumber: Int
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
 }
@@ -8975,8 +8992,10 @@ input PhysicalProductUpdateWithoutProductVariantDataInput {
   productStatus: PhysicalProductStatus
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
-  barcode: String
   sequenceNumber: Int
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
   location: LocationUpdateOneWithoutPhysicalProductsInput
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
 }
@@ -8987,8 +9006,10 @@ input PhysicalProductUpdateWithoutWarehouseLocationDataInput {
   productStatus: PhysicalProductStatus
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
-  barcode: String
   sequenceNumber: Int
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
   location: LocationUpdateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
 }
@@ -9011,6 +9032,11 @@ input PhysicalProductUpdateWithWhereUniqueWithoutProductVariantInput {
 input PhysicalProductUpdateWithWhereUniqueWithoutWarehouseLocationInput {
   where: PhysicalProductWhereUniqueInput!
   data: PhysicalProductUpdateWithoutWarehouseLocationDataInput!
+}
+
+input PhysicalProductUpsertNestedInput {
+  update: PhysicalProductUpdateDataInput!
+  create: PhysicalProductCreateInput!
 }
 
 input PhysicalProductUpsertWithWhereUniqueNestedInput {
@@ -9196,46 +9222,6 @@ input PhysicalProductWhereInput {
 
   """All values not ending with the given string."""
   offloadNotes_not_ends_with: String
-  barcode: String
-
-  """All values that are not equal to given value."""
-  barcode_not: String
-
-  """All values that are contained in given list."""
-  barcode_in: [String!]
-
-  """All values that are not contained in given list."""
-  barcode_not_in: [String!]
-
-  """All values less than the given value."""
-  barcode_lt: String
-
-  """All values less than or equal the given value."""
-  barcode_lte: String
-
-  """All values greater than the given value."""
-  barcode_gt: String
-
-  """All values greater than or equal the given value."""
-  barcode_gte: String
-
-  """All values containing the given string."""
-  barcode_contains: String
-
-  """All values not containing the given string."""
-  barcode_not_contains: String
-
-  """All values starting with the given string."""
-  barcode_starts_with: String
-
-  """All values not starting with the given string."""
-  barcode_not_starts_with: String
-
-  """All values ending with the given string."""
-  barcode_ends_with: String
-
-  """All values not ending with the given string."""
-  barcode_not_ends_with: String
   sequenceNumber: Int
 
   """All values that are not equal to given value."""
@@ -9258,6 +9244,72 @@ input PhysicalProductWhereInput {
 
   """All values greater than or equal the given value."""
   sequenceNumber_gte: Int
+  dateOrdered: DateTime
+
+  """All values that are not equal to given value."""
+  dateOrdered_not: DateTime
+
+  """All values that are contained in given list."""
+  dateOrdered_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  dateOrdered_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  dateOrdered_lt: DateTime
+
+  """All values less than or equal the given value."""
+  dateOrdered_lte: DateTime
+
+  """All values greater than the given value."""
+  dateOrdered_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  dateOrdered_gte: DateTime
+  dateReceived: DateTime
+
+  """All values that are not equal to given value."""
+  dateReceived_not: DateTime
+
+  """All values that are contained in given list."""
+  dateReceived_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  dateReceived_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  dateReceived_lt: DateTime
+
+  """All values less than or equal the given value."""
+  dateReceived_lte: DateTime
+
+  """All values greater than the given value."""
+  dateReceived_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  dateReceived_gte: DateTime
+  unitCost: Float
+
+  """All values that are not equal to given value."""
+  unitCost_not: Float
+
+  """All values that are contained in given list."""
+  unitCost_in: [Float!]
+
+  """All values that are not contained in given list."""
+  unitCost_not_in: [Float!]
+
+  """All values less than the given value."""
+  unitCost_lt: Float
+
+  """All values less than or equal the given value."""
+  unitCost_lte: Float
+
+  """All values greater than the given value."""
+  unitCost_gt: Float
+
+  """All values greater than or equal the given value."""
+  unitCost_gte: Float
   createdAt: DateTime
 
   """All values that are not equal to given value."""
@@ -13917,6 +13969,7 @@ type Query {
   warehouseLocations(where: WarehouseLocationWhereInput, orderBy: WarehouseLocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [WarehouseLocation]!
   bagItems(where: BagItemWhereInput, orderBy: BagItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [BagItem]!
   recentlyViewedProducts(where: RecentlyViewedProductWhereInput, orderBy: RecentlyViewedProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [RecentlyViewedProduct]!
+  reservationReceipts(where: ReservationReceiptWhereInput, orderBy: ReservationReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ReservationReceipt]!
   productRequests(where: ProductRequestWhereInput, orderBy: ProductRequestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductRequest]!
   productVariantWants(where: ProductVariantWantWhereInput, orderBy: ProductVariantWantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariantWant]!
   reservationFeedbacks(where: ReservationFeedbackWhereInput, orderBy: ReservationFeedbackOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ReservationFeedback]!
@@ -13925,6 +13978,7 @@ type Query {
   collections(where: CollectionWhereInput, orderBy: CollectionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Collection]!
   customerDetails(where: CustomerDetailWhereInput, orderBy: CustomerDetailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CustomerDetail]!
   billingInfoes(where: BillingInfoWhereInput, orderBy: BillingInfoOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [BillingInfo]!
+  reservationReceiptItems(where: ReservationReceiptItemWhereInput, orderBy: ReservationReceiptItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ReservationReceiptItem]!
   categories(where: CategoryWhereInput, orderBy: CategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Category]!
   locations(where: LocationWhereInput, orderBy: LocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Location]!
   images(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Image]!
@@ -13950,6 +14004,7 @@ type Query {
   warehouseLocation(where: WarehouseLocationWhereUniqueInput!): WarehouseLocation
   bagItem(where: BagItemWhereUniqueInput!): BagItem
   recentlyViewedProduct(where: RecentlyViewedProductWhereUniqueInput!): RecentlyViewedProduct
+  reservationReceipt(where: ReservationReceiptWhereUniqueInput!): ReservationReceipt
   productRequest(where: ProductRequestWhereUniqueInput!): ProductRequest
   productVariantWant(where: ProductVariantWantWhereUniqueInput!): ProductVariantWant
   reservationFeedback(where: ReservationFeedbackWhereUniqueInput!): ReservationFeedback
@@ -13958,6 +14013,7 @@ type Query {
   collection(where: CollectionWhereUniqueInput!): Collection
   customerDetail(where: CustomerDetailWhereUniqueInput!): CustomerDetail
   billingInfo(where: BillingInfoWhereUniqueInput!): BillingInfo
+  reservationReceiptItem(where: ReservationReceiptItemWhereUniqueInput!): ReservationReceiptItem
   category(where: CategoryWhereUniqueInput!): Category
   location(where: LocationWhereUniqueInput!): Location
   image(where: ImageWhereUniqueInput!): Image
@@ -13983,6 +14039,7 @@ type Query {
   warehouseLocationsConnection(where: WarehouseLocationWhereInput, orderBy: WarehouseLocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): WarehouseLocationConnection!
   bagItemsConnection(where: BagItemWhereInput, orderBy: BagItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BagItemConnection!
   recentlyViewedProductsConnection(where: RecentlyViewedProductWhereInput, orderBy: RecentlyViewedProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): RecentlyViewedProductConnection!
+  reservationReceiptsConnection(where: ReservationReceiptWhereInput, orderBy: ReservationReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ReservationReceiptConnection!
   productRequestsConnection(where: ProductRequestWhereInput, orderBy: ProductRequestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductRequestConnection!
   productVariantWantsConnection(where: ProductVariantWantWhereInput, orderBy: ProductVariantWantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductVariantWantConnection!
   reservationFeedbacksConnection(where: ReservationFeedbackWhereInput, orderBy: ReservationFeedbackOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ReservationFeedbackConnection!
@@ -13991,6 +14048,7 @@ type Query {
   collectionsConnection(where: CollectionWhereInput, orderBy: CollectionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CollectionConnection!
   customerDetailsConnection(where: CustomerDetailWhereInput, orderBy: CustomerDetailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CustomerDetailConnection!
   billingInfoesConnection(where: BillingInfoWhereInput, orderBy: BillingInfoOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BillingInfoConnection!
+  reservationReceiptItemsConnection(where: ReservationReceiptItemWhereInput, orderBy: ReservationReceiptItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ReservationReceiptItemConnection!
   categoriesConnection(where: CategoryWhereInput, orderBy: CategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CategoryConnection!
   locationsConnection(where: LocationWhereInput, orderBy: LocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): LocationConnection!
   imagesConnection(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ImageConnection!
@@ -14263,6 +14321,7 @@ type Reservation implements Node {
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
+  receipt: ReservationReceipt
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -14291,6 +14350,7 @@ input ReservationCreateInput {
   returnedPackage: PackageCreateOneInput
   location: LocationCreateOneInput
   products: PhysicalProductCreateManyInput
+  receipt: ReservationReceiptCreateOneWithoutReservationInput
 }
 
 input ReservationCreateManyWithoutCustomerInput {
@@ -14303,6 +14363,11 @@ input ReservationCreateOneInput {
   connect: ReservationWhereUniqueInput
 }
 
+input ReservationCreateOneWithoutReceiptInput {
+  create: ReservationCreateWithoutReceiptInput
+  connect: ReservationWhereUniqueInput
+}
+
 input ReservationCreateWithoutCustomerInput {
   id: ID
   reservationNumber: Int!
@@ -14312,6 +14377,23 @@ input ReservationCreateWithoutCustomerInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   user: UserCreateOneInput!
+  sentPackage: PackageCreateOneInput
+  returnedPackage: PackageCreateOneInput
+  location: LocationCreateOneInput
+  products: PhysicalProductCreateManyInput
+  receipt: ReservationReceiptCreateOneWithoutReservationInput
+}
+
+input ReservationCreateWithoutReceiptInput {
+  id: ID
+  reservationNumber: Int!
+  shipped: Boolean!
+  status: ReservationStatus!
+  shippedAt: DateTime
+  receivedAt: DateTime
+  reminderSentAt: DateTime
+  user: UserCreateOneInput!
+  customer: CustomerCreateOneWithoutReservationsInput!
   sentPackage: PackageCreateOneInput
   returnedPackage: PackageCreateOneInput
   location: LocationCreateOneInput
@@ -14687,6 +14769,574 @@ type ReservationPreviousValues {
   updatedAt: DateTime!
 }
 
+type ReservationReceipt implements Node {
+  id: ID!
+  reservation: Reservation!
+  items(where: ReservationReceiptItemWhereInput, orderBy: ReservationReceiptItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ReservationReceiptItem!]
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""A connection to a list of items."""
+type ReservationReceiptConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [ReservationReceiptEdge]!
+  aggregate: AggregateReservationReceipt!
+}
+
+input ReservationReceiptCreateInput {
+  id: ID
+  reservation: ReservationCreateOneWithoutReceiptInput!
+  items: ReservationReceiptItemCreateManyInput
+}
+
+input ReservationReceiptCreateOneWithoutReservationInput {
+  create: ReservationReceiptCreateWithoutReservationInput
+  connect: ReservationReceiptWhereUniqueInput
+}
+
+input ReservationReceiptCreateWithoutReservationInput {
+  id: ID
+  items: ReservationReceiptItemCreateManyInput
+}
+
+"""An edge in a connection."""
+type ReservationReceiptEdge {
+  """The item at the end of the edge."""
+  node: ReservationReceipt!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+type ReservationReceiptItem implements Node {
+  id: ID!
+  product: PhysicalProduct!
+  productStatus: PhysicalProductStatus!
+  notes: String
+}
+
+"""A connection to a list of items."""
+type ReservationReceiptItemConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [ReservationReceiptItemEdge]!
+  aggregate: AggregateReservationReceiptItem!
+}
+
+input ReservationReceiptItemCreateInput {
+  id: ID
+  productStatus: PhysicalProductStatus!
+  notes: String
+  product: PhysicalProductCreateOneInput!
+}
+
+input ReservationReceiptItemCreateManyInput {
+  create: [ReservationReceiptItemCreateInput!]
+  connect: [ReservationReceiptItemWhereUniqueInput!]
+}
+
+"""An edge in a connection."""
+type ReservationReceiptItemEdge {
+  """The item at the end of the edge."""
+  node: ReservationReceiptItem!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum ReservationReceiptItemOrderByInput {
+  id_ASC
+  id_DESC
+  productStatus_ASC
+  productStatus_DESC
+  notes_ASC
+  notes_DESC
+}
+
+type ReservationReceiptItemPreviousValues {
+  id: ID!
+  productStatus: PhysicalProductStatus!
+  notes: String
+}
+
+input ReservationReceiptItemScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ReservationReceiptItemScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ReservationReceiptItemScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ReservationReceiptItemScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  productStatus: PhysicalProductStatus
+
+  """All values that are not equal to given value."""
+  productStatus_not: PhysicalProductStatus
+
+  """All values that are contained in given list."""
+  productStatus_in: [PhysicalProductStatus!]
+
+  """All values that are not contained in given list."""
+  productStatus_not_in: [PhysicalProductStatus!]
+  notes: String
+
+  """All values that are not equal to given value."""
+  notes_not: String
+
+  """All values that are contained in given list."""
+  notes_in: [String!]
+
+  """All values that are not contained in given list."""
+  notes_not_in: [String!]
+
+  """All values less than the given value."""
+  notes_lt: String
+
+  """All values less than or equal the given value."""
+  notes_lte: String
+
+  """All values greater than the given value."""
+  notes_gt: String
+
+  """All values greater than or equal the given value."""
+  notes_gte: String
+
+  """All values containing the given string."""
+  notes_contains: String
+
+  """All values not containing the given string."""
+  notes_not_contains: String
+
+  """All values starting with the given string."""
+  notes_starts_with: String
+
+  """All values not starting with the given string."""
+  notes_not_starts_with: String
+
+  """All values ending with the given string."""
+  notes_ends_with: String
+
+  """All values not ending with the given string."""
+  notes_not_ends_with: String
+}
+
+type ReservationReceiptItemSubscriptionPayload {
+  mutation: MutationType!
+  node: ReservationReceiptItem
+  updatedFields: [String!]
+  previousValues: ReservationReceiptItemPreviousValues
+}
+
+input ReservationReceiptItemSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ReservationReceiptItemSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ReservationReceiptItemSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ReservationReceiptItemSubscriptionWhereInput!]
+
+  """The subscription event gets dispatched when it's listed in mutation_in"""
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: ReservationReceiptItemWhereInput
+}
+
+input ReservationReceiptItemUpdateDataInput {
+  productStatus: PhysicalProductStatus
+  notes: String
+  product: PhysicalProductUpdateOneRequiredInput
+}
+
+input ReservationReceiptItemUpdateInput {
+  productStatus: PhysicalProductStatus
+  notes: String
+  product: PhysicalProductUpdateOneRequiredInput
+}
+
+input ReservationReceiptItemUpdateManyDataInput {
+  productStatus: PhysicalProductStatus
+  notes: String
+}
+
+input ReservationReceiptItemUpdateManyInput {
+  create: [ReservationReceiptItemCreateInput!]
+  connect: [ReservationReceiptItemWhereUniqueInput!]
+  set: [ReservationReceiptItemWhereUniqueInput!]
+  disconnect: [ReservationReceiptItemWhereUniqueInput!]
+  delete: [ReservationReceiptItemWhereUniqueInput!]
+  update: [ReservationReceiptItemUpdateWithWhereUniqueNestedInput!]
+  updateMany: [ReservationReceiptItemUpdateManyWithWhereNestedInput!]
+  deleteMany: [ReservationReceiptItemScalarWhereInput!]
+  upsert: [ReservationReceiptItemUpsertWithWhereUniqueNestedInput!]
+}
+
+input ReservationReceiptItemUpdateManyMutationInput {
+  productStatus: PhysicalProductStatus
+  notes: String
+}
+
+input ReservationReceiptItemUpdateManyWithWhereNestedInput {
+  where: ReservationReceiptItemScalarWhereInput!
+  data: ReservationReceiptItemUpdateManyDataInput!
+}
+
+input ReservationReceiptItemUpdateWithWhereUniqueNestedInput {
+  where: ReservationReceiptItemWhereUniqueInput!
+  data: ReservationReceiptItemUpdateDataInput!
+}
+
+input ReservationReceiptItemUpsertWithWhereUniqueNestedInput {
+  where: ReservationReceiptItemWhereUniqueInput!
+  update: ReservationReceiptItemUpdateDataInput!
+  create: ReservationReceiptItemCreateInput!
+}
+
+input ReservationReceiptItemWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ReservationReceiptItemWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ReservationReceiptItemWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ReservationReceiptItemWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  productStatus: PhysicalProductStatus
+
+  """All values that are not equal to given value."""
+  productStatus_not: PhysicalProductStatus
+
+  """All values that are contained in given list."""
+  productStatus_in: [PhysicalProductStatus!]
+
+  """All values that are not contained in given list."""
+  productStatus_not_in: [PhysicalProductStatus!]
+  notes: String
+
+  """All values that are not equal to given value."""
+  notes_not: String
+
+  """All values that are contained in given list."""
+  notes_in: [String!]
+
+  """All values that are not contained in given list."""
+  notes_not_in: [String!]
+
+  """All values less than the given value."""
+  notes_lt: String
+
+  """All values less than or equal the given value."""
+  notes_lte: String
+
+  """All values greater than the given value."""
+  notes_gt: String
+
+  """All values greater than or equal the given value."""
+  notes_gte: String
+
+  """All values containing the given string."""
+  notes_contains: String
+
+  """All values not containing the given string."""
+  notes_not_contains: String
+
+  """All values starting with the given string."""
+  notes_starts_with: String
+
+  """All values not starting with the given string."""
+  notes_not_starts_with: String
+
+  """All values ending with the given string."""
+  notes_ends_with: String
+
+  """All values not ending with the given string."""
+  notes_not_ends_with: String
+  product: PhysicalProductWhereInput
+}
+
+input ReservationReceiptItemWhereUniqueInput {
+  id: ID
+}
+
+enum ReservationReceiptOrderByInput {
+  id_ASC
+  id_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type ReservationReceiptPreviousValues {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type ReservationReceiptSubscriptionPayload {
+  mutation: MutationType!
+  node: ReservationReceipt
+  updatedFields: [String!]
+  previousValues: ReservationReceiptPreviousValues
+}
+
+input ReservationReceiptSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ReservationReceiptSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ReservationReceiptSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ReservationReceiptSubscriptionWhereInput!]
+
+  """The subscription event gets dispatched when it's listed in mutation_in"""
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: ReservationReceiptWhereInput
+}
+
+input ReservationReceiptUpdateInput {
+  reservation: ReservationUpdateOneRequiredWithoutReceiptInput
+  items: ReservationReceiptItemUpdateManyInput
+}
+
+input ReservationReceiptUpdateOneWithoutReservationInput {
+  create: ReservationReceiptCreateWithoutReservationInput
+  connect: ReservationReceiptWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: ReservationReceiptUpdateWithoutReservationDataInput
+  upsert: ReservationReceiptUpsertWithoutReservationInput
+}
+
+input ReservationReceiptUpdateWithoutReservationDataInput {
+  items: ReservationReceiptItemUpdateManyInput
+}
+
+input ReservationReceiptUpsertWithoutReservationInput {
+  update: ReservationReceiptUpdateWithoutReservationDataInput!
+  create: ReservationReceiptCreateWithoutReservationInput!
+}
+
+input ReservationReceiptWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ReservationReceiptWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ReservationReceiptWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ReservationReceiptWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
+  reservation: ReservationWhereInput
+  items_every: ReservationReceiptItemWhereInput
+  items_some: ReservationReceiptItemWhereInput
+  items_none: ReservationReceiptItemWhereInput
+}
+
+input ReservationReceiptWhereUniqueInput {
+  id: ID
+}
+
 input ReservationScalarWhereInput {
   """Logical AND on all given filters."""
   AND: [ReservationScalarWhereInput!]
@@ -14946,6 +15596,7 @@ input ReservationUpdateDataInput {
   returnedPackage: PackageUpdateOneInput
   location: LocationUpdateOneInput
   products: PhysicalProductUpdateManyInput
+  receipt: ReservationReceiptUpdateOneWithoutReservationInput
 }
 
 input ReservationUpdateInput {
@@ -14961,6 +15612,7 @@ input ReservationUpdateInput {
   returnedPackage: PackageUpdateOneInput
   location: LocationUpdateOneInput
   products: PhysicalProductUpdateManyInput
+  receipt: ReservationReceiptUpdateOneWithoutReservationInput
 }
 
 input ReservationUpdateManyDataInput {
@@ -15005,6 +15657,13 @@ input ReservationUpdateOneRequiredInput {
   upsert: ReservationUpsertNestedInput
 }
 
+input ReservationUpdateOneRequiredWithoutReceiptInput {
+  create: ReservationCreateWithoutReceiptInput
+  connect: ReservationWhereUniqueInput
+  update: ReservationUpdateWithoutReceiptDataInput
+  upsert: ReservationUpsertWithoutReceiptInput
+}
+
 input ReservationUpdateWithoutCustomerDataInput {
   reservationNumber: Int
   shipped: Boolean
@@ -15013,6 +15672,22 @@ input ReservationUpdateWithoutCustomerDataInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   user: UserUpdateOneRequiredInput
+  sentPackage: PackageUpdateOneInput
+  returnedPackage: PackageUpdateOneInput
+  location: LocationUpdateOneInput
+  products: PhysicalProductUpdateManyInput
+  receipt: ReservationReceiptUpdateOneWithoutReservationInput
+}
+
+input ReservationUpdateWithoutReceiptDataInput {
+  reservationNumber: Int
+  shipped: Boolean
+  status: ReservationStatus
+  shippedAt: DateTime
+  receivedAt: DateTime
+  reminderSentAt: DateTime
+  user: UserUpdateOneRequiredInput
+  customer: CustomerUpdateOneRequiredWithoutReservationsInput
   sentPackage: PackageUpdateOneInput
   returnedPackage: PackageUpdateOneInput
   location: LocationUpdateOneInput
@@ -15027,6 +15702,11 @@ input ReservationUpdateWithWhereUniqueWithoutCustomerInput {
 input ReservationUpsertNestedInput {
   update: ReservationUpdateDataInput!
   create: ReservationCreateInput!
+}
+
+input ReservationUpsertWithoutReceiptInput {
+  update: ReservationUpdateWithoutReceiptDataInput!
+  create: ReservationCreateWithoutReceiptInput!
 }
 
 input ReservationUpsertWithWhereUniqueWithoutCustomerInput {
@@ -15238,6 +15918,7 @@ input ReservationWhereInput {
   products_every: PhysicalProductWhereInput
   products_some: PhysicalProductWhereInput
   products_none: PhysicalProductWhereInput
+  receipt: ReservationReceiptWhereInput
 }
 
 input ReservationWhereUniqueInput {
@@ -15716,6 +16397,7 @@ type Subscription {
   warehouseLocation(where: WarehouseLocationSubscriptionWhereInput): WarehouseLocationSubscriptionPayload
   bagItem(where: BagItemSubscriptionWhereInput): BagItemSubscriptionPayload
   recentlyViewedProduct(where: RecentlyViewedProductSubscriptionWhereInput): RecentlyViewedProductSubscriptionPayload
+  reservationReceipt(where: ReservationReceiptSubscriptionWhereInput): ReservationReceiptSubscriptionPayload
   productRequest(where: ProductRequestSubscriptionWhereInput): ProductRequestSubscriptionPayload
   productVariantWant(where: ProductVariantWantSubscriptionWhereInput): ProductVariantWantSubscriptionPayload
   reservationFeedback(where: ReservationFeedbackSubscriptionWhereInput): ReservationFeedbackSubscriptionPayload
@@ -15724,6 +16406,7 @@ type Subscription {
   collection(where: CollectionSubscriptionWhereInput): CollectionSubscriptionPayload
   customerDetail(where: CustomerDetailSubscriptionWhereInput): CustomerDetailSubscriptionPayload
   billingInfo(where: BillingInfoSubscriptionWhereInput): BillingInfoSubscriptionPayload
+  reservationReceiptItem(where: ReservationReceiptItemSubscriptionWhereInput): ReservationReceiptItemSubscriptionPayload
   category(where: CategorySubscriptionWhereInput): CategorySubscriptionPayload
   location(where: LocationSubscriptionWhereInput): LocationSubscriptionPayload
   image(where: ImageSubscriptionWhereInput): ImageSubscriptionPayload
@@ -16584,6 +17267,7 @@ type User implements Node {
   firstName: String!
   lastName: String!
   role: UserRole!
+  roles: [UserRole!]!
   createdAt: DateTime!
   updatedAt: DateTime!
   pushNotifications: PushNotificationStatus!
@@ -16607,11 +17291,16 @@ input UserCreateInput {
   lastName: String!
   role: UserRole
   pushNotifications: PushNotificationStatus
+  roles: UserCreaterolesInput
 }
 
 input UserCreateOneInput {
   create: UserCreateInput
   connect: UserWhereUniqueInput
+}
+
+input UserCreaterolesInput {
+  set: [UserRole!]
 }
 
 """An edge in a connection."""
@@ -16651,6 +17340,7 @@ type UserPreviousValues {
   firstName: String!
   lastName: String!
   role: UserRole!
+  roles: [UserRole!]!
   createdAt: DateTime!
   updatedAt: DateTime!
   pushNotifications: PushNotificationStatus!
@@ -16706,6 +17396,7 @@ input UserUpdateDataInput {
   lastName: String
   role: UserRole
   pushNotifications: PushNotificationStatus
+  roles: UserUpdaterolesInput
 }
 
 input UserUpdateInput {
@@ -16715,6 +17406,7 @@ input UserUpdateInput {
   lastName: String
   role: UserRole
   pushNotifications: PushNotificationStatus
+  roles: UserUpdaterolesInput
 }
 
 input UserUpdateManyMutationInput {
@@ -16724,6 +17416,7 @@ input UserUpdateManyMutationInput {
   lastName: String
   role: UserRole
   pushNotifications: PushNotificationStatus
+  roles: UserUpdaterolesInput
 }
 
 input UserUpdateOneInput {
@@ -16740,6 +17433,10 @@ input UserUpdateOneRequiredInput {
   connect: UserWhereUniqueInput
   update: UserUpdateDataInput
   upsert: UserUpsertNestedInput
+}
+
+input UserUpdaterolesInput {
+  set: [UserRole!]
 }
 
 input UserUpsertNestedInput {
@@ -18322,12 +19019,10 @@ export type ImageOrderByInput =   'id_ASC' |
   'caption_DESC' |
   'url_ASC' |
   'url_DESC' |
-  'originalHeight_ASC' |
-  'originalHeight_DESC' |
-  'originalUrl_ASC' |
-  'originalUrl_DESC' |
-  'originalWidth_ASC' |
-  'originalWidth_DESC' |
+  'height_ASC' |
+  'height_DESC' |
+  'width_ASC' |
+  'width_DESC' |
   'title_ASC' |
   'title_DESC' |
   'createdAt_ASC' |
@@ -18426,10 +19121,14 @@ export type PhysicalProductOrderByInput =   'id_ASC' |
   'offloadMethod_DESC' |
   'offloadNotes_ASC' |
   'offloadNotes_DESC' |
-  'barcode_ASC' |
-  'barcode_DESC' |
   'sequenceNumber_ASC' |
   'sequenceNumber_DESC' |
+  'dateOrdered_ASC' |
+  'dateOrdered_DESC' |
+  'dateReceived_ASC' |
+  'dateReceived_DESC' |
+  'unitCost_ASC' |
+  'unitCost_DESC' |
   'createdAt_ASC' |
   'createdAt_DESC' |
   'updatedAt_ASC' |
@@ -18437,7 +19136,9 @@ export type PhysicalProductOrderByInput =   'id_ASC' |
 
 export type PhysicalProductStatus =   'New' |
   'Used' |
+  'Dirty' |
   'Damaged' |
+  'PermanentlyDamaged' |
   'Clean' |
   'Lost'
 
@@ -18611,6 +19312,20 @@ export type ReservationOrderByInput =   'id_ASC' |
   'receivedAt_DESC' |
   'reminderSentAt_ASC' |
   'reminderSentAt_DESC' |
+  'createdAt_ASC' |
+  'createdAt_DESC' |
+  'updatedAt_ASC' |
+  'updatedAt_DESC'
+
+export type ReservationReceiptItemOrderByInput =   'id_ASC' |
+  'id_DESC' |
+  'productStatus_ASC' |
+  'productStatus_DESC' |
+  'notes_ASC' |
+  'notes_DESC'
+
+export type ReservationReceiptOrderByInput =   'id_ASC' |
+  'id_DESC' |
   'createdAt_ASC' |
   'createdAt_DESC' |
   'updatedAt_ASC' |
@@ -21007,10 +21722,9 @@ export interface HomepageProductRailWhereUniqueInput {
 export interface ImageCreateInput {
   id?: ID_Input | null
   caption?: String | null
-  url?: String | null
-  originalHeight?: Int | null
-  originalUrl: String
-  originalWidth?: Int | null
+  url: String
+  height?: Int | null
+  width?: Int | null
   title?: String | null
 }
 
@@ -21065,36 +21779,22 @@ export interface ImageScalarWhereInput {
   url_not_starts_with?: String | null
   url_ends_with?: String | null
   url_not_ends_with?: String | null
-  originalHeight?: Int | null
-  originalHeight_not?: Int | null
-  originalHeight_in?: Int[] | Int | null
-  originalHeight_not_in?: Int[] | Int | null
-  originalHeight_lt?: Int | null
-  originalHeight_lte?: Int | null
-  originalHeight_gt?: Int | null
-  originalHeight_gte?: Int | null
-  originalUrl?: String | null
-  originalUrl_not?: String | null
-  originalUrl_in?: String[] | String | null
-  originalUrl_not_in?: String[] | String | null
-  originalUrl_lt?: String | null
-  originalUrl_lte?: String | null
-  originalUrl_gt?: String | null
-  originalUrl_gte?: String | null
-  originalUrl_contains?: String | null
-  originalUrl_not_contains?: String | null
-  originalUrl_starts_with?: String | null
-  originalUrl_not_starts_with?: String | null
-  originalUrl_ends_with?: String | null
-  originalUrl_not_ends_with?: String | null
-  originalWidth?: Int | null
-  originalWidth_not?: Int | null
-  originalWidth_in?: Int[] | Int | null
-  originalWidth_not_in?: Int[] | Int | null
-  originalWidth_lt?: Int | null
-  originalWidth_lte?: Int | null
-  originalWidth_gt?: Int | null
-  originalWidth_gte?: Int | null
+  height?: Int | null
+  height_not?: Int | null
+  height_in?: Int[] | Int | null
+  height_not_in?: Int[] | Int | null
+  height_lt?: Int | null
+  height_lte?: Int | null
+  height_gt?: Int | null
+  height_gte?: Int | null
+  width?: Int | null
+  width_not?: Int | null
+  width_in?: Int[] | Int | null
+  width_not_in?: Int[] | Int | null
+  width_lt?: Int | null
+  width_lte?: Int | null
+  width_gt?: Int | null
+  width_gte?: Int | null
   title?: String | null
   title_not?: String | null
   title_in?: String[] | String | null
@@ -21141,27 +21841,24 @@ export interface ImageSubscriptionWhereInput {
 export interface ImageUpdateDataInput {
   caption?: String | null
   url?: String | null
-  originalHeight?: Int | null
-  originalUrl?: String | null
-  originalWidth?: Int | null
+  height?: Int | null
+  width?: Int | null
   title?: String | null
 }
 
 export interface ImageUpdateInput {
   caption?: String | null
   url?: String | null
-  originalHeight?: Int | null
-  originalUrl?: String | null
-  originalWidth?: Int | null
+  height?: Int | null
+  width?: Int | null
   title?: String | null
 }
 
 export interface ImageUpdateManyDataInput {
   caption?: String | null
   url?: String | null
-  originalHeight?: Int | null
-  originalUrl?: String | null
-  originalWidth?: Int | null
+  height?: Int | null
+  width?: Int | null
   title?: String | null
 }
 
@@ -21180,9 +21877,8 @@ export interface ImageUpdateManyInput {
 export interface ImageUpdateManyMutationInput {
   caption?: String | null
   url?: String | null
-  originalHeight?: Int | null
-  originalUrl?: String | null
-  originalWidth?: Int | null
+  height?: Int | null
+  width?: Int | null
   title?: String | null
 }
 
@@ -21248,36 +21944,22 @@ export interface ImageWhereInput {
   url_not_starts_with?: String | null
   url_ends_with?: String | null
   url_not_ends_with?: String | null
-  originalHeight?: Int | null
-  originalHeight_not?: Int | null
-  originalHeight_in?: Int[] | Int | null
-  originalHeight_not_in?: Int[] | Int | null
-  originalHeight_lt?: Int | null
-  originalHeight_lte?: Int | null
-  originalHeight_gt?: Int | null
-  originalHeight_gte?: Int | null
-  originalUrl?: String | null
-  originalUrl_not?: String | null
-  originalUrl_in?: String[] | String | null
-  originalUrl_not_in?: String[] | String | null
-  originalUrl_lt?: String | null
-  originalUrl_lte?: String | null
-  originalUrl_gt?: String | null
-  originalUrl_gte?: String | null
-  originalUrl_contains?: String | null
-  originalUrl_not_contains?: String | null
-  originalUrl_starts_with?: String | null
-  originalUrl_not_starts_with?: String | null
-  originalUrl_ends_with?: String | null
-  originalUrl_not_ends_with?: String | null
-  originalWidth?: Int | null
-  originalWidth_not?: Int | null
-  originalWidth_in?: Int[] | Int | null
-  originalWidth_not_in?: Int[] | Int | null
-  originalWidth_lt?: Int | null
-  originalWidth_lte?: Int | null
-  originalWidth_gt?: Int | null
-  originalWidth_gte?: Int | null
+  height?: Int | null
+  height_not?: Int | null
+  height_in?: Int[] | Int | null
+  height_not_in?: Int[] | Int | null
+  height_lt?: Int | null
+  height_lte?: Int | null
+  height_gt?: Int | null
+  height_gte?: Int | null
+  width?: Int | null
+  width_not?: Int | null
+  width_in?: Int[] | Int | null
+  width_not_in?: Int[] | Int | null
+  width_lt?: Int | null
+  width_lte?: Int | null
+  width_gt?: Int | null
+  width_gte?: Int | null
   title?: String | null
   title_not?: String | null
   title_in?: String[] | String | null
@@ -21312,7 +21994,7 @@ export interface ImageWhereInput {
 
 export interface ImageWhereUniqueInput {
   id?: ID_Input | null
-  originalUrl?: String | null
+  url?: String | null
 }
 
 export interface LabelCreateInput {
@@ -21919,8 +22601,10 @@ export interface PhysicalProductCreateInput {
   productStatus: PhysicalProductStatus
   offloadMethod?: PhysicalProductOffloadMethod | null
   offloadNotes?: String | null
-  barcode: String
   sequenceNumber: Int
+  dateOrdered?: DateTime | null
+  dateReceived?: DateTime | null
+  unitCost?: Float | null
   location?: LocationCreateOneWithoutPhysicalProductsInput | null
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput
   warehouseLocation?: WarehouseLocationCreateOneWithoutPhysicalProductsInput | null
@@ -21946,6 +22630,11 @@ export interface PhysicalProductCreateManyWithoutWarehouseLocationInput {
   connect?: PhysicalProductWhereUniqueInput[] | PhysicalProductWhereUniqueInput | null
 }
 
+export interface PhysicalProductCreateOneInput {
+  create?: PhysicalProductCreateInput | null
+  connect?: PhysicalProductWhereUniqueInput | null
+}
+
 export interface PhysicalProductCreateWithoutLocationInput {
   id?: ID_Input | null
   seasonsUID: String
@@ -21953,8 +22642,10 @@ export interface PhysicalProductCreateWithoutLocationInput {
   productStatus: PhysicalProductStatus
   offloadMethod?: PhysicalProductOffloadMethod | null
   offloadNotes?: String | null
-  barcode: String
   sequenceNumber: Int
+  dateOrdered?: DateTime | null
+  dateReceived?: DateTime | null
+  unitCost?: Float | null
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput
   warehouseLocation?: WarehouseLocationCreateOneWithoutPhysicalProductsInput | null
 }
@@ -21966,8 +22657,10 @@ export interface PhysicalProductCreateWithoutProductVariantInput {
   productStatus: PhysicalProductStatus
   offloadMethod?: PhysicalProductOffloadMethod | null
   offloadNotes?: String | null
-  barcode: String
   sequenceNumber: Int
+  dateOrdered?: DateTime | null
+  dateReceived?: DateTime | null
+  unitCost?: Float | null
   location?: LocationCreateOneWithoutPhysicalProductsInput | null
   warehouseLocation?: WarehouseLocationCreateOneWithoutPhysicalProductsInput | null
 }
@@ -21979,8 +22672,10 @@ export interface PhysicalProductCreateWithoutWarehouseLocationInput {
   productStatus: PhysicalProductStatus
   offloadMethod?: PhysicalProductOffloadMethod | null
   offloadNotes?: String | null
-  barcode: String
   sequenceNumber: Int
+  dateOrdered?: DateTime | null
+  dateReceived?: DateTime | null
+  unitCost?: Float | null
   location?: LocationCreateOneWithoutPhysicalProductsInput | null
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput
 }
@@ -22043,20 +22738,6 @@ export interface PhysicalProductScalarWhereInput {
   offloadNotes_not_starts_with?: String | null
   offloadNotes_ends_with?: String | null
   offloadNotes_not_ends_with?: String | null
-  barcode?: String | null
-  barcode_not?: String | null
-  barcode_in?: String[] | String | null
-  barcode_not_in?: String[] | String | null
-  barcode_lt?: String | null
-  barcode_lte?: String | null
-  barcode_gt?: String | null
-  barcode_gte?: String | null
-  barcode_contains?: String | null
-  barcode_not_contains?: String | null
-  barcode_starts_with?: String | null
-  barcode_not_starts_with?: String | null
-  barcode_ends_with?: String | null
-  barcode_not_ends_with?: String | null
   sequenceNumber?: Int | null
   sequenceNumber_not?: Int | null
   sequenceNumber_in?: Int[] | Int | null
@@ -22065,6 +22746,30 @@ export interface PhysicalProductScalarWhereInput {
   sequenceNumber_lte?: Int | null
   sequenceNumber_gt?: Int | null
   sequenceNumber_gte?: Int | null
+  dateOrdered?: DateTime | null
+  dateOrdered_not?: DateTime | null
+  dateOrdered_in?: DateTime[] | DateTime | null
+  dateOrdered_not_in?: DateTime[] | DateTime | null
+  dateOrdered_lt?: DateTime | null
+  dateOrdered_lte?: DateTime | null
+  dateOrdered_gt?: DateTime | null
+  dateOrdered_gte?: DateTime | null
+  dateReceived?: DateTime | null
+  dateReceived_not?: DateTime | null
+  dateReceived_in?: DateTime[] | DateTime | null
+  dateReceived_not_in?: DateTime[] | DateTime | null
+  dateReceived_lt?: DateTime | null
+  dateReceived_lte?: DateTime | null
+  dateReceived_gt?: DateTime | null
+  dateReceived_gte?: DateTime | null
+  unitCost?: Float | null
+  unitCost_not?: Float | null
+  unitCost_in?: Float[] | Float | null
+  unitCost_not_in?: Float[] | Float | null
+  unitCost_lt?: Float | null
+  unitCost_lte?: Float | null
+  unitCost_gt?: Float | null
+  unitCost_gte?: Float | null
   createdAt?: DateTime | null
   createdAt_not?: DateTime | null
   createdAt_in?: DateTime[] | DateTime | null
@@ -22100,8 +22805,10 @@ export interface PhysicalProductUpdateDataInput {
   productStatus?: PhysicalProductStatus | null
   offloadMethod?: PhysicalProductOffloadMethod | null
   offloadNotes?: String | null
-  barcode?: String | null
   sequenceNumber?: Int | null
+  dateOrdered?: DateTime | null
+  dateReceived?: DateTime | null
+  unitCost?: Float | null
   location?: LocationUpdateOneWithoutPhysicalProductsInput | null
   productVariant?: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput | null
   warehouseLocation?: WarehouseLocationUpdateOneWithoutPhysicalProductsInput | null
@@ -22113,8 +22820,10 @@ export interface PhysicalProductUpdateInput {
   productStatus?: PhysicalProductStatus | null
   offloadMethod?: PhysicalProductOffloadMethod | null
   offloadNotes?: String | null
-  barcode?: String | null
   sequenceNumber?: Int | null
+  dateOrdered?: DateTime | null
+  dateReceived?: DateTime | null
+  unitCost?: Float | null
   location?: LocationUpdateOneWithoutPhysicalProductsInput | null
   productVariant?: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput | null
   warehouseLocation?: WarehouseLocationUpdateOneWithoutPhysicalProductsInput | null
@@ -22126,8 +22835,10 @@ export interface PhysicalProductUpdateManyDataInput {
   productStatus?: PhysicalProductStatus | null
   offloadMethod?: PhysicalProductOffloadMethod | null
   offloadNotes?: String | null
-  barcode?: String | null
   sequenceNumber?: Int | null
+  dateOrdered?: DateTime | null
+  dateReceived?: DateTime | null
+  unitCost?: Float | null
 }
 
 export interface PhysicalProductUpdateManyInput {
@@ -22148,8 +22859,10 @@ export interface PhysicalProductUpdateManyMutationInput {
   productStatus?: PhysicalProductStatus | null
   offloadMethod?: PhysicalProductOffloadMethod | null
   offloadNotes?: String | null
-  barcode?: String | null
   sequenceNumber?: Int | null
+  dateOrdered?: DateTime | null
+  dateReceived?: DateTime | null
+  unitCost?: Float | null
 }
 
 export interface PhysicalProductUpdateManyWithoutLocationInput {
@@ -22193,14 +22906,23 @@ export interface PhysicalProductUpdateManyWithWhereNestedInput {
   data: PhysicalProductUpdateManyDataInput
 }
 
+export interface PhysicalProductUpdateOneRequiredInput {
+  create?: PhysicalProductCreateInput | null
+  connect?: PhysicalProductWhereUniqueInput | null
+  update?: PhysicalProductUpdateDataInput | null
+  upsert?: PhysicalProductUpsertNestedInput | null
+}
+
 export interface PhysicalProductUpdateWithoutLocationDataInput {
   seasonsUID?: String | null
   inventoryStatus?: InventoryStatus | null
   productStatus?: PhysicalProductStatus | null
   offloadMethod?: PhysicalProductOffloadMethod | null
   offloadNotes?: String | null
-  barcode?: String | null
   sequenceNumber?: Int | null
+  dateOrdered?: DateTime | null
+  dateReceived?: DateTime | null
+  unitCost?: Float | null
   productVariant?: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput | null
   warehouseLocation?: WarehouseLocationUpdateOneWithoutPhysicalProductsInput | null
 }
@@ -22211,8 +22933,10 @@ export interface PhysicalProductUpdateWithoutProductVariantDataInput {
   productStatus?: PhysicalProductStatus | null
   offloadMethod?: PhysicalProductOffloadMethod | null
   offloadNotes?: String | null
-  barcode?: String | null
   sequenceNumber?: Int | null
+  dateOrdered?: DateTime | null
+  dateReceived?: DateTime | null
+  unitCost?: Float | null
   location?: LocationUpdateOneWithoutPhysicalProductsInput | null
   warehouseLocation?: WarehouseLocationUpdateOneWithoutPhysicalProductsInput | null
 }
@@ -22223,8 +22947,10 @@ export interface PhysicalProductUpdateWithoutWarehouseLocationDataInput {
   productStatus?: PhysicalProductStatus | null
   offloadMethod?: PhysicalProductOffloadMethod | null
   offloadNotes?: String | null
-  barcode?: String | null
   sequenceNumber?: Int | null
+  dateOrdered?: DateTime | null
+  dateReceived?: DateTime | null
+  unitCost?: Float | null
   location?: LocationUpdateOneWithoutPhysicalProductsInput | null
   productVariant?: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput | null
 }
@@ -22247,6 +22973,11 @@ export interface PhysicalProductUpdateWithWhereUniqueWithoutProductVariantInput 
 export interface PhysicalProductUpdateWithWhereUniqueWithoutWarehouseLocationInput {
   where: PhysicalProductWhereUniqueInput
   data: PhysicalProductUpdateWithoutWarehouseLocationDataInput
+}
+
+export interface PhysicalProductUpsertNestedInput {
+  update: PhysicalProductUpdateDataInput
+  create: PhysicalProductCreateInput
 }
 
 export interface PhysicalProductUpsertWithWhereUniqueNestedInput {
@@ -22331,20 +23062,6 @@ export interface PhysicalProductWhereInput {
   offloadNotes_not_starts_with?: String | null
   offloadNotes_ends_with?: String | null
   offloadNotes_not_ends_with?: String | null
-  barcode?: String | null
-  barcode_not?: String | null
-  barcode_in?: String[] | String | null
-  barcode_not_in?: String[] | String | null
-  barcode_lt?: String | null
-  barcode_lte?: String | null
-  barcode_gt?: String | null
-  barcode_gte?: String | null
-  barcode_contains?: String | null
-  barcode_not_contains?: String | null
-  barcode_starts_with?: String | null
-  barcode_not_starts_with?: String | null
-  barcode_ends_with?: String | null
-  barcode_not_ends_with?: String | null
   sequenceNumber?: Int | null
   sequenceNumber_not?: Int | null
   sequenceNumber_in?: Int[] | Int | null
@@ -22353,6 +23070,30 @@ export interface PhysicalProductWhereInput {
   sequenceNumber_lte?: Int | null
   sequenceNumber_gt?: Int | null
   sequenceNumber_gte?: Int | null
+  dateOrdered?: DateTime | null
+  dateOrdered_not?: DateTime | null
+  dateOrdered_in?: DateTime[] | DateTime | null
+  dateOrdered_not_in?: DateTime[] | DateTime | null
+  dateOrdered_lt?: DateTime | null
+  dateOrdered_lte?: DateTime | null
+  dateOrdered_gt?: DateTime | null
+  dateOrdered_gte?: DateTime | null
+  dateReceived?: DateTime | null
+  dateReceived_not?: DateTime | null
+  dateReceived_in?: DateTime[] | DateTime | null
+  dateReceived_not_in?: DateTime[] | DateTime | null
+  dateReceived_lt?: DateTime | null
+  dateReceived_lte?: DateTime | null
+  dateReceived_gt?: DateTime | null
+  dateReceived_gte?: DateTime | null
+  unitCost?: Float | null
+  unitCost_not?: Float | null
+  unitCost_in?: Float[] | Float | null
+  unitCost_not_in?: Float[] | Float | null
+  unitCost_lt?: Float | null
+  unitCost_lte?: Float | null
+  unitCost_gt?: Float | null
+  unitCost_gte?: Float | null
   createdAt?: DateTime | null
   createdAt_not?: DateTime | null
   createdAt_in?: DateTime[] | DateTime | null
@@ -24767,6 +25508,7 @@ export interface ReservationCreateInput {
   returnedPackage?: PackageCreateOneInput | null
   location?: LocationCreateOneInput | null
   products?: PhysicalProductCreateManyInput | null
+  receipt?: ReservationReceiptCreateOneWithoutReservationInput | null
 }
 
 export interface ReservationCreateManyWithoutCustomerInput {
@@ -24779,6 +25521,11 @@ export interface ReservationCreateOneInput {
   connect?: ReservationWhereUniqueInput | null
 }
 
+export interface ReservationCreateOneWithoutReceiptInput {
+  create?: ReservationCreateWithoutReceiptInput | null
+  connect?: ReservationWhereUniqueInput | null
+}
+
 export interface ReservationCreateWithoutCustomerInput {
   id?: ID_Input | null
   reservationNumber: Int
@@ -24788,6 +25535,23 @@ export interface ReservationCreateWithoutCustomerInput {
   receivedAt?: DateTime | null
   reminderSentAt?: DateTime | null
   user: UserCreateOneInput
+  sentPackage?: PackageCreateOneInput | null
+  returnedPackage?: PackageCreateOneInput | null
+  location?: LocationCreateOneInput | null
+  products?: PhysicalProductCreateManyInput | null
+  receipt?: ReservationReceiptCreateOneWithoutReservationInput | null
+}
+
+export interface ReservationCreateWithoutReceiptInput {
+  id?: ID_Input | null
+  reservationNumber: Int
+  shipped: Boolean
+  status: ReservationStatus
+  shippedAt?: DateTime | null
+  receivedAt?: DateTime | null
+  reminderSentAt?: DateTime | null
+  user: UserCreateOneInput
+  customer: CustomerCreateOneWithoutReservationsInput
   sentPackage?: PackageCreateOneInput | null
   returnedPackage?: PackageCreateOneInput | null
   location?: LocationCreateOneInput | null
@@ -24935,6 +25699,254 @@ export interface ReservationFeedbackWhereUniqueInput {
   id?: ID_Input | null
 }
 
+export interface ReservationReceiptCreateInput {
+  id?: ID_Input | null
+  reservation: ReservationCreateOneWithoutReceiptInput
+  items?: ReservationReceiptItemCreateManyInput | null
+}
+
+export interface ReservationReceiptCreateOneWithoutReservationInput {
+  create?: ReservationReceiptCreateWithoutReservationInput | null
+  connect?: ReservationReceiptWhereUniqueInput | null
+}
+
+export interface ReservationReceiptCreateWithoutReservationInput {
+  id?: ID_Input | null
+  items?: ReservationReceiptItemCreateManyInput | null
+}
+
+export interface ReservationReceiptItemCreateInput {
+  id?: ID_Input | null
+  productStatus: PhysicalProductStatus
+  notes?: String | null
+  product: PhysicalProductCreateOneInput
+}
+
+export interface ReservationReceiptItemCreateManyInput {
+  create?: ReservationReceiptItemCreateInput[] | ReservationReceiptItemCreateInput | null
+  connect?: ReservationReceiptItemWhereUniqueInput[] | ReservationReceiptItemWhereUniqueInput | null
+}
+
+export interface ReservationReceiptItemScalarWhereInput {
+  AND?: ReservationReceiptItemScalarWhereInput[] | ReservationReceiptItemScalarWhereInput | null
+  OR?: ReservationReceiptItemScalarWhereInput[] | ReservationReceiptItemScalarWhereInput | null
+  NOT?: ReservationReceiptItemScalarWhereInput[] | ReservationReceiptItemScalarWhereInput | null
+  id?: ID_Input | null
+  id_not?: ID_Input | null
+  id_in?: ID_Output[] | ID_Output | null
+  id_not_in?: ID_Output[] | ID_Output | null
+  id_lt?: ID_Input | null
+  id_lte?: ID_Input | null
+  id_gt?: ID_Input | null
+  id_gte?: ID_Input | null
+  id_contains?: ID_Input | null
+  id_not_contains?: ID_Input | null
+  id_starts_with?: ID_Input | null
+  id_not_starts_with?: ID_Input | null
+  id_ends_with?: ID_Input | null
+  id_not_ends_with?: ID_Input | null
+  productStatus?: PhysicalProductStatus | null
+  productStatus_not?: PhysicalProductStatus | null
+  productStatus_in?: PhysicalProductStatus[] | PhysicalProductStatus | null
+  productStatus_not_in?: PhysicalProductStatus[] | PhysicalProductStatus | null
+  notes?: String | null
+  notes_not?: String | null
+  notes_in?: String[] | String | null
+  notes_not_in?: String[] | String | null
+  notes_lt?: String | null
+  notes_lte?: String | null
+  notes_gt?: String | null
+  notes_gte?: String | null
+  notes_contains?: String | null
+  notes_not_contains?: String | null
+  notes_starts_with?: String | null
+  notes_not_starts_with?: String | null
+  notes_ends_with?: String | null
+  notes_not_ends_with?: String | null
+}
+
+export interface ReservationReceiptItemSubscriptionWhereInput {
+  AND?: ReservationReceiptItemSubscriptionWhereInput[] | ReservationReceiptItemSubscriptionWhereInput | null
+  OR?: ReservationReceiptItemSubscriptionWhereInput[] | ReservationReceiptItemSubscriptionWhereInput | null
+  NOT?: ReservationReceiptItemSubscriptionWhereInput[] | ReservationReceiptItemSubscriptionWhereInput | null
+  mutation_in?: MutationType[] | MutationType | null
+  updatedFields_contains?: String | null
+  updatedFields_contains_every?: String[] | String | null
+  updatedFields_contains_some?: String[] | String | null
+  node?: ReservationReceiptItemWhereInput | null
+}
+
+export interface ReservationReceiptItemUpdateDataInput {
+  productStatus?: PhysicalProductStatus | null
+  notes?: String | null
+  product?: PhysicalProductUpdateOneRequiredInput | null
+}
+
+export interface ReservationReceiptItemUpdateInput {
+  productStatus?: PhysicalProductStatus | null
+  notes?: String | null
+  product?: PhysicalProductUpdateOneRequiredInput | null
+}
+
+export interface ReservationReceiptItemUpdateManyDataInput {
+  productStatus?: PhysicalProductStatus | null
+  notes?: String | null
+}
+
+export interface ReservationReceiptItemUpdateManyInput {
+  create?: ReservationReceiptItemCreateInput[] | ReservationReceiptItemCreateInput | null
+  connect?: ReservationReceiptItemWhereUniqueInput[] | ReservationReceiptItemWhereUniqueInput | null
+  set?: ReservationReceiptItemWhereUniqueInput[] | ReservationReceiptItemWhereUniqueInput | null
+  disconnect?: ReservationReceiptItemWhereUniqueInput[] | ReservationReceiptItemWhereUniqueInput | null
+  delete?: ReservationReceiptItemWhereUniqueInput[] | ReservationReceiptItemWhereUniqueInput | null
+  update?: ReservationReceiptItemUpdateWithWhereUniqueNestedInput[] | ReservationReceiptItemUpdateWithWhereUniqueNestedInput | null
+  updateMany?: ReservationReceiptItemUpdateManyWithWhereNestedInput[] | ReservationReceiptItemUpdateManyWithWhereNestedInput | null
+  deleteMany?: ReservationReceiptItemScalarWhereInput[] | ReservationReceiptItemScalarWhereInput | null
+  upsert?: ReservationReceiptItemUpsertWithWhereUniqueNestedInput[] | ReservationReceiptItemUpsertWithWhereUniqueNestedInput | null
+}
+
+export interface ReservationReceiptItemUpdateManyMutationInput {
+  productStatus?: PhysicalProductStatus | null
+  notes?: String | null
+}
+
+export interface ReservationReceiptItemUpdateManyWithWhereNestedInput {
+  where: ReservationReceiptItemScalarWhereInput
+  data: ReservationReceiptItemUpdateManyDataInput
+}
+
+export interface ReservationReceiptItemUpdateWithWhereUniqueNestedInput {
+  where: ReservationReceiptItemWhereUniqueInput
+  data: ReservationReceiptItemUpdateDataInput
+}
+
+export interface ReservationReceiptItemUpsertWithWhereUniqueNestedInput {
+  where: ReservationReceiptItemWhereUniqueInput
+  update: ReservationReceiptItemUpdateDataInput
+  create: ReservationReceiptItemCreateInput
+}
+
+export interface ReservationReceiptItemWhereInput {
+  AND?: ReservationReceiptItemWhereInput[] | ReservationReceiptItemWhereInput | null
+  OR?: ReservationReceiptItemWhereInput[] | ReservationReceiptItemWhereInput | null
+  NOT?: ReservationReceiptItemWhereInput[] | ReservationReceiptItemWhereInput | null
+  id?: ID_Input | null
+  id_not?: ID_Input | null
+  id_in?: ID_Output[] | ID_Output | null
+  id_not_in?: ID_Output[] | ID_Output | null
+  id_lt?: ID_Input | null
+  id_lte?: ID_Input | null
+  id_gt?: ID_Input | null
+  id_gte?: ID_Input | null
+  id_contains?: ID_Input | null
+  id_not_contains?: ID_Input | null
+  id_starts_with?: ID_Input | null
+  id_not_starts_with?: ID_Input | null
+  id_ends_with?: ID_Input | null
+  id_not_ends_with?: ID_Input | null
+  productStatus?: PhysicalProductStatus | null
+  productStatus_not?: PhysicalProductStatus | null
+  productStatus_in?: PhysicalProductStatus[] | PhysicalProductStatus | null
+  productStatus_not_in?: PhysicalProductStatus[] | PhysicalProductStatus | null
+  notes?: String | null
+  notes_not?: String | null
+  notes_in?: String[] | String | null
+  notes_not_in?: String[] | String | null
+  notes_lt?: String | null
+  notes_lte?: String | null
+  notes_gt?: String | null
+  notes_gte?: String | null
+  notes_contains?: String | null
+  notes_not_contains?: String | null
+  notes_starts_with?: String | null
+  notes_not_starts_with?: String | null
+  notes_ends_with?: String | null
+  notes_not_ends_with?: String | null
+  product?: PhysicalProductWhereInput | null
+}
+
+export interface ReservationReceiptItemWhereUniqueInput {
+  id?: ID_Input | null
+}
+
+export interface ReservationReceiptSubscriptionWhereInput {
+  AND?: ReservationReceiptSubscriptionWhereInput[] | ReservationReceiptSubscriptionWhereInput | null
+  OR?: ReservationReceiptSubscriptionWhereInput[] | ReservationReceiptSubscriptionWhereInput | null
+  NOT?: ReservationReceiptSubscriptionWhereInput[] | ReservationReceiptSubscriptionWhereInput | null
+  mutation_in?: MutationType[] | MutationType | null
+  updatedFields_contains?: String | null
+  updatedFields_contains_every?: String[] | String | null
+  updatedFields_contains_some?: String[] | String | null
+  node?: ReservationReceiptWhereInput | null
+}
+
+export interface ReservationReceiptUpdateInput {
+  reservation?: ReservationUpdateOneRequiredWithoutReceiptInput | null
+  items?: ReservationReceiptItemUpdateManyInput | null
+}
+
+export interface ReservationReceiptUpdateOneWithoutReservationInput {
+  create?: ReservationReceiptCreateWithoutReservationInput | null
+  connect?: ReservationReceiptWhereUniqueInput | null
+  disconnect?: Boolean | null
+  delete?: Boolean | null
+  update?: ReservationReceiptUpdateWithoutReservationDataInput | null
+  upsert?: ReservationReceiptUpsertWithoutReservationInput | null
+}
+
+export interface ReservationReceiptUpdateWithoutReservationDataInput {
+  items?: ReservationReceiptItemUpdateManyInput | null
+}
+
+export interface ReservationReceiptUpsertWithoutReservationInput {
+  update: ReservationReceiptUpdateWithoutReservationDataInput
+  create: ReservationReceiptCreateWithoutReservationInput
+}
+
+export interface ReservationReceiptWhereInput {
+  AND?: ReservationReceiptWhereInput[] | ReservationReceiptWhereInput | null
+  OR?: ReservationReceiptWhereInput[] | ReservationReceiptWhereInput | null
+  NOT?: ReservationReceiptWhereInput[] | ReservationReceiptWhereInput | null
+  id?: ID_Input | null
+  id_not?: ID_Input | null
+  id_in?: ID_Output[] | ID_Output | null
+  id_not_in?: ID_Output[] | ID_Output | null
+  id_lt?: ID_Input | null
+  id_lte?: ID_Input | null
+  id_gt?: ID_Input | null
+  id_gte?: ID_Input | null
+  id_contains?: ID_Input | null
+  id_not_contains?: ID_Input | null
+  id_starts_with?: ID_Input | null
+  id_not_starts_with?: ID_Input | null
+  id_ends_with?: ID_Input | null
+  id_not_ends_with?: ID_Input | null
+  createdAt?: DateTime | null
+  createdAt_not?: DateTime | null
+  createdAt_in?: DateTime[] | DateTime | null
+  createdAt_not_in?: DateTime[] | DateTime | null
+  createdAt_lt?: DateTime | null
+  createdAt_lte?: DateTime | null
+  createdAt_gt?: DateTime | null
+  createdAt_gte?: DateTime | null
+  updatedAt?: DateTime | null
+  updatedAt_not?: DateTime | null
+  updatedAt_in?: DateTime[] | DateTime | null
+  updatedAt_not_in?: DateTime[] | DateTime | null
+  updatedAt_lt?: DateTime | null
+  updatedAt_lte?: DateTime | null
+  updatedAt_gt?: DateTime | null
+  updatedAt_gte?: DateTime | null
+  reservation?: ReservationWhereInput | null
+  items_every?: ReservationReceiptItemWhereInput | null
+  items_some?: ReservationReceiptItemWhereInput | null
+  items_none?: ReservationReceiptItemWhereInput | null
+}
+
+export interface ReservationReceiptWhereUniqueInput {
+  id?: ID_Input | null
+}
+
 export interface ReservationScalarWhereInput {
   AND?: ReservationScalarWhereInput[] | ReservationScalarWhereInput | null
   OR?: ReservationScalarWhereInput[] | ReservationScalarWhereInput | null
@@ -25033,6 +26045,7 @@ export interface ReservationUpdateDataInput {
   returnedPackage?: PackageUpdateOneInput | null
   location?: LocationUpdateOneInput | null
   products?: PhysicalProductUpdateManyInput | null
+  receipt?: ReservationReceiptUpdateOneWithoutReservationInput | null
 }
 
 export interface ReservationUpdateInput {
@@ -25048,6 +26061,7 @@ export interface ReservationUpdateInput {
   returnedPackage?: PackageUpdateOneInput | null
   location?: LocationUpdateOneInput | null
   products?: PhysicalProductUpdateManyInput | null
+  receipt?: ReservationReceiptUpdateOneWithoutReservationInput | null
 }
 
 export interface ReservationUpdateManyDataInput {
@@ -25092,6 +26106,13 @@ export interface ReservationUpdateOneRequiredInput {
   upsert?: ReservationUpsertNestedInput | null
 }
 
+export interface ReservationUpdateOneRequiredWithoutReceiptInput {
+  create?: ReservationCreateWithoutReceiptInput | null
+  connect?: ReservationWhereUniqueInput | null
+  update?: ReservationUpdateWithoutReceiptDataInput | null
+  upsert?: ReservationUpsertWithoutReceiptInput | null
+}
+
 export interface ReservationUpdateWithoutCustomerDataInput {
   reservationNumber?: Int | null
   shipped?: Boolean | null
@@ -25100,6 +26121,22 @@ export interface ReservationUpdateWithoutCustomerDataInput {
   receivedAt?: DateTime | null
   reminderSentAt?: DateTime | null
   user?: UserUpdateOneRequiredInput | null
+  sentPackage?: PackageUpdateOneInput | null
+  returnedPackage?: PackageUpdateOneInput | null
+  location?: LocationUpdateOneInput | null
+  products?: PhysicalProductUpdateManyInput | null
+  receipt?: ReservationReceiptUpdateOneWithoutReservationInput | null
+}
+
+export interface ReservationUpdateWithoutReceiptDataInput {
+  reservationNumber?: Int | null
+  shipped?: Boolean | null
+  status?: ReservationStatus | null
+  shippedAt?: DateTime | null
+  receivedAt?: DateTime | null
+  reminderSentAt?: DateTime | null
+  user?: UserUpdateOneRequiredInput | null
+  customer?: CustomerUpdateOneRequiredWithoutReservationsInput | null
   sentPackage?: PackageUpdateOneInput | null
   returnedPackage?: PackageUpdateOneInput | null
   location?: LocationUpdateOneInput | null
@@ -25114,6 +26151,11 @@ export interface ReservationUpdateWithWhereUniqueWithoutCustomerInput {
 export interface ReservationUpsertNestedInput {
   update: ReservationUpdateDataInput
   create: ReservationCreateInput
+}
+
+export interface ReservationUpsertWithoutReceiptInput {
+  update: ReservationUpdateWithoutReceiptDataInput
+  create: ReservationCreateWithoutReceiptInput
 }
 
 export interface ReservationUpsertWithWhereUniqueWithoutCustomerInput {
@@ -25202,6 +26244,7 @@ export interface ReservationWhereInput {
   products_every?: PhysicalProductWhereInput | null
   products_some?: PhysicalProductWhereInput | null
   products_none?: PhysicalProductWhereInput | null
+  receipt?: ReservationReceiptWhereInput | null
 }
 
 export interface ReservationWhereUniqueInput {
@@ -25777,11 +26820,16 @@ export interface UserCreateInput {
   lastName: String
   role?: UserRole | null
   pushNotifications?: PushNotificationStatus | null
+  roles?: UserCreaterolesInput | null
 }
 
 export interface UserCreateOneInput {
   create?: UserCreateInput | null
   connect?: UserWhereUniqueInput | null
+}
+
+export interface UserCreaterolesInput {
+  set?: UserRole[] | UserRole | null
 }
 
 export interface UserSubscriptionWhereInput {
@@ -25802,6 +26850,7 @@ export interface UserUpdateDataInput {
   lastName?: String | null
   role?: UserRole | null
   pushNotifications?: PushNotificationStatus | null
+  roles?: UserUpdaterolesInput | null
 }
 
 export interface UserUpdateInput {
@@ -25811,6 +26860,7 @@ export interface UserUpdateInput {
   lastName?: String | null
   role?: UserRole | null
   pushNotifications?: PushNotificationStatus | null
+  roles?: UserUpdaterolesInput | null
 }
 
 export interface UserUpdateManyMutationInput {
@@ -25820,6 +26870,7 @@ export interface UserUpdateManyMutationInput {
   lastName?: String | null
   role?: UserRole | null
   pushNotifications?: PushNotificationStatus | null
+  roles?: UserUpdaterolesInput | null
 }
 
 export interface UserUpdateOneInput {
@@ -25836,6 +26887,10 @@ export interface UserUpdateOneRequiredInput {
   connect?: UserWhereUniqueInput | null
   update?: UserUpdateDataInput | null
   upsert?: UserUpsertNestedInput | null
+}
+
+export interface UserUpdaterolesInput {
+  set?: UserRole[] | UserRole | null
 }
 
 export interface UserUpsertNestedInput {
@@ -26542,6 +27597,14 @@ export interface AggregateReservationFeedback {
   count: Int
 }
 
+export interface AggregateReservationReceipt {
+  count: Int
+}
+
+export interface AggregateReservationReceiptItem {
+  count: Int
+}
+
 export interface AggregateSize {
   count: Int
 }
@@ -27110,10 +28173,9 @@ export interface HomepageProductRailSubscriptionPayload {
 export interface Image extends Node {
   id: ID_Output
   caption?: String | null
-  url?: String | null
-  originalHeight?: Int | null
-  originalUrl: String
-  originalWidth?: Int | null
+  url: String
+  height?: Int | null
+  width?: Int | null
   title?: String | null
   createdAt: DateTime
   updatedAt: DateTime
@@ -27141,10 +28203,9 @@ export interface ImageEdge {
 export interface ImagePreviousValues {
   id: ID_Output
   caption?: String | null
-  url?: String | null
-  originalHeight?: Int | null
-  originalUrl: String
-  originalWidth?: Int | null
+  url: String
+  height?: Int | null
+  width?: Int | null
   title?: String | null
   createdAt: DateTime
   updatedAt: DateTime
@@ -27327,9 +28388,11 @@ export interface PhysicalProduct extends Node {
   productStatus: PhysicalProductStatus
   offloadMethod?: PhysicalProductOffloadMethod | null
   offloadNotes?: String | null
-  barcode: String
   sequenceNumber: Int
   warehouseLocation?: WarehouseLocation | null
+  dateOrdered?: DateTime | null
+  dateReceived?: DateTime | null
+  unitCost?: Float | null
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -27360,8 +28423,10 @@ export interface PhysicalProductPreviousValues {
   productStatus: PhysicalProductStatus
   offloadMethod?: PhysicalProductOffloadMethod | null
   offloadNotes?: String | null
-  barcode: String
   sequenceNumber: Int
+  dateOrdered?: DateTime | null
+  dateReceived?: DateTime | null
+  unitCost?: Float | null
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -27816,6 +28881,7 @@ export interface Reservation extends Node {
   shippedAt?: DateTime | null
   receivedAt?: DateTime | null
   reminderSentAt?: DateTime | null
+  receipt?: ReservationReceipt | null
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -27896,6 +28962,85 @@ export interface ReservationPreviousValues {
   reminderSentAt?: DateTime | null
   createdAt: DateTime
   updatedAt: DateTime
+}
+
+export interface ReservationReceipt extends Node {
+  id: ID_Output
+  reservation: Reservation
+  items?: Array<ReservationReceiptItem> | null
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+/*
+ * A connection to a list of items.
+
+ */
+export interface ReservationReceiptConnection {
+  pageInfo: PageInfo
+  edges: Array<ReservationReceiptEdge | null>
+  aggregate: AggregateReservationReceipt
+}
+
+/*
+ * An edge in a connection.
+
+ */
+export interface ReservationReceiptEdge {
+  node: ReservationReceipt
+  cursor: String
+}
+
+export interface ReservationReceiptItem extends Node {
+  id: ID_Output
+  product: PhysicalProduct
+  productStatus: PhysicalProductStatus
+  notes?: String | null
+}
+
+/*
+ * A connection to a list of items.
+
+ */
+export interface ReservationReceiptItemConnection {
+  pageInfo: PageInfo
+  edges: Array<ReservationReceiptItemEdge | null>
+  aggregate: AggregateReservationReceiptItem
+}
+
+/*
+ * An edge in a connection.
+
+ */
+export interface ReservationReceiptItemEdge {
+  node: ReservationReceiptItem
+  cursor: String
+}
+
+export interface ReservationReceiptItemPreviousValues {
+  id: ID_Output
+  productStatus: PhysicalProductStatus
+  notes?: String | null
+}
+
+export interface ReservationReceiptItemSubscriptionPayload {
+  mutation: MutationType
+  node?: ReservationReceiptItem | null
+  updatedFields?: Array<String> | null
+  previousValues?: ReservationReceiptItemPreviousValues | null
+}
+
+export interface ReservationReceiptPreviousValues {
+  id: ID_Output
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+export interface ReservationReceiptSubscriptionPayload {
+  mutation: MutationType
+  node?: ReservationReceipt | null
+  updatedFields?: Array<String> | null
+  previousValues?: ReservationReceiptPreviousValues | null
 }
 
 export interface ReservationSubscriptionPayload {
@@ -28043,6 +29188,7 @@ export interface User extends Node {
   firstName: String
   lastName: String
   role: UserRole
+  roles: Array<UserRole>
   createdAt: DateTime
   updatedAt: DateTime
   pushNotifications: PushNotificationStatus
@@ -28074,6 +29220,7 @@ export interface UserPreviousValues {
   firstName: String
   lastName: String
   role: UserRole
+  roles: Array<UserRole>
   createdAt: DateTime
   updatedAt: DateTime
   pushNotifications: PushNotificationStatus
