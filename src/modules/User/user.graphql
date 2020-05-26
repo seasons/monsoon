@@ -1,0 +1,89 @@
+# import Reservation from "../Reservation/reservation.graphql"
+
+type Query {
+  me: Me
+  user(where: UserWhereUniqueInput!): User @hasRole(roles: [Admin])
+  users(
+    where: UserWhereInput
+    orderBy: UserOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [User]! @hasRole(roles: [Admin])
+  usersConnection(
+    where: UserWhereInput
+    orderBy: UserOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): UserConnection! @hasRole(roles: [Admin])
+}
+
+type Mutation {
+  signup(
+    email: String!
+    password: String!
+    firstName: String!
+    lastName: String!
+    details: CustomerDetailCreateInput
+  ): AuthPayload!
+  login(email: String!, password: String!): AuthPayload!
+  updateUserPushNotifications(pushNotificationsStatus: String!): User!
+    @hasRole(roles: [Customer])
+  resetPassword(email: String!): ResetPasswordPayload! @isAuthenticated
+  refreshToken(refreshToken: String!): String!
+}
+
+type AuthPayload {
+  token: String!
+  refreshToken: String!
+  expiresIn: Int!
+  user: User!
+  beamsToken: String!
+}
+
+type ResetPasswordPayload {
+  message: String!
+}
+
+type Me {
+  user: User
+  customer: Customer
+  activeReservation: Reservation
+  bag: [BagItem!]
+  savedItems: [BagItem!]
+}
+
+type Customer {
+  id: ID!
+  user: User!
+  shouldRequestFeedback: Boolean
+  status: CustomerStatus
+  detail: CustomerDetail
+  billingInfo: BillingInfo
+  plan: Plan
+  bagItems(
+    where: BagItemWhereInput
+    orderBy: BagItemOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [BagItem!]
+  reservations(
+    where: ReservationWhereInput
+    orderBy: ReservationOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Reservation!]
+  invoices: [Invoice]
+  transactions: [Transaction]
+}

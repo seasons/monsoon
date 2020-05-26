@@ -1,0 +1,75 @@
+type Query {
+  reservation(where: ReservationWhereUniqueInput!): Reservation
+    @hasRole(roles: [Customer, Admin, Partner])
+  reservations(
+    where: ReservationWhereInput
+    orderBy: ReservationOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Reservation]! @hasRole(roles: [Customer, Admin, Partner])
+  reservationsConnection(
+    where: ReservationWhereInput
+    orderBy: ReservationOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): ReservationConnection! @hasRole(roles: [Customer, Admin, Partner])
+  reservationFeedback: ReservationFeedback
+}
+
+type Mutation {
+  reserveItems(items: [ID!]!, options: ReserveItemsOptions): Reservation
+    @hasRole(roles: [Customer])
+  checkItemsAvailability(items: [ID!]!): Boolean! @hasRole(roles: [Customer])
+  updateReservationFeedback(
+    feedbackID: ID!
+    input: ReservationFeedbackUpdateInput!
+  ): ReservationFeedback! @hasRole(roles: [Admin])
+  processReservation(data: ReservationProcessReturnInput!): ReservationReceipt
+    @hasRole(roles: [Admin, Partner])
+  updateReservation(
+    data: ReservationUpdateInput!
+    where: ReservationWhereUniqueInput!
+  ): Reservation
+}
+
+input ReservationProcessReturnInput {
+  reservationNumber: Int!
+  productStates: [ProductStateInput!]!
+}
+
+input ProductStateInput {
+  productUID: String!
+  returned: Boolean!
+  productStatus: PhysicalProductStatus!
+  notes: String
+}
+
+input ReserveItemsOptions {
+  dryRun: Boolean
+}
+
+type Reservation {
+  id: ID!
+  user: User!
+  customer: Customer!
+  sentPackage: Package
+  returnedPackage: Package
+  location: Location
+  products: [PhysicalProduct!]!
+  images(width: Int, height: Int, size: ImageSize): [Image!]!
+  reservationNumber: Int!
+  shipped: Boolean!
+  status(display: Boolean): String!
+  shippedAt: DateTime
+  receivedAt: DateTime
+  reminderSentAt: DateTime
+  returnAt: DateTime
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}

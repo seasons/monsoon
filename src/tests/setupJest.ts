@@ -1,12 +1,5 @@
-jest.mock("airtable", () => ({
-  base: () => () => ({
-    create: jest.fn(data => data),
-    select: () => ({
-      firstPage: jest.fn(cb => cb(null, [])),
-      eachPage: jest.fn(cb => cb(null, [])),
-    }),
-  }),
-  configure: jest.fn(),
-}))
-jest.mock("chargebee")
-jest.mock("@sendgrid/mail")
+import path from "path"
+
+import dotenv from "dotenv"
+
+dotenv.config({ path: path.resolve(process.cwd(), ".env") })

@@ -1,276 +1,41 @@
-# import Category, User, Bag, Collection, CustomerDetail, ProductFunction, SavedProduct from "./prisma/prisma.graphql"
+# import Brand, Category, User, Bag, Collection, CustomerDetail, ProductFunction, SavedProduct from "./prisma/prisma.graphql"
+# import BlogCollection, BlogPost, Query from "./modules/Blog/blog.graphql"
+# import SearchOptions, SearchResultType, SearchResult, Query from "./modules/Search/search.graphql"
+# import Query, Mutation from "./modules/Customer/customer.graphql"
+# import Query, Mutation from "./modules/User/user.graphql"
+# import Reservation, Query, Mutation from "./modules/Reservation/reservation.graphql"
+# import Query, Mutation from "./modules/Product/product.graphql"
+# import Image, Mutation from "./modules/Image/image.graphql"
+# import Query from "./modules/Homepage/homepage.graphql"
+# import Query, Mutation from "./modules/Payment/payment.graphql"
+# import Query, Mutation from "./modules/Shipping/shipping.graphql"
 
 directive @isAuthenticated on FIELD_DEFINITION
-directive @hasRole(roles: [String]) on FIELD_DEFINITION
-directive @isOwner(type: String) on FIELD_DEFINITION
-directive @isOwnerOrHasRole(type: String, roles: [String]) on FIELD_DEFINITION
-
-type Product {
-  id: ID!
-  slug: String!
-  name: String!
-  brand: Brand!
-  category: Category!
-  description: String
-  externalURL: String
-  images: Json!
-  modelHeight: Int
-  modelSize: Size
-  retailPrice: Int
-  color: Color!
-  secondaryColor: Color
-  tags: Json
-  functions(
-    where: ProductFunctionWhereInput
-    orderBy: ProductFunctionOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [ProductFunction!]
-  availableSizes: [Size!]!
-  innerMaterials: [Material!]!
-  outerMaterials: [Material!]!
-  variants(
-    where: ProductVariantWhereInput
-    orderBy: ProductVariantOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [ProductVariant!]
-  status: ProductStatus
-  isSaved: Boolean
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
-type ProductVariant {
-  id: ID!
-  sku: String
-  color: Color!
-  size: Size!
-  weight: Float
-  height: Float
-  productID: String!
-  product: Product!
-  retailPrice: Float
-  physicalProducts(
-    where: PhysicalProductWhereInput
-    orderBy: PhysicalProductOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [PhysicalProduct!]
-  total: Int!
-  reservable: Int!
-  reserved: Int!
-  nonReservable: Int!
-  isSaved: Boolean!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
+directive @hasRole(roles: [UserRole]) on FIELD_DEFINITION
 
 type Query {
-  me: Me @isAuthenticated
-  products(
-    category: String
-    where: ProductWhereInput
-    orderBy: ProductOrderByInput
-    sizes: [Size!]
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [Product]!
-  collectionGroups(
-    where: CollectionGroupWhereInput
-    orderBy: CollectionGroupOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [CollectionGroup]!
-  collectionGroup(where: CollectionGroupWhereUniqueInput!): CollectionGroup
-  collections(
-    where: CollectionWhereInput
-    orderBy: CollectionOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [Collection]!
-  collection(where: CollectionWhereUniqueInput!): Collection
-  product(where: ProductWhereUniqueInput!): Product
-  categories(
-    where: CategoryWhereInput
-    orderBy: CategoryOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [Category]!
-  productFunctions(
-    where: ProductFunctionWhereInput
-    orderBy: ProductFunctionOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [ProductFunction]!
-  productRequests(
-    where: ProductRequestWhereInput
-    orderBy: ProductRequestOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [ProductRequest]!
-  homepage: Homepage
-  chargebeeCheckout(planID: PlanID!, userIDHash: String!): ChargebeeCheckout
-  homepageProductRails(
-    where: HomepageProductRailWhereInput
-    orderBy: HomepageProductRailOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [HomepageProductRail]!
-  homepageProductRail(
-    where: HomepageProductRailWhereUniqueInput!
-  ): HomepageProductRail
-}
-
-type ChargebeeCheckout {
-  created_at: Int!
-  embed: Boolean!
-  expires_at: Int!
-  id: String!
-  object: String!
-  resource_version: Int!
-  state: String!
-  type: String!
-  updated_at: Int!
-  url: String!
+  faq: Faq
 }
 
 type Mutation {
-  signup(
-    email: String!
-    password: String!
-    firstName: String!
-    lastName: String!
-    details: CustomerDetailCreateInput
-  ): AuthPayload!
-  login(email: String!, password: String!): AuthPayload!
-  resetPassword(email: String!): ResetPasswordPayload!
-  addCustomerDetails(
-    details: CustomerDetailCreateInput!
-    status: CustomerStatus
-    event: Event
-  ): Customer! @hasRole(roles: ["Customer"])
-  checkItemsAvailability(items: [ID!]!): Boolean!
-  reserveItems(items: [ID!]!, options: ReserveItemsOptions): Reservation
-  addToBag(item: ID!): BagItem!
-  removeFromBag(item: ID!): BagItem!
-  saveProduct(item: ID!, save: Boolean!): BagItem
-  acknowledgeCompletedChargebeeHostedCheckout(
-    hostedPageID: String!
-  ): BillingInfoPayload
-  addProductRequest(reason: String!, url: String!): ProductRequest!
-  deleteProductRequest(requestID: ID!): ProductRequest!
-  validateAddress(input: ValidateAddressInput!): ValidationPayload!
+  beamsData: BeamsData!
 }
 
-input ReserveItemsOptions {
-  dryRun: Boolean
+type BeamsData {
+  email: String!
+  beamsToken: String!
 }
 
-type BillingInfoPayload {
-  billingInfo: BillingInfo
-  plan: Plan
+type Faq {
+  sections: [FaqSection!]!
 }
 
-type AuthPayload {
-  token: String!
-  refreshToken: String!
-  expiresIn: Int!
-  user: User!
+type FaqSection {
+  title: String!
+  subsections: [FaqSubsection!]!
 }
 
-type ResetPasswordPayload {
-  message: String!
-}
-
-input ValidateAddressInput {
-  location: LocationCreateInput!
-}
-
-type ValidationPayload {
-  isValid: Boolean!
-  code: String
-  text: String
-}
-
-type Image {
-  href: String
-  height: Int
-  width: Int
-  imageURL: String
-  originalHeight: Int
-  originalWidth: Int
-  resized(width: Int, height: Int, version: [String]): ResizedImageUrl
-}
-
-type ResizedImageUrl {
-  factor: Float
-  width: Int
-  height: Int
-  url: String
-}
-
-type Homepage {
-  sections: [HomepageSection!]!
-}
-
-type HomepageSection {
-  type: HomePageSectionType!
-  results: [HomepageResult!]!
-  title: String
-}
-
-type Me {
-  user: User!
-  customer: Customer!
-  activeReservation: Reservation
-  bag: [BagItem!]!
-  savedItems: [BagItem!]!
-}
-
-union HomepageResult = HomepageProductRail | Product | Collection
-
-enum HomePageSectionType {
-  CollectionGroups
-  Products
-  HomepageProductRails
-}
-
-enum PlanID {
-  AllAccess
-  Essential
-}
-
-enum Event {
-  CompletedWaitlistForm
+type FaqSubsection {
+  title: String!
+  text: String!
 }
