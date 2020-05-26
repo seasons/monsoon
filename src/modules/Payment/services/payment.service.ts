@@ -62,20 +62,23 @@ export class PaymentService {
       .plus({ months: 1 })
       .toISO()
 
-    const customerMembership = await this.prisma.client.upsertCustomerMembership(
-      {
+    if (!customer.membership) {
+      await this.prisma.client.upsertCustomerMembership({
         where: { id: customer.membership?.id || "" },
         create: { customer: { connect: { id: customer.id } } },
         update: { customer: { connect: { id: customer.id } } },
-      }
-    )
-
-    await this.prisma.client.createPauseRequest({
-      membership: { connect: { id: customerMembership.id } },
-      pausePending: true,
-      pauseDate: pauseDateISO,
-      resumeDate: resumeDateISO,
-    })
+      })
+    } else {
+      const customerMembership = await this.prisma.client.customerMembership({
+        id: customer.membership?.id,
+      })
+      await this.prisma.client.createPauseRequest({
+        membership: { connect: { id: customerMembership.id } },
+        pausePending: true,
+        pauseDate: pauseDateISO,
+        resumeDate: resumeDateISO,
+      })
+    }
   }
 
   async removeScheduledPause(subscriptionID) {

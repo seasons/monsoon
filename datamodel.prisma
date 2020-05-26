@@ -463,14 +463,14 @@ type Customer {
   detail: CustomerDetail
   billingInfo: BillingInfo
   plan: Plan
-  membership: CustomerMembership @relation(name: "CustomerToCustomerMembership", onDelete: CASCADE)
+  membership: CustomerMembership
   bagItems: [BagItem] @relation(name: "CustomerToBagItem")
   reservations: [Reservation] @relation(name: "CustomerToReservation")
 }
 
 type CustomerMembership {
   id: ID! @id
-  customer: Customer! @relation(name: "CustomerToCustomerMembership", link: INLINE)
+  customer: Customer! @relation(link: INLINE)
   pauseRequests: [PauseRequest] @relation(name: "CustomerMembershipToPauseRequest", onDelete: CASCADE)
 }
 
