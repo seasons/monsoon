@@ -463,14 +463,15 @@ type Customer {
   detail: CustomerDetail
   billingInfo: BillingInfo
   plan: Plan
-  customerMembership: CustomerMembership 
+  membership: CustomerMembership @relation(name: "CustomerToCustomerMembership", onDelete: CASCADE)
   bagItems: [BagItem] @relation(name: "CustomerToBagItem")
   reservations: [Reservation] @relation(name: "CustomerToReservation")
 }
 
 type CustomerMembership {
   id: ID! @id
-  pauseRequests: [PauseRequest] @relation(name: "CustomerMembershipToPauseRequest")
+  customer: Customer! @relation(name: "CustomerToCustomerMembership", link: INLINE)
+  pauseRequests: [PauseRequest] @relation(name: "CustomerMembershipToPauseRequest", onDelete: CASCADE)
 }
 
 type PauseRequest {
@@ -480,7 +481,7 @@ type PauseRequest {
   pausePending: Boolean!
   pauseDate: DateTime
   resumeDate: DateTime
-  customer: Customer!
+  membership: CustomerMembership! @relation(name: "CustomerMembershipToPauseRequest")
 }
 
 type RecentlyViewedProduct {

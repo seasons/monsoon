@@ -2309,7 +2309,7 @@ type Customer {
   detail: CustomerDetail
   billingInfo: BillingInfo
   plan: Plan
-  customerMembership: CustomerMembership
+  membership: CustomerMembership
   bagItems(where: BagItemWhereInput, orderBy: BagItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [BagItem!]
   reservations(where: ReservationWhereInput, orderBy: ReservationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Reservation!]
 }
@@ -2327,7 +2327,7 @@ input CustomerCreateInput {
   detail: CustomerDetailCreateOneInput
   billingInfo: BillingInfoCreateOneInput
   plan: Plan
-  customerMembership: CustomerMembershipCreateOneInput
+  membership: CustomerMembershipCreateOneWithoutCustomerInput
   bagItems: BagItemCreateManyWithoutCustomerInput
   reservations: ReservationCreateManyWithoutCustomerInput
 }
@@ -2339,6 +2339,11 @@ input CustomerCreateOneInput {
 
 input CustomerCreateOneWithoutBagItemsInput {
   create: CustomerCreateWithoutBagItemsInput
+  connect: CustomerWhereUniqueInput
+}
+
+input CustomerCreateOneWithoutMembershipInput {
+  create: CustomerCreateWithoutMembershipInput
   connect: CustomerWhereUniqueInput
 }
 
@@ -2354,7 +2359,18 @@ input CustomerCreateWithoutBagItemsInput {
   detail: CustomerDetailCreateOneInput
   billingInfo: BillingInfoCreateOneInput
   plan: Plan
-  customerMembership: CustomerMembershipCreateOneInput
+  membership: CustomerMembershipCreateOneWithoutCustomerInput
+  reservations: ReservationCreateManyWithoutCustomerInput
+}
+
+input CustomerCreateWithoutMembershipInput {
+  id: ID
+  user: UserCreateOneInput!
+  status: CustomerStatus
+  detail: CustomerDetailCreateOneInput
+  billingInfo: BillingInfoCreateOneInput
+  plan: Plan
+  bagItems: BagItemCreateManyWithoutCustomerInput
   reservations: ReservationCreateManyWithoutCustomerInput
 }
 
@@ -2365,7 +2381,7 @@ input CustomerCreateWithoutReservationsInput {
   detail: CustomerDetailCreateOneInput
   billingInfo: BillingInfoCreateOneInput
   plan: Plan
-  customerMembership: CustomerMembershipCreateOneInput
+  membership: CustomerMembershipCreateOneWithoutCustomerInput
   bagItems: BagItemCreateManyWithoutCustomerInput
 }
 
@@ -2875,6 +2891,7 @@ type CustomerEdge {
 
 type CustomerMembership {
   id: ID!
+  customer: Customer!
   pauseRequests(where: PauseRequestWhereInput, orderBy: PauseRequestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PauseRequest!]
 }
 
@@ -2886,12 +2903,28 @@ type CustomerMembershipConnection {
 
 input CustomerMembershipCreateInput {
   id: ID
-  pauseRequests: PauseRequestCreateManyInput
+  customer: CustomerCreateOneWithoutMembershipInput!
+  pauseRequests: PauseRequestCreateManyWithoutMembershipInput
 }
 
-input CustomerMembershipCreateOneInput {
-  create: CustomerMembershipCreateInput
+input CustomerMembershipCreateOneWithoutCustomerInput {
+  create: CustomerMembershipCreateWithoutCustomerInput
   connect: CustomerMembershipWhereUniqueInput
+}
+
+input CustomerMembershipCreateOneWithoutPauseRequestsInput {
+  create: CustomerMembershipCreateWithoutPauseRequestsInput
+  connect: CustomerMembershipWhereUniqueInput
+}
+
+input CustomerMembershipCreateWithoutCustomerInput {
+  id: ID
+  pauseRequests: PauseRequestCreateManyWithoutMembershipInput
+}
+
+input CustomerMembershipCreateWithoutPauseRequestsInput {
+  id: ID
+  customer: CustomerCreateOneWithoutMembershipInput!
 }
 
 type CustomerMembershipEdge {
@@ -2926,26 +2959,43 @@ input CustomerMembershipSubscriptionWhereInput {
   NOT: [CustomerMembershipSubscriptionWhereInput!]
 }
 
-input CustomerMembershipUpdateDataInput {
-  pauseRequests: PauseRequestUpdateManyInput
-}
-
 input CustomerMembershipUpdateInput {
-  pauseRequests: PauseRequestUpdateManyInput
+  customer: CustomerUpdateOneRequiredWithoutMembershipInput
+  pauseRequests: PauseRequestUpdateManyWithoutMembershipInput
 }
 
-input CustomerMembershipUpdateOneInput {
-  create: CustomerMembershipCreateInput
-  update: CustomerMembershipUpdateDataInput
-  upsert: CustomerMembershipUpsertNestedInput
+input CustomerMembershipUpdateOneRequiredWithoutPauseRequestsInput {
+  create: CustomerMembershipCreateWithoutPauseRequestsInput
+  update: CustomerMembershipUpdateWithoutPauseRequestsDataInput
+  upsert: CustomerMembershipUpsertWithoutPauseRequestsInput
+  connect: CustomerMembershipWhereUniqueInput
+}
+
+input CustomerMembershipUpdateOneWithoutCustomerInput {
+  create: CustomerMembershipCreateWithoutCustomerInput
+  update: CustomerMembershipUpdateWithoutCustomerDataInput
+  upsert: CustomerMembershipUpsertWithoutCustomerInput
   delete: Boolean
   disconnect: Boolean
   connect: CustomerMembershipWhereUniqueInput
 }
 
-input CustomerMembershipUpsertNestedInput {
-  update: CustomerMembershipUpdateDataInput!
-  create: CustomerMembershipCreateInput!
+input CustomerMembershipUpdateWithoutCustomerDataInput {
+  pauseRequests: PauseRequestUpdateManyWithoutMembershipInput
+}
+
+input CustomerMembershipUpdateWithoutPauseRequestsDataInput {
+  customer: CustomerUpdateOneRequiredWithoutMembershipInput
+}
+
+input CustomerMembershipUpsertWithoutCustomerInput {
+  update: CustomerMembershipUpdateWithoutCustomerDataInput!
+  create: CustomerMembershipCreateWithoutCustomerInput!
+}
+
+input CustomerMembershipUpsertWithoutPauseRequestsInput {
+  update: CustomerMembershipUpdateWithoutPauseRequestsDataInput!
+  create: CustomerMembershipCreateWithoutPauseRequestsInput!
 }
 
 input CustomerMembershipWhereInput {
@@ -2963,6 +3013,7 @@ input CustomerMembershipWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
+  customer: CustomerWhereInput
   pauseRequests_every: PauseRequestWhereInput
   pauseRequests_some: PauseRequestWhereInput
   pauseRequests_none: PauseRequestWhereInput
@@ -3025,7 +3076,7 @@ input CustomerUpdateDataInput {
   detail: CustomerDetailUpdateOneInput
   billingInfo: BillingInfoUpdateOneInput
   plan: Plan
-  customerMembership: CustomerMembershipUpdateOneInput
+  membership: CustomerMembershipUpdateOneWithoutCustomerInput
   bagItems: BagItemUpdateManyWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
 }
@@ -3036,7 +3087,7 @@ input CustomerUpdateInput {
   detail: CustomerDetailUpdateOneInput
   billingInfo: BillingInfoUpdateOneInput
   plan: Plan
-  customerMembership: CustomerMembershipUpdateOneInput
+  membership: CustomerMembershipUpdateOneWithoutCustomerInput
   bagItems: BagItemUpdateManyWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
 }
@@ -3060,6 +3111,13 @@ input CustomerUpdateOneRequiredWithoutBagItemsInput {
   connect: CustomerWhereUniqueInput
 }
 
+input CustomerUpdateOneRequiredWithoutMembershipInput {
+  create: CustomerCreateWithoutMembershipInput
+  update: CustomerUpdateWithoutMembershipDataInput
+  upsert: CustomerUpsertWithoutMembershipInput
+  connect: CustomerWhereUniqueInput
+}
+
 input CustomerUpdateOneRequiredWithoutReservationsInput {
   create: CustomerCreateWithoutReservationsInput
   update: CustomerUpdateWithoutReservationsDataInput
@@ -3073,7 +3131,17 @@ input CustomerUpdateWithoutBagItemsDataInput {
   detail: CustomerDetailUpdateOneInput
   billingInfo: BillingInfoUpdateOneInput
   plan: Plan
-  customerMembership: CustomerMembershipUpdateOneInput
+  membership: CustomerMembershipUpdateOneWithoutCustomerInput
+  reservations: ReservationUpdateManyWithoutCustomerInput
+}
+
+input CustomerUpdateWithoutMembershipDataInput {
+  user: UserUpdateOneRequiredInput
+  status: CustomerStatus
+  detail: CustomerDetailUpdateOneInput
+  billingInfo: BillingInfoUpdateOneInput
+  plan: Plan
+  bagItems: BagItemUpdateManyWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
 }
 
@@ -3083,7 +3151,7 @@ input CustomerUpdateWithoutReservationsDataInput {
   detail: CustomerDetailUpdateOneInput
   billingInfo: BillingInfoUpdateOneInput
   plan: Plan
-  customerMembership: CustomerMembershipUpdateOneInput
+  membership: CustomerMembershipUpdateOneWithoutCustomerInput
   bagItems: BagItemUpdateManyWithoutCustomerInput
 }
 
@@ -3095,6 +3163,11 @@ input CustomerUpsertNestedInput {
 input CustomerUpsertWithoutBagItemsInput {
   update: CustomerUpdateWithoutBagItemsDataInput!
   create: CustomerCreateWithoutBagItemsInput!
+}
+
+input CustomerUpsertWithoutMembershipInput {
+  update: CustomerUpdateWithoutMembershipDataInput!
+  create: CustomerCreateWithoutMembershipInput!
 }
 
 input CustomerUpsertWithoutReservationsInput {
@@ -3128,7 +3201,7 @@ input CustomerWhereInput {
   plan_not: Plan
   plan_in: [Plan!]
   plan_not_in: [Plan!]
-  customerMembership: CustomerMembershipWhereInput
+  membership: CustomerMembershipWhereInput
   bagItems_every: BagItemWhereInput
   bagItems_some: BagItemWhereInput
   bagItems_none: BagItemWhereInput

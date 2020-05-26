@@ -2751,7 +2751,7 @@ type Customer {
   detail: CustomerDetail
   billingInfo: BillingInfo
   plan: Plan
-  customerMembership: CustomerMembership
+  membership: CustomerMembership
   bagItems(where: BagItemWhereInput, orderBy: BagItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [BagItem!]
   reservations(where: ReservationWhereInput, orderBy: ReservationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Reservation!]
 }
@@ -2780,6 +2780,11 @@ input CustomerCreateOneInput {
 
 input CustomerCreateOneWithoutBagItemsInput {
   create: CustomerCreateWithoutBagItemsInput
+  connect: CustomerWhereUniqueInput
+}
+
+input CustomerCreateOneWithoutMembershipInput {
+  create: CustomerCreateWithoutMembershipInput
   connect: CustomerWhereUniqueInput
 }
 
@@ -3314,6 +3319,7 @@ type CustomerEdge {
 
 type CustomerMembership implements Node {
   id: ID!
+  customer: Customer!
   pauseRequests(where: PauseRequestWhereInput, orderBy: PauseRequestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PauseRequest!]
 }
 
@@ -3329,12 +3335,28 @@ type CustomerMembershipConnection {
 
 input CustomerMembershipCreateInput {
   id: ID
-  pauseRequests: PauseRequestCreateManyInput
+  customer: CustomerCreateOneWithoutMembershipInput!
+  pauseRequests: PauseRequestCreateManyWithoutMembershipInput
 }
 
-input CustomerMembershipCreateOneInput {
-  create: CustomerMembershipCreateInput
+input CustomerMembershipCreateOneWithoutCustomerInput {
+  create: CustomerMembershipCreateWithoutCustomerInput
   connect: CustomerMembershipWhereUniqueInput
+}
+
+input CustomerMembershipCreateOneWithoutPauseRequestsInput {
+  create: CustomerMembershipCreateWithoutPauseRequestsInput
+  connect: CustomerMembershipWhereUniqueInput
+}
+
+input CustomerMembershipCreateWithoutCustomerInput {
+  id: ID
+  pauseRequests: PauseRequestCreateManyWithoutMembershipInput
+}
+
+input CustomerMembershipCreateWithoutPauseRequestsInput {
+  id: ID
+  customer: CustomerCreateOneWithoutMembershipInput!
 }
 
 """An edge in a connection."""
@@ -3392,26 +3414,43 @@ input CustomerMembershipSubscriptionWhereInput {
   node: CustomerMembershipWhereInput
 }
 
-input CustomerMembershipUpdateDataInput {
-  pauseRequests: PauseRequestUpdateManyInput
-}
-
 input CustomerMembershipUpdateInput {
-  pauseRequests: PauseRequestUpdateManyInput
+  customer: CustomerUpdateOneRequiredWithoutMembershipInput
+  pauseRequests: PauseRequestUpdateManyWithoutMembershipInput
 }
 
-input CustomerMembershipUpdateOneInput {
-  create: CustomerMembershipCreateInput
+input CustomerMembershipUpdateOneRequiredWithoutPauseRequestsInput {
+  create: CustomerMembershipCreateWithoutPauseRequestsInput
+  connect: CustomerMembershipWhereUniqueInput
+  update: CustomerMembershipUpdateWithoutPauseRequestsDataInput
+  upsert: CustomerMembershipUpsertWithoutPauseRequestsInput
+}
+
+input CustomerMembershipUpdateOneWithoutCustomerInput {
+  create: CustomerMembershipCreateWithoutCustomerInput
   connect: CustomerMembershipWhereUniqueInput
   disconnect: Boolean
   delete: Boolean
-  update: CustomerMembershipUpdateDataInput
-  upsert: CustomerMembershipUpsertNestedInput
+  update: CustomerMembershipUpdateWithoutCustomerDataInput
+  upsert: CustomerMembershipUpsertWithoutCustomerInput
 }
 
-input CustomerMembershipUpsertNestedInput {
-  update: CustomerMembershipUpdateDataInput!
-  create: CustomerMembershipCreateInput!
+input CustomerMembershipUpdateWithoutCustomerDataInput {
+  pauseRequests: PauseRequestUpdateManyWithoutMembershipInput
+}
+
+input CustomerMembershipUpdateWithoutPauseRequestsDataInput {
+  customer: CustomerUpdateOneRequiredWithoutMembershipInput
+}
+
+input CustomerMembershipUpsertWithoutCustomerInput {
+  update: CustomerMembershipUpdateWithoutCustomerDataInput!
+  create: CustomerMembershipCreateWithoutCustomerInput!
+}
+
+input CustomerMembershipUpsertWithoutPauseRequestsInput {
+  update: CustomerMembershipUpdateWithoutPauseRequestsDataInput!
+  create: CustomerMembershipCreateWithoutPauseRequestsInput!
 }
 
 input CustomerMembershipWhereInput {
@@ -3463,6 +3502,7 @@ input CustomerMembershipWhereInput {
 
   """All values not ending with the given string."""
   id_not_ends_with: ID
+  customer: CustomerWhereInput
   pauseRequests_every: PauseRequestWhereInput
   pauseRequests_some: PauseRequestWhereInput
   pauseRequests_none: PauseRequestWhereInput
@@ -3555,6 +3595,13 @@ input CustomerUpdateOneRequiredWithoutBagItemsInput {
   connect: CustomerWhereUniqueInput
 }
 
+input CustomerUpdateOneRequiredWithoutMembershipInput {
+  create: CustomerCreateWithoutMembershipInput
+  connect: CustomerWhereUniqueInput
+  update: CustomerUpdateWithoutMembershipDataInput
+  upsert: CustomerUpsertWithoutMembershipInput
+}
+
 input CustomerUpdateOneRequiredWithoutReservationsInput {
   create: CustomerCreateWithoutReservationsInput
   update: CustomerUpdateWithoutReservationsDataInput
@@ -3588,6 +3635,11 @@ input CustomerUpsertNestedInput {
 input CustomerUpsertWithoutBagItemsInput {
   update: CustomerUpdateWithoutBagItemsDataInput!
   create: CustomerCreateWithoutBagItemsInput!
+}
+
+input CustomerUpsertWithoutMembershipInput {
+  update: CustomerUpdateWithoutMembershipDataInput!
+  create: CustomerCreateWithoutMembershipInput!
 }
 
 input CustomerUpsertWithoutReservationsInput {
@@ -14311,6 +14363,11 @@ export interface CustomerCreateOneWithoutBagItemsInput {
   connect?: CustomerWhereUniqueInput | null
 }
 
+export interface CustomerCreateOneWithoutMembershipInput {
+  create?: CustomerCreateWithoutMembershipInput | null
+  connect?: CustomerWhereUniqueInput | null
+}
+
 export interface CustomerCreateOneWithoutReservationsInput {
   create?: CustomerCreateWithoutReservationsInput | null
   connect?: CustomerWhereUniqueInput | null
@@ -14725,12 +14782,28 @@ export interface CustomerDetailWhereUniqueInput {
 
 export interface CustomerMembershipCreateInput {
   id?: ID_Input | null
-  pauseRequests?: PauseRequestCreateManyInput | null
+  customer: CustomerCreateOneWithoutMembershipInput
+  pauseRequests?: PauseRequestCreateManyWithoutMembershipInput | null
 }
 
-export interface CustomerMembershipCreateOneInput {
-  create?: CustomerMembershipCreateInput | null
+export interface CustomerMembershipCreateOneWithoutCustomerInput {
+  create?: CustomerMembershipCreateWithoutCustomerInput | null
   connect?: CustomerMembershipWhereUniqueInput | null
+}
+
+export interface CustomerMembershipCreateOneWithoutPauseRequestsInput {
+  create?: CustomerMembershipCreateWithoutPauseRequestsInput | null
+  connect?: CustomerMembershipWhereUniqueInput | null
+}
+
+export interface CustomerMembershipCreateWithoutCustomerInput {
+  id?: ID_Input | null
+  pauseRequests?: PauseRequestCreateManyWithoutMembershipInput | null
+}
+
+export interface CustomerMembershipCreateWithoutPauseRequestsInput {
+  id?: ID_Input | null
+  customer: CustomerCreateOneWithoutMembershipInput
 }
 
 export interface CustomerMembershipSubscriptionWhereInput {
@@ -14744,26 +14817,43 @@ export interface CustomerMembershipSubscriptionWhereInput {
   node?: CustomerMembershipWhereInput | null
 }
 
-export interface CustomerMembershipUpdateDataInput {
-  pauseRequests?: PauseRequestUpdateManyInput | null
-}
-
 export interface CustomerMembershipUpdateInput {
-  pauseRequests?: PauseRequestUpdateManyInput | null
+  customer?: CustomerUpdateOneRequiredWithoutMembershipInput | null
+  pauseRequests?: PauseRequestUpdateManyWithoutMembershipInput | null
 }
 
-export interface CustomerMembershipUpdateOneInput {
-  create?: CustomerMembershipCreateInput | null
+export interface CustomerMembershipUpdateOneRequiredWithoutPauseRequestsInput {
+  create?: CustomerMembershipCreateWithoutPauseRequestsInput | null
+  connect?: CustomerMembershipWhereUniqueInput | null
+  update?: CustomerMembershipUpdateWithoutPauseRequestsDataInput | null
+  upsert?: CustomerMembershipUpsertWithoutPauseRequestsInput | null
+}
+
+export interface CustomerMembershipUpdateOneWithoutCustomerInput {
+  create?: CustomerMembershipCreateWithoutCustomerInput | null
   connect?: CustomerMembershipWhereUniqueInput | null
   disconnect?: Boolean | null
   delete?: Boolean | null
-  update?: CustomerMembershipUpdateDataInput | null
-  upsert?: CustomerMembershipUpsertNestedInput | null
+  update?: CustomerMembershipUpdateWithoutCustomerDataInput | null
+  upsert?: CustomerMembershipUpsertWithoutCustomerInput | null
 }
 
-export interface CustomerMembershipUpsertNestedInput {
-  update: CustomerMembershipUpdateDataInput
-  create: CustomerMembershipCreateInput
+export interface CustomerMembershipUpdateWithoutCustomerDataInput {
+  pauseRequests?: PauseRequestUpdateManyWithoutMembershipInput | null
+}
+
+export interface CustomerMembershipUpdateWithoutPauseRequestsDataInput {
+  customer?: CustomerUpdateOneRequiredWithoutMembershipInput | null
+}
+
+export interface CustomerMembershipUpsertWithoutCustomerInput {
+  update: CustomerMembershipUpdateWithoutCustomerDataInput
+  create: CustomerMembershipCreateWithoutCustomerInput
+}
+
+export interface CustomerMembershipUpsertWithoutPauseRequestsInput {
+  update: CustomerMembershipUpdateWithoutPauseRequestsDataInput
+  create: CustomerMembershipCreateWithoutPauseRequestsInput
 }
 
 export interface CustomerMembershipWhereInput {
@@ -14784,6 +14874,7 @@ export interface CustomerMembershipWhereInput {
   id_not_starts_with?: ID_Input | null
   id_ends_with?: ID_Input | null
   id_not_ends_with?: ID_Input | null
+  customer?: CustomerWhereInput | null
   pauseRequests_every?: PauseRequestWhereInput | null
   pauseRequests_some?: PauseRequestWhereInput | null
   pauseRequests_none?: PauseRequestWhereInput | null
@@ -14843,6 +14934,13 @@ export interface CustomerUpdateOneRequiredWithoutBagItemsInput {
   connect?: CustomerWhereUniqueInput | null
 }
 
+export interface CustomerUpdateOneRequiredWithoutMembershipInput {
+  create?: CustomerCreateWithoutMembershipInput | null
+  connect?: CustomerWhereUniqueInput | null
+  update?: CustomerUpdateWithoutMembershipDataInput | null
+  upsert?: CustomerUpsertWithoutMembershipInput | null
+}
+
 export interface CustomerUpdateOneRequiredWithoutReservationsInput {
   create?: CustomerCreateWithoutReservationsInput | null
   update?: CustomerUpdateWithoutReservationsDataInput | null
@@ -14876,6 +14974,11 @@ export interface CustomerUpsertNestedInput {
 export interface CustomerUpsertWithoutBagItemsInput {
   update: CustomerUpdateWithoutBagItemsDataInput
   create: CustomerCreateWithoutBagItemsInput
+}
+
+export interface CustomerUpsertWithoutMembershipInput {
+  update: CustomerUpdateWithoutMembershipDataInput
+  create: CustomerCreateWithoutMembershipInput
 }
 
 export interface CustomerUpsertWithoutReservationsInput {
@@ -15960,12 +16063,19 @@ export interface PauseRequestCreateInput {
   pausePending: Boolean
   pauseDate?: DateTime | null
   resumeDate?: DateTime | null
-  customer: CustomerCreateOneInput
+  membership: CustomerMembershipCreateOneWithoutPauseRequestsInput
 }
 
-export interface PauseRequestCreateManyInput {
-  create?: PauseRequestCreateInput[] | PauseRequestCreateInput | null
+export interface PauseRequestCreateManyWithoutMembershipInput {
+  create?: PauseRequestCreateWithoutMembershipInput[] | PauseRequestCreateWithoutMembershipInput | null
   connect?: PauseRequestWhereUniqueInput[] | PauseRequestWhereUniqueInput | null
+}
+
+export interface PauseRequestCreateWithoutMembershipInput {
+  id?: ID_Input | null
+  pausePending: Boolean
+  pauseDate?: DateTime | null
+  resumeDate?: DateTime | null
 }
 
 export interface PauseRequestScalarWhereInput {
@@ -16033,18 +16143,11 @@ export interface PauseRequestSubscriptionWhereInput {
   node?: PauseRequestWhereInput | null
 }
 
-export interface PauseRequestUpdateDataInput {
-  pausePending?: Boolean | null
-  pauseDate?: DateTime | null
-  resumeDate?: DateTime | null
-  customer?: CustomerUpdateOneRequiredInput | null
-}
-
 export interface PauseRequestUpdateInput {
   pausePending?: Boolean | null
   pauseDate?: DateTime | null
   resumeDate?: DateTime | null
-  customer?: CustomerUpdateOneRequiredInput | null
+  membership?: CustomerMembershipUpdateOneRequiredWithoutPauseRequestsInput | null
 }
 
 export interface PauseRequestUpdateManyDataInput {
@@ -16053,22 +16156,22 @@ export interface PauseRequestUpdateManyDataInput {
   resumeDate?: DateTime | null
 }
 
-export interface PauseRequestUpdateManyInput {
-  create?: PauseRequestCreateInput[] | PauseRequestCreateInput | null
-  connect?: PauseRequestWhereUniqueInput[] | PauseRequestWhereUniqueInput | null
-  set?: PauseRequestWhereUniqueInput[] | PauseRequestWhereUniqueInput | null
-  disconnect?: PauseRequestWhereUniqueInput[] | PauseRequestWhereUniqueInput | null
-  delete?: PauseRequestWhereUniqueInput[] | PauseRequestWhereUniqueInput | null
-  update?: PauseRequestUpdateWithWhereUniqueNestedInput[] | PauseRequestUpdateWithWhereUniqueNestedInput | null
-  updateMany?: PauseRequestUpdateManyWithWhereNestedInput[] | PauseRequestUpdateManyWithWhereNestedInput | null
-  deleteMany?: PauseRequestScalarWhereInput[] | PauseRequestScalarWhereInput | null
-  upsert?: PauseRequestUpsertWithWhereUniqueNestedInput[] | PauseRequestUpsertWithWhereUniqueNestedInput | null
-}
-
 export interface PauseRequestUpdateManyMutationInput {
   pausePending?: Boolean | null
   pauseDate?: DateTime | null
   resumeDate?: DateTime | null
+}
+
+export interface PauseRequestUpdateManyWithoutMembershipInput {
+  create?: PauseRequestCreateWithoutMembershipInput[] | PauseRequestCreateWithoutMembershipInput | null
+  connect?: PauseRequestWhereUniqueInput[] | PauseRequestWhereUniqueInput | null
+  set?: PauseRequestWhereUniqueInput[] | PauseRequestWhereUniqueInput | null
+  disconnect?: PauseRequestWhereUniqueInput[] | PauseRequestWhereUniqueInput | null
+  delete?: PauseRequestWhereUniqueInput[] | PauseRequestWhereUniqueInput | null
+  update?: PauseRequestUpdateWithWhereUniqueWithoutMembershipInput[] | PauseRequestUpdateWithWhereUniqueWithoutMembershipInput | null
+  updateMany?: PauseRequestUpdateManyWithWhereNestedInput[] | PauseRequestUpdateManyWithWhereNestedInput | null
+  deleteMany?: PauseRequestScalarWhereInput[] | PauseRequestScalarWhereInput | null
+  upsert?: PauseRequestUpsertWithWhereUniqueWithoutMembershipInput[] | PauseRequestUpsertWithWhereUniqueWithoutMembershipInput | null
 }
 
 export interface PauseRequestUpdateManyWithWhereNestedInput {
@@ -16076,15 +16179,21 @@ export interface PauseRequestUpdateManyWithWhereNestedInput {
   data: PauseRequestUpdateManyDataInput
 }
 
-export interface PauseRequestUpdateWithWhereUniqueNestedInput {
-  where: PauseRequestWhereUniqueInput
-  data: PauseRequestUpdateDataInput
+export interface PauseRequestUpdateWithoutMembershipDataInput {
+  pausePending?: Boolean | null
+  pauseDate?: DateTime | null
+  resumeDate?: DateTime | null
 }
 
-export interface PauseRequestUpsertWithWhereUniqueNestedInput {
+export interface PauseRequestUpdateWithWhereUniqueWithoutMembershipInput {
   where: PauseRequestWhereUniqueInput
-  update: PauseRequestUpdateDataInput
-  create: PauseRequestCreateInput
+  data: PauseRequestUpdateWithoutMembershipDataInput
+}
+
+export interface PauseRequestUpsertWithWhereUniqueWithoutMembershipInput {
+  where: PauseRequestWhereUniqueInput
+  update: PauseRequestUpdateWithoutMembershipDataInput
+  create: PauseRequestCreateWithoutMembershipInput
 }
 
 export interface PauseRequestWhereInput {
@@ -16139,7 +16248,7 @@ export interface PauseRequestWhereInput {
   resumeDate_lte?: DateTime | null
   resumeDate_gt?: DateTime | null
   resumeDate_gte?: DateTime | null
-  customer?: CustomerWhereInput | null
+  membership?: CustomerMembershipWhereInput | null
 }
 
 export interface PauseRequestWhereUniqueInput {
@@ -21892,7 +22001,7 @@ export interface Customer {
   detail?: CustomerDetail | null
   billingInfo?: BillingInfo | null
   plan?: Plan | null
-  customerMembership?: CustomerMembership | null
+  membership?: CustomerMembership | null
   bagItems?: Array<BagItem> | null
   reservations?: Array<Reservation> | null
 }
@@ -21977,6 +22086,7 @@ export interface CustomerEdge {
 
 export interface CustomerMembership extends Node {
   id: ID_Output
+  customer: Customer
   pauseRequests?: Array<PauseRequest> | null
 }
 

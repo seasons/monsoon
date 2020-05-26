@@ -4048,10 +4048,34 @@ export interface PauseRequestWhereInput {
   resumeDate_lte?: Maybe<DateTimeInput>;
   resumeDate_gt?: Maybe<DateTimeInput>;
   resumeDate_gte?: Maybe<DateTimeInput>;
-  customer?: Maybe<CustomerWhereInput>;
+  membership?: Maybe<CustomerMembershipWhereInput>;
   AND?: Maybe<PauseRequestWhereInput[] | PauseRequestWhereInput>;
   OR?: Maybe<PauseRequestWhereInput[] | PauseRequestWhereInput>;
   NOT?: Maybe<PauseRequestWhereInput[] | PauseRequestWhereInput>;
+}
+
+export interface CustomerMembershipWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  customer?: Maybe<CustomerWhereInput>;
+  pauseRequests_every?: Maybe<PauseRequestWhereInput>;
+  pauseRequests_some?: Maybe<PauseRequestWhereInput>;
+  pauseRequests_none?: Maybe<PauseRequestWhereInput>;
+  AND?: Maybe<CustomerMembershipWhereInput[] | CustomerMembershipWhereInput>;
+  OR?: Maybe<CustomerMembershipWhereInput[] | CustomerMembershipWhereInput>;
+  NOT?: Maybe<CustomerMembershipWhereInput[] | CustomerMembershipWhereInput>;
 }
 
 export interface CustomerWhereInput {
@@ -4080,7 +4104,7 @@ export interface CustomerWhereInput {
   plan_not?: Maybe<Plan>;
   plan_in?: Maybe<Plan[] | Plan>;
   plan_not_in?: Maybe<Plan[] | Plan>;
-  customerMembership?: Maybe<CustomerMembershipWhereInput>;
+  membership?: Maybe<CustomerMembershipWhereInput>;
   bagItems_every?: Maybe<BagItemWhereInput>;
   bagItems_some?: Maybe<BagItemWhereInput>;
   bagItems_none?: Maybe<BagItemWhereInput>;
@@ -4517,29 +4541,6 @@ export interface BillingInfoWhereInput {
   AND?: Maybe<BillingInfoWhereInput[] | BillingInfoWhereInput>;
   OR?: Maybe<BillingInfoWhereInput[] | BillingInfoWhereInput>;
   NOT?: Maybe<BillingInfoWhereInput[] | BillingInfoWhereInput>;
-}
-
-export interface CustomerMembershipWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  pauseRequests_every?: Maybe<PauseRequestWhereInput>;
-  pauseRequests_some?: Maybe<PauseRequestWhereInput>;
-  pauseRequests_none?: Maybe<PauseRequestWhereInput>;
-  AND?: Maybe<CustomerMembershipWhereInput[] | CustomerMembershipWhereInput>;
-  OR?: Maybe<CustomerMembershipWhereInput[] | CustomerMembershipWhereInput>;
-  NOT?: Maybe<CustomerMembershipWhereInput[] | CustomerMembershipWhereInput>;
 }
 
 export interface BagItemWhereInput {
@@ -5809,7 +5810,7 @@ export interface CustomerCreateWithoutBagItemsInput {
   detail?: Maybe<CustomerDetailCreateOneInput>;
   billingInfo?: Maybe<BillingInfoCreateOneInput>;
   plan?: Maybe<Plan>;
-  customerMembership?: Maybe<CustomerMembershipCreateOneInput>;
+  membership?: Maybe<CustomerMembershipCreateOneWithoutCustomerInput>;
   reservations?: Maybe<ReservationCreateManyWithoutCustomerInput>;
 }
 
@@ -6362,86 +6363,31 @@ export interface BillingInfoCreateInput {
   postal_code?: Maybe<String>;
 }
 
-export interface CustomerMembershipCreateOneInput {
-  create?: Maybe<CustomerMembershipCreateInput>;
+export interface CustomerMembershipCreateOneWithoutCustomerInput {
+  create?: Maybe<CustomerMembershipCreateWithoutCustomerInput>;
   connect?: Maybe<CustomerMembershipWhereUniqueInput>;
 }
 
-export interface CustomerMembershipCreateInput {
+export interface CustomerMembershipCreateWithoutCustomerInput {
   id?: Maybe<ID_Input>;
-  pauseRequests?: Maybe<PauseRequestCreateManyInput>;
+  pauseRequests?: Maybe<PauseRequestCreateManyWithoutMembershipInput>;
 }
 
-export interface PauseRequestCreateManyInput {
-  create?: Maybe<PauseRequestCreateInput[] | PauseRequestCreateInput>;
+export interface PauseRequestCreateManyWithoutMembershipInput {
+  create?: Maybe<
+    | PauseRequestCreateWithoutMembershipInput[]
+    | PauseRequestCreateWithoutMembershipInput
+  >;
   connect?: Maybe<
     PauseRequestWhereUniqueInput[] | PauseRequestWhereUniqueInput
   >;
 }
 
-export interface PauseRequestCreateInput {
+export interface PauseRequestCreateWithoutMembershipInput {
   id?: Maybe<ID_Input>;
   pausePending: Boolean;
   pauseDate?: Maybe<DateTimeInput>;
   resumeDate?: Maybe<DateTimeInput>;
-  customer: CustomerCreateOneInput;
-}
-
-export interface CustomerCreateOneInput {
-  create?: Maybe<CustomerCreateInput>;
-  connect?: Maybe<CustomerWhereUniqueInput>;
-}
-
-export interface CustomerCreateInput {
-  id?: Maybe<ID_Input>;
-  user: UserCreateOneInput;
-  status?: Maybe<CustomerStatus>;
-  detail?: Maybe<CustomerDetailCreateOneInput>;
-  billingInfo?: Maybe<BillingInfoCreateOneInput>;
-  plan?: Maybe<Plan>;
-  customerMembership?: Maybe<CustomerMembershipCreateOneInput>;
-  bagItems?: Maybe<BagItemCreateManyWithoutCustomerInput>;
-  reservations?: Maybe<ReservationCreateManyWithoutCustomerInput>;
-}
-
-export interface BagItemCreateManyWithoutCustomerInput {
-  create?: Maybe<
-    BagItemCreateWithoutCustomerInput[] | BagItemCreateWithoutCustomerInput
-  >;
-  connect?: Maybe<BagItemWhereUniqueInput[] | BagItemWhereUniqueInput>;
-}
-
-export interface BagItemCreateWithoutCustomerInput {
-  id?: Maybe<ID_Input>;
-  productVariant: ProductVariantCreateOneInput;
-  position?: Maybe<Int>;
-  saved?: Maybe<Boolean>;
-  status: BagItemStatus;
-}
-
-export interface ProductVariantCreateOneInput {
-  create?: Maybe<ProductVariantCreateInput>;
-  connect?: Maybe<ProductVariantWhereUniqueInput>;
-}
-
-export interface ProductVariantCreateInput {
-  id?: Maybe<ID_Input>;
-  sku?: Maybe<String>;
-  color: ColorCreateOneWithoutProductVariantsInput;
-  internalSize?: Maybe<SizeCreateOneInput>;
-  manufacturerSizes?: Maybe<SizeCreateManyInput>;
-  weight?: Maybe<Float>;
-  height?: Maybe<Float>;
-  productID: String;
-  product: ProductCreateOneWithoutVariantsInput;
-  retailPrice?: Maybe<Float>;
-  physicalProducts?: Maybe<PhysicalProductCreateManyWithoutProductVariantInput>;
-  total: Int;
-  reservable: Int;
-  reserved: Int;
-  nonReservable: Int;
-  offloaded: Int;
-  stored: Int;
 }
 
 export interface ReservationCreateManyWithoutCustomerInput {
@@ -6552,6 +6498,31 @@ export interface PhysicalProductCreateOneInput {
   connect?: Maybe<PhysicalProductWhereUniqueInput>;
 }
 
+export interface ProductVariantCreateOneInput {
+  create?: Maybe<ProductVariantCreateInput>;
+  connect?: Maybe<ProductVariantWhereUniqueInput>;
+}
+
+export interface ProductVariantCreateInput {
+  id?: Maybe<ID_Input>;
+  sku?: Maybe<String>;
+  color: ColorCreateOneWithoutProductVariantsInput;
+  internalSize?: Maybe<SizeCreateOneInput>;
+  manufacturerSizes?: Maybe<SizeCreateManyInput>;
+  weight?: Maybe<Float>;
+  height?: Maybe<Float>;
+  productID: String;
+  product: ProductCreateOneWithoutVariantsInput;
+  retailPrice?: Maybe<Float>;
+  physicalProducts?: Maybe<PhysicalProductCreateManyWithoutProductVariantInput>;
+  total: Int;
+  reservable: Int;
+  reserved: Int;
+  nonReservable: Int;
+  offloaded: Int;
+  stored: Int;
+}
+
 export interface BagItemUpdateInput {
   customer?: Maybe<CustomerUpdateOneRequiredWithoutBagItemsInput>;
   productVariant?: Maybe<ProductVariantUpdateOneRequiredInput>;
@@ -6573,7 +6544,7 @@ export interface CustomerUpdateWithoutBagItemsDataInput {
   detail?: Maybe<CustomerDetailUpdateOneInput>;
   billingInfo?: Maybe<BillingInfoUpdateOneInput>;
   plan?: Maybe<Plan>;
-  customerMembership?: Maybe<CustomerMembershipUpdateOneInput>;
+  membership?: Maybe<CustomerMembershipUpdateOneWithoutCustomerInput>;
   reservations?: Maybe<ReservationUpdateManyWithoutCustomerInput>;
 }
 
@@ -8496,28 +8467,23 @@ export interface BillingInfoUpsertNestedInput {
   create: BillingInfoCreateInput;
 }
 
-export interface CustomerMembershipUpdateOneInput {
-  create?: Maybe<CustomerMembershipCreateInput>;
-  update?: Maybe<CustomerMembershipUpdateDataInput>;
-  upsert?: Maybe<CustomerMembershipUpsertNestedInput>;
+export interface CustomerMembershipUpdateOneWithoutCustomerInput {
+  create?: Maybe<CustomerMembershipCreateWithoutCustomerInput>;
+  update?: Maybe<CustomerMembershipUpdateWithoutCustomerDataInput>;
+  upsert?: Maybe<CustomerMembershipUpsertWithoutCustomerInput>;
   delete?: Maybe<Boolean>;
   disconnect?: Maybe<Boolean>;
   connect?: Maybe<CustomerMembershipWhereUniqueInput>;
 }
 
-export interface CustomerMembershipUpdateDataInput {
-  pauseRequests?: Maybe<PauseRequestUpdateManyInput>;
+export interface CustomerMembershipUpdateWithoutCustomerDataInput {
+  pauseRequests?: Maybe<PauseRequestUpdateManyWithoutMembershipInput>;
 }
 
-export interface PauseRequestUpdateManyInput {
-  create?: Maybe<PauseRequestCreateInput[] | PauseRequestCreateInput>;
-  update?: Maybe<
-    | PauseRequestUpdateWithWhereUniqueNestedInput[]
-    | PauseRequestUpdateWithWhereUniqueNestedInput
-  >;
-  upsert?: Maybe<
-    | PauseRequestUpsertWithWhereUniqueNestedInput[]
-    | PauseRequestUpsertWithWhereUniqueNestedInput
+export interface PauseRequestUpdateManyWithoutMembershipInput {
+  create?: Maybe<
+    | PauseRequestCreateWithoutMembershipInput[]
+    | PauseRequestCreateWithoutMembershipInput
   >;
   delete?: Maybe<PauseRequestWhereUniqueInput[] | PauseRequestWhereUniqueInput>;
   connect?: Maybe<
@@ -8526,6 +8492,14 @@ export interface PauseRequestUpdateManyInput {
   set?: Maybe<PauseRequestWhereUniqueInput[] | PauseRequestWhereUniqueInput>;
   disconnect?: Maybe<
     PauseRequestWhereUniqueInput[] | PauseRequestWhereUniqueInput
+  >;
+  update?: Maybe<
+    | PauseRequestUpdateWithWhereUniqueWithoutMembershipInput[]
+    | PauseRequestUpdateWithWhereUniqueWithoutMembershipInput
+  >;
+  upsert?: Maybe<
+    | PauseRequestUpsertWithWhereUniqueWithoutMembershipInput[]
+    | PauseRequestUpsertWithWhereUniqueWithoutMembershipInput
   >;
   deleteMany?: Maybe<
     PauseRequestScalarWhereInput[] | PauseRequestScalarWhereInput
@@ -8536,109 +8510,24 @@ export interface PauseRequestUpdateManyInput {
   >;
 }
 
-export interface PauseRequestUpdateWithWhereUniqueNestedInput {
+export interface PauseRequestUpdateWithWhereUniqueWithoutMembershipInput {
   where: PauseRequestWhereUniqueInput;
-  data: PauseRequestUpdateDataInput;
+  data: PauseRequestUpdateWithoutMembershipDataInput;
 }
 
-export interface PauseRequestUpdateDataInput {
+export interface PauseRequestUpdateWithoutMembershipDataInput {
   pausePending?: Maybe<Boolean>;
   pauseDate?: Maybe<DateTimeInput>;
   resumeDate?: Maybe<DateTimeInput>;
-  customer?: Maybe<CustomerUpdateOneRequiredInput>;
 }
 
-export interface CustomerUpdateOneRequiredInput {
-  create?: Maybe<CustomerCreateInput>;
-  update?: Maybe<CustomerUpdateDataInput>;
-  upsert?: Maybe<CustomerUpsertNestedInput>;
-  connect?: Maybe<CustomerWhereUniqueInput>;
+export interface PauseRequestUpsertWithWhereUniqueWithoutMembershipInput {
+  where: PauseRequestWhereUniqueInput;
+  update: PauseRequestUpdateWithoutMembershipDataInput;
+  create: PauseRequestCreateWithoutMembershipInput;
 }
 
-export interface CustomerUpdateDataInput {
-  user?: Maybe<UserUpdateOneRequiredInput>;
-  status?: Maybe<CustomerStatus>;
-  detail?: Maybe<CustomerDetailUpdateOneInput>;
-  billingInfo?: Maybe<BillingInfoUpdateOneInput>;
-  plan?: Maybe<Plan>;
-  customerMembership?: Maybe<CustomerMembershipUpdateOneInput>;
-  bagItems?: Maybe<BagItemUpdateManyWithoutCustomerInput>;
-  reservations?: Maybe<ReservationUpdateManyWithoutCustomerInput>;
-}
-
-export interface BagItemUpdateManyWithoutCustomerInput {
-  create?: Maybe<
-    BagItemCreateWithoutCustomerInput[] | BagItemCreateWithoutCustomerInput
-  >;
-  delete?: Maybe<BagItemWhereUniqueInput[] | BagItemWhereUniqueInput>;
-  connect?: Maybe<BagItemWhereUniqueInput[] | BagItemWhereUniqueInput>;
-  set?: Maybe<BagItemWhereUniqueInput[] | BagItemWhereUniqueInput>;
-  disconnect?: Maybe<BagItemWhereUniqueInput[] | BagItemWhereUniqueInput>;
-  update?: Maybe<
-    | BagItemUpdateWithWhereUniqueWithoutCustomerInput[]
-    | BagItemUpdateWithWhereUniqueWithoutCustomerInput
-  >;
-  upsert?: Maybe<
-    | BagItemUpsertWithWhereUniqueWithoutCustomerInput[]
-    | BagItemUpsertWithWhereUniqueWithoutCustomerInput
-  >;
-  deleteMany?: Maybe<BagItemScalarWhereInput[] | BagItemScalarWhereInput>;
-  updateMany?: Maybe<
-    | BagItemUpdateManyWithWhereNestedInput[]
-    | BagItemUpdateManyWithWhereNestedInput
-  >;
-}
-
-export interface BagItemUpdateWithWhereUniqueWithoutCustomerInput {
-  where: BagItemWhereUniqueInput;
-  data: BagItemUpdateWithoutCustomerDataInput;
-}
-
-export interface BagItemUpdateWithoutCustomerDataInput {
-  productVariant?: Maybe<ProductVariantUpdateOneRequiredInput>;
-  position?: Maybe<Int>;
-  saved?: Maybe<Boolean>;
-  status?: Maybe<BagItemStatus>;
-}
-
-export interface ProductVariantUpdateOneRequiredInput {
-  create?: Maybe<ProductVariantCreateInput>;
-  update?: Maybe<ProductVariantUpdateDataInput>;
-  upsert?: Maybe<ProductVariantUpsertNestedInput>;
-  connect?: Maybe<ProductVariantWhereUniqueInput>;
-}
-
-export interface ProductVariantUpdateDataInput {
-  sku?: Maybe<String>;
-  color?: Maybe<ColorUpdateOneRequiredWithoutProductVariantsInput>;
-  internalSize?: Maybe<SizeUpdateOneInput>;
-  manufacturerSizes?: Maybe<SizeUpdateManyInput>;
-  weight?: Maybe<Float>;
-  height?: Maybe<Float>;
-  productID?: Maybe<String>;
-  product?: Maybe<ProductUpdateOneRequiredWithoutVariantsInput>;
-  retailPrice?: Maybe<Float>;
-  physicalProducts?: Maybe<PhysicalProductUpdateManyWithoutProductVariantInput>;
-  total?: Maybe<Int>;
-  reservable?: Maybe<Int>;
-  reserved?: Maybe<Int>;
-  nonReservable?: Maybe<Int>;
-  offloaded?: Maybe<Int>;
-  stored?: Maybe<Int>;
-}
-
-export interface ProductVariantUpsertNestedInput {
-  update: ProductVariantUpdateDataInput;
-  create: ProductVariantCreateInput;
-}
-
-export interface BagItemUpsertWithWhereUniqueWithoutCustomerInput {
-  where: BagItemWhereUniqueInput;
-  update: BagItemUpdateWithoutCustomerDataInput;
-  create: BagItemCreateWithoutCustomerInput;
-}
-
-export interface BagItemScalarWhereInput {
+export interface PauseRequestScalarWhereInput {
   id?: Maybe<ID_Input>;
   id_not?: Maybe<ID_Input>;
   id_in?: Maybe<ID_Input[] | ID_Input>;
@@ -8653,34 +8542,59 @@ export interface BagItemScalarWhereInput {
   id_not_starts_with?: Maybe<ID_Input>;
   id_ends_with?: Maybe<ID_Input>;
   id_not_ends_with?: Maybe<ID_Input>;
-  position?: Maybe<Int>;
-  position_not?: Maybe<Int>;
-  position_in?: Maybe<Int[] | Int>;
-  position_not_in?: Maybe<Int[] | Int>;
-  position_lt?: Maybe<Int>;
-  position_lte?: Maybe<Int>;
-  position_gt?: Maybe<Int>;
-  position_gte?: Maybe<Int>;
-  saved?: Maybe<Boolean>;
-  saved_not?: Maybe<Boolean>;
-  status?: Maybe<BagItemStatus>;
-  status_not?: Maybe<BagItemStatus>;
-  status_in?: Maybe<BagItemStatus[] | BagItemStatus>;
-  status_not_in?: Maybe<BagItemStatus[] | BagItemStatus>;
-  AND?: Maybe<BagItemScalarWhereInput[] | BagItemScalarWhereInput>;
-  OR?: Maybe<BagItemScalarWhereInput[] | BagItemScalarWhereInput>;
-  NOT?: Maybe<BagItemScalarWhereInput[] | BagItemScalarWhereInput>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  pausePending?: Maybe<Boolean>;
+  pausePending_not?: Maybe<Boolean>;
+  pauseDate?: Maybe<DateTimeInput>;
+  pauseDate_not?: Maybe<DateTimeInput>;
+  pauseDate_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  pauseDate_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  pauseDate_lt?: Maybe<DateTimeInput>;
+  pauseDate_lte?: Maybe<DateTimeInput>;
+  pauseDate_gt?: Maybe<DateTimeInput>;
+  pauseDate_gte?: Maybe<DateTimeInput>;
+  resumeDate?: Maybe<DateTimeInput>;
+  resumeDate_not?: Maybe<DateTimeInput>;
+  resumeDate_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  resumeDate_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  resumeDate_lt?: Maybe<DateTimeInput>;
+  resumeDate_lte?: Maybe<DateTimeInput>;
+  resumeDate_gt?: Maybe<DateTimeInput>;
+  resumeDate_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<PauseRequestScalarWhereInput[] | PauseRequestScalarWhereInput>;
+  OR?: Maybe<PauseRequestScalarWhereInput[] | PauseRequestScalarWhereInput>;
+  NOT?: Maybe<PauseRequestScalarWhereInput[] | PauseRequestScalarWhereInput>;
 }
 
-export interface BagItemUpdateManyWithWhereNestedInput {
-  where: BagItemScalarWhereInput;
-  data: BagItemUpdateManyDataInput;
+export interface PauseRequestUpdateManyWithWhereNestedInput {
+  where: PauseRequestScalarWhereInput;
+  data: PauseRequestUpdateManyDataInput;
 }
 
-export interface BagItemUpdateManyDataInput {
-  position?: Maybe<Int>;
-  saved?: Maybe<Boolean>;
-  status?: Maybe<BagItemStatus>;
+export interface PauseRequestUpdateManyDataInput {
+  pausePending?: Maybe<Boolean>;
+  pauseDate?: Maybe<DateTimeInput>;
+  resumeDate?: Maybe<DateTimeInput>;
+}
+
+export interface CustomerMembershipUpsertWithoutCustomerInput {
+  update: CustomerMembershipUpdateWithoutCustomerDataInput;
+  create: CustomerMembershipCreateWithoutCustomerInput;
 }
 
 export interface ReservationUpdateManyWithoutCustomerInput {
@@ -9076,90 +8990,40 @@ export interface ReservationUpdateManyDataInput {
   reminderSentAt?: Maybe<DateTimeInput>;
 }
 
-export interface CustomerUpsertNestedInput {
-  update: CustomerUpdateDataInput;
-  create: CustomerCreateInput;
-}
-
-export interface PauseRequestUpsertWithWhereUniqueNestedInput {
-  where: PauseRequestWhereUniqueInput;
-  update: PauseRequestUpdateDataInput;
-  create: PauseRequestCreateInput;
-}
-
-export interface PauseRequestScalarWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  createdAt?: Maybe<DateTimeInput>;
-  createdAt_not?: Maybe<DateTimeInput>;
-  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_lt?: Maybe<DateTimeInput>;
-  createdAt_lte?: Maybe<DateTimeInput>;
-  createdAt_gt?: Maybe<DateTimeInput>;
-  createdAt_gte?: Maybe<DateTimeInput>;
-  updatedAt?: Maybe<DateTimeInput>;
-  updatedAt_not?: Maybe<DateTimeInput>;
-  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_lt?: Maybe<DateTimeInput>;
-  updatedAt_lte?: Maybe<DateTimeInput>;
-  updatedAt_gt?: Maybe<DateTimeInput>;
-  updatedAt_gte?: Maybe<DateTimeInput>;
-  pausePending?: Maybe<Boolean>;
-  pausePending_not?: Maybe<Boolean>;
-  pauseDate?: Maybe<DateTimeInput>;
-  pauseDate_not?: Maybe<DateTimeInput>;
-  pauseDate_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  pauseDate_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  pauseDate_lt?: Maybe<DateTimeInput>;
-  pauseDate_lte?: Maybe<DateTimeInput>;
-  pauseDate_gt?: Maybe<DateTimeInput>;
-  pauseDate_gte?: Maybe<DateTimeInput>;
-  resumeDate?: Maybe<DateTimeInput>;
-  resumeDate_not?: Maybe<DateTimeInput>;
-  resumeDate_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  resumeDate_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  resumeDate_lt?: Maybe<DateTimeInput>;
-  resumeDate_lte?: Maybe<DateTimeInput>;
-  resumeDate_gt?: Maybe<DateTimeInput>;
-  resumeDate_gte?: Maybe<DateTimeInput>;
-  AND?: Maybe<PauseRequestScalarWhereInput[] | PauseRequestScalarWhereInput>;
-  OR?: Maybe<PauseRequestScalarWhereInput[] | PauseRequestScalarWhereInput>;
-  NOT?: Maybe<PauseRequestScalarWhereInput[] | PauseRequestScalarWhereInput>;
-}
-
-export interface PauseRequestUpdateManyWithWhereNestedInput {
-  where: PauseRequestScalarWhereInput;
-  data: PauseRequestUpdateManyDataInput;
-}
-
-export interface PauseRequestUpdateManyDataInput {
-  pausePending?: Maybe<Boolean>;
-  pauseDate?: Maybe<DateTimeInput>;
-  resumeDate?: Maybe<DateTimeInput>;
-}
-
-export interface CustomerMembershipUpsertNestedInput {
-  update: CustomerMembershipUpdateDataInput;
-  create: CustomerMembershipCreateInput;
-}
-
 export interface CustomerUpsertWithoutBagItemsInput {
   update: CustomerUpdateWithoutBagItemsDataInput;
   create: CustomerCreateWithoutBagItemsInput;
+}
+
+export interface ProductVariantUpdateOneRequiredInput {
+  create?: Maybe<ProductVariantCreateInput>;
+  update?: Maybe<ProductVariantUpdateDataInput>;
+  upsert?: Maybe<ProductVariantUpsertNestedInput>;
+  connect?: Maybe<ProductVariantWhereUniqueInput>;
+}
+
+export interface ProductVariantUpdateDataInput {
+  sku?: Maybe<String>;
+  color?: Maybe<ColorUpdateOneRequiredWithoutProductVariantsInput>;
+  internalSize?: Maybe<SizeUpdateOneInput>;
+  manufacturerSizes?: Maybe<SizeUpdateManyInput>;
+  weight?: Maybe<Float>;
+  height?: Maybe<Float>;
+  productID?: Maybe<String>;
+  product?: Maybe<ProductUpdateOneRequiredWithoutVariantsInput>;
+  retailPrice?: Maybe<Float>;
+  physicalProducts?: Maybe<PhysicalProductUpdateManyWithoutProductVariantInput>;
+  total?: Maybe<Int>;
+  reservable?: Maybe<Int>;
+  reserved?: Maybe<Int>;
+  nonReservable?: Maybe<Int>;
+  offloaded?: Maybe<Int>;
+  stored?: Maybe<Int>;
+}
+
+export interface ProductVariantUpsertNestedInput {
+  update: ProductVariantUpdateDataInput;
+  create: ProductVariantCreateInput;
 }
 
 export interface BagItemUpdateManyMutationInput {
@@ -9677,15 +9541,128 @@ export interface ColorUpdateManyMutationInput {
   hexCode?: Maybe<String>;
 }
 
+export interface CustomerCreateInput {
+  id?: Maybe<ID_Input>;
+  user: UserCreateOneInput;
+  status?: Maybe<CustomerStatus>;
+  detail?: Maybe<CustomerDetailCreateOneInput>;
+  billingInfo?: Maybe<BillingInfoCreateOneInput>;
+  plan?: Maybe<Plan>;
+  membership?: Maybe<CustomerMembershipCreateOneWithoutCustomerInput>;
+  bagItems?: Maybe<BagItemCreateManyWithoutCustomerInput>;
+  reservations?: Maybe<ReservationCreateManyWithoutCustomerInput>;
+}
+
+export interface BagItemCreateManyWithoutCustomerInput {
+  create?: Maybe<
+    BagItemCreateWithoutCustomerInput[] | BagItemCreateWithoutCustomerInput
+  >;
+  connect?: Maybe<BagItemWhereUniqueInput[] | BagItemWhereUniqueInput>;
+}
+
+export interface BagItemCreateWithoutCustomerInput {
+  id?: Maybe<ID_Input>;
+  productVariant: ProductVariantCreateOneInput;
+  position?: Maybe<Int>;
+  saved?: Maybe<Boolean>;
+  status: BagItemStatus;
+}
+
 export interface CustomerUpdateInput {
   user?: Maybe<UserUpdateOneRequiredInput>;
   status?: Maybe<CustomerStatus>;
   detail?: Maybe<CustomerDetailUpdateOneInput>;
   billingInfo?: Maybe<BillingInfoUpdateOneInput>;
   plan?: Maybe<Plan>;
-  customerMembership?: Maybe<CustomerMembershipUpdateOneInput>;
+  membership?: Maybe<CustomerMembershipUpdateOneWithoutCustomerInput>;
   bagItems?: Maybe<BagItemUpdateManyWithoutCustomerInput>;
   reservations?: Maybe<ReservationUpdateManyWithoutCustomerInput>;
+}
+
+export interface BagItemUpdateManyWithoutCustomerInput {
+  create?: Maybe<
+    BagItemCreateWithoutCustomerInput[] | BagItemCreateWithoutCustomerInput
+  >;
+  delete?: Maybe<BagItemWhereUniqueInput[] | BagItemWhereUniqueInput>;
+  connect?: Maybe<BagItemWhereUniqueInput[] | BagItemWhereUniqueInput>;
+  set?: Maybe<BagItemWhereUniqueInput[] | BagItemWhereUniqueInput>;
+  disconnect?: Maybe<BagItemWhereUniqueInput[] | BagItemWhereUniqueInput>;
+  update?: Maybe<
+    | BagItemUpdateWithWhereUniqueWithoutCustomerInput[]
+    | BagItemUpdateWithWhereUniqueWithoutCustomerInput
+  >;
+  upsert?: Maybe<
+    | BagItemUpsertWithWhereUniqueWithoutCustomerInput[]
+    | BagItemUpsertWithWhereUniqueWithoutCustomerInput
+  >;
+  deleteMany?: Maybe<BagItemScalarWhereInput[] | BagItemScalarWhereInput>;
+  updateMany?: Maybe<
+    | BagItemUpdateManyWithWhereNestedInput[]
+    | BagItemUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface BagItemUpdateWithWhereUniqueWithoutCustomerInput {
+  where: BagItemWhereUniqueInput;
+  data: BagItemUpdateWithoutCustomerDataInput;
+}
+
+export interface BagItemUpdateWithoutCustomerDataInput {
+  productVariant?: Maybe<ProductVariantUpdateOneRequiredInput>;
+  position?: Maybe<Int>;
+  saved?: Maybe<Boolean>;
+  status?: Maybe<BagItemStatus>;
+}
+
+export interface BagItemUpsertWithWhereUniqueWithoutCustomerInput {
+  where: BagItemWhereUniqueInput;
+  update: BagItemUpdateWithoutCustomerDataInput;
+  create: BagItemCreateWithoutCustomerInput;
+}
+
+export interface BagItemScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  position?: Maybe<Int>;
+  position_not?: Maybe<Int>;
+  position_in?: Maybe<Int[] | Int>;
+  position_not_in?: Maybe<Int[] | Int>;
+  position_lt?: Maybe<Int>;
+  position_lte?: Maybe<Int>;
+  position_gt?: Maybe<Int>;
+  position_gte?: Maybe<Int>;
+  saved?: Maybe<Boolean>;
+  saved_not?: Maybe<Boolean>;
+  status?: Maybe<BagItemStatus>;
+  status_not?: Maybe<BagItemStatus>;
+  status_in?: Maybe<BagItemStatus[] | BagItemStatus>;
+  status_not_in?: Maybe<BagItemStatus[] | BagItemStatus>;
+  AND?: Maybe<BagItemScalarWhereInput[] | BagItemScalarWhereInput>;
+  OR?: Maybe<BagItemScalarWhereInput[] | BagItemScalarWhereInput>;
+  NOT?: Maybe<BagItemScalarWhereInput[] | BagItemScalarWhereInput>;
+}
+
+export interface BagItemUpdateManyWithWhereNestedInput {
+  where: BagItemScalarWhereInput;
+  data: BagItemUpdateManyDataInput;
+}
+
+export interface BagItemUpdateManyDataInput {
+  position?: Maybe<Int>;
+  saved?: Maybe<Boolean>;
+  status?: Maybe<BagItemStatus>;
 }
 
 export interface CustomerUpdateManyMutationInput {
@@ -9843,11 +9820,47 @@ export interface PackageUpdateManyMutationInput {
   weight?: Maybe<Float>;
 }
 
+export interface PauseRequestCreateInput {
+  id?: Maybe<ID_Input>;
+  pausePending: Boolean;
+  pauseDate?: Maybe<DateTimeInput>;
+  resumeDate?: Maybe<DateTimeInput>;
+  membership: CustomerMembershipCreateOneWithoutPauseRequestsInput;
+}
+
+export interface CustomerMembershipCreateOneWithoutPauseRequestsInput {
+  create?: Maybe<CustomerMembershipCreateWithoutPauseRequestsInput>;
+  connect?: Maybe<CustomerMembershipWhereUniqueInput>;
+}
+
+export interface CustomerMembershipCreateWithoutPauseRequestsInput {
+  id?: Maybe<ID_Input>;
+  customer: CustomerCreateOneWithoutMembershipInput;
+}
+
 export interface PauseRequestUpdateInput {
   pausePending?: Maybe<Boolean>;
   pauseDate?: Maybe<DateTimeInput>;
   resumeDate?: Maybe<DateTimeInput>;
-  customer?: Maybe<CustomerUpdateOneRequiredInput>;
+  membership?: Maybe<
+    CustomerMembershipUpdateOneRequiredWithoutPauseRequestsInput
+  >;
+}
+
+export interface CustomerMembershipUpdateOneRequiredWithoutPauseRequestsInput {
+  create?: Maybe<CustomerMembershipCreateWithoutPauseRequestsInput>;
+  update?: Maybe<CustomerMembershipUpdateWithoutPauseRequestsDataInput>;
+  upsert?: Maybe<CustomerMembershipUpsertWithoutPauseRequestsInput>;
+  connect?: Maybe<CustomerMembershipWhereUniqueInput>;
+}
+
+export interface CustomerMembershipUpdateWithoutPauseRequestsDataInput {
+  customer?: Maybe<CustomerUpdateOneRequiredWithoutMembershipInput>;
+}
+
+export interface CustomerMembershipUpsertWithoutPauseRequestsInput {
+  update: CustomerMembershipUpdateWithoutPauseRequestsDataInput;
+  create: CustomerMembershipCreateWithoutPauseRequestsInput;
 }
 
 export interface PauseRequestUpdateManyMutationInput {
@@ -10219,7 +10232,7 @@ export interface CustomerCreateWithoutReservationsInput {
   detail?: Maybe<CustomerDetailCreateOneInput>;
   billingInfo?: Maybe<BillingInfoCreateOneInput>;
   plan?: Maybe<Plan>;
-  customerMembership?: Maybe<CustomerMembershipCreateOneInput>;
+  membership?: Maybe<CustomerMembershipCreateOneWithoutCustomerInput>;
   bagItems?: Maybe<BagItemCreateManyWithoutCustomerInput>;
 }
 
@@ -10409,7 +10422,7 @@ export interface CustomerUpdateWithoutReservationsDataInput {
   detail?: Maybe<CustomerDetailUpdateOneInput>;
   billingInfo?: Maybe<BillingInfoUpdateOneInput>;
   plan?: Maybe<Plan>;
-  customerMembership?: Maybe<CustomerMembershipUpdateOneInput>;
+  membership?: Maybe<CustomerMembershipUpdateOneWithoutCustomerInput>;
   bagItems?: Maybe<BagItemUpdateManyWithoutCustomerInput>;
 }
 
@@ -12155,7 +12168,7 @@ export interface CustomerPromise extends Promise<Customer>, Fragmentable {
   detail: <T = CustomerDetailPromise>() => T;
   billingInfo: <T = BillingInfoPromise>() => T;
   plan: () => Promise<Plan>;
-  customerMembership: <T = CustomerMembershipPromise>() => T;
+  membership: <T = CustomerMembershipPromise>() => T;
   bagItems: <T = FragmentableArray<BagItem>>(args?: {
     where?: BagItemWhereInput;
     orderBy?: BagItemOrderByInput;
@@ -12185,7 +12198,7 @@ export interface CustomerSubscription
   detail: <T = CustomerDetailSubscription>() => T;
   billingInfo: <T = BillingInfoSubscription>() => T;
   plan: () => Promise<AsyncIterator<Plan>>;
-  customerMembership: <T = CustomerMembershipSubscription>() => T;
+  membership: <T = CustomerMembershipSubscription>() => T;
   bagItems: <T = Promise<AsyncIterator<BagItemSubscription>>>(args?: {
     where?: BagItemWhereInput;
     orderBy?: BagItemOrderByInput;
@@ -12215,7 +12228,7 @@ export interface CustomerNullablePromise
   detail: <T = CustomerDetailPromise>() => T;
   billingInfo: <T = BillingInfoPromise>() => T;
   plan: () => Promise<Plan>;
-  customerMembership: <T = CustomerMembershipPromise>() => T;
+  membership: <T = CustomerMembershipPromise>() => T;
   bagItems: <T = FragmentableArray<BagItem>>(args?: {
     where?: BagItemWhereInput;
     orderBy?: BagItemOrderByInput;
@@ -13743,6 +13756,7 @@ export interface CustomerMembershipPromise
   extends Promise<CustomerMembership>,
     Fragmentable {
   id: () => Promise<ID_Output>;
+  customer: <T = CustomerPromise>() => T;
   pauseRequests: <T = FragmentableArray<PauseRequest>>(args?: {
     where?: PauseRequestWhereInput;
     orderBy?: PauseRequestOrderByInput;
@@ -13758,6 +13772,7 @@ export interface CustomerMembershipSubscription
   extends Promise<AsyncIterator<CustomerMembership>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
+  customer: <T = CustomerSubscription>() => T;
   pauseRequests: <T = Promise<AsyncIterator<PauseRequestSubscription>>>(args?: {
     where?: PauseRequestWhereInput;
     orderBy?: PauseRequestOrderByInput;
@@ -13773,6 +13788,7 @@ export interface CustomerMembershipNullablePromise
   extends Promise<CustomerMembership | null>,
     Fragmentable {
   id: () => Promise<ID_Output>;
+  customer: <T = CustomerPromise>() => T;
   pauseRequests: <T = FragmentableArray<PauseRequest>>(args?: {
     where?: PauseRequestWhereInput;
     orderBy?: PauseRequestOrderByInput;
@@ -13802,7 +13818,7 @@ export interface PauseRequestPromise
   pausePending: () => Promise<Boolean>;
   pauseDate: () => Promise<DateTimeOutput>;
   resumeDate: () => Promise<DateTimeOutput>;
-  customer: <T = CustomerPromise>() => T;
+  membership: <T = CustomerMembershipPromise>() => T;
 }
 
 export interface PauseRequestSubscription
@@ -13814,7 +13830,7 @@ export interface PauseRequestSubscription
   pausePending: () => Promise<AsyncIterator<Boolean>>;
   pauseDate: () => Promise<AsyncIterator<DateTimeOutput>>;
   resumeDate: () => Promise<AsyncIterator<DateTimeOutput>>;
-  customer: <T = CustomerSubscription>() => T;
+  membership: <T = CustomerMembershipSubscription>() => T;
 }
 
 export interface PauseRequestNullablePromise
@@ -13826,7 +13842,7 @@ export interface PauseRequestNullablePromise
   pausePending: () => Promise<Boolean>;
   pauseDate: () => Promise<DateTimeOutput>;
   resumeDate: () => Promise<DateTimeOutput>;
-  customer: <T = CustomerPromise>() => T;
+  membership: <T = CustomerMembershipPromise>() => T;
 }
 
 export interface Reservation {

@@ -32,28 +32,29 @@ export class PaymentService {
   ) {}
 
   async pauseSubscription(subscriptionID) {
-    const subscription = await chargebee.subscription
-      .retrieve(subscriptionID)
-      .request()
-
-    const chargbeeUser = subscription.customer
-    const termEnd = subscription?.subscription?.current_term_end
-
-    const resumeDateMillis = DateTime.fromMillis(termEnd)
-      .plus({ months: 1 })
-      .toMillis()
-
     const result = await chargebee.subscription
       .pause(subscriptionID, {
-        pause_option: { specific_date: termEnd },
-        resume_option: { specific_date: resumeDateMillis },
+        pause_option: "end_of_term",
       })
       .request()
 
-    console.log("result", result)
+    const chargbeeUser = result.customer
+    const termEnd = result?.subscription?.current_term_end
 
-    const prismaCustomer = await this.authService.getCustomerFromUserID(
+    const customerFromUserID = await this.authService.getCustomerFromUserID(
       chargbeeUser.id
+    )
+
+    const customer = await this.prisma.binding.query.customer(
+      { where: { id: customerFromUserID.id } },
+      `
+        {
+          id
+          membership {
+            id
+          }
+        }
+      `
     )
 
     const pauseDateISO = DateTime.fromMillis(termEnd).toISO()
@@ -61,12 +62,16 @@ export class PaymentService {
       .plus({ months: 1 })
       .toISO()
 
+    const customerMembership = await this.prisma.client.upsertCustomerMembership(
+      {
+        where: { id: customer.membership?.id || "" },
+        create: { customer: { connect: { id: customer.id } } },
+        update: { customer: { connect: { id: customer.id } } },
+      }
+    )
+
     await this.prisma.client.createPauseRequest({
-      customer: {
-        connect: {
-          id: prismaCustomer.id,
-        },
-      },
+      membership: { connect: { id: customerMembership.id } },
       pausePending: true,
       pauseDate: pauseDateISO,
       resumeDate: resumeDateISO,
@@ -86,8 +91,10 @@ export class PaymentService {
 
     const pauseRequests = await this.prisma.client.pauseRequests({
       where: {
-        customer: {
-          id: prismaCustomer.id,
+        membership: {
+          customer: {
+            id: prismaCustomer.id,
+          },
         },
       },
     })
@@ -118,8 +125,10 @@ export class PaymentService {
 
     const pauseRequests = await this.prisma.client.pauseRequests({
       where: {
-        customer: {
-          id: prismaCustomer.id,
+        membership: {
+          customer: {
+            id: prismaCustomer.id,
+          },
         },
       },
     })

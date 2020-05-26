@@ -50,3 +50,47 @@ input AddressInput {
 enum CustomerAnalyticsEvent {
   CompletedWaitlistForm
 }
+
+type Customer {
+  id: ID!
+  user: User!
+  shouldRequestFeedback: Boolean
+  status: CustomerStatus
+  detail: CustomerDetail
+  billingInfo: BillingInfo
+  plan: Plan
+  bagItems(
+    where: BagItemWhereInput
+    orderBy: BagItemOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [BagItem!]
+  reservations(
+    where: ReservationWhereInput
+    orderBy: ReservationOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Reservation!]
+  invoices: [Invoice]
+  transactions: [Transaction]
+  membership: CustomerMembership
+}
+
+type CustomerMembership {
+  id: ID!
+  pauseRequests(
+    where: PauseRequestWhereInput
+    orderBy: PauseRequestOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [PauseRequest!]
+}

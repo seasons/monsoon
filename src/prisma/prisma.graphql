@@ -2305,7 +2305,7 @@ type Customer {
   detail: CustomerDetail
   billingInfo: BillingInfo
   plan: Plan
-  customerMembership: CustomerMembership
+  membership: CustomerMembership
   bagItems(where: BagItemWhereInput, orderBy: BagItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [BagItem!]
   reservations(where: ReservationWhereInput, orderBy: ReservationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Reservation!]
 }
@@ -2334,6 +2334,11 @@ input CustomerCreateOneInput {
 
 input CustomerCreateOneWithoutBagItemsInput {
   create: CustomerCreateWithoutBagItemsInput
+  connect: CustomerWhereUniqueInput
+}
+
+input CustomerCreateOneWithoutMembershipInput {
+  create: CustomerCreateWithoutMembershipInput
   connect: CustomerWhereUniqueInput
 }
 
@@ -2868,6 +2873,7 @@ type CustomerEdge {
 
 type CustomerMembership implements Node {
   id: ID!
+  customer: Customer!
   pauseRequests(where: PauseRequestWhereInput, orderBy: PauseRequestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PauseRequest!]
 }
 
@@ -2883,12 +2889,28 @@ type CustomerMembershipConnection {
 
 input CustomerMembershipCreateInput {
   id: ID
-  pauseRequests: PauseRequestCreateManyInput
+  customer: CustomerCreateOneWithoutMembershipInput!
+  pauseRequests: PauseRequestCreateManyWithoutMembershipInput
 }
 
-input CustomerMembershipCreateOneInput {
-  create: CustomerMembershipCreateInput
+input CustomerMembershipCreateOneWithoutCustomerInput {
+  create: CustomerMembershipCreateWithoutCustomerInput
   connect: CustomerMembershipWhereUniqueInput
+}
+
+input CustomerMembershipCreateOneWithoutPauseRequestsInput {
+  create: CustomerMembershipCreateWithoutPauseRequestsInput
+  connect: CustomerMembershipWhereUniqueInput
+}
+
+input CustomerMembershipCreateWithoutCustomerInput {
+  id: ID
+  pauseRequests: PauseRequestCreateManyWithoutMembershipInput
+}
+
+input CustomerMembershipCreateWithoutPauseRequestsInput {
+  id: ID
+  customer: CustomerCreateOneWithoutMembershipInput!
 }
 
 """An edge in a connection."""
@@ -2946,26 +2968,43 @@ input CustomerMembershipSubscriptionWhereInput {
   node: CustomerMembershipWhereInput
 }
 
-input CustomerMembershipUpdateDataInput {
-  pauseRequests: PauseRequestUpdateManyInput
-}
-
 input CustomerMembershipUpdateInput {
-  pauseRequests: PauseRequestUpdateManyInput
+  customer: CustomerUpdateOneRequiredWithoutMembershipInput
+  pauseRequests: PauseRequestUpdateManyWithoutMembershipInput
 }
 
-input CustomerMembershipUpdateOneInput {
-  create: CustomerMembershipCreateInput
+input CustomerMembershipUpdateOneRequiredWithoutPauseRequestsInput {
+  create: CustomerMembershipCreateWithoutPauseRequestsInput
+  connect: CustomerMembershipWhereUniqueInput
+  update: CustomerMembershipUpdateWithoutPauseRequestsDataInput
+  upsert: CustomerMembershipUpsertWithoutPauseRequestsInput
+}
+
+input CustomerMembershipUpdateOneWithoutCustomerInput {
+  create: CustomerMembershipCreateWithoutCustomerInput
   connect: CustomerMembershipWhereUniqueInput
   disconnect: Boolean
   delete: Boolean
-  update: CustomerMembershipUpdateDataInput
-  upsert: CustomerMembershipUpsertNestedInput
+  update: CustomerMembershipUpdateWithoutCustomerDataInput
+  upsert: CustomerMembershipUpsertWithoutCustomerInput
 }
 
-input CustomerMembershipUpsertNestedInput {
-  update: CustomerMembershipUpdateDataInput!
-  create: CustomerMembershipCreateInput!
+input CustomerMembershipUpdateWithoutCustomerDataInput {
+  pauseRequests: PauseRequestUpdateManyWithoutMembershipInput
+}
+
+input CustomerMembershipUpdateWithoutPauseRequestsDataInput {
+  customer: CustomerUpdateOneRequiredWithoutMembershipInput
+}
+
+input CustomerMembershipUpsertWithoutCustomerInput {
+  update: CustomerMembershipUpdateWithoutCustomerDataInput!
+  create: CustomerMembershipCreateWithoutCustomerInput!
+}
+
+input CustomerMembershipUpsertWithoutPauseRequestsInput {
+  update: CustomerMembershipUpdateWithoutPauseRequestsDataInput!
+  create: CustomerMembershipCreateWithoutPauseRequestsInput!
 }
 
 input CustomerMembershipWhereInput {
@@ -3017,6 +3056,7 @@ input CustomerMembershipWhereInput {
 
   """All values not ending with the given string."""
   id_not_ends_with: ID
+  customer: CustomerWhereInput
   pauseRequests_every: PauseRequestWhereInput
   pauseRequests_some: PauseRequestWhereInput
   pauseRequests_none: PauseRequestWhereInput
@@ -3109,6 +3149,13 @@ input CustomerUpdateOneRequiredWithoutBagItemsInput {
   connect: CustomerWhereUniqueInput
 }
 
+input CustomerUpdateOneRequiredWithoutMembershipInput {
+  create: CustomerCreateWithoutMembershipInput
+  connect: CustomerWhereUniqueInput
+  update: CustomerUpdateWithoutMembershipDataInput
+  upsert: CustomerUpsertWithoutMembershipInput
+}
+
 input CustomerUpdateOneRequiredWithoutReservationsInput {
   create: CustomerCreateWithoutReservationsInput
   update: CustomerUpdateWithoutReservationsDataInput
@@ -3142,6 +3189,11 @@ input CustomerUpsertNestedInput {
 input CustomerUpsertWithoutBagItemsInput {
   update: CustomerUpdateWithoutBagItemsDataInput!
   create: CustomerCreateWithoutBagItemsInput!
+}
+
+input CustomerUpsertWithoutMembershipInput {
+  update: CustomerUpdateWithoutMembershipDataInput!
+  create: CustomerCreateWithoutMembershipInput!
 }
 
 input CustomerUpsertWithoutReservationsInput {
