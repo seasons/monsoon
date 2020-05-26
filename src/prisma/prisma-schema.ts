@@ -5173,6 +5173,7 @@ type Product {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  publishedAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -5217,6 +5218,7 @@ input ProductCreateInput {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  publishedAt: DateTime
 }
 
 input ProductCreateManyInput {
@@ -5281,6 +5283,7 @@ input ProductCreateWithoutBrandInput {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  publishedAt: DateTime
 }
 
 input ProductCreateWithoutCategoryInput {
@@ -5306,6 +5309,7 @@ input ProductCreateWithoutCategoryInput {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  publishedAt: DateTime
 }
 
 input ProductCreateWithoutModelInput {
@@ -5331,6 +5335,7 @@ input ProductCreateWithoutModelInput {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  publishedAt: DateTime
 }
 
 input ProductCreateWithoutTagsInput {
@@ -5356,6 +5361,7 @@ input ProductCreateWithoutTagsInput {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  publishedAt: DateTime
 }
 
 input ProductCreateWithoutVariantsInput {
@@ -5381,6 +5387,7 @@ input ProductCreateWithoutVariantsInput {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  publishedAt: DateTime
 }
 
 type ProductEdge {
@@ -5733,6 +5740,8 @@ enum ProductOrderByInput {
   season_DESC
   architecture_ASC
   architecture_DESC
+  publishedAt_ASC
+  publishedAt_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -5753,6 +5762,7 @@ type ProductPreviousValues {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  publishedAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -6146,6 +6156,14 @@ input ProductScalarWhereInput {
   architecture_not: ProductArchitecture
   architecture_in: [ProductArchitecture!]
   architecture_not_in: [ProductArchitecture!]
+  publishedAt: DateTime
+  publishedAt_not: DateTime
+  publishedAt_in: [DateTime!]
+  publishedAt_not_in: [DateTime!]
+  publishedAt_lt: DateTime
+  publishedAt_lte: DateTime
+  publishedAt_gt: DateTime
+  publishedAt_gte: DateTime
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -6222,6 +6240,7 @@ input ProductUpdateDataInput {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  publishedAt: DateTime
 }
 
 input ProductUpdateinnerMaterialsInput {
@@ -6251,6 +6270,7 @@ input ProductUpdateInput {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  publishedAt: DateTime
 }
 
 input ProductUpdateManyDataInput {
@@ -6266,6 +6286,7 @@ input ProductUpdateManyDataInput {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  publishedAt: DateTime
 }
 
 input ProductUpdateManyInput {
@@ -6293,6 +6314,7 @@ input ProductUpdateManyMutationInput {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  publishedAt: DateTime
 }
 
 input ProductUpdateManyWithoutBrandInput {
@@ -6388,6 +6410,7 @@ input ProductUpdateWithoutBrandDataInput {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  publishedAt: DateTime
 }
 
 input ProductUpdateWithoutCategoryDataInput {
@@ -6412,6 +6435,7 @@ input ProductUpdateWithoutCategoryDataInput {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  publishedAt: DateTime
 }
 
 input ProductUpdateWithoutModelDataInput {
@@ -6436,6 +6460,7 @@ input ProductUpdateWithoutModelDataInput {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  publishedAt: DateTime
 }
 
 input ProductUpdateWithoutTagsDataInput {
@@ -6460,6 +6485,7 @@ input ProductUpdateWithoutTagsDataInput {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  publishedAt: DateTime
 }
 
 input ProductUpdateWithoutVariantsDataInput {
@@ -6484,6 +6510,7 @@ input ProductUpdateWithoutVariantsDataInput {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  publishedAt: DateTime
 }
 
 input ProductUpdateWithWhereUniqueNestedInput {
@@ -7884,6 +7911,14 @@ input ProductWhereInput {
   architecture_not: ProductArchitecture
   architecture_in: [ProductArchitecture!]
   architecture_not_in: [ProductArchitecture!]
+  publishedAt: DateTime
+  publishedAt_not: DateTime
+  publishedAt_in: [DateTime!]
+  publishedAt_not_in: [DateTime!]
+  publishedAt_lt: DateTime
+  publishedAt_lte: DateTime
+  publishedAt_gt: DateTime
+  publishedAt_gte: DateTime
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
