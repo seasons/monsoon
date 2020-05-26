@@ -393,6 +393,7 @@ export class ProductService {
       imageIDs = await this.upsertImages(images, product)
     }
     await this.storeProductIfNeeded(where, status)
+    await this.offloadProductIfNeeded(where, status)
     await this.prisma.client.updateProduct({
       where,
       data: {
@@ -680,6 +681,44 @@ export class ProductService {
           },
         })
       }
+    }
+  }
+
+  private async offloadProductIfNeeded(
+    where: ProductWhereUniqueInput,
+    status: ProductStatus
+  ) {
+    const productBeforeUpdate: PrismaBindingProduct = await this.prisma.binding.query.product(
+      { where },
+      `{
+          id
+          status
+          variants {
+            id
+            reservable
+          }
+        }`
+    )
+    if (status === "Offloaded" && productBeforeUpdate.status !== "Offloaded") {
+      // Update product status
+      await this.prisma.client.updateProduct({
+        where: { id: productBeforeUpdate.id },
+        data: { status: "Offloaded" },
+      })
+
+      // Update product variants by setting their offloaded count to be their
+      // current reservable count and setting reservable count to 0
+      await Promise.all(
+        productBeforeUpdate.variants.map(async variant => {
+          return this.prisma.client.updateProductVariant({
+            where: { id: variant.id },
+            data: {
+              offloaded: variant.reservable,
+              reservable: 0,
+            },
+          })
+        })
+      )
     }
   }
 }
