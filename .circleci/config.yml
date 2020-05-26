@@ -35,6 +35,9 @@ jobs:
 
       - run: bash src/tests/create_testing_env_file.sh
 
+      # Setup docker but don't start (Will be started from other scripts if needed)
+      - run: docker-compose up --no-start
+
       - save_cache:
           paths:
             - node_modules
