@@ -6,3 +6,7 @@ export interface ImageData {
   height: number
   title?: string
 }
+
+export interface ImageOptions {
+  retina?: boolean
+}

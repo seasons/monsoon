@@ -12,6 +12,11 @@ export class ReservationMutationsResolver {
   ) {}
 
   @Mutation()
+  async updateReservation(@Args() args, @Info() info) {
+    return this.prisma.binding.mutation.updateReservation(args, info)
+  }
+
+  @Mutation()
   async reserveItems(
     @Args() { items },
     @User() user,
