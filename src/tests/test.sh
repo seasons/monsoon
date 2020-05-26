@@ -13,7 +13,7 @@ then
   exit 1
 fi
 
-container_name=monsoon_prisma_testing_1
+container_name='monsoon_prisma_testing_1'
 docker_running=$( docker inspect -f {{.State.Running}} $container_name )
 if [[ $docker_running == false ]]
 then
