@@ -9,6 +9,7 @@
     "graphql": "^14.5.7"
   },
   "scripts": {
+    "apollo": "apollo service:push",
     "build": "rimraf dist && tsc",
     "check:parity": "node -r dotenv/config -r ts-node/register src/scripts/queryParity.ts",
     "debug": "concurrently --kill-others 'yarn tsc -w' 'yarn debug:server'",

@@ -152,8 +152,18 @@ type Product {
   season: String
   secondaryColor: Color
   tags: [Tag!]!
-  images(width: Int, height: Int, size: ImageSize): [Image!]!
-  resizedImages(width: Int, height: Int, size: ImageSize): [Image!]!
+  images(
+    width: Int
+    height: Int
+    size: ImageSize
+    options: ImageOptionsInput
+  ): [Image!]!
+  resizedImages(
+    width: Int
+    height: Int
+    size: ImageSize
+    options: ImageOptionsInput
+  ): [Image!]!
   functions(
     where: ProductFunctionWhereInput
     orderBy: ProductFunctionOrderByInput
