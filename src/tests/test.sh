@@ -1,12 +1,13 @@
 #!/bin/bash
 
-if [ ! -f .env.testing ]; then
+if [[ ! -f .env.testing ]]
+then
     sh src/tests/create_testing_env_file.sh
 fi
 
 source .env.testing
 
-if [ -z "$POSTGRES_PASSWORD" ] || [ -z "$POSTGRES_TABLE" ] || [ -z "$POSTGRES_DATABASE" ]
+if [[ -z "$POSTGRES_PASSWORD" ]] || [[ -z "$POSTGRES_TABLE" ]] || [[ -z "$POSTGRES_DATABASE" ]]
 then
   echo "Please ensure you have your .env.testing file setup correctly"
   exit 1
