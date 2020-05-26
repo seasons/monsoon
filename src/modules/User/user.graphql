@@ -101,4 +101,18 @@ type Customer {
   ): [Reservation!]
   invoices: [Invoice]
   transactions: [Transaction]
+  customerSubscription: CustomerSubscription
+}
+
+type CustomerSubscription {
+  id: ID!
+  pauseRequests(
+    where: PauseRequestWhereInput
+    orderBy: PauseRequestOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [PauseRequest!]
 }

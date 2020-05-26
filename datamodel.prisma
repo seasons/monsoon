@@ -463,8 +463,24 @@ type Customer {
   detail: CustomerDetail
   billingInfo: BillingInfo
   plan: Plan
+  customerMembership: CustomerMembership 
   bagItems: [BagItem] @relation(name: "CustomerToBagItem")
   reservations: [Reservation] @relation(name: "CustomerToReservation")
+}
+
+type CustomerMembership {
+  id: ID! @id
+  pauseRequests: [PauseRequest] @relation(name: "CustomerMembershipToPauseRequest")
+}
+
+type PauseRequest {
+  id: ID! @id
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+  pausePending: Boolean!
+  pauseDate: DateTime
+  resumeDate: DateTime
+  customer: Customer!
 }
 
 type RecentlyViewedProduct {

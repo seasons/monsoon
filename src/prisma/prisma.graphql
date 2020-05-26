@@ -62,6 +62,10 @@ type AggregatePackage {
   count: Int!
 }
 
+type AggregatePauseRequest {
+  count: Int!
+}
+
 type AggregatePhysicalProduct {
   count: Int!
 }
@@ -2301,6 +2305,7 @@ type Customer {
   detail: CustomerDetail
   billingInfo: BillingInfo
   plan: Plan
+  customerMembership: CustomerMembership
   bagItems(where: BagItemWhereInput, orderBy: BagItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [BagItem!]
   reservations(where: ReservationWhereInput, orderBy: ReservationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Reservation!]
 }
@@ -2859,6 +2864,166 @@ input CustomerDetailWhereUniqueInput {
 type CustomerEdge {
   node: Customer!
   cursor: String!
+}
+
+type CustomerMembership implements Node {
+  id: ID!
+  pauseRequests(where: PauseRequestWhereInput, orderBy: PauseRequestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PauseRequest!]
+}
+
+"""A connection to a list of items."""
+type CustomerMembershipConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [CustomerMembershipEdge]!
+  aggregate: AggregateCustomerMembership!
+}
+
+input CustomerMembershipCreateInput {
+  id: ID
+  pauseRequests: PauseRequestCreateManyInput
+}
+
+input CustomerMembershipCreateOneInput {
+  create: CustomerMembershipCreateInput
+  connect: CustomerMembershipWhereUniqueInput
+}
+
+"""An edge in a connection."""
+type CustomerMembershipEdge {
+  """The item at the end of the edge."""
+  node: CustomerMembership!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum CustomerMembershipOrderByInput {
+  id_ASC
+  id_DESC
+}
+
+type CustomerMembershipPreviousValues {
+  id: ID!
+}
+
+type CustomerMembershipSubscriptionPayload {
+  mutation: MutationType!
+  node: CustomerMembership
+  updatedFields: [String!]
+  previousValues: CustomerMembershipPreviousValues
+}
+
+input CustomerMembershipSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [CustomerMembershipSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [CustomerMembershipSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [CustomerMembershipSubscriptionWhereInput!]
+
+  """The subscription event gets dispatched when it's listed in mutation_in"""
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: CustomerMembershipWhereInput
+}
+
+input CustomerMembershipUpdateDataInput {
+  pauseRequests: PauseRequestUpdateManyInput
+}
+
+input CustomerMembershipUpdateInput {
+  pauseRequests: PauseRequestUpdateManyInput
+}
+
+input CustomerMembershipUpdateOneInput {
+  create: CustomerMembershipCreateInput
+  connect: CustomerMembershipWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: CustomerMembershipUpdateDataInput
+  upsert: CustomerMembershipUpsertNestedInput
+}
+
+input CustomerMembershipUpsertNestedInput {
+  update: CustomerMembershipUpdateDataInput!
+  create: CustomerMembershipCreateInput!
+}
+
+input CustomerMembershipWhereInput {
+  """Logical AND on all given filters."""
+  AND: [CustomerMembershipWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [CustomerMembershipWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [CustomerMembershipWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  pauseRequests_every: PauseRequestWhereInput
+  pauseRequests_some: PauseRequestWhereInput
+  pauseRequests_none: PauseRequestWhereInput
+}
+
+input CustomerMembershipWhereUniqueInput {
+  id: ID
 }
 
 enum CustomerOrderByInput {

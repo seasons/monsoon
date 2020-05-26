@@ -6,7 +6,8 @@ import { UtilsService } from "@modules/Utils"
 import { Injectable } from "@nestjs/common"
 import { PrismaService } from "@prisma/prisma.service"
 import chargebee from "chargebee"
-import { camelCase, get, identity, snakeCase, upperFirst } from "lodash"
+import { camelCase, get, head, identity, snakeCase, upperFirst } from "lodash"
+import { DateTime } from "luxon"
 
 import {
   BillingAddress,
@@ -31,8 +32,50 @@ export class PaymentService {
   ) {}
 
   async pauseSubscription(subscriptionID) {
+    const subscription = await chargebee.subscription
+      .retrieve(subscriptionID)
+      .request()
+
+    const chargbeeUser = subscription.customer
+    const termEnd = subscription?.subscription?.current_term_end
+
+    const resumeDateMillis = DateTime.fromMillis(termEnd)
+      .plus({ months: 1 })
+      .toMillis()
+
     const result = await chargebee.subscription
       .pause(subscriptionID, {
+        pause_option: { specific_date: termEnd },
+        resume_option: { specific_date: resumeDateMillis },
+      })
+      .request()
+
+    console.log("result", result)
+
+    const prismaCustomer = await this.authService.getCustomerFromUserID(
+      chargbeeUser.id
+    )
+
+    const pauseDateISO = DateTime.fromMillis(termEnd).toISO()
+    const resumeDateISO = DateTime.fromMillis(termEnd)
+      .plus({ months: 1 })
+      .toISO()
+
+    await this.prisma.client.createPauseRequest({
+      customer: {
+        connect: {
+          id: prismaCustomer.id,
+        },
+      },
+      pausePending: true,
+      pauseDate: pauseDateISO,
+      resumeDate: resumeDateISO,
+    })
+  }
+
+  async removeScheduledPause(subscriptionID) {
+    const result = await chargebee.subscription
+      .remove_scheduled_pause(subscriptionID, {
         pause_option: "end_of_term",
       })
       .request()
@@ -40,32 +83,52 @@ export class PaymentService {
     const prismaCustomer = await this.authService.getCustomerFromUserID(
       chargbeeUser.id
     )
-    console.log("result success", result)
-    await this.prisma.client.updateCustomer({
-      data: {
-        status: "Paused",
+
+    const pauseRequests = await this.prisma.client.pauseRequests({
+      where: {
+        customer: {
+          id: prismaCustomer.id,
+        },
       },
-      where: { id: prismaCustomer.id },
+    })
+
+    const pauseRequest = head(pauseRequests)
+
+    await this.prisma.client.updatePauseRequest({
+      where: { id: pauseRequest.id },
+      data: { pausePending: false, pauseDate: null, resumeDate: null },
     })
   }
 
-  async resumeSubscription(subscriptionID) {
+  async resumeSubscription(subscriptionID, date) {
+    const resumeDate = !!date
+      ? { specific_date: DateTime.fromISO(date).toMillis() }
+      : "immediately"
     const result = await chargebee.subscription
       .resume(subscriptionID, {
-        resume_option: "immediately",
+        resume_option: resumeDate,
         unpaid_invoices_handling: "schedule_payment_collection",
       })
       .request()
-    console.log(result)
+    console.log("success from resume", result)
     const chargbeeUser = result.customer
     const prismaCustomer = await this.authService.getCustomerFromUserID(
       chargbeeUser.id
     )
-    await this.prisma.client.updateCustomer({
-      data: {
-        status: "Active",
+
+    const pauseRequests = await this.prisma.client.pauseRequests({
+      where: {
+        customer: {
+          id: prismaCustomer.id,
+        },
       },
-      where: { id: prismaCustomer.id },
+    })
+
+    const pauseRequest = head(pauseRequests)
+
+    await this.prisma.client.updatePauseRequest({
+      where: { id: pauseRequest.id },
+      data: { pausePending: false, pauseDate: null, resumeDate: null },
     })
   }
 

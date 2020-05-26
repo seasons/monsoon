@@ -508,6 +508,10 @@ type AggregatePackage {
   count: Int!
 }
 
+type AggregatePauseRequest {
+  count: Int!
+}
+
 type AggregatePhysicalProduct {
   count: Int!
 }
@@ -2747,6 +2751,7 @@ type Customer {
   detail: CustomerDetail
   billingInfo: BillingInfo
   plan: Plan
+  customerMembership: CustomerMembership
   bagItems(where: BagItemWhereInput, orderBy: BagItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [BagItem!]
   reservations(where: ReservationWhereInput, orderBy: ReservationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Reservation!]
 }
@@ -3305,6 +3310,166 @@ input CustomerDetailWhereUniqueInput {
 type CustomerEdge {
   node: Customer!
   cursor: String!
+}
+
+type CustomerMembership implements Node {
+  id: ID!
+  pauseRequests(where: PauseRequestWhereInput, orderBy: PauseRequestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PauseRequest!]
+}
+
+"""A connection to a list of items."""
+type CustomerMembershipConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [CustomerMembershipEdge]!
+  aggregate: AggregateCustomerMembership!
+}
+
+input CustomerMembershipCreateInput {
+  id: ID
+  pauseRequests: PauseRequestCreateManyInput
+}
+
+input CustomerMembershipCreateOneInput {
+  create: CustomerMembershipCreateInput
+  connect: CustomerMembershipWhereUniqueInput
+}
+
+"""An edge in a connection."""
+type CustomerMembershipEdge {
+  """The item at the end of the edge."""
+  node: CustomerMembership!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum CustomerMembershipOrderByInput {
+  id_ASC
+  id_DESC
+}
+
+type CustomerMembershipPreviousValues {
+  id: ID!
+}
+
+type CustomerMembershipSubscriptionPayload {
+  mutation: MutationType!
+  node: CustomerMembership
+  updatedFields: [String!]
+  previousValues: CustomerMembershipPreviousValues
+}
+
+input CustomerMembershipSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [CustomerMembershipSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [CustomerMembershipSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [CustomerMembershipSubscriptionWhereInput!]
+
+  """The subscription event gets dispatched when it's listed in mutation_in"""
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: CustomerMembershipWhereInput
+}
+
+input CustomerMembershipUpdateDataInput {
+  pauseRequests: PauseRequestUpdateManyInput
+}
+
+input CustomerMembershipUpdateInput {
+  pauseRequests: PauseRequestUpdateManyInput
+}
+
+input CustomerMembershipUpdateOneInput {
+  create: CustomerMembershipCreateInput
+  connect: CustomerMembershipWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: CustomerMembershipUpdateDataInput
+  upsert: CustomerMembershipUpsertNestedInput
+}
+
+input CustomerMembershipUpsertNestedInput {
+  update: CustomerMembershipUpdateDataInput!
+  create: CustomerMembershipCreateInput!
+}
+
+input CustomerMembershipWhereInput {
+  """Logical AND on all given filters."""
+  AND: [CustomerMembershipWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [CustomerMembershipWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [CustomerMembershipWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  pauseRequests_every: PauseRequestWhereInput
+  pauseRequests_some: PauseRequestWhereInput
+  pauseRequests_none: PauseRequestWhereInput
+}
+
+input CustomerMembershipWhereUniqueInput {
+  id: ID
 }
 
 enum CustomerOrderByInput {
@@ -5097,7 +5262,7 @@ input PackageWhereInput {
   NOT: [PackageWhereInput!]
 }
 
-input PackageWhereUniqueInput {
+input PauseRequestWhereUniqueInput {
   id: ID
 }
 
@@ -11976,6 +12141,9 @@ export type CustomerDetailOrderByInput =   'id_ASC' |
   'updatedAt_ASC' |
   'updatedAt_DESC'
 
+export type CustomerMembershipOrderByInput =   'id_ASC' |
+  'id_DESC'
+
 export type CustomerOrderByInput =   'id_ASC' |
   'id_DESC' |
   'status_ASC' |
@@ -14555,6 +14723,76 @@ export interface CustomerDetailWhereUniqueInput {
   id?: ID_Input | null
 }
 
+export interface CustomerMembershipCreateInput {
+  id?: ID_Input | null
+  pauseRequests?: PauseRequestCreateManyInput | null
+}
+
+export interface CustomerMembershipCreateOneInput {
+  create?: CustomerMembershipCreateInput | null
+  connect?: CustomerMembershipWhereUniqueInput | null
+}
+
+export interface CustomerMembershipSubscriptionWhereInput {
+  AND?: CustomerMembershipSubscriptionWhereInput[] | CustomerMembershipSubscriptionWhereInput | null
+  OR?: CustomerMembershipSubscriptionWhereInput[] | CustomerMembershipSubscriptionWhereInput | null
+  NOT?: CustomerMembershipSubscriptionWhereInput[] | CustomerMembershipSubscriptionWhereInput | null
+  mutation_in?: MutationType[] | MutationType | null
+  updatedFields_contains?: String | null
+  updatedFields_contains_every?: String[] | String | null
+  updatedFields_contains_some?: String[] | String | null
+  node?: CustomerMembershipWhereInput | null
+}
+
+export interface CustomerMembershipUpdateDataInput {
+  pauseRequests?: PauseRequestUpdateManyInput | null
+}
+
+export interface CustomerMembershipUpdateInput {
+  pauseRequests?: PauseRequestUpdateManyInput | null
+}
+
+export interface CustomerMembershipUpdateOneInput {
+  create?: CustomerMembershipCreateInput | null
+  connect?: CustomerMembershipWhereUniqueInput | null
+  disconnect?: Boolean | null
+  delete?: Boolean | null
+  update?: CustomerMembershipUpdateDataInput | null
+  upsert?: CustomerMembershipUpsertNestedInput | null
+}
+
+export interface CustomerMembershipUpsertNestedInput {
+  update: CustomerMembershipUpdateDataInput
+  create: CustomerMembershipCreateInput
+}
+
+export interface CustomerMembershipWhereInput {
+  AND?: CustomerMembershipWhereInput[] | CustomerMembershipWhereInput | null
+  OR?: CustomerMembershipWhereInput[] | CustomerMembershipWhereInput | null
+  NOT?: CustomerMembershipWhereInput[] | CustomerMembershipWhereInput | null
+  id?: ID_Input | null
+  id_not?: ID_Input | null
+  id_in?: ID_Output[] | ID_Output | null
+  id_not_in?: ID_Output[] | ID_Output | null
+  id_lt?: ID_Input | null
+  id_lte?: ID_Input | null
+  id_gt?: ID_Input | null
+  id_gte?: ID_Input | null
+  id_contains?: ID_Input | null
+  id_not_contains?: ID_Input | null
+  id_starts_with?: ID_Input | null
+  id_not_starts_with?: ID_Input | null
+  id_ends_with?: ID_Input | null
+  id_not_ends_with?: ID_Input | null
+  pauseRequests_every?: PauseRequestWhereInput | null
+  pauseRequests_some?: PauseRequestWhereInput | null
+  pauseRequests_none?: PauseRequestWhereInput | null
+}
+
+export interface CustomerMembershipWhereUniqueInput {
+  id?: ID_Input | null
+}
+
 export interface CustomerSubscriptionWhereInput {
   mutation_in?: MutationType[] | MutationType | null
   updatedFields_contains?: String | null
@@ -15714,6 +15952,197 @@ export interface PackageWhereInput {
 }
 
 export interface PackageWhereUniqueInput {
+  id?: ID_Input | null
+}
+
+export interface PauseRequestCreateInput {
+  id?: ID_Input | null
+  pausePending: Boolean
+  pauseDate?: DateTime | null
+  resumeDate?: DateTime | null
+  customer: CustomerCreateOneInput
+}
+
+export interface PauseRequestCreateManyInput {
+  create?: PauseRequestCreateInput[] | PauseRequestCreateInput | null
+  connect?: PauseRequestWhereUniqueInput[] | PauseRequestWhereUniqueInput | null
+}
+
+export interface PauseRequestScalarWhereInput {
+  AND?: PauseRequestScalarWhereInput[] | PauseRequestScalarWhereInput | null
+  OR?: PauseRequestScalarWhereInput[] | PauseRequestScalarWhereInput | null
+  NOT?: PauseRequestScalarWhereInput[] | PauseRequestScalarWhereInput | null
+  id?: ID_Input | null
+  id_not?: ID_Input | null
+  id_in?: ID_Output[] | ID_Output | null
+  id_not_in?: ID_Output[] | ID_Output | null
+  id_lt?: ID_Input | null
+  id_lte?: ID_Input | null
+  id_gt?: ID_Input | null
+  id_gte?: ID_Input | null
+  id_contains?: ID_Input | null
+  id_not_contains?: ID_Input | null
+  id_starts_with?: ID_Input | null
+  id_not_starts_with?: ID_Input | null
+  id_ends_with?: ID_Input | null
+  id_not_ends_with?: ID_Input | null
+  createdAt?: DateTime | null
+  createdAt_not?: DateTime | null
+  createdAt_in?: DateTime[] | DateTime | null
+  createdAt_not_in?: DateTime[] | DateTime | null
+  createdAt_lt?: DateTime | null
+  createdAt_lte?: DateTime | null
+  createdAt_gt?: DateTime | null
+  createdAt_gte?: DateTime | null
+  updatedAt?: DateTime | null
+  updatedAt_not?: DateTime | null
+  updatedAt_in?: DateTime[] | DateTime | null
+  updatedAt_not_in?: DateTime[] | DateTime | null
+  updatedAt_lt?: DateTime | null
+  updatedAt_lte?: DateTime | null
+  updatedAt_gt?: DateTime | null
+  updatedAt_gte?: DateTime | null
+  pausePending?: Boolean | null
+  pausePending_not?: Boolean | null
+  pauseDate?: DateTime | null
+  pauseDate_not?: DateTime | null
+  pauseDate_in?: DateTime[] | DateTime | null
+  pauseDate_not_in?: DateTime[] | DateTime | null
+  pauseDate_lt?: DateTime | null
+  pauseDate_lte?: DateTime | null
+  pauseDate_gt?: DateTime | null
+  pauseDate_gte?: DateTime | null
+  resumeDate?: DateTime | null
+  resumeDate_not?: DateTime | null
+  resumeDate_in?: DateTime[] | DateTime | null
+  resumeDate_not_in?: DateTime[] | DateTime | null
+  resumeDate_lt?: DateTime | null
+  resumeDate_lte?: DateTime | null
+  resumeDate_gt?: DateTime | null
+  resumeDate_gte?: DateTime | null
+}
+
+export interface PauseRequestSubscriptionWhereInput {
+  AND?: PauseRequestSubscriptionWhereInput[] | PauseRequestSubscriptionWhereInput | null
+  OR?: PauseRequestSubscriptionWhereInput[] | PauseRequestSubscriptionWhereInput | null
+  NOT?: PauseRequestSubscriptionWhereInput[] | PauseRequestSubscriptionWhereInput | null
+  mutation_in?: MutationType[] | MutationType | null
+  updatedFields_contains?: String | null
+  updatedFields_contains_every?: String[] | String | null
+  updatedFields_contains_some?: String[] | String | null
+  node?: PauseRequestWhereInput | null
+}
+
+export interface PauseRequestUpdateDataInput {
+  pausePending?: Boolean | null
+  pauseDate?: DateTime | null
+  resumeDate?: DateTime | null
+  customer?: CustomerUpdateOneRequiredInput | null
+}
+
+export interface PauseRequestUpdateInput {
+  pausePending?: Boolean | null
+  pauseDate?: DateTime | null
+  resumeDate?: DateTime | null
+  customer?: CustomerUpdateOneRequiredInput | null
+}
+
+export interface PauseRequestUpdateManyDataInput {
+  pausePending?: Boolean | null
+  pauseDate?: DateTime | null
+  resumeDate?: DateTime | null
+}
+
+export interface PauseRequestUpdateManyInput {
+  create?: PauseRequestCreateInput[] | PauseRequestCreateInput | null
+  connect?: PauseRequestWhereUniqueInput[] | PauseRequestWhereUniqueInput | null
+  set?: PauseRequestWhereUniqueInput[] | PauseRequestWhereUniqueInput | null
+  disconnect?: PauseRequestWhereUniqueInput[] | PauseRequestWhereUniqueInput | null
+  delete?: PauseRequestWhereUniqueInput[] | PauseRequestWhereUniqueInput | null
+  update?: PauseRequestUpdateWithWhereUniqueNestedInput[] | PauseRequestUpdateWithWhereUniqueNestedInput | null
+  updateMany?: PauseRequestUpdateManyWithWhereNestedInput[] | PauseRequestUpdateManyWithWhereNestedInput | null
+  deleteMany?: PauseRequestScalarWhereInput[] | PauseRequestScalarWhereInput | null
+  upsert?: PauseRequestUpsertWithWhereUniqueNestedInput[] | PauseRequestUpsertWithWhereUniqueNestedInput | null
+}
+
+export interface PauseRequestUpdateManyMutationInput {
+  pausePending?: Boolean | null
+  pauseDate?: DateTime | null
+  resumeDate?: DateTime | null
+}
+
+export interface PauseRequestUpdateManyWithWhereNestedInput {
+  where: PauseRequestScalarWhereInput
+  data: PauseRequestUpdateManyDataInput
+}
+
+export interface PauseRequestUpdateWithWhereUniqueNestedInput {
+  where: PauseRequestWhereUniqueInput
+  data: PauseRequestUpdateDataInput
+}
+
+export interface PauseRequestUpsertWithWhereUniqueNestedInput {
+  where: PauseRequestWhereUniqueInput
+  update: PauseRequestUpdateDataInput
+  create: PauseRequestCreateInput
+}
+
+export interface PauseRequestWhereInput {
+  AND?: PauseRequestWhereInput[] | PauseRequestWhereInput | null
+  OR?: PauseRequestWhereInput[] | PauseRequestWhereInput | null
+  NOT?: PauseRequestWhereInput[] | PauseRequestWhereInput | null
+  id?: ID_Input | null
+  id_not?: ID_Input | null
+  id_in?: ID_Output[] | ID_Output | null
+  id_not_in?: ID_Output[] | ID_Output | null
+  id_lt?: ID_Input | null
+  id_lte?: ID_Input | null
+  id_gt?: ID_Input | null
+  id_gte?: ID_Input | null
+  id_contains?: ID_Input | null
+  id_not_contains?: ID_Input | null
+  id_starts_with?: ID_Input | null
+  id_not_starts_with?: ID_Input | null
+  id_ends_with?: ID_Input | null
+  id_not_ends_with?: ID_Input | null
+  createdAt?: DateTime | null
+  createdAt_not?: DateTime | null
+  createdAt_in?: DateTime[] | DateTime | null
+  createdAt_not_in?: DateTime[] | DateTime | null
+  createdAt_lt?: DateTime | null
+  createdAt_lte?: DateTime | null
+  createdAt_gt?: DateTime | null
+  createdAt_gte?: DateTime | null
+  updatedAt?: DateTime | null
+  updatedAt_not?: DateTime | null
+  updatedAt_in?: DateTime[] | DateTime | null
+  updatedAt_not_in?: DateTime[] | DateTime | null
+  updatedAt_lt?: DateTime | null
+  updatedAt_lte?: DateTime | null
+  updatedAt_gt?: DateTime | null
+  updatedAt_gte?: DateTime | null
+  pausePending?: Boolean | null
+  pausePending_not?: Boolean | null
+  pauseDate?: DateTime | null
+  pauseDate_not?: DateTime | null
+  pauseDate_in?: DateTime[] | DateTime | null
+  pauseDate_not_in?: DateTime[] | DateTime | null
+  pauseDate_lt?: DateTime | null
+  pauseDate_lte?: DateTime | null
+  pauseDate_gt?: DateTime | null
+  pauseDate_gte?: DateTime | null
+  resumeDate?: DateTime | null
+  resumeDate_not?: DateTime | null
+  resumeDate_in?: DateTime[] | DateTime | null
+  resumeDate_not_in?: DateTime[] | DateTime | null
+  resumeDate_lt?: DateTime | null
+  resumeDate_lte?: DateTime | null
+  resumeDate_gt?: DateTime | null
+  resumeDate_gte?: DateTime | null
+  customer?: CustomerWhereInput | null
+}
+
+export interface PauseRequestWhereUniqueInput {
   id?: ID_Input | null
 }
 
@@ -21048,6 +21477,10 @@ export interface AggregatePackage {
   count: Int
 }
 
+export interface AggregatePauseRequest {
+  count: Int
+}
+
 export interface AggregatePhysicalProduct {
   count: Int
 }
@@ -21459,6 +21892,7 @@ export interface Customer {
   detail?: CustomerDetail | null
   billingInfo?: BillingInfo | null
   plan?: Plan | null
+  customerMembership?: CustomerMembership | null
   bagItems?: Array<BagItem> | null
   reservations?: Array<Reservation> | null
 }
@@ -21539,6 +21973,41 @@ export interface CustomerDetailSubscriptionPayload {
 export interface CustomerEdge {
   node: Customer
   cursor: String
+}
+
+export interface CustomerMembership extends Node {
+  id: ID_Output
+  pauseRequests?: Array<PauseRequest> | null
+}
+
+/*
+ * A connection to a list of items.
+
+ */
+export interface CustomerMembershipConnection {
+  pageInfo: PageInfo
+  edges: Array<CustomerMembershipEdge | null>
+  aggregate: AggregateCustomerMembership
+}
+
+/*
+ * An edge in a connection.
+
+ */
+export interface CustomerMembershipEdge {
+  node: CustomerMembership
+  cursor: String
+}
+
+export interface CustomerMembershipPreviousValues {
+  id: ID_Output
+}
+
+export interface CustomerMembershipSubscriptionPayload {
+  mutation: MutationType
+  node?: CustomerMembership | null
+  updatedFields?: Array<String> | null
+  previousValues?: CustomerMembershipPreviousValues | null
 }
 
 export interface CustomerPreviousValues {
