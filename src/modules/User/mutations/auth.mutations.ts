@@ -1,83 +1,15 @@
 import { User } from "@app/decorators"
-import { PrismaService } from "@app/prisma/prisma.service"
 import { Args, Context, Mutation, Resolver } from "@nestjs/graphql"
-import { ForbiddenError, UserInputError } from "apollo-server"
 
 import { AuthService } from "../services/auth.service"
 
 @Resolver()
 export class AuthMutationsResolver {
-  constructor(
-    private readonly authService: AuthService,
-    private readonly prisma: PrismaService
-  ) {}
-
-  @Mutation()
-  async beamsData(@User() user) {
-    const { email } = user
-    if (email) {
-      const beamsToken = this.authService.beamsClient?.generateToken(
-        email
-      ) as any
-      return {
-        beamsToken: beamsToken.token,
-        email,
-      }
-    }
-  }
+  constructor(private readonly authService: AuthService) {}
 
   @Mutation()
   async login(@Args() { email, password }, @User() requestUser) {
-    // If they are already logged in, throw an error
-    if (requestUser) {
-      throw new Error(`user is already logged in`)
-    }
-
-    // Get their API access token
-    let tokenData
-    try {
-      tokenData = await this.authService.getAuth0UserAccessToken(
-        email,
-        password
-      )
-    } catch (err) {
-      if (err.message.includes("403")) {
-        throw new ForbiddenError(err)
-      }
-      throw new UserInputError(err)
-    }
-
-    // Get user with this email
-    const user = await this.prisma.client.user({ email })
-
-    // If the user is a Customer, make sure that the account has been approved
-    if (!user) {
-      throw new Error("User record not found")
-    }
-
-    if (user.roles.includes("Customer")) {
-      const customer = await this.authService.getCustomerFromUserID(user.id)
-      if (
-        customer &&
-        customer.status !== "Active" &&
-        customer.status !== "Authorized"
-      ) {
-        throw new Error(`User account has not been approved`)
-      }
-    }
-
-    const { token: beamsToken } = this.authService.beamsClient?.generateToken(
-      email
-    ) as any
-
-    const params = {
-      token: tokenData.access_token,
-      refreshToken: tokenData.refresh_token,
-      expiresIn: tokenData.expires_in,
-      user,
-      beamsToken,
-    }
-    return params
+    return this.authService.loginUser({ email, password, requestUser })
   }
 
   @Mutation()

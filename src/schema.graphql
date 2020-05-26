@@ -17,15 +17,6 @@ type Query {
   faq: Faq
 }
 
-type Mutation {
-  beamsData: BeamsData!
-}
-
-type BeamsData {
-  email: String!
-  beamsToken: String!
-}
-
 type Faq {
   sections: [FaqSection!]!
 }

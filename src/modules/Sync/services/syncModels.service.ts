@@ -25,11 +25,10 @@ export class SyncModelsService {
       allProductionRecords: await this.airtableService.getAllModels(
         this.airtableService.getProductionBase()
       ),
-      sanitizeFunc: fields =>
-        this.utils.Identity({
-          ...fields,
-          Products: [],
-        }),
+      sanitizeFunc: fields => ({
+        ...fields,
+        Products: [],
+      }),
       cliProgressBar,
     })
   }
