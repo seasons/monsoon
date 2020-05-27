@@ -6,6 +6,8 @@ import Handlebars from "handlebars"
 import nodemailer from "nodemailer"
 
 import {
+  EmailId,
+  ID_Input,
   Reservation as PrismaReservation,
   Product,
   User,
@@ -36,17 +38,19 @@ export class EmailService {
         user.email
       ),
     })
+    await this.storeEmailReceipt("ReservationReturnConfirmation", user.id)
   }
 
-  sendAuthorizedToSubscribeEmail(user: User) {
+  async sendAuthorizedToSubscribeEmail(user: User) {
     const idHash = this.utils.encryptUserIDHash(user.id)
-    this.sendTransactionalEmail({
+    await this.sendTransactionalEmail({
       to: user.email,
       data: this.data.completeAccount(
         user.firstName,
         `${process.env.SEEDLING_URL}/complete?idHash=${idHash}`
       ),
     })
+    await this.storeEmailReceipt("CompleteAccount", user.id)
   }
 
   async sendReservationConfirmationEmail(
@@ -70,7 +74,7 @@ export class EmailService {
       )
     }
 
-    this.sendTransactionalEmail({
+    await this.sendTransactionalEmail({
       to: user.email,
       data: this.data.reservationConfirmation(
         reservation.reservationNumber,
@@ -80,10 +84,11 @@ export class EmailService {
         trackingUrl
       ),
     })
+    await this.storeEmailReceipt("ReservationConfirmation", user.id)
   }
 
-  sendReturnReminderEmail(user: User, reservation: PrismaReservation) {
-    this.sendTransactionalEmail({
+  async sendReturnReminderEmail(user: User, reservation: PrismaReservation) {
+    await this.sendTransactionalEmail({
       to: user.email,
       data: this.data.returnReminder({
         name: user.firstName,
@@ -92,19 +97,29 @@ export class EmailService {
         ),
       }),
     })
+    await this.storeEmailReceipt("ReturnReminder", user.id)
   }
 
-  sendWelcomeToSeasonsEmail(user: User) {
-    this.sendTransactionalEmail({
+  async sendWelcomeToSeasonsEmail(user: User) {
+    await this.sendTransactionalEmail({
       to: user.email,
       data: this.data.welcomeToSeasons(user.firstName),
     })
+    await this.storeEmailReceipt("WelcomeToSeasons", user.id)
   }
 
   async sendYouCanNowReserveAgainEmail(user: User) {
     await this.sendTransactionalEmail({
       to: user.email,
       data: this.data.freeToReserve(),
+    })
+    await this.storeEmailReceipt("FreeToReserve", user.id)
+  }
+
+  private async storeEmailReceipt(emailId: EmailId, userId: ID_Input) {
+    await this.prisma.client.createEmailReceipt({
+      emailId,
+      user: { connect: { id: userId } },
     })
   }
 
