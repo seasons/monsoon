@@ -124,6 +124,13 @@ export class SyncProductsService {
           continue
         }
 
+        if (
+          record.model.photographyStatus !== "Done" &&
+          record.model.status == "Available"
+        ) {
+          continue
+        }
+
         const {
           color,
           description,
