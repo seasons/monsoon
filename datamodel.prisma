@@ -436,6 +436,8 @@ type Reservation {
     @relation(name: "SeasonsToCustomerPackage", onDelete: CASCADE)
   returnedPackage: Package
     @relation(name: "CustomerToSeasonsPackage", onDelete: CASCADE)
+  feedback: ReservationFeedback
+    @relation(link: TABLE, name: "ReservationFeedbackReservation")
   location: Location
   products: [PhysicalProduct!]!
   reservationNumber: Int! @unique
@@ -557,6 +559,7 @@ type ReservationFeedback {
   rating: Rating
   user: User!
   reservation: Reservation!
+    @relation(link: TABLE, name: "ReservationFeedbackToReservation")
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
   respondedAt: DateTime
