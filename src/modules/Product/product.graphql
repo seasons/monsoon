@@ -191,26 +191,26 @@ type Product {
 }
 
 input UpsertProductInput {
-  name: String!
-  images: [Upload!]!
+  architecture: String
+  bottomSizeType: BottomSizeType
   brandID: String!
   categoryID: String!
-  type: ProductType!
+  colorCode: String!
   description: String!
-  modelID: String!
-  retailPrice: Int!
-  modelSizeName: String!
-  modelSizeDisplay: String!
-  bottomSizeType: BottomSizeType
-  colorID: String!
-  secondaryColorID: String
-  tags: [String!]!
   functions: [String!]!
+  images: [Upload!]!
   innerMaterials: [String!]!
+  modelID: String!
+  modelSizeDisplay: String!
+  modelSizeName: String!
+  name: String!
   outerMaterials: [String!]!
+  retailPrice: Int!
+  season: String
+  secondaryColorCode: String
   status: ProductStatus!
-  season: String!
-  architecture: String!
+  tags: [String!]!
+  type: ProductType!
   variants: [UpsertVariantInput!]!
 }
 
