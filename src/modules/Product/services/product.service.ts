@@ -131,7 +131,7 @@ export class ProductService {
   async deepUpsertProduct(input) {
     // get records whose associated data we need for other parts of the upsert
     const brand = await this.prisma.client.brand({ id: input.brandID })
-    const color = await this.prisma.client.color({ id: input.colorID })
+    const color = await this.prisma.client.color({ colorCode: input.colorCode })
     const model = await this.prisma.client.productModel({ id: input.modelID })
 
     // Get the functionIDs which we will connect to the product
@@ -200,10 +200,10 @@ export class ProductService {
         connect: { id: modelSize.id },
       },
       color: {
-        connect: { id: input.colorID },
+        connect: { colorCode: input.colorCode },
       },
-      secondaryColor: input.secondaryColorID && {
-        connect: { id: input.secondaryColorID },
+      secondaryColor: input.secondaryColorCode && {
+        connect: { colorCode: input.secondaryColorCode },
       },
       tags: {
         connect: tagIDs,

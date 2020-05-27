@@ -277,6 +277,7 @@ type Product {
   status: ProductStatus @default(value: Available)
   season: String
   architecture: ProductArchitecture
+  publishedAt: DateTime
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }

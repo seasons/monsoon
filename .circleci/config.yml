@@ -5,19 +5,26 @@
 version: 2
 jobs:
   build:
-    docker:
-      # specify the version you desire here
-      - image: circleci/node:latest
-
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/mongo:3.4.4
-
+    machine: true
     working_directory: ~/monsoon
-
+    shell: /bin/bash --login -o pipefail
     steps:
       - checkout
+
+      - run:
+          name: Install Yarn
+          command: curl -o- -L https://yarnpkg.com/install.sh | bash
+
+      - run:
+          name: Install Node Version Manager
+          command: |
+            curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
+            export NVM_DIR="/opt/circleci/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+            nvm install v12.0.0
+            nvm alias default v12.0.0
+            echo 'export NVM_DIR="/opt/circleci/.nvm"' >> $BASH_ENV
+            echo "[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"" >> $BASH_ENV
 
       # Download and cache dependencies
       - restore_cache:
@@ -26,7 +33,18 @@ jobs:
             # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
 
-      - run: yarn install
+      - run:
+          name: Install Dependencies
+          command: yarn install
+
+      - run:
+          name: Create Testing File
+          command: bash src/tests/create_testing_env_file.sh
+
+      # Setup docker but don't start (Will be started from other scripts if needed)
+      - run:
+          name: Build and Create docker containers (Not run yet)
+          command: docker-compose build; docker-compose create;
 
       - save_cache:
           paths:
@@ -34,4 +52,6 @@ jobs:
           key: v1-dependencies-{{ checksum "package.json" }}
 
       # run tests!
-      - run: yarn test --verbose
+      - run:
+          name: Run tests
+          command: yarn test

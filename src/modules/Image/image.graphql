@@ -1,5 +1,9 @@
 scalar Upload
 
+input ImageOptionsInput {
+  retina: Boolean
+}
+
 type Image {
   id: ID!
   caption: String
