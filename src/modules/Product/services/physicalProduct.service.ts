@@ -50,6 +50,15 @@ export class PhysicalProductService {
     data: PhysicalProductUpdateInput
     info: GraphQLResolveInfo
   }) {
+    // Must update counts before calling any other methods because they
+    // might update the inventoryStatus, i.e. in offloadPhysicalProductIfNeeded
+    if (data.inventoryStatus) {
+      await this.updateVariantCountsIfNeeded({
+        where,
+        inventoryStatus: data.inventoryStatus,
+      })
+    }
+
     await this.offloadPhysicalProductIfNeeded({
       where,
       ...pick(data, ["inventoryStatus", "offloadMethod", "offloadNotes"]),
@@ -61,6 +70,7 @@ export class PhysicalProductService {
         data.warehouseLocation.connect
       )
     }
+
     // Use two separate queries because the schema for update data differs
     // between the client and the binding, and we expose the client's schema
     await this.prisma.client.updatePhysicalProduct({ where, data })
@@ -294,14 +304,36 @@ export class PhysicalProductService {
         where,
         data: { inventoryStatus, offloadMethod, offloadNotes },
       })
-      await this.productVariantService.updateCountsForStatusChange({
-        id: physicalProductBeforeUpdate.productVariant.id,
-        oldInventoryStatus: physicalProductBeforeUpdate.inventoryStatus,
-        newInventoryStatus: "Offloaded",
-      })
       await this.productService.offloadProductIfAppropriate(
         physicalProductBeforeUpdate.productVariant.product.id
       )
+    }
+  }
+
+  private async updateVariantCountsIfNeeded({
+    where,
+    inventoryStatus,
+  }: {
+    where: PhysicalProductWhereUniqueInput
+    inventoryStatus: InventoryStatus
+  }) {
+    const physicalProductBeforeUpdate = await this.prisma.binding.query.physicalProduct(
+      { where },
+      `{
+          id
+          inventoryStatus
+          productVariant {
+              id
+          }
+      }`
+    )
+
+    if (inventoryStatus !== physicalProductBeforeUpdate.inventoryStatus) {
+      await this.productVariantService.updateCountsForStatusChange({
+        id: physicalProductBeforeUpdate.productVariant.id,
+        oldInventoryStatus: physicalProductBeforeUpdate.inventoryStatus,
+        newInventoryStatus: inventoryStatus,
+      })
     }
   }
 }
