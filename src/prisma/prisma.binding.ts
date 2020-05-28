@@ -9393,6 +9393,7 @@ type Product implements Node {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  publishedAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -9429,6 +9430,7 @@ input ProductCreateInput {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  publishedAt: DateTime
   innerMaterials: ProductCreateinnerMaterialsInput
   outerMaterials: ProductCreateouterMaterialsInput
   brand: BrandCreateOneWithoutProductsInput!
@@ -9494,6 +9496,7 @@ input ProductCreateWithoutBrandInput {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  publishedAt: DateTime
   innerMaterials: ProductCreateinnerMaterialsInput
   outerMaterials: ProductCreateouterMaterialsInput
   category: CategoryCreateOneWithoutProductsInput!
@@ -9519,6 +9522,7 @@ input ProductCreateWithoutCategoryInput {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  publishedAt: DateTime
   innerMaterials: ProductCreateinnerMaterialsInput
   outerMaterials: ProductCreateouterMaterialsInput
   brand: BrandCreateOneWithoutProductsInput!
@@ -9544,6 +9548,7 @@ input ProductCreateWithoutModelInput {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  publishedAt: DateTime
   innerMaterials: ProductCreateinnerMaterialsInput
   outerMaterials: ProductCreateouterMaterialsInput
   brand: BrandCreateOneWithoutProductsInput!
@@ -9569,6 +9574,7 @@ input ProductCreateWithoutTagsInput {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  publishedAt: DateTime
   innerMaterials: ProductCreateinnerMaterialsInput
   outerMaterials: ProductCreateouterMaterialsInput
   brand: BrandCreateOneWithoutProductsInput!
@@ -9594,6 +9600,7 @@ input ProductCreateWithoutVariantsInput {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  publishedAt: DateTime
   innerMaterials: ProductCreateinnerMaterialsInput
   outerMaterials: ProductCreateouterMaterialsInput
   brand: BrandCreateOneWithoutProductsInput!
@@ -10200,6 +10207,8 @@ enum ProductOrderByInput {
   season_DESC
   architecture_ASC
   architecture_DESC
+  publishedAt_ASC
+  publishedAt_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -10220,6 +10229,7 @@ type ProductPreviousValues {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  publishedAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -11103,6 +11113,28 @@ input ProductScalarWhereInput {
 
   """All values that are not contained in given list."""
   architecture_not_in: [ProductArchitecture!]
+  publishedAt: DateTime
+
+  """All values that are not equal to given value."""
+  publishedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  publishedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  publishedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  publishedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  publishedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  publishedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  publishedAt_gte: DateTime
   createdAt: DateTime
 
   """All values that are not equal to given value."""
@@ -11211,6 +11243,7 @@ input ProductUpdateDataInput {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  publishedAt: DateTime
   innerMaterials: ProductUpdateinnerMaterialsInput
   outerMaterials: ProductUpdateouterMaterialsInput
   brand: BrandUpdateOneRequiredWithoutProductsInput
@@ -11240,6 +11273,7 @@ input ProductUpdateInput {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  publishedAt: DateTime
   innerMaterials: ProductUpdateinnerMaterialsInput
   outerMaterials: ProductUpdateouterMaterialsInput
   brand: BrandUpdateOneRequiredWithoutProductsInput
@@ -11265,6 +11299,7 @@ input ProductUpdateManyDataInput {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  publishedAt: DateTime
   innerMaterials: ProductUpdateinnerMaterialsInput
   outerMaterials: ProductUpdateouterMaterialsInput
 }
@@ -11292,6 +11327,7 @@ input ProductUpdateManyMutationInput {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  publishedAt: DateTime
   innerMaterials: ProductUpdateinnerMaterialsInput
   outerMaterials: ProductUpdateouterMaterialsInput
 }
@@ -11378,6 +11414,7 @@ input ProductUpdateWithoutBrandDataInput {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  publishedAt: DateTime
   innerMaterials: ProductUpdateinnerMaterialsInput
   outerMaterials: ProductUpdateouterMaterialsInput
   category: CategoryUpdateOneRequiredWithoutProductsInput
@@ -11402,6 +11439,7 @@ input ProductUpdateWithoutCategoryDataInput {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  publishedAt: DateTime
   innerMaterials: ProductUpdateinnerMaterialsInput
   outerMaterials: ProductUpdateouterMaterialsInput
   brand: BrandUpdateOneRequiredWithoutProductsInput
@@ -11426,6 +11464,7 @@ input ProductUpdateWithoutModelDataInput {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  publishedAt: DateTime
   innerMaterials: ProductUpdateinnerMaterialsInput
   outerMaterials: ProductUpdateouterMaterialsInput
   brand: BrandUpdateOneRequiredWithoutProductsInput
@@ -11450,6 +11489,7 @@ input ProductUpdateWithoutTagsDataInput {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  publishedAt: DateTime
   innerMaterials: ProductUpdateinnerMaterialsInput
   outerMaterials: ProductUpdateouterMaterialsInput
   brand: BrandUpdateOneRequiredWithoutProductsInput
@@ -11474,6 +11514,7 @@ input ProductUpdateWithoutVariantsDataInput {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  publishedAt: DateTime
   innerMaterials: ProductUpdateinnerMaterialsInput
   outerMaterials: ProductUpdateouterMaterialsInput
   brand: BrandUpdateOneRequiredWithoutProductsInput
@@ -13884,6 +13925,28 @@ input ProductWhereInput {
 
   """All values that are not contained in given list."""
   architecture_not_in: [ProductArchitecture!]
+  publishedAt: DateTime
+
+  """All values that are not equal to given value."""
+  publishedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  publishedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  publishedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  publishedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  publishedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  publishedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  publishedAt_gte: DateTime
   createdAt: DateTime
 
   """All values that are not equal to given value."""
@@ -19183,6 +19246,8 @@ export type ProductOrderByInput =   'id_ASC' |
   'season_DESC' |
   'architecture_ASC' |
   'architecture_DESC' |
+  'publishedAt_ASC' |
+  'publishedAt_DESC' |
   'createdAt_ASC' |
   'createdAt_DESC' |
   'updatedAt_ASC' |
@@ -23136,6 +23201,7 @@ export interface ProductCreateInput {
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
+  publishedAt?: DateTime | null
   innerMaterials?: ProductCreateinnerMaterialsInput | null
   outerMaterials?: ProductCreateouterMaterialsInput | null
   brand: BrandCreateOneWithoutProductsInput
@@ -23201,6 +23267,7 @@ export interface ProductCreateWithoutBrandInput {
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
+  publishedAt?: DateTime | null
   innerMaterials?: ProductCreateinnerMaterialsInput | null
   outerMaterials?: ProductCreateouterMaterialsInput | null
   category: CategoryCreateOneWithoutProductsInput
@@ -23226,6 +23293,7 @@ export interface ProductCreateWithoutCategoryInput {
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
+  publishedAt?: DateTime | null
   innerMaterials?: ProductCreateinnerMaterialsInput | null
   outerMaterials?: ProductCreateouterMaterialsInput | null
   brand: BrandCreateOneWithoutProductsInput
@@ -23251,6 +23319,7 @@ export interface ProductCreateWithoutModelInput {
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
+  publishedAt?: DateTime | null
   innerMaterials?: ProductCreateinnerMaterialsInput | null
   outerMaterials?: ProductCreateouterMaterialsInput | null
   brand: BrandCreateOneWithoutProductsInput
@@ -23276,6 +23345,7 @@ export interface ProductCreateWithoutTagsInput {
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
+  publishedAt?: DateTime | null
   innerMaterials?: ProductCreateinnerMaterialsInput | null
   outerMaterials?: ProductCreateouterMaterialsInput | null
   brand: BrandCreateOneWithoutProductsInput
@@ -23301,6 +23371,7 @@ export interface ProductCreateWithoutVariantsInput {
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
+  publishedAt?: DateTime | null
   innerMaterials?: ProductCreateinnerMaterialsInput | null
   outerMaterials?: ProductCreateouterMaterialsInput | null
   brand: BrandCreateOneWithoutProductsInput
@@ -23883,6 +23954,14 @@ export interface ProductScalarWhereInput {
   architecture_not?: ProductArchitecture | null
   architecture_in?: ProductArchitecture[] | ProductArchitecture | null
   architecture_not_in?: ProductArchitecture[] | ProductArchitecture | null
+  publishedAt?: DateTime | null
+  publishedAt_not?: DateTime | null
+  publishedAt_in?: DateTime[] | DateTime | null
+  publishedAt_not_in?: DateTime[] | DateTime | null
+  publishedAt_lt?: DateTime | null
+  publishedAt_lte?: DateTime | null
+  publishedAt_gt?: DateTime | null
+  publishedAt_gte?: DateTime | null
   createdAt?: DateTime | null
   createdAt_not?: DateTime | null
   createdAt_in?: DateTime[] | DateTime | null
@@ -23923,6 +24002,7 @@ export interface ProductUpdateDataInput {
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
+  publishedAt?: DateTime | null
   innerMaterials?: ProductUpdateinnerMaterialsInput | null
   outerMaterials?: ProductUpdateouterMaterialsInput | null
   brand?: BrandUpdateOneRequiredWithoutProductsInput | null
@@ -23952,6 +24032,7 @@ export interface ProductUpdateInput {
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
+  publishedAt?: DateTime | null
   innerMaterials?: ProductUpdateinnerMaterialsInput | null
   outerMaterials?: ProductUpdateouterMaterialsInput | null
   brand?: BrandUpdateOneRequiredWithoutProductsInput | null
@@ -23977,6 +24058,7 @@ export interface ProductUpdateManyDataInput {
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
+  publishedAt?: DateTime | null
   innerMaterials?: ProductUpdateinnerMaterialsInput | null
   outerMaterials?: ProductUpdateouterMaterialsInput | null
 }
@@ -24004,6 +24086,7 @@ export interface ProductUpdateManyMutationInput {
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
+  publishedAt?: DateTime | null
   innerMaterials?: ProductUpdateinnerMaterialsInput | null
   outerMaterials?: ProductUpdateouterMaterialsInput | null
 }
@@ -24090,6 +24173,7 @@ export interface ProductUpdateWithoutBrandDataInput {
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
+  publishedAt?: DateTime | null
   innerMaterials?: ProductUpdateinnerMaterialsInput | null
   outerMaterials?: ProductUpdateouterMaterialsInput | null
   category?: CategoryUpdateOneRequiredWithoutProductsInput | null
@@ -24114,6 +24198,7 @@ export interface ProductUpdateWithoutCategoryDataInput {
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
+  publishedAt?: DateTime | null
   innerMaterials?: ProductUpdateinnerMaterialsInput | null
   outerMaterials?: ProductUpdateouterMaterialsInput | null
   brand?: BrandUpdateOneRequiredWithoutProductsInput | null
@@ -24138,6 +24223,7 @@ export interface ProductUpdateWithoutModelDataInput {
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
+  publishedAt?: DateTime | null
   innerMaterials?: ProductUpdateinnerMaterialsInput | null
   outerMaterials?: ProductUpdateouterMaterialsInput | null
   brand?: BrandUpdateOneRequiredWithoutProductsInput | null
@@ -24162,6 +24248,7 @@ export interface ProductUpdateWithoutTagsDataInput {
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
+  publishedAt?: DateTime | null
   innerMaterials?: ProductUpdateinnerMaterialsInput | null
   outerMaterials?: ProductUpdateouterMaterialsInput | null
   brand?: BrandUpdateOneRequiredWithoutProductsInput | null
@@ -24186,6 +24273,7 @@ export interface ProductUpdateWithoutVariantsDataInput {
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
+  publishedAt?: DateTime | null
   innerMaterials?: ProductUpdateinnerMaterialsInput | null
   outerMaterials?: ProductUpdateouterMaterialsInput | null
   brand?: BrandUpdateOneRequiredWithoutProductsInput | null
@@ -25375,6 +25463,14 @@ export interface ProductWhereInput {
   architecture_not?: ProductArchitecture | null
   architecture_in?: ProductArchitecture[] | ProductArchitecture | null
   architecture_not_in?: ProductArchitecture[] | ProductArchitecture | null
+  publishedAt?: DateTime | null
+  publishedAt_not?: DateTime | null
+  publishedAt_in?: DateTime[] | DateTime | null
+  publishedAt_not_in?: DateTime[] | DateTime | null
+  publishedAt_lt?: DateTime | null
+  publishedAt_lte?: DateTime | null
+  publishedAt_gt?: DateTime | null
+  publishedAt_gte?: DateTime | null
   createdAt?: DateTime | null
   createdAt_not?: DateTime | null
   createdAt_in?: DateTime[] | DateTime | null
@@ -28462,6 +28558,7 @@ export interface Product extends Node {
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
+  publishedAt?: DateTime | null
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -28574,6 +28671,7 @@ export interface ProductPreviousValues {
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
+  publishedAt?: DateTime | null
   createdAt: DateTime
   updatedAt: DateTime
 }
