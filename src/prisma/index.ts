@@ -2291,6 +2291,8 @@ export type PushNotificationReceiptOrderByInput =
   | "screen_DESC"
   | "uri_ASC"
   | "uri_DESC"
+  | "interest_ASC"
+  | "interest_DESC"
   | "body_ASC"
   | "body_DESC"
   | "title_ASC"
@@ -5452,6 +5454,20 @@ export interface PushNotificationReceiptWhereInput {
   users_every?: Maybe<UserWhereInput>;
   users_some?: Maybe<UserWhereInput>;
   users_none?: Maybe<UserWhereInput>;
+  interest?: Maybe<String>;
+  interest_not?: Maybe<String>;
+  interest_in?: Maybe<String[] | String>;
+  interest_not_in?: Maybe<String[] | String>;
+  interest_lt?: Maybe<String>;
+  interest_lte?: Maybe<String>;
+  interest_gt?: Maybe<String>;
+  interest_gte?: Maybe<String>;
+  interest_contains?: Maybe<String>;
+  interest_not_contains?: Maybe<String>;
+  interest_starts_with?: Maybe<String>;
+  interest_not_starts_with?: Maybe<String>;
+  interest_ends_with?: Maybe<String>;
+  interest_not_ends_with?: Maybe<String>;
   body?: Maybe<String>;
   body_not?: Maybe<String>;
   body_in?: Maybe<String[] | String>;
@@ -10125,6 +10141,7 @@ export interface PushNotificationReceiptCreateInput {
   screen?: Maybe<String>;
   uri?: Maybe<String>;
   users?: Maybe<UserCreateManyInput>;
+  interest?: Maybe<String>;
   body: String;
   title?: Maybe<String>;
   sentAt: DateTimeInput;
@@ -10140,6 +10157,7 @@ export interface PushNotificationReceiptUpdateInput {
   screen?: Maybe<String>;
   uri?: Maybe<String>;
   users?: Maybe<UserUpdateManyInput>;
+  interest?: Maybe<String>;
   body?: Maybe<String>;
   title?: Maybe<String>;
   sentAt?: Maybe<DateTimeInput>;
@@ -10299,6 +10317,7 @@ export interface PushNotificationReceiptUpdateManyMutationInput {
   route?: Maybe<String>;
   screen?: Maybe<String>;
   uri?: Maybe<String>;
+  interest?: Maybe<String>;
   body?: Maybe<String>;
   title?: Maybe<String>;
   sentAt?: Maybe<DateTimeInput>;
@@ -15538,6 +15557,7 @@ export interface PushNotificationReceipt {
   route?: String;
   screen?: String;
   uri?: String;
+  interest?: String;
   body: String;
   title?: String;
   sentAt: DateTimeOutput;
@@ -15561,6 +15581,7 @@ export interface PushNotificationReceiptPromise
     first?: Int;
     last?: Int;
   }) => T;
+  interest: () => Promise<String>;
   body: () => Promise<String>;
   title: () => Promise<String>;
   sentAt: () => Promise<DateTimeOutput>;
@@ -15584,6 +15605,7 @@ export interface PushNotificationReceiptSubscription
     first?: Int;
     last?: Int;
   }) => T;
+  interest: () => Promise<AsyncIterator<String>>;
   body: () => Promise<AsyncIterator<String>>;
   title: () => Promise<AsyncIterator<String>>;
   sentAt: () => Promise<AsyncIterator<DateTimeOutput>>;
@@ -15607,6 +15629,7 @@ export interface PushNotificationReceiptNullablePromise
     first?: Int;
     last?: Int;
   }) => T;
+  interest: () => Promise<String>;
   body: () => Promise<String>;
   title: () => Promise<String>;
   sentAt: () => Promise<DateTimeOutput>;
@@ -17898,6 +17921,7 @@ export interface PushNotificationReceiptPreviousValues {
   route?: String;
   screen?: String;
   uri?: String;
+  interest?: String;
   body: String;
   title?: String;
   sentAt: DateTimeOutput;
@@ -17912,6 +17936,7 @@ export interface PushNotificationReceiptPreviousValuesPromise
   route: () => Promise<String>;
   screen: () => Promise<String>;
   uri: () => Promise<String>;
+  interest: () => Promise<String>;
   body: () => Promise<String>;
   title: () => Promise<String>;
   sentAt: () => Promise<DateTimeOutput>;
@@ -17926,6 +17951,7 @@ export interface PushNotificationReceiptPreviousValuesSubscription
   route: () => Promise<AsyncIterator<String>>;
   screen: () => Promise<AsyncIterator<String>>;
   uri: () => Promise<AsyncIterator<String>>;
+  interest: () => Promise<AsyncIterator<String>>;
   body: () => Promise<AsyncIterator<String>>;
   title: () => Promise<AsyncIterator<String>>;
   sentAt: () => Promise<AsyncIterator<DateTimeOutput>>;
@@ -18827,7 +18853,7 @@ export const models: Model[] = [
 export const Prisma = makePrismaClientClass<ClientConstructor<Prisma>>({
   typeDefs,
   models,
-  endpoint: `${process.env["PRISMA_ENDPOINT"]}`,
+  endpoint: `http://localhost:4466/monsoon/dev`,
   secret: `${process.env["PRISMA_SECRET"]}`
 });
 export const prisma = new Prisma();

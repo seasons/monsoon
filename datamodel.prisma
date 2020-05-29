@@ -383,7 +383,9 @@ type PushNotificationReceipt {
   # uri, e.g https://blog.seasons.nyc/posts/can-the-industry-fix-seasons
   uri: String
   # user = which customer to send message to
-  users: [User!]!
+  users: [User!]
+  # interest = interest we sent it to
+  interest: String
   # body = body of the message
   body: String!
   # title = title of the message

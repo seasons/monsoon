@@ -2,30 +2,36 @@ import fs from "fs"
 
 import { Injectable } from "@nestjs/common"
 import { AlertPayload } from "@pusher/push-notifications-server"
+import mustache from "mustache"
 
-import { PushNotificationData } from "../pushNotifications.types"
-
-export enum PushNotificationID {
-  ResetBag,
-  ReturnDue,
-  NewBlogPost,
-}
+import {
+  PushNotificationData,
+  PushNotificationID,
+  PushNotificationVars,
+} from "../pushNotifications.types"
 
 const maxTitleLength = 50
 const maxBodyLength = 110
 
 @Injectable()
 export class PushNotificationsDataProvider {
-  getPushNotifData(pushNotifID: PushNotificationID): PushNotificationData {
-    const now = new Date()
-    const { alert, data } = JSON.parse(
+  getPushNotifData(
+    pushNotifID: PushNotificationID,
+    vars: PushNotificationVars
+  ): PushNotificationData {
+    let { alert, data } = JSON.parse(
       fs.readFileSync(
         process.cwd() + "/src/modules/PushNotifications/data.json",
         "utf-8"
       )
-    )[PushNotificationID[pushNotifID]]
+    )[pushNotifID]
+
+    alert = this.interpolateJSONObjectWithMustache(alert, vars)
+    data = this.interpolateJSONObjectWithMustache(data, vars)
 
     this.enforceLengths(alert)
+
+    const now = new Date()
     const receiptPayload = {
       title: alert?.title,
       body: alert?.body,
@@ -35,6 +41,7 @@ export class PushNotificationsDataProvider {
       sentAt: now.toISOString(),
     }
     const notificationPayload = this.wrapAPNsData(alert, data)
+
     return {
       notificationPayload,
       receiptPayload,
@@ -52,4 +59,8 @@ export class PushNotificationsDataProvider {
   }
 
   private wrapAPNsData = (alert, data) => ({ apns: { aps: { alert }, data } })
+
+  private interpolateJSONObjectWithMustache(obj: any, vars: any) {
+    return JSON.parse(mustache.render(JSON.stringify(obj), vars))
+  }
 }
