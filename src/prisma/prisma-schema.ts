@@ -8200,6 +8200,7 @@ type Reservation {
   customer: Customer!
   sentPackage: Package
   returnedPackage: Package
+  feedback: ReservationFeedback
   location: Location
   products(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct!]
   reservationNumber: Int!
@@ -8225,6 +8226,7 @@ input ReservationCreateInput {
   customer: CustomerCreateOneWithoutReservationsInput!
   sentPackage: PackageCreateOneInput
   returnedPackage: PackageCreateOneInput
+  feedback: ReservationFeedbackCreateOneWithoutReservationInput
   location: LocationCreateOneInput
   products: PhysicalProductCreateManyInput
   reservationNumber: Int!
@@ -8241,8 +8243,8 @@ input ReservationCreateManyWithoutCustomerInput {
   connect: [ReservationWhereUniqueInput!]
 }
 
-input ReservationCreateOneInput {
-  create: ReservationCreateInput
+input ReservationCreateOneWithoutFeedbackInput {
+  create: ReservationCreateWithoutFeedbackInput
   connect: ReservationWhereUniqueInput
 }
 
@@ -8254,6 +8256,24 @@ input ReservationCreateOneWithoutReceiptInput {
 input ReservationCreateWithoutCustomerInput {
   id: ID
   user: UserCreateOneInput!
+  sentPackage: PackageCreateOneInput
+  returnedPackage: PackageCreateOneInput
+  feedback: ReservationFeedbackCreateOneWithoutReservationInput
+  location: LocationCreateOneInput
+  products: PhysicalProductCreateManyInput
+  reservationNumber: Int!
+  shipped: Boolean!
+  status: ReservationStatus!
+  shippedAt: DateTime
+  receivedAt: DateTime
+  reminderSentAt: DateTime
+  receipt: ReservationReceiptCreateOneWithoutReservationInput
+}
+
+input ReservationCreateWithoutFeedbackInput {
+  id: ID
+  user: UserCreateOneInput!
+  customer: CustomerCreateOneWithoutReservationsInput!
   sentPackage: PackageCreateOneInput
   returnedPackage: PackageCreateOneInput
   location: LocationCreateOneInput
@@ -8273,6 +8293,7 @@ input ReservationCreateWithoutReceiptInput {
   customer: CustomerCreateOneWithoutReservationsInput!
   sentPackage: PackageCreateOneInput
   returnedPackage: PackageCreateOneInput
+  feedback: ReservationFeedbackCreateOneWithoutReservationInput
   location: LocationCreateOneInput
   products: PhysicalProductCreateManyInput
   reservationNumber: Int!
@@ -8312,7 +8333,7 @@ input ReservationFeedbackCreateInput {
   feedbacks: ProductVariantFeedbackCreateManyWithoutReservationFeedbackInput
   rating: Rating
   user: UserCreateOneInput!
-  reservation: ReservationCreateOneInput!
+  reservation: ReservationCreateOneWithoutFeedbackInput!
   respondedAt: DateTime
 }
 
@@ -8321,12 +8342,26 @@ input ReservationFeedbackCreateOneWithoutFeedbacksInput {
   connect: ReservationFeedbackWhereUniqueInput
 }
 
+input ReservationFeedbackCreateOneWithoutReservationInput {
+  create: ReservationFeedbackCreateWithoutReservationInput
+  connect: ReservationFeedbackWhereUniqueInput
+}
+
 input ReservationFeedbackCreateWithoutFeedbacksInput {
   id: ID
   comment: String
   rating: Rating
   user: UserCreateOneInput!
-  reservation: ReservationCreateOneInput!
+  reservation: ReservationCreateOneWithoutFeedbackInput!
+  respondedAt: DateTime
+}
+
+input ReservationFeedbackCreateWithoutReservationInput {
+  id: ID
+  comment: String
+  feedbacks: ProductVariantFeedbackCreateManyWithoutReservationFeedbackInput
+  rating: Rating
+  user: UserCreateOneInput!
   respondedAt: DateTime
 }
 
@@ -8382,7 +8417,7 @@ input ReservationFeedbackUpdateInput {
   feedbacks: ProductVariantFeedbackUpdateManyWithoutReservationFeedbackInput
   rating: Rating
   user: UserUpdateOneRequiredInput
-  reservation: ReservationUpdateOneRequiredInput
+  reservation: ReservationUpdateOneRequiredWithoutFeedbackInput
   respondedAt: DateTime
 }
 
@@ -8399,17 +8434,39 @@ input ReservationFeedbackUpdateOneRequiredWithoutFeedbacksInput {
   connect: ReservationFeedbackWhereUniqueInput
 }
 
+input ReservationFeedbackUpdateOneWithoutReservationInput {
+  create: ReservationFeedbackCreateWithoutReservationInput
+  update: ReservationFeedbackUpdateWithoutReservationDataInput
+  upsert: ReservationFeedbackUpsertWithoutReservationInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: ReservationFeedbackWhereUniqueInput
+}
+
 input ReservationFeedbackUpdateWithoutFeedbacksDataInput {
   comment: String
   rating: Rating
   user: UserUpdateOneRequiredInput
-  reservation: ReservationUpdateOneRequiredInput
+  reservation: ReservationUpdateOneRequiredWithoutFeedbackInput
+  respondedAt: DateTime
+}
+
+input ReservationFeedbackUpdateWithoutReservationDataInput {
+  comment: String
+  feedbacks: ProductVariantFeedbackUpdateManyWithoutReservationFeedbackInput
+  rating: Rating
+  user: UserUpdateOneRequiredInput
   respondedAt: DateTime
 }
 
 input ReservationFeedbackUpsertWithoutFeedbacksInput {
   update: ReservationFeedbackUpdateWithoutFeedbacksDataInput!
   create: ReservationFeedbackCreateWithoutFeedbacksInput!
+}
+
+input ReservationFeedbackUpsertWithoutReservationInput {
+  update: ReservationFeedbackUpdateWithoutReservationDataInput!
+  create: ReservationFeedbackCreateWithoutReservationInput!
 }
 
 input ReservationFeedbackWhereInput {
@@ -8949,27 +9006,12 @@ input ReservationSubscriptionWhereInput {
   NOT: [ReservationSubscriptionWhereInput!]
 }
 
-input ReservationUpdateDataInput {
-  user: UserUpdateOneRequiredInput
-  customer: CustomerUpdateOneRequiredWithoutReservationsInput
-  sentPackage: PackageUpdateOneInput
-  returnedPackage: PackageUpdateOneInput
-  location: LocationUpdateOneInput
-  products: PhysicalProductUpdateManyInput
-  reservationNumber: Int
-  shipped: Boolean
-  status: ReservationStatus
-  shippedAt: DateTime
-  receivedAt: DateTime
-  reminderSentAt: DateTime
-  receipt: ReservationReceiptUpdateOneWithoutReservationInput
-}
-
 input ReservationUpdateInput {
   user: UserUpdateOneRequiredInput
   customer: CustomerUpdateOneRequiredWithoutReservationsInput
   sentPackage: PackageUpdateOneInput
   returnedPackage: PackageUpdateOneInput
+  feedback: ReservationFeedbackUpdateOneWithoutReservationInput
   location: LocationUpdateOneInput
   products: PhysicalProductUpdateManyInput
   reservationNumber: Int
@@ -9016,10 +9058,10 @@ input ReservationUpdateManyWithWhereNestedInput {
   data: ReservationUpdateManyDataInput!
 }
 
-input ReservationUpdateOneRequiredInput {
-  create: ReservationCreateInput
-  update: ReservationUpdateDataInput
-  upsert: ReservationUpsertNestedInput
+input ReservationUpdateOneRequiredWithoutFeedbackInput {
+  create: ReservationCreateWithoutFeedbackInput
+  update: ReservationUpdateWithoutFeedbackDataInput
+  upsert: ReservationUpsertWithoutFeedbackInput
   connect: ReservationWhereUniqueInput
 }
 
@@ -9032,6 +9074,23 @@ input ReservationUpdateOneRequiredWithoutReceiptInput {
 
 input ReservationUpdateWithoutCustomerDataInput {
   user: UserUpdateOneRequiredInput
+  sentPackage: PackageUpdateOneInput
+  returnedPackage: PackageUpdateOneInput
+  feedback: ReservationFeedbackUpdateOneWithoutReservationInput
+  location: LocationUpdateOneInput
+  products: PhysicalProductUpdateManyInput
+  reservationNumber: Int
+  shipped: Boolean
+  status: ReservationStatus
+  shippedAt: DateTime
+  receivedAt: DateTime
+  reminderSentAt: DateTime
+  receipt: ReservationReceiptUpdateOneWithoutReservationInput
+}
+
+input ReservationUpdateWithoutFeedbackDataInput {
+  user: UserUpdateOneRequiredInput
+  customer: CustomerUpdateOneRequiredWithoutReservationsInput
   sentPackage: PackageUpdateOneInput
   returnedPackage: PackageUpdateOneInput
   location: LocationUpdateOneInput
@@ -9050,6 +9109,7 @@ input ReservationUpdateWithoutReceiptDataInput {
   customer: CustomerUpdateOneRequiredWithoutReservationsInput
   sentPackage: PackageUpdateOneInput
   returnedPackage: PackageUpdateOneInput
+  feedback: ReservationFeedbackUpdateOneWithoutReservationInput
   location: LocationUpdateOneInput
   products: PhysicalProductUpdateManyInput
   reservationNumber: Int
@@ -9065,9 +9125,9 @@ input ReservationUpdateWithWhereUniqueWithoutCustomerInput {
   data: ReservationUpdateWithoutCustomerDataInput!
 }
 
-input ReservationUpsertNestedInput {
-  update: ReservationUpdateDataInput!
-  create: ReservationCreateInput!
+input ReservationUpsertWithoutFeedbackInput {
+  update: ReservationUpdateWithoutFeedbackDataInput!
+  create: ReservationCreateWithoutFeedbackInput!
 }
 
 input ReservationUpsertWithoutReceiptInput {
@@ -9100,6 +9160,7 @@ input ReservationWhereInput {
   customer: CustomerWhereInput
   sentPackage: PackageWhereInput
   returnedPackage: PackageWhereInput
+  feedback: ReservationFeedbackWhereInput
   location: LocationWhereInput
   products_every: PhysicalProductWhereInput
   products_some: PhysicalProductWhereInput

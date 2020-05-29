@@ -446,14 +446,48 @@ type Reservation {
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
-  receipt: ReservationReceipt @relation(link: INLINE, onDelete: CASCADE)
+  receipt: ReservationReceipt
+    @relation(
+      link: TABLE
+      name: "ReservationReceiptToReservation"
+      onDelete: CASCADE
+    )
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
 
+type ReservationFeedback {
+  id: ID! @id
+  comment: String
+  feedbacks: [ProductVariantFeedback!]!
+  rating: Rating
+  user: User!
+  reservation: Reservation! @relation(name: "ReservationFeedbackReservation")
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+  respondedAt: DateTime
+}
+
+type ProductVariantFeedback {
+  id: ID! @id
+  isCompleted: Boolean!
+  questions: [ProductVariantFeedbackQuestion!]! @relation(link: TABLE)
+  reservationFeedback: ReservationFeedback!
+  variant: ProductVariant!
+}
+
+type ProductVariantFeedbackQuestion {
+  id: ID! @id
+  options: [String!] @scalarList(strategy: RELATION)
+  question: String!
+  responses: [String!] @scalarList(strategy: RELATION)
+  type: QuestionType!
+  variantFeedback: ProductVariantFeedback!
+}
+
 type ReservationReceipt {
   id: ID! @id
-  reservation: Reservation!
+  reservation: Reservation! @relation(name: "ReservationReceiptToReservation")
   items: [ReservationReceiptItem!] @relation(link: TABLE, onDelete: CASCADE)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
@@ -549,35 +583,4 @@ type Size {
   top: TopSize
   bottom: BottomSize
   display: String!
-}
-
-type ReservationFeedback {
-  id: ID! @id
-  comment: String
-  feedbacks: [ProductVariantFeedback!]!
-    @relation(link: TABLE, onDelete: CASCADE)
-  rating: Rating
-  user: User!
-  reservation: Reservation!
-    @relation(link: TABLE, name: "ReservationFeedbackToReservation")
-  createdAt: DateTime! @createdAt
-  updatedAt: DateTime! @updatedAt
-  respondedAt: DateTime
-}
-
-type ProductVariantFeedback {
-  id: ID! @id
-  isCompleted: Boolean!
-  questions: [ProductVariantFeedbackQuestion!]! @relation(link: TABLE)
-  reservationFeedback: ReservationFeedback!
-  variant: ProductVariant!
-}
-
-type ProductVariantFeedbackQuestion {
-  id: ID! @id
-  options: [String!] @scalarList(strategy: RELATION)
-  question: String!
-  responses: [String!] @scalarList(strategy: RELATION)
-  type: QuestionType!
-  variantFeedback: ProductVariantFeedback!
 }
