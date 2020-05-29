@@ -1787,6 +1787,8 @@ export type ProductOrderByInput =
   | "season_DESC"
   | "architecture_ASC"
   | "architecture_DESC"
+  | "publishedAt_ASC"
+  | "publishedAt_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -3239,6 +3241,14 @@ export interface ProductWhereInput {
   architecture_not?: Maybe<ProductArchitecture>;
   architecture_in?: Maybe<ProductArchitecture[] | ProductArchitecture>;
   architecture_not_in?: Maybe<ProductArchitecture[] | ProductArchitecture>;
+  publishedAt?: Maybe<DateTimeInput>;
+  publishedAt_not?: Maybe<DateTimeInput>;
+  publishedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  publishedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  publishedAt_lt?: Maybe<DateTimeInput>;
+  publishedAt_lte?: Maybe<DateTimeInput>;
+  publishedAt_gt?: Maybe<DateTimeInput>;
+  publishedAt_gte?: Maybe<DateTimeInput>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -5735,6 +5745,7 @@ export interface ProductCreateWithoutVariantsInput {
   status?: Maybe<ProductStatus>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
+  publishedAt?: Maybe<DateTimeInput>;
 }
 
 export interface BrandCreateOneWithoutProductsInput {
@@ -5818,6 +5829,7 @@ export interface ProductCreateWithoutCategoryInput {
   status?: Maybe<ProductStatus>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
+  publishedAt?: Maybe<DateTimeInput>;
 }
 
 export interface ImageCreateManyInput {
@@ -6609,6 +6621,7 @@ export interface ProductUpdateWithoutVariantsDataInput {
   status?: Maybe<ProductStatus>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
+  publishedAt?: Maybe<DateTimeInput>;
 }
 
 export interface BrandUpdateOneRequiredWithoutProductsInput {
@@ -6739,6 +6752,7 @@ export interface ProductUpdateWithoutCategoryDataInput {
   status?: Maybe<ProductStatus>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
+  publishedAt?: Maybe<DateTimeInput>;
 }
 
 export interface ImageUpdateManyInput {
@@ -7943,6 +7957,14 @@ export interface ProductScalarWhereInput {
   architecture_not?: Maybe<ProductArchitecture>;
   architecture_in?: Maybe<ProductArchitecture[] | ProductArchitecture>;
   architecture_not_in?: Maybe<ProductArchitecture[] | ProductArchitecture>;
+  publishedAt?: Maybe<DateTimeInput>;
+  publishedAt_not?: Maybe<DateTimeInput>;
+  publishedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  publishedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  publishedAt_lt?: Maybe<DateTimeInput>;
+  publishedAt_lte?: Maybe<DateTimeInput>;
+  publishedAt_gt?: Maybe<DateTimeInput>;
+  publishedAt_gte?: Maybe<DateTimeInput>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -7982,6 +8004,7 @@ export interface ProductUpdateManyDataInput {
   status?: Maybe<ProductStatus>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
+  publishedAt?: Maybe<DateTimeInput>;
 }
 
 export interface CategoryUpsertWithWhereUniqueWithoutChildrenInput {
@@ -8652,6 +8675,7 @@ export interface ProductCreateWithoutBrandInput {
   status?: Maybe<ProductStatus>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
+  publishedAt?: Maybe<DateTimeInput>;
 }
 
 export interface BrandUpdateInput {
@@ -8718,6 +8742,7 @@ export interface ProductUpdateWithoutBrandDataInput {
   status?: Maybe<ProductStatus>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
+  publishedAt?: Maybe<DateTimeInput>;
 }
 
 export interface ProductUpsertWithWhereUniqueWithoutBrandInput {
@@ -8797,6 +8822,7 @@ export interface ProductCreateInput {
   status?: Maybe<ProductStatus>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
+  publishedAt?: Maybe<DateTimeInput>;
 }
 
 export interface CollectionUpdateInput {
@@ -8858,6 +8884,7 @@ export interface ProductUpdateDataInput {
   status?: Maybe<ProductStatus>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
+  publishedAt?: Maybe<DateTimeInput>;
 }
 
 export interface ProductUpsertWithWhereUniqueNestedInput {
@@ -9378,6 +9405,7 @@ export interface ProductUpdateInput {
   status?: Maybe<ProductStatus>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
+  publishedAt?: Maybe<DateTimeInput>;
 }
 
 export interface ProductUpdateManyMutationInput {
@@ -9393,6 +9421,7 @@ export interface ProductUpdateManyMutationInput {
   status?: Maybe<ProductStatus>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
+  publishedAt?: Maybe<DateTimeInput>;
 }
 
 export interface ProductFunctionUpdateInput {
@@ -9440,6 +9469,7 @@ export interface ProductCreateWithoutModelInput {
   status?: Maybe<ProductStatus>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
+  publishedAt?: Maybe<DateTimeInput>;
 }
 
 export interface ProductModelUpdateInput {
@@ -9498,6 +9528,7 @@ export interface ProductUpdateWithoutModelDataInput {
   status?: Maybe<ProductStatus>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
+  publishedAt?: Maybe<DateTimeInput>;
 }
 
 export interface ProductUpsertWithWhereUniqueWithoutModelInput {
@@ -10504,6 +10535,7 @@ export interface ProductCreateWithoutTagsInput {
   status?: Maybe<ProductStatus>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
+  publishedAt?: Maybe<DateTimeInput>;
 }
 
 export interface TagUpdateInput {
@@ -10562,6 +10594,7 @@ export interface ProductUpdateWithoutTagsDataInput {
   status?: Maybe<ProductStatus>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
+  publishedAt?: Maybe<DateTimeInput>;
 }
 
 export interface ProductUpsertWithWhereUniqueWithoutTagsInput {
@@ -12338,6 +12371,7 @@ export interface Product {
   status?: ProductStatus;
   season?: String;
   architecture?: ProductArchitecture;
+  publishedAt?: DateTimeOutput;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -12398,6 +12432,7 @@ export interface ProductPromise extends Promise<Product>, Fragmentable {
   status: () => Promise<ProductStatus>;
   season: () => Promise<String>;
   architecture: () => Promise<ProductArchitecture>;
+  publishedAt: () => Promise<DateTimeOutput>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -12460,6 +12495,7 @@ export interface ProductSubscription
   status: () => Promise<AsyncIterator<ProductStatus>>;
   season: () => Promise<AsyncIterator<String>>;
   architecture: () => Promise<AsyncIterator<ProductArchitecture>>;
+  publishedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -12522,6 +12558,7 @@ export interface ProductNullablePromise
   status: () => Promise<ProductStatus>;
   season: () => Promise<String>;
   architecture: () => Promise<ProductArchitecture>;
+  publishedAt: () => Promise<DateTimeOutput>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -17110,6 +17147,7 @@ export interface ProductPreviousValues {
   status?: ProductStatus;
   season?: String;
   architecture?: ProductArchitecture;
+  publishedAt?: DateTimeOutput;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -17130,6 +17168,7 @@ export interface ProductPreviousValuesPromise
   status: () => Promise<ProductStatus>;
   season: () => Promise<String>;
   architecture: () => Promise<ProductArchitecture>;
+  publishedAt: () => Promise<DateTimeOutput>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -17150,6 +17189,7 @@ export interface ProductPreviousValuesSubscription
   status: () => Promise<AsyncIterator<ProductStatus>>;
   season: () => Promise<AsyncIterator<String>>;
   architecture: () => Promise<AsyncIterator<ProductArchitecture>>;
+  publishedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }

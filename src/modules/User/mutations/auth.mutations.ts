@@ -17,7 +17,7 @@ export class AuthMutationsResolver {
     @Args() { email, password, firstName, lastName, details },
     @Context() ctx
   ) {
-    const { user, tokenData } = await this.authService.signupUser({
+    const { user, tokenData, customer } = await this.authService.signupUser({
       email,
       password,
       firstName,
@@ -52,6 +52,7 @@ export class AuthMutationsResolver {
       refreshToken: tokenData.refresh_token,
       expiresIn: tokenData.expires_in,
       user,
+      customer,
     }
   }
 

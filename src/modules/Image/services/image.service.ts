@@ -134,6 +134,9 @@ export class ImageService {
     imageName: string,
     title?: string
   ): Promise<ImageData> {
+    try {
+      await this.purgeS3ImageFromImgix(imageURL)
+    } catch (err) {}
     return new Promise((resolve, reject) => {
       request(
         {
