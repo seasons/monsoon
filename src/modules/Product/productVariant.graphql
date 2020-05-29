@@ -128,7 +128,7 @@ input UpdateVariantInput {
 }
 
 input ProductVariantSKUsInput {
-  brandID: String!
-  colorID: String!
+  brandID: ID!
+  colorCode: String!
   sizeNames: [String!]!
 }

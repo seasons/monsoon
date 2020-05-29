@@ -5202,6 +5202,18 @@ input ProductCreateInput {
   images: ImageCreateManyInput
   modelHeight: Int
   retailPrice: Int
+<<<<<<< HEAD
+=======
+  status: ProductStatus
+  season: String
+  architecture: ProductArchitecture
+  publishedAt: DateTime
+  innerMaterials: ProductCreateinnerMaterialsInput
+  outerMaterials: ProductCreateouterMaterialsInput
+  brand: BrandCreateOneWithoutProductsInput!
+  category: CategoryCreateOneWithoutProductsInput!
+  images: ImageCreateManyInput
+>>>>>>> 47001a9ba53ffa3e9864818a790d8ae4755c47b1
   model: ProductModelCreateOneWithoutProductsInput
   modelSize: SizeCreateOneInput
   color: ColorCreateOneInput!
@@ -5267,6 +5279,17 @@ input ProductCreateWithoutBrandInput {
   images: ImageCreateManyInput
   modelHeight: Int
   retailPrice: Int
+<<<<<<< HEAD
+=======
+  status: ProductStatus
+  season: String
+  architecture: ProductArchitecture
+  publishedAt: DateTime
+  innerMaterials: ProductCreateinnerMaterialsInput
+  outerMaterials: ProductCreateouterMaterialsInput
+  category: CategoryCreateOneWithoutProductsInput!
+  images: ImageCreateManyInput
+>>>>>>> 47001a9ba53ffa3e9864818a790d8ae4755c47b1
   model: ProductModelCreateOneWithoutProductsInput
   modelSize: SizeCreateOneInput
   color: ColorCreateOneInput!
@@ -5293,6 +5316,17 @@ input ProductCreateWithoutCategoryInput {
   images: ImageCreateManyInput
   modelHeight: Int
   retailPrice: Int
+<<<<<<< HEAD
+=======
+  status: ProductStatus
+  season: String
+  architecture: ProductArchitecture
+  publishedAt: DateTime
+  innerMaterials: ProductCreateinnerMaterialsInput
+  outerMaterials: ProductCreateouterMaterialsInput
+  brand: BrandCreateOneWithoutProductsInput!
+  images: ImageCreateManyInput
+>>>>>>> 47001a9ba53ffa3e9864818a790d8ae4755c47b1
   model: ProductModelCreateOneWithoutProductsInput
   modelSize: SizeCreateOneInput
   color: ColorCreateOneInput!
@@ -5320,6 +5354,18 @@ input ProductCreateWithoutModelInput {
   images: ImageCreateManyInput
   modelHeight: Int
   retailPrice: Int
+<<<<<<< HEAD
+=======
+  status: ProductStatus
+  season: String
+  architecture: ProductArchitecture
+  publishedAt: DateTime
+  innerMaterials: ProductCreateinnerMaterialsInput
+  outerMaterials: ProductCreateouterMaterialsInput
+  brand: BrandCreateOneWithoutProductsInput!
+  category: CategoryCreateOneWithoutProductsInput!
+  images: ImageCreateManyInput
+>>>>>>> 47001a9ba53ffa3e9864818a790d8ae4755c47b1
   modelSize: SizeCreateOneInput
   color: ColorCreateOneInput!
   secondaryColor: ColorCreateOneInput
@@ -5346,6 +5392,18 @@ input ProductCreateWithoutTagsInput {
   images: ImageCreateManyInput
   modelHeight: Int
   retailPrice: Int
+<<<<<<< HEAD
+=======
+  status: ProductStatus
+  season: String
+  architecture: ProductArchitecture
+  publishedAt: DateTime
+  innerMaterials: ProductCreateinnerMaterialsInput
+  outerMaterials: ProductCreateouterMaterialsInput
+  brand: BrandCreateOneWithoutProductsInput!
+  category: CategoryCreateOneWithoutProductsInput!
+  images: ImageCreateManyInput
+>>>>>>> 47001a9ba53ffa3e9864818a790d8ae4755c47b1
   model: ProductModelCreateOneWithoutProductsInput
   modelSize: SizeCreateOneInput
   color: ColorCreateOneInput!
@@ -5372,6 +5430,18 @@ input ProductCreateWithoutVariantsInput {
   images: ImageCreateManyInput
   modelHeight: Int
   retailPrice: Int
+<<<<<<< HEAD
+=======
+  status: ProductStatus
+  season: String
+  architecture: ProductArchitecture
+  publishedAt: DateTime
+  innerMaterials: ProductCreateinnerMaterialsInput
+  outerMaterials: ProductCreateouterMaterialsInput
+  brand: BrandCreateOneWithoutProductsInput!
+  category: CategoryCreateOneWithoutProductsInput!
+  images: ImageCreateManyInput
+>>>>>>> 47001a9ba53ffa3e9864818a790d8ae4755c47b1
   model: ProductModelCreateOneWithoutProductsInput
   modelSize: SizeCreateOneInput
   color: ColorCreateOneInput!
@@ -6153,12 +6223,35 @@ input ProductScalarWhereInput {
   architecture_in: [ProductArchitecture!]
   architecture_not_in: [ProductArchitecture!]
   publishedAt: DateTime
+<<<<<<< HEAD
   publishedAt_not: DateTime
   publishedAt_in: [DateTime!]
   publishedAt_not_in: [DateTime!]
   publishedAt_lt: DateTime
   publishedAt_lte: DateTime
   publishedAt_gt: DateTime
+=======
+
+  """All values that are not equal to given value."""
+  publishedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  publishedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  publishedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  publishedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  publishedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  publishedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+>>>>>>> 47001a9ba53ffa3e9864818a790d8ae4755c47b1
   publishedAt_gte: DateTime
   createdAt: DateTime
   createdAt_not: DateTime
@@ -6224,6 +6317,18 @@ input ProductUpdateDataInput {
   images: ImageUpdateManyInput
   modelHeight: Int
   retailPrice: Int
+<<<<<<< HEAD
+=======
+  status: ProductStatus
+  season: String
+  architecture: ProductArchitecture
+  publishedAt: DateTime
+  innerMaterials: ProductUpdateinnerMaterialsInput
+  outerMaterials: ProductUpdateouterMaterialsInput
+  brand: BrandUpdateOneRequiredWithoutProductsInput
+  category: CategoryUpdateOneRequiredWithoutProductsInput
+  images: ImageUpdateManyInput
+>>>>>>> 47001a9ba53ffa3e9864818a790d8ae4755c47b1
   model: ProductModelUpdateOneWithoutProductsInput
   modelSize: SizeUpdateOneInput
   color: ColorUpdateOneRequiredInput
@@ -6254,6 +6359,18 @@ input ProductUpdateInput {
   images: ImageUpdateManyInput
   modelHeight: Int
   retailPrice: Int
+<<<<<<< HEAD
+=======
+  status: ProductStatus
+  season: String
+  architecture: ProductArchitecture
+  publishedAt: DateTime
+  innerMaterials: ProductUpdateinnerMaterialsInput
+  outerMaterials: ProductUpdateouterMaterialsInput
+  brand: BrandUpdateOneRequiredWithoutProductsInput
+  category: CategoryUpdateOneRequiredWithoutProductsInput
+  images: ImageUpdateManyInput
+>>>>>>> 47001a9ba53ffa3e9864818a790d8ae4755c47b1
   model: ProductModelUpdateOneWithoutProductsInput
   modelSize: SizeUpdateOneInput
   color: ColorUpdateOneRequiredInput
@@ -6283,6 +6400,11 @@ input ProductUpdateManyDataInput {
   season: String
   architecture: ProductArchitecture
   publishedAt: DateTime
+<<<<<<< HEAD
+=======
+  innerMaterials: ProductUpdateinnerMaterialsInput
+  outerMaterials: ProductUpdateouterMaterialsInput
+>>>>>>> 47001a9ba53ffa3e9864818a790d8ae4755c47b1
 }
 
 input ProductUpdateManyInput {
@@ -6311,6 +6433,11 @@ input ProductUpdateManyMutationInput {
   season: String
   architecture: ProductArchitecture
   publishedAt: DateTime
+<<<<<<< HEAD
+=======
+  innerMaterials: ProductUpdateinnerMaterialsInput
+  outerMaterials: ProductUpdateouterMaterialsInput
+>>>>>>> 47001a9ba53ffa3e9864818a790d8ae4755c47b1
 }
 
 input ProductUpdateManyWithoutBrandInput {
@@ -6394,6 +6521,17 @@ input ProductUpdateWithoutBrandDataInput {
   images: ImageUpdateManyInput
   modelHeight: Int
   retailPrice: Int
+<<<<<<< HEAD
+=======
+  status: ProductStatus
+  season: String
+  architecture: ProductArchitecture
+  publishedAt: DateTime
+  innerMaterials: ProductUpdateinnerMaterialsInput
+  outerMaterials: ProductUpdateouterMaterialsInput
+  category: CategoryUpdateOneRequiredWithoutProductsInput
+  images: ImageUpdateManyInput
+>>>>>>> 47001a9ba53ffa3e9864818a790d8ae4755c47b1
   model: ProductModelUpdateOneWithoutProductsInput
   modelSize: SizeUpdateOneInput
   color: ColorUpdateOneRequiredInput
@@ -6419,6 +6557,17 @@ input ProductUpdateWithoutCategoryDataInput {
   images: ImageUpdateManyInput
   modelHeight: Int
   retailPrice: Int
+<<<<<<< HEAD
+=======
+  status: ProductStatus
+  season: String
+  architecture: ProductArchitecture
+  publishedAt: DateTime
+  innerMaterials: ProductUpdateinnerMaterialsInput
+  outerMaterials: ProductUpdateouterMaterialsInput
+  brand: BrandUpdateOneRequiredWithoutProductsInput
+  images: ImageUpdateManyInput
+>>>>>>> 47001a9ba53ffa3e9864818a790d8ae4755c47b1
   model: ProductModelUpdateOneWithoutProductsInput
   modelSize: SizeUpdateOneInput
   color: ColorUpdateOneRequiredInput
@@ -6445,6 +6594,18 @@ input ProductUpdateWithoutModelDataInput {
   images: ImageUpdateManyInput
   modelHeight: Int
   retailPrice: Int
+<<<<<<< HEAD
+=======
+  status: ProductStatus
+  season: String
+  architecture: ProductArchitecture
+  publishedAt: DateTime
+  innerMaterials: ProductUpdateinnerMaterialsInput
+  outerMaterials: ProductUpdateouterMaterialsInput
+  brand: BrandUpdateOneRequiredWithoutProductsInput
+  category: CategoryUpdateOneRequiredWithoutProductsInput
+  images: ImageUpdateManyInput
+>>>>>>> 47001a9ba53ffa3e9864818a790d8ae4755c47b1
   modelSize: SizeUpdateOneInput
   color: ColorUpdateOneRequiredInput
   secondaryColor: ColorUpdateOneInput
@@ -6470,6 +6631,18 @@ input ProductUpdateWithoutTagsDataInput {
   images: ImageUpdateManyInput
   modelHeight: Int
   retailPrice: Int
+<<<<<<< HEAD
+=======
+  status: ProductStatus
+  season: String
+  architecture: ProductArchitecture
+  publishedAt: DateTime
+  innerMaterials: ProductUpdateinnerMaterialsInput
+  outerMaterials: ProductUpdateouterMaterialsInput
+  brand: BrandUpdateOneRequiredWithoutProductsInput
+  category: CategoryUpdateOneRequiredWithoutProductsInput
+  images: ImageUpdateManyInput
+>>>>>>> 47001a9ba53ffa3e9864818a790d8ae4755c47b1
   model: ProductModelUpdateOneWithoutProductsInput
   modelSize: SizeUpdateOneInput
   color: ColorUpdateOneRequiredInput
@@ -6495,6 +6668,18 @@ input ProductUpdateWithoutVariantsDataInput {
   images: ImageUpdateManyInput
   modelHeight: Int
   retailPrice: Int
+<<<<<<< HEAD
+=======
+  status: ProductStatus
+  season: String
+  architecture: ProductArchitecture
+  publishedAt: DateTime
+  innerMaterials: ProductUpdateinnerMaterialsInput
+  outerMaterials: ProductUpdateouterMaterialsInput
+  brand: BrandUpdateOneRequiredWithoutProductsInput
+  category: CategoryUpdateOneRequiredWithoutProductsInput
+  images: ImageUpdateManyInput
+>>>>>>> 47001a9ba53ffa3e9864818a790d8ae4755c47b1
   model: ProductModelUpdateOneWithoutProductsInput
   modelSize: SizeUpdateOneInput
   color: ColorUpdateOneRequiredInput
@@ -7908,12 +8093,35 @@ input ProductWhereInput {
   architecture_in: [ProductArchitecture!]
   architecture_not_in: [ProductArchitecture!]
   publishedAt: DateTime
+<<<<<<< HEAD
   publishedAt_not: DateTime
   publishedAt_in: [DateTime!]
   publishedAt_not_in: [DateTime!]
   publishedAt_lt: DateTime
   publishedAt_lte: DateTime
   publishedAt_gt: DateTime
+=======
+
+  """All values that are not equal to given value."""
+  publishedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  publishedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  publishedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  publishedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  publishedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  publishedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+>>>>>>> 47001a9ba53ffa3e9864818a790d8ae4755c47b1
   publishedAt_gte: DateTime
   createdAt: DateTime
   createdAt_not: DateTime
