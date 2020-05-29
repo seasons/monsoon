@@ -262,11 +262,9 @@ export class SyncProductVariantsService {
             },
           },
           manufacturerSizes: {
-            connect: manufacturerSizeRecords.map(a =>
-              this.utils.Identity({
-                id: a.id,
-              })
-            ),
+            connect: manufacturerSizeRecords.map(a => ({
+              id: a.id,
+            })),
           },
           weight: parseFloat(weight) || 0,
           height: parseFloat(height) || 0,

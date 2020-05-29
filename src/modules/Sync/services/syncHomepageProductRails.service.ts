@@ -29,7 +29,7 @@ export class SyncHomepageProductRailsService {
     await this.syncUtils.createAllStagingRecordsWithoutLinks({
       modelName: "Homepage Product Rails",
       allProductionRecords: allProductionRecs,
-      sanitizeFunc: fields => this.utils.Identity({ ...fields, Products: [] }),
+      sanitizeFunc: fields => ({ ...fields, Products: [] }),
       cliProgressBar,
     })
 
