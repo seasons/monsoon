@@ -730,29 +730,25 @@ export class DataScheduledJobs {
           a.offloaded !== physicalProductsWithStatusOffloaded.length
         )
       })
-      .map(c =>
-        this.utils.Identity({
-          sku: c.sku,
-          createdAt: c.createdAt,
-          counts: {
-            total: c.total,
-            reservable: c.reservable,
-            reserved: c.reserved,
-            nonReservable: c.nonReservable,
-            stored: c.stored,
-            offloaded: c.offloaded,
-          },
-          updatedAt: c.updatedAt,
-          physicalProducts: c.physicalProducts.map(d =>
-            this.utils.Identity({
-              suid: d.seasonsUID,
-              status: d.inventoryStatus,
-              createdAt: d.createdAt,
-              updatedAt: d.updatedAt,
-            })
-          ),
-        })
-      )
+      .map(c => ({
+        sku: c.sku,
+        createdAt: c.createdAt,
+        counts: {
+          total: c.total,
+          reservable: c.reservable,
+          reserved: c.reserved,
+          nonReservable: c.nonReservable,
+          stored: c.stored,
+          offloaded: c.offloaded,
+        },
+        updatedAt: c.updatedAt,
+        physicalProducts: c.physicalProducts.map(d => ({
+          suid: d.seasonsUID,
+          status: d.inventoryStatus,
+          createdAt: d.createdAt,
+          updatedAt: d.updatedAt,
+        })),
+      }))
 
     const airtableMisalignments = allAirtableProductVariants
       .filter(a => {
@@ -779,26 +775,22 @@ export class DataScheduledJobs {
               physicalProductsWithStatusNonReservable.length)
         )
       })
-      .map(d =>
-        this.utils.Identity({
-          sku: d.fields.SKU,
-          counts: {
-            total: d.fields["Total Count"],
-            reservable: d.model.reservableCount,
-            reserved: d.model.reservedCount,
-            nonReservable: d.model.nonReservableCount,
-          },
-          physicalProducts: this.getAttachedAirtablePhysicalProducts(
-            allAirtablePhysicalProducts,
-            d
-          ).map(e =>
-            this.utils.Identity({
-              SUID: e.fields.SUID.text,
-              status: e.fields["Inventory Status"],
-            })
-          ),
-        })
-      )
+      .map(d => ({
+        sku: d.fields.SKU,
+        counts: {
+          total: d.fields["Total Count"],
+          reservable: d.model.reservableCount,
+          reserved: d.model.reservedCount,
+          nonReservable: d.model.nonReservableCount,
+        },
+        physicalProducts: this.getAttachedAirtablePhysicalProducts(
+          allAirtablePhysicalProducts,
+          d
+        ).map(e => ({
+          SUID: e.fields.SUID.text,
+          status: e.fields["Inventory Status"],
+        })),
+      }))
     return [prismaMisalignments, airtableMisalignments]
   }
 
@@ -987,15 +979,13 @@ export class DataScheduledJobs {
     if (datapoints.length >= 1) {
       blocks.push({
         type: "section",
-        fields: datapoints.map(p =>
-          this.utils.Identity({
-            type: "mrkdwn",
-            text: `*${p.name}*\n${this.flagIfNeeded(
-              p.number,
-              !!p.shouldFlagNum
-            )}`,
-          })
-        ),
+        fields: datapoints.map(p => ({
+          type: "mrkdwn",
+          text: `*${p.name}*\n${this.flagIfNeeded(
+            p.number,
+            !!p.shouldFlagNum
+          )}`,
+        })),
       } as any)
     }
 

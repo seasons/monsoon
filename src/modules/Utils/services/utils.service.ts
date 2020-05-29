@@ -6,6 +6,7 @@ import { Location } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
 import cliProgress from "cli-progress"
 import { camelCase, isObject, mapKeys, snakeCase } from "lodash"
+import moment from "moment"
 
 enum ProductSize {
   XS = "XS",
@@ -28,6 +29,32 @@ export class UtilsService {
     const objCopy = { ...obj }
     fieldsToDelete.forEach(a => delete objCopy[a])
     return objCopy
+  }
+
+  isXDaysBefore({
+    beforeDate,
+    afterDate,
+    numDays,
+  }: {
+    beforeDate: Date
+    afterDate: Date
+    numDays: number
+  }): boolean {
+    const before = moment(
+      new Date(
+        beforeDate.getFullYear(),
+        beforeDate.getMonth(),
+        beforeDate.getDate()
+      )
+    )
+    const after = moment(
+      new Date(
+        afterDate.getFullYear(),
+        afterDate.getMonth(),
+        afterDate.getDate()
+      )
+    )
+    return before.isBefore(after) && after.diff(before, "days") === numDays
   }
 
   async getPrismaLocationFromSlug(slug: string): Promise<Location> {
@@ -70,10 +97,6 @@ export class UtilsService {
     let decryptedHash = decipher.update(hash, "hex", "utf8")
     decryptedHash += decipher.final("utf8")
     return decryptedHash
-  }
-
-  Identity(a) {
-    return a
   }
 
   weightedCoinFlip(pHeads) {

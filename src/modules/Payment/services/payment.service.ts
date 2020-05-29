@@ -44,6 +44,7 @@ export class PaymentService {
           first_name: user.firstName,
           last_name: user.lastName,
           email: user.email,
+          id: user.id,
         },
         card,
       })
