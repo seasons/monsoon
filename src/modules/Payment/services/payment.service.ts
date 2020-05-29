@@ -31,10 +31,15 @@ export class PaymentService {
     private readonly prisma: PrismaService
   ) {}
 
+  async updateResumeDate() {
+    return null
+  }
+
   async pauseSubscription(subscriptionID) {
     const result = await chargebee.subscription
       .pause(subscriptionID, {
-        pause_option: "end_of_term",
+        // pause_option: "end_of_term",
+        pause_option: "immediately",
       })
       .request()
 
@@ -57,28 +62,38 @@ export class PaymentService {
       `
     )
 
-    const pauseDateISO = DateTime.fromMillis(termEnd).toISO()
-    const resumeDateISO = DateTime.fromMillis(termEnd)
+    const pauseDateISO = DateTime.fromSeconds(termEnd).toISO()
+    const resumeDateISO = DateTime.fromSeconds(termEnd)
       .plus({ months: 1 })
       .toISO()
 
+    await this.prisma.client.updateCustomer({
+      data: {
+        status: "Paused",
+      },
+      where: { id: customer.id },
+    })
+
+    let customerMembership
+
     if (!customer.membership) {
-      await this.prisma.client.upsertCustomerMembership({
+      customerMembership = await this.prisma.client.upsertCustomerMembership({
         where: { id: customer.membership?.id || "" },
         create: { customer: { connect: { id: customer.id } } },
         update: { customer: { connect: { id: customer.id } } },
       })
     } else {
-      const customerMembership = await this.prisma.client.customerMembership({
+      customerMembership = await this.prisma.client.customerMembership({
         id: customer.membership?.id,
       })
-      await this.prisma.client.createPauseRequest({
-        membership: { connect: { id: customerMembership.id } },
-        pausePending: true,
-        pauseDate: pauseDateISO,
-        resumeDate: resumeDateISO,
-      })
     }
+
+    await this.prisma.client.createPauseRequest({
+      membership: { connect: { id: customerMembership.id } },
+      pausePending: true,
+      pauseDate: pauseDateISO,
+      resumeDate: resumeDateISO,
+    })
   }
 
   async removeScheduledPause(subscriptionID) {
@@ -112,7 +127,7 @@ export class PaymentService {
 
   async resumeSubscription(subscriptionID, date) {
     const resumeDate = !!date
-      ? { specific_date: DateTime.fromISO(date).toMillis() }
+      ? { specific_date: DateTime.fromISO(date).toSeconds() }
       : "immediately"
     const result = await chargebee.subscription
       .resume(subscriptionID, {
@@ -141,6 +156,13 @@ export class PaymentService {
     await this.prisma.client.updatePauseRequest({
       where: { id: pauseRequest.id },
       data: { pausePending: false, pauseDate: null, resumeDate: null },
+    })
+
+    await this.prisma.client.updateCustomer({
+      data: {
+        status: "Active",
+      },
+      where: { id: prismaCustomer.id },
     })
   }
 

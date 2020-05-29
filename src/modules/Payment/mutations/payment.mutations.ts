@@ -15,6 +15,12 @@ export class PaymentMutationsResolver {
   ) {}
 
   @Mutation()
+  async updateResumeDate() {
+    await this.paymentService.updateResumeDate()
+    return true
+  }
+
+  @Mutation()
   async pauseSubscription(@Args() { subscriptionID }) {
     console.log("pauseSubscription", subscriptionID)
     await this.paymentService.pauseSubscription(subscriptionID)
