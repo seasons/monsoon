@@ -150,6 +150,14 @@ enum WarehouseLocationType {
   Bin
 }
 
+enum PhotographyStatus {
+  Done
+  InProgress
+  ReadyForEditing
+  ReadyToShoot
+  Steam
+}
+
 type Brand {
   id: ID! @id
   slug: String! @unique
@@ -277,6 +285,7 @@ type Product {
   status: ProductStatus @default(value: Available)
   season: String
   architecture: ProductArchitecture
+  photographyStatus: PhotographyStatus
   publishedAt: DateTime
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
