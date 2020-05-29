@@ -4,7 +4,11 @@ import { head, pick } from "lodash"
 import moment from "moment"
 
 import { BlogPost } from "../blog.types"
-import { BlogPostsCollectionId } from "../constants"
+import {
+  BlogPostsCollectionId,
+  BlogPostsURL,
+  CategoriesCollectionId,
+} from "../constants"
 import { WebflowService } from "./webflow.service"
 
 @Injectable()
@@ -14,14 +18,8 @@ export class BlogService {
     private readonly utils: UtilsService
   ) {}
 
-  async getPosts({
-    collectionId = BlogPostsCollectionId,
-    limit,
-  }: {
-    collectionId?: string
-    limit?: number
-  }) {
-    const publishedPosts = await this.getAllPosts(collectionId)
+  async getPosts({ limit }: { limit?: number }) {
+    const publishedPosts = await this.getAllItems(BlogPostsCollectionId)
 
     if (limit) {
       return publishedPosts?.slice(0, limit)
@@ -30,8 +28,8 @@ export class BlogService {
     return publishedPosts
   }
 
-  async getLastPost(collectionId = BlogPostsCollectionId): Promise<BlogPost> {
-    const publishedPosts = await this.getAllPosts(collectionId)
+  async getLastPost(): Promise<BlogPost> {
+    const publishedPosts = await this.getAllItems(BlogPostsCollectionId)
 
     // published posts in order of most recently updated
     publishedPosts.sort((a, b) => {
@@ -40,10 +38,22 @@ export class BlogService {
       return timeA.isAfter(timeB) ? -1 : 1
     })
 
-    return head(publishedPosts)
+    const lastPost = head(publishedPosts)
+    if (lastPost) {
+      lastPost.category = await this.getCategory(lastPost.category)
+    }
+    return lastPost
   }
 
-  private async getAllPosts(collectionId: string): Promise<BlogPost[]> {
+  private async getCategory(categoryId: string): Promise<string> {
+    const data = await this.webflow.client.item({
+      collectionId: CategoriesCollectionId,
+      itemId: categoryId,
+    })
+    return data?.name
+  }
+
+  private async getAllItems(collectionId: string): Promise<BlogPost[]> {
     const allPosts = []
     let offset = 0
     while (true) {
@@ -62,10 +72,11 @@ export class BlogService {
         imageURL: item.articleImage?.url,
         imageAlt: item.articleImage?.alt,
         thumbnailURL: item.articleHeaderImage?.url,
-        url: `https://blog.seasons.nyc/posts/${item.slug}`,
+        url: `${BlogPostsURL}/${item.slug}`,
         createdAt: item.createdOn,
         updatedAt: item.updatedOn,
         publishedOn: item.publishedOn,
+        category: item.category5,
       }))
   }
 }

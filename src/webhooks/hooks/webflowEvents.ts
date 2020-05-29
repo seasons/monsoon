@@ -21,7 +21,12 @@ export const webflowEvents = async (_, res) => {
   const blog = new BlogService(new WebflowService(), utils)
 
   // Get the last blog post
-  const { name: headline, url: uri, publishedOn } = await blog.getLastPost()
+  const {
+    name: headline,
+    url: uri,
+    publishedOn,
+    category,
+  } = await blog.getLastPost()
 
   // Have we push notified about this post yet? Was it published today?
   const receiptForThisPost = await prisma.client.pushNotificationReceipts({
@@ -42,8 +47,7 @@ export const webflowEvents = async (_, res) => {
     await pushNotifications.pushNotifyInterest({
       interest: "seasons-general-interest",
       pushNotifID: "NewBlogPost",
-      // TODO: get the real category name
-      vars: { headline, category: "placeholder", uri },
+      vars: { headline, category, uri },
     })
   }
 

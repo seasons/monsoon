@@ -7,6 +7,7 @@ export interface BlogPost {
   imageURL: string
   imageAlt: string
   thumbnailURL: string
+  category?: string
   url: string
   tags: string[]
   createdAt: DateTime
