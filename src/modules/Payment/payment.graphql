@@ -8,7 +8,8 @@ type Query {
 }
 
 type Mutation {
-  updateResumeDate: Boolean @hasRole(roles: [Customer])
+  updateResumeDate(subscriptionID: String!, date: DateTime): Boolean
+    @hasRole(roles: [Customer])
   removeScheduledPause(subscriptionID: String!): Boolean
     @hasRole(roles: [Customer])
   pauseSubscription(subscriptionID: String!): Boolean

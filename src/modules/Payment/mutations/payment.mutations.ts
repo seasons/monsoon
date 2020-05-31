@@ -15,8 +15,8 @@ export class PaymentMutationsResolver {
   ) {}
 
   @Mutation()
-  async updateResumeDate() {
-    await this.paymentService.updateResumeDate()
+  async updateResumeDate(@Args() { subscriptionID, date }) {
+    await this.paymentService.updateResumeDate(subscriptionID, date)
     return true
   }
 
