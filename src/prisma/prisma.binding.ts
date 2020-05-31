@@ -484,6 +484,10 @@ type AggregateCustomerDetail {
   count: Int!
 }
 
+type AggregateCustomerMembership {
+  count: Int!
+}
+
 type AggregateEmailReceipt {
   count: Int!
 }
@@ -5148,10 +5152,8 @@ type Mutation {
   deleteManyWarehouseLocationConstraints(where: WarehouseLocationConstraintWhereInput): BatchPayload!
 }
 
-enum MutationType {
-  CREATED
-  UPDATED
-  DELETED
+input PackageWhereUniqueInput {
+  id: ID
 }
 
 interface Node {
@@ -5160,13 +5162,12 @@ interface Node {
 
 type Package {
   id: ID!
-  items(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct!]
-  shippingLabel: Label!
-  fromAddress: Location!
-  toAddress: Location!
-  weight: Float
   createdAt: DateTime!
   updatedAt: DateTime!
+  pausePending: Boolean!
+  pauseDate: DateTime
+  resumeDate: DateTime
+  membership: CustomerMembership!
 }
 
 type PackageConnection {
@@ -5175,7 +5176,7 @@ type PackageConnection {
   aggregate: AggregatePackage!
 }
 
-input PackageCreateInput {
+input PauseRequestCreateInput {
   id: ID
   items: PhysicalProductCreateManyInput
   shippingLabel: LabelCreateOneInput!
@@ -5184,9 +5185,9 @@ input PackageCreateInput {
   weight: Float
 }
 
-input PackageCreateOneInput {
-  create: PackageCreateInput
-  connect: PackageWhereUniqueInput
+input PauseRequestCreateManyWithoutMembershipInput {
+  create: [PauseRequestCreateWithoutMembershipInput!]
+  connect: [PauseRequestWhereUniqueInput!]
 }
 
 type PackageEdge {
@@ -5194,29 +5195,178 @@ type PackageEdge {
   cursor: String!
 }
 
-enum PackageOrderByInput {
+enum PauseRequestOrderByInput {
   id_ASC
   id_DESC
-  weight_ASC
-  weight_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
   updatedAt_DESC
+  pausePending_ASC
+  pausePending_DESC
+  pauseDate_ASC
+  pauseDate_DESC
+  resumeDate_ASC
+  resumeDate_DESC
 }
 
-type PackagePreviousValues {
+type PauseRequestPreviousValues {
   id: ID!
-  weight: Float
   createdAt: DateTime!
   updatedAt: DateTime!
+  pausePending: Boolean!
+  pauseDate: DateTime
+  resumeDate: DateTime
 }
 
-type PackageSubscriptionPayload {
+input PauseRequestScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [PauseRequestScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [PauseRequestScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [PauseRequestScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
+  pausePending: Boolean
+
+  """All values that are not equal to given value."""
+  pausePending_not: Boolean
+  pauseDate: DateTime
+
+  """All values that are not equal to given value."""
+  pauseDate_not: DateTime
+
+  """All values that are contained in given list."""
+  pauseDate_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  pauseDate_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  pauseDate_lt: DateTime
+
+  """All values less than or equal the given value."""
+  pauseDate_lte: DateTime
+
+  """All values greater than the given value."""
+  pauseDate_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  pauseDate_gte: DateTime
+  resumeDate: DateTime
+
+  """All values that are not equal to given value."""
+  resumeDate_not: DateTime
+
+  """All values that are contained in given list."""
+  resumeDate_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  resumeDate_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  resumeDate_lt: DateTime
+
+  """All values less than or equal the given value."""
+  resumeDate_lte: DateTime
+
+  """All values greater than the given value."""
+  resumeDate_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  resumeDate_gte: DateTime
+}
+
+type PauseRequestSubscriptionPayload {
   mutation: MutationType!
-  node: Package
+  node: PauseRequest
   updatedFields: [String!]
-  previousValues: PackagePreviousValues
+  previousValues: PauseRequestPreviousValues
 }
 
 input PackageSubscriptionWhereInput {
@@ -5246,8 +5396,10 @@ input PackageUpdateInput {
   weight: Float
 }
 
-input PackageUpdateManyMutationInput {
-  weight: Float
+input PauseRequestUpdateManyMutationInput {
+  pausePending: Boolean
+  pauseDate: DateTime
+  resumeDate: DateTime
 }
 
 input PackageUpdateOneInput {
@@ -5259,9 +5411,15 @@ input PackageUpdateOneInput {
   connect: PackageWhereUniqueInput
 }
 
-input PackageUpsertNestedInput {
-  update: PackageUpdateDataInput!
-  create: PackageCreateInput!
+input PauseRequestUpdateManyWithWhereNestedInput {
+  where: PauseRequestScalarWhereInput!
+  data: PauseRequestUpdateManyDataInput!
+}
+
+input PauseRequestUpdateWithoutMembershipDataInput {
+  pausePending: Boolean
+  pauseDate: DateTime
+  resumeDate: DateTime
 }
 
 input PackageWhereInput {
@@ -21559,6 +21717,10 @@ export interface AggregateCustomer {
 }
 
 export interface AggregateCustomerDetail {
+  count: Int
+}
+
+export interface AggregateCustomerMembership {
   count: Int
 }
 
