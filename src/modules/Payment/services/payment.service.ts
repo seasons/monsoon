@@ -126,6 +126,7 @@ export class PaymentService {
         pause_option: "end_of_term",
       })
       .request()
+
     const chargbeeUser = result.customer
     const prismaCustomer = await this.authService.getCustomerFromUserID(
       chargbeeUser.id
@@ -139,13 +140,14 @@ export class PaymentService {
           },
         },
       },
+      orderBy: "createdAt_DESC",
     })
 
     const pauseRequest = head(pauseRequests)
 
     await this.prisma.client.updatePauseRequest({
       where: { id: pauseRequest.id },
-      data: { pausePending: false, pauseDate: null, resumeDate: null },
+      data: { pausePending: false },
     })
   }
 
