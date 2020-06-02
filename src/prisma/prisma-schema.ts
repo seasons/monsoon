@@ -42,6 +42,10 @@ type AggregateCustomerDetail {
   count: Int!
 }
 
+type AggregateEmailReceipt {
+  count: Int!
+}
+
 type AggregateHomepageProductRail {
   count: Int!
 }
@@ -3027,6 +3031,130 @@ input CustomerWhereUniqueInput {
 
 scalar DateTime
 
+enum EmailId {
+  ReservationReturnConfirmation
+  ReservationConfirmation
+  CompleteAccount
+  FreeToReserve
+  WelcomeToSeasons
+  ReturnReminder
+}
+
+type EmailReceipt {
+  id: ID!
+  emailId: EmailId!
+  user: User!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type EmailReceiptConnection {
+  pageInfo: PageInfo!
+  edges: [EmailReceiptEdge]!
+  aggregate: AggregateEmailReceipt!
+}
+
+input EmailReceiptCreateInput {
+  id: ID
+  emailId: EmailId!
+  user: UserCreateOneInput!
+}
+
+type EmailReceiptEdge {
+  node: EmailReceipt!
+  cursor: String!
+}
+
+enum EmailReceiptOrderByInput {
+  id_ASC
+  id_DESC
+  emailId_ASC
+  emailId_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type EmailReceiptPreviousValues {
+  id: ID!
+  emailId: EmailId!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type EmailReceiptSubscriptionPayload {
+  mutation: MutationType!
+  node: EmailReceipt
+  updatedFields: [String!]
+  previousValues: EmailReceiptPreviousValues
+}
+
+input EmailReceiptSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: EmailReceiptWhereInput
+  AND: [EmailReceiptSubscriptionWhereInput!]
+  OR: [EmailReceiptSubscriptionWhereInput!]
+  NOT: [EmailReceiptSubscriptionWhereInput!]
+}
+
+input EmailReceiptUpdateInput {
+  emailId: EmailId
+  user: UserUpdateOneRequiredInput
+}
+
+input EmailReceiptUpdateManyMutationInput {
+  emailId: EmailId
+}
+
+input EmailReceiptWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  emailId: EmailId
+  emailId_not: EmailId
+  emailId_in: [EmailId!]
+  emailId_not_in: [EmailId!]
+  user: UserWhereInput
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [EmailReceiptWhereInput!]
+  OR: [EmailReceiptWhereInput!]
+  NOT: [EmailReceiptWhereInput!]
+}
+
+input EmailReceiptWhereUniqueInput {
+  id: ID
+}
+
 type HomepageProductRail {
   id: ID!
   slug: String!
@@ -4198,6 +4326,12 @@ type Mutation {
   upsertCustomerDetail(where: CustomerDetailWhereUniqueInput!, create: CustomerDetailCreateInput!, update: CustomerDetailUpdateInput!): CustomerDetail!
   deleteCustomerDetail(where: CustomerDetailWhereUniqueInput!): CustomerDetail
   deleteManyCustomerDetails(where: CustomerDetailWhereInput): BatchPayload!
+  createEmailReceipt(data: EmailReceiptCreateInput!): EmailReceipt!
+  updateEmailReceipt(data: EmailReceiptUpdateInput!, where: EmailReceiptWhereUniqueInput!): EmailReceipt
+  updateManyEmailReceipts(data: EmailReceiptUpdateManyMutationInput!, where: EmailReceiptWhereInput): BatchPayload!
+  upsertEmailReceipt(where: EmailReceiptWhereUniqueInput!, create: EmailReceiptCreateInput!, update: EmailReceiptUpdateInput!): EmailReceipt!
+  deleteEmailReceipt(where: EmailReceiptWhereUniqueInput!): EmailReceipt
+  deleteManyEmailReceipts(where: EmailReceiptWhereInput): BatchPayload!
   createHomepageProductRail(data: HomepageProductRailCreateInput!): HomepageProductRail!
   updateHomepageProductRail(data: HomepageProductRailUpdateInput!, where: HomepageProductRailWhereUniqueInput!): HomepageProductRail
   updateManyHomepageProductRails(data: HomepageProductRailUpdateManyMutationInput!, where: HomepageProductRailWhereInput): BatchPayload!
@@ -8218,6 +8352,9 @@ type Query {
   customerDetail(where: CustomerDetailWhereUniqueInput!): CustomerDetail
   customerDetails(where: CustomerDetailWhereInput, orderBy: CustomerDetailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CustomerDetail]!
   customerDetailsConnection(where: CustomerDetailWhereInput, orderBy: CustomerDetailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CustomerDetailConnection!
+  emailReceipt(where: EmailReceiptWhereUniqueInput!): EmailReceipt
+  emailReceipts(where: EmailReceiptWhereInput, orderBy: EmailReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [EmailReceipt]!
+  emailReceiptsConnection(where: EmailReceiptWhereInput, orderBy: EmailReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): EmailReceiptConnection!
   homepageProductRail(where: HomepageProductRailWhereUniqueInput!): HomepageProductRail
   homepageProductRails(where: HomepageProductRailWhereInput, orderBy: HomepageProductRailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [HomepageProductRail]!
   homepageProductRailsConnection(where: HomepageProductRailWhereInput, orderBy: HomepageProductRailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): HomepageProductRailConnection!
@@ -9675,6 +9812,7 @@ type Subscription {
   color(where: ColorSubscriptionWhereInput): ColorSubscriptionPayload
   customer(where: CustomerSubscriptionWhereInput): CustomerSubscriptionPayload
   customerDetail(where: CustomerDetailSubscriptionWhereInput): CustomerDetailSubscriptionPayload
+  emailReceipt(where: EmailReceiptSubscriptionWhereInput): EmailReceiptSubscriptionPayload
   homepageProductRail(where: HomepageProductRailSubscriptionWhereInput): HomepageProductRailSubscriptionPayload
   image(where: ImageSubscriptionWhereInput): ImageSubscriptionPayload
   label(where: LabelSubscriptionWhereInput): LabelSubscriptionPayload

@@ -162,7 +162,7 @@ export class PaymentService {
               })
 
               // Send welcome to seasons email
-              emailService.sendWelcomeToSeasonsEmail(prismaUser)
+              await emailService.sendWelcomeToSeasonsEmail(prismaUser)
 
               // Return
               resolve({

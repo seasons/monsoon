@@ -26,6 +26,7 @@ export interface Exists {
   color: (where?: ColorWhereInput) => Promise<boolean>;
   customer: (where?: CustomerWhereInput) => Promise<boolean>;
   customerDetail: (where?: CustomerDetailWhereInput) => Promise<boolean>;
+  emailReceipt: (where?: EmailReceiptWhereInput) => Promise<boolean>;
   homepageProductRail: (
     where?: HomepageProductRailWhereInput
   ) => Promise<boolean>;
@@ -289,6 +290,27 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => CustomerDetailConnectionPromise;
+  emailReceipt: (
+    where: EmailReceiptWhereUniqueInput
+  ) => EmailReceiptNullablePromise;
+  emailReceipts: (args?: {
+    where?: EmailReceiptWhereInput;
+    orderBy?: EmailReceiptOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<EmailReceipt>;
+  emailReceiptsConnection: (args?: {
+    where?: EmailReceiptWhereInput;
+    orderBy?: EmailReceiptOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => EmailReceiptConnectionPromise;
   homepageProductRail: (
     where: HomepageProductRailWhereUniqueInput
   ) => HomepageProductRailNullablePromise;
@@ -997,6 +1019,26 @@ export interface Prisma {
   deleteManyCustomerDetails: (
     where?: CustomerDetailWhereInput
   ) => BatchPayloadPromise;
+  createEmailReceipt: (data: EmailReceiptCreateInput) => EmailReceiptPromise;
+  updateEmailReceipt: (args: {
+    data: EmailReceiptUpdateInput;
+    where: EmailReceiptWhereUniqueInput;
+  }) => EmailReceiptPromise;
+  updateManyEmailReceipts: (args: {
+    data: EmailReceiptUpdateManyMutationInput;
+    where?: EmailReceiptWhereInput;
+  }) => BatchPayloadPromise;
+  upsertEmailReceipt: (args: {
+    where: EmailReceiptWhereUniqueInput;
+    create: EmailReceiptCreateInput;
+    update: EmailReceiptUpdateInput;
+  }) => EmailReceiptPromise;
+  deleteEmailReceipt: (
+    where: EmailReceiptWhereUniqueInput
+  ) => EmailReceiptPromise;
+  deleteManyEmailReceipts: (
+    where?: EmailReceiptWhereInput
+  ) => BatchPayloadPromise;
   createHomepageProductRail: (
     data: HomepageProductRailCreateInput
   ) => HomepageProductRailPromise;
@@ -1544,6 +1586,9 @@ export interface Subscription {
   customerDetail: (
     where?: CustomerDetailSubscriptionWhereInput
   ) => CustomerDetailSubscriptionPayloadSubscription;
+  emailReceipt: (
+    where?: EmailReceiptSubscriptionWhereInput
+  ) => EmailReceiptSubscriptionPayloadSubscription;
   homepageProductRail: (
     where?: HomepageProductRailSubscriptionWhereInput
   ) => HomepageProductRailSubscriptionPayloadSubscription;
@@ -2078,6 +2123,24 @@ export type CustomerDetailOrderByInput =
   | "phoneOS_DESC"
   | "insureShipment_ASC"
   | "insureShipment_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
+
+export type EmailId =
+  | "ReservationReturnConfirmation"
+  | "ReservationConfirmation"
+  | "CompleteAccount"
+  | "FreeToReserve"
+  | "WelcomeToSeasons"
+  | "ReturnReminder";
+
+export type EmailReceiptOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "emailId_ASC"
+  | "emailId_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -4851,6 +4914,51 @@ export type CustomerWhereUniqueInput = AtLeastOne<{
 export type CustomerDetailWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
+
+export type EmailReceiptWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
+export interface EmailReceiptWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  emailId?: Maybe<EmailId>;
+  emailId_not?: Maybe<EmailId>;
+  emailId_in?: Maybe<EmailId[] | EmailId>;
+  emailId_not_in?: Maybe<EmailId[] | EmailId>;
+  user?: Maybe<UserWhereInput>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<EmailReceiptWhereInput[] | EmailReceiptWhereInput>;
+  OR?: Maybe<EmailReceiptWhereInput[] | EmailReceiptWhereInput>;
+  NOT?: Maybe<EmailReceiptWhereInput[] | EmailReceiptWhereInput>;
+}
 
 export type HomepageProductRailWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
@@ -9259,6 +9367,21 @@ export interface CustomerDetailUpdateManyMutationInput {
   insureShipment?: Maybe<Boolean>;
 }
 
+export interface EmailReceiptCreateInput {
+  id?: Maybe<ID_Input>;
+  emailId: EmailId;
+  user: UserCreateOneInput;
+}
+
+export interface EmailReceiptUpdateInput {
+  emailId?: Maybe<EmailId>;
+  user?: Maybe<UserUpdateOneRequiredInput>;
+}
+
+export interface EmailReceiptUpdateManyMutationInput {
+  emailId?: Maybe<EmailId>;
+}
+
 export interface HomepageProductRailCreateInput {
   id?: Maybe<ID_Input>;
   slug: String;
@@ -11110,6 +11233,23 @@ export interface CustomerDetailSubscriptionWhereInput {
   NOT?: Maybe<
     | CustomerDetailSubscriptionWhereInput[]
     | CustomerDetailSubscriptionWhereInput
+  >;
+}
+
+export interface EmailReceiptSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<EmailReceiptWhereInput>;
+  AND?: Maybe<
+    EmailReceiptSubscriptionWhereInput[] | EmailReceiptSubscriptionWhereInput
+  >;
+  OR?: Maybe<
+    EmailReceiptSubscriptionWhereInput[] | EmailReceiptSubscriptionWhereInput
+  >;
+  NOT?: Maybe<
+    EmailReceiptSubscriptionWhereInput[] | EmailReceiptSubscriptionWhereInput
   >;
 }
 
@@ -14183,6 +14323,99 @@ export interface AggregateCustomerDetailSubscription
   count: () => Promise<AsyncIterator<Int>>;
 }
 
+export interface EmailReceipt {
+  id: ID_Output;
+  emailId: EmailId;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface EmailReceiptPromise
+  extends Promise<EmailReceipt>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  emailId: () => Promise<EmailId>;
+  user: <T = UserPromise>() => T;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface EmailReceiptSubscription
+  extends Promise<AsyncIterator<EmailReceipt>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  emailId: () => Promise<AsyncIterator<EmailId>>;
+  user: <T = UserSubscription>() => T;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface EmailReceiptNullablePromise
+  extends Promise<EmailReceipt | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  emailId: () => Promise<EmailId>;
+  user: <T = UserPromise>() => T;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface EmailReceiptConnection {
+  pageInfo: PageInfo;
+  edges: EmailReceiptEdge[];
+}
+
+export interface EmailReceiptConnectionPromise
+  extends Promise<EmailReceiptConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<EmailReceiptEdge>>() => T;
+  aggregate: <T = AggregateEmailReceiptPromise>() => T;
+}
+
+export interface EmailReceiptConnectionSubscription
+  extends Promise<AsyncIterator<EmailReceiptConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<EmailReceiptEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateEmailReceiptSubscription>() => T;
+}
+
+export interface EmailReceiptEdge {
+  node: EmailReceipt;
+  cursor: String;
+}
+
+export interface EmailReceiptEdgePromise
+  extends Promise<EmailReceiptEdge>,
+    Fragmentable {
+  node: <T = EmailReceiptPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface EmailReceiptEdgeSubscription
+  extends Promise<AsyncIterator<EmailReceiptEdge>>,
+    Fragmentable {
+  node: <T = EmailReceiptSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateEmailReceipt {
+  count: Int;
+}
+
+export interface AggregateEmailReceiptPromise
+  extends Promise<AggregateEmailReceipt>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateEmailReceiptSubscription
+  extends Promise<AsyncIterator<AggregateEmailReceipt>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
 export interface HomepageProductRail {
   id: ID_Output;
   slug: String;
@@ -16739,6 +16972,56 @@ export interface CustomerDetailPreviousValuesSubscription
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
+export interface EmailReceiptSubscriptionPayload {
+  mutation: MutationType;
+  node: EmailReceipt;
+  updatedFields: String[];
+  previousValues: EmailReceiptPreviousValues;
+}
+
+export interface EmailReceiptSubscriptionPayloadPromise
+  extends Promise<EmailReceiptSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = EmailReceiptPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = EmailReceiptPreviousValuesPromise>() => T;
+}
+
+export interface EmailReceiptSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<EmailReceiptSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = EmailReceiptSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = EmailReceiptPreviousValuesSubscription>() => T;
+}
+
+export interface EmailReceiptPreviousValues {
+  id: ID_Output;
+  emailId: EmailId;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface EmailReceiptPreviousValuesPromise
+  extends Promise<EmailReceiptPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  emailId: () => Promise<EmailId>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface EmailReceiptPreviousValuesSubscription
+  extends Promise<AsyncIterator<EmailReceiptPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  emailId: () => Promise<AsyncIterator<EmailId>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
 export interface HomepageProductRailSubscriptionPayload {
   mutation: MutationType;
   node: HomepageProductRail;
@@ -18384,6 +18667,10 @@ export const models: Model[] = [
     embedded: false
   },
   {
+    name: "EmailId",
+    embedded: false
+  },
+  {
     name: "Brand",
     embedded: false
   },
@@ -18445,6 +18732,10 @@ export const models: Model[] = [
   },
   {
     name: "WarehouseLocation",
+    embedded: false
+  },
+  {
+    name: "EmailReceipt",
     embedded: false
   },
   {
