@@ -22,21 +22,18 @@ export class PaymentMutationsResolver {
 
   @Mutation()
   async pauseSubscription(@Args() { subscriptionID }) {
-    console.log("pauseSubscription", subscriptionID)
     await this.paymentService.pauseSubscription(subscriptionID)
     return true
   }
 
   @Mutation()
   async resumeSubscription(@Args() { subscriptionID, date }) {
-    console.log("resumeSubscription", subscriptionID)
     await this.paymentService.resumeSubscription(subscriptionID, date)
     return true
   }
 
   @Mutation()
   async removeScheduledPause(@Args() { subscriptionID }) {
-    console.log("removeScheduledPause", subscriptionID)
     await this.paymentService.removeScheduledPause(subscriptionID)
     return true
   }
