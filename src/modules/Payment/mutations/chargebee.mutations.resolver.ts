@@ -11,6 +11,7 @@ export class ChargebeeMutationsResolver {
     private readonly prisma: PrismaService
   ) {}
 
+  @Mutation()
   async acknowledgeCompletedChargebeeHostedCheckout(
     @Args() { hostedPageID },
     @Analytics() analytics
