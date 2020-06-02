@@ -15,26 +15,29 @@ export class PaymentMutationsResolver {
   ) {}
 
   @Mutation()
-  async updateResumeDate(@Args() { subscriptionID, date }) {
-    await this.paymentService.updateResumeDate(subscriptionID, date)
+  async updateResumeDate(@Args() { date }, @Customer() customer) {
+    await this.paymentService.updateResumeDate(date, customer)
     return true
   }
 
   @Mutation()
-  async pauseSubscription(@Args() { subscriptionID }) {
-    await this.paymentService.pauseSubscription(subscriptionID)
+  async pauseSubscription(@Args() { subscriptionID }, @Customer() customer) {
+    await this.paymentService.pauseSubscription(subscriptionID, customer)
     return true
   }
 
   @Mutation()
-  async resumeSubscription(@Args() { subscriptionID, date }) {
-    await this.paymentService.resumeSubscription(subscriptionID, date)
+  async resumeSubscription(
+    @Args() { subscriptionID, date },
+    @Customer() customer
+  ) {
+    await this.paymentService.resumeSubscription(subscriptionID, date, customer)
     return true
   }
 
   @Mutation()
-  async removeScheduledPause(@Args() { subscriptionID }) {
-    await this.paymentService.removeScheduledPause(subscriptionID)
+  async removeScheduledPause(@Args() { subscriptionID }, @Customer() customer) {
+    await this.paymentService.removeScheduledPause(subscriptionID, customer)
     return true
   }
 
