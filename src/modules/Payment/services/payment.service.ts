@@ -58,13 +58,11 @@ export class PaymentService {
   async pauseSubscription(subscriptionID, customer) {
     const result = await chargebee.subscription
       .pause(subscriptionID, {
-        pause_option: "immediately",
-        // pause_option: "end_of_term",
+        pause_option: "end_of_term",
       })
       .request()
 
-    // const termEnd = result?.subscription?.current_term_end
-    const termEnd = result?.subscription?.pause_date
+    const termEnd = result?.subscription?.current_term_end
 
     const customerWithMembership = await this.prisma.binding.query.customer(
       { where: { id: customer.id } },
@@ -102,14 +100,6 @@ export class PaymentService {
       pausePending: false,
       pauseDate: pauseDateISO,
       resumeDate: resumeDateISO,
-    })
-
-    // FIXME: Remove
-    await this.prisma.client.updateCustomer({
-      data: {
-        status: "Paused",
-      },
-      where: { id: customer.id },
     })
   }
 
