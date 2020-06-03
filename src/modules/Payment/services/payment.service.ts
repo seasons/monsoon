@@ -55,9 +55,9 @@ export class PaymentService {
     })
   }
 
-  async pauseSubscription(subscriptionID, customer) {
+  async pauseSubscription(subscriptionId, customer) {
     const result = await chargebee.subscription
-      .pause(subscriptionID, {
+      .pause(subscriptionId, {
         pause_option: "end_of_term",
       })
       .request()
@@ -86,8 +86,8 @@ export class PaymentService {
     if (!customerWithMembership.membership) {
       customerMembership = await this.prisma.client.upsertCustomerMembership({
         where: { id: customerWithMembership.membership?.id || "" },
-        create: { customer: { connect: { id: customer.id } } },
-        update: { customer: { connect: { id: customer.id } } },
+        create: { customer: { connect: { id: customer.id } }, subscriptionId },
+        update: { customer: { connect: { id: customer.id } }, subscriptionId },
       })
     } else {
       customerMembership = await this.prisma.client.customerMembership({
@@ -97,16 +97,16 @@ export class PaymentService {
 
     await this.prisma.client.createPauseRequest({
       membership: { connect: { id: customerMembership.id } },
-      pausePending: false,
+      pausePending: true,
       pauseDate: pauseDateISO,
       resumeDate: resumeDateISO,
     })
   }
 
-  async removeScheduledPause(subscriptionID, customer) {
+  async removeScheduledPause(subscriptionId, customer) {
     try {
       await chargebee.subscription
-        .remove_scheduled_pause(subscriptionID, {
+        .remove_scheduled_pause(subscriptionId, {
           pause_option: "end_of_term",
         })
         .request()
@@ -138,13 +138,13 @@ export class PaymentService {
     })
   }
 
-  async resumeSubscription(subscriptionID, date, customer) {
+  async resumeSubscription(subscriptionId, date, customer) {
     const resumeDate = !!date
       ? { specific_date: DateTime.fromISO(date).toSeconds() }
       : "immediately"
     try {
       await chargebee.subscription
-        .resume(subscriptionID, {
+        .resume(subscriptionId, {
           resume_option: resumeDate,
           unpaid_invoices_handling: "schedule_payment_collection",
         })
