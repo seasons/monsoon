@@ -27,9 +27,24 @@ export class MembershipScheduledJobs {
 
     for (const pauseRequest of pauseRequests) {
       if (DateTime.fromISO(pauseRequest.pauseDate) >= DateTime.local()) {
-        const customerId = pauseRequest?.membership?.customer?.id
+        const pauseRequestWithCustomer = (await this.prisma.binding.query.pauseRequest(
+          { where: { id: pauseRequest.id } },
+          `
+            {
+              id
+              membership {
+                id
+                customer {
+                  id
+                }
+              }
+            }
+          `
+        )) as any
 
-        const customerWithActiveReservation = await this.prisma.binding.query.customer(
+        const customerId = pauseRequestWithCustomer?.membership?.customer?.id
+
+        const customerWithActiveReservation = (await this.prisma.binding.query.customer(
           { where: { id: customerId } },
           `
             {
@@ -43,11 +58,11 @@ export class MembershipScheduledJobs {
               }
             }
           `
-        )
+        )) as any
 
         if (customerWithActiveReservation?.activeReservation) {
           const subscriptionId =
-            customerWithInvoices?.invoices?.[0]?.subscriptionId
+            customerWithActiveReservation?.invoices?.[0]?.subscriptionId
 
           this.paymentService.resumeSubscription(subscriptionId, null, customer)
         } else {
@@ -95,7 +110,7 @@ export class MembershipScheduledJobs {
         !!pauseRequest &&
         DateTime.fromISO(pauseRequest?.resumeDate) >= DateTime.local()
       ) {
-        const customerWithInvoices = await this.prisma.binding.query.customer(
+        const customerWithInvoices = (await this.prisma.binding.query.customer(
           { where: { id: customer.id } },
           `
             {
@@ -106,7 +121,8 @@ export class MembershipScheduledJobs {
               }
             }
           `
-        )
+        )) as any
+
         const subscriptionId =
           customerWithInvoices?.invoices?.[0]?.subscriptionId
 
