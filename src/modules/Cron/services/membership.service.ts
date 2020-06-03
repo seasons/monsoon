@@ -1,6 +1,15 @@
 import { Customer } from "@app/decorators"
+import { TransactionsForCustomersLoader } from "@app/modules/Payment/loaders/transactionsForCustomers.loader"
 import { PrismaService } from "@modules/../prisma/prisma.service"
-import { PaymentService } from "@modules/Payment/services/payment.service"
+import { Loader } from "@modules/DataLoader"
+import {
+  InvoicesForCustomersLoader,
+  PaymentService,
+} from "@modules/Payment/index"
+import {
+  InvoicesDataLoader,
+  TransactionsDataLoader,
+} from "@modules/Payment/payment.types"
 import { Injectable, Logger } from "@nestjs/common"
 import { Cron, CronExpression } from "@nestjs/schedule"
 import { head } from "lodash"
@@ -15,8 +24,13 @@ export class MembershipScheduledJobs {
     private readonly paymentService: PaymentService
   ) {}
 
-  @Cron(CronExpression.EVERY_6_HOURS)
-  async updatePausePendingToPaused(@Customer() customer) {
+  @Cron(CronExpression.EVERY_MINUTE)
+  async updatePausePendingToPaused(
+    @Customer() customer,
+    @Loader(InvoicesForCustomersLoader.name) invoicesLoader: InvoicesDataLoader,
+    @Loader(TransactionsForCustomersLoader.name)
+    transactionsForCustomerLoader: TransactionsDataLoader
+  ) {
     this.logger.log("Update pause pending to paused job ran")
 
     const pauseRequests = await this.prisma.client.pauseRequests({
@@ -44,28 +58,33 @@ export class MembershipScheduledJobs {
 
         const customerId = pauseRequestWithCustomer?.membership?.customer?.id
 
-        const customerWithActiveReservation = (await this.prisma.binding.query.customer(
-          { where: { id: customerId } },
-          `
-            {
-              id
-              activeReservation {
-                id
-              }
-              invoices {
-                id
-                subscriptionId
-              }
-            }
-          `
-        )) as any
+        const invoices = this.paymentService.getCustomerInvoiceHistory(
+          await this.prisma.client
+            .customer({
+              id: customerId,
+            })
+            .user()
+            .id(),
+          invoicesLoader,
+          transactionsForCustomerLoader
+        )
 
-        if (customerWithActiveReservation?.activeReservation) {
-          const subscriptionId =
-            customerWithActiveReservation?.invoices?.[0]?.subscriptionId
+        const reservations = await this.prisma.client
+          .customer({ id: customerId })
+          .reservations({ orderBy: "createdAt_DESC" })
+
+        const latestReservation = head(reservations)
+
+        if (
+          latestReservation &&
+          !["Completed", "Cancelled"].includes(latestReservation.status)
+        ) {
+          // Customer has an active reservation so we restart membership
+          const subscriptionId = invoices?.[0]?.subscriptionId
 
           this.paymentService.resumeSubscription(subscriptionId, null, customer)
         } else {
+          // Otherwise we can pause the membership if no active reservations
           await this.prisma.client.updatePauseRequest({
             where: { id: pauseRequest.id },
             data: { pausePending: false },
@@ -82,8 +101,12 @@ export class MembershipScheduledJobs {
     }
   }
 
-  @Cron(CronExpression.EVERY_6_HOURS)
-  async restartMembership() {
+  @Cron(CronExpression.EVERY_MINUTE)
+  async restartMembership(
+    @Loader(InvoicesForCustomersLoader.name) invoicesLoader: InvoicesDataLoader,
+    @Loader(TransactionsForCustomersLoader.name)
+    transactionsForCustomerLoader: TransactionsDataLoader
+  ) {
     this.logger.log("Restart membership job ran")
 
     const pausedCustomers = await this.prisma.client.customers({
@@ -110,21 +133,18 @@ export class MembershipScheduledJobs {
         !!pauseRequest &&
         DateTime.fromISO(pauseRequest?.resumeDate) >= DateTime.local()
       ) {
-        const customerWithInvoices = (await this.prisma.binding.query.customer(
-          { where: { id: customer.id } },
-          `
-            {
-              id
-              invoices {
-                id
-                subscriptionId
-              }
-            }
-          `
-        )) as any
+        const invoices = this.paymentService.getCustomerInvoiceHistory(
+          await this.prisma.client
+            .customer({
+              id: customer.id,
+            })
+            .user()
+            .id(),
+          invoicesLoader,
+          transactionsForCustomerLoader
+        )
 
-        const subscriptionId =
-          customerWithInvoices?.invoices?.[0]?.subscriptionId
+        const subscriptionId = invoices?.[0]?.subscriptionId
 
         this.paymentService.resumeSubscription(subscriptionId, null, customer)
       }
