@@ -7,6 +7,7 @@ import {
 } from "@app/modules/PushNotifications"
 import { UtilsService } from "@app/modules/Utils"
 import { PrismaService } from "@prisma/prisma.service"
+import { upperFirst } from "lodash"
 import moment from "moment"
 
 export const webflowEvents = async (_, res) => {
@@ -29,9 +30,12 @@ export const webflowEvents = async (_, res) => {
   } = await blog.getLastPost()
 
   // Have we push notified about this post yet? Was it published today?
-  const receiptForThisPost = await prisma.client.pushNotificationReceipts({
-    where: { body_contains: headline },
-  })
+  const receiptForThisPost =
+    (
+      await prisma.client.pushNotificationReceipts({
+        where: { body_contains: headline },
+      })
+    )?.length === 1
   const postPublishedDate = moment(publishedOn)
   const publishedToday = utils.isSameDay(
     new Date(
@@ -45,9 +49,10 @@ export const webflowEvents = async (_, res) => {
   // If needed, push notif the people!
   if (!receiptForThisPost && publishedToday) {
     await pushNotifications.pushNotifyInterest({
-      interest: "seasons-general-interest",
+      interest: "seasons-general-notifications",
       pushNotifID: "NewBlogPost",
-      vars: { headline, category, uri },
+      vars: { headline, category: upperFirst(category.toLowerCase()), uri },
+      debug: true,
     })
   }
 
