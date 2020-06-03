@@ -147,6 +147,7 @@ type Product {
   model: ProductModel
   modelHeight: Int
   modelSize: Size
+  photographyStatus: PhotographyStatus
   retailPrice: Int
   color: Color!
   season: String
