@@ -1,7 +1,9 @@
+import { Customer } from "@app/decorators"
 import { PrismaService } from "@modules/../prisma/prisma.service"
 import { PaymentService } from "@modules/Payment/services/payment.service"
 import { Injectable, Logger } from "@nestjs/common"
 import { Cron, CronExpression } from "@nestjs/schedule"
+import { head } from "lodash"
 import { DateTime } from "luxon"
 
 @Injectable()
@@ -14,7 +16,7 @@ export class MembershipScheduledJobs {
   ) {}
 
   @Cron(CronExpression.EVERY_6_HOURS)
-  async updatePausePendingToPaused() {
+  async updatePausePendingToPaused(@Customer() customer) {
     this.logger.log("Update pause pending to paused job ran")
 
     const pauseRequests = await this.prisma.client.pauseRequests({
@@ -24,7 +26,7 @@ export class MembershipScheduledJobs {
     })
 
     for (const pauseRequest of pauseRequests) {
-      if (DateTime(pauseRequest.pauseDate) >= DateTime.local()) {
+      if (DateTime.fromISO(pauseRequest.pauseDate) >= DateTime.local()) {
         const customerId = pauseRequest?.membership?.customer?.id
 
         const customerWithActiveReservation = await this.prisma.binding.query.customer(
@@ -47,7 +49,7 @@ export class MembershipScheduledJobs {
           const subscriptionId =
             customerWithInvoices?.invoices?.[0]?.subscriptionId
 
-          this.paymentService.resumeSubscription(subscriptionId)
+          this.paymentService.resumeSubscription(subscriptionId, null, customer)
         } else {
           await this.prisma.client.updatePauseRequest({
             where: { id: pauseRequest.id },
@@ -91,7 +93,7 @@ export class MembershipScheduledJobs {
 
       if (
         !!pauseRequest &&
-        DateTime(pauseRequest?.resumeDate) >= DateTime.local()
+        DateTime.fromISO(pauseRequest?.resumeDate) >= DateTime.local()
       ) {
         const customerWithInvoices = await this.prisma.binding.query.customer(
           { where: { id: customer.id } },
@@ -108,7 +110,7 @@ export class MembershipScheduledJobs {
         const subscriptionId =
           customerWithInvoices?.invoices?.[0]?.subscriptionId
 
-        this.paymentService.resumeSubscription(subscriptionId)
+        this.paymentService.resumeSubscription(subscriptionId, null, customer)
       }
     }
   }
