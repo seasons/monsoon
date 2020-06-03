@@ -470,6 +470,7 @@ type Customer {
 
 type CustomerMembership {
   id: ID! @id
+  subscriptionId: String!
   customer: Customer! @relation(link: INLINE)
   pauseRequests: [PauseRequest] @relation(name: "CustomerMembershipToPauseRequest", onDelete: CASCADE)
 }

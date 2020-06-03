@@ -84,6 +84,7 @@ type Customer {
 
 type CustomerMembership {
   id: ID!
+  subscriptionId: String!
   pauseRequests(
     where: PauseRequestWhereInput
     orderBy: PauseRequestOrderByInput

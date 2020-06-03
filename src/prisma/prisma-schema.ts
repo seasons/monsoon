@@ -2895,6 +2895,7 @@ type CustomerEdge {
 
 type CustomerMembership {
   id: ID!
+  subscriptionId: String!
   customer: Customer!
   pauseRequests(where: PauseRequestWhereInput, orderBy: PauseRequestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PauseRequest!]
 }
@@ -2907,6 +2908,7 @@ type CustomerMembershipConnection {
 
 input CustomerMembershipCreateInput {
   id: ID
+  subscriptionId: String!
   customer: CustomerCreateOneWithoutMembershipInput!
   pauseRequests: PauseRequestCreateManyWithoutMembershipInput
 }
@@ -2923,11 +2925,13 @@ input CustomerMembershipCreateOneWithoutPauseRequestsInput {
 
 input CustomerMembershipCreateWithoutCustomerInput {
   id: ID
+  subscriptionId: String!
   pauseRequests: PauseRequestCreateManyWithoutMembershipInput
 }
 
 input CustomerMembershipCreateWithoutPauseRequestsInput {
   id: ID
+  subscriptionId: String!
   customer: CustomerCreateOneWithoutMembershipInput!
 }
 
@@ -2939,10 +2943,13 @@ type CustomerMembershipEdge {
 enum CustomerMembershipOrderByInput {
   id_ASC
   id_DESC
+  subscriptionId_ASC
+  subscriptionId_DESC
 }
 
 type CustomerMembershipPreviousValues {
   id: ID!
+  subscriptionId: String!
 }
 
 type CustomerMembershipSubscriptionPayload {
@@ -2964,8 +2971,13 @@ input CustomerMembershipSubscriptionWhereInput {
 }
 
 input CustomerMembershipUpdateInput {
+  subscriptionId: String
   customer: CustomerUpdateOneRequiredWithoutMembershipInput
   pauseRequests: PauseRequestUpdateManyWithoutMembershipInput
+}
+
+input CustomerMembershipUpdateManyMutationInput {
+  subscriptionId: String
 }
 
 input CustomerMembershipUpdateOneRequiredWithoutPauseRequestsInput {
@@ -2985,10 +2997,12 @@ input CustomerMembershipUpdateOneWithoutCustomerInput {
 }
 
 input CustomerMembershipUpdateWithoutCustomerDataInput {
+  subscriptionId: String
   pauseRequests: PauseRequestUpdateManyWithoutMembershipInput
 }
 
 input CustomerMembershipUpdateWithoutPauseRequestsDataInput {
+  subscriptionId: String
   customer: CustomerUpdateOneRequiredWithoutMembershipInput
 }
 
@@ -3017,6 +3031,20 @@ input CustomerMembershipWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
+  subscriptionId: String
+  subscriptionId_not: String
+  subscriptionId_in: [String!]
+  subscriptionId_not_in: [String!]
+  subscriptionId_lt: String
+  subscriptionId_lte: String
+  subscriptionId_gt: String
+  subscriptionId_gte: String
+  subscriptionId_contains: String
+  subscriptionId_not_contains: String
+  subscriptionId_starts_with: String
+  subscriptionId_not_starts_with: String
+  subscriptionId_ends_with: String
+  subscriptionId_not_ends_with: String
   customer: CustomerWhereInput
   pauseRequests_every: PauseRequestWhereInput
   pauseRequests_some: PauseRequestWhereInput
@@ -4520,6 +4548,7 @@ type Mutation {
   deleteManyCustomerDetails(where: CustomerDetailWhereInput): BatchPayload!
   createCustomerMembership(data: CustomerMembershipCreateInput!): CustomerMembership!
   updateCustomerMembership(data: CustomerMembershipUpdateInput!, where: CustomerMembershipWhereUniqueInput!): CustomerMembership
+  updateManyCustomerMemberships(data: CustomerMembershipUpdateManyMutationInput!, where: CustomerMembershipWhereInput): BatchPayload!
   upsertCustomerMembership(where: CustomerMembershipWhereUniqueInput!, create: CustomerMembershipCreateInput!, update: CustomerMembershipUpdateInput!): CustomerMembership!
   deleteCustomerMembership(where: CustomerMembershipWhereUniqueInput!): CustomerMembership
   deleteManyCustomerMemberships(where: CustomerMembershipWhereInput): BatchPayload!
