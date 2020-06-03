@@ -25,9 +25,10 @@ export class PushNotificationsService {
     interest,
     pushNotifID,
     vars,
+    debug = false,
   }: PushNotifyInterestInput) {
     let targetInterest = `debug-${interest}`
-    if (process.env.NODE_ENV === "production") {
+    if (!debug && process.env.NODE_ENV === "production") {
       targetInterest = interest
     }
     const { receiptPayload, notificationPayload } = this.data.getPushNotifData(
@@ -40,7 +41,7 @@ export class PushNotificationsService {
     )
     await this.prisma.client.createPushNotificationReceipt({
       ...receiptPayload,
-      interest,
+      interest: targetInterest,
     })
   }
 
@@ -60,7 +61,7 @@ export class PushNotificationsService {
     )
     await this.prisma.client.createPushNotificationReceipt({
       ...receiptPayload,
-      users: { connect: [{ email: email }] },
+      users: { connect: [{ email: targetEmail }] },
     })
   }
 }
