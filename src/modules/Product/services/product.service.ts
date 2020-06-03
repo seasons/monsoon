@@ -161,13 +161,16 @@ export class ProductService {
     const imageIDs = await this.productUtils.getImageIDs(imageDatas, slug)
 
     // Deep upsert the model size
-    const modelSize = await this.productUtils.upsertModelSize({
-      slug,
-      type: input.type,
-      modelSizeName: input.modelSizeName,
-      modelSizeDisplay: input.modelSizeDisplay,
-      bottomSizeType: input.bottomSizeType,
-    })
+    let modelSize
+    if (input.modelSizeDisplay && input.modelSizeName) {
+      modelSize = await this.productUtils.upsertModelSize({
+        slug,
+        type: input.type,
+        modelSizeName: input.modelSizeName,
+        modelSizeDisplay: input.modelSizeDisplay,
+        bottomSizeType: input.bottomSizeType,
+      })
+    }
 
     // Create all necessary tag records
     const tagIDs = await this.upsertTags(input.tags)
@@ -196,7 +199,7 @@ export class ProductService {
       model: {
         connect: { id: model.id },
       },
-      modelSize: {
+      modelSize: modelSize && {
         connect: { id: modelSize.id },
       },
       color: {
