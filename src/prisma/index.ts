@@ -2306,6 +2306,10 @@ export type PushNotificationReceiptOrderByInput =
   | "body_DESC"
   | "title_ASC"
   | "title_DESC"
+  | "recordID_ASC"
+  | "recordID_DESC"
+  | "recordSlug_ASC"
+  | "recordSlug_DESC"
   | "sentAt_ASC"
   | "sentAt_DESC"
   | "createdAt_ASC"
@@ -5509,6 +5513,34 @@ export interface PushNotificationReceiptWhereInput {
   title_not_starts_with?: Maybe<String>;
   title_ends_with?: Maybe<String>;
   title_not_ends_with?: Maybe<String>;
+  recordID?: Maybe<String>;
+  recordID_not?: Maybe<String>;
+  recordID_in?: Maybe<String[] | String>;
+  recordID_not_in?: Maybe<String[] | String>;
+  recordID_lt?: Maybe<String>;
+  recordID_lte?: Maybe<String>;
+  recordID_gt?: Maybe<String>;
+  recordID_gte?: Maybe<String>;
+  recordID_contains?: Maybe<String>;
+  recordID_not_contains?: Maybe<String>;
+  recordID_starts_with?: Maybe<String>;
+  recordID_not_starts_with?: Maybe<String>;
+  recordID_ends_with?: Maybe<String>;
+  recordID_not_ends_with?: Maybe<String>;
+  recordSlug?: Maybe<String>;
+  recordSlug_not?: Maybe<String>;
+  recordSlug_in?: Maybe<String[] | String>;
+  recordSlug_not_in?: Maybe<String[] | String>;
+  recordSlug_lt?: Maybe<String>;
+  recordSlug_lte?: Maybe<String>;
+  recordSlug_gt?: Maybe<String>;
+  recordSlug_gte?: Maybe<String>;
+  recordSlug_contains?: Maybe<String>;
+  recordSlug_not_contains?: Maybe<String>;
+  recordSlug_starts_with?: Maybe<String>;
+  recordSlug_not_starts_with?: Maybe<String>;
+  recordSlug_ends_with?: Maybe<String>;
+  recordSlug_not_ends_with?: Maybe<String>;
   sentAt?: Maybe<DateTimeInput>;
   sentAt_not?: Maybe<DateTimeInput>;
   sentAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -10174,6 +10206,8 @@ export interface PushNotificationReceiptCreateInput {
   interest?: Maybe<String>;
   body: String;
   title?: Maybe<String>;
+  recordID?: Maybe<String>;
+  recordSlug?: Maybe<String>;
   sentAt: DateTimeInput;
 }
 
@@ -10190,6 +10224,8 @@ export interface PushNotificationReceiptUpdateInput {
   interest?: Maybe<String>;
   body?: Maybe<String>;
   title?: Maybe<String>;
+  recordID?: Maybe<String>;
+  recordSlug?: Maybe<String>;
   sentAt?: Maybe<DateTimeInput>;
 }
 
@@ -10350,6 +10386,8 @@ export interface PushNotificationReceiptUpdateManyMutationInput {
   interest?: Maybe<String>;
   body?: Maybe<String>;
   title?: Maybe<String>;
+  recordID?: Maybe<String>;
+  recordSlug?: Maybe<String>;
   sentAt?: Maybe<DateTimeInput>;
 }
 
@@ -15596,6 +15634,8 @@ export interface PushNotificationReceipt {
   interest?: String;
   body: String;
   title?: String;
+  recordID?: String;
+  recordSlug?: String;
   sentAt: DateTimeOutput;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
@@ -15620,6 +15660,8 @@ export interface PushNotificationReceiptPromise
   interest: () => Promise<String>;
   body: () => Promise<String>;
   title: () => Promise<String>;
+  recordID: () => Promise<String>;
+  recordSlug: () => Promise<String>;
   sentAt: () => Promise<DateTimeOutput>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
@@ -15644,6 +15686,8 @@ export interface PushNotificationReceiptSubscription
   interest: () => Promise<AsyncIterator<String>>;
   body: () => Promise<AsyncIterator<String>>;
   title: () => Promise<AsyncIterator<String>>;
+  recordID: () => Promise<AsyncIterator<String>>;
+  recordSlug: () => Promise<AsyncIterator<String>>;
   sentAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
@@ -15668,6 +15712,8 @@ export interface PushNotificationReceiptNullablePromise
   interest: () => Promise<String>;
   body: () => Promise<String>;
   title: () => Promise<String>;
+  recordID: () => Promise<String>;
+  recordSlug: () => Promise<String>;
   sentAt: () => Promise<DateTimeOutput>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
@@ -17963,6 +18009,8 @@ export interface PushNotificationReceiptPreviousValues {
   interest?: String;
   body: String;
   title?: String;
+  recordID?: String;
+  recordSlug?: String;
   sentAt: DateTimeOutput;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
@@ -17978,6 +18026,8 @@ export interface PushNotificationReceiptPreviousValuesPromise
   interest: () => Promise<String>;
   body: () => Promise<String>;
   title: () => Promise<String>;
+  recordID: () => Promise<String>;
+  recordSlug: () => Promise<String>;
   sentAt: () => Promise<DateTimeOutput>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
@@ -17993,6 +18043,8 @@ export interface PushNotificationReceiptPreviousValuesSubscription
   interest: () => Promise<AsyncIterator<String>>;
   body: () => Promise<AsyncIterator<String>>;
   title: () => Promise<AsyncIterator<String>>;
+  recordID: () => Promise<AsyncIterator<String>>;
+  recordSlug: () => Promise<AsyncIterator<String>>;
   sentAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;

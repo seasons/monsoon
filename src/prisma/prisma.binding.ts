@@ -8575,6 +8575,8 @@ type PushNotificationReceipt {
   interest: String
   body: String!
   title: String
+  recordID: String
+  recordSlug: String
   sentAt: DateTime!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -8595,6 +8597,8 @@ input PushNotificationReceiptCreateInput {
   interest: String
   body: String!
   title: String
+  recordID: String
+  recordSlug: String
   sentAt: DateTime!
 }
 
@@ -8618,6 +8622,10 @@ enum PushNotificationReceiptOrderByInput {
   body_DESC
   title_ASC
   title_DESC
+  recordID_ASC
+  recordID_DESC
+  recordSlug_ASC
+  recordSlug_DESC
   sentAt_ASC
   sentAt_DESC
   createdAt_ASC
@@ -8634,6 +8642,8 @@ type PushNotificationReceiptPreviousValues {
   interest: String
   body: String!
   title: String
+  recordID: String
+  recordSlug: String
   sentAt: DateTime!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -8665,6 +8675,8 @@ input PushNotificationReceiptUpdateInput {
   interest: String
   body: String
   title: String
+  recordID: String
+  recordSlug: String
   sentAt: DateTime
 }
 
@@ -8675,6 +8687,8 @@ input PushNotificationReceiptUpdateManyMutationInput {
   interest: String
   body: String
   title: String
+  recordID: String
+  recordSlug: String
   sentAt: DateTime
 }
 
@@ -8780,6 +8794,34 @@ input PushNotificationReceiptWhereInput {
   title_not_starts_with: String
   title_ends_with: String
   title_not_ends_with: String
+  recordID: String
+  recordID_not: String
+  recordID_in: [String!]
+  recordID_not_in: [String!]
+  recordID_lt: String
+  recordID_lte: String
+  recordID_gt: String
+  recordID_gte: String
+  recordID_contains: String
+  recordID_not_contains: String
+  recordID_starts_with: String
+  recordID_not_starts_with: String
+  recordID_ends_with: String
+  recordID_not_ends_with: String
+  recordSlug: String
+  recordSlug_not: String
+  recordSlug_in: [String!]
+  recordSlug_not_in: [String!]
+  recordSlug_lt: String
+  recordSlug_lte: String
+  recordSlug_gt: String
+  recordSlug_gte: String
+  recordSlug_contains: String
+  recordSlug_not_contains: String
+  recordSlug_starts_with: String
+  recordSlug_not_starts_with: String
+  recordSlug_ends_with: String
+  recordSlug_not_ends_with: String
   sentAt: DateTime
   sentAt_not: DateTime
   sentAt_in: [DateTime!]
@@ -12291,6 +12333,10 @@ export type PushNotificationReceiptOrderByInput =   'id_ASC' |
   'body_DESC' |
   'title_ASC' |
   'title_DESC' |
+  'recordID_ASC' |
+  'recordID_DESC' |
+  'recordSlug_ASC' |
+  'recordSlug_DESC' |
   'sentAt_ASC' |
   'sentAt_DESC' |
   'createdAt_ASC' |
@@ -18602,6 +18648,8 @@ export interface PushNotificationReceiptCreateInput {
   interest?: String | null
   body: String
   title?: String | null
+  recordID?: String | null
+  recordSlug?: String | null
   sentAt: DateTime
 }
 
@@ -18624,6 +18672,8 @@ export interface PushNotificationReceiptUpdateInput {
   interest?: String | null
   body?: String | null
   title?: String | null
+  recordID?: String | null
+  recordSlug?: String | null
   sentAt?: DateTime | null
 }
 
@@ -18634,6 +18684,8 @@ export interface PushNotificationReceiptUpdateManyMutationInput {
   interest?: String | null
   body?: String | null
   title?: String | null
+  recordID?: String | null
+  recordSlug?: String | null
   sentAt?: DateTime | null
 }
 
@@ -18739,6 +18791,34 @@ export interface PushNotificationReceiptWhereInput {
   title_not_starts_with?: String | null
   title_ends_with?: String | null
   title_not_ends_with?: String | null
+  recordID?: String | null
+  recordID_not?: String | null
+  recordID_in?: String[] | String | null
+  recordID_not_in?: String[] | String | null
+  recordID_lt?: String | null
+  recordID_lte?: String | null
+  recordID_gt?: String | null
+  recordID_gte?: String | null
+  recordID_contains?: String | null
+  recordID_not_contains?: String | null
+  recordID_starts_with?: String | null
+  recordID_not_starts_with?: String | null
+  recordID_ends_with?: String | null
+  recordID_not_ends_with?: String | null
+  recordSlug?: String | null
+  recordSlug_not?: String | null
+  recordSlug_in?: String[] | String | null
+  recordSlug_not_in?: String[] | String | null
+  recordSlug_lt?: String | null
+  recordSlug_lte?: String | null
+  recordSlug_gt?: String | null
+  recordSlug_gte?: String | null
+  recordSlug_contains?: String | null
+  recordSlug_not_contains?: String | null
+  recordSlug_starts_with?: String | null
+  recordSlug_not_starts_with?: String | null
+  recordSlug_ends_with?: String | null
+  recordSlug_not_ends_with?: String | null
   sentAt?: DateTime | null
   sentAt_not?: DateTime | null
   sentAt_in?: DateTime[] | DateTime | null
@@ -22178,6 +22258,8 @@ export interface PushNotificationReceipt {
   interest?: String | null
   body: String
   title?: String | null
+  recordID?: String | null
+  recordSlug?: String | null
   sentAt: DateTime
   createdAt: DateTime
   updatedAt: DateTime
@@ -22202,6 +22284,8 @@ export interface PushNotificationReceiptPreviousValues {
   interest?: String | null
   body: String
   title?: String | null
+  recordID?: String | null
+  recordSlug?: String | null
   sentAt: DateTime
   createdAt: DateTime
   updatedAt: DateTime

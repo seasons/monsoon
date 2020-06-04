@@ -399,6 +399,10 @@ type PushNotificationReceipt {
   body: String!
   # title = title of the message
   title: String
+  # id we pass as a param
+  recordID: String
+  # slug we pass as a param
+  recordSlug: String
   sentAt: DateTime!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
