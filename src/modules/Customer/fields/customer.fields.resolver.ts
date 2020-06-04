@@ -95,7 +95,11 @@ export class CustomerFieldsResolver {
   }
 
   @ResolveField()
-  async user(@User() user) {
-    return user
+  async user(@Parent() customer) {
+    return await this.prisma.client
+      .customer({
+        id: customer.id,
+      })
+      .user()
   }
 }
