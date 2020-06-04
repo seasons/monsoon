@@ -1,15 +1,13 @@
-import { HttpModule, Module } from "@nestjs/common"
+import { Module } from "@nestjs/common"
 
+import { UtilsModule } from "../Utils"
 import { BlogQueriesResolver } from "./queries/blog.queries.resolver"
 import { BlogService } from "./services/blog.service"
+import { WebflowService } from "./services/webflow.service"
 
 @Module({
-  imports: [
-    HttpModule.register({
-      timeout: 5000,
-    }),
-  ],
-  providers: [BlogService, BlogQueriesResolver],
+  imports: [UtilsModule],
+  providers: [BlogService, BlogQueriesResolver, WebflowService],
   exports: [BlogService],
 })
 export class BlogModule {}

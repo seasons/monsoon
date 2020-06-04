@@ -1,9 +1,6 @@
 import { get } from "lodash"
 
 import { User } from "../prisma"
-import { PrismaService } from "../prisma/prisma.service"
-
-const prisma = new PrismaService()
 
 class AuthError extends Error {
   constructor() {

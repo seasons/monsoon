@@ -8130,6 +8130,7 @@ type PushNotificationReceipt {
   screen: String
   uri: String
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User!]
+  interest: String
   body: String!
   title: String
   sentAt: DateTime!
@@ -8149,6 +8150,7 @@ input PushNotificationReceiptCreateInput {
   screen: String
   uri: String
   users: UserCreateManyInput
+  interest: String
   body: String!
   title: String
   sentAt: DateTime!
@@ -8168,6 +8170,8 @@ enum PushNotificationReceiptOrderByInput {
   screen_DESC
   uri_ASC
   uri_DESC
+  interest_ASC
+  interest_DESC
   body_ASC
   body_DESC
   title_ASC
@@ -8185,6 +8189,7 @@ type PushNotificationReceiptPreviousValues {
   route: String
   screen: String
   uri: String
+  interest: String
   body: String!
   title: String
   sentAt: DateTime!
@@ -8215,6 +8220,7 @@ input PushNotificationReceiptUpdateInput {
   screen: String
   uri: String
   users: UserUpdateManyInput
+  interest: String
   body: String
   title: String
   sentAt: DateTime
@@ -8224,6 +8230,7 @@ input PushNotificationReceiptUpdateManyMutationInput {
   route: String
   screen: String
   uri: String
+  interest: String
   body: String
   title: String
   sentAt: DateTime
@@ -8289,6 +8296,20 @@ input PushNotificationReceiptWhereInput {
   users_every: UserWhereInput
   users_some: UserWhereInput
   users_none: UserWhereInput
+  interest: String
+  interest_not: String
+  interest_in: [String!]
+  interest_not_in: [String!]
+  interest_lt: String
+  interest_lte: String
+  interest_gt: String
+  interest_gte: String
+  interest_contains: String
+  interest_not_contains: String
+  interest_starts_with: String
+  interest_not_starts_with: String
+  interest_ends_with: String
+  interest_not_ends_with: String
   body: String
   body_not: String
   body_in: [String!]
