@@ -147,6 +147,7 @@ type Product {
   model: ProductModel
   modelHeight: Int
   modelSize: Size
+  photographyStatus: PhotographyStatus
   retailPrice: Int
   color: Color!
   season: String
@@ -201,8 +202,8 @@ input UpsertProductInput {
   images: [Upload!]!
   innerMaterials: [String!]!
   modelID: String!
-  modelSizeDisplay: String!
-  modelSizeName: String!
+  modelSizeDisplay: String
+  modelSizeName: String
   name: String!
   outerMaterials: [String!]!
   retailPrice: Int!
