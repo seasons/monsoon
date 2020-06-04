@@ -9,7 +9,7 @@ import {
   InvoicesDataLoader,
   TransactionsDataLoader,
 } from "@modules/Payment/payment.types"
-import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
+import { Info, Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma/prisma.service"
 import { head } from "lodash"
 
@@ -95,7 +95,11 @@ export class CustomerFieldsResolver {
   }
 
   @ResolveField()
-  async user(@User() user) {
-    return user
+  async user(@Parent() customer) {
+    return await this.prisma.client
+      .customer({
+        id: customer.id,
+      })
+      .user()
   }
 }
