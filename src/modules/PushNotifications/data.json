@@ -19,5 +19,15 @@
       "body": "{{headline}}"
     },
     "data": { "route": "Webview", "params": { "uri": "{{& uri}}" } }
+  },
+  "Custom": {
+    "alert": {
+      "title": "{{title}}",
+      "body": "{{body}}"
+    },
+    "data": {
+      "route": "{{route}}",
+      "params": { "uri": "{{& uri}}", "id": "{{id}}", "slug": "{{slug}}" }
+    }
   }
 }

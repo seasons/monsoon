@@ -8,16 +8,18 @@ const run = async () => {
     secretKey: process.env.PUSHER_SECRET_KEY,
   })
 
-  const y = await client.publishToInterests(
-    ["debug-seasons-general-notifications"],
-    {
-      // const y = await client.publishToUsers(["faiyam+1@faiyamrahman.com"], {
-      apns: {
-        aps: { alert: { title: "yo", body: "yo" } },
-        data: { route: "Faq" },
+  // const y = await client.publishToInterests(
+  //   ["debug-seasons-general-notifications"],
+  //   {
+  const y = await client.publishToUsers(["faiyam+1@faiyamrahman.com"], {
+    apns: {
+      aps: { alert: { title: "yo", body: "yo" } },
+      data: {
+        route: "Brand",
+        params: { id: "ck2ze8lgo0p1307347rt0emdj", slug: "acne-studios" },
       },
-    } as any
-  )
+    },
+  } as any)
   console.log(y)
 }
 

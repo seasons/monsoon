@@ -1,0 +1,35 @@
+type Mutation {
+  pushNotifyUser(
+    where: UserWhereUniqueInput
+    data: PushNotifDataInput
+  ): PushNotificationReceipt
+}
+
+input PushNotifDataInput {
+  title: String
+  body: String!
+  route: AppRoute
+  uri: String
+  record: RecordParamsInput
+}
+
+input RecordParamsInput {
+  id: String!
+  slug: String!
+}
+
+enum AppRoute {
+  BagStack
+  Faq
+  Webview
+  CurrentRotation
+  Reservation
+  Browse
+  Home
+  Brand
+  Account
+  PaymentAndShipping
+  PersonalPreferences
+  ProductRequest
+  Product
+}
