@@ -4806,6 +4806,286 @@ type PackageEdge {
   cursor: String!
 }
 
+enum PackageOrderByInput {
+  id_ASC
+  id_DESC
+  weight_ASC
+  weight_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type PackagePreviousValues {
+  id: ID!
+  weight: Float
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type PackageSubscriptionPayload {
+  mutation: MutationType!
+  node: Package
+  updatedFields: [String!]
+  previousValues: PackagePreviousValues
+}
+
+input PackageSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [PackageSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [PackageSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [PackageSubscriptionWhereInput!]
+
+  """The subscription event gets dispatched when it's listed in mutation_in"""
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: PackageWhereInput
+}
+
+input PackageUpdateDataInput {
+  weight: Float
+  items: PhysicalProductUpdateManyInput
+  shippingLabel: LabelUpdateOneRequiredInput
+  fromAddress: LocationUpdateOneRequiredInput
+  toAddress: LocationUpdateOneRequiredInput
+}
+
+input PackageUpdateInput {
+  weight: Float
+  items: PhysicalProductUpdateManyInput
+  shippingLabel: LabelUpdateOneRequiredInput
+  fromAddress: LocationUpdateOneRequiredInput
+  toAddress: LocationUpdateOneRequiredInput
+}
+
+input PackageUpdateManyMutationInput {
+  weight: Float
+}
+
+input PackageUpdateOneInput {
+  create: PackageCreateInput
+  connect: PackageWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: PackageUpdateDataInput
+  upsert: PackageUpsertNestedInput
+}
+
+input PackageUpsertNestedInput {
+  update: PackageUpdateDataInput!
+  create: PackageCreateInput!
+}
+
+input PackageWhereInput {
+  """Logical AND on all given filters."""
+  AND: [PackageWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [PackageWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [PackageWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  weight: Float
+
+  """All values that are not equal to given value."""
+  weight_not: Float
+
+  """All values that are contained in given list."""
+  weight_in: [Float!]
+
+  """All values that are not contained in given list."""
+  weight_not_in: [Float!]
+
+  """All values less than the given value."""
+  weight_lt: Float
+
+  """All values less than or equal the given value."""
+  weight_lte: Float
+
+  """All values greater than the given value."""
+  weight_gt: Float
+
+  """All values greater than or equal the given value."""
+  weight_gte: Float
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
+  items_every: PhysicalProductWhereInput
+  items_some: PhysicalProductWhereInput
+  items_none: PhysicalProductWhereInput
+  shippingLabel: LabelWhereInput
+  fromAddress: LocationWhereInput
+  toAddress: LocationWhereInput
+}
+
+input PackageWhereUniqueInput {
+  id: ID
+}
+
+"""Information about pagination in a connection."""
+type PageInfo {
+  """When paginating forwards, are there more items?"""
+  hasNextPage: Boolean!
+
+  """When paginating backwards, are there more items?"""
+  hasPreviousPage: Boolean!
+
+  """When paginating backwards, the cursor to continue."""
+  startCursor: String
+
+  """When paginating forwards, the cursor to continue."""
+  endCursor: String
+}
+
+type PauseRequest implements Node {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  pausePending: Boolean!
+  pauseDate: DateTime
+  resumeDate: DateTime
+  membership: CustomerMembership!
+}
+
+"""A connection to a list of items."""
+type PauseRequestConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [PauseRequestEdge]!
+  aggregate: AggregatePauseRequest!
+}
+
+input PauseRequestCreateInput {
+  id: ID
+  pausePending: Boolean!
+  pauseDate: DateTime
+  resumeDate: DateTime
+  membership: CustomerMembershipCreateOneWithoutPauseRequestsInput!
+}
+
+input PauseRequestCreateManyWithoutMembershipInput {
+  create: [PauseRequestCreateWithoutMembershipInput!]
+  connect: [PauseRequestWhereUniqueInput!]
+}
+
+input PauseRequestCreateWithoutMembershipInput {
+  id: ID
+  pausePending: Boolean!
+  pauseDate: DateTime
+  resumeDate: DateTime
+}
+
+"""An edge in a connection."""
+type PauseRequestEdge {
+  """The item at the end of the edge."""
+  node: PauseRequest!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
 enum PauseRequestOrderByInput {
   id_ASC
   id_DESC

@@ -4898,6 +4898,255 @@ type PageInfo {
   endCursor: String
 }
 
+type PauseRequest {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  pausePending: Boolean!
+  pauseDate: DateTime
+  resumeDate: DateTime
+  membership: CustomerMembership!
+}
+
+type PauseRequestConnection {
+  pageInfo: PageInfo!
+  edges: [PauseRequestEdge]!
+  aggregate: AggregatePauseRequest!
+}
+
+input PauseRequestCreateInput {
+  id: ID
+  pausePending: Boolean!
+  pauseDate: DateTime
+  resumeDate: DateTime
+  membership: CustomerMembershipCreateOneWithoutPauseRequestsInput!
+}
+
+input PauseRequestCreateManyWithoutMembershipInput {
+  create: [PauseRequestCreateWithoutMembershipInput!]
+  connect: [PauseRequestWhereUniqueInput!]
+}
+
+input PauseRequestCreateWithoutMembershipInput {
+  id: ID
+  pausePending: Boolean!
+  pauseDate: DateTime
+  resumeDate: DateTime
+}
+
+type PauseRequestEdge {
+  node: PauseRequest!
+  cursor: String!
+}
+
+enum PauseRequestOrderByInput {
+  id_ASC
+  id_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  pausePending_ASC
+  pausePending_DESC
+  pauseDate_ASC
+  pauseDate_DESC
+  resumeDate_ASC
+  resumeDate_DESC
+}
+
+type PauseRequestPreviousValues {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  pausePending: Boolean!
+  pauseDate: DateTime
+  resumeDate: DateTime
+}
+
+input PauseRequestScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  pausePending: Boolean
+  pausePending_not: Boolean
+  pauseDate: DateTime
+  pauseDate_not: DateTime
+  pauseDate_in: [DateTime!]
+  pauseDate_not_in: [DateTime!]
+  pauseDate_lt: DateTime
+  pauseDate_lte: DateTime
+  pauseDate_gt: DateTime
+  pauseDate_gte: DateTime
+  resumeDate: DateTime
+  resumeDate_not: DateTime
+  resumeDate_in: [DateTime!]
+  resumeDate_not_in: [DateTime!]
+  resumeDate_lt: DateTime
+  resumeDate_lte: DateTime
+  resumeDate_gt: DateTime
+  resumeDate_gte: DateTime
+  AND: [PauseRequestScalarWhereInput!]
+  OR: [PauseRequestScalarWhereInput!]
+  NOT: [PauseRequestScalarWhereInput!]
+}
+
+type PauseRequestSubscriptionPayload {
+  mutation: MutationType!
+  node: PauseRequest
+  updatedFields: [String!]
+  previousValues: PauseRequestPreviousValues
+}
+
+input PauseRequestSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: PauseRequestWhereInput
+  AND: [PauseRequestSubscriptionWhereInput!]
+  OR: [PauseRequestSubscriptionWhereInput!]
+  NOT: [PauseRequestSubscriptionWhereInput!]
+}
+
+input PauseRequestUpdateInput {
+  pausePending: Boolean
+  pauseDate: DateTime
+  resumeDate: DateTime
+  membership: CustomerMembershipUpdateOneRequiredWithoutPauseRequestsInput
+}
+
+input PauseRequestUpdateManyDataInput {
+  pausePending: Boolean
+  pauseDate: DateTime
+  resumeDate: DateTime
+}
+
+input PauseRequestUpdateManyMutationInput {
+  pausePending: Boolean
+  pauseDate: DateTime
+  resumeDate: DateTime
+}
+
+input PauseRequestUpdateManyWithoutMembershipInput {
+  create: [PauseRequestCreateWithoutMembershipInput!]
+  delete: [PauseRequestWhereUniqueInput!]
+  connect: [PauseRequestWhereUniqueInput!]
+  set: [PauseRequestWhereUniqueInput!]
+  disconnect: [PauseRequestWhereUniqueInput!]
+  update: [PauseRequestUpdateWithWhereUniqueWithoutMembershipInput!]
+  upsert: [PauseRequestUpsertWithWhereUniqueWithoutMembershipInput!]
+  deleteMany: [PauseRequestScalarWhereInput!]
+  updateMany: [PauseRequestUpdateManyWithWhereNestedInput!]
+}
+
+input PauseRequestUpdateManyWithWhereNestedInput {
+  where: PauseRequestScalarWhereInput!
+  data: PauseRequestUpdateManyDataInput!
+}
+
+input PauseRequestUpdateWithoutMembershipDataInput {
+  pausePending: Boolean
+  pauseDate: DateTime
+  resumeDate: DateTime
+}
+
+input PauseRequestUpdateWithWhereUniqueWithoutMembershipInput {
+  where: PauseRequestWhereUniqueInput!
+  data: PauseRequestUpdateWithoutMembershipDataInput!
+}
+
+input PauseRequestUpsertWithWhereUniqueWithoutMembershipInput {
+  where: PauseRequestWhereUniqueInput!
+  update: PauseRequestUpdateWithoutMembershipDataInput!
+  create: PauseRequestCreateWithoutMembershipInput!
+}
+
+input PauseRequestWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  pausePending: Boolean
+  pausePending_not: Boolean
+  pauseDate: DateTime
+  pauseDate_not: DateTime
+  pauseDate_in: [DateTime!]
+  pauseDate_not_in: [DateTime!]
+  pauseDate_lt: DateTime
+  pauseDate_lte: DateTime
+  pauseDate_gt: DateTime
+  pauseDate_gte: DateTime
+  resumeDate: DateTime
+  resumeDate_not: DateTime
+  resumeDate_in: [DateTime!]
+  resumeDate_not_in: [DateTime!]
+  resumeDate_lt: DateTime
+  resumeDate_lte: DateTime
+  resumeDate_gt: DateTime
+  resumeDate_gte: DateTime
+  membership: CustomerMembershipWhereInput
+  AND: [PauseRequestWhereInput!]
+  OR: [PauseRequestWhereInput!]
+  NOT: [PauseRequestWhereInput!]
+}
+
+input PauseRequestWhereUniqueInput {
+  id: ID
+}
+
 enum PhotographyStatus {
   Done
   InProgress
