@@ -1,9 +1,10 @@
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
 import { ApolloError } from "apollo-server"
-import { pick } from "lodash"
+import { kebabCase, pick } from "lodash"
 import * as validUrl from "valid-url"
 
+import { PushNotificationInterest } from "../pushNotifications.types"
 import { PushNotificationsService } from "../services/pushNotifications.service"
 
 @Resolver()
@@ -33,6 +34,30 @@ export class PushNotificationsMutationsResolver {
       email: email,
       pushNotifID: "Custom",
       vars: { title, body, route, uri, ...pick(record, ["id", "slug"]) },
+    })
+    return await this.prisma.binding.query.pushNotificationReceipt(
+      {
+        where: { id },
+      },
+      info
+    )
+  }
+
+  @Mutation()
+  async pushNotifyInterest(
+    @Args()
+    { interest, data: { title, body, route, uri, record }, debug = false },
+    @Info() info
+  ) {
+    this.validateWebviewParams(route, uri)
+    await this.validateBrandAndProductParams(route, record)
+
+    // Send the notif
+    const { id } = await this.pushNotifications.pushNotifyInterest({
+      interest: kebabCase(interest) as PushNotificationInterest,
+      pushNotifID: "Custom",
+      vars: { title, body, route, uri, ...pick(record, ["id", "slug"]) },
+      debug,
     })
     return await this.prisma.binding.query.pushNotificationReceipt(
       {
