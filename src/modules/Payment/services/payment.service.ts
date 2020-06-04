@@ -115,7 +115,7 @@ export class PaymentService {
         e?.api_error_code &&
         e?.api_error_code !== "invalid_state_for_request"
       ) {
-        return e
+        throw new Error(`Error removing scheduled pause: ${e}`)
       }
     }
 
@@ -154,7 +154,7 @@ export class PaymentService {
         e?.api_error_code &&
         e?.api_error_code !== "invalid_state_for_request"
       ) {
-        return e
+        throw new Error(`Error resuming subscription: ${e}`)
       }
     }
 
