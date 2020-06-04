@@ -29,15 +29,14 @@ export class SyncSizesService {
       allProductionRecords: await this.airtableService.getAllSizes(
         this.airtableService.getProductionBase()
       ),
-      sanitizeFunc: fields =>
-        this.utils.Identity({
-          ...fields,
-          "Top Sizes": [],
-          "Bottom Sizes": [],
-          "Bottom Sizes 2": [],
-          "Related Size": [],
-          Products: [],
-        }),
+      sanitizeFunc: fields => ({
+        ...fields,
+        "Top Sizes": [],
+        "Bottom Sizes": [],
+        "Bottom Sizes 2": [],
+        "Related Size": [],
+        Products: [],
+      }),
       cliProgressBar,
     })
   }

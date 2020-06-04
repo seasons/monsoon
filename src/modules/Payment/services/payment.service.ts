@@ -44,6 +44,7 @@ export class PaymentService {
           first_name: user.firstName,
           last_name: user.lastName,
           email: user.email,
+          id: user.id,
         },
         card,
       })
@@ -161,7 +162,7 @@ export class PaymentService {
               })
 
               // Send welcome to seasons email
-              emailService.sendWelcomeToSeasonsEmail(prismaUser)
+              await emailService.sendWelcomeToSeasonsEmail(prismaUser)
 
               // Return
               resolve({

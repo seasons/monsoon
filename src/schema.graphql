@@ -9,33 +9,7 @@
 # import Query from "./modules/Homepage/homepage.graphql"
 # import Query, Mutation from "./modules/Payment/payment.graphql"
 # import Query, Mutation from "./modules/Shipping/shipping.graphql"
+# import Query from "./modules/FAQ/faq.graphql"
 
 directive @isAuthenticated on FIELD_DEFINITION
 directive @hasRole(roles: [UserRole]) on FIELD_DEFINITION
-
-type Query {
-  faq: Faq
-}
-
-type Mutation {
-  beamsData: BeamsData!
-}
-
-type BeamsData {
-  email: String!
-  beamsToken: String!
-}
-
-type Faq {
-  sections: [FaqSection!]!
-}
-
-type FaqSection {
-  title: String!
-  subsections: [FaqSubsection!]!
-}
-
-type FaqSubsection {
-  title: String!
-  text: String!
-}

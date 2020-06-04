@@ -26,6 +26,7 @@ export interface Exists {
   color: (where?: ColorWhereInput) => Promise<boolean>;
   customer: (where?: CustomerWhereInput) => Promise<boolean>;
   customerDetail: (where?: CustomerDetailWhereInput) => Promise<boolean>;
+  emailReceipt: (where?: EmailReceiptWhereInput) => Promise<boolean>;
   homepageProductRail: (
     where?: HomepageProductRailWhereInput
   ) => Promise<boolean>;
@@ -47,6 +48,9 @@ export interface Exists {
   ) => Promise<boolean>;
   productVariantWant: (
     where?: ProductVariantWantWhereInput
+  ) => Promise<boolean>;
+  pushNotificationReceipt: (
+    where?: PushNotificationReceiptWhereInput
   ) => Promise<boolean>;
   recentlyViewedProduct: (
     where?: RecentlyViewedProductWhereInput
@@ -286,6 +290,27 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => CustomerDetailConnectionPromise;
+  emailReceipt: (
+    where: EmailReceiptWhereUniqueInput
+  ) => EmailReceiptNullablePromise;
+  emailReceipts: (args?: {
+    where?: EmailReceiptWhereInput;
+    orderBy?: EmailReceiptOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<EmailReceipt>;
+  emailReceiptsConnection: (args?: {
+    where?: EmailReceiptWhereInput;
+    orderBy?: EmailReceiptOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => EmailReceiptConnectionPromise;
   homepageProductRail: (
     where: HomepageProductRailWhereUniqueInput
   ) => HomepageProductRailNullablePromise;
@@ -570,6 +595,27 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => ProductVariantWantConnectionPromise;
+  pushNotificationReceipt: (
+    where: PushNotificationReceiptWhereUniqueInput
+  ) => PushNotificationReceiptNullablePromise;
+  pushNotificationReceipts: (args?: {
+    where?: PushNotificationReceiptWhereInput;
+    orderBy?: PushNotificationReceiptOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<PushNotificationReceipt>;
+  pushNotificationReceiptsConnection: (args?: {
+    where?: PushNotificationReceiptWhereInput;
+    orderBy?: PushNotificationReceiptOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => PushNotificationReceiptConnectionPromise;
   recentlyViewedProduct: (
     where: RecentlyViewedProductWhereUniqueInput
   ) => RecentlyViewedProductNullablePromise;
@@ -973,6 +1019,26 @@ export interface Prisma {
   deleteManyCustomerDetails: (
     where?: CustomerDetailWhereInput
   ) => BatchPayloadPromise;
+  createEmailReceipt: (data: EmailReceiptCreateInput) => EmailReceiptPromise;
+  updateEmailReceipt: (args: {
+    data: EmailReceiptUpdateInput;
+    where: EmailReceiptWhereUniqueInput;
+  }) => EmailReceiptPromise;
+  updateManyEmailReceipts: (args: {
+    data: EmailReceiptUpdateManyMutationInput;
+    where?: EmailReceiptWhereInput;
+  }) => BatchPayloadPromise;
+  upsertEmailReceipt: (args: {
+    where: EmailReceiptWhereUniqueInput;
+    create: EmailReceiptCreateInput;
+    update: EmailReceiptUpdateInput;
+  }) => EmailReceiptPromise;
+  deleteEmailReceipt: (
+    where: EmailReceiptWhereUniqueInput
+  ) => EmailReceiptPromise;
+  deleteManyEmailReceipts: (
+    where?: EmailReceiptWhereInput
+  ) => BatchPayloadPromise;
   createHomepageProductRail: (
     data: HomepageProductRailCreateInput
   ) => HomepageProductRailPromise;
@@ -1249,6 +1315,28 @@ export interface Prisma {
   deleteManyProductVariantWants: (
     where?: ProductVariantWantWhereInput
   ) => BatchPayloadPromise;
+  createPushNotificationReceipt: (
+    data: PushNotificationReceiptCreateInput
+  ) => PushNotificationReceiptPromise;
+  updatePushNotificationReceipt: (args: {
+    data: PushNotificationReceiptUpdateInput;
+    where: PushNotificationReceiptWhereUniqueInput;
+  }) => PushNotificationReceiptPromise;
+  updateManyPushNotificationReceipts: (args: {
+    data: PushNotificationReceiptUpdateManyMutationInput;
+    where?: PushNotificationReceiptWhereInput;
+  }) => BatchPayloadPromise;
+  upsertPushNotificationReceipt: (args: {
+    where: PushNotificationReceiptWhereUniqueInput;
+    create: PushNotificationReceiptCreateInput;
+    update: PushNotificationReceiptUpdateInput;
+  }) => PushNotificationReceiptPromise;
+  deletePushNotificationReceipt: (
+    where: PushNotificationReceiptWhereUniqueInput
+  ) => PushNotificationReceiptPromise;
+  deleteManyPushNotificationReceipts: (
+    where?: PushNotificationReceiptWhereInput
+  ) => BatchPayloadPromise;
   createRecentlyViewedProduct: (
     data: RecentlyViewedProductCreateInput
   ) => RecentlyViewedProductPromise;
@@ -1498,6 +1586,9 @@ export interface Subscription {
   customerDetail: (
     where?: CustomerDetailSubscriptionWhereInput
   ) => CustomerDetailSubscriptionPayloadSubscription;
+  emailReceipt: (
+    where?: EmailReceiptSubscriptionWhereInput
+  ) => EmailReceiptSubscriptionPayloadSubscription;
   homepageProductRail: (
     where?: HomepageProductRailSubscriptionWhereInput
   ) => HomepageProductRailSubscriptionPayloadSubscription;
@@ -1540,6 +1631,9 @@ export interface Subscription {
   productVariantWant: (
     where?: ProductVariantWantSubscriptionWhereInput
   ) => ProductVariantWantSubscriptionPayloadSubscription;
+  pushNotificationReceipt: (
+    where?: PushNotificationReceiptSubscriptionWhereInput
+  ) => PushNotificationReceiptSubscriptionPayloadSubscription;
   recentlyViewedProduct: (
     where?: RecentlyViewedProductSubscriptionWhereInput
   ) => RecentlyViewedProductSubscriptionPayloadSubscription;
@@ -1623,6 +1717,13 @@ export type ProductStatus =
   | "Offloaded";
 
 export type ProductArchitecture = "Fashion" | "Showstopper" | "Staple";
+
+export type PhotographyStatus =
+  | "Done"
+  | "InProgress"
+  | "ReadyForEditing"
+  | "ReadyToShoot"
+  | "Steam";
 
 export type InventoryStatus =
   | "NonReservable"
@@ -1738,6 +1839,8 @@ export type ProductOrderByInput =
   | "season_DESC"
   | "architecture_ASC"
   | "architecture_DESC"
+  | "photographyStatus_ASC"
+  | "photographyStatus_DESC"
   | "publishedAt_ASC"
   | "publishedAt_DESC"
   | "createdAt_ASC"
@@ -2052,6 +2155,24 @@ export type CustomerDetailOrderByInput =
   | "updatedAt_ASC"
   | "updatedAt_DESC";
 
+export type EmailId =
+  | "ReservationReturnConfirmation"
+  | "ReservationConfirmation"
+  | "CompleteAccount"
+  | "FreeToReserve"
+  | "WelcomeToSeasons"
+  | "ReturnReminder";
+
+export type EmailReceiptOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "emailId_ASC"
+  | "emailId_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
+
 export type HomepageProductRailOrderByInput =
   | "id_ASC"
   | "id_DESC"
@@ -2150,6 +2271,46 @@ export type ProductVariantWantOrderByInput =
   | "isFulfilled_ASC"
   | "isFulfilled_DESC";
 
+export type UserOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "auth0Id_ASC"
+  | "auth0Id_DESC"
+  | "email_ASC"
+  | "email_DESC"
+  | "firstName_ASC"
+  | "firstName_DESC"
+  | "lastName_ASC"
+  | "lastName_DESC"
+  | "role_ASC"
+  | "role_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC"
+  | "pushNotifications_ASC"
+  | "pushNotifications_DESC";
+
+export type PushNotificationReceiptOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "route_ASC"
+  | "route_DESC"
+  | "screen_ASC"
+  | "screen_DESC"
+  | "uri_ASC"
+  | "uri_DESC"
+  | "body_ASC"
+  | "body_DESC"
+  | "title_ASC"
+  | "title_DESC"
+  | "sentAt_ASC"
+  | "sentAt_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
+
 export type RecentlyViewedProductOrderByInput =
   | "id_ASC"
   | "id_DESC"
@@ -2197,26 +2358,6 @@ export type TopSizeOrderByInput =
   | "neck_DESC"
   | "length_ASC"
   | "length_DESC";
-
-export type UserOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "auth0Id_ASC"
-  | "auth0Id_DESC"
-  | "email_ASC"
-  | "email_DESC"
-  | "firstName_ASC"
-  | "firstName_DESC"
-  | "lastName_ASC"
-  | "lastName_DESC"
-  | "role_ASC"
-  | "role_DESC"
-  | "createdAt_ASC"
-  | "createdAt_DESC"
-  | "updatedAt_ASC"
-  | "updatedAt_DESC"
-  | "pushNotifications_ASC"
-  | "pushNotifications_DESC";
 
 export type MutationType = "CREATED" | "UPDATED" | "DELETED";
 
@@ -3172,6 +3313,10 @@ export interface ProductWhereInput {
   architecture_not?: Maybe<ProductArchitecture>;
   architecture_in?: Maybe<ProductArchitecture[] | ProductArchitecture>;
   architecture_not_in?: Maybe<ProductArchitecture[] | ProductArchitecture>;
+  photographyStatus?: Maybe<PhotographyStatus>;
+  photographyStatus_not?: Maybe<PhotographyStatus>;
+  photographyStatus_in?: Maybe<PhotographyStatus[] | PhotographyStatus>;
+  photographyStatus_not_in?: Maybe<PhotographyStatus[] | PhotographyStatus>;
   publishedAt?: Maybe<DateTimeInput>;
   publishedAt_not?: Maybe<DateTimeInput>;
   publishedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -4932,6 +5077,51 @@ export type CustomerDetailWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
 
+export type EmailReceiptWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
+export interface EmailReceiptWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  emailId?: Maybe<EmailId>;
+  emailId_not?: Maybe<EmailId>;
+  emailId_in?: Maybe<EmailId[] | EmailId>;
+  emailId_not_in?: Maybe<EmailId[] | EmailId>;
+  user?: Maybe<UserWhereInput>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<EmailReceiptWhereInput[] | EmailReceiptWhereInput>;
+  OR?: Maybe<EmailReceiptWhereInput[] | EmailReceiptWhereInput>;
+  NOT?: Maybe<EmailReceiptWhereInput[] | EmailReceiptWhereInput>;
+}
+
 export type HomepageProductRailWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
   slug?: Maybe<String>;
@@ -5210,6 +5400,133 @@ export interface ProductVariantWantWhereInput {
   AND?: Maybe<ProductVariantWantWhereInput[] | ProductVariantWantWhereInput>;
   OR?: Maybe<ProductVariantWantWhereInput[] | ProductVariantWantWhereInput>;
   NOT?: Maybe<ProductVariantWantWhereInput[] | ProductVariantWantWhereInput>;
+}
+
+export type PushNotificationReceiptWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
+export interface PushNotificationReceiptWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  route?: Maybe<String>;
+  route_not?: Maybe<String>;
+  route_in?: Maybe<String[] | String>;
+  route_not_in?: Maybe<String[] | String>;
+  route_lt?: Maybe<String>;
+  route_lte?: Maybe<String>;
+  route_gt?: Maybe<String>;
+  route_gte?: Maybe<String>;
+  route_contains?: Maybe<String>;
+  route_not_contains?: Maybe<String>;
+  route_starts_with?: Maybe<String>;
+  route_not_starts_with?: Maybe<String>;
+  route_ends_with?: Maybe<String>;
+  route_not_ends_with?: Maybe<String>;
+  screen?: Maybe<String>;
+  screen_not?: Maybe<String>;
+  screen_in?: Maybe<String[] | String>;
+  screen_not_in?: Maybe<String[] | String>;
+  screen_lt?: Maybe<String>;
+  screen_lte?: Maybe<String>;
+  screen_gt?: Maybe<String>;
+  screen_gte?: Maybe<String>;
+  screen_contains?: Maybe<String>;
+  screen_not_contains?: Maybe<String>;
+  screen_starts_with?: Maybe<String>;
+  screen_not_starts_with?: Maybe<String>;
+  screen_ends_with?: Maybe<String>;
+  screen_not_ends_with?: Maybe<String>;
+  uri?: Maybe<String>;
+  uri_not?: Maybe<String>;
+  uri_in?: Maybe<String[] | String>;
+  uri_not_in?: Maybe<String[] | String>;
+  uri_lt?: Maybe<String>;
+  uri_lte?: Maybe<String>;
+  uri_gt?: Maybe<String>;
+  uri_gte?: Maybe<String>;
+  uri_contains?: Maybe<String>;
+  uri_not_contains?: Maybe<String>;
+  uri_starts_with?: Maybe<String>;
+  uri_not_starts_with?: Maybe<String>;
+  uri_ends_with?: Maybe<String>;
+  uri_not_ends_with?: Maybe<String>;
+  users_every?: Maybe<UserWhereInput>;
+  users_some?: Maybe<UserWhereInput>;
+  users_none?: Maybe<UserWhereInput>;
+  body?: Maybe<String>;
+  body_not?: Maybe<String>;
+  body_in?: Maybe<String[] | String>;
+  body_not_in?: Maybe<String[] | String>;
+  body_lt?: Maybe<String>;
+  body_lte?: Maybe<String>;
+  body_gt?: Maybe<String>;
+  body_gte?: Maybe<String>;
+  body_contains?: Maybe<String>;
+  body_not_contains?: Maybe<String>;
+  body_starts_with?: Maybe<String>;
+  body_not_starts_with?: Maybe<String>;
+  body_ends_with?: Maybe<String>;
+  body_not_ends_with?: Maybe<String>;
+  title?: Maybe<String>;
+  title_not?: Maybe<String>;
+  title_in?: Maybe<String[] | String>;
+  title_not_in?: Maybe<String[] | String>;
+  title_lt?: Maybe<String>;
+  title_lte?: Maybe<String>;
+  title_gt?: Maybe<String>;
+  title_gte?: Maybe<String>;
+  title_contains?: Maybe<String>;
+  title_not_contains?: Maybe<String>;
+  title_starts_with?: Maybe<String>;
+  title_not_starts_with?: Maybe<String>;
+  title_ends_with?: Maybe<String>;
+  title_not_ends_with?: Maybe<String>;
+  sentAt?: Maybe<DateTimeInput>;
+  sentAt_not?: Maybe<DateTimeInput>;
+  sentAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  sentAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  sentAt_lt?: Maybe<DateTimeInput>;
+  sentAt_lte?: Maybe<DateTimeInput>;
+  sentAt_gt?: Maybe<DateTimeInput>;
+  sentAt_gte?: Maybe<DateTimeInput>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<
+    PushNotificationReceiptWhereInput[] | PushNotificationReceiptWhereInput
+  >;
+  OR?: Maybe<
+    PushNotificationReceiptWhereInput[] | PushNotificationReceiptWhereInput
+  >;
+  NOT?: Maybe<
+    PushNotificationReceiptWhereInput[] | PushNotificationReceiptWhereInput
+  >;
 }
 
 export type RecentlyViewedProductWhereUniqueInput = AtLeastOne<{
@@ -5550,6 +5867,7 @@ export interface ProductCreateWithoutVariantsInput {
   status?: Maybe<ProductStatus>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
+  photographyStatus?: Maybe<PhotographyStatus>;
   publishedAt?: Maybe<DateTimeInput>;
 }
 
@@ -5634,6 +5952,7 @@ export interface ProductCreateWithoutCategoryInput {
   status?: Maybe<ProductStatus>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
+  photographyStatus?: Maybe<PhotographyStatus>;
   publishedAt?: Maybe<DateTimeInput>;
 }
 
@@ -6490,6 +6809,7 @@ export interface ProductUpdateWithoutVariantsDataInput {
   status?: Maybe<ProductStatus>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
+  photographyStatus?: Maybe<PhotographyStatus>;
   publishedAt?: Maybe<DateTimeInput>;
 }
 
@@ -6621,6 +6941,7 @@ export interface ProductUpdateWithoutCategoryDataInput {
   status?: Maybe<ProductStatus>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
+  photographyStatus?: Maybe<PhotographyStatus>;
   publishedAt?: Maybe<DateTimeInput>;
 }
 
@@ -7826,6 +8147,10 @@ export interface ProductScalarWhereInput {
   architecture_not?: Maybe<ProductArchitecture>;
   architecture_in?: Maybe<ProductArchitecture[] | ProductArchitecture>;
   architecture_not_in?: Maybe<ProductArchitecture[] | ProductArchitecture>;
+  photographyStatus?: Maybe<PhotographyStatus>;
+  photographyStatus_not?: Maybe<PhotographyStatus>;
+  photographyStatus_in?: Maybe<PhotographyStatus[] | PhotographyStatus>;
+  photographyStatus_not_in?: Maybe<PhotographyStatus[] | PhotographyStatus>;
   publishedAt?: Maybe<DateTimeInput>;
   publishedAt_not?: Maybe<DateTimeInput>;
   publishedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -7873,6 +8198,7 @@ export interface ProductUpdateManyDataInput {
   status?: Maybe<ProductStatus>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
+  photographyStatus?: Maybe<PhotographyStatus>;
   publishedAt?: Maybe<DateTimeInput>;
 }
 
@@ -8791,6 +9117,7 @@ export interface ProductCreateWithoutBrandInput {
   status?: Maybe<ProductStatus>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
+  photographyStatus?: Maybe<PhotographyStatus>;
   publishedAt?: Maybe<DateTimeInput>;
 }
 
@@ -8858,6 +9185,7 @@ export interface ProductUpdateWithoutBrandDataInput {
   status?: Maybe<ProductStatus>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
+  photographyStatus?: Maybe<PhotographyStatus>;
   publishedAt?: Maybe<DateTimeInput>;
 }
 
@@ -8938,6 +9266,7 @@ export interface ProductCreateInput {
   status?: Maybe<ProductStatus>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
+  photographyStatus?: Maybe<PhotographyStatus>;
   publishedAt?: Maybe<DateTimeInput>;
 }
 
@@ -9000,6 +9329,7 @@ export interface ProductUpdateDataInput {
   status?: Maybe<ProductStatus>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
+  photographyStatus?: Maybe<PhotographyStatus>;
   publishedAt?: Maybe<DateTimeInput>;
 }
 
@@ -9375,6 +9705,21 @@ export interface CustomerDetailUpdateManyMutationInput {
   insureShipment?: Maybe<Boolean>;
 }
 
+export interface EmailReceiptCreateInput {
+  id?: Maybe<ID_Input>;
+  emailId: EmailId;
+  user: UserCreateOneInput;
+}
+
+export interface EmailReceiptUpdateInput {
+  emailId?: Maybe<EmailId>;
+  user?: Maybe<UserUpdateOneRequiredInput>;
+}
+
+export interface EmailReceiptUpdateManyMutationInput {
+  emailId?: Maybe<EmailId>;
+}
+
 export interface HomepageProductRailCreateInput {
   id?: Maybe<ID_Input>;
   slug: String;
@@ -9521,6 +9866,7 @@ export interface ProductUpdateInput {
   status?: Maybe<ProductStatus>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
+  photographyStatus?: Maybe<PhotographyStatus>;
   publishedAt?: Maybe<DateTimeInput>;
 }
 
@@ -9537,6 +9883,7 @@ export interface ProductUpdateManyMutationInput {
   status?: Maybe<ProductStatus>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
+  photographyStatus?: Maybe<PhotographyStatus>;
   publishedAt?: Maybe<DateTimeInput>;
 }
 
@@ -9585,6 +9932,7 @@ export interface ProductCreateWithoutModelInput {
   status?: Maybe<ProductStatus>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
+  photographyStatus?: Maybe<PhotographyStatus>;
   publishedAt?: Maybe<DateTimeInput>;
 }
 
@@ -9644,6 +9992,7 @@ export interface ProductUpdateWithoutModelDataInput {
   status?: Maybe<ProductStatus>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
+  photographyStatus?: Maybe<PhotographyStatus>;
   publishedAt?: Maybe<DateTimeInput>;
 }
 
@@ -9961,6 +10310,191 @@ export interface ProductVariantWantUpdateManyMutationInput {
   isFulfilled?: Maybe<Boolean>;
 }
 
+export interface PushNotificationReceiptCreateInput {
+  id?: Maybe<ID_Input>;
+  route?: Maybe<String>;
+  screen?: Maybe<String>;
+  uri?: Maybe<String>;
+  users?: Maybe<UserCreateManyInput>;
+  body: String;
+  title?: Maybe<String>;
+  sentAt: DateTimeInput;
+}
+
+export interface UserCreateManyInput {
+  create?: Maybe<UserCreateInput[] | UserCreateInput>;
+  connect?: Maybe<UserWhereUniqueInput[] | UserWhereUniqueInput>;
+}
+
+export interface PushNotificationReceiptUpdateInput {
+  route?: Maybe<String>;
+  screen?: Maybe<String>;
+  uri?: Maybe<String>;
+  users?: Maybe<UserUpdateManyInput>;
+  body?: Maybe<String>;
+  title?: Maybe<String>;
+  sentAt?: Maybe<DateTimeInput>;
+}
+
+export interface UserUpdateManyInput {
+  create?: Maybe<UserCreateInput[] | UserCreateInput>;
+  update?: Maybe<
+    | UserUpdateWithWhereUniqueNestedInput[]
+    | UserUpdateWithWhereUniqueNestedInput
+  >;
+  upsert?: Maybe<
+    | UserUpsertWithWhereUniqueNestedInput[]
+    | UserUpsertWithWhereUniqueNestedInput
+  >;
+  delete?: Maybe<UserWhereUniqueInput[] | UserWhereUniqueInput>;
+  connect?: Maybe<UserWhereUniqueInput[] | UserWhereUniqueInput>;
+  set?: Maybe<UserWhereUniqueInput[] | UserWhereUniqueInput>;
+  disconnect?: Maybe<UserWhereUniqueInput[] | UserWhereUniqueInput>;
+  deleteMany?: Maybe<UserScalarWhereInput[] | UserScalarWhereInput>;
+  updateMany?: Maybe<
+    UserUpdateManyWithWhereNestedInput[] | UserUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface UserUpdateWithWhereUniqueNestedInput {
+  where: UserWhereUniqueInput;
+  data: UserUpdateDataInput;
+}
+
+export interface UserUpsertWithWhereUniqueNestedInput {
+  where: UserWhereUniqueInput;
+  update: UserUpdateDataInput;
+  create: UserCreateInput;
+}
+
+export interface UserScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  auth0Id?: Maybe<String>;
+  auth0Id_not?: Maybe<String>;
+  auth0Id_in?: Maybe<String[] | String>;
+  auth0Id_not_in?: Maybe<String[] | String>;
+  auth0Id_lt?: Maybe<String>;
+  auth0Id_lte?: Maybe<String>;
+  auth0Id_gt?: Maybe<String>;
+  auth0Id_gte?: Maybe<String>;
+  auth0Id_contains?: Maybe<String>;
+  auth0Id_not_contains?: Maybe<String>;
+  auth0Id_starts_with?: Maybe<String>;
+  auth0Id_not_starts_with?: Maybe<String>;
+  auth0Id_ends_with?: Maybe<String>;
+  auth0Id_not_ends_with?: Maybe<String>;
+  email?: Maybe<String>;
+  email_not?: Maybe<String>;
+  email_in?: Maybe<String[] | String>;
+  email_not_in?: Maybe<String[] | String>;
+  email_lt?: Maybe<String>;
+  email_lte?: Maybe<String>;
+  email_gt?: Maybe<String>;
+  email_gte?: Maybe<String>;
+  email_contains?: Maybe<String>;
+  email_not_contains?: Maybe<String>;
+  email_starts_with?: Maybe<String>;
+  email_not_starts_with?: Maybe<String>;
+  email_ends_with?: Maybe<String>;
+  email_not_ends_with?: Maybe<String>;
+  firstName?: Maybe<String>;
+  firstName_not?: Maybe<String>;
+  firstName_in?: Maybe<String[] | String>;
+  firstName_not_in?: Maybe<String[] | String>;
+  firstName_lt?: Maybe<String>;
+  firstName_lte?: Maybe<String>;
+  firstName_gt?: Maybe<String>;
+  firstName_gte?: Maybe<String>;
+  firstName_contains?: Maybe<String>;
+  firstName_not_contains?: Maybe<String>;
+  firstName_starts_with?: Maybe<String>;
+  firstName_not_starts_with?: Maybe<String>;
+  firstName_ends_with?: Maybe<String>;
+  firstName_not_ends_with?: Maybe<String>;
+  lastName?: Maybe<String>;
+  lastName_not?: Maybe<String>;
+  lastName_in?: Maybe<String[] | String>;
+  lastName_not_in?: Maybe<String[] | String>;
+  lastName_lt?: Maybe<String>;
+  lastName_lte?: Maybe<String>;
+  lastName_gt?: Maybe<String>;
+  lastName_gte?: Maybe<String>;
+  lastName_contains?: Maybe<String>;
+  lastName_not_contains?: Maybe<String>;
+  lastName_starts_with?: Maybe<String>;
+  lastName_not_starts_with?: Maybe<String>;
+  lastName_ends_with?: Maybe<String>;
+  lastName_not_ends_with?: Maybe<String>;
+  role?: Maybe<UserRole>;
+  role_not?: Maybe<UserRole>;
+  role_in?: Maybe<UserRole[] | UserRole>;
+  role_not_in?: Maybe<UserRole[] | UserRole>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  pushNotifications?: Maybe<PushNotificationStatus>;
+  pushNotifications_not?: Maybe<PushNotificationStatus>;
+  pushNotifications_in?: Maybe<
+    PushNotificationStatus[] | PushNotificationStatus
+  >;
+  pushNotifications_not_in?: Maybe<
+    PushNotificationStatus[] | PushNotificationStatus
+  >;
+  AND?: Maybe<UserScalarWhereInput[] | UserScalarWhereInput>;
+  OR?: Maybe<UserScalarWhereInput[] | UserScalarWhereInput>;
+  NOT?: Maybe<UserScalarWhereInput[] | UserScalarWhereInput>;
+}
+
+export interface UserUpdateManyWithWhereNestedInput {
+  where: UserScalarWhereInput;
+  data: UserUpdateManyDataInput;
+}
+
+export interface UserUpdateManyDataInput {
+  auth0Id?: Maybe<String>;
+  email?: Maybe<String>;
+  firstName?: Maybe<String>;
+  lastName?: Maybe<String>;
+  role?: Maybe<UserRole>;
+  roles?: Maybe<UserUpdaterolesInput>;
+  pushNotifications?: Maybe<PushNotificationStatus>;
+}
+
+export interface PushNotificationReceiptUpdateManyMutationInput {
+  route?: Maybe<String>;
+  screen?: Maybe<String>;
+  uri?: Maybe<String>;
+  body?: Maybe<String>;
+  title?: Maybe<String>;
+  sentAt?: Maybe<DateTimeInput>;
+}
+
 export interface RecentlyViewedProductCreateInput {
   id?: Maybe<ID_Input>;
   product: ProductCreateOneInput;
@@ -10218,6 +10752,7 @@ export interface ProductCreateWithoutTagsInput {
   status?: Maybe<ProductStatus>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
+  photographyStatus?: Maybe<PhotographyStatus>;
   publishedAt?: Maybe<DateTimeInput>;
 }
 
@@ -10277,6 +10812,7 @@ export interface ProductUpdateWithoutTagsDataInput {
   status?: Maybe<ProductStatus>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
+  photographyStatus?: Maybe<PhotographyStatus>;
   publishedAt?: Maybe<DateTimeInput>;
 }
 
@@ -10796,6 +11332,23 @@ export interface CustomerDetailSubscriptionWhereInput {
   >;
 }
 
+export interface EmailReceiptSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<EmailReceiptWhereInput>;
+  AND?: Maybe<
+    EmailReceiptSubscriptionWhereInput[] | EmailReceiptSubscriptionWhereInput
+  >;
+  OR?: Maybe<
+    EmailReceiptSubscriptionWhereInput[] | EmailReceiptSubscriptionWhereInput
+  >;
+  NOT?: Maybe<
+    EmailReceiptSubscriptionWhereInput[] | EmailReceiptSubscriptionWhereInput
+  >;
+}
+
 export interface HomepageProductRailSubscriptionWhereInput {
   mutation_in?: Maybe<MutationType[] | MutationType>;
   updatedFields_contains?: Maybe<String>;
@@ -11029,6 +11582,26 @@ export interface ProductVariantWantSubscriptionWhereInput {
   NOT?: Maybe<
     | ProductVariantWantSubscriptionWhereInput[]
     | ProductVariantWantSubscriptionWhereInput
+  >;
+}
+
+export interface PushNotificationReceiptSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<PushNotificationReceiptWhereInput>;
+  AND?: Maybe<
+    | PushNotificationReceiptSubscriptionWhereInput[]
+    | PushNotificationReceiptSubscriptionWhereInput
+  >;
+  OR?: Maybe<
+    | PushNotificationReceiptSubscriptionWhereInput[]
+    | PushNotificationReceiptSubscriptionWhereInput
+  >;
+  NOT?: Maybe<
+    | PushNotificationReceiptSubscriptionWhereInput[]
+    | PushNotificationReceiptSubscriptionWhereInput
   >;
 }
 
@@ -12034,6 +12607,7 @@ export interface Product {
   status?: ProductStatus;
   season?: String;
   architecture?: ProductArchitecture;
+  photographyStatus?: PhotographyStatus;
   publishedAt?: DateTimeOutput;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
@@ -12095,6 +12669,7 @@ export interface ProductPromise extends Promise<Product>, Fragmentable {
   status: () => Promise<ProductStatus>;
   season: () => Promise<String>;
   architecture: () => Promise<ProductArchitecture>;
+  photographyStatus: () => Promise<PhotographyStatus>;
   publishedAt: () => Promise<DateTimeOutput>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
@@ -12158,6 +12733,7 @@ export interface ProductSubscription
   status: () => Promise<AsyncIterator<ProductStatus>>;
   season: () => Promise<AsyncIterator<String>>;
   architecture: () => Promise<AsyncIterator<ProductArchitecture>>;
+  photographyStatus: () => Promise<AsyncIterator<PhotographyStatus>>;
   publishedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
@@ -12221,6 +12797,7 @@ export interface ProductNullablePromise
   status: () => Promise<ProductStatus>;
   season: () => Promise<String>;
   architecture: () => Promise<ProductArchitecture>;
+  photographyStatus: () => Promise<PhotographyStatus>;
   publishedAt: () => Promise<DateTimeOutput>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
@@ -14028,6 +14605,99 @@ export interface AggregateCustomerDetailSubscription
   count: () => Promise<AsyncIterator<Int>>;
 }
 
+export interface EmailReceipt {
+  id: ID_Output;
+  emailId: EmailId;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface EmailReceiptPromise
+  extends Promise<EmailReceipt>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  emailId: () => Promise<EmailId>;
+  user: <T = UserPromise>() => T;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface EmailReceiptSubscription
+  extends Promise<AsyncIterator<EmailReceipt>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  emailId: () => Promise<AsyncIterator<EmailId>>;
+  user: <T = UserSubscription>() => T;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface EmailReceiptNullablePromise
+  extends Promise<EmailReceipt | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  emailId: () => Promise<EmailId>;
+  user: <T = UserPromise>() => T;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface EmailReceiptConnection {
+  pageInfo: PageInfo;
+  edges: EmailReceiptEdge[];
+}
+
+export interface EmailReceiptConnectionPromise
+  extends Promise<EmailReceiptConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<EmailReceiptEdge>>() => T;
+  aggregate: <T = AggregateEmailReceiptPromise>() => T;
+}
+
+export interface EmailReceiptConnectionSubscription
+  extends Promise<AsyncIterator<EmailReceiptConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<EmailReceiptEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateEmailReceiptSubscription>() => T;
+}
+
+export interface EmailReceiptEdge {
+  node: EmailReceipt;
+  cursor: String;
+}
+
+export interface EmailReceiptEdgePromise
+  extends Promise<EmailReceiptEdge>,
+    Fragmentable {
+  node: <T = EmailReceiptPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface EmailReceiptEdgeSubscription
+  extends Promise<AsyncIterator<EmailReceiptEdge>>,
+    Fragmentable {
+  node: <T = EmailReceiptSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateEmailReceipt {
+  count: Int;
+}
+
+export interface AggregateEmailReceiptPromise
+  extends Promise<AggregateEmailReceipt>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateEmailReceiptSubscription
+  extends Promise<AsyncIterator<AggregateEmailReceipt>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
 export interface HomepageProductRail {
   id: ID_Output;
   slug: String;
@@ -14962,6 +15632,145 @@ export interface AggregateProductVariantWantPromise
 
 export interface AggregateProductVariantWantSubscription
   extends Promise<AsyncIterator<AggregateProductVariantWant>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface PushNotificationReceipt {
+  id: ID_Output;
+  route?: String;
+  screen?: String;
+  uri?: String;
+  body: String;
+  title?: String;
+  sentAt: DateTimeOutput;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface PushNotificationReceiptPromise
+  extends Promise<PushNotificationReceipt>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  route: () => Promise<String>;
+  screen: () => Promise<String>;
+  uri: () => Promise<String>;
+  users: <T = FragmentableArray<User>>(args?: {
+    where?: UserWhereInput;
+    orderBy?: UserOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  body: () => Promise<String>;
+  title: () => Promise<String>;
+  sentAt: () => Promise<DateTimeOutput>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface PushNotificationReceiptSubscription
+  extends Promise<AsyncIterator<PushNotificationReceipt>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  route: () => Promise<AsyncIterator<String>>;
+  screen: () => Promise<AsyncIterator<String>>;
+  uri: () => Promise<AsyncIterator<String>>;
+  users: <T = Promise<AsyncIterator<UserSubscription>>>(args?: {
+    where?: UserWhereInput;
+    orderBy?: UserOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  body: () => Promise<AsyncIterator<String>>;
+  title: () => Promise<AsyncIterator<String>>;
+  sentAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface PushNotificationReceiptNullablePromise
+  extends Promise<PushNotificationReceipt | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  route: () => Promise<String>;
+  screen: () => Promise<String>;
+  uri: () => Promise<String>;
+  users: <T = FragmentableArray<User>>(args?: {
+    where?: UserWhereInput;
+    orderBy?: UserOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  body: () => Promise<String>;
+  title: () => Promise<String>;
+  sentAt: () => Promise<DateTimeOutput>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface PushNotificationReceiptConnection {
+  pageInfo: PageInfo;
+  edges: PushNotificationReceiptEdge[];
+}
+
+export interface PushNotificationReceiptConnectionPromise
+  extends Promise<PushNotificationReceiptConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<PushNotificationReceiptEdge>>() => T;
+  aggregate: <T = AggregatePushNotificationReceiptPromise>() => T;
+}
+
+export interface PushNotificationReceiptConnectionSubscription
+  extends Promise<AsyncIterator<PushNotificationReceiptConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <
+    T = Promise<AsyncIterator<PushNotificationReceiptEdgeSubscription>>
+  >() => T;
+  aggregate: <T = AggregatePushNotificationReceiptSubscription>() => T;
+}
+
+export interface PushNotificationReceiptEdge {
+  node: PushNotificationReceipt;
+  cursor: String;
+}
+
+export interface PushNotificationReceiptEdgePromise
+  extends Promise<PushNotificationReceiptEdge>,
+    Fragmentable {
+  node: <T = PushNotificationReceiptPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface PushNotificationReceiptEdgeSubscription
+  extends Promise<AsyncIterator<PushNotificationReceiptEdge>>,
+    Fragmentable {
+  node: <T = PushNotificationReceiptSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregatePushNotificationReceipt {
+  count: Int;
+}
+
+export interface AggregatePushNotificationReceiptPromise
+  extends Promise<AggregatePushNotificationReceipt>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregatePushNotificationReceiptSubscription
+  extends Promise<AsyncIterator<AggregatePushNotificationReceipt>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
@@ -16266,6 +17075,56 @@ export interface CustomerDetailPreviousValuesSubscription
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
+export interface EmailReceiptSubscriptionPayload {
+  mutation: MutationType;
+  node: EmailReceipt;
+  updatedFields: String[];
+  previousValues: EmailReceiptPreviousValues;
+}
+
+export interface EmailReceiptSubscriptionPayloadPromise
+  extends Promise<EmailReceiptSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = EmailReceiptPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = EmailReceiptPreviousValuesPromise>() => T;
+}
+
+export interface EmailReceiptSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<EmailReceiptSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = EmailReceiptSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = EmailReceiptPreviousValuesSubscription>() => T;
+}
+
+export interface EmailReceiptPreviousValues {
+  id: ID_Output;
+  emailId: EmailId;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface EmailReceiptPreviousValuesPromise
+  extends Promise<EmailReceiptPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  emailId: () => Promise<EmailId>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface EmailReceiptPreviousValuesSubscription
+  extends Promise<AsyncIterator<EmailReceiptPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  emailId: () => Promise<AsyncIterator<EmailId>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
 export interface HomepageProductRailSubscriptionPayload {
   mutation: MutationType;
   node: HomepageProductRail;
@@ -16674,6 +17533,7 @@ export interface ProductPreviousValues {
   status?: ProductStatus;
   season?: String;
   architecture?: ProductArchitecture;
+  photographyStatus?: PhotographyStatus;
   publishedAt?: DateTimeOutput;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
@@ -16695,6 +17555,7 @@ export interface ProductPreviousValuesPromise
   status: () => Promise<ProductStatus>;
   season: () => Promise<String>;
   architecture: () => Promise<ProductArchitecture>;
+  photographyStatus: () => Promise<PhotographyStatus>;
   publishedAt: () => Promise<DateTimeOutput>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
@@ -16716,6 +17577,7 @@ export interface ProductPreviousValuesSubscription
   status: () => Promise<AsyncIterator<ProductStatus>>;
   season: () => Promise<AsyncIterator<String>>;
   architecture: () => Promise<AsyncIterator<ProductArchitecture>>;
+  photographyStatus: () => Promise<AsyncIterator<PhotographyStatus>>;
   publishedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
@@ -17108,6 +17970,73 @@ export interface ProductVariantWantPreviousValuesSubscription
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   isFulfilled: () => Promise<AsyncIterator<Boolean>>;
+}
+
+export interface PushNotificationReceiptSubscriptionPayload {
+  mutation: MutationType;
+  node: PushNotificationReceipt;
+  updatedFields: String[];
+  previousValues: PushNotificationReceiptPreviousValues;
+}
+
+export interface PushNotificationReceiptSubscriptionPayloadPromise
+  extends Promise<PushNotificationReceiptSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = PushNotificationReceiptPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = PushNotificationReceiptPreviousValuesPromise>() => T;
+}
+
+export interface PushNotificationReceiptSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<PushNotificationReceiptSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = PushNotificationReceiptSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <
+    T = PushNotificationReceiptPreviousValuesSubscription
+  >() => T;
+}
+
+export interface PushNotificationReceiptPreviousValues {
+  id: ID_Output;
+  route?: String;
+  screen?: String;
+  uri?: String;
+  body: String;
+  title?: String;
+  sentAt: DateTimeOutput;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface PushNotificationReceiptPreviousValuesPromise
+  extends Promise<PushNotificationReceiptPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  route: () => Promise<String>;
+  screen: () => Promise<String>;
+  uri: () => Promise<String>;
+  body: () => Promise<String>;
+  title: () => Promise<String>;
+  sentAt: () => Promise<DateTimeOutput>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface PushNotificationReceiptPreviousValuesSubscription
+  extends Promise<AsyncIterator<PushNotificationReceiptPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  route: () => Promise<AsyncIterator<String>>;
+  screen: () => Promise<AsyncIterator<String>>;
+  uri: () => Promise<AsyncIterator<String>>;
+  body: () => Promise<AsyncIterator<String>>;
+  title: () => Promise<AsyncIterator<String>>;
+  sentAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
 export interface RecentlyViewedProductSubscriptionPayload {
@@ -17844,6 +18773,14 @@ export const models: Model[] = [
     embedded: false
   },
   {
+    name: "PhotographyStatus",
+    embedded: false
+  },
+  {
+    name: "EmailId",
+    embedded: false
+  },
+  {
     name: "Brand",
     embedded: false
   },
@@ -17905,6 +18842,14 @@ export const models: Model[] = [
   },
   {
     name: "WarehouseLocation",
+    embedded: false
+  },
+  {
+    name: "EmailReceipt",
+    embedded: false
+  },
+  {
+    name: "PushNotificationReceipt",
     embedded: false
   },
   {

@@ -150,6 +150,23 @@ enum WarehouseLocationType {
   Bin
 }
 
+enum PhotographyStatus {
+  Done
+  InProgress
+  ReadyForEditing
+  ReadyToShoot
+  Steam
+}
+
+enum EmailId {
+  ReservationReturnConfirmation
+  ReservationConfirmation
+  CompleteAccount
+  FreeToReserve
+  WelcomeToSeasons
+  ReturnReminder
+}
+
 type Brand {
   id: ID! @id
   slug: String! @unique
@@ -277,6 +294,7 @@ type Product {
   status: ProductStatus @default(value: Available)
   season: String
   architecture: ProductArchitecture
+  photographyStatus: PhotographyStatus
   publishedAt: DateTime
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
@@ -352,6 +370,34 @@ type WarehouseLocation {
   itemCode: String!
   physicalProducts: [PhysicalProduct!]
   constraints: [WarehouseLocationConstraint!]
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type EmailReceipt {
+  id: ID! @id
+  emailId: EmailId!
+  user: User!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type PushNotificationReceipt {
+  #id of the notification
+  id: ID! @id
+  # e.g BagStack, Faq, Webview
+  route: String
+  # screen on the route
+  screen: String
+  # uri, e.g https://blog.seasons.nyc/posts/can-the-industry-fix-seasons
+  uri: String
+  # user = which customer to send message to
+  users: [User!]!
+  # body = body of the message
+  body: String!
+  # title = title of the message
+  title: String
+  sentAt: DateTime!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }

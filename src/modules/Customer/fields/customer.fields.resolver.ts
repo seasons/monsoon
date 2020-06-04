@@ -82,7 +82,7 @@ export class CustomerFieldsResolver {
     if (!customer) {
       return null
     }
-    return this.paymentService.getCustomerInvoiceHistory(
+    return await this.paymentService.getCustomerInvoiceHistory(
       await this.prisma.client
         .customer({
           id: customer.id,
@@ -92,5 +92,10 @@ export class CustomerFieldsResolver {
       invoicesLoader,
       transactionsForCustomerLoader
     )
+  }
+
+  @ResolveField()
+  async user(@User() user) {
+    return user
   }
 }

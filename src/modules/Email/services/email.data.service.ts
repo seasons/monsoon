@@ -1,4 +1,8 @@
+import fs from "fs"
+
+import { EmailId } from "@app/prisma"
 import { Injectable } from "@nestjs/common"
+import mustache from "mustache"
 
 import { ReservedItem } from "../email.types"
 
@@ -196,5 +200,16 @@ export class EmailDataProvider {
         subject: "It's time to return your items",
       },
     }
+  }
+
+  private getEmailData(emailId: EmailId, data: any) {
+    const template = JSON.parse(
+      fs.readFileSync(
+        process.cwd() + "/src/modules/Email/template.json",
+        "utf-8"
+      )
+    )[emailId]
+    const x = mustache.render(JSON.stringify(template), data)
+    return x
   }
 }

@@ -3,7 +3,6 @@ import { PrismaService } from "@prisma/prisma.service"
 
 export enum SectionTitle {
   FeaturedCollection = "Featured collection",
-  JustAdded = "Just added",
   RecentlyViewed = "Recently viewed",
   Designers = "Designers",
 }
@@ -25,11 +24,6 @@ export class HomepageService {
         type: "CollectionGroups",
         __typename: "HomepageSection",
         title: SectionTitle.FeaturedCollection,
-      },
-      {
-        type: "Products",
-        __typename: "HomepageSection",
-        title: SectionTitle.JustAdded,
       },
       {
         type: "Brands",

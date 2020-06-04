@@ -23,12 +23,11 @@ export class SyncTopSizesService {
     await this.syncUtils.createAllStagingRecordsWithoutLinks({
       modelName: "Top Sizes",
       allProductionRecords: allProductionRecords,
-      sanitizeFunc: fields =>
-        this.utils.Identity({
-          ...fields,
-          Size: [],
-          "Product Variants": [],
-        }),
+      sanitizeFunc: fields => ({
+        ...fields,
+        Size: [],
+        "Product Variants": [],
+      }),
       cliProgressBar,
     })
 
