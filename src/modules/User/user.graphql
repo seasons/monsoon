@@ -72,33 +72,3 @@ type User {
   pushNotifications: PushNotificationStatus!
   beamsToken: String!
 }
-
-type Customer {
-  id: ID!
-  user: User!
-  shouldRequestFeedback: Boolean
-  status: CustomerStatus
-  detail: CustomerDetail
-  billingInfo: BillingInfo
-  plan: Plan
-  bagItems(
-    where: BagItemWhereInput
-    orderBy: BagItemOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [BagItem!]
-  reservations(
-    where: ReservationWhereInput
-    orderBy: ReservationOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [Reservation!]
-  invoices: [Invoice]
-  transactions: [Transaction]
-}

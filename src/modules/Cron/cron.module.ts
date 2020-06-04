@@ -9,7 +9,9 @@ import { UtilsModule } from "@modules/Utils/utils.module"
 import { Module } from "@nestjs/common"
 import { PrismaModule } from "@prisma/prisma.module"
 
+import { PaymentModule } from "../Payment/payment.module"
 import { DataScheduledJobs } from "./services/data.service"
+import { MembershipScheduledJobs } from "./services/membership.service"
 import { ReservationScheduledJobs } from "./services/reservations.service"
 import { UsersScheduledJobs } from "./services/users.service"
 
@@ -18,6 +20,7 @@ import { UsersScheduledJobs } from "./services/users.service"
     AirtableModule,
     EmailModule,
     PrismaModule,
+    PaymentModule,
     ShippingModule,
     SlackModule,
     UserModule,
@@ -25,7 +28,12 @@ import { UsersScheduledJobs } from "./services/users.service"
     UtilsModule,
     PushNotificationsModule,
   ],
-  providers: [ReservationScheduledJobs, UsersScheduledJobs, DataScheduledJobs],
+  providers: [
+    ReservationScheduledJobs,
+    UsersScheduledJobs,
+    DataScheduledJobs,
+    MembershipScheduledJobs,
+  ],
   exports: [DataScheduledJobs],
 })
 export class CronModule {}

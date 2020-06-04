@@ -42,6 +42,10 @@ type AggregateCustomerDetail {
   count: Int!
 }
 
+type AggregateCustomerMembership {
+  count: Int!
+}
+
 type AggregateEmailReceipt {
   count: Int!
 }
@@ -63,6 +67,10 @@ type AggregateLocation {
 }
 
 type AggregatePackage {
+  count: Int!
+}
+
+type AggregatePauseRequest {
   count: Int!
 }
 
@@ -2305,6 +2313,7 @@ type Customer {
   detail: CustomerDetail
   billingInfo: BillingInfo
   plan: Plan
+  membership: CustomerMembership
   bagItems(where: BagItemWhereInput, orderBy: BagItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [BagItem!]
   reservations(where: ReservationWhereInput, orderBy: ReservationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Reservation!]
 }
@@ -2322,6 +2331,7 @@ input CustomerCreateInput {
   detail: CustomerDetailCreateOneInput
   billingInfo: BillingInfoCreateOneInput
   plan: Plan
+  membership: CustomerMembershipCreateOneWithoutCustomerInput
   bagItems: BagItemCreateManyWithoutCustomerInput
   reservations: ReservationCreateManyWithoutCustomerInput
 }
@@ -2333,6 +2343,11 @@ input CustomerCreateOneInput {
 
 input CustomerCreateOneWithoutBagItemsInput {
   create: CustomerCreateWithoutBagItemsInput
+  connect: CustomerWhereUniqueInput
+}
+
+input CustomerCreateOneWithoutMembershipInput {
+  create: CustomerCreateWithoutMembershipInput
   connect: CustomerWhereUniqueInput
 }
 
@@ -2348,6 +2363,18 @@ input CustomerCreateWithoutBagItemsInput {
   detail: CustomerDetailCreateOneInput
   billingInfo: BillingInfoCreateOneInput
   plan: Plan
+  membership: CustomerMembershipCreateOneWithoutCustomerInput
+  reservations: ReservationCreateManyWithoutCustomerInput
+}
+
+input CustomerCreateWithoutMembershipInput {
+  id: ID
+  user: UserCreateOneInput!
+  status: CustomerStatus
+  detail: CustomerDetailCreateOneInput
+  billingInfo: BillingInfoCreateOneInput
+  plan: Plan
+  bagItems: BagItemCreateManyWithoutCustomerInput
   reservations: ReservationCreateManyWithoutCustomerInput
 }
 
@@ -2358,6 +2385,7 @@ input CustomerCreateWithoutReservationsInput {
   detail: CustomerDetailCreateOneInput
   billingInfo: BillingInfoCreateOneInput
   plan: Plan
+  membership: CustomerMembershipCreateOneWithoutCustomerInput
   bagItems: BagItemCreateManyWithoutCustomerInput
 }
 
@@ -2865,6 +2893,171 @@ type CustomerEdge {
   cursor: String!
 }
 
+type CustomerMembership {
+  id: ID!
+  subscriptionId: String!
+  customer: Customer!
+  pauseRequests(where: PauseRequestWhereInput, orderBy: PauseRequestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PauseRequest!]
+}
+
+type CustomerMembershipConnection {
+  pageInfo: PageInfo!
+  edges: [CustomerMembershipEdge]!
+  aggregate: AggregateCustomerMembership!
+}
+
+input CustomerMembershipCreateInput {
+  id: ID
+  subscriptionId: String!
+  customer: CustomerCreateOneWithoutMembershipInput!
+  pauseRequests: PauseRequestCreateManyWithoutMembershipInput
+}
+
+input CustomerMembershipCreateOneWithoutCustomerInput {
+  create: CustomerMembershipCreateWithoutCustomerInput
+  connect: CustomerMembershipWhereUniqueInput
+}
+
+input CustomerMembershipCreateOneWithoutPauseRequestsInput {
+  create: CustomerMembershipCreateWithoutPauseRequestsInput
+  connect: CustomerMembershipWhereUniqueInput
+}
+
+input CustomerMembershipCreateWithoutCustomerInput {
+  id: ID
+  subscriptionId: String!
+  pauseRequests: PauseRequestCreateManyWithoutMembershipInput
+}
+
+input CustomerMembershipCreateWithoutPauseRequestsInput {
+  id: ID
+  subscriptionId: String!
+  customer: CustomerCreateOneWithoutMembershipInput!
+}
+
+type CustomerMembershipEdge {
+  node: CustomerMembership!
+  cursor: String!
+}
+
+enum CustomerMembershipOrderByInput {
+  id_ASC
+  id_DESC
+  subscriptionId_ASC
+  subscriptionId_DESC
+}
+
+type CustomerMembershipPreviousValues {
+  id: ID!
+  subscriptionId: String!
+}
+
+type CustomerMembershipSubscriptionPayload {
+  mutation: MutationType!
+  node: CustomerMembership
+  updatedFields: [String!]
+  previousValues: CustomerMembershipPreviousValues
+}
+
+input CustomerMembershipSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: CustomerMembershipWhereInput
+  AND: [CustomerMembershipSubscriptionWhereInput!]
+  OR: [CustomerMembershipSubscriptionWhereInput!]
+  NOT: [CustomerMembershipSubscriptionWhereInput!]
+}
+
+input CustomerMembershipUpdateInput {
+  subscriptionId: String
+  customer: CustomerUpdateOneRequiredWithoutMembershipInput
+  pauseRequests: PauseRequestUpdateManyWithoutMembershipInput
+}
+
+input CustomerMembershipUpdateManyMutationInput {
+  subscriptionId: String
+}
+
+input CustomerMembershipUpdateOneRequiredWithoutPauseRequestsInput {
+  create: CustomerMembershipCreateWithoutPauseRequestsInput
+  update: CustomerMembershipUpdateWithoutPauseRequestsDataInput
+  upsert: CustomerMembershipUpsertWithoutPauseRequestsInput
+  connect: CustomerMembershipWhereUniqueInput
+}
+
+input CustomerMembershipUpdateOneWithoutCustomerInput {
+  create: CustomerMembershipCreateWithoutCustomerInput
+  update: CustomerMembershipUpdateWithoutCustomerDataInput
+  upsert: CustomerMembershipUpsertWithoutCustomerInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: CustomerMembershipWhereUniqueInput
+}
+
+input CustomerMembershipUpdateWithoutCustomerDataInput {
+  subscriptionId: String
+  pauseRequests: PauseRequestUpdateManyWithoutMembershipInput
+}
+
+input CustomerMembershipUpdateWithoutPauseRequestsDataInput {
+  subscriptionId: String
+  customer: CustomerUpdateOneRequiredWithoutMembershipInput
+}
+
+input CustomerMembershipUpsertWithoutCustomerInput {
+  update: CustomerMembershipUpdateWithoutCustomerDataInput!
+  create: CustomerMembershipCreateWithoutCustomerInput!
+}
+
+input CustomerMembershipUpsertWithoutPauseRequestsInput {
+  update: CustomerMembershipUpdateWithoutPauseRequestsDataInput!
+  create: CustomerMembershipCreateWithoutPauseRequestsInput!
+}
+
+input CustomerMembershipWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  subscriptionId: String
+  subscriptionId_not: String
+  subscriptionId_in: [String!]
+  subscriptionId_not_in: [String!]
+  subscriptionId_lt: String
+  subscriptionId_lte: String
+  subscriptionId_gt: String
+  subscriptionId_gte: String
+  subscriptionId_contains: String
+  subscriptionId_not_contains: String
+  subscriptionId_starts_with: String
+  subscriptionId_not_starts_with: String
+  subscriptionId_ends_with: String
+  subscriptionId_not_ends_with: String
+  customer: CustomerWhereInput
+  pauseRequests_every: PauseRequestWhereInput
+  pauseRequests_some: PauseRequestWhereInput
+  pauseRequests_none: PauseRequestWhereInput
+  AND: [CustomerMembershipWhereInput!]
+  OR: [CustomerMembershipWhereInput!]
+  NOT: [CustomerMembershipWhereInput!]
+}
+
+input CustomerMembershipWhereUniqueInput {
+  id: ID
+}
+
 enum CustomerOrderByInput {
   id_ASC
   id_DESC
@@ -2915,6 +3108,7 @@ input CustomerUpdateDataInput {
   detail: CustomerDetailUpdateOneInput
   billingInfo: BillingInfoUpdateOneInput
   plan: Plan
+  membership: CustomerMembershipUpdateOneWithoutCustomerInput
   bagItems: BagItemUpdateManyWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
 }
@@ -2925,6 +3119,7 @@ input CustomerUpdateInput {
   detail: CustomerDetailUpdateOneInput
   billingInfo: BillingInfoUpdateOneInput
   plan: Plan
+  membership: CustomerMembershipUpdateOneWithoutCustomerInput
   bagItems: BagItemUpdateManyWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
 }
@@ -2948,6 +3143,13 @@ input CustomerUpdateOneRequiredWithoutBagItemsInput {
   connect: CustomerWhereUniqueInput
 }
 
+input CustomerUpdateOneRequiredWithoutMembershipInput {
+  create: CustomerCreateWithoutMembershipInput
+  update: CustomerUpdateWithoutMembershipDataInput
+  upsert: CustomerUpsertWithoutMembershipInput
+  connect: CustomerWhereUniqueInput
+}
+
 input CustomerUpdateOneRequiredWithoutReservationsInput {
   create: CustomerCreateWithoutReservationsInput
   update: CustomerUpdateWithoutReservationsDataInput
@@ -2961,6 +3163,17 @@ input CustomerUpdateWithoutBagItemsDataInput {
   detail: CustomerDetailUpdateOneInput
   billingInfo: BillingInfoUpdateOneInput
   plan: Plan
+  membership: CustomerMembershipUpdateOneWithoutCustomerInput
+  reservations: ReservationUpdateManyWithoutCustomerInput
+}
+
+input CustomerUpdateWithoutMembershipDataInput {
+  user: UserUpdateOneRequiredInput
+  status: CustomerStatus
+  detail: CustomerDetailUpdateOneInput
+  billingInfo: BillingInfoUpdateOneInput
+  plan: Plan
+  bagItems: BagItemUpdateManyWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
 }
 
@@ -2970,6 +3183,7 @@ input CustomerUpdateWithoutReservationsDataInput {
   detail: CustomerDetailUpdateOneInput
   billingInfo: BillingInfoUpdateOneInput
   plan: Plan
+  membership: CustomerMembershipUpdateOneWithoutCustomerInput
   bagItems: BagItemUpdateManyWithoutCustomerInput
 }
 
@@ -2981,6 +3195,11 @@ input CustomerUpsertNestedInput {
 input CustomerUpsertWithoutBagItemsInput {
   update: CustomerUpdateWithoutBagItemsDataInput!
   create: CustomerCreateWithoutBagItemsInput!
+}
+
+input CustomerUpsertWithoutMembershipInput {
+  update: CustomerUpdateWithoutMembershipDataInput!
+  create: CustomerCreateWithoutMembershipInput!
 }
 
 input CustomerUpsertWithoutReservationsInput {
@@ -3014,6 +3233,7 @@ input CustomerWhereInput {
   plan_not: Plan
   plan_in: [Plan!]
   plan_not_in: [Plan!]
+  membership: CustomerMembershipWhereInput
   bagItems_every: BagItemWhereInput
   bagItems_some: BagItemWhereInput
   bagItems_none: BagItemWhereInput
@@ -4326,6 +4546,12 @@ type Mutation {
   upsertCustomerDetail(where: CustomerDetailWhereUniqueInput!, create: CustomerDetailCreateInput!, update: CustomerDetailUpdateInput!): CustomerDetail!
   deleteCustomerDetail(where: CustomerDetailWhereUniqueInput!): CustomerDetail
   deleteManyCustomerDetails(where: CustomerDetailWhereInput): BatchPayload!
+  createCustomerMembership(data: CustomerMembershipCreateInput!): CustomerMembership!
+  updateCustomerMembership(data: CustomerMembershipUpdateInput!, where: CustomerMembershipWhereUniqueInput!): CustomerMembership
+  updateManyCustomerMemberships(data: CustomerMembershipUpdateManyMutationInput!, where: CustomerMembershipWhereInput): BatchPayload!
+  upsertCustomerMembership(where: CustomerMembershipWhereUniqueInput!, create: CustomerMembershipCreateInput!, update: CustomerMembershipUpdateInput!): CustomerMembership!
+  deleteCustomerMembership(where: CustomerMembershipWhereUniqueInput!): CustomerMembership
+  deleteManyCustomerMemberships(where: CustomerMembershipWhereInput): BatchPayload!
   createEmailReceipt(data: EmailReceiptCreateInput!): EmailReceipt!
   updateEmailReceipt(data: EmailReceiptUpdateInput!, where: EmailReceiptWhereUniqueInput!): EmailReceipt
   updateManyEmailReceipts(data: EmailReceiptUpdateManyMutationInput!, where: EmailReceiptWhereInput): BatchPayload!
@@ -4362,6 +4588,12 @@ type Mutation {
   upsertPackage(where: PackageWhereUniqueInput!, create: PackageCreateInput!, update: PackageUpdateInput!): Package!
   deletePackage(where: PackageWhereUniqueInput!): Package
   deleteManyPackages(where: PackageWhereInput): BatchPayload!
+  createPauseRequest(data: PauseRequestCreateInput!): PauseRequest!
+  updatePauseRequest(data: PauseRequestUpdateInput!, where: PauseRequestWhereUniqueInput!): PauseRequest
+  updateManyPauseRequests(data: PauseRequestUpdateManyMutationInput!, where: PauseRequestWhereInput): BatchPayload!
+  upsertPauseRequest(where: PauseRequestWhereUniqueInput!, create: PauseRequestCreateInput!, update: PauseRequestUpdateInput!): PauseRequest!
+  deletePauseRequest(where: PauseRequestWhereUniqueInput!): PauseRequest
+  deleteManyPauseRequests(where: PauseRequestWhereInput): BatchPayload!
   createPhysicalProduct(data: PhysicalProductCreateInput!): PhysicalProduct!
   updatePhysicalProduct(data: PhysicalProductUpdateInput!, where: PhysicalProductWhereUniqueInput!): PhysicalProduct
   updateManyPhysicalProducts(data: PhysicalProductUpdateManyMutationInput!, where: PhysicalProductWhereInput): BatchPayload!
@@ -4664,6 +4896,255 @@ type PageInfo {
   hasPreviousPage: Boolean!
   startCursor: String
   endCursor: String
+}
+
+type PauseRequest {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  pausePending: Boolean!
+  pauseDate: DateTime
+  resumeDate: DateTime
+  membership: CustomerMembership!
+}
+
+type PauseRequestConnection {
+  pageInfo: PageInfo!
+  edges: [PauseRequestEdge]!
+  aggregate: AggregatePauseRequest!
+}
+
+input PauseRequestCreateInput {
+  id: ID
+  pausePending: Boolean!
+  pauseDate: DateTime
+  resumeDate: DateTime
+  membership: CustomerMembershipCreateOneWithoutPauseRequestsInput!
+}
+
+input PauseRequestCreateManyWithoutMembershipInput {
+  create: [PauseRequestCreateWithoutMembershipInput!]
+  connect: [PauseRequestWhereUniqueInput!]
+}
+
+input PauseRequestCreateWithoutMembershipInput {
+  id: ID
+  pausePending: Boolean!
+  pauseDate: DateTime
+  resumeDate: DateTime
+}
+
+type PauseRequestEdge {
+  node: PauseRequest!
+  cursor: String!
+}
+
+enum PauseRequestOrderByInput {
+  id_ASC
+  id_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  pausePending_ASC
+  pausePending_DESC
+  pauseDate_ASC
+  pauseDate_DESC
+  resumeDate_ASC
+  resumeDate_DESC
+}
+
+type PauseRequestPreviousValues {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  pausePending: Boolean!
+  pauseDate: DateTime
+  resumeDate: DateTime
+}
+
+input PauseRequestScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  pausePending: Boolean
+  pausePending_not: Boolean
+  pauseDate: DateTime
+  pauseDate_not: DateTime
+  pauseDate_in: [DateTime!]
+  pauseDate_not_in: [DateTime!]
+  pauseDate_lt: DateTime
+  pauseDate_lte: DateTime
+  pauseDate_gt: DateTime
+  pauseDate_gte: DateTime
+  resumeDate: DateTime
+  resumeDate_not: DateTime
+  resumeDate_in: [DateTime!]
+  resumeDate_not_in: [DateTime!]
+  resumeDate_lt: DateTime
+  resumeDate_lte: DateTime
+  resumeDate_gt: DateTime
+  resumeDate_gte: DateTime
+  AND: [PauseRequestScalarWhereInput!]
+  OR: [PauseRequestScalarWhereInput!]
+  NOT: [PauseRequestScalarWhereInput!]
+}
+
+type PauseRequestSubscriptionPayload {
+  mutation: MutationType!
+  node: PauseRequest
+  updatedFields: [String!]
+  previousValues: PauseRequestPreviousValues
+}
+
+input PauseRequestSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: PauseRequestWhereInput
+  AND: [PauseRequestSubscriptionWhereInput!]
+  OR: [PauseRequestSubscriptionWhereInput!]
+  NOT: [PauseRequestSubscriptionWhereInput!]
+}
+
+input PauseRequestUpdateInput {
+  pausePending: Boolean
+  pauseDate: DateTime
+  resumeDate: DateTime
+  membership: CustomerMembershipUpdateOneRequiredWithoutPauseRequestsInput
+}
+
+input PauseRequestUpdateManyDataInput {
+  pausePending: Boolean
+  pauseDate: DateTime
+  resumeDate: DateTime
+}
+
+input PauseRequestUpdateManyMutationInput {
+  pausePending: Boolean
+  pauseDate: DateTime
+  resumeDate: DateTime
+}
+
+input PauseRequestUpdateManyWithoutMembershipInput {
+  create: [PauseRequestCreateWithoutMembershipInput!]
+  delete: [PauseRequestWhereUniqueInput!]
+  connect: [PauseRequestWhereUniqueInput!]
+  set: [PauseRequestWhereUniqueInput!]
+  disconnect: [PauseRequestWhereUniqueInput!]
+  update: [PauseRequestUpdateWithWhereUniqueWithoutMembershipInput!]
+  upsert: [PauseRequestUpsertWithWhereUniqueWithoutMembershipInput!]
+  deleteMany: [PauseRequestScalarWhereInput!]
+  updateMany: [PauseRequestUpdateManyWithWhereNestedInput!]
+}
+
+input PauseRequestUpdateManyWithWhereNestedInput {
+  where: PauseRequestScalarWhereInput!
+  data: PauseRequestUpdateManyDataInput!
+}
+
+input PauseRequestUpdateWithoutMembershipDataInput {
+  pausePending: Boolean
+  pauseDate: DateTime
+  resumeDate: DateTime
+}
+
+input PauseRequestUpdateWithWhereUniqueWithoutMembershipInput {
+  where: PauseRequestWhereUniqueInput!
+  data: PauseRequestUpdateWithoutMembershipDataInput!
+}
+
+input PauseRequestUpsertWithWhereUniqueWithoutMembershipInput {
+  where: PauseRequestWhereUniqueInput!
+  update: PauseRequestUpdateWithoutMembershipDataInput!
+  create: PauseRequestCreateWithoutMembershipInput!
+}
+
+input PauseRequestWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  pausePending: Boolean
+  pausePending_not: Boolean
+  pauseDate: DateTime
+  pauseDate_not: DateTime
+  pauseDate_in: [DateTime!]
+  pauseDate_not_in: [DateTime!]
+  pauseDate_lt: DateTime
+  pauseDate_lte: DateTime
+  pauseDate_gt: DateTime
+  pauseDate_gte: DateTime
+  resumeDate: DateTime
+  resumeDate_not: DateTime
+  resumeDate_in: [DateTime!]
+  resumeDate_not_in: [DateTime!]
+  resumeDate_lt: DateTime
+  resumeDate_lte: DateTime
+  resumeDate_gt: DateTime
+  resumeDate_gte: DateTime
+  membership: CustomerMembershipWhereInput
+  AND: [PauseRequestWhereInput!]
+  OR: [PauseRequestWhereInput!]
+  NOT: [PauseRequestWhereInput!]
+}
+
+input PauseRequestWhereUniqueInput {
+  id: ID
 }
 
 enum PhotographyStatus {
@@ -8408,6 +8889,9 @@ type Query {
   customerDetail(where: CustomerDetailWhereUniqueInput!): CustomerDetail
   customerDetails(where: CustomerDetailWhereInput, orderBy: CustomerDetailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CustomerDetail]!
   customerDetailsConnection(where: CustomerDetailWhereInput, orderBy: CustomerDetailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CustomerDetailConnection!
+  customerMembership(where: CustomerMembershipWhereUniqueInput!): CustomerMembership
+  customerMemberships(where: CustomerMembershipWhereInput, orderBy: CustomerMembershipOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CustomerMembership]!
+  customerMembershipsConnection(where: CustomerMembershipWhereInput, orderBy: CustomerMembershipOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CustomerMembershipConnection!
   emailReceipt(where: EmailReceiptWhereUniqueInput!): EmailReceipt
   emailReceipts(where: EmailReceiptWhereInput, orderBy: EmailReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [EmailReceipt]!
   emailReceiptsConnection(where: EmailReceiptWhereInput, orderBy: EmailReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): EmailReceiptConnection!
@@ -8426,6 +8910,9 @@ type Query {
   package(where: PackageWhereUniqueInput!): Package
   packages(where: PackageWhereInput, orderBy: PackageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Package]!
   packagesConnection(where: PackageWhereInput, orderBy: PackageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PackageConnection!
+  pauseRequest(where: PauseRequestWhereUniqueInput!): PauseRequest
+  pauseRequests(where: PauseRequestWhereInput, orderBy: PauseRequestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PauseRequest]!
+  pauseRequestsConnection(where: PauseRequestWhereInput, orderBy: PauseRequestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PauseRequestConnection!
   physicalProduct(where: PhysicalProductWhereUniqueInput!): PhysicalProduct
   physicalProducts(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct]!
   physicalProductsConnection(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PhysicalProductConnection!
@@ -9868,12 +10355,14 @@ type Subscription {
   color(where: ColorSubscriptionWhereInput): ColorSubscriptionPayload
   customer(where: CustomerSubscriptionWhereInput): CustomerSubscriptionPayload
   customerDetail(where: CustomerDetailSubscriptionWhereInput): CustomerDetailSubscriptionPayload
+  customerMembership(where: CustomerMembershipSubscriptionWhereInput): CustomerMembershipSubscriptionPayload
   emailReceipt(where: EmailReceiptSubscriptionWhereInput): EmailReceiptSubscriptionPayload
   homepageProductRail(where: HomepageProductRailSubscriptionWhereInput): HomepageProductRailSubscriptionPayload
   image(where: ImageSubscriptionWhereInput): ImageSubscriptionPayload
   label(where: LabelSubscriptionWhereInput): LabelSubscriptionPayload
   location(where: LocationSubscriptionWhereInput): LocationSubscriptionPayload
   package(where: PackageSubscriptionWhereInput): PackageSubscriptionPayload
+  pauseRequest(where: PauseRequestSubscriptionWhereInput): PauseRequestSubscriptionPayload
   physicalProduct(where: PhysicalProductSubscriptionWhereInput): PhysicalProductSubscriptionPayload
   product(where: ProductSubscriptionWhereInput): ProductSubscriptionPayload
   productFunction(where: ProductFunctionSubscriptionWhereInput): ProductFunctionSubscriptionPayload
