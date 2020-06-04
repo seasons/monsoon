@@ -52,20 +52,6 @@ export class HomepageSectionService {
           .collections()
         return collections
 
-      case SectionTitle.JustAdded:
-        const newProducts = await this.prisma.binding.query.products(
-          {
-            ...args,
-            orderBy: "createdAt_DESC",
-            first: 8,
-            where: {
-              status: "Available",
-            },
-          },
-          ProductFragment
-        )
-        return newProducts
-
       case SectionTitle.RecentlyViewed:
         if (!customerId) {
           return []

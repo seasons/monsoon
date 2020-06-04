@@ -1718,6 +1718,13 @@ export type ProductStatus =
 
 export type ProductArchitecture = "Fashion" | "Showstopper" | "Staple";
 
+export type PhotographyStatus =
+  | "Done"
+  | "InProgress"
+  | "ReadyForEditing"
+  | "ReadyToShoot"
+  | "Steam";
+
 export type InventoryStatus =
   | "NonReservable"
   | "Reservable"
@@ -1832,6 +1839,8 @@ export type ProductOrderByInput =
   | "season_DESC"
   | "architecture_ASC"
   | "architecture_DESC"
+  | "photographyStatus_ASC"
+  | "photographyStatus_DESC"
   | "publishedAt_ASC"
   | "publishedAt_DESC"
   | "createdAt_ASC"
@@ -3306,6 +3315,10 @@ export interface ProductWhereInput {
   architecture_not?: Maybe<ProductArchitecture>;
   architecture_in?: Maybe<ProductArchitecture[] | ProductArchitecture>;
   architecture_not_in?: Maybe<ProductArchitecture[] | ProductArchitecture>;
+  photographyStatus?: Maybe<PhotographyStatus>;
+  photographyStatus_not?: Maybe<PhotographyStatus>;
+  photographyStatus_in?: Maybe<PhotographyStatus[] | PhotographyStatus>;
+  photographyStatus_not_in?: Maybe<PhotographyStatus[] | PhotographyStatus>;
   publishedAt?: Maybe<DateTimeInput>;
   publishedAt_not?: Maybe<DateTimeInput>;
   publishedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -5869,6 +5882,7 @@ export interface ProductCreateWithoutVariantsInput {
   status?: Maybe<ProductStatus>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
+  photographyStatus?: Maybe<PhotographyStatus>;
   publishedAt?: Maybe<DateTimeInput>;
 }
 
@@ -5953,6 +5967,7 @@ export interface ProductCreateWithoutCategoryInput {
   status?: Maybe<ProductStatus>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
+  photographyStatus?: Maybe<PhotographyStatus>;
   publishedAt?: Maybe<DateTimeInput>;
 }
 
@@ -6745,6 +6760,7 @@ export interface ProductUpdateWithoutVariantsDataInput {
   status?: Maybe<ProductStatus>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
+  photographyStatus?: Maybe<PhotographyStatus>;
   publishedAt?: Maybe<DateTimeInput>;
 }
 
@@ -6876,6 +6892,7 @@ export interface ProductUpdateWithoutCategoryDataInput {
   status?: Maybe<ProductStatus>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
+  photographyStatus?: Maybe<PhotographyStatus>;
   publishedAt?: Maybe<DateTimeInput>;
 }
 
@@ -8081,6 +8098,10 @@ export interface ProductScalarWhereInput {
   architecture_not?: Maybe<ProductArchitecture>;
   architecture_in?: Maybe<ProductArchitecture[] | ProductArchitecture>;
   architecture_not_in?: Maybe<ProductArchitecture[] | ProductArchitecture>;
+  photographyStatus?: Maybe<PhotographyStatus>;
+  photographyStatus_not?: Maybe<PhotographyStatus>;
+  photographyStatus_in?: Maybe<PhotographyStatus[] | PhotographyStatus>;
+  photographyStatus_not_in?: Maybe<PhotographyStatus[] | PhotographyStatus>;
   publishedAt?: Maybe<DateTimeInput>;
   publishedAt_not?: Maybe<DateTimeInput>;
   publishedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -8128,6 +8149,7 @@ export interface ProductUpdateManyDataInput {
   status?: Maybe<ProductStatus>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
+  photographyStatus?: Maybe<PhotographyStatus>;
   publishedAt?: Maybe<DateTimeInput>;
 }
 
@@ -8799,6 +8821,7 @@ export interface ProductCreateWithoutBrandInput {
   status?: Maybe<ProductStatus>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
+  photographyStatus?: Maybe<PhotographyStatus>;
   publishedAt?: Maybe<DateTimeInput>;
 }
 
@@ -8866,6 +8889,7 @@ export interface ProductUpdateWithoutBrandDataInput {
   status?: Maybe<ProductStatus>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
+  photographyStatus?: Maybe<PhotographyStatus>;
   publishedAt?: Maybe<DateTimeInput>;
 }
 
@@ -8946,6 +8970,7 @@ export interface ProductCreateInput {
   status?: Maybe<ProductStatus>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
+  photographyStatus?: Maybe<PhotographyStatus>;
   publishedAt?: Maybe<DateTimeInput>;
 }
 
@@ -9008,6 +9033,7 @@ export interface ProductUpdateDataInput {
   status?: Maybe<ProductStatus>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
+  photographyStatus?: Maybe<PhotographyStatus>;
   publishedAt?: Maybe<DateTimeInput>;
 }
 
@@ -9544,6 +9570,7 @@ export interface ProductUpdateInput {
   status?: Maybe<ProductStatus>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
+  photographyStatus?: Maybe<PhotographyStatus>;
   publishedAt?: Maybe<DateTimeInput>;
 }
 
@@ -9560,6 +9587,7 @@ export interface ProductUpdateManyMutationInput {
   status?: Maybe<ProductStatus>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
+  photographyStatus?: Maybe<PhotographyStatus>;
   publishedAt?: Maybe<DateTimeInput>;
 }
 
@@ -9608,6 +9636,7 @@ export interface ProductCreateWithoutModelInput {
   status?: Maybe<ProductStatus>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
+  photographyStatus?: Maybe<PhotographyStatus>;
   publishedAt?: Maybe<DateTimeInput>;
 }
 
@@ -9667,6 +9696,7 @@ export interface ProductUpdateWithoutModelDataInput {
   status?: Maybe<ProductStatus>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
+  photographyStatus?: Maybe<PhotographyStatus>;
   publishedAt?: Maybe<DateTimeInput>;
 }
 
@@ -10677,6 +10707,7 @@ export interface ProductCreateWithoutTagsInput {
   status?: Maybe<ProductStatus>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
+  photographyStatus?: Maybe<PhotographyStatus>;
   publishedAt?: Maybe<DateTimeInput>;
 }
 
@@ -10736,6 +10767,7 @@ export interface ProductUpdateWithoutTagsDataInput {
   status?: Maybe<ProductStatus>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
+  photographyStatus?: Maybe<PhotographyStatus>;
   publishedAt?: Maybe<DateTimeInput>;
 }
 
@@ -12530,6 +12562,7 @@ export interface Product {
   status?: ProductStatus;
   season?: String;
   architecture?: ProductArchitecture;
+  photographyStatus?: PhotographyStatus;
   publishedAt?: DateTimeOutput;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
@@ -12591,6 +12624,7 @@ export interface ProductPromise extends Promise<Product>, Fragmentable {
   status: () => Promise<ProductStatus>;
   season: () => Promise<String>;
   architecture: () => Promise<ProductArchitecture>;
+  photographyStatus: () => Promise<PhotographyStatus>;
   publishedAt: () => Promise<DateTimeOutput>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
@@ -12654,6 +12688,7 @@ export interface ProductSubscription
   status: () => Promise<AsyncIterator<ProductStatus>>;
   season: () => Promise<AsyncIterator<String>>;
   architecture: () => Promise<AsyncIterator<ProductArchitecture>>;
+  photographyStatus: () => Promise<AsyncIterator<PhotographyStatus>>;
   publishedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
@@ -12717,6 +12752,7 @@ export interface ProductNullablePromise
   status: () => Promise<ProductStatus>;
   season: () => Promise<String>;
   architecture: () => Promise<ProductArchitecture>;
+  photographyStatus: () => Promise<PhotographyStatus>;
   publishedAt: () => Promise<DateTimeOutput>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
@@ -17453,6 +17489,7 @@ export interface ProductPreviousValues {
   status?: ProductStatus;
   season?: String;
   architecture?: ProductArchitecture;
+  photographyStatus?: PhotographyStatus;
   publishedAt?: DateTimeOutput;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
@@ -17474,6 +17511,7 @@ export interface ProductPreviousValuesPromise
   status: () => Promise<ProductStatus>;
   season: () => Promise<String>;
   architecture: () => Promise<ProductArchitecture>;
+  photographyStatus: () => Promise<PhotographyStatus>;
   publishedAt: () => Promise<DateTimeOutput>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
@@ -17495,6 +17533,7 @@ export interface ProductPreviousValuesSubscription
   status: () => Promise<AsyncIterator<ProductStatus>>;
   season: () => Promise<AsyncIterator<String>>;
   architecture: () => Promise<AsyncIterator<ProductArchitecture>>;
+  photographyStatus: () => Promise<AsyncIterator<PhotographyStatus>>;
   publishedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
@@ -18690,6 +18729,10 @@ export const models: Model[] = [
   },
   {
     name: "WarehouseLocationType",
+    embedded: false
+  },
+  {
+    name: "PhotographyStatus",
     embedded: false
   },
   {

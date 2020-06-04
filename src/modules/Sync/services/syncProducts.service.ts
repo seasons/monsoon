@@ -124,12 +124,20 @@ export class SyncProductsService {
           continue
         }
 
+        if (
+          record.model.photographyStatus !== "Done" &&
+          record.model.status == "Available"
+        ) {
+          continue
+        }
+
         const {
           color,
           description,
           images,
           modelHeight,
           externalURL,
+          photographyStatus,
           tags,
           retailPrice,
           innerMaterials,
@@ -145,6 +153,10 @@ export class SyncProductsService {
         // Get the slug
         const { brandCode } = brand.model
         const slug = this.productUtils.getProductSlug(brandCode, name, color)
+
+        const prismaPhotographyStatus = this.getPrismaPhotographyStatus(
+          photographyStatus
+        )
 
         const imageIDs = await this.syncImages(
           images,
@@ -203,6 +215,7 @@ export class SyncProductsService {
           outerMaterials: {
             set: (outerMaterials || []).map(a => a.replace(/\ /g, "")),
           },
+          photographyStatus: prismaPhotographyStatus,
           tags: {
             connect: model.tags.map(name =>
               identity({
@@ -383,5 +396,22 @@ export class SyncProductsService {
     )
     const imageIDs = this.productUtils.getImageIDs(imageDatas, slug)
     return imageIDs
+  }
+
+  private getPrismaPhotographyStatus(airtablePhotographyStatus: string) {
+    switch (airtablePhotographyStatus) {
+      case "Done":
+        return "Done"
+      case "In progress":
+        return "InProgress"
+      case "Ready for editing":
+        return "ReadyForEditing"
+      case "Ready to shoot":
+        return "ReadyToShoot"
+      case "Steam":
+        return "Steam"
+      default:
+        return null
+    }
   }
 }

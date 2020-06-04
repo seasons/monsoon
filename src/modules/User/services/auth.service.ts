@@ -43,7 +43,7 @@ export class AuthService {
     lastName: string
     details: CustomerDetailCreateInput
   }) {
-    // Register the user on Auth0
+    // 1. Register the user on Auth0
     let userAuth0ID
     try {
       userAuth0ID = await this.createAuth0User(email, password, {
@@ -57,7 +57,7 @@ export class AuthService {
       throw new Error(err)
     }
 
-    // Get their API access token
+    // 2. Get their API access token from Auth0
     let tokenData
     try {
       tokenData = await this.getAuth0UserAccessToken(email, password)
@@ -68,20 +68,28 @@ export class AuthService {
       throw new UserInputError(err)
     }
 
-    // Create a user object in our database and airtable
+    // 3. Create the user in our database and Airtable
     const user = await this.createPrismaUser(
       userAuth0ID,
       email,
       firstName,
       lastName
     )
-    await this.createPrismaCustomerForExistingUser(user.id, details, "Created")
+
+    // 4. Create the customer in our database
+    const customer = await this.createPrismaCustomerForExistingUser(
+      user.id,
+      details,
+      "Created"
+    )
+
+    // 5. Update the user in Airtable
     await this.airtable.createOrUpdateAirtableUser(user, {
       ...details,
       status: "Created",
     })
 
-    return { user, tokenData }
+    return { user, tokenData, customer }
   }
 
   async loginUser({ email, password, requestUser }) {

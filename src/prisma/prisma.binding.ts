@@ -5108,6 +5108,14 @@ type PageInfo {
   endCursor: String
 }
 
+enum PhotographyStatus {
+  Done
+  InProgress
+  ReadyForEditing
+  ReadyToShoot
+  Steam
+}
+
 type PhysicalProduct {
   id: ID!
   seasonsUID: String!
@@ -5759,6 +5767,7 @@ type Product {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  photographyStatus: PhotographyStatus
   publishedAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -5804,6 +5813,7 @@ input ProductCreateInput {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  photographyStatus: PhotographyStatus
   publishedAt: DateTime
 }
 
@@ -5869,6 +5879,7 @@ input ProductCreateWithoutBrandInput {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  photographyStatus: PhotographyStatus
   publishedAt: DateTime
 }
 
@@ -5895,6 +5906,7 @@ input ProductCreateWithoutCategoryInput {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  photographyStatus: PhotographyStatus
   publishedAt: DateTime
 }
 
@@ -5921,6 +5933,7 @@ input ProductCreateWithoutModelInput {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  photographyStatus: PhotographyStatus
   publishedAt: DateTime
 }
 
@@ -5947,6 +5960,7 @@ input ProductCreateWithoutTagsInput {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  photographyStatus: PhotographyStatus
   publishedAt: DateTime
 }
 
@@ -5973,6 +5987,7 @@ input ProductCreateWithoutVariantsInput {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  photographyStatus: PhotographyStatus
   publishedAt: DateTime
 }
 
@@ -6326,6 +6341,8 @@ enum ProductOrderByInput {
   season_DESC
   architecture_ASC
   architecture_DESC
+  photographyStatus_ASC
+  photographyStatus_DESC
   publishedAt_ASC
   publishedAt_DESC
   createdAt_ASC
@@ -6348,6 +6365,7 @@ type ProductPreviousValues {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  photographyStatus: PhotographyStatus
   publishedAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -6742,6 +6760,10 @@ input ProductScalarWhereInput {
   architecture_not: ProductArchitecture
   architecture_in: [ProductArchitecture!]
   architecture_not_in: [ProductArchitecture!]
+  photographyStatus: PhotographyStatus
+  photographyStatus_not: PhotographyStatus
+  photographyStatus_in: [PhotographyStatus!]
+  photographyStatus_not_in: [PhotographyStatus!]
   publishedAt: DateTime
   publishedAt_not: DateTime
   publishedAt_in: [DateTime!]
@@ -6826,6 +6848,7 @@ input ProductUpdateDataInput {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  photographyStatus: PhotographyStatus
   publishedAt: DateTime
 }
 
@@ -6856,6 +6879,7 @@ input ProductUpdateInput {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  photographyStatus: PhotographyStatus
   publishedAt: DateTime
 }
 
@@ -6872,6 +6896,7 @@ input ProductUpdateManyDataInput {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  photographyStatus: PhotographyStatus
   publishedAt: DateTime
 }
 
@@ -6900,6 +6925,7 @@ input ProductUpdateManyMutationInput {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  photographyStatus: PhotographyStatus
   publishedAt: DateTime
 }
 
@@ -6996,6 +7022,7 @@ input ProductUpdateWithoutBrandDataInput {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  photographyStatus: PhotographyStatus
   publishedAt: DateTime
 }
 
@@ -7021,6 +7048,7 @@ input ProductUpdateWithoutCategoryDataInput {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  photographyStatus: PhotographyStatus
   publishedAt: DateTime
 }
 
@@ -7046,6 +7074,7 @@ input ProductUpdateWithoutModelDataInput {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  photographyStatus: PhotographyStatus
   publishedAt: DateTime
 }
 
@@ -7071,6 +7100,7 @@ input ProductUpdateWithoutTagsDataInput {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  photographyStatus: PhotographyStatus
   publishedAt: DateTime
 }
 
@@ -7096,6 +7126,7 @@ input ProductUpdateWithoutVariantsDataInput {
   status: ProductStatus
   season: String
   architecture: ProductArchitecture
+  photographyStatus: PhotographyStatus
   publishedAt: DateTime
 }
 
@@ -8497,6 +8528,10 @@ input ProductWhereInput {
   architecture_not: ProductArchitecture
   architecture_in: [ProductArchitecture!]
   architecture_not_in: [ProductArchitecture!]
+  photographyStatus: PhotographyStatus
+  photographyStatus_not: PhotographyStatus
+  photographyStatus_in: [PhotographyStatus!]
+  photographyStatus_not_in: [PhotographyStatus!]
   publishedAt: DateTime
   publishedAt_not: DateTime
   publishedAt_in: [DateTime!]
@@ -12070,6 +12105,12 @@ export type PackageOrderByInput =   'id_ASC' |
   'updatedAt_ASC' |
   'updatedAt_DESC'
 
+export type PhotographyStatus =   'Done' |
+  'InProgress' |
+  'ReadyForEditing' |
+  'ReadyToShoot' |
+  'Steam'
+
 export type PhysicalProductOffloadMethod =   'SoldToUser' |
   'SoldToThirdParty' |
   'ReturnedToVendor' |
@@ -12150,6 +12191,8 @@ export type ProductOrderByInput =   'id_ASC' |
   'season_DESC' |
   'architecture_ASC' |
   'architecture_DESC' |
+  'photographyStatus_ASC' |
+  'photographyStatus_DESC' |
   'publishedAt_ASC' |
   'publishedAt_DESC' |
   'createdAt_ASC' |
@@ -16228,6 +16271,7 @@ export interface ProductCreateInput {
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
+  photographyStatus?: PhotographyStatus | null
   publishedAt?: DateTime | null
 }
 
@@ -16293,6 +16337,7 @@ export interface ProductCreateWithoutBrandInput {
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
+  photographyStatus?: PhotographyStatus | null
   publishedAt?: DateTime | null
 }
 
@@ -16319,6 +16364,7 @@ export interface ProductCreateWithoutCategoryInput {
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
+  photographyStatus?: PhotographyStatus | null
   publishedAt?: DateTime | null
 }
 
@@ -16345,6 +16391,7 @@ export interface ProductCreateWithoutModelInput {
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
+  photographyStatus?: PhotographyStatus | null
   publishedAt?: DateTime | null
 }
 
@@ -16371,6 +16418,7 @@ export interface ProductCreateWithoutTagsInput {
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
+  photographyStatus?: PhotographyStatus | null
   publishedAt?: DateTime | null
 }
 
@@ -16397,6 +16445,7 @@ export interface ProductCreateWithoutVariantsInput {
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
+  photographyStatus?: PhotographyStatus | null
   publishedAt?: DateTime | null
 }
 
@@ -16966,6 +17015,10 @@ export interface ProductScalarWhereInput {
   architecture_not?: ProductArchitecture | null
   architecture_in?: ProductArchitecture[] | ProductArchitecture | null
   architecture_not_in?: ProductArchitecture[] | ProductArchitecture | null
+  photographyStatus?: PhotographyStatus | null
+  photographyStatus_not?: PhotographyStatus | null
+  photographyStatus_in?: PhotographyStatus[] | PhotographyStatus | null
+  photographyStatus_not_in?: PhotographyStatus[] | PhotographyStatus | null
   publishedAt?: DateTime | null
   publishedAt_not?: DateTime | null
   publishedAt_in?: DateTime[] | DateTime | null
@@ -17029,6 +17082,7 @@ export interface ProductUpdateDataInput {
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
+  photographyStatus?: PhotographyStatus | null
   publishedAt?: DateTime | null
 }
 
@@ -17059,6 +17113,7 @@ export interface ProductUpdateInput {
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
+  photographyStatus?: PhotographyStatus | null
   publishedAt?: DateTime | null
 }
 
@@ -17075,6 +17130,7 @@ export interface ProductUpdateManyDataInput {
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
+  photographyStatus?: PhotographyStatus | null
   publishedAt?: DateTime | null
 }
 
@@ -17103,6 +17159,7 @@ export interface ProductUpdateManyMutationInput {
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
+  photographyStatus?: PhotographyStatus | null
   publishedAt?: DateTime | null
 }
 
@@ -17199,6 +17256,7 @@ export interface ProductUpdateWithoutBrandDataInput {
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
+  photographyStatus?: PhotographyStatus | null
   publishedAt?: DateTime | null
 }
 
@@ -17224,6 +17282,7 @@ export interface ProductUpdateWithoutCategoryDataInput {
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
+  photographyStatus?: PhotographyStatus | null
   publishedAt?: DateTime | null
 }
 
@@ -17249,6 +17308,7 @@ export interface ProductUpdateWithoutModelDataInput {
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
+  photographyStatus?: PhotographyStatus | null
   publishedAt?: DateTime | null
 }
 
@@ -17274,6 +17334,7 @@ export interface ProductUpdateWithoutTagsDataInput {
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
+  photographyStatus?: PhotographyStatus | null
   publishedAt?: DateTime | null
 }
 
@@ -17299,6 +17360,7 @@ export interface ProductUpdateWithoutVariantsDataInput {
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
+  photographyStatus?: PhotographyStatus | null
   publishedAt?: DateTime | null
 }
 
@@ -18493,6 +18555,10 @@ export interface ProductWhereInput {
   architecture_not?: ProductArchitecture | null
   architecture_in?: ProductArchitecture[] | ProductArchitecture | null
   architecture_not_in?: ProductArchitecture[] | ProductArchitecture | null
+  photographyStatus?: PhotographyStatus | null
+  photographyStatus_not?: PhotographyStatus | null
+  photographyStatus_in?: PhotographyStatus[] | PhotographyStatus | null
+  photographyStatus_not_in?: PhotographyStatus[] | PhotographyStatus | null
   publishedAt?: DateTime | null
   publishedAt_not?: DateTime | null
   publishedAt_in?: DateTime[] | DateTime | null
@@ -21800,6 +21866,7 @@ export interface Product {
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
+  photographyStatus?: PhotographyStatus | null
   publishedAt?: DateTime | null
   createdAt: DateTime
   updatedAt: DateTime
@@ -21889,6 +21956,7 @@ export interface ProductPreviousValues {
   status?: ProductStatus | null
   season?: String | null
   architecture?: ProductArchitecture | null
+  photographyStatus?: PhotographyStatus | null
   publishedAt?: DateTime | null
   createdAt: DateTime
   updatedAt: DateTime
