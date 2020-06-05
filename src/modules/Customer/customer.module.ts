@@ -6,7 +6,7 @@ import { CustomerQueriesResolver } from "./queries/customer.queries.resolver"
 import { PaymentModule } from ".."
 
 @Module({
-  imports: [PrismaModule, PaymentModule],
+  imports: [PrismaModule, forwardRef(() => PaymentModule)],
   providers: [CustomerQueriesResolver, CustomerFieldsResolver],
 })
 export class CustomerModule {}
