@@ -1,4 +1,5 @@
 import { RollbackError } from "@app/errors"
+import { PushNotificationsService } from "@app/modules/PushNotifications/services/pushNotifications.service"
 import { AirtableService } from "@modules/Airtable"
 import { EmailService } from "@modules/Email/services/email.service"
 import {
@@ -58,6 +59,7 @@ export class ReservationService {
     private readonly airtableService: AirtableService,
     private readonly shippingService: ShippingService,
     private readonly emails: EmailService,
+    private readonly pushNotifs: PushNotificationsService,
     private readonly reservationUtils: ReservationUtilsService
   ) {}
 
@@ -309,6 +311,10 @@ export class ReservationService {
       reservation as Reservation
     )
 
+    await this.pushNotifs.pushNotifyUser({
+      email: prismaUser.email,
+      pushNotifID: "ResetBag",
+    })
     await this.emails.sendYouCanNowReserveAgainEmail(prismaUser)
 
     await this.emails.sendAdminConfirmationEmail(

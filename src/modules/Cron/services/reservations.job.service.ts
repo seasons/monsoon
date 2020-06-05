@@ -1,8 +1,5 @@
 import { SyncError } from "@app/errors"
-import {
-  PushNotificationID,
-  PushNotificationsService,
-} from "@app/modules/PushNotifications"
+import { PushNotificationsService } from "@app/modules/PushNotifications"
 import { ReservationService } from "@app/modules/Reservation/services/reservation.service"
 import { UtilsService } from "@app/modules/Utils"
 import {
@@ -68,7 +65,7 @@ export class ReservationScheduledJobs {
           const now = new Date()
           await this.pushNotifs.pushNotifyUser({
             email: user.email,
-            pushNotifID: PushNotificationID.ReturnDue,
+            pushNotifID: "ReturnDue",
           })
           await this.prisma.client.updateReservation({
             where: { id: reservation.id },

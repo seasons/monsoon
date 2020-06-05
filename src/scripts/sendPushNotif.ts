@@ -8,12 +8,16 @@ const run = async () => {
     secretKey: process.env.PUSHER_SECRET_KEY,
   })
 
-  const y = await client.publishToUsers(["faiyam+1@faiyamrahman.com"], {
-    apns: {
-      aps: { alert: { title: "yo", body: "yo" } },
-      data: { route: "Faq" },
-    },
-  } as any)
+  const y = await client.publishToInterests(
+    ["debug-seasons-general-notifications"],
+    {
+      // const y = await client.publishToUsers(["faiyam+1@faiyamrahman.com"], {
+      apns: {
+        aps: { alert: { title: "yo", body: "yo" } },
+        data: { route: "Faq" },
+      },
+    } as any
+  )
   console.log(y)
 }
 

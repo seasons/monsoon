@@ -57,6 +57,14 @@ export class UtilsService {
     return before.isBefore(after) && after.diff(before, "days") === numDays
   }
 
+  isSameDay(first: Date, second: Date) {
+    return (
+      first.getFullYear() === second.getFullYear() &&
+      first.getMonth() === second.getMonth() &&
+      first.getDate() === second.getDate()
+    )
+  }
+
   async getPrismaLocationFromSlug(slug: string): Promise<Location> {
     const prismaLocation = await this.prisma.client.location({
       slug,
@@ -196,7 +204,15 @@ export class UtilsService {
   }
 
   private caseify = (obj: any, caseFunc: (str: string) => string): any => {
+    // Need this to prevent strings from getting turned into objects
+    if (typeof obj === "string") {
+      return obj
+    }
+
+    // caseify keys of the object
     const a = mapKeys(obj, (_, key) => caseFunc(key))
+
+    // if obj values are arrays or objects, recursively caseify
     for (const [key, val] of Object.entries(a)) {
       if (Array.isArray(val)) {
         a[key] = val.map(b => this.caseify(b, caseFunc))

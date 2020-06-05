@@ -1,4 +1,7 @@
 import { ProductService } from "@app/modules/Product"
+import { PusherService } from "@app/modules/PushNotifications/services/pusher.service"
+import { PushNotificationsDataProvider } from "@app/modules/PushNotifications/services/pushNotifications.data.service"
+import { PushNotificationsService } from "@app/modules/PushNotifications/services/pushNotifications.service"
 import { ReservationService } from "@app/modules/Reservation/services/reservation.service"
 import { AirtableBaseService, AirtableUtilsService } from "@modules/Airtable"
 import { AirtableService } from "@modules/Airtable/index"
@@ -100,6 +103,11 @@ export class TestUtilsService {
       airtableService,
       shippingService,
       new EmailService(this.prisma, utilsService, new EmailDataProvider()),
+      new PushNotificationsService(
+        new PusherService(),
+        new PushNotificationsDataProvider(),
+        this.prisma
+      ),
       new ReservationUtilsService(this.prisma, shippingService)
     )
 
