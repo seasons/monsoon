@@ -75,15 +75,14 @@ enum ProductStatus {
 }
 
 enum ReservationStatus {
-  New
-  InQueue
-  OnHold
+  Queued
   Packed
   Shipped
-  InTransit
-  Received
-  Cancelled
+  Delivered
   Completed
+  Cancelled
+  Blocked
+  Unknown
 }
 
 enum BagItemStatus {
@@ -165,6 +164,45 @@ enum EmailId {
   FreeToReserve
   WelcomeToSeasons
   ReturnReminder
+}
+
+enum PackageTransitEventStatus {
+  PreTransit
+  Transit
+  Delivered
+  Returned
+  Failure
+  Unknown
+}
+
+enum PackageTransitEventSubStatus {
+  InformationReceived
+  AddressIssue
+  ContactCarrier
+  Delayed
+  DeliveryAttempted
+  DeliveryRescheduled
+  DeliveryScheduled
+  LocationInaccessible
+  NoticeLeft
+  OutForDelivery
+  PackageAccepted
+  PackageArrived
+  PackageDamaged
+  PackageDeparted
+  PackageForwarded
+  PackageHeld
+  PackageProcessed
+  PackageProcessing
+  PickupAvailable
+  RescheduleDelivery
+  Delivered
+  ReturnToSender
+  PackageUnclaimed
+  PackageUndeliverable
+  PackageDisposed
+  PackageLost
+  Other
 }
 
 type Brand {
@@ -476,6 +514,11 @@ type RecentlyViewedProduct {
   updatedAt: DateTime! @updatedAt
 }
 
+enum ReservationPhase {
+  BusinessToCustomer
+  CustomerToBusiness
+}
+
 type Reservation {
   id: ID! @id
   user: User!
@@ -486,7 +529,6 @@ type Reservation {
     @relation(name: "CustomerToSeasonsPackage", onDelete: CASCADE)
   feedback: ReservationFeedback
     @relation(link: TABLE, name: "ReservationFeedbackReservation")
-  location: Location
   products: [PhysicalProduct!]!
   reservationNumber: Int! @unique
   shipped: Boolean!
@@ -500,6 +542,7 @@ type Reservation {
       name: "ReservationReceiptToReservation"
       onDelete: CASCADE
     )
+  lastLocation: Location
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
@@ -555,6 +598,15 @@ type Package {
   fromAddress: Location! @relation(name: "SenderAddress")
   toAddress: Location! @relation(name: "RecipientAddress")
   weight: Float
+  events: [PackageTransitEvent!]
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type PackageTransitEvent {
+  id: ID! @id
+  status: PackageTransitEventStatus!
+  subStatus: PackageTransitEventSubStatus!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
