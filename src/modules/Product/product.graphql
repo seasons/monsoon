@@ -195,7 +195,7 @@ input UpsertProductInput {
   architecture: String
   bottomSizeType: BottomSizeType
   brandID: String!
-  categoryID: String!
+  categoryName: String!
   colorCode: String!
   description: String!
   functions: [String!]!

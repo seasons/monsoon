@@ -190,7 +190,7 @@ export class ProductService {
         connect: { id: input.brandID },
       },
       category: {
-        connect: { id: input.categoryID },
+        connect: { name: input.categoryName },
       },
       images: {
         connect: imageIDs,
