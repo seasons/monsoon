@@ -29,7 +29,7 @@ type Mutation {
   updateReservationFeedback(
     feedbackID: ID!
     input: ReservationFeedbackUpdateInput!
-  ): ReservationFeedback!
+  ): ReservationFeedback! @hasRole(roles: [Customer, Admin])
   processReservation(data: ReservationProcessReturnInput!): ReservationReceipt
     @hasRole(roles: [Admin, Partner])
   updateReservation(
