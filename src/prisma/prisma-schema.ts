@@ -42,6 +42,10 @@ type AggregateCustomerDetail {
   count: Int!
 }
 
+type AggregateCustomerMembership {
+  count: Int!
+}
+
 type AggregateEmailReceipt {
   count: Int!
 }
@@ -66,6 +70,14 @@ type AggregatePackage {
   count: Int!
 }
 
+type AggregatePackageTransitEvent {
+  count: Int!
+}
+
+type AggregatePauseRequest {
+  count: Int!
+}
+
 type AggregatePhysicalProduct {
   count: Int!
 }
@@ -75,6 +87,10 @@ type AggregateProduct {
 }
 
 type AggregateProductFunction {
+  count: Int!
+}
+
+type AggregateProductMaterialCategory {
   count: Int!
 }
 
@@ -2305,6 +2321,7 @@ type Customer {
   detail: CustomerDetail
   billingInfo: BillingInfo
   plan: Plan
+  membership: CustomerMembership
   bagItems(where: BagItemWhereInput, orderBy: BagItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [BagItem!]
   reservations(where: ReservationWhereInput, orderBy: ReservationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Reservation!]
 }
@@ -2322,6 +2339,7 @@ input CustomerCreateInput {
   detail: CustomerDetailCreateOneInput
   billingInfo: BillingInfoCreateOneInput
   plan: Plan
+  membership: CustomerMembershipCreateOneWithoutCustomerInput
   bagItems: BagItemCreateManyWithoutCustomerInput
   reservations: ReservationCreateManyWithoutCustomerInput
 }
@@ -2333,6 +2351,11 @@ input CustomerCreateOneInput {
 
 input CustomerCreateOneWithoutBagItemsInput {
   create: CustomerCreateWithoutBagItemsInput
+  connect: CustomerWhereUniqueInput
+}
+
+input CustomerCreateOneWithoutMembershipInput {
+  create: CustomerCreateWithoutMembershipInput
   connect: CustomerWhereUniqueInput
 }
 
@@ -2348,6 +2371,18 @@ input CustomerCreateWithoutBagItemsInput {
   detail: CustomerDetailCreateOneInput
   billingInfo: BillingInfoCreateOneInput
   plan: Plan
+  membership: CustomerMembershipCreateOneWithoutCustomerInput
+  reservations: ReservationCreateManyWithoutCustomerInput
+}
+
+input CustomerCreateWithoutMembershipInput {
+  id: ID
+  user: UserCreateOneInput!
+  status: CustomerStatus
+  detail: CustomerDetailCreateOneInput
+  billingInfo: BillingInfoCreateOneInput
+  plan: Plan
+  bagItems: BagItemCreateManyWithoutCustomerInput
   reservations: ReservationCreateManyWithoutCustomerInput
 }
 
@@ -2358,6 +2393,7 @@ input CustomerCreateWithoutReservationsInput {
   detail: CustomerDetailCreateOneInput
   billingInfo: BillingInfoCreateOneInput
   plan: Plan
+  membership: CustomerMembershipCreateOneWithoutCustomerInput
   bagItems: BagItemCreateManyWithoutCustomerInput
 }
 
@@ -2865,6 +2901,171 @@ type CustomerEdge {
   cursor: String!
 }
 
+type CustomerMembership {
+  id: ID!
+  subscriptionId: String!
+  customer: Customer!
+  pauseRequests(where: PauseRequestWhereInput, orderBy: PauseRequestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PauseRequest!]
+}
+
+type CustomerMembershipConnection {
+  pageInfo: PageInfo!
+  edges: [CustomerMembershipEdge]!
+  aggregate: AggregateCustomerMembership!
+}
+
+input CustomerMembershipCreateInput {
+  id: ID
+  subscriptionId: String!
+  customer: CustomerCreateOneWithoutMembershipInput!
+  pauseRequests: PauseRequestCreateManyWithoutMembershipInput
+}
+
+input CustomerMembershipCreateOneWithoutCustomerInput {
+  create: CustomerMembershipCreateWithoutCustomerInput
+  connect: CustomerMembershipWhereUniqueInput
+}
+
+input CustomerMembershipCreateOneWithoutPauseRequestsInput {
+  create: CustomerMembershipCreateWithoutPauseRequestsInput
+  connect: CustomerMembershipWhereUniqueInput
+}
+
+input CustomerMembershipCreateWithoutCustomerInput {
+  id: ID
+  subscriptionId: String!
+  pauseRequests: PauseRequestCreateManyWithoutMembershipInput
+}
+
+input CustomerMembershipCreateWithoutPauseRequestsInput {
+  id: ID
+  subscriptionId: String!
+  customer: CustomerCreateOneWithoutMembershipInput!
+}
+
+type CustomerMembershipEdge {
+  node: CustomerMembership!
+  cursor: String!
+}
+
+enum CustomerMembershipOrderByInput {
+  id_ASC
+  id_DESC
+  subscriptionId_ASC
+  subscriptionId_DESC
+}
+
+type CustomerMembershipPreviousValues {
+  id: ID!
+  subscriptionId: String!
+}
+
+type CustomerMembershipSubscriptionPayload {
+  mutation: MutationType!
+  node: CustomerMembership
+  updatedFields: [String!]
+  previousValues: CustomerMembershipPreviousValues
+}
+
+input CustomerMembershipSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: CustomerMembershipWhereInput
+  AND: [CustomerMembershipSubscriptionWhereInput!]
+  OR: [CustomerMembershipSubscriptionWhereInput!]
+  NOT: [CustomerMembershipSubscriptionWhereInput!]
+}
+
+input CustomerMembershipUpdateInput {
+  subscriptionId: String
+  customer: CustomerUpdateOneRequiredWithoutMembershipInput
+  pauseRequests: PauseRequestUpdateManyWithoutMembershipInput
+}
+
+input CustomerMembershipUpdateManyMutationInput {
+  subscriptionId: String
+}
+
+input CustomerMembershipUpdateOneRequiredWithoutPauseRequestsInput {
+  create: CustomerMembershipCreateWithoutPauseRequestsInput
+  update: CustomerMembershipUpdateWithoutPauseRequestsDataInput
+  upsert: CustomerMembershipUpsertWithoutPauseRequestsInput
+  connect: CustomerMembershipWhereUniqueInput
+}
+
+input CustomerMembershipUpdateOneWithoutCustomerInput {
+  create: CustomerMembershipCreateWithoutCustomerInput
+  update: CustomerMembershipUpdateWithoutCustomerDataInput
+  upsert: CustomerMembershipUpsertWithoutCustomerInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: CustomerMembershipWhereUniqueInput
+}
+
+input CustomerMembershipUpdateWithoutCustomerDataInput {
+  subscriptionId: String
+  pauseRequests: PauseRequestUpdateManyWithoutMembershipInput
+}
+
+input CustomerMembershipUpdateWithoutPauseRequestsDataInput {
+  subscriptionId: String
+  customer: CustomerUpdateOneRequiredWithoutMembershipInput
+}
+
+input CustomerMembershipUpsertWithoutCustomerInput {
+  update: CustomerMembershipUpdateWithoutCustomerDataInput!
+  create: CustomerMembershipCreateWithoutCustomerInput!
+}
+
+input CustomerMembershipUpsertWithoutPauseRequestsInput {
+  update: CustomerMembershipUpdateWithoutPauseRequestsDataInput!
+  create: CustomerMembershipCreateWithoutPauseRequestsInput!
+}
+
+input CustomerMembershipWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  subscriptionId: String
+  subscriptionId_not: String
+  subscriptionId_in: [String!]
+  subscriptionId_not_in: [String!]
+  subscriptionId_lt: String
+  subscriptionId_lte: String
+  subscriptionId_gt: String
+  subscriptionId_gte: String
+  subscriptionId_contains: String
+  subscriptionId_not_contains: String
+  subscriptionId_starts_with: String
+  subscriptionId_not_starts_with: String
+  subscriptionId_ends_with: String
+  subscriptionId_not_ends_with: String
+  customer: CustomerWhereInput
+  pauseRequests_every: PauseRequestWhereInput
+  pauseRequests_some: PauseRequestWhereInput
+  pauseRequests_none: PauseRequestWhereInput
+  AND: [CustomerMembershipWhereInput!]
+  OR: [CustomerMembershipWhereInput!]
+  NOT: [CustomerMembershipWhereInput!]
+}
+
+input CustomerMembershipWhereUniqueInput {
+  id: ID
+}
+
 enum CustomerOrderByInput {
   id_ASC
   id_DESC
@@ -2915,6 +3116,7 @@ input CustomerUpdateDataInput {
   detail: CustomerDetailUpdateOneInput
   billingInfo: BillingInfoUpdateOneInput
   plan: Plan
+  membership: CustomerMembershipUpdateOneWithoutCustomerInput
   bagItems: BagItemUpdateManyWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
 }
@@ -2925,6 +3127,7 @@ input CustomerUpdateInput {
   detail: CustomerDetailUpdateOneInput
   billingInfo: BillingInfoUpdateOneInput
   plan: Plan
+  membership: CustomerMembershipUpdateOneWithoutCustomerInput
   bagItems: BagItemUpdateManyWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
 }
@@ -2948,6 +3151,13 @@ input CustomerUpdateOneRequiredWithoutBagItemsInput {
   connect: CustomerWhereUniqueInput
 }
 
+input CustomerUpdateOneRequiredWithoutMembershipInput {
+  create: CustomerCreateWithoutMembershipInput
+  update: CustomerUpdateWithoutMembershipDataInput
+  upsert: CustomerUpsertWithoutMembershipInput
+  connect: CustomerWhereUniqueInput
+}
+
 input CustomerUpdateOneRequiredWithoutReservationsInput {
   create: CustomerCreateWithoutReservationsInput
   update: CustomerUpdateWithoutReservationsDataInput
@@ -2961,6 +3171,17 @@ input CustomerUpdateWithoutBagItemsDataInput {
   detail: CustomerDetailUpdateOneInput
   billingInfo: BillingInfoUpdateOneInput
   plan: Plan
+  membership: CustomerMembershipUpdateOneWithoutCustomerInput
+  reservations: ReservationUpdateManyWithoutCustomerInput
+}
+
+input CustomerUpdateWithoutMembershipDataInput {
+  user: UserUpdateOneRequiredInput
+  status: CustomerStatus
+  detail: CustomerDetailUpdateOneInput
+  billingInfo: BillingInfoUpdateOneInput
+  plan: Plan
+  bagItems: BagItemUpdateManyWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
 }
 
@@ -2970,6 +3191,7 @@ input CustomerUpdateWithoutReservationsDataInput {
   detail: CustomerDetailUpdateOneInput
   billingInfo: BillingInfoUpdateOneInput
   plan: Plan
+  membership: CustomerMembershipUpdateOneWithoutCustomerInput
   bagItems: BagItemUpdateManyWithoutCustomerInput
 }
 
@@ -2981,6 +3203,11 @@ input CustomerUpsertNestedInput {
 input CustomerUpsertWithoutBagItemsInput {
   update: CustomerUpdateWithoutBagItemsDataInput!
   create: CustomerCreateWithoutBagItemsInput!
+}
+
+input CustomerUpsertWithoutMembershipInput {
+  update: CustomerUpdateWithoutMembershipDataInput!
+  create: CustomerCreateWithoutMembershipInput!
 }
 
 input CustomerUpsertWithoutReservationsInput {
@@ -3014,6 +3241,7 @@ input CustomerWhereInput {
   plan_not: Plan
   plan_in: [Plan!]
   plan_not_in: [Plan!]
+  membership: CustomerMembershipWhereInput
   bagItems_every: BagItemWhereInput
   bagItems_some: BagItemWhereInput
   bagItems_none: BagItemWhereInput
@@ -4326,6 +4554,12 @@ type Mutation {
   upsertCustomerDetail(where: CustomerDetailWhereUniqueInput!, create: CustomerDetailCreateInput!, update: CustomerDetailUpdateInput!): CustomerDetail!
   deleteCustomerDetail(where: CustomerDetailWhereUniqueInput!): CustomerDetail
   deleteManyCustomerDetails(where: CustomerDetailWhereInput): BatchPayload!
+  createCustomerMembership(data: CustomerMembershipCreateInput!): CustomerMembership!
+  updateCustomerMembership(data: CustomerMembershipUpdateInput!, where: CustomerMembershipWhereUniqueInput!): CustomerMembership
+  updateManyCustomerMemberships(data: CustomerMembershipUpdateManyMutationInput!, where: CustomerMembershipWhereInput): BatchPayload!
+  upsertCustomerMembership(where: CustomerMembershipWhereUniqueInput!, create: CustomerMembershipCreateInput!, update: CustomerMembershipUpdateInput!): CustomerMembership!
+  deleteCustomerMembership(where: CustomerMembershipWhereUniqueInput!): CustomerMembership
+  deleteManyCustomerMemberships(where: CustomerMembershipWhereInput): BatchPayload!
   createEmailReceipt(data: EmailReceiptCreateInput!): EmailReceipt!
   updateEmailReceipt(data: EmailReceiptUpdateInput!, where: EmailReceiptWhereUniqueInput!): EmailReceipt
   updateManyEmailReceipts(data: EmailReceiptUpdateManyMutationInput!, where: EmailReceiptWhereInput): BatchPayload!
@@ -4362,6 +4596,18 @@ type Mutation {
   upsertPackage(where: PackageWhereUniqueInput!, create: PackageCreateInput!, update: PackageUpdateInput!): Package!
   deletePackage(where: PackageWhereUniqueInput!): Package
   deleteManyPackages(where: PackageWhereInput): BatchPayload!
+  createPackageTransitEvent(data: PackageTransitEventCreateInput!): PackageTransitEvent!
+  updatePackageTransitEvent(data: PackageTransitEventUpdateInput!, where: PackageTransitEventWhereUniqueInput!): PackageTransitEvent
+  updateManyPackageTransitEvents(data: PackageTransitEventUpdateManyMutationInput!, where: PackageTransitEventWhereInput): BatchPayload!
+  upsertPackageTransitEvent(where: PackageTransitEventWhereUniqueInput!, create: PackageTransitEventCreateInput!, update: PackageTransitEventUpdateInput!): PackageTransitEvent!
+  deletePackageTransitEvent(where: PackageTransitEventWhereUniqueInput!): PackageTransitEvent
+  deleteManyPackageTransitEvents(where: PackageTransitEventWhereInput): BatchPayload!
+  createPauseRequest(data: PauseRequestCreateInput!): PauseRequest!
+  updatePauseRequest(data: PauseRequestUpdateInput!, where: PauseRequestWhereUniqueInput!): PauseRequest
+  updateManyPauseRequests(data: PauseRequestUpdateManyMutationInput!, where: PauseRequestWhereInput): BatchPayload!
+  upsertPauseRequest(where: PauseRequestWhereUniqueInput!, create: PauseRequestCreateInput!, update: PauseRequestUpdateInput!): PauseRequest!
+  deletePauseRequest(where: PauseRequestWhereUniqueInput!): PauseRequest
+  deleteManyPauseRequests(where: PauseRequestWhereInput): BatchPayload!
   createPhysicalProduct(data: PhysicalProductCreateInput!): PhysicalProduct!
   updatePhysicalProduct(data: PhysicalProductUpdateInput!, where: PhysicalProductWhereUniqueInput!): PhysicalProduct
   updateManyPhysicalProducts(data: PhysicalProductUpdateManyMutationInput!, where: PhysicalProductWhereInput): BatchPayload!
@@ -4380,6 +4626,12 @@ type Mutation {
   upsertProductFunction(where: ProductFunctionWhereUniqueInput!, create: ProductFunctionCreateInput!, update: ProductFunctionUpdateInput!): ProductFunction!
   deleteProductFunction(where: ProductFunctionWhereUniqueInput!): ProductFunction
   deleteManyProductFunctions(where: ProductFunctionWhereInput): BatchPayload!
+  createProductMaterialCategory(data: ProductMaterialCategoryCreateInput!): ProductMaterialCategory!
+  updateProductMaterialCategory(data: ProductMaterialCategoryUpdateInput!, where: ProductMaterialCategoryWhereUniqueInput!): ProductMaterialCategory
+  updateManyProductMaterialCategories(data: ProductMaterialCategoryUpdateManyMutationInput!, where: ProductMaterialCategoryWhereInput): BatchPayload!
+  upsertProductMaterialCategory(where: ProductMaterialCategoryWhereUniqueInput!, create: ProductMaterialCategoryCreateInput!, update: ProductMaterialCategoryUpdateInput!): ProductMaterialCategory!
+  deleteProductMaterialCategory(where: ProductMaterialCategoryWhereUniqueInput!): ProductMaterialCategory
+  deleteManyProductMaterialCategories(where: ProductMaterialCategoryWhereInput): BatchPayload!
   createProductModel(data: ProductModelCreateInput!): ProductModel!
   updateProductModel(data: ProductModelUpdateInput!, where: ProductModelWhereUniqueInput!): ProductModel
   updateManyProductModels(data: ProductModelUpdateManyMutationInput!, where: ProductModelWhereInput): BatchPayload!
@@ -4506,6 +4758,7 @@ type Package {
   fromAddress: Location!
   toAddress: Location!
   weight: Float
+  events(where: PackageTransitEventWhereInput, orderBy: PackageTransitEventOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PackageTransitEvent!]
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -4523,6 +4776,7 @@ input PackageCreateInput {
   fromAddress: LocationCreateOneInput!
   toAddress: LocationCreateOneInput!
   weight: Float
+  events: PackageTransitEventCreateManyInput
 }
 
 input PackageCreateOneInput {
@@ -4571,12 +4825,261 @@ input PackageSubscriptionWhereInput {
   NOT: [PackageSubscriptionWhereInput!]
 }
 
+type PackageTransitEvent {
+  id: ID!
+  status: PackageTransitEventStatus!
+  subStatus: PackageTransitEventSubStatus!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type PackageTransitEventConnection {
+  pageInfo: PageInfo!
+  edges: [PackageTransitEventEdge]!
+  aggregate: AggregatePackageTransitEvent!
+}
+
+input PackageTransitEventCreateInput {
+  id: ID
+  status: PackageTransitEventStatus!
+  subStatus: PackageTransitEventSubStatus!
+}
+
+input PackageTransitEventCreateManyInput {
+  create: [PackageTransitEventCreateInput!]
+  connect: [PackageTransitEventWhereUniqueInput!]
+}
+
+type PackageTransitEventEdge {
+  node: PackageTransitEvent!
+  cursor: String!
+}
+
+enum PackageTransitEventOrderByInput {
+  id_ASC
+  id_DESC
+  status_ASC
+  status_DESC
+  subStatus_ASC
+  subStatus_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type PackageTransitEventPreviousValues {
+  id: ID!
+  status: PackageTransitEventStatus!
+  subStatus: PackageTransitEventSubStatus!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+input PackageTransitEventScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  status: PackageTransitEventStatus
+  status_not: PackageTransitEventStatus
+  status_in: [PackageTransitEventStatus!]
+  status_not_in: [PackageTransitEventStatus!]
+  subStatus: PackageTransitEventSubStatus
+  subStatus_not: PackageTransitEventSubStatus
+  subStatus_in: [PackageTransitEventSubStatus!]
+  subStatus_not_in: [PackageTransitEventSubStatus!]
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [PackageTransitEventScalarWhereInput!]
+  OR: [PackageTransitEventScalarWhereInput!]
+  NOT: [PackageTransitEventScalarWhereInput!]
+}
+
+enum PackageTransitEventStatus {
+  PreTransit
+  Transit
+  Delivered
+  Returned
+  Failure
+  Unknown
+}
+
+type PackageTransitEventSubscriptionPayload {
+  mutation: MutationType!
+  node: PackageTransitEvent
+  updatedFields: [String!]
+  previousValues: PackageTransitEventPreviousValues
+}
+
+input PackageTransitEventSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: PackageTransitEventWhereInput
+  AND: [PackageTransitEventSubscriptionWhereInput!]
+  OR: [PackageTransitEventSubscriptionWhereInput!]
+  NOT: [PackageTransitEventSubscriptionWhereInput!]
+}
+
+enum PackageTransitEventSubStatus {
+  InformationReceived
+  AddressIssue
+  ContactCarrier
+  Delayed
+  DeliveryAttempted
+  DeliveryRescheduled
+  DeliveryScheduled
+  LocationInaccessible
+  NoticeLeft
+  OutForDelivery
+  PackageAccepted
+  PackageArrived
+  PackageDamaged
+  PackageDeparted
+  PackageForwarded
+  PackageHeld
+  PackageProcessed
+  PackageProcessing
+  PickupAvailable
+  RescheduleDelivery
+  Delivered
+  ReturnToSender
+  PackageUnclaimed
+  PackageUndeliverable
+  PackageDisposed
+  PackageLost
+  Other
+}
+
+input PackageTransitEventUpdateDataInput {
+  status: PackageTransitEventStatus
+  subStatus: PackageTransitEventSubStatus
+}
+
+input PackageTransitEventUpdateInput {
+  status: PackageTransitEventStatus
+  subStatus: PackageTransitEventSubStatus
+}
+
+input PackageTransitEventUpdateManyDataInput {
+  status: PackageTransitEventStatus
+  subStatus: PackageTransitEventSubStatus
+}
+
+input PackageTransitEventUpdateManyInput {
+  create: [PackageTransitEventCreateInput!]
+  update: [PackageTransitEventUpdateWithWhereUniqueNestedInput!]
+  upsert: [PackageTransitEventUpsertWithWhereUniqueNestedInput!]
+  delete: [PackageTransitEventWhereUniqueInput!]
+  connect: [PackageTransitEventWhereUniqueInput!]
+  set: [PackageTransitEventWhereUniqueInput!]
+  disconnect: [PackageTransitEventWhereUniqueInput!]
+  deleteMany: [PackageTransitEventScalarWhereInput!]
+  updateMany: [PackageTransitEventUpdateManyWithWhereNestedInput!]
+}
+
+input PackageTransitEventUpdateManyMutationInput {
+  status: PackageTransitEventStatus
+  subStatus: PackageTransitEventSubStatus
+}
+
+input PackageTransitEventUpdateManyWithWhereNestedInput {
+  where: PackageTransitEventScalarWhereInput!
+  data: PackageTransitEventUpdateManyDataInput!
+}
+
+input PackageTransitEventUpdateWithWhereUniqueNestedInput {
+  where: PackageTransitEventWhereUniqueInput!
+  data: PackageTransitEventUpdateDataInput!
+}
+
+input PackageTransitEventUpsertWithWhereUniqueNestedInput {
+  where: PackageTransitEventWhereUniqueInput!
+  update: PackageTransitEventUpdateDataInput!
+  create: PackageTransitEventCreateInput!
+}
+
+input PackageTransitEventWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  status: PackageTransitEventStatus
+  status_not: PackageTransitEventStatus
+  status_in: [PackageTransitEventStatus!]
+  status_not_in: [PackageTransitEventStatus!]
+  subStatus: PackageTransitEventSubStatus
+  subStatus_not: PackageTransitEventSubStatus
+  subStatus_in: [PackageTransitEventSubStatus!]
+  subStatus_not_in: [PackageTransitEventSubStatus!]
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [PackageTransitEventWhereInput!]
+  OR: [PackageTransitEventWhereInput!]
+  NOT: [PackageTransitEventWhereInput!]
+}
+
+input PackageTransitEventWhereUniqueInput {
+  id: ID
+}
+
 input PackageUpdateDataInput {
   items: PhysicalProductUpdateManyInput
   shippingLabel: LabelUpdateOneRequiredInput
   fromAddress: LocationUpdateOneRequiredInput
   toAddress: LocationUpdateOneRequiredInput
   weight: Float
+  events: PackageTransitEventUpdateManyInput
 }
 
 input PackageUpdateInput {
@@ -4585,6 +5088,7 @@ input PackageUpdateInput {
   fromAddress: LocationUpdateOneRequiredInput
   toAddress: LocationUpdateOneRequiredInput
   weight: Float
+  events: PackageTransitEventUpdateManyInput
 }
 
 input PackageUpdateManyMutationInput {
@@ -4634,6 +5138,9 @@ input PackageWhereInput {
   weight_lte: Float
   weight_gt: Float
   weight_gte: Float
+  events_every: PackageTransitEventWhereInput
+  events_some: PackageTransitEventWhereInput
+  events_none: PackageTransitEventWhereInput
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -4664,6 +5171,255 @@ type PageInfo {
   hasPreviousPage: Boolean!
   startCursor: String
   endCursor: String
+}
+
+type PauseRequest {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  pausePending: Boolean!
+  pauseDate: DateTime
+  resumeDate: DateTime
+  membership: CustomerMembership!
+}
+
+type PauseRequestConnection {
+  pageInfo: PageInfo!
+  edges: [PauseRequestEdge]!
+  aggregate: AggregatePauseRequest!
+}
+
+input PauseRequestCreateInput {
+  id: ID
+  pausePending: Boolean!
+  pauseDate: DateTime
+  resumeDate: DateTime
+  membership: CustomerMembershipCreateOneWithoutPauseRequestsInput!
+}
+
+input PauseRequestCreateManyWithoutMembershipInput {
+  create: [PauseRequestCreateWithoutMembershipInput!]
+  connect: [PauseRequestWhereUniqueInput!]
+}
+
+input PauseRequestCreateWithoutMembershipInput {
+  id: ID
+  pausePending: Boolean!
+  pauseDate: DateTime
+  resumeDate: DateTime
+}
+
+type PauseRequestEdge {
+  node: PauseRequest!
+  cursor: String!
+}
+
+enum PauseRequestOrderByInput {
+  id_ASC
+  id_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  pausePending_ASC
+  pausePending_DESC
+  pauseDate_ASC
+  pauseDate_DESC
+  resumeDate_ASC
+  resumeDate_DESC
+}
+
+type PauseRequestPreviousValues {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  pausePending: Boolean!
+  pauseDate: DateTime
+  resumeDate: DateTime
+}
+
+input PauseRequestScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  pausePending: Boolean
+  pausePending_not: Boolean
+  pauseDate: DateTime
+  pauseDate_not: DateTime
+  pauseDate_in: [DateTime!]
+  pauseDate_not_in: [DateTime!]
+  pauseDate_lt: DateTime
+  pauseDate_lte: DateTime
+  pauseDate_gt: DateTime
+  pauseDate_gte: DateTime
+  resumeDate: DateTime
+  resumeDate_not: DateTime
+  resumeDate_in: [DateTime!]
+  resumeDate_not_in: [DateTime!]
+  resumeDate_lt: DateTime
+  resumeDate_lte: DateTime
+  resumeDate_gt: DateTime
+  resumeDate_gte: DateTime
+  AND: [PauseRequestScalarWhereInput!]
+  OR: [PauseRequestScalarWhereInput!]
+  NOT: [PauseRequestScalarWhereInput!]
+}
+
+type PauseRequestSubscriptionPayload {
+  mutation: MutationType!
+  node: PauseRequest
+  updatedFields: [String!]
+  previousValues: PauseRequestPreviousValues
+}
+
+input PauseRequestSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: PauseRequestWhereInput
+  AND: [PauseRequestSubscriptionWhereInput!]
+  OR: [PauseRequestSubscriptionWhereInput!]
+  NOT: [PauseRequestSubscriptionWhereInput!]
+}
+
+input PauseRequestUpdateInput {
+  pausePending: Boolean
+  pauseDate: DateTime
+  resumeDate: DateTime
+  membership: CustomerMembershipUpdateOneRequiredWithoutPauseRequestsInput
+}
+
+input PauseRequestUpdateManyDataInput {
+  pausePending: Boolean
+  pauseDate: DateTime
+  resumeDate: DateTime
+}
+
+input PauseRequestUpdateManyMutationInput {
+  pausePending: Boolean
+  pauseDate: DateTime
+  resumeDate: DateTime
+}
+
+input PauseRequestUpdateManyWithoutMembershipInput {
+  create: [PauseRequestCreateWithoutMembershipInput!]
+  delete: [PauseRequestWhereUniqueInput!]
+  connect: [PauseRequestWhereUniqueInput!]
+  set: [PauseRequestWhereUniqueInput!]
+  disconnect: [PauseRequestWhereUniqueInput!]
+  update: [PauseRequestUpdateWithWhereUniqueWithoutMembershipInput!]
+  upsert: [PauseRequestUpsertWithWhereUniqueWithoutMembershipInput!]
+  deleteMany: [PauseRequestScalarWhereInput!]
+  updateMany: [PauseRequestUpdateManyWithWhereNestedInput!]
+}
+
+input PauseRequestUpdateManyWithWhereNestedInput {
+  where: PauseRequestScalarWhereInput!
+  data: PauseRequestUpdateManyDataInput!
+}
+
+input PauseRequestUpdateWithoutMembershipDataInput {
+  pausePending: Boolean
+  pauseDate: DateTime
+  resumeDate: DateTime
+}
+
+input PauseRequestUpdateWithWhereUniqueWithoutMembershipInput {
+  where: PauseRequestWhereUniqueInput!
+  data: PauseRequestUpdateWithoutMembershipDataInput!
+}
+
+input PauseRequestUpsertWithWhereUniqueWithoutMembershipInput {
+  where: PauseRequestWhereUniqueInput!
+  update: PauseRequestUpdateWithoutMembershipDataInput!
+  create: PauseRequestCreateWithoutMembershipInput!
+}
+
+input PauseRequestWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  pausePending: Boolean
+  pausePending_not: Boolean
+  pauseDate: DateTime
+  pauseDate_not: DateTime
+  pauseDate_in: [DateTime!]
+  pauseDate_not_in: [DateTime!]
+  pauseDate_lt: DateTime
+  pauseDate_lte: DateTime
+  pauseDate_gt: DateTime
+  pauseDate_gte: DateTime
+  resumeDate: DateTime
+  resumeDate_not: DateTime
+  resumeDate_in: [DateTime!]
+  resumeDate_not_in: [DateTime!]
+  resumeDate_lt: DateTime
+  resumeDate_lte: DateTime
+  resumeDate_gt: DateTime
+  resumeDate_gte: DateTime
+  membership: CustomerMembershipWhereInput
+  AND: [PauseRequestWhereInput!]
+  OR: [PauseRequestWhereInput!]
+  NOT: [PauseRequestWhereInput!]
+}
+
+input PauseRequestWhereUniqueInput {
+  id: ID
 }
 
 enum PhotographyStatus {
@@ -5319,6 +6075,7 @@ type Product {
   secondaryColor: Color
   tags(where: TagWhereInput, orderBy: TagOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Tag!]
   functions(where: ProductFunctionWhereInput, orderBy: ProductFunctionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductFunction!]
+  materialCategory: ProductMaterialCategory
   innerMaterials: [String!]!
   outerMaterials: [String!]!
   variants(where: ProductVariantWhereInput, orderBy: ProductVariantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariant!]
@@ -5365,6 +6122,7 @@ input ProductCreateInput {
   secondaryColor: ColorCreateOneInput
   tags: TagCreateManyWithoutProductsInput
   functions: ProductFunctionCreateManyInput
+  materialCategory: ProductMaterialCategoryCreateOneWithoutProductsInput
   innerMaterials: ProductCreateinnerMaterialsInput
   outerMaterials: ProductCreateouterMaterialsInput
   variants: ProductVariantCreateManyWithoutProductInput
@@ -5387,6 +6145,11 @@ input ProductCreateManyWithoutBrandInput {
 
 input ProductCreateManyWithoutCategoryInput {
   create: [ProductCreateWithoutCategoryInput!]
+  connect: [ProductWhereUniqueInput!]
+}
+
+input ProductCreateManyWithoutMaterialCategoryInput {
+  create: [ProductCreateWithoutMaterialCategoryInput!]
   connect: [ProductWhereUniqueInput!]
 }
 
@@ -5431,6 +6194,7 @@ input ProductCreateWithoutBrandInput {
   secondaryColor: ColorCreateOneInput
   tags: TagCreateManyWithoutProductsInput
   functions: ProductFunctionCreateManyInput
+  materialCategory: ProductMaterialCategoryCreateOneWithoutProductsInput
   innerMaterials: ProductCreateinnerMaterialsInput
   outerMaterials: ProductCreateouterMaterialsInput
   variants: ProductVariantCreateManyWithoutProductInput
@@ -5446,6 +6210,35 @@ input ProductCreateWithoutCategoryInput {
   slug: String!
   name: String!
   brand: BrandCreateOneWithoutProductsInput!
+  type: ProductType
+  description: String
+  externalURL: String
+  images: ImageCreateManyInput
+  modelHeight: Int
+  retailPrice: Int
+  model: ProductModelCreateOneWithoutProductsInput
+  modelSize: SizeCreateOneInput
+  color: ColorCreateOneInput!
+  secondaryColor: ColorCreateOneInput
+  tags: TagCreateManyWithoutProductsInput
+  functions: ProductFunctionCreateManyInput
+  materialCategory: ProductMaterialCategoryCreateOneWithoutProductsInput
+  innerMaterials: ProductCreateinnerMaterialsInput
+  outerMaterials: ProductCreateouterMaterialsInput
+  variants: ProductVariantCreateManyWithoutProductInput
+  status: ProductStatus
+  season: String
+  architecture: ProductArchitecture
+  photographyStatus: PhotographyStatus
+  publishedAt: DateTime
+}
+
+input ProductCreateWithoutMaterialCategoryInput {
+  id: ID
+  slug: String!
+  name: String!
+  brand: BrandCreateOneWithoutProductsInput!
+  category: CategoryCreateOneWithoutProductsInput!
   type: ProductType
   description: String
   externalURL: String
@@ -5485,6 +6278,7 @@ input ProductCreateWithoutModelInput {
   secondaryColor: ColorCreateOneInput
   tags: TagCreateManyWithoutProductsInput
   functions: ProductFunctionCreateManyInput
+  materialCategory: ProductMaterialCategoryCreateOneWithoutProductsInput
   innerMaterials: ProductCreateinnerMaterialsInput
   outerMaterials: ProductCreateouterMaterialsInput
   variants: ProductVariantCreateManyWithoutProductInput
@@ -5512,6 +6306,7 @@ input ProductCreateWithoutTagsInput {
   color: ColorCreateOneInput!
   secondaryColor: ColorCreateOneInput
   functions: ProductFunctionCreateManyInput
+  materialCategory: ProductMaterialCategoryCreateOneWithoutProductsInput
   innerMaterials: ProductCreateinnerMaterialsInput
   outerMaterials: ProductCreateouterMaterialsInput
   variants: ProductVariantCreateManyWithoutProductInput
@@ -5540,6 +6335,7 @@ input ProductCreateWithoutVariantsInput {
   secondaryColor: ColorCreateOneInput
   tags: TagCreateManyWithoutProductsInput
   functions: ProductFunctionCreateManyInput
+  materialCategory: ProductMaterialCategoryCreateOneWithoutProductsInput
   innerMaterials: ProductCreateinnerMaterialsInput
   outerMaterials: ProductCreateouterMaterialsInput
   status: ProductStatus
@@ -5725,6 +6521,160 @@ input ProductFunctionWhereInput {
 input ProductFunctionWhereUniqueInput {
   id: ID
   name: String
+}
+
+type ProductMaterialCategory {
+  id: ID!
+  slug: String!
+  lifeExpectancy: Int!
+  category: Category!
+  products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
+}
+
+type ProductMaterialCategoryConnection {
+  pageInfo: PageInfo!
+  edges: [ProductMaterialCategoryEdge]!
+  aggregate: AggregateProductMaterialCategory!
+}
+
+input ProductMaterialCategoryCreateInput {
+  id: ID
+  slug: String!
+  lifeExpectancy: Int!
+  category: CategoryCreateOneInput!
+  products: ProductCreateManyWithoutMaterialCategoryInput
+}
+
+input ProductMaterialCategoryCreateOneWithoutProductsInput {
+  create: ProductMaterialCategoryCreateWithoutProductsInput
+  connect: ProductMaterialCategoryWhereUniqueInput
+}
+
+input ProductMaterialCategoryCreateWithoutProductsInput {
+  id: ID
+  slug: String!
+  lifeExpectancy: Int!
+  category: CategoryCreateOneInput!
+}
+
+type ProductMaterialCategoryEdge {
+  node: ProductMaterialCategory!
+  cursor: String!
+}
+
+enum ProductMaterialCategoryOrderByInput {
+  id_ASC
+  id_DESC
+  slug_ASC
+  slug_DESC
+  lifeExpectancy_ASC
+  lifeExpectancy_DESC
+}
+
+type ProductMaterialCategoryPreviousValues {
+  id: ID!
+  slug: String!
+  lifeExpectancy: Int!
+}
+
+type ProductMaterialCategorySubscriptionPayload {
+  mutation: MutationType!
+  node: ProductMaterialCategory
+  updatedFields: [String!]
+  previousValues: ProductMaterialCategoryPreviousValues
+}
+
+input ProductMaterialCategorySubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: ProductMaterialCategoryWhereInput
+  AND: [ProductMaterialCategorySubscriptionWhereInput!]
+  OR: [ProductMaterialCategorySubscriptionWhereInput!]
+  NOT: [ProductMaterialCategorySubscriptionWhereInput!]
+}
+
+input ProductMaterialCategoryUpdateInput {
+  slug: String
+  lifeExpectancy: Int
+  category: CategoryUpdateOneRequiredInput
+  products: ProductUpdateManyWithoutMaterialCategoryInput
+}
+
+input ProductMaterialCategoryUpdateManyMutationInput {
+  slug: String
+  lifeExpectancy: Int
+}
+
+input ProductMaterialCategoryUpdateOneWithoutProductsInput {
+  create: ProductMaterialCategoryCreateWithoutProductsInput
+  update: ProductMaterialCategoryUpdateWithoutProductsDataInput
+  upsert: ProductMaterialCategoryUpsertWithoutProductsInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: ProductMaterialCategoryWhereUniqueInput
+}
+
+input ProductMaterialCategoryUpdateWithoutProductsDataInput {
+  slug: String
+  lifeExpectancy: Int
+  category: CategoryUpdateOneRequiredInput
+}
+
+input ProductMaterialCategoryUpsertWithoutProductsInput {
+  update: ProductMaterialCategoryUpdateWithoutProductsDataInput!
+  create: ProductMaterialCategoryCreateWithoutProductsInput!
+}
+
+input ProductMaterialCategoryWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  slug: String
+  slug_not: String
+  slug_in: [String!]
+  slug_not_in: [String!]
+  slug_lt: String
+  slug_lte: String
+  slug_gt: String
+  slug_gte: String
+  slug_contains: String
+  slug_not_contains: String
+  slug_starts_with: String
+  slug_not_starts_with: String
+  slug_ends_with: String
+  slug_not_ends_with: String
+  lifeExpectancy: Int
+  lifeExpectancy_not: Int
+  lifeExpectancy_in: [Int!]
+  lifeExpectancy_not_in: [Int!]
+  lifeExpectancy_lt: Int
+  lifeExpectancy_lte: Int
+  lifeExpectancy_gt: Int
+  lifeExpectancy_gte: Int
+  category: CategoryWhereInput
+  products_every: ProductWhereInput
+  products_some: ProductWhereInput
+  products_none: ProductWhereInput
+  AND: [ProductMaterialCategoryWhereInput!]
+  OR: [ProductMaterialCategoryWhereInput!]
+  NOT: [ProductMaterialCategoryWhereInput!]
+}
+
+input ProductMaterialCategoryWhereUniqueInput {
+  id: ID
 }
 
 type ProductModel {
@@ -6400,6 +7350,7 @@ input ProductUpdateDataInput {
   secondaryColor: ColorUpdateOneInput
   tags: TagUpdateManyWithoutProductsInput
   functions: ProductFunctionUpdateManyInput
+  materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
   innerMaterials: ProductUpdateinnerMaterialsInput
   outerMaterials: ProductUpdateouterMaterialsInput
   variants: ProductVariantUpdateManyWithoutProductInput
@@ -6431,6 +7382,7 @@ input ProductUpdateInput {
   secondaryColor: ColorUpdateOneInput
   tags: TagUpdateManyWithoutProductsInput
   functions: ProductFunctionUpdateManyInput
+  materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
   innerMaterials: ProductUpdateinnerMaterialsInput
   outerMaterials: ProductUpdateouterMaterialsInput
   variants: ProductVariantUpdateManyWithoutProductInput
@@ -6511,6 +7463,18 @@ input ProductUpdateManyWithoutCategoryInput {
   updateMany: [ProductUpdateManyWithWhereNestedInput!]
 }
 
+input ProductUpdateManyWithoutMaterialCategoryInput {
+  create: [ProductCreateWithoutMaterialCategoryInput!]
+  delete: [ProductWhereUniqueInput!]
+  connect: [ProductWhereUniqueInput!]
+  set: [ProductWhereUniqueInput!]
+  disconnect: [ProductWhereUniqueInput!]
+  update: [ProductUpdateWithWhereUniqueWithoutMaterialCategoryInput!]
+  upsert: [ProductUpsertWithWhereUniqueWithoutMaterialCategoryInput!]
+  deleteMany: [ProductScalarWhereInput!]
+  updateMany: [ProductUpdateManyWithWhereNestedInput!]
+}
+
 input ProductUpdateManyWithoutModelInput {
   create: [ProductCreateWithoutModelInput!]
   delete: [ProductWhereUniqueInput!]
@@ -6574,6 +7538,7 @@ input ProductUpdateWithoutBrandDataInput {
   secondaryColor: ColorUpdateOneInput
   tags: TagUpdateManyWithoutProductsInput
   functions: ProductFunctionUpdateManyInput
+  materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
   innerMaterials: ProductUpdateinnerMaterialsInput
   outerMaterials: ProductUpdateouterMaterialsInput
   variants: ProductVariantUpdateManyWithoutProductInput
@@ -6588,6 +7553,34 @@ input ProductUpdateWithoutCategoryDataInput {
   slug: String
   name: String
   brand: BrandUpdateOneRequiredWithoutProductsInput
+  type: ProductType
+  description: String
+  externalURL: String
+  images: ImageUpdateManyInput
+  modelHeight: Int
+  retailPrice: Int
+  model: ProductModelUpdateOneWithoutProductsInput
+  modelSize: SizeUpdateOneInput
+  color: ColorUpdateOneRequiredInput
+  secondaryColor: ColorUpdateOneInput
+  tags: TagUpdateManyWithoutProductsInput
+  functions: ProductFunctionUpdateManyInput
+  materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
+  innerMaterials: ProductUpdateinnerMaterialsInput
+  outerMaterials: ProductUpdateouterMaterialsInput
+  variants: ProductVariantUpdateManyWithoutProductInput
+  status: ProductStatus
+  season: String
+  architecture: ProductArchitecture
+  photographyStatus: PhotographyStatus
+  publishedAt: DateTime
+}
+
+input ProductUpdateWithoutMaterialCategoryDataInput {
+  slug: String
+  name: String
+  brand: BrandUpdateOneRequiredWithoutProductsInput
+  category: CategoryUpdateOneRequiredWithoutProductsInput
   type: ProductType
   description: String
   externalURL: String
@@ -6626,6 +7619,7 @@ input ProductUpdateWithoutModelDataInput {
   secondaryColor: ColorUpdateOneInput
   tags: TagUpdateManyWithoutProductsInput
   functions: ProductFunctionUpdateManyInput
+  materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
   innerMaterials: ProductUpdateinnerMaterialsInput
   outerMaterials: ProductUpdateouterMaterialsInput
   variants: ProductVariantUpdateManyWithoutProductInput
@@ -6652,6 +7646,7 @@ input ProductUpdateWithoutTagsDataInput {
   color: ColorUpdateOneRequiredInput
   secondaryColor: ColorUpdateOneInput
   functions: ProductFunctionUpdateManyInput
+  materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
   innerMaterials: ProductUpdateinnerMaterialsInput
   outerMaterials: ProductUpdateouterMaterialsInput
   variants: ProductVariantUpdateManyWithoutProductInput
@@ -6679,6 +7674,7 @@ input ProductUpdateWithoutVariantsDataInput {
   secondaryColor: ColorUpdateOneInput
   tags: TagUpdateManyWithoutProductsInput
   functions: ProductFunctionUpdateManyInput
+  materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
   innerMaterials: ProductUpdateinnerMaterialsInput
   outerMaterials: ProductUpdateouterMaterialsInput
   status: ProductStatus
@@ -6701,6 +7697,11 @@ input ProductUpdateWithWhereUniqueWithoutBrandInput {
 input ProductUpdateWithWhereUniqueWithoutCategoryInput {
   where: ProductWhereUniqueInput!
   data: ProductUpdateWithoutCategoryDataInput!
+}
+
+input ProductUpdateWithWhereUniqueWithoutMaterialCategoryInput {
+  where: ProductWhereUniqueInput!
+  data: ProductUpdateWithoutMaterialCategoryDataInput!
 }
 
 input ProductUpdateWithWhereUniqueWithoutModelInput {
@@ -6739,6 +7740,12 @@ input ProductUpsertWithWhereUniqueWithoutCategoryInput {
   where: ProductWhereUniqueInput!
   update: ProductUpdateWithoutCategoryDataInput!
   create: ProductCreateWithoutCategoryInput!
+}
+
+input ProductUpsertWithWhereUniqueWithoutMaterialCategoryInput {
+  where: ProductWhereUniqueInput!
+  update: ProductUpdateWithoutMaterialCategoryDataInput!
+  create: ProductCreateWithoutMaterialCategoryInput!
 }
 
 input ProductUpsertWithWhereUniqueWithoutModelInput {
@@ -8061,6 +9068,7 @@ input ProductWhereInput {
   functions_every: ProductFunctionWhereInput
   functions_some: ProductFunctionWhereInput
   functions_none: ProductFunctionWhereInput
+  materialCategory: ProductMaterialCategoryWhereInput
   variants_every: ProductVariantWhereInput
   variants_some: ProductVariantWhereInput
   variants_none: ProductVariantWhereInput
@@ -8408,6 +9416,9 @@ type Query {
   customerDetail(where: CustomerDetailWhereUniqueInput!): CustomerDetail
   customerDetails(where: CustomerDetailWhereInput, orderBy: CustomerDetailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CustomerDetail]!
   customerDetailsConnection(where: CustomerDetailWhereInput, orderBy: CustomerDetailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CustomerDetailConnection!
+  customerMembership(where: CustomerMembershipWhereUniqueInput!): CustomerMembership
+  customerMemberships(where: CustomerMembershipWhereInput, orderBy: CustomerMembershipOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CustomerMembership]!
+  customerMembershipsConnection(where: CustomerMembershipWhereInput, orderBy: CustomerMembershipOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CustomerMembershipConnection!
   emailReceipt(where: EmailReceiptWhereUniqueInput!): EmailReceipt
   emailReceipts(where: EmailReceiptWhereInput, orderBy: EmailReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [EmailReceipt]!
   emailReceiptsConnection(where: EmailReceiptWhereInput, orderBy: EmailReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): EmailReceiptConnection!
@@ -8426,6 +9437,12 @@ type Query {
   package(where: PackageWhereUniqueInput!): Package
   packages(where: PackageWhereInput, orderBy: PackageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Package]!
   packagesConnection(where: PackageWhereInput, orderBy: PackageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PackageConnection!
+  packageTransitEvent(where: PackageTransitEventWhereUniqueInput!): PackageTransitEvent
+  packageTransitEvents(where: PackageTransitEventWhereInput, orderBy: PackageTransitEventOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PackageTransitEvent]!
+  packageTransitEventsConnection(where: PackageTransitEventWhereInput, orderBy: PackageTransitEventOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PackageTransitEventConnection!
+  pauseRequest(where: PauseRequestWhereUniqueInput!): PauseRequest
+  pauseRequests(where: PauseRequestWhereInput, orderBy: PauseRequestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PauseRequest]!
+  pauseRequestsConnection(where: PauseRequestWhereInput, orderBy: PauseRequestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PauseRequestConnection!
   physicalProduct(where: PhysicalProductWhereUniqueInput!): PhysicalProduct
   physicalProducts(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct]!
   physicalProductsConnection(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PhysicalProductConnection!
@@ -8435,6 +9452,9 @@ type Query {
   productFunction(where: ProductFunctionWhereUniqueInput!): ProductFunction
   productFunctions(where: ProductFunctionWhereInput, orderBy: ProductFunctionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductFunction]!
   productFunctionsConnection(where: ProductFunctionWhereInput, orderBy: ProductFunctionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductFunctionConnection!
+  productMaterialCategory(where: ProductMaterialCategoryWhereUniqueInput!): ProductMaterialCategory
+  productMaterialCategories(where: ProductMaterialCategoryWhereInput, orderBy: ProductMaterialCategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductMaterialCategory]!
+  productMaterialCategoriesConnection(where: ProductMaterialCategoryWhereInput, orderBy: ProductMaterialCategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductMaterialCategoryConnection!
   productModel(where: ProductModelWhereUniqueInput!): ProductModel
   productModels(where: ProductModelWhereInput, orderBy: ProductModelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductModel]!
   productModelsConnection(where: ProductModelWhereInput, orderBy: ProductModelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductModelConnection!
@@ -8633,7 +9653,6 @@ type Reservation {
   sentPackage: Package
   returnedPackage: Package
   feedback: ReservationFeedback
-  location: Location
   products(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct!]
   reservationNumber: Int!
   shipped: Boolean!
@@ -8642,6 +9661,7 @@ type Reservation {
   receivedAt: DateTime
   reminderSentAt: DateTime
   receipt: ReservationReceipt
+  lastLocation: Location
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -8659,7 +9679,6 @@ input ReservationCreateInput {
   sentPackage: PackageCreateOneInput
   returnedPackage: PackageCreateOneInput
   feedback: ReservationFeedbackCreateOneWithoutReservationInput
-  location: LocationCreateOneInput
   products: PhysicalProductCreateManyInput
   reservationNumber: Int!
   shipped: Boolean!
@@ -8668,6 +9687,7 @@ input ReservationCreateInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   receipt: ReservationReceiptCreateOneWithoutReservationInput
+  lastLocation: LocationCreateOneInput
 }
 
 input ReservationCreateManyWithoutCustomerInput {
@@ -8691,7 +9711,6 @@ input ReservationCreateWithoutCustomerInput {
   sentPackage: PackageCreateOneInput
   returnedPackage: PackageCreateOneInput
   feedback: ReservationFeedbackCreateOneWithoutReservationInput
-  location: LocationCreateOneInput
   products: PhysicalProductCreateManyInput
   reservationNumber: Int!
   shipped: Boolean!
@@ -8700,6 +9719,7 @@ input ReservationCreateWithoutCustomerInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   receipt: ReservationReceiptCreateOneWithoutReservationInput
+  lastLocation: LocationCreateOneInput
 }
 
 input ReservationCreateWithoutFeedbackInput {
@@ -8708,7 +9728,6 @@ input ReservationCreateWithoutFeedbackInput {
   customer: CustomerCreateOneWithoutReservationsInput!
   sentPackage: PackageCreateOneInput
   returnedPackage: PackageCreateOneInput
-  location: LocationCreateOneInput
   products: PhysicalProductCreateManyInput
   reservationNumber: Int!
   shipped: Boolean!
@@ -8717,6 +9736,7 @@ input ReservationCreateWithoutFeedbackInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   receipt: ReservationReceiptCreateOneWithoutReservationInput
+  lastLocation: LocationCreateOneInput
 }
 
 input ReservationCreateWithoutReceiptInput {
@@ -8726,7 +9746,6 @@ input ReservationCreateWithoutReceiptInput {
   sentPackage: PackageCreateOneInput
   returnedPackage: PackageCreateOneInput
   feedback: ReservationFeedbackCreateOneWithoutReservationInput
-  location: LocationCreateOneInput
   products: PhysicalProductCreateManyInput
   reservationNumber: Int!
   shipped: Boolean!
@@ -8734,6 +9753,7 @@ input ReservationCreateWithoutReceiptInput {
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
+  lastLocation: LocationCreateOneInput
 }
 
 type ReservationEdge {
@@ -9409,15 +10429,15 @@ input ReservationScalarWhereInput {
 }
 
 enum ReservationStatus {
-  New
-  InQueue
-  OnHold
+  Queued
   Packed
   Shipped
-  InTransit
-  Received
-  Cancelled
+  Delivered
   Completed
+  Cancelled
+  Blocked
+  Unknown
+  Received
 }
 
 type ReservationSubscriptionPayload {
@@ -9444,7 +10464,6 @@ input ReservationUpdateInput {
   sentPackage: PackageUpdateOneInput
   returnedPackage: PackageUpdateOneInput
   feedback: ReservationFeedbackUpdateOneWithoutReservationInput
-  location: LocationUpdateOneInput
   products: PhysicalProductUpdateManyInput
   reservationNumber: Int
   shipped: Boolean
@@ -9453,6 +10472,7 @@ input ReservationUpdateInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   receipt: ReservationReceiptUpdateOneWithoutReservationInput
+  lastLocation: LocationUpdateOneInput
 }
 
 input ReservationUpdateManyDataInput {
@@ -9509,7 +10529,6 @@ input ReservationUpdateWithoutCustomerDataInput {
   sentPackage: PackageUpdateOneInput
   returnedPackage: PackageUpdateOneInput
   feedback: ReservationFeedbackUpdateOneWithoutReservationInput
-  location: LocationUpdateOneInput
   products: PhysicalProductUpdateManyInput
   reservationNumber: Int
   shipped: Boolean
@@ -9518,6 +10537,7 @@ input ReservationUpdateWithoutCustomerDataInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   receipt: ReservationReceiptUpdateOneWithoutReservationInput
+  lastLocation: LocationUpdateOneInput
 }
 
 input ReservationUpdateWithoutFeedbackDataInput {
@@ -9525,7 +10545,6 @@ input ReservationUpdateWithoutFeedbackDataInput {
   customer: CustomerUpdateOneRequiredWithoutReservationsInput
   sentPackage: PackageUpdateOneInput
   returnedPackage: PackageUpdateOneInput
-  location: LocationUpdateOneInput
   products: PhysicalProductUpdateManyInput
   reservationNumber: Int
   shipped: Boolean
@@ -9534,6 +10553,7 @@ input ReservationUpdateWithoutFeedbackDataInput {
   receivedAt: DateTime
   reminderSentAt: DateTime
   receipt: ReservationReceiptUpdateOneWithoutReservationInput
+  lastLocation: LocationUpdateOneInput
 }
 
 input ReservationUpdateWithoutReceiptDataInput {
@@ -9542,7 +10562,6 @@ input ReservationUpdateWithoutReceiptDataInput {
   sentPackage: PackageUpdateOneInput
   returnedPackage: PackageUpdateOneInput
   feedback: ReservationFeedbackUpdateOneWithoutReservationInput
-  location: LocationUpdateOneInput
   products: PhysicalProductUpdateManyInput
   reservationNumber: Int
   shipped: Boolean
@@ -9550,6 +10569,7 @@ input ReservationUpdateWithoutReceiptDataInput {
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
+  lastLocation: LocationUpdateOneInput
 }
 
 input ReservationUpdateWithWhereUniqueWithoutCustomerInput {
@@ -9593,7 +10613,6 @@ input ReservationWhereInput {
   sentPackage: PackageWhereInput
   returnedPackage: PackageWhereInput
   feedback: ReservationFeedbackWhereInput
-  location: LocationWhereInput
   products_every: PhysicalProductWhereInput
   products_some: PhysicalProductWhereInput
   products_none: PhysicalProductWhereInput
@@ -9636,6 +10655,7 @@ input ReservationWhereInput {
   reminderSentAt_gt: DateTime
   reminderSentAt_gte: DateTime
   receipt: ReservationReceiptWhereInput
+  lastLocation: LocationWhereInput
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -9929,15 +10949,19 @@ type Subscription {
   color(where: ColorSubscriptionWhereInput): ColorSubscriptionPayload
   customer(where: CustomerSubscriptionWhereInput): CustomerSubscriptionPayload
   customerDetail(where: CustomerDetailSubscriptionWhereInput): CustomerDetailSubscriptionPayload
+  customerMembership(where: CustomerMembershipSubscriptionWhereInput): CustomerMembershipSubscriptionPayload
   emailReceipt(where: EmailReceiptSubscriptionWhereInput): EmailReceiptSubscriptionPayload
   homepageProductRail(where: HomepageProductRailSubscriptionWhereInput): HomepageProductRailSubscriptionPayload
   image(where: ImageSubscriptionWhereInput): ImageSubscriptionPayload
   label(where: LabelSubscriptionWhereInput): LabelSubscriptionPayload
   location(where: LocationSubscriptionWhereInput): LocationSubscriptionPayload
   package(where: PackageSubscriptionWhereInput): PackageSubscriptionPayload
+  packageTransitEvent(where: PackageTransitEventSubscriptionWhereInput): PackageTransitEventSubscriptionPayload
+  pauseRequest(where: PauseRequestSubscriptionWhereInput): PauseRequestSubscriptionPayload
   physicalProduct(where: PhysicalProductSubscriptionWhereInput): PhysicalProductSubscriptionPayload
   product(where: ProductSubscriptionWhereInput): ProductSubscriptionPayload
   productFunction(where: ProductFunctionSubscriptionWhereInput): ProductFunctionSubscriptionPayload
+  productMaterialCategory(where: ProductMaterialCategorySubscriptionWhereInput): ProductMaterialCategorySubscriptionPayload
   productModel(where: ProductModelSubscriptionWhereInput): ProductModelSubscriptionPayload
   productRequest(where: ProductRequestSubscriptionWhereInput): ProductRequestSubscriptionPayload
   productVariant(where: ProductVariantSubscriptionWhereInput): ProductVariantSubscriptionPayload

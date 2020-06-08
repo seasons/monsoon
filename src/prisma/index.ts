@@ -26,6 +26,9 @@ export interface Exists {
   color: (where?: ColorWhereInput) => Promise<boolean>;
   customer: (where?: CustomerWhereInput) => Promise<boolean>;
   customerDetail: (where?: CustomerDetailWhereInput) => Promise<boolean>;
+  customerMembership: (
+    where?: CustomerMembershipWhereInput
+  ) => Promise<boolean>;
   emailReceipt: (where?: EmailReceiptWhereInput) => Promise<boolean>;
   homepageProductRail: (
     where?: HomepageProductRailWhereInput
@@ -34,9 +37,16 @@ export interface Exists {
   label: (where?: LabelWhereInput) => Promise<boolean>;
   location: (where?: LocationWhereInput) => Promise<boolean>;
   package: (where?: PackageWhereInput) => Promise<boolean>;
+  packageTransitEvent: (
+    where?: PackageTransitEventWhereInput
+  ) => Promise<boolean>;
+  pauseRequest: (where?: PauseRequestWhereInput) => Promise<boolean>;
   physicalProduct: (where?: PhysicalProductWhereInput) => Promise<boolean>;
   product: (where?: ProductWhereInput) => Promise<boolean>;
   productFunction: (where?: ProductFunctionWhereInput) => Promise<boolean>;
+  productMaterialCategory: (
+    where?: ProductMaterialCategoryWhereInput
+  ) => Promise<boolean>;
   productModel: (where?: ProductModelWhereInput) => Promise<boolean>;
   productRequest: (where?: ProductRequestWhereInput) => Promise<boolean>;
   productVariant: (where?: ProductVariantWhereInput) => Promise<boolean>;
@@ -290,6 +300,27 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => CustomerDetailConnectionPromise;
+  customerMembership: (
+    where: CustomerMembershipWhereUniqueInput
+  ) => CustomerMembershipNullablePromise;
+  customerMemberships: (args?: {
+    where?: CustomerMembershipWhereInput;
+    orderBy?: CustomerMembershipOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<CustomerMembership>;
+  customerMembershipsConnection: (args?: {
+    where?: CustomerMembershipWhereInput;
+    orderBy?: CustomerMembershipOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => CustomerMembershipConnectionPromise;
   emailReceipt: (
     where: EmailReceiptWhereUniqueInput
   ) => EmailReceiptNullablePromise;
@@ -408,6 +439,48 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => PackageConnectionPromise;
+  packageTransitEvent: (
+    where: PackageTransitEventWhereUniqueInput
+  ) => PackageTransitEventNullablePromise;
+  packageTransitEvents: (args?: {
+    where?: PackageTransitEventWhereInput;
+    orderBy?: PackageTransitEventOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<PackageTransitEvent>;
+  packageTransitEventsConnection: (args?: {
+    where?: PackageTransitEventWhereInput;
+    orderBy?: PackageTransitEventOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => PackageTransitEventConnectionPromise;
+  pauseRequest: (
+    where: PauseRequestWhereUniqueInput
+  ) => PauseRequestNullablePromise;
+  pauseRequests: (args?: {
+    where?: PauseRequestWhereInput;
+    orderBy?: PauseRequestOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<PauseRequest>;
+  pauseRequestsConnection: (args?: {
+    where?: PauseRequestWhereInput;
+    orderBy?: PauseRequestOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => PauseRequestConnectionPromise;
   physicalProduct: (
     where: PhysicalProductWhereUniqueInput
   ) => PhysicalProductNullablePromise;
@@ -469,6 +542,27 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => ProductFunctionConnectionPromise;
+  productMaterialCategory: (
+    where: ProductMaterialCategoryWhereUniqueInput
+  ) => ProductMaterialCategoryNullablePromise;
+  productMaterialCategories: (args?: {
+    where?: ProductMaterialCategoryWhereInput;
+    orderBy?: ProductMaterialCategoryOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<ProductMaterialCategory>;
+  productMaterialCategoriesConnection: (args?: {
+    where?: ProductMaterialCategoryWhereInput;
+    orderBy?: ProductMaterialCategoryOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => ProductMaterialCategoryConnectionPromise;
   productModel: (
     where: ProductModelWhereUniqueInput
   ) => ProductModelNullablePromise;
@@ -1019,6 +1113,28 @@ export interface Prisma {
   deleteManyCustomerDetails: (
     where?: CustomerDetailWhereInput
   ) => BatchPayloadPromise;
+  createCustomerMembership: (
+    data: CustomerMembershipCreateInput
+  ) => CustomerMembershipPromise;
+  updateCustomerMembership: (args: {
+    data: CustomerMembershipUpdateInput;
+    where: CustomerMembershipWhereUniqueInput;
+  }) => CustomerMembershipPromise;
+  updateManyCustomerMemberships: (args: {
+    data: CustomerMembershipUpdateManyMutationInput;
+    where?: CustomerMembershipWhereInput;
+  }) => BatchPayloadPromise;
+  upsertCustomerMembership: (args: {
+    where: CustomerMembershipWhereUniqueInput;
+    create: CustomerMembershipCreateInput;
+    update: CustomerMembershipUpdateInput;
+  }) => CustomerMembershipPromise;
+  deleteCustomerMembership: (
+    where: CustomerMembershipWhereUniqueInput
+  ) => CustomerMembershipPromise;
+  deleteManyCustomerMemberships: (
+    where?: CustomerMembershipWhereInput
+  ) => BatchPayloadPromise;
   createEmailReceipt: (data: EmailReceiptCreateInput) => EmailReceiptPromise;
   updateEmailReceipt: (args: {
     data: EmailReceiptUpdateInput;
@@ -1125,6 +1241,48 @@ export interface Prisma {
   }) => PackagePromise;
   deletePackage: (where: PackageWhereUniqueInput) => PackagePromise;
   deleteManyPackages: (where?: PackageWhereInput) => BatchPayloadPromise;
+  createPackageTransitEvent: (
+    data: PackageTransitEventCreateInput
+  ) => PackageTransitEventPromise;
+  updatePackageTransitEvent: (args: {
+    data: PackageTransitEventUpdateInput;
+    where: PackageTransitEventWhereUniqueInput;
+  }) => PackageTransitEventPromise;
+  updateManyPackageTransitEvents: (args: {
+    data: PackageTransitEventUpdateManyMutationInput;
+    where?: PackageTransitEventWhereInput;
+  }) => BatchPayloadPromise;
+  upsertPackageTransitEvent: (args: {
+    where: PackageTransitEventWhereUniqueInput;
+    create: PackageTransitEventCreateInput;
+    update: PackageTransitEventUpdateInput;
+  }) => PackageTransitEventPromise;
+  deletePackageTransitEvent: (
+    where: PackageTransitEventWhereUniqueInput
+  ) => PackageTransitEventPromise;
+  deleteManyPackageTransitEvents: (
+    where?: PackageTransitEventWhereInput
+  ) => BatchPayloadPromise;
+  createPauseRequest: (data: PauseRequestCreateInput) => PauseRequestPromise;
+  updatePauseRequest: (args: {
+    data: PauseRequestUpdateInput;
+    where: PauseRequestWhereUniqueInput;
+  }) => PauseRequestPromise;
+  updateManyPauseRequests: (args: {
+    data: PauseRequestUpdateManyMutationInput;
+    where?: PauseRequestWhereInput;
+  }) => BatchPayloadPromise;
+  upsertPauseRequest: (args: {
+    where: PauseRequestWhereUniqueInput;
+    create: PauseRequestCreateInput;
+    update: PauseRequestUpdateInput;
+  }) => PauseRequestPromise;
+  deletePauseRequest: (
+    where: PauseRequestWhereUniqueInput
+  ) => PauseRequestPromise;
+  deleteManyPauseRequests: (
+    where?: PauseRequestWhereInput
+  ) => BatchPayloadPromise;
   createPhysicalProduct: (
     data: PhysicalProductCreateInput
   ) => PhysicalProductPromise;
@@ -1184,6 +1342,28 @@ export interface Prisma {
   ) => ProductFunctionPromise;
   deleteManyProductFunctions: (
     where?: ProductFunctionWhereInput
+  ) => BatchPayloadPromise;
+  createProductMaterialCategory: (
+    data: ProductMaterialCategoryCreateInput
+  ) => ProductMaterialCategoryPromise;
+  updateProductMaterialCategory: (args: {
+    data: ProductMaterialCategoryUpdateInput;
+    where: ProductMaterialCategoryWhereUniqueInput;
+  }) => ProductMaterialCategoryPromise;
+  updateManyProductMaterialCategories: (args: {
+    data: ProductMaterialCategoryUpdateManyMutationInput;
+    where?: ProductMaterialCategoryWhereInput;
+  }) => BatchPayloadPromise;
+  upsertProductMaterialCategory: (args: {
+    where: ProductMaterialCategoryWhereUniqueInput;
+    create: ProductMaterialCategoryCreateInput;
+    update: ProductMaterialCategoryUpdateInput;
+  }) => ProductMaterialCategoryPromise;
+  deleteProductMaterialCategory: (
+    where: ProductMaterialCategoryWhereUniqueInput
+  ) => ProductMaterialCategoryPromise;
+  deleteManyProductMaterialCategories: (
+    where?: ProductMaterialCategoryWhereInput
   ) => BatchPayloadPromise;
   createProductModel: (data: ProductModelCreateInput) => ProductModelPromise;
   updateProductModel: (args: {
@@ -1586,6 +1766,9 @@ export interface Subscription {
   customerDetail: (
     where?: CustomerDetailSubscriptionWhereInput
   ) => CustomerDetailSubscriptionPayloadSubscription;
+  customerMembership: (
+    where?: CustomerMembershipSubscriptionWhereInput
+  ) => CustomerMembershipSubscriptionPayloadSubscription;
   emailReceipt: (
     where?: EmailReceiptSubscriptionWhereInput
   ) => EmailReceiptSubscriptionPayloadSubscription;
@@ -1604,6 +1787,12 @@ export interface Subscription {
   package: (
     where?: PackageSubscriptionWhereInput
   ) => PackageSubscriptionPayloadSubscription;
+  packageTransitEvent: (
+    where?: PackageTransitEventSubscriptionWhereInput
+  ) => PackageTransitEventSubscriptionPayloadSubscription;
+  pauseRequest: (
+    where?: PauseRequestSubscriptionWhereInput
+  ) => PauseRequestSubscriptionPayloadSubscription;
   physicalProduct: (
     where?: PhysicalProductSubscriptionWhereInput
   ) => PhysicalProductSubscriptionPayloadSubscription;
@@ -1613,6 +1802,9 @@ export interface Subscription {
   productFunction: (
     where?: ProductFunctionSubscriptionWhereInput
   ) => ProductFunctionSubscriptionPayloadSubscription;
+  productMaterialCategory: (
+    where?: ProductMaterialCategorySubscriptionWhereInput
+  ) => ProductMaterialCategorySubscriptionPayloadSubscription;
   productModel: (
     where?: ProductModelSubscriptionWhereInput
   ) => ProductModelSubscriptionPayloadSubscription;
@@ -1926,22 +2118,73 @@ export type WarehouseLocationOrderByInput =
 
 export type Plan = "AllAccess" | "Essential";
 
+export type BagItemStatus = "Added" | "Reserved" | "Received";
+
+export type PackageTransitEventStatus =
+  | "PreTransit"
+  | "Transit"
+  | "Delivered"
+  | "Returned"
+  | "Failure"
+  | "Unknown";
+
+export type PackageTransitEventSubStatus =
+  | "InformationReceived"
+  | "AddressIssue"
+  | "ContactCarrier"
+  | "Delayed"
+  | "DeliveryAttempted"
+  | "DeliveryRescheduled"
+  | "DeliveryScheduled"
+  | "LocationInaccessible"
+  | "NoticeLeft"
+  | "OutForDelivery"
+  | "PackageAccepted"
+  | "PackageArrived"
+  | "PackageDamaged"
+  | "PackageDeparted"
+  | "PackageForwarded"
+  | "PackageHeld"
+  | "PackageProcessed"
+  | "PackageProcessing"
+  | "PickupAvailable"
+  | "RescheduleDelivery"
+  | "Delivered"
+  | "ReturnToSender"
+  | "PackageUnclaimed"
+  | "PackageUndeliverable"
+  | "PackageDisposed"
+  | "PackageLost"
+  | "Other";
+
 export type QuestionType = "MultipleChoice" | "FreeResponse";
 
 export type Rating = "Disliked" | "Ok" | "Loved";
 
 export type ReservationStatus =
-  | "New"
-  | "InQueue"
-  | "OnHold"
+  | "Queued"
   | "Packed"
   | "Shipped"
-  | "InTransit"
-  | "Received"
+  | "Delivered"
+  | "Completed"
   | "Cancelled"
-  | "Completed";
+  | "Blocked"
+  | "Unknown"
+  | "Received";
 
-export type BagItemStatus = "Added" | "Reserved" | "Received";
+export type PauseRequestOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC"
+  | "pausePending_ASC"
+  | "pausePending_DESC"
+  | "pauseDate_ASC"
+  | "pauseDate_DESC"
+  | "resumeDate_ASC"
+  | "resumeDate_DESC";
 
 export type BagItemOrderByInput =
   | "id_ASC"
@@ -1968,6 +2211,18 @@ export type ReservationOrderByInput =
   | "receivedAt_DESC"
   | "reminderSentAt_ASC"
   | "reminderSentAt_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
+
+export type PackageTransitEventOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "status_ASC"
+  | "status_DESC"
+  | "subStatus_ASC"
+  | "subStatus_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -2155,6 +2410,12 @@ export type CustomerDetailOrderByInput =
   | "updatedAt_ASC"
   | "updatedAt_DESC";
 
+export type CustomerMembershipOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "subscriptionId_ASC"
+  | "subscriptionId_DESC";
+
 export type EmailId =
   | "ReservationReturnConfirmation"
   | "ReservationConfirmation"
@@ -2234,6 +2495,14 @@ export type PackageOrderByInput =
   | "createdAt_DESC"
   | "updatedAt_ASC"
   | "updatedAt_DESC";
+
+export type ProductMaterialCategoryOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "slug_ASC"
+  | "slug_DESC"
+  | "lifeExpectancy_ASC"
+  | "lifeExpectancy_DESC";
 
 export type ProductModelOrderByInput =
   | "id_ASC"
@@ -3290,6 +3559,7 @@ export interface ProductWhereInput {
   functions_every?: Maybe<ProductFunctionWhereInput>;
   functions_some?: Maybe<ProductFunctionWhereInput>;
   functions_none?: Maybe<ProductFunctionWhereInput>;
+  materialCategory?: Maybe<ProductMaterialCategoryWhereInput>;
   variants_every?: Maybe<ProductVariantWhereInput>;
   variants_some?: Maybe<ProductVariantWhereInput>;
   variants_none?: Maybe<ProductVariantWhereInput>;
@@ -3795,6 +4065,58 @@ export interface ProductFunctionWhereInput {
   NOT?: Maybe<ProductFunctionWhereInput[] | ProductFunctionWhereInput>;
 }
 
+export interface ProductMaterialCategoryWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  slug?: Maybe<String>;
+  slug_not?: Maybe<String>;
+  slug_in?: Maybe<String[] | String>;
+  slug_not_in?: Maybe<String[] | String>;
+  slug_lt?: Maybe<String>;
+  slug_lte?: Maybe<String>;
+  slug_gt?: Maybe<String>;
+  slug_gte?: Maybe<String>;
+  slug_contains?: Maybe<String>;
+  slug_not_contains?: Maybe<String>;
+  slug_starts_with?: Maybe<String>;
+  slug_not_starts_with?: Maybe<String>;
+  slug_ends_with?: Maybe<String>;
+  slug_not_ends_with?: Maybe<String>;
+  lifeExpectancy?: Maybe<Int>;
+  lifeExpectancy_not?: Maybe<Int>;
+  lifeExpectancy_in?: Maybe<Int[] | Int>;
+  lifeExpectancy_not_in?: Maybe<Int[] | Int>;
+  lifeExpectancy_lt?: Maybe<Int>;
+  lifeExpectancy_lte?: Maybe<Int>;
+  lifeExpectancy_gt?: Maybe<Int>;
+  lifeExpectancy_gte?: Maybe<Int>;
+  category?: Maybe<CategoryWhereInput>;
+  products_every?: Maybe<ProductWhereInput>;
+  products_some?: Maybe<ProductWhereInput>;
+  products_none?: Maybe<ProductWhereInput>;
+  AND?: Maybe<
+    ProductMaterialCategoryWhereInput[] | ProductMaterialCategoryWhereInput
+  >;
+  OR?: Maybe<
+    ProductMaterialCategoryWhereInput[] | ProductMaterialCategoryWhereInput
+  >;
+  NOT?: Maybe<
+    ProductMaterialCategoryWhereInput[] | ProductMaterialCategoryWhereInput
+  >;
+}
+
 export interface WarehouseLocationWhereInput {
   id?: Maybe<ID_Input>;
   id_not?: Maybe<ID_Input>;
@@ -3940,7 +4262,7 @@ export interface WarehouseLocationConstraintWhereInput {
   >;
 }
 
-export interface BagItemWhereInput {
+export interface PauseRequestWhereInput {
   id?: Maybe<ID_Input>;
   id_not?: Maybe<ID_Input>;
   id_in?: Maybe<ID_Input[] | ID_Input>;
@@ -3955,25 +4277,82 @@ export interface BagItemWhereInput {
   id_not_starts_with?: Maybe<ID_Input>;
   id_ends_with?: Maybe<ID_Input>;
   id_not_ends_with?: Maybe<ID_Input>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  pausePending?: Maybe<Boolean>;
+  pausePending_not?: Maybe<Boolean>;
+  pauseDate?: Maybe<DateTimeInput>;
+  pauseDate_not?: Maybe<DateTimeInput>;
+  pauseDate_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  pauseDate_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  pauseDate_lt?: Maybe<DateTimeInput>;
+  pauseDate_lte?: Maybe<DateTimeInput>;
+  pauseDate_gt?: Maybe<DateTimeInput>;
+  pauseDate_gte?: Maybe<DateTimeInput>;
+  resumeDate?: Maybe<DateTimeInput>;
+  resumeDate_not?: Maybe<DateTimeInput>;
+  resumeDate_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  resumeDate_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  resumeDate_lt?: Maybe<DateTimeInput>;
+  resumeDate_lte?: Maybe<DateTimeInput>;
+  resumeDate_gt?: Maybe<DateTimeInput>;
+  resumeDate_gte?: Maybe<DateTimeInput>;
+  membership?: Maybe<CustomerMembershipWhereInput>;
+  AND?: Maybe<PauseRequestWhereInput[] | PauseRequestWhereInput>;
+  OR?: Maybe<PauseRequestWhereInput[] | PauseRequestWhereInput>;
+  NOT?: Maybe<PauseRequestWhereInput[] | PauseRequestWhereInput>;
+}
+
+export interface CustomerMembershipWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  subscriptionId?: Maybe<String>;
+  subscriptionId_not?: Maybe<String>;
+  subscriptionId_in?: Maybe<String[] | String>;
+  subscriptionId_not_in?: Maybe<String[] | String>;
+  subscriptionId_lt?: Maybe<String>;
+  subscriptionId_lte?: Maybe<String>;
+  subscriptionId_gt?: Maybe<String>;
+  subscriptionId_gte?: Maybe<String>;
+  subscriptionId_contains?: Maybe<String>;
+  subscriptionId_not_contains?: Maybe<String>;
+  subscriptionId_starts_with?: Maybe<String>;
+  subscriptionId_not_starts_with?: Maybe<String>;
+  subscriptionId_ends_with?: Maybe<String>;
+  subscriptionId_not_ends_with?: Maybe<String>;
   customer?: Maybe<CustomerWhereInput>;
-  productVariant?: Maybe<ProductVariantWhereInput>;
-  position?: Maybe<Int>;
-  position_not?: Maybe<Int>;
-  position_in?: Maybe<Int[] | Int>;
-  position_not_in?: Maybe<Int[] | Int>;
-  position_lt?: Maybe<Int>;
-  position_lte?: Maybe<Int>;
-  position_gt?: Maybe<Int>;
-  position_gte?: Maybe<Int>;
-  saved?: Maybe<Boolean>;
-  saved_not?: Maybe<Boolean>;
-  status?: Maybe<BagItemStatus>;
-  status_not?: Maybe<BagItemStatus>;
-  status_in?: Maybe<BagItemStatus[] | BagItemStatus>;
-  status_not_in?: Maybe<BagItemStatus[] | BagItemStatus>;
-  AND?: Maybe<BagItemWhereInput[] | BagItemWhereInput>;
-  OR?: Maybe<BagItemWhereInput[] | BagItemWhereInput>;
-  NOT?: Maybe<BagItemWhereInput[] | BagItemWhereInput>;
+  pauseRequests_every?: Maybe<PauseRequestWhereInput>;
+  pauseRequests_some?: Maybe<PauseRequestWhereInput>;
+  pauseRequests_none?: Maybe<PauseRequestWhereInput>;
+  AND?: Maybe<CustomerMembershipWhereInput[] | CustomerMembershipWhereInput>;
+  OR?: Maybe<CustomerMembershipWhereInput[] | CustomerMembershipWhereInput>;
+  NOT?: Maybe<CustomerMembershipWhereInput[] | CustomerMembershipWhereInput>;
 }
 
 export interface CustomerWhereInput {
@@ -4002,6 +4381,7 @@ export interface CustomerWhereInput {
   plan_not?: Maybe<Plan>;
   plan_in?: Maybe<Plan[] | Plan>;
   plan_not_in?: Maybe<Plan[] | Plan>;
+  membership?: Maybe<CustomerMembershipWhereInput>;
   bagItems_every?: Maybe<BagItemWhereInput>;
   bagItems_some?: Maybe<BagItemWhereInput>;
   bagItems_none?: Maybe<BagItemWhereInput>;
@@ -4440,6 +4820,42 @@ export interface BillingInfoWhereInput {
   NOT?: Maybe<BillingInfoWhereInput[] | BillingInfoWhereInput>;
 }
 
+export interface BagItemWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  customer?: Maybe<CustomerWhereInput>;
+  productVariant?: Maybe<ProductVariantWhereInput>;
+  position?: Maybe<Int>;
+  position_not?: Maybe<Int>;
+  position_in?: Maybe<Int[] | Int>;
+  position_not_in?: Maybe<Int[] | Int>;
+  position_lt?: Maybe<Int>;
+  position_lte?: Maybe<Int>;
+  position_gt?: Maybe<Int>;
+  position_gte?: Maybe<Int>;
+  saved?: Maybe<Boolean>;
+  saved_not?: Maybe<Boolean>;
+  status?: Maybe<BagItemStatus>;
+  status_not?: Maybe<BagItemStatus>;
+  status_in?: Maybe<BagItemStatus[] | BagItemStatus>;
+  status_not_in?: Maybe<BagItemStatus[] | BagItemStatus>;
+  AND?: Maybe<BagItemWhereInput[] | BagItemWhereInput>;
+  OR?: Maybe<BagItemWhereInput[] | BagItemWhereInput>;
+  NOT?: Maybe<BagItemWhereInput[] | BagItemWhereInput>;
+}
+
 export interface ReservationWhereInput {
   id?: Maybe<ID_Input>;
   id_not?: Maybe<ID_Input>;
@@ -4460,7 +4876,6 @@ export interface ReservationWhereInput {
   sentPackage?: Maybe<PackageWhereInput>;
   returnedPackage?: Maybe<PackageWhereInput>;
   feedback?: Maybe<ReservationFeedbackWhereInput>;
-  location?: Maybe<LocationWhereInput>;
   products_every?: Maybe<PhysicalProductWhereInput>;
   products_some?: Maybe<PhysicalProductWhereInput>;
   products_none?: Maybe<PhysicalProductWhereInput>;
@@ -4503,6 +4918,7 @@ export interface ReservationWhereInput {
   reminderSentAt_gt?: Maybe<DateTimeInput>;
   reminderSentAt_gte?: Maybe<DateTimeInput>;
   receipt?: Maybe<ReservationReceiptWhereInput>;
+  lastLocation?: Maybe<LocationWhereInput>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -4553,6 +4969,9 @@ export interface PackageWhereInput {
   weight_lte?: Maybe<Float>;
   weight_gt?: Maybe<Float>;
   weight_gte?: Maybe<Float>;
+  events_every?: Maybe<PackageTransitEventWhereInput>;
+  events_some?: Maybe<PackageTransitEventWhereInput>;
+  events_none?: Maybe<PackageTransitEventWhereInput>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -4648,6 +5067,56 @@ export interface LabelWhereInput {
   AND?: Maybe<LabelWhereInput[] | LabelWhereInput>;
   OR?: Maybe<LabelWhereInput[] | LabelWhereInput>;
   NOT?: Maybe<LabelWhereInput[] | LabelWhereInput>;
+}
+
+export interface PackageTransitEventWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  status?: Maybe<PackageTransitEventStatus>;
+  status_not?: Maybe<PackageTransitEventStatus>;
+  status_in?: Maybe<PackageTransitEventStatus[] | PackageTransitEventStatus>;
+  status_not_in?: Maybe<
+    PackageTransitEventStatus[] | PackageTransitEventStatus
+  >;
+  subStatus?: Maybe<PackageTransitEventSubStatus>;
+  subStatus_not?: Maybe<PackageTransitEventSubStatus>;
+  subStatus_in?: Maybe<
+    PackageTransitEventSubStatus[] | PackageTransitEventSubStatus
+  >;
+  subStatus_not_in?: Maybe<
+    PackageTransitEventSubStatus[] | PackageTransitEventSubStatus
+  >;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<PackageTransitEventWhereInput[] | PackageTransitEventWhereInput>;
+  OR?: Maybe<PackageTransitEventWhereInput[] | PackageTransitEventWhereInput>;
+  NOT?: Maybe<PackageTransitEventWhereInput[] | PackageTransitEventWhereInput>;
 }
 
 export interface ReservationFeedbackWhereInput {
@@ -5079,6 +5548,10 @@ export type CustomerDetailWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
 
+export type CustomerMembershipWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
 export type EmailReceiptWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
@@ -5198,6 +5671,14 @@ export type PackageWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
 
+export type PackageTransitEventWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
+export type PauseRequestWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
 export type PhysicalProductWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
   seasonsUID?: Maybe<String>;
@@ -5211,6 +5692,10 @@ export type ProductWhereUniqueInput = AtLeastOne<{
 export type ProductFunctionWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
   name?: Maybe<String>;
+}>;
+
+export type ProductMaterialCategoryWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
 }>;
 
 export type ProductModelWhereUniqueInput = AtLeastOne<{
@@ -5668,6 +6153,7 @@ export interface CustomerCreateWithoutBagItemsInput {
   detail?: Maybe<CustomerDetailCreateOneInput>;
   billingInfo?: Maybe<BillingInfoCreateOneInput>;
   plan?: Maybe<Plan>;
+  membership?: Maybe<CustomerMembershipCreateOneWithoutCustomerInput>;
   reservations?: Maybe<ReservationCreateManyWithoutCustomerInput>;
 }
 
@@ -5878,6 +6364,9 @@ export interface ProductCreateWithoutVariantsInput {
   secondaryColor?: Maybe<ColorCreateOneInput>;
   tags?: Maybe<TagCreateManyWithoutProductsInput>;
   functions?: Maybe<ProductFunctionCreateManyInput>;
+  materialCategory?: Maybe<
+    ProductMaterialCategoryCreateOneWithoutProductsInput
+  >;
   innerMaterials?: Maybe<ProductCreateinnerMaterialsInput>;
   outerMaterials?: Maybe<ProductCreateouterMaterialsInput>;
   status?: Maybe<ProductStatus>;
@@ -5962,6 +6451,9 @@ export interface ProductCreateWithoutCategoryInput {
   secondaryColor?: Maybe<ColorCreateOneInput>;
   tags?: Maybe<TagCreateManyWithoutProductsInput>;
   functions?: Maybe<ProductFunctionCreateManyInput>;
+  materialCategory?: Maybe<
+    ProductMaterialCategoryCreateOneWithoutProductsInput
+  >;
   innerMaterials?: Maybe<ProductCreateinnerMaterialsInput>;
   outerMaterials?: Maybe<ProductCreateouterMaterialsInput>;
   variants?: Maybe<ProductVariantCreateManyWithoutProductInput>;
@@ -6163,6 +6655,18 @@ export interface ProductFunctionCreateInput {
   name?: Maybe<String>;
 }
 
+export interface ProductMaterialCategoryCreateOneWithoutProductsInput {
+  create?: Maybe<ProductMaterialCategoryCreateWithoutProductsInput>;
+  connect?: Maybe<ProductMaterialCategoryWhereUniqueInput>;
+}
+
+export interface ProductMaterialCategoryCreateWithoutProductsInput {
+  id?: Maybe<ID_Input>;
+  slug: String;
+  lifeExpectancy: Int;
+  category: CategoryCreateOneInput;
+}
+
 export interface ProductCreateinnerMaterialsInput {
   set?: Maybe<String[] | String>;
 }
@@ -6220,6 +6724,34 @@ export interface BillingInfoCreateInput {
   postal_code?: Maybe<String>;
 }
 
+export interface CustomerMembershipCreateOneWithoutCustomerInput {
+  create?: Maybe<CustomerMembershipCreateWithoutCustomerInput>;
+  connect?: Maybe<CustomerMembershipWhereUniqueInput>;
+}
+
+export interface CustomerMembershipCreateWithoutCustomerInput {
+  id?: Maybe<ID_Input>;
+  subscriptionId: String;
+  pauseRequests?: Maybe<PauseRequestCreateManyWithoutMembershipInput>;
+}
+
+export interface PauseRequestCreateManyWithoutMembershipInput {
+  create?: Maybe<
+    | PauseRequestCreateWithoutMembershipInput[]
+    | PauseRequestCreateWithoutMembershipInput
+  >;
+  connect?: Maybe<
+    PauseRequestWhereUniqueInput[] | PauseRequestWhereUniqueInput
+  >;
+}
+
+export interface PauseRequestCreateWithoutMembershipInput {
+  id?: Maybe<ID_Input>;
+  pausePending: Boolean;
+  pauseDate?: Maybe<DateTimeInput>;
+  resumeDate?: Maybe<DateTimeInput>;
+}
+
 export interface ReservationCreateManyWithoutCustomerInput {
   create?: Maybe<
     | ReservationCreateWithoutCustomerInput[]
@@ -6234,7 +6766,6 @@ export interface ReservationCreateWithoutCustomerInput {
   sentPackage?: Maybe<PackageCreateOneInput>;
   returnedPackage?: Maybe<PackageCreateOneInput>;
   feedback?: Maybe<ReservationFeedbackCreateOneWithoutReservationInput>;
-  location?: Maybe<LocationCreateOneInput>;
   products?: Maybe<PhysicalProductCreateManyInput>;
   reservationNumber: Int;
   shipped: Boolean;
@@ -6243,6 +6774,7 @@ export interface ReservationCreateWithoutCustomerInput {
   receivedAt?: Maybe<DateTimeInput>;
   reminderSentAt?: Maybe<DateTimeInput>;
   receipt?: Maybe<ReservationReceiptCreateOneWithoutReservationInput>;
+  lastLocation?: Maybe<LocationCreateOneInput>;
 }
 
 export interface PackageCreateOneInput {
@@ -6257,6 +6789,7 @@ export interface PackageCreateInput {
   fromAddress: LocationCreateOneInput;
   toAddress: LocationCreateOneInput;
   weight?: Maybe<Float>;
+  events?: Maybe<PackageTransitEventCreateManyInput>;
 }
 
 export interface PhysicalProductCreateManyInput {
@@ -6295,6 +6828,21 @@ export interface LabelCreateInput {
   image?: Maybe<String>;
   trackingNumber?: Maybe<String>;
   trackingURL?: Maybe<String>;
+}
+
+export interface PackageTransitEventCreateManyInput {
+  create?: Maybe<
+    PackageTransitEventCreateInput[] | PackageTransitEventCreateInput
+  >;
+  connect?: Maybe<
+    PackageTransitEventWhereUniqueInput[] | PackageTransitEventWhereUniqueInput
+  >;
+}
+
+export interface PackageTransitEventCreateInput {
+  id?: Maybe<ID_Input>;
+  status: PackageTransitEventStatus;
+  subStatus: PackageTransitEventSubStatus;
 }
 
 export interface ReservationFeedbackCreateOneWithoutReservationInput {
@@ -6438,6 +6986,7 @@ export interface CustomerUpdateWithoutBagItemsDataInput {
   detail?: Maybe<CustomerDetailUpdateOneInput>;
   billingInfo?: Maybe<BillingInfoUpdateOneInput>;
   plan?: Maybe<Plan>;
+  membership?: Maybe<CustomerMembershipUpdateOneWithoutCustomerInput>;
   reservations?: Maybe<ReservationUpdateManyWithoutCustomerInput>;
 }
 
@@ -6820,6 +7369,9 @@ export interface ProductUpdateWithoutVariantsDataInput {
   secondaryColor?: Maybe<ColorUpdateOneInput>;
   tags?: Maybe<TagUpdateManyWithoutProductsInput>;
   functions?: Maybe<ProductFunctionUpdateManyInput>;
+  materialCategory?: Maybe<
+    ProductMaterialCategoryUpdateOneWithoutProductsInput
+  >;
   innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
   status?: Maybe<ProductStatus>;
@@ -6951,6 +7503,9 @@ export interface ProductUpdateWithoutCategoryDataInput {
   secondaryColor?: Maybe<ColorUpdateOneInput>;
   tags?: Maybe<TagUpdateManyWithoutProductsInput>;
   functions?: Maybe<ProductFunctionUpdateManyInput>;
+  materialCategory?: Maybe<
+    ProductMaterialCategoryUpdateOneWithoutProductsInput
+  >;
   innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
   variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
@@ -7973,6 +8528,26 @@ export interface ProductFunctionUpdateManyDataInput {
   name?: Maybe<String>;
 }
 
+export interface ProductMaterialCategoryUpdateOneWithoutProductsInput {
+  create?: Maybe<ProductMaterialCategoryCreateWithoutProductsInput>;
+  update?: Maybe<ProductMaterialCategoryUpdateWithoutProductsDataInput>;
+  upsert?: Maybe<ProductMaterialCategoryUpsertWithoutProductsInput>;
+  delete?: Maybe<Boolean>;
+  disconnect?: Maybe<Boolean>;
+  connect?: Maybe<ProductMaterialCategoryWhereUniqueInput>;
+}
+
+export interface ProductMaterialCategoryUpdateWithoutProductsDataInput {
+  slug?: Maybe<String>;
+  lifeExpectancy?: Maybe<Int>;
+  category?: Maybe<CategoryUpdateOneRequiredInput>;
+}
+
+export interface ProductMaterialCategoryUpsertWithoutProductsInput {
+  update: ProductMaterialCategoryUpdateWithoutProductsDataInput;
+  create: ProductMaterialCategoryCreateWithoutProductsInput;
+}
+
 export interface ProductUpdateinnerMaterialsInput {
   set?: Maybe<String[] | String>;
 }
@@ -8360,6 +8935,137 @@ export interface BillingInfoUpsertNestedInput {
   create: BillingInfoCreateInput;
 }
 
+export interface CustomerMembershipUpdateOneWithoutCustomerInput {
+  create?: Maybe<CustomerMembershipCreateWithoutCustomerInput>;
+  update?: Maybe<CustomerMembershipUpdateWithoutCustomerDataInput>;
+  upsert?: Maybe<CustomerMembershipUpsertWithoutCustomerInput>;
+  delete?: Maybe<Boolean>;
+  disconnect?: Maybe<Boolean>;
+  connect?: Maybe<CustomerMembershipWhereUniqueInput>;
+}
+
+export interface CustomerMembershipUpdateWithoutCustomerDataInput {
+  subscriptionId?: Maybe<String>;
+  pauseRequests?: Maybe<PauseRequestUpdateManyWithoutMembershipInput>;
+}
+
+export interface PauseRequestUpdateManyWithoutMembershipInput {
+  create?: Maybe<
+    | PauseRequestCreateWithoutMembershipInput[]
+    | PauseRequestCreateWithoutMembershipInput
+  >;
+  delete?: Maybe<PauseRequestWhereUniqueInput[] | PauseRequestWhereUniqueInput>;
+  connect?: Maybe<
+    PauseRequestWhereUniqueInput[] | PauseRequestWhereUniqueInput
+  >;
+  set?: Maybe<PauseRequestWhereUniqueInput[] | PauseRequestWhereUniqueInput>;
+  disconnect?: Maybe<
+    PauseRequestWhereUniqueInput[] | PauseRequestWhereUniqueInput
+  >;
+  update?: Maybe<
+    | PauseRequestUpdateWithWhereUniqueWithoutMembershipInput[]
+    | PauseRequestUpdateWithWhereUniqueWithoutMembershipInput
+  >;
+  upsert?: Maybe<
+    | PauseRequestUpsertWithWhereUniqueWithoutMembershipInput[]
+    | PauseRequestUpsertWithWhereUniqueWithoutMembershipInput
+  >;
+  deleteMany?: Maybe<
+    PauseRequestScalarWhereInput[] | PauseRequestScalarWhereInput
+  >;
+  updateMany?: Maybe<
+    | PauseRequestUpdateManyWithWhereNestedInput[]
+    | PauseRequestUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface PauseRequestUpdateWithWhereUniqueWithoutMembershipInput {
+  where: PauseRequestWhereUniqueInput;
+  data: PauseRequestUpdateWithoutMembershipDataInput;
+}
+
+export interface PauseRequestUpdateWithoutMembershipDataInput {
+  pausePending?: Maybe<Boolean>;
+  pauseDate?: Maybe<DateTimeInput>;
+  resumeDate?: Maybe<DateTimeInput>;
+}
+
+export interface PauseRequestUpsertWithWhereUniqueWithoutMembershipInput {
+  where: PauseRequestWhereUniqueInput;
+  update: PauseRequestUpdateWithoutMembershipDataInput;
+  create: PauseRequestCreateWithoutMembershipInput;
+}
+
+export interface PauseRequestScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  pausePending?: Maybe<Boolean>;
+  pausePending_not?: Maybe<Boolean>;
+  pauseDate?: Maybe<DateTimeInput>;
+  pauseDate_not?: Maybe<DateTimeInput>;
+  pauseDate_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  pauseDate_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  pauseDate_lt?: Maybe<DateTimeInput>;
+  pauseDate_lte?: Maybe<DateTimeInput>;
+  pauseDate_gt?: Maybe<DateTimeInput>;
+  pauseDate_gte?: Maybe<DateTimeInput>;
+  resumeDate?: Maybe<DateTimeInput>;
+  resumeDate_not?: Maybe<DateTimeInput>;
+  resumeDate_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  resumeDate_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  resumeDate_lt?: Maybe<DateTimeInput>;
+  resumeDate_lte?: Maybe<DateTimeInput>;
+  resumeDate_gt?: Maybe<DateTimeInput>;
+  resumeDate_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<PauseRequestScalarWhereInput[] | PauseRequestScalarWhereInput>;
+  OR?: Maybe<PauseRequestScalarWhereInput[] | PauseRequestScalarWhereInput>;
+  NOT?: Maybe<PauseRequestScalarWhereInput[] | PauseRequestScalarWhereInput>;
+}
+
+export interface PauseRequestUpdateManyWithWhereNestedInput {
+  where: PauseRequestScalarWhereInput;
+  data: PauseRequestUpdateManyDataInput;
+}
+
+export interface PauseRequestUpdateManyDataInput {
+  pausePending?: Maybe<Boolean>;
+  pauseDate?: Maybe<DateTimeInput>;
+  resumeDate?: Maybe<DateTimeInput>;
+}
+
+export interface CustomerMembershipUpsertWithoutCustomerInput {
+  update: CustomerMembershipUpdateWithoutCustomerDataInput;
+  create: CustomerMembershipCreateWithoutCustomerInput;
+}
+
 export interface ReservationUpdateManyWithoutCustomerInput {
   create?: Maybe<
     | ReservationCreateWithoutCustomerInput[]
@@ -8398,7 +9104,6 @@ export interface ReservationUpdateWithoutCustomerDataInput {
   sentPackage?: Maybe<PackageUpdateOneInput>;
   returnedPackage?: Maybe<PackageUpdateOneInput>;
   feedback?: Maybe<ReservationFeedbackUpdateOneWithoutReservationInput>;
-  location?: Maybe<LocationUpdateOneInput>;
   products?: Maybe<PhysicalProductUpdateManyInput>;
   reservationNumber?: Maybe<Int>;
   shipped?: Maybe<Boolean>;
@@ -8407,6 +9112,7 @@ export interface ReservationUpdateWithoutCustomerDataInput {
   receivedAt?: Maybe<DateTimeInput>;
   reminderSentAt?: Maybe<DateTimeInput>;
   receipt?: Maybe<ReservationReceiptUpdateOneWithoutReservationInput>;
+  lastLocation?: Maybe<LocationUpdateOneInput>;
 }
 
 export interface PackageUpdateOneInput {
@@ -8424,6 +9130,7 @@ export interface PackageUpdateDataInput {
   fromAddress?: Maybe<LocationUpdateOneRequiredInput>;
   toAddress?: Maybe<LocationUpdateOneRequiredInput>;
   weight?: Maybe<Float>;
+  events?: Maybe<PackageTransitEventUpdateManyInput>;
 }
 
 export interface PhysicalProductUpdateManyInput {
@@ -8511,6 +9218,121 @@ export interface LocationUpdateOneRequiredInput {
   update?: Maybe<LocationUpdateDataInput>;
   upsert?: Maybe<LocationUpsertNestedInput>;
   connect?: Maybe<LocationWhereUniqueInput>;
+}
+
+export interface PackageTransitEventUpdateManyInput {
+  create?: Maybe<
+    PackageTransitEventCreateInput[] | PackageTransitEventCreateInput
+  >;
+  update?: Maybe<
+    | PackageTransitEventUpdateWithWhereUniqueNestedInput[]
+    | PackageTransitEventUpdateWithWhereUniqueNestedInput
+  >;
+  upsert?: Maybe<
+    | PackageTransitEventUpsertWithWhereUniqueNestedInput[]
+    | PackageTransitEventUpsertWithWhereUniqueNestedInput
+  >;
+  delete?: Maybe<
+    PackageTransitEventWhereUniqueInput[] | PackageTransitEventWhereUniqueInput
+  >;
+  connect?: Maybe<
+    PackageTransitEventWhereUniqueInput[] | PackageTransitEventWhereUniqueInput
+  >;
+  set?: Maybe<
+    PackageTransitEventWhereUniqueInput[] | PackageTransitEventWhereUniqueInput
+  >;
+  disconnect?: Maybe<
+    PackageTransitEventWhereUniqueInput[] | PackageTransitEventWhereUniqueInput
+  >;
+  deleteMany?: Maybe<
+    PackageTransitEventScalarWhereInput[] | PackageTransitEventScalarWhereInput
+  >;
+  updateMany?: Maybe<
+    | PackageTransitEventUpdateManyWithWhereNestedInput[]
+    | PackageTransitEventUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface PackageTransitEventUpdateWithWhereUniqueNestedInput {
+  where: PackageTransitEventWhereUniqueInput;
+  data: PackageTransitEventUpdateDataInput;
+}
+
+export interface PackageTransitEventUpdateDataInput {
+  status?: Maybe<PackageTransitEventStatus>;
+  subStatus?: Maybe<PackageTransitEventSubStatus>;
+}
+
+export interface PackageTransitEventUpsertWithWhereUniqueNestedInput {
+  where: PackageTransitEventWhereUniqueInput;
+  update: PackageTransitEventUpdateDataInput;
+  create: PackageTransitEventCreateInput;
+}
+
+export interface PackageTransitEventScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  status?: Maybe<PackageTransitEventStatus>;
+  status_not?: Maybe<PackageTransitEventStatus>;
+  status_in?: Maybe<PackageTransitEventStatus[] | PackageTransitEventStatus>;
+  status_not_in?: Maybe<
+    PackageTransitEventStatus[] | PackageTransitEventStatus
+  >;
+  subStatus?: Maybe<PackageTransitEventSubStatus>;
+  subStatus_not?: Maybe<PackageTransitEventSubStatus>;
+  subStatus_in?: Maybe<
+    PackageTransitEventSubStatus[] | PackageTransitEventSubStatus
+  >;
+  subStatus_not_in?: Maybe<
+    PackageTransitEventSubStatus[] | PackageTransitEventSubStatus
+  >;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<
+    PackageTransitEventScalarWhereInput[] | PackageTransitEventScalarWhereInput
+  >;
+  OR?: Maybe<
+    PackageTransitEventScalarWhereInput[] | PackageTransitEventScalarWhereInput
+  >;
+  NOT?: Maybe<
+    PackageTransitEventScalarWhereInput[] | PackageTransitEventScalarWhereInput
+  >;
+}
+
+export interface PackageTransitEventUpdateManyWithWhereNestedInput {
+  where: PackageTransitEventScalarWhereInput;
+  data: PackageTransitEventUpdateManyDataInput;
+}
+
+export interface PackageTransitEventUpdateManyDataInput {
+  status?: Maybe<PackageTransitEventStatus>;
+  subStatus?: Maybe<PackageTransitEventSubStatus>;
 }
 
 export interface PackageUpsertNestedInput {
@@ -9127,6 +9949,9 @@ export interface ProductCreateWithoutBrandInput {
   secondaryColor?: Maybe<ColorCreateOneInput>;
   tags?: Maybe<TagCreateManyWithoutProductsInput>;
   functions?: Maybe<ProductFunctionCreateManyInput>;
+  materialCategory?: Maybe<
+    ProductMaterialCategoryCreateOneWithoutProductsInput
+  >;
   innerMaterials?: Maybe<ProductCreateinnerMaterialsInput>;
   outerMaterials?: Maybe<ProductCreateouterMaterialsInput>;
   variants?: Maybe<ProductVariantCreateManyWithoutProductInput>;
@@ -9195,6 +10020,9 @@ export interface ProductUpdateWithoutBrandDataInput {
   secondaryColor?: Maybe<ColorUpdateOneInput>;
   tags?: Maybe<TagUpdateManyWithoutProductsInput>;
   functions?: Maybe<ProductFunctionUpdateManyInput>;
+  materialCategory?: Maybe<
+    ProductMaterialCategoryUpdateOneWithoutProductsInput
+  >;
   innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
   variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
@@ -9276,6 +10104,9 @@ export interface ProductCreateInput {
   secondaryColor?: Maybe<ColorCreateOneInput>;
   tags?: Maybe<TagCreateManyWithoutProductsInput>;
   functions?: Maybe<ProductFunctionCreateManyInput>;
+  materialCategory?: Maybe<
+    ProductMaterialCategoryCreateOneWithoutProductsInput
+  >;
   innerMaterials?: Maybe<ProductCreateinnerMaterialsInput>;
   outerMaterials?: Maybe<ProductCreateouterMaterialsInput>;
   variants?: Maybe<ProductVariantCreateManyWithoutProductInput>;
@@ -9339,6 +10170,9 @@ export interface ProductUpdateDataInput {
   secondaryColor?: Maybe<ColorUpdateOneInput>;
   tags?: Maybe<TagUpdateManyWithoutProductsInput>;
   functions?: Maybe<ProductFunctionUpdateManyInput>;
+  materialCategory?: Maybe<
+    ProductMaterialCategoryUpdateOneWithoutProductsInput
+  >;
   innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
   variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
@@ -9558,6 +10392,7 @@ export interface CustomerCreateInput {
   detail?: Maybe<CustomerDetailCreateOneInput>;
   billingInfo?: Maybe<BillingInfoCreateOneInput>;
   plan?: Maybe<Plan>;
+  membership?: Maybe<CustomerMembershipCreateOneWithoutCustomerInput>;
   bagItems?: Maybe<BagItemCreateManyWithoutCustomerInput>;
   reservations?: Maybe<ReservationCreateManyWithoutCustomerInput>;
 }
@@ -9583,6 +10418,7 @@ export interface CustomerUpdateInput {
   detail?: Maybe<CustomerDetailUpdateOneInput>;
   billingInfo?: Maybe<BillingInfoUpdateOneInput>;
   plan?: Maybe<Plan>;
+  membership?: Maybe<CustomerMembershipUpdateOneWithoutCustomerInput>;
   bagItems?: Maybe<BagItemUpdateManyWithoutCustomerInput>;
   reservations?: Maybe<ReservationUpdateManyWithoutCustomerInput>;
 }
@@ -9721,6 +10557,61 @@ export interface CustomerDetailUpdateManyMutationInput {
   insureShipment?: Maybe<Boolean>;
 }
 
+export interface CustomerMembershipCreateInput {
+  id?: Maybe<ID_Input>;
+  subscriptionId: String;
+  customer: CustomerCreateOneWithoutMembershipInput;
+  pauseRequests?: Maybe<PauseRequestCreateManyWithoutMembershipInput>;
+}
+
+export interface CustomerCreateOneWithoutMembershipInput {
+  create?: Maybe<CustomerCreateWithoutMembershipInput>;
+  connect?: Maybe<CustomerWhereUniqueInput>;
+}
+
+export interface CustomerCreateWithoutMembershipInput {
+  id?: Maybe<ID_Input>;
+  user: UserCreateOneInput;
+  status?: Maybe<CustomerStatus>;
+  detail?: Maybe<CustomerDetailCreateOneInput>;
+  billingInfo?: Maybe<BillingInfoCreateOneInput>;
+  plan?: Maybe<Plan>;
+  bagItems?: Maybe<BagItemCreateManyWithoutCustomerInput>;
+  reservations?: Maybe<ReservationCreateManyWithoutCustomerInput>;
+}
+
+export interface CustomerMembershipUpdateInput {
+  subscriptionId?: Maybe<String>;
+  customer?: Maybe<CustomerUpdateOneRequiredWithoutMembershipInput>;
+  pauseRequests?: Maybe<PauseRequestUpdateManyWithoutMembershipInput>;
+}
+
+export interface CustomerUpdateOneRequiredWithoutMembershipInput {
+  create?: Maybe<CustomerCreateWithoutMembershipInput>;
+  update?: Maybe<CustomerUpdateWithoutMembershipDataInput>;
+  upsert?: Maybe<CustomerUpsertWithoutMembershipInput>;
+  connect?: Maybe<CustomerWhereUniqueInput>;
+}
+
+export interface CustomerUpdateWithoutMembershipDataInput {
+  user?: Maybe<UserUpdateOneRequiredInput>;
+  status?: Maybe<CustomerStatus>;
+  detail?: Maybe<CustomerDetailUpdateOneInput>;
+  billingInfo?: Maybe<BillingInfoUpdateOneInput>;
+  plan?: Maybe<Plan>;
+  bagItems?: Maybe<BagItemUpdateManyWithoutCustomerInput>;
+  reservations?: Maybe<ReservationUpdateManyWithoutCustomerInput>;
+}
+
+export interface CustomerUpsertWithoutMembershipInput {
+  update: CustomerUpdateWithoutMembershipDataInput;
+  create: CustomerCreateWithoutMembershipInput;
+}
+
+export interface CustomerMembershipUpdateManyMutationInput {
+  subscriptionId?: Maybe<String>;
+}
+
 export interface EmailReceiptCreateInput {
   id?: Maybe<ID_Input>;
   emailId: EmailId;
@@ -9822,10 +10713,72 @@ export interface PackageUpdateInput {
   fromAddress?: Maybe<LocationUpdateOneRequiredInput>;
   toAddress?: Maybe<LocationUpdateOneRequiredInput>;
   weight?: Maybe<Float>;
+  events?: Maybe<PackageTransitEventUpdateManyInput>;
 }
 
 export interface PackageUpdateManyMutationInput {
   weight?: Maybe<Float>;
+}
+
+export interface PackageTransitEventUpdateInput {
+  status?: Maybe<PackageTransitEventStatus>;
+  subStatus?: Maybe<PackageTransitEventSubStatus>;
+}
+
+export interface PackageTransitEventUpdateManyMutationInput {
+  status?: Maybe<PackageTransitEventStatus>;
+  subStatus?: Maybe<PackageTransitEventSubStatus>;
+}
+
+export interface PauseRequestCreateInput {
+  id?: Maybe<ID_Input>;
+  pausePending: Boolean;
+  pauseDate?: Maybe<DateTimeInput>;
+  resumeDate?: Maybe<DateTimeInput>;
+  membership: CustomerMembershipCreateOneWithoutPauseRequestsInput;
+}
+
+export interface CustomerMembershipCreateOneWithoutPauseRequestsInput {
+  create?: Maybe<CustomerMembershipCreateWithoutPauseRequestsInput>;
+  connect?: Maybe<CustomerMembershipWhereUniqueInput>;
+}
+
+export interface CustomerMembershipCreateWithoutPauseRequestsInput {
+  id?: Maybe<ID_Input>;
+  subscriptionId: String;
+  customer: CustomerCreateOneWithoutMembershipInput;
+}
+
+export interface PauseRequestUpdateInput {
+  pausePending?: Maybe<Boolean>;
+  pauseDate?: Maybe<DateTimeInput>;
+  resumeDate?: Maybe<DateTimeInput>;
+  membership?: Maybe<
+    CustomerMembershipUpdateOneRequiredWithoutPauseRequestsInput
+  >;
+}
+
+export interface CustomerMembershipUpdateOneRequiredWithoutPauseRequestsInput {
+  create?: Maybe<CustomerMembershipCreateWithoutPauseRequestsInput>;
+  update?: Maybe<CustomerMembershipUpdateWithoutPauseRequestsDataInput>;
+  upsert?: Maybe<CustomerMembershipUpsertWithoutPauseRequestsInput>;
+  connect?: Maybe<CustomerMembershipWhereUniqueInput>;
+}
+
+export interface CustomerMembershipUpdateWithoutPauseRequestsDataInput {
+  subscriptionId?: Maybe<String>;
+  customer?: Maybe<CustomerUpdateOneRequiredWithoutMembershipInput>;
+}
+
+export interface CustomerMembershipUpsertWithoutPauseRequestsInput {
+  update: CustomerMembershipUpdateWithoutPauseRequestsDataInput;
+  create: CustomerMembershipCreateWithoutPauseRequestsInput;
+}
+
+export interface PauseRequestUpdateManyMutationInput {
+  pausePending?: Maybe<Boolean>;
+  pauseDate?: Maybe<DateTimeInput>;
+  resumeDate?: Maybe<DateTimeInput>;
 }
 
 export interface PhysicalProductUpdateInput {
@@ -9876,6 +10829,9 @@ export interface ProductUpdateInput {
   secondaryColor?: Maybe<ColorUpdateOneInput>;
   tags?: Maybe<TagUpdateManyWithoutProductsInput>;
   functions?: Maybe<ProductFunctionUpdateManyInput>;
+  materialCategory?: Maybe<
+    ProductMaterialCategoryUpdateOneWithoutProductsInput
+  >;
   innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
   variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
@@ -9911,6 +10867,124 @@ export interface ProductFunctionUpdateManyMutationInput {
   name?: Maybe<String>;
 }
 
+export interface ProductMaterialCategoryCreateInput {
+  id?: Maybe<ID_Input>;
+  slug: String;
+  lifeExpectancy: Int;
+  category: CategoryCreateOneInput;
+  products?: Maybe<ProductCreateManyWithoutMaterialCategoryInput>;
+}
+
+export interface ProductCreateManyWithoutMaterialCategoryInput {
+  create?: Maybe<
+    | ProductCreateWithoutMaterialCategoryInput[]
+    | ProductCreateWithoutMaterialCategoryInput
+  >;
+  connect?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
+}
+
+export interface ProductCreateWithoutMaterialCategoryInput {
+  id?: Maybe<ID_Input>;
+  slug: String;
+  name: String;
+  brand: BrandCreateOneWithoutProductsInput;
+  category: CategoryCreateOneWithoutProductsInput;
+  type?: Maybe<ProductType>;
+  description?: Maybe<String>;
+  externalURL?: Maybe<String>;
+  images?: Maybe<ImageCreateManyInput>;
+  modelHeight?: Maybe<Int>;
+  retailPrice?: Maybe<Int>;
+  model?: Maybe<ProductModelCreateOneWithoutProductsInput>;
+  modelSize?: Maybe<SizeCreateOneInput>;
+  color: ColorCreateOneInput;
+  secondaryColor?: Maybe<ColorCreateOneInput>;
+  tags?: Maybe<TagCreateManyWithoutProductsInput>;
+  functions?: Maybe<ProductFunctionCreateManyInput>;
+  innerMaterials?: Maybe<ProductCreateinnerMaterialsInput>;
+  outerMaterials?: Maybe<ProductCreateouterMaterialsInput>;
+  variants?: Maybe<ProductVariantCreateManyWithoutProductInput>;
+  status?: Maybe<ProductStatus>;
+  season?: Maybe<String>;
+  architecture?: Maybe<ProductArchitecture>;
+  photographyStatus?: Maybe<PhotographyStatus>;
+  publishedAt?: Maybe<DateTimeInput>;
+}
+
+export interface ProductMaterialCategoryUpdateInput {
+  slug?: Maybe<String>;
+  lifeExpectancy?: Maybe<Int>;
+  category?: Maybe<CategoryUpdateOneRequiredInput>;
+  products?: Maybe<ProductUpdateManyWithoutMaterialCategoryInput>;
+}
+
+export interface ProductUpdateManyWithoutMaterialCategoryInput {
+  create?: Maybe<
+    | ProductCreateWithoutMaterialCategoryInput[]
+    | ProductCreateWithoutMaterialCategoryInput
+  >;
+  delete?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
+  connect?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
+  set?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
+  disconnect?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
+  update?: Maybe<
+    | ProductUpdateWithWhereUniqueWithoutMaterialCategoryInput[]
+    | ProductUpdateWithWhereUniqueWithoutMaterialCategoryInput
+  >;
+  upsert?: Maybe<
+    | ProductUpsertWithWhereUniqueWithoutMaterialCategoryInput[]
+    | ProductUpsertWithWhereUniqueWithoutMaterialCategoryInput
+  >;
+  deleteMany?: Maybe<ProductScalarWhereInput[] | ProductScalarWhereInput>;
+  updateMany?: Maybe<
+    | ProductUpdateManyWithWhereNestedInput[]
+    | ProductUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface ProductUpdateWithWhereUniqueWithoutMaterialCategoryInput {
+  where: ProductWhereUniqueInput;
+  data: ProductUpdateWithoutMaterialCategoryDataInput;
+}
+
+export interface ProductUpdateWithoutMaterialCategoryDataInput {
+  slug?: Maybe<String>;
+  name?: Maybe<String>;
+  brand?: Maybe<BrandUpdateOneRequiredWithoutProductsInput>;
+  category?: Maybe<CategoryUpdateOneRequiredWithoutProductsInput>;
+  type?: Maybe<ProductType>;
+  description?: Maybe<String>;
+  externalURL?: Maybe<String>;
+  images?: Maybe<ImageUpdateManyInput>;
+  modelHeight?: Maybe<Int>;
+  retailPrice?: Maybe<Int>;
+  model?: Maybe<ProductModelUpdateOneWithoutProductsInput>;
+  modelSize?: Maybe<SizeUpdateOneInput>;
+  color?: Maybe<ColorUpdateOneRequiredInput>;
+  secondaryColor?: Maybe<ColorUpdateOneInput>;
+  tags?: Maybe<TagUpdateManyWithoutProductsInput>;
+  functions?: Maybe<ProductFunctionUpdateManyInput>;
+  innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
+  outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
+  variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
+  status?: Maybe<ProductStatus>;
+  season?: Maybe<String>;
+  architecture?: Maybe<ProductArchitecture>;
+  photographyStatus?: Maybe<PhotographyStatus>;
+  publishedAt?: Maybe<DateTimeInput>;
+}
+
+export interface ProductUpsertWithWhereUniqueWithoutMaterialCategoryInput {
+  where: ProductWhereUniqueInput;
+  update: ProductUpdateWithoutMaterialCategoryDataInput;
+  create: ProductCreateWithoutMaterialCategoryInput;
+}
+
+export interface ProductMaterialCategoryUpdateManyMutationInput {
+  slug?: Maybe<String>;
+  lifeExpectancy?: Maybe<Int>;
+}
+
 export interface ProductModelCreateInput {
   id?: Maybe<ID_Input>;
   name: String;
@@ -9942,6 +11016,9 @@ export interface ProductCreateWithoutModelInput {
   secondaryColor?: Maybe<ColorCreateOneInput>;
   tags?: Maybe<TagCreateManyWithoutProductsInput>;
   functions?: Maybe<ProductFunctionCreateManyInput>;
+  materialCategory?: Maybe<
+    ProductMaterialCategoryCreateOneWithoutProductsInput
+  >;
   innerMaterials?: Maybe<ProductCreateinnerMaterialsInput>;
   outerMaterials?: Maybe<ProductCreateouterMaterialsInput>;
   variants?: Maybe<ProductVariantCreateManyWithoutProductInput>;
@@ -10002,6 +11079,9 @@ export interface ProductUpdateWithoutModelDataInput {
   secondaryColor?: Maybe<ColorUpdateOneInput>;
   tags?: Maybe<TagUpdateManyWithoutProductsInput>;
   functions?: Maybe<ProductFunctionUpdateManyInput>;
+  materialCategory?: Maybe<
+    ProductMaterialCategoryUpdateOneWithoutProductsInput
+  >;
   innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
   variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
@@ -10141,7 +11221,6 @@ export interface ReservationCreateWithoutFeedbackInput {
   customer: CustomerCreateOneWithoutReservationsInput;
   sentPackage?: Maybe<PackageCreateOneInput>;
   returnedPackage?: Maybe<PackageCreateOneInput>;
-  location?: Maybe<LocationCreateOneInput>;
   products?: Maybe<PhysicalProductCreateManyInput>;
   reservationNumber: Int;
   shipped: Boolean;
@@ -10150,6 +11229,7 @@ export interface ReservationCreateWithoutFeedbackInput {
   receivedAt?: Maybe<DateTimeInput>;
   reminderSentAt?: Maybe<DateTimeInput>;
   receipt?: Maybe<ReservationReceiptCreateOneWithoutReservationInput>;
+  lastLocation?: Maybe<LocationCreateOneInput>;
 }
 
 export interface CustomerCreateOneWithoutReservationsInput {
@@ -10164,6 +11244,7 @@ export interface CustomerCreateWithoutReservationsInput {
   detail?: Maybe<CustomerDetailCreateOneInput>;
   billingInfo?: Maybe<BillingInfoCreateOneInput>;
   plan?: Maybe<Plan>;
+  membership?: Maybe<CustomerMembershipCreateOneWithoutCustomerInput>;
   bagItems?: Maybe<BagItemCreateManyWithoutCustomerInput>;
 }
 
@@ -10205,7 +11286,6 @@ export interface ReservationUpdateWithoutFeedbackDataInput {
   customer?: Maybe<CustomerUpdateOneRequiredWithoutReservationsInput>;
   sentPackage?: Maybe<PackageUpdateOneInput>;
   returnedPackage?: Maybe<PackageUpdateOneInput>;
-  location?: Maybe<LocationUpdateOneInput>;
   products?: Maybe<PhysicalProductUpdateManyInput>;
   reservationNumber?: Maybe<Int>;
   shipped?: Maybe<Boolean>;
@@ -10214,6 +11294,7 @@ export interface ReservationUpdateWithoutFeedbackDataInput {
   receivedAt?: Maybe<DateTimeInput>;
   reminderSentAt?: Maybe<DateTimeInput>;
   receipt?: Maybe<ReservationReceiptUpdateOneWithoutReservationInput>;
+  lastLocation?: Maybe<LocationUpdateOneInput>;
 }
 
 export interface CustomerUpdateOneRequiredWithoutReservationsInput {
@@ -10229,6 +11310,7 @@ export interface CustomerUpdateWithoutReservationsDataInput {
   detail?: Maybe<CustomerDetailUpdateOneInput>;
   billingInfo?: Maybe<BillingInfoUpdateOneInput>;
   plan?: Maybe<Plan>;
+  membership?: Maybe<CustomerMembershipUpdateOneWithoutCustomerInput>;
   bagItems?: Maybe<BagItemUpdateManyWithoutCustomerInput>;
 }
 
@@ -10562,6 +11644,7 @@ export interface CustomerUpdateDataInput {
   detail?: Maybe<CustomerDetailUpdateOneInput>;
   billingInfo?: Maybe<BillingInfoUpdateOneInput>;
   plan?: Maybe<Plan>;
+  membership?: Maybe<CustomerMembershipUpdateOneWithoutCustomerInput>;
   bagItems?: Maybe<BagItemUpdateManyWithoutCustomerInput>;
   reservations?: Maybe<ReservationUpdateManyWithoutCustomerInput>;
 }
@@ -10582,7 +11665,6 @@ export interface ReservationCreateInput {
   sentPackage?: Maybe<PackageCreateOneInput>;
   returnedPackage?: Maybe<PackageCreateOneInput>;
   feedback?: Maybe<ReservationFeedbackCreateOneWithoutReservationInput>;
-  location?: Maybe<LocationCreateOneInput>;
   products?: Maybe<PhysicalProductCreateManyInput>;
   reservationNumber: Int;
   shipped: Boolean;
@@ -10591,6 +11673,7 @@ export interface ReservationCreateInput {
   receivedAt?: Maybe<DateTimeInput>;
   reminderSentAt?: Maybe<DateTimeInput>;
   receipt?: Maybe<ReservationReceiptCreateOneWithoutReservationInput>;
+  lastLocation?: Maybe<LocationCreateOneInput>;
 }
 
 export interface ReservationUpdateInput {
@@ -10599,7 +11682,6 @@ export interface ReservationUpdateInput {
   sentPackage?: Maybe<PackageUpdateOneInput>;
   returnedPackage?: Maybe<PackageUpdateOneInput>;
   feedback?: Maybe<ReservationFeedbackUpdateOneWithoutReservationInput>;
-  location?: Maybe<LocationUpdateOneInput>;
   products?: Maybe<PhysicalProductUpdateManyInput>;
   reservationNumber?: Maybe<Int>;
   shipped?: Maybe<Boolean>;
@@ -10608,6 +11690,7 @@ export interface ReservationUpdateInput {
   receivedAt?: Maybe<DateTimeInput>;
   reminderSentAt?: Maybe<DateTimeInput>;
   receipt?: Maybe<ReservationReceiptUpdateOneWithoutReservationInput>;
+  lastLocation?: Maybe<LocationUpdateOneInput>;
 }
 
 export interface ReservationUpdateManyMutationInput {
@@ -10666,7 +11749,6 @@ export interface ReservationCreateWithoutReceiptInput {
   sentPackage?: Maybe<PackageCreateOneInput>;
   returnedPackage?: Maybe<PackageCreateOneInput>;
   feedback?: Maybe<ReservationFeedbackCreateOneWithoutReservationInput>;
-  location?: Maybe<LocationCreateOneInput>;
   products?: Maybe<PhysicalProductCreateManyInput>;
   reservationNumber: Int;
   shipped: Boolean;
@@ -10674,6 +11756,7 @@ export interface ReservationCreateWithoutReceiptInput {
   shippedAt?: Maybe<DateTimeInput>;
   receivedAt?: Maybe<DateTimeInput>;
   reminderSentAt?: Maybe<DateTimeInput>;
+  lastLocation?: Maybe<LocationCreateOneInput>;
 }
 
 export interface ReservationReceiptUpdateInput {
@@ -10694,7 +11777,6 @@ export interface ReservationUpdateWithoutReceiptDataInput {
   sentPackage?: Maybe<PackageUpdateOneInput>;
   returnedPackage?: Maybe<PackageUpdateOneInput>;
   feedback?: Maybe<ReservationFeedbackUpdateOneWithoutReservationInput>;
-  location?: Maybe<LocationUpdateOneInput>;
   products?: Maybe<PhysicalProductUpdateManyInput>;
   reservationNumber?: Maybe<Int>;
   shipped?: Maybe<Boolean>;
@@ -10702,6 +11784,7 @@ export interface ReservationUpdateWithoutReceiptDataInput {
   shippedAt?: Maybe<DateTimeInput>;
   receivedAt?: Maybe<DateTimeInput>;
   reminderSentAt?: Maybe<DateTimeInput>;
+  lastLocation?: Maybe<LocationUpdateOneInput>;
 }
 
 export interface ReservationUpsertWithoutReceiptInput {
@@ -10765,6 +11848,9 @@ export interface ProductCreateWithoutTagsInput {
   color: ColorCreateOneInput;
   secondaryColor?: Maybe<ColorCreateOneInput>;
   functions?: Maybe<ProductFunctionCreateManyInput>;
+  materialCategory?: Maybe<
+    ProductMaterialCategoryCreateOneWithoutProductsInput
+  >;
   innerMaterials?: Maybe<ProductCreateinnerMaterialsInput>;
   outerMaterials?: Maybe<ProductCreateouterMaterialsInput>;
   variants?: Maybe<ProductVariantCreateManyWithoutProductInput>;
@@ -10825,6 +11911,9 @@ export interface ProductUpdateWithoutTagsDataInput {
   color?: Maybe<ColorUpdateOneRequiredInput>;
   secondaryColor?: Maybe<ColorUpdateOneInput>;
   functions?: Maybe<ProductFunctionUpdateManyInput>;
+  materialCategory?: Maybe<
+    ProductMaterialCategoryUpdateOneWithoutProductsInput
+  >;
   innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
   variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
@@ -11351,6 +12440,26 @@ export interface CustomerDetailSubscriptionWhereInput {
   >;
 }
 
+export interface CustomerMembershipSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<CustomerMembershipWhereInput>;
+  AND?: Maybe<
+    | CustomerMembershipSubscriptionWhereInput[]
+    | CustomerMembershipSubscriptionWhereInput
+  >;
+  OR?: Maybe<
+    | CustomerMembershipSubscriptionWhereInput[]
+    | CustomerMembershipSubscriptionWhereInput
+  >;
+  NOT?: Maybe<
+    | CustomerMembershipSubscriptionWhereInput[]
+    | CustomerMembershipSubscriptionWhereInput
+  >;
+}
+
 export interface EmailReceiptSubscriptionWhereInput {
   mutation_in?: Maybe<MutationType[] | MutationType>;
   updatedFields_contains?: Maybe<String>;
@@ -11436,6 +12545,43 @@ export interface PackageSubscriptionWhereInput {
   NOT?: Maybe<PackageSubscriptionWhereInput[] | PackageSubscriptionWhereInput>;
 }
 
+export interface PackageTransitEventSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<PackageTransitEventWhereInput>;
+  AND?: Maybe<
+    | PackageTransitEventSubscriptionWhereInput[]
+    | PackageTransitEventSubscriptionWhereInput
+  >;
+  OR?: Maybe<
+    | PackageTransitEventSubscriptionWhereInput[]
+    | PackageTransitEventSubscriptionWhereInput
+  >;
+  NOT?: Maybe<
+    | PackageTransitEventSubscriptionWhereInput[]
+    | PackageTransitEventSubscriptionWhereInput
+  >;
+}
+
+export interface PauseRequestSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<PauseRequestWhereInput>;
+  AND?: Maybe<
+    PauseRequestSubscriptionWhereInput[] | PauseRequestSubscriptionWhereInput
+  >;
+  OR?: Maybe<
+    PauseRequestSubscriptionWhereInput[] | PauseRequestSubscriptionWhereInput
+  >;
+  NOT?: Maybe<
+    PauseRequestSubscriptionWhereInput[] | PauseRequestSubscriptionWhereInput
+  >;
+}
+
 export interface PhysicalProductSubscriptionWhereInput {
   mutation_in?: Maybe<MutationType[] | MutationType>;
   updatedFields_contains?: Maybe<String>;
@@ -11484,6 +12630,26 @@ export interface ProductFunctionSubscriptionWhereInput {
   NOT?: Maybe<
     | ProductFunctionSubscriptionWhereInput[]
     | ProductFunctionSubscriptionWhereInput
+  >;
+}
+
+export interface ProductMaterialCategorySubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<ProductMaterialCategoryWhereInput>;
+  AND?: Maybe<
+    | ProductMaterialCategorySubscriptionWhereInput[]
+    | ProductMaterialCategorySubscriptionWhereInput
+  >;
+  OR?: Maybe<
+    | ProductMaterialCategorySubscriptionWhereInput[]
+    | ProductMaterialCategorySubscriptionWhereInput
+  >;
+  NOT?: Maybe<
+    | ProductMaterialCategorySubscriptionWhereInput[]
+    | ProductMaterialCategorySubscriptionWhereInput
   >;
 }
 
@@ -11860,6 +13026,7 @@ export interface CustomerPromise extends Promise<Customer>, Fragmentable {
   detail: <T = CustomerDetailPromise>() => T;
   billingInfo: <T = BillingInfoPromise>() => T;
   plan: () => Promise<Plan>;
+  membership: <T = CustomerMembershipPromise>() => T;
   bagItems: <T = FragmentableArray<BagItem>>(args?: {
     where?: BagItemWhereInput;
     orderBy?: BagItemOrderByInput;
@@ -11889,6 +13056,7 @@ export interface CustomerSubscription
   detail: <T = CustomerDetailSubscription>() => T;
   billingInfo: <T = BillingInfoSubscription>() => T;
   plan: () => Promise<AsyncIterator<Plan>>;
+  membership: <T = CustomerMembershipSubscription>() => T;
   bagItems: <T = Promise<AsyncIterator<BagItemSubscription>>>(args?: {
     where?: BagItemWhereInput;
     orderBy?: BagItemOrderByInput;
@@ -11918,6 +13086,7 @@ export interface CustomerNullablePromise
   detail: <T = CustomerDetailPromise>() => T;
   billingInfo: <T = BillingInfoPromise>() => T;
   plan: () => Promise<Plan>;
+  membership: <T = CustomerMembershipPromise>() => T;
   bagItems: <T = FragmentableArray<BagItem>>(args?: {
     where?: BagItemWhereInput;
     orderBy?: BagItemOrderByInput;
@@ -12674,6 +13843,7 @@ export interface ProductPromise extends Promise<Product>, Fragmentable {
     first?: Int;
     last?: Int;
   }) => T;
+  materialCategory: <T = ProductMaterialCategoryPromise>() => T;
   innerMaterials: () => Promise<String[]>;
   outerMaterials: () => Promise<String[]>;
   variants: <T = FragmentableArray<ProductVariant>>(args?: {
@@ -12738,6 +13908,7 @@ export interface ProductSubscription
     first?: Int;
     last?: Int;
   }) => T;
+  materialCategory: <T = ProductMaterialCategorySubscription>() => T;
   innerMaterials: () => Promise<AsyncIterator<String[]>>;
   outerMaterials: () => Promise<AsyncIterator<String[]>>;
   variants: <T = Promise<AsyncIterator<ProductVariantSubscription>>>(args?: {
@@ -12802,6 +13973,7 @@ export interface ProductNullablePromise
     first?: Int;
     last?: Int;
   }) => T;
+  materialCategory: <T = ProductMaterialCategoryPromise>() => T;
   innerMaterials: () => Promise<String[]>;
   outerMaterials: () => Promise<String[]>;
   variants: <T = FragmentableArray<ProductVariant>>(args?: {
@@ -13203,6 +14375,66 @@ export interface ProductFunctionNullablePromise
   name: () => Promise<String>;
 }
 
+export interface ProductMaterialCategory {
+  id: ID_Output;
+  slug: String;
+  lifeExpectancy: Int;
+}
+
+export interface ProductMaterialCategoryPromise
+  extends Promise<ProductMaterialCategory>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  slug: () => Promise<String>;
+  lifeExpectancy: () => Promise<Int>;
+  category: <T = CategoryPromise>() => T;
+  products: <T = FragmentableArray<Product>>(args?: {
+    where?: ProductWhereInput;
+    orderBy?: ProductOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+}
+
+export interface ProductMaterialCategorySubscription
+  extends Promise<AsyncIterator<ProductMaterialCategory>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  slug: () => Promise<AsyncIterator<String>>;
+  lifeExpectancy: () => Promise<AsyncIterator<Int>>;
+  category: <T = CategorySubscription>() => T;
+  products: <T = Promise<AsyncIterator<ProductSubscription>>>(args?: {
+    where?: ProductWhereInput;
+    orderBy?: ProductOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+}
+
+export interface ProductMaterialCategoryNullablePromise
+  extends Promise<ProductMaterialCategory | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  slug: () => Promise<String>;
+  lifeExpectancy: () => Promise<Int>;
+  category: <T = CategoryPromise>() => T;
+  products: <T = FragmentableArray<Product>>(args?: {
+    where?: ProductWhereInput;
+    orderBy?: ProductOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+}
+
 export interface WarehouseLocation {
   id: ID_Output;
   type: WarehouseLocationType;
@@ -13437,6 +14669,107 @@ export interface BillingInfoNullablePromise
   postal_code: () => Promise<String>;
 }
 
+export interface CustomerMembership {
+  id: ID_Output;
+  subscriptionId: String;
+}
+
+export interface CustomerMembershipPromise
+  extends Promise<CustomerMembership>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  subscriptionId: () => Promise<String>;
+  customer: <T = CustomerPromise>() => T;
+  pauseRequests: <T = FragmentableArray<PauseRequest>>(args?: {
+    where?: PauseRequestWhereInput;
+    orderBy?: PauseRequestOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+}
+
+export interface CustomerMembershipSubscription
+  extends Promise<AsyncIterator<CustomerMembership>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  subscriptionId: () => Promise<AsyncIterator<String>>;
+  customer: <T = CustomerSubscription>() => T;
+  pauseRequests: <T = Promise<AsyncIterator<PauseRequestSubscription>>>(args?: {
+    where?: PauseRequestWhereInput;
+    orderBy?: PauseRequestOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+}
+
+export interface CustomerMembershipNullablePromise
+  extends Promise<CustomerMembership | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  subscriptionId: () => Promise<String>;
+  customer: <T = CustomerPromise>() => T;
+  pauseRequests: <T = FragmentableArray<PauseRequest>>(args?: {
+    where?: PauseRequestWhereInput;
+    orderBy?: PauseRequestOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+}
+
+export interface PauseRequest {
+  id: ID_Output;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+  pausePending: Boolean;
+  pauseDate?: DateTimeOutput;
+  resumeDate?: DateTimeOutput;
+}
+
+export interface PauseRequestPromise
+  extends Promise<PauseRequest>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+  pausePending: () => Promise<Boolean>;
+  pauseDate: () => Promise<DateTimeOutput>;
+  resumeDate: () => Promise<DateTimeOutput>;
+  membership: <T = CustomerMembershipPromise>() => T;
+}
+
+export interface PauseRequestSubscription
+  extends Promise<AsyncIterator<PauseRequest>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  pausePending: () => Promise<AsyncIterator<Boolean>>;
+  pauseDate: () => Promise<AsyncIterator<DateTimeOutput>>;
+  resumeDate: () => Promise<AsyncIterator<DateTimeOutput>>;
+  membership: <T = CustomerMembershipSubscription>() => T;
+}
+
+export interface PauseRequestNullablePromise
+  extends Promise<PauseRequest | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+  pausePending: () => Promise<Boolean>;
+  pauseDate: () => Promise<DateTimeOutput>;
+  resumeDate: () => Promise<DateTimeOutput>;
+  membership: <T = CustomerMembershipPromise>() => T;
+}
+
 export interface Reservation {
   id: ID_Output;
   reservationNumber: Int;
@@ -13456,7 +14789,6 @@ export interface ReservationPromise extends Promise<Reservation>, Fragmentable {
   sentPackage: <T = PackagePromise>() => T;
   returnedPackage: <T = PackagePromise>() => T;
   feedback: <T = ReservationFeedbackPromise>() => T;
-  location: <T = LocationPromise>() => T;
   products: <T = FragmentableArray<PhysicalProduct>>(args?: {
     where?: PhysicalProductWhereInput;
     orderBy?: PhysicalProductOrderByInput;
@@ -13473,6 +14805,7 @@ export interface ReservationPromise extends Promise<Reservation>, Fragmentable {
   receivedAt: () => Promise<DateTimeOutput>;
   reminderSentAt: () => Promise<DateTimeOutput>;
   receipt: <T = ReservationReceiptPromise>() => T;
+  lastLocation: <T = LocationPromise>() => T;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -13486,7 +14819,6 @@ export interface ReservationSubscription
   sentPackage: <T = PackageSubscription>() => T;
   returnedPackage: <T = PackageSubscription>() => T;
   feedback: <T = ReservationFeedbackSubscription>() => T;
-  location: <T = LocationSubscription>() => T;
   products: <T = Promise<AsyncIterator<PhysicalProductSubscription>>>(args?: {
     where?: PhysicalProductWhereInput;
     orderBy?: PhysicalProductOrderByInput;
@@ -13503,6 +14835,7 @@ export interface ReservationSubscription
   receivedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   reminderSentAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   receipt: <T = ReservationReceiptSubscription>() => T;
+  lastLocation: <T = LocationSubscription>() => T;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -13516,7 +14849,6 @@ export interface ReservationNullablePromise
   sentPackage: <T = PackagePromise>() => T;
   returnedPackage: <T = PackagePromise>() => T;
   feedback: <T = ReservationFeedbackPromise>() => T;
-  location: <T = LocationPromise>() => T;
   products: <T = FragmentableArray<PhysicalProduct>>(args?: {
     where?: PhysicalProductWhereInput;
     orderBy?: PhysicalProductOrderByInput;
@@ -13533,6 +14865,7 @@ export interface ReservationNullablePromise
   receivedAt: () => Promise<DateTimeOutput>;
   reminderSentAt: () => Promise<DateTimeOutput>;
   receipt: <T = ReservationReceiptPromise>() => T;
+  lastLocation: <T = LocationPromise>() => T;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -13559,6 +14892,15 @@ export interface PackagePromise extends Promise<Package>, Fragmentable {
   fromAddress: <T = LocationPromise>() => T;
   toAddress: <T = LocationPromise>() => T;
   weight: () => Promise<Float>;
+  events: <T = FragmentableArray<PackageTransitEvent>>(args?: {
+    where?: PackageTransitEventWhereInput;
+    orderBy?: PackageTransitEventOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -13580,6 +14922,15 @@ export interface PackageSubscription
   fromAddress: <T = LocationSubscription>() => T;
   toAddress: <T = LocationSubscription>() => T;
   weight: () => Promise<AsyncIterator<Float>>;
+  events: <T = Promise<AsyncIterator<PackageTransitEventSubscription>>>(args?: {
+    where?: PackageTransitEventWhereInput;
+    orderBy?: PackageTransitEventOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -13601,6 +14952,15 @@ export interface PackageNullablePromise
   fromAddress: <T = LocationPromise>() => T;
   toAddress: <T = LocationPromise>() => T;
   weight: () => Promise<Float>;
+  events: <T = FragmentableArray<PackageTransitEvent>>(args?: {
+    where?: PackageTransitEventWhereInput;
+    orderBy?: PackageTransitEventOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -13639,6 +14999,44 @@ export interface LabelNullablePromise
   image: () => Promise<String>;
   trackingNumber: () => Promise<String>;
   trackingURL: () => Promise<String>;
+}
+
+export interface PackageTransitEvent {
+  id: ID_Output;
+  status: PackageTransitEventStatus;
+  subStatus: PackageTransitEventSubStatus;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface PackageTransitEventPromise
+  extends Promise<PackageTransitEvent>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  status: () => Promise<PackageTransitEventStatus>;
+  subStatus: () => Promise<PackageTransitEventSubStatus>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface PackageTransitEventSubscription
+  extends Promise<AsyncIterator<PackageTransitEvent>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  status: () => Promise<AsyncIterator<PackageTransitEventStatus>>;
+  subStatus: () => Promise<AsyncIterator<PackageTransitEventSubStatus>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface PackageTransitEventNullablePromise
+  extends Promise<PackageTransitEvent | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  status: () => Promise<PackageTransitEventStatus>;
+  subStatus: () => Promise<PackageTransitEventSubStatus>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface ReservationFeedback {
@@ -14624,6 +16022,64 @@ export interface AggregateCustomerDetailSubscription
   count: () => Promise<AsyncIterator<Int>>;
 }
 
+export interface CustomerMembershipConnection {
+  pageInfo: PageInfo;
+  edges: CustomerMembershipEdge[];
+}
+
+export interface CustomerMembershipConnectionPromise
+  extends Promise<CustomerMembershipConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<CustomerMembershipEdge>>() => T;
+  aggregate: <T = AggregateCustomerMembershipPromise>() => T;
+}
+
+export interface CustomerMembershipConnectionSubscription
+  extends Promise<AsyncIterator<CustomerMembershipConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <
+    T = Promise<AsyncIterator<CustomerMembershipEdgeSubscription>>
+  >() => T;
+  aggregate: <T = AggregateCustomerMembershipSubscription>() => T;
+}
+
+export interface CustomerMembershipEdge {
+  node: CustomerMembership;
+  cursor: String;
+}
+
+export interface CustomerMembershipEdgePromise
+  extends Promise<CustomerMembershipEdge>,
+    Fragmentable {
+  node: <T = CustomerMembershipPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface CustomerMembershipEdgeSubscription
+  extends Promise<AsyncIterator<CustomerMembershipEdge>>,
+    Fragmentable {
+  node: <T = CustomerMembershipSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateCustomerMembership {
+  count: Int;
+}
+
+export interface AggregateCustomerMembershipPromise
+  extends Promise<AggregateCustomerMembership>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateCustomerMembershipSubscription
+  extends Promise<AsyncIterator<AggregateCustomerMembership>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
 export interface EmailReceipt {
   id: ID_Output;
   emailId: EmailId;
@@ -15050,6 +16506,120 @@ export interface AggregatePackageSubscription
   count: () => Promise<AsyncIterator<Int>>;
 }
 
+export interface PackageTransitEventConnection {
+  pageInfo: PageInfo;
+  edges: PackageTransitEventEdge[];
+}
+
+export interface PackageTransitEventConnectionPromise
+  extends Promise<PackageTransitEventConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<PackageTransitEventEdge>>() => T;
+  aggregate: <T = AggregatePackageTransitEventPromise>() => T;
+}
+
+export interface PackageTransitEventConnectionSubscription
+  extends Promise<AsyncIterator<PackageTransitEventConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <
+    T = Promise<AsyncIterator<PackageTransitEventEdgeSubscription>>
+  >() => T;
+  aggregate: <T = AggregatePackageTransitEventSubscription>() => T;
+}
+
+export interface PackageTransitEventEdge {
+  node: PackageTransitEvent;
+  cursor: String;
+}
+
+export interface PackageTransitEventEdgePromise
+  extends Promise<PackageTransitEventEdge>,
+    Fragmentable {
+  node: <T = PackageTransitEventPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface PackageTransitEventEdgeSubscription
+  extends Promise<AsyncIterator<PackageTransitEventEdge>>,
+    Fragmentable {
+  node: <T = PackageTransitEventSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregatePackageTransitEvent {
+  count: Int;
+}
+
+export interface AggregatePackageTransitEventPromise
+  extends Promise<AggregatePackageTransitEvent>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregatePackageTransitEventSubscription
+  extends Promise<AsyncIterator<AggregatePackageTransitEvent>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface PauseRequestConnection {
+  pageInfo: PageInfo;
+  edges: PauseRequestEdge[];
+}
+
+export interface PauseRequestConnectionPromise
+  extends Promise<PauseRequestConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<PauseRequestEdge>>() => T;
+  aggregate: <T = AggregatePauseRequestPromise>() => T;
+}
+
+export interface PauseRequestConnectionSubscription
+  extends Promise<AsyncIterator<PauseRequestConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<PauseRequestEdgeSubscription>>>() => T;
+  aggregate: <T = AggregatePauseRequestSubscription>() => T;
+}
+
+export interface PauseRequestEdge {
+  node: PauseRequest;
+  cursor: String;
+}
+
+export interface PauseRequestEdgePromise
+  extends Promise<PauseRequestEdge>,
+    Fragmentable {
+  node: <T = PauseRequestPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface PauseRequestEdgeSubscription
+  extends Promise<AsyncIterator<PauseRequestEdge>>,
+    Fragmentable {
+  node: <T = PauseRequestSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregatePauseRequest {
+  count: Int;
+}
+
+export interface AggregatePauseRequestPromise
+  extends Promise<AggregatePauseRequest>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregatePauseRequestSubscription
+  extends Promise<AsyncIterator<AggregatePauseRequest>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
 export interface PhysicalProductConnection {
   pageInfo: PageInfo;
   edges: PhysicalProductEdge[];
@@ -15212,6 +16782,64 @@ export interface AggregateProductFunctionPromise
 
 export interface AggregateProductFunctionSubscription
   extends Promise<AsyncIterator<AggregateProductFunction>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface ProductMaterialCategoryConnection {
+  pageInfo: PageInfo;
+  edges: ProductMaterialCategoryEdge[];
+}
+
+export interface ProductMaterialCategoryConnectionPromise
+  extends Promise<ProductMaterialCategoryConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<ProductMaterialCategoryEdge>>() => T;
+  aggregate: <T = AggregateProductMaterialCategoryPromise>() => T;
+}
+
+export interface ProductMaterialCategoryConnectionSubscription
+  extends Promise<AsyncIterator<ProductMaterialCategoryConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <
+    T = Promise<AsyncIterator<ProductMaterialCategoryEdgeSubscription>>
+  >() => T;
+  aggregate: <T = AggregateProductMaterialCategorySubscription>() => T;
+}
+
+export interface ProductMaterialCategoryEdge {
+  node: ProductMaterialCategory;
+  cursor: String;
+}
+
+export interface ProductMaterialCategoryEdgePromise
+  extends Promise<ProductMaterialCategoryEdge>,
+    Fragmentable {
+  node: <T = ProductMaterialCategoryPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface ProductMaterialCategoryEdgeSubscription
+  extends Promise<AsyncIterator<ProductMaterialCategoryEdge>>,
+    Fragmentable {
+  node: <T = ProductMaterialCategorySubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateProductMaterialCategory {
+  count: Int;
+}
+
+export interface AggregateProductMaterialCategoryPromise
+  extends Promise<AggregateProductMaterialCategory>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateProductMaterialCategorySubscription
+  extends Promise<AsyncIterator<AggregateProductMaterialCategory>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
@@ -17098,6 +18726,50 @@ export interface CustomerDetailPreviousValuesSubscription
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
+export interface CustomerMembershipSubscriptionPayload {
+  mutation: MutationType;
+  node: CustomerMembership;
+  updatedFields: String[];
+  previousValues: CustomerMembershipPreviousValues;
+}
+
+export interface CustomerMembershipSubscriptionPayloadPromise
+  extends Promise<CustomerMembershipSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = CustomerMembershipPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = CustomerMembershipPreviousValuesPromise>() => T;
+}
+
+export interface CustomerMembershipSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<CustomerMembershipSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = CustomerMembershipSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = CustomerMembershipPreviousValuesSubscription>() => T;
+}
+
+export interface CustomerMembershipPreviousValues {
+  id: ID_Output;
+  subscriptionId: String;
+}
+
+export interface CustomerMembershipPreviousValuesPromise
+  extends Promise<CustomerMembershipPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  subscriptionId: () => Promise<String>;
+}
+
+export interface CustomerMembershipPreviousValuesSubscription
+  extends Promise<AsyncIterator<CustomerMembershipPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  subscriptionId: () => Promise<AsyncIterator<String>>;
+}
+
 export interface EmailReceiptSubscriptionPayload {
   mutation: MutationType;
   node: EmailReceipt;
@@ -17443,6 +19115,115 @@ export interface PackagePreviousValuesSubscription
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
+export interface PackageTransitEventSubscriptionPayload {
+  mutation: MutationType;
+  node: PackageTransitEvent;
+  updatedFields: String[];
+  previousValues: PackageTransitEventPreviousValues;
+}
+
+export interface PackageTransitEventSubscriptionPayloadPromise
+  extends Promise<PackageTransitEventSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = PackageTransitEventPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = PackageTransitEventPreviousValuesPromise>() => T;
+}
+
+export interface PackageTransitEventSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<PackageTransitEventSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = PackageTransitEventSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = PackageTransitEventPreviousValuesSubscription>() => T;
+}
+
+export interface PackageTransitEventPreviousValues {
+  id: ID_Output;
+  status: PackageTransitEventStatus;
+  subStatus: PackageTransitEventSubStatus;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface PackageTransitEventPreviousValuesPromise
+  extends Promise<PackageTransitEventPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  status: () => Promise<PackageTransitEventStatus>;
+  subStatus: () => Promise<PackageTransitEventSubStatus>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface PackageTransitEventPreviousValuesSubscription
+  extends Promise<AsyncIterator<PackageTransitEventPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  status: () => Promise<AsyncIterator<PackageTransitEventStatus>>;
+  subStatus: () => Promise<AsyncIterator<PackageTransitEventSubStatus>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface PauseRequestSubscriptionPayload {
+  mutation: MutationType;
+  node: PauseRequest;
+  updatedFields: String[];
+  previousValues: PauseRequestPreviousValues;
+}
+
+export interface PauseRequestSubscriptionPayloadPromise
+  extends Promise<PauseRequestSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = PauseRequestPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = PauseRequestPreviousValuesPromise>() => T;
+}
+
+export interface PauseRequestSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<PauseRequestSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = PauseRequestSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = PauseRequestPreviousValuesSubscription>() => T;
+}
+
+export interface PauseRequestPreviousValues {
+  id: ID_Output;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+  pausePending: Boolean;
+  pauseDate?: DateTimeOutput;
+  resumeDate?: DateTimeOutput;
+}
+
+export interface PauseRequestPreviousValuesPromise
+  extends Promise<PauseRequestPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+  pausePending: () => Promise<Boolean>;
+  pauseDate: () => Promise<DateTimeOutput>;
+  resumeDate: () => Promise<DateTimeOutput>;
+}
+
+export interface PauseRequestPreviousValuesSubscription
+  extends Promise<AsyncIterator<PauseRequestPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  pausePending: () => Promise<AsyncIterator<Boolean>>;
+  pauseDate: () => Promise<AsyncIterator<DateTimeOutput>>;
+  resumeDate: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
 export interface PhysicalProductSubscriptionPayload {
   mutation: MutationType;
   node: PhysicalProduct;
@@ -17648,6 +19429,55 @@ export interface ProductFunctionPreviousValuesSubscription
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   name: () => Promise<AsyncIterator<String>>;
+}
+
+export interface ProductMaterialCategorySubscriptionPayload {
+  mutation: MutationType;
+  node: ProductMaterialCategory;
+  updatedFields: String[];
+  previousValues: ProductMaterialCategoryPreviousValues;
+}
+
+export interface ProductMaterialCategorySubscriptionPayloadPromise
+  extends Promise<ProductMaterialCategorySubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = ProductMaterialCategoryPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = ProductMaterialCategoryPreviousValuesPromise>() => T;
+}
+
+export interface ProductMaterialCategorySubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<ProductMaterialCategorySubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = ProductMaterialCategorySubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <
+    T = ProductMaterialCategoryPreviousValuesSubscription
+  >() => T;
+}
+
+export interface ProductMaterialCategoryPreviousValues {
+  id: ID_Output;
+  slug: String;
+  lifeExpectancy: Int;
+}
+
+export interface ProductMaterialCategoryPreviousValuesPromise
+  extends Promise<ProductMaterialCategoryPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  slug: () => Promise<String>;
+  lifeExpectancy: () => Promise<Int>;
+}
+
+export interface ProductMaterialCategoryPreviousValuesSubscription
+  extends Promise<AsyncIterator<ProductMaterialCategoryPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  slug: () => Promise<AsyncIterator<String>>;
+  lifeExpectancy: () => Promise<AsyncIterator<Int>>;
 }
 
 export interface ProductModelSubscriptionPayload {
@@ -18807,6 +20637,14 @@ export const models: Model[] = [
     embedded: false
   },
   {
+    name: "PackageTransitEventStatus",
+    embedded: false
+  },
+  {
+    name: "PackageTransitEventSubStatus",
+    embedded: false
+  },
+  {
     name: "Brand",
     embedded: false
   },
@@ -18844,6 +20682,10 @@ export const models: Model[] = [
   },
   {
     name: "Product",
+    embedded: false
+  },
+  {
+    name: "ProductMaterialCategory",
     embedded: false
   },
   {
@@ -18895,7 +20737,19 @@ export const models: Model[] = [
     embedded: false
   },
   {
+    name: "CustomerMembership",
+    embedded: false
+  },
+  {
+    name: "PauseRequest",
+    embedded: false
+  },
+  {
     name: "RecentlyViewedProduct",
+    embedded: false
+  },
+  {
+    name: "ReservationPhase",
     embedded: false
   },
   {
@@ -18924,6 +20778,10 @@ export const models: Model[] = [
   },
   {
     name: "Package",
+    embedded: false
+  },
+  {
+    name: "PackageTransitEvent",
     embedded: false
   },
   {
