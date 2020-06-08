@@ -120,6 +120,7 @@ export class ReservationScheduledJobs {
   }
 
   private async syncPhysicalProductStatus() {
+    console.log("SYNCING PHYSICAL PRODUCT STATUS")
     // Get relevant data for airtable, setup containers to hold return data
     const updatedPhysicalProducts = []
     const updatedProductVariants = []
@@ -165,11 +166,13 @@ export class ReservationScheduledJobs {
             newStatusOnAirtable
           )
 
+          console.log("FINISHED UPDATING PROD VAR COUNT AND STATUS")
           // Store updated ids for reporting
           updatedPhysicalProducts.push(prismaPhysicalProduct.seasonsUID)
           updatedProductVariants.push(prismaProductVariant.sku)
         }
       } catch (error) {
+        console.log("ERROR SYNCING PHYS PROD", error)
         errors.push(error)
         this.errorService.captureError(error)
       }
@@ -189,6 +192,7 @@ export class ReservationScheduledJobs {
   }
 
   private async syncReservationStatus() {
+    console.log("SYNCING RESV STATUS")
     const updatedReservations = []
     const errors = []
     const allAirtableReservations = await this.airtableService.getAllReservations()
@@ -254,16 +258,21 @@ export class ReservationScheduledJobs {
             returnedPhysicalProducts
           )
 
-          // Create reservationFeedback datamodels for the returned product variants
-          await this.createReservationFeedbacksForVariants(
-            await this.prisma.client.productVariants({
-              where: {
-                id_in: returnedPhysicalProducts.map(p => p.productVariant.id),
-              },
-            }),
-            prismaUser,
-            prismaReservation as Reservation
-          )
+          console.log("ABOUT TO CREATE RESERVATION FEEDBACKS")
+          try {
+            // Create reservationFeedback datamodels for the returned product variants
+            await this.createReservationFeedbacksForVariants(
+              await this.prisma.client.productVariants({
+                where: {
+                  id_in: returnedPhysicalProducts.map(p => p.productVariant.id),
+                },
+              }),
+              prismaUser,
+              prismaReservation as Reservation
+            )
+          } catch (e) {
+            console.log("ERROR CREATING FEEDBACK", e)
+          }
 
           await this.emailService.sendYouCanNowReserveAgainEmail(prismaUser)
           await this.pushNotifs.pushNotifyUser({
@@ -292,6 +301,7 @@ export class ReservationScheduledJobs {
           })
         }
       } catch (err) {
+        console.log("ERROR SYNC RESV STATUS", err)
         errors.push(err)
         this.errorService.captureError(err)
       }
@@ -379,21 +389,29 @@ export class ReservationScheduledJobs {
     newStatusOnAirtable: AirtableInventoryStatus,
     format: "prisma" | "airtable"
   ): productVariantCounts {
+    console.log("CURR STATUS ON PRISMA:", currentStatusOnPrisma)
+    console.log("NEW STATUS ON AIRTABLE", newStatusOnAirtable)
     const prismaCounts = {} as prismaProductVariantCounts
     const airtableCounts = {} as AirtableProductVariantCounts
 
     // Decrement the count for whichever status we are moving away from
     switch (currentStatusOnPrisma) {
       case "NonReservable":
-        prismaCounts.nonReservable = prismaProductVariant.nonReservable - 1
+        prismaCounts.nonReservable = Math.max(
+          prismaProductVariant.nonReservable - 1,
+          0
+        )
         airtableCounts["Non-Reservable Count"] = prismaCounts.nonReservable
         break
       case "Reserved":
-        prismaCounts.reserved = prismaProductVariant.reserved - 1
+        prismaCounts.reserved = Math.max(prismaProductVariant.reserved - 1, 0)
         airtableCounts["Reserved Count"] = prismaCounts.reserved
         break
       case "Reservable":
-        prismaCounts.reservable = prismaProductVariant.reservable - 1
+        prismaCounts.reservable = Math.max(
+          prismaProductVariant.reservable - 1,
+          0
+        )
         airtableCounts["Reservable Count"] = prismaCounts.reservable
         break
     }
@@ -468,6 +486,17 @@ export class ReservationScheduledJobs {
     currentStatusOnPrisma,
     newStatusOnAirtable
   ) {
+    // console.log("UPDATING PROD VAR COUNT AND STATUS", airtablePhysicalProduct, prismaPhysicalProduct, prismaProductVariant, currentStatusOnPrisma, newStatusOnAirtable)
+    console.log("UPDATING PROD VAR COUNT AND STATUS")
+    console.log(
+      "UPDATE DATA:",
+      this.getUpdatedCounts(
+        prismaProductVariant,
+        currentStatusOnPrisma,
+        newStatusOnAirtable,
+        "prisma"
+      )
+    )
     // Update the counts on the corresponding product variant in prisma
     await this.prisma.client.updateProductVariant({
       data: this.getUpdatedCounts(
@@ -481,6 +510,10 @@ export class ReservationScheduledJobs {
       },
     })
 
+    console.log(
+      "UPDATING PHYS PROD",
+      this.airtableService.airtableToPrismaInventoryStatus(newStatusOnAirtable)
+    )
     // Update the status of the corresponding physical product in prisma
     await this.prisma.client.updatePhysicalProduct({
       data: {
@@ -491,6 +524,15 @@ export class ReservationScheduledJobs {
       where: { id: prismaPhysicalProduct.id },
     })
 
+    console.log(
+      "UPDATING AIRTABLE PROD VAR COUNTS:",
+      this.getUpdatedCounts(
+        prismaProductVariant,
+        currentStatusOnPrisma,
+        newStatusOnAirtable,
+        "airtable"
+      )
+    )
     // Update the counts on the corresponding product variant in airtable
     await this.airtableService.updateProductVariantCounts(
       head(airtablePhysicalProduct.model.productVariant),
