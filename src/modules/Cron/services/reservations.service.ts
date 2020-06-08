@@ -397,22 +397,16 @@ export class ReservationScheduledJobs {
     // Decrement the count for whichever status we are moving away from
     switch (currentStatusOnPrisma) {
       case "NonReservable":
-        prismaCounts.nonReservable = Math.max(
-          prismaProductVariant.nonReservable - 1,
-          0
-        )
-        airtableCounts["Non-Reservable Count"] = prismaCounts.nonReservable
+        ;(prismaCounts.nonReservable = prismaProductVariant.nonReservable - 1),
+          (airtableCounts["Non-Reservable Count"] = prismaCounts.nonReservable)
         break
       case "Reserved":
-        prismaCounts.reserved = Math.max(prismaProductVariant.reserved - 1, 0)
+        prismaCounts.reserved = prismaProductVariant.reserved - 1
         airtableCounts["Reserved Count"] = prismaCounts.reserved
         break
       case "Reservable":
-        prismaCounts.reservable = Math.max(
-          prismaProductVariant.reservable - 1,
-          0
-        )
-        airtableCounts["Reservable Count"] = prismaCounts.reservable
+        ;(prismaCounts.reservable = prismaProductVariant.reservable - 1),
+          (airtableCounts["Reservable Count"] = prismaCounts.reservable)
         break
     }
 
