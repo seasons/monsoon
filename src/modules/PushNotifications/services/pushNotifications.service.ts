@@ -52,7 +52,10 @@ export class PushNotificationsService {
     debug = false,
   }: PushNotifyUserInput) {
     let targetEmail = process.env.PUSH_NOTIFICATIONS_DEFAULT_EMAIL
-    if (!debug && process.env.NODE_ENV === "production") {
+    const isAdmin = (await this.prisma.client.user({ email }).roles()).includes(
+      "Admin"
+    )
+    if (isAdmin || (!debug && process.env.NODE_ENV === "production")) {
       targetEmail = email
     }
 
