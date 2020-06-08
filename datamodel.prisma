@@ -83,6 +83,9 @@ enum ReservationStatus {
   Cancelled
   Blocked
   Unknown
+
+  # To be deleted, needed for migration
+  Received
 }
 
 enum BagItemStatus {
@@ -326,6 +329,7 @@ type Product {
   secondaryColor: Color @relation(name: "ProductSecondaryColor")
   tags: [Tag!]!
   functions: [ProductFunction!]!
+  materialCategory: ProductMaterialCategory
   innerMaterials: [String!]! @scalarList(strategy: RELATION)
   outerMaterials: [String!]! @scalarList(strategy: RELATION)
   variants: [ProductVariant!]! @relation(link: TABLE, onDelete: CASCADE)
@@ -336,6 +340,14 @@ type Product {
   publishedAt: DateTime
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
+}
+
+type ProductMaterialCategory {
+  id: ID! @id
+  slug: String!
+  lifeExpectancy: Int!
+  category: Category!
+  products: [Product!]! @relation(link: TABLE)
 }
 
 type ProductModel {
