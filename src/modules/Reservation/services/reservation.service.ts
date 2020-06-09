@@ -612,13 +612,13 @@ export class ReservationService {
         },
       },
       reservationNumber: uniqueReservationNumber,
-      location: {
+      lastLocation: {
         connect: {
           slug: process.env.SEASONS_CLEANER_LOCATION_SLUG,
         },
       },
       shipped: false,
-      status: "InQueue",
+      status: "Queued",
     }
   }
 
