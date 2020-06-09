@@ -75,15 +75,17 @@ enum ProductStatus {
 }
 
 enum ReservationStatus {
-  New
-  InQueue
-  OnHold
+  Queued
   Packed
   Shipped
-  InTransit
-  Received
-  Cancelled
+  Delivered
   Completed
+  Cancelled
+  Blocked
+  Unknown
+
+  # To be deleted, needed for migration
+  Received
 }
 
 enum BagItemStatus {
@@ -165,6 +167,45 @@ enum EmailId {
   FreeToReserve
   WelcomeToSeasons
   ReturnReminder
+}
+
+enum PackageTransitEventStatus {
+  PreTransit
+  Transit
+  Delivered
+  Returned
+  Failure
+  Unknown
+}
+
+enum PackageTransitEventSubStatus {
+  InformationReceived
+  AddressIssue
+  ContactCarrier
+  Delayed
+  DeliveryAttempted
+  DeliveryRescheduled
+  DeliveryScheduled
+  LocationInaccessible
+  NoticeLeft
+  OutForDelivery
+  PackageAccepted
+  PackageArrived
+  PackageDamaged
+  PackageDeparted
+  PackageForwarded
+  PackageHeld
+  PackageProcessed
+  PackageProcessing
+  PickupAvailable
+  RescheduleDelivery
+  Delivered
+  ReturnToSender
+  PackageUnclaimed
+  PackageUndeliverable
+  PackageDisposed
+  PackageLost
+  Other
 }
 
 type Brand {
@@ -288,6 +329,7 @@ type Product {
   secondaryColor: Color @relation(name: "ProductSecondaryColor")
   tags: [Tag!]!
   functions: [ProductFunction!]!
+  materialCategory: ProductMaterialCategory
   innerMaterials: [String!]! @scalarList(strategy: RELATION)
   outerMaterials: [String!]! @scalarList(strategy: RELATION)
   variants: [ProductVariant!]! @relation(link: TABLE, onDelete: CASCADE)
@@ -298,6 +340,14 @@ type Product {
   publishedAt: DateTime
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
+}
+
+type ProductMaterialCategory {
+  id: ID! @id
+  slug: String!
+  lifeExpectancy: Int!
+  category: Category!
+  products: [Product!]! @relation(link: TABLE)
 }
 
 type ProductModel {
@@ -494,6 +544,11 @@ type RecentlyViewedProduct {
   updatedAt: DateTime! @updatedAt
 }
 
+enum ReservationPhase {
+  BusinessToCustomer
+  CustomerToBusiness
+}
+
 type Reservation {
   id: ID! @id
   user: User!
@@ -502,7 +557,8 @@ type Reservation {
     @relation(name: "SeasonsToCustomerPackage", onDelete: CASCADE)
   returnedPackage: Package
     @relation(name: "CustomerToSeasonsPackage", onDelete: CASCADE)
-  location: Location
+  feedback: ReservationFeedback
+    @relation(link: TABLE, name: "ReservationFeedbackReservation")
   products: [PhysicalProduct!]!
   reservationNumber: Int! @unique
   shipped: Boolean!
@@ -510,14 +566,49 @@ type Reservation {
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
-  receipt: ReservationReceipt @relation(link: INLINE, onDelete: CASCADE)
+  receipt: ReservationReceipt
+    @relation(
+      link: TABLE
+      name: "ReservationReceiptToReservation"
+      onDelete: CASCADE
+    )
+  lastLocation: Location
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
 
+type ReservationFeedback {
+  id: ID! @id
+  comment: String
+  feedbacks: [ProductVariantFeedback!]!
+  rating: Rating
+  user: User!
+  reservation: Reservation! @relation(name: "ReservationFeedbackReservation")
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+  respondedAt: DateTime
+}
+
+type ProductVariantFeedback {
+  id: ID! @id
+  isCompleted: Boolean!
+  questions: [ProductVariantFeedbackQuestion!]! @relation(link: TABLE)
+  reservationFeedback: ReservationFeedback!
+  variant: ProductVariant!
+}
+
+type ProductVariantFeedbackQuestion {
+  id: ID! @id
+  options: [String!] @scalarList(strategy: RELATION)
+  question: String!
+  responses: [String!] @scalarList(strategy: RELATION)
+  type: QuestionType!
+  variantFeedback: ProductVariantFeedback!
+}
+
 type ReservationReceipt {
   id: ID! @id
-  reservation: Reservation!
+  reservation: Reservation! @relation(name: "ReservationReceiptToReservation")
   items: [ReservationReceiptItem!] @relation(link: TABLE, onDelete: CASCADE)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
@@ -537,6 +628,15 @@ type Package {
   fromAddress: Location! @relation(name: "SenderAddress")
   toAddress: Location! @relation(name: "RecipientAddress")
   weight: Float
+  events: [PackageTransitEvent!]
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type PackageTransitEvent {
+  id: ID! @id
+  status: PackageTransitEventStatus!
+  subStatus: PackageTransitEventSubStatus!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
@@ -613,34 +713,4 @@ type Size {
   top: TopSize
   bottom: BottomSize
   display: String!
-}
-
-type ReservationFeedback {
-  id: ID! @id
-  comment: String
-  feedbacks: [ProductVariantFeedback!]!
-    @relation(link: TABLE, onDelete: CASCADE)
-  rating: Rating
-  user: User!
-  reservation: Reservation!
-  createdAt: DateTime! @createdAt
-  updatedAt: DateTime! @updatedAt
-  respondedAt: DateTime
-}
-
-type ProductVariantFeedback {
-  id: ID! @id
-  isCompleted: Boolean!
-  questions: [ProductVariantFeedbackQuestion!]! @relation(link: TABLE)
-  reservationFeedback: ReservationFeedback!
-  variant: ProductVariant!
-}
-
-type ProductVariantFeedbackQuestion {
-  id: ID! @id
-  options: [String!] @scalarList(strategy: RELATION)
-  question: String!
-  responses: [String!] @scalarList(strategy: RELATION)
-  type: QuestionType!
-  variantFeedback: ProductVariantFeedback!
 }

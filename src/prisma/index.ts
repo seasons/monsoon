@@ -37,10 +37,16 @@ export interface Exists {
   label: (where?: LabelWhereInput) => Promise<boolean>;
   location: (where?: LocationWhereInput) => Promise<boolean>;
   package: (where?: PackageWhereInput) => Promise<boolean>;
+  packageTransitEvent: (
+    where?: PackageTransitEventWhereInput
+  ) => Promise<boolean>;
   pauseRequest: (where?: PauseRequestWhereInput) => Promise<boolean>;
   physicalProduct: (where?: PhysicalProductWhereInput) => Promise<boolean>;
   product: (where?: ProductWhereInput) => Promise<boolean>;
   productFunction: (where?: ProductFunctionWhereInput) => Promise<boolean>;
+  productMaterialCategory: (
+    where?: ProductMaterialCategoryWhereInput
+  ) => Promise<boolean>;
   productModel: (where?: ProductModelWhereInput) => Promise<boolean>;
   productRequest: (where?: ProductRequestWhereInput) => Promise<boolean>;
   productVariant: (where?: ProductVariantWhereInput) => Promise<boolean>;
@@ -433,6 +439,27 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => PackageConnectionPromise;
+  packageTransitEvent: (
+    where: PackageTransitEventWhereUniqueInput
+  ) => PackageTransitEventNullablePromise;
+  packageTransitEvents: (args?: {
+    where?: PackageTransitEventWhereInput;
+    orderBy?: PackageTransitEventOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<PackageTransitEvent>;
+  packageTransitEventsConnection: (args?: {
+    where?: PackageTransitEventWhereInput;
+    orderBy?: PackageTransitEventOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => PackageTransitEventConnectionPromise;
   pauseRequest: (
     where: PauseRequestWhereUniqueInput
   ) => PauseRequestNullablePromise;
@@ -515,6 +542,27 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => ProductFunctionConnectionPromise;
+  productMaterialCategory: (
+    where: ProductMaterialCategoryWhereUniqueInput
+  ) => ProductMaterialCategoryNullablePromise;
+  productMaterialCategories: (args?: {
+    where?: ProductMaterialCategoryWhereInput;
+    orderBy?: ProductMaterialCategoryOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<ProductMaterialCategory>;
+  productMaterialCategoriesConnection: (args?: {
+    where?: ProductMaterialCategoryWhereInput;
+    orderBy?: ProductMaterialCategoryOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => ProductMaterialCategoryConnectionPromise;
   productModel: (
     where: ProductModelWhereUniqueInput
   ) => ProductModelNullablePromise;
@@ -1193,6 +1241,28 @@ export interface Prisma {
   }) => PackagePromise;
   deletePackage: (where: PackageWhereUniqueInput) => PackagePromise;
   deleteManyPackages: (where?: PackageWhereInput) => BatchPayloadPromise;
+  createPackageTransitEvent: (
+    data: PackageTransitEventCreateInput
+  ) => PackageTransitEventPromise;
+  updatePackageTransitEvent: (args: {
+    data: PackageTransitEventUpdateInput;
+    where: PackageTransitEventWhereUniqueInput;
+  }) => PackageTransitEventPromise;
+  updateManyPackageTransitEvents: (args: {
+    data: PackageTransitEventUpdateManyMutationInput;
+    where?: PackageTransitEventWhereInput;
+  }) => BatchPayloadPromise;
+  upsertPackageTransitEvent: (args: {
+    where: PackageTransitEventWhereUniqueInput;
+    create: PackageTransitEventCreateInput;
+    update: PackageTransitEventUpdateInput;
+  }) => PackageTransitEventPromise;
+  deletePackageTransitEvent: (
+    where: PackageTransitEventWhereUniqueInput
+  ) => PackageTransitEventPromise;
+  deleteManyPackageTransitEvents: (
+    where?: PackageTransitEventWhereInput
+  ) => BatchPayloadPromise;
   createPauseRequest: (data: PauseRequestCreateInput) => PauseRequestPromise;
   updatePauseRequest: (args: {
     data: PauseRequestUpdateInput;
@@ -1272,6 +1342,28 @@ export interface Prisma {
   ) => ProductFunctionPromise;
   deleteManyProductFunctions: (
     where?: ProductFunctionWhereInput
+  ) => BatchPayloadPromise;
+  createProductMaterialCategory: (
+    data: ProductMaterialCategoryCreateInput
+  ) => ProductMaterialCategoryPromise;
+  updateProductMaterialCategory: (args: {
+    data: ProductMaterialCategoryUpdateInput;
+    where: ProductMaterialCategoryWhereUniqueInput;
+  }) => ProductMaterialCategoryPromise;
+  updateManyProductMaterialCategories: (args: {
+    data: ProductMaterialCategoryUpdateManyMutationInput;
+    where?: ProductMaterialCategoryWhereInput;
+  }) => BatchPayloadPromise;
+  upsertProductMaterialCategory: (args: {
+    where: ProductMaterialCategoryWhereUniqueInput;
+    create: ProductMaterialCategoryCreateInput;
+    update: ProductMaterialCategoryUpdateInput;
+  }) => ProductMaterialCategoryPromise;
+  deleteProductMaterialCategory: (
+    where: ProductMaterialCategoryWhereUniqueInput
+  ) => ProductMaterialCategoryPromise;
+  deleteManyProductMaterialCategories: (
+    where?: ProductMaterialCategoryWhereInput
   ) => BatchPayloadPromise;
   createProductModel: (data: ProductModelCreateInput) => ProductModelPromise;
   updateProductModel: (args: {
@@ -1695,6 +1787,9 @@ export interface Subscription {
   package: (
     where?: PackageSubscriptionWhereInput
   ) => PackageSubscriptionPayloadSubscription;
+  packageTransitEvent: (
+    where?: PackageTransitEventSubscriptionWhereInput
+  ) => PackageTransitEventSubscriptionPayloadSubscription;
   pauseRequest: (
     where?: PauseRequestSubscriptionWhereInput
   ) => PauseRequestSubscriptionPayloadSubscription;
@@ -1707,6 +1802,9 @@ export interface Subscription {
   productFunction: (
     where?: ProductFunctionSubscriptionWhereInput
   ) => ProductFunctionSubscriptionPayloadSubscription;
+  productMaterialCategory: (
+    where?: ProductMaterialCategorySubscriptionWhereInput
+  ) => ProductMaterialCategorySubscriptionPayloadSubscription;
   productModel: (
     where?: ProductModelSubscriptionWhereInput
   ) => ProductModelSubscriptionPayloadSubscription;
@@ -2022,16 +2120,57 @@ export type Plan = "AllAccess" | "Essential";
 
 export type BagItemStatus = "Added" | "Reserved" | "Received";
 
+export type PackageTransitEventStatus =
+  | "PreTransit"
+  | "Transit"
+  | "Delivered"
+  | "Returned"
+  | "Failure"
+  | "Unknown";
+
+export type PackageTransitEventSubStatus =
+  | "InformationReceived"
+  | "AddressIssue"
+  | "ContactCarrier"
+  | "Delayed"
+  | "DeliveryAttempted"
+  | "DeliveryRescheduled"
+  | "DeliveryScheduled"
+  | "LocationInaccessible"
+  | "NoticeLeft"
+  | "OutForDelivery"
+  | "PackageAccepted"
+  | "PackageArrived"
+  | "PackageDamaged"
+  | "PackageDeparted"
+  | "PackageForwarded"
+  | "PackageHeld"
+  | "PackageProcessed"
+  | "PackageProcessing"
+  | "PickupAvailable"
+  | "RescheduleDelivery"
+  | "Delivered"
+  | "ReturnToSender"
+  | "PackageUnclaimed"
+  | "PackageUndeliverable"
+  | "PackageDisposed"
+  | "PackageLost"
+  | "Other";
+
+export type QuestionType = "MultipleChoice" | "FreeResponse";
+
+export type Rating = "Disliked" | "Ok" | "Loved";
+
 export type ReservationStatus =
-  | "New"
-  | "InQueue"
-  | "OnHold"
+  | "Queued"
   | "Packed"
   | "Shipped"
-  | "InTransit"
-  | "Received"
+  | "Delivered"
+  | "Completed"
   | "Cancelled"
-  | "Completed";
+  | "Blocked"
+  | "Unknown"
+  | "Received";
 
 export type PauseRequestOrderByInput =
   | "id_ASC"
@@ -2076,6 +2215,32 @@ export type ReservationOrderByInput =
   | "createdAt_DESC"
   | "updatedAt_ASC"
   | "updatedAt_DESC";
+
+export type PackageTransitEventOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "status_ASC"
+  | "status_DESC"
+  | "subStatus_ASC"
+  | "subStatus_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
+
+export type ProductVariantFeedbackOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "isCompleted_ASC"
+  | "isCompleted_DESC";
+
+export type ProductVariantFeedbackQuestionOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "question_ASC"
+  | "question_DESC"
+  | "type_ASC"
+  | "type_DESC";
 
 export type ReservationReceiptItemOrderByInput =
   | "id_ASC"
@@ -2331,6 +2496,14 @@ export type PackageOrderByInput =
   | "updatedAt_ASC"
   | "updatedAt_DESC";
 
+export type ProductMaterialCategoryOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "slug_ASC"
+  | "slug_DESC"
+  | "lifeExpectancy_ASC"
+  | "lifeExpectancy_DESC";
+
 export type ProductModelOrderByInput =
   | "id_ASC"
   | "id_DESC"
@@ -2360,24 +2533,6 @@ export type ProductRequestOrderByInput =
   | "sku_DESC"
   | "url_ASC"
   | "url_DESC";
-
-export type QuestionType = "MultipleChoice" | "FreeResponse";
-
-export type Rating = "Disliked" | "Ok" | "Loved";
-
-export type ProductVariantFeedbackQuestionOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "question_ASC"
-  | "question_DESC"
-  | "type_ASC"
-  | "type_DESC";
-
-export type ProductVariantFeedbackOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "isCompleted_ASC"
-  | "isCompleted_DESC";
 
 export type ProductVariantWantOrderByInput =
   | "id_ASC"
@@ -3404,6 +3559,7 @@ export interface ProductWhereInput {
   functions_every?: Maybe<ProductFunctionWhereInput>;
   functions_some?: Maybe<ProductFunctionWhereInput>;
   functions_none?: Maybe<ProductFunctionWhereInput>;
+  materialCategory?: Maybe<ProductMaterialCategoryWhereInput>;
   variants_every?: Maybe<ProductVariantWhereInput>;
   variants_some?: Maybe<ProductVariantWhereInput>;
   variants_none?: Maybe<ProductVariantWhereInput>;
@@ -3907,6 +4063,58 @@ export interface ProductFunctionWhereInput {
   AND?: Maybe<ProductFunctionWhereInput[] | ProductFunctionWhereInput>;
   OR?: Maybe<ProductFunctionWhereInput[] | ProductFunctionWhereInput>;
   NOT?: Maybe<ProductFunctionWhereInput[] | ProductFunctionWhereInput>;
+}
+
+export interface ProductMaterialCategoryWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  slug?: Maybe<String>;
+  slug_not?: Maybe<String>;
+  slug_in?: Maybe<String[] | String>;
+  slug_not_in?: Maybe<String[] | String>;
+  slug_lt?: Maybe<String>;
+  slug_lte?: Maybe<String>;
+  slug_gt?: Maybe<String>;
+  slug_gte?: Maybe<String>;
+  slug_contains?: Maybe<String>;
+  slug_not_contains?: Maybe<String>;
+  slug_starts_with?: Maybe<String>;
+  slug_not_starts_with?: Maybe<String>;
+  slug_ends_with?: Maybe<String>;
+  slug_not_ends_with?: Maybe<String>;
+  lifeExpectancy?: Maybe<Int>;
+  lifeExpectancy_not?: Maybe<Int>;
+  lifeExpectancy_in?: Maybe<Int[] | Int>;
+  lifeExpectancy_not_in?: Maybe<Int[] | Int>;
+  lifeExpectancy_lt?: Maybe<Int>;
+  lifeExpectancy_lte?: Maybe<Int>;
+  lifeExpectancy_gt?: Maybe<Int>;
+  lifeExpectancy_gte?: Maybe<Int>;
+  category?: Maybe<CategoryWhereInput>;
+  products_every?: Maybe<ProductWhereInput>;
+  products_some?: Maybe<ProductWhereInput>;
+  products_none?: Maybe<ProductWhereInput>;
+  AND?: Maybe<
+    ProductMaterialCategoryWhereInput[] | ProductMaterialCategoryWhereInput
+  >;
+  OR?: Maybe<
+    ProductMaterialCategoryWhereInput[] | ProductMaterialCategoryWhereInput
+  >;
+  NOT?: Maybe<
+    ProductMaterialCategoryWhereInput[] | ProductMaterialCategoryWhereInput
+  >;
 }
 
 export interface WarehouseLocationWhereInput {
@@ -4667,7 +4875,7 @@ export interface ReservationWhereInput {
   customer?: Maybe<CustomerWhereInput>;
   sentPackage?: Maybe<PackageWhereInput>;
   returnedPackage?: Maybe<PackageWhereInput>;
-  location?: Maybe<LocationWhereInput>;
+  feedback?: Maybe<ReservationFeedbackWhereInput>;
   products_every?: Maybe<PhysicalProductWhereInput>;
   products_some?: Maybe<PhysicalProductWhereInput>;
   products_none?: Maybe<PhysicalProductWhereInput>;
@@ -4710,6 +4918,7 @@ export interface ReservationWhereInput {
   reminderSentAt_gt?: Maybe<DateTimeInput>;
   reminderSentAt_gte?: Maybe<DateTimeInput>;
   receipt?: Maybe<ReservationReceiptWhereInput>;
+  lastLocation?: Maybe<LocationWhereInput>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -4760,6 +4969,9 @@ export interface PackageWhereInput {
   weight_lte?: Maybe<Float>;
   weight_gt?: Maybe<Float>;
   weight_gte?: Maybe<Float>;
+  events_every?: Maybe<PackageTransitEventWhereInput>;
+  events_some?: Maybe<PackageTransitEventWhereInput>;
+  events_none?: Maybe<PackageTransitEventWhereInput>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -4855,6 +5067,204 @@ export interface LabelWhereInput {
   AND?: Maybe<LabelWhereInput[] | LabelWhereInput>;
   OR?: Maybe<LabelWhereInput[] | LabelWhereInput>;
   NOT?: Maybe<LabelWhereInput[] | LabelWhereInput>;
+}
+
+export interface PackageTransitEventWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  status?: Maybe<PackageTransitEventStatus>;
+  status_not?: Maybe<PackageTransitEventStatus>;
+  status_in?: Maybe<PackageTransitEventStatus[] | PackageTransitEventStatus>;
+  status_not_in?: Maybe<
+    PackageTransitEventStatus[] | PackageTransitEventStatus
+  >;
+  subStatus?: Maybe<PackageTransitEventSubStatus>;
+  subStatus_not?: Maybe<PackageTransitEventSubStatus>;
+  subStatus_in?: Maybe<
+    PackageTransitEventSubStatus[] | PackageTransitEventSubStatus
+  >;
+  subStatus_not_in?: Maybe<
+    PackageTransitEventSubStatus[] | PackageTransitEventSubStatus
+  >;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<PackageTransitEventWhereInput[] | PackageTransitEventWhereInput>;
+  OR?: Maybe<PackageTransitEventWhereInput[] | PackageTransitEventWhereInput>;
+  NOT?: Maybe<PackageTransitEventWhereInput[] | PackageTransitEventWhereInput>;
+}
+
+export interface ReservationFeedbackWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  comment?: Maybe<String>;
+  comment_not?: Maybe<String>;
+  comment_in?: Maybe<String[] | String>;
+  comment_not_in?: Maybe<String[] | String>;
+  comment_lt?: Maybe<String>;
+  comment_lte?: Maybe<String>;
+  comment_gt?: Maybe<String>;
+  comment_gte?: Maybe<String>;
+  comment_contains?: Maybe<String>;
+  comment_not_contains?: Maybe<String>;
+  comment_starts_with?: Maybe<String>;
+  comment_not_starts_with?: Maybe<String>;
+  comment_ends_with?: Maybe<String>;
+  comment_not_ends_with?: Maybe<String>;
+  feedbacks_every?: Maybe<ProductVariantFeedbackWhereInput>;
+  feedbacks_some?: Maybe<ProductVariantFeedbackWhereInput>;
+  feedbacks_none?: Maybe<ProductVariantFeedbackWhereInput>;
+  rating?: Maybe<Rating>;
+  rating_not?: Maybe<Rating>;
+  rating_in?: Maybe<Rating[] | Rating>;
+  rating_not_in?: Maybe<Rating[] | Rating>;
+  user?: Maybe<UserWhereInput>;
+  reservation?: Maybe<ReservationWhereInput>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  respondedAt?: Maybe<DateTimeInput>;
+  respondedAt_not?: Maybe<DateTimeInput>;
+  respondedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  respondedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  respondedAt_lt?: Maybe<DateTimeInput>;
+  respondedAt_lte?: Maybe<DateTimeInput>;
+  respondedAt_gt?: Maybe<DateTimeInput>;
+  respondedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<ReservationFeedbackWhereInput[] | ReservationFeedbackWhereInput>;
+  OR?: Maybe<ReservationFeedbackWhereInput[] | ReservationFeedbackWhereInput>;
+  NOT?: Maybe<ReservationFeedbackWhereInput[] | ReservationFeedbackWhereInput>;
+}
+
+export interface ProductVariantFeedbackWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  isCompleted?: Maybe<Boolean>;
+  isCompleted_not?: Maybe<Boolean>;
+  questions_every?: Maybe<ProductVariantFeedbackQuestionWhereInput>;
+  questions_some?: Maybe<ProductVariantFeedbackQuestionWhereInput>;
+  questions_none?: Maybe<ProductVariantFeedbackQuestionWhereInput>;
+  reservationFeedback?: Maybe<ReservationFeedbackWhereInput>;
+  variant?: Maybe<ProductVariantWhereInput>;
+  AND?: Maybe<
+    ProductVariantFeedbackWhereInput[] | ProductVariantFeedbackWhereInput
+  >;
+  OR?: Maybe<
+    ProductVariantFeedbackWhereInput[] | ProductVariantFeedbackWhereInput
+  >;
+  NOT?: Maybe<
+    ProductVariantFeedbackWhereInput[] | ProductVariantFeedbackWhereInput
+  >;
+}
+
+export interface ProductVariantFeedbackQuestionWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  question?: Maybe<String>;
+  question_not?: Maybe<String>;
+  question_in?: Maybe<String[] | String>;
+  question_not_in?: Maybe<String[] | String>;
+  question_lt?: Maybe<String>;
+  question_lte?: Maybe<String>;
+  question_gt?: Maybe<String>;
+  question_gte?: Maybe<String>;
+  question_contains?: Maybe<String>;
+  question_not_contains?: Maybe<String>;
+  question_starts_with?: Maybe<String>;
+  question_not_starts_with?: Maybe<String>;
+  question_ends_with?: Maybe<String>;
+  question_not_ends_with?: Maybe<String>;
+  type?: Maybe<QuestionType>;
+  type_not?: Maybe<QuestionType>;
+  type_in?: Maybe<QuestionType[] | QuestionType>;
+  type_not_in?: Maybe<QuestionType[] | QuestionType>;
+  variantFeedback?: Maybe<ProductVariantFeedbackWhereInput>;
+  AND?: Maybe<
+    | ProductVariantFeedbackQuestionWhereInput[]
+    | ProductVariantFeedbackQuestionWhereInput
+  >;
+  OR?: Maybe<
+    | ProductVariantFeedbackQuestionWhereInput[]
+    | ProductVariantFeedbackQuestionWhereInput
+  >;
+  NOT?: Maybe<
+    | ProductVariantFeedbackQuestionWhereInput[]
+    | ProductVariantFeedbackQuestionWhereInput
+  >;
 }
 
 export interface ReservationReceiptWhereInput {
@@ -5261,6 +5671,10 @@ export type PackageWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
 
+export type PackageTransitEventWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
 export type PauseRequestWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
@@ -5278,6 +5692,10 @@ export type ProductWhereUniqueInput = AtLeastOne<{
 export type ProductFunctionWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
   name?: Maybe<String>;
+}>;
+
+export type ProductMaterialCategoryWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
 }>;
 
 export type ProductModelWhereUniqueInput = AtLeastOne<{
@@ -5438,154 +5856,6 @@ export type ProductVariantWhereUniqueInput = AtLeastOne<{
 export type ProductVariantFeedbackWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
-
-export interface ProductVariantFeedbackQuestionWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  question?: Maybe<String>;
-  question_not?: Maybe<String>;
-  question_in?: Maybe<String[] | String>;
-  question_not_in?: Maybe<String[] | String>;
-  question_lt?: Maybe<String>;
-  question_lte?: Maybe<String>;
-  question_gt?: Maybe<String>;
-  question_gte?: Maybe<String>;
-  question_contains?: Maybe<String>;
-  question_not_contains?: Maybe<String>;
-  question_starts_with?: Maybe<String>;
-  question_not_starts_with?: Maybe<String>;
-  question_ends_with?: Maybe<String>;
-  question_not_ends_with?: Maybe<String>;
-  type?: Maybe<QuestionType>;
-  type_not?: Maybe<QuestionType>;
-  type_in?: Maybe<QuestionType[] | QuestionType>;
-  type_not_in?: Maybe<QuestionType[] | QuestionType>;
-  variantFeedback?: Maybe<ProductVariantFeedbackWhereInput>;
-  AND?: Maybe<
-    | ProductVariantFeedbackQuestionWhereInput[]
-    | ProductVariantFeedbackQuestionWhereInput
-  >;
-  OR?: Maybe<
-    | ProductVariantFeedbackQuestionWhereInput[]
-    | ProductVariantFeedbackQuestionWhereInput
-  >;
-  NOT?: Maybe<
-    | ProductVariantFeedbackQuestionWhereInput[]
-    | ProductVariantFeedbackQuestionWhereInput
-  >;
-}
-
-export interface ProductVariantFeedbackWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  isCompleted?: Maybe<Boolean>;
-  isCompleted_not?: Maybe<Boolean>;
-  questions_every?: Maybe<ProductVariantFeedbackQuestionWhereInput>;
-  questions_some?: Maybe<ProductVariantFeedbackQuestionWhereInput>;
-  questions_none?: Maybe<ProductVariantFeedbackQuestionWhereInput>;
-  reservationFeedback?: Maybe<ReservationFeedbackWhereInput>;
-  variant?: Maybe<ProductVariantWhereInput>;
-  AND?: Maybe<
-    ProductVariantFeedbackWhereInput[] | ProductVariantFeedbackWhereInput
-  >;
-  OR?: Maybe<
-    ProductVariantFeedbackWhereInput[] | ProductVariantFeedbackWhereInput
-  >;
-  NOT?: Maybe<
-    ProductVariantFeedbackWhereInput[] | ProductVariantFeedbackWhereInput
-  >;
-}
-
-export interface ReservationFeedbackWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  comment?: Maybe<String>;
-  comment_not?: Maybe<String>;
-  comment_in?: Maybe<String[] | String>;
-  comment_not_in?: Maybe<String[] | String>;
-  comment_lt?: Maybe<String>;
-  comment_lte?: Maybe<String>;
-  comment_gt?: Maybe<String>;
-  comment_gte?: Maybe<String>;
-  comment_contains?: Maybe<String>;
-  comment_not_contains?: Maybe<String>;
-  comment_starts_with?: Maybe<String>;
-  comment_not_starts_with?: Maybe<String>;
-  comment_ends_with?: Maybe<String>;
-  comment_not_ends_with?: Maybe<String>;
-  feedbacks_every?: Maybe<ProductVariantFeedbackWhereInput>;
-  feedbacks_some?: Maybe<ProductVariantFeedbackWhereInput>;
-  feedbacks_none?: Maybe<ProductVariantFeedbackWhereInput>;
-  rating?: Maybe<Rating>;
-  rating_not?: Maybe<Rating>;
-  rating_in?: Maybe<Rating[] | Rating>;
-  rating_not_in?: Maybe<Rating[] | Rating>;
-  user?: Maybe<UserWhereInput>;
-  reservation?: Maybe<ReservationWhereInput>;
-  createdAt?: Maybe<DateTimeInput>;
-  createdAt_not?: Maybe<DateTimeInput>;
-  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_lt?: Maybe<DateTimeInput>;
-  createdAt_lte?: Maybe<DateTimeInput>;
-  createdAt_gt?: Maybe<DateTimeInput>;
-  createdAt_gte?: Maybe<DateTimeInput>;
-  updatedAt?: Maybe<DateTimeInput>;
-  updatedAt_not?: Maybe<DateTimeInput>;
-  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_lt?: Maybe<DateTimeInput>;
-  updatedAt_lte?: Maybe<DateTimeInput>;
-  updatedAt_gt?: Maybe<DateTimeInput>;
-  updatedAt_gte?: Maybe<DateTimeInput>;
-  respondedAt?: Maybe<DateTimeInput>;
-  respondedAt_not?: Maybe<DateTimeInput>;
-  respondedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  respondedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  respondedAt_lt?: Maybe<DateTimeInput>;
-  respondedAt_lte?: Maybe<DateTimeInput>;
-  respondedAt_gt?: Maybe<DateTimeInput>;
-  respondedAt_gte?: Maybe<DateTimeInput>;
-  AND?: Maybe<ReservationFeedbackWhereInput[] | ReservationFeedbackWhereInput>;
-  OR?: Maybe<ReservationFeedbackWhereInput[] | ReservationFeedbackWhereInput>;
-  NOT?: Maybe<ReservationFeedbackWhereInput[] | ReservationFeedbackWhereInput>;
-}
 
 export type ProductVariantFeedbackQuestionWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
@@ -6094,6 +6364,9 @@ export interface ProductCreateWithoutVariantsInput {
   secondaryColor?: Maybe<ColorCreateOneInput>;
   tags?: Maybe<TagCreateManyWithoutProductsInput>;
   functions?: Maybe<ProductFunctionCreateManyInput>;
+  materialCategory?: Maybe<
+    ProductMaterialCategoryCreateOneWithoutProductsInput
+  >;
   innerMaterials?: Maybe<ProductCreateinnerMaterialsInput>;
   outerMaterials?: Maybe<ProductCreateouterMaterialsInput>;
   status?: Maybe<ProductStatus>;
@@ -6178,6 +6451,9 @@ export interface ProductCreateWithoutCategoryInput {
   secondaryColor?: Maybe<ColorCreateOneInput>;
   tags?: Maybe<TagCreateManyWithoutProductsInput>;
   functions?: Maybe<ProductFunctionCreateManyInput>;
+  materialCategory?: Maybe<
+    ProductMaterialCategoryCreateOneWithoutProductsInput
+  >;
   innerMaterials?: Maybe<ProductCreateinnerMaterialsInput>;
   outerMaterials?: Maybe<ProductCreateouterMaterialsInput>;
   variants?: Maybe<ProductVariantCreateManyWithoutProductInput>;
@@ -6379,6 +6655,18 @@ export interface ProductFunctionCreateInput {
   name?: Maybe<String>;
 }
 
+export interface ProductMaterialCategoryCreateOneWithoutProductsInput {
+  create?: Maybe<ProductMaterialCategoryCreateWithoutProductsInput>;
+  connect?: Maybe<ProductMaterialCategoryWhereUniqueInput>;
+}
+
+export interface ProductMaterialCategoryCreateWithoutProductsInput {
+  id?: Maybe<ID_Input>;
+  slug: String;
+  lifeExpectancy: Int;
+  category: CategoryCreateOneInput;
+}
+
 export interface ProductCreateinnerMaterialsInput {
   set?: Maybe<String[] | String>;
 }
@@ -6477,7 +6765,7 @@ export interface ReservationCreateWithoutCustomerInput {
   user: UserCreateOneInput;
   sentPackage?: Maybe<PackageCreateOneInput>;
   returnedPackage?: Maybe<PackageCreateOneInput>;
-  location?: Maybe<LocationCreateOneInput>;
+  feedback?: Maybe<ReservationFeedbackCreateOneWithoutReservationInput>;
   products?: Maybe<PhysicalProductCreateManyInput>;
   reservationNumber: Int;
   shipped: Boolean;
@@ -6486,6 +6774,7 @@ export interface ReservationCreateWithoutCustomerInput {
   receivedAt?: Maybe<DateTimeInput>;
   reminderSentAt?: Maybe<DateTimeInput>;
   receipt?: Maybe<ReservationReceiptCreateOneWithoutReservationInput>;
+  lastLocation?: Maybe<LocationCreateOneInput>;
 }
 
 export interface PackageCreateOneInput {
@@ -6500,6 +6789,7 @@ export interface PackageCreateInput {
   fromAddress: LocationCreateOneInput;
   toAddress: LocationCreateOneInput;
   weight?: Maybe<Float>;
+  events?: Maybe<PackageTransitEventCreateManyInput>;
 }
 
 export interface PhysicalProductCreateManyInput {
@@ -6540,6 +6830,109 @@ export interface LabelCreateInput {
   trackingURL?: Maybe<String>;
 }
 
+export interface PackageTransitEventCreateManyInput {
+  create?: Maybe<
+    PackageTransitEventCreateInput[] | PackageTransitEventCreateInput
+  >;
+  connect?: Maybe<
+    PackageTransitEventWhereUniqueInput[] | PackageTransitEventWhereUniqueInput
+  >;
+}
+
+export interface PackageTransitEventCreateInput {
+  id?: Maybe<ID_Input>;
+  status: PackageTransitEventStatus;
+  subStatus: PackageTransitEventSubStatus;
+}
+
+export interface ReservationFeedbackCreateOneWithoutReservationInput {
+  create?: Maybe<ReservationFeedbackCreateWithoutReservationInput>;
+  connect?: Maybe<ReservationFeedbackWhereUniqueInput>;
+}
+
+export interface ReservationFeedbackCreateWithoutReservationInput {
+  id?: Maybe<ID_Input>;
+  comment?: Maybe<String>;
+  feedbacks?: Maybe<
+    ProductVariantFeedbackCreateManyWithoutReservationFeedbackInput
+  >;
+  rating?: Maybe<Rating>;
+  user: UserCreateOneInput;
+  respondedAt?: Maybe<DateTimeInput>;
+}
+
+export interface ProductVariantFeedbackCreateManyWithoutReservationFeedbackInput {
+  create?: Maybe<
+    | ProductVariantFeedbackCreateWithoutReservationFeedbackInput[]
+    | ProductVariantFeedbackCreateWithoutReservationFeedbackInput
+  >;
+  connect?: Maybe<
+    | ProductVariantFeedbackWhereUniqueInput[]
+    | ProductVariantFeedbackWhereUniqueInput
+  >;
+}
+
+export interface ProductVariantFeedbackCreateWithoutReservationFeedbackInput {
+  id?: Maybe<ID_Input>;
+  isCompleted: Boolean;
+  questions?: Maybe<
+    ProductVariantFeedbackQuestionCreateManyWithoutVariantFeedbackInput
+  >;
+  variant: ProductVariantCreateOneInput;
+}
+
+export interface ProductVariantFeedbackQuestionCreateManyWithoutVariantFeedbackInput {
+  create?: Maybe<
+    | ProductVariantFeedbackQuestionCreateWithoutVariantFeedbackInput[]
+    | ProductVariantFeedbackQuestionCreateWithoutVariantFeedbackInput
+  >;
+  connect?: Maybe<
+    | ProductVariantFeedbackQuestionWhereUniqueInput[]
+    | ProductVariantFeedbackQuestionWhereUniqueInput
+  >;
+}
+
+export interface ProductVariantFeedbackQuestionCreateWithoutVariantFeedbackInput {
+  id?: Maybe<ID_Input>;
+  options?: Maybe<ProductVariantFeedbackQuestionCreateoptionsInput>;
+  question: String;
+  responses?: Maybe<ProductVariantFeedbackQuestionCreateresponsesInput>;
+  type: QuestionType;
+}
+
+export interface ProductVariantFeedbackQuestionCreateoptionsInput {
+  set?: Maybe<String[] | String>;
+}
+
+export interface ProductVariantFeedbackQuestionCreateresponsesInput {
+  set?: Maybe<String[] | String>;
+}
+
+export interface ProductVariantCreateOneInput {
+  create?: Maybe<ProductVariantCreateInput>;
+  connect?: Maybe<ProductVariantWhereUniqueInput>;
+}
+
+export interface ProductVariantCreateInput {
+  id?: Maybe<ID_Input>;
+  sku?: Maybe<String>;
+  color: ColorCreateOneWithoutProductVariantsInput;
+  internalSize?: Maybe<SizeCreateOneInput>;
+  manufacturerSizes?: Maybe<SizeCreateManyInput>;
+  weight?: Maybe<Float>;
+  height?: Maybe<Float>;
+  productID: String;
+  product: ProductCreateOneWithoutVariantsInput;
+  retailPrice?: Maybe<Float>;
+  physicalProducts?: Maybe<PhysicalProductCreateManyWithoutProductVariantInput>;
+  total: Int;
+  reservable: Int;
+  reserved: Int;
+  nonReservable: Int;
+  offloaded: Int;
+  stored: Int;
+}
+
 export interface ReservationReceiptCreateOneWithoutReservationInput {
   create?: Maybe<ReservationReceiptCreateWithoutReservationInput>;
   connect?: Maybe<ReservationReceiptWhereUniqueInput>;
@@ -6570,31 +6963,6 @@ export interface ReservationReceiptItemCreateInput {
 export interface PhysicalProductCreateOneInput {
   create?: Maybe<PhysicalProductCreateInput>;
   connect?: Maybe<PhysicalProductWhereUniqueInput>;
-}
-
-export interface ProductVariantCreateOneInput {
-  create?: Maybe<ProductVariantCreateInput>;
-  connect?: Maybe<ProductVariantWhereUniqueInput>;
-}
-
-export interface ProductVariantCreateInput {
-  id?: Maybe<ID_Input>;
-  sku?: Maybe<String>;
-  color: ColorCreateOneWithoutProductVariantsInput;
-  internalSize?: Maybe<SizeCreateOneInput>;
-  manufacturerSizes?: Maybe<SizeCreateManyInput>;
-  weight?: Maybe<Float>;
-  height?: Maybe<Float>;
-  productID: String;
-  product: ProductCreateOneWithoutVariantsInput;
-  retailPrice?: Maybe<Float>;
-  physicalProducts?: Maybe<PhysicalProductCreateManyWithoutProductVariantInput>;
-  total: Int;
-  reservable: Int;
-  reserved: Int;
-  nonReservable: Int;
-  offloaded: Int;
-  stored: Int;
 }
 
 export interface BagItemUpdateInput {
@@ -7001,6 +7369,9 @@ export interface ProductUpdateWithoutVariantsDataInput {
   secondaryColor?: Maybe<ColorUpdateOneInput>;
   tags?: Maybe<TagUpdateManyWithoutProductsInput>;
   functions?: Maybe<ProductFunctionUpdateManyInput>;
+  materialCategory?: Maybe<
+    ProductMaterialCategoryUpdateOneWithoutProductsInput
+  >;
   innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
   status?: Maybe<ProductStatus>;
@@ -7132,6 +7503,9 @@ export interface ProductUpdateWithoutCategoryDataInput {
   secondaryColor?: Maybe<ColorUpdateOneInput>;
   tags?: Maybe<TagUpdateManyWithoutProductsInput>;
   functions?: Maybe<ProductFunctionUpdateManyInput>;
+  materialCategory?: Maybe<
+    ProductMaterialCategoryUpdateOneWithoutProductsInput
+  >;
   innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
   variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
@@ -8154,6 +8528,26 @@ export interface ProductFunctionUpdateManyDataInput {
   name?: Maybe<String>;
 }
 
+export interface ProductMaterialCategoryUpdateOneWithoutProductsInput {
+  create?: Maybe<ProductMaterialCategoryCreateWithoutProductsInput>;
+  update?: Maybe<ProductMaterialCategoryUpdateWithoutProductsDataInput>;
+  upsert?: Maybe<ProductMaterialCategoryUpsertWithoutProductsInput>;
+  delete?: Maybe<Boolean>;
+  disconnect?: Maybe<Boolean>;
+  connect?: Maybe<ProductMaterialCategoryWhereUniqueInput>;
+}
+
+export interface ProductMaterialCategoryUpdateWithoutProductsDataInput {
+  slug?: Maybe<String>;
+  lifeExpectancy?: Maybe<Int>;
+  category?: Maybe<CategoryUpdateOneRequiredInput>;
+}
+
+export interface ProductMaterialCategoryUpsertWithoutProductsInput {
+  update: ProductMaterialCategoryUpdateWithoutProductsDataInput;
+  create: ProductMaterialCategoryCreateWithoutProductsInput;
+}
+
 export interface ProductUpdateinnerMaterialsInput {
   set?: Maybe<String[] | String>;
 }
@@ -8709,7 +9103,7 @@ export interface ReservationUpdateWithoutCustomerDataInput {
   user?: Maybe<UserUpdateOneRequiredInput>;
   sentPackage?: Maybe<PackageUpdateOneInput>;
   returnedPackage?: Maybe<PackageUpdateOneInput>;
-  location?: Maybe<LocationUpdateOneInput>;
+  feedback?: Maybe<ReservationFeedbackUpdateOneWithoutReservationInput>;
   products?: Maybe<PhysicalProductUpdateManyInput>;
   reservationNumber?: Maybe<Int>;
   shipped?: Maybe<Boolean>;
@@ -8718,6 +9112,7 @@ export interface ReservationUpdateWithoutCustomerDataInput {
   receivedAt?: Maybe<DateTimeInput>;
   reminderSentAt?: Maybe<DateTimeInput>;
   receipt?: Maybe<ReservationReceiptUpdateOneWithoutReservationInput>;
+  lastLocation?: Maybe<LocationUpdateOneInput>;
 }
 
 export interface PackageUpdateOneInput {
@@ -8735,6 +9130,7 @@ export interface PackageUpdateDataInput {
   fromAddress?: Maybe<LocationUpdateOneRequiredInput>;
   toAddress?: Maybe<LocationUpdateOneRequiredInput>;
   weight?: Maybe<Float>;
+  events?: Maybe<PackageTransitEventUpdateManyInput>;
 }
 
 export interface PhysicalProductUpdateManyInput {
@@ -8824,9 +9220,401 @@ export interface LocationUpdateOneRequiredInput {
   connect?: Maybe<LocationWhereUniqueInput>;
 }
 
+export interface PackageTransitEventUpdateManyInput {
+  create?: Maybe<
+    PackageTransitEventCreateInput[] | PackageTransitEventCreateInput
+  >;
+  update?: Maybe<
+    | PackageTransitEventUpdateWithWhereUniqueNestedInput[]
+    | PackageTransitEventUpdateWithWhereUniqueNestedInput
+  >;
+  upsert?: Maybe<
+    | PackageTransitEventUpsertWithWhereUniqueNestedInput[]
+    | PackageTransitEventUpsertWithWhereUniqueNestedInput
+  >;
+  delete?: Maybe<
+    PackageTransitEventWhereUniqueInput[] | PackageTransitEventWhereUniqueInput
+  >;
+  connect?: Maybe<
+    PackageTransitEventWhereUniqueInput[] | PackageTransitEventWhereUniqueInput
+  >;
+  set?: Maybe<
+    PackageTransitEventWhereUniqueInput[] | PackageTransitEventWhereUniqueInput
+  >;
+  disconnect?: Maybe<
+    PackageTransitEventWhereUniqueInput[] | PackageTransitEventWhereUniqueInput
+  >;
+  deleteMany?: Maybe<
+    PackageTransitEventScalarWhereInput[] | PackageTransitEventScalarWhereInput
+  >;
+  updateMany?: Maybe<
+    | PackageTransitEventUpdateManyWithWhereNestedInput[]
+    | PackageTransitEventUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface PackageTransitEventUpdateWithWhereUniqueNestedInput {
+  where: PackageTransitEventWhereUniqueInput;
+  data: PackageTransitEventUpdateDataInput;
+}
+
+export interface PackageTransitEventUpdateDataInput {
+  status?: Maybe<PackageTransitEventStatus>;
+  subStatus?: Maybe<PackageTransitEventSubStatus>;
+}
+
+export interface PackageTransitEventUpsertWithWhereUniqueNestedInput {
+  where: PackageTransitEventWhereUniqueInput;
+  update: PackageTransitEventUpdateDataInput;
+  create: PackageTransitEventCreateInput;
+}
+
+export interface PackageTransitEventScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  status?: Maybe<PackageTransitEventStatus>;
+  status_not?: Maybe<PackageTransitEventStatus>;
+  status_in?: Maybe<PackageTransitEventStatus[] | PackageTransitEventStatus>;
+  status_not_in?: Maybe<
+    PackageTransitEventStatus[] | PackageTransitEventStatus
+  >;
+  subStatus?: Maybe<PackageTransitEventSubStatus>;
+  subStatus_not?: Maybe<PackageTransitEventSubStatus>;
+  subStatus_in?: Maybe<
+    PackageTransitEventSubStatus[] | PackageTransitEventSubStatus
+  >;
+  subStatus_not_in?: Maybe<
+    PackageTransitEventSubStatus[] | PackageTransitEventSubStatus
+  >;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<
+    PackageTransitEventScalarWhereInput[] | PackageTransitEventScalarWhereInput
+  >;
+  OR?: Maybe<
+    PackageTransitEventScalarWhereInput[] | PackageTransitEventScalarWhereInput
+  >;
+  NOT?: Maybe<
+    PackageTransitEventScalarWhereInput[] | PackageTransitEventScalarWhereInput
+  >;
+}
+
+export interface PackageTransitEventUpdateManyWithWhereNestedInput {
+  where: PackageTransitEventScalarWhereInput;
+  data: PackageTransitEventUpdateManyDataInput;
+}
+
+export interface PackageTransitEventUpdateManyDataInput {
+  status?: Maybe<PackageTransitEventStatus>;
+  subStatus?: Maybe<PackageTransitEventSubStatus>;
+}
+
 export interface PackageUpsertNestedInput {
   update: PackageUpdateDataInput;
   create: PackageCreateInput;
+}
+
+export interface ReservationFeedbackUpdateOneWithoutReservationInput {
+  create?: Maybe<ReservationFeedbackCreateWithoutReservationInput>;
+  update?: Maybe<ReservationFeedbackUpdateWithoutReservationDataInput>;
+  upsert?: Maybe<ReservationFeedbackUpsertWithoutReservationInput>;
+  delete?: Maybe<Boolean>;
+  disconnect?: Maybe<Boolean>;
+  connect?: Maybe<ReservationFeedbackWhereUniqueInput>;
+}
+
+export interface ReservationFeedbackUpdateWithoutReservationDataInput {
+  comment?: Maybe<String>;
+  feedbacks?: Maybe<
+    ProductVariantFeedbackUpdateManyWithoutReservationFeedbackInput
+  >;
+  rating?: Maybe<Rating>;
+  user?: Maybe<UserUpdateOneRequiredInput>;
+  respondedAt?: Maybe<DateTimeInput>;
+}
+
+export interface ProductVariantFeedbackUpdateManyWithoutReservationFeedbackInput {
+  create?: Maybe<
+    | ProductVariantFeedbackCreateWithoutReservationFeedbackInput[]
+    | ProductVariantFeedbackCreateWithoutReservationFeedbackInput
+  >;
+  delete?: Maybe<
+    | ProductVariantFeedbackWhereUniqueInput[]
+    | ProductVariantFeedbackWhereUniqueInput
+  >;
+  connect?: Maybe<
+    | ProductVariantFeedbackWhereUniqueInput[]
+    | ProductVariantFeedbackWhereUniqueInput
+  >;
+  set?: Maybe<
+    | ProductVariantFeedbackWhereUniqueInput[]
+    | ProductVariantFeedbackWhereUniqueInput
+  >;
+  disconnect?: Maybe<
+    | ProductVariantFeedbackWhereUniqueInput[]
+    | ProductVariantFeedbackWhereUniqueInput
+  >;
+  update?: Maybe<
+    | ProductVariantFeedbackUpdateWithWhereUniqueWithoutReservationFeedbackInput[]
+    | ProductVariantFeedbackUpdateWithWhereUniqueWithoutReservationFeedbackInput
+  >;
+  upsert?: Maybe<
+    | ProductVariantFeedbackUpsertWithWhereUniqueWithoutReservationFeedbackInput[]
+    | ProductVariantFeedbackUpsertWithWhereUniqueWithoutReservationFeedbackInput
+  >;
+  deleteMany?: Maybe<
+    | ProductVariantFeedbackScalarWhereInput[]
+    | ProductVariantFeedbackScalarWhereInput
+  >;
+  updateMany?: Maybe<
+    | ProductVariantFeedbackUpdateManyWithWhereNestedInput[]
+    | ProductVariantFeedbackUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface ProductVariantFeedbackUpdateWithWhereUniqueWithoutReservationFeedbackInput {
+  where: ProductVariantFeedbackWhereUniqueInput;
+  data: ProductVariantFeedbackUpdateWithoutReservationFeedbackDataInput;
+}
+
+export interface ProductVariantFeedbackUpdateWithoutReservationFeedbackDataInput {
+  isCompleted?: Maybe<Boolean>;
+  questions?: Maybe<
+    ProductVariantFeedbackQuestionUpdateManyWithoutVariantFeedbackInput
+  >;
+  variant?: Maybe<ProductVariantUpdateOneRequiredInput>;
+}
+
+export interface ProductVariantFeedbackQuestionUpdateManyWithoutVariantFeedbackInput {
+  create?: Maybe<
+    | ProductVariantFeedbackQuestionCreateWithoutVariantFeedbackInput[]
+    | ProductVariantFeedbackQuestionCreateWithoutVariantFeedbackInput
+  >;
+  delete?: Maybe<
+    | ProductVariantFeedbackQuestionWhereUniqueInput[]
+    | ProductVariantFeedbackQuestionWhereUniqueInput
+  >;
+  connect?: Maybe<
+    | ProductVariantFeedbackQuestionWhereUniqueInput[]
+    | ProductVariantFeedbackQuestionWhereUniqueInput
+  >;
+  set?: Maybe<
+    | ProductVariantFeedbackQuestionWhereUniqueInput[]
+    | ProductVariantFeedbackQuestionWhereUniqueInput
+  >;
+  disconnect?: Maybe<
+    | ProductVariantFeedbackQuestionWhereUniqueInput[]
+    | ProductVariantFeedbackQuestionWhereUniqueInput
+  >;
+  update?: Maybe<
+    | ProductVariantFeedbackQuestionUpdateWithWhereUniqueWithoutVariantFeedbackInput[]
+    | ProductVariantFeedbackQuestionUpdateWithWhereUniqueWithoutVariantFeedbackInput
+  >;
+  upsert?: Maybe<
+    | ProductVariantFeedbackQuestionUpsertWithWhereUniqueWithoutVariantFeedbackInput[]
+    | ProductVariantFeedbackQuestionUpsertWithWhereUniqueWithoutVariantFeedbackInput
+  >;
+  deleteMany?: Maybe<
+    | ProductVariantFeedbackQuestionScalarWhereInput[]
+    | ProductVariantFeedbackQuestionScalarWhereInput
+  >;
+  updateMany?: Maybe<
+    | ProductVariantFeedbackQuestionUpdateManyWithWhereNestedInput[]
+    | ProductVariantFeedbackQuestionUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface ProductVariantFeedbackQuestionUpdateWithWhereUniqueWithoutVariantFeedbackInput {
+  where: ProductVariantFeedbackQuestionWhereUniqueInput;
+  data: ProductVariantFeedbackQuestionUpdateWithoutVariantFeedbackDataInput;
+}
+
+export interface ProductVariantFeedbackQuestionUpdateWithoutVariantFeedbackDataInput {
+  options?: Maybe<ProductVariantFeedbackQuestionUpdateoptionsInput>;
+  question?: Maybe<String>;
+  responses?: Maybe<ProductVariantFeedbackQuestionUpdateresponsesInput>;
+  type?: Maybe<QuestionType>;
+}
+
+export interface ProductVariantFeedbackQuestionUpdateoptionsInput {
+  set?: Maybe<String[] | String>;
+}
+
+export interface ProductVariantFeedbackQuestionUpdateresponsesInput {
+  set?: Maybe<String[] | String>;
+}
+
+export interface ProductVariantFeedbackQuestionUpsertWithWhereUniqueWithoutVariantFeedbackInput {
+  where: ProductVariantFeedbackQuestionWhereUniqueInput;
+  update: ProductVariantFeedbackQuestionUpdateWithoutVariantFeedbackDataInput;
+  create: ProductVariantFeedbackQuestionCreateWithoutVariantFeedbackInput;
+}
+
+export interface ProductVariantFeedbackQuestionScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  question?: Maybe<String>;
+  question_not?: Maybe<String>;
+  question_in?: Maybe<String[] | String>;
+  question_not_in?: Maybe<String[] | String>;
+  question_lt?: Maybe<String>;
+  question_lte?: Maybe<String>;
+  question_gt?: Maybe<String>;
+  question_gte?: Maybe<String>;
+  question_contains?: Maybe<String>;
+  question_not_contains?: Maybe<String>;
+  question_starts_with?: Maybe<String>;
+  question_not_starts_with?: Maybe<String>;
+  question_ends_with?: Maybe<String>;
+  question_not_ends_with?: Maybe<String>;
+  type?: Maybe<QuestionType>;
+  type_not?: Maybe<QuestionType>;
+  type_in?: Maybe<QuestionType[] | QuestionType>;
+  type_not_in?: Maybe<QuestionType[] | QuestionType>;
+  AND?: Maybe<
+    | ProductVariantFeedbackQuestionScalarWhereInput[]
+    | ProductVariantFeedbackQuestionScalarWhereInput
+  >;
+  OR?: Maybe<
+    | ProductVariantFeedbackQuestionScalarWhereInput[]
+    | ProductVariantFeedbackQuestionScalarWhereInput
+  >;
+  NOT?: Maybe<
+    | ProductVariantFeedbackQuestionScalarWhereInput[]
+    | ProductVariantFeedbackQuestionScalarWhereInput
+  >;
+}
+
+export interface ProductVariantFeedbackQuestionUpdateManyWithWhereNestedInput {
+  where: ProductVariantFeedbackQuestionScalarWhereInput;
+  data: ProductVariantFeedbackQuestionUpdateManyDataInput;
+}
+
+export interface ProductVariantFeedbackQuestionUpdateManyDataInput {
+  options?: Maybe<ProductVariantFeedbackQuestionUpdateoptionsInput>;
+  question?: Maybe<String>;
+  responses?: Maybe<ProductVariantFeedbackQuestionUpdateresponsesInput>;
+  type?: Maybe<QuestionType>;
+}
+
+export interface ProductVariantUpdateOneRequiredInput {
+  create?: Maybe<ProductVariantCreateInput>;
+  update?: Maybe<ProductVariantUpdateDataInput>;
+  upsert?: Maybe<ProductVariantUpsertNestedInput>;
+  connect?: Maybe<ProductVariantWhereUniqueInput>;
+}
+
+export interface ProductVariantUpdateDataInput {
+  sku?: Maybe<String>;
+  color?: Maybe<ColorUpdateOneRequiredWithoutProductVariantsInput>;
+  internalSize?: Maybe<SizeUpdateOneInput>;
+  manufacturerSizes?: Maybe<SizeUpdateManyInput>;
+  weight?: Maybe<Float>;
+  height?: Maybe<Float>;
+  productID?: Maybe<String>;
+  product?: Maybe<ProductUpdateOneRequiredWithoutVariantsInput>;
+  retailPrice?: Maybe<Float>;
+  physicalProducts?: Maybe<PhysicalProductUpdateManyWithoutProductVariantInput>;
+  total?: Maybe<Int>;
+  reservable?: Maybe<Int>;
+  reserved?: Maybe<Int>;
+  nonReservable?: Maybe<Int>;
+  offloaded?: Maybe<Int>;
+  stored?: Maybe<Int>;
+}
+
+export interface ProductVariantUpsertNestedInput {
+  update: ProductVariantUpdateDataInput;
+  create: ProductVariantCreateInput;
+}
+
+export interface ProductVariantFeedbackUpsertWithWhereUniqueWithoutReservationFeedbackInput {
+  where: ProductVariantFeedbackWhereUniqueInput;
+  update: ProductVariantFeedbackUpdateWithoutReservationFeedbackDataInput;
+  create: ProductVariantFeedbackCreateWithoutReservationFeedbackInput;
+}
+
+export interface ProductVariantFeedbackScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  isCompleted?: Maybe<Boolean>;
+  isCompleted_not?: Maybe<Boolean>;
+  AND?: Maybe<
+    | ProductVariantFeedbackScalarWhereInput[]
+    | ProductVariantFeedbackScalarWhereInput
+  >;
+  OR?: Maybe<
+    | ProductVariantFeedbackScalarWhereInput[]
+    | ProductVariantFeedbackScalarWhereInput
+  >;
+  NOT?: Maybe<
+    | ProductVariantFeedbackScalarWhereInput[]
+    | ProductVariantFeedbackScalarWhereInput
+  >;
+}
+
+export interface ProductVariantFeedbackUpdateManyWithWhereNestedInput {
+  where: ProductVariantFeedbackScalarWhereInput;
+  data: ProductVariantFeedbackUpdateManyDataInput;
+}
+
+export interface ProductVariantFeedbackUpdateManyDataInput {
+  isCompleted?: Maybe<Boolean>;
+}
+
+export interface ReservationFeedbackUpsertWithoutReservationInput {
+  update: ReservationFeedbackUpdateWithoutReservationDataInput;
+  create: ReservationFeedbackCreateWithoutReservationInput;
 }
 
 export interface ReservationReceiptUpdateOneWithoutReservationInput {
@@ -9070,37 +9858,6 @@ export interface CustomerUpsertWithoutBagItemsInput {
   create: CustomerCreateWithoutBagItemsInput;
 }
 
-export interface ProductVariantUpdateOneRequiredInput {
-  create?: Maybe<ProductVariantCreateInput>;
-  update?: Maybe<ProductVariantUpdateDataInput>;
-  upsert?: Maybe<ProductVariantUpsertNestedInput>;
-  connect?: Maybe<ProductVariantWhereUniqueInput>;
-}
-
-export interface ProductVariantUpdateDataInput {
-  sku?: Maybe<String>;
-  color?: Maybe<ColorUpdateOneRequiredWithoutProductVariantsInput>;
-  internalSize?: Maybe<SizeUpdateOneInput>;
-  manufacturerSizes?: Maybe<SizeUpdateManyInput>;
-  weight?: Maybe<Float>;
-  height?: Maybe<Float>;
-  productID?: Maybe<String>;
-  product?: Maybe<ProductUpdateOneRequiredWithoutVariantsInput>;
-  retailPrice?: Maybe<Float>;
-  physicalProducts?: Maybe<PhysicalProductUpdateManyWithoutProductVariantInput>;
-  total?: Maybe<Int>;
-  reservable?: Maybe<Int>;
-  reserved?: Maybe<Int>;
-  nonReservable?: Maybe<Int>;
-  offloaded?: Maybe<Int>;
-  stored?: Maybe<Int>;
-}
-
-export interface ProductVariantUpsertNestedInput {
-  update: ProductVariantUpdateDataInput;
-  create: ProductVariantCreateInput;
-}
-
 export interface BagItemUpdateManyMutationInput {
   position?: Maybe<Int>;
   saved?: Maybe<Boolean>;
@@ -9192,6 +9949,9 @@ export interface ProductCreateWithoutBrandInput {
   secondaryColor?: Maybe<ColorCreateOneInput>;
   tags?: Maybe<TagCreateManyWithoutProductsInput>;
   functions?: Maybe<ProductFunctionCreateManyInput>;
+  materialCategory?: Maybe<
+    ProductMaterialCategoryCreateOneWithoutProductsInput
+  >;
   innerMaterials?: Maybe<ProductCreateinnerMaterialsInput>;
   outerMaterials?: Maybe<ProductCreateouterMaterialsInput>;
   variants?: Maybe<ProductVariantCreateManyWithoutProductInput>;
@@ -9260,6 +10020,9 @@ export interface ProductUpdateWithoutBrandDataInput {
   secondaryColor?: Maybe<ColorUpdateOneInput>;
   tags?: Maybe<TagUpdateManyWithoutProductsInput>;
   functions?: Maybe<ProductFunctionUpdateManyInput>;
+  materialCategory?: Maybe<
+    ProductMaterialCategoryUpdateOneWithoutProductsInput
+  >;
   innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
   variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
@@ -9341,6 +10104,9 @@ export interface ProductCreateInput {
   secondaryColor?: Maybe<ColorCreateOneInput>;
   tags?: Maybe<TagCreateManyWithoutProductsInput>;
   functions?: Maybe<ProductFunctionCreateManyInput>;
+  materialCategory?: Maybe<
+    ProductMaterialCategoryCreateOneWithoutProductsInput
+  >;
   innerMaterials?: Maybe<ProductCreateinnerMaterialsInput>;
   outerMaterials?: Maybe<ProductCreateouterMaterialsInput>;
   variants?: Maybe<ProductVariantCreateManyWithoutProductInput>;
@@ -9404,6 +10170,9 @@ export interface ProductUpdateDataInput {
   secondaryColor?: Maybe<ColorUpdateOneInput>;
   tags?: Maybe<TagUpdateManyWithoutProductsInput>;
   functions?: Maybe<ProductFunctionUpdateManyInput>;
+  materialCategory?: Maybe<
+    ProductMaterialCategoryUpdateOneWithoutProductsInput
+  >;
   innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
   variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
@@ -9944,10 +10713,21 @@ export interface PackageUpdateInput {
   fromAddress?: Maybe<LocationUpdateOneRequiredInput>;
   toAddress?: Maybe<LocationUpdateOneRequiredInput>;
   weight?: Maybe<Float>;
+  events?: Maybe<PackageTransitEventUpdateManyInput>;
 }
 
 export interface PackageUpdateManyMutationInput {
   weight?: Maybe<Float>;
+}
+
+export interface PackageTransitEventUpdateInput {
+  status?: Maybe<PackageTransitEventStatus>;
+  subStatus?: Maybe<PackageTransitEventSubStatus>;
+}
+
+export interface PackageTransitEventUpdateManyMutationInput {
+  status?: Maybe<PackageTransitEventStatus>;
+  subStatus?: Maybe<PackageTransitEventSubStatus>;
 }
 
 export interface PauseRequestCreateInput {
@@ -10049,6 +10829,9 @@ export interface ProductUpdateInput {
   secondaryColor?: Maybe<ColorUpdateOneInput>;
   tags?: Maybe<TagUpdateManyWithoutProductsInput>;
   functions?: Maybe<ProductFunctionUpdateManyInput>;
+  materialCategory?: Maybe<
+    ProductMaterialCategoryUpdateOneWithoutProductsInput
+  >;
   innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
   variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
@@ -10084,6 +10867,124 @@ export interface ProductFunctionUpdateManyMutationInput {
   name?: Maybe<String>;
 }
 
+export interface ProductMaterialCategoryCreateInput {
+  id?: Maybe<ID_Input>;
+  slug: String;
+  lifeExpectancy: Int;
+  category: CategoryCreateOneInput;
+  products?: Maybe<ProductCreateManyWithoutMaterialCategoryInput>;
+}
+
+export interface ProductCreateManyWithoutMaterialCategoryInput {
+  create?: Maybe<
+    | ProductCreateWithoutMaterialCategoryInput[]
+    | ProductCreateWithoutMaterialCategoryInput
+  >;
+  connect?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
+}
+
+export interface ProductCreateWithoutMaterialCategoryInput {
+  id?: Maybe<ID_Input>;
+  slug: String;
+  name: String;
+  brand: BrandCreateOneWithoutProductsInput;
+  category: CategoryCreateOneWithoutProductsInput;
+  type?: Maybe<ProductType>;
+  description?: Maybe<String>;
+  externalURL?: Maybe<String>;
+  images?: Maybe<ImageCreateManyInput>;
+  modelHeight?: Maybe<Int>;
+  retailPrice?: Maybe<Int>;
+  model?: Maybe<ProductModelCreateOneWithoutProductsInput>;
+  modelSize?: Maybe<SizeCreateOneInput>;
+  color: ColorCreateOneInput;
+  secondaryColor?: Maybe<ColorCreateOneInput>;
+  tags?: Maybe<TagCreateManyWithoutProductsInput>;
+  functions?: Maybe<ProductFunctionCreateManyInput>;
+  innerMaterials?: Maybe<ProductCreateinnerMaterialsInput>;
+  outerMaterials?: Maybe<ProductCreateouterMaterialsInput>;
+  variants?: Maybe<ProductVariantCreateManyWithoutProductInput>;
+  status?: Maybe<ProductStatus>;
+  season?: Maybe<String>;
+  architecture?: Maybe<ProductArchitecture>;
+  photographyStatus?: Maybe<PhotographyStatus>;
+  publishedAt?: Maybe<DateTimeInput>;
+}
+
+export interface ProductMaterialCategoryUpdateInput {
+  slug?: Maybe<String>;
+  lifeExpectancy?: Maybe<Int>;
+  category?: Maybe<CategoryUpdateOneRequiredInput>;
+  products?: Maybe<ProductUpdateManyWithoutMaterialCategoryInput>;
+}
+
+export interface ProductUpdateManyWithoutMaterialCategoryInput {
+  create?: Maybe<
+    | ProductCreateWithoutMaterialCategoryInput[]
+    | ProductCreateWithoutMaterialCategoryInput
+  >;
+  delete?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
+  connect?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
+  set?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
+  disconnect?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
+  update?: Maybe<
+    | ProductUpdateWithWhereUniqueWithoutMaterialCategoryInput[]
+    | ProductUpdateWithWhereUniqueWithoutMaterialCategoryInput
+  >;
+  upsert?: Maybe<
+    | ProductUpsertWithWhereUniqueWithoutMaterialCategoryInput[]
+    | ProductUpsertWithWhereUniqueWithoutMaterialCategoryInput
+  >;
+  deleteMany?: Maybe<ProductScalarWhereInput[] | ProductScalarWhereInput>;
+  updateMany?: Maybe<
+    | ProductUpdateManyWithWhereNestedInput[]
+    | ProductUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface ProductUpdateWithWhereUniqueWithoutMaterialCategoryInput {
+  where: ProductWhereUniqueInput;
+  data: ProductUpdateWithoutMaterialCategoryDataInput;
+}
+
+export interface ProductUpdateWithoutMaterialCategoryDataInput {
+  slug?: Maybe<String>;
+  name?: Maybe<String>;
+  brand?: Maybe<BrandUpdateOneRequiredWithoutProductsInput>;
+  category?: Maybe<CategoryUpdateOneRequiredWithoutProductsInput>;
+  type?: Maybe<ProductType>;
+  description?: Maybe<String>;
+  externalURL?: Maybe<String>;
+  images?: Maybe<ImageUpdateManyInput>;
+  modelHeight?: Maybe<Int>;
+  retailPrice?: Maybe<Int>;
+  model?: Maybe<ProductModelUpdateOneWithoutProductsInput>;
+  modelSize?: Maybe<SizeUpdateOneInput>;
+  color?: Maybe<ColorUpdateOneRequiredInput>;
+  secondaryColor?: Maybe<ColorUpdateOneInput>;
+  tags?: Maybe<TagUpdateManyWithoutProductsInput>;
+  functions?: Maybe<ProductFunctionUpdateManyInput>;
+  innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
+  outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
+  variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
+  status?: Maybe<ProductStatus>;
+  season?: Maybe<String>;
+  architecture?: Maybe<ProductArchitecture>;
+  photographyStatus?: Maybe<PhotographyStatus>;
+  publishedAt?: Maybe<DateTimeInput>;
+}
+
+export interface ProductUpsertWithWhereUniqueWithoutMaterialCategoryInput {
+  where: ProductWhereUniqueInput;
+  update: ProductUpdateWithoutMaterialCategoryDataInput;
+  create: ProductCreateWithoutMaterialCategoryInput;
+}
+
+export interface ProductMaterialCategoryUpdateManyMutationInput {
+  slug?: Maybe<String>;
+  lifeExpectancy?: Maybe<Int>;
+}
+
 export interface ProductModelCreateInput {
   id?: Maybe<ID_Input>;
   name: String;
@@ -10115,6 +11016,9 @@ export interface ProductCreateWithoutModelInput {
   secondaryColor?: Maybe<ColorCreateOneInput>;
   tags?: Maybe<TagCreateManyWithoutProductsInput>;
   functions?: Maybe<ProductFunctionCreateManyInput>;
+  materialCategory?: Maybe<
+    ProductMaterialCategoryCreateOneWithoutProductsInput
+  >;
   innerMaterials?: Maybe<ProductCreateinnerMaterialsInput>;
   outerMaterials?: Maybe<ProductCreateouterMaterialsInput>;
   variants?: Maybe<ProductVariantCreateManyWithoutProductInput>;
@@ -10175,6 +11079,9 @@ export interface ProductUpdateWithoutModelDataInput {
   secondaryColor?: Maybe<ColorUpdateOneInput>;
   tags?: Maybe<TagUpdateManyWithoutProductsInput>;
   functions?: Maybe<ProductFunctionUpdateManyInput>;
+  materialCategory?: Maybe<
+    ProductMaterialCategoryUpdateOneWithoutProductsInput
+  >;
   innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
   variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
@@ -10289,33 +11196,6 @@ export interface ProductVariantFeedbackCreateInput {
   variant: ProductVariantCreateOneInput;
 }
 
-export interface ProductVariantFeedbackQuestionCreateManyWithoutVariantFeedbackInput {
-  create?: Maybe<
-    | ProductVariantFeedbackQuestionCreateWithoutVariantFeedbackInput[]
-    | ProductVariantFeedbackQuestionCreateWithoutVariantFeedbackInput
-  >;
-  connect?: Maybe<
-    | ProductVariantFeedbackQuestionWhereUniqueInput[]
-    | ProductVariantFeedbackQuestionWhereUniqueInput
-  >;
-}
-
-export interface ProductVariantFeedbackQuestionCreateWithoutVariantFeedbackInput {
-  id?: Maybe<ID_Input>;
-  options?: Maybe<ProductVariantFeedbackQuestionCreateoptionsInput>;
-  question: String;
-  responses?: Maybe<ProductVariantFeedbackQuestionCreateresponsesInput>;
-  type: QuestionType;
-}
-
-export interface ProductVariantFeedbackQuestionCreateoptionsInput {
-  set?: Maybe<String[] | String>;
-}
-
-export interface ProductVariantFeedbackQuestionCreateresponsesInput {
-  set?: Maybe<String[] | String>;
-}
-
 export interface ReservationFeedbackCreateOneWithoutFeedbacksInput {
   create?: Maybe<ReservationFeedbackCreateWithoutFeedbacksInput>;
   connect?: Maybe<ReservationFeedbackWhereUniqueInput>;
@@ -10326,22 +11206,21 @@ export interface ReservationFeedbackCreateWithoutFeedbacksInput {
   comment?: Maybe<String>;
   rating?: Maybe<Rating>;
   user: UserCreateOneInput;
-  reservation: ReservationCreateOneInput;
+  reservation: ReservationCreateOneWithoutFeedbackInput;
   respondedAt?: Maybe<DateTimeInput>;
 }
 
-export interface ReservationCreateOneInput {
-  create?: Maybe<ReservationCreateInput>;
+export interface ReservationCreateOneWithoutFeedbackInput {
+  create?: Maybe<ReservationCreateWithoutFeedbackInput>;
   connect?: Maybe<ReservationWhereUniqueInput>;
 }
 
-export interface ReservationCreateInput {
+export interface ReservationCreateWithoutFeedbackInput {
   id?: Maybe<ID_Input>;
   user: UserCreateOneInput;
   customer: CustomerCreateOneWithoutReservationsInput;
   sentPackage?: Maybe<PackageCreateOneInput>;
   returnedPackage?: Maybe<PackageCreateOneInput>;
-  location?: Maybe<LocationCreateOneInput>;
   products?: Maybe<PhysicalProductCreateManyInput>;
   reservationNumber: Int;
   shipped: Boolean;
@@ -10350,6 +11229,7 @@ export interface ReservationCreateInput {
   receivedAt?: Maybe<DateTimeInput>;
   reminderSentAt?: Maybe<DateTimeInput>;
   receipt?: Maybe<ReservationReceiptCreateOneWithoutReservationInput>;
+  lastLocation?: Maybe<LocationCreateOneInput>;
 }
 
 export interface CustomerCreateOneWithoutReservationsInput {
@@ -10379,130 +11259,6 @@ export interface ProductVariantFeedbackUpdateInput {
   variant?: Maybe<ProductVariantUpdateOneRequiredInput>;
 }
 
-export interface ProductVariantFeedbackQuestionUpdateManyWithoutVariantFeedbackInput {
-  create?: Maybe<
-    | ProductVariantFeedbackQuestionCreateWithoutVariantFeedbackInput[]
-    | ProductVariantFeedbackQuestionCreateWithoutVariantFeedbackInput
-  >;
-  delete?: Maybe<
-    | ProductVariantFeedbackQuestionWhereUniqueInput[]
-    | ProductVariantFeedbackQuestionWhereUniqueInput
-  >;
-  connect?: Maybe<
-    | ProductVariantFeedbackQuestionWhereUniqueInput[]
-    | ProductVariantFeedbackQuestionWhereUniqueInput
-  >;
-  set?: Maybe<
-    | ProductVariantFeedbackQuestionWhereUniqueInput[]
-    | ProductVariantFeedbackQuestionWhereUniqueInput
-  >;
-  disconnect?: Maybe<
-    | ProductVariantFeedbackQuestionWhereUniqueInput[]
-    | ProductVariantFeedbackQuestionWhereUniqueInput
-  >;
-  update?: Maybe<
-    | ProductVariantFeedbackQuestionUpdateWithWhereUniqueWithoutVariantFeedbackInput[]
-    | ProductVariantFeedbackQuestionUpdateWithWhereUniqueWithoutVariantFeedbackInput
-  >;
-  upsert?: Maybe<
-    | ProductVariantFeedbackQuestionUpsertWithWhereUniqueWithoutVariantFeedbackInput[]
-    | ProductVariantFeedbackQuestionUpsertWithWhereUniqueWithoutVariantFeedbackInput
-  >;
-  deleteMany?: Maybe<
-    | ProductVariantFeedbackQuestionScalarWhereInput[]
-    | ProductVariantFeedbackQuestionScalarWhereInput
-  >;
-  updateMany?: Maybe<
-    | ProductVariantFeedbackQuestionUpdateManyWithWhereNestedInput[]
-    | ProductVariantFeedbackQuestionUpdateManyWithWhereNestedInput
-  >;
-}
-
-export interface ProductVariantFeedbackQuestionUpdateWithWhereUniqueWithoutVariantFeedbackInput {
-  where: ProductVariantFeedbackQuestionWhereUniqueInput;
-  data: ProductVariantFeedbackQuestionUpdateWithoutVariantFeedbackDataInput;
-}
-
-export interface ProductVariantFeedbackQuestionUpdateWithoutVariantFeedbackDataInput {
-  options?: Maybe<ProductVariantFeedbackQuestionUpdateoptionsInput>;
-  question?: Maybe<String>;
-  responses?: Maybe<ProductVariantFeedbackQuestionUpdateresponsesInput>;
-  type?: Maybe<QuestionType>;
-}
-
-export interface ProductVariantFeedbackQuestionUpdateoptionsInput {
-  set?: Maybe<String[] | String>;
-}
-
-export interface ProductVariantFeedbackQuestionUpdateresponsesInput {
-  set?: Maybe<String[] | String>;
-}
-
-export interface ProductVariantFeedbackQuestionUpsertWithWhereUniqueWithoutVariantFeedbackInput {
-  where: ProductVariantFeedbackQuestionWhereUniqueInput;
-  update: ProductVariantFeedbackQuestionUpdateWithoutVariantFeedbackDataInput;
-  create: ProductVariantFeedbackQuestionCreateWithoutVariantFeedbackInput;
-}
-
-export interface ProductVariantFeedbackQuestionScalarWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  question?: Maybe<String>;
-  question_not?: Maybe<String>;
-  question_in?: Maybe<String[] | String>;
-  question_not_in?: Maybe<String[] | String>;
-  question_lt?: Maybe<String>;
-  question_lte?: Maybe<String>;
-  question_gt?: Maybe<String>;
-  question_gte?: Maybe<String>;
-  question_contains?: Maybe<String>;
-  question_not_contains?: Maybe<String>;
-  question_starts_with?: Maybe<String>;
-  question_not_starts_with?: Maybe<String>;
-  question_ends_with?: Maybe<String>;
-  question_not_ends_with?: Maybe<String>;
-  type?: Maybe<QuestionType>;
-  type_not?: Maybe<QuestionType>;
-  type_in?: Maybe<QuestionType[] | QuestionType>;
-  type_not_in?: Maybe<QuestionType[] | QuestionType>;
-  AND?: Maybe<
-    | ProductVariantFeedbackQuestionScalarWhereInput[]
-    | ProductVariantFeedbackQuestionScalarWhereInput
-  >;
-  OR?: Maybe<
-    | ProductVariantFeedbackQuestionScalarWhereInput[]
-    | ProductVariantFeedbackQuestionScalarWhereInput
-  >;
-  NOT?: Maybe<
-    | ProductVariantFeedbackQuestionScalarWhereInput[]
-    | ProductVariantFeedbackQuestionScalarWhereInput
-  >;
-}
-
-export interface ProductVariantFeedbackQuestionUpdateManyWithWhereNestedInput {
-  where: ProductVariantFeedbackQuestionScalarWhereInput;
-  data: ProductVariantFeedbackQuestionUpdateManyDataInput;
-}
-
-export interface ProductVariantFeedbackQuestionUpdateManyDataInput {
-  options?: Maybe<ProductVariantFeedbackQuestionUpdateoptionsInput>;
-  question?: Maybe<String>;
-  responses?: Maybe<ProductVariantFeedbackQuestionUpdateresponsesInput>;
-  type?: Maybe<QuestionType>;
-}
-
 export interface ReservationFeedbackUpdateOneRequiredWithoutFeedbacksInput {
   create?: Maybe<ReservationFeedbackCreateWithoutFeedbacksInput>;
   update?: Maybe<ReservationFeedbackUpdateWithoutFeedbacksDataInput>;
@@ -10514,23 +11270,22 @@ export interface ReservationFeedbackUpdateWithoutFeedbacksDataInput {
   comment?: Maybe<String>;
   rating?: Maybe<Rating>;
   user?: Maybe<UserUpdateOneRequiredInput>;
-  reservation?: Maybe<ReservationUpdateOneRequiredInput>;
+  reservation?: Maybe<ReservationUpdateOneRequiredWithoutFeedbackInput>;
   respondedAt?: Maybe<DateTimeInput>;
 }
 
-export interface ReservationUpdateOneRequiredInput {
-  create?: Maybe<ReservationCreateInput>;
-  update?: Maybe<ReservationUpdateDataInput>;
-  upsert?: Maybe<ReservationUpsertNestedInput>;
+export interface ReservationUpdateOneRequiredWithoutFeedbackInput {
+  create?: Maybe<ReservationCreateWithoutFeedbackInput>;
+  update?: Maybe<ReservationUpdateWithoutFeedbackDataInput>;
+  upsert?: Maybe<ReservationUpsertWithoutFeedbackInput>;
   connect?: Maybe<ReservationWhereUniqueInput>;
 }
 
-export interface ReservationUpdateDataInput {
+export interface ReservationUpdateWithoutFeedbackDataInput {
   user?: Maybe<UserUpdateOneRequiredInput>;
   customer?: Maybe<CustomerUpdateOneRequiredWithoutReservationsInput>;
   sentPackage?: Maybe<PackageUpdateOneInput>;
   returnedPackage?: Maybe<PackageUpdateOneInput>;
-  location?: Maybe<LocationUpdateOneInput>;
   products?: Maybe<PhysicalProductUpdateManyInput>;
   reservationNumber?: Maybe<Int>;
   shipped?: Maybe<Boolean>;
@@ -10539,6 +11294,7 @@ export interface ReservationUpdateDataInput {
   receivedAt?: Maybe<DateTimeInput>;
   reminderSentAt?: Maybe<DateTimeInput>;
   receipt?: Maybe<ReservationReceiptUpdateOneWithoutReservationInput>;
+  lastLocation?: Maybe<LocationUpdateOneInput>;
 }
 
 export interface CustomerUpdateOneRequiredWithoutReservationsInput {
@@ -10563,9 +11319,9 @@ export interface CustomerUpsertWithoutReservationsInput {
   create: CustomerCreateWithoutReservationsInput;
 }
 
-export interface ReservationUpsertNestedInput {
-  update: ReservationUpdateDataInput;
-  create: ReservationCreateInput;
+export interface ReservationUpsertWithoutFeedbackInput {
+  update: ReservationUpdateWithoutFeedbackDataInput;
+  create: ReservationCreateWithoutFeedbackInput;
 }
 
 export interface ReservationFeedbackUpsertWithoutFeedbacksInput {
@@ -10902,12 +11658,30 @@ export interface RecentlyViewedProductUpdateManyMutationInput {
   viewCount?: Maybe<Int>;
 }
 
+export interface ReservationCreateInput {
+  id?: Maybe<ID_Input>;
+  user: UserCreateOneInput;
+  customer: CustomerCreateOneWithoutReservationsInput;
+  sentPackage?: Maybe<PackageCreateOneInput>;
+  returnedPackage?: Maybe<PackageCreateOneInput>;
+  feedback?: Maybe<ReservationFeedbackCreateOneWithoutReservationInput>;
+  products?: Maybe<PhysicalProductCreateManyInput>;
+  reservationNumber: Int;
+  shipped: Boolean;
+  status: ReservationStatus;
+  shippedAt?: Maybe<DateTimeInput>;
+  receivedAt?: Maybe<DateTimeInput>;
+  reminderSentAt?: Maybe<DateTimeInput>;
+  receipt?: Maybe<ReservationReceiptCreateOneWithoutReservationInput>;
+  lastLocation?: Maybe<LocationCreateOneInput>;
+}
+
 export interface ReservationUpdateInput {
   user?: Maybe<UserUpdateOneRequiredInput>;
   customer?: Maybe<CustomerUpdateOneRequiredWithoutReservationsInput>;
   sentPackage?: Maybe<PackageUpdateOneInput>;
   returnedPackage?: Maybe<PackageUpdateOneInput>;
-  location?: Maybe<LocationUpdateOneInput>;
+  feedback?: Maybe<ReservationFeedbackUpdateOneWithoutReservationInput>;
   products?: Maybe<PhysicalProductUpdateManyInput>;
   reservationNumber?: Maybe<Int>;
   shipped?: Maybe<Boolean>;
@@ -10916,6 +11690,7 @@ export interface ReservationUpdateInput {
   receivedAt?: Maybe<DateTimeInput>;
   reminderSentAt?: Maybe<DateTimeInput>;
   receipt?: Maybe<ReservationReceiptUpdateOneWithoutReservationInput>;
+  lastLocation?: Maybe<LocationUpdateOneInput>;
 }
 
 export interface ReservationUpdateManyMutationInput {
@@ -10935,28 +11710,8 @@ export interface ReservationFeedbackCreateInput {
   >;
   rating?: Maybe<Rating>;
   user: UserCreateOneInput;
-  reservation: ReservationCreateOneInput;
+  reservation: ReservationCreateOneWithoutFeedbackInput;
   respondedAt?: Maybe<DateTimeInput>;
-}
-
-export interface ProductVariantFeedbackCreateManyWithoutReservationFeedbackInput {
-  create?: Maybe<
-    | ProductVariantFeedbackCreateWithoutReservationFeedbackInput[]
-    | ProductVariantFeedbackCreateWithoutReservationFeedbackInput
-  >;
-  connect?: Maybe<
-    | ProductVariantFeedbackWhereUniqueInput[]
-    | ProductVariantFeedbackWhereUniqueInput
-  >;
-}
-
-export interface ProductVariantFeedbackCreateWithoutReservationFeedbackInput {
-  id?: Maybe<ID_Input>;
-  isCompleted: Boolean;
-  questions?: Maybe<
-    ProductVariantFeedbackQuestionCreateManyWithoutVariantFeedbackInput
-  >;
-  variant: ProductVariantCreateOneInput;
 }
 
 export interface ReservationFeedbackUpdateInput {
@@ -10966,106 +11721,8 @@ export interface ReservationFeedbackUpdateInput {
   >;
   rating?: Maybe<Rating>;
   user?: Maybe<UserUpdateOneRequiredInput>;
-  reservation?: Maybe<ReservationUpdateOneRequiredInput>;
+  reservation?: Maybe<ReservationUpdateOneRequiredWithoutFeedbackInput>;
   respondedAt?: Maybe<DateTimeInput>;
-}
-
-export interface ProductVariantFeedbackUpdateManyWithoutReservationFeedbackInput {
-  create?: Maybe<
-    | ProductVariantFeedbackCreateWithoutReservationFeedbackInput[]
-    | ProductVariantFeedbackCreateWithoutReservationFeedbackInput
-  >;
-  delete?: Maybe<
-    | ProductVariantFeedbackWhereUniqueInput[]
-    | ProductVariantFeedbackWhereUniqueInput
-  >;
-  connect?: Maybe<
-    | ProductVariantFeedbackWhereUniqueInput[]
-    | ProductVariantFeedbackWhereUniqueInput
-  >;
-  set?: Maybe<
-    | ProductVariantFeedbackWhereUniqueInput[]
-    | ProductVariantFeedbackWhereUniqueInput
-  >;
-  disconnect?: Maybe<
-    | ProductVariantFeedbackWhereUniqueInput[]
-    | ProductVariantFeedbackWhereUniqueInput
-  >;
-  update?: Maybe<
-    | ProductVariantFeedbackUpdateWithWhereUniqueWithoutReservationFeedbackInput[]
-    | ProductVariantFeedbackUpdateWithWhereUniqueWithoutReservationFeedbackInput
-  >;
-  upsert?: Maybe<
-    | ProductVariantFeedbackUpsertWithWhereUniqueWithoutReservationFeedbackInput[]
-    | ProductVariantFeedbackUpsertWithWhereUniqueWithoutReservationFeedbackInput
-  >;
-  deleteMany?: Maybe<
-    | ProductVariantFeedbackScalarWhereInput[]
-    | ProductVariantFeedbackScalarWhereInput
-  >;
-  updateMany?: Maybe<
-    | ProductVariantFeedbackUpdateManyWithWhereNestedInput[]
-    | ProductVariantFeedbackUpdateManyWithWhereNestedInput
-  >;
-}
-
-export interface ProductVariantFeedbackUpdateWithWhereUniqueWithoutReservationFeedbackInput {
-  where: ProductVariantFeedbackWhereUniqueInput;
-  data: ProductVariantFeedbackUpdateWithoutReservationFeedbackDataInput;
-}
-
-export interface ProductVariantFeedbackUpdateWithoutReservationFeedbackDataInput {
-  isCompleted?: Maybe<Boolean>;
-  questions?: Maybe<
-    ProductVariantFeedbackQuestionUpdateManyWithoutVariantFeedbackInput
-  >;
-  variant?: Maybe<ProductVariantUpdateOneRequiredInput>;
-}
-
-export interface ProductVariantFeedbackUpsertWithWhereUniqueWithoutReservationFeedbackInput {
-  where: ProductVariantFeedbackWhereUniqueInput;
-  update: ProductVariantFeedbackUpdateWithoutReservationFeedbackDataInput;
-  create: ProductVariantFeedbackCreateWithoutReservationFeedbackInput;
-}
-
-export interface ProductVariantFeedbackScalarWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  isCompleted?: Maybe<Boolean>;
-  isCompleted_not?: Maybe<Boolean>;
-  AND?: Maybe<
-    | ProductVariantFeedbackScalarWhereInput[]
-    | ProductVariantFeedbackScalarWhereInput
-  >;
-  OR?: Maybe<
-    | ProductVariantFeedbackScalarWhereInput[]
-    | ProductVariantFeedbackScalarWhereInput
-  >;
-  NOT?: Maybe<
-    | ProductVariantFeedbackScalarWhereInput[]
-    | ProductVariantFeedbackScalarWhereInput
-  >;
-}
-
-export interface ProductVariantFeedbackUpdateManyWithWhereNestedInput {
-  where: ProductVariantFeedbackScalarWhereInput;
-  data: ProductVariantFeedbackUpdateManyDataInput;
-}
-
-export interface ProductVariantFeedbackUpdateManyDataInput {
-  isCompleted?: Maybe<Boolean>;
 }
 
 export interface ReservationFeedbackUpdateManyMutationInput {
@@ -11091,7 +11748,7 @@ export interface ReservationCreateWithoutReceiptInput {
   customer: CustomerCreateOneWithoutReservationsInput;
   sentPackage?: Maybe<PackageCreateOneInput>;
   returnedPackage?: Maybe<PackageCreateOneInput>;
-  location?: Maybe<LocationCreateOneInput>;
+  feedback?: Maybe<ReservationFeedbackCreateOneWithoutReservationInput>;
   products?: Maybe<PhysicalProductCreateManyInput>;
   reservationNumber: Int;
   shipped: Boolean;
@@ -11099,6 +11756,7 @@ export interface ReservationCreateWithoutReceiptInput {
   shippedAt?: Maybe<DateTimeInput>;
   receivedAt?: Maybe<DateTimeInput>;
   reminderSentAt?: Maybe<DateTimeInput>;
+  lastLocation?: Maybe<LocationCreateOneInput>;
 }
 
 export interface ReservationReceiptUpdateInput {
@@ -11118,7 +11776,7 @@ export interface ReservationUpdateWithoutReceiptDataInput {
   customer?: Maybe<CustomerUpdateOneRequiredWithoutReservationsInput>;
   sentPackage?: Maybe<PackageUpdateOneInput>;
   returnedPackage?: Maybe<PackageUpdateOneInput>;
-  location?: Maybe<LocationUpdateOneInput>;
+  feedback?: Maybe<ReservationFeedbackUpdateOneWithoutReservationInput>;
   products?: Maybe<PhysicalProductUpdateManyInput>;
   reservationNumber?: Maybe<Int>;
   shipped?: Maybe<Boolean>;
@@ -11126,6 +11784,7 @@ export interface ReservationUpdateWithoutReceiptDataInput {
   shippedAt?: Maybe<DateTimeInput>;
   receivedAt?: Maybe<DateTimeInput>;
   reminderSentAt?: Maybe<DateTimeInput>;
+  lastLocation?: Maybe<LocationUpdateOneInput>;
 }
 
 export interface ReservationUpsertWithoutReceiptInput {
@@ -11189,6 +11848,9 @@ export interface ProductCreateWithoutTagsInput {
   color: ColorCreateOneInput;
   secondaryColor?: Maybe<ColorCreateOneInput>;
   functions?: Maybe<ProductFunctionCreateManyInput>;
+  materialCategory?: Maybe<
+    ProductMaterialCategoryCreateOneWithoutProductsInput
+  >;
   innerMaterials?: Maybe<ProductCreateinnerMaterialsInput>;
   outerMaterials?: Maybe<ProductCreateouterMaterialsInput>;
   variants?: Maybe<ProductVariantCreateManyWithoutProductInput>;
@@ -11249,6 +11911,9 @@ export interface ProductUpdateWithoutTagsDataInput {
   color?: Maybe<ColorUpdateOneRequiredInput>;
   secondaryColor?: Maybe<ColorUpdateOneInput>;
   functions?: Maybe<ProductFunctionUpdateManyInput>;
+  materialCategory?: Maybe<
+    ProductMaterialCategoryUpdateOneWithoutProductsInput
+  >;
   innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
   variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
@@ -11880,6 +12545,26 @@ export interface PackageSubscriptionWhereInput {
   NOT?: Maybe<PackageSubscriptionWhereInput[] | PackageSubscriptionWhereInput>;
 }
 
+export interface PackageTransitEventSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<PackageTransitEventWhereInput>;
+  AND?: Maybe<
+    | PackageTransitEventSubscriptionWhereInput[]
+    | PackageTransitEventSubscriptionWhereInput
+  >;
+  OR?: Maybe<
+    | PackageTransitEventSubscriptionWhereInput[]
+    | PackageTransitEventSubscriptionWhereInput
+  >;
+  NOT?: Maybe<
+    | PackageTransitEventSubscriptionWhereInput[]
+    | PackageTransitEventSubscriptionWhereInput
+  >;
+}
+
 export interface PauseRequestSubscriptionWhereInput {
   mutation_in?: Maybe<MutationType[] | MutationType>;
   updatedFields_contains?: Maybe<String>;
@@ -11945,6 +12630,26 @@ export interface ProductFunctionSubscriptionWhereInput {
   NOT?: Maybe<
     | ProductFunctionSubscriptionWhereInput[]
     | ProductFunctionSubscriptionWhereInput
+  >;
+}
+
+export interface ProductMaterialCategorySubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<ProductMaterialCategoryWhereInput>;
+  AND?: Maybe<
+    | ProductMaterialCategorySubscriptionWhereInput[]
+    | ProductMaterialCategorySubscriptionWhereInput
+  >;
+  OR?: Maybe<
+    | ProductMaterialCategorySubscriptionWhereInput[]
+    | ProductMaterialCategorySubscriptionWhereInput
+  >;
+  NOT?: Maybe<
+    | ProductMaterialCategorySubscriptionWhereInput[]
+    | ProductMaterialCategorySubscriptionWhereInput
   >;
 }
 
@@ -13138,6 +13843,7 @@ export interface ProductPromise extends Promise<Product>, Fragmentable {
     first?: Int;
     last?: Int;
   }) => T;
+  materialCategory: <T = ProductMaterialCategoryPromise>() => T;
   innerMaterials: () => Promise<String[]>;
   outerMaterials: () => Promise<String[]>;
   variants: <T = FragmentableArray<ProductVariant>>(args?: {
@@ -13202,6 +13908,7 @@ export interface ProductSubscription
     first?: Int;
     last?: Int;
   }) => T;
+  materialCategory: <T = ProductMaterialCategorySubscription>() => T;
   innerMaterials: () => Promise<AsyncIterator<String[]>>;
   outerMaterials: () => Promise<AsyncIterator<String[]>>;
   variants: <T = Promise<AsyncIterator<ProductVariantSubscription>>>(args?: {
@@ -13266,6 +13973,7 @@ export interface ProductNullablePromise
     first?: Int;
     last?: Int;
   }) => T;
+  materialCategory: <T = ProductMaterialCategoryPromise>() => T;
   innerMaterials: () => Promise<String[]>;
   outerMaterials: () => Promise<String[]>;
   variants: <T = FragmentableArray<ProductVariant>>(args?: {
@@ -13667,6 +14375,66 @@ export interface ProductFunctionNullablePromise
   name: () => Promise<String>;
 }
 
+export interface ProductMaterialCategory {
+  id: ID_Output;
+  slug: String;
+  lifeExpectancy: Int;
+}
+
+export interface ProductMaterialCategoryPromise
+  extends Promise<ProductMaterialCategory>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  slug: () => Promise<String>;
+  lifeExpectancy: () => Promise<Int>;
+  category: <T = CategoryPromise>() => T;
+  products: <T = FragmentableArray<Product>>(args?: {
+    where?: ProductWhereInput;
+    orderBy?: ProductOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+}
+
+export interface ProductMaterialCategorySubscription
+  extends Promise<AsyncIterator<ProductMaterialCategory>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  slug: () => Promise<AsyncIterator<String>>;
+  lifeExpectancy: () => Promise<AsyncIterator<Int>>;
+  category: <T = CategorySubscription>() => T;
+  products: <T = Promise<AsyncIterator<ProductSubscription>>>(args?: {
+    where?: ProductWhereInput;
+    orderBy?: ProductOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+}
+
+export interface ProductMaterialCategoryNullablePromise
+  extends Promise<ProductMaterialCategory | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  slug: () => Promise<String>;
+  lifeExpectancy: () => Promise<Int>;
+  category: <T = CategoryPromise>() => T;
+  products: <T = FragmentableArray<Product>>(args?: {
+    where?: ProductWhereInput;
+    orderBy?: ProductOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+}
+
 export interface WarehouseLocation {
   id: ID_Output;
   type: WarehouseLocationType;
@@ -14020,7 +14788,7 @@ export interface ReservationPromise extends Promise<Reservation>, Fragmentable {
   customer: <T = CustomerPromise>() => T;
   sentPackage: <T = PackagePromise>() => T;
   returnedPackage: <T = PackagePromise>() => T;
-  location: <T = LocationPromise>() => T;
+  feedback: <T = ReservationFeedbackPromise>() => T;
   products: <T = FragmentableArray<PhysicalProduct>>(args?: {
     where?: PhysicalProductWhereInput;
     orderBy?: PhysicalProductOrderByInput;
@@ -14037,6 +14805,7 @@ export interface ReservationPromise extends Promise<Reservation>, Fragmentable {
   receivedAt: () => Promise<DateTimeOutput>;
   reminderSentAt: () => Promise<DateTimeOutput>;
   receipt: <T = ReservationReceiptPromise>() => T;
+  lastLocation: <T = LocationPromise>() => T;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -14049,7 +14818,7 @@ export interface ReservationSubscription
   customer: <T = CustomerSubscription>() => T;
   sentPackage: <T = PackageSubscription>() => T;
   returnedPackage: <T = PackageSubscription>() => T;
-  location: <T = LocationSubscription>() => T;
+  feedback: <T = ReservationFeedbackSubscription>() => T;
   products: <T = Promise<AsyncIterator<PhysicalProductSubscription>>>(args?: {
     where?: PhysicalProductWhereInput;
     orderBy?: PhysicalProductOrderByInput;
@@ -14066,6 +14835,7 @@ export interface ReservationSubscription
   receivedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   reminderSentAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   receipt: <T = ReservationReceiptSubscription>() => T;
+  lastLocation: <T = LocationSubscription>() => T;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -14078,7 +14848,7 @@ export interface ReservationNullablePromise
   customer: <T = CustomerPromise>() => T;
   sentPackage: <T = PackagePromise>() => T;
   returnedPackage: <T = PackagePromise>() => T;
-  location: <T = LocationPromise>() => T;
+  feedback: <T = ReservationFeedbackPromise>() => T;
   products: <T = FragmentableArray<PhysicalProduct>>(args?: {
     where?: PhysicalProductWhereInput;
     orderBy?: PhysicalProductOrderByInput;
@@ -14095,6 +14865,7 @@ export interface ReservationNullablePromise
   receivedAt: () => Promise<DateTimeOutput>;
   reminderSentAt: () => Promise<DateTimeOutput>;
   receipt: <T = ReservationReceiptPromise>() => T;
+  lastLocation: <T = LocationPromise>() => T;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -14121,6 +14892,15 @@ export interface PackagePromise extends Promise<Package>, Fragmentable {
   fromAddress: <T = LocationPromise>() => T;
   toAddress: <T = LocationPromise>() => T;
   weight: () => Promise<Float>;
+  events: <T = FragmentableArray<PackageTransitEvent>>(args?: {
+    where?: PackageTransitEventWhereInput;
+    orderBy?: PackageTransitEventOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -14142,6 +14922,15 @@ export interface PackageSubscription
   fromAddress: <T = LocationSubscription>() => T;
   toAddress: <T = LocationSubscription>() => T;
   weight: () => Promise<AsyncIterator<Float>>;
+  events: <T = Promise<AsyncIterator<PackageTransitEventSubscription>>>(args?: {
+    where?: PackageTransitEventWhereInput;
+    orderBy?: PackageTransitEventOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -14163,6 +14952,15 @@ export interface PackageNullablePromise
   fromAddress: <T = LocationPromise>() => T;
   toAddress: <T = LocationPromise>() => T;
   weight: () => Promise<Float>;
+  events: <T = FragmentableArray<PackageTransitEvent>>(args?: {
+    where?: PackageTransitEventWhereInput;
+    orderBy?: PackageTransitEventOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -14201,6 +14999,223 @@ export interface LabelNullablePromise
   image: () => Promise<String>;
   trackingNumber: () => Promise<String>;
   trackingURL: () => Promise<String>;
+}
+
+export interface PackageTransitEvent {
+  id: ID_Output;
+  status: PackageTransitEventStatus;
+  subStatus: PackageTransitEventSubStatus;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface PackageTransitEventPromise
+  extends Promise<PackageTransitEvent>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  status: () => Promise<PackageTransitEventStatus>;
+  subStatus: () => Promise<PackageTransitEventSubStatus>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface PackageTransitEventSubscription
+  extends Promise<AsyncIterator<PackageTransitEvent>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  status: () => Promise<AsyncIterator<PackageTransitEventStatus>>;
+  subStatus: () => Promise<AsyncIterator<PackageTransitEventSubStatus>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface PackageTransitEventNullablePromise
+  extends Promise<PackageTransitEvent | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  status: () => Promise<PackageTransitEventStatus>;
+  subStatus: () => Promise<PackageTransitEventSubStatus>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface ReservationFeedback {
+  id: ID_Output;
+  comment?: String;
+  rating?: Rating;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+  respondedAt?: DateTimeOutput;
+}
+
+export interface ReservationFeedbackPromise
+  extends Promise<ReservationFeedback>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  comment: () => Promise<String>;
+  feedbacks: <T = FragmentableArray<ProductVariantFeedback>>(args?: {
+    where?: ProductVariantFeedbackWhereInput;
+    orderBy?: ProductVariantFeedbackOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  rating: () => Promise<Rating>;
+  user: <T = UserPromise>() => T;
+  reservation: <T = ReservationPromise>() => T;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+  respondedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface ReservationFeedbackSubscription
+  extends Promise<AsyncIterator<ReservationFeedback>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  comment: () => Promise<AsyncIterator<String>>;
+  feedbacks: <
+    T = Promise<AsyncIterator<ProductVariantFeedbackSubscription>>
+  >(args?: {
+    where?: ProductVariantFeedbackWhereInput;
+    orderBy?: ProductVariantFeedbackOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  rating: () => Promise<AsyncIterator<Rating>>;
+  user: <T = UserSubscription>() => T;
+  reservation: <T = ReservationSubscription>() => T;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  respondedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface ReservationFeedbackNullablePromise
+  extends Promise<ReservationFeedback | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  comment: () => Promise<String>;
+  feedbacks: <T = FragmentableArray<ProductVariantFeedback>>(args?: {
+    where?: ProductVariantFeedbackWhereInput;
+    orderBy?: ProductVariantFeedbackOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  rating: () => Promise<Rating>;
+  user: <T = UserPromise>() => T;
+  reservation: <T = ReservationPromise>() => T;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+  respondedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface ProductVariantFeedback {
+  id: ID_Output;
+  isCompleted: Boolean;
+}
+
+export interface ProductVariantFeedbackPromise
+  extends Promise<ProductVariantFeedback>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  isCompleted: () => Promise<Boolean>;
+  questions: <T = FragmentableArray<ProductVariantFeedbackQuestion>>(args?: {
+    where?: ProductVariantFeedbackQuestionWhereInput;
+    orderBy?: ProductVariantFeedbackQuestionOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  reservationFeedback: <T = ReservationFeedbackPromise>() => T;
+  variant: <T = ProductVariantPromise>() => T;
+}
+
+export interface ProductVariantFeedbackSubscription
+  extends Promise<AsyncIterator<ProductVariantFeedback>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  isCompleted: () => Promise<AsyncIterator<Boolean>>;
+  questions: <
+    T = Promise<AsyncIterator<ProductVariantFeedbackQuestionSubscription>>
+  >(args?: {
+    where?: ProductVariantFeedbackQuestionWhereInput;
+    orderBy?: ProductVariantFeedbackQuestionOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  reservationFeedback: <T = ReservationFeedbackSubscription>() => T;
+  variant: <T = ProductVariantSubscription>() => T;
+}
+
+export interface ProductVariantFeedbackNullablePromise
+  extends Promise<ProductVariantFeedback | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  isCompleted: () => Promise<Boolean>;
+  questions: <T = FragmentableArray<ProductVariantFeedbackQuestion>>(args?: {
+    where?: ProductVariantFeedbackQuestionWhereInput;
+    orderBy?: ProductVariantFeedbackQuestionOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  reservationFeedback: <T = ReservationFeedbackPromise>() => T;
+  variant: <T = ProductVariantPromise>() => T;
+}
+
+export interface ProductVariantFeedbackQuestion {
+  id: ID_Output;
+  options: String[];
+  question: String;
+  responses: String[];
+  type: QuestionType;
+}
+
+export interface ProductVariantFeedbackQuestionPromise
+  extends Promise<ProductVariantFeedbackQuestion>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  options: () => Promise<String[]>;
+  question: () => Promise<String>;
+  responses: () => Promise<String[]>;
+  type: () => Promise<QuestionType>;
+  variantFeedback: <T = ProductVariantFeedbackPromise>() => T;
+}
+
+export interface ProductVariantFeedbackQuestionSubscription
+  extends Promise<AsyncIterator<ProductVariantFeedbackQuestion>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  options: () => Promise<AsyncIterator<String[]>>;
+  question: () => Promise<AsyncIterator<String>>;
+  responses: () => Promise<AsyncIterator<String[]>>;
+  type: () => Promise<AsyncIterator<QuestionType>>;
+  variantFeedback: <T = ProductVariantFeedbackSubscription>() => T;
+}
+
+export interface ProductVariantFeedbackQuestionNullablePromise
+  extends Promise<ProductVariantFeedbackQuestion | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  options: () => Promise<String[]>;
+  question: () => Promise<String>;
+  responses: () => Promise<String[]>;
+  type: () => Promise<QuestionType>;
+  variantFeedback: <T = ProductVariantFeedbackPromise>() => T;
 }
 
 export interface ReservationReceipt {
@@ -15491,6 +16506,64 @@ export interface AggregatePackageSubscription
   count: () => Promise<AsyncIterator<Int>>;
 }
 
+export interface PackageTransitEventConnection {
+  pageInfo: PageInfo;
+  edges: PackageTransitEventEdge[];
+}
+
+export interface PackageTransitEventConnectionPromise
+  extends Promise<PackageTransitEventConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<PackageTransitEventEdge>>() => T;
+  aggregate: <T = AggregatePackageTransitEventPromise>() => T;
+}
+
+export interface PackageTransitEventConnectionSubscription
+  extends Promise<AsyncIterator<PackageTransitEventConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <
+    T = Promise<AsyncIterator<PackageTransitEventEdgeSubscription>>
+  >() => T;
+  aggregate: <T = AggregatePackageTransitEventSubscription>() => T;
+}
+
+export interface PackageTransitEventEdge {
+  node: PackageTransitEvent;
+  cursor: String;
+}
+
+export interface PackageTransitEventEdgePromise
+  extends Promise<PackageTransitEventEdge>,
+    Fragmentable {
+  node: <T = PackageTransitEventPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface PackageTransitEventEdgeSubscription
+  extends Promise<AsyncIterator<PackageTransitEventEdge>>,
+    Fragmentable {
+  node: <T = PackageTransitEventSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregatePackageTransitEvent {
+  count: Int;
+}
+
+export interface AggregatePackageTransitEventPromise
+  extends Promise<AggregatePackageTransitEvent>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregatePackageTransitEventSubscription
+  extends Promise<AsyncIterator<AggregatePackageTransitEvent>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
 export interface PauseRequestConnection {
   pageInfo: PageInfo;
   edges: PauseRequestEdge[];
@@ -15709,6 +16782,64 @@ export interface AggregateProductFunctionPromise
 
 export interface AggregateProductFunctionSubscription
   extends Promise<AsyncIterator<AggregateProductFunction>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface ProductMaterialCategoryConnection {
+  pageInfo: PageInfo;
+  edges: ProductMaterialCategoryEdge[];
+}
+
+export interface ProductMaterialCategoryConnectionPromise
+  extends Promise<ProductMaterialCategoryConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<ProductMaterialCategoryEdge>>() => T;
+  aggregate: <T = AggregateProductMaterialCategoryPromise>() => T;
+}
+
+export interface ProductMaterialCategoryConnectionSubscription
+  extends Promise<AsyncIterator<ProductMaterialCategoryConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <
+    T = Promise<AsyncIterator<ProductMaterialCategoryEdgeSubscription>>
+  >() => T;
+  aggregate: <T = AggregateProductMaterialCategorySubscription>() => T;
+}
+
+export interface ProductMaterialCategoryEdge {
+  node: ProductMaterialCategory;
+  cursor: String;
+}
+
+export interface ProductMaterialCategoryEdgePromise
+  extends Promise<ProductMaterialCategoryEdge>,
+    Fragmentable {
+  node: <T = ProductMaterialCategoryPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface ProductMaterialCategoryEdgeSubscription
+  extends Promise<AsyncIterator<ProductMaterialCategoryEdge>>,
+    Fragmentable {
+  node: <T = ProductMaterialCategorySubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateProductMaterialCategory {
+  count: Int;
+}
+
+export interface AggregateProductMaterialCategoryPromise
+  extends Promise<AggregateProductMaterialCategory>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateProductMaterialCategorySubscription
+  extends Promise<AsyncIterator<AggregateProductMaterialCategory>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
@@ -15944,185 +17075,6 @@ export interface AggregateProductVariantSubscription
   extends Promise<AsyncIterator<AggregateProductVariant>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
-}
-
-export interface ProductVariantFeedback {
-  id: ID_Output;
-  isCompleted: Boolean;
-}
-
-export interface ProductVariantFeedbackPromise
-  extends Promise<ProductVariantFeedback>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  isCompleted: () => Promise<Boolean>;
-  questions: <T = FragmentableArray<ProductVariantFeedbackQuestion>>(args?: {
-    where?: ProductVariantFeedbackQuestionWhereInput;
-    orderBy?: ProductVariantFeedbackQuestionOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
-  reservationFeedback: <T = ReservationFeedbackPromise>() => T;
-  variant: <T = ProductVariantPromise>() => T;
-}
-
-export interface ProductVariantFeedbackSubscription
-  extends Promise<AsyncIterator<ProductVariantFeedback>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  isCompleted: () => Promise<AsyncIterator<Boolean>>;
-  questions: <
-    T = Promise<AsyncIterator<ProductVariantFeedbackQuestionSubscription>>
-  >(args?: {
-    where?: ProductVariantFeedbackQuestionWhereInput;
-    orderBy?: ProductVariantFeedbackQuestionOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
-  reservationFeedback: <T = ReservationFeedbackSubscription>() => T;
-  variant: <T = ProductVariantSubscription>() => T;
-}
-
-export interface ProductVariantFeedbackNullablePromise
-  extends Promise<ProductVariantFeedback | null>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  isCompleted: () => Promise<Boolean>;
-  questions: <T = FragmentableArray<ProductVariantFeedbackQuestion>>(args?: {
-    where?: ProductVariantFeedbackQuestionWhereInput;
-    orderBy?: ProductVariantFeedbackQuestionOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
-  reservationFeedback: <T = ReservationFeedbackPromise>() => T;
-  variant: <T = ProductVariantPromise>() => T;
-}
-
-export interface ProductVariantFeedbackQuestion {
-  id: ID_Output;
-  options: String[];
-  question: String;
-  responses: String[];
-  type: QuestionType;
-}
-
-export interface ProductVariantFeedbackQuestionPromise
-  extends Promise<ProductVariantFeedbackQuestion>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  options: () => Promise<String[]>;
-  question: () => Promise<String>;
-  responses: () => Promise<String[]>;
-  type: () => Promise<QuestionType>;
-  variantFeedback: <T = ProductVariantFeedbackPromise>() => T;
-}
-
-export interface ProductVariantFeedbackQuestionSubscription
-  extends Promise<AsyncIterator<ProductVariantFeedbackQuestion>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  options: () => Promise<AsyncIterator<String[]>>;
-  question: () => Promise<AsyncIterator<String>>;
-  responses: () => Promise<AsyncIterator<String[]>>;
-  type: () => Promise<AsyncIterator<QuestionType>>;
-  variantFeedback: <T = ProductVariantFeedbackSubscription>() => T;
-}
-
-export interface ProductVariantFeedbackQuestionNullablePromise
-  extends Promise<ProductVariantFeedbackQuestion | null>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  options: () => Promise<String[]>;
-  question: () => Promise<String>;
-  responses: () => Promise<String[]>;
-  type: () => Promise<QuestionType>;
-  variantFeedback: <T = ProductVariantFeedbackPromise>() => T;
-}
-
-export interface ReservationFeedback {
-  id: ID_Output;
-  comment?: String;
-  rating?: Rating;
-  createdAt: DateTimeOutput;
-  updatedAt: DateTimeOutput;
-  respondedAt?: DateTimeOutput;
-}
-
-export interface ReservationFeedbackPromise
-  extends Promise<ReservationFeedback>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  comment: () => Promise<String>;
-  feedbacks: <T = FragmentableArray<ProductVariantFeedback>>(args?: {
-    where?: ProductVariantFeedbackWhereInput;
-    orderBy?: ProductVariantFeedbackOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
-  rating: () => Promise<Rating>;
-  user: <T = UserPromise>() => T;
-  reservation: <T = ReservationPromise>() => T;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
-  respondedAt: () => Promise<DateTimeOutput>;
-}
-
-export interface ReservationFeedbackSubscription
-  extends Promise<AsyncIterator<ReservationFeedback>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  comment: () => Promise<AsyncIterator<String>>;
-  feedbacks: <
-    T = Promise<AsyncIterator<ProductVariantFeedbackSubscription>>
-  >(args?: {
-    where?: ProductVariantFeedbackWhereInput;
-    orderBy?: ProductVariantFeedbackOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
-  rating: () => Promise<AsyncIterator<Rating>>;
-  user: <T = UserSubscription>() => T;
-  reservation: <T = ReservationSubscription>() => T;
-  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  respondedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-}
-
-export interface ReservationFeedbackNullablePromise
-  extends Promise<ReservationFeedback | null>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  comment: () => Promise<String>;
-  feedbacks: <T = FragmentableArray<ProductVariantFeedback>>(args?: {
-    where?: ProductVariantFeedbackWhereInput;
-    orderBy?: ProductVariantFeedbackOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
-  rating: () => Promise<Rating>;
-  user: <T = UserPromise>() => T;
-  reservation: <T = ReservationPromise>() => T;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
-  respondedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface ProductVariantFeedbackConnection {
@@ -18163,6 +19115,59 @@ export interface PackagePreviousValuesSubscription
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
+export interface PackageTransitEventSubscriptionPayload {
+  mutation: MutationType;
+  node: PackageTransitEvent;
+  updatedFields: String[];
+  previousValues: PackageTransitEventPreviousValues;
+}
+
+export interface PackageTransitEventSubscriptionPayloadPromise
+  extends Promise<PackageTransitEventSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = PackageTransitEventPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = PackageTransitEventPreviousValuesPromise>() => T;
+}
+
+export interface PackageTransitEventSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<PackageTransitEventSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = PackageTransitEventSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = PackageTransitEventPreviousValuesSubscription>() => T;
+}
+
+export interface PackageTransitEventPreviousValues {
+  id: ID_Output;
+  status: PackageTransitEventStatus;
+  subStatus: PackageTransitEventSubStatus;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface PackageTransitEventPreviousValuesPromise
+  extends Promise<PackageTransitEventPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  status: () => Promise<PackageTransitEventStatus>;
+  subStatus: () => Promise<PackageTransitEventSubStatus>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface PackageTransitEventPreviousValuesSubscription
+  extends Promise<AsyncIterator<PackageTransitEventPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  status: () => Promise<AsyncIterator<PackageTransitEventStatus>>;
+  subStatus: () => Promise<AsyncIterator<PackageTransitEventSubStatus>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
 export interface PauseRequestSubscriptionPayload {
   mutation: MutationType;
   node: PauseRequest;
@@ -18424,6 +19429,55 @@ export interface ProductFunctionPreviousValuesSubscription
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   name: () => Promise<AsyncIterator<String>>;
+}
+
+export interface ProductMaterialCategorySubscriptionPayload {
+  mutation: MutationType;
+  node: ProductMaterialCategory;
+  updatedFields: String[];
+  previousValues: ProductMaterialCategoryPreviousValues;
+}
+
+export interface ProductMaterialCategorySubscriptionPayloadPromise
+  extends Promise<ProductMaterialCategorySubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = ProductMaterialCategoryPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = ProductMaterialCategoryPreviousValuesPromise>() => T;
+}
+
+export interface ProductMaterialCategorySubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<ProductMaterialCategorySubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = ProductMaterialCategorySubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <
+    T = ProductMaterialCategoryPreviousValuesSubscription
+  >() => T;
+}
+
+export interface ProductMaterialCategoryPreviousValues {
+  id: ID_Output;
+  slug: String;
+  lifeExpectancy: Int;
+}
+
+export interface ProductMaterialCategoryPreviousValuesPromise
+  extends Promise<ProductMaterialCategoryPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  slug: () => Promise<String>;
+  lifeExpectancy: () => Promise<Int>;
+}
+
+export interface ProductMaterialCategoryPreviousValuesSubscription
+  extends Promise<AsyncIterator<ProductMaterialCategoryPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  slug: () => Promise<AsyncIterator<String>>;
+  lifeExpectancy: () => Promise<AsyncIterator<Int>>;
 }
 
 export interface ProductModelSubscriptionPayload {
@@ -19583,6 +20637,14 @@ export const models: Model[] = [
     embedded: false
   },
   {
+    name: "PackageTransitEventStatus",
+    embedded: false
+  },
+  {
+    name: "PackageTransitEventSubStatus",
+    embedded: false
+  },
+  {
     name: "Brand",
     embedded: false
   },
@@ -19620,6 +20682,10 @@ export const models: Model[] = [
   },
   {
     name: "Product",
+    embedded: false
+  },
+  {
+    name: "ProductMaterialCategory",
     embedded: false
   },
   {
@@ -19683,7 +20749,23 @@ export const models: Model[] = [
     embedded: false
   },
   {
+    name: "ReservationPhase",
+    embedded: false
+  },
+  {
     name: "Reservation",
+    embedded: false
+  },
+  {
+    name: "ReservationFeedback",
+    embedded: false
+  },
+  {
+    name: "ProductVariantFeedback",
+    embedded: false
+  },
+  {
+    name: "ProductVariantFeedbackQuestion",
     embedded: false
   },
   {
@@ -19696,6 +20778,10 @@ export const models: Model[] = [
   },
   {
     name: "Package",
+    embedded: false
+  },
+  {
+    name: "PackageTransitEvent",
     embedded: false
   },
   {
@@ -19724,18 +20810,6 @@ export const models: Model[] = [
   },
   {
     name: "Size",
-    embedded: false
-  },
-  {
-    name: "ReservationFeedback",
-    embedded: false
-  },
-  {
-    name: "ProductVariantFeedback",
-    embedded: false
-  },
-  {
-    name: "ProductVariantFeedbackQuestion",
     embedded: false
   }
 ];
