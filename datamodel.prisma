@@ -85,6 +85,7 @@ enum ReservationStatus {
   Unknown
 
   # To be deleted, needed for migration
+  InQueue
   Received
 }
 
@@ -344,7 +345,7 @@ type Product {
 
 type ProductMaterialCategory {
   id: ID! @id
-  slug: String!
+  slug: String! @unique
   lifeExpectancy: Int!
   category: Category!
   products: [Product!]! @relation(link: TABLE)
@@ -522,7 +523,8 @@ type CustomerMembership {
   id: ID! @id
   subscriptionId: String!
   customer: Customer! @relation(link: INLINE)
-  pauseRequests: [PauseRequest] @relation(name: "CustomerMembershipToPauseRequest", onDelete: CASCADE)
+  pauseRequests: [PauseRequest]
+    @relation(name: "CustomerMembershipToPauseRequest", onDelete: CASCADE)
 }
 
 type PauseRequest {
@@ -532,7 +534,8 @@ type PauseRequest {
   pausePending: Boolean!
   pauseDate: DateTime
   resumeDate: DateTime
-  membership: CustomerMembership! @relation(name: "CustomerMembershipToPauseRequest")
+  membership: CustomerMembership!
+    @relation(name: "CustomerMembershipToPauseRequest")
 }
 
 type RecentlyViewedProduct {

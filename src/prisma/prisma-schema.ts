@@ -6675,6 +6675,7 @@ input ProductMaterialCategoryWhereInput {
 
 input ProductMaterialCategoryWhereUniqueInput {
   id: ID
+  slug: String
 }
 
 type ProductModel {

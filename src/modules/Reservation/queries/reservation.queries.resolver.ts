@@ -27,11 +27,16 @@ export class ReservationQueriesResolver {
 
   @Query()
   async reservations(@Args() args, @Info() info) {
-    return await this.prisma.binding.query.reservations(args, info)
+    const data = await this.prisma.binding.query.reservations(args, info)
+    return data
   }
 
   @Query()
   async reservationsConnection(@Args() args, @Info() info) {
-    return await this.prisma.binding.query.reservationsConnection(args, info)
+    const data = await this.prisma.binding.query.reservationsConnection(
+      args,
+      info
+    )
+    return data
   }
 }

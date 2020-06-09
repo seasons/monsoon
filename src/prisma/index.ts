@@ -5696,6 +5696,7 @@ export type ProductFunctionWhereUniqueInput = AtLeastOne<{
 
 export type ProductMaterialCategoryWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
+  slug?: Maybe<String>;
 }>;
 
 export type ProductModelWhereUniqueInput = AtLeastOne<{

@@ -71,12 +71,6 @@ export class ReservationFieldsResolver {
     const status = reservation.status
     if (args.display === true) {
       switch (status) {
-        case "InQueue":
-          return "In queue"
-        case "InTransit":
-          return "In transit"
-        case "OnHold":
-          return "On hold"
         default:
           return status
       }

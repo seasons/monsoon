@@ -20,6 +20,7 @@ export type AirtableModelName =
   | "Colors"
   | "Brands"
   | "Models"
+  | "Materials"
   | "Categories"
   | "Locations"
   | "Products"

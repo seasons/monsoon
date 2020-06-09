@@ -55,6 +55,10 @@ export class AirtableQueriesService {
     return await this.getAllFromScriptView("Physical Products", airtableBase)
   }
 
+  async getAllMaterialCategories(airtableBase?) {
+    return await this.getAllFromScriptView("Materials", airtableBase)
+  }
+
   getPhysicalProducts(SUIDs: string[]) {
     const formula = `OR(${SUIDs.map(a => `{SUID}='${a}'`).join(",")})`
     return this.getAll("Physical Products", formula)

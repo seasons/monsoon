@@ -93,6 +93,7 @@ export class SyncProductsService {
     const allProducts = await this.airtableService.getAllProducts()
     const allCategories = await this.airtableService.getAllCategories()
     const allSizes = await this.airtableService.getAllSizes()
+    const allMaterials = await this.airtableService.getAllMaterialCategories()
 
     const [
       multibar,
@@ -114,6 +115,7 @@ export class SyncProductsService {
         const brand = allBrands.findByIds(model.brand)
         const category = allCategories.findByIds(model.category)
         const modelSize = allSizes.findByIds(model.modelSize)
+        const material = allMaterials.findByIds(model.materialCategory)
 
         if (
           isEmpty(model) ||
@@ -126,7 +128,7 @@ export class SyncProductsService {
 
         if (
           record.model.photographyStatus !== "Done" &&
-          record.model.status == "Available"
+          record.model.status === "Available"
         ) {
           continue
         }
@@ -192,6 +194,13 @@ export class SyncProductsService {
           })
         }
 
+        // Upsert the category
+        const materialCategory = allCategories.findByIds(material.category)
+        await this.productUtils.upsertMaterialCategory(
+          material,
+          materialCategory
+        )
+
         // Upsert the product
         const data = {
           brand: {
@@ -236,6 +245,7 @@ export class SyncProductsService {
               : {}
           })(),
           modelHeight: head(modelHeight) ?? 0,
+          materialCategory: {},
           status: (status || "Available").replace(" ", ""),
           season: model.season,
         } as ProductCreateInput

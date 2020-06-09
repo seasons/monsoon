@@ -81,7 +81,22 @@ export class ImageService {
       identity
     )
 
-    return url.replace(S3_BASE, IMGIX_BASE) + "?" + qs.stringify(params)
+    if (/seasons-images\./.test(url)) {
+      return (
+        url.replace(`seasons-images.s3.amazonaws.com`, `seasons-s3.imgix.net`) +
+        "?" +
+        qs.stringify(params)
+      )
+    }
+
+    return (
+      url.replace(
+        `seasons-images-staging.s3.amazonaws.com`,
+        `seasons-s3-staging.imgix.net`
+      ) +
+      "?" +
+      qs.stringify(params)
+    )
   }
 
   async uploadImage(
