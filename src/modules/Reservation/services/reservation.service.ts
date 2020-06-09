@@ -273,12 +273,12 @@ export class ReservationService {
 
     const reservation = await this.getReservation(reservationNumber)
 
-    const returnedPhysicalProducts = reservation.products.filter(p =>
-      [
-        "Reservable" as InventoryStatus,
-        "NonReservable" as InventoryStatus,
-      ].includes(p.inventoryStatus)
-    )
+    const returnedPhysicalProducts = reservation.products.filter(p => {
+      const physicalProduct = productStates.find(
+        s => s.productUID === p.seasonsUID
+      )
+      return physicalProduct.returned
+    })
 
     const prismaUser = await this.prisma.client.user({
       email: reservation.user.email,
