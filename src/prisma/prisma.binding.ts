@@ -14,16 +14,6 @@ export interface Query {
     emailReceipts: <T = Array<EmailReceipt | null>>(args: { where?: EmailReceiptWhereInput | null, orderBy?: EmailReceiptOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     pushNotificationReceipts: <T = Array<PushNotificationReceipt | null>>(args: { where?: PushNotificationReceiptWhereInput | null, orderBy?: PushNotificationReceiptOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     bagItems: <T = Array<BagItem | null>>(args: { where?: BagItemWhereInput | null, orderBy?: BagItemOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-<<<<<<< HEAD
-    recentlyViewedProducts: <T = Array<RecentlyViewedProduct | null>>(args: { where?: RecentlyViewedProductWhereInput | null, orderBy?: RecentlyViewedProductOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    reservations: <T = Array<Reservation | null>>(args: { where?: ReservationWhereInput | null, orderBy?: ReservationOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    reservationFeedbacks: <T = Array<ReservationFeedback | null>>(args: { where?: ReservationFeedbackWhereInput | null, orderBy?: ReservationFeedbackOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    productVariantFeedbacks: <T = Array<ProductVariantFeedback | null>>(args: { where?: ProductVariantFeedbackWhereInput | null, orderBy?: ProductVariantFeedbackOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    productVariantFeedbackQuestions: <T = Array<ProductVariantFeedbackQuestion | null>>(args: { where?: ProductVariantFeedbackQuestionWhereInput | null, orderBy?: ProductVariantFeedbackQuestionOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    reservationReceipts: <T = Array<ReservationReceipt | null>>(args: { where?: ReservationReceiptWhereInput | null, orderBy?: ReservationReceiptOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    productRequests: <T = Array<ProductRequest | null>>(args: { where?: ProductRequestWhereInput | null, orderBy?: ProductRequestOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    productVariantWants: <T = Array<ProductVariantWant | null>>(args: { where?: ProductVariantWantWhereInput | null, orderBy?: ProductVariantWantOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-=======
     customerMemberships: <T = Array<CustomerMembership | null>>(args: { where?: CustomerMembershipWhereInput | null, orderBy?: CustomerMembershipOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     pauseRequests: <T = Array<PauseRequest | null>>(args: { where?: PauseRequestWhereInput | null, orderBy?: PauseRequestOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     recentlyViewedProducts: <T = Array<RecentlyViewedProduct | null>>(args: { where?: RecentlyViewedProductWhereInput | null, orderBy?: RecentlyViewedProductOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -33,7 +23,6 @@ export interface Query {
     reservationFeedbacks: <T = Array<ReservationFeedback | null>>(args: { where?: ReservationFeedbackWhereInput | null, orderBy?: ReservationFeedbackOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     productVariantFeedbacks: <T = Array<ProductVariantFeedback | null>>(args: { where?: ProductVariantFeedbackWhereInput | null, orderBy?: ProductVariantFeedbackOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     productVariantFeedbackQuestions: <T = Array<ProductVariantFeedbackQuestion | null>>(args: { where?: ProductVariantFeedbackQuestionWhereInput | null, orderBy?: ProductVariantFeedbackQuestionOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
     collections: <T = Array<Collection | null>>(args: { where?: CollectionWhereInput | null, orderBy?: CollectionOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     customerDetails: <T = Array<CustomerDetail | null>>(args: { where?: CustomerDetailWhereInput | null, orderBy?: CustomerDetailOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     billingInfoes: <T = Array<BillingInfo | null>>(args: { where?: BillingInfoWhereInput | null, orderBy?: BillingInfoOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -52,10 +41,7 @@ export interface Query {
     physicalProducts: <T = Array<PhysicalProduct | null>>(args: { where?: PhysicalProductWhereInput | null, orderBy?: PhysicalProductOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     productVariants: <T = Array<ProductVariant | null>>(args: { where?: ProductVariantWhereInput | null, orderBy?: ProductVariantOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     products: <T = Array<Product | null>>(args: { where?: ProductWhereInput | null, orderBy?: ProductOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-<<<<<<< HEAD
-=======
     reservations: <T = Array<Reservation | null>>(args: { where?: ReservationWhereInput | null, orderBy?: ReservationOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
     users: <T = Array<User | null>>(args: { where?: UserWhereInput | null, orderBy?: UserOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     brand: <T = Brand | null>(args: { where: BrandWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     collectionGroup: <T = CollectionGroup | null>(args: { where: CollectionGroupWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -67,16 +53,6 @@ export interface Query {
     emailReceipt: <T = EmailReceipt | null>(args: { where: EmailReceiptWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     pushNotificationReceipt: <T = PushNotificationReceipt | null>(args: { where: PushNotificationReceiptWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     bagItem: <T = BagItem | null>(args: { where: BagItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-<<<<<<< HEAD
-    recentlyViewedProduct: <T = RecentlyViewedProduct | null>(args: { where: RecentlyViewedProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    reservation: <T = Reservation | null>(args: { where: ReservationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    reservationFeedback: <T = ReservationFeedback | null>(args: { where: ReservationFeedbackWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    productVariantFeedback: <T = ProductVariantFeedback | null>(args: { where: ProductVariantFeedbackWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    productVariantFeedbackQuestion: <T = ProductVariantFeedbackQuestion | null>(args: { where: ProductVariantFeedbackQuestionWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    reservationReceipt: <T = ReservationReceipt | null>(args: { where: ReservationReceiptWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    productRequest: <T = ProductRequest | null>(args: { where: ProductRequestWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    productVariantWant: <T = ProductVariantWant | null>(args: { where: ProductVariantWantWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-=======
     customerMembership: <T = CustomerMembership | null>(args: { where: CustomerMembershipWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     pauseRequest: <T = PauseRequest | null>(args: { where: PauseRequestWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     recentlyViewedProduct: <T = RecentlyViewedProduct | null>(args: { where: RecentlyViewedProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -86,7 +62,6 @@ export interface Query {
     reservationFeedback: <T = ReservationFeedback | null>(args: { where: ReservationFeedbackWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     productVariantFeedback: <T = ProductVariantFeedback | null>(args: { where: ProductVariantFeedbackWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     productVariantFeedbackQuestion: <T = ProductVariantFeedbackQuestion | null>(args: { where: ProductVariantFeedbackQuestionWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
     collection: <T = Collection | null>(args: { where: CollectionWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     customerDetail: <T = CustomerDetail | null>(args: { where: CustomerDetailWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     billingInfo: <T = BillingInfo | null>(args: { where: BillingInfoWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -105,10 +80,7 @@ export interface Query {
     physicalProduct: <T = PhysicalProduct | null>(args: { where: PhysicalProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     productVariant: <T = ProductVariant | null>(args: { where: ProductVariantWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     product: <T = Product | null>(args: { where: ProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-<<<<<<< HEAD
-=======
     reservation: <T = Reservation | null>(args: { where: ReservationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
     user: <T = User | null>(args: { where: UserWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     brandsConnection: <T = BrandConnection>(args: { where?: BrandWhereInput | null, orderBy?: BrandOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     collectionGroupsConnection: <T = CollectionGroupConnection>(args: { where?: CollectionGroupWhereInput | null, orderBy?: CollectionGroupOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -120,16 +92,6 @@ export interface Query {
     emailReceiptsConnection: <T = EmailReceiptConnection>(args: { where?: EmailReceiptWhereInput | null, orderBy?: EmailReceiptOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     pushNotificationReceiptsConnection: <T = PushNotificationReceiptConnection>(args: { where?: PushNotificationReceiptWhereInput | null, orderBy?: PushNotificationReceiptOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     bagItemsConnection: <T = BagItemConnection>(args: { where?: BagItemWhereInput | null, orderBy?: BagItemOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-<<<<<<< HEAD
-    recentlyViewedProductsConnection: <T = RecentlyViewedProductConnection>(args: { where?: RecentlyViewedProductWhereInput | null, orderBy?: RecentlyViewedProductOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    reservationsConnection: <T = ReservationConnection>(args: { where?: ReservationWhereInput | null, orderBy?: ReservationOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    reservationFeedbacksConnection: <T = ReservationFeedbackConnection>(args: { where?: ReservationFeedbackWhereInput | null, orderBy?: ReservationFeedbackOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    productVariantFeedbacksConnection: <T = ProductVariantFeedbackConnection>(args: { where?: ProductVariantFeedbackWhereInput | null, orderBy?: ProductVariantFeedbackOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    productVariantFeedbackQuestionsConnection: <T = ProductVariantFeedbackQuestionConnection>(args: { where?: ProductVariantFeedbackQuestionWhereInput | null, orderBy?: ProductVariantFeedbackQuestionOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    reservationReceiptsConnection: <T = ReservationReceiptConnection>(args: { where?: ReservationReceiptWhereInput | null, orderBy?: ReservationReceiptOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    productRequestsConnection: <T = ProductRequestConnection>(args: { where?: ProductRequestWhereInput | null, orderBy?: ProductRequestOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    productVariantWantsConnection: <T = ProductVariantWantConnection>(args: { where?: ProductVariantWantWhereInput | null, orderBy?: ProductVariantWantOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-=======
     customerMembershipsConnection: <T = CustomerMembershipConnection>(args: { where?: CustomerMembershipWhereInput | null, orderBy?: CustomerMembershipOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     pauseRequestsConnection: <T = PauseRequestConnection>(args: { where?: PauseRequestWhereInput | null, orderBy?: PauseRequestOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     recentlyViewedProductsConnection: <T = RecentlyViewedProductConnection>(args: { where?: RecentlyViewedProductWhereInput | null, orderBy?: RecentlyViewedProductOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -139,7 +101,6 @@ export interface Query {
     reservationFeedbacksConnection: <T = ReservationFeedbackConnection>(args: { where?: ReservationFeedbackWhereInput | null, orderBy?: ReservationFeedbackOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     productVariantFeedbacksConnection: <T = ProductVariantFeedbackConnection>(args: { where?: ProductVariantFeedbackWhereInput | null, orderBy?: ProductVariantFeedbackOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     productVariantFeedbackQuestionsConnection: <T = ProductVariantFeedbackQuestionConnection>(args: { where?: ProductVariantFeedbackQuestionWhereInput | null, orderBy?: ProductVariantFeedbackQuestionOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
     collectionsConnection: <T = CollectionConnection>(args: { where?: CollectionWhereInput | null, orderBy?: CollectionOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     customerDetailsConnection: <T = CustomerDetailConnection>(args: { where?: CustomerDetailWhereInput | null, orderBy?: CustomerDetailOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     billingInfoesConnection: <T = BillingInfoConnection>(args: { where?: BillingInfoWhereInput | null, orderBy?: BillingInfoOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -158,10 +119,7 @@ export interface Query {
     physicalProductsConnection: <T = PhysicalProductConnection>(args: { where?: PhysicalProductWhereInput | null, orderBy?: PhysicalProductOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     productVariantsConnection: <T = ProductVariantConnection>(args: { where?: ProductVariantWhereInput | null, orderBy?: ProductVariantOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     productsConnection: <T = ProductConnection>(args: { where?: ProductWhereInput | null, orderBy?: ProductOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-<<<<<<< HEAD
-=======
     reservationsConnection: <T = ReservationConnection>(args: { where?: ReservationWhereInput | null, orderBy?: ReservationOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
     usersConnection: <T = UserConnection>(args: { where?: UserWhereInput | null, orderBy?: UserOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     node: <T = Node | null>(args: { id: ID_Output }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> 
   }
@@ -177,16 +135,6 @@ export interface Mutation {
     createEmailReceipt: <T = EmailReceipt>(args: { data: EmailReceiptCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createPushNotificationReceipt: <T = PushNotificationReceipt>(args: { data: PushNotificationReceiptCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createBagItem: <T = BagItem>(args: { data: BagItemCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-<<<<<<< HEAD
-    createRecentlyViewedProduct: <T = RecentlyViewedProduct>(args: { data: RecentlyViewedProductCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    createReservation: <T = Reservation>(args: { data: ReservationCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    createReservationFeedback: <T = ReservationFeedback>(args: { data: ReservationFeedbackCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    createProductVariantFeedback: <T = ProductVariantFeedback>(args: { data: ProductVariantFeedbackCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    createProductVariantFeedbackQuestion: <T = ProductVariantFeedbackQuestion>(args: { data: ProductVariantFeedbackQuestionCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    createReservationReceipt: <T = ReservationReceipt>(args: { data: ReservationReceiptCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    createProductRequest: <T = ProductRequest>(args: { data: ProductRequestCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    createProductVariantWant: <T = ProductVariantWant>(args: { data: ProductVariantWantCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-=======
     createCustomerMembership: <T = CustomerMembership>(args: { data: CustomerMembershipCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createPauseRequest: <T = PauseRequest>(args: { data: PauseRequestCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createRecentlyViewedProduct: <T = RecentlyViewedProduct>(args: { data: RecentlyViewedProductCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -196,7 +144,6 @@ export interface Mutation {
     createReservationFeedback: <T = ReservationFeedback>(args: { data: ReservationFeedbackCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createProductVariantFeedback: <T = ProductVariantFeedback>(args: { data: ProductVariantFeedbackCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createProductVariantFeedbackQuestion: <T = ProductVariantFeedbackQuestion>(args: { data: ProductVariantFeedbackQuestionCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
     createCollection: <T = Collection>(args: { data: CollectionCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createCustomerDetail: <T = CustomerDetail>(args: { data: CustomerDetailCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createBillingInfo: <T = BillingInfo>(args: { data: BillingInfoCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -215,10 +162,7 @@ export interface Mutation {
     createPhysicalProduct: <T = PhysicalProduct>(args: { data: PhysicalProductCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createProductVariant: <T = ProductVariant>(args: { data: ProductVariantCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createProduct: <T = Product>(args: { data: ProductCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-<<<<<<< HEAD
-=======
     createReservation: <T = Reservation>(args: { data: ReservationCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
     createUser: <T = User>(args: { data: UserCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateBrand: <T = Brand | null>(args: { data: BrandUpdateInput, where: BrandWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateCollectionGroup: <T = CollectionGroup | null>(args: { data: CollectionGroupUpdateInput, where: CollectionGroupWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -230,16 +174,6 @@ export interface Mutation {
     updateEmailReceipt: <T = EmailReceipt | null>(args: { data: EmailReceiptUpdateInput, where: EmailReceiptWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updatePushNotificationReceipt: <T = PushNotificationReceipt | null>(args: { data: PushNotificationReceiptUpdateInput, where: PushNotificationReceiptWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateBagItem: <T = BagItem | null>(args: { data: BagItemUpdateInput, where: BagItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-<<<<<<< HEAD
-    updateRecentlyViewedProduct: <T = RecentlyViewedProduct | null>(args: { data: RecentlyViewedProductUpdateInput, where: RecentlyViewedProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    updateReservation: <T = Reservation | null>(args: { data: ReservationUpdateInput, where: ReservationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    updateReservationFeedback: <T = ReservationFeedback | null>(args: { data: ReservationFeedbackUpdateInput, where: ReservationFeedbackWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    updateProductVariantFeedback: <T = ProductVariantFeedback | null>(args: { data: ProductVariantFeedbackUpdateInput, where: ProductVariantFeedbackWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    updateProductVariantFeedbackQuestion: <T = ProductVariantFeedbackQuestion | null>(args: { data: ProductVariantFeedbackQuestionUpdateInput, where: ProductVariantFeedbackQuestionWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    updateReservationReceipt: <T = ReservationReceipt | null>(args: { data: ReservationReceiptUpdateInput, where: ReservationReceiptWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    updateProductRequest: <T = ProductRequest | null>(args: { data: ProductRequestUpdateInput, where: ProductRequestWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    updateProductVariantWant: <T = ProductVariantWant | null>(args: { data: ProductVariantWantUpdateInput, where: ProductVariantWantWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-=======
     updateCustomerMembership: <T = CustomerMembership | null>(args: { data: CustomerMembershipUpdateInput, where: CustomerMembershipWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updatePauseRequest: <T = PauseRequest | null>(args: { data: PauseRequestUpdateInput, where: PauseRequestWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateRecentlyViewedProduct: <T = RecentlyViewedProduct | null>(args: { data: RecentlyViewedProductUpdateInput, where: RecentlyViewedProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -249,7 +183,6 @@ export interface Mutation {
     updateReservationFeedback: <T = ReservationFeedback | null>(args: { data: ReservationFeedbackUpdateInput, where: ReservationFeedbackWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateProductVariantFeedback: <T = ProductVariantFeedback | null>(args: { data: ProductVariantFeedbackUpdateInput, where: ProductVariantFeedbackWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateProductVariantFeedbackQuestion: <T = ProductVariantFeedbackQuestion | null>(args: { data: ProductVariantFeedbackQuestionUpdateInput, where: ProductVariantFeedbackQuestionWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
     updateCollection: <T = Collection | null>(args: { data: CollectionUpdateInput, where: CollectionWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateCustomerDetail: <T = CustomerDetail | null>(args: { data: CustomerDetailUpdateInput, where: CustomerDetailWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateBillingInfo: <T = BillingInfo | null>(args: { data: BillingInfoUpdateInput, where: BillingInfoWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -268,10 +201,7 @@ export interface Mutation {
     updatePhysicalProduct: <T = PhysicalProduct | null>(args: { data: PhysicalProductUpdateInput, where: PhysicalProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateProductVariant: <T = ProductVariant | null>(args: { data: ProductVariantUpdateInput, where: ProductVariantWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateProduct: <T = Product | null>(args: { data: ProductUpdateInput, where: ProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-<<<<<<< HEAD
-=======
     updateReservation: <T = Reservation | null>(args: { data: ReservationUpdateInput, where: ReservationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
     updateUser: <T = User | null>(args: { data: UserUpdateInput, where: UserWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteBrand: <T = Brand | null>(args: { where: BrandWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteCollectionGroup: <T = CollectionGroup | null>(args: { where: CollectionGroupWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -283,16 +213,6 @@ export interface Mutation {
     deleteEmailReceipt: <T = EmailReceipt | null>(args: { where: EmailReceiptWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deletePushNotificationReceipt: <T = PushNotificationReceipt | null>(args: { where: PushNotificationReceiptWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteBagItem: <T = BagItem | null>(args: { where: BagItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-<<<<<<< HEAD
-    deleteRecentlyViewedProduct: <T = RecentlyViewedProduct | null>(args: { where: RecentlyViewedProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    deleteReservation: <T = Reservation | null>(args: { where: ReservationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    deleteReservationFeedback: <T = ReservationFeedback | null>(args: { where: ReservationFeedbackWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    deleteProductVariantFeedback: <T = ProductVariantFeedback | null>(args: { where: ProductVariantFeedbackWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    deleteProductVariantFeedbackQuestion: <T = ProductVariantFeedbackQuestion | null>(args: { where: ProductVariantFeedbackQuestionWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    deleteReservationReceipt: <T = ReservationReceipt | null>(args: { where: ReservationReceiptWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    deleteProductRequest: <T = ProductRequest | null>(args: { where: ProductRequestWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    deleteProductVariantWant: <T = ProductVariantWant | null>(args: { where: ProductVariantWantWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-=======
     deleteCustomerMembership: <T = CustomerMembership | null>(args: { where: CustomerMembershipWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deletePauseRequest: <T = PauseRequest | null>(args: { where: PauseRequestWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteRecentlyViewedProduct: <T = RecentlyViewedProduct | null>(args: { where: RecentlyViewedProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -302,7 +222,6 @@ export interface Mutation {
     deleteReservationFeedback: <T = ReservationFeedback | null>(args: { where: ReservationFeedbackWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteProductVariantFeedback: <T = ProductVariantFeedback | null>(args: { where: ProductVariantFeedbackWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteProductVariantFeedbackQuestion: <T = ProductVariantFeedbackQuestion | null>(args: { where: ProductVariantFeedbackQuestionWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
     deleteCollection: <T = Collection | null>(args: { where: CollectionWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteCustomerDetail: <T = CustomerDetail | null>(args: { where: CustomerDetailWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteBillingInfo: <T = BillingInfo | null>(args: { where: BillingInfoWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -321,10 +240,7 @@ export interface Mutation {
     deletePhysicalProduct: <T = PhysicalProduct | null>(args: { where: PhysicalProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteProductVariant: <T = ProductVariant | null>(args: { where: ProductVariantWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteProduct: <T = Product | null>(args: { where: ProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-<<<<<<< HEAD
-=======
     deleteReservation: <T = Reservation | null>(args: { where: ReservationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
     deleteUser: <T = User | null>(args: { where: UserWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     upsertBrand: <T = Brand>(args: { where: BrandWhereUniqueInput, create: BrandCreateInput, update: BrandUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertCollectionGroup: <T = CollectionGroup>(args: { where: CollectionGroupWhereUniqueInput, create: CollectionGroupCreateInput, update: CollectionGroupUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -336,16 +252,6 @@ export interface Mutation {
     upsertEmailReceipt: <T = EmailReceipt>(args: { where: EmailReceiptWhereUniqueInput, create: EmailReceiptCreateInput, update: EmailReceiptUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertPushNotificationReceipt: <T = PushNotificationReceipt>(args: { where: PushNotificationReceiptWhereUniqueInput, create: PushNotificationReceiptCreateInput, update: PushNotificationReceiptUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertBagItem: <T = BagItem>(args: { where: BagItemWhereUniqueInput, create: BagItemCreateInput, update: BagItemUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-<<<<<<< HEAD
-    upsertRecentlyViewedProduct: <T = RecentlyViewedProduct>(args: { where: RecentlyViewedProductWhereUniqueInput, create: RecentlyViewedProductCreateInput, update: RecentlyViewedProductUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    upsertReservation: <T = Reservation>(args: { where: ReservationWhereUniqueInput, create: ReservationCreateInput, update: ReservationUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    upsertReservationFeedback: <T = ReservationFeedback>(args: { where: ReservationFeedbackWhereUniqueInput, create: ReservationFeedbackCreateInput, update: ReservationFeedbackUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    upsertProductVariantFeedback: <T = ProductVariantFeedback>(args: { where: ProductVariantFeedbackWhereUniqueInput, create: ProductVariantFeedbackCreateInput, update: ProductVariantFeedbackUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    upsertProductVariantFeedbackQuestion: <T = ProductVariantFeedbackQuestion>(args: { where: ProductVariantFeedbackQuestionWhereUniqueInput, create: ProductVariantFeedbackQuestionCreateInput, update: ProductVariantFeedbackQuestionUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    upsertReservationReceipt: <T = ReservationReceipt>(args: { where: ReservationReceiptWhereUniqueInput, create: ReservationReceiptCreateInput, update: ReservationReceiptUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    upsertProductRequest: <T = ProductRequest>(args: { where: ProductRequestWhereUniqueInput, create: ProductRequestCreateInput, update: ProductRequestUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    upsertProductVariantWant: <T = ProductVariantWant>(args: { where: ProductVariantWantWhereUniqueInput, create: ProductVariantWantCreateInput, update: ProductVariantWantUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-=======
     upsertCustomerMembership: <T = CustomerMembership>(args: { where: CustomerMembershipWhereUniqueInput, create: CustomerMembershipCreateInput, update: CustomerMembershipUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertPauseRequest: <T = PauseRequest>(args: { where: PauseRequestWhereUniqueInput, create: PauseRequestCreateInput, update: PauseRequestUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertRecentlyViewedProduct: <T = RecentlyViewedProduct>(args: { where: RecentlyViewedProductWhereUniqueInput, create: RecentlyViewedProductCreateInput, update: RecentlyViewedProductUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -355,7 +261,6 @@ export interface Mutation {
     upsertReservationFeedback: <T = ReservationFeedback>(args: { where: ReservationFeedbackWhereUniqueInput, create: ReservationFeedbackCreateInput, update: ReservationFeedbackUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertProductVariantFeedback: <T = ProductVariantFeedback>(args: { where: ProductVariantFeedbackWhereUniqueInput, create: ProductVariantFeedbackCreateInput, update: ProductVariantFeedbackUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertProductVariantFeedbackQuestion: <T = ProductVariantFeedbackQuestion>(args: { where: ProductVariantFeedbackQuestionWhereUniqueInput, create: ProductVariantFeedbackQuestionCreateInput, update: ProductVariantFeedbackQuestionUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
     upsertCollection: <T = Collection>(args: { where: CollectionWhereUniqueInput, create: CollectionCreateInput, update: CollectionUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertCustomerDetail: <T = CustomerDetail>(args: { where: CustomerDetailWhereUniqueInput, create: CustomerDetailCreateInput, update: CustomerDetailUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertBillingInfo: <T = BillingInfo>(args: { where: BillingInfoWhereUniqueInput, create: BillingInfoCreateInput, update: BillingInfoUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -374,10 +279,7 @@ export interface Mutation {
     upsertPhysicalProduct: <T = PhysicalProduct>(args: { where: PhysicalProductWhereUniqueInput, create: PhysicalProductCreateInput, update: PhysicalProductUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertProductVariant: <T = ProductVariant>(args: { where: ProductVariantWhereUniqueInput, create: ProductVariantCreateInput, update: ProductVariantUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertProduct: <T = Product>(args: { where: ProductWhereUniqueInput, create: ProductCreateInput, update: ProductUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-<<<<<<< HEAD
-=======
     upsertReservation: <T = Reservation>(args: { where: ReservationWhereUniqueInput, create: ReservationCreateInput, update: ReservationUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
     upsertUser: <T = User>(args: { where: UserWhereUniqueInput, create: UserCreateInput, update: UserUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyBrands: <T = BatchPayload>(args: { data: BrandUpdateManyMutationInput, where?: BrandWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyCollectionGroups: <T = BatchPayload>(args: { data: CollectionGroupUpdateManyMutationInput, where?: CollectionGroupWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -389,15 +291,6 @@ export interface Mutation {
     updateManyEmailReceipts: <T = BatchPayload>(args: { data: EmailReceiptUpdateManyMutationInput, where?: EmailReceiptWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyPushNotificationReceipts: <T = BatchPayload>(args: { data: PushNotificationReceiptUpdateManyMutationInput, where?: PushNotificationReceiptWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyBagItems: <T = BatchPayload>(args: { data: BagItemUpdateManyMutationInput, where?: BagItemWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-<<<<<<< HEAD
-    updateManyRecentlyViewedProducts: <T = BatchPayload>(args: { data: RecentlyViewedProductUpdateManyMutationInput, where?: RecentlyViewedProductWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    updateManyReservations: <T = BatchPayload>(args: { data: ReservationUpdateManyMutationInput, where?: ReservationWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    updateManyReservationFeedbacks: <T = BatchPayload>(args: { data: ReservationFeedbackUpdateManyMutationInput, where?: ReservationFeedbackWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    updateManyProductVariantFeedbacks: <T = BatchPayload>(args: { data: ProductVariantFeedbackUpdateManyMutationInput, where?: ProductVariantFeedbackWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    updateManyProductVariantFeedbackQuestions: <T = BatchPayload>(args: { data: ProductVariantFeedbackQuestionUpdateManyMutationInput, where?: ProductVariantFeedbackQuestionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    updateManyProductRequests: <T = BatchPayload>(args: { data: ProductRequestUpdateManyMutationInput, where?: ProductRequestWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    updateManyProductVariantWants: <T = BatchPayload>(args: { data: ProductVariantWantUpdateManyMutationInput, where?: ProductVariantWantWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-=======
     updateManyCustomerMemberships: <T = BatchPayload>(args: { data: CustomerMembershipUpdateManyMutationInput, where?: CustomerMembershipWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyPauseRequests: <T = BatchPayload>(args: { data: PauseRequestUpdateManyMutationInput, where?: PauseRequestWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyRecentlyViewedProducts: <T = BatchPayload>(args: { data: RecentlyViewedProductUpdateManyMutationInput, where?: RecentlyViewedProductWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -406,7 +299,6 @@ export interface Mutation {
     updateManyReservationFeedbacks: <T = BatchPayload>(args: { data: ReservationFeedbackUpdateManyMutationInput, where?: ReservationFeedbackWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyProductVariantFeedbacks: <T = BatchPayload>(args: { data: ProductVariantFeedbackUpdateManyMutationInput, where?: ProductVariantFeedbackWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyProductVariantFeedbackQuestions: <T = BatchPayload>(args: { data: ProductVariantFeedbackQuestionUpdateManyMutationInput, where?: ProductVariantFeedbackQuestionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
     updateManyCollections: <T = BatchPayload>(args: { data: CollectionUpdateManyMutationInput, where?: CollectionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyCustomerDetails: <T = BatchPayload>(args: { data: CustomerDetailUpdateManyMutationInput, where?: CustomerDetailWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyBillingInfoes: <T = BatchPayload>(args: { data: BillingInfoUpdateManyMutationInput, where?: BillingInfoWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -425,10 +317,7 @@ export interface Mutation {
     updateManyPhysicalProducts: <T = BatchPayload>(args: { data: PhysicalProductUpdateManyMutationInput, where?: PhysicalProductWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyProductVariants: <T = BatchPayload>(args: { data: ProductVariantUpdateManyMutationInput, where?: ProductVariantWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyProducts: <T = BatchPayload>(args: { data: ProductUpdateManyMutationInput, where?: ProductWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-<<<<<<< HEAD
-=======
     updateManyReservations: <T = BatchPayload>(args: { data: ReservationUpdateManyMutationInput, where?: ReservationWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
     updateManyUsers: <T = BatchPayload>(args: { data: UserUpdateManyMutationInput, where?: UserWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyBrands: <T = BatchPayload>(args: { where?: BrandWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyCollectionGroups: <T = BatchPayload>(args: { where?: CollectionGroupWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -440,16 +329,6 @@ export interface Mutation {
     deleteManyEmailReceipts: <T = BatchPayload>(args: { where?: EmailReceiptWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyPushNotificationReceipts: <T = BatchPayload>(args: { where?: PushNotificationReceiptWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyBagItems: <T = BatchPayload>(args: { where?: BagItemWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-<<<<<<< HEAD
-    deleteManyRecentlyViewedProducts: <T = BatchPayload>(args: { where?: RecentlyViewedProductWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    deleteManyReservations: <T = BatchPayload>(args: { where?: ReservationWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    deleteManyReservationFeedbacks: <T = BatchPayload>(args: { where?: ReservationFeedbackWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    deleteManyProductVariantFeedbacks: <T = BatchPayload>(args: { where?: ProductVariantFeedbackWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    deleteManyProductVariantFeedbackQuestions: <T = BatchPayload>(args: { where?: ProductVariantFeedbackQuestionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    deleteManyReservationReceipts: <T = BatchPayload>(args: { where?: ReservationReceiptWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    deleteManyProductRequests: <T = BatchPayload>(args: { where?: ProductRequestWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    deleteManyProductVariantWants: <T = BatchPayload>(args: { where?: ProductVariantWantWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-=======
     deleteManyCustomerMemberships: <T = BatchPayload>(args: { where?: CustomerMembershipWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyPauseRequests: <T = BatchPayload>(args: { where?: PauseRequestWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyRecentlyViewedProducts: <T = BatchPayload>(args: { where?: RecentlyViewedProductWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -459,7 +338,6 @@ export interface Mutation {
     deleteManyReservationFeedbacks: <T = BatchPayload>(args: { where?: ReservationFeedbackWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyProductVariantFeedbacks: <T = BatchPayload>(args: { where?: ProductVariantFeedbackWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyProductVariantFeedbackQuestions: <T = BatchPayload>(args: { where?: ProductVariantFeedbackQuestionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
     deleteManyCollections: <T = BatchPayload>(args: { where?: CollectionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyCustomerDetails: <T = BatchPayload>(args: { where?: CustomerDetailWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyBillingInfoes: <T = BatchPayload>(args: { where?: BillingInfoWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -478,10 +356,7 @@ export interface Mutation {
     deleteManyPhysicalProducts: <T = BatchPayload>(args: { where?: PhysicalProductWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyProductVariants: <T = BatchPayload>(args: { where?: ProductVariantWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyProducts: <T = BatchPayload>(args: { where?: ProductWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-<<<<<<< HEAD
-=======
     deleteManyReservations: <T = BatchPayload>(args: { where?: ReservationWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
     deleteManyUsers: <T = BatchPayload>(args: { where?: UserWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> 
   }
 
@@ -496,16 +371,6 @@ export interface Subscription {
     emailReceipt: <T = EmailReceiptSubscriptionPayload | null>(args: { where?: EmailReceiptSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     pushNotificationReceipt: <T = PushNotificationReceiptSubscriptionPayload | null>(args: { where?: PushNotificationReceiptSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     bagItem: <T = BagItemSubscriptionPayload | null>(args: { where?: BagItemSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
-<<<<<<< HEAD
-    recentlyViewedProduct: <T = RecentlyViewedProductSubscriptionPayload | null>(args: { where?: RecentlyViewedProductSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
-    reservation: <T = ReservationSubscriptionPayload | null>(args: { where?: ReservationSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
-    reservationFeedback: <T = ReservationFeedbackSubscriptionPayload | null>(args: { where?: ReservationFeedbackSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
-    productVariantFeedback: <T = ProductVariantFeedbackSubscriptionPayload | null>(args: { where?: ProductVariantFeedbackSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
-    productVariantFeedbackQuestion: <T = ProductVariantFeedbackQuestionSubscriptionPayload | null>(args: { where?: ProductVariantFeedbackQuestionSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
-    reservationReceipt: <T = ReservationReceiptSubscriptionPayload | null>(args: { where?: ReservationReceiptSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
-    productRequest: <T = ProductRequestSubscriptionPayload | null>(args: { where?: ProductRequestSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
-    productVariantWant: <T = ProductVariantWantSubscriptionPayload | null>(args: { where?: ProductVariantWantSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
-=======
     customerMembership: <T = CustomerMembershipSubscriptionPayload | null>(args: { where?: CustomerMembershipSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     pauseRequest: <T = PauseRequestSubscriptionPayload | null>(args: { where?: PauseRequestSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     recentlyViewedProduct: <T = RecentlyViewedProductSubscriptionPayload | null>(args: { where?: RecentlyViewedProductSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
@@ -515,7 +380,6 @@ export interface Subscription {
     reservationFeedback: <T = ReservationFeedbackSubscriptionPayload | null>(args: { where?: ReservationFeedbackSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     productVariantFeedback: <T = ProductVariantFeedbackSubscriptionPayload | null>(args: { where?: ProductVariantFeedbackSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     productVariantFeedbackQuestion: <T = ProductVariantFeedbackQuestionSubscriptionPayload | null>(args: { where?: ProductVariantFeedbackQuestionSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
     collection: <T = CollectionSubscriptionPayload | null>(args: { where?: CollectionSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     customerDetail: <T = CustomerDetailSubscriptionPayload | null>(args: { where?: CustomerDetailSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     billingInfo: <T = BillingInfoSubscriptionPayload | null>(args: { where?: BillingInfoSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
@@ -534,10 +398,7 @@ export interface Subscription {
     physicalProduct: <T = PhysicalProductSubscriptionPayload | null>(args: { where?: PhysicalProductSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     productVariant: <T = ProductVariantSubscriptionPayload | null>(args: { where?: ProductVariantSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     product: <T = ProductSubscriptionPayload | null>(args: { where?: ProductSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
-<<<<<<< HEAD
-=======
     reservation: <T = ReservationSubscriptionPayload | null>(args: { where?: ReservationSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
     user: <T = UserSubscriptionPayload | null>(args: { where?: UserSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> 
   }
 
@@ -552,16 +413,6 @@ export interface Exists {
   EmailReceipt: (where?: EmailReceiptWhereInput) => Promise<boolean>
   PushNotificationReceipt: (where?: PushNotificationReceiptWhereInput) => Promise<boolean>
   BagItem: (where?: BagItemWhereInput) => Promise<boolean>
-<<<<<<< HEAD
-  RecentlyViewedProduct: (where?: RecentlyViewedProductWhereInput) => Promise<boolean>
-  Reservation: (where?: ReservationWhereInput) => Promise<boolean>
-  ReservationFeedback: (where?: ReservationFeedbackWhereInput) => Promise<boolean>
-  ProductVariantFeedback: (where?: ProductVariantFeedbackWhereInput) => Promise<boolean>
-  ProductVariantFeedbackQuestion: (where?: ProductVariantFeedbackQuestionWhereInput) => Promise<boolean>
-  ReservationReceipt: (where?: ReservationReceiptWhereInput) => Promise<boolean>
-  ProductRequest: (where?: ProductRequestWhereInput) => Promise<boolean>
-  ProductVariantWant: (where?: ProductVariantWantWhereInput) => Promise<boolean>
-=======
   CustomerMembership: (where?: CustomerMembershipWhereInput) => Promise<boolean>
   PauseRequest: (where?: PauseRequestWhereInput) => Promise<boolean>
   RecentlyViewedProduct: (where?: RecentlyViewedProductWhereInput) => Promise<boolean>
@@ -571,7 +422,6 @@ export interface Exists {
   ReservationFeedback: (where?: ReservationFeedbackWhereInput) => Promise<boolean>
   ProductVariantFeedback: (where?: ProductVariantFeedbackWhereInput) => Promise<boolean>
   ProductVariantFeedbackQuestion: (where?: ProductVariantFeedbackQuestionWhereInput) => Promise<boolean>
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   Collection: (where?: CollectionWhereInput) => Promise<boolean>
   CustomerDetail: (where?: CustomerDetailWhereInput) => Promise<boolean>
   BillingInfo: (where?: BillingInfoWhereInput) => Promise<boolean>
@@ -590,10 +440,7 @@ export interface Exists {
   PhysicalProduct: (where?: PhysicalProductWhereInput) => Promise<boolean>
   ProductVariant: (where?: ProductVariantWhereInput) => Promise<boolean>
   Product: (where?: ProductWhereInput) => Promise<boolean>
-<<<<<<< HEAD
-=======
   Reservation: (where?: ReservationWhereInput) => Promise<boolean>
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   User: (where?: UserWhereInput) => Promise<boolean>
 }
 
@@ -4681,10 +4528,7 @@ input CustomerCreateInput {
   user: UserCreateOneInput!
   detail: CustomerDetailCreateOneInput
   billingInfo: BillingInfoCreateOneInput
-<<<<<<< HEAD
-=======
   membership: CustomerMembershipCreateOneWithoutCustomerInput
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   bagItems: BagItemCreateManyWithoutCustomerInput
   reservations: ReservationCreateManyWithoutCustomerInput
 }
@@ -4716,8 +4560,6 @@ input CustomerCreateWithoutBagItemsInput {
   user: UserCreateOneInput!
   detail: CustomerDetailCreateOneInput
   billingInfo: BillingInfoCreateOneInput
-<<<<<<< HEAD
-=======
   membership: CustomerMembershipCreateOneWithoutCustomerInput
   reservations: ReservationCreateManyWithoutCustomerInput
 }
@@ -4730,7 +4572,6 @@ input CustomerCreateWithoutMembershipInput {
   detail: CustomerDetailCreateOneInput
   billingInfo: BillingInfoCreateOneInput
   bagItems: BagItemCreateManyWithoutCustomerInput
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   reservations: ReservationCreateManyWithoutCustomerInput
 }
 
@@ -4741,10 +4582,7 @@ input CustomerCreateWithoutReservationsInput {
   user: UserCreateOneInput!
   detail: CustomerDetailCreateOneInput
   billingInfo: BillingInfoCreateOneInput
-<<<<<<< HEAD
-=======
   membership: CustomerMembershipCreateOneWithoutCustomerInput
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   bagItems: BagItemCreateManyWithoutCustomerInput
 }
 
@@ -5757,13 +5595,6 @@ input CustomerDetailWhereUniqueInput {
 type CustomerEdge {
   """The item at the end of the edge."""
   node: Customer!
-<<<<<<< HEAD
-
-  """A cursor for use in pagination."""
-  cursor: String!
-}
-=======
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
 
   """A cursor for use in pagination."""
   cursor: String!
@@ -6087,10 +5918,7 @@ input CustomerUpdateDataInput {
   user: UserUpdateOneRequiredInput
   detail: CustomerDetailUpdateOneInput
   billingInfo: BillingInfoUpdateOneInput
-<<<<<<< HEAD
-=======
   membership: CustomerMembershipUpdateOneWithoutCustomerInput
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   bagItems: BagItemUpdateManyWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
 }
@@ -6101,10 +5929,7 @@ input CustomerUpdateInput {
   user: UserUpdateOneRequiredInput
   detail: CustomerDetailUpdateOneInput
   billingInfo: BillingInfoUpdateOneInput
-<<<<<<< HEAD
-=======
   membership: CustomerMembershipUpdateOneWithoutCustomerInput
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   bagItems: BagItemUpdateManyWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
 }
@@ -6126,8 +5951,6 @@ input CustomerUpdateOneRequiredWithoutBagItemsInput {
   connect: CustomerWhereUniqueInput
   update: CustomerUpdateWithoutBagItemsDataInput
   upsert: CustomerUpsertWithoutBagItemsInput
-<<<<<<< HEAD
-=======
 }
 
 input CustomerUpdateOneRequiredWithoutMembershipInput {
@@ -6135,7 +5958,6 @@ input CustomerUpdateOneRequiredWithoutMembershipInput {
   connect: CustomerWhereUniqueInput
   update: CustomerUpdateWithoutMembershipDataInput
   upsert: CustomerUpsertWithoutMembershipInput
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
 }
 
 input CustomerUpdateOneRequiredWithoutReservationsInput {
@@ -6151,8 +5973,6 @@ input CustomerUpdateWithoutBagItemsDataInput {
   user: UserUpdateOneRequiredInput
   detail: CustomerDetailUpdateOneInput
   billingInfo: BillingInfoUpdateOneInput
-<<<<<<< HEAD
-=======
   membership: CustomerMembershipUpdateOneWithoutCustomerInput
   reservations: ReservationUpdateManyWithoutCustomerInput
 }
@@ -6164,7 +5984,6 @@ input CustomerUpdateWithoutMembershipDataInput {
   detail: CustomerDetailUpdateOneInput
   billingInfo: BillingInfoUpdateOneInput
   bagItems: BagItemUpdateManyWithoutCustomerInput
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   reservations: ReservationUpdateManyWithoutCustomerInput
 }
 
@@ -6174,10 +5993,7 @@ input CustomerUpdateWithoutReservationsDataInput {
   user: UserUpdateOneRequiredInput
   detail: CustomerDetailUpdateOneInput
   billingInfo: BillingInfoUpdateOneInput
-<<<<<<< HEAD
-=======
   membership: CustomerMembershipUpdateOneWithoutCustomerInput
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   bagItems: BagItemUpdateManyWithoutCustomerInput
 }
 
@@ -6273,10 +6089,7 @@ input CustomerWhereInput {
   user: UserWhereInput
   detail: CustomerDetailWhereInput
   billingInfo: BillingInfoWhereInput
-<<<<<<< HEAD
-=======
   membership: CustomerMembershipWhereInput
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   bagItems_every: BagItemWhereInput
   bagItems_some: BagItemWhereInput
   bagItems_none: BagItemWhereInput
@@ -8616,16 +8429,6 @@ type Mutation {
   createEmailReceipt(data: EmailReceiptCreateInput!): EmailReceipt!
   createPushNotificationReceipt(data: PushNotificationReceiptCreateInput!): PushNotificationReceipt!
   createBagItem(data: BagItemCreateInput!): BagItem!
-<<<<<<< HEAD
-  createRecentlyViewedProduct(data: RecentlyViewedProductCreateInput!): RecentlyViewedProduct!
-  createReservation(data: ReservationCreateInput!): Reservation!
-  createReservationFeedback(data: ReservationFeedbackCreateInput!): ReservationFeedback!
-  createProductVariantFeedback(data: ProductVariantFeedbackCreateInput!): ProductVariantFeedback!
-  createProductVariantFeedbackQuestion(data: ProductVariantFeedbackQuestionCreateInput!): ProductVariantFeedbackQuestion!
-  createReservationReceipt(data: ReservationReceiptCreateInput!): ReservationReceipt!
-  createProductRequest(data: ProductRequestCreateInput!): ProductRequest!
-  createProductVariantWant(data: ProductVariantWantCreateInput!): ProductVariantWant!
-=======
   createCustomerMembership(data: CustomerMembershipCreateInput!): CustomerMembership!
   createPauseRequest(data: PauseRequestCreateInput!): PauseRequest!
   createRecentlyViewedProduct(data: RecentlyViewedProductCreateInput!): RecentlyViewedProduct!
@@ -8635,7 +8438,6 @@ type Mutation {
   createReservationFeedback(data: ReservationFeedbackCreateInput!): ReservationFeedback!
   createProductVariantFeedback(data: ProductVariantFeedbackCreateInput!): ProductVariantFeedback!
   createProductVariantFeedbackQuestion(data: ProductVariantFeedbackQuestionCreateInput!): ProductVariantFeedbackQuestion!
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   createCollection(data: CollectionCreateInput!): Collection!
   createCustomerDetail(data: CustomerDetailCreateInput!): CustomerDetail!
   createBillingInfo(data: BillingInfoCreateInput!): BillingInfo!
@@ -8654,10 +8456,7 @@ type Mutation {
   createPhysicalProduct(data: PhysicalProductCreateInput!): PhysicalProduct!
   createProductVariant(data: ProductVariantCreateInput!): ProductVariant!
   createProduct(data: ProductCreateInput!): Product!
-<<<<<<< HEAD
-=======
   createReservation(data: ReservationCreateInput!): Reservation!
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   createUser(data: UserCreateInput!): User!
   updateBrand(data: BrandUpdateInput!, where: BrandWhereUniqueInput!): Brand
   updateCollectionGroup(data: CollectionGroupUpdateInput!, where: CollectionGroupWhereUniqueInput!): CollectionGroup
@@ -8669,16 +8468,6 @@ type Mutation {
   updateEmailReceipt(data: EmailReceiptUpdateInput!, where: EmailReceiptWhereUniqueInput!): EmailReceipt
   updatePushNotificationReceipt(data: PushNotificationReceiptUpdateInput!, where: PushNotificationReceiptWhereUniqueInput!): PushNotificationReceipt
   updateBagItem(data: BagItemUpdateInput!, where: BagItemWhereUniqueInput!): BagItem
-<<<<<<< HEAD
-  updateRecentlyViewedProduct(data: RecentlyViewedProductUpdateInput!, where: RecentlyViewedProductWhereUniqueInput!): RecentlyViewedProduct
-  updateReservation(data: ReservationUpdateInput!, where: ReservationWhereUniqueInput!): Reservation
-  updateReservationFeedback(data: ReservationFeedbackUpdateInput!, where: ReservationFeedbackWhereUniqueInput!): ReservationFeedback
-  updateProductVariantFeedback(data: ProductVariantFeedbackUpdateInput!, where: ProductVariantFeedbackWhereUniqueInput!): ProductVariantFeedback
-  updateProductVariantFeedbackQuestion(data: ProductVariantFeedbackQuestionUpdateInput!, where: ProductVariantFeedbackQuestionWhereUniqueInput!): ProductVariantFeedbackQuestion
-  updateReservationReceipt(data: ReservationReceiptUpdateInput!, where: ReservationReceiptWhereUniqueInput!): ReservationReceipt
-  updateProductRequest(data: ProductRequestUpdateInput!, where: ProductRequestWhereUniqueInput!): ProductRequest
-  updateProductVariantWant(data: ProductVariantWantUpdateInput!, where: ProductVariantWantWhereUniqueInput!): ProductVariantWant
-=======
   updateCustomerMembership(data: CustomerMembershipUpdateInput!, where: CustomerMembershipWhereUniqueInput!): CustomerMembership
   updatePauseRequest(data: PauseRequestUpdateInput!, where: PauseRequestWhereUniqueInput!): PauseRequest
   updateRecentlyViewedProduct(data: RecentlyViewedProductUpdateInput!, where: RecentlyViewedProductWhereUniqueInput!): RecentlyViewedProduct
@@ -8688,7 +8477,6 @@ type Mutation {
   updateReservationFeedback(data: ReservationFeedbackUpdateInput!, where: ReservationFeedbackWhereUniqueInput!): ReservationFeedback
   updateProductVariantFeedback(data: ProductVariantFeedbackUpdateInput!, where: ProductVariantFeedbackWhereUniqueInput!): ProductVariantFeedback
   updateProductVariantFeedbackQuestion(data: ProductVariantFeedbackQuestionUpdateInput!, where: ProductVariantFeedbackQuestionWhereUniqueInput!): ProductVariantFeedbackQuestion
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   updateCollection(data: CollectionUpdateInput!, where: CollectionWhereUniqueInput!): Collection
   updateCustomerDetail(data: CustomerDetailUpdateInput!, where: CustomerDetailWhereUniqueInput!): CustomerDetail
   updateBillingInfo(data: BillingInfoUpdateInput!, where: BillingInfoWhereUniqueInput!): BillingInfo
@@ -8707,10 +8495,7 @@ type Mutation {
   updatePhysicalProduct(data: PhysicalProductUpdateInput!, where: PhysicalProductWhereUniqueInput!): PhysicalProduct
   updateProductVariant(data: ProductVariantUpdateInput!, where: ProductVariantWhereUniqueInput!): ProductVariant
   updateProduct(data: ProductUpdateInput!, where: ProductWhereUniqueInput!): Product
-<<<<<<< HEAD
-=======
   updateReservation(data: ReservationUpdateInput!, where: ReservationWhereUniqueInput!): Reservation
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   deleteBrand(where: BrandWhereUniqueInput!): Brand
   deleteCollectionGroup(where: CollectionGroupWhereUniqueInput!): CollectionGroup
@@ -8722,16 +8507,6 @@ type Mutation {
   deleteEmailReceipt(where: EmailReceiptWhereUniqueInput!): EmailReceipt
   deletePushNotificationReceipt(where: PushNotificationReceiptWhereUniqueInput!): PushNotificationReceipt
   deleteBagItem(where: BagItemWhereUniqueInput!): BagItem
-<<<<<<< HEAD
-  deleteRecentlyViewedProduct(where: RecentlyViewedProductWhereUniqueInput!): RecentlyViewedProduct
-  deleteReservation(where: ReservationWhereUniqueInput!): Reservation
-  deleteReservationFeedback(where: ReservationFeedbackWhereUniqueInput!): ReservationFeedback
-  deleteProductVariantFeedback(where: ProductVariantFeedbackWhereUniqueInput!): ProductVariantFeedback
-  deleteProductVariantFeedbackQuestion(where: ProductVariantFeedbackQuestionWhereUniqueInput!): ProductVariantFeedbackQuestion
-  deleteReservationReceipt(where: ReservationReceiptWhereUniqueInput!): ReservationReceipt
-  deleteProductRequest(where: ProductRequestWhereUniqueInput!): ProductRequest
-  deleteProductVariantWant(where: ProductVariantWantWhereUniqueInput!): ProductVariantWant
-=======
   deleteCustomerMembership(where: CustomerMembershipWhereUniqueInput!): CustomerMembership
   deletePauseRequest(where: PauseRequestWhereUniqueInput!): PauseRequest
   deleteRecentlyViewedProduct(where: RecentlyViewedProductWhereUniqueInput!): RecentlyViewedProduct
@@ -8741,7 +8516,6 @@ type Mutation {
   deleteReservationFeedback(where: ReservationFeedbackWhereUniqueInput!): ReservationFeedback
   deleteProductVariantFeedback(where: ProductVariantFeedbackWhereUniqueInput!): ProductVariantFeedback
   deleteProductVariantFeedbackQuestion(where: ProductVariantFeedbackQuestionWhereUniqueInput!): ProductVariantFeedbackQuestion
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   deleteCollection(where: CollectionWhereUniqueInput!): Collection
   deleteCustomerDetail(where: CustomerDetailWhereUniqueInput!): CustomerDetail
   deleteBillingInfo(where: BillingInfoWhereUniqueInput!): BillingInfo
@@ -8760,10 +8534,7 @@ type Mutation {
   deletePhysicalProduct(where: PhysicalProductWhereUniqueInput!): PhysicalProduct
   deleteProductVariant(where: ProductVariantWhereUniqueInput!): ProductVariant
   deleteProduct(where: ProductWhereUniqueInput!): Product
-<<<<<<< HEAD
-=======
   deleteReservation(where: ReservationWhereUniqueInput!): Reservation
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   deleteUser(where: UserWhereUniqueInput!): User
   upsertBrand(where: BrandWhereUniqueInput!, create: BrandCreateInput!, update: BrandUpdateInput!): Brand!
   upsertCollectionGroup(where: CollectionGroupWhereUniqueInput!, create: CollectionGroupCreateInput!, update: CollectionGroupUpdateInput!): CollectionGroup!
@@ -8775,16 +8546,6 @@ type Mutation {
   upsertEmailReceipt(where: EmailReceiptWhereUniqueInput!, create: EmailReceiptCreateInput!, update: EmailReceiptUpdateInput!): EmailReceipt!
   upsertPushNotificationReceipt(where: PushNotificationReceiptWhereUniqueInput!, create: PushNotificationReceiptCreateInput!, update: PushNotificationReceiptUpdateInput!): PushNotificationReceipt!
   upsertBagItem(where: BagItemWhereUniqueInput!, create: BagItemCreateInput!, update: BagItemUpdateInput!): BagItem!
-<<<<<<< HEAD
-  upsertRecentlyViewedProduct(where: RecentlyViewedProductWhereUniqueInput!, create: RecentlyViewedProductCreateInput!, update: RecentlyViewedProductUpdateInput!): RecentlyViewedProduct!
-  upsertReservation(where: ReservationWhereUniqueInput!, create: ReservationCreateInput!, update: ReservationUpdateInput!): Reservation!
-  upsertReservationFeedback(where: ReservationFeedbackWhereUniqueInput!, create: ReservationFeedbackCreateInput!, update: ReservationFeedbackUpdateInput!): ReservationFeedback!
-  upsertProductVariantFeedback(where: ProductVariantFeedbackWhereUniqueInput!, create: ProductVariantFeedbackCreateInput!, update: ProductVariantFeedbackUpdateInput!): ProductVariantFeedback!
-  upsertProductVariantFeedbackQuestion(where: ProductVariantFeedbackQuestionWhereUniqueInput!, create: ProductVariantFeedbackQuestionCreateInput!, update: ProductVariantFeedbackQuestionUpdateInput!): ProductVariantFeedbackQuestion!
-  upsertReservationReceipt(where: ReservationReceiptWhereUniqueInput!, create: ReservationReceiptCreateInput!, update: ReservationReceiptUpdateInput!): ReservationReceipt!
-  upsertProductRequest(where: ProductRequestWhereUniqueInput!, create: ProductRequestCreateInput!, update: ProductRequestUpdateInput!): ProductRequest!
-  upsertProductVariantWant(where: ProductVariantWantWhereUniqueInput!, create: ProductVariantWantCreateInput!, update: ProductVariantWantUpdateInput!): ProductVariantWant!
-=======
   upsertCustomerMembership(where: CustomerMembershipWhereUniqueInput!, create: CustomerMembershipCreateInput!, update: CustomerMembershipUpdateInput!): CustomerMembership!
   upsertPauseRequest(where: PauseRequestWhereUniqueInput!, create: PauseRequestCreateInput!, update: PauseRequestUpdateInput!): PauseRequest!
   upsertRecentlyViewedProduct(where: RecentlyViewedProductWhereUniqueInput!, create: RecentlyViewedProductCreateInput!, update: RecentlyViewedProductUpdateInput!): RecentlyViewedProduct!
@@ -8794,7 +8555,6 @@ type Mutation {
   upsertReservationFeedback(where: ReservationFeedbackWhereUniqueInput!, create: ReservationFeedbackCreateInput!, update: ReservationFeedbackUpdateInput!): ReservationFeedback!
   upsertProductVariantFeedback(where: ProductVariantFeedbackWhereUniqueInput!, create: ProductVariantFeedbackCreateInput!, update: ProductVariantFeedbackUpdateInput!): ProductVariantFeedback!
   upsertProductVariantFeedbackQuestion(where: ProductVariantFeedbackQuestionWhereUniqueInput!, create: ProductVariantFeedbackQuestionCreateInput!, update: ProductVariantFeedbackQuestionUpdateInput!): ProductVariantFeedbackQuestion!
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   upsertCollection(where: CollectionWhereUniqueInput!, create: CollectionCreateInput!, update: CollectionUpdateInput!): Collection!
   upsertCustomerDetail(where: CustomerDetailWhereUniqueInput!, create: CustomerDetailCreateInput!, update: CustomerDetailUpdateInput!): CustomerDetail!
   upsertBillingInfo(where: BillingInfoWhereUniqueInput!, create: BillingInfoCreateInput!, update: BillingInfoUpdateInput!): BillingInfo!
@@ -8813,10 +8573,7 @@ type Mutation {
   upsertPhysicalProduct(where: PhysicalProductWhereUniqueInput!, create: PhysicalProductCreateInput!, update: PhysicalProductUpdateInput!): PhysicalProduct!
   upsertProductVariant(where: ProductVariantWhereUniqueInput!, create: ProductVariantCreateInput!, update: ProductVariantUpdateInput!): ProductVariant!
   upsertProduct(where: ProductWhereUniqueInput!, create: ProductCreateInput!, update: ProductUpdateInput!): Product!
-<<<<<<< HEAD
-=======
   upsertReservation(where: ReservationWhereUniqueInput!, create: ReservationCreateInput!, update: ReservationUpdateInput!): Reservation!
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
   updateManyBrands(data: BrandUpdateManyMutationInput!, where: BrandWhereInput): BatchPayload!
   updateManyCollectionGroups(data: CollectionGroupUpdateManyMutationInput!, where: CollectionGroupWhereInput): BatchPayload!
@@ -8828,15 +8585,6 @@ type Mutation {
   updateManyEmailReceipts(data: EmailReceiptUpdateManyMutationInput!, where: EmailReceiptWhereInput): BatchPayload!
   updateManyPushNotificationReceipts(data: PushNotificationReceiptUpdateManyMutationInput!, where: PushNotificationReceiptWhereInput): BatchPayload!
   updateManyBagItems(data: BagItemUpdateManyMutationInput!, where: BagItemWhereInput): BatchPayload!
-<<<<<<< HEAD
-  updateManyRecentlyViewedProducts(data: RecentlyViewedProductUpdateManyMutationInput!, where: RecentlyViewedProductWhereInput): BatchPayload!
-  updateManyReservations(data: ReservationUpdateManyMutationInput!, where: ReservationWhereInput): BatchPayload!
-  updateManyReservationFeedbacks(data: ReservationFeedbackUpdateManyMutationInput!, where: ReservationFeedbackWhereInput): BatchPayload!
-  updateManyProductVariantFeedbacks(data: ProductVariantFeedbackUpdateManyMutationInput!, where: ProductVariantFeedbackWhereInput): BatchPayload!
-  updateManyProductVariantFeedbackQuestions(data: ProductVariantFeedbackQuestionUpdateManyMutationInput!, where: ProductVariantFeedbackQuestionWhereInput): BatchPayload!
-  updateManyProductRequests(data: ProductRequestUpdateManyMutationInput!, where: ProductRequestWhereInput): BatchPayload!
-  updateManyProductVariantWants(data: ProductVariantWantUpdateManyMutationInput!, where: ProductVariantWantWhereInput): BatchPayload!
-=======
   updateManyCustomerMemberships(data: CustomerMembershipUpdateManyMutationInput!, where: CustomerMembershipWhereInput): BatchPayload!
   updateManyPauseRequests(data: PauseRequestUpdateManyMutationInput!, where: PauseRequestWhereInput): BatchPayload!
   updateManyRecentlyViewedProducts(data: RecentlyViewedProductUpdateManyMutationInput!, where: RecentlyViewedProductWhereInput): BatchPayload!
@@ -8845,7 +8593,6 @@ type Mutation {
   updateManyReservationFeedbacks(data: ReservationFeedbackUpdateManyMutationInput!, where: ReservationFeedbackWhereInput): BatchPayload!
   updateManyProductVariantFeedbacks(data: ProductVariantFeedbackUpdateManyMutationInput!, where: ProductVariantFeedbackWhereInput): BatchPayload!
   updateManyProductVariantFeedbackQuestions(data: ProductVariantFeedbackQuestionUpdateManyMutationInput!, where: ProductVariantFeedbackQuestionWhereInput): BatchPayload!
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   updateManyCollections(data: CollectionUpdateManyMutationInput!, where: CollectionWhereInput): BatchPayload!
   updateManyCustomerDetails(data: CustomerDetailUpdateManyMutationInput!, where: CustomerDetailWhereInput): BatchPayload!
   updateManyBillingInfoes(data: BillingInfoUpdateManyMutationInput!, where: BillingInfoWhereInput): BatchPayload!
@@ -8864,10 +8611,7 @@ type Mutation {
   updateManyPhysicalProducts(data: PhysicalProductUpdateManyMutationInput!, where: PhysicalProductWhereInput): BatchPayload!
   updateManyProductVariants(data: ProductVariantUpdateManyMutationInput!, where: ProductVariantWhereInput): BatchPayload!
   updateManyProducts(data: ProductUpdateManyMutationInput!, where: ProductWhereInput): BatchPayload!
-<<<<<<< HEAD
-=======
   updateManyReservations(data: ReservationUpdateManyMutationInput!, where: ReservationWhereInput): BatchPayload!
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   updateManyUsers(data: UserUpdateManyMutationInput!, where: UserWhereInput): BatchPayload!
   deleteManyBrands(where: BrandWhereInput): BatchPayload!
   deleteManyCollectionGroups(where: CollectionGroupWhereInput): BatchPayload!
@@ -8879,16 +8623,6 @@ type Mutation {
   deleteManyEmailReceipts(where: EmailReceiptWhereInput): BatchPayload!
   deleteManyPushNotificationReceipts(where: PushNotificationReceiptWhereInput): BatchPayload!
   deleteManyBagItems(where: BagItemWhereInput): BatchPayload!
-<<<<<<< HEAD
-  deleteManyRecentlyViewedProducts(where: RecentlyViewedProductWhereInput): BatchPayload!
-  deleteManyReservations(where: ReservationWhereInput): BatchPayload!
-  deleteManyReservationFeedbacks(where: ReservationFeedbackWhereInput): BatchPayload!
-  deleteManyProductVariantFeedbacks(where: ProductVariantFeedbackWhereInput): BatchPayload!
-  deleteManyProductVariantFeedbackQuestions(where: ProductVariantFeedbackQuestionWhereInput): BatchPayload!
-  deleteManyReservationReceipts(where: ReservationReceiptWhereInput): BatchPayload!
-  deleteManyProductRequests(where: ProductRequestWhereInput): BatchPayload!
-  deleteManyProductVariantWants(where: ProductVariantWantWhereInput): BatchPayload!
-=======
   deleteManyCustomerMemberships(where: CustomerMembershipWhereInput): BatchPayload!
   deleteManyPauseRequests(where: PauseRequestWhereInput): BatchPayload!
   deleteManyRecentlyViewedProducts(where: RecentlyViewedProductWhereInput): BatchPayload!
@@ -8898,7 +8632,6 @@ type Mutation {
   deleteManyReservationFeedbacks(where: ReservationFeedbackWhereInput): BatchPayload!
   deleteManyProductVariantFeedbacks(where: ProductVariantFeedbackWhereInput): BatchPayload!
   deleteManyProductVariantFeedbackQuestions(where: ProductVariantFeedbackQuestionWhereInput): BatchPayload!
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   deleteManyCollections(where: CollectionWhereInput): BatchPayload!
   deleteManyCustomerDetails(where: CustomerDetailWhereInput): BatchPayload!
   deleteManyBillingInfoes(where: BillingInfoWhereInput): BatchPayload!
@@ -8917,9 +8650,6 @@ type Mutation {
   deleteManyPhysicalProducts(where: PhysicalProductWhereInput): BatchPayload!
   deleteManyProductVariants(where: ProductVariantWhereInput): BatchPayload!
   deleteManyProducts(where: ProductWhereInput): BatchPayload!
-<<<<<<< HEAD
-  deleteManyUsers(where: UserWhereInput): BatchPayload!
-=======
   deleteManyReservations(where: ReservationWhereInput): BatchPayload!
   deleteManyUsers(where: UserWhereInput): BatchPayload!
 }
@@ -9282,7 +9012,6 @@ type PauseRequestPreviousValues {
   pausePending: Boolean!
   pauseDate: DateTime
   resumeDate: DateTime
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
 }
 
 input PauseRequestScalarWhereInput {
@@ -9376,43 +9105,6 @@ input PauseRequestScalarWhereInput {
   """All values greater than the given value."""
   updatedAt_gt: DateTime
 
-<<<<<<< HEAD
-"""An object with an ID"""
-interface Node {
-  """The id of the object."""
-  id: ID!
-}
-
-type Package implements Node {
-  id: ID!
-  items(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct!]
-  shippingLabel: Label!
-  fromAddress: Location!
-  toAddress: Location!
-  weight: Float
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
-"""A connection to a list of items."""
-type PackageConnection {
-  """Information to aid in pagination."""
-  pageInfo: PageInfo!
-
-  """A list of edges."""
-  edges: [PackageEdge]!
-  aggregate: AggregatePackage!
-}
-
-input PackageCreateInput {
-  id: ID
-  weight: Float
-  items: PhysicalProductCreateManyInput
-  shippingLabel: LabelCreateOneInput!
-  fromAddress: LocationCreateOneInput!
-  toAddress: LocationCreateOneInput!
-}
-=======
   """All values greater than or equal the given value."""
   updatedAt_gte: DateTime
   pausePending: Boolean
@@ -9426,24 +9118,12 @@ input PackageCreateInput {
 
   """All values that are contained in given list."""
   pauseDate_in: [DateTime!]
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
 
   """All values that are not contained in given list."""
   pauseDate_not_in: [DateTime!]
 
-<<<<<<< HEAD
-"""An edge in a connection."""
-type PackageEdge {
-  """The item at the end of the edge."""
-  node: Package!
-
-  """A cursor for use in pagination."""
-  cursor: String!
-}
-=======
   """All values less than the given value."""
   pauseDate_lt: DateTime
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
 
   """All values less than or equal the given value."""
   pauseDate_lte: DateTime
@@ -9484,17 +9164,6 @@ type PauseRequestSubscriptionPayload {
   previousValues: PauseRequestPreviousValues
 }
 
-<<<<<<< HEAD
-input PackageSubscriptionWhereInput {
-  """Logical AND on all given filters."""
-  AND: [PackageSubscriptionWhereInput!]
-
-  """Logical OR on all given filters."""
-  OR: [PackageSubscriptionWhereInput!]
-
-  """Logical NOT on all given filters combined by AND."""
-  NOT: [PackageSubscriptionWhereInput!]
-=======
 input PauseRequestSubscriptionWhereInput {
   """Logical AND on all given filters."""
   AND: [PauseRequestSubscriptionWhereInput!]
@@ -9504,7 +9173,6 @@ input PauseRequestSubscriptionWhereInput {
 
   """Logical NOT on all given filters combined by AND."""
   NOT: [PauseRequestSubscriptionWhereInput!]
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
 
   """The subscription event gets dispatched when it's listed in mutation_in"""
   mutation_in: [MutationType!]
@@ -9523,25 +9191,6 @@ input PauseRequestSubscriptionWhereInput {
   The subscription event gets only dispatched when some of the field names included in this list have been updated
   """
   updatedFields_contains_some: [String!]
-<<<<<<< HEAD
-  node: PackageWhereInput
-}
-
-input PackageUpdateDataInput {
-  weight: Float
-  items: PhysicalProductUpdateManyInput
-  shippingLabel: LabelUpdateOneRequiredInput
-  fromAddress: LocationUpdateOneRequiredInput
-  toAddress: LocationUpdateOneRequiredInput
-}
-
-input PackageUpdateInput {
-  weight: Float
-  items: PhysicalProductUpdateManyInput
-  shippingLabel: LabelUpdateOneRequiredInput
-  fromAddress: LocationUpdateOneRequiredInput
-  toAddress: LocationUpdateOneRequiredInput
-=======
   node: PauseRequestWhereInput
 }
 
@@ -9556,7 +9205,6 @@ input PauseRequestUpdateManyDataInput {
   pausePending: Boolean
   pauseDate: DateTime
   resumeDate: DateTime
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
 }
 
 input PauseRequestUpdateManyMutationInput {
@@ -9565,15 +9213,6 @@ input PauseRequestUpdateManyMutationInput {
   resumeDate: DateTime
 }
 
-<<<<<<< HEAD
-input PackageUpdateOneInput {
-  create: PackageCreateInput
-  connect: PackageWhereUniqueInput
-  disconnect: Boolean
-  delete: Boolean
-  update: PackageUpdateDataInput
-  upsert: PackageUpsertNestedInput
-=======
 input PauseRequestUpdateManyWithoutMembershipInput {
   create: [PauseRequestCreateWithoutMembershipInput!]
   connect: [PauseRequestWhereUniqueInput!]
@@ -9584,7 +9223,6 @@ input PauseRequestUpdateManyWithoutMembershipInput {
   updateMany: [PauseRequestUpdateManyWithWhereNestedInput!]
   deleteMany: [PauseRequestScalarWhereInput!]
   upsert: [PauseRequestUpsertWithWhereUniqueWithoutMembershipInput!]
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
 }
 
 input PauseRequestUpdateManyWithWhereNestedInput {
@@ -9592,17 +9230,6 @@ input PauseRequestUpdateManyWithWhereNestedInput {
   data: PauseRequestUpdateManyDataInput!
 }
 
-<<<<<<< HEAD
-input PackageWhereInput {
-  """Logical AND on all given filters."""
-  AND: [PackageWhereInput!]
-
-  """Logical OR on all given filters."""
-  OR: [PackageWhereInput!]
-
-  """Logical NOT on all given filters combined by AND."""
-  NOT: [PackageWhereInput!]
-=======
 input PauseRequestUpdateWithoutMembershipDataInput {
   pausePending: Boolean
   pauseDate: DateTime
@@ -9629,7 +9256,6 @@ input PauseRequestWhereInput {
 
   """Logical NOT on all given filters combined by AND."""
   NOT: [PauseRequestWhereInput!]
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   id: ID
 
   """All values that are not equal to given value."""
@@ -9670,31 +9296,6 @@ input PauseRequestWhereInput {
 
   """All values not ending with the given string."""
   id_not_ends_with: ID
-<<<<<<< HEAD
-  weight: Float
-
-  """All values that are not equal to given value."""
-  weight_not: Float
-
-  """All values that are contained in given list."""
-  weight_in: [Float!]
-
-  """All values that are not contained in given list."""
-  weight_not_in: [Float!]
-
-  """All values less than the given value."""
-  weight_lt: Float
-
-  """All values less than or equal the given value."""
-  weight_lte: Float
-
-  """All values greater than the given value."""
-  weight_gt: Float
-
-  """All values greater than or equal the given value."""
-  weight_gte: Float
-=======
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   createdAt: DateTime
 
   """All values that are not equal to given value."""
@@ -9739,17 +9340,7 @@ input PauseRequestWhereInput {
 
   """All values greater than or equal the given value."""
   updatedAt_gte: DateTime
-<<<<<<< HEAD
-  items_every: PhysicalProductWhereInput
-  items_some: PhysicalProductWhereInput
-  items_none: PhysicalProductWhereInput
-  shippingLabel: LabelWhereInput
-  fromAddress: LocationWhereInput
-  toAddress: LocationWhereInput
-}
-=======
   pausePending: Boolean
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
 
   """All values that are not equal to given value."""
   pausePending_not: Boolean
@@ -9800,24 +9391,8 @@ input PauseRequestWhereInput {
   membership: CustomerMembershipWhereInput
 }
 
-<<<<<<< HEAD
-"""Information about pagination in a connection."""
-type PageInfo {
-  """When paginating forwards, are there more items?"""
-  hasNextPage: Boolean!
-
-  """When paginating backwards, are there more items?"""
-  hasPreviousPage: Boolean!
-
-  """When paginating backwards, the cursor to continue."""
-  startCursor: String
-
-  """When paginating forwards, the cursor to continue."""
-  endCursor: String
-=======
 input PauseRequestWhereUniqueInput {
   id: ID
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
 }
 
 enum PhotographyStatus {
@@ -15544,6 +15119,7 @@ type PushNotificationReceipt implements Node {
   screen: String
   uri: String
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User!]
+  interest: String
   body: String!
   title: String
   sentAt: DateTime!
@@ -15566,10 +15142,7 @@ input PushNotificationReceiptCreateInput {
   route: String
   screen: String
   uri: String
-<<<<<<< HEAD
-=======
   interest: String
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   body: String!
   title: String
   sentAt: DateTime!
@@ -15594,6 +15167,8 @@ enum PushNotificationReceiptOrderByInput {
   screen_DESC
   uri_ASC
   uri_DESC
+  interest_ASC
+  interest_DESC
   body_ASC
   body_DESC
   title_ASC
@@ -15611,6 +15186,7 @@ type PushNotificationReceiptPreviousValues {
   route: String
   screen: String
   uri: String
+  interest: String
   body: String!
   title: String
   sentAt: DateTime!
@@ -15659,10 +15235,7 @@ input PushNotificationReceiptUpdateInput {
   route: String
   screen: String
   uri: String
-<<<<<<< HEAD
-=======
   interest: String
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   body: String
   title: String
   sentAt: DateTime
@@ -15673,6 +15246,7 @@ input PushNotificationReceiptUpdateManyMutationInput {
   route: String
   screen: String
   uri: String
+  interest: String
   body: String
   title: String
   sentAt: DateTime
@@ -15847,8 +15421,6 @@ input PushNotificationReceiptWhereInput {
 
   """All values not ending with the given string."""
   uri_not_ends_with: String
-<<<<<<< HEAD
-=======
   interest: String
 
   """All values that are not equal to given value."""
@@ -15889,7 +15461,6 @@ input PushNotificationReceiptWhereInput {
 
   """All values not ending with the given string."""
   interest_not_ends_with: String
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   body: String
 
   """All values that are not equal to given value."""
@@ -16062,16 +15633,6 @@ type Query {
   emailReceipts(where: EmailReceiptWhereInput, orderBy: EmailReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [EmailReceipt]!
   pushNotificationReceipts(where: PushNotificationReceiptWhereInput, orderBy: PushNotificationReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PushNotificationReceipt]!
   bagItems(where: BagItemWhereInput, orderBy: BagItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [BagItem]!
-<<<<<<< HEAD
-  recentlyViewedProducts(where: RecentlyViewedProductWhereInput, orderBy: RecentlyViewedProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [RecentlyViewedProduct]!
-  reservations(where: ReservationWhereInput, orderBy: ReservationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Reservation]!
-  reservationFeedbacks(where: ReservationFeedbackWhereInput, orderBy: ReservationFeedbackOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ReservationFeedback]!
-  productVariantFeedbacks(where: ProductVariantFeedbackWhereInput, orderBy: ProductVariantFeedbackOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariantFeedback]!
-  productVariantFeedbackQuestions(where: ProductVariantFeedbackQuestionWhereInput, orderBy: ProductVariantFeedbackQuestionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariantFeedbackQuestion]!
-  reservationReceipts(where: ReservationReceiptWhereInput, orderBy: ReservationReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ReservationReceipt]!
-  productRequests(where: ProductRequestWhereInput, orderBy: ProductRequestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductRequest]!
-  productVariantWants(where: ProductVariantWantWhereInput, orderBy: ProductVariantWantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariantWant]!
-=======
   customerMemberships(where: CustomerMembershipWhereInput, orderBy: CustomerMembershipOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CustomerMembership]!
   pauseRequests(where: PauseRequestWhereInput, orderBy: PauseRequestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PauseRequest]!
   recentlyViewedProducts(where: RecentlyViewedProductWhereInput, orderBy: RecentlyViewedProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [RecentlyViewedProduct]!
@@ -16081,7 +15642,6 @@ type Query {
   reservationFeedbacks(where: ReservationFeedbackWhereInput, orderBy: ReservationFeedbackOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ReservationFeedback]!
   productVariantFeedbacks(where: ProductVariantFeedbackWhereInput, orderBy: ProductVariantFeedbackOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariantFeedback]!
   productVariantFeedbackQuestions(where: ProductVariantFeedbackQuestionWhereInput, orderBy: ProductVariantFeedbackQuestionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariantFeedbackQuestion]!
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   collections(where: CollectionWhereInput, orderBy: CollectionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Collection]!
   customerDetails(where: CustomerDetailWhereInput, orderBy: CustomerDetailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CustomerDetail]!
   billingInfoes(where: BillingInfoWhereInput, orderBy: BillingInfoOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [BillingInfo]!
@@ -16100,10 +15660,7 @@ type Query {
   physicalProducts(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct]!
   productVariants(where: ProductVariantWhereInput, orderBy: ProductVariantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariant]!
   products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product]!
-<<<<<<< HEAD
-=======
   reservations(where: ReservationWhereInput, orderBy: ReservationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Reservation]!
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   brand(where: BrandWhereUniqueInput!): Brand
   collectionGroup(where: CollectionGroupWhereUniqueInput!): CollectionGroup
@@ -16115,16 +15672,6 @@ type Query {
   emailReceipt(where: EmailReceiptWhereUniqueInput!): EmailReceipt
   pushNotificationReceipt(where: PushNotificationReceiptWhereUniqueInput!): PushNotificationReceipt
   bagItem(where: BagItemWhereUniqueInput!): BagItem
-<<<<<<< HEAD
-  recentlyViewedProduct(where: RecentlyViewedProductWhereUniqueInput!): RecentlyViewedProduct
-  reservation(where: ReservationWhereUniqueInput!): Reservation
-  reservationFeedback(where: ReservationFeedbackWhereUniqueInput!): ReservationFeedback
-  productVariantFeedback(where: ProductVariantFeedbackWhereUniqueInput!): ProductVariantFeedback
-  productVariantFeedbackQuestion(where: ProductVariantFeedbackQuestionWhereUniqueInput!): ProductVariantFeedbackQuestion
-  reservationReceipt(where: ReservationReceiptWhereUniqueInput!): ReservationReceipt
-  productRequest(where: ProductRequestWhereUniqueInput!): ProductRequest
-  productVariantWant(where: ProductVariantWantWhereUniqueInput!): ProductVariantWant
-=======
   customerMembership(where: CustomerMembershipWhereUniqueInput!): CustomerMembership
   pauseRequest(where: PauseRequestWhereUniqueInput!): PauseRequest
   recentlyViewedProduct(where: RecentlyViewedProductWhereUniqueInput!): RecentlyViewedProduct
@@ -16134,7 +15681,6 @@ type Query {
   reservationFeedback(where: ReservationFeedbackWhereUniqueInput!): ReservationFeedback
   productVariantFeedback(where: ProductVariantFeedbackWhereUniqueInput!): ProductVariantFeedback
   productVariantFeedbackQuestion(where: ProductVariantFeedbackQuestionWhereUniqueInput!): ProductVariantFeedbackQuestion
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   collection(where: CollectionWhereUniqueInput!): Collection
   customerDetail(where: CustomerDetailWhereUniqueInput!): CustomerDetail
   billingInfo(where: BillingInfoWhereUniqueInput!): BillingInfo
@@ -16153,10 +15699,7 @@ type Query {
   physicalProduct(where: PhysicalProductWhereUniqueInput!): PhysicalProduct
   productVariant(where: ProductVariantWhereUniqueInput!): ProductVariant
   product(where: ProductWhereUniqueInput!): Product
-<<<<<<< HEAD
-=======
   reservation(where: ReservationWhereUniqueInput!): Reservation
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   user(where: UserWhereUniqueInput!): User
   brandsConnection(where: BrandWhereInput, orderBy: BrandOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BrandConnection!
   collectionGroupsConnection(where: CollectionGroupWhereInput, orderBy: CollectionGroupOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CollectionGroupConnection!
@@ -16168,16 +15711,6 @@ type Query {
   emailReceiptsConnection(where: EmailReceiptWhereInput, orderBy: EmailReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): EmailReceiptConnection!
   pushNotificationReceiptsConnection(where: PushNotificationReceiptWhereInput, orderBy: PushNotificationReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PushNotificationReceiptConnection!
   bagItemsConnection(where: BagItemWhereInput, orderBy: BagItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BagItemConnection!
-<<<<<<< HEAD
-  recentlyViewedProductsConnection(where: RecentlyViewedProductWhereInput, orderBy: RecentlyViewedProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): RecentlyViewedProductConnection!
-  reservationsConnection(where: ReservationWhereInput, orderBy: ReservationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ReservationConnection!
-  reservationFeedbacksConnection(where: ReservationFeedbackWhereInput, orderBy: ReservationFeedbackOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ReservationFeedbackConnection!
-  productVariantFeedbacksConnection(where: ProductVariantFeedbackWhereInput, orderBy: ProductVariantFeedbackOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductVariantFeedbackConnection!
-  productVariantFeedbackQuestionsConnection(where: ProductVariantFeedbackQuestionWhereInput, orderBy: ProductVariantFeedbackQuestionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductVariantFeedbackQuestionConnection!
-  reservationReceiptsConnection(where: ReservationReceiptWhereInput, orderBy: ReservationReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ReservationReceiptConnection!
-  productRequestsConnection(where: ProductRequestWhereInput, orderBy: ProductRequestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductRequestConnection!
-  productVariantWantsConnection(where: ProductVariantWantWhereInput, orderBy: ProductVariantWantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductVariantWantConnection!
-=======
   customerMembershipsConnection(where: CustomerMembershipWhereInput, orderBy: CustomerMembershipOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CustomerMembershipConnection!
   pauseRequestsConnection(where: PauseRequestWhereInput, orderBy: PauseRequestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PauseRequestConnection!
   recentlyViewedProductsConnection(where: RecentlyViewedProductWhereInput, orderBy: RecentlyViewedProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): RecentlyViewedProductConnection!
@@ -16187,7 +15720,6 @@ type Query {
   reservationFeedbacksConnection(where: ReservationFeedbackWhereInput, orderBy: ReservationFeedbackOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ReservationFeedbackConnection!
   productVariantFeedbacksConnection(where: ProductVariantFeedbackWhereInput, orderBy: ProductVariantFeedbackOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductVariantFeedbackConnection!
   productVariantFeedbackQuestionsConnection(where: ProductVariantFeedbackQuestionWhereInput, orderBy: ProductVariantFeedbackQuestionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductVariantFeedbackQuestionConnection!
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   collectionsConnection(where: CollectionWhereInput, orderBy: CollectionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CollectionConnection!
   customerDetailsConnection(where: CustomerDetailWhereInput, orderBy: CustomerDetailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CustomerDetailConnection!
   billingInfoesConnection(where: BillingInfoWhereInput, orderBy: BillingInfoOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BillingInfoConnection!
@@ -16206,10 +15738,7 @@ type Query {
   physicalProductsConnection(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PhysicalProductConnection!
   productVariantsConnection(where: ProductVariantWhereInput, orderBy: ProductVariantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductVariantConnection!
   productsConnection(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductConnection!
-<<<<<<< HEAD
-=======
   reservationsConnection(where: ReservationWhereInput, orderBy: ReservationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ReservationConnection!
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
 
   """Fetches an object given its ID"""
@@ -16459,7 +15988,6 @@ type Reservation implements Node {
   customer: Customer!
   sentPackage: Package
   returnedPackage: Package
-  feedback: ReservationFeedback
   location: Location
   products(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct!]
   reservationNumber: Int!
@@ -16495,10 +16023,6 @@ input ReservationCreateInput {
   customer: CustomerCreateOneWithoutReservationsInput!
   sentPackage: PackageCreateOneInput
   returnedPackage: PackageCreateOneInput
-<<<<<<< HEAD
-  feedback: ReservationFeedbackCreateOneWithoutReservationInput
-=======
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   location: LocationCreateOneInput
   products: PhysicalProductCreateManyInput
   receipt: ReservationReceiptCreateOneWithoutReservationInput
@@ -16509,8 +16033,8 @@ input ReservationCreateManyWithoutCustomerInput {
   connect: [ReservationWhereUniqueInput!]
 }
 
-input ReservationCreateOneWithoutFeedbackInput {
-  create: ReservationCreateWithoutFeedbackInput
+input ReservationCreateOneInput {
+  create: ReservationCreateInput
   connect: ReservationWhereUniqueInput
 }
 
@@ -16521,26 +16045,6 @@ input ReservationCreateOneWithoutReceiptInput {
 
 input ReservationCreateWithoutCustomerInput {
   id: ID
-<<<<<<< HEAD
-  reservationNumber: Int!
-  shipped: Boolean!
-  status: ReservationStatus!
-  shippedAt: DateTime
-  receivedAt: DateTime
-  reminderSentAt: DateTime
-  user: UserCreateOneInput!
-  sentPackage: PackageCreateOneInput
-  returnedPackage: PackageCreateOneInput
-  feedback: ReservationFeedbackCreateOneWithoutReservationInput
-  location: LocationCreateOneInput
-  products: PhysicalProductCreateManyInput
-  receipt: ReservationReceiptCreateOneWithoutReservationInput
-}
-
-input ReservationCreateWithoutFeedbackInput {
-  id: ID
-=======
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   reservationNumber: Int!
   shipped: Boolean!
   status: ReservationStatus!
@@ -16567,10 +16071,6 @@ input ReservationCreateWithoutReceiptInput {
   customer: CustomerCreateOneWithoutReservationsInput!
   sentPackage: PackageCreateOneInput
   returnedPackage: PackageCreateOneInput
-<<<<<<< HEAD
-  feedback: ReservationFeedbackCreateOneWithoutReservationInput
-=======
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   location: LocationCreateOneInput
   products: PhysicalProductCreateManyInput
 }
@@ -16613,20 +16113,11 @@ input ReservationFeedbackCreateInput {
   respondedAt: DateTime
   feedbacks: ProductVariantFeedbackCreateManyWithoutReservationFeedbackInput
   user: UserCreateOneInput!
-<<<<<<< HEAD
-  reservation: ReservationCreateOneWithoutFeedbackInput!
-=======
   reservation: ReservationCreateOneInput!
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
 }
 
 input ReservationFeedbackCreateOneWithoutFeedbacksInput {
   create: ReservationFeedbackCreateWithoutFeedbacksInput
-  connect: ReservationFeedbackWhereUniqueInput
-}
-
-input ReservationFeedbackCreateOneWithoutReservationInput {
-  create: ReservationFeedbackCreateWithoutReservationInput
   connect: ReservationFeedbackWhereUniqueInput
 }
 
@@ -16636,20 +16127,7 @@ input ReservationFeedbackCreateWithoutFeedbacksInput {
   rating: Rating
   respondedAt: DateTime
   user: UserCreateOneInput!
-<<<<<<< HEAD
-  reservation: ReservationCreateOneWithoutFeedbackInput!
-}
-
-input ReservationFeedbackCreateWithoutReservationInput {
-  id: ID
-  comment: String
-  rating: Rating
-  respondedAt: DateTime
-  feedbacks: ProductVariantFeedbackCreateManyWithoutReservationFeedbackInput
-  user: UserCreateOneInput!
-=======
   reservation: ReservationCreateOneInput!
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
 }
 
 """An edge in a connection."""
@@ -16728,11 +16206,7 @@ input ReservationFeedbackUpdateInput {
   respondedAt: DateTime
   feedbacks: ProductVariantFeedbackUpdateManyWithoutReservationFeedbackInput
   user: UserUpdateOneRequiredInput
-<<<<<<< HEAD
-  reservation: ReservationUpdateOneRequiredWithoutFeedbackInput
-=======
   reservation: ReservationUpdateOneRequiredInput
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
 }
 
 input ReservationFeedbackUpdateManyMutationInput {
@@ -16746,18 +16220,6 @@ input ReservationFeedbackUpdateOneRequiredWithoutFeedbacksInput {
   connect: ReservationFeedbackWhereUniqueInput
   update: ReservationFeedbackUpdateWithoutFeedbacksDataInput
   upsert: ReservationFeedbackUpsertWithoutFeedbacksInput
-<<<<<<< HEAD
-}
-
-input ReservationFeedbackUpdateOneWithoutReservationInput {
-  create: ReservationFeedbackCreateWithoutReservationInput
-  connect: ReservationFeedbackWhereUniqueInput
-  disconnect: Boolean
-  delete: Boolean
-  update: ReservationFeedbackUpdateWithoutReservationDataInput
-  upsert: ReservationFeedbackUpsertWithoutReservationInput
-=======
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
 }
 
 input ReservationFeedbackUpdateWithoutFeedbacksDataInput {
@@ -16765,29 +16227,12 @@ input ReservationFeedbackUpdateWithoutFeedbacksDataInput {
   rating: Rating
   respondedAt: DateTime
   user: UserUpdateOneRequiredInput
-<<<<<<< HEAD
-  reservation: ReservationUpdateOneRequiredWithoutFeedbackInput
-}
-
-input ReservationFeedbackUpdateWithoutReservationDataInput {
-  comment: String
-  rating: Rating
-  respondedAt: DateTime
-  feedbacks: ProductVariantFeedbackUpdateManyWithoutReservationFeedbackInput
-  user: UserUpdateOneRequiredInput
-=======
   reservation: ReservationUpdateOneRequiredInput
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
 }
 
 input ReservationFeedbackUpsertWithoutFeedbacksInput {
   update: ReservationFeedbackUpdateWithoutFeedbacksDataInput!
   create: ReservationFeedbackCreateWithoutFeedbacksInput!
-}
-
-input ReservationFeedbackUpsertWithoutReservationInput {
-  update: ReservationFeedbackUpdateWithoutReservationDataInput!
-  create: ReservationFeedbackCreateWithoutReservationInput!
 }
 
 input ReservationFeedbackWhereInput {
@@ -17813,11 +17258,7 @@ input ReservationSubscriptionWhereInput {
   node: ReservationWhereInput
 }
 
-<<<<<<< HEAD
-input ReservationUpdateInput {
-=======
 input ReservationUpdateDataInput {
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   reservationNumber: Int
   shipped: Boolean
   status: ReservationStatus
@@ -17828,11 +17269,8 @@ input ReservationUpdateDataInput {
   customer: CustomerUpdateOneRequiredWithoutReservationsInput
   sentPackage: PackageUpdateOneInput
   returnedPackage: PackageUpdateOneInput
-  feedback: ReservationFeedbackUpdateOneWithoutReservationInput
   location: LocationUpdateOneInput
   products: PhysicalProductUpdateManyInput
-<<<<<<< HEAD
-=======
   receipt: ReservationReceiptUpdateOneWithoutReservationInput
 }
 
@@ -17849,7 +17287,6 @@ input ReservationUpdateInput {
   returnedPackage: PackageUpdateOneInput
   location: LocationUpdateOneInput
   products: PhysicalProductUpdateManyInput
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   receipt: ReservationReceiptUpdateOneWithoutReservationInput
 }
 
@@ -17888,19 +17325,11 @@ input ReservationUpdateManyWithWhereNestedInput {
   data: ReservationUpdateManyDataInput!
 }
 
-<<<<<<< HEAD
-input ReservationUpdateOneRequiredWithoutFeedbackInput {
-  create: ReservationCreateWithoutFeedbackInput
-  connect: ReservationWhereUniqueInput
-  update: ReservationUpdateWithoutFeedbackDataInput
-  upsert: ReservationUpsertWithoutFeedbackInput
-=======
 input ReservationUpdateOneRequiredInput {
   create: ReservationCreateInput
   connect: ReservationWhereUniqueInput
   update: ReservationUpdateDataInput
   upsert: ReservationUpsertNestedInput
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
 }
 
 input ReservationUpdateOneRequiredWithoutReceiptInput {
@@ -17911,25 +17340,6 @@ input ReservationUpdateOneRequiredWithoutReceiptInput {
 }
 
 input ReservationUpdateWithoutCustomerDataInput {
-<<<<<<< HEAD
-  reservationNumber: Int
-  shipped: Boolean
-  status: ReservationStatus
-  shippedAt: DateTime
-  receivedAt: DateTime
-  reminderSentAt: DateTime
-  user: UserUpdateOneRequiredInput
-  sentPackage: PackageUpdateOneInput
-  returnedPackage: PackageUpdateOneInput
-  feedback: ReservationFeedbackUpdateOneWithoutReservationInput
-  location: LocationUpdateOneInput
-  products: PhysicalProductUpdateManyInput
-  receipt: ReservationReceiptUpdateOneWithoutReservationInput
-}
-
-input ReservationUpdateWithoutFeedbackDataInput {
-=======
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   reservationNumber: Int
   shipped: Boolean
   status: ReservationStatus
@@ -17955,10 +17365,6 @@ input ReservationUpdateWithoutReceiptDataInput {
   customer: CustomerUpdateOneRequiredWithoutReservationsInput
   sentPackage: PackageUpdateOneInput
   returnedPackage: PackageUpdateOneInput
-<<<<<<< HEAD
-  feedback: ReservationFeedbackUpdateOneWithoutReservationInput
-=======
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   location: LocationUpdateOneInput
   products: PhysicalProductUpdateManyInput
 }
@@ -17968,9 +17374,9 @@ input ReservationUpdateWithWhereUniqueWithoutCustomerInput {
   data: ReservationUpdateWithoutCustomerDataInput!
 }
 
-input ReservationUpsertWithoutFeedbackInput {
-  update: ReservationUpdateWithoutFeedbackDataInput!
-  create: ReservationCreateWithoutFeedbackInput!
+input ReservationUpsertNestedInput {
+  update: ReservationUpdateDataInput!
+  create: ReservationCreateInput!
 }
 
 input ReservationUpsertWithoutReceiptInput {
@@ -18183,10 +17589,6 @@ input ReservationWhereInput {
   customer: CustomerWhereInput
   sentPackage: PackageWhereInput
   returnedPackage: PackageWhereInput
-<<<<<<< HEAD
-  feedback: ReservationFeedbackWhereInput
-=======
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   location: LocationWhereInput
   products_every: PhysicalProductWhereInput
   products_some: PhysicalProductWhereInput
@@ -18671,16 +18073,6 @@ type Subscription {
   emailReceipt(where: EmailReceiptSubscriptionWhereInput): EmailReceiptSubscriptionPayload
   pushNotificationReceipt(where: PushNotificationReceiptSubscriptionWhereInput): PushNotificationReceiptSubscriptionPayload
   bagItem(where: BagItemSubscriptionWhereInput): BagItemSubscriptionPayload
-<<<<<<< HEAD
-  recentlyViewedProduct(where: RecentlyViewedProductSubscriptionWhereInput): RecentlyViewedProductSubscriptionPayload
-  reservation(where: ReservationSubscriptionWhereInput): ReservationSubscriptionPayload
-  reservationFeedback(where: ReservationFeedbackSubscriptionWhereInput): ReservationFeedbackSubscriptionPayload
-  productVariantFeedback(where: ProductVariantFeedbackSubscriptionWhereInput): ProductVariantFeedbackSubscriptionPayload
-  productVariantFeedbackQuestion(where: ProductVariantFeedbackQuestionSubscriptionWhereInput): ProductVariantFeedbackQuestionSubscriptionPayload
-  reservationReceipt(where: ReservationReceiptSubscriptionWhereInput): ReservationReceiptSubscriptionPayload
-  productRequest(where: ProductRequestSubscriptionWhereInput): ProductRequestSubscriptionPayload
-  productVariantWant(where: ProductVariantWantSubscriptionWhereInput): ProductVariantWantSubscriptionPayload
-=======
   customerMembership(where: CustomerMembershipSubscriptionWhereInput): CustomerMembershipSubscriptionPayload
   pauseRequest(where: PauseRequestSubscriptionWhereInput): PauseRequestSubscriptionPayload
   recentlyViewedProduct(where: RecentlyViewedProductSubscriptionWhereInput): RecentlyViewedProductSubscriptionPayload
@@ -18690,7 +18082,6 @@ type Subscription {
   reservationFeedback(where: ReservationFeedbackSubscriptionWhereInput): ReservationFeedbackSubscriptionPayload
   productVariantFeedback(where: ProductVariantFeedbackSubscriptionWhereInput): ProductVariantFeedbackSubscriptionPayload
   productVariantFeedbackQuestion(where: ProductVariantFeedbackQuestionSubscriptionWhereInput): ProductVariantFeedbackQuestionSubscriptionPayload
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   collection(where: CollectionSubscriptionWhereInput): CollectionSubscriptionPayload
   customerDetail(where: CustomerDetailSubscriptionWhereInput): CustomerDetailSubscriptionPayload
   billingInfo(where: BillingInfoSubscriptionWhereInput): BillingInfoSubscriptionPayload
@@ -18709,10 +18100,7 @@ type Subscription {
   physicalProduct(where: PhysicalProductSubscriptionWhereInput): PhysicalProductSubscriptionPayload
   productVariant(where: ProductVariantSubscriptionWhereInput): ProductVariantSubscriptionPayload
   product(where: ProductSubscriptionWhereInput): ProductSubscriptionPayload
-<<<<<<< HEAD
-=======
   reservation(where: ReservationSubscriptionWhereInput): ReservationSubscriptionPayload
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
 }
 
@@ -21926,6 +21314,8 @@ export type PushNotificationReceiptOrderByInput =   'id_ASC' |
   'screen_DESC' |
   'uri_ASC' |
   'uri_DESC' |
+  'interest_ASC' |
+  'interest_DESC' |
   'body_ASC' |
   'body_DESC' |
   'title_ASC' |
@@ -23749,10 +23139,7 @@ export interface CustomerCreateInput {
   user: UserCreateOneInput
   detail?: CustomerDetailCreateOneInput | null
   billingInfo?: BillingInfoCreateOneInput | null
-<<<<<<< HEAD
-=======
   membership?: CustomerMembershipCreateOneWithoutCustomerInput | null
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   bagItems?: BagItemCreateManyWithoutCustomerInput | null
   reservations?: ReservationCreateManyWithoutCustomerInput | null
 }
@@ -23784,8 +23171,6 @@ export interface CustomerCreateWithoutBagItemsInput {
   user: UserCreateOneInput
   detail?: CustomerDetailCreateOneInput | null
   billingInfo?: BillingInfoCreateOneInput | null
-<<<<<<< HEAD
-=======
   membership?: CustomerMembershipCreateOneWithoutCustomerInput | null
   reservations?: ReservationCreateManyWithoutCustomerInput | null
 }
@@ -23798,7 +23183,6 @@ export interface CustomerCreateWithoutMembershipInput {
   detail?: CustomerDetailCreateOneInput | null
   billingInfo?: BillingInfoCreateOneInput | null
   bagItems?: BagItemCreateManyWithoutCustomerInput | null
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   reservations?: ReservationCreateManyWithoutCustomerInput | null
 }
 
@@ -23809,10 +23193,7 @@ export interface CustomerCreateWithoutReservationsInput {
   user: UserCreateOneInput
   detail?: CustomerDetailCreateOneInput | null
   billingInfo?: BillingInfoCreateOneInput | null
-<<<<<<< HEAD
-=======
   membership?: CustomerMembershipCreateOneWithoutCustomerInput | null
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   bagItems?: BagItemCreateManyWithoutCustomerInput | null
 }
 
@@ -24203,12 +23584,6 @@ export interface CustomerDetailWhereUniqueInput {
   id?: ID_Input | null
 }
 
-<<<<<<< HEAD
-export interface CustomerSubscriptionWhereInput {
-  AND?: CustomerSubscriptionWhereInput[] | CustomerSubscriptionWhereInput | null
-  OR?: CustomerSubscriptionWhereInput[] | CustomerSubscriptionWhereInput | null
-  NOT?: CustomerSubscriptionWhereInput[] | CustomerSubscriptionWhereInput | null
-=======
 export interface CustomerMembershipCreateInput {
   id?: ID_Input | null
   subscriptionId: String
@@ -24242,13 +23617,10 @@ export interface CustomerMembershipSubscriptionWhereInput {
   AND?: CustomerMembershipSubscriptionWhereInput[] | CustomerMembershipSubscriptionWhereInput | null
   OR?: CustomerMembershipSubscriptionWhereInput[] | CustomerMembershipSubscriptionWhereInput | null
   NOT?: CustomerMembershipSubscriptionWhereInput[] | CustomerMembershipSubscriptionWhereInput | null
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   mutation_in?: MutationType[] | MutationType | null
   updatedFields_contains?: String | null
   updatedFields_contains_every?: String[] | String | null
   updatedFields_contains_some?: String[] | String | null
-<<<<<<< HEAD
-=======
   node?: CustomerMembershipWhereInput | null
 }
 
@@ -24348,7 +23720,6 @@ export interface CustomerSubscriptionWhereInput {
   updatedFields_contains?: String | null
   updatedFields_contains_every?: String[] | String | null
   updatedFields_contains_some?: String[] | String | null
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   node?: CustomerWhereInput | null
 }
 
@@ -24358,10 +23729,7 @@ export interface CustomerUpdateDataInput {
   user?: UserUpdateOneRequiredInput | null
   detail?: CustomerDetailUpdateOneInput | null
   billingInfo?: BillingInfoUpdateOneInput | null
-<<<<<<< HEAD
-=======
   membership?: CustomerMembershipUpdateOneWithoutCustomerInput | null
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   bagItems?: BagItemUpdateManyWithoutCustomerInput | null
   reservations?: ReservationUpdateManyWithoutCustomerInput | null
 }
@@ -24372,10 +23740,7 @@ export interface CustomerUpdateInput {
   user?: UserUpdateOneRequiredInput | null
   detail?: CustomerDetailUpdateOneInput | null
   billingInfo?: BillingInfoUpdateOneInput | null
-<<<<<<< HEAD
-=======
   membership?: CustomerMembershipUpdateOneWithoutCustomerInput | null
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   bagItems?: BagItemUpdateManyWithoutCustomerInput | null
   reservations?: ReservationUpdateManyWithoutCustomerInput | null
 }
@@ -24397,8 +23762,6 @@ export interface CustomerUpdateOneRequiredWithoutBagItemsInput {
   connect?: CustomerWhereUniqueInput | null
   update?: CustomerUpdateWithoutBagItemsDataInput | null
   upsert?: CustomerUpsertWithoutBagItemsInput | null
-<<<<<<< HEAD
-=======
 }
 
 export interface CustomerUpdateOneRequiredWithoutMembershipInput {
@@ -24406,7 +23769,6 @@ export interface CustomerUpdateOneRequiredWithoutMembershipInput {
   connect?: CustomerWhereUniqueInput | null
   update?: CustomerUpdateWithoutMembershipDataInput | null
   upsert?: CustomerUpsertWithoutMembershipInput | null
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
 }
 
 export interface CustomerUpdateOneRequiredWithoutReservationsInput {
@@ -24422,8 +23784,6 @@ export interface CustomerUpdateWithoutBagItemsDataInput {
   user?: UserUpdateOneRequiredInput | null
   detail?: CustomerDetailUpdateOneInput | null
   billingInfo?: BillingInfoUpdateOneInput | null
-<<<<<<< HEAD
-=======
   membership?: CustomerMembershipUpdateOneWithoutCustomerInput | null
   reservations?: ReservationUpdateManyWithoutCustomerInput | null
 }
@@ -24435,7 +23795,6 @@ export interface CustomerUpdateWithoutMembershipDataInput {
   detail?: CustomerDetailUpdateOneInput | null
   billingInfo?: BillingInfoUpdateOneInput | null
   bagItems?: BagItemUpdateManyWithoutCustomerInput | null
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   reservations?: ReservationUpdateManyWithoutCustomerInput | null
 }
 
@@ -24445,10 +23804,7 @@ export interface CustomerUpdateWithoutReservationsDataInput {
   user?: UserUpdateOneRequiredInput | null
   detail?: CustomerDetailUpdateOneInput | null
   billingInfo?: BillingInfoUpdateOneInput | null
-<<<<<<< HEAD
-=======
   membership?: CustomerMembershipUpdateOneWithoutCustomerInput | null
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   bagItems?: BagItemUpdateManyWithoutCustomerInput | null
 }
 
@@ -24501,10 +23857,7 @@ export interface CustomerWhereInput {
   user?: UserWhereInput | null
   detail?: CustomerDetailWhereInput | null
   billingInfo?: BillingInfoWhereInput | null
-<<<<<<< HEAD
-=======
   membership?: CustomerMembershipWhereInput | null
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   bagItems_every?: BagItemWhereInput | null
   bagItems_some?: BagItemWhereInput | null
   bagItems_none?: BagItemWhereInput | null
@@ -28626,10 +27979,7 @@ export interface PushNotificationReceiptCreateInput {
   route?: String | null
   screen?: String | null
   uri?: String | null
-<<<<<<< HEAD
-=======
   interest?: String | null
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   body: String
   title?: String | null
   sentAt: DateTime
@@ -28651,10 +28001,7 @@ export interface PushNotificationReceiptUpdateInput {
   route?: String | null
   screen?: String | null
   uri?: String | null
-<<<<<<< HEAD
-=======
   interest?: String | null
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   body?: String | null
   title?: String | null
   sentAt?: DateTime | null
@@ -28665,6 +28012,7 @@ export interface PushNotificationReceiptUpdateManyMutationInput {
   route?: String | null
   screen?: String | null
   uri?: String | null
+  interest?: String | null
   body?: String | null
   title?: String | null
   sentAt?: DateTime | null
@@ -28730,8 +28078,6 @@ export interface PushNotificationReceiptWhereInput {
   uri_not_starts_with?: String | null
   uri_ends_with?: String | null
   uri_not_ends_with?: String | null
-<<<<<<< HEAD
-=======
   interest?: String | null
   interest_not?: String | null
   interest_in?: String[] | String | null
@@ -28746,7 +28092,6 @@ export interface PushNotificationReceiptWhereInput {
   interest_not_starts_with?: String | null
   interest_ends_with?: String | null
   interest_not_ends_with?: String | null
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   body?: String | null
   body_not?: String | null
   body_in?: String[] | String | null
@@ -28898,10 +28243,6 @@ export interface ReservationCreateInput {
   customer: CustomerCreateOneWithoutReservationsInput
   sentPackage?: PackageCreateOneInput | null
   returnedPackage?: PackageCreateOneInput | null
-<<<<<<< HEAD
-  feedback?: ReservationFeedbackCreateOneWithoutReservationInput | null
-=======
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   location?: LocationCreateOneInput | null
   products?: PhysicalProductCreateManyInput | null
   receipt?: ReservationReceiptCreateOneWithoutReservationInput | null
@@ -28912,8 +28253,8 @@ export interface ReservationCreateManyWithoutCustomerInput {
   connect?: ReservationWhereUniqueInput[] | ReservationWhereUniqueInput | null
 }
 
-export interface ReservationCreateOneWithoutFeedbackInput {
-  create?: ReservationCreateWithoutFeedbackInput | null
+export interface ReservationCreateOneInput {
+  create?: ReservationCreateInput | null
   connect?: ReservationWhereUniqueInput | null
 }
 
@@ -28924,26 +28265,6 @@ export interface ReservationCreateOneWithoutReceiptInput {
 
 export interface ReservationCreateWithoutCustomerInput {
   id?: ID_Input | null
-<<<<<<< HEAD
-  reservationNumber: Int
-  shipped: Boolean
-  status: ReservationStatus
-  shippedAt?: DateTime | null
-  receivedAt?: DateTime | null
-  reminderSentAt?: DateTime | null
-  user: UserCreateOneInput
-  sentPackage?: PackageCreateOneInput | null
-  returnedPackage?: PackageCreateOneInput | null
-  feedback?: ReservationFeedbackCreateOneWithoutReservationInput | null
-  location?: LocationCreateOneInput | null
-  products?: PhysicalProductCreateManyInput | null
-  receipt?: ReservationReceiptCreateOneWithoutReservationInput | null
-}
-
-export interface ReservationCreateWithoutFeedbackInput {
-  id?: ID_Input | null
-=======
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   reservationNumber: Int
   shipped: Boolean
   status: ReservationStatus
@@ -28970,10 +28291,6 @@ export interface ReservationCreateWithoutReceiptInput {
   customer: CustomerCreateOneWithoutReservationsInput
   sentPackage?: PackageCreateOneInput | null
   returnedPackage?: PackageCreateOneInput | null
-<<<<<<< HEAD
-  feedback?: ReservationFeedbackCreateOneWithoutReservationInput | null
-=======
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   location?: LocationCreateOneInput | null
   products?: PhysicalProductCreateManyInput | null
 }
@@ -28985,20 +28302,11 @@ export interface ReservationFeedbackCreateInput {
   respondedAt?: DateTime | null
   feedbacks?: ProductVariantFeedbackCreateManyWithoutReservationFeedbackInput | null
   user: UserCreateOneInput
-<<<<<<< HEAD
-  reservation: ReservationCreateOneWithoutFeedbackInput
-=======
   reservation: ReservationCreateOneInput
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
 }
 
 export interface ReservationFeedbackCreateOneWithoutFeedbacksInput {
   create?: ReservationFeedbackCreateWithoutFeedbacksInput | null
-  connect?: ReservationFeedbackWhereUniqueInput | null
-}
-
-export interface ReservationFeedbackCreateOneWithoutReservationInput {
-  create?: ReservationFeedbackCreateWithoutReservationInput | null
   connect?: ReservationFeedbackWhereUniqueInput | null
 }
 
@@ -29008,20 +28316,7 @@ export interface ReservationFeedbackCreateWithoutFeedbacksInput {
   rating?: Rating | null
   respondedAt?: DateTime | null
   user: UserCreateOneInput
-<<<<<<< HEAD
-  reservation: ReservationCreateOneWithoutFeedbackInput
-}
-
-export interface ReservationFeedbackCreateWithoutReservationInput {
-  id?: ID_Input | null
-  comment?: String | null
-  rating?: Rating | null
-  respondedAt?: DateTime | null
-  feedbacks?: ProductVariantFeedbackCreateManyWithoutReservationFeedbackInput | null
-  user: UserCreateOneInput
-=======
   reservation: ReservationCreateOneInput
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
 }
 
 export interface ReservationFeedbackSubscriptionWhereInput {
@@ -29041,11 +28336,7 @@ export interface ReservationFeedbackUpdateInput {
   respondedAt?: DateTime | null
   feedbacks?: ProductVariantFeedbackUpdateManyWithoutReservationFeedbackInput | null
   user?: UserUpdateOneRequiredInput | null
-<<<<<<< HEAD
-  reservation?: ReservationUpdateOneRequiredWithoutFeedbackInput | null
-=======
   reservation?: ReservationUpdateOneRequiredInput | null
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
 }
 
 export interface ReservationFeedbackUpdateManyMutationInput {
@@ -29059,18 +28350,6 @@ export interface ReservationFeedbackUpdateOneRequiredWithoutFeedbacksInput {
   connect?: ReservationFeedbackWhereUniqueInput | null
   update?: ReservationFeedbackUpdateWithoutFeedbacksDataInput | null
   upsert?: ReservationFeedbackUpsertWithoutFeedbacksInput | null
-<<<<<<< HEAD
-}
-
-export interface ReservationFeedbackUpdateOneWithoutReservationInput {
-  create?: ReservationFeedbackCreateWithoutReservationInput | null
-  connect?: ReservationFeedbackWhereUniqueInput | null
-  disconnect?: Boolean | null
-  delete?: Boolean | null
-  update?: ReservationFeedbackUpdateWithoutReservationDataInput | null
-  upsert?: ReservationFeedbackUpsertWithoutReservationInput | null
-=======
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
 }
 
 export interface ReservationFeedbackUpdateWithoutFeedbacksDataInput {
@@ -29078,29 +28357,12 @@ export interface ReservationFeedbackUpdateWithoutFeedbacksDataInput {
   rating?: Rating | null
   respondedAt?: DateTime | null
   user?: UserUpdateOneRequiredInput | null
-<<<<<<< HEAD
-  reservation?: ReservationUpdateOneRequiredWithoutFeedbackInput | null
-}
-
-export interface ReservationFeedbackUpdateWithoutReservationDataInput {
-  comment?: String | null
-  rating?: Rating | null
-  respondedAt?: DateTime | null
-  feedbacks?: ProductVariantFeedbackUpdateManyWithoutReservationFeedbackInput | null
-  user?: UserUpdateOneRequiredInput | null
-=======
   reservation?: ReservationUpdateOneRequiredInput | null
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
 }
 
 export interface ReservationFeedbackUpsertWithoutFeedbacksInput {
   update: ReservationFeedbackUpdateWithoutFeedbacksDataInput
   create: ReservationFeedbackCreateWithoutFeedbacksInput
-}
-
-export interface ReservationFeedbackUpsertWithoutReservationInput {
-  update: ReservationFeedbackUpdateWithoutReservationDataInput
-  create: ReservationFeedbackCreateWithoutReservationInput
 }
 
 export interface ReservationFeedbackWhereInput {
@@ -29507,11 +28769,7 @@ export interface ReservationSubscriptionWhereInput {
   node?: ReservationWhereInput | null
 }
 
-<<<<<<< HEAD
-export interface ReservationUpdateInput {
-=======
 export interface ReservationUpdateDataInput {
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   reservationNumber?: Int | null
   shipped?: Boolean | null
   status?: ReservationStatus | null
@@ -29522,11 +28780,8 @@ export interface ReservationUpdateDataInput {
   customer?: CustomerUpdateOneRequiredWithoutReservationsInput | null
   sentPackage?: PackageUpdateOneInput | null
   returnedPackage?: PackageUpdateOneInput | null
-  feedback?: ReservationFeedbackUpdateOneWithoutReservationInput | null
   location?: LocationUpdateOneInput | null
   products?: PhysicalProductUpdateManyInput | null
-<<<<<<< HEAD
-=======
   receipt?: ReservationReceiptUpdateOneWithoutReservationInput | null
 }
 
@@ -29543,7 +28798,6 @@ export interface ReservationUpdateInput {
   returnedPackage?: PackageUpdateOneInput | null
   location?: LocationUpdateOneInput | null
   products?: PhysicalProductUpdateManyInput | null
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   receipt?: ReservationReceiptUpdateOneWithoutReservationInput | null
 }
 
@@ -29582,19 +28836,11 @@ export interface ReservationUpdateManyWithWhereNestedInput {
   data: ReservationUpdateManyDataInput
 }
 
-<<<<<<< HEAD
-export interface ReservationUpdateOneRequiredWithoutFeedbackInput {
-  create?: ReservationCreateWithoutFeedbackInput | null
-  connect?: ReservationWhereUniqueInput | null
-  update?: ReservationUpdateWithoutFeedbackDataInput | null
-  upsert?: ReservationUpsertWithoutFeedbackInput | null
-=======
 export interface ReservationUpdateOneRequiredInput {
   create?: ReservationCreateInput | null
   connect?: ReservationWhereUniqueInput | null
   update?: ReservationUpdateDataInput | null
   upsert?: ReservationUpsertNestedInput | null
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
 }
 
 export interface ReservationUpdateOneRequiredWithoutReceiptInput {
@@ -29605,25 +28851,6 @@ export interface ReservationUpdateOneRequiredWithoutReceiptInput {
 }
 
 export interface ReservationUpdateWithoutCustomerDataInput {
-<<<<<<< HEAD
-  reservationNumber?: Int | null
-  shipped?: Boolean | null
-  status?: ReservationStatus | null
-  shippedAt?: DateTime | null
-  receivedAt?: DateTime | null
-  reminderSentAt?: DateTime | null
-  user?: UserUpdateOneRequiredInput | null
-  sentPackage?: PackageUpdateOneInput | null
-  returnedPackage?: PackageUpdateOneInput | null
-  feedback?: ReservationFeedbackUpdateOneWithoutReservationInput | null
-  location?: LocationUpdateOneInput | null
-  products?: PhysicalProductUpdateManyInput | null
-  receipt?: ReservationReceiptUpdateOneWithoutReservationInput | null
-}
-
-export interface ReservationUpdateWithoutFeedbackDataInput {
-=======
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   reservationNumber?: Int | null
   shipped?: Boolean | null
   status?: ReservationStatus | null
@@ -29649,10 +28876,6 @@ export interface ReservationUpdateWithoutReceiptDataInput {
   customer?: CustomerUpdateOneRequiredWithoutReservationsInput | null
   sentPackage?: PackageUpdateOneInput | null
   returnedPackage?: PackageUpdateOneInput | null
-<<<<<<< HEAD
-  feedback?: ReservationFeedbackUpdateOneWithoutReservationInput | null
-=======
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   location?: LocationUpdateOneInput | null
   products?: PhysicalProductUpdateManyInput | null
 }
@@ -29662,9 +28885,9 @@ export interface ReservationUpdateWithWhereUniqueWithoutCustomerInput {
   data: ReservationUpdateWithoutCustomerDataInput
 }
 
-export interface ReservationUpsertWithoutFeedbackInput {
-  update: ReservationUpdateWithoutFeedbackDataInput
-  create: ReservationCreateWithoutFeedbackInput
+export interface ReservationUpsertNestedInput {
+  update: ReservationUpdateDataInput
+  create: ReservationCreateInput
 }
 
 export interface ReservationUpsertWithoutReceiptInput {
@@ -29754,10 +28977,6 @@ export interface ReservationWhereInput {
   customer?: CustomerWhereInput | null
   sentPackage?: PackageWhereInput | null
   returnedPackage?: PackageWhereInput | null
-<<<<<<< HEAD
-  feedback?: ReservationFeedbackWhereInput | null
-=======
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
   location?: LocationWhereInput | null
   products_every?: PhysicalProductWhereInput | null
   products_some?: PhysicalProductWhereInput | null
@@ -32136,8 +31355,6 @@ export interface PageInfo {
   endCursor?: String | null
 }
 
-<<<<<<< HEAD
-=======
 export interface PauseRequest extends Node {
   id: ID_Output
   createdAt: DateTime
@@ -32183,7 +31400,6 @@ export interface PauseRequestSubscriptionPayload {
   previousValues?: PauseRequestPreviousValues | null
 }
 
->>>>>>> f4cc2ba2765351d9b350926d35482946b0a2fc08
 export interface PhysicalProduct extends Node {
   id: ID_Output
   seasonsUID: String
@@ -32640,6 +31856,7 @@ export interface PushNotificationReceipt extends Node {
   screen?: String | null
   uri?: String | null
   users?: Array<User> | null
+  interest?: String | null
   body: String
   title?: String | null
   sentAt: DateTime
@@ -32671,6 +31888,7 @@ export interface PushNotificationReceiptPreviousValues {
   route?: String | null
   screen?: String | null
   uri?: String | null
+  interest?: String | null
   body: String
   title?: String | null
   sentAt: DateTime
@@ -32733,7 +31951,6 @@ export interface Reservation extends Node {
   customer: Customer
   sentPackage?: Package | null
   returnedPackage?: Package | null
-  feedback?: ReservationFeedback | null
   location?: Location | null
   products?: Array<PhysicalProduct> | null
   reservationNumber: Int
