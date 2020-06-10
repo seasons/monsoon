@@ -5,6 +5,7 @@ import moment from "moment"
 
 import { BlogPost } from "../blog.types"
 import {
+  AuthorsCollectionId,
   BlogPostsCollectionId,
   BlogPostsURL,
   CategoriesCollectionId,
@@ -57,11 +58,22 @@ export class BlogService {
       collectionId: CategoriesCollectionId,
     })
 
+    const authors = await this.webflow.client.items({
+      collectionId: AuthorsCollectionId,
+    })
+
     const getCategory = categoryID => {
       const category = categories?.items?.find(cat => {
         return cat._id === categoryID
       })
       return category?.name || ""
+    }
+
+    const getAuthor = authorID => {
+      const author = authors?.items?.find(auth => {
+        return auth._id === authorID
+      })
+      return author?.name || ""
     }
 
     return allPosts
@@ -77,6 +89,7 @@ export class BlogService {
         updatedAt: item.updatedOn,
         publishedOn: item.publishedOn,
         category: getCategory(item.category5),
+        author: getAuthor(item.author4),
       }))
   }
 }
