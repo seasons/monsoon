@@ -17,12 +17,15 @@ interface ImageResizerOptions {
   w?: number
   h?: number
   retina?: boolean
+  format?: ImageFormat
 }
 interface ImageSizeOptions {
   w?: number
   h?: number
   fit?: "clip"
 }
+
+type ImageFormat = "webp" | "jpg" | "png" | "gif" | "mp4"
 
 type ImageSizeMap = {
   [key in ImageSize]: ImageSizeOptions
@@ -64,6 +67,7 @@ export class ImageService {
       {
         fit: "clip",
         retina: true,
+        fm: "webp",
         ...passedOptions,
       },
       identity

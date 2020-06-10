@@ -68,14 +68,6 @@ export class ReservationFieldsResolver {
     const reservation = await this.prisma.client.reservation({
       id: parent.id,
     })
-    const status = reservation.status
-    if (args.display === true) {
-      switch (status) {
-        default:
-          return status
-      }
-    } else {
-      return status
-    }
+    return reservation.status
   }
 }
