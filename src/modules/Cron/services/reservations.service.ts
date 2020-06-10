@@ -1,5 +1,5 @@
 import { SyncError } from "@app/errors"
-import { PushNotificationsService } from "@app/modules/PushNotifications"
+import { PushNotificationsService } from "@app/modules/PushNotification"
 import { UtilsService } from "@app/modules/Utils"
 import {
   AirtableInventoryStatus,

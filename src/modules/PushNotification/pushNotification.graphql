@@ -1,0 +1,23 @@
+type Query {
+  pushNotificationReceipt(
+    where: PushNotificationReceiptWhereUniqueInput!
+  ): PushNotificationReceipt
+  pushNotificationReceipts(
+    where: PushNotificationReceiptWhereInput
+    orderBy: PushNotificationReceiptOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [PushNotificationReceipt]!
+  pushNotificationReceiptsConnection(
+    where: PushNotificationReceiptWhereInput
+    orderBy: PushNotificationReceiptOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): PushNotificationReceiptConnection!
+}

@@ -8630,7 +8630,23 @@ input PushNotificationReceiptCreateInput {
   route: String
   screen: String
   uri: String
-  users: UserCreateManyInput
+  users: UserCreateManyWithoutPushNotificationsInput
+  interest: String
+  body: String!
+  title: String
+  sentAt: DateTime!
+}
+
+input PushNotificationReceiptCreateManyWithoutUsersInput {
+  create: [PushNotificationReceiptCreateWithoutUsersInput!]
+  connect: [PushNotificationReceiptWhereUniqueInput!]
+}
+
+input PushNotificationReceiptCreateWithoutUsersInput {
+  id: ID
+  route: String
+  screen: String
+  uri: String
   interest: String
   body: String!
   title: String
@@ -8678,6 +8694,134 @@ type PushNotificationReceiptPreviousValues {
   updatedAt: DateTime!
 }
 
+input PushNotificationReceiptScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  route: String
+  route_not: String
+  route_in: [String!]
+  route_not_in: [String!]
+  route_lt: String
+  route_lte: String
+  route_gt: String
+  route_gte: String
+  route_contains: String
+  route_not_contains: String
+  route_starts_with: String
+  route_not_starts_with: String
+  route_ends_with: String
+  route_not_ends_with: String
+  screen: String
+  screen_not: String
+  screen_in: [String!]
+  screen_not_in: [String!]
+  screen_lt: String
+  screen_lte: String
+  screen_gt: String
+  screen_gte: String
+  screen_contains: String
+  screen_not_contains: String
+  screen_starts_with: String
+  screen_not_starts_with: String
+  screen_ends_with: String
+  screen_not_ends_with: String
+  uri: String
+  uri_not: String
+  uri_in: [String!]
+  uri_not_in: [String!]
+  uri_lt: String
+  uri_lte: String
+  uri_gt: String
+  uri_gte: String
+  uri_contains: String
+  uri_not_contains: String
+  uri_starts_with: String
+  uri_not_starts_with: String
+  uri_ends_with: String
+  uri_not_ends_with: String
+  interest: String
+  interest_not: String
+  interest_in: [String!]
+  interest_not_in: [String!]
+  interest_lt: String
+  interest_lte: String
+  interest_gt: String
+  interest_gte: String
+  interest_contains: String
+  interest_not_contains: String
+  interest_starts_with: String
+  interest_not_starts_with: String
+  interest_ends_with: String
+  interest_not_ends_with: String
+  body: String
+  body_not: String
+  body_in: [String!]
+  body_not_in: [String!]
+  body_lt: String
+  body_lte: String
+  body_gt: String
+  body_gte: String
+  body_contains: String
+  body_not_contains: String
+  body_starts_with: String
+  body_not_starts_with: String
+  body_ends_with: String
+  body_not_ends_with: String
+  title: String
+  title_not: String
+  title_in: [String!]
+  title_not_in: [String!]
+  title_lt: String
+  title_lte: String
+  title_gt: String
+  title_gte: String
+  title_contains: String
+  title_not_contains: String
+  title_starts_with: String
+  title_not_starts_with: String
+  title_ends_with: String
+  title_not_ends_with: String
+  sentAt: DateTime
+  sentAt_not: DateTime
+  sentAt_in: [DateTime!]
+  sentAt_not_in: [DateTime!]
+  sentAt_lt: DateTime
+  sentAt_lte: DateTime
+  sentAt_gt: DateTime
+  sentAt_gte: DateTime
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [PushNotificationReceiptScalarWhereInput!]
+  OR: [PushNotificationReceiptScalarWhereInput!]
+  NOT: [PushNotificationReceiptScalarWhereInput!]
+}
+
 type PushNotificationReceiptSubscriptionPayload {
   mutation: MutationType!
   node: PushNotificationReceipt
@@ -8700,7 +8844,17 @@ input PushNotificationReceiptUpdateInput {
   route: String
   screen: String
   uri: String
-  users: UserUpdateManyInput
+  users: UserUpdateManyWithoutPushNotificationsInput
+  interest: String
+  body: String
+  title: String
+  sentAt: DateTime
+}
+
+input PushNotificationReceiptUpdateManyDataInput {
+  route: String
+  screen: String
+  uri: String
   interest: String
   body: String
   title: String
@@ -8715,6 +8869,44 @@ input PushNotificationReceiptUpdateManyMutationInput {
   body: String
   title: String
   sentAt: DateTime
+}
+
+input PushNotificationReceiptUpdateManyWithoutUsersInput {
+  create: [PushNotificationReceiptCreateWithoutUsersInput!]
+  delete: [PushNotificationReceiptWhereUniqueInput!]
+  connect: [PushNotificationReceiptWhereUniqueInput!]
+  set: [PushNotificationReceiptWhereUniqueInput!]
+  disconnect: [PushNotificationReceiptWhereUniqueInput!]
+  update: [PushNotificationReceiptUpdateWithWhereUniqueWithoutUsersInput!]
+  upsert: [PushNotificationReceiptUpsertWithWhereUniqueWithoutUsersInput!]
+  deleteMany: [PushNotificationReceiptScalarWhereInput!]
+  updateMany: [PushNotificationReceiptUpdateManyWithWhereNestedInput!]
+}
+
+input PushNotificationReceiptUpdateManyWithWhereNestedInput {
+  where: PushNotificationReceiptScalarWhereInput!
+  data: PushNotificationReceiptUpdateManyDataInput!
+}
+
+input PushNotificationReceiptUpdateWithoutUsersDataInput {
+  route: String
+  screen: String
+  uri: String
+  interest: String
+  body: String
+  title: String
+  sentAt: DateTime
+}
+
+input PushNotificationReceiptUpdateWithWhereUniqueWithoutUsersInput {
+  where: PushNotificationReceiptWhereUniqueInput!
+  data: PushNotificationReceiptUpdateWithoutUsersDataInput!
+}
+
+input PushNotificationReceiptUpsertWithWhereUniqueWithoutUsersInput {
+  where: PushNotificationReceiptWhereUniqueInput!
+  update: PushNotificationReceiptUpdateWithoutUsersDataInput!
+  create: PushNotificationReceiptCreateWithoutUsersInput!
 }
 
 input PushNotificationReceiptWhereInput {
@@ -10848,7 +11040,8 @@ type User {
   roles: [UserRole!]!
   createdAt: DateTime!
   updatedAt: DateTime!
-  pushNotifications: PushNotificationStatus!
+  pushNotificationStatus: PushNotificationStatus!
+  pushNotifications(where: PushNotificationReceiptWhereInput, orderBy: PushNotificationReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PushNotificationReceipt!]
 }
 
 type UserConnection {
@@ -10865,11 +11058,12 @@ input UserCreateInput {
   lastName: String!
   role: UserRole
   roles: UserCreaterolesInput
-  pushNotifications: PushNotificationStatus
+  pushNotificationStatus: PushNotificationStatus
+  pushNotifications: PushNotificationReceiptCreateManyWithoutUsersInput
 }
 
-input UserCreateManyInput {
-  create: [UserCreateInput!]
+input UserCreateManyWithoutPushNotificationsInput {
+  create: [UserCreateWithoutPushNotificationsInput!]
   connect: [UserWhereUniqueInput!]
 }
 
@@ -10880,6 +11074,17 @@ input UserCreateOneInput {
 
 input UserCreaterolesInput {
   set: [UserRole!]
+}
+
+input UserCreateWithoutPushNotificationsInput {
+  id: ID
+  auth0Id: String!
+  email: String!
+  firstName: String!
+  lastName: String!
+  role: UserRole
+  roles: UserCreaterolesInput
+  pushNotificationStatus: PushNotificationStatus
 }
 
 type UserEdge {
@@ -10904,8 +11109,8 @@ enum UserOrderByInput {
   createdAt_DESC
   updatedAt_ASC
   updatedAt_DESC
-  pushNotifications_ASC
-  pushNotifications_DESC
+  pushNotificationStatus_ASC
+  pushNotificationStatus_DESC
 }
 
 type UserPreviousValues {
@@ -10918,7 +11123,7 @@ type UserPreviousValues {
   roles: [UserRole!]!
   createdAt: DateTime!
   updatedAt: DateTime!
-  pushNotifications: PushNotificationStatus!
+  pushNotificationStatus: PushNotificationStatus!
 }
 
 enum UserRole {
@@ -11018,10 +11223,10 @@ input UserScalarWhereInput {
   updatedAt_lte: DateTime
   updatedAt_gt: DateTime
   updatedAt_gte: DateTime
-  pushNotifications: PushNotificationStatus
-  pushNotifications_not: PushNotificationStatus
-  pushNotifications_in: [PushNotificationStatus!]
-  pushNotifications_not_in: [PushNotificationStatus!]
+  pushNotificationStatus: PushNotificationStatus
+  pushNotificationStatus_not: PushNotificationStatus
+  pushNotificationStatus_in: [PushNotificationStatus!]
+  pushNotificationStatus_not_in: [PushNotificationStatus!]
   AND: [UserScalarWhereInput!]
   OR: [UserScalarWhereInput!]
   NOT: [UserScalarWhereInput!]
@@ -11052,7 +11257,8 @@ input UserUpdateDataInput {
   lastName: String
   role: UserRole
   roles: UserUpdaterolesInput
-  pushNotifications: PushNotificationStatus
+  pushNotificationStatus: PushNotificationStatus
+  pushNotifications: PushNotificationReceiptUpdateManyWithoutUsersInput
 }
 
 input UserUpdateInput {
@@ -11062,7 +11268,8 @@ input UserUpdateInput {
   lastName: String
   role: UserRole
   roles: UserUpdaterolesInput
-  pushNotifications: PushNotificationStatus
+  pushNotificationStatus: PushNotificationStatus
+  pushNotifications: PushNotificationReceiptUpdateManyWithoutUsersInput
 }
 
 input UserUpdateManyDataInput {
@@ -11072,19 +11279,7 @@ input UserUpdateManyDataInput {
   lastName: String
   role: UserRole
   roles: UserUpdaterolesInput
-  pushNotifications: PushNotificationStatus
-}
-
-input UserUpdateManyInput {
-  create: [UserCreateInput!]
-  update: [UserUpdateWithWhereUniqueNestedInput!]
-  upsert: [UserUpsertWithWhereUniqueNestedInput!]
-  delete: [UserWhereUniqueInput!]
-  connect: [UserWhereUniqueInput!]
-  set: [UserWhereUniqueInput!]
-  disconnect: [UserWhereUniqueInput!]
-  deleteMany: [UserScalarWhereInput!]
-  updateMany: [UserUpdateManyWithWhereNestedInput!]
+  pushNotificationStatus: PushNotificationStatus
 }
 
 input UserUpdateManyMutationInput {
@@ -11094,7 +11289,19 @@ input UserUpdateManyMutationInput {
   lastName: String
   role: UserRole
   roles: UserUpdaterolesInput
-  pushNotifications: PushNotificationStatus
+  pushNotificationStatus: PushNotificationStatus
+}
+
+input UserUpdateManyWithoutPushNotificationsInput {
+  create: [UserCreateWithoutPushNotificationsInput!]
+  delete: [UserWhereUniqueInput!]
+  connect: [UserWhereUniqueInput!]
+  set: [UserWhereUniqueInput!]
+  disconnect: [UserWhereUniqueInput!]
+  update: [UserUpdateWithWhereUniqueWithoutPushNotificationsInput!]
+  upsert: [UserUpsertWithWhereUniqueWithoutPushNotificationsInput!]
+  deleteMany: [UserScalarWhereInput!]
+  updateMany: [UserUpdateManyWithWhereNestedInput!]
 }
 
 input UserUpdateManyWithWhereNestedInput {
@@ -11122,9 +11329,19 @@ input UserUpdaterolesInput {
   set: [UserRole!]
 }
 
-input UserUpdateWithWhereUniqueNestedInput {
+input UserUpdateWithoutPushNotificationsDataInput {
+  auth0Id: String
+  email: String
+  firstName: String
+  lastName: String
+  role: UserRole
+  roles: UserUpdaterolesInput
+  pushNotificationStatus: PushNotificationStatus
+}
+
+input UserUpdateWithWhereUniqueWithoutPushNotificationsInput {
   where: UserWhereUniqueInput!
-  data: UserUpdateDataInput!
+  data: UserUpdateWithoutPushNotificationsDataInput!
 }
 
 input UserUpsertNestedInput {
@@ -11132,10 +11349,10 @@ input UserUpsertNestedInput {
   create: UserCreateInput!
 }
 
-input UserUpsertWithWhereUniqueNestedInput {
+input UserUpsertWithWhereUniqueWithoutPushNotificationsInput {
   where: UserWhereUniqueInput!
-  update: UserUpdateDataInput!
-  create: UserCreateInput!
+  update: UserUpdateWithoutPushNotificationsDataInput!
+  create: UserCreateWithoutPushNotificationsInput!
 }
 
 input UserWhereInput {
@@ -11229,10 +11446,13 @@ input UserWhereInput {
   updatedAt_lte: DateTime
   updatedAt_gt: DateTime
   updatedAt_gte: DateTime
-  pushNotifications: PushNotificationStatus
-  pushNotifications_not: PushNotificationStatus
-  pushNotifications_in: [PushNotificationStatus!]
-  pushNotifications_not_in: [PushNotificationStatus!]
+  pushNotificationStatus: PushNotificationStatus
+  pushNotificationStatus_not: PushNotificationStatus
+  pushNotificationStatus_in: [PushNotificationStatus!]
+  pushNotificationStatus_not_in: [PushNotificationStatus!]
+  pushNotifications_every: PushNotificationReceiptWhereInput
+  pushNotifications_some: PushNotificationReceiptWhereInput
+  pushNotifications_none: PushNotificationReceiptWhereInput
   AND: [UserWhereInput!]
   OR: [UserWhereInput!]
   NOT: [UserWhereInput!]

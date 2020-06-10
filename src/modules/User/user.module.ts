@@ -2,7 +2,7 @@ import { Module } from "@nestjs/common"
 import { PrismaModule } from "@prisma/prisma.module"
 
 import { AirtableModule } from "../Airtable/airtable.module"
-import { PushNotificationsModule } from "../PushNotifications/pushNotifications.module"
+import { PushNotificationsModule } from "../PushNotification/pushNotifications.module"
 import { ShippingModule } from "../Shipping/shipping.module"
 import { MeFieldsResolver } from "./fields/me.fields"
 import { UserFieldsResolver } from "./fields/user.fields"

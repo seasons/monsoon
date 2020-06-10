@@ -69,6 +69,7 @@ type User {
   roles: [UserRole!]!
   createdAt: DateTime!
   updatedAt: DateTime!
-  pushNotifications: PushNotificationStatus!
+  pushNotifications: [PushNotificationReceipt!]
+  pushNotificationStatus: PushNotificationStatus
   beamsToken: String!
 }

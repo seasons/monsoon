@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Thu Jun 04 2020 17:00:19 GMT-0400 (Eastern Daylight Time)
+# timestamp: Tue Jun 09 2020 15:48:38 GMT-0400 (Eastern Daylight Time)
 
 type AggregateBagItem {
   count: Int!
@@ -14681,7 +14681,23 @@ input PushNotificationReceiptCreateInput {
   body: String!
   title: String
   sentAt: DateTime!
-  users: UserCreateManyInput
+  users: UserCreateManyWithoutPushNotificationsInput
+}
+
+input PushNotificationReceiptCreateManyWithoutUsersInput {
+  create: [PushNotificationReceiptCreateWithoutUsersInput!]
+  connect: [PushNotificationReceiptWhereUniqueInput!]
+}
+
+input PushNotificationReceiptCreateWithoutUsersInput {
+  id: ID
+  route: String
+  screen: String
+  uri: String
+  interest: String
+  body: String!
+  title: String
+  sentAt: DateTime!
 }
 
 """An edge in a connection."""
@@ -14729,6 +14745,363 @@ type PushNotificationReceiptPreviousValues {
   updatedAt: DateTime!
 }
 
+input PushNotificationReceiptScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [PushNotificationReceiptScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [PushNotificationReceiptScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [PushNotificationReceiptScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  route: String
+
+  """All values that are not equal to given value."""
+  route_not: String
+
+  """All values that are contained in given list."""
+  route_in: [String!]
+
+  """All values that are not contained in given list."""
+  route_not_in: [String!]
+
+  """All values less than the given value."""
+  route_lt: String
+
+  """All values less than or equal the given value."""
+  route_lte: String
+
+  """All values greater than the given value."""
+  route_gt: String
+
+  """All values greater than or equal the given value."""
+  route_gte: String
+
+  """All values containing the given string."""
+  route_contains: String
+
+  """All values not containing the given string."""
+  route_not_contains: String
+
+  """All values starting with the given string."""
+  route_starts_with: String
+
+  """All values not starting with the given string."""
+  route_not_starts_with: String
+
+  """All values ending with the given string."""
+  route_ends_with: String
+
+  """All values not ending with the given string."""
+  route_not_ends_with: String
+  screen: String
+
+  """All values that are not equal to given value."""
+  screen_not: String
+
+  """All values that are contained in given list."""
+  screen_in: [String!]
+
+  """All values that are not contained in given list."""
+  screen_not_in: [String!]
+
+  """All values less than the given value."""
+  screen_lt: String
+
+  """All values less than or equal the given value."""
+  screen_lte: String
+
+  """All values greater than the given value."""
+  screen_gt: String
+
+  """All values greater than or equal the given value."""
+  screen_gte: String
+
+  """All values containing the given string."""
+  screen_contains: String
+
+  """All values not containing the given string."""
+  screen_not_contains: String
+
+  """All values starting with the given string."""
+  screen_starts_with: String
+
+  """All values not starting with the given string."""
+  screen_not_starts_with: String
+
+  """All values ending with the given string."""
+  screen_ends_with: String
+
+  """All values not ending with the given string."""
+  screen_not_ends_with: String
+  uri: String
+
+  """All values that are not equal to given value."""
+  uri_not: String
+
+  """All values that are contained in given list."""
+  uri_in: [String!]
+
+  """All values that are not contained in given list."""
+  uri_not_in: [String!]
+
+  """All values less than the given value."""
+  uri_lt: String
+
+  """All values less than or equal the given value."""
+  uri_lte: String
+
+  """All values greater than the given value."""
+  uri_gt: String
+
+  """All values greater than or equal the given value."""
+  uri_gte: String
+
+  """All values containing the given string."""
+  uri_contains: String
+
+  """All values not containing the given string."""
+  uri_not_contains: String
+
+  """All values starting with the given string."""
+  uri_starts_with: String
+
+  """All values not starting with the given string."""
+  uri_not_starts_with: String
+
+  """All values ending with the given string."""
+  uri_ends_with: String
+
+  """All values not ending with the given string."""
+  uri_not_ends_with: String
+  interest: String
+
+  """All values that are not equal to given value."""
+  interest_not: String
+
+  """All values that are contained in given list."""
+  interest_in: [String!]
+
+  """All values that are not contained in given list."""
+  interest_not_in: [String!]
+
+  """All values less than the given value."""
+  interest_lt: String
+
+  """All values less than or equal the given value."""
+  interest_lte: String
+
+  """All values greater than the given value."""
+  interest_gt: String
+
+  """All values greater than or equal the given value."""
+  interest_gte: String
+
+  """All values containing the given string."""
+  interest_contains: String
+
+  """All values not containing the given string."""
+  interest_not_contains: String
+
+  """All values starting with the given string."""
+  interest_starts_with: String
+
+  """All values not starting with the given string."""
+  interest_not_starts_with: String
+
+  """All values ending with the given string."""
+  interest_ends_with: String
+
+  """All values not ending with the given string."""
+  interest_not_ends_with: String
+  body: String
+
+  """All values that are not equal to given value."""
+  body_not: String
+
+  """All values that are contained in given list."""
+  body_in: [String!]
+
+  """All values that are not contained in given list."""
+  body_not_in: [String!]
+
+  """All values less than the given value."""
+  body_lt: String
+
+  """All values less than or equal the given value."""
+  body_lte: String
+
+  """All values greater than the given value."""
+  body_gt: String
+
+  """All values greater than or equal the given value."""
+  body_gte: String
+
+  """All values containing the given string."""
+  body_contains: String
+
+  """All values not containing the given string."""
+  body_not_contains: String
+
+  """All values starting with the given string."""
+  body_starts_with: String
+
+  """All values not starting with the given string."""
+  body_not_starts_with: String
+
+  """All values ending with the given string."""
+  body_ends_with: String
+
+  """All values not ending with the given string."""
+  body_not_ends_with: String
+  title: String
+
+  """All values that are not equal to given value."""
+  title_not: String
+
+  """All values that are contained in given list."""
+  title_in: [String!]
+
+  """All values that are not contained in given list."""
+  title_not_in: [String!]
+
+  """All values less than the given value."""
+  title_lt: String
+
+  """All values less than or equal the given value."""
+  title_lte: String
+
+  """All values greater than the given value."""
+  title_gt: String
+
+  """All values greater than or equal the given value."""
+  title_gte: String
+
+  """All values containing the given string."""
+  title_contains: String
+
+  """All values not containing the given string."""
+  title_not_contains: String
+
+  """All values starting with the given string."""
+  title_starts_with: String
+
+  """All values not starting with the given string."""
+  title_not_starts_with: String
+
+  """All values ending with the given string."""
+  title_ends_with: String
+
+  """All values not ending with the given string."""
+  title_not_ends_with: String
+  sentAt: DateTime
+
+  """All values that are not equal to given value."""
+  sentAt_not: DateTime
+
+  """All values that are contained in given list."""
+  sentAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  sentAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  sentAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  sentAt_lte: DateTime
+
+  """All values greater than the given value."""
+  sentAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  sentAt_gte: DateTime
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
+}
+
 type PushNotificationReceiptSubscriptionPayload {
   mutation: MutationType!
   node: PushNotificationReceipt
@@ -14774,7 +15147,17 @@ input PushNotificationReceiptUpdateInput {
   body: String
   title: String
   sentAt: DateTime
-  users: UserUpdateManyInput
+  users: UserUpdateManyWithoutPushNotificationsInput
+}
+
+input PushNotificationReceiptUpdateManyDataInput {
+  route: String
+  screen: String
+  uri: String
+  interest: String
+  body: String
+  title: String
+  sentAt: DateTime
 }
 
 input PushNotificationReceiptUpdateManyMutationInput {
@@ -14785,6 +15168,44 @@ input PushNotificationReceiptUpdateManyMutationInput {
   body: String
   title: String
   sentAt: DateTime
+}
+
+input PushNotificationReceiptUpdateManyWithoutUsersInput {
+  create: [PushNotificationReceiptCreateWithoutUsersInput!]
+  connect: [PushNotificationReceiptWhereUniqueInput!]
+  set: [PushNotificationReceiptWhereUniqueInput!]
+  disconnect: [PushNotificationReceiptWhereUniqueInput!]
+  delete: [PushNotificationReceiptWhereUniqueInput!]
+  update: [PushNotificationReceiptUpdateWithWhereUniqueWithoutUsersInput!]
+  updateMany: [PushNotificationReceiptUpdateManyWithWhereNestedInput!]
+  deleteMany: [PushNotificationReceiptScalarWhereInput!]
+  upsert: [PushNotificationReceiptUpsertWithWhereUniqueWithoutUsersInput!]
+}
+
+input PushNotificationReceiptUpdateManyWithWhereNestedInput {
+  where: PushNotificationReceiptScalarWhereInput!
+  data: PushNotificationReceiptUpdateManyDataInput!
+}
+
+input PushNotificationReceiptUpdateWithoutUsersDataInput {
+  route: String
+  screen: String
+  uri: String
+  interest: String
+  body: String
+  title: String
+  sentAt: DateTime
+}
+
+input PushNotificationReceiptUpdateWithWhereUniqueWithoutUsersInput {
+  where: PushNotificationReceiptWhereUniqueInput!
+  data: PushNotificationReceiptUpdateWithoutUsersDataInput!
+}
+
+input PushNotificationReceiptUpsertWithWhereUniqueWithoutUsersInput {
+  where: PushNotificationReceiptWhereUniqueInput!
+  update: PushNotificationReceiptUpdateWithoutUsersDataInput!
+  create: PushNotificationReceiptCreateWithoutUsersInput!
 }
 
 input PushNotificationReceiptWhereInput {
@@ -18484,7 +18905,8 @@ type User implements Node {
   roles: [UserRole!]!
   createdAt: DateTime!
   updatedAt: DateTime!
-  pushNotifications: PushNotificationStatus!
+  pushNotificationStatus: PushNotificationStatus!
+  pushNotifications(where: PushNotificationReceiptWhereInput, orderBy: PushNotificationReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PushNotificationReceipt!]
 }
 
 """A connection to a list of items."""
@@ -18504,12 +18926,13 @@ input UserCreateInput {
   firstName: String!
   lastName: String!
   role: UserRole
-  pushNotifications: PushNotificationStatus
+  pushNotificationStatus: PushNotificationStatus
   roles: UserCreaterolesInput
+  pushNotifications: PushNotificationReceiptCreateManyWithoutUsersInput
 }
 
-input UserCreateManyInput {
-  create: [UserCreateInput!]
+input UserCreateManyWithoutPushNotificationsInput {
+  create: [UserCreateWithoutPushNotificationsInput!]
   connect: [UserWhereUniqueInput!]
 }
 
@@ -18520,6 +18943,17 @@ input UserCreateOneInput {
 
 input UserCreaterolesInput {
   set: [UserRole!]
+}
+
+input UserCreateWithoutPushNotificationsInput {
+  id: ID
+  auth0Id: String!
+  email: String!
+  firstName: String!
+  lastName: String!
+  role: UserRole
+  pushNotificationStatus: PushNotificationStatus
+  roles: UserCreaterolesInput
 }
 
 """An edge in a connection."""
@@ -18548,8 +18982,8 @@ enum UserOrderByInput {
   createdAt_DESC
   updatedAt_ASC
   updatedAt_DESC
-  pushNotifications_ASC
-  pushNotifications_DESC
+  pushNotificationStatus_ASC
+  pushNotificationStatus_DESC
 }
 
 type UserPreviousValues {
@@ -18562,7 +18996,7 @@ type UserPreviousValues {
   roles: [UserRole!]!
   createdAt: DateTime!
   updatedAt: DateTime!
-  pushNotifications: PushNotificationStatus!
+  pushNotificationStatus: PushNotificationStatus!
 }
 
 enum UserRole {
@@ -18834,16 +19268,16 @@ input UserScalarWhereInput {
 
   """All values greater than or equal the given value."""
   updatedAt_gte: DateTime
-  pushNotifications: PushNotificationStatus
+  pushNotificationStatus: PushNotificationStatus
 
   """All values that are not equal to given value."""
-  pushNotifications_not: PushNotificationStatus
+  pushNotificationStatus_not: PushNotificationStatus
 
   """All values that are contained in given list."""
-  pushNotifications_in: [PushNotificationStatus!]
+  pushNotificationStatus_in: [PushNotificationStatus!]
 
   """All values that are not contained in given list."""
-  pushNotifications_not_in: [PushNotificationStatus!]
+  pushNotificationStatus_not_in: [PushNotificationStatus!]
 }
 
 type UserSubscriptionPayload {
@@ -18889,8 +19323,9 @@ input UserUpdateDataInput {
   firstName: String
   lastName: String
   role: UserRole
-  pushNotifications: PushNotificationStatus
+  pushNotificationStatus: PushNotificationStatus
   roles: UserUpdaterolesInput
+  pushNotifications: PushNotificationReceiptUpdateManyWithoutUsersInput
 }
 
 input UserUpdateInput {
@@ -18899,8 +19334,9 @@ input UserUpdateInput {
   firstName: String
   lastName: String
   role: UserRole
-  pushNotifications: PushNotificationStatus
+  pushNotificationStatus: PushNotificationStatus
   roles: UserUpdaterolesInput
+  pushNotifications: PushNotificationReceiptUpdateManyWithoutUsersInput
 }
 
 input UserUpdateManyDataInput {
@@ -18909,20 +19345,8 @@ input UserUpdateManyDataInput {
   firstName: String
   lastName: String
   role: UserRole
-  pushNotifications: PushNotificationStatus
+  pushNotificationStatus: PushNotificationStatus
   roles: UserUpdaterolesInput
-}
-
-input UserUpdateManyInput {
-  create: [UserCreateInput!]
-  connect: [UserWhereUniqueInput!]
-  set: [UserWhereUniqueInput!]
-  disconnect: [UserWhereUniqueInput!]
-  delete: [UserWhereUniqueInput!]
-  update: [UserUpdateWithWhereUniqueNestedInput!]
-  updateMany: [UserUpdateManyWithWhereNestedInput!]
-  deleteMany: [UserScalarWhereInput!]
-  upsert: [UserUpsertWithWhereUniqueNestedInput!]
 }
 
 input UserUpdateManyMutationInput {
@@ -18931,8 +19355,20 @@ input UserUpdateManyMutationInput {
   firstName: String
   lastName: String
   role: UserRole
-  pushNotifications: PushNotificationStatus
+  pushNotificationStatus: PushNotificationStatus
   roles: UserUpdaterolesInput
+}
+
+input UserUpdateManyWithoutPushNotificationsInput {
+  create: [UserCreateWithoutPushNotificationsInput!]
+  connect: [UserWhereUniqueInput!]
+  set: [UserWhereUniqueInput!]
+  disconnect: [UserWhereUniqueInput!]
+  delete: [UserWhereUniqueInput!]
+  update: [UserUpdateWithWhereUniqueWithoutPushNotificationsInput!]
+  updateMany: [UserUpdateManyWithWhereNestedInput!]
+  deleteMany: [UserScalarWhereInput!]
+  upsert: [UserUpsertWithWhereUniqueWithoutPushNotificationsInput!]
 }
 
 input UserUpdateManyWithWhereNestedInput {
@@ -18960,9 +19396,19 @@ input UserUpdaterolesInput {
   set: [UserRole!]
 }
 
-input UserUpdateWithWhereUniqueNestedInput {
+input UserUpdateWithoutPushNotificationsDataInput {
+  auth0Id: String
+  email: String
+  firstName: String
+  lastName: String
+  role: UserRole
+  pushNotificationStatus: PushNotificationStatus
+  roles: UserUpdaterolesInput
+}
+
+input UserUpdateWithWhereUniqueWithoutPushNotificationsInput {
   where: UserWhereUniqueInput!
-  data: UserUpdateDataInput!
+  data: UserUpdateWithoutPushNotificationsDataInput!
 }
 
 input UserUpsertNestedInput {
@@ -18970,10 +19416,10 @@ input UserUpsertNestedInput {
   create: UserCreateInput!
 }
 
-input UserUpsertWithWhereUniqueNestedInput {
+input UserUpsertWithWhereUniqueWithoutPushNotificationsInput {
   where: UserWhereUniqueInput!
-  update: UserUpdateDataInput!
-  create: UserCreateInput!
+  update: UserUpdateWithoutPushNotificationsDataInput!
+  create: UserCreateWithoutPushNotificationsInput!
 }
 
 input UserWhereInput {
@@ -19239,16 +19685,19 @@ input UserWhereInput {
 
   """All values greater than or equal the given value."""
   updatedAt_gte: DateTime
-  pushNotifications: PushNotificationStatus
+  pushNotificationStatus: PushNotificationStatus
 
   """All values that are not equal to given value."""
-  pushNotifications_not: PushNotificationStatus
+  pushNotificationStatus_not: PushNotificationStatus
 
   """All values that are contained in given list."""
-  pushNotifications_in: [PushNotificationStatus!]
+  pushNotificationStatus_in: [PushNotificationStatus!]
 
   """All values that are not contained in given list."""
-  pushNotifications_not_in: [PushNotificationStatus!]
+  pushNotificationStatus_not_in: [PushNotificationStatus!]
+  pushNotifications_every: PushNotificationReceiptWhereInput
+  pushNotifications_some: PushNotificationReceiptWhereInput
+  pushNotifications_none: PushNotificationReceiptWhereInput
 }
 
 input UserWhereUniqueInput {

@@ -1,5 +1,5 @@
 import { User } from "@app/decorators"
-import { PushNotificationsService } from "@modules/PushNotifications/services/pushNotifications.service"
+import { PushNotificationsService } from "@app/modules/PushNotification/services/pushNotifications.service"
 import { ResolveField, Resolver } from "@nestjs/graphql"
 
 @Resolver("User")

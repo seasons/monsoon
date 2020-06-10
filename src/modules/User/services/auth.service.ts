@@ -1,4 +1,4 @@
-import { PushNotificationsService } from "@app/modules/PushNotifications/services/pushNotifications.service"
+import { PushNotificationsService } from "@app/modules/PushNotification/services/pushNotifications.service"
 import { AirtableService } from "@modules/Airtable/services/airtable.service"
 import { Injectable } from "@nestjs/common"
 import { CustomerDetail, CustomerDetailCreateInput } from "@prisma/index"

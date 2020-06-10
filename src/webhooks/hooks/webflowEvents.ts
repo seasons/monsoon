@@ -4,7 +4,7 @@ import {
   PushNotificationsDataProvider,
   PushNotificationsService,
   PusherService,
-} from "@app/modules/PushNotifications"
+} from "@app/modules/PushNotification"
 import { UtilsService } from "@app/modules/Utils"
 import { PrismaService } from "@prisma/prisma.service"
 import { upperFirst } from "lodash"
