@@ -38,19 +38,7 @@ export class BlogService {
       return timeA.isAfter(timeB) ? -1 : 1
     })
 
-    const lastPost = head(publishedPosts)
-    if (lastPost) {
-      lastPost.category = await this.getCategory(lastPost.category)
-    }
-    return lastPost
-  }
-
-  private async getCategory(categoryId: string): Promise<string> {
-    const data = await this.webflow.client.item({
-      collectionId: CategoriesCollectionId,
-      itemId: categoryId,
-    })
-    return data?.name
+    return head(publishedPosts)
   }
 
   private async getAllItems(collectionId: string): Promise<BlogPost[]> {
@@ -64,6 +52,18 @@ export class BlogService {
         break
       }
     }
+
+    const categories = await this.webflow.client.items({
+      collectionId: CategoriesCollectionId,
+    })
+
+    const getCategory = categoryID => {
+      const category = categories?.items?.find(cat => {
+        return cat._id === categoryID
+      })
+      return category?.name || ""
+    }
+
     return allPosts
       .map(this.utils.camelCaseify)
       .filter(post => !post.archived && !post.draft)
@@ -76,7 +76,7 @@ export class BlogService {
         createdAt: item.createdOn,
         updatedAt: item.updatedOn,
         publishedOn: item.publishedOn,
-        category: item.category5,
+        category: getCategory(item.category5),
       }))
   }
 }
