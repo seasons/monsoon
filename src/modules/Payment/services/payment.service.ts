@@ -298,7 +298,7 @@ export class PaymentService {
               )
               await prisma.client.updateCustomer({
                 data: {
-                  plan: plan,
+                  plan,
                   billingInfo: {
                     create: billingInfo,
                   },
