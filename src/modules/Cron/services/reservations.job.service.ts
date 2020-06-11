@@ -1,5 +1,5 @@
 import { SyncError } from "@app/errors"
-import { PushNotificationsService } from "@app/modules/PushNotification"
+import { PushNotificationService } from "@app/modules/PushNotification"
 import { ReservationService } from "@app/modules/Reservation/services/reservation.service"
 import { UtilsService } from "@app/modules/Utils"
 import {
@@ -34,7 +34,7 @@ export class ReservationScheduledJobs {
     private readonly prisma: PrismaService,
     private readonly errorService: ErrorService,
     private readonly reservationService: ReservationService,
-    private readonly pushNotifs: PushNotificationsService,
+    private readonly pushNotifs: PushNotificationService,
     private readonly utils: UtilsService
   ) {}
 
