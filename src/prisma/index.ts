@@ -2169,8 +2169,7 @@ export type ReservationStatus =
   | "Completed"
   | "Cancelled"
   | "Blocked"
-  | "Unknown"
-  | "Received";
+  | "Unknown";
 
 export type PauseRequestOrderByInput =
   | "id_ASC"

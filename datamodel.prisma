@@ -85,8 +85,8 @@ enum ReservationStatus {
   Unknown
 
   # To be deleted, needed for migration
-  InQueue
-  Received
+  # InQueue
+  # Received
 }
 
 enum BagItemStatus {
@@ -561,7 +561,7 @@ type Reservation {
   returnedPackage: Package
     @relation(name: "CustomerToSeasonsPackage", onDelete: CASCADE)
   feedback: ReservationFeedback
-    @relation(link: TABLE, name: "ReservationFeedbackReservation")
+    @relation(name: "ReservationFeedbackReservation")
   products: [PhysicalProduct!]!
   reservationNumber: Int! @unique
   shipped: Boolean!
@@ -571,7 +571,7 @@ type Reservation {
   reminderSentAt: DateTime
   receipt: ReservationReceipt
     @relation(
-      link: TABLE
+      link: INLINE
       name: "ReservationReceiptToReservation"
       onDelete: CASCADE
     )
@@ -586,7 +586,8 @@ type ReservationFeedback {
   feedbacks: [ProductVariantFeedback!]!
   rating: Rating
   user: User!
-  reservation: Reservation! @relation(name: "ReservationFeedbackReservation")
+  reservation: Reservation!
+    @relation(link: INLINE, name: "ReservationFeedbackReservation")
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
   respondedAt: DateTime

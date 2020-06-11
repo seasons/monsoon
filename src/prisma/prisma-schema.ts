@@ -10438,7 +10438,6 @@ enum ReservationStatus {
   Cancelled
   Blocked
   Unknown
-  Received
 }
 
 type ReservationSubscriptionPayload {
