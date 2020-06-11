@@ -9,7 +9,7 @@ export class BlogQueriesResolver {
   @Query()
   async blogPosts(@Args() args, @Info() info) {
     const data = await this.blogService.getPosts({
-      collectionId: "5e72a4bad1075fcf7313bf38",
+      collectionId: "5ee266d741919756c8167f2a",
       limit: args.count,
     })
 
