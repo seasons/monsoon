@@ -69,7 +69,7 @@ export class PushNotificationsMutationsResolver {
 
   private isValidURL(url: string): boolean {
     const startsCorrect =
-      url.startsWith("http://www") || url.startsWith("https://www")
+      url.startsWith("http") || url.startsWith("https")
     return startsCorrect && validUrl.isUri(url)
   }
 
