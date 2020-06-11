@@ -1,3 +1,4 @@
-export { PushNotificationsService } from "./services/pushNotifications.service"
+export { PushNotificationService } from "./services/pushNotification.service"
 export { PusherService } from "./services/pusher.service"
-export { PushNotificationsDataProvider } from "./services/pushNotifications.data.service"
+export { PushNotificationDataProvider } from "./services/pushNotification.data.service"
+export { PushNotificationModule } from "./pushNotification.module"

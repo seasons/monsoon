@@ -23,6 +23,7 @@ type BlogPost {
   updatedAt: DateTime!
   publishedOn: DateTime!
   author: String
+  category: String
 }
 
 type Query {

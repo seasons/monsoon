@@ -17,12 +17,15 @@ interface ImageResizerOptions {
   w?: number
   h?: number
   retina?: boolean
+  format?: ImageFormat
 }
 interface ImageSizeOptions {
   w?: number
   h?: number
   fit?: "clip"
 }
+
+type ImageFormat = "webp" | "jpg" | "png" | "gif" | "mp4"
 
 type ImageSizeMap = {
   [key in ImageSize]: ImageSizeOptions
@@ -64,6 +67,7 @@ export class ImageService {
       {
         fit: "clip",
         retina: true,
+        fm: "webp",
         ...passedOptions,
       },
       identity
@@ -81,7 +85,22 @@ export class ImageService {
       identity
     )
 
-    return url.replace(S3_BASE, IMGIX_BASE) + "?" + qs.stringify(params)
+    if (/seasons-images\./.test(url)) {
+      return (
+        url.replace(`seasons-images.s3.amazonaws.com`, `seasons-s3.imgix.net`) +
+        "?" +
+        qs.stringify(params)
+      )
+    }
+
+    return (
+      url.replace(
+        `seasons-images-staging.s3.amazonaws.com`,
+        `seasons-s3-staging.imgix.net`
+      ) +
+      "?" +
+      qs.stringify(params)
+    )
   }
 
   async uploadImage(

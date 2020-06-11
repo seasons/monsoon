@@ -8,13 +8,13 @@ import {
   PushNotificationData,
   PushNotificationID,
   PushNotificationVars,
-} from "../pushNotifications.types"
+} from "../pushNotification.types"
 
 const maxTitleLength = 50
 const maxBodyLength = 110
 
 @Injectable()
-export class PushNotificationsDataProvider {
+export class PushNotificationDataProvider {
   getPushNotifData(
     pushNotifID: PushNotificationID,
     vars: PushNotificationVars
@@ -38,6 +38,8 @@ export class PushNotificationsDataProvider {
       route: data?.route,
       screen: data?.screen,
       uri: data?.params?.uri,
+      recordID: data?.params?.id,
+      recordSlug: data?.params?.slug,
       sentAt: now.toISOString(),
     }
     const notificationPayload = this.wrapAPNsData(alert, data)

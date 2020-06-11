@@ -1,6 +1,6 @@
 import fs from "fs"
 
-import { DataScheduledJobs } from "@app/modules/Cron/services/data.service"
+import { DataScheduledJobs } from "@app/modules/Cron/services/data.job.service"
 import { AirtableSyncService } from "@modules/Sync/services/sync.airtable.service"
 import { PrismaSyncService } from "@modules/Sync/services/sync.prisma.service"
 import { Injectable } from "@nestjs/common"

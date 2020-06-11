@@ -1,4 +1,4 @@
-import { PushNotificationsService } from "@app/modules/PushNotification/services/pushNotifications.service"
+import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { AirtableService } from "@modules/Airtable/services/airtable.service"
 import { Injectable } from "@nestjs/common"
 import { CustomerDetail, CustomerDetailCreateInput } from "@prisma/index"
@@ -27,7 +27,7 @@ export class AuthService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly airtable: AirtableService,
-    private readonly pushNotifications: PushNotificationsService
+    private readonly pushNotification: PushNotificationService
   ) {}
 
   async signupUser({
@@ -131,7 +131,7 @@ export class AuthService {
       refreshToken: tokenData.refresh_token,
       expiresIn: tokenData.expires_in,
       user,
-      beamsToken: this.pushNotifications.generateToken(email),
+      beamsToken: this.pushNotification.generateToken(email),
     }
   }
 

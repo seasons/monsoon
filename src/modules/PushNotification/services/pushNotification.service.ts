@@ -5,15 +5,15 @@ import { Token } from "@pusher/push-notifications-server"
 import {
   PushNotifyInterestInput,
   PushNotifyUserInput,
-} from "../pushNotifications.types"
+} from "../pushNotification.types"
 import { PusherService } from "./pusher.service"
-import { PushNotificationsDataProvider } from "./pushNotifications.data.service"
+import { PushNotificationDataProvider } from "./pushNotification.data.service"
 
 @Injectable()
-export class PushNotificationsService {
+export class PushNotificationService {
   constructor(
     private readonly pusher: PusherService,
-    private readonly data: PushNotificationsDataProvider,
+    private readonly data: PushNotificationDataProvider,
     private readonly prisma: PrismaService
   ) {}
 
@@ -24,7 +24,7 @@ export class PushNotificationsService {
   async pushNotifyInterest({
     interest,
     pushNotifID,
-    vars,
+    vars = {},
     debug = false,
   }: PushNotifyInterestInput) {
     let targetInterest = `debug-${interest}`
@@ -39,27 +39,35 @@ export class PushNotificationsService {
       [targetInterest],
       notificationPayload as any
     )
-    await this.prisma.client.createPushNotificationReceipt({
+    return await this.prisma.client.createPushNotificationReceipt({
       ...receiptPayload,
       interest: targetInterest,
     })
   }
 
-  async pushNotifyUser({ email, pushNotifID }: PushNotifyUserInput) {
+  async pushNotifyUser({
+    email,
+    pushNotifID,
+    vars = {},
+    debug = false,
+  }: PushNotifyUserInput) {
     let targetEmail = process.env.PUSH_NOTIFICATIONS_DEFAULT_EMAIL
-    if (process.env.NODE_ENV === "production") {
+    const isAdmin = (await this.prisma.client.user({ email }).roles()).includes(
+      "Admin"
+    )
+    if (isAdmin || (!debug && process.env.NODE_ENV === "production")) {
       targetEmail = email
     }
 
     const { receiptPayload, notificationPayload } = this.data.getPushNotifData(
       pushNotifID,
-      {}
+      vars
     )
     await this.pusher.client.publishToUsers(
       [targetEmail],
       notificationPayload as any
     )
-    await this.prisma.client.createPushNotificationReceipt({
+    return await this.prisma.client.createPushNotificationReceipt({
       ...receiptPayload,
       users: { connect: [{ email: targetEmail }] },
     })
