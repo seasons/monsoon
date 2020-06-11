@@ -1,6 +1,10 @@
 import { PushNotificationReceiptCreateInput } from "@app/prisma/prisma.binding"
 
-export type PushNotificationID = "ResetBag" | "ReturnDue" | "NewBlogPost"
+export type PushNotificationID =
+  | "ResetBag"
+  | "ReturnDue"
+  | "NewBlogPost"
+  | "Custom"
 export type PushNotificationInterest = "seasons-general-notifications"
 export type PushNotificationVars = NewBlogPostVars | {}
 
@@ -10,15 +14,17 @@ export interface NewBlogPostVars {
   uri: string
 }
 
-export interface PushNotifyUserInput {
+export interface PushNotifyUserInput extends PushNotifyFuncInput {
   email: string
-  pushNotifID: PushNotificationID
 }
 
-export interface PushNotifyInterestInput {
+export interface PushNotifyInterestInput extends PushNotifyFuncInput {
   interest: PushNotificationInterest
+}
+
+interface PushNotifyFuncInput {
   pushNotifID: PushNotificationID
-  vars: PushNotificationVars
+  vars?: any
   debug?: boolean
 }
 

@@ -111,6 +111,7 @@
     "typescript": "^3.7.5",
     "utf-8-validate": "^5.0.2",
     "v8-to-istanbul": "^4.1.2",
+    "valid-url": "^1.0.9",
     "webflow-api": "^0.5.0",
     "zipcodes": "^8.0.0"
   },

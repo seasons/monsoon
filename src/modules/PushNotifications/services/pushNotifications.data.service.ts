@@ -38,6 +38,8 @@ export class PushNotificationsDataProvider {
       route: data?.route,
       screen: data?.screen,
       uri: data?.params?.uri,
+      recordID: data?.params?.id,
+      recordSlug: data?.params?.slug,
       sentAt: now.toISOString(),
     }
     const notificationPayload = this.wrapAPNsData(alert, data)

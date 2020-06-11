@@ -10,6 +10,7 @@
 # import Query, Mutation from "./modules/Payment/payment.graphql"
 # import Query, Mutation from "./modules/Shipping/shipping.graphql"
 # import Query from "./modules/FAQ/faq.graphql"
+# import Mutation from "./modules/PushNotifications/pushNotifications.graphql"
 
 directive @isAuthenticated on FIELD_DEFINITION
 directive @hasRole(roles: [UserRole]) on FIELD_DEFINITION
