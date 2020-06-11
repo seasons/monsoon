@@ -1,7 +1,7 @@
 type Query {
   pushNotificationReceipt(
     where: PushNotificationReceiptWhereUniqueInput!
-  ): PushNotificationReceipt
+  ): PushNotificationReceipt @hasRole(roles: [Admin])
   pushNotificationReceipts(
     where: PushNotificationReceiptWhereInput
     orderBy: PushNotificationReceiptOrderByInput
@@ -10,7 +10,7 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): [PushNotificationReceipt]!
+  ): [PushNotificationReceipt]! @hasRole(roles: [Admin])
   pushNotificationReceiptsConnection(
     where: PushNotificationReceiptWhereInput
     orderBy: PushNotificationReceiptOrderByInput
@@ -19,19 +19,19 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): PushNotificationReceiptConnection!
+  ): PushNotificationReceiptConnection! @hasRole(roles: [Admin])
 }
 
 type Mutation {
   pushNotifyUser(
     where: UserWhereUniqueInput
     data: PushNotifDataInput
-  ): PushNotificationReceipt
+  ): PushNotificationReceipt @hasRole(roles: [Admin])
   pushNotifyInterest(
     interest: PushNotificationInterest
     data: PushNotifDataInput
     debug: Boolean
-  ): PushNotificationReceipt
+  ): PushNotificationReceipt @hasRole(roles: [Admin])
 }
 
 input PushNotifDataInput {
