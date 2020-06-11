@@ -28,6 +28,6 @@ type BlogPost {
 
 type Query {
   blogCollections: [BlogCollection!]!
-  blogPosts(collection: String!, skip: Int, count: Int): [BlogPost!]!
+  blogPosts(skip: Int, count: Int): [BlogPost!]!
   blogPost(id: String): BlogPost
 }
