@@ -20,7 +20,7 @@ export class BlogService {
   ) {}
 
   async getPosts({ limit }: { limit?: number }) {
-    const publishedPosts = await this.getAllItems(BlogPostsCollectionId)
+    const publishedPosts = await this.getAllItems()
 
     if (limit) {
       return publishedPosts?.slice(0, limit)
@@ -30,7 +30,7 @@ export class BlogService {
   }
 
   async getLastPost(): Promise<BlogPost> {
-    const publishedPosts = await this.getAllItems(BlogPostsCollectionId)
+    const publishedPosts = await this.getAllItems()
 
     // published posts in order of most recently updated
     publishedPosts.sort((a, b) => {
@@ -42,11 +42,14 @@ export class BlogService {
     return head(publishedPosts)
   }
 
-  private async getAllItems(collectionId: string): Promise<BlogPost[]> {
+  private async getAllItems(): Promise<BlogPost[]> {
     const allPosts = []
     let offset = 0
     while (true) {
-      const data = await this.webflow.client.items({ collectionId }, { offset })
+      const data = await this.webflow.client.items(
+        { collectionId: BlogPostsCollectionId },
+        { offset }
+      )
       allPosts.push(...data?.items)
       offset = data?.offset
       if (!offset) {
