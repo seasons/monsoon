@@ -73,6 +73,7 @@ const scheduleModule =
             maxFileSize: 125000000, // 125 MB
             maxFiles: 5,
           },
+          introspection: true,
         } as GqlModuleOptions),
     }),
     AirtableModule,
