@@ -11,7 +11,7 @@ const run = async () => {
   // const y = await client.publishToInterests(
   //   ["debug-seasons-general-notifications"],
   //   {
-  const y = await client.publishToUsers(["faiyam+1@faiyamrahman.com"], {
+  const y = await client.publishToUsers(["grace-mckenzie@seasons.nyc"], {
     apns: {
       aps: { alert: { title: "yo", body: "yo" } },
       data: {

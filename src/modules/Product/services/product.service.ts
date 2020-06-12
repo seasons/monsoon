@@ -132,7 +132,9 @@ export class ProductService {
     // get records whose associated data we need for other parts of the upsert
     const brand = await this.prisma.client.brand({ id: input.brandID })
     const color = await this.prisma.client.color({ colorCode: input.colorCode })
-    const model = await this.prisma.client.productModel({ id: input.modelID })
+    const model =
+      input.modelID &&
+      (await this.prisma.client.productModel({ id: input.modelID }))
 
     // Get the functionIDs which we will connect to the product
     const functionIDs = await this.upsertFunctions(input.functions)
@@ -195,8 +197,8 @@ export class ProductService {
       images: {
         connect: imageIDs,
       },
-      modelHeight: model.height,
-      model: {
+      modelHeight: model && model.height,
+      model: model && {
         connect: { id: model.id },
       },
       modelSize: modelSize && {
