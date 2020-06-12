@@ -29,7 +29,7 @@
     "start:server": "dotenv -- nodemon -e ts,graphql -x ts-node src/index.ts",
     "start": "concurrently --kill-others 'yarn tsc -w' 'yarn start:server'",
     "start:production": "node -r dotenv/config dist/index.js",
-    "test": "jest"
+    "test": "bash src/tests/test.sh"
   },
   "dependencies": {
     "@auth0/auth0-spa-js": "^1.3.0",
@@ -89,6 +89,8 @@
     "lodash": "^4.17.15",
     "luxon": "^1.22.0",
     "module-alias": "^2.2.2",
+    "moment": "^2.26.0",
+    "mustache": "^4.0.1",
     "nestjs-command": "^1.3.0",
     "nodemailer": "^6.4.2",
     "passport": "^0.4.1",
@@ -109,6 +111,8 @@
     "typescript": "^3.7.5",
     "utf-8-validate": "^5.0.2",
     "v8-to-istanbul": "^4.1.2",
+    "valid-url": "^1.0.9",
+    "webflow-api": "^0.5.0",
     "zipcodes": "^8.0.0"
   },
   "devDependencies": {

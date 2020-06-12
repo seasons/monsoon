@@ -6,6 +6,7 @@ import { Location } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
 import cliProgress from "cli-progress"
 import { camelCase, isObject, mapKeys, snakeCase } from "lodash"
+import moment from "moment"
 
 enum ProductSize {
   XS = "XS",
@@ -28,6 +29,40 @@ export class UtilsService {
     const objCopy = { ...obj }
     fieldsToDelete.forEach(a => delete objCopy[a])
     return objCopy
+  }
+
+  isXDaysBefore({
+    beforeDate,
+    afterDate,
+    numDays,
+  }: {
+    beforeDate: Date
+    afterDate: Date
+    numDays: number
+  }): boolean {
+    const before = moment(
+      new Date(
+        beforeDate.getFullYear(),
+        beforeDate.getMonth(),
+        beforeDate.getDate()
+      )
+    )
+    const after = moment(
+      new Date(
+        afterDate.getFullYear(),
+        afterDate.getMonth(),
+        afterDate.getDate()
+      )
+    )
+    return before.isBefore(after) && after.diff(before, "days") === numDays
+  }
+
+  isSameDay(first: Date, second: Date) {
+    return (
+      first.getFullYear() === second.getFullYear() &&
+      first.getMonth() === second.getMonth() &&
+      first.getDate() === second.getDate()
+    )
   }
 
   async getPrismaLocationFromSlug(slug: string): Promise<Location> {
@@ -70,10 +105,6 @@ export class UtilsService {
     let decryptedHash = decipher.update(hash, "hex", "utf8")
     decryptedHash += decipher.final("utf8")
     return decryptedHash
-  }
-
-  Identity(a) {
-    return a
   }
 
   weightedCoinFlip(pHeads) {
@@ -173,7 +204,15 @@ export class UtilsService {
   }
 
   private caseify = (obj: any, caseFunc: (str: string) => string): any => {
+    // Need this to prevent strings from getting turned into objects
+    if (typeof obj === "string") {
+      return obj
+    }
+
+    // caseify keys of the object
     const a = mapKeys(obj, (_, key) => caseFunc(key))
+
+    // if obj values are arrays or objects, recursively caseify
     for (const [key, val] of Object.entries(a)) {
       if (Array.isArray(val)) {
         a[key] = val.map(b => this.caseify(b, caseFunc))

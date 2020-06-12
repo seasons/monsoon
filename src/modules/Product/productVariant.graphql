@@ -105,7 +105,7 @@ input UpsertVariantInput {
   rise: Float
   hem: Float
   inseam: Float
-  weight: Float!
+  weight: Float
   total: Int!
   physicalProducts: [UpsertPhysicalProductInput!]!
 }
@@ -128,7 +128,7 @@ input UpdateVariantInput {
 }
 
 input ProductVariantSKUsInput {
-  brandID: String!
-  colorID: String!
+  brandID: ID!
+  colorCode: String!
   sizeNames: [String!]!
 }

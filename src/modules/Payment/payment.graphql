@@ -8,6 +8,13 @@ type Query {
 }
 
 type Mutation {
+  updateResumeDate(date: DateTime): Boolean @hasRole(roles: [Customer])
+  removeScheduledPause(subscriptionID: String!): Boolean
+    @hasRole(roles: [Customer])
+  pauseSubscription(subscriptionID: String!): Boolean
+    @hasRole(roles: [Customer])
+  resumeSubscription(subscriptionID: String!, date: DateTime): Boolean
+    @hasRole(roles: [Customer])
   acknowledgeCompletedChargebeeHostedCheckout(
     hostedPageID: String!
   ): BillingInfoPayload

@@ -162,8 +162,7 @@ export class SyncUtilsService {
     return [multibar, _cliProgressBar]
   }
 
-  sanitizeAttachments = attachments =>
-    attachments?.map(a => this.utils.Identity({ url: a.url }))
+  sanitizeAttachments = attachments => attachments?.map(a => ({ url: a.url }))
 
   private airtableModelNameToGetAllFunc(modelname: AirtableModelName) {
     const func = {

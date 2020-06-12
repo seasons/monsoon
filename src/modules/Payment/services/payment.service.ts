@@ -6,7 +6,8 @@ import { UtilsService } from "@modules/Utils"
 import { Injectable } from "@nestjs/common"
 import { PrismaService } from "@prisma/prisma.service"
 import chargebee from "chargebee"
-import { camelCase, get, identity, snakeCase, upperFirst } from "lodash"
+import { camelCase, get, head, identity, snakeCase, upperFirst } from "lodash"
+import { DateTime } from "luxon"
 
 import {
   BillingAddress,
@@ -30,6 +31,158 @@ export class PaymentService {
     private readonly prisma: PrismaService
   ) {}
 
+  async updateResumeDate(date, customer) {
+    const customerWithMembership = await this.prisma.binding.query.customer(
+      { where: { id: customer.id } },
+      `
+        {
+          id
+          membership {
+            id
+            pauseRequests(orderBy: createdAt_DESC) {
+              id
+            }
+          }
+        }
+      `
+    )
+
+    const pauseRequest = customerWithMembership.membership?.pauseRequests?.[0]
+
+    await this.prisma.client.updatePauseRequest({
+      where: { id: pauseRequest?.id || "" },
+      data: { resumeDate: date },
+    })
+  }
+
+  async pauseSubscription(subscriptionId, customer) {
+    const result = await chargebee.subscription
+      .pause(subscriptionId, {
+        pause_option: "end_of_term",
+      })
+      .request()
+
+    const termEnd = result?.subscription?.current_term_end
+
+    const customerWithMembership = await this.prisma.binding.query.customer(
+      { where: { id: customer.id } },
+      `
+        {
+          id
+          membership {
+            id
+          }
+        }
+      `
+    )
+
+    const pauseDateISO = DateTime.fromSeconds(termEnd).toISO()
+    const resumeDateISO = DateTime.fromSeconds(termEnd)
+      .plus({ months: 1 })
+      .toISO()
+
+    let customerMembership
+
+    if (!customerWithMembership.membership) {
+      customerMembership = await this.prisma.client.upsertCustomerMembership({
+        where: { id: customerWithMembership.membership?.id || "" },
+        create: { customer: { connect: { id: customer.id } }, subscriptionId },
+        update: { customer: { connect: { id: customer.id } }, subscriptionId },
+      })
+    } else {
+      customerMembership = await this.prisma.client.customerMembership({
+        id: customerWithMembership.membership?.id,
+      })
+    }
+
+    await this.prisma.client.createPauseRequest({
+      membership: { connect: { id: customerMembership.id } },
+      pausePending: true,
+      pauseDate: pauseDateISO,
+      resumeDate: resumeDateISO,
+    })
+  }
+
+  async removeScheduledPause(subscriptionId, customer) {
+    try {
+      await chargebee.subscription
+        .remove_scheduled_pause(subscriptionId, {
+          pause_option: "end_of_term",
+        })
+        .request()
+    } catch (e) {
+      if (
+        e?.api_error_code &&
+        e?.api_error_code !== "invalid_state_for_request"
+      ) {
+        throw new Error(`Error removing scheduled pause: ${e}`)
+      }
+    }
+
+    const pauseRequests = await this.prisma.client.pauseRequests({
+      where: {
+        membership: {
+          customer: {
+            id: customer.id,
+          },
+        },
+      },
+      orderBy: "createdAt_DESC",
+    })
+
+    const pauseRequest = head(pauseRequests)
+
+    await this.prisma.client.updatePauseRequest({
+      where: { id: pauseRequest.id },
+      data: { pausePending: false },
+    })
+  }
+
+  async resumeSubscription(subscriptionId, date, customer) {
+    const resumeDate = !!date
+      ? { specific_date: DateTime.fromISO(date).toSeconds() }
+      : "immediately"
+    try {
+      await chargebee.subscription
+        .resume(subscriptionId, {
+          resume_option: resumeDate,
+          unpaid_invoices_handling: "schedule_payment_collection",
+        })
+        .request()
+    } catch (e) {
+      if (
+        e?.api_error_code &&
+        e?.api_error_code !== "invalid_state_for_request"
+      ) {
+        throw new Error(`Error resuming subscription: ${e}`)
+      }
+    }
+
+    const pauseRequests = await this.prisma.client.pauseRequests({
+      where: {
+        membership: {
+          customer: {
+            id: customer.id,
+          },
+        },
+      },
+    })
+
+    const pauseRequest = head(pauseRequests)
+
+    await this.prisma.client.updatePauseRequest({
+      where: { id: pauseRequest.id },
+      data: { pausePending: false },
+    })
+
+    await this.prisma.client.updateCustomer({
+      data: {
+        status: "Active",
+      },
+      where: { id: customer.id },
+    })
+  }
+
   async createSubscription(
     plan: Plan,
     billingAddress: BillingAddress,
@@ -41,6 +194,7 @@ export class PaymentService {
         plan_id: this.prismaPlanToChargebeePlanId(plan),
         billingAddress,
         customer: {
+          id: user.id,
           first_name: user.firstName,
           last_name: user.lastName,
           email: user.email,
@@ -113,7 +267,7 @@ export class PaymentService {
       try {
         await chargebee.hosted_page
           .acknowledge(hostedPageID)
-          .request(async function (error, result) {
+          .request(async (error, result) => {
             if (error) {
               reject(error)
             } else {
@@ -161,7 +315,7 @@ export class PaymentService {
               })
 
               // Send welcome to seasons email
-              emailService.sendWelcomeToSeasonsEmail(prismaUser)
+              await emailService.sendWelcomeToSeasonsEmail(prismaUser)
 
               // Return
               resolve({

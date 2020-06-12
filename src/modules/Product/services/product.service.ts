@@ -132,7 +132,9 @@ export class ProductService {
     // get records whose associated data we need for other parts of the upsert
     const brand = await this.prisma.client.brand({ id: input.brandID })
     const color = await this.prisma.client.color({ colorCode: input.colorCode })
-    const model = await this.prisma.client.productModel({ id: input.modelID })
+    const model =
+      input.modelID &&
+      (await this.prisma.client.productModel({ id: input.modelID }))
 
     // Get the functionIDs which we will connect to the product
     const functionIDs = await this.upsertFunctions(input.functions)
@@ -161,13 +163,16 @@ export class ProductService {
     const imageIDs = await this.productUtils.getImageIDs(imageDatas, slug)
 
     // Deep upsert the model size
-    const modelSize = await this.productUtils.upsertModelSize({
-      slug,
-      type: input.type,
-      modelSizeName: input.modelSizeName,
-      modelSizeDisplay: input.modelSizeDisplay,
-      bottomSizeType: input.bottomSizeType,
-    })
+    let modelSize
+    if (input.modelSizeDisplay && input.modelSizeName) {
+      modelSize = await this.productUtils.upsertModelSize({
+        slug,
+        type: input.type,
+        modelSizeName: input.modelSizeName,
+        modelSizeDisplay: input.modelSizeDisplay,
+        bottomSizeType: input.bottomSizeType,
+      })
+    }
 
     // Create all necessary tag records
     const tagIDs = await this.upsertTags(input.tags)
@@ -187,16 +192,16 @@ export class ProductService {
         connect: { id: input.brandID },
       },
       category: {
-        connect: { id: input.categoryID },
+        connect: { name: input.categoryName },
       },
       images: {
         connect: imageIDs,
       },
-      modelHeight: model.height,
-      model: {
+      modelHeight: model && model.height,
+      model: model && {
         connect: { id: model.id },
       },
-      modelSize: {
+      modelSize: modelSize && {
         connect: { id: modelSize.id },
       },
       color: {
@@ -224,7 +229,7 @@ export class ProductService {
         this.deepUpsertProductVariant({
           variant: a,
           productID: product.id,
-          ...pick(input, ["type", "colorID", "retailPrice", "status"]),
+          ...pick(input, ["type", "colorCode", "retailPrice", "status"]),
         })
       )
     )
@@ -315,9 +320,9 @@ export class ProductService {
   }
 
   async getGeneratedVariantSKUs({ input }) {
-    const { brandID, colorID, sizeNames } = input
+    const { brandID, colorCode, sizeNames } = input
     const brand = await this.prisma.client.brand({ id: brandID })
-    const color = await this.prisma.client.color({ id: colorID })
+    const color = await this.prisma.client.color({ colorCode })
 
     if (!brand || !color) {
       return null
@@ -449,14 +454,14 @@ export class ProductService {
   private async deepUpsertProductVariant({
     variant,
     type,
-    colorID,
+    colorCode,
     retailPrice,
     productID,
     status,
   }: {
     variant
     type: ProductType
-    colorID: ID_Input
+    colorCode: string
     retailPrice: number
     productID: string
     status: ProductStatus
@@ -480,7 +485,7 @@ export class ProductService {
       productID,
       product: { connect: { id: productID } },
       color: {
-        connect: { id: colorID },
+        connect: { colorCode },
       },
       internalSize: {
         connect: { id: internalSize.id },

@@ -21,6 +21,7 @@ import {
   ImageModule,
   PaymentModule,
   ProductModule,
+  PushNotificationModule,
   ReservationModule,
   SearchModule,
   ShippingModule,
@@ -48,6 +49,8 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 // Don't run cron jobs in dev mode, to keep the console clean
 const scheduleModule =
   process.env.NODE_ENV === "production" ? [ScheduleModule.forRoot()] : []
+// const scheduleModule =
+//   process.env.NODE_ENV === "development" ? [ScheduleModule.forRoot()] : []
 
 @Module({
   imports: [
@@ -75,20 +78,21 @@ const scheduleModule =
     AirtableModule,
     BlogModule,
     CollectionModule,
+    CustomerModule,
     EmailModule,
-    ImageModule,
-    UtilsModule,
     FAQModule,
+    forwardRef(() => CronModule),
     HomepageModule,
+    ImageModule,
     PaymentModule,
     ProductModule,
+    PushNotificationModule,
     ReservationModule,
-    ShippingModule,
     SearchModule,
+    ShippingModule,
     SlackModule,
     UserModule,
-    CustomerModule,
-    forwardRef(() => CronModule),
+    UtilsModule,
   ],
   providers: [
     {

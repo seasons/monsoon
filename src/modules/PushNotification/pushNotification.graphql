@@ -1,0 +1,68 @@
+type Query {
+  pushNotificationReceipt(
+    where: PushNotificationReceiptWhereUniqueInput!
+  ): PushNotificationReceipt @hasRole(roles: [Admin])
+  pushNotificationReceipts(
+    where: PushNotificationReceiptWhereInput
+    orderBy: PushNotificationReceiptOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [PushNotificationReceipt]! @hasRole(roles: [Admin])
+  pushNotificationReceiptsConnection(
+    where: PushNotificationReceiptWhereInput
+    orderBy: PushNotificationReceiptOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): PushNotificationReceiptConnection! @hasRole(roles: [Admin])
+}
+
+type Mutation {
+  pushNotifyUser(
+    where: UserWhereUniqueInput
+    data: PushNotifDataInput
+  ): PushNotificationReceipt @hasRole(roles: [Admin])
+  pushNotifyInterest(
+    interest: PushNotificationInterest
+    data: PushNotifDataInput
+    debug: Boolean
+  ): PushNotificationReceipt @hasRole(roles: [Admin])
+}
+
+input PushNotifDataInput {
+  title: String
+  body: String!
+  route: AppRoute
+  uri: String
+  record: RecordParamsInput
+}
+
+input RecordParamsInput {
+  id: String!
+  slug: String!
+}
+
+enum PushNotificationInterest {
+  SeasonsGeneralNotifications
+}
+
+enum AppRoute {
+  BagStack
+  Faq
+  Webview
+  CurrentRotation
+  Reservation
+  Browse
+  Home
+  Brand
+  Account
+  PaymentAndShipping
+  PersonalPreferences
+  ProductRequest
+  Product
+}

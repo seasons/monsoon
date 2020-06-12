@@ -23,10 +23,11 @@ type BlogPost {
   updatedAt: DateTime!
   publishedOn: DateTime!
   author: String
+  category: String
 }
 
 type Query {
   blogCollections: [BlogCollection!]!
-  blogPosts(collection: String!, skip: Int, count: Int): [BlogPost!]!
+  blogPosts(skip: Int, count: Int): [BlogPost!]!
   blogPost(id: String): BlogPost
 }

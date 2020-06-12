@@ -2,6 +2,7 @@ import { AirtableModule } from "@modules/Airtable"
 import { EmailModule } from "@modules/Email"
 import { ImageModule } from "@modules/Image"
 import { ProductModule } from "@modules/Product"
+import { PushNotificationModule } from "@modules/PushNotification"
 import { ShippingModule } from "@modules/Shipping/shipping.module"
 import { Module } from "@nestjs/common"
 import { PrismaModule } from "@prisma/prisma.module"
@@ -22,6 +23,7 @@ import { ReservationFeedbackService } from "./services/reservationFeedback.servi
     ImageModule,
     PrismaModule,
     ProductModule,
+    PushNotificationModule,
     ShippingModule,
   ],
   providers: [
@@ -34,5 +36,6 @@ import { ReservationFeedbackService } from "./services/reservationFeedback.servi
     ReservationService,
     ReservationMutationsResolver,
   ],
+  exports: [ReservationService],
 })
 export class ReservationModule {}

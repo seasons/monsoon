@@ -9,7 +9,7 @@ import {
   InvoicesDataLoader,
   TransactionsDataLoader,
 } from "@modules/Payment/payment.types"
-import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
+import { Info, Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma/prisma.service"
 import { head } from "lodash"
 
@@ -82,7 +82,7 @@ export class CustomerFieldsResolver {
     if (!customer) {
       return null
     }
-    return this.paymentService.getCustomerInvoiceHistory(
+    return await this.paymentService.getCustomerInvoiceHistory(
       await this.prisma.client
         .customer({
           id: customer.id,
@@ -91,6 +91,23 @@ export class CustomerFieldsResolver {
         .id(),
       invoicesLoader,
       transactionsForCustomerLoader
+    )
+  }
+
+  @ResolveField()
+  async user(@Parent() customer, @Info() info) {
+    return await this.prisma.binding.query.user(
+      {
+        where: {
+          id: await this.prisma.client
+            .customer({
+              id: customer.id,
+            })
+            .user()
+            .id(),
+        },
+      },
+      info
     )
   }
 }

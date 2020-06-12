@@ -29,7 +29,7 @@ type Mutation {
   updateReservationFeedback(
     feedbackID: ID!
     input: ReservationFeedbackUpdateInput!
-  ): ReservationFeedback! @hasRole(roles: [Admin])
+  ): ReservationFeedback! @hasRole(roles: [Customer, Admin])
   processReservation(data: ReservationProcessReturnInput!): ReservationReceipt
     @hasRole(roles: [Admin, Partner])
   updateReservation(
@@ -65,11 +65,25 @@ type Reservation {
   images(width: Int, height: Int, size: ImageSize): [Image!]!
   reservationNumber: Int!
   shipped: Boolean!
-  status(display: Boolean): String!
+  status: ReservationStatus!
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
   returnAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
+}
+
+enum ReservationStatus {
+  Queued
+  Packed
+  Shipped
+  Delivered
+  Completed
+  Cancelled
+  Blocked
+  Unknown
+
+  # To be deleted, needed for migration
+  Received
 }

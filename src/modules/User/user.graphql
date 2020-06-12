@@ -32,8 +32,9 @@ type Mutation {
     details: CustomerDetailCreateInput
   ): AuthPayload!
   login(email: String!, password: String!): AuthPayload!
-  updateUserPushNotifications(pushNotificationsStatus: String!): User!
-    @hasRole(roles: [Customer])
+  updateUserPushNotificationStatus(
+    pushNotificationStatus: PushNotificationStatus!
+  ): User! @hasRole(roles: [Customer])
   resetPassword(email: String!): ResetPasswordPayload! @isAuthenticated
   refreshToken(refreshToken: String!): String!
 }
@@ -44,6 +45,7 @@ type AuthPayload {
   expiresIn: Int!
   user: User!
   beamsToken: String!
+  customer: Customer!
 }
 
 type ResetPasswordPayload {
@@ -58,32 +60,17 @@ type Me {
   savedItems: [BagItem!]
 }
 
-type Customer {
+type User {
   id: ID!
-  user: User!
-  shouldRequestFeedback: Boolean
-  status: CustomerStatus
-  detail: CustomerDetail
-  billingInfo: BillingInfo
-  plan: Plan
-  bagItems(
-    where: BagItemWhereInput
-    orderBy: BagItemOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [BagItem!]
-  reservations(
-    where: ReservationWhereInput
-    orderBy: ReservationOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [Reservation!]
-  invoices: [Invoice]
-  transactions: [Transaction]
+  auth0Id: String!
+  email: String!
+  firstName: String!
+  lastName: String!
+  role: UserRole!
+  roles: [UserRole!]!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  pushNotifications: [PushNotificationReceipt!]
+  pushNotificationStatus: PushNotificationStatus
+  beamsToken: String!
 }

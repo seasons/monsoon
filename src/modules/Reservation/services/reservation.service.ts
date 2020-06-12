@@ -1,4 +1,5 @@
 import { RollbackError } from "@app/errors"
+import { PushNotificationService } from "@app/modules/PushNotification"
 import { AirtableService } from "@modules/Airtable"
 import { EmailService } from "@modules/Email/services/email.service"
 import {
@@ -12,7 +13,12 @@ import { Injectable } from "@nestjs/common"
 import {
   Customer,
   ID_Input,
+  InventoryStatus,
   PhysicalProduct,
+  PhysicalProductPromise,
+  PhysicalProductStatus,
+  Product,
+  ProductVariant,
   Reservation,
   ReservationCreateInput,
   ReservationStatus,
@@ -27,6 +33,13 @@ import { ReservationUtilsService } from "./reservation.utils.service"
 
 interface PhysicalProductWithProductVariant extends PhysicalProduct {
   productVariant: { id: ID_Input }
+}
+
+interface ProductState {
+  productUID: string
+  returned: boolean
+  productStatus: PhysicalProductStatus
+  notes: string
 }
 
 export interface ReservationWithProductVariantData {
@@ -46,6 +59,7 @@ export class ReservationService {
     private readonly airtableService: AirtableService,
     private readonly shippingService: ShippingService,
     private readonly emails: EmailService,
+    private readonly pushNotifs: PushNotificationService,
     private readonly reservationUtils: ReservationUtilsService
   ) {}
 
@@ -63,7 +77,9 @@ export class ReservationService {
       }
 
       // Figure out which items the user is reserving anew and which they already have
-      const lastReservation = await this.getLatestReservation(customer)
+      const lastReservation = await this.reservationUtils.getLatestReservation(
+        customer
+      )
       this.checkLastReservation(lastReservation)
       const newProductVariantsBeingReserved = await this.getNewProductVariantsBeingReserved(
         lastReservation,
@@ -170,43 +186,226 @@ export class ReservationService {
     return reservationReturnData
   }
 
-  private async getLatestReservation(
-    customer: Customer
-  ): Promise<ReservationWithProductVariantData | null> {
-    return new Promise(async (resolve, reject) => {
-      const allCustomerReservationsOrderedByCreatedAt = await this.prisma.client
-        .customer({ id: customer.id })
-        .reservations({
-          orderBy: "createdAt_DESC",
-        })
+  async getReservation(reservationNumber: number) {
+    return await this.prisma.binding.query.reservation(
+      {
+        where: { reservationNumber },
+      },
+      `{
+          id
+          status
+          reservationNumber
+          products {
+              id
+              inventoryStatus
+              seasonsUID
+              productVariant {
+                  id
+              }
+          }
+          customer {
+              id
+              detail {
+                  shippingAddress {
+                      slug
+                  }
+              }
+          }
+          user {
+            id
+            email
+          }
+          returnedPackage {
+              id
+          }
+      }`
+    )
+  }
 
-      const latestReservation = head(
-        allCustomerReservationsOrderedByCreatedAt
-      ) as Reservation
-      if (latestReservation == null) {
-        return resolve(null)
-      } else {
-        const res = (await this.prisma.binding.query.reservation(
-          {
-            where: { id: latestReservation.id },
-          },
-          `{ 
-                id  
-                products {
-                    id
-                    seasonsUID
-                    inventoryStatus
-                    productStatus
-                    productVariant {
-                        id
-                    }
-                }
-                status
-                reservationNumber
-             }`
-        )) as ReservationWithProductVariantData
-        return resolve(res)
+  async processReservation(reservationNumber, productStates: ProductState[]) {
+    const receiptData = {
+      reservation: {
+        connect: {
+          reservationNumber,
+        },
+      },
+      items: {
+        create: productStates
+          .filter(a => a.returned)
+          .map(productState => {
+            return {
+              product: {
+                connect: {
+                  seasonsUID: productState.productUID,
+                },
+              },
+              productStatus: productState.productStatus,
+              notes: productState.notes,
+            }
+          }),
+      },
+    }
+
+    // Update status on physical products depending on whether
+    // the item was returned
+    const promises = productStates.map(
+      ({ productUID, productStatus, returned }) => {
+        const seasonsUID = productUID
+        const updateData: any = {
+          productStatus,
+        }
+        if (returned) {
+          // TODO: allow inventory status to be overriden from admin but derive value
+          // from automated criteria
+          updateData.inventoryStatus = "Reservable"
+          return this.prisma.client.updatePhysicalProduct({
+            where: { seasonsUID },
+            data: updateData,
+          })
+        }
       }
+    ) as PhysicalProductPromise[]
+
+    await Promise.all(promises)
+
+    // Create reservation receipt
+    await this.prisma.client.createReservationReceipt(receiptData)
+
+    const reservation = await this.getReservation(reservationNumber)
+
+    const returnedPhysicalProducts = reservation.products.filter(p => {
+      const physicalProduct = productStates.find(
+        s => s.productUID === p.seasonsUID
+      )
+      return physicalProduct.returned
+    })
+
+    const prismaUser = await this.prisma.client.user({
+      email: reservation.user.email,
+    })
+
+    // Mark reservation as completed
+    await this.prisma.client.updateReservation({
+      data: { status: "Completed" },
+      where: { reservationNumber },
+    })
+
+    await this.reservationUtils.updateUsersBagItemsOnCompletedReservation(
+      reservation,
+      returnedPhysicalProducts
+    )
+
+    await this.reservationUtils.updateReturnPackageOnCompletedReservation(
+      reservation,
+      returnedPhysicalProducts
+    )
+
+    // Create reservationFeedback datamodels for the returned product variants
+    await this.createReservationFeedbacksForVariants(
+      await this.prisma.client.productVariants({
+        where: {
+          id_in: returnedPhysicalProducts.map(p => p.productVariant.id),
+        },
+      }),
+      prismaUser,
+      reservation as Reservation
+    )
+
+    await this.pushNotifs.pushNotifyUser({
+      email: prismaUser.email,
+      pushNotifID: "ResetBag",
+    })
+    await this.emails.sendYouCanNowReserveAgainEmail(prismaUser)
+
+    await this.emails.sendAdminConfirmationEmail(
+      prismaUser,
+      returnedPhysicalProducts,
+      reservation
+    )
+  }
+
+  private async createReservationFeedbacksForVariants(
+    productVariants: ProductVariant[],
+    user: User,
+    reservation: Reservation
+  ) {
+    const MULTIPLE_CHOICE = "MultipleChoice"
+    const variantInfos = await Promise.all(
+      productVariants.map(async variant => {
+        const products: Product[] = await this.prisma.client.products({
+          where: {
+            variants_some: {
+              id: variant.id,
+            },
+          },
+        })
+        if (!products || products.length === 0) {
+          throw new Error(
+            `createReservationFeedback error: Unable to find product for product variant id ${variant.id}.`
+          )
+        }
+        return {
+          id: variant.id,
+          name: products[0].name,
+          retailPrice: products[0].retailPrice,
+        }
+      })
+    )
+    await this.prisma.client.createReservationFeedback({
+      feedbacks: {
+        create: variantInfos.map(variantInfo => ({
+          isCompleted: false,
+          questions: {
+            create: [
+              {
+                question: `How many times did you wear this ${variantInfo.name}?`,
+                options: {
+                  set: [
+                    "More than 6 times",
+                    "3-5 times",
+                    "1-2 times",
+                    "0 times",
+                  ],
+                },
+                type: MULTIPLE_CHOICE,
+              },
+              {
+                question: `Would you buy it at retail for $${variantInfo.retailPrice}?`,
+                options: {
+                  set: [
+                    "Would buy at a discount",
+                    "Buy below retail",
+                    "Buy at retail",
+                    "Would only rent",
+                  ],
+                },
+                type: MULTIPLE_CHOICE,
+              },
+              {
+                question: `Did it fit as expected?`,
+                options: {
+                  set: [
+                    "Fit too big",
+                    "Fit true to size",
+                    "Ran small",
+                    "Didn’t fit at all",
+                  ],
+                },
+                type: MULTIPLE_CHOICE,
+              },
+            ],
+          },
+          variant: { connect: { id: variantInfo.id } },
+        })),
+      },
+      user: {
+        connect: {
+          id: user.id,
+        },
+      },
+      reservation: {
+        connect: { id: reservation.id },
+      },
     })
   }
 
@@ -340,7 +539,7 @@ export class ReservationService {
     interface UniqueIDObject {
       id: string
     }
-    const uniqueReservationNumber = await this.getUniqueReservationNumber()
+    const uniqueReservationNumber = await this.reservationUtils.getUniqueReservationNumber()
 
     return {
       products: {
@@ -413,28 +612,14 @@ export class ReservationService {
         },
       },
       reservationNumber: uniqueReservationNumber,
-      location: {
+      lastLocation: {
         connect: {
           slug: process.env.SEASONS_CLEANER_LOCATION_SLUG,
         },
       },
       shipped: false,
-      status: "InQueue",
+      status: "Queued",
     }
-  }
-
-  private async getUniqueReservationNumber(): Promise<number> {
-    let reservationNumber: number
-    let foundUnique = false
-    while (!foundUnique) {
-      reservationNumber = Math.floor(Math.random() * 900000000) + 100000000
-      const reservationWithThatNumber = await this.prisma.client.reservation({
-        reservationNumber,
-      })
-      foundUnique = !reservationWithThatNumber
-    }
-
-    return reservationNumber
   }
 
   /* Returns [createdReservation, rollbackFunc] */

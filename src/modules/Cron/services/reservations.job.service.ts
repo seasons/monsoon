@@ -1,4 +1,7 @@
 import { SyncError } from "@app/errors"
+import { PushNotificationService } from "@app/modules/PushNotification"
+import { ReservationService } from "@app/modules/Reservation/services/reservation.service"
+import { UtilsService } from "@app/modules/Utils"
 import {
   AirtableInventoryStatus,
   AirtableProductVariantCounts,
@@ -6,20 +9,12 @@ import {
 import { AirtableService } from "@modules/Airtable/services/airtable.service"
 import { EmailService } from "@modules/Email/services/email.service"
 import { ErrorService } from "@modules/Error/services/error.service"
-import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { Injectable, Logger } from "@nestjs/common"
 import { Cron, CronExpression } from "@nestjs/schedule"
-import {
-  ID_Input,
-  InventoryStatus,
-  Product,
-  ProductVariant,
-  Reservation,
-  User,
-} from "@prisma/index"
+import { InventoryStatus, ProductVariant, Reservation } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
 import { head } from "lodash"
-import { DateTime, Interval } from "luxon"
+import moment from "moment"
 
 type prismaProductVariantCounts = Pick<
   ProductVariant,
@@ -29,8 +24,6 @@ type productVariantCounts =
   | prismaProductVariantCounts
   | AirtableProductVariantCounts
 
-const MULTIPLE_CHOICE = "MultipleChoice"
-
 @Injectable()
 export class ReservationScheduledJobs {
   private readonly logger = new Logger(ReservationScheduledJobs.name)
@@ -39,8 +32,10 @@ export class ReservationScheduledJobs {
     private readonly airtableService: AirtableService,
     private readonly emailService: EmailService,
     private readonly prisma: PrismaService,
-    private readonly shippingService: ShippingService,
-    private readonly errorService: ErrorService
+    private readonly errorService: ErrorService,
+    private readonly reservationService: ReservationService,
+    private readonly pushNotifs: PushNotificationService,
+    private readonly utils: UtilsService
   ) {}
 
   @Cron(CronExpression.EVERY_6_HOURS)
@@ -65,11 +60,16 @@ export class ReservationScheduledJobs {
             .customer()
             .user()
 
-          this.emailService.sendReturnReminderEmail(user, reservation)
+          await this.emailService.sendReturnReminderEmail(user, reservation)
 
+          const now = new Date()
+          await this.pushNotifs.pushNotifyUser({
+            email: user.email,
+            pushNotifID: "ReturnDue",
+          })
           await this.prisma.client.updateReservation({
             where: { id: reservation.id },
-            data: { reminderSentAt: DateTime.local().toString() },
+            data: { reminderSentAt: now.toISOString() },
           })
 
           report.reservationsForWhichRemindersWereSent.push(
@@ -218,50 +218,14 @@ export class ReservationScheduledJobs {
           // Handle housekeeping
           updatedReservations.push(prismaReservation.reservationNumber)
 
-          const prismaUser = await this.prisma.client.user({
-            email: prismaReservation.user.email,
-          })
-
-          const returnedPhysicalProducts = prismaReservation.products.filter(
-            p =>
-              [
-                "Reservable" as InventoryStatus,
-                "NonReservable" as InventoryStatus,
-              ].includes(p.inventoryStatus)
-          )
-
-          await this.prisma.client.updateReservation({
-            data: { status: "Completed" },
-            where: { id: prismaReservation.id },
-          })
-
-          await this.updateUsersBagItemsOnCompletedReservation(
-            prismaReservation,
-            returnedPhysicalProducts
-          )
-
-          await this.updateReturnPackageOnCompletedReservation(
-            prismaReservation,
-            returnedPhysicalProducts
-          )
-
-          // Create reservationFeedback datamodels for the returned product variants
-          await this.createReservationFeedbacksForVariants(
-            await this.prisma.client.productVariants({
-              where: {
-                id_in: returnedPhysicalProducts.map(p => p.productVariant.id),
-              },
-            }),
-            prismaUser,
-            prismaReservation as Reservation
-          )
-
-          await this.emailService.sendYouCanNowReserveAgainEmail(prismaUser)
-
-          await this.emailService.sendAdminConfirmationEmail(
-            prismaUser,
-            returnedPhysicalProducts,
-            prismaReservation
+          await this.reservationService.processReservation(
+            prismaReservation.reservationNumber,
+            prismaReservation.products.map(product => ({
+              productUID: product.seasonsUID,
+              returned: product.inventoryStatus === "Reservable",
+              productStatus: product.productStatus,
+              notes: "",
+            }))
           )
         } else if (
           airtableReservation.model.status !== prismaReservation.status
@@ -324,40 +288,7 @@ export class ReservationScheduledJobs {
   }
 
   private async getPrismaReservationWithNeededFields(reservationNumber) {
-    const res = await this.prisma.binding.query.reservation(
-      {
-        where: { reservationNumber },
-      },
-      `{
-          id
-          status
-          reservationNumber
-          products {
-              id
-              inventoryStatus
-              seasonsUID
-              productVariant {
-                  id
-              }
-          }
-          customer {
-              id
-              detail {
-                  shippingAddress {
-                      slug
-                  }
-              }
-          }
-          user {
-            id
-            email
-          }
-          returnedPackage {
-              id
-          }
-      }`
-    )
-    return res
+    return await this.reservationService.getReservation(reservationNumber)
   }
 
   private getUpdatedCounts(
@@ -425,21 +356,23 @@ export class ReservationScheduledJobs {
   }
 
   private async returnNoticeNeeded(reservation: Reservation) {
-    const now = DateTime.local()
-    const twentyEightToTwentyNineDaysAgo = Interval.fromDateTimes(
-      now.minus({ days: 29 }),
-      now.minus({ days: 28 })
-    )
     const customer = await this.prisma.client
       .reservation({
         id: reservation.id,
       })
       .customer()
-
+    const reservationCreatedAt = moment(reservation.createdAt)
     return (
-      twentyEightToTwentyNineDaysAgo.contains(
-        DateTime.fromISO(reservation.createdAt)
-      ) &&
+      this.utils.isXDaysBefore({
+        beforeDate: new Date(
+          reservationCreatedAt.year(),
+          reservationCreatedAt.month(),
+          reservationCreatedAt.date()
+        ),
+        // now
+        afterDate: new Date(),
+        numDays: 27,
+      }) &&
       !reservation.reminderSentAt &&
       customer.plan === "Essential" &&
       !["Cancelled", "Completed"].includes(reservation.status)
@@ -488,157 +421,5 @@ export class ReservationScheduledJobs {
     )
 
     return prismaProductVariant
-  }
-
-  private async updateReturnPackageOnCompletedReservation(
-    prismaReservation: any,
-    returnedPhysicalProducts: any[] // fields specified in getPrismaReservationWithNeededFields
-  ) {
-    const returnedPhysicalProductIDs: {
-      id: ID_Input
-    }[] = returnedPhysicalProducts.map(p => {
-      return { id: p.id }
-    })
-    const returnedProductVariantIDs: string[] = prismaReservation.products
-      .filter(p => p.inventoryStatus === "Reservable")
-      .map(prod => prod.productVariant.id)
-    const weight = await this.shippingService.calcShipmentWeightFromProductVariantIDs(
-      returnedProductVariantIDs
-    )
-
-    if (prismaReservation.returnedPackage != null) {
-      await this.prisma.client.updatePackage({
-        data: {
-          items: { connect: returnedPhysicalProductIDs },
-          weight,
-        },
-        where: { id: prismaReservation.returnedPackage.id },
-      })
-    } else {
-      await this.prisma.client.updateReservation({
-        data: {
-          returnedPackage: {
-            create: {
-              items: { connect: returnedPhysicalProductIDs },
-              weight,
-              shippingLabel: {
-                create: {},
-              },
-              fromAddress: {
-                connect: {
-                  slug: prismaReservation.customer.detail.shippingAddress.slug,
-                },
-              },
-              toAddress: {
-                connect: {
-                  slug: process.env.SEASONS_CLEANER_LOCATION_SLUG,
-                },
-              },
-            },
-          },
-        },
-        where: {
-          id: prismaReservation.id,
-        },
-      })
-    }
-  }
-
-  private async updateUsersBagItemsOnCompletedReservation(
-    prismaReservation: any,
-    returnedPhysicalProducts: any[] // fields specified in getPrismaReservationWithNeededFields
-  ) {
-    return await this.prisma.client.deleteManyBagItems({
-      customer: { id: prismaReservation.customer.id },
-      saved: false,
-      productVariant: {
-        id_in: returnedPhysicalProducts.map(p => p.productVariant.id),
-      },
-      status: "Reserved",
-    })
-  }
-
-  private async createReservationFeedbacksForVariants(
-    productVariants: ProductVariant[],
-    user: User,
-    reservation: Reservation
-  ) {
-    const variantInfos = await Promise.all(
-      productVariants.map(async variant => {
-        const products: Product[] = await this.prisma.client.products({
-          where: {
-            variants_some: {
-              id: variant.id,
-            },
-          },
-        })
-        if (!products || products.length === 0) {
-          throw new Error(
-            `createReservationFeedback error: Unable to find product for product variant id ${variant.id}.`
-          )
-        }
-        return {
-          id: variant.id,
-          name: products[0].name,
-          retailPrice: products[0].retailPrice,
-        }
-      })
-    )
-    await this.prisma.client.createReservationFeedback({
-      feedbacks: {
-        create: variantInfos.map(variantInfo => ({
-          isCompleted: false,
-          questions: {
-            create: [
-              {
-                question: `How many times did you wear this ${variantInfo.name}?`,
-                options: {
-                  set: [
-                    "More than 6 times",
-                    "3-5 times",
-                    "1-2 times",
-                    "0 times",
-                  ],
-                },
-                type: MULTIPLE_CHOICE,
-              },
-              {
-                question: `Would you buy it at retail for $${variantInfo.retailPrice}?`,
-                options: {
-                  set: [
-                    "Would buy at a discount",
-                    "Buy below retail",
-                    "Buy at retail",
-                    "Would only rent",
-                  ],
-                },
-                type: MULTIPLE_CHOICE,
-              },
-              {
-                question: `Did it fit as expected?`,
-                options: {
-                  set: [
-                    "Fit too big",
-                    "Fit true to size",
-                    "Ran small",
-                    "Didn’t fit at all",
-                  ],
-                },
-                type: MULTIPLE_CHOICE,
-              },
-            ],
-          },
-          variant: { connect: { id: variantInfo.id } },
-        })),
-      },
-      user: {
-        connect: {
-          id: user.id,
-        },
-      },
-      reservation: {
-        connect: { id: reservation.id },
-      },
-    })
   }
 }
