@@ -95,11 +95,19 @@ export class CustomerFieldsResolver {
   }
 
   @ResolveField()
-  async user(@Parent() customer) {
-    return await this.prisma.client
-      .customer({
-        id: customer.id,
-      })
-      .user()
+  async user(@Parent() customer, @Info() info) {
+    return await this.prisma.binding.query.user(
+      {
+        where: {
+          id: await this.prisma.client
+            .customer({
+              id: customer.id,
+            })
+            .user()
+            .id(),
+        },
+      },
+      info
+    )
   }
 }

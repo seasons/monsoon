@@ -8,13 +8,13 @@ import {
   PushNotificationData,
   PushNotificationID,
   PushNotificationVars,
-} from "../pushNotifications.types"
+} from "../pushNotification.types"
 
 const maxTitleLength = 50
 const maxBodyLength = 110
 
 @Injectable()
-export class PushNotificationsDataProvider {
+export class PushNotificationDataProvider {
   getPushNotifData(
     pushNotifID: PushNotificationID,
     vars: PushNotificationVars

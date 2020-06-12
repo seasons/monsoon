@@ -1,5 +1,5 @@
 import { User } from "@app/decorators"
-import { Args, Mutation, Resolver } from "@nestjs/graphql"
+import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma/prisma.service"
 
 @Resolver()
@@ -7,20 +7,24 @@ export class UserMutationsResolver {
   constructor(private readonly prisma: PrismaService) {}
 
   @Mutation()
-  async updateUserPushNotifications(
-    @Args() { pushNotificationsStatus },
-    @User() user
+  async updateUserPushNotificationStatus(
+    @Args() { pushNotificationStatus },
+    @User() user,
+    @Info() info
   ) {
     if (!user) {
       throw new Error("Missing user from context")
     }
 
-    const updatedUser = await this.prisma.client.updateUser({
-      where: {
-        id: user.id,
+    const x = await this.prisma.binding.mutation.updateUser(
+      {
+        where: {
+          id: user.id,
+        },
+        data: { pushNotificationStatus },
       },
-      data: { pushNotifications: pushNotificationsStatus },
-    })
-    return updatedUser
+      info
+    )
+    return x
   }
 }

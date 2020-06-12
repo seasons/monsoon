@@ -5,15 +5,15 @@ import { Token } from "@pusher/push-notifications-server"
 import {
   PushNotifyInterestInput,
   PushNotifyUserInput,
-} from "../pushNotifications.types"
+} from "../pushNotification.types"
 import { PusherService } from "./pusher.service"
-import { PushNotificationsDataProvider } from "./pushNotifications.data.service"
+import { PushNotificationDataProvider } from "./pushNotification.data.service"
 
 @Injectable()
-export class PushNotificationsService {
+export class PushNotificationService {
   constructor(
     private readonly pusher: PusherService,
-    private readonly data: PushNotificationsDataProvider,
+    private readonly data: PushNotificationDataProvider,
     private readonly prisma: PrismaService
   ) {}
 

@@ -4,13 +4,13 @@ import { ApolloError } from "apollo-server"
 import { kebabCase, pick } from "lodash"
 import * as validUrl from "valid-url"
 
-import { PushNotificationInterest } from "../pushNotifications.types"
-import { PushNotificationsService } from "../services/pushNotifications.service"
+import { PushNotificationInterest } from "../pushNotification.types"
+import { PushNotificationService } from "../services/pushNotification.service"
 
 @Resolver()
-export class PushNotificationsMutationsResolver {
+export class PushNotificationMutationsResolver {
   constructor(
-    private readonly pushNotifications: PushNotificationsService,
+    private readonly pushNotifications: PushNotificationService,
     private readonly prisma: PrismaService
   ) {}
 
@@ -68,8 +68,7 @@ export class PushNotificationsMutationsResolver {
   }
 
   private isValidURL(url: string): boolean {
-    const startsCorrect =
-      url.startsWith("http") || url.startsWith("https")
+    const startsCorrect = url.startsWith("http") || url.startsWith("https")
     return startsCorrect && validUrl.isUri(url)
   }
 

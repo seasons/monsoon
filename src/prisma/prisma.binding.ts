@@ -15966,7 +15966,25 @@ input PushNotificationReceiptCreateInput {
   recordID: String
   recordSlug: String
   sentAt: DateTime!
-  users: UserCreateManyInput
+  users: UserCreateManyWithoutPushNotificationsInput
+}
+
+input PushNotificationReceiptCreateManyWithoutUsersInput {
+  create: [PushNotificationReceiptCreateWithoutUsersInput!]
+  connect: [PushNotificationReceiptWhereUniqueInput!]
+}
+
+input PushNotificationReceiptCreateWithoutUsersInput {
+  id: ID
+  route: String
+  screen: String
+  uri: String
+  interest: String
+  body: String!
+  title: String
+  recordID: String
+  recordSlug: String
+  sentAt: DateTime!
 }
 
 """An edge in a connection."""
@@ -16020,6 +16038,443 @@ type PushNotificationReceiptPreviousValues {
   updatedAt: DateTime!
 }
 
+input PushNotificationReceiptScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [PushNotificationReceiptScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [PushNotificationReceiptScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [PushNotificationReceiptScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  route: String
+
+  """All values that are not equal to given value."""
+  route_not: String
+
+  """All values that are contained in given list."""
+  route_in: [String!]
+
+  """All values that are not contained in given list."""
+  route_not_in: [String!]
+
+  """All values less than the given value."""
+  route_lt: String
+
+  """All values less than or equal the given value."""
+  route_lte: String
+
+  """All values greater than the given value."""
+  route_gt: String
+
+  """All values greater than or equal the given value."""
+  route_gte: String
+
+  """All values containing the given string."""
+  route_contains: String
+
+  """All values not containing the given string."""
+  route_not_contains: String
+
+  """All values starting with the given string."""
+  route_starts_with: String
+
+  """All values not starting with the given string."""
+  route_not_starts_with: String
+
+  """All values ending with the given string."""
+  route_ends_with: String
+
+  """All values not ending with the given string."""
+  route_not_ends_with: String
+  screen: String
+
+  """All values that are not equal to given value."""
+  screen_not: String
+
+  """All values that are contained in given list."""
+  screen_in: [String!]
+
+  """All values that are not contained in given list."""
+  screen_not_in: [String!]
+
+  """All values less than the given value."""
+  screen_lt: String
+
+  """All values less than or equal the given value."""
+  screen_lte: String
+
+  """All values greater than the given value."""
+  screen_gt: String
+
+  """All values greater than or equal the given value."""
+  screen_gte: String
+
+  """All values containing the given string."""
+  screen_contains: String
+
+  """All values not containing the given string."""
+  screen_not_contains: String
+
+  """All values starting with the given string."""
+  screen_starts_with: String
+
+  """All values not starting with the given string."""
+  screen_not_starts_with: String
+
+  """All values ending with the given string."""
+  screen_ends_with: String
+
+  """All values not ending with the given string."""
+  screen_not_ends_with: String
+  uri: String
+
+  """All values that are not equal to given value."""
+  uri_not: String
+
+  """All values that are contained in given list."""
+  uri_in: [String!]
+
+  """All values that are not contained in given list."""
+  uri_not_in: [String!]
+
+  """All values less than the given value."""
+  uri_lt: String
+
+  """All values less than or equal the given value."""
+  uri_lte: String
+
+  """All values greater than the given value."""
+  uri_gt: String
+
+  """All values greater than or equal the given value."""
+  uri_gte: String
+
+  """All values containing the given string."""
+  uri_contains: String
+
+  """All values not containing the given string."""
+  uri_not_contains: String
+
+  """All values starting with the given string."""
+  uri_starts_with: String
+
+  """All values not starting with the given string."""
+  uri_not_starts_with: String
+
+  """All values ending with the given string."""
+  uri_ends_with: String
+
+  """All values not ending with the given string."""
+  uri_not_ends_with: String
+  interest: String
+
+  """All values that are not equal to given value."""
+  interest_not: String
+
+  """All values that are contained in given list."""
+  interest_in: [String!]
+
+  """All values that are not contained in given list."""
+  interest_not_in: [String!]
+
+  """All values less than the given value."""
+  interest_lt: String
+
+  """All values less than or equal the given value."""
+  interest_lte: String
+
+  """All values greater than the given value."""
+  interest_gt: String
+
+  """All values greater than or equal the given value."""
+  interest_gte: String
+
+  """All values containing the given string."""
+  interest_contains: String
+
+  """All values not containing the given string."""
+  interest_not_contains: String
+
+  """All values starting with the given string."""
+  interest_starts_with: String
+
+  """All values not starting with the given string."""
+  interest_not_starts_with: String
+
+  """All values ending with the given string."""
+  interest_ends_with: String
+
+  """All values not ending with the given string."""
+  interest_not_ends_with: String
+  body: String
+
+  """All values that are not equal to given value."""
+  body_not: String
+
+  """All values that are contained in given list."""
+  body_in: [String!]
+
+  """All values that are not contained in given list."""
+  body_not_in: [String!]
+
+  """All values less than the given value."""
+  body_lt: String
+
+  """All values less than or equal the given value."""
+  body_lte: String
+
+  """All values greater than the given value."""
+  body_gt: String
+
+  """All values greater than or equal the given value."""
+  body_gte: String
+
+  """All values containing the given string."""
+  body_contains: String
+
+  """All values not containing the given string."""
+  body_not_contains: String
+
+  """All values starting with the given string."""
+  body_starts_with: String
+
+  """All values not starting with the given string."""
+  body_not_starts_with: String
+
+  """All values ending with the given string."""
+  body_ends_with: String
+
+  """All values not ending with the given string."""
+  body_not_ends_with: String
+  title: String
+
+  """All values that are not equal to given value."""
+  title_not: String
+
+  """All values that are contained in given list."""
+  title_in: [String!]
+
+  """All values that are not contained in given list."""
+  title_not_in: [String!]
+
+  """All values less than the given value."""
+  title_lt: String
+
+  """All values less than or equal the given value."""
+  title_lte: String
+
+  """All values greater than the given value."""
+  title_gt: String
+
+  """All values greater than or equal the given value."""
+  title_gte: String
+
+  """All values containing the given string."""
+  title_contains: String
+
+  """All values not containing the given string."""
+  title_not_contains: String
+
+  """All values starting with the given string."""
+  title_starts_with: String
+
+  """All values not starting with the given string."""
+  title_not_starts_with: String
+
+  """All values ending with the given string."""
+  title_ends_with: String
+
+  """All values not ending with the given string."""
+  title_not_ends_with: String
+  recordID: String
+
+  """All values that are not equal to given value."""
+  recordID_not: String
+
+  """All values that are contained in given list."""
+  recordID_in: [String!]
+
+  """All values that are not contained in given list."""
+  recordID_not_in: [String!]
+
+  """All values less than the given value."""
+  recordID_lt: String
+
+  """All values less than or equal the given value."""
+  recordID_lte: String
+
+  """All values greater than the given value."""
+  recordID_gt: String
+
+  """All values greater than or equal the given value."""
+  recordID_gte: String
+
+  """All values containing the given string."""
+  recordID_contains: String
+
+  """All values not containing the given string."""
+  recordID_not_contains: String
+
+  """All values starting with the given string."""
+  recordID_starts_with: String
+
+  """All values not starting with the given string."""
+  recordID_not_starts_with: String
+
+  """All values ending with the given string."""
+  recordID_ends_with: String
+
+  """All values not ending with the given string."""
+  recordID_not_ends_with: String
+  recordSlug: String
+
+  """All values that are not equal to given value."""
+  recordSlug_not: String
+
+  """All values that are contained in given list."""
+  recordSlug_in: [String!]
+
+  """All values that are not contained in given list."""
+  recordSlug_not_in: [String!]
+
+  """All values less than the given value."""
+  recordSlug_lt: String
+
+  """All values less than or equal the given value."""
+  recordSlug_lte: String
+
+  """All values greater than the given value."""
+  recordSlug_gt: String
+
+  """All values greater than or equal the given value."""
+  recordSlug_gte: String
+
+  """All values containing the given string."""
+  recordSlug_contains: String
+
+  """All values not containing the given string."""
+  recordSlug_not_contains: String
+
+  """All values starting with the given string."""
+  recordSlug_starts_with: String
+
+  """All values not starting with the given string."""
+  recordSlug_not_starts_with: String
+
+  """All values ending with the given string."""
+  recordSlug_ends_with: String
+
+  """All values not ending with the given string."""
+  recordSlug_not_ends_with: String
+  sentAt: DateTime
+
+  """All values that are not equal to given value."""
+  sentAt_not: DateTime
+
+  """All values that are contained in given list."""
+  sentAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  sentAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  sentAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  sentAt_lte: DateTime
+
+  """All values greater than the given value."""
+  sentAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  sentAt_gte: DateTime
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
+}
+
 type PushNotificationReceiptSubscriptionPayload {
   mutation: MutationType!
   node: PushNotificationReceipt
@@ -16067,7 +16522,19 @@ input PushNotificationReceiptUpdateInput {
   recordID: String
   recordSlug: String
   sentAt: DateTime
-  users: UserUpdateManyInput
+  users: UserUpdateManyWithoutPushNotificationsInput
+}
+
+input PushNotificationReceiptUpdateManyDataInput {
+  route: String
+  screen: String
+  uri: String
+  interest: String
+  body: String
+  title: String
+  recordID: String
+  recordSlug: String
+  sentAt: DateTime
 }
 
 input PushNotificationReceiptUpdateManyMutationInput {
@@ -16080,6 +16547,46 @@ input PushNotificationReceiptUpdateManyMutationInput {
   recordID: String
   recordSlug: String
   sentAt: DateTime
+}
+
+input PushNotificationReceiptUpdateManyWithoutUsersInput {
+  create: [PushNotificationReceiptCreateWithoutUsersInput!]
+  connect: [PushNotificationReceiptWhereUniqueInput!]
+  set: [PushNotificationReceiptWhereUniqueInput!]
+  disconnect: [PushNotificationReceiptWhereUniqueInput!]
+  delete: [PushNotificationReceiptWhereUniqueInput!]
+  update: [PushNotificationReceiptUpdateWithWhereUniqueWithoutUsersInput!]
+  updateMany: [PushNotificationReceiptUpdateManyWithWhereNestedInput!]
+  deleteMany: [PushNotificationReceiptScalarWhereInput!]
+  upsert: [PushNotificationReceiptUpsertWithWhereUniqueWithoutUsersInput!]
+}
+
+input PushNotificationReceiptUpdateManyWithWhereNestedInput {
+  where: PushNotificationReceiptScalarWhereInput!
+  data: PushNotificationReceiptUpdateManyDataInput!
+}
+
+input PushNotificationReceiptUpdateWithoutUsersDataInput {
+  route: String
+  screen: String
+  uri: String
+  interest: String
+  body: String
+  title: String
+  recordID: String
+  recordSlug: String
+  sentAt: DateTime
+}
+
+input PushNotificationReceiptUpdateWithWhereUniqueWithoutUsersInput {
+  where: PushNotificationReceiptWhereUniqueInput!
+  data: PushNotificationReceiptUpdateWithoutUsersDataInput!
+}
+
+input PushNotificationReceiptUpsertWithWhereUniqueWithoutUsersInput {
+  where: PushNotificationReceiptWhereUniqueInput!
+  update: PushNotificationReceiptUpdateWithoutUsersDataInput!
+  create: PushNotificationReceiptCreateWithoutUsersInput!
 }
 
 input PushNotificationReceiptWhereInput {
@@ -18191,6 +18698,7 @@ enum ReservationStatus {
   Cancelled
   Blocked
   Unknown
+  InTransit
   Received
 }
 
@@ -19928,7 +20436,8 @@ type User implements Node {
   roles: [UserRole!]!
   createdAt: DateTime!
   updatedAt: DateTime!
-  pushNotifications: PushNotificationStatus!
+  pushNotificationStatus: PushNotificationStatus!
+  pushNotifications(where: PushNotificationReceiptWhereInput, orderBy: PushNotificationReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PushNotificationReceipt!]
 }
 
 """A connection to a list of items."""
@@ -19948,12 +20457,13 @@ input UserCreateInput {
   firstName: String!
   lastName: String!
   role: UserRole
-  pushNotifications: PushNotificationStatus
+  pushNotificationStatus: PushNotificationStatus
   roles: UserCreaterolesInput
+  pushNotifications: PushNotificationReceiptCreateManyWithoutUsersInput
 }
 
-input UserCreateManyInput {
-  create: [UserCreateInput!]
+input UserCreateManyWithoutPushNotificationsInput {
+  create: [UserCreateWithoutPushNotificationsInput!]
   connect: [UserWhereUniqueInput!]
 }
 
@@ -19964,6 +20474,17 @@ input UserCreateOneInput {
 
 input UserCreaterolesInput {
   set: [UserRole!]
+}
+
+input UserCreateWithoutPushNotificationsInput {
+  id: ID
+  auth0Id: String!
+  email: String!
+  firstName: String!
+  lastName: String!
+  role: UserRole
+  pushNotificationStatus: PushNotificationStatus
+  roles: UserCreaterolesInput
 }
 
 """An edge in a connection."""
@@ -19992,8 +20513,8 @@ enum UserOrderByInput {
   createdAt_DESC
   updatedAt_ASC
   updatedAt_DESC
-  pushNotifications_ASC
-  pushNotifications_DESC
+  pushNotificationStatus_ASC
+  pushNotificationStatus_DESC
 }
 
 type UserPreviousValues {
@@ -20006,7 +20527,7 @@ type UserPreviousValues {
   roles: [UserRole!]!
   createdAt: DateTime!
   updatedAt: DateTime!
-  pushNotifications: PushNotificationStatus!
+  pushNotificationStatus: PushNotificationStatus!
 }
 
 enum UserRole {
@@ -20278,16 +20799,16 @@ input UserScalarWhereInput {
 
   """All values greater than or equal the given value."""
   updatedAt_gte: DateTime
-  pushNotifications: PushNotificationStatus
+  pushNotificationStatus: PushNotificationStatus
 
   """All values that are not equal to given value."""
-  pushNotifications_not: PushNotificationStatus
+  pushNotificationStatus_not: PushNotificationStatus
 
   """All values that are contained in given list."""
-  pushNotifications_in: [PushNotificationStatus!]
+  pushNotificationStatus_in: [PushNotificationStatus!]
 
   """All values that are not contained in given list."""
-  pushNotifications_not_in: [PushNotificationStatus!]
+  pushNotificationStatus_not_in: [PushNotificationStatus!]
 }
 
 type UserSubscriptionPayload {
@@ -20333,8 +20854,9 @@ input UserUpdateDataInput {
   firstName: String
   lastName: String
   role: UserRole
-  pushNotifications: PushNotificationStatus
+  pushNotificationStatus: PushNotificationStatus
   roles: UserUpdaterolesInput
+  pushNotifications: PushNotificationReceiptUpdateManyWithoutUsersInput
 }
 
 input UserUpdateInput {
@@ -20343,8 +20865,9 @@ input UserUpdateInput {
   firstName: String
   lastName: String
   role: UserRole
-  pushNotifications: PushNotificationStatus
+  pushNotificationStatus: PushNotificationStatus
   roles: UserUpdaterolesInput
+  pushNotifications: PushNotificationReceiptUpdateManyWithoutUsersInput
 }
 
 input UserUpdateManyDataInput {
@@ -20353,20 +20876,8 @@ input UserUpdateManyDataInput {
   firstName: String
   lastName: String
   role: UserRole
-  pushNotifications: PushNotificationStatus
+  pushNotificationStatus: PushNotificationStatus
   roles: UserUpdaterolesInput
-}
-
-input UserUpdateManyInput {
-  create: [UserCreateInput!]
-  connect: [UserWhereUniqueInput!]
-  set: [UserWhereUniqueInput!]
-  disconnect: [UserWhereUniqueInput!]
-  delete: [UserWhereUniqueInput!]
-  update: [UserUpdateWithWhereUniqueNestedInput!]
-  updateMany: [UserUpdateManyWithWhereNestedInput!]
-  deleteMany: [UserScalarWhereInput!]
-  upsert: [UserUpsertWithWhereUniqueNestedInput!]
 }
 
 input UserUpdateManyMutationInput {
@@ -20375,8 +20886,20 @@ input UserUpdateManyMutationInput {
   firstName: String
   lastName: String
   role: UserRole
-  pushNotifications: PushNotificationStatus
+  pushNotificationStatus: PushNotificationStatus
   roles: UserUpdaterolesInput
+}
+
+input UserUpdateManyWithoutPushNotificationsInput {
+  create: [UserCreateWithoutPushNotificationsInput!]
+  connect: [UserWhereUniqueInput!]
+  set: [UserWhereUniqueInput!]
+  disconnect: [UserWhereUniqueInput!]
+  delete: [UserWhereUniqueInput!]
+  update: [UserUpdateWithWhereUniqueWithoutPushNotificationsInput!]
+  updateMany: [UserUpdateManyWithWhereNestedInput!]
+  deleteMany: [UserScalarWhereInput!]
+  upsert: [UserUpsertWithWhereUniqueWithoutPushNotificationsInput!]
 }
 
 input UserUpdateManyWithWhereNestedInput {
@@ -20404,9 +20927,19 @@ input UserUpdaterolesInput {
   set: [UserRole!]
 }
 
-input UserUpdateWithWhereUniqueNestedInput {
+input UserUpdateWithoutPushNotificationsDataInput {
+  auth0Id: String
+  email: String
+  firstName: String
+  lastName: String
+  role: UserRole
+  pushNotificationStatus: PushNotificationStatus
+  roles: UserUpdaterolesInput
+}
+
+input UserUpdateWithWhereUniqueWithoutPushNotificationsInput {
   where: UserWhereUniqueInput!
-  data: UserUpdateDataInput!
+  data: UserUpdateWithoutPushNotificationsDataInput!
 }
 
 input UserUpsertNestedInput {
@@ -20414,10 +20947,10 @@ input UserUpsertNestedInput {
   create: UserCreateInput!
 }
 
-input UserUpsertWithWhereUniqueNestedInput {
+input UserUpsertWithWhereUniqueWithoutPushNotificationsInput {
   where: UserWhereUniqueInput!
-  update: UserUpdateDataInput!
-  create: UserCreateInput!
+  update: UserUpdateWithoutPushNotificationsDataInput!
+  create: UserCreateWithoutPushNotificationsInput!
 }
 
 input UserWhereInput {
@@ -20683,16 +21216,19 @@ input UserWhereInput {
 
   """All values greater than or equal the given value."""
   updatedAt_gte: DateTime
-  pushNotifications: PushNotificationStatus
+  pushNotificationStatus: PushNotificationStatus
 
   """All values that are not equal to given value."""
-  pushNotifications_not: PushNotificationStatus
+  pushNotificationStatus_not: PushNotificationStatus
 
   """All values that are contained in given list."""
-  pushNotifications_in: [PushNotificationStatus!]
+  pushNotificationStatus_in: [PushNotificationStatus!]
 
   """All values that are not contained in given list."""
-  pushNotifications_not_in: [PushNotificationStatus!]
+  pushNotificationStatus_not_in: [PushNotificationStatus!]
+  pushNotifications_every: PushNotificationReceiptWhereInput
+  pushNotifications_some: PushNotificationReceiptWhereInput
+  pushNotifications_none: PushNotificationReceiptWhereInput
 }
 
 input UserWhereUniqueInput {
@@ -22437,6 +22973,7 @@ export type ReservationStatus =   'Queued' |
   'Cancelled' |
   'Blocked' |
   'Unknown' |
+  'InTransit' |
   'Received'
 
 export type SizeOrderByInput =   'id_ASC' |
@@ -22490,8 +23027,8 @@ export type UserOrderByInput =   'id_ASC' |
   'createdAt_DESC' |
   'updatedAt_ASC' |
   'updatedAt_DESC' |
-  'pushNotifications_ASC' |
-  'pushNotifications_DESC'
+  'pushNotificationStatus_ASC' |
+  'pushNotificationStatus_DESC'
 
 export type UserRole =   'Admin' |
   'Customer' |
@@ -29399,7 +29936,181 @@ export interface PushNotificationReceiptCreateInput {
   recordID?: String | null
   recordSlug?: String | null
   sentAt: DateTime
-  users?: UserCreateManyInput | null
+  users?: UserCreateManyWithoutPushNotificationsInput | null
+}
+
+export interface PushNotificationReceiptCreateManyWithoutUsersInput {
+  create?: PushNotificationReceiptCreateWithoutUsersInput[] | PushNotificationReceiptCreateWithoutUsersInput | null
+  connect?: PushNotificationReceiptWhereUniqueInput[] | PushNotificationReceiptWhereUniqueInput | null
+}
+
+export interface PushNotificationReceiptCreateWithoutUsersInput {
+  id?: ID_Input | null
+  route?: String | null
+  screen?: String | null
+  uri?: String | null
+  interest?: String | null
+  body: String
+  title?: String | null
+  recordID?: String | null
+  recordSlug?: String | null
+  sentAt: DateTime
+}
+
+export interface PushNotificationReceiptScalarWhereInput {
+  AND?: PushNotificationReceiptScalarWhereInput[] | PushNotificationReceiptScalarWhereInput | null
+  OR?: PushNotificationReceiptScalarWhereInput[] | PushNotificationReceiptScalarWhereInput | null
+  NOT?: PushNotificationReceiptScalarWhereInput[] | PushNotificationReceiptScalarWhereInput | null
+  id?: ID_Input | null
+  id_not?: ID_Input | null
+  id_in?: ID_Output[] | ID_Output | null
+  id_not_in?: ID_Output[] | ID_Output | null
+  id_lt?: ID_Input | null
+  id_lte?: ID_Input | null
+  id_gt?: ID_Input | null
+  id_gte?: ID_Input | null
+  id_contains?: ID_Input | null
+  id_not_contains?: ID_Input | null
+  id_starts_with?: ID_Input | null
+  id_not_starts_with?: ID_Input | null
+  id_ends_with?: ID_Input | null
+  id_not_ends_with?: ID_Input | null
+  route?: String | null
+  route_not?: String | null
+  route_in?: String[] | String | null
+  route_not_in?: String[] | String | null
+  route_lt?: String | null
+  route_lte?: String | null
+  route_gt?: String | null
+  route_gte?: String | null
+  route_contains?: String | null
+  route_not_contains?: String | null
+  route_starts_with?: String | null
+  route_not_starts_with?: String | null
+  route_ends_with?: String | null
+  route_not_ends_with?: String | null
+  screen?: String | null
+  screen_not?: String | null
+  screen_in?: String[] | String | null
+  screen_not_in?: String[] | String | null
+  screen_lt?: String | null
+  screen_lte?: String | null
+  screen_gt?: String | null
+  screen_gte?: String | null
+  screen_contains?: String | null
+  screen_not_contains?: String | null
+  screen_starts_with?: String | null
+  screen_not_starts_with?: String | null
+  screen_ends_with?: String | null
+  screen_not_ends_with?: String | null
+  uri?: String | null
+  uri_not?: String | null
+  uri_in?: String[] | String | null
+  uri_not_in?: String[] | String | null
+  uri_lt?: String | null
+  uri_lte?: String | null
+  uri_gt?: String | null
+  uri_gte?: String | null
+  uri_contains?: String | null
+  uri_not_contains?: String | null
+  uri_starts_with?: String | null
+  uri_not_starts_with?: String | null
+  uri_ends_with?: String | null
+  uri_not_ends_with?: String | null
+  interest?: String | null
+  interest_not?: String | null
+  interest_in?: String[] | String | null
+  interest_not_in?: String[] | String | null
+  interest_lt?: String | null
+  interest_lte?: String | null
+  interest_gt?: String | null
+  interest_gte?: String | null
+  interest_contains?: String | null
+  interest_not_contains?: String | null
+  interest_starts_with?: String | null
+  interest_not_starts_with?: String | null
+  interest_ends_with?: String | null
+  interest_not_ends_with?: String | null
+  body?: String | null
+  body_not?: String | null
+  body_in?: String[] | String | null
+  body_not_in?: String[] | String | null
+  body_lt?: String | null
+  body_lte?: String | null
+  body_gt?: String | null
+  body_gte?: String | null
+  body_contains?: String | null
+  body_not_contains?: String | null
+  body_starts_with?: String | null
+  body_not_starts_with?: String | null
+  body_ends_with?: String | null
+  body_not_ends_with?: String | null
+  title?: String | null
+  title_not?: String | null
+  title_in?: String[] | String | null
+  title_not_in?: String[] | String | null
+  title_lt?: String | null
+  title_lte?: String | null
+  title_gt?: String | null
+  title_gte?: String | null
+  title_contains?: String | null
+  title_not_contains?: String | null
+  title_starts_with?: String | null
+  title_not_starts_with?: String | null
+  title_ends_with?: String | null
+  title_not_ends_with?: String | null
+  recordID?: String | null
+  recordID_not?: String | null
+  recordID_in?: String[] | String | null
+  recordID_not_in?: String[] | String | null
+  recordID_lt?: String | null
+  recordID_lte?: String | null
+  recordID_gt?: String | null
+  recordID_gte?: String | null
+  recordID_contains?: String | null
+  recordID_not_contains?: String | null
+  recordID_starts_with?: String | null
+  recordID_not_starts_with?: String | null
+  recordID_ends_with?: String | null
+  recordID_not_ends_with?: String | null
+  recordSlug?: String | null
+  recordSlug_not?: String | null
+  recordSlug_in?: String[] | String | null
+  recordSlug_not_in?: String[] | String | null
+  recordSlug_lt?: String | null
+  recordSlug_lte?: String | null
+  recordSlug_gt?: String | null
+  recordSlug_gte?: String | null
+  recordSlug_contains?: String | null
+  recordSlug_not_contains?: String | null
+  recordSlug_starts_with?: String | null
+  recordSlug_not_starts_with?: String | null
+  recordSlug_ends_with?: String | null
+  recordSlug_not_ends_with?: String | null
+  sentAt?: DateTime | null
+  sentAt_not?: DateTime | null
+  sentAt_in?: DateTime[] | DateTime | null
+  sentAt_not_in?: DateTime[] | DateTime | null
+  sentAt_lt?: DateTime | null
+  sentAt_lte?: DateTime | null
+  sentAt_gt?: DateTime | null
+  sentAt_gte?: DateTime | null
+  createdAt?: DateTime | null
+  createdAt_not?: DateTime | null
+  createdAt_in?: DateTime[] | DateTime | null
+  createdAt_not_in?: DateTime[] | DateTime | null
+  createdAt_lt?: DateTime | null
+  createdAt_lte?: DateTime | null
+  createdAt_gt?: DateTime | null
+  createdAt_gte?: DateTime | null
+  updatedAt?: DateTime | null
+  updatedAt_not?: DateTime | null
+  updatedAt_in?: DateTime[] | DateTime | null
+  updatedAt_not_in?: DateTime[] | DateTime | null
+  updatedAt_lt?: DateTime | null
+  updatedAt_lte?: DateTime | null
+  updatedAt_gt?: DateTime | null
+  updatedAt_gte?: DateTime | null
 }
 
 export interface PushNotificationReceiptSubscriptionWhereInput {
@@ -29423,7 +30134,19 @@ export interface PushNotificationReceiptUpdateInput {
   recordID?: String | null
   recordSlug?: String | null
   sentAt?: DateTime | null
-  users?: UserUpdateManyInput | null
+  users?: UserUpdateManyWithoutPushNotificationsInput | null
+}
+
+export interface PushNotificationReceiptUpdateManyDataInput {
+  route?: String | null
+  screen?: String | null
+  uri?: String | null
+  interest?: String | null
+  body?: String | null
+  title?: String | null
+  recordID?: String | null
+  recordSlug?: String | null
+  sentAt?: DateTime | null
 }
 
 export interface PushNotificationReceiptUpdateManyMutationInput {
@@ -29436,6 +30159,46 @@ export interface PushNotificationReceiptUpdateManyMutationInput {
   recordID?: String | null
   recordSlug?: String | null
   sentAt?: DateTime | null
+}
+
+export interface PushNotificationReceiptUpdateManyWithoutUsersInput {
+  create?: PushNotificationReceiptCreateWithoutUsersInput[] | PushNotificationReceiptCreateWithoutUsersInput | null
+  connect?: PushNotificationReceiptWhereUniqueInput[] | PushNotificationReceiptWhereUniqueInput | null
+  set?: PushNotificationReceiptWhereUniqueInput[] | PushNotificationReceiptWhereUniqueInput | null
+  disconnect?: PushNotificationReceiptWhereUniqueInput[] | PushNotificationReceiptWhereUniqueInput | null
+  delete?: PushNotificationReceiptWhereUniqueInput[] | PushNotificationReceiptWhereUniqueInput | null
+  update?: PushNotificationReceiptUpdateWithWhereUniqueWithoutUsersInput[] | PushNotificationReceiptUpdateWithWhereUniqueWithoutUsersInput | null
+  updateMany?: PushNotificationReceiptUpdateManyWithWhereNestedInput[] | PushNotificationReceiptUpdateManyWithWhereNestedInput | null
+  deleteMany?: PushNotificationReceiptScalarWhereInput[] | PushNotificationReceiptScalarWhereInput | null
+  upsert?: PushNotificationReceiptUpsertWithWhereUniqueWithoutUsersInput[] | PushNotificationReceiptUpsertWithWhereUniqueWithoutUsersInput | null
+}
+
+export interface PushNotificationReceiptUpdateManyWithWhereNestedInput {
+  where: PushNotificationReceiptScalarWhereInput
+  data: PushNotificationReceiptUpdateManyDataInput
+}
+
+export interface PushNotificationReceiptUpdateWithoutUsersDataInput {
+  route?: String | null
+  screen?: String | null
+  uri?: String | null
+  interest?: String | null
+  body?: String | null
+  title?: String | null
+  recordID?: String | null
+  recordSlug?: String | null
+  sentAt?: DateTime | null
+}
+
+export interface PushNotificationReceiptUpdateWithWhereUniqueWithoutUsersInput {
+  where: PushNotificationReceiptWhereUniqueInput
+  data: PushNotificationReceiptUpdateWithoutUsersDataInput
+}
+
+export interface PushNotificationReceiptUpsertWithWhereUniqueWithoutUsersInput {
+  where: PushNotificationReceiptWhereUniqueInput
+  update: PushNotificationReceiptUpdateWithoutUsersDataInput
+  create: PushNotificationReceiptCreateWithoutUsersInput
 }
 
 export interface PushNotificationReceiptWhereInput {
@@ -31064,12 +31827,13 @@ export interface UserCreateInput {
   firstName: String
   lastName: String
   role?: UserRole | null
-  pushNotifications?: PushNotificationStatus | null
+  pushNotificationStatus?: PushNotificationStatus | null
   roles?: UserCreaterolesInput | null
+  pushNotifications?: PushNotificationReceiptCreateManyWithoutUsersInput | null
 }
 
-export interface UserCreateManyInput {
-  create?: UserCreateInput[] | UserCreateInput | null
+export interface UserCreateManyWithoutPushNotificationsInput {
+  create?: UserCreateWithoutPushNotificationsInput[] | UserCreateWithoutPushNotificationsInput | null
   connect?: UserWhereUniqueInput[] | UserWhereUniqueInput | null
 }
 
@@ -31080,6 +31844,17 @@ export interface UserCreateOneInput {
 
 export interface UserCreaterolesInput {
   set?: UserRole[] | UserRole | null
+}
+
+export interface UserCreateWithoutPushNotificationsInput {
+  id?: ID_Input | null
+  auth0Id: String
+  email: String
+  firstName: String
+  lastName: String
+  role?: UserRole | null
+  pushNotificationStatus?: PushNotificationStatus | null
+  roles?: UserCreaterolesInput | null
 }
 
 export interface UserScalarWhereInput {
@@ -31176,10 +31951,10 @@ export interface UserScalarWhereInput {
   updatedAt_lte?: DateTime | null
   updatedAt_gt?: DateTime | null
   updatedAt_gte?: DateTime | null
-  pushNotifications?: PushNotificationStatus | null
-  pushNotifications_not?: PushNotificationStatus | null
-  pushNotifications_in?: PushNotificationStatus[] | PushNotificationStatus | null
-  pushNotifications_not_in?: PushNotificationStatus[] | PushNotificationStatus | null
+  pushNotificationStatus?: PushNotificationStatus | null
+  pushNotificationStatus_not?: PushNotificationStatus | null
+  pushNotificationStatus_in?: PushNotificationStatus[] | PushNotificationStatus | null
+  pushNotificationStatus_not_in?: PushNotificationStatus[] | PushNotificationStatus | null
 }
 
 export interface UserSubscriptionWhereInput {
@@ -31199,8 +31974,9 @@ export interface UserUpdateDataInput {
   firstName?: String | null
   lastName?: String | null
   role?: UserRole | null
-  pushNotifications?: PushNotificationStatus | null
+  pushNotificationStatus?: PushNotificationStatus | null
   roles?: UserUpdaterolesInput | null
+  pushNotifications?: PushNotificationReceiptUpdateManyWithoutUsersInput | null
 }
 
 export interface UserUpdateInput {
@@ -31209,8 +31985,9 @@ export interface UserUpdateInput {
   firstName?: String | null
   lastName?: String | null
   role?: UserRole | null
-  pushNotifications?: PushNotificationStatus | null
+  pushNotificationStatus?: PushNotificationStatus | null
   roles?: UserUpdaterolesInput | null
+  pushNotifications?: PushNotificationReceiptUpdateManyWithoutUsersInput | null
 }
 
 export interface UserUpdateManyDataInput {
@@ -31219,20 +31996,8 @@ export interface UserUpdateManyDataInput {
   firstName?: String | null
   lastName?: String | null
   role?: UserRole | null
-  pushNotifications?: PushNotificationStatus | null
+  pushNotificationStatus?: PushNotificationStatus | null
   roles?: UserUpdaterolesInput | null
-}
-
-export interface UserUpdateManyInput {
-  create?: UserCreateInput[] | UserCreateInput | null
-  connect?: UserWhereUniqueInput[] | UserWhereUniqueInput | null
-  set?: UserWhereUniqueInput[] | UserWhereUniqueInput | null
-  disconnect?: UserWhereUniqueInput[] | UserWhereUniqueInput | null
-  delete?: UserWhereUniqueInput[] | UserWhereUniqueInput | null
-  update?: UserUpdateWithWhereUniqueNestedInput[] | UserUpdateWithWhereUniqueNestedInput | null
-  updateMany?: UserUpdateManyWithWhereNestedInput[] | UserUpdateManyWithWhereNestedInput | null
-  deleteMany?: UserScalarWhereInput[] | UserScalarWhereInput | null
-  upsert?: UserUpsertWithWhereUniqueNestedInput[] | UserUpsertWithWhereUniqueNestedInput | null
 }
 
 export interface UserUpdateManyMutationInput {
@@ -31241,8 +32006,20 @@ export interface UserUpdateManyMutationInput {
   firstName?: String | null
   lastName?: String | null
   role?: UserRole | null
-  pushNotifications?: PushNotificationStatus | null
+  pushNotificationStatus?: PushNotificationStatus | null
   roles?: UserUpdaterolesInput | null
+}
+
+export interface UserUpdateManyWithoutPushNotificationsInput {
+  create?: UserCreateWithoutPushNotificationsInput[] | UserCreateWithoutPushNotificationsInput | null
+  connect?: UserWhereUniqueInput[] | UserWhereUniqueInput | null
+  set?: UserWhereUniqueInput[] | UserWhereUniqueInput | null
+  disconnect?: UserWhereUniqueInput[] | UserWhereUniqueInput | null
+  delete?: UserWhereUniqueInput[] | UserWhereUniqueInput | null
+  update?: UserUpdateWithWhereUniqueWithoutPushNotificationsInput[] | UserUpdateWithWhereUniqueWithoutPushNotificationsInput | null
+  updateMany?: UserUpdateManyWithWhereNestedInput[] | UserUpdateManyWithWhereNestedInput | null
+  deleteMany?: UserScalarWhereInput[] | UserScalarWhereInput | null
+  upsert?: UserUpsertWithWhereUniqueWithoutPushNotificationsInput[] | UserUpsertWithWhereUniqueWithoutPushNotificationsInput | null
 }
 
 export interface UserUpdateManyWithWhereNestedInput {
@@ -31270,9 +32047,19 @@ export interface UserUpdaterolesInput {
   set?: UserRole[] | UserRole | null
 }
 
-export interface UserUpdateWithWhereUniqueNestedInput {
+export interface UserUpdateWithoutPushNotificationsDataInput {
+  auth0Id?: String | null
+  email?: String | null
+  firstName?: String | null
+  lastName?: String | null
+  role?: UserRole | null
+  pushNotificationStatus?: PushNotificationStatus | null
+  roles?: UserUpdaterolesInput | null
+}
+
+export interface UserUpdateWithWhereUniqueWithoutPushNotificationsInput {
   where: UserWhereUniqueInput
-  data: UserUpdateDataInput
+  data: UserUpdateWithoutPushNotificationsDataInput
 }
 
 export interface UserUpsertNestedInput {
@@ -31280,10 +32067,10 @@ export interface UserUpsertNestedInput {
   create: UserCreateInput
 }
 
-export interface UserUpsertWithWhereUniqueNestedInput {
+export interface UserUpsertWithWhereUniqueWithoutPushNotificationsInput {
   where: UserWhereUniqueInput
-  update: UserUpdateDataInput
-  create: UserCreateInput
+  update: UserUpdateWithoutPushNotificationsDataInput
+  create: UserCreateWithoutPushNotificationsInput
 }
 
 export interface UserWhereInput {
@@ -31380,10 +32167,13 @@ export interface UserWhereInput {
   updatedAt_lte?: DateTime | null
   updatedAt_gt?: DateTime | null
   updatedAt_gte?: DateTime | null
-  pushNotifications?: PushNotificationStatus | null
-  pushNotifications_not?: PushNotificationStatus | null
-  pushNotifications_in?: PushNotificationStatus[] | PushNotificationStatus | null
-  pushNotifications_not_in?: PushNotificationStatus[] | PushNotificationStatus | null
+  pushNotificationStatus?: PushNotificationStatus | null
+  pushNotificationStatus_not?: PushNotificationStatus | null
+  pushNotificationStatus_in?: PushNotificationStatus[] | PushNotificationStatus | null
+  pushNotificationStatus_not_in?: PushNotificationStatus[] | PushNotificationStatus | null
+  pushNotifications_every?: PushNotificationReceiptWhereInput | null
+  pushNotifications_some?: PushNotificationReceiptWhereInput | null
+  pushNotifications_none?: PushNotificationReceiptWhereInput | null
 }
 
 export interface UserWhereUniqueInput {
@@ -33874,7 +34664,8 @@ export interface User extends Node {
   roles: Array<UserRole>
   createdAt: DateTime
   updatedAt: DateTime
-  pushNotifications: PushNotificationStatus
+  pushNotificationStatus: PushNotificationStatus
+  pushNotifications?: Array<PushNotificationReceipt> | null
 }
 
 /*
@@ -33906,7 +34697,7 @@ export interface UserPreviousValues {
   roles: Array<UserRole>
   createdAt: DateTime
   updatedAt: DateTime
-  pushNotifications: PushNotificationStatus
+  pushNotificationStatus: PushNotificationStatus
 }
 
 export interface UserSubscriptionPayload {
