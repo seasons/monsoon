@@ -21,7 +21,7 @@ export class PushNotificationDataProvider {
   ): PushNotificationData {
     let { alert, data } = JSON.parse(
       fs.readFileSync(
-        process.cwd() + "/src/modules/PushNotifications/data.json",
+        process.cwd() + "/src/modules/PushNotification/data.json",
         "utf-8"
       )
     )[pushNotifID]
