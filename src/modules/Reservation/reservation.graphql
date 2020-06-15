@@ -73,17 +73,3 @@ type Reservation {
   createdAt: DateTime!
   updatedAt: DateTime!
 }
-
-enum ReservationStatus {
-  Queued
-  Packed
-  Shipped
-  Delivered
-  Completed
-  Cancelled
-  Blocked
-  Unknown
-
-  # To be deleted, needed for migration
-  Received
-}
