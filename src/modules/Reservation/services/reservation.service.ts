@@ -224,7 +224,6 @@ export class ReservationService {
   }
 
   async processReservation(reservationNumber, productStates: ProductState[]) {
-    console.log("PROCESSING:", reservationNumber, productStates)
     const receiptData = {
       reservation: {
         connect: {
@@ -302,7 +301,6 @@ export class ReservationService {
       returnedPhysicalProducts
     )
 
-    console.log("CREATING FEEDBACKS")
     // Create reservationFeedback datamodels for the returned product variants
     await this.createReservationFeedbacksForVariants(
       await this.prisma.client.productVariants({
@@ -313,7 +311,6 @@ export class ReservationService {
       prismaUser,
       reservation as Reservation
     )
-    console.log("CREATED FEEDBACKS")
 
     await this.pushNotifs.pushNotifyUser({
       email: prismaUser.email,

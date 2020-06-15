@@ -206,7 +206,6 @@ export class ReservationScheduledJobs {
           airtableReservation.model.status === "Completed" &&
           prismaReservation.status !== "Completed"
         ) {
-          console.log("DETECTED COMPLETED RESV")
           for (const physProd of prismaReservation.products) {
             await this.ensurePhysicalProductSynced(physProd)
           }
@@ -219,7 +218,6 @@ export class ReservationScheduledJobs {
           // Handle housekeeping
           updatedReservations.push(prismaReservation.reservationNumber)
 
-          console.log("PROCESSING RESV FOR PRODUCT", prismaReservation.products)
           await this.reservationService.processReservation(
             prismaReservation.reservationNumber,
             prismaReservation.products.map(product => ({
@@ -245,7 +243,6 @@ export class ReservationScheduledJobs {
           })
         }
       } catch (err) {
-        console.log("ERROR SYNCING RESV", err)
         errors.push(err)
         this.errorService.captureError(err)
       }
