@@ -197,6 +197,7 @@ export class ReservationService {
           reservationNumber
           products {
               id
+              productStatus
               inventoryStatus
               seasonsUID
               productVariant {
