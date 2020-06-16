@@ -212,14 +212,6 @@ export class ShippingService {
         return reject(JSON.stringify(transaction))
       }
 
-      // track live shipment events
-      const trackingNumber = transaction.tracking_number
-      const trackOptions = {
-        carrier: "ups",
-        trackingNumber,
-      }
-      const trackingResult = await this.shippo.track(trackOptions)
-
       return resolve(transaction)
     })
   }

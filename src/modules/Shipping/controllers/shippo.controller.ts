@@ -66,14 +66,13 @@ export class ShippoController {
       camelCase(trackingStatus.substatus)
     ) as PackageTransitEventSubStatus
 
-    await this.prisma.client.createPackageTransitEvent({
-      status,
-      subStatus,
-      data: result,
-    })
-
     switch (event) {
       case ShippoEventType.TrackUpdated:
+        await this.prisma.client.createPackageTransitEvent({
+          status,
+          subStatus,
+          data: result,
+        })
         const reservation: ReservationWithPackage = head(
           await this.prisma.binding.query.reservations(
             {
