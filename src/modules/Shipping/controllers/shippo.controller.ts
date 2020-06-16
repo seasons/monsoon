@@ -27,23 +27,25 @@ export class ShippoController {
 
   @Post()
   async handlePost(@Body() result: ShippoData) {
-    console.log(result)
-
-    // 4. Update reservation with new reservation status, reservation phase
-    // 5. Create record in DB for event
     const { carrier, data, event, transaction: transactionID } = result
+    const { tracking_status } = data
+
+    const status = upperCase(
+      camelCase(tracking_status.status)
+    ) as PackageTransitEventStatus
+
+    const subStatus = upperCase(
+      camelCase(tracking_status.substatus)
+    ) as PackageTransitEventSubStatus
+
+    await this.prisma.client.createPackageTransitEvent({
+      status,
+      subStatus,
+      data: result,
+    })
 
     switch (event) {
       case ShippoEventType.TrackUpdated:
-        const { tracking_status } = data
-        const status = upperCase(
-          camelCase(tracking_status.status)
-        ) as PackageTransitEventStatus
-        const subStatus = upperCase(
-          camelCase(tracking_status.substatus)
-        ) as PackageTransitEventSubStatus
-
-        // Lookup reservation based on transaction id
         const reservation: ReservationWithPackage = head(
           await this.prisma.binding.query.reservations(
             {
@@ -80,12 +82,6 @@ export class ShippoController {
             status: reservationStatus,
             phase,
           },
-        })
-
-        await this.prisma.client.createPackageTransitEvent({
-          status,
-          subStatus,
-          data: result,
         })
 
         break
