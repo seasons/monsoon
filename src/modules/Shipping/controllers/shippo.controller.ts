@@ -8,9 +8,36 @@ import {
 import { PackageTransitEventSubStatus } from "@app/prisma"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Body, Controller, Post } from "@nestjs/common"
+import casify from "camelcase-keys"
 import { camelCase, head, upperCase } from "lodash"
 
-import { ShippoData, ShippoEventType } from "../shipping.types"
+export enum ShippoEventType {
+  TransactionCreated = "transaction_created",
+  TrackUpdated = "track_updated",
+}
+
+export type ShippoData = {
+  carrier: "ups"
+  event: ShippoEventType
+  data: {
+    trackingNumber: string
+    trackingStatus: {
+      objectId: string
+      statusDate: string
+      statusDetails: string
+      status: PackageTransitEventStatus
+      substatus: PackageTransitEventSubStatus
+      location: {
+        city: string
+        country: string
+        state: string
+        zip: string
+      }
+    }
+  }
+  transaction?: string
+  test?: boolean
+}
 
 type ReservationWithPackage = Reservation & {
   sentPackage: Package
@@ -26,16 +53,17 @@ export class ShippoController {
   constructor(private readonly prisma: PrismaService) {}
 
   @Post()
-  async handlePost(@Body() result: ShippoData) {
-    const { carrier, data, event, transaction: transactionID } = result
-    const { tracking_status } = data
+  async handlePost(@Body() body: ShippoData) {
+    const result = casify(body, { deep: true })
+    const { data, event, transaction: transactionID } = result
+    const { trackingStatus } = data
 
     const status = upperCase(
-      camelCase(tracking_status.status)
+      camelCase(trackingStatus.status)
     ) as PackageTransitEventStatus
 
     const subStatus = upperCase(
-      camelCase(tracking_status.substatus)
+      camelCase(trackingStatus.substatus)
     ) as PackageTransitEventSubStatus
 
     await this.prisma.client.createPackageTransitEvent({

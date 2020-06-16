@@ -119,7 +119,7 @@ export class ReservationUtilsService {
       await this.prisma.client.updateReservation({
         data: {
           returnedPackage: {
-            create: {
+            update: {
               items: { connect: returnedPhysicalProductIDs },
               weight,
               shippingLabel: {

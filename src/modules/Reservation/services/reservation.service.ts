@@ -477,7 +477,7 @@ export class ReservationService {
 
   private async markBagItemsReserved(
     customerId: ID_Input,
-    productVariantIds: Array<ID_Input>
+    productVariantIds: ID_Input[]
   ): Promise<() => void> {
     const bagItemsToUpdateIds = (
       await this.prisma.client.bagItems({
@@ -591,8 +591,8 @@ export class ReservationService {
         },
       },
       returnedPackage: {
-        transactionID: customerToSeasonsTransaction.object_id,
         create: {
+          transactionID: customerToSeasonsTransaction.object_id,
           shippingLabel: {
             create: {
               image: customerToSeasonsTransaction.label_url || "",
