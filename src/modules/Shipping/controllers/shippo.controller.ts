@@ -9,7 +9,7 @@ import { PackageTransitEventSubStatus } from "@app/prisma"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Body, Controller, Post } from "@nestjs/common"
 import casify from "camelcase-keys"
-import { camelCase, head, upperCase } from "lodash"
+import { camelCase, head, upperFirst } from "lodash"
 
 export enum ShippoEventType {
   TransactionCreated = "transaction_created",
@@ -34,8 +34,8 @@ export type ShippoData = {
         zip: string
       }
     }
+    transaction?: string
   }
-  transaction?: string
   test?: boolean
 }
 
@@ -55,14 +55,14 @@ export class ShippoController {
   @Post()
   async handlePost(@Body() body: ShippoData) {
     const result = casify(body, { deep: true })
-    const { data, event, transaction: transactionID } = result
-    const { trackingStatus } = data
+    const { data, event } = result
+    const { trackingStatus, transaction: transactionID } = data
 
-    const status = upperCase(
+    const status = upperFirst(
       camelCase(trackingStatus.status)
     ) as PackageTransitEventStatus
 
-    const subStatus = upperCase(
+    const subStatus = upperFirst(
       camelCase(trackingStatus.substatus)
     ) as PackageTransitEventSubStatus
 
@@ -102,7 +102,6 @@ export class ShippoController {
           subStatus,
           phase
         )
-        console.log("Reservation: ", reservation, reservationStatus)
 
         await this.prisma.client.updateReservation({
           where: { id: reservation.id },
