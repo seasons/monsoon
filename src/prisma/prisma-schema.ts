@@ -4754,6 +4754,7 @@ interface Node {
 type Package {
   id: ID!
   items(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct!]
+  transactionID: String!
   shippingLabel: Label!
   fromAddress: Location!
   toAddress: Location!
@@ -4772,6 +4773,7 @@ type PackageConnection {
 input PackageCreateInput {
   id: ID
   items: PhysicalProductCreateManyInput
+  transactionID: String!
   shippingLabel: LabelCreateOneInput!
   fromAddress: LocationCreateOneInput!
   toAddress: LocationCreateOneInput!
@@ -4792,6 +4794,8 @@ type PackageEdge {
 enum PackageOrderByInput {
   id_ASC
   id_DESC
+  transactionID_ASC
+  transactionID_DESC
   weight_ASC
   weight_DESC
   createdAt_ASC
@@ -4802,6 +4806,7 @@ enum PackageOrderByInput {
 
 type PackagePreviousValues {
   id: ID!
+  transactionID: String!
   weight: Float
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -4829,6 +4834,7 @@ type PackageTransitEvent {
   id: ID!
   status: PackageTransitEventStatus!
   subStatus: PackageTransitEventSubStatus!
+  data: Json!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -4843,6 +4849,7 @@ input PackageTransitEventCreateInput {
   id: ID
   status: PackageTransitEventStatus!
   subStatus: PackageTransitEventSubStatus!
+  data: Json!
 }
 
 input PackageTransitEventCreateManyInput {
@@ -4862,6 +4869,8 @@ enum PackageTransitEventOrderByInput {
   status_DESC
   subStatus_ASC
   subStatus_DESC
+  data_ASC
+  data_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -4872,6 +4881,7 @@ type PackageTransitEventPreviousValues {
   id: ID!
   status: PackageTransitEventStatus!
   subStatus: PackageTransitEventSubStatus!
+  data: Json!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -4980,16 +4990,19 @@ enum PackageTransitEventSubStatus {
 input PackageTransitEventUpdateDataInput {
   status: PackageTransitEventStatus
   subStatus: PackageTransitEventSubStatus
+  data: Json
 }
 
 input PackageTransitEventUpdateInput {
   status: PackageTransitEventStatus
   subStatus: PackageTransitEventSubStatus
+  data: Json
 }
 
 input PackageTransitEventUpdateManyDataInput {
   status: PackageTransitEventStatus
   subStatus: PackageTransitEventSubStatus
+  data: Json
 }
 
 input PackageTransitEventUpdateManyInput {
@@ -5007,6 +5020,7 @@ input PackageTransitEventUpdateManyInput {
 input PackageTransitEventUpdateManyMutationInput {
   status: PackageTransitEventStatus
   subStatus: PackageTransitEventSubStatus
+  data: Json
 }
 
 input PackageTransitEventUpdateManyWithWhereNestedInput {
@@ -5075,6 +5089,7 @@ input PackageTransitEventWhereUniqueInput {
 
 input PackageUpdateDataInput {
   items: PhysicalProductUpdateManyInput
+  transactionID: String
   shippingLabel: LabelUpdateOneRequiredInput
   fromAddress: LocationUpdateOneRequiredInput
   toAddress: LocationUpdateOneRequiredInput
@@ -5084,6 +5099,7 @@ input PackageUpdateDataInput {
 
 input PackageUpdateInput {
   items: PhysicalProductUpdateManyInput
+  transactionID: String
   shippingLabel: LabelUpdateOneRequiredInput
   fromAddress: LocationUpdateOneRequiredInput
   toAddress: LocationUpdateOneRequiredInput
@@ -5092,6 +5108,7 @@ input PackageUpdateInput {
 }
 
 input PackageUpdateManyMutationInput {
+  transactionID: String
   weight: Float
 }
 
@@ -5127,6 +5144,20 @@ input PackageWhereInput {
   items_every: PhysicalProductWhereInput
   items_some: PhysicalProductWhereInput
   items_none: PhysicalProductWhereInput
+  transactionID: String
+  transactionID_not: String
+  transactionID_in: [String!]
+  transactionID_not_in: [String!]
+  transactionID_lt: String
+  transactionID_lte: String
+  transactionID_gt: String
+  transactionID_gte: String
+  transactionID_contains: String
+  transactionID_not_contains: String
+  transactionID_starts_with: String
+  transactionID_not_starts_with: String
+  transactionID_ends_with: String
+  transactionID_not_ends_with: String
   shippingLabel: LabelWhereInput
   fromAddress: LocationWhereInput
   toAddress: LocationWhereInput
@@ -9656,6 +9687,7 @@ type Reservation {
   feedback: ReservationFeedback
   products(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct!]
   reservationNumber: Int!
+  phase: ReservationPhase!
   shipped: Boolean!
   status: ReservationStatus!
   shippedAt: DateTime
@@ -9682,6 +9714,7 @@ input ReservationCreateInput {
   feedback: ReservationFeedbackCreateOneWithoutReservationInput
   products: PhysicalProductCreateManyInput
   reservationNumber: Int!
+  phase: ReservationPhase!
   shipped: Boolean!
   status: ReservationStatus!
   shippedAt: DateTime
@@ -9714,6 +9747,7 @@ input ReservationCreateWithoutCustomerInput {
   feedback: ReservationFeedbackCreateOneWithoutReservationInput
   products: PhysicalProductCreateManyInput
   reservationNumber: Int!
+  phase: ReservationPhase!
   shipped: Boolean!
   status: ReservationStatus!
   shippedAt: DateTime
@@ -9731,6 +9765,7 @@ input ReservationCreateWithoutFeedbackInput {
   returnedPackage: PackageCreateOneInput
   products: PhysicalProductCreateManyInput
   reservationNumber: Int!
+  phase: ReservationPhase!
   shipped: Boolean!
   status: ReservationStatus!
   shippedAt: DateTime
@@ -9749,6 +9784,7 @@ input ReservationCreateWithoutReceiptInput {
   feedback: ReservationFeedbackCreateOneWithoutReservationInput
   products: PhysicalProductCreateManyInput
   reservationNumber: Int!
+  phase: ReservationPhase!
   shipped: Boolean!
   status: ReservationStatus!
   shippedAt: DateTime
@@ -9998,6 +10034,8 @@ enum ReservationOrderByInput {
   id_DESC
   reservationNumber_ASC
   reservationNumber_DESC
+  phase_ASC
+  phase_DESC
   shipped_ASC
   shipped_DESC
   status_ASC
@@ -10014,9 +10052,15 @@ enum ReservationOrderByInput {
   updatedAt_DESC
 }
 
+enum ReservationPhase {
+  BusinessToCustomer
+  CustomerToBusiness
+}
+
 type ReservationPreviousValues {
   id: ID!
   reservationNumber: Int!
+  phase: ReservationPhase!
   shipped: Boolean!
   status: ReservationStatus!
   shippedAt: DateTime
@@ -10378,6 +10422,10 @@ input ReservationScalarWhereInput {
   reservationNumber_lte: Int
   reservationNumber_gt: Int
   reservationNumber_gte: Int
+  phase: ReservationPhase
+  phase_not: ReservationPhase
+  phase_in: [ReservationPhase!]
+  phase_not_in: [ReservationPhase!]
   shipped: Boolean
   shipped_not: Boolean
   status: ReservationStatus
@@ -10466,6 +10514,7 @@ input ReservationUpdateInput {
   feedback: ReservationFeedbackUpdateOneWithoutReservationInput
   products: PhysicalProductUpdateManyInput
   reservationNumber: Int
+  phase: ReservationPhase
   shipped: Boolean
   status: ReservationStatus
   shippedAt: DateTime
@@ -10477,6 +10526,7 @@ input ReservationUpdateInput {
 
 input ReservationUpdateManyDataInput {
   reservationNumber: Int
+  phase: ReservationPhase
   shipped: Boolean
   status: ReservationStatus
   shippedAt: DateTime
@@ -10486,6 +10536,7 @@ input ReservationUpdateManyDataInput {
 
 input ReservationUpdateManyMutationInput {
   reservationNumber: Int
+  phase: ReservationPhase
   shipped: Boolean
   status: ReservationStatus
   shippedAt: DateTime
@@ -10531,6 +10582,7 @@ input ReservationUpdateWithoutCustomerDataInput {
   feedback: ReservationFeedbackUpdateOneWithoutReservationInput
   products: PhysicalProductUpdateManyInput
   reservationNumber: Int
+  phase: ReservationPhase
   shipped: Boolean
   status: ReservationStatus
   shippedAt: DateTime
@@ -10547,6 +10599,7 @@ input ReservationUpdateWithoutFeedbackDataInput {
   returnedPackage: PackageUpdateOneInput
   products: PhysicalProductUpdateManyInput
   reservationNumber: Int
+  phase: ReservationPhase
   shipped: Boolean
   status: ReservationStatus
   shippedAt: DateTime
@@ -10564,6 +10617,7 @@ input ReservationUpdateWithoutReceiptDataInput {
   feedback: ReservationFeedbackUpdateOneWithoutReservationInput
   products: PhysicalProductUpdateManyInput
   reservationNumber: Int
+  phase: ReservationPhase
   shipped: Boolean
   status: ReservationStatus
   shippedAt: DateTime
@@ -10624,6 +10678,10 @@ input ReservationWhereInput {
   reservationNumber_lte: Int
   reservationNumber_gt: Int
   reservationNumber_gte: Int
+  phase: ReservationPhase
+  phase_not: ReservationPhase
+  phase_in: [ReservationPhase!]
+  phase_not_in: [ReservationPhase!]
   shipped: Boolean
   shipped_not: Boolean
   status: ReservationStatus

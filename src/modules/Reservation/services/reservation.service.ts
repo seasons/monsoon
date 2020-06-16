@@ -555,8 +555,10 @@ export class ReservationService {
           id: user.id,
         },
       },
+      phase: "BusinessToCustomer",
       sentPackage: {
         create: {
+          transactionID: seasonsToCustomerTransaction.object_id,
           weight: shipmentWeight,
           items: {
             // need to include the type on the function passed into map
@@ -588,6 +590,7 @@ export class ReservationService {
         },
       },
       returnedPackage: {
+        transactionID: customerToSeasonsTransaction.object_id,
         create: {
           shippingLabel: {
             create: {
