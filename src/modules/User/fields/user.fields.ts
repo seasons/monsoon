@@ -1,16 +1,30 @@
-import { User } from "@app/decorators"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
-import { ResolveField, Resolver } from "@nestjs/graphql"
+import { PrismaService } from "@app/prisma/prisma.service"
+import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
 
 @Resolver("User")
 export class UserFieldsResolver {
-  constructor(private readonly pushNotification: PushNotificationService) {}
+  constructor(
+    private readonly pushNotification: PushNotificationService,
+    private readonly prisma: PrismaService
+  ) {}
 
   @ResolveField()
-  async beamsToken(@User() user) {
+  async beamsToken(@Parent() user) {
     if (!user) {
       return ""
     }
-    return this.pushNotification.generateToken(user.email)
+    return this.pushNotification.generateToken(
+      await this.prisma.client.user({ id: user.id }).email()
+    )
+  }
+
+  @ResolveField()
+  async fullName(@Parent() user) {
+    if (!user) {
+      return ""
+    }
+    const rec = await this.prisma.client.user({ id: user.id })
+    return `${rec.firstName} ${rec.lastName}`
   }
 }

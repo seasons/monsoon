@@ -66,6 +66,7 @@ type User {
   email: String!
   firstName: String!
   lastName: String!
+  fullName: String!
   role: UserRole!
   roles: [UserRole!]!
   createdAt: DateTime!
