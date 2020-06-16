@@ -15,19 +15,19 @@
   },
   "NewBlogPost": {
     "alert": {
-      "title": "Blog Post: {{category}}",
-      "body": "{{headline}}"
+      "title": "Blog Post: {{{category}}}",
+      "body": "{{{headline}}}"
     },
-    "data": { "route": "Webview", "params": { "uri": "{{& uri}}" } }
+    "data": { "route": "Webview", "params": { "uri": "{{{uri}}}" } }
   },
   "Custom": {
     "alert": {
-      "title": "{{title}}",
-      "body": "{{body}}"
+      "title": "{{{title}}}",
+      "body": "{{{body}}}"
     },
     "data": {
       "route": "{{route}}",
-      "params": { "uri": "{{& uri}}", "id": "{{id}}", "slug": "{{slug}}" }
+      "params": { "uri": "{{{uri}}}", "id": "{{id}}", "slug": "{{slug}}" }
     }
   }
 }
