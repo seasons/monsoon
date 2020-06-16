@@ -66,7 +66,7 @@ type Reservation {
   images(width: Int, height: Int, size: ImageSize): [Image!]!
   reservationNumber: Int!
   shipped: Boolean!
-  status(display: Boolean): String!
+  status: ReservationStatus!
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime

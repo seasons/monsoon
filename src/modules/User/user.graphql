@@ -32,8 +32,9 @@ type Mutation {
     details: CustomerDetailCreateInput
   ): AuthPayload!
   login(email: String!, password: String!): AuthPayload!
-  updateUserPushNotifications(pushNotificationsStatus: String!): User!
-    @hasRole(roles: [Customer])
+  updateUserPushNotificationStatus(
+    pushNotificationStatus: PushNotificationStatus!
+  ): User! @hasRole(roles: [Customer])
   resetPassword(email: String!): ResetPasswordPayload! @isAuthenticated
   refreshToken(refreshToken: String!): String!
 }
@@ -69,6 +70,7 @@ type User {
   roles: [UserRole!]!
   createdAt: DateTime!
   updatedAt: DateTime!
-  pushNotifications: PushNotificationStatus!
+  pushNotifications: [PushNotificationReceipt!]
+  pushNotificationStatus: PushNotificationStatus
   beamsToken: String!
 }

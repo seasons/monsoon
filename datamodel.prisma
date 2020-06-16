@@ -83,6 +83,7 @@ enum ReservationStatus {
   Cancelled
   Blocked
   Unknown
+  InTransit
 
   # To be deleted, needed for migration
   # InQueue
@@ -447,14 +448,17 @@ type PushNotificationReceipt {
   screen: String
   # uri, e.g https://blog.seasons.nyc/posts/can-the-industry-fix-seasons
   uri: String
-  # user = which customer to send message to
-  users: [User!]
+  users: [User!] @relation(name: "UserToPushNotificationReceipts")
   # interest = interest we sent it to
   interest: String
   # body = body of the message
   body: String!
   # title = title of the message
   title: String
+  # id we pass as a param
+  recordID: String
+  # slug we pass as a param
+  recordSlug: String
   sentAt: DateTime!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
@@ -470,7 +474,9 @@ type User {
   roles: [UserRole!]! @scalarList(strategy: RELATION)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
-  pushNotifications: PushNotificationStatus! @default(value: Denied)
+  pushNotificationStatus: PushNotificationStatus! @default(value: Denied)
+  pushNotifications: [PushNotificationReceipt!]
+    @relation(name: "UserToPushNotificationReceipts")
 }
 
 type CustomerDetail {
@@ -560,8 +566,6 @@ type Reservation {
     @relation(name: "SeasonsToCustomerPackage", onDelete: CASCADE)
   returnedPackage: Package
     @relation(name: "CustomerToSeasonsPackage", onDelete: CASCADE)
-  feedback: ReservationFeedback
-    @relation(name: "ReservationFeedbackReservation")
   products: [PhysicalProduct!]!
   reservationNumber: Int! @unique
   phase: ReservationPhase!
@@ -585,10 +589,10 @@ type ReservationFeedback {
   id: ID! @id
   comment: String
   feedbacks: [ProductVariantFeedback!]!
+    @relation(link: TABLE, onDelete: CASCADE)
   rating: Rating
   user: User!
   reservation: Reservation!
-    @relation(link: INLINE, name: "ReservationFeedbackReservation")
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
   respondedAt: DateTime

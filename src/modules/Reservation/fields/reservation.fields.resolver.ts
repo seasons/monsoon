@@ -62,12 +62,4 @@ export class ReservationFieldsResolver {
       }
     })
   }
-
-  @ResolveField()
-  async status(@Parent() parent, @Args() args) {
-    const reservation = await this.prisma.client.reservation({
-      id: parent.id,
-    })
-    return reservation.status
-  }
 }

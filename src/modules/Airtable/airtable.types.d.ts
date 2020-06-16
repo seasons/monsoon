@@ -47,15 +47,16 @@ export type AirtableProductVariantCounts = {
 
 export type AirtableReservationFields = {
   Status:
-    | "New"
-    | "In Queue"
-    | "On Hold"
+    | "Queued"
     | "Packed"
     | "Shipped"
+    | "Delivered"
+    | "Completed"
+    | "Cancelled"
+    | "Blocked"
+    | "Unknown"
     | "In Transit"
     | "Received"
-    | "Cancelled"
-    | "Completed"
 }
 
 export interface AirtableUserFields extends CustomerDetailCreateInput {

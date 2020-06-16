@@ -2,7 +2,7 @@ import { Module } from "@nestjs/common"
 import { PrismaModule } from "@prisma/prisma.module"
 
 import { AirtableModule } from "../Airtable/airtable.module"
-import { PushNotificationsModule } from "../PushNotifications/pushNotifications.module"
+import { PushNotificationModule } from "../PushNotification/pushNotification.module"
 import { ShippingModule } from "../Shipping/shipping.module"
 import { MeFieldsResolver } from "./fields/me.fields"
 import { UserFieldsResolver } from "./fields/user.fields"
@@ -19,7 +19,7 @@ import { CustomerService } from "./services/customer.service"
     AirtableModule,
     PrismaModule,
     ShippingModule,
-    PushNotificationsModule,
+    PushNotificationModule,
   ],
   providers: [
     AuthService,

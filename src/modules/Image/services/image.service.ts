@@ -17,7 +17,7 @@ interface ImageResizerOptions {
   w?: number
   h?: number
   retina?: boolean
-  format?: ImageFormat
+  fm?: ImageFormat
 }
 interface ImageSizeOptions {
   w?: number

@@ -1,10 +1,10 @@
 import { BlogService } from "@app/modules/Blog"
 import { WebflowService } from "@app/modules/Blog/services/webflow.service"
 import {
-  PushNotificationsDataProvider,
-  PushNotificationsService,
+  PushNotificationDataProvider,
+  PushNotificationService,
   PusherService,
-} from "@app/modules/PushNotifications"
+} from "@app/modules/PushNotification"
 import { UtilsService } from "@app/modules/Utils"
 import { PrismaService } from "@prisma/prisma.service"
 import { upperFirst } from "lodash"
@@ -13,9 +13,9 @@ import moment from "moment"
 export const webflowEvents = async (_, res) => {
   // Create services
   const prisma = new PrismaService()
-  const pushNotifications = new PushNotificationsService(
+  const pushNotifications = new PushNotificationService(
     new PusherService(),
-    new PushNotificationsDataProvider(),
+    new PushNotificationDataProvider(),
     prisma
   )
   const utils = new UtilsService(prisma)

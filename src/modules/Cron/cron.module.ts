@@ -1,7 +1,7 @@
+import { PushNotificationModule } from "@app/modules/PushNotification/pushNotification.module"
 import { AirtableModule } from "@modules/Airtable/airtable.module"
 import { EmailModule } from "@modules/Email/email.module"
 import { ErrorModule } from "@modules/Error/error.module"
-import { PushNotificationsModule } from "@modules/PushNotifications/pushNotifications.module"
 import { ReservationModule } from "@modules/Reservation/reservation.module"
 import { ShippingModule } from "@modules/Shipping/shipping.module"
 import { SlackModule } from "@modules/Slack/slack.module"
@@ -28,7 +28,7 @@ import { UsersScheduledJobs } from "./services/users.job.service"
     UserModule,
     ReservationModule,
     UtilsModule,
-    PushNotificationsModule,
+    PushNotificationModule,
   ],
   providers: [
     ReservationScheduledJobs,

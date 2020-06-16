@@ -2,23 +2,23 @@ import "module-alias/register"
 
 import PushNotifications from "@pusher/push-notifications-server"
 
-const run = async () => {
-  const client: PushNotifications = new PushNotifications({
-    instanceId: process.env.PUSHER_INSTANCE_ID,
-    secretKey: process.env.PUSHER_SECRET_KEY,
-  })
+import { PusherService } from "../modules/PushNotification/services/pusher.service"
+import { PushNotificationDataProvider } from "../modules/PushNotification/services/pushNotification.data.service"
+import { PushNotificationService } from "../modules/PushNotification/services/pushNotification.service"
+import { PrismaService } from "../prisma/prisma.service"
 
-  const y = await client.publishToInterests(
-    ["debug-seasons-general-notifications"],
-    {
-      // const y = await client.publishToUsers(["faiyam+1@faiyamrahman.com"], {
-      apns: {
-        aps: { alert: { title: "yo", body: "yo" } },
-        data: { route: "Faq" },
-      },
-    } as any
+const run = async () => {
+  const pns = new PushNotificationService(
+    new PusherService(),
+    new PushNotificationDataProvider(),
+    new PrismaService()
   )
-  console.log(y)
+
+  await pns.pushNotifyUser({
+    email: "grace-mckenzie@seasons.nyc",
+    pushNotifID: "Custom",
+    vars: { title: "yo", body: "yo" },
+  })
 }
 
 run()

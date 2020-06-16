@@ -90,7 +90,7 @@ export class ProductUtilsService {
         .category({ slug: args.category })
         .children()
 
-      return children.length > 0
+      return children?.length > 0
         ? {
             where: {
               ...args.where,
@@ -102,7 +102,7 @@ export class ProductUtilsService {
             where: {
               ...args.where,
               ...brandFilter.where,
-              category: { slug: category.slug },
+              category: { slug: category?.slug || "" },
             },
           }
     } else {

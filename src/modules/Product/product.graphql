@@ -201,7 +201,7 @@ input UpsertProductInput {
   functions: [String!]!
   images: [Upload!]!
   innerMaterials: [String!]!
-  modelID: String!
+  modelID: String
   modelSizeDisplay: String
   modelSizeName: String
   name: String!

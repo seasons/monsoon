@@ -1,16 +1,16 @@
 import { User } from "@app/decorators"
-import { PushNotificationsService } from "@modules/PushNotifications/services/pushNotifications.service"
+import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { ResolveField, Resolver } from "@nestjs/graphql"
 
 @Resolver("User")
 export class UserFieldsResolver {
-  constructor(private readonly pushNotifications: PushNotificationsService) {}
+  constructor(private readonly pushNotification: PushNotificationService) {}
 
   @ResolveField()
   async beamsToken(@User() user) {
     if (!user) {
       return ""
     }
-    return this.pushNotifications.generateToken(user.email)
+    return this.pushNotification.generateToken(user.email)
   }
 }
