@@ -69,6 +69,7 @@ type User {
   fullName: String!
   role: UserRole!
   roles: [UserRole!]!
+  customer: Customer
   createdAt: DateTime!
   updatedAt: DateTime!
   pushNotifications: [PushNotificationReceipt!]

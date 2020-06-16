@@ -1,6 +1,7 @@
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { PrismaService } from "@app/prisma/prisma.service"
-import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
+import { Info, Parent, ResolveField, Resolver } from "@nestjs/graphql"
+import { head } from "lodash"
 
 @Resolver("User")
 export class UserFieldsResolver {
@@ -26,5 +27,21 @@ export class UserFieldsResolver {
     }
     const rec = await this.prisma.client.user({ id: user.id })
     return `${rec.firstName} ${rec.lastName}`
+  }
+
+  @ResolveField()
+  async customer(@Parent() user, @Info() info) {
+    if (!user) {
+      return null
+    }
+
+    return head(
+      await this.prisma.binding.query.customers(
+        {
+          where: { user: { id: user.id } },
+        },
+        info
+      )
+    )
   }
 }
