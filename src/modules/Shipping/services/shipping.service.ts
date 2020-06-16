@@ -211,6 +211,7 @@ export class ShippingService {
       } else if (!transaction.label_url) {
         return reject(JSON.stringify(transaction))
       }
+
       return resolve(transaction)
     })
   }

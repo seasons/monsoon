@@ -33,7 +33,7 @@ export class CustomerFieldsResolver {
       `
         {
           id
-          respondedAt 
+          respondedAt
         }
       `
     )

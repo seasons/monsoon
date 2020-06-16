@@ -1,3 +1,8 @@
+import {
+  PackageTransitEventStatus,
+  PackageTransitEventSubStatus,
+} from "@app/prisma"
+
 export interface ShippoShipment {
   address_from: any
   address_to: any
