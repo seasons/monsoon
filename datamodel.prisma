@@ -84,10 +84,6 @@ enum ReservationStatus {
   Blocked
   Unknown
   InTransit
-
-  # To be deleted, needed for migration
-  # InQueue
-  # Received
 }
 
 enum BagItemStatus {
