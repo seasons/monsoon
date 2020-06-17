@@ -4,6 +4,7 @@ import { PrismaModule } from "@prisma/prisma.module"
 import { AirtableModule } from "../Airtable/airtable.module"
 import { PushNotificationModule } from "../PushNotification/pushNotification.module"
 import { ShippingModule } from "../Shipping/shipping.module"
+import { UtilsModule } from "../Utils/utils.module"
 import { MeFieldsResolver } from "./fields/me.fields"
 import { UserFieldsResolver } from "./fields/user.fields"
 import { AuthMutationsResolver } from "./mutations/auth.mutations"
@@ -20,6 +21,7 @@ import { CustomerService } from "./services/customer.service"
     PrismaModule,
     ShippingModule,
     PushNotificationModule,
+    UtilsModule,
   ],
   providers: [
     AuthService,

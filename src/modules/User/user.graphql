@@ -72,6 +72,7 @@ type User {
   customer: Customer
   createdAt: DateTime!
   updatedAt: DateTime!
+  completeAccountURL: String!
   pushNotifications: [PushNotificationReceipt!]
   pushNotificationStatus: PushNotificationStatus
   beamsToken: String!

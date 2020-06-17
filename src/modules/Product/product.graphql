@@ -132,6 +132,7 @@ type Mutation {
   addViewedProduct(item: ID!): RecentlyViewedProduct!
   upsertProduct(input: UpsertProductInput!): Product @hasRole(roles: [Admin])
   addProductRequest(reason: String!, url: String!): ProductRequest!
+  createBrand(input: BrandCreateInput!): Brand @hasRole(roles: [Admin])
 }
 
 type Product {

@@ -348,4 +348,21 @@ export class ProductUtilsService {
       },
     })
   }
+
+  async upsertMaterialCategory(material, category) {
+    const data = {
+      slug: material.name,
+      lifeExpectancy: material.lifeExpectancy,
+      category: {
+        connect: {
+          slug: category.slug,
+        },
+      },
+    }
+    return await this.prisma.client.upsertProductMaterialCategory({
+      where: { slug: material.name },
+      create: data,
+      update: data,
+    })
+  }
 }

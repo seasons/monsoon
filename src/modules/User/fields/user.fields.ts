@@ -1,4 +1,5 @@
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
+import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Info, Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { head } from "lodash"
@@ -7,7 +8,8 @@ import { head } from "lodash"
 export class UserFieldsResolver {
   constructor(
     private readonly pushNotification: PushNotificationService,
-    private readonly prisma: PrismaService
+    private readonly prisma: PrismaService,
+    private readonly utils: UtilsService
   ) {}
 
   @ResolveField()
@@ -43,5 +45,11 @@ export class UserFieldsResolver {
         info
       )
     )
+  }
+
+  @ResolveField()
+  async completeAccountURL(@Parent() user) {
+    const idHash = this.utils.encryptUserIDHash(user.id)
+    return `${process.env.SEEDLING_URL}/complete?idHash=${idHash}`
   }
 }

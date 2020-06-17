@@ -142,16 +142,21 @@ export class ReservationService {
         rollbackPrismaReservationCreation,
       ] = await this.createPrismaReservation(reservationData)
       rollbackFuncs.push(rollbackPrismaReservationCreation)
-      const [
-        ,
-        rollbackAirtableReservationCreation,
-      ] = await this.airtableService.createAirtableReservation(
-        user.email,
-        reservationData,
-        (seasonsToCustomerTransaction as ShippoTransaction).formatted_error,
-        (customerToSeasonsTransaction as ShippoTransaction).formatted_error
-      )
-      rollbackFuncs.push(rollbackAirtableReservationCreation)
+      try {
+        const [
+          ,
+          rollbackAirtableReservationCreation,
+        ] = await this.airtableService.createAirtableReservation(
+          user.email,
+          reservationData,
+          (seasonsToCustomerTransaction as ShippoTransaction).formatted_error,
+          (customerToSeasonsTransaction as ShippoTransaction).formatted_error
+        )
+        rollbackFuncs.push(rollbackAirtableReservationCreation)
+      } catch (err) {
+        console.log(err)
+        Sentry.captureException(err)
+      }
 
       // Send confirmation email
       await this.emails.sendReservationConfirmationEmail(
@@ -477,7 +482,7 @@ export class ReservationService {
 
   private async markBagItemsReserved(
     customerId: ID_Input,
-    productVariantIds: Array<ID_Input>
+    productVariantIds: ID_Input[]
   ): Promise<() => void> {
     const bagItemsToUpdateIds = (
       await this.prisma.client.bagItems({
@@ -556,8 +561,10 @@ export class ReservationService {
           id: user.id,
         },
       },
+      phase: "BusinessToCustomer",
       sentPackage: {
         create: {
+          transactionID: seasonsToCustomerTransaction.object_id,
           weight: shipmentWeight,
           items: {
             // need to include the type on the function passed into map
@@ -590,6 +597,7 @@ export class ReservationService {
       },
       returnedPackage: {
         create: {
+          transactionID: customerToSeasonsTransaction.object_id,
           shippingLabel: {
             create: {
               image: customerToSeasonsTransaction.label_url || "",
@@ -630,6 +638,7 @@ export class ReservationService {
     const reservation = await this.prisma.client.createReservation(
       reservationData
     )
+
     const rollbackPrismaReservation = async () => {
       await this.prisma.client.deleteReservation({ id: reservation.id })
     }

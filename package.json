@@ -11,7 +11,7 @@
   "scripts": {
     "apollo": "apollo service:push",
     "build": "rimraf dist && tsc",
-    "check:parity": "node -r dotenv/config -r ts-node/register src/scripts/queryParity.ts",
+    "check:parity": "node -r dotenv/config -r ts-node/register dotenv_config_path=.env src/scripts/queryParity.ts",
     "debug": "concurrently --kill-others 'yarn tsc -w' 'yarn debug:server'",
     "debug:server": "dotenv -- nodemon -e ts,graphql -x node --inspect -r dotenv/config -r ts-node/register src/index.ts",
     "debug:cli": "node --inspect-brk -r dotenv/config -r ts-node/register bin/cli.js",
@@ -64,6 +64,7 @@
     "bcryptjs": "2.4.3",
     "body-parser": "^1.19.0",
     "bufferutil": "^4.0.1",
+    "camelcase-keys": "^6.2.2",
     "canvas": "^2.5.0",
     "chargebee": ">=2 <3",
     "cheerio": "^1.0.0-rc.3",

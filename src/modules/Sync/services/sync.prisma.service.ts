@@ -15,7 +15,7 @@ interface DBVars {
   endpoint: string
   secret: string
 }
-type prismaSyncDestination = "local" | "staging"
+type PrismaSyncDestination = "local" | "staging"
 
 @Injectable()
 export class PrismaSyncService {
@@ -30,7 +30,7 @@ export class PrismaSyncService {
     process.env[`DB_${env.toUpperCase()}_SECRET`] = values.secret
   }
 
-  async syncPrisma(env: prismaSyncDestination) {
+  async syncPrisma(env: PrismaSyncDestination) {
     let toHost
     let toDBName
     let toUsername

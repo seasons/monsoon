@@ -1,4 +1,5 @@
 export { PaymentService } from "./services/payment.service"
+export { PaymentUtilsService } from "./services/payment.utils.service"
 export { PaymentModule } from "./payment.module"
 export { InvoicesForCustomersLoader } from "./loaders/invoicesForCustomers.loaders"
 export { TransactionsLoader } from "./loaders/transactions.loaders"
