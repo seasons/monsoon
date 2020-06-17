@@ -11815,6 +11815,7 @@ input ProductMaterialCategoryWhereInput {
 
 input ProductMaterialCategoryWhereUniqueInput {
   id: ID
+  slug: String
 }
 
 type ProductModel implements Node {
@@ -18720,7 +18721,6 @@ enum ReservationStatus {
   Cancelled
   Blocked
   Unknown
-  InTransit
   Received
 }
 
@@ -23016,7 +23016,6 @@ export type ReservationStatus =   'Queued' |
   'Cancelled' |
   'Blocked' |
   'Unknown' |
-  'InTransit' |
   'Received'
 
 export type SizeOrderByInput =   'id_ASC' |
@@ -27925,6 +27924,7 @@ export interface ProductMaterialCategoryWhereInput {
 
 export interface ProductMaterialCategoryWhereUniqueInput {
   id?: ID_Input | null
+  slug?: String | null
 }
 
 export interface ProductModelCreateInput {
