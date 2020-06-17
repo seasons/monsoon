@@ -28,7 +28,7 @@ export class UserFieldsResolver {
       return ""
     }
     const rec = await this.prisma.client.user({ id: user.id })
-    return `${rec.firstName} ${rec.lastName}`
+    return `${rec?.firstName} ${rec?.lastName}`
   }
 
   @ResolveField()
