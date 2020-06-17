@@ -60,7 +60,8 @@ type Reservation {
   customer: Customer!
   sentPackage: Package
   returnedPackage: Package
-  location: Location
+  feedback: ReservationFeedback
+  lastLocation: Location
   products: [PhysicalProduct!]!
   images(width: Int, height: Int, size: ImageSize): [Image!]!
   reservationNumber: Int!
@@ -72,18 +73,4 @@ type Reservation {
   returnAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
-}
-
-enum ReservationStatus {
-  Queued
-  Packed
-  Shipped
-  Delivered
-  Completed
-  Cancelled
-  Blocked
-  Unknown
-
-  # To be deleted, needed for migration
-  Received
 }

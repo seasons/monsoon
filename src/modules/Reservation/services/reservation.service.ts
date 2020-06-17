@@ -197,6 +197,7 @@ export class ReservationService {
           reservationNumber
           products {
               id
+              productStatus
               inventoryStatus
               seasonsUID
               productVariant {
@@ -476,7 +477,7 @@ export class ReservationService {
 
   private async markBagItemsReserved(
     customerId: ID_Input,
-    productVariantIds: Array<ID_Input>
+    productVariantIds: ID_Input[]
   ): Promise<() => void> {
     const bagItemsToUpdateIds = (
       await this.prisma.client.bagItems({
@@ -555,8 +556,10 @@ export class ReservationService {
           id: user.id,
         },
       },
+      phase: "BusinessToCustomer",
       sentPackage: {
         create: {
+          transactionID: seasonsToCustomerTransaction.object_id,
           weight: shipmentWeight,
           items: {
             // need to include the type on the function passed into map
@@ -589,6 +592,7 @@ export class ReservationService {
       },
       returnedPackage: {
         create: {
+          transactionID: customerToSeasonsTransaction.object_id,
           shippingLabel: {
             create: {
               image: customerToSeasonsTransaction.label_url || "",

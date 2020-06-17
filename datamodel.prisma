@@ -83,9 +83,7 @@ enum ReservationStatus {
   Cancelled
   Blocked
   Unknown
-  InTransit
 
-  # To be deleted, needed for migration
   Received
 }
 
@@ -207,6 +205,11 @@ enum PackageTransitEventSubStatus {
   PackageDisposed
   PackageLost
   Other
+}
+
+enum ReservationPhase {
+  BusinessToCustomer
+  CustomerToBusiness
 }
 
 type Brand {
@@ -345,7 +348,7 @@ type Product {
 
 type ProductMaterialCategory {
   id: ID! @id
-  slug: String!
+  slug: String! @unique
   lifeExpectancy: Int!
   category: Category!
   products: [Product!]! @relation(link: TABLE)
@@ -552,11 +555,6 @@ type RecentlyViewedProduct {
   updatedAt: DateTime! @updatedAt
 }
 
-enum ReservationPhase {
-  BusinessToCustomer
-  CustomerToBusiness
-}
-
 type Reservation {
   id: ID! @id
   user: User!
@@ -567,6 +565,7 @@ type Reservation {
     @relation(name: "CustomerToSeasonsPackage", onDelete: CASCADE)
   products: [PhysicalProduct!]!
   reservationNumber: Int! @unique
+  phase: ReservationPhase!
   shipped: Boolean!
   status: ReservationStatus!
   shippedAt: DateTime
@@ -574,7 +573,7 @@ type Reservation {
   reminderSentAt: DateTime
   receipt: ReservationReceipt
     @relation(
-      link: TABLE
+      link: INLINE
       name: "ReservationReceiptToReservation"
       onDelete: CASCADE
     )
@@ -631,6 +630,7 @@ type ReservationReceiptItem {
 type Package {
   id: ID! @id
   items: [PhysicalProduct!]
+  transactionID: String!
   shippingLabel: Label!
   fromAddress: Location! @relation(name: "SenderAddress")
   toAddress: Location! @relation(name: "RecipientAddress")
@@ -644,6 +644,7 @@ type PackageTransitEvent {
   id: ID! @id
   status: PackageTransitEventStatus!
   subStatus: PackageTransitEventSubStatus!
+  data: Json!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }

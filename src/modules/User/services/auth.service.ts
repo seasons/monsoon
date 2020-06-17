@@ -117,10 +117,17 @@ export class AuthService {
 
     if (user.roles.includes("Customer")) {
       const customer = await this.getCustomerFromUserID(user.id)
+
+      // TODO: remove customer.status check once we implement new onboarding flow
       if (
         customer &&
-        customer.status !== "Active" &&
-        customer.status !== "Authorized"
+        ![
+          "Active",
+          "Authorized",
+          "Paused",
+          "Suspended",
+          "Deactivated",
+        ].includes(customer.status)
       ) {
         throw new Error(`User account has not been approved`)
       }

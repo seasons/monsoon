@@ -2203,6 +2203,8 @@ export type PackageTransitEventSubStatus =
   | "PackageLost"
   | "Other";
 
+export type ReservationPhase = "BusinessToCustomer" | "CustomerToBusiness";
+
 export type ReservationStatus =
   | "Queued"
   | "Packed"
@@ -2212,7 +2214,6 @@ export type ReservationStatus =
   | "Cancelled"
   | "Blocked"
   | "Unknown"
-  | "InTransit"
   | "Received";
 
 export type PauseRequestOrderByInput =
@@ -2244,6 +2245,8 @@ export type ReservationOrderByInput =
   | "id_DESC"
   | "reservationNumber_ASC"
   | "reservationNumber_DESC"
+  | "phase_ASC"
+  | "phase_DESC"
   | "shipped_ASC"
   | "shipped_DESC"
   | "status_ASC"
@@ -2266,6 +2269,8 @@ export type PackageTransitEventOrderByInput =
   | "status_DESC"
   | "subStatus_ASC"
   | "subStatus_DESC"
+  | "data_ASC"
+  | "data_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -2518,6 +2523,8 @@ export type LocationOrderByInput =
 export type PackageOrderByInput =
   | "id_ASC"
   | "id_DESC"
+  | "transactionID_ASC"
+  | "transactionID_DESC"
   | "weight_ASC"
   | "weight_DESC"
   | "createdAt_ASC"
@@ -5059,6 +5066,10 @@ export interface ReservationWhereInput {
   reservationNumber_lte?: Maybe<Int>;
   reservationNumber_gt?: Maybe<Int>;
   reservationNumber_gte?: Maybe<Int>;
+  phase?: Maybe<ReservationPhase>;
+  phase_not?: Maybe<ReservationPhase>;
+  phase_in?: Maybe<ReservationPhase[] | ReservationPhase>;
+  phase_not_in?: Maybe<ReservationPhase[] | ReservationPhase>;
   shipped?: Maybe<Boolean>;
   shipped_not?: Maybe<Boolean>;
   status?: Maybe<ReservationStatus>;
@@ -5130,6 +5141,20 @@ export interface PackageWhereInput {
   items_every?: Maybe<PhysicalProductWhereInput>;
   items_some?: Maybe<PhysicalProductWhereInput>;
   items_none?: Maybe<PhysicalProductWhereInput>;
+  transactionID?: Maybe<String>;
+  transactionID_not?: Maybe<String>;
+  transactionID_in?: Maybe<String[] | String>;
+  transactionID_not_in?: Maybe<String[] | String>;
+  transactionID_lt?: Maybe<String>;
+  transactionID_lte?: Maybe<String>;
+  transactionID_gt?: Maybe<String>;
+  transactionID_gte?: Maybe<String>;
+  transactionID_contains?: Maybe<String>;
+  transactionID_not_contains?: Maybe<String>;
+  transactionID_starts_with?: Maybe<String>;
+  transactionID_not_starts_with?: Maybe<String>;
+  transactionID_ends_with?: Maybe<String>;
+  transactionID_not_ends_with?: Maybe<String>;
   shippingLabel?: Maybe<LabelWhereInput>;
   fromAddress?: Maybe<LocationWhereInput>;
   toAddress?: Maybe<LocationWhereInput>;
@@ -5720,6 +5745,7 @@ export type ProductFunctionWhereUniqueInput = AtLeastOne<{
 
 export type ProductMaterialCategoryWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
+  slug?: Maybe<String>;
 }>;
 
 export type ProductModelWhereUniqueInput = AtLeastOne<{
@@ -6827,6 +6853,7 @@ export interface ReservationCreateWithoutCustomerInput {
   returnedPackage?: Maybe<PackageCreateOneInput>;
   products?: Maybe<PhysicalProductCreateManyInput>;
   reservationNumber: Int;
+  phase: ReservationPhase;
   shipped: Boolean;
   status: ReservationStatus;
   shippedAt?: Maybe<DateTimeInput>;
@@ -6844,6 +6871,7 @@ export interface PackageCreateOneInput {
 export interface PackageCreateInput {
   id?: Maybe<ID_Input>;
   items?: Maybe<PhysicalProductCreateManyInput>;
+  transactionID: String;
   shippingLabel: LabelCreateOneInput;
   fromAddress: LocationCreateOneInput;
   toAddress: LocationCreateOneInput;
@@ -6902,6 +6930,7 @@ export interface PackageTransitEventCreateInput {
   id?: Maybe<ID_Input>;
   status: PackageTransitEventStatus;
   subStatus: PackageTransitEventSubStatus;
+  data: Json;
 }
 
 export interface ReservationReceiptCreateOneWithoutReservationInput {
@@ -9346,6 +9375,7 @@ export interface ReservationUpdateWithoutCustomerDataInput {
   returnedPackage?: Maybe<PackageUpdateOneInput>;
   products?: Maybe<PhysicalProductUpdateManyInput>;
   reservationNumber?: Maybe<Int>;
+  phase?: Maybe<ReservationPhase>;
   shipped?: Maybe<Boolean>;
   status?: Maybe<ReservationStatus>;
   shippedAt?: Maybe<DateTimeInput>;
@@ -9366,6 +9396,7 @@ export interface PackageUpdateOneInput {
 
 export interface PackageUpdateDataInput {
   items?: Maybe<PhysicalProductUpdateManyInput>;
+  transactionID?: Maybe<String>;
   shippingLabel?: Maybe<LabelUpdateOneRequiredInput>;
   fromAddress?: Maybe<LocationUpdateOneRequiredInput>;
   toAddress?: Maybe<LocationUpdateOneRequiredInput>;
@@ -9501,6 +9532,7 @@ export interface PackageTransitEventUpdateWithWhereUniqueNestedInput {
 export interface PackageTransitEventUpdateDataInput {
   status?: Maybe<PackageTransitEventStatus>;
   subStatus?: Maybe<PackageTransitEventSubStatus>;
+  data?: Maybe<Json>;
 }
 
 export interface PackageTransitEventUpsertWithWhereUniqueNestedInput {
@@ -9573,6 +9605,7 @@ export interface PackageTransitEventUpdateManyWithWhereNestedInput {
 export interface PackageTransitEventUpdateManyDataInput {
   status?: Maybe<PackageTransitEventStatus>;
   subStatus?: Maybe<PackageTransitEventSubStatus>;
+  data?: Maybe<Json>;
 }
 
 export interface PackageUpsertNestedInput {
@@ -9751,6 +9784,10 @@ export interface ReservationScalarWhereInput {
   reservationNumber_lte?: Maybe<Int>;
   reservationNumber_gt?: Maybe<Int>;
   reservationNumber_gte?: Maybe<Int>;
+  phase?: Maybe<ReservationPhase>;
+  phase_not?: Maybe<ReservationPhase>;
+  phase_in?: Maybe<ReservationPhase[] | ReservationPhase>;
+  phase_not_in?: Maybe<ReservationPhase[] | ReservationPhase>;
   shipped?: Maybe<Boolean>;
   shipped_not?: Maybe<Boolean>;
   status?: Maybe<ReservationStatus>;
@@ -9809,6 +9846,7 @@ export interface ReservationUpdateManyWithWhereNestedInput {
 
 export interface ReservationUpdateManyDataInput {
   reservationNumber?: Maybe<Int>;
+  phase?: Maybe<ReservationPhase>;
   shipped?: Maybe<Boolean>;
   status?: Maybe<ReservationStatus>;
   shippedAt?: Maybe<DateTimeInput>;
@@ -10703,6 +10741,7 @@ export interface LocationUpdateManyMutationInput {
 
 export interface PackageUpdateInput {
   items?: Maybe<PhysicalProductUpdateManyInput>;
+  transactionID?: Maybe<String>;
   shippingLabel?: Maybe<LabelUpdateOneRequiredInput>;
   fromAddress?: Maybe<LocationUpdateOneRequiredInput>;
   toAddress?: Maybe<LocationUpdateOneRequiredInput>;
@@ -10711,17 +10750,20 @@ export interface PackageUpdateInput {
 }
 
 export interface PackageUpdateManyMutationInput {
+  transactionID?: Maybe<String>;
   weight?: Maybe<Float>;
 }
 
 export interface PackageTransitEventUpdateInput {
   status?: Maybe<PackageTransitEventStatus>;
   subStatus?: Maybe<PackageTransitEventSubStatus>;
+  data?: Maybe<Json>;
 }
 
 export interface PackageTransitEventUpdateManyMutationInput {
   status?: Maybe<PackageTransitEventStatus>;
   subStatus?: Maybe<PackageTransitEventSubStatus>;
+  data?: Maybe<Json>;
 }
 
 export interface PauseRequestCreateInput {
@@ -11244,6 +11286,7 @@ export interface ReservationCreateInput {
   returnedPackage?: Maybe<PackageCreateOneInput>;
   products?: Maybe<PhysicalProductCreateManyInput>;
   reservationNumber: Int;
+  phase: ReservationPhase;
   shipped: Boolean;
   status: ReservationStatus;
   shippedAt?: Maybe<DateTimeInput>;
@@ -11433,6 +11476,7 @@ export interface ReservationUpdateDataInput {
   returnedPackage?: Maybe<PackageUpdateOneInput>;
   products?: Maybe<PhysicalProductUpdateManyInput>;
   reservationNumber?: Maybe<Int>;
+  phase?: Maybe<ReservationPhase>;
   shipped?: Maybe<Boolean>;
   status?: Maybe<ReservationStatus>;
   shippedAt?: Maybe<DateTimeInput>;
@@ -11843,6 +11887,7 @@ export interface ReservationUpdateInput {
   returnedPackage?: Maybe<PackageUpdateOneInput>;
   products?: Maybe<PhysicalProductUpdateManyInput>;
   reservationNumber?: Maybe<Int>;
+  phase?: Maybe<ReservationPhase>;
   shipped?: Maybe<Boolean>;
   status?: Maybe<ReservationStatus>;
   shippedAt?: Maybe<DateTimeInput>;
@@ -11854,6 +11899,7 @@ export interface ReservationUpdateInput {
 
 export interface ReservationUpdateManyMutationInput {
   reservationNumber?: Maybe<Int>;
+  phase?: Maybe<ReservationPhase>;
   shipped?: Maybe<Boolean>;
   status?: Maybe<ReservationStatus>;
   shippedAt?: Maybe<DateTimeInput>;
@@ -12027,6 +12073,7 @@ export interface ReservationCreateWithoutReceiptInput {
   returnedPackage?: Maybe<PackageCreateOneInput>;
   products?: Maybe<PhysicalProductCreateManyInput>;
   reservationNumber: Int;
+  phase: ReservationPhase;
   shipped: Boolean;
   status: ReservationStatus;
   shippedAt?: Maybe<DateTimeInput>;
@@ -12054,6 +12101,7 @@ export interface ReservationUpdateWithoutReceiptDataInput {
   returnedPackage?: Maybe<PackageUpdateOneInput>;
   products?: Maybe<PhysicalProductUpdateManyInput>;
   reservationNumber?: Maybe<Int>;
+  phase?: Maybe<ReservationPhase>;
   shipped?: Maybe<Boolean>;
   status?: Maybe<ReservationStatus>;
   shippedAt?: Maybe<DateTimeInput>;
@@ -15171,6 +15219,7 @@ export interface PauseRequestNullablePromise
 export interface Reservation {
   id: ID_Output;
   reservationNumber: Int;
+  phase: ReservationPhase;
   shipped: Boolean;
   status: ReservationStatus;
   shippedAt?: DateTimeOutput;
@@ -15196,6 +15245,7 @@ export interface ReservationPromise extends Promise<Reservation>, Fragmentable {
     last?: Int;
   }) => T;
   reservationNumber: () => Promise<Int>;
+  phase: () => Promise<ReservationPhase>;
   shipped: () => Promise<Boolean>;
   status: () => Promise<ReservationStatus>;
   shippedAt: () => Promise<DateTimeOutput>;
@@ -15225,6 +15275,7 @@ export interface ReservationSubscription
     last?: Int;
   }) => T;
   reservationNumber: () => Promise<AsyncIterator<Int>>;
+  phase: () => Promise<AsyncIterator<ReservationPhase>>;
   shipped: () => Promise<AsyncIterator<Boolean>>;
   status: () => Promise<AsyncIterator<ReservationStatus>>;
   shippedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
@@ -15254,6 +15305,7 @@ export interface ReservationNullablePromise
     last?: Int;
   }) => T;
   reservationNumber: () => Promise<Int>;
+  phase: () => Promise<ReservationPhase>;
   shipped: () => Promise<Boolean>;
   status: () => Promise<ReservationStatus>;
   shippedAt: () => Promise<DateTimeOutput>;
@@ -15267,6 +15319,7 @@ export interface ReservationNullablePromise
 
 export interface Package {
   id: ID_Output;
+  transactionID: String;
   weight?: Float;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
@@ -15283,6 +15336,7 @@ export interface PackagePromise extends Promise<Package>, Fragmentable {
     first?: Int;
     last?: Int;
   }) => T;
+  transactionID: () => Promise<String>;
   shippingLabel: <T = LabelPromise>() => T;
   fromAddress: <T = LocationPromise>() => T;
   toAddress: <T = LocationPromise>() => T;
@@ -15313,6 +15367,7 @@ export interface PackageSubscription
     first?: Int;
     last?: Int;
   }) => T;
+  transactionID: () => Promise<AsyncIterator<String>>;
   shippingLabel: <T = LabelSubscription>() => T;
   fromAddress: <T = LocationSubscription>() => T;
   toAddress: <T = LocationSubscription>() => T;
@@ -15343,6 +15398,7 @@ export interface PackageNullablePromise
     first?: Int;
     last?: Int;
   }) => T;
+  transactionID: () => Promise<String>;
   shippingLabel: <T = LabelPromise>() => T;
   fromAddress: <T = LocationPromise>() => T;
   toAddress: <T = LocationPromise>() => T;
@@ -15400,6 +15456,7 @@ export interface PackageTransitEvent {
   id: ID_Output;
   status: PackageTransitEventStatus;
   subStatus: PackageTransitEventSubStatus;
+  data: Json;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -15410,6 +15467,7 @@ export interface PackageTransitEventPromise
   id: () => Promise<ID_Output>;
   status: () => Promise<PackageTransitEventStatus>;
   subStatus: () => Promise<PackageTransitEventSubStatus>;
+  data: () => Promise<Json>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -15420,6 +15478,7 @@ export interface PackageTransitEventSubscription
   id: () => Promise<AsyncIterator<ID_Output>>;
   status: () => Promise<AsyncIterator<PackageTransitEventStatus>>;
   subStatus: () => Promise<AsyncIterator<PackageTransitEventSubStatus>>;
+  data: () => Promise<AsyncIterator<Json>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -15430,6 +15489,7 @@ export interface PackageTransitEventNullablePromise
   id: () => Promise<ID_Output>;
   status: () => Promise<PackageTransitEventStatus>;
   subStatus: () => Promise<PackageTransitEventSubStatus>;
+  data: () => Promise<Json>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -19402,6 +19462,7 @@ export interface PackageSubscriptionPayloadSubscription
 
 export interface PackagePreviousValues {
   id: ID_Output;
+  transactionID: String;
   weight?: Float;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
@@ -19411,6 +19472,7 @@ export interface PackagePreviousValuesPromise
   extends Promise<PackagePreviousValues>,
     Fragmentable {
   id: () => Promise<ID_Output>;
+  transactionID: () => Promise<String>;
   weight: () => Promise<Float>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
@@ -19420,6 +19482,7 @@ export interface PackagePreviousValuesSubscription
   extends Promise<AsyncIterator<PackagePreviousValues>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
+  transactionID: () => Promise<AsyncIterator<String>>;
   weight: () => Promise<AsyncIterator<Float>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
@@ -19454,6 +19517,7 @@ export interface PackageTransitEventPreviousValues {
   id: ID_Output;
   status: PackageTransitEventStatus;
   subStatus: PackageTransitEventSubStatus;
+  data: Json;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -19464,6 +19528,7 @@ export interface PackageTransitEventPreviousValuesPromise
   id: () => Promise<ID_Output>;
   status: () => Promise<PackageTransitEventStatus>;
   subStatus: () => Promise<PackageTransitEventSubStatus>;
+  data: () => Promise<Json>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -19474,6 +19539,7 @@ export interface PackageTransitEventPreviousValuesSubscription
   id: () => Promise<AsyncIterator<ID_Output>>;
   status: () => Promise<AsyncIterator<PackageTransitEventStatus>>;
   subStatus: () => Promise<AsyncIterator<PackageTransitEventSubStatus>>;
+  data: () => Promise<AsyncIterator<Json>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -20289,6 +20355,7 @@ export interface ReservationSubscriptionPayloadSubscription
 export interface ReservationPreviousValues {
   id: ID_Output;
   reservationNumber: Int;
+  phase: ReservationPhase;
   shipped: Boolean;
   status: ReservationStatus;
   shippedAt?: DateTimeOutput;
@@ -20303,6 +20370,7 @@ export interface ReservationPreviousValuesPromise
     Fragmentable {
   id: () => Promise<ID_Output>;
   reservationNumber: () => Promise<Int>;
+  phase: () => Promise<ReservationPhase>;
   shipped: () => Promise<Boolean>;
   status: () => Promise<ReservationStatus>;
   shippedAt: () => Promise<DateTimeOutput>;
@@ -20317,6 +20385,7 @@ export interface ReservationPreviousValuesSubscription
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   reservationNumber: () => Promise<AsyncIterator<Int>>;
+  phase: () => Promise<AsyncIterator<ReservationPhase>>;
   shipped: () => Promise<AsyncIterator<Boolean>>;
   status: () => Promise<AsyncIterator<ReservationStatus>>;
   shippedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
@@ -20961,6 +21030,10 @@ export const models: Model[] = [
     embedded: false
   },
   {
+    name: "ReservationPhase",
+    embedded: false
+  },
+  {
     name: "Brand",
     embedded: false
   },
@@ -21062,10 +21135,6 @@ export const models: Model[] = [
   },
   {
     name: "RecentlyViewedProduct",
-    embedded: false
-  },
-  {
-    name: "ReservationPhase",
     embedded: false
   },
   {

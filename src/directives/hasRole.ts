@@ -4,8 +4,9 @@ import { intersection } from "lodash"
 import { getEnforcedUser } from "./utils"
 
 export async function hasRole(next, _, { roles: permissibleRoles }, ctx) {
+  const userID = getEnforcedUser(ctx).id
   const userRoles = await new PrismaService().client
-    .user({ id: getEnforcedUser(ctx).id })
+    .user({ id: userID })
     .roles()
 
   if (intersection(permissibleRoles, userRoles).length === 0) {

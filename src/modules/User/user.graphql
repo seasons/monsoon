@@ -70,6 +70,7 @@ type User {
   roles: [UserRole!]!
   createdAt: DateTime!
   updatedAt: DateTime!
+  completeAccountURL: String!
   pushNotifications: [PushNotificationReceipt!]
   pushNotificationStatus: PushNotificationStatus
   beamsToken: String!

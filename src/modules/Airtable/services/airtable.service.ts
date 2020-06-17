@@ -80,7 +80,7 @@ export class AirtableService extends AirtableQueriesService {
           User: compact([airtableUserRecord?.id]),
           Items: (await this.getPhysicalProducts(itemIDs)).map(a => a.id),
           Shipped: false,
-          Status: "New",
+          Status: "Queued",
           "Shipping Address": compact(
             airtableUserRecord?.fields["Shipping Address"]
           ),
