@@ -142,16 +142,21 @@ export class ReservationService {
         rollbackPrismaReservationCreation,
       ] = await this.createPrismaReservation(reservationData)
       rollbackFuncs.push(rollbackPrismaReservationCreation)
-      // const [
-      //   ,
-      //   rollbackAirtableReservationCreation,
-      // ] = await this.airtableService.createAirtableReservation(
-      //   user.email,
-      //   reservationData,
-      //   (seasonsToCustomerTransaction as ShippoTransaction).formatted_error,
-      //   (customerToSeasonsTransaction as ShippoTransaction).formatted_error
-      // )
-      // rollbackFuncs.push(rollbackAirtableReservationCreation)
+      try {
+        const [
+          ,
+          rollbackAirtableReservationCreation,
+        ] = await this.airtableService.createAirtableReservation(
+          user.email,
+          reservationData,
+          (seasonsToCustomerTransaction as ShippoTransaction).formatted_error,
+          (customerToSeasonsTransaction as ShippoTransaction).formatted_error
+        )
+        rollbackFuncs.push(rollbackAirtableReservationCreation)
+      } catch (err) {
+        console.log(err)
+        Sentry.captureException(err)
+      }
 
       // Send confirmation email
       await this.emails.sendReservationConfirmationEmail(
