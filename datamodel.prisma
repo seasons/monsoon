@@ -83,6 +83,8 @@ enum ReservationStatus {
   Cancelled
   Blocked
   Unknown
+
+  Received
 }
 
 enum BagItemStatus {
