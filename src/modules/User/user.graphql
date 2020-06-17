@@ -66,8 +66,10 @@ type User {
   email: String!
   firstName: String!
   lastName: String!
+  fullName: String!
   role: UserRole!
   roles: [UserRole!]!
+  customer: Customer
   createdAt: DateTime!
   updatedAt: DateTime!
   completeAccountURL: String!
