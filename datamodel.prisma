@@ -507,6 +507,11 @@ type PushNotificationReceipt {
   updatedAt: DateTime! @updatedAt
 }
 
+enum UserVerificationMethod {
+  SMS
+  Email
+}
+
 type User {
   id: ID! @id
   auth0Id: String! @unique
@@ -515,11 +520,13 @@ type User {
   lastName: String!
   role: UserRole! @default(value: Customer)
   roles: [UserRole!]! @scalarList(strategy: RELATION)
-  createdAt: DateTime! @createdAt
-  updatedAt: DateTime! @updatedAt
   pushNotificationStatus: PushNotificationStatus! @default(value: Denied)
   pushNotifications: [PushNotificationReceipt!]
     @relation(name: "UserToPushNotificationReceipts")
+  verified: Boolean! @default(value: true)
+  verificationMethod: UserVerificationMethod
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
 }
 
 type CustomerDetail {
