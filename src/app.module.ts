@@ -32,6 +32,8 @@ import {
   UtilsModule,
   directiveResolvers,
 } from "./modules"
+import { SMSModule } from "./modules/SMS/sms.module"
+import { TwilioModule } from "./modules/Twilio/twilio.module"
 
 const analytics = new Analytics(process.env.SEGMENT_MONSOON_WRITE_KEY)
 
@@ -100,6 +102,8 @@ const scheduleModule =
     SlackModule,
     UserModule,
     UtilsModule,
+    TwilioModule,
+    SMSModule,
   ],
   providers: [
     {
