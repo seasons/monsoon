@@ -89,7 +89,7 @@ export class UtilsService {
 
   encryptUserIDHash(userID: string): string {
     const cipher = crypto.createCipher(
-      "aes-128-ctr",
+      "aes-128-cbc",
       `${process.env.HASH_SECRET}`
     )
     let hash = cipher.update(userID, "utf8", "hex")
@@ -99,7 +99,7 @@ export class UtilsService {
 
   decryptUserIDHash(hash: string): string {
     const decipher = crypto.createDecipher(
-      "aes-128-ctr",
+      "aes-128-cbc",
       `${process.env.HASH_SECRET}`
     )
     let decryptedHash = decipher.update(hash, "hex", "utf8")

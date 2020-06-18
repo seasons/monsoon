@@ -400,6 +400,7 @@ type PhysicalProduct {
   offloadNotes: String
   sequenceNumber: Int!
   warehouseLocation: WarehouseLocation
+  barcoded: Boolean @default(value: false)
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
