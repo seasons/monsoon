@@ -376,6 +376,10 @@ export class ProductService {
             id
             brandCode
           }
+          color {
+            id
+            name
+          }
         }`
     )
     if (functions) {
