@@ -5472,6 +5472,7 @@ type PhysicalProduct {
   offloadNotes: String
   sequenceNumber: Int!
   warehouseLocation: WarehouseLocation
+  barcoded: Boolean
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
@@ -5496,6 +5497,7 @@ input PhysicalProductCreateInput {
   offloadNotes: String
   sequenceNumber: Int!
   warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
+  barcoded: Boolean
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
@@ -5536,6 +5538,7 @@ input PhysicalProductCreateWithoutLocationInput {
   offloadNotes: String
   sequenceNumber: Int!
   warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
+  barcoded: Boolean
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
@@ -5551,6 +5554,7 @@ input PhysicalProductCreateWithoutProductVariantInput {
   offloadNotes: String
   sequenceNumber: Int!
   warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
+  barcoded: Boolean
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
@@ -5566,6 +5570,7 @@ input PhysicalProductCreateWithoutWarehouseLocationInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   sequenceNumber: Int!
+  barcoded: Boolean
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
@@ -5599,6 +5604,8 @@ enum PhysicalProductOrderByInput {
   offloadNotes_DESC
   sequenceNumber_ASC
   sequenceNumber_DESC
+  barcoded_ASC
+  barcoded_DESC
   dateOrdered_ASC
   dateOrdered_DESC
   dateReceived_ASC
@@ -5619,6 +5626,7 @@ type PhysicalProductPreviousValues {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   sequenceNumber: Int!
+  barcoded: Boolean
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
@@ -5689,6 +5697,8 @@ input PhysicalProductScalarWhereInput {
   sequenceNumber_lte: Int
   sequenceNumber_gt: Int
   sequenceNumber_gte: Int
+  barcoded: Boolean
+  barcoded_not: Boolean
   dateOrdered: DateTime
   dateOrdered_not: DateTime
   dateOrdered_in: [DateTime!]
@@ -5772,6 +5782,7 @@ input PhysicalProductUpdateDataInput {
   offloadNotes: String
   sequenceNumber: Int
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
+  barcoded: Boolean
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
@@ -5787,6 +5798,7 @@ input PhysicalProductUpdateInput {
   offloadNotes: String
   sequenceNumber: Int
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
+  barcoded: Boolean
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
@@ -5799,6 +5811,7 @@ input PhysicalProductUpdateManyDataInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   sequenceNumber: Int
+  barcoded: Boolean
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
@@ -5823,6 +5836,7 @@ input PhysicalProductUpdateManyMutationInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   sequenceNumber: Int
+  barcoded: Boolean
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
@@ -5885,6 +5899,7 @@ input PhysicalProductUpdateWithoutLocationDataInput {
   offloadNotes: String
   sequenceNumber: Int
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
+  barcoded: Boolean
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
@@ -5899,6 +5914,7 @@ input PhysicalProductUpdateWithoutProductVariantDataInput {
   offloadNotes: String
   sequenceNumber: Int
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
+  barcoded: Boolean
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
@@ -5913,6 +5929,7 @@ input PhysicalProductUpdateWithoutWarehouseLocationDataInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   sequenceNumber: Int
+  barcoded: Boolean
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
@@ -6033,6 +6050,8 @@ input PhysicalProductWhereInput {
   sequenceNumber_gt: Int
   sequenceNumber_gte: Int
   warehouseLocation: WarehouseLocationWhereInput
+  barcoded: Boolean
+  barcoded_not: Boolean
   dateOrdered: DateTime
   dateOrdered_not: DateTime
   dateOrdered_in: [DateTime!]
