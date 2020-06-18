@@ -40,6 +40,8 @@ type Mutation {
   ): User! @hasRole(roles: [Customer])
   resetPassword(email: String!): ResetPasswordPayload!
   refreshToken(refreshToken: String!): String!
+  startSMSVerification(where: UserWhereUniqueInput, number: String): User
+  checkSMSVerification(where: UserWhereUniqueInput, number: String): Boolean
 }
 
 type AuthPayload {

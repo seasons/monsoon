@@ -1,10 +1,11 @@
 import { Module } from "@nestjs/common"
-import { PrismaModule } from "@prisma/prisma.module"
 
 import { UtilsModule } from "../Utils/utils.module"
+import { TwilioService } from "./services/twilio.service"
 
 @Module({
-  controllers: [],
-  imports: [UtilsModule, PrismaModule],
+  exports: [TwilioService],
+  providers: [TwilioService],
+  imports: [UtilsModule],
 })
 export class TwilioModule {}
