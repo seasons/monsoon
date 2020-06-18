@@ -137,6 +137,14 @@ You can copy the staging and production environment variables directly from hero
 - `heroku config -s --app monsoon-staging > .env.staging`
 - `heroku config -s --app monsoon-production > .env.production`.
 
+You can set environment variables on heroku from your CLI with the following command:
+
+- `heroku config:set {ENV_VAR_NAME}={ENV_VAR_VALUE} -a {HEROKU_APP_NAME}
+
+For example, to see the variable HELLO with value WORLD on app monsoon-staging, you'd do:
+
+- `heroku config:set HELLO=WORLD -a monsoon-staging`
+
 You may need to install the CLI and login using `heroku login` first.
 
 ### Database security
