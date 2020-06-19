@@ -510,6 +510,13 @@ type PushNotificationReceipt {
 enum UserVerificationMethod {
   SMS
   Email
+  None
+}
+
+enum UserVerificationStatus {
+  Approved
+  Denied
+  Pending
 }
 
 type User {
@@ -523,8 +530,8 @@ type User {
   pushNotificationStatus: PushNotificationStatus! @default(value: Denied)
   pushNotifications: [PushNotificationReceipt!]
     @relation(name: "UserToPushNotificationReceipts")
-  verified: Boolean! @default(value: true)
-  verificationMethod: UserVerificationMethod
+  verificationStatus: UserVerificationStatus! @default(value: Pending)
+  verificationMethod: UserVerificationMethod! @default(value: None)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }

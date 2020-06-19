@@ -1,0 +1,10 @@
+type Mutation {
+  startSMSVerification(
+    phoneNumber: String!
+    where: UserWhereUniqueInput!
+  ): Boolean!
+  checkSMSVerification(
+    code: String!
+    where: UserWhereUniqueInput!
+  ): UserVerificationStatus!
+}

@@ -10597,10 +10597,26 @@ type PhysicalProductInventoryStatusChangeEdge {
 enum PhysicalProductInventoryStatusChangeOrderByInput {
   id_ASC
   id_DESC
-  old_ASC
-  old_DESC
-  new_ASC
-  new_DESC
+  seasonsUID_ASC
+  seasonsUID_DESC
+  inventoryStatus_ASC
+  inventoryStatus_DESC
+  productStatus_ASC
+  productStatus_DESC
+  offloadMethod_ASC
+  offloadMethod_DESC
+  offloadNotes_ASC
+  offloadNotes_DESC
+  sequenceNumber_ASC
+  sequenceNumber_DESC
+  barcoded_ASC
+  barcoded_DESC
+  dateOrdered_ASC
+  dateOrdered_DESC
+  dateReceived_ASC
+  dateReceived_DESC
+  unitCost_ASC
+  unitCost_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -10609,8 +10625,16 @@ enum PhysicalProductInventoryStatusChangeOrderByInput {
 
 type PhysicalProductInventoryStatusChangePreviousValues {
   id: ID!
-  old: InventoryStatus!
-  new: InventoryStatus!
+  seasonsUID: String!
+  inventoryStatus: InventoryStatus!
+  productStatus: PhysicalProductStatus!
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
+  sequenceNumber: Int!
+  barcoded: Boolean
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
   createdAt: DateTime!
   updatedAt: DateTime
 }
@@ -10664,7 +10688,165 @@ input PhysicalProductInventoryStatusChangeScalarWhereInput {
 
   """All values not ending with the given string."""
   id_not_ends_with: ID
-  old: InventoryStatus
+  seasonsUID: String
+
+  """All values that are not equal to given value."""
+  seasonsUID_not: String
+
+  """All values that are contained in given list."""
+  seasonsUID_in: [String!]
+
+  """All values that are not contained in given list."""
+  seasonsUID_not_in: [String!]
+
+  """All values less than the given value."""
+  seasonsUID_lt: String
+
+  """All values less than or equal the given value."""
+  seasonsUID_lte: String
+
+  """All values greater than the given value."""
+  seasonsUID_gt: String
+
+  """All values greater than or equal the given value."""
+  seasonsUID_gte: String
+
+  """All values containing the given string."""
+  seasonsUID_contains: String
+
+  """All values not containing the given string."""
+  seasonsUID_not_contains: String
+
+  """All values starting with the given string."""
+  seasonsUID_starts_with: String
+
+  """All values not starting with the given string."""
+  seasonsUID_not_starts_with: String
+
+  """All values ending with the given string."""
+  seasonsUID_ends_with: String
+
+  """All values not ending with the given string."""
+  seasonsUID_not_ends_with: String
+  inventoryStatus: InventoryStatus
+
+  """All values that are not equal to given value."""
+  inventoryStatus_not: InventoryStatus
+
+  """All values that are contained in given list."""
+  inventoryStatus_in: [InventoryStatus!]
+
+  """All values that are not contained in given list."""
+  inventoryStatus_not_in: [InventoryStatus!]
+  productStatus: PhysicalProductStatus
+
+  """All values that are not equal to given value."""
+  productStatus_not: PhysicalProductStatus
+
+  """All values that are contained in given list."""
+  productStatus_in: [PhysicalProductStatus!]
+
+  """All values that are not contained in given list."""
+  productStatus_not_in: [PhysicalProductStatus!]
+  offloadMethod: PhysicalProductOffloadMethod
+
+  """All values that are not equal to given value."""
+  offloadMethod_not: PhysicalProductOffloadMethod
+
+  """All values that are contained in given list."""
+  offloadMethod_in: [PhysicalProductOffloadMethod!]
+
+  """All values that are not contained in given list."""
+  offloadMethod_not_in: [PhysicalProductOffloadMethod!]
+  offloadNotes: String
+
+  """All values that are not equal to given value."""
+  offloadNotes_not: String
+
+  """All values that are contained in given list."""
+  offloadNotes_in: [String!]
+
+  """All values that are not contained in given list."""
+  offloadNotes_not_in: [String!]
+
+  """All values less than the given value."""
+  offloadNotes_lt: String
+
+  """All values less than or equal the given value."""
+  offloadNotes_lte: String
+
+  """All values greater than the given value."""
+  offloadNotes_gt: String
+
+  """All values greater than or equal the given value."""
+  offloadNotes_gte: String
+
+  """All values containing the given string."""
+  offloadNotes_contains: String
+
+  """All values not containing the given string."""
+  offloadNotes_not_contains: String
+
+  """All values starting with the given string."""
+  offloadNotes_starts_with: String
+
+  """All values not starting with the given string."""
+  offloadNotes_not_starts_with: String
+
+  """All values ending with the given string."""
+  offloadNotes_ends_with: String
+
+  """All values not ending with the given string."""
+  offloadNotes_not_ends_with: String
+  sequenceNumber: Int
+
+  """All values that are not equal to given value."""
+  sequenceNumber_not: Int
+
+  """All values that are contained in given list."""
+  sequenceNumber_in: [Int!]
+
+  """All values that are not contained in given list."""
+  sequenceNumber_not_in: [Int!]
+
+  """All values less than the given value."""
+  sequenceNumber_lt: Int
+
+  """All values less than or equal the given value."""
+  sequenceNumber_lte: Int
+
+  """All values greater than the given value."""
+  sequenceNumber_gt: Int
+
+  """All values greater than or equal the given value."""
+  sequenceNumber_gte: Int
+  barcoded: Boolean
+
+  """All values that are not equal to given value."""
+  barcoded_not: Boolean
+  dateOrdered: DateTime
+
+  """All values that are not equal to given value."""
+  dateOrdered_not: DateTime
+
+  """All values that are contained in given list."""
+  dateOrdered_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  dateOrdered_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  dateOrdered_lt: DateTime
+
+  """All values less than or equal the given value."""
+  dateOrdered_lte: DateTime
+
+  """All values greater than the given value."""
+  dateOrdered_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  dateOrdered_gte: DateTime
+  dateReceived: DateTime
 
   """All values that are not equal to given value."""
   old_not: InventoryStatus
@@ -10767,20 +10949,49 @@ input PhysicalProductInventoryStatusChangeSubscriptionWhereInput {
   node: PhysicalProductInventoryStatusChangeWhereInput
 }
 
-input PhysicalProductInventoryStatusChangeUpdateInput {
-  old: InventoryStatus
-  new: InventoryStatus
-  physicalProduct: PhysicalProductUpdateOneRequiredWithoutInventoryStatusChangesInput
+input PhysicalProductUpdateDataInput {
+  seasonsUID: String
+  inventoryStatus: InventoryStatus
+  productStatus: PhysicalProductStatus
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
+  sequenceNumber: Int
+  barcoded: Boolean
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
+  location: LocationUpdateOneWithoutPhysicalProductsInput
+  productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
+  warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
 }
 
-input PhysicalProductInventoryStatusChangeUpdateManyDataInput {
-  old: InventoryStatus
-  new: InventoryStatus
+input PhysicalProductUpdateInput {
+  seasonsUID: String
+  inventoryStatus: InventoryStatus
+  productStatus: PhysicalProductStatus
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
+  sequenceNumber: Int
+  barcoded: Boolean
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
+  location: LocationUpdateOneWithoutPhysicalProductsInput
+  productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
+  warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
 }
 
-input PhysicalProductInventoryStatusChangeUpdateManyMutationInput {
-  old: InventoryStatus
-  new: InventoryStatus
+input PhysicalProductUpdateManyDataInput {
+  seasonsUID: String
+  inventoryStatus: InventoryStatus
+  productStatus: PhysicalProductStatus
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
+  sequenceNumber: Int
+  barcoded: Boolean
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
 }
 
 input PhysicalProductInventoryStatusChangeUpdateManyWithoutPhysicalProductInput {
@@ -10795,9 +11006,17 @@ input PhysicalProductInventoryStatusChangeUpdateManyWithoutPhysicalProductInput 
   upsert: [PhysicalProductInventoryStatusChangeUpsertWithWhereUniqueWithoutPhysicalProductInput!]
 }
 
-input PhysicalProductInventoryStatusChangeUpdateManyWithWhereNestedInput {
-  where: PhysicalProductInventoryStatusChangeScalarWhereInput!
-  data: PhysicalProductInventoryStatusChangeUpdateManyDataInput!
+input PhysicalProductUpdateManyMutationInput {
+  seasonsUID: String
+  inventoryStatus: InventoryStatus
+  productStatus: PhysicalProductStatus
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
+  sequenceNumber: Int
+  barcoded: Boolean
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
 }
 
 input PhysicalProductInventoryStatusChangeUpdateWithoutPhysicalProductDataInput {
@@ -10823,15 +11042,50 @@ input PhysicalProductInventoryStatusChangeWhereInput {
   """Logical OR on all given filters."""
   OR: [PhysicalProductInventoryStatusChangeWhereInput!]
 
-  """Logical NOT on all given filters combined by AND."""
-  NOT: [PhysicalProductInventoryStatusChangeWhereInput!]
-  id: ID
+input PhysicalProductUpdateWithoutLocationDataInput {
+  seasonsUID: String
+  inventoryStatus: InventoryStatus
+  productStatus: PhysicalProductStatus
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
+  sequenceNumber: Int
+  barcoded: Boolean
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
+  productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
+  warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
+}
 
-  """All values that are not equal to given value."""
-  id_not: ID
+input PhysicalProductUpdateWithoutProductVariantDataInput {
+  seasonsUID: String
+  inventoryStatus: InventoryStatus
+  productStatus: PhysicalProductStatus
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
+  sequenceNumber: Int
+  barcoded: Boolean
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
+  location: LocationUpdateOneWithoutPhysicalProductsInput
+  warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
+}
 
-  """All values that are contained in given list."""
-  id_in: [ID!]
+input PhysicalProductUpdateWithoutWarehouseLocationDataInput {
+  seasonsUID: String
+  inventoryStatus: InventoryStatus
+  productStatus: PhysicalProductStatus
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
+  sequenceNumber: Int
+  barcoded: Boolean
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
+  location: LocationUpdateOneWithoutPhysicalProductsInput
+  productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
+}
 
   """All values that are not contained in given list."""
   id_not_in: [ID!]
@@ -21902,10 +22156,12 @@ type User implements Node {
   lastName: String!
   role: UserRole!
   roles: [UserRole!]!
-  createdAt: DateTime!
-  updatedAt: DateTime!
   pushNotificationStatus: PushNotificationStatus!
   pushNotifications(where: PushNotificationReceiptWhereInput, orderBy: PushNotificationReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PushNotificationReceipt!]
+  verificationStatus: UserVerificationStatus!
+  verificationMethod: UserVerificationMethod!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 """A connection to a list of items."""
@@ -21926,6 +22182,8 @@ input UserCreateInput {
   lastName: String!
   role: UserRole
   pushNotificationStatus: PushNotificationStatus
+  verificationStatus: UserVerificationStatus
+  verificationMethod: UserVerificationMethod
   roles: UserCreaterolesInput
   pushNotifications: PushNotificationReceiptCreateManyWithoutUsersInput
 }
@@ -21952,6 +22210,8 @@ input UserCreateWithoutPushNotificationsInput {
   lastName: String!
   role: UserRole
   pushNotificationStatus: PushNotificationStatus
+  verificationStatus: UserVerificationStatus
+  verificationMethod: UserVerificationMethod
   roles: UserCreaterolesInput
 }
 
@@ -21977,12 +22237,16 @@ enum UserOrderByInput {
   lastName_DESC
   role_ASC
   role_DESC
+  pushNotificationStatus_ASC
+  pushNotificationStatus_DESC
+  verificationStatus_ASC
+  verificationStatus_DESC
+  verificationMethod_ASC
+  verificationMethod_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
   updatedAt_DESC
-  pushNotificationStatus_ASC
-  pushNotificationStatus_DESC
 }
 
 type UserPreviousValues {
@@ -21993,9 +22257,11 @@ type UserPreviousValues {
   lastName: String!
   role: UserRole!
   roles: [UserRole!]!
+  pushNotificationStatus: PushNotificationStatus!
+  verificationStatus: UserVerificationStatus!
+  verificationMethod: UserVerificationMethod!
   createdAt: DateTime!
   updatedAt: DateTime!
-  pushNotificationStatus: PushNotificationStatus!
 }
 
 enum UserRole {
@@ -22223,6 +22489,36 @@ input UserScalarWhereInput {
 
   """All values that are not contained in given list."""
   role_not_in: [UserRole!]
+  pushNotificationStatus: PushNotificationStatus
+
+  """All values that are not equal to given value."""
+  pushNotificationStatus_not: PushNotificationStatus
+
+  """All values that are contained in given list."""
+  pushNotificationStatus_in: [PushNotificationStatus!]
+
+  """All values that are not contained in given list."""
+  pushNotificationStatus_not_in: [PushNotificationStatus!]
+  verificationStatus: UserVerificationStatus
+
+  """All values that are not equal to given value."""
+  verificationStatus_not: UserVerificationStatus
+
+  """All values that are contained in given list."""
+  verificationStatus_in: [UserVerificationStatus!]
+
+  """All values that are not contained in given list."""
+  verificationStatus_not_in: [UserVerificationStatus!]
+  verificationMethod: UserVerificationMethod
+
+  """All values that are not equal to given value."""
+  verificationMethod_not: UserVerificationMethod
+
+  """All values that are contained in given list."""
+  verificationMethod_in: [UserVerificationMethod!]
+
+  """All values that are not contained in given list."""
+  verificationMethod_not_in: [UserVerificationMethod!]
   createdAt: DateTime
 
   """All values that are not equal to given value."""
@@ -22267,16 +22563,6 @@ input UserScalarWhereInput {
 
   """All values greater than or equal the given value."""
   updatedAt_gte: DateTime
-  pushNotificationStatus: PushNotificationStatus
-
-  """All values that are not equal to given value."""
-  pushNotificationStatus_not: PushNotificationStatus
-
-  """All values that are contained in given list."""
-  pushNotificationStatus_in: [PushNotificationStatus!]
-
-  """All values that are not contained in given list."""
-  pushNotificationStatus_not_in: [PushNotificationStatus!]
 }
 
 type UserSubscriptionPayload {
@@ -22323,6 +22609,8 @@ input UserUpdateDataInput {
   lastName: String
   role: UserRole
   pushNotificationStatus: PushNotificationStatus
+  verificationStatus: UserVerificationStatus
+  verificationMethod: UserVerificationMethod
   roles: UserUpdaterolesInput
   pushNotifications: PushNotificationReceiptUpdateManyWithoutUsersInput
 }
@@ -22334,6 +22622,8 @@ input UserUpdateInput {
   lastName: String
   role: UserRole
   pushNotificationStatus: PushNotificationStatus
+  verificationStatus: UserVerificationStatus
+  verificationMethod: UserVerificationMethod
   roles: UserUpdaterolesInput
   pushNotifications: PushNotificationReceiptUpdateManyWithoutUsersInput
 }
@@ -22345,6 +22635,8 @@ input UserUpdateManyDataInput {
   lastName: String
   role: UserRole
   pushNotificationStatus: PushNotificationStatus
+  verificationStatus: UserVerificationStatus
+  verificationMethod: UserVerificationMethod
   roles: UserUpdaterolesInput
 }
 
@@ -22355,6 +22647,8 @@ input UserUpdateManyMutationInput {
   lastName: String
   role: UserRole
   pushNotificationStatus: PushNotificationStatus
+  verificationStatus: UserVerificationStatus
+  verificationMethod: UserVerificationMethod
   roles: UserUpdaterolesInput
 }
 
@@ -22402,6 +22696,8 @@ input UserUpdateWithoutPushNotificationsDataInput {
   lastName: String
   role: UserRole
   pushNotificationStatus: PushNotificationStatus
+  verificationStatus: UserVerificationStatus
+  verificationMethod: UserVerificationMethod
   roles: UserUpdaterolesInput
 }
 
@@ -22419,6 +22715,18 @@ input UserUpsertWithWhereUniqueWithoutPushNotificationsInput {
   where: UserWhereUniqueInput!
   update: UserUpdateWithoutPushNotificationsDataInput!
   create: UserCreateWithoutPushNotificationsInput!
+}
+
+enum UserVerificationMethod {
+  SMS
+  Email
+  None
+}
+
+enum UserVerificationStatus {
+  Approved
+  Denied
+  Pending
 }
 
 input UserWhereInput {
@@ -22640,6 +22948,36 @@ input UserWhereInput {
 
   """All values that are not contained in given list."""
   role_not_in: [UserRole!]
+  pushNotificationStatus: PushNotificationStatus
+
+  """All values that are not equal to given value."""
+  pushNotificationStatus_not: PushNotificationStatus
+
+  """All values that are contained in given list."""
+  pushNotificationStatus_in: [PushNotificationStatus!]
+
+  """All values that are not contained in given list."""
+  pushNotificationStatus_not_in: [PushNotificationStatus!]
+  verificationStatus: UserVerificationStatus
+
+  """All values that are not equal to given value."""
+  verificationStatus_not: UserVerificationStatus
+
+  """All values that are contained in given list."""
+  verificationStatus_in: [UserVerificationStatus!]
+
+  """All values that are not contained in given list."""
+  verificationStatus_not_in: [UserVerificationStatus!]
+  verificationMethod: UserVerificationMethod
+
+  """All values that are not equal to given value."""
+  verificationMethod_not: UserVerificationMethod
+
+  """All values that are contained in given list."""
+  verificationMethod_in: [UserVerificationMethod!]
+
+  """All values that are not contained in given list."""
+  verificationMethod_not_in: [UserVerificationMethod!]
   createdAt: DateTime
 
   """All values that are not equal to given value."""
@@ -22684,16 +23022,6 @@ input UserWhereInput {
 
   """All values greater than or equal the given value."""
   updatedAt_gte: DateTime
-  pushNotificationStatus: PushNotificationStatus
-
-  """All values that are not equal to given value."""
-  pushNotificationStatus_not: PushNotificationStatus
-
-  """All values that are contained in given list."""
-  pushNotificationStatus_in: [PushNotificationStatus!]
-
-  """All values that are not contained in given list."""
-  pushNotificationStatus_not_in: [PushNotificationStatus!]
   pushNotifications_every: PushNotificationReceiptWhereInput
   pushNotifications_some: PushNotificationReceiptWhereInput
   pushNotifications_none: PushNotificationReceiptWhereInput
@@ -24540,16 +24868,28 @@ export type UserOrderByInput =   'id_ASC' |
   'lastName_DESC' |
   'role_ASC' |
   'role_DESC' |
+  'pushNotificationStatus_ASC' |
+  'pushNotificationStatus_DESC' |
+  'verificationStatus_ASC' |
+  'verificationStatus_DESC' |
+  'verificationMethod_ASC' |
+  'verificationMethod_DESC' |
   'createdAt_ASC' |
   'createdAt_DESC' |
   'updatedAt_ASC' |
-  'updatedAt_DESC' |
-  'pushNotificationStatus_ASC' |
-  'pushNotificationStatus_DESC'
+  'updatedAt_DESC'
 
 export type UserRole =   'Admin' |
   'Customer' |
   'Partner'
+
+export type UserVerificationMethod =   'SMS' |
+  'Email' |
+  'None'
+
+export type UserVerificationStatus =   'Approved' |
+  'Denied' |
+  'Pending'
 
 export type WarehouseLocationConstraintOrderByInput =   'id_ASC' |
   'id_DESC' |
@@ -33978,6 +34318,8 @@ export interface UserCreateInput {
   lastName: String
   role?: UserRole | null
   pushNotificationStatus?: PushNotificationStatus | null
+  verificationStatus?: UserVerificationStatus | null
+  verificationMethod?: UserVerificationMethod | null
   roles?: UserCreaterolesInput | null
   pushNotifications?: PushNotificationReceiptCreateManyWithoutUsersInput | null
 }
@@ -34004,6 +34346,8 @@ export interface UserCreateWithoutPushNotificationsInput {
   lastName: String
   role?: UserRole | null
   pushNotificationStatus?: PushNotificationStatus | null
+  verificationStatus?: UserVerificationStatus | null
+  verificationMethod?: UserVerificationMethod | null
   roles?: UserCreaterolesInput | null
 }
 
@@ -34085,6 +34429,18 @@ export interface UserScalarWhereInput {
   role_not?: UserRole | null
   role_in?: UserRole[] | UserRole | null
   role_not_in?: UserRole[] | UserRole | null
+  pushNotificationStatus?: PushNotificationStatus | null
+  pushNotificationStatus_not?: PushNotificationStatus | null
+  pushNotificationStatus_in?: PushNotificationStatus[] | PushNotificationStatus | null
+  pushNotificationStatus_not_in?: PushNotificationStatus[] | PushNotificationStatus | null
+  verificationStatus?: UserVerificationStatus | null
+  verificationStatus_not?: UserVerificationStatus | null
+  verificationStatus_in?: UserVerificationStatus[] | UserVerificationStatus | null
+  verificationStatus_not_in?: UserVerificationStatus[] | UserVerificationStatus | null
+  verificationMethod?: UserVerificationMethod | null
+  verificationMethod_not?: UserVerificationMethod | null
+  verificationMethod_in?: UserVerificationMethod[] | UserVerificationMethod | null
+  verificationMethod_not_in?: UserVerificationMethod[] | UserVerificationMethod | null
   createdAt?: DateTime | null
   createdAt_not?: DateTime | null
   createdAt_in?: DateTime[] | DateTime | null
@@ -34101,10 +34457,6 @@ export interface UserScalarWhereInput {
   updatedAt_lte?: DateTime | null
   updatedAt_gt?: DateTime | null
   updatedAt_gte?: DateTime | null
-  pushNotificationStatus?: PushNotificationStatus | null
-  pushNotificationStatus_not?: PushNotificationStatus | null
-  pushNotificationStatus_in?: PushNotificationStatus[] | PushNotificationStatus | null
-  pushNotificationStatus_not_in?: PushNotificationStatus[] | PushNotificationStatus | null
 }
 
 export interface UserSubscriptionWhereInput {
@@ -34125,6 +34477,8 @@ export interface UserUpdateDataInput {
   lastName?: String | null
   role?: UserRole | null
   pushNotificationStatus?: PushNotificationStatus | null
+  verificationStatus?: UserVerificationStatus | null
+  verificationMethod?: UserVerificationMethod | null
   roles?: UserUpdaterolesInput | null
   pushNotifications?: PushNotificationReceiptUpdateManyWithoutUsersInput | null
 }
@@ -34136,6 +34490,8 @@ export interface UserUpdateInput {
   lastName?: String | null
   role?: UserRole | null
   pushNotificationStatus?: PushNotificationStatus | null
+  verificationStatus?: UserVerificationStatus | null
+  verificationMethod?: UserVerificationMethod | null
   roles?: UserUpdaterolesInput | null
   pushNotifications?: PushNotificationReceiptUpdateManyWithoutUsersInput | null
 }
@@ -34147,6 +34503,8 @@ export interface UserUpdateManyDataInput {
   lastName?: String | null
   role?: UserRole | null
   pushNotificationStatus?: PushNotificationStatus | null
+  verificationStatus?: UserVerificationStatus | null
+  verificationMethod?: UserVerificationMethod | null
   roles?: UserUpdaterolesInput | null
 }
 
@@ -34157,6 +34515,8 @@ export interface UserUpdateManyMutationInput {
   lastName?: String | null
   role?: UserRole | null
   pushNotificationStatus?: PushNotificationStatus | null
+  verificationStatus?: UserVerificationStatus | null
+  verificationMethod?: UserVerificationMethod | null
   roles?: UserUpdaterolesInput | null
 }
 
@@ -34204,6 +34564,8 @@ export interface UserUpdateWithoutPushNotificationsDataInput {
   lastName?: String | null
   role?: UserRole | null
   pushNotificationStatus?: PushNotificationStatus | null
+  verificationStatus?: UserVerificationStatus | null
+  verificationMethod?: UserVerificationMethod | null
   roles?: UserUpdaterolesInput | null
 }
 
@@ -34301,6 +34663,18 @@ export interface UserWhereInput {
   role_not?: UserRole | null
   role_in?: UserRole[] | UserRole | null
   role_not_in?: UserRole[] | UserRole | null
+  pushNotificationStatus?: PushNotificationStatus | null
+  pushNotificationStatus_not?: PushNotificationStatus | null
+  pushNotificationStatus_in?: PushNotificationStatus[] | PushNotificationStatus | null
+  pushNotificationStatus_not_in?: PushNotificationStatus[] | PushNotificationStatus | null
+  verificationStatus?: UserVerificationStatus | null
+  verificationStatus_not?: UserVerificationStatus | null
+  verificationStatus_in?: UserVerificationStatus[] | UserVerificationStatus | null
+  verificationStatus_not_in?: UserVerificationStatus[] | UserVerificationStatus | null
+  verificationMethod?: UserVerificationMethod | null
+  verificationMethod_not?: UserVerificationMethod | null
+  verificationMethod_in?: UserVerificationMethod[] | UserVerificationMethod | null
+  verificationMethod_not_in?: UserVerificationMethod[] | UserVerificationMethod | null
   createdAt?: DateTime | null
   createdAt_not?: DateTime | null
   createdAt_in?: DateTime[] | DateTime | null
@@ -34317,10 +34691,6 @@ export interface UserWhereInput {
   updatedAt_lte?: DateTime | null
   updatedAt_gt?: DateTime | null
   updatedAt_gte?: DateTime | null
-  pushNotificationStatus?: PushNotificationStatus | null
-  pushNotificationStatus_not?: PushNotificationStatus | null
-  pushNotificationStatus_in?: PushNotificationStatus[] | PushNotificationStatus | null
-  pushNotificationStatus_not_in?: PushNotificationStatus[] | PushNotificationStatus | null
   pushNotifications_every?: PushNotificationReceiptWhereInput | null
   pushNotifications_some?: PushNotificationReceiptWhereInput | null
   pushNotifications_none?: PushNotificationReceiptWhereInput | null
@@ -36967,10 +37337,12 @@ export interface User extends Node {
   lastName: String
   role: UserRole
   roles: Array<UserRole>
-  createdAt: DateTime
-  updatedAt: DateTime
   pushNotificationStatus: PushNotificationStatus
   pushNotifications?: Array<PushNotificationReceipt> | null
+  verificationStatus: UserVerificationStatus
+  verificationMethod: UserVerificationMethod
+  createdAt: DateTime
+  updatedAt: DateTime
 }
 
 /*
@@ -37000,9 +37372,11 @@ export interface UserPreviousValues {
   lastName: String
   role: UserRole
   roles: Array<UserRole>
+  pushNotificationStatus: PushNotificationStatus
+  verificationStatus: UserVerificationStatus
+  verificationMethod: UserVerificationMethod
   createdAt: DateTime
   updatedAt: DateTime
-  pushNotificationStatus: PushNotificationStatus
 }
 
 export interface UserSubscriptionPayload {

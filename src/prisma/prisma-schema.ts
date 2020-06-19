@@ -12562,10 +12562,12 @@ type User {
   lastName: String!
   role: UserRole!
   roles: [UserRole!]!
-  createdAt: DateTime!
-  updatedAt: DateTime!
   pushNotificationStatus: PushNotificationStatus!
   pushNotifications(where: PushNotificationReceiptWhereInput, orderBy: PushNotificationReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PushNotificationReceipt!]
+  verificationStatus: UserVerificationStatus!
+  verificationMethod: UserVerificationMethod!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 type UserConnection {
@@ -12584,6 +12586,8 @@ input UserCreateInput {
   roles: UserCreaterolesInput
   pushNotificationStatus: PushNotificationStatus
   pushNotifications: PushNotificationReceiptCreateManyWithoutUsersInput
+  verificationStatus: UserVerificationStatus
+  verificationMethod: UserVerificationMethod
 }
 
 input UserCreateManyWithoutPushNotificationsInput {
@@ -12609,6 +12613,8 @@ input UserCreateWithoutPushNotificationsInput {
   role: UserRole
   roles: UserCreaterolesInput
   pushNotificationStatus: PushNotificationStatus
+  verificationStatus: UserVerificationStatus
+  verificationMethod: UserVerificationMethod
 }
 
 type UserEdge {
@@ -12629,12 +12635,16 @@ enum UserOrderByInput {
   lastName_DESC
   role_ASC
   role_DESC
+  pushNotificationStatus_ASC
+  pushNotificationStatus_DESC
+  verificationStatus_ASC
+  verificationStatus_DESC
+  verificationMethod_ASC
+  verificationMethod_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
   updatedAt_DESC
-  pushNotificationStatus_ASC
-  pushNotificationStatus_DESC
 }
 
 type UserPreviousValues {
@@ -12645,9 +12655,11 @@ type UserPreviousValues {
   lastName: String!
   role: UserRole!
   roles: [UserRole!]!
+  pushNotificationStatus: PushNotificationStatus!
+  verificationStatus: UserVerificationStatus!
+  verificationMethod: UserVerificationMethod!
   createdAt: DateTime!
   updatedAt: DateTime!
-  pushNotificationStatus: PushNotificationStatus!
 }
 
 enum UserRole {
@@ -12731,6 +12743,18 @@ input UserScalarWhereInput {
   role_not: UserRole
   role_in: [UserRole!]
   role_not_in: [UserRole!]
+  pushNotificationStatus: PushNotificationStatus
+  pushNotificationStatus_not: PushNotificationStatus
+  pushNotificationStatus_in: [PushNotificationStatus!]
+  pushNotificationStatus_not_in: [PushNotificationStatus!]
+  verificationStatus: UserVerificationStatus
+  verificationStatus_not: UserVerificationStatus
+  verificationStatus_in: [UserVerificationStatus!]
+  verificationStatus_not_in: [UserVerificationStatus!]
+  verificationMethod: UserVerificationMethod
+  verificationMethod_not: UserVerificationMethod
+  verificationMethod_in: [UserVerificationMethod!]
+  verificationMethod_not_in: [UserVerificationMethod!]
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -12747,10 +12771,6 @@ input UserScalarWhereInput {
   updatedAt_lte: DateTime
   updatedAt_gt: DateTime
   updatedAt_gte: DateTime
-  pushNotificationStatus: PushNotificationStatus
-  pushNotificationStatus_not: PushNotificationStatus
-  pushNotificationStatus_in: [PushNotificationStatus!]
-  pushNotificationStatus_not_in: [PushNotificationStatus!]
   AND: [UserScalarWhereInput!]
   OR: [UserScalarWhereInput!]
   NOT: [UserScalarWhereInput!]
@@ -12783,6 +12803,8 @@ input UserUpdateDataInput {
   roles: UserUpdaterolesInput
   pushNotificationStatus: PushNotificationStatus
   pushNotifications: PushNotificationReceiptUpdateManyWithoutUsersInput
+  verificationStatus: UserVerificationStatus
+  verificationMethod: UserVerificationMethod
 }
 
 input UserUpdateInput {
@@ -12794,6 +12816,8 @@ input UserUpdateInput {
   roles: UserUpdaterolesInput
   pushNotificationStatus: PushNotificationStatus
   pushNotifications: PushNotificationReceiptUpdateManyWithoutUsersInput
+  verificationStatus: UserVerificationStatus
+  verificationMethod: UserVerificationMethod
 }
 
 input UserUpdateManyDataInput {
@@ -12804,6 +12828,8 @@ input UserUpdateManyDataInput {
   role: UserRole
   roles: UserUpdaterolesInput
   pushNotificationStatus: PushNotificationStatus
+  verificationStatus: UserVerificationStatus
+  verificationMethod: UserVerificationMethod
 }
 
 input UserUpdateManyMutationInput {
@@ -12814,6 +12840,8 @@ input UserUpdateManyMutationInput {
   role: UserRole
   roles: UserUpdaterolesInput
   pushNotificationStatus: PushNotificationStatus
+  verificationStatus: UserVerificationStatus
+  verificationMethod: UserVerificationMethod
 }
 
 input UserUpdateManyWithoutPushNotificationsInput {
@@ -12861,6 +12889,8 @@ input UserUpdateWithoutPushNotificationsDataInput {
   role: UserRole
   roles: UserUpdaterolesInput
   pushNotificationStatus: PushNotificationStatus
+  verificationStatus: UserVerificationStatus
+  verificationMethod: UserVerificationMethod
 }
 
 input UserUpdateWithWhereUniqueWithoutPushNotificationsInput {
@@ -12877,6 +12907,18 @@ input UserUpsertWithWhereUniqueWithoutPushNotificationsInput {
   where: UserWhereUniqueInput!
   update: UserUpdateWithoutPushNotificationsDataInput!
   create: UserCreateWithoutPushNotificationsInput!
+}
+
+enum UserVerificationMethod {
+  SMS
+  Email
+  None
+}
+
+enum UserVerificationStatus {
+  Approved
+  Denied
+  Pending
 }
 
 input UserWhereInput {
@@ -12954,6 +12996,21 @@ input UserWhereInput {
   role_not: UserRole
   role_in: [UserRole!]
   role_not_in: [UserRole!]
+  pushNotificationStatus: PushNotificationStatus
+  pushNotificationStatus_not: PushNotificationStatus
+  pushNotificationStatus_in: [PushNotificationStatus!]
+  pushNotificationStatus_not_in: [PushNotificationStatus!]
+  pushNotifications_every: PushNotificationReceiptWhereInput
+  pushNotifications_some: PushNotificationReceiptWhereInput
+  pushNotifications_none: PushNotificationReceiptWhereInput
+  verificationStatus: UserVerificationStatus
+  verificationStatus_not: UserVerificationStatus
+  verificationStatus_in: [UserVerificationStatus!]
+  verificationStatus_not_in: [UserVerificationStatus!]
+  verificationMethod: UserVerificationMethod
+  verificationMethod_not: UserVerificationMethod
+  verificationMethod_in: [UserVerificationMethod!]
+  verificationMethod_not_in: [UserVerificationMethod!]
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -12970,13 +13027,6 @@ input UserWhereInput {
   updatedAt_lte: DateTime
   updatedAt_gt: DateTime
   updatedAt_gte: DateTime
-  pushNotificationStatus: PushNotificationStatus
-  pushNotificationStatus_not: PushNotificationStatus
-  pushNotificationStatus_in: [PushNotificationStatus!]
-  pushNotificationStatus_not_in: [PushNotificationStatus!]
-  pushNotifications_every: PushNotificationReceiptWhereInput
-  pushNotifications_some: PushNotificationReceiptWhereInput
-  pushNotifications_none: PushNotificationReceiptWhereInput
   AND: [UserWhereInput!]
   OR: [UserWhereInput!]
   NOT: [UserWhereInput!]
