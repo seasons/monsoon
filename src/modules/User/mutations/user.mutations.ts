@@ -39,14 +39,4 @@ export class UserMutationsResolver {
     )
     return result
   }
-
-  @Mutation()
-  async startSMSVerification(@Args() { where, number }, @Info() info) {
-    return
-  }
-
-  @Mutation()
-  async checkSMSVerification(@Args() { where, number }, @Info() info) {
-    return
-  }
 }

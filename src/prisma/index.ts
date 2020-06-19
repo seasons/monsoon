@@ -1971,6 +1971,10 @@ export type UserRole = "Admin" | "Customer" | "Partner";
 
 export type PushNotificationStatus = "Blocked" | "Granted" | "Denied";
 
+export type UserVerificationStatus = "Approved" | "Denied" | "Pending";
+
+export type UserVerificationMethod = "SMS" | "Email" | "None";
+
 export type PushNotificationReceiptOrderByInput =
   | "id_ASC"
   | "id_DESC"
@@ -2010,12 +2014,16 @@ export type UserOrderByInput =
   | "lastName_DESC"
   | "role_ASC"
   | "role_DESC"
+  | "pushNotificationStatus_ASC"
+  | "pushNotificationStatus_DESC"
+  | "verificationStatus_ASC"
+  | "verificationStatus_DESC"
+  | "verificationMethod_ASC"
+  | "verificationMethod_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
-  | "updatedAt_DESC"
-  | "pushNotificationStatus_ASC"
-  | "pushNotificationStatus_DESC";
+  | "updatedAt_DESC";
 
 export type CustomerStatus =
   | "Invited"
@@ -3012,6 +3020,33 @@ export interface UserWhereInput {
   role_not?: Maybe<UserRole>;
   role_in?: Maybe<UserRole[] | UserRole>;
   role_not_in?: Maybe<UserRole[] | UserRole>;
+  pushNotificationStatus?: Maybe<PushNotificationStatus>;
+  pushNotificationStatus_not?: Maybe<PushNotificationStatus>;
+  pushNotificationStatus_in?: Maybe<
+    PushNotificationStatus[] | PushNotificationStatus
+  >;
+  pushNotificationStatus_not_in?: Maybe<
+    PushNotificationStatus[] | PushNotificationStatus
+  >;
+  pushNotifications_every?: Maybe<PushNotificationReceiptWhereInput>;
+  pushNotifications_some?: Maybe<PushNotificationReceiptWhereInput>;
+  pushNotifications_none?: Maybe<PushNotificationReceiptWhereInput>;
+  verificationStatus?: Maybe<UserVerificationStatus>;
+  verificationStatus_not?: Maybe<UserVerificationStatus>;
+  verificationStatus_in?: Maybe<
+    UserVerificationStatus[] | UserVerificationStatus
+  >;
+  verificationStatus_not_in?: Maybe<
+    UserVerificationStatus[] | UserVerificationStatus
+  >;
+  verificationMethod?: Maybe<UserVerificationMethod>;
+  verificationMethod_not?: Maybe<UserVerificationMethod>;
+  verificationMethod_in?: Maybe<
+    UserVerificationMethod[] | UserVerificationMethod
+  >;
+  verificationMethod_not_in?: Maybe<
+    UserVerificationMethod[] | UserVerificationMethod
+  >;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -3028,17 +3063,6 @@ export interface UserWhereInput {
   updatedAt_lte?: Maybe<DateTimeInput>;
   updatedAt_gt?: Maybe<DateTimeInput>;
   updatedAt_gte?: Maybe<DateTimeInput>;
-  pushNotificationStatus?: Maybe<PushNotificationStatus>;
-  pushNotificationStatus_not?: Maybe<PushNotificationStatus>;
-  pushNotificationStatus_in?: Maybe<
-    PushNotificationStatus[] | PushNotificationStatus
-  >;
-  pushNotificationStatus_not_in?: Maybe<
-    PushNotificationStatus[] | PushNotificationStatus
-  >;
-  pushNotifications_every?: Maybe<PushNotificationReceiptWhereInput>;
-  pushNotifications_some?: Maybe<PushNotificationReceiptWhereInput>;
-  pushNotifications_none?: Maybe<PushNotificationReceiptWhereInput>;
   AND?: Maybe<UserWhereInput[] | UserWhereInput>;
   OR?: Maybe<UserWhereInput[] | UserWhereInput>;
   NOT?: Maybe<UserWhereInput[] | UserWhereInput>;
@@ -6478,6 +6502,8 @@ export interface UserCreateInput {
   roles?: Maybe<UserCreaterolesInput>;
   pushNotificationStatus?: Maybe<PushNotificationStatus>;
   pushNotifications?: Maybe<PushNotificationReceiptCreateManyWithoutUsersInput>;
+  verificationStatus?: Maybe<UserVerificationStatus>;
+  verificationMethod?: Maybe<UserVerificationMethod>;
 }
 
 export interface UserCreaterolesInput {
@@ -7323,6 +7349,8 @@ export interface UserUpdateDataInput {
   roles?: Maybe<UserUpdaterolesInput>;
   pushNotificationStatus?: Maybe<PushNotificationStatus>;
   pushNotifications?: Maybe<PushNotificationReceiptUpdateManyWithoutUsersInput>;
+  verificationStatus?: Maybe<UserVerificationStatus>;
+  verificationMethod?: Maybe<UserVerificationMethod>;
 }
 
 export interface UserUpdaterolesInput {
@@ -12351,6 +12379,8 @@ export interface UserCreateWithoutPushNotificationsInput {
   role?: Maybe<UserRole>;
   roles?: Maybe<UserCreaterolesInput>;
   pushNotificationStatus?: Maybe<PushNotificationStatus>;
+  verificationStatus?: Maybe<UserVerificationStatus>;
+  verificationMethod?: Maybe<UserVerificationMethod>;
 }
 
 export interface PushNotificationReceiptUpdateInput {
@@ -12402,6 +12432,8 @@ export interface UserUpdateWithoutPushNotificationsDataInput {
   role?: Maybe<UserRole>;
   roles?: Maybe<UserUpdaterolesInput>;
   pushNotificationStatus?: Maybe<PushNotificationStatus>;
+  verificationStatus?: Maybe<UserVerificationStatus>;
+  verificationMethod?: Maybe<UserVerificationMethod>;
 }
 
 export interface UserUpsertWithWhereUniqueWithoutPushNotificationsInput {
@@ -12485,6 +12517,30 @@ export interface UserScalarWhereInput {
   role_not?: Maybe<UserRole>;
   role_in?: Maybe<UserRole[] | UserRole>;
   role_not_in?: Maybe<UserRole[] | UserRole>;
+  pushNotificationStatus?: Maybe<PushNotificationStatus>;
+  pushNotificationStatus_not?: Maybe<PushNotificationStatus>;
+  pushNotificationStatus_in?: Maybe<
+    PushNotificationStatus[] | PushNotificationStatus
+  >;
+  pushNotificationStatus_not_in?: Maybe<
+    PushNotificationStatus[] | PushNotificationStatus
+  >;
+  verificationStatus?: Maybe<UserVerificationStatus>;
+  verificationStatus_not?: Maybe<UserVerificationStatus>;
+  verificationStatus_in?: Maybe<
+    UserVerificationStatus[] | UserVerificationStatus
+  >;
+  verificationStatus_not_in?: Maybe<
+    UserVerificationStatus[] | UserVerificationStatus
+  >;
+  verificationMethod?: Maybe<UserVerificationMethod>;
+  verificationMethod_not?: Maybe<UserVerificationMethod>;
+  verificationMethod_in?: Maybe<
+    UserVerificationMethod[] | UserVerificationMethod
+  >;
+  verificationMethod_not_in?: Maybe<
+    UserVerificationMethod[] | UserVerificationMethod
+  >;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -12501,14 +12557,6 @@ export interface UserScalarWhereInput {
   updatedAt_lte?: Maybe<DateTimeInput>;
   updatedAt_gt?: Maybe<DateTimeInput>;
   updatedAt_gte?: Maybe<DateTimeInput>;
-  pushNotificationStatus?: Maybe<PushNotificationStatus>;
-  pushNotificationStatus_not?: Maybe<PushNotificationStatus>;
-  pushNotificationStatus_in?: Maybe<
-    PushNotificationStatus[] | PushNotificationStatus
-  >;
-  pushNotificationStatus_not_in?: Maybe<
-    PushNotificationStatus[] | PushNotificationStatus
-  >;
   AND?: Maybe<UserScalarWhereInput[] | UserScalarWhereInput>;
   OR?: Maybe<UserScalarWhereInput[] | UserScalarWhereInput>;
   NOT?: Maybe<UserScalarWhereInput[] | UserScalarWhereInput>;
@@ -12527,6 +12575,8 @@ export interface UserUpdateManyDataInput {
   role?: Maybe<UserRole>;
   roles?: Maybe<UserUpdaterolesInput>;
   pushNotificationStatus?: Maybe<PushNotificationStatus>;
+  verificationStatus?: Maybe<UserVerificationStatus>;
+  verificationMethod?: Maybe<UserVerificationMethod>;
 }
 
 export interface PushNotificationReceiptUpdateManyMutationInput {
@@ -13010,6 +13060,8 @@ export interface UserUpdateInput {
   roles?: Maybe<UserUpdaterolesInput>;
   pushNotificationStatus?: Maybe<PushNotificationStatus>;
   pushNotifications?: Maybe<PushNotificationReceiptUpdateManyWithoutUsersInput>;
+  verificationStatus?: Maybe<UserVerificationStatus>;
+  verificationMethod?: Maybe<UserVerificationMethod>;
 }
 
 export interface UserUpdateManyMutationInput {
@@ -13020,6 +13072,8 @@ export interface UserUpdateManyMutationInput {
   role?: Maybe<UserRole>;
   roles?: Maybe<UserUpdaterolesInput>;
   pushNotificationStatus?: Maybe<PushNotificationStatus>;
+  verificationStatus?: Maybe<UserVerificationStatus>;
+  verificationMethod?: Maybe<UserVerificationMethod>;
 }
 
 export interface WarehouseLocationCreateInput {
@@ -14212,9 +14266,11 @@ export interface User {
   lastName: String;
   role: UserRole;
   roles: UserRole[];
+  pushNotificationStatus: PushNotificationStatus;
+  verificationStatus: UserVerificationStatus;
+  verificationMethod: UserVerificationMethod;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
-  pushNotificationStatus: PushNotificationStatus;
 }
 
 export interface UserPromise extends Promise<User>, Fragmentable {
@@ -14225,8 +14281,6 @@ export interface UserPromise extends Promise<User>, Fragmentable {
   lastName: () => Promise<String>;
   role: () => Promise<UserRole>;
   roles: () => Promise<UserRole[]>;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
   pushNotificationStatus: () => Promise<PushNotificationStatus>;
   pushNotifications: <T = FragmentableArray<PushNotificationReceipt>>(args?: {
     where?: PushNotificationReceiptWhereInput;
@@ -14237,6 +14291,10 @@ export interface UserPromise extends Promise<User>, Fragmentable {
     first?: Int;
     last?: Int;
   }) => T;
+  verificationStatus: () => Promise<UserVerificationStatus>;
+  verificationMethod: () => Promise<UserVerificationMethod>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface UserSubscription
@@ -14249,8 +14307,6 @@ export interface UserSubscription
   lastName: () => Promise<AsyncIterator<String>>;
   role: () => Promise<AsyncIterator<UserRole>>;
   roles: () => Promise<AsyncIterator<UserRole[]>>;
-  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   pushNotificationStatus: () => Promise<AsyncIterator<PushNotificationStatus>>;
   pushNotifications: <
     T = Promise<AsyncIterator<PushNotificationReceiptSubscription>>
@@ -14263,6 +14319,10 @@ export interface UserSubscription
     first?: Int;
     last?: Int;
   }) => T;
+  verificationStatus: () => Promise<AsyncIterator<UserVerificationStatus>>;
+  verificationMethod: () => Promise<AsyncIterator<UserVerificationMethod>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
 export interface UserNullablePromise
@@ -14275,8 +14335,6 @@ export interface UserNullablePromise
   lastName: () => Promise<String>;
   role: () => Promise<UserRole>;
   roles: () => Promise<UserRole[]>;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
   pushNotificationStatus: () => Promise<PushNotificationStatus>;
   pushNotifications: <T = FragmentableArray<PushNotificationReceipt>>(args?: {
     where?: PushNotificationReceiptWhereInput;
@@ -14287,6 +14345,10 @@ export interface UserNullablePromise
     first?: Int;
     last?: Int;
   }) => T;
+  verificationStatus: () => Promise<UserVerificationStatus>;
+  verificationMethod: () => Promise<UserVerificationMethod>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface PushNotificationReceipt {
@@ -21902,9 +21964,11 @@ export interface UserPreviousValues {
   lastName: String;
   role: UserRole;
   roles: UserRole[];
+  pushNotificationStatus: PushNotificationStatus;
+  verificationStatus: UserVerificationStatus;
+  verificationMethod: UserVerificationMethod;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
-  pushNotificationStatus: PushNotificationStatus;
 }
 
 export interface UserPreviousValuesPromise
@@ -21917,9 +21981,11 @@ export interface UserPreviousValuesPromise
   lastName: () => Promise<String>;
   role: () => Promise<UserRole>;
   roles: () => Promise<UserRole[]>;
+  pushNotificationStatus: () => Promise<PushNotificationStatus>;
+  verificationStatus: () => Promise<UserVerificationStatus>;
+  verificationMethod: () => Promise<UserVerificationMethod>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
-  pushNotificationStatus: () => Promise<PushNotificationStatus>;
 }
 
 export interface UserPreviousValuesSubscription
@@ -21932,9 +21998,11 @@ export interface UserPreviousValuesSubscription
   lastName: () => Promise<AsyncIterator<String>>;
   role: () => Promise<AsyncIterator<UserRole>>;
   roles: () => Promise<AsyncIterator<UserRole[]>>;
+  pushNotificationStatus: () => Promise<AsyncIterator<PushNotificationStatus>>;
+  verificationStatus: () => Promise<AsyncIterator<UserVerificationStatus>>;
+  verificationMethod: () => Promise<AsyncIterator<UserVerificationMethod>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  pushNotificationStatus: () => Promise<AsyncIterator<PushNotificationStatus>>;
 }
 
 export interface WarehouseLocationSubscriptionPayload {
@@ -22277,6 +22345,14 @@ export const models: Model[] = [
   },
   {
     name: "PushNotificationReceipt",
+    embedded: false
+  },
+  {
+    name: "UserVerificationMethod",
+    embedded: false
+  },
+  {
+    name: "UserVerificationStatus",
     embedded: false
   },
   {
