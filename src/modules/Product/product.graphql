@@ -94,6 +94,15 @@ type Query {
     first: Int
     last: Int
   ): [ProductFunction]!
+  productMaterialCategories(
+    where: ProductMaterialCategoryWhereInput
+    orderBy: ProductMaterialCategoryOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [ProductMaterialCategory]!
   productModels(
     where: ProductModelWhereInput
     orderBy: ProductModelOrderByInput
@@ -202,6 +211,7 @@ input UpsertProductInput {
   functions: [String!]!
   images: [Upload!]!
   innerMaterials: [String!]!
+  materialCategorySlug: String
   modelID: String
   modelSizeDisplay: String
   modelSizeName: String
