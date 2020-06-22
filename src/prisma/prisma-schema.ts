@@ -10061,7 +10061,6 @@ type PushNotificationReceipt {
   sentAt: DateTime!
   createdAt: DateTime!
   updatedAt: DateTime!
-<<<<<<< HEAD
 }
 
 type PushNotificationReceiptConnection {
@@ -10089,38 +10088,6 @@ input PushNotificationReceiptCreateManyInput {
   connect: [PushNotificationReceiptWhereUniqueInput!]
 }
 
-<<<<<<< HEAD
-=======
-}
-
-type PushNotificationReceiptConnection {
-  pageInfo: PageInfo!
-  edges: [PushNotificationReceiptEdge]!
-  aggregate: AggregatePushNotificationReceipt!
-}
-
-input PushNotificationReceiptCreateInput {
-  id: ID
-  route: String
-  screen: String
-  uri: String
-  users: UserCreateManyInput
-  interest: String
-  body: String!
-  title: String
-  recordID: String
-  recordSlug: String
-  sentAt: DateTime!
-}
-
-input PushNotificationReceiptCreateManyInput {
-  create: [PushNotificationReceiptCreateInput!]
-  connect: [PushNotificationReceiptWhereUniqueInput!]
-}
-
->>>>>>> 4514086... Updates push notification models
-=======
->>>>>>> db750af... Updates push notification models
 type PushNotificationReceiptEdge {
   node: PushNotificationReceipt!
   cursor: String!
@@ -12713,23 +12680,7 @@ type UserPushNotificationConnection {
 input UserPushNotificationCreateInput {
   id: ID
   interests: UserPushNotificationInterestCreateManyInput
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
   status: Boolean
-=======
-  status: Boolean!
->>>>>>> 4514086... Updates push notification models
-=======
-  status: Boolean
->>>>>>> a944198... Updates datamodel
-=======
-  status: Boolean!
->>>>>>> db750af... Updates push notification models
-=======
-  status: Boolean
->>>>>>> d1fe03e... Updates datamodel
   history: PushNotificationReceiptCreateManyInput
 }
 

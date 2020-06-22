@@ -44,13 +44,10 @@ export class UserMutationsResolver {
 
   @Mutation()
   async updateUser(@Args() { data, where }, @Info() info) {
-    const result = await this.prisma.binding.mutation.updateUser(
-      {
-        where,
-        data,
-      },
-      info
-    )
+    const result = await this.prisma.binding.mutation.updateUser({
+      where,
+      data,
+    })
     return result
   }
 }
