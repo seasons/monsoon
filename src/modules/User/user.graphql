@@ -47,7 +47,6 @@ type AuthPayload {
   refreshToken: String!
   expiresIn: Int!
   user: User!
-  beamsToken: String!
   customer: Customer!
 }
 
