@@ -10089,6 +10089,7 @@ input PushNotificationReceiptCreateManyInput {
   connect: [PushNotificationReceiptWhereUniqueInput!]
 }
 
+<<<<<<< HEAD
 =======
 }
 
@@ -10118,6 +10119,8 @@ input PushNotificationReceiptCreateManyInput {
 }
 
 >>>>>>> 4514086... Updates push notification models
+=======
+>>>>>>> db750af... Updates push notification models
 type PushNotificationReceiptEdge {
   node: PushNotificationReceipt!
   cursor: String!
@@ -12712,6 +12715,7 @@ input UserPushNotificationCreateInput {
   interests: UserPushNotificationInterestCreateManyInput
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
   status: Boolean
 =======
   status: Boolean!
@@ -12719,6 +12723,9 @@ input UserPushNotificationCreateInput {
 =======
   status: Boolean
 >>>>>>> a944198... Updates datamodel
+=======
+  status: Boolean!
+>>>>>>> db750af... Updates push notification models
   history: PushNotificationReceiptCreateManyInput
 }
 

@@ -2954,6 +2954,8 @@ export type BagItemWhereUniqueInput = AtLeastOne<{
 
 export interface UserPushNotificationInterestWhereInput {
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
 =======
   id?: Maybe<ID_Input>;
   id_not?: Maybe<ID_Input>;
@@ -3106,6 +3108,194 @@ export interface UserWhereInput {
 }
 
 export interface UserPushNotificationWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  interests_every?: Maybe<UserPushNotificationInterestWhereInput>;
+  interests_some?: Maybe<UserPushNotificationInterestWhereInput>;
+  interests_none?: Maybe<UserPushNotificationInterestWhereInput>;
+  status?: Maybe<Boolean>;
+  status_not?: Maybe<Boolean>;
+  history_every?: Maybe<PushNotificationReceiptWhereInput>;
+  history_some?: Maybe<PushNotificationReceiptWhereInput>;
+  history_none?: Maybe<PushNotificationReceiptWhereInput>;
+  AND?: Maybe<
+    UserPushNotificationWhereInput[] | UserPushNotificationWhereInput
+  >;
+  OR?: Maybe<UserPushNotificationWhereInput[] | UserPushNotificationWhereInput>;
+  NOT?: Maybe<
+    UserPushNotificationWhereInput[] | UserPushNotificationWhereInput
+  >;
+}
+
+export interface PushNotificationReceiptWhereInput {
+>>>>>>> db750af... Updates push notification models
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  type?: Maybe<UserPushNotificationInterestType>;
+  type_not?: Maybe<UserPushNotificationInterestType>;
+  type_in?: Maybe<
+    UserPushNotificationInterestType[] | UserPushNotificationInterestType
+  >;
+  type_not_in?: Maybe<
+    UserPushNotificationInterestType[] | UserPushNotificationInterestType
+  >;
+  value?: Maybe<String>;
+  value_not?: Maybe<String>;
+  value_in?: Maybe<String[] | String>;
+  value_not_in?: Maybe<String[] | String>;
+  value_lt?: Maybe<String>;
+  value_lte?: Maybe<String>;
+  value_gt?: Maybe<String>;
+  value_gte?: Maybe<String>;
+  value_contains?: Maybe<String>;
+  value_not_contains?: Maybe<String>;
+  value_starts_with?: Maybe<String>;
+  value_not_starts_with?: Maybe<String>;
+  value_ends_with?: Maybe<String>;
+  value_not_ends_with?: Maybe<String>;
+  user?: Maybe<UserWhereInput>;
+  status?: Maybe<Boolean>;
+  status_not?: Maybe<Boolean>;
+  AND?: Maybe<
+    | UserPushNotificationInterestWhereInput[]
+    | UserPushNotificationInterestWhereInput
+  >;
+  OR?: Maybe<
+    | UserPushNotificationInterestWhereInput[]
+    | UserPushNotificationInterestWhereInput
+  >;
+  NOT?: Maybe<
+    | UserPushNotificationInterestWhereInput[]
+    | UserPushNotificationInterestWhereInput
+  >;
+}
+
+<<<<<<< HEAD
+export interface UserWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  auth0Id?: Maybe<String>;
+  auth0Id_not?: Maybe<String>;
+  auth0Id_in?: Maybe<String[] | String>;
+  auth0Id_not_in?: Maybe<String[] | String>;
+  auth0Id_lt?: Maybe<String>;
+  auth0Id_lte?: Maybe<String>;
+  auth0Id_gt?: Maybe<String>;
+  auth0Id_gte?: Maybe<String>;
+  auth0Id_contains?: Maybe<String>;
+  auth0Id_not_contains?: Maybe<String>;
+  auth0Id_starts_with?: Maybe<String>;
+  auth0Id_not_starts_with?: Maybe<String>;
+  auth0Id_ends_with?: Maybe<String>;
+  auth0Id_not_ends_with?: Maybe<String>;
+  email?: Maybe<String>;
+  email_not?: Maybe<String>;
+  email_in?: Maybe<String[] | String>;
+  email_not_in?: Maybe<String[] | String>;
+  email_lt?: Maybe<String>;
+  email_lte?: Maybe<String>;
+  email_gt?: Maybe<String>;
+  email_gte?: Maybe<String>;
+  email_contains?: Maybe<String>;
+  email_not_contains?: Maybe<String>;
+  email_starts_with?: Maybe<String>;
+  email_not_starts_with?: Maybe<String>;
+  email_ends_with?: Maybe<String>;
+  email_not_ends_with?: Maybe<String>;
+  firstName?: Maybe<String>;
+  firstName_not?: Maybe<String>;
+  firstName_in?: Maybe<String[] | String>;
+  firstName_not_in?: Maybe<String[] | String>;
+  firstName_lt?: Maybe<String>;
+  firstName_lte?: Maybe<String>;
+  firstName_gt?: Maybe<String>;
+  firstName_gte?: Maybe<String>;
+  firstName_contains?: Maybe<String>;
+  firstName_not_contains?: Maybe<String>;
+  firstName_starts_with?: Maybe<String>;
+  firstName_not_starts_with?: Maybe<String>;
+  firstName_ends_with?: Maybe<String>;
+  firstName_not_ends_with?: Maybe<String>;
+  lastName?: Maybe<String>;
+  lastName_not?: Maybe<String>;
+  lastName_in?: Maybe<String[] | String>;
+  lastName_not_in?: Maybe<String[] | String>;
+  lastName_lt?: Maybe<String>;
+  lastName_lte?: Maybe<String>;
+  lastName_gt?: Maybe<String>;
+  lastName_gte?: Maybe<String>;
+  lastName_contains?: Maybe<String>;
+  lastName_not_contains?: Maybe<String>;
+  lastName_starts_with?: Maybe<String>;
+  lastName_not_starts_with?: Maybe<String>;
+  lastName_ends_with?: Maybe<String>;
+  lastName_not_ends_with?: Maybe<String>;
+  role?: Maybe<UserRole>;
+  role_not?: Maybe<UserRole>;
+  role_in?: Maybe<UserRole[] | UserRole>;
+  role_not_in?: Maybe<UserRole[] | UserRole>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  pushNotification?: Maybe<UserPushNotificationWhereInput>;
+  AND?: Maybe<UserWhereInput[] | UserWhereInput>;
+  OR?: Maybe<UserWhereInput[] | UserWhereInput>;
+  NOT?: Maybe<UserWhereInput[] | UserWhereInput>;
+}
+
+export interface UserPushNotificationWhereInput {
+=======
+export interface PhysicalProductWhereInput {
+>>>>>>> db750af... Updates push notification models
   id?: Maybe<ID_Input>;
   id_not?: Maybe<ID_Input>;
   id_in?: Maybe<ID_Input[] | ID_Input>;
@@ -7059,6 +7249,7 @@ export interface UserPushNotificationCreateInput {
   interests?: Maybe<UserPushNotificationInterestCreateManyInput>;
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
   status?: Maybe<Boolean>;
 =======
   status: Boolean;
@@ -7066,6 +7257,9 @@ export interface UserPushNotificationCreateInput {
 =======
   status?: Maybe<Boolean>;
 >>>>>>> a944198... Updates datamodel
+=======
+  status: Boolean;
+>>>>>>> db750af... Updates push notification models
   history?: Maybe<PushNotificationReceiptCreateManyInput>;
 }
 
@@ -8401,6 +8595,148 @@ export interface UserPushNotificationInterestScalarWhereInput {
   >;
 }
 
+<<<<<<< HEAD
+=======
+export interface UserUpdateDataInput {
+  auth0Id?: Maybe<String>;
+  email?: Maybe<String>;
+  firstName?: Maybe<String>;
+  lastName?: Maybe<String>;
+  role?: Maybe<UserRole>;
+  roles?: Maybe<UserUpdaterolesInput>;
+  pushNotification?: Maybe<UserPushNotificationUpdateOneInput>;
+}
+
+export interface UserUpdaterolesInput {
+  set?: Maybe<UserRole[] | UserRole>;
+}
+
+export interface UserPushNotificationUpdateOneInput {
+  create?: Maybe<UserPushNotificationCreateInput>;
+  update?: Maybe<UserPushNotificationUpdateDataInput>;
+  upsert?: Maybe<UserPushNotificationUpsertNestedInput>;
+  delete?: Maybe<Boolean>;
+  disconnect?: Maybe<Boolean>;
+  connect?: Maybe<UserPushNotificationWhereUniqueInput>;
+}
+
+export interface UserPushNotificationUpdateDataInput {
+  interests?: Maybe<UserPushNotificationInterestUpdateManyInput>;
+  status?: Maybe<Boolean>;
+  history?: Maybe<PushNotificationReceiptUpdateManyInput>;
+}
+
+export interface UserPushNotificationInterestUpdateManyInput {
+  create?: Maybe<
+    | UserPushNotificationInterestCreateInput[]
+    | UserPushNotificationInterestCreateInput
+  >;
+  update?: Maybe<
+    | UserPushNotificationInterestUpdateWithWhereUniqueNestedInput[]
+    | UserPushNotificationInterestUpdateWithWhereUniqueNestedInput
+  >;
+  upsert?: Maybe<
+    | UserPushNotificationInterestUpsertWithWhereUniqueNestedInput[]
+    | UserPushNotificationInterestUpsertWithWhereUniqueNestedInput
+  >;
+  delete?: Maybe<
+    | UserPushNotificationInterestWhereUniqueInput[]
+    | UserPushNotificationInterestWhereUniqueInput
+  >;
+  connect?: Maybe<
+    | UserPushNotificationInterestWhereUniqueInput[]
+    | UserPushNotificationInterestWhereUniqueInput
+  >;
+  set?: Maybe<
+    | UserPushNotificationInterestWhereUniqueInput[]
+    | UserPushNotificationInterestWhereUniqueInput
+  >;
+  disconnect?: Maybe<
+    | UserPushNotificationInterestWhereUniqueInput[]
+    | UserPushNotificationInterestWhereUniqueInput
+  >;
+  deleteMany?: Maybe<
+    | UserPushNotificationInterestScalarWhereInput[]
+    | UserPushNotificationInterestScalarWhereInput
+  >;
+  updateMany?: Maybe<
+    | UserPushNotificationInterestUpdateManyWithWhereNestedInput[]
+    | UserPushNotificationInterestUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface UserPushNotificationInterestUpdateWithWhereUniqueNestedInput {
+  where: UserPushNotificationInterestWhereUniqueInput;
+  data: UserPushNotificationInterestUpdateDataInput;
+}
+
+export interface UserPushNotificationInterestUpdateDataInput {
+  type?: Maybe<UserPushNotificationInterestType>;
+  value?: Maybe<String>;
+  user?: Maybe<UserUpdateOneRequiredInput>;
+  status?: Maybe<Boolean>;
+}
+
+export interface UserPushNotificationInterestUpsertWithWhereUniqueNestedInput {
+  where: UserPushNotificationInterestWhereUniqueInput;
+  update: UserPushNotificationInterestUpdateDataInput;
+  create: UserPushNotificationInterestCreateInput;
+}
+
+export interface UserPushNotificationInterestScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  type?: Maybe<UserPushNotificationInterestType>;
+  type_not?: Maybe<UserPushNotificationInterestType>;
+  type_in?: Maybe<
+    UserPushNotificationInterestType[] | UserPushNotificationInterestType
+  >;
+  type_not_in?: Maybe<
+    UserPushNotificationInterestType[] | UserPushNotificationInterestType
+  >;
+  value?: Maybe<String>;
+  value_not?: Maybe<String>;
+  value_in?: Maybe<String[] | String>;
+  value_not_in?: Maybe<String[] | String>;
+  value_lt?: Maybe<String>;
+  value_lte?: Maybe<String>;
+  value_gt?: Maybe<String>;
+  value_gte?: Maybe<String>;
+  value_contains?: Maybe<String>;
+  value_not_contains?: Maybe<String>;
+  value_starts_with?: Maybe<String>;
+  value_not_starts_with?: Maybe<String>;
+  value_ends_with?: Maybe<String>;
+  value_not_ends_with?: Maybe<String>;
+  status?: Maybe<Boolean>;
+  status_not?: Maybe<Boolean>;
+  AND?: Maybe<
+    | UserPushNotificationInterestScalarWhereInput[]
+    | UserPushNotificationInterestScalarWhereInput
+  >;
+  OR?: Maybe<
+    | UserPushNotificationInterestScalarWhereInput[]
+    | UserPushNotificationInterestScalarWhereInput
+  >;
+  NOT?: Maybe<
+    | UserPushNotificationInterestScalarWhereInput[]
+    | UserPushNotificationInterestScalarWhereInput
+  >;
+}
+
+>>>>>>> db750af... Updates push notification models
 export interface UserPushNotificationInterestUpdateManyWithWhereNestedInput {
   where: UserPushNotificationInterestScalarWhereInput;
   data: UserPushNotificationInterestUpdateManyDataInput;
@@ -8609,10 +8945,13 @@ export interface UserUpdateManyDataInput {
   roles?: Maybe<UserUpdaterolesInput>;
 }
 
+<<<<<<< HEAD
 =======
 }
 
 >>>>>>> 4514086... Updates push notification models
+=======
+>>>>>>> db750af... Updates push notification models
 export interface PushNotificationReceiptUpsertWithWhereUniqueNestedInput {
   where: PushNotificationReceiptWhereUniqueInput;
   update: PushNotificationReceiptUpdateDataInput;
@@ -13267,6 +13606,7 @@ export interface ReservationCreateOneInput {
   connect?: Maybe<ReservationWhereUniqueInput>;
 }
 
+<<<<<<< HEAD
 export interface ReservationCreateInput {
   id?: Maybe<ID_Input>;
   user: UserCreateOneInput;
@@ -13599,6 +13939,21 @@ export interface PushNotificationReceiptUpdateInput {
   sentAt?: Maybe<DateTimeInput>;
 }
 
+=======
+export interface PushNotificationReceiptUpdateInput {
+  route?: Maybe<String>;
+  screen?: Maybe<String>;
+  uri?: Maybe<String>;
+  users?: Maybe<UserUpdateManyInput>;
+  interest?: Maybe<String>;
+  body?: Maybe<String>;
+  title?: Maybe<String>;
+  recordID?: Maybe<String>;
+  recordSlug?: Maybe<String>;
+  sentAt?: Maybe<DateTimeInput>;
+}
+
+>>>>>>> db750af... Updates push notification models
 export interface PushNotificationReceiptUpdateManyMutationInput {
   route?: Maybe<String>;
   screen?: Maybe<String>;
@@ -15216,6 +15571,46 @@ export interface UserPushNotificationInterestSubscriptionWhereInput {
   >;
 }
 
+export interface UserPushNotificationSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<UserPushNotificationWhereInput>;
+  AND?: Maybe<
+    | UserPushNotificationSubscriptionWhereInput[]
+    | UserPushNotificationSubscriptionWhereInput
+  >;
+  OR?: Maybe<
+    | UserPushNotificationSubscriptionWhereInput[]
+    | UserPushNotificationSubscriptionWhereInput
+  >;
+  NOT?: Maybe<
+    | UserPushNotificationSubscriptionWhereInput[]
+    | UserPushNotificationSubscriptionWhereInput
+  >;
+}
+
+export interface UserPushNotificationInterestSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<UserPushNotificationInterestWhereInput>;
+  AND?: Maybe<
+    | UserPushNotificationInterestSubscriptionWhereInput[]
+    | UserPushNotificationInterestSubscriptionWhereInput
+  >;
+  OR?: Maybe<
+    | UserPushNotificationInterestSubscriptionWhereInput[]
+    | UserPushNotificationInterestSubscriptionWhereInput
+  >;
+  NOT?: Maybe<
+    | UserPushNotificationInterestSubscriptionWhereInput[]
+    | UserPushNotificationInterestSubscriptionWhereInput
+  >;
+}
+
 export interface WarehouseLocationSubscriptionWhereInput {
   mutation_in?: Maybe<MutationType[] | MutationType>;
   updatedFields_contains?: Maybe<String>;
@@ -15497,7 +15892,10 @@ export interface UserPushNotificationSubscription
     T = Promise<AsyncIterator<PushNotificationReceiptSubscription>>
   >(args?: {
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> db750af... Updates push notification models
     where?: PushNotificationReceiptWhereInput;
     orderBy?: PushNotificationReceiptOrderByInput;
     skip?: Int;
@@ -15523,6 +15921,7 @@ export interface UserPushNotificationNullablePromise
   }) => T;
   status: () => Promise<Boolean>;
   history: <T = FragmentableArray<PushNotificationReceipt>>(args?: {
+<<<<<<< HEAD
 >>>>>>> 4514086... Updates push notification models
     where?: PushNotificationReceiptWhereInput;
     orderBy?: PushNotificationReceiptOrderByInput;
@@ -15550,6 +15949,8 @@ export interface UserPushNotificationNullablePromise
   }) => T;
   status: () => Promise<Boolean>;
   history: <T = FragmentableArray<PushNotificationReceipt>>(args?: {
+=======
+>>>>>>> db750af... Updates push notification models
     where?: PushNotificationReceiptWhereInput;
     orderBy?: PushNotificationReceiptOrderByInput;
     skip?: Int;
@@ -15560,8 +15961,11 @@ export interface UserPushNotificationNullablePromise
   }) => T;
 }
 
+<<<<<<< HEAD
 =======
 >>>>>>> 4514086... Updates push notification models
+=======
+>>>>>>> db750af... Updates push notification models
 export interface UserPushNotificationInterest {
   id: ID_Output;
   type: UserPushNotificationInterestType;
@@ -20919,6 +21323,7 @@ export interface AggregateUserPushNotificationInterestSubscription
   count: () => Promise<AsyncIterator<Int>>;
 }
 
+<<<<<<< HEAD
 export interface UserPushNotificationConnection {
   pageInfo: PageInfo;
   edges: UserPushNotificationEdge[];
@@ -21035,6 +21440,8 @@ export interface AggregateUserPushNotificationInterestSubscription
   count: () => Promise<AsyncIterator<Int>>;
 }
 
+=======
+>>>>>>> db750af... Updates push notification models
 export interface WarehouseLocationConnection {
   pageInfo: PageInfo;
   edges: WarehouseLocationEdge[];
