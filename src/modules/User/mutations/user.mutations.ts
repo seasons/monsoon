@@ -8,7 +8,7 @@ export class UserMutationsResolver {
 
   @Mutation()
   async updateUserPushNotificationStatus(
-    @Args() { pushNotificationStatus },
+    @Args() { newStatus },
     @User() user,
     @Info() info
   ) {
@@ -16,12 +16,26 @@ export class UserMutationsResolver {
       throw new Error("Missing user from context")
     }
 
-    const x = await this.prisma.binding.mutation.updateUser(
+    const memberWithPushNotification = await this.prisma.binding.query.user(
+      {
+        where: { id: user.id },
+      },
+      `
+    {
+      id
+      pushNotification {
+        id
+      }
+    }
+    `
+    )
+
+    const x = await this.prisma.binding.mutation.updateUserPushNotification(
       {
         where: {
-          id: user.id,
+          id: memberWithPushNotification?.pushNotification?.id,
         },
-        data: { pushNotificationStatus },
+        data: { status: newStatus },
       },
       info
     )

@@ -118,12 +118,6 @@ enum QuestionType {
   FreeResponse
 }
 
-enum PushNotificationStatus {
-  Blocked
-  Granted
-  Denied
-}
-
 enum Rating {
   Disliked
   Ok
@@ -210,6 +204,14 @@ enum PackageTransitEventSubStatus {
 enum ReservationPhase {
   BusinessToCustomer
   CustomerToBusiness
+}
+
+enum UserPushNotificationInterestType {
+  General
+  Blog
+  Bag
+  NewProduct
+  Brand
 }
 
 type Brand {
@@ -518,9 +520,7 @@ type User {
   roles: [UserRole!]! @scalarList(strategy: RELATION)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
-  pushNotificationStatus: PushNotificationStatus! @default(value: Denied)
-  pushNotifications: [PushNotificationReceipt!]
-    @relation(name: "UserToPushNotificationReceipts")
+  pushNotification: UserPushNotification
 }
 
 type CustomerDetail {
@@ -672,6 +672,21 @@ type ReservationReceiptItem {
   product: PhysicalProduct!
   productStatus: PhysicalProductStatus!
   notes: String
+}
+
+type UserPushNotificationInterest {
+  id: ID! @id
+  type: UserPushNotificationInterestType!
+  value: String! # e.g. CDGS,
+  user: User!
+  status: Boolean! @default(value: true)
+}
+
+type UserPushNotification {
+  id: ID! @id
+  interests: [UserPushNotificationInterest!]!
+  status: Boolean!
+  history: [PushNotificationReceipt!]!
 }
 
 type Package {
