@@ -154,6 +154,7 @@ type Product {
   type: ProductType
   description: String
   externalURL: String
+  materialCategory: ProductMaterialCategory
   model: ProductModel
   modelHeight: Int
   modelSize: Size
@@ -235,6 +236,7 @@ input CustomProductUpdateInput {
   description: String
   externalURL: String
   innerMaterials: ProductUpdateinnerMaterialsInput
+  materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
   model: ProductModelUpdateOneWithoutProductsInput
   modelHeight: Int
   name: String
