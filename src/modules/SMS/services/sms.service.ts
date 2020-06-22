@@ -30,7 +30,7 @@ export class SMSService {
     this.sid = service.sid
   }
 
-  private status(statusString: string): UserVerificationStatus {
+  private twilioToPrismaStatus(statusString: string): UserVerificationStatus {
     switch (statusString.toLowerCase()) {
       case "approved":
         return "Approved"
@@ -59,8 +59,6 @@ export class SMSService {
   ): Promise<boolean> {
     if (!this.sid) {
       throw new Error("Twilio service not set up yet. Please try again.")
-    } else if (!where.id) {
-      throw new Error("Missing user id.")
     }
 
     let validPhoneNumber: PhoneNumberInstance
@@ -72,18 +70,19 @@ export class SMSService {
       throw new Error("Invalid phone number.")
     }
     const e164PhoneNumber = validPhoneNumber.phoneNumber
-    const customerDetail = await this.getCustomerDetail(where.id.toString())
+    const user = await this.prisma.binding.query.user({ where })
+    const customerDetail = await this.getCustomerDetail(user.id)
 
     const verification = await this.twilio.client.verify
       .services(this.sid)
       .verifications.create({ to: e164PhoneNumber, channel: "sms" })
     await this.prisma.binding.mutation.updateUser({
       data: {
-        verificationStatus: this.status(verification.status),
+        verificationStatus: this.twilioToPrismaStatus(verification.status),
         verificationMethod: "SMS",
       },
       where: {
-        id: where.id,
+        id: user.id,
       },
     })
     await this.prisma.binding.mutation.updateCustomerDetail({
@@ -104,11 +103,10 @@ export class SMSService {
   ): Promise<UserVerificationStatus> {
     if (!this.sid) {
       throw new Error("Twilio service not set up yet. Please try again.")
-    } else if (!where.id) {
-      throw new Error("Missing user id.")
     }
 
-    const customerDetail = await this.getCustomerDetail(where.id.toString())
+    const user = await this.prisma.binding.query.user({ where })
+    const customerDetail = await this.getCustomerDetail(user.id)
 
     const phoneNumber = customerDetail.phoneNumber
     if (!phoneNumber) {
@@ -124,25 +122,22 @@ export class SMSService {
       if (error.code === 20404) {
         // Most likely, Twilio has deleted the verification SID because it has expired, been approved, or the
         // max attempts to check a code has been reached. Return the current verification status instead.
-        const user = await this.prisma.binding.query.user({
-          where: { id: where.id },
-        })
         return user.verificationStatus
       } else {
         throw error
       }
     }
 
-    const newStatus = this.status(check.status)
+    const newStatus = this.twilioToPrismaStatus(check.status)
     await this.prisma.binding.mutation.updateUser({
       data: {
-        verificationStatus: this.status(newStatus),
+        verificationStatus: newStatus,
       },
       where: {
-        id: where.id,
+        id: user.id,
       },
     })
 
-    return this.status(check.status)
+    return this.twilioToPrismaStatus(check.status)
   }
 }
