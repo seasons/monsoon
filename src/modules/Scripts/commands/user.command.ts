@@ -188,7 +188,7 @@ export class UserCommands {
         firstName,
         lastName,
         details: {
-          phoneNumber: "(646) 350-2715",
+          phoneNumber: "+16463502715",
           height: 40 + faker.random.number(32),
           weight: "152lb",
           bodyType: "Athletic",
