@@ -1,17 +1,21 @@
-import { User } from "@app/decorators"
 import { TwilioService } from "@app/modules/Twilio"
+import { AuthService } from "@modules/User/services/auth.service"
 import { Injectable } from "@nestjs/common"
-import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
-import { UserVerificationStatus, UserWhereUniqueInput } from "@prisma/index"
+import { Args } from "@nestjs/graphql"
+import {
+  CustomerDetail,
+  UserVerificationStatus,
+  UserWhereUniqueInput,
+} from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
-import { Twilio } from "twilio"
-
-// https://www.twilio.com/docs/verify/api/verification-check
+import { PhoneNumberInstance } from "twilio/lib/rest/lookups/v1/phoneNumber"
+import { VerificationCheckInstance } from "twilio/lib/rest/verify/v2/service/verificationCheck"
 
 @Injectable()
 export class SMSService {
   private sid?: string
   constructor(
+    private readonly authService: AuthService,
     private readonly prisma: PrismaService,
     private readonly twilio: TwilioService
   ) {
@@ -20,14 +24,14 @@ export class SMSService {
 
   private async setupService() {
     const service = await this.twilio.client.verify.services.create({
-      friendlyName: "SMS Verification Service",
+      friendlyName: "Seasons",
       codeLength: 6,
     })
     this.sid = service.sid
   }
 
   private status(statusString: string): UserVerificationStatus {
-    switch (statusString) {
+    switch (statusString.toLowerCase()) {
       case "approved":
         return "Approved"
       case "denied":
@@ -41,20 +45,38 @@ export class SMSService {
     }
   }
 
+  private async getCustomerDetail(userID: string): Promise<CustomerDetail> {
+    const customer = await this.authService.getCustomerFromUserID(userID)
+    const detail = await this.prisma.client
+      .customer({ id: customer.id })
+      .detail()
+    return detail
+  }
+
   async startSMSVerification(
     @Args()
     { phoneNumber, where }: { phoneNumber: string; where: UserWhereUniqueInput }
   ): Promise<boolean> {
-    // verify if number is valid? https://www.twilio.com/docs/lookup/tutorials/validation-and-formatting
-    // store number in user
     if (!this.sid) {
       throw new Error("Twilio service not set up yet. Please try again.")
+    } else if (!where.id) {
+      throw new Error("Missing user id.")
     }
+
+    let validPhoneNumber: PhoneNumberInstance
+    try {
+      validPhoneNumber = await this.twilio.client.lookups
+        .phoneNumbers(phoneNumber)
+        .fetch()
+    } catch (error) {
+      throw new Error("Invalid phone number.")
+    }
+    const e164PhoneNumber = validPhoneNumber.phoneNumber
+    const customerDetail = await this.getCustomerDetail(where.id.toString())
 
     const verification = await this.twilio.client.verify
       .services(this.sid)
-      .verifications.create({ to: phoneNumber, channel: "sms" })
-    // store status in user
+      .verifications.create({ to: e164PhoneNumber, channel: "sms" })
     await this.prisma.binding.mutation.updateUser({
       data: {
         verificationStatus: this.status(verification.status),
@@ -64,17 +86,63 @@ export class SMSService {
         id: where.id,
       },
     })
+    await this.prisma.binding.mutation.updateCustomerDetail({
+      data: {
+        phoneNumber: e164PhoneNumber,
+      },
+      where: {
+        id: customerDetail.id,
+      },
+    })
+
     return true
   }
 
-  async checkSMSVerification(args): Promise<UserVerificationStatus> {
-    const { code, where } = args
+  async checkSMSVerification(
+    @Args()
+    { code, where }: { code: string; where: UserWhereUniqueInput }
+  ): Promise<UserVerificationStatus> {
+    if (!this.sid) {
+      throw new Error("Twilio service not set up yet. Please try again.")
+    } else if (!where.id) {
+      throw new Error("Missing user id.")
+    }
 
-    const phoneNumber = "" // get number from param or db?
-    const check = await this.twilio.client.verify
-      .services(this.sid)
-      .verificationChecks.create({ to: phoneNumber, code })
-    // update status
+    const customerDetail = await this.getCustomerDetail(where.id.toString())
+
+    const phoneNumber = customerDetail.phoneNumber
+    if (!phoneNumber) {
+      throw new Error("Cannot find a phone number for this user.")
+    }
+
+    let check: VerificationCheckInstance
+    try {
+      check = await this.twilio.client.verify
+        .services(this.sid)
+        .verificationChecks.create({ to: phoneNumber, code })
+    } catch (error) {
+      if (error.code === 20404) {
+        // Most likely, Twilio has deleted the verification SID because it has expired, been approved, or the
+        // max attempts to check a code has been reached. Return the current verification status instead.
+        const user = await this.prisma.binding.query.user({
+          where: { id: where.id },
+        })
+        return user.verificationStatus
+      } else {
+        throw error
+      }
+    }
+
+    const newStatus = this.status(check.status)
+    await this.prisma.binding.mutation.updateUser({
+      data: {
+        verificationStatus: this.status(newStatus),
+      },
+      where: {
+        id: where.id,
+      },
+    })
+
     return this.status(check.status)
   }
 }
