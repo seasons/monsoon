@@ -35,7 +35,7 @@ type Mutation {
   updateUserPushNotificationStatus(
     pushNotificationStatus: PushNotificationStatus!
   ): User! @hasRole(roles: [Customer])
-  resetPassword(email: String!): ResetPasswordPayload! @isAuthenticated
+  resetPassword(email: String!): ResetPasswordPayload!
   refreshToken(refreshToken: String!): String!
 }
 
