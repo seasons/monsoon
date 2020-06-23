@@ -261,9 +261,9 @@ export class ReservationService {
           productStatus,
         }
         if (returned) {
-          // TODO: allow inventory status to be overriden from admin but derive value
-          // from automated criteria
-          updateData.inventoryStatus = "Reservable"
+          updateData.inventoryStatus = this.getReturnedPhysicalProductInventoryStatus(
+            seasonsUID
+          )
           return this.prisma.client.updatePhysicalProduct({
             where: { seasonsUID },
             data: updateData,
@@ -643,5 +643,23 @@ export class ReservationService {
       await this.prisma.client.deleteReservation({ id: reservation.id })
     }
     return [reservation, rollbackPrismaReservation]
+  }
+
+  private async getReturnedPhysicalProductInventoryStatus(
+    seasonsUID: string
+  ): Promise<InventoryStatus> {
+    // TODO: Allow inventory status to be overriden from admin but derive value from automated criteria
+
+    const parentProduct = head(
+      await this.prisma.client.products({
+        where: { variants_some: { physicalProducts_some: { seasonsUID } } },
+      })
+    )
+
+    if (parentProduct.status === "Stored") {
+      return "Stored"
+    }
+
+    return "Reservable"
   }
 }
