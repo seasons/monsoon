@@ -13220,6 +13220,10 @@ type UserPushNotificationConnection {
 
 input UserPushNotificationCreateInput {
   id: ID
+<<<<<<< HEAD
+=======
+  status: Boolean
+>>>>>>> a944198... Updates datamodel
   interests: UserPushNotificationInterestCreateManyInput
   status: Boolean
   history: PushNotificationReceiptCreateManyInput
@@ -24701,6 +24705,10 @@ export interface UserCreaterolesInput {
 
 export interface UserPushNotificationCreateInput {
   id?: ID_Input | null
+<<<<<<< HEAD
+=======
+  status?: Boolean | null
+>>>>>>> a944198... Updates datamodel
   interests?: UserPushNotificationInterestCreateManyInput | null
   status?: Boolean | null
   history?: PushNotificationReceiptCreateManyInput | null

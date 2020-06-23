@@ -1,3 +1,9 @@
+<<<<<<< HEAD
+=======
+# source: http://localhost:4466/monsoon/dev
+# timestamp: Tue Jun 23 2020 12:34:22 GMT-0400 (Eastern Daylight Time)
+
+>>>>>>> a944198... Updates datamodel
 type AggregateBagItem {
   count: Int!
 }
@@ -12675,6 +12681,10 @@ type UserPushNotificationConnection {
 
 input UserPushNotificationCreateInput {
   id: ID
+<<<<<<< HEAD
+=======
+  status: Boolean
+>>>>>>> a944198... Updates datamodel
   interests: UserPushNotificationInterestCreateManyInput
   status: Boolean
   history: PushNotificationReceiptCreateManyInput
