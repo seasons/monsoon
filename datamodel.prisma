@@ -545,7 +545,9 @@ type CustomerDetail {
   weight: String
   bodyType: String
   averageTopSize: String
+  averageTopSizeFit: String
   averageWaistSize: String
+  averageWaistSizeFit: String
   averagePantLength: String
   preferredPronouns: String
   profession: String
