@@ -534,6 +534,7 @@ type CustomerDetail {
   weight: String
   bodyType: String
   averageTopSize: String
+  # How does average top size run? Too big, too small, perfect.
   averageTopSizeFit: String
   averageWaistSize: String
   averageWaistSizeFit: String

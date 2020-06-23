@@ -1,3 +1,4 @@
+import { Customer, User } from "@app/decorators"
 import { TwilioService } from "@app/modules/Twilio"
 import { AuthService } from "@modules/User/services/auth.service"
 import { Injectable } from "@nestjs/common"
@@ -8,6 +9,7 @@ import {
   UserWhereUniqueInput,
 } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
+import { upperFirst } from "lodash"
 import { PhoneNumberInstance } from "twilio/lib/rest/lookups/v1/phoneNumber"
 import { VerificationCheckInstance } from "twilio/lib/rest/verify/v2/service/verificationCheck"
 
@@ -31,31 +33,20 @@ export class SMSService {
   }
 
   private twilioToPrismaStatus(statusString: string): UserVerificationStatus {
-    switch (statusString.toLowerCase()) {
-      case "approved":
-        return "Approved"
-      case "denied":
-        return "Denied"
-      case "pending":
-        return "Pending"
-      default:
-        throw new Error(
-          `Got unrecognized verification status "${statusString}".`
-        )
+    if (!["approved", "denied", "pending"].includes(statusString)) {
+      throw new Error(`Got unrecognized verification status "${statusString}".`)
     }
-  }
-
-  private async getCustomerDetail(userID: string): Promise<CustomerDetail> {
-    const customer = await this.authService.getCustomerFromUserID(userID)
-    const detail = await this.prisma.client
-      .customer({ id: customer.id })
-      .detail()
-    return detail
+    return upperFirst(statusString) as UserVerificationStatus
   }
 
   async startSMSVerification(
     @Args()
-    { phoneNumber, where }: { phoneNumber: string; where: UserWhereUniqueInput }
+    {
+      phoneNumber,
+      where,
+    }: { phoneNumber: string; where: UserWhereUniqueInput },
+    @Customer() customer,
+    @User() user
   ): Promise<boolean> {
     if (!this.sid) {
       throw new Error("Twilio service not set up yet. Please try again.")
@@ -70,8 +61,6 @@ export class SMSService {
       throw new Error("Invalid phone number.")
     }
     const e164PhoneNumber = validPhoneNumber.phoneNumber
-    const user = await this.prisma.binding.query.user({ where })
-    const customerDetail = await this.getCustomerDetail(user.id)
 
     const verification = await this.twilio.client.verify
       .services(this.sid)
@@ -90,7 +79,7 @@ export class SMSService {
         phoneNumber: e164PhoneNumber,
       },
       where: {
-        id: customerDetail.id,
+        id: customer.id,
       },
     })
 
@@ -99,16 +88,18 @@ export class SMSService {
 
   async checkSMSVerification(
     @Args()
-    { code, where }: { code: string; where: UserWhereUniqueInput }
+    { code, where }: { code: string; where: UserWhereUniqueInput },
+    @Customer() customer,
+    @User() user
   ): Promise<UserVerificationStatus> {
     if (!this.sid) {
       throw new Error("Twilio service not set up yet. Please try again.")
     }
 
-    const user = await this.prisma.binding.query.user({ where })
-    const customerDetail = await this.getCustomerDetail(user.id)
-
-    const phoneNumber = customerDetail.phoneNumber
+    const phoneNumber = await this.prisma.client
+      .customer({ id: customer.id })
+      .detail()
+      .phoneNumber()
     if (!phoneNumber) {
       throw new Error("Cannot find a phone number for this user.")
     }

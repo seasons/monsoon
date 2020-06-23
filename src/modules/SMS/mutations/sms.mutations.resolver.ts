@@ -1,3 +1,4 @@
+import { Customer, User } from "@app/decorators"
 import { Args, Mutation, Resolver } from "@nestjs/graphql"
 
 import { SMSService } from "../services/sms.service"
@@ -7,15 +8,23 @@ export class SMSMutationsResolver {
   constructor(private readonly smsService: SMSService) {}
 
   @Mutation()
-  async startSMSVerification(@Args() args) {
-    const success = await this.smsService.startSMSVerification(args)
+  async startSMSVerification(@Args() args, @Customer() customer, @User() user) {
+    const success = await this.smsService.startSMSVerification(
+      args,
+      customer,
+      user
+    )
     // analytics?
     return success
   }
 
   @Mutation()
-  async checkSMSVerification(@Args() args) {
-    const status = await this.smsService.checkSMSVerification(args)
+  async checkSMSVerification(@Args() args, @Customer() customer, @User() user) {
+    const status = await this.smsService.checkSMSVerification(
+      args,
+      customer,
+      user
+    )
     // analytics?
     return status
   }
