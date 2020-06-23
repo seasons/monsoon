@@ -12711,10 +12711,14 @@ input UserPushNotificationCreateInput {
   id: ID
   interests: UserPushNotificationInterestCreateManyInput
 <<<<<<< HEAD
+<<<<<<< HEAD
   status: Boolean
 =======
   status: Boolean!
 >>>>>>> 4514086... Updates push notification models
+=======
+  status: Boolean
+>>>>>>> a944198... Updates datamodel
   history: PushNotificationReceiptCreateManyInput
 }
 

@@ -7058,10 +7058,14 @@ export interface UserPushNotificationCreateInput {
   id?: Maybe<ID_Input>;
   interests?: Maybe<UserPushNotificationInterestCreateManyInput>;
 <<<<<<< HEAD
+<<<<<<< HEAD
   status?: Maybe<Boolean>;
 =======
   status: Boolean;
 >>>>>>> 4514086... Updates push notification models
+=======
+  status?: Maybe<Boolean>;
+>>>>>>> a944198... Updates datamodel
   history?: Maybe<PushNotificationReceiptCreateManyInput>;
 }
 
