@@ -86,7 +86,7 @@ export class ReservationScheduledJobs {
     this.logger.log(report)
   }
 
-  @Cron(CronExpression.EVERY_MINUTE)
+  // @Cron(CronExpression.EVERY_MINUTE)
   async syncPhysicalProductAndReservationStatuses(onlyReservation = false) {
     this.logger.log(
       `Sync ${
