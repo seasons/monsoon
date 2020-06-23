@@ -1,5 +1,5 @@
-# source: https://monsoon-prisma-staging.herokuapp.com/monsoon/staging
-# timestamp: Fri Jun 19 2020 13:04:36 GMT-0400 (Eastern Daylight Time)
+# source: http://localhost:4466/monsoon/dev
+# timestamp: Tue Jun 23 2020 09:55:53 GMT-0400 (Eastern Daylight Time)
 
 type AggregateBagItem {
   count: Int!
@@ -4153,7 +4153,9 @@ type CustomerDetail implements Node {
   weight: String
   bodyType: String
   averageTopSize: String
+  averageTopSizeFit: String
   averageWaistSize: String
+  averageWaistSizeFit: String
   averagePantLength: String
   preferredPronouns: String
   profession: String
@@ -4188,7 +4190,9 @@ input CustomerDetailCreateInput {
   weight: String
   bodyType: String
   averageTopSize: String
+  averageTopSizeFit: String
   averageWaistSize: String
+  averageWaistSizeFit: String
   averagePantLength: String
   preferredPronouns: String
   profession: String
@@ -4232,8 +4236,12 @@ enum CustomerDetailOrderByInput {
   bodyType_DESC
   averageTopSize_ASC
   averageTopSize_DESC
+  averageTopSizeFit_ASC
+  averageTopSizeFit_DESC
   averageWaistSize_ASC
   averageWaistSize_DESC
+  averageWaistSizeFit_ASC
+  averageWaistSizeFit_DESC
   averagePantLength_ASC
   averagePantLength_DESC
   preferredPronouns_ASC
@@ -4270,7 +4278,9 @@ type CustomerDetailPreviousValues {
   weight: String
   bodyType: String
   averageTopSize: String
+  averageTopSizeFit: String
   averageWaistSize: String
+  averageWaistSizeFit: String
   averagePantLength: String
   preferredPronouns: String
   profession: String
@@ -4330,7 +4340,9 @@ input CustomerDetailUpdateDataInput {
   weight: String
   bodyType: String
   averageTopSize: String
+  averageTopSizeFit: String
   averageWaistSize: String
+  averageWaistSizeFit: String
   averagePantLength: String
   preferredPronouns: String
   profession: String
@@ -4352,7 +4364,9 @@ input CustomerDetailUpdateInput {
   weight: String
   bodyType: String
   averageTopSize: String
+  averageTopSizeFit: String
   averageWaistSize: String
+  averageWaistSizeFit: String
   averagePantLength: String
   preferredPronouns: String
   profession: String
@@ -4374,7 +4388,9 @@ input CustomerDetailUpdateManyMutationInput {
   weight: String
   bodyType: String
   averageTopSize: String
+  averageTopSizeFit: String
   averageWaistSize: String
+  averageWaistSizeFit: String
   averagePantLength: String
   preferredPronouns: String
   profession: String
@@ -4655,6 +4671,46 @@ input CustomerDetailWhereInput {
 
   """All values not ending with the given string."""
   averageTopSize_not_ends_with: String
+  averageTopSizeFit: String
+
+  """All values that are not equal to given value."""
+  averageTopSizeFit_not: String
+
+  """All values that are contained in given list."""
+  averageTopSizeFit_in: [String!]
+
+  """All values that are not contained in given list."""
+  averageTopSizeFit_not_in: [String!]
+
+  """All values less than the given value."""
+  averageTopSizeFit_lt: String
+
+  """All values less than or equal the given value."""
+  averageTopSizeFit_lte: String
+
+  """All values greater than the given value."""
+  averageTopSizeFit_gt: String
+
+  """All values greater than or equal the given value."""
+  averageTopSizeFit_gte: String
+
+  """All values containing the given string."""
+  averageTopSizeFit_contains: String
+
+  """All values not containing the given string."""
+  averageTopSizeFit_not_contains: String
+
+  """All values starting with the given string."""
+  averageTopSizeFit_starts_with: String
+
+  """All values not starting with the given string."""
+  averageTopSizeFit_not_starts_with: String
+
+  """All values ending with the given string."""
+  averageTopSizeFit_ends_with: String
+
+  """All values not ending with the given string."""
+  averageTopSizeFit_not_ends_with: String
   averageWaistSize: String
 
   """All values that are not equal to given value."""
@@ -4695,6 +4751,46 @@ input CustomerDetailWhereInput {
 
   """All values not ending with the given string."""
   averageWaistSize_not_ends_with: String
+  averageWaistSizeFit: String
+
+  """All values that are not equal to given value."""
+  averageWaistSizeFit_not: String
+
+  """All values that are contained in given list."""
+  averageWaistSizeFit_in: [String!]
+
+  """All values that are not contained in given list."""
+  averageWaistSizeFit_not_in: [String!]
+
+  """All values less than the given value."""
+  averageWaistSizeFit_lt: String
+
+  """All values less than or equal the given value."""
+  averageWaistSizeFit_lte: String
+
+  """All values greater than the given value."""
+  averageWaistSizeFit_gt: String
+
+  """All values greater than or equal the given value."""
+  averageWaistSizeFit_gte: String
+
+  """All values containing the given string."""
+  averageWaistSizeFit_contains: String
+
+  """All values not containing the given string."""
+  averageWaistSizeFit_not_contains: String
+
+  """All values starting with the given string."""
+  averageWaistSizeFit_starts_with: String
+
+  """All values not starting with the given string."""
+  averageWaistSizeFit_not_starts_with: String
+
+  """All values ending with the given string."""
+  averageWaistSizeFit_ends_with: String
+
+  """All values not ending with the given string."""
+  averageWaistSizeFit_not_ends_with: String
   averagePantLength: String
 
   """All values that are not equal to given value."""

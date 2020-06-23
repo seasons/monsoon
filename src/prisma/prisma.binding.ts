@@ -4654,7 +4654,9 @@ type CustomerDetail implements Node {
   weight: String
   bodyType: String
   averageTopSize: String
+  averageTopSizeFit: String
   averageWaistSize: String
+  averageWaistSizeFit: String
   averagePantLength: String
   preferredPronouns: String
   profession: String
@@ -4689,7 +4691,9 @@ input CustomerDetailCreateInput {
   weight: String
   bodyType: String
   averageTopSize: String
+  averageTopSizeFit: String
   averageWaistSize: String
+  averageWaistSizeFit: String
   averagePantLength: String
   preferredPronouns: String
   profession: String
@@ -4733,8 +4737,12 @@ enum CustomerDetailOrderByInput {
   bodyType_DESC
   averageTopSize_ASC
   averageTopSize_DESC
+  averageTopSizeFit_ASC
+  averageTopSizeFit_DESC
   averageWaistSize_ASC
   averageWaistSize_DESC
+  averageWaistSizeFit_ASC
+  averageWaistSizeFit_DESC
   averagePantLength_ASC
   averagePantLength_DESC
   preferredPronouns_ASC
@@ -4771,7 +4779,9 @@ type CustomerDetailPreviousValues {
   weight: String
   bodyType: String
   averageTopSize: String
+  averageTopSizeFit: String
   averageWaistSize: String
+  averageWaistSizeFit: String
   averagePantLength: String
   preferredPronouns: String
   profession: String
@@ -4831,7 +4841,9 @@ input CustomerDetailUpdateDataInput {
   weight: String
   bodyType: String
   averageTopSize: String
+  averageTopSizeFit: String
   averageWaistSize: String
+  averageWaistSizeFit: String
   averagePantLength: String
   preferredPronouns: String
   profession: String
@@ -4853,7 +4865,9 @@ input CustomerDetailUpdateInput {
   weight: String
   bodyType: String
   averageTopSize: String
+  averageTopSizeFit: String
   averageWaistSize: String
+  averageWaistSizeFit: String
   averagePantLength: String
   preferredPronouns: String
   profession: String
@@ -4875,7 +4889,9 @@ input CustomerDetailUpdateManyMutationInput {
   weight: String
   bodyType: String
   averageTopSize: String
+  averageTopSizeFit: String
   averageWaistSize: String
+  averageWaistSizeFit: String
   averagePantLength: String
   preferredPronouns: String
   profession: String
@@ -5156,6 +5172,46 @@ input CustomerDetailWhereInput {
 
   """All values not ending with the given string."""
   averageTopSize_not_ends_with: String
+  averageTopSizeFit: String
+
+  """All values that are not equal to given value."""
+  averageTopSizeFit_not: String
+
+  """All values that are contained in given list."""
+  averageTopSizeFit_in: [String!]
+
+  """All values that are not contained in given list."""
+  averageTopSizeFit_not_in: [String!]
+
+  """All values less than the given value."""
+  averageTopSizeFit_lt: String
+
+  """All values less than or equal the given value."""
+  averageTopSizeFit_lte: String
+
+  """All values greater than the given value."""
+  averageTopSizeFit_gt: String
+
+  """All values greater than or equal the given value."""
+  averageTopSizeFit_gte: String
+
+  """All values containing the given string."""
+  averageTopSizeFit_contains: String
+
+  """All values not containing the given string."""
+  averageTopSizeFit_not_contains: String
+
+  """All values starting with the given string."""
+  averageTopSizeFit_starts_with: String
+
+  """All values not starting with the given string."""
+  averageTopSizeFit_not_starts_with: String
+
+  """All values ending with the given string."""
+  averageTopSizeFit_ends_with: String
+
+  """All values not ending with the given string."""
+  averageTopSizeFit_not_ends_with: String
   averageWaistSize: String
 
   """All values that are not equal to given value."""
@@ -5196,6 +5252,46 @@ input CustomerDetailWhereInput {
 
   """All values not ending with the given string."""
   averageWaistSize_not_ends_with: String
+  averageWaistSizeFit: String
+
+  """All values that are not equal to given value."""
+  averageWaistSizeFit_not: String
+
+  """All values that are contained in given list."""
+  averageWaistSizeFit_in: [String!]
+
+  """All values that are not contained in given list."""
+  averageWaistSizeFit_not_in: [String!]
+
+  """All values less than the given value."""
+  averageWaistSizeFit_lt: String
+
+  """All values less than or equal the given value."""
+  averageWaistSizeFit_lte: String
+
+  """All values greater than the given value."""
+  averageWaistSizeFit_gt: String
+
+  """All values greater than or equal the given value."""
+  averageWaistSizeFit_gte: String
+
+  """All values containing the given string."""
+  averageWaistSizeFit_contains: String
+
+  """All values not containing the given string."""
+  averageWaistSizeFit_not_contains: String
+
+  """All values starting with the given string."""
+  averageWaistSizeFit_starts_with: String
+
+  """All values not starting with the given string."""
+  averageWaistSizeFit_not_starts_with: String
+
+  """All values ending with the given string."""
+  averageWaistSizeFit_ends_with: String
+
+  """All values not ending with the given string."""
+  averageWaistSizeFit_not_ends_with: String
   averagePantLength: String
 
   """All values that are not equal to given value."""
@@ -23840,8 +23936,12 @@ export type CustomerDetailOrderByInput =   'id_ASC' |
   'bodyType_DESC' |
   'averageTopSize_ASC' |
   'averageTopSize_DESC' |
+  'averageTopSizeFit_ASC' |
+  'averageTopSizeFit_DESC' |
   'averageWaistSize_ASC' |
   'averageWaistSize_DESC' |
+  'averageWaistSizeFit_ASC' |
+  'averageWaistSizeFit_DESC' |
   'averagePantLength_ASC' |
   'averagePantLength_DESC' |
   'preferredPronouns_ASC' |
@@ -26189,7 +26289,9 @@ export interface CustomerDetailCreateInput {
   weight?: String | null
   bodyType?: String | null
   averageTopSize?: String | null
+  averageTopSizeFit?: String | null
   averageWaistSize?: String | null
+  averageWaistSizeFit?: String | null
   averagePantLength?: String | null
   preferredPronouns?: String | null
   profession?: String | null
@@ -26227,7 +26329,9 @@ export interface CustomerDetailUpdateDataInput {
   weight?: String | null
   bodyType?: String | null
   averageTopSize?: String | null
+  averageTopSizeFit?: String | null
   averageWaistSize?: String | null
+  averageWaistSizeFit?: String | null
   averagePantLength?: String | null
   preferredPronouns?: String | null
   profession?: String | null
@@ -26249,7 +26353,9 @@ export interface CustomerDetailUpdateInput {
   weight?: String | null
   bodyType?: String | null
   averageTopSize?: String | null
+  averageTopSizeFit?: String | null
   averageWaistSize?: String | null
+  averageWaistSizeFit?: String | null
   averagePantLength?: String | null
   preferredPronouns?: String | null
   profession?: String | null
@@ -26271,7 +26377,9 @@ export interface CustomerDetailUpdateManyMutationInput {
   weight?: String | null
   bodyType?: String | null
   averageTopSize?: String | null
+  averageTopSizeFit?: String | null
   averageWaistSize?: String | null
+  averageWaistSizeFit?: String | null
   averagePantLength?: String | null
   preferredPronouns?: String | null
   profession?: String | null
@@ -26389,6 +26497,20 @@ export interface CustomerDetailWhereInput {
   averageTopSize_not_starts_with?: String | null
   averageTopSize_ends_with?: String | null
   averageTopSize_not_ends_with?: String | null
+  averageTopSizeFit?: String | null
+  averageTopSizeFit_not?: String | null
+  averageTopSizeFit_in?: String[] | String | null
+  averageTopSizeFit_not_in?: String[] | String | null
+  averageTopSizeFit_lt?: String | null
+  averageTopSizeFit_lte?: String | null
+  averageTopSizeFit_gt?: String | null
+  averageTopSizeFit_gte?: String | null
+  averageTopSizeFit_contains?: String | null
+  averageTopSizeFit_not_contains?: String | null
+  averageTopSizeFit_starts_with?: String | null
+  averageTopSizeFit_not_starts_with?: String | null
+  averageTopSizeFit_ends_with?: String | null
+  averageTopSizeFit_not_ends_with?: String | null
   averageWaistSize?: String | null
   averageWaistSize_not?: String | null
   averageWaistSize_in?: String[] | String | null
@@ -26403,6 +26525,20 @@ export interface CustomerDetailWhereInput {
   averageWaistSize_not_starts_with?: String | null
   averageWaistSize_ends_with?: String | null
   averageWaistSize_not_ends_with?: String | null
+  averageWaistSizeFit?: String | null
+  averageWaistSizeFit_not?: String | null
+  averageWaistSizeFit_in?: String[] | String | null
+  averageWaistSizeFit_not_in?: String[] | String | null
+  averageWaistSizeFit_lt?: String | null
+  averageWaistSizeFit_lte?: String | null
+  averageWaistSizeFit_gt?: String | null
+  averageWaistSizeFit_gte?: String | null
+  averageWaistSizeFit_contains?: String | null
+  averageWaistSizeFit_not_contains?: String | null
+  averageWaistSizeFit_starts_with?: String | null
+  averageWaistSizeFit_not_starts_with?: String | null
+  averageWaistSizeFit_ends_with?: String | null
+  averageWaistSizeFit_not_ends_with?: String | null
   averagePantLength?: String | null
   averagePantLength_not?: String | null
   averagePantLength_in?: String[] | String | null
@@ -35186,7 +35322,9 @@ export interface CustomerDetail extends Node {
   weight?: String | null
   bodyType?: String | null
   averageTopSize?: String | null
+  averageTopSizeFit?: String | null
   averageWaistSize?: String | null
+  averageWaistSizeFit?: String | null
   averagePantLength?: String | null
   preferredPronouns?: String | null
   profession?: String | null
@@ -35230,7 +35368,9 @@ export interface CustomerDetailPreviousValues {
   weight?: String | null
   bodyType?: String | null
   averageTopSize?: String | null
+  averageTopSizeFit?: String | null
   averageWaistSize?: String | null
+  averageWaistSizeFit?: String | null
   averagePantLength?: String | null
   preferredPronouns?: String | null
   profession?: String | null

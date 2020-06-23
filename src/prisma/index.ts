@@ -2547,8 +2547,12 @@ export type CustomerDetailOrderByInput =
   | "bodyType_DESC"
   | "averageTopSize_ASC"
   | "averageTopSize_DESC"
+  | "averageTopSizeFit_ASC"
+  | "averageTopSizeFit_DESC"
   | "averageWaistSize_ASC"
   | "averageWaistSize_DESC"
+  | "averageWaistSizeFit_ASC"
+  | "averageWaistSizeFit_DESC"
   | "averagePantLength_ASC"
   | "averagePantLength_DESC"
   | "preferredPronouns_ASC"
@@ -4921,6 +4925,20 @@ export interface CustomerDetailWhereInput {
   averageTopSize_not_starts_with?: Maybe<String>;
   averageTopSize_ends_with?: Maybe<String>;
   averageTopSize_not_ends_with?: Maybe<String>;
+  averageTopSizeFit?: Maybe<String>;
+  averageTopSizeFit_not?: Maybe<String>;
+  averageTopSizeFit_in?: Maybe<String[] | String>;
+  averageTopSizeFit_not_in?: Maybe<String[] | String>;
+  averageTopSizeFit_lt?: Maybe<String>;
+  averageTopSizeFit_lte?: Maybe<String>;
+  averageTopSizeFit_gt?: Maybe<String>;
+  averageTopSizeFit_gte?: Maybe<String>;
+  averageTopSizeFit_contains?: Maybe<String>;
+  averageTopSizeFit_not_contains?: Maybe<String>;
+  averageTopSizeFit_starts_with?: Maybe<String>;
+  averageTopSizeFit_not_starts_with?: Maybe<String>;
+  averageTopSizeFit_ends_with?: Maybe<String>;
+  averageTopSizeFit_not_ends_with?: Maybe<String>;
   averageWaistSize?: Maybe<String>;
   averageWaistSize_not?: Maybe<String>;
   averageWaistSize_in?: Maybe<String[] | String>;
@@ -4935,6 +4953,20 @@ export interface CustomerDetailWhereInput {
   averageWaistSize_not_starts_with?: Maybe<String>;
   averageWaistSize_ends_with?: Maybe<String>;
   averageWaistSize_not_ends_with?: Maybe<String>;
+  averageWaistSizeFit?: Maybe<String>;
+  averageWaistSizeFit_not?: Maybe<String>;
+  averageWaistSizeFit_in?: Maybe<String[] | String>;
+  averageWaistSizeFit_not_in?: Maybe<String[] | String>;
+  averageWaistSizeFit_lt?: Maybe<String>;
+  averageWaistSizeFit_lte?: Maybe<String>;
+  averageWaistSizeFit_gt?: Maybe<String>;
+  averageWaistSizeFit_gte?: Maybe<String>;
+  averageWaistSizeFit_contains?: Maybe<String>;
+  averageWaistSizeFit_not_contains?: Maybe<String>;
+  averageWaistSizeFit_starts_with?: Maybe<String>;
+  averageWaistSizeFit_not_starts_with?: Maybe<String>;
+  averageWaistSizeFit_ends_with?: Maybe<String>;
+  averageWaistSizeFit_not_ends_with?: Maybe<String>;
   averagePantLength?: Maybe<String>;
   averagePantLength_not?: Maybe<String>;
   averagePantLength_in?: Maybe<String[] | String>;
@@ -6547,7 +6579,9 @@ export interface CustomerDetailCreateInput {
   weight?: Maybe<String>;
   bodyType?: Maybe<String>;
   averageTopSize?: Maybe<String>;
+  averageTopSizeFit?: Maybe<String>;
   averageWaistSize?: Maybe<String>;
+  averageWaistSizeFit?: Maybe<String>;
   averagePantLength?: Maybe<String>;
   preferredPronouns?: Maybe<String>;
   profession?: Maybe<String>;
@@ -7622,7 +7656,9 @@ export interface CustomerDetailUpdateDataInput {
   weight?: Maybe<String>;
   bodyType?: Maybe<String>;
   averageTopSize?: Maybe<String>;
+  averageTopSizeFit?: Maybe<String>;
   averageWaistSize?: Maybe<String>;
+  averageWaistSizeFit?: Maybe<String>;
   averagePantLength?: Maybe<String>;
   preferredPronouns?: Maybe<String>;
   profession?: Maybe<String>;
@@ -11122,7 +11158,9 @@ export interface CustomerDetailUpdateInput {
   weight?: Maybe<String>;
   bodyType?: Maybe<String>;
   averageTopSize?: Maybe<String>;
+  averageTopSizeFit?: Maybe<String>;
   averageWaistSize?: Maybe<String>;
+  averageWaistSizeFit?: Maybe<String>;
   averagePantLength?: Maybe<String>;
   preferredPronouns?: Maybe<String>;
   profession?: Maybe<String>;
@@ -11144,7 +11182,9 @@ export interface CustomerDetailUpdateManyMutationInput {
   weight?: Maybe<String>;
   bodyType?: Maybe<String>;
   averageTopSize?: Maybe<String>;
+  averageTopSizeFit?: Maybe<String>;
   averageWaistSize?: Maybe<String>;
+  averageWaistSizeFit?: Maybe<String>;
   averagePantLength?: Maybe<String>;
   preferredPronouns?: Maybe<String>;
   profession?: Maybe<String>;
@@ -14452,7 +14492,9 @@ export interface CustomerDetail {
   weight?: String;
   bodyType?: String;
   averageTopSize?: String;
+  averageTopSizeFit?: String;
   averageWaistSize?: String;
+  averageWaistSizeFit?: String;
   averagePantLength?: String;
   preferredPronouns?: String;
   profession?: String;
@@ -14478,7 +14520,9 @@ export interface CustomerDetailPromise
   weight: () => Promise<String>;
   bodyType: () => Promise<String>;
   averageTopSize: () => Promise<String>;
+  averageTopSizeFit: () => Promise<String>;
   averageWaistSize: () => Promise<String>;
+  averageWaistSizeFit: () => Promise<String>;
   averagePantLength: () => Promise<String>;
   preferredPronouns: () => Promise<String>;
   profession: () => Promise<String>;
@@ -14505,7 +14549,9 @@ export interface CustomerDetailSubscription
   weight: () => Promise<AsyncIterator<String>>;
   bodyType: () => Promise<AsyncIterator<String>>;
   averageTopSize: () => Promise<AsyncIterator<String>>;
+  averageTopSizeFit: () => Promise<AsyncIterator<String>>;
   averageWaistSize: () => Promise<AsyncIterator<String>>;
+  averageWaistSizeFit: () => Promise<AsyncIterator<String>>;
   averagePantLength: () => Promise<AsyncIterator<String>>;
   preferredPronouns: () => Promise<AsyncIterator<String>>;
   profession: () => Promise<AsyncIterator<String>>;
@@ -14532,7 +14578,9 @@ export interface CustomerDetailNullablePromise
   weight: () => Promise<String>;
   bodyType: () => Promise<String>;
   averageTopSize: () => Promise<String>;
+  averageTopSizeFit: () => Promise<String>;
   averageWaistSize: () => Promise<String>;
+  averageWaistSizeFit: () => Promise<String>;
   averagePantLength: () => Promise<String>;
   preferredPronouns: () => Promise<String>;
   profession: () => Promise<String>;
@@ -20135,7 +20183,9 @@ export interface CustomerDetailPreviousValues {
   weight?: String;
   bodyType?: String;
   averageTopSize?: String;
+  averageTopSizeFit?: String;
   averageWaistSize?: String;
+  averageWaistSizeFit?: String;
   averagePantLength?: String;
   preferredPronouns?: String;
   profession?: String;
@@ -20161,7 +20211,9 @@ export interface CustomerDetailPreviousValuesPromise
   weight: () => Promise<String>;
   bodyType: () => Promise<String>;
   averageTopSize: () => Promise<String>;
+  averageTopSizeFit: () => Promise<String>;
   averageWaistSize: () => Promise<String>;
+  averageWaistSizeFit: () => Promise<String>;
   averagePantLength: () => Promise<String>;
   preferredPronouns: () => Promise<String>;
   profession: () => Promise<String>;
@@ -20187,7 +20239,9 @@ export interface CustomerDetailPreviousValuesSubscription
   weight: () => Promise<AsyncIterator<String>>;
   bodyType: () => Promise<AsyncIterator<String>>;
   averageTopSize: () => Promise<AsyncIterator<String>>;
+  averageTopSizeFit: () => Promise<AsyncIterator<String>>;
   averageWaistSize: () => Promise<AsyncIterator<String>>;
+  averageWaistSizeFit: () => Promise<AsyncIterator<String>>;
   averagePantLength: () => Promise<AsyncIterator<String>>;
   preferredPronouns: () => Promise<AsyncIterator<String>>;
   profession: () => Promise<AsyncIterator<String>>;
