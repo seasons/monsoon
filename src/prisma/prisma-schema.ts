@@ -12716,6 +12716,7 @@ input UserPushNotificationCreateInput {
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
   status: Boolean
 =======
   status: Boolean!
@@ -12726,6 +12727,9 @@ input UserPushNotificationCreateInput {
 =======
   status: Boolean!
 >>>>>>> db750af... Updates push notification models
+=======
+  status: Boolean
+>>>>>>> d1fe03e... Updates datamodel
   history: PushNotificationReceiptCreateManyInput
 }
 

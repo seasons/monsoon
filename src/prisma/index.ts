@@ -7250,6 +7250,7 @@ export interface UserPushNotificationCreateInput {
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
   status?: Maybe<Boolean>;
 =======
   status: Boolean;
@@ -7260,6 +7261,9 @@ export interface UserPushNotificationCreateInput {
 =======
   status: Boolean;
 >>>>>>> db750af... Updates push notification models
+=======
+  status?: Maybe<Boolean>;
+>>>>>>> d1fe03e... Updates datamodel
   history?: Maybe<PushNotificationReceiptCreateManyInput>;
 }
 
