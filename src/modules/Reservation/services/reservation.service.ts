@@ -255,13 +255,13 @@ export class ReservationService {
     // Update status on physical products depending on whether
     // the item was returned
     const promises = productStates.map(
-      ({ productUID, productStatus, returned }) => {
+      async ({ productUID, productStatus, returned }) => {
         const seasonsUID = productUID
         const updateData: any = {
           productStatus,
         }
         if (returned) {
-          updateData.inventoryStatus = this.getReturnedPhysicalProductInventoryStatus(
+          updateData.inventoryStatus = await this.getReturnedPhysicalProductInventoryStatus(
             seasonsUID
           )
           return this.prisma.client.updatePhysicalProduct({
