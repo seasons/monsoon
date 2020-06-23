@@ -3,11 +3,7 @@ import { TwilioService } from "@app/modules/Twilio"
 import { AuthService } from "@modules/User/services/auth.service"
 import { Injectable } from "@nestjs/common"
 import { Args } from "@nestjs/graphql"
-import {
-  CustomerDetail,
-  UserVerificationStatus,
-  UserWhereUniqueInput,
-} from "@prisma/index"
+import { UserVerificationStatus, UserWhereUniqueInput } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
 import { upperFirst } from "lodash"
 import { PhoneNumberInstance } from "twilio/lib/rest/lookups/v1/phoneNumber"
@@ -41,10 +37,7 @@ export class SMSService {
 
   async startSMSVerification(
     @Args()
-    {
-      phoneNumber,
-      where,
-    }: { phoneNumber: string; where: UserWhereUniqueInput },
+    { phoneNumber }: { phoneNumber: string; where: UserWhereUniqueInput },
     @Customer() customer,
     @User() user
   ): Promise<boolean> {
@@ -74,12 +67,16 @@ export class SMSService {
         id: user.id,
       },
     })
+    const customerDetailID = await this.prisma.client
+      .customer({ id: customer.id })
+      .detail()
+      .id()
     await this.prisma.binding.mutation.updateCustomerDetail({
       data: {
         phoneNumber: e164PhoneNumber,
       },
       where: {
-        id: customer.id,
+        id: customerDetailID,
       },
     })
 
