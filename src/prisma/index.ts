@@ -6447,7 +6447,7 @@ export interface UserPushNotificationCreateOneInput {
 export interface UserPushNotificationCreateInput {
   id?: Maybe<ID_Input>;
   interests?: Maybe<UserPushNotificationInterestCreateManyInput>;
-  status: Boolean;
+  status?: Maybe<Boolean>;
   history?: Maybe<PushNotificationReceiptCreateManyInput>;
 }
 

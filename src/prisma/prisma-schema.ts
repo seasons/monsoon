@@ -11805,7 +11805,7 @@ type UserPushNotificationConnection {
 input UserPushNotificationCreateInput {
   id: ID
   interests: UserPushNotificationInterestCreateManyInput
-  status: Boolean!
+  status: Boolean
   history: PushNotificationReceiptCreateManyInput
 }
 

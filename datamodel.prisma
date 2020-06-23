@@ -638,7 +638,7 @@ type UserPushNotificationInterest {
 type UserPushNotification {
   id: ID! @id
   interests: [UserPushNotificationInterest!]!
-  status: Boolean!
+  status: Boolean! @default(value: true)
   history: [PushNotificationReceipt!]!
 }
 

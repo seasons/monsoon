@@ -20599,7 +20599,7 @@ type UserPushNotificationConnection {
 
 input UserPushNotificationCreateInput {
   id: ID
-  status: Boolean!
+  status: Boolean
   interests: UserPushNotificationInterestCreateManyInput
   history: PushNotificationReceiptCreateManyInput
 }
@@ -32406,7 +32406,7 @@ export interface UserCreaterolesInput {
 
 export interface UserPushNotificationCreateInput {
   id?: ID_Input | null
-  status: Boolean
+  status?: Boolean | null
   interests?: UserPushNotificationInterestCreateManyInput | null
   history?: PushNotificationReceiptCreateManyInput | null
 }

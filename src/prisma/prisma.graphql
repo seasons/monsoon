@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Mon Jun 22 2020 16:09:34 GMT-0400 (Eastern Daylight Time)
+# timestamp: Tue Jun 23 2020 12:34:22 GMT-0400 (Eastern Daylight Time)
 
 type AggregateBagItem {
   count: Int!
@@ -20090,7 +20090,7 @@ type UserPushNotificationConnection {
 
 input UserPushNotificationCreateInput {
   id: ID
-  status: Boolean!
+  status: Boolean
   interests: UserPushNotificationInterestCreateManyInput
   history: PushNotificationReceiptCreateManyInput
 }
