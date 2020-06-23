@@ -1,9 +1,13 @@
 # source: http://localhost:4466/monsoon/dev
 <<<<<<< HEAD
+<<<<<<< HEAD
 # timestamp: Mon Jul 06 2020 11:33:15 GMT-0400 (Eastern Daylight Time)
 =======
 # timestamp: Mon Jun 22 2020 16:09:34 GMT-0400 (Eastern Daylight Time)
 >>>>>>> 4514086... Updates push notification models
+=======
+# timestamp: Tue Jun 23 2020 12:34:22 GMT-0400 (Eastern Daylight Time)
+>>>>>>> a944198... Updates datamodel
 
 type AggregateBagItem {
   count: Int!
@@ -31956,7 +31960,7 @@ type UserPushNotificationConnection {
 
 input UserPushNotificationCreateInput {
   id: ID
-  status: Boolean!
+  status: Boolean
   interests: UserPushNotificationInterestCreateManyInput
   history: PushNotificationReceiptCreateManyInput
 }
