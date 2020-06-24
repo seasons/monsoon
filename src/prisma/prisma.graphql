@@ -1,7 +1,7 @@
 <<<<<<< HEAD
 =======
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Tue Jun 23 2020 12:34:22 GMT-0400 (Eastern Daylight Time)
+# timestamp: Wed Jun 24 2020 12:02:38 GMT-0400 (Eastern Daylight Time)
 
 >>>>>>> a944198... Updates datamodel
 type AggregateBagItem {

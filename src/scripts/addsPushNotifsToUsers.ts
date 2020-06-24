@@ -1,7 +1,4 @@
-<<<<<<< HEAD
 import { UserPushNotificationInterestType } from "../prisma"
-=======
->>>>>>> ce66567... Adds script to add PushNotifs to users
 import { PrismaService } from "../prisma/prisma.service"
 
 const run = async () => {
