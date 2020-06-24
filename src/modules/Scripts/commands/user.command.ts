@@ -172,8 +172,8 @@ export class UserCommands {
     let user
     let tokenData
     const address: BillingAddress = {
-      firstName: firstName,
-      lastName: lastName,
+      firstName,
+      lastName,
       line1: "138 Mulberry St",
       city: "New York",
       state: "NY",
@@ -226,6 +226,7 @@ export class UserCommands {
       expiryYear: "2022",
       cvv: "222",
     }
+    this.logger.log("Updating customer")
     await this.prisma.client.updateCustomer({
       data: {
         plan,
