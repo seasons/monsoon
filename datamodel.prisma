@@ -349,7 +349,7 @@ type Product {
 type ProductMaterialCategory {
   id: ID! @id
   slug: String! @unique
-  lifeExpectancy: Int!
+  lifeExpectancy: Float!
   category: Category!
   products: [Product!]! @relation(link: TABLE)
 }

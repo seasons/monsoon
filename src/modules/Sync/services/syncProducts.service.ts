@@ -195,7 +195,9 @@ export class SyncProductsService {
         }
 
         // Upsert the category
-        const materialCategory = allCategories.findByIds(material.category)
+        const materialCategory = allCategories.findByIds(
+          material.model.category
+        )
         await this.productUtils.upsertMaterialCategory(
           material,
           materialCategory
@@ -245,7 +247,11 @@ export class SyncProductsService {
               : {}
           })(),
           modelHeight: head(modelHeight) ?? 0,
-          materialCategory: {},
+          materialCategory: {
+            connect: {
+              slug: material.model.name,
+            },
+          },
           status: (status || "Available").replace(" ", ""),
           season: model.season,
         } as ProductCreateInput
