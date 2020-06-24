@@ -18,6 +18,8 @@ type Query {
     first: Int
     last: Int
   ): CustomerConnection! @hasRole(roles: [Admin])
+  shouldAdmitCustomer(where: CustomerWhereUniqueInput): CustomerAdmissionStatus
+    @hasRole(roles: [Customer, Admin])
 }
 
 type Mutation {
@@ -39,16 +41,21 @@ type Mutation {
   ): Boolean @hasRole(roles: [Customer])
 }
 
+enum CustomerAdmissionStatus {
+  Waitlisted
+  Admitted
+}
+
+enum CustomerAnalyticsEvent {
+  CompletedWaitlistForm
+}
+
 input AddressInput {
   city: String!
   postalCode: String!
   state: String!
   street1: String!
   street2: String
-}
-
-enum CustomerAnalyticsEvent {
-  CompletedWaitlistForm
 }
 
 type Customer {

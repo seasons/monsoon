@@ -89,11 +89,17 @@ export class SyncProductsService {
   }
 
   async syncAirtableToPrisma(cliProgressBar?) {
+    console.log("0")
     const allBrands = await this.airtableService.getAllBrands()
+    console.log("1")
     const allProducts = await this.airtableService.getAllProducts()
+    console.log("2")
     const allCategories = await this.airtableService.getAllCategories()
+    console.log("3")
     const allSizes = await this.airtableService.getAllSizes()
+    console.log("4")
     const allMaterials = await this.airtableService.getAllMaterialCategories()
+    console.log("5")
 
     const [
       multibar,

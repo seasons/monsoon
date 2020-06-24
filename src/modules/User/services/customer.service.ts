@@ -4,6 +4,7 @@ import { Injectable } from "@nestjs/common"
 import {
   BillingInfoUpdateDataInput,
   CustomerStatus,
+  CustomerWhereUniqueInput,
   ID_Input,
   User,
 } from "@prisma/index"
