@@ -32,6 +32,7 @@ type Mutation {
     details: CustomerDetailCreateInput
   ): AuthPayload!
   login(email: String!, password: String!): AuthPayload!
+  updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   updateUserPushNotificationStatus(
     pushNotificationStatus: PushNotificationStatus!
   ): User! @hasRole(roles: [Customer])
