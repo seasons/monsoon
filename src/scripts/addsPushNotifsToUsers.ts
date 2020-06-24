@@ -1,20 +1,38 @@
+import { UserPushNotificationInterestType } from "../prisma"
 import { PrismaService } from "../prisma/prisma.service"
 
 const run = async () => {
   const ps = new PrismaService()
   try {
     const users = await ps.client.users()
-    const interests = await ps.client.userPushNotificationInterests()
+    const interests = ["General", "Blog", "Bag", "NewProduct"]
     users?.forEach(async user => {
+      const interestsIDs = []
+      interests.forEach(async interest => {
+        const createdInterest = await ps.client.createUserPushNotificationInterest(
+          {
+            type: interest as UserPushNotificationInterestType,
+            value: "",
+            user: { connect: { id: user.id } },
+            status: true,
+          }
+        )
+        interestsIDs.push({ id: createdInterest.id })
+      })
       const receipts = await ps.client.pushNotificationReceipts({
         where: {
           users_some: { id: user.id },
         },
       })
+
       const pushNotif = await ps.client.createUserPushNotification({
         status: true,
-        interests: { connect: interests },
-        history: { connect: receipts },
+        interests: { connect: interestsIDs },
+        history: {
+          connect: receipts.map(receipt => {
+            return { id: receipt.id }
+          }),
+        },
       })
 
       await ps.client.updateUser({
