@@ -47,3 +47,27 @@ export const AirtableIdOption = ({
     type: "string",
     ...options,
   })
+
+export const EmailOption = ({
+  describeExtra = "",
+  ...options
+}: MonsoonCommandOptions = {}) =>
+  Option({
+    name: "email",
+    describe: `Email of the new user. ${describeExtra}`,
+    type: "string",
+    alias: "em",
+    ...options,
+  })
+
+export const PasswordOption = ({
+  describeExtra = "",
+  ...options
+}: MonsoonCommandOptions = {}) =>
+  Option({
+    name: "password",
+    describe: `Password of the new user. ${describeExtra}`,
+    type: "string",
+    alias: "pw",
+    ...options,
+  })

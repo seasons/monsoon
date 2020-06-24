@@ -216,61 +216,7 @@ export class AuthService {
     return traits
   }
 
-  private async getAuth0ManagementAPIToken() {
-    return new Promise((resolve, reject) => {
-      request(
-        {
-          method: "POST",
-          url: `https://${process.env.AUTH0_DOMAIN}/oauth/token`,
-          headers: { "content-type": "application/x-www-form-urlencoded" },
-          form: {
-            grant_type: "client_credentials",
-            client_id: process.env.AUTH0_MACHINE_TO_MACHINE_CLIENT_ID,
-            client_secret: process.env.AUTH0_MACHINE_TO_MACHINE_CLIENT_SECRET,
-            audience: `https://${process.env.AUTH0_DOMAIN}/api/v2/`,
-          },
-        },
-        (error, response, body) => {
-          if (error) return reject(error)
-          if (response.statusCode !== 200) {
-            return reject(response.body)
-          }
-          return resolve(JSON.parse(body).access_token)
-        }
-      )
-    })
-  }
-
-  private async createPrismaUser(auth0Id, email, firstName, lastName) {
-    const user = await this.prisma.client.createUser({
-      auth0Id,
-      email,
-      firstName,
-      lastName,
-      roles: { set: ["Customer"] }, // defaults to customer
-    })
-    return user
-  }
-
-  private async createPrismaCustomerForExistingUser(
-    userID,
-    details = {},
-    status
-  ) {
-    const customer = await this.prisma.client.createCustomer({
-      user: {
-        connect: { id: userID },
-      },
-      detail: { create: details },
-      status: status || "Waitlisted",
-    })
-
-    // TODO: update airtable with customer data
-
-    return customer
-  }
-
-  private async createAuth0User(
+  async createAuth0User(
     email: string,
     password: string,
     details: {
@@ -330,6 +276,60 @@ export class AuthService {
         }
       )
     })
+  }
+
+  private async getAuth0ManagementAPIToken() {
+    return new Promise((resolve, reject) => {
+      request(
+        {
+          method: "POST",
+          url: `https://${process.env.AUTH0_DOMAIN}/oauth/token`,
+          headers: { "content-type": "application/x-www-form-urlencoded" },
+          form: {
+            grant_type: "client_credentials",
+            client_id: process.env.AUTH0_MACHINE_TO_MACHINE_CLIENT_ID,
+            client_secret: process.env.AUTH0_MACHINE_TO_MACHINE_CLIENT_SECRET,
+            audience: `https://${process.env.AUTH0_DOMAIN}/api/v2/`,
+          },
+        },
+        (error, response, body) => {
+          if (error) return reject(error)
+          if (response.statusCode !== 200) {
+            return reject(response.body)
+          }
+          return resolve(JSON.parse(body).access_token)
+        }
+      )
+    })
+  }
+
+  private async createPrismaUser(auth0Id, email, firstName, lastName) {
+    const user = await this.prisma.client.createUser({
+      auth0Id,
+      email,
+      firstName,
+      lastName,
+      roles: { set: ["Customer"] }, // defaults to customer
+    })
+    return user
+  }
+
+  private async createPrismaCustomerForExistingUser(
+    userID,
+    details = {},
+    status
+  ) {
+    const customer = await this.prisma.client.createCustomer({
+      user: {
+        connect: { id: userID },
+      },
+      detail: { create: details },
+      status: status || "Waitlisted",
+    })
+
+    // TODO: update airtable with customer data
+
+    return customer
   }
 
   private async getAuth0UserAccessToken(
