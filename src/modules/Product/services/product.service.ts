@@ -197,6 +197,9 @@ export class ProductService {
       images: {
         connect: imageIDs,
       },
+      materialCategory: input.materialCategorySlug && {
+        connect: { slug: input.materialCategorySlug },
+      },
       modelHeight: model && model.height,
       model: model && {
         connect: { id: model.id },
@@ -375,6 +378,10 @@ export class ProductService {
           brand {
             id
             brandCode
+          }
+          color {
+            id
+            name
           }
         }`
     )

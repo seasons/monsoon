@@ -129,7 +129,7 @@ export class EmailDataProvider {
             },
           ],
         },
-        title: "We've got your order",
+        title: "We've received your return",
         subject: "We've received your return",
       },
     }
