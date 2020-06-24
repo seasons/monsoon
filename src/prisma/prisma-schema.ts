@@ -6576,7 +6576,7 @@ input ProductFunctionWhereUniqueInput {
 type ProductMaterialCategory {
   id: ID!
   slug: String!
-  lifeExpectancy: Int!
+  lifeExpectancy: Float!
   category: Category!
   products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
 }
@@ -6590,7 +6590,7 @@ type ProductMaterialCategoryConnection {
 input ProductMaterialCategoryCreateInput {
   id: ID
   slug: String!
-  lifeExpectancy: Int!
+  lifeExpectancy: Float!
   category: CategoryCreateOneInput!
   products: ProductCreateManyWithoutMaterialCategoryInput
 }
@@ -6603,7 +6603,7 @@ input ProductMaterialCategoryCreateOneWithoutProductsInput {
 input ProductMaterialCategoryCreateWithoutProductsInput {
   id: ID
   slug: String!
-  lifeExpectancy: Int!
+  lifeExpectancy: Float!
   category: CategoryCreateOneInput!
 }
 
@@ -6624,7 +6624,7 @@ enum ProductMaterialCategoryOrderByInput {
 type ProductMaterialCategoryPreviousValues {
   id: ID!
   slug: String!
-  lifeExpectancy: Int!
+  lifeExpectancy: Float!
 }
 
 type ProductMaterialCategorySubscriptionPayload {
@@ -6647,14 +6647,14 @@ input ProductMaterialCategorySubscriptionWhereInput {
 
 input ProductMaterialCategoryUpdateInput {
   slug: String
-  lifeExpectancy: Int
+  lifeExpectancy: Float
   category: CategoryUpdateOneRequiredInput
   products: ProductUpdateManyWithoutMaterialCategoryInput
 }
 
 input ProductMaterialCategoryUpdateManyMutationInput {
   slug: String
-  lifeExpectancy: Int
+  lifeExpectancy: Float
 }
 
 input ProductMaterialCategoryUpdateOneWithoutProductsInput {
@@ -6668,7 +6668,7 @@ input ProductMaterialCategoryUpdateOneWithoutProductsInput {
 
 input ProductMaterialCategoryUpdateWithoutProductsDataInput {
   slug: String
-  lifeExpectancy: Int
+  lifeExpectancy: Float
   category: CategoryUpdateOneRequiredInput
 }
 
@@ -6706,14 +6706,14 @@ input ProductMaterialCategoryWhereInput {
   slug_not_starts_with: String
   slug_ends_with: String
   slug_not_ends_with: String
-  lifeExpectancy: Int
-  lifeExpectancy_not: Int
-  lifeExpectancy_in: [Int!]
-  lifeExpectancy_not_in: [Int!]
-  lifeExpectancy_lt: Int
-  lifeExpectancy_lte: Int
-  lifeExpectancy_gt: Int
-  lifeExpectancy_gte: Int
+  lifeExpectancy: Float
+  lifeExpectancy_not: Float
+  lifeExpectancy_in: [Float!]
+  lifeExpectancy_not_in: [Float!]
+  lifeExpectancy_lt: Float
+  lifeExpectancy_lte: Float
+  lifeExpectancy_gt: Float
+  lifeExpectancy_gte: Float
   category: CategoryWhereInput
   products_every: ProductWhereInput
   products_some: ProductWhereInput

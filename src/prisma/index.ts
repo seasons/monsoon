@@ -4278,14 +4278,14 @@ export interface ProductMaterialCategoryWhereInput {
   slug_not_starts_with?: Maybe<String>;
   slug_ends_with?: Maybe<String>;
   slug_not_ends_with?: Maybe<String>;
-  lifeExpectancy?: Maybe<Int>;
-  lifeExpectancy_not?: Maybe<Int>;
-  lifeExpectancy_in?: Maybe<Int[] | Int>;
-  lifeExpectancy_not_in?: Maybe<Int[] | Int>;
-  lifeExpectancy_lt?: Maybe<Int>;
-  lifeExpectancy_lte?: Maybe<Int>;
-  lifeExpectancy_gt?: Maybe<Int>;
-  lifeExpectancy_gte?: Maybe<Int>;
+  lifeExpectancy?: Maybe<Float>;
+  lifeExpectancy_not?: Maybe<Float>;
+  lifeExpectancy_in?: Maybe<Float[] | Float>;
+  lifeExpectancy_not_in?: Maybe<Float[] | Float>;
+  lifeExpectancy_lt?: Maybe<Float>;
+  lifeExpectancy_lte?: Maybe<Float>;
+  lifeExpectancy_gt?: Maybe<Float>;
+  lifeExpectancy_gte?: Maybe<Float>;
   category?: Maybe<CategoryWhereInput>;
   products_every?: Maybe<ProductWhereInput>;
   products_some?: Maybe<ProductWhereInput>;
@@ -6755,7 +6755,7 @@ export interface ProductMaterialCategoryCreateOneWithoutProductsInput {
 export interface ProductMaterialCategoryCreateWithoutProductsInput {
   id?: Maybe<ID_Input>;
   slug: String;
-  lifeExpectancy: Int;
+  lifeExpectancy: Float;
   category: CategoryCreateOneInput;
 }
 
@@ -8821,7 +8821,7 @@ export interface ProductMaterialCategoryUpdateOneWithoutProductsInput {
 
 export interface ProductMaterialCategoryUpdateWithoutProductsDataInput {
   slug?: Maybe<String>;
-  lifeExpectancy?: Maybe<Int>;
+  lifeExpectancy?: Maybe<Float>;
   category?: Maybe<CategoryUpdateOneRequiredInput>;
 }
 
@@ -10921,7 +10921,7 @@ export interface ProductFunctionUpdateManyMutationInput {
 export interface ProductMaterialCategoryCreateInput {
   id?: Maybe<ID_Input>;
   slug: String;
-  lifeExpectancy: Int;
+  lifeExpectancy: Float;
   category: CategoryCreateOneInput;
   products?: Maybe<ProductCreateManyWithoutMaterialCategoryInput>;
 }
@@ -10964,7 +10964,7 @@ export interface ProductCreateWithoutMaterialCategoryInput {
 
 export interface ProductMaterialCategoryUpdateInput {
   slug?: Maybe<String>;
-  lifeExpectancy?: Maybe<Int>;
+  lifeExpectancy?: Maybe<Float>;
   category?: Maybe<CategoryUpdateOneRequiredInput>;
   products?: Maybe<ProductUpdateManyWithoutMaterialCategoryInput>;
 }
@@ -11033,7 +11033,7 @@ export interface ProductUpsertWithWhereUniqueWithoutMaterialCategoryInput {
 
 export interface ProductMaterialCategoryUpdateManyMutationInput {
   slug?: Maybe<String>;
-  lifeExpectancy?: Maybe<Int>;
+  lifeExpectancy?: Maybe<Float>;
 }
 
 export interface ProductModelCreateInput {
@@ -14845,7 +14845,7 @@ export interface ProductFunctionNullablePromise
 export interface ProductMaterialCategory {
   id: ID_Output;
   slug: String;
-  lifeExpectancy: Int;
+  lifeExpectancy: Float;
 }
 
 export interface ProductMaterialCategoryPromise
@@ -14853,7 +14853,7 @@ export interface ProductMaterialCategoryPromise
     Fragmentable {
   id: () => Promise<ID_Output>;
   slug: () => Promise<String>;
-  lifeExpectancy: () => Promise<Int>;
+  lifeExpectancy: () => Promise<Float>;
   category: <T = CategoryPromise>() => T;
   products: <T = FragmentableArray<Product>>(args?: {
     where?: ProductWhereInput;
@@ -14871,7 +14871,7 @@ export interface ProductMaterialCategorySubscription
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   slug: () => Promise<AsyncIterator<String>>;
-  lifeExpectancy: () => Promise<AsyncIterator<Int>>;
+  lifeExpectancy: () => Promise<AsyncIterator<Float>>;
   category: <T = CategorySubscription>() => T;
   products: <T = Promise<AsyncIterator<ProductSubscription>>>(args?: {
     where?: ProductWhereInput;
@@ -14889,7 +14889,7 @@ export interface ProductMaterialCategoryNullablePromise
     Fragmentable {
   id: () => Promise<ID_Output>;
   slug: () => Promise<String>;
-  lifeExpectancy: () => Promise<Int>;
+  lifeExpectancy: () => Promise<Float>;
   category: <T = CategoryPromise>() => T;
   products: <T = FragmentableArray<Product>>(args?: {
     where?: ProductWhereInput;
@@ -19861,7 +19861,7 @@ export interface ProductMaterialCategorySubscriptionPayloadSubscription
 export interface ProductMaterialCategoryPreviousValues {
   id: ID_Output;
   slug: String;
-  lifeExpectancy: Int;
+  lifeExpectancy: Float;
 }
 
 export interface ProductMaterialCategoryPreviousValuesPromise
@@ -19869,7 +19869,7 @@ export interface ProductMaterialCategoryPreviousValuesPromise
     Fragmentable {
   id: () => Promise<ID_Output>;
   slug: () => Promise<String>;
-  lifeExpectancy: () => Promise<Int>;
+  lifeExpectancy: () => Promise<Float>;
 }
 
 export interface ProductMaterialCategoryPreviousValuesSubscription
@@ -19877,7 +19877,7 @@ export interface ProductMaterialCategoryPreviousValuesSubscription
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   slug: () => Promise<AsyncIterator<String>>;
-  lifeExpectancy: () => Promise<AsyncIterator<Int>>;
+  lifeExpectancy: () => Promise<AsyncIterator<Float>>;
 }
 
 export interface ProductModelSubscriptionPayload {
