@@ -58,6 +58,11 @@ export class ProductQueriesResolver {
   }
 
   @Query()
+  async productMaterialCategories(@Args() args, @Info() info) {
+    return await this.prisma.binding.query.productMaterialCategories(args, info)
+  }
+
+  @Query()
   async productModels(@Args() args, @Info() info) {
     return await this.prisma.binding.query.productModels(args, info)
   }
