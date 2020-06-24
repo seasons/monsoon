@@ -13,18 +13,16 @@ import {
   InventoryStatus,
   LetterSize,
   Product,
-  ProductCreateInput,
   ProductFunction,
   ProductStatus,
   ProductType,
-  ProductUpdateInput,
-  ProductVariantCreateWithoutProductInput,
   ProductWhereUniqueInput,
   RecentlyViewedProduct,
   Tag,
 } from "@prisma/index"
 import { Product as PrismaBindingProduct } from "@prisma/prisma.binding"
 import { PrismaService } from "@prisma/prisma.service"
+import { ApolloError } from "apollo-server"
 import { GraphQLResolveInfo } from "graphql"
 import { head, pick } from "lodash"
 
@@ -375,6 +373,7 @@ export class ProductService {
           name
           slug
           type
+          status
           brand {
             id
             brandCode
@@ -385,6 +384,13 @@ export class ProductService {
           }
         }`
     )
+    // For now, throw an error if trying to unstore a product. We need to
+    // add code to handle this case properly.
+    if (product.status === "Stored" && data?.status !== "Stored") {
+      throw new ApolloError(
+        "Unable to unstore a product. Code needs to be written"
+      )
+    }
     if (functions) {
       functionIDs = await this.upsertFunctions(functions)
     }
