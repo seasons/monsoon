@@ -14,7 +14,6 @@ import { PaymentModule } from "../Payment/payment.module"
 import { DataScheduledJobs } from "./services/data.job.service"
 import { MembershipScheduledJobs } from "./services/membership.service"
 import { ReservationScheduledJobs } from "./services/reservations.job.service"
-import { UsersScheduledJobs } from "./services/users.job.service"
 
 @Module({
   imports: [
@@ -32,7 +31,6 @@ import { UsersScheduledJobs } from "./services/users.job.service"
   ],
   providers: [
     ReservationScheduledJobs,
-    UsersScheduledJobs,
     DataScheduledJobs,
     MembershipScheduledJobs,
   ],
