@@ -49,6 +49,9 @@ export interface Exists {
   ) => Promise<boolean>;
   productModel: (where?: ProductModelWhereInput) => Promise<boolean>;
   productRequest: (where?: ProductRequestWhereInput) => Promise<boolean>;
+  productStatusChange: (
+    where?: ProductStatusChangeWhereInput
+  ) => Promise<boolean>;
   productVariant: (where?: ProductVariantWhereInput) => Promise<boolean>;
   productVariantFeedback: (
     where?: ProductVariantFeedbackWhereInput
@@ -605,6 +608,27 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => ProductRequestConnectionPromise;
+  productStatusChange: (
+    where: ProductStatusChangeWhereUniqueInput
+  ) => ProductStatusChangeNullablePromise;
+  productStatusChanges: (args?: {
+    where?: ProductStatusChangeWhereInput;
+    orderBy?: ProductStatusChangeOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<ProductStatusChange>;
+  productStatusChangesConnection: (args?: {
+    where?: ProductStatusChangeWhereInput;
+    orderBy?: ProductStatusChangeOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => ProductStatusChangeConnectionPromise;
   productVariant: (
     where: ProductVariantWhereUniqueInput
   ) => ProductVariantNullablePromise;
@@ -1407,6 +1431,28 @@ export interface Prisma {
   deleteManyProductRequests: (
     where?: ProductRequestWhereInput
   ) => BatchPayloadPromise;
+  createProductStatusChange: (
+    data: ProductStatusChangeCreateInput
+  ) => ProductStatusChangePromise;
+  updateProductStatusChange: (args: {
+    data: ProductStatusChangeUpdateInput;
+    where: ProductStatusChangeWhereUniqueInput;
+  }) => ProductStatusChangePromise;
+  updateManyProductStatusChanges: (args: {
+    data: ProductStatusChangeUpdateManyMutationInput;
+    where?: ProductStatusChangeWhereInput;
+  }) => BatchPayloadPromise;
+  upsertProductStatusChange: (args: {
+    where: ProductStatusChangeWhereUniqueInput;
+    create: ProductStatusChangeCreateInput;
+    update: ProductStatusChangeUpdateInput;
+  }) => ProductStatusChangePromise;
+  deleteProductStatusChange: (
+    where: ProductStatusChangeWhereUniqueInput
+  ) => ProductStatusChangePromise;
+  deleteManyProductStatusChanges: (
+    where?: ProductStatusChangeWhereInput
+  ) => BatchPayloadPromise;
   createProductVariant: (
     data: ProductVariantCreateInput
   ) => ProductVariantPromise;
@@ -1811,6 +1857,9 @@ export interface Subscription {
   productRequest: (
     where?: ProductRequestSubscriptionWhereInput
   ) => ProductRequestSubscriptionPayloadSubscription;
+  productStatusChange: (
+    where?: ProductStatusChangeSubscriptionWhereInput
+  ) => ProductStatusChangeSubscriptionPayloadSubscription;
   productVariant: (
     where?: ProductVariantSubscriptionWhereInput
   ) => ProductVariantSubscriptionPayloadSubscription;
@@ -2135,6 +2184,18 @@ export type ProductFunctionOrderByInput =
   | "id_DESC"
   | "name_ASC"
   | "name_DESC";
+
+export type ProductStatusChangeOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "old_ASC"
+  | "old_DESC"
+  | "new_ASC"
+  | "new_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
 
 export type WarehouseLocationConstraintOrderByInput =
   | "id_ASC"
@@ -3747,6 +3808,9 @@ export interface ProductWhereInput {
   status_not?: Maybe<ProductStatus>;
   status_in?: Maybe<ProductStatus[] | ProductStatus>;
   status_not_in?: Maybe<ProductStatus[] | ProductStatus>;
+  statusChanges_every?: Maybe<ProductStatusChangeWhereInput>;
+  statusChanges_some?: Maybe<ProductStatusChangeWhereInput>;
+  statusChanges_none?: Maybe<ProductStatusChangeWhereInput>;
   season?: Maybe<String>;
   season_not?: Maybe<String>;
   season_in?: Maybe<String[] | String>;
@@ -4295,6 +4359,51 @@ export interface ProductMaterialCategoryWhereInput {
   NOT?: Maybe<
     ProductMaterialCategoryWhereInput[] | ProductMaterialCategoryWhereInput
   >;
+}
+
+export interface ProductStatusChangeWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  old?: Maybe<ProductStatus>;
+  old_not?: Maybe<ProductStatus>;
+  old_in?: Maybe<ProductStatus[] | ProductStatus>;
+  old_not_in?: Maybe<ProductStatus[] | ProductStatus>;
+  new?: Maybe<ProductStatus>;
+  new_not?: Maybe<ProductStatus>;
+  new_in?: Maybe<ProductStatus[] | ProductStatus>;
+  new_not_in?: Maybe<ProductStatus[] | ProductStatus>;
+  product?: Maybe<ProductWhereInput>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<ProductStatusChangeWhereInput[] | ProductStatusChangeWhereInput>;
+  OR?: Maybe<ProductStatusChangeWhereInput[] | ProductStatusChangeWhereInput>;
+  NOT?: Maybe<ProductStatusChangeWhereInput[] | ProductStatusChangeWhereInput>;
 }
 
 export interface WarehouseLocationWhereInput {
@@ -5898,6 +6007,10 @@ export interface ProductRequestWhereInput {
   NOT?: Maybe<ProductRequestWhereInput[] | ProductRequestWhereInput>;
 }
 
+export type ProductStatusChangeWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
 export type ProductVariantWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
   sku?: Maybe<String>;
@@ -6456,6 +6569,7 @@ export interface ProductCreateWithoutVariantsInput {
   innerMaterials?: Maybe<ProductCreateinnerMaterialsInput>;
   outerMaterials?: Maybe<ProductCreateouterMaterialsInput>;
   status?: Maybe<ProductStatus>;
+  statusChanges?: Maybe<ProductStatusChangeCreateManyWithoutProductInput>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
@@ -6544,6 +6658,7 @@ export interface ProductCreateWithoutCategoryInput {
   outerMaterials?: Maybe<ProductCreateouterMaterialsInput>;
   variants?: Maybe<ProductVariantCreateManyWithoutProductInput>;
   status?: Maybe<ProductStatus>;
+  statusChanges?: Maybe<ProductStatusChangeCreateManyWithoutProductInput>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
@@ -6788,6 +6903,22 @@ export interface ProductVariantCreateWithoutProductInput {
   nonReservable: Int;
   offloaded: Int;
   stored: Int;
+}
+
+export interface ProductStatusChangeCreateManyWithoutProductInput {
+  create?: Maybe<
+    | ProductStatusChangeCreateWithoutProductInput[]
+    | ProductStatusChangeCreateWithoutProductInput
+  >;
+  connect?: Maybe<
+    ProductStatusChangeWhereUniqueInput[] | ProductStatusChangeWhereUniqueInput
+  >;
+}
+
+export interface ProductStatusChangeCreateWithoutProductInput {
+  id?: Maybe<ID_Input>;
+  old: ProductStatus;
+  new: ProductStatus;
 }
 
 export interface BillingInfoCreateOneInput {
@@ -7645,6 +7776,7 @@ export interface ProductUpdateWithoutVariantsDataInput {
   innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
   status?: Maybe<ProductStatus>;
+  statusChanges?: Maybe<ProductStatusChangeUpdateManyWithoutProductInput>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
@@ -7780,6 +7912,7 @@ export interface ProductUpdateWithoutCategoryDataInput {
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
   variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
   status?: Maybe<ProductStatus>;
+  statusChanges?: Maybe<ProductStatusChangeUpdateManyWithoutProductInput>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
@@ -8889,6 +9022,116 @@ export interface ProductVariantUpsertWithWhereUniqueWithoutProductInput {
   create: ProductVariantCreateWithoutProductInput;
 }
 
+export interface ProductStatusChangeUpdateManyWithoutProductInput {
+  create?: Maybe<
+    | ProductStatusChangeCreateWithoutProductInput[]
+    | ProductStatusChangeCreateWithoutProductInput
+  >;
+  delete?: Maybe<
+    ProductStatusChangeWhereUniqueInput[] | ProductStatusChangeWhereUniqueInput
+  >;
+  connect?: Maybe<
+    ProductStatusChangeWhereUniqueInput[] | ProductStatusChangeWhereUniqueInput
+  >;
+  set?: Maybe<
+    ProductStatusChangeWhereUniqueInput[] | ProductStatusChangeWhereUniqueInput
+  >;
+  disconnect?: Maybe<
+    ProductStatusChangeWhereUniqueInput[] | ProductStatusChangeWhereUniqueInput
+  >;
+  update?: Maybe<
+    | ProductStatusChangeUpdateWithWhereUniqueWithoutProductInput[]
+    | ProductStatusChangeUpdateWithWhereUniqueWithoutProductInput
+  >;
+  upsert?: Maybe<
+    | ProductStatusChangeUpsertWithWhereUniqueWithoutProductInput[]
+    | ProductStatusChangeUpsertWithWhereUniqueWithoutProductInput
+  >;
+  deleteMany?: Maybe<
+    ProductStatusChangeScalarWhereInput[] | ProductStatusChangeScalarWhereInput
+  >;
+  updateMany?: Maybe<
+    | ProductStatusChangeUpdateManyWithWhereNestedInput[]
+    | ProductStatusChangeUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface ProductStatusChangeUpdateWithWhereUniqueWithoutProductInput {
+  where: ProductStatusChangeWhereUniqueInput;
+  data: ProductStatusChangeUpdateWithoutProductDataInput;
+}
+
+export interface ProductStatusChangeUpdateWithoutProductDataInput {
+  old?: Maybe<ProductStatus>;
+  new?: Maybe<ProductStatus>;
+}
+
+export interface ProductStatusChangeUpsertWithWhereUniqueWithoutProductInput {
+  where: ProductStatusChangeWhereUniqueInput;
+  update: ProductStatusChangeUpdateWithoutProductDataInput;
+  create: ProductStatusChangeCreateWithoutProductInput;
+}
+
+export interface ProductStatusChangeScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  old?: Maybe<ProductStatus>;
+  old_not?: Maybe<ProductStatus>;
+  old_in?: Maybe<ProductStatus[] | ProductStatus>;
+  old_not_in?: Maybe<ProductStatus[] | ProductStatus>;
+  new?: Maybe<ProductStatus>;
+  new_not?: Maybe<ProductStatus>;
+  new_in?: Maybe<ProductStatus[] | ProductStatus>;
+  new_not_in?: Maybe<ProductStatus[] | ProductStatus>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<
+    ProductStatusChangeScalarWhereInput[] | ProductStatusChangeScalarWhereInput
+  >;
+  OR?: Maybe<
+    ProductStatusChangeScalarWhereInput[] | ProductStatusChangeScalarWhereInput
+  >;
+  NOT?: Maybe<
+    ProductStatusChangeScalarWhereInput[] | ProductStatusChangeScalarWhereInput
+  >;
+}
+
+export interface ProductStatusChangeUpdateManyWithWhereNestedInput {
+  where: ProductStatusChangeScalarWhereInput;
+  data: ProductStatusChangeUpdateManyDataInput;
+}
+
+export interface ProductStatusChangeUpdateManyDataInput {
+  old?: Maybe<ProductStatus>;
+  new?: Maybe<ProductStatus>;
+}
+
 export interface ProductUpsertWithWhereUniqueWithoutCategoryInput {
   where: ProductWhereUniqueInput;
   update: ProductUpdateWithoutCategoryDataInput;
@@ -9988,6 +10231,7 @@ export interface ProductCreateWithoutBrandInput {
   outerMaterials?: Maybe<ProductCreateouterMaterialsInput>;
   variants?: Maybe<ProductVariantCreateManyWithoutProductInput>;
   status?: Maybe<ProductStatus>;
+  statusChanges?: Maybe<ProductStatusChangeCreateManyWithoutProductInput>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
@@ -10059,6 +10303,7 @@ export interface ProductUpdateWithoutBrandDataInput {
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
   variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
   status?: Maybe<ProductStatus>;
+  statusChanges?: Maybe<ProductStatusChangeUpdateManyWithoutProductInput>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
@@ -10143,6 +10388,7 @@ export interface ProductCreateInput {
   outerMaterials?: Maybe<ProductCreateouterMaterialsInput>;
   variants?: Maybe<ProductVariantCreateManyWithoutProductInput>;
   status?: Maybe<ProductStatus>;
+  statusChanges?: Maybe<ProductStatusChangeCreateManyWithoutProductInput>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
@@ -10209,6 +10455,7 @@ export interface ProductUpdateDataInput {
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
   variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
   status?: Maybe<ProductStatus>;
+  statusChanges?: Maybe<ProductStatusChangeUpdateManyWithoutProductInput>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
@@ -10872,6 +11119,7 @@ export interface ProductUpdateInput {
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
   variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
   status?: Maybe<ProductStatus>;
+  statusChanges?: Maybe<ProductStatusChangeUpdateManyWithoutProductInput>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
@@ -10941,6 +11189,7 @@ export interface ProductCreateWithoutMaterialCategoryInput {
   outerMaterials?: Maybe<ProductCreateouterMaterialsInput>;
   variants?: Maybe<ProductVariantCreateManyWithoutProductInput>;
   status?: Maybe<ProductStatus>;
+  statusChanges?: Maybe<ProductStatusChangeCreateManyWithoutProductInput>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
@@ -11004,6 +11253,7 @@ export interface ProductUpdateWithoutMaterialCategoryDataInput {
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
   variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
   status?: Maybe<ProductStatus>;
+  statusChanges?: Maybe<ProductStatusChangeUpdateManyWithoutProductInput>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
@@ -11059,6 +11309,7 @@ export interface ProductCreateWithoutModelInput {
   outerMaterials?: Maybe<ProductCreateouterMaterialsInput>;
   variants?: Maybe<ProductVariantCreateManyWithoutProductInput>;
   status?: Maybe<ProductStatus>;
+  statusChanges?: Maybe<ProductStatusChangeCreateManyWithoutProductInput>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
@@ -11122,6 +11373,7 @@ export interface ProductUpdateWithoutModelDataInput {
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
   variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
   status?: Maybe<ProductStatus>;
+  statusChanges?: Maybe<ProductStatusChangeUpdateManyWithoutProductInput>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
@@ -11187,6 +11439,102 @@ export interface ProductRequestUpdateManyMutationInput {
   reason?: Maybe<String>;
   sku?: Maybe<String>;
   url?: Maybe<String>;
+}
+
+export interface ProductStatusChangeCreateInput {
+  id?: Maybe<ID_Input>;
+  old: ProductStatus;
+  new: ProductStatus;
+  product: ProductCreateOneWithoutStatusChangesInput;
+}
+
+export interface ProductCreateOneWithoutStatusChangesInput {
+  create?: Maybe<ProductCreateWithoutStatusChangesInput>;
+  connect?: Maybe<ProductWhereUniqueInput>;
+}
+
+export interface ProductCreateWithoutStatusChangesInput {
+  id?: Maybe<ID_Input>;
+  slug: String;
+  name: String;
+  brand: BrandCreateOneWithoutProductsInput;
+  category: CategoryCreateOneWithoutProductsInput;
+  type?: Maybe<ProductType>;
+  description?: Maybe<String>;
+  externalURL?: Maybe<String>;
+  images?: Maybe<ImageCreateManyInput>;
+  modelHeight?: Maybe<Int>;
+  retailPrice?: Maybe<Int>;
+  model?: Maybe<ProductModelCreateOneWithoutProductsInput>;
+  modelSize?: Maybe<SizeCreateOneInput>;
+  color: ColorCreateOneInput;
+  secondaryColor?: Maybe<ColorCreateOneInput>;
+  tags?: Maybe<TagCreateManyWithoutProductsInput>;
+  functions?: Maybe<ProductFunctionCreateManyInput>;
+  materialCategory?: Maybe<
+    ProductMaterialCategoryCreateOneWithoutProductsInput
+  >;
+  innerMaterials?: Maybe<ProductCreateinnerMaterialsInput>;
+  outerMaterials?: Maybe<ProductCreateouterMaterialsInput>;
+  variants?: Maybe<ProductVariantCreateManyWithoutProductInput>;
+  status?: Maybe<ProductStatus>;
+  season?: Maybe<String>;
+  architecture?: Maybe<ProductArchitecture>;
+  photographyStatus?: Maybe<PhotographyStatus>;
+  publishedAt?: Maybe<DateTimeInput>;
+}
+
+export interface ProductStatusChangeUpdateInput {
+  old?: Maybe<ProductStatus>;
+  new?: Maybe<ProductStatus>;
+  product?: Maybe<ProductUpdateOneRequiredWithoutStatusChangesInput>;
+}
+
+export interface ProductUpdateOneRequiredWithoutStatusChangesInput {
+  create?: Maybe<ProductCreateWithoutStatusChangesInput>;
+  update?: Maybe<ProductUpdateWithoutStatusChangesDataInput>;
+  upsert?: Maybe<ProductUpsertWithoutStatusChangesInput>;
+  connect?: Maybe<ProductWhereUniqueInput>;
+}
+
+export interface ProductUpdateWithoutStatusChangesDataInput {
+  slug?: Maybe<String>;
+  name?: Maybe<String>;
+  brand?: Maybe<BrandUpdateOneRequiredWithoutProductsInput>;
+  category?: Maybe<CategoryUpdateOneRequiredWithoutProductsInput>;
+  type?: Maybe<ProductType>;
+  description?: Maybe<String>;
+  externalURL?: Maybe<String>;
+  images?: Maybe<ImageUpdateManyInput>;
+  modelHeight?: Maybe<Int>;
+  retailPrice?: Maybe<Int>;
+  model?: Maybe<ProductModelUpdateOneWithoutProductsInput>;
+  modelSize?: Maybe<SizeUpdateOneInput>;
+  color?: Maybe<ColorUpdateOneRequiredInput>;
+  secondaryColor?: Maybe<ColorUpdateOneInput>;
+  tags?: Maybe<TagUpdateManyWithoutProductsInput>;
+  functions?: Maybe<ProductFunctionUpdateManyInput>;
+  materialCategory?: Maybe<
+    ProductMaterialCategoryUpdateOneWithoutProductsInput
+  >;
+  innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
+  outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
+  variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
+  status?: Maybe<ProductStatus>;
+  season?: Maybe<String>;
+  architecture?: Maybe<ProductArchitecture>;
+  photographyStatus?: Maybe<PhotographyStatus>;
+  publishedAt?: Maybe<DateTimeInput>;
+}
+
+export interface ProductUpsertWithoutStatusChangesInput {
+  update: ProductUpdateWithoutStatusChangesDataInput;
+  create: ProductCreateWithoutStatusChangesInput;
+}
+
+export interface ProductStatusChangeUpdateManyMutationInput {
+  old?: Maybe<ProductStatus>;
+  new?: Maybe<ProductStatus>;
 }
 
 export interface ProductVariantUpdateInput {
@@ -12178,6 +12526,7 @@ export interface ProductCreateWithoutTagsInput {
   outerMaterials?: Maybe<ProductCreateouterMaterialsInput>;
   variants?: Maybe<ProductVariantCreateManyWithoutProductInput>;
   status?: Maybe<ProductStatus>;
+  statusChanges?: Maybe<ProductStatusChangeCreateManyWithoutProductInput>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
@@ -12241,6 +12590,7 @@ export interface ProductUpdateWithoutTagsDataInput {
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
   variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
   status?: Maybe<ProductStatus>;
+  statusChanges?: Maybe<ProductStatusChangeUpdateManyWithoutProductInput>;
   season?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
@@ -13011,6 +13361,26 @@ export interface ProductRequestSubscriptionWhereInput {
   NOT?: Maybe<
     | ProductRequestSubscriptionWhereInput[]
     | ProductRequestSubscriptionWhereInput
+  >;
+}
+
+export interface ProductStatusChangeSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<ProductStatusChangeWhereInput>;
+  AND?: Maybe<
+    | ProductStatusChangeSubscriptionWhereInput[]
+    | ProductStatusChangeSubscriptionWhereInput
+  >;
+  OR?: Maybe<
+    | ProductStatusChangeSubscriptionWhereInput[]
+    | ProductStatusChangeSubscriptionWhereInput
+  >;
+  NOT?: Maybe<
+    | ProductStatusChangeSubscriptionWhereInput[]
+    | ProductStatusChangeSubscriptionWhereInput
   >;
 }
 
@@ -14302,6 +14672,15 @@ export interface ProductPromise extends Promise<Product>, Fragmentable {
     last?: Int;
   }) => T;
   status: () => Promise<ProductStatus>;
+  statusChanges: <T = FragmentableArray<ProductStatusChange>>(args?: {
+    where?: ProductStatusChangeWhereInput;
+    orderBy?: ProductStatusChangeOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
   season: () => Promise<String>;
   architecture: () => Promise<ProductArchitecture>;
   photographyStatus: () => Promise<PhotographyStatus>;
@@ -14367,6 +14746,17 @@ export interface ProductSubscription
     last?: Int;
   }) => T;
   status: () => Promise<AsyncIterator<ProductStatus>>;
+  statusChanges: <
+    T = Promise<AsyncIterator<ProductStatusChangeSubscription>>
+  >(args?: {
+    where?: ProductStatusChangeWhereInput;
+    orderBy?: ProductStatusChangeOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
   season: () => Promise<AsyncIterator<String>>;
   architecture: () => Promise<AsyncIterator<ProductArchitecture>>;
   photographyStatus: () => Promise<AsyncIterator<PhotographyStatus>>;
@@ -14432,6 +14822,15 @@ export interface ProductNullablePromise
     last?: Int;
   }) => T;
   status: () => Promise<ProductStatus>;
+  statusChanges: <T = FragmentableArray<ProductStatusChange>>(args?: {
+    where?: ProductStatusChangeWhereInput;
+    orderBy?: ProductStatusChangeOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
   season: () => Promise<String>;
   architecture: () => Promise<ProductArchitecture>;
   photographyStatus: () => Promise<PhotographyStatus>;
@@ -14879,6 +15278,47 @@ export interface ProductMaterialCategoryNullablePromise
     first?: Int;
     last?: Int;
   }) => T;
+}
+
+export interface ProductStatusChange {
+  id: ID_Output;
+  old: ProductStatus;
+  new: ProductStatus;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface ProductStatusChangePromise
+  extends Promise<ProductStatusChange>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  old: () => Promise<ProductStatus>;
+  new: () => Promise<ProductStatus>;
+  product: <T = ProductPromise>() => T;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface ProductStatusChangeSubscription
+  extends Promise<AsyncIterator<ProductStatusChange>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  old: () => Promise<AsyncIterator<ProductStatus>>;
+  new: () => Promise<AsyncIterator<ProductStatus>>;
+  product: <T = ProductSubscription>() => T;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface ProductStatusChangeNullablePromise
+  extends Promise<ProductStatusChange | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  old: () => Promise<ProductStatus>;
+  new: () => Promise<ProductStatus>;
+  product: <T = ProductPromise>() => T;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface WarehouseLocation {
@@ -17293,6 +17733,64 @@ export interface AggregateProductRequestPromise
 
 export interface AggregateProductRequestSubscription
   extends Promise<AsyncIterator<AggregateProductRequest>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface ProductStatusChangeConnection {
+  pageInfo: PageInfo;
+  edges: ProductStatusChangeEdge[];
+}
+
+export interface ProductStatusChangeConnectionPromise
+  extends Promise<ProductStatusChangeConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<ProductStatusChangeEdge>>() => T;
+  aggregate: <T = AggregateProductStatusChangePromise>() => T;
+}
+
+export interface ProductStatusChangeConnectionSubscription
+  extends Promise<AsyncIterator<ProductStatusChangeConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <
+    T = Promise<AsyncIterator<ProductStatusChangeEdgeSubscription>>
+  >() => T;
+  aggregate: <T = AggregateProductStatusChangeSubscription>() => T;
+}
+
+export interface ProductStatusChangeEdge {
+  node: ProductStatusChange;
+  cursor: String;
+}
+
+export interface ProductStatusChangeEdgePromise
+  extends Promise<ProductStatusChangeEdge>,
+    Fragmentable {
+  node: <T = ProductStatusChangePromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface ProductStatusChangeEdgeSubscription
+  extends Promise<AsyncIterator<ProductStatusChangeEdge>>,
+    Fragmentable {
+  node: <T = ProductStatusChangeSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateProductStatusChange {
+  count: Int;
+}
+
+export interface AggregateProductStatusChangePromise
+  extends Promise<AggregateProductStatusChange>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateProductStatusChangeSubscription
+  extends Promise<AsyncIterator<AggregateProductStatusChange>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
@@ -19974,6 +20472,59 @@ export interface ProductRequestPreviousValuesSubscription
   url: () => Promise<AsyncIterator<String>>;
 }
 
+export interface ProductStatusChangeSubscriptionPayload {
+  mutation: MutationType;
+  node: ProductStatusChange;
+  updatedFields: String[];
+  previousValues: ProductStatusChangePreviousValues;
+}
+
+export interface ProductStatusChangeSubscriptionPayloadPromise
+  extends Promise<ProductStatusChangeSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = ProductStatusChangePromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = ProductStatusChangePreviousValuesPromise>() => T;
+}
+
+export interface ProductStatusChangeSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<ProductStatusChangeSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = ProductStatusChangeSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = ProductStatusChangePreviousValuesSubscription>() => T;
+}
+
+export interface ProductStatusChangePreviousValues {
+  id: ID_Output;
+  old: ProductStatus;
+  new: ProductStatus;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface ProductStatusChangePreviousValuesPromise
+  extends Promise<ProductStatusChangePreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  old: () => Promise<ProductStatus>;
+  new: () => Promise<ProductStatus>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface ProductStatusChangePreviousValuesSubscription
+  extends Promise<AsyncIterator<ProductStatusChangePreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  old: () => Promise<AsyncIterator<ProductStatus>>;
+  new: () => Promise<AsyncIterator<ProductStatus>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
 export interface ProductVariantSubscriptionPayload {
   mutation: MutationType;
   node: ProductVariant;
@@ -21070,6 +21621,10 @@ export const models: Model[] = [
     embedded: false
   },
   {
+    name: "ProductStatusChange",
+    embedded: false
+  },
+  {
     name: "Product",
     embedded: false
   },
@@ -21206,7 +21761,7 @@ export const models: Model[] = [
 export const Prisma = makePrismaClientClass<ClientConstructor<Prisma>>({
   typeDefs,
   models,
-  endpoint: `${process.env["PRISMA_ENDPOINT"]}`,
+  endpoint: `http://localhost:4466/monsoon/dev`,
   secret: `${process.env["PRISMA_SECRET"]}`
 });
 export const prisma = new Prisma();

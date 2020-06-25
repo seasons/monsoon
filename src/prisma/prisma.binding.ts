@@ -8,6 +8,7 @@ export interface Query {
     collectionGroups: <T = Array<CollectionGroup | null>>(args: { where?: CollectionGroupWhereInput | null, orderBy?: CollectionGroupOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     homepageProductRails: <T = Array<HomepageProductRail | null>>(args: { where?: HomepageProductRailWhereInput | null, orderBy?: HomepageProductRailOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     tags: <T = Array<Tag | null>>(args: { where?: TagWhereInput | null, orderBy?: TagOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    productStatusChanges: <T = Array<ProductStatusChange | null>>(args: { where?: ProductStatusChangeWhereInput | null, orderBy?: ProductStatusChangeOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     productMaterialCategories: <T = Array<ProductMaterialCategory | null>>(args: { where?: ProductMaterialCategoryWhereInput | null, orderBy?: ProductMaterialCategoryOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     productModels: <T = Array<ProductModel | null>>(args: { where?: ProductModelWhereInput | null, orderBy?: ProductModelOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     warehouseLocationConstraints: <T = Array<WarehouseLocationConstraint | null>>(args: { where?: WarehouseLocationConstraintWhereInput | null, orderBy?: WarehouseLocationConstraintOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -49,6 +50,7 @@ export interface Query {
     collectionGroup: <T = CollectionGroup | null>(args: { where: CollectionGroupWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     homepageProductRail: <T = HomepageProductRail | null>(args: { where: HomepageProductRailWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     tag: <T = Tag | null>(args: { where: TagWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    productStatusChange: <T = ProductStatusChange | null>(args: { where: ProductStatusChangeWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     productMaterialCategory: <T = ProductMaterialCategory | null>(args: { where: ProductMaterialCategoryWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     productModel: <T = ProductModel | null>(args: { where: ProductModelWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     warehouseLocationConstraint: <T = WarehouseLocationConstraint | null>(args: { where: WarehouseLocationConstraintWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -90,6 +92,7 @@ export interface Query {
     collectionGroupsConnection: <T = CollectionGroupConnection>(args: { where?: CollectionGroupWhereInput | null, orderBy?: CollectionGroupOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     homepageProductRailsConnection: <T = HomepageProductRailConnection>(args: { where?: HomepageProductRailWhereInput | null, orderBy?: HomepageProductRailOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     tagsConnection: <T = TagConnection>(args: { where?: TagWhereInput | null, orderBy?: TagOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    productStatusChangesConnection: <T = ProductStatusChangeConnection>(args: { where?: ProductStatusChangeWhereInput | null, orderBy?: ProductStatusChangeOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     productMaterialCategoriesConnection: <T = ProductMaterialCategoryConnection>(args: { where?: ProductMaterialCategoryWhereInput | null, orderBy?: ProductMaterialCategoryOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     productModelsConnection: <T = ProductModelConnection>(args: { where?: ProductModelWhereInput | null, orderBy?: ProductModelOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     warehouseLocationConstraintsConnection: <T = WarehouseLocationConstraintConnection>(args: { where?: WarehouseLocationConstraintWhereInput | null, orderBy?: WarehouseLocationConstraintOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -135,6 +138,7 @@ export interface Mutation {
     createCollectionGroup: <T = CollectionGroup>(args: { data: CollectionGroupCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createHomepageProductRail: <T = HomepageProductRail>(args: { data: HomepageProductRailCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createTag: <T = Tag>(args: { data: TagCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    createProductStatusChange: <T = ProductStatusChange>(args: { data: ProductStatusChangeCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createProductMaterialCategory: <T = ProductMaterialCategory>(args: { data: ProductMaterialCategoryCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createProductModel: <T = ProductModel>(args: { data: ProductModelCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createWarehouseLocationConstraint: <T = WarehouseLocationConstraint>(args: { data: WarehouseLocationConstraintCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -176,6 +180,7 @@ export interface Mutation {
     updateCollectionGroup: <T = CollectionGroup | null>(args: { data: CollectionGroupUpdateInput, where: CollectionGroupWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateHomepageProductRail: <T = HomepageProductRail | null>(args: { data: HomepageProductRailUpdateInput, where: HomepageProductRailWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateTag: <T = Tag | null>(args: { data: TagUpdateInput, where: TagWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    updateProductStatusChange: <T = ProductStatusChange | null>(args: { data: ProductStatusChangeUpdateInput, where: ProductStatusChangeWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateProductMaterialCategory: <T = ProductMaterialCategory | null>(args: { data: ProductMaterialCategoryUpdateInput, where: ProductMaterialCategoryWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateProductModel: <T = ProductModel | null>(args: { data: ProductModelUpdateInput, where: ProductModelWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateWarehouseLocationConstraint: <T = WarehouseLocationConstraint | null>(args: { data: WarehouseLocationConstraintUpdateInput, where: WarehouseLocationConstraintWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -217,6 +222,7 @@ export interface Mutation {
     deleteCollectionGroup: <T = CollectionGroup | null>(args: { where: CollectionGroupWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteHomepageProductRail: <T = HomepageProductRail | null>(args: { where: HomepageProductRailWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteTag: <T = Tag | null>(args: { where: TagWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deleteProductStatusChange: <T = ProductStatusChange | null>(args: { where: ProductStatusChangeWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteProductMaterialCategory: <T = ProductMaterialCategory | null>(args: { where: ProductMaterialCategoryWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteProductModel: <T = ProductModel | null>(args: { where: ProductModelWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteWarehouseLocationConstraint: <T = WarehouseLocationConstraint | null>(args: { where: WarehouseLocationConstraintWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -258,6 +264,7 @@ export interface Mutation {
     upsertCollectionGroup: <T = CollectionGroup>(args: { where: CollectionGroupWhereUniqueInput, create: CollectionGroupCreateInput, update: CollectionGroupUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertHomepageProductRail: <T = HomepageProductRail>(args: { where: HomepageProductRailWhereUniqueInput, create: HomepageProductRailCreateInput, update: HomepageProductRailUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertTag: <T = Tag>(args: { where: TagWhereUniqueInput, create: TagCreateInput, update: TagUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    upsertProductStatusChange: <T = ProductStatusChange>(args: { where: ProductStatusChangeWhereUniqueInput, create: ProductStatusChangeCreateInput, update: ProductStatusChangeUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertProductMaterialCategory: <T = ProductMaterialCategory>(args: { where: ProductMaterialCategoryWhereUniqueInput, create: ProductMaterialCategoryCreateInput, update: ProductMaterialCategoryUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertProductModel: <T = ProductModel>(args: { where: ProductModelWhereUniqueInput, create: ProductModelCreateInput, update: ProductModelUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertWarehouseLocationConstraint: <T = WarehouseLocationConstraint>(args: { where: WarehouseLocationConstraintWhereUniqueInput, create: WarehouseLocationConstraintCreateInput, update: WarehouseLocationConstraintUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -299,6 +306,7 @@ export interface Mutation {
     updateManyCollectionGroups: <T = BatchPayload>(args: { data: CollectionGroupUpdateManyMutationInput, where?: CollectionGroupWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyHomepageProductRails: <T = BatchPayload>(args: { data: HomepageProductRailUpdateManyMutationInput, where?: HomepageProductRailWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyTags: <T = BatchPayload>(args: { data: TagUpdateManyMutationInput, where?: TagWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateManyProductStatusChanges: <T = BatchPayload>(args: { data: ProductStatusChangeUpdateManyMutationInput, where?: ProductStatusChangeWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyProductMaterialCategories: <T = BatchPayload>(args: { data: ProductMaterialCategoryUpdateManyMutationInput, where?: ProductMaterialCategoryWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyProductModels: <T = BatchPayload>(args: { data: ProductModelUpdateManyMutationInput, where?: ProductModelWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyWarehouseLocationConstraints: <T = BatchPayload>(args: { data: WarehouseLocationConstraintUpdateManyMutationInput, where?: WarehouseLocationConstraintWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -339,6 +347,7 @@ export interface Mutation {
     deleteManyCollectionGroups: <T = BatchPayload>(args: { where?: CollectionGroupWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyHomepageProductRails: <T = BatchPayload>(args: { where?: HomepageProductRailWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyTags: <T = BatchPayload>(args: { where?: TagWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteManyProductStatusChanges: <T = BatchPayload>(args: { where?: ProductStatusChangeWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyProductMaterialCategories: <T = BatchPayload>(args: { where?: ProductMaterialCategoryWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyProductModels: <T = BatchPayload>(args: { where?: ProductModelWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyWarehouseLocationConstraints: <T = BatchPayload>(args: { where?: WarehouseLocationConstraintWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -383,6 +392,7 @@ export interface Subscription {
     collectionGroup: <T = CollectionGroupSubscriptionPayload | null>(args: { where?: CollectionGroupSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     homepageProductRail: <T = HomepageProductRailSubscriptionPayload | null>(args: { where?: HomepageProductRailSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     tag: <T = TagSubscriptionPayload | null>(args: { where?: TagSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
+    productStatusChange: <T = ProductStatusChangeSubscriptionPayload | null>(args: { where?: ProductStatusChangeSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     productMaterialCategory: <T = ProductMaterialCategorySubscriptionPayload | null>(args: { where?: ProductMaterialCategorySubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     productModel: <T = ProductModelSubscriptionPayload | null>(args: { where?: ProductModelSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     warehouseLocationConstraint: <T = WarehouseLocationConstraintSubscriptionPayload | null>(args: { where?: WarehouseLocationConstraintSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
@@ -427,6 +437,7 @@ export interface Exists {
   CollectionGroup: (where?: CollectionGroupWhereInput) => Promise<boolean>
   HomepageProductRail: (where?: HomepageProductRailWhereInput) => Promise<boolean>
   Tag: (where?: TagWhereInput) => Promise<boolean>
+  ProductStatusChange: (where?: ProductStatusChangeWhereInput) => Promise<boolean>
   ProductMaterialCategory: (where?: ProductMaterialCategoryWhereInput) => Promise<boolean>
   ProductModel: (where?: ProductModelWhereInput) => Promise<boolean>
   WarehouseLocationConstraint: (where?: WarehouseLocationConstraintWhereInput) => Promise<boolean>
@@ -585,6 +596,10 @@ type AggregateProductModel {
 }
 
 type AggregateProductRequest {
+  count: Int!
+}
+
+type AggregateProductStatusChange {
   count: Int!
 }
 
@@ -8453,6 +8468,7 @@ type Mutation {
   createCollectionGroup(data: CollectionGroupCreateInput!): CollectionGroup!
   createHomepageProductRail(data: HomepageProductRailCreateInput!): HomepageProductRail!
   createTag(data: TagCreateInput!): Tag!
+  createProductStatusChange(data: ProductStatusChangeCreateInput!): ProductStatusChange!
   createProductMaterialCategory(data: ProductMaterialCategoryCreateInput!): ProductMaterialCategory!
   createProductModel(data: ProductModelCreateInput!): ProductModel!
   createWarehouseLocationConstraint(data: WarehouseLocationConstraintCreateInput!): WarehouseLocationConstraint!
@@ -8494,6 +8510,7 @@ type Mutation {
   updateCollectionGroup(data: CollectionGroupUpdateInput!, where: CollectionGroupWhereUniqueInput!): CollectionGroup
   updateHomepageProductRail(data: HomepageProductRailUpdateInput!, where: HomepageProductRailWhereUniqueInput!): HomepageProductRail
   updateTag(data: TagUpdateInput!, where: TagWhereUniqueInput!): Tag
+  updateProductStatusChange(data: ProductStatusChangeUpdateInput!, where: ProductStatusChangeWhereUniqueInput!): ProductStatusChange
   updateProductMaterialCategory(data: ProductMaterialCategoryUpdateInput!, where: ProductMaterialCategoryWhereUniqueInput!): ProductMaterialCategory
   updateProductModel(data: ProductModelUpdateInput!, where: ProductModelWhereUniqueInput!): ProductModel
   updateWarehouseLocationConstraint(data: WarehouseLocationConstraintUpdateInput!, where: WarehouseLocationConstraintWhereUniqueInput!): WarehouseLocationConstraint
@@ -8535,6 +8552,7 @@ type Mutation {
   deleteCollectionGroup(where: CollectionGroupWhereUniqueInput!): CollectionGroup
   deleteHomepageProductRail(where: HomepageProductRailWhereUniqueInput!): HomepageProductRail
   deleteTag(where: TagWhereUniqueInput!): Tag
+  deleteProductStatusChange(where: ProductStatusChangeWhereUniqueInput!): ProductStatusChange
   deleteProductMaterialCategory(where: ProductMaterialCategoryWhereUniqueInput!): ProductMaterialCategory
   deleteProductModel(where: ProductModelWhereUniqueInput!): ProductModel
   deleteWarehouseLocationConstraint(where: WarehouseLocationConstraintWhereUniqueInput!): WarehouseLocationConstraint
@@ -8576,6 +8594,7 @@ type Mutation {
   upsertCollectionGroup(where: CollectionGroupWhereUniqueInput!, create: CollectionGroupCreateInput!, update: CollectionGroupUpdateInput!): CollectionGroup!
   upsertHomepageProductRail(where: HomepageProductRailWhereUniqueInput!, create: HomepageProductRailCreateInput!, update: HomepageProductRailUpdateInput!): HomepageProductRail!
   upsertTag(where: TagWhereUniqueInput!, create: TagCreateInput!, update: TagUpdateInput!): Tag!
+  upsertProductStatusChange(where: ProductStatusChangeWhereUniqueInput!, create: ProductStatusChangeCreateInput!, update: ProductStatusChangeUpdateInput!): ProductStatusChange!
   upsertProductMaterialCategory(where: ProductMaterialCategoryWhereUniqueInput!, create: ProductMaterialCategoryCreateInput!, update: ProductMaterialCategoryUpdateInput!): ProductMaterialCategory!
   upsertProductModel(where: ProductModelWhereUniqueInput!, create: ProductModelCreateInput!, update: ProductModelUpdateInput!): ProductModel!
   upsertWarehouseLocationConstraint(where: WarehouseLocationConstraintWhereUniqueInput!, create: WarehouseLocationConstraintCreateInput!, update: WarehouseLocationConstraintUpdateInput!): WarehouseLocationConstraint!
@@ -8617,6 +8636,7 @@ type Mutation {
   updateManyCollectionGroups(data: CollectionGroupUpdateManyMutationInput!, where: CollectionGroupWhereInput): BatchPayload!
   updateManyHomepageProductRails(data: HomepageProductRailUpdateManyMutationInput!, where: HomepageProductRailWhereInput): BatchPayload!
   updateManyTags(data: TagUpdateManyMutationInput!, where: TagWhereInput): BatchPayload!
+  updateManyProductStatusChanges(data: ProductStatusChangeUpdateManyMutationInput!, where: ProductStatusChangeWhereInput): BatchPayload!
   updateManyProductMaterialCategories(data: ProductMaterialCategoryUpdateManyMutationInput!, where: ProductMaterialCategoryWhereInput): BatchPayload!
   updateManyProductModels(data: ProductModelUpdateManyMutationInput!, where: ProductModelWhereInput): BatchPayload!
   updateManyWarehouseLocationConstraints(data: WarehouseLocationConstraintUpdateManyMutationInput!, where: WarehouseLocationConstraintWhereInput): BatchPayload!
@@ -8657,6 +8677,7 @@ type Mutation {
   deleteManyCollectionGroups(where: CollectionGroupWhereInput): BatchPayload!
   deleteManyHomepageProductRails(where: HomepageProductRailWhereInput): BatchPayload!
   deleteManyTags(where: TagWhereInput): BatchPayload!
+  deleteManyProductStatusChanges(where: ProductStatusChangeWhereInput): BatchPayload!
   deleteManyProductMaterialCategories(where: ProductMaterialCategoryWhereInput): BatchPayload!
   deleteManyProductModels(where: ProductModelWhereInput): BatchPayload!
   deleteManyWarehouseLocationConstraints(where: WarehouseLocationConstraintWhereInput): BatchPayload!
@@ -10973,6 +10994,7 @@ type Product implements Node {
   outerMaterials: [String!]!
   variants(where: ProductVariantWhereInput, orderBy: ProductVariantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariant!]
   status: ProductStatus
+  statusChanges(where: ProductStatusChangeWhereInput, orderBy: ProductStatusChangeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductStatusChange!]
   season: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
@@ -11028,6 +11050,7 @@ input ProductCreateInput {
   functions: ProductFunctionCreateManyInput
   materialCategory: ProductMaterialCategoryCreateOneWithoutProductsInput
   variants: ProductVariantCreateManyWithoutProductInput
+  statusChanges: ProductStatusChangeCreateManyWithoutProductInput
 }
 
 input ProductCreateManyInput {
@@ -11062,6 +11085,11 @@ input ProductCreateManyWithoutTagsInput {
 
 input ProductCreateOneInput {
   create: ProductCreateInput
+  connect: ProductWhereUniqueInput
+}
+
+input ProductCreateOneWithoutStatusChangesInput {
+  create: ProductCreateWithoutStatusChangesInput
   connect: ProductWhereUniqueInput
 }
 
@@ -11100,6 +11128,7 @@ input ProductCreateWithoutBrandInput {
   functions: ProductFunctionCreateManyInput
   materialCategory: ProductMaterialCategoryCreateOneWithoutProductsInput
   variants: ProductVariantCreateManyWithoutProductInput
+  statusChanges: ProductStatusChangeCreateManyWithoutProductInput
 }
 
 input ProductCreateWithoutCategoryInput {
@@ -11128,6 +11157,7 @@ input ProductCreateWithoutCategoryInput {
   functions: ProductFunctionCreateManyInput
   materialCategory: ProductMaterialCategoryCreateOneWithoutProductsInput
   variants: ProductVariantCreateManyWithoutProductInput
+  statusChanges: ProductStatusChangeCreateManyWithoutProductInput
 }
 
 input ProductCreateWithoutMaterialCategoryInput {
@@ -11156,6 +11186,7 @@ input ProductCreateWithoutMaterialCategoryInput {
   tags: TagCreateManyWithoutProductsInput
   functions: ProductFunctionCreateManyInput
   variants: ProductVariantCreateManyWithoutProductInput
+  statusChanges: ProductStatusChangeCreateManyWithoutProductInput
 }
 
 input ProductCreateWithoutModelInput {
@@ -11177,6 +11208,36 @@ input ProductCreateWithoutModelInput {
   brand: BrandCreateOneWithoutProductsInput!
   category: CategoryCreateOneWithoutProductsInput!
   images: ImageCreateManyInput
+  modelSize: SizeCreateOneInput
+  color: ColorCreateOneInput!
+  secondaryColor: ColorCreateOneInput
+  tags: TagCreateManyWithoutProductsInput
+  functions: ProductFunctionCreateManyInput
+  materialCategory: ProductMaterialCategoryCreateOneWithoutProductsInput
+  variants: ProductVariantCreateManyWithoutProductInput
+  statusChanges: ProductStatusChangeCreateManyWithoutProductInput
+}
+
+input ProductCreateWithoutStatusChangesInput {
+  id: ID
+  slug: String!
+  name: String!
+  type: ProductType
+  description: String
+  externalURL: String
+  modelHeight: Int
+  retailPrice: Int
+  status: ProductStatus
+  season: String
+  architecture: ProductArchitecture
+  photographyStatus: PhotographyStatus
+  publishedAt: DateTime
+  innerMaterials: ProductCreateinnerMaterialsInput
+  outerMaterials: ProductCreateouterMaterialsInput
+  brand: BrandCreateOneWithoutProductsInput!
+  category: CategoryCreateOneWithoutProductsInput!
+  images: ImageCreateManyInput
+  model: ProductModelCreateOneWithoutProductsInput
   modelSize: SizeCreateOneInput
   color: ColorCreateOneInput!
   secondaryColor: ColorCreateOneInput
@@ -11212,6 +11273,7 @@ input ProductCreateWithoutTagsInput {
   functions: ProductFunctionCreateManyInput
   materialCategory: ProductMaterialCategoryCreateOneWithoutProductsInput
   variants: ProductVariantCreateManyWithoutProductInput
+  statusChanges: ProductStatusChangeCreateManyWithoutProductInput
 }
 
 input ProductCreateWithoutVariantsInput {
@@ -11240,6 +11302,7 @@ input ProductCreateWithoutVariantsInput {
   tags: TagCreateManyWithoutProductsInput
   functions: ProductFunctionCreateManyInput
   materialCategory: ProductMaterialCategoryCreateOneWithoutProductsInput
+  statusChanges: ProductStatusChangeCreateManyWithoutProductInput
 }
 
 """An edge in a connection."""
@@ -13082,6 +13145,394 @@ enum ProductStatus {
   Offloaded
 }
 
+type ProductStatusChange implements Node {
+  id: ID!
+  old: ProductStatus!
+  new: ProductStatus!
+  product: Product!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""A connection to a list of items."""
+type ProductStatusChangeConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [ProductStatusChangeEdge]!
+  aggregate: AggregateProductStatusChange!
+}
+
+input ProductStatusChangeCreateInput {
+  id: ID
+  old: ProductStatus!
+  new: ProductStatus!
+  product: ProductCreateOneWithoutStatusChangesInput!
+}
+
+input ProductStatusChangeCreateManyWithoutProductInput {
+  create: [ProductStatusChangeCreateWithoutProductInput!]
+  connect: [ProductStatusChangeWhereUniqueInput!]
+}
+
+input ProductStatusChangeCreateWithoutProductInput {
+  id: ID
+  old: ProductStatus!
+  new: ProductStatus!
+}
+
+"""An edge in a connection."""
+type ProductStatusChangeEdge {
+  """The item at the end of the edge."""
+  node: ProductStatusChange!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum ProductStatusChangeOrderByInput {
+  id_ASC
+  id_DESC
+  old_ASC
+  old_DESC
+  new_ASC
+  new_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type ProductStatusChangePreviousValues {
+  id: ID!
+  old: ProductStatus!
+  new: ProductStatus!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+input ProductStatusChangeScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ProductStatusChangeScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ProductStatusChangeScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ProductStatusChangeScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  old: ProductStatus
+
+  """All values that are not equal to given value."""
+  old_not: ProductStatus
+
+  """All values that are contained in given list."""
+  old_in: [ProductStatus!]
+
+  """All values that are not contained in given list."""
+  old_not_in: [ProductStatus!]
+  new: ProductStatus
+
+  """All values that are not equal to given value."""
+  new_not: ProductStatus
+
+  """All values that are contained in given list."""
+  new_in: [ProductStatus!]
+
+  """All values that are not contained in given list."""
+  new_not_in: [ProductStatus!]
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
+}
+
+type ProductStatusChangeSubscriptionPayload {
+  mutation: MutationType!
+  node: ProductStatusChange
+  updatedFields: [String!]
+  previousValues: ProductStatusChangePreviousValues
+}
+
+input ProductStatusChangeSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ProductStatusChangeSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ProductStatusChangeSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ProductStatusChangeSubscriptionWhereInput!]
+
+  """The subscription event gets dispatched when it's listed in mutation_in"""
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: ProductStatusChangeWhereInput
+}
+
+input ProductStatusChangeUpdateInput {
+  old: ProductStatus
+  new: ProductStatus
+  product: ProductUpdateOneRequiredWithoutStatusChangesInput
+}
+
+input ProductStatusChangeUpdateManyDataInput {
+  old: ProductStatus
+  new: ProductStatus
+}
+
+input ProductStatusChangeUpdateManyMutationInput {
+  old: ProductStatus
+  new: ProductStatus
+}
+
+input ProductStatusChangeUpdateManyWithoutProductInput {
+  create: [ProductStatusChangeCreateWithoutProductInput!]
+  connect: [ProductStatusChangeWhereUniqueInput!]
+  set: [ProductStatusChangeWhereUniqueInput!]
+  disconnect: [ProductStatusChangeWhereUniqueInput!]
+  delete: [ProductStatusChangeWhereUniqueInput!]
+  update: [ProductStatusChangeUpdateWithWhereUniqueWithoutProductInput!]
+  updateMany: [ProductStatusChangeUpdateManyWithWhereNestedInput!]
+  deleteMany: [ProductStatusChangeScalarWhereInput!]
+  upsert: [ProductStatusChangeUpsertWithWhereUniqueWithoutProductInput!]
+}
+
+input ProductStatusChangeUpdateManyWithWhereNestedInput {
+  where: ProductStatusChangeScalarWhereInput!
+  data: ProductStatusChangeUpdateManyDataInput!
+}
+
+input ProductStatusChangeUpdateWithoutProductDataInput {
+  old: ProductStatus
+  new: ProductStatus
+}
+
+input ProductStatusChangeUpdateWithWhereUniqueWithoutProductInput {
+  where: ProductStatusChangeWhereUniqueInput!
+  data: ProductStatusChangeUpdateWithoutProductDataInput!
+}
+
+input ProductStatusChangeUpsertWithWhereUniqueWithoutProductInput {
+  where: ProductStatusChangeWhereUniqueInput!
+  update: ProductStatusChangeUpdateWithoutProductDataInput!
+  create: ProductStatusChangeCreateWithoutProductInput!
+}
+
+input ProductStatusChangeWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ProductStatusChangeWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ProductStatusChangeWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ProductStatusChangeWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  old: ProductStatus
+
+  """All values that are not equal to given value."""
+  old_not: ProductStatus
+
+  """All values that are contained in given list."""
+  old_in: [ProductStatus!]
+
+  """All values that are not contained in given list."""
+  old_not_in: [ProductStatus!]
+  new: ProductStatus
+
+  """All values that are not equal to given value."""
+  new_not: ProductStatus
+
+  """All values that are contained in given list."""
+  new_in: [ProductStatus!]
+
+  """All values that are not contained in given list."""
+  new_not_in: [ProductStatus!]
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
+  product: ProductWhereInput
+}
+
+input ProductStatusChangeWhereUniqueInput {
+  id: ID
+}
+
 type ProductSubscriptionPayload {
   mutation: MutationType!
   node: Product
@@ -13152,6 +13603,7 @@ input ProductUpdateDataInput {
   functions: ProductFunctionUpdateManyInput
   materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
   variants: ProductVariantUpdateManyWithoutProductInput
+  statusChanges: ProductStatusChangeUpdateManyWithoutProductInput
 }
 
 input ProductUpdateinnerMaterialsInput {
@@ -13184,6 +13636,7 @@ input ProductUpdateInput {
   functions: ProductFunctionUpdateManyInput
   materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
   variants: ProductVariantUpdateManyWithoutProductInput
+  statusChanges: ProductStatusChangeUpdateManyWithoutProductInput
 }
 
 input ProductUpdateManyDataInput {
@@ -13304,6 +13757,13 @@ input ProductUpdateOneRequiredInput {
   upsert: ProductUpsertNestedInput
 }
 
+input ProductUpdateOneRequiredWithoutStatusChangesInput {
+  create: ProductCreateWithoutStatusChangesInput
+  connect: ProductWhereUniqueInput
+  update: ProductUpdateWithoutStatusChangesDataInput
+  upsert: ProductUpsertWithoutStatusChangesInput
+}
+
 input ProductUpdateOneRequiredWithoutVariantsInput {
   create: ProductCreateWithoutVariantsInput
   connect: ProductWhereUniqueInput
@@ -13340,6 +13800,7 @@ input ProductUpdateWithoutBrandDataInput {
   functions: ProductFunctionUpdateManyInput
   materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
   variants: ProductVariantUpdateManyWithoutProductInput
+  statusChanges: ProductStatusChangeUpdateManyWithoutProductInput
 }
 
 input ProductUpdateWithoutCategoryDataInput {
@@ -13367,6 +13828,7 @@ input ProductUpdateWithoutCategoryDataInput {
   functions: ProductFunctionUpdateManyInput
   materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
   variants: ProductVariantUpdateManyWithoutProductInput
+  statusChanges: ProductStatusChangeUpdateManyWithoutProductInput
 }
 
 input ProductUpdateWithoutMaterialCategoryDataInput {
@@ -13394,6 +13856,7 @@ input ProductUpdateWithoutMaterialCategoryDataInput {
   tags: TagUpdateManyWithoutProductsInput
   functions: ProductFunctionUpdateManyInput
   variants: ProductVariantUpdateManyWithoutProductInput
+  statusChanges: ProductStatusChangeUpdateManyWithoutProductInput
 }
 
 input ProductUpdateWithoutModelDataInput {
@@ -13414,6 +13877,35 @@ input ProductUpdateWithoutModelDataInput {
   brand: BrandUpdateOneRequiredWithoutProductsInput
   category: CategoryUpdateOneRequiredWithoutProductsInput
   images: ImageUpdateManyInput
+  modelSize: SizeUpdateOneInput
+  color: ColorUpdateOneRequiredInput
+  secondaryColor: ColorUpdateOneInput
+  tags: TagUpdateManyWithoutProductsInput
+  functions: ProductFunctionUpdateManyInput
+  materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
+  variants: ProductVariantUpdateManyWithoutProductInput
+  statusChanges: ProductStatusChangeUpdateManyWithoutProductInput
+}
+
+input ProductUpdateWithoutStatusChangesDataInput {
+  slug: String
+  name: String
+  type: ProductType
+  description: String
+  externalURL: String
+  modelHeight: Int
+  retailPrice: Int
+  status: ProductStatus
+  season: String
+  architecture: ProductArchitecture
+  photographyStatus: PhotographyStatus
+  publishedAt: DateTime
+  innerMaterials: ProductUpdateinnerMaterialsInput
+  outerMaterials: ProductUpdateouterMaterialsInput
+  brand: BrandUpdateOneRequiredWithoutProductsInput
+  category: CategoryUpdateOneRequiredWithoutProductsInput
+  images: ImageUpdateManyInput
+  model: ProductModelUpdateOneWithoutProductsInput
   modelSize: SizeUpdateOneInput
   color: ColorUpdateOneRequiredInput
   secondaryColor: ColorUpdateOneInput
@@ -13448,6 +13940,7 @@ input ProductUpdateWithoutTagsDataInput {
   functions: ProductFunctionUpdateManyInput
   materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
   variants: ProductVariantUpdateManyWithoutProductInput
+  statusChanges: ProductStatusChangeUpdateManyWithoutProductInput
 }
 
 input ProductUpdateWithoutVariantsDataInput {
@@ -13475,6 +13968,7 @@ input ProductUpdateWithoutVariantsDataInput {
   tags: TagUpdateManyWithoutProductsInput
   functions: ProductFunctionUpdateManyInput
   materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
+  statusChanges: ProductStatusChangeUpdateManyWithoutProductInput
 }
 
 input ProductUpdateWithWhereUniqueNestedInput {
@@ -13510,6 +14004,11 @@ input ProductUpdateWithWhereUniqueWithoutTagsInput {
 input ProductUpsertNestedInput {
   update: ProductUpdateDataInput!
   create: ProductCreateInput!
+}
+
+input ProductUpsertWithoutStatusChangesInput {
+  update: ProductUpdateWithoutStatusChangesDataInput!
+  create: ProductCreateWithoutStatusChangesInput!
 }
 
 input ProductUpsertWithoutVariantsInput {
@@ -15980,6 +16479,9 @@ input ProductWhereInput {
   variants_every: ProductVariantWhereInput
   variants_some: ProductVariantWhereInput
   variants_none: ProductVariantWhereInput
+  statusChanges_every: ProductStatusChangeWhereInput
+  statusChanges_some: ProductStatusChangeWhereInput
+  statusChanges_none: ProductStatusChangeWhereInput
 }
 
 input ProductWhereUniqueInput {
@@ -17102,6 +17604,7 @@ type Query {
   collectionGroups(where: CollectionGroupWhereInput, orderBy: CollectionGroupOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CollectionGroup]!
   homepageProductRails(where: HomepageProductRailWhereInput, orderBy: HomepageProductRailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [HomepageProductRail]!
   tags(where: TagWhereInput, orderBy: TagOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Tag]!
+  productStatusChanges(where: ProductStatusChangeWhereInput, orderBy: ProductStatusChangeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductStatusChange]!
   productMaterialCategories(where: ProductMaterialCategoryWhereInput, orderBy: ProductMaterialCategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductMaterialCategory]!
   productModels(where: ProductModelWhereInput, orderBy: ProductModelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductModel]!
   warehouseLocationConstraints(where: WarehouseLocationConstraintWhereInput, orderBy: WarehouseLocationConstraintOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [WarehouseLocationConstraint]!
@@ -17143,6 +17646,7 @@ type Query {
   collectionGroup(where: CollectionGroupWhereUniqueInput!): CollectionGroup
   homepageProductRail(where: HomepageProductRailWhereUniqueInput!): HomepageProductRail
   tag(where: TagWhereUniqueInput!): Tag
+  productStatusChange(where: ProductStatusChangeWhereUniqueInput!): ProductStatusChange
   productMaterialCategory(where: ProductMaterialCategoryWhereUniqueInput!): ProductMaterialCategory
   productModel(where: ProductModelWhereUniqueInput!): ProductModel
   warehouseLocationConstraint(where: WarehouseLocationConstraintWhereUniqueInput!): WarehouseLocationConstraint
@@ -17184,6 +17688,7 @@ type Query {
   collectionGroupsConnection(where: CollectionGroupWhereInput, orderBy: CollectionGroupOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CollectionGroupConnection!
   homepageProductRailsConnection(where: HomepageProductRailWhereInput, orderBy: HomepageProductRailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): HomepageProductRailConnection!
   tagsConnection(where: TagWhereInput, orderBy: TagOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): TagConnection!
+  productStatusChangesConnection(where: ProductStatusChangeWhereInput, orderBy: ProductStatusChangeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductStatusChangeConnection!
   productMaterialCategoriesConnection(where: ProductMaterialCategoryWhereInput, orderBy: ProductMaterialCategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductMaterialCategoryConnection!
   productModelsConnection(where: ProductModelWhereInput, orderBy: ProductModelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductModelConnection!
   warehouseLocationConstraintsConnection(where: WarehouseLocationConstraintWhereInput, orderBy: WarehouseLocationConstraintOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): WarehouseLocationConstraintConnection!
@@ -19586,6 +20091,7 @@ type Subscription {
   collectionGroup(where: CollectionGroupSubscriptionWhereInput): CollectionGroupSubscriptionPayload
   homepageProductRail(where: HomepageProductRailSubscriptionWhereInput): HomepageProductRailSubscriptionPayload
   tag(where: TagSubscriptionWhereInput): TagSubscriptionPayload
+  productStatusChange(where: ProductStatusChangeSubscriptionWhereInput): ProductStatusChangeSubscriptionPayload
   productMaterialCategory(where: ProductMaterialCategorySubscriptionWhereInput): ProductMaterialCategorySubscriptionPayload
   productModel(where: ProductModelSubscriptionWhereInput): ProductModelSubscriptionPayload
   warehouseLocationConstraint(where: WarehouseLocationConstraintSubscriptionWhereInput): WarehouseLocationConstraintSubscriptionPayload
@@ -22860,6 +23366,17 @@ export type ProductStatus =   'Available' |
   'NotAvailable' |
   'Stored' |
   'Offloaded'
+
+export type ProductStatusChangeOrderByInput =   'id_ASC' |
+  'id_DESC' |
+  'old_ASC' |
+  'old_DESC' |
+  'new_ASC' |
+  'new_DESC' |
+  'createdAt_ASC' |
+  'createdAt_DESC' |
+  'updatedAt_ASC' |
+  'updatedAt_DESC'
 
 export type ProductType =   'Top' |
   'Bottom' |
@@ -27461,6 +27978,7 @@ export interface ProductCreateInput {
   functions?: ProductFunctionCreateManyInput | null
   materialCategory?: ProductMaterialCategoryCreateOneWithoutProductsInput | null
   variants?: ProductVariantCreateManyWithoutProductInput | null
+  statusChanges?: ProductStatusChangeCreateManyWithoutProductInput | null
 }
 
 export interface ProductCreateManyInput {
@@ -27495,6 +28013,11 @@ export interface ProductCreateManyWithoutTagsInput {
 
 export interface ProductCreateOneInput {
   create?: ProductCreateInput | null
+  connect?: ProductWhereUniqueInput | null
+}
+
+export interface ProductCreateOneWithoutStatusChangesInput {
+  create?: ProductCreateWithoutStatusChangesInput | null
   connect?: ProductWhereUniqueInput | null
 }
 
@@ -27533,6 +28056,7 @@ export interface ProductCreateWithoutBrandInput {
   functions?: ProductFunctionCreateManyInput | null
   materialCategory?: ProductMaterialCategoryCreateOneWithoutProductsInput | null
   variants?: ProductVariantCreateManyWithoutProductInput | null
+  statusChanges?: ProductStatusChangeCreateManyWithoutProductInput | null
 }
 
 export interface ProductCreateWithoutCategoryInput {
@@ -27561,6 +28085,7 @@ export interface ProductCreateWithoutCategoryInput {
   functions?: ProductFunctionCreateManyInput | null
   materialCategory?: ProductMaterialCategoryCreateOneWithoutProductsInput | null
   variants?: ProductVariantCreateManyWithoutProductInput | null
+  statusChanges?: ProductStatusChangeCreateManyWithoutProductInput | null
 }
 
 export interface ProductCreateWithoutMaterialCategoryInput {
@@ -27589,6 +28114,7 @@ export interface ProductCreateWithoutMaterialCategoryInput {
   tags?: TagCreateManyWithoutProductsInput | null
   functions?: ProductFunctionCreateManyInput | null
   variants?: ProductVariantCreateManyWithoutProductInput | null
+  statusChanges?: ProductStatusChangeCreateManyWithoutProductInput | null
 }
 
 export interface ProductCreateWithoutModelInput {
@@ -27610,6 +28136,36 @@ export interface ProductCreateWithoutModelInput {
   brand: BrandCreateOneWithoutProductsInput
   category: CategoryCreateOneWithoutProductsInput
   images?: ImageCreateManyInput | null
+  modelSize?: SizeCreateOneInput | null
+  color: ColorCreateOneInput
+  secondaryColor?: ColorCreateOneInput | null
+  tags?: TagCreateManyWithoutProductsInput | null
+  functions?: ProductFunctionCreateManyInput | null
+  materialCategory?: ProductMaterialCategoryCreateOneWithoutProductsInput | null
+  variants?: ProductVariantCreateManyWithoutProductInput | null
+  statusChanges?: ProductStatusChangeCreateManyWithoutProductInput | null
+}
+
+export interface ProductCreateWithoutStatusChangesInput {
+  id?: ID_Input | null
+  slug: String
+  name: String
+  type?: ProductType | null
+  description?: String | null
+  externalURL?: String | null
+  modelHeight?: Int | null
+  retailPrice?: Int | null
+  status?: ProductStatus | null
+  season?: String | null
+  architecture?: ProductArchitecture | null
+  photographyStatus?: PhotographyStatus | null
+  publishedAt?: DateTime | null
+  innerMaterials?: ProductCreateinnerMaterialsInput | null
+  outerMaterials?: ProductCreateouterMaterialsInput | null
+  brand: BrandCreateOneWithoutProductsInput
+  category: CategoryCreateOneWithoutProductsInput
+  images?: ImageCreateManyInput | null
+  model?: ProductModelCreateOneWithoutProductsInput | null
   modelSize?: SizeCreateOneInput | null
   color: ColorCreateOneInput
   secondaryColor?: ColorCreateOneInput | null
@@ -27645,6 +28201,7 @@ export interface ProductCreateWithoutTagsInput {
   functions?: ProductFunctionCreateManyInput | null
   materialCategory?: ProductMaterialCategoryCreateOneWithoutProductsInput | null
   variants?: ProductVariantCreateManyWithoutProductInput | null
+  statusChanges?: ProductStatusChangeCreateManyWithoutProductInput | null
 }
 
 export interface ProductCreateWithoutVariantsInput {
@@ -27673,6 +28230,7 @@ export interface ProductCreateWithoutVariantsInput {
   tags?: TagCreateManyWithoutProductsInput | null
   functions?: ProductFunctionCreateManyInput | null
   materialCategory?: ProductMaterialCategoryCreateOneWithoutProductsInput | null
+  statusChanges?: ProductStatusChangeCreateManyWithoutProductInput | null
 }
 
 export interface ProductFunctionCreateInput {
@@ -28388,6 +28946,177 @@ export interface ProductScalarWhereInput {
   updatedAt_gte?: DateTime | null
 }
 
+export interface ProductStatusChangeCreateInput {
+  id?: ID_Input | null
+  old: ProductStatus
+  new: ProductStatus
+  product: ProductCreateOneWithoutStatusChangesInput
+}
+
+export interface ProductStatusChangeCreateManyWithoutProductInput {
+  create?: ProductStatusChangeCreateWithoutProductInput[] | ProductStatusChangeCreateWithoutProductInput | null
+  connect?: ProductStatusChangeWhereUniqueInput[] | ProductStatusChangeWhereUniqueInput | null
+}
+
+export interface ProductStatusChangeCreateWithoutProductInput {
+  id?: ID_Input | null
+  old: ProductStatus
+  new: ProductStatus
+}
+
+export interface ProductStatusChangeScalarWhereInput {
+  AND?: ProductStatusChangeScalarWhereInput[] | ProductStatusChangeScalarWhereInput | null
+  OR?: ProductStatusChangeScalarWhereInput[] | ProductStatusChangeScalarWhereInput | null
+  NOT?: ProductStatusChangeScalarWhereInput[] | ProductStatusChangeScalarWhereInput | null
+  id?: ID_Input | null
+  id_not?: ID_Input | null
+  id_in?: ID_Output[] | ID_Output | null
+  id_not_in?: ID_Output[] | ID_Output | null
+  id_lt?: ID_Input | null
+  id_lte?: ID_Input | null
+  id_gt?: ID_Input | null
+  id_gte?: ID_Input | null
+  id_contains?: ID_Input | null
+  id_not_contains?: ID_Input | null
+  id_starts_with?: ID_Input | null
+  id_not_starts_with?: ID_Input | null
+  id_ends_with?: ID_Input | null
+  id_not_ends_with?: ID_Input | null
+  old?: ProductStatus | null
+  old_not?: ProductStatus | null
+  old_in?: ProductStatus[] | ProductStatus | null
+  old_not_in?: ProductStatus[] | ProductStatus | null
+  new?: ProductStatus | null
+  new_not?: ProductStatus | null
+  new_in?: ProductStatus[] | ProductStatus | null
+  new_not_in?: ProductStatus[] | ProductStatus | null
+  createdAt?: DateTime | null
+  createdAt_not?: DateTime | null
+  createdAt_in?: DateTime[] | DateTime | null
+  createdAt_not_in?: DateTime[] | DateTime | null
+  createdAt_lt?: DateTime | null
+  createdAt_lte?: DateTime | null
+  createdAt_gt?: DateTime | null
+  createdAt_gte?: DateTime | null
+  updatedAt?: DateTime | null
+  updatedAt_not?: DateTime | null
+  updatedAt_in?: DateTime[] | DateTime | null
+  updatedAt_not_in?: DateTime[] | DateTime | null
+  updatedAt_lt?: DateTime | null
+  updatedAt_lte?: DateTime | null
+  updatedAt_gt?: DateTime | null
+  updatedAt_gte?: DateTime | null
+}
+
+export interface ProductStatusChangeSubscriptionWhereInput {
+  AND?: ProductStatusChangeSubscriptionWhereInput[] | ProductStatusChangeSubscriptionWhereInput | null
+  OR?: ProductStatusChangeSubscriptionWhereInput[] | ProductStatusChangeSubscriptionWhereInput | null
+  NOT?: ProductStatusChangeSubscriptionWhereInput[] | ProductStatusChangeSubscriptionWhereInput | null
+  mutation_in?: MutationType[] | MutationType | null
+  updatedFields_contains?: String | null
+  updatedFields_contains_every?: String[] | String | null
+  updatedFields_contains_some?: String[] | String | null
+  node?: ProductStatusChangeWhereInput | null
+}
+
+export interface ProductStatusChangeUpdateInput {
+  old?: ProductStatus | null
+  new?: ProductStatus | null
+  product?: ProductUpdateOneRequiredWithoutStatusChangesInput | null
+}
+
+export interface ProductStatusChangeUpdateManyDataInput {
+  old?: ProductStatus | null
+  new?: ProductStatus | null
+}
+
+export interface ProductStatusChangeUpdateManyMutationInput {
+  old?: ProductStatus | null
+  new?: ProductStatus | null
+}
+
+export interface ProductStatusChangeUpdateManyWithoutProductInput {
+  create?: ProductStatusChangeCreateWithoutProductInput[] | ProductStatusChangeCreateWithoutProductInput | null
+  connect?: ProductStatusChangeWhereUniqueInput[] | ProductStatusChangeWhereUniqueInput | null
+  set?: ProductStatusChangeWhereUniqueInput[] | ProductStatusChangeWhereUniqueInput | null
+  disconnect?: ProductStatusChangeWhereUniqueInput[] | ProductStatusChangeWhereUniqueInput | null
+  delete?: ProductStatusChangeWhereUniqueInput[] | ProductStatusChangeWhereUniqueInput | null
+  update?: ProductStatusChangeUpdateWithWhereUniqueWithoutProductInput[] | ProductStatusChangeUpdateWithWhereUniqueWithoutProductInput | null
+  updateMany?: ProductStatusChangeUpdateManyWithWhereNestedInput[] | ProductStatusChangeUpdateManyWithWhereNestedInput | null
+  deleteMany?: ProductStatusChangeScalarWhereInput[] | ProductStatusChangeScalarWhereInput | null
+  upsert?: ProductStatusChangeUpsertWithWhereUniqueWithoutProductInput[] | ProductStatusChangeUpsertWithWhereUniqueWithoutProductInput | null
+}
+
+export interface ProductStatusChangeUpdateManyWithWhereNestedInput {
+  where: ProductStatusChangeScalarWhereInput
+  data: ProductStatusChangeUpdateManyDataInput
+}
+
+export interface ProductStatusChangeUpdateWithoutProductDataInput {
+  old?: ProductStatus | null
+  new?: ProductStatus | null
+}
+
+export interface ProductStatusChangeUpdateWithWhereUniqueWithoutProductInput {
+  where: ProductStatusChangeWhereUniqueInput
+  data: ProductStatusChangeUpdateWithoutProductDataInput
+}
+
+export interface ProductStatusChangeUpsertWithWhereUniqueWithoutProductInput {
+  where: ProductStatusChangeWhereUniqueInput
+  update: ProductStatusChangeUpdateWithoutProductDataInput
+  create: ProductStatusChangeCreateWithoutProductInput
+}
+
+export interface ProductStatusChangeWhereInput {
+  AND?: ProductStatusChangeWhereInput[] | ProductStatusChangeWhereInput | null
+  OR?: ProductStatusChangeWhereInput[] | ProductStatusChangeWhereInput | null
+  NOT?: ProductStatusChangeWhereInput[] | ProductStatusChangeWhereInput | null
+  id?: ID_Input | null
+  id_not?: ID_Input | null
+  id_in?: ID_Output[] | ID_Output | null
+  id_not_in?: ID_Output[] | ID_Output | null
+  id_lt?: ID_Input | null
+  id_lte?: ID_Input | null
+  id_gt?: ID_Input | null
+  id_gte?: ID_Input | null
+  id_contains?: ID_Input | null
+  id_not_contains?: ID_Input | null
+  id_starts_with?: ID_Input | null
+  id_not_starts_with?: ID_Input | null
+  id_ends_with?: ID_Input | null
+  id_not_ends_with?: ID_Input | null
+  old?: ProductStatus | null
+  old_not?: ProductStatus | null
+  old_in?: ProductStatus[] | ProductStatus | null
+  old_not_in?: ProductStatus[] | ProductStatus | null
+  new?: ProductStatus | null
+  new_not?: ProductStatus | null
+  new_in?: ProductStatus[] | ProductStatus | null
+  new_not_in?: ProductStatus[] | ProductStatus | null
+  createdAt?: DateTime | null
+  createdAt_not?: DateTime | null
+  createdAt_in?: DateTime[] | DateTime | null
+  createdAt_not_in?: DateTime[] | DateTime | null
+  createdAt_lt?: DateTime | null
+  createdAt_lte?: DateTime | null
+  createdAt_gt?: DateTime | null
+  createdAt_gte?: DateTime | null
+  updatedAt?: DateTime | null
+  updatedAt_not?: DateTime | null
+  updatedAt_in?: DateTime[] | DateTime | null
+  updatedAt_not_in?: DateTime[] | DateTime | null
+  updatedAt_lt?: DateTime | null
+  updatedAt_lte?: DateTime | null
+  updatedAt_gt?: DateTime | null
+  updatedAt_gte?: DateTime | null
+  product?: ProductWhereInput | null
+}
+
+export interface ProductStatusChangeWhereUniqueInput {
+  id?: ID_Input | null
+}
+
 export interface ProductSubscriptionWhereInput {
   AND?: ProductSubscriptionWhereInput[] | ProductSubscriptionWhereInput | null
   OR?: ProductSubscriptionWhereInput[] | ProductSubscriptionWhereInput | null
@@ -28425,6 +29154,7 @@ export interface ProductUpdateDataInput {
   functions?: ProductFunctionUpdateManyInput | null
   materialCategory?: ProductMaterialCategoryUpdateOneWithoutProductsInput | null
   variants?: ProductVariantUpdateManyWithoutProductInput | null
+  statusChanges?: ProductStatusChangeUpdateManyWithoutProductInput | null
 }
 
 export interface ProductUpdateinnerMaterialsInput {
@@ -28457,6 +29187,7 @@ export interface ProductUpdateInput {
   functions?: ProductFunctionUpdateManyInput | null
   materialCategory?: ProductMaterialCategoryUpdateOneWithoutProductsInput | null
   variants?: ProductVariantUpdateManyWithoutProductInput | null
+  statusChanges?: ProductStatusChangeUpdateManyWithoutProductInput | null
 }
 
 export interface ProductUpdateManyDataInput {
@@ -28577,6 +29308,13 @@ export interface ProductUpdateOneRequiredInput {
   upsert?: ProductUpsertNestedInput | null
 }
 
+export interface ProductUpdateOneRequiredWithoutStatusChangesInput {
+  create?: ProductCreateWithoutStatusChangesInput | null
+  connect?: ProductWhereUniqueInput | null
+  update?: ProductUpdateWithoutStatusChangesDataInput | null
+  upsert?: ProductUpsertWithoutStatusChangesInput | null
+}
+
 export interface ProductUpdateOneRequiredWithoutVariantsInput {
   create?: ProductCreateWithoutVariantsInput | null
   connect?: ProductWhereUniqueInput | null
@@ -28613,6 +29351,7 @@ export interface ProductUpdateWithoutBrandDataInput {
   functions?: ProductFunctionUpdateManyInput | null
   materialCategory?: ProductMaterialCategoryUpdateOneWithoutProductsInput | null
   variants?: ProductVariantUpdateManyWithoutProductInput | null
+  statusChanges?: ProductStatusChangeUpdateManyWithoutProductInput | null
 }
 
 export interface ProductUpdateWithoutCategoryDataInput {
@@ -28640,6 +29379,7 @@ export interface ProductUpdateWithoutCategoryDataInput {
   functions?: ProductFunctionUpdateManyInput | null
   materialCategory?: ProductMaterialCategoryUpdateOneWithoutProductsInput | null
   variants?: ProductVariantUpdateManyWithoutProductInput | null
+  statusChanges?: ProductStatusChangeUpdateManyWithoutProductInput | null
 }
 
 export interface ProductUpdateWithoutMaterialCategoryDataInput {
@@ -28667,6 +29407,7 @@ export interface ProductUpdateWithoutMaterialCategoryDataInput {
   tags?: TagUpdateManyWithoutProductsInput | null
   functions?: ProductFunctionUpdateManyInput | null
   variants?: ProductVariantUpdateManyWithoutProductInput | null
+  statusChanges?: ProductStatusChangeUpdateManyWithoutProductInput | null
 }
 
 export interface ProductUpdateWithoutModelDataInput {
@@ -28687,6 +29428,35 @@ export interface ProductUpdateWithoutModelDataInput {
   brand?: BrandUpdateOneRequiredWithoutProductsInput | null
   category?: CategoryUpdateOneRequiredWithoutProductsInput | null
   images?: ImageUpdateManyInput | null
+  modelSize?: SizeUpdateOneInput | null
+  color?: ColorUpdateOneRequiredInput | null
+  secondaryColor?: ColorUpdateOneInput | null
+  tags?: TagUpdateManyWithoutProductsInput | null
+  functions?: ProductFunctionUpdateManyInput | null
+  materialCategory?: ProductMaterialCategoryUpdateOneWithoutProductsInput | null
+  variants?: ProductVariantUpdateManyWithoutProductInput | null
+  statusChanges?: ProductStatusChangeUpdateManyWithoutProductInput | null
+}
+
+export interface ProductUpdateWithoutStatusChangesDataInput {
+  slug?: String | null
+  name?: String | null
+  type?: ProductType | null
+  description?: String | null
+  externalURL?: String | null
+  modelHeight?: Int | null
+  retailPrice?: Int | null
+  status?: ProductStatus | null
+  season?: String | null
+  architecture?: ProductArchitecture | null
+  photographyStatus?: PhotographyStatus | null
+  publishedAt?: DateTime | null
+  innerMaterials?: ProductUpdateinnerMaterialsInput | null
+  outerMaterials?: ProductUpdateouterMaterialsInput | null
+  brand?: BrandUpdateOneRequiredWithoutProductsInput | null
+  category?: CategoryUpdateOneRequiredWithoutProductsInput | null
+  images?: ImageUpdateManyInput | null
+  model?: ProductModelUpdateOneWithoutProductsInput | null
   modelSize?: SizeUpdateOneInput | null
   color?: ColorUpdateOneRequiredInput | null
   secondaryColor?: ColorUpdateOneInput | null
@@ -28721,6 +29491,7 @@ export interface ProductUpdateWithoutTagsDataInput {
   functions?: ProductFunctionUpdateManyInput | null
   materialCategory?: ProductMaterialCategoryUpdateOneWithoutProductsInput | null
   variants?: ProductVariantUpdateManyWithoutProductInput | null
+  statusChanges?: ProductStatusChangeUpdateManyWithoutProductInput | null
 }
 
 export interface ProductUpdateWithoutVariantsDataInput {
@@ -28748,6 +29519,7 @@ export interface ProductUpdateWithoutVariantsDataInput {
   tags?: TagUpdateManyWithoutProductsInput | null
   functions?: ProductFunctionUpdateManyInput | null
   materialCategory?: ProductMaterialCategoryUpdateOneWithoutProductsInput | null
+  statusChanges?: ProductStatusChangeUpdateManyWithoutProductInput | null
 }
 
 export interface ProductUpdateWithWhereUniqueNestedInput {
@@ -28783,6 +29555,11 @@ export interface ProductUpdateWithWhereUniqueWithoutTagsInput {
 export interface ProductUpsertNestedInput {
   update: ProductUpdateDataInput
   create: ProductCreateInput
+}
+
+export interface ProductUpsertWithoutStatusChangesInput {
+  update: ProductUpdateWithoutStatusChangesDataInput
+  create: ProductCreateWithoutStatusChangesInput
 }
 
 export interface ProductUpsertWithoutVariantsInput {
@@ -29984,6 +30761,9 @@ export interface ProductWhereInput {
   variants_every?: ProductVariantWhereInput | null
   variants_some?: ProductVariantWhereInput | null
   variants_none?: ProductVariantWhereInput | null
+  statusChanges_every?: ProductStatusChangeWhereInput | null
+  statusChanges_some?: ProductStatusChangeWhereInput | null
+  statusChanges_none?: ProductStatusChangeWhereInput | null
 }
 
 export interface ProductWhereUniqueInput {
@@ -32790,6 +33570,10 @@ export interface AggregateProductRequest {
   count: Int
 }
 
+export interface AggregateProductStatusChange {
+  count: Int
+}
+
 export interface AggregateProductVariant {
   count: Int
 }
@@ -33858,6 +34642,7 @@ export interface Product extends Node {
   outerMaterials: Array<String>
   variants?: Array<ProductVariant> | null
   status?: ProductStatus | null
+  statusChanges?: Array<ProductStatusChange> | null
   season?: String | null
   architecture?: ProductArchitecture | null
   photographyStatus?: PhotographyStatus | null
@@ -34073,6 +34858,49 @@ export interface ProductRequestSubscriptionPayload {
   node?: ProductRequest | null
   updatedFields?: Array<String> | null
   previousValues?: ProductRequestPreviousValues | null
+}
+
+export interface ProductStatusChange extends Node {
+  id: ID_Output
+  old: ProductStatus
+  new: ProductStatus
+  product: Product
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+/*
+ * A connection to a list of items.
+
+ */
+export interface ProductStatusChangeConnection {
+  pageInfo: PageInfo
+  edges: Array<ProductStatusChangeEdge | null>
+  aggregate: AggregateProductStatusChange
+}
+
+/*
+ * An edge in a connection.
+
+ */
+export interface ProductStatusChangeEdge {
+  node: ProductStatusChange
+  cursor: String
+}
+
+export interface ProductStatusChangePreviousValues {
+  id: ID_Output
+  old: ProductStatus
+  new: ProductStatus
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+export interface ProductStatusChangeSubscriptionPayload {
+  mutation: MutationType
+  node?: ProductStatusChange | null
+  updatedFields?: Array<String> | null
+  previousValues?: ProductStatusChangePreviousValues | null
 }
 
 export interface ProductSubscriptionPayload {

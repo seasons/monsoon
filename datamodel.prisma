@@ -315,6 +315,16 @@ type Tag {
   updatedAt: DateTime! @updatedAt
 }
 
+type ProductStatusChange {
+  id: ID! @id
+  old: ProductStatus!
+  new: ProductStatus!
+  product: Product!
+    @relation(name: "ProductToProductStatusChanges", onDelete: SET_NULL)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
 type Product {
   id: ID! @id
   slug: String! @unique
@@ -338,6 +348,12 @@ type Product {
   outerMaterials: [String!]! @scalarList(strategy: RELATION)
   variants: [ProductVariant!]! @relation(link: TABLE, onDelete: CASCADE)
   status: ProductStatus @default(value: Available)
+  statusChanges: [ProductStatusChange!]!
+    @relation(
+      name: "ProductToProductStatusChanges"
+      link: TABLE
+      onDelete: CASCADE
+    )
   season: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus

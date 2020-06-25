@@ -11,3 +11,13 @@ interface ProductVariantWithPhysicalProducts {
     id: ID_Input
   }[]
 }
+
+export interface ProductUpdateMutationInput extends ProductUpdateInput {
+  // Custom fields
+  bottomSizeType: BottomSizeType
+  functions: [!String]
+  images: [!Upload]
+  modelSizeDisplay: String
+  modelSizeName: String
+  tags: [!String]
+}

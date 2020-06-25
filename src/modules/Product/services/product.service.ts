@@ -16,6 +16,7 @@ import {
   ProductFunction,
   ProductStatus,
   ProductType,
+  ProductUpdateInput,
   ProductWhereUniqueInput,
   RecentlyViewedProduct,
   Tag,
@@ -347,11 +348,15 @@ export class ProductService {
     })
   }
 
-  async updateProduct(
-    where: ProductWhereUniqueInput,
-    { status, ...data },
+  async updateProduct({
+    where,
+    data,
+    info,
+  }: {
+    where: ProductWhereUniqueInput
+    data: any // for convenience
     info: GraphQLResolveInfo
-  ) {
+  }) {
     // Extract custom fields out
     const {
       bottomSizeType,
@@ -360,6 +365,7 @@ export class ProductService {
       modelSizeDisplay,
       modelSizeName,
       tags,
+      status,
       ...updateData
     } = data
     let functionIDs
@@ -386,7 +392,7 @@ export class ProductService {
     )
     // For now, throw an error if trying to unstore a product. We need to
     // add code to handle this case properly.
-    if (product.status === "Stored" && data?.status !== "Stored") {
+    if (product.status === "Stored" && status !== "Stored") {
       throw new ApolloError(
         "Unable to unstore a product. Code needs to be written"
       )
@@ -422,6 +428,14 @@ export class ProductService {
         status,
       },
     })
+    if (!!status) {
+      await this.prisma.client.createProductStatusChange({
+        old: product.status,
+        new: status,
+        product: { connect: { id: product.id } },
+      })
+    }
+
     return await this.prisma.binding.query.product({ where }, info)
   }
 
@@ -430,17 +444,19 @@ export class ProductService {
    * If so, marks the product as offloaded.
    */
   async offloadProductIfAppropriate(id: ID_Input) {
-    const downstreamPhysProds = this.productUtils.physicalProductsForProduct(
-      await this.prisma.binding.query.product(
-        { where: { id } },
-        `{
-          variants {
-            physicalProducts {
-              inventoryStatus
-            }
+    const prodWithPhysicalProducts = await this.prisma.binding.query.product(
+      { where: { id } },
+      `{
+        status
+        variants {
+          physicalProducts {
+            inventoryStatus
           }
-         }`
-      )
+        }
+       }`
+    )
+    const downstreamPhysProds = this.productUtils.physicalProductsForProduct(
+      prodWithPhysicalProducts as ProductWithPhysicalProducts
     )
     const allPhysProdsOffloaded = downstreamPhysProds.reduce(
       (acc, curPhysProd: { inventoryStatus: InventoryStatus }) =>
@@ -451,6 +467,11 @@ export class ProductService {
       await this.prisma.client.updateProduct({
         where: { id },
         data: { status: "Offloaded" },
+      })
+      await this.prisma.client.createProductStatusChange({
+        old: prodWithPhysicalProducts.status,
+        new: "Offloaded",
+        product: { connect: { id } },
       })
     }
   }
@@ -653,6 +674,8 @@ export class ProductService {
     )
     if (status === "Stored" && productBeforeUpdate.status !== "Stored") {
       // Update product status
+      // Don't create a `ProductStatusChange` record here because this function should
+      // only be called from the `updateProduct` function, which handles the creation of that record.
       await this.prisma.client.updateProduct({
         where: { id: productBeforeUpdate.id },
         data: { status: "Stored" },

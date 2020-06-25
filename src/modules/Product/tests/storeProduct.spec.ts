@@ -86,11 +86,13 @@ describe("Store Product", () => {
       }))
 
       // Store the product
-      await productService.updateProduct(
-        { id: testProduct.id },
-        { status: "Stored" },
-        null
-      )
+      await productService.updateProduct({
+        where: {
+          where: { id: testProduct.id },
+          data: { status: "Stored" },
+          info: null,
+        },
+      })
 
       // Retrieve the updated product and physical products
       testProduct = await retrieveTestProductWithNecessaryFields(
