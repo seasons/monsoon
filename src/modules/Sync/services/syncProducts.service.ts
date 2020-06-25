@@ -135,6 +135,7 @@ export class SyncProductsService {
 
         const {
           color,
+          barcode,
           description,
           images,
           modelHeight,
@@ -268,7 +269,7 @@ export class SyncProductsService {
           Slug: slug,
         })
       } catch (e) {
-        console.log(`Check ${logFile}`)
+        console.log(`Check logs`)
         this.syncUtils.logSyncError(logFile, record, e)
       }
     }

@@ -16,6 +16,10 @@ type Mutation {
     where: PhysicalProductWhereUniqueInput!
     data: PhysicalProductUpdateInput!
   ): PhysicalProduct @hasRole(roles: [Admin])
+  updateManyPhysicalProducts(
+    data: PhysicalProductUpdateManyMutationInput!
+    where: PhysicalProductWhereInput
+  ): BatchPayload!
 }
 
 type PhysicalProduct {
@@ -29,6 +33,7 @@ type PhysicalProduct {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   sequenceNumber: Int!
+  barcoded: Boolean!
   barcode: String!
   dateOrdered: DateTime
   dateReceived: DateTime
