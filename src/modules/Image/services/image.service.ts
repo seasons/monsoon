@@ -1,5 +1,6 @@
 import qs from "querystring"
 
+import { DateTime } from "@app/prisma/prisma.binding"
 import { Injectable, Logger } from "@nestjs/common"
 import AWS from "aws-sdk"
 import { imageSize } from "image-size"
@@ -18,7 +19,9 @@ interface ImageResizerOptions {
   h?: number
   retina?: boolean
   fm?: ImageFormat
+  updatedAt?: DateTime
 }
+
 interface ImageSizeOptions {
   w?: number
   h?: number

@@ -20,6 +20,7 @@ export class ImageResolver {
     const url = this.imageService.resizeImage(image.url, null, {
       w: width,
       h: height,
+      updatedAt: image.updatedAt,
     })
 
     return {

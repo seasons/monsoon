@@ -43,6 +43,7 @@ export class ReservationFieldsResolver {
               images {
                 id
                 url
+                updatedAt
               }
             }
           }
@@ -58,6 +59,7 @@ export class ReservationFieldsResolver {
         url: this.imageService.resizeImage(image?.url, size, {
           w: width,
           h: height,
+          updatedAt: image?.updatedAt,
         }),
       }
     })

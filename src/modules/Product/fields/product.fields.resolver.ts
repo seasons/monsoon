@@ -84,6 +84,7 @@ export class ProductFieldsResolver {
         images(orderBy: url_ASC) {
           id
           url
+          updatedAt
         }
       }
       `
@@ -95,6 +96,7 @@ export class ProductFieldsResolver {
           ...options,
           w: width,
           h: height,
+          updatedAt: image?.updatedAt,
         }),
         entityType: "Product",
         entityID: product?.id,
