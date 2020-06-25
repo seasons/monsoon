@@ -127,4 +127,9 @@ export class ProductQueriesResolver {
   async tags(@Args() args, @Info() info) {
     return await this.prisma.binding.query.tags(args, info)
   }
+
+  @Query()
+  async warehouseLocations(@Args() args, @Info() info) {
+    return await this.prisma.binding.query.warehouseLocations(args, info)
+  }
 }
