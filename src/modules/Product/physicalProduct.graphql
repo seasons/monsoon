@@ -42,7 +42,7 @@ type PhysicalProduct {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   sequenceNumber: Int!
-  barcoded: Boolean!
+  barcoded: Boolean
   barcode: String!
   dateOrdered: DateTime
   dateReceived: DateTime
