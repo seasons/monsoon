@@ -69,12 +69,14 @@ export class ImageService {
     passedOptions: ImageResizerOptions
   ) {
     const updatedAt = await this.prisma.client.image({ url }).updatedAt()
+    const updatedAtTimestamp =
+      updatedAt && Math.floor(new Date(updatedAt).getTime() / 1000)
     const options: ImageResizerOptions = pickBy(
       {
         fit: "clip",
         retina: true,
         fm: "webp",
-        updatedAt,
+        updatedAt: updatedAtTimestamp,
         ...passedOptions,
       },
       identity
