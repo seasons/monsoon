@@ -1,6 +1,5 @@
 import qs from "querystring"
 
-import { DateTime } from "@app/prisma/prisma.binding"
 import { Injectable, Logger } from "@nestjs/common"
 import { PrismaService } from "@prisma/prisma.service"
 import AWS from "aws-sdk"
