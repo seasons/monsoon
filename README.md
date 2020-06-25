@@ -128,6 +128,26 @@ You can generate a random test user using the following command
 
 If `--email` and/or `--password` are not specified, those values are also generated. All random values are generated using a library called [faker.js](https://github.com/marak/Faker.js/)
 
+#### Taking over a user's account
+
+Sometimes, you need to take over a user's account and use one of our applications as them in order to debug an issue. Refrain from doing this on production, as it requires the user later needing to update their password.
+
+Instead, you can first sync their data from production to your local database, then takeover their account as follows:
+
+```
+monsoon sync:prisma:prisma local
+monsoon takeover someguy@gmail.com
+```
+
+You can also do this on staging as follows:
+
+```
+monsoon sync:prisma:prisma staging
+monsoon takeover someguy@gmail.com --pe staging
+```
+
+Please note that before syncing prisma production to another environment, you need to ensure the schema's match. The instructions for doing so are in the CLI warning that appears when you run the `sync:prisma:prisma` command.
+
 ### Environments
 
 You should have `.env`, `.env.staging`, and `.env.production` that declare the environment variables for your local, and the staging and production environments respectively.
