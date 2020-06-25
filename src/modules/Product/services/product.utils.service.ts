@@ -1,6 +1,12 @@
 import { ImageData } from "@modules/Image/image.types"
 import { Injectable } from "@nestjs/common"
-import { BrandOrderByInput, Category, Product } from "@prisma/index"
+import {
+  BrandOrderByInput,
+  Category,
+  Product,
+  ProductMaterialCategoryCreateInput,
+  ProductMaterialCategoryUpdateInput,
+} from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
 import { head, identity, pickBy, union, uniqBy } from "lodash"
 import slugify from "slugify"
@@ -351,16 +357,16 @@ export class ProductUtilsService {
 
   async upsertMaterialCategory(material, category) {
     const data = {
-      slug: material.name,
-      lifeExpectancy: material.lifeExpectancy,
+      slug: material.model.name,
+      lifeExpectancy: material.model.lifeExpectancy,
       category: {
         connect: {
-          slug: category.slug,
+          slug: category.model.slug,
         },
       },
-    }
+    } as ProductMaterialCategoryCreateInput
     return await this.prisma.client.upsertProductMaterialCategory({
-      where: { slug: material.name },
+      where: { slug: material.model.name },
       create: data,
       update: data,
     })

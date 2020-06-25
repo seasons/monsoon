@@ -2,6 +2,7 @@ import fs from "fs"
 
 import { EmailId } from "@app/prisma"
 import { Injectable } from "@nestjs/common"
+import Handlebars from "handlebars"
 import mustache from "mustache"
 
 import { ReservedItem } from "../email.types"
@@ -202,7 +203,28 @@ export class EmailDataProvider {
     }
   }
 
-  private getEmailData(emailId: EmailId, data: any) {
+  resetPassword(url: string) {
+    return {
+      email: {
+        body: {
+          title: "Changing your Seasons password",
+          subject: `Reset your Seasons password`,
+          paragraphs: [
+            {
+              html: `Need to reset your password? No problem. Just click below to get started`,
+            },
+            {
+              html:
+                "If you didn't request to change your Seasons password, you don't have to do anything. So that's easy.",
+            },
+          ],
+          button: { text: "Reset my password", url },
+        },
+      },
+    }
+  }
+
+  getEmailTemplate(emailId: EmailId, data: any) {
     const template = JSON.parse(
       fs.readFileSync(
         process.cwd() + "/src/modules/Email/template.json",
@@ -211,5 +233,15 @@ export class EmailDataProvider {
     )[emailId]
     const x = mustache.render(JSON.stringify(template), data)
     return x
+  }
+
+  printEmail(data) {
+    const path = process.cwd()
+    const buffer = fs.readFileSync(path + "/" + "master-email.html")
+    const emailTemplate = buffer.toString()
+    const RenderedEmailTemplate = Handlebars.compile(emailTemplate)
+    const renderedString = RenderedEmailTemplate(data)
+
+    return renderedString
   }
 }

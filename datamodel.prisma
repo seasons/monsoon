@@ -349,7 +349,7 @@ type Product {
 type ProductMaterialCategory {
   id: ID! @id
   slug: String! @unique
-  lifeExpectancy: Int!
+  lifeExpectancy: Float!
   category: Category!
   products: [Product!]! @relation(link: TABLE)
 }
@@ -400,6 +400,7 @@ type PhysicalProduct {
   offloadNotes: String
   sequenceNumber: Int!
   warehouseLocation: WarehouseLocation
+  barcoded: Boolean @default(value: false)
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float

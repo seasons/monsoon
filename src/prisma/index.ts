@@ -2003,6 +2003,8 @@ export type PhysicalProductOrderByInput =
   | "offloadNotes_DESC"
   | "sequenceNumber_ASC"
   | "sequenceNumber_DESC"
+  | "barcoded_ASC"
+  | "barcoded_DESC"
   | "dateOrdered_ASC"
   | "dateOrdered_DESC"
   | "dateReceived_ASC"
@@ -2990,6 +2992,8 @@ export interface PhysicalProductWhereInput {
   sequenceNumber_gt?: Maybe<Int>;
   sequenceNumber_gte?: Maybe<Int>;
   warehouseLocation?: Maybe<WarehouseLocationWhereInput>;
+  barcoded?: Maybe<Boolean>;
+  barcoded_not?: Maybe<Boolean>;
   dateOrdered?: Maybe<DateTimeInput>;
   dateOrdered_not?: Maybe<DateTimeInput>;
   dateOrdered_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -4274,14 +4278,14 @@ export interface ProductMaterialCategoryWhereInput {
   slug_not_starts_with?: Maybe<String>;
   slug_ends_with?: Maybe<String>;
   slug_not_ends_with?: Maybe<String>;
-  lifeExpectancy?: Maybe<Int>;
-  lifeExpectancy_not?: Maybe<Int>;
-  lifeExpectancy_in?: Maybe<Int[] | Int>;
-  lifeExpectancy_not_in?: Maybe<Int[] | Int>;
-  lifeExpectancy_lt?: Maybe<Int>;
-  lifeExpectancy_lte?: Maybe<Int>;
-  lifeExpectancy_gt?: Maybe<Int>;
-  lifeExpectancy_gte?: Maybe<Int>;
+  lifeExpectancy?: Maybe<Float>;
+  lifeExpectancy_not?: Maybe<Float>;
+  lifeExpectancy_in?: Maybe<Float[] | Float>;
+  lifeExpectancy_not_in?: Maybe<Float[] | Float>;
+  lifeExpectancy_lt?: Maybe<Float>;
+  lifeExpectancy_lte?: Maybe<Float>;
+  lifeExpectancy_gt?: Maybe<Float>;
+  lifeExpectancy_gte?: Maybe<Float>;
   category?: Maybe<CategoryWhereInput>;
   products_every?: Maybe<ProductWhereInput>;
   products_some?: Maybe<ProductWhereInput>;
@@ -6336,6 +6340,7 @@ export interface PhysicalProductCreateWithoutLocationInput {
   warehouseLocation?: Maybe<
     WarehouseLocationCreateOneWithoutPhysicalProductsInput
   >;
+  barcoded?: Maybe<Boolean>;
   dateOrdered?: Maybe<DateTimeInput>;
   dateReceived?: Maybe<DateTimeInput>;
   unitCost?: Maybe<Float>;
@@ -6640,6 +6645,7 @@ export interface PhysicalProductCreateWithoutProductVariantInput {
   warehouseLocation?: Maybe<
     WarehouseLocationCreateOneWithoutPhysicalProductsInput
   >;
+  barcoded?: Maybe<Boolean>;
   dateOrdered?: Maybe<DateTimeInput>;
   dateReceived?: Maybe<DateTimeInput>;
   unitCost?: Maybe<Float>;
@@ -6749,7 +6755,7 @@ export interface ProductMaterialCategoryCreateOneWithoutProductsInput {
 export interface ProductMaterialCategoryCreateWithoutProductsInput {
   id?: Maybe<ID_Input>;
   slug: String;
-  lifeExpectancy: Int;
+  lifeExpectancy: Float;
   category: CategoryCreateOneInput;
 }
 
@@ -6899,6 +6905,7 @@ export interface PhysicalProductCreateInput {
   warehouseLocation?: Maybe<
     WarehouseLocationCreateOneWithoutPhysicalProductsInput
   >;
+  barcoded?: Maybe<Boolean>;
   dateOrdered?: Maybe<DateTimeInput>;
   dateReceived?: Maybe<DateTimeInput>;
   unitCost?: Maybe<Float>;
@@ -7404,6 +7411,7 @@ export interface PhysicalProductUpdateWithoutLocationDataInput {
   warehouseLocation?: Maybe<
     WarehouseLocationUpdateOneWithoutPhysicalProductsInput
   >;
+  barcoded?: Maybe<Boolean>;
   dateOrdered?: Maybe<DateTimeInput>;
   dateReceived?: Maybe<DateTimeInput>;
   unitCost?: Maybe<Float>;
@@ -8073,6 +8081,7 @@ export interface PhysicalProductUpdateWithoutProductVariantDataInput {
   warehouseLocation?: Maybe<
     WarehouseLocationUpdateOneWithoutPhysicalProductsInput
   >;
+  barcoded?: Maybe<Boolean>;
   dateOrdered?: Maybe<DateTimeInput>;
   dateReceived?: Maybe<DateTimeInput>;
   unitCost?: Maybe<Float>;
@@ -8344,6 +8353,8 @@ export interface PhysicalProductScalarWhereInput {
   sequenceNumber_lte?: Maybe<Int>;
   sequenceNumber_gt?: Maybe<Int>;
   sequenceNumber_gte?: Maybe<Int>;
+  barcoded?: Maybe<Boolean>;
+  barcoded_not?: Maybe<Boolean>;
   dateOrdered?: Maybe<DateTimeInput>;
   dateOrdered_not?: Maybe<DateTimeInput>;
   dateOrdered_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -8407,6 +8418,7 @@ export interface PhysicalProductUpdateManyDataInput {
   offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
   offloadNotes?: Maybe<String>;
   sequenceNumber?: Maybe<Int>;
+  barcoded?: Maybe<Boolean>;
   dateOrdered?: Maybe<DateTimeInput>;
   dateReceived?: Maybe<DateTimeInput>;
   unitCost?: Maybe<Float>;
@@ -8809,7 +8821,7 @@ export interface ProductMaterialCategoryUpdateOneWithoutProductsInput {
 
 export interface ProductMaterialCategoryUpdateWithoutProductsDataInput {
   slug?: Maybe<String>;
-  lifeExpectancy?: Maybe<Int>;
+  lifeExpectancy?: Maybe<Float>;
   category?: Maybe<CategoryUpdateOneRequiredInput>;
 }
 
@@ -9454,6 +9466,7 @@ export interface PhysicalProductUpdateDataInput {
   warehouseLocation?: Maybe<
     WarehouseLocationUpdateOneWithoutPhysicalProductsInput
   >;
+  barcoded?: Maybe<Boolean>;
   dateOrdered?: Maybe<DateTimeInput>;
   dateReceived?: Maybe<DateTimeInput>;
   unitCost?: Maybe<Float>;
@@ -10831,6 +10844,7 @@ export interface PhysicalProductUpdateInput {
   warehouseLocation?: Maybe<
     WarehouseLocationUpdateOneWithoutPhysicalProductsInput
   >;
+  barcoded?: Maybe<Boolean>;
   dateOrdered?: Maybe<DateTimeInput>;
   dateReceived?: Maybe<DateTimeInput>;
   unitCost?: Maybe<Float>;
@@ -10843,6 +10857,7 @@ export interface PhysicalProductUpdateManyMutationInput {
   offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
   offloadNotes?: Maybe<String>;
   sequenceNumber?: Maybe<Int>;
+  barcoded?: Maybe<Boolean>;
   dateOrdered?: Maybe<DateTimeInput>;
   dateReceived?: Maybe<DateTimeInput>;
   unitCost?: Maybe<Float>;
@@ -10906,7 +10921,7 @@ export interface ProductFunctionUpdateManyMutationInput {
 export interface ProductMaterialCategoryCreateInput {
   id?: Maybe<ID_Input>;
   slug: String;
-  lifeExpectancy: Int;
+  lifeExpectancy: Float;
   category: CategoryCreateOneInput;
   products?: Maybe<ProductCreateManyWithoutMaterialCategoryInput>;
 }
@@ -10949,7 +10964,7 @@ export interface ProductCreateWithoutMaterialCategoryInput {
 
 export interface ProductMaterialCategoryUpdateInput {
   slug?: Maybe<String>;
-  lifeExpectancy?: Maybe<Int>;
+  lifeExpectancy?: Maybe<Float>;
   category?: Maybe<CategoryUpdateOneRequiredInput>;
   products?: Maybe<ProductUpdateManyWithoutMaterialCategoryInput>;
 }
@@ -11018,7 +11033,7 @@ export interface ProductUpsertWithWhereUniqueWithoutMaterialCategoryInput {
 
 export interface ProductMaterialCategoryUpdateManyMutationInput {
   slug?: Maybe<String>;
-  lifeExpectancy?: Maybe<Int>;
+  lifeExpectancy?: Maybe<Float>;
 }
 
 export interface ProductModelCreateInput {
@@ -12331,6 +12346,7 @@ export interface PhysicalProductCreateWithoutWarehouseLocationInput {
   offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
   offloadNotes?: Maybe<String>;
   sequenceNumber: Int;
+  barcoded?: Maybe<Boolean>;
   dateOrdered?: Maybe<DateTimeInput>;
   dateReceived?: Maybe<DateTimeInput>;
   unitCost?: Maybe<Float>;
@@ -12399,6 +12415,7 @@ export interface PhysicalProductUpdateWithoutWarehouseLocationDataInput {
   offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
   offloadNotes?: Maybe<String>;
   sequenceNumber?: Maybe<Int>;
+  barcoded?: Maybe<Boolean>;
   dateOrdered?: Maybe<DateTimeInput>;
   dateReceived?: Maybe<DateTimeInput>;
   unitCost?: Maybe<Float>;
@@ -13830,6 +13847,7 @@ export interface PhysicalProduct {
   offloadMethod?: PhysicalProductOffloadMethod;
   offloadNotes?: String;
   sequenceNumber: Int;
+  barcoded?: Boolean;
   dateOrdered?: DateTimeOutput;
   dateReceived?: DateTimeOutput;
   unitCost?: Float;
@@ -13850,6 +13868,7 @@ export interface PhysicalProductPromise
   offloadNotes: () => Promise<String>;
   sequenceNumber: () => Promise<Int>;
   warehouseLocation: <T = WarehouseLocationPromise>() => T;
+  barcoded: () => Promise<Boolean>;
   dateOrdered: () => Promise<DateTimeOutput>;
   dateReceived: () => Promise<DateTimeOutput>;
   unitCost: () => Promise<Float>;
@@ -13870,6 +13889,7 @@ export interface PhysicalProductSubscription
   offloadNotes: () => Promise<AsyncIterator<String>>;
   sequenceNumber: () => Promise<AsyncIterator<Int>>;
   warehouseLocation: <T = WarehouseLocationSubscription>() => T;
+  barcoded: () => Promise<AsyncIterator<Boolean>>;
   dateOrdered: () => Promise<AsyncIterator<DateTimeOutput>>;
   dateReceived: () => Promise<AsyncIterator<DateTimeOutput>>;
   unitCost: () => Promise<AsyncIterator<Float>>;
@@ -13890,6 +13910,7 @@ export interface PhysicalProductNullablePromise
   offloadNotes: () => Promise<String>;
   sequenceNumber: () => Promise<Int>;
   warehouseLocation: <T = WarehouseLocationPromise>() => T;
+  barcoded: () => Promise<Boolean>;
   dateOrdered: () => Promise<DateTimeOutput>;
   dateReceived: () => Promise<DateTimeOutput>;
   unitCost: () => Promise<Float>;
@@ -14824,7 +14845,7 @@ export interface ProductFunctionNullablePromise
 export interface ProductMaterialCategory {
   id: ID_Output;
   slug: String;
-  lifeExpectancy: Int;
+  lifeExpectancy: Float;
 }
 
 export interface ProductMaterialCategoryPromise
@@ -14832,7 +14853,7 @@ export interface ProductMaterialCategoryPromise
     Fragmentable {
   id: () => Promise<ID_Output>;
   slug: () => Promise<String>;
-  lifeExpectancy: () => Promise<Int>;
+  lifeExpectancy: () => Promise<Float>;
   category: <T = CategoryPromise>() => T;
   products: <T = FragmentableArray<Product>>(args?: {
     where?: ProductWhereInput;
@@ -14850,7 +14871,7 @@ export interface ProductMaterialCategorySubscription
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   slug: () => Promise<AsyncIterator<String>>;
-  lifeExpectancy: () => Promise<AsyncIterator<Int>>;
+  lifeExpectancy: () => Promise<AsyncIterator<Float>>;
   category: <T = CategorySubscription>() => T;
   products: <T = Promise<AsyncIterator<ProductSubscription>>>(args?: {
     where?: ProductWhereInput;
@@ -14868,7 +14889,7 @@ export interface ProductMaterialCategoryNullablePromise
     Fragmentable {
   id: () => Promise<ID_Output>;
   slug: () => Promise<String>;
-  lifeExpectancy: () => Promise<Int>;
+  lifeExpectancy: () => Promise<Float>;
   category: <T = CategoryPromise>() => T;
   products: <T = FragmentableArray<Product>>(args?: {
     where?: ProductWhereInput;
@@ -19633,6 +19654,7 @@ export interface PhysicalProductPreviousValues {
   offloadMethod?: PhysicalProductOffloadMethod;
   offloadNotes?: String;
   sequenceNumber: Int;
+  barcoded?: Boolean;
   dateOrdered?: DateTimeOutput;
   dateReceived?: DateTimeOutput;
   unitCost?: Float;
@@ -19650,6 +19672,7 @@ export interface PhysicalProductPreviousValuesPromise
   offloadMethod: () => Promise<PhysicalProductOffloadMethod>;
   offloadNotes: () => Promise<String>;
   sequenceNumber: () => Promise<Int>;
+  barcoded: () => Promise<Boolean>;
   dateOrdered: () => Promise<DateTimeOutput>;
   dateReceived: () => Promise<DateTimeOutput>;
   unitCost: () => Promise<Float>;
@@ -19667,6 +19690,7 @@ export interface PhysicalProductPreviousValuesSubscription
   offloadMethod: () => Promise<AsyncIterator<PhysicalProductOffloadMethod>>;
   offloadNotes: () => Promise<AsyncIterator<String>>;
   sequenceNumber: () => Promise<AsyncIterator<Int>>;
+  barcoded: () => Promise<AsyncIterator<Boolean>>;
   dateOrdered: () => Promise<AsyncIterator<DateTimeOutput>>;
   dateReceived: () => Promise<AsyncIterator<DateTimeOutput>>;
   unitCost: () => Promise<AsyncIterator<Float>>;
@@ -19837,7 +19861,7 @@ export interface ProductMaterialCategorySubscriptionPayloadSubscription
 export interface ProductMaterialCategoryPreviousValues {
   id: ID_Output;
   slug: String;
-  lifeExpectancy: Int;
+  lifeExpectancy: Float;
 }
 
 export interface ProductMaterialCategoryPreviousValuesPromise
@@ -19845,7 +19869,7 @@ export interface ProductMaterialCategoryPreviousValuesPromise
     Fragmentable {
   id: () => Promise<ID_Output>;
   slug: () => Promise<String>;
-  lifeExpectancy: () => Promise<Int>;
+  lifeExpectancy: () => Promise<Float>;
 }
 
 export interface ProductMaterialCategoryPreviousValuesSubscription
@@ -19853,7 +19877,7 @@ export interface ProductMaterialCategoryPreviousValuesSubscription
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   slug: () => Promise<AsyncIterator<String>>;
-  lifeExpectancy: () => Promise<AsyncIterator<Int>>;
+  lifeExpectancy: () => Promise<AsyncIterator<Float>>;
 }
 
 export interface ProductModelSubscriptionPayload {

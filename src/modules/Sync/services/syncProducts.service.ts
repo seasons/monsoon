@@ -135,6 +135,7 @@ export class SyncProductsService {
 
         const {
           color,
+          barcode,
           description,
           images,
           modelHeight,
@@ -195,7 +196,9 @@ export class SyncProductsService {
         }
 
         // Upsert the category
-        const materialCategory = allCategories.findByIds(material.category)
+        const materialCategory = allCategories.findByIds(
+          material.model.category
+        )
         await this.productUtils.upsertMaterialCategory(
           material,
           materialCategory
@@ -245,7 +248,11 @@ export class SyncProductsService {
               : {}
           })(),
           modelHeight: head(modelHeight) ?? 0,
-          materialCategory: {},
+          materialCategory: {
+            connect: {
+              slug: material.model.name,
+            },
+          },
           status: (status || "Available").replace(" ", ""),
           season: model.season,
         } as ProductCreateInput
@@ -262,7 +269,7 @@ export class SyncProductsService {
           Slug: slug,
         })
       } catch (e) {
-        console.log(`Check ${logFile}`)
+        console.log(`Check logs`)
         this.syncUtils.logSyncError(logFile, record, e)
       }
     }

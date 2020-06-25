@@ -7,7 +7,7 @@ import {
 } from "@app/prisma"
 import { PackageTransitEventSubStatus } from "@app/prisma"
 import { PrismaService } from "@app/prisma/prisma.service"
-import { Body, Controller, Post } from "@nestjs/common"
+import { Body, Controller, Logger, Post } from "@nestjs/common"
 import casify from "camelcase-keys"
 import { camelCase, head, upperFirst } from "lodash"
 
@@ -50,6 +50,8 @@ type ReservationWithPackage = Reservation & {
  */
 @Controller("shippo_events")
 export class ShippoController {
+  private readonly logger = new Logger(ShippoController.name)
+
   constructor(private readonly prisma: PrismaService) {}
 
   @Post()
@@ -57,6 +59,9 @@ export class ShippoController {
     const result = casify(body, { deep: true })
     const { data, event } = result
     const { trackingStatus, transaction: transactionID } = data
+
+    this.logger.log("Received shippo event:")
+    this.logger.log(result)
 
     const status = upperFirst(
       camelCase(trackingStatus.status)
