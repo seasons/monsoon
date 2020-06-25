@@ -84,14 +84,16 @@ export class ProductFieldsResolver {
         images(orderBy: url_ASC) {
           id
           url
+          updatedAt
         }
       }
       `
     )
-    return product?.images.map(image => {
+
+    return product?.images.map(async image => {
       return {
         id: image?.id,
-        url: this.imageService.resizeImage(image?.url, size, {
+        url: await this.imageService.resizeImage(image?.url, size, {
           ...options,
           w: width,
           h: height,

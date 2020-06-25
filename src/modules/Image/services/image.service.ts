@@ -1,6 +1,7 @@
 import qs from "querystring"
 
 import { Injectable, Logger } from "@nestjs/common"
+import { PrismaService } from "@prisma/prisma.service"
 import AWS from "aws-sdk"
 import { imageSize } from "image-size"
 import { identity, pickBy } from "lodash"
@@ -19,6 +20,7 @@ interface ImageResizerOptions {
   retina?: boolean
   fm?: ImageFormat
 }
+
 interface ImageSizeOptions {
   w?: number
   h?: number
@@ -59,16 +61,22 @@ export class ImageService {
   private readonly logger = new Logger(ImageService.name)
   private s3 = new AWS.S3()
 
-  resizeImage(
+  constructor(private readonly prisma: PrismaService) {}
+
+  async resizeImage(
     url: string,
     sizeName: ImageSize,
     passedOptions: ImageResizerOptions
   ) {
+    const updatedAt = await this.prisma.client.image({ url }).updatedAt()
+    const updatedAtTimestamp =
+      updatedAt && Math.floor(new Date(updatedAt).getTime() / 1000)
     const options: ImageResizerOptions = pickBy(
       {
         fit: "clip",
         retina: true,
         fm: "webp",
+        updatedAt: updatedAtTimestamp,
         ...passedOptions,
       },
       identity
