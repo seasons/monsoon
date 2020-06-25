@@ -1,6 +1,6 @@
 import qs from "querystring"
 
-import { Injectable } from "@nestjs/common"
+import { Injectable, Logger } from "@nestjs/common"
 import AWS from "aws-sdk"
 import { imageSize } from "image-size"
 import { identity, pickBy } from "lodash"
@@ -56,6 +56,7 @@ const sizes: ImageSizeMap = {
 
 @Injectable()
 export class ImageService {
+  private readonly logger = new Logger(ImageService.name)
   private s3 = new AWS.S3()
 
   resizeImage(
@@ -172,15 +173,21 @@ export class ImageService {
               Key: imageName,
               Body: body,
             }
-            const result = await this.s3.upload(uploadParams).promise()
-            const { width, height } = imageSize(body)
+            try {
+              const result = await this.s3.upload(uploadParams).promise()
+              const { width, height } = imageSize(body)
 
-            resolve({
-              height,
-              url: result.Location,
-              width,
-              title,
-            })
+              resolve({
+                height,
+                url: result.Location,
+                width,
+                title,
+              })
+            } catch (err) {
+              this.logger.error("Error while uploading image")
+              this.logger.error(imageName)
+              this.logger.error(err)
+            }
           }
         }
       )
