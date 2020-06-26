@@ -350,7 +350,7 @@ type Product {
   status: ProductStatus @default(value: Available)
   statusChanges: [ProductStatusChange!]!
     @relation(
-      name: "ProductToProductStatusChanges"
+      name: "ProductToProductStatusChange"
       link: TABLE
       onDelete: CASCADE
     )
