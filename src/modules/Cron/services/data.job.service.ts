@@ -8,7 +8,7 @@ import { UtilsService } from "@modules/Utils/services/utils.service"
 import { Injectable } from "@nestjs/common"
 import { Cron, CronExpression } from "@nestjs/schedule"
 import { PrismaService } from "@prisma/prisma.service"
-import { identity, pick, xor } from "lodash"
+import { pick, xor } from "lodash"
 
 interface DataPoint {
   name: string
@@ -37,31 +37,6 @@ export class DataScheduledJobs {
   async airtableToPrismaHealthCheck() {
     let message = { channel: process.env.SLACK_DEV_CHANNEL_ID, text: "'" }
     try {
-      const [
-        productsInPrismaButNotAirtable,
-        productsInAirtableButNotPrisma,
-        physicalProductsInPrismaButNotAirtable,
-        physicalProductsInAirtableButNotPrisma,
-        productVariantsInPrismaButNotAirtable,
-        productVariantsInAirtableButNotPrisma,
-        productVariantSKUMismatches,
-        prismaSUIDToSKUMismatches,
-        airtableSUIDToSKUMismatches,
-        countMisalignments,
-        prismaTotalPhysicalProductMisalignment,
-        airtableTotalPhysicalProductMisalignment,
-        prismaCountToStatusMisalignments,
-        airtableCountToStatusMisalignments,
-        prismaProdVarsWithImpossibleCounts,
-        mismatchingStatuses,
-        mismatchingSequenceNumbers,
-        reservationsInPrismaButNotAirtable,
-        reservationsInAirtableButNotPrisma,
-        misalignedSUIDsOnReservations,
-        misalignedStatusOnReservations,
-        reservationsWithMoreThanThreeProducts,
-        errors,
-      ] = await this.checkAll()
       message = {
         ...message,
         text: "",
@@ -70,7 +45,7 @@ export class DataScheduledJobs {
             type: "section",
             text: {
               type: "mrkdwn",
-              text: `:newspaper: *Airtable-Prisma Products Parity Health Check* :newspaper:`,
+              text: `:newspaper: *Prisma Data Health Report* :newspaper:`,
             },
           },
           {
@@ -83,148 +58,28 @@ export class DataScheduledJobs {
             ],
           },
           ...this.createReportSection({
-            title:
-              "Do products, physical products, and product variants align in number?",
+            title: "Product Variant + Physical Product Health?",
             datapoints: [
               {
-                name: "Products on Prisma but not Airtable",
-                number: productsInPrismaButNotAirtable.length,
-                shouldFlagNum: true,
-              },
-              {
-                name: "Products on Airtable but not Prisma",
-                number: productsInAirtableButNotPrisma.length,
-              },
-              {
-                name: "Physical Products on Prisma but not Airtable",
-                number: physicalProductsInPrismaButNotAirtable.length,
-                shouldFlagNum: true,
-              },
-              {
-                name: "Physical Products on Airtable but not Prisma",
-                number: physicalProductsInAirtableButNotPrisma.length,
-              },
-              {
-                name: "Product Variants on Prisma but not Airtable",
-                number: productVariantsInPrismaButNotAirtable.length,
-                shouldFlagNum: true,
-              },
-              {
-                name: "Product Variants on Airtable but not Prisma",
-                number: productVariantsInAirtableButNotPrisma.length,
-              },
-            ],
-          }),
-          ...this.createReportSection({
-            title: "Do product variant SKUs match?",
-            datapoints: [
-              {
-                name: "Mismatched product variant SKUs",
-                number: productVariantSKUMismatches.length,
-                shouldFlagNum: true,
-              },
-            ],
-          }),
-          ...this.createReportSection({
-            title: "Are SUIDs correct?",
-            datapoints: [
-              {
-                name: "Mismatched SUID/SKU combos on Prisma",
-                number: prismaSUIDToSKUMismatches.length,
-                shouldFlagNum: true,
-              },
-              {
-                name: "Mismatched SUID/SKU combos on Airtable",
-                number: airtableSUIDToSKUMismatches.length,
-                shouldFlagNum: true,
-              },
-            ],
-          }),
-          ...this.createReportSection({
-            title: "Are the counts aligned?",
-            datapoints: [
-              {
-                name:
-                  "Prisma: Number of Product Variants with incorrect number of physical products attached",
-                number: prismaTotalPhysicalProductMisalignment.length,
+                name: "Mismatched SUID/SKU combos",
+                number: [].length,
                 shouldFlagNum: true,
               },
               {
                 name:
-                  "Airtable: Number of Product Variants with incorrect number of physical products attached",
-                number: airtableTotalPhysicalProductMisalignment.length,
-                shouldFlagNum: true,
+                  "Number of product variants with incorrect number of physical products attached",
+                number: [].length,
               },
               {
-                name: "Mismatched counts",
-                number: countMisalignments.length,
+                name:
+                  "Number of product variants with a count profile that doesn't match the attached physical product statuses",
+                number: [].length,
                 shouldFlagNum: true,
               },
               {
                 name:
-                  "Prisma: Number of product variants with mismatching counts/statuses",
-                number: prismaCountToStatusMisalignments.length,
-                shouldFlagNum: true,
-              },
-              {
-                name:
-                  "Airtable: Number of product variants with mismatching counts/statuses",
-                number: airtableCountToStatusMisalignments.length,
-                shouldFlagNum: true,
-              },
-              {
-                name:
-                  "Prisma: Number of product variants with impossible counts",
-                number: prismaProdVarsWithImpossibleCounts.length,
-                shouldFlagNum: true,
-              },
-            ],
-          }),
-          ...this.createReportSection({
-            title:
-              "Are physical product inventory statuses and sequence numbers aligned?",
-            datapoints: [
-              {
-                name:
-                  "Number of physical products with mismatching inventory statuses",
-                number: mismatchingStatuses.length,
-                shouldFlagNum: true,
-              },
-              {
-                name:
-                  "Number of physical products with mismatching sequence numbers",
-                number: mismatchingSequenceNumbers.length,
-                shouldFlagNum: true,
-              },
-            ],
-          }),
-          ...this.createReportSection({
-            title: "Are reservations aligned?",
-            datapoints: [
-              {
-                name: "Reservations in prisma but not airtable",
-                number: reservationsInPrismaButNotAirtable.length,
-                shouldFlagNum: true,
-              },
-              {
-                name: "Reservations in airtable but not prisma",
-                number: reservationsInAirtableButNotPrisma.length,
-                shouldFlagNum: true,
-              },
-              {
-                name: "Reservations with mismatching products",
-                number: misalignedSUIDsOnReservations.length,
-                shouldFlagNum: true,
-              },
-              {
-                name: "Reservations with mismatching statuses",
-                number: misalignedStatusOnReservations.length,
-                shouldFlagNum: true,
-              },
-              {
-                name: "Reservations with more than 3 products",
-                number: reservationsWithMoreThanThreeProducts.length,
-                shouldFlagNum: true,
+                  "Number of product variants with total != reserved + reservable + nonreservable + stored + offloaded",
+                number: [].length,
               },
             ],
           }),
@@ -233,7 +88,7 @@ export class DataScheduledJobs {
             datapoints: [
               {
                 name: "Errors",
-                number: errors.length,
+                number: [].length,
               },
             ],
             divider: false,
@@ -244,8 +99,7 @@ export class DataScheduledJobs {
               type: "mrkdwn",
               text:
                 `Note: \`Highlighted numbers\` need attention. For more details` +
-                ` work with the health check script locally using \`yarn healthCheck:production\`` +
-                `, printing more details as needed`,
+                ` work with the health check script locally using \`monsoon hc --pe production --withDetails\``,
             },
           },
         ],
@@ -254,8 +108,8 @@ export class DataScheduledJobs {
       message = {
         ...message,
         text:
-          `Error while running airtable/prisma health check. Please debug it ` +
-          `locally using \`monsoon hc --pe production --ae production\`\n${err}`,
+          `Error while running prisma data health check. Please debug it ` +
+          `locally using \`monsoon hc --pe production\`\n${err}`,
       } as any
     }
 
@@ -263,336 +117,69 @@ export class DataScheduledJobs {
   }
 
   async checkAll(withDetails = false) {
-    const allAirtableProductVariants = await this.airtableService.getAllProductVariants()
-    const allAirtablePhysicalProducts = await this.airtableService.getAllPhysicalProducts()
-    const allAirtableProducts = await this.airtableService.getAllProducts()
-    const allAirtableReservations = await this.airtableService.getAllReservations()
-    const allPrismaProductVariants = await this.prisma.binding.query.productVariants(
-      {},
-      `{
-            id
-            product {
-                slug
-            }
-            physicalProducts {
-                seasonsUID
-                inventoryStatus
-                createdAt
-                updatedAt
-            }
-            sku
-            total
-            reservable
-            reserved
-            nonReservable
-            stored
-            offloaded
-            internalSize {
-              top {
-                letter
-              }
-              bottom {
-                type
-                value
-              }
-              productType
-            }
-            createdAt
-            updatedAt
-        }`
-    )
-    const allPrismaPhysicalProducts = await this.prisma.client.physicalProducts()
-    const allPrismaProducts = await this.prisma.client.products()
-    const allPrismaReservations = await this.prisma.binding.query.reservations(
-      {},
-      `
-      {
-          id
-          reservationNumber
-          products {
-              seasonsUID
-          }
-          status
-      }
-      `
-    )
-
-    let errors = []
-
-    /* Do we have any products on prisma but not airtable? Vice versa? */
-    const allPrismaProductSlugs = allPrismaProducts.map(prod => prod.slug)
-    const allAirtableProductSlugs = allAirtableProducts.map(
-      prod => prod.fields.Slug
-    )
-    const productsInAirtableButNotPrisma = allAirtableProductSlugs.filter(
-      slug => !allPrismaProductSlugs.includes(slug)
-    )
-    const productsInPrismaButNotAirtable = allPrismaProductSlugs.filter(
-      slug => !allAirtableProductSlugs.includes(slug)
-    )
-
-    /* Do we have any physical products in airtable but not prisma? Vice versa */
-    const allPrismaPhysicalProductSUIDs = allPrismaPhysicalProducts.map(
-      physProd => physProd.seasonsUID
-    )
-    const allAirtablePhysicalProductSUIDs = allAirtablePhysicalProducts.map(
-      physProd => physProd.fields.SUID.text
-    )
-    const physicalProductsInAirtableButNotPrisma = allAirtablePhysicalProductSUIDs.filter(
-      suid => !allPrismaPhysicalProductSUIDs.includes(suid)
-    )
-    const physicalProductsInPrismaButNotAirtable = allPrismaPhysicalProductSUIDs.filter(
-      suid => !allAirtablePhysicalProductSUIDs.includes(suid)
-    )
-
-    /* Do we have any product variants in airtable but not prisma? Vice versa? */
-    const allPrismaProductVariantSKUs = allPrismaProductVariants.map(
-      prodVar => prodVar.sku
-    )
-    const allAirtableProductVariantSKUs = allAirtableProductVariants.map(
-      prodVar => prodVar.fields.SKU
-    )
-    const productVariantsInAirtableButNotPrisma = allAirtableProductVariantSKUs.filter(
-      sku => !allPrismaProductVariantSKUs.includes(sku)
-    )
-    const productVariantsInPrismaButNotAirtable = allPrismaProductVariantSKUs.filter(
-      sku => !allAirtableProductVariantSKUs.includes(sku)
-    )
-
-    /* Are the skus matching between product variants on prisma and airtable?
-    (Only considers those product variants in both prisma and airtable)
-    */
-    const {
-      productVariantSKUMismatches,
-      errors: prismaAirtableSKUCheckErrors,
-    } = this.getPrismaAirtableProductVariantSKUMismatches(
-      allAirtableProductVariants,
-      allPrismaProductVariants,
-      productVariantsInPrismaButNotAirtable
-    )
-    errors = [...errors, ...prismaAirtableSKUCheckErrors]
-
-    /* Check SUIDs. Are they correct on prisma? Are the correct on airtable? */
-    const {
-      prismaSUIDToSKUMismatches,
-      airtableSUIDToSKUMismatches,
-    } = this.checkSUIDs(
-      allPrismaProductVariants,
-      allAirtableProductVariants,
-      allAirtablePhysicalProducts
-    )
-
-    /* Are the product variant counts matching between prisma and airtable? */
-    const {
-      countMisalignments,
-      prismaTotalPhysicalProductMisalignment,
-      airtableTotalPhysicalProductMisalignment,
-    } = this.checkCounts(allAirtableProductVariants, allPrismaProductVariants)
-    const [
-      prismaCountToStatusMisalignments,
-      airtableCountToStatusMisalignments,
-    ] = this.checkMisalignmentsBetweenProdVarCountsAndPhysProdStatuses(
-      allPrismaProductVariants,
-      allAirtableProductVariants,
-      allAirtablePhysicalProducts
-    )
-    const prismaProdVarsWithImpossibleCounts = await this.getProdVarsWithImpossibleCounts(
-      allPrismaProductVariants
-    )
-
-    /* Are the physical product statuses and sequenceNumbers matching between prisma and airtable? */
-    const {
-      mismatchingStatuses,
-      physicalProductsOnPrismaButNotAirtable,
-    } = this.checkPhysicalProductStatuses(
-      allPrismaPhysicalProducts,
-      allAirtablePhysicalProducts
-    )
-    const mismatchingSequenceNumbers = this.checkSequenceNumberSync(
-      allAirtablePhysicalProducts,
-      allPrismaPhysicalProducts
-    )
-
-    /* Are the reservations aligned? */
-    const {
-      misalignedSUIDsOnReservations,
-      misalignedStatusOnReservations,
-      reservationsWithMoreThanThreeProducts,
-      reservationsInAirtableButNotPrisma,
-      reservationsInPrismaButNotAirtable,
-    } = this.checkReservations(
-      allPrismaReservations,
-      allAirtableReservations,
-      allAirtablePhysicalProducts
-    )
+    debugger
+    const suidToSKUMismatches = await this.getSUIDtoSKUMismatches()
 
     /* REPORT */
     this.printReportLines(
       [
         { text: `/*********** report ***********/` },
         {
-          text: `do products, physical products, and product variants align in number?`,
+          text: `Product Variant + Physical Product Health`,
         },
         {
-          text: "products on prisma but not airtable",
-          paramArray: productsInPrismaButNotAirtable,
-        },
-        {
-          text: "products on airtable but not prisma",
-          paramArray: productsInAirtableButNotPrisma,
-        },
-        {
-          text: "physical products on prisma but not airtable",
-          paramArray: physicalProductsInPrismaButNotAirtable,
-        },
-        {
-          text: "physical products on airtable but not prisma",
-          paramArray: physicalProductsInAirtableButNotPrisma,
-        },
-        {
-          text: "product variants on prisma but not airtable",
-          paramArray: productVariantsInPrismaButNotAirtable,
-        },
-        {
-          text: "product variants on airtable but not prisma",
-          paramArray: productVariantsInAirtableButNotPrisma,
-          withGutter: true,
-        },
-        {
-          text: "do product variant skus match on prisma and airtable",
-        },
-        {
-          text: "mismatched product variant skus between prisma/airtable",
-          paramArray: productVariantSKUMismatches,
-          withGutter: true,
-        },
-        {
-          text: `are suids correct on prisma and airtable?`,
-        },
-        {
-          text: "mismatched suid/sku combos on prisma",
-          paramArray: prismaSUIDToSKUMismatches,
-        },
-        {
-          text: "mismatched suid/sku combos on airtable",
-          paramArray: airtableSUIDToSKUMismatches,
-          withGutter: true,
-        },
-        {
-          text: "are the counts the same on prisma and airtable?",
-        },
-        {
-          text: "mismatched counts",
-          paramArray: countMisalignments,
+          text: "Mismatched SUID/SKU combos",
+          paramArray: suidToSKUMismatches,
         },
         {
           text:
-            "prisma: number of product variants with incorrect number of physical products attached",
-          paramArray: prismaTotalPhysicalProductMisalignment,
+            "Number of product variants with incorrect number of physical products attached",
+          paramArray: [],
         },
         {
           text:
-            "airtable: number of product variants with incorrect number of physical products attached",
-          paramArray: airtableTotalPhysicalProductMisalignment,
-        },
-        {
-          text:
-            "prisma: number of product variants with a count profile that doesn't match the statuses of the attached physical products",
-          paramArray: prismaCountToStatusMisalignments,
+            "Number of product variants with a count profile that doesn't match the attached physical product statuses",
+          paramArray: [],
           printDetailFunc: a => {
             console.log(util.inspect(a, { depth: null }))
           },
         },
         {
           text:
-            "airtable: number of product variants with a count profile that doesn't match the statuses of the attached physical products",
-          paramArray: airtableCountToStatusMisalignments,
-          printDetailFunc: a => {
-            console.log(
-              util.inspect(
-                a.map(a => a.sku),
-                { depth: null }
-              )
-            )
-          },
-        },
-        {
-          text:
-            "prisma: number of product variants with total != reserved + reservable + nonreservable + stored + offloaded",
-          paramArray: prismaProdVarsWithImpossibleCounts,
+            "Number of product variants with total != reserved + reservable + nonreservable + stored + offloaded",
+          paramArray: [],
           withGutter: true,
-        },
-        {
-          text:
-            "are the physical product statuses and sequenceNumbers aligned?",
-        },
-        {
-          text:
-            "number of physical products with mismatching inventory statuses",
-          paramArray: mismatchingStatuses,
-          withGutter: false,
-        },
-        {
-          text: "number of physical products with mismatching sequence numbers",
-          paramArray: mismatchingSequenceNumbers,
-          withGutter: true,
-        },
-        {
-          text: "are the reservations aligned?",
-        },
-        {
-          text: "reservations in prisma but not airtable",
-          paramArray: reservationsInPrismaButNotAirtable,
-        },
-        {
-          text: "reservations in airtable but not prisma",
-          paramArray: reservationsInAirtableButNotPrisma,
-        },
-        {
-          text: "reservations with mismatching products",
-          paramArray: misalignedSUIDsOnReservations,
-        },
-        {
-          text: "reservations with mismatching statuses",
-          paramArray: misalignedStatusOnReservations,
-        },
-        {
-          text: "reservations with more than 3 products",
-          paramArray: reservationsWithMoreThanThreeProducts,
-        },
-        {
-          text: "errors",
-          paramArray: errors,
         },
       ],
       withDetails
     )
+  }
 
-    return [
-      productsInPrismaButNotAirtable,
-      productsInAirtableButNotPrisma,
-      physicalProductsInPrismaButNotAirtable,
-      physicalProductsInAirtableButNotPrisma,
-      productVariantsInPrismaButNotAirtable,
-      productVariantsInAirtableButNotPrisma,
-      productVariantSKUMismatches,
-      prismaSUIDToSKUMismatches,
-      airtableSUIDToSKUMismatches,
-      countMisalignments,
-      prismaTotalPhysicalProductMisalignment,
-      airtableTotalPhysicalProductMisalignment,
-      prismaCountToStatusMisalignments,
-      airtableCountToStatusMisalignments,
-      prismaProdVarsWithImpossibleCounts,
-      mismatchingStatuses,
-      mismatchingSequenceNumbers,
-      reservationsInPrismaButNotAirtable,
-      reservationsInAirtableButNotPrisma,
-      misalignedSUIDsOnReservations,
-      misalignedStatusOnReservations,
-      reservationsWithMoreThanThreeProducts,
-      errors,
-    ]
+  private async getSUIDtoSKUMismatches() {
+    debugger
+    const SUIDtoSKUMismatches = []
+    const allProdVars = await this.prisma.binding.query.productVariants(
+      { where: {} },
+      `{
+        id
+        sku
+        physicalProducts {
+          seasonsUID
+        }
+      }`
+    )
+    for (const prodVar of allProdVars) {
+      for (const physProd of prodVar.physicalProducts) {
+        if (!physProd.seasonsUID.startsWith(prodVar.sku)) {
+          SUIDtoSKUMismatches.push({
+            productVariantSKU: prodVar.sku,
+            physicalProductSUID: physProd.seasonsUID,
+          })
+        }
+      }
+    }
+
+    return SUIDtoSKUMismatches
   }
 
   private checkCounts(allAirtableProductVariants, allPrismaProductVariants) {
