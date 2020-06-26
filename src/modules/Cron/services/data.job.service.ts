@@ -117,9 +117,6 @@ export class DataScheduledJobs {
   }
 
   async checkAll(withDetails = false) {
-    debugger
-    const suidToSKUMismatches = await this.getSUIDtoSKUMismatches()
-
     /* REPORT */
     this.printReportLines(
       [
@@ -129,12 +126,12 @@ export class DataScheduledJobs {
         },
         {
           text: "Mismatched SUID/SKU combos",
-          paramArray: suidToSKUMismatches,
+          paramArray: await this.getSUIDtoSKUMismatches(),
         },
         {
           text:
             "Number of product variants with incorrect number of physical products attached",
-          paramArray: [],
+          paramArray: await this.getProductVariantsWithIncorrectNumberOfPhysicalProductsAttached(),
         },
         {
           text:
@@ -150,13 +147,27 @@ export class DataScheduledJobs {
           paramArray: [],
           withGutter: true,
         },
+        {
+          text:
+            "Physical products with status stored without the parent product also stored",
+          paramArray: [],
+        },
+        {
+          text:
+            "Products with status offloaded without the descendant physical products all being offloaded",
+          paramArray: [],
+        },
+        {
+          text:
+            "Physical Products with status Reserved that are not on an active reservation",
+          paramArray: [],
+        },
       ],
       withDetails
     )
   }
 
   private async getSUIDtoSKUMismatches() {
-    debugger
     const SUIDtoSKUMismatches = []
     const allProdVars = await this.prisma.binding.query.productVariants(
       { where: {} },
@@ -180,6 +191,34 @@ export class DataScheduledJobs {
     }
 
     return SUIDtoSKUMismatches
+  }
+
+  private async getProductVariantsWithIncorrectNumberOfPhysicalProductsAttached() {
+    const cases = []
+    const allProdVars = await this.prisma.binding.query.productVariants(
+      { where: {} },
+      `{
+        id
+        sku
+        physicalProducts {
+          seasonsUID
+        }
+        total
+      }`
+    )
+    for (const prodVar of allProdVars) {
+      if (prodVar.total !== prodVar.physicalProducts.length) {
+        cases.push({
+          sku: prodVar.sku,
+          total: prodVar.total,
+          attachedPhysicalProducts: prodVar.physicalProducts.map(a => ({
+            seasonsUID: a.seasonsUID,
+          })),
+        })
+      }
+    }
+
+    return cases
   }
 
   private checkCounts(allAirtableProductVariants, allPrismaProductVariants) {
