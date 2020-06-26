@@ -253,7 +253,7 @@ export class ReservationService {
     }
 
     // Update status on physical products depending on whether
-    // the item was returned
+    // the item was returned, and update associated product variant counts
     const promises = productStates.map(
       async ({ productUID, productStatus, returned }) => {
         const seasonsUID = productUID
@@ -261,26 +261,37 @@ export class ReservationService {
           productStatus,
         }
         if (returned) {
-          const oldInventoryStatus = await this.prisma.client
-            .physicalProduct({
-              seasonsUID,
-            })
-            .inventoryStatus()
+          const physProdBeforeUpdates = await this.prisma.binding.query.physicalProduct(
+            { where: { seasonsUID } },
+            `{
+              inventoryStatus
+              productVariant {
+                id
+              }
+            }`
+          )
           updateData.inventoryStatus = await this.getReturnedPhysicalProductInventoryStatus(
             seasonsUID
           )
-          await this.prisma.client.createPhysicalProductInventoryStatusChange({
-            old: oldInventoryStatus,
-            new: updateData.inventoryStatus,
-            physicalProduct: { connect: { seasonsUID } },
-          })
-          return this.prisma.client.updatePhysicalProduct({
-            where: { seasonsUID },
-            data: updateData,
-          })
+          return Promise.all([
+            this.prisma.client.createPhysicalProductInventoryStatusChange({
+              old: physProdBeforeUpdates.inventoryStatus,
+              new: updateData.inventoryStatus,
+              physicalProduct: { connect: { seasonsUID } },
+            }),
+            this.productVariantService.updateCountsForStatusChange({
+              id: physProdBeforeUpdates.productVariant.id,
+              oldInventoryStatus: physProdBeforeUpdates.inventoryStatus,
+              newInventoryStatus: updateData.inventoryStatus,
+            }),
+            this.prisma.client.updatePhysicalProduct({
+              where: { seasonsUID },
+              data: updateData,
+            }),
+          ])
         }
       }
-    ) as PhysicalProductPromise[]
+    )
 
     await Promise.all(promises)
 
