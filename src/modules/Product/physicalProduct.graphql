@@ -17,7 +17,7 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): [WarehouseLocation]!
+  ): [WarehouseLocation]! @hasRole(roles: [Admin])
 }
 
 type Mutation {
@@ -28,7 +28,7 @@ type Mutation {
   updateManyPhysicalProducts(
     data: PhysicalProductUpdateManyMutationInput!
     where: PhysicalProductWhereInput
-  ): BatchPayload!
+  ): BatchPayload! @hasRole(roles: [Admin])
 }
 
 type PhysicalProduct {
