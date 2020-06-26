@@ -1,6 +1,6 @@
 import * as util from "util"
 
-import { PhysicalProduct } from "@app/prisma"
+import { PhysicalProduct, ProductVariant } from "@app/prisma"
 import { AirtableService } from "@modules/Airtable"
 import { AirtableData } from "@modules/Airtable/airtable.types"
 import { SlackService } from "@modules/Slack/services/slack.service"
@@ -8,7 +8,7 @@ import { UtilsService } from "@modules/Utils/services/utils.service"
 import { Injectable } from "@nestjs/common"
 import { Cron, CronExpression } from "@nestjs/schedule"
 import { PrismaService } from "@prisma/prisma.service"
-import { pick, xor } from "lodash"
+import { head, pick, xor } from "lodash"
 import { format } from "prettier"
 
 interface DataPoint {
@@ -406,10 +406,64 @@ export class DataScheduledJobs {
       If its inventoryStatus is reservable or nonReservable, it should not be on an active reservation. 
       If it is, add it to the cases list. 
     */
+    const cases = []
     for (const physProd of allPhysicalProducts) {
+      let thisCase = {
+        ...pick(physProd, ["inventoryStatus", "seasonsUID"]),
+        issues: [],
+        siblingsWithIssues: [],
+      } as any
       switch (physProd.inventoryStatus) {
         case "Stored":
-          // code block
+          const parentProduct = head(
+            await this.prisma.client.products({
+              where: {
+                variants_some: {
+                  physicalProducts_some: { seasonsUID: physProd.seasonsUID },
+                },
+              },
+            })
+          )
+          if (parentProduct.status !== "Stored") {
+            thisCase = {
+              ...thisCase,
+              parentProductStatus: parentProduct.status,
+            }
+            thisCase.issues.push(
+              "If a physical product is stored, its parent product should be stored"
+            )
+          }
+
+          const parentProductVariant = head(
+            await this.prisma.binding.query.productVariants(
+              {
+                where: {
+                  physicalProducts_some: { seasonsUID: physProd.seasonsUID },
+                },
+              },
+              `{
+              physicalProducts {
+                seasonsUID
+                inventoryStatus
+              }
+            }`
+            )
+          ) as any
+          const siblingPhysicalProducts = parentProductVariant.physicalProducts.filter(
+            a => a.seasonsUID !== physProd.seasonsUID
+          )
+          for (const siblingPhysProd of siblingPhysicalProducts) {
+            if (
+              !["Stored", "Reserved"].includes(siblingPhysProd.inventoryStatus)
+            ) {
+              thisCase.siblingsWithIssues.push({
+                ...pick(siblingPhysProd, ["inventoryStatus", "seasonsUID"]),
+              })
+              thisCase.issues.push(
+                `Sibling ${siblingPhysProd.seasonsUID} has erroneous status ${siblingPhysProd.inventoryStatus}`
+              )
+            }
+          }
           break
         case "Reserved":
           // code block
@@ -421,16 +475,6 @@ export class DataScheduledJobs {
         // code block
       }
     }
-    const storedPhysProds = allPhysicalProducts.filter(
-      a => a.inventoryStatus === "Stored"
-    )
-    const offloadedPhysProds = allPhysicalProducts.filter(
-      a => a.inventoryStatus === "Offloaded"
-    )
-    const reservedPhysProds = allPhysicalProducts.filter(
-      a => a.inventoryStatus === "Reserved"
-    )
-    const reservable
 
     //
   }
