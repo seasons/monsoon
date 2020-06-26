@@ -77,7 +77,7 @@ const scheduleModule =
           },
           introspection: true,
           formatError: error => {
-            console.log(util.inspect(error, { depth: null }))
+            console.error(util.inspect(error, { depth: null }))
             return error
           },
         } as GqlModuleOptions),
