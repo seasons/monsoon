@@ -36,12 +36,14 @@ export class AuthService {
     password,
     firstName,
     lastName,
+    zipCode,
     details,
   }: {
     email: string
     password: string
     firstName: string
     lastName: string
+    zipCode: string
     details: CustomerDetailCreateInput
   }) {
     // 1. Register the user on Auth0
@@ -80,6 +82,7 @@ export class AuthService {
     // 4. Create the customer in our database
     const customer = await this.createPrismaCustomerForExistingUser(
       user.id,
+      zipCode,
       details,
       "Created"
     )
