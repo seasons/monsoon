@@ -253,24 +253,45 @@ export class ReservationService {
     }
 
     // Update status on physical products depending on whether
-    // the item was returned
+    // the item was returned, and update associated product variant counts
     const promises = productStates.map(
-      ({ productUID, productStatus, returned }) => {
+      async ({ productUID, productStatus, returned }) => {
         const seasonsUID = productUID
         const updateData: any = {
           productStatus,
         }
         if (returned) {
-          // TODO: allow inventory status to be overriden from admin but derive value
-          // from automated criteria
-          updateData.inventoryStatus = "Reservable"
-          return this.prisma.client.updatePhysicalProduct({
-            where: { seasonsUID },
-            data: updateData,
-          })
+          const physProdBeforeUpdates = await this.prisma.binding.query.physicalProduct(
+            { where: { seasonsUID } },
+            `{
+              inventoryStatus
+              productVariant {
+                id
+              }
+            }`
+          )
+          updateData.inventoryStatus = await this.getReturnedPhysicalProductInventoryStatus(
+            seasonsUID
+          )
+          return Promise.all([
+            this.prisma.client.createPhysicalProductInventoryStatusChange({
+              old: physProdBeforeUpdates.inventoryStatus,
+              new: updateData.inventoryStatus,
+              physicalProduct: { connect: { seasonsUID } },
+            }),
+            this.productVariantService.updateCountsForStatusChange({
+              id: physProdBeforeUpdates.productVariant.id,
+              oldInventoryStatus: physProdBeforeUpdates.inventoryStatus,
+              newInventoryStatus: updateData.inventoryStatus,
+            }),
+            this.prisma.client.updatePhysicalProduct({
+              where: { seasonsUID },
+              data: updateData,
+            }),
+          ])
         }
       }
-    ) as PhysicalProductPromise[]
+    )
 
     await Promise.all(promises)
 
@@ -643,5 +664,23 @@ export class ReservationService {
       await this.prisma.client.deleteReservation({ id: reservation.id })
     }
     return [reservation, rollbackPrismaReservation]
+  }
+
+  private async getReturnedPhysicalProductInventoryStatus(
+    seasonsUID: string
+  ): Promise<InventoryStatus> {
+    // TODO: Allow inventory status to be overriden from admin but derive value from automated criteria
+
+    const parentProduct = head(
+      await this.prisma.client.products({
+        where: { variants_some: { physicalProducts_some: { seasonsUID } } },
+      })
+    )
+
+    if (parentProduct.status === "Stored") {
+      return "Stored"
+    }
+
+    return "Reservable"
   }
 }
