@@ -531,13 +531,11 @@ type CustomerDetail {
   birthday: DateTime
   # Height in inches
   height: Int
-  weight: String
+  # The weight range [min, max], where max = min + 10
+  weight: [Int] @scalarList(strategy: RELATION)
   bodyType: String
-  averageTopSize: String
-  # How does average top size run? Too big, too small, perfect.
-  averageTopSizeFit: String
-  averageWaistSize: String
-  averageWaistSizeFit: String
+  topSizes: [String] @scalarList(strategy: RELATION)
+  waistSizes: [Int] @scalarList(strategy: RELATION)
   averagePantLength: String
   preferredPronouns: String
   profession: String

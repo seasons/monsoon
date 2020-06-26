@@ -2541,18 +2541,8 @@ export type CustomerDetailOrderByInput =
   | "birthday_DESC"
   | "height_ASC"
   | "height_DESC"
-  | "weight_ASC"
-  | "weight_DESC"
   | "bodyType_ASC"
   | "bodyType_DESC"
-  | "averageTopSize_ASC"
-  | "averageTopSize_DESC"
-  | "averageTopSizeFit_ASC"
-  | "averageTopSizeFit_DESC"
-  | "averageWaistSize_ASC"
-  | "averageWaistSize_DESC"
-  | "averageWaistSizeFit_ASC"
-  | "averageWaistSizeFit_DESC"
   | "averagePantLength_ASC"
   | "averagePantLength_DESC"
   | "preferredPronouns_ASC"
@@ -4883,20 +4873,6 @@ export interface CustomerDetailWhereInput {
   height_lte?: Maybe<Int>;
   height_gt?: Maybe<Int>;
   height_gte?: Maybe<Int>;
-  weight?: Maybe<String>;
-  weight_not?: Maybe<String>;
-  weight_in?: Maybe<String[] | String>;
-  weight_not_in?: Maybe<String[] | String>;
-  weight_lt?: Maybe<String>;
-  weight_lte?: Maybe<String>;
-  weight_gt?: Maybe<String>;
-  weight_gte?: Maybe<String>;
-  weight_contains?: Maybe<String>;
-  weight_not_contains?: Maybe<String>;
-  weight_starts_with?: Maybe<String>;
-  weight_not_starts_with?: Maybe<String>;
-  weight_ends_with?: Maybe<String>;
-  weight_not_ends_with?: Maybe<String>;
   bodyType?: Maybe<String>;
   bodyType_not?: Maybe<String>;
   bodyType_in?: Maybe<String[] | String>;
@@ -4911,62 +4887,6 @@ export interface CustomerDetailWhereInput {
   bodyType_not_starts_with?: Maybe<String>;
   bodyType_ends_with?: Maybe<String>;
   bodyType_not_ends_with?: Maybe<String>;
-  averageTopSize?: Maybe<String>;
-  averageTopSize_not?: Maybe<String>;
-  averageTopSize_in?: Maybe<String[] | String>;
-  averageTopSize_not_in?: Maybe<String[] | String>;
-  averageTopSize_lt?: Maybe<String>;
-  averageTopSize_lte?: Maybe<String>;
-  averageTopSize_gt?: Maybe<String>;
-  averageTopSize_gte?: Maybe<String>;
-  averageTopSize_contains?: Maybe<String>;
-  averageTopSize_not_contains?: Maybe<String>;
-  averageTopSize_starts_with?: Maybe<String>;
-  averageTopSize_not_starts_with?: Maybe<String>;
-  averageTopSize_ends_with?: Maybe<String>;
-  averageTopSize_not_ends_with?: Maybe<String>;
-  averageTopSizeFit?: Maybe<String>;
-  averageTopSizeFit_not?: Maybe<String>;
-  averageTopSizeFit_in?: Maybe<String[] | String>;
-  averageTopSizeFit_not_in?: Maybe<String[] | String>;
-  averageTopSizeFit_lt?: Maybe<String>;
-  averageTopSizeFit_lte?: Maybe<String>;
-  averageTopSizeFit_gt?: Maybe<String>;
-  averageTopSizeFit_gte?: Maybe<String>;
-  averageTopSizeFit_contains?: Maybe<String>;
-  averageTopSizeFit_not_contains?: Maybe<String>;
-  averageTopSizeFit_starts_with?: Maybe<String>;
-  averageTopSizeFit_not_starts_with?: Maybe<String>;
-  averageTopSizeFit_ends_with?: Maybe<String>;
-  averageTopSizeFit_not_ends_with?: Maybe<String>;
-  averageWaistSize?: Maybe<String>;
-  averageWaistSize_not?: Maybe<String>;
-  averageWaistSize_in?: Maybe<String[] | String>;
-  averageWaistSize_not_in?: Maybe<String[] | String>;
-  averageWaistSize_lt?: Maybe<String>;
-  averageWaistSize_lte?: Maybe<String>;
-  averageWaistSize_gt?: Maybe<String>;
-  averageWaistSize_gte?: Maybe<String>;
-  averageWaistSize_contains?: Maybe<String>;
-  averageWaistSize_not_contains?: Maybe<String>;
-  averageWaistSize_starts_with?: Maybe<String>;
-  averageWaistSize_not_starts_with?: Maybe<String>;
-  averageWaistSize_ends_with?: Maybe<String>;
-  averageWaistSize_not_ends_with?: Maybe<String>;
-  averageWaistSizeFit?: Maybe<String>;
-  averageWaistSizeFit_not?: Maybe<String>;
-  averageWaistSizeFit_in?: Maybe<String[] | String>;
-  averageWaistSizeFit_not_in?: Maybe<String[] | String>;
-  averageWaistSizeFit_lt?: Maybe<String>;
-  averageWaistSizeFit_lte?: Maybe<String>;
-  averageWaistSizeFit_gt?: Maybe<String>;
-  averageWaistSizeFit_gte?: Maybe<String>;
-  averageWaistSizeFit_contains?: Maybe<String>;
-  averageWaistSizeFit_not_contains?: Maybe<String>;
-  averageWaistSizeFit_starts_with?: Maybe<String>;
-  averageWaistSizeFit_not_starts_with?: Maybe<String>;
-  averageWaistSizeFit_ends_with?: Maybe<String>;
-  averageWaistSizeFit_not_ends_with?: Maybe<String>;
   averagePantLength?: Maybe<String>;
   averagePantLength_not?: Maybe<String>;
   averagePantLength_in?: Maybe<String[] | String>;
@@ -6576,12 +6496,10 @@ export interface CustomerDetailCreateInput {
   phoneNumber?: Maybe<String>;
   birthday?: Maybe<DateTimeInput>;
   height?: Maybe<Int>;
-  weight?: Maybe<String>;
+  weight?: Maybe<CustomerDetailCreateweightInput>;
   bodyType?: Maybe<String>;
-  averageTopSize?: Maybe<String>;
-  averageTopSizeFit?: Maybe<String>;
-  averageWaistSize?: Maybe<String>;
-  averageWaistSizeFit?: Maybe<String>;
+  topSizes?: Maybe<CustomerDetailCreatetopSizesInput>;
+  waistSizes?: Maybe<CustomerDetailCreatewaistSizesInput>;
   averagePantLength?: Maybe<String>;
   preferredPronouns?: Maybe<String>;
   profession?: Maybe<String>;
@@ -6594,6 +6512,18 @@ export interface CustomerDetailCreateInput {
   shippingAddress?: Maybe<LocationCreateOneInput>;
   phoneOS?: Maybe<String>;
   insureShipment?: Maybe<Boolean>;
+}
+
+export interface CustomerDetailCreateweightInput {
+  set?: Maybe<Int[] | Int>;
+}
+
+export interface CustomerDetailCreatetopSizesInput {
+  set?: Maybe<String[] | String>;
+}
+
+export interface CustomerDetailCreatewaistSizesInput {
+  set?: Maybe<Int[] | Int>;
 }
 
 export interface LocationCreateOneInput {
@@ -7653,12 +7583,10 @@ export interface CustomerDetailUpdateDataInput {
   phoneNumber?: Maybe<String>;
   birthday?: Maybe<DateTimeInput>;
   height?: Maybe<Int>;
-  weight?: Maybe<String>;
+  weight?: Maybe<CustomerDetailUpdateweightInput>;
   bodyType?: Maybe<String>;
-  averageTopSize?: Maybe<String>;
-  averageTopSizeFit?: Maybe<String>;
-  averageWaistSize?: Maybe<String>;
-  averageWaistSizeFit?: Maybe<String>;
+  topSizes?: Maybe<CustomerDetailUpdatetopSizesInput>;
+  waistSizes?: Maybe<CustomerDetailUpdatewaistSizesInput>;
   averagePantLength?: Maybe<String>;
   preferredPronouns?: Maybe<String>;
   profession?: Maybe<String>;
@@ -7671,6 +7599,18 @@ export interface CustomerDetailUpdateDataInput {
   shippingAddress?: Maybe<LocationUpdateOneInput>;
   phoneOS?: Maybe<String>;
   insureShipment?: Maybe<Boolean>;
+}
+
+export interface CustomerDetailUpdateweightInput {
+  set?: Maybe<Int[] | Int>;
+}
+
+export interface CustomerDetailUpdatetopSizesInput {
+  set?: Maybe<String[] | String>;
+}
+
+export interface CustomerDetailUpdatewaistSizesInput {
+  set?: Maybe<Int[] | Int>;
 }
 
 export interface LocationUpdateOneInput {
@@ -11155,12 +11095,10 @@ export interface CustomerDetailUpdateInput {
   phoneNumber?: Maybe<String>;
   birthday?: Maybe<DateTimeInput>;
   height?: Maybe<Int>;
-  weight?: Maybe<String>;
+  weight?: Maybe<CustomerDetailUpdateweightInput>;
   bodyType?: Maybe<String>;
-  averageTopSize?: Maybe<String>;
-  averageTopSizeFit?: Maybe<String>;
-  averageWaistSize?: Maybe<String>;
-  averageWaistSizeFit?: Maybe<String>;
+  topSizes?: Maybe<CustomerDetailUpdatetopSizesInput>;
+  waistSizes?: Maybe<CustomerDetailUpdatewaistSizesInput>;
   averagePantLength?: Maybe<String>;
   preferredPronouns?: Maybe<String>;
   profession?: Maybe<String>;
@@ -11179,12 +11117,10 @@ export interface CustomerDetailUpdateManyMutationInput {
   phoneNumber?: Maybe<String>;
   birthday?: Maybe<DateTimeInput>;
   height?: Maybe<Int>;
-  weight?: Maybe<String>;
+  weight?: Maybe<CustomerDetailUpdateweightInput>;
   bodyType?: Maybe<String>;
-  averageTopSize?: Maybe<String>;
-  averageTopSizeFit?: Maybe<String>;
-  averageWaistSize?: Maybe<String>;
-  averageWaistSizeFit?: Maybe<String>;
+  topSizes?: Maybe<CustomerDetailUpdatetopSizesInput>;
+  waistSizes?: Maybe<CustomerDetailUpdatewaistSizesInput>;
   averagePantLength?: Maybe<String>;
   preferredPronouns?: Maybe<String>;
   profession?: Maybe<String>;
@@ -14489,12 +14425,10 @@ export interface CustomerDetail {
   phoneNumber?: String;
   birthday?: DateTimeOutput;
   height?: Int;
-  weight?: String;
+  weight: Int[];
   bodyType?: String;
-  averageTopSize?: String;
-  averageTopSizeFit?: String;
-  averageWaistSize?: String;
-  averageWaistSizeFit?: String;
+  topSizes: String[];
+  waistSizes: Int[];
   averagePantLength?: String;
   preferredPronouns?: String;
   profession?: String;
@@ -14517,12 +14451,10 @@ export interface CustomerDetailPromise
   phoneNumber: () => Promise<String>;
   birthday: () => Promise<DateTimeOutput>;
   height: () => Promise<Int>;
-  weight: () => Promise<String>;
+  weight: () => Promise<Int[]>;
   bodyType: () => Promise<String>;
-  averageTopSize: () => Promise<String>;
-  averageTopSizeFit: () => Promise<String>;
-  averageWaistSize: () => Promise<String>;
-  averageWaistSizeFit: () => Promise<String>;
+  topSizes: () => Promise<String[]>;
+  waistSizes: () => Promise<Int[]>;
   averagePantLength: () => Promise<String>;
   preferredPronouns: () => Promise<String>;
   profession: () => Promise<String>;
@@ -14546,12 +14478,10 @@ export interface CustomerDetailSubscription
   phoneNumber: () => Promise<AsyncIterator<String>>;
   birthday: () => Promise<AsyncIterator<DateTimeOutput>>;
   height: () => Promise<AsyncIterator<Int>>;
-  weight: () => Promise<AsyncIterator<String>>;
+  weight: () => Promise<AsyncIterator<Int[]>>;
   bodyType: () => Promise<AsyncIterator<String>>;
-  averageTopSize: () => Promise<AsyncIterator<String>>;
-  averageTopSizeFit: () => Promise<AsyncIterator<String>>;
-  averageWaistSize: () => Promise<AsyncIterator<String>>;
-  averageWaistSizeFit: () => Promise<AsyncIterator<String>>;
+  topSizes: () => Promise<AsyncIterator<String[]>>;
+  waistSizes: () => Promise<AsyncIterator<Int[]>>;
   averagePantLength: () => Promise<AsyncIterator<String>>;
   preferredPronouns: () => Promise<AsyncIterator<String>>;
   profession: () => Promise<AsyncIterator<String>>;
@@ -14575,12 +14505,10 @@ export interface CustomerDetailNullablePromise
   phoneNumber: () => Promise<String>;
   birthday: () => Promise<DateTimeOutput>;
   height: () => Promise<Int>;
-  weight: () => Promise<String>;
+  weight: () => Promise<Int[]>;
   bodyType: () => Promise<String>;
-  averageTopSize: () => Promise<String>;
-  averageTopSizeFit: () => Promise<String>;
-  averageWaistSize: () => Promise<String>;
-  averageWaistSizeFit: () => Promise<String>;
+  topSizes: () => Promise<String[]>;
+  waistSizes: () => Promise<Int[]>;
   averagePantLength: () => Promise<String>;
   preferredPronouns: () => Promise<String>;
   profession: () => Promise<String>;
@@ -20180,12 +20108,10 @@ export interface CustomerDetailPreviousValues {
   phoneNumber?: String;
   birthday?: DateTimeOutput;
   height?: Int;
-  weight?: String;
+  weight: Int[];
   bodyType?: String;
-  averageTopSize?: String;
-  averageTopSizeFit?: String;
-  averageWaistSize?: String;
-  averageWaistSizeFit?: String;
+  topSizes: String[];
+  waistSizes: Int[];
   averagePantLength?: String;
   preferredPronouns?: String;
   profession?: String;
@@ -20208,12 +20134,10 @@ export interface CustomerDetailPreviousValuesPromise
   phoneNumber: () => Promise<String>;
   birthday: () => Promise<DateTimeOutput>;
   height: () => Promise<Int>;
-  weight: () => Promise<String>;
+  weight: () => Promise<Int[]>;
   bodyType: () => Promise<String>;
-  averageTopSize: () => Promise<String>;
-  averageTopSizeFit: () => Promise<String>;
-  averageWaistSize: () => Promise<String>;
-  averageWaistSizeFit: () => Promise<String>;
+  topSizes: () => Promise<String[]>;
+  waistSizes: () => Promise<Int[]>;
   averagePantLength: () => Promise<String>;
   preferredPronouns: () => Promise<String>;
   profession: () => Promise<String>;
@@ -20236,12 +20160,10 @@ export interface CustomerDetailPreviousValuesSubscription
   phoneNumber: () => Promise<AsyncIterator<String>>;
   birthday: () => Promise<AsyncIterator<DateTimeOutput>>;
   height: () => Promise<AsyncIterator<Int>>;
-  weight: () => Promise<AsyncIterator<String>>;
+  weight: () => Promise<AsyncIterator<Int[]>>;
   bodyType: () => Promise<AsyncIterator<String>>;
-  averageTopSize: () => Promise<AsyncIterator<String>>;
-  averageTopSizeFit: () => Promise<AsyncIterator<String>>;
-  averageWaistSize: () => Promise<AsyncIterator<String>>;
-  averageWaistSizeFit: () => Promise<AsyncIterator<String>>;
+  topSizes: () => Promise<AsyncIterator<String[]>>;
+  waistSizes: () => Promise<AsyncIterator<Int[]>>;
   averagePantLength: () => Promise<AsyncIterator<String>>;
   preferredPronouns: () => Promise<AsyncIterator<String>>;
   profession: () => Promise<AsyncIterator<String>>;

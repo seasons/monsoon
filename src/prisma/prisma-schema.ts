@@ -2410,12 +2410,10 @@ type CustomerDetail {
   phoneNumber: String
   birthday: DateTime
   height: Int
-  weight: String
+  weight: [Int!]!
   bodyType: String
-  averageTopSize: String
-  averageTopSizeFit: String
-  averageWaistSize: String
-  averageWaistSizeFit: String
+  topSizes: [String!]!
+  waistSizes: [Int!]!
   averagePantLength: String
   preferredPronouns: String
   profession: String
@@ -2443,12 +2441,10 @@ input CustomerDetailCreateInput {
   phoneNumber: String
   birthday: DateTime
   height: Int
-  weight: String
+  weight: CustomerDetailCreateweightInput
   bodyType: String
-  averageTopSize: String
-  averageTopSizeFit: String
-  averageWaistSize: String
-  averageWaistSizeFit: String
+  topSizes: CustomerDetailCreatetopSizesInput
+  waistSizes: CustomerDetailCreatewaistSizesInput
   averagePantLength: String
   preferredPronouns: String
   profession: String
@@ -2468,6 +2464,18 @@ input CustomerDetailCreateOneInput {
   connect: CustomerDetailWhereUniqueInput
 }
 
+input CustomerDetailCreatetopSizesInput {
+  set: [String!]
+}
+
+input CustomerDetailCreatewaistSizesInput {
+  set: [Int!]
+}
+
+input CustomerDetailCreateweightInput {
+  set: [Int!]
+}
+
 type CustomerDetailEdge {
   node: CustomerDetail!
   cursor: String!
@@ -2482,18 +2490,8 @@ enum CustomerDetailOrderByInput {
   birthday_DESC
   height_ASC
   height_DESC
-  weight_ASC
-  weight_DESC
   bodyType_ASC
   bodyType_DESC
-  averageTopSize_ASC
-  averageTopSize_DESC
-  averageTopSizeFit_ASC
-  averageTopSizeFit_DESC
-  averageWaistSize_ASC
-  averageWaistSize_DESC
-  averageWaistSizeFit_ASC
-  averageWaistSizeFit_DESC
   averagePantLength_ASC
   averagePantLength_DESC
   preferredPronouns_ASC
@@ -2527,12 +2525,10 @@ type CustomerDetailPreviousValues {
   phoneNumber: String
   birthday: DateTime
   height: Int
-  weight: String
+  weight: [Int!]!
   bodyType: String
-  averageTopSize: String
-  averageTopSizeFit: String
-  averageWaistSize: String
-  averageWaistSizeFit: String
+  topSizes: [String!]!
+  waistSizes: [Int!]!
   averagePantLength: String
   preferredPronouns: String
   profession: String
@@ -2570,12 +2566,10 @@ input CustomerDetailUpdateDataInput {
   phoneNumber: String
   birthday: DateTime
   height: Int
-  weight: String
+  weight: CustomerDetailUpdateweightInput
   bodyType: String
-  averageTopSize: String
-  averageTopSizeFit: String
-  averageWaistSize: String
-  averageWaistSizeFit: String
+  topSizes: CustomerDetailUpdatetopSizesInput
+  waistSizes: CustomerDetailUpdatewaistSizesInput
   averagePantLength: String
   preferredPronouns: String
   profession: String
@@ -2594,12 +2588,10 @@ input CustomerDetailUpdateInput {
   phoneNumber: String
   birthday: DateTime
   height: Int
-  weight: String
+  weight: CustomerDetailUpdateweightInput
   bodyType: String
-  averageTopSize: String
-  averageTopSizeFit: String
-  averageWaistSize: String
-  averageWaistSizeFit: String
+  topSizes: CustomerDetailUpdatetopSizesInput
+  waistSizes: CustomerDetailUpdatewaistSizesInput
   averagePantLength: String
   preferredPronouns: String
   profession: String
@@ -2618,12 +2610,10 @@ input CustomerDetailUpdateManyMutationInput {
   phoneNumber: String
   birthday: DateTime
   height: Int
-  weight: String
+  weight: CustomerDetailUpdateweightInput
   bodyType: String
-  averageTopSize: String
-  averageTopSizeFit: String
-  averageWaistSize: String
-  averageWaistSizeFit: String
+  topSizes: CustomerDetailUpdatetopSizesInput
+  waistSizes: CustomerDetailUpdatewaistSizesInput
   averagePantLength: String
   preferredPronouns: String
   profession: String
@@ -2644,6 +2634,18 @@ input CustomerDetailUpdateOneInput {
   delete: Boolean
   disconnect: Boolean
   connect: CustomerDetailWhereUniqueInput
+}
+
+input CustomerDetailUpdatetopSizesInput {
+  set: [String!]
+}
+
+input CustomerDetailUpdatewaistSizesInput {
+  set: [Int!]
+}
+
+input CustomerDetailUpdateweightInput {
+  set: [Int!]
 }
 
 input CustomerDetailUpsertNestedInput {
@@ -2696,20 +2698,6 @@ input CustomerDetailWhereInput {
   height_lte: Int
   height_gt: Int
   height_gte: Int
-  weight: String
-  weight_not: String
-  weight_in: [String!]
-  weight_not_in: [String!]
-  weight_lt: String
-  weight_lte: String
-  weight_gt: String
-  weight_gte: String
-  weight_contains: String
-  weight_not_contains: String
-  weight_starts_with: String
-  weight_not_starts_with: String
-  weight_ends_with: String
-  weight_not_ends_with: String
   bodyType: String
   bodyType_not: String
   bodyType_in: [String!]
@@ -2724,62 +2712,6 @@ input CustomerDetailWhereInput {
   bodyType_not_starts_with: String
   bodyType_ends_with: String
   bodyType_not_ends_with: String
-  averageTopSize: String
-  averageTopSize_not: String
-  averageTopSize_in: [String!]
-  averageTopSize_not_in: [String!]
-  averageTopSize_lt: String
-  averageTopSize_lte: String
-  averageTopSize_gt: String
-  averageTopSize_gte: String
-  averageTopSize_contains: String
-  averageTopSize_not_contains: String
-  averageTopSize_starts_with: String
-  averageTopSize_not_starts_with: String
-  averageTopSize_ends_with: String
-  averageTopSize_not_ends_with: String
-  averageTopSizeFit: String
-  averageTopSizeFit_not: String
-  averageTopSizeFit_in: [String!]
-  averageTopSizeFit_not_in: [String!]
-  averageTopSizeFit_lt: String
-  averageTopSizeFit_lte: String
-  averageTopSizeFit_gt: String
-  averageTopSizeFit_gte: String
-  averageTopSizeFit_contains: String
-  averageTopSizeFit_not_contains: String
-  averageTopSizeFit_starts_with: String
-  averageTopSizeFit_not_starts_with: String
-  averageTopSizeFit_ends_with: String
-  averageTopSizeFit_not_ends_with: String
-  averageWaistSize: String
-  averageWaistSize_not: String
-  averageWaistSize_in: [String!]
-  averageWaistSize_not_in: [String!]
-  averageWaistSize_lt: String
-  averageWaistSize_lte: String
-  averageWaistSize_gt: String
-  averageWaistSize_gte: String
-  averageWaistSize_contains: String
-  averageWaistSize_not_contains: String
-  averageWaistSize_starts_with: String
-  averageWaistSize_not_starts_with: String
-  averageWaistSize_ends_with: String
-  averageWaistSize_not_ends_with: String
-  averageWaistSizeFit: String
-  averageWaistSizeFit_not: String
-  averageWaistSizeFit_in: [String!]
-  averageWaistSizeFit_not_in: [String!]
-  averageWaistSizeFit_lt: String
-  averageWaistSizeFit_lte: String
-  averageWaistSizeFit_gt: String
-  averageWaistSizeFit_gte: String
-  averageWaistSizeFit_contains: String
-  averageWaistSizeFit_not_contains: String
-  averageWaistSizeFit_starts_with: String
-  averageWaistSizeFit_not_starts_with: String
-  averageWaistSizeFit_ends_with: String
-  averageWaistSizeFit_not_ends_with: String
   averagePantLength: String
   averagePantLength_not: String
   averagePantLength_in: [String!]

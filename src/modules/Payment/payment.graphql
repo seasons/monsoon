@@ -3,6 +3,8 @@ type Query {
     planID: PlanID!
     userIDHash: String!
   ): ChargebeeHostedPagePayload
+  hostedChargebeeCheckout(planID: PlanID!): ChargebeeHostedPagePayload
+    @hasRole(roles: [Customer])
   chargebeeUpdatePaymentPage: ChargebeeHostedPagePayload
     @hasRole(roles: [Customer])
 }
