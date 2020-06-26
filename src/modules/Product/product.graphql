@@ -136,7 +136,7 @@ type Mutation {
   saveProduct(item: ID!, save: Boolean!): BagItem @hasRole(roles: [Customer])
   updateProduct(
     where: ProductWhereUniqueInput!
-    data: ProductUpdateInput!
+    data: CustomProductUpdateInput!
   ): Product! @hasRole(roles: [Admin])
   addViewedProduct(item: ID!): RecentlyViewedProduct!
   upsertProduct(input: UpsertProductInput!): Product @hasRole(roles: [Admin])
@@ -227,7 +227,7 @@ input UpsertProductInput {
   variants: [UpsertVariantInput!]!
 }
 
-input ProductUpdateInput {
+input CustomProductUpdateInput {
   # Fields from ProductUpdateInput
   architecture: ProductArchitecture
   brand: BrandUpdateOneRequiredWithoutProductsInput
