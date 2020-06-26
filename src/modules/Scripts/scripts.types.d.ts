@@ -3,6 +3,7 @@ import { CommandOptionsOption } from "nestjs-command"
 
 export interface MonsoonCommandOptions
   extends Omit<CommandOptionsOption, "name"> {
+  name?: string
   describeExtra?: string
 }
 

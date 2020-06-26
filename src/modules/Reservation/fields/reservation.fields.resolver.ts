@@ -43,6 +43,7 @@ export class ReservationFieldsResolver {
               images {
                 id
                 url
+                updatedAt
               }
             }
           }
@@ -51,11 +52,11 @@ export class ReservationFieldsResolver {
       `
     )
 
-    return reservation.products.map(product => {
+    return reservation.products.map(async product => {
       const image = product.productVariant.product.images?.[0]
 
       return {
-        url: this.imageService.resizeImage(image?.url, size, {
+        url: await this.imageService.resizeImage(image?.url, size, {
           w: width,
           h: height,
         }),

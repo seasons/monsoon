@@ -428,13 +428,13 @@ export class ProductService {
         status,
       },
     })
-    if (!!status) {
-      await this.prisma.client.createProductStatusChange({
-        old: product.status,
-        new: status,
-        product: { connect: { id: product.id } },
-      })
-    }
+    // if (!!status) {
+    //   await this.prisma.client.createProductStatusChange({
+    //     old: product.status,
+    //     new: status,
+    //     product: { connect: { id: product.id } },
+    //   })
+    // }
 
     return await this.prisma.binding.query.product({ where }, info)
   }
@@ -468,11 +468,11 @@ export class ProductService {
         where: { id },
         data: { status: "Offloaded" },
       })
-      await this.prisma.client.createProductStatusChange({
-        old: prodWithPhysicalProducts.status,
-        new: "Offloaded",
-        product: { connect: { id } },
-      })
+      // await this.prisma.client.createProductStatusChange({
+      //   old: prodWithPhysicalProducts.status,
+      //   new: "Offloaded",
+      //   product: { connect: { id } },
+      // })
     }
   }
 

@@ -31,7 +31,7 @@ describe("Validate Warehouse Location", () => {
       productVariantService,
       new ProductService(
         prismaService,
-        new ImageService(),
+        new ImageService(prismaService),
         productUtilsService,
         productVariantService,
         new PhysicalProductUtilsService(prismaService, productUtilsService),

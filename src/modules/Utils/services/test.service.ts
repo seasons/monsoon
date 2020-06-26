@@ -120,7 +120,7 @@ export class TestUtilsService {
     const productUtilsService = new ProductUtilsService(this.prisma)
     return new ProductService(
       this.prisma,
-      new ImageService(),
+      new ImageService(this.prisma),
       productUtilsService,
       new ProductVariantService(
         this.prisma,

@@ -9,6 +9,15 @@ type Query {
     first: Int
     last: Int
   ): [PhysicalProduct]!
+  warehouseLocations(
+    where: WarehouseLocationWhereInput
+    orderBy: WarehouseLocationOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [WarehouseLocation]!
 }
 
 type Mutation {
@@ -16,6 +25,10 @@ type Mutation {
     where: PhysicalProductWhereUniqueInput!
     data: PhysicalProductUpdateInput!
   ): PhysicalProduct @hasRole(roles: [Admin])
+  updateManyPhysicalProducts(
+    data: PhysicalProductUpdateManyMutationInput!
+    where: PhysicalProductWhereInput
+  ): BatchPayload!
 }
 
 type PhysicalProduct {
@@ -29,6 +42,7 @@ type PhysicalProduct {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   sequenceNumber: Int!
+  barcoded: Boolean!
   barcode: String!
   dateOrdered: DateTime
   dateReceived: DateTime

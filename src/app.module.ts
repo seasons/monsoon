@@ -1,3 +1,5 @@
+import * as util from "util"
+
 import { DataLoaderInterceptor } from "@modules/DataLoader/index"
 import { Module, forwardRef } from "@nestjs/common"
 import { APP_INTERCEPTOR } from "@nestjs/core"
@@ -74,6 +76,10 @@ const scheduleModule =
             maxFiles: 5,
           },
           introspection: true,
+          formatError: error => {
+            console.log(util.inspect(error, { depth: null }))
+            return error
+          },
         } as GqlModuleOptions),
     }),
     AirtableModule,

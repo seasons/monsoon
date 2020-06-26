@@ -13,9 +13,14 @@ import { PrismaService } from "@prisma/prisma.service"
 import chargebee from "chargebee"
 import faker from "faker"
 import { head } from "lodash"
-import { Command, Option } from "nestjs-command"
+import { Command, Option, Positional } from "nestjs-command"
 
-import { AirtableIdOption, PrismaEnvOption } from "../scripts.decorators"
+import {
+  AirtableIdOption,
+  EmailOption,
+  PasswordOption,
+  PrismaEnvOption,
+} from "../scripts.decorators"
 import { ScriptsService } from "../services/scripts.service"
 
 @Injectable()
@@ -33,6 +38,62 @@ export class UserCommands {
   ) {}
 
   @Command({
+    command: "takeover <email>",
+    describe:
+      "Overrides the indicated user's record with an email and password you can use to use their account",
+    aliases: "to",
+  })
+  async mimick(
+    @Positional({
+      name: "email",
+      type: "string",
+      describe: "Email of the user to takeover",
+    })
+    targetEmail,
+    @PrismaEnvOption()
+    prismaEnv,
+    @EmailOption({
+      name: "newEmail",
+      describe: "New Email to use on the target record",
+    })
+    _newEmail,
+    @PasswordOption({
+      describe: "New Password to use on the target record",
+    })
+    _password
+  ) {
+    await this.scriptsService.updateConnections({
+      prismaEnv,
+      moduleRef: this.moduleRef,
+    })
+    let {
+      email: newEmail,
+      password,
+      firstName,
+      lastName,
+    } = this.createTestUserBasics(_newEmail, _password)
+    const auth0Id = await this.authService.createAuth0User(newEmail, password, {
+      firstName,
+      lastName,
+    })
+
+    await this.prisma.client.updateUser({
+      where: { email: targetEmail },
+      data: { auth0Id, email: newEmail },
+    })
+
+    this.logger.log(
+      `User with email: ${targetEmail} has had its email and password changed to: ${newEmail}, ${password} on ${prismaEnv} prisma`
+    )
+    this.logger.log(
+      `You may now login with the above credentials to effectively act as the given user`
+    )
+    this.logger.log(
+      `Please note that integrations with third-party services may be reliant on the user's original email, in which case they may not work`
+    )
+  }
+
+  @Command({
     command: "create:test-user",
     describe: "creates a test user with the given email and password",
     aliases: "ctu",
@@ -44,18 +105,10 @@ export class UserCommands {
       describeExtra: "If none given, will use staging",
     })
     abid,
-    @Option({
-      name: "email",
-      describe: "Email of the test user",
-      type: "string",
-    })
-    email,
-    @Option({
-      name: "password",
-      describe: "Password of the test user",
-      type: "string",
-    })
-    password,
+    @EmailOption()
+    _email,
+    @PasswordOption()
+    _password,
     @Option({
       name: "plan",
       describe: "Subscription plan of the user",
@@ -84,12 +137,14 @@ export class UserCommands {
       api_key: "test_fmWkxemy4L3CP1ku1XwPlTYQyJVKajXx",
     })
 
-    const firstName = faker.name.firstName()
-    const lastName = faker.name.lastName()
-    const fullName = `${firstName} ${lastName}`
-    const slug = `${firstName}-${lastName}`.toLowerCase()
-    email = email || `${slug}@seasons.nyc`
-    password = password || faker.random.alphaNumeric(6)
+    let {
+      firstName,
+      lastName,
+      fullName,
+      email,
+      password,
+      slug,
+    } = this.createTestUserBasics(_email, _password)
 
     // Fail gracefully if the user is already in the DB
     if (!!(await this.prisma.client.user({ email }))) {
@@ -185,5 +240,16 @@ export class UserCommands {
       } airtable`
     )
     this.logger.log(`Access token: ${tokenData.access_token}`)
+  }
+
+  private createTestUserBasics(email, password) {
+    const firstName = faker.name.firstName()
+    const lastName = faker.name.lastName()
+    const fullName = `${firstName} ${lastName}`
+    const slug = `${firstName}-${lastName}`.toLowerCase()
+    email = email || `${slug}@seasons.nyc`
+    password = password || faker.random.alphaNumeric(6)
+
+    return { firstName, lastName, fullName, email, password, slug }
   }
 }

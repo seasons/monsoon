@@ -9980,6 +9980,7 @@ type PhysicalProduct implements Node {
   offloadNotes: String
   sequenceNumber: Int!
   warehouseLocation: WarehouseLocation
+  barcoded: Boolean
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
@@ -10005,6 +10006,7 @@ input PhysicalProductCreateInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   sequenceNumber: Int!
+  barcoded: Boolean
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
@@ -10052,6 +10054,7 @@ input PhysicalProductCreateWithoutInventoryStatusChangesInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   sequenceNumber: Int!
+  barcoded: Boolean
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
@@ -10068,6 +10071,7 @@ input PhysicalProductCreateWithoutLocationInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   sequenceNumber: Int!
+  barcoded: Boolean
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
@@ -10084,6 +10088,7 @@ input PhysicalProductCreateWithoutProductVariantInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   sequenceNumber: Int!
+  barcoded: Boolean
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
@@ -10100,6 +10105,7 @@ input PhysicalProductCreateWithoutWarehouseLocationInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   sequenceNumber: Int!
+  barcoded: Boolean
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
@@ -10528,6 +10534,8 @@ enum PhysicalProductOrderByInput {
   offloadNotes_DESC
   sequenceNumber_ASC
   sequenceNumber_DESC
+  barcoded_ASC
+  barcoded_DESC
   dateOrdered_ASC
   dateOrdered_DESC
   dateReceived_ASC
@@ -10548,6 +10556,7 @@ type PhysicalProductPreviousValues {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   sequenceNumber: Int!
+  barcoded: Boolean
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
@@ -10736,6 +10745,10 @@ input PhysicalProductScalarWhereInput {
 
   """All values greater than or equal the given value."""
   sequenceNumber_gte: Int
+  barcoded: Boolean
+
+  """All values that are not equal to given value."""
+  barcoded_not: Boolean
   dateOrdered: DateTime
 
   """All values that are not equal to given value."""
@@ -10902,6 +10915,7 @@ input PhysicalProductUpdateDataInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   sequenceNumber: Int
+  barcoded: Boolean
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
@@ -10918,6 +10932,7 @@ input PhysicalProductUpdateInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   sequenceNumber: Int
+  barcoded: Boolean
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
@@ -10934,6 +10949,7 @@ input PhysicalProductUpdateManyDataInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   sequenceNumber: Int
+  barcoded: Boolean
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
@@ -10958,6 +10974,7 @@ input PhysicalProductUpdateManyMutationInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   sequenceNumber: Int
+  barcoded: Boolean
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
@@ -11025,6 +11042,7 @@ input PhysicalProductUpdateWithoutInventoryStatusChangesDataInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   sequenceNumber: Int
+  barcoded: Boolean
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
@@ -11040,6 +11058,7 @@ input PhysicalProductUpdateWithoutLocationDataInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   sequenceNumber: Int
+  barcoded: Boolean
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
@@ -11055,6 +11074,7 @@ input PhysicalProductUpdateWithoutProductVariantDataInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   sequenceNumber: Int
+  barcoded: Boolean
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
@@ -11070,6 +11090,7 @@ input PhysicalProductUpdateWithoutWarehouseLocationDataInput {
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
   sequenceNumber: Int
+  barcoded: Boolean
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
@@ -11313,6 +11334,10 @@ input PhysicalProductWhereInput {
 
   """All values greater than or equal the given value."""
   sequenceNumber_gte: Int
+  barcoded: Boolean
+
+  """All values that are not equal to given value."""
+  barcoded_not: Boolean
   dateOrdered: DateTime
 
   """All values that are not equal to given value."""
@@ -12101,7 +12126,7 @@ input ProductFunctionWhereUniqueInput {
 type ProductMaterialCategory implements Node {
   id: ID!
   slug: String!
-  lifeExpectancy: Int!
+  lifeExpectancy: Float!
   category: Category!
   products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
 }
@@ -12119,7 +12144,7 @@ type ProductMaterialCategoryConnection {
 input ProductMaterialCategoryCreateInput {
   id: ID
   slug: String!
-  lifeExpectancy: Int!
+  lifeExpectancy: Float!
   category: CategoryCreateOneInput!
   products: ProductCreateManyWithoutMaterialCategoryInput
 }
@@ -12132,7 +12157,7 @@ input ProductMaterialCategoryCreateOneWithoutProductsInput {
 input ProductMaterialCategoryCreateWithoutProductsInput {
   id: ID
   slug: String!
-  lifeExpectancy: Int!
+  lifeExpectancy: Float!
   category: CategoryCreateOneInput!
 }
 
@@ -12157,7 +12182,7 @@ enum ProductMaterialCategoryOrderByInput {
 type ProductMaterialCategoryPreviousValues {
   id: ID!
   slug: String!
-  lifeExpectancy: Int!
+  lifeExpectancy: Float!
 }
 
 type ProductMaterialCategorySubscriptionPayload {
@@ -12199,14 +12224,14 @@ input ProductMaterialCategorySubscriptionWhereInput {
 
 input ProductMaterialCategoryUpdateInput {
   slug: String
-  lifeExpectancy: Int
+  lifeExpectancy: Float
   category: CategoryUpdateOneRequiredInput
   products: ProductUpdateManyWithoutMaterialCategoryInput
 }
 
 input ProductMaterialCategoryUpdateManyMutationInput {
   slug: String
-  lifeExpectancy: Int
+  lifeExpectancy: Float
 }
 
 input ProductMaterialCategoryUpdateOneWithoutProductsInput {
@@ -12220,7 +12245,7 @@ input ProductMaterialCategoryUpdateOneWithoutProductsInput {
 
 input ProductMaterialCategoryUpdateWithoutProductsDataInput {
   slug: String
-  lifeExpectancy: Int
+  lifeExpectancy: Float
   category: CategoryUpdateOneRequiredInput
 }
 
@@ -12318,28 +12343,28 @@ input ProductMaterialCategoryWhereInput {
 
   """All values not ending with the given string."""
   slug_not_ends_with: String
-  lifeExpectancy: Int
+  lifeExpectancy: Float
 
   """All values that are not equal to given value."""
-  lifeExpectancy_not: Int
+  lifeExpectancy_not: Float
 
   """All values that are contained in given list."""
-  lifeExpectancy_in: [Int!]
+  lifeExpectancy_in: [Float!]
 
   """All values that are not contained in given list."""
-  lifeExpectancy_not_in: [Int!]
+  lifeExpectancy_not_in: [Float!]
 
   """All values less than the given value."""
-  lifeExpectancy_lt: Int
+  lifeExpectancy_lt: Float
 
   """All values less than or equal the given value."""
-  lifeExpectancy_lte: Int
+  lifeExpectancy_lte: Float
 
   """All values greater than the given value."""
-  lifeExpectancy_gt: Int
+  lifeExpectancy_gt: Float
 
   """All values greater than or equal the given value."""
-  lifeExpectancy_gte: Int
+  lifeExpectancy_gte: Float
   category: CategoryWhereInput
   products_every: ProductWhereInput
   products_some: ProductWhereInput
@@ -23750,6 +23775,8 @@ export type PhysicalProductOrderByInput =   'id_ASC' |
   'offloadNotes_DESC' |
   'sequenceNumber_ASC' |
   'sequenceNumber_DESC' |
+  'barcoded_ASC' |
+  'barcoded_DESC' |
   'dateOrdered_ASC' |
   'dateOrdered_DESC' |
   'dateReceived_ASC' |
@@ -27914,6 +27941,7 @@ export interface PhysicalProductCreateInput {
   offloadMethod?: PhysicalProductOffloadMethod | null
   offloadNotes?: String | null
   sequenceNumber: Int
+  barcoded?: Boolean | null
   dateOrdered?: DateTime | null
   dateReceived?: DateTime | null
   unitCost?: Float | null
@@ -27961,6 +27989,7 @@ export interface PhysicalProductCreateWithoutInventoryStatusChangesInput {
   offloadMethod?: PhysicalProductOffloadMethod | null
   offloadNotes?: String | null
   sequenceNumber: Int
+  barcoded?: Boolean | null
   dateOrdered?: DateTime | null
   dateReceived?: DateTime | null
   unitCost?: Float | null
@@ -27977,6 +28006,7 @@ export interface PhysicalProductCreateWithoutLocationInput {
   offloadMethod?: PhysicalProductOffloadMethod | null
   offloadNotes?: String | null
   sequenceNumber: Int
+  barcoded?: Boolean | null
   dateOrdered?: DateTime | null
   dateReceived?: DateTime | null
   unitCost?: Float | null
@@ -27993,6 +28023,7 @@ export interface PhysicalProductCreateWithoutProductVariantInput {
   offloadMethod?: PhysicalProductOffloadMethod | null
   offloadNotes?: String | null
   sequenceNumber: Int
+  barcoded?: Boolean | null
   dateOrdered?: DateTime | null
   dateReceived?: DateTime | null
   unitCost?: Float | null
@@ -28009,6 +28040,7 @@ export interface PhysicalProductCreateWithoutWarehouseLocationInput {
   offloadMethod?: PhysicalProductOffloadMethod | null
   offloadNotes?: String | null
   sequenceNumber: Int
+  barcoded?: Boolean | null
   dateOrdered?: DateTime | null
   dateReceived?: DateTime | null
   unitCost?: Float | null
@@ -28254,6 +28286,8 @@ export interface PhysicalProductScalarWhereInput {
   sequenceNumber_lte?: Int | null
   sequenceNumber_gt?: Int | null
   sequenceNumber_gte?: Int | null
+  barcoded?: Boolean | null
+  barcoded_not?: Boolean | null
   dateOrdered?: DateTime | null
   dateOrdered_not?: DateTime | null
   dateOrdered_in?: DateTime[] | DateTime | null
@@ -28314,6 +28348,7 @@ export interface PhysicalProductUpdateDataInput {
   offloadMethod?: PhysicalProductOffloadMethod | null
   offloadNotes?: String | null
   sequenceNumber?: Int | null
+  barcoded?: Boolean | null
   dateOrdered?: DateTime | null
   dateReceived?: DateTime | null
   unitCost?: Float | null
@@ -28330,6 +28365,7 @@ export interface PhysicalProductUpdateInput {
   offloadMethod?: PhysicalProductOffloadMethod | null
   offloadNotes?: String | null
   sequenceNumber?: Int | null
+  barcoded?: Boolean | null
   dateOrdered?: DateTime | null
   dateReceived?: DateTime | null
   unitCost?: Float | null
@@ -28346,6 +28382,7 @@ export interface PhysicalProductUpdateManyDataInput {
   offloadMethod?: PhysicalProductOffloadMethod | null
   offloadNotes?: String | null
   sequenceNumber?: Int | null
+  barcoded?: Boolean | null
   dateOrdered?: DateTime | null
   dateReceived?: DateTime | null
   unitCost?: Float | null
@@ -28370,6 +28407,7 @@ export interface PhysicalProductUpdateManyMutationInput {
   offloadMethod?: PhysicalProductOffloadMethod | null
   offloadNotes?: String | null
   sequenceNumber?: Int | null
+  barcoded?: Boolean | null
   dateOrdered?: DateTime | null
   dateReceived?: DateTime | null
   unitCost?: Float | null
@@ -28437,6 +28475,7 @@ export interface PhysicalProductUpdateWithoutInventoryStatusChangesDataInput {
   offloadMethod?: PhysicalProductOffloadMethod | null
   offloadNotes?: String | null
   sequenceNumber?: Int | null
+  barcoded?: Boolean | null
   dateOrdered?: DateTime | null
   dateReceived?: DateTime | null
   unitCost?: Float | null
@@ -28452,6 +28491,7 @@ export interface PhysicalProductUpdateWithoutLocationDataInput {
   offloadMethod?: PhysicalProductOffloadMethod | null
   offloadNotes?: String | null
   sequenceNumber?: Int | null
+  barcoded?: Boolean | null
   dateOrdered?: DateTime | null
   dateReceived?: DateTime | null
   unitCost?: Float | null
@@ -28467,6 +28507,7 @@ export interface PhysicalProductUpdateWithoutProductVariantDataInput {
   offloadMethod?: PhysicalProductOffloadMethod | null
   offloadNotes?: String | null
   sequenceNumber?: Int | null
+  barcoded?: Boolean | null
   dateOrdered?: DateTime | null
   dateReceived?: DateTime | null
   unitCost?: Float | null
@@ -28482,6 +28523,7 @@ export interface PhysicalProductUpdateWithoutWarehouseLocationDataInput {
   offloadMethod?: PhysicalProductOffloadMethod | null
   offloadNotes?: String | null
   sequenceNumber?: Int | null
+  barcoded?: Boolean | null
   dateOrdered?: DateTime | null
   dateReceived?: DateTime | null
   unitCost?: Float | null
@@ -28610,6 +28652,8 @@ export interface PhysicalProductWhereInput {
   sequenceNumber_lte?: Int | null
   sequenceNumber_gt?: Int | null
   sequenceNumber_gte?: Int | null
+  barcoded?: Boolean | null
+  barcoded_not?: Boolean | null
   dateOrdered?: DateTime | null
   dateOrdered_not?: DateTime | null
   dateOrdered_in?: DateTime[] | DateTime | null
@@ -29090,7 +29134,7 @@ export interface ProductFunctionWhereUniqueInput {
 export interface ProductMaterialCategoryCreateInput {
   id?: ID_Input | null
   slug: String
-  lifeExpectancy: Int
+  lifeExpectancy: Float
   category: CategoryCreateOneInput
   products?: ProductCreateManyWithoutMaterialCategoryInput | null
 }
@@ -29103,7 +29147,7 @@ export interface ProductMaterialCategoryCreateOneWithoutProductsInput {
 export interface ProductMaterialCategoryCreateWithoutProductsInput {
   id?: ID_Input | null
   slug: String
-  lifeExpectancy: Int
+  lifeExpectancy: Float
   category: CategoryCreateOneInput
 }
 
@@ -29120,14 +29164,14 @@ export interface ProductMaterialCategorySubscriptionWhereInput {
 
 export interface ProductMaterialCategoryUpdateInput {
   slug?: String | null
-  lifeExpectancy?: Int | null
+  lifeExpectancy?: Float | null
   category?: CategoryUpdateOneRequiredInput | null
   products?: ProductUpdateManyWithoutMaterialCategoryInput | null
 }
 
 export interface ProductMaterialCategoryUpdateManyMutationInput {
   slug?: String | null
-  lifeExpectancy?: Int | null
+  lifeExpectancy?: Float | null
 }
 
 export interface ProductMaterialCategoryUpdateOneWithoutProductsInput {
@@ -29141,7 +29185,7 @@ export interface ProductMaterialCategoryUpdateOneWithoutProductsInput {
 
 export interface ProductMaterialCategoryUpdateWithoutProductsDataInput {
   slug?: String | null
-  lifeExpectancy?: Int | null
+  lifeExpectancy?: Float | null
   category?: CategoryUpdateOneRequiredInput | null
 }
 
@@ -29182,14 +29226,14 @@ export interface ProductMaterialCategoryWhereInput {
   slug_not_starts_with?: String | null
   slug_ends_with?: String | null
   slug_not_ends_with?: String | null
-  lifeExpectancy?: Int | null
-  lifeExpectancy_not?: Int | null
-  lifeExpectancy_in?: Int[] | Int | null
-  lifeExpectancy_not_in?: Int[] | Int | null
-  lifeExpectancy_lt?: Int | null
-  lifeExpectancy_lte?: Int | null
-  lifeExpectancy_gt?: Int | null
-  lifeExpectancy_gte?: Int | null
+  lifeExpectancy?: Float | null
+  lifeExpectancy_not?: Float | null
+  lifeExpectancy_in?: Float[] | Float | null
+  lifeExpectancy_not_in?: Float[] | Float | null
+  lifeExpectancy_lt?: Float | null
+  lifeExpectancy_lte?: Float | null
+  lifeExpectancy_gt?: Float | null
+  lifeExpectancy_gte?: Float | null
   category?: CategoryWhereInput | null
   products_every?: ProductWhereInput | null
   products_some?: ProductWhereInput | null
@@ -35292,6 +35336,7 @@ export interface PhysicalProduct extends Node {
   offloadNotes?: String | null
   sequenceNumber: Int
   warehouseLocation?: WarehouseLocation | null
+  barcoded?: Boolean | null
   dateOrdered?: DateTime | null
   dateReceived?: DateTime | null
   unitCost?: Float | null
@@ -35369,6 +35414,7 @@ export interface PhysicalProductPreviousValues {
   offloadMethod?: PhysicalProductOffloadMethod | null
   offloadNotes?: String | null
   sequenceNumber: Int
+  barcoded?: Boolean | null
   dateOrdered?: DateTime | null
   dateReceived?: DateTime | null
   unitCost?: Float | null
@@ -35473,7 +35519,7 @@ export interface ProductFunctionSubscriptionPayload {
 export interface ProductMaterialCategory extends Node {
   id: ID_Output
   slug: String
-  lifeExpectancy: Int
+  lifeExpectancy: Float
   category: Category
   products?: Array<Product> | null
 }
@@ -35500,7 +35546,7 @@ export interface ProductMaterialCategoryEdge {
 export interface ProductMaterialCategoryPreviousValues {
   id: ID_Output
   slug: String
-  lifeExpectancy: Int
+  lifeExpectancy: Float
 }
 
 export interface ProductMaterialCategorySubscriptionPayload {
