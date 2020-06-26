@@ -1,15 +1,11 @@
 import * as util from "util"
 
-import { PhysicalProduct, ProductVariant } from "@app/prisma"
-import { AirtableService } from "@modules/Airtable"
-import { AirtableData } from "@modules/Airtable/airtable.types"
+import { PhysicalProductUtilsService } from "@app/modules/Product"
 import { SlackService } from "@modules/Slack/services/slack.service"
-import { UtilsService } from "@modules/Utils/services/utils.service"
 import { Injectable } from "@nestjs/common"
 import { Cron, CronExpression } from "@nestjs/schedule"
 import { PrismaService } from "@prisma/prisma.service"
-import { head, pick, xor } from "lodash"
-import { format } from "prettier"
+import { head, pick } from "lodash"
 
 interface DataPoint {
   name: string
@@ -28,10 +24,8 @@ interface ReportLine {
 @Injectable()
 export class DataScheduledJobs {
   constructor(
-    private readonly airtableService: AirtableService,
     private readonly prisma: PrismaService,
-    private readonly slackService: SlackService,
-    private readonly utils: UtilsService
+    private readonly slackService: SlackService // private readonly physicalProductUtils: PhysicalProductUtilsService
   ) {}
 
   @Cron(CronExpression.MONDAY_TO_FRIDAY_AT_9AM)
@@ -149,19 +143,11 @@ export class DataScheduledJobs {
           withGutter: true,
         },
         {
-          text:
-            "Physical products with status stored without the parent product also stored",
-          paramArray: [],
-        },
-        {
-          text:
-            "Products with status offloaded without the descendant physical products all being offloaded",
-          paramArray: [],
-        },
-        {
-          text:
-            "Physical Products with status Reserved that are not on an active reservation",
-          paramArray: [],
+          text: "Physical products with an erroneous inventoryStatus situation",
+          paramArray: await this.checkPhysicalProductStatuses(),
+          printDetailFunc: a => {
+            console.log(util.inspect(a, { depth: null }))
+          },
         },
       ],
       withDetails
@@ -215,108 +201,6 @@ export class DataScheduledJobs {
           attachedPhysicalProducts: prodVar.physicalProducts.map(a => ({
             seasonsUID: a.seasonsUID,
           })),
-        })
-      }
-    }
-
-    return cases
-  }
-
-  private checkCounts(allAirtableProductVariants, allPrismaProductVariants) {
-    const countMisalignments = []
-    const prismaTotalPhysicalProductMisalignment = []
-    const airtableTotalPhysicalProductMisalignment = []
-    for (const prismaProductVariant of allPrismaProductVariants) {
-      const correspondingAirtableProductVariant = this.airtableService.getCorrespondingAirtableProductVariant(
-        allAirtableProductVariants,
-        prismaProductVariant
-      )
-
-      // Are all counts identical
-      if (correspondingAirtableProductVariant === undefined) {
-        console.log(
-          "could not find product variant in airtable. sku: ",
-          prismaProductVariant.sku
-        )
-        continue
-      }
-      const totalCorrect =
-        prismaProductVariant.total ===
-        correspondingAirtableProductVariant.model.totalCount
-      const reservableCorrect =
-        prismaProductVariant.reservable ===
-        correspondingAirtableProductVariant.model.reservableCount
-      const reservedCorrect =
-        prismaProductVariant.reserved ===
-        correspondingAirtableProductVariant.model.reservedCount
-      const nonReservableCorrect =
-        prismaProductVariant.nonReservable ===
-        correspondingAirtableProductVariant.model.nonReservableCount
-      const storedCorrect =
-        prismaProductVariant.stored ===
-        correspondingAirtableProductVariant.model.storedCount
-      const offloadedCorrect =
-        prismaProductVariant.offloaded ===
-        correspondingAirtableProductVariant.model.offloadedCount
-      if (
-        !totalCorrect ||
-        !reservableCorrect ||
-        !reservedCorrect ||
-        !nonReservableCorrect ||
-        !storedCorrect ||
-        !offloadedCorrect
-      ) {
-        countMisalignments.push({
-          sku: prismaProductVariant.sku,
-          prismaCounts: pick(prismaProductVariant, [
-            "total",
-            "reserved",
-            "reservable",
-            "nonReservable",
-            "stored",
-            "offloaded",
-          ]),
-          airtableCounts: {
-            total: correspondingAirtableProductVariant.model.totalCount,
-            reserved: correspondingAirtableProductVariant.model.reservedCount,
-            reservable:
-              correspondingAirtableProductVariant.model.reservableCount,
-            nonReservable:
-              correspondingAirtableProductVariant.model.nonReservableCount,
-            stored: correspondingAirtableProductVariant.model.storedCount,
-            offloaded: correspondingAirtableProductVariant.model.offloadedCount,
-          },
-        })
-      }
-
-      // Does prisma have the number of physical products it should? ibid, Airtable?
-      if (
-        prismaProductVariant.physicalProducts.length !==
-        prismaProductVariant.total
-      ) {
-        prismaTotalPhysicalProductMisalignment.push({
-          sku: prismaProductVariant.sku,
-          totalCount: prismaProductVariant.total,
-          attachedPhysicalProducts:
-            prismaProductVariant.physicalProducts.length,
-        })
-      }
-      const noPhysicalProductsAndMisalignment =
-        !correspondingAirtableProductVariant.fields["Physical Products"] &&
-        correspondingAirtableProductVariant.fields["Total Count"] !== 0
-      const physicalProductsAndMisalignment =
-        !!correspondingAirtableProductVariant.fields["Physical Products"] &&
-        correspondingAirtableProductVariant.fields["Physical Products"]
-          .length !== correspondingAirtableProductVariant.fields["Total Count"]
-      if (
-        noPhysicalProductsAndMisalignment ||
-        physicalProductsAndMisalignment
-      ) {
-        airtableTotalPhysicalProductMisalignment.push({
-          sku: correspondingAirtableProductVariant.fields.SKU,
-          totalCount: correspondingAirtableProductVariant.fields["Total Count"],
-          attachedPhysicalProducts:
-            correspondingAirtableProductVariant.fields["Total Count"].length,
         })
       }
     }
@@ -413,72 +297,126 @@ export class DataScheduledJobs {
         issues: [],
         siblingsWithIssues: [],
       } as any
+      const activeReservationWithPhysProd = head(
+        await this.prisma.client.reservations({
+          where: {
+            AND: [
+              { products_some: { seasonsUID: physProd.seasonsUID } },
+              { status_not_in: ["Completed", "Cancelled"] },
+            ],
+          },
+        })
+      )
       switch (physProd.inventoryStatus) {
         case "Stored":
-          const parentProduct = head(
-            await this.prisma.client.products({
-              where: {
-                variants_some: {
-                  physicalProducts_some: { seasonsUID: physProd.seasonsUID },
-                },
-              },
-            })
-          )
-          if (parentProduct.status !== "Stored") {
-            thisCase = {
-              ...thisCase,
-              parentProductStatus: parentProduct.status,
-            }
-            thisCase.issues.push(
-              "If a physical product is stored, its parent product should be stored"
-            )
-          }
-
-          const parentProductVariant = head(
-            await this.prisma.binding.query.productVariants(
-              {
-                where: {
-                  physicalProducts_some: { seasonsUID: physProd.seasonsUID },
-                },
-              },
-              `{
-              physicalProducts {
-                seasonsUID
-                inventoryStatus
-              }
-            }`
-            )
-          ) as any
-          const siblingPhysicalProducts = parentProductVariant.physicalProducts.filter(
-            a => a.seasonsUID !== physProd.seasonsUID
-          )
-          for (const siblingPhysProd of siblingPhysicalProducts) {
-            if (
-              !["Stored", "Reserved"].includes(siblingPhysProd.inventoryStatus)
-            ) {
-              thisCase.siblingsWithIssues.push({
-                ...pick(siblingPhysProd, ["inventoryStatus", "seasonsUID"]),
-              })
-              thisCase.issues.push(
-                `Sibling ${siblingPhysProd.seasonsUID} has erroneous status ${siblingPhysProd.inventoryStatus}`
-              )
-            }
-          }
+          thisCase = await this.checkStoredPhysicalProduct(physProd, thisCase)
           break
         case "Reserved":
-          // code block
+          if (!activeReservationWithPhysProd) {
+            thisCase.issues.push(
+              "Has status reserved but is not on an active reservation"
+            )
+          }
           break
-        case "Offloaded":
-          // code block
+        case "Reservable":
+        case "NonReservable":
+          if (!!activeReservationWithPhysProd) {
+            thisCase = {
+              ...thisCase,
+              activeReservation: pick(activeReservationWithPhysProd, [
+                "reservationNumber",
+                "status",
+              ]),
+            }
+            thisCase.issues.push(
+              `Has status ${physProd.inventoryStatus} but is on an active reservation`
+            )
+          }
           break
         default:
-        // code block
+          break
+      }
+      if (thisCase.issues.length !== 0) {
+        cases.push(thisCase)
       }
     }
 
-    //
+    return cases
   }
 
+  private async checkStoredPhysicalProduct(physProd, thisCase) {
+    let thisCaseClone = Object.assign({}, thisCase)
+
+    const parentProduct = head(
+      await this.prisma.client.products({
+        where: {
+          variants_some: {
+            physicalProducts_some: { seasonsUID: physProd.seasonsUID },
+          },
+        },
+      })
+    )
+    if (parentProduct.status !== "Stored") {
+      thisCaseClone = {
+        ...thisCaseClone,
+        parentProductStatus: parentProduct.status,
+      }
+      thisCaseClone.issues.push(
+        "If a physical product is stored, its parent product should be stored"
+      )
+    }
+
+    const parentProductVariant = head(
+      await this.prisma.binding.query.productVariants(
+        {
+          where: {
+            physicalProducts_some: { seasonsUID: physProd.seasonsUID },
+          },
+        },
+        `{
+        physicalProducts {
+          seasonsUID
+          inventoryStatus
+        }
+      }`
+      )
+    ) as any
+    const siblingPhysicalProducts = parentProductVariant.physicalProducts.filter(
+      a => a.seasonsUID !== physProd.seasonsUID
+    )
+    for (const siblingPhysProd of siblingPhysicalProducts) {
+      if (!["Stored", "Reserved"].includes(siblingPhysProd.inventoryStatus)) {
+        thisCaseClone.siblingsWithIssues.push({
+          ...pick(siblingPhysProd, ["inventoryStatus", "seasonsUID"]),
+        })
+        thisCaseClone.issues.push(
+          `Sibling ${siblingPhysProd.seasonsUID} has erroneous status ${siblingPhysProd.inventoryStatus}`
+        )
+      }
+    }
+
+    return thisCaseClone
+  }
+  private async getProdVarsWithImpossibleCounts() {
+    const allPrismaProdVars = await this.prisma.client.productVariants()
+    const cases = allPrismaProdVars.filter(
+      a =>
+        a.total !==
+        a.reserved + a.reservable + a.nonReservable + a.stored + a.offloaded
+    )
+    const formattedCases = cases.map(a =>
+      pick(a, [
+        "sku",
+        "total",
+        "reserved",
+        "reservable",
+        "nonReservable",
+        "stored",
+        "offloaded",
+      ])
+    )
+    return formattedCases
+  }
   private createReportSection({
     title,
     datapoints,
@@ -555,26 +493,5 @@ export class DataScheduledJobs {
     if (withDetails && paramArray?.length > 0) {
       !!printFunc ? printFunc(paramArray) : console.log(paramArray)
     }
-  }
-
-  private async getProdVarsWithImpossibleCounts() {
-    const allPrismaProdVars = await this.prisma.client.productVariants()
-    const cases = allPrismaProdVars.filter(
-      a =>
-        a.total !==
-        a.reserved + a.reservable + a.nonReservable + a.stored + a.offloaded
-    )
-    const formattedCases = cases.map(a =>
-      pick(a, [
-        "sku",
-        "total",
-        "reserved",
-        "reservable",
-        "nonReservable",
-        "stored",
-        "offloaded",
-      ])
-    )
-    return formattedCases
   }
 }
