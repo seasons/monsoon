@@ -42,6 +42,9 @@ export interface Exists {
   ) => Promise<boolean>;
   pauseRequest: (where?: PauseRequestWhereInput) => Promise<boolean>;
   physicalProduct: (where?: PhysicalProductWhereInput) => Promise<boolean>;
+  physicalProductInventoryStatusChange: (
+    where?: PhysicalProductInventoryStatusChangeWhereInput
+  ) => Promise<boolean>;
   product: (where?: ProductWhereInput) => Promise<boolean>;
   productFunction: (where?: ProductFunctionWhereInput) => Promise<boolean>;
   productMaterialCategory: (
@@ -505,6 +508,27 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => PhysicalProductConnectionPromise;
+  physicalProductInventoryStatusChange: (
+    where: PhysicalProductInventoryStatusChangeWhereUniqueInput
+  ) => PhysicalProductInventoryStatusChangeNullablePromise;
+  physicalProductInventoryStatusChanges: (args?: {
+    where?: PhysicalProductInventoryStatusChangeWhereInput;
+    orderBy?: PhysicalProductInventoryStatusChangeOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<PhysicalProductInventoryStatusChange>;
+  physicalProductInventoryStatusChangesConnection: (args?: {
+    where?: PhysicalProductInventoryStatusChangeWhereInput;
+    orderBy?: PhysicalProductInventoryStatusChangeOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => PhysicalProductInventoryStatusChangeConnectionPromise;
   product: (where: ProductWhereUniqueInput) => ProductNullablePromise;
   products: (args?: {
     where?: ProductWhereInput;
@@ -1329,6 +1353,28 @@ export interface Prisma {
   deleteManyPhysicalProducts: (
     where?: PhysicalProductWhereInput
   ) => BatchPayloadPromise;
+  createPhysicalProductInventoryStatusChange: (
+    data: PhysicalProductInventoryStatusChangeCreateInput
+  ) => PhysicalProductInventoryStatusChangePromise;
+  updatePhysicalProductInventoryStatusChange: (args: {
+    data: PhysicalProductInventoryStatusChangeUpdateInput;
+    where: PhysicalProductInventoryStatusChangeWhereUniqueInput;
+  }) => PhysicalProductInventoryStatusChangePromise;
+  updateManyPhysicalProductInventoryStatusChanges: (args: {
+    data: PhysicalProductInventoryStatusChangeUpdateManyMutationInput;
+    where?: PhysicalProductInventoryStatusChangeWhereInput;
+  }) => BatchPayloadPromise;
+  upsertPhysicalProductInventoryStatusChange: (args: {
+    where: PhysicalProductInventoryStatusChangeWhereUniqueInput;
+    create: PhysicalProductInventoryStatusChangeCreateInput;
+    update: PhysicalProductInventoryStatusChangeUpdateInput;
+  }) => PhysicalProductInventoryStatusChangePromise;
+  deletePhysicalProductInventoryStatusChange: (
+    where: PhysicalProductInventoryStatusChangeWhereUniqueInput
+  ) => PhysicalProductInventoryStatusChangePromise;
+  deleteManyPhysicalProductInventoryStatusChanges: (
+    where?: PhysicalProductInventoryStatusChangeWhereInput
+  ) => BatchPayloadPromise;
   createProduct: (data: ProductCreateInput) => ProductPromise;
   updateProduct: (args: {
     data: ProductUpdateInput;
@@ -1842,6 +1888,9 @@ export interface Subscription {
   physicalProduct: (
     where?: PhysicalProductSubscriptionWhereInput
   ) => PhysicalProductSubscriptionPayloadSubscription;
+  physicalProductInventoryStatusChange: (
+    where?: PhysicalProductInventoryStatusChangeSubscriptionWhereInput
+  ) => PhysicalProductInventoryStatusChangeSubscriptionPayloadSubscription;
   product: (
     where?: ProductSubscriptionWhereInput
   ) => ProductSubscriptionPayloadSubscription;
@@ -2186,6 +2235,18 @@ export type ProductFunctionOrderByInput =
   | "name_DESC";
 
 export type ProductStatusChangeOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "old_ASC"
+  | "old_DESC"
+  | "new_ASC"
+  | "new_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
+
+export type PhysicalProductInventoryStatusChangeOrderByInput =
   | "id_ASC"
   | "id_DESC"
   | "old_ASC"
@@ -3016,6 +3077,15 @@ export interface PhysicalProductWhereInput {
   inventoryStatus_not?: Maybe<InventoryStatus>;
   inventoryStatus_in?: Maybe<InventoryStatus[] | InventoryStatus>;
   inventoryStatus_not_in?: Maybe<InventoryStatus[] | InventoryStatus>;
+  inventoryStatusChanges_every?: Maybe<
+    PhysicalProductInventoryStatusChangeWhereInput
+  >;
+  inventoryStatusChanges_some?: Maybe<
+    PhysicalProductInventoryStatusChangeWhereInput
+  >;
+  inventoryStatusChanges_none?: Maybe<
+    PhysicalProductInventoryStatusChangeWhereInput
+  >;
   productStatus?: Maybe<PhysicalProductStatus>;
   productStatus_not?: Maybe<PhysicalProductStatus>;
   productStatus_in?: Maybe<PhysicalProductStatus[] | PhysicalProductStatus>;
@@ -4404,6 +4474,60 @@ export interface ProductStatusChangeWhereInput {
   AND?: Maybe<ProductStatusChangeWhereInput[] | ProductStatusChangeWhereInput>;
   OR?: Maybe<ProductStatusChangeWhereInput[] | ProductStatusChangeWhereInput>;
   NOT?: Maybe<ProductStatusChangeWhereInput[] | ProductStatusChangeWhereInput>;
+}
+
+export interface PhysicalProductInventoryStatusChangeWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  old?: Maybe<InventoryStatus>;
+  old_not?: Maybe<InventoryStatus>;
+  old_in?: Maybe<InventoryStatus[] | InventoryStatus>;
+  old_not_in?: Maybe<InventoryStatus[] | InventoryStatus>;
+  new?: Maybe<InventoryStatus>;
+  new_not?: Maybe<InventoryStatus>;
+  new_in?: Maybe<InventoryStatus[] | InventoryStatus>;
+  new_not_in?: Maybe<InventoryStatus[] | InventoryStatus>;
+  physicalProduct?: Maybe<PhysicalProductWhereInput>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<
+    | PhysicalProductInventoryStatusChangeWhereInput[]
+    | PhysicalProductInventoryStatusChangeWhereInput
+  >;
+  OR?: Maybe<
+    | PhysicalProductInventoryStatusChangeWhereInput[]
+    | PhysicalProductInventoryStatusChangeWhereInput
+  >;
+  NOT?: Maybe<
+    | PhysicalProductInventoryStatusChangeWhereInput[]
+    | PhysicalProductInventoryStatusChangeWhereInput
+  >;
 }
 
 export interface WarehouseLocationWhereInput {
@@ -5842,6 +5966,10 @@ export type PhysicalProductWhereUniqueInput = AtLeastOne<{
   seasonsUID?: Maybe<String>;
 }>;
 
+export type PhysicalProductInventoryStatusChangeWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
 export type ProductWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
   slug?: Maybe<String>;
@@ -6442,6 +6570,9 @@ export interface PhysicalProductCreateWithoutLocationInput {
   seasonsUID: String;
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput;
   inventoryStatus: InventoryStatus;
+  inventoryStatusChanges?: Maybe<
+    PhysicalProductInventoryStatusChangeCreateManyWithoutPhysicalProductInput
+  >;
   productStatus: PhysicalProductStatus;
   offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
   offloadNotes?: Maybe<String>;
@@ -6748,6 +6879,9 @@ export interface PhysicalProductCreateWithoutProductVariantInput {
   seasonsUID: String;
   location?: Maybe<LocationCreateOneWithoutPhysicalProductsInput>;
   inventoryStatus: InventoryStatus;
+  inventoryStatusChanges?: Maybe<
+    PhysicalProductInventoryStatusChangeCreateManyWithoutPhysicalProductInput
+  >;
   productStatus: PhysicalProductStatus;
   offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
   offloadNotes?: Maybe<String>;
@@ -6780,6 +6914,23 @@ export interface LocationCreateWithoutPhysicalProductsInput {
   user?: Maybe<UserCreateOneInput>;
   lat?: Maybe<Float>;
   lng?: Maybe<Float>;
+}
+
+export interface PhysicalProductInventoryStatusChangeCreateManyWithoutPhysicalProductInput {
+  create?: Maybe<
+    | PhysicalProductInventoryStatusChangeCreateWithoutPhysicalProductInput[]
+    | PhysicalProductInventoryStatusChangeCreateWithoutPhysicalProductInput
+  >;
+  connect?: Maybe<
+    | PhysicalProductInventoryStatusChangeWhereUniqueInput[]
+    | PhysicalProductInventoryStatusChangeWhereUniqueInput
+  >;
+}
+
+export interface PhysicalProductInventoryStatusChangeCreateWithoutPhysicalProductInput {
+  id?: Maybe<ID_Input>;
+  old: InventoryStatus;
+  new: InventoryStatus;
 }
 
 export interface WarehouseLocationCreateOneWithoutPhysicalProductsInput {
@@ -7023,6 +7174,9 @@ export interface PhysicalProductCreateInput {
   location?: Maybe<LocationCreateOneWithoutPhysicalProductsInput>;
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput;
   inventoryStatus: InventoryStatus;
+  inventoryStatusChanges?: Maybe<
+    PhysicalProductInventoryStatusChangeCreateManyWithoutPhysicalProductInput
+  >;
   productStatus: PhysicalProductStatus;
   offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
   offloadNotes?: Maybe<String>;
@@ -7528,6 +7682,9 @@ export interface PhysicalProductUpdateWithoutLocationDataInput {
     ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
   >;
   inventoryStatus?: Maybe<InventoryStatus>;
+  inventoryStatusChanges?: Maybe<
+    PhysicalProductInventoryStatusChangeUpdateManyWithoutPhysicalProductInput
+  >;
   productStatus?: Maybe<PhysicalProductStatus>;
   offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
   offloadNotes?: Maybe<String>;
@@ -8199,6 +8356,9 @@ export interface PhysicalProductUpdateWithoutProductVariantDataInput {
   seasonsUID?: Maybe<String>;
   location?: Maybe<LocationUpdateOneWithoutPhysicalProductsInput>;
   inventoryStatus?: Maybe<InventoryStatus>;
+  inventoryStatusChanges?: Maybe<
+    PhysicalProductInventoryStatusChangeUpdateManyWithoutPhysicalProductInput
+  >;
   productStatus?: Maybe<PhysicalProductStatus>;
   offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
   offloadNotes?: Maybe<String>;
@@ -8239,6 +8399,124 @@ export interface LocationUpdateWithoutPhysicalProductsDataInput {
 export interface LocationUpsertWithoutPhysicalProductsInput {
   update: LocationUpdateWithoutPhysicalProductsDataInput;
   create: LocationCreateWithoutPhysicalProductsInput;
+}
+
+export interface PhysicalProductInventoryStatusChangeUpdateManyWithoutPhysicalProductInput {
+  create?: Maybe<
+    | PhysicalProductInventoryStatusChangeCreateWithoutPhysicalProductInput[]
+    | PhysicalProductInventoryStatusChangeCreateWithoutPhysicalProductInput
+  >;
+  delete?: Maybe<
+    | PhysicalProductInventoryStatusChangeWhereUniqueInput[]
+    | PhysicalProductInventoryStatusChangeWhereUniqueInput
+  >;
+  connect?: Maybe<
+    | PhysicalProductInventoryStatusChangeWhereUniqueInput[]
+    | PhysicalProductInventoryStatusChangeWhereUniqueInput
+  >;
+  set?: Maybe<
+    | PhysicalProductInventoryStatusChangeWhereUniqueInput[]
+    | PhysicalProductInventoryStatusChangeWhereUniqueInput
+  >;
+  disconnect?: Maybe<
+    | PhysicalProductInventoryStatusChangeWhereUniqueInput[]
+    | PhysicalProductInventoryStatusChangeWhereUniqueInput
+  >;
+  update?: Maybe<
+    | PhysicalProductInventoryStatusChangeUpdateWithWhereUniqueWithoutPhysicalProductInput[]
+    | PhysicalProductInventoryStatusChangeUpdateWithWhereUniqueWithoutPhysicalProductInput
+  >;
+  upsert?: Maybe<
+    | PhysicalProductInventoryStatusChangeUpsertWithWhereUniqueWithoutPhysicalProductInput[]
+    | PhysicalProductInventoryStatusChangeUpsertWithWhereUniqueWithoutPhysicalProductInput
+  >;
+  deleteMany?: Maybe<
+    | PhysicalProductInventoryStatusChangeScalarWhereInput[]
+    | PhysicalProductInventoryStatusChangeScalarWhereInput
+  >;
+  updateMany?: Maybe<
+    | PhysicalProductInventoryStatusChangeUpdateManyWithWhereNestedInput[]
+    | PhysicalProductInventoryStatusChangeUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface PhysicalProductInventoryStatusChangeUpdateWithWhereUniqueWithoutPhysicalProductInput {
+  where: PhysicalProductInventoryStatusChangeWhereUniqueInput;
+  data: PhysicalProductInventoryStatusChangeUpdateWithoutPhysicalProductDataInput;
+}
+
+export interface PhysicalProductInventoryStatusChangeUpdateWithoutPhysicalProductDataInput {
+  old?: Maybe<InventoryStatus>;
+  new?: Maybe<InventoryStatus>;
+}
+
+export interface PhysicalProductInventoryStatusChangeUpsertWithWhereUniqueWithoutPhysicalProductInput {
+  where: PhysicalProductInventoryStatusChangeWhereUniqueInput;
+  update: PhysicalProductInventoryStatusChangeUpdateWithoutPhysicalProductDataInput;
+  create: PhysicalProductInventoryStatusChangeCreateWithoutPhysicalProductInput;
+}
+
+export interface PhysicalProductInventoryStatusChangeScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  old?: Maybe<InventoryStatus>;
+  old_not?: Maybe<InventoryStatus>;
+  old_in?: Maybe<InventoryStatus[] | InventoryStatus>;
+  old_not_in?: Maybe<InventoryStatus[] | InventoryStatus>;
+  new?: Maybe<InventoryStatus>;
+  new_not?: Maybe<InventoryStatus>;
+  new_in?: Maybe<InventoryStatus[] | InventoryStatus>;
+  new_not_in?: Maybe<InventoryStatus[] | InventoryStatus>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<
+    | PhysicalProductInventoryStatusChangeScalarWhereInput[]
+    | PhysicalProductInventoryStatusChangeScalarWhereInput
+  >;
+  OR?: Maybe<
+    | PhysicalProductInventoryStatusChangeScalarWhereInput[]
+    | PhysicalProductInventoryStatusChangeScalarWhereInput
+  >;
+  NOT?: Maybe<
+    | PhysicalProductInventoryStatusChangeScalarWhereInput[]
+    | PhysicalProductInventoryStatusChangeScalarWhereInput
+  >;
+}
+
+export interface PhysicalProductInventoryStatusChangeUpdateManyWithWhereNestedInput {
+  where: PhysicalProductInventoryStatusChangeScalarWhereInput;
+  data: PhysicalProductInventoryStatusChangeUpdateManyDataInput;
+}
+
+export interface PhysicalProductInventoryStatusChangeUpdateManyDataInput {
+  old?: Maybe<InventoryStatus>;
+  new?: Maybe<InventoryStatus>;
 }
 
 export interface WarehouseLocationUpdateOneWithoutPhysicalProductsInput {
@@ -9690,6 +9968,9 @@ export interface PhysicalProductUpdateDataInput {
     ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
   >;
   inventoryStatus?: Maybe<InventoryStatus>;
+  inventoryStatusChanges?: Maybe<
+    PhysicalProductInventoryStatusChangeUpdateManyWithoutPhysicalProductInput
+  >;
   productStatus?: Maybe<PhysicalProductStatus>;
   offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
   offloadNotes?: Maybe<String>;
@@ -11071,6 +11352,9 @@ export interface PhysicalProductUpdateInput {
     ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
   >;
   inventoryStatus?: Maybe<InventoryStatus>;
+  inventoryStatusChanges?: Maybe<
+    PhysicalProductInventoryStatusChangeUpdateManyWithoutPhysicalProductInput
+  >;
   productStatus?: Maybe<PhysicalProductStatus>;
   offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
   offloadNotes?: Maybe<String>;
@@ -11093,6 +11377,80 @@ export interface PhysicalProductUpdateManyMutationInput {
   dateOrdered?: Maybe<DateTimeInput>;
   dateReceived?: Maybe<DateTimeInput>;
   unitCost?: Maybe<Float>;
+}
+
+export interface PhysicalProductInventoryStatusChangeCreateInput {
+  id?: Maybe<ID_Input>;
+  old: InventoryStatus;
+  new: InventoryStatus;
+  physicalProduct: PhysicalProductCreateOneWithoutInventoryStatusChangesInput;
+}
+
+export interface PhysicalProductCreateOneWithoutInventoryStatusChangesInput {
+  create?: Maybe<PhysicalProductCreateWithoutInventoryStatusChangesInput>;
+  connect?: Maybe<PhysicalProductWhereUniqueInput>;
+}
+
+export interface PhysicalProductCreateWithoutInventoryStatusChangesInput {
+  id?: Maybe<ID_Input>;
+  seasonsUID: String;
+  location?: Maybe<LocationCreateOneWithoutPhysicalProductsInput>;
+  productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput;
+  inventoryStatus: InventoryStatus;
+  productStatus: PhysicalProductStatus;
+  offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
+  offloadNotes?: Maybe<String>;
+  sequenceNumber: Int;
+  warehouseLocation?: Maybe<
+    WarehouseLocationCreateOneWithoutPhysicalProductsInput
+  >;
+  dateOrdered?: Maybe<DateTimeInput>;
+  dateReceived?: Maybe<DateTimeInput>;
+  unitCost?: Maybe<Float>;
+}
+
+export interface PhysicalProductInventoryStatusChangeUpdateInput {
+  old?: Maybe<InventoryStatus>;
+  new?: Maybe<InventoryStatus>;
+  physicalProduct?: Maybe<
+    PhysicalProductUpdateOneRequiredWithoutInventoryStatusChangesInput
+  >;
+}
+
+export interface PhysicalProductUpdateOneRequiredWithoutInventoryStatusChangesInput {
+  create?: Maybe<PhysicalProductCreateWithoutInventoryStatusChangesInput>;
+  update?: Maybe<PhysicalProductUpdateWithoutInventoryStatusChangesDataInput>;
+  upsert?: Maybe<PhysicalProductUpsertWithoutInventoryStatusChangesInput>;
+  connect?: Maybe<PhysicalProductWhereUniqueInput>;
+}
+
+export interface PhysicalProductUpdateWithoutInventoryStatusChangesDataInput {
+  seasonsUID?: Maybe<String>;
+  location?: Maybe<LocationUpdateOneWithoutPhysicalProductsInput>;
+  productVariant?: Maybe<
+    ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
+  >;
+  inventoryStatus?: Maybe<InventoryStatus>;
+  productStatus?: Maybe<PhysicalProductStatus>;
+  offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
+  offloadNotes?: Maybe<String>;
+  sequenceNumber?: Maybe<Int>;
+  warehouseLocation?: Maybe<
+    WarehouseLocationUpdateOneWithoutPhysicalProductsInput
+  >;
+  dateOrdered?: Maybe<DateTimeInput>;
+  dateReceived?: Maybe<DateTimeInput>;
+  unitCost?: Maybe<Float>;
+}
+
+export interface PhysicalProductUpsertWithoutInventoryStatusChangesInput {
+  update: PhysicalProductUpdateWithoutInventoryStatusChangesDataInput;
+  create: PhysicalProductCreateWithoutInventoryStatusChangesInput;
+}
+
+export interface PhysicalProductInventoryStatusChangeUpdateManyMutationInput {
+  old?: Maybe<InventoryStatus>;
+  new?: Maybe<InventoryStatus>;
 }
 
 export interface ProductUpdateInput {
@@ -12677,6 +13035,9 @@ export interface PhysicalProductCreateWithoutWarehouseLocationInput {
   location?: Maybe<LocationCreateOneWithoutPhysicalProductsInput>;
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput;
   inventoryStatus: InventoryStatus;
+  inventoryStatusChanges?: Maybe<
+    PhysicalProductInventoryStatusChangeCreateManyWithoutPhysicalProductInput
+  >;
   productStatus: PhysicalProductStatus;
   offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
   offloadNotes?: Maybe<String>;
@@ -12745,6 +13106,9 @@ export interface PhysicalProductUpdateWithoutWarehouseLocationDataInput {
     ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
   >;
   inventoryStatus?: Maybe<InventoryStatus>;
+  inventoryStatusChanges?: Maybe<
+    PhysicalProductInventoryStatusChangeUpdateManyWithoutPhysicalProductInput
+  >;
   productStatus?: Maybe<PhysicalProductStatus>;
   offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
   offloadNotes?: Maybe<String>;
@@ -13273,6 +13637,26 @@ export interface PhysicalProductSubscriptionWhereInput {
   NOT?: Maybe<
     | PhysicalProductSubscriptionWhereInput[]
     | PhysicalProductSubscriptionWhereInput
+  >;
+}
+
+export interface PhysicalProductInventoryStatusChangeSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<PhysicalProductInventoryStatusChangeWhereInput>;
+  AND?: Maybe<
+    | PhysicalProductInventoryStatusChangeSubscriptionWhereInput[]
+    | PhysicalProductInventoryStatusChangeSubscriptionWhereInput
+  >;
+  OR?: Maybe<
+    | PhysicalProductInventoryStatusChangeSubscriptionWhereInput[]
+    | PhysicalProductInventoryStatusChangeSubscriptionWhereInput
+  >;
+  NOT?: Maybe<
+    | PhysicalProductInventoryStatusChangeSubscriptionWhereInput[]
+    | PhysicalProductInventoryStatusChangeSubscriptionWhereInput
   >;
 }
 
@@ -14215,6 +14599,17 @@ export interface PhysicalProductPromise
   location: <T = LocationPromise>() => T;
   productVariant: <T = ProductVariantPromise>() => T;
   inventoryStatus: () => Promise<InventoryStatus>;
+  inventoryStatusChanges: <
+    T = FragmentableArray<PhysicalProductInventoryStatusChange>
+  >(args?: {
+    where?: PhysicalProductInventoryStatusChangeWhereInput;
+    orderBy?: PhysicalProductInventoryStatusChangeOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
   productStatus: () => Promise<PhysicalProductStatus>;
   offloadMethod: () => Promise<PhysicalProductOffloadMethod>;
   offloadNotes: () => Promise<String>;
@@ -14235,6 +14630,17 @@ export interface PhysicalProductSubscription
   location: <T = LocationSubscription>() => T;
   productVariant: <T = ProductVariantSubscription>() => T;
   inventoryStatus: () => Promise<AsyncIterator<InventoryStatus>>;
+  inventoryStatusChanges: <
+    T = Promise<AsyncIterator<PhysicalProductInventoryStatusChangeSubscription>>
+  >(args?: {
+    where?: PhysicalProductInventoryStatusChangeWhereInput;
+    orderBy?: PhysicalProductInventoryStatusChangeOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
   productStatus: () => Promise<AsyncIterator<PhysicalProductStatus>>;
   offloadMethod: () => Promise<AsyncIterator<PhysicalProductOffloadMethod>>;
   offloadNotes: () => Promise<AsyncIterator<String>>;
@@ -14255,6 +14661,17 @@ export interface PhysicalProductNullablePromise
   location: <T = LocationPromise>() => T;
   productVariant: <T = ProductVariantPromise>() => T;
   inventoryStatus: () => Promise<InventoryStatus>;
+  inventoryStatusChanges: <
+    T = FragmentableArray<PhysicalProductInventoryStatusChange>
+  >(args?: {
+    where?: PhysicalProductInventoryStatusChangeWhereInput;
+    orderBy?: PhysicalProductInventoryStatusChangeOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
   productStatus: () => Promise<PhysicalProductStatus>;
   offloadMethod: () => Promise<PhysicalProductOffloadMethod>;
   offloadNotes: () => Promise<String>;
@@ -15317,6 +15734,47 @@ export interface ProductStatusChangeNullablePromise
   old: () => Promise<ProductStatus>;
   new: () => Promise<ProductStatus>;
   product: <T = ProductPromise>() => T;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface PhysicalProductInventoryStatusChange {
+  id: ID_Output;
+  old: InventoryStatus;
+  new: InventoryStatus;
+  createdAt: DateTimeOutput;
+  updatedAt?: DateTimeOutput;
+}
+
+export interface PhysicalProductInventoryStatusChangePromise
+  extends Promise<PhysicalProductInventoryStatusChange>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  old: () => Promise<InventoryStatus>;
+  new: () => Promise<InventoryStatus>;
+  physicalProduct: <T = PhysicalProductPromise>() => T;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface PhysicalProductInventoryStatusChangeSubscription
+  extends Promise<AsyncIterator<PhysicalProductInventoryStatusChange>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  old: () => Promise<AsyncIterator<InventoryStatus>>;
+  new: () => Promise<AsyncIterator<InventoryStatus>>;
+  physicalProduct: <T = PhysicalProductSubscription>() => T;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface PhysicalProductInventoryStatusChangeNullablePromise
+  extends Promise<PhysicalProductInventoryStatusChange | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  old: () => Promise<InventoryStatus>;
+  new: () => Promise<InventoryStatus>;
+  physicalProduct: <T = PhysicalProductPromise>() => T;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -17388,6 +17846,72 @@ export interface AggregatePhysicalProductPromise
 
 export interface AggregatePhysicalProductSubscription
   extends Promise<AsyncIterator<AggregatePhysicalProduct>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface PhysicalProductInventoryStatusChangeConnection {
+  pageInfo: PageInfo;
+  edges: PhysicalProductInventoryStatusChangeEdge[];
+}
+
+export interface PhysicalProductInventoryStatusChangeConnectionPromise
+  extends Promise<PhysicalProductInventoryStatusChangeConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <
+    T = FragmentableArray<PhysicalProductInventoryStatusChangeEdge>
+  >() => T;
+  aggregate: <T = AggregatePhysicalProductInventoryStatusChangePromise>() => T;
+}
+
+export interface PhysicalProductInventoryStatusChangeConnectionSubscription
+  extends Promise<
+      AsyncIterator<PhysicalProductInventoryStatusChangeConnection>
+    >,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <
+    T = Promise<
+      AsyncIterator<PhysicalProductInventoryStatusChangeEdgeSubscription>
+    >
+  >() => T;
+  aggregate: <
+    T = AggregatePhysicalProductInventoryStatusChangeSubscription
+  >() => T;
+}
+
+export interface PhysicalProductInventoryStatusChangeEdge {
+  node: PhysicalProductInventoryStatusChange;
+  cursor: String;
+}
+
+export interface PhysicalProductInventoryStatusChangeEdgePromise
+  extends Promise<PhysicalProductInventoryStatusChangeEdge>,
+    Fragmentable {
+  node: <T = PhysicalProductInventoryStatusChangePromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface PhysicalProductInventoryStatusChangeEdgeSubscription
+  extends Promise<AsyncIterator<PhysicalProductInventoryStatusChangeEdge>>,
+    Fragmentable {
+  node: <T = PhysicalProductInventoryStatusChangeSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregatePhysicalProductInventoryStatusChange {
+  count: Int;
+}
+
+export interface AggregatePhysicalProductInventoryStatusChangePromise
+  extends Promise<AggregatePhysicalProductInventoryStatusChange>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregatePhysicalProductInventoryStatusChangeSubscription
+  extends Promise<AsyncIterator<AggregatePhysicalProductInventoryStatusChange>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
@@ -20172,6 +20696,67 @@ export interface PhysicalProductPreviousValuesSubscription
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
+export interface PhysicalProductInventoryStatusChangeSubscriptionPayload {
+  mutation: MutationType;
+  node: PhysicalProductInventoryStatusChange;
+  updatedFields: String[];
+  previousValues: PhysicalProductInventoryStatusChangePreviousValues;
+}
+
+export interface PhysicalProductInventoryStatusChangeSubscriptionPayloadPromise
+  extends Promise<PhysicalProductInventoryStatusChangeSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = PhysicalProductInventoryStatusChangePromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <
+    T = PhysicalProductInventoryStatusChangePreviousValuesPromise
+  >() => T;
+}
+
+export interface PhysicalProductInventoryStatusChangeSubscriptionPayloadSubscription
+  extends Promise<
+      AsyncIterator<PhysicalProductInventoryStatusChangeSubscriptionPayload>
+    >,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = PhysicalProductInventoryStatusChangeSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <
+    T = PhysicalProductInventoryStatusChangePreviousValuesSubscription
+  >() => T;
+}
+
+export interface PhysicalProductInventoryStatusChangePreviousValues {
+  id: ID_Output;
+  old: InventoryStatus;
+  new: InventoryStatus;
+  createdAt: DateTimeOutput;
+  updatedAt?: DateTimeOutput;
+}
+
+export interface PhysicalProductInventoryStatusChangePreviousValuesPromise
+  extends Promise<PhysicalProductInventoryStatusChangePreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  old: () => Promise<InventoryStatus>;
+  new: () => Promise<InventoryStatus>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface PhysicalProductInventoryStatusChangePreviousValuesSubscription
+  extends Promise<
+      AsyncIterator<PhysicalProductInventoryStatusChangePreviousValues>
+    >,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  old: () => Promise<AsyncIterator<InventoryStatus>>;
+  new: () => Promise<AsyncIterator<InventoryStatus>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
 export interface ProductSubscriptionPayload {
   mutation: MutationType;
   node: Product;
@@ -21645,6 +22230,10 @@ export const models: Model[] = [
     embedded: false
   },
   {
+    name: "PhysicalProductInventoryStatusChange",
+    embedded: false
+  },
+  {
     name: "PhysicalProduct",
     embedded: false
   },
@@ -21761,7 +22350,7 @@ export const models: Model[] = [
 export const Prisma = makePrismaClientClass<ClientConstructor<Prisma>>({
   typeDefs,
   models,
-  endpoint: `http://localhost:4466/monsoon/dev`,
+  endpoint: `${process.env["PRISMA_ENDPOINT"]}`,
   secret: `${process.env["PRISMA_SECRET"]}`
 });
 export const prisma = new Prisma();

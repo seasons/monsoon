@@ -405,12 +405,30 @@ type ProductVariant {
   updatedAt: DateTime! @updatedAt
 }
 
+type PhysicalProductInventoryStatusChange {
+  id: ID! @id
+  old: InventoryStatus!
+  new: InventoryStatus!
+  physicalProduct: PhysicalProduct!
+    @relation(
+      name: "PhysicalProductToPhysicalProductStatusChange"
+      onDelete: SET_NULL
+    )
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime @updatedAt
+}
 type PhysicalProduct {
   id: ID! @id
   seasonsUID: String! @unique
   location: Location
   productVariant: ProductVariant! @relation(onDelete: SET_NULL)
   inventoryStatus: InventoryStatus!
+  inventoryStatusChanges: [PhysicalProductInventoryStatusChange!]!
+    @relation(
+      name: "PhysicalProductToPhysicalProductStatusChange"
+      link: TABLE
+      onDelete: CASCADE
+    )
   productStatus: PhysicalProductStatus!
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String

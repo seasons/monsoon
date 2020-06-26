@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Thu Jun 25 2020 11:52:10 GMT-0400 (Eastern Daylight Time)
+# timestamp: Thu Jun 25 2020 19:56:09 GMT-0400 (Eastern Daylight Time)
 
 type AggregateBagItem {
   count: Int!
@@ -78,6 +78,10 @@ type AggregatePauseRequest {
 }
 
 type AggregatePhysicalProduct {
+  count: Int!
+}
+
+type AggregatePhysicalProductInventoryStatusChange {
   count: Int!
 }
 
@@ -7973,6 +7977,7 @@ type Mutation {
   createProductStatusChange(data: ProductStatusChangeCreateInput!): ProductStatusChange!
   createProductMaterialCategory(data: ProductMaterialCategoryCreateInput!): ProductMaterialCategory!
   createProductModel(data: ProductModelCreateInput!): ProductModel!
+  createPhysicalProductInventoryStatusChange(data: PhysicalProductInventoryStatusChangeCreateInput!): PhysicalProductInventoryStatusChange!
   createWarehouseLocationConstraint(data: WarehouseLocationConstraintCreateInput!): WarehouseLocationConstraint!
   createWarehouseLocation(data: WarehouseLocationCreateInput!): WarehouseLocation!
   createEmailReceipt(data: EmailReceiptCreateInput!): EmailReceipt!
@@ -8015,6 +8020,7 @@ type Mutation {
   updateProductStatusChange(data: ProductStatusChangeUpdateInput!, where: ProductStatusChangeWhereUniqueInput!): ProductStatusChange
   updateProductMaterialCategory(data: ProductMaterialCategoryUpdateInput!, where: ProductMaterialCategoryWhereUniqueInput!): ProductMaterialCategory
   updateProductModel(data: ProductModelUpdateInput!, where: ProductModelWhereUniqueInput!): ProductModel
+  updatePhysicalProductInventoryStatusChange(data: PhysicalProductInventoryStatusChangeUpdateInput!, where: PhysicalProductInventoryStatusChangeWhereUniqueInput!): PhysicalProductInventoryStatusChange
   updateWarehouseLocationConstraint(data: WarehouseLocationConstraintUpdateInput!, where: WarehouseLocationConstraintWhereUniqueInput!): WarehouseLocationConstraint
   updateWarehouseLocation(data: WarehouseLocationUpdateInput!, where: WarehouseLocationWhereUniqueInput!): WarehouseLocation
   updateEmailReceipt(data: EmailReceiptUpdateInput!, where: EmailReceiptWhereUniqueInput!): EmailReceipt
@@ -8057,6 +8063,7 @@ type Mutation {
   deleteProductStatusChange(where: ProductStatusChangeWhereUniqueInput!): ProductStatusChange
   deleteProductMaterialCategory(where: ProductMaterialCategoryWhereUniqueInput!): ProductMaterialCategory
   deleteProductModel(where: ProductModelWhereUniqueInput!): ProductModel
+  deletePhysicalProductInventoryStatusChange(where: PhysicalProductInventoryStatusChangeWhereUniqueInput!): PhysicalProductInventoryStatusChange
   deleteWarehouseLocationConstraint(where: WarehouseLocationConstraintWhereUniqueInput!): WarehouseLocationConstraint
   deleteWarehouseLocation(where: WarehouseLocationWhereUniqueInput!): WarehouseLocation
   deleteEmailReceipt(where: EmailReceiptWhereUniqueInput!): EmailReceipt
@@ -8099,6 +8106,7 @@ type Mutation {
   upsertProductStatusChange(where: ProductStatusChangeWhereUniqueInput!, create: ProductStatusChangeCreateInput!, update: ProductStatusChangeUpdateInput!): ProductStatusChange!
   upsertProductMaterialCategory(where: ProductMaterialCategoryWhereUniqueInput!, create: ProductMaterialCategoryCreateInput!, update: ProductMaterialCategoryUpdateInput!): ProductMaterialCategory!
   upsertProductModel(where: ProductModelWhereUniqueInput!, create: ProductModelCreateInput!, update: ProductModelUpdateInput!): ProductModel!
+  upsertPhysicalProductInventoryStatusChange(where: PhysicalProductInventoryStatusChangeWhereUniqueInput!, create: PhysicalProductInventoryStatusChangeCreateInput!, update: PhysicalProductInventoryStatusChangeUpdateInput!): PhysicalProductInventoryStatusChange!
   upsertWarehouseLocationConstraint(where: WarehouseLocationConstraintWhereUniqueInput!, create: WarehouseLocationConstraintCreateInput!, update: WarehouseLocationConstraintUpdateInput!): WarehouseLocationConstraint!
   upsertWarehouseLocation(where: WarehouseLocationWhereUniqueInput!, create: WarehouseLocationCreateInput!, update: WarehouseLocationUpdateInput!): WarehouseLocation!
   upsertEmailReceipt(where: EmailReceiptWhereUniqueInput!, create: EmailReceiptCreateInput!, update: EmailReceiptUpdateInput!): EmailReceipt!
@@ -8141,6 +8149,7 @@ type Mutation {
   updateManyProductStatusChanges(data: ProductStatusChangeUpdateManyMutationInput!, where: ProductStatusChangeWhereInput): BatchPayload!
   updateManyProductMaterialCategories(data: ProductMaterialCategoryUpdateManyMutationInput!, where: ProductMaterialCategoryWhereInput): BatchPayload!
   updateManyProductModels(data: ProductModelUpdateManyMutationInput!, where: ProductModelWhereInput): BatchPayload!
+  updateManyPhysicalProductInventoryStatusChanges(data: PhysicalProductInventoryStatusChangeUpdateManyMutationInput!, where: PhysicalProductInventoryStatusChangeWhereInput): BatchPayload!
   updateManyWarehouseLocationConstraints(data: WarehouseLocationConstraintUpdateManyMutationInput!, where: WarehouseLocationConstraintWhereInput): BatchPayload!
   updateManyWarehouseLocations(data: WarehouseLocationUpdateManyMutationInput!, where: WarehouseLocationWhereInput): BatchPayload!
   updateManyEmailReceipts(data: EmailReceiptUpdateManyMutationInput!, where: EmailReceiptWhereInput): BatchPayload!
@@ -8182,6 +8191,7 @@ type Mutation {
   deleteManyProductStatusChanges(where: ProductStatusChangeWhereInput): BatchPayload!
   deleteManyProductMaterialCategories(where: ProductMaterialCategoryWhereInput): BatchPayload!
   deleteManyProductModels(where: ProductModelWhereInput): BatchPayload!
+  deleteManyPhysicalProductInventoryStatusChanges(where: PhysicalProductInventoryStatusChangeWhereInput): BatchPayload!
   deleteManyWarehouseLocationConstraints(where: WarehouseLocationConstraintWhereInput): BatchPayload!
   deleteManyWarehouseLocations(where: WarehouseLocationWhereInput): BatchPayload!
   deleteManyEmailReceipts(where: EmailReceiptWhereInput): BatchPayload!
@@ -9455,6 +9465,7 @@ type PhysicalProduct implements Node {
   location: Location
   productVariant: ProductVariant!
   inventoryStatus: InventoryStatus!
+  inventoryStatusChanges(where: PhysicalProductInventoryStatusChangeWhereInput, orderBy: PhysicalProductInventoryStatusChangeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProductInventoryStatusChange!]
   productStatus: PhysicalProductStatus!
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
@@ -9490,6 +9501,7 @@ input PhysicalProductCreateInput {
   unitCost: Float
   location: LocationCreateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
+  inventoryStatusChanges: PhysicalProductInventoryStatusChangeCreateManyWithoutPhysicalProductInput
   warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
 }
 
@@ -9518,6 +9530,27 @@ input PhysicalProductCreateOneInput {
   connect: PhysicalProductWhereUniqueInput
 }
 
+input PhysicalProductCreateOneWithoutInventoryStatusChangesInput {
+  create: PhysicalProductCreateWithoutInventoryStatusChangesInput
+  connect: PhysicalProductWhereUniqueInput
+}
+
+input PhysicalProductCreateWithoutInventoryStatusChangesInput {
+  id: ID
+  seasonsUID: String!
+  inventoryStatus: InventoryStatus!
+  productStatus: PhysicalProductStatus!
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
+  sequenceNumber: Int!
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
+  location: LocationCreateOneWithoutPhysicalProductsInput
+  productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
+  warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
+}
+
 input PhysicalProductCreateWithoutLocationInput {
   id: ID
   seasonsUID: String!
@@ -9530,6 +9563,7 @@ input PhysicalProductCreateWithoutLocationInput {
   dateReceived: DateTime
   unitCost: Float
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
+  inventoryStatusChanges: PhysicalProductInventoryStatusChangeCreateManyWithoutPhysicalProductInput
   warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
 }
 
@@ -9545,6 +9579,7 @@ input PhysicalProductCreateWithoutProductVariantInput {
   dateReceived: DateTime
   unitCost: Float
   location: LocationCreateOneWithoutPhysicalProductsInput
+  inventoryStatusChanges: PhysicalProductInventoryStatusChangeCreateManyWithoutPhysicalProductInput
   warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
 }
 
@@ -9561,6 +9596,7 @@ input PhysicalProductCreateWithoutWarehouseLocationInput {
   unitCost: Float
   location: LocationCreateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
+  inventoryStatusChanges: PhysicalProductInventoryStatusChangeCreateManyWithoutPhysicalProductInput
 }
 
 """An edge in a connection."""
@@ -9570,6 +9606,394 @@ type PhysicalProductEdge {
 
   """A cursor for use in pagination."""
   cursor: String!
+}
+
+type PhysicalProductInventoryStatusChange implements Node {
+  id: ID!
+  old: InventoryStatus!
+  new: InventoryStatus!
+  physicalProduct: PhysicalProduct!
+  createdAt: DateTime!
+  updatedAt: DateTime
+}
+
+"""A connection to a list of items."""
+type PhysicalProductInventoryStatusChangeConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [PhysicalProductInventoryStatusChangeEdge]!
+  aggregate: AggregatePhysicalProductInventoryStatusChange!
+}
+
+input PhysicalProductInventoryStatusChangeCreateInput {
+  id: ID
+  old: InventoryStatus!
+  new: InventoryStatus!
+  physicalProduct: PhysicalProductCreateOneWithoutInventoryStatusChangesInput!
+}
+
+input PhysicalProductInventoryStatusChangeCreateManyWithoutPhysicalProductInput {
+  create: [PhysicalProductInventoryStatusChangeCreateWithoutPhysicalProductInput!]
+  connect: [PhysicalProductInventoryStatusChangeWhereUniqueInput!]
+}
+
+input PhysicalProductInventoryStatusChangeCreateWithoutPhysicalProductInput {
+  id: ID
+  old: InventoryStatus!
+  new: InventoryStatus!
+}
+
+"""An edge in a connection."""
+type PhysicalProductInventoryStatusChangeEdge {
+  """The item at the end of the edge."""
+  node: PhysicalProductInventoryStatusChange!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum PhysicalProductInventoryStatusChangeOrderByInput {
+  id_ASC
+  id_DESC
+  old_ASC
+  old_DESC
+  new_ASC
+  new_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type PhysicalProductInventoryStatusChangePreviousValues {
+  id: ID!
+  old: InventoryStatus!
+  new: InventoryStatus!
+  createdAt: DateTime!
+  updatedAt: DateTime
+}
+
+input PhysicalProductInventoryStatusChangeScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [PhysicalProductInventoryStatusChangeScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [PhysicalProductInventoryStatusChangeScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [PhysicalProductInventoryStatusChangeScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  old: InventoryStatus
+
+  """All values that are not equal to given value."""
+  old_not: InventoryStatus
+
+  """All values that are contained in given list."""
+  old_in: [InventoryStatus!]
+
+  """All values that are not contained in given list."""
+  old_not_in: [InventoryStatus!]
+  new: InventoryStatus
+
+  """All values that are not equal to given value."""
+  new_not: InventoryStatus
+
+  """All values that are contained in given list."""
+  new_in: [InventoryStatus!]
+
+  """All values that are not contained in given list."""
+  new_not_in: [InventoryStatus!]
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
+}
+
+type PhysicalProductInventoryStatusChangeSubscriptionPayload {
+  mutation: MutationType!
+  node: PhysicalProductInventoryStatusChange
+  updatedFields: [String!]
+  previousValues: PhysicalProductInventoryStatusChangePreviousValues
+}
+
+input PhysicalProductInventoryStatusChangeSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [PhysicalProductInventoryStatusChangeSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [PhysicalProductInventoryStatusChangeSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [PhysicalProductInventoryStatusChangeSubscriptionWhereInput!]
+
+  """The subscription event gets dispatched when it's listed in mutation_in"""
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: PhysicalProductInventoryStatusChangeWhereInput
+}
+
+input PhysicalProductInventoryStatusChangeUpdateInput {
+  old: InventoryStatus
+  new: InventoryStatus
+  physicalProduct: PhysicalProductUpdateOneRequiredWithoutInventoryStatusChangesInput
+}
+
+input PhysicalProductInventoryStatusChangeUpdateManyDataInput {
+  old: InventoryStatus
+  new: InventoryStatus
+}
+
+input PhysicalProductInventoryStatusChangeUpdateManyMutationInput {
+  old: InventoryStatus
+  new: InventoryStatus
+}
+
+input PhysicalProductInventoryStatusChangeUpdateManyWithoutPhysicalProductInput {
+  create: [PhysicalProductInventoryStatusChangeCreateWithoutPhysicalProductInput!]
+  connect: [PhysicalProductInventoryStatusChangeWhereUniqueInput!]
+  set: [PhysicalProductInventoryStatusChangeWhereUniqueInput!]
+  disconnect: [PhysicalProductInventoryStatusChangeWhereUniqueInput!]
+  delete: [PhysicalProductInventoryStatusChangeWhereUniqueInput!]
+  update: [PhysicalProductInventoryStatusChangeUpdateWithWhereUniqueWithoutPhysicalProductInput!]
+  updateMany: [PhysicalProductInventoryStatusChangeUpdateManyWithWhereNestedInput!]
+  deleteMany: [PhysicalProductInventoryStatusChangeScalarWhereInput!]
+  upsert: [PhysicalProductInventoryStatusChangeUpsertWithWhereUniqueWithoutPhysicalProductInput!]
+}
+
+input PhysicalProductInventoryStatusChangeUpdateManyWithWhereNestedInput {
+  where: PhysicalProductInventoryStatusChangeScalarWhereInput!
+  data: PhysicalProductInventoryStatusChangeUpdateManyDataInput!
+}
+
+input PhysicalProductInventoryStatusChangeUpdateWithoutPhysicalProductDataInput {
+  old: InventoryStatus
+  new: InventoryStatus
+}
+
+input PhysicalProductInventoryStatusChangeUpdateWithWhereUniqueWithoutPhysicalProductInput {
+  where: PhysicalProductInventoryStatusChangeWhereUniqueInput!
+  data: PhysicalProductInventoryStatusChangeUpdateWithoutPhysicalProductDataInput!
+}
+
+input PhysicalProductInventoryStatusChangeUpsertWithWhereUniqueWithoutPhysicalProductInput {
+  where: PhysicalProductInventoryStatusChangeWhereUniqueInput!
+  update: PhysicalProductInventoryStatusChangeUpdateWithoutPhysicalProductDataInput!
+  create: PhysicalProductInventoryStatusChangeCreateWithoutPhysicalProductInput!
+}
+
+input PhysicalProductInventoryStatusChangeWhereInput {
+  """Logical AND on all given filters."""
+  AND: [PhysicalProductInventoryStatusChangeWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [PhysicalProductInventoryStatusChangeWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [PhysicalProductInventoryStatusChangeWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  old: InventoryStatus
+
+  """All values that are not equal to given value."""
+  old_not: InventoryStatus
+
+  """All values that are contained in given list."""
+  old_in: [InventoryStatus!]
+
+  """All values that are not contained in given list."""
+  old_not_in: [InventoryStatus!]
+  new: InventoryStatus
+
+  """All values that are not equal to given value."""
+  new_not: InventoryStatus
+
+  """All values that are contained in given list."""
+  new_in: [InventoryStatus!]
+
+  """All values that are not contained in given list."""
+  new_not_in: [InventoryStatus!]
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
+  physicalProduct: PhysicalProductWhereInput
+}
+
+input PhysicalProductInventoryStatusChangeWhereUniqueInput {
+  id: ID
 }
 
 enum PhysicalProductOffloadMethod {
@@ -9974,6 +10398,7 @@ input PhysicalProductUpdateDataInput {
   unitCost: Float
   location: LocationUpdateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
+  inventoryStatusChanges: PhysicalProductInventoryStatusChangeUpdateManyWithoutPhysicalProductInput
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
 }
 
@@ -9989,6 +10414,7 @@ input PhysicalProductUpdateInput {
   unitCost: Float
   location: LocationUpdateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
+  inventoryStatusChanges: PhysicalProductInventoryStatusChangeUpdateManyWithoutPhysicalProductInput
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
 }
 
@@ -10076,6 +10502,28 @@ input PhysicalProductUpdateOneRequiredInput {
   upsert: PhysicalProductUpsertNestedInput
 }
 
+input PhysicalProductUpdateOneRequiredWithoutInventoryStatusChangesInput {
+  create: PhysicalProductCreateWithoutInventoryStatusChangesInput
+  connect: PhysicalProductWhereUniqueInput
+  update: PhysicalProductUpdateWithoutInventoryStatusChangesDataInput
+  upsert: PhysicalProductUpsertWithoutInventoryStatusChangesInput
+}
+
+input PhysicalProductUpdateWithoutInventoryStatusChangesDataInput {
+  seasonsUID: String
+  inventoryStatus: InventoryStatus
+  productStatus: PhysicalProductStatus
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
+  sequenceNumber: Int
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
+  location: LocationUpdateOneWithoutPhysicalProductsInput
+  productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
+  warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
+}
+
 input PhysicalProductUpdateWithoutLocationDataInput {
   seasonsUID: String
   inventoryStatus: InventoryStatus
@@ -10087,6 +10535,7 @@ input PhysicalProductUpdateWithoutLocationDataInput {
   dateReceived: DateTime
   unitCost: Float
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
+  inventoryStatusChanges: PhysicalProductInventoryStatusChangeUpdateManyWithoutPhysicalProductInput
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
 }
 
@@ -10101,6 +10550,7 @@ input PhysicalProductUpdateWithoutProductVariantDataInput {
   dateReceived: DateTime
   unitCost: Float
   location: LocationUpdateOneWithoutPhysicalProductsInput
+  inventoryStatusChanges: PhysicalProductInventoryStatusChangeUpdateManyWithoutPhysicalProductInput
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
 }
 
@@ -10116,6 +10566,7 @@ input PhysicalProductUpdateWithoutWarehouseLocationDataInput {
   unitCost: Float
   location: LocationUpdateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
+  inventoryStatusChanges: PhysicalProductInventoryStatusChangeUpdateManyWithoutPhysicalProductInput
 }
 
 input PhysicalProductUpdateWithWhereUniqueNestedInput {
@@ -10141,6 +10592,11 @@ input PhysicalProductUpdateWithWhereUniqueWithoutWarehouseLocationInput {
 input PhysicalProductUpsertNestedInput {
   update: PhysicalProductUpdateDataInput!
   create: PhysicalProductCreateInput!
+}
+
+input PhysicalProductUpsertWithoutInventoryStatusChangesInput {
+  update: PhysicalProductUpdateWithoutInventoryStatusChangesDataInput!
+  create: PhysicalProductCreateWithoutInventoryStatusChangesInput!
 }
 
 input PhysicalProductUpsertWithWhereUniqueNestedInput {
@@ -10460,6 +10916,9 @@ input PhysicalProductWhereInput {
   updatedAt_gte: DateTime
   location: LocationWhereInput
   productVariant: ProductVariantWhereInput
+  inventoryStatusChanges_every: PhysicalProductInventoryStatusChangeWhereInput
+  inventoryStatusChanges_some: PhysicalProductInventoryStatusChangeWhereInput
+  inventoryStatusChanges_none: PhysicalProductInventoryStatusChangeWhereInput
   warehouseLocation: WarehouseLocationWhereInput
 }
 
@@ -17109,6 +17568,7 @@ type Query {
   productStatusChanges(where: ProductStatusChangeWhereInput, orderBy: ProductStatusChangeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductStatusChange]!
   productMaterialCategories(where: ProductMaterialCategoryWhereInput, orderBy: ProductMaterialCategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductMaterialCategory]!
   productModels(where: ProductModelWhereInput, orderBy: ProductModelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductModel]!
+  physicalProductInventoryStatusChanges(where: PhysicalProductInventoryStatusChangeWhereInput, orderBy: PhysicalProductInventoryStatusChangeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProductInventoryStatusChange]!
   warehouseLocationConstraints(where: WarehouseLocationConstraintWhereInput, orderBy: WarehouseLocationConstraintOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [WarehouseLocationConstraint]!
   warehouseLocations(where: WarehouseLocationWhereInput, orderBy: WarehouseLocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [WarehouseLocation]!
   emailReceipts(where: EmailReceiptWhereInput, orderBy: EmailReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [EmailReceipt]!
@@ -17151,6 +17611,7 @@ type Query {
   productStatusChange(where: ProductStatusChangeWhereUniqueInput!): ProductStatusChange
   productMaterialCategory(where: ProductMaterialCategoryWhereUniqueInput!): ProductMaterialCategory
   productModel(where: ProductModelWhereUniqueInput!): ProductModel
+  physicalProductInventoryStatusChange(where: PhysicalProductInventoryStatusChangeWhereUniqueInput!): PhysicalProductInventoryStatusChange
   warehouseLocationConstraint(where: WarehouseLocationConstraintWhereUniqueInput!): WarehouseLocationConstraint
   warehouseLocation(where: WarehouseLocationWhereUniqueInput!): WarehouseLocation
   emailReceipt(where: EmailReceiptWhereUniqueInput!): EmailReceipt
@@ -17193,6 +17654,7 @@ type Query {
   productStatusChangesConnection(where: ProductStatusChangeWhereInput, orderBy: ProductStatusChangeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductStatusChangeConnection!
   productMaterialCategoriesConnection(where: ProductMaterialCategoryWhereInput, orderBy: ProductMaterialCategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductMaterialCategoryConnection!
   productModelsConnection(where: ProductModelWhereInput, orderBy: ProductModelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductModelConnection!
+  physicalProductInventoryStatusChangesConnection(where: PhysicalProductInventoryStatusChangeWhereInput, orderBy: PhysicalProductInventoryStatusChangeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PhysicalProductInventoryStatusChangeConnection!
   warehouseLocationConstraintsConnection(where: WarehouseLocationConstraintWhereInput, orderBy: WarehouseLocationConstraintOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): WarehouseLocationConstraintConnection!
   warehouseLocationsConnection(where: WarehouseLocationWhereInput, orderBy: WarehouseLocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): WarehouseLocationConnection!
   emailReceiptsConnection(where: EmailReceiptWhereInput, orderBy: EmailReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): EmailReceiptConnection!
@@ -19596,6 +20058,7 @@ type Subscription {
   productStatusChange(where: ProductStatusChangeSubscriptionWhereInput): ProductStatusChangeSubscriptionPayload
   productMaterialCategory(where: ProductMaterialCategorySubscriptionWhereInput): ProductMaterialCategorySubscriptionPayload
   productModel(where: ProductModelSubscriptionWhereInput): ProductModelSubscriptionPayload
+  physicalProductInventoryStatusChange(where: PhysicalProductInventoryStatusChangeSubscriptionWhereInput): PhysicalProductInventoryStatusChangeSubscriptionPayload
   warehouseLocationConstraint(where: WarehouseLocationConstraintSubscriptionWhereInput): WarehouseLocationConstraintSubscriptionPayload
   warehouseLocation(where: WarehouseLocationSubscriptionWhereInput): WarehouseLocationSubscriptionPayload
   emailReceipt(where: EmailReceiptSubscriptionWhereInput): EmailReceiptSubscriptionPayload

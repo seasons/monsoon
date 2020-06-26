@@ -693,6 +693,11 @@ export class ProductService {
             where: { seasonsUID },
             data: { inventoryStatus: "Stored" },
           })
+          await this.prisma.client.createPhysicalProductInventoryStatusChange({
+            old: inventoryStatus,
+            new: "Stored",
+            physicalProduct: { connect: { seasonsUID } },
+          })
         }
       }
 

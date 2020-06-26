@@ -82,6 +82,10 @@ type AggregatePhysicalProduct {
   count: Int!
 }
 
+type AggregatePhysicalProductInventoryStatusChange {
+  count: Int!
+}
+
 type AggregateProduct {
   count: Int!
 }
@@ -4618,6 +4622,12 @@ type Mutation {
   upsertPhysicalProduct(where: PhysicalProductWhereUniqueInput!, create: PhysicalProductCreateInput!, update: PhysicalProductUpdateInput!): PhysicalProduct!
   deletePhysicalProduct(where: PhysicalProductWhereUniqueInput!): PhysicalProduct
   deleteManyPhysicalProducts(where: PhysicalProductWhereInput): BatchPayload!
+  createPhysicalProductInventoryStatusChange(data: PhysicalProductInventoryStatusChangeCreateInput!): PhysicalProductInventoryStatusChange!
+  updatePhysicalProductInventoryStatusChange(data: PhysicalProductInventoryStatusChangeUpdateInput!, where: PhysicalProductInventoryStatusChangeWhereUniqueInput!): PhysicalProductInventoryStatusChange
+  updateManyPhysicalProductInventoryStatusChanges(data: PhysicalProductInventoryStatusChangeUpdateManyMutationInput!, where: PhysicalProductInventoryStatusChangeWhereInput): BatchPayload!
+  upsertPhysicalProductInventoryStatusChange(where: PhysicalProductInventoryStatusChangeWhereUniqueInput!, create: PhysicalProductInventoryStatusChangeCreateInput!, update: PhysicalProductInventoryStatusChangeUpdateInput!): PhysicalProductInventoryStatusChange!
+  deletePhysicalProductInventoryStatusChange(where: PhysicalProductInventoryStatusChangeWhereUniqueInput!): PhysicalProductInventoryStatusChange
+  deleteManyPhysicalProductInventoryStatusChanges(where: PhysicalProductInventoryStatusChangeWhereInput): BatchPayload!
   createProduct(data: ProductCreateInput!): Product!
   updateProduct(data: ProductUpdateInput!, where: ProductWhereUniqueInput!): Product
   updateManyProducts(data: ProductUpdateManyMutationInput!, where: ProductWhereInput): BatchPayload!
@@ -5477,6 +5487,7 @@ type PhysicalProduct {
   location: Location
   productVariant: ProductVariant!
   inventoryStatus: InventoryStatus!
+  inventoryStatusChanges(where: PhysicalProductInventoryStatusChangeWhereInput, orderBy: PhysicalProductInventoryStatusChangeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProductInventoryStatusChange!]
   productStatus: PhysicalProductStatus!
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
@@ -5501,6 +5512,7 @@ input PhysicalProductCreateInput {
   location: LocationCreateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
   inventoryStatus: InventoryStatus!
+  inventoryStatusChanges: PhysicalProductInventoryStatusChangeCreateManyWithoutPhysicalProductInput
   productStatus: PhysicalProductStatus!
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
@@ -5536,11 +5548,33 @@ input PhysicalProductCreateOneInput {
   connect: PhysicalProductWhereUniqueInput
 }
 
+input PhysicalProductCreateOneWithoutInventoryStatusChangesInput {
+  create: PhysicalProductCreateWithoutInventoryStatusChangesInput
+  connect: PhysicalProductWhereUniqueInput
+}
+
+input PhysicalProductCreateWithoutInventoryStatusChangesInput {
+  id: ID
+  seasonsUID: String!
+  location: LocationCreateOneWithoutPhysicalProductsInput
+  productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
+  inventoryStatus: InventoryStatus!
+  productStatus: PhysicalProductStatus!
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
+  sequenceNumber: Int!
+  warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
+}
+
 input PhysicalProductCreateWithoutLocationInput {
   id: ID
   seasonsUID: String!
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
   inventoryStatus: InventoryStatus!
+  inventoryStatusChanges: PhysicalProductInventoryStatusChangeCreateManyWithoutPhysicalProductInput
   productStatus: PhysicalProductStatus!
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
@@ -5556,6 +5590,7 @@ input PhysicalProductCreateWithoutProductVariantInput {
   seasonsUID: String!
   location: LocationCreateOneWithoutPhysicalProductsInput
   inventoryStatus: InventoryStatus!
+  inventoryStatusChanges: PhysicalProductInventoryStatusChangeCreateManyWithoutPhysicalProductInput
   productStatus: PhysicalProductStatus!
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
@@ -5572,6 +5607,7 @@ input PhysicalProductCreateWithoutWarehouseLocationInput {
   location: LocationCreateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
   inventoryStatus: InventoryStatus!
+  inventoryStatusChanges: PhysicalProductInventoryStatusChangeCreateManyWithoutPhysicalProductInput
   productStatus: PhysicalProductStatus!
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
@@ -5584,6 +5620,225 @@ input PhysicalProductCreateWithoutWarehouseLocationInput {
 type PhysicalProductEdge {
   node: PhysicalProduct!
   cursor: String!
+}
+
+type PhysicalProductInventoryStatusChange {
+  id: ID!
+  old: InventoryStatus!
+  new: InventoryStatus!
+  physicalProduct: PhysicalProduct!
+  createdAt: DateTime!
+  updatedAt: DateTime
+}
+
+type PhysicalProductInventoryStatusChangeConnection {
+  pageInfo: PageInfo!
+  edges: [PhysicalProductInventoryStatusChangeEdge]!
+  aggregate: AggregatePhysicalProductInventoryStatusChange!
+}
+
+input PhysicalProductInventoryStatusChangeCreateInput {
+  id: ID
+  old: InventoryStatus!
+  new: InventoryStatus!
+  physicalProduct: PhysicalProductCreateOneWithoutInventoryStatusChangesInput!
+}
+
+input PhysicalProductInventoryStatusChangeCreateManyWithoutPhysicalProductInput {
+  create: [PhysicalProductInventoryStatusChangeCreateWithoutPhysicalProductInput!]
+  connect: [PhysicalProductInventoryStatusChangeWhereUniqueInput!]
+}
+
+input PhysicalProductInventoryStatusChangeCreateWithoutPhysicalProductInput {
+  id: ID
+  old: InventoryStatus!
+  new: InventoryStatus!
+}
+
+type PhysicalProductInventoryStatusChangeEdge {
+  node: PhysicalProductInventoryStatusChange!
+  cursor: String!
+}
+
+enum PhysicalProductInventoryStatusChangeOrderByInput {
+  id_ASC
+  id_DESC
+  old_ASC
+  old_DESC
+  new_ASC
+  new_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type PhysicalProductInventoryStatusChangePreviousValues {
+  id: ID!
+  old: InventoryStatus!
+  new: InventoryStatus!
+  createdAt: DateTime!
+  updatedAt: DateTime
+}
+
+input PhysicalProductInventoryStatusChangeScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  old: InventoryStatus
+  old_not: InventoryStatus
+  old_in: [InventoryStatus!]
+  old_not_in: [InventoryStatus!]
+  new: InventoryStatus
+  new_not: InventoryStatus
+  new_in: [InventoryStatus!]
+  new_not_in: [InventoryStatus!]
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [PhysicalProductInventoryStatusChangeScalarWhereInput!]
+  OR: [PhysicalProductInventoryStatusChangeScalarWhereInput!]
+  NOT: [PhysicalProductInventoryStatusChangeScalarWhereInput!]
+}
+
+type PhysicalProductInventoryStatusChangeSubscriptionPayload {
+  mutation: MutationType!
+  node: PhysicalProductInventoryStatusChange
+  updatedFields: [String!]
+  previousValues: PhysicalProductInventoryStatusChangePreviousValues
+}
+
+input PhysicalProductInventoryStatusChangeSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: PhysicalProductInventoryStatusChangeWhereInput
+  AND: [PhysicalProductInventoryStatusChangeSubscriptionWhereInput!]
+  OR: [PhysicalProductInventoryStatusChangeSubscriptionWhereInput!]
+  NOT: [PhysicalProductInventoryStatusChangeSubscriptionWhereInput!]
+}
+
+input PhysicalProductInventoryStatusChangeUpdateInput {
+  old: InventoryStatus
+  new: InventoryStatus
+  physicalProduct: PhysicalProductUpdateOneRequiredWithoutInventoryStatusChangesInput
+}
+
+input PhysicalProductInventoryStatusChangeUpdateManyDataInput {
+  old: InventoryStatus
+  new: InventoryStatus
+}
+
+input PhysicalProductInventoryStatusChangeUpdateManyMutationInput {
+  old: InventoryStatus
+  new: InventoryStatus
+}
+
+input PhysicalProductInventoryStatusChangeUpdateManyWithoutPhysicalProductInput {
+  create: [PhysicalProductInventoryStatusChangeCreateWithoutPhysicalProductInput!]
+  delete: [PhysicalProductInventoryStatusChangeWhereUniqueInput!]
+  connect: [PhysicalProductInventoryStatusChangeWhereUniqueInput!]
+  set: [PhysicalProductInventoryStatusChangeWhereUniqueInput!]
+  disconnect: [PhysicalProductInventoryStatusChangeWhereUniqueInput!]
+  update: [PhysicalProductInventoryStatusChangeUpdateWithWhereUniqueWithoutPhysicalProductInput!]
+  upsert: [PhysicalProductInventoryStatusChangeUpsertWithWhereUniqueWithoutPhysicalProductInput!]
+  deleteMany: [PhysicalProductInventoryStatusChangeScalarWhereInput!]
+  updateMany: [PhysicalProductInventoryStatusChangeUpdateManyWithWhereNestedInput!]
+}
+
+input PhysicalProductInventoryStatusChangeUpdateManyWithWhereNestedInput {
+  where: PhysicalProductInventoryStatusChangeScalarWhereInput!
+  data: PhysicalProductInventoryStatusChangeUpdateManyDataInput!
+}
+
+input PhysicalProductInventoryStatusChangeUpdateWithoutPhysicalProductDataInput {
+  old: InventoryStatus
+  new: InventoryStatus
+}
+
+input PhysicalProductInventoryStatusChangeUpdateWithWhereUniqueWithoutPhysicalProductInput {
+  where: PhysicalProductInventoryStatusChangeWhereUniqueInput!
+  data: PhysicalProductInventoryStatusChangeUpdateWithoutPhysicalProductDataInput!
+}
+
+input PhysicalProductInventoryStatusChangeUpsertWithWhereUniqueWithoutPhysicalProductInput {
+  where: PhysicalProductInventoryStatusChangeWhereUniqueInput!
+  update: PhysicalProductInventoryStatusChangeUpdateWithoutPhysicalProductDataInput!
+  create: PhysicalProductInventoryStatusChangeCreateWithoutPhysicalProductInput!
+}
+
+input PhysicalProductInventoryStatusChangeWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  old: InventoryStatus
+  old_not: InventoryStatus
+  old_in: [InventoryStatus!]
+  old_not_in: [InventoryStatus!]
+  new: InventoryStatus
+  new_not: InventoryStatus
+  new_in: [InventoryStatus!]
+  new_not_in: [InventoryStatus!]
+  physicalProduct: PhysicalProductWhereInput
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [PhysicalProductInventoryStatusChangeWhereInput!]
+  OR: [PhysicalProductInventoryStatusChangeWhereInput!]
+  NOT: [PhysicalProductInventoryStatusChangeWhereInput!]
+}
+
+input PhysicalProductInventoryStatusChangeWhereUniqueInput {
+  id: ID
 }
 
 enum PhysicalProductOffloadMethod {
@@ -5777,6 +6032,7 @@ input PhysicalProductUpdateDataInput {
   location: LocationUpdateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
   inventoryStatus: InventoryStatus
+  inventoryStatusChanges: PhysicalProductInventoryStatusChangeUpdateManyWithoutPhysicalProductInput
   productStatus: PhysicalProductStatus
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
@@ -5792,6 +6048,7 @@ input PhysicalProductUpdateInput {
   location: LocationUpdateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
   inventoryStatus: InventoryStatus
+  inventoryStatusChanges: PhysicalProductInventoryStatusChangeUpdateManyWithoutPhysicalProductInput
   productStatus: PhysicalProductStatus
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
@@ -5886,10 +6143,33 @@ input PhysicalProductUpdateOneRequiredInput {
   connect: PhysicalProductWhereUniqueInput
 }
 
+input PhysicalProductUpdateOneRequiredWithoutInventoryStatusChangesInput {
+  create: PhysicalProductCreateWithoutInventoryStatusChangesInput
+  update: PhysicalProductUpdateWithoutInventoryStatusChangesDataInput
+  upsert: PhysicalProductUpsertWithoutInventoryStatusChangesInput
+  connect: PhysicalProductWhereUniqueInput
+}
+
+input PhysicalProductUpdateWithoutInventoryStatusChangesDataInput {
+  seasonsUID: String
+  location: LocationUpdateOneWithoutPhysicalProductsInput
+  productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
+  inventoryStatus: InventoryStatus
+  productStatus: PhysicalProductStatus
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
+  sequenceNumber: Int
+  warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
+}
+
 input PhysicalProductUpdateWithoutLocationDataInput {
   seasonsUID: String
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
   inventoryStatus: InventoryStatus
+  inventoryStatusChanges: PhysicalProductInventoryStatusChangeUpdateManyWithoutPhysicalProductInput
   productStatus: PhysicalProductStatus
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
@@ -5904,6 +6184,7 @@ input PhysicalProductUpdateWithoutProductVariantDataInput {
   seasonsUID: String
   location: LocationUpdateOneWithoutPhysicalProductsInput
   inventoryStatus: InventoryStatus
+  inventoryStatusChanges: PhysicalProductInventoryStatusChangeUpdateManyWithoutPhysicalProductInput
   productStatus: PhysicalProductStatus
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
@@ -5919,6 +6200,7 @@ input PhysicalProductUpdateWithoutWarehouseLocationDataInput {
   location: LocationUpdateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
   inventoryStatus: InventoryStatus
+  inventoryStatusChanges: PhysicalProductInventoryStatusChangeUpdateManyWithoutPhysicalProductInput
   productStatus: PhysicalProductStatus
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
@@ -5951,6 +6233,11 @@ input PhysicalProductUpdateWithWhereUniqueWithoutWarehouseLocationInput {
 input PhysicalProductUpsertNestedInput {
   update: PhysicalProductUpdateDataInput!
   create: PhysicalProductCreateInput!
+}
+
+input PhysicalProductUpsertWithoutInventoryStatusChangesInput {
+  update: PhysicalProductUpdateWithoutInventoryStatusChangesDataInput!
+  create: PhysicalProductCreateWithoutInventoryStatusChangesInput!
 }
 
 input PhysicalProductUpsertWithWhereUniqueNestedInput {
@@ -6012,6 +6299,9 @@ input PhysicalProductWhereInput {
   inventoryStatus_not: InventoryStatus
   inventoryStatus_in: [InventoryStatus!]
   inventoryStatus_not_in: [InventoryStatus!]
+  inventoryStatusChanges_every: PhysicalProductInventoryStatusChangeWhereInput
+  inventoryStatusChanges_some: PhysicalProductInventoryStatusChangeWhereInput
+  inventoryStatusChanges_none: PhysicalProductInventoryStatusChangeWhereInput
   productStatus: PhysicalProductStatus
   productStatus_not: PhysicalProductStatus
   productStatus_in: [PhysicalProductStatus!]
@@ -10068,6 +10358,9 @@ type Query {
   physicalProduct(where: PhysicalProductWhereUniqueInput!): PhysicalProduct
   physicalProducts(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct]!
   physicalProductsConnection(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PhysicalProductConnection!
+  physicalProductInventoryStatusChange(where: PhysicalProductInventoryStatusChangeWhereUniqueInput!): PhysicalProductInventoryStatusChange
+  physicalProductInventoryStatusChanges(where: PhysicalProductInventoryStatusChangeWhereInput, orderBy: PhysicalProductInventoryStatusChangeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProductInventoryStatusChange]!
+  physicalProductInventoryStatusChangesConnection(where: PhysicalProductInventoryStatusChangeWhereInput, orderBy: PhysicalProductInventoryStatusChangeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PhysicalProductInventoryStatusChangeConnection!
   product(where: ProductWhereUniqueInput!): Product
   products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product]!
   productsConnection(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductConnection!
@@ -11549,6 +11842,7 @@ type Subscription {
   packageTransitEvent(where: PackageTransitEventSubscriptionWhereInput): PackageTransitEventSubscriptionPayload
   pauseRequest(where: PauseRequestSubscriptionWhereInput): PauseRequestSubscriptionPayload
   physicalProduct(where: PhysicalProductSubscriptionWhereInput): PhysicalProductSubscriptionPayload
+  physicalProductInventoryStatusChange(where: PhysicalProductInventoryStatusChangeSubscriptionWhereInput): PhysicalProductInventoryStatusChangeSubscriptionPayload
   product(where: ProductSubscriptionWhereInput): ProductSubscriptionPayload
   productFunction(where: ProductFunctionSubscriptionWhereInput): ProductFunctionSubscriptionPayload
   productMaterialCategory(where: ProductMaterialCategorySubscriptionWhereInput): ProductMaterialCategorySubscriptionPayload

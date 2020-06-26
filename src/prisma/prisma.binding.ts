@@ -11,6 +11,7 @@ export interface Query {
     productStatusChanges: <T = Array<ProductStatusChange | null>>(args: { where?: ProductStatusChangeWhereInput | null, orderBy?: ProductStatusChangeOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     productMaterialCategories: <T = Array<ProductMaterialCategory | null>>(args: { where?: ProductMaterialCategoryWhereInput | null, orderBy?: ProductMaterialCategoryOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     productModels: <T = Array<ProductModel | null>>(args: { where?: ProductModelWhereInput | null, orderBy?: ProductModelOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    physicalProductInventoryStatusChanges: <T = Array<PhysicalProductInventoryStatusChange | null>>(args: { where?: PhysicalProductInventoryStatusChangeWhereInput | null, orderBy?: PhysicalProductInventoryStatusChangeOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     warehouseLocationConstraints: <T = Array<WarehouseLocationConstraint | null>>(args: { where?: WarehouseLocationConstraintWhereInput | null, orderBy?: WarehouseLocationConstraintOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     warehouseLocations: <T = Array<WarehouseLocation | null>>(args: { where?: WarehouseLocationWhereInput | null, orderBy?: WarehouseLocationOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     emailReceipts: <T = Array<EmailReceipt | null>>(args: { where?: EmailReceiptWhereInput | null, orderBy?: EmailReceiptOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -53,6 +54,7 @@ export interface Query {
     productStatusChange: <T = ProductStatusChange | null>(args: { where: ProductStatusChangeWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     productMaterialCategory: <T = ProductMaterialCategory | null>(args: { where: ProductMaterialCategoryWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     productModel: <T = ProductModel | null>(args: { where: ProductModelWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    physicalProductInventoryStatusChange: <T = PhysicalProductInventoryStatusChange | null>(args: { where: PhysicalProductInventoryStatusChangeWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     warehouseLocationConstraint: <T = WarehouseLocationConstraint | null>(args: { where: WarehouseLocationConstraintWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     warehouseLocation: <T = WarehouseLocation | null>(args: { where: WarehouseLocationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     emailReceipt: <T = EmailReceipt | null>(args: { where: EmailReceiptWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -95,6 +97,7 @@ export interface Query {
     productStatusChangesConnection: <T = ProductStatusChangeConnection>(args: { where?: ProductStatusChangeWhereInput | null, orderBy?: ProductStatusChangeOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     productMaterialCategoriesConnection: <T = ProductMaterialCategoryConnection>(args: { where?: ProductMaterialCategoryWhereInput | null, orderBy?: ProductMaterialCategoryOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     productModelsConnection: <T = ProductModelConnection>(args: { where?: ProductModelWhereInput | null, orderBy?: ProductModelOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    physicalProductInventoryStatusChangesConnection: <T = PhysicalProductInventoryStatusChangeConnection>(args: { where?: PhysicalProductInventoryStatusChangeWhereInput | null, orderBy?: PhysicalProductInventoryStatusChangeOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     warehouseLocationConstraintsConnection: <T = WarehouseLocationConstraintConnection>(args: { where?: WarehouseLocationConstraintWhereInput | null, orderBy?: WarehouseLocationConstraintOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     warehouseLocationsConnection: <T = WarehouseLocationConnection>(args: { where?: WarehouseLocationWhereInput | null, orderBy?: WarehouseLocationOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     emailReceiptsConnection: <T = EmailReceiptConnection>(args: { where?: EmailReceiptWhereInput | null, orderBy?: EmailReceiptOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -141,6 +144,7 @@ export interface Mutation {
     createProductStatusChange: <T = ProductStatusChange>(args: { data: ProductStatusChangeCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createProductMaterialCategory: <T = ProductMaterialCategory>(args: { data: ProductMaterialCategoryCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createProductModel: <T = ProductModel>(args: { data: ProductModelCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    createPhysicalProductInventoryStatusChange: <T = PhysicalProductInventoryStatusChange>(args: { data: PhysicalProductInventoryStatusChangeCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createWarehouseLocationConstraint: <T = WarehouseLocationConstraint>(args: { data: WarehouseLocationConstraintCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createWarehouseLocation: <T = WarehouseLocation>(args: { data: WarehouseLocationCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createEmailReceipt: <T = EmailReceipt>(args: { data: EmailReceiptCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -183,6 +187,7 @@ export interface Mutation {
     updateProductStatusChange: <T = ProductStatusChange | null>(args: { data: ProductStatusChangeUpdateInput, where: ProductStatusChangeWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateProductMaterialCategory: <T = ProductMaterialCategory | null>(args: { data: ProductMaterialCategoryUpdateInput, where: ProductMaterialCategoryWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateProductModel: <T = ProductModel | null>(args: { data: ProductModelUpdateInput, where: ProductModelWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    updatePhysicalProductInventoryStatusChange: <T = PhysicalProductInventoryStatusChange | null>(args: { data: PhysicalProductInventoryStatusChangeUpdateInput, where: PhysicalProductInventoryStatusChangeWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateWarehouseLocationConstraint: <T = WarehouseLocationConstraint | null>(args: { data: WarehouseLocationConstraintUpdateInput, where: WarehouseLocationConstraintWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateWarehouseLocation: <T = WarehouseLocation | null>(args: { data: WarehouseLocationUpdateInput, where: WarehouseLocationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateEmailReceipt: <T = EmailReceipt | null>(args: { data: EmailReceiptUpdateInput, where: EmailReceiptWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -225,6 +230,7 @@ export interface Mutation {
     deleteProductStatusChange: <T = ProductStatusChange | null>(args: { where: ProductStatusChangeWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteProductMaterialCategory: <T = ProductMaterialCategory | null>(args: { where: ProductMaterialCategoryWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteProductModel: <T = ProductModel | null>(args: { where: ProductModelWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deletePhysicalProductInventoryStatusChange: <T = PhysicalProductInventoryStatusChange | null>(args: { where: PhysicalProductInventoryStatusChangeWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteWarehouseLocationConstraint: <T = WarehouseLocationConstraint | null>(args: { where: WarehouseLocationConstraintWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteWarehouseLocation: <T = WarehouseLocation | null>(args: { where: WarehouseLocationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteEmailReceipt: <T = EmailReceipt | null>(args: { where: EmailReceiptWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -267,6 +273,7 @@ export interface Mutation {
     upsertProductStatusChange: <T = ProductStatusChange>(args: { where: ProductStatusChangeWhereUniqueInput, create: ProductStatusChangeCreateInput, update: ProductStatusChangeUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertProductMaterialCategory: <T = ProductMaterialCategory>(args: { where: ProductMaterialCategoryWhereUniqueInput, create: ProductMaterialCategoryCreateInput, update: ProductMaterialCategoryUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertProductModel: <T = ProductModel>(args: { where: ProductModelWhereUniqueInput, create: ProductModelCreateInput, update: ProductModelUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    upsertPhysicalProductInventoryStatusChange: <T = PhysicalProductInventoryStatusChange>(args: { where: PhysicalProductInventoryStatusChangeWhereUniqueInput, create: PhysicalProductInventoryStatusChangeCreateInput, update: PhysicalProductInventoryStatusChangeUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertWarehouseLocationConstraint: <T = WarehouseLocationConstraint>(args: { where: WarehouseLocationConstraintWhereUniqueInput, create: WarehouseLocationConstraintCreateInput, update: WarehouseLocationConstraintUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertWarehouseLocation: <T = WarehouseLocation>(args: { where: WarehouseLocationWhereUniqueInput, create: WarehouseLocationCreateInput, update: WarehouseLocationUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertEmailReceipt: <T = EmailReceipt>(args: { where: EmailReceiptWhereUniqueInput, create: EmailReceiptCreateInput, update: EmailReceiptUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -309,6 +316,7 @@ export interface Mutation {
     updateManyProductStatusChanges: <T = BatchPayload>(args: { data: ProductStatusChangeUpdateManyMutationInput, where?: ProductStatusChangeWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyProductMaterialCategories: <T = BatchPayload>(args: { data: ProductMaterialCategoryUpdateManyMutationInput, where?: ProductMaterialCategoryWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyProductModels: <T = BatchPayload>(args: { data: ProductModelUpdateManyMutationInput, where?: ProductModelWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateManyPhysicalProductInventoryStatusChanges: <T = BatchPayload>(args: { data: PhysicalProductInventoryStatusChangeUpdateManyMutationInput, where?: PhysicalProductInventoryStatusChangeWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyWarehouseLocationConstraints: <T = BatchPayload>(args: { data: WarehouseLocationConstraintUpdateManyMutationInput, where?: WarehouseLocationConstraintWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyWarehouseLocations: <T = BatchPayload>(args: { data: WarehouseLocationUpdateManyMutationInput, where?: WarehouseLocationWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyEmailReceipts: <T = BatchPayload>(args: { data: EmailReceiptUpdateManyMutationInput, where?: EmailReceiptWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -350,6 +358,7 @@ export interface Mutation {
     deleteManyProductStatusChanges: <T = BatchPayload>(args: { where?: ProductStatusChangeWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyProductMaterialCategories: <T = BatchPayload>(args: { where?: ProductMaterialCategoryWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyProductModels: <T = BatchPayload>(args: { where?: ProductModelWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteManyPhysicalProductInventoryStatusChanges: <T = BatchPayload>(args: { where?: PhysicalProductInventoryStatusChangeWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyWarehouseLocationConstraints: <T = BatchPayload>(args: { where?: WarehouseLocationConstraintWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyWarehouseLocations: <T = BatchPayload>(args: { where?: WarehouseLocationWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyEmailReceipts: <T = BatchPayload>(args: { where?: EmailReceiptWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -395,6 +404,7 @@ export interface Subscription {
     productStatusChange: <T = ProductStatusChangeSubscriptionPayload | null>(args: { where?: ProductStatusChangeSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     productMaterialCategory: <T = ProductMaterialCategorySubscriptionPayload | null>(args: { where?: ProductMaterialCategorySubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     productModel: <T = ProductModelSubscriptionPayload | null>(args: { where?: ProductModelSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
+    physicalProductInventoryStatusChange: <T = PhysicalProductInventoryStatusChangeSubscriptionPayload | null>(args: { where?: PhysicalProductInventoryStatusChangeSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     warehouseLocationConstraint: <T = WarehouseLocationConstraintSubscriptionPayload | null>(args: { where?: WarehouseLocationConstraintSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     warehouseLocation: <T = WarehouseLocationSubscriptionPayload | null>(args: { where?: WarehouseLocationSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     emailReceipt: <T = EmailReceiptSubscriptionPayload | null>(args: { where?: EmailReceiptSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
@@ -440,6 +450,7 @@ export interface Exists {
   ProductStatusChange: (where?: ProductStatusChangeWhereInput) => Promise<boolean>
   ProductMaterialCategory: (where?: ProductMaterialCategoryWhereInput) => Promise<boolean>
   ProductModel: (where?: ProductModelWhereInput) => Promise<boolean>
+  PhysicalProductInventoryStatusChange: (where?: PhysicalProductInventoryStatusChangeWhereInput) => Promise<boolean>
   WarehouseLocationConstraint: (where?: WarehouseLocationConstraintWhereInput) => Promise<boolean>
   WarehouseLocation: (where?: WarehouseLocationWhereInput) => Promise<boolean>
   EmailReceipt: (where?: EmailReceiptWhereInput) => Promise<boolean>
@@ -576,6 +587,10 @@ type AggregatePauseRequest {
 }
 
 type AggregatePhysicalProduct {
+  count: Int!
+}
+
+type AggregatePhysicalProductInventoryStatusChange {
   count: Int!
 }
 
@@ -8471,6 +8486,7 @@ type Mutation {
   createProductStatusChange(data: ProductStatusChangeCreateInput!): ProductStatusChange!
   createProductMaterialCategory(data: ProductMaterialCategoryCreateInput!): ProductMaterialCategory!
   createProductModel(data: ProductModelCreateInput!): ProductModel!
+  createPhysicalProductInventoryStatusChange(data: PhysicalProductInventoryStatusChangeCreateInput!): PhysicalProductInventoryStatusChange!
   createWarehouseLocationConstraint(data: WarehouseLocationConstraintCreateInput!): WarehouseLocationConstraint!
   createWarehouseLocation(data: WarehouseLocationCreateInput!): WarehouseLocation!
   createEmailReceipt(data: EmailReceiptCreateInput!): EmailReceipt!
@@ -8513,6 +8529,7 @@ type Mutation {
   updateProductStatusChange(data: ProductStatusChangeUpdateInput!, where: ProductStatusChangeWhereUniqueInput!): ProductStatusChange
   updateProductMaterialCategory(data: ProductMaterialCategoryUpdateInput!, where: ProductMaterialCategoryWhereUniqueInput!): ProductMaterialCategory
   updateProductModel(data: ProductModelUpdateInput!, where: ProductModelWhereUniqueInput!): ProductModel
+  updatePhysicalProductInventoryStatusChange(data: PhysicalProductInventoryStatusChangeUpdateInput!, where: PhysicalProductInventoryStatusChangeWhereUniqueInput!): PhysicalProductInventoryStatusChange
   updateWarehouseLocationConstraint(data: WarehouseLocationConstraintUpdateInput!, where: WarehouseLocationConstraintWhereUniqueInput!): WarehouseLocationConstraint
   updateWarehouseLocation(data: WarehouseLocationUpdateInput!, where: WarehouseLocationWhereUniqueInput!): WarehouseLocation
   updateEmailReceipt(data: EmailReceiptUpdateInput!, where: EmailReceiptWhereUniqueInput!): EmailReceipt
@@ -8555,6 +8572,7 @@ type Mutation {
   deleteProductStatusChange(where: ProductStatusChangeWhereUniqueInput!): ProductStatusChange
   deleteProductMaterialCategory(where: ProductMaterialCategoryWhereUniqueInput!): ProductMaterialCategory
   deleteProductModel(where: ProductModelWhereUniqueInput!): ProductModel
+  deletePhysicalProductInventoryStatusChange(where: PhysicalProductInventoryStatusChangeWhereUniqueInput!): PhysicalProductInventoryStatusChange
   deleteWarehouseLocationConstraint(where: WarehouseLocationConstraintWhereUniqueInput!): WarehouseLocationConstraint
   deleteWarehouseLocation(where: WarehouseLocationWhereUniqueInput!): WarehouseLocation
   deleteEmailReceipt(where: EmailReceiptWhereUniqueInput!): EmailReceipt
@@ -8597,6 +8615,7 @@ type Mutation {
   upsertProductStatusChange(where: ProductStatusChangeWhereUniqueInput!, create: ProductStatusChangeCreateInput!, update: ProductStatusChangeUpdateInput!): ProductStatusChange!
   upsertProductMaterialCategory(where: ProductMaterialCategoryWhereUniqueInput!, create: ProductMaterialCategoryCreateInput!, update: ProductMaterialCategoryUpdateInput!): ProductMaterialCategory!
   upsertProductModel(where: ProductModelWhereUniqueInput!, create: ProductModelCreateInput!, update: ProductModelUpdateInput!): ProductModel!
+  upsertPhysicalProductInventoryStatusChange(where: PhysicalProductInventoryStatusChangeWhereUniqueInput!, create: PhysicalProductInventoryStatusChangeCreateInput!, update: PhysicalProductInventoryStatusChangeUpdateInput!): PhysicalProductInventoryStatusChange!
   upsertWarehouseLocationConstraint(where: WarehouseLocationConstraintWhereUniqueInput!, create: WarehouseLocationConstraintCreateInput!, update: WarehouseLocationConstraintUpdateInput!): WarehouseLocationConstraint!
   upsertWarehouseLocation(where: WarehouseLocationWhereUniqueInput!, create: WarehouseLocationCreateInput!, update: WarehouseLocationUpdateInput!): WarehouseLocation!
   upsertEmailReceipt(where: EmailReceiptWhereUniqueInput!, create: EmailReceiptCreateInput!, update: EmailReceiptUpdateInput!): EmailReceipt!
@@ -8639,6 +8658,7 @@ type Mutation {
   updateManyProductStatusChanges(data: ProductStatusChangeUpdateManyMutationInput!, where: ProductStatusChangeWhereInput): BatchPayload!
   updateManyProductMaterialCategories(data: ProductMaterialCategoryUpdateManyMutationInput!, where: ProductMaterialCategoryWhereInput): BatchPayload!
   updateManyProductModels(data: ProductModelUpdateManyMutationInput!, where: ProductModelWhereInput): BatchPayload!
+  updateManyPhysicalProductInventoryStatusChanges(data: PhysicalProductInventoryStatusChangeUpdateManyMutationInput!, where: PhysicalProductInventoryStatusChangeWhereInput): BatchPayload!
   updateManyWarehouseLocationConstraints(data: WarehouseLocationConstraintUpdateManyMutationInput!, where: WarehouseLocationConstraintWhereInput): BatchPayload!
   updateManyWarehouseLocations(data: WarehouseLocationUpdateManyMutationInput!, where: WarehouseLocationWhereInput): BatchPayload!
   updateManyEmailReceipts(data: EmailReceiptUpdateManyMutationInput!, where: EmailReceiptWhereInput): BatchPayload!
@@ -8680,6 +8700,7 @@ type Mutation {
   deleteManyProductStatusChanges(where: ProductStatusChangeWhereInput): BatchPayload!
   deleteManyProductMaterialCategories(where: ProductMaterialCategoryWhereInput): BatchPayload!
   deleteManyProductModels(where: ProductModelWhereInput): BatchPayload!
+  deleteManyPhysicalProductInventoryStatusChanges(where: PhysicalProductInventoryStatusChangeWhereInput): BatchPayload!
   deleteManyWarehouseLocationConstraints(where: WarehouseLocationConstraintWhereInput): BatchPayload!
   deleteManyWarehouseLocations(where: WarehouseLocationWhereInput): BatchPayload!
   deleteManyEmailReceipts(where: EmailReceiptWhereInput): BatchPayload!
@@ -9953,6 +9974,7 @@ type PhysicalProduct implements Node {
   location: Location
   productVariant: ProductVariant!
   inventoryStatus: InventoryStatus!
+  inventoryStatusChanges(where: PhysicalProductInventoryStatusChangeWhereInput, orderBy: PhysicalProductInventoryStatusChangeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProductInventoryStatusChange!]
   productStatus: PhysicalProductStatus!
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String
@@ -9988,6 +10010,7 @@ input PhysicalProductCreateInput {
   unitCost: Float
   location: LocationCreateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
+  inventoryStatusChanges: PhysicalProductInventoryStatusChangeCreateManyWithoutPhysicalProductInput
   warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
 }
 
@@ -10016,6 +10039,27 @@ input PhysicalProductCreateOneInput {
   connect: PhysicalProductWhereUniqueInput
 }
 
+input PhysicalProductCreateOneWithoutInventoryStatusChangesInput {
+  create: PhysicalProductCreateWithoutInventoryStatusChangesInput
+  connect: PhysicalProductWhereUniqueInput
+}
+
+input PhysicalProductCreateWithoutInventoryStatusChangesInput {
+  id: ID
+  seasonsUID: String!
+  inventoryStatus: InventoryStatus!
+  productStatus: PhysicalProductStatus!
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
+  sequenceNumber: Int!
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
+  location: LocationCreateOneWithoutPhysicalProductsInput
+  productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
+  warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
+}
+
 input PhysicalProductCreateWithoutLocationInput {
   id: ID
   seasonsUID: String!
@@ -10028,6 +10072,7 @@ input PhysicalProductCreateWithoutLocationInput {
   dateReceived: DateTime
   unitCost: Float
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
+  inventoryStatusChanges: PhysicalProductInventoryStatusChangeCreateManyWithoutPhysicalProductInput
   warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
 }
 
@@ -10043,6 +10088,7 @@ input PhysicalProductCreateWithoutProductVariantInput {
   dateReceived: DateTime
   unitCost: Float
   location: LocationCreateOneWithoutPhysicalProductsInput
+  inventoryStatusChanges: PhysicalProductInventoryStatusChangeCreateManyWithoutPhysicalProductInput
   warehouseLocation: WarehouseLocationCreateOneWithoutPhysicalProductsInput
 }
 
@@ -10059,6 +10105,7 @@ input PhysicalProductCreateWithoutWarehouseLocationInput {
   unitCost: Float
   location: LocationCreateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput!
+  inventoryStatusChanges: PhysicalProductInventoryStatusChangeCreateManyWithoutPhysicalProductInput
 }
 
 """An edge in a connection."""
@@ -10068,6 +10115,394 @@ type PhysicalProductEdge {
 
   """A cursor for use in pagination."""
   cursor: String!
+}
+
+type PhysicalProductInventoryStatusChange implements Node {
+  id: ID!
+  old: InventoryStatus!
+  new: InventoryStatus!
+  physicalProduct: PhysicalProduct!
+  createdAt: DateTime!
+  updatedAt: DateTime
+}
+
+"""A connection to a list of items."""
+type PhysicalProductInventoryStatusChangeConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [PhysicalProductInventoryStatusChangeEdge]!
+  aggregate: AggregatePhysicalProductInventoryStatusChange!
+}
+
+input PhysicalProductInventoryStatusChangeCreateInput {
+  id: ID
+  old: InventoryStatus!
+  new: InventoryStatus!
+  physicalProduct: PhysicalProductCreateOneWithoutInventoryStatusChangesInput!
+}
+
+input PhysicalProductInventoryStatusChangeCreateManyWithoutPhysicalProductInput {
+  create: [PhysicalProductInventoryStatusChangeCreateWithoutPhysicalProductInput!]
+  connect: [PhysicalProductInventoryStatusChangeWhereUniqueInput!]
+}
+
+input PhysicalProductInventoryStatusChangeCreateWithoutPhysicalProductInput {
+  id: ID
+  old: InventoryStatus!
+  new: InventoryStatus!
+}
+
+"""An edge in a connection."""
+type PhysicalProductInventoryStatusChangeEdge {
+  """The item at the end of the edge."""
+  node: PhysicalProductInventoryStatusChange!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum PhysicalProductInventoryStatusChangeOrderByInput {
+  id_ASC
+  id_DESC
+  old_ASC
+  old_DESC
+  new_ASC
+  new_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type PhysicalProductInventoryStatusChangePreviousValues {
+  id: ID!
+  old: InventoryStatus!
+  new: InventoryStatus!
+  createdAt: DateTime!
+  updatedAt: DateTime
+}
+
+input PhysicalProductInventoryStatusChangeScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [PhysicalProductInventoryStatusChangeScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [PhysicalProductInventoryStatusChangeScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [PhysicalProductInventoryStatusChangeScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  old: InventoryStatus
+
+  """All values that are not equal to given value."""
+  old_not: InventoryStatus
+
+  """All values that are contained in given list."""
+  old_in: [InventoryStatus!]
+
+  """All values that are not contained in given list."""
+  old_not_in: [InventoryStatus!]
+  new: InventoryStatus
+
+  """All values that are not equal to given value."""
+  new_not: InventoryStatus
+
+  """All values that are contained in given list."""
+  new_in: [InventoryStatus!]
+
+  """All values that are not contained in given list."""
+  new_not_in: [InventoryStatus!]
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
+}
+
+type PhysicalProductInventoryStatusChangeSubscriptionPayload {
+  mutation: MutationType!
+  node: PhysicalProductInventoryStatusChange
+  updatedFields: [String!]
+  previousValues: PhysicalProductInventoryStatusChangePreviousValues
+}
+
+input PhysicalProductInventoryStatusChangeSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [PhysicalProductInventoryStatusChangeSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [PhysicalProductInventoryStatusChangeSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [PhysicalProductInventoryStatusChangeSubscriptionWhereInput!]
+
+  """The subscription event gets dispatched when it's listed in mutation_in"""
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: PhysicalProductInventoryStatusChangeWhereInput
+}
+
+input PhysicalProductInventoryStatusChangeUpdateInput {
+  old: InventoryStatus
+  new: InventoryStatus
+  physicalProduct: PhysicalProductUpdateOneRequiredWithoutInventoryStatusChangesInput
+}
+
+input PhysicalProductInventoryStatusChangeUpdateManyDataInput {
+  old: InventoryStatus
+  new: InventoryStatus
+}
+
+input PhysicalProductInventoryStatusChangeUpdateManyMutationInput {
+  old: InventoryStatus
+  new: InventoryStatus
+}
+
+input PhysicalProductInventoryStatusChangeUpdateManyWithoutPhysicalProductInput {
+  create: [PhysicalProductInventoryStatusChangeCreateWithoutPhysicalProductInput!]
+  connect: [PhysicalProductInventoryStatusChangeWhereUniqueInput!]
+  set: [PhysicalProductInventoryStatusChangeWhereUniqueInput!]
+  disconnect: [PhysicalProductInventoryStatusChangeWhereUniqueInput!]
+  delete: [PhysicalProductInventoryStatusChangeWhereUniqueInput!]
+  update: [PhysicalProductInventoryStatusChangeUpdateWithWhereUniqueWithoutPhysicalProductInput!]
+  updateMany: [PhysicalProductInventoryStatusChangeUpdateManyWithWhereNestedInput!]
+  deleteMany: [PhysicalProductInventoryStatusChangeScalarWhereInput!]
+  upsert: [PhysicalProductInventoryStatusChangeUpsertWithWhereUniqueWithoutPhysicalProductInput!]
+}
+
+input PhysicalProductInventoryStatusChangeUpdateManyWithWhereNestedInput {
+  where: PhysicalProductInventoryStatusChangeScalarWhereInput!
+  data: PhysicalProductInventoryStatusChangeUpdateManyDataInput!
+}
+
+input PhysicalProductInventoryStatusChangeUpdateWithoutPhysicalProductDataInput {
+  old: InventoryStatus
+  new: InventoryStatus
+}
+
+input PhysicalProductInventoryStatusChangeUpdateWithWhereUniqueWithoutPhysicalProductInput {
+  where: PhysicalProductInventoryStatusChangeWhereUniqueInput!
+  data: PhysicalProductInventoryStatusChangeUpdateWithoutPhysicalProductDataInput!
+}
+
+input PhysicalProductInventoryStatusChangeUpsertWithWhereUniqueWithoutPhysicalProductInput {
+  where: PhysicalProductInventoryStatusChangeWhereUniqueInput!
+  update: PhysicalProductInventoryStatusChangeUpdateWithoutPhysicalProductDataInput!
+  create: PhysicalProductInventoryStatusChangeCreateWithoutPhysicalProductInput!
+}
+
+input PhysicalProductInventoryStatusChangeWhereInput {
+  """Logical AND on all given filters."""
+  AND: [PhysicalProductInventoryStatusChangeWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [PhysicalProductInventoryStatusChangeWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [PhysicalProductInventoryStatusChangeWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  old: InventoryStatus
+
+  """All values that are not equal to given value."""
+  old_not: InventoryStatus
+
+  """All values that are contained in given list."""
+  old_in: [InventoryStatus!]
+
+  """All values that are not contained in given list."""
+  old_not_in: [InventoryStatus!]
+  new: InventoryStatus
+
+  """All values that are not equal to given value."""
+  new_not: InventoryStatus
+
+  """All values that are contained in given list."""
+  new_in: [InventoryStatus!]
+
+  """All values that are not contained in given list."""
+  new_not_in: [InventoryStatus!]
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
+  physicalProduct: PhysicalProductWhereInput
+}
+
+input PhysicalProductInventoryStatusChangeWhereUniqueInput {
+  id: ID
 }
 
 enum PhysicalProductOffloadMethod {
@@ -10472,6 +10907,7 @@ input PhysicalProductUpdateDataInput {
   unitCost: Float
   location: LocationUpdateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
+  inventoryStatusChanges: PhysicalProductInventoryStatusChangeUpdateManyWithoutPhysicalProductInput
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
 }
 
@@ -10487,6 +10923,7 @@ input PhysicalProductUpdateInput {
   unitCost: Float
   location: LocationUpdateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
+  inventoryStatusChanges: PhysicalProductInventoryStatusChangeUpdateManyWithoutPhysicalProductInput
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
 }
 
@@ -10574,6 +11011,28 @@ input PhysicalProductUpdateOneRequiredInput {
   upsert: PhysicalProductUpsertNestedInput
 }
 
+input PhysicalProductUpdateOneRequiredWithoutInventoryStatusChangesInput {
+  create: PhysicalProductCreateWithoutInventoryStatusChangesInput
+  connect: PhysicalProductWhereUniqueInput
+  update: PhysicalProductUpdateWithoutInventoryStatusChangesDataInput
+  upsert: PhysicalProductUpsertWithoutInventoryStatusChangesInput
+}
+
+input PhysicalProductUpdateWithoutInventoryStatusChangesDataInput {
+  seasonsUID: String
+  inventoryStatus: InventoryStatus
+  productStatus: PhysicalProductStatus
+  offloadMethod: PhysicalProductOffloadMethod
+  offloadNotes: String
+  sequenceNumber: Int
+  dateOrdered: DateTime
+  dateReceived: DateTime
+  unitCost: Float
+  location: LocationUpdateOneWithoutPhysicalProductsInput
+  productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
+  warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
+}
+
 input PhysicalProductUpdateWithoutLocationDataInput {
   seasonsUID: String
   inventoryStatus: InventoryStatus
@@ -10585,6 +11044,7 @@ input PhysicalProductUpdateWithoutLocationDataInput {
   dateReceived: DateTime
   unitCost: Float
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
+  inventoryStatusChanges: PhysicalProductInventoryStatusChangeUpdateManyWithoutPhysicalProductInput
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
 }
 
@@ -10599,6 +11059,7 @@ input PhysicalProductUpdateWithoutProductVariantDataInput {
   dateReceived: DateTime
   unitCost: Float
   location: LocationUpdateOneWithoutPhysicalProductsInput
+  inventoryStatusChanges: PhysicalProductInventoryStatusChangeUpdateManyWithoutPhysicalProductInput
   warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
 }
 
@@ -10614,6 +11075,7 @@ input PhysicalProductUpdateWithoutWarehouseLocationDataInput {
   unitCost: Float
   location: LocationUpdateOneWithoutPhysicalProductsInput
   productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
+  inventoryStatusChanges: PhysicalProductInventoryStatusChangeUpdateManyWithoutPhysicalProductInput
 }
 
 input PhysicalProductUpdateWithWhereUniqueNestedInput {
@@ -10639,6 +11101,11 @@ input PhysicalProductUpdateWithWhereUniqueWithoutWarehouseLocationInput {
 input PhysicalProductUpsertNestedInput {
   update: PhysicalProductUpdateDataInput!
   create: PhysicalProductCreateInput!
+}
+
+input PhysicalProductUpsertWithoutInventoryStatusChangesInput {
+  update: PhysicalProductUpdateWithoutInventoryStatusChangesDataInput!
+  create: PhysicalProductCreateWithoutInventoryStatusChangesInput!
 }
 
 input PhysicalProductUpsertWithWhereUniqueNestedInput {
@@ -10958,6 +11425,9 @@ input PhysicalProductWhereInput {
   updatedAt_gte: DateTime
   location: LocationWhereInput
   productVariant: ProductVariantWhereInput
+  inventoryStatusChanges_every: PhysicalProductInventoryStatusChangeWhereInput
+  inventoryStatusChanges_some: PhysicalProductInventoryStatusChangeWhereInput
+  inventoryStatusChanges_none: PhysicalProductInventoryStatusChangeWhereInput
   warehouseLocation: WarehouseLocationWhereInput
 }
 
@@ -17607,6 +18077,7 @@ type Query {
   productStatusChanges(where: ProductStatusChangeWhereInput, orderBy: ProductStatusChangeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductStatusChange]!
   productMaterialCategories(where: ProductMaterialCategoryWhereInput, orderBy: ProductMaterialCategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductMaterialCategory]!
   productModels(where: ProductModelWhereInput, orderBy: ProductModelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductModel]!
+  physicalProductInventoryStatusChanges(where: PhysicalProductInventoryStatusChangeWhereInput, orderBy: PhysicalProductInventoryStatusChangeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProductInventoryStatusChange]!
   warehouseLocationConstraints(where: WarehouseLocationConstraintWhereInput, orderBy: WarehouseLocationConstraintOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [WarehouseLocationConstraint]!
   warehouseLocations(where: WarehouseLocationWhereInput, orderBy: WarehouseLocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [WarehouseLocation]!
   emailReceipts(where: EmailReceiptWhereInput, orderBy: EmailReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [EmailReceipt]!
@@ -17649,6 +18120,7 @@ type Query {
   productStatusChange(where: ProductStatusChangeWhereUniqueInput!): ProductStatusChange
   productMaterialCategory(where: ProductMaterialCategoryWhereUniqueInput!): ProductMaterialCategory
   productModel(where: ProductModelWhereUniqueInput!): ProductModel
+  physicalProductInventoryStatusChange(where: PhysicalProductInventoryStatusChangeWhereUniqueInput!): PhysicalProductInventoryStatusChange
   warehouseLocationConstraint(where: WarehouseLocationConstraintWhereUniqueInput!): WarehouseLocationConstraint
   warehouseLocation(where: WarehouseLocationWhereUniqueInput!): WarehouseLocation
   emailReceipt(where: EmailReceiptWhereUniqueInput!): EmailReceipt
@@ -17691,6 +18163,7 @@ type Query {
   productStatusChangesConnection(where: ProductStatusChangeWhereInput, orderBy: ProductStatusChangeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductStatusChangeConnection!
   productMaterialCategoriesConnection(where: ProductMaterialCategoryWhereInput, orderBy: ProductMaterialCategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductMaterialCategoryConnection!
   productModelsConnection(where: ProductModelWhereInput, orderBy: ProductModelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductModelConnection!
+  physicalProductInventoryStatusChangesConnection(where: PhysicalProductInventoryStatusChangeWhereInput, orderBy: PhysicalProductInventoryStatusChangeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PhysicalProductInventoryStatusChangeConnection!
   warehouseLocationConstraintsConnection(where: WarehouseLocationConstraintWhereInput, orderBy: WarehouseLocationConstraintOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): WarehouseLocationConstraintConnection!
   warehouseLocationsConnection(where: WarehouseLocationWhereInput, orderBy: WarehouseLocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): WarehouseLocationConnection!
   emailReceiptsConnection(where: EmailReceiptWhereInput, orderBy: EmailReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): EmailReceiptConnection!
@@ -20094,6 +20567,7 @@ type Subscription {
   productStatusChange(where: ProductStatusChangeSubscriptionWhereInput): ProductStatusChangeSubscriptionPayload
   productMaterialCategory(where: ProductMaterialCategorySubscriptionWhereInput): ProductMaterialCategorySubscriptionPayload
   productModel(where: ProductModelSubscriptionWhereInput): ProductModelSubscriptionPayload
+  physicalProductInventoryStatusChange(where: PhysicalProductInventoryStatusChangeSubscriptionWhereInput): PhysicalProductInventoryStatusChangeSubscriptionPayload
   warehouseLocationConstraint(where: WarehouseLocationConstraintSubscriptionWhereInput): WarehouseLocationConstraintSubscriptionPayload
   warehouseLocation(where: WarehouseLocationSubscriptionWhereInput): WarehouseLocationSubscriptionPayload
   emailReceipt(where: EmailReceiptSubscriptionWhereInput): EmailReceiptSubscriptionPayload
@@ -23244,6 +23718,17 @@ export type PhotographyStatus =   'Done' |
   'ReadyForEditing' |
   'ReadyToShoot' |
   'Steam'
+
+export type PhysicalProductInventoryStatusChangeOrderByInput =   'id_ASC' |
+  'id_DESC' |
+  'old_ASC' |
+  'old_DESC' |
+  'new_ASC' |
+  'new_DESC' |
+  'createdAt_ASC' |
+  'createdAt_DESC' |
+  'updatedAt_ASC' |
+  'updatedAt_DESC'
 
 export type PhysicalProductOffloadMethod =   'SoldToUser' |
   'SoldToThirdParty' |
@@ -27434,6 +27919,7 @@ export interface PhysicalProductCreateInput {
   unitCost?: Float | null
   location?: LocationCreateOneWithoutPhysicalProductsInput | null
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput
+  inventoryStatusChanges?: PhysicalProductInventoryStatusChangeCreateManyWithoutPhysicalProductInput | null
   warehouseLocation?: WarehouseLocationCreateOneWithoutPhysicalProductsInput | null
 }
 
@@ -27462,6 +27948,27 @@ export interface PhysicalProductCreateOneInput {
   connect?: PhysicalProductWhereUniqueInput | null
 }
 
+export interface PhysicalProductCreateOneWithoutInventoryStatusChangesInput {
+  create?: PhysicalProductCreateWithoutInventoryStatusChangesInput | null
+  connect?: PhysicalProductWhereUniqueInput | null
+}
+
+export interface PhysicalProductCreateWithoutInventoryStatusChangesInput {
+  id?: ID_Input | null
+  seasonsUID: String
+  inventoryStatus: InventoryStatus
+  productStatus: PhysicalProductStatus
+  offloadMethod?: PhysicalProductOffloadMethod | null
+  offloadNotes?: String | null
+  sequenceNumber: Int
+  dateOrdered?: DateTime | null
+  dateReceived?: DateTime | null
+  unitCost?: Float | null
+  location?: LocationCreateOneWithoutPhysicalProductsInput | null
+  productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput
+  warehouseLocation?: WarehouseLocationCreateOneWithoutPhysicalProductsInput | null
+}
+
 export interface PhysicalProductCreateWithoutLocationInput {
   id?: ID_Input | null
   seasonsUID: String
@@ -27474,6 +27981,7 @@ export interface PhysicalProductCreateWithoutLocationInput {
   dateReceived?: DateTime | null
   unitCost?: Float | null
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput
+  inventoryStatusChanges?: PhysicalProductInventoryStatusChangeCreateManyWithoutPhysicalProductInput | null
   warehouseLocation?: WarehouseLocationCreateOneWithoutPhysicalProductsInput | null
 }
 
@@ -27489,6 +27997,7 @@ export interface PhysicalProductCreateWithoutProductVariantInput {
   dateReceived?: DateTime | null
   unitCost?: Float | null
   location?: LocationCreateOneWithoutPhysicalProductsInput | null
+  inventoryStatusChanges?: PhysicalProductInventoryStatusChangeCreateManyWithoutPhysicalProductInput | null
   warehouseLocation?: WarehouseLocationCreateOneWithoutPhysicalProductsInput | null
 }
 
@@ -27505,6 +28014,178 @@ export interface PhysicalProductCreateWithoutWarehouseLocationInput {
   unitCost?: Float | null
   location?: LocationCreateOneWithoutPhysicalProductsInput | null
   productVariant: ProductVariantCreateOneWithoutPhysicalProductsInput
+  inventoryStatusChanges?: PhysicalProductInventoryStatusChangeCreateManyWithoutPhysicalProductInput | null
+}
+
+export interface PhysicalProductInventoryStatusChangeCreateInput {
+  id?: ID_Input | null
+  old: InventoryStatus
+  new: InventoryStatus
+  physicalProduct: PhysicalProductCreateOneWithoutInventoryStatusChangesInput
+}
+
+export interface PhysicalProductInventoryStatusChangeCreateManyWithoutPhysicalProductInput {
+  create?: PhysicalProductInventoryStatusChangeCreateWithoutPhysicalProductInput[] | PhysicalProductInventoryStatusChangeCreateWithoutPhysicalProductInput | null
+  connect?: PhysicalProductInventoryStatusChangeWhereUniqueInput[] | PhysicalProductInventoryStatusChangeWhereUniqueInput | null
+}
+
+export interface PhysicalProductInventoryStatusChangeCreateWithoutPhysicalProductInput {
+  id?: ID_Input | null
+  old: InventoryStatus
+  new: InventoryStatus
+}
+
+export interface PhysicalProductInventoryStatusChangeScalarWhereInput {
+  AND?: PhysicalProductInventoryStatusChangeScalarWhereInput[] | PhysicalProductInventoryStatusChangeScalarWhereInput | null
+  OR?: PhysicalProductInventoryStatusChangeScalarWhereInput[] | PhysicalProductInventoryStatusChangeScalarWhereInput | null
+  NOT?: PhysicalProductInventoryStatusChangeScalarWhereInput[] | PhysicalProductInventoryStatusChangeScalarWhereInput | null
+  id?: ID_Input | null
+  id_not?: ID_Input | null
+  id_in?: ID_Output[] | ID_Output | null
+  id_not_in?: ID_Output[] | ID_Output | null
+  id_lt?: ID_Input | null
+  id_lte?: ID_Input | null
+  id_gt?: ID_Input | null
+  id_gte?: ID_Input | null
+  id_contains?: ID_Input | null
+  id_not_contains?: ID_Input | null
+  id_starts_with?: ID_Input | null
+  id_not_starts_with?: ID_Input | null
+  id_ends_with?: ID_Input | null
+  id_not_ends_with?: ID_Input | null
+  old?: InventoryStatus | null
+  old_not?: InventoryStatus | null
+  old_in?: InventoryStatus[] | InventoryStatus | null
+  old_not_in?: InventoryStatus[] | InventoryStatus | null
+  new?: InventoryStatus | null
+  new_not?: InventoryStatus | null
+  new_in?: InventoryStatus[] | InventoryStatus | null
+  new_not_in?: InventoryStatus[] | InventoryStatus | null
+  createdAt?: DateTime | null
+  createdAt_not?: DateTime | null
+  createdAt_in?: DateTime[] | DateTime | null
+  createdAt_not_in?: DateTime[] | DateTime | null
+  createdAt_lt?: DateTime | null
+  createdAt_lte?: DateTime | null
+  createdAt_gt?: DateTime | null
+  createdAt_gte?: DateTime | null
+  updatedAt?: DateTime | null
+  updatedAt_not?: DateTime | null
+  updatedAt_in?: DateTime[] | DateTime | null
+  updatedAt_not_in?: DateTime[] | DateTime | null
+  updatedAt_lt?: DateTime | null
+  updatedAt_lte?: DateTime | null
+  updatedAt_gt?: DateTime | null
+  updatedAt_gte?: DateTime | null
+}
+
+export interface PhysicalProductInventoryStatusChangeSubscriptionWhereInput {
+  AND?: PhysicalProductInventoryStatusChangeSubscriptionWhereInput[] | PhysicalProductInventoryStatusChangeSubscriptionWhereInput | null
+  OR?: PhysicalProductInventoryStatusChangeSubscriptionWhereInput[] | PhysicalProductInventoryStatusChangeSubscriptionWhereInput | null
+  NOT?: PhysicalProductInventoryStatusChangeSubscriptionWhereInput[] | PhysicalProductInventoryStatusChangeSubscriptionWhereInput | null
+  mutation_in?: MutationType[] | MutationType | null
+  updatedFields_contains?: String | null
+  updatedFields_contains_every?: String[] | String | null
+  updatedFields_contains_some?: String[] | String | null
+  node?: PhysicalProductInventoryStatusChangeWhereInput | null
+}
+
+export interface PhysicalProductInventoryStatusChangeUpdateInput {
+  old?: InventoryStatus | null
+  new?: InventoryStatus | null
+  physicalProduct?: PhysicalProductUpdateOneRequiredWithoutInventoryStatusChangesInput | null
+}
+
+export interface PhysicalProductInventoryStatusChangeUpdateManyDataInput {
+  old?: InventoryStatus | null
+  new?: InventoryStatus | null
+}
+
+export interface PhysicalProductInventoryStatusChangeUpdateManyMutationInput {
+  old?: InventoryStatus | null
+  new?: InventoryStatus | null
+}
+
+export interface PhysicalProductInventoryStatusChangeUpdateManyWithoutPhysicalProductInput {
+  create?: PhysicalProductInventoryStatusChangeCreateWithoutPhysicalProductInput[] | PhysicalProductInventoryStatusChangeCreateWithoutPhysicalProductInput | null
+  connect?: PhysicalProductInventoryStatusChangeWhereUniqueInput[] | PhysicalProductInventoryStatusChangeWhereUniqueInput | null
+  set?: PhysicalProductInventoryStatusChangeWhereUniqueInput[] | PhysicalProductInventoryStatusChangeWhereUniqueInput | null
+  disconnect?: PhysicalProductInventoryStatusChangeWhereUniqueInput[] | PhysicalProductInventoryStatusChangeWhereUniqueInput | null
+  delete?: PhysicalProductInventoryStatusChangeWhereUniqueInput[] | PhysicalProductInventoryStatusChangeWhereUniqueInput | null
+  update?: PhysicalProductInventoryStatusChangeUpdateWithWhereUniqueWithoutPhysicalProductInput[] | PhysicalProductInventoryStatusChangeUpdateWithWhereUniqueWithoutPhysicalProductInput | null
+  updateMany?: PhysicalProductInventoryStatusChangeUpdateManyWithWhereNestedInput[] | PhysicalProductInventoryStatusChangeUpdateManyWithWhereNestedInput | null
+  deleteMany?: PhysicalProductInventoryStatusChangeScalarWhereInput[] | PhysicalProductInventoryStatusChangeScalarWhereInput | null
+  upsert?: PhysicalProductInventoryStatusChangeUpsertWithWhereUniqueWithoutPhysicalProductInput[] | PhysicalProductInventoryStatusChangeUpsertWithWhereUniqueWithoutPhysicalProductInput | null
+}
+
+export interface PhysicalProductInventoryStatusChangeUpdateManyWithWhereNestedInput {
+  where: PhysicalProductInventoryStatusChangeScalarWhereInput
+  data: PhysicalProductInventoryStatusChangeUpdateManyDataInput
+}
+
+export interface PhysicalProductInventoryStatusChangeUpdateWithoutPhysicalProductDataInput {
+  old?: InventoryStatus | null
+  new?: InventoryStatus | null
+}
+
+export interface PhysicalProductInventoryStatusChangeUpdateWithWhereUniqueWithoutPhysicalProductInput {
+  where: PhysicalProductInventoryStatusChangeWhereUniqueInput
+  data: PhysicalProductInventoryStatusChangeUpdateWithoutPhysicalProductDataInput
+}
+
+export interface PhysicalProductInventoryStatusChangeUpsertWithWhereUniqueWithoutPhysicalProductInput {
+  where: PhysicalProductInventoryStatusChangeWhereUniqueInput
+  update: PhysicalProductInventoryStatusChangeUpdateWithoutPhysicalProductDataInput
+  create: PhysicalProductInventoryStatusChangeCreateWithoutPhysicalProductInput
+}
+
+export interface PhysicalProductInventoryStatusChangeWhereInput {
+  AND?: PhysicalProductInventoryStatusChangeWhereInput[] | PhysicalProductInventoryStatusChangeWhereInput | null
+  OR?: PhysicalProductInventoryStatusChangeWhereInput[] | PhysicalProductInventoryStatusChangeWhereInput | null
+  NOT?: PhysicalProductInventoryStatusChangeWhereInput[] | PhysicalProductInventoryStatusChangeWhereInput | null
+  id?: ID_Input | null
+  id_not?: ID_Input | null
+  id_in?: ID_Output[] | ID_Output | null
+  id_not_in?: ID_Output[] | ID_Output | null
+  id_lt?: ID_Input | null
+  id_lte?: ID_Input | null
+  id_gt?: ID_Input | null
+  id_gte?: ID_Input | null
+  id_contains?: ID_Input | null
+  id_not_contains?: ID_Input | null
+  id_starts_with?: ID_Input | null
+  id_not_starts_with?: ID_Input | null
+  id_ends_with?: ID_Input | null
+  id_not_ends_with?: ID_Input | null
+  old?: InventoryStatus | null
+  old_not?: InventoryStatus | null
+  old_in?: InventoryStatus[] | InventoryStatus | null
+  old_not_in?: InventoryStatus[] | InventoryStatus | null
+  new?: InventoryStatus | null
+  new_not?: InventoryStatus | null
+  new_in?: InventoryStatus[] | InventoryStatus | null
+  new_not_in?: InventoryStatus[] | InventoryStatus | null
+  createdAt?: DateTime | null
+  createdAt_not?: DateTime | null
+  createdAt_in?: DateTime[] | DateTime | null
+  createdAt_not_in?: DateTime[] | DateTime | null
+  createdAt_lt?: DateTime | null
+  createdAt_lte?: DateTime | null
+  createdAt_gt?: DateTime | null
+  createdAt_gte?: DateTime | null
+  updatedAt?: DateTime | null
+  updatedAt_not?: DateTime | null
+  updatedAt_in?: DateTime[] | DateTime | null
+  updatedAt_not_in?: DateTime[] | DateTime | null
+  updatedAt_lt?: DateTime | null
+  updatedAt_lte?: DateTime | null
+  updatedAt_gt?: DateTime | null
+  updatedAt_gte?: DateTime | null
+  physicalProduct?: PhysicalProductWhereInput | null
+}
+
+export interface PhysicalProductInventoryStatusChangeWhereUniqueInput {
+  id?: ID_Input | null
 }
 
 export interface PhysicalProductScalarWhereInput {
@@ -27638,6 +28319,7 @@ export interface PhysicalProductUpdateDataInput {
   unitCost?: Float | null
   location?: LocationUpdateOneWithoutPhysicalProductsInput | null
   productVariant?: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput | null
+  inventoryStatusChanges?: PhysicalProductInventoryStatusChangeUpdateManyWithoutPhysicalProductInput | null
   warehouseLocation?: WarehouseLocationUpdateOneWithoutPhysicalProductsInput | null
 }
 
@@ -27653,6 +28335,7 @@ export interface PhysicalProductUpdateInput {
   unitCost?: Float | null
   location?: LocationUpdateOneWithoutPhysicalProductsInput | null
   productVariant?: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput | null
+  inventoryStatusChanges?: PhysicalProductInventoryStatusChangeUpdateManyWithoutPhysicalProductInput | null
   warehouseLocation?: WarehouseLocationUpdateOneWithoutPhysicalProductsInput | null
 }
 
@@ -27740,6 +28423,28 @@ export interface PhysicalProductUpdateOneRequiredInput {
   upsert?: PhysicalProductUpsertNestedInput | null
 }
 
+export interface PhysicalProductUpdateOneRequiredWithoutInventoryStatusChangesInput {
+  create?: PhysicalProductCreateWithoutInventoryStatusChangesInput | null
+  connect?: PhysicalProductWhereUniqueInput | null
+  update?: PhysicalProductUpdateWithoutInventoryStatusChangesDataInput | null
+  upsert?: PhysicalProductUpsertWithoutInventoryStatusChangesInput | null
+}
+
+export interface PhysicalProductUpdateWithoutInventoryStatusChangesDataInput {
+  seasonsUID?: String | null
+  inventoryStatus?: InventoryStatus | null
+  productStatus?: PhysicalProductStatus | null
+  offloadMethod?: PhysicalProductOffloadMethod | null
+  offloadNotes?: String | null
+  sequenceNumber?: Int | null
+  dateOrdered?: DateTime | null
+  dateReceived?: DateTime | null
+  unitCost?: Float | null
+  location?: LocationUpdateOneWithoutPhysicalProductsInput | null
+  productVariant?: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput | null
+  warehouseLocation?: WarehouseLocationUpdateOneWithoutPhysicalProductsInput | null
+}
+
 export interface PhysicalProductUpdateWithoutLocationDataInput {
   seasonsUID?: String | null
   inventoryStatus?: InventoryStatus | null
@@ -27751,6 +28456,7 @@ export interface PhysicalProductUpdateWithoutLocationDataInput {
   dateReceived?: DateTime | null
   unitCost?: Float | null
   productVariant?: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput | null
+  inventoryStatusChanges?: PhysicalProductInventoryStatusChangeUpdateManyWithoutPhysicalProductInput | null
   warehouseLocation?: WarehouseLocationUpdateOneWithoutPhysicalProductsInput | null
 }
 
@@ -27765,6 +28471,7 @@ export interface PhysicalProductUpdateWithoutProductVariantDataInput {
   dateReceived?: DateTime | null
   unitCost?: Float | null
   location?: LocationUpdateOneWithoutPhysicalProductsInput | null
+  inventoryStatusChanges?: PhysicalProductInventoryStatusChangeUpdateManyWithoutPhysicalProductInput | null
   warehouseLocation?: WarehouseLocationUpdateOneWithoutPhysicalProductsInput | null
 }
 
@@ -27780,6 +28487,7 @@ export interface PhysicalProductUpdateWithoutWarehouseLocationDataInput {
   unitCost?: Float | null
   location?: LocationUpdateOneWithoutPhysicalProductsInput | null
   productVariant?: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput | null
+  inventoryStatusChanges?: PhysicalProductInventoryStatusChangeUpdateManyWithoutPhysicalProductInput | null
 }
 
 export interface PhysicalProductUpdateWithWhereUniqueNestedInput {
@@ -27805,6 +28513,11 @@ export interface PhysicalProductUpdateWithWhereUniqueWithoutWarehouseLocationInp
 export interface PhysicalProductUpsertNestedInput {
   update: PhysicalProductUpdateDataInput
   create: PhysicalProductCreateInput
+}
+
+export interface PhysicalProductUpsertWithoutInventoryStatusChangesInput {
+  update: PhysicalProductUpdateWithoutInventoryStatusChangesDataInput
+  create: PhysicalProductCreateWithoutInventoryStatusChangesInput
 }
 
 export interface PhysicalProductUpsertWithWhereUniqueNestedInput {
@@ -27939,6 +28652,9 @@ export interface PhysicalProductWhereInput {
   updatedAt_gte?: DateTime | null
   location?: LocationWhereInput | null
   productVariant?: ProductVariantWhereInput | null
+  inventoryStatusChanges_every?: PhysicalProductInventoryStatusChangeWhereInput | null
+  inventoryStatusChanges_some?: PhysicalProductInventoryStatusChangeWhereInput | null
+  inventoryStatusChanges_none?: PhysicalProductInventoryStatusChangeWhereInput | null
   warehouseLocation?: WarehouseLocationWhereInput | null
 }
 
@@ -33550,6 +34266,10 @@ export interface AggregatePhysicalProduct {
   count: Int
 }
 
+export interface AggregatePhysicalProductInventoryStatusChange {
+  count: Int
+}
+
 export interface AggregateProduct {
   count: Int
 }
@@ -34566,6 +35286,7 @@ export interface PhysicalProduct extends Node {
   location?: Location | null
   productVariant: ProductVariant
   inventoryStatus: InventoryStatus
+  inventoryStatusChanges?: Array<PhysicalProductInventoryStatusChange> | null
   productStatus: PhysicalProductStatus
   offloadMethod?: PhysicalProductOffloadMethod | null
   offloadNotes?: String | null
@@ -34595,6 +35316,49 @@ export interface PhysicalProductConnection {
 export interface PhysicalProductEdge {
   node: PhysicalProduct
   cursor: String
+}
+
+export interface PhysicalProductInventoryStatusChange extends Node {
+  id: ID_Output
+  old: InventoryStatus
+  new: InventoryStatus
+  physicalProduct: PhysicalProduct
+  createdAt: DateTime
+  updatedAt?: DateTime | null
+}
+
+/*
+ * A connection to a list of items.
+
+ */
+export interface PhysicalProductInventoryStatusChangeConnection {
+  pageInfo: PageInfo
+  edges: Array<PhysicalProductInventoryStatusChangeEdge | null>
+  aggregate: AggregatePhysicalProductInventoryStatusChange
+}
+
+/*
+ * An edge in a connection.
+
+ */
+export interface PhysicalProductInventoryStatusChangeEdge {
+  node: PhysicalProductInventoryStatusChange
+  cursor: String
+}
+
+export interface PhysicalProductInventoryStatusChangePreviousValues {
+  id: ID_Output
+  old: InventoryStatus
+  new: InventoryStatus
+  createdAt: DateTime
+  updatedAt?: DateTime | null
+}
+
+export interface PhysicalProductInventoryStatusChangeSubscriptionPayload {
+  mutation: MutationType
+  node?: PhysicalProductInventoryStatusChange | null
+  updatedFields?: Array<String> | null
+  previousValues?: PhysicalProductInventoryStatusChangePreviousValues | null
 }
 
 export interface PhysicalProductPreviousValues {

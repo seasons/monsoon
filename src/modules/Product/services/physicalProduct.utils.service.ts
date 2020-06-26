@@ -56,17 +56,33 @@ export class PhysicalProductUtilsService {
   async markPhysicalProductsReservedOnPrisma(
     physicalProducts: PhysicalProduct[]
   ): Promise<() => void> {
-    const physicalProductIDs = physicalProducts.map(a => a.id)
+    const inventoryStatusChanges = []
+    const physProdIds = physicalProducts.map(a => a.id)
+
     await this.prisma.client.updateManyPhysicalProducts({
-      where: { id_in: physicalProductIDs },
+      where: { id_in: physProdIds },
       data: { inventoryStatus: "Reserved" },
     })
+    for (const id of physProdIds) {
+      inventoryStatusChanges.push(
+        await this.prisma.client.createPhysicalProductInventoryStatusChange({
+          old: "Reservable",
+          new: "Reserved",
+          physicalProduct: { connect: { id } },
+        })
+      )
+    }
+
     const rollbackMarkPhysicalProductReservedOnPrisma = async () => {
       await this.prisma.client.updateManyPhysicalProducts({
-        where: { id_in: physicalProductIDs },
+        where: { id_in: physProdIds },
         data: { inventoryStatus: "Reservable" },
       })
+      await this.prisma.client.deleteManyPhysicalProductInventoryStatusChanges({
+        id_in: inventoryStatusChanges.map(a => a.id),
+      })
     }
+
     return rollbackMarkPhysicalProductReservedOnPrisma
   }
 

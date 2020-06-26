@@ -50,12 +50,18 @@ export class PhysicalProductService {
     data: PhysicalProductUpdateInput
     info: GraphQLResolveInfo
   }) {
-    // Must update counts before calling any other methods because they
-    // might update the inventoryStatus, i.e. in offloadPhysicalProductIfNeeded
+    const physProdBeforeUpdate = await this.prisma.client.physicalProduct(where)
     if (data.inventoryStatus) {
+      // Must update counts before calling any other methods because they
+      // might update the inventoryStatus, i.e. in offloadPhysicalProductIfNeeded
       await this.updateVariantCountsIfNeeded({
         where,
         inventoryStatus: data.inventoryStatus,
+      })
+      await this.prisma.client.createPhysicalProductInventoryStatusChange({
+        old: physProdBeforeUpdate.inventoryStatus,
+        new: data.inventoryStatus,
+        physicalProduct: { connect: where },
       })
     }
 
@@ -300,6 +306,9 @@ export class PhysicalProductService {
       }
 
       // Core logic
+      // Note that we do not create a PhysicalProductInventoryStatusChange record here
+      // because this function is only called from the updatePhysicalProduct, where we
+      // do create that record.
       await this.prisma.client.updatePhysicalProduct({
         where,
         data: { inventoryStatus, offloadMethod, offloadNotes },

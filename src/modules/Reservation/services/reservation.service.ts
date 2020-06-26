@@ -261,9 +261,19 @@ export class ReservationService {
           productStatus,
         }
         if (returned) {
+          const oldInventoryStatus = await this.prisma.client
+            .physicalProduct({
+              seasonsUID,
+            })
+            .inventoryStatus()
           updateData.inventoryStatus = await this.getReturnedPhysicalProductInventoryStatus(
             seasonsUID
           )
+          await this.prisma.client.createPhysicalProductInventoryStatusChange({
+            old: oldInventoryStatus,
+            new: updateData.inventoryStatus,
+            physicalProduct: { connect: { seasonsUID } },
+          })
           return this.prisma.client.updatePhysicalProduct({
             where: { seasonsUID },
             data: updateData,
