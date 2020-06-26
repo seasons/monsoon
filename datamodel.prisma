@@ -320,7 +320,7 @@ type ProductStatusChange {
   old: ProductStatus!
   new: ProductStatus!
   product: Product!
-    @relation(name: "ProductToProductStatusChanges", onDelete: SET_NULL)
+    @relation(name: "ProductToProductStatusChange", onDelete: SET_NULL)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
