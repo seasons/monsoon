@@ -4058,14 +4058,14 @@ enum LetterSize {
 
 type Location {
   id: ID!
-  slug: String!
-  name: String!
+  slug: String
+  name: String
   company: String
   description: String
-  address1: String!
+  address1: String
   address2: String
-  city: String!
-  state: String!
+  city: String
+  state: String
   zipCode: String!
   locationType: LocationType
   user: User
@@ -4084,14 +4084,14 @@ type LocationConnection {
 
 input LocationCreateInput {
   id: ID
-  slug: String!
-  name: String!
+  slug: String
+  name: String
   company: String
   description: String
-  address1: String!
+  address1: String
   address2: String
-  city: String!
-  state: String!
+  city: String
+  state: String
   zipCode: String!
   locationType: LocationType
   user: UserCreateOneInput
@@ -4112,14 +4112,14 @@ input LocationCreateOneWithoutPhysicalProductsInput {
 
 input LocationCreateWithoutPhysicalProductsInput {
   id: ID
-  slug: String!
-  name: String!
+  slug: String
+  name: String
   company: String
   description: String
-  address1: String!
+  address1: String
   address2: String
-  city: String!
-  state: String!
+  city: String
+  state: String
   zipCode: String!
   locationType: LocationType
   user: UserCreateOneInput
@@ -4167,14 +4167,14 @@ enum LocationOrderByInput {
 
 type LocationPreviousValues {
   id: ID!
-  slug: String!
-  name: String!
+  slug: String
+  name: String
   company: String
   description: String
-  address1: String!
+  address1: String
   address2: String
-  city: String!
-  state: String!
+  city: String
+  state: String
   zipCode: String!
   locationType: LocationType
   lat: Float
