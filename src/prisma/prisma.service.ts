@@ -1,5 +1,5 @@
 import { UpdatableConnection } from "@app/modules/index.types"
-import { Injectable, Scope } from "@nestjs/common"
+import { Injectable } from "@nestjs/common"
 
 import { Prisma as PrismaClient, prisma } from "./"
 import { Prisma as PrismaBinding } from "./prisma.binding"

@@ -315,6 +315,16 @@ type Tag {
   updatedAt: DateTime! @updatedAt
 }
 
+type ProductStatusChange {
+  id: ID! @id
+  old: ProductStatus!
+  new: ProductStatus!
+  product: Product!
+    @relation(name: "ProductToProductStatusChange", onDelete: SET_NULL)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
 type Product {
   id: ID! @id
   slug: String! @unique
@@ -338,6 +348,12 @@ type Product {
   outerMaterials: [String!]! @scalarList(strategy: RELATION)
   variants: [ProductVariant!]! @relation(link: TABLE, onDelete: CASCADE)
   status: ProductStatus @default(value: Available)
+  statusChanges: [ProductStatusChange!]!
+    @relation(
+      name: "ProductToProductStatusChange"
+      link: TABLE
+      onDelete: CASCADE
+    )
   season: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
@@ -389,12 +405,30 @@ type ProductVariant {
   updatedAt: DateTime! @updatedAt
 }
 
+type PhysicalProductInventoryStatusChange {
+  id: ID! @id
+  old: InventoryStatus!
+  new: InventoryStatus!
+  physicalProduct: PhysicalProduct!
+    @relation(
+      name: "PhysicalProductToPhysicalProductStatusChange"
+      onDelete: SET_NULL
+    )
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime @updatedAt
+}
 type PhysicalProduct {
   id: ID! @id
   seasonsUID: String! @unique
   location: Location
   productVariant: ProductVariant! @relation(onDelete: SET_NULL)
   inventoryStatus: InventoryStatus!
+  inventoryStatusChanges: [PhysicalProductInventoryStatusChange!]!
+    @relation(
+      name: "PhysicalProductToPhysicalProductStatusChange"
+      link: TABLE
+      onDelete: CASCADE
+    )
   productStatus: PhysicalProductStatus!
   offloadMethod: PhysicalProductOffloadMethod
   offloadNotes: String

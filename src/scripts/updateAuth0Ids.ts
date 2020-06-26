@@ -15,12 +15,12 @@ Airtable.configure({
 
 const run = async () => {
   try {
-    debugger
     const ps = new PrismaService()
     const abs = new AirtableBaseService()
     const authService = new AuthService(
       ps,
-      new AirtableService(abs, new AirtableUtilsService(abs))
+      new AirtableService(abs, new AirtableUtilsService(abs)),
+      null
     )
     const prismaUsers = await ps.client.users({})
 

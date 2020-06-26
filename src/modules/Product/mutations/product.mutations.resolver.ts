@@ -1,6 +1,5 @@
 import { Customer, User } from "@app/decorators"
 import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
-import { PrismaService } from "@prisma/prisma.service"
 
 import { BagService } from "../services/bag.service"
 import { ProductService } from "../services/product.service"
@@ -55,6 +54,6 @@ export class ProductMutationsResolver {
 
   @Mutation()
   async updateProduct(@Args() { where, data }, @Info() info) {
-    return await this.productService.updateProduct(where, data, info)
+    return await this.productService.updateProduct({ where, data, info })
   }
 }

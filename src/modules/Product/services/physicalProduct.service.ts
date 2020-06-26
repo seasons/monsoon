@@ -50,9 +50,15 @@ export class PhysicalProductService {
     data: PhysicalProductUpdateInput
     info: GraphQLResolveInfo
   }) {
-    // Must update counts before calling any other methods because they
-    // might update the inventoryStatus, i.e. in offloadPhysicalProductIfNeeded
-    if (data.inventoryStatus) {
+    const physProdBeforeUpdate = await this.prisma.client.physicalProduct(where)
+    if (data.inventoryStatus !== physProdBeforeUpdate.inventoryStatus) {
+      if (physProdBeforeUpdate.inventoryStatus === "Stored") {
+        throw new ApolloError(
+          "Can not unstore a physical product directly. Must do so from parent product."
+        )
+      }
+      // Must update counts before calling any other methods because they
+      // might update the inventoryStatus, i.e. in offloadPhysicalProductIfNeeded
       await this.updateVariantCountsIfNeeded({
         where,
         inventoryStatus: data.inventoryStatus,
@@ -71,9 +77,17 @@ export class PhysicalProductService {
       )
     }
 
-    // Use two separate queries because the schema for update data differs
-    // between the client and the binding, and we expose the client's schema
     await this.prisma.client.updatePhysicalProduct({ where, data })
+
+    // Do this at the end so it only happens *after* any status changes have occured
+    if (data.inventoryStatus !== physProdBeforeUpdate.inventoryStatus) {
+      await this.prisma.client.createPhysicalProductInventoryStatusChange({
+        old: physProdBeforeUpdate.inventoryStatus,
+        new: data.inventoryStatus,
+        physicalProduct: { connect: where },
+      })
+    }
+
     return await this.prisma.binding.query.physicalProduct({ where }, info)
   }
 
@@ -298,8 +312,17 @@ export class PhysicalProductService {
           pick(activeResyWithPhysProd, "reservationNumber")
         )
       }
+      if (physicalProductBeforeUpdate.inventoryStatus === "Reserved") {
+        throw new ApolloError(
+          "Corrupt data. No active reservation with physical product, but its current status is reserved",
+          "409"
+        )
+      }
 
       // Core logic
+      // Note that we do not create a PhysicalProductInventoryStatusChange record here
+      // because this function is only called from the updatePhysicalProduct, where we
+      // do create that record.
       await this.prisma.client.updatePhysicalProduct({
         where,
         data: { inventoryStatus, offloadMethod, offloadNotes },
