@@ -6543,14 +6543,14 @@ export interface LocationCreateOneInput {
 
 export interface LocationCreateInput {
   id?: Maybe<ID_Input>;
-  slug: String;
-  name: String;
+  slug?: Maybe<String>;
+  name?: Maybe<String>;
   company?: Maybe<String>;
   description?: Maybe<String>;
-  address1: String;
+  address1?: Maybe<String>;
   address2?: Maybe<String>;
-  city: String;
-  state: String;
+  city?: Maybe<String>;
+  state?: Maybe<String>;
   zipCode: String;
   locationType?: Maybe<LocationType>;
   user?: Maybe<UserCreateOneInput>;
@@ -6907,14 +6907,14 @@ export interface LocationCreateOneWithoutPhysicalProductsInput {
 
 export interface LocationCreateWithoutPhysicalProductsInput {
   id?: Maybe<ID_Input>;
-  slug: String;
-  name: String;
+  slug?: Maybe<String>;
+  name?: Maybe<String>;
   company?: Maybe<String>;
   description?: Maybe<String>;
-  address1: String;
+  address1?: Maybe<String>;
   address2?: Maybe<String>;
-  city: String;
-  state: String;
+  city?: Maybe<String>;
+  state?: Maybe<String>;
   zipCode: String;
   locationType?: Maybe<LocationType>;
   user?: Maybe<UserCreateOneInput>;
@@ -14489,14 +14489,14 @@ export interface CustomerDetailNullablePromise
 
 export interface Location {
   id: ID_Output;
-  slug: String;
-  name: String;
+  slug?: String;
+  name?: String;
   company?: String;
   description?: String;
-  address1: String;
+  address1?: String;
   address2?: String;
-  city: String;
-  state: String;
+  city?: String;
+  state?: String;
   zipCode: String;
   locationType?: LocationType;
   lat?: Float;
@@ -20424,14 +20424,14 @@ export interface LocationSubscriptionPayloadSubscription
 
 export interface LocationPreviousValues {
   id: ID_Output;
-  slug: String;
-  name: String;
+  slug?: String;
+  name?: String;
   company?: String;
   description?: String;
-  address1: String;
+  address1?: String;
   address2?: String;
-  city: String;
-  state: String;
+  city?: String;
+  state?: String;
   zipCode: String;
   locationType?: LocationType;
   lat?: Float;
