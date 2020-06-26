@@ -222,6 +222,108 @@ export class DataScheduledJobs {
     return cases
   }
 
+  private checkCounts(allAirtableProductVariants, allPrismaProductVariants) {
+    const countMisalignments = []
+    const prismaTotalPhysicalProductMisalignment = []
+    const airtableTotalPhysicalProductMisalignment = []
+    for (const prismaProductVariant of allPrismaProductVariants) {
+      const correspondingAirtableProductVariant = this.airtableService.getCorrespondingAirtableProductVariant(
+        allAirtableProductVariants,
+        prismaProductVariant
+      )
+
+      // Are all counts identical
+      if (correspondingAirtableProductVariant === undefined) {
+        console.log(
+          "could not find product variant in airtable. sku: ",
+          prismaProductVariant.sku
+        )
+        continue
+      }
+      const totalCorrect =
+        prismaProductVariant.total ===
+        correspondingAirtableProductVariant.model.totalCount
+      const reservableCorrect =
+        prismaProductVariant.reservable ===
+        correspondingAirtableProductVariant.model.reservableCount
+      const reservedCorrect =
+        prismaProductVariant.reserved ===
+        correspondingAirtableProductVariant.model.reservedCount
+      const nonReservableCorrect =
+        prismaProductVariant.nonReservable ===
+        correspondingAirtableProductVariant.model.nonReservableCount
+      const storedCorrect =
+        prismaProductVariant.stored ===
+        correspondingAirtableProductVariant.model.storedCount
+      const offloadedCorrect =
+        prismaProductVariant.offloaded ===
+        correspondingAirtableProductVariant.model.offloadedCount
+      if (
+        !totalCorrect ||
+        !reservableCorrect ||
+        !reservedCorrect ||
+        !nonReservableCorrect ||
+        !storedCorrect ||
+        !offloadedCorrect
+      ) {
+        countMisalignments.push({
+          sku: prismaProductVariant.sku,
+          prismaCounts: pick(prismaProductVariant, [
+            "total",
+            "reserved",
+            "reservable",
+            "nonReservable",
+            "stored",
+            "offloaded",
+          ]),
+          airtableCounts: {
+            total: correspondingAirtableProductVariant.model.totalCount,
+            reserved: correspondingAirtableProductVariant.model.reservedCount,
+            reservable:
+              correspondingAirtableProductVariant.model.reservableCount,
+            nonReservable:
+              correspondingAirtableProductVariant.model.nonReservableCount,
+            stored: correspondingAirtableProductVariant.model.storedCount,
+            offloaded: correspondingAirtableProductVariant.model.offloadedCount,
+          },
+        })
+      }
+
+      // Does prisma have the number of physical products it should? ibid, Airtable?
+      if (
+        prismaProductVariant.physicalProducts.length !==
+        prismaProductVariant.total
+      ) {
+        prismaTotalPhysicalProductMisalignment.push({
+          sku: prismaProductVariant.sku,
+          totalCount: prismaProductVariant.total,
+          attachedPhysicalProducts:
+            prismaProductVariant.physicalProducts.length,
+        })
+      }
+      const noPhysicalProductsAndMisalignment =
+        !correspondingAirtableProductVariant.fields["Physical Products"] &&
+        correspondingAirtableProductVariant.fields["Total Count"] !== 0
+      const physicalProductsAndMisalignment =
+        !!correspondingAirtableProductVariant.fields["Physical Products"] &&
+        correspondingAirtableProductVariant.fields["Physical Products"]
+          .length !== correspondingAirtableProductVariant.fields["Total Count"]
+      if (
+        noPhysicalProductsAndMisalignment ||
+        physicalProductsAndMisalignment
+      ) {
+        airtableTotalPhysicalProductMisalignment.push({
+          sku: correspondingAirtableProductVariant.fields.SKU,
+          totalCount: correspondingAirtableProductVariant.fields["Total Count"],
+          attachedPhysicalProducts:
+            correspondingAirtableProductVariant.fields["Total Count"].length,
+        })
+      }
+    }
+
+    return cases
+  }
+
   private async getProdVarsWithCountsThatDontMatchPhysProdStatuses() {
     const allProdVars = await this.prisma.binding.query.productVariants(
       { where: {} },
@@ -304,14 +406,21 @@ export class DataScheduledJobs {
       If its inventoryStatus is reservable or nonReservable, it should not be on an active reservation. 
       If it is, add it to the cases list. 
     */
-   for (const physProd of allPhysicalProducts) {
-     switch physProd.inventoryStatus {
-       case "Stored":
-         break
-       case "Offloaded":
-        break
-     }
-   }
+    for (const physProd of allPhysicalProducts) {
+      switch (physProd.inventoryStatus) {
+        case "Stored":
+          // code block
+          break
+        case "Reserved":
+          // code block
+          break
+        case "Offloaded":
+          // code block
+          break
+        default:
+        // code block
+      }
+    }
     const storedPhysProds = allPhysicalProducts.filter(
       a => a.inventoryStatus === "Stored"
     )
@@ -402,16 +511,6 @@ export class DataScheduledJobs {
     if (withDetails && paramArray?.length > 0) {
       !!printFunc ? printFunc(paramArray) : console.log(paramArray)
     }
-  }
-  private getAttachedAirtablePhysicalProducts(
-    allAirtablePhysicalProducts,
-    airtableProductVariant
-  ) {
-    if (!airtableProductVariant.fields.SKU) return []
-
-    return allAirtablePhysicalProducts.filter(a =>
-      airtableProductVariant.model?.physicalProducts?.includes(a.id)
-    )
   }
 
   private async getProdVarsWithImpossibleCounts() {
