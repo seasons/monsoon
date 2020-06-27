@@ -9,7 +9,7 @@ import { PackageTransitEventSubStatus } from "@app/prisma"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Body, Controller, Logger, Post } from "@nestjs/common"
 import casify from "camelcase-keys"
-import { camelCase, head, upperFirst } from "lodash"
+import { camelCase, head, isObject, upperFirst } from "lodash"
 
 export enum ShippoEventType {
   TransactionCreated = "transaction_created",
@@ -26,7 +26,9 @@ export type ShippoData = {
       statusDate: string
       statusDetails: string
       status: PackageTransitEventStatus
-      substatus: PackageTransitEventSubStatus
+      substatus: {
+        code: PackageTransitEventSubStatus
+      }
       location: {
         city: string
         country: string
@@ -52,7 +54,9 @@ type ReservationWithPackage = Reservation & {
 export class ShippoController {
   private readonly logger = new Logger(ShippoController.name)
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) {
+    console.log(prisma)
+  }
 
   @Post()
   async handlePost(@Body() body: ShippoData) {
@@ -67,17 +71,20 @@ export class ShippoController {
       camelCase(trackingStatus.status)
     ) as PackageTransitEventStatus
 
-    const subStatus = upperFirst(
-      camelCase(trackingStatus.substatus)
-    ) as PackageTransitEventSubStatus
+    const subStatus = (isObject(trackingStatus.substatus)
+      ? upperFirst(camelCase(trackingStatus?.substatus?.code))
+      : "Other") as PackageTransitEventSubStatus
+
+    const packageTransitEvent = await this.prisma.client.createPackageTransitEvent(
+      {
+        status,
+        subStatus,
+        data: result,
+      }
+    )
 
     switch (event) {
       case ShippoEventType.TrackUpdated:
-        await this.prisma.client.createPackageTransitEvent({
-          status,
-          subStatus,
-          data: result,
-        })
         const reservation: ReservationWithPackage = head(
           await this.prisma.binding.query.reservations(
             {
@@ -117,6 +124,8 @@ export class ShippoController {
 
         break
     }
+
+    return packageTransitEvent
   }
 
   reservationPhase(
