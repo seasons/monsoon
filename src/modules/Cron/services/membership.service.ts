@@ -16,8 +16,6 @@ export class MembershipScheduledJobs {
 
   @Cron(CronExpression.EVERY_MINUTE)
   async updatePausePendingToPaused() {
-    this.logger.log("Update pause pending to paused job ran")
-
     const pauseRequests = await this.prisma.client.pauseRequests({
       where: {
         pausePending: true,
@@ -69,6 +67,7 @@ export class MembershipScheduledJobs {
 
           // Customer has an active reservation so we restart membership
           this.paymentService.resumeSubscription(subscriptionId, null, customer)
+          this.logger.log(`Resumed customer subscription: ${customerId}`)
         } else {
           // Otherwise we can pause the membership if no active reservations
           await this.prisma.client.updatePauseRequest({
@@ -82,6 +81,7 @@ export class MembershipScheduledJobs {
             },
             where: { id: customerId },
           })
+          this.logger.log(`Paused customer subscription: ${customerId}`)
         }
       }
     }
@@ -89,8 +89,6 @@ export class MembershipScheduledJobs {
 
   @Cron(CronExpression.EVERY_MINUTE)
   async restartMembership() {
-    this.logger.log("Restart membership job ran")
-
     const pausedCustomers = await this.prisma.client.customers({
       where: {
         status: "Paused",
@@ -135,6 +133,7 @@ export class MembershipScheduledJobs {
           return
         }
 
+        this.logger.log(`Paused customer subscription: ${customer.id}`)
         this.paymentService.resumeSubscription(subscriptionId, null, customer)
       }
     }
