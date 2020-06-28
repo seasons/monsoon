@@ -1,12 +1,12 @@
 import { AppModule } from "@app/app.module"
-import { ShippingModule } from "@app/modules"
-import { HttpModule, INestApplication } from "@nestjs/common"
+import { INestApplication } from "@nestjs/common"
+import { ContextIdFactory } from "@nestjs/core"
 import { Test } from "@nestjs/testing"
 import request from "supertest"
 
 import { PrismaModule } from "../../../prisma/prisma.module"
 import { PrismaService } from "../../../prisma/prisma.service"
-import { ShippoController, ShippoData } from "../controllers/shippo.controller"
+import { ShippoController } from "../controllers/shippo.controller"
 import { PackageArrived, PackageDeparted } from "./shippoEvents.stub"
 
 class PrismaServiceMock {
@@ -29,15 +29,18 @@ class PrismaServiceMock {
       return Promise.resolve({
         id: "456",
         status: data.status,
-        substatus: data.substatus,
+        substatus: data.subStatus,
+        data,
       })
     }),
+    updateReservation: jest.fn(),
   }
 }
 
 describe("Shippo Controller", () => {
   let app: INestApplication
   let shippoController: ShippoController
+  let prismaService: PrismaService
 
   beforeEach(async () => {
     const PrismaServiceProvider = {
@@ -46,12 +49,17 @@ describe("Shippo Controller", () => {
     }
     const moduleRef = await Test.createTestingModule({
       controllers: [ShippoController],
-      providers: [PrismaServiceProvider],
-      imports: [AppModule, ShippingModule, PrismaModule],
-    }).compile()
+      providers: [ShippoController, PrismaServiceProvider],
+      imports: [AppModule],
+    })
+      .overrideProvider(PrismaService)
+      .useClass(PrismaServiceMock)
+      .compile()
 
     app = moduleRef.createNestApplication()
     shippoController = moduleRef.get<ShippoController>(ShippoController)
+    prismaService = moduleRef.get<PrismaService>(PrismaService)
+
     await app.init()
   })
 
@@ -59,10 +67,14 @@ describe("Shippo Controller", () => {
     return request(app.getHttpServer())
       .post("/shippo_events")
       .send(PackageDeparted)
-      .expect(200)
+      .expect(201)
       .end((err, res) => {
         if (err) done(err)
-        expect(res).toBe({})
+        expect(res.body).toMatchObject({
+          id: "456",
+          status: "Transit",
+          substatus: "PackageDeparted",
+        })
         done()
       })
   })

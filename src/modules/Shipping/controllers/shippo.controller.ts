@@ -54,9 +54,7 @@ type ReservationWithPackage = Reservation & {
 export class ShippoController {
   private readonly logger = new Logger(ShippoController.name)
 
-  constructor(private readonly prisma: PrismaService) {
-    console.log(prisma)
-  }
+  constructor(private readonly prisma: PrismaService) {}
 
   @Post()
   async handlePost(@Body() body: ShippoData) {
