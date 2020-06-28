@@ -6,7 +6,8 @@
   "bin": "bin/cli.js",
   "main": "dist/index.js",
   "resolutions": {
-    "graphql": "^14.5.7"
+    "graphql": "^14.5.7",
+    "apollo-cache-control": "0.11.0"
   },
   "scripts": {
     "apollo": "apollo service:push",
@@ -36,15 +37,15 @@
     "@babel/plugin-proposal-class-properties": "^7.8.3",
     "@babel/plugin-proposal-decorators": "^7.8.3",
     "@elastic/elasticsearch": "^7.5.1",
-    "@nestjs/cli": "^6.14.2",
-    "@nestjs/common": "^6.11.11",
-    "@nestjs/core": "^6.11.5",
+    "@nestjs/cli": "^7.4.1",
+    "@nestjs/common": "^7.2.0",
+    "@nestjs/core": "^7.2.0",
     "@nestjs/graphql": "^7.0.15",
-    "@nestjs/jwt": "^6.1.1",
-    "@nestjs/passport": "^6.1.1",
-    "@nestjs/platform-express": "^6.11.8",
-    "@nestjs/schedule": "^0.3.0",
-    "@nestjs/testing": "^6.11.11",
+    "@nestjs/jwt": "^7.0.0",
+    "@nestjs/passport": "^7.0.0",
+    "@nestjs/platform-express": "^7.2.0",
+    "@nestjs/schedule": "^0.4.0",
+    "@nestjs/testing": "^7.2.0",
     "@pusher/push-notifications-server": "^1.2.0",
     "@sendgrid/mail": "^6.4.0",
     "@sentry/node": "^5.10.2",
@@ -54,9 +55,11 @@
     "@types/request": "^2.48.3",
     "airtable": "^0.7.1",
     "analytics-node": "^3.4.0-beta.1",
+    "apollo-cache-control": "0.11.0",
     "apollo-datasource-rest": "^0.6.4",
     "apollo-link-http": "^1.5.15",
     "apollo-server": "^2.11.0",
+    "apollo-server-express": "^2.15.0",
     "auth0": "^2.20.0",
     "aws-sdk": "^2.619.0",
     "babel-plugin-parameter-decorator": "^1.0.15",
@@ -125,6 +128,7 @@
     "@types/jest": "^24.0.24",
     "@types/luxon": "^1.21.0",
     "@types/node": "10.14.17",
+    "@types/supertest": "^2.0.9",
     "@types/yargs": "^15.0.4",
     "apollo-server-testing": "^2.9.16",
     "babel-jest": "^24.9.0",
@@ -134,7 +138,7 @@
     "husky": "^4.2.3",
     "import-sort-cli": "^6.0.0",
     "import-sort-style-module": "^6.0.0",
-    "jest": "^24.9.0",
+    "jest": "^26.1.0",
     "nodemon": "^1.19.2",
     "prettier": "^2.0.0",
     "prettier-plugin-import-sort": "^0.0.4",
@@ -145,6 +149,8 @@
     "serverless-offline": "^5.10.1",
     "serverless-plugin-include-dependencies": "^3.2.1",
     "serverless-plugin-typescript": "1.1.7",
+    "supertest": "^4.0.2",
+    "ts-jest": "^26.1.1",
     "yargs": "^15.1.0"
   },
   "prettier": {
@@ -174,6 +180,10 @@
       "ts",
       "tsx"
     ],
+    "transform": {
+      "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "testEnvironment": "node",
     "moduleNameMapper": {
       "^@app/(.*)$": "<rootDir>/src/$1",
       "^@modules/(.*)$": "<rootDir>/src/modules/$1",
