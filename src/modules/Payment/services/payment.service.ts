@@ -225,6 +225,7 @@ export class PaymentService {
             last_name: lastName,
             phone: phoneNumber,
           },
+          redirect_url: "https://seasons.nyc/chargebee-mobile-checkout-success",
         })
         .request((error, result) => {
           if (error) {
