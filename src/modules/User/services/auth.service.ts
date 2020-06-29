@@ -320,18 +320,27 @@ export class AuthService {
 
   private async createPrismaCustomerForExistingUser(
     userID,
-    details = {},
+    zipCode,
+    details,
     status
   ) {
-    const customer = await this.prisma.client.createCustomer({
+    let customer
+    const location = await this.prisma.client.createLocation({
+      zipCode,
+    })
+
+    const customerDetails = await this.prisma.client.createCustomerDetail({
+      ...details,
+      shippingAddress: { connect: { id: location.id } },
+    })
+
+    customer = await this.prisma.client.createCustomer({
       user: {
         connect: { id: userID },
       },
-      detail: { create: details },
+      detail: { connect: { id: customerDetails.id } },
       status: status || "Waitlisted",
     })
-
-    // TODO: update airtable with customer data
 
     return customer
   }
