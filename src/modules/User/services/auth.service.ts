@@ -324,7 +324,6 @@ export class AuthService {
     details,
     status
   ) {
-    let customer
     const location = await this.prisma.client.createLocation({
       zipCode,
     })
@@ -334,15 +333,13 @@ export class AuthService {
       shippingAddress: { connect: { id: location.id } },
     })
 
-    customer = await this.prisma.client.createCustomer({
+    return await this.prisma.client.createCustomer({
       user: {
         connect: { id: userID },
       },
       detail: { connect: { id: customerDetails.id } },
       status: status || "Waitlisted",
     })
-
-    return customer
   }
 
   private async getAuth0UserAccessToken(
