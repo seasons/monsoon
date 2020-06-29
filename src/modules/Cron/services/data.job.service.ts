@@ -112,103 +112,6 @@ export class DataScheduledJobs {
   }
 
   async checkAll(withDetails = false) {
-    /* REPORT */
-    this.printReportLines(
-      [
-        { text: `/*********** report ***********/` },
-        {
-          text: `Product Variant + Physical Product Health`,
-        },
-        {
-          text: "Mismatched SUID/SKU combos",
-          paramArray: await this.getSUIDtoSKUMismatches(),
-        },
-        {
-          text:
-            "Number of product variants with incorrect number of physical products attached",
-          paramArray: await this.getProductVariantsWithIncorrectNumberOfPhysicalProductsAttached(),
-        },
-        {
-          text:
-            "Number of product variants with a count profile that doesn't match the attached physical product statuses",
-          paramArray: await this.getProdVarsWithCountsThatDontMatchPhysProdStatuses(),
-          printDetailFunc: a => {
-            console.log(util.inspect(a, { depth: null }))
-          },
-        },
-        {
-          text:
-            "Number of product variants with total != reserved + reservable + nonreservable + stored + offloaded",
-          paramArray: await this.getProdVarsWithImpossibleCounts(),
-          withGutter: true,
-        },
-        {
-          text: "Physical products with an erroneous inventoryStatus situation",
-          paramArray: await this.checkPhysicalProductStatuses(),
-          printDetailFunc: a => {
-            console.log(util.inspect(a, { depth: null }))
-          },
-        },
-      ],
-      withDetails
-    )
-  }
-
-  private async getSUIDtoSKUMismatches() {
-    const SUIDtoSKUMismatches = []
-    const allProdVars = await this.prisma.binding.query.productVariants(
-      { where: {} },
-      `{
-        id
-        sku
-        physicalProducts {
-          seasonsUID
-        }
-      }`
-    )
-    for (const prodVar of allProdVars) {
-      for (const physProd of prodVar.physicalProducts) {
-        if (!physProd.seasonsUID.startsWith(prodVar.sku)) {
-          SUIDtoSKUMismatches.push({
-            productVariantSKU: prodVar.sku,
-            physicalProductSUID: physProd.seasonsUID,
-          })
-        }
-      }
-    }
-
-    return SUIDtoSKUMismatches
-  }
-
-  private async getProductVariantsWithIncorrectNumberOfPhysicalProductsAttached() {
-    const cases = []
-    const allProdVars = await this.prisma.binding.query.productVariants(
-      { where: {} },
-      `{
-        id
-        sku
-        physicalProducts {
-          seasonsUID
-        }
-        total
-      }`
-    )
-    for (const prodVar of allProdVars) {
-      if (prodVar.total !== prodVar.physicalProducts.length) {
-        cases.push({
-          sku: prodVar.sku,
-          total: prodVar.total,
-          attachedPhysicalProducts: prodVar.physicalProducts.map(a => ({
-            seasonsUID: a.seasonsUID,
-          })),
-        })
-      }
-    }
-
-    return cases
-  }
-
-  private async getProdVarsWithCountsThatDontMatchPhysProdStatuses() {
     const allProdVars = await this.prisma.binding.query.productVariants(
       { where: {} },
       `{
@@ -226,6 +129,93 @@ export class DataScheduledJobs {
         stored
       }`
     )
+    const allPhysicalProducts = await this.prisma.client.physicalProducts()
+    /* REPORT */
+    this.printReportLines(
+      [
+        { text: `/*********** report ***********/` },
+        {
+          text: `Product Variant + Physical Product Health`,
+        },
+        {
+          text: "Mismatched SUID/SKU combos",
+          paramArray: await this.getSUIDtoSKUMismatches(allProdVars),
+        },
+        {
+          text:
+            "Number of product variants with incorrect number of physical products attached",
+          paramArray: await this.getProductVariantsWithIncorrectNumberOfPhysicalProductsAttached(
+            allProdVars
+          ),
+        },
+        {
+          text:
+            "Number of product variants with a count profile that doesn't match the attached physical product statuses",
+          paramArray: await this.getProdVarsWithCountsThatDontMatchPhysProdStatuses(
+            allProdVars
+          ),
+          printDetailFunc: a => {
+            console.log(util.inspect(a, { depth: null }))
+          },
+        },
+        {
+          text:
+            "Number of product variants with total != reserved + reservable + nonreservable + stored + offloaded",
+          paramArray: await this.getProdVarsWithImpossibleCounts(allProdVars),
+          withGutter: true,
+        },
+        {
+          text: "Physical products with an erroneous inventoryStatus situation",
+          paramArray: await this.checkPhysicalProductStatuses(
+            allPhysicalProducts
+          ),
+          printDetailFunc: a => {
+            console.log(util.inspect(a, { depth: null }))
+          },
+        },
+      ],
+      withDetails
+    )
+  }
+
+  private async getSUIDtoSKUMismatches(allProdVars) {
+    const SUIDtoSKUMismatches = []
+    for (const prodVar of allProdVars) {
+      for (const physProd of prodVar.physicalProducts) {
+        if (!physProd.seasonsUID.startsWith(prodVar.sku)) {
+          SUIDtoSKUMismatches.push({
+            productVariantSKU: prodVar.sku,
+            physicalProductSUID: physProd.seasonsUID,
+          })
+        }
+      }
+    }
+
+    return SUIDtoSKUMismatches
+  }
+
+  private async getProductVariantsWithIncorrectNumberOfPhysicalProductsAttached(
+    allProdVars
+  ) {
+    const cases = []
+    for (const prodVar of allProdVars) {
+      if (prodVar.total !== prodVar.physicalProducts.length) {
+        cases.push({
+          sku: prodVar.sku,
+          total: prodVar.total,
+          attachedPhysicalProducts: prodVar.physicalProducts.map(a => ({
+            seasonsUID: a.seasonsUID,
+          })),
+        })
+      }
+    }
+
+    return cases
+  }
+
+  private async getProdVarsWithCountsThatDontMatchPhysProdStatuses(
+    allProdVars
+  ) {
     const cases = allProdVars.filter(a => {
       const physProds = a.physicalProducts
       const reservedPhysProds = physProds.filter(
@@ -271,9 +261,7 @@ export class DataScheduledJobs {
     return formattedCases
   }
 
-  private async checkPhysicalProductStatuses() {
-    const allPhysicalProducts = await this.prisma.client.physicalProducts()
-
+  private async checkPhysicalProductStatuses(allPhysicalProducts) {
     /*
       Consider a given physical product. 
       
@@ -397,9 +385,8 @@ export class DataScheduledJobs {
 
     return thisCaseClone
   }
-  private async getProdVarsWithImpossibleCounts() {
-    const allPrismaProdVars = await this.prisma.client.productVariants()
-    const cases = allPrismaProdVars.filter(
+  private async getProdVarsWithImpossibleCounts(allProdVars) {
+    const cases = allProdVars.filter(
       a =>
         a.total !==
         a.reserved + a.reservable + a.nonReservable + a.stored + a.offloaded

@@ -72,6 +72,7 @@ export class DataCommands {
       this.logger.error(
         `No Physical Product found with seasonsUID: ${seasonsUID}`
       )
+      return
     }
     const reservations = await this.prisma.binding.query.reservations(
       {
