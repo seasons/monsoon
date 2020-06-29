@@ -1,14 +1,13 @@
-import { createParamDecorator } from "@nestjs/common"
+import { ExecutionContext, createParamDecorator } from "@nestjs/common"
 
 import { Customer as PrismaCustomer } from "../prisma"
 import { PrismaService } from "../prisma/prisma.service"
-import { SeasonsExectionContext } from "./decorators"
 
 const prisma = new PrismaService()
 
 export const Customer = createParamDecorator(
-  async (data, context: SeasonsExectionContext): Promise<PrismaCustomer> => {
-    const ctx = context.getArgByIndex(2)
+  async (data, context: ExecutionContext): Promise<PrismaCustomer> => {
+    const [obj, args, ctx, info] = context.getArgs()
     if (!!ctx.customer || ctx.customer === null) {
       return ctx.customer
     }

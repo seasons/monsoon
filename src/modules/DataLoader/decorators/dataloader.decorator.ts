@@ -14,7 +14,7 @@ export const Loader: (
   type: string
 ) => ParameterDecorator = createParamDecorator(
   (type: string, context: ExecutionContext) => {
-    const ctx = context.getArgByIndex(2)
+    const [obj, args, ctx, info] = context.getArgs()
     if (ctx[GET_LOADER_CONTEXT_KEY] === undefined) {
       throw new InternalServerErrorException(`
         You should provide interceptor ${DataLoaderInterceptor.name} globally with ${APP_INTERCEPTOR}
