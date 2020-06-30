@@ -10070,26 +10070,10 @@ type PhysicalProductInventoryStatusChangeEdge {
 enum PhysicalProductInventoryStatusChangeOrderByInput {
   id_ASC
   id_DESC
-  seasonsUID_ASC
-  seasonsUID_DESC
-  inventoryStatus_ASC
-  inventoryStatus_DESC
-  productStatus_ASC
-  productStatus_DESC
-  offloadMethod_ASC
-  offloadMethod_DESC
-  offloadNotes_ASC
-  offloadNotes_DESC
-  sequenceNumber_ASC
-  sequenceNumber_DESC
-  barcoded_ASC
-  barcoded_DESC
-  dateOrdered_ASC
-  dateOrdered_DESC
-  dateReceived_ASC
-  dateReceived_DESC
-  unitCost_ASC
-  unitCost_DESC
+  old_ASC
+  old_DESC
+  new_ASC
+  new_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -10098,16 +10082,8 @@ enum PhysicalProductInventoryStatusChangeOrderByInput {
 
 type PhysicalProductInventoryStatusChangePreviousValues {
   id: ID!
-  seasonsUID: String!
-  inventoryStatus: InventoryStatus!
-  productStatus: PhysicalProductStatus!
-  offloadMethod: PhysicalProductOffloadMethod
-  offloadNotes: String
-  sequenceNumber: Int!
-  barcoded: Boolean
-  dateOrdered: DateTime
-  dateReceived: DateTime
-  unitCost: Float
+  old: InventoryStatus!
+  new: InventoryStatus!
   createdAt: DateTime!
   updatedAt: DateTime
 }
@@ -10161,165 +10137,7 @@ input PhysicalProductInventoryStatusChangeScalarWhereInput {
 
   """All values not ending with the given string."""
   id_not_ends_with: ID
-  seasonsUID: String
-
-  """All values that are not equal to given value."""
-  seasonsUID_not: String
-
-  """All values that are contained in given list."""
-  seasonsUID_in: [String!]
-
-  """All values that are not contained in given list."""
-  seasonsUID_not_in: [String!]
-
-  """All values less than the given value."""
-  seasonsUID_lt: String
-
-  """All values less than or equal the given value."""
-  seasonsUID_lte: String
-
-  """All values greater than the given value."""
-  seasonsUID_gt: String
-
-  """All values greater than or equal the given value."""
-  seasonsUID_gte: String
-
-  """All values containing the given string."""
-  seasonsUID_contains: String
-
-  """All values not containing the given string."""
-  seasonsUID_not_contains: String
-
-  """All values starting with the given string."""
-  seasonsUID_starts_with: String
-
-  """All values not starting with the given string."""
-  seasonsUID_not_starts_with: String
-
-  """All values ending with the given string."""
-  seasonsUID_ends_with: String
-
-  """All values not ending with the given string."""
-  seasonsUID_not_ends_with: String
-  inventoryStatus: InventoryStatus
-
-  """All values that are not equal to given value."""
-  inventoryStatus_not: InventoryStatus
-
-  """All values that are contained in given list."""
-  inventoryStatus_in: [InventoryStatus!]
-
-  """All values that are not contained in given list."""
-  inventoryStatus_not_in: [InventoryStatus!]
-  productStatus: PhysicalProductStatus
-
-  """All values that are not equal to given value."""
-  productStatus_not: PhysicalProductStatus
-
-  """All values that are contained in given list."""
-  productStatus_in: [PhysicalProductStatus!]
-
-  """All values that are not contained in given list."""
-  productStatus_not_in: [PhysicalProductStatus!]
-  offloadMethod: PhysicalProductOffloadMethod
-
-  """All values that are not equal to given value."""
-  offloadMethod_not: PhysicalProductOffloadMethod
-
-  """All values that are contained in given list."""
-  offloadMethod_in: [PhysicalProductOffloadMethod!]
-
-  """All values that are not contained in given list."""
-  offloadMethod_not_in: [PhysicalProductOffloadMethod!]
-  offloadNotes: String
-
-  """All values that are not equal to given value."""
-  offloadNotes_not: String
-
-  """All values that are contained in given list."""
-  offloadNotes_in: [String!]
-
-  """All values that are not contained in given list."""
-  offloadNotes_not_in: [String!]
-
-  """All values less than the given value."""
-  offloadNotes_lt: String
-
-  """All values less than or equal the given value."""
-  offloadNotes_lte: String
-
-  """All values greater than the given value."""
-  offloadNotes_gt: String
-
-  """All values greater than or equal the given value."""
-  offloadNotes_gte: String
-
-  """All values containing the given string."""
-  offloadNotes_contains: String
-
-  """All values not containing the given string."""
-  offloadNotes_not_contains: String
-
-  """All values starting with the given string."""
-  offloadNotes_starts_with: String
-
-  """All values not starting with the given string."""
-  offloadNotes_not_starts_with: String
-
-  """All values ending with the given string."""
-  offloadNotes_ends_with: String
-
-  """All values not ending with the given string."""
-  offloadNotes_not_ends_with: String
-  sequenceNumber: Int
-
-  """All values that are not equal to given value."""
-  sequenceNumber_not: Int
-
-  """All values that are contained in given list."""
-  sequenceNumber_in: [Int!]
-
-  """All values that are not contained in given list."""
-  sequenceNumber_not_in: [Int!]
-
-  """All values less than the given value."""
-  sequenceNumber_lt: Int
-
-  """All values less than or equal the given value."""
-  sequenceNumber_lte: Int
-
-  """All values greater than the given value."""
-  sequenceNumber_gt: Int
-
-  """All values greater than or equal the given value."""
-  sequenceNumber_gte: Int
-  barcoded: Boolean
-
-  """All values that are not equal to given value."""
-  barcoded_not: Boolean
-  dateOrdered: DateTime
-
-  """All values that are not equal to given value."""
-  dateOrdered_not: DateTime
-
-  """All values that are contained in given list."""
-  dateOrdered_in: [DateTime!]
-
-  """All values that are not contained in given list."""
-  dateOrdered_not_in: [DateTime!]
-
-  """All values less than the given value."""
-  dateOrdered_lt: DateTime
-
-  """All values less than or equal the given value."""
-  dateOrdered_lte: DateTime
-
-  """All values greater than the given value."""
-  dateOrdered_gt: DateTime
-
-  """All values greater than or equal the given value."""
-  dateOrdered_gte: DateTime
-  dateReceived: DateTime
+  old: InventoryStatus
 
   """All values that are not equal to given value."""
   old_not: InventoryStatus
@@ -10422,49 +10240,20 @@ input PhysicalProductInventoryStatusChangeSubscriptionWhereInput {
   node: PhysicalProductInventoryStatusChangeWhereInput
 }
 
-input PhysicalProductUpdateDataInput {
-  seasonsUID: String
-  inventoryStatus: InventoryStatus
-  productStatus: PhysicalProductStatus
-  offloadMethod: PhysicalProductOffloadMethod
-  offloadNotes: String
-  sequenceNumber: Int
-  barcoded: Boolean
-  dateOrdered: DateTime
-  dateReceived: DateTime
-  unitCost: Float
-  location: LocationUpdateOneWithoutPhysicalProductsInput
-  productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
-  warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
+input PhysicalProductInventoryStatusChangeUpdateInput {
+  old: InventoryStatus
+  new: InventoryStatus
+  physicalProduct: PhysicalProductUpdateOneRequiredWithoutInventoryStatusChangesInput
 }
 
-input PhysicalProductUpdateInput {
-  seasonsUID: String
-  inventoryStatus: InventoryStatus
-  productStatus: PhysicalProductStatus
-  offloadMethod: PhysicalProductOffloadMethod
-  offloadNotes: String
-  sequenceNumber: Int
-  barcoded: Boolean
-  dateOrdered: DateTime
-  dateReceived: DateTime
-  unitCost: Float
-  location: LocationUpdateOneWithoutPhysicalProductsInput
-  productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
-  warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
+input PhysicalProductInventoryStatusChangeUpdateManyDataInput {
+  old: InventoryStatus
+  new: InventoryStatus
 }
 
-input PhysicalProductUpdateManyDataInput {
-  seasonsUID: String
-  inventoryStatus: InventoryStatus
-  productStatus: PhysicalProductStatus
-  offloadMethod: PhysicalProductOffloadMethod
-  offloadNotes: String
-  sequenceNumber: Int
-  barcoded: Boolean
-  dateOrdered: DateTime
-  dateReceived: DateTime
-  unitCost: Float
+input PhysicalProductInventoryStatusChangeUpdateManyMutationInput {
+  old: InventoryStatus
+  new: InventoryStatus
 }
 
 input PhysicalProductInventoryStatusChangeUpdateManyWithoutPhysicalProductInput {
@@ -10479,17 +10268,9 @@ input PhysicalProductInventoryStatusChangeUpdateManyWithoutPhysicalProductInput 
   upsert: [PhysicalProductInventoryStatusChangeUpsertWithWhereUniqueWithoutPhysicalProductInput!]
 }
 
-input PhysicalProductUpdateManyMutationInput {
-  seasonsUID: String
-  inventoryStatus: InventoryStatus
-  productStatus: PhysicalProductStatus
-  offloadMethod: PhysicalProductOffloadMethod
-  offloadNotes: String
-  sequenceNumber: Int
-  barcoded: Boolean
-  dateOrdered: DateTime
-  dateReceived: DateTime
-  unitCost: Float
+input PhysicalProductInventoryStatusChangeUpdateManyWithWhereNestedInput {
+  where: PhysicalProductInventoryStatusChangeScalarWhereInput!
+  data: PhysicalProductInventoryStatusChangeUpdateManyDataInput!
 }
 
 input PhysicalProductInventoryStatusChangeUpdateWithoutPhysicalProductDataInput {
@@ -10515,50 +10296,15 @@ input PhysicalProductInventoryStatusChangeWhereInput {
   """Logical OR on all given filters."""
   OR: [PhysicalProductInventoryStatusChangeWhereInput!]
 
-input PhysicalProductUpdateWithoutLocationDataInput {
-  seasonsUID: String
-  inventoryStatus: InventoryStatus
-  productStatus: PhysicalProductStatus
-  offloadMethod: PhysicalProductOffloadMethod
-  offloadNotes: String
-  sequenceNumber: Int
-  barcoded: Boolean
-  dateOrdered: DateTime
-  dateReceived: DateTime
-  unitCost: Float
-  productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
-  warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
-}
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [PhysicalProductInventoryStatusChangeWhereInput!]
+  id: ID
 
-input PhysicalProductUpdateWithoutProductVariantDataInput {
-  seasonsUID: String
-  inventoryStatus: InventoryStatus
-  productStatus: PhysicalProductStatus
-  offloadMethod: PhysicalProductOffloadMethod
-  offloadNotes: String
-  sequenceNumber: Int
-  barcoded: Boolean
-  dateOrdered: DateTime
-  dateReceived: DateTime
-  unitCost: Float
-  location: LocationUpdateOneWithoutPhysicalProductsInput
-  warehouseLocation: WarehouseLocationUpdateOneWithoutPhysicalProductsInput
-}
+  """All values that are not equal to given value."""
+  id_not: ID
 
-input PhysicalProductUpdateWithoutWarehouseLocationDataInput {
-  seasonsUID: String
-  inventoryStatus: InventoryStatus
-  productStatus: PhysicalProductStatus
-  offloadMethod: PhysicalProductOffloadMethod
-  offloadNotes: String
-  sequenceNumber: Int
-  barcoded: Boolean
-  dateOrdered: DateTime
-  dateReceived: DateTime
-  unitCost: Float
-  location: LocationUpdateOneWithoutPhysicalProductsInput
-  productVariant: ProductVariantUpdateOneRequiredWithoutPhysicalProductsInput
-}
+  """All values that are contained in given list."""
+  id_in: [ID!]
 
   """All values that are not contained in given list."""
   id_not_in: [ID!]

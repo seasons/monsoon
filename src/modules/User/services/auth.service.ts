@@ -87,12 +87,6 @@ export class AuthService {
       "Created"
     )
 
-    // 5. Update the user in Airtable
-    await this.airtable.createOrUpdateAirtableUser(user, {
-      ...details,
-      status: "Created",
-    })
-
     return { user, tokenData, customer }
   }
 
