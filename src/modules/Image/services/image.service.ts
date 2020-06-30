@@ -19,6 +19,7 @@ interface ImageResizerOptions {
   h?: number
   retina?: boolean
   fm?: ImageFormat
+  updatedAt?: string
 }
 
 interface ImageSizeOptions {
@@ -68,48 +69,57 @@ export class ImageService {
     sizeName: ImageSize,
     passedOptions: ImageResizerOptions
   ) {
-    const updatedAt = await this.prisma.client.image({ url }).updatedAt()
-    const updatedAtTimestamp =
-      updatedAt && Math.floor(new Date(updatedAt).getTime() / 1000)
-    const options: ImageResizerOptions = pickBy(
-      {
-        fit: "clip",
-        retina: true,
-        fm: "webp",
-        updatedAt: updatedAtTimestamp,
-        ...passedOptions,
-      },
-      identity
-    )
+    try {
+      const updatedAt =
+        passedOptions.updatedAt ??
+        (await this.prisma.client.image({ url }).updatedAt())
+      const updatedAtTimestamp =
+        updatedAt && Math.floor(new Date(updatedAt).getTime() / 1000)
+      const options: ImageResizerOptions = pickBy(
+        {
+          fit: "clip",
+          retina: true,
+          fm: "webp",
+          updatedAt: updatedAtTimestamp,
+          ...passedOptions,
+        },
+        identity
+      )
 
-    const { retina, ...remainingOptions } = options
-    const size = sizes[sizeName]
-    const params: any = pickBy(
-      {
-        ...remainingOptions,
-        ...sizes[sizeName],
-        ...(options.retina && size.w ? { w: size.w * 2 } : {}),
-        ...(options.retina && size.h ? { h: size.h * 2 } : {}),
-      },
-      identity
-    )
+      const { retina, ...remainingOptions } = options
+      const size = sizes[sizeName]
+      const params: any = pickBy(
+        {
+          ...remainingOptions,
+          ...sizes[sizeName],
+          ...(options.retina && size.w ? { w: size.w * 2 } : {}),
+          ...(options.retina && size.h ? { h: size.h * 2 } : {}),
+        },
+        identity
+      )
 
-    if (/seasons-images\./.test(url)) {
+      if (/seasons-images\./.test(url)) {
+        return (
+          url.replace(
+            `seasons-images.s3.amazonaws.com`,
+            `seasons-s3.imgix.net`
+          ) +
+          "?" +
+          qs.stringify(params)
+        )
+      }
+
       return (
-        url.replace(`seasons-images.s3.amazonaws.com`, `seasons-s3.imgix.net`) +
+        url.replace(
+          `seasons-images-staging.s3.amazonaws.com`,
+          `seasons-s3-staging.imgix.net`
+        ) +
         "?" +
         qs.stringify(params)
       )
+    } catch (err) {
+      console.error(err)
     }
-
-    return (
-      url.replace(
-        `seasons-images-staging.s3.amazonaws.com`,
-        `seasons-s3-staging.imgix.net`
-      ) +
-      "?" +
-      qs.stringify(params)
-    )
   }
 
   async uploadImage(
