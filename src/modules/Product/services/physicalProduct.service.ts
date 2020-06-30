@@ -51,7 +51,7 @@ export class PhysicalProductService {
     info: GraphQLResolveInfo
   }) {
     const physProdBeforeUpdate = await this.prisma.client.physicalProduct(where)
-    if (data.inventoryStatus !== physProdBeforeUpdate.inventoryStatus) {
+    if (this.changingInventoryStatus(data, physProdBeforeUpdate)) {
       if (physProdBeforeUpdate.inventoryStatus === "Stored") {
         throw new ApolloError(
           "Can not unstore a physical product directly. Must do so from parent product."
@@ -80,7 +80,7 @@ export class PhysicalProductService {
     await this.prisma.client.updatePhysicalProduct({ where, data })
 
     // Do this at the end so it only happens *after* any status changes have occured
-    if (data.inventoryStatus !== physProdBeforeUpdate.inventoryStatus) {
+    if (this.changingInventoryStatus(data, physProdBeforeUpdate)) {
       await this.prisma.client.createPhysicalProductInventoryStatusChange({
         old: physProdBeforeUpdate.inventoryStatus,
         new: data.inventoryStatus,
@@ -358,5 +358,15 @@ export class PhysicalProductService {
         newInventoryStatus: inventoryStatus,
       })
     }
+  }
+
+  private changingInventoryStatus(
+    data: PhysicalProductUpdateInput,
+    physProdBeforeUpdate: PhysicalProduct
+  ) {
+    return (
+      !!data.inventoryStatus &&
+      data.inventoryStatus !== physProdBeforeUpdate.inventoryStatus
+    )
   }
 }

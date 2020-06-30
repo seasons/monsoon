@@ -669,8 +669,6 @@ export class ReservationService {
   private async getReturnedPhysicalProductInventoryStatus(
     seasonsUID: string
   ): Promise<InventoryStatus> {
-    // TODO: Allow inventory status to be overriden from admin but derive value from automated criteria
-
     const parentProduct = head(
       await this.prisma.client.products({
         where: { variants_some: { physicalProducts_some: { seasonsUID } } },
@@ -681,6 +679,6 @@ export class ReservationService {
       return "Stored"
     }
 
-    return "Reservable"
+    return "NonReservable"
   }
 }
