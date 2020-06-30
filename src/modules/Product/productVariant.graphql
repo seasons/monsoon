@@ -48,6 +48,10 @@ type Mutation {
     @hasRole(roles: [Customer])
   updateProductVariant(input: UpdateVariantInput!): ProductVariant
     @hasRole(roles: [Admin])
+  upsertProductVariants(
+    productID: ID!
+    inputs: [UpsertProductInput!]!
+  ): [ProductVariant!] @hasRole(roles: [Admin])
 }
 
 type ProductVariant {

@@ -485,7 +485,7 @@ export class ProductService {
    * @param retailPrice: retailPrice of the product variant
    * @param productID: id of the parent product
    */
-  private async deepUpsertProductVariant({
+  async deepUpsertProductVariant({
     variant,
     type,
     colorCode,
