@@ -12,8 +12,8 @@ export class ReservationMutationsResolver {
   ) {}
 
   @Mutation()
-  async updateReservation(@Args() args, @Info() info) {
-    return this.prisma.binding.mutation.updateReservation(args, info)
+  async updateReservation(@Args() { data, where }, @Info() info) {
+    return this.reservationService.updateReservation(data, where, info)
   }
 
   @Mutation()

@@ -50,13 +50,47 @@ export class PhysicalProductService {
     data: PhysicalProductUpdateInput
     info: GraphQLResolveInfo
   }) {
-    const physProdBeforeUpdate = await this.prisma.client.physicalProduct(where)
+    const physProdBeforeUpdate = (await this.prisma.binding.query.physicalProduct(
+      { where },
+      `{
+      id
+      inventoryStatus
+    }`
+    )) as PhysicalProduct
+
+    // TODO: If the physProd has a warehouse location before update, and we are attempting to update its
+    // status to anything but Reservable, throw an error. Leave out for now to avoid chaos.
+
+    // Need to do this before we check for a changing inventory status because this
+    // may update the inventoryStatus on data
+    if (!!data.warehouseLocation) {
+      await this.validateWarehouseLocationConstraints(
+        await this.prisma.client.physicalProduct(where),
+        data.warehouseLocation.connect
+      )
+      if (!!data.inventoryStatus && data.inventoryStatus !== "Reservable") {
+        throw new ApolloError(
+          `A physical product with a warehouse location can not be set to status ${data.inventoryStatus}. It must be Reservable`
+        )
+      }
+      if (!data.inventoryStatus) {
+        data.inventoryStatus = "Reservable"
+      }
+    }
+
     if (this.changingInventoryStatus(data, physProdBeforeUpdate)) {
       if (physProdBeforeUpdate.inventoryStatus === "Stored") {
         throw new ApolloError(
           "Can not unstore a physical product directly. Must do so from parent product."
         )
       }
+
+      if (physProdBeforeUpdate.inventoryStatus === "Offloaded") {
+        throw new ApolloError(
+          "Can not un-offload a physical product. Learn to let go. Try a buddha board: https://tinyurl.com/yabmmcc7"
+        )
+      }
+
       // Must update counts before calling any other methods because they
       // might update the inventoryStatus, i.e. in offloadPhysicalProductIfNeeded
       await this.updateVariantCountsIfNeeded({
@@ -69,13 +103,6 @@ export class PhysicalProductService {
       where,
       ...pick(data, ["inventoryStatus", "offloadMethod", "offloadNotes"]),
     } as OffloadPhysicalProductIfNeededInput)
-
-    if (!!data.warehouseLocation) {
-      await this.validateWarehouseLocationConstraints(
-        await this.prisma.client.physicalProduct(where),
-        data.warehouseLocation.connect
-      )
-    }
 
     await this.prisma.client.updatePhysicalProduct({ where, data })
 
