@@ -22,6 +22,8 @@ import {
   Reservation,
   ReservationCreateInput,
   ReservationStatus,
+  ReservationUpdateInput,
+  ReservationWhereUniqueInput,
   User,
 } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
@@ -349,6 +351,40 @@ export class ReservationService {
       returnedPhysicalProducts,
       reservation
     )
+  }
+
+  async updateReservation(
+    data: ReservationUpdateInput,
+    where: ReservationWhereUniqueInput,
+    info: any
+  ) {
+    const reservationBeforeUpdate = await this.prisma.binding.query.reservation(
+      { where },
+      `{
+        status
+        products {
+          id
+        }
+      }`
+    )
+    await this.prisma.client.updateReservation({ data, where })
+
+    // Reservation was just packed. Null out warehouse locations on attached products
+    if (
+      data.status === "Packed" &&
+      data.status !== reservationBeforeUpdate.status
+    ) {
+      await Promise.all(
+        reservationBeforeUpdate.products.map(a =>
+          this.prisma.client.updatePhysicalProduct({
+            where: { id: a.id },
+            data: { warehouseLocation: { disconnect: true } },
+          })
+        )
+      )
+    }
+
+    return this.prisma.binding.query.reservation({ where }, info)
   }
 
   private async createReservationFeedbacksForVariants(
