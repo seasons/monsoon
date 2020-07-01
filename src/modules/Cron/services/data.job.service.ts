@@ -129,7 +129,18 @@ export class DataScheduledJobs {
         stored
       }`
     )
-    const allPhysicalProducts = await this.prisma.client.physicalProducts()
+    const allPhysicalProducts = await this.prisma.binding.query.physicalProducts(
+      { where: {} },
+      `{
+        id
+        seasonsUID
+        inventoryStatus
+        warehouseLocation {
+          id
+          barcode
+        }
+      }`
+    )
     /* REPORT */
     this.printReportLines(
       [
@@ -277,6 +288,9 @@ export class DataScheduledJobs {
 
       If its inventoryStatus is reservable or nonReservable, it should not be on an active reservation. 
       If it is, add it to the cases list. 
+
+      Also check:
+        If it has a warehouse location, it should be reservable. If it doesn't, it should not be reservable. 
     */
     const cases = []
     for (const physProd of allPhysicalProducts) {
@@ -295,6 +309,8 @@ export class DataScheduledJobs {
           },
         })
       )
+
+      // Check specific inventory statuses
       switch (physProd.inventoryStatus) {
         case "Stored":
           thisCase = await this.checkStoredPhysicalProduct(physProd, thisCase)
@@ -323,6 +339,19 @@ export class DataScheduledJobs {
           break
         default:
           break
+      }
+
+      // Check warehouse location rules
+      if (!!physProd.warehouseLocation) {
+        if (physProd.inventoryStatus !== "Reservable") {
+          thisCase.issues.push(
+            `Has warehouse location ${physProd.warehouseLocation.barcode}. Should be reservable`
+          )
+        }
+      } else {
+        if (physProd.InventoryStatus === "Reservable") {
+          thisCase.issues.push(`Has no warehouse location, but is reservable.`)
+        }
       }
       if (thisCase.issues.length !== 0) {
         cases.push(thisCase)
