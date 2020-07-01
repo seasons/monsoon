@@ -5,18 +5,28 @@ import { PrismaService } from "../prisma/prisma.service"
 const run = async () => {
   const ps = new PrismaService()
 
-  await ps.client.updateReservation({
-    where: { reservationNumber: 213563997 },
-    data: {
-      products: {
-        connect: [
-          { seasonsUID: "STIS-BLU-MM-007-01" },
-          { seasonsUID: "NIKE-BLU-MM-001-01" },
-          { seasonsUID: "PRDA-BLK-MM-006-01" },
-        ],
-      },
-    },
-  })
+  const allPhysProds = await ps.binding.query.physicalProducts(
+    { where: {} },
+    `{
+        id
+        inventoryStatus
+        warehouseLocation {
+          id
+          barcode
+        }
+    }`
+  )
+  for (const physProd of allPhysProds) {
+    if (
+      physProd.inventoryStatus === "Reserved" &&
+      !!physProd.warehouseLocation
+    ) {
+      await ps.client.updatePhysicalProduct({
+        where: { id: physProd.id },
+        data: { warehouseLocation: { disconnect: true } },
+      })
+    }
+  }
 }
 
 run()

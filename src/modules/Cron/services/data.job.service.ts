@@ -25,12 +25,20 @@ interface ReportLine {
 export class DataScheduledJobs {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly slackService: SlackService // private readonly physicalProductUtils: PhysicalProductUtilsService
+    private readonly slackService: SlackService
   ) {}
 
   @Cron(CronExpression.MONDAY_TO_FRIDAY_AT_9AM)
   async airtableToPrismaHealthCheck() {
     let message = { channel: process.env.SLACK_DEV_CHANNEL_ID, text: "'" }
+    const {
+      SUIDToSKUMismatches,
+      prodVarsWithIncorrectNumberOfPhysProdsAttached,
+      prodVarsWIthCountsThatDontMatchPhysProdStatuses,
+      prodVarsWithImpossibleCounts,
+      physProdsWithErroneousInventoryStatuses,
+    } = await this.checkAll()
+
     try {
       message = {
         ...message,
@@ -57,24 +65,32 @@ export class DataScheduledJobs {
             datapoints: [
               {
                 name: "Mismatched SUID/SKU combos",
-                number: [].length,
+                number: SUIDToSKUMismatches.length,
                 shouldFlagNum: true,
               },
               {
                 name:
                   "Number of product variants with incorrect number of physical products attached",
-                number: [].length,
+                number: prodVarsWithIncorrectNumberOfPhysProdsAttached.length,
+                shouldFlagNum: true,
               },
               {
                 name:
                   "Number of product variants with a count profile that doesn't match the attached physical product statuses",
-                number: [].length,
+                number: prodVarsWIthCountsThatDontMatchPhysProdStatuses.length,
                 shouldFlagNum: true,
               },
               {
                 name:
                   "Number of product variants with total != reserved + reservable + nonreservable + stored + offloaded",
-                number: [].length,
+                number: prodVarsWithImpossibleCounts.length,
+                shouldFlagNum: true,
+              },
+              {
+                name:
+                  "Number of physical products with inventory statuses that don't match their surrounding data",
+                number: physProdsWithErroneousInventoryStatuses.length,
+                shouldFlagNum: true,
               },
             ],
           }),
@@ -141,6 +157,19 @@ export class DataScheduledJobs {
         }
       }`
     )
+    const SUIDToSKUMismatches = await this.getSUIDtoSKUMismatches(allProdVars)
+    const prodVarsWithIncorrectNumberOfPhysProdsAttached = await this.getProductVariantsWithIncorrectNumberOfPhysicalProductsAttached(
+      allProdVars
+    )
+    const prodVarsWIthCountsThatDontMatchPhysProdStatuses = await this.getProdVarsWithCountsThatDontMatchPhysProdStatuses(
+      allProdVars
+    )
+    const prodVarsWithImpossibleCounts = await this.getProdVarsWithImpossibleCounts(
+      allProdVars
+    )
+    const physProdsWithErroneousInventoryStatuses = await this.checkPhysicalProductStatuses(
+      allPhysicalProducts
+    )
     /* REPORT */
     this.printReportLines(
       [
@@ -150,21 +179,17 @@ export class DataScheduledJobs {
         },
         {
           text: "Mismatched SUID/SKU combos",
-          paramArray: await this.getSUIDtoSKUMismatches(allProdVars),
+          paramArray: SUIDToSKUMismatches,
         },
         {
           text:
             "Number of product variants with incorrect number of physical products attached",
-          paramArray: await this.getProductVariantsWithIncorrectNumberOfPhysicalProductsAttached(
-            allProdVars
-          ),
+          paramArray: prodVarsWithIncorrectNumberOfPhysProdsAttached,
         },
         {
           text:
             "Number of product variants with a count profile that doesn't match the attached physical product statuses",
-          paramArray: await this.getProdVarsWithCountsThatDontMatchPhysProdStatuses(
-            allProdVars
-          ),
+          paramArray: prodVarsWIthCountsThatDontMatchPhysProdStatuses,
           printDetailFunc: a => {
             console.log(util.inspect(a, { depth: null }))
           },
@@ -172,14 +197,12 @@ export class DataScheduledJobs {
         {
           text:
             "Number of product variants with total != reserved + reservable + nonreservable + stored + offloaded",
-          paramArray: await this.getProdVarsWithImpossibleCounts(allProdVars),
+          paramArray: prodVarsWithImpossibleCounts,
           withGutter: true,
         },
         {
           text: "Physical products with an erroneous inventoryStatus situation",
-          paramArray: await this.checkPhysicalProductStatuses(
-            allPhysicalProducts
-          ),
+          paramArray: physProdsWithErroneousInventoryStatuses,
           printDetailFunc: a => {
             console.log(util.inspect(a, { depth: null }))
           },
@@ -187,6 +210,14 @@ export class DataScheduledJobs {
       ],
       withDetails
     )
+
+    return {
+      SUIDToSKUMismatches,
+      prodVarsWithIncorrectNumberOfPhysProdsAttached,
+      prodVarsWIthCountsThatDontMatchPhysProdStatuses,
+      prodVarsWithImpossibleCounts,
+      physProdsWithErroneousInventoryStatuses,
+    }
   }
 
   private async getSUIDtoSKUMismatches(allProdVars) {
@@ -345,7 +376,7 @@ export class DataScheduledJobs {
       if (!!physProd.warehouseLocation) {
         if (physProd.inventoryStatus !== "Reservable") {
           thisCase.issues.push(
-            `Has warehouse location ${physProd.warehouseLocation.barcode}. Should be reservable`
+            `Has warehouse location ${physProd.warehouseLocation.barcode}. Either it shouldn't have one, or it should be Reservable`
           )
         }
       } else {
