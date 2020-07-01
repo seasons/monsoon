@@ -155,8 +155,8 @@ export class UserCommands {
     let user
     let tokenData
     const address: BillingAddress = {
-      firstName: firstName,
-      lastName: lastName,
+      firstName,
+      lastName,
       line1: "138 Mulberry St",
       city: "New York",
       state: "NY",
@@ -174,7 +174,7 @@ export class UserCommands {
         details: {
           phoneNumber: "+16463502715",
           height: 40 + faker.random.number(32),
-          weight: [150, 160],
+          weight: { set: [150, 160] },
           bodyType: "Athletic",
           shippingAddress: {
             create: {

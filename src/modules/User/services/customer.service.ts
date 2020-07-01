@@ -51,13 +51,6 @@ export class CustomerService {
       await this.setCustomerPrismaStatus(user, status)
     }
 
-    // Sync with airtable
-    await this.airtableService.createOrUpdateAirtableUser(user, {
-      ...currentCustomerDetail,
-      ...details,
-      status,
-    })
-
     // Return the updated customer object
     const returnData = await this.prisma.binding.query.customer(
       { where: { id: customer.id } },
@@ -87,7 +80,7 @@ export class CustomerService {
       throw new Error("Shipping address is invalid")
     }
 
-    const zipcodesData = zipcodes.lookup(parseInt(shippingPostalCode))
+    const zipcodesData = zipcodes.lookup(parseInt(shippingPostalCode, 10))
     const validCities = ["Brooklyn", "New York", "Queens", "The Bronx"]
     if (
       zipcodesData?.state !== "NY" ||
