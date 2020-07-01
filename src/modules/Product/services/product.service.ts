@@ -529,7 +529,7 @@ export class ProductService {
     variant
     type: ProductType
     colorCode: string
-    retailPrice: number
+    retailPrice?: number
     productID: string
     status: ProductStatus
   }) {

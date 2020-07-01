@@ -66,7 +66,7 @@ export class ProductVariantMutationsResolver {
         }`
     )
     const { retailPrice, status, type } = product
-    if (!retailPrice || !status || !type) {
+    if (!status || !type) {
       return null
     }
 
