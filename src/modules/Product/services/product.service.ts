@@ -323,6 +323,39 @@ export class ProductService {
 
   async getGeneratedVariantSKUs({ input }) {
     const { brandID, colorCode, sizeNames } = input
+    const skuData = await this.getSKUData({ brandID, colorCode })
+    if (!skuData) {
+      return null
+    }
+
+    const { brandCode, styleCode } = skuData
+
+    return sizeNames.map(sizeName => {
+      const sizeCode = this.utils.sizeNameToSizeCode(sizeName)
+      return `${brandCode}-${colorCode}-${sizeCode}-${styleCode}`
+    })
+  }
+
+  async getGeneratedSeasonsUIDs({ brandID, colorCode, sizes }) {
+    const skuData = await this.getSKUData({ brandID, colorCode })
+    if (!skuData) {
+      return null
+    }
+
+    const { brandCode, styleCode } = skuData
+
+    return sizes
+      .map(({ sizeName, count }) => {
+        const sizeCode = this.utils.sizeNameToSizeCode(sizeName)
+        return Array.from(Array(count).keys()).map((_, index) => {
+          const physicalProductIndex = `${index + 1}`.padStart(2, "0")
+          return `${brandCode}-${colorCode}-${sizeCode}-${styleCode}-${physicalProductIndex}`
+        })
+      })
+      .flat()
+  }
+
+  async getSKUData({ brandID, colorCode }) {
     const brand = await this.prisma.client.brand({ id: brandID })
     const color = await this.prisma.client.color({ colorCode })
 
@@ -342,10 +375,10 @@ export class ProductService {
 
     const styleNumber = brandCount + 1
     const styleCode = styleNumber.toString().padStart(3, "0")
-    return sizeNames.map(sizeName => {
-      const sizeCode = this.utils.sizeNameToSizeCode(sizeName)
-      return `${brand.brandCode}-${color.colorCode}-${sizeCode}-${styleCode}`
-    })
+    return {
+      brandCode: brand.brandCode,
+      styleCode,
+    }
   }
 
   async updateProduct({
@@ -515,6 +548,32 @@ export class ProductService {
       },
     })
 
+    const manufacturerSizeIDs: { id: string }[] | null =
+      variant.manufacturerSizeNames &&
+      (await Promise.all(
+        variant.manufacturerSizeNames?.map(async sizeName => {
+          // sizeName is of the format "[size type] [size value]"", i.e. "WxL 32x30"
+          const [sizeType, sizeValue] = sizeName.split(" ")
+          const slug = `${variant.sku}-manufacturer-${sizeValue.replace(
+            "x",
+            ""
+          )}`
+          const size = await this.productUtils.deepUpsertSize({
+            slug,
+            type,
+            display: sizeName,
+            topSizeData: type === "Top" && {
+              letter: (sizeValue as LetterSize) || null,
+            },
+            bottomSizeData: type === "Bottom" && {
+              type: (sizeType as BottomSizeType) || null,
+              value: sizeValue || "",
+            },
+          })
+          return { id: size.id }
+        })
+      ))
+
     const data = {
       productID,
       product: { connect: { id: productID } },
@@ -523,6 +582,9 @@ export class ProductService {
       },
       internalSize: {
         connect: { id: internalSize.id },
+      },
+      manufacturerSizes: manufacturerSizeIDs && {
+        connect: manufacturerSizeIDs,
       },
       retailPrice,
       reservable: status === "Available" ? variant.total : 0,

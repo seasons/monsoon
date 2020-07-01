@@ -50,7 +50,7 @@ type Mutation {
     @hasRole(roles: [Admin])
   upsertProductVariants(
     productID: ID!
-    inputs: [UpsertProductInput!]!
+    inputs: [UpsertVariantInput!]!
   ): [ProductVariant!] @hasRole(roles: [Admin])
 }
 
@@ -97,6 +97,7 @@ type ProductVariant {
 input UpsertVariantInput {
   sku: String!
   internalSizeName: String!
+  manufacturerSizeNames: [String!]
   # Top Size values
   sleeve: Float
   shoulder: Float
