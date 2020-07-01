@@ -120,13 +120,11 @@ export class ProductQueriesResolver {
 
   @Query()
   async generatedVariantSKUs(@Args() args, @Info() info) {
-    console.log("ARGS:", args)
     return await this.productService.getGeneratedVariantSKUs(args)
   }
 
   @Query()
   async generatedSeasonsUIDs(@Args() { input }, @Info() info) {
-    console.log("INPUT:", input)
     const { brandID, colorCode, sizes } = input
     return await this.productService.getGeneratedSeasonsUIDs({
       brandID,
