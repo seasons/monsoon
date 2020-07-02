@@ -110,4 +110,52 @@ export class CustomerFieldsResolver {
       info
     )
   }
+
+  @ResolveField()
+  async onboardingSteps(@Parent() customer) {
+    const steps: string[] = []
+
+    const verificationStatus = await this.prisma.client
+      .customer({ id: customer.id })
+      .user()
+      .verificationStatus()
+    const height = await this.prisma.client
+      .customer({ id: customer.id })
+      .detail()
+      .height()
+    const billingInfo = await this.prisma.client
+      .customer({ id: customer.id })
+      .billingInfo()
+    const style = await this.prisma.client
+      .customer({ id: customer.id })
+      .detail()
+      .style()
+    const shippingAddress = await this.prisma.client
+      .customer({ id: customer.id })
+      .detail()
+      .shippingAddress()
+      .address1()
+
+    const values = [
+      verificationStatus === "Approved",
+      height !== null,
+      billingInfo !== null,
+      style !== null,
+      shippingAddress !== null,
+    ]
+    const keys = [
+      "VerifiedPhone",
+      "SetMeasurements",
+      "SetPaymentDetails",
+      "SetStylePreferences",
+      "SetShippingAddress",
+    ]
+    for (let i = 0; i < values.length; i++) {
+      if (values[i]) {
+        steps.push(keys[i])
+      }
+    }
+
+    return steps
+  }
 }

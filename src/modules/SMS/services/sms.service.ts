@@ -58,7 +58,7 @@ export class SMSService {
     const verification = await this.twilio.client.verify
       .services(this.sid)
       .verifications.create({ to: e164PhoneNumber, channel: "sms" })
-    await this.prisma.binding.mutation.updateUser({
+    await this.prisma.client.updateUser({
       data: {
         verificationStatus: this.twilioToPrismaStatus(verification.status),
         verificationMethod: "SMS",
@@ -71,7 +71,7 @@ export class SMSService {
       .customer({ id: customer.id })
       .detail()
       .id()
-    await this.prisma.binding.mutation.updateCustomerDetail({
+    await this.prisma.client.updateCustomerDetail({
       data: {
         phoneNumber: e164PhoneNumber,
       },
@@ -117,7 +117,7 @@ export class SMSService {
     }
 
     const newStatus = this.twilioToPrismaStatus(check.status)
-    await this.prisma.binding.mutation.updateUser({
+    await this.prisma.client.updateUser({
       data: {
         verificationStatus: newStatus,
       },
