@@ -158,6 +158,10 @@ type AggregateSize {
   count: Int!
 }
 
+type AggregateStylePreferences {
+  count: Int!
+}
+
 type AggregateTag {
   count: Int!
 }
@@ -2427,6 +2431,7 @@ type CustomerDetail {
   averageSpend: String
   style: String
   commuteStyle: String
+  stylePreferences: StylePreferences
   shippingAddress: Location
   phoneOS: String
   insureShipment: Boolean!
@@ -2458,6 +2463,7 @@ input CustomerDetailCreateInput {
   averageSpend: String
   style: String
   commuteStyle: String
+  stylePreferences: StylePreferencesCreateOneInput
   shippingAddress: LocationCreateOneInput
   phoneOS: String
   insureShipment: Boolean
@@ -2583,6 +2589,7 @@ input CustomerDetailUpdateDataInput {
   averageSpend: String
   style: String
   commuteStyle: String
+  stylePreferences: StylePreferencesUpdateOneInput
   shippingAddress: LocationUpdateOneInput
   phoneOS: String
   insureShipment: Boolean
@@ -2605,6 +2612,7 @@ input CustomerDetailUpdateInput {
   averageSpend: String
   style: String
   commuteStyle: String
+  stylePreferences: StylePreferencesUpdateOneInput
   shippingAddress: LocationUpdateOneInput
   phoneOS: String
   insureShipment: Boolean
@@ -2842,6 +2850,7 @@ input CustomerDetailWhereInput {
   commuteStyle_not_starts_with: String
   commuteStyle_ends_with: String
   commuteStyle_not_ends_with: String
+  stylePreferences: StylePreferencesWhereInput
   shippingAddress: LocationWhereInput
   phoneOS: String
   phoneOS_not: String
@@ -4715,6 +4724,12 @@ type Mutation {
   upsertSize(where: SizeWhereUniqueInput!, create: SizeCreateInput!, update: SizeUpdateInput!): Size!
   deleteSize(where: SizeWhereUniqueInput!): Size
   deleteManySizes(where: SizeWhereInput): BatchPayload!
+  createStylePreferences(data: StylePreferencesCreateInput!): StylePreferences!
+  updateStylePreferences(data: StylePreferencesUpdateInput!, where: StylePreferencesWhereUniqueInput!): StylePreferences
+  updateManyStylePreferenceses(data: StylePreferencesUpdateManyMutationInput!, where: StylePreferencesWhereInput): BatchPayload!
+  upsertStylePreferences(where: StylePreferencesWhereUniqueInput!, create: StylePreferencesCreateInput!, update: StylePreferencesUpdateInput!): StylePreferences!
+  deleteStylePreferences(where: StylePreferencesWhereUniqueInput!): StylePreferences
+  deleteManyStylePreferenceses(where: StylePreferencesWhereInput): BatchPayload!
   createTag(data: TagCreateInput!): Tag!
   updateTag(data: TagUpdateInput!, where: TagWhereUniqueInput!): Tag
   updateManyTags(data: TagUpdateManyMutationInput!, where: TagWhereInput): BatchPayload!
@@ -10622,6 +10637,9 @@ type Query {
   size(where: SizeWhereUniqueInput!): Size
   sizes(where: SizeWhereInput, orderBy: SizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Size]!
   sizesConnection(where: SizeWhereInput, orderBy: SizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): SizeConnection!
+  stylePreferences(where: StylePreferencesWhereUniqueInput!): StylePreferences
+  stylePreferenceses(where: StylePreferencesWhereInput, orderBy: StylePreferencesOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [StylePreferences]!
+  stylePreferencesesConnection(where: StylePreferencesWhereInput, orderBy: StylePreferencesOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): StylePreferencesConnection!
   tag(where: TagWhereUniqueInput!): Tag
   tags(where: TagWhereInput, orderBy: TagOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Tag]!
   tagsConnection(where: TagWhereInput, orderBy: TagOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): TagConnection!
@@ -12031,6 +12049,132 @@ input SizeWhereUniqueInput {
   slug: String
 }
 
+type StylePreferences {
+  id: ID!
+  styles: [String!]!
+  patterns: [String!]!
+}
+
+type StylePreferencesConnection {
+  pageInfo: PageInfo!
+  edges: [StylePreferencesEdge]!
+  aggregate: AggregateStylePreferences!
+}
+
+input StylePreferencesCreateInput {
+  id: ID
+  styles: StylePreferencesCreatestylesInput
+  patterns: StylePreferencesCreatepatternsInput
+}
+
+input StylePreferencesCreateOneInput {
+  create: StylePreferencesCreateInput
+  connect: StylePreferencesWhereUniqueInput
+}
+
+input StylePreferencesCreatepatternsInput {
+  set: [String!]
+}
+
+input StylePreferencesCreatestylesInput {
+  set: [String!]
+}
+
+type StylePreferencesEdge {
+  node: StylePreferences!
+  cursor: String!
+}
+
+enum StylePreferencesOrderByInput {
+  id_ASC
+  id_DESC
+}
+
+type StylePreferencesPreviousValues {
+  id: ID!
+  styles: [String!]!
+  patterns: [String!]!
+}
+
+type StylePreferencesSubscriptionPayload {
+  mutation: MutationType!
+  node: StylePreferences
+  updatedFields: [String!]
+  previousValues: StylePreferencesPreviousValues
+}
+
+input StylePreferencesSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: StylePreferencesWhereInput
+  AND: [StylePreferencesSubscriptionWhereInput!]
+  OR: [StylePreferencesSubscriptionWhereInput!]
+  NOT: [StylePreferencesSubscriptionWhereInput!]
+}
+
+input StylePreferencesUpdateDataInput {
+  styles: StylePreferencesUpdatestylesInput
+  patterns: StylePreferencesUpdatepatternsInput
+}
+
+input StylePreferencesUpdateInput {
+  styles: StylePreferencesUpdatestylesInput
+  patterns: StylePreferencesUpdatepatternsInput
+}
+
+input StylePreferencesUpdateManyMutationInput {
+  styles: StylePreferencesUpdatestylesInput
+  patterns: StylePreferencesUpdatepatternsInput
+}
+
+input StylePreferencesUpdateOneInput {
+  create: StylePreferencesCreateInput
+  update: StylePreferencesUpdateDataInput
+  upsert: StylePreferencesUpsertNestedInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: StylePreferencesWhereUniqueInput
+}
+
+input StylePreferencesUpdatepatternsInput {
+  set: [String!]
+}
+
+input StylePreferencesUpdatestylesInput {
+  set: [String!]
+}
+
+input StylePreferencesUpsertNestedInput {
+  update: StylePreferencesUpdateDataInput!
+  create: StylePreferencesCreateInput!
+}
+
+input StylePreferencesWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  AND: [StylePreferencesWhereInput!]
+  OR: [StylePreferencesWhereInput!]
+  NOT: [StylePreferencesWhereInput!]
+}
+
+input StylePreferencesWhereUniqueInput {
+  id: ID
+}
+
 type Subscription {
   bagItem(where: BagItemSubscriptionWhereInput): BagItemSubscriptionPayload
   billingInfo(where: BillingInfoSubscriptionWhereInput): BillingInfoSubscriptionPayload
@@ -12071,6 +12215,7 @@ type Subscription {
   reservationReceipt(where: ReservationReceiptSubscriptionWhereInput): ReservationReceiptSubscriptionPayload
   reservationReceiptItem(where: ReservationReceiptItemSubscriptionWhereInput): ReservationReceiptItemSubscriptionPayload
   size(where: SizeSubscriptionWhereInput): SizeSubscriptionPayload
+  stylePreferences(where: StylePreferencesSubscriptionWhereInput): StylePreferencesSubscriptionPayload
   tag(where: TagSubscriptionWhereInput): TagSubscriptionPayload
   topSize(where: TopSizeSubscriptionWhereInput): TopSizeSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload

@@ -536,6 +536,12 @@ type User {
   updatedAt: DateTime! @updatedAt
 }
 
+type StylePreferences {
+  id: ID! @id
+  styles: [String] @scalarList(strategy: RELATION)
+  patterns: [String] @scalarList(strategy: RELATION)
+}
+
 type CustomerDetail {
   id: ID! @id
   phoneNumber: String
@@ -560,6 +566,7 @@ type CustomerDetail {
   averageSpend: String
   style: String
   commuteStyle: String
+  stylePreferences: StylePreferences
   shippingAddress: Location
   phoneOS: String
   insureShipment: Boolean! @default(value: false)

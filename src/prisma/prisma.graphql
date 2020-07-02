@@ -157,6 +157,10 @@ type AggregateSize {
   count: Int!
 }
 
+type AggregateStylePreferences {
+  count: Int!
+}
+
 type AggregateTag {
   count: Int!
 }
@@ -5933,6 +5937,7 @@ type CustomerDetail implements Node {
   averageSpend: String
   style: String
   commuteStyle: String
+  stylePreferences: StylePreferences
   shippingAddress: Location
   phoneOS: String
   insureShipment: Boolean!
@@ -5976,6 +5981,7 @@ input CustomerDetailCreateInput {
   weight: CustomerDetailCreateweightInput
   topSizes: CustomerDetailCreatetopSizesInput
   waistSizes: CustomerDetailCreatewaistSizesInput
+  stylePreferences: StylePreferencesCreateOneInput
   shippingAddress: LocationCreateOneInput
 }
 
@@ -6138,6 +6144,7 @@ input CustomerDetailUpdateDataInput {
   weight: CustomerDetailUpdateweightInput
   topSizes: CustomerDetailUpdatetopSizesInput
   waistSizes: CustomerDetailUpdatewaistSizesInput
+  stylePreferences: StylePreferencesUpdateOneInput
   shippingAddress: LocationUpdateOneInput
 }
 
@@ -6160,6 +6167,7 @@ input CustomerDetailUpdateInput {
   weight: CustomerDetailUpdateweightInput
   topSizes: CustomerDetailUpdatetopSizesInput
   waistSizes: CustomerDetailUpdatewaistSizesInput
+  stylePreferences: StylePreferencesUpdateOneInput
   shippingAddress: LocationUpdateOneInput
 }
 
@@ -7233,6 +7241,7 @@ input CustomerDetailWhereInput {
   All values greater than or equal the given value.
   """
   updatedAt_gte: DateTime
+  stylePreferences: StylePreferencesWhereInput
   shippingAddress: LocationWhereInput
 }
 
@@ -11333,6 +11342,7 @@ type Mutation {
   createReservationReceiptItem(
     data: ReservationReceiptItemCreateInput!
   ): ReservationReceiptItem!
+  createStylePreferences(data: StylePreferencesCreateInput!): StylePreferences!
   createImage(data: ImageCreateInput!): Image!
   createPackage(data: PackageCreateInput!): Package!
   createSize(data: SizeCreateInput!): Size!
@@ -11454,6 +11464,10 @@ type Mutation {
     data: ReservationReceiptItemUpdateInput!
     where: ReservationReceiptItemWhereUniqueInput!
   ): ReservationReceiptItem
+  updateStylePreferences(
+    data: StylePreferencesUpdateInput!
+    where: StylePreferencesWhereUniqueInput!
+  ): StylePreferences
   updateImage(data: ImageUpdateInput!, where: ImageWhereUniqueInput!): Image
   updatePackage(
     data: PackageUpdateInput!
@@ -11566,6 +11580,9 @@ type Mutation {
   deleteReservationReceiptItem(
     where: ReservationReceiptItemWhereUniqueInput!
   ): ReservationReceiptItem
+  deleteStylePreferences(
+    where: StylePreferencesWhereUniqueInput!
+  ): StylePreferences
   deleteImage(where: ImageWhereUniqueInput!): Image
   deletePackage(where: PackageWhereUniqueInput!): Package
   deleteSize(where: SizeWhereUniqueInput!): Size
@@ -11724,6 +11741,11 @@ type Mutation {
     create: ReservationReceiptItemCreateInput!
     update: ReservationReceiptItemUpdateInput!
   ): ReservationReceiptItem!
+  upsertStylePreferences(
+    where: StylePreferencesWhereUniqueInput!
+    create: StylePreferencesCreateInput!
+    update: StylePreferencesUpdateInput!
+  ): StylePreferences!
   upsertImage(
     where: ImageWhereUniqueInput!
     create: ImageCreateInput!
@@ -11913,6 +11935,10 @@ type Mutation {
     data: ReservationReceiptItemUpdateManyMutationInput!
     where: ReservationReceiptItemWhereInput
   ): BatchPayload!
+  updateManyStylePreferenceses(
+    data: StylePreferencesUpdateManyMutationInput!
+    where: StylePreferencesWhereInput
+  ): BatchPayload!
   updateManyImages(
     data: ImageUpdateManyMutationInput!
     where: ImageWhereInput
@@ -12038,6 +12064,7 @@ type Mutation {
   deleteManyReservationReceiptItems(
     where: ReservationReceiptItemWhereInput
   ): BatchPayload!
+  deleteManyStylePreferenceses(where: StylePreferencesWhereInput): BatchPayload!
   deleteManyImages(where: ImageWhereInput): BatchPayload!
   deleteManyPackages(where: PackageWhereInput): BatchPayload!
   deleteManySizes(where: SizeWhereInput): BatchPayload!
@@ -25421,6 +25448,15 @@ type Query {
     first: Int
     last: Int
   ): [ReservationReceiptItem]!
+  stylePreferenceses(
+    where: StylePreferencesWhereInput
+    orderBy: StylePreferencesOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [StylePreferences]!
   images(
     where: ImageWhereInput
     orderBy: ImageOrderByInput
@@ -25631,6 +25667,7 @@ type Query {
   reservationReceiptItem(
     where: ReservationReceiptItemWhereUniqueInput!
   ): ReservationReceiptItem
+  stylePreferences(where: StylePreferencesWhereUniqueInput!): StylePreferences
   image(where: ImageWhereUniqueInput!): Image
   package(where: PackageWhereUniqueInput!): Package
   size(where: SizeWhereUniqueInput!): Size
@@ -25893,6 +25930,15 @@ type Query {
     first: Int
     last: Int
   ): ReservationReceiptItemConnection!
+  stylePreferencesesConnection(
+    where: StylePreferencesWhereInput
+    orderBy: StylePreferencesOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): StylePreferencesConnection!
   imagesConnection(
     where: ImageWhereInput
     orderBy: ImageOrderByInput
@@ -29362,6 +29408,242 @@ input SizeWhereUniqueInput {
   slug: String
 }
 
+type StylePreferences implements Node {
+  id: ID!
+  styles: [String!]!
+  patterns: [String!]!
+}
+
+"""
+A connection to a list of items.
+"""
+type StylePreferencesConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+
+  """
+  A list of edges.
+  """
+  edges: [StylePreferencesEdge]!
+  aggregate: AggregateStylePreferences!
+}
+
+input StylePreferencesCreateInput {
+  id: ID
+  styles: StylePreferencesCreatestylesInput
+  patterns: StylePreferencesCreatepatternsInput
+}
+
+input StylePreferencesCreateOneInput {
+  create: StylePreferencesCreateInput
+  connect: StylePreferencesWhereUniqueInput
+}
+
+input StylePreferencesCreatepatternsInput {
+  set: [String!]
+}
+
+input StylePreferencesCreatestylesInput {
+  set: [String!]
+}
+
+"""
+An edge in a connection.
+"""
+type StylePreferencesEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: StylePreferences!
+
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+}
+
+enum StylePreferencesOrderByInput {
+  id_ASC
+  id_DESC
+}
+
+type StylePreferencesPreviousValues {
+  id: ID!
+  styles: [String!]!
+  patterns: [String!]!
+}
+
+type StylePreferencesSubscriptionPayload {
+  mutation: MutationType!
+  node: StylePreferences
+  updatedFields: [String!]
+  previousValues: StylePreferencesPreviousValues
+}
+
+input StylePreferencesSubscriptionWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [StylePreferencesSubscriptionWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [StylePreferencesSubscriptionWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [StylePreferencesSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: StylePreferencesWhereInput
+}
+
+input StylePreferencesUpdateDataInput {
+  styles: StylePreferencesUpdatestylesInput
+  patterns: StylePreferencesUpdatepatternsInput
+}
+
+input StylePreferencesUpdateInput {
+  styles: StylePreferencesUpdatestylesInput
+  patterns: StylePreferencesUpdatepatternsInput
+}
+
+input StylePreferencesUpdateManyMutationInput {
+  styles: StylePreferencesUpdatestylesInput
+  patterns: StylePreferencesUpdatepatternsInput
+}
+
+input StylePreferencesUpdateOneInput {
+  create: StylePreferencesCreateInput
+  connect: StylePreferencesWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: StylePreferencesUpdateDataInput
+  upsert: StylePreferencesUpsertNestedInput
+}
+
+input StylePreferencesUpdatepatternsInput {
+  set: [String!]
+}
+
+input StylePreferencesUpdatestylesInput {
+  set: [String!]
+}
+
+input StylePreferencesUpsertNestedInput {
+  update: StylePreferencesUpdateDataInput!
+  create: StylePreferencesCreateInput!
+}
+
+input StylePreferencesWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [StylePreferencesWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [StylePreferencesWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [StylePreferencesWhereInput!]
+  id: ID
+
+  """
+  All values that are not equal to given value.
+  """
+  id_not: ID
+
+  """
+  All values that are contained in given list.
+  """
+  id_in: [ID!]
+
+  """
+  All values that are not contained in given list.
+  """
+  id_not_in: [ID!]
+
+  """
+  All values less than the given value.
+  """
+  id_lt: ID
+
+  """
+  All values less than or equal the given value.
+  """
+  id_lte: ID
+
+  """
+  All values greater than the given value.
+  """
+  id_gt: ID
+
+  """
+  All values greater than or equal the given value.
+  """
+  id_gte: ID
+
+  """
+  All values containing the given string.
+  """
+  id_contains: ID
+
+  """
+  All values not containing the given string.
+  """
+  id_not_contains: ID
+
+  """
+  All values starting with the given string.
+  """
+  id_starts_with: ID
+
+  """
+  All values not starting with the given string.
+  """
+  id_not_starts_with: ID
+
+  """
+  All values ending with the given string.
+  """
+  id_ends_with: ID
+
+  """
+  All values not ending with the given string.
+  """
+  id_not_ends_with: ID
+}
+
+input StylePreferencesWhereUniqueInput {
+  id: ID
+}
+
 type Subscription {
   brand(where: BrandSubscriptionWhereInput): BrandSubscriptionPayload
   collectionGroup(
@@ -29438,6 +29720,9 @@ type Subscription {
   reservationReceiptItem(
     where: ReservationReceiptItemSubscriptionWhereInput
   ): ReservationReceiptItemSubscriptionPayload
+  stylePreferences(
+    where: StylePreferencesSubscriptionWhereInput
+  ): StylePreferencesSubscriptionPayload
   image(where: ImageSubscriptionWhereInput): ImageSubscriptionPayload
   package(where: PackageSubscriptionWhereInput): PackageSubscriptionPayload
   size(where: SizeSubscriptionWhereInput): SizeSubscriptionPayload

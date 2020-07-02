@@ -83,6 +83,7 @@ export interface Exists {
     where?: ReservationReceiptItemWhereInput
   ) => Promise<boolean>;
   size: (where?: SizeWhereInput) => Promise<boolean>;
+  stylePreferences: (where?: StylePreferencesWhereInput) => Promise<boolean>;
   tag: (where?: TagWhereInput) => Promise<boolean>;
   topSize: (where?: TopSizeWhereInput) => Promise<boolean>;
   user: (where?: UserWhereInput) => Promise<boolean>;
@@ -904,6 +905,27 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => SizeConnectionPromise;
+  stylePreferences: (
+    where: StylePreferencesWhereUniqueInput
+  ) => StylePreferencesNullablePromise;
+  stylePreferenceses: (args?: {
+    where?: StylePreferencesWhereInput;
+    orderBy?: StylePreferencesOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<StylePreferences>;
+  stylePreferencesesConnection: (args?: {
+    where?: StylePreferencesWhereInput;
+    orderBy?: StylePreferencesOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => StylePreferencesConnectionPromise;
   tag: (where: TagWhereUniqueInput) => TagNullablePromise;
   tags: (args?: {
     where?: TagWhereInput;
@@ -1767,6 +1789,28 @@ export interface Prisma {
   }) => SizePromise;
   deleteSize: (where: SizeWhereUniqueInput) => SizePromise;
   deleteManySizes: (where?: SizeWhereInput) => BatchPayloadPromise;
+  createStylePreferences: (
+    data: StylePreferencesCreateInput
+  ) => StylePreferencesPromise;
+  updateStylePreferences: (args: {
+    data: StylePreferencesUpdateInput;
+    where: StylePreferencesWhereUniqueInput;
+  }) => StylePreferencesPromise;
+  updateManyStylePreferenceses: (args: {
+    data: StylePreferencesUpdateManyMutationInput;
+    where?: StylePreferencesWhereInput;
+  }) => BatchPayloadPromise;
+  upsertStylePreferences: (args: {
+    where: StylePreferencesWhereUniqueInput;
+    create: StylePreferencesCreateInput;
+    update: StylePreferencesUpdateInput;
+  }) => StylePreferencesPromise;
+  deleteStylePreferences: (
+    where: StylePreferencesWhereUniqueInput
+  ) => StylePreferencesPromise;
+  deleteManyStylePreferenceses: (
+    where?: StylePreferencesWhereInput
+  ) => BatchPayloadPromise;
   createTag: (data: TagCreateInput) => TagPromise;
   updateTag: (args: {
     data: TagUpdateInput;
@@ -1985,6 +2029,9 @@ export interface Subscription {
   size: (
     where?: SizeSubscriptionWhereInput
   ) => SizeSubscriptionPayloadSubscription;
+  stylePreferences: (
+    where?: StylePreferencesSubscriptionWhereInput
+  ) => StylePreferencesSubscriptionPayloadSubscription;
   tag: (
     where?: TagSubscriptionWhereInput
   ) => TagSubscriptionPayloadSubscription;
@@ -2812,6 +2859,8 @@ export type ReservationReceiptOrderByInput =
   | "createdAt_DESC"
   | "updatedAt_ASC"
   | "updatedAt_DESC";
+
+export type StylePreferencesOrderByInput = "id_ASC" | "id_DESC";
 
 export type TopSizeOrderByInput =
   | "id_ASC"
@@ -5074,6 +5123,7 @@ export interface CustomerDetailWhereInput {
   commuteStyle_not_starts_with?: Maybe<String>;
   commuteStyle_ends_with?: Maybe<String>;
   commuteStyle_not_ends_with?: Maybe<String>;
+  stylePreferences?: Maybe<StylePreferencesWhereInput>;
   shippingAddress?: Maybe<LocationWhereInput>;
   phoneOS?: Maybe<String>;
   phoneOS_not?: Maybe<String>;
@@ -5110,6 +5160,26 @@ export interface CustomerDetailWhereInput {
   AND?: Maybe<CustomerDetailWhereInput[] | CustomerDetailWhereInput>;
   OR?: Maybe<CustomerDetailWhereInput[] | CustomerDetailWhereInput>;
   NOT?: Maybe<CustomerDetailWhereInput[] | CustomerDetailWhereInput>;
+}
+
+export interface StylePreferencesWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  AND?: Maybe<StylePreferencesWhereInput[] | StylePreferencesWhereInput>;
+  OR?: Maybe<StylePreferencesWhereInput[] | StylePreferencesWhereInput>;
+  NOT?: Maybe<StylePreferencesWhereInput[] | StylePreferencesWhereInput>;
 }
 
 export interface BillingInfoWhereInput {
@@ -6556,6 +6626,10 @@ export type SizeWhereUniqueInput = AtLeastOne<{
   slug?: Maybe<String>;
 }>;
 
+export type StylePreferencesWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
 export type TagWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
   name?: Maybe<String>;
@@ -6675,6 +6749,7 @@ export interface CustomerDetailCreateInput {
   averageSpend?: Maybe<String>;
   style?: Maybe<String>;
   commuteStyle?: Maybe<String>;
+  stylePreferences?: Maybe<StylePreferencesCreateOneInput>;
   shippingAddress?: Maybe<LocationCreateOneInput>;
   phoneOS?: Maybe<String>;
   insureShipment?: Maybe<Boolean>;
@@ -6690,6 +6765,25 @@ export interface CustomerDetailCreatetopSizesInput {
 
 export interface CustomerDetailCreatewaistSizesInput {
   set?: Maybe<Int[] | Int>;
+}
+
+export interface StylePreferencesCreateOneInput {
+  create?: Maybe<StylePreferencesCreateInput>;
+  connect?: Maybe<StylePreferencesWhereUniqueInput>;
+}
+
+export interface StylePreferencesCreateInput {
+  id?: Maybe<ID_Input>;
+  styles?: Maybe<StylePreferencesCreatestylesInput>;
+  patterns?: Maybe<StylePreferencesCreatepatternsInput>;
+}
+
+export interface StylePreferencesCreatestylesInput {
+  set?: Maybe<String[] | String>;
+}
+
+export interface StylePreferencesCreatepatternsInput {
+  set?: Maybe<String[] | String>;
 }
 
 export interface LocationCreateOneInput {
@@ -7762,6 +7856,7 @@ export interface CustomerDetailUpdateDataInput {
   averageSpend?: Maybe<String>;
   style?: Maybe<String>;
   commuteStyle?: Maybe<String>;
+  stylePreferences?: Maybe<StylePreferencesUpdateOneInput>;
   shippingAddress?: Maybe<LocationUpdateOneInput>;
   phoneOS?: Maybe<String>;
   insureShipment?: Maybe<Boolean>;
@@ -7777,6 +7872,33 @@ export interface CustomerDetailUpdatetopSizesInput {
 
 export interface CustomerDetailUpdatewaistSizesInput {
   set?: Maybe<Int[] | Int>;
+}
+
+export interface StylePreferencesUpdateOneInput {
+  create?: Maybe<StylePreferencesCreateInput>;
+  update?: Maybe<StylePreferencesUpdateDataInput>;
+  upsert?: Maybe<StylePreferencesUpsertNestedInput>;
+  delete?: Maybe<Boolean>;
+  disconnect?: Maybe<Boolean>;
+  connect?: Maybe<StylePreferencesWhereUniqueInput>;
+}
+
+export interface StylePreferencesUpdateDataInput {
+  styles?: Maybe<StylePreferencesUpdatestylesInput>;
+  patterns?: Maybe<StylePreferencesUpdatepatternsInput>;
+}
+
+export interface StylePreferencesUpdatestylesInput {
+  set?: Maybe<String[] | String>;
+}
+
+export interface StylePreferencesUpdatepatternsInput {
+  set?: Maybe<String[] | String>;
+}
+
+export interface StylePreferencesUpsertNestedInput {
+  update: StylePreferencesUpdateDataInput;
+  create: StylePreferencesCreateInput;
 }
 
 export interface LocationUpdateOneInput {
@@ -11274,6 +11396,7 @@ export interface CustomerDetailUpdateInput {
   averageSpend?: Maybe<String>;
   style?: Maybe<String>;
   commuteStyle?: Maybe<String>;
+  stylePreferences?: Maybe<StylePreferencesUpdateOneInput>;
   shippingAddress?: Maybe<LocationUpdateOneInput>;
   phoneOS?: Maybe<String>;
   insureShipment?: Maybe<Boolean>;
@@ -13080,6 +13203,16 @@ export interface SizeUpdateManyMutationInput {
   display?: Maybe<String>;
 }
 
+export interface StylePreferencesUpdateInput {
+  styles?: Maybe<StylePreferencesUpdatestylesInput>;
+  patterns?: Maybe<StylePreferencesUpdatepatternsInput>;
+}
+
+export interface StylePreferencesUpdateManyMutationInput {
+  styles?: Maybe<StylePreferencesUpdatestylesInput>;
+  patterns?: Maybe<StylePreferencesUpdatepatternsInput>;
+}
+
 export interface TagCreateInput {
   id?: Maybe<ID_Input>;
   name: String;
@@ -14233,6 +14366,26 @@ export interface SizeSubscriptionWhereInput {
   NOT?: Maybe<SizeSubscriptionWhereInput[] | SizeSubscriptionWhereInput>;
 }
 
+export interface StylePreferencesSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<StylePreferencesWhereInput>;
+  AND?: Maybe<
+    | StylePreferencesSubscriptionWhereInput[]
+    | StylePreferencesSubscriptionWhereInput
+  >;
+  OR?: Maybe<
+    | StylePreferencesSubscriptionWhereInput[]
+    | StylePreferencesSubscriptionWhereInput
+  >;
+  NOT?: Maybe<
+    | StylePreferencesSubscriptionWhereInput[]
+    | StylePreferencesSubscriptionWhereInput
+  >;
+}
+
 export interface TagSubscriptionWhereInput {
   mutation_in?: Maybe<MutationType[] | MutationType>;
   updatedFields_contains?: Maybe<String>;
@@ -14672,6 +14825,7 @@ export interface CustomerDetailPromise
   averageSpend: () => Promise<String>;
   style: () => Promise<String>;
   commuteStyle: () => Promise<String>;
+  stylePreferences: <T = StylePreferencesPromise>() => T;
   shippingAddress: <T = LocationPromise>() => T;
   phoneOS: () => Promise<String>;
   insureShipment: () => Promise<Boolean>;
@@ -14699,6 +14853,7 @@ export interface CustomerDetailSubscription
   averageSpend: () => Promise<AsyncIterator<String>>;
   style: () => Promise<AsyncIterator<String>>;
   commuteStyle: () => Promise<AsyncIterator<String>>;
+  stylePreferences: <T = StylePreferencesSubscription>() => T;
   shippingAddress: <T = LocationSubscription>() => T;
   phoneOS: () => Promise<AsyncIterator<String>>;
   insureShipment: () => Promise<AsyncIterator<Boolean>>;
@@ -14726,11 +14881,42 @@ export interface CustomerDetailNullablePromise
   averageSpend: () => Promise<String>;
   style: () => Promise<String>;
   commuteStyle: () => Promise<String>;
+  stylePreferences: <T = StylePreferencesPromise>() => T;
   shippingAddress: <T = LocationPromise>() => T;
   phoneOS: () => Promise<String>;
   insureShipment: () => Promise<Boolean>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface StylePreferences {
+  id: ID_Output;
+  styles: String[];
+  patterns: String[];
+}
+
+export interface StylePreferencesPromise
+  extends Promise<StylePreferences>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  styles: () => Promise<String[]>;
+  patterns: () => Promise<String[]>;
+}
+
+export interface StylePreferencesSubscription
+  extends Promise<AsyncIterator<StylePreferences>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  styles: () => Promise<AsyncIterator<String[]>>;
+  patterns: () => Promise<AsyncIterator<String[]>>;
+}
+
+export interface StylePreferencesNullablePromise
+  extends Promise<StylePreferences | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  styles: () => Promise<String[]>;
+  patterns: () => Promise<String[]>;
 }
 
 export interface Location {
@@ -19573,6 +19759,62 @@ export interface AggregateSizeSubscription
   count: () => Promise<AsyncIterator<Int>>;
 }
 
+export interface StylePreferencesConnection {
+  pageInfo: PageInfo;
+  edges: StylePreferencesEdge[];
+}
+
+export interface StylePreferencesConnectionPromise
+  extends Promise<StylePreferencesConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<StylePreferencesEdge>>() => T;
+  aggregate: <T = AggregateStylePreferencesPromise>() => T;
+}
+
+export interface StylePreferencesConnectionSubscription
+  extends Promise<AsyncIterator<StylePreferencesConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<StylePreferencesEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateStylePreferencesSubscription>() => T;
+}
+
+export interface StylePreferencesEdge {
+  node: StylePreferences;
+  cursor: String;
+}
+
+export interface StylePreferencesEdgePromise
+  extends Promise<StylePreferencesEdge>,
+    Fragmentable {
+  node: <T = StylePreferencesPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface StylePreferencesEdgeSubscription
+  extends Promise<AsyncIterator<StylePreferencesEdge>>,
+    Fragmentable {
+  node: <T = StylePreferencesSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateStylePreferences {
+  count: Int;
+}
+
+export interface AggregateStylePreferencesPromise
+  extends Promise<AggregateStylePreferences>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateStylePreferencesSubscription
+  extends Promise<AsyncIterator<AggregateStylePreferences>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
 export interface TagConnection {
   pageInfo: PageInfo;
   edges: TagEdge[];
@@ -22169,6 +22411,53 @@ export interface SizePreviousValuesSubscription
   display: () => Promise<AsyncIterator<String>>;
 }
 
+export interface StylePreferencesSubscriptionPayload {
+  mutation: MutationType;
+  node: StylePreferences;
+  updatedFields: String[];
+  previousValues: StylePreferencesPreviousValues;
+}
+
+export interface StylePreferencesSubscriptionPayloadPromise
+  extends Promise<StylePreferencesSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = StylePreferencesPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = StylePreferencesPreviousValuesPromise>() => T;
+}
+
+export interface StylePreferencesSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<StylePreferencesSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = StylePreferencesSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = StylePreferencesPreviousValuesSubscription>() => T;
+}
+
+export interface StylePreferencesPreviousValues {
+  id: ID_Output;
+  styles: String[];
+  patterns: String[];
+}
+
+export interface StylePreferencesPreviousValuesPromise
+  extends Promise<StylePreferencesPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  styles: () => Promise<String[]>;
+  patterns: () => Promise<String[]>;
+}
+
+export interface StylePreferencesPreviousValuesSubscription
+  extends Promise<AsyncIterator<StylePreferencesPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  styles: () => Promise<AsyncIterator<String[]>>;
+  patterns: () => Promise<AsyncIterator<String[]>>;
+}
+
 export interface TagSubscriptionPayload {
   mutation: MutationType;
   node: Tag;
@@ -22711,6 +23000,10 @@ export const models: Model[] = [
   },
   {
     name: "User",
+    embedded: false
+  },
+  {
+    name: "StylePreferences",
     embedded: false
   },
   {
