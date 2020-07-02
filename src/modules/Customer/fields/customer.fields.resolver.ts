@@ -129,7 +129,7 @@ export class CustomerFieldsResolver {
     const style = await this.prisma.client
       .customer({ id: customer.id })
       .detail()
-      .style()
+      .stylePreferences()
     const shippingAddress = await this.prisma.client
       .customer({ id: customer.id })
       .detail()
