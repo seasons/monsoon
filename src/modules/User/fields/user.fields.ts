@@ -1,5 +1,7 @@
+import { Loader } from "@app/modules/DataLoader"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
+import { PrismaDataLoader, PrismaLoader } from "@app/prisma/prisma.loader"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Info, Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { head } from "lodash"
@@ -13,13 +15,20 @@ export class UserFieldsResolver {
   ) {}
 
   @ResolveField()
-  async beamsToken(@Parent() user) {
+  async beamsToken(
+    @Parent() user,
+    @Loader({
+      name: "BeamsTokenUserEmail",
+      type: PrismaLoader.name,
+      generateParams: { query: "users", info: `{email}`, format: a => a.email },
+    })
+    userEmailLoader: PrismaDataLoader<string>
+  ) {
     if (!user) {
       return ""
     }
-    return this.pushNotification.generateToken(
-      await this.prisma.client.user({ id: user.id }).email()
-    )
+    const userEmail = await userEmailLoader.load(user.id)
+    return this.pushNotification.generateToken(userEmail)
   }
 
   @ResolveField()
