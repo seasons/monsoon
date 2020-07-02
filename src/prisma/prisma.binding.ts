@@ -7677,14 +7677,14 @@ enum LetterSize {
 
 type Location implements Node {
   id: ID!
-  slug: String!
-  name: String!
+  slug: String
+  name: String
   company: String
   description: String
-  address1: String!
+  address1: String
   address2: String
-  city: String!
-  state: String!
+  city: String
+  state: String
   zipCode: String!
   locationType: LocationType
   user: User
@@ -7707,14 +7707,14 @@ type LocationConnection {
 
 input LocationCreateInput {
   id: ID
-  slug: String!
-  name: String!
+  slug: String
+  name: String
   company: String
   description: String
-  address1: String!
+  address1: String
   address2: String
-  city: String!
-  state: String!
+  city: String
+  state: String
   zipCode: String!
   locationType: LocationType
   lat: Float
@@ -7735,14 +7735,14 @@ input LocationCreateOneWithoutPhysicalProductsInput {
 
 input LocationCreateWithoutPhysicalProductsInput {
   id: ID
-  slug: String!
-  name: String!
+  slug: String
+  name: String
   company: String
   description: String
-  address1: String!
+  address1: String
   address2: String
-  city: String!
-  state: String!
+  city: String
+  state: String
   zipCode: String!
   locationType: LocationType
   lat: Float
@@ -7794,14 +7794,14 @@ enum LocationOrderByInput {
 
 type LocationPreviousValues {
   id: ID!
-  slug: String!
-  name: String!
+  slug: String
+  name: String
   company: String
   description: String
-  address1: String!
+  address1: String
   address2: String
-  city: String!
-  state: String!
+  city: String
+  state: String
   zipCode: String!
   locationType: LocationType
   lat: Float
@@ -27087,14 +27087,14 @@ export interface LabelWhereUniqueInput {
 
 export interface LocationCreateInput {
   id?: ID_Input | null
-  slug: String
-  name: String
+  slug?: String | null
+  name?: String | null
   company?: String | null
   description?: String | null
-  address1: String
+  address1?: String | null
   address2?: String | null
-  city: String
-  state: String
+  city?: String | null
+  state?: String | null
   zipCode: String
   locationType?: LocationType | null
   lat?: Float | null
@@ -27115,14 +27115,14 @@ export interface LocationCreateOneWithoutPhysicalProductsInput {
 
 export interface LocationCreateWithoutPhysicalProductsInput {
   id?: ID_Input | null
-  slug: String
-  name: String
+  slug?: String | null
+  name?: String | null
   company?: String | null
   description?: String | null
-  address1: String
+  address1?: String | null
   address2?: String | null
-  city: String
-  state: String
+  city?: String | null
+  state?: String | null
   zipCode: String
   locationType?: LocationType | null
   lat?: Float | null
@@ -35115,14 +35115,14 @@ export interface LabelSubscriptionPayload {
 
 export interface Location extends Node {
   id: ID_Output
-  slug: String
-  name: String
+  slug?: String | null
+  name?: String | null
   company?: String | null
   description?: String | null
-  address1: String
+  address1?: String | null
   address2?: String | null
-  city: String
-  state: String
+  city?: String | null
+  state?: String | null
   zipCode: String
   locationType?: LocationType | null
   user?: User | null
@@ -35154,14 +35154,14 @@ export interface LocationEdge {
 
 export interface LocationPreviousValues {
   id: ID_Output
-  slug: String
-  name: String
+  slug?: String | null
+  name?: String | null
   company?: String | null
   description?: String | null
-  address1: String
+  address1?: String | null
   address2?: String | null
-  city: String
-  state: String
+  city?: String | null
+  state?: String | null
   zipCode: String
   locationType?: LocationType | null
   lat?: Float | null

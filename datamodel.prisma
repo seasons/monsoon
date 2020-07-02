@@ -288,14 +288,14 @@ type Image {
 
 type Location {
   id: ID! @id
-  slug: String! @unique
-  name: String!
+  slug: String @unique
+  name: String
   company: String
   description: String
-  address1: String!
+  address1: String
   address2: String
-  city: String!
-  state: String!
+  city: String
+  state: String
   zipCode: String!
   locationType: LocationType
   user: User

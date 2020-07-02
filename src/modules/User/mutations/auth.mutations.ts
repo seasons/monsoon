@@ -14,7 +14,7 @@ export class AuthMutationsResolver {
 
   @Mutation()
   async signup(
-    @Args() { email, password, firstName, lastName, details },
+    @Args() { email, password, firstName, lastName, zipCode, details },
     @Context() ctx
   ) {
     const { user, tokenData, customer } = await this.authService.signupUser({
@@ -22,12 +22,13 @@ export class AuthMutationsResolver {
       password,
       firstName,
       lastName,
+      zipCode,
       details,
     })
 
     // Add them to segment and track their account creation event
     const now = new Date()
-    ctx.analytics.identify({
+    ctx?.analytics?.identify({
       userId: user.id,
       traits: {
         ...this.authService.extractSegmentReservedTraitsFromCustomerDetail(
@@ -42,7 +43,7 @@ export class AuthMutationsResolver {
         auth0Id: user.auth0Id,
       },
     })
-    ctx.analytics.track({
+    ctx?.analytics?.track({
       userId: user.id,
       event: "Created Account",
     })
