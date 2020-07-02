@@ -1,5 +1,6 @@
 import { User } from "@app/decorators"
 import { TransactionsForCustomersLoader } from "@app/modules/Payment/loaders/transactionsForCustomers.loader"
+import { PrismaDataLoader, PrismaLoader } from "@app/prisma/prisma.loader"
 import { Loader } from "@modules/DataLoader"
 import {
   InvoicesForCustomersLoader,
@@ -55,7 +56,7 @@ export class CustomerFieldsResolver {
   @ResolveField()
   async transactions(
     @Parent() customer,
-    @Loader(TransactionsForCustomersLoader.name)
+    @Loader({ name: TransactionsForCustomersLoader.name })
     transactionsForCustomerLoader: TransactionsDataLoader
   ) {
     if (!customer) {
@@ -75,20 +76,26 @@ export class CustomerFieldsResolver {
   @ResolveField()
   async invoices(
     @Parent() customer,
-    @Loader(InvoicesForCustomersLoader.name) invoicesLoader: InvoicesDataLoader,
-    @Loader(TransactionsForCustomersLoader.name)
-    transactionsForCustomerLoader: TransactionsDataLoader
+    @Loader({ type: InvoicesForCustomersLoader.name })
+    invoicesLoader: InvoicesDataLoader,
+    @Loader({ type: TransactionsForCustomersLoader.name })
+    transactionsForCustomerLoader: TransactionsDataLoader,
+    @Loader({
+      name: PrismaLoader.name,
+      generateParams: {
+        query: `customers`,
+        info: `{user {id}}`,
+        format: a => a.user.id,
+      },
+    })
+    prismaLoader: PrismaDataLoader<string>
   ) {
     if (!customer) {
       return null
     }
+    const userId = await prismaLoader.load(customer.id)
     return await this.paymentService.getCustomerInvoiceHistory(
-      await this.prisma.client
-        .customer({
-          id: customer.id,
-        })
-        .user()
-        .id(),
+      userId,
       invoicesLoader,
       transactionsForCustomerLoader
     )

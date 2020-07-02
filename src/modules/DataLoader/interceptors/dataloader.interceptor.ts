@@ -9,7 +9,7 @@ import { ModuleRef } from "@nestjs/core"
 import { GqlExecutionContext, GraphQLExecutionContext } from "@nestjs/graphql"
 import { Observable } from "rxjs"
 
-import { NestDataLoader } from "../dataloader.types"
+import { LoaderParams, NestDataLoader } from "../dataloader.types"
 
 /**
  * Context key where get loader function will be store
@@ -30,12 +30,15 @@ export class DataLoaderInterceptor implements NestInterceptor {
     const ctx: any = graphqlExecutionContext.getContext()
 
     if (ctx[GET_LOADER_CONTEXT_KEY] === undefined) {
-      ctx[GET_LOADER_CONTEXT_KEY] = (type: string): NestDataLoader => {
+      ctx[GET_LOADER_CONTEXT_KEY] = ({
+        type,
+        generateParams = null,
+      }: LoaderParams): NestDataLoader => {
         if (ctx[type] === undefined) {
           try {
             ctx[type] = this.moduleRef
               .get<NestDataLoader>(type, { strict: false })
-              .generateDataLoader()
+              .generateDataLoader(generateParams)
           } catch (e) {
             throw new InternalServerErrorException(
               `The loader ${type} is not provided`

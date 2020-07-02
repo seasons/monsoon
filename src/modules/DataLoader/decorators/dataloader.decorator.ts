@@ -5,15 +5,16 @@ import {
 } from "@nestjs/common"
 import { APP_INTERCEPTOR } from "@nestjs/core"
 
+import { LoaderParams } from "../dataloader.types"
 import {
   DataLoaderInterceptor,
   GET_LOADER_CONTEXT_KEY,
 } from "../interceptors/dataloader.interceptor"
 
 export const Loader: (
-  type: string
+  params: LoaderParams
 ) => ParameterDecorator = createParamDecorator(
-  (type: string, context: ExecutionContext) => {
+  (data: LoaderParams, context: ExecutionContext) => {
     const [obj, args, ctx, info] = context.getArgs()
     if (ctx[GET_LOADER_CONTEXT_KEY] === undefined) {
       throw new InternalServerErrorException(`
@@ -21,6 +22,6 @@ export const Loader: (
       `)
     }
 
-    return ctx[GET_LOADER_CONTEXT_KEY](type)
+    return ctx[GET_LOADER_CONTEXT_KEY](data)
   }
 )
