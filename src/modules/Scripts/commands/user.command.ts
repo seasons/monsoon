@@ -227,7 +227,6 @@ export class UserCommands {
       },
       where: { id: customer.id },
     })
-    await this.airtable.createOrUpdateAirtableUser(user, { status: "Active" })
     await this.paymentService.createSubscription(
       plan,
       this.utilsService.snakeCaseify(address),

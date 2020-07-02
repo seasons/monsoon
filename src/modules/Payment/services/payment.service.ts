@@ -307,13 +307,6 @@ export class PaymentService {
                 where: { id: prismaCustomer.id },
               })
 
-              // Save it to airtable
-              await airtableService.createOrUpdateAirtableUser(prismaUser, {
-                status: "Active",
-                plan,
-                billingInfo,
-              })
-
               // Send welcome to seasons email
               await emailService.sendWelcomeToSeasonsEmail(prismaUser)
 

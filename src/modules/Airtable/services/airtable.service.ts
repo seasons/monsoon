@@ -122,48 +122,6 @@ export class AirtableService extends AirtableQueriesService {
     return await this.airtableBase.base(modelName).update(recordId, fields)
   }
 
-  async createOrUpdateAirtableUser(user: User, fields: AirtableUserFields) {
-    // Create the airtable data
-    const { email, firstName, lastName } = user
-    const data = {
-      Email: email,
-      "First Name": firstName,
-      "Last Name": lastName,
-    }
-    for (const key in fields) {
-      if (this.utils.keyMap[key]) {
-        data[this.utils.keyMap[key]] = fields[key]
-      }
-    }
-    // WARNING: shipping address and billingInfo code are still "create" only.
-    if (!!fields.shippingAddress) {
-      const location = await this.utils.createLocation(
-        fields.shippingAddress.create
-      )
-      data["Shipping Address"] = location.map(l => l.id)
-    }
-    if (!!fields.billingInfo) {
-      const airtableBillingInfoRecord = await this.utils.createBillingInfo(
-        fields.billingInfo
-      )
-      data["Billing Info"] = [airtableBillingInfoRecord.getId()]
-    }
-
-    // Create or update the record
-    const airtableUser = await this.utils.getAirtableUserRecordByUserEmail(
-      email
-    )
-    if (!!airtableUser) {
-      return await this.airtableBase.base("Users").update(airtableUser.id, data)
-    }
-
-    return await this.airtableBase.base("Users").create([
-      {
-        fields: data,
-      },
-    ])
-  }
-
   async createPhysicalProducts(newPhysicalProducts) {
     await this.airtableBase
       .base("Physical Products")
