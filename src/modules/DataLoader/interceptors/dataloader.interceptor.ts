@@ -32,16 +32,17 @@ export class DataLoaderInterceptor implements NestInterceptor {
     if (ctx[GET_LOADER_CONTEXT_KEY] === undefined) {
       ctx[GET_LOADER_CONTEXT_KEY] = ({
         name,
+        type,
         generateParams = null,
       }: LoaderParams): NestDataLoader => {
         if (ctx[name] === undefined) {
           try {
             ctx[name] = this.moduleRef
-              .get<NestDataLoader>(name, { strict: false })
+              .get<NestDataLoader>(type || name, { strict: false })
               .generateDataLoader(generateParams)
           } catch (e) {
             throw new InternalServerErrorException(
-              `The loader ${name} is not provided`
+              `The loader ${type} is not provided`
             )
           }
         }

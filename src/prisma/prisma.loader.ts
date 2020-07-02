@@ -25,12 +25,13 @@ export class PrismaLoader implements NestDataLoader {
     recordIds: string[],
     { query, info, format = identity }: GenerateParams
   ) {
+
     const data = await this.prisma.binding.query[query](
-      {
-        where: { id_in: recordIds },
-      },
-      info
-    )
+        {
+          where: { id_in: recordIds },
+        },
+        info
+      )
 
     return data.map(format)
   }

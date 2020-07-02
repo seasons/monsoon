@@ -22,6 +22,10 @@ export const Loader: (
       `)
     }
 
+    if (data.generateParams?.info === "FROM_CONTEXT") {
+      data.generateParams.info = info
+    }
+
     return ctx[GET_LOADER_CONTEXT_KEY](data)
   }
 )

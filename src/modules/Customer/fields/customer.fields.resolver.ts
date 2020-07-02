@@ -10,7 +10,7 @@ import {
   InvoicesDataLoader,
   TransactionsDataLoader,
 } from "@modules/Payment/payment.types"
-import { Info, Parent, ResolveField, Resolver } from "@nestjs/graphql"
+import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma/prisma.service"
 import { head } from "lodash"
 
@@ -104,19 +104,22 @@ export class CustomerFieldsResolver {
   }
 
   @ResolveField()
-  async user(@Parent() customer, @Info() info) {
-    return await this.prisma.binding.query.user(
-      {
-        where: {
-          id: await this.prisma.client
-            .customer({
-              id: customer.id,
-            })
-            .user()
-            .id(),
-        },
-      },
-      info
-    )
+  async user(
+    @Parent() customer,
+    @Loader({
+      name: "PrismaUserIdLoader",
+      type: PrismaLoader.name,
+      generateParams: getUserIDGenerateParams,
+    })
+    userIdLoader: PrismaDataLoader<string>,
+    @Loader({
+      name: "PrismaUserLoader",
+      type: PrismaLoader.name,
+      generateParams: { query: "users", info: "FROM_CONTEXT" },
+    })
+    userLoader: PrismaDataLoader<any>
+  ) {
+    const userId = await userIdLoader.load(customer.id)
+    return userLoader.load(userId)
   }
 }
