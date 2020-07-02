@@ -18,7 +18,7 @@ export class UserFieldsResolver {
   async beamsToken(
     @Parent() user,
     @Loader({
-      name: "BeamsTokenUserEmail",
+      name: "BeamsTokenFieldPrismaLoader",
       type: PrismaLoader.name,
       generateParams: { query: "users", info: `{email}`, format: a => a.email },
     })
@@ -32,12 +32,23 @@ export class UserFieldsResolver {
   }
 
   @ResolveField()
-  async fullName(@Parent() user) {
+  async fullName(
+    @Parent() user,
+    @Loader({
+      name: "FullNameFieldPrismaLoader",
+      type: PrismaLoader.name,
+      generateParams: {
+        query: "users",
+        info: `{firstName lastName}`,
+        format: rec => `${rec.firstName} ${rec.lastName}`,
+      },
+    })
+    userNameLoader: PrismaDataLoader<any>
+  ) {
     if (!user) {
       return ""
     }
-    const rec = await this.prisma.client.user({ id: user.id })
-    return `${rec?.firstName} ${rec?.lastName}`
+    return userNameLoader.load(user.id)
   }
 
   @ResolveField()
