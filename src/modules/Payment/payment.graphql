@@ -5,6 +5,7 @@ type Query {
   ): ChargebeeHostedPagePayload
   chargebeeUpdatePaymentPage: ChargebeeHostedPagePayload
     @hasRole(roles: [Customer])
+  paymentPlans: [PaymentPlan]
 }
 
 type Mutation {
@@ -105,6 +106,10 @@ type CreditNote {
   date: DateTime
   total: Int
   status: CreditNoteStatus
+}
+
+type ChargebeePlanPayload {
+  plans: [Plan]
 }
 
 type BillingInfoPayload {

@@ -15,6 +15,11 @@ export class ChargebeeQueriesResolver {
   ) {}
 
   @Query()
+  async paymentPlans() {
+    return this.paymentService.getPaymentPlans()
+  }
+
+  @Query()
   async chargebeeCheckout(@Args() { planID, userIDHash }, @Context() ctx) {
     const userID = this.utils.decryptUserIDHash(userIDHash)
     const user = await this.prisma.client.user({ id: userID })
