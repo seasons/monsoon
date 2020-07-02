@@ -31,22 +31,22 @@ export class DataLoaderInterceptor implements NestInterceptor {
 
     if (ctx[GET_LOADER_CONTEXT_KEY] === undefined) {
       ctx[GET_LOADER_CONTEXT_KEY] = ({
-        type,
+        name,
         generateParams = null,
       }: LoaderParams): NestDataLoader => {
-        if (ctx[type] === undefined) {
+        if (ctx[name] === undefined) {
           try {
-            ctx[type] = this.moduleRef
-              .get<NestDataLoader>(type, { strict: false })
+            ctx[name] = this.moduleRef
+              .get<NestDataLoader>(name, { strict: false })
               .generateDataLoader(generateParams)
           } catch (e) {
             throw new InternalServerErrorException(
-              `The loader ${type} is not provided`
+              `The loader ${name} is not provided`
             )
           }
         }
 
-        return ctx[type]
+        return ctx[name]
       }
     }
 
