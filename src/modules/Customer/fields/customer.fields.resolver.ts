@@ -1,5 +1,6 @@
 import { User } from "@app/decorators"
 import { TransactionsForCustomersLoader } from "@app/modules/Payment/loaders/transactionsForCustomers.loader"
+import { PrismaDataLoader, PrismaLoader } from "@app/prisma/prisma.loader"
 import { Loader } from "@modules/DataLoader"
 import {
   InvoicesForCustomersLoader,
@@ -9,10 +10,15 @@ import {
   InvoicesDataLoader,
   TransactionsDataLoader,
 } from "@modules/Payment/payment.types"
-import { Info, Parent, ResolveField, Resolver } from "@nestjs/graphql"
+import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma/prisma.service"
 import { head } from "lodash"
 
+const getUserIDGenerateParams = {
+  query: `customers`,
+  info: `{user {id}}`,
+  format: a => a.user.id,
+}
 @Resolver("Customer")
 export class CustomerFieldsResolver {
   constructor(
@@ -55,19 +61,20 @@ export class CustomerFieldsResolver {
   @ResolveField()
   async transactions(
     @Parent() customer,
-    @Loader(TransactionsForCustomersLoader.name)
-    transactionsForCustomerLoader: TransactionsDataLoader
+    @Loader({ name: TransactionsForCustomersLoader.name })
+    transactionsForCustomerLoader: TransactionsDataLoader,
+    @Loader({
+      name: PrismaLoader.name,
+      generateParams: getUserIDGenerateParams,
+    })
+    prismaLoader: PrismaDataLoader<string>
   ) {
     if (!customer) {
       return null
     }
+    const userId = await prismaLoader.load(customer.id)
     return this.paymentService.getCustomerTransactionHistory(
-      await this.prisma.client
-        .customer({
-          id: customer.id,
-        })
-        .user()
-        .id(),
+      userId,
       transactionsForCustomerLoader
     )
   }
@@ -75,39 +82,44 @@ export class CustomerFieldsResolver {
   @ResolveField()
   async invoices(
     @Parent() customer,
-    @Loader(InvoicesForCustomersLoader.name) invoicesLoader: InvoicesDataLoader,
-    @Loader(TransactionsForCustomersLoader.name)
-    transactionsForCustomerLoader: TransactionsDataLoader
+    @Loader({ name: InvoicesForCustomersLoader.name })
+    invoicesLoader: InvoicesDataLoader,
+    @Loader({ name: TransactionsForCustomersLoader.name })
+    transactionsForCustomerLoader: TransactionsDataLoader,
+    @Loader({
+      name: PrismaLoader.name,
+      generateParams: getUserIDGenerateParams,
+    })
+    prismaLoader: PrismaDataLoader<string>
   ) {
     if (!customer) {
       return null
     }
+    const userId = await prismaLoader.load(customer.id)
     return await this.paymentService.getCustomerInvoiceHistory(
-      await this.prisma.client
-        .customer({
-          id: customer.id,
-        })
-        .user()
-        .id(),
+      userId,
       invoicesLoader,
       transactionsForCustomerLoader
     )
   }
 
   @ResolveField()
-  async user(@Parent() customer, @Info() info) {
-    return await this.prisma.binding.query.user(
-      {
-        where: {
-          id: await this.prisma.client
-            .customer({
-              id: customer.id,
-            })
-            .user()
-            .id(),
-        },
-      },
-      info
-    )
+  async user(
+    @Parent() customer,
+    @Loader({
+      name: "PrismaUserIdLoader",
+      type: PrismaLoader.name,
+      generateParams: getUserIDGenerateParams,
+    })
+    userIdLoader: PrismaDataLoader<string>,
+    @Loader({
+      name: "PrismaUserLoader",
+      type: PrismaLoader.name,
+      generateParams: { query: "users", info: "FROM_CONTEXT" },
+    })
+    userLoader: PrismaDataLoader<any>
+  ) {
+    const userId = await userIdLoader.load(customer.id)
+    return userLoader.load(userId)
   }
 }
