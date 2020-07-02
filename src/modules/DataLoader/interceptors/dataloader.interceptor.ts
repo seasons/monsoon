@@ -38,7 +38,7 @@ export class DataLoaderInterceptor implements NestInterceptor {
         if (ctx[name] === undefined) {
           try {
             ctx[name] = this.moduleRef
-              .get<NestDataLoader>(type || name, { strict: false })
+              .get<NestDataLoader>(type, { strict: false })
               .generateDataLoader(generateParams)
           } catch (e) {
             throw new InternalServerErrorException(

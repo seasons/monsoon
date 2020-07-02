@@ -11,11 +11,14 @@ export type GenerateParamsInfo = string | "FROM_CONTEXT"
 export interface GenerateParams {
   query: string
   info: GenerateParamsInfo
-  format?: (any) => any
+  formatWhere?: (ids: string[]) => any
+  formatData?: (any) => any
 }
 
 export interface LoaderParams {
+  // Should be unique across the application space, because all loaders
+  // are stored on the request-level context object
   name: string
-  type?: string
+  type: string
   generateParams?: GenerateParams
 }
