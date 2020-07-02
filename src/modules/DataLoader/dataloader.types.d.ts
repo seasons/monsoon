@@ -15,7 +15,9 @@ export interface GenerateParams {
 }
 
 export interface LoaderParams {
+  // Should be unique across the application space, because all loaders
+  // are stored on the request-level context object
   name: string
-  type?: string
+  type: string
   generateParams?: GenerateParams
 }
