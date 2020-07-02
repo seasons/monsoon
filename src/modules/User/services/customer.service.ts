@@ -51,13 +51,6 @@ export class CustomerService {
       await this.setCustomerPrismaStatus(user, status)
     }
 
-    // Sync with airtable
-    await this.airtableService.createOrUpdateAirtableUser(user, {
-      ...currentCustomerDetail,
-      ...details,
-      status,
-    })
-
     // Return the updated customer object
     const returnData = await this.prisma.binding.query.customer(
       { where: { id: customer.id } },

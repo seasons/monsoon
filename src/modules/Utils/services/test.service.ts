@@ -80,8 +80,6 @@ export class TestUtilsService {
     const newUser = await this.prisma.client.user({
       id: await this.prisma.client.customer({ id: newCustomer.id }).user().id(),
     })
-    this.airtableService.createOrUpdateAirtableUser(newUser, {})
-
     return { user: newUser, customer: newCustomer }
   }
 
