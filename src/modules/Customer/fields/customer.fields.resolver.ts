@@ -76,9 +76,9 @@ export class CustomerFieldsResolver {
   @ResolveField()
   async invoices(
     @Parent() customer,
-    @Loader({ type: InvoicesForCustomersLoader.name })
+    @Loader({ name: InvoicesForCustomersLoader.name })
     invoicesLoader: InvoicesDataLoader,
-    @Loader({ type: TransactionsForCustomersLoader.name })
+    @Loader({ name: TransactionsForCustomersLoader.name })
     transactionsForCustomerLoader: TransactionsDataLoader,
     @Loader({
       name: PrismaLoader.name,
