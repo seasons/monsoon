@@ -14,6 +14,11 @@ import { Info, Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma/prisma.service"
 import { head } from "lodash"
 
+const getUserIDGenerateParams = {
+  query: `customers`,
+  info: `{user {id}}`,
+  format: a => a.user.id,
+}
 @Resolver("Customer")
 export class CustomerFieldsResolver {
   constructor(
@@ -57,18 +62,19 @@ export class CustomerFieldsResolver {
   async transactions(
     @Parent() customer,
     @Loader({ name: TransactionsForCustomersLoader.name })
-    transactionsForCustomerLoader: TransactionsDataLoader
+    transactionsForCustomerLoader: TransactionsDataLoader,
+    @Loader({
+      name: PrismaLoader.name,
+      generateParams: getUserIDGenerateParams,
+    })
+    prismaLoader: PrismaDataLoader<string>
   ) {
     if (!customer) {
       return null
     }
+    const userId = await prismaLoader.load(customer.id)
     return this.paymentService.getCustomerTransactionHistory(
-      await this.prisma.client
-        .customer({
-          id: customer.id,
-        })
-        .user()
-        .id(),
+      userId,
       transactionsForCustomerLoader
     )
   }
@@ -82,11 +88,7 @@ export class CustomerFieldsResolver {
     transactionsForCustomerLoader: TransactionsDataLoader,
     @Loader({
       name: PrismaLoader.name,
-      generateParams: {
-        query: `customers`,
-        info: `{user {id}}`,
-        format: a => a.user.id,
-      },
+      generateParams: getUserIDGenerateParams,
     })
     prismaLoader: PrismaDataLoader<string>
   ) {
