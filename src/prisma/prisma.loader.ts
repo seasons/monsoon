@@ -23,16 +23,16 @@ export class PrismaLoader implements NestDataLoader {
 
   private async fetchData(
     recordIds: string[],
-    { query, info, format = identity }: GenerateParams
+    { query, info, formatData: format = identity, formatWhere = this.defaultFormatWhere }: GenerateParams
   ) {
 
     const data = await this.prisma.binding.query[query](
-        {
-          where: { id_in: recordIds },
-        },
+        formatWhere(recordIds),
         info
       )
 
     return data.map(format)
   }
+
+  private defaultFormatWhere = (recordIds: string[]) => ({where: {id_in: recordIds}})
 }

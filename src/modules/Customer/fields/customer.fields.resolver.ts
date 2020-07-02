@@ -17,7 +17,7 @@ import { head } from "lodash"
 const getUserIDGenerateParams = {
   query: `customers`,
   info: `{user {id}}`,
-  format: a => a.user.id,
+  formatData: a => a.user.id,
 }
 @Resolver("Customer")
 export class CustomerFieldsResolver {

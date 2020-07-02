@@ -3,8 +3,7 @@ import { PushNotificationService } from "@app/modules/PushNotification/services/
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaDataLoader, PrismaLoader } from "@app/prisma/prisma.loader"
 import { PrismaService } from "@app/prisma/prisma.service"
-import { Info, Parent, ResolveField, Resolver } from "@nestjs/graphql"
-import { head } from "lodash"
+import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
 
 @Resolver("User")
 export class UserFieldsResolver {
@@ -20,7 +19,11 @@ export class UserFieldsResolver {
     @Loader({
       name: "BeamsTokenFieldPrismaLoader",
       type: PrismaLoader.name,
-      generateParams: { query: "users", info: `{email}`, format: a => a.email },
+      generateParams: {
+        query: "users",
+        info: `{email}`,
+        formatData: a => a.email,
+      },
     })
     userEmailLoader: PrismaDataLoader<string>
   ) {
@@ -40,7 +43,7 @@ export class UserFieldsResolver {
       generateParams: {
         query: "users",
         info: `{firstName lastName}`,
-        format: rec => `${rec.firstName} ${rec.lastName}`,
+        formatData: rec => `${rec.firstName} ${rec.lastName}`,
       },
     })
     userNameLoader: PrismaDataLoader<any>
@@ -52,19 +55,24 @@ export class UserFieldsResolver {
   }
 
   @ResolveField()
-  async customer(@Parent() user, @Info() info) {
+  async customer(
+    @Parent() user,
+    @Loader({
+      name: "CustomerFieldPrismaLoader",
+      type: PrismaLoader.name,
+      generateParams: {
+        query: "customers",
+        info: `FROM_CONTEXT`,
+        formatWhere: ids => ({ where: { user: { id_in: ids } } }),
+      },
+    })
+    customersLoader: PrismaDataLoader<any>
+  ) {
     if (!user) {
       return null
     }
 
-    return head(
-      await this.prisma.binding.query.customers(
-        {
-          where: { user: { id: user.id } },
-        },
-        info
-      )
-    )
+    return customersLoader.load(user.id)
   }
 
   @ResolveField()

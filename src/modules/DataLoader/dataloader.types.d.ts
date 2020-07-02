@@ -11,7 +11,8 @@ export type GenerateParamsInfo = string | "FROM_CONTEXT"
 export interface GenerateParams {
   query: string
   info: GenerateParamsInfo
-  format?: (any) => any
+  formatWhere?: (ids: string[]) => any
+  formatData?: (any) => any
 }
 
 export interface LoaderParams {
