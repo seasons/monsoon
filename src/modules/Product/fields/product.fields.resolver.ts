@@ -91,13 +91,16 @@ export class ProductFieldsResolver {
     )
 
     return product?.images.map(async image => {
+      const url = await this.imageService.resizeImage(image?.url, size, {
+        ...options,
+        w: width,
+        h: height,
+        updatedAt: image.updatedAt as string,
+      })
+
       return {
         id: image?.id,
-        url: await this.imageService.resizeImage(image?.url, size, {
-          ...options,
-          w: width,
-          h: height,
-        }),
+        url,
         entityType: "Product",
         entityID: product?.id,
       }
