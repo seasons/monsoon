@@ -22,6 +22,8 @@ import {
   Reservation,
   ReservationCreateInput,
   ReservationStatus,
+  ReservationUpdateInput,
+  ReservationWhereUniqueInput,
   User,
 } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
@@ -351,6 +353,40 @@ export class ReservationService {
     )
   }
 
+  async updateReservation(
+    data: ReservationUpdateInput,
+    where: ReservationWhereUniqueInput,
+    info: any
+  ) {
+    const reservationBeforeUpdate = await this.prisma.binding.query.reservation(
+      { where },
+      `{
+        status
+        products {
+          id
+        }
+      }`
+    )
+    await this.prisma.client.updateReservation({ data, where })
+
+    // Reservation was just packed. Null out warehouse locations on attached products
+    if (
+      data.status === "Packed" &&
+      data.status !== reservationBeforeUpdate.status
+    ) {
+      await Promise.all(
+        reservationBeforeUpdate.products.map(a =>
+          this.prisma.client.updatePhysicalProduct({
+            where: { id: a.id },
+            data: { warehouseLocation: { disconnect: true } },
+          })
+        )
+      )
+    }
+
+    return this.prisma.binding.query.reservation({ where }, info)
+  }
+
   private async createReservationFeedbacksForVariants(
     productVariants: ProductVariant[],
     user: User,
@@ -669,8 +705,6 @@ export class ReservationService {
   private async getReturnedPhysicalProductInventoryStatus(
     seasonsUID: string
   ): Promise<InventoryStatus> {
-    // TODO: Allow inventory status to be overriden from admin but derive value from automated criteria
-
     const parentProduct = head(
       await this.prisma.client.products({
         where: { variants_some: { physicalProducts_some: { seasonsUID } } },
@@ -681,6 +715,6 @@ export class ReservationService {
       return "Stored"
     }
 
-    return "Reservable"
+    return "NonReservable"
   }
 }

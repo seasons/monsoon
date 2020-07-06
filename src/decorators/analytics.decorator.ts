@@ -1,7 +1,8 @@
-import { createParamDecorator } from "@nestjs/common"
+import { ExecutionContext, createParamDecorator } from "@nestjs/common"
 
 export const Analytics = createParamDecorator(
-  (data, [root, args, ctx, info]): any => {
+  (data, context: ExecutionContext): any => {
+    const [obj, args, ctx, info] = context.getArgs()
     return ctx.analytics
   }
 )
