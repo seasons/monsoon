@@ -36,14 +36,12 @@ export class AuthService {
     password,
     firstName,
     lastName,
-    zipCode,
     details,
   }: {
     email: string
     password: string
     firstName: string
     lastName: string
-    zipCode: string
     details: CustomerDetailCreateInput
   }) {
     // 1. Register the user on Auth0
@@ -82,7 +80,6 @@ export class AuthService {
     // 4. Create the customer in our database
     const customer = await this.createPrismaCustomerForExistingUser(
       user.id,
-      zipCode,
       details,
       "Created"
     )
@@ -312,26 +309,12 @@ export class AuthService {
     return user
   }
 
-  private async createPrismaCustomerForExistingUser(
-    userID,
-    zipCode,
-    details,
-    status
-  ) {
-    const location = await this.prisma.client.createLocation({
-      zipCode,
-    })
-
-    const customerDetails = await this.prisma.client.createCustomerDetail({
-      ...details,
-      shippingAddress: { connect: { id: location.id } },
-    })
-
+  private async createPrismaCustomerForExistingUser(userID, details, status) {
     return await this.prisma.client.createCustomer({
       user: {
         connect: { id: userID },
       },
-      detail: { connect: { id: customerDetails.id } },
+      detail: { create: details },
       status: status || "Waitlisted",
     })
   }
