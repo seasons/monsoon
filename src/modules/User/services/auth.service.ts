@@ -112,24 +112,6 @@ export class AuthService {
       throw new Error("User record not found")
     }
 
-    if (user.roles.includes("Customer")) {
-      const customer = await this.getCustomerFromUserID(user.id)
-
-      // TODO: remove customer.status check once we implement new onboarding flow
-      if (
-        customer &&
-        ![
-          "Active",
-          "Authorized",
-          "Paused",
-          "Suspended",
-          "Deactivated",
-        ].includes(customer.status)
-      ) {
-        throw new Error(`User account has not been approved`)
-      }
-    }
-
     return {
       token: tokenData.access_token,
       refreshToken: tokenData.refresh_token,
