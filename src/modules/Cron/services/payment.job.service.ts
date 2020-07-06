@@ -11,11 +11,6 @@ export class PaymentScheduledJobs {
 
   @Cron(CronExpression.EVERY_4_HOURS)
   async updatePlans() {
-    chargebee.configure({
-      site: process.env.CHARGEBEE_SITE,
-      api_key: process.env.CHARGEE_API_KEY,
-    })
-
     const request = await chargebee.plan.list().request()
     const list = request?.list || []
 
