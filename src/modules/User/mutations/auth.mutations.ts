@@ -14,7 +14,7 @@ export class AuthMutationsResolver {
 
   @Mutation()
   async signup(
-    @Args() { email, password, firstName, lastName, zipCode, details },
+    @Args() { email, password, firstName, lastName, details },
     @Context() ctx
   ) {
     const { user, tokenData, customer } = await this.authService.signupUser({
@@ -22,7 +22,6 @@ export class AuthMutationsResolver {
       password,
       firstName,
       lastName,
-      zipCode,
       details,
     })
 

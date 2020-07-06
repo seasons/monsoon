@@ -187,7 +187,6 @@ export class UserCommands {
         password,
         firstName,
         lastName,
-        zipCode: "10013",
         details: {
           phoneNumber: "(646) 350-2715",
           height: 40 + faker.random.number(32),
