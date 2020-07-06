@@ -12,6 +12,7 @@ import { TransactionsForCustomersLoader } from "./loaders/transactionsForCustome
 import { ChargebeeMutationsResolver } from "./mutations/chargebee.mutations.resolver"
 import { PaymentMutationsResolver } from "./mutations/payment.mutations"
 import { ChargebeeQueriesResolver } from "./queries/chargebee.queries.resolver"
+import { PaymentQueriesResolver } from "./queries/payment.queries.resolver"
 import { LoaderUtilsService } from "./services/loader.utils.service"
 import { PaymentService } from "./services/payment.service"
 import { PaymentUtilsService } from "./services/payment.utils.service"
@@ -28,6 +29,7 @@ import { PaymentUtilsService } from "./services/payment.utils.service"
   providers: [
     ChargebeeMutationsResolver,
     ChargebeeQueriesResolver,
+    PaymentQueriesResolver,
     PaymentMutationsResolver,
     PaymentService,
     PaymentUtilsService,

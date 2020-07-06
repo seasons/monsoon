@@ -9,8 +9,7 @@ export class PaymentScheduledJobs {
 
   constructor(private readonly prisma: PrismaService) {}
 
-  // @Cron(CronExpression.EVERY_12_HOURS)
-  @Cron(CronExpression.EVERY_MINUTE)
+  @Cron(CronExpression.EVERY_4_HOURS)
   async updatePlans() {
     chargebee.configure({
       site: process.env.CHARGEBEE_SITE,
@@ -20,21 +19,22 @@ export class PaymentScheduledJobs {
     const request = await chargebee.plan.list().request()
     const list = request?.list || []
 
-    list.forEach(item => {
-      console.log("item", item)
-      const data = {
-        description: item.plan.description,
-        planID: item.plan.id,
-        name: item.plan.name,
-        price: item.plan.price,
-        status: item.plan.status,
-      }
+    list.forEach(async item => {
+      if (item?.plan?.id) {
+        const data = {
+          description: item.plan.description,
+          planID: item.plan.id,
+          name: item.plan.name,
+          price: item.plan.price,
+          status: item.plan.status,
+        }
 
-      this.prisma.client.upsertPaymentPlan({
-        where: { planID: item.plan.id },
-        create: data,
-        update: data,
-      })
+        await this.prisma.client.upsertPaymentPlan({
+          where: { planID: item.plan.id },
+          create: data,
+          update: data,
+        })
+      }
     })
 
     this.logger.log("Update playment plans job ran")
