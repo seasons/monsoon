@@ -56,7 +56,6 @@ enum CustomerAnalyticsEvent {
 enum OnboardingStep {
   VerifiedPhone
   SetMeasurements
-  SetPaymentDetails
   SetStylePreferences
   SetShippingAddress
 }
