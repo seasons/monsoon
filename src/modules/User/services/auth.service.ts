@@ -82,7 +82,6 @@ export class AuthService {
     // 4. Create the customer in our database
     const customer = await this.createPrismaCustomerForExistingUser(
       user.id,
-      zipCode,
       details,
       "Created"
     )
