@@ -12053,6 +12053,8 @@ type StylePreferences {
   id: ID!
   styles: [String!]!
   patterns: [String!]!
+  colors: [String!]!
+  brands: [String!]!
 }
 
 type StylePreferencesConnection {
@@ -12061,10 +12063,20 @@ type StylePreferencesConnection {
   aggregate: AggregateStylePreferences!
 }
 
+input StylePreferencesCreatebrandsInput {
+  set: [String!]
+}
+
+input StylePreferencesCreatecolorsInput {
+  set: [String!]
+}
+
 input StylePreferencesCreateInput {
   id: ID
   styles: StylePreferencesCreatestylesInput
   patterns: StylePreferencesCreatepatternsInput
+  colors: StylePreferencesCreatecolorsInput
+  brands: StylePreferencesCreatebrandsInput
 }
 
 input StylePreferencesCreateOneInput {
@@ -12094,6 +12106,8 @@ type StylePreferencesPreviousValues {
   id: ID!
   styles: [String!]!
   patterns: [String!]!
+  colors: [String!]!
+  brands: [String!]!
 }
 
 type StylePreferencesSubscriptionPayload {
@@ -12114,19 +12128,33 @@ input StylePreferencesSubscriptionWhereInput {
   NOT: [StylePreferencesSubscriptionWhereInput!]
 }
 
+input StylePreferencesUpdatebrandsInput {
+  set: [String!]
+}
+
+input StylePreferencesUpdatecolorsInput {
+  set: [String!]
+}
+
 input StylePreferencesUpdateDataInput {
   styles: StylePreferencesUpdatestylesInput
   patterns: StylePreferencesUpdatepatternsInput
+  colors: StylePreferencesUpdatecolorsInput
+  brands: StylePreferencesUpdatebrandsInput
 }
 
 input StylePreferencesUpdateInput {
   styles: StylePreferencesUpdatestylesInput
   patterns: StylePreferencesUpdatepatternsInput
+  colors: StylePreferencesUpdatecolorsInput
+  brands: StylePreferencesUpdatebrandsInput
 }
 
 input StylePreferencesUpdateManyMutationInput {
   styles: StylePreferencesUpdatestylesInput
   patterns: StylePreferencesUpdatepatternsInput
+  colors: StylePreferencesUpdatecolorsInput
+  brands: StylePreferencesUpdatebrandsInput
 }
 
 input StylePreferencesUpdateOneInput {

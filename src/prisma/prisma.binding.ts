@@ -20943,6 +20943,8 @@ type StylePreferences implements Node {
   id: ID!
   styles: [String!]!
   patterns: [String!]!
+  colors: [String!]!
+  brands: [String!]!
 }
 
 """A connection to a list of items."""
@@ -20955,10 +20957,20 @@ type StylePreferencesConnection {
   aggregate: AggregateStylePreferences!
 }
 
+input StylePreferencesCreatebrandsInput {
+  set: [String!]
+}
+
+input StylePreferencesCreatecolorsInput {
+  set: [String!]
+}
+
 input StylePreferencesCreateInput {
   id: ID
   styles: StylePreferencesCreatestylesInput
   patterns: StylePreferencesCreatepatternsInput
+  colors: StylePreferencesCreatecolorsInput
+  brands: StylePreferencesCreatebrandsInput
 }
 
 input StylePreferencesCreateOneInput {
@@ -20992,6 +21004,8 @@ type StylePreferencesPreviousValues {
   id: ID!
   styles: [String!]!
   patterns: [String!]!
+  colors: [String!]!
+  brands: [String!]!
 }
 
 type StylePreferencesSubscriptionPayload {
@@ -21031,19 +21045,33 @@ input StylePreferencesSubscriptionWhereInput {
   node: StylePreferencesWhereInput
 }
 
+input StylePreferencesUpdatebrandsInput {
+  set: [String!]
+}
+
+input StylePreferencesUpdatecolorsInput {
+  set: [String!]
+}
+
 input StylePreferencesUpdateDataInput {
   styles: StylePreferencesUpdatestylesInput
   patterns: StylePreferencesUpdatepatternsInput
+  colors: StylePreferencesUpdatecolorsInput
+  brands: StylePreferencesUpdatebrandsInput
 }
 
 input StylePreferencesUpdateInput {
   styles: StylePreferencesUpdatestylesInput
   patterns: StylePreferencesUpdatepatternsInput
+  colors: StylePreferencesUpdatecolorsInput
+  brands: StylePreferencesUpdatebrandsInput
 }
 
 input StylePreferencesUpdateManyMutationInput {
   styles: StylePreferencesUpdatestylesInput
   patterns: StylePreferencesUpdatepatternsInput
+  colors: StylePreferencesUpdatecolorsInput
+  brands: StylePreferencesUpdatebrandsInput
 }
 
 input StylePreferencesUpdateOneInput {
@@ -33802,10 +33830,20 @@ export interface SizeWhereUniqueInput {
   slug?: String | null
 }
 
+export interface StylePreferencesCreatebrandsInput {
+  set?: String[] | String | null
+}
+
+export interface StylePreferencesCreatecolorsInput {
+  set?: String[] | String | null
+}
+
 export interface StylePreferencesCreateInput {
   id?: ID_Input | null
   styles?: StylePreferencesCreatestylesInput | null
   patterns?: StylePreferencesCreatepatternsInput | null
+  colors?: StylePreferencesCreatecolorsInput | null
+  brands?: StylePreferencesCreatebrandsInput | null
 }
 
 export interface StylePreferencesCreateOneInput {
@@ -33832,19 +33870,33 @@ export interface StylePreferencesSubscriptionWhereInput {
   node?: StylePreferencesWhereInput | null
 }
 
+export interface StylePreferencesUpdatebrandsInput {
+  set?: String[] | String | null
+}
+
+export interface StylePreferencesUpdatecolorsInput {
+  set?: String[] | String | null
+}
+
 export interface StylePreferencesUpdateDataInput {
   styles?: StylePreferencesUpdatestylesInput | null
   patterns?: StylePreferencesUpdatepatternsInput | null
+  colors?: StylePreferencesUpdatecolorsInput | null
+  brands?: StylePreferencesUpdatebrandsInput | null
 }
 
 export interface StylePreferencesUpdateInput {
   styles?: StylePreferencesUpdatestylesInput | null
   patterns?: StylePreferencesUpdatepatternsInput | null
+  colors?: StylePreferencesUpdatecolorsInput | null
+  brands?: StylePreferencesUpdatebrandsInput | null
 }
 
 export interface StylePreferencesUpdateManyMutationInput {
   styles?: StylePreferencesUpdatestylesInput | null
   patterns?: StylePreferencesUpdatepatternsInput | null
+  colors?: StylePreferencesUpdatecolorsInput | null
+  brands?: StylePreferencesUpdatebrandsInput | null
 }
 
 export interface StylePreferencesUpdateOneInput {
@@ -37181,6 +37233,8 @@ export interface StylePreferences extends Node {
   id: ID_Output
   styles: Array<String>
   patterns: Array<String>
+  colors: Array<String>
+  brands: Array<String>
 }
 
 /*
@@ -37206,6 +37260,8 @@ export interface StylePreferencesPreviousValues {
   id: ID_Output
   styles: Array<String>
   patterns: Array<String>
+  colors: Array<String>
+  brands: Array<String>
 }
 
 export interface StylePreferencesSubscriptionPayload {
