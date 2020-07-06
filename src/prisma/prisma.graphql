@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Thu Jul 02 2020 17:44:11 GMT-0400 (Eastern Daylight Time)
+# timestamp: Mon Jul 06 2020 10:01:17 GMT-0400 (Eastern Daylight Time)
 
 type AggregateBagItem {
   count: Int!
@@ -29441,6 +29441,8 @@ type StylePreferences implements Node {
   id: ID!
   styles: [String!]!
   patterns: [String!]!
+  colors: [String!]!
+  brands: [String!]!
 }
 
 """
@@ -29459,10 +29461,20 @@ type StylePreferencesConnection {
   aggregate: AggregateStylePreferences!
 }
 
+input StylePreferencesCreatebrandsInput {
+  set: [String!]
+}
+
+input StylePreferencesCreatecolorsInput {
+  set: [String!]
+}
+
 input StylePreferencesCreateInput {
   id: ID
   styles: StylePreferencesCreatestylesInput
   patterns: StylePreferencesCreatepatternsInput
+  colors: StylePreferencesCreatecolorsInput
+  brands: StylePreferencesCreatebrandsInput
 }
 
 input StylePreferencesCreateOneInput {
@@ -29502,6 +29514,8 @@ type StylePreferencesPreviousValues {
   id: ID!
   styles: [String!]!
   patterns: [String!]!
+  colors: [String!]!
+  brands: [String!]!
 }
 
 type StylePreferencesSubscriptionPayload {
@@ -29549,19 +29563,33 @@ input StylePreferencesSubscriptionWhereInput {
   node: StylePreferencesWhereInput
 }
 
+input StylePreferencesUpdatebrandsInput {
+  set: [String!]
+}
+
+input StylePreferencesUpdatecolorsInput {
+  set: [String!]
+}
+
 input StylePreferencesUpdateDataInput {
   styles: StylePreferencesUpdatestylesInput
   patterns: StylePreferencesUpdatepatternsInput
+  colors: StylePreferencesUpdatecolorsInput
+  brands: StylePreferencesUpdatebrandsInput
 }
 
 input StylePreferencesUpdateInput {
   styles: StylePreferencesUpdatestylesInput
   patterns: StylePreferencesUpdatepatternsInput
+  colors: StylePreferencesUpdatecolorsInput
+  brands: StylePreferencesUpdatebrandsInput
 }
 
 input StylePreferencesUpdateManyMutationInput {
   styles: StylePreferencesUpdatestylesInput
   patterns: StylePreferencesUpdatepatternsInput
+  colors: StylePreferencesUpdatecolorsInput
+  brands: StylePreferencesUpdatebrandsInput
 }
 
 input StylePreferencesUpdateOneInput {

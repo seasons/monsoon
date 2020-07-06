@@ -529,6 +529,8 @@ type StylePreferences {
   id: ID! @id
   styles: [String] @scalarList(strategy: RELATION)
   patterns: [String] @scalarList(strategy: RELATION)
+  colors: [String] @scalarList(strategy: RELATION)
+  brands: [String] @scalarList(strategy: RELATION)
 }
 
 type CustomerDetail {

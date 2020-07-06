@@ -6610,6 +6610,8 @@ export interface StylePreferencesCreateInput {
   id?: Maybe<ID_Input>;
   styles?: Maybe<StylePreferencesCreatestylesInput>;
   patterns?: Maybe<StylePreferencesCreatepatternsInput>;
+  colors?: Maybe<StylePreferencesCreatecolorsInput>;
+  brands?: Maybe<StylePreferencesCreatebrandsInput>;
 }
 
 export interface StylePreferencesCreatestylesInput {
@@ -6617,6 +6619,14 @@ export interface StylePreferencesCreatestylesInput {
 }
 
 export interface StylePreferencesCreatepatternsInput {
+  set?: Maybe<String[] | String>;
+}
+
+export interface StylePreferencesCreatecolorsInput {
+  set?: Maybe<String[] | String>;
+}
+
+export interface StylePreferencesCreatebrandsInput {
   set?: Maybe<String[] | String>;
 }
 
@@ -7720,6 +7730,8 @@ export interface StylePreferencesUpdateOneInput {
 export interface StylePreferencesUpdateDataInput {
   styles?: Maybe<StylePreferencesUpdatestylesInput>;
   patterns?: Maybe<StylePreferencesUpdatepatternsInput>;
+  colors?: Maybe<StylePreferencesUpdatecolorsInput>;
+  brands?: Maybe<StylePreferencesUpdatebrandsInput>;
 }
 
 export interface StylePreferencesUpdatestylesInput {
@@ -7727,6 +7739,14 @@ export interface StylePreferencesUpdatestylesInput {
 }
 
 export interface StylePreferencesUpdatepatternsInput {
+  set?: Maybe<String[] | String>;
+}
+
+export interface StylePreferencesUpdatecolorsInput {
+  set?: Maybe<String[] | String>;
+}
+
+export interface StylePreferencesUpdatebrandsInput {
   set?: Maybe<String[] | String>;
 }
 
@@ -13015,11 +13035,15 @@ export interface SizeUpdateManyMutationInput {
 export interface StylePreferencesUpdateInput {
   styles?: Maybe<StylePreferencesUpdatestylesInput>;
   patterns?: Maybe<StylePreferencesUpdatepatternsInput>;
+  colors?: Maybe<StylePreferencesUpdatecolorsInput>;
+  brands?: Maybe<StylePreferencesUpdatebrandsInput>;
 }
 
 export interface StylePreferencesUpdateManyMutationInput {
   styles?: Maybe<StylePreferencesUpdatestylesInput>;
   patterns?: Maybe<StylePreferencesUpdatepatternsInput>;
+  colors?: Maybe<StylePreferencesUpdatecolorsInput>;
+  brands?: Maybe<StylePreferencesUpdatebrandsInput>;
 }
 
 export interface TagCreateInput {
@@ -14685,6 +14709,8 @@ export interface StylePreferences {
   id: ID_Output;
   styles: String[];
   patterns: String[];
+  colors: String[];
+  brands: String[];
 }
 
 export interface StylePreferencesPromise
@@ -14693,6 +14719,8 @@ export interface StylePreferencesPromise
   id: () => Promise<ID_Output>;
   styles: () => Promise<String[]>;
   patterns: () => Promise<String[]>;
+  colors: () => Promise<String[]>;
+  brands: () => Promise<String[]>;
 }
 
 export interface StylePreferencesSubscription
@@ -14701,6 +14729,8 @@ export interface StylePreferencesSubscription
   id: () => Promise<AsyncIterator<ID_Output>>;
   styles: () => Promise<AsyncIterator<String[]>>;
   patterns: () => Promise<AsyncIterator<String[]>>;
+  colors: () => Promise<AsyncIterator<String[]>>;
+  brands: () => Promise<AsyncIterator<String[]>>;
 }
 
 export interface StylePreferencesNullablePromise
@@ -14709,6 +14739,8 @@ export interface StylePreferencesNullablePromise
   id: () => Promise<ID_Output>;
   styles: () => Promise<String[]>;
   patterns: () => Promise<String[]>;
+  colors: () => Promise<String[]>;
+  brands: () => Promise<String[]>;
 }
 
 export interface Location {
@@ -22066,6 +22098,8 @@ export interface StylePreferencesPreviousValues {
   id: ID_Output;
   styles: String[];
   patterns: String[];
+  colors: String[];
+  brands: String[];
 }
 
 export interface StylePreferencesPreviousValuesPromise
@@ -22074,6 +22108,8 @@ export interface StylePreferencesPreviousValuesPromise
   id: () => Promise<ID_Output>;
   styles: () => Promise<String[]>;
   patterns: () => Promise<String[]>;
+  colors: () => Promise<String[]>;
+  brands: () => Promise<String[]>;
 }
 
 export interface StylePreferencesPreviousValuesSubscription
@@ -22082,6 +22118,8 @@ export interface StylePreferencesPreviousValuesSubscription
   id: () => Promise<AsyncIterator<ID_Output>>;
   styles: () => Promise<AsyncIterator<String[]>>;
   patterns: () => Promise<AsyncIterator<String[]>>;
+  colors: () => Promise<AsyncIterator<String[]>>;
+  brands: () => Promise<AsyncIterator<String[]>>;
 }
 
 export interface TagSubscriptionPayload {
