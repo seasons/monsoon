@@ -37,6 +37,7 @@ type Mutation {
     shippingAddress: AddressInput!
     phoneNumber: String!
   ): Boolean @hasRole(roles: [Customer])
+  triageCustomer: TriageCustomerStatus @hasRole(roles: [Customer])
 }
 
 input AddressInput {
@@ -49,6 +50,11 @@ input AddressInput {
 
 enum CustomerAnalyticsEvent {
   CompletedWaitlistForm
+}
+
+enum TriageCustomerStatus {
+  Waitlisted
+  Authorized
 }
 
 type Customer {

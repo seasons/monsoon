@@ -31,7 +31,6 @@ export class UserCommands {
     private readonly scriptsService: ScriptsService,
     private readonly authService: AuthService,
     private readonly prisma: PrismaService,
-    private readonly airtable: AirtableService,
     private readonly paymentService: PaymentService,
     private readonly utilsService: UtilsService,
     private moduleRef: ModuleRef
@@ -125,7 +124,25 @@ export class UserCommands {
       default: "Customer",
       choices: ["Customer", "Admin", "Partner"],
     })
-    roles
+    roles,
+    @Option({
+      name: "status",
+      alias: "s",
+      describe: "Desired customer status",
+      type: "string",
+      default: "Customer",
+      choices: [
+        "Invted",
+        "Created",
+        "Waitlisted",
+        "Authorized",
+        "Active",
+        "Suspended",
+        "Paused",
+        "Deactivated",
+      ],
+    })
+    status
   ) {
     await this.scriptsService.updateConnections({
       prismaEnv,
@@ -198,7 +215,7 @@ export class UserCommands {
       return
     }
 
-    // Set their status to Active
+    // Give them valid billing data
     const customer = head(
       await this.prisma.client.customers({
         where: { user: { id: user.id } },
@@ -222,7 +239,7 @@ export class UserCommands {
             expiration_year: parseInt(card.expiryYear, 10),
           },
         },
-        status: "Active",
+        status: status || "Active",
         user: { update: { roles: { set: roles } } },
       },
       where: { id: customer.id },

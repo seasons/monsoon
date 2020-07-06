@@ -54,4 +54,12 @@ export class CustomerMutationsResolver {
   ) {
     return this.prisma.binding.mutation.updateCustomer(args, info)
   }
+
+  @Mutation()
+  async triageCustomer(@Customer() sessionCustomer) {
+    const returnValue = await this.customerService.triageCustomer({
+      id: sessionCustomer.id,
+    })
+    return returnValue
+  }
 }

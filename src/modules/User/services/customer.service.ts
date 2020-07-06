@@ -4,10 +4,12 @@ import { Injectable } from "@nestjs/common"
 import {
   BillingInfoUpdateDataInput,
   CustomerStatus,
+  CustomerWhereUniqueInput,
   ID_Input,
   User,
 } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
+import { ApolloError } from "apollo-server"
 import zipcodes from "zipcodes"
 
 import { AuthService } from "./auth.service"
@@ -159,5 +161,23 @@ export class CustomerService {
         where: { id: billingInfoId },
       })
     }
+  }
+
+  async triageCustomer(
+    where: CustomerWhereUniqueInput
+  ): Promise<"Waitlisted" | "Authorized"> {
+    const customer = await this.prisma.client.customer(where)
+
+    if (!["Created", "Invited"].includes(customer.status)) {
+      throw new ApolloError(
+        `Invalid customer status: ${customer.status}. Can only triage an "Invited" or "Created" customer`
+      )
+    }
+
+    await this.prisma.client.updateCustomer({
+      where,
+      data: { status: "Waitlisted" },
+    })
+    return "Waitlisted"
   }
 }
