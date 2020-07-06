@@ -13,6 +13,7 @@ import { PrismaModule } from "@prisma/prisma.module"
 import { PaymentModule } from "../Payment/payment.module"
 import { DataScheduledJobs } from "./services/data.job.service"
 import { MembershipScheduledJobs } from "./services/membership.service"
+import { PaymentScheduledJobs } from "./services/payment.job.service"
 import { ReservationScheduledJobs } from "./services/reservations.job.service"
 
 @Module({
@@ -33,6 +34,7 @@ import { ReservationScheduledJobs } from "./services/reservations.job.service"
     ReservationScheduledJobs,
     DataScheduledJobs,
     MembershipScheduledJobs,
+    PaymentScheduledJobs,
   ],
   exports: [DataScheduledJobs],
 })

@@ -463,6 +463,17 @@ type WarehouseLocation {
   updatedAt: DateTime! @updatedAt
 }
 
+type PaymentPlan {
+  id: ID! @id
+  description: String
+  planID: String! @unique
+  status: String
+  name: String
+  price: Int
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
 type EmailReceipt {
   id: ID! @id
   emailId: EmailId!

@@ -41,6 +41,7 @@ export interface Exists {
     where?: PackageTransitEventWhereInput
   ) => Promise<boolean>;
   pauseRequest: (where?: PauseRequestWhereInput) => Promise<boolean>;
+  paymentPlan: (where?: PaymentPlanWhereInput) => Promise<boolean>;
   physicalProduct: (where?: PhysicalProductWhereInput) => Promise<boolean>;
   physicalProductInventoryStatusChange: (
     where?: PhysicalProductInventoryStatusChangeWhereInput
@@ -487,6 +488,27 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => PauseRequestConnectionPromise;
+  paymentPlan: (
+    where: PaymentPlanWhereUniqueInput
+  ) => PaymentPlanNullablePromise;
+  paymentPlans: (args?: {
+    where?: PaymentPlanWhereInput;
+    orderBy?: PaymentPlanOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<PaymentPlan>;
+  paymentPlansConnection: (args?: {
+    where?: PaymentPlanWhereInput;
+    orderBy?: PaymentPlanOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => PaymentPlanConnectionPromise;
   physicalProduct: (
     where: PhysicalProductWhereUniqueInput
   ) => PhysicalProductNullablePromise;
@@ -1331,6 +1353,24 @@ export interface Prisma {
   deleteManyPauseRequests: (
     where?: PauseRequestWhereInput
   ) => BatchPayloadPromise;
+  createPaymentPlan: (data: PaymentPlanCreateInput) => PaymentPlanPromise;
+  updatePaymentPlan: (args: {
+    data: PaymentPlanUpdateInput;
+    where: PaymentPlanWhereUniqueInput;
+  }) => PaymentPlanPromise;
+  updateManyPaymentPlans: (args: {
+    data: PaymentPlanUpdateManyMutationInput;
+    where?: PaymentPlanWhereInput;
+  }) => BatchPayloadPromise;
+  upsertPaymentPlan: (args: {
+    where: PaymentPlanWhereUniqueInput;
+    create: PaymentPlanCreateInput;
+    update: PaymentPlanUpdateInput;
+  }) => PaymentPlanPromise;
+  deletePaymentPlan: (where: PaymentPlanWhereUniqueInput) => PaymentPlanPromise;
+  deleteManyPaymentPlans: (
+    where?: PaymentPlanWhereInput
+  ) => BatchPayloadPromise;
   createPhysicalProduct: (
     data: PhysicalProductCreateInput
   ) => PhysicalProductPromise;
@@ -1885,6 +1925,9 @@ export interface Subscription {
   pauseRequest: (
     where?: PauseRequestSubscriptionWhereInput
   ) => PauseRequestSubscriptionPayloadSubscription;
+  paymentPlan: (
+    where?: PaymentPlanSubscriptionWhereInput
+  ) => PaymentPlanSubscriptionPayloadSubscription;
   physicalProduct: (
     where?: PhysicalProductSubscriptionWhereInput
   ) => PhysicalProductSubscriptionPayloadSubscription;
@@ -2651,6 +2694,24 @@ export type PackageOrderByInput =
   | "transactionID_DESC"
   | "weight_ASC"
   | "weight_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
+
+export type PaymentPlanOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "description_ASC"
+  | "description_DESC"
+  | "planID_ASC"
+  | "planID_DESC"
+  | "status_ASC"
+  | "status_DESC"
+  | "name_ASC"
+  | "name_DESC"
+  | "price_ASC"
+  | "price_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -5964,6 +6025,111 @@ export type PackageTransitEventWhereUniqueInput = AtLeastOne<{
 export type PauseRequestWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
+
+export type PaymentPlanWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+  planID?: Maybe<String>;
+}>;
+
+export interface PaymentPlanWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  description?: Maybe<String>;
+  description_not?: Maybe<String>;
+  description_in?: Maybe<String[] | String>;
+  description_not_in?: Maybe<String[] | String>;
+  description_lt?: Maybe<String>;
+  description_lte?: Maybe<String>;
+  description_gt?: Maybe<String>;
+  description_gte?: Maybe<String>;
+  description_contains?: Maybe<String>;
+  description_not_contains?: Maybe<String>;
+  description_starts_with?: Maybe<String>;
+  description_not_starts_with?: Maybe<String>;
+  description_ends_with?: Maybe<String>;
+  description_not_ends_with?: Maybe<String>;
+  planID?: Maybe<String>;
+  planID_not?: Maybe<String>;
+  planID_in?: Maybe<String[] | String>;
+  planID_not_in?: Maybe<String[] | String>;
+  planID_lt?: Maybe<String>;
+  planID_lte?: Maybe<String>;
+  planID_gt?: Maybe<String>;
+  planID_gte?: Maybe<String>;
+  planID_contains?: Maybe<String>;
+  planID_not_contains?: Maybe<String>;
+  planID_starts_with?: Maybe<String>;
+  planID_not_starts_with?: Maybe<String>;
+  planID_ends_with?: Maybe<String>;
+  planID_not_ends_with?: Maybe<String>;
+  status?: Maybe<String>;
+  status_not?: Maybe<String>;
+  status_in?: Maybe<String[] | String>;
+  status_not_in?: Maybe<String[] | String>;
+  status_lt?: Maybe<String>;
+  status_lte?: Maybe<String>;
+  status_gt?: Maybe<String>;
+  status_gte?: Maybe<String>;
+  status_contains?: Maybe<String>;
+  status_not_contains?: Maybe<String>;
+  status_starts_with?: Maybe<String>;
+  status_not_starts_with?: Maybe<String>;
+  status_ends_with?: Maybe<String>;
+  status_not_ends_with?: Maybe<String>;
+  name?: Maybe<String>;
+  name_not?: Maybe<String>;
+  name_in?: Maybe<String[] | String>;
+  name_not_in?: Maybe<String[] | String>;
+  name_lt?: Maybe<String>;
+  name_lte?: Maybe<String>;
+  name_gt?: Maybe<String>;
+  name_gte?: Maybe<String>;
+  name_contains?: Maybe<String>;
+  name_not_contains?: Maybe<String>;
+  name_starts_with?: Maybe<String>;
+  name_not_starts_with?: Maybe<String>;
+  name_ends_with?: Maybe<String>;
+  name_not_ends_with?: Maybe<String>;
+  price?: Maybe<Int>;
+  price_not?: Maybe<Int>;
+  price_in?: Maybe<Int[] | Int>;
+  price_not_in?: Maybe<Int[] | Int>;
+  price_lt?: Maybe<Int>;
+  price_lte?: Maybe<Int>;
+  price_gt?: Maybe<Int>;
+  price_gte?: Maybe<Int>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<PaymentPlanWhereInput[] | PaymentPlanWhereInput>;
+  OR?: Maybe<PaymentPlanWhereInput[] | PaymentPlanWhereInput>;
+  NOT?: Maybe<PaymentPlanWhereInput[] | PaymentPlanWhereInput>;
+}
 
 export type PhysicalProductWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
@@ -11358,6 +11524,31 @@ export interface PauseRequestUpdateManyMutationInput {
   resumeDate?: Maybe<DateTimeInput>;
 }
 
+export interface PaymentPlanCreateInput {
+  id?: Maybe<ID_Input>;
+  description?: Maybe<String>;
+  planID: String;
+  status?: Maybe<String>;
+  name?: Maybe<String>;
+  price?: Maybe<Int>;
+}
+
+export interface PaymentPlanUpdateInput {
+  description?: Maybe<String>;
+  planID?: Maybe<String>;
+  status?: Maybe<String>;
+  name?: Maybe<String>;
+  price?: Maybe<Int>;
+}
+
+export interface PaymentPlanUpdateManyMutationInput {
+  description?: Maybe<String>;
+  planID?: Maybe<String>;
+  status?: Maybe<String>;
+  name?: Maybe<String>;
+  price?: Maybe<Int>;
+}
+
 export interface PhysicalProductUpdateInput {
   seasonsUID?: Maybe<String>;
   location?: Maybe<LocationUpdateOneWithoutPhysicalProductsInput>;
@@ -13636,6 +13827,23 @@ export interface PauseRequestSubscriptionWhereInput {
   >;
   NOT?: Maybe<
     PauseRequestSubscriptionWhereInput[] | PauseRequestSubscriptionWhereInput
+  >;
+}
+
+export interface PaymentPlanSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<PaymentPlanWhereInput>;
+  AND?: Maybe<
+    PaymentPlanSubscriptionWhereInput[] | PaymentPlanSubscriptionWhereInput
+  >;
+  OR?: Maybe<
+    PaymentPlanSubscriptionWhereInput[] | PaymentPlanSubscriptionWhereInput
+  >;
+  NOT?: Maybe<
+    PaymentPlanSubscriptionWhereInput[] | PaymentPlanSubscriptionWhereInput
   >;
 }
 
@@ -17817,6 +18025,110 @@ export interface AggregatePauseRequestSubscription
   count: () => Promise<AsyncIterator<Int>>;
 }
 
+export interface PaymentPlan {
+  id: ID_Output;
+  description?: String;
+  planID: String;
+  status?: String;
+  name?: String;
+  price?: Int;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface PaymentPlanPromise extends Promise<PaymentPlan>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  description: () => Promise<String>;
+  planID: () => Promise<String>;
+  status: () => Promise<String>;
+  name: () => Promise<String>;
+  price: () => Promise<Int>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface PaymentPlanSubscription
+  extends Promise<AsyncIterator<PaymentPlan>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  description: () => Promise<AsyncIterator<String>>;
+  planID: () => Promise<AsyncIterator<String>>;
+  status: () => Promise<AsyncIterator<String>>;
+  name: () => Promise<AsyncIterator<String>>;
+  price: () => Promise<AsyncIterator<Int>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface PaymentPlanNullablePromise
+  extends Promise<PaymentPlan | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  description: () => Promise<String>;
+  planID: () => Promise<String>;
+  status: () => Promise<String>;
+  name: () => Promise<String>;
+  price: () => Promise<Int>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface PaymentPlanConnection {
+  pageInfo: PageInfo;
+  edges: PaymentPlanEdge[];
+}
+
+export interface PaymentPlanConnectionPromise
+  extends Promise<PaymentPlanConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<PaymentPlanEdge>>() => T;
+  aggregate: <T = AggregatePaymentPlanPromise>() => T;
+}
+
+export interface PaymentPlanConnectionSubscription
+  extends Promise<AsyncIterator<PaymentPlanConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<PaymentPlanEdgeSubscription>>>() => T;
+  aggregate: <T = AggregatePaymentPlanSubscription>() => T;
+}
+
+export interface PaymentPlanEdge {
+  node: PaymentPlan;
+  cursor: String;
+}
+
+export interface PaymentPlanEdgePromise
+  extends Promise<PaymentPlanEdge>,
+    Fragmentable {
+  node: <T = PaymentPlanPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface PaymentPlanEdgeSubscription
+  extends Promise<AsyncIterator<PaymentPlanEdge>>,
+    Fragmentable {
+  node: <T = PaymentPlanSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregatePaymentPlan {
+  count: Int;
+}
+
+export interface AggregatePaymentPlanPromise
+  extends Promise<AggregatePaymentPlan>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregatePaymentPlanSubscription
+  extends Promise<AsyncIterator<AggregatePaymentPlan>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
 export interface PhysicalProductConnection {
   pageInfo: PageInfo;
   edges: PhysicalProductEdge[];
@@ -20645,6 +20957,68 @@ export interface PauseRequestPreviousValuesSubscription
   resumeDate: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
+export interface PaymentPlanSubscriptionPayload {
+  mutation: MutationType;
+  node: PaymentPlan;
+  updatedFields: String[];
+  previousValues: PaymentPlanPreviousValues;
+}
+
+export interface PaymentPlanSubscriptionPayloadPromise
+  extends Promise<PaymentPlanSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = PaymentPlanPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = PaymentPlanPreviousValuesPromise>() => T;
+}
+
+export interface PaymentPlanSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<PaymentPlanSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = PaymentPlanSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = PaymentPlanPreviousValuesSubscription>() => T;
+}
+
+export interface PaymentPlanPreviousValues {
+  id: ID_Output;
+  description?: String;
+  planID: String;
+  status?: String;
+  name?: String;
+  price?: Int;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface PaymentPlanPreviousValuesPromise
+  extends Promise<PaymentPlanPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  description: () => Promise<String>;
+  planID: () => Promise<String>;
+  status: () => Promise<String>;
+  name: () => Promise<String>;
+  price: () => Promise<Int>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface PaymentPlanPreviousValuesSubscription
+  extends Promise<AsyncIterator<PaymentPlanPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  description: () => Promise<AsyncIterator<String>>;
+  planID: () => Promise<AsyncIterator<String>>;
+  status: () => Promise<AsyncIterator<String>>;
+  name: () => Promise<AsyncIterator<String>>;
+  price: () => Promise<AsyncIterator<Int>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
 export interface PhysicalProductSubscriptionPayload {
   mutation: MutationType;
   node: PhysicalProduct;
@@ -22269,6 +22643,10 @@ export const models: Model[] = [
   },
   {
     name: "WarehouseLocation",
+    embedded: false
+  },
+  {
+    name: "PaymentPlan",
     embedded: false
   },
   {

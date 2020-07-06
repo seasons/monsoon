@@ -78,6 +78,10 @@ type AggregatePauseRequest {
   count: Int!
 }
 
+type AggregatePaymentPlan {
+  count: Int!
+}
+
 type AggregatePhysicalProduct {
   count: Int!
 }
@@ -4616,6 +4620,12 @@ type Mutation {
   upsertPauseRequest(where: PauseRequestWhereUniqueInput!, create: PauseRequestCreateInput!, update: PauseRequestUpdateInput!): PauseRequest!
   deletePauseRequest(where: PauseRequestWhereUniqueInput!): PauseRequest
   deleteManyPauseRequests(where: PauseRequestWhereInput): BatchPayload!
+  createPaymentPlan(data: PaymentPlanCreateInput!): PaymentPlan!
+  updatePaymentPlan(data: PaymentPlanUpdateInput!, where: PaymentPlanWhereUniqueInput!): PaymentPlan
+  updateManyPaymentPlans(data: PaymentPlanUpdateManyMutationInput!, where: PaymentPlanWhereInput): BatchPayload!
+  upsertPaymentPlan(where: PaymentPlanWhereUniqueInput!, create: PaymentPlanCreateInput!, update: PaymentPlanUpdateInput!): PaymentPlan!
+  deletePaymentPlan(where: PaymentPlanWhereUniqueInput!): PaymentPlan
+  deleteManyPaymentPlans(where: PaymentPlanWhereInput): BatchPayload!
   createPhysicalProduct(data: PhysicalProductCreateInput!): PhysicalProduct!
   updatePhysicalProduct(data: PhysicalProductUpdateInput!, where: PhysicalProductWhereUniqueInput!): PhysicalProduct
   updateManyPhysicalProducts(data: PhysicalProductUpdateManyMutationInput!, where: PhysicalProductWhereInput): BatchPayload!
@@ -5471,6 +5481,206 @@ input PauseRequestWhereInput {
 
 input PauseRequestWhereUniqueInput {
   id: ID
+}
+
+type PaymentPlan {
+  id: ID!
+  description: String
+  planID: String!
+  status: String
+  name: String
+  price: Int
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type PaymentPlanConnection {
+  pageInfo: PageInfo!
+  edges: [PaymentPlanEdge]!
+  aggregate: AggregatePaymentPlan!
+}
+
+input PaymentPlanCreateInput {
+  id: ID
+  description: String
+  planID: String!
+  status: String
+  name: String
+  price: Int
+}
+
+type PaymentPlanEdge {
+  node: PaymentPlan!
+  cursor: String!
+}
+
+enum PaymentPlanOrderByInput {
+  id_ASC
+  id_DESC
+  description_ASC
+  description_DESC
+  planID_ASC
+  planID_DESC
+  status_ASC
+  status_DESC
+  name_ASC
+  name_DESC
+  price_ASC
+  price_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type PaymentPlanPreviousValues {
+  id: ID!
+  description: String
+  planID: String!
+  status: String
+  name: String
+  price: Int
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type PaymentPlanSubscriptionPayload {
+  mutation: MutationType!
+  node: PaymentPlan
+  updatedFields: [String!]
+  previousValues: PaymentPlanPreviousValues
+}
+
+input PaymentPlanSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: PaymentPlanWhereInput
+  AND: [PaymentPlanSubscriptionWhereInput!]
+  OR: [PaymentPlanSubscriptionWhereInput!]
+  NOT: [PaymentPlanSubscriptionWhereInput!]
+}
+
+input PaymentPlanUpdateInput {
+  description: String
+  planID: String
+  status: String
+  name: String
+  price: Int
+}
+
+input PaymentPlanUpdateManyMutationInput {
+  description: String
+  planID: String
+  status: String
+  name: String
+  price: Int
+}
+
+input PaymentPlanWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  description: String
+  description_not: String
+  description_in: [String!]
+  description_not_in: [String!]
+  description_lt: String
+  description_lte: String
+  description_gt: String
+  description_gte: String
+  description_contains: String
+  description_not_contains: String
+  description_starts_with: String
+  description_not_starts_with: String
+  description_ends_with: String
+  description_not_ends_with: String
+  planID: String
+  planID_not: String
+  planID_in: [String!]
+  planID_not_in: [String!]
+  planID_lt: String
+  planID_lte: String
+  planID_gt: String
+  planID_gte: String
+  planID_contains: String
+  planID_not_contains: String
+  planID_starts_with: String
+  planID_not_starts_with: String
+  planID_ends_with: String
+  planID_not_ends_with: String
+  status: String
+  status_not: String
+  status_in: [String!]
+  status_not_in: [String!]
+  status_lt: String
+  status_lte: String
+  status_gt: String
+  status_gte: String
+  status_contains: String
+  status_not_contains: String
+  status_starts_with: String
+  status_not_starts_with: String
+  status_ends_with: String
+  status_not_ends_with: String
+  name: String
+  name_not: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_lt: String
+  name_lte: String
+  name_gt: String
+  name_gte: String
+  name_contains: String
+  name_not_contains: String
+  name_starts_with: String
+  name_not_starts_with: String
+  name_ends_with: String
+  name_not_ends_with: String
+  price: Int
+  price_not: Int
+  price_in: [Int!]
+  price_not_in: [Int!]
+  price_lt: Int
+  price_lte: Int
+  price_gt: Int
+  price_gte: Int
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [PaymentPlanWhereInput!]
+  OR: [PaymentPlanWhereInput!]
+  NOT: [PaymentPlanWhereInput!]
+}
+
+input PaymentPlanWhereUniqueInput {
+  id: ID
+  planID: String
 }
 
 enum PhotographyStatus {
@@ -10376,6 +10586,9 @@ type Query {
   pauseRequest(where: PauseRequestWhereUniqueInput!): PauseRequest
   pauseRequests(where: PauseRequestWhereInput, orderBy: PauseRequestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PauseRequest]!
   pauseRequestsConnection(where: PauseRequestWhereInput, orderBy: PauseRequestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PauseRequestConnection!
+  paymentPlan(where: PaymentPlanWhereUniqueInput!): PaymentPlan
+  paymentPlans(where: PaymentPlanWhereInput, orderBy: PaymentPlanOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PaymentPlan]!
+  paymentPlansConnection(where: PaymentPlanWhereInput, orderBy: PaymentPlanOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PaymentPlanConnection!
   physicalProduct(where: PhysicalProductWhereUniqueInput!): PhysicalProduct
   physicalProducts(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct]!
   physicalProductsConnection(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PhysicalProductConnection!
@@ -11862,6 +12075,7 @@ type Subscription {
   package(where: PackageSubscriptionWhereInput): PackageSubscriptionPayload
   packageTransitEvent(where: PackageTransitEventSubscriptionWhereInput): PackageTransitEventSubscriptionPayload
   pauseRequest(where: PauseRequestSubscriptionWhereInput): PauseRequestSubscriptionPayload
+  paymentPlan(where: PaymentPlanSubscriptionWhereInput): PaymentPlanSubscriptionPayload
   physicalProduct(where: PhysicalProductSubscriptionWhereInput): PhysicalProductSubscriptionPayload
   physicalProductInventoryStatusChange(where: PhysicalProductInventoryStatusChangeSubscriptionWhereInput): PhysicalProductInventoryStatusChangeSubscriptionPayload
   product(where: ProductSubscriptionWhereInput): ProductSubscriptionPayload
