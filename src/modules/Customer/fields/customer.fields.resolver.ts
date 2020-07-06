@@ -146,9 +146,6 @@ export class CustomerFieldsResolver {
       .customer({ id: customer.id })
       .detail()
       .height()
-    const billingInfo = await this.prisma.client
-      .customer({ id: customer.id })
-      .billingInfo()
     const style = await this.prisma.client
       .customer({ id: customer.id })
       .detail()
@@ -162,14 +159,12 @@ export class CustomerFieldsResolver {
     const values = [
       verificationStatus === "Approved",
       height !== null,
-      billingInfo !== null,
       style !== null,
       shippingAddress !== null,
     ]
     const keys = [
       "VerifiedPhone",
       "SetMeasurements",
-      "SetPaymentDetails",
       "SetStylePreferences",
       "SetShippingAddress",
     ]

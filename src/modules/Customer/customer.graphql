@@ -62,7 +62,6 @@ enum TriageCustomerStatus {
 enum OnboardingStep {
   VerifiedPhone
   SetMeasurements
-  SetPaymentDetails
   SetStylePreferences
   SetShippingAddress
 }
