@@ -20,7 +20,7 @@ export class UserFieldsResolver {
       type: PrismaLoader.name,
       generateParams: {
         query: "users",
-        info: `{email}`,
+        info: `{id email}`,
         formatData: a => a.email,
       },
     })
