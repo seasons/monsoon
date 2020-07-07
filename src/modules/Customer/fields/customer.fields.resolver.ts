@@ -130,7 +130,6 @@ export class CustomerFieldsResolver {
   ) {
     const userId = await userIdLoader.load(customer.id)
     const user = await userLoader.load(userId)
-
     return user
   }
 }
