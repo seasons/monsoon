@@ -1,5 +1,6 @@
 import { User } from "@app/decorators"
 import { TransactionsForCustomersLoader } from "@app/modules/Payment/loaders/transactionsForCustomers.loader"
+import { PaymentPlan, Plan } from "@app/prisma"
 import { PrismaDataLoader, PrismaLoader } from "@app/prisma/prisma.loader"
 import { Loader } from "@modules/DataLoader"
 import {
@@ -81,6 +82,41 @@ export class CustomerFieldsResolver {
       userId,
       transactionsForCustomerLoader
     )
+  }
+
+  @ResolveField()
+  async paymentPlan(
+    @Parent() customer,
+    @Loader({
+      name: "PaymentPlanFieldCustomerLoader",
+      type: PrismaLoader.name,
+      generateParams: {
+        query: `customers`,
+        info: `{ plan }`,
+        formatData: a => a.plan,
+      },
+    })
+    prismaLoader: PrismaDataLoader<Plan>,
+    @Loader({
+      name: "PaymentPlanFieldCustomerLoader",
+      type: PrismaLoader.name,
+      generateParams: {
+        formatWhere: (planID: string[]) => ({
+          where: { planID },
+        }),
+        query: `paymentPlan`,
+        info: "FROM_CONTEXT",
+      },
+    })
+    paymentPlanLoader: PrismaDataLoader<PaymentPlan>
+  ) {
+    const customerPlan = await prismaLoader.load(customer.id)
+    const planID = this.paymentService.prismaPlanToChargebeePlanId(customerPlan)
+    // The Customer.Plan comes back as AllAccess
+    // The PaymentPlan.name is 'All Access'
+    // So we need to remove whitespace from the Paymant.Plan to compare
+    const paymentPlan = await paymentPlanLoader.load(planID)
+    return paymentPlan
   }
 
   @ResolveField()
