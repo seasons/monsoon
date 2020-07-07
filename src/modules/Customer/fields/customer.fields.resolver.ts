@@ -16,7 +16,12 @@ import { head } from "lodash"
 
 const getUserIDGenerateParams = {
   query: `customers`,
-  info: `{user {id}}`,
+  info: `{
+    id
+    user {
+      id
+    }
+  }`,
   formatData: a => a.user.id,
 }
 @Resolver("Customer")
@@ -131,6 +136,8 @@ export class CustomerFieldsResolver {
     userLoader: PrismaDataLoader<any>
   ) {
     const userId = await userIdLoader.load(customer.id)
-    return userLoader.load(userId)
+    const user = await userLoader.load(userId)
+
+    return user
   }
 }
