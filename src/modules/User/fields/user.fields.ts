@@ -60,7 +60,9 @@ export class UserFieldsResolver {
       generateParams: {
         query: "customers",
         info: `FROM_CONTEXT`,
+        infoFragment: `fragment EnsureUserWithId on Customer {user {id}}`,
         formatWhere: ids => ({ where: { user: { id_in: ids } } }),
+        getKey: a => a.user.id,
       },
     })
     customersLoader: PrismaDataLoader<any>

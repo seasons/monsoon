@@ -11,6 +11,7 @@ export type GenerateParamsInfo = string | "FROM_CONTEXT"
 export interface GenerateParams {
   query: string
   info: GenerateParamsInfo
+  infoFragment?: string
   getKey?: (obj: any) => string | null
   formatWhere?: (ids: string[]) => any
   formatData?: (any) => any
