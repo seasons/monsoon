@@ -8,7 +8,6 @@ export class PhysicalProductFieldsResolver {
   async barcode(
     @Parent() physicalProduct,
     @Loader({
-      name: "BarcodeFieldPrismaLoader",
       type: PrismaLoader.name,
       generateParams: {
         query: "physicalProducts",

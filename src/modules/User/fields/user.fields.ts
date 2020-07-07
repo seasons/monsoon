@@ -17,7 +17,6 @@ export class UserFieldsResolver {
   async beamsToken(
     @Parent() user,
     @Loader({
-      name: "BeamsTokenFieldPrismaLoader",
       type: PrismaLoader.name,
       generateParams: {
         query: "users",
@@ -38,7 +37,6 @@ export class UserFieldsResolver {
   async fullName(
     @Parent() user,
     @Loader({
-      name: "FullNameFieldPrismaLoader",
       type: PrismaLoader.name,
       generateParams: {
         query: "users",
@@ -58,7 +56,6 @@ export class UserFieldsResolver {
   async customer(
     @Parent() user,
     @Loader({
-      name: "CustomerFieldPrismaLoader",
       type: PrismaLoader.name,
       generateParams: {
         query: "customers",

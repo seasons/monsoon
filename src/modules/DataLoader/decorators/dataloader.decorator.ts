@@ -22,10 +22,25 @@ export const Loader: (
       `)
     }
 
-    if (data.generateParams?.info === "FROM_CONTEXT") {
-      data.generateParams.info = info
+    const adjustedData = {
+      ...data,
+      name: createName(data.type, data.generateParams),
     }
-
-    return ctx[GET_LOADER_CONTEXT_KEY](data)
+    if (adjustedData.generateParams?.info === "FROM_CONTEXT") {
+      adjustedData.generateParams.info = info
+    }
+    return ctx[GET_LOADER_CONTEXT_KEY](adjustedData)
   }
 )
+
+const createName = (type, generateParams) => {
+  let name = type
+  for (const key of Object.keys(generateParams)) {
+    name += paramToString(generateParams[key])
+  }
+  return name
+}
+
+const paramToString = p => {
+  return p.toString().replace(/ /g, "").replace(/\n/g, "")
+}

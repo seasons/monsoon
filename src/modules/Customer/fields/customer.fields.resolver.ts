@@ -67,12 +67,10 @@ export class CustomerFieldsResolver {
   async transactions(
     @Parent() customer,
     @Loader({
-      name: "TransactionsFieldTransactionsForCustomerLoader",
       type: TransactionsForCustomersLoader.name,
     })
     transactionsForCustomerLoader: TransactionsDataLoader,
     @Loader({
-      name: "TransactionsFieldPrismaLoader",
       type: PrismaLoader.name,
       generateParams: getUserIDGenerateParams,
     })
@@ -92,17 +90,14 @@ export class CustomerFieldsResolver {
   async invoices(
     @Parent() customer,
     @Loader({
-      name: "InvoicesFieldInvoicesForCustomerLoader",
       type: InvoicesForCustomersLoader.name,
     })
     invoicesLoader: InvoicesDataLoader,
     @Loader({
-      name: "InvoicesFieldTransactionsForCustomerLoader",
       type: TransactionsForCustomersLoader.name,
     })
     transactionsForCustomerLoader: TransactionsDataLoader,
     @Loader({
-      name: "InvoicesFieldPrismaLoader",
       type: PrismaLoader.name,
       generateParams: getUserIDGenerateParams,
     })
@@ -123,13 +118,11 @@ export class CustomerFieldsResolver {
   async user(
     @Parent() customer,
     @Loader({
-      name: "UserFieldPrismaUserIdLoader",
       type: PrismaLoader.name,
       generateParams: getUserIDGenerateParams,
     })
     userIdLoader: PrismaDataLoader<string>,
     @Loader({
-      name: "UserFieldPrismaUserLoader",
       type: PrismaLoader.name,
       generateParams: { query: "users", info: "FROM_CONTEXT" },
     })
