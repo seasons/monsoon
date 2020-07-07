@@ -130,9 +130,9 @@ export class UserCommands {
       alias: "s",
       describe: "Desired customer status",
       type: "string",
-      default: "Customer",
+      default: "Active",
       choices: [
-        "Invted",
+        "Invited",
         "Created",
         "Waitlisted",
         "Authorized",
