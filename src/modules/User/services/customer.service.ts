@@ -17,7 +17,6 @@ import { AuthService } from "./auth.service"
 @Injectable()
 export class CustomerService {
   constructor(
-    private readonly airtableService: AirtableService,
     private readonly authService: AuthService,
     private readonly prisma: PrismaService,
     private readonly shippingService: ShippingService

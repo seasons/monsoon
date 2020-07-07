@@ -1,6 +1,5 @@
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { CustomerDetail } from "@app/prisma/prisma.binding"
-import { AirtableService } from "@modules/Airtable/services/airtable.service"
 import { Injectable } from "@nestjs/common"
 import { CustomerDetailCreateInput } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
@@ -27,7 +26,6 @@ interface Auth0User {
 export class AuthService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly airtable: AirtableService,
     private readonly pushNotification: PushNotificationService
   ) {}
 
