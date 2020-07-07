@@ -92,26 +92,29 @@ export class CustomerFieldsResolver {
       type: PrismaLoader.name,
       generateParams: {
         query: `customers`,
-        info: `{ plan }`,
-        formatData: a => a.plan,
+        info: `{ 
+          plan 
+        }`,
       },
     })
-    prismaLoader: PrismaDataLoader<Plan>,
+    prismaLoader: PrismaDataLoader<any>,
     @Loader({
-      name: "PaymentPlanFieldCustomerLoader",
+      name: "PaymentPlanFieldPaymentPlanLoader",
       type: PrismaLoader.name,
       generateParams: {
-        formatWhere: (planID: string[]) => ({
-          where: { planID },
+        formatWhere: (ids: string[]) => ({
+          where: { planID_in: ids },
         }),
-        query: `paymentPlan`,
+        query: `paymentPlans`,
         info: "FROM_CONTEXT",
       },
     })
     paymentPlanLoader: PrismaDataLoader<PaymentPlan>
   ) {
-    const customerPlan = await prismaLoader.load(customer.id)
-    const planID = this.paymentService.prismaPlanToChargebeePlanId(customerPlan)
+    const customerData = await prismaLoader.load(customer.id)
+    const planID = this.paymentService.prismaPlanToChargebeePlanId(
+      customerData.plan
+    )
     // The Customer.Plan comes back as AllAccess
     // The PaymentPlan.name is 'All Access'
     // So we need to remove whitespace from the Paymant.Plan to compare
