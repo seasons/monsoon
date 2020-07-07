@@ -1,3 +1,4 @@
+import { PrismaModule } from "@app/prisma/prisma.module"
 import { Module } from "@nestjs/common"
 
 import { SearchResultTypeFieldsResolver } from "./fields/searchResultType.fields.resolver"
@@ -10,5 +11,6 @@ import { SearchService } from "./services/search.service"
     SearchService,
     SearchQueriesResolver,
   ],
+  imports: [PrismaModule],
 })
 export class SearchModule {}
