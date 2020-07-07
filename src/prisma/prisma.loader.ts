@@ -16,8 +16,8 @@ export class PrismaLoader implements NestDataLoader {
 
   generateDataLoader(params: GenerateParams): PrismaDataLoader {
     //@ts-ignore
-    return new DataLoader<string, any>((recordIds: string[]) =>
-      this.fetchData(recordIds, params)
+    return new DataLoader<string, any>((keys: string[]) =>
+      this.fetchData(keys, params)
     )
   }
 
@@ -49,5 +49,5 @@ export class PrismaLoader implements NestDataLoader {
     return result
   }
 
-  private defaultFormatWhere = (recordIds: string[]) => ({where: {id_in: recordIds}})
+  private defaultFormatWhere = (keys: string[]) => ({where: {id_in: keys}})
 }
