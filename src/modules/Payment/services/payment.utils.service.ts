@@ -5,8 +5,6 @@ import { get } from "lodash"
 @Injectable()
 export class PaymentUtilsService {
   createBillingInfoObject(card, chargebeeCustomer) {
-    console.log(card)
-    console.log(chargebeeCustomer)
     return {
       brand: card.card_type,
       name: `${card.first_name || ""} ${card.last_name || ""}`,
