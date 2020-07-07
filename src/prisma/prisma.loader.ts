@@ -28,7 +28,8 @@ export class PrismaLoader implements NestDataLoader {
       info,
       formatData = identity,
       getKey = a => a.id,
-      formatWhere = this.defaultFormatWhere }: GenerateParams
+      formatWhere = this.defaultFormatWhere 
+    }: GenerateParams
   ) {
     const data = await this.prisma.binding.query[query](
         formatWhere(keys),
