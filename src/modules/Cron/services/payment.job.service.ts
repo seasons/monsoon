@@ -9,7 +9,7 @@ export class PaymentScheduledJobs {
 
   constructor(private readonly prisma: PrismaService) {}
 
-  @Cron(CronExpression.EVERY_4_HOURS)
+  @Cron(CronExpression.EVERY_6_HOURS)
   async updatePlans() {
     const request = await chargebee.plan.list().request()
     const list = request?.list || []
