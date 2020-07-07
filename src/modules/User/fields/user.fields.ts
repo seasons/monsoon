@@ -40,7 +40,7 @@ export class UserFieldsResolver {
       type: PrismaLoader.name,
       generateParams: {
         query: "users",
-        info: `{firstName lastName}`,
+        info: `{id firstName lastName}`,
         formatData: rec => `${rec.firstName} ${rec.lastName}`,
       },
     })
