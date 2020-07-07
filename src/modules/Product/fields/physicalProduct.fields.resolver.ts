@@ -11,7 +11,7 @@ export class PhysicalProductFieldsResolver {
       type: PrismaLoader.name,
       generateParams: {
         query: "physicalProducts",
-        info: `{ sequenceNumber }`,
+        info: `{ id sequenceNumber }`,
         formatData: a => `SZNS` + `${a.sequenceNumber}`.padStart(5, "0"),
       },
     })
