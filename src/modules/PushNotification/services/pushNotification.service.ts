@@ -95,7 +95,11 @@ export class PushNotificationService {
     vars = {},
     debug = false,
   }: PushNotifyUserInput) {
+<<<<<<< HEAD
     // Should we even run?
+=======
+    let targetEmail = process.env.PUSH_NOTIFICATIONS_DEFAULT_EMAIL
+>>>>>>> 52be72c... when we push notify a user, the receipt is attached to their history
     const targetUser = await this.prisma.binding.query.user(
       {
         where: { email },
@@ -104,6 +108,7 @@ export class PushNotificationService {
         roles
         pushNotification {
           id
+<<<<<<< HEAD
           status
         }
       }`
@@ -114,6 +119,11 @@ export class PushNotificationService {
 
     // Determine the target user
     let targetEmail = process.env.PUSH_NOTIFICATIONS_DEFAULT_EMAIL
+=======
+        }
+      }`
+    )
+>>>>>>> 52be72c... when we push notify a user, the receipt is attached to their history
     const isAdmin = targetUser.roles.includes("Admin")
     if (isAdmin || (!debug && process.env.NODE_ENV === "production")) {
       targetEmail = email
@@ -128,12 +138,16 @@ export class PushNotificationService {
       [targetEmail],
       notificationPayload as any
     )
+<<<<<<< HEAD
 
     // Create the receipt
+=======
+>>>>>>> 52be72c... when we push notify a user, the receipt is attached to their history
     const receipt = await this.prisma.client.createPushNotificationReceipt({
       ...receiptPayload,
       users: { connect: [{ email: targetEmail }] },
     })
+<<<<<<< HEAD
 
     // Update the user's history
     await this.prisma.client.updateUser({
@@ -162,5 +176,16 @@ export class PushNotificationService {
       interestType = "newProduct"
     }
     return upperFirst(interestType) as UserPushNotificationInterestType
+=======
+    await this.prisma.client.updateUser({
+      where: { email: targetEmail },
+      data: {
+        pushNotification: {
+          update: { history: { connect: [{ id: receipt.id }] } },
+        },
+      },
+    })
+    return receipt
+>>>>>>> 52be72c... when we push notify a user, the receipt is attached to their history
   }
 }
