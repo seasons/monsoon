@@ -30,16 +30,16 @@ export class UserMutationsResolver {
     `
     )
 
-    const x = await this.prisma.binding.mutation.updateUserPushNotification(
+    const returnVal = await this.prisma.binding.mutation.updateUserPushNotification(
       {
         where: {
-          id: memberWithPushNotification?.pushNotification?.id,
+          id: memberWithPushNotification.pushNotification.id,
         },
         data: { status: newStatus },
       },
       info
     )
-    return x
+    return returnVal
   }
 
   @Mutation()

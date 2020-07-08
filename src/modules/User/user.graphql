@@ -32,15 +32,10 @@ type Mutation {
     details: CustomerDetailCreateInput
   ): AuthPayload!
   login(email: String!, password: String!): AuthPayload!
-<<<<<<< HEAD
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
     @hasRole(roles: [Admin])
-  updateUserPushNotificationStatus(
-    pushNotificationStatus: PushNotificationStatus!
-  ): User! @hasRole(roles: [Customer])
-=======
   updateUserPushNotificationStatus(newStatus: Boolean!): UserPushNotification!
->>>>>>> 4514086... Updates push notification models
+    @isAuthenticated
   resetPassword(email: String!): ResetPasswordPayload! @isAuthenticated
   refreshToken(refreshToken: String!): String!
 }
