@@ -86,8 +86,7 @@ export class PushNotificationService {
     vars = {},
     debug = false,
   }: PushNotifyUserInput) {
-    // Determine the target user
-    let targetEmail = process.env.PUSH_NOTIFICATIONS_DEFAULT_EMAIL
+    // Should we even run?
     const targetUser = await this.prisma.binding.query.user(
       {
         where: { email },
@@ -96,9 +95,16 @@ export class PushNotificationService {
         roles
         pushNotification {
           id
+          status
         }
       }`
     )
+    if (!targetUser.pushNotification.status) {
+      return null
+    }
+
+    // Determine the target user
+    let targetEmail = process.env.PUSH_NOTIFICATIONS_DEFAULT_EMAIL
     const isAdmin = targetUser.roles.includes("Admin")
     if (isAdmin || (!debug && process.env.NODE_ENV === "production")) {
       targetEmail = email
