@@ -95,11 +95,7 @@ export class PushNotificationService {
     vars = {},
     debug = false,
   }: PushNotifyUserInput) {
-<<<<<<< HEAD
     // Should we even run?
-=======
-    let targetEmail = process.env.PUSH_NOTIFICATIONS_DEFAULT_EMAIL
->>>>>>> 52be72c... when we push notify a user, the receipt is attached to their history
     const targetUser = await this.prisma.binding.query.user(
       {
         where: { email },
@@ -108,7 +104,6 @@ export class PushNotificationService {
         roles
         pushNotification {
           id
-<<<<<<< HEAD
           status
         }
       }`
@@ -119,11 +114,6 @@ export class PushNotificationService {
 
     // Determine the target user
     let targetEmail = process.env.PUSH_NOTIFICATIONS_DEFAULT_EMAIL
-=======
-        }
-      }`
-    )
->>>>>>> 52be72c... when we push notify a user, the receipt is attached to their history
     const isAdmin = targetUser.roles.includes("Admin")
     if (isAdmin || (!debug && process.env.NODE_ENV === "production")) {
       targetEmail = email
@@ -138,16 +128,12 @@ export class PushNotificationService {
       [targetEmail],
       notificationPayload as any
     )
-<<<<<<< HEAD
 
     // Create the receipt
-=======
->>>>>>> 52be72c... when we push notify a user, the receipt is attached to their history
     const receipt = await this.prisma.client.createPushNotificationReceipt({
       ...receiptPayload,
       users: { connect: [{ email: targetEmail }] },
     })
-<<<<<<< HEAD
 
     // Update the user's history
     await this.prisma.client.updateUser({
@@ -164,28 +150,16 @@ export class PushNotificationService {
     },
   })
 
-  // assumes pusher interests are of the same seasons-{interestType}-notifications or
+  // assumes pusher interests are of the form seasons-{interestType}-notifications or
   // debug-seasons-{interestType}-notifications e.g seasons-general-notifications
   private pusherInterestToPrismaInterestType(
     pusherInterest: string
   ): UserPushNotificationInterestType {
-    debugger
     const pusherInterestWithoutDebug = pusherInterest.replace(/debug-/, "")
     let interestType = pusherInterestWithoutDebug.split("-")?.[1]
     if (interestType === "newproduct") {
       interestType = "newProduct"
     }
     return upperFirst(interestType) as UserPushNotificationInterestType
-=======
-    await this.prisma.client.updateUser({
-      where: { email: targetEmail },
-      data: {
-        pushNotification: {
-          update: { history: { connect: [{ id: receipt.id }] } },
-        },
-      },
-    })
-    return receipt
->>>>>>> 52be72c... when we push notify a user, the receipt is attached to their history
   }
 }
