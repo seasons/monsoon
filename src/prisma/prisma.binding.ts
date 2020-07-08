@@ -2651,6 +2651,7 @@ type Category implements Node {
   visible: Boolean!
   products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
   children(where: CategoryWhereInput, orderBy: CategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Category!]
+  updatedAt: DateTime
 }
 
 """A connection to a list of items."""
@@ -2721,6 +2722,8 @@ enum CategoryOrderByInput {
   description_DESC
   visible_ASC
   visible_DESC
+  updatedAt_ASC
+  updatedAt_DESC
 }
 
 type CategoryPreviousValues {
@@ -2730,6 +2733,7 @@ type CategoryPreviousValues {
   image: Json
   description: String
   visible: Boolean!
+  updatedAt: DateTime
 }
 
 input CategoryScalarWhereInput {
@@ -2905,6 +2909,28 @@ input CategoryScalarWhereInput {
 
   """All values that are not equal to given value."""
   visible_not: Boolean
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
 }
 
 type CategorySubscriptionPayload {
@@ -3214,6 +3240,28 @@ input CategoryWhereInput {
 
   """All values that are not equal to given value."""
   visible_not: Boolean
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
   products_every: ProductWhereInput
   products_some: ProductWhereInput
   products_none: ProductWhereInput
@@ -23890,7 +23938,9 @@ export type CategoryOrderByInput =   'id_ASC' |
   'description_ASC' |
   'description_DESC' |
   'visible_ASC' |
-  'visible_DESC'
+  'visible_DESC' |
+  'updatedAt_ASC' |
+  'updatedAt_DESC'
 
 export type CollectionGroupOrderByInput =   'id_ASC' |
   'id_DESC' |
@@ -25473,6 +25523,14 @@ export interface CategoryScalarWhereInput {
   description_not_ends_with?: String | null
   visible?: Boolean | null
   visible_not?: Boolean | null
+  updatedAt?: DateTime | null
+  updatedAt_not?: DateTime | null
+  updatedAt_in?: DateTime[] | DateTime | null
+  updatedAt_not_in?: DateTime[] | DateTime | null
+  updatedAt_lt?: DateTime | null
+  updatedAt_lte?: DateTime | null
+  updatedAt_gt?: DateTime | null
+  updatedAt_gte?: DateTime | null
 }
 
 export interface CategorySubscriptionWhereInput {
@@ -25645,6 +25703,14 @@ export interface CategoryWhereInput {
   description_not_ends_with?: String | null
   visible?: Boolean | null
   visible_not?: Boolean | null
+  updatedAt?: DateTime | null
+  updatedAt_not?: DateTime | null
+  updatedAt_in?: DateTime[] | DateTime | null
+  updatedAt_not_in?: DateTime[] | DateTime | null
+  updatedAt_lt?: DateTime | null
+  updatedAt_lte?: DateTime | null
+  updatedAt_gt?: DateTime | null
+  updatedAt_gte?: DateTime | null
   products_every?: ProductWhereInput | null
   products_some?: ProductWhereInput | null
   products_none?: ProductWhereInput | null
@@ -35209,6 +35275,7 @@ export interface Category extends Node {
   visible: Boolean
   products?: Array<Product> | null
   children?: Array<Category> | null
+  updatedAt?: DateTime | null
 }
 
 /*
@@ -35237,6 +35304,7 @@ export interface CategoryPreviousValues {
   image?: Json | null
   description?: String | null
   visible: Boolean
+  updatedAt?: DateTime | null
 }
 
 export interface CategorySubscriptionPayload {
