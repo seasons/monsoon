@@ -53,12 +53,21 @@ export class PushNotificationService {
     const usersToUpdate = await this.prisma.client.users({
       where: {
         pushNotification: {
-          interests_some: {
-            AND: [
-              { type: this.pusherInterestToPrismaInterestType(targetInterest) },
-              { status: true },
-            ],
-          },
+          AND: [
+            { status: true },
+            {
+              interests_some: {
+                AND: [
+                  {
+                    type: this.pusherInterestToPrismaInterestType(
+                      targetInterest
+                    ),
+                  },
+                  { status: true },
+                ],
+              },
+            },
+          ],
         },
       },
     })
