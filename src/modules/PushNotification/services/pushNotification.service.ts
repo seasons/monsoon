@@ -1,6 +1,12 @@
+import {
+  ID_Input,
+  UserPushNotificationInterest,
+  UserPushNotificationInterestType,
+} from "@app/prisma"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Injectable } from "@nestjs/common"
 import { Token } from "@pusher/push-notifications-server"
+import { upperFirst } from "lodash"
 
 import {
   PushNotifyInterestInput,
@@ -27,10 +33,13 @@ export class PushNotificationService {
     vars = {},
     debug = false,
   }: PushNotifyInterestInput) {
+    // Decipher the interest
     let targetInterest = `debug-${interest}`
     if (!debug && process.env.NODE_ENV === "production") {
       targetInterest = interest
     }
+
+    // Send the notification
     const { receiptPayload, notificationPayload } = this.data.getPushNotifData(
       pushNotifID,
       vars
@@ -39,10 +48,36 @@ export class PushNotificationService {
       [targetInterest],
       notificationPayload as any
     )
-    return await this.prisma.client.createPushNotificationReceipt({
+
+    // Create the receipt
+    const usersToUpdate = await this.prisma.client.users({
+      where: {
+        pushNotification: {
+          interests_some: {
+            AND: [
+              { type: this.pusherInterestToPrismaInterestType(targetInterest) },
+              { status: true },
+            ],
+          },
+        },
+      },
+    })
+    const receipt = await this.prisma.client.createPushNotificationReceipt({
       ...receiptPayload,
       interest: targetInterest,
+      users: { connect: usersToUpdate.map(a => ({ id: a.id })) },
     })
+
+    // Update user histories
+    const updates = usersToUpdate.map(a =>
+      this.prisma.client.updateUser({
+        where: { id: a.id },
+        data: this.getUpdateUserPushNotificationHistoryData(receipt.id),
+      })
+    )
+    await Promise.all(updates)
+
+    return receipt
   }
 
   async pushNotifyUser({
@@ -51,6 +86,7 @@ export class PushNotificationService {
     vars = {},
     debug = false,
   }: PushNotifyUserInput) {
+    // Determine the target user
     let targetEmail = process.env.PUSH_NOTIFICATIONS_DEFAULT_EMAIL
     const targetUser = await this.prisma.binding.query.user(
       {
@@ -68,6 +104,7 @@ export class PushNotificationService {
       targetEmail = email
     }
 
+    // Send the notification
     const { receiptPayload, notificationPayload } = this.data.getPushNotifData(
       pushNotifID,
       vars
@@ -76,18 +113,39 @@ export class PushNotificationService {
       [targetEmail],
       notificationPayload as any
     )
+
+    // Create the receipt
     const receipt = await this.prisma.client.createPushNotificationReceipt({
       ...receiptPayload,
       users: { connect: [{ email: targetEmail }] },
     })
+
+    // Update the user's history
     await this.prisma.client.updateUser({
       where: { email: targetEmail },
-      data: {
-        pushNotification: {
-          update: { history: { connect: [{ id: receipt.id }] } },
-        },
-      },
+      data: this.getUpdateUserPushNotificationHistoryData(receipt.id),
     })
+
     return receipt
+  }
+
+  private getUpdateUserPushNotificationHistoryData = receiptID => ({
+    pushNotification: {
+      update: { history: { connect: [{ id: receiptID }] } },
+    },
+  })
+
+  // assumes pusher interests are of the same seasons-{interestType}-notifications or
+  // debug-seasons-{interestType}-notifications e.g seasons-general-notifications
+  private pusherInterestToPrismaInterestType(
+    pusherInterest: string
+  ): UserPushNotificationInterestType {
+    debugger
+    const pusherInterestWithoutDebug = pusherInterest.replace(/debug-/, "")
+    let interestType = pusherInterestWithoutDebug.split("-")?.[1]
+    if (interestType === "newproduct") {
+      interestType = "newProduct"
+    }
+    return upperFirst(interestType) as UserPushNotificationInterestType
   }
 }
