@@ -2,7 +2,10 @@ import { PushNotificationService } from "@app/modules/PushNotification/services/
 import { CustomerDetail } from "@app/prisma/prisma.binding"
 import { AirtableService } from "@modules/Airtable/services/airtable.service"
 import { Injectable } from "@nestjs/common"
-import { CustomerDetailCreateInput } from "@prisma/index"
+import {
+  CustomerDetailCreateInput,
+  UserPushNotificationInterestType,
+} from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
 import { ForbiddenError, UserInputError } from "apollo-server"
 import { head } from "lodash"
@@ -299,12 +302,36 @@ export class AuthService {
   }
 
   private async createPrismaUser(auth0Id, email, firstName, lastName) {
-    const user = await this.prisma.client.createUser({
+    let user = await this.prisma.client.createUser({
       auth0Id,
       email,
       firstName,
       lastName,
       roles: { set: ["Customer"] }, // defaults to customer
+    })
+    const defaultPushNotificationInterests = [
+      "General",
+      "Blog",
+      "Bag",
+      "NewProduct",
+    ] as UserPushNotificationInterestType[]
+    user = await this.prisma.client.updateUser({
+      where: { id: user.id },
+      data: {
+        pushNotification: {
+          create: {
+            interests: {
+              create: defaultPushNotificationInterests.map(type => ({
+                type,
+                value: "",
+                user: { connect: { id: user.id } },
+                status: true,
+              })),
+            },
+            status: true,
+          },
+        },
+      },
     })
     return user
   }

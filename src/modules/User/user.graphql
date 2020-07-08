@@ -34,10 +34,9 @@ type Mutation {
   login(email: String!, password: String!): AuthPayload!
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
     @hasRole(roles: [Admin])
-  updateUserPushNotificationStatus(
-    pushNotificationStatus: PushNotificationStatus!
-  ): User! @hasRole(roles: [Customer])
-  resetPassword(email: String!): ResetPasswordPayload!
+  updateUserPushNotificationStatus(newStatus: Boolean!): UserPushNotification!
+    @isAuthenticated
+  resetPassword(email: String!): ResetPasswordPayload! # Do not put @isAuthenticated guard here because only users who can't login need to reset passwords!
   refreshToken(refreshToken: String!): String!
 }
 
@@ -75,7 +74,6 @@ type User {
   createdAt: DateTime!
   updatedAt: DateTime!
   completeAccountURL: String!
-  pushNotifications: [PushNotificationReceipt!]
-  pushNotificationStatus: PushNotificationStatus
+  pushNotification: UserPushNotification
   beamsToken: String!
 }
