@@ -1,4 +1,3 @@
-import { AirtableService } from "@modules/Airtable/services/airtable.service"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { Injectable } from "@nestjs/common"
 import {
@@ -10,7 +9,6 @@ import {
 } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
 import { ApolloError } from "apollo-server"
-import zipcodes from "zipcodes"
 
 import { AuthService } from "./auth.service"
 
@@ -108,15 +106,6 @@ export class CustomerService {
     })
     if (!shippingAddressIsValid) {
       throw new Error("Shipping address is invalid")
-    }
-
-    const zipcodesData = zipcodes.lookup(parseInt(shippingPostalCode, 10))
-    const validCities = ["Brooklyn", "New York", "Queens", "The Bronx"]
-    if (
-      zipcodesData?.state !== "NY" ||
-      !validCities.includes(zipcodesData?.city)
-    ) {
-      throw new Error("SHIPPING_ADDRESS_NOT_NYC")
     }
 
     // Update the user's shipping address
