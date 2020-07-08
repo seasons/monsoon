@@ -1,8 +1,4 @@
-import { PackageTransitEventSubStatus } from "@app/prisma"
-import { PrismaService } from "@app/prisma/prisma.service"
-import { Body, Controller, Get, Logger, Post, Response } from "@nestjs/common"
-import casify from "camelcase-keys"
-import { camelCase, head, isObject, upperFirst } from "lodash"
+import { Body, Controller, Post } from "@nestjs/common"
 
 import { PaymentService } from "../services/payment.service"
 
@@ -22,10 +18,10 @@ export class ChargebeeController {
   async handlePost(@Body() body: ChargebeeEvent) {
     switch (body.event_type) {
       case CHARGEBEE_SUBSCRIPTION_CREATED:
-        this.chargebeeSubscriptionCreated(body.content)
+        await this.chargebeeSubscriptionCreated(body.content)
         break
       case CHARGEBEE_CUSTOMER_CHANGED:
-        this.chargebeeCustomerChanged(body.content)
+        await this.chargebeeCustomerChanged(body.content)
         break
     }
   }
@@ -36,7 +32,7 @@ export class ChargebeeController {
       customer,
       card,
     } = content
-    this.paymentService.chargebeeSubscriptionCreated(
+    await this.paymentService.chargebeeSubscriptionCreated(
       customer_id,
       customer,
       card,
@@ -49,6 +45,6 @@ export class ChargebeeController {
       customer: { id },
       card,
     } = content
-    this.paymentService.chargebeeCustomerChanged(id, card)
+    await this.paymentService.chargebeeCustomerChanged(id, card)
   }
 }

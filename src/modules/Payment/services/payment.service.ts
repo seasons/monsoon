@@ -340,26 +340,27 @@ export class PaymentService {
             if (error) {
               reject(error)
             } else {
-              var {
+              const {
                 subscription,
                 card,
                 customer: chargebeeCustomer,
               } = result.hosted_page.content
 
               // Retrieve plan and billing data
-              let plan = { essential: "Essential", "all-access": "AllAccess" }[
-                subscription.plan_id
-              ]
+              const plan = {
+                essential: "Essential",
+                "all-access": "AllAccess",
+              }[subscription.plan_id]
               if (!plan) {
                 reject(`unexpected plan-id: ${subscription.plan_id}`)
               }
-              let billingInfo = this.paymentUtils.createBillingInfoObject(
+              const billingInfo = this.paymentUtils.createBillingInfoObject(
                 card,
                 chargebeeCustomer
               )
 
               // Save it to prisma
-              let prismaUser = await prisma.client.user({
+              const prismaUser = await prisma.client.user({
                 id: subscription.customer_id,
               })
               const prismaCustomer = await authService.getCustomerFromUserID(
