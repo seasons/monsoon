@@ -86,8 +86,9 @@ export class PaymentMutationsResolver {
       billingPostalCode
     )
 
-    // Update customer's shipping address & phone number. Will throw an
-    // error if the address is not in NYC
+    // Update customer's shipping address & phone number. Unlike before, will
+    // accept all valid addresses. Will NOT throw an error if the address is
+    // not in NYC.
     await this.customerService.updateCustomerDetail(
       user,
       customer,

@@ -57,6 +57,15 @@ enum TriageCustomerStatus {
   Authorized
 }
 
+# Do not include "CreatedAccount" because the fact that this is being returned
+# on a user object means they have created an account.
+enum OnboardingStep {
+  VerifiedPhone
+  SetMeasurements
+  SetStylePreferences
+  SetShippingAddress
+}
+
 type Customer {
   id: ID!
   user: User!
@@ -87,6 +96,7 @@ type Customer {
   invoices: [Invoice]
   transactions: [Transaction]
   membership: CustomerMembership
+  onboardingSteps: [OnboardingStep!]!
 }
 
 type CustomerMembership {

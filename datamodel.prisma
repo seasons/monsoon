@@ -508,6 +508,18 @@ type PushNotificationReceipt {
   updatedAt: DateTime! @updatedAt
 }
 
+enum UserVerificationMethod {
+  SMS
+  Email
+  None
+}
+
+enum UserVerificationStatus {
+  Approved
+  Denied
+  Pending
+}
+
 type User {
   id: ID! @id
   auth0Id: String! @unique
@@ -516,11 +528,21 @@ type User {
   lastName: String!
   role: UserRole! @default(value: Customer)
   roles: [UserRole!]! @scalarList(strategy: RELATION)
-  createdAt: DateTime! @createdAt
-  updatedAt: DateTime! @updatedAt
   pushNotificationStatus: PushNotificationStatus! @default(value: Denied)
   pushNotifications: [PushNotificationReceipt!]
     @relation(name: "UserToPushNotificationReceipts")
+  verificationStatus: UserVerificationStatus! @default(value: Pending)
+  verificationMethod: UserVerificationMethod! @default(value: None)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type StylePreferences {
+  id: ID! @id
+  styles: [String] @scalarList(strategy: RELATION)
+  patterns: [String] @scalarList(strategy: RELATION)
+  colors: [String] @scalarList(strategy: RELATION)
+  brands: [String] @scalarList(strategy: RELATION)
 }
 
 type CustomerDetail {
@@ -529,10 +551,11 @@ type CustomerDetail {
   birthday: DateTime
   # Height in inches
   height: Int
-  weight: String
+  # The weight range [min, max], where max = min + 10
+  weight: [Int] @scalarList(strategy: RELATION)
   bodyType: String
-  averageTopSize: String
-  averageWaistSize: String
+  topSizes: [String] @scalarList(strategy: RELATION)
+  waistSizes: [Int] @scalarList(strategy: RELATION)
   averagePantLength: String
   preferredPronouns: String
   profession: String
@@ -546,6 +569,7 @@ type CustomerDetail {
   averageSpend: String
   style: String
   commuteStyle: String
+  stylePreferences: StylePreferences
   shippingAddress: Location
   phoneOS: String
   insureShipment: Boolean! @default(value: false)

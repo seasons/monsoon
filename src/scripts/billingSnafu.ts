@@ -17,7 +17,7 @@ import { PrismaService } from "../prisma/prisma.service"
 
 chargebee.configure({
   site: process.env.CHARGEBEE_SITE,
-  api_key: process.env.CHARGEE_API_KEY,
+  api_key: process.env.CHARGEBEE_API_KEY,
 })
 
 Airtable.configure({

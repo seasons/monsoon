@@ -83,6 +83,7 @@ export interface Exists {
     where?: ReservationReceiptItemWhereInput
   ) => Promise<boolean>;
   size: (where?: SizeWhereInput) => Promise<boolean>;
+  stylePreferences: (where?: StylePreferencesWhereInput) => Promise<boolean>;
   tag: (where?: TagWhereInput) => Promise<boolean>;
   topSize: (where?: TopSizeWhereInput) => Promise<boolean>;
   user: (where?: UserWhereInput) => Promise<boolean>;
@@ -904,6 +905,27 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => SizeConnectionPromise;
+  stylePreferences: (
+    where: StylePreferencesWhereUniqueInput
+  ) => StylePreferencesNullablePromise;
+  stylePreferenceses: (args?: {
+    where?: StylePreferencesWhereInput;
+    orderBy?: StylePreferencesOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<StylePreferences>;
+  stylePreferencesesConnection: (args?: {
+    where?: StylePreferencesWhereInput;
+    orderBy?: StylePreferencesOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => StylePreferencesConnectionPromise;
   tag: (where: TagWhereUniqueInput) => TagNullablePromise;
   tags: (args?: {
     where?: TagWhereInput;
@@ -1767,6 +1789,28 @@ export interface Prisma {
   }) => SizePromise;
   deleteSize: (where: SizeWhereUniqueInput) => SizePromise;
   deleteManySizes: (where?: SizeWhereInput) => BatchPayloadPromise;
+  createStylePreferences: (
+    data: StylePreferencesCreateInput
+  ) => StylePreferencesPromise;
+  updateStylePreferences: (args: {
+    data: StylePreferencesUpdateInput;
+    where: StylePreferencesWhereUniqueInput;
+  }) => StylePreferencesPromise;
+  updateManyStylePreferenceses: (args: {
+    data: StylePreferencesUpdateManyMutationInput;
+    where?: StylePreferencesWhereInput;
+  }) => BatchPayloadPromise;
+  upsertStylePreferences: (args: {
+    where: StylePreferencesWhereUniqueInput;
+    create: StylePreferencesCreateInput;
+    update: StylePreferencesUpdateInput;
+  }) => StylePreferencesPromise;
+  deleteStylePreferences: (
+    where: StylePreferencesWhereUniqueInput
+  ) => StylePreferencesPromise;
+  deleteManyStylePreferenceses: (
+    where?: StylePreferencesWhereInput
+  ) => BatchPayloadPromise;
   createTag: (data: TagCreateInput) => TagPromise;
   updateTag: (args: {
     data: TagUpdateInput;
@@ -1985,6 +2029,9 @@ export interface Subscription {
   size: (
     where?: SizeSubscriptionWhereInput
   ) => SizeSubscriptionPayloadSubscription;
+  stylePreferences: (
+    where?: StylePreferencesSubscriptionWhereInput
+  ) => StylePreferencesSubscriptionPayloadSubscription;
   tag: (
     where?: TagSubscriptionWhereInput
   ) => TagSubscriptionPayloadSubscription;
@@ -2013,6 +2060,10 @@ export interface ClientConstructor<T> {
 export type UserRole = "Admin" | "Customer" | "Partner";
 
 export type PushNotificationStatus = "Blocked" | "Granted" | "Denied";
+
+export type UserVerificationStatus = "Approved" | "Denied" | "Pending";
+
+export type UserVerificationMethod = "SMS" | "Email" | "None";
 
 export type PushNotificationReceiptOrderByInput =
   | "id_ASC"
@@ -2053,12 +2104,16 @@ export type UserOrderByInput =
   | "lastName_DESC"
   | "role_ASC"
   | "role_DESC"
+  | "pushNotificationStatus_ASC"
+  | "pushNotificationStatus_DESC"
+  | "verificationStatus_ASC"
+  | "verificationStatus_DESC"
+  | "verificationMethod_ASC"
+  | "verificationMethod_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
-  | "updatedAt_DESC"
-  | "pushNotificationStatus_ASC"
-  | "pushNotificationStatus_DESC";
+  | "updatedAt_DESC";
 
 export type CustomerStatus =
   | "Invited"
@@ -2578,14 +2633,8 @@ export type CustomerDetailOrderByInput =
   | "birthday_DESC"
   | "height_ASC"
   | "height_DESC"
-  | "weight_ASC"
-  | "weight_DESC"
   | "bodyType_ASC"
   | "bodyType_DESC"
-  | "averageTopSize_ASC"
-  | "averageTopSize_DESC"
-  | "averageWaistSize_ASC"
-  | "averageWaistSize_DESC"
   | "averagePantLength_ASC"
   | "averagePantLength_DESC"
   | "preferredPronouns_ASC"
@@ -2812,6 +2861,8 @@ export type ReservationReceiptOrderByInput =
   | "createdAt_DESC"
   | "updatedAt_ASC"
   | "updatedAt_DESC";
+
+export type StylePreferencesOrderByInput = "id_ASC" | "id_DESC";
 
 export type TopSizeOrderByInput =
   | "id_ASC"
@@ -3075,6 +3126,33 @@ export interface UserWhereInput {
   role_not?: Maybe<UserRole>;
   role_in?: Maybe<UserRole[] | UserRole>;
   role_not_in?: Maybe<UserRole[] | UserRole>;
+  pushNotificationStatus?: Maybe<PushNotificationStatus>;
+  pushNotificationStatus_not?: Maybe<PushNotificationStatus>;
+  pushNotificationStatus_in?: Maybe<
+    PushNotificationStatus[] | PushNotificationStatus
+  >;
+  pushNotificationStatus_not_in?: Maybe<
+    PushNotificationStatus[] | PushNotificationStatus
+  >;
+  pushNotifications_every?: Maybe<PushNotificationReceiptWhereInput>;
+  pushNotifications_some?: Maybe<PushNotificationReceiptWhereInput>;
+  pushNotifications_none?: Maybe<PushNotificationReceiptWhereInput>;
+  verificationStatus?: Maybe<UserVerificationStatus>;
+  verificationStatus_not?: Maybe<UserVerificationStatus>;
+  verificationStatus_in?: Maybe<
+    UserVerificationStatus[] | UserVerificationStatus
+  >;
+  verificationStatus_not_in?: Maybe<
+    UserVerificationStatus[] | UserVerificationStatus
+  >;
+  verificationMethod?: Maybe<UserVerificationMethod>;
+  verificationMethod_not?: Maybe<UserVerificationMethod>;
+  verificationMethod_in?: Maybe<
+    UserVerificationMethod[] | UserVerificationMethod
+  >;
+  verificationMethod_not_in?: Maybe<
+    UserVerificationMethod[] | UserVerificationMethod
+  >;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -3091,17 +3169,6 @@ export interface UserWhereInput {
   updatedAt_lte?: Maybe<DateTimeInput>;
   updatedAt_gt?: Maybe<DateTimeInput>;
   updatedAt_gte?: Maybe<DateTimeInput>;
-  pushNotificationStatus?: Maybe<PushNotificationStatus>;
-  pushNotificationStatus_not?: Maybe<PushNotificationStatus>;
-  pushNotificationStatus_in?: Maybe<
-    PushNotificationStatus[] | PushNotificationStatus
-  >;
-  pushNotificationStatus_not_in?: Maybe<
-    PushNotificationStatus[] | PushNotificationStatus
-  >;
-  pushNotifications_every?: Maybe<PushNotificationReceiptWhereInput>;
-  pushNotifications_some?: Maybe<PushNotificationReceiptWhereInput>;
-  pushNotifications_none?: Maybe<PushNotificationReceiptWhereInput>;
   AND?: Maybe<UserWhereInput[] | UserWhereInput>;
   OR?: Maybe<UserWhereInput[] | UserWhereInput>;
   NOT?: Maybe<UserWhereInput[] | UserWhereInput>;
@@ -4926,20 +4993,6 @@ export interface CustomerDetailWhereInput {
   height_lte?: Maybe<Int>;
   height_gt?: Maybe<Int>;
   height_gte?: Maybe<Int>;
-  weight?: Maybe<String>;
-  weight_not?: Maybe<String>;
-  weight_in?: Maybe<String[] | String>;
-  weight_not_in?: Maybe<String[] | String>;
-  weight_lt?: Maybe<String>;
-  weight_lte?: Maybe<String>;
-  weight_gt?: Maybe<String>;
-  weight_gte?: Maybe<String>;
-  weight_contains?: Maybe<String>;
-  weight_not_contains?: Maybe<String>;
-  weight_starts_with?: Maybe<String>;
-  weight_not_starts_with?: Maybe<String>;
-  weight_ends_with?: Maybe<String>;
-  weight_not_ends_with?: Maybe<String>;
   bodyType?: Maybe<String>;
   bodyType_not?: Maybe<String>;
   bodyType_in?: Maybe<String[] | String>;
@@ -4954,34 +5007,6 @@ export interface CustomerDetailWhereInput {
   bodyType_not_starts_with?: Maybe<String>;
   bodyType_ends_with?: Maybe<String>;
   bodyType_not_ends_with?: Maybe<String>;
-  averageTopSize?: Maybe<String>;
-  averageTopSize_not?: Maybe<String>;
-  averageTopSize_in?: Maybe<String[] | String>;
-  averageTopSize_not_in?: Maybe<String[] | String>;
-  averageTopSize_lt?: Maybe<String>;
-  averageTopSize_lte?: Maybe<String>;
-  averageTopSize_gt?: Maybe<String>;
-  averageTopSize_gte?: Maybe<String>;
-  averageTopSize_contains?: Maybe<String>;
-  averageTopSize_not_contains?: Maybe<String>;
-  averageTopSize_starts_with?: Maybe<String>;
-  averageTopSize_not_starts_with?: Maybe<String>;
-  averageTopSize_ends_with?: Maybe<String>;
-  averageTopSize_not_ends_with?: Maybe<String>;
-  averageWaistSize?: Maybe<String>;
-  averageWaistSize_not?: Maybe<String>;
-  averageWaistSize_in?: Maybe<String[] | String>;
-  averageWaistSize_not_in?: Maybe<String[] | String>;
-  averageWaistSize_lt?: Maybe<String>;
-  averageWaistSize_lte?: Maybe<String>;
-  averageWaistSize_gt?: Maybe<String>;
-  averageWaistSize_gte?: Maybe<String>;
-  averageWaistSize_contains?: Maybe<String>;
-  averageWaistSize_not_contains?: Maybe<String>;
-  averageWaistSize_starts_with?: Maybe<String>;
-  averageWaistSize_not_starts_with?: Maybe<String>;
-  averageWaistSize_ends_with?: Maybe<String>;
-  averageWaistSize_not_ends_with?: Maybe<String>;
   averagePantLength?: Maybe<String>;
   averagePantLength_not?: Maybe<String>;
   averagePantLength_in?: Maybe<String[] | String>;
@@ -5108,6 +5133,7 @@ export interface CustomerDetailWhereInput {
   commuteStyle_not_starts_with?: Maybe<String>;
   commuteStyle_ends_with?: Maybe<String>;
   commuteStyle_not_ends_with?: Maybe<String>;
+  stylePreferences?: Maybe<StylePreferencesWhereInput>;
   shippingAddress?: Maybe<LocationWhereInput>;
   phoneOS?: Maybe<String>;
   phoneOS_not?: Maybe<String>;
@@ -5144,6 +5170,26 @@ export interface CustomerDetailWhereInput {
   AND?: Maybe<CustomerDetailWhereInput[] | CustomerDetailWhereInput>;
   OR?: Maybe<CustomerDetailWhereInput[] | CustomerDetailWhereInput>;
   NOT?: Maybe<CustomerDetailWhereInput[] | CustomerDetailWhereInput>;
+}
+
+export interface StylePreferencesWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  AND?: Maybe<StylePreferencesWhereInput[] | StylePreferencesWhereInput>;
+  OR?: Maybe<StylePreferencesWhereInput[] | StylePreferencesWhereInput>;
+  NOT?: Maybe<StylePreferencesWhereInput[] | StylePreferencesWhereInput>;
 }
 
 export interface BillingInfoWhereInput {
@@ -6590,6 +6636,10 @@ export type SizeWhereUniqueInput = AtLeastOne<{
   slug?: Maybe<String>;
 }>;
 
+export type StylePreferencesWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
 export type TagWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
   name?: Maybe<String>;
@@ -6654,6 +6704,8 @@ export interface UserCreateInput {
   roles?: Maybe<UserCreaterolesInput>;
   pushNotificationStatus?: Maybe<PushNotificationStatus>;
   pushNotifications?: Maybe<PushNotificationReceiptCreateManyWithoutUsersInput>;
+  verificationStatus?: Maybe<UserVerificationStatus>;
+  verificationMethod?: Maybe<UserVerificationMethod>;
 }
 
 export interface UserCreaterolesInput {
@@ -6694,10 +6746,10 @@ export interface CustomerDetailCreateInput {
   phoneNumber?: Maybe<String>;
   birthday?: Maybe<DateTimeInput>;
   height?: Maybe<Int>;
-  weight?: Maybe<String>;
+  weight?: Maybe<CustomerDetailCreateweightInput>;
   bodyType?: Maybe<String>;
-  averageTopSize?: Maybe<String>;
-  averageWaistSize?: Maybe<String>;
+  topSizes?: Maybe<CustomerDetailCreatetopSizesInput>;
+  waistSizes?: Maybe<CustomerDetailCreatewaistSizesInput>;
   averagePantLength?: Maybe<String>;
   preferredPronouns?: Maybe<String>;
   profession?: Maybe<String>;
@@ -6707,9 +6759,51 @@ export interface CustomerDetailCreateInput {
   averageSpend?: Maybe<String>;
   style?: Maybe<String>;
   commuteStyle?: Maybe<String>;
+  stylePreferences?: Maybe<StylePreferencesCreateOneInput>;
   shippingAddress?: Maybe<LocationCreateOneInput>;
   phoneOS?: Maybe<String>;
   insureShipment?: Maybe<Boolean>;
+}
+
+export interface CustomerDetailCreateweightInput {
+  set?: Maybe<Int[] | Int>;
+}
+
+export interface CustomerDetailCreatetopSizesInput {
+  set?: Maybe<String[] | String>;
+}
+
+export interface CustomerDetailCreatewaistSizesInput {
+  set?: Maybe<Int[] | Int>;
+}
+
+export interface StylePreferencesCreateOneInput {
+  create?: Maybe<StylePreferencesCreateInput>;
+  connect?: Maybe<StylePreferencesWhereUniqueInput>;
+}
+
+export interface StylePreferencesCreateInput {
+  id?: Maybe<ID_Input>;
+  styles?: Maybe<StylePreferencesCreatestylesInput>;
+  patterns?: Maybe<StylePreferencesCreatepatternsInput>;
+  colors?: Maybe<StylePreferencesCreatecolorsInput>;
+  brands?: Maybe<StylePreferencesCreatebrandsInput>;
+}
+
+export interface StylePreferencesCreatestylesInput {
+  set?: Maybe<String[] | String>;
+}
+
+export interface StylePreferencesCreatepatternsInput {
+  set?: Maybe<String[] | String>;
+}
+
+export interface StylePreferencesCreatecolorsInput {
+  set?: Maybe<String[] | String>;
+}
+
+export interface StylePreferencesCreatebrandsInput {
+  set?: Maybe<String[] | String>;
 }
 
 export interface LocationCreateOneInput {
@@ -7499,6 +7593,8 @@ export interface UserUpdateDataInput {
   roles?: Maybe<UserUpdaterolesInput>;
   pushNotificationStatus?: Maybe<PushNotificationStatus>;
   pushNotifications?: Maybe<PushNotificationReceiptUpdateManyWithoutUsersInput>;
+  verificationStatus?: Maybe<UserVerificationStatus>;
+  verificationMethod?: Maybe<UserVerificationMethod>;
 }
 
 export interface UserUpdaterolesInput {
@@ -7767,10 +7863,10 @@ export interface CustomerDetailUpdateDataInput {
   phoneNumber?: Maybe<String>;
   birthday?: Maybe<DateTimeInput>;
   height?: Maybe<Int>;
-  weight?: Maybe<String>;
+  weight?: Maybe<CustomerDetailUpdateweightInput>;
   bodyType?: Maybe<String>;
-  averageTopSize?: Maybe<String>;
-  averageWaistSize?: Maybe<String>;
+  topSizes?: Maybe<CustomerDetailUpdatetopSizesInput>;
+  waistSizes?: Maybe<CustomerDetailUpdatewaistSizesInput>;
   averagePantLength?: Maybe<String>;
   preferredPronouns?: Maybe<String>;
   profession?: Maybe<String>;
@@ -7780,9 +7876,59 @@ export interface CustomerDetailUpdateDataInput {
   averageSpend?: Maybe<String>;
   style?: Maybe<String>;
   commuteStyle?: Maybe<String>;
+  stylePreferences?: Maybe<StylePreferencesUpdateOneInput>;
   shippingAddress?: Maybe<LocationUpdateOneInput>;
   phoneOS?: Maybe<String>;
   insureShipment?: Maybe<Boolean>;
+}
+
+export interface CustomerDetailUpdateweightInput {
+  set?: Maybe<Int[] | Int>;
+}
+
+export interface CustomerDetailUpdatetopSizesInput {
+  set?: Maybe<String[] | String>;
+}
+
+export interface CustomerDetailUpdatewaistSizesInput {
+  set?: Maybe<Int[] | Int>;
+}
+
+export interface StylePreferencesUpdateOneInput {
+  create?: Maybe<StylePreferencesCreateInput>;
+  update?: Maybe<StylePreferencesUpdateDataInput>;
+  upsert?: Maybe<StylePreferencesUpsertNestedInput>;
+  delete?: Maybe<Boolean>;
+  disconnect?: Maybe<Boolean>;
+  connect?: Maybe<StylePreferencesWhereUniqueInput>;
+}
+
+export interface StylePreferencesUpdateDataInput {
+  styles?: Maybe<StylePreferencesUpdatestylesInput>;
+  patterns?: Maybe<StylePreferencesUpdatepatternsInput>;
+  colors?: Maybe<StylePreferencesUpdatecolorsInput>;
+  brands?: Maybe<StylePreferencesUpdatebrandsInput>;
+}
+
+export interface StylePreferencesUpdatestylesInput {
+  set?: Maybe<String[] | String>;
+}
+
+export interface StylePreferencesUpdatepatternsInput {
+  set?: Maybe<String[] | String>;
+}
+
+export interface StylePreferencesUpdatecolorsInput {
+  set?: Maybe<String[] | String>;
+}
+
+export interface StylePreferencesUpdatebrandsInput {
+  set?: Maybe<String[] | String>;
+}
+
+export interface StylePreferencesUpsertNestedInput {
+  update: StylePreferencesUpdateDataInput;
+  create: StylePreferencesCreateInput;
 }
 
 export interface LocationUpdateOneInput {
@@ -11275,10 +11421,10 @@ export interface CustomerDetailUpdateInput {
   phoneNumber?: Maybe<String>;
   birthday?: Maybe<DateTimeInput>;
   height?: Maybe<Int>;
-  weight?: Maybe<String>;
+  weight?: Maybe<CustomerDetailUpdateweightInput>;
   bodyType?: Maybe<String>;
-  averageTopSize?: Maybe<String>;
-  averageWaistSize?: Maybe<String>;
+  topSizes?: Maybe<CustomerDetailUpdatetopSizesInput>;
+  waistSizes?: Maybe<CustomerDetailUpdatewaistSizesInput>;
   averagePantLength?: Maybe<String>;
   preferredPronouns?: Maybe<String>;
   profession?: Maybe<String>;
@@ -11288,6 +11434,7 @@ export interface CustomerDetailUpdateInput {
   averageSpend?: Maybe<String>;
   style?: Maybe<String>;
   commuteStyle?: Maybe<String>;
+  stylePreferences?: Maybe<StylePreferencesUpdateOneInput>;
   shippingAddress?: Maybe<LocationUpdateOneInput>;
   phoneOS?: Maybe<String>;
   insureShipment?: Maybe<Boolean>;
@@ -11297,10 +11444,10 @@ export interface CustomerDetailUpdateManyMutationInput {
   phoneNumber?: Maybe<String>;
   birthday?: Maybe<DateTimeInput>;
   height?: Maybe<Int>;
-  weight?: Maybe<String>;
+  weight?: Maybe<CustomerDetailUpdateweightInput>;
   bodyType?: Maybe<String>;
-  averageTopSize?: Maybe<String>;
-  averageWaistSize?: Maybe<String>;
+  topSizes?: Maybe<CustomerDetailUpdatetopSizesInput>;
+  waistSizes?: Maybe<CustomerDetailUpdatewaistSizesInput>;
   averagePantLength?: Maybe<String>;
   preferredPronouns?: Maybe<String>;
   profession?: Maybe<String>;
@@ -12560,6 +12707,8 @@ export interface UserCreateWithoutPushNotificationsInput {
   role?: Maybe<UserRole>;
   roles?: Maybe<UserCreaterolesInput>;
   pushNotificationStatus?: Maybe<PushNotificationStatus>;
+  verificationStatus?: Maybe<UserVerificationStatus>;
+  verificationMethod?: Maybe<UserVerificationMethod>;
 }
 
 export interface PushNotificationReceiptUpdateInput {
@@ -12611,6 +12760,8 @@ export interface UserUpdateWithoutPushNotificationsDataInput {
   role?: Maybe<UserRole>;
   roles?: Maybe<UserUpdaterolesInput>;
   pushNotificationStatus?: Maybe<PushNotificationStatus>;
+  verificationStatus?: Maybe<UserVerificationStatus>;
+  verificationMethod?: Maybe<UserVerificationMethod>;
 }
 
 export interface UserUpsertWithWhereUniqueWithoutPushNotificationsInput {
@@ -12694,6 +12845,30 @@ export interface UserScalarWhereInput {
   role_not?: Maybe<UserRole>;
   role_in?: Maybe<UserRole[] | UserRole>;
   role_not_in?: Maybe<UserRole[] | UserRole>;
+  pushNotificationStatus?: Maybe<PushNotificationStatus>;
+  pushNotificationStatus_not?: Maybe<PushNotificationStatus>;
+  pushNotificationStatus_in?: Maybe<
+    PushNotificationStatus[] | PushNotificationStatus
+  >;
+  pushNotificationStatus_not_in?: Maybe<
+    PushNotificationStatus[] | PushNotificationStatus
+  >;
+  verificationStatus?: Maybe<UserVerificationStatus>;
+  verificationStatus_not?: Maybe<UserVerificationStatus>;
+  verificationStatus_in?: Maybe<
+    UserVerificationStatus[] | UserVerificationStatus
+  >;
+  verificationStatus_not_in?: Maybe<
+    UserVerificationStatus[] | UserVerificationStatus
+  >;
+  verificationMethod?: Maybe<UserVerificationMethod>;
+  verificationMethod_not?: Maybe<UserVerificationMethod>;
+  verificationMethod_in?: Maybe<
+    UserVerificationMethod[] | UserVerificationMethod
+  >;
+  verificationMethod_not_in?: Maybe<
+    UserVerificationMethod[] | UserVerificationMethod
+  >;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -12710,14 +12885,6 @@ export interface UserScalarWhereInput {
   updatedAt_lte?: Maybe<DateTimeInput>;
   updatedAt_gt?: Maybe<DateTimeInput>;
   updatedAt_gte?: Maybe<DateTimeInput>;
-  pushNotificationStatus?: Maybe<PushNotificationStatus>;
-  pushNotificationStatus_not?: Maybe<PushNotificationStatus>;
-  pushNotificationStatus_in?: Maybe<
-    PushNotificationStatus[] | PushNotificationStatus
-  >;
-  pushNotificationStatus_not_in?: Maybe<
-    PushNotificationStatus[] | PushNotificationStatus
-  >;
   AND?: Maybe<UserScalarWhereInput[] | UserScalarWhereInput>;
   OR?: Maybe<UserScalarWhereInput[] | UserScalarWhereInput>;
   NOT?: Maybe<UserScalarWhereInput[] | UserScalarWhereInput>;
@@ -12736,6 +12903,8 @@ export interface UserUpdateManyDataInput {
   role?: Maybe<UserRole>;
   roles?: Maybe<UserUpdaterolesInput>;
   pushNotificationStatus?: Maybe<PushNotificationStatus>;
+  verificationStatus?: Maybe<UserVerificationStatus>;
+  verificationMethod?: Maybe<UserVerificationMethod>;
 }
 
 export interface PushNotificationReceiptUpdateManyMutationInput {
@@ -13072,6 +13241,20 @@ export interface SizeUpdateManyMutationInput {
   display?: Maybe<String>;
 }
 
+export interface StylePreferencesUpdateInput {
+  styles?: Maybe<StylePreferencesUpdatestylesInput>;
+  patterns?: Maybe<StylePreferencesUpdatepatternsInput>;
+  colors?: Maybe<StylePreferencesUpdatecolorsInput>;
+  brands?: Maybe<StylePreferencesUpdatebrandsInput>;
+}
+
+export interface StylePreferencesUpdateManyMutationInput {
+  styles?: Maybe<StylePreferencesUpdatestylesInput>;
+  patterns?: Maybe<StylePreferencesUpdatepatternsInput>;
+  colors?: Maybe<StylePreferencesUpdatecolorsInput>;
+  brands?: Maybe<StylePreferencesUpdatebrandsInput>;
+}
+
 export interface TagCreateInput {
   id?: Maybe<ID_Input>;
   name: String;
@@ -13219,6 +13402,8 @@ export interface UserUpdateInput {
   roles?: Maybe<UserUpdaterolesInput>;
   pushNotificationStatus?: Maybe<PushNotificationStatus>;
   pushNotifications?: Maybe<PushNotificationReceiptUpdateManyWithoutUsersInput>;
+  verificationStatus?: Maybe<UserVerificationStatus>;
+  verificationMethod?: Maybe<UserVerificationMethod>;
 }
 
 export interface UserUpdateManyMutationInput {
@@ -13229,6 +13414,8 @@ export interface UserUpdateManyMutationInput {
   role?: Maybe<UserRole>;
   roles?: Maybe<UserUpdaterolesInput>;
   pushNotificationStatus?: Maybe<PushNotificationStatus>;
+  verificationStatus?: Maybe<UserVerificationStatus>;
+  verificationMethod?: Maybe<UserVerificationMethod>;
 }
 
 export interface WarehouseLocationCreateInput {
@@ -14221,6 +14408,26 @@ export interface SizeSubscriptionWhereInput {
   NOT?: Maybe<SizeSubscriptionWhereInput[] | SizeSubscriptionWhereInput>;
 }
 
+export interface StylePreferencesSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<StylePreferencesWhereInput>;
+  AND?: Maybe<
+    | StylePreferencesSubscriptionWhereInput[]
+    | StylePreferencesSubscriptionWhereInput
+  >;
+  OR?: Maybe<
+    | StylePreferencesSubscriptionWhereInput[]
+    | StylePreferencesSubscriptionWhereInput
+  >;
+  NOT?: Maybe<
+    | StylePreferencesSubscriptionWhereInput[]
+    | StylePreferencesSubscriptionWhereInput
+  >;
+}
+
 export interface TagSubscriptionWhereInput {
   mutation_in?: Maybe<MutationType[] | MutationType>;
   updatedFields_contains?: Maybe<String>;
@@ -14438,9 +14645,11 @@ export interface User {
   lastName: String;
   role: UserRole;
   roles: UserRole[];
+  pushNotificationStatus: PushNotificationStatus;
+  verificationStatus: UserVerificationStatus;
+  verificationMethod: UserVerificationMethod;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
-  pushNotificationStatus: PushNotificationStatus;
 }
 
 export interface UserPromise extends Promise<User>, Fragmentable {
@@ -14451,8 +14660,6 @@ export interface UserPromise extends Promise<User>, Fragmentable {
   lastName: () => Promise<String>;
   role: () => Promise<UserRole>;
   roles: () => Promise<UserRole[]>;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
   pushNotificationStatus: () => Promise<PushNotificationStatus>;
   pushNotifications: <T = FragmentableArray<PushNotificationReceipt>>(args?: {
     where?: PushNotificationReceiptWhereInput;
@@ -14463,6 +14670,10 @@ export interface UserPromise extends Promise<User>, Fragmentable {
     first?: Int;
     last?: Int;
   }) => T;
+  verificationStatus: () => Promise<UserVerificationStatus>;
+  verificationMethod: () => Promise<UserVerificationMethod>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface UserSubscription
@@ -14475,8 +14686,6 @@ export interface UserSubscription
   lastName: () => Promise<AsyncIterator<String>>;
   role: () => Promise<AsyncIterator<UserRole>>;
   roles: () => Promise<AsyncIterator<UserRole[]>>;
-  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   pushNotificationStatus: () => Promise<AsyncIterator<PushNotificationStatus>>;
   pushNotifications: <
     T = Promise<AsyncIterator<PushNotificationReceiptSubscription>>
@@ -14489,6 +14698,10 @@ export interface UserSubscription
     first?: Int;
     last?: Int;
   }) => T;
+  verificationStatus: () => Promise<AsyncIterator<UserVerificationStatus>>;
+  verificationMethod: () => Promise<AsyncIterator<UserVerificationMethod>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
 export interface UserNullablePromise
@@ -14501,8 +14714,6 @@ export interface UserNullablePromise
   lastName: () => Promise<String>;
   role: () => Promise<UserRole>;
   roles: () => Promise<UserRole[]>;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
   pushNotificationStatus: () => Promise<PushNotificationStatus>;
   pushNotifications: <T = FragmentableArray<PushNotificationReceipt>>(args?: {
     where?: PushNotificationReceiptWhereInput;
@@ -14513,6 +14724,10 @@ export interface UserNullablePromise
     first?: Int;
     last?: Int;
   }) => T;
+  verificationStatus: () => Promise<UserVerificationStatus>;
+  verificationMethod: () => Promise<UserVerificationMethod>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface PushNotificationReceipt {
@@ -14613,10 +14828,10 @@ export interface CustomerDetail {
   phoneNumber?: String;
   birthday?: DateTimeOutput;
   height?: Int;
-  weight?: String;
+  weight: Int[];
   bodyType?: String;
-  averageTopSize?: String;
-  averageWaistSize?: String;
+  topSizes: String[];
+  waistSizes: Int[];
   averagePantLength?: String;
   preferredPronouns?: String;
   profession?: String;
@@ -14639,10 +14854,10 @@ export interface CustomerDetailPromise
   phoneNumber: () => Promise<String>;
   birthday: () => Promise<DateTimeOutput>;
   height: () => Promise<Int>;
-  weight: () => Promise<String>;
+  weight: () => Promise<Int[]>;
   bodyType: () => Promise<String>;
-  averageTopSize: () => Promise<String>;
-  averageWaistSize: () => Promise<String>;
+  topSizes: () => Promise<String[]>;
+  waistSizes: () => Promise<Int[]>;
   averagePantLength: () => Promise<String>;
   preferredPronouns: () => Promise<String>;
   profession: () => Promise<String>;
@@ -14652,6 +14867,7 @@ export interface CustomerDetailPromise
   averageSpend: () => Promise<String>;
   style: () => Promise<String>;
   commuteStyle: () => Promise<String>;
+  stylePreferences: <T = StylePreferencesPromise>() => T;
   shippingAddress: <T = LocationPromise>() => T;
   phoneOS: () => Promise<String>;
   insureShipment: () => Promise<Boolean>;
@@ -14666,10 +14882,10 @@ export interface CustomerDetailSubscription
   phoneNumber: () => Promise<AsyncIterator<String>>;
   birthday: () => Promise<AsyncIterator<DateTimeOutput>>;
   height: () => Promise<AsyncIterator<Int>>;
-  weight: () => Promise<AsyncIterator<String>>;
+  weight: () => Promise<AsyncIterator<Int[]>>;
   bodyType: () => Promise<AsyncIterator<String>>;
-  averageTopSize: () => Promise<AsyncIterator<String>>;
-  averageWaistSize: () => Promise<AsyncIterator<String>>;
+  topSizes: () => Promise<AsyncIterator<String[]>>;
+  waistSizes: () => Promise<AsyncIterator<Int[]>>;
   averagePantLength: () => Promise<AsyncIterator<String>>;
   preferredPronouns: () => Promise<AsyncIterator<String>>;
   profession: () => Promise<AsyncIterator<String>>;
@@ -14679,6 +14895,7 @@ export interface CustomerDetailSubscription
   averageSpend: () => Promise<AsyncIterator<String>>;
   style: () => Promise<AsyncIterator<String>>;
   commuteStyle: () => Promise<AsyncIterator<String>>;
+  stylePreferences: <T = StylePreferencesSubscription>() => T;
   shippingAddress: <T = LocationSubscription>() => T;
   phoneOS: () => Promise<AsyncIterator<String>>;
   insureShipment: () => Promise<AsyncIterator<Boolean>>;
@@ -14693,10 +14910,10 @@ export interface CustomerDetailNullablePromise
   phoneNumber: () => Promise<String>;
   birthday: () => Promise<DateTimeOutput>;
   height: () => Promise<Int>;
-  weight: () => Promise<String>;
+  weight: () => Promise<Int[]>;
   bodyType: () => Promise<String>;
-  averageTopSize: () => Promise<String>;
-  averageWaistSize: () => Promise<String>;
+  topSizes: () => Promise<String[]>;
+  waistSizes: () => Promise<Int[]>;
   averagePantLength: () => Promise<String>;
   preferredPronouns: () => Promise<String>;
   profession: () => Promise<String>;
@@ -14706,11 +14923,50 @@ export interface CustomerDetailNullablePromise
   averageSpend: () => Promise<String>;
   style: () => Promise<String>;
   commuteStyle: () => Promise<String>;
+  stylePreferences: <T = StylePreferencesPromise>() => T;
   shippingAddress: <T = LocationPromise>() => T;
   phoneOS: () => Promise<String>;
   insureShipment: () => Promise<Boolean>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface StylePreferences {
+  id: ID_Output;
+  styles: String[];
+  patterns: String[];
+  colors: String[];
+  brands: String[];
+}
+
+export interface StylePreferencesPromise
+  extends Promise<StylePreferences>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  styles: () => Promise<String[]>;
+  patterns: () => Promise<String[]>;
+  colors: () => Promise<String[]>;
+  brands: () => Promise<String[]>;
+}
+
+export interface StylePreferencesSubscription
+  extends Promise<AsyncIterator<StylePreferences>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  styles: () => Promise<AsyncIterator<String[]>>;
+  patterns: () => Promise<AsyncIterator<String[]>>;
+  colors: () => Promise<AsyncIterator<String[]>>;
+  brands: () => Promise<AsyncIterator<String[]>>;
+}
+
+export interface StylePreferencesNullablePromise
+  extends Promise<StylePreferences | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  styles: () => Promise<String[]>;
+  patterns: () => Promise<String[]>;
+  colors: () => Promise<String[]>;
+  brands: () => Promise<String[]>;
 }
 
 export interface Location {
@@ -19557,6 +19813,62 @@ export interface AggregateSizeSubscription
   count: () => Promise<AsyncIterator<Int>>;
 }
 
+export interface StylePreferencesConnection {
+  pageInfo: PageInfo;
+  edges: StylePreferencesEdge[];
+}
+
+export interface StylePreferencesConnectionPromise
+  extends Promise<StylePreferencesConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<StylePreferencesEdge>>() => T;
+  aggregate: <T = AggregateStylePreferencesPromise>() => T;
+}
+
+export interface StylePreferencesConnectionSubscription
+  extends Promise<AsyncIterator<StylePreferencesConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<StylePreferencesEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateStylePreferencesSubscription>() => T;
+}
+
+export interface StylePreferencesEdge {
+  node: StylePreferences;
+  cursor: String;
+}
+
+export interface StylePreferencesEdgePromise
+  extends Promise<StylePreferencesEdge>,
+    Fragmentable {
+  node: <T = StylePreferencesPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface StylePreferencesEdgeSubscription
+  extends Promise<AsyncIterator<StylePreferencesEdge>>,
+    Fragmentable {
+  node: <T = StylePreferencesSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateStylePreferences {
+  count: Int;
+}
+
+export interface AggregateStylePreferencesPromise
+  extends Promise<AggregateStylePreferences>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateStylePreferencesSubscription
+  extends Promise<AsyncIterator<AggregateStylePreferences>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
 export interface TagConnection {
   pageInfo: PageInfo;
   edges: TagEdge[];
@@ -20407,10 +20719,10 @@ export interface CustomerDetailPreviousValues {
   phoneNumber?: String;
   birthday?: DateTimeOutput;
   height?: Int;
-  weight?: String;
+  weight: Int[];
   bodyType?: String;
-  averageTopSize?: String;
-  averageWaistSize?: String;
+  topSizes: String[];
+  waistSizes: Int[];
   averagePantLength?: String;
   preferredPronouns?: String;
   profession?: String;
@@ -20433,10 +20745,10 @@ export interface CustomerDetailPreviousValuesPromise
   phoneNumber: () => Promise<String>;
   birthday: () => Promise<DateTimeOutput>;
   height: () => Promise<Int>;
-  weight: () => Promise<String>;
+  weight: () => Promise<Int[]>;
   bodyType: () => Promise<String>;
-  averageTopSize: () => Promise<String>;
-  averageWaistSize: () => Promise<String>;
+  topSizes: () => Promise<String[]>;
+  waistSizes: () => Promise<Int[]>;
   averagePantLength: () => Promise<String>;
   preferredPronouns: () => Promise<String>;
   profession: () => Promise<String>;
@@ -20459,10 +20771,10 @@ export interface CustomerDetailPreviousValuesSubscription
   phoneNumber: () => Promise<AsyncIterator<String>>;
   birthday: () => Promise<AsyncIterator<DateTimeOutput>>;
   height: () => Promise<AsyncIterator<Int>>;
-  weight: () => Promise<AsyncIterator<String>>;
+  weight: () => Promise<AsyncIterator<Int[]>>;
   bodyType: () => Promise<AsyncIterator<String>>;
-  averageTopSize: () => Promise<AsyncIterator<String>>;
-  averageWaistSize: () => Promise<AsyncIterator<String>>;
+  topSizes: () => Promise<AsyncIterator<String[]>>;
+  waistSizes: () => Promise<AsyncIterator<Int[]>>;
   averagePantLength: () => Promise<AsyncIterator<String>>;
   preferredPronouns: () => Promise<AsyncIterator<String>>;
   profession: () => Promise<AsyncIterator<String>>;
@@ -22156,6 +22468,59 @@ export interface SizePreviousValuesSubscription
   display: () => Promise<AsyncIterator<String>>;
 }
 
+export interface StylePreferencesSubscriptionPayload {
+  mutation: MutationType;
+  node: StylePreferences;
+  updatedFields: String[];
+  previousValues: StylePreferencesPreviousValues;
+}
+
+export interface StylePreferencesSubscriptionPayloadPromise
+  extends Promise<StylePreferencesSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = StylePreferencesPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = StylePreferencesPreviousValuesPromise>() => T;
+}
+
+export interface StylePreferencesSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<StylePreferencesSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = StylePreferencesSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = StylePreferencesPreviousValuesSubscription>() => T;
+}
+
+export interface StylePreferencesPreviousValues {
+  id: ID_Output;
+  styles: String[];
+  patterns: String[];
+  colors: String[];
+  brands: String[];
+}
+
+export interface StylePreferencesPreviousValuesPromise
+  extends Promise<StylePreferencesPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  styles: () => Promise<String[]>;
+  patterns: () => Promise<String[]>;
+  colors: () => Promise<String[]>;
+  brands: () => Promise<String[]>;
+}
+
+export interface StylePreferencesPreviousValuesSubscription
+  extends Promise<AsyncIterator<StylePreferencesPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  styles: () => Promise<AsyncIterator<String[]>>;
+  patterns: () => Promise<AsyncIterator<String[]>>;
+  colors: () => Promise<AsyncIterator<String[]>>;
+  brands: () => Promise<AsyncIterator<String[]>>;
+}
+
 export interface TagSubscriptionPayload {
   mutation: MutationType;
   node: Tag;
@@ -22301,9 +22666,11 @@ export interface UserPreviousValues {
   lastName: String;
   role: UserRole;
   roles: UserRole[];
+  pushNotificationStatus: PushNotificationStatus;
+  verificationStatus: UserVerificationStatus;
+  verificationMethod: UserVerificationMethod;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
-  pushNotificationStatus: PushNotificationStatus;
 }
 
 export interface UserPreviousValuesPromise
@@ -22316,9 +22683,11 @@ export interface UserPreviousValuesPromise
   lastName: () => Promise<String>;
   role: () => Promise<UserRole>;
   roles: () => Promise<UserRole[]>;
+  pushNotificationStatus: () => Promise<PushNotificationStatus>;
+  verificationStatus: () => Promise<UserVerificationStatus>;
+  verificationMethod: () => Promise<UserVerificationMethod>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
-  pushNotificationStatus: () => Promise<PushNotificationStatus>;
 }
 
 export interface UserPreviousValuesSubscription
@@ -22331,9 +22700,11 @@ export interface UserPreviousValuesSubscription
   lastName: () => Promise<AsyncIterator<String>>;
   role: () => Promise<AsyncIterator<UserRole>>;
   roles: () => Promise<AsyncIterator<UserRole[]>>;
+  pushNotificationStatus: () => Promise<AsyncIterator<PushNotificationStatus>>;
+  verificationStatus: () => Promise<AsyncIterator<UserVerificationStatus>>;
+  verificationMethod: () => Promise<AsyncIterator<UserVerificationMethod>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  pushNotificationStatus: () => Promise<AsyncIterator<PushNotificationStatus>>;
 }
 
 export interface WarehouseLocationSubscriptionPayload {
@@ -22683,7 +23054,19 @@ export const models: Model[] = [
     embedded: false
   },
   {
+    name: "UserVerificationMethod",
+    embedded: false
+  },
+  {
+    name: "UserVerificationStatus",
+    embedded: false
+  },
+  {
     name: "User",
+    embedded: false
+  },
+  {
+    name: "StylePreferences",
     embedded: false
   },
   {
