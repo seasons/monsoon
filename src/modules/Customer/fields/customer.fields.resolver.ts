@@ -1,5 +1,6 @@
 import { User } from "@app/decorators"
 import { TransactionsForCustomersLoader } from "@app/modules/Payment/loaders/transactionsForCustomers.loader"
+import { PaymentPlan, Plan } from "@app/prisma"
 import { PrismaDataLoader, PrismaLoader } from "@app/prisma/prisma.loader"
 import { Loader } from "@modules/DataLoader"
 import {
@@ -16,7 +17,12 @@ import { head } from "lodash"
 
 const getUserIDGenerateParams = {
   query: `customers`,
-  info: `{user {id}}`,
+  info: `{
+    id
+    user {
+      id
+    }
+  }`,
   formatData: a => a.user.id,
 }
 @Resolver("Customer")
@@ -62,12 +68,10 @@ export class CustomerFieldsResolver {
   async transactions(
     @Parent() customer,
     @Loader({
-      name: "TransactionsFieldTransactionsForCustomerLoader",
       type: TransactionsForCustomersLoader.name,
     })
     transactionsForCustomerLoader: TransactionsDataLoader,
     @Loader({
-      name: "TransactionsFieldPrismaLoader",
       type: PrismaLoader.name,
       generateParams: getUserIDGenerateParams,
     })
@@ -84,20 +88,56 @@ export class CustomerFieldsResolver {
   }
 
   @ResolveField()
+  async paymentPlan(
+    @Parent() customer,
+    @Loader({
+      type: PrismaLoader.name,
+      generateParams: {
+        query: `customers`,
+        info: `{ 
+          id
+          plan 
+        }`,
+        formatData: a => a.plan,
+      },
+    })
+    prismaLoader: PrismaDataLoader<any>,
+    @Loader({
+      type: PrismaLoader.name,
+      generateParams: {
+        formatWhere: (ids: string[]) => ({
+          where: { planID_in: ids },
+        }),
+        query: `paymentPlans`,
+        info: "FROM_CONTEXT",
+        infoFragment: `fragment EnsurePlanID on PaymentPlan {planID}`,
+        getKey: a => a.planID,
+      },
+    })
+    paymentPlanLoader: PrismaDataLoader<PaymentPlan>
+  ) {
+    const plan = await prismaLoader.load(customer.id)
+    if (!plan) {
+      return null
+    }
+    const paymentPlan = await paymentPlanLoader.load(
+      this.paymentService.prismaPlanToChargebeePlanId(plan)
+    )
+    return paymentPlan
+  }
+
+  @ResolveField()
   async invoices(
     @Parent() customer,
     @Loader({
-      name: "InvoicesFieldInvoicesForCustomerLoader",
       type: InvoicesForCustomersLoader.name,
     })
     invoicesLoader: InvoicesDataLoader,
     @Loader({
-      name: "InvoicesFieldTransactionsForCustomerLoader",
       type: TransactionsForCustomersLoader.name,
     })
     transactionsForCustomerLoader: TransactionsDataLoader,
     @Loader({
-      name: "InvoicesFieldPrismaLoader",
       type: PrismaLoader.name,
       generateParams: getUserIDGenerateParams,
     })
@@ -118,20 +158,19 @@ export class CustomerFieldsResolver {
   async user(
     @Parent() customer,
     @Loader({
-      name: "UserFieldPrismaUserIdLoader",
       type: PrismaLoader.name,
       generateParams: getUserIDGenerateParams,
     })
     userIdLoader: PrismaDataLoader<string>,
     @Loader({
-      name: "UserFieldPrismaUserLoader",
       type: PrismaLoader.name,
       generateParams: { query: "users", info: "FROM_CONTEXT" },
     })
     userLoader: PrismaDataLoader<any>
   ) {
     const userId = await userIdLoader.load(customer.id)
-    return userLoader.load(userId)
+    const user = await userLoader.load(userId)
+    return user
   }
 
   @ResolveField()

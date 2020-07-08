@@ -74,6 +74,7 @@ type Customer {
   detail: CustomerDetail
   billingInfo: BillingInfo
   plan: Plan
+  paymentPlan: PaymentPlan
   bagItems(
     where: BagItemWhereInput
     orderBy: BagItemOrderByInput

@@ -22,10 +22,34 @@ export const Loader: (
       `)
     }
 
-    if (data.generateParams?.info === "FROM_CONTEXT") {
-      data.generateParams.info = info
+    // If the info property is an object, that means the original
+    // value was FROM_CONTEXT. Use it to get the loader's name.
+    const originalGenerateParams = { ...data.generateParams }
+    if (typeof originalGenerateParams === "object") {
+      originalGenerateParams.info = "FROM_CONTEXT"
+    }
+    const adjustedData = {
+      ...data,
+      name: createName(data.type, originalGenerateParams),
     }
 
-    return ctx[GET_LOADER_CONTEXT_KEY](data)
+    // If needed, get the info from the context
+    if (adjustedData.generateParams?.info === "FROM_CONTEXT") {
+      adjustedData.generateParams.info = info
+    }
+
+    return ctx[GET_LOADER_CONTEXT_KEY](adjustedData)
   }
 )
+
+const createName = (type, generateParams) => {
+  let name = type
+  for (const key of Object.keys(generateParams || {})) {
+    name += paramToString(generateParams[key])
+  }
+  return name
+}
+
+const paramToString = p => {
+  return p.toString().replace(/ /g, "").replace(/\n/g, "")
+}

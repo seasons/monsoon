@@ -73,4 +73,5 @@ type Reservation {
   returnAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
+  phase: ReservationPhase!
 }

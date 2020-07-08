@@ -547,6 +547,18 @@ export class PaymentService {
     return true
   }
 
+  prismaPlanToChargebeePlanId(plan: Plan) {
+    let chargebeePlanId
+    if (plan === "AllAccess") {
+      chargebeePlanId = "all-access"
+    } else if (plan === "Essential") {
+      chargebeePlanId = "essential"
+    } else {
+      throw new Error(`unrecognized planID: ${plan}`)
+    }
+    return chargebeePlanId
+  }
+
   private getInvoiceTransactionIds(invoice): string[] {
     return invoice.linkedPayments.map(a => a.txnId)
   }
@@ -586,16 +598,4 @@ export class PaymentService {
         true
       ),
     })
-
-  private prismaPlanToChargebeePlanId(plan: Plan) {
-    let chargebeePlanId
-    if (plan === "AllAccess") {
-      chargebeePlanId = "all-access"
-    } else if (plan === "Essential") {
-      chargebeePlanId = "essential"
-    } else {
-      throw new Error(`unrecognized planID: ${plan}`)
-    }
-    return chargebeePlanId
-  }
 }
