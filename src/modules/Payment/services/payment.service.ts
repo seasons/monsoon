@@ -293,7 +293,7 @@ export class PaymentService {
     planID: string
   ) {
     // Retrieve plan and billing data
-    const plan = { essential: "Essential", "all-access": "AllAccess" }[planID]
+    const plan = await this.prisma.client.paymentPlan({ planID })
     if (!plan) {
       throw new Error(`Unexpected plan id: ${planID}`)
     }
@@ -315,7 +315,7 @@ export class PaymentService {
     }
     await this.prisma.client.updateCustomer({
       data: {
-        plan,
+        plan: plan.name as Plan,
         billingInfo: {
           create: billingInfo,
         },
