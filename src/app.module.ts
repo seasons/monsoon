@@ -45,7 +45,7 @@ Airtable.configure({
 // make the call to chargebee
 chargebee.configure({
   site: process.env.CHARGEBEE_SITE,
-  api_key: process.env.CHARGEE_API_KEY,
+  api_key: process.env.CHARGEBEE_API_KEY,
 })
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
