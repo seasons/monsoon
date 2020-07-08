@@ -52,9 +52,18 @@ export class PushNotificationService {
     debug = false,
   }: PushNotifyUserInput) {
     let targetEmail = process.env.PUSH_NOTIFICATIONS_DEFAULT_EMAIL
-    const isAdmin = (await this.prisma.client.user({ email }).roles()).includes(
-      "Admin"
+    const targetUser = await this.prisma.binding.query.user(
+      {
+        where: { email },
+      },
+      `{
+        roles
+        pushNotification {
+          id
+        }
+      }`
     )
+    const isAdmin = targetUser.roles.includes("Admin")
     if (isAdmin || (!debug && process.env.NODE_ENV === "production")) {
       targetEmail = email
     }
@@ -67,9 +76,18 @@ export class PushNotificationService {
       [targetEmail],
       notificationPayload as any
     )
-    return await this.prisma.client.createPushNotificationReceipt({
+    const receipt = await this.prisma.client.createPushNotificationReceipt({
       ...receiptPayload,
       users: { connect: [{ email: targetEmail }] },
     })
+    await this.prisma.client.updateUser({
+      where: { email: targetEmail },
+      data: {
+        pushNotification: {
+          update: { history: { connect: [{ id: receipt.id }] } },
+        },
+      },
+    })
+    return receipt
   }
 }
