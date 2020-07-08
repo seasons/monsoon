@@ -2296,7 +2296,9 @@ export type CategoryOrderByInput =
   | "description_ASC"
   | "description_DESC"
   | "visible_ASC"
-  | "visible_DESC";
+  | "visible_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
 
 export type ImageOrderByInput =
   | "id_ASC"
@@ -4266,6 +4268,14 @@ export interface CategoryWhereInput {
   children_every?: Maybe<CategoryWhereInput>;
   children_some?: Maybe<CategoryWhereInput>;
   children_none?: Maybe<CategoryWhereInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
   AND?: Maybe<CategoryWhereInput[] | CategoryWhereInput>;
   OR?: Maybe<CategoryWhereInput[] | CategoryWhereInput>;
   NOT?: Maybe<CategoryWhereInput[] | CategoryWhereInput>;
@@ -9973,6 +9983,14 @@ export interface CategoryScalarWhereInput {
   description_not_ends_with?: Maybe<String>;
   visible?: Maybe<Boolean>;
   visible_not?: Maybe<Boolean>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
   AND?: Maybe<CategoryScalarWhereInput[] | CategoryScalarWhereInput>;
   OR?: Maybe<CategoryScalarWhereInput[] | CategoryScalarWhereInput>;
   NOT?: Maybe<CategoryScalarWhereInput[] | CategoryScalarWhereInput>;
@@ -15845,6 +15863,7 @@ export interface Category {
   image?: Json;
   description?: String;
   visible: Boolean;
+  updatedAt?: DateTimeOutput;
 }
 
 export interface CategoryPromise extends Promise<Category>, Fragmentable {
@@ -15872,6 +15891,7 @@ export interface CategoryPromise extends Promise<Category>, Fragmentable {
     first?: Int;
     last?: Int;
   }) => T;
+  updatedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface CategorySubscription
@@ -15901,6 +15921,7 @@ export interface CategorySubscription
     first?: Int;
     last?: Int;
   }) => T;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
 export interface CategoryNullablePromise
@@ -15930,6 +15951,7 @@ export interface CategoryNullablePromise
     first?: Int;
     last?: Int;
   }) => T;
+  updatedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface Image {
@@ -20431,6 +20453,7 @@ export interface CategoryPreviousValues {
   image?: Json;
   description?: String;
   visible: Boolean;
+  updatedAt?: DateTimeOutput;
 }
 
 export interface CategoryPreviousValuesPromise
@@ -20442,6 +20465,7 @@ export interface CategoryPreviousValuesPromise
   image: () => Promise<Json>;
   description: () => Promise<String>;
   visible: () => Promise<Boolean>;
+  updatedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface CategoryPreviousValuesSubscription
@@ -20453,6 +20477,7 @@ export interface CategoryPreviousValuesSubscription
   image: () => Promise<AsyncIterator<Json>>;
   description: () => Promise<AsyncIterator<String>>;
   visible: () => Promise<AsyncIterator<Boolean>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
 export interface CollectionSubscriptionPayload {

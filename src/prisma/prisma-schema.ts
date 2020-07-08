@@ -1272,6 +1272,7 @@ type Category {
   visible: Boolean!
   products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
   children(where: CategoryWhereInput, orderBy: CategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Category!]
+  updatedAt: DateTime
 }
 
 type CategoryConnection {
@@ -1344,6 +1345,8 @@ enum CategoryOrderByInput {
   description_DESC
   visible_ASC
   visible_DESC
+  updatedAt_ASC
+  updatedAt_DESC
 }
 
 type CategoryPreviousValues {
@@ -1353,6 +1356,7 @@ type CategoryPreviousValues {
   image: Json
   description: String
   visible: Boolean!
+  updatedAt: DateTime
 }
 
 input CategoryScalarWhereInput {
@@ -1414,6 +1418,14 @@ input CategoryScalarWhereInput {
   description_not_ends_with: String
   visible: Boolean
   visible_not: Boolean
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
   AND: [CategoryScalarWhereInput!]
   OR: [CategoryScalarWhereInput!]
   NOT: [CategoryScalarWhereInput!]
@@ -1608,6 +1620,14 @@ input CategoryWhereInput {
   children_every: CategoryWhereInput
   children_some: CategoryWhereInput
   children_none: CategoryWhereInput
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
   AND: [CategoryWhereInput!]
   OR: [CategoryWhereInput!]
   NOT: [CategoryWhereInput!]

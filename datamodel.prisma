@@ -238,6 +238,7 @@ type Category {
   visible: Boolean! @default(value: false)
   products: [Product!]!
   children: [Category!]! @relation(name: "CategoryToChildren")
+  updatedAt: DateTime @updatedAt
 }
 
 type Color {

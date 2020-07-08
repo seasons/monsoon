@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Mon Jul 06 2020 17:38:37 GMT-0400 (Eastern Daylight Time)
+# timestamp: Wed Jul 08 2020 13:49:46 GMT-0400 (Eastern Daylight Time)
 
 type AggregateBagItem {
   count: Int!
@@ -3001,6 +3001,7 @@ type Category implements Node {
     first: Int
     last: Int
   ): [Category!]
+  updatedAt: DateTime
 }
 
 """
@@ -3083,6 +3084,8 @@ enum CategoryOrderByInput {
   description_DESC
   visible_ASC
   visible_DESC
+  updatedAt_ASC
+  updatedAt_DESC
 }
 
 type CategoryPreviousValues {
@@ -3092,6 +3095,7 @@ type CategoryPreviousValues {
   image: Json
   description: String
   visible: Boolean!
+  updatedAt: DateTime
 }
 
 input CategoryScalarWhereInput {
@@ -3379,6 +3383,42 @@ input CategoryScalarWhereInput {
   All values that are not equal to given value.
   """
   visible_not: Boolean
+  updatedAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  updatedAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  updatedAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  updatedAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  updatedAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  updatedAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  updatedAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  updatedAt_gte: DateTime
 }
 
 type CategorySubscriptionPayload {
@@ -3808,6 +3848,42 @@ input CategoryWhereInput {
   All values that are not equal to given value.
   """
   visible_not: Boolean
+  updatedAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  updatedAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  updatedAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  updatedAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  updatedAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  updatedAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  updatedAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  updatedAt_gte: DateTime
   products_every: ProductWhereInput
   products_some: ProductWhereInput
   products_none: ProductWhereInput
