@@ -36,7 +36,11 @@ type Mutation {
     @hasRole(roles: [Admin])
   updateUserPushNotificationStatus(newStatus: Boolean!): UserPushNotification!
     @isAuthenticated
+<<<<<<< HEAD
   resetPassword(email: String!): ResetPasswordPayload! # Do not put @isAuthenticated guard here because only users who can't login need to reset passwords!
+=======
+  resetPassword(email: String!): ResetPasswordPayload! @isAuthenticated
+>>>>>>> ada5c83... adds isAuthenticated role gaurd to updateUserPushNotificationStatus
   refreshToken(refreshToken: String!): String!
 }
 
