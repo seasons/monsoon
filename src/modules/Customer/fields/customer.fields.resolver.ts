@@ -17,7 +17,12 @@ import { head } from "lodash"
 
 const getUserIDGenerateParams = {
   query: `customers`,
-  info: `{user {id}}`,
+  info: `{
+    id
+    user {
+      id
+    }
+  }`,
   formatData: a => a.user.id,
 }
 @Resolver("Customer")
@@ -63,12 +68,10 @@ export class CustomerFieldsResolver {
   async transactions(
     @Parent() customer,
     @Loader({
-      name: "TransactionsFieldTransactionsForCustomerLoader",
       type: TransactionsForCustomersLoader.name,
     })
     transactionsForCustomerLoader: TransactionsDataLoader,
     @Loader({
-      name: "TransactionsFieldPrismaLoader",
       type: PrismaLoader.name,
       generateParams: getUserIDGenerateParams,
     })
@@ -88,18 +91,18 @@ export class CustomerFieldsResolver {
   async paymentPlan(
     @Parent() customer,
     @Loader({
-      name: "PaymentPlanFieldCustomerLoader",
       type: PrismaLoader.name,
       generateParams: {
         query: `customers`,
         info: `{ 
+          id
           plan 
         }`,
+        formatData: a => a.plan,
       },
     })
     prismaLoader: PrismaDataLoader<any>,
     @Loader({
-      name: "PaymentPlanFieldPaymentPlanLoader",
       type: PrismaLoader.name,
       generateParams: {
         formatWhere: (ids: string[]) => ({
@@ -107,18 +110,19 @@ export class CustomerFieldsResolver {
         }),
         query: `paymentPlans`,
         info: "FROM_CONTEXT",
+        infoFragment: `fragment EnsurePlanID on PaymentPlan {planID}`,
+        getKey: a => a.planID,
       },
     })
     paymentPlanLoader: PrismaDataLoader<PaymentPlan>
   ) {
-    const customerData = await prismaLoader.load(customer.id)
-    const planID = this.paymentService.prismaPlanToChargebeePlanId(
-      customerData.plan
+    const plan = await prismaLoader.load(customer.id)
+    if (!plan) {
+      return null
+    }
+    const paymentPlan = await paymentPlanLoader.load(
+      this.paymentService.prismaPlanToChargebeePlanId(plan)
     )
-    // The Customer.Plan comes back as AllAccess
-    // The PaymentPlan.name is 'All Access'
-    // So we need to remove whitespace from the Paymant.Plan to compare
-    const paymentPlan = await paymentPlanLoader.load(planID)
     return paymentPlan
   }
 
@@ -126,17 +130,14 @@ export class CustomerFieldsResolver {
   async invoices(
     @Parent() customer,
     @Loader({
-      name: "InvoicesFieldInvoicesForCustomerLoader",
       type: InvoicesForCustomersLoader.name,
     })
     invoicesLoader: InvoicesDataLoader,
     @Loader({
-      name: "InvoicesFieldTransactionsForCustomerLoader",
       type: TransactionsForCustomersLoader.name,
     })
     transactionsForCustomerLoader: TransactionsDataLoader,
     @Loader({
-      name: "InvoicesFieldPrismaLoader",
       type: PrismaLoader.name,
       generateParams: getUserIDGenerateParams,
     })
@@ -157,19 +158,18 @@ export class CustomerFieldsResolver {
   async user(
     @Parent() customer,
     @Loader({
-      name: "UserFieldPrismaUserIdLoader",
       type: PrismaLoader.name,
       generateParams: getUserIDGenerateParams,
     })
     userIdLoader: PrismaDataLoader<string>,
     @Loader({
-      name: "UserFieldPrismaUserLoader",
       type: PrismaLoader.name,
       generateParams: { query: "users", info: "FROM_CONTEXT" },
     })
     userLoader: PrismaDataLoader<any>
   ) {
     const userId = await userIdLoader.load(customer.id)
-    return userLoader.load(userId)
+    const user = await userLoader.load(userId)
+    return user
   }
 }

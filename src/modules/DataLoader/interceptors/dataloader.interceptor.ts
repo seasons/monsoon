@@ -34,7 +34,7 @@ export class DataLoaderInterceptor implements NestInterceptor {
         name,
         type,
         generateParams = null,
-      }: LoaderParams): NestDataLoader => {
+      }: LoaderParams & { name: "string" }): NestDataLoader => {
         if (ctx[name] === undefined) {
           try {
             ctx[name] = this.moduleRef

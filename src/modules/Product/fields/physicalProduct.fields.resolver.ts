@@ -8,11 +8,10 @@ export class PhysicalProductFieldsResolver {
   async barcode(
     @Parent() physicalProduct,
     @Loader({
-      name: "BarcodeFieldPrismaLoader",
       type: PrismaLoader.name,
       generateParams: {
         query: "physicalProducts",
-        info: `{ sequenceNumber }`,
+        info: `{ id sequenceNumber }`,
         formatData: a => `SZNS` + `${a.sequenceNumber}`.padStart(5, "0"),
       },
     })
