@@ -106,10 +106,6 @@ export class ReservationService {
         physicalProductsBeingReserved
       )
       rollbackFuncs.push(rollbackPrismaPhysicalProductStatuses)
-      const rollbackAirtablePhysicalProductStatuses = await this.airtableService.markPhysicalProductsReservedOnAirtable(
-        physicalProductsBeingReserved
-      )
-      rollbackFuncs.push(rollbackAirtablePhysicalProductStatuses)
 
       const [
         seasonsToCustomerTransaction,

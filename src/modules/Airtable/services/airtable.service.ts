@@ -158,45 +158,6 @@ export class AirtableService extends AirtableQueriesService {
     return updatedRecords
   }
 
-  async markPhysicalProductsReservedOnAirtable(
-    physicalProducts: PhysicalProduct[]
-  ): Promise<() => void> {
-    // Get the record ids of all relevant airtable physical products
-    const airtablePhysicalProductRecords = await this.getPhysicalProducts(
-      physicalProducts.map(prod => prod.seasonsUID)
-    )
-    const airtablePhysicalProductRecordIds = airtablePhysicalProductRecords.map(
-      a => a.id
-    ) as [string]
-
-    // Update their statuses on airtable
-    const airtablePhysicalProductRecordsData = fill(
-      new Array(airtablePhysicalProductRecordIds.length),
-      {
-        "Inventory Status": "Reserved",
-      }
-    ) as [AirtablePhysicalProductFields]
-    await this.updatePhysicalProducts(
-      airtablePhysicalProductRecordIds,
-      airtablePhysicalProductRecordsData
-    )
-
-    // Create and return a rollback function
-    const airtablePhysicalProductRecordsRollbackData = fill(
-      new Array(airtablePhysicalProductRecordIds.length),
-      {
-        "Inventory Status": "Reservable",
-      }
-    ) as [AirtablePhysicalProductFields]
-    const rollbackMarkPhysicalProductReservedOnAirtable = async () => {
-      await this.updatePhysicalProducts(
-        airtablePhysicalProductRecordIds,
-        airtablePhysicalProductRecordsRollbackData
-      )
-    }
-    return rollbackMarkPhysicalProductReservedOnAirtable
-  }
-
   async updateProductVariantCounts(
     airtableID: string,
     counts: AirtableProductVariantCounts
