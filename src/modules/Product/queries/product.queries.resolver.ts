@@ -25,7 +25,7 @@ export class ProductQueriesResolver {
 
   @Query()
   async products(@Args() args, @Info() info) {
-    return await this.productService.getProducts(
+    const products = await this.productService.getProducts(
       args,
       addFragmentToInfo(
         info,
@@ -33,6 +33,7 @@ export class ProductQueriesResolver {
         `fragment EnsureId on Product { id }`
       )
     )
+    return products
   }
 
   @Query()

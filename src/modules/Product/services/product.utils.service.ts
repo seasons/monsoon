@@ -1,3 +1,5 @@
+import { isNull } from "util"
+
 import { ImageData } from "@modules/Image/image.types"
 import { Injectable } from "@nestjs/common"
 import {
@@ -79,6 +81,8 @@ export class ProductUtilsService {
   }
 
   private async filters(args) {
+    const childrenSlugs = []
+
     let brandFilter = { where: {} }
     if (args.brand && args.brand !== "all") {
       brandFilter = {
@@ -96,12 +100,32 @@ export class ProductUtilsService {
         .category({ slug: args.category })
         .children()
 
-      return children?.length > 0
+      const checkChildren = async children => {
+        if (children?.length > 0) {
+          children.forEach(async child => {
+            childrenSlugs.push(child.slug)
+
+            const grandChildren = await this.prisma.client
+              .category({ slug: child })
+              .children()
+
+            if (grandChildren.length > 0) {
+              checkChildren(grandChildren)
+            }
+          })
+        }
+      }
+
+      if (children?.length > 0) {
+        checkChildren(children)
+      }
+
+      return childrenSlugs?.length > 0
         ? {
             where: {
               ...args.where,
               ...brandFilter.where,
-              OR: children.map(({ slug }) => ({ category: { slug } })),
+              OR: childrenSlugs.map(({ slug }) => ({ category: { slug } })),
             },
           }
         : {
