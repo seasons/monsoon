@@ -10109,7 +10109,7 @@ input PushNotificationReceiptCreateInput {
   route: String
   screen: String
   uri: String
-  users: UserCreateManyInput
+  users: UserCreateManyWithoutPushNotificationsInput
   interest: String
   body: String!
   title: String
@@ -10121,6 +10121,24 @@ input PushNotificationReceiptCreateInput {
 input PushNotificationReceiptCreateManyInput {
   create: [PushNotificationReceiptCreateInput!]
   connect: [PushNotificationReceiptWhereUniqueInput!]
+}
+
+input PushNotificationReceiptCreateManyWithoutUsersInput {
+  create: [PushNotificationReceiptCreateWithoutUsersInput!]
+  connect: [PushNotificationReceiptWhereUniqueInput!]
+}
+
+input PushNotificationReceiptCreateWithoutUsersInput {
+  id: ID
+  route: String
+  screen: String
+  uri: String
+  interest: String
+  body: String!
+  title: String
+  recordID: String
+  recordSlug: String
+  sentAt: DateTime!
 }
 
 type PushNotificationReceiptEdge {
@@ -10348,7 +10366,7 @@ input PushNotificationReceiptUpdateDataInput {
   route: String
   screen: String
   uri: String
-  users: UserUpdateManyInput
+  users: UserUpdateManyWithoutPushNotificationsInput
   interest: String
   body: String
   title: String
@@ -10361,7 +10379,7 @@ input PushNotificationReceiptUpdateInput {
   route: String
   screen: String
   uri: String
-  users: UserUpdateManyInput
+  users: UserUpdateManyWithoutPushNotificationsInput
   interest: String
   body: String
   title: String
@@ -10406,9 +10424,33 @@ input PushNotificationReceiptUpdateManyMutationInput {
   sentAt: DateTime
 }
 
+input PushNotificationReceiptUpdateManyWithoutUsersInput {
+  create: [PushNotificationReceiptCreateWithoutUsersInput!]
+  delete: [PushNotificationReceiptWhereUniqueInput!]
+  connect: [PushNotificationReceiptWhereUniqueInput!]
+  set: [PushNotificationReceiptWhereUniqueInput!]
+  disconnect: [PushNotificationReceiptWhereUniqueInput!]
+  update: [PushNotificationReceiptUpdateWithWhereUniqueWithoutUsersInput!]
+  upsert: [PushNotificationReceiptUpsertWithWhereUniqueWithoutUsersInput!]
+  deleteMany: [PushNotificationReceiptScalarWhereInput!]
+  updateMany: [PushNotificationReceiptUpdateManyWithWhereNestedInput!]
+}
+
 input PushNotificationReceiptUpdateManyWithWhereNestedInput {
   where: PushNotificationReceiptScalarWhereInput!
   data: PushNotificationReceiptUpdateManyDataInput!
+}
+
+input PushNotificationReceiptUpdateWithoutUsersDataInput {
+  route: String
+  screen: String
+  uri: String
+  interest: String
+  body: String
+  title: String
+  recordID: String
+  recordSlug: String
+  sentAt: DateTime
 }
 
 input PushNotificationReceiptUpdateWithWhereUniqueNestedInput {
@@ -10416,10 +10458,21 @@ input PushNotificationReceiptUpdateWithWhereUniqueNestedInput {
   data: PushNotificationReceiptUpdateDataInput!
 }
 
+input PushNotificationReceiptUpdateWithWhereUniqueWithoutUsersInput {
+  where: PushNotificationReceiptWhereUniqueInput!
+  data: PushNotificationReceiptUpdateWithoutUsersDataInput!
+}
+
 input PushNotificationReceiptUpsertWithWhereUniqueNestedInput {
   where: PushNotificationReceiptWhereUniqueInput!
   update: PushNotificationReceiptUpdateDataInput!
   create: PushNotificationReceiptCreateInput!
+}
+
+input PushNotificationReceiptUpsertWithWhereUniqueWithoutUsersInput {
+  where: PushNotificationReceiptWhereUniqueInput!
+  update: PushNotificationReceiptUpdateWithoutUsersDataInput!
+  create: PushNotificationReceiptCreateWithoutUsersInput!
 }
 
 input PushNotificationReceiptWhereInput {
@@ -10583,6 +10636,12 @@ input PushNotificationReceiptWhereInput {
 
 input PushNotificationReceiptWhereUniqueInput {
   id: ID
+}
+
+enum PushNotificationStatus {
+  Blocked
+  Granted
+  Denied
 }
 
 type Query {
@@ -12785,6 +12844,8 @@ type User {
   lastName: String!
   role: UserRole!
   roles: [UserRole!]!
+  pushNotificationStatus: PushNotificationStatus!
+  pushNotifications(where: PushNotificationReceiptWhereInput, orderBy: PushNotificationReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PushNotificationReceipt!]
   pushNotification: UserPushNotification
   verificationStatus: UserVerificationStatus!
   verificationMethod: UserVerificationMethod!
@@ -12806,13 +12867,15 @@ input UserCreateInput {
   lastName: String!
   role: UserRole
   roles: UserCreaterolesInput
+  pushNotificationStatus: PushNotificationStatus
+  pushNotifications: PushNotificationReceiptCreateManyWithoutUsersInput
   pushNotification: UserPushNotificationCreateOneInput
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
 }
 
-input UserCreateManyInput {
-  create: [UserCreateInput!]
+input UserCreateManyWithoutPushNotificationsInput {
+  create: [UserCreateWithoutPushNotificationsInput!]
   connect: [UserWhereUniqueInput!]
 }
 
@@ -12823,6 +12886,20 @@ input UserCreateOneInput {
 
 input UserCreaterolesInput {
   set: [UserRole!]
+}
+
+input UserCreateWithoutPushNotificationsInput {
+  id: ID
+  auth0Id: String!
+  email: String!
+  firstName: String!
+  lastName: String!
+  role: UserRole
+  roles: UserCreaterolesInput
+  pushNotificationStatus: PushNotificationStatus
+  pushNotification: UserPushNotificationCreateOneInput
+  verificationStatus: UserVerificationStatus
+  verificationMethod: UserVerificationMethod
 }
 
 type UserEdge {
@@ -12843,6 +12920,8 @@ enum UserOrderByInput {
   lastName_DESC
   role_ASC
   role_DESC
+  pushNotificationStatus_ASC
+  pushNotificationStatus_DESC
   verificationStatus_ASC
   verificationStatus_DESC
   verificationMethod_ASC
@@ -12861,6 +12940,7 @@ type UserPreviousValues {
   lastName: String!
   role: UserRole!
   roles: [UserRole!]!
+  pushNotificationStatus: PushNotificationStatus!
   verificationStatus: UserVerificationStatus!
   verificationMethod: UserVerificationMethod!
   createdAt: DateTime!
@@ -13285,6 +13365,10 @@ input UserScalarWhereInput {
   role_not: UserRole
   role_in: [UserRole!]
   role_not_in: [UserRole!]
+  pushNotificationStatus: PushNotificationStatus
+  pushNotificationStatus_not: PushNotificationStatus
+  pushNotificationStatus_in: [PushNotificationStatus!]
+  pushNotificationStatus_not_in: [PushNotificationStatus!]
   verificationStatus: UserVerificationStatus
   verificationStatus_not: UserVerificationStatus
   verificationStatus_in: [UserVerificationStatus!]
@@ -13339,6 +13423,8 @@ input UserUpdateDataInput {
   lastName: String
   role: UserRole
   roles: UserUpdaterolesInput
+  pushNotificationStatus: PushNotificationStatus
+  pushNotifications: PushNotificationReceiptUpdateManyWithoutUsersInput
   pushNotification: UserPushNotificationUpdateOneInput
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
@@ -13351,6 +13437,8 @@ input UserUpdateInput {
   lastName: String
   role: UserRole
   roles: UserUpdaterolesInput
+  pushNotificationStatus: PushNotificationStatus
+  pushNotifications: PushNotificationReceiptUpdateManyWithoutUsersInput
   pushNotification: UserPushNotificationUpdateOneInput
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
@@ -13363,20 +13451,9 @@ input UserUpdateManyDataInput {
   lastName: String
   role: UserRole
   roles: UserUpdaterolesInput
+  pushNotificationStatus: PushNotificationStatus
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
-}
-
-input UserUpdateManyInput {
-  create: [UserCreateInput!]
-  update: [UserUpdateWithWhereUniqueNestedInput!]
-  upsert: [UserUpsertWithWhereUniqueNestedInput!]
-  delete: [UserWhereUniqueInput!]
-  connect: [UserWhereUniqueInput!]
-  set: [UserWhereUniqueInput!]
-  disconnect: [UserWhereUniqueInput!]
-  deleteMany: [UserScalarWhereInput!]
-  updateMany: [UserUpdateManyWithWhereNestedInput!]
 }
 
 input UserUpdateManyMutationInput {
@@ -13386,8 +13463,21 @@ input UserUpdateManyMutationInput {
   lastName: String
   role: UserRole
   roles: UserUpdaterolesInput
+  pushNotificationStatus: PushNotificationStatus
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
+}
+
+input UserUpdateManyWithoutPushNotificationsInput {
+  create: [UserCreateWithoutPushNotificationsInput!]
+  delete: [UserWhereUniqueInput!]
+  connect: [UserWhereUniqueInput!]
+  set: [UserWhereUniqueInput!]
+  disconnect: [UserWhereUniqueInput!]
+  update: [UserUpdateWithWhereUniqueWithoutPushNotificationsInput!]
+  upsert: [UserUpsertWithWhereUniqueWithoutPushNotificationsInput!]
+  deleteMany: [UserScalarWhereInput!]
+  updateMany: [UserUpdateManyWithWhereNestedInput!]
 }
 
 input UserUpdateManyWithWhereNestedInput {
@@ -13415,9 +13505,22 @@ input UserUpdaterolesInput {
   set: [UserRole!]
 }
 
-input UserUpdateWithWhereUniqueNestedInput {
+input UserUpdateWithoutPushNotificationsDataInput {
+  auth0Id: String
+  email: String
+  firstName: String
+  lastName: String
+  role: UserRole
+  roles: UserUpdaterolesInput
+  pushNotificationStatus: PushNotificationStatus
+  pushNotification: UserPushNotificationUpdateOneInput
+  verificationStatus: UserVerificationStatus
+  verificationMethod: UserVerificationMethod
+}
+
+input UserUpdateWithWhereUniqueWithoutPushNotificationsInput {
   where: UserWhereUniqueInput!
-  data: UserUpdateDataInput!
+  data: UserUpdateWithoutPushNotificationsDataInput!
 }
 
 input UserUpsertNestedInput {
@@ -13425,10 +13528,10 @@ input UserUpsertNestedInput {
   create: UserCreateInput!
 }
 
-input UserUpsertWithWhereUniqueNestedInput {
+input UserUpsertWithWhereUniqueWithoutPushNotificationsInput {
   where: UserWhereUniqueInput!
-  update: UserUpdateDataInput!
-  create: UserCreateInput!
+  update: UserUpdateWithoutPushNotificationsDataInput!
+  create: UserCreateWithoutPushNotificationsInput!
 }
 
 enum UserVerificationMethod {
@@ -13518,6 +13621,13 @@ input UserWhereInput {
   role_not: UserRole
   role_in: [UserRole!]
   role_not_in: [UserRole!]
+  pushNotificationStatus: PushNotificationStatus
+  pushNotificationStatus_not: PushNotificationStatus
+  pushNotificationStatus_in: [PushNotificationStatus!]
+  pushNotificationStatus_not_in: [PushNotificationStatus!]
+  pushNotifications_every: PushNotificationReceiptWhereInput
+  pushNotifications_some: PushNotificationReceiptWhereInput
+  pushNotifications_none: PushNotificationReceiptWhereInput
   pushNotification: UserPushNotificationWhereInput
   verificationStatus: UserVerificationStatus
   verificationStatus_not: UserVerificationStatus
