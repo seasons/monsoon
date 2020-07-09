@@ -522,6 +522,12 @@ enum UserVerificationStatus {
   Pending
 }
 
+enum PushNotificationStatus {
+   Blocked
+   Granted
+   Denied
+ }
+ 
 type User {
   id: ID! @id
   auth0Id: String! @unique
@@ -530,6 +536,9 @@ type User {
   lastName: String!
   role: UserRole! @default(value: Customer)
   roles: [UserRole!]! @scalarList(strategy: RELATION)
+  pushNotificationStatus: PushNotificationStatus! @default(value: Denied)
+  pushNotifications: [PushNotificationReceipt!]
+     @relation(name: "UserToPushNotificationReceipts")
   pushNotification: UserPushNotification
   verificationStatus: UserVerificationStatus! @default(value: Pending)
   verificationMethod: UserVerificationMethod! @default(value: None)
