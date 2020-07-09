@@ -222,7 +222,7 @@ export class AuthService {
         function handleResponse(error, response, body) {
           // Handle a generic error
           if (error) {
-            return reject(new Error(`Error creating Auth0 user: ${error}`))
+            return reject(new Error(`Error creating new Auth0 user ${error}`))
           }
 
           // Handle 400 error
@@ -231,6 +231,7 @@ export class AuthService {
               switch (bodyCode) {
                 case "invalid_signup":
                   return "Email already associated with an account."
+                case "invalid_password":
                 case "password_strength_error":
                   return `Password too weak. See password rules at ${PW_STRENGTH_RULES_URL}.`
                 case "password_dictionary_error":
@@ -242,18 +243,18 @@ export class AuthService {
               }
             }
             return reject(
-              new Error(`[400 ${body.code}] ${messageFor(body.code)}`)
+              new Error(
+                `[400 ${body.code}] Error creating new Auth0 user: ${messageFor(
+                  body.code
+                )}`
+              )
             )
           }
 
           // If any other error occured, expose a generic error message
           if (response.statusCode !== 200) {
-            return reject(
-              new Error(
-                `Error creating new Auth0 user. Auth0 returned ` +
-                  `${response.statusCode} with body: ${JSON.stringify(body)}`
-              )
-            )
+            const metadata = `[${response.statusCode} ${body.code}]`
+            return reject(new Error(`${metadata} ${JSON.stringify(body)}`))
           }
 
           // Otherwise resolve
