@@ -7,14 +7,15 @@ import {
 } from "@nestjs/common"
 import { ModuleRef } from "@nestjs/core"
 import { GqlExecutionContext, GraphQLExecutionContext } from "@nestjs/graphql"
+import DataLoader from "dataloader"
+import { isUndefined } from "lodash"
 import { Observable } from "rxjs"
 
-import { LoaderParams, NestDataLoader } from "../dataloader.types"
-
-/**
- * Context key where get loader function will be store
- */
-export const GET_LOADER_CONTEXT_KEY: string = "GET_LOADER_CONTEXT_KEY"
+import {
+  DataloaderContext,
+  LoaderParams,
+  NestDataLoader,
+} from "../dataloader.types"
 
 @Injectable()
 export class DataLoaderInterceptor implements NestInterceptor {
@@ -27,19 +28,21 @@ export class DataLoaderInterceptor implements NestInterceptor {
     const graphqlExecutionContext: GraphQLExecutionContext = GqlExecutionContext.create(
       context
     )
-    const ctx: any = graphqlExecutionContext.getContext()
+    const ctx: DataloaderContext = graphqlExecutionContext.getContext()
 
-    if (ctx[GET_LOADER_CONTEXT_KEY] === undefined) {
-      ctx[GET_LOADER_CONTEXT_KEY] = ({
+    if (isUndefined(ctx.dataloaders)) {
+      ctx.dataloaders = new Map()
+      ctx.getDataLoader = ({
         name,
         type,
-        generateParams = null,
-      }: LoaderParams & { name: "string" }): NestDataLoader => {
-        if (ctx[name] === undefined) {
+        params = null,
+      }: LoaderParams): DataLoader<any, any> => {
+        if (!ctx.dataloaders.has(name)) {
           try {
-            ctx[name] = this.moduleRef
-              .get<NestDataLoader>(type, { strict: false })
-              .generateDataLoader(generateParams)
+            const loader = this.moduleRef.get<NestDataLoader>(type, {
+              strict: false,
+            })
+            ctx.dataloaders.set(name, loader.generateDataLoader(params))
           } catch (e) {
             throw new InternalServerErrorException(
               `The loader ${type} is not provided`
@@ -47,7 +50,7 @@ export class DataLoaderInterceptor implements NestInterceptor {
           }
         }
 
-        return ctx[name]
+        return ctx.dataloaders.get(name)
       }
     }
 

@@ -11,9 +11,9 @@ import {
   InvoicesDataLoader,
   TransactionsDataLoader,
 } from "@modules/Payment/payment.types"
-import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
+import { Info, Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma/prisma.service"
-import { head } from "lodash"
+import { head, isObject } from "lodash"
 
 const getUserIDGenerateParams = {
   query: `customers`,
@@ -73,7 +73,7 @@ export class CustomerFieldsResolver {
     transactionsForCustomerLoader: TransactionsDataLoader,
     @Loader({
       type: PrismaLoader.name,
-      generateParams: getUserIDGenerateParams,
+      params: getUserIDGenerateParams,
     })
     prismaLoader: PrismaDataLoader<string>
   ) {
@@ -92,11 +92,11 @@ export class CustomerFieldsResolver {
     @Parent() customer,
     @Loader({
       type: PrismaLoader.name,
-      generateParams: {
+      params: {
         query: `customers`,
-        info: `{ 
+        info: `{
           id
-          plan 
+          plan
         }`,
         formatData: a => a.plan,
       },
@@ -104,15 +104,15 @@ export class CustomerFieldsResolver {
     prismaLoader: PrismaDataLoader<any>,
     @Loader({
       type: PrismaLoader.name,
-      generateParams: {
+      params: {
         formatWhere: (ids: string[]) => ({
           where: { planID_in: ids },
         }),
         query: `paymentPlans`,
-        info: "FROM_CONTEXT",
         infoFragment: `fragment EnsurePlanID on PaymentPlan {planID}`,
         getKey: a => a.planID,
       },
+      includeInfo: true,
     })
     paymentPlanLoader: PrismaDataLoader<PaymentPlan>
   ) {
@@ -139,7 +139,7 @@ export class CustomerFieldsResolver {
     transactionsForCustomerLoader: TransactionsDataLoader,
     @Loader({
       type: PrismaLoader.name,
-      generateParams: getUserIDGenerateParams,
+      params: getUserIDGenerateParams,
     })
     prismaLoader: PrismaDataLoader<string>
   ) {
@@ -159,15 +159,19 @@ export class CustomerFieldsResolver {
     @Parent() customer,
     @Loader({
       type: PrismaLoader.name,
-      generateParams: getUserIDGenerateParams,
+      params: getUserIDGenerateParams,
     })
     userIdLoader: PrismaDataLoader<string>,
     @Loader({
       type: PrismaLoader.name,
-      generateParams: { query: "users", info: "FROM_CONTEXT" },
+      params: { query: "users" },
+      includeInfo: true,
     })
     userLoader: PrismaDataLoader<any>
   ) {
+    if (isObject(customer.user)) {
+      return customer.user
+    }
     const userId = await userIdLoader.load(customer.id)
     const user = await userLoader.load(userId)
     return user

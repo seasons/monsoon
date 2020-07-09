@@ -1,53 +1,63 @@
+import qs from "querystring"
+
 import {
   ExecutionContext,
   InternalServerErrorException,
   createParamDecorator,
 } from "@nestjs/common"
 import { APP_INTERCEPTOR } from "@nestjs/core"
+import { isUndefined } from "lodash"
+import sha1 from "sha1"
 
-import { LoaderParams } from "../dataloader.types"
-import {
-  DataLoaderInterceptor,
-  GET_LOADER_CONTEXT_KEY,
-} from "../interceptors/dataloader.interceptor"
+import { DataloaderContext, LoaderParams } from "../dataloader.types"
+import { DataLoaderInterceptor } from "../interceptors/dataloader.interceptor"
 
 export const Loader: (
   params: LoaderParams
 ) => ParameterDecorator = createParamDecorator(
   (data: LoaderParams, context: ExecutionContext) => {
-    const [obj, args, ctx, info] = context.getArgs()
-    if (ctx[GET_LOADER_CONTEXT_KEY] === undefined) {
+    const [obj, args, ctx, info]: [
+      any,
+      any,
+      DataloaderContext,
+      any
+    ] = context.getArgs()
+
+    if (isUndefined(ctx.dataloaders)) {
       throw new InternalServerErrorException(`
         You should provide interceptor ${DataLoaderInterceptor.name} globally with ${APP_INTERCEPTOR}
       `)
     }
 
-    // If the info property is an object, that means the original
-    // value was FROM_CONTEXT. Use it to get the loader's name.
-    const originalGenerateParams = { ...data.generateParams }
-    if (typeof originalGenerateParams === "object") {
-      originalGenerateParams.info = "FROM_CONTEXT"
-    }
+    const { operationName, variables } = ctx.req.body
+
+    const key = createKey(data.type, operationName, variables, data.params)
+
     const adjustedData = {
       ...data,
-      name: createName(data.type, originalGenerateParams),
+      name: key,
     }
 
     // If needed, get the info from the context
-    if (adjustedData.generateParams?.info === "FROM_CONTEXT") {
-      adjustedData.generateParams.info = info
+    if (data.includeInfo === true) {
+      adjustedData.params.info = info
     }
 
-    return ctx[GET_LOADER_CONTEXT_KEY](adjustedData)
+    return ctx.getDataLoader(adjustedData)
   }
 )
 
-const createName = (type, generateParams) => {
-  let name = type
-  for (const key of Object.keys(generateParams || {})) {
-    name += paramToString(generateParams[key])
+const createKey = (type, operationName, variables, params) => {
+  let name = `${type}-${params.query}-${operationName}-${qs.stringify(
+    variables
+  )}`
+
+  let paramString = ""
+  for (const key of Object.keys(params || {})) {
+    paramString += paramToString(params[key])
   }
-  return name
+
+  return `${name}-${sha1(paramString)}` // hash param string for brevity
 }
 
 const paramToString = p => {

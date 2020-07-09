@@ -9,7 +9,7 @@ export class PhysicalProductFieldsResolver {
     @Parent() physicalProduct,
     @Loader({
       type: PrismaLoader.name,
-      generateParams: {
+      params: {
         query: "physicalProducts",
         info: `{ id sequenceNumber }`,
         formatData: a => `SZNS` + `${a.sequenceNumber}`.padStart(5, "0"),
