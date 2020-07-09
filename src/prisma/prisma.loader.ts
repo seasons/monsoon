@@ -6,8 +6,9 @@ import {
 import { Injectable } from "@nestjs/common"
 import DataLoader from "dataloader"
 import { PrismaService } from "./prisma.service"
-import { identity, upperFirst } from "lodash"
+import { identity, isNull } from "lodash"
 import { addFragmentToInfo } from "graphql-binding"
+
 
 export type PrismaDataLoader<V=any> = DataLoader<string, V>
 
@@ -33,7 +34,7 @@ export class PrismaLoader implements NestDataLoader {
     }: GenerateParams
   ) {
     let adjustedInfo = info as any
-    if (typeof info === "object" && !!infoFragment) {
+    if (typeof info === "object" && !isNull(infoFragment)) {
       adjustedInfo = addFragmentToInfo(info, infoFragment)
     }
     const data = await this.prisma.binding.query[query](

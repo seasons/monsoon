@@ -8,10 +8,11 @@ export class CustomerQueriesResolver {
 
   @Query()
   async customer(@Args() args, @Info() info) {
-    return await this.prisma.binding.query.customer(
+    const data = await this.prisma.binding.query.customer(
       args,
       addFragmentToInfo(info, `fragment EnsureId on Customer {id}`)
     )
+    return data
   }
 
   @Query()
