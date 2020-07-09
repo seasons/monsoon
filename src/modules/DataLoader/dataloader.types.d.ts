@@ -7,7 +7,7 @@ export interface NestDataLoader {
    */
   generateDataLoader(generateParams: any): DataLoader<any, any>
 }
-export type GenerateParamsInfo = string | "FROM_CONTEXT"
+export type GenerateParamsInfo = string
 
 export interface GenerateParams {
   query: string
