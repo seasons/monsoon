@@ -554,6 +554,8 @@ type CustomerDetail {
   # The weight range [min, max], where max = min + 10
   weight: [Int] @scalarList(strategy: RELATION)
   bodyType: String
+  averageTopSize: String
+  averageWaistSize: String
   topSizes: [String] @scalarList(strategy: RELATION)
   waistSizes: [Int] @scalarList(strategy: RELATION)
   averagePantLength: String
