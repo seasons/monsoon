@@ -7,6 +7,7 @@ import {
 } from "@nestjs/common"
 import { APP_INTERCEPTOR } from "@nestjs/core"
 import { isUndefined } from "lodash"
+import sha1 from "sha1"
 
 import { DataloaderContext, LoaderParams } from "../dataloader.types"
 import { DataLoaderInterceptor } from "../interceptors/dataloader.interceptor"
@@ -30,9 +31,7 @@ export const Loader: (
 
     const { operationName, variables } = ctx.req.body
 
-    const key = `${data.type}-${operationName}${
-      data.params ? "-" + data.params.query : ""
-    }-${qs.stringify(variables)}`
+    const key = createKey(data.type, operationName, variables, data.params)
 
     const adjustedData = {
       ...data,
@@ -47,3 +46,20 @@ export const Loader: (
     return ctx.getDataLoader(adjustedData)
   }
 )
+
+const createKey = (type, operationName, variables, params) => {
+  let name = `${type}-${params.query}-${operationName}-${qs.stringify(
+    variables
+  )}`
+
+  let paramString = ""
+  for (const key of Object.keys(params || {})) {
+    paramString += paramToString(params[key])
+  }
+
+  return `${name}-${sha1(paramString)}` // hash param string for brevity
+}
+
+const paramToString = p => {
+  return p.toString().replace(/ /g, "").replace(/\n/g, "")
+}
