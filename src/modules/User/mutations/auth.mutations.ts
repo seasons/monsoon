@@ -9,7 +9,12 @@ export class AuthMutationsResolver {
 
   @Mutation()
   async login(@Args() { email, password }, @User() requestUser) {
-    return this.authService.loginUser({ email, password, requestUser })
+    const data = await this.authService.loginUser({
+      email,
+      password,
+      requestUser,
+    })
+    return data
   }
 
   @Mutation()

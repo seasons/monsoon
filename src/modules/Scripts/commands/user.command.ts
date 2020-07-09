@@ -1,11 +1,6 @@
 import { PaymentService } from "@app/modules/Payment/index"
-import {
-  BillingAddress,
-  Card,
-  PlanId,
-} from "@app/modules/Payment/payment.types"
+import { BillingAddress, Card } from "@app/modules/Payment/payment.types"
 import { UtilsService } from "@app/modules/Utils"
-import { AirtableService } from "@modules/Airtable"
 import { AuthService } from "@modules/User"
 import { Injectable, Logger } from "@nestjs/common"
 import { ModuleRef } from "@nestjs/core"
@@ -223,6 +218,7 @@ export class UserCommands {
       expiryYear: "2022",
       cvv: "222",
     }
+    this.logger.log("Updating customer")
     await this.prisma.client.updateCustomer({
       data: {
         plan,
