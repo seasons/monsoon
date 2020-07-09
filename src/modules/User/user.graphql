@@ -74,6 +74,8 @@ type User {
   createdAt: DateTime!
   updatedAt: DateTime!
   completeAccountURL: String!
+  pushNotifications: [PushNotificationReceipt!]
+  pushNotificationStatus: PushNotificationStatus!
   pushNotification: UserPushNotification
   beamsToken: String!
 }
