@@ -3,8 +3,19 @@ type Query {
     planID: PlanID!
     userIDHash: String!
   ): ChargebeeHostedPagePayload
+  hostedChargebeeCheckout(planID: PlanID!): ChargebeeHostedPagePayload
+    @hasRole(roles: [Customer])
   chargebeeUpdatePaymentPage: ChargebeeHostedPagePayload
     @hasRole(roles: [Customer])
+  paymentPlans(
+    where: PaymentPlanWhereInput
+    orderBy: PaymentPlanOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [PaymentPlan]
 }
 
 type Mutation {
@@ -107,6 +118,10 @@ type CreditNote {
   status: CreditNoteStatus
 }
 
+type ChargebeePlanPayload {
+  plans: [Plan]
+}
+
 type BillingInfoPayload {
   billingInfo: BillingInfo
   plan: Plan
@@ -131,4 +146,13 @@ input RefundInvoiceInput {
   comment: String
   customerNotes: String
   reasonCode: CreditNoteReasonCodeInput
+}
+
+type PaymentPlan {
+  id: String!
+  description: String
+  planID: String!
+  status: String
+  name: String
+  price: Int
 }

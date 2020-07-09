@@ -1,11 +1,6 @@
 import { PaymentService } from "@app/modules/Payment/index"
-import {
-  BillingAddress,
-  Card,
-  PlanId,
-} from "@app/modules/Payment/payment.types"
+import { BillingAddress, Card } from "@app/modules/Payment/payment.types"
 import { UtilsService } from "@app/modules/Utils"
-import { AirtableService } from "@modules/Airtable"
 import { AuthService } from "@modules/User"
 import { Injectable, Logger } from "@nestjs/common"
 import { ModuleRef } from "@nestjs/core"
@@ -130,9 +125,9 @@ export class UserCommands {
       alias: "s",
       describe: "Desired customer status",
       type: "string",
-      default: "Customer",
+      default: "Active",
       choices: [
-        "Invted",
+        "Invited",
         "Created",
         "Waitlisted",
         "Authorized",
@@ -172,8 +167,8 @@ export class UserCommands {
     let user
     let tokenData
     const address: BillingAddress = {
-      firstName: firstName,
-      lastName: lastName,
+      firstName,
+      lastName,
       line1: "138 Mulberry St",
       city: "New York",
       state: "NY",
@@ -187,18 +182,15 @@ export class UserCommands {
         password,
         firstName,
         lastName,
+        zipCode: "10013",
         details: {
-          phoneNumber: "(646) 350-2715",
+          phoneNumber: "+16463502715",
           height: 40 + faker.random.number(32),
-          weight: "152lb",
+          weight: { set: [150, 160] },
           bodyType: "Athletic",
           shippingAddress: {
             create: {
-              slug,
               name: `${firstName} ${lastName}`,
-              address1: address.line1,
-              city: address.city,
-              state: address.state,
               zipCode: address.zip,
             },
           },
@@ -226,6 +218,7 @@ export class UserCommands {
       expiryYear: "2022",
       cvv: "222",
     }
+    this.logger.log("Updating customer")
     await this.prisma.client.updateCustomer({
       data: {
         plan,
@@ -238,7 +231,7 @@ export class UserCommands {
             expiration_year: parseInt(card.expiryYear, 10),
           },
         },
-        status: status || "Active",
+        status,
         user: { update: { roles: { set: roles } } },
       },
       where: { id: customer.id },

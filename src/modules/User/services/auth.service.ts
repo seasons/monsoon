@@ -1,8 +1,10 @@
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { CustomerDetail } from "@app/prisma/prisma.binding"
-import { AirtableService } from "@modules/Airtable/services/airtable.service"
 import { Injectable } from "@nestjs/common"
-import { CustomerDetailCreateInput } from "@prisma/index"
+import {
+  CustomerDetailCreateInput,
+  UserPushNotificationInterestType,
+} from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
 import { ForbiddenError, UserInputError } from "apollo-server"
 import { head } from "lodash"
@@ -27,7 +29,6 @@ interface Auth0User {
 export class AuthService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly airtable: AirtableService,
     private readonly pushNotification: PushNotificationService
   ) {}
 
@@ -36,12 +37,14 @@ export class AuthService {
     password,
     firstName,
     lastName,
+    zipCode,
     details,
   }: {
     email: string
     password: string
     firstName: string
     lastName: string
+    zipCode: string
     details: CustomerDetailCreateInput
   }) {
     // 1. Register the user on Auth0
@@ -108,24 +111,6 @@ export class AuthService {
     // If the user is a Customer, make sure that the account has been approved
     if (!user) {
       throw new Error("User record not found")
-    }
-
-    if (user.roles.includes("Customer")) {
-      const customer = await this.getCustomerFromUserID(user.id)
-
-      // TODO: remove customer.status check once we implement new onboarding flow
-      if (
-        customer &&
-        ![
-          "Active",
-          "Authorized",
-          "Paused",
-          "Suspended",
-          "Deactivated",
-        ].includes(customer.status)
-      ) {
-        throw new Error(`User account has not been approved`)
-      }
     }
 
     return {
@@ -299,12 +284,36 @@ export class AuthService {
   }
 
   private async createPrismaUser(auth0Id, email, firstName, lastName) {
-    const user = await this.prisma.client.createUser({
+    let user = await this.prisma.client.createUser({
       auth0Id,
       email,
       firstName,
       lastName,
       roles: { set: ["Customer"] }, // defaults to customer
+    })
+    const defaultPushNotificationInterests = [
+      "General",
+      "Blog",
+      "Bag",
+      "NewProduct",
+    ] as UserPushNotificationInterestType[]
+    user = await this.prisma.client.updateUser({
+      where: { id: user.id },
+      data: {
+        pushNotification: {
+          create: {
+            interests: {
+              create: defaultPushNotificationInterests.map(type => ({
+                type,
+                value: "",
+                user: { connect: { id: user.id } },
+                status: true,
+              })),
+            },
+            status: true,
+          },
+        },
+      },
     })
     return user
   }

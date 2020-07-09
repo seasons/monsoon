@@ -15,6 +15,38 @@ export class ChargebeeQueriesResolver {
   ) {}
 
   @Query()
+  async hostedChargebeeCheckout(
+    @Args() { planID },
+    @Customer() customer,
+    @User() user,
+    @Context() ctx
+  ) {
+    const { email, firstName, lastName } = user
+    const { phoneNumber } = await this.prisma.client
+      .customer({ id: customer.id })
+      .detail()
+    const hostedPage = await this.paymentService.getHostedCheckoutPage(
+      planID,
+      user.id,
+      email,
+      firstName,
+      lastName,
+      phoneNumber
+    )
+
+    // Track the selection
+    ctx.analytics.track({
+      userId: user.id,
+      event: "Opened Hosted Checkout",
+      properties: {
+        plan: planID,
+      },
+    })
+
+    return hostedPage
+  }
+
+  @Query()
   async chargebeeCheckout(@Args() { planID, userIDHash }, @Context() ctx) {
     const userID = this.utils.decryptUserIDHash(userIDHash)
     const user = await this.prisma.client.user({ id: userID })

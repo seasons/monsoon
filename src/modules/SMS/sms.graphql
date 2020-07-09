@@ -1,0 +1,6 @@
+type Mutation {
+  startSMSVerification(phoneNumber: String!): Boolean!
+    @hasRole(roles: [Customer])
+  checkSMSVerification(code: String!): UserVerificationStatus!
+    @hasRole(roles: [Customer])
+}

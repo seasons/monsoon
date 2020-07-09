@@ -9,12 +9,17 @@ export class AuthMutationsResolver {
 
   @Mutation()
   async login(@Args() { email, password }, @User() requestUser) {
-    return this.authService.loginUser({ email, password, requestUser })
+    const data = await this.authService.loginUser({
+      email,
+      password,
+      requestUser,
+    })
+    return data
   }
 
   @Mutation()
   async signup(
-    @Args() { email, password, firstName, lastName, details },
+    @Args() { email, password, firstName, lastName, zipCode, details },
     @Context() ctx
   ) {
     const { user, tokenData, customer } = await this.authService.signupUser({
@@ -22,6 +27,7 @@ export class AuthMutationsResolver {
       password,
       firstName,
       lastName,
+      zipCode,
       details,
     })
 

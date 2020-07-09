@@ -2,11 +2,8 @@ import "module-alias/register"
 
 import * as Airtable from "airtable"
 
-import { AirtableBaseService } from "../modules/Airtable/services/airtable.base.service"
-import { AirtableService } from "../modules/Airtable/services/airtable.service"
-import { AirtableUtilsService } from "../modules/Airtable/services/airtable.utils.service"
-import { DataScheduledJobs } from "../modules/Cron/services/data.service"
-import { UtilsService } from "../modules/Utils"
+import { DataScheduledJobs } from "../modules/Cron/services/data.job.service"
+import { SlackService } from "../modules/Slack/services/slack.service"
 import { PrismaService } from "../prisma/prisma.service"
 
 Airtable.configure({
@@ -16,15 +13,9 @@ Airtable.configure({
 
 const run = async () => {
   const ps = new PrismaService()
-  const abs = new AirtableBaseService()
-  const dj = new DataScheduledJobs(
-    new AirtableService(abs, new AirtableUtilsService(abs)),
-    ps,
-    null,
-    new UtilsService(ps)
-  )
+  const dj = new DataScheduledJobs(ps, new SlackService())
   try {
-    await dj.checkAll()
+    await dj.airtableToPrismaHealthCheck()
   } catch (err) {
     console.log(err)
   }

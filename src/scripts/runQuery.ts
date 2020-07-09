@@ -1,7 +1,5 @@
 import "module-alias/register"
 
-import { set } from "lodash"
-
 import { PrismaService } from "../prisma/prisma.service"
 
 const run = async () => {

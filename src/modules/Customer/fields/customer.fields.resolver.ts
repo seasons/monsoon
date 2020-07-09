@@ -1,5 +1,6 @@
 import { User } from "@app/decorators"
 import { TransactionsForCustomersLoader } from "@app/modules/Payment/loaders/transactionsForCustomers.loader"
+import { PaymentPlan, Plan } from "@app/prisma"
 import { PrismaDataLoader, PrismaLoader } from "@app/prisma/prisma.loader"
 import { Loader } from "@modules/DataLoader"
 import {
@@ -10,13 +11,18 @@ import {
   InvoicesDataLoader,
   TransactionsDataLoader,
 } from "@modules/Payment/payment.types"
-import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
+import { Info, Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma/prisma.service"
-import { head } from "lodash"
+import { head, isObject } from "lodash"
 
 const getUserIDGenerateParams = {
   query: `customers`,
-  info: `{user {id}}`,
+  info: `{
+    id
+    user {
+      id
+    }
+  }`,
   formatData: a => a.user.id,
 }
 @Resolver("Customer")
@@ -62,14 +68,12 @@ export class CustomerFieldsResolver {
   async transactions(
     @Parent() customer,
     @Loader({
-      name: "TransactionsFieldTransactionsForCustomerLoader",
       type: TransactionsForCustomersLoader.name,
     })
     transactionsForCustomerLoader: TransactionsDataLoader,
     @Loader({
-      name: "TransactionsFieldPrismaLoader",
       type: PrismaLoader.name,
-      generateParams: getUserIDGenerateParams,
+      params: getUserIDGenerateParams,
     })
     prismaLoader: PrismaDataLoader<string>
   ) {
@@ -84,22 +88,58 @@ export class CustomerFieldsResolver {
   }
 
   @ResolveField()
+  async paymentPlan(
+    @Parent() customer,
+    @Loader({
+      type: PrismaLoader.name,
+      params: {
+        query: `customers`,
+        info: `{
+          id
+          plan
+        }`,
+        formatData: a => a.plan,
+      },
+    })
+    prismaLoader: PrismaDataLoader<any>,
+    @Loader({
+      type: PrismaLoader.name,
+      params: {
+        formatWhere: (ids: string[]) => ({
+          where: { planID_in: ids },
+        }),
+        query: `paymentPlans`,
+        infoFragment: `fragment EnsurePlanID on PaymentPlan {planID}`,
+        getKey: a => a.planID,
+      },
+      includeInfo: true,
+    })
+    paymentPlanLoader: PrismaDataLoader<PaymentPlan>
+  ) {
+    const plan = await prismaLoader.load(customer.id)
+    if (!plan) {
+      return null
+    }
+    const paymentPlan = await paymentPlanLoader.load(
+      this.paymentService.prismaPlanToChargebeePlanId(plan)
+    )
+    return paymentPlan
+  }
+
+  @ResolveField()
   async invoices(
     @Parent() customer,
     @Loader({
-      name: "InvoicesFieldInvoicesForCustomerLoader",
       type: InvoicesForCustomersLoader.name,
     })
     invoicesLoader: InvoicesDataLoader,
     @Loader({
-      name: "InvoicesFieldTransactionsForCustomerLoader",
       type: TransactionsForCustomersLoader.name,
     })
     transactionsForCustomerLoader: TransactionsDataLoader,
     @Loader({
-      name: "InvoicesFieldPrismaLoader",
       type: PrismaLoader.name,
-      generateParams: getUserIDGenerateParams,
+      params: getUserIDGenerateParams,
     })
     prismaLoader: PrismaDataLoader<string>
   ) {
@@ -118,19 +158,65 @@ export class CustomerFieldsResolver {
   async user(
     @Parent() customer,
     @Loader({
-      name: "UserFieldPrismaUserIdLoader",
       type: PrismaLoader.name,
-      generateParams: getUserIDGenerateParams,
+      params: getUserIDGenerateParams,
     })
     userIdLoader: PrismaDataLoader<string>,
     @Loader({
-      name: "UserFieldPrismaUserLoader",
       type: PrismaLoader.name,
-      generateParams: { query: "users", info: "FROM_CONTEXT" },
+      params: { query: "users" },
+      includeInfo: true,
     })
     userLoader: PrismaDataLoader<any>
   ) {
+    if (isObject(customer.user)) {
+      return customer.user
+    }
     const userId = await userIdLoader.load(customer.id)
-    return userLoader.load(userId)
+    const user = await userLoader.load(userId)
+    return user
+  }
+
+  @ResolveField()
+  async onboardingSteps(@Parent() customer) {
+    const steps: string[] = []
+
+    const verificationStatus = await this.prisma.client
+      .customer({ id: customer.id })
+      .user()
+      .verificationStatus()
+    const height = await this.prisma.client
+      .customer({ id: customer.id })
+      .detail()
+      .height()
+    const style = await this.prisma.client
+      .customer({ id: customer.id })
+      .detail()
+      .stylePreferences()
+    const shippingAddress = await this.prisma.client
+      .customer({ id: customer.id })
+      .detail()
+      .shippingAddress()
+      .address1()
+
+    const values = [
+      verificationStatus === "Approved",
+      height !== null,
+      style !== null,
+      shippingAddress !== null,
+    ]
+    const keys = [
+      "VerifiedPhone",
+      "SetMeasurements",
+      "SetStylePreferences",
+      "SetShippingAddress",
+    ]
+    for (let i = 0; i < values.length; i++) {
+      if (values[i]) {
+        steps.push(keys[i])
+      }
+    }
+
+    return steps
   }
 }

@@ -6,7 +6,9 @@ import {
 import { Injectable } from "@nestjs/common"
 import DataLoader from "dataloader"
 import { PrismaService } from "./prisma.service"
-import { identity } from "lodash"
+import { identity, isNull } from "lodash"
+import { addFragmentToInfo } from "graphql-binding"
+
 
 export type PrismaDataLoader<V=any> = DataLoader<string, V>
 
@@ -15,24 +17,42 @@ export class PrismaLoader implements NestDataLoader {
   constructor(private readonly prisma: PrismaService) {}
 
   generateDataLoader(params: GenerateParams): PrismaDataLoader {
-    //@ts-ignore
-    return new DataLoader<string, any>((recordIds: string[]) =>
-      this.fetchData(recordIds, params)
+    return new DataLoader<string, any>((keys: string[]) =>
+      this.fetchData(keys, params)
     )
   }
 
   private async fetchData(
-    recordIds: string[],
-    { query, info, formatData = identity, formatWhere = this.defaultFormatWhere }: GenerateParams
+    keys: string[],
+    {
+      query,
+      info,
+      infoFragment = null,
+      formatData = identity,
+      getKey = a => a.id,
+      formatWhere = this.defaultFormatWhere 
+    }: GenerateParams
   ) {
-
+    let adjustedInfo = info as any
+    if (typeof info === "object" && !isNull(infoFragment)) {
+      adjustedInfo = addFragmentToInfo(info, infoFragment)
+    }
     const data = await this.prisma.binding.query[query](
-        formatWhere(recordIds),
-        info
+        formatWhere(keys),
+        adjustedInfo
       )
+    const map = {}
+    data.forEach(item => {
+      const key = getKey(item)
+      if (!key) {
+        throw new Error(`Key not found: ${key}`)
+      }
+      map[key] = item
+    })
 
-    return data.map(formatData)
+    const result = keys.map(key => formatData(map[key]))
+    return Promise.resolve(result)
   }
 
-  private defaultFormatWhere = (recordIds: string[]) => ({where: {id_in: recordIds}})
+  private defaultFormatWhere = (keys: string[]) => ({where: {id_in: keys}})
 }

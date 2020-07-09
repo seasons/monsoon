@@ -118,12 +118,6 @@ enum QuestionType {
   FreeResponse
 }
 
-enum PushNotificationStatus {
-  Blocked
-  Granted
-  Denied
-}
-
 enum Rating {
   Disliked
   Ok
@@ -212,6 +206,14 @@ enum ReservationPhase {
   CustomerToBusiness
 }
 
+enum UserPushNotificationInterestType {
+  General
+  Blog
+  Bag
+  NewProduct
+  Brand
+}
+
 type Brand {
   id: ID! @id
   slug: String! @unique
@@ -238,6 +240,7 @@ type Category {
   visible: Boolean! @default(value: false)
   products: [Product!]!
   children: [Category!]! @relation(name: "CategoryToChildren")
+  updatedAt: DateTime @updatedAt
 }
 
 type Color {
@@ -463,6 +466,17 @@ type WarehouseLocation {
   updatedAt: DateTime! @updatedAt
 }
 
+type PaymentPlan {
+  id: ID! @id
+  description: String
+  planID: String! @unique
+  status: String
+  name: String
+  price: Int
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
 type EmailReceipt {
   id: ID! @id
   emailId: EmailId!
@@ -496,6 +510,24 @@ type PushNotificationReceipt {
   updatedAt: DateTime! @updatedAt
 }
 
+enum UserVerificationMethod {
+  SMS
+  Email
+  None
+}
+
+enum UserVerificationStatus {
+  Approved
+  Denied
+  Pending
+}
+
+enum PushNotificationStatus {
+   Blocked
+   Granted
+   Denied
+ }
+ 
 type User {
   id: ID! @id
   auth0Id: String! @unique
@@ -504,11 +536,22 @@ type User {
   lastName: String!
   role: UserRole! @default(value: Customer)
   roles: [UserRole!]! @scalarList(strategy: RELATION)
-  createdAt: DateTime! @createdAt
-  updatedAt: DateTime! @updatedAt
   pushNotificationStatus: PushNotificationStatus! @default(value: Denied)
   pushNotifications: [PushNotificationReceipt!]
-    @relation(name: "UserToPushNotificationReceipts")
+     @relation(name: "UserToPushNotificationReceipts")
+  pushNotification: UserPushNotification
+  verificationStatus: UserVerificationStatus! @default(value: Pending)
+  verificationMethod: UserVerificationMethod! @default(value: None)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type StylePreferences {
+  id: ID! @id
+  styles: [String] @scalarList(strategy: RELATION)
+  patterns: [String] @scalarList(strategy: RELATION)
+  colors: [String] @scalarList(strategy: RELATION)
+  brands: [String] @scalarList(strategy: RELATION)
 }
 
 type CustomerDetail {
@@ -517,10 +560,13 @@ type CustomerDetail {
   birthday: DateTime
   # Height in inches
   height: Int
-  weight: String
+  # The weight range [min, max], where max = min + 10
+  weight: [Int] @scalarList(strategy: RELATION)
   bodyType: String
-  averageTopSize: String
-  averageWaistSize: String
+  averageTopSize: String # to be deprecated in favor of topSizes
+  topSizes: [String] @scalarList(strategy: RELATION)
+  averageWaistSize: String # to be deprecated in favor of waistSizes
+  waistSizes: [Int] @scalarList(strategy: RELATION)
   averagePantLength: String
   preferredPronouns: String
   profession: String
@@ -534,6 +580,7 @@ type CustomerDetail {
   averageSpend: String
   style: String
   commuteStyle: String
+  stylePreferences: StylePreferences
   shippingAddress: Location
   phoneOS: String
   insureShipment: Boolean! @default(value: false)
@@ -660,6 +707,21 @@ type ReservationReceiptItem {
   product: PhysicalProduct!
   productStatus: PhysicalProductStatus!
   notes: String
+}
+
+type UserPushNotificationInterest {
+  id: ID! @id
+  type: UserPushNotificationInterestType!
+  value: String! # e.g. CDGS,
+  user: User!
+  status: Boolean! @default(value: true)
+}
+
+type UserPushNotification {
+  id: ID! @id
+  interests: [UserPushNotificationInterest!]!
+  status: Boolean! @default(value: true)
+  history: [PushNotificationReceipt!]!
 }
 
 type Package {
