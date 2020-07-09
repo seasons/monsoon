@@ -47,6 +47,7 @@ type AuthPayload {
   expiresIn: Int!
   user: User!
   customer: Customer!
+  beamsToken: String!
 }
 
 type ResetPasswordPayload {
