@@ -98,32 +98,12 @@ export class ProductUtilsService {
         .category({ slug: args.category })
         .children()
 
-      const checkChildren = async children => {
-        if (children?.length > 0) {
-          children.forEach(async child => {
-            childrenSlugs.push(child.slug)
-
-            const grandChildren = await this.prisma.client
-              .category({ slug: child.slug })
-              .children()
-
-            if (grandChildren.length > 0) {
-              checkChildren(grandChildren)
-            }
-          })
-        }
-      }
-
-      if (children?.length > 0) {
-        checkChildren(children)
-      }
-
       return childrenSlugs?.length > 0
         ? {
             where: {
               ...args.where,
               ...brandFilter.where,
-              OR: childrenSlugs.map(({ slug }) => ({ category: { slug } })),
+              OR: children.map(({ slug }) => ({ category: { slug } })),
             },
           }
         : {
