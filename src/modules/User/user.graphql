@@ -29,7 +29,6 @@ type Mutation {
     password: String!
     firstName: String!
     lastName: String!
-    zipCode: String!
     details: CustomerDetailCreateInput
   ): AuthPayload!
   login(email: String!, password: String!): AuthPayload!
