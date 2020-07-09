@@ -104,7 +104,7 @@ export class ProductUtilsService {
             childrenSlugs.push(child.slug)
 
             const grandChildren = await this.prisma.client
-              .category({ slug: child })
+              .category({ slug: child.slug })
               .children()
 
             if (grandChildren.length > 0) {
