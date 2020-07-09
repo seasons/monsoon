@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Wed Jul 08 2020 17:43:05 GMT-0400 (Eastern Daylight Time)
+# timestamp: Thu Jul 09 2020 10:29:49 GMT-0400 (Eastern Daylight Time)
 
 type AggregateBagItem {
   count: Int!
@@ -154,6 +154,10 @@ type AggregateReservationReceiptItem {
 }
 
 type AggregateSize {
+  count: Int!
+}
+
+type AggregateStylePreferences {
   count: Int!
 }
 
@@ -6004,10 +6008,12 @@ type CustomerDetail implements Node {
   phoneNumber: String
   birthday: DateTime
   height: Int
-  weight: String
+  weight: [Int!]!
   bodyType: String
   averageTopSize: String
+  topSizes: [String!]!
   averageWaistSize: String
+  waistSizes: [Int!]!
   averagePantLength: String
   preferredPronouns: String
   profession: String
@@ -6017,6 +6023,7 @@ type CustomerDetail implements Node {
   averageSpend: String
   style: String
   commuteStyle: String
+  stylePreferences: StylePreferences
   shippingAddress: Location
   phoneOS: String
   insureShipment: Boolean!
@@ -6045,7 +6052,6 @@ input CustomerDetailCreateInput {
   phoneNumber: String
   birthday: DateTime
   height: Int
-  weight: String
   bodyType: String
   averageTopSize: String
   averageWaistSize: String
@@ -6060,12 +6066,28 @@ input CustomerDetailCreateInput {
   commuteStyle: String
   phoneOS: String
   insureShipment: Boolean
+  weight: CustomerDetailCreateweightInput
+  topSizes: CustomerDetailCreatetopSizesInput
+  waistSizes: CustomerDetailCreatewaistSizesInput
+  stylePreferences: StylePreferencesCreateOneInput
   shippingAddress: LocationCreateOneInput
 }
 
 input CustomerDetailCreateOneInput {
   create: CustomerDetailCreateInput
   connect: CustomerDetailWhereUniqueInput
+}
+
+input CustomerDetailCreatetopSizesInput {
+  set: [String!]
+}
+
+input CustomerDetailCreatewaistSizesInput {
+  set: [Int!]
+}
+
+input CustomerDetailCreateweightInput {
+  set: [Int!]
 }
 
 """
@@ -6092,8 +6114,6 @@ enum CustomerDetailOrderByInput {
   birthday_DESC
   height_ASC
   height_DESC
-  weight_ASC
-  weight_DESC
   bodyType_ASC
   bodyType_DESC
   averageTopSize_ASC
@@ -6133,10 +6153,12 @@ type CustomerDetailPreviousValues {
   phoneNumber: String
   birthday: DateTime
   height: Int
-  weight: String
+  weight: [Int!]!
   bodyType: String
   averageTopSize: String
+  topSizes: [String!]!
   averageWaistSize: String
+  waistSizes: [Int!]!
   averagePantLength: String
   preferredPronouns: String
   profession: String
@@ -6201,7 +6223,6 @@ input CustomerDetailUpdateDataInput {
   phoneNumber: String
   birthday: DateTime
   height: Int
-  weight: String
   bodyType: String
   averageTopSize: String
   averageWaistSize: String
@@ -6216,6 +6237,10 @@ input CustomerDetailUpdateDataInput {
   commuteStyle: String
   phoneOS: String
   insureShipment: Boolean
+  weight: CustomerDetailUpdateweightInput
+  topSizes: CustomerDetailUpdatetopSizesInput
+  waistSizes: CustomerDetailUpdatewaistSizesInput
+  stylePreferences: StylePreferencesUpdateOneInput
   shippingAddress: LocationUpdateOneInput
 }
 
@@ -6223,7 +6248,6 @@ input CustomerDetailUpdateInput {
   phoneNumber: String
   birthday: DateTime
   height: Int
-  weight: String
   bodyType: String
   averageTopSize: String
   averageWaistSize: String
@@ -6238,6 +6262,10 @@ input CustomerDetailUpdateInput {
   commuteStyle: String
   phoneOS: String
   insureShipment: Boolean
+  weight: CustomerDetailUpdateweightInput
+  topSizes: CustomerDetailUpdatetopSizesInput
+  waistSizes: CustomerDetailUpdatewaistSizesInput
+  stylePreferences: StylePreferencesUpdateOneInput
   shippingAddress: LocationUpdateOneInput
 }
 
@@ -6245,7 +6273,6 @@ input CustomerDetailUpdateManyMutationInput {
   phoneNumber: String
   birthday: DateTime
   height: Int
-  weight: String
   bodyType: String
   averageTopSize: String
   averageWaistSize: String
@@ -6260,6 +6287,9 @@ input CustomerDetailUpdateManyMutationInput {
   commuteStyle: String
   phoneOS: String
   insureShipment: Boolean
+  weight: CustomerDetailUpdateweightInput
+  topSizes: CustomerDetailUpdatetopSizesInput
+  waistSizes: CustomerDetailUpdatewaistSizesInput
 }
 
 input CustomerDetailUpdateOneInput {
@@ -6269,6 +6299,18 @@ input CustomerDetailUpdateOneInput {
   delete: Boolean
   update: CustomerDetailUpdateDataInput
   upsert: CustomerDetailUpsertNestedInput
+}
+
+input CustomerDetailUpdatetopSizesInput {
+  set: [String!]
+}
+
+input CustomerDetailUpdatewaistSizesInput {
+  set: [Int!]
+}
+
+input CustomerDetailUpdateweightInput {
+  set: [Int!]
 }
 
 input CustomerDetailUpsertNestedInput {
@@ -6495,72 +6537,6 @@ input CustomerDetailWhereInput {
   All values greater than or equal the given value.
   """
   height_gte: Int
-  weight: String
-
-  """
-  All values that are not equal to given value.
-  """
-  weight_not: String
-
-  """
-  All values that are contained in given list.
-  """
-  weight_in: [String!]
-
-  """
-  All values that are not contained in given list.
-  """
-  weight_not_in: [String!]
-
-  """
-  All values less than the given value.
-  """
-  weight_lt: String
-
-  """
-  All values less than or equal the given value.
-  """
-  weight_lte: String
-
-  """
-  All values greater than the given value.
-  """
-  weight_gt: String
-
-  """
-  All values greater than or equal the given value.
-  """
-  weight_gte: String
-
-  """
-  All values containing the given string.
-  """
-  weight_contains: String
-
-  """
-  All values not containing the given string.
-  """
-  weight_not_contains: String
-
-  """
-  All values starting with the given string.
-  """
-  weight_starts_with: String
-
-  """
-  All values not starting with the given string.
-  """
-  weight_not_starts_with: String
-
-  """
-  All values ending with the given string.
-  """
-  weight_ends_with: String
-
-  """
-  All values not ending with the given string.
-  """
-  weight_not_ends_with: String
   bodyType: String
 
   """
@@ -7497,6 +7473,7 @@ input CustomerDetailWhereInput {
   All values greater than or equal the given value.
   """
   updatedAt_gte: DateTime
+  stylePreferences: StylePreferencesWhereInput
   shippingAddress: LocationWhereInput
 }
 
@@ -11600,6 +11577,7 @@ type Mutation {
   createReservationReceiptItem(
     data: ReservationReceiptItemCreateInput!
   ): ReservationReceiptItem!
+  createStylePreferences(data: StylePreferencesCreateInput!): StylePreferences!
   createImage(data: ImageCreateInput!): Image!
   createPackage(data: PackageCreateInput!): Package!
   createSize(data: SizeCreateInput!): Size!
@@ -11728,6 +11706,10 @@ type Mutation {
     data: ReservationReceiptItemUpdateInput!
     where: ReservationReceiptItemWhereUniqueInput!
   ): ReservationReceiptItem
+  updateStylePreferences(
+    data: StylePreferencesUpdateInput!
+    where: StylePreferencesWhereUniqueInput!
+  ): StylePreferences
   updateImage(data: ImageUpdateInput!, where: ImageWhereUniqueInput!): Image
   updatePackage(
     data: PackageUpdateInput!
@@ -11847,6 +11829,9 @@ type Mutation {
   deleteReservationReceiptItem(
     where: ReservationReceiptItemWhereUniqueInput!
   ): ReservationReceiptItem
+  deleteStylePreferences(
+    where: StylePreferencesWhereUniqueInput!
+  ): StylePreferences
   deleteImage(where: ImageWhereUniqueInput!): Image
   deletePackage(where: PackageWhereUniqueInput!): Package
   deleteSize(where: SizeWhereUniqueInput!): Size
@@ -12013,6 +11998,11 @@ type Mutation {
     create: ReservationReceiptItemCreateInput!
     update: ReservationReceiptItemUpdateInput!
   ): ReservationReceiptItem!
+  upsertStylePreferences(
+    where: StylePreferencesWhereUniqueInput!
+    create: StylePreferencesCreateInput!
+    update: StylePreferencesUpdateInput!
+  ): StylePreferences!
   upsertImage(
     where: ImageWhereUniqueInput!
     create: ImageCreateInput!
@@ -12211,6 +12201,10 @@ type Mutation {
     data: ReservationReceiptItemUpdateManyMutationInput!
     where: ReservationReceiptItemWhereInput
   ): BatchPayload!
+  updateManyStylePreferenceses(
+    data: StylePreferencesUpdateManyMutationInput!
+    where: StylePreferencesWhereInput
+  ): BatchPayload!
   updateManyImages(
     data: ImageUpdateManyMutationInput!
     where: ImageWhereInput
@@ -12343,6 +12337,7 @@ type Mutation {
   deleteManyReservationReceiptItems(
     where: ReservationReceiptItemWhereInput
   ): BatchPayload!
+  deleteManyStylePreferenceses(where: StylePreferencesWhereInput): BatchPayload!
   deleteManyImages(where: ImageWhereInput): BatchPayload!
   deleteManyPackages(where: PackageWhereInput): BatchPayload!
   deleteManySizes(where: SizeWhereInput): BatchPayload!
@@ -26390,6 +26385,15 @@ type Query {
     first: Int
     last: Int
   ): [ReservationReceiptItem]!
+  stylePreferenceses(
+    where: StylePreferencesWhereInput
+    orderBy: StylePreferencesOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [StylePreferences]!
   images(
     where: ImageWhereInput
     orderBy: ImageOrderByInput
@@ -26612,6 +26616,7 @@ type Query {
   reservationReceiptItem(
     where: ReservationReceiptItemWhereUniqueInput!
   ): ReservationReceiptItem
+  stylePreferences(where: StylePreferencesWhereUniqueInput!): StylePreferences
   image(where: ImageWhereUniqueInput!): Image
   package(where: PackageWhereUniqueInput!): Package
   size(where: SizeWhereUniqueInput!): Size
@@ -26886,6 +26891,15 @@ type Query {
     first: Int
     last: Int
   ): ReservationReceiptItemConnection!
+  stylePreferencesesConnection(
+    where: StylePreferencesWhereInput
+    orderBy: StylePreferencesOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): StylePreferencesConnection!
   imagesConnection(
     where: ImageWhereInput
     orderBy: ImageOrderByInput
@@ -30364,6 +30378,270 @@ input SizeWhereUniqueInput {
   slug: String
 }
 
+type StylePreferences implements Node {
+  id: ID!
+  styles: [String!]!
+  patterns: [String!]!
+  colors: [String!]!
+  brands: [String!]!
+}
+
+"""
+A connection to a list of items.
+"""
+type StylePreferencesConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+
+  """
+  A list of edges.
+  """
+  edges: [StylePreferencesEdge]!
+  aggregate: AggregateStylePreferences!
+}
+
+input StylePreferencesCreatebrandsInput {
+  set: [String!]
+}
+
+input StylePreferencesCreatecolorsInput {
+  set: [String!]
+}
+
+input StylePreferencesCreateInput {
+  id: ID
+  styles: StylePreferencesCreatestylesInput
+  patterns: StylePreferencesCreatepatternsInput
+  colors: StylePreferencesCreatecolorsInput
+  brands: StylePreferencesCreatebrandsInput
+}
+
+input StylePreferencesCreateOneInput {
+  create: StylePreferencesCreateInput
+  connect: StylePreferencesWhereUniqueInput
+}
+
+input StylePreferencesCreatepatternsInput {
+  set: [String!]
+}
+
+input StylePreferencesCreatestylesInput {
+  set: [String!]
+}
+
+"""
+An edge in a connection.
+"""
+type StylePreferencesEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: StylePreferences!
+
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+}
+
+enum StylePreferencesOrderByInput {
+  id_ASC
+  id_DESC
+}
+
+type StylePreferencesPreviousValues {
+  id: ID!
+  styles: [String!]!
+  patterns: [String!]!
+  colors: [String!]!
+  brands: [String!]!
+}
+
+type StylePreferencesSubscriptionPayload {
+  mutation: MutationType!
+  node: StylePreferences
+  updatedFields: [String!]
+  previousValues: StylePreferencesPreviousValues
+}
+
+input StylePreferencesSubscriptionWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [StylePreferencesSubscriptionWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [StylePreferencesSubscriptionWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [StylePreferencesSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: StylePreferencesWhereInput
+}
+
+input StylePreferencesUpdatebrandsInput {
+  set: [String!]
+}
+
+input StylePreferencesUpdatecolorsInput {
+  set: [String!]
+}
+
+input StylePreferencesUpdateDataInput {
+  styles: StylePreferencesUpdatestylesInput
+  patterns: StylePreferencesUpdatepatternsInput
+  colors: StylePreferencesUpdatecolorsInput
+  brands: StylePreferencesUpdatebrandsInput
+}
+
+input StylePreferencesUpdateInput {
+  styles: StylePreferencesUpdatestylesInput
+  patterns: StylePreferencesUpdatepatternsInput
+  colors: StylePreferencesUpdatecolorsInput
+  brands: StylePreferencesUpdatebrandsInput
+}
+
+input StylePreferencesUpdateManyMutationInput {
+  styles: StylePreferencesUpdatestylesInput
+  patterns: StylePreferencesUpdatepatternsInput
+  colors: StylePreferencesUpdatecolorsInput
+  brands: StylePreferencesUpdatebrandsInput
+}
+
+input StylePreferencesUpdateOneInput {
+  create: StylePreferencesCreateInput
+  connect: StylePreferencesWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: StylePreferencesUpdateDataInput
+  upsert: StylePreferencesUpsertNestedInput
+}
+
+input StylePreferencesUpdatepatternsInput {
+  set: [String!]
+}
+
+input StylePreferencesUpdatestylesInput {
+  set: [String!]
+}
+
+input StylePreferencesUpsertNestedInput {
+  update: StylePreferencesUpdateDataInput!
+  create: StylePreferencesCreateInput!
+}
+
+input StylePreferencesWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [StylePreferencesWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [StylePreferencesWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [StylePreferencesWhereInput!]
+  id: ID
+
+  """
+  All values that are not equal to given value.
+  """
+  id_not: ID
+
+  """
+  All values that are contained in given list.
+  """
+  id_in: [ID!]
+
+  """
+  All values that are not contained in given list.
+  """
+  id_not_in: [ID!]
+
+  """
+  All values less than the given value.
+  """
+  id_lt: ID
+
+  """
+  All values less than or equal the given value.
+  """
+  id_lte: ID
+
+  """
+  All values greater than the given value.
+  """
+  id_gt: ID
+
+  """
+  All values greater than or equal the given value.
+  """
+  id_gte: ID
+
+  """
+  All values containing the given string.
+  """
+  id_contains: ID
+
+  """
+  All values not containing the given string.
+  """
+  id_not_contains: ID
+
+  """
+  All values starting with the given string.
+  """
+  id_starts_with: ID
+
+  """
+  All values not starting with the given string.
+  """
+  id_not_starts_with: ID
+
+  """
+  All values ending with the given string.
+  """
+  id_ends_with: ID
+
+  """
+  All values not ending with the given string.
+  """
+  id_not_ends_with: ID
+}
+
+input StylePreferencesWhereUniqueInput {
+  id: ID
+}
+
 type Subscription {
   brand(where: BrandSubscriptionWhereInput): BrandSubscriptionPayload
   collectionGroup(
@@ -30443,6 +30721,9 @@ type Subscription {
   reservationReceiptItem(
     where: ReservationReceiptItemSubscriptionWhereInput
   ): ReservationReceiptItemSubscriptionPayload
+  stylePreferences(
+    where: StylePreferencesSubscriptionWhereInput
+  ): StylePreferencesSubscriptionPayload
   image(where: ImageSubscriptionWhereInput): ImageSubscriptionPayload
   package(where: PackageSubscriptionWhereInput): PackageSubscriptionPayload
   size(where: SizeSubscriptionWhereInput): SizeSubscriptionPayload
@@ -31700,9 +31981,11 @@ type User implements Node {
   lastName: String!
   role: UserRole!
   roles: [UserRole!]!
+  pushNotification: UserPushNotification
+  verificationStatus: UserVerificationStatus!
+  verificationMethod: UserVerificationMethod!
   createdAt: DateTime!
   updatedAt: DateTime!
-  pushNotification: UserPushNotification
 }
 
 """
@@ -31728,6 +32011,8 @@ input UserCreateInput {
   firstName: String!
   lastName: String!
   role: UserRole
+  verificationStatus: UserVerificationStatus
+  verificationMethod: UserVerificationMethod
   roles: UserCreaterolesInput
   pushNotification: UserPushNotificationCreateOneInput
 }
@@ -31774,6 +32059,10 @@ enum UserOrderByInput {
   lastName_DESC
   role_ASC
   role_DESC
+  verificationStatus_ASC
+  verificationStatus_DESC
+  verificationMethod_ASC
+  verificationMethod_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -31788,6 +32077,8 @@ type UserPreviousValues {
   lastName: String!
   role: UserRole!
   roles: [UserRole!]!
+  verificationStatus: UserVerificationStatus!
+  verificationMethod: UserVerificationMethod!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -32935,6 +33226,38 @@ input UserScalarWhereInput {
   All values that are not contained in given list.
   """
   role_not_in: [UserRole!]
+  verificationStatus: UserVerificationStatus
+
+  """
+  All values that are not equal to given value.
+  """
+  verificationStatus_not: UserVerificationStatus
+
+  """
+  All values that are contained in given list.
+  """
+  verificationStatus_in: [UserVerificationStatus!]
+
+  """
+  All values that are not contained in given list.
+  """
+  verificationStatus_not_in: [UserVerificationStatus!]
+  verificationMethod: UserVerificationMethod
+
+  """
+  All values that are not equal to given value.
+  """
+  verificationMethod_not: UserVerificationMethod
+
+  """
+  All values that are contained in given list.
+  """
+  verificationMethod_in: [UserVerificationMethod!]
+
+  """
+  All values that are not contained in given list.
+  """
+  verificationMethod_not_in: [UserVerificationMethod!]
   createdAt: DateTime
 
   """
@@ -33060,6 +33383,8 @@ input UserUpdateDataInput {
   firstName: String
   lastName: String
   role: UserRole
+  verificationStatus: UserVerificationStatus
+  verificationMethod: UserVerificationMethod
   roles: UserUpdaterolesInput
   pushNotification: UserPushNotificationUpdateOneInput
 }
@@ -33070,6 +33395,8 @@ input UserUpdateInput {
   firstName: String
   lastName: String
   role: UserRole
+  verificationStatus: UserVerificationStatus
+  verificationMethod: UserVerificationMethod
   roles: UserUpdaterolesInput
   pushNotification: UserPushNotificationUpdateOneInput
 }
@@ -33080,6 +33407,8 @@ input UserUpdateManyDataInput {
   firstName: String
   lastName: String
   role: UserRole
+  verificationStatus: UserVerificationStatus
+  verificationMethod: UserVerificationMethod
   roles: UserUpdaterolesInput
 }
 
@@ -33101,6 +33430,8 @@ input UserUpdateManyMutationInput {
   firstName: String
   lastName: String
   role: UserRole
+  verificationStatus: UserVerificationStatus
+  verificationMethod: UserVerificationMethod
   roles: UserUpdaterolesInput
 }
 
@@ -33143,6 +33474,18 @@ input UserUpsertWithWhereUniqueNestedInput {
   where: UserWhereUniqueInput!
   update: UserUpdateDataInput!
   create: UserCreateInput!
+}
+
+enum UserVerificationMethod {
+  SMS
+  Email
+  None
+}
+
+enum UserVerificationStatus {
+  Approved
+  Denied
+  Pending
 }
 
 input UserWhereInput {
@@ -33506,6 +33849,38 @@ input UserWhereInput {
   All values that are not contained in given list.
   """
   role_not_in: [UserRole!]
+  verificationStatus: UserVerificationStatus
+
+  """
+  All values that are not equal to given value.
+  """
+  verificationStatus_not: UserVerificationStatus
+
+  """
+  All values that are contained in given list.
+  """
+  verificationStatus_in: [UserVerificationStatus!]
+
+  """
+  All values that are not contained in given list.
+  """
+  verificationStatus_not_in: [UserVerificationStatus!]
+  verificationMethod: UserVerificationMethod
+
+  """
+  All values that are not equal to given value.
+  """
+  verificationMethod_not: UserVerificationMethod
+
+  """
+  All values that are contained in given list.
+  """
+  verificationMethod_in: [UserVerificationMethod!]
+
+  """
+  All values that are not contained in given list.
+  """
+  verificationMethod_not_in: [UserVerificationMethod!]
   createdAt: DateTime
 
   """

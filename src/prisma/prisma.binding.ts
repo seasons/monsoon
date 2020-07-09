@@ -32,6 +32,7 @@ export interface Query {
     userPushNotificationInterests: <T = Array<UserPushNotificationInterest | null>>(args: { where?: UserPushNotificationInterestWhereInput | null, orderBy?: UserPushNotificationInterestOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     billingInfoes: <T = Array<BillingInfo | null>>(args: { where?: BillingInfoWhereInput | null, orderBy?: BillingInfoOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     reservationReceiptItems: <T = Array<ReservationReceiptItem | null>>(args: { where?: ReservationReceiptItemWhereInput | null, orderBy?: ReservationReceiptItemOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    stylePreferenceses: <T = Array<StylePreferences | null>>(args: { where?: StylePreferencesWhereInput | null, orderBy?: StylePreferencesOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     images: <T = Array<Image | null>>(args: { where?: ImageWhereInput | null, orderBy?: ImageOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     packages: <T = Array<Package | null>>(args: { where?: PackageWhereInput | null, orderBy?: PackageOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     sizes: <T = Array<Size | null>>(args: { where?: SizeWhereInput | null, orderBy?: SizeOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -78,6 +79,7 @@ export interface Query {
     userPushNotificationInterest: <T = UserPushNotificationInterest | null>(args: { where: UserPushNotificationInterestWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     billingInfo: <T = BillingInfo | null>(args: { where: BillingInfoWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     reservationReceiptItem: <T = ReservationReceiptItem | null>(args: { where: ReservationReceiptItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    stylePreferences: <T = StylePreferences | null>(args: { where: StylePreferencesWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     image: <T = Image | null>(args: { where: ImageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     package: <T = Package | null>(args: { where: PackageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     size: <T = Size | null>(args: { where: SizeWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -124,6 +126,7 @@ export interface Query {
     userPushNotificationInterestsConnection: <T = UserPushNotificationInterestConnection>(args: { where?: UserPushNotificationInterestWhereInput | null, orderBy?: UserPushNotificationInterestOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     billingInfoesConnection: <T = BillingInfoConnection>(args: { where?: BillingInfoWhereInput | null, orderBy?: BillingInfoOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     reservationReceiptItemsConnection: <T = ReservationReceiptItemConnection>(args: { where?: ReservationReceiptItemWhereInput | null, orderBy?: ReservationReceiptItemOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    stylePreferencesesConnection: <T = StylePreferencesConnection>(args: { where?: StylePreferencesWhereInput | null, orderBy?: StylePreferencesOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     imagesConnection: <T = ImageConnection>(args: { where?: ImageWhereInput | null, orderBy?: ImageOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     packagesConnection: <T = PackageConnection>(args: { where?: PackageWhereInput | null, orderBy?: PackageOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     sizesConnection: <T = SizeConnection>(args: { where?: SizeWhereInput | null, orderBy?: SizeOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -174,6 +177,7 @@ export interface Mutation {
     createUserPushNotificationInterest: <T = UserPushNotificationInterest>(args: { data: UserPushNotificationInterestCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createBillingInfo: <T = BillingInfo>(args: { data: BillingInfoCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createReservationReceiptItem: <T = ReservationReceiptItem>(args: { data: ReservationReceiptItemCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    createStylePreferences: <T = StylePreferences>(args: { data: StylePreferencesCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createImage: <T = Image>(args: { data: ImageCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createPackage: <T = Package>(args: { data: PackageCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createSize: <T = Size>(args: { data: SizeCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -220,6 +224,7 @@ export interface Mutation {
     updateUserPushNotificationInterest: <T = UserPushNotificationInterest | null>(args: { data: UserPushNotificationInterestUpdateInput, where: UserPushNotificationInterestWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateBillingInfo: <T = BillingInfo | null>(args: { data: BillingInfoUpdateInput, where: BillingInfoWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateReservationReceiptItem: <T = ReservationReceiptItem | null>(args: { data: ReservationReceiptItemUpdateInput, where: ReservationReceiptItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    updateStylePreferences: <T = StylePreferences | null>(args: { data: StylePreferencesUpdateInput, where: StylePreferencesWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateImage: <T = Image | null>(args: { data: ImageUpdateInput, where: ImageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updatePackage: <T = Package | null>(args: { data: PackageUpdateInput, where: PackageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateSize: <T = Size | null>(args: { data: SizeUpdateInput, where: SizeWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -266,6 +271,7 @@ export interface Mutation {
     deleteUserPushNotificationInterest: <T = UserPushNotificationInterest | null>(args: { where: UserPushNotificationInterestWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteBillingInfo: <T = BillingInfo | null>(args: { where: BillingInfoWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteReservationReceiptItem: <T = ReservationReceiptItem | null>(args: { where: ReservationReceiptItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deleteStylePreferences: <T = StylePreferences | null>(args: { where: StylePreferencesWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteImage: <T = Image | null>(args: { where: ImageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deletePackage: <T = Package | null>(args: { where: PackageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteSize: <T = Size | null>(args: { where: SizeWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -312,6 +318,7 @@ export interface Mutation {
     upsertUserPushNotificationInterest: <T = UserPushNotificationInterest>(args: { where: UserPushNotificationInterestWhereUniqueInput, create: UserPushNotificationInterestCreateInput, update: UserPushNotificationInterestUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertBillingInfo: <T = BillingInfo>(args: { where: BillingInfoWhereUniqueInput, create: BillingInfoCreateInput, update: BillingInfoUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertReservationReceiptItem: <T = ReservationReceiptItem>(args: { where: ReservationReceiptItemWhereUniqueInput, create: ReservationReceiptItemCreateInput, update: ReservationReceiptItemUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    upsertStylePreferences: <T = StylePreferences>(args: { where: StylePreferencesWhereUniqueInput, create: StylePreferencesCreateInput, update: StylePreferencesUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertImage: <T = Image>(args: { where: ImageWhereUniqueInput, create: ImageCreateInput, update: ImageUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertPackage: <T = Package>(args: { where: PackageWhereUniqueInput, create: PackageCreateInput, update: PackageUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertSize: <T = Size>(args: { where: SizeWhereUniqueInput, create: SizeCreateInput, update: SizeUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -357,6 +364,7 @@ export interface Mutation {
     updateManyUserPushNotificationInterests: <T = BatchPayload>(args: { data: UserPushNotificationInterestUpdateManyMutationInput, where?: UserPushNotificationInterestWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyBillingInfoes: <T = BatchPayload>(args: { data: BillingInfoUpdateManyMutationInput, where?: BillingInfoWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyReservationReceiptItems: <T = BatchPayload>(args: { data: ReservationReceiptItemUpdateManyMutationInput, where?: ReservationReceiptItemWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateManyStylePreferenceses: <T = BatchPayload>(args: { data: StylePreferencesUpdateManyMutationInput, where?: StylePreferencesWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyImages: <T = BatchPayload>(args: { data: ImageUpdateManyMutationInput, where?: ImageWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyPackages: <T = BatchPayload>(args: { data: PackageUpdateManyMutationInput, where?: PackageWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManySizes: <T = BatchPayload>(args: { data: SizeUpdateManyMutationInput, where?: SizeWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -403,6 +411,7 @@ export interface Mutation {
     deleteManyUserPushNotificationInterests: <T = BatchPayload>(args: { where?: UserPushNotificationInterestWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyBillingInfoes: <T = BatchPayload>(args: { where?: BillingInfoWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyReservationReceiptItems: <T = BatchPayload>(args: { where?: ReservationReceiptItemWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteManyStylePreferenceses: <T = BatchPayload>(args: { where?: StylePreferencesWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyImages: <T = BatchPayload>(args: { where?: ImageWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyPackages: <T = BatchPayload>(args: { where?: PackageWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManySizes: <T = BatchPayload>(args: { where?: SizeWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -452,6 +461,7 @@ export interface Subscription {
     userPushNotificationInterest: <T = UserPushNotificationInterestSubscriptionPayload | null>(args: { where?: UserPushNotificationInterestSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     billingInfo: <T = BillingInfoSubscriptionPayload | null>(args: { where?: BillingInfoSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     reservationReceiptItem: <T = ReservationReceiptItemSubscriptionPayload | null>(args: { where?: ReservationReceiptItemSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
+    stylePreferences: <T = StylePreferencesSubscriptionPayload | null>(args: { where?: StylePreferencesSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     image: <T = ImageSubscriptionPayload | null>(args: { where?: ImageSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     package: <T = PackageSubscriptionPayload | null>(args: { where?: PackageSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     size: <T = SizeSubscriptionPayload | null>(args: { where?: SizeSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
@@ -501,6 +511,7 @@ export interface Exists {
   UserPushNotificationInterest: (where?: UserPushNotificationInterestWhereInput) => Promise<boolean>
   BillingInfo: (where?: BillingInfoWhereInput) => Promise<boolean>
   ReservationReceiptItem: (where?: ReservationReceiptItemWhereInput) => Promise<boolean>
+  StylePreferences: (where?: StylePreferencesWhereInput) => Promise<boolean>
   Image: (where?: ImageWhereInput) => Promise<boolean>
   Package: (where?: PackageWhereInput) => Promise<boolean>
   Size: (where?: SizeWhereInput) => Promise<boolean>
@@ -696,6 +707,10 @@ type AggregateReservationReceiptItem {
 }
 
 type AggregateSize {
+  count: Int!
+}
+
+type AggregateStylePreferences {
   count: Int!
 }
 
@@ -4744,10 +4759,12 @@ type CustomerDetail implements Node {
   phoneNumber: String
   birthday: DateTime
   height: Int
-  weight: String
+  weight: [Int!]!
   bodyType: String
   averageTopSize: String
+  topSizes: [String!]!
   averageWaistSize: String
+  waistSizes: [Int!]!
   averagePantLength: String
   preferredPronouns: String
   profession: String
@@ -4757,6 +4774,7 @@ type CustomerDetail implements Node {
   averageSpend: String
   style: String
   commuteStyle: String
+  stylePreferences: StylePreferences
   shippingAddress: Location
   phoneOS: String
   insureShipment: Boolean!
@@ -4779,7 +4797,6 @@ input CustomerDetailCreateInput {
   phoneNumber: String
   birthday: DateTime
   height: Int
-  weight: String
   bodyType: String
   averageTopSize: String
   averageWaistSize: String
@@ -4794,12 +4811,28 @@ input CustomerDetailCreateInput {
   commuteStyle: String
   phoneOS: String
   insureShipment: Boolean
+  weight: CustomerDetailCreateweightInput
+  topSizes: CustomerDetailCreatetopSizesInput
+  waistSizes: CustomerDetailCreatewaistSizesInput
+  stylePreferences: StylePreferencesCreateOneInput
   shippingAddress: LocationCreateOneInput
 }
 
 input CustomerDetailCreateOneInput {
   create: CustomerDetailCreateInput
   connect: CustomerDetailWhereUniqueInput
+}
+
+input CustomerDetailCreatetopSizesInput {
+  set: [String!]
+}
+
+input CustomerDetailCreatewaistSizesInput {
+  set: [Int!]
+}
+
+input CustomerDetailCreateweightInput {
+  set: [Int!]
 }
 
 """An edge in a connection."""
@@ -4820,8 +4853,6 @@ enum CustomerDetailOrderByInput {
   birthday_DESC
   height_ASC
   height_DESC
-  weight_ASC
-  weight_DESC
   bodyType_ASC
   bodyType_DESC
   averageTopSize_ASC
@@ -4861,10 +4892,12 @@ type CustomerDetailPreviousValues {
   phoneNumber: String
   birthday: DateTime
   height: Int
-  weight: String
+  weight: [Int!]!
   bodyType: String
   averageTopSize: String
+  topSizes: [String!]!
   averageWaistSize: String
+  waistSizes: [Int!]!
   averagePantLength: String
   preferredPronouns: String
   profession: String
@@ -4921,7 +4954,6 @@ input CustomerDetailUpdateDataInput {
   phoneNumber: String
   birthday: DateTime
   height: Int
-  weight: String
   bodyType: String
   averageTopSize: String
   averageWaistSize: String
@@ -4936,6 +4968,10 @@ input CustomerDetailUpdateDataInput {
   commuteStyle: String
   phoneOS: String
   insureShipment: Boolean
+  weight: CustomerDetailUpdateweightInput
+  topSizes: CustomerDetailUpdatetopSizesInput
+  waistSizes: CustomerDetailUpdatewaistSizesInput
+  stylePreferences: StylePreferencesUpdateOneInput
   shippingAddress: LocationUpdateOneInput
 }
 
@@ -4943,7 +4979,6 @@ input CustomerDetailUpdateInput {
   phoneNumber: String
   birthday: DateTime
   height: Int
-  weight: String
   bodyType: String
   averageTopSize: String
   averageWaistSize: String
@@ -4958,6 +4993,10 @@ input CustomerDetailUpdateInput {
   commuteStyle: String
   phoneOS: String
   insureShipment: Boolean
+  weight: CustomerDetailUpdateweightInput
+  topSizes: CustomerDetailUpdatetopSizesInput
+  waistSizes: CustomerDetailUpdatewaistSizesInput
+  stylePreferences: StylePreferencesUpdateOneInput
   shippingAddress: LocationUpdateOneInput
 }
 
@@ -4965,7 +5004,6 @@ input CustomerDetailUpdateManyMutationInput {
   phoneNumber: String
   birthday: DateTime
   height: Int
-  weight: String
   bodyType: String
   averageTopSize: String
   averageWaistSize: String
@@ -4980,6 +5018,9 @@ input CustomerDetailUpdateManyMutationInput {
   commuteStyle: String
   phoneOS: String
   insureShipment: Boolean
+  weight: CustomerDetailUpdateweightInput
+  topSizes: CustomerDetailUpdatetopSizesInput
+  waistSizes: CustomerDetailUpdatewaistSizesInput
 }
 
 input CustomerDetailUpdateOneInput {
@@ -4989,6 +5030,18 @@ input CustomerDetailUpdateOneInput {
   delete: Boolean
   update: CustomerDetailUpdateDataInput
   upsert: CustomerDetailUpsertNestedInput
+}
+
+input CustomerDetailUpdatetopSizesInput {
+  set: [String!]
+}
+
+input CustomerDetailUpdatewaistSizesInput {
+  set: [Int!]
+}
+
+input CustomerDetailUpdateweightInput {
+  set: [Int!]
 }
 
 input CustomerDetailUpsertNestedInput {
@@ -5129,46 +5182,6 @@ input CustomerDetailWhereInput {
 
   """All values greater than or equal the given value."""
   height_gte: Int
-  weight: String
-
-  """All values that are not equal to given value."""
-  weight_not: String
-
-  """All values that are contained in given list."""
-  weight_in: [String!]
-
-  """All values that are not contained in given list."""
-  weight_not_in: [String!]
-
-  """All values less than the given value."""
-  weight_lt: String
-
-  """All values less than or equal the given value."""
-  weight_lte: String
-
-  """All values greater than the given value."""
-  weight_gt: String
-
-  """All values greater than or equal the given value."""
-  weight_gte: String
-
-  """All values containing the given string."""
-  weight_contains: String
-
-  """All values not containing the given string."""
-  weight_not_contains: String
-
-  """All values starting with the given string."""
-  weight_starts_with: String
-
-  """All values not starting with the given string."""
-  weight_not_starts_with: String
-
-  """All values ending with the given string."""
-  weight_ends_with: String
-
-  """All values not ending with the given string."""
-  weight_not_ends_with: String
   bodyType: String
 
   """All values that are not equal to given value."""
@@ -5737,6 +5750,7 @@ input CustomerDetailWhereInput {
 
   """All values greater than or equal the given value."""
   updatedAt_gte: DateTime
+  stylePreferences: StylePreferencesWhereInput
   shippingAddress: LocationWhereInput
 }
 
@@ -8600,6 +8614,7 @@ type Mutation {
   createUserPushNotificationInterest(data: UserPushNotificationInterestCreateInput!): UserPushNotificationInterest!
   createBillingInfo(data: BillingInfoCreateInput!): BillingInfo!
   createReservationReceiptItem(data: ReservationReceiptItemCreateInput!): ReservationReceiptItem!
+  createStylePreferences(data: StylePreferencesCreateInput!): StylePreferences!
   createImage(data: ImageCreateInput!): Image!
   createPackage(data: PackageCreateInput!): Package!
   createSize(data: SizeCreateInput!): Size!
@@ -8646,6 +8661,7 @@ type Mutation {
   updateUserPushNotificationInterest(data: UserPushNotificationInterestUpdateInput!, where: UserPushNotificationInterestWhereUniqueInput!): UserPushNotificationInterest
   updateBillingInfo(data: BillingInfoUpdateInput!, where: BillingInfoWhereUniqueInput!): BillingInfo
   updateReservationReceiptItem(data: ReservationReceiptItemUpdateInput!, where: ReservationReceiptItemWhereUniqueInput!): ReservationReceiptItem
+  updateStylePreferences(data: StylePreferencesUpdateInput!, where: StylePreferencesWhereUniqueInput!): StylePreferences
   updateImage(data: ImageUpdateInput!, where: ImageWhereUniqueInput!): Image
   updatePackage(data: PackageUpdateInput!, where: PackageWhereUniqueInput!): Package
   updateSize(data: SizeUpdateInput!, where: SizeWhereUniqueInput!): Size
@@ -8692,6 +8708,7 @@ type Mutation {
   deleteUserPushNotificationInterest(where: UserPushNotificationInterestWhereUniqueInput!): UserPushNotificationInterest
   deleteBillingInfo(where: BillingInfoWhereUniqueInput!): BillingInfo
   deleteReservationReceiptItem(where: ReservationReceiptItemWhereUniqueInput!): ReservationReceiptItem
+  deleteStylePreferences(where: StylePreferencesWhereUniqueInput!): StylePreferences
   deleteImage(where: ImageWhereUniqueInput!): Image
   deletePackage(where: PackageWhereUniqueInput!): Package
   deleteSize(where: SizeWhereUniqueInput!): Size
@@ -8738,6 +8755,7 @@ type Mutation {
   upsertUserPushNotificationInterest(where: UserPushNotificationInterestWhereUniqueInput!, create: UserPushNotificationInterestCreateInput!, update: UserPushNotificationInterestUpdateInput!): UserPushNotificationInterest!
   upsertBillingInfo(where: BillingInfoWhereUniqueInput!, create: BillingInfoCreateInput!, update: BillingInfoUpdateInput!): BillingInfo!
   upsertReservationReceiptItem(where: ReservationReceiptItemWhereUniqueInput!, create: ReservationReceiptItemCreateInput!, update: ReservationReceiptItemUpdateInput!): ReservationReceiptItem!
+  upsertStylePreferences(where: StylePreferencesWhereUniqueInput!, create: StylePreferencesCreateInput!, update: StylePreferencesUpdateInput!): StylePreferences!
   upsertImage(where: ImageWhereUniqueInput!, create: ImageCreateInput!, update: ImageUpdateInput!): Image!
   upsertPackage(where: PackageWhereUniqueInput!, create: PackageCreateInput!, update: PackageUpdateInput!): Package!
   upsertSize(where: SizeWhereUniqueInput!, create: SizeCreateInput!, update: SizeUpdateInput!): Size!
@@ -8783,6 +8801,7 @@ type Mutation {
   updateManyUserPushNotificationInterests(data: UserPushNotificationInterestUpdateManyMutationInput!, where: UserPushNotificationInterestWhereInput): BatchPayload!
   updateManyBillingInfoes(data: BillingInfoUpdateManyMutationInput!, where: BillingInfoWhereInput): BatchPayload!
   updateManyReservationReceiptItems(data: ReservationReceiptItemUpdateManyMutationInput!, where: ReservationReceiptItemWhereInput): BatchPayload!
+  updateManyStylePreferenceses(data: StylePreferencesUpdateManyMutationInput!, where: StylePreferencesWhereInput): BatchPayload!
   updateManyImages(data: ImageUpdateManyMutationInput!, where: ImageWhereInput): BatchPayload!
   updateManyPackages(data: PackageUpdateManyMutationInput!, where: PackageWhereInput): BatchPayload!
   updateManySizes(data: SizeUpdateManyMutationInput!, where: SizeWhereInput): BatchPayload!
@@ -8829,6 +8848,7 @@ type Mutation {
   deleteManyUserPushNotificationInterests(where: UserPushNotificationInterestWhereInput): BatchPayload!
   deleteManyBillingInfoes(where: BillingInfoWhereInput): BatchPayload!
   deleteManyReservationReceiptItems(where: ReservationReceiptItemWhereInput): BatchPayload!
+  deleteManyStylePreferenceses(where: StylePreferencesWhereInput): BatchPayload!
   deleteManyImages(where: ImageWhereInput): BatchPayload!
   deleteManyPackages(where: PackageWhereInput): BatchPayload!
   deleteManySizes(where: SizeWhereInput): BatchPayload!
@@ -18620,6 +18640,7 @@ type Query {
   userPushNotificationInterests(where: UserPushNotificationInterestWhereInput, orderBy: UserPushNotificationInterestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [UserPushNotificationInterest]!
   billingInfoes(where: BillingInfoWhereInput, orderBy: BillingInfoOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [BillingInfo]!
   reservationReceiptItems(where: ReservationReceiptItemWhereInput, orderBy: ReservationReceiptItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ReservationReceiptItem]!
+  stylePreferenceses(where: StylePreferencesWhereInput, orderBy: StylePreferencesOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [StylePreferences]!
   images(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Image]!
   packages(where: PackageWhereInput, orderBy: PackageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Package]!
   sizes(where: SizeWhereInput, orderBy: SizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Size]!
@@ -18666,6 +18687,7 @@ type Query {
   userPushNotificationInterest(where: UserPushNotificationInterestWhereUniqueInput!): UserPushNotificationInterest
   billingInfo(where: BillingInfoWhereUniqueInput!): BillingInfo
   reservationReceiptItem(where: ReservationReceiptItemWhereUniqueInput!): ReservationReceiptItem
+  stylePreferences(where: StylePreferencesWhereUniqueInput!): StylePreferences
   image(where: ImageWhereUniqueInput!): Image
   package(where: PackageWhereUniqueInput!): Package
   size(where: SizeWhereUniqueInput!): Size
@@ -18712,6 +18734,7 @@ type Query {
   userPushNotificationInterestsConnection(where: UserPushNotificationInterestWhereInput, orderBy: UserPushNotificationInterestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserPushNotificationInterestConnection!
   billingInfoesConnection(where: BillingInfoWhereInput, orderBy: BillingInfoOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BillingInfoConnection!
   reservationReceiptItemsConnection(where: ReservationReceiptItemWhereInput, orderBy: ReservationReceiptItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ReservationReceiptItemConnection!
+  stylePreferencesesConnection(where: StylePreferencesWhereInput, orderBy: StylePreferencesOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): StylePreferencesConnection!
   imagesConnection(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ImageConnection!
   packagesConnection(where: PackageWhereInput, orderBy: PackageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PackageConnection!
   sizesConnection(where: SizeWhereInput, orderBy: SizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): SizeConnection!
@@ -21090,6 +21113,218 @@ input SizeWhereUniqueInput {
   slug: String
 }
 
+type StylePreferences implements Node {
+  id: ID!
+  styles: [String!]!
+  patterns: [String!]!
+  colors: [String!]!
+  brands: [String!]!
+}
+
+"""A connection to a list of items."""
+type StylePreferencesConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [StylePreferencesEdge]!
+  aggregate: AggregateStylePreferences!
+}
+
+input StylePreferencesCreatebrandsInput {
+  set: [String!]
+}
+
+input StylePreferencesCreatecolorsInput {
+  set: [String!]
+}
+
+input StylePreferencesCreateInput {
+  id: ID
+  styles: StylePreferencesCreatestylesInput
+  patterns: StylePreferencesCreatepatternsInput
+  colors: StylePreferencesCreatecolorsInput
+  brands: StylePreferencesCreatebrandsInput
+}
+
+input StylePreferencesCreateOneInput {
+  create: StylePreferencesCreateInput
+  connect: StylePreferencesWhereUniqueInput
+}
+
+input StylePreferencesCreatepatternsInput {
+  set: [String!]
+}
+
+input StylePreferencesCreatestylesInput {
+  set: [String!]
+}
+
+"""An edge in a connection."""
+type StylePreferencesEdge {
+  """The item at the end of the edge."""
+  node: StylePreferences!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum StylePreferencesOrderByInput {
+  id_ASC
+  id_DESC
+}
+
+type StylePreferencesPreviousValues {
+  id: ID!
+  styles: [String!]!
+  patterns: [String!]!
+  colors: [String!]!
+  brands: [String!]!
+}
+
+type StylePreferencesSubscriptionPayload {
+  mutation: MutationType!
+  node: StylePreferences
+  updatedFields: [String!]
+  previousValues: StylePreferencesPreviousValues
+}
+
+input StylePreferencesSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [StylePreferencesSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [StylePreferencesSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [StylePreferencesSubscriptionWhereInput!]
+
+  """The subscription event gets dispatched when it's listed in mutation_in"""
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: StylePreferencesWhereInput
+}
+
+input StylePreferencesUpdatebrandsInput {
+  set: [String!]
+}
+
+input StylePreferencesUpdatecolorsInput {
+  set: [String!]
+}
+
+input StylePreferencesUpdateDataInput {
+  styles: StylePreferencesUpdatestylesInput
+  patterns: StylePreferencesUpdatepatternsInput
+  colors: StylePreferencesUpdatecolorsInput
+  brands: StylePreferencesUpdatebrandsInput
+}
+
+input StylePreferencesUpdateInput {
+  styles: StylePreferencesUpdatestylesInput
+  patterns: StylePreferencesUpdatepatternsInput
+  colors: StylePreferencesUpdatecolorsInput
+  brands: StylePreferencesUpdatebrandsInput
+}
+
+input StylePreferencesUpdateManyMutationInput {
+  styles: StylePreferencesUpdatestylesInput
+  patterns: StylePreferencesUpdatepatternsInput
+  colors: StylePreferencesUpdatecolorsInput
+  brands: StylePreferencesUpdatebrandsInput
+}
+
+input StylePreferencesUpdateOneInput {
+  create: StylePreferencesCreateInput
+  connect: StylePreferencesWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: StylePreferencesUpdateDataInput
+  upsert: StylePreferencesUpsertNestedInput
+}
+
+input StylePreferencesUpdatepatternsInput {
+  set: [String!]
+}
+
+input StylePreferencesUpdatestylesInput {
+  set: [String!]
+}
+
+input StylePreferencesUpsertNestedInput {
+  update: StylePreferencesUpdateDataInput!
+  create: StylePreferencesCreateInput!
+}
+
+input StylePreferencesWhereInput {
+  """Logical AND on all given filters."""
+  AND: [StylePreferencesWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [StylePreferencesWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [StylePreferencesWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+}
+
+input StylePreferencesWhereUniqueInput {
+  id: ID
+}
+
 type Subscription {
   brand(where: BrandSubscriptionWhereInput): BrandSubscriptionPayload
   collectionGroup(where: CollectionGroupSubscriptionWhereInput): CollectionGroupSubscriptionPayload
@@ -21119,6 +21354,7 @@ type Subscription {
   userPushNotificationInterest(where: UserPushNotificationInterestSubscriptionWhereInput): UserPushNotificationInterestSubscriptionPayload
   billingInfo(where: BillingInfoSubscriptionWhereInput): BillingInfoSubscriptionPayload
   reservationReceiptItem(where: ReservationReceiptItemSubscriptionWhereInput): ReservationReceiptItemSubscriptionPayload
+  stylePreferences(where: StylePreferencesSubscriptionWhereInput): StylePreferencesSubscriptionPayload
   image(where: ImageSubscriptionWhereInput): ImageSubscriptionPayload
   package(where: PackageSubscriptionWhereInput): PackageSubscriptionPayload
   size(where: SizeSubscriptionWhereInput): SizeSubscriptionPayload
@@ -21982,9 +22218,11 @@ type User implements Node {
   lastName: String!
   role: UserRole!
   roles: [UserRole!]!
+  pushNotification: UserPushNotification
+  verificationStatus: UserVerificationStatus!
+  verificationMethod: UserVerificationMethod!
   createdAt: DateTime!
   updatedAt: DateTime!
-  pushNotification: UserPushNotification
 }
 
 """A connection to a list of items."""
@@ -22004,6 +22242,8 @@ input UserCreateInput {
   firstName: String!
   lastName: String!
   role: UserRole
+  verificationStatus: UserVerificationStatus
+  verificationMethod: UserVerificationMethod
   roles: UserCreaterolesInput
   pushNotification: UserPushNotificationCreateOneInput
 }
@@ -22044,6 +22284,10 @@ enum UserOrderByInput {
   lastName_DESC
   role_ASC
   role_DESC
+  verificationStatus_ASC
+  verificationStatus_DESC
+  verificationMethod_ASC
+  verificationMethod_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -22058,6 +22302,8 @@ type UserPreviousValues {
   lastName: String!
   role: UserRole!
   roles: [UserRole!]!
+  verificationStatus: UserVerificationStatus!
+  verificationMethod: UserVerificationMethod!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -22841,6 +23087,26 @@ input UserScalarWhereInput {
 
   """All values that are not contained in given list."""
   role_not_in: [UserRole!]
+  verificationStatus: UserVerificationStatus
+
+  """All values that are not equal to given value."""
+  verificationStatus_not: UserVerificationStatus
+
+  """All values that are contained in given list."""
+  verificationStatus_in: [UserVerificationStatus!]
+
+  """All values that are not contained in given list."""
+  verificationStatus_not_in: [UserVerificationStatus!]
+  verificationMethod: UserVerificationMethod
+
+  """All values that are not equal to given value."""
+  verificationMethod_not: UserVerificationMethod
+
+  """All values that are contained in given list."""
+  verificationMethod_in: [UserVerificationMethod!]
+
+  """All values that are not contained in given list."""
+  verificationMethod_not_in: [UserVerificationMethod!]
   createdAt: DateTime
 
   """All values that are not equal to given value."""
@@ -22930,6 +23196,8 @@ input UserUpdateDataInput {
   firstName: String
   lastName: String
   role: UserRole
+  verificationStatus: UserVerificationStatus
+  verificationMethod: UserVerificationMethod
   roles: UserUpdaterolesInput
   pushNotification: UserPushNotificationUpdateOneInput
 }
@@ -22940,6 +23208,8 @@ input UserUpdateInput {
   firstName: String
   lastName: String
   role: UserRole
+  verificationStatus: UserVerificationStatus
+  verificationMethod: UserVerificationMethod
   roles: UserUpdaterolesInput
   pushNotification: UserPushNotificationUpdateOneInput
 }
@@ -22950,6 +23220,8 @@ input UserUpdateManyDataInput {
   firstName: String
   lastName: String
   role: UserRole
+  verificationStatus: UserVerificationStatus
+  verificationMethod: UserVerificationMethod
   roles: UserUpdaterolesInput
 }
 
@@ -22971,6 +23243,8 @@ input UserUpdateManyMutationInput {
   firstName: String
   lastName: String
   role: UserRole
+  verificationStatus: UserVerificationStatus
+  verificationMethod: UserVerificationMethod
   roles: UserUpdaterolesInput
 }
 
@@ -23013,6 +23287,18 @@ input UserUpsertWithWhereUniqueNestedInput {
   where: UserWhereUniqueInput!
   update: UserUpdateDataInput!
   create: UserCreateInput!
+}
+
+enum UserVerificationMethod {
+  SMS
+  Email
+  None
+}
+
+enum UserVerificationStatus {
+  Approved
+  Denied
+  Pending
 }
 
 input UserWhereInput {
@@ -23234,6 +23520,26 @@ input UserWhereInput {
 
   """All values that are not contained in given list."""
   role_not_in: [UserRole!]
+  verificationStatus: UserVerificationStatus
+
+  """All values that are not equal to given value."""
+  verificationStatus_not: UserVerificationStatus
+
+  """All values that are contained in given list."""
+  verificationStatus_in: [UserVerificationStatus!]
+
+  """All values that are not contained in given list."""
+  verificationStatus_not_in: [UserVerificationStatus!]
+  verificationMethod: UserVerificationMethod
+
+  """All values that are not equal to given value."""
+  verificationMethod_not: UserVerificationMethod
+
+  """All values that are contained in given list."""
+  verificationMethod_in: [UserVerificationMethod!]
+
+  """All values that are not contained in given list."""
+  verificationMethod_not_in: [UserVerificationMethod!]
   createdAt: DateTime
 
   """All values that are not equal to given value."""
@@ -24519,8 +24825,6 @@ export type CustomerDetailOrderByInput =   'id_ASC' |
   'birthday_DESC' |
   'height_ASC' |
   'height_DESC' |
-  'weight_ASC' |
-  'weight_DESC' |
   'bodyType_ASC' |
   'bodyType_DESC' |
   'averageTopSize_ASC' |
@@ -25082,6 +25386,9 @@ export type SizeOrderByInput =   'id_ASC' |
   'display_ASC' |
   'display_DESC'
 
+export type StylePreferencesOrderByInput =   'id_ASC' |
+  'id_DESC'
+
 export type TagOrderByInput =   'id_ASC' |
   'id_DESC' |
   'name_ASC' |
@@ -25120,6 +25427,10 @@ export type UserOrderByInput =   'id_ASC' |
   'lastName_DESC' |
   'role_ASC' |
   'role_DESC' |
+  'verificationStatus_ASC' |
+  'verificationStatus_DESC' |
+  'verificationMethod_ASC' |
+  'verificationMethod_DESC' |
   'createdAt_ASC' |
   'createdAt_DESC' |
   'updatedAt_ASC' |
@@ -25148,6 +25459,14 @@ export type UserPushNotificationOrderByInput =   'id_ASC' |
 export type UserRole =   'Admin' |
   'Customer' |
   'Partner'
+
+export type UserVerificationMethod =   'SMS' |
+  'Email' |
+  'None'
+
+export type UserVerificationStatus =   'Approved' |
+  'Denied' |
+  'Pending'
 
 export type WarehouseLocationConstraintOrderByInput =   'id_ASC' |
   'id_DESC' |
@@ -26906,7 +27225,6 @@ export interface CustomerDetailCreateInput {
   phoneNumber?: String | null
   birthday?: DateTime | null
   height?: Int | null
-  weight?: String | null
   bodyType?: String | null
   averageTopSize?: String | null
   averageWaistSize?: String | null
@@ -26921,12 +27239,28 @@ export interface CustomerDetailCreateInput {
   commuteStyle?: String | null
   phoneOS?: String | null
   insureShipment?: Boolean | null
+  weight?: CustomerDetailCreateweightInput | null
+  topSizes?: CustomerDetailCreatetopSizesInput | null
+  waistSizes?: CustomerDetailCreatewaistSizesInput | null
+  stylePreferences?: StylePreferencesCreateOneInput | null
   shippingAddress?: LocationCreateOneInput | null
 }
 
 export interface CustomerDetailCreateOneInput {
   create?: CustomerDetailCreateInput | null
   connect?: CustomerDetailWhereUniqueInput | null
+}
+
+export interface CustomerDetailCreatetopSizesInput {
+  set?: String[] | String | null
+}
+
+export interface CustomerDetailCreatewaistSizesInput {
+  set?: Int[] | Int | null
+}
+
+export interface CustomerDetailCreateweightInput {
+  set?: Int[] | Int | null
 }
 
 export interface CustomerDetailSubscriptionWhereInput {
@@ -26944,7 +27278,6 @@ export interface CustomerDetailUpdateDataInput {
   phoneNumber?: String | null
   birthday?: DateTime | null
   height?: Int | null
-  weight?: String | null
   bodyType?: String | null
   averageTopSize?: String | null
   averageWaistSize?: String | null
@@ -26959,6 +27292,10 @@ export interface CustomerDetailUpdateDataInput {
   commuteStyle?: String | null
   phoneOS?: String | null
   insureShipment?: Boolean | null
+  weight?: CustomerDetailUpdateweightInput | null
+  topSizes?: CustomerDetailUpdatetopSizesInput | null
+  waistSizes?: CustomerDetailUpdatewaistSizesInput | null
+  stylePreferences?: StylePreferencesUpdateOneInput | null
   shippingAddress?: LocationUpdateOneInput | null
 }
 
@@ -26966,7 +27303,6 @@ export interface CustomerDetailUpdateInput {
   phoneNumber?: String | null
   birthday?: DateTime | null
   height?: Int | null
-  weight?: String | null
   bodyType?: String | null
   averageTopSize?: String | null
   averageWaistSize?: String | null
@@ -26981,6 +27317,10 @@ export interface CustomerDetailUpdateInput {
   commuteStyle?: String | null
   phoneOS?: String | null
   insureShipment?: Boolean | null
+  weight?: CustomerDetailUpdateweightInput | null
+  topSizes?: CustomerDetailUpdatetopSizesInput | null
+  waistSizes?: CustomerDetailUpdatewaistSizesInput | null
+  stylePreferences?: StylePreferencesUpdateOneInput | null
   shippingAddress?: LocationUpdateOneInput | null
 }
 
@@ -26988,7 +27328,6 @@ export interface CustomerDetailUpdateManyMutationInput {
   phoneNumber?: String | null
   birthday?: DateTime | null
   height?: Int | null
-  weight?: String | null
   bodyType?: String | null
   averageTopSize?: String | null
   averageWaistSize?: String | null
@@ -27003,6 +27342,9 @@ export interface CustomerDetailUpdateManyMutationInput {
   commuteStyle?: String | null
   phoneOS?: String | null
   insureShipment?: Boolean | null
+  weight?: CustomerDetailUpdateweightInput | null
+  topSizes?: CustomerDetailUpdatetopSizesInput | null
+  waistSizes?: CustomerDetailUpdatewaistSizesInput | null
 }
 
 export interface CustomerDetailUpdateOneInput {
@@ -27012,6 +27354,18 @@ export interface CustomerDetailUpdateOneInput {
   delete?: Boolean | null
   update?: CustomerDetailUpdateDataInput | null
   upsert?: CustomerDetailUpsertNestedInput | null
+}
+
+export interface CustomerDetailUpdatetopSizesInput {
+  set?: String[] | String | null
+}
+
+export interface CustomerDetailUpdatewaistSizesInput {
+  set?: Int[] | Int | null
+}
+
+export interface CustomerDetailUpdateweightInput {
+  set?: Int[] | Int | null
 }
 
 export interface CustomerDetailUpsertNestedInput {
@@ -27067,20 +27421,6 @@ export interface CustomerDetailWhereInput {
   height_lte?: Int | null
   height_gt?: Int | null
   height_gte?: Int | null
-  weight?: String | null
-  weight_not?: String | null
-  weight_in?: String[] | String | null
-  weight_not_in?: String[] | String | null
-  weight_lt?: String | null
-  weight_lte?: String | null
-  weight_gt?: String | null
-  weight_gte?: String | null
-  weight_contains?: String | null
-  weight_not_contains?: String | null
-  weight_starts_with?: String | null
-  weight_not_starts_with?: String | null
-  weight_ends_with?: String | null
-  weight_not_ends_with?: String | null
   bodyType?: String | null
   bodyType_not?: String | null
   bodyType_in?: String[] | String | null
@@ -27281,6 +27621,7 @@ export interface CustomerDetailWhereInput {
   updatedAt_lte?: DateTime | null
   updatedAt_gt?: DateTime | null
   updatedAt_gte?: DateTime | null
+  stylePreferences?: StylePreferencesWhereInput | null
   shippingAddress?: LocationWhereInput | null
 }
 
@@ -34223,6 +34564,121 @@ export interface SizeWhereUniqueInput {
   slug?: String | null
 }
 
+export interface StylePreferencesCreatebrandsInput {
+  set?: String[] | String | null
+}
+
+export interface StylePreferencesCreatecolorsInput {
+  set?: String[] | String | null
+}
+
+export interface StylePreferencesCreateInput {
+  id?: ID_Input | null
+  styles?: StylePreferencesCreatestylesInput | null
+  patterns?: StylePreferencesCreatepatternsInput | null
+  colors?: StylePreferencesCreatecolorsInput | null
+  brands?: StylePreferencesCreatebrandsInput | null
+}
+
+export interface StylePreferencesCreateOneInput {
+  create?: StylePreferencesCreateInput | null
+  connect?: StylePreferencesWhereUniqueInput | null
+}
+
+export interface StylePreferencesCreatepatternsInput {
+  set?: String[] | String | null
+}
+
+export interface StylePreferencesCreatestylesInput {
+  set?: String[] | String | null
+}
+
+export interface StylePreferencesSubscriptionWhereInput {
+  AND?: StylePreferencesSubscriptionWhereInput[] | StylePreferencesSubscriptionWhereInput | null
+  OR?: StylePreferencesSubscriptionWhereInput[] | StylePreferencesSubscriptionWhereInput | null
+  NOT?: StylePreferencesSubscriptionWhereInput[] | StylePreferencesSubscriptionWhereInput | null
+  mutation_in?: MutationType[] | MutationType | null
+  updatedFields_contains?: String | null
+  updatedFields_contains_every?: String[] | String | null
+  updatedFields_contains_some?: String[] | String | null
+  node?: StylePreferencesWhereInput | null
+}
+
+export interface StylePreferencesUpdatebrandsInput {
+  set?: String[] | String | null
+}
+
+export interface StylePreferencesUpdatecolorsInput {
+  set?: String[] | String | null
+}
+
+export interface StylePreferencesUpdateDataInput {
+  styles?: StylePreferencesUpdatestylesInput | null
+  patterns?: StylePreferencesUpdatepatternsInput | null
+  colors?: StylePreferencesUpdatecolorsInput | null
+  brands?: StylePreferencesUpdatebrandsInput | null
+}
+
+export interface StylePreferencesUpdateInput {
+  styles?: StylePreferencesUpdatestylesInput | null
+  patterns?: StylePreferencesUpdatepatternsInput | null
+  colors?: StylePreferencesUpdatecolorsInput | null
+  brands?: StylePreferencesUpdatebrandsInput | null
+}
+
+export interface StylePreferencesUpdateManyMutationInput {
+  styles?: StylePreferencesUpdatestylesInput | null
+  patterns?: StylePreferencesUpdatepatternsInput | null
+  colors?: StylePreferencesUpdatecolorsInput | null
+  brands?: StylePreferencesUpdatebrandsInput | null
+}
+
+export interface StylePreferencesUpdateOneInput {
+  create?: StylePreferencesCreateInput | null
+  connect?: StylePreferencesWhereUniqueInput | null
+  disconnect?: Boolean | null
+  delete?: Boolean | null
+  update?: StylePreferencesUpdateDataInput | null
+  upsert?: StylePreferencesUpsertNestedInput | null
+}
+
+export interface StylePreferencesUpdatepatternsInput {
+  set?: String[] | String | null
+}
+
+export interface StylePreferencesUpdatestylesInput {
+  set?: String[] | String | null
+}
+
+export interface StylePreferencesUpsertNestedInput {
+  update: StylePreferencesUpdateDataInput
+  create: StylePreferencesCreateInput
+}
+
+export interface StylePreferencesWhereInput {
+  AND?: StylePreferencesWhereInput[] | StylePreferencesWhereInput | null
+  OR?: StylePreferencesWhereInput[] | StylePreferencesWhereInput | null
+  NOT?: StylePreferencesWhereInput[] | StylePreferencesWhereInput | null
+  id?: ID_Input | null
+  id_not?: ID_Input | null
+  id_in?: ID_Output[] | ID_Output | null
+  id_not_in?: ID_Output[] | ID_Output | null
+  id_lt?: ID_Input | null
+  id_lte?: ID_Input | null
+  id_gt?: ID_Input | null
+  id_gte?: ID_Input | null
+  id_contains?: ID_Input | null
+  id_not_contains?: ID_Input | null
+  id_starts_with?: ID_Input | null
+  id_not_starts_with?: ID_Input | null
+  id_ends_with?: ID_Input | null
+  id_not_ends_with?: ID_Input | null
+}
+
+export interface StylePreferencesWhereUniqueInput {
+  id?: ID_Input | null
+}
+
 export interface TagCreateInput {
   id?: ID_Input | null
   name: String
@@ -34579,6 +35035,8 @@ export interface UserCreateInput {
   firstName: String
   lastName: String
   role?: UserRole | null
+  verificationStatus?: UserVerificationStatus | null
+  verificationMethod?: UserVerificationMethod | null
   roles?: UserCreaterolesInput | null
   pushNotification?: UserPushNotificationCreateOneInput | null
 }
@@ -34923,6 +35381,14 @@ export interface UserScalarWhereInput {
   role_not?: UserRole | null
   role_in?: UserRole[] | UserRole | null
   role_not_in?: UserRole[] | UserRole | null
+  verificationStatus?: UserVerificationStatus | null
+  verificationStatus_not?: UserVerificationStatus | null
+  verificationStatus_in?: UserVerificationStatus[] | UserVerificationStatus | null
+  verificationStatus_not_in?: UserVerificationStatus[] | UserVerificationStatus | null
+  verificationMethod?: UserVerificationMethod | null
+  verificationMethod_not?: UserVerificationMethod | null
+  verificationMethod_in?: UserVerificationMethod[] | UserVerificationMethod | null
+  verificationMethod_not_in?: UserVerificationMethod[] | UserVerificationMethod | null
   createdAt?: DateTime | null
   createdAt_not?: DateTime | null
   createdAt_in?: DateTime[] | DateTime | null
@@ -34958,6 +35424,8 @@ export interface UserUpdateDataInput {
   firstName?: String | null
   lastName?: String | null
   role?: UserRole | null
+  verificationStatus?: UserVerificationStatus | null
+  verificationMethod?: UserVerificationMethod | null
   roles?: UserUpdaterolesInput | null
   pushNotification?: UserPushNotificationUpdateOneInput | null
 }
@@ -34968,6 +35436,8 @@ export interface UserUpdateInput {
   firstName?: String | null
   lastName?: String | null
   role?: UserRole | null
+  verificationStatus?: UserVerificationStatus | null
+  verificationMethod?: UserVerificationMethod | null
   roles?: UserUpdaterolesInput | null
   pushNotification?: UserPushNotificationUpdateOneInput | null
 }
@@ -34978,6 +35448,8 @@ export interface UserUpdateManyDataInput {
   firstName?: String | null
   lastName?: String | null
   role?: UserRole | null
+  verificationStatus?: UserVerificationStatus | null
+  verificationMethod?: UserVerificationMethod | null
   roles?: UserUpdaterolesInput | null
 }
 
@@ -34999,6 +35471,8 @@ export interface UserUpdateManyMutationInput {
   firstName?: String | null
   lastName?: String | null
   role?: UserRole | null
+  verificationStatus?: UserVerificationStatus | null
+  verificationMethod?: UserVerificationMethod | null
   roles?: UserUpdaterolesInput | null
 }
 
@@ -35121,6 +35595,14 @@ export interface UserWhereInput {
   role_not?: UserRole | null
   role_in?: UserRole[] | UserRole | null
   role_not_in?: UserRole[] | UserRole | null
+  verificationStatus?: UserVerificationStatus | null
+  verificationStatus_not?: UserVerificationStatus | null
+  verificationStatus_in?: UserVerificationStatus[] | UserVerificationStatus | null
+  verificationStatus_not_in?: UserVerificationStatus[] | UserVerificationStatus | null
+  verificationMethod?: UserVerificationMethod | null
+  verificationMethod_not?: UserVerificationMethod | null
+  verificationMethod_in?: UserVerificationMethod[] | UserVerificationMethod | null
+  verificationMethod_not_in?: UserVerificationMethod[] | UserVerificationMethod | null
   createdAt?: DateTime | null
   createdAt_not?: DateTime | null
   createdAt_in?: DateTime[] | DateTime | null
@@ -35787,6 +36269,10 @@ export interface AggregateSize {
   count: Int
 }
 
+export interface AggregateStylePreferences {
+  count: Int
+}
+
 export interface AggregateTag {
   count: Int
 }
@@ -36228,10 +36714,12 @@ export interface CustomerDetail extends Node {
   phoneNumber?: String | null
   birthday?: DateTime | null
   height?: Int | null
-  weight?: String | null
+  weight: Array<Int>
   bodyType?: String | null
   averageTopSize?: String | null
+  topSizes: Array<String>
   averageWaistSize?: String | null
+  waistSizes: Array<Int>
   averagePantLength?: String | null
   preferredPronouns?: String | null
   profession?: String | null
@@ -36241,6 +36729,7 @@ export interface CustomerDetail extends Node {
   averageSpend?: String | null
   style?: String | null
   commuteStyle?: String | null
+  stylePreferences?: StylePreferences | null
   shippingAddress?: Location | null
   phoneOS?: String | null
   insureShipment: Boolean
@@ -36272,10 +36761,12 @@ export interface CustomerDetailPreviousValues {
   phoneNumber?: String | null
   birthday?: DateTime | null
   height?: Int | null
-  weight?: String | null
+  weight: Array<Int>
   bodyType?: String | null
   averageTopSize?: String | null
+  topSizes: Array<String>
   averageWaistSize?: String | null
+  waistSizes: Array<Int>
   averagePantLength?: String | null
   preferredPronouns?: String | null
   profession?: String | null
@@ -37694,6 +38185,48 @@ export interface SizeSubscriptionPayload {
   previousValues?: SizePreviousValues | null
 }
 
+export interface StylePreferences extends Node {
+  id: ID_Output
+  styles: Array<String>
+  patterns: Array<String>
+  colors: Array<String>
+  brands: Array<String>
+}
+
+/*
+ * A connection to a list of items.
+
+ */
+export interface StylePreferencesConnection {
+  pageInfo: PageInfo
+  edges: Array<StylePreferencesEdge | null>
+  aggregate: AggregateStylePreferences
+}
+
+/*
+ * An edge in a connection.
+
+ */
+export interface StylePreferencesEdge {
+  node: StylePreferences
+  cursor: String
+}
+
+export interface StylePreferencesPreviousValues {
+  id: ID_Output
+  styles: Array<String>
+  patterns: Array<String>
+  colors: Array<String>
+  brands: Array<String>
+}
+
+export interface StylePreferencesSubscriptionPayload {
+  mutation: MutationType
+  node?: StylePreferences | null
+  updatedFields?: Array<String> | null
+  previousValues?: StylePreferencesPreviousValues | null
+}
+
 export interface Tag extends Node {
   id: ID_Output
   name: String
@@ -37791,9 +38324,11 @@ export interface User extends Node {
   lastName: String
   role: UserRole
   roles: Array<UserRole>
+  pushNotification?: UserPushNotification | null
+  verificationStatus: UserVerificationStatus
+  verificationMethod: UserVerificationMethod
   createdAt: DateTime
   updatedAt: DateTime
-  pushNotification?: UserPushNotification | null
 }
 
 /*
@@ -37823,6 +38358,8 @@ export interface UserPreviousValues {
   lastName: String
   role: UserRole
   roles: Array<UserRole>
+  verificationStatus: UserVerificationStatus
+  verificationMethod: UserVerificationMethod
   createdAt: DateTime
   updatedAt: DateTime
 }

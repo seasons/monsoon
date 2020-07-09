@@ -1,3 +1,9 @@
+type Query {
+  blogCollections: [BlogCollection!]!
+  blogPosts(skip: Int, count: Int): [BlogPost!]!
+  blogPost(id: String): BlogPost
+}
+
 type BlogCollection {
   id: ID!
   slug: String!
@@ -24,10 +30,4 @@ type BlogPost {
   publishedOn: DateTime!
   author: String
   category: String
-}
-
-type Query {
-  blogCollections: [BlogCollection!]!
-  blogPosts(skip: Int, count: Int): [BlogPost!]!
-  blogPost(id: String): BlogPost
 }

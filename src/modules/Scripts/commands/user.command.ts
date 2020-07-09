@@ -182,18 +182,15 @@ export class UserCommands {
         password,
         firstName,
         lastName,
+        zipCode: "10013",
         details: {
-          phoneNumber: "(646) 350-2715",
+          phoneNumber: "+16463502715",
           height: 40 + faker.random.number(32),
-          weight: "152lb",
+          weight: { set: [150, 160] },
           bodyType: "Athletic",
           shippingAddress: {
             create: {
-              slug,
               name: `${firstName} ${lastName}`,
-              address1: address.line1,
-              city: address.city,
-              state: address.state,
               zipCode: address.zip,
             },
           },
