@@ -79,8 +79,6 @@ export class ProductUtilsService {
   }
 
   private async filters(args) {
-    const childrenSlugs = []
-
     let brandFilter = { where: {} }
     if (args.brand && args.brand !== "all") {
       brandFilter = {
@@ -98,12 +96,12 @@ export class ProductUtilsService {
         .category({ slug: args.category })
         .children()
 
-      return childrenSlugs?.length > 0
+      return children?.length > 0
         ? {
             where: {
               ...args.where,
               ...brandFilter.where,
-              OR: children.map(({ slug }) => ({ category: { slug } })),
+              category: { slug_in: children.map(child => child.slug) },
             },
           }
         : {
