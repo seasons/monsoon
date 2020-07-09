@@ -224,6 +224,36 @@ export class EmailDataProvider {
     }
   }
 
+  verifyEmail() {
+    return {
+      email: {
+        title: "Welcome to Seasons.",
+        body: {
+          subject: `Verify your email`,
+          paragraphs: [
+            {
+              html: `Hey {{user.given_name}}!`,
+            },
+            {
+              html:
+                "Welcome to Seasons, a members only subscription service to the most coveted menswear and streetwear brands. To make sure we have the right person, please verify your email by clicking on the button below.",
+            },
+          ],
+          button: { text: "Verify Email", url: "{{url}}" },
+        },
+        prefooter: {
+          paragraphs: [
+            {
+              html: `If you have any questions, reach out to ${process.env.MAIN_CONTACT_EMAIL}.`,
+            },
+          ],
+        },
+      },
+    }
+  }
+
+  // TODO: get email data from template.json, rather than in functions
+  // as defined above.
   getEmailTemplate(emailId: EmailId, data: any) {
     const template = JSON.parse(
       fs.readFileSync(
