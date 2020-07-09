@@ -2157,6 +2157,8 @@ export interface ClientConstructor<T> {
 
 export type UserRole = "Admin" | "Customer" | "Partner";
 
+export type PushNotificationStatus = "Blocked" | "Granted" | "Denied";
+
 export type UserPushNotificationInterestType =
   | "General"
   | "Blog"
@@ -2167,16 +2169,6 @@ export type UserPushNotificationInterestType =
 export type UserVerificationStatus = "Approved" | "Denied" | "Pending";
 
 export type UserVerificationMethod = "SMS" | "Email" | "None";
-
-export type UserPushNotificationInterestOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "type_ASC"
-  | "type_DESC"
-  | "value_ASC"
-  | "value_DESC"
-  | "status_ASC"
-  | "status_DESC";
 
 export type PushNotificationReceiptOrderByInput =
   | "id_ASC"
@@ -2217,6 +2209,8 @@ export type UserOrderByInput =
   | "lastName_DESC"
   | "role_ASC"
   | "role_DESC"
+  | "pushNotificationStatus_ASC"
+  | "pushNotificationStatus_DESC"
   | "verificationStatus_ASC"
   | "verificationStatus_DESC"
   | "verificationMethod_ASC"
@@ -2225,6 +2219,16 @@ export type UserOrderByInput =
   | "createdAt_DESC"
   | "updatedAt_ASC"
   | "updatedAt_DESC";
+
+export type UserPushNotificationInterestOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "type_ASC"
+  | "type_DESC"
+  | "value_ASC"
+  | "value_DESC"
+  | "status_ASC"
+  | "status_DESC";
 
 export type CustomerStatus =
   | "Invited"
@@ -3007,205 +3011,6 @@ export type BagItemWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
 
-export interface UserPushNotificationInterestWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  type?: Maybe<UserPushNotificationInterestType>;
-  type_not?: Maybe<UserPushNotificationInterestType>;
-  type_in?: Maybe<
-    UserPushNotificationInterestType[] | UserPushNotificationInterestType
-  >;
-  type_not_in?: Maybe<
-    UserPushNotificationInterestType[] | UserPushNotificationInterestType
-  >;
-  value?: Maybe<String>;
-  value_not?: Maybe<String>;
-  value_in?: Maybe<String[] | String>;
-  value_not_in?: Maybe<String[] | String>;
-  value_lt?: Maybe<String>;
-  value_lte?: Maybe<String>;
-  value_gt?: Maybe<String>;
-  value_gte?: Maybe<String>;
-  value_contains?: Maybe<String>;
-  value_not_contains?: Maybe<String>;
-  value_starts_with?: Maybe<String>;
-  value_not_starts_with?: Maybe<String>;
-  value_ends_with?: Maybe<String>;
-  value_not_ends_with?: Maybe<String>;
-  user?: Maybe<UserWhereInput>;
-  status?: Maybe<Boolean>;
-  status_not?: Maybe<Boolean>;
-  AND?: Maybe<
-    | UserPushNotificationInterestWhereInput[]
-    | UserPushNotificationInterestWhereInput
-  >;
-  OR?: Maybe<
-    | UserPushNotificationInterestWhereInput[]
-    | UserPushNotificationInterestWhereInput
-  >;
-  NOT?: Maybe<
-    | UserPushNotificationInterestWhereInput[]
-    | UserPushNotificationInterestWhereInput
-  >;
-}
-
-export interface UserWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  auth0Id?: Maybe<String>;
-  auth0Id_not?: Maybe<String>;
-  auth0Id_in?: Maybe<String[] | String>;
-  auth0Id_not_in?: Maybe<String[] | String>;
-  auth0Id_lt?: Maybe<String>;
-  auth0Id_lte?: Maybe<String>;
-  auth0Id_gt?: Maybe<String>;
-  auth0Id_gte?: Maybe<String>;
-  auth0Id_contains?: Maybe<String>;
-  auth0Id_not_contains?: Maybe<String>;
-  auth0Id_starts_with?: Maybe<String>;
-  auth0Id_not_starts_with?: Maybe<String>;
-  auth0Id_ends_with?: Maybe<String>;
-  auth0Id_not_ends_with?: Maybe<String>;
-  email?: Maybe<String>;
-  email_not?: Maybe<String>;
-  email_in?: Maybe<String[] | String>;
-  email_not_in?: Maybe<String[] | String>;
-  email_lt?: Maybe<String>;
-  email_lte?: Maybe<String>;
-  email_gt?: Maybe<String>;
-  email_gte?: Maybe<String>;
-  email_contains?: Maybe<String>;
-  email_not_contains?: Maybe<String>;
-  email_starts_with?: Maybe<String>;
-  email_not_starts_with?: Maybe<String>;
-  email_ends_with?: Maybe<String>;
-  email_not_ends_with?: Maybe<String>;
-  firstName?: Maybe<String>;
-  firstName_not?: Maybe<String>;
-  firstName_in?: Maybe<String[] | String>;
-  firstName_not_in?: Maybe<String[] | String>;
-  firstName_lt?: Maybe<String>;
-  firstName_lte?: Maybe<String>;
-  firstName_gt?: Maybe<String>;
-  firstName_gte?: Maybe<String>;
-  firstName_contains?: Maybe<String>;
-  firstName_not_contains?: Maybe<String>;
-  firstName_starts_with?: Maybe<String>;
-  firstName_not_starts_with?: Maybe<String>;
-  firstName_ends_with?: Maybe<String>;
-  firstName_not_ends_with?: Maybe<String>;
-  lastName?: Maybe<String>;
-  lastName_not?: Maybe<String>;
-  lastName_in?: Maybe<String[] | String>;
-  lastName_not_in?: Maybe<String[] | String>;
-  lastName_lt?: Maybe<String>;
-  lastName_lte?: Maybe<String>;
-  lastName_gt?: Maybe<String>;
-  lastName_gte?: Maybe<String>;
-  lastName_contains?: Maybe<String>;
-  lastName_not_contains?: Maybe<String>;
-  lastName_starts_with?: Maybe<String>;
-  lastName_not_starts_with?: Maybe<String>;
-  lastName_ends_with?: Maybe<String>;
-  lastName_not_ends_with?: Maybe<String>;
-  role?: Maybe<UserRole>;
-  role_not?: Maybe<UserRole>;
-  role_in?: Maybe<UserRole[] | UserRole>;
-  role_not_in?: Maybe<UserRole[] | UserRole>;
-  pushNotification?: Maybe<UserPushNotificationWhereInput>;
-  verificationStatus?: Maybe<UserVerificationStatus>;
-  verificationStatus_not?: Maybe<UserVerificationStatus>;
-  verificationStatus_in?: Maybe<
-    UserVerificationStatus[] | UserVerificationStatus
-  >;
-  verificationStatus_not_in?: Maybe<
-    UserVerificationStatus[] | UserVerificationStatus
-  >;
-  verificationMethod?: Maybe<UserVerificationMethod>;
-  verificationMethod_not?: Maybe<UserVerificationMethod>;
-  verificationMethod_in?: Maybe<
-    UserVerificationMethod[] | UserVerificationMethod
-  >;
-  verificationMethod_not_in?: Maybe<
-    UserVerificationMethod[] | UserVerificationMethod
-  >;
-  createdAt?: Maybe<DateTimeInput>;
-  createdAt_not?: Maybe<DateTimeInput>;
-  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_lt?: Maybe<DateTimeInput>;
-  createdAt_lte?: Maybe<DateTimeInput>;
-  createdAt_gt?: Maybe<DateTimeInput>;
-  createdAt_gte?: Maybe<DateTimeInput>;
-  updatedAt?: Maybe<DateTimeInput>;
-  updatedAt_not?: Maybe<DateTimeInput>;
-  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_lt?: Maybe<DateTimeInput>;
-  updatedAt_lte?: Maybe<DateTimeInput>;
-  updatedAt_gt?: Maybe<DateTimeInput>;
-  updatedAt_gte?: Maybe<DateTimeInput>;
-  AND?: Maybe<UserWhereInput[] | UserWhereInput>;
-  OR?: Maybe<UserWhereInput[] | UserWhereInput>;
-  NOT?: Maybe<UserWhereInput[] | UserWhereInput>;
-}
-
-export interface UserPushNotificationWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  interests_every?: Maybe<UserPushNotificationInterestWhereInput>;
-  interests_some?: Maybe<UserPushNotificationInterestWhereInput>;
-  interests_none?: Maybe<UserPushNotificationInterestWhereInput>;
-  status?: Maybe<Boolean>;
-  status_not?: Maybe<Boolean>;
-  history_every?: Maybe<PushNotificationReceiptWhereInput>;
-  history_some?: Maybe<PushNotificationReceiptWhereInput>;
-  history_none?: Maybe<PushNotificationReceiptWhereInput>;
-  AND?: Maybe<
-    UserPushNotificationWhereInput[] | UserPushNotificationWhereInput
-  >;
-  OR?: Maybe<UserPushNotificationWhereInput[] | UserPushNotificationWhereInput>;
-  NOT?: Maybe<
-    UserPushNotificationWhereInput[] | UserPushNotificationWhereInput
-  >;
-}
-
 export interface PushNotificationReceiptWhereInput {
   id?: Maybe<ID_Input>;
   id_not?: Maybe<ID_Input>;
@@ -3368,6 +3173,216 @@ export interface PushNotificationReceiptWhereInput {
   >;
   NOT?: Maybe<
     PushNotificationReceiptWhereInput[] | PushNotificationReceiptWhereInput
+  >;
+}
+
+export interface UserWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  auth0Id?: Maybe<String>;
+  auth0Id_not?: Maybe<String>;
+  auth0Id_in?: Maybe<String[] | String>;
+  auth0Id_not_in?: Maybe<String[] | String>;
+  auth0Id_lt?: Maybe<String>;
+  auth0Id_lte?: Maybe<String>;
+  auth0Id_gt?: Maybe<String>;
+  auth0Id_gte?: Maybe<String>;
+  auth0Id_contains?: Maybe<String>;
+  auth0Id_not_contains?: Maybe<String>;
+  auth0Id_starts_with?: Maybe<String>;
+  auth0Id_not_starts_with?: Maybe<String>;
+  auth0Id_ends_with?: Maybe<String>;
+  auth0Id_not_ends_with?: Maybe<String>;
+  email?: Maybe<String>;
+  email_not?: Maybe<String>;
+  email_in?: Maybe<String[] | String>;
+  email_not_in?: Maybe<String[] | String>;
+  email_lt?: Maybe<String>;
+  email_lte?: Maybe<String>;
+  email_gt?: Maybe<String>;
+  email_gte?: Maybe<String>;
+  email_contains?: Maybe<String>;
+  email_not_contains?: Maybe<String>;
+  email_starts_with?: Maybe<String>;
+  email_not_starts_with?: Maybe<String>;
+  email_ends_with?: Maybe<String>;
+  email_not_ends_with?: Maybe<String>;
+  firstName?: Maybe<String>;
+  firstName_not?: Maybe<String>;
+  firstName_in?: Maybe<String[] | String>;
+  firstName_not_in?: Maybe<String[] | String>;
+  firstName_lt?: Maybe<String>;
+  firstName_lte?: Maybe<String>;
+  firstName_gt?: Maybe<String>;
+  firstName_gte?: Maybe<String>;
+  firstName_contains?: Maybe<String>;
+  firstName_not_contains?: Maybe<String>;
+  firstName_starts_with?: Maybe<String>;
+  firstName_not_starts_with?: Maybe<String>;
+  firstName_ends_with?: Maybe<String>;
+  firstName_not_ends_with?: Maybe<String>;
+  lastName?: Maybe<String>;
+  lastName_not?: Maybe<String>;
+  lastName_in?: Maybe<String[] | String>;
+  lastName_not_in?: Maybe<String[] | String>;
+  lastName_lt?: Maybe<String>;
+  lastName_lte?: Maybe<String>;
+  lastName_gt?: Maybe<String>;
+  lastName_gte?: Maybe<String>;
+  lastName_contains?: Maybe<String>;
+  lastName_not_contains?: Maybe<String>;
+  lastName_starts_with?: Maybe<String>;
+  lastName_not_starts_with?: Maybe<String>;
+  lastName_ends_with?: Maybe<String>;
+  lastName_not_ends_with?: Maybe<String>;
+  role?: Maybe<UserRole>;
+  role_not?: Maybe<UserRole>;
+  role_in?: Maybe<UserRole[] | UserRole>;
+  role_not_in?: Maybe<UserRole[] | UserRole>;
+  pushNotificationStatus?: Maybe<PushNotificationStatus>;
+  pushNotificationStatus_not?: Maybe<PushNotificationStatus>;
+  pushNotificationStatus_in?: Maybe<
+    PushNotificationStatus[] | PushNotificationStatus
+  >;
+  pushNotificationStatus_not_in?: Maybe<
+    PushNotificationStatus[] | PushNotificationStatus
+  >;
+  pushNotifications_every?: Maybe<PushNotificationReceiptWhereInput>;
+  pushNotifications_some?: Maybe<PushNotificationReceiptWhereInput>;
+  pushNotifications_none?: Maybe<PushNotificationReceiptWhereInput>;
+  pushNotification?: Maybe<UserPushNotificationWhereInput>;
+  verificationStatus?: Maybe<UserVerificationStatus>;
+  verificationStatus_not?: Maybe<UserVerificationStatus>;
+  verificationStatus_in?: Maybe<
+    UserVerificationStatus[] | UserVerificationStatus
+  >;
+  verificationStatus_not_in?: Maybe<
+    UserVerificationStatus[] | UserVerificationStatus
+  >;
+  verificationMethod?: Maybe<UserVerificationMethod>;
+  verificationMethod_not?: Maybe<UserVerificationMethod>;
+  verificationMethod_in?: Maybe<
+    UserVerificationMethod[] | UserVerificationMethod
+  >;
+  verificationMethod_not_in?: Maybe<
+    UserVerificationMethod[] | UserVerificationMethod
+  >;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<UserWhereInput[] | UserWhereInput>;
+  OR?: Maybe<UserWhereInput[] | UserWhereInput>;
+  NOT?: Maybe<UserWhereInput[] | UserWhereInput>;
+}
+
+export interface UserPushNotificationWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  interests_every?: Maybe<UserPushNotificationInterestWhereInput>;
+  interests_some?: Maybe<UserPushNotificationInterestWhereInput>;
+  interests_none?: Maybe<UserPushNotificationInterestWhereInput>;
+  status?: Maybe<Boolean>;
+  status_not?: Maybe<Boolean>;
+  history_every?: Maybe<PushNotificationReceiptWhereInput>;
+  history_some?: Maybe<PushNotificationReceiptWhereInput>;
+  history_none?: Maybe<PushNotificationReceiptWhereInput>;
+  AND?: Maybe<
+    UserPushNotificationWhereInput[] | UserPushNotificationWhereInput
+  >;
+  OR?: Maybe<UserPushNotificationWhereInput[] | UserPushNotificationWhereInput>;
+  NOT?: Maybe<
+    UserPushNotificationWhereInput[] | UserPushNotificationWhereInput
+  >;
+}
+
+export interface UserPushNotificationInterestWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  type?: Maybe<UserPushNotificationInterestType>;
+  type_not?: Maybe<UserPushNotificationInterestType>;
+  type_in?: Maybe<
+    UserPushNotificationInterestType[] | UserPushNotificationInterestType
+  >;
+  type_not_in?: Maybe<
+    UserPushNotificationInterestType[] | UserPushNotificationInterestType
+  >;
+  value?: Maybe<String>;
+  value_not?: Maybe<String>;
+  value_in?: Maybe<String[] | String>;
+  value_not_in?: Maybe<String[] | String>;
+  value_lt?: Maybe<String>;
+  value_lte?: Maybe<String>;
+  value_gt?: Maybe<String>;
+  value_gte?: Maybe<String>;
+  value_contains?: Maybe<String>;
+  value_not_contains?: Maybe<String>;
+  value_starts_with?: Maybe<String>;
+  value_not_starts_with?: Maybe<String>;
+  value_ends_with?: Maybe<String>;
+  value_not_ends_with?: Maybe<String>;
+  user?: Maybe<UserWhereInput>;
+  status?: Maybe<Boolean>;
+  status_not?: Maybe<Boolean>;
+  AND?: Maybe<
+    | UserPushNotificationInterestWhereInput[]
+    | UserPushNotificationInterestWhereInput
+  >;
+  OR?: Maybe<
+    | UserPushNotificationInterestWhereInput[]
+    | UserPushNotificationInterestWhereInput
+  >;
+  NOT?: Maybe<
+    | UserPushNotificationInterestWhereInput[]
+    | UserPushNotificationInterestWhereInput
   >;
 }
 
@@ -6935,6 +6950,8 @@ export interface UserCreateInput {
   lastName: String;
   role?: Maybe<UserRole>;
   roles?: Maybe<UserCreaterolesInput>;
+  pushNotificationStatus?: Maybe<PushNotificationStatus>;
+  pushNotifications?: Maybe<PushNotificationReceiptCreateManyWithoutUsersInput>;
   pushNotification?: Maybe<UserPushNotificationCreateOneInput>;
   verificationStatus?: Maybe<UserVerificationStatus>;
   verificationMethod?: Maybe<UserVerificationMethod>;
@@ -6942,6 +6959,30 @@ export interface UserCreateInput {
 
 export interface UserCreaterolesInput {
   set?: Maybe<UserRole[] | UserRole>;
+}
+
+export interface PushNotificationReceiptCreateManyWithoutUsersInput {
+  create?: Maybe<
+    | PushNotificationReceiptCreateWithoutUsersInput[]
+    | PushNotificationReceiptCreateWithoutUsersInput
+  >;
+  connect?: Maybe<
+    | PushNotificationReceiptWhereUniqueInput[]
+    | PushNotificationReceiptWhereUniqueInput
+  >;
+}
+
+export interface PushNotificationReceiptCreateWithoutUsersInput {
+  id?: Maybe<ID_Input>;
+  route?: Maybe<String>;
+  screen?: Maybe<String>;
+  uri?: Maybe<String>;
+  interest?: Maybe<String>;
+  body: String;
+  title?: Maybe<String>;
+  recordID?: Maybe<String>;
+  recordSlug?: Maybe<String>;
+  sentAt: DateTimeInput;
 }
 
 export interface UserPushNotificationCreateOneInput {
@@ -6990,7 +7031,7 @@ export interface PushNotificationReceiptCreateInput {
   route?: Maybe<String>;
   screen?: Maybe<String>;
   uri?: Maybe<String>;
-  users?: Maybe<UserCreateManyInput>;
+  users?: Maybe<UserCreateManyWithoutPushNotificationsInput>;
   interest?: Maybe<String>;
   body: String;
   title?: Maybe<String>;
@@ -6999,9 +7040,26 @@ export interface PushNotificationReceiptCreateInput {
   sentAt: DateTimeInput;
 }
 
-export interface UserCreateManyInput {
-  create?: Maybe<UserCreateInput[] | UserCreateInput>;
+export interface UserCreateManyWithoutPushNotificationsInput {
+  create?: Maybe<
+    | UserCreateWithoutPushNotificationsInput[]
+    | UserCreateWithoutPushNotificationsInput
+  >;
   connect?: Maybe<UserWhereUniqueInput[] | UserWhereUniqueInput>;
+}
+
+export interface UserCreateWithoutPushNotificationsInput {
+  id?: Maybe<ID_Input>;
+  auth0Id: String;
+  email: String;
+  firstName: String;
+  lastName: String;
+  role?: Maybe<UserRole>;
+  roles?: Maybe<UserCreaterolesInput>;
+  pushNotificationStatus?: Maybe<PushNotificationStatus>;
+  pushNotification?: Maybe<UserPushNotificationCreateOneInput>;
+  verificationStatus?: Maybe<UserVerificationStatus>;
+  verificationMethod?: Maybe<UserVerificationMethod>;
 }
 
 export interface CustomerDetailCreateOneInput {
@@ -7861,6 +7919,8 @@ export interface UserUpdateDataInput {
   lastName?: Maybe<String>;
   role?: Maybe<UserRole>;
   roles?: Maybe<UserUpdaterolesInput>;
+  pushNotificationStatus?: Maybe<PushNotificationStatus>;
+  pushNotifications?: Maybe<PushNotificationReceiptUpdateManyWithoutUsersInput>;
   pushNotification?: Maybe<UserPushNotificationUpdateOneInput>;
   verificationStatus?: Maybe<UserVerificationStatus>;
   verificationMethod?: Maybe<UserVerificationMethod>;
@@ -7868,6 +7928,250 @@ export interface UserUpdateDataInput {
 
 export interface UserUpdaterolesInput {
   set?: Maybe<UserRole[] | UserRole>;
+}
+
+export interface PushNotificationReceiptUpdateManyWithoutUsersInput {
+  create?: Maybe<
+    | PushNotificationReceiptCreateWithoutUsersInput[]
+    | PushNotificationReceiptCreateWithoutUsersInput
+  >;
+  delete?: Maybe<
+    | PushNotificationReceiptWhereUniqueInput[]
+    | PushNotificationReceiptWhereUniqueInput
+  >;
+  connect?: Maybe<
+    | PushNotificationReceiptWhereUniqueInput[]
+    | PushNotificationReceiptWhereUniqueInput
+  >;
+  set?: Maybe<
+    | PushNotificationReceiptWhereUniqueInput[]
+    | PushNotificationReceiptWhereUniqueInput
+  >;
+  disconnect?: Maybe<
+    | PushNotificationReceiptWhereUniqueInput[]
+    | PushNotificationReceiptWhereUniqueInput
+  >;
+  update?: Maybe<
+    | PushNotificationReceiptUpdateWithWhereUniqueWithoutUsersInput[]
+    | PushNotificationReceiptUpdateWithWhereUniqueWithoutUsersInput
+  >;
+  upsert?: Maybe<
+    | PushNotificationReceiptUpsertWithWhereUniqueWithoutUsersInput[]
+    | PushNotificationReceiptUpsertWithWhereUniqueWithoutUsersInput
+  >;
+  deleteMany?: Maybe<
+    | PushNotificationReceiptScalarWhereInput[]
+    | PushNotificationReceiptScalarWhereInput
+  >;
+  updateMany?: Maybe<
+    | PushNotificationReceiptUpdateManyWithWhereNestedInput[]
+    | PushNotificationReceiptUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface PushNotificationReceiptUpdateWithWhereUniqueWithoutUsersInput {
+  where: PushNotificationReceiptWhereUniqueInput;
+  data: PushNotificationReceiptUpdateWithoutUsersDataInput;
+}
+
+export interface PushNotificationReceiptUpdateWithoutUsersDataInput {
+  route?: Maybe<String>;
+  screen?: Maybe<String>;
+  uri?: Maybe<String>;
+  interest?: Maybe<String>;
+  body?: Maybe<String>;
+  title?: Maybe<String>;
+  recordID?: Maybe<String>;
+  recordSlug?: Maybe<String>;
+  sentAt?: Maybe<DateTimeInput>;
+}
+
+export interface PushNotificationReceiptUpsertWithWhereUniqueWithoutUsersInput {
+  where: PushNotificationReceiptWhereUniqueInput;
+  update: PushNotificationReceiptUpdateWithoutUsersDataInput;
+  create: PushNotificationReceiptCreateWithoutUsersInput;
+}
+
+export interface PushNotificationReceiptScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  route?: Maybe<String>;
+  route_not?: Maybe<String>;
+  route_in?: Maybe<String[] | String>;
+  route_not_in?: Maybe<String[] | String>;
+  route_lt?: Maybe<String>;
+  route_lte?: Maybe<String>;
+  route_gt?: Maybe<String>;
+  route_gte?: Maybe<String>;
+  route_contains?: Maybe<String>;
+  route_not_contains?: Maybe<String>;
+  route_starts_with?: Maybe<String>;
+  route_not_starts_with?: Maybe<String>;
+  route_ends_with?: Maybe<String>;
+  route_not_ends_with?: Maybe<String>;
+  screen?: Maybe<String>;
+  screen_not?: Maybe<String>;
+  screen_in?: Maybe<String[] | String>;
+  screen_not_in?: Maybe<String[] | String>;
+  screen_lt?: Maybe<String>;
+  screen_lte?: Maybe<String>;
+  screen_gt?: Maybe<String>;
+  screen_gte?: Maybe<String>;
+  screen_contains?: Maybe<String>;
+  screen_not_contains?: Maybe<String>;
+  screen_starts_with?: Maybe<String>;
+  screen_not_starts_with?: Maybe<String>;
+  screen_ends_with?: Maybe<String>;
+  screen_not_ends_with?: Maybe<String>;
+  uri?: Maybe<String>;
+  uri_not?: Maybe<String>;
+  uri_in?: Maybe<String[] | String>;
+  uri_not_in?: Maybe<String[] | String>;
+  uri_lt?: Maybe<String>;
+  uri_lte?: Maybe<String>;
+  uri_gt?: Maybe<String>;
+  uri_gte?: Maybe<String>;
+  uri_contains?: Maybe<String>;
+  uri_not_contains?: Maybe<String>;
+  uri_starts_with?: Maybe<String>;
+  uri_not_starts_with?: Maybe<String>;
+  uri_ends_with?: Maybe<String>;
+  uri_not_ends_with?: Maybe<String>;
+  interest?: Maybe<String>;
+  interest_not?: Maybe<String>;
+  interest_in?: Maybe<String[] | String>;
+  interest_not_in?: Maybe<String[] | String>;
+  interest_lt?: Maybe<String>;
+  interest_lte?: Maybe<String>;
+  interest_gt?: Maybe<String>;
+  interest_gte?: Maybe<String>;
+  interest_contains?: Maybe<String>;
+  interest_not_contains?: Maybe<String>;
+  interest_starts_with?: Maybe<String>;
+  interest_not_starts_with?: Maybe<String>;
+  interest_ends_with?: Maybe<String>;
+  interest_not_ends_with?: Maybe<String>;
+  body?: Maybe<String>;
+  body_not?: Maybe<String>;
+  body_in?: Maybe<String[] | String>;
+  body_not_in?: Maybe<String[] | String>;
+  body_lt?: Maybe<String>;
+  body_lte?: Maybe<String>;
+  body_gt?: Maybe<String>;
+  body_gte?: Maybe<String>;
+  body_contains?: Maybe<String>;
+  body_not_contains?: Maybe<String>;
+  body_starts_with?: Maybe<String>;
+  body_not_starts_with?: Maybe<String>;
+  body_ends_with?: Maybe<String>;
+  body_not_ends_with?: Maybe<String>;
+  title?: Maybe<String>;
+  title_not?: Maybe<String>;
+  title_in?: Maybe<String[] | String>;
+  title_not_in?: Maybe<String[] | String>;
+  title_lt?: Maybe<String>;
+  title_lte?: Maybe<String>;
+  title_gt?: Maybe<String>;
+  title_gte?: Maybe<String>;
+  title_contains?: Maybe<String>;
+  title_not_contains?: Maybe<String>;
+  title_starts_with?: Maybe<String>;
+  title_not_starts_with?: Maybe<String>;
+  title_ends_with?: Maybe<String>;
+  title_not_ends_with?: Maybe<String>;
+  recordID?: Maybe<String>;
+  recordID_not?: Maybe<String>;
+  recordID_in?: Maybe<String[] | String>;
+  recordID_not_in?: Maybe<String[] | String>;
+  recordID_lt?: Maybe<String>;
+  recordID_lte?: Maybe<String>;
+  recordID_gt?: Maybe<String>;
+  recordID_gte?: Maybe<String>;
+  recordID_contains?: Maybe<String>;
+  recordID_not_contains?: Maybe<String>;
+  recordID_starts_with?: Maybe<String>;
+  recordID_not_starts_with?: Maybe<String>;
+  recordID_ends_with?: Maybe<String>;
+  recordID_not_ends_with?: Maybe<String>;
+  recordSlug?: Maybe<String>;
+  recordSlug_not?: Maybe<String>;
+  recordSlug_in?: Maybe<String[] | String>;
+  recordSlug_not_in?: Maybe<String[] | String>;
+  recordSlug_lt?: Maybe<String>;
+  recordSlug_lte?: Maybe<String>;
+  recordSlug_gt?: Maybe<String>;
+  recordSlug_gte?: Maybe<String>;
+  recordSlug_contains?: Maybe<String>;
+  recordSlug_not_contains?: Maybe<String>;
+  recordSlug_starts_with?: Maybe<String>;
+  recordSlug_not_starts_with?: Maybe<String>;
+  recordSlug_ends_with?: Maybe<String>;
+  recordSlug_not_ends_with?: Maybe<String>;
+  sentAt?: Maybe<DateTimeInput>;
+  sentAt_not?: Maybe<DateTimeInput>;
+  sentAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  sentAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  sentAt_lt?: Maybe<DateTimeInput>;
+  sentAt_lte?: Maybe<DateTimeInput>;
+  sentAt_gt?: Maybe<DateTimeInput>;
+  sentAt_gte?: Maybe<DateTimeInput>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<
+    | PushNotificationReceiptScalarWhereInput[]
+    | PushNotificationReceiptScalarWhereInput
+  >;
+  OR?: Maybe<
+    | PushNotificationReceiptScalarWhereInput[]
+    | PushNotificationReceiptScalarWhereInput
+  >;
+  NOT?: Maybe<
+    | PushNotificationReceiptScalarWhereInput[]
+    | PushNotificationReceiptScalarWhereInput
+  >;
+}
+
+export interface PushNotificationReceiptUpdateManyWithWhereNestedInput {
+  where: PushNotificationReceiptScalarWhereInput;
+  data: PushNotificationReceiptUpdateManyDataInput;
+}
+
+export interface PushNotificationReceiptUpdateManyDataInput {
+  route?: Maybe<String>;
+  screen?: Maybe<String>;
+  uri?: Maybe<String>;
+  interest?: Maybe<String>;
+  body?: Maybe<String>;
+  title?: Maybe<String>;
+  recordID?: Maybe<String>;
+  recordSlug?: Maybe<String>;
+  sentAt?: Maybe<DateTimeInput>;
 }
 
 export interface UserPushNotificationUpdateOneInput {
@@ -8053,7 +8357,7 @@ export interface PushNotificationReceiptUpdateDataInput {
   route?: Maybe<String>;
   screen?: Maybe<String>;
   uri?: Maybe<String>;
-  users?: Maybe<UserUpdateManyInput>;
+  users?: Maybe<UserUpdateManyWithoutPushNotificationsInput>;
   interest?: Maybe<String>;
   body?: Maybe<String>;
   title?: Maybe<String>;
@@ -8062,35 +8366,51 @@ export interface PushNotificationReceiptUpdateDataInput {
   sentAt?: Maybe<DateTimeInput>;
 }
 
-export interface UserUpdateManyInput {
-  create?: Maybe<UserCreateInput[] | UserCreateInput>;
-  update?: Maybe<
-    | UserUpdateWithWhereUniqueNestedInput[]
-    | UserUpdateWithWhereUniqueNestedInput
-  >;
-  upsert?: Maybe<
-    | UserUpsertWithWhereUniqueNestedInput[]
-    | UserUpsertWithWhereUniqueNestedInput
+export interface UserUpdateManyWithoutPushNotificationsInput {
+  create?: Maybe<
+    | UserCreateWithoutPushNotificationsInput[]
+    | UserCreateWithoutPushNotificationsInput
   >;
   delete?: Maybe<UserWhereUniqueInput[] | UserWhereUniqueInput>;
   connect?: Maybe<UserWhereUniqueInput[] | UserWhereUniqueInput>;
   set?: Maybe<UserWhereUniqueInput[] | UserWhereUniqueInput>;
   disconnect?: Maybe<UserWhereUniqueInput[] | UserWhereUniqueInput>;
+  update?: Maybe<
+    | UserUpdateWithWhereUniqueWithoutPushNotificationsInput[]
+    | UserUpdateWithWhereUniqueWithoutPushNotificationsInput
+  >;
+  upsert?: Maybe<
+    | UserUpsertWithWhereUniqueWithoutPushNotificationsInput[]
+    | UserUpsertWithWhereUniqueWithoutPushNotificationsInput
+  >;
   deleteMany?: Maybe<UserScalarWhereInput[] | UserScalarWhereInput>;
   updateMany?: Maybe<
     UserUpdateManyWithWhereNestedInput[] | UserUpdateManyWithWhereNestedInput
   >;
 }
 
-export interface UserUpdateWithWhereUniqueNestedInput {
+export interface UserUpdateWithWhereUniqueWithoutPushNotificationsInput {
   where: UserWhereUniqueInput;
-  data: UserUpdateDataInput;
+  data: UserUpdateWithoutPushNotificationsDataInput;
 }
 
-export interface UserUpsertWithWhereUniqueNestedInput {
+export interface UserUpdateWithoutPushNotificationsDataInput {
+  auth0Id?: Maybe<String>;
+  email?: Maybe<String>;
+  firstName?: Maybe<String>;
+  lastName?: Maybe<String>;
+  role?: Maybe<UserRole>;
+  roles?: Maybe<UserUpdaterolesInput>;
+  pushNotificationStatus?: Maybe<PushNotificationStatus>;
+  pushNotification?: Maybe<UserPushNotificationUpdateOneInput>;
+  verificationStatus?: Maybe<UserVerificationStatus>;
+  verificationMethod?: Maybe<UserVerificationMethod>;
+}
+
+export interface UserUpsertWithWhereUniqueWithoutPushNotificationsInput {
   where: UserWhereUniqueInput;
-  update: UserUpdateDataInput;
-  create: UserCreateInput;
+  update: UserUpdateWithoutPushNotificationsDataInput;
+  create: UserCreateWithoutPushNotificationsInput;
 }
 
 export interface UserScalarWhereInput {
@@ -8168,6 +8488,14 @@ export interface UserScalarWhereInput {
   role_not?: Maybe<UserRole>;
   role_in?: Maybe<UserRole[] | UserRole>;
   role_not_in?: Maybe<UserRole[] | UserRole>;
+  pushNotificationStatus?: Maybe<PushNotificationStatus>;
+  pushNotificationStatus_not?: Maybe<PushNotificationStatus>;
+  pushNotificationStatus_in?: Maybe<
+    PushNotificationStatus[] | PushNotificationStatus
+  >;
+  pushNotificationStatus_not_in?: Maybe<
+    PushNotificationStatus[] | PushNotificationStatus
+  >;
   verificationStatus?: Maybe<UserVerificationStatus>;
   verificationStatus_not?: Maybe<UserVerificationStatus>;
   verificationStatus_in?: Maybe<
@@ -8217,6 +8545,7 @@ export interface UserUpdateManyDataInput {
   lastName?: Maybe<String>;
   role?: Maybe<UserRole>;
   roles?: Maybe<UserUpdaterolesInput>;
+  pushNotificationStatus?: Maybe<PushNotificationStatus>;
   verificationStatus?: Maybe<UserVerificationStatus>;
   verificationMethod?: Maybe<UserVerificationMethod>;
 }
@@ -8225,188 +8554,6 @@ export interface PushNotificationReceiptUpsertWithWhereUniqueNestedInput {
   where: PushNotificationReceiptWhereUniqueInput;
   update: PushNotificationReceiptUpdateDataInput;
   create: PushNotificationReceiptCreateInput;
-}
-
-export interface PushNotificationReceiptScalarWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  route?: Maybe<String>;
-  route_not?: Maybe<String>;
-  route_in?: Maybe<String[] | String>;
-  route_not_in?: Maybe<String[] | String>;
-  route_lt?: Maybe<String>;
-  route_lte?: Maybe<String>;
-  route_gt?: Maybe<String>;
-  route_gte?: Maybe<String>;
-  route_contains?: Maybe<String>;
-  route_not_contains?: Maybe<String>;
-  route_starts_with?: Maybe<String>;
-  route_not_starts_with?: Maybe<String>;
-  route_ends_with?: Maybe<String>;
-  route_not_ends_with?: Maybe<String>;
-  screen?: Maybe<String>;
-  screen_not?: Maybe<String>;
-  screen_in?: Maybe<String[] | String>;
-  screen_not_in?: Maybe<String[] | String>;
-  screen_lt?: Maybe<String>;
-  screen_lte?: Maybe<String>;
-  screen_gt?: Maybe<String>;
-  screen_gte?: Maybe<String>;
-  screen_contains?: Maybe<String>;
-  screen_not_contains?: Maybe<String>;
-  screen_starts_with?: Maybe<String>;
-  screen_not_starts_with?: Maybe<String>;
-  screen_ends_with?: Maybe<String>;
-  screen_not_ends_with?: Maybe<String>;
-  uri?: Maybe<String>;
-  uri_not?: Maybe<String>;
-  uri_in?: Maybe<String[] | String>;
-  uri_not_in?: Maybe<String[] | String>;
-  uri_lt?: Maybe<String>;
-  uri_lte?: Maybe<String>;
-  uri_gt?: Maybe<String>;
-  uri_gte?: Maybe<String>;
-  uri_contains?: Maybe<String>;
-  uri_not_contains?: Maybe<String>;
-  uri_starts_with?: Maybe<String>;
-  uri_not_starts_with?: Maybe<String>;
-  uri_ends_with?: Maybe<String>;
-  uri_not_ends_with?: Maybe<String>;
-  interest?: Maybe<String>;
-  interest_not?: Maybe<String>;
-  interest_in?: Maybe<String[] | String>;
-  interest_not_in?: Maybe<String[] | String>;
-  interest_lt?: Maybe<String>;
-  interest_lte?: Maybe<String>;
-  interest_gt?: Maybe<String>;
-  interest_gte?: Maybe<String>;
-  interest_contains?: Maybe<String>;
-  interest_not_contains?: Maybe<String>;
-  interest_starts_with?: Maybe<String>;
-  interest_not_starts_with?: Maybe<String>;
-  interest_ends_with?: Maybe<String>;
-  interest_not_ends_with?: Maybe<String>;
-  body?: Maybe<String>;
-  body_not?: Maybe<String>;
-  body_in?: Maybe<String[] | String>;
-  body_not_in?: Maybe<String[] | String>;
-  body_lt?: Maybe<String>;
-  body_lte?: Maybe<String>;
-  body_gt?: Maybe<String>;
-  body_gte?: Maybe<String>;
-  body_contains?: Maybe<String>;
-  body_not_contains?: Maybe<String>;
-  body_starts_with?: Maybe<String>;
-  body_not_starts_with?: Maybe<String>;
-  body_ends_with?: Maybe<String>;
-  body_not_ends_with?: Maybe<String>;
-  title?: Maybe<String>;
-  title_not?: Maybe<String>;
-  title_in?: Maybe<String[] | String>;
-  title_not_in?: Maybe<String[] | String>;
-  title_lt?: Maybe<String>;
-  title_lte?: Maybe<String>;
-  title_gt?: Maybe<String>;
-  title_gte?: Maybe<String>;
-  title_contains?: Maybe<String>;
-  title_not_contains?: Maybe<String>;
-  title_starts_with?: Maybe<String>;
-  title_not_starts_with?: Maybe<String>;
-  title_ends_with?: Maybe<String>;
-  title_not_ends_with?: Maybe<String>;
-  recordID?: Maybe<String>;
-  recordID_not?: Maybe<String>;
-  recordID_in?: Maybe<String[] | String>;
-  recordID_not_in?: Maybe<String[] | String>;
-  recordID_lt?: Maybe<String>;
-  recordID_lte?: Maybe<String>;
-  recordID_gt?: Maybe<String>;
-  recordID_gte?: Maybe<String>;
-  recordID_contains?: Maybe<String>;
-  recordID_not_contains?: Maybe<String>;
-  recordID_starts_with?: Maybe<String>;
-  recordID_not_starts_with?: Maybe<String>;
-  recordID_ends_with?: Maybe<String>;
-  recordID_not_ends_with?: Maybe<String>;
-  recordSlug?: Maybe<String>;
-  recordSlug_not?: Maybe<String>;
-  recordSlug_in?: Maybe<String[] | String>;
-  recordSlug_not_in?: Maybe<String[] | String>;
-  recordSlug_lt?: Maybe<String>;
-  recordSlug_lte?: Maybe<String>;
-  recordSlug_gt?: Maybe<String>;
-  recordSlug_gte?: Maybe<String>;
-  recordSlug_contains?: Maybe<String>;
-  recordSlug_not_contains?: Maybe<String>;
-  recordSlug_starts_with?: Maybe<String>;
-  recordSlug_not_starts_with?: Maybe<String>;
-  recordSlug_ends_with?: Maybe<String>;
-  recordSlug_not_ends_with?: Maybe<String>;
-  sentAt?: Maybe<DateTimeInput>;
-  sentAt_not?: Maybe<DateTimeInput>;
-  sentAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  sentAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  sentAt_lt?: Maybe<DateTimeInput>;
-  sentAt_lte?: Maybe<DateTimeInput>;
-  sentAt_gt?: Maybe<DateTimeInput>;
-  sentAt_gte?: Maybe<DateTimeInput>;
-  createdAt?: Maybe<DateTimeInput>;
-  createdAt_not?: Maybe<DateTimeInput>;
-  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_lt?: Maybe<DateTimeInput>;
-  createdAt_lte?: Maybe<DateTimeInput>;
-  createdAt_gt?: Maybe<DateTimeInput>;
-  createdAt_gte?: Maybe<DateTimeInput>;
-  updatedAt?: Maybe<DateTimeInput>;
-  updatedAt_not?: Maybe<DateTimeInput>;
-  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_lt?: Maybe<DateTimeInput>;
-  updatedAt_lte?: Maybe<DateTimeInput>;
-  updatedAt_gt?: Maybe<DateTimeInput>;
-  updatedAt_gte?: Maybe<DateTimeInput>;
-  AND?: Maybe<
-    | PushNotificationReceiptScalarWhereInput[]
-    | PushNotificationReceiptScalarWhereInput
-  >;
-  OR?: Maybe<
-    | PushNotificationReceiptScalarWhereInput[]
-    | PushNotificationReceiptScalarWhereInput
-  >;
-  NOT?: Maybe<
-    | PushNotificationReceiptScalarWhereInput[]
-    | PushNotificationReceiptScalarWhereInput
-  >;
-}
-
-export interface PushNotificationReceiptUpdateManyWithWhereNestedInput {
-  where: PushNotificationReceiptScalarWhereInput;
-  data: PushNotificationReceiptUpdateManyDataInput;
-}
-
-export interface PushNotificationReceiptUpdateManyDataInput {
-  route?: Maybe<String>;
-  screen?: Maybe<String>;
-  uri?: Maybe<String>;
-  interest?: Maybe<String>;
-  body?: Maybe<String>;
-  title?: Maybe<String>;
-  recordID?: Maybe<String>;
-  recordSlug?: Maybe<String>;
-  sentAt?: Maybe<DateTimeInput>;
 }
 
 export interface UserPushNotificationUpsertNestedInput {
@@ -13255,7 +13402,7 @@ export interface PushNotificationReceiptUpdateInput {
   route?: Maybe<String>;
   screen?: Maybe<String>;
   uri?: Maybe<String>;
-  users?: Maybe<UserUpdateManyInput>;
+  users?: Maybe<UserUpdateManyWithoutPushNotificationsInput>;
   interest?: Maybe<String>;
   body?: Maybe<String>;
   title?: Maybe<String>;
@@ -13757,6 +13904,8 @@ export interface UserUpdateInput {
   lastName?: Maybe<String>;
   role?: Maybe<UserRole>;
   roles?: Maybe<UserUpdaterolesInput>;
+  pushNotificationStatus?: Maybe<PushNotificationStatus>;
+  pushNotifications?: Maybe<PushNotificationReceiptUpdateManyWithoutUsersInput>;
   pushNotification?: Maybe<UserPushNotificationUpdateOneInput>;
   verificationStatus?: Maybe<UserVerificationStatus>;
   verificationMethod?: Maybe<UserVerificationMethod>;
@@ -13769,6 +13918,7 @@ export interface UserUpdateManyMutationInput {
   lastName?: Maybe<String>;
   role?: Maybe<UserRole>;
   roles?: Maybe<UserUpdaterolesInput>;
+  pushNotificationStatus?: Maybe<PushNotificationStatus>;
   verificationStatus?: Maybe<UserVerificationStatus>;
   verificationMethod?: Maybe<UserVerificationMethod>;
 }
@@ -15063,6 +15213,7 @@ export interface User {
   lastName: String;
   role: UserRole;
   roles: UserRole[];
+  pushNotificationStatus: PushNotificationStatus;
   verificationStatus: UserVerificationStatus;
   verificationMethod: UserVerificationMethod;
   createdAt: DateTimeOutput;
@@ -15077,6 +15228,16 @@ export interface UserPromise extends Promise<User>, Fragmentable {
   lastName: () => Promise<String>;
   role: () => Promise<UserRole>;
   roles: () => Promise<UserRole[]>;
+  pushNotificationStatus: () => Promise<PushNotificationStatus>;
+  pushNotifications: <T = FragmentableArray<PushNotificationReceipt>>(args?: {
+    where?: PushNotificationReceiptWhereInput;
+    orderBy?: PushNotificationReceiptOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
   pushNotification: <T = UserPushNotificationPromise>() => T;
   verificationStatus: () => Promise<UserVerificationStatus>;
   verificationMethod: () => Promise<UserVerificationMethod>;
@@ -15094,6 +15255,18 @@ export interface UserSubscription
   lastName: () => Promise<AsyncIterator<String>>;
   role: () => Promise<AsyncIterator<UserRole>>;
   roles: () => Promise<AsyncIterator<UserRole[]>>;
+  pushNotificationStatus: () => Promise<AsyncIterator<PushNotificationStatus>>;
+  pushNotifications: <
+    T = Promise<AsyncIterator<PushNotificationReceiptSubscription>>
+  >(args?: {
+    where?: PushNotificationReceiptWhereInput;
+    orderBy?: PushNotificationReceiptOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
   pushNotification: <T = UserPushNotificationSubscription>() => T;
   verificationStatus: () => Promise<AsyncIterator<UserVerificationStatus>>;
   verificationMethod: () => Promise<AsyncIterator<UserVerificationMethod>>;
@@ -15111,9 +15284,112 @@ export interface UserNullablePromise
   lastName: () => Promise<String>;
   role: () => Promise<UserRole>;
   roles: () => Promise<UserRole[]>;
+  pushNotificationStatus: () => Promise<PushNotificationStatus>;
+  pushNotifications: <T = FragmentableArray<PushNotificationReceipt>>(args?: {
+    where?: PushNotificationReceiptWhereInput;
+    orderBy?: PushNotificationReceiptOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
   pushNotification: <T = UserPushNotificationPromise>() => T;
   verificationStatus: () => Promise<UserVerificationStatus>;
   verificationMethod: () => Promise<UserVerificationMethod>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface PushNotificationReceipt {
+  id: ID_Output;
+  route?: String;
+  screen?: String;
+  uri?: String;
+  interest?: String;
+  body: String;
+  title?: String;
+  recordID?: String;
+  recordSlug?: String;
+  sentAt: DateTimeOutput;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface PushNotificationReceiptPromise
+  extends Promise<PushNotificationReceipt>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  route: () => Promise<String>;
+  screen: () => Promise<String>;
+  uri: () => Promise<String>;
+  users: <T = FragmentableArray<User>>(args?: {
+    where?: UserWhereInput;
+    orderBy?: UserOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  interest: () => Promise<String>;
+  body: () => Promise<String>;
+  title: () => Promise<String>;
+  recordID: () => Promise<String>;
+  recordSlug: () => Promise<String>;
+  sentAt: () => Promise<DateTimeOutput>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface PushNotificationReceiptSubscription
+  extends Promise<AsyncIterator<PushNotificationReceipt>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  route: () => Promise<AsyncIterator<String>>;
+  screen: () => Promise<AsyncIterator<String>>;
+  uri: () => Promise<AsyncIterator<String>>;
+  users: <T = Promise<AsyncIterator<UserSubscription>>>(args?: {
+    where?: UserWhereInput;
+    orderBy?: UserOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  interest: () => Promise<AsyncIterator<String>>;
+  body: () => Promise<AsyncIterator<String>>;
+  title: () => Promise<AsyncIterator<String>>;
+  recordID: () => Promise<AsyncIterator<String>>;
+  recordSlug: () => Promise<AsyncIterator<String>>;
+  sentAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface PushNotificationReceiptNullablePromise
+  extends Promise<PushNotificationReceipt | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  route: () => Promise<String>;
+  screen: () => Promise<String>;
+  uri: () => Promise<String>;
+  users: <T = FragmentableArray<User>>(args?: {
+    where?: UserWhereInput;
+    orderBy?: UserOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  interest: () => Promise<String>;
+  body: () => Promise<String>;
+  title: () => Promise<String>;
+  recordID: () => Promise<String>;
+  recordSlug: () => Promise<String>;
+  sentAt: () => Promise<DateTimeOutput>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -15237,99 +15513,6 @@ export interface UserPushNotificationInterestNullablePromise
   value: () => Promise<String>;
   user: <T = UserPromise>() => T;
   status: () => Promise<Boolean>;
-}
-
-export interface PushNotificationReceipt {
-  id: ID_Output;
-  route?: String;
-  screen?: String;
-  uri?: String;
-  interest?: String;
-  body: String;
-  title?: String;
-  recordID?: String;
-  recordSlug?: String;
-  sentAt: DateTimeOutput;
-  createdAt: DateTimeOutput;
-  updatedAt: DateTimeOutput;
-}
-
-export interface PushNotificationReceiptPromise
-  extends Promise<PushNotificationReceipt>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  route: () => Promise<String>;
-  screen: () => Promise<String>;
-  uri: () => Promise<String>;
-  users: <T = FragmentableArray<User>>(args?: {
-    where?: UserWhereInput;
-    orderBy?: UserOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
-  interest: () => Promise<String>;
-  body: () => Promise<String>;
-  title: () => Promise<String>;
-  recordID: () => Promise<String>;
-  recordSlug: () => Promise<String>;
-  sentAt: () => Promise<DateTimeOutput>;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
-}
-
-export interface PushNotificationReceiptSubscription
-  extends Promise<AsyncIterator<PushNotificationReceipt>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  route: () => Promise<AsyncIterator<String>>;
-  screen: () => Promise<AsyncIterator<String>>;
-  uri: () => Promise<AsyncIterator<String>>;
-  users: <T = Promise<AsyncIterator<UserSubscription>>>(args?: {
-    where?: UserWhereInput;
-    orderBy?: UserOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
-  interest: () => Promise<AsyncIterator<String>>;
-  body: () => Promise<AsyncIterator<String>>;
-  title: () => Promise<AsyncIterator<String>>;
-  recordID: () => Promise<AsyncIterator<String>>;
-  recordSlug: () => Promise<AsyncIterator<String>>;
-  sentAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-}
-
-export interface PushNotificationReceiptNullablePromise
-  extends Promise<PushNotificationReceipt | null>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  route: () => Promise<String>;
-  screen: () => Promise<String>;
-  uri: () => Promise<String>;
-  users: <T = FragmentableArray<User>>(args?: {
-    where?: UserWhereInput;
-    orderBy?: UserOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
-  interest: () => Promise<String>;
-  body: () => Promise<String>;
-  title: () => Promise<String>;
-  recordID: () => Promise<String>;
-  recordSlug: () => Promise<String>;
-  sentAt: () => Promise<DateTimeOutput>;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface CustomerDetail {
@@ -23305,6 +23488,7 @@ export interface UserPreviousValues {
   lastName: String;
   role: UserRole;
   roles: UserRole[];
+  pushNotificationStatus: PushNotificationStatus;
   verificationStatus: UserVerificationStatus;
   verificationMethod: UserVerificationMethod;
   createdAt: DateTimeOutput;
@@ -23321,6 +23505,7 @@ export interface UserPreviousValuesPromise
   lastName: () => Promise<String>;
   role: () => Promise<UserRole>;
   roles: () => Promise<UserRole[]>;
+  pushNotificationStatus: () => Promise<PushNotificationStatus>;
   verificationStatus: () => Promise<UserVerificationStatus>;
   verificationMethod: () => Promise<UserVerificationMethod>;
   createdAt: () => Promise<DateTimeOutput>;
@@ -23337,6 +23522,7 @@ export interface UserPreviousValuesSubscription
   lastName: () => Promise<AsyncIterator<String>>;
   role: () => Promise<AsyncIterator<UserRole>>;
   roles: () => Promise<AsyncIterator<UserRole[]>>;
+  pushNotificationStatus: () => Promise<AsyncIterator<PushNotificationStatus>>;
   verificationStatus: () => Promise<AsyncIterator<UserVerificationStatus>>;
   verificationMethod: () => Promise<AsyncIterator<UserVerificationMethod>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
@@ -23795,6 +23981,10 @@ export const models: Model[] = [
   },
   {
     name: "UserVerificationStatus",
+    embedded: false
+  },
+  {
+    name: "PushNotificationStatus",
     embedded: false
   },
   {
