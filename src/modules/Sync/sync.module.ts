@@ -22,7 +22,6 @@ import { SyncPhysicalProductsService } from "./services/syncPhysicalProducts.ser
 import { SyncProductsService } from "./services/syncProducts.service"
 import { SyncProductVariantsService } from "./services/syncProductVariants.service"
 import { SyncSizesService } from "./services/syncSizes.service"
-import { SyncTopSizesService } from "./services/syncTopSizes.service"
 import { SyncUsersService } from "./services/syncUsers.service"
 
 @Module({
@@ -51,7 +50,6 @@ import { SyncUsersService } from "./services/syncUsers.service"
     SyncProductsService,
     SyncProductVariantsService,
     SyncSizesService,
-    SyncTopSizesService,
     SyncUsersService,
     SyncUtilsService,
   ],
