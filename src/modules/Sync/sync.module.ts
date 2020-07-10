@@ -21,7 +21,6 @@ import { SyncModelsService } from "./services/syncModels.service"
 import { SyncPhysicalProductsService } from "./services/syncPhysicalProducts.service"
 import { SyncProductsService } from "./services/syncProducts.service"
 import { SyncProductVariantsService } from "./services/syncProductVariants.service"
-import { SyncReservationsService } from "./services/syncReservations.service"
 import { SyncSizesService } from "./services/syncSizes.service"
 import { SyncTopSizesService } from "./services/syncTopSizes.service"
 import { SyncUsersService } from "./services/syncUsers.service"
@@ -51,7 +50,6 @@ import { SyncUsersService } from "./services/syncUsers.service"
     SyncPhysicalProductsService,
     SyncProductsService,
     SyncProductVariantsService,
-    SyncReservationsService,
     SyncSizesService,
     SyncTopSizesService,
     SyncUsersService,
