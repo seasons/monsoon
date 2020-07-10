@@ -24,8 +24,6 @@ export class SyncProductsService {
     private readonly utils: UtilsService
   ) {}
 
-  getProductRecordIdentifer = rec => rec.fields.Slug
-
   async syncAirtableToPrisma(cliProgressBar?) {
     const allBrands = await this.airtableService.getAllBrands()
     const allProducts = await this.airtableService.getAllProducts()

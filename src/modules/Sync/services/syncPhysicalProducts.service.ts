@@ -17,8 +17,6 @@ export class SyncPhysicalProductsService {
     private readonly utils: UtilsService
   ) {}
 
-  getPhysicalProductRecordIdentifier = rec => rec.fields.SUID.text
-
   async syncAirtableToPrisma(cliProgressBar?) {
     const allProductVariants = await this.airtableService.getAllProductVariants()
     const allPhysicalProducts = await this.airtableService.getAllPhysicalProducts()

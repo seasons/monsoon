@@ -15,8 +15,6 @@ export class SyncCategoriesService {
     private readonly syncUtils: SyncUtilsService
   ) {}
 
-  getCategoryRecordIdentifier = rec => rec.fields.Name
-
   async syncAirtableToPrisma(cliProgressBar?) {
     const allCategories = await this.airtableService.getAllCategories()
 

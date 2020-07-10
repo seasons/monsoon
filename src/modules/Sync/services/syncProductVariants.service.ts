@@ -25,8 +25,6 @@ export class SyncProductVariantsService {
     private readonly utils: UtilsService
   ) {}
 
-  getProductVariantRecordIdentifier = rec => rec.fields.SKU
-
   async syncAirtableToPrisma(cliProgressBar?) {
     // Make the progress bar
     const allProductVariants = await this.airtableService.getAllProductVariants()
