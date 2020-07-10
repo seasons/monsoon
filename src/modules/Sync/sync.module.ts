@@ -21,7 +21,6 @@ import { SyncModelsService } from "./services/syncModels.service"
 import { SyncPhysicalProductsService } from "./services/syncPhysicalProducts.service"
 import { SyncProductsService } from "./services/syncProducts.service"
 import { SyncProductVariantsService } from "./services/syncProductVariants.service"
-import { SyncUsersService } from "./services/syncUsers.service"
 
 @Module({
   imports: [
@@ -48,7 +47,6 @@ import { SyncUsersService } from "./services/syncUsers.service"
     SyncPhysicalProductsService,
     SyncProductsService,
     SyncProductVariantsService,
-    SyncUsersService,
     SyncUtilsService,
   ],
 })

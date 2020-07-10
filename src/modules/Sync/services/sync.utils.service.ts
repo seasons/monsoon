@@ -42,25 +42,6 @@ export class SyncUtilsService {
     ])
   }
 
-  async createAllStagingRecordsWithoutLinks({
-    modelName,
-    allProductionRecords,
-    sanitizeFunc,
-    cliProgressBar,
-  }: {
-    modelName: AirtableModelName
-    allProductionRecords: AirtableData
-    sanitizeFunc: (fields: any) => any
-    cliProgressBar?: any
-  }) {
-    for (const rec of allProductionRecords) {
-      cliProgressBar?.increment()
-      await this.airtableService
-        .getStagingBase()(`${modelName}`)
-        .create([{ fields: sanitizeFunc(rec.fields) }])
-    }
-  }
-
   async createAirtableToPrismaSubBar(
     multibar: any,
     modelName: AirtableModelName,
@@ -81,63 +62,6 @@ export class SyncUtilsService {
         ),
       }
     )
-  }
-
-  async createAirtableToAirtableSubBar(multibar, modelName: AirtableModelName) {
-    return await multibar.create(
-      await this.getNumReadWritesToSyncModel(modelName),
-      0,
-      {
-        modelName: `${modelName}:`.padEnd(
-          "Homepage Product Rails".length + 1,
-          " "
-        ),
-      }
-    )
-  }
-
-  async deleteAllStagingRecords(
-    modelName: AirtableModelName,
-    cliProgressBar?: any
-  ) {
-    const allRecords = await this.airtableModelNameToGetAllFunc(modelName)(
-      this.airtableService.getStagingBase()
-    )
-    for (const rec of allRecords) {
-      cliProgressBar?.increment()
-      await this.airtableService
-        .getStagingBase()(`${modelName}`)
-        .destroy([rec.id])
-    }
-  }
-
-  async linkStagingRecords({
-    rootRecordName,
-    targetFieldNameOnRootRecord,
-    allRootProductionRecords,
-    allRootStagingRecords,
-    allTargetProductionRecords,
-    allTargetStagingRecords,
-    getRootRecordIdentifer,
-    getTargetRecordIdentifer,
-    cliProgressBar,
-  }: Omit<LinkStagingRecordsInput, "rootProductionRecord">) {
-    for (const rootProductionRecord of allRootProductionRecords) {
-      cliProgressBar?.increment()
-      if (!rootProductionRecord.fields[`${targetFieldNameOnRootRecord}`]) {
-        continue
-      }
-      await this.linkStagingRecord({
-        rootProductionRecord,
-        rootRecordName,
-        targetFieldNameOnRootRecord,
-        allRootStagingRecords,
-        allTargetProductionRecords,
-        allTargetStagingRecords,
-        getRootRecordIdentifer,
-        getTargetRecordIdentifer,
-      })
-    }
   }
 
   async makeSingleSyncFuncMultiBarAndProgressBarIfNeeded({
@@ -229,58 +153,5 @@ export class SyncUtilsService {
       this.airtableService.getStagingBase()
     )
     return [prodRecords.length, stagingRecords.length]
-  }
-
-  private getNumReadWritesToSyncModel = async (
-    modelName: AirtableModelName
-  ) => {
-    const [
-      numProdRecs,
-      numStagingRecs,
-    ] = await this.getNumProdAndStagingRecords(modelName)
-    return (1 + this.getNumLinks(modelName)) * numProdRecs + numStagingRecs
-  }
-
-  private async linkStagingRecord({
-    rootProductionRecord,
-    rootRecordName,
-    targetFieldNameOnRootRecord,
-    allRootStagingRecords,
-    allTargetProductionRecords,
-    allTargetStagingRecords,
-    getRootRecordIdentifer,
-    getTargetRecordIdentifer,
-  }: LinkStagingRecordInput) {
-    // Find the staging record that corresponds to the production record
-    const correspondingRootStagingRecord = allRootStagingRecords.find(
-      rsr =>
-        getRootRecordIdentifer(rootProductionRecord) ===
-        getRootRecordIdentifer(rsr)
-    )
-    // Find the linked record(s) id(s) on staging
-    const targetProductionRecords = allTargetProductionRecords.filter(r =>
-      rootProductionRecord.fields[`${targetFieldNameOnRootRecord}`].includes(
-        r.id
-      )
-    )
-    const targetStagingRecords = allTargetStagingRecords.filter(r =>
-      targetProductionRecords.reduce(
-        (acc, curVal) =>
-          acc ||
-          getTargetRecordIdentifer(curVal) === getTargetRecordIdentifer(r),
-        false
-      )
-    )
-    //   Do the update
-    await this.airtableService
-      .getStagingBase()(`${rootRecordName}`)
-      .update([
-        {
-          id: correspondingRootStagingRecord.id,
-          fields: {
-            [targetFieldNameOnRootRecord]: targetStagingRecords.map(r => r.id),
-          },
-        },
-      ])
   }
 }
