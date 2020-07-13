@@ -1,3 +1,4 @@
+import { PrismaModule } from "@app/prisma/prisma.module"
 import { Module } from "@nestjs/common"
 
 import { PushNotificationModule } from "../PushNotification"
@@ -8,13 +9,9 @@ import { BlogService } from "./services/blog.service"
 import { WebflowService } from "./services/webflow.service"
 
 @Module({
-  imports: [UtilsModule, PushNotificationModule],
-  providers: [
-    BlogService,
-    BlogQueriesResolver,
-    WebflowService,
-    WebflowController,
-  ],
+  controllers: [WebflowController],
+  imports: [UtilsModule, PushNotificationModule, PrismaModule],
+  providers: [BlogService, BlogQueriesResolver, WebflowService],
   exports: [BlogService],
 })
 export class BlogModule {}

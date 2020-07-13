@@ -2,7 +2,7 @@ import { PushNotificationService } from "@app/modules/PushNotification"
 import { UtilsService } from "@app/modules/Utils"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Body, Controller, Logger, Post } from "@nestjs/common"
-import { upperFirst } from "lodash"
+import { head, omit, upperFirst } from "lodash"
 import moment from "moment"
 
 import { BlogService } from "../services/blog.service"
@@ -13,8 +13,6 @@ import { BlogService } from "../services/blog.service"
  */
 @Controller("webflow_events")
 export class WebflowController {
-  private readonly logger = new Logger(WebflowController.name)
-
   constructor(
     private readonly prisma: PrismaService,
     private readonly blog: BlogService,
@@ -23,9 +21,10 @@ export class WebflowController {
   ) {}
 
   @Post()
-  async handlePost(@Body() body: any) {
-    // Get the last blog post
+  async handlePost() {
     const {
+      id,
+      slug,
       name: headline,
       url: uri,
       publishedOn,
@@ -33,12 +32,17 @@ export class WebflowController {
     } = await this.blog.getLastPost()
 
     // Have we push notified about this post yet? Was it published today?
-    const receiptForThisPost =
-      (
-        await this.prisma.client.pushNotificationReceipts({
-          where: { body_contains: headline },
-        })
-      )?.length === 1
+    const receiptForThisPost = !!head(
+      await this.prisma.client.pushNotificationReceipts({
+        where: {
+          OR: [
+            { body_contains: headline },
+            { recordID: id },
+            { recordSlug: slug },
+          ],
+        },
+      })
+    )
     const postPublishedDate = moment(publishedOn)
     const publishedToday = this.utils.isSameDay(
       new Date(
@@ -50,18 +54,26 @@ export class WebflowController {
     )
 
     // If needed, push notif the people!
+    let receipt
     const sendPushNotif = !receiptForThisPost && publishedToday
     if (sendPushNotif) {
-      await this.pushNotification.pushNotifyInterest({
+      receipt = await this.pushNotification.pushNotifyInterest({
         interest: "seasons-general-notifications",
         pushNotifID: "NewBlogPost",
-        vars: { headline, category: upperFirst(category.toLowerCase()), uri },
+        vars: {
+          headline,
+          category: upperFirst(category.toLowerCase()),
+          uri,
+          id,
+          slug,
+        },
         debug: true,
       })
     }
 
     return {
       pushNotifSent: sendPushNotif,
+      receipt: omit(receipt, ["updatedAt", "createdAt"]),
     }
   }
 }
