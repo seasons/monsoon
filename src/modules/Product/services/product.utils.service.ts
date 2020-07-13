@@ -101,7 +101,7 @@ export class ProductUtilsService {
             where: {
               ...args.where,
               ...brandFilter.where,
-              OR: children.map(({ slug }) => ({ category: { slug } })),
+              category: { slug_in: children.map(child => child.slug) },
             },
           }
         : {
