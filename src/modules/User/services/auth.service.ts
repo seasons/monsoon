@@ -342,7 +342,7 @@ export class AuthService {
     refresh_token: string
     expires_in: number
   }> {
-    return new Promise(function RetrieveAccessToken(resolve, reject) {
+    return new Promise((resolve, reject) => {
       request(
         {
           method: "Post",

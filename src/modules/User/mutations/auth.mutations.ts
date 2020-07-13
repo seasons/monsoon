@@ -10,7 +10,7 @@ export class AuthMutationsResolver {
   @Mutation()
   async login(@Args() { email, password }, @User() requestUser) {
     const data = await this.authService.loginUser({
-      email,
+      email: email.toLowerCase(),
       password,
       requestUser,
     })
@@ -23,7 +23,7 @@ export class AuthMutationsResolver {
     @Context() ctx
   ) {
     const { user, tokenData, customer } = await this.authService.signupUser({
-      email,
+      email: email.toLowerCase(),
       password,
       firstName,
       lastName,
@@ -63,7 +63,7 @@ export class AuthMutationsResolver {
 
   @Mutation()
   async resetPassword(@Args() { email }) {
-    return await this.authService.resetPassword(email)
+    return await this.authService.resetPassword(email.toLowerCase())
   }
 
   @Mutation()
