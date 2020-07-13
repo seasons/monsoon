@@ -6,9 +6,13 @@ const run = async () => {
   try {
     const users = await ps.client.users()
     const interests = ["General", "Blog", "Bag", "NewProduct"]
-    users?.forEach(async user => {
+
+    const numUsers = users.length
+    let i = 0
+    for (const user of users) {
+      console.log(`user ${i++} of ${numUsers}`)
       const interestsIDs = []
-      interests.forEach(async interest => {
+      for (const interest of interests) {
         const createdInterest = await ps.client.createUserPushNotificationInterest(
           {
             type: interest as UserPushNotificationInterestType,
@@ -18,7 +22,8 @@ const run = async () => {
           }
         )
         interestsIDs.push({ id: createdInterest.id })
-      })
+      }
+
       const receipts = await ps.client.pushNotificationReceipts({
         where: {
           users_some: { id: user.id },
@@ -39,7 +44,7 @@ const run = async () => {
         where: { id: user.id },
         data: { pushNotification: { connect: { id: pushNotif.id } } },
       })
-    })
+    }
   } catch (err) {
     console.log(err)
   }
