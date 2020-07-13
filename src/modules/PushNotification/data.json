@@ -18,7 +18,10 @@
       "title": "Blog Post: {{{category}}}",
       "body": "{{{headline}}}"
     },
-    "data": { "route": "Webview", "params": { "uri": "{{{uri}}}" } }
+    "data": {
+      "route": "Webview",
+      "params": { "uri": "{{{uri}}}", "id": "{{id}}", "slug": "{{slug}}" }
+    }
   },
   "Custom": {
     "alert": {
