@@ -534,7 +534,6 @@ type User {
   email: String! @unique
   firstName: String!
   lastName: String!
-  role: UserRole! @default(value: Customer)
   roles: [UserRole!]! @scalarList(strategy: RELATION)
   pushNotificationStatus: PushNotificationStatus! @default(value: Denied)
   pushNotifications: [PushNotificationReceipt!]

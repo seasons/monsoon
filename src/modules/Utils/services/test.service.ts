@@ -54,7 +54,7 @@ export class TestUtilsService {
           email: `membership+${Date.now()}@seasons.nyc`,
           firstName: "SamTest",
           lastName: "JohnsonTest",
-          role: "Customer",
+          roles: { set: ["Customer"] },
           auth0Id: `auth|${Date.now()}`,
         },
       },
