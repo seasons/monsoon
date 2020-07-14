@@ -12,6 +12,7 @@ export class PhysicalProductMutationsResolver {
 
   @Mutation()
   async updatePhysicalProduct(@Args() { where, data }, @Info() info) {
+    throw new Error("yo")
     return await this.physicalProductService.updatePhysicalProduct({
       where,
       data,
