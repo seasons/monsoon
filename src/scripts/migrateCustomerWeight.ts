@@ -76,7 +76,7 @@ const run = async () => {
       continue
     }
 
-    ps.client.updateCustomerDetail({
+    await ps.client.updateCustomerDetail({
       data: {
         weight: { set: weight },
       },
