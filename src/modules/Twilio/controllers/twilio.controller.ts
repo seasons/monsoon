@@ -8,6 +8,8 @@ type TwilioEvent = {
   status: MessageStatus
 }
 
+export const twilioToPrismaSMSStatus = () => {}
+
 @Controller("twilio_events")
 export class TwilioController {
   @Post()

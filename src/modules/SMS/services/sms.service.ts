@@ -27,7 +27,9 @@ export class SMSService {
     this.sid = service.sid
   }
 
-  private twilioToPrismaStatus(statusString: string): UserVerificationStatus {
+  private twilioToPrismaVerificationStatus(
+    statusString: string
+  ): UserVerificationStatus {
     if (!["approved", "denied", "pending"].includes(statusString)) {
       throw new Error(`Got unrecognized verification status "${statusString}".`)
     }
@@ -59,7 +61,9 @@ export class SMSService {
       .verifications.create({ to: e164PhoneNumber, channel: "sms" })
     await this.prisma.client.updateUser({
       data: {
-        verificationStatus: this.twilioToPrismaStatus(verification.status),
+        verificationStatus: this.twilioToPrismaVerificationStatus(
+          verification.status
+        ),
         verificationMethod: "SMS",
       },
       where: {
@@ -115,7 +119,7 @@ export class SMSService {
       }
     }
 
-    const newStatus = this.twilioToPrismaStatus(check.status)
+    const newStatus = this.twilioToPrismaVerificationStatus(check.status)
     await this.prisma.client.updateUser({
       data: {
         verificationStatus: newStatus,
@@ -125,7 +129,7 @@ export class SMSService {
       },
     })
 
-    return this.twilioToPrismaStatus(check.status)
+    return this.twilioToPrismaVerificationStatus(check.status)
   }
 
   async sendMMSMessage(
@@ -167,7 +171,7 @@ export class SMSService {
 
     const message = await this.twilio.client.messages.create({
       body,
-      from: "",
+      from: "+16466877438",
       to: phoneNumber,
     })
     if (message.errorMessage) {
