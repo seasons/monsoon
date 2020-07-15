@@ -153,15 +153,6 @@ enum PhotographyStatus {
   Steam
 }
 
-enum EmailId {
-  ReservationReturnConfirmation
-  ReservationConfirmation
-  CompleteAccount
-  FreeToReserve
-  WelcomeToSeasons
-  ReturnReminder
-}
-
 enum PackageTransitEventStatus {
   PreTransit
   Transit
@@ -204,14 +195,6 @@ enum PackageTransitEventSubStatus {
 enum ReservationPhase {
   BusinessToCustomer
   CustomerToBusiness
-}
-
-enum UserPushNotificationInterestType {
-  General
-  Blog
-  Bag
-  NewProduct
-  Brand
 }
 
 type Brand {
@@ -477,6 +460,17 @@ type PaymentPlan {
   updatedAt: DateTime! @updatedAt
 }
 
+## Emails
+
+enum EmailId {
+  ReservationReturnConfirmation
+  ReservationConfirmation
+  CompleteAccount
+  FreeToReserve
+  WelcomeToSeasons
+  ReturnReminder
+}
+
 type EmailReceipt {
   id: ID! @id
   emailId: EmailId!
@@ -484,6 +478,14 @@ type EmailReceipt {
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
+
+## Push notifications
+
+enum PushNotificationStatus {
+   Blocked
+   Granted
+   Denied
+ }
 
 type PushNotificationReceipt {
   #id of the notification
@@ -510,6 +512,70 @@ type PushNotificationReceipt {
   updatedAt: DateTime! @updatedAt
 }
 
+enum UserPushNotificationInterestType {
+  General
+  Blog
+  Bag
+  NewProduct
+  Brand
+}
+
+type UserPushNotificationInterest {
+  id: ID! @id
+  type: UserPushNotificationInterestType!
+  value: String! # e.g. CDGS,
+  user: User!
+  status: Boolean! @default(value: true)
+}
+
+type UserPushNotification {
+  id: ID! @id
+  interests: [UserPushNotificationInterest!]!
+  status: Boolean! @default(value: true)
+  history: [PushNotificationReceipt!]!
+}
+
+## MMS
+
+enum MMSStatus{
+  Queued
+  Sending
+  Sent
+  Failed
+  Delivered
+  Undelivered
+  Receiving
+  Received
+  Accepted
+  Scheduled
+  Read
+  PartiallyDelivered
+}
+
+
+type MMSReceipt {
+  id: ID! @id
+  # user = which customer to send message to
+  user: User
+  # body = body of the message
+  body: String
+  # mediaUrls = image urls attached to message
+  mediaUrls: [String!] @scalarList(strategy: RELATION)
+  # status = delivery status
+  status: MMSStatus
+  createdAt: DateTime
+  sentAt: DateTime
+}
+
+type UserNotification {
+  id: ID! @id
+  push: UserPushNotification!
+  email: [EmailReceipt!]! @scalarList(strategy: RELATION)
+  mms: [MMSReceipt!]! @scalarList(strategy: RELATION)
+}
+
+## User verification
+
 enum UserVerificationMethod {
   SMS
   Email
@@ -521,12 +587,6 @@ enum UserVerificationStatus {
   Denied
   Pending
 }
-
-enum PushNotificationStatus {
-   Blocked
-   Granted
-   Denied
- }
  
 type User {
   id: ID! @id
@@ -544,6 +604,8 @@ type User {
   verificationMethod: UserVerificationMethod! @default(value: None)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
+
+  userNotification: UserNotification
 }
 
 type StylePreferences {
@@ -707,21 +769,6 @@ type ReservationReceiptItem {
   product: PhysicalProduct!
   productStatus: PhysicalProductStatus!
   notes: String
-}
-
-type UserPushNotificationInterest {
-  id: ID! @id
-  type: UserPushNotificationInterestType!
-  value: String! # e.g. CDGS,
-  user: User!
-  status: Boolean! @default(value: true)
-}
-
-type UserPushNotification {
-  id: ID! @id
-  interests: [UserPushNotificationInterest!]!
-  status: Boolean! @default(value: true)
-  history: [PushNotificationReceipt!]!
 }
 
 type Package {

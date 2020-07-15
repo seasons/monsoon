@@ -1,11 +1,11 @@
 import { Customer, User } from "@app/decorators"
 import { TwilioService } from "@app/modules/Twilio"
-import { AuthService } from "@modules/User/services/auth.service"
 import { Injectable } from "@nestjs/common"
 import { Args } from "@nestjs/graphql"
 import { UserVerificationStatus, UserWhereUniqueInput } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
 import { upperFirst } from "lodash"
+import { head } from "lodash"
 import { PhoneNumberInstance } from "twilio/lib/rest/lookups/v1/phoneNumber"
 import { VerificationCheckInstance } from "twilio/lib/rest/verify/v2/service/verificationCheck"
 
@@ -13,7 +13,6 @@ import { VerificationCheckInstance } from "twilio/lib/rest/verify/v2/service/ver
 export class SMSService {
   private sid?: string
   constructor(
-    private readonly authService: AuthService,
     private readonly prisma: PrismaService,
     private readonly twilio: TwilioService
   ) {
@@ -37,7 +36,7 @@ export class SMSService {
 
   async startSMSVerification(
     @Args()
-    { phoneNumber }: { phoneNumber: string; where: UserWhereUniqueInput },
+    { phoneNumber }: { phoneNumber: string },
     @Customer() customer,
     @User() user
   ): Promise<boolean> {
@@ -85,7 +84,7 @@ export class SMSService {
 
   async checkSMSVerification(
     @Args()
-    { code, where }: { code: string; where: UserWhereUniqueInput },
+    { code }: { code: string },
     @Customer() customer,
     @User() user
   ): Promise<UserVerificationStatus> {
@@ -127,5 +126,57 @@ export class SMSService {
     })
 
     return this.twilioToPrismaStatus(check.status)
+  }
+
+  async sendMMSMessage(
+    @Args()
+    {
+      body,
+      mediaUrls,
+      to,
+    }: {
+      body: string
+      mediaUrls?: string[]
+      to: UserWhereUniqueInput
+    }
+  ) {
+    if (mediaUrls?.length > 10) {
+      throw new Error(
+        "You can only attach up to 10 media URLs to an MMS message."
+      )
+    }
+
+    const customer = head(
+      await this.prisma.client.customers({
+        where: { user: to },
+      })
+    )
+    if (!customer) {
+      throw new Error(`Could not find a customer for the user with id ${to}`)
+    }
+
+    const phoneNumber = await this.prisma.client
+      .customer({ id: customer.id })
+      .detail()
+      .phoneNumber()
+    if (!phoneNumber) {
+      throw new Error(
+        `Could not find a phone number for the user with id ${to}.`
+      )
+    }
+
+    const message = await this.twilio.client.messages.create({
+      body,
+      from: "",
+      to: phoneNumber,
+    })
+    if (message.errorMessage) {
+      throw new Error(message.errorMessage)
+    }
+
+    // analytics?
+    // store sid?
+
+    return message.status
   }
 }
