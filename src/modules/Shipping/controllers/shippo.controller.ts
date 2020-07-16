@@ -112,7 +112,12 @@ export class ShippoController {
           phase
         )
 
-        this.updateLastLocation(reservationStatus, reservation, phase)
+        try {
+          await this.updateLastLocation(reservationStatus, reservation, phase)
+        } catch (e) {
+          this.logger.error("Error while updating last location")
+          this.logger.error(e)
+        }
 
         await this.prisma.client.updateReservation({
           where: { id: reservation.id },
@@ -182,8 +187,6 @@ export class ShippoController {
             process.env.SEASONS_CLEANER_LOCATION_SLUG ||
             "seasons-cleaners-official",
         })
-      } else {
-        throw new Error("Phase is undefined")
       }
 
       reservationWithData.products?.forEach(async product => {
