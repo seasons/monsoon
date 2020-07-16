@@ -231,7 +231,7 @@ export class UserCommands {
           },
         },
         status,
-        user: { update: { roles: { set: roles } } },
+        user: { update: { roles: { set: ["Customer", "Admin"] } } },
       },
       where: { id: customer.id },
     })
