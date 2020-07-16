@@ -252,7 +252,6 @@ input CustomProductUpdateInput {
   publishedAt: DateTime
 
   # Custom fields
-  createdAt: DateTime
   bottomSizeType: BottomSizeType
   functions: [String!]
   images: [Upload!]
