@@ -6,7 +6,7 @@
   "bin": "bin/cli.js",
   "main": "dist/index.js",
   "engines": {
-    "node": "14.x"
+    "node": "12.x"
   },
   "resolutions": {
     "graphql": "^14.5.7",
