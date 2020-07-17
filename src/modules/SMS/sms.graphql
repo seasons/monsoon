@@ -7,5 +7,5 @@ type Mutation {
     body: String!
     mediaUrls: [String]
     to: UserWhereUniqueInput!
-  ): SmsStatus
+  ): SmsStatus @hasRole(roles: [Admin])
 }
