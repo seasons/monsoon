@@ -12199,8 +12199,8 @@ type SmsReceipt {
   body: String!
   mediaUrls: [String!]!
   status: SmsStatus!
-  createdAt: DateTime!
   sentAt: DateTime!
+  updatedAt: DateTime!
 }
 
 type SmsReceiptConnection {
@@ -12240,10 +12240,10 @@ enum SmsReceiptOrderByInput {
   body_DESC
   status_ASC
   status_DESC
-  createdAt_ASC
-  createdAt_DESC
   sentAt_ASC
   sentAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
 }
 
 type SmsReceiptPreviousValues {
@@ -12252,8 +12252,8 @@ type SmsReceiptPreviousValues {
   body: String!
   mediaUrls: [String!]!
   status: SmsStatus!
-  createdAt: DateTime!
   sentAt: DateTime!
+  updatedAt: DateTime!
 }
 
 input SmsReceiptScalarWhereInput {
@@ -12303,14 +12303,6 @@ input SmsReceiptScalarWhereInput {
   status_not: SmsStatus
   status_in: [SmsStatus!]
   status_not_in: [SmsStatus!]
-  createdAt: DateTime
-  createdAt_not: DateTime
-  createdAt_in: [DateTime!]
-  createdAt_not_in: [DateTime!]
-  createdAt_lt: DateTime
-  createdAt_lte: DateTime
-  createdAt_gt: DateTime
-  createdAt_gte: DateTime
   sentAt: DateTime
   sentAt_not: DateTime
   sentAt_in: [DateTime!]
@@ -12319,6 +12311,14 @@ input SmsReceiptScalarWhereInput {
   sentAt_lte: DateTime
   sentAt_gt: DateTime
   sentAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
   AND: [SmsReceiptScalarWhereInput!]
   OR: [SmsReceiptScalarWhereInput!]
   NOT: [SmsReceiptScalarWhereInput!]
@@ -12449,14 +12449,6 @@ input SmsReceiptWhereInput {
   status_not: SmsStatus
   status_in: [SmsStatus!]
   status_not_in: [SmsStatus!]
-  createdAt: DateTime
-  createdAt_not: DateTime
-  createdAt_in: [DateTime!]
-  createdAt_not_in: [DateTime!]
-  createdAt_lt: DateTime
-  createdAt_lte: DateTime
-  createdAt_gt: DateTime
-  createdAt_gte: DateTime
   sentAt: DateTime
   sentAt_not: DateTime
   sentAt_in: [DateTime!]
@@ -12465,6 +12457,14 @@ input SmsReceiptWhereInput {
   sentAt_lte: DateTime
   sentAt_gt: DateTime
   sentAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
   AND: [SmsReceiptWhereInput!]
   OR: [SmsReceiptWhereInput!]
   NOT: [SmsReceiptWhereInput!]
