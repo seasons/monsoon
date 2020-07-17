@@ -158,6 +158,10 @@ type AggregateSize {
   count: Int!
 }
 
+type AggregateSmsReceipt {
+  count: Int!
+}
+
 type AggregateStylePreferences {
   count: Int!
 }
@@ -4796,6 +4800,12 @@ type Mutation {
   upsertSize(where: SizeWhereUniqueInput!, create: SizeCreateInput!, update: SizeUpdateInput!): Size!
   deleteSize(where: SizeWhereUniqueInput!): Size
   deleteManySizes(where: SizeWhereInput): BatchPayload!
+  createSmsReceipt(data: SmsReceiptCreateInput!): SmsReceipt!
+  updateSmsReceipt(data: SmsReceiptUpdateInput!, where: SmsReceiptWhereUniqueInput!): SmsReceipt
+  updateManySmsReceipts(data: SmsReceiptUpdateManyMutationInput!, where: SmsReceiptWhereInput): BatchPayload!
+  upsertSmsReceipt(where: SmsReceiptWhereUniqueInput!, create: SmsReceiptCreateInput!, update: SmsReceiptUpdateInput!): SmsReceipt!
+  deleteSmsReceipt(where: SmsReceiptWhereUniqueInput!): SmsReceipt
+  deleteManySmsReceipts(where: SmsReceiptWhereInput): BatchPayload!
   createStylePreferences(data: StylePreferencesCreateInput!): StylePreferences!
   updateStylePreferences(data: StylePreferencesUpdateInput!, where: StylePreferencesWhereUniqueInput!): StylePreferences
   updateManyStylePreferenceses(data: StylePreferencesUpdateManyMutationInput!, where: StylePreferencesWhereInput): BatchPayload!
@@ -10762,6 +10772,9 @@ type Query {
   size(where: SizeWhereUniqueInput!): Size
   sizes(where: SizeWhereInput, orderBy: SizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Size]!
   sizesConnection(where: SizeWhereInput, orderBy: SizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): SizeConnection!
+  smsReceipt(where: SmsReceiptWhereUniqueInput!): SmsReceipt
+  smsReceipts(where: SmsReceiptWhereInput, orderBy: SmsReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [SmsReceipt]!
+  smsReceiptsConnection(where: SmsReceiptWhereInput, orderBy: SmsReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): SmsReceiptConnection!
   stylePreferences(where: StylePreferencesWhereUniqueInput!): StylePreferences
   stylePreferenceses(where: StylePreferencesWhereInput, orderBy: StylePreferencesOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [StylePreferences]!
   stylePreferencesesConnection(where: StylePreferencesWhereInput, orderBy: StylePreferencesOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): StylePreferencesConnection!
@@ -12180,6 +12193,302 @@ input SizeWhereUniqueInput {
   slug: String
 }
 
+type SmsReceipt {
+  id: ID!
+  externalId: String
+  body: String!
+  mediaUrls: [String!]!
+  status: SmsStatus!
+  sentAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type SmsReceiptConnection {
+  pageInfo: PageInfo!
+  edges: [SmsReceiptEdge]!
+  aggregate: AggregateSmsReceipt!
+}
+
+input SmsReceiptCreateInput {
+  id: ID
+  externalId: String
+  body: String!
+  mediaUrls: SmsReceiptCreatemediaUrlsInput
+  status: SmsStatus!
+}
+
+input SmsReceiptCreateManyInput {
+  create: [SmsReceiptCreateInput!]
+  connect: [SmsReceiptWhereUniqueInput!]
+}
+
+input SmsReceiptCreatemediaUrlsInput {
+  set: [String!]
+}
+
+type SmsReceiptEdge {
+  node: SmsReceipt!
+  cursor: String!
+}
+
+enum SmsReceiptOrderByInput {
+  id_ASC
+  id_DESC
+  externalId_ASC
+  externalId_DESC
+  body_ASC
+  body_DESC
+  status_ASC
+  status_DESC
+  sentAt_ASC
+  sentAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type SmsReceiptPreviousValues {
+  id: ID!
+  externalId: String
+  body: String!
+  mediaUrls: [String!]!
+  status: SmsStatus!
+  sentAt: DateTime!
+  updatedAt: DateTime!
+}
+
+input SmsReceiptScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  externalId: String
+  externalId_not: String
+  externalId_in: [String!]
+  externalId_not_in: [String!]
+  externalId_lt: String
+  externalId_lte: String
+  externalId_gt: String
+  externalId_gte: String
+  externalId_contains: String
+  externalId_not_contains: String
+  externalId_starts_with: String
+  externalId_not_starts_with: String
+  externalId_ends_with: String
+  externalId_not_ends_with: String
+  body: String
+  body_not: String
+  body_in: [String!]
+  body_not_in: [String!]
+  body_lt: String
+  body_lte: String
+  body_gt: String
+  body_gte: String
+  body_contains: String
+  body_not_contains: String
+  body_starts_with: String
+  body_not_starts_with: String
+  body_ends_with: String
+  body_not_ends_with: String
+  status: SmsStatus
+  status_not: SmsStatus
+  status_in: [SmsStatus!]
+  status_not_in: [SmsStatus!]
+  sentAt: DateTime
+  sentAt_not: DateTime
+  sentAt_in: [DateTime!]
+  sentAt_not_in: [DateTime!]
+  sentAt_lt: DateTime
+  sentAt_lte: DateTime
+  sentAt_gt: DateTime
+  sentAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [SmsReceiptScalarWhereInput!]
+  OR: [SmsReceiptScalarWhereInput!]
+  NOT: [SmsReceiptScalarWhereInput!]
+}
+
+type SmsReceiptSubscriptionPayload {
+  mutation: MutationType!
+  node: SmsReceipt
+  updatedFields: [String!]
+  previousValues: SmsReceiptPreviousValues
+}
+
+input SmsReceiptSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: SmsReceiptWhereInput
+  AND: [SmsReceiptSubscriptionWhereInput!]
+  OR: [SmsReceiptSubscriptionWhereInput!]
+  NOT: [SmsReceiptSubscriptionWhereInput!]
+}
+
+input SmsReceiptUpdateDataInput {
+  externalId: String
+  body: String
+  mediaUrls: SmsReceiptUpdatemediaUrlsInput
+  status: SmsStatus
+}
+
+input SmsReceiptUpdateInput {
+  externalId: String
+  body: String
+  mediaUrls: SmsReceiptUpdatemediaUrlsInput
+  status: SmsStatus
+}
+
+input SmsReceiptUpdateManyDataInput {
+  externalId: String
+  body: String
+  mediaUrls: SmsReceiptUpdatemediaUrlsInput
+  status: SmsStatus
+}
+
+input SmsReceiptUpdateManyInput {
+  create: [SmsReceiptCreateInput!]
+  update: [SmsReceiptUpdateWithWhereUniqueNestedInput!]
+  upsert: [SmsReceiptUpsertWithWhereUniqueNestedInput!]
+  delete: [SmsReceiptWhereUniqueInput!]
+  connect: [SmsReceiptWhereUniqueInput!]
+  set: [SmsReceiptWhereUniqueInput!]
+  disconnect: [SmsReceiptWhereUniqueInput!]
+  deleteMany: [SmsReceiptScalarWhereInput!]
+  updateMany: [SmsReceiptUpdateManyWithWhereNestedInput!]
+}
+
+input SmsReceiptUpdateManyMutationInput {
+  externalId: String
+  body: String
+  mediaUrls: SmsReceiptUpdatemediaUrlsInput
+  status: SmsStatus
+}
+
+input SmsReceiptUpdateManyWithWhereNestedInput {
+  where: SmsReceiptScalarWhereInput!
+  data: SmsReceiptUpdateManyDataInput!
+}
+
+input SmsReceiptUpdatemediaUrlsInput {
+  set: [String!]
+}
+
+input SmsReceiptUpdateWithWhereUniqueNestedInput {
+  where: SmsReceiptWhereUniqueInput!
+  data: SmsReceiptUpdateDataInput!
+}
+
+input SmsReceiptUpsertWithWhereUniqueNestedInput {
+  where: SmsReceiptWhereUniqueInput!
+  update: SmsReceiptUpdateDataInput!
+  create: SmsReceiptCreateInput!
+}
+
+input SmsReceiptWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  externalId: String
+  externalId_not: String
+  externalId_in: [String!]
+  externalId_not_in: [String!]
+  externalId_lt: String
+  externalId_lte: String
+  externalId_gt: String
+  externalId_gte: String
+  externalId_contains: String
+  externalId_not_contains: String
+  externalId_starts_with: String
+  externalId_not_starts_with: String
+  externalId_ends_with: String
+  externalId_not_ends_with: String
+  body: String
+  body_not: String
+  body_in: [String!]
+  body_not_in: [String!]
+  body_lt: String
+  body_lte: String
+  body_gt: String
+  body_gte: String
+  body_contains: String
+  body_not_contains: String
+  body_starts_with: String
+  body_not_starts_with: String
+  body_ends_with: String
+  body_not_ends_with: String
+  status: SmsStatus
+  status_not: SmsStatus
+  status_in: [SmsStatus!]
+  status_not_in: [SmsStatus!]
+  sentAt: DateTime
+  sentAt_not: DateTime
+  sentAt_in: [DateTime!]
+  sentAt_not_in: [DateTime!]
+  sentAt_lt: DateTime
+  sentAt_lte: DateTime
+  sentAt_gt: DateTime
+  sentAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [SmsReceiptWhereInput!]
+  OR: [SmsReceiptWhereInput!]
+  NOT: [SmsReceiptWhereInput!]
+}
+
+input SmsReceiptWhereUniqueInput {
+  id: ID
+}
+
+enum SmsStatus {
+  Queued
+  Sending
+  Sent
+  Failed
+  Delivered
+  Undelivered
+  Receiving
+  Received
+  Accepted
+  Scheduled
+  Read
+  PartiallyDelivered
+}
+
 type StylePreferences {
   id: ID!
   styles: [String!]!
@@ -12374,6 +12683,7 @@ type Subscription {
   reservationReceipt(where: ReservationReceiptSubscriptionWhereInput): ReservationReceiptSubscriptionPayload
   reservationReceiptItem(where: ReservationReceiptItemSubscriptionWhereInput): ReservationReceiptItemSubscriptionPayload
   size(where: SizeSubscriptionWhereInput): SizeSubscriptionPayload
+  smsReceipt(where: SmsReceiptSubscriptionWhereInput): SmsReceiptSubscriptionPayload
   stylePreferences(where: StylePreferencesSubscriptionWhereInput): StylePreferencesSubscriptionPayload
   tag(where: TagSubscriptionWhereInput): TagSubscriptionPayload
   topSize(where: TopSizeSubscriptionWhereInput): TopSizeSubscriptionPayload
@@ -12851,6 +13161,7 @@ type User {
   verificationMethod: UserVerificationMethod!
   createdAt: DateTime!
   updatedAt: DateTime!
+  smsReceipts(where: SmsReceiptWhereInput, orderBy: SmsReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [SmsReceipt!]
 }
 
 type UserConnection {
@@ -12872,6 +13183,7 @@ input UserCreateInput {
   pushNotification: UserPushNotificationCreateOneInput
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
+  smsReceipts: SmsReceiptCreateManyInput
 }
 
 input UserCreateManyWithoutPushNotificationsInput {
@@ -12900,6 +13212,7 @@ input UserCreateWithoutPushNotificationsInput {
   pushNotification: UserPushNotificationCreateOneInput
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
+  smsReceipts: SmsReceiptCreateManyInput
 }
 
 type UserEdge {
@@ -13428,6 +13741,7 @@ input UserUpdateDataInput {
   pushNotification: UserPushNotificationUpdateOneInput
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
+  smsReceipts: SmsReceiptUpdateManyInput
 }
 
 input UserUpdateInput {
@@ -13442,6 +13756,7 @@ input UserUpdateInput {
   pushNotification: UserPushNotificationUpdateOneInput
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
+  smsReceipts: SmsReceiptUpdateManyInput
 }
 
 input UserUpdateManyDataInput {
@@ -13516,6 +13831,7 @@ input UserUpdateWithoutPushNotificationsDataInput {
   pushNotification: UserPushNotificationUpdateOneInput
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
+  smsReceipts: SmsReceiptUpdateManyInput
 }
 
 input UserUpdateWithWhereUniqueWithoutPushNotificationsInput {
@@ -13653,6 +13969,9 @@ input UserWhereInput {
   updatedAt_lte: DateTime
   updatedAt_gt: DateTime
   updatedAt_gte: DateTime
+  smsReceipts_every: SmsReceiptWhereInput
+  smsReceipts_some: SmsReceiptWhereInput
+  smsReceipts_none: SmsReceiptWhereInput
   AND: [UserWhereInput!]
   OR: [UserWhereInput!]
   NOT: [UserWhereInput!]

@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Tue Jul 14 2020 10:57:39 GMT-0400 (Eastern Daylight Time)
+# timestamp: Fri Jul 17 2020 09:02:34 GMT-0700 (Pacific Daylight Time)
 
 type AggregateBagItem {
   count: Int!
@@ -154,6 +154,10 @@ type AggregateReservationReceiptItem {
 }
 
 type AggregateSize {
+  count: Int!
+}
+
+type AggregateSmsReceipt {
   count: Int!
 }
 
@@ -11577,6 +11581,7 @@ type Mutation {
   createReservationReceiptItem(
     data: ReservationReceiptItemCreateInput!
   ): ReservationReceiptItem!
+  createSmsReceipt(data: SmsReceiptCreateInput!): SmsReceipt!
   createStylePreferences(data: StylePreferencesCreateInput!): StylePreferences!
   createImage(data: ImageCreateInput!): Image!
   createPackage(data: PackageCreateInput!): Package!
@@ -11706,6 +11711,10 @@ type Mutation {
     data: ReservationReceiptItemUpdateInput!
     where: ReservationReceiptItemWhereUniqueInput!
   ): ReservationReceiptItem
+  updateSmsReceipt(
+    data: SmsReceiptUpdateInput!
+    where: SmsReceiptWhereUniqueInput!
+  ): SmsReceipt
   updateStylePreferences(
     data: StylePreferencesUpdateInput!
     where: StylePreferencesWhereUniqueInput!
@@ -11829,6 +11838,7 @@ type Mutation {
   deleteReservationReceiptItem(
     where: ReservationReceiptItemWhereUniqueInput!
   ): ReservationReceiptItem
+  deleteSmsReceipt(where: SmsReceiptWhereUniqueInput!): SmsReceipt
   deleteStylePreferences(
     where: StylePreferencesWhereUniqueInput!
   ): StylePreferences
@@ -11998,6 +12008,11 @@ type Mutation {
     create: ReservationReceiptItemCreateInput!
     update: ReservationReceiptItemUpdateInput!
   ): ReservationReceiptItem!
+  upsertSmsReceipt(
+    where: SmsReceiptWhereUniqueInput!
+    create: SmsReceiptCreateInput!
+    update: SmsReceiptUpdateInput!
+  ): SmsReceipt!
   upsertStylePreferences(
     where: StylePreferencesWhereUniqueInput!
     create: StylePreferencesCreateInput!
@@ -12201,6 +12216,10 @@ type Mutation {
     data: ReservationReceiptItemUpdateManyMutationInput!
     where: ReservationReceiptItemWhereInput
   ): BatchPayload!
+  updateManySmsReceipts(
+    data: SmsReceiptUpdateManyMutationInput!
+    where: SmsReceiptWhereInput
+  ): BatchPayload!
   updateManyStylePreferenceses(
     data: StylePreferencesUpdateManyMutationInput!
     where: StylePreferencesWhereInput
@@ -12337,6 +12356,7 @@ type Mutation {
   deleteManyReservationReceiptItems(
     where: ReservationReceiptItemWhereInput
   ): BatchPayload!
+  deleteManySmsReceipts(where: SmsReceiptWhereInput): BatchPayload!
   deleteManyStylePreferenceses(where: StylePreferencesWhereInput): BatchPayload!
   deleteManyImages(where: ImageWhereInput): BatchPayload!
   deleteManyPackages(where: PackageWhereInput): BatchPayload!
@@ -26444,6 +26464,15 @@ type Query {
     first: Int
     last: Int
   ): [ReservationReceiptItem]!
+  smsReceipts(
+    where: SmsReceiptWhereInput
+    orderBy: SmsReceiptOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [SmsReceipt]!
   stylePreferenceses(
     where: StylePreferencesWhereInput
     orderBy: StylePreferencesOrderByInput
@@ -26675,6 +26704,7 @@ type Query {
   reservationReceiptItem(
     where: ReservationReceiptItemWhereUniqueInput!
   ): ReservationReceiptItem
+  smsReceipt(where: SmsReceiptWhereUniqueInput!): SmsReceipt
   stylePreferences(where: StylePreferencesWhereUniqueInput!): StylePreferences
   image(where: ImageWhereUniqueInput!): Image
   package(where: PackageWhereUniqueInput!): Package
@@ -26950,6 +26980,15 @@ type Query {
     first: Int
     last: Int
   ): ReservationReceiptItemConnection!
+  smsReceiptsConnection(
+    where: SmsReceiptWhereInput
+    orderBy: SmsReceiptOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): SmsReceiptConnection!
   stylePreferencesesConnection(
     where: StylePreferencesWhereInput
     orderBy: StylePreferencesOrderByInput
@@ -30437,6 +30476,819 @@ input SizeWhereUniqueInput {
   slug: String
 }
 
+type SmsReceipt implements Node {
+  id: ID!
+  externalId: String
+  body: String!
+  mediaUrls: [String!]!
+  status: SmsStatus!
+  sentAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""
+A connection to a list of items.
+"""
+type SmsReceiptConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+
+  """
+  A list of edges.
+  """
+  edges: [SmsReceiptEdge]!
+  aggregate: AggregateSmsReceipt!
+}
+
+input SmsReceiptCreateInput {
+  id: ID
+  externalId: String
+  body: String!
+  status: SmsStatus!
+  mediaUrls: SmsReceiptCreatemediaUrlsInput
+}
+
+input SmsReceiptCreateManyInput {
+  create: [SmsReceiptCreateInput!]
+  connect: [SmsReceiptWhereUniqueInput!]
+}
+
+input SmsReceiptCreatemediaUrlsInput {
+  set: [String!]
+}
+
+"""
+An edge in a connection.
+"""
+type SmsReceiptEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: SmsReceipt!
+
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+}
+
+enum SmsReceiptOrderByInput {
+  id_ASC
+  id_DESC
+  externalId_ASC
+  externalId_DESC
+  body_ASC
+  body_DESC
+  status_ASC
+  status_DESC
+  sentAt_ASC
+  sentAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type SmsReceiptPreviousValues {
+  id: ID!
+  externalId: String
+  body: String!
+  mediaUrls: [String!]!
+  status: SmsStatus!
+  sentAt: DateTime!
+  updatedAt: DateTime!
+}
+
+input SmsReceiptScalarWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [SmsReceiptScalarWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [SmsReceiptScalarWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [SmsReceiptScalarWhereInput!]
+  id: ID
+
+  """
+  All values that are not equal to given value.
+  """
+  id_not: ID
+
+  """
+  All values that are contained in given list.
+  """
+  id_in: [ID!]
+
+  """
+  All values that are not contained in given list.
+  """
+  id_not_in: [ID!]
+
+  """
+  All values less than the given value.
+  """
+  id_lt: ID
+
+  """
+  All values less than or equal the given value.
+  """
+  id_lte: ID
+
+  """
+  All values greater than the given value.
+  """
+  id_gt: ID
+
+  """
+  All values greater than or equal the given value.
+  """
+  id_gte: ID
+
+  """
+  All values containing the given string.
+  """
+  id_contains: ID
+
+  """
+  All values not containing the given string.
+  """
+  id_not_contains: ID
+
+  """
+  All values starting with the given string.
+  """
+  id_starts_with: ID
+
+  """
+  All values not starting with the given string.
+  """
+  id_not_starts_with: ID
+
+  """
+  All values ending with the given string.
+  """
+  id_ends_with: ID
+
+  """
+  All values not ending with the given string.
+  """
+  id_not_ends_with: ID
+  externalId: String
+
+  """
+  All values that are not equal to given value.
+  """
+  externalId_not: String
+
+  """
+  All values that are contained in given list.
+  """
+  externalId_in: [String!]
+
+  """
+  All values that are not contained in given list.
+  """
+  externalId_not_in: [String!]
+
+  """
+  All values less than the given value.
+  """
+  externalId_lt: String
+
+  """
+  All values less than or equal the given value.
+  """
+  externalId_lte: String
+
+  """
+  All values greater than the given value.
+  """
+  externalId_gt: String
+
+  """
+  All values greater than or equal the given value.
+  """
+  externalId_gte: String
+
+  """
+  All values containing the given string.
+  """
+  externalId_contains: String
+
+  """
+  All values not containing the given string.
+  """
+  externalId_not_contains: String
+
+  """
+  All values starting with the given string.
+  """
+  externalId_starts_with: String
+
+  """
+  All values not starting with the given string.
+  """
+  externalId_not_starts_with: String
+
+  """
+  All values ending with the given string.
+  """
+  externalId_ends_with: String
+
+  """
+  All values not ending with the given string.
+  """
+  externalId_not_ends_with: String
+  body: String
+
+  """
+  All values that are not equal to given value.
+  """
+  body_not: String
+
+  """
+  All values that are contained in given list.
+  """
+  body_in: [String!]
+
+  """
+  All values that are not contained in given list.
+  """
+  body_not_in: [String!]
+
+  """
+  All values less than the given value.
+  """
+  body_lt: String
+
+  """
+  All values less than or equal the given value.
+  """
+  body_lte: String
+
+  """
+  All values greater than the given value.
+  """
+  body_gt: String
+
+  """
+  All values greater than or equal the given value.
+  """
+  body_gte: String
+
+  """
+  All values containing the given string.
+  """
+  body_contains: String
+
+  """
+  All values not containing the given string.
+  """
+  body_not_contains: String
+
+  """
+  All values starting with the given string.
+  """
+  body_starts_with: String
+
+  """
+  All values not starting with the given string.
+  """
+  body_not_starts_with: String
+
+  """
+  All values ending with the given string.
+  """
+  body_ends_with: String
+
+  """
+  All values not ending with the given string.
+  """
+  body_not_ends_with: String
+  status: SmsStatus
+
+  """
+  All values that are not equal to given value.
+  """
+  status_not: SmsStatus
+
+  """
+  All values that are contained in given list.
+  """
+  status_in: [SmsStatus!]
+
+  """
+  All values that are not contained in given list.
+  """
+  status_not_in: [SmsStatus!]
+  sentAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  sentAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  sentAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  sentAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  sentAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  sentAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  sentAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  sentAt_gte: DateTime
+  updatedAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  updatedAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  updatedAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  updatedAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  updatedAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  updatedAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  updatedAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  updatedAt_gte: DateTime
+}
+
+type SmsReceiptSubscriptionPayload {
+  mutation: MutationType!
+  node: SmsReceipt
+  updatedFields: [String!]
+  previousValues: SmsReceiptPreviousValues
+}
+
+input SmsReceiptSubscriptionWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [SmsReceiptSubscriptionWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [SmsReceiptSubscriptionWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [SmsReceiptSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: SmsReceiptWhereInput
+}
+
+input SmsReceiptUpdateDataInput {
+  externalId: String
+  body: String
+  status: SmsStatus
+  mediaUrls: SmsReceiptUpdatemediaUrlsInput
+}
+
+input SmsReceiptUpdateInput {
+  externalId: String
+  body: String
+  status: SmsStatus
+  mediaUrls: SmsReceiptUpdatemediaUrlsInput
+}
+
+input SmsReceiptUpdateManyDataInput {
+  externalId: String
+  body: String
+  status: SmsStatus
+  mediaUrls: SmsReceiptUpdatemediaUrlsInput
+}
+
+input SmsReceiptUpdateManyInput {
+  create: [SmsReceiptCreateInput!]
+  connect: [SmsReceiptWhereUniqueInput!]
+  set: [SmsReceiptWhereUniqueInput!]
+  disconnect: [SmsReceiptWhereUniqueInput!]
+  delete: [SmsReceiptWhereUniqueInput!]
+  update: [SmsReceiptUpdateWithWhereUniqueNestedInput!]
+  updateMany: [SmsReceiptUpdateManyWithWhereNestedInput!]
+  deleteMany: [SmsReceiptScalarWhereInput!]
+  upsert: [SmsReceiptUpsertWithWhereUniqueNestedInput!]
+}
+
+input SmsReceiptUpdateManyMutationInput {
+  externalId: String
+  body: String
+  status: SmsStatus
+  mediaUrls: SmsReceiptUpdatemediaUrlsInput
+}
+
+input SmsReceiptUpdateManyWithWhereNestedInput {
+  where: SmsReceiptScalarWhereInput!
+  data: SmsReceiptUpdateManyDataInput!
+}
+
+input SmsReceiptUpdatemediaUrlsInput {
+  set: [String!]
+}
+
+input SmsReceiptUpdateWithWhereUniqueNestedInput {
+  where: SmsReceiptWhereUniqueInput!
+  data: SmsReceiptUpdateDataInput!
+}
+
+input SmsReceiptUpsertWithWhereUniqueNestedInput {
+  where: SmsReceiptWhereUniqueInput!
+  update: SmsReceiptUpdateDataInput!
+  create: SmsReceiptCreateInput!
+}
+
+input SmsReceiptWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [SmsReceiptWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [SmsReceiptWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [SmsReceiptWhereInput!]
+  id: ID
+
+  """
+  All values that are not equal to given value.
+  """
+  id_not: ID
+
+  """
+  All values that are contained in given list.
+  """
+  id_in: [ID!]
+
+  """
+  All values that are not contained in given list.
+  """
+  id_not_in: [ID!]
+
+  """
+  All values less than the given value.
+  """
+  id_lt: ID
+
+  """
+  All values less than or equal the given value.
+  """
+  id_lte: ID
+
+  """
+  All values greater than the given value.
+  """
+  id_gt: ID
+
+  """
+  All values greater than or equal the given value.
+  """
+  id_gte: ID
+
+  """
+  All values containing the given string.
+  """
+  id_contains: ID
+
+  """
+  All values not containing the given string.
+  """
+  id_not_contains: ID
+
+  """
+  All values starting with the given string.
+  """
+  id_starts_with: ID
+
+  """
+  All values not starting with the given string.
+  """
+  id_not_starts_with: ID
+
+  """
+  All values ending with the given string.
+  """
+  id_ends_with: ID
+
+  """
+  All values not ending with the given string.
+  """
+  id_not_ends_with: ID
+  externalId: String
+
+  """
+  All values that are not equal to given value.
+  """
+  externalId_not: String
+
+  """
+  All values that are contained in given list.
+  """
+  externalId_in: [String!]
+
+  """
+  All values that are not contained in given list.
+  """
+  externalId_not_in: [String!]
+
+  """
+  All values less than the given value.
+  """
+  externalId_lt: String
+
+  """
+  All values less than or equal the given value.
+  """
+  externalId_lte: String
+
+  """
+  All values greater than the given value.
+  """
+  externalId_gt: String
+
+  """
+  All values greater than or equal the given value.
+  """
+  externalId_gte: String
+
+  """
+  All values containing the given string.
+  """
+  externalId_contains: String
+
+  """
+  All values not containing the given string.
+  """
+  externalId_not_contains: String
+
+  """
+  All values starting with the given string.
+  """
+  externalId_starts_with: String
+
+  """
+  All values not starting with the given string.
+  """
+  externalId_not_starts_with: String
+
+  """
+  All values ending with the given string.
+  """
+  externalId_ends_with: String
+
+  """
+  All values not ending with the given string.
+  """
+  externalId_not_ends_with: String
+  body: String
+
+  """
+  All values that are not equal to given value.
+  """
+  body_not: String
+
+  """
+  All values that are contained in given list.
+  """
+  body_in: [String!]
+
+  """
+  All values that are not contained in given list.
+  """
+  body_not_in: [String!]
+
+  """
+  All values less than the given value.
+  """
+  body_lt: String
+
+  """
+  All values less than or equal the given value.
+  """
+  body_lte: String
+
+  """
+  All values greater than the given value.
+  """
+  body_gt: String
+
+  """
+  All values greater than or equal the given value.
+  """
+  body_gte: String
+
+  """
+  All values containing the given string.
+  """
+  body_contains: String
+
+  """
+  All values not containing the given string.
+  """
+  body_not_contains: String
+
+  """
+  All values starting with the given string.
+  """
+  body_starts_with: String
+
+  """
+  All values not starting with the given string.
+  """
+  body_not_starts_with: String
+
+  """
+  All values ending with the given string.
+  """
+  body_ends_with: String
+
+  """
+  All values not ending with the given string.
+  """
+  body_not_ends_with: String
+  status: SmsStatus
+
+  """
+  All values that are not equal to given value.
+  """
+  status_not: SmsStatus
+
+  """
+  All values that are contained in given list.
+  """
+  status_in: [SmsStatus!]
+
+  """
+  All values that are not contained in given list.
+  """
+  status_not_in: [SmsStatus!]
+  sentAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  sentAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  sentAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  sentAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  sentAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  sentAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  sentAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  sentAt_gte: DateTime
+  updatedAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  updatedAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  updatedAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  updatedAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  updatedAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  updatedAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  updatedAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  updatedAt_gte: DateTime
+}
+
+input SmsReceiptWhereUniqueInput {
+  id: ID
+}
+
+enum SmsStatus {
+  Queued
+  Sending
+  Sent
+  Failed
+  Delivered
+  Undelivered
+  Receiving
+  Received
+  Accepted
+  Scheduled
+  Read
+  PartiallyDelivered
+}
+
 type StylePreferences implements Node {
   id: ID!
   styles: [String!]!
@@ -30780,6 +31632,9 @@ type Subscription {
   reservationReceiptItem(
     where: ReservationReceiptItemSubscriptionWhereInput
   ): ReservationReceiptItemSubscriptionPayload
+  smsReceipt(
+    where: SmsReceiptSubscriptionWhereInput
+  ): SmsReceiptSubscriptionPayload
   stylePreferences(
     where: StylePreferencesSubscriptionWhereInput
   ): StylePreferencesSubscriptionPayload
@@ -32055,6 +32910,15 @@ type User implements Node {
   verificationMethod: UserVerificationMethod!
   createdAt: DateTime!
   updatedAt: DateTime!
+  smsReceipts(
+    where: SmsReceiptWhereInput
+    orderBy: SmsReceiptOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [SmsReceipt!]
 }
 
 """
@@ -32086,6 +32950,7 @@ input UserCreateInput {
   roles: UserCreaterolesInput
   pushNotifications: PushNotificationReceiptCreateManyWithoutUsersInput
   pushNotification: UserPushNotificationCreateOneInput
+  smsReceipts: SmsReceiptCreateManyInput
 }
 
 input UserCreateManyWithoutPushNotificationsInput {
@@ -32114,6 +32979,7 @@ input UserCreateWithoutPushNotificationsInput {
   verificationMethod: UserVerificationMethod
   roles: UserCreaterolesInput
   pushNotification: UserPushNotificationCreateOneInput
+  smsReceipts: SmsReceiptCreateManyInput
 }
 
 """
@@ -33493,6 +34359,7 @@ input UserUpdateDataInput {
   roles: UserUpdaterolesInput
   pushNotifications: PushNotificationReceiptUpdateManyWithoutUsersInput
   pushNotification: UserPushNotificationUpdateOneInput
+  smsReceipts: SmsReceiptUpdateManyInput
 }
 
 input UserUpdateInput {
@@ -33507,6 +34374,7 @@ input UserUpdateInput {
   roles: UserUpdaterolesInput
   pushNotifications: PushNotificationReceiptUpdateManyWithoutUsersInput
   pushNotification: UserPushNotificationUpdateOneInput
+  smsReceipts: SmsReceiptUpdateManyInput
 }
 
 input UserUpdateManyDataInput {
@@ -33581,6 +34449,7 @@ input UserUpdateWithoutPushNotificationsDataInput {
   verificationMethod: UserVerificationMethod
   roles: UserUpdaterolesInput
   pushNotification: UserPushNotificationUpdateOneInput
+  smsReceipts: SmsReceiptUpdateManyInput
 }
 
 input UserUpdateWithWhereUniqueWithoutPushNotificationsInput {
@@ -34096,6 +34965,9 @@ input UserWhereInput {
   pushNotifications_some: PushNotificationReceiptWhereInput
   pushNotifications_none: PushNotificationReceiptWhereInput
   pushNotification: UserPushNotificationWhereInput
+  smsReceipts_every: SmsReceiptWhereInput
+  smsReceipts_some: SmsReceiptWhereInput
+  smsReceipts_none: SmsReceiptWhereInput
 }
 
 input UserWhereUniqueInput {

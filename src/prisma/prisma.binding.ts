@@ -32,6 +32,7 @@ export interface Query {
     userPushNotificationInterests: <T = Array<UserPushNotificationInterest | null>>(args: { where?: UserPushNotificationInterestWhereInput | null, orderBy?: UserPushNotificationInterestOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     billingInfoes: <T = Array<BillingInfo | null>>(args: { where?: BillingInfoWhereInput | null, orderBy?: BillingInfoOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     reservationReceiptItems: <T = Array<ReservationReceiptItem | null>>(args: { where?: ReservationReceiptItemWhereInput | null, orderBy?: ReservationReceiptItemOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    smsReceipts: <T = Array<SmsReceipt | null>>(args: { where?: SmsReceiptWhereInput | null, orderBy?: SmsReceiptOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     stylePreferenceses: <T = Array<StylePreferences | null>>(args: { where?: StylePreferencesWhereInput | null, orderBy?: StylePreferencesOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     images: <T = Array<Image | null>>(args: { where?: ImageWhereInput | null, orderBy?: ImageOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     packages: <T = Array<Package | null>>(args: { where?: PackageWhereInput | null, orderBy?: PackageOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -79,6 +80,7 @@ export interface Query {
     userPushNotificationInterest: <T = UserPushNotificationInterest | null>(args: { where: UserPushNotificationInterestWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     billingInfo: <T = BillingInfo | null>(args: { where: BillingInfoWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     reservationReceiptItem: <T = ReservationReceiptItem | null>(args: { where: ReservationReceiptItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    smsReceipt: <T = SmsReceipt | null>(args: { where: SmsReceiptWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     stylePreferences: <T = StylePreferences | null>(args: { where: StylePreferencesWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     image: <T = Image | null>(args: { where: ImageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     package: <T = Package | null>(args: { where: PackageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -126,6 +128,7 @@ export interface Query {
     userPushNotificationInterestsConnection: <T = UserPushNotificationInterestConnection>(args: { where?: UserPushNotificationInterestWhereInput | null, orderBy?: UserPushNotificationInterestOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     billingInfoesConnection: <T = BillingInfoConnection>(args: { where?: BillingInfoWhereInput | null, orderBy?: BillingInfoOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     reservationReceiptItemsConnection: <T = ReservationReceiptItemConnection>(args: { where?: ReservationReceiptItemWhereInput | null, orderBy?: ReservationReceiptItemOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    smsReceiptsConnection: <T = SmsReceiptConnection>(args: { where?: SmsReceiptWhereInput | null, orderBy?: SmsReceiptOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     stylePreferencesesConnection: <T = StylePreferencesConnection>(args: { where?: StylePreferencesWhereInput | null, orderBy?: StylePreferencesOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     imagesConnection: <T = ImageConnection>(args: { where?: ImageWhereInput | null, orderBy?: ImageOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     packagesConnection: <T = PackageConnection>(args: { where?: PackageWhereInput | null, orderBy?: PackageOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -177,6 +180,7 @@ export interface Mutation {
     createUserPushNotificationInterest: <T = UserPushNotificationInterest>(args: { data: UserPushNotificationInterestCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createBillingInfo: <T = BillingInfo>(args: { data: BillingInfoCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createReservationReceiptItem: <T = ReservationReceiptItem>(args: { data: ReservationReceiptItemCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    createSmsReceipt: <T = SmsReceipt>(args: { data: SmsReceiptCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createStylePreferences: <T = StylePreferences>(args: { data: StylePreferencesCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createImage: <T = Image>(args: { data: ImageCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createPackage: <T = Package>(args: { data: PackageCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -224,6 +228,7 @@ export interface Mutation {
     updateUserPushNotificationInterest: <T = UserPushNotificationInterest | null>(args: { data: UserPushNotificationInterestUpdateInput, where: UserPushNotificationInterestWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateBillingInfo: <T = BillingInfo | null>(args: { data: BillingInfoUpdateInput, where: BillingInfoWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateReservationReceiptItem: <T = ReservationReceiptItem | null>(args: { data: ReservationReceiptItemUpdateInput, where: ReservationReceiptItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    updateSmsReceipt: <T = SmsReceipt | null>(args: { data: SmsReceiptUpdateInput, where: SmsReceiptWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateStylePreferences: <T = StylePreferences | null>(args: { data: StylePreferencesUpdateInput, where: StylePreferencesWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateImage: <T = Image | null>(args: { data: ImageUpdateInput, where: ImageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updatePackage: <T = Package | null>(args: { data: PackageUpdateInput, where: PackageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -271,6 +276,7 @@ export interface Mutation {
     deleteUserPushNotificationInterest: <T = UserPushNotificationInterest | null>(args: { where: UserPushNotificationInterestWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteBillingInfo: <T = BillingInfo | null>(args: { where: BillingInfoWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteReservationReceiptItem: <T = ReservationReceiptItem | null>(args: { where: ReservationReceiptItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deleteSmsReceipt: <T = SmsReceipt | null>(args: { where: SmsReceiptWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteStylePreferences: <T = StylePreferences | null>(args: { where: StylePreferencesWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteImage: <T = Image | null>(args: { where: ImageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deletePackage: <T = Package | null>(args: { where: PackageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -318,6 +324,7 @@ export interface Mutation {
     upsertUserPushNotificationInterest: <T = UserPushNotificationInterest>(args: { where: UserPushNotificationInterestWhereUniqueInput, create: UserPushNotificationInterestCreateInput, update: UserPushNotificationInterestUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertBillingInfo: <T = BillingInfo>(args: { where: BillingInfoWhereUniqueInput, create: BillingInfoCreateInput, update: BillingInfoUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertReservationReceiptItem: <T = ReservationReceiptItem>(args: { where: ReservationReceiptItemWhereUniqueInput, create: ReservationReceiptItemCreateInput, update: ReservationReceiptItemUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    upsertSmsReceipt: <T = SmsReceipt>(args: { where: SmsReceiptWhereUniqueInput, create: SmsReceiptCreateInput, update: SmsReceiptUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertStylePreferences: <T = StylePreferences>(args: { where: StylePreferencesWhereUniqueInput, create: StylePreferencesCreateInput, update: StylePreferencesUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertImage: <T = Image>(args: { where: ImageWhereUniqueInput, create: ImageCreateInput, update: ImageUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertPackage: <T = Package>(args: { where: PackageWhereUniqueInput, create: PackageCreateInput, update: PackageUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -364,6 +371,7 @@ export interface Mutation {
     updateManyUserPushNotificationInterests: <T = BatchPayload>(args: { data: UserPushNotificationInterestUpdateManyMutationInput, where?: UserPushNotificationInterestWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyBillingInfoes: <T = BatchPayload>(args: { data: BillingInfoUpdateManyMutationInput, where?: BillingInfoWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyReservationReceiptItems: <T = BatchPayload>(args: { data: ReservationReceiptItemUpdateManyMutationInput, where?: ReservationReceiptItemWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateManySmsReceipts: <T = BatchPayload>(args: { data: SmsReceiptUpdateManyMutationInput, where?: SmsReceiptWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyStylePreferenceses: <T = BatchPayload>(args: { data: StylePreferencesUpdateManyMutationInput, where?: StylePreferencesWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyImages: <T = BatchPayload>(args: { data: ImageUpdateManyMutationInput, where?: ImageWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyPackages: <T = BatchPayload>(args: { data: PackageUpdateManyMutationInput, where?: PackageWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -411,6 +419,7 @@ export interface Mutation {
     deleteManyUserPushNotificationInterests: <T = BatchPayload>(args: { where?: UserPushNotificationInterestWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyBillingInfoes: <T = BatchPayload>(args: { where?: BillingInfoWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyReservationReceiptItems: <T = BatchPayload>(args: { where?: ReservationReceiptItemWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteManySmsReceipts: <T = BatchPayload>(args: { where?: SmsReceiptWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyStylePreferenceses: <T = BatchPayload>(args: { where?: StylePreferencesWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyImages: <T = BatchPayload>(args: { where?: ImageWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyPackages: <T = BatchPayload>(args: { where?: PackageWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -461,6 +470,7 @@ export interface Subscription {
     userPushNotificationInterest: <T = UserPushNotificationInterestSubscriptionPayload | null>(args: { where?: UserPushNotificationInterestSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     billingInfo: <T = BillingInfoSubscriptionPayload | null>(args: { where?: BillingInfoSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     reservationReceiptItem: <T = ReservationReceiptItemSubscriptionPayload | null>(args: { where?: ReservationReceiptItemSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
+    smsReceipt: <T = SmsReceiptSubscriptionPayload | null>(args: { where?: SmsReceiptSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     stylePreferences: <T = StylePreferencesSubscriptionPayload | null>(args: { where?: StylePreferencesSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     image: <T = ImageSubscriptionPayload | null>(args: { where?: ImageSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     package: <T = PackageSubscriptionPayload | null>(args: { where?: PackageSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
@@ -511,6 +521,7 @@ export interface Exists {
   UserPushNotificationInterest: (where?: UserPushNotificationInterestWhereInput) => Promise<boolean>
   BillingInfo: (where?: BillingInfoWhereInput) => Promise<boolean>
   ReservationReceiptItem: (where?: ReservationReceiptItemWhereInput) => Promise<boolean>
+  SmsReceipt: (where?: SmsReceiptWhereInput) => Promise<boolean>
   StylePreferences: (where?: StylePreferencesWhereInput) => Promise<boolean>
   Image: (where?: ImageWhereInput) => Promise<boolean>
   Package: (where?: PackageWhereInput) => Promise<boolean>
@@ -707,6 +718,10 @@ type AggregateReservationReceiptItem {
 }
 
 type AggregateSize {
+  count: Int!
+}
+
+type AggregateSmsReceipt {
   count: Int!
 }
 
@@ -8614,6 +8629,7 @@ type Mutation {
   createUserPushNotificationInterest(data: UserPushNotificationInterestCreateInput!): UserPushNotificationInterest!
   createBillingInfo(data: BillingInfoCreateInput!): BillingInfo!
   createReservationReceiptItem(data: ReservationReceiptItemCreateInput!): ReservationReceiptItem!
+  createSmsReceipt(data: SmsReceiptCreateInput!): SmsReceipt!
   createStylePreferences(data: StylePreferencesCreateInput!): StylePreferences!
   createImage(data: ImageCreateInput!): Image!
   createPackage(data: PackageCreateInput!): Package!
@@ -8661,6 +8677,7 @@ type Mutation {
   updateUserPushNotificationInterest(data: UserPushNotificationInterestUpdateInput!, where: UserPushNotificationInterestWhereUniqueInput!): UserPushNotificationInterest
   updateBillingInfo(data: BillingInfoUpdateInput!, where: BillingInfoWhereUniqueInput!): BillingInfo
   updateReservationReceiptItem(data: ReservationReceiptItemUpdateInput!, where: ReservationReceiptItemWhereUniqueInput!): ReservationReceiptItem
+  updateSmsReceipt(data: SmsReceiptUpdateInput!, where: SmsReceiptWhereUniqueInput!): SmsReceipt
   updateStylePreferences(data: StylePreferencesUpdateInput!, where: StylePreferencesWhereUniqueInput!): StylePreferences
   updateImage(data: ImageUpdateInput!, where: ImageWhereUniqueInput!): Image
   updatePackage(data: PackageUpdateInput!, where: PackageWhereUniqueInput!): Package
@@ -8708,6 +8725,7 @@ type Mutation {
   deleteUserPushNotificationInterest(where: UserPushNotificationInterestWhereUniqueInput!): UserPushNotificationInterest
   deleteBillingInfo(where: BillingInfoWhereUniqueInput!): BillingInfo
   deleteReservationReceiptItem(where: ReservationReceiptItemWhereUniqueInput!): ReservationReceiptItem
+  deleteSmsReceipt(where: SmsReceiptWhereUniqueInput!): SmsReceipt
   deleteStylePreferences(where: StylePreferencesWhereUniqueInput!): StylePreferences
   deleteImage(where: ImageWhereUniqueInput!): Image
   deletePackage(where: PackageWhereUniqueInput!): Package
@@ -8755,6 +8773,7 @@ type Mutation {
   upsertUserPushNotificationInterest(where: UserPushNotificationInterestWhereUniqueInput!, create: UserPushNotificationInterestCreateInput!, update: UserPushNotificationInterestUpdateInput!): UserPushNotificationInterest!
   upsertBillingInfo(where: BillingInfoWhereUniqueInput!, create: BillingInfoCreateInput!, update: BillingInfoUpdateInput!): BillingInfo!
   upsertReservationReceiptItem(where: ReservationReceiptItemWhereUniqueInput!, create: ReservationReceiptItemCreateInput!, update: ReservationReceiptItemUpdateInput!): ReservationReceiptItem!
+  upsertSmsReceipt(where: SmsReceiptWhereUniqueInput!, create: SmsReceiptCreateInput!, update: SmsReceiptUpdateInput!): SmsReceipt!
   upsertStylePreferences(where: StylePreferencesWhereUniqueInput!, create: StylePreferencesCreateInput!, update: StylePreferencesUpdateInput!): StylePreferences!
   upsertImage(where: ImageWhereUniqueInput!, create: ImageCreateInput!, update: ImageUpdateInput!): Image!
   upsertPackage(where: PackageWhereUniqueInput!, create: PackageCreateInput!, update: PackageUpdateInput!): Package!
@@ -8801,6 +8820,7 @@ type Mutation {
   updateManyUserPushNotificationInterests(data: UserPushNotificationInterestUpdateManyMutationInput!, where: UserPushNotificationInterestWhereInput): BatchPayload!
   updateManyBillingInfoes(data: BillingInfoUpdateManyMutationInput!, where: BillingInfoWhereInput): BatchPayload!
   updateManyReservationReceiptItems(data: ReservationReceiptItemUpdateManyMutationInput!, where: ReservationReceiptItemWhereInput): BatchPayload!
+  updateManySmsReceipts(data: SmsReceiptUpdateManyMutationInput!, where: SmsReceiptWhereInput): BatchPayload!
   updateManyStylePreferenceses(data: StylePreferencesUpdateManyMutationInput!, where: StylePreferencesWhereInput): BatchPayload!
   updateManyImages(data: ImageUpdateManyMutationInput!, where: ImageWhereInput): BatchPayload!
   updateManyPackages(data: PackageUpdateManyMutationInput!, where: PackageWhereInput): BatchPayload!
@@ -8848,6 +8868,7 @@ type Mutation {
   deleteManyUserPushNotificationInterests(where: UserPushNotificationInterestWhereInput): BatchPayload!
   deleteManyBillingInfoes(where: BillingInfoWhereInput): BatchPayload!
   deleteManyReservationReceiptItems(where: ReservationReceiptItemWhereInput): BatchPayload!
+  deleteManySmsReceipts(where: SmsReceiptWhereInput): BatchPayload!
   deleteManyStylePreferenceses(where: StylePreferencesWhereInput): BatchPayload!
   deleteManyImages(where: ImageWhereInput): BatchPayload!
   deleteManyPackages(where: PackageWhereInput): BatchPayload!
@@ -18699,6 +18720,7 @@ type Query {
   userPushNotificationInterests(where: UserPushNotificationInterestWhereInput, orderBy: UserPushNotificationInterestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [UserPushNotificationInterest]!
   billingInfoes(where: BillingInfoWhereInput, orderBy: BillingInfoOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [BillingInfo]!
   reservationReceiptItems(where: ReservationReceiptItemWhereInput, orderBy: ReservationReceiptItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ReservationReceiptItem]!
+  smsReceipts(where: SmsReceiptWhereInput, orderBy: SmsReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [SmsReceipt]!
   stylePreferenceses(where: StylePreferencesWhereInput, orderBy: StylePreferencesOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [StylePreferences]!
   images(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Image]!
   packages(where: PackageWhereInput, orderBy: PackageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Package]!
@@ -18746,6 +18768,7 @@ type Query {
   userPushNotificationInterest(where: UserPushNotificationInterestWhereUniqueInput!): UserPushNotificationInterest
   billingInfo(where: BillingInfoWhereUniqueInput!): BillingInfo
   reservationReceiptItem(where: ReservationReceiptItemWhereUniqueInput!): ReservationReceiptItem
+  smsReceipt(where: SmsReceiptWhereUniqueInput!): SmsReceipt
   stylePreferences(where: StylePreferencesWhereUniqueInput!): StylePreferences
   image(where: ImageWhereUniqueInput!): Image
   package(where: PackageWhereUniqueInput!): Package
@@ -18793,6 +18816,7 @@ type Query {
   userPushNotificationInterestsConnection(where: UserPushNotificationInterestWhereInput, orderBy: UserPushNotificationInterestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserPushNotificationInterestConnection!
   billingInfoesConnection(where: BillingInfoWhereInput, orderBy: BillingInfoOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BillingInfoConnection!
   reservationReceiptItemsConnection(where: ReservationReceiptItemWhereInput, orderBy: ReservationReceiptItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ReservationReceiptItemConnection!
+  smsReceiptsConnection(where: SmsReceiptWhereInput, orderBy: SmsReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): SmsReceiptConnection!
   stylePreferencesesConnection(where: StylePreferencesWhereInput, orderBy: StylePreferencesOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): StylePreferencesConnection!
   imagesConnection(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ImageConnection!
   packagesConnection(where: PackageWhereInput, orderBy: PackageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PackageConnection!
@@ -21172,6 +21196,563 @@ input SizeWhereUniqueInput {
   slug: String
 }
 
+type SmsReceipt implements Node {
+  id: ID!
+  externalId: String
+  body: String!
+  mediaUrls: [String!]!
+  status: SmsStatus!
+  sentAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""A connection to a list of items."""
+type SmsReceiptConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [SmsReceiptEdge]!
+  aggregate: AggregateSmsReceipt!
+}
+
+input SmsReceiptCreateInput {
+  id: ID
+  externalId: String
+  body: String!
+  status: SmsStatus!
+  mediaUrls: SmsReceiptCreatemediaUrlsInput
+}
+
+input SmsReceiptCreateManyInput {
+  create: [SmsReceiptCreateInput!]
+  connect: [SmsReceiptWhereUniqueInput!]
+}
+
+input SmsReceiptCreatemediaUrlsInput {
+  set: [String!]
+}
+
+"""An edge in a connection."""
+type SmsReceiptEdge {
+  """The item at the end of the edge."""
+  node: SmsReceipt!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum SmsReceiptOrderByInput {
+  id_ASC
+  id_DESC
+  externalId_ASC
+  externalId_DESC
+  body_ASC
+  body_DESC
+  status_ASC
+  status_DESC
+  sentAt_ASC
+  sentAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type SmsReceiptPreviousValues {
+  id: ID!
+  externalId: String
+  body: String!
+  mediaUrls: [String!]!
+  status: SmsStatus!
+  sentAt: DateTime!
+  updatedAt: DateTime!
+}
+
+input SmsReceiptScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [SmsReceiptScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [SmsReceiptScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [SmsReceiptScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  externalId: String
+
+  """All values that are not equal to given value."""
+  externalId_not: String
+
+  """All values that are contained in given list."""
+  externalId_in: [String!]
+
+  """All values that are not contained in given list."""
+  externalId_not_in: [String!]
+
+  """All values less than the given value."""
+  externalId_lt: String
+
+  """All values less than or equal the given value."""
+  externalId_lte: String
+
+  """All values greater than the given value."""
+  externalId_gt: String
+
+  """All values greater than or equal the given value."""
+  externalId_gte: String
+
+  """All values containing the given string."""
+  externalId_contains: String
+
+  """All values not containing the given string."""
+  externalId_not_contains: String
+
+  """All values starting with the given string."""
+  externalId_starts_with: String
+
+  """All values not starting with the given string."""
+  externalId_not_starts_with: String
+
+  """All values ending with the given string."""
+  externalId_ends_with: String
+
+  """All values not ending with the given string."""
+  externalId_not_ends_with: String
+  body: String
+
+  """All values that are not equal to given value."""
+  body_not: String
+
+  """All values that are contained in given list."""
+  body_in: [String!]
+
+  """All values that are not contained in given list."""
+  body_not_in: [String!]
+
+  """All values less than the given value."""
+  body_lt: String
+
+  """All values less than or equal the given value."""
+  body_lte: String
+
+  """All values greater than the given value."""
+  body_gt: String
+
+  """All values greater than or equal the given value."""
+  body_gte: String
+
+  """All values containing the given string."""
+  body_contains: String
+
+  """All values not containing the given string."""
+  body_not_contains: String
+
+  """All values starting with the given string."""
+  body_starts_with: String
+
+  """All values not starting with the given string."""
+  body_not_starts_with: String
+
+  """All values ending with the given string."""
+  body_ends_with: String
+
+  """All values not ending with the given string."""
+  body_not_ends_with: String
+  status: SmsStatus
+
+  """All values that are not equal to given value."""
+  status_not: SmsStatus
+
+  """All values that are contained in given list."""
+  status_in: [SmsStatus!]
+
+  """All values that are not contained in given list."""
+  status_not_in: [SmsStatus!]
+  sentAt: DateTime
+
+  """All values that are not equal to given value."""
+  sentAt_not: DateTime
+
+  """All values that are contained in given list."""
+  sentAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  sentAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  sentAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  sentAt_lte: DateTime
+
+  """All values greater than the given value."""
+  sentAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  sentAt_gte: DateTime
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
+}
+
+type SmsReceiptSubscriptionPayload {
+  mutation: MutationType!
+  node: SmsReceipt
+  updatedFields: [String!]
+  previousValues: SmsReceiptPreviousValues
+}
+
+input SmsReceiptSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [SmsReceiptSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [SmsReceiptSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [SmsReceiptSubscriptionWhereInput!]
+
+  """The subscription event gets dispatched when it's listed in mutation_in"""
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: SmsReceiptWhereInput
+}
+
+input SmsReceiptUpdateDataInput {
+  externalId: String
+  body: String
+  status: SmsStatus
+  mediaUrls: SmsReceiptUpdatemediaUrlsInput
+}
+
+input SmsReceiptUpdateInput {
+  externalId: String
+  body: String
+  status: SmsStatus
+  mediaUrls: SmsReceiptUpdatemediaUrlsInput
+}
+
+input SmsReceiptUpdateManyDataInput {
+  externalId: String
+  body: String
+  status: SmsStatus
+  mediaUrls: SmsReceiptUpdatemediaUrlsInput
+}
+
+input SmsReceiptUpdateManyInput {
+  create: [SmsReceiptCreateInput!]
+  connect: [SmsReceiptWhereUniqueInput!]
+  set: [SmsReceiptWhereUniqueInput!]
+  disconnect: [SmsReceiptWhereUniqueInput!]
+  delete: [SmsReceiptWhereUniqueInput!]
+  update: [SmsReceiptUpdateWithWhereUniqueNestedInput!]
+  updateMany: [SmsReceiptUpdateManyWithWhereNestedInput!]
+  deleteMany: [SmsReceiptScalarWhereInput!]
+  upsert: [SmsReceiptUpsertWithWhereUniqueNestedInput!]
+}
+
+input SmsReceiptUpdateManyMutationInput {
+  externalId: String
+  body: String
+  status: SmsStatus
+  mediaUrls: SmsReceiptUpdatemediaUrlsInput
+}
+
+input SmsReceiptUpdateManyWithWhereNestedInput {
+  where: SmsReceiptScalarWhereInput!
+  data: SmsReceiptUpdateManyDataInput!
+}
+
+input SmsReceiptUpdatemediaUrlsInput {
+  set: [String!]
+}
+
+input SmsReceiptUpdateWithWhereUniqueNestedInput {
+  where: SmsReceiptWhereUniqueInput!
+  data: SmsReceiptUpdateDataInput!
+}
+
+input SmsReceiptUpsertWithWhereUniqueNestedInput {
+  where: SmsReceiptWhereUniqueInput!
+  update: SmsReceiptUpdateDataInput!
+  create: SmsReceiptCreateInput!
+}
+
+input SmsReceiptWhereInput {
+  """Logical AND on all given filters."""
+  AND: [SmsReceiptWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [SmsReceiptWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [SmsReceiptWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  externalId: String
+
+  """All values that are not equal to given value."""
+  externalId_not: String
+
+  """All values that are contained in given list."""
+  externalId_in: [String!]
+
+  """All values that are not contained in given list."""
+  externalId_not_in: [String!]
+
+  """All values less than the given value."""
+  externalId_lt: String
+
+  """All values less than or equal the given value."""
+  externalId_lte: String
+
+  """All values greater than the given value."""
+  externalId_gt: String
+
+  """All values greater than or equal the given value."""
+  externalId_gte: String
+
+  """All values containing the given string."""
+  externalId_contains: String
+
+  """All values not containing the given string."""
+  externalId_not_contains: String
+
+  """All values starting with the given string."""
+  externalId_starts_with: String
+
+  """All values not starting with the given string."""
+  externalId_not_starts_with: String
+
+  """All values ending with the given string."""
+  externalId_ends_with: String
+
+  """All values not ending with the given string."""
+  externalId_not_ends_with: String
+  body: String
+
+  """All values that are not equal to given value."""
+  body_not: String
+
+  """All values that are contained in given list."""
+  body_in: [String!]
+
+  """All values that are not contained in given list."""
+  body_not_in: [String!]
+
+  """All values less than the given value."""
+  body_lt: String
+
+  """All values less than or equal the given value."""
+  body_lte: String
+
+  """All values greater than the given value."""
+  body_gt: String
+
+  """All values greater than or equal the given value."""
+  body_gte: String
+
+  """All values containing the given string."""
+  body_contains: String
+
+  """All values not containing the given string."""
+  body_not_contains: String
+
+  """All values starting with the given string."""
+  body_starts_with: String
+
+  """All values not starting with the given string."""
+  body_not_starts_with: String
+
+  """All values ending with the given string."""
+  body_ends_with: String
+
+  """All values not ending with the given string."""
+  body_not_ends_with: String
+  status: SmsStatus
+
+  """All values that are not equal to given value."""
+  status_not: SmsStatus
+
+  """All values that are contained in given list."""
+  status_in: [SmsStatus!]
+
+  """All values that are not contained in given list."""
+  status_not_in: [SmsStatus!]
+  sentAt: DateTime
+
+  """All values that are not equal to given value."""
+  sentAt_not: DateTime
+
+  """All values that are contained in given list."""
+  sentAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  sentAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  sentAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  sentAt_lte: DateTime
+
+  """All values greater than the given value."""
+  sentAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  sentAt_gte: DateTime
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
+}
+
+input SmsReceiptWhereUniqueInput {
+  id: ID
+}
+
+enum SmsStatus {
+  Queued
+  Sending
+  Sent
+  Failed
+  Delivered
+  Undelivered
+  Receiving
+  Received
+  Accepted
+  Scheduled
+  Read
+  PartiallyDelivered
+}
+
 type StylePreferences implements Node {
   id: ID!
   styles: [String!]!
@@ -21413,6 +21994,7 @@ type Subscription {
   userPushNotificationInterest(where: UserPushNotificationInterestSubscriptionWhereInput): UserPushNotificationInterestSubscriptionPayload
   billingInfo(where: BillingInfoSubscriptionWhereInput): BillingInfoSubscriptionPayload
   reservationReceiptItem(where: ReservationReceiptItemSubscriptionWhereInput): ReservationReceiptItemSubscriptionPayload
+  smsReceipt(where: SmsReceiptSubscriptionWhereInput): SmsReceiptSubscriptionPayload
   stylePreferences(where: StylePreferencesSubscriptionWhereInput): StylePreferencesSubscriptionPayload
   image(where: ImageSubscriptionWhereInput): ImageSubscriptionPayload
   package(where: PackageSubscriptionWhereInput): PackageSubscriptionPayload
@@ -22284,6 +22866,7 @@ type User implements Node {
   verificationMethod: UserVerificationMethod!
   createdAt: DateTime!
   updatedAt: DateTime!
+  smsReceipts(where: SmsReceiptWhereInput, orderBy: SmsReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [SmsReceipt!]
 }
 
 """A connection to a list of items."""
@@ -22309,6 +22892,7 @@ input UserCreateInput {
   roles: UserCreaterolesInput
   pushNotifications: PushNotificationReceiptCreateManyWithoutUsersInput
   pushNotification: UserPushNotificationCreateOneInput
+  smsReceipts: SmsReceiptCreateManyInput
 }
 
 input UserCreateManyWithoutPushNotificationsInput {
@@ -22337,6 +22921,7 @@ input UserCreateWithoutPushNotificationsInput {
   verificationMethod: UserVerificationMethod
   roles: UserCreaterolesInput
   pushNotification: UserPushNotificationCreateOneInput
+  smsReceipts: SmsReceiptCreateManyInput
 }
 
 """An edge in a connection."""
@@ -23292,6 +23877,7 @@ input UserUpdateDataInput {
   roles: UserUpdaterolesInput
   pushNotifications: PushNotificationReceiptUpdateManyWithoutUsersInput
   pushNotification: UserPushNotificationUpdateOneInput
+  smsReceipts: SmsReceiptUpdateManyInput
 }
 
 input UserUpdateInput {
@@ -23306,6 +23892,7 @@ input UserUpdateInput {
   roles: UserUpdaterolesInput
   pushNotifications: PushNotificationReceiptUpdateManyWithoutUsersInput
   pushNotification: UserPushNotificationUpdateOneInput
+  smsReceipts: SmsReceiptUpdateManyInput
 }
 
 input UserUpdateManyDataInput {
@@ -23380,6 +23967,7 @@ input UserUpdateWithoutPushNotificationsDataInput {
   verificationMethod: UserVerificationMethod
   roles: UserUpdaterolesInput
   pushNotification: UserPushNotificationUpdateOneInput
+  smsReceipts: SmsReceiptUpdateManyInput
 }
 
 input UserUpdateWithWhereUniqueWithoutPushNotificationsInput {
@@ -23707,6 +24295,9 @@ input UserWhereInput {
   pushNotifications_some: PushNotificationReceiptWhereInput
   pushNotifications_none: PushNotificationReceiptWhereInput
   pushNotification: UserPushNotificationWhereInput
+  smsReceipts_every: SmsReceiptWhereInput
+  smsReceipts_some: SmsReceiptWhereInput
+  smsReceipts_none: SmsReceiptWhereInput
 }
 
 input UserWhereUniqueInput {
@@ -25511,6 +26102,32 @@ export type SizeOrderByInput =   'id_ASC' |
   'productType_DESC' |
   'display_ASC' |
   'display_DESC'
+
+export type SmsReceiptOrderByInput =   'id_ASC' |
+  'id_DESC' |
+  'externalId_ASC' |
+  'externalId_DESC' |
+  'body_ASC' |
+  'body_DESC' |
+  'status_ASC' |
+  'status_DESC' |
+  'sentAt_ASC' |
+  'sentAt_DESC' |
+  'updatedAt_ASC' |
+  'updatedAt_DESC'
+
+export type SmsStatus =   'Queued' |
+  'Sending' |
+  'Sent' |
+  'Failed' |
+  'Delivered' |
+  'Undelivered' |
+  'Receiving' |
+  'Received' |
+  'Accepted' |
+  'Scheduled' |
+  'Read' |
+  'PartiallyDelivered'
 
 export type StylePreferencesOrderByInput =   'id_ASC' |
   'id_DESC'
@@ -34745,6 +35362,234 @@ export interface SizeWhereUniqueInput {
   slug?: String | null
 }
 
+export interface SmsReceiptCreateInput {
+  id?: ID_Input | null
+  externalId?: String | null
+  body: String
+  status: SmsStatus
+  mediaUrls?: SmsReceiptCreatemediaUrlsInput | null
+}
+
+export interface SmsReceiptCreateManyInput {
+  create?: SmsReceiptCreateInput[] | SmsReceiptCreateInput | null
+  connect?: SmsReceiptWhereUniqueInput[] | SmsReceiptWhereUniqueInput | null
+}
+
+export interface SmsReceiptCreatemediaUrlsInput {
+  set?: String[] | String | null
+}
+
+export interface SmsReceiptScalarWhereInput {
+  AND?: SmsReceiptScalarWhereInput[] | SmsReceiptScalarWhereInput | null
+  OR?: SmsReceiptScalarWhereInput[] | SmsReceiptScalarWhereInput | null
+  NOT?: SmsReceiptScalarWhereInput[] | SmsReceiptScalarWhereInput | null
+  id?: ID_Input | null
+  id_not?: ID_Input | null
+  id_in?: ID_Output[] | ID_Output | null
+  id_not_in?: ID_Output[] | ID_Output | null
+  id_lt?: ID_Input | null
+  id_lte?: ID_Input | null
+  id_gt?: ID_Input | null
+  id_gte?: ID_Input | null
+  id_contains?: ID_Input | null
+  id_not_contains?: ID_Input | null
+  id_starts_with?: ID_Input | null
+  id_not_starts_with?: ID_Input | null
+  id_ends_with?: ID_Input | null
+  id_not_ends_with?: ID_Input | null
+  externalId?: String | null
+  externalId_not?: String | null
+  externalId_in?: String[] | String | null
+  externalId_not_in?: String[] | String | null
+  externalId_lt?: String | null
+  externalId_lte?: String | null
+  externalId_gt?: String | null
+  externalId_gte?: String | null
+  externalId_contains?: String | null
+  externalId_not_contains?: String | null
+  externalId_starts_with?: String | null
+  externalId_not_starts_with?: String | null
+  externalId_ends_with?: String | null
+  externalId_not_ends_with?: String | null
+  body?: String | null
+  body_not?: String | null
+  body_in?: String[] | String | null
+  body_not_in?: String[] | String | null
+  body_lt?: String | null
+  body_lte?: String | null
+  body_gt?: String | null
+  body_gte?: String | null
+  body_contains?: String | null
+  body_not_contains?: String | null
+  body_starts_with?: String | null
+  body_not_starts_with?: String | null
+  body_ends_with?: String | null
+  body_not_ends_with?: String | null
+  status?: SmsStatus | null
+  status_not?: SmsStatus | null
+  status_in?: SmsStatus[] | SmsStatus | null
+  status_not_in?: SmsStatus[] | SmsStatus | null
+  sentAt?: DateTime | null
+  sentAt_not?: DateTime | null
+  sentAt_in?: DateTime[] | DateTime | null
+  sentAt_not_in?: DateTime[] | DateTime | null
+  sentAt_lt?: DateTime | null
+  sentAt_lte?: DateTime | null
+  sentAt_gt?: DateTime | null
+  sentAt_gte?: DateTime | null
+  updatedAt?: DateTime | null
+  updatedAt_not?: DateTime | null
+  updatedAt_in?: DateTime[] | DateTime | null
+  updatedAt_not_in?: DateTime[] | DateTime | null
+  updatedAt_lt?: DateTime | null
+  updatedAt_lte?: DateTime | null
+  updatedAt_gt?: DateTime | null
+  updatedAt_gte?: DateTime | null
+}
+
+export interface SmsReceiptSubscriptionWhereInput {
+  AND?: SmsReceiptSubscriptionWhereInput[] | SmsReceiptSubscriptionWhereInput | null
+  OR?: SmsReceiptSubscriptionWhereInput[] | SmsReceiptSubscriptionWhereInput | null
+  NOT?: SmsReceiptSubscriptionWhereInput[] | SmsReceiptSubscriptionWhereInput | null
+  mutation_in?: MutationType[] | MutationType | null
+  updatedFields_contains?: String | null
+  updatedFields_contains_every?: String[] | String | null
+  updatedFields_contains_some?: String[] | String | null
+  node?: SmsReceiptWhereInput | null
+}
+
+export interface SmsReceiptUpdateDataInput {
+  externalId?: String | null
+  body?: String | null
+  status?: SmsStatus | null
+  mediaUrls?: SmsReceiptUpdatemediaUrlsInput | null
+}
+
+export interface SmsReceiptUpdateInput {
+  externalId?: String | null
+  body?: String | null
+  status?: SmsStatus | null
+  mediaUrls?: SmsReceiptUpdatemediaUrlsInput | null
+}
+
+export interface SmsReceiptUpdateManyDataInput {
+  externalId?: String | null
+  body?: String | null
+  status?: SmsStatus | null
+  mediaUrls?: SmsReceiptUpdatemediaUrlsInput | null
+}
+
+export interface SmsReceiptUpdateManyInput {
+  create?: SmsReceiptCreateInput[] | SmsReceiptCreateInput | null
+  connect?: SmsReceiptWhereUniqueInput[] | SmsReceiptWhereUniqueInput | null
+  set?: SmsReceiptWhereUniqueInput[] | SmsReceiptWhereUniqueInput | null
+  disconnect?: SmsReceiptWhereUniqueInput[] | SmsReceiptWhereUniqueInput | null
+  delete?: SmsReceiptWhereUniqueInput[] | SmsReceiptWhereUniqueInput | null
+  update?: SmsReceiptUpdateWithWhereUniqueNestedInput[] | SmsReceiptUpdateWithWhereUniqueNestedInput | null
+  updateMany?: SmsReceiptUpdateManyWithWhereNestedInput[] | SmsReceiptUpdateManyWithWhereNestedInput | null
+  deleteMany?: SmsReceiptScalarWhereInput[] | SmsReceiptScalarWhereInput | null
+  upsert?: SmsReceiptUpsertWithWhereUniqueNestedInput[] | SmsReceiptUpsertWithWhereUniqueNestedInput | null
+}
+
+export interface SmsReceiptUpdateManyMutationInput {
+  externalId?: String | null
+  body?: String | null
+  status?: SmsStatus | null
+  mediaUrls?: SmsReceiptUpdatemediaUrlsInput | null
+}
+
+export interface SmsReceiptUpdateManyWithWhereNestedInput {
+  where: SmsReceiptScalarWhereInput
+  data: SmsReceiptUpdateManyDataInput
+}
+
+export interface SmsReceiptUpdatemediaUrlsInput {
+  set?: String[] | String | null
+}
+
+export interface SmsReceiptUpdateWithWhereUniqueNestedInput {
+  where: SmsReceiptWhereUniqueInput
+  data: SmsReceiptUpdateDataInput
+}
+
+export interface SmsReceiptUpsertWithWhereUniqueNestedInput {
+  where: SmsReceiptWhereUniqueInput
+  update: SmsReceiptUpdateDataInput
+  create: SmsReceiptCreateInput
+}
+
+export interface SmsReceiptWhereInput {
+  AND?: SmsReceiptWhereInput[] | SmsReceiptWhereInput | null
+  OR?: SmsReceiptWhereInput[] | SmsReceiptWhereInput | null
+  NOT?: SmsReceiptWhereInput[] | SmsReceiptWhereInput | null
+  id?: ID_Input | null
+  id_not?: ID_Input | null
+  id_in?: ID_Output[] | ID_Output | null
+  id_not_in?: ID_Output[] | ID_Output | null
+  id_lt?: ID_Input | null
+  id_lte?: ID_Input | null
+  id_gt?: ID_Input | null
+  id_gte?: ID_Input | null
+  id_contains?: ID_Input | null
+  id_not_contains?: ID_Input | null
+  id_starts_with?: ID_Input | null
+  id_not_starts_with?: ID_Input | null
+  id_ends_with?: ID_Input | null
+  id_not_ends_with?: ID_Input | null
+  externalId?: String | null
+  externalId_not?: String | null
+  externalId_in?: String[] | String | null
+  externalId_not_in?: String[] | String | null
+  externalId_lt?: String | null
+  externalId_lte?: String | null
+  externalId_gt?: String | null
+  externalId_gte?: String | null
+  externalId_contains?: String | null
+  externalId_not_contains?: String | null
+  externalId_starts_with?: String | null
+  externalId_not_starts_with?: String | null
+  externalId_ends_with?: String | null
+  externalId_not_ends_with?: String | null
+  body?: String | null
+  body_not?: String | null
+  body_in?: String[] | String | null
+  body_not_in?: String[] | String | null
+  body_lt?: String | null
+  body_lte?: String | null
+  body_gt?: String | null
+  body_gte?: String | null
+  body_contains?: String | null
+  body_not_contains?: String | null
+  body_starts_with?: String | null
+  body_not_starts_with?: String | null
+  body_ends_with?: String | null
+  body_not_ends_with?: String | null
+  status?: SmsStatus | null
+  status_not?: SmsStatus | null
+  status_in?: SmsStatus[] | SmsStatus | null
+  status_not_in?: SmsStatus[] | SmsStatus | null
+  sentAt?: DateTime | null
+  sentAt_not?: DateTime | null
+  sentAt_in?: DateTime[] | DateTime | null
+  sentAt_not_in?: DateTime[] | DateTime | null
+  sentAt_lt?: DateTime | null
+  sentAt_lte?: DateTime | null
+  sentAt_gt?: DateTime | null
+  sentAt_gte?: DateTime | null
+  updatedAt?: DateTime | null
+  updatedAt_not?: DateTime | null
+  updatedAt_in?: DateTime[] | DateTime | null
+  updatedAt_not_in?: DateTime[] | DateTime | null
+  updatedAt_lt?: DateTime | null
+  updatedAt_lte?: DateTime | null
+  updatedAt_gt?: DateTime | null
+  updatedAt_gte?: DateTime | null
+}
+
+export interface SmsReceiptWhereUniqueInput {
+  id?: ID_Input | null
+}
+
 export interface StylePreferencesCreatebrandsInput {
   set?: String[] | String | null
 }
@@ -35222,6 +36067,7 @@ export interface UserCreateInput {
   roles?: UserCreaterolesInput | null
   pushNotifications?: PushNotificationReceiptCreateManyWithoutUsersInput | null
   pushNotification?: UserPushNotificationCreateOneInput | null
+  smsReceipts?: SmsReceiptCreateManyInput | null
 }
 
 export interface UserCreateManyWithoutPushNotificationsInput {
@@ -35250,6 +36096,7 @@ export interface UserCreateWithoutPushNotificationsInput {
   verificationMethod?: UserVerificationMethod | null
   roles?: UserCreaterolesInput | null
   pushNotification?: UserPushNotificationCreateOneInput | null
+  smsReceipts?: SmsReceiptCreateManyInput | null
 }
 
 export interface UserPushNotificationCreateInput {
@@ -35631,6 +36478,7 @@ export interface UserUpdateDataInput {
   roles?: UserUpdaterolesInput | null
   pushNotifications?: PushNotificationReceiptUpdateManyWithoutUsersInput | null
   pushNotification?: UserPushNotificationUpdateOneInput | null
+  smsReceipts?: SmsReceiptUpdateManyInput | null
 }
 
 export interface UserUpdateInput {
@@ -35645,6 +36493,7 @@ export interface UserUpdateInput {
   roles?: UserUpdaterolesInput | null
   pushNotifications?: PushNotificationReceiptUpdateManyWithoutUsersInput | null
   pushNotification?: UserPushNotificationUpdateOneInput | null
+  smsReceipts?: SmsReceiptUpdateManyInput | null
 }
 
 export interface UserUpdateManyDataInput {
@@ -35719,6 +36568,7 @@ export interface UserUpdateWithoutPushNotificationsDataInput {
   verificationMethod?: UserVerificationMethod | null
   roles?: UserUpdaterolesInput | null
   pushNotification?: UserPushNotificationUpdateOneInput | null
+  smsReceipts?: SmsReceiptUpdateManyInput | null
 }
 
 export interface UserUpdateWithWhereUniqueWithoutPushNotificationsInput {
@@ -35847,6 +36697,9 @@ export interface UserWhereInput {
   pushNotifications_some?: PushNotificationReceiptWhereInput | null
   pushNotifications_none?: PushNotificationReceiptWhereInput | null
   pushNotification?: UserPushNotificationWhereInput | null
+  smsReceipts_every?: SmsReceiptWhereInput | null
+  smsReceipts_some?: SmsReceiptWhereInput | null
+  smsReceipts_none?: SmsReceiptWhereInput | null
 }
 
 export interface UserWhereUniqueInput {
@@ -36493,6 +37346,10 @@ export interface AggregateReservationReceiptItem {
 }
 
 export interface AggregateSize {
+  count: Int
+}
+
+export interface AggregateSmsReceipt {
   count: Int
 }
 
@@ -38412,6 +39269,52 @@ export interface SizeSubscriptionPayload {
   previousValues?: SizePreviousValues | null
 }
 
+export interface SmsReceipt extends Node {
+  id: ID_Output
+  externalId?: String | null
+  body: String
+  mediaUrls: Array<String>
+  status: SmsStatus
+  sentAt: DateTime
+  updatedAt: DateTime
+}
+
+/*
+ * A connection to a list of items.
+
+ */
+export interface SmsReceiptConnection {
+  pageInfo: PageInfo
+  edges: Array<SmsReceiptEdge | null>
+  aggregate: AggregateSmsReceipt
+}
+
+/*
+ * An edge in a connection.
+
+ */
+export interface SmsReceiptEdge {
+  node: SmsReceipt
+  cursor: String
+}
+
+export interface SmsReceiptPreviousValues {
+  id: ID_Output
+  externalId?: String | null
+  body: String
+  mediaUrls: Array<String>
+  status: SmsStatus
+  sentAt: DateTime
+  updatedAt: DateTime
+}
+
+export interface SmsReceiptSubscriptionPayload {
+  mutation: MutationType
+  node?: SmsReceipt | null
+  updatedFields?: Array<String> | null
+  previousValues?: SmsReceiptPreviousValues | null
+}
+
 export interface StylePreferences extends Node {
   id: ID_Output
   styles: Array<String>
@@ -38558,6 +39461,7 @@ export interface User extends Node {
   verificationMethod: UserVerificationMethod
   createdAt: DateTime
   updatedAt: DateTime
+  smsReceipts?: Array<SmsReceipt> | null
 }
 
 /*
