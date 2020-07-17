@@ -89,10 +89,6 @@ export class ProductUtilsService {
     }
 
     if (args.category && args.category !== "all") {
-      const category = await this.prisma.client.category({
-        slug: args.category,
-      })
-
       const allCategoriesWithChildren = await this.prisma.binding.query.categories(
         {},
         `
@@ -135,7 +131,7 @@ export class ProductUtilsService {
             where: {
               ...args.where,
               ...brandFilter.where,
-              category: { slug: category?.slug || "" },
+              category: { slug: args.category || "" },
             },
           }
     } else {
