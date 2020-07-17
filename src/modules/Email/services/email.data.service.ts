@@ -81,7 +81,7 @@ export class EmailDataProvider {
     }
   }
 
-  completeAccount(firstName) {
+  completeAccount(firstName, url) {
     return {
       email: {
         body: {
@@ -89,14 +89,16 @@ export class EmailDataProvider {
             {
               html:
                 `Hey ${firstName}, thanks for waiting. We're ready for you. ` +
-                `Tap the button below to get the app, choose your membership plan, and start reserving.`,
+                `Tap the button below to choose your membership plan, get the beta app and start reserving.`,
             },
             {
-              html: `Heads up -- your spot will remain open for 48 hours. After that, due to demand, it will be given to someone else.`,
+              html:
+                `Heads up -- due to demand, we may need to give your spot to someone` +
+                ` else if you don't choose your plan within the next 48 hours.`,
             },
             { html: "Thanks,<br>The Seasons Team" },
           ],
-          button: { text: "Get the app", url: process.env.MOBILE_APP_URL },
+          button: { text: "Choose plan", url },
         },
         prefooter: {
           paragraphs: [
@@ -149,6 +151,17 @@ export class EmailDataProvider {
                 `We're still actively working on the beta app. If you have any ideas` +
                 ` or thoughts about the service, give us your feedback! Good or bad.` +
                 ` Just write to ${process.env.MAIN_CONTACT_EMAIL}`,
+            },
+            {
+              html:
+                '<b style="color:#000000">How to install the app and reserve your first three pieces</b>',
+            },
+            {
+              html:
+                `<ol><li>View this e-mail on your iOS device.</li><li>If you don\'t` +
+                ` already have it, download the <a href="${process.env.TESTFLIGHT_URL}">testflight app</a>.` +
+                `</li><li><a href="${process.env.TESTFLIGHT_URL}">Click here</a> to install` +
+                ` the seasons app on testflight.</li><li>Login and start reserving!</li></ol>`,
             },
           ],
         },
