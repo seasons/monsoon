@@ -89,26 +89,49 @@ export class ProductUtilsService {
     }
 
     if (args.category && args.category !== "all") {
-      const category = await this.prisma.client.category({
-        slug: args.category,
-      })
-      const children = await this.prisma.client
-        .category({ slug: args.category })
-        .children()
+      const allCategoriesWithChildren = await this.prisma.binding.query.categories(
+        {},
+        `
+        {
+          id
+          slug
+          children {
+            id
+            slug
+          }
+        }
+      `
+      )
+
+      const getChildren = (categorySlug, results = []) => {
+        const category = allCategoriesWithChildren.find(
+          cat => cat.slug === categorySlug
+        )
+        if (category.children.length > 0) {
+          category.children.forEach(child => {
+            getChildren(child.slug, results)
+          })
+        } else {
+          results.push(categorySlug)
+        }
+        return results
+      }
+
+      const children = getChildren(args.category)
 
       return children?.length > 0
         ? {
             where: {
               ...args.where,
               ...brandFilter.where,
-              category: { slug_in: children.map(child => child.slug) },
+              category: { slug_in: children },
             },
           }
         : {
             where: {
               ...args.where,
               ...brandFilter.where,
-              category: { slug: category?.slug || "" },
+              category: { slug: args.category || "" },
             },
           }
     } else {
