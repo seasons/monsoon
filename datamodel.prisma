@@ -485,7 +485,7 @@ type EmailReceipt {
   updatedAt: DateTime! @updatedAt
 }
 
-enum SMSStatus {
+enum SmsStatus {
   Queued
   Sending
   Sent
@@ -500,19 +500,18 @@ enum SMSStatus {
   PartiallyDelivered
 }
 
-type SMSReceipt {
+type SmsReceipt {
   id: ID! @id
-
-  # user = which customer to send message to
-  user: User
+  # externalId = external id provided by the SMS service
+  externalId: String
   # body = body of the message
-  body: String
+  body: String!
   # mediaUrls = image urls attached to message
   mediaUrls: [String!] @scalarList(strategy: RELATION)
   # status = delivery status
-  status: SMSStatus
-  createdAt: DateTime
-  sentAt: DateTime
+  status: SmsStatus!
+  sentAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
 }
 
 type PushNotificationReceipt {
@@ -573,7 +572,7 @@ type User {
   verificationMethod: UserVerificationMethod! @default(value: None)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
-  smsReceipts: [SMSReceipt!]! @scalarList(strategy: RELATION)
+  smsReceipts: [SmsReceipt!]! @scalarList(strategy: RELATION)
 }
 
 type StylePreferences {

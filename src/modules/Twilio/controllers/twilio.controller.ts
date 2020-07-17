@@ -1,19 +1,23 @@
-import { DateTime } from "@app/prisma/prisma.binding"
+import { SMSService } from "@app/modules/SMS/services/sms.service"
 import { Body, Controller, Post } from "@nestjs/common"
 import { MessageStatus } from "twilio/lib/rest/api/v2010/account/message"
 
-type TwilioEvent = {
-  date_created: DateTime
-  sid: string
-  status: MessageStatus
-}
+import { twilioToPrismaSmsStatus } from "../services/twilio.service"
 
-export const twilioToPrismaSMSStatus = () => {}
+type TwilioEvent = {
+  MessageSid: string
+  SmsStatus: MessageStatus
+}
 
 @Controller("twilio_events")
 export class TwilioController {
+  constructor(private readonly smsService: SMSService) {}
+
   @Post()
   async handlePost(@Body() body: TwilioEvent) {
-    // store somewhere?
+    this.smsService.handleSMSStatusUpdate(
+      body.MessageSid,
+      twilioToPrismaSmsStatus(body.SmsStatus)
+    )
   }
 }

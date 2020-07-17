@@ -28,4 +28,9 @@ export class SMSMutationsResolver {
     // analytics?
     return status
   }
+
+  @Mutation()
+  async sendSMSMessage(@Args() args) {
+    return this.smsService.sendSMSMessage(args)
+  }
 }
