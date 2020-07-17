@@ -485,6 +485,35 @@ type EmailReceipt {
   updatedAt: DateTime! @updatedAt
 }
 
+enum SmsStatus {
+  Queued
+  Sending
+  Sent
+  Failed
+  Delivered
+  Undelivered
+  Receiving
+  Received
+  Accepted
+  Scheduled
+  Read
+  PartiallyDelivered
+}
+
+type SmsReceipt {
+  id: ID! @id
+  # externalId = external id provided by the SMS service
+  externalId: String
+  # body = body of the message
+  body: String!
+  # mediaUrls = image urls attached to message
+  mediaUrls: [String!] @scalarList(strategy: RELATION)
+  # status = delivery status
+  status: SmsStatus!
+  sentAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
 type PushNotificationReceipt {
   #id of the notification
   id: ID! @id
@@ -537,13 +566,13 @@ type User {
   role: UserRole! @default(value: Customer)
   roles: [UserRole!]! @scalarList(strategy: RELATION)
   pushNotificationStatus: PushNotificationStatus! @default(value: Denied)
-  pushNotifications: [PushNotificationReceipt!]
-     @relation(name: "UserToPushNotificationReceipts")
+  pushNotifications: [PushNotificationReceipt!] @relation(name: "UserToPushNotificationReceipts")
   pushNotification: UserPushNotification
   verificationStatus: UserVerificationStatus! @default(value: Pending)
   verificationMethod: UserVerificationMethod! @default(value: None)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
+  smsReceipts: [SmsReceipt!]! @scalarList(strategy: RELATION)
 }
 
 type StylePreferences {

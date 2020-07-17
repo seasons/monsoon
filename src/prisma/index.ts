@@ -83,6 +83,7 @@ export interface Exists {
     where?: ReservationReceiptItemWhereInput
   ) => Promise<boolean>;
   size: (where?: SizeWhereInput) => Promise<boolean>;
+  smsReceipt: (where?: SmsReceiptWhereInput) => Promise<boolean>;
   stylePreferences: (where?: StylePreferencesWhereInput) => Promise<boolean>;
   tag: (where?: TagWhereInput) => Promise<boolean>;
   topSize: (where?: TopSizeWhereInput) => Promise<boolean>;
@@ -911,6 +912,25 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => SizeConnectionPromise;
+  smsReceipt: (where: SmsReceiptWhereUniqueInput) => SmsReceiptNullablePromise;
+  smsReceipts: (args?: {
+    where?: SmsReceiptWhereInput;
+    orderBy?: SmsReceiptOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<SmsReceipt>;
+  smsReceiptsConnection: (args?: {
+    where?: SmsReceiptWhereInput;
+    orderBy?: SmsReceiptOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => SmsReceiptConnectionPromise;
   stylePreferences: (
     where: StylePreferencesWhereUniqueInput
   ) => StylePreferencesNullablePromise;
@@ -1837,6 +1857,22 @@ export interface Prisma {
   }) => SizePromise;
   deleteSize: (where: SizeWhereUniqueInput) => SizePromise;
   deleteManySizes: (where?: SizeWhereInput) => BatchPayloadPromise;
+  createSmsReceipt: (data: SmsReceiptCreateInput) => SmsReceiptPromise;
+  updateSmsReceipt: (args: {
+    data: SmsReceiptUpdateInput;
+    where: SmsReceiptWhereUniqueInput;
+  }) => SmsReceiptPromise;
+  updateManySmsReceipts: (args: {
+    data: SmsReceiptUpdateManyMutationInput;
+    where?: SmsReceiptWhereInput;
+  }) => BatchPayloadPromise;
+  upsertSmsReceipt: (args: {
+    where: SmsReceiptWhereUniqueInput;
+    create: SmsReceiptCreateInput;
+    update: SmsReceiptUpdateInput;
+  }) => SmsReceiptPromise;
+  deleteSmsReceipt: (where: SmsReceiptWhereUniqueInput) => SmsReceiptPromise;
+  deleteManySmsReceipts: (where?: SmsReceiptWhereInput) => BatchPayloadPromise;
   createStylePreferences: (
     data: StylePreferencesCreateInput
   ) => StylePreferencesPromise;
@@ -2121,6 +2157,9 @@ export interface Subscription {
   size: (
     where?: SizeSubscriptionWhereInput
   ) => SizeSubscriptionPayloadSubscription;
+  smsReceipt: (
+    where?: SmsReceiptSubscriptionWhereInput
+  ) => SmsReceiptSubscriptionPayloadSubscription;
   stylePreferences: (
     where?: StylePreferencesSubscriptionWhereInput
   ) => StylePreferencesSubscriptionPayloadSubscription;
@@ -2169,6 +2208,20 @@ export type UserPushNotificationInterestType =
 export type UserVerificationStatus = "Approved" | "Denied" | "Pending";
 
 export type UserVerificationMethod = "SMS" | "Email" | "None";
+
+export type SmsStatus =
+  | "Queued"
+  | "Sending"
+  | "Sent"
+  | "Failed"
+  | "Delivered"
+  | "Undelivered"
+  | "Receiving"
+  | "Received"
+  | "Accepted"
+  | "Scheduled"
+  | "Read"
+  | "PartiallyDelivered";
 
 export type PushNotificationReceiptOrderByInput =
   | "id_ASC"
@@ -2229,6 +2282,20 @@ export type UserPushNotificationInterestOrderByInput =
   | "value_DESC"
   | "status_ASC"
   | "status_DESC";
+
+export type SmsReceiptOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "externalId_ASC"
+  | "externalId_DESC"
+  | "body_ASC"
+  | "body_DESC"
+  | "status_ASC"
+  | "status_DESC"
+  | "sentAt_ASC"
+  | "sentAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
 
 export type CustomerStatus =
   | "Invited"
@@ -3295,6 +3362,9 @@ export interface UserWhereInput {
   updatedAt_lte?: Maybe<DateTimeInput>;
   updatedAt_gt?: Maybe<DateTimeInput>;
   updatedAt_gte?: Maybe<DateTimeInput>;
+  smsReceipts_every?: Maybe<SmsReceiptWhereInput>;
+  smsReceipts_some?: Maybe<SmsReceiptWhereInput>;
+  smsReceipts_none?: Maybe<SmsReceiptWhereInput>;
   AND?: Maybe<UserWhereInput[] | UserWhereInput>;
   OR?: Maybe<UserWhereInput[] | UserWhereInput>;
   NOT?: Maybe<UserWhereInput[] | UserWhereInput>;
@@ -3384,6 +3454,74 @@ export interface UserPushNotificationInterestWhereInput {
     | UserPushNotificationInterestWhereInput[]
     | UserPushNotificationInterestWhereInput
   >;
+}
+
+export interface SmsReceiptWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  externalId?: Maybe<String>;
+  externalId_not?: Maybe<String>;
+  externalId_in?: Maybe<String[] | String>;
+  externalId_not_in?: Maybe<String[] | String>;
+  externalId_lt?: Maybe<String>;
+  externalId_lte?: Maybe<String>;
+  externalId_gt?: Maybe<String>;
+  externalId_gte?: Maybe<String>;
+  externalId_contains?: Maybe<String>;
+  externalId_not_contains?: Maybe<String>;
+  externalId_starts_with?: Maybe<String>;
+  externalId_not_starts_with?: Maybe<String>;
+  externalId_ends_with?: Maybe<String>;
+  externalId_not_ends_with?: Maybe<String>;
+  body?: Maybe<String>;
+  body_not?: Maybe<String>;
+  body_in?: Maybe<String[] | String>;
+  body_not_in?: Maybe<String[] | String>;
+  body_lt?: Maybe<String>;
+  body_lte?: Maybe<String>;
+  body_gt?: Maybe<String>;
+  body_gte?: Maybe<String>;
+  body_contains?: Maybe<String>;
+  body_not_contains?: Maybe<String>;
+  body_starts_with?: Maybe<String>;
+  body_not_starts_with?: Maybe<String>;
+  body_ends_with?: Maybe<String>;
+  body_not_ends_with?: Maybe<String>;
+  status?: Maybe<SmsStatus>;
+  status_not?: Maybe<SmsStatus>;
+  status_in?: Maybe<SmsStatus[] | SmsStatus>;
+  status_not_in?: Maybe<SmsStatus[] | SmsStatus>;
+  sentAt?: Maybe<DateTimeInput>;
+  sentAt_not?: Maybe<DateTimeInput>;
+  sentAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  sentAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  sentAt_lt?: Maybe<DateTimeInput>;
+  sentAt_lte?: Maybe<DateTimeInput>;
+  sentAt_gt?: Maybe<DateTimeInput>;
+  sentAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<SmsReceiptWhereInput[] | SmsReceiptWhereInput>;
+  OR?: Maybe<SmsReceiptWhereInput[] | SmsReceiptWhereInput>;
+  NOT?: Maybe<SmsReceiptWhereInput[] | SmsReceiptWhereInput>;
 }
 
 export interface PhysicalProductWhereInput {
@@ -6876,6 +7014,10 @@ export type SizeWhereUniqueInput = AtLeastOne<{
   slug?: Maybe<String>;
 }>;
 
+export type SmsReceiptWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
 export type StylePreferencesWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
@@ -6955,6 +7097,7 @@ export interface UserCreateInput {
   pushNotification?: Maybe<UserPushNotificationCreateOneInput>;
   verificationStatus?: Maybe<UserVerificationStatus>;
   verificationMethod?: Maybe<UserVerificationMethod>;
+  smsReceipts?: Maybe<SmsReceiptCreateManyInput>;
 }
 
 export interface UserCreaterolesInput {
@@ -7060,6 +7203,24 @@ export interface UserCreateWithoutPushNotificationsInput {
   pushNotification?: Maybe<UserPushNotificationCreateOneInput>;
   verificationStatus?: Maybe<UserVerificationStatus>;
   verificationMethod?: Maybe<UserVerificationMethod>;
+  smsReceipts?: Maybe<SmsReceiptCreateManyInput>;
+}
+
+export interface SmsReceiptCreateManyInput {
+  create?: Maybe<SmsReceiptCreateInput[] | SmsReceiptCreateInput>;
+  connect?: Maybe<SmsReceiptWhereUniqueInput[] | SmsReceiptWhereUniqueInput>;
+}
+
+export interface SmsReceiptCreateInput {
+  id?: Maybe<ID_Input>;
+  externalId?: Maybe<String>;
+  body: String;
+  mediaUrls?: Maybe<SmsReceiptCreatemediaUrlsInput>;
+  status: SmsStatus;
+}
+
+export interface SmsReceiptCreatemediaUrlsInput {
+  set?: Maybe<String[] | String>;
 }
 
 export interface CustomerDetailCreateOneInput {
@@ -7924,6 +8085,7 @@ export interface UserUpdateDataInput {
   pushNotification?: Maybe<UserPushNotificationUpdateOneInput>;
   verificationStatus?: Maybe<UserVerificationStatus>;
   verificationMethod?: Maybe<UserVerificationMethod>;
+  smsReceipts?: Maybe<SmsReceiptUpdateManyInput>;
 }
 
 export interface UserUpdaterolesInput {
@@ -8405,6 +8567,130 @@ export interface UserUpdateWithoutPushNotificationsDataInput {
   pushNotification?: Maybe<UserPushNotificationUpdateOneInput>;
   verificationStatus?: Maybe<UserVerificationStatus>;
   verificationMethod?: Maybe<UserVerificationMethod>;
+  smsReceipts?: Maybe<SmsReceiptUpdateManyInput>;
+}
+
+export interface SmsReceiptUpdateManyInput {
+  create?: Maybe<SmsReceiptCreateInput[] | SmsReceiptCreateInput>;
+  update?: Maybe<
+    | SmsReceiptUpdateWithWhereUniqueNestedInput[]
+    | SmsReceiptUpdateWithWhereUniqueNestedInput
+  >;
+  upsert?: Maybe<
+    | SmsReceiptUpsertWithWhereUniqueNestedInput[]
+    | SmsReceiptUpsertWithWhereUniqueNestedInput
+  >;
+  delete?: Maybe<SmsReceiptWhereUniqueInput[] | SmsReceiptWhereUniqueInput>;
+  connect?: Maybe<SmsReceiptWhereUniqueInput[] | SmsReceiptWhereUniqueInput>;
+  set?: Maybe<SmsReceiptWhereUniqueInput[] | SmsReceiptWhereUniqueInput>;
+  disconnect?: Maybe<SmsReceiptWhereUniqueInput[] | SmsReceiptWhereUniqueInput>;
+  deleteMany?: Maybe<SmsReceiptScalarWhereInput[] | SmsReceiptScalarWhereInput>;
+  updateMany?: Maybe<
+    | SmsReceiptUpdateManyWithWhereNestedInput[]
+    | SmsReceiptUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface SmsReceiptUpdateWithWhereUniqueNestedInput {
+  where: SmsReceiptWhereUniqueInput;
+  data: SmsReceiptUpdateDataInput;
+}
+
+export interface SmsReceiptUpdateDataInput {
+  externalId?: Maybe<String>;
+  body?: Maybe<String>;
+  mediaUrls?: Maybe<SmsReceiptUpdatemediaUrlsInput>;
+  status?: Maybe<SmsStatus>;
+}
+
+export interface SmsReceiptUpdatemediaUrlsInput {
+  set?: Maybe<String[] | String>;
+}
+
+export interface SmsReceiptUpsertWithWhereUniqueNestedInput {
+  where: SmsReceiptWhereUniqueInput;
+  update: SmsReceiptUpdateDataInput;
+  create: SmsReceiptCreateInput;
+}
+
+export interface SmsReceiptScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  externalId?: Maybe<String>;
+  externalId_not?: Maybe<String>;
+  externalId_in?: Maybe<String[] | String>;
+  externalId_not_in?: Maybe<String[] | String>;
+  externalId_lt?: Maybe<String>;
+  externalId_lte?: Maybe<String>;
+  externalId_gt?: Maybe<String>;
+  externalId_gte?: Maybe<String>;
+  externalId_contains?: Maybe<String>;
+  externalId_not_contains?: Maybe<String>;
+  externalId_starts_with?: Maybe<String>;
+  externalId_not_starts_with?: Maybe<String>;
+  externalId_ends_with?: Maybe<String>;
+  externalId_not_ends_with?: Maybe<String>;
+  body?: Maybe<String>;
+  body_not?: Maybe<String>;
+  body_in?: Maybe<String[] | String>;
+  body_not_in?: Maybe<String[] | String>;
+  body_lt?: Maybe<String>;
+  body_lte?: Maybe<String>;
+  body_gt?: Maybe<String>;
+  body_gte?: Maybe<String>;
+  body_contains?: Maybe<String>;
+  body_not_contains?: Maybe<String>;
+  body_starts_with?: Maybe<String>;
+  body_not_starts_with?: Maybe<String>;
+  body_ends_with?: Maybe<String>;
+  body_not_ends_with?: Maybe<String>;
+  status?: Maybe<SmsStatus>;
+  status_not?: Maybe<SmsStatus>;
+  status_in?: Maybe<SmsStatus[] | SmsStatus>;
+  status_not_in?: Maybe<SmsStatus[] | SmsStatus>;
+  sentAt?: Maybe<DateTimeInput>;
+  sentAt_not?: Maybe<DateTimeInput>;
+  sentAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  sentAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  sentAt_lt?: Maybe<DateTimeInput>;
+  sentAt_lte?: Maybe<DateTimeInput>;
+  sentAt_gt?: Maybe<DateTimeInput>;
+  sentAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<SmsReceiptScalarWhereInput[] | SmsReceiptScalarWhereInput>;
+  OR?: Maybe<SmsReceiptScalarWhereInput[] | SmsReceiptScalarWhereInput>;
+  NOT?: Maybe<SmsReceiptScalarWhereInput[] | SmsReceiptScalarWhereInput>;
+}
+
+export interface SmsReceiptUpdateManyWithWhereNestedInput {
+  where: SmsReceiptScalarWhereInput;
+  data: SmsReceiptUpdateManyDataInput;
+}
+
+export interface SmsReceiptUpdateManyDataInput {
+  externalId?: Maybe<String>;
+  body?: Maybe<String>;
+  mediaUrls?: Maybe<SmsReceiptUpdatemediaUrlsInput>;
+  status?: Maybe<SmsStatus>;
 }
 
 export interface UserUpsertWithWhereUniqueWithoutPushNotificationsInput {
@@ -13745,6 +14031,20 @@ export interface SizeUpdateManyMutationInput {
   display?: Maybe<String>;
 }
 
+export interface SmsReceiptUpdateInput {
+  externalId?: Maybe<String>;
+  body?: Maybe<String>;
+  mediaUrls?: Maybe<SmsReceiptUpdatemediaUrlsInput>;
+  status?: Maybe<SmsStatus>;
+}
+
+export interface SmsReceiptUpdateManyMutationInput {
+  externalId?: Maybe<String>;
+  body?: Maybe<String>;
+  mediaUrls?: Maybe<SmsReceiptUpdatemediaUrlsInput>;
+  status?: Maybe<SmsStatus>;
+}
+
 export interface StylePreferencesUpdateInput {
   styles?: Maybe<StylePreferencesUpdatestylesInput>;
   patterns?: Maybe<StylePreferencesUpdatepatternsInput>;
@@ -13909,6 +14209,7 @@ export interface UserUpdateInput {
   pushNotification?: Maybe<UserPushNotificationUpdateOneInput>;
   verificationStatus?: Maybe<UserVerificationStatus>;
   verificationMethod?: Maybe<UserVerificationMethod>;
+  smsReceipts?: Maybe<SmsReceiptUpdateManyInput>;
 }
 
 export interface UserUpdateManyMutationInput {
@@ -14936,6 +15237,23 @@ export interface SizeSubscriptionWhereInput {
   NOT?: Maybe<SizeSubscriptionWhereInput[] | SizeSubscriptionWhereInput>;
 }
 
+export interface SmsReceiptSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<SmsReceiptWhereInput>;
+  AND?: Maybe<
+    SmsReceiptSubscriptionWhereInput[] | SmsReceiptSubscriptionWhereInput
+  >;
+  OR?: Maybe<
+    SmsReceiptSubscriptionWhereInput[] | SmsReceiptSubscriptionWhereInput
+  >;
+  NOT?: Maybe<
+    SmsReceiptSubscriptionWhereInput[] | SmsReceiptSubscriptionWhereInput
+  >;
+}
+
 export interface StylePreferencesSubscriptionWhereInput {
   mutation_in?: Maybe<MutationType[] | MutationType>;
   updatedFields_contains?: Maybe<String>;
@@ -15243,6 +15561,15 @@ export interface UserPromise extends Promise<User>, Fragmentable {
   verificationMethod: () => Promise<UserVerificationMethod>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
+  smsReceipts: <T = FragmentableArray<SmsReceipt>>(args?: {
+    where?: SmsReceiptWhereInput;
+    orderBy?: SmsReceiptOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
 }
 
 export interface UserSubscription
@@ -15272,6 +15599,15 @@ export interface UserSubscription
   verificationMethod: () => Promise<AsyncIterator<UserVerificationMethod>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  smsReceipts: <T = Promise<AsyncIterator<SmsReceiptSubscription>>>(args?: {
+    where?: SmsReceiptWhereInput;
+    orderBy?: SmsReceiptOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
 }
 
 export interface UserNullablePromise
@@ -15299,6 +15635,15 @@ export interface UserNullablePromise
   verificationMethod: () => Promise<UserVerificationMethod>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
+  smsReceipts: <T = FragmentableArray<SmsReceipt>>(args?: {
+    where?: SmsReceiptWhereInput;
+    orderBy?: SmsReceiptOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
 }
 
 export interface PushNotificationReceipt {
@@ -15513,6 +15858,50 @@ export interface UserPushNotificationInterestNullablePromise
   value: () => Promise<String>;
   user: <T = UserPromise>() => T;
   status: () => Promise<Boolean>;
+}
+
+export interface SmsReceipt {
+  id: ID_Output;
+  externalId?: String;
+  body: String;
+  mediaUrls: String[];
+  status: SmsStatus;
+  sentAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface SmsReceiptPromise extends Promise<SmsReceipt>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  externalId: () => Promise<String>;
+  body: () => Promise<String>;
+  mediaUrls: () => Promise<String[]>;
+  status: () => Promise<SmsStatus>;
+  sentAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface SmsReceiptSubscription
+  extends Promise<AsyncIterator<SmsReceipt>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  externalId: () => Promise<AsyncIterator<String>>;
+  body: () => Promise<AsyncIterator<String>>;
+  mediaUrls: () => Promise<AsyncIterator<String[]>>;
+  status: () => Promise<AsyncIterator<SmsStatus>>;
+  sentAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface SmsReceiptNullablePromise
+  extends Promise<SmsReceipt | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  externalId: () => Promise<String>;
+  body: () => Promise<String>;
+  mediaUrls: () => Promise<String[]>;
+  status: () => Promise<SmsStatus>;
+  sentAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface CustomerDetail {
@@ -20513,6 +20902,62 @@ export interface AggregateSizeSubscription
   count: () => Promise<AsyncIterator<Int>>;
 }
 
+export interface SmsReceiptConnection {
+  pageInfo: PageInfo;
+  edges: SmsReceiptEdge[];
+}
+
+export interface SmsReceiptConnectionPromise
+  extends Promise<SmsReceiptConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<SmsReceiptEdge>>() => T;
+  aggregate: <T = AggregateSmsReceiptPromise>() => T;
+}
+
+export interface SmsReceiptConnectionSubscription
+  extends Promise<AsyncIterator<SmsReceiptConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<SmsReceiptEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateSmsReceiptSubscription>() => T;
+}
+
+export interface SmsReceiptEdge {
+  node: SmsReceipt;
+  cursor: String;
+}
+
+export interface SmsReceiptEdgePromise
+  extends Promise<SmsReceiptEdge>,
+    Fragmentable {
+  node: <T = SmsReceiptPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface SmsReceiptEdgeSubscription
+  extends Promise<AsyncIterator<SmsReceiptEdge>>,
+    Fragmentable {
+  node: <T = SmsReceiptSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateSmsReceipt {
+  count: Int;
+}
+
+export interface AggregateSmsReceiptPromise
+  extends Promise<AggregateSmsReceipt>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateSmsReceiptSubscription
+  extends Promise<AsyncIterator<AggregateSmsReceipt>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
 export interface StylePreferencesConnection {
   pageInfo: PageInfo;
   edges: StylePreferencesEdge[];
@@ -23290,6 +23735,65 @@ export interface SizePreviousValuesSubscription
   display: () => Promise<AsyncIterator<String>>;
 }
 
+export interface SmsReceiptSubscriptionPayload {
+  mutation: MutationType;
+  node: SmsReceipt;
+  updatedFields: String[];
+  previousValues: SmsReceiptPreviousValues;
+}
+
+export interface SmsReceiptSubscriptionPayloadPromise
+  extends Promise<SmsReceiptSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = SmsReceiptPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = SmsReceiptPreviousValuesPromise>() => T;
+}
+
+export interface SmsReceiptSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<SmsReceiptSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = SmsReceiptSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = SmsReceiptPreviousValuesSubscription>() => T;
+}
+
+export interface SmsReceiptPreviousValues {
+  id: ID_Output;
+  externalId?: String;
+  body: String;
+  mediaUrls: String[];
+  status: SmsStatus;
+  sentAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface SmsReceiptPreviousValuesPromise
+  extends Promise<SmsReceiptPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  externalId: () => Promise<String>;
+  body: () => Promise<String>;
+  mediaUrls: () => Promise<String[]>;
+  status: () => Promise<SmsStatus>;
+  sentAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface SmsReceiptPreviousValuesSubscription
+  extends Promise<AsyncIterator<SmsReceiptPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  externalId: () => Promise<AsyncIterator<String>>;
+  body: () => Promise<AsyncIterator<String>>;
+  mediaUrls: () => Promise<AsyncIterator<String[]>>;
+  status: () => Promise<AsyncIterator<SmsStatus>>;
+  sentAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
 export interface StylePreferencesSubscriptionPayload {
   mutation: MutationType;
   node: StylePreferences;
@@ -23969,6 +24473,14 @@ export const models: Model[] = [
   },
   {
     name: "EmailReceipt",
+    embedded: false
+  },
+  {
+    name: "SmsStatus",
+    embedded: false
+  },
+  {
+    name: "SmsReceipt",
     embedded: false
   },
   {

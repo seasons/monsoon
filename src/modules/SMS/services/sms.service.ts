@@ -1,21 +1,27 @@
 import { Customer, User } from "@app/decorators"
-import { TwilioService } from "@app/modules/Twilio"
-import { AuthService } from "@modules/User/services/auth.service"
+import { TwilioService, TwilioUtils } from "@app/modules/Twilio"
 import { Injectable } from "@nestjs/common"
 import { Args } from "@nestjs/graphql"
-import { UserVerificationStatus, UserWhereUniqueInput } from "@prisma/index"
+import {
+  SmsStatus,
+  UserVerificationStatus,
+  UserWhereUniqueInput,
+} from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
-import { upperFirst } from "lodash"
+import { head } from "lodash"
 import { PhoneNumberInstance } from "twilio/lib/rest/lookups/v1/phoneNumber"
 import { VerificationCheckInstance } from "twilio/lib/rest/verify/v2/service/verificationCheck"
+
+const twilioStatusCallback = process.env.TWILIO_STATUS_CALLBACK
+const twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER
 
 @Injectable()
 export class SMSService {
   private sid?: string
   constructor(
-    private readonly authService: AuthService,
     private readonly prisma: PrismaService,
-    private readonly twilio: TwilioService
+    private readonly twilio: TwilioService,
+    private readonly twilioUtils: TwilioUtils
   ) {
     this.setupService()
   }
@@ -28,16 +34,9 @@ export class SMSService {
     this.sid = service.sid
   }
 
-  private twilioToPrismaStatus(statusString: string): UserVerificationStatus {
-    if (!["approved", "denied", "pending"].includes(statusString)) {
-      throw new Error(`Got unrecognized verification status "${statusString}".`)
-    }
-    return upperFirst(statusString) as UserVerificationStatus
-  }
-
   async startSMSVerification(
     @Args()
-    { phoneNumber }: { phoneNumber: string; where: UserWhereUniqueInput },
+    { phoneNumber }: { phoneNumber: string },
     @Customer() customer,
     @User() user
   ): Promise<boolean> {
@@ -60,7 +59,9 @@ export class SMSService {
       .verifications.create({ to: e164PhoneNumber, channel: "sms" })
     await this.prisma.client.updateUser({
       data: {
-        verificationStatus: this.twilioToPrismaStatus(verification.status),
+        verificationStatus: this.twilioUtils.twilioToPrismaVerificationStatus(
+          verification.status
+        ),
         verificationMethod: "SMS",
       },
       where: {
@@ -85,7 +86,7 @@ export class SMSService {
 
   async checkSMSVerification(
     @Args()
-    { code, where }: { code: string; where: UserWhereUniqueInput },
+    { code }: { code: string },
     @Customer() customer,
     @User() user
   ): Promise<UserVerificationStatus> {
@@ -116,7 +117,9 @@ export class SMSService {
       }
     }
 
-    const newStatus = this.twilioToPrismaStatus(check.status)
+    const newStatus = this.twilioUtils.twilioToPrismaVerificationStatus(
+      check.status
+    )
     await this.prisma.client.updateUser({
       data: {
         verificationStatus: newStatus,
@@ -126,6 +129,77 @@ export class SMSService {
       },
     })
 
-    return this.twilioToPrismaStatus(check.status)
+    return this.twilioUtils.twilioToPrismaVerificationStatus(check.status)
+  }
+
+  async sendSMSMessage(
+    @Args()
+    {
+      body,
+      mediaUrls,
+      to,
+    }: {
+      body: string
+      mediaUrls?: string[]
+      to: UserWhereUniqueInput
+    }
+  ): Promise<SmsStatus> {
+    // Ensure there are not too many media URLs
+    if (mediaUrls?.length > 10) {
+      throw new Error(
+        "You can only attach up to 10 media URLs to an MMS message."
+      )
+    }
+
+    const phoneNumber = (head(
+      await this.prisma.binding.query.customers(
+        { where: { user: to } },
+        `{ detail { phoneNumber } }`
+      )
+    ) as { detail?: { phoneNumber?: string } })?.detail?.phoneNumber
+    if (!phoneNumber) {
+      throw new Error(`Could not find a phone number for the indicated user.`)
+    }
+
+    // Send SMS message
+    const {
+      errorMessage,
+      sid,
+      status,
+    } = await this.twilio.client.messages.create({
+      body,
+      mediaUrl: mediaUrls,
+      from: twilioPhoneNumber,
+      statusCallback: twilioStatusCallback,
+      to: phoneNumber,
+    })
+    if (errorMessage) {
+      throw new Error(errorMessage)
+    }
+
+    // Create receipt and add it to the user
+    const receipt = await this.prisma.client.createSmsReceipt({
+      body,
+      externalId: sid,
+      mediaUrls: { set: mediaUrls },
+      status: this.twilioUtils.twilioToPrismaSmsStatus(status),
+    })
+
+    await this.prisma.client.updateUser({
+      data: {
+        smsReceipts: { connect: [{ id: receipt.id }] },
+      },
+      where: to,
+    })
+
+    // Return status
+    return this.twilioUtils.twilioToPrismaSmsStatus(status)
+  }
+
+  async handleSMSStatusUpdate(externalId: string, status: SmsStatus) {
+    await this.prisma.client.updateManySmsReceipts({
+      data: { status },
+      where: { externalId },
+    })
   }
 }

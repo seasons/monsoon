@@ -12,9 +12,9 @@ export class SyncCollectionGroupsService {
   constructor(
     private readonly airtableService: AirtableService,
     private readonly prisma: PrismaService,
-    private readonly syncUtils: SyncUtilsService,
-    private readonly utils: UtilsService
+    private readonly syncUtils: SyncUtilsService
   ) {}
+
   async syncAirtableToPrisma(cliProgressBar?) {
     const records = await this.airtableService.getAllCollectionGroups()
     const allCollections = await this.airtableService.getAllCollections()

@@ -3,4 +3,9 @@ type Mutation {
     @hasRole(roles: [Customer])
   checkSMSVerification(code: String!): UserVerificationStatus!
     @hasRole(roles: [Customer])
+  sendSMSMessage(
+    body: String!
+    mediaUrls: [String]
+    to: UserWhereUniqueInput!
+  ): SmsStatus @hasRole(roles: [Admin])
 }

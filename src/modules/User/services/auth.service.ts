@@ -222,34 +222,42 @@ export class AuthService {
         function handleResponse(error, response, body) {
           // Handle a generic error
           if (error) {
-            return reject(new Error(`Error creating Auth0 user: ${error}`))
+            return reject(new Error(`Error creating new Auth0 user ${error}`))
           }
-          // Give a precise error message if a user tried to sign up with an
-          // email that's already in the db
-          if (response.statusCode == 400 && body.code === "invalid_signup") {
-            return reject(new Error("400 -- email already in db or auth0"))
-          }
-          // Give a precise error message if a user tried to sign up with
-          // a insufficiently strong password
-          if (
-            response.statusCode == 400 &&
-            body.name === "PasswordStrengthError"
-          ) {
+
+          // Handle 400 error
+          if (response.statusCode === 400) {
+            const messageFor = (bodyCode: string) => {
+              switch (bodyCode) {
+                case "invalid_signup":
+                  return "Email already associated with an account."
+                case "invalid_password":
+                case "password_strength_error":
+                  return `Password too weak. See password rules at ${PW_STRENGTH_RULES_URL}.`
+                case "password_dictionary_error":
+                  return "Password too common."
+                case "password_no_user_info_error":
+                  return "Password includes user info."
+                default:
+                  return JSON.stringify(body)
+              }
+            }
             return reject(
               new Error(
-                `400 -- insufficiently strong password. see pw rules at ${PW_STRENGTH_RULES_URL}`
+                `[400 ${body.code}] Error creating new Auth0 user: ${messageFor(
+                  body.code
+                )}`
               )
             )
           }
+
           // If any other error occured, expose a generic error message
-          if (response.statusCode != 200) {
-            return reject(
-              new Error(
-                `Error creating new Auth0 user. Auth0 returned ` +
-                  `${response.statusCode} with body: ${JSON.stringify(body)}`
-              )
-            )
+          if (response.statusCode !== 200) {
+            const metadata = `[${response.statusCode} ${body.code}]`
+            return reject(new Error(`${metadata} ${JSON.stringify(body)}`))
           }
+
+          // Otherwise resolve
           return resolve(body._id)
         }
       )
@@ -334,7 +342,7 @@ export class AuthService {
     refresh_token: string
     expires_in: number
   }> {
-    return new Promise(function RetrieveAccessToken(resolve, reject) {
+    return new Promise((resolve, reject) => {
       request(
         {
           method: "Post",
