@@ -1,9 +1,5 @@
 import { Customer, User } from "@app/decorators"
-import { TwilioService } from "@app/modules/Twilio"
-import {
-  twilioToPrismaSmsStatus,
-  twilioToPrismaVerificationStatus,
-} from "@modules/Twilio/services/twilio.service"
+import { TwilioService, TwilioUtils } from "@app/modules/Twilio"
 import { Injectable } from "@nestjs/common"
 import { Args } from "@nestjs/graphql"
 import {
@@ -17,13 +13,15 @@ import { PhoneNumberInstance } from "twilio/lib/rest/lookups/v1/phoneNumber"
 import { VerificationCheckInstance } from "twilio/lib/rest/verify/v2/service/verificationCheck"
 
 const twilioStatusCallback = process.env.TWILIO_STATUS_CALLBACK
+const twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER
 
 @Injectable()
 export class SMSService {
   private sid?: string
   constructor(
     private readonly prisma: PrismaService,
-    private readonly twilio: TwilioService
+    private readonly twilio: TwilioService,
+    private readonly twilioUtils: TwilioUtils
   ) {
     this.setupService()
   }
@@ -61,7 +59,7 @@ export class SMSService {
       .verifications.create({ to: e164PhoneNumber, channel: "sms" })
     await this.prisma.client.updateUser({
       data: {
-        verificationStatus: twilioToPrismaVerificationStatus(
+        verificationStatus: this.twilioUtils.twilioToPrismaVerificationStatus(
           verification.status
         ),
         verificationMethod: "SMS",
@@ -119,7 +117,9 @@ export class SMSService {
       }
     }
 
-    const newStatus = twilioToPrismaVerificationStatus(check.status)
+    const newStatus = this.twilioUtils.twilioToPrismaVerificationStatus(
+      check.status
+    )
     await this.prisma.client.updateUser({
       data: {
         verificationStatus: newStatus,
@@ -129,7 +129,7 @@ export class SMSService {
       },
     })
 
-    return twilioToPrismaVerificationStatus(check.status)
+    return this.twilioUtils.twilioToPrismaVerificationStatus(check.status)
   }
 
   async sendSMSMessage(
@@ -151,29 +151,14 @@ export class SMSService {
       )
     }
 
-    // Fetch customer
-    const customer = head(
-      await this.prisma.client.customers({
-        where: { user: to },
-      })
-    )
-    if (!customer) {
-      throw new Error(
-        `Could not find a customer for the user ${
-          to.auth0Id || to.email || to.id
-        }`
+    const phoneNumber = (head(
+      await this.prisma.binding.query.customers(
+        { where: { user: to } },
+        `{ detail { phoneNumber } }`
       )
-    }
-
-    // Get customer phone number
-    const phoneNumber = await this.prisma.client
-      .customer({ id: customer.id })
-      .detail()
-      .phoneNumber()
+    ) as { detail?: { phoneNumber?: string } })?.detail?.phoneNumber
     if (!phoneNumber) {
-      throw new Error(
-        `Could not find a phone number for the customer ${customer.id}.`
-      )
+      throw new Error(`Could not find a phone number for the indicated user.`)
     }
 
     // Send SMS message
@@ -184,7 +169,7 @@ export class SMSService {
     } = await this.twilio.client.messages.create({
       body,
       mediaUrl: mediaUrls,
-      from: "+16466877438",
+      from: twilioPhoneNumber,
       statusCallback: twilioStatusCallback,
       to: phoneNumber,
     })
@@ -197,7 +182,7 @@ export class SMSService {
       body,
       externalId: sid,
       mediaUrls: { set: mediaUrls },
-      status: twilioToPrismaSmsStatus(status),
+      status: this.twilioUtils.twilioToPrismaSmsStatus(status),
     })
 
     await this.prisma.client.updateUser({
@@ -208,7 +193,7 @@ export class SMSService {
     })
 
     // Return status
-    return twilioToPrismaSmsStatus(status)
+    return this.twilioUtils.twilioToPrismaSmsStatus(status)
   }
 
   async handleSMSStatusUpdate(externalId: string, status: SmsStatus) {
