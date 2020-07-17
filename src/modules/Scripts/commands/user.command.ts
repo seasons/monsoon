@@ -190,6 +190,9 @@ export class UserCommands {
           shippingAddress: {
             create: {
               name: `${firstName} ${lastName}`,
+              address1: address.line1,
+              city: address.city,
+              state: address.state,
               zipCode: address.zip,
             },
           },
