@@ -50,6 +50,10 @@ export class AuthMutationsResolver {
     ctx?.analytics?.track({
       userId: user.id,
       event: "Created Account",
+      properties: {
+        name: `${user.firstName} ${user.lastName}`,
+        email: `${user.email}`,
+      },
     })
 
     return {
