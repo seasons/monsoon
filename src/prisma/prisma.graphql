@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Thu Jul 16 2020 12:49:33 GMT-0400 (Eastern Daylight Time)
+# timestamp: Fri Jul 17 2020 08:37:18 GMT-0700 (Pacific Daylight Time)
 
 type AggregateBagItem {
   count: Int!
@@ -30482,8 +30482,8 @@ type SmsReceipt implements Node {
   body: String!
   mediaUrls: [String!]!
   status: SmsStatus!
-  createdAt: DateTime!
   sentAt: DateTime!
+  updatedAt: DateTime!
 }
 
 """
@@ -30543,10 +30543,10 @@ enum SmsReceiptOrderByInput {
   body_DESC
   status_ASC
   status_DESC
-  createdAt_ASC
-  createdAt_DESC
   sentAt_ASC
   sentAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
 }
 
 type SmsReceiptPreviousValues {
@@ -30555,8 +30555,8 @@ type SmsReceiptPreviousValues {
   body: String!
   mediaUrls: [String!]!
   status: SmsStatus!
-  createdAt: DateTime!
   sentAt: DateTime!
+  updatedAt: DateTime!
 }
 
 input SmsReceiptScalarWhereInput {
@@ -30788,42 +30788,6 @@ input SmsReceiptScalarWhereInput {
   All values that are not contained in given list.
   """
   status_not_in: [SmsStatus!]
-  createdAt: DateTime
-
-  """
-  All values that are not equal to given value.
-  """
-  createdAt_not: DateTime
-
-  """
-  All values that are contained in given list.
-  """
-  createdAt_in: [DateTime!]
-
-  """
-  All values that are not contained in given list.
-  """
-  createdAt_not_in: [DateTime!]
-
-  """
-  All values less than the given value.
-  """
-  createdAt_lt: DateTime
-
-  """
-  All values less than or equal the given value.
-  """
-  createdAt_lte: DateTime
-
-  """
-  All values greater than the given value.
-  """
-  createdAt_gt: DateTime
-
-  """
-  All values greater than or equal the given value.
-  """
-  createdAt_gte: DateTime
   sentAt: DateTime
 
   """
@@ -30860,6 +30824,42 @@ input SmsReceiptScalarWhereInput {
   All values greater than or equal the given value.
   """
   sentAt_gte: DateTime
+  updatedAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  updatedAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  updatedAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  updatedAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  updatedAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  updatedAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  updatedAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  updatedAt_gte: DateTime
 }
 
 type SmsReceiptSubscriptionPayload {
@@ -31196,42 +31196,6 @@ input SmsReceiptWhereInput {
   All values that are not contained in given list.
   """
   status_not_in: [SmsStatus!]
-  createdAt: DateTime
-
-  """
-  All values that are not equal to given value.
-  """
-  createdAt_not: DateTime
-
-  """
-  All values that are contained in given list.
-  """
-  createdAt_in: [DateTime!]
-
-  """
-  All values that are not contained in given list.
-  """
-  createdAt_not_in: [DateTime!]
-
-  """
-  All values less than the given value.
-  """
-  createdAt_lt: DateTime
-
-  """
-  All values less than or equal the given value.
-  """
-  createdAt_lte: DateTime
-
-  """
-  All values greater than the given value.
-  """
-  createdAt_gt: DateTime
-
-  """
-  All values greater than or equal the given value.
-  """
-  createdAt_gte: DateTime
   sentAt: DateTime
 
   """
@@ -31268,6 +31232,42 @@ input SmsReceiptWhereInput {
   All values greater than or equal the given value.
   """
   sentAt_gte: DateTime
+  updatedAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  updatedAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  updatedAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  updatedAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  updatedAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  updatedAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  updatedAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  updatedAt_gte: DateTime
 }
 
 input SmsReceiptWhereUniqueInput {

@@ -21202,8 +21202,8 @@ type SmsReceipt implements Node {
   body: String!
   mediaUrls: [String!]!
   status: SmsStatus!
-  createdAt: DateTime!
   sentAt: DateTime!
+  updatedAt: DateTime!
 }
 
 """A connection to a list of items."""
@@ -21251,10 +21251,10 @@ enum SmsReceiptOrderByInput {
   body_DESC
   status_ASC
   status_DESC
-  createdAt_ASC
-  createdAt_DESC
   sentAt_ASC
   sentAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
 }
 
 type SmsReceiptPreviousValues {
@@ -21263,8 +21263,8 @@ type SmsReceiptPreviousValues {
   body: String!
   mediaUrls: [String!]!
   status: SmsStatus!
-  createdAt: DateTime!
   sentAt: DateTime!
+  updatedAt: DateTime!
 }
 
 input SmsReceiptScalarWhereInput {
@@ -21406,28 +21406,6 @@ input SmsReceiptScalarWhereInput {
 
   """All values that are not contained in given list."""
   status_not_in: [SmsStatus!]
-  createdAt: DateTime
-
-  """All values that are not equal to given value."""
-  createdAt_not: DateTime
-
-  """All values that are contained in given list."""
-  createdAt_in: [DateTime!]
-
-  """All values that are not contained in given list."""
-  createdAt_not_in: [DateTime!]
-
-  """All values less than the given value."""
-  createdAt_lt: DateTime
-
-  """All values less than or equal the given value."""
-  createdAt_lte: DateTime
-
-  """All values greater than the given value."""
-  createdAt_gt: DateTime
-
-  """All values greater than or equal the given value."""
-  createdAt_gte: DateTime
   sentAt: DateTime
 
   """All values that are not equal to given value."""
@@ -21450,6 +21428,28 @@ input SmsReceiptScalarWhereInput {
 
   """All values greater than or equal the given value."""
   sentAt_gte: DateTime
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
 }
 
 type SmsReceiptSubscriptionPayload {
@@ -21688,28 +21688,6 @@ input SmsReceiptWhereInput {
 
   """All values that are not contained in given list."""
   status_not_in: [SmsStatus!]
-  createdAt: DateTime
-
-  """All values that are not equal to given value."""
-  createdAt_not: DateTime
-
-  """All values that are contained in given list."""
-  createdAt_in: [DateTime!]
-
-  """All values that are not contained in given list."""
-  createdAt_not_in: [DateTime!]
-
-  """All values less than the given value."""
-  createdAt_lt: DateTime
-
-  """All values less than or equal the given value."""
-  createdAt_lte: DateTime
-
-  """All values greater than the given value."""
-  createdAt_gt: DateTime
-
-  """All values greater than or equal the given value."""
-  createdAt_gte: DateTime
   sentAt: DateTime
 
   """All values that are not equal to given value."""
@@ -21732,6 +21710,28 @@ input SmsReceiptWhereInput {
 
   """All values greater than or equal the given value."""
   sentAt_gte: DateTime
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
 }
 
 input SmsReceiptWhereUniqueInput {
@@ -26111,10 +26111,10 @@ export type SmsReceiptOrderByInput =   'id_ASC' |
   'body_DESC' |
   'status_ASC' |
   'status_DESC' |
-  'createdAt_ASC' |
-  'createdAt_DESC' |
   'sentAt_ASC' |
-  'sentAt_DESC'
+  'sentAt_DESC' |
+  'updatedAt_ASC' |
+  'updatedAt_DESC'
 
 export type SmsStatus =   'Queued' |
   'Sending' |
@@ -35429,14 +35429,6 @@ export interface SmsReceiptScalarWhereInput {
   status_not?: SmsStatus | null
   status_in?: SmsStatus[] | SmsStatus | null
   status_not_in?: SmsStatus[] | SmsStatus | null
-  createdAt?: DateTime | null
-  createdAt_not?: DateTime | null
-  createdAt_in?: DateTime[] | DateTime | null
-  createdAt_not_in?: DateTime[] | DateTime | null
-  createdAt_lt?: DateTime | null
-  createdAt_lte?: DateTime | null
-  createdAt_gt?: DateTime | null
-  createdAt_gte?: DateTime | null
   sentAt?: DateTime | null
   sentAt_not?: DateTime | null
   sentAt_in?: DateTime[] | DateTime | null
@@ -35445,6 +35437,14 @@ export interface SmsReceiptScalarWhereInput {
   sentAt_lte?: DateTime | null
   sentAt_gt?: DateTime | null
   sentAt_gte?: DateTime | null
+  updatedAt?: DateTime | null
+  updatedAt_not?: DateTime | null
+  updatedAt_in?: DateTime[] | DateTime | null
+  updatedAt_not_in?: DateTime[] | DateTime | null
+  updatedAt_lt?: DateTime | null
+  updatedAt_lte?: DateTime | null
+  updatedAt_gt?: DateTime | null
+  updatedAt_gte?: DateTime | null
 }
 
 export interface SmsReceiptSubscriptionWhereInput {
@@ -35568,14 +35568,6 @@ export interface SmsReceiptWhereInput {
   status_not?: SmsStatus | null
   status_in?: SmsStatus[] | SmsStatus | null
   status_not_in?: SmsStatus[] | SmsStatus | null
-  createdAt?: DateTime | null
-  createdAt_not?: DateTime | null
-  createdAt_in?: DateTime[] | DateTime | null
-  createdAt_not_in?: DateTime[] | DateTime | null
-  createdAt_lt?: DateTime | null
-  createdAt_lte?: DateTime | null
-  createdAt_gt?: DateTime | null
-  createdAt_gte?: DateTime | null
   sentAt?: DateTime | null
   sentAt_not?: DateTime | null
   sentAt_in?: DateTime[] | DateTime | null
@@ -35584,6 +35576,14 @@ export interface SmsReceiptWhereInput {
   sentAt_lte?: DateTime | null
   sentAt_gt?: DateTime | null
   sentAt_gte?: DateTime | null
+  updatedAt?: DateTime | null
+  updatedAt_not?: DateTime | null
+  updatedAt_in?: DateTime[] | DateTime | null
+  updatedAt_not_in?: DateTime[] | DateTime | null
+  updatedAt_lt?: DateTime | null
+  updatedAt_lte?: DateTime | null
+  updatedAt_gt?: DateTime | null
+  updatedAt_gte?: DateTime | null
 }
 
 export interface SmsReceiptWhereUniqueInput {
@@ -39275,8 +39275,8 @@ export interface SmsReceipt extends Node {
   body: String
   mediaUrls: Array<String>
   status: SmsStatus
-  createdAt: DateTime
   sentAt: DateTime
+  updatedAt: DateTime
 }
 
 /*
@@ -39304,8 +39304,8 @@ export interface SmsReceiptPreviousValues {
   body: String
   mediaUrls: Array<String>
   status: SmsStatus
-  createdAt: DateTime
   sentAt: DateTime
+  updatedAt: DateTime
 }
 
 export interface SmsReceiptSubscriptionPayload {
