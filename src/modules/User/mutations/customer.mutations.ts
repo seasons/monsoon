@@ -73,8 +73,6 @@ export class CustomerMutationsResolver {
       }`
     )
 
-    console.log(customer)
-
     if (
       customer.status === "Waitlisted" &&
       data.status &&
