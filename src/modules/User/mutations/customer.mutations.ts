@@ -78,8 +78,8 @@ export class CustomerMutationsResolver {
       data.status &&
       data.status === "Authorized"
     ) {
-      this.email.sendWelcomeToSeasonsEmail(user)
-      this.pushNotification.pushNotifyUser({
+      await this.email.sendWelcomeToSeasonsEmail(user)
+      await this.pushNotification.pushNotifyUser({
         email: user.email,
         pushNotifID: "Welcome",
       })
