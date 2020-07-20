@@ -26,6 +26,7 @@ import { PrismaService } from "@prisma/prisma.service"
 import { ApolloError } from "apollo-server"
 import { GraphQLResolveInfo } from "graphql"
 import { head, pick } from "lodash"
+import { DateTime } from "luxon"
 
 import { UtilsService } from "../../Utils/services/utils.service"
 import { ProductWithPhysicalProducts } from "../product.types"
@@ -60,6 +61,44 @@ export class ProductService {
       info
     )
     return products
+  }
+
+  async publishProducts(productIDs) {
+    const productsWithData = await this.prisma.binding.query.products(
+      {
+        where: {
+          id_in: productIDs,
+        },
+      },
+      `{
+        id
+        photographyStatus
+        variants {
+          id
+        }
+      }`
+    )
+
+    const updatedIDs = []
+
+    productIDs.forEach(async id => {
+      const product = productsWithData.find(p => p.id === id)
+      console.log("product", product)
+      if (product.variants?.length && product.photographyStatus === "Done") {
+        updatedIDs.push(id)
+        await this.prisma.client.updateProduct({
+          where: { id },
+          data: {
+            status: "Available",
+            publishedAt: DateTime.local().toISO(),
+          },
+        })
+      }
+    })
+
+    console.log("????", updatedIDs)
+
+    return updatedIDs
   }
 
   async addViewedProduct(item, customer) {
