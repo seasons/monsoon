@@ -1,21 +1,22 @@
+import { Loader } from "@app/modules/DataLoader"
 import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
-import { PrismaService } from "@prisma/prisma.service"
+import { PrismaDataLoader, PrismaLoader } from "@prisma/prisma.loader"
 
 @Resolver("PhysicalProduct")
 export class PhysicalProductFieldsResolver {
-  constructor(private readonly prisma: PrismaService) {}
-
   @ResolveField()
-  async barcode(@Parent() physicalProduct) {
-    return (
-      `SZNS` +
-      `${
-        (
-          await this.prisma.client.physicalProduct({
-            id: physicalProduct.id,
-          })
-        ).sequenceNumber
-      }`.padStart(5, "0")
-    )
+  async barcode(
+    @Parent() physicalProduct,
+    @Loader({
+      type: PrismaLoader.name,
+      params: {
+        query: "physicalProducts",
+        info: `{ id sequenceNumber }`,
+        formatData: a => `SZNS` + `${a.sequenceNumber}`.padStart(5, "0"),
+      },
+    })
+    prismaLoader: PrismaDataLoader<string>
+  ) {
+    return prismaLoader.load(physicalProduct.id)
   }
 }

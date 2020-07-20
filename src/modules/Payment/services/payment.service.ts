@@ -1,5 +1,5 @@
+import { CustomerService } from "@app/modules/User"
 import { Plan, User } from "@app/prisma"
-import { AirtableService } from "@modules/Airtable/services/airtable.service"
 import { EmailService } from "@modules/Email/services/email.service"
 import { AuthService } from "@modules/User/services/auth.service"
 import { UtilsService } from "@modules/Utils"
@@ -23,12 +23,12 @@ import { PaymentUtilsService } from "./payment.utils.service"
 @Injectable()
 export class PaymentService {
   constructor(
-    private readonly airtableService: AirtableService,
     private readonly authService: AuthService,
+    private readonly customerService: CustomerService,
     private readonly emailService: EmailService,
     private readonly paymentUtils: PaymentUtilsService,
-    private readonly utils: UtilsService,
-    private readonly prisma: PrismaService
+    private readonly prisma: PrismaService,
+    private readonly utils: UtilsService
   ) {}
 
   async updateResumeDate(date, customer) {
@@ -225,6 +225,7 @@ export class PaymentService {
             last_name: lastName,
             phone: phoneNumber,
           },
+          redirect_url: "https://seasons.nyc/chargebee-mobile-checkout-success",
         })
         .request((error, result) => {
           if (error) {
@@ -258,8 +259,76 @@ export class PaymentService {
     })
   }
 
+  async chargebeeCustomerChanged(userID: string, card: any) {
+    const {
+      card_type: brand,
+      expiry_month,
+      expiry_year,
+      first_name,
+      last_name,
+      last4,
+    } = card
+    const customers = await this.prisma.client.customers({
+      where: { user: { id: userID } },
+    })
+    if (customers?.length) {
+      const customer = customers[0]
+      this.customerService.updateCustomerBillingInfo({
+        customerId: customer.id,
+        billingInfo: {
+          brand,
+          expiration_month: expiry_month,
+          expiration_year: expiry_year,
+          last_digits: last4,
+          name: `${first_name} ${last_name}`,
+        },
+      })
+    }
+  }
+
+  async chargebeeSubscriptionCreated(
+    customerID: string,
+    customer: any,
+    card: any,
+    planID: string
+  ) {
+    // Retrieve plan and billing data
+    const plan = { essential: "Essential", "all-access": "AllAccess" }[planID]
+    if (!plan) {
+      throw new Error(`Unexpected plan id: ${planID}`)
+    }
+    const billingInfo = this.paymentUtils.createBillingInfoObject(
+      card,
+      customer
+    )
+
+    // Save to prisma
+    const prismaUser = await this.prisma.client.user({ id: customerID })
+    if (!prismaUser) {
+      throw new Error(`Could not find user with id: ${customerID}`)
+    }
+    const prismaCustomer = await this.authService.getCustomerFromUserID(
+      prismaUser.id
+    )
+    if (!prismaCustomer) {
+      throw new Error(`Could not find customer with user id: ${prismaUser.id}`)
+    }
+    await this.prisma.client.updateCustomer({
+      data: {
+        plan,
+        billingInfo: {
+          create: billingInfo,
+        },
+        status: "Active",
+      },
+      where: { id: prismaCustomer.id },
+    })
+
+    // Send welcome to seasons email
+    await this.emailService.sendWelcomeToSeasonsEmail(prismaUser)
+  }
+
   async acknowledgeCompletedChargebeeHostedCheckout(hostedPageID) {
-    const airtableService = this.airtableService
     const authService = this.authService
     const emailService = this.emailService
     const prisma = this.prisma
@@ -271,26 +340,27 @@ export class PaymentService {
             if (error) {
               reject(error)
             } else {
-              var {
+              const {
                 subscription,
                 card,
                 customer: chargebeeCustomer,
               } = result.hosted_page.content
 
               // Retrieve plan and billing data
-              let plan = { essential: "Essential", "all-access": "AllAccess" }[
-                subscription.plan_id
-              ]
+              const plan = {
+                essential: "Essential",
+                "all-access": "AllAccess",
+              }[subscription.plan_id]
               if (!plan) {
                 reject(`unexpected plan-id: ${subscription.plan_id}`)
               }
-              let billingInfo = this.paymentUtils.createBillingInfoObject(
+              const billingInfo = this.paymentUtils.createBillingInfoObject(
                 card,
                 chargebeeCustomer
               )
 
               // Save it to prisma
-              let prismaUser = await prisma.client.user({
+              const prismaUser = await prisma.client.user({
                 id: subscription.customer_id,
               })
               const prismaCustomer = await authService.getCustomerFromUserID(
@@ -305,13 +375,6 @@ export class PaymentService {
                   status: "Active",
                 },
                 where: { id: prismaCustomer.id },
-              })
-
-              // Save it to airtable
-              await airtableService.createOrUpdateAirtableUser(prismaUser, {
-                status: "Active",
-                plan,
-                billingInfo,
               })
 
               // Send welcome to seasons email
@@ -484,6 +547,18 @@ export class PaymentService {
     return true
   }
 
+  prismaPlanToChargebeePlanId(plan: Plan) {
+    let chargebeePlanId
+    if (plan === "AllAccess") {
+      chargebeePlanId = "all-access"
+    } else if (plan === "Essential") {
+      chargebeePlanId = "essential"
+    } else {
+      throw new Error(`unrecognized planID: ${plan}`)
+    }
+    return chargebeePlanId
+  }
+
   private getInvoiceTransactionIds(invoice): string[] {
     return invoice.linkedPayments.map(a => a.txnId)
   }
@@ -523,16 +598,4 @@ export class PaymentService {
         true
       ),
     })
-
-  private prismaPlanToChargebeePlanId(plan: Plan) {
-    let chargebeePlanId
-    if (plan === "AllAccess") {
-      chargebeePlanId = "all-access"
-    } else if (plan === "Essential") {
-      chargebeePlanId = "essential"
-    } else {
-      throw new Error(`unrecognized planID: ${plan}`)
-    }
-    return chargebeePlanId
-  }
 }

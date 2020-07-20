@@ -78,6 +78,10 @@ type AggregatePauseRequest {
   count: Int!
 }
 
+type AggregatePaymentPlan {
+  count: Int!
+}
+
 type AggregatePhysicalProduct {
   count: Int!
 }
@@ -154,6 +158,14 @@ type AggregateSize {
   count: Int!
 }
 
+type AggregateSmsReceipt {
+  count: Int!
+}
+
+type AggregateStylePreferences {
+  count: Int!
+}
+
 type AggregateTag {
   count: Int!
 }
@@ -163,6 +175,14 @@ type AggregateTopSize {
 }
 
 type AggregateUser {
+  count: Int!
+}
+
+type AggregateUserPushNotification {
+  count: Int!
+}
+
+type AggregateUserPushNotificationInterest {
   count: Int!
 }
 
@@ -1264,6 +1284,7 @@ type Category {
   visible: Boolean!
   products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
   children(where: CategoryWhereInput, orderBy: CategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Category!]
+  updatedAt: DateTime
 }
 
 type CategoryConnection {
@@ -1336,6 +1357,8 @@ enum CategoryOrderByInput {
   description_DESC
   visible_ASC
   visible_DESC
+  updatedAt_ASC
+  updatedAt_DESC
 }
 
 type CategoryPreviousValues {
@@ -1345,6 +1368,7 @@ type CategoryPreviousValues {
   image: Json
   description: String
   visible: Boolean!
+  updatedAt: DateTime
 }
 
 input CategoryScalarWhereInput {
@@ -1406,6 +1430,14 @@ input CategoryScalarWhereInput {
   description_not_ends_with: String
   visible: Boolean
   visible_not: Boolean
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
   AND: [CategoryScalarWhereInput!]
   OR: [CategoryScalarWhereInput!]
   NOT: [CategoryScalarWhereInput!]
@@ -1600,6 +1632,14 @@ input CategoryWhereInput {
   children_every: CategoryWhereInput
   children_some: CategoryWhereInput
   children_none: CategoryWhereInput
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
   AND: [CategoryWhereInput!]
   OR: [CategoryWhereInput!]
   NOT: [CategoryWhereInput!]
@@ -2410,10 +2450,12 @@ type CustomerDetail {
   phoneNumber: String
   birthday: DateTime
   height: Int
-  weight: String
+  weight: [Int!]!
   bodyType: String
   averageTopSize: String
+  topSizes: [String!]!
   averageWaistSize: String
+  waistSizes: [Int!]!
   averagePantLength: String
   preferredPronouns: String
   profession: String
@@ -2423,6 +2465,7 @@ type CustomerDetail {
   averageSpend: String
   style: String
   commuteStyle: String
+  stylePreferences: StylePreferences
   shippingAddress: Location
   phoneOS: String
   insureShipment: Boolean!
@@ -2441,10 +2484,12 @@ input CustomerDetailCreateInput {
   phoneNumber: String
   birthday: DateTime
   height: Int
-  weight: String
+  weight: CustomerDetailCreateweightInput
   bodyType: String
   averageTopSize: String
+  topSizes: CustomerDetailCreatetopSizesInput
   averageWaistSize: String
+  waistSizes: CustomerDetailCreatewaistSizesInput
   averagePantLength: String
   preferredPronouns: String
   profession: String
@@ -2454,6 +2499,7 @@ input CustomerDetailCreateInput {
   averageSpend: String
   style: String
   commuteStyle: String
+  stylePreferences: StylePreferencesCreateOneInput
   shippingAddress: LocationCreateOneInput
   phoneOS: String
   insureShipment: Boolean
@@ -2462,6 +2508,18 @@ input CustomerDetailCreateInput {
 input CustomerDetailCreateOneInput {
   create: CustomerDetailCreateInput
   connect: CustomerDetailWhereUniqueInput
+}
+
+input CustomerDetailCreatetopSizesInput {
+  set: [String!]
+}
+
+input CustomerDetailCreatewaistSizesInput {
+  set: [Int!]
+}
+
+input CustomerDetailCreateweightInput {
+  set: [Int!]
 }
 
 type CustomerDetailEdge {
@@ -2478,8 +2536,6 @@ enum CustomerDetailOrderByInput {
   birthday_DESC
   height_ASC
   height_DESC
-  weight_ASC
-  weight_DESC
   bodyType_ASC
   bodyType_DESC
   averageTopSize_ASC
@@ -2519,10 +2575,12 @@ type CustomerDetailPreviousValues {
   phoneNumber: String
   birthday: DateTime
   height: Int
-  weight: String
+  weight: [Int!]!
   bodyType: String
   averageTopSize: String
+  topSizes: [String!]!
   averageWaistSize: String
+  waistSizes: [Int!]!
   averagePantLength: String
   preferredPronouns: String
   profession: String
@@ -2560,10 +2618,12 @@ input CustomerDetailUpdateDataInput {
   phoneNumber: String
   birthday: DateTime
   height: Int
-  weight: String
+  weight: CustomerDetailUpdateweightInput
   bodyType: String
   averageTopSize: String
+  topSizes: CustomerDetailUpdatetopSizesInput
   averageWaistSize: String
+  waistSizes: CustomerDetailUpdatewaistSizesInput
   averagePantLength: String
   preferredPronouns: String
   profession: String
@@ -2573,6 +2633,7 @@ input CustomerDetailUpdateDataInput {
   averageSpend: String
   style: String
   commuteStyle: String
+  stylePreferences: StylePreferencesUpdateOneInput
   shippingAddress: LocationUpdateOneInput
   phoneOS: String
   insureShipment: Boolean
@@ -2582,10 +2643,12 @@ input CustomerDetailUpdateInput {
   phoneNumber: String
   birthday: DateTime
   height: Int
-  weight: String
+  weight: CustomerDetailUpdateweightInput
   bodyType: String
   averageTopSize: String
+  topSizes: CustomerDetailUpdatetopSizesInput
   averageWaistSize: String
+  waistSizes: CustomerDetailUpdatewaistSizesInput
   averagePantLength: String
   preferredPronouns: String
   profession: String
@@ -2595,6 +2658,7 @@ input CustomerDetailUpdateInput {
   averageSpend: String
   style: String
   commuteStyle: String
+  stylePreferences: StylePreferencesUpdateOneInput
   shippingAddress: LocationUpdateOneInput
   phoneOS: String
   insureShipment: Boolean
@@ -2604,10 +2668,12 @@ input CustomerDetailUpdateManyMutationInput {
   phoneNumber: String
   birthday: DateTime
   height: Int
-  weight: String
+  weight: CustomerDetailUpdateweightInput
   bodyType: String
   averageTopSize: String
+  topSizes: CustomerDetailUpdatetopSizesInput
   averageWaistSize: String
+  waistSizes: CustomerDetailUpdatewaistSizesInput
   averagePantLength: String
   preferredPronouns: String
   profession: String
@@ -2628,6 +2694,18 @@ input CustomerDetailUpdateOneInput {
   delete: Boolean
   disconnect: Boolean
   connect: CustomerDetailWhereUniqueInput
+}
+
+input CustomerDetailUpdatetopSizesInput {
+  set: [String!]
+}
+
+input CustomerDetailUpdatewaistSizesInput {
+  set: [Int!]
+}
+
+input CustomerDetailUpdateweightInput {
+  set: [Int!]
 }
 
 input CustomerDetailUpsertNestedInput {
@@ -2680,20 +2758,6 @@ input CustomerDetailWhereInput {
   height_lte: Int
   height_gt: Int
   height_gte: Int
-  weight: String
-  weight_not: String
-  weight_in: [String!]
-  weight_not_in: [String!]
-  weight_lt: String
-  weight_lte: String
-  weight_gt: String
-  weight_gte: String
-  weight_contains: String
-  weight_not_contains: String
-  weight_starts_with: String
-  weight_not_starts_with: String
-  weight_ends_with: String
-  weight_not_ends_with: String
   bodyType: String
   bodyType_not: String
   bodyType_in: [String!]
@@ -2862,6 +2926,7 @@ input CustomerDetailWhereInput {
   commuteStyle_not_starts_with: String
   commuteStyle_ends_with: String
   commuteStyle_not_ends_with: String
+  stylePreferences: StylePreferencesWhereInput
   shippingAddress: LocationWhereInput
   phoneOS: String
   phoneOS_not: String
@@ -4058,14 +4123,14 @@ enum LetterSize {
 
 type Location {
   id: ID!
-  slug: String!
-  name: String!
+  slug: String
+  name: String
   company: String
   description: String
-  address1: String!
+  address1: String
   address2: String
-  city: String!
-  state: String!
+  city: String
+  state: String
   zipCode: String!
   locationType: LocationType
   user: User
@@ -4084,14 +4149,14 @@ type LocationConnection {
 
 input LocationCreateInput {
   id: ID
-  slug: String!
-  name: String!
+  slug: String
+  name: String
   company: String
   description: String
-  address1: String!
+  address1: String
   address2: String
-  city: String!
-  state: String!
+  city: String
+  state: String
   zipCode: String!
   locationType: LocationType
   user: UserCreateOneInput
@@ -4112,14 +4177,14 @@ input LocationCreateOneWithoutPhysicalProductsInput {
 
 input LocationCreateWithoutPhysicalProductsInput {
   id: ID
-  slug: String!
-  name: String!
+  slug: String
+  name: String
   company: String
   description: String
-  address1: String!
+  address1: String
   address2: String
-  city: String!
-  state: String!
+  city: String
+  state: String
   zipCode: String!
   locationType: LocationType
   user: UserCreateOneInput
@@ -4167,14 +4232,14 @@ enum LocationOrderByInput {
 
 type LocationPreviousValues {
   id: ID!
-  slug: String!
-  name: String!
+  slug: String
+  name: String
   company: String
   description: String
-  address1: String!
+  address1: String
   address2: String
-  city: String!
-  state: String!
+  city: String
+  state: String
   zipCode: String!
   locationType: LocationType
   lat: Float
@@ -4616,6 +4681,12 @@ type Mutation {
   upsertPauseRequest(where: PauseRequestWhereUniqueInput!, create: PauseRequestCreateInput!, update: PauseRequestUpdateInput!): PauseRequest!
   deletePauseRequest(where: PauseRequestWhereUniqueInput!): PauseRequest
   deleteManyPauseRequests(where: PauseRequestWhereInput): BatchPayload!
+  createPaymentPlan(data: PaymentPlanCreateInput!): PaymentPlan!
+  updatePaymentPlan(data: PaymentPlanUpdateInput!, where: PaymentPlanWhereUniqueInput!): PaymentPlan
+  updateManyPaymentPlans(data: PaymentPlanUpdateManyMutationInput!, where: PaymentPlanWhereInput): BatchPayload!
+  upsertPaymentPlan(where: PaymentPlanWhereUniqueInput!, create: PaymentPlanCreateInput!, update: PaymentPlanUpdateInput!): PaymentPlan!
+  deletePaymentPlan(where: PaymentPlanWhereUniqueInput!): PaymentPlan
+  deleteManyPaymentPlans(where: PaymentPlanWhereInput): BatchPayload!
   createPhysicalProduct(data: PhysicalProductCreateInput!): PhysicalProduct!
   updatePhysicalProduct(data: PhysicalProductUpdateInput!, where: PhysicalProductWhereUniqueInput!): PhysicalProduct
   updateManyPhysicalProducts(data: PhysicalProductUpdateManyMutationInput!, where: PhysicalProductWhereInput): BatchPayload!
@@ -4729,6 +4800,18 @@ type Mutation {
   upsertSize(where: SizeWhereUniqueInput!, create: SizeCreateInput!, update: SizeUpdateInput!): Size!
   deleteSize(where: SizeWhereUniqueInput!): Size
   deleteManySizes(where: SizeWhereInput): BatchPayload!
+  createSmsReceipt(data: SmsReceiptCreateInput!): SmsReceipt!
+  updateSmsReceipt(data: SmsReceiptUpdateInput!, where: SmsReceiptWhereUniqueInput!): SmsReceipt
+  updateManySmsReceipts(data: SmsReceiptUpdateManyMutationInput!, where: SmsReceiptWhereInput): BatchPayload!
+  upsertSmsReceipt(where: SmsReceiptWhereUniqueInput!, create: SmsReceiptCreateInput!, update: SmsReceiptUpdateInput!): SmsReceipt!
+  deleteSmsReceipt(where: SmsReceiptWhereUniqueInput!): SmsReceipt
+  deleteManySmsReceipts(where: SmsReceiptWhereInput): BatchPayload!
+  createStylePreferences(data: StylePreferencesCreateInput!): StylePreferences!
+  updateStylePreferences(data: StylePreferencesUpdateInput!, where: StylePreferencesWhereUniqueInput!): StylePreferences
+  updateManyStylePreferenceses(data: StylePreferencesUpdateManyMutationInput!, where: StylePreferencesWhereInput): BatchPayload!
+  upsertStylePreferences(where: StylePreferencesWhereUniqueInput!, create: StylePreferencesCreateInput!, update: StylePreferencesUpdateInput!): StylePreferences!
+  deleteStylePreferences(where: StylePreferencesWhereUniqueInput!): StylePreferences
+  deleteManyStylePreferenceses(where: StylePreferencesWhereInput): BatchPayload!
   createTag(data: TagCreateInput!): Tag!
   updateTag(data: TagUpdateInput!, where: TagWhereUniqueInput!): Tag
   updateManyTags(data: TagUpdateManyMutationInput!, where: TagWhereInput): BatchPayload!
@@ -4747,6 +4830,18 @@ type Mutation {
   upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
   deleteUser(where: UserWhereUniqueInput!): User
   deleteManyUsers(where: UserWhereInput): BatchPayload!
+  createUserPushNotification(data: UserPushNotificationCreateInput!): UserPushNotification!
+  updateUserPushNotification(data: UserPushNotificationUpdateInput!, where: UserPushNotificationWhereUniqueInput!): UserPushNotification
+  updateManyUserPushNotifications(data: UserPushNotificationUpdateManyMutationInput!, where: UserPushNotificationWhereInput): BatchPayload!
+  upsertUserPushNotification(where: UserPushNotificationWhereUniqueInput!, create: UserPushNotificationCreateInput!, update: UserPushNotificationUpdateInput!): UserPushNotification!
+  deleteUserPushNotification(where: UserPushNotificationWhereUniqueInput!): UserPushNotification
+  deleteManyUserPushNotifications(where: UserPushNotificationWhereInput): BatchPayload!
+  createUserPushNotificationInterest(data: UserPushNotificationInterestCreateInput!): UserPushNotificationInterest!
+  updateUserPushNotificationInterest(data: UserPushNotificationInterestUpdateInput!, where: UserPushNotificationInterestWhereUniqueInput!): UserPushNotificationInterest
+  updateManyUserPushNotificationInterests(data: UserPushNotificationInterestUpdateManyMutationInput!, where: UserPushNotificationInterestWhereInput): BatchPayload!
+  upsertUserPushNotificationInterest(where: UserPushNotificationInterestWhereUniqueInput!, create: UserPushNotificationInterestCreateInput!, update: UserPushNotificationInterestUpdateInput!): UserPushNotificationInterest!
+  deleteUserPushNotificationInterest(where: UserPushNotificationInterestWhereUniqueInput!): UserPushNotificationInterest
+  deleteManyUserPushNotificationInterests(where: UserPushNotificationInterestWhereInput): BatchPayload!
   createWarehouseLocation(data: WarehouseLocationCreateInput!): WarehouseLocation!
   updateWarehouseLocation(data: WarehouseLocationUpdateInput!, where: WarehouseLocationWhereUniqueInput!): WarehouseLocation
   updateManyWarehouseLocations(data: WarehouseLocationUpdateManyMutationInput!, where: WarehouseLocationWhereInput): BatchPayload!
@@ -5471,6 +5566,206 @@ input PauseRequestWhereInput {
 
 input PauseRequestWhereUniqueInput {
   id: ID
+}
+
+type PaymentPlan {
+  id: ID!
+  description: String
+  planID: String!
+  status: String
+  name: String
+  price: Int
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type PaymentPlanConnection {
+  pageInfo: PageInfo!
+  edges: [PaymentPlanEdge]!
+  aggregate: AggregatePaymentPlan!
+}
+
+input PaymentPlanCreateInput {
+  id: ID
+  description: String
+  planID: String!
+  status: String
+  name: String
+  price: Int
+}
+
+type PaymentPlanEdge {
+  node: PaymentPlan!
+  cursor: String!
+}
+
+enum PaymentPlanOrderByInput {
+  id_ASC
+  id_DESC
+  description_ASC
+  description_DESC
+  planID_ASC
+  planID_DESC
+  status_ASC
+  status_DESC
+  name_ASC
+  name_DESC
+  price_ASC
+  price_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type PaymentPlanPreviousValues {
+  id: ID!
+  description: String
+  planID: String!
+  status: String
+  name: String
+  price: Int
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type PaymentPlanSubscriptionPayload {
+  mutation: MutationType!
+  node: PaymentPlan
+  updatedFields: [String!]
+  previousValues: PaymentPlanPreviousValues
+}
+
+input PaymentPlanSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: PaymentPlanWhereInput
+  AND: [PaymentPlanSubscriptionWhereInput!]
+  OR: [PaymentPlanSubscriptionWhereInput!]
+  NOT: [PaymentPlanSubscriptionWhereInput!]
+}
+
+input PaymentPlanUpdateInput {
+  description: String
+  planID: String
+  status: String
+  name: String
+  price: Int
+}
+
+input PaymentPlanUpdateManyMutationInput {
+  description: String
+  planID: String
+  status: String
+  name: String
+  price: Int
+}
+
+input PaymentPlanWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  description: String
+  description_not: String
+  description_in: [String!]
+  description_not_in: [String!]
+  description_lt: String
+  description_lte: String
+  description_gt: String
+  description_gte: String
+  description_contains: String
+  description_not_contains: String
+  description_starts_with: String
+  description_not_starts_with: String
+  description_ends_with: String
+  description_not_ends_with: String
+  planID: String
+  planID_not: String
+  planID_in: [String!]
+  planID_not_in: [String!]
+  planID_lt: String
+  planID_lte: String
+  planID_gt: String
+  planID_gte: String
+  planID_contains: String
+  planID_not_contains: String
+  planID_starts_with: String
+  planID_not_starts_with: String
+  planID_ends_with: String
+  planID_not_ends_with: String
+  status: String
+  status_not: String
+  status_in: [String!]
+  status_not_in: [String!]
+  status_lt: String
+  status_lte: String
+  status_gt: String
+  status_gte: String
+  status_contains: String
+  status_not_contains: String
+  status_starts_with: String
+  status_not_starts_with: String
+  status_ends_with: String
+  status_not_ends_with: String
+  name: String
+  name_not: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_lt: String
+  name_lte: String
+  name_gt: String
+  name_gte: String
+  name_contains: String
+  name_not_contains: String
+  name_starts_with: String
+  name_not_starts_with: String
+  name_ends_with: String
+  name_not_ends_with: String
+  price: Int
+  price_not: Int
+  price_in: [Int!]
+  price_not_in: [Int!]
+  price_lt: Int
+  price_lte: Int
+  price_gt: Int
+  price_gte: Int
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [PaymentPlanWhereInput!]
+  OR: [PaymentPlanWhereInput!]
+  NOT: [PaymentPlanWhereInput!]
+}
+
+input PaymentPlanWhereUniqueInput {
+  id: ID
+  planID: String
 }
 
 enum PhotographyStatus {
@@ -9833,6 +10128,11 @@ input PushNotificationReceiptCreateInput {
   sentAt: DateTime!
 }
 
+input PushNotificationReceiptCreateManyInput {
+  create: [PushNotificationReceiptCreateInput!]
+  connect: [PushNotificationReceiptWhereUniqueInput!]
+}
+
 input PushNotificationReceiptCreateManyWithoutUsersInput {
   create: [PushNotificationReceiptCreateWithoutUsersInput!]
   connect: [PushNotificationReceiptWhereUniqueInput!]
@@ -10072,6 +10372,19 @@ input PushNotificationReceiptSubscriptionWhereInput {
   NOT: [PushNotificationReceiptSubscriptionWhereInput!]
 }
 
+input PushNotificationReceiptUpdateDataInput {
+  route: String
+  screen: String
+  uri: String
+  users: UserUpdateManyWithoutPushNotificationsInput
+  interest: String
+  body: String
+  title: String
+  recordID: String
+  recordSlug: String
+  sentAt: DateTime
+}
+
 input PushNotificationReceiptUpdateInput {
   route: String
   screen: String
@@ -10095,6 +10408,18 @@ input PushNotificationReceiptUpdateManyDataInput {
   recordID: String
   recordSlug: String
   sentAt: DateTime
+}
+
+input PushNotificationReceiptUpdateManyInput {
+  create: [PushNotificationReceiptCreateInput!]
+  update: [PushNotificationReceiptUpdateWithWhereUniqueNestedInput!]
+  upsert: [PushNotificationReceiptUpsertWithWhereUniqueNestedInput!]
+  delete: [PushNotificationReceiptWhereUniqueInput!]
+  connect: [PushNotificationReceiptWhereUniqueInput!]
+  set: [PushNotificationReceiptWhereUniqueInput!]
+  disconnect: [PushNotificationReceiptWhereUniqueInput!]
+  deleteMany: [PushNotificationReceiptScalarWhereInput!]
+  updateMany: [PushNotificationReceiptUpdateManyWithWhereNestedInput!]
 }
 
 input PushNotificationReceiptUpdateManyMutationInput {
@@ -10138,9 +10463,20 @@ input PushNotificationReceiptUpdateWithoutUsersDataInput {
   sentAt: DateTime
 }
 
+input PushNotificationReceiptUpdateWithWhereUniqueNestedInput {
+  where: PushNotificationReceiptWhereUniqueInput!
+  data: PushNotificationReceiptUpdateDataInput!
+}
+
 input PushNotificationReceiptUpdateWithWhereUniqueWithoutUsersInput {
   where: PushNotificationReceiptWhereUniqueInput!
   data: PushNotificationReceiptUpdateWithoutUsersDataInput!
+}
+
+input PushNotificationReceiptUpsertWithWhereUniqueNestedInput {
+  where: PushNotificationReceiptWhereUniqueInput!
+  update: PushNotificationReceiptUpdateDataInput!
+  create: PushNotificationReceiptCreateInput!
 }
 
 input PushNotificationReceiptUpsertWithWhereUniqueWithoutUsersInput {
@@ -10376,6 +10712,9 @@ type Query {
   pauseRequest(where: PauseRequestWhereUniqueInput!): PauseRequest
   pauseRequests(where: PauseRequestWhereInput, orderBy: PauseRequestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PauseRequest]!
   pauseRequestsConnection(where: PauseRequestWhereInput, orderBy: PauseRequestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PauseRequestConnection!
+  paymentPlan(where: PaymentPlanWhereUniqueInput!): PaymentPlan
+  paymentPlans(where: PaymentPlanWhereInput, orderBy: PaymentPlanOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PaymentPlan]!
+  paymentPlansConnection(where: PaymentPlanWhereInput, orderBy: PaymentPlanOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PaymentPlanConnection!
   physicalProduct(where: PhysicalProductWhereUniqueInput!): PhysicalProduct
   physicalProducts(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct]!
   physicalProductsConnection(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PhysicalProductConnection!
@@ -10433,6 +10772,12 @@ type Query {
   size(where: SizeWhereUniqueInput!): Size
   sizes(where: SizeWhereInput, orderBy: SizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Size]!
   sizesConnection(where: SizeWhereInput, orderBy: SizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): SizeConnection!
+  smsReceipt(where: SmsReceiptWhereUniqueInput!): SmsReceipt
+  smsReceipts(where: SmsReceiptWhereInput, orderBy: SmsReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [SmsReceipt]!
+  smsReceiptsConnection(where: SmsReceiptWhereInput, orderBy: SmsReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): SmsReceiptConnection!
+  stylePreferences(where: StylePreferencesWhereUniqueInput!): StylePreferences
+  stylePreferenceses(where: StylePreferencesWhereInput, orderBy: StylePreferencesOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [StylePreferences]!
+  stylePreferencesesConnection(where: StylePreferencesWhereInput, orderBy: StylePreferencesOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): StylePreferencesConnection!
   tag(where: TagWhereUniqueInput!): Tag
   tags(where: TagWhereInput, orderBy: TagOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Tag]!
   tagsConnection(where: TagWhereInput, orderBy: TagOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): TagConnection!
@@ -10442,6 +10787,12 @@ type Query {
   user(where: UserWhereUniqueInput!): User
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
+  userPushNotification(where: UserPushNotificationWhereUniqueInput!): UserPushNotification
+  userPushNotifications(where: UserPushNotificationWhereInput, orderBy: UserPushNotificationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [UserPushNotification]!
+  userPushNotificationsConnection(where: UserPushNotificationWhereInput, orderBy: UserPushNotificationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserPushNotificationConnection!
+  userPushNotificationInterest(where: UserPushNotificationInterestWhereUniqueInput!): UserPushNotificationInterest
+  userPushNotificationInterests(where: UserPushNotificationInterestWhereInput, orderBy: UserPushNotificationInterestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [UserPushNotificationInterest]!
+  userPushNotificationInterestsConnection(where: UserPushNotificationInterestWhereInput, orderBy: UserPushNotificationInterestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserPushNotificationInterestConnection!
   warehouseLocation(where: WarehouseLocationWhereUniqueInput!): WarehouseLocation
   warehouseLocations(where: WarehouseLocationWhereInput, orderBy: WarehouseLocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [WarehouseLocation]!
   warehouseLocationsConnection(where: WarehouseLocationWhereInput, orderBy: WarehouseLocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): WarehouseLocationConnection!
@@ -11842,6 +12193,456 @@ input SizeWhereUniqueInput {
   slug: String
 }
 
+type SmsReceipt {
+  id: ID!
+  externalId: String
+  body: String!
+  mediaUrls: [String!]!
+  status: SmsStatus!
+  sentAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type SmsReceiptConnection {
+  pageInfo: PageInfo!
+  edges: [SmsReceiptEdge]!
+  aggregate: AggregateSmsReceipt!
+}
+
+input SmsReceiptCreateInput {
+  id: ID
+  externalId: String
+  body: String!
+  mediaUrls: SmsReceiptCreatemediaUrlsInput
+  status: SmsStatus!
+}
+
+input SmsReceiptCreateManyInput {
+  create: [SmsReceiptCreateInput!]
+  connect: [SmsReceiptWhereUniqueInput!]
+}
+
+input SmsReceiptCreatemediaUrlsInput {
+  set: [String!]
+}
+
+type SmsReceiptEdge {
+  node: SmsReceipt!
+  cursor: String!
+}
+
+enum SmsReceiptOrderByInput {
+  id_ASC
+  id_DESC
+  externalId_ASC
+  externalId_DESC
+  body_ASC
+  body_DESC
+  status_ASC
+  status_DESC
+  sentAt_ASC
+  sentAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type SmsReceiptPreviousValues {
+  id: ID!
+  externalId: String
+  body: String!
+  mediaUrls: [String!]!
+  status: SmsStatus!
+  sentAt: DateTime!
+  updatedAt: DateTime!
+}
+
+input SmsReceiptScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  externalId: String
+  externalId_not: String
+  externalId_in: [String!]
+  externalId_not_in: [String!]
+  externalId_lt: String
+  externalId_lte: String
+  externalId_gt: String
+  externalId_gte: String
+  externalId_contains: String
+  externalId_not_contains: String
+  externalId_starts_with: String
+  externalId_not_starts_with: String
+  externalId_ends_with: String
+  externalId_not_ends_with: String
+  body: String
+  body_not: String
+  body_in: [String!]
+  body_not_in: [String!]
+  body_lt: String
+  body_lte: String
+  body_gt: String
+  body_gte: String
+  body_contains: String
+  body_not_contains: String
+  body_starts_with: String
+  body_not_starts_with: String
+  body_ends_with: String
+  body_not_ends_with: String
+  status: SmsStatus
+  status_not: SmsStatus
+  status_in: [SmsStatus!]
+  status_not_in: [SmsStatus!]
+  sentAt: DateTime
+  sentAt_not: DateTime
+  sentAt_in: [DateTime!]
+  sentAt_not_in: [DateTime!]
+  sentAt_lt: DateTime
+  sentAt_lte: DateTime
+  sentAt_gt: DateTime
+  sentAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [SmsReceiptScalarWhereInput!]
+  OR: [SmsReceiptScalarWhereInput!]
+  NOT: [SmsReceiptScalarWhereInput!]
+}
+
+type SmsReceiptSubscriptionPayload {
+  mutation: MutationType!
+  node: SmsReceipt
+  updatedFields: [String!]
+  previousValues: SmsReceiptPreviousValues
+}
+
+input SmsReceiptSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: SmsReceiptWhereInput
+  AND: [SmsReceiptSubscriptionWhereInput!]
+  OR: [SmsReceiptSubscriptionWhereInput!]
+  NOT: [SmsReceiptSubscriptionWhereInput!]
+}
+
+input SmsReceiptUpdateDataInput {
+  externalId: String
+  body: String
+  mediaUrls: SmsReceiptUpdatemediaUrlsInput
+  status: SmsStatus
+}
+
+input SmsReceiptUpdateInput {
+  externalId: String
+  body: String
+  mediaUrls: SmsReceiptUpdatemediaUrlsInput
+  status: SmsStatus
+}
+
+input SmsReceiptUpdateManyDataInput {
+  externalId: String
+  body: String
+  mediaUrls: SmsReceiptUpdatemediaUrlsInput
+  status: SmsStatus
+}
+
+input SmsReceiptUpdateManyInput {
+  create: [SmsReceiptCreateInput!]
+  update: [SmsReceiptUpdateWithWhereUniqueNestedInput!]
+  upsert: [SmsReceiptUpsertWithWhereUniqueNestedInput!]
+  delete: [SmsReceiptWhereUniqueInput!]
+  connect: [SmsReceiptWhereUniqueInput!]
+  set: [SmsReceiptWhereUniqueInput!]
+  disconnect: [SmsReceiptWhereUniqueInput!]
+  deleteMany: [SmsReceiptScalarWhereInput!]
+  updateMany: [SmsReceiptUpdateManyWithWhereNestedInput!]
+}
+
+input SmsReceiptUpdateManyMutationInput {
+  externalId: String
+  body: String
+  mediaUrls: SmsReceiptUpdatemediaUrlsInput
+  status: SmsStatus
+}
+
+input SmsReceiptUpdateManyWithWhereNestedInput {
+  where: SmsReceiptScalarWhereInput!
+  data: SmsReceiptUpdateManyDataInput!
+}
+
+input SmsReceiptUpdatemediaUrlsInput {
+  set: [String!]
+}
+
+input SmsReceiptUpdateWithWhereUniqueNestedInput {
+  where: SmsReceiptWhereUniqueInput!
+  data: SmsReceiptUpdateDataInput!
+}
+
+input SmsReceiptUpsertWithWhereUniqueNestedInput {
+  where: SmsReceiptWhereUniqueInput!
+  update: SmsReceiptUpdateDataInput!
+  create: SmsReceiptCreateInput!
+}
+
+input SmsReceiptWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  externalId: String
+  externalId_not: String
+  externalId_in: [String!]
+  externalId_not_in: [String!]
+  externalId_lt: String
+  externalId_lte: String
+  externalId_gt: String
+  externalId_gte: String
+  externalId_contains: String
+  externalId_not_contains: String
+  externalId_starts_with: String
+  externalId_not_starts_with: String
+  externalId_ends_with: String
+  externalId_not_ends_with: String
+  body: String
+  body_not: String
+  body_in: [String!]
+  body_not_in: [String!]
+  body_lt: String
+  body_lte: String
+  body_gt: String
+  body_gte: String
+  body_contains: String
+  body_not_contains: String
+  body_starts_with: String
+  body_not_starts_with: String
+  body_ends_with: String
+  body_not_ends_with: String
+  status: SmsStatus
+  status_not: SmsStatus
+  status_in: [SmsStatus!]
+  status_not_in: [SmsStatus!]
+  sentAt: DateTime
+  sentAt_not: DateTime
+  sentAt_in: [DateTime!]
+  sentAt_not_in: [DateTime!]
+  sentAt_lt: DateTime
+  sentAt_lte: DateTime
+  sentAt_gt: DateTime
+  sentAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [SmsReceiptWhereInput!]
+  OR: [SmsReceiptWhereInput!]
+  NOT: [SmsReceiptWhereInput!]
+}
+
+input SmsReceiptWhereUniqueInput {
+  id: ID
+}
+
+enum SmsStatus {
+  Queued
+  Sending
+  Sent
+  Failed
+  Delivered
+  Undelivered
+  Receiving
+  Received
+  Accepted
+  Scheduled
+  Read
+  PartiallyDelivered
+}
+
+type StylePreferences {
+  id: ID!
+  styles: [String!]!
+  patterns: [String!]!
+  colors: [String!]!
+  brands: [String!]!
+}
+
+type StylePreferencesConnection {
+  pageInfo: PageInfo!
+  edges: [StylePreferencesEdge]!
+  aggregate: AggregateStylePreferences!
+}
+
+input StylePreferencesCreatebrandsInput {
+  set: [String!]
+}
+
+input StylePreferencesCreatecolorsInput {
+  set: [String!]
+}
+
+input StylePreferencesCreateInput {
+  id: ID
+  styles: StylePreferencesCreatestylesInput
+  patterns: StylePreferencesCreatepatternsInput
+  colors: StylePreferencesCreatecolorsInput
+  brands: StylePreferencesCreatebrandsInput
+}
+
+input StylePreferencesCreateOneInput {
+  create: StylePreferencesCreateInput
+  connect: StylePreferencesWhereUniqueInput
+}
+
+input StylePreferencesCreatepatternsInput {
+  set: [String!]
+}
+
+input StylePreferencesCreatestylesInput {
+  set: [String!]
+}
+
+type StylePreferencesEdge {
+  node: StylePreferences!
+  cursor: String!
+}
+
+enum StylePreferencesOrderByInput {
+  id_ASC
+  id_DESC
+}
+
+type StylePreferencesPreviousValues {
+  id: ID!
+  styles: [String!]!
+  patterns: [String!]!
+  colors: [String!]!
+  brands: [String!]!
+}
+
+type StylePreferencesSubscriptionPayload {
+  mutation: MutationType!
+  node: StylePreferences
+  updatedFields: [String!]
+  previousValues: StylePreferencesPreviousValues
+}
+
+input StylePreferencesSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: StylePreferencesWhereInput
+  AND: [StylePreferencesSubscriptionWhereInput!]
+  OR: [StylePreferencesSubscriptionWhereInput!]
+  NOT: [StylePreferencesSubscriptionWhereInput!]
+}
+
+input StylePreferencesUpdatebrandsInput {
+  set: [String!]
+}
+
+input StylePreferencesUpdatecolorsInput {
+  set: [String!]
+}
+
+input StylePreferencesUpdateDataInput {
+  styles: StylePreferencesUpdatestylesInput
+  patterns: StylePreferencesUpdatepatternsInput
+  colors: StylePreferencesUpdatecolorsInput
+  brands: StylePreferencesUpdatebrandsInput
+}
+
+input StylePreferencesUpdateInput {
+  styles: StylePreferencesUpdatestylesInput
+  patterns: StylePreferencesUpdatepatternsInput
+  colors: StylePreferencesUpdatecolorsInput
+  brands: StylePreferencesUpdatebrandsInput
+}
+
+input StylePreferencesUpdateManyMutationInput {
+  styles: StylePreferencesUpdatestylesInput
+  patterns: StylePreferencesUpdatepatternsInput
+  colors: StylePreferencesUpdatecolorsInput
+  brands: StylePreferencesUpdatebrandsInput
+}
+
+input StylePreferencesUpdateOneInput {
+  create: StylePreferencesCreateInput
+  update: StylePreferencesUpdateDataInput
+  upsert: StylePreferencesUpsertNestedInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: StylePreferencesWhereUniqueInput
+}
+
+input StylePreferencesUpdatepatternsInput {
+  set: [String!]
+}
+
+input StylePreferencesUpdatestylesInput {
+  set: [String!]
+}
+
+input StylePreferencesUpsertNestedInput {
+  update: StylePreferencesUpdateDataInput!
+  create: StylePreferencesCreateInput!
+}
+
+input StylePreferencesWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  AND: [StylePreferencesWhereInput!]
+  OR: [StylePreferencesWhereInput!]
+  NOT: [StylePreferencesWhereInput!]
+}
+
+input StylePreferencesWhereUniqueInput {
+  id: ID
+}
+
 type Subscription {
   bagItem(where: BagItemSubscriptionWhereInput): BagItemSubscriptionPayload
   billingInfo(where: BillingInfoSubscriptionWhereInput): BillingInfoSubscriptionPayload
@@ -11862,6 +12663,7 @@ type Subscription {
   package(where: PackageSubscriptionWhereInput): PackageSubscriptionPayload
   packageTransitEvent(where: PackageTransitEventSubscriptionWhereInput): PackageTransitEventSubscriptionPayload
   pauseRequest(where: PauseRequestSubscriptionWhereInput): PauseRequestSubscriptionPayload
+  paymentPlan(where: PaymentPlanSubscriptionWhereInput): PaymentPlanSubscriptionPayload
   physicalProduct(where: PhysicalProductSubscriptionWhereInput): PhysicalProductSubscriptionPayload
   physicalProductInventoryStatusChange(where: PhysicalProductInventoryStatusChangeSubscriptionWhereInput): PhysicalProductInventoryStatusChangeSubscriptionPayload
   product(where: ProductSubscriptionWhereInput): ProductSubscriptionPayload
@@ -11881,9 +12683,13 @@ type Subscription {
   reservationReceipt(where: ReservationReceiptSubscriptionWhereInput): ReservationReceiptSubscriptionPayload
   reservationReceiptItem(where: ReservationReceiptItemSubscriptionWhereInput): ReservationReceiptItemSubscriptionPayload
   size(where: SizeSubscriptionWhereInput): SizeSubscriptionPayload
+  smsReceipt(where: SmsReceiptSubscriptionWhereInput): SmsReceiptSubscriptionPayload
+  stylePreferences(where: StylePreferencesSubscriptionWhereInput): StylePreferencesSubscriptionPayload
   tag(where: TagSubscriptionWhereInput): TagSubscriptionPayload
   topSize(where: TopSizeSubscriptionWhereInput): TopSizeSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
+  userPushNotification(where: UserPushNotificationSubscriptionWhereInput): UserPushNotificationSubscriptionPayload
+  userPushNotificationInterest(where: UserPushNotificationInterestSubscriptionWhereInput): UserPushNotificationInterestSubscriptionPayload
   warehouseLocation(where: WarehouseLocationSubscriptionWhereInput): WarehouseLocationSubscriptionPayload
   warehouseLocationConstraint(where: WarehouseLocationConstraintSubscriptionWhereInput): WarehouseLocationConstraintSubscriptionPayload
 }
@@ -12348,10 +13154,14 @@ type User {
   lastName: String!
   role: UserRole!
   roles: [UserRole!]!
-  createdAt: DateTime!
-  updatedAt: DateTime!
   pushNotificationStatus: PushNotificationStatus!
   pushNotifications(where: PushNotificationReceiptWhereInput, orderBy: PushNotificationReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PushNotificationReceipt!]
+  pushNotification: UserPushNotification
+  verificationStatus: UserVerificationStatus!
+  verificationMethod: UserVerificationMethod!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  smsReceipts(where: SmsReceiptWhereInput, orderBy: SmsReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [SmsReceipt!]
 }
 
 type UserConnection {
@@ -12370,6 +13180,10 @@ input UserCreateInput {
   roles: UserCreaterolesInput
   pushNotificationStatus: PushNotificationStatus
   pushNotifications: PushNotificationReceiptCreateManyWithoutUsersInput
+  pushNotification: UserPushNotificationCreateOneInput
+  verificationStatus: UserVerificationStatus
+  verificationMethod: UserVerificationMethod
+  smsReceipts: SmsReceiptCreateManyInput
 }
 
 input UserCreateManyWithoutPushNotificationsInput {
@@ -12395,6 +13209,10 @@ input UserCreateWithoutPushNotificationsInput {
   role: UserRole
   roles: UserCreaterolesInput
   pushNotificationStatus: PushNotificationStatus
+  pushNotification: UserPushNotificationCreateOneInput
+  verificationStatus: UserVerificationStatus
+  verificationMethod: UserVerificationMethod
+  smsReceipts: SmsReceiptCreateManyInput
 }
 
 type UserEdge {
@@ -12415,12 +13233,16 @@ enum UserOrderByInput {
   lastName_DESC
   role_ASC
   role_DESC
+  pushNotificationStatus_ASC
+  pushNotificationStatus_DESC
+  verificationStatus_ASC
+  verificationStatus_DESC
+  verificationMethod_ASC
+  verificationMethod_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
   updatedAt_DESC
-  pushNotificationStatus_ASC
-  pushNotificationStatus_DESC
 }
 
 type UserPreviousValues {
@@ -12431,9 +13253,348 @@ type UserPreviousValues {
   lastName: String!
   role: UserRole!
   roles: [UserRole!]!
+  pushNotificationStatus: PushNotificationStatus!
+  verificationStatus: UserVerificationStatus!
+  verificationMethod: UserVerificationMethod!
   createdAt: DateTime!
   updatedAt: DateTime!
-  pushNotificationStatus: PushNotificationStatus!
+}
+
+type UserPushNotification {
+  id: ID!
+  interests(where: UserPushNotificationInterestWhereInput, orderBy: UserPushNotificationInterestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [UserPushNotificationInterest!]
+  status: Boolean!
+  history(where: PushNotificationReceiptWhereInput, orderBy: PushNotificationReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PushNotificationReceipt!]
+}
+
+type UserPushNotificationConnection {
+  pageInfo: PageInfo!
+  edges: [UserPushNotificationEdge]!
+  aggregate: AggregateUserPushNotification!
+}
+
+input UserPushNotificationCreateInput {
+  id: ID
+  interests: UserPushNotificationInterestCreateManyInput
+  status: Boolean
+  history: PushNotificationReceiptCreateManyInput
+}
+
+input UserPushNotificationCreateOneInput {
+  create: UserPushNotificationCreateInput
+  connect: UserPushNotificationWhereUniqueInput
+}
+
+type UserPushNotificationEdge {
+  node: UserPushNotification!
+  cursor: String!
+}
+
+type UserPushNotificationInterest {
+  id: ID!
+  type: UserPushNotificationInterestType!
+  value: String!
+  user: User!
+  status: Boolean!
+}
+
+type UserPushNotificationInterestConnection {
+  pageInfo: PageInfo!
+  edges: [UserPushNotificationInterestEdge]!
+  aggregate: AggregateUserPushNotificationInterest!
+}
+
+input UserPushNotificationInterestCreateInput {
+  id: ID
+  type: UserPushNotificationInterestType!
+  value: String!
+  user: UserCreateOneInput!
+  status: Boolean
+}
+
+input UserPushNotificationInterestCreateManyInput {
+  create: [UserPushNotificationInterestCreateInput!]
+  connect: [UserPushNotificationInterestWhereUniqueInput!]
+}
+
+type UserPushNotificationInterestEdge {
+  node: UserPushNotificationInterest!
+  cursor: String!
+}
+
+enum UserPushNotificationInterestOrderByInput {
+  id_ASC
+  id_DESC
+  type_ASC
+  type_DESC
+  value_ASC
+  value_DESC
+  status_ASC
+  status_DESC
+}
+
+type UserPushNotificationInterestPreviousValues {
+  id: ID!
+  type: UserPushNotificationInterestType!
+  value: String!
+  status: Boolean!
+}
+
+input UserPushNotificationInterestScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  type: UserPushNotificationInterestType
+  type_not: UserPushNotificationInterestType
+  type_in: [UserPushNotificationInterestType!]
+  type_not_in: [UserPushNotificationInterestType!]
+  value: String
+  value_not: String
+  value_in: [String!]
+  value_not_in: [String!]
+  value_lt: String
+  value_lte: String
+  value_gt: String
+  value_gte: String
+  value_contains: String
+  value_not_contains: String
+  value_starts_with: String
+  value_not_starts_with: String
+  value_ends_with: String
+  value_not_ends_with: String
+  status: Boolean
+  status_not: Boolean
+  AND: [UserPushNotificationInterestScalarWhereInput!]
+  OR: [UserPushNotificationInterestScalarWhereInput!]
+  NOT: [UserPushNotificationInterestScalarWhereInput!]
+}
+
+type UserPushNotificationInterestSubscriptionPayload {
+  mutation: MutationType!
+  node: UserPushNotificationInterest
+  updatedFields: [String!]
+  previousValues: UserPushNotificationInterestPreviousValues
+}
+
+input UserPushNotificationInterestSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: UserPushNotificationInterestWhereInput
+  AND: [UserPushNotificationInterestSubscriptionWhereInput!]
+  OR: [UserPushNotificationInterestSubscriptionWhereInput!]
+  NOT: [UserPushNotificationInterestSubscriptionWhereInput!]
+}
+
+enum UserPushNotificationInterestType {
+  General
+  Blog
+  Bag
+  NewProduct
+  Brand
+}
+
+input UserPushNotificationInterestUpdateDataInput {
+  type: UserPushNotificationInterestType
+  value: String
+  user: UserUpdateOneRequiredInput
+  status: Boolean
+}
+
+input UserPushNotificationInterestUpdateInput {
+  type: UserPushNotificationInterestType
+  value: String
+  user: UserUpdateOneRequiredInput
+  status: Boolean
+}
+
+input UserPushNotificationInterestUpdateManyDataInput {
+  type: UserPushNotificationInterestType
+  value: String
+  status: Boolean
+}
+
+input UserPushNotificationInterestUpdateManyInput {
+  create: [UserPushNotificationInterestCreateInput!]
+  update: [UserPushNotificationInterestUpdateWithWhereUniqueNestedInput!]
+  upsert: [UserPushNotificationInterestUpsertWithWhereUniqueNestedInput!]
+  delete: [UserPushNotificationInterestWhereUniqueInput!]
+  connect: [UserPushNotificationInterestWhereUniqueInput!]
+  set: [UserPushNotificationInterestWhereUniqueInput!]
+  disconnect: [UserPushNotificationInterestWhereUniqueInput!]
+  deleteMany: [UserPushNotificationInterestScalarWhereInput!]
+  updateMany: [UserPushNotificationInterestUpdateManyWithWhereNestedInput!]
+}
+
+input UserPushNotificationInterestUpdateManyMutationInput {
+  type: UserPushNotificationInterestType
+  value: String
+  status: Boolean
+}
+
+input UserPushNotificationInterestUpdateManyWithWhereNestedInput {
+  where: UserPushNotificationInterestScalarWhereInput!
+  data: UserPushNotificationInterestUpdateManyDataInput!
+}
+
+input UserPushNotificationInterestUpdateWithWhereUniqueNestedInput {
+  where: UserPushNotificationInterestWhereUniqueInput!
+  data: UserPushNotificationInterestUpdateDataInput!
+}
+
+input UserPushNotificationInterestUpsertWithWhereUniqueNestedInput {
+  where: UserPushNotificationInterestWhereUniqueInput!
+  update: UserPushNotificationInterestUpdateDataInput!
+  create: UserPushNotificationInterestCreateInput!
+}
+
+input UserPushNotificationInterestWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  type: UserPushNotificationInterestType
+  type_not: UserPushNotificationInterestType
+  type_in: [UserPushNotificationInterestType!]
+  type_not_in: [UserPushNotificationInterestType!]
+  value: String
+  value_not: String
+  value_in: [String!]
+  value_not_in: [String!]
+  value_lt: String
+  value_lte: String
+  value_gt: String
+  value_gte: String
+  value_contains: String
+  value_not_contains: String
+  value_starts_with: String
+  value_not_starts_with: String
+  value_ends_with: String
+  value_not_ends_with: String
+  user: UserWhereInput
+  status: Boolean
+  status_not: Boolean
+  AND: [UserPushNotificationInterestWhereInput!]
+  OR: [UserPushNotificationInterestWhereInput!]
+  NOT: [UserPushNotificationInterestWhereInput!]
+}
+
+input UserPushNotificationInterestWhereUniqueInput {
+  id: ID
+}
+
+enum UserPushNotificationOrderByInput {
+  id_ASC
+  id_DESC
+  status_ASC
+  status_DESC
+}
+
+type UserPushNotificationPreviousValues {
+  id: ID!
+  status: Boolean!
+}
+
+type UserPushNotificationSubscriptionPayload {
+  mutation: MutationType!
+  node: UserPushNotification
+  updatedFields: [String!]
+  previousValues: UserPushNotificationPreviousValues
+}
+
+input UserPushNotificationSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: UserPushNotificationWhereInput
+  AND: [UserPushNotificationSubscriptionWhereInput!]
+  OR: [UserPushNotificationSubscriptionWhereInput!]
+  NOT: [UserPushNotificationSubscriptionWhereInput!]
+}
+
+input UserPushNotificationUpdateDataInput {
+  interests: UserPushNotificationInterestUpdateManyInput
+  status: Boolean
+  history: PushNotificationReceiptUpdateManyInput
+}
+
+input UserPushNotificationUpdateInput {
+  interests: UserPushNotificationInterestUpdateManyInput
+  status: Boolean
+  history: PushNotificationReceiptUpdateManyInput
+}
+
+input UserPushNotificationUpdateManyMutationInput {
+  status: Boolean
+}
+
+input UserPushNotificationUpdateOneInput {
+  create: UserPushNotificationCreateInput
+  update: UserPushNotificationUpdateDataInput
+  upsert: UserPushNotificationUpsertNestedInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: UserPushNotificationWhereUniqueInput
+}
+
+input UserPushNotificationUpsertNestedInput {
+  update: UserPushNotificationUpdateDataInput!
+  create: UserPushNotificationCreateInput!
+}
+
+input UserPushNotificationWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  interests_every: UserPushNotificationInterestWhereInput
+  interests_some: UserPushNotificationInterestWhereInput
+  interests_none: UserPushNotificationInterestWhereInput
+  status: Boolean
+  status_not: Boolean
+  history_every: PushNotificationReceiptWhereInput
+  history_some: PushNotificationReceiptWhereInput
+  history_none: PushNotificationReceiptWhereInput
+  AND: [UserPushNotificationWhereInput!]
+  OR: [UserPushNotificationWhereInput!]
+  NOT: [UserPushNotificationWhereInput!]
+}
+
+input UserPushNotificationWhereUniqueInput {
+  id: ID
 }
 
 enum UserRole {
@@ -12517,6 +13678,18 @@ input UserScalarWhereInput {
   role_not: UserRole
   role_in: [UserRole!]
   role_not_in: [UserRole!]
+  pushNotificationStatus: PushNotificationStatus
+  pushNotificationStatus_not: PushNotificationStatus
+  pushNotificationStatus_in: [PushNotificationStatus!]
+  pushNotificationStatus_not_in: [PushNotificationStatus!]
+  verificationStatus: UserVerificationStatus
+  verificationStatus_not: UserVerificationStatus
+  verificationStatus_in: [UserVerificationStatus!]
+  verificationStatus_not_in: [UserVerificationStatus!]
+  verificationMethod: UserVerificationMethod
+  verificationMethod_not: UserVerificationMethod
+  verificationMethod_in: [UserVerificationMethod!]
+  verificationMethod_not_in: [UserVerificationMethod!]
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -12533,10 +13706,6 @@ input UserScalarWhereInput {
   updatedAt_lte: DateTime
   updatedAt_gt: DateTime
   updatedAt_gte: DateTime
-  pushNotificationStatus: PushNotificationStatus
-  pushNotificationStatus_not: PushNotificationStatus
-  pushNotificationStatus_in: [PushNotificationStatus!]
-  pushNotificationStatus_not_in: [PushNotificationStatus!]
   AND: [UserScalarWhereInput!]
   OR: [UserScalarWhereInput!]
   NOT: [UserScalarWhereInput!]
@@ -12569,6 +13738,10 @@ input UserUpdateDataInput {
   roles: UserUpdaterolesInput
   pushNotificationStatus: PushNotificationStatus
   pushNotifications: PushNotificationReceiptUpdateManyWithoutUsersInput
+  pushNotification: UserPushNotificationUpdateOneInput
+  verificationStatus: UserVerificationStatus
+  verificationMethod: UserVerificationMethod
+  smsReceipts: SmsReceiptUpdateManyInput
 }
 
 input UserUpdateInput {
@@ -12580,6 +13753,10 @@ input UserUpdateInput {
   roles: UserUpdaterolesInput
   pushNotificationStatus: PushNotificationStatus
   pushNotifications: PushNotificationReceiptUpdateManyWithoutUsersInput
+  pushNotification: UserPushNotificationUpdateOneInput
+  verificationStatus: UserVerificationStatus
+  verificationMethod: UserVerificationMethod
+  smsReceipts: SmsReceiptUpdateManyInput
 }
 
 input UserUpdateManyDataInput {
@@ -12590,6 +13767,8 @@ input UserUpdateManyDataInput {
   role: UserRole
   roles: UserUpdaterolesInput
   pushNotificationStatus: PushNotificationStatus
+  verificationStatus: UserVerificationStatus
+  verificationMethod: UserVerificationMethod
 }
 
 input UserUpdateManyMutationInput {
@@ -12600,6 +13779,8 @@ input UserUpdateManyMutationInput {
   role: UserRole
   roles: UserUpdaterolesInput
   pushNotificationStatus: PushNotificationStatus
+  verificationStatus: UserVerificationStatus
+  verificationMethod: UserVerificationMethod
 }
 
 input UserUpdateManyWithoutPushNotificationsInput {
@@ -12647,6 +13828,10 @@ input UserUpdateWithoutPushNotificationsDataInput {
   role: UserRole
   roles: UserUpdaterolesInput
   pushNotificationStatus: PushNotificationStatus
+  pushNotification: UserPushNotificationUpdateOneInput
+  verificationStatus: UserVerificationStatus
+  verificationMethod: UserVerificationMethod
+  smsReceipts: SmsReceiptUpdateManyInput
 }
 
 input UserUpdateWithWhereUniqueWithoutPushNotificationsInput {
@@ -12663,6 +13848,18 @@ input UserUpsertWithWhereUniqueWithoutPushNotificationsInput {
   where: UserWhereUniqueInput!
   update: UserUpdateWithoutPushNotificationsDataInput!
   create: UserCreateWithoutPushNotificationsInput!
+}
+
+enum UserVerificationMethod {
+  SMS
+  Email
+  None
+}
+
+enum UserVerificationStatus {
+  Approved
+  Denied
+  Pending
 }
 
 input UserWhereInput {
@@ -12740,6 +13937,22 @@ input UserWhereInput {
   role_not: UserRole
   role_in: [UserRole!]
   role_not_in: [UserRole!]
+  pushNotificationStatus: PushNotificationStatus
+  pushNotificationStatus_not: PushNotificationStatus
+  pushNotificationStatus_in: [PushNotificationStatus!]
+  pushNotificationStatus_not_in: [PushNotificationStatus!]
+  pushNotifications_every: PushNotificationReceiptWhereInput
+  pushNotifications_some: PushNotificationReceiptWhereInput
+  pushNotifications_none: PushNotificationReceiptWhereInput
+  pushNotification: UserPushNotificationWhereInput
+  verificationStatus: UserVerificationStatus
+  verificationStatus_not: UserVerificationStatus
+  verificationStatus_in: [UserVerificationStatus!]
+  verificationStatus_not_in: [UserVerificationStatus!]
+  verificationMethod: UserVerificationMethod
+  verificationMethod_not: UserVerificationMethod
+  verificationMethod_in: [UserVerificationMethod!]
+  verificationMethod_not_in: [UserVerificationMethod!]
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -12756,13 +13969,9 @@ input UserWhereInput {
   updatedAt_lte: DateTime
   updatedAt_gt: DateTime
   updatedAt_gte: DateTime
-  pushNotificationStatus: PushNotificationStatus
-  pushNotificationStatus_not: PushNotificationStatus
-  pushNotificationStatus_in: [PushNotificationStatus!]
-  pushNotificationStatus_not_in: [PushNotificationStatus!]
-  pushNotifications_every: PushNotificationReceiptWhereInput
-  pushNotifications_some: PushNotificationReceiptWhereInput
-  pushNotifications_none: PushNotificationReceiptWhereInput
+  smsReceipts_every: SmsReceiptWhereInput
+  smsReceipts_some: SmsReceiptWhereInput
+  smsReceipts_none: SmsReceiptWhereInput
   AND: [UserWhereInput!]
   OR: [UserWhereInput!]
   NOT: [UserWhereInput!]

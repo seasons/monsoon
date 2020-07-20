@@ -21,22 +21,6 @@ export class SyncBrandsService {
     private readonly physicalProductsService: PhysicalProductService
   ) {}
 
-  async syncAirtableToAirtable(cliProgressBar?: any) {
-    await this.syncUtils.deleteAllStagingRecords("Brands", cliProgressBar)
-    await this.syncUtils.createAllStagingRecordsWithoutLinks({
-      modelName: "Brands",
-      allProductionRecords: await this.airtableService.getAllBrands(
-        this.airtableService.getProductionBase()
-      ),
-      sanitizeFunc: fields => ({
-        ...fields,
-        Logo: this.syncUtils.sanitizeAttachments(fields.Logo),
-        Products: [],
-      }),
-      cliProgressBar,
-    })
-  }
-
   async syncAirtableToPrisma(cliProgressBar?) {
     const records = await this.airtableService.getAllBrands()
 

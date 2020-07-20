@@ -17,7 +17,7 @@ import { PrismaService } from "../prisma/prisma.service"
 
 chargebee.configure({
   site: process.env.CHARGEBEE_SITE,
-  api_key: process.env.CHARGEE_API_KEY,
+  api_key: process.env.CHARGEBEE_API_KEY,
 })
 
 Airtable.configure({
@@ -111,21 +111,10 @@ const fixData = async () => {
       where: { id: prismaCust.id },
       data: { plan, status: "Active", billingInfo: { create: billingInfo } },
     })
-
-    // Save it to airtable
-    await airtableService.createOrUpdateAirtableUser(
-      await ps.client.user({ email: c.customer.email }),
-      {
-        status: "Active",
-        plan,
-        billingInfo,
-      }
-    )
   }
 
   // Get each users customer data
   // Update their status on prisma, billingInfo, and plan on prisma
-  // Update their status, plan, billingInfo on airtable
 }
 
 // TODO

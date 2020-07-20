@@ -25,6 +25,7 @@ import {
   ProductModule,
   PushNotificationModule,
   ReservationModule,
+  SMSModule,
   SearchModule,
   ShippingModule,
   SlackModule,
@@ -32,6 +33,7 @@ import {
   UtilsModule,
   directiveResolvers,
 } from "./modules"
+import { TwilioModule } from "./modules/Twilio/twilio.module"
 
 const analytics = new Analytics(process.env.SEGMENT_MONSOON_WRITE_KEY)
 
@@ -43,7 +45,7 @@ Airtable.configure({
 // make the call to chargebee
 chargebee.configure({
   site: process.env.CHARGEBEE_SITE,
-  api_key: process.env.CHARGEE_API_KEY,
+  api_key: process.env.CHARGEBEE_API_KEY,
 })
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
@@ -98,6 +100,8 @@ const scheduleModule =
     SearchModule,
     ShippingModule,
     SlackModule,
+    SMSModule,
+    TwilioModule,
     UserModule,
     UtilsModule,
   ],

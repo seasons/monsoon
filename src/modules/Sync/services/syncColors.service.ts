@@ -18,18 +18,6 @@ export class SyncColorsService {
     private readonly utils: UtilsService
   ) {}
 
-  async syncAirtableToAirtable(cliProgressBar?) {
-    await this.syncUtils.deleteAllStagingRecords("Colors", cliProgressBar)
-    await this.syncUtils.createAllStagingRecordsWithoutLinks({
-      modelName: "Colors",
-      allProductionRecords: await this.airtableService.getAllColors(
-        this.airtableService.getProductionBase()
-      ),
-      sanitizeFunc: fields => fields,
-      cliProgressBar,
-    })
-  }
-
   async syncAirtableToPrisma(cliProgressBar?) {
     const records = await this.airtableService.getAllColors()
 

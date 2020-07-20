@@ -1,6 +1,7 @@
 import { Analytics, Customer, User } from "@app/decorators"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
+import { addFragmentToInfo } from "graphql-binding"
 
 import { ReservationService } from ".."
 
@@ -12,8 +13,8 @@ export class ReservationMutationsResolver {
   ) {}
 
   @Mutation()
-  async updateReservation(@Args() args, @Info() info) {
-    return this.prisma.binding.mutation.updateReservation(args, info)
+  async updateReservation(@Args() { data, where }, @Info() info) {
+    return this.reservationService.updateReservation(data, where, info)
   }
 
   @Mutation()
@@ -28,7 +29,7 @@ export class ReservationMutationsResolver {
       items,
       user,
       customer,
-      info
+      addFragmentToInfo(info, `{products {seasonsUID}}`)
     )
 
     // Track the selection
@@ -36,7 +37,9 @@ export class ReservationMutationsResolver {
       userId: user.id,
       event: "Reserved Items",
       properties: {
+        email: user.email,
         items,
+        units: returnData.products.map(a => a.seasonsUID),
       },
     })
 

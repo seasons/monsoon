@@ -1,8 +1,9 @@
+import { Loader } from "@app/modules/DataLoader"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
+import { PrismaDataLoader, PrismaLoader } from "@app/prisma/prisma.loader"
 import { PrismaService } from "@app/prisma/prisma.service"
-import { Info, Parent, ResolveField, Resolver } from "@nestjs/graphql"
-import { head } from "lodash"
+import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
 
 @Resolver("User")
 export class UserFieldsResolver {
@@ -13,38 +14,64 @@ export class UserFieldsResolver {
   ) {}
 
   @ResolveField()
-  async beamsToken(@Parent() user) {
+  async beamsToken(
+    @Parent() user,
+    @Loader({
+      type: PrismaLoader.name,
+      params: {
+        query: "users",
+        info: `{id email}`,
+        formatData: a => a.email,
+      },
+    })
+    userEmailLoader: PrismaDataLoader<string>
+  ) {
     if (!user) {
       return ""
     }
-    return this.pushNotification.generateToken(
-      await this.prisma.client.user({ id: user.id }).email()
-    )
+    const userEmail = await userEmailLoader.load(user.id)
+    return this.pushNotification.generateToken(userEmail)
   }
 
   @ResolveField()
-  async fullName(@Parent() user) {
+  async fullName(
+    @Parent() user,
+    @Loader({
+      type: PrismaLoader.name,
+      params: {
+        query: "users",
+        info: `{id firstName lastName}`,
+        formatData: rec => `${rec.firstName} ${rec.lastName}`,
+      },
+    })
+    userNameLoader: PrismaDataLoader<any>
+  ) {
     if (!user) {
       return ""
     }
-    const rec = await this.prisma.client.user({ id: user.id })
-    return `${rec?.firstName} ${rec?.lastName}`
+    return userNameLoader.load(user.id)
   }
 
   @ResolveField()
-  async customer(@Parent() user, @Info() info) {
+  async customer(
+    @Parent() user,
+    @Loader({
+      type: PrismaLoader.name,
+      params: {
+        query: "customers",
+        infoFragment: `fragment EnsureUserWithId on Customer {user {id}}`,
+        formatWhere: ids => ({ where: { user: { id_in: ids } } }),
+        getKey: a => a.user.id,
+      },
+      includeInfo: true,
+    })
+    customersLoader: PrismaDataLoader<any>
+  ) {
     if (!user) {
       return null
     }
 
-    return head(
-      await this.prisma.binding.query.customers(
-        {
-          where: { user: { id: user.id } },
-        },
-        info
-      )
-    )
+    return customersLoader.load(user.id)
   }
 
   @ResolveField()

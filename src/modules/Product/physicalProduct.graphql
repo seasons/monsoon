@@ -18,6 +18,7 @@ type Query {
     first: Int
     last: Int
   ): [WarehouseLocation]! @hasRole(roles: [Admin])
+  generatedSeasonsUIDs(input: PhysicalProductSeasonsUIDsInput!): [String!]
 }
 
 type Mutation {
@@ -78,4 +79,15 @@ input UpsertPhysicalProductInput {
   productStatus: PhysicalProductStatus!
   seasonsUID: String!
   unitCost: Float
+}
+
+input PhysicalProductSeasonsUIDsInput {
+  brandID: ID!
+  colorCode: String!
+  sizes: [PhysicalProductSeasonsUIDSizes!]!
+}
+
+input PhysicalProductSeasonsUIDSizes {
+  sizeName: String!
+  count: Int!
 }

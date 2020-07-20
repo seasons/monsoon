@@ -122,48 +122,6 @@ export class AirtableService extends AirtableQueriesService {
     return await this.airtableBase.base(modelName).update(recordId, fields)
   }
 
-  async createOrUpdateAirtableUser(user: User, fields: AirtableUserFields) {
-    // Create the airtable data
-    const { email, firstName, lastName } = user
-    const data = {
-      Email: email,
-      "First Name": firstName,
-      "Last Name": lastName,
-    }
-    for (const key in fields) {
-      if (this.utils.keyMap[key]) {
-        data[this.utils.keyMap[key]] = fields[key]
-      }
-    }
-    // WARNING: shipping address and billingInfo code are still "create" only.
-    if (!!fields.shippingAddress) {
-      const location = await this.utils.createLocation(
-        fields.shippingAddress.create
-      )
-      data["Shipping Address"] = location.map(l => l.id)
-    }
-    if (!!fields.billingInfo) {
-      const airtableBillingInfoRecord = await this.utils.createBillingInfo(
-        fields.billingInfo
-      )
-      data["Billing Info"] = [airtableBillingInfoRecord.getId()]
-    }
-
-    // Create or update the record
-    const airtableUser = await this.utils.getAirtableUserRecordByUserEmail(
-      email
-    )
-    if (!!airtableUser) {
-      return await this.airtableBase.base("Users").update(airtableUser.id, data)
-    }
-
-    return await this.airtableBase.base("Users").create([
-      {
-        fields: data,
-      },
-    ])
-  }
-
   async createPhysicalProducts(newPhysicalProducts) {
     await this.airtableBase
       .base("Physical Products")
@@ -198,45 +156,6 @@ export class AirtableService extends AirtableQueriesService {
       .base("Physical Products")
       .update(formattedUpdateData)
     return updatedRecords
-  }
-
-  async markPhysicalProductsReservedOnAirtable(
-    physicalProducts: PhysicalProduct[]
-  ): Promise<() => void> {
-    // Get the record ids of all relevant airtable physical products
-    const airtablePhysicalProductRecords = await this.getPhysicalProducts(
-      physicalProducts.map(prod => prod.seasonsUID)
-    )
-    const airtablePhysicalProductRecordIds = airtablePhysicalProductRecords.map(
-      a => a.id
-    ) as [string]
-
-    // Update their statuses on airtable
-    const airtablePhysicalProductRecordsData = fill(
-      new Array(airtablePhysicalProductRecordIds.length),
-      {
-        "Inventory Status": "Reserved",
-      }
-    ) as [AirtablePhysicalProductFields]
-    await this.updatePhysicalProducts(
-      airtablePhysicalProductRecordIds,
-      airtablePhysicalProductRecordsData
-    )
-
-    // Create and return a rollback function
-    const airtablePhysicalProductRecordsRollbackData = fill(
-      new Array(airtablePhysicalProductRecordIds.length),
-      {
-        "Inventory Status": "Reservable",
-      }
-    ) as [AirtablePhysicalProductFields]
-    const rollbackMarkPhysicalProductReservedOnAirtable = async () => {
-      await this.updatePhysicalProducts(
-        airtablePhysicalProductRecordIds,
-        airtablePhysicalProductRecordsRollbackData
-      )
-    }
-    return rollbackMarkPhysicalProductReservedOnAirtable
   }
 
   async updateProductVariantCounts(

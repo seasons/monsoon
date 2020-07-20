@@ -11,7 +11,6 @@ import { AppModule } from "./app.module"
 import { checkJwt } from "./middleware/jwt"
 import { createGetUserMiddleware } from "./middleware/user"
 import { prisma } from "./prisma"
-import { app as webhooks } from "./webhooks"
 
 // Set up the server
 const server = express()
@@ -26,7 +25,7 @@ if (process.env.NODE_ENV === "production") {
 
 const handleErrors = (err, req, res, next) => {
   if (err) {
-    return res.status(err.status).json(err)
+    return res.status(err.status || 500).json(err)
   }
 }
 
@@ -43,7 +42,6 @@ server.use(
   checkJwt,
   createGetUserMiddleware(prisma),
   bodyParser.json(),
-  webhooks,
   handleErrors
 )
 

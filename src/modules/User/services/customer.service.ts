@@ -1,21 +1,20 @@
-import { AirtableService } from "@modules/Airtable/services/airtable.service"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { Injectable } from "@nestjs/common"
 import {
   BillingInfoUpdateDataInput,
   CustomerStatus,
+  CustomerWhereUniqueInput,
   ID_Input,
   User,
 } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
-import zipcodes from "zipcodes"
+import { ApolloError } from "apollo-server"
 
 import { AuthService } from "./auth.service"
 
 @Injectable()
 export class CustomerService {
   constructor(
-    private readonly airtableService: AirtableService,
     private readonly authService: AuthService,
     private readonly prisma: PrismaService,
     private readonly shippingService: ShippingService
@@ -30,9 +29,39 @@ export class CustomerService {
   }
 
   async addCustomerDetails({ details, status }, customer, user, info) {
-    const currentCustomerDetail = await this.prisma.client
-      .customer({ id: customer.id })
-      .detail()
+    // If any of these keys is present, the entire address must be present and valid.
+    const groupedKeys = ["name", "address1", "address2", "city", "state"]
+    if (
+      details.shippingAddress?.create &&
+      Object.keys(details.shippingAddress?.create)?.some(key =>
+        groupedKeys.includes(key)
+      )
+    ) {
+      const {
+        name,
+        address1: street1,
+        city,
+        state,
+        zipCode: zip,
+      } = details.shippingAddress.create
+      if (!(name && street1 && city && state && zip)) {
+        throw new Error(
+          "Missing a required field. Expected name, address1, city, state, and zipCode."
+        )
+      }
+      const {
+        isValid: shippingAddressIsValid,
+      } = await this.shippingService.shippoValidateAddress({
+        name,
+        street1,
+        city,
+        state,
+        zip,
+      })
+      if (!shippingAddressIsValid) {
+        throw new Error("Shipping address is invalid")
+      }
+    }
 
     await this.prisma.client.updateCustomer({
       data: {
@@ -51,19 +80,11 @@ export class CustomerService {
       await this.setCustomerPrismaStatus(user, status)
     }
 
-    // Sync with airtable
-    await this.airtableService.createOrUpdateAirtableUser(user, {
-      ...currentCustomerDetail,
-      ...details,
-      status,
-    })
-
     // Return the updated customer object
-    const returnData = await this.prisma.binding.query.customer(
+    return await this.prisma.binding.query.customer(
       { where: { id: customer.id } },
       info
     )
-    return returnData
   }
 
   async updateCustomerDetail(user, customer, shippingAddress, phoneNumber) {
@@ -85,15 +106,6 @@ export class CustomerService {
     })
     if (!shippingAddressIsValid) {
       throw new Error("Shipping address is invalid")
-    }
-
-    const zipcodesData = zipcodes.lookup(parseInt(shippingPostalCode))
-    const validCities = ["Brooklyn", "New York", "Queens", "The Bronx"]
-    if (
-      zipcodesData?.state !== "NY" ||
-      !validCities.includes(zipcodesData?.city)
-    ) {
-      throw new Error("SHIPPING_ADDRESS_NOT_NYC")
     }
 
     // Update the user's shipping address
@@ -166,5 +178,23 @@ export class CustomerService {
         where: { id: billingInfoId },
       })
     }
+  }
+
+  async triageCustomer(
+    where: CustomerWhereUniqueInput
+  ): Promise<"Waitlisted" | "Authorized"> {
+    const customer = await this.prisma.client.customer(where)
+
+    if (!["Created", "Invited"].includes(customer.status)) {
+      throw new ApolloError(
+        `Invalid customer status: ${customer.status}. Can only triage an "Invited" or "Created" customer`
+      )
+    }
+
+    await this.prisma.client.updateCustomer({
+      where,
+      data: { status: "Waitlisted" },
+    })
+    return "Waitlisted"
   }
 }

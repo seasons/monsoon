@@ -9,7 +9,12 @@ export class AuthMutationsResolver {
 
   @Mutation()
   async login(@Args() { email, password }, @User() requestUser) {
-    return this.authService.loginUser({ email, password, requestUser })
+    const data = await this.authService.loginUser({
+      email: email.toLowerCase(),
+      password,
+      requestUser,
+    })
+    return data
   }
 
   @Mutation()
@@ -18,7 +23,7 @@ export class AuthMutationsResolver {
     @Context() ctx
   ) {
     const { user, tokenData, customer } = await this.authService.signupUser({
-      email,
+      email: email.toLowerCase(),
       password,
       firstName,
       lastName,
@@ -27,7 +32,7 @@ export class AuthMutationsResolver {
 
     // Add them to segment and track their account creation event
     const now = new Date()
-    ctx.analytics.identify({
+    ctx?.analytics?.identify({
       userId: user.id,
       traits: {
         ...this.authService.extractSegmentReservedTraitsFromCustomerDetail(
@@ -42,9 +47,13 @@ export class AuthMutationsResolver {
         auth0Id: user.auth0Id,
       },
     })
-    ctx.analytics.track({
+    ctx?.analytics?.track({
       userId: user.id,
       event: "Created Account",
+      properties: {
+        name: `${user.firstName} ${user.lastName}`,
+        email: `${user.email}`,
+      },
     })
 
     return {
@@ -58,7 +67,7 @@ export class AuthMutationsResolver {
 
   @Mutation()
   async resetPassword(@Args() { email }) {
-    return await this.authService.resetPassword(email)
+    return await this.authService.resetPassword(email.toLowerCase())
   }
 
   @Mutation()

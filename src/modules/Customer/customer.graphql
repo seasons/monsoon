@@ -37,6 +37,7 @@ type Mutation {
     shippingAddress: AddressInput!
     phoneNumber: String!
   ): Boolean @hasRole(roles: [Customer])
+  triageCustomer: TriageCustomerStatus @hasRole(roles: [Customer])
 }
 
 input AddressInput {
@@ -51,6 +52,20 @@ enum CustomerAnalyticsEvent {
   CompletedWaitlistForm
 }
 
+enum TriageCustomerStatus {
+  Waitlisted
+  Authorized
+}
+
+# Do not include "CreatedAccount" because the fact that this is being returned
+# on a user object means they have created an account.
+enum OnboardingStep {
+  VerifiedPhone
+  SetMeasurements
+  SetStylePreferences
+  SetShippingAddress
+}
+
 type Customer {
   id: ID!
   user: User!
@@ -59,6 +74,7 @@ type Customer {
   detail: CustomerDetail
   billingInfo: BillingInfo
   plan: Plan
+  paymentPlan: PaymentPlan
   bagItems(
     where: BagItemWhereInput
     orderBy: BagItemOrderByInput
@@ -80,6 +96,7 @@ type Customer {
   invoices: [Invoice]
   transactions: [Transaction]
   membership: CustomerMembership
+  onboardingSteps: [OnboardingStep!]!
 }
 
 type CustomerMembership {

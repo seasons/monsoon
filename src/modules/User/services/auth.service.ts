@@ -1,7 +1,10 @@
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
-import { AirtableService } from "@modules/Airtable/services/airtable.service"
+import { CustomerDetail } from "@app/prisma/prisma.binding"
 import { Injectable } from "@nestjs/common"
-import { CustomerDetail, CustomerDetailCreateInput } from "@prisma/index"
+import {
+  CustomerDetailCreateInput,
+  UserPushNotificationInterestType,
+} from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
 import { ForbiddenError, UserInputError } from "apollo-server"
 import { head } from "lodash"
@@ -26,7 +29,6 @@ interface Auth0User {
 export class AuthService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly airtable: AirtableService,
     private readonly pushNotification: PushNotificationService
   ) {}
 
@@ -83,12 +85,6 @@ export class AuthService {
       "Created"
     )
 
-    // 5. Update the user in Airtable
-    await this.airtable.createOrUpdateAirtableUser(user, {
-      ...details,
-      status: "Created",
-    })
-
     return { user, tokenData, customer }
   }
 
@@ -113,24 +109,6 @@ export class AuthService {
     // If the user is a Customer, make sure that the account has been approved
     if (!user) {
       throw new Error("User record not found")
-    }
-
-    if (user.roles.includes("Customer")) {
-      const customer = await this.getCustomerFromUserID(user.id)
-
-      // TODO: remove customer.status check once we implement new onboarding flow
-      if (
-        customer &&
-        ![
-          "Active",
-          "Authorized",
-          "Paused",
-          "Suspended",
-          "Deactivated",
-        ].includes(customer.status)
-      ) {
-        throw new Error(`User account has not been approved`)
-      }
     }
 
     return {
@@ -244,34 +222,42 @@ export class AuthService {
         function handleResponse(error, response, body) {
           // Handle a generic error
           if (error) {
-            return reject(new Error(`Error creating Auth0 user: ${error}`))
+            return reject(new Error(`Error creating new Auth0 user ${error}`))
           }
-          // Give a precise error message if a user tried to sign up with an
-          // email that's already in the db
-          if (response.statusCode == 400 && body.code === "invalid_signup") {
-            return reject(new Error("400 -- email already in db or auth0"))
-          }
-          // Give a precise error message if a user tried to sign up with
-          // a insufficiently strong password
-          if (
-            response.statusCode == 400 &&
-            body.name === "PasswordStrengthError"
-          ) {
+
+          // Handle 400 error
+          if (response.statusCode === 400) {
+            const messageFor = (bodyCode: string) => {
+              switch (bodyCode) {
+                case "invalid_signup":
+                  return "Email already associated with an account."
+                case "invalid_password":
+                case "password_strength_error":
+                  return `Password too weak. See password rules at ${PW_STRENGTH_RULES_URL}.`
+                case "password_dictionary_error":
+                  return "Password too common."
+                case "password_no_user_info_error":
+                  return "Password includes user info."
+                default:
+                  return JSON.stringify(body)
+              }
+            }
             return reject(
               new Error(
-                `400 -- insufficiently strong password. see pw rules at ${PW_STRENGTH_RULES_URL}`
+                `[400 ${body.code}] Error creating new Auth0 user: ${messageFor(
+                  body.code
+                )}`
               )
             )
           }
+
           // If any other error occured, expose a generic error message
-          if (response.statusCode != 200) {
-            return reject(
-              new Error(
-                `Error creating new Auth0 user. Auth0 returned ` +
-                  `${response.statusCode} with body: ${JSON.stringify(body)}`
-              )
-            )
+          if (response.statusCode !== 200) {
+            const metadata = `[${response.statusCode} ${body.code}]`
+            return reject(new Error(`${metadata} ${JSON.stringify(body)}`))
           }
+
+          // Otherwise resolve
           return resolve(body._id)
         }
       )
@@ -304,32 +290,48 @@ export class AuthService {
   }
 
   private async createPrismaUser(auth0Id, email, firstName, lastName) {
-    const user = await this.prisma.client.createUser({
+    let user = await this.prisma.client.createUser({
       auth0Id,
       email,
       firstName,
       lastName,
       roles: { set: ["Customer"] }, // defaults to customer
     })
+    const defaultPushNotificationInterests = [
+      "General",
+      "Blog",
+      "Bag",
+      "NewProduct",
+    ] as UserPushNotificationInterestType[]
+    user = await this.prisma.client.updateUser({
+      where: { id: user.id },
+      data: {
+        pushNotification: {
+          create: {
+            interests: {
+              create: defaultPushNotificationInterests.map(type => ({
+                type,
+                value: "",
+                user: { connect: { id: user.id } },
+                status: true,
+              })),
+            },
+            status: true,
+          },
+        },
+      },
+    })
     return user
   }
 
-  private async createPrismaCustomerForExistingUser(
-    userID,
-    details = {},
-    status
-  ) {
-    const customer = await this.prisma.client.createCustomer({
+  private async createPrismaCustomerForExistingUser(userID, details, status) {
+    return await this.prisma.client.createCustomer({
       user: {
         connect: { id: userID },
       },
       detail: { create: details },
       status: status || "Waitlisted",
     })
-
-    // TODO: update airtable with customer data
-
-    return customer
   }
 
   private async getAuth0UserAccessToken(
@@ -340,7 +342,7 @@ export class AuthService {
     refresh_token: string
     expires_in: number
   }> {
-    return new Promise(function RetrieveAccessToken(resolve, reject) {
+    return new Promise((resolve, reject) => {
       request(
         {
           method: "Post",

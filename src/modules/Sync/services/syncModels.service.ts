@@ -18,21 +18,6 @@ export class SyncModelsService {
     private readonly utils: UtilsService
   ) {}
 
-  async syncAirtableToAirtable(cliProgressBar?) {
-    await this.syncUtils.deleteAllStagingRecords("Models", cliProgressBar)
-    await this.syncUtils.createAllStagingRecordsWithoutLinks({
-      modelName: "Models",
-      allProductionRecords: await this.airtableService.getAllModels(
-        this.airtableService.getProductionBase()
-      ),
-      sanitizeFunc: fields => ({
-        ...fields,
-        Products: [],
-      }),
-      cliProgressBar,
-    })
-  }
-
   async syncAirtableToPrisma(cliProgressBar?) {
     const allBrands = await this.airtableService.getAllBrands()
     const allModels = await this.airtableService.getAllModels()

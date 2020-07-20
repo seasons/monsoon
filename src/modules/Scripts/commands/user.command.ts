@@ -1,11 +1,6 @@
 import { PaymentService } from "@app/modules/Payment/index"
-import {
-  BillingAddress,
-  Card,
-  PlanId,
-} from "@app/modules/Payment/payment.types"
+import { BillingAddress, Card } from "@app/modules/Payment/payment.types"
 import { UtilsService } from "@app/modules/Utils"
-import { AirtableService } from "@modules/Airtable"
 import { AuthService } from "@modules/User"
 import { Injectable, Logger } from "@nestjs/common"
 import { ModuleRef } from "@nestjs/core"
@@ -31,7 +26,6 @@ export class UserCommands {
     private readonly scriptsService: ScriptsService,
     private readonly authService: AuthService,
     private readonly prisma: PrismaService,
-    private readonly airtable: AirtableService,
     private readonly paymentService: PaymentService,
     private readonly utilsService: UtilsService,
     private moduleRef: ModuleRef
@@ -125,7 +119,25 @@ export class UserCommands {
       default: "Customer",
       choices: ["Customer", "Admin", "Partner"],
     })
-    roles
+    roles,
+    @Option({
+      name: "status",
+      alias: "s",
+      describe: "Desired customer status",
+      type: "string",
+      default: "Active",
+      choices: [
+        "Invited",
+        "Created",
+        "Waitlisted",
+        "Authorized",
+        "Active",
+        "Suspended",
+        "Paused",
+        "Deactivated",
+      ],
+    })
+    status
   ) {
     await this.scriptsService.updateConnections({
       prismaEnv,
@@ -155,8 +167,8 @@ export class UserCommands {
     let user
     let tokenData
     const address: BillingAddress = {
-      firstName: firstName,
-      lastName: lastName,
+      firstName,
+      lastName,
       line1: "138 Mulberry St",
       city: "New York",
       state: "NY",
@@ -171,13 +183,12 @@ export class UserCommands {
         firstName,
         lastName,
         details: {
-          phoneNumber: "(646) 350-2715",
+          phoneNumber: "+16463502715",
           height: 40 + faker.random.number(32),
-          weight: "152lb",
+          weight: { set: [150, 160] },
           bodyType: "Athletic",
           shippingAddress: {
             create: {
-              slug,
               name: `${firstName} ${lastName}`,
               address1: address.line1,
               city: address.city,
@@ -197,7 +208,7 @@ export class UserCommands {
       return
     }
 
-    // Set their status to Active
+    // Give them valid billing data
     const customer = head(
       await this.prisma.client.customers({
         where: { user: { id: user.id } },
@@ -209,6 +220,7 @@ export class UserCommands {
       expiryYear: "2022",
       cvv: "222",
     }
+    this.logger.log("Updating customer")
     await this.prisma.client.updateCustomer({
       data: {
         plan,
@@ -221,12 +233,11 @@ export class UserCommands {
             expiration_year: parseInt(card.expiryYear, 10),
           },
         },
-        status: "Active",
+        status,
         user: { update: { roles: { set: roles } } },
       },
       where: { id: customer.id },
     })
-    await this.airtable.createOrUpdateAirtableUser(user, { status: "Active" })
     await this.paymentService.createSubscription(
       plan,
       this.utilsService.snakeCaseify(address),
