@@ -1,7 +1,10 @@
 import { Analytics, Customer, User } from "@app/decorators"
+import { EmailService } from "@app/modules/Email/services/email.service"
+import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
 import { UserInputError } from "apollo-server"
+import { first } from "lodash"
 
 import { CustomerService } from "../services/customer.service"
 
@@ -9,7 +12,9 @@ import { CustomerService } from "../services/customer.service"
 export class CustomerMutationsResolver {
   constructor(
     private readonly customerService: CustomerService,
-    private readonly prisma: PrismaService
+    private readonly prisma: PrismaService,
+    private readonly email: EmailService,
+    private readonly pushNotification: PushNotificationService
   ) {}
 
   @Mutation()
@@ -52,6 +57,35 @@ export class CustomerMutationsResolver {
     @Customer() sessionCustomer,
     @User() user
   ) {
+    const { where, data } = args
+    const customer = await this.prisma.binding.query.customer(
+      {
+        where,
+      },
+      `{
+        id
+        user {
+          id
+          email
+          firstName
+        }
+        status
+      }`
+    )
+
+    console.log(customer)
+
+    if (
+      customer.status === "Waitlisted" &&
+      data.status &&
+      data.status === "Authorized"
+    ) {
+      this.email.sendWelcomeToSeasonsEmail(user)
+      this.pushNotification.pushNotifyUser({
+        email: user.email,
+        pushNotifID: "Welcome",
+      })
+    }
     return this.prisma.binding.mutation.updateCustomer(args, info)
   }
 

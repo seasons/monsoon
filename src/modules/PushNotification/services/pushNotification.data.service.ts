@@ -62,7 +62,7 @@ export class PushNotificationDataProvider {
 
   private wrapAPNsData = (alert, data) => ({ apns: { aps: { alert }, data } })
 
-  private interpolateJSONObjectWithMustache(obj: any, vars: any) {
+  private interpolateJSONObjectWithMustache(obj: any, vars: any = {}) {
     return JSON.parse(mustache.render(JSON.stringify(obj), vars))
   }
 }
