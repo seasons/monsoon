@@ -2,13 +2,14 @@ import { PrismaService } from "@app/prisma/prisma.service"
 import { Injectable } from "@nestjs/common"
 import algoliasearch from "algoliasearch"
 
+const { ALGOLIA_ACCOUNT_ID, ALGOLIA_KEY } = process.env
 @Injectable()
 export class SearchService {
-  client = algoliasearch("YFWHA7229D", "4faf39592ff55234486984aa5080a754")
+  client = algoliasearch(ALGOLIA_ACCOUNT_ID, ALGOLIA_KEY)
 
   constructor(private readonly prisma: PrismaService) {}
 
-  async indexData() {
+  async indexProducts() {
     try {
       const products = await this.prisma.binding.query.products(
         {},
@@ -36,7 +37,7 @@ export class SearchService {
         createdAt
         updatedAt
         __typename
-      } 
+      }
     `
       )
 
