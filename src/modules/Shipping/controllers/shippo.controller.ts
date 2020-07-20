@@ -95,6 +95,7 @@ export class ShippoController {
             },
             `{
               id
+              status
               sentPackage {
                 transactionID
               }
@@ -104,6 +105,11 @@ export class ShippoController {
           }`
           )
         )
+
+        if (reservation.status === "Completed") {
+          break
+        }
+
         const phase = this.reservationPhase(reservation, transactionID)
 
         const reservationStatus = this.convertShippoToReservationStatus(
