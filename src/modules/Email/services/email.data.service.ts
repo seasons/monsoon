@@ -142,26 +142,12 @@ export class EmailDataProvider {
           paragraphs: [
             {
               html:
-                `Hey ${firstName}, thank you so much for signing up. We're excited ` +
-                `you're here. As a Founding Member, you'll be the first to know about` +
+                `Hey ${firstName},<br><br>Thank you so much for signing up. We're excited ` +
+                `you're here. You'll be the first to know about` +
                 ` exclusive features, products and restocks.`,
             },
             {
-              html:
-                `We're still actively working on the beta app. If you have any ideas` +
-                ` or thoughts about the service, give us your feedback! Good or bad.` +
-                ` Just write to ${process.env.MAIN_CONTACT_EMAIL}`,
-            },
-            {
-              html:
-                '<b style="color:#000000">How to install the app and reserve your first three pieces</b>',
-            },
-            {
-              html:
-                `<ol><li>View this e-mail on your iOS device.</li><li>If you don\'t` +
-                ` already have it, download the <a href="${process.env.TESTFLIGHT_URL}">testflight app</a>.` +
-                `</li><li><a href="${process.env.TESTFLIGHT_URL}">Click here</a> to install` +
-                ` the seasons app on testflight.</li><li>Login and start reserving!</li></ol>`,
+              html: `If you have any questions or feedback, we'd love to hear from you at ${process.env.MAIN_CONTACT_EMAIL}`,
             },
           ],
         },

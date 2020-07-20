@@ -2,6 +2,7 @@ import { Module } from "@nestjs/common"
 import { PrismaModule } from "@prisma/prisma.module"
 
 import { AirtableModule } from "../Airtable/airtable.module"
+import { EmailModule } from "../Email/email.module"
 import { PushNotificationModule } from "../PushNotification/pushNotification.module"
 import { ShippingModule } from "../Shipping/shipping.module"
 import { UtilsModule } from "../Utils/utils.module"
@@ -18,6 +19,7 @@ import { CustomerService } from "./services/customer.service"
 @Module({
   imports: [
     AirtableModule,
+    EmailModule,
     PrismaModule,
     ShippingModule,
     PushNotificationModule,
