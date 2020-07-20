@@ -2,11 +2,16 @@ import { Module, forwardRef } from "@nestjs/common"
 import { PrismaModule } from "@prisma/prisma.module"
 
 import { CustomerFieldsResolver } from "./fields/customer.fields.resolver"
+import { CustomerDetailFieldsResolver } from "./fields/customerDetail.fields.resolver"
 import { CustomerQueriesResolver } from "./queries/customer.queries.resolver"
 import { PaymentModule } from ".."
 
 @Module({
   imports: [PrismaModule, forwardRef(() => PaymentModule)],
-  providers: [CustomerQueriesResolver, CustomerFieldsResolver],
+  providers: [
+    CustomerQueriesResolver,
+    CustomerFieldsResolver,
+    CustomerDetailFieldsResolver,
+  ],
 })
 export class CustomerModule {}
