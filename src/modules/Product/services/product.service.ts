@@ -80,10 +80,10 @@ export class ProductService {
     )
 
     const updatedIDs = []
+    const notUpdatedIDs = []
 
     productIDs.forEach(async id => {
       const product = productsWithData.find(p => p.id === id)
-      console.log("product", product)
       if (product.variants?.length && product.photographyStatus === "Done") {
         updatedIDs.push(id)
         await this.prisma.client.updateProduct({
@@ -93,12 +93,21 @@ export class ProductService {
             publishedAt: DateTime.local().toISO(),
           },
         })
+      } else {
+        notUpdatedIDs.push(id)
       }
     })
 
-    console.log("????", updatedIDs)
+    let response
+    if (productIDs.length === updatedIDs.length) {
+      response = "Successfully published all products."
+    } else {
+      response = `Some of the products weren't published, check that these products have variants and their photography status is complete: ${notUpdatedIDs.join(
+        ", "
+      )}.`
+    }
 
-    return updatedIDs
+    return response
   }
 
   async addViewedProduct(item, customer) {
