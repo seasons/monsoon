@@ -56,4 +56,9 @@ export class ProductMutationsResolver {
   async updateProduct(@Args() { where, data }, @Info() info) {
     return await this.productService.updateProduct({ where, data, info })
   }
+
+  @Mutation()
+  async publishProducts(@Args() { productIDs }) {
+    return await this.productService.publishProducts(productIDs)
+  }
 }

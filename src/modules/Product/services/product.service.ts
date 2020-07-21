@@ -26,6 +26,7 @@ import { PrismaService } from "@prisma/prisma.service"
 import { ApolloError } from "apollo-server"
 import { GraphQLResolveInfo } from "graphql"
 import { head, pick } from "lodash"
+import { DateTime } from "luxon"
 
 import { UtilsService } from "../../Utils/services/utils.service"
 import { ProductWithPhysicalProducts } from "../product.types"
@@ -60,6 +61,61 @@ export class ProductService {
       info
     )
     return products
+  }
+
+  async publishProducts(productIDs) {
+    const productsWithData = await this.prisma.binding.query.products(
+      {
+        where: {
+          id_in: productIDs,
+        },
+      },
+      `{
+        id
+        photographyStatus
+        variants {
+          id
+        }
+      }`
+    )
+
+    const validatedIDs = []
+    const unvalidatedIDs = []
+
+    productIDs.forEach(async id => {
+      const product = productsWithData.find(p => p.id === id)
+      if (product.variants?.length && product.photographyStatus === "Done") {
+        validatedIDs.push(id)
+        await this.prisma.client.updateProduct({
+          where: { id },
+          data: {
+            status: "Available",
+            publishedAt: DateTime.local().toISO(),
+          },
+        })
+      } else {
+        unvalidatedIDs.push(id)
+      }
+    })
+
+    let message
+    let status
+    if (productIDs.length === validatedIDs.length) {
+      message = "Successfully published all products."
+      status = "success"
+    } else {
+      message = `Some of the products weren't published, check that these products have variants and their photography status is complete: ${unvalidatedIDs.join(
+        ", "
+      )}.`
+      status = "error"
+    }
+
+    return {
+      message,
+      unvalidatedIDs,
+      validatedIDs,
+      status,
+    }
   }
 
   async addViewedProduct(item, customer) {
