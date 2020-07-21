@@ -96,7 +96,7 @@ export class EmailDataProvider {
             },
             {
               html:
-                `To choose your plan and start reserving, download or update the Seasons app below, ` +
+                `To choose your plan and start reserving, download or update the Seasons app below, login ` +
                 `and visit your profile. If you have any questions or need any help, contact us at ${process.env.MAIN_CONTACT_EMAIL}.`,
             },
             {
@@ -109,7 +109,7 @@ export class EmailDataProvider {
                 `if you don't finish signing up in the next 72 hours.`,
             },
           ],
-          button: { text: "Choose Plan", url: process.env.APP_URL },
+          button: { text: "Get the App", url: process.env.APP_URL },
         },
         prefooter: {
           paragraphs: [
@@ -262,7 +262,7 @@ export class EmailDataProvider {
             },
             {
               html:
-                `To finish creating your account and start reserving, download or update the Seasons app below. ` +
+                `To finish creating your account and start reserving, download or update the Seasons app below and login. ` +
                 `If you have any questions or need any help, contact us at membership@seasons.nyc.`,
             },
           ],
