@@ -13,9 +13,9 @@
     },
     "data": { "route": "Faq" }
   },
-  "Welcome": {
+  "CompleteAccount": {
     "alert": {
-      "title": "Welcome to Seasons",
+      "title": "You're In",
       "body": "You've been invited to complete your sign up and reserve your first order"
     },
     "data": {

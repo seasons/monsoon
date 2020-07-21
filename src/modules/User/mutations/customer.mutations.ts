@@ -3,8 +3,8 @@ import { EmailService } from "@app/modules/Email/services/email.service"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
-import { UserInputError } from "apollo-server"
-import { first } from "lodash"
+import { User as PrismaUser } from "@prisma/index"
+import { ApolloError, UserInputError } from "apollo-server"
 
 import { CustomerService } from "../services/customer.service"
 
@@ -50,13 +50,7 @@ export class CustomerMutationsResolver {
   }
 
   @Mutation()
-  async updateCustomer(
-    @Args() args,
-    @Info() info,
-    @Analytics() analytics,
-    @Customer() sessionCustomer,
-    @User() user
-  ) {
+  async updateCustomer(@Args() args, @Info() info) {
     const { where, data } = args
     const customer = await this.prisma.binding.query.customer(
       {
@@ -74,14 +68,25 @@ export class CustomerMutationsResolver {
     )
 
     if (
-      customer.status === "Waitlisted" &&
+      ["Waitlisted", "Invited"].includes(customer.status) &&
       data.status &&
       data.status === "Authorized"
     ) {
-      await this.email.sendWelcomeToSeasonsEmail(user)
+      // Normal users
+      if (customer.status === "Waitlisted") {
+        await this.email.sendAuthorizedToSubscribeEmail(
+          customer.user as PrismaUser
+        )
+      }
+      // Users we invited off the admin
+      if (customer.status === "Invited") {
+        await this.email.sendPriorityAccessEmail(customer.user as PrismaUser)
+      }
+
+      // either kind of user
       await this.pushNotification.pushNotifyUser({
-        email: user.email,
-        pushNotifID: "Welcome",
+        email: customer.user.email,
+        pushNotifID: "CompleteAccount",
       })
     }
     return this.prisma.binding.mutation.updateCustomer(args, info)

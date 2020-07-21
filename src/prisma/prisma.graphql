@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Mon Jul 20 2020 17:47:16 GMT-0400 (Eastern Daylight Time)
+# timestamp: Tue Jul 21 2020 12:58:55 GMT-0400 (Eastern Daylight Time)
 
 type AggregateBagItem {
   count: Int!
@@ -8149,6 +8149,7 @@ enum EmailId {
   FreeToReserve
   WelcomeToSeasons
   ReturnReminder
+  PriorityAccess
 }
 
 type EmailReceipt implements Node {

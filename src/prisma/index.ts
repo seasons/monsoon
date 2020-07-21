@@ -2860,7 +2860,8 @@ export type EmailId =
   | "CompleteAccount"
   | "FreeToReserve"
   | "WelcomeToSeasons"
-  | "ReturnReminder";
+  | "ReturnReminder"
+  | "PriorityAccess";
 
 export type EmailReceiptOrderByInput =
   | "id_ASC"

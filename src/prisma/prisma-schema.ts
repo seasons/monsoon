@@ -3339,6 +3339,7 @@ enum EmailId {
   FreeToReserve
   WelcomeToSeasons
   ReturnReminder
+  PriorityAccess
 }
 
 type EmailReceipt {

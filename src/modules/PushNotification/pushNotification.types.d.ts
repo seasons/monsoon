@@ -5,7 +5,7 @@ export type PushNotificationID =
   | "ReturnDue"
   | "NewBlogPost"
   | "Custom"
-  | "Welcome"
+  | "CompleteAccount"
 export type PushNotificationInterest = "seasons-general-notifications"
 export type PushNotificationVars = NewBlogPostVars | {}
 

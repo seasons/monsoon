@@ -160,6 +160,7 @@ enum EmailId {
   FreeToReserve
   WelcomeToSeasons
   ReturnReminder
+  PriorityAccess
 }
 
 enum PackageTransitEventStatus {
