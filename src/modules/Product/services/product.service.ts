@@ -455,6 +455,8 @@ export class ProductService {
       modelSizeName,
       tags,
       status,
+      variants,
+      photographyStatus,
       ...updateData
     } = data
     let functionIDs
@@ -469,6 +471,9 @@ export class ProductService {
           slug
           type
           status
+          variants {
+            id
+          }
           brand {
             id
             brandCode
@@ -485,6 +490,18 @@ export class ProductService {
       throw new ApolloError(
         "Unable to unstore a product. Code needs to be written"
       )
+    }
+    if (
+      !!status &&
+      status === "Available" &&
+      (!product?.variants?.length || photographyStatus !== "Done")
+    ) {
+      throw new ApolloError(
+        "Can not set product status to Available. Check that there are product variants and the photography status is done."
+      )
+    }
+    if (!!status && status === "Available" && product.status !== "Available") {
+      updateData.publishedAt = DateTime.local().toISO()
     }
     if (functions) {
       functionIDs = await this.upsertFunctions(functions)
