@@ -209,7 +209,7 @@ export class CustomerService {
 
     let status = "Waitlisted" as TriageCustomerResult
     if (
-      process.env.AutomaticAdmissions &&
+      process.env.AUTOMATIC_ADMISSIONS === "true" &&
       this.admissions.weServiceZipcode(
         customer.detail.shippingAddress.zipCode
       ) &&

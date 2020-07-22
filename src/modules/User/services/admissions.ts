@@ -1,20 +1,23 @@
-import { Customer, User } from "@app/prisma"
-import { ShippingService } from "@modules/Shipping/services/shipping.service"
+import * as fs from "fs"
+
+import { Customer } from "@app/prisma"
 import { Injectable } from "@nestjs/common"
 import { PrismaService } from "@prisma/prisma.service"
-
-import { AuthService } from "./auth.service"
+import zipcodes from "zipcodes"
 
 @Injectable()
 export class AdmissionsService {
-  constructor(
-    private readonly authService: AuthService,
-    private readonly prisma: PrismaService,
-    private readonly shippingService: ShippingService
-  ) {}
-  // TODO: Write function
+  constructor(private readonly prisma: PrismaService) {}
+
   weServiceZipcode(zipcode: string): boolean {
-    return false
+    const state = zipcodes.lookup(zipcode)?.state
+    let { states } = JSON.parse(
+      fs.readFileSync(
+        process.cwd() + "/src/modules/User/admissableStates.json",
+        "utf-8"
+      )
+    )
+    return states.includes(state)
   }
 
   // TODO: Write function
