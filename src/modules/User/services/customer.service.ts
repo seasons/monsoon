@@ -10,14 +10,18 @@ import {
 import { PrismaService } from "@prisma/prisma.service"
 import { ApolloError } from "apollo-server"
 
+import { AdmissionsService } from "./admissions"
 import { AuthService } from "./auth.service"
+
+type TriageCustomerResult = "Waitlisted" | "Authorized"
 
 @Injectable()
 export class CustomerService {
   constructor(
     private readonly authService: AuthService,
     private readonly prisma: PrismaService,
-    private readonly shippingService: ShippingService
+    private readonly shippingService: ShippingService,
+    private readonly admissions: AdmissionsService
   ) {}
 
   async setCustomerPrismaStatus(user: User, status: CustomerStatus) {
@@ -182,8 +186,20 @@ export class CustomerService {
 
   async triageCustomer(
     where: CustomerWhereUniqueInput
-  ): Promise<"Waitlisted" | "Authorized"> {
-    const customer = await this.prisma.client.customer(where)
+  ): Promise<TriageCustomerResult> {
+    const customer = await this.prisma.binding.query.customer(
+      { where },
+      `{
+        status
+        detail {
+          shippingAddress {
+            zipCode
+          }
+          topSizes
+          waistSizes
+        }
+      }`
+    )
 
     if (!["Created", "Invited"].includes(customer.status)) {
       throw new ApolloError(
@@ -191,10 +207,22 @@ export class CustomerService {
       )
     }
 
+    let status = "Waitlisted" as TriageCustomerResult
+    if (
+      process.env.AutomaticAdmissions &&
+      this.admissions.weServiceZipcode(
+        customer.detail.shippingAddress.zipCode
+      ) &&
+      this.admissions.belowWeeklyNewUsersOpsThreshold() &&
+      this.admissions.haveSufficientInventoryToServiceCustomer(customer)
+    ) {
+      status = "Authorized"
+    }
+
     await this.prisma.client.updateCustomer({
       where,
-      data: { status: "Waitlisted" },
+      data: { status },
     })
-    return "Waitlisted"
+    return status
   }
 }
