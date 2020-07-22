@@ -95,6 +95,7 @@ export class ShippoController {
             },
             `{
               id
+              status
               sentPackage {
                 transactionID
               }
@@ -104,6 +105,11 @@ export class ShippoController {
           }`
           )
         )
+
+        if (reservation.status === "Completed") {
+          break
+        }
+
         const phase = this.reservationPhase(reservation, transactionID)
 
         const reservationStatus = this.convertShippoToReservationStatus(
@@ -111,6 +117,13 @@ export class ShippoController {
           subStatus,
           phase
         )
+
+        try {
+          await this.updateLastLocation(reservationStatus, reservation, phase)
+        } catch (e) {
+          this.logger.error("Error while updating last location")
+          this.logger.error(e)
+        }
 
         await this.prisma.client.updateReservation({
           where: { id: reservation.id },
@@ -134,6 +147,78 @@ export class ShippoController {
       return "BusinessToCustomer"
     }
     return "CustomerToBusiness"
+  }
+
+  async updateLastLocation(
+    reservationStatus: ReservationStatus,
+    reservation: ReservationWithPackage,
+    phase: ReservationPhase
+  ) {
+    if (reservationStatus === "Delivered") {
+      const reservationWithData = await this.prisma.binding.query.reservation(
+        { where: { id: reservation.id } },
+        `
+        {
+          id
+          customer {
+            id
+          }
+          products {
+            id
+          }
+        }
+      `
+      )
+
+      let location
+      if (phase === "BusinessToCustomer") {
+        const customerWithShippingAddress = await this.prisma.binding.query.customer(
+          { where: { id: reservationWithData.customer.id } },
+          `
+          {
+            id
+            detail {
+              id
+              shippingAddress {
+                id
+              }
+            }
+          }
+        `
+        )
+        location = customerWithShippingAddress.detail.shippingAddress
+      } else if (phase === "CustomerToBusiness") {
+        location = await this.prisma.client.location({
+          slug:
+            process.env.SEASONS_CLEANER_LOCATION_SLUG ||
+            "seasons-cleaners-official",
+        })
+      }
+
+      reservationWithData.products?.forEach(async product => {
+        await this.prisma.client.updatePhysicalProduct({
+          where: { id: product.id },
+          data: {
+            location: {
+              connect: {
+                id: location.id,
+              },
+            },
+          },
+        })
+      })
+
+      await this.prisma.client.updateReservation({
+        where: { id: reservation.id },
+        data: {
+          lastLocation: {
+            connect: {
+              id: location.id,
+            },
+          },
+        },
+      })
+    }
   }
 
   convertShippoToReservationStatus(

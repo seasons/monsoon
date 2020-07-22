@@ -13,6 +13,15 @@
     },
     "data": { "route": "Faq" }
   },
+  "CompleteAccount": {
+    "alert": {
+      "title": "You're In",
+      "body": "You've been invited to complete your sign up and reserve your first order"
+    },
+    "data": {
+      "route": "Account"
+    }
+  },
   "NewBlogPost": {
     "alert": {
       "title": "Blog Post: {{{category}}}",

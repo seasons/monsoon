@@ -42,15 +42,19 @@ export class EmailService {
   }
 
   async sendAuthorizedToSubscribeEmail(user: User) {
-    const idHash = this.utils.encryptUserIDHash(user.id)
     await this.sendTransactionalEmail({
       to: user.email,
-      data: this.data.completeAccount(
-        user.firstName,
-        `${process.env.SEEDLING_URL}/complete?idHash=${idHash}`
-      ),
+      data: this.data.completeAccount(user.firstName),
     })
     await this.storeEmailReceipt("CompleteAccount", user.id)
+  }
+
+  async sendPriorityAccessEmail(user: User) {
+    await this.sendTransactionalEmail({
+      to: user.email,
+      data: this.data.priorityAccess({ name: user.firstName }),
+    })
+    await this.storeEmailReceipt("PriorityAccess", user.id)
   }
 
   async sendReservationConfirmationEmail(

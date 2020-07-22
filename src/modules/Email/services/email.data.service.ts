@@ -81,24 +81,35 @@ export class EmailDataProvider {
     }
   }
 
-  completeAccount(firstName, url) {
+  completeAccount(firstName) {
     return {
       email: {
         body: {
           paragraphs: [
             {
-              html:
-                `Hey ${firstName}, thanks for waiting. We're ready for you. ` +
-                `Tap the button below to choose your membership plan, get the beta app and start reserving.`,
+              html: `Hey ${firstName}!`,
             },
             {
               html:
-                `Heads up -- due to demand, we may need to give your spot to someone` +
-                ` else if you don't choose your plan within the next 48 hours.`,
+                `You're receiving this email because you created an account and joined our waitlist. ` +
+                `We really appreciate your patience and are excited to extend you an invite!`,
+            },
+            {
+              html:
+                `To choose your plan and start reserving, download or update the Seasons app below, login ` +
+                `and visit your profile. If you have any questions or need any help, contact us at ${process.env.MAIN_CONTACT_EMAIL}.`,
+            },
+            {
+              html: `For a limited time, enjoy $30 off of your first month using code: NEW30 at checkout.`,
             },
             { html: "Thanks,<br>The Seasons Team" },
+            {
+              html:
+                `P.S. Due to demand, we may have to pass along your invite to the next person in line ` +
+                `if you don't finish signing up in the next 72 hours.`,
+            },
           ],
-          button: { text: "Choose plan", url },
+          button: { text: "Get the App", url: process.env.APP_URL },
         },
         prefooter: {
           paragraphs: [
@@ -142,26 +153,12 @@ export class EmailDataProvider {
           paragraphs: [
             {
               html:
-                `Hey ${firstName}, thank you so much for signing up. We're excited ` +
-                `you're here. As a Founding Member, you'll be the first to know about` +
+                `Hey ${firstName},<br><br>Thank you so much for signing up. We're excited ` +
+                `you're here. You'll be the first to know about` +
                 ` exclusive features, products and restocks.`,
             },
             {
-              html:
-                `We're still actively working on the beta app. If you have any ideas` +
-                ` or thoughts about the service, give us your feedback! Good or bad.` +
-                ` Just write to ${process.env.MAIN_CONTACT_EMAIL}`,
-            },
-            {
-              html:
-                '<b style="color:#000000">How to install the app and reserve your first three pieces</b>',
-            },
-            {
-              html:
-                `<ol><li>View this e-mail on your iOS device.</li><li>If you don\'t` +
-                ` already have it, download the <a href="${process.env.TESTFLIGHT_URL}">testflight app</a>.` +
-                `</li><li><a href="${process.env.TESTFLIGHT_URL}">Click here</a> to install` +
-                ` the seasons app on testflight.</li><li>Login and start reserving!</li></ol>`,
+              html: `If you have any questions or feedback, we'd love to hear from you at ${process.env.MAIN_CONTACT_EMAIL}`,
             },
           ],
         },
@@ -247,6 +244,29 @@ export class EmailDataProvider {
               html: `If you have any questions, reach out to ${process.env.MAIN_CONTACT_EMAIL}.`,
             },
           ],
+        },
+      },
+    }
+  }
+
+  priorityAccess({ name }) {
+    return {
+      email: {
+        title: `Your priority access`,
+        subject: `Your priority access`,
+        body: {
+          paragraphs: [
+            { html: `Hey ${name}!` },
+            {
+              html: `You're receiving this email because you've been given priority access to Seasons.`,
+            },
+            {
+              html:
+                `To finish creating your account and start reserving, download or update the Seasons app below and login. ` +
+                `If you have any questions or need any help, contact us at membership@seasons.nyc.`,
+            },
+          ],
+          button: { text: "Get the App", url: process.env.APP_URL },
         },
       },
     }
