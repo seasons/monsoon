@@ -209,7 +209,7 @@ type Product {
   isSaved: Boolean
   createdAt: DateTime!
   updatedAt: DateTime!
-  publishedAt: DateTime!
+  publishedAt: DateTime
 }
 
 input UpsertProductInput {
