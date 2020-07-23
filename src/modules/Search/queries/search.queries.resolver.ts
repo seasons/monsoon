@@ -4,12 +4,18 @@ import { SearchService } from "../services/search.service"
 
 @Resolver()
 export class SearchQueriesResolver {
-  constructor(private readonly searchService: SearchService) {}
+  constructor(private readonly service: SearchService) {}
 
   @Query()
   async search(@Args() { query }) {
-    const indexes = ["brands", "products"]
+    const result = await this.service.query(query)
 
-    return []
+    const data = result.map(data => {
+      return {
+        kindOf: data.kindOf,
+        data,
+      }
+    })
+    return data
   }
 }

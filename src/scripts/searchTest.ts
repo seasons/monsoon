@@ -7,7 +7,8 @@ const run = async () => {
   const ps = new PrismaService()
   const searchService = new SearchService(ps)
 
-  await searchService.indexData()
+  // await searchService.indexData()
+  await searchService.query("Prada")
 }
 
 run()

@@ -6,9 +6,25 @@ input SearchOptions {
   includeTypes: [String]
 }
 
-union SearchResultType = Product | Brand
+enum SearchResultType {
+  Product
+  Brand
+}
+
+union SearchResultData = ProductSearchResultData
 
 type SearchResult {
-  data: SearchResultType!
-  score: Float
+  kindOf: SearchResultType!
+  data: SearchResultData!
+}
+
+type ProductSearchResultData {
+  id: ID!
+  slug: String!
+  name: String!
+  brandName: String!
+  image: String
+  description: String
+  variantsCount: Int!
+  physicalProductsCount: Int!
 }
