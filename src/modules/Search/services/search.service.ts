@@ -1,6 +1,8 @@
+import { ImageService } from "@app/modules/Image/services/image.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Injectable } from "@nestjs/common"
 import { pick, rest } from "lodash"
+import moment from "moment"
 
 import { AlgoliaService } from "./algolia.service"
 
@@ -8,7 +10,8 @@ import { AlgoliaService } from "./algolia.service"
 export class SearchService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly algolia: AlgoliaService
+    private readonly algolia: AlgoliaService,
+    private readonly image: ImageService
   ) {}
 
   async indexData() {
@@ -33,6 +36,7 @@ export class SearchService {
         images {
           url
           __typename
+          updatedAt
         }
         retailPrice
         brand {
@@ -63,45 +67,59 @@ export class SearchService {
     `
     )
 
-    const productsForIndexing = products.map(
-      ({
-        id,
-        name,
-        slug,
-        description,
-        brand,
-        category,
-        images,
-        variants,
-        type,
-        tags,
-        status,
-        createdAt,
-        publishedAt,
-      }) => {
-        const variantsCount = variants.length
-        const physicalProductsCount = variants
-          .map((variant: any) => variant.physicalProducts.length)
-          .reduce((a, b) => a + b, 0)
-
-        return {
-          objectID: id,
-          kindOf: "Product",
+    const productsForIndexing = await Promise.all(
+      products.map(
+        async ({
+          id,
           name,
-          brandName: brand.name,
-          image: images?.[0]?.url,
-          description,
-          variantsCount,
-          physicalProductsCount,
           slug,
+          description,
+          brand,
+          category,
+          images,
+          variants,
           type,
+          tags,
           status,
-          categoryName: category.name,
-          tags: tags.map(a => a.name),
-          createdAt: new Date(createdAt).getMilliseconds() / 1000,
-          publishedAt: new Date(publishedAt).getMilliseconds() / 1000,
+          createdAt,
+          publishedAt,
+        }) => {
+          const variantsCount = variants.length
+          const physicalProductsCount = variants
+            .map((variant: any) => variant.physicalProducts.length)
+            .reduce((a, b) => a + b, 0)
+
+          const image = images?.[0]
+          const imageURL = image?.url
+          const updatedAt = image?.updatedAt as string
+
+          let url = "" //
+
+          try {
+            url = await this.image.resizeImage(imageURL, "Small", {
+              updatedAt,
+            })
+          } catch (err) {}
+
+          return {
+            objectID: id,
+            kindOf: "Product",
+            name,
+            brandName: brand.name,
+            image: url,
+            description,
+            variantsCount,
+            physicalProductsCount,
+            slug,
+            type,
+            status,
+            categoryName: category.name,
+            tags: tags.map(a => a.name),
+            createdAt: new Date(createdAt).getMilliseconds() / 1000,
+            publishedAt: new Date(publishedAt).getMilliseconds() / 1000,
+          }
         }
-      }
+      )
     )
 
     return this.algolia.index.saveObjects(productsForIndexing, {

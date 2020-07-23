@@ -1,4 +1,4 @@
-import { SearchService } from "@app/modules/Search"
+import { SearchService } from "@app/modules/Search/services/search.service"
 import { Injectable, Logger } from "@nestjs/common"
 import { Cron, CronExpression } from "@nestjs/schedule"
 

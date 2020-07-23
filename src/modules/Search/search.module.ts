@@ -1,4 +1,5 @@
 import { PrismaModule } from "@app/prisma/prisma.module"
+import { ImageService } from "@modules/Image/services/image.service"
 import { Module } from "@nestjs/common"
 
 import { SearchResultDataFieldsResolver } from "./fields/searchResultData.fields.resolver"
@@ -12,6 +13,7 @@ import { SearchService } from "./services/search.service"
     SearchService,
     SearchQueriesResolver,
     AlgoliaService,
+    ImageService,
   ],
   imports: [PrismaModule],
   exports: [SearchService],
