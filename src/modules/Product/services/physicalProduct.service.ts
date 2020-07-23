@@ -76,6 +76,12 @@ export class PhysicalProductService {
       if (!data.inventoryStatus) {
         data.inventoryStatus = "Reservable"
       }
+      const location = await this.prisma.client.location({
+        slug:
+          process.env.SEASONS_CLEANER_LOCATION_SLUG ||
+          "seasons-cleaners-official",
+      })
+      data.location = { connect: { id: location.id } }
     }
 
     if (this.changingInventoryStatus(data, physProdBeforeUpdate)) {
