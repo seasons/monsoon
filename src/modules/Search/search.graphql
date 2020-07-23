@@ -14,7 +14,7 @@ enum SearchResultType {
 
 union SearchResultData =
     ProductSearchResultData
-  | PhysicalProductSearchResultsData
+  | PhysicalProductSearchResultData
 
 type SearchResult {
   kindOf: SearchResultType!
@@ -32,7 +32,7 @@ type ProductSearchResultData {
   physicalProductsCount: Int!
 }
 
-type PhysicalProductSearchResultsData {
+type PhysicalProductSearchResultData {
   id: ID!
   productName: String!
   seasonsUID: String!
