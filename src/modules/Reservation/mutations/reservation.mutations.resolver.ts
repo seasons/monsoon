@@ -38,6 +38,7 @@ export class ReservationMutationsResolver {
       event: "Reserved Items",
       properties: {
         email: user.email,
+        reservationID: returnData.id,
         items,
         units: returnData.products.map(a => a.seasonsUID),
       },

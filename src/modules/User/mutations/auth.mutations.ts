@@ -53,6 +53,7 @@ export class AuthMutationsResolver {
       properties: {
         name: `${user.firstName} ${user.lastName}`,
         email: `${user.email}`,
+        customerID: customer.id,
       },
     })
 
