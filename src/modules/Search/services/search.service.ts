@@ -1,5 +1,6 @@
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Injectable } from "@nestjs/common"
+import { pick, rest } from "lodash"
 
 import { AlgoliaService } from "./algolia.service"
 
@@ -103,7 +104,7 @@ export class SearchService {
       }
     )
 
-    return this.algolia.index.replaceAllObjects(productsForIndexing, {
+    return this.algolia.index.saveObjects(productsForIndexing, {
       autoGenerateObjectIDIfNotExist: false,
     })
   }
@@ -123,5 +124,38 @@ export class SearchService {
     )
   }
 
-  async indexPhysicalProducts() {}
+  async indexPhysicalProducts() {
+    const physicalProducts = await this.prisma.binding.query.physicalProducts(
+      {},
+      `{
+        id
+        seasonsUID
+        inventoryStatus
+        sequenceNumber
+        productVariant {
+          product {
+            name
+          }
+        }
+        __typename
+      }
+    `
+    )
+
+    const physicalProductsForIndexing = physicalProducts.map(
+      ({ id, ...data }) => {
+        return {
+          kindOf: "PhysicalProduct",
+          objectID: id,
+          productName: data.productVariant.product.name,
+          barcode: `SZNS` + `${data.sequenceNumber}`.padStart(5, "0"),
+          ...pick(data, ["seasonsUID", "inventoryStatus"]),
+        }
+      }
+    )
+
+    return this.algolia.index.saveObjects(physicalProductsForIndexing, {
+      autoGenerateObjectIDIfNotExist: false,
+    })
+  }
 }

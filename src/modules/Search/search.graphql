@@ -9,9 +9,12 @@ input SearchOptions {
 enum SearchResultType {
   Product
   Brand
+  PhysicalProduct
 }
 
-union SearchResultData = ProductSearchResultData
+union SearchResultData =
+    ProductSearchResultData
+  | PhysicalProductSearchResultsData
 
 type SearchResult {
   kindOf: SearchResultType!
@@ -27,4 +30,12 @@ type ProductSearchResultData {
   description: String
   variantsCount: Int!
   physicalProductsCount: Int!
+}
+
+type PhysicalProductSearchResultsData {
+  id: ID!
+  productName: String!
+  seasonsUID: String!
+  inventoryStatus: InventoryStatus
+  barcode: String!
 }

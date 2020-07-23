@@ -12,6 +12,7 @@ export class SearchScheduledJobs {
   async indexProducts() {
     this.logger.log("Index products job beginning")
     await this.search.indexProducts()
+    await this.search.indexPhysicalProducts()
     this.logger.log("Index products job completed")
   }
 }
