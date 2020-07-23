@@ -39,6 +39,9 @@ export class ChargebeeQueriesResolver {
       userId: user.id,
       event: "Opened Hosted Checkout",
       properties: {
+        email,
+        firstName,
+        lastName,
         plan: planID,
       },
     })
