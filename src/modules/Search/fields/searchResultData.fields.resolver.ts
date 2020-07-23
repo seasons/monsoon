@@ -1,7 +1,7 @@
 import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
 
 @Resolver("SearchResultData")
-export class SearchResultTypeFieldsResolver {
+export class SearchResultDataFieldsResolver {
   @ResolveField()
   __resolveType(@Parent() obj) {
     switch (obj.kindOf) {

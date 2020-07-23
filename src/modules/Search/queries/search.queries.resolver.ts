@@ -13,7 +13,7 @@ export class SearchQueriesResolver {
     const data = result.map(data => {
       return {
         kindOf: data.kindOf,
-        data,
+        data: { id: data.objectID, ...data },
       }
     })
     return data
