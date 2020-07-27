@@ -7,6 +7,7 @@ import {
 } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
 import { ForbiddenError, UserInputError } from "apollo-server"
+import axios from "axios"
 import { head } from "lodash"
 import request from "request"
 
@@ -324,7 +325,47 @@ export class AuthService {
     return user
   }
 
+  private async getCityAndStateFromZipCode(zipCode) {
+    const response = await axios.get(
+      `https://maps.googleapis.com/maps/api/geocode/json?key=${process.env.GOOGLE_MAPS_KEY}&address=${zipCode}`
+    )
+
+    const components = response?.data?.results?.[0].address_components
+    let state = ""
+    let city = ""
+    components.forEach(component => {
+      component.types.forEach(type => {
+        if (type === "sublocality" && !!component.long_name) {
+          city = component.long_name
+        }
+        if (type === "locality" && !city) {
+          city = component.long_name
+        }
+        // Occasionally there is no locality or sublocality and only a neighborhood for city
+        if (type === "neighborhood" && !city) {
+          city = component.long_name
+        }
+        if (type === "administrative_area_level_1") {
+          state = component.long_name
+        }
+      })
+    })
+    return { city, state }
+  }
+
   private async createPrismaCustomerForExistingUser(userID, details, status) {
+    if (details?.shippingAddress?.create?.zipCode) {
+      try {
+        const { city, state } = (await this.getCityAndStateFromZipCode(
+          details?.shippingAddress?.create?.zipCode
+        )) as any
+        details.shippingAddress.create.city = city
+        details.shippingAddress.create.state = state
+      } catch (error) {
+        throw new Error("Error looking up city and state from zipCode")
+      }
+    }
+
     return await this.prisma.client.createCustomer({
       user: {
         connect: { id: userID },

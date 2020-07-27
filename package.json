@@ -67,6 +67,7 @@
     "apollo-server-express": "^2.15.0",
     "auth0": "^2.20.0",
     "aws-sdk": "^2.619.0",
+    "axios": "^0.19.2",
     "babel-plugin-parameter-decorator": "^1.0.15",
     "babel-polyfill": "^6.26.0",
     "bcryptjs": "2.4.3",
