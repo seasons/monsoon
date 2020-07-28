@@ -39,7 +39,7 @@ export class ProductService {
     private readonly imageService: ImageService,
     private readonly productUtils: ProductUtilsService,
     private readonly productVariantService: ProductVariantService,
-    private readonly physicalProductUtilsService: PhysicalProductUtilsService,
+    private readonly physicalProductUtils: PhysicalProductUtilsService,
     private readonly utils: UtilsService
   ) {}
 
@@ -281,13 +281,14 @@ export class ProductService {
       where: { slug },
     })
 
-    const sequenceNumbers = await this.physicalProductUtilsService.groupedSequenceNumbers(
+    const sequenceNumbers = await this.physicalProductUtils.groupedSequenceNumbers(
       input.variants
     )
 
     await Promise.all(
       input.variants.map((a, i) => {
-        return this.deepUpsertProductVariant(sequenceNumbers[i], {
+        return this.deepUpsertProductVariant({
+          sequenceNumbers: sequenceNumbers[i],
           variant: a,
           productID: product.id,
           ...pick(input, ["type", "colorCode", "retailPrice", "status"]),
@@ -577,24 +578,23 @@ export class ProductService {
    * @param retailPrice: retailPrice of the product variant
    * @param productID: id of the parent product
    */
-  async deepUpsertProductVariant(
-    groupedSequenceNumbers,
-    {
-      variant,
-      type,
-      colorCode,
-      retailPrice,
-      productID,
-      status,
-    }: {
-      variant
-      type: ProductType
-      colorCode: string
-      retailPrice?: number
-      productID: string
-      status: ProductStatus
-    }
-  ) {
+  async deepUpsertProductVariant({
+    sequenceNumbers,
+    variant,
+    type,
+    colorCode,
+    retailPrice,
+    productID,
+    status,
+  }: {
+    sequenceNumbers
+    variant
+    type: ProductType
+    colorCode: string
+    retailPrice?: number
+    productID: string
+    status: ProductStatus
+  }) {
     const internalSize = await this.productUtils.deepUpsertSize({
       slug: `${variant.sku}-internal`,
       type,
@@ -664,7 +664,7 @@ export class ProductService {
     })
 
     variant.physicalProducts.forEach(async (physProdData, index) => {
-      const sequenceNumber = groupedSequenceNumbers[index]
+      const sequenceNumber = sequenceNumbers[index]
       await this.prisma.client.upsertPhysicalProduct({
         where: { seasonsUID: physProdData.seasonsUID },
         create: {

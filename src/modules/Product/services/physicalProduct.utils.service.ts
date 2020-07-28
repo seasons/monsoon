@@ -100,6 +100,17 @@ export class PhysicalProductUtilsService {
     )
   }
 
+  async nextSequenceNumber(): Promise<number> {
+    const physicalProduct = head(
+      await this.prisma.client.physicalProducts({
+        first: 1,
+        orderBy: "sequenceNumber_DESC",
+      })
+    )
+
+    return physicalProduct.sequenceNumber + 1
+  }
+
   async groupedSequenceNumbers(inputs): Promise<any> {
     const lastPhysicalProduct = head(
       await this.prisma.client.physicalProducts({
