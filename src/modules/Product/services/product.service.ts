@@ -6,7 +6,6 @@ import { S3_BASE } from "@modules/Image/services/image.service"
 import { Injectable } from "@nestjs/common"
 import {
   BagItem,
-  BottomSizeCreateInput,
   BottomSizeType,
   Customer,
   ID_Input,
@@ -16,7 +15,6 @@ import {
   ProductFunction,
   ProductStatus,
   ProductType,
-  ProductUpdateInput,
   ProductWhereUniqueInput,
   RecentlyViewedProduct,
   Tag,
@@ -41,7 +39,7 @@ export class ProductService {
     private readonly imageService: ImageService,
     private readonly productUtils: ProductUtilsService,
     private readonly productVariantService: ProductVariantService,
-    private readonly physicalProductUtils: PhysicalProductUtilsService,
+    private readonly physicalProductUtilsService: PhysicalProductUtilsService,
     private readonly utils: UtilsService
   ) {}
 
@@ -282,14 +280,19 @@ export class ProductService {
       update: data,
       where: { slug },
     })
+
+    const sequenceNumbers = await this.physicalProductUtilsService.groupedSequenceNumbers(
+      input.variants
+    )
+
     await Promise.all(
-      input.variants.map(a =>
-        this.deepUpsertProductVariant({
+      input.variants.map((a, i) => {
+        return this.deepUpsertProductVariant(sequenceNumbers[i], {
           variant: a,
           productID: product.id,
           ...pick(input, ["type", "colorCode", "retailPrice", "status"]),
         })
-      )
+      })
     )
     return product
   }
@@ -574,21 +577,24 @@ export class ProductService {
    * @param retailPrice: retailPrice of the product variant
    * @param productID: id of the parent product
    */
-  async deepUpsertProductVariant({
-    variant,
-    type,
-    colorCode,
-    retailPrice,
-    productID,
-    status,
-  }: {
-    variant
-    type: ProductType
-    colorCode: string
-    retailPrice?: number
-    productID: string
-    status: ProductStatus
-  }) {
+  async deepUpsertProductVariant(
+    groupedSequenceNumbers,
+    {
+      variant,
+      type,
+      colorCode,
+      retailPrice,
+      productID,
+      status,
+    }: {
+      variant
+      type: ProductType
+      colorCode: string
+      retailPrice?: number
+      productID: string
+      status: ProductStatus
+    }
+  ) {
     const internalSize = await this.productUtils.deepUpsertSize({
       slug: `${variant.sku}-internal`,
       type,
@@ -657,17 +663,18 @@ export class ProductService {
       update: data,
     })
 
-    for (const physProdData of variant.physicalProducts) {
+    variant.physicalProducts.forEach(async (physProdData, index) => {
+      const sequenceNumber = groupedSequenceNumbers[index]
       await this.prisma.client.upsertPhysicalProduct({
         where: { seasonsUID: physProdData.seasonsUID },
         create: {
           ...physProdData,
-          sequenceNumber: await this.physicalProductUtils.nextSequenceNumber(),
+          sequenceNumber,
           productVariant: { connect: { id: prodVar.id } },
         },
         update: physProdData,
       })
-    }
+    })
 
     return prodVar
   }
