@@ -6,7 +6,6 @@ import { S3_BASE } from "@modules/Image/services/image.service"
 import { Injectable } from "@nestjs/common"
 import {
   BagItem,
-  BottomSizeCreateInput,
   BottomSizeType,
   Customer,
   ID_Input,
@@ -16,7 +15,6 @@ import {
   ProductFunction,
   ProductStatus,
   ProductType,
-  ProductUpdateInput,
   ProductWhereUniqueInput,
   RecentlyViewedProduct,
   Tag,
@@ -282,14 +280,20 @@ export class ProductService {
       update: data,
       where: { slug },
     })
+
+    const sequenceNumbers = await this.physicalProductUtils.groupedSequenceNumbers(
+      input.variants
+    )
+
     await Promise.all(
-      input.variants.map(a =>
-        this.deepUpsertProductVariant({
+      input.variants.map((a, i) => {
+        return this.deepUpsertProductVariant({
+          sequenceNumbers: sequenceNumbers[i],
           variant: a,
           productID: product.id,
           ...pick(input, ["type", "colorCode", "retailPrice", "status"]),
         })
-      )
+      })
     )
     return product
   }
@@ -575,6 +579,7 @@ export class ProductService {
    * @param productID: id of the parent product
    */
   async deepUpsertProductVariant({
+    sequenceNumbers,
     variant,
     type,
     colorCode,
@@ -582,6 +587,7 @@ export class ProductService {
     productID,
     status,
   }: {
+    sequenceNumbers
     variant
     type: ProductType
     colorCode: string
@@ -657,17 +663,18 @@ export class ProductService {
       update: data,
     })
 
-    for (const physProdData of variant.physicalProducts) {
+    variant.physicalProducts.forEach(async (physProdData, index) => {
+      const sequenceNumber = sequenceNumbers[index]
       await this.prisma.client.upsertPhysicalProduct({
         where: { seasonsUID: physProdData.seasonsUID },
         create: {
           ...physProdData,
-          sequenceNumber: await this.physicalProductUtils.nextSequenceNumber(),
+          sequenceNumber,
           productVariant: { connect: { id: prodVar.id } },
         },
         update: physProdData,
       })
-    }
+    })
 
     return prodVar
   }
