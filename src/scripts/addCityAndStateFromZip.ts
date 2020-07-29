@@ -10,7 +10,7 @@ const run = async () => {
       `https://maps.googleapis.com/maps/api/geocode/json?key=${process.env.GOOGLE_MAPS_KEY}&address=${zipCode}`
     )
 
-    const components = response?.data?.results?.[0].address_components
+    const components = response?.data?.results?.[0]?.address_components
     let state = ""
     let city = ""
     components.forEach(component => {
@@ -29,6 +29,9 @@ const run = async () => {
           state = component.long_name
         }
       })
+      if (!city && response?.data?.results?.[0]?.postcode_localities?.[0]) {
+        city = response?.data?.results?.[0]?.postcode_localities?.[0]
+      }
     })
     if (!!city && !!state) {
       await ps.client.updateLocation({
@@ -40,6 +43,7 @@ const run = async () => {
       })
     } else {
       console.log("not updated: ", locationID)
+      console.log("results: ", response?.data?.results)
     }
   }
 

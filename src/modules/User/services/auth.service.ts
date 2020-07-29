@@ -349,6 +349,9 @@ export class AuthService {
           state = component.long_name
         }
       })
+      if (!city && response?.data?.results?.[0]?.postcode_localities?.[0]) {
+        city = response?.data?.results?.[0]?.postcode_localities?.[0]
+      }
     })
     return { city, state }
   }
