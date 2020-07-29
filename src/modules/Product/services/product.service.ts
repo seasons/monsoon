@@ -240,6 +240,7 @@ export class ProductService {
         "status",
         "season",
         "architecture",
+        "photographyStatus",
       ]),
       brand: {
         connect: { id: input.brandID },
