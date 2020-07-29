@@ -76,7 +76,7 @@ export class ProductVariantMutationsResolver {
 
     const variants = await Promise.all(
       inputs.map(async (input, index) => {
-        this.productService.deepUpsertProductVariant({
+        return this.productService.deepUpsertProductVariant({
           sequenceNumbers: sequenceNumbers[index],
           variant: input,
           colorCode: product.color.colorCode,
