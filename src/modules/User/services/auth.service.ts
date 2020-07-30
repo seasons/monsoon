@@ -365,7 +365,9 @@ export class AuthService {
         details.shippingAddress.create.city = city
         details.shippingAddress.create.state = state
       } catch (error) {
-        throw new Error("Error looking up city and state from zipCode")
+        throw new Error(
+          `Error looking up city and state from zipCode: ${error}`
+        )
       }
     }
 
