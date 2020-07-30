@@ -611,31 +611,10 @@ export class ProductService {
       },
     })
 
-    const manufacturerSizeIDs: { id: string }[] | null =
-      variant.manufacturerSizeNames &&
-      (await Promise.all(
-        variant.manufacturerSizeNames?.map(async sizeName => {
-          // sizeName is of the format "[size type] [size value]"", i.e. "WxL 32x30"
-          const [sizeType, sizeValue] = sizeName.split(" ")
-          const slug = `${variant.sku}-manufacturer-${sizeValue.replace(
-            "x",
-            ""
-          )}`
-          const size = await this.productUtils.deepUpsertSize({
-            slug,
-            type,
-            display: sizeName,
-            topSizeData: type === "Top" && {
-              letter: (sizeValue as LetterSize) || null,
-            },
-            bottomSizeData: type === "Bottom" && {
-              type: (sizeType as BottomSizeType) || null,
-              value: sizeValue || "",
-            },
-          })
-          return { id: size.id }
-        })
-      ))
+    const manufacturerSizeIDs = await this.productVariantService.getManufacturerSizeIDs(
+      variant,
+      type
+    )
 
     const data = {
       productID,
