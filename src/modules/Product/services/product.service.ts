@@ -238,6 +238,7 @@ export class ProductService {
     // Create all necessary tag records
     const tagIDs = await this.upsertTags(input.tags)
 
+    debugger
     const data = {
       slug,
       ...pick(input, [
@@ -299,7 +300,7 @@ export class ProductService {
         return this.deepUpsertProductVariant({
           sequenceNumbers: sequenceNumbers[i],
           variant: a,
-          productID: product.id,
+          productID: slug,
           ...pick(input, ["type", "colorCode", "retailPrice", "status"]),
         })
       })
@@ -650,7 +651,7 @@ export class ProductService {
 
     const data = {
       productID,
-      product: { connect: { id: productID } },
+      product: { connect: { slug: productID } },
       color: {
         connect: { colorCode },
       },
