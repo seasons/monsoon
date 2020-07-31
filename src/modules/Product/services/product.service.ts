@@ -238,7 +238,6 @@ export class ProductService {
     // Create all necessary tag records
     const tagIDs = await this.upsertTags(input.tags)
 
-    debugger
     const data = {
       slug,
       ...pick(input, [
