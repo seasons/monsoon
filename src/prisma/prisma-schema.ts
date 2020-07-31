@@ -166,6 +166,14 @@ type AggregateStylePreferences {
   count: Int!
 }
 
+type AggregateStyleSubmission {
+  count: Int!
+}
+
+type AggregateStyleSubmissionReport {
+  count: Int!
+}
+
 type AggregateTag {
   count: Int!
 }
@@ -3637,6 +3645,11 @@ input ImageCreateManyInput {
   connect: [ImageWhereUniqueInput!]
 }
 
+input ImageCreateOneInput {
+  create: ImageCreateInput
+  connect: ImageWhereUniqueInput
+}
+
 type ImageEdge {
   node: Image!
   cursor: String!
@@ -3833,9 +3846,21 @@ input ImageUpdateManyWithWhereNestedInput {
   data: ImageUpdateManyDataInput!
 }
 
+input ImageUpdateOneRequiredInput {
+  create: ImageCreateInput
+  update: ImageUpdateDataInput
+  upsert: ImageUpsertNestedInput
+  connect: ImageWhereUniqueInput
+}
+
 input ImageUpdateWithWhereUniqueNestedInput {
   where: ImageWhereUniqueInput!
   data: ImageUpdateDataInput!
+}
+
+input ImageUpsertNestedInput {
+  update: ImageUpdateDataInput!
+  create: ImageCreateInput!
 }
 
 input ImageUpsertWithWhereUniqueNestedInput {
@@ -4837,6 +4862,18 @@ type Mutation {
   upsertStylePreferences(where: StylePreferencesWhereUniqueInput!, create: StylePreferencesCreateInput!, update: StylePreferencesUpdateInput!): StylePreferences!
   deleteStylePreferences(where: StylePreferencesWhereUniqueInput!): StylePreferences
   deleteManyStylePreferenceses(where: StylePreferencesWhereInput): BatchPayload!
+  createStyleSubmission(data: StyleSubmissionCreateInput!): StyleSubmission!
+  updateStyleSubmission(data: StyleSubmissionUpdateInput!, where: StyleSubmissionWhereUniqueInput!): StyleSubmission
+  updateManyStyleSubmissions(data: StyleSubmissionUpdateManyMutationInput!, where: StyleSubmissionWhereInput): BatchPayload!
+  upsertStyleSubmission(where: StyleSubmissionWhereUniqueInput!, create: StyleSubmissionCreateInput!, update: StyleSubmissionUpdateInput!): StyleSubmission!
+  deleteStyleSubmission(where: StyleSubmissionWhereUniqueInput!): StyleSubmission
+  deleteManyStyleSubmissions(where: StyleSubmissionWhereInput): BatchPayload!
+  createStyleSubmissionReport(data: StyleSubmissionReportCreateInput!): StyleSubmissionReport!
+  updateStyleSubmissionReport(data: StyleSubmissionReportUpdateInput!, where: StyleSubmissionReportWhereUniqueInput!): StyleSubmissionReport
+  updateManyStyleSubmissionReports(data: StyleSubmissionReportUpdateManyMutationInput!, where: StyleSubmissionReportWhereInput): BatchPayload!
+  upsertStyleSubmissionReport(where: StyleSubmissionReportWhereUniqueInput!, create: StyleSubmissionReportCreateInput!, update: StyleSubmissionReportUpdateInput!): StyleSubmissionReport!
+  deleteStyleSubmissionReport(where: StyleSubmissionReportWhereUniqueInput!): StyleSubmissionReport
+  deleteManyStyleSubmissionReports(where: StyleSubmissionReportWhereInput): BatchPayload!
   createTag(data: TagCreateInput!): Tag!
   updateTag(data: TagUpdateInput!, where: TagWhereUniqueInput!): Tag
   updateManyTags(data: TagUpdateManyMutationInput!, where: TagWhereInput): BatchPayload!
@@ -10817,6 +10854,12 @@ type Query {
   stylePreferences(where: StylePreferencesWhereUniqueInput!): StylePreferences
   stylePreferenceses(where: StylePreferencesWhereInput, orderBy: StylePreferencesOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [StylePreferences]!
   stylePreferencesesConnection(where: StylePreferencesWhereInput, orderBy: StylePreferencesOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): StylePreferencesConnection!
+  styleSubmission(where: StyleSubmissionWhereUniqueInput!): StyleSubmission
+  styleSubmissions(where: StyleSubmissionWhereInput, orderBy: StyleSubmissionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [StyleSubmission]!
+  styleSubmissionsConnection(where: StyleSubmissionWhereInput, orderBy: StyleSubmissionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): StyleSubmissionConnection!
+  styleSubmissionReport(where: StyleSubmissionReportWhereUniqueInput!): StyleSubmissionReport
+  styleSubmissionReports(where: StyleSubmissionReportWhereInput, orderBy: StyleSubmissionReportOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [StyleSubmissionReport]!
+  styleSubmissionReportsConnection(where: StyleSubmissionReportWhereInput, orderBy: StyleSubmissionReportOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): StyleSubmissionReportConnection!
   tag(where: TagWhereUniqueInput!): Tag
   tags(where: TagWhereInput, orderBy: TagOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Tag]!
   tagsConnection(where: TagWhereInput, orderBy: TagOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): TagConnection!
@@ -12682,6 +12725,373 @@ input StylePreferencesWhereUniqueInput {
   id: ID
 }
 
+type StyleSubmission {
+  id: ID!
+  user: User!
+  image: Image!
+  location: Location
+  products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
+  approved: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type StyleSubmissionConnection {
+  pageInfo: PageInfo!
+  edges: [StyleSubmissionEdge]!
+  aggregate: AggregateStyleSubmission!
+}
+
+input StyleSubmissionCreateInput {
+  id: ID
+  user: UserCreateOneWithoutStyleSubmissionsInput!
+  image: ImageCreateOneInput!
+  location: LocationCreateOneInput
+  products: ProductCreateManyInput
+  approved: Boolean
+}
+
+input StyleSubmissionCreateManyWithoutUserInput {
+  create: [StyleSubmissionCreateWithoutUserInput!]
+  connect: [StyleSubmissionWhereUniqueInput!]
+}
+
+input StyleSubmissionCreateOneInput {
+  create: StyleSubmissionCreateInput
+  connect: StyleSubmissionWhereUniqueInput
+}
+
+input StyleSubmissionCreateWithoutUserInput {
+  id: ID
+  image: ImageCreateOneInput!
+  location: LocationCreateOneInput
+  products: ProductCreateManyInput
+  approved: Boolean
+}
+
+type StyleSubmissionEdge {
+  node: StyleSubmission!
+  cursor: String!
+}
+
+enum StyleSubmissionOrderByInput {
+  id_ASC
+  id_DESC
+  approved_ASC
+  approved_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type StyleSubmissionPreviousValues {
+  id: ID!
+  approved: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type StyleSubmissionReport {
+  id: ID!
+  reporter: User!
+  reported: StyleSubmission!
+  status: StyleSubmissionReportStatus
+  reportedAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type StyleSubmissionReportConnection {
+  pageInfo: PageInfo!
+  edges: [StyleSubmissionReportEdge]!
+  aggregate: AggregateStyleSubmissionReport!
+}
+
+input StyleSubmissionReportCreateInput {
+  id: ID
+  reporter: UserCreateOneInput!
+  reported: StyleSubmissionCreateOneInput!
+  status: StyleSubmissionReportStatus
+}
+
+type StyleSubmissionReportEdge {
+  node: StyleSubmissionReport!
+  cursor: String!
+}
+
+enum StyleSubmissionReportOrderByInput {
+  id_ASC
+  id_DESC
+  status_ASC
+  status_DESC
+  reportedAt_ASC
+  reportedAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type StyleSubmissionReportPreviousValues {
+  id: ID!
+  status: StyleSubmissionReportStatus
+  reportedAt: DateTime!
+  updatedAt: DateTime!
+}
+
+enum StyleSubmissionReportStatus {
+  AwaitingReview
+  UnderReview
+  Reviewed
+}
+
+type StyleSubmissionReportSubscriptionPayload {
+  mutation: MutationType!
+  node: StyleSubmissionReport
+  updatedFields: [String!]
+  previousValues: StyleSubmissionReportPreviousValues
+}
+
+input StyleSubmissionReportSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: StyleSubmissionReportWhereInput
+  AND: [StyleSubmissionReportSubscriptionWhereInput!]
+  OR: [StyleSubmissionReportSubscriptionWhereInput!]
+  NOT: [StyleSubmissionReportSubscriptionWhereInput!]
+}
+
+input StyleSubmissionReportUpdateInput {
+  reporter: UserUpdateOneRequiredInput
+  reported: StyleSubmissionUpdateOneRequiredInput
+  status: StyleSubmissionReportStatus
+}
+
+input StyleSubmissionReportUpdateManyMutationInput {
+  status: StyleSubmissionReportStatus
+}
+
+input StyleSubmissionReportWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  reporter: UserWhereInput
+  reported: StyleSubmissionWhereInput
+  status: StyleSubmissionReportStatus
+  status_not: StyleSubmissionReportStatus
+  status_in: [StyleSubmissionReportStatus!]
+  status_not_in: [StyleSubmissionReportStatus!]
+  reportedAt: DateTime
+  reportedAt_not: DateTime
+  reportedAt_in: [DateTime!]
+  reportedAt_not_in: [DateTime!]
+  reportedAt_lt: DateTime
+  reportedAt_lte: DateTime
+  reportedAt_gt: DateTime
+  reportedAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [StyleSubmissionReportWhereInput!]
+  OR: [StyleSubmissionReportWhereInput!]
+  NOT: [StyleSubmissionReportWhereInput!]
+}
+
+input StyleSubmissionReportWhereUniqueInput {
+  id: ID
+}
+
+input StyleSubmissionScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  approved: Boolean
+  approved_not: Boolean
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [StyleSubmissionScalarWhereInput!]
+  OR: [StyleSubmissionScalarWhereInput!]
+  NOT: [StyleSubmissionScalarWhereInput!]
+}
+
+type StyleSubmissionSubscriptionPayload {
+  mutation: MutationType!
+  node: StyleSubmission
+  updatedFields: [String!]
+  previousValues: StyleSubmissionPreviousValues
+}
+
+input StyleSubmissionSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: StyleSubmissionWhereInput
+  AND: [StyleSubmissionSubscriptionWhereInput!]
+  OR: [StyleSubmissionSubscriptionWhereInput!]
+  NOT: [StyleSubmissionSubscriptionWhereInput!]
+}
+
+input StyleSubmissionUpdateDataInput {
+  user: UserUpdateOneRequiredWithoutStyleSubmissionsInput
+  image: ImageUpdateOneRequiredInput
+  location: LocationUpdateOneInput
+  products: ProductUpdateManyInput
+  approved: Boolean
+}
+
+input StyleSubmissionUpdateInput {
+  user: UserUpdateOneRequiredWithoutStyleSubmissionsInput
+  image: ImageUpdateOneRequiredInput
+  location: LocationUpdateOneInput
+  products: ProductUpdateManyInput
+  approved: Boolean
+}
+
+input StyleSubmissionUpdateManyDataInput {
+  approved: Boolean
+}
+
+input StyleSubmissionUpdateManyMutationInput {
+  approved: Boolean
+}
+
+input StyleSubmissionUpdateManyWithoutUserInput {
+  create: [StyleSubmissionCreateWithoutUserInput!]
+  delete: [StyleSubmissionWhereUniqueInput!]
+  connect: [StyleSubmissionWhereUniqueInput!]
+  set: [StyleSubmissionWhereUniqueInput!]
+  disconnect: [StyleSubmissionWhereUniqueInput!]
+  update: [StyleSubmissionUpdateWithWhereUniqueWithoutUserInput!]
+  upsert: [StyleSubmissionUpsertWithWhereUniqueWithoutUserInput!]
+  deleteMany: [StyleSubmissionScalarWhereInput!]
+  updateMany: [StyleSubmissionUpdateManyWithWhereNestedInput!]
+}
+
+input StyleSubmissionUpdateManyWithWhereNestedInput {
+  where: StyleSubmissionScalarWhereInput!
+  data: StyleSubmissionUpdateManyDataInput!
+}
+
+input StyleSubmissionUpdateOneRequiredInput {
+  create: StyleSubmissionCreateInput
+  update: StyleSubmissionUpdateDataInput
+  upsert: StyleSubmissionUpsertNestedInput
+  connect: StyleSubmissionWhereUniqueInput
+}
+
+input StyleSubmissionUpdateWithoutUserDataInput {
+  image: ImageUpdateOneRequiredInput
+  location: LocationUpdateOneInput
+  products: ProductUpdateManyInput
+  approved: Boolean
+}
+
+input StyleSubmissionUpdateWithWhereUniqueWithoutUserInput {
+  where: StyleSubmissionWhereUniqueInput!
+  data: StyleSubmissionUpdateWithoutUserDataInput!
+}
+
+input StyleSubmissionUpsertNestedInput {
+  update: StyleSubmissionUpdateDataInput!
+  create: StyleSubmissionCreateInput!
+}
+
+input StyleSubmissionUpsertWithWhereUniqueWithoutUserInput {
+  where: StyleSubmissionWhereUniqueInput!
+  update: StyleSubmissionUpdateWithoutUserDataInput!
+  create: StyleSubmissionCreateWithoutUserInput!
+}
+
+input StyleSubmissionWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  user: UserWhereInput
+  image: ImageWhereInput
+  location: LocationWhereInput
+  products_every: ProductWhereInput
+  products_some: ProductWhereInput
+  products_none: ProductWhereInput
+  approved: Boolean
+  approved_not: Boolean
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [StyleSubmissionWhereInput!]
+  OR: [StyleSubmissionWhereInput!]
+  NOT: [StyleSubmissionWhereInput!]
+}
+
+input StyleSubmissionWhereUniqueInput {
+  id: ID
+}
+
 type Subscription {
   bagItem(where: BagItemSubscriptionWhereInput): BagItemSubscriptionPayload
   billingInfo(where: BillingInfoSubscriptionWhereInput): BillingInfoSubscriptionPayload
@@ -12724,6 +13134,8 @@ type Subscription {
   size(where: SizeSubscriptionWhereInput): SizeSubscriptionPayload
   smsReceipt(where: SmsReceiptSubscriptionWhereInput): SmsReceiptSubscriptionPayload
   stylePreferences(where: StylePreferencesSubscriptionWhereInput): StylePreferencesSubscriptionPayload
+  styleSubmission(where: StyleSubmissionSubscriptionWhereInput): StyleSubmissionSubscriptionPayload
+  styleSubmissionReport(where: StyleSubmissionReportSubscriptionWhereInput): StyleSubmissionReportSubscriptionPayload
   tag(where: TagSubscriptionWhereInput): TagSubscriptionPayload
   topSize(where: TopSizeSubscriptionWhereInput): TopSizeSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
@@ -13198,9 +13610,10 @@ type User {
   pushNotification: UserPushNotification
   verificationStatus: UserVerificationStatus!
   verificationMethod: UserVerificationMethod!
+  smsReceipts(where: SmsReceiptWhereInput, orderBy: SmsReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [SmsReceipt!]
+  styleSubmissions(where: StyleSubmissionWhereInput, orderBy: StyleSubmissionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [StyleSubmission!]
   createdAt: DateTime!
   updatedAt: DateTime!
-  smsReceipts(where: SmsReceiptWhereInput, orderBy: SmsReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [SmsReceipt!]
 }
 
 type UserConnection {
@@ -13223,6 +13636,7 @@ input UserCreateInput {
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
   smsReceipts: SmsReceiptCreateManyInput
+  styleSubmissions: StyleSubmissionCreateManyWithoutUserInput
 }
 
 input UserCreateManyWithoutPushNotificationsInput {
@@ -13232,6 +13646,11 @@ input UserCreateManyWithoutPushNotificationsInput {
 
 input UserCreateOneInput {
   create: UserCreateInput
+  connect: UserWhereUniqueInput
+}
+
+input UserCreateOneWithoutStyleSubmissionsInput {
+  create: UserCreateWithoutStyleSubmissionsInput
   connect: UserWhereUniqueInput
 }
 
@@ -13248,6 +13667,23 @@ input UserCreateWithoutPushNotificationsInput {
   role: UserRole
   roles: UserCreaterolesInput
   pushNotificationStatus: PushNotificationStatus
+  pushNotification: UserPushNotificationCreateOneInput
+  verificationStatus: UserVerificationStatus
+  verificationMethod: UserVerificationMethod
+  smsReceipts: SmsReceiptCreateManyInput
+  styleSubmissions: StyleSubmissionCreateManyWithoutUserInput
+}
+
+input UserCreateWithoutStyleSubmissionsInput {
+  id: ID
+  auth0Id: String!
+  email: String!
+  firstName: String!
+  lastName: String!
+  role: UserRole
+  roles: UserCreaterolesInput
+  pushNotificationStatus: PushNotificationStatus
+  pushNotifications: PushNotificationReceiptCreateManyWithoutUsersInput
   pushNotification: UserPushNotificationCreateOneInput
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
@@ -13781,6 +14217,7 @@ input UserUpdateDataInput {
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
   smsReceipts: SmsReceiptUpdateManyInput
+  styleSubmissions: StyleSubmissionUpdateManyWithoutUserInput
 }
 
 input UserUpdateInput {
@@ -13796,6 +14233,7 @@ input UserUpdateInput {
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
   smsReceipts: SmsReceiptUpdateManyInput
+  styleSubmissions: StyleSubmissionUpdateManyWithoutUserInput
 }
 
 input UserUpdateManyDataInput {
@@ -13855,6 +14293,13 @@ input UserUpdateOneRequiredInput {
   connect: UserWhereUniqueInput
 }
 
+input UserUpdateOneRequiredWithoutStyleSubmissionsInput {
+  create: UserCreateWithoutStyleSubmissionsInput
+  update: UserUpdateWithoutStyleSubmissionsDataInput
+  upsert: UserUpsertWithoutStyleSubmissionsInput
+  connect: UserWhereUniqueInput
+}
+
 input UserUpdaterolesInput {
   set: [UserRole!]
 }
@@ -13871,6 +14316,22 @@ input UserUpdateWithoutPushNotificationsDataInput {
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
   smsReceipts: SmsReceiptUpdateManyInput
+  styleSubmissions: StyleSubmissionUpdateManyWithoutUserInput
+}
+
+input UserUpdateWithoutStyleSubmissionsDataInput {
+  auth0Id: String
+  email: String
+  firstName: String
+  lastName: String
+  role: UserRole
+  roles: UserUpdaterolesInput
+  pushNotificationStatus: PushNotificationStatus
+  pushNotifications: PushNotificationReceiptUpdateManyWithoutUsersInput
+  pushNotification: UserPushNotificationUpdateOneInput
+  verificationStatus: UserVerificationStatus
+  verificationMethod: UserVerificationMethod
+  smsReceipts: SmsReceiptUpdateManyInput
 }
 
 input UserUpdateWithWhereUniqueWithoutPushNotificationsInput {
@@ -13881,6 +14342,11 @@ input UserUpdateWithWhereUniqueWithoutPushNotificationsInput {
 input UserUpsertNestedInput {
   update: UserUpdateDataInput!
   create: UserCreateInput!
+}
+
+input UserUpsertWithoutStyleSubmissionsInput {
+  update: UserUpdateWithoutStyleSubmissionsDataInput!
+  create: UserCreateWithoutStyleSubmissionsInput!
 }
 
 input UserUpsertWithWhereUniqueWithoutPushNotificationsInput {
@@ -13992,6 +14458,12 @@ input UserWhereInput {
   verificationMethod_not: UserVerificationMethod
   verificationMethod_in: [UserVerificationMethod!]
   verificationMethod_not_in: [UserVerificationMethod!]
+  smsReceipts_every: SmsReceiptWhereInput
+  smsReceipts_some: SmsReceiptWhereInput
+  smsReceipts_none: SmsReceiptWhereInput
+  styleSubmissions_every: StyleSubmissionWhereInput
+  styleSubmissions_some: StyleSubmissionWhereInput
+  styleSubmissions_none: StyleSubmissionWhereInput
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -14008,9 +14480,6 @@ input UserWhereInput {
   updatedAt_lte: DateTime
   updatedAt_gt: DateTime
   updatedAt_gte: DateTime
-  smsReceipts_every: SmsReceiptWhereInput
-  smsReceipts_some: SmsReceiptWhereInput
-  smsReceipts_none: SmsReceiptWhereInput
   AND: [UserWhereInput!]
   OR: [UserWhereInput!]
   NOT: [UserWhereInput!]

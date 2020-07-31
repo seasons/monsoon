@@ -729,6 +729,14 @@ type AggregateStylePreferences {
   count: Int!
 }
 
+type AggregateStyleSubmission {
+  count: Int!
+}
+
+type AggregateStyleSubmissionReport {
+  count: Int!
+}
+
 type AggregateTag {
   count: Int!
 }
@@ -7209,9 +7217,21 @@ input ImageUpdateManyWithWhereNestedInput {
   data: ImageUpdateManyDataInput!
 }
 
+input ImageUpdateOneRequiredInput {
+  create: ImageCreateInput
+  connect: ImageWhereUniqueInput
+  update: ImageUpdateDataInput
+  upsert: ImageUpsertNestedInput
+}
+
 input ImageUpdateWithWhereUniqueNestedInput {
   where: ImageWhereUniqueInput!
   data: ImageUpdateDataInput!
+}
+
+input ImageUpsertNestedInput {
+  update: ImageUpdateDataInput!
+  create: ImageCreateInput!
 }
 
 input ImageUpsertWithWhereUniqueNestedInput {
@@ -22935,9 +22955,10 @@ type User implements Node {
   pushNotification: UserPushNotification
   verificationStatus: UserVerificationStatus!
   verificationMethod: UserVerificationMethod!
+  smsReceipts(where: SmsReceiptWhereInput, orderBy: SmsReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [SmsReceipt!]
+  styleSubmissions(where: StyleSubmissionWhereInput, orderBy: StyleSubmissionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [StyleSubmission!]
   createdAt: DateTime!
   updatedAt: DateTime!
-  smsReceipts(where: SmsReceiptWhereInput, orderBy: SmsReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [SmsReceipt!]
 }
 
 """A connection to a list of items."""
@@ -22964,6 +22985,7 @@ input UserCreateInput {
   pushNotifications: PushNotificationReceiptCreateManyWithoutUsersInput
   pushNotification: UserPushNotificationCreateOneInput
   smsReceipts: SmsReceiptCreateManyInput
+  styleSubmissions: StyleSubmissionCreateManyWithoutUserInput
 }
 
 input UserCreateManyWithoutPushNotificationsInput {
@@ -22973,6 +22995,11 @@ input UserCreateManyWithoutPushNotificationsInput {
 
 input UserCreateOneInput {
   create: UserCreateInput
+  connect: UserWhereUniqueInput
+}
+
+input UserCreateOneWithoutStyleSubmissionsInput {
+  create: UserCreateWithoutStyleSubmissionsInput
   connect: UserWhereUniqueInput
 }
 
@@ -22991,6 +23018,23 @@ input UserCreateWithoutPushNotificationsInput {
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
   roles: UserCreaterolesInput
+  pushNotification: UserPushNotificationCreateOneInput
+  smsReceipts: SmsReceiptCreateManyInput
+  styleSubmissions: StyleSubmissionCreateManyWithoutUserInput
+}
+
+input UserCreateWithoutStyleSubmissionsInput {
+  id: ID
+  auth0Id: String!
+  email: String!
+  firstName: String!
+  lastName: String!
+  role: UserRole
+  pushNotificationStatus: PushNotificationStatus
+  verificationStatus: UserVerificationStatus
+  verificationMethod: UserVerificationMethod
+  roles: UserCreaterolesInput
+  pushNotifications: PushNotificationReceiptCreateManyWithoutUsersInput
   pushNotification: UserPushNotificationCreateOneInput
   smsReceipts: SmsReceiptCreateManyInput
 }
@@ -23949,6 +23993,7 @@ input UserUpdateDataInput {
   pushNotifications: PushNotificationReceiptUpdateManyWithoutUsersInput
   pushNotification: UserPushNotificationUpdateOneInput
   smsReceipts: SmsReceiptUpdateManyInput
+  styleSubmissions: StyleSubmissionUpdateManyWithoutUserInput
 }
 
 input UserUpdateInput {
@@ -23964,6 +24009,7 @@ input UserUpdateInput {
   pushNotifications: PushNotificationReceiptUpdateManyWithoutUsersInput
   pushNotification: UserPushNotificationUpdateOneInput
   smsReceipts: SmsReceiptUpdateManyInput
+  styleSubmissions: StyleSubmissionUpdateManyWithoutUserInput
 }
 
 input UserUpdateManyDataInput {
@@ -24023,6 +24069,13 @@ input UserUpdateOneRequiredInput {
   upsert: UserUpsertNestedInput
 }
 
+input UserUpdateOneRequiredWithoutStyleSubmissionsInput {
+  create: UserCreateWithoutStyleSubmissionsInput
+  connect: UserWhereUniqueInput
+  update: UserUpdateWithoutStyleSubmissionsDataInput
+  upsert: UserUpsertWithoutStyleSubmissionsInput
+}
+
 input UserUpdaterolesInput {
   set: [UserRole!]
 }
@@ -24039,6 +24092,22 @@ input UserUpdateWithoutPushNotificationsDataInput {
   roles: UserUpdaterolesInput
   pushNotification: UserPushNotificationUpdateOneInput
   smsReceipts: SmsReceiptUpdateManyInput
+  styleSubmissions: StyleSubmissionUpdateManyWithoutUserInput
+}
+
+input UserUpdateWithoutStyleSubmissionsDataInput {
+  auth0Id: String
+  email: String
+  firstName: String
+  lastName: String
+  role: UserRole
+  pushNotificationStatus: PushNotificationStatus
+  verificationStatus: UserVerificationStatus
+  verificationMethod: UserVerificationMethod
+  roles: UserUpdaterolesInput
+  pushNotifications: PushNotificationReceiptUpdateManyWithoutUsersInput
+  pushNotification: UserPushNotificationUpdateOneInput
+  smsReceipts: SmsReceiptUpdateManyInput
 }
 
 input UserUpdateWithWhereUniqueWithoutPushNotificationsInput {
@@ -24049,6 +24118,11 @@ input UserUpdateWithWhereUniqueWithoutPushNotificationsInput {
 input UserUpsertNestedInput {
   update: UserUpdateDataInput!
   create: UserCreateInput!
+}
+
+input UserUpsertWithoutStyleSubmissionsInput {
+  update: UserUpdateWithoutStyleSubmissionsDataInput!
+  create: UserCreateWithoutStyleSubmissionsInput!
 }
 
 input UserUpsertWithWhereUniqueWithoutPushNotificationsInput {
@@ -26209,6 +26283,28 @@ export type SmsStatus =   'Queued' |
 
 export type StylePreferencesOrderByInput =   'id_ASC' |
   'id_DESC'
+
+export type StyleSubmissionOrderByInput =   'id_ASC' |
+  'id_DESC' |
+  'approved_ASC' |
+  'approved_DESC' |
+  'createdAt_ASC' |
+  'createdAt_DESC' |
+  'updatedAt_ASC' |
+  'updatedAt_DESC'
+
+export type StyleSubmissionReportOrderByInput =   'id_ASC' |
+  'id_DESC' |
+  'status_ASC' |
+  'status_DESC' |
+  'reportedAt_ASC' |
+  'reportedAt_DESC' |
+  'updatedAt_ASC' |
+  'updatedAt_DESC'
+
+export type StyleSubmissionReportStatus =   'AwaitingReview' |
+  'UnderReview' |
+  'Reviewed'
 
 export type TagOrderByInput =   'id_ASC' |
   'id_DESC' |
@@ -28924,6 +29020,11 @@ export interface ImageCreateManyInput {
   connect?: ImageWhereUniqueInput[] | ImageWhereUniqueInput | null
 }
 
+export interface ImageCreateOneInput {
+  create?: ImageCreateInput | null
+  connect?: ImageWhereUniqueInput | null
+}
+
 export interface ImageScalarWhereInput {
   AND?: ImageScalarWhereInput[] | ImageScalarWhereInput | null
   OR?: ImageScalarWhereInput[] | ImageScalarWhereInput | null
@@ -29078,9 +29179,21 @@ export interface ImageUpdateManyWithWhereNestedInput {
   data: ImageUpdateManyDataInput
 }
 
+export interface ImageUpdateOneRequiredInput {
+  create?: ImageCreateInput | null
+  connect?: ImageWhereUniqueInput | null
+  update?: ImageUpdateDataInput | null
+  upsert?: ImageUpsertNestedInput | null
+}
+
 export interface ImageUpdateWithWhereUniqueNestedInput {
   where: ImageWhereUniqueInput
   data: ImageUpdateDataInput
+}
+
+export interface ImageUpsertNestedInput {
+  update: ImageUpdateDataInput
+  create: ImageCreateInput
 }
 
 export interface ImageUpsertWithWhereUniqueNestedInput {
@@ -35809,6 +35922,275 @@ export interface StylePreferencesWhereUniqueInput {
   id?: ID_Input | null
 }
 
+export interface StyleSubmissionCreateInput {
+  id?: ID_Input | null
+  approved?: Boolean | null
+  user: UserCreateOneWithoutStyleSubmissionsInput
+  image: ImageCreateOneInput
+  location?: LocationCreateOneInput | null
+  products?: ProductCreateManyInput | null
+}
+
+export interface StyleSubmissionCreateManyWithoutUserInput {
+  create?: StyleSubmissionCreateWithoutUserInput[] | StyleSubmissionCreateWithoutUserInput | null
+  connect?: StyleSubmissionWhereUniqueInput[] | StyleSubmissionWhereUniqueInput | null
+}
+
+export interface StyleSubmissionCreateOneInput {
+  create?: StyleSubmissionCreateInput | null
+  connect?: StyleSubmissionWhereUniqueInput | null
+}
+
+export interface StyleSubmissionCreateWithoutUserInput {
+  id?: ID_Input | null
+  approved?: Boolean | null
+  image: ImageCreateOneInput
+  location?: LocationCreateOneInput | null
+  products?: ProductCreateManyInput | null
+}
+
+export interface StyleSubmissionReportCreateInput {
+  id?: ID_Input | null
+  status?: StyleSubmissionReportStatus | null
+  reporter: UserCreateOneInput
+  reported: StyleSubmissionCreateOneInput
+}
+
+export interface StyleSubmissionReportSubscriptionWhereInput {
+  AND?: StyleSubmissionReportSubscriptionWhereInput[] | StyleSubmissionReportSubscriptionWhereInput | null
+  OR?: StyleSubmissionReportSubscriptionWhereInput[] | StyleSubmissionReportSubscriptionWhereInput | null
+  NOT?: StyleSubmissionReportSubscriptionWhereInput[] | StyleSubmissionReportSubscriptionWhereInput | null
+  mutation_in?: MutationType[] | MutationType | null
+  updatedFields_contains?: String | null
+  updatedFields_contains_every?: String[] | String | null
+  updatedFields_contains_some?: String[] | String | null
+  node?: StyleSubmissionReportWhereInput | null
+}
+
+export interface StyleSubmissionReportUpdateInput {
+  status?: StyleSubmissionReportStatus | null
+  reporter?: UserUpdateOneRequiredInput | null
+  reported?: StyleSubmissionUpdateOneRequiredInput | null
+}
+
+export interface StyleSubmissionReportUpdateManyMutationInput {
+  status?: StyleSubmissionReportStatus | null
+}
+
+export interface StyleSubmissionReportWhereInput {
+  AND?: StyleSubmissionReportWhereInput[] | StyleSubmissionReportWhereInput | null
+  OR?: StyleSubmissionReportWhereInput[] | StyleSubmissionReportWhereInput | null
+  NOT?: StyleSubmissionReportWhereInput[] | StyleSubmissionReportWhereInput | null
+  id?: ID_Input | null
+  id_not?: ID_Input | null
+  id_in?: ID_Output[] | ID_Output | null
+  id_not_in?: ID_Output[] | ID_Output | null
+  id_lt?: ID_Input | null
+  id_lte?: ID_Input | null
+  id_gt?: ID_Input | null
+  id_gte?: ID_Input | null
+  id_contains?: ID_Input | null
+  id_not_contains?: ID_Input | null
+  id_starts_with?: ID_Input | null
+  id_not_starts_with?: ID_Input | null
+  id_ends_with?: ID_Input | null
+  id_not_ends_with?: ID_Input | null
+  status?: StyleSubmissionReportStatus | null
+  status_not?: StyleSubmissionReportStatus | null
+  status_in?: StyleSubmissionReportStatus[] | StyleSubmissionReportStatus | null
+  status_not_in?: StyleSubmissionReportStatus[] | StyleSubmissionReportStatus | null
+  reportedAt?: DateTime | null
+  reportedAt_not?: DateTime | null
+  reportedAt_in?: DateTime[] | DateTime | null
+  reportedAt_not_in?: DateTime[] | DateTime | null
+  reportedAt_lt?: DateTime | null
+  reportedAt_lte?: DateTime | null
+  reportedAt_gt?: DateTime | null
+  reportedAt_gte?: DateTime | null
+  updatedAt?: DateTime | null
+  updatedAt_not?: DateTime | null
+  updatedAt_in?: DateTime[] | DateTime | null
+  updatedAt_not_in?: DateTime[] | DateTime | null
+  updatedAt_lt?: DateTime | null
+  updatedAt_lte?: DateTime | null
+  updatedAt_gt?: DateTime | null
+  updatedAt_gte?: DateTime | null
+  reporter?: UserWhereInput | null
+  reported?: StyleSubmissionWhereInput | null
+}
+
+export interface StyleSubmissionReportWhereUniqueInput {
+  id?: ID_Input | null
+}
+
+export interface StyleSubmissionScalarWhereInput {
+  AND?: StyleSubmissionScalarWhereInput[] | StyleSubmissionScalarWhereInput | null
+  OR?: StyleSubmissionScalarWhereInput[] | StyleSubmissionScalarWhereInput | null
+  NOT?: StyleSubmissionScalarWhereInput[] | StyleSubmissionScalarWhereInput | null
+  id?: ID_Input | null
+  id_not?: ID_Input | null
+  id_in?: ID_Output[] | ID_Output | null
+  id_not_in?: ID_Output[] | ID_Output | null
+  id_lt?: ID_Input | null
+  id_lte?: ID_Input | null
+  id_gt?: ID_Input | null
+  id_gte?: ID_Input | null
+  id_contains?: ID_Input | null
+  id_not_contains?: ID_Input | null
+  id_starts_with?: ID_Input | null
+  id_not_starts_with?: ID_Input | null
+  id_ends_with?: ID_Input | null
+  id_not_ends_with?: ID_Input | null
+  approved?: Boolean | null
+  approved_not?: Boolean | null
+  createdAt?: DateTime | null
+  createdAt_not?: DateTime | null
+  createdAt_in?: DateTime[] | DateTime | null
+  createdAt_not_in?: DateTime[] | DateTime | null
+  createdAt_lt?: DateTime | null
+  createdAt_lte?: DateTime | null
+  createdAt_gt?: DateTime | null
+  createdAt_gte?: DateTime | null
+  updatedAt?: DateTime | null
+  updatedAt_not?: DateTime | null
+  updatedAt_in?: DateTime[] | DateTime | null
+  updatedAt_not_in?: DateTime[] | DateTime | null
+  updatedAt_lt?: DateTime | null
+  updatedAt_lte?: DateTime | null
+  updatedAt_gt?: DateTime | null
+  updatedAt_gte?: DateTime | null
+}
+
+export interface StyleSubmissionSubscriptionWhereInput {
+  AND?: StyleSubmissionSubscriptionWhereInput[] | StyleSubmissionSubscriptionWhereInput | null
+  OR?: StyleSubmissionSubscriptionWhereInput[] | StyleSubmissionSubscriptionWhereInput | null
+  NOT?: StyleSubmissionSubscriptionWhereInput[] | StyleSubmissionSubscriptionWhereInput | null
+  mutation_in?: MutationType[] | MutationType | null
+  updatedFields_contains?: String | null
+  updatedFields_contains_every?: String[] | String | null
+  updatedFields_contains_some?: String[] | String | null
+  node?: StyleSubmissionWhereInput | null
+}
+
+export interface StyleSubmissionUpdateDataInput {
+  approved?: Boolean | null
+  user?: UserUpdateOneRequiredWithoutStyleSubmissionsInput | null
+  image?: ImageUpdateOneRequiredInput | null
+  location?: LocationUpdateOneInput | null
+  products?: ProductUpdateManyInput | null
+}
+
+export interface StyleSubmissionUpdateInput {
+  approved?: Boolean | null
+  user?: UserUpdateOneRequiredWithoutStyleSubmissionsInput | null
+  image?: ImageUpdateOneRequiredInput | null
+  location?: LocationUpdateOneInput | null
+  products?: ProductUpdateManyInput | null
+}
+
+export interface StyleSubmissionUpdateManyDataInput {
+  approved?: Boolean | null
+}
+
+export interface StyleSubmissionUpdateManyMutationInput {
+  approved?: Boolean | null
+}
+
+export interface StyleSubmissionUpdateManyWithoutUserInput {
+  create?: StyleSubmissionCreateWithoutUserInput[] | StyleSubmissionCreateWithoutUserInput | null
+  connect?: StyleSubmissionWhereUniqueInput[] | StyleSubmissionWhereUniqueInput | null
+  set?: StyleSubmissionWhereUniqueInput[] | StyleSubmissionWhereUniqueInput | null
+  disconnect?: StyleSubmissionWhereUniqueInput[] | StyleSubmissionWhereUniqueInput | null
+  delete?: StyleSubmissionWhereUniqueInput[] | StyleSubmissionWhereUniqueInput | null
+  update?: StyleSubmissionUpdateWithWhereUniqueWithoutUserInput[] | StyleSubmissionUpdateWithWhereUniqueWithoutUserInput | null
+  updateMany?: StyleSubmissionUpdateManyWithWhereNestedInput[] | StyleSubmissionUpdateManyWithWhereNestedInput | null
+  deleteMany?: StyleSubmissionScalarWhereInput[] | StyleSubmissionScalarWhereInput | null
+  upsert?: StyleSubmissionUpsertWithWhereUniqueWithoutUserInput[] | StyleSubmissionUpsertWithWhereUniqueWithoutUserInput | null
+}
+
+export interface StyleSubmissionUpdateManyWithWhereNestedInput {
+  where: StyleSubmissionScalarWhereInput
+  data: StyleSubmissionUpdateManyDataInput
+}
+
+export interface StyleSubmissionUpdateOneRequiredInput {
+  create?: StyleSubmissionCreateInput | null
+  connect?: StyleSubmissionWhereUniqueInput | null
+  update?: StyleSubmissionUpdateDataInput | null
+  upsert?: StyleSubmissionUpsertNestedInput | null
+}
+
+export interface StyleSubmissionUpdateWithoutUserDataInput {
+  approved?: Boolean | null
+  image?: ImageUpdateOneRequiredInput | null
+  location?: LocationUpdateOneInput | null
+  products?: ProductUpdateManyInput | null
+}
+
+export interface StyleSubmissionUpdateWithWhereUniqueWithoutUserInput {
+  where: StyleSubmissionWhereUniqueInput
+  data: StyleSubmissionUpdateWithoutUserDataInput
+}
+
+export interface StyleSubmissionUpsertNestedInput {
+  update: StyleSubmissionUpdateDataInput
+  create: StyleSubmissionCreateInput
+}
+
+export interface StyleSubmissionUpsertWithWhereUniqueWithoutUserInput {
+  where: StyleSubmissionWhereUniqueInput
+  update: StyleSubmissionUpdateWithoutUserDataInput
+  create: StyleSubmissionCreateWithoutUserInput
+}
+
+export interface StyleSubmissionWhereInput {
+  AND?: StyleSubmissionWhereInput[] | StyleSubmissionWhereInput | null
+  OR?: StyleSubmissionWhereInput[] | StyleSubmissionWhereInput | null
+  NOT?: StyleSubmissionWhereInput[] | StyleSubmissionWhereInput | null
+  id?: ID_Input | null
+  id_not?: ID_Input | null
+  id_in?: ID_Output[] | ID_Output | null
+  id_not_in?: ID_Output[] | ID_Output | null
+  id_lt?: ID_Input | null
+  id_lte?: ID_Input | null
+  id_gt?: ID_Input | null
+  id_gte?: ID_Input | null
+  id_contains?: ID_Input | null
+  id_not_contains?: ID_Input | null
+  id_starts_with?: ID_Input | null
+  id_not_starts_with?: ID_Input | null
+  id_ends_with?: ID_Input | null
+  id_not_ends_with?: ID_Input | null
+  approved?: Boolean | null
+  approved_not?: Boolean | null
+  createdAt?: DateTime | null
+  createdAt_not?: DateTime | null
+  createdAt_in?: DateTime[] | DateTime | null
+  createdAt_not_in?: DateTime[] | DateTime | null
+  createdAt_lt?: DateTime | null
+  createdAt_lte?: DateTime | null
+  createdAt_gt?: DateTime | null
+  createdAt_gte?: DateTime | null
+  updatedAt?: DateTime | null
+  updatedAt_not?: DateTime | null
+  updatedAt_in?: DateTime[] | DateTime | null
+  updatedAt_not_in?: DateTime[] | DateTime | null
+  updatedAt_lt?: DateTime | null
+  updatedAt_lte?: DateTime | null
+  updatedAt_gt?: DateTime | null
+  updatedAt_gte?: DateTime | null
+  user?: UserWhereInput | null
+  image?: ImageWhereInput | null
+  location?: LocationWhereInput | null
+  products_every?: ProductWhereInput | null
+  products_some?: ProductWhereInput | null
+  products_none?: ProductWhereInput | null
+}
+
+export interface StyleSubmissionWhereUniqueInput {
+  id?: ID_Input | null
+}
+
 export interface TagCreateInput {
   id?: ID_Input | null
   name: String
@@ -36172,6 +36554,7 @@ export interface UserCreateInput {
   pushNotifications?: PushNotificationReceiptCreateManyWithoutUsersInput | null
   pushNotification?: UserPushNotificationCreateOneInput | null
   smsReceipts?: SmsReceiptCreateManyInput | null
+  styleSubmissions?: StyleSubmissionCreateManyWithoutUserInput | null
 }
 
 export interface UserCreateManyWithoutPushNotificationsInput {
@@ -36181,6 +36564,11 @@ export interface UserCreateManyWithoutPushNotificationsInput {
 
 export interface UserCreateOneInput {
   create?: UserCreateInput | null
+  connect?: UserWhereUniqueInput | null
+}
+
+export interface UserCreateOneWithoutStyleSubmissionsInput {
+  create?: UserCreateWithoutStyleSubmissionsInput | null
   connect?: UserWhereUniqueInput | null
 }
 
@@ -36199,6 +36587,23 @@ export interface UserCreateWithoutPushNotificationsInput {
   verificationStatus?: UserVerificationStatus | null
   verificationMethod?: UserVerificationMethod | null
   roles?: UserCreaterolesInput | null
+  pushNotification?: UserPushNotificationCreateOneInput | null
+  smsReceipts?: SmsReceiptCreateManyInput | null
+  styleSubmissions?: StyleSubmissionCreateManyWithoutUserInput | null
+}
+
+export interface UserCreateWithoutStyleSubmissionsInput {
+  id?: ID_Input | null
+  auth0Id: String
+  email: String
+  firstName: String
+  lastName: String
+  role?: UserRole | null
+  pushNotificationStatus?: PushNotificationStatus | null
+  verificationStatus?: UserVerificationStatus | null
+  verificationMethod?: UserVerificationMethod | null
+  roles?: UserCreaterolesInput | null
+  pushNotifications?: PushNotificationReceiptCreateManyWithoutUsersInput | null
   pushNotification?: UserPushNotificationCreateOneInput | null
   smsReceipts?: SmsReceiptCreateManyInput | null
 }
@@ -36583,6 +36988,7 @@ export interface UserUpdateDataInput {
   pushNotifications?: PushNotificationReceiptUpdateManyWithoutUsersInput | null
   pushNotification?: UserPushNotificationUpdateOneInput | null
   smsReceipts?: SmsReceiptUpdateManyInput | null
+  styleSubmissions?: StyleSubmissionUpdateManyWithoutUserInput | null
 }
 
 export interface UserUpdateInput {
@@ -36598,6 +37004,7 @@ export interface UserUpdateInput {
   pushNotifications?: PushNotificationReceiptUpdateManyWithoutUsersInput | null
   pushNotification?: UserPushNotificationUpdateOneInput | null
   smsReceipts?: SmsReceiptUpdateManyInput | null
+  styleSubmissions?: StyleSubmissionUpdateManyWithoutUserInput | null
 }
 
 export interface UserUpdateManyDataInput {
@@ -36657,6 +37064,13 @@ export interface UserUpdateOneRequiredInput {
   upsert?: UserUpsertNestedInput | null
 }
 
+export interface UserUpdateOneRequiredWithoutStyleSubmissionsInput {
+  create?: UserCreateWithoutStyleSubmissionsInput | null
+  connect?: UserWhereUniqueInput | null
+  update?: UserUpdateWithoutStyleSubmissionsDataInput | null
+  upsert?: UserUpsertWithoutStyleSubmissionsInput | null
+}
+
 export interface UserUpdaterolesInput {
   set?: UserRole[] | UserRole | null
 }
@@ -36673,6 +37087,22 @@ export interface UserUpdateWithoutPushNotificationsDataInput {
   roles?: UserUpdaterolesInput | null
   pushNotification?: UserPushNotificationUpdateOneInput | null
   smsReceipts?: SmsReceiptUpdateManyInput | null
+  styleSubmissions?: StyleSubmissionUpdateManyWithoutUserInput | null
+}
+
+export interface UserUpdateWithoutStyleSubmissionsDataInput {
+  auth0Id?: String | null
+  email?: String | null
+  firstName?: String | null
+  lastName?: String | null
+  role?: UserRole | null
+  pushNotificationStatus?: PushNotificationStatus | null
+  verificationStatus?: UserVerificationStatus | null
+  verificationMethod?: UserVerificationMethod | null
+  roles?: UserUpdaterolesInput | null
+  pushNotifications?: PushNotificationReceiptUpdateManyWithoutUsersInput | null
+  pushNotification?: UserPushNotificationUpdateOneInput | null
+  smsReceipts?: SmsReceiptUpdateManyInput | null
 }
 
 export interface UserUpdateWithWhereUniqueWithoutPushNotificationsInput {
@@ -36683,6 +37113,11 @@ export interface UserUpdateWithWhereUniqueWithoutPushNotificationsInput {
 export interface UserUpsertNestedInput {
   update: UserUpdateDataInput
   create: UserCreateInput
+}
+
+export interface UserUpsertWithoutStyleSubmissionsInput {
+  update: UserUpdateWithoutStyleSubmissionsDataInput
+  create: UserCreateWithoutStyleSubmissionsInput
 }
 
 export interface UserUpsertWithWhereUniqueWithoutPushNotificationsInput {
@@ -37458,6 +37893,14 @@ export interface AggregateSmsReceipt {
 }
 
 export interface AggregateStylePreferences {
+  count: Int
+}
+
+export interface AggregateStyleSubmission {
+  count: Int
+}
+
+export interface AggregateStyleSubmissionReport {
   count: Int
 }
 
@@ -39569,9 +40012,10 @@ export interface User extends Node {
   pushNotification?: UserPushNotification | null
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
+  smsReceipts?: Array<SmsReceipt> | null
+  styleSubmissions?: Array<StyleSubmission> | null
   createdAt: DateTime
   updatedAt: DateTime
-  smsReceipts?: Array<SmsReceipt> | null
 }
 
 /*

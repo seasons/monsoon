@@ -1,0 +1,12 @@
+type Mutation {
+  submitStyle(image: Upload!): [StyleSubmission!]! @hasRole(roles: [Customer])
+  reportStyle(id: ID!): Boolean! @hasRole(roles: [Customer])
+
+  approveStyle(id: ID!): Boolean! @hasRole(roles: [Admin])
+  unapproveStyle(id: ID!): Boolean! @hasRole(roles: [Admin])
+  deleteStyle(id: ID!): Boolean! @hasRole(roles: [Admin])
+}
+
+type Query {
+  communityStyle: [StyleSubmission!]! @hasRole(roles: [Customer])
+}

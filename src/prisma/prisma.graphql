@@ -29,77 +29,12 @@ type AggregateCollectionGroup {
   count: Int!
 }
 
-type AggregateColor {
-  count: Int!
-}
-
-type AggregateCustomer {
-  count: Int!
+:  cunt: Int!
 }
 
 type AggregateCustomerDetail {
-  count: Int!
-}
-
-type AggregateCustomerMembership {
-  count: Int!
-}
-
-type AggregateEmailReceipt {
-  count: Int!
-}
-
-type AggregateHomepageProductRail {
-  count: Int!
-}
-
-type AggregateImage {
-  count: Int!
-}
-
-type AggregateLabel {
-  count: Int!
-}
-
-type AggregateLocation {
-  count: Int!
-}
-
-type AggregatePackage {
-  count: Int!
-}
-
-type AggregatePackageTransitEvent {
-  count: Int!
-}
-
-type AggregatePauseRequest {
-  count: Int!
-}
-
-type AggregatePaymentPlan {
-  count: Int!
-}
-
-type AggregatePhysicalProduct {
-  count: Int!
-}
-
-type AggregatePhysicalProductInventoryStatusChange {
-  count: Int!
-}
-
-type AggregateProduct {
-  count: Int!
-}
-
-type AggregateProductFunction {
-  count: Int!
-}
-
-type AggregateProductMaterialCategory {
-  count: Int!
-}
+  count: Int! gu
+:}
 
 type AggregateProductModel {
   count: Int!
@@ -114,76 +49,7 @@ type AggregateProductStatusChange {
 }
 
 type AggregateProductVariant {
-  count: Int!
-}
-
-type AggregateProductVariantFeedback {
-  count: Int!
-}
-
-type AggregateProductVariantFeedbackQuestion {
-  count: Int!
-}
-
-type AggregateProductVariantWant {
-  count: Int!
-}
-
-type AggregatePushNotificationReceipt {
-  count: Int!
-}
-
-type AggregateRecentlyViewedProduct {
-  count: Int!
-}
-
-type AggregateReservation {
-  count: Int!
-}
-
-type AggregateReservationFeedback {
-  count: Int!
-}
-
-type AggregateReservationReceipt {
-  count: Int!
-}
-
-type AggregateReservationReceiptItem {
-  count: Int!
-}
-
-type AggregateSize {
-  count: Int!
-}
-
-type AggregateSmsReceipt {
-  count: Int!
-}
-
-type AggregateStylePreferences {
-  count: Int!
-}
-
-type AggregateTag {
-  count: Int!
-}
-
-type AggregateTopSize {
-  count: Int!
-}
-
-type AggregateUser {
-  count: Int!
-}
-
-type AggregateUserPushNotification {
-  count: Int!
-}
-
-type AggregateUserPushNotificationInterest {
-  count: Int!
-}
+  count: Int! gu
 
 type AggregateWarehouseLocation {
   count: Int!
@@ -217,7 +83,6 @@ type BagItemConnection {
   edges: [BagItemEdge]!
   aggregate: AggregateBagItem!
 }
-
 input BagItemCreateInput {
   id: ID
   position: Int
@@ -1739,8 +1604,7 @@ type BottomSizeConnection {
   A list of edges.
   """
   edges: [BottomSizeEdge]!
-  aggregate: AggregateBottomSize!
-}
+g}
 
 input BottomSizeCreateInput {
   id: ID
@@ -1784,8 +1648,7 @@ enum BottomSizeOrderByInput {
   rise_ASC
   rise_DESC
   hem_ASC
-  hem_DESC
-  inseam_ASC
+E  iseam_ASC
   inseam_DESC
 }
 
@@ -2346,7 +2209,6 @@ type BrandSubscriptionPayload {
   node: Brand
   updatedFields: [String!]
   previousValues: BrandPreviousValues
-}
 
 input BrandSubscriptionWhereInput {
   """
@@ -3134,15 +2996,13 @@ input CategoryCreateOneInput {
 }
 
 input CategoryCreateOneWithoutProductsInput {
-  create: CategoryCreateWithoutProductsInput
   connect: CategoryWhereUniqueInput
 }
 
 input CategoryCreateWithoutProductsInput {
   id: ID
   slug: String!
-  name: String!
-  image: Json
+   iage: Json
   description: String
   visible: Boolean
   children: CategoryCreateManyInput
@@ -9477,9 +9337,21 @@ input ImageUpdateManyWithWhereNestedInput {
   data: ImageUpdateManyDataInput!
 }
 
+input ImageUpdateOneRequiredInput {
+  create: ImageCreateInput
+  connect: ImageWhereUniqueInput
+  update: ImageUpdateDataInput
+  upsert: ImageUpsertNestedInput
+}
+
 input ImageUpdateWithWhereUniqueNestedInput {
   where: ImageWhereUniqueInput!
   data: ImageUpdateDataInput!
+}
+
+input ImageUpsertNestedInput {
+  update: ImageUpdateDataInput!
+  create: ImageCreateInput!
 }
 
 input ImageUpsertWithWhereUniqueNestedInput {
@@ -11954,11 +11826,343 @@ type Mutation {
     create: BrandCreateInput!
     update: BrandUpdateInput!
   ): Brand!
+<<<<<<< HEAD
+=======
+  deleteBrand(where: BrandWhereUniqueInput!): Brand
+  deleteManyBrands(where: BrandWhereInput): BatchPayload!
+  createCategory(data: CategoryCreateInput!): Category!
+  updateCategory(
+    data: CategoryUpdateInput!
+    where: CategoryWhereUniqueInput!
+  ): Category
+  updateManyCategories(
+    data: CategoryUpdateManyMutationInput!
+    where: CategoryWhereInput
+  ): BatchPayload!
+  upsertCategory(
+    where: CategoryWhereUniqueInput!
+    create: CategoryCreateInput!
+    update: CategoryUpdateInput!
+  ): Category!
+  deleteCategory(where: CategoryWhereUniqueInput!): Category
+  deleteManyCategories(where: CategoryWhereInput): BatchPayload!
+  createCollection(data: CollectionCreateInput!): Collection!
+  updateCollection(
+    data: CollectionUpdateInput!
+    where: CollectionWhereUniqueInput!
+  ): Collection
+  updateManyCollections(
+    data: CollectionUpdateManyMutationInput!
+    where: CollectionWhereInput
+  ): BatchPayload!
+  upsertCollection(
+    where: CollectionWhereUniqueInput!
+    create: CollectionCreateInput!
+    update: CollectionUpdateInput!
+  ): Collection!
+  deleteCollection(where: CollectionWhereUniqueInput!): Collection
+  deleteManyCollections(where: CollectionWhereInput): BatchPayload!
+  createCollectionGroup(data: CollectionGroupCreateInput!): CollectionGroup!
+  updateCollectionGroup(
+    data: CollectionGroupUpdateInput!
+    where: CollectionGroupWhereUniqueInput!
+  ): CollectionGroup
+<<<<<<< HEAD
+  updateManyCollectionGroups(
+    data: CollectionGroupUpdateManyMutationInput!
+    where: CollectionGroupWhereInput
+  ): BatchPayload!
+=======
+  updateHomepageProductRail(
+    data: HomepageProductRailUpdateInput!
+    where: HomepageProductRailWhereUniqueInput!
+  ): HomepageProductRail
+  updateTag(data: TagUpdateInput!, where: TagWhereUniqueInput!): Tag
+  updateProductStatusChange(
+    data: ProductStatusChangeUpdateInput!
+    where: ProductStatusChangeWhereUniqueInput!
+  ): ProductStatusChange
+  updateProductMaterialCategory(
+    data: ProductMaterialCategoryUpdateInput!
+    where: ProductMaterialCategoryWhereUniqueInput!
+  ): ProductMaterialCategory
+  updateProductModel(
+    data: ProductModelUpdateInput!
+    where: ProductModelWhereUniqueInput!
+  ): ProductModel
+  updatePhysicalProductInventoryStatusChange(
+    data: PhysicalProductInventoryStatusChangeUpdateInput!
+    where: PhysicalProductInventoryStatusChangeWhereUniqueInput!
+  ): PhysicalProductInventoryStatusChange
+  updateWarehouseLocationConstraint(
+    data: WarehouseLocationConstraintUpdateInput!
+    where: WarehouseLocationConstraintWhereUniqueInput!
+  ): WarehouseLocationConstraint
+  updateWarehouseLocation(
+    data: WarehouseLocationUpdateInput!
+    where: WarehouseLocationWhereUniqueInput!
+  ): WarehouseLocation
+  updatePaymentPlan(
+    data: PaymentPlanUpdateInput!
+    where: PaymentPlanWhereUniqueInput!
+  ): PaymentPlan
+  updateEmailReceipt(
+    data: EmailReceiptUpdateInput!
+    where: EmailReceiptWhereUniqueInput!
+  ): EmailReceipt
+  updateStyleSubmissionReport(
+    data: StyleSubmissionReportUpdateInput!
+    where: StyleSubmissionReportWhereUniqueInput!
+  ): StyleSubmissionReport
+  updateBagItem(
+    data: BagItemUpdateInput!
+    where: BagItemWhereUniqueInput!
+  ): BagItem
+  updateCustomerMembership(
+    data: CustomerMembershipUpdateInput!
+    where: CustomerMembershipWhereUniqueInput!
+  ): CustomerMembership
+  updatePauseRequest(
+    data: PauseRequestUpdateInput!
+    where: PauseRequestWhereUniqueInput!
+  ): PauseRequest
+  updateRecentlyViewedProduct(
+    data: RecentlyViewedProductUpdateInput!
+    where: RecentlyViewedProductWhereUniqueInput!
+  ): RecentlyViewedProduct
+  updateReservationFeedback(
+    data: ReservationFeedbackUpdateInput!
+    where: ReservationFeedbackWhereUniqueInput!
+  ): ReservationFeedback
+  updateProductVariantFeedback(
+    data: ProductVariantFeedbackUpdateInput!
+    where: ProductVariantFeedbackWhereUniqueInput!
+  ): ProductVariantFeedback
+  updateProductVariantFeedbackQuestion(
+    data: ProductVariantFeedbackQuestionUpdateInput!
+    where: ProductVariantFeedbackQuestionWhereUniqueInput!
+  ): ProductVariantFeedbackQuestion
+  updateReservationReceipt(
+    data: ReservationReceiptUpdateInput!
+    where: ReservationReceiptWhereUniqueInput!
+  ): ReservationReceipt
+  updateProductRequest(
+    data: ProductRequestUpdateInput!
+    where: ProductRequestWhereUniqueInput!
+  ): ProductRequest
+  updateProductVariantWant(
+    data: ProductVariantWantUpdateInput!
+    where: ProductVariantWantWhereUniqueInput!
+  ): ProductVariantWant
+  updateCollection(
+    data: CollectionUpdateInput!
+    where: CollectionWhereUniqueInput!
+  ): Collection
+  updatePushNotificationReceipt(
+    data: PushNotificationReceiptUpdateInput!
+    where: PushNotificationReceiptWhereUniqueInput!
+  ): PushNotificationReceipt
+  updateCustomerDetail(
+    data: CustomerDetailUpdateInput!
+    where: CustomerDetailWhereUniqueInput!
+  ): CustomerDetail
+  updateUserPushNotificationInterest(
+    data: UserPushNotificationInterestUpdateInput!
+    where: UserPushNotificationInterestWhereUniqueInput!
+  ): UserPushNotificationInterest
+  updateBillingInfo(
+    data: BillingInfoUpdateInput!
+    where: BillingInfoWhereUniqueInput!
+  ): BillingInfo
+  updateReservationReceiptItem(
+    data: ReservationReceiptItemUpdateInput!
+    where: ReservationReceiptItemWhereUniqueInput!
+  ): ReservationReceiptItem
+  updateStylePreferences(
+    data: StylePreferencesUpdateInput!
+    where: StylePreferencesWhereUniqueInput!
+  ): StylePreferences
+  updatePackage(
+    data: PackageUpdateInput!
+    where: PackageWhereUniqueInput!
+  ): Package
+  updateSize(data: SizeUpdateInput!, where: SizeWhereUniqueInput!): Size
+  updateProductFunction(
+    data: ProductFunctionUpdateInput!
+    where: ProductFunctionWhereUniqueInput!
+  ): ProductFunction
+  updateStyleSubmission(
+    data: StyleSubmissionUpdateInput!
+    where: StyleSubmissionWhereUniqueInput!
+  ): StyleSubmission
+  updateImage(data: ImageUpdateInput!, where: ImageWhereUniqueInput!): Image
+  updateColor(data: ColorUpdateInput!, where: ColorWhereUniqueInput!): Color
+  updateTopSize(
+    data: TopSizeUpdateInput!
+    where: TopSizeWhereUniqueInput!
+  ): TopSize
+  updateCustomer(
+    data: CustomerUpdateInput!
+    where: CustomerWhereUniqueInput!
+  ): Customer
+  updateUserPushNotification(
+    data: UserPushNotificationUpdateInput!
+    where: UserPushNotificationWhereUniqueInput!
+  ): UserPushNotification
+  updateCategory(
+    data: CategoryUpdateInput!
+    where: CategoryWhereUniqueInput!
+  ): Category
+  updateBottomSize(
+    data: BottomSizeUpdateInput!
+    where: BottomSizeWhereUniqueInput!
+  ): BottomSize
+  updatePackageTransitEvent(
+    data: PackageTransitEventUpdateInput!
+    where: PackageTransitEventWhereUniqueInput!
+  ): PackageTransitEvent
+  updateLabel(data: LabelUpdateInput!, where: LabelWhereUniqueInput!): Label
+  updateSmsReceipt(
+    data: SmsReceiptUpdateInput!
+    where: SmsReceiptWhereUniqueInput!
+  ): SmsReceipt
+  updateLocation(
+    data: LocationUpdateInput!
+    where: LocationWhereUniqueInput!
+  ): Location
+  updatePhysicalProduct(
+    data: PhysicalProductUpdateInput!
+    where: PhysicalProductWhereUniqueInput!
+  ): PhysicalProduct
+  updateProductVariant(
+    data: ProductVariantUpdateInput!
+    where: ProductVariantWhereUniqueInput!
+  ): ProductVariant
+  updateProduct(
+    data: ProductUpdateInput!
+    where: ProductWhereUniqueInput!
+  ): Product
+  updateReservation(
+    data: ReservationUpdateInput!
+    where: ReservationWhereUniqueInput!
+  ): Reservation
+  updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
+  deleteBrand(where: BrandWhereUniqueInput!): Brand
+  deleteCollectionGroup(
+    where: CollectionGroupWhereUniqueInput!
+  ): CollectionGroup
+  deleteHomepageProductRail(
+    where: HomepageProductRailWhereUniqueInput!
+  ): HomepageProductRail
+  deleteTag(where: TagWhereUniqueInput!): Tag
+  deleteProductStatusChange(
+    where: ProductStatusChangeWhereUniqueInput!
+  ): ProductStatusChange
+  deleteProductMaterialCategory(
+    where: ProductMaterialCategoryWhereUniqueInput!
+  ): ProductMaterialCategory
+  deleteProductModel(where: ProductModelWhereUniqueInput!): ProductModel
+  deletePhysicalProductInventoryStatusChange(
+    where: PhysicalProductInventoryStatusChangeWhereUniqueInput!
+  ): PhysicalProductInventoryStatusChange
+  deleteWarehouseLocationConstraint(
+    where: WarehouseLocationConstraintWhereUniqueInput!
+  ): WarehouseLocationConstraint
+  deleteWarehouseLocation(
+    where: WarehouseLocationWhereUniqueInput!
+  ): WarehouseLocation
+  deletePaymentPlan(where: PaymentPlanWhereUniqueInput!): PaymentPlan
+  deleteEmailReceipt(where: EmailReceiptWhereUniqueInput!): EmailReceipt
+  deleteStyleSubmissionReport(
+    where: StyleSubmissionReportWhereUniqueInput!
+  ): StyleSubmissionReport
+  deleteBagItem(where: BagItemWhereUniqueInput!): BagItem
+  deleteCustomerMembership(
+    where: CustomerMembershipWhereUniqueInput!
+  ): CustomerMembership
+  deletePauseRequest(where: PauseRequestWhereUniqueInput!): PauseRequest
+  deleteRecentlyViewedProduct(
+    where: RecentlyViewedProductWhereUniqueInput!
+  ): RecentlyViewedProduct
+  deleteReservationFeedback(
+    where: ReservationFeedbackWhereUniqueInput!
+  ): ReservationFeedback
+  deleteProductVariantFeedback(
+    where: ProductVariantFeedbackWhereUniqueInput!
+  ): ProductVariantFeedback
+  deleteProductVariantFeedbackQuestion(
+    where: ProductVariantFeedbackQuestionWhereUniqueInput!
+  ): ProductVariantFeedbackQuestion
+  deleteReservationReceipt(
+    where: ReservationReceiptWhereUniqueInput!
+  ): ReservationReceipt
+  deleteProductRequest(where: ProductRequestWhereUniqueInput!): ProductRequest
+  deleteProductVariantWant(
+    where: ProductVariantWantWhereUniqueInput!
+  ): ProductVariantWant
+  deleteCollection(where: CollectionWhereUniqueInput!): Collection
+  deletePushNotificationReceipt(
+    where: PushNotificationReceiptWhereUniqueInput!
+  ): PushNotificationReceipt
+  deleteCustomerDetail(where: CustomerDetailWhereUniqueInput!): CustomerDetail
+  deleteUserPushNotificationInterest(
+    where: UserPushNotificationInterestWhereUniqueInput!
+  ): UserPushNotificationInterest
+  deleteBillingInfo(where: BillingInfoWhereUniqueInput!): BillingInfo
+  deleteReservationReceiptItem(
+    where: ReservationReceiptItemWhereUniqueInput!
+  ): ReservationReceiptItem
+  deleteStylePreferences(
+    where: StylePreferencesWhereUniqueInput!
+  ): StylePreferences
+  deletePackage(where: PackageWhereUniqueInput!): Package
+  deleteSize(where: SizeWhereUniqueInput!): Size
+  deleteProductFunction(
+    where: ProductFunctionWhereUniqueInput!
+  ): ProductFunction
+  deleteStyleSubmission(
+    where: StyleSubmissionWhereUniqueInput!
+  ): StyleSubmission
+  deleteImage(where: ImageWhereUniqueInput!): Image
+  deleteColor(where: ColorWhereUniqueInput!): Color
+  deleteTopSize(where: TopSizeWhereUniqueInput!): TopSize
+  deleteCustomer(where: CustomerWhereUniqueInput!): Customer
+  deleteUserPushNotification(
+    where: UserPushNotificationWhereUniqueInput!
+  ): UserPushNotification
+  deleteCategory(where: CategoryWhereUniqueInput!): Category
+  deleteBottomSize(where: BottomSizeWhereUniqueInput!): BottomSize
+  deletePackageTransitEvent(
+    where: PackageTransitEventWhereUniqueInput!
+  ): PackageTransitEvent
+  deleteLabel(where: LabelWhereUniqueInput!): Label
+  deleteSmsReceipt(where: SmsReceiptWhereUniqueInput!): SmsReceipt
+  deleteLocation(where: LocationWhereUniqueInput!): Location
+  deletePhysicalProduct(
+    where: PhysicalProductWhereUniqueInput!
+  ): PhysicalProduct
+  deleteProductVariant(where: ProductVariantWhereUniqueInput!): ProductVariant
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
   upsertCollectionGroup(
     where: CollectionGroupWhereUniqueInput!
     create: CollectionGroupCreateInput!
     update: CollectionGroupUpdateInput!
   ): CollectionGroup!
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+  deleteCollectionGroup(
+    where: CollectionGroupWhereUniqueInput!
+  ): CollectionGroup
+  deleteManyCollectionGroups(where: CollectionGroupWhereInput): BatchPayload!
+  createColor(data: ColorCreateInput!): Color!
+  updateColor(data: ColorUpdateInput!, where: ColorWhereUniqueInput!): Color
+  updateManyColors(
+    data: ColorUpdateManyMutationInput!
+    where: ColorWhereInput
+  ): BatchPayload!
+=======
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
   upsertHomepageProductRail(
     where: HomepageProductRailWhereUniqueInput!
     create: HomepageProductRailCreateInput!
@@ -12009,6 +12213,14 @@ type Mutation {
     create: EmailReceiptCreateInput!
     update: EmailReceiptUpdateInput!
   ): EmailReceipt!
+<<<<<<< HEAD
+=======
+  upsertStyleSubmissionReport(
+    where: StyleSubmissionReportWhereUniqueInput!
+    create: StyleSubmissionReportCreateInput!
+    update: StyleSubmissionReportUpdateInput!
+  ): StyleSubmissionReport!
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
   upsertBagItem(
     where: BagItemWhereUniqueInput!
     create: BagItemCreateInput!
@@ -12089,21 +12301,27 @@ type Mutation {
     create: ReservationReceiptItemCreateInput!
     update: ReservationReceiptItemUpdateInput!
   ): ReservationReceiptItem!
+<<<<<<< HEAD
   upsertSmsReceipt(
     where: SmsReceiptWhereUniqueInput!
     create: SmsReceiptCreateInput!
     update: SmsReceiptUpdateInput!
   ): SmsReceipt!
+=======
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
   upsertStylePreferences(
     where: StylePreferencesWhereUniqueInput!
     create: StylePreferencesCreateInput!
     update: StylePreferencesUpdateInput!
   ): StylePreferences!
+<<<<<<< HEAD
   upsertImage(
     where: ImageWhereUniqueInput!
     create: ImageCreateInput!
     update: ImageUpdateInput!
   ): Image!
+=======
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
   upsertPackage(
     where: PackageWhereUniqueInput!
     create: PackageCreateInput!
@@ -12119,11 +12337,26 @@ type Mutation {
     create: ProductFunctionCreateInput!
     update: ProductFunctionUpdateInput!
   ): ProductFunction!
+<<<<<<< HEAD
+=======
+  upsertStyleSubmission(
+    where: StyleSubmissionWhereUniqueInput!
+    create: StyleSubmissionCreateInput!
+    update: StyleSubmissionUpdateInput!
+  ): StyleSubmission!
+  upsertImage(
+    where: ImageWhereUniqueInput!
+    create: ImageCreateInput!
+    update: ImageUpdateInput!
+  ): Image!
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
   upsertColor(
     where: ColorWhereUniqueInput!
     create: ColorCreateInput!
     update: ColorUpdateInput!
   ): Color!
+<<<<<<< HEAD
   upsertTopSize(
     where: TopSizeWhereUniqueInput!
     create: TopSizeCreateInput!
@@ -12622,14 +12855,674 @@ input PackageSubscriptionWhereInput {
 }
 
 type PackageTransitEvent implements Node {
+=======
+  deleteColor(where: ColorWhereUniqueInput!): Color
+  deleteManyColors(where: ColorWhereInput): BatchPayload!
+  createCustomer(data: CustomerCreateInput!): Customer!
+  updateCustomer(
+    data: CustomerUpdateInput!
+    where: CustomerWhereUniqueInput!
+  ): Customer
+  updateManyCustomers(
+    data: CustomerUpdateManyMutationInput!
+    where: CustomerWhereInput
+  ): BatchPayload!
+  upsertCustomer(
+    where: CustomerWhereUniqueInput!
+    create: CustomerCreateInput!
+    update: CustomerUpdateInput!
+  ): Customer!
+  deleteCustomer(where: CustomerWhereUniqueInput!): Customer
+  deleteManyCustomers(where: CustomerWhereInput): BatchPayload!
+  createCustomerDetail(data: CustomerDetailCreateInput!): CustomerDetail!
+  updateCustomerDetail(
+    data: CustomerDetailUpdateInput!
+    where: CustomerDetailWhereUniqueInput!
+  ): CustomerDetail
+  updateManyCustomerDetails(
+    data: CustomerDetailUpdateManyMutationInput!
+    where: CustomerDetailWhereInput
+  ): BatchPayload!
+  upsertCustomerDetail(
+    where: CustomerDetailWhereUniqueInput!
+    create: CustomerDetailCreateInput!
+    update: CustomerDetailUpdateInput!
+  ): CustomerDetail!
+  deleteCustomerDetail(where: CustomerDetailWhereUniqueInput!): CustomerDetail
+  deleteManyCustomerDetails(where: CustomerDetailWhereInput): BatchPayload!
+  createCustomerMembership(
+    data: CustomerMembershipCreateInput!
+  ): CustomerMembership!
+  updateCustomerMembership(
+    data: CustomerMembershipUpdateInput!
+    where: CustomerMembershipWhereUniqueInput!
+  ): CustomerMembership
+  updateManyCustomerMemberships(
+    data: CustomerMembershipUpdateManyMutationInput!
+    where: CustomerMembershipWhereInput
+  ): BatchPayload!
+  upsertCustomerMembership(
+    where: CustomerMembershipWhereUniqueInput!
+    create: CustomerMembershipCreateInput!
+    update: CustomerMembershipUpdateInput!
+  ): CustomerMembership!
+  deleteCustomerMembership(
+    where: CustomerMembershipWhereUniqueInput!
+  ): CustomerMembership
+  deleteManyCustomerMemberships(
+    where: CustomerMembershipWhereInput
+  ): BatchPayload!
+  createEmailReceipt(data: EmailReceiptCreateInput!): EmailReceipt!
+  updateEmailReceipt(
+    data: EmailReceiptUpdateInput!
+    where: EmailReceiptWhereUniqueInput!
+  ): EmailReceipt
+  updateManyEmailReceipts(
+    data: EmailReceiptUpdateManyMutationInput!
+    where: EmailReceiptWhereInput
+  ): BatchPayload!
+  upsertEmailReceipt(
+    where: EmailReceiptWhereUniqueInput!
+    create: EmailReceiptCreateInput!
+    update: EmailReceiptUpdateInput!
+  ): EmailReceipt!
+  deleteEmailReceipt(where: EmailReceiptWhereUniqueInput!): EmailReceipt
+  deleteManyEmailReceipts(where: EmailReceiptWhereInput): BatchPayload!
+  createHomepageProductRail(
+    data: HomepageProductRailCreateInput!
+  ): HomepageProductRail!
+  updateHomepageProductRail(
+    data: HomepageProductRailUpdateInput!
+    where: HomepageProductRailWhereUniqueInput!
+  ): HomepageProductRail
+  updateManyHomepageProductRails(
+    data: HomepageProductRailUpdateManyMutationInput!
+    where: HomepageProductRailWhereInput
+  ): BatchPayload!
+  upsertHomepageProductRail(
+    where: HomepageProductRailWhereUniqueInput!
+    create: HomepageProductRailCreateInput!
+    update: HomepageProductRailUpdateInput!
+  ): HomepageProductRail!
+  deleteHomepageProductRail(
+    where: HomepageProductRailWhereUniqueInput!
+  ): HomepageProductRail
+  deleteManyHomepageProductRails(
+    where: HomepageProductRailWhereInput
+  ): BatchPayload!
+  createImage(data: ImageCreateInput!): Image!
+  updateImage(data: ImageUpdateInput!, where: ImageWhereUniqueInput!): Image
+  updateManyImages(
+    data: ImageUpdateManyMutationInput!
+    where: ImageWhereInput
+  ): BatchPayload!
+  upsertImage(
+    where: ImageWhereUniqueInput!
+    create: ImageCreateInput!
+    update: ImageUpdateInput!
+  ): Image!
+  deleteImage(where: ImageWhereUniqueInput!): Image
+  deleteManyImages(where: ImageWhereInput): BatchPayload!
+  createLabel(data: LabelCreateInput!): Label!
+  updateLabel(data: LabelUpdateInput!, where: LabelWhereUniqueInput!): Label
+  updateManyLabels(
+    data: LabelUpdateManyMutationInput!
+    where: LabelWhereInput
+  ): BatchPayload!
+  upsertLabel(
+    where: LabelWhereUniqueInput!
+    create: LabelCreateInput!
+    update: LabelUpdateInput!
+  ): Label!
+<<<<<<< HEAD
+  deleteLabel(where: LabelWhereUniqueInput!): Label
+  deleteManyLabels(where: LabelWhereInput): BatchPayload!
+  createLocation(data: LocationCreateInput!): Location!
+  updateLocation(
+    data: LocationUpdateInput!
+    where: LocationWhereUniqueInput!
+  ): Location
+  updateManyLocations(
+    data: LocationUpdateManyMutationInput!
+    where: LocationWhereInput
+  ): BatchPayload!
+=======
+  upsertSmsReceipt(
+    where: SmsReceiptWhereUniqueInput!
+    create: SmsReceiptCreateInput!
+    update: SmsReceiptUpdateInput!
+  ): SmsReceipt!
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
+  upsertLocation(
+    where: LocationWhereUniqueInput!
+    create: LocationCreateInput!
+    update: LocationUpdateInput!
+  ): Location!
+  deleteLocation(where: LocationWhereUniqueInput!): Location
+  deleteManyLocations(where: LocationWhereInput): BatchPayload!
+  createPackage(data: PackageCreateInput!): Package!
+  updatePackage(
+    data: PackageUpdateInput!
+    where: PackageWhereUniqueInput!
+  ): Package
+  updateManyPackages(
+    data: PackageUpdateManyMutationInput!
+    where: PackageWhereInput
+  ): BatchPayload!
+  upsertPackage(
+    where: PackageWhereUniqueInput!
+    create: PackageCreateInput!
+    update: PackageUpdateInput!
+  ): Package!
+  deletePackage(where: PackageWhereUniqueInput!): Package
+  deleteManyPackages(where: PackageWhereInput): BatchPayload!
+  createPackageTransitEvent(
+    data: PackageTransitEventCreateInput!
+  ): PackageTransitEvent!
+  updatePackageTransitEvent(
+    data: PackageTransitEventUpdateInput!
+    where: PackageTransitEventWhereUniqueInput!
+  ): PackageTransitEvent
+  updateManyPackageTransitEvents(
+    data: PackageTransitEventUpdateManyMutationInput!
+    where: PackageTransitEventWhereInput
+  ): BatchPayload!
+  upsertPackageTransitEvent(
+    where: PackageTransitEventWhereUniqueInput!
+    create: PackageTransitEventCreateInput!
+    update: PackageTransitEventUpdateInput!
+  ): PackageTransitEvent!
+  deletePackageTransitEvent(
+    where: PackageTransitEventWhereUniqueInput!
+  ): PackageTransitEvent
+  deleteManyPackageTransitEvents(
+    where: PackageTransitEventWhereInput
+  ): BatchPayload!
+  createPauseRequest(data: PauseRequestCreateInput!): PauseRequest!
+  updatePauseRequest(
+    data: PauseRequestUpdateInput!
+    where: PauseRequestWhereUniqueInput!
+  ): PauseRequest
+  updateManyPauseRequests(
+    data: PauseRequestUpdateManyMutationInput!
+    where: PauseRequestWhereInput
+  ): BatchPayload!
+  upsertPauseRequest(
+    where: PauseRequestWhereUniqueInput!
+    create: PauseRequestCreateInput!
+    update: PauseRequestUpdateInput!
+  ): PauseRequest!
+  deletePauseRequest(where: PauseRequestWhereUniqueInput!): PauseRequest
+  deleteManyPauseRequests(where: PauseRequestWhereInput): BatchPayload!
+  createPaymentPlan(data: PaymentPlanCreateInput!): PaymentPlan!
+  updatePaymentPlan(
+    data: PaymentPlanUpdateInput!
+    where: PaymentPlanWhereUniqueInput!
+  ): PaymentPlan
+  updateManyPaymentPlans(
+    data: PaymentPlanUpdateManyMutationInput!
+    where: PaymentPlanWhereInput
+  ): BatchPayload!
+  upsertPaymentPlan(
+    where: PaymentPlanWhereUniqueInput!
+    create: PaymentPlanCreateInput!
+    update: PaymentPlanUpdateInput!
+  ): PaymentPlan!
+  deletePaymentPlan(where: PaymentPlanWhereUniqueInput!): PaymentPlan
+  deleteManyPaymentPlans(where: PaymentPlanWhereInput): BatchPayload!
+  createPhysicalProduct(data: PhysicalProductCreateInput!): PhysicalProduct!
+  updatePhysicalProduct(
+    data: PhysicalProductUpdateInput!
+    where: PhysicalProductWhereUniqueInput!
+  ): PhysicalProduct
+  updateManyPhysicalProducts(
+    data: PhysicalProductUpdateManyMutationInput!
+    where: PhysicalProductWhereInput
+  ): BatchPayload!
+  upsertPhysicalProduct(
+    where: PhysicalProductWhereUniqueInput!
+    create: PhysicalProductCreateInput!
+    update: PhysicalProductUpdateInput!
+  ): PhysicalProduct!
+  deletePhysicalProduct(
+    where: PhysicalProductWhereUniqueInput!
+  ): PhysicalProduct
+  deleteManyPhysicalProducts(where: PhysicalProductWhereInput): BatchPayload!
+  createPhysicalProductInventoryStatusChange(
+    data: PhysicalProductInventoryStatusChangeCreateInput!
+  ): PhysicalProductInventoryStatusChange!
+  updatePhysicalProductInventoryStatusChange(
+    data: PhysicalProductInventoryStatusChangeUpdateInput!
+    where: PhysicalProductInventoryStatusChangeWhereUniqueInput!
+  ): PhysicalProductInventoryStatusChange
+  updateManyPhysicalProductInventoryStatusChanges(
+    data: PhysicalProductInventoryStatusChangeUpdateManyMutationInput!
+    where: PhysicalProductInventoryStatusChangeWhereInput
+  ): BatchPayload!
+  upsertPhysicalProductInventoryStatusChange(
+    where: PhysicalProductInventoryStatusChangeWhereUniqueInput!
+    create: PhysicalProductInventoryStatusChangeCreateInput!
+    update: PhysicalProductInventoryStatusChangeUpdateInput!
+  ): PhysicalProductInventoryStatusChange!
+  deletePhysicalProductInventoryStatusChange(
+    where: PhysicalProductInventoryStatusChangeWhereUniqueInput!
+  ): PhysicalProductInventoryStatusChange
+  deleteManyPhysicalProductInventoryStatusChanges(
+    where: PhysicalProductInventoryStatusChangeWhereInput
+  ): BatchPayload!
+  createProduct(data: ProductCreateInput!): Product!
+  updateProduct(
+    data: ProductUpdateInput!
+    where: ProductWhereUniqueInput!
+  ): Product
+  updateManyProducts(
+    data: ProductUpdateManyMutationInput!
+    where: ProductWhereInput
+  ): BatchPayload!
+  upsertProduct(
+    where: ProductWhereUniqueInput!
+    create: ProductCreateInput!
+    update: ProductUpdateInput!
+  ): Product!
+  deleteProduct(where: ProductWhereUniqueInput!): Product
+  deleteManyProducts(where: ProductWhereInput): BatchPayload!
+  createProductFunction(data: ProductFunctionCreateInput!): ProductFunction!
+  updateProductFunction(
+    data: ProductFunctionUpdateInput!
+    where: ProductFunctionWhereUniqueInput!
+  ): ProductFunction
+  updateManyProductFunctions(
+    data: ProductFunctionUpdateManyMutationInput!
+    where: ProductFunctionWhereInput
+  ): BatchPayload!
+  upsertProductFunction(
+    where: ProductFunctionWhereUniqueInput!
+    create: ProductFunctionCreateInput!
+    update: ProductFunctionUpdateInput!
+  ): ProductFunction!
+  deleteProductFunction(
+    where: ProductFunctionWhereUniqueInput!
+o deleteManyProductFunctions(where: ProductFunctionWhereInput): BatchPayload!
+  createProductMaterialCategory(
+    data: ProductMaterialCategoryCreateInput!
+  ): ProductMaterialCategory!
+  updateProductMaterialCategory(
+    data: ProductMaterialCategoryUpdateInput!
+    where: ProductMaterialCategoryWhereUniqueInput!
+  ): ProductMaterialCategory
+  updateManyProductMaterialC
+  upsertProductModel(
+    where: ProductModelWhereUniqueInput!
+    create: ProductModelCreateInput!
+    update: ProductModelUpdateInput!
+  ): ProductModel!
+  deleteProductModel(where: ProductModelWhereUniqueInput!): ProductModel
+  deleteManyProductModels(where: ProductModelWhereInput): BatchPayload!
+  updateProductRequest(
+    data: ProductRequestUpdateInput!
+    where: ProductRequestWhereUniqueInput!
+  ): ProductRequest
+  updateManyProductRequests(
+    data: ProductRequestUpdateManyMutatione cpdateInpuoedce oich 
+    data: RecentlyViewedProductUpdateInput!
+    where: RecentlyViewedProductWhereUniqueInput!
+  ): RecentlyViewedProduct
+  updateManyRecentlyViewedProducts(
+    data: RecentlyViewedProductUpdateManyMutationInput!
+    where: RecentlyViewedProductWhereInput
+  ): BatchPayload!
+t   where: RecentlyViewedProductWhereUniqueInput!
+    create: RecentlyViewedProductCreateInput!
+    update: RecentlyViewedProductUpdateInput!
+  ): RecentlyViewedProduct!
+  deleteRecentlyViewedProduct(
+    where: RecentlyViewedProductWhereUniqueInput!
+  ): RecentlyViewedProduct
+  deleteManyRecentlyViewedProducts(
+    where: RecentlyViewedProductWhereInput
+  ): BatchPayload!
+  createReservation(data: ReservationCreateInput!): Reservation!
+  updateReservation(
+    data: ReservationUpdateInput!
+    where: ReservationWhereUniqueInput!
+  ): Reservation
+  updateManyReservations(
+    data: ReservationUpdateManyMutationInput!
+    where: ReservationWhereInput
+  ): BatchPayload!
+  upsertReservation(
+    where: ReservationWhereUniqueInput!
+    create: ReservationCreateInput!
+    update: ReservationUpdateInput!
+  ): Reservation!
+  deleteReservation(where: ReservationWhereUniqueInput!): Reservation
+  deleteManyReservations(where: ReservationWhereInput): BatchPayload!
+  createReservationFeedback(
+    data: ReservationFeedbackCreateInput!
+  ): ReservationFeedback!
+  updateReservationFeedback(
+    data: ReservationFeedbackUpdateInput!
+    where: ReservationFeedbackWhereUniqueInput!
+  ): ReservationFeedbace
+    wtihaateUue S
+    data: SizeUpdateManyMutationInput!
+    where: SizeWhereInput
+  ): BatchPayload!
+  upsertSize(
+    where: SizeWhereUniqueInput!
+    create: SizeCreateInput!
+    update: SizeUpdateInput!
+  ): Size!
+  deleteSize(where: SizeWhereUniqueInput!): Size
+  deleteManySizes(where: SizeWhereInput): BatchPayload!
+  createSmsReceipt(data: SmsReceiptCreateInput!): SmsReceipt!
+  updateSmsReceipt(
+    data: SmsReceiptUpdateInput!
+    where: SmsReceiptWhereUniqueInput!
+  ): SmsReceipt
+  updateManySmsReceipts(
+    data: SmsReceiptUpdateManyMutationInput!
+    where: SmsReceiptWhereInput
+  ): BatchPayload!
+  upsertSmsReceipt(
+    where: SmsReceiptWhereUniqueInput!
+    create: SmsReceiptCreateInput!
+    update: SmsReceiptUpdateInput!
+  ): SmsReceipt!
+  deleteSmsReceipt(where: SmsReceiptWhereUniqueInput!): SmsReceipt
+  deleteManySmsReceipts(where: SmsReceiptWhereInput): BatchPayload!
+  createStylePreferences(data: StylePreferencesCreateInput!): StylePreferences!
+  updateStylePreferences(
+    data: StylePreferencesUpdateInput!
+    where: StylePreferencesWhereUniqueInput!
+  ): StylePreferences
+=======
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
+  updateManyStylePreferenceses(
+    data: StylePreferencesUpdateManyMutationInput!
+    where: StylePreferencesWhereInput
+  ): BatchPayload!
+<<<<<<< HEAD
+  upsertStylePreferences(
+    where: StylePreferencesWhereUniqueInput!
+    create: StylePreferencesCreateInput!
+    update: StylePreferencesUpdateInput!
+  ): StylePreferences!
+    where: StylePreferencesWhereUniqueInput!
+  ): StylePreferences
+  deleteManyStylePreferenceses(where: StylePreferencesWhereInput): BatchPayload!
+  createTag(data: TagCreateInput!): Tag!
+  updateTag(data: TagUpdateInput!, where: TagWhereUniqueInput!): TagT
+=======
+  updateManyPackages(
+    data: PackageUpdateManyMutationInput!
+    where: PackageWhereInput
+  ): BatchPayload!
+  updateManySizes(
+    data: SizeUpdateManyMutationInput!
+    where: SizeWhereInput
+  ): BatchPayload!
+  updateManyProductFunctions(
+    data: ProductFunctionUpdateManyMutationInput!
+    where: ProductFunctionWhereInput
+  ): BatchPayload!
+  updateManyStyleSubmissions(
+    data: StyleSubmissionUpdateManyMutationInput!
+    where: StyleSubmissionWhereInput
+  ): BatchPayload!
+  updateManyImages(
+    data: ImageUpdateManyMutationInput!
+    where: ImageWhereInput
+  ): BatchPayload!
+  updateManyColors(
+    data: ColorUpdateManyMutationInput!
+    where: ColorWhereInput
+  ): BatchPayload!
+  updateManyTopSizes(
+    data: TopSizeUpdateManyMutationInput!
+    where: TopSizeWhereInput
+  ): BatchPayload!
+  updateManyCustomers(
+    data: CustomerUpdateManyMutationInput!
+    where: CustomerWhereInput
+  ): BatchPayload!
+  updateManyUserPushNotifications(
+    data: UserPushNotificationUpdateManyMutationInput!
+    where: UserPushNotificationWhereInput
+  ): BatchPayload!
+  updateManyCategories(
+    data: CategoryUpdateManyMutationInput!
+    where: CategoryWhereInput
+  ): BatchPayload!
+  updateManyBottomSizes(
+    data: BottomSizeUpdateManyMutationInput!
+    where: BottomSizeWhereInput
+  ): BatchPayload!
+  updateManyPackageTransitEvents(
+    data: PackageTransitEventUpdateManyMutationInput!
+    where: PackageTransitEventWhereInput
+  ): BatchPayload!
+  updateManyLabels(
+    data: LabelUpdateManyMutationInput!
+    where: LabelWhereInput
+  ): BatchPayload!
+  updateManySmsReceipts(
+    data: SmsReceiptUpdateManyMutationInput!
+    where: SmsReceiptWhereInput
+  ): BatchPayload!
+  updateManyLocations(
+    data: LocationUpdateManyMutationInput!
+    where: LocationWhereInput
+  ): BatchPayload!
+  updateManyPhysicalProducts(
+    data: PhysicalProductUpdateManyMutationInput!
+    where: PhysicalProductWhereInput
+t updateManyProductVariants(
+    data: ProductVariantUpdateManyMutationInput!
+    where: ProductVariantWhereInput
+  ): BatchPayload!
+  updateManyProducts(
+    data: ProductUpdateManyMutationInput!
+    where: ProductWhereInput
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
+  ): BatchPayload!
+  upsertTag(
+    where: TagWhereUniqueInput!
+    create: TagCreateInput!
+    update: TagUpdateInput!
+  ): Tag!
+  deleteTag(where: TagWhereUniqueInput!): Tag
+  deleteManyTags(where: TagWhereInput): BatchPayload!
+  createTopSize(data: TopSizeCreateInput!): TopSize!
+  updateTopSize(
+    data: TopSizeUpdateInput!
+    where: TopSizeWhereUniqueInput!
+  ): TopSize
+  updateManyTopSizes(
+    data: TopSizeUpdateManyMutationInput!
+    where: UserWhereInput
+  ): BatchPayload!
+  upsertUser(
+    where: UserWhereUniqueInput!
+    create: UserCreateInput!
+    update: UserUpdateInput!
+  ): User!
+  deleteUser(where: UserWhereUniqueInput!): User
+  deleteManyUsers(where: UserWhereInput): BatchPayload!
+  createUserPushNotification(
+    data: UserPushNotificationCreateInput!
+  ): UserPushNotification!
+  updateUserPushNotification(
+    data: UserPushNotificationUpdateInput!
+    where: UserPushNotificationWhereUniqueInput!
+  ): UserPushNotification
+  updateManyUserPushNotifications(
+    data: UserPushNotificationUpdateManyMutationInput!
+    where: UserPushNotificationWhereInput
+  ): BatchPayload!
+  upsertUserPushNotification(
+    where: UserPushNotificationWhereUniqueInput!
+    create: UserPushNotificationCreateInput!
+    update: UserPushNotificationUpdateInput!
+  ): UserPushNotification!
+  deleteUserPushNotification(
+    where: UserPushNotificationWhereUniqueInput!
+  ): UserPushNotification
+  deleteManyUserPushNotifications(
+    where: UserPushNotificationWhereInput
+  ): BatchPayload!
+  createUserPushNotificationInterest(
+    data: UserPushNotificationInterestCreateInput!
+  ): UserPushNotificationInterest!
+  updateUserPushNotificationInterest(
+    data: UserPushNotificationInterestUpdateInput!
+    where: UserPushNotificationInterestWhereUniqueInput!
+  ): UserPushNotificationInterest
+  updateManyUserPushNotificationInterests(
+    data: UserPushNotificationInterestUpdateManyMutationInput!
+    where: UserPushNotificationInterestWhereInput
+  ): BatchPayload!
+  upsertUserPushNotificationInterest(
+    where: UserPushNotificationInterestWhereUniqueInput!
+    create: UserPushNotificationInterestCreateInput!
+    update: UserPushNotificationInterestUpdateInput!
+  ): UserPushNotificationInterest!
+  deleteUserPushNotificationInterest(
+r ): UserPushNotificationInterest
+  deleteManyUserPushNotificationInterests(
+    where: UserPushNotificationInterestWhereInput
+  ): BatchPayload!
+  createWarehouseLocation(
+    data: WarehouseLocationCreateInput!
+  ): WarehouseLocation!
+  updateWarehouseLocation(
+    data: WarehouseLocationUpdateInput!
+    where: WarehouseLocationWhereUniqueInput!
+  ): WarehouseLocation
+  updateManyWarehouseLocations(
+    data: WarehouseLocationUpdateManyMutationInput!
+    where: WarehouseLocationWhereInput
+  ): BatchPayload!
+  upsertWarehouseLocation(
+    where: WarehouseLocationWhereUniqueInput!
+    create: WarehouseLocationCreateInput!
+    update: WarehouseLocationUpdateInput!
+  ): WarehouseLocation!
+  deleteWarehouseLocation(
+    where: WarehouseLocationWhereUniqueInput!
+  ): WarehouseLocation
+  deleteManyWarehouseLocations(
+    where: WarehouseLocationWhereInput
+  ): BatchPayload!
+<<<<<<< HEAD
+  createWarehouseLocationConstraint(
+    data: WarehouseLocationConstraintCreateInput!
+  ): WarehouseLocationConstraint!
+  updateWarehouseLocationConstraint(
+    data: WarehouseLocationConstraintUpdateInput!
+    where: WarehouseLocationConstraintWhereUniqueInput!
+  ): WarehouseLocationConstraint
+  updateManyWarehouseLocationConssRInpu 
+  deleteManyProductVariantFeedbackQuestions(
+    where: ProductVariantFeedbackQuestionWhereInput
+  ): BatchPayload!
+  deleteManyReservationReceipts(
+    where: ReservationReceiptWhereInput
+  ): BatchPayload!
+  deleteManyProductRequests(where: ProductRequestWhereInput): BatchPayload!
+  deleteManyProductVariantWants(
+    where: ProductVariantWantWhereInput
+  ): BatchPayload!
+  deleteManyCollections(where: CollectionWhereInput): BatchPayload!
+  deleteManyPushNotificationReceipts(
+    where: PushNotificationReceiptWhereInput
+  ): BatchPayload!
+  deleteManyCustomerDetails(where: CustomerDetailWhereInput): BatchPayload!
+  deleteManyUserPushNotificationInterests(
+    where: UserPushNotificationInterestWhereInput
+  ): BatchPayload!
+  deleteManyBillingInfoes(where: BillingInfoWhereInput): BatchPayload!
+  deleteManyReservationReceiptItems(
+    where: ReservationReceiptItemWhereInput
+  ): BatchPayload!
+  deleteManyStylePreferenceses(where: StylePreferencesWhereInput): BatchPayload!
+  deleteManyPackages(where: PackageWhereInput): BatchPayload!
+  deleteManySizes(where: SizeWhereInput): BatchPayload!
+  deleteManyProductFunctions(where: ProductFunctionWhereInput): BatchPayload!
+  deleteManyStyleSubmissions(where: StyleSubmissionWhereInput): BatchPayload!
+  deleteManyImages(where: ImageWhereInput): BatchPayload!
+  deleteManyColors(where: ColorWhereInput): BatchPayload!
+  deleteManyTopSizes(where: TopSizeWhereInput): BatchPayload!
+  deleteManyCustomers(where: CustomerWhereInput): BatchPayload!
+  deleteManyUserPushNotifications(
+    where: UserPushNotificationWhereInput
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
+  ): BatchPayload!
+  upsertWarehouseLocationConstraint(
+    where: WarehouseLocationConstraintWhereUniqueInput!
+    create: WarehouseLocationConstraintCreateInput!
+    update: WarehouseLocationConstraintUpdateInput!
+  ): WarehouseLocationConstraint!
+  deleteWarehouseLocationConstraint(
+    where: WarehouseLocationConstraintWhereUniqueInput!
+  ): WarehouseLocationConstraint
+  deleteManyWarehouseLocationConstraints(
+    where: WarehouseLocationConstraintWhereInput
+  ): BatchPayload!
+<<<<<<< HEAD
+=======
+  deleteManyLabels(where: LabelWhereInput): BatchPayload!
+  deleteManySmsReceipts(where: SmsReceiptWhereInput): BatchPayload!
+  deleteManyLocations(where: LocationWhereInput): BatchPayload!
+  deleteManyPhysicalProducts(where: PhysicalProductWhereInput): BatchPayload!
+  deleteManyProductVariants(where: ProductVariantWhereInput): BatchPayload!
+  deleteManyProducts(where: ProductWhereInput): BatchPayload!
+  deleteManyReservations(where: ReservationWhereInput): BatchPayload!
+  deleteManyUsers(where: UserWhereInput): BatchPayload!
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
+}
+
+enum MutationType {
+  CREATED
+  UPDATED
+  DELETED
+}
+
+interface Node {
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
   id: ID!
-  status: PackageTransitEventStatus!
-  subStatus: PackageTransitEventSubStatus!
-  data: Json!
+}
+
+type Package {
+  id: ID!
+  items(
+    where: PhysicalProductWhereInput
+    orderBy: PhysicalProductOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [PhysicalProduct!]
+  transactionID: String!
+  shippingLabel: Label!
+  fromAddress: Location!
+  toAddress: Location!
+  weight: Float
+  events(
+    where: PackageTransitEventWhereInput
+    orderBy: PackageTransitEventOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [PackageTransitEvent!]
   createdAt: DateTime!
   updatedAt: DateTime!
 }
 
+<<<<<<< HEAD
 """
 A connection to a list of items.
 """
@@ -12644,20 +13537,31 @@ type PackageTransitEventConnection {
   """
   edges: [PackageTransitEventEdge]!
   aggregate: AggregatePackageTransitEvent!
+=======
+type PackageConnection {
+  pageInfo: PageInfo!
+  edges: [PackageEdge]!
+  aggregate: AggregatePackage!
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
 }
 
-input PackageTransitEventCreateInput {
+input PackageCreateInput {
   id: ID
-  status: PackageTransitEventStatus!
-  subStatus: PackageTransitEventSubStatus!
-  data: Json!
+  items: PhysicalProductCreateManyInput
+  transactionID: String!
+  shippingLabel: LabelCreateOneInput!
+  fromAddress: LocationCreateOneInput!
+  toAddress: LocationCreateOneInput!
+  weight: Float
+  events: PackageTransitEventCreateManyInput
 }
 
-input PackageTransitEventCreateManyInput {
-  create: [PackageTransitEventCreateInput!]
-  connect: [PackageTransitEventWhereUniqueInput!]
+input PackageCreateOneInput {
+  create: PackageCreateInput
+  connect: PackageWhereUniqueInput
 }
 
+<<<<<<< HEAD
 """
 An edge in a connection.
 """
@@ -12670,33 +13574,35 @@ type PackageTransitEventEdge {
   """
   A cursor for use in pagination.
   """
+=======
+type PackageEdge {
+  node: Package!
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
   cursor: String!
 }
 
-enum PackageTransitEventOrderByInput {
+enum PackageOrderByInput {
   id_ASC
   id_DESC
-  status_ASC
-  status_DESC
-  subStatus_ASC
-  subStatus_DESC
-  data_ASC
-  data_DESC
+  transactionID_ASC
+  transactionID_DESC
+  weight_ASC
+  weight_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
   updatedAt_DESC
 }
 
-type PackageTransitEventPreviousValues {
+type PackagePreviousValues {
   id: ID!
-  status: PackageTransitEventStatus!
-  subStatus: PackageTransitEventSubStatus!
-  data: Json!
+  transactionID: String!
+  weight: Float
   createdAt: DateTime!
   updatedAt: DateTime!
 }
 
+<<<<<<< HEAD
 input PackageTransitEventScalarWhereInput {
   """
   Logical AND on all given filters.
@@ -12894,12 +13800,16 @@ enum PackageTransitEventStatus {
 }
 
 type PackageTransitEventSubscriptionPayload {
+=======
+type PackageSubscriptionPayload {
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
   mutation: MutationType!
-  node: PackageTransitEvent
+  node: Package
   updatedFields: [String!]
-  previousValues: PackageTransitEventPreviousValues
+  previousValues: PackagePreviousValues
 }
 
+<<<<<<< HEAD
 input PackageTransitEventSubscriptionWhereInput {
   """
   Logical AND on all given filters.
@@ -12919,6 +13829,9 @@ input PackageTransitEventSubscriptionWhereInput {
   """
   The subscription event gets dispatched when it's listed in mutation_in
   """
+=======
+input PackageSubscriptionWhereInput {
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
   mutation_in: [MutationType!]
 
   """
@@ -12935,6 +13848,7 @@ input PackageTransitEventSubscriptionWhereInput {
   The subscription event gets only dispatched when some of the field names included in this list have been updated
   """
   updatedFields_contains_some: [String!]
+<<<<<<< HEAD
   node: PackageTransitEventWhereInput
 }
 
@@ -12966,29 +13880,40 @@ enum PackageTransitEventSubStatus {
   PackageDisposed
   PackageLost
   Other
+=======
+  node: PackageWhereInput
+  AND: [PackageSubscriptionWhereInput!]
+  OR: [PackageSubscriptionWhereInput!]
+  NOT: [PackageSubscriptionWhereInput!]
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
 }
 
-input PackageTransitEventUpdateDataInput {
-  status: PackageTransitEventStatus
-  subStatus: PackageTransitEventSubStatus
-  data: Json
+type PackageTransitEvent {
+  id: ID!
+  status: PackageTransitEventStatus!
+  subStatus: PackageTransitEventSubStatus!
+  data: Json!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
-input PackageTransitEventUpdateInput {
-  status: PackageTransitEventStatus
-  subStatus: PackageTransitEventSubStatus
-  data: Json
+type PackageTransitEventConnection {
+  pageInfo: PageInfo!
+  edges: [PackageTransitEventEdge]!
+  aggregate: AggregatePackageTransitEvent!
 }
 
-input PackageTransitEventUpdateManyDataInput {
-  status: PackageTransitEventStatus
-  subStatus: PackageTransitEventSubStatus
-  data: Json
+input PackageTransitEventCreateInput {
+  id: ID
+  status: PackageTransitEventStatus!
+  subStatus: PackageTransitEventSubStatus!
+  data: Json!
 }
 
-input PackageTransitEventUpdateManyInput {
+input PackageTransitEventCreateManyInput {
   create: [PackageTransitEventCreateInput!]
   connect: [PackageTransitEventWhereUniqueInput!]
+<<<<<<< HEAD
   set: [PackageTransitEventWhereUniqueInput!]
   disconnect: [PackageTransitEventWhereUniqueInput!]
   delete: [PackageTransitEventWhereUniqueInput!]
@@ -12996,30 +13921,15 @@ input PackageTransitEventUpdateManyInput {
   updateMany: [PackageTransitEventUpdateManyWithWhereNestedInput!]
   deleteMany: [PackageTransitEventScalarWhereInput!]
   upsert: [PackageTransitEventUpsertWithWhereUniqueNestedInput!]
+=======
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
 }
 
-input PackageTransitEventUpdateManyMutationInput {
-  status: PackageTransitEventStatus
-  subStatus: PackageTransitEventSubStatus
-  data: Json
-}
+type PackageTransitEventEdge {
+  node: PackageTransitEvent!
+r}
 
-input PackageTransitEventUpdateManyWithWhereNestedInput {
-  where: PackageTransitEventScalarWhereInput!
-  data: PackageTransitEventUpdateManyDataInput!
-}
-
-input PackageTransitEventUpdateWithWhereUniqueNestedInput {
-  where: PackageTransitEventWhereUniqueInput!
-  data: PackageTransitEventUpdateDataInput!
-}
-
-input PackageTransitEventUpsertWithWhereUniqueNestedInput {
-  where: PackageTransitEventWhereUniqueInput!
-  update: PackageTransitEventUpdateDataInput!
-  create: PackageTransitEventCreateInput!
-}
-
+<<<<<<< HEAD
 input PackageTransitEventWhereInput {
   """
   Logical AND on all given filters.
@@ -13065,6 +13975,15 @@ input PackageTransitEventWhereInput {
   """
   All values greater than the given value.
   """
+=======
+enum PackageTransitEventOrderByInput {
+  id_ASC
+  id_DESC
+  status_ASC
+  status_DESC
+  subStatus_ASC
+  subStatus_DESC
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
   id_gt: ID
 
   """
@@ -13096,11 +14015,14 @@ input PackageTransitEventWhereInput {
   All values ending with the given string.
   """
   id_ends_with: ID
+<<<<<<< HEAD
 
   """
   All values not ending with the given string.
   """
   id_not_ends_with: ID
+=======
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
   status: PackageTransitEventStatus
 
   """
@@ -13118,6 +14040,7 @@ input PackageTransitEventWhereInput {
   """
   status_not_in: [PackageTransitEventStatus!]
   subStatus: PackageTransitEventSubStatus
+<<<<<<< HEAD
 
   """
   All values that are not equal to given value.
@@ -13205,13 +14128,23 @@ input PackageTransitEventWhereInput {
   All values greater than or equal the given value.
   """
   updatedAt_gte: DateTime
+=======
+  subStatus_not: PackageTransitEventSubStcanStatus peev PatUtu
+  OR: [PackageTransitEventWhereInput!]
+  NOT: [PackageTransitEventWhereInput!]
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
 }
 
 input PackageTransitEventWhereUniqueInput {
   id: ID
 }
+<<<<<<< HEAD
 
 input PackageUpdateDataInput {
+=======
+iput PackageUpdateDataInput {
+  items: PhysicalProductUpdateManyInput
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
   transactionID: String
   weight: Float
   items: PhysicalProductUpdateManyInput
@@ -13243,6 +14176,7 @@ input PackageUpdateOneInput {
   delete: Boolean
   update: PackageUpdateDataInput
   upsert: PackageUpsertNestedInput
+<<<<<<< HEAD
 }
 
 input PackageUpsertNestedInput {
@@ -13468,6 +14402,13 @@ input PackageWhereInput {
   """
   All values greater than or equal the given value.
   """
+=======
+  delete: Boolean
+  disconnect: Boolean
+  connect: PackageWhereUniqueInput
+}I
+  traegnDsStra g
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
   createdAt_gte: DateTime
   updatedAt: DateTime
 
@@ -13574,16 +14515,12 @@ type PauseRequestConnection {
 
 input PauseRequestCreateInput {
   id: ID
-  pausePending: Boolean!
   pauseDate: DateTime
   resumeDate: DateTime
   notified: Boolean
   membership: CustomerMembershipCreateOneWithoutPauseRequestsInput!
 }
-
-input PauseRequestCreateManyWithoutMembershipInput {
-  create: [PauseRequestCreateWithoutMembershipInput!]
-  connect: [PauseRequestWhereUniqueInput!]
+[
 }
 
 input PauseRequestCreateWithoutMembershipInput {
@@ -13764,6 +14701,7 @@ input PauseRequestScalarWhereInput {
   All values that are contained in given list.
   """
   updatedAt_in: [DateTime!]
+<<<<<<< HEAD
 
   """
   All values that are not contained in given list.
@@ -13778,6 +14716,9 @@ input PauseRequestScalarWhereInput {
   """
   All values less than or equal the given value.
   """
+=======
+e updatedAt_lt: DateTime
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
   updatedAt_lte: DateTime
 
   """
@@ -13867,12 +14808,16 @@ input PauseRequestScalarWhereInput {
   All values greater than or equal the given value.
   """
   resumeDate_gte: DateTime
+<<<<<<< HEAD
   notified: Boolean
 
   """
   All values that are not equal to given value.
   """
   notified_not: Boolean
+=======
+<<<<<<< HEAD
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
 }
 
 type PauseRequestSubscriptionPayload {
@@ -13906,6 +14851,9 @@ input PauseRequestSubscriptionWhereInput {
   """
   The subscription event gets only dispatched when one of the updated fields names is included in this list
   """
+=======
+  AND: [PauseRequestScalarWhereInput!]
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
   updatedFields_contains: String
 
   """
@@ -13962,9 +14910,13 @@ input PauseRequestUpdateManyWithWhereNestedInput {
 input PauseRequestUpdateWithoutMembershipDataInput {
   pausePending: Boolean
   pauseDate: DateTime
+<<<<<<< HEAD
   resumeDate: DateTime
   notified: Boolean
 }
+=======
+e}
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
 
 input PauseRequestUpdateWithWhereUniqueWithoutMembershipInput {
   where: PauseRequestWhereUniqueInput!
@@ -14084,6 +15036,7 @@ input PauseRequestWhereInput {
   All values less than or equal the given value.
   """
   createdAt_lte: DateTime
+<<<<<<< HEAD
 
   """
   All values greater than the given value.
@@ -14187,6 +15140,9 @@ input PauseRequestWhereInput {
   """
   All values that are not contained in given list.
   """
+=======
+  createdAt_gt: DateTimeT 
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
   resumeDate_not_in: [DateTime!]
 
   """
@@ -25714,6 +26670,7 @@ input PushNotificationReceiptWhereInput {
   All values starting with the given string.
   """
   route_starts_with: String
+<<<<<<< HEAD
 
   """
   All values not starting with the given string.
@@ -25795,6 +26752,9 @@ input PushNotificationReceiptWhereInput {
   All values not ending with the given string.
   """
   screen_not_ends_with: String
+=======
+_ route_ends_with: String:n
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
   uri: String
 
   """
@@ -25811,6 +26771,7 @@ input PushNotificationReceiptWhereInput {
   All values that are not contained in given list.
   """
   uri_not_in: [String!]
+<<<<<<< HEAD
 
   """
   All values less than the given value.
@@ -25825,6 +26786,9 @@ input PushNotificationReceiptWhereInput {
   """
   All values greater than the given value.
   """
+=======
+t uri_lte: String
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
   uri_gt: String
 
   """
@@ -25872,6 +26836,7 @@ input PushNotificationReceiptWhereInput {
   All values that are contained in given list.
   """
   interest_in: [String!]
+<<<<<<< HEAD
 
   """
   All values that are not contained in given list.
@@ -26160,6 +27125,9 @@ input PushNotificationReceiptWhereInput {
   """
   All values greater than or equal the given value.
   """
+=======
+  interest_not_in: [String!]ri
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
   recordSlug_gte: String
 
   """
@@ -26258,6 +27226,7 @@ input PushNotificationReceiptWhereInput {
   All values greater than the given value.
   """
   createdAt_gt: DateTime
+<<<<<<< HEAD
 
   """
   All values greater than or equal the given value.
@@ -26288,6 +27257,10 @@ input PushNotificationReceiptWhereInput {
   """
   All values less than or equal the given value.
   """
+=======
+e updatedAt: DateTime
+  updatedAt_not: DateTime
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
   updatedAt_lte: DateTime
 
   """
@@ -26319,8 +27292,7 @@ type Query {
     where: BrandWhereInput
     orderBy: BrandOrderByInput
     skip: Int
-    after: String
-    before: String
+e   before: String
     first: Int
     last: Int
   ): [Brand]!
@@ -26329,6 +27301,7 @@ type Query {
     orderBy: CollectionGroupOrderByInput
     skip: Int
     after: String
+<<<<<<< HEAD
     before: String
     first: Int
     last: Int
@@ -26345,6 +27318,12 @@ type Query {
   tags(
     where: TagWhereInput
     orderBy: TagOrderByInput
+=======
+    before: Stringize
+  bottomSizes(
+    where: BottomSizeWhereInput
+    orderBy: BottomSizeOrderByInput
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
     skip: Int
     after: String
     before: String
@@ -26366,12 +27345,20 @@ type Query {
     skip: Int
     after: String
     before: String
+<<<<<<< HEAD
     first: Int
     last: Int
   ): [ProductMaterialCategory]!
   productModels(
     where: ProductModelWhereInput
     orderBy: ProductModelOrderByInput
+=======
+s   last: Int
+  ): [Brand]!
+  brandsConnection(
+    where: BrandWhereInput
+    orderBy: BrandOrderByInput
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
     skip: Int
     after: String
     before: String
@@ -26383,6 +27370,7 @@ type Query {
     orderBy: PhysicalProductInventoryStatusChangeOrderByInput
     skip: Int
     after: String
+<<<<<<< HEAD
     before: String
     first: Int
     last: Int
@@ -26390,6 +27378,9 @@ type Query {
   warehouseLocationConstraints(
     where: WarehouseLocationConstraintWhereInput
     orderBy: WarehouseLocationConstraintOrderByInput
+=======
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
     skip: Int
     after: String
     before: String
@@ -26530,37 +27521,81 @@ type Query {
     before: String
     first: Int
     last: Int
+<<<<<<< HEAD
   ): [PushNotificationReceipt]!
   customerDetails(
     where: CustomerDetailWhereInput
     orderBy: CustomerDetailOrderByInput
+=======
+<<<<<<< HEAD
+  ): [HomepageProductRail]!
+  homepageProductRailsConnection(
+    where: HomepageProductRailWhereInput
+    orderBy: HomepageProductRailOrderByInput
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
     skip: Int
     after: String
     before: String
     first: Int
     last: Int
+<<<<<<< HEAD
   ): [CustomerDetail]!
   userPushNotificationInterests(
     where: UserPushNotificationInterestWhereInput
     orderBy: UserPushNotificationInterestOrderByInput
+=======
+  ): HomepageProductRailConnection!
+  image(where: ImageWhereUniqueInput!): Image
+  images(
+    where: ImageWhereInput
+    orderBy: ImageOrderByInput
+=======
+  ): [ReservationReceiptItem]!
+  stylePreferenceses(
+    where: StylePreferencesWhereInput
+    orderBy: StylePreferencesOrderByInput
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
     skip: Int
     after: String
     before: String
     first: Int
     last: Int
+<<<<<<< HEAD
   ): [UserPushNotificationInterest]!
   billingInfoes(
     where: BillingInfoWhereInput
     orderBy: BillingInfoOrderByInput
+=======
+<<<<<<< HEAD
+  ): [Image]!
+  imagesConnection(
+    where: ImageWhereInput
+    orderBy: ImageOrderByInput
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
     skip: Int
     after: String
     before: String
     first: Int
     last: Int
+<<<<<<< HEAD
   ): [BillingInfo]!
   reservationReceiptItems(
     where: ReservationReceiptItemWhereInput
     orderBy: ReservationReceiptItemOrderByInput
+=======
+  ): ImageConnection!
+  label(where: LabelWhereUniqueInput!): Label
+  labels(
+    where: LabelWhereInput
+    orderBy: LabelOrderByInput
+=======
+  ): [StylePreferences]!
+  packages(
+    where: PackageWhereInput
+    orderBy: PackageOrderByInput
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
     skip: Int
     after: String
     before: String
@@ -26584,10 +27619,42 @@ type Query {
     before: String
     first: Int
     last: Int
+<<<<<<< HEAD
   ): [StylePreferences]!
   images(
     where: ImageWhereInput
     orderBy: ImageOrderByInput
+=======
+<<<<<<< HEAD
+  ): [Location]!
+  locationsConnection(
+    where: LocationWhereInput
+    orderBy: LocationOrderByInput
+=======
+  ): [ProductFunction]!
+  styleSubmissions(
+    where: StyleSubmissionWhereInput
+    orderBy: StyleSubmissionOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [StyleSubmission]!
+  images(
+    where: ImageWhereInput
+    orderBy: ImageOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Image]!
+  colors(
+    where: ColorWhereInput
+    orderBy: ColorOrderByInput
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
     skip: Int
     after: String
     before: String
@@ -26656,10 +27723,33 @@ type Query {
     before: String
     first: Int
     last: Int
+<<<<<<< HEAD
   ): [UserPushNotification]!
   categories(
     where: CategoryWhereInput
     orderBy: CategoryOrderByInput
+=======
+<<<<<<< HEAD
+  ): [PaymentPlan]!
+  paymentPlansConnection(
+    where: PaymentPlanWhereInput
+    orderBy: PaymentPlanOrderByInput
+=======
+  ): [Label]!
+  smsReceipts(
+    where: SmsReceiptWhereInput
+    orderBy: SmsReceiptOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [SmsReceipt]!
+  locations(
+    where: LocationWhereInput
+    orderBy: LocationOrderByInput
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
     skip: Int
     after: String
     before: String
@@ -26759,6 +27849,14 @@ type Query {
   productMaterialCategory(
     where: ProductMaterialCategoryWhereUniqueInput!
   ): ProductMaterialCategory
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+  productMaterialCategories(
+    where: ProductMaterialCategoryWhereInput
+    orderBy: ProductMaterialCategoryOrderByInput
+=======
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
   productModel(where: ProductModelWhereUniqueInput!): ProductModel
   physicalProductInventoryStatusChange(
     where: PhysicalProductInventoryStatusChangeWhereUniqueInput!
@@ -26771,6 +27869,12 @@ type Query {
   ): WarehouseLocation
   paymentPlan(where: PaymentPlanWhereUniqueInput!): PaymentPlan
   emailReceipt(where: EmailReceiptWhereUniqueInput!): EmailReceipt
+<<<<<<< HEAD
+=======
+  styleSubmissionReport(
+    where: StyleSubmissionReportWhereUniqueInput!
+  ): StyleSubmissionReport
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
   bagItem(where: BagItemWhereUniqueInput!): BagItem
   customerMembership(
     where: CustomerMembershipWhereUniqueInput!
@@ -26807,12 +27911,21 @@ type Query {
   reservationReceiptItem(
     where: ReservationReceiptItemWhereUniqueInput!
   ): ReservationReceiptItem
+<<<<<<< HEAD
   smsReceipt(where: SmsReceiptWhereUniqueInput!): SmsReceipt
   stylePreferences(where: StylePreferencesWhereUniqueInput!): StylePreferences
   image(where: ImageWhereUniqueInput!): Image
   package(where: PackageWhereUniqueInput!): Package
   size(where: SizeWhereUniqueInput!): Size
   productFunction(where: ProductFunctionWhereUniqueInput!): ProductFunction
+=======
+  stylePreferences(where: StylePreferencesWhereUniqueInput!): StylePreferences
+  package(where: PackageWhereUniqueInput!): Package
+  size(where: SizeWhereUniqueInput!): Size
+  productFunction(where: ProductFunctionWhereUniqueInput!): ProductFunction
+  styleSubmission(where: StyleSubmissionWhereUniqueInput!): StyleSubmission
+  image(where: ImageWhereUniqueInput!): Image
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
   color(where: ColorWhereUniqueInput!): Color
   topSize(where: TopSizeWhereUniqueInput!): TopSize
   customer(where: CustomerWhereUniqueInput!): Customer
@@ -26825,6 +27938,10 @@ type Query {
     where: PackageTransitEventWhereUniqueInput!
   ): PackageTransitEvent
   label(where: LabelWhereUniqueInput!): Label
+<<<<<<< HEAD
+=======
+  smsReceipt(where: SmsReceiptWhereUniqueInput!): SmsReceipt
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
   location(where: LocationWhereUniqueInput!): Location
   physicalProduct(where: PhysicalProductWhereUniqueInput!): PhysicalProduct
   productVariant(where: ProductVariantWhereUniqueInput!): ProductVariant
@@ -26834,6 +27951,10 @@ type Query {
   brandsConnection(
     where: BrandWhereInput
     orderBy: BrandOrderByInput
+<<<<<<< HEAD
+=======
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
     skip: Int
     after: String
     before: String
@@ -26938,6 +28059,7 @@ type Query {
     before: String
     first: Int
     last: Int
+<<<<<<< HEAD
   ): EmailReceiptConnection!
   bagItemsConnection(
     where: BagItemWhereInput
@@ -26951,6 +28073,23 @@ type Query {
   customerMembershipsConnection(
     where: CustomerMembershipWhereInput
     orderBy: CustomerMembershipOrderByInput
+=======
+<<<<<<< HEAD
+  ): ProductVariantFeedbackConnection!
+  productVariantFeedbackQuestion(
+    where: ProductVariantFeedbackQuestionWhereUniqueInput!
+  ): ProductVariantFeedbackQuestion
+  productVariantFeedbackQuestions(
+    where: ProductVariantFeedbackQuestionWhereInput
+    orderBy: ProductVariantFeedbackQuestionOrderByInput
+=======
+a styleSubmissionReportsConnectiomodel
+    first: Int
+    last: Int
+  ): [ProductVariantFeedbackQuestion]!
+  productVariantFeedbackQuestionsConnection(
+r   orderBy: ProductVariantFeedbackQuestionOrderByInput
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
     skip: Int
     after: String
     before: String
@@ -26962,6 +28101,7 @@ type Query {
     orderBy: PauseRequestOrderByInput
     skip: Int
     after: String
+<<<<<<< HEAD
     before: String
     first: Int
     last: Int
@@ -27015,6 +28155,9 @@ type Query {
     where: ProductRequestWhereInput
     orderBy: ProductRequestOrderByInput
     skip: Int
+=======
+    before: Stringi 
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
     after: String
     before: String
     first: Int
@@ -27034,13 +28177,16 @@ type Query {
     orderBy: CollectionOrderByInput
     skip: Int
     after: String
-    before: String
-    first: Int
+o   first: Int
     last: Int
+<<<<<<< HEAD
   ): CollectionConnection!
   pushNotificationReceiptsConnection(
     where: PushNotificationReceiptWhereInput
     orderBy: PushNotificationReceiptOrderByInput
+=======
+    orderBy: ReservationFeedbackOrderByInput
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
     skip: Int
     after: String
     before: String
@@ -27064,11 +28210,21 @@ type Query {
     before: String
     first: Int
     last: Int
+<<<<<<< HEAD
   ): UserPushNotificationInterestConnection!
   billingInfoesConnection(
     where: BillingInfoWhereInput
     orderBy: BillingInfoOrderByInput
     skip: Int
+=======
+  ): ReservationReceiptConnection!
+  reservationReceiptItem(
+    where: ReservationReceiptItemWhereUniqueInput!
+  ): ReservationReceiptItem
+  reservationReceiptItems(
+    where: ReservationReceiptItemWhereInput
+e   skip: Int
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
     after: String
     before: String
     first: Int
@@ -27079,6 +28235,7 @@ type Query {
     orderBy: ReservationReceiptItemOrderByInput
     skip: Int
     after: String
+<<<<<<< HEAD
     before: String
     first: Int
     last: Int
@@ -27095,51 +28252,111 @@ type Query {
   stylePreferencesesConnection(
     where: StylePreferencesWhereInput
     orderBy: StylePreferencesOrderByInput
+=======
+    last: Int
+  ): [Size]!
+  sizesConnection(
+    where: SizeWhereInput
+    orderBy: SizeOrderByInput
+=======
+  stylePreferencesesConnection(
+    where: StylePreferencesWhereInput
+    orderBy: StylePreferencesOrderByInput
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
     skip: Int
     after: String
     before: String
     first: Int
     last: Int
+<<<<<<< HEAD
   ): StylePreferencesConnection!
   imagesConnection(
     where: ImageWhereInput
     orderBy: ImageOrderByInput
+=======
+<<<<<<< HEAD
+  ): SizeConnection!
+  smsReceipt(where: SmsReceiptWhereUniqueInput!): SmsReceipt
+  smsReceipts(
+    where: SmsReceiptWhereInput
+    orderBy: SmsReceiptOrderByInput
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
     skip: Int
     after: String
     before: String
     first: Int
+<<<<<<< HEAD
     last: Int
   ): ImageConnection!
   packagesConnection(
     where: PackageWhereInput
     orderBy: PackageOrderByInput
+=======
+t ): [SmsReceipt]!
+  smsReceiptsConnection(
+    where: SmsReceiptWhereInput
+    orderBy: SmsReceiptOrderByInput
+=======
+  ): StylePreferencesConnection!
+  packagesConnection(
+    where: PackageWhereInput
+    orderBy: PackageOrderByInput
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
     skip: Int
     after: String
     before: String
     first: Int
     last: Int
+<<<<<<< HEAD
   ): PackageConnection!
   sizesConnection(
     where: SizeWhereInput
     orderBy: SizeOrderByInput
+=======
+  ): SmsReceiptConnection!
+  stylePreferences(where: StylePreferencesWhereUniqueInput!): StylePreferences
+    orderBy: TagOrderByInput
+=======
+  ): ProductFunctionConnection!
+  styleSubmissionsConnection(
+    where: StyleSubmissionWhereInput
+    orderBy: StyleSubmissionOrderByInput
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
     skip: Int
     after: String
     before: String
     first: Int
     last: Int
+<<<<<<< HEAD
   ): SizeConnection!
   productFunctionsConnection(
     where: ProductFunctionWhereInput
     orderBy: ProductFunctionOrderByInput
+=======
+  ): StyleSubmissionConnection!
+  imagesConnection(
+    where: ImageWhereInput
+    orderBy: ImageOrderByInput
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
     skip: Int
     after: String
     before: String
     first: Int
     last: Int
+<<<<<<< HEAD
   ): ProductFunctionConnection!
   colorsConnection(
     where: ColorWhereInput
     orderBy: ColorOrderByInput
+=======
+  ): ImageConnection!
+  colorsConnection(
+    where: ColorWhereInput
+    orderBy: ColorOrderByInput
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
     skip: Int
     after: String
     before: String
@@ -27208,15 +28425,32 @@ type Query {
     before: String
     first: Int
     last: Int
+<<<<<<< HEAD
   ): LabelConnection!
   locationsConnection(
     where: LocationWhereInput
     orderBy: LocationOrderByInput
+=======
+<<<<<<< HEAD
+  ): UserPushNotificationConnection!
+  userPushNotificationInterest(
+    where: UserPushNotificationInterestWhereUniqueInput!
+  ): UserPushNotificationInterest
+  userPushNotificationInterests(
+    where: UserPushNotificationInterestWhereInput
+    orderBy: UserPushNotificationInterestOrderByInput
+=======
+  ): LabelConnection!
+  smsReceiptsConnection(
+    where: SmsReceiptWhereInput
+    orderBy: SmsReceiptOrderByInput
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
     skip: Int
     after: String
     before: String
     first: Int
     last: Int
+<<<<<<< HEAD
   ): LocationConnection!
   physicalProductsConnection(
     where: PhysicalProductWhereInput
@@ -27248,20 +28482,35 @@ type Query {
   reservationsConnection(
     where: ReservationWhereInput
     orderBy: ReservationOrderByInput
+=======
+  ): SmsReceiptConnection!
+  locationsConnection(
+    where: LocationWhereInput
+    orderBy: LocationOrderByInput
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
     skip: Int
     after: String
     before: String
     first: Int
     last: Int
+<<<<<<< HEAD
   ): ReservationConnection!
   usersConnection(
     where: UserWhereInput
     orderBy: UserOrderByInput
+=======
+  ): [UserPushNotificationInterest]!
+  userPushNotificationInterestsConnection(
+    where: UserPushNotificationInterestWhereInput
+    orderBy: UserPushNotificationInterestOrderByInput
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
     skip: Int
     after: String
     before: String
     first: Int
     last: Int
+<<<<<<< HEAD
   ): UserConnection!
 
   """
@@ -27612,11 +28861,21 @@ type Reservation implements Node {
   products(
     where: PhysicalProductWhereInput
     orderBy: PhysicalProductOrderByInput
+=======
+  ): UserPushNotificationInterestConnection!
+  warehouseLocation(
+    where: WarehouseLocationWhereUniqueInput!
+  ): WarehouseLocation
+  warehouseLocations(
+    where: WarehouseLocationWhereInput
+    orderBy: WarehouseLocationOrderByInput
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
     skip: Int
     after: String
     before: String
     first: Int
     last: Int
+<<<<<<< HEAD
   ): [PhysicalProduct!]
   reservationNumber: Int!
   phase: ReservationPhase!
@@ -27735,11 +28994,18 @@ type ReservationFeedback implements Node {
   feedbacks(
     where: ProductVariantFeedbackWhereInput
     orderBy: ProductVariantFeedbackOrderByInput
+=======
+  ): [WarehouseLocation]!
+  warehouseLocationsConnection(
+    where: WarehouseLocationWhereInput
+    orderBy: WarehouseLocationOrderByInput
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
     skip: Int
     after: String
     before: String
     first: Int
     last: Int
+<<<<<<< HEAD
   ): [ProductVariantFeedback!]
   rating: Rating
   user: User!
@@ -28237,11 +29503,30 @@ type ReservationReceipt implements Node {
   items(
     where: ReservationReceiptItemWhereInput
     orderBy: ReservationReceiptItemOrderByInput
+=======
+  ): WarehouseLocationConnection!
+  warehouseLocationConstraint(
+    where: WarehouseLocationConstraintWhereUniqueInput!
+  ): WarehouseLocationConstraint
+  warehouseLocationConstraints(
+    where: WarehouseLocationConstraintWhereInput
+    orderBy: WarehouseLocationConstraintOrderByInput
     skip: Int
     after: String
     before: String
     first: Int
     last: Int
+  ): [WarehouseLocationConstraint]!
+  warehouseLocationConstraintsConnection(
+    where: WarehouseLocationConstraintWhereInput
+    orderBy: WarehouseLocationConstraintOrderByInput
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+<<<<<<< HEAD
   ): [ReservationReceiptItem!]
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -28272,13 +29557,18 @@ input ReservationReceiptCreateInput {
 input ReservationReceiptCreateOneWithoutReservationInput {
   create: ReservationReceiptCreateWithoutReservationInput
   connect: ReservationReceiptWhereUniqueInput
+=======
+  ): WarehouseLocationConstraintConnection!
+  node(id: ID!): Node
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
 }
 
-input ReservationReceiptCreateWithoutReservationInput {
-  id: ID
-  items: ReservationReceiptItemCreateManyInput
+enum QuestionType {
+  MultipleChoice
+  FreeResponse
 }
 
+<<<<<<< HEAD
 """
 An edge in a connection.
 """
@@ -28295,12 +29585,24 @@ type ReservationReceiptEdge {
 }
 
 type ReservationReceiptItem implements Node {
-  id: ID!
-  product: PhysicalProduct!
-  productStatus: PhysicalProductStatus!
-  notes: String
+=======
+enum Rating {
+  Disliked
+  Ok
+  Loved
 }
 
+type RecentlyViewedProduct {
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
+  id: ID!
+  product: Product!
+  customer: Customer!
+  viewCount: Int!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+<<<<<<< HEAD
 """
 A connection to a list of items.
 """
@@ -28315,10 +29617,17 @@ type ReservationReceiptItemConnection {
   """
   edges: [ReservationReceiptItemEdge]!
   aggregate: AggregateReservationReceiptItem!
+=======
+type RecentlyViewedProductConnection {
+  pageInfo: PageInfo!
+  edges: [RecentlyViewedProductEdge]!
+  aggregate: AggregateRecentlyViewedProduct!
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
 }
 
-input ReservationReceiptItemCreateInput {
+input RecentlyViewedProductCreateInput {
   id: ID
+<<<<<<< HEAD
   productStatus: PhysicalProductStatus!
   notes: String
   product: PhysicalProductCreateOneInput!
@@ -28790,27 +30099,44 @@ input ReservationReceiptItemWhereUniqueInput {
 }
 
 enum ReservationReceiptOrderByInput {
+=======
+  product: ProductCreateOneInput!
+  customer: CustomerCreateOneInput!
+  viewCount: Int
+}
+
+type RecentlyViewedProductEdge {
+  node: RecentlyViewedProduct!
+  cursor: String!
+}
+
+enum RecentlyViewedProductOrderByInput {
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
   id_ASC
   id_DESC
+  viewCount_ASC
+  viewCount_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
   updatedAt_DESC
 }
 
-type ReservationReceiptPreviousValues {
+type RecentlyViewedProductPreviousValues {
   id: ID!
+  viewCount: Int!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
 
-type ReservationReceiptSubscriptionPayload {
+type RecentlyViewedProductSubscriptionPayload {
   mutation: MutationType!
-  node: ReservationReceipt
+  node: RecentlyViewedProduct
   updatedFields: [String!]
-  previousValues: ReservationReceiptPreviousValues
+  previousValues: RecentlyViewedProductPreviousValues
 }
 
+<<<<<<< HEAD
 input ReservationReceiptSubscriptionWhereInput {
   """
   Logical AND on all given filters.
@@ -28830,6 +30156,9 @@ input ReservationReceiptSubscriptionWhereInput {
   """
   The subscription event gets dispatched when it's listed in mutation_in
   """
+=======
+input RecentlyViewedProductSubscriptionWhereInput {
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
   mutation_in: [MutationType!]
 
   """
@@ -28846,6 +30175,7 @@ input ReservationReceiptSubscriptionWhereInput {
   The subscription event gets only dispatched when some of the field names included in this list have been updated
   """
   updatedFields_contains_some: [String!]
+<<<<<<< HEAD
   node: ReservationReceiptWhereInput
 }
 
@@ -28861,17 +30191,25 @@ input ReservationReceiptUpdateOneWithoutReservationInput {
   delete: Boolean
   update: ReservationReceiptUpdateWithoutReservationDataInput
   upsert: ReservationReceiptUpsertWithoutReservationInput
+=======
+  node: RecentlyViewedProductWhereInput
+  AND: [RecentlyViewedProductSubscriptionWhereInput!]
+  OR: [RecentlyViewedProductSubscriptionWhereInput!]
+  NOT: [RecentlyViewedProductSubscriptionWhereInput!]
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
 }
 
-input ReservationReceiptUpdateWithoutReservationDataInput {
-  items: ReservationReceiptItemUpdateManyInput
+input RecentlyViewedProductUpdateInput {
+  product: ProductUpdateOneRequiredInput
+  customer: CustomerUpdateOneRequiredInput
+  viewCount: Int
 }
 
-input ReservationReceiptUpsertWithoutReservationInput {
-  update: ReservationReceiptUpdateWithoutReservationDataInput!
-  create: ReservationReceiptCreateWithoutReservationInput!
+input RecentlyViewedProductUpdateManyMutationInput {
+  viewCount: Int
 }
 
+<<<<<<< HEAD
 input ReservationReceiptWhereInput {
   """
   Logical AND on all given filters.
@@ -28887,6 +30225,9 @@ input ReservationReceiptWhereInput {
   Logical NOT on all given filters combined by AND.
   """
   NOT: [ReservationReceiptWhereInput!]
+=======
+input RecentlyViewedProductWhereInput {
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
   id: ID
 
   """
@@ -28953,6 +30294,19 @@ input ReservationReceiptWhereInput {
   All values not ending with the given string.
   """
   id_not_ends_with: ID
+<<<<<<< HEAD
+=======
+  product: ProductWhereInput
+  customer: CustomerWhereInput
+  viewCount: Int
+  viewCount_not: Int
+  viewCount_in: [Int!]
+  viewCount_not_in: [Int!]
+  viewCount_lt: Int
+  viewCount_lte: Int
+  viewCount_gt: Int
+  viewCount_gte: Int
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
   createdAt: DateTime
 
   """
@@ -29025,16 +30379,23 @@ input ReservationReceiptWhereInput {
   All values greater than or equal the given value.
   """
   updatedAt_gte: DateTime
+<<<<<<< HEAD
   reservation: ReservationWhereInput
   items_every: ReservationReceiptItemWhereInput
   items_some: ReservationReceiptItemWhereInput
   items_none: ReservationReceiptItemWhereInput
+=======
+  AND: [RecentlyViewedProductWhereInput!]
+  OR: [RecentlyViewedProductWhereInput!]
+  NOT: [RecentlyViewedProductWhereInput!]
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
 }
 
-input ReservationReceiptWhereUniqueInput {
+input RecentlyViewedProductWhereUniqueInput {
   id: ID
 }
 
+<<<<<<< HEAD
 input ReservationScalarWhereInput {
   """
   Logical AND on all given filters.
@@ -29370,27 +30731,71 @@ input ReservationScalarWhereInput {
   All values greater than or equal the given value.
   """
   updatedAt_gte: DateTime
+=======
+type Reservation {
+  id: ID!
+  user: User!
+  customer: Customer!
+  sentPackage: Package
+  returnedPackage: Package
+  products(
+    where: PhysicalProductWhereInput
+    orderBy: PhysicalProductOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [PhysicalProduct!]
+  reservationNumber: Int!
+  phase: ReservationPhase!
+  shipped: Boolean!
+  status: ReservationStatus!
+  shippedAt: DateTime
+  receivedAt: DateTime
+  reminderSentAt: DateTime
+  receipt: ReservationReceipt
+  lastLocation: Location
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
-enum ReservationStatus {
-  Queued
-  Packed
-  Shipped
-  Delivered
-  Completed
-  Cancelled
-  Blocked
-  Unknown
-  Received
+type ReservationConnection {
+  pageInfo: PageInfo!
+  edges: [ReservationEdge]!
+  aggregate: AggregateReservation!
 }
 
-type ReservationSubscriptionPayload {
-  mutation: MutationType!
-  node: Reservation
-  updatedFields: [String!]
-  previousValues: ReservationPreviousValues
+input ReservationCreateInput {
+  id: ID
+  user: UserCreateOneInput!
+  customer: CustomerCreateOneWithoutReservationsInput!
+  sentPackage: PackageCreateOneInput
+  returnedPackage: PackageCreateOneInput
+  products: PhysicalProductCreateManyInput
+  reservationNumber: Int!
+  phase: ReservationPhase!
+  shipped: Boolean!
+  status: ReservationStatus!
+  shippedAt: DateTime
+  receivedAt: DateTime
+  reminderSentAt: DateTime
+  receipt: ReservationReceiptCreateOneWithoutReservationInput
+  lastLocation: LocationCreateOneInput
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
 }
 
+input ReservationCreateManyWithoutCustomerInput {
+  create: [ReservationCreateWithoutCustomerInput!]
+  connect: [ReservationWhereUniqueInput!]
+}
+
+input ReservationCreateOneInput {
+  create: ReservationCreateInput
+  connect: ReservationWhereUniqueInput
+}
+
+<<<<<<< HEAD
 input ReservationSubscriptionWhereInput {
   """
   Logical AND on all given filters.
@@ -29461,28 +30866,73 @@ input ReservationUpdateInput {
   products: PhysicalProductUpdateManyInput
   receipt: ReservationReceiptUpdateOneWithoutReservationInput
   lastLocation: LocationUpdateOneInput
+=======
+input ReservationCreateOneWithoutReceiptInput {
+  create: ReservationCreateWithoutReceiptInput
+  connect: ReservationWhereUniqueInput
 }
 
-input ReservationUpdateManyDataInput {
-  reservationNumber: Int
-  phase: ReservationPhase
-  shipped: Boolean
-  status: ReservationStatus
+input ReservationCreateWithoutCustomerInput {
+  id: ID
+  user: UserCreateOneInput!
+  sentPackage: PackageCreateOneInput
+  returnedPackage: PackageCreateOneInput
+  products: PhysicalProductCreateManyInput
+  reservationNumber: Int!
+  phase: ReservationPhase!
+  shipped: Boolean!
+  status: ReservationStatus!
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
+  receipt: ReservationReceiptCreateOneWithoutReservationInput
+  lastLocation: LocationCreateOneInput
 }
 
-input ReservationUpdateManyMutationInput {
-  reservationNumber: Int
-  phase: ReservationPhase
-  shipped: Boolean
-  status: ReservationStatus
+input ReservationCreateWithoutReceiptInput {
+  id: ID
+  user: UserCreateOneInput!
+  customer: CustomerCreateOneWithoutReservationsInput!
+  sentPackage: PackageCreateOneInput
+  returnedPackage: PackageCreateOneInput
+  products: PhysicalProductCreateManyInput
+  reservationNumber: Int!
+  phase: ReservationPhase!
+  shipped: Boolean!
+  status: ReservationStatus!
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
+  lastLocation: LocationCreateOneInput
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
 }
 
+type ReservationEdge {
+  node: Reservation!
+  cursor: String!
+}
+
+type ReservationFeedback {
+  id: ID!
+  comment: String
+  feedbacks(
+    where: ProductVariantFeedbackWhereInput
+    orderBy: ProductVariantFeedbackOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [ProductVariantFeedback!]
+  rating: Rating
+  user: User!
+  reservation: Reservation!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  respondedAt: DateTime
+}
+
+<<<<<<< HEAD
 input ReservationUpdateManyWithoutCustomerInput {
   create: [ReservationCreateWithoutCustomerInput!]
   connect: [ReservationWhereUniqueInput!]
@@ -29493,13 +30943,25 @@ input ReservationUpdateManyWithoutCustomerInput {
   updateMany: [ReservationUpdateManyWithWhereNestedInput!]
   deleteMany: [ReservationScalarWhereInput!]
   upsert: [ReservationUpsertWithWhereUniqueWithoutCustomerInput!]
+=======
+type ReservationFeedbackConnection {
+  pageInfo: PageInfo!
+  edges: [ReservationFeedbackEdge]!
+  aggregate: AggregateReservationFeedback!
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
 }
 
-input ReservationUpdateManyWithWhereNestedInput {
-  where: ReservationScalarWhereInput!
-  data: ReservationUpdateManyDataInput!
+input ReservationFeedbackCreateInput {
+  id: ID
+  comment: String
+  feedbacks: ProductVariantFeedbackCreateManyWithoutReservationFeedbackInput
+  rating: Rating
+  user: UserCreateOneInput!
+  reservation: ReservationCreateOneInput!
+  respondedAt: DateTime
 }
 
+<<<<<<< HEAD
 input ReservationUpdateOneRequiredInput {
   create: ReservationCreateInput
   connect: ReservationWhereUniqueInput
@@ -29544,29 +31006,105 @@ input ReservationUpdateWithoutReceiptDataInput {
   returnedPackage: PackageUpdateOneInput
   products: PhysicalProductUpdateManyInput
   lastLocation: LocationUpdateOneInput
+=======
+input ReservationFeedbackCreateOneWithoutFeedbacksInput {
+  create: ReservationFeedbackCreateWithoutFeedbacksInput
+  connect: ReservationFeedbackWhereUniqueInput
 }
 
-input ReservationUpdateWithWhereUniqueWithoutCustomerInput {
-  where: ReservationWhereUniqueInput!
-  data: ReservationUpdateWithoutCustomerDataInput!
+input ReservationFeedbackCreateWithoutFeedbacksInput {
+  id: ID
+  comment: String
+  rating: Rating
+  user: UserCreateOneInput!
+  reservation: ReservationCreateOneInput!
+  respondedAt: DateTime
 }
 
-input ReservationUpsertNestedInput {
-  update: ReservationUpdateDataInput!
-  create: ReservationCreateInput!
+type ReservationFeedbackEdge {
+  node: ReservationFeedback!
+  cursor: String!
 }
 
-input ReservationUpsertWithoutReceiptInput {
-  update: ReservationUpdateWithoutReceiptDataInput!
-  create: ReservationCreateWithoutReceiptInput!
+enum ReservationFeedbackOrderByInput {
+  id_ASC
+  id_DESC
+  comment_ASC
+  comment_DESC
+  rating_ASC
+  rating_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  respondedAt_ASC
+  respondedAt_DESC
 }
 
-input ReservationUpsertWithWhereUniqueWithoutCustomerInput {
-  where: ReservationWhereUniqueInput!
-  update: ReservationUpdateWithoutCustomerDataInput!
-  create: ReservationCreateWithoutCustomerInput!
+type ReservationFeedbackPreviousValues {
+  id: ID!
+  comment: String
+  rating: Rating
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  respondedAt: DateTime
 }
 
+type ReservationFeedbackSubscriptionPayload {
+  mutation: MutationType!
+  node: ReservationFeedback
+  updatedFields: [String!]
+  previousValues: ReservationFeedbackPreviousValues
+}
+
+input ReservationFeedbackSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: ReservationFeedbackWhereInput
+  AND: [ReservationFeedbackSubscriptionWhereInput!]
+  OR: [ReservationFeedbackSubscriptionWhereInput!]
+  NOT: [ReservationFeedbackSubscriptionWhereInput!]
+}
+
+input ReservationFeedbackUpdateInput {
+  comment: String
+  feedbacks: ProductVariantFeedbackUpdateManyWithoutReservationFeedbackInput
+  rating: Rating
+  user: UserUpdateOneRequiredInput
+  reservation: ReservationUpdateOneRequiredInput
+  respondedAt: DateTime
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
+}
+
+input ReservationFeedbackUpdateManyMutationInput {
+  comment: String
+  rating: Rating
+  respondedAt: DateTime
+}
+
+input ReservationFeedbackUpdateOneRequiredWithoutFeedbacksInput {
+  create: ReservationFeedbackCreateWithoutFeedbacksInput
+  update: ReservationFeedbackUpdateWithoutFeedbacksDataInput
+  upsert: ReservationFeedbackUpsertWithoutFeedbacksInput
+  connect: ReservationFeedbackWhereUniqueInput
+}
+
+input ReservationFeedbackUpdateWithoutFeedbacksDataInput {
+  comment: String
+  rating: Rating
+  user: UserUpdateOneRequiredInput
+  reservation: ReservationUpdateOneRequiredInput
+  respondedAt: DateTime
+}
+
+input ReservationFeedbackUpsertWithoutFeedbacksInput {
+  update: ReservationFeedbackUpdateWithoutFeedbacksDataInput!
+  create: ReservationFeedbackCreateWithoutFeedbacksInput!
+}
+
+<<<<<<< HEAD
 input ReservationWhereInput {
   """
   Logical AND on all given filters.
@@ -29582,6 +31120,9 @@ input ReservationWhereInput {
   Logical NOT on all given filters combined by AND.
   """
   NOT: [ReservationWhereInput!]
+=======
+input ReservationFeedbackWhereInput {
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
   id: ID
 
   """
@@ -29648,6 +31189,7 @@ input ReservationWhereInput {
   All values not ending with the given string.
   """
   id_not_ends_with: ID
+<<<<<<< HEAD
   reservationNumber: Int
 
   """
@@ -29830,6 +31372,31 @@ input ReservationWhereInput {
   All values greater than or equal the given value.
   """
   reminderSentAt_gte: DateTime
+=======
+  comment: String
+  comment_not: String
+  comment_in: [String!]
+  comment_not_in: [String!]
+  comment_lt: String
+  comment_lte: String
+  comment_gt: String
+  comment_gte: String
+  comment_contains: String
+  comment_not_contains: String
+  comment_starts_with: String
+  comment_not_starts_with: String
+  comment_ends_with: String
+  comment_not_ends_with: String
+  feedbacks_every: ProductVariantFeedbackWhereInput
+  feedbacks_some: ProductVariantFeedbackWhereInput
+  feedbacks_none: ProductVariantFeedbackWhereInput
+  rating: Rating
+  rating_not: Rating
+  rating_in: [Rating!]
+  rating_not_in: [Rating!]
+  user: UserWhereInput
+  reservation: ReservationWhereInput
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
   createdAt: DateTime
 
   """
@@ -29902,6 +31469,7 @@ input ReservationWhereInput {
   All values greater than or equal the given value.
   """
   updatedAt_gte: DateTime
+<<<<<<< HEAD
   user: UserWhereInput
   customer: CustomerWhereInput
   sentPackage: PackageWhereInput
@@ -29911,22 +31479,87 @@ input ReservationWhereInput {
   products_none: PhysicalProductWhereInput
   receipt: ReservationReceiptWhereInput
   lastLocation: LocationWhereInput
+=======
+  respondedAt: DateTime
+  respondedAt_not: DateTime
+  respondedAt_in: [DateTime!]
+  respondedAt_not_in: [DateTime!]
+  respondedAt_lt: DateTime
+  respondedAt_lte: DateTime
+  respondedAt_gt: DateTime
+  respondedAt_gte: DateTime
+  AND: [ReservationFeedbackWhereInput!]
+  OR: [ReservationFeedbackWhereInput!]
+  NOT: [ReservationFeedbackWhereInput!]
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
 }
 
-input ReservationWhereUniqueInput {
+input ReservationFeedbackWhereUniqueInput {
   id: ID
-  reservationNumber: Int
 }
 
+<<<<<<< HEAD
 type Size implements Node {
-  id: ID!
-  slug: String!
-  productType: ProductType
-  top: TopSize
-  bottom: BottomSize
-  display: String!
+=======
+enum ReservationOrderByInput {
+  id_ASC
+  id_DESC
+  reservationNumber_ASC
+  reservationNumber_DESC
+  phase_ASC
+  phase_DESC
+  shipped_ASC
+  shipped_DESC
+  status_ASC
+  status_DESC
+  shippedAt_ASC
+  shippedAt_DESC
+  receivedAt_ASC
+  receivedAt_DESC
+  reminderSentAt_ASC
+  reminderSentAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
 }
 
+enum ReservationPhase {
+  BusinessToCustomer
+  CustomerToBusiness
+}
+
+type ReservationPreviousValues {
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
+  id: ID!
+  reservationNumber: Int!
+  phase: ReservationPhase!
+  shipped: Boolean!
+  status: ReservationStatus!
+  shippedAt: DateTime
+  receivedAt: DateTime
+  reminderSentAt: DateTime
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type ReservationReceipt {
+  id: ID!
+  reservation: Reservation!
+  items(
+    where: ReservationReceiptItemWhereInput
+    orderBy: ReservationReceiptItemOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [ReservationReceiptItem!]
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+<<<<<<< HEAD
 """
 A connection to a list of items.
 """
@@ -29941,27 +31574,69 @@ type SizeConnection {
   """
   edges: [SizeEdge]!
   aggregate: AggregateSize!
+=======
+type ReservationReceiptConnection {
+  pageInfo: PageInfo!
+  edges: [ReservationReceiptEdge]!
+  aggregate: AggregateReservationReceipt!
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
 }
 
-input SizeCreateInput {
+input ReservationReceiptCreateInput {
   id: ID
+<<<<<<< HEAD
   slug: String!
   productType: ProductType
   display: String!
   top: TopSizeCreateOneInput
   bottom: BottomSizeCreateOneInput
+=======
+  reservation: ReservationCreateOneWithoutReceiptInput!
+  items: ReservationReceiptItemCreateManyInput
 }
 
-input SizeCreateManyInput {
-  create: [SizeCreateInput!]
-  connect: [SizeWhereUniqueInput!]
+input ReservationReceiptCreateOneWithoutReservationInput {
+  create: ReservationReceiptCreateWithoutReservationInput
+  connect: ReservationReceiptWhereUniqueInput
 }
 
-input SizeCreateOneInput {
-  create: SizeCreateInput
-  connect: SizeWhereUniqueInput
+input ReservationReceiptCreateWithoutReservationInput {
+  id: ID
+  items: ReservationReceiptItemCreateManyInput
 }
 
+type ReservationReceiptEdge {
+  node: ReservationReceipt!
+  cursor: String!
+}
+
+type ReservationReceiptItem {
+  id: ID!
+  product: PhysicalProduct!
+  productStatus: PhysicalProductStatus!
+  notes: String
+}
+
+type ReservationReceiptItemConnection {
+  pageInfo: PageInfo!
+  edges: [ReservationReceiptItemEdge]!
+  aggregate: AggregateReservationReceiptItem!
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
+}
+
+input ReservationReceiptItemCreateInput {
+  id: ID
+  product: PhysicalProductCreateOneInput!
+  productStatus: PhysicalProductStatus!
+  notes: String
+}
+
+input ReservationReceiptItemCreateManyInput {
+  create: [ReservationReceiptItemCreateInput!]
+  connect: [ReservationReceiptItemWhereUniqueInput!]
+}
+
+<<<<<<< HEAD
 """
 An edge in a connection.
 """
@@ -29974,27 +31649,29 @@ type SizeEdge {
   """
   A cursor for use in pagination.
   """
+=======
+type ReservationReceiptItemEdge {
+  node: ReservationReceiptItem!
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
   cursor: String!
 }
 
-enum SizeOrderByInput {
+enum ReservationReceiptItemOrderByInput {
   id_ASC
   id_DESC
-  slug_ASC
-  slug_DESC
-  productType_ASC
-  productType_DESC
-  display_ASC
-  display_DESC
+  productStatus_ASC
+  productStatus_DESC
+  notes_ASC
+  notes_DESC
 }
 
-type SizePreviousValues {
+type ReservationReceiptItemPreviousValues {
   id: ID!
-  slug: String!
-  productType: ProductType
-  display: String!
+  productStatus: PhysicalProductStatus!
+  notes: String
 }
 
+<<<<<<< HEAD
 input SizeScalarWhereInput {
   """
   Logical AND on all given filters.
@@ -30010,6 +31687,9 @@ input SizeScalarWhereInput {
   Logical NOT on all given filters combined by AND.
   """
   NOT: [SizeScalarWhereInput!]
+=======
+input ReservationReceiptItemScalarWhereInput {
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
   id: ID
 
   """
@@ -30076,6 +31756,7 @@ input SizeScalarWhereInput {
   All values not ending with the given string.
   """
   id_not_ends_with: ID
+<<<<<<< HEAD
   slug: String
 
   """
@@ -30227,12 +31908,58 @@ input SizeScalarWhereInput {
 }
 
 type SizeSubscriptionPayload {
-  mutation: MutationType!
-  node: Size
-  updatedFields: [String!]
-  previousValues: SizePreviousValues
+=======
+  productStatus: PhysicalProductStatus
+  productStatus_not: PhysicalProductStatus
+  productStatus_in: [PhysicalProductStatus!]
+  productStatus_not_in: [PhysicalProductStatus!]
+  notes: String
+  notes_not: String
+  notes_in: [String!]
+  notes_not_in: [String!]
+  notes_lt: String
+  notes_lte: String
+  notes_gt: String
+  notes_gte: String
+  notes_contains: String
+  notes_not_contains: String
+  notes_starts_with: String
+  notes_not_starts_with: String
+  notes_ends_with: String
+  notes_not_ends_with: String
+  AND: [ReservationReceiptItemScalarWhereInput!]
+  OR: [ReservationReceiptItemScalarWhereInput!]
+  NOT: [ReservationReceiptItemScalarWhereInput!]
 }
 
+type ReservationReceiptItemSubscriptionPayload {
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
+  mutation: MutationType!
+  node: ReservationReceiptItem
+  updatedFields: [String!]
+  previousValues: ReservationReceiptItemPreviousValues
+}
+
+input ReservationReceiptItemSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: ReservationReceiptItemWhereInput
+  AND: [ReservationReceiptItemSubscriptionWhereInput!]
+  OR: [ReservationReceiptItemSubscriptionWhereInput!]
+  NOT: [ReservationReceiptItemSubscriptionWhereInput!]
+}
+
+input ReservationReceiptItemUpdateDataInput {
+  product: PhysicalProductUpdateOneRequiredInput
+  productStatus: PhysicalProductStatus
+  notes: String
+}
+input ReservationReceip
+}
+
+<<<<<<< HEAD
 input SizeSubscriptionWhereInput {
   """
   Logical AND on all given filters.
@@ -30285,14 +32012,32 @@ input SizeUpdateInput {
   display: String
   top: TopSizeUpdateOneInput
   bottom: BottomSizeUpdateOneInput
+=======
+input ReservationReceiptItemUpdateManyDataInput {
+  productStatus: PhysicalProductStatus
+  notes: String
 }
 
-input SizeUpdateManyDataInput {
-  slug: String
-  productType: ProductType
-  display: String
+  create: [ReservationReceiptItemInput!]
+  disconnect: [Reserv
+
+input ReservationReceiptItemUpdateManyMutationInput {
+  productStatus: PhysicalProductStatus
+  notes: String
 }
 
+input ReservationReceiptItemUpdateManyWithWhereNestedInput {
+  where: ReservationReceiptItemScalarWhereInput!
+  data: ReservationReceiptItemUpdateManyDataInput!
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
+}
+
+input ReservationReceiptItemUpdateWithWhereUniqueNestedInput {
+  where: ReservationReceiptItemWhereUniqueInput!
+  data: ReservationReceiptItemUpdateDataInput!
+}
+
+<<<<<<< HEAD
 input SizeUpdateManyInput {
   create: [SizeCreateInput!]
   connect: [SizeWhereUniqueInput!]
@@ -30303,19 +32048,49 @@ input SizeUpdateManyInput {
   updateMany: [SizeUpdateManyWithWhereNestedInput!]
   deleteMany: [SizeScalarWhereInput!]
   upsert: [SizeUpsertWithWhereUniqueNestedInput!]
+=======
+input ReservationReceiptItemUpsertWithWhereUniqueNestedInput {
+  where: ReservationReceiptItemWhereUniqueInput!
+  update: ReservationReceiptItemUpdateDataInput!
+  create: ReservationReceiptItemCreateInput!
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
 }
 
-input SizeUpdateManyMutationInput {
-  slug: String
-  productType: ProductType
-  display: String
+input ReservationReceiptItemWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_not_starts_with: IDus
+  productStatus_in: [Phys
+  notes_in: [String!]
+  notes_not_in: [String!]
+  notes_lt: String
+  notes_lte: String
+  notes_gt: String
+  notes_gte: String
+  notes_contains: String
+  notes_not_contains: String
+  notes_starts_with: String
+  notes_not_starts_with: String
+  notes_ends_with: String
+  notes_not_ends_with: String
+  AND: [ReservationReceiptItemWhereInput!]
+  OR: [ReservationReceiptItemWhereInput!]
+  NOT: [ReservationReceiptItemWhereInput!]
 }
 
-input SizeUpdateManyWithWhereNestedInput {
-  where: SizeScalarWhereInput!
-  data: SizeUpdateManyDataInput!
+input ReservationReceiptItemWhereUniqueInput {
+  id: ID
 }
 
+<<<<<<< HEAD
 input SizeUpdateOneInput {
   create: SizeCreateInput
   connect: SizeWhereUniqueInput
@@ -30323,24 +32098,35 @@ input SizeUpdateOneInput {
   delete: Boolean
   update: SizeUpdateDataInput
   upsert: SizeUpsertNestedInput
+=======
+enum ReservationReceiptOrderByInput {
+  id_ASC
+  id_DESC
+e createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
 }
 
-input SizeUpdateWithWhereUniqueNestedInput {
-  where: SizeWhereUniqueInput!
-  data: SizeUpdateDataInput!
+type ReservationReceiptPreviousValues {
+  id: ID!
+  crede: ReservationReceiptpRnput
+  upsert: ReservationReceiptUpsertWithoutReservationInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: ReservationReceiptWhereUniqueInput
 }
 
-input SizeUpsertNestedInput {
-  update: SizeUpdateDataInput!
-  create: SizeCreateInput!
+input ReservationReceiptUpdateWithoutReservationDataInput {
+  items: ReservationReceiptItemUpdateManyInput
 }
 
-input SizeUpsertWithWhereUniqueNestedInput {
-  where: SizeWhereUniqueInput!
-  update: SizeUpdateDataInput!
-  create: SizeCreateInput!
+input ReservationReceiptUpsertWithoutReservationInput {
+  update: ReservationReceiptUpdateWithoutReservationDataInput!
+  create: ReservationReceiptCreateWithoutReservationInput!
 }
 
+<<<<<<< HEAD
 input SizeWhereInput {
   """
   Logical AND on all given filters.
@@ -30356,6 +32142,9 @@ input SizeWhereInput {
   Logical NOT on all given filters combined by AND.
   """
   NOT: [SizeWhereInput!]
+=======
+input ReservationReceiptWhereInput {
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
   id: ID
 
   """
@@ -30422,6 +32211,7 @@ input SizeWhereInput {
   All values not ending with the given string.
   """
   id_not_ends_with: ID
+<<<<<<< HEAD
   slug: String
 
   """
@@ -30603,10 +32393,28 @@ type SmsReceiptConnection {
   """
   edges: [SmsReceiptEdge]!
   aggregate: AggregateSmsReceipt!
+=======
+  reservation: ReservationWhereInput
+  items_every: ReservationReceiptItemWhereInput
+  items_some: ReservationReceiptItemWhereInput
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTimed
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [ReservationReceiptWhereInput!]
+  OR: [ReservationReceiptWhereInput!]
+  NOT: [ReservationReceiptWhereInput!]
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
 }
 
-input SmsReceiptCreateInput {
+input ReservationReceiptWhereUniqueInput {
   id: ID
+<<<<<<< HEAD
   externalId: String
   body: String!
   status: SmsStatus!
@@ -30677,12 +32485,18 @@ input SmsReceiptScalarWhereInput {
   Logical NOT on all given filters combined by AND.
   """
   NOT: [SmsReceiptScalarWhereInput!]
+=======
+}
+
+input ReservationScalarWhereInput {
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
   id: ID
 
   """
   All values that are not equal to given value.
   """
   id_not: ID
+<<<<<<< HEAD
 
   """
   All values that are contained in given list.
@@ -30697,6 +32511,9 @@ input SmsReceiptScalarWhereInput {
   """
   All values less than the given value.
   """
+=======
+: id_not_in: [ID!]
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
   id_lt: ID
 
   """
@@ -30743,6 +32560,7 @@ input SmsReceiptScalarWhereInput {
   All values not ending with the given string.
   """
   id_not_ends_with: ID
+<<<<<<< HEAD
   externalId: String
 
   """
@@ -30808,6 +32626,17 @@ input SmsReceiptScalarWhereInput {
   """
   All values not ending with the given string.
   """
+=======
+  reservationNumber: Int
+  reservationNumber_not: Int
+  reservationNumber_in: [Int!]
+  reservationNumber_not_in: [Int!]
+  reservationNumber_lt: Int
+  reservationNumbteaapeOne
+  returnedPackage: PackageUpdateOneInput
+  products: PhysicalProductUpdateManyInput
+  rpetontn:t
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
   externalId_not_ends_with: String
   body: String
 
@@ -30938,6 +32767,7 @@ input SmsReceiptScalarWhereInput {
   All values that are contained in given list.
   """
   updatedAt_in: [DateTime!]
+<<<<<<< HEAD
 
   """
   All values that are not contained in given list.
@@ -30952,12 +32782,16 @@ input SmsReceiptScalarWhereInput {
   """
   All values less than or equal the given value.
   """
+=======
+e updatedAt_lt: DateTime
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
   updatedAt_lte: DateTime
 
   """
   All values greater than the given value.
   """
   updatedAt_gt: DateTime
+<<<<<<< HEAD
 
   """
   All values greater than or equal the given value.
@@ -30972,6 +32806,8 @@ type SmsReceiptSubscriptionPayload {
   previousValues: SmsReceiptPreviousValues
 }
 
+=======
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
 input SmsReceiptSubscriptionWhereInput {
   """
   Logical AND on all given filters.
@@ -31008,11 +32844,18 @@ input SmsReceiptSubscriptionWhereInput {
   """
   updatedFields_contains_some: [String!]
   node: SmsReceiptWhereInput
+<<<<<<< HEAD
 }
+=======
+  AND: [SmsReceiptSubscriptionWhereInput!]
+  OR: [SmsReceiptSubscriptionWhereInput!]
+  NOT: [SmsReceiptSubscriptionWhereInput!]
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
 
 input SmsReceiptUpdateDataInput {
   externalId: String
   body: String
+<<<<<<< HEAD
   status: SmsStatus
   mediaUrls: SmsReceiptUpdatemediaUrlsInput
 }
@@ -31033,6 +32876,9 @@ input SmsReceiptUpdateManyDataInput {
 
 input SmsReceiptUpdateManyInput {
   create: [SmsReceiptCreateInput!]
+=======
+  mediaUrls: SmsReceiptUpdatemediaUrlsInput
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
   connect: [SmsReceiptWhereUniqueInput!]
   set: [SmsReceiptWhereUniqueInput!]
   disconnect: [SmsReceiptWhereUniqueInput!]
@@ -31392,7 +33238,15 @@ enum SmsStatus {
   PartiallyDelivered
 }
 
+<<<<<<< HEAD
 type StylePreferences implements Node {
+=======
+<<<<<<< HEAD
+type StylePreferences {
+=======
+type StylePreferences implements Node {
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
   id: ID!
   styles: [String!]!
   patterns: [String!]!
@@ -31400,6 +33254,13 @@ type StylePreferences implements Node {
   brands: [String!]!
 }
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+type StylePreferencesConnection {
+  pageInfo: PageInfo!
+=======
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
 """
 A connection to a list of items.
 """
@@ -31412,6 +33273,10 @@ type StylePreferencesConnection {
   """
   A list of edges.
   """
+<<<<<<< HEAD
+=======
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
   edges: [StylePreferencesEdge]!
   aggregate: AggregateStylePreferences!
 }
@@ -31445,6 +33310,13 @@ input StylePreferencesCreatestylesInput {
   set: [String!]
 }
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+type StylePreferencesEdge {
+  node: StylePreferences!
+=======
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
 """
 An edge in a connection.
 """
@@ -31457,6 +33329,10 @@ type StylePreferencesEdge {
   """
   A cursor for use in pagination.
   """
+<<<<<<< HEAD
+=======
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
   cursor: String!
 }
 
@@ -31474,6 +33350,8 @@ type StylePreferencesPreviousValues {
 }
 
 type StylePreferencesSubscriptionPayload {
+<<<<<<< HEAD
+=======
   mutation: MutationType!
   node: StylePreferences
   updatedFields: [String!]
@@ -31656,6 +33534,7 @@ input StylePreferencesWhereUniqueInput {
   id: ID
 }
 
+<<<<<<< HEAD
 type Subscription {
   brand(where: BrandSubscriptionWhereInput): BrandSubscriptionPayload
   collectionGroup(
@@ -31776,9 +33655,13 @@ type Subscription {
 }
 
 type Tag implements Node {
+=======
+type StyleSubmission implements Node {
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
   id: ID!
-  name: String!
-  description: String
+  user: User!
+  image: Image!
+  location: Location
   products(
     where: ProductWhereInput
     orderBy: ProductOrderByInput
@@ -31788,6 +33671,7 @@ type Tag implements Node {
     first: Int
     last: Int
   ): [Product!]
+  approved: Boolean!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -31795,7 +33679,11 @@ type Tag implements Node {
 """
 A connection to a list of items.
 """
+<<<<<<< HEAD
 type TagConnection {
+=======
+type StyleSubmissionConnection {
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
   """
   Information to aid in pagination.
   """
@@ -31804,36 +33692,58 @@ type TagConnection {
   """
   A list of edges.
   """
+<<<<<<< HEAD
   edges: [TagEdge]!
   aggregate: AggregateTag!
+=======
+  edges: [StyleSubmissionEdge]!
+  aggregate: AggregateStyleSubmission!
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
 }
 
-input TagCreateInput {
+input StyleSubmissionCreateInput {
   id: ID
-  name: String!
-  description: String
-  products: ProductCreateManyWithoutTagsInput
+  approved: Boolean
+  user: UserCreateOneWithoutStyleSubmissionsInput!
+  image: ImageCreateOneInput!
+  location: LocationCreateOneInput
+  products: ProductCreateManyInput
 }
 
-input TagCreateManyWithoutProductsInput {
-  create: [TagCreateWithoutProductsInput!]
-  connect: [TagWhereUniqueInput!]
+input StyleSubmissionCreateManyWithoutUserInput {
+  create: [StyleSubmissionCreateWithoutUserInput!]
+  connect: [StyleSubmissionWhereUniqueInput!]
 }
 
-input TagCreateWithoutProductsInput {
+input StyleSubmissionCreateOneInput {
+  create: StyleSubmissionCreateInput
+  connect: StyleSubmissionWhereUniqueInput
+}
+
+input StyleSubmissionCreateWithoutUserInput {
   id: ID
-  name: String!
-  description: String
+  approved: Boolean
+  image: ImageCreateOneInput!
+  location: LocationCreateOneInput
+  products: ProductCreateManyInput
 }
 
 """
 An edge in a connection.
 """
+<<<<<<< HEAD
 type TagEdge {
   """
   The item at the end of the edge.
   """
   node: Tag!
+=======
+type StyleSubmissionEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: StyleSubmission!
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
 
   """
   A cursor for use in pagination.
@@ -31841,42 +33751,181 @@ type TagEdge {
   cursor: String!
 }
 
-enum TagOrderByInput {
+enum StyleSubmissionOrderByInput {
   id_ASC
   id_DESC
-  name_ASC
-  name_DESC
-  description_ASC
-  description_DESC
+  approved_ASC
+  approved_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
   updatedAt_DESC
 }
 
-type TagPreviousValues {
+type StyleSubmissionPreviousValues {
   id: ID!
-  name: String!
-  description: String
+  approved: Boolean!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
 
+<<<<<<< HEAD
 input TagScalarWhereInput {
   """
   Logical AND on all given filters.
   """
   AND: [TagScalarWhereInput!]
+=======
+type StyleSubmissionReport implements Node {
+  id: ID!
+  reporter: User!
+  reported: StyleSubmission!
+  status: StyleSubmissionReportStatus
+  reportedAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""
+A connection to a list of items.
+"""
+type StyleSubmissionReportConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+
+  """
+  A list of edges.
+  """
+  edges: [StyleSubmissionReportEdge]!
+  aggregate: AggregateStyleSubmissionReport!
+}
+
+input StyleSubmissionReportCreateInput {
+  id: ID
+  status: StyleSubmissionReportStatus
+  reporter: UserCreateOneInput!
+  reported: StyleSubmissionCreateOneInput!
+}
+
+"""
+An edge in a connection.
+"""
+type StyleSubmissionReportEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: StyleSubmissionReport!
+
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+}
+
+enum StyleSubmissionReportOrderByInput {
+  id_ASC
+  id_DESC
+  status_ASC
+  status_DESC
+  reportedAt_ASC
+  reportedAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type StyleSubmissionReportPreviousValues {
+  id: ID!
+  status: StyleSubmissionReportStatus
+  reportedAt: DateTime!
+  updatedAt: DateTime!
+}
+
+enum StyleSubmissionReportStatus {
+  AwaitingReview
+  UnderReview
+  Reviewed
+}
+
+type StyleSubmissionReportSubscriptionPayload {
+  mutation: MutationType!
+  node: StyleSubmissionReport
+  updatedFields: [String!]
+  previousValues: StyleSubmissionReportPreviousValues
+}
+
+input StyleSubmissionReportSubscriptionWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [StyleSubmissionReportSubscriptionWhereInput!]
 
   """
   Logical OR on all given filters.
   """
-  OR: [TagScalarWhereInput!]
+  OR: [StyleSubmissionReportSubscriptionWhereInput!]
 
   """
   Logical NOT on all given filters combined by AND.
   """
+  NOT: [StyleSubmissionReportSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: StyleSubmissionReportWhereInput
+}
+
+input StyleSubmissionReportUpdateInput {
+  status: StyleSubmissionReportStatus
+  reporter: UserUpdateOneRequiredInput
+  reported: StyleSubmissionUpdateOneRequiredInput
+}
+
+input StyleSubmissionReportUpdateManyMutationInput {
+  status: StyleSubmissionReportStatus
+}
+
+input StyleSubmissionReportWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [StyleSubmissionReportWhereInput!]
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
+
+  """
+  Logical OR on all given filters.
+  """
+<<<<<<< HEAD
+  OR: [TagScalarWhereInput!]
+=======
+  OR: [StyleSubmissionReportWhereInput!]
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+<<<<<<< HEAD
   NOT: [TagScalarWhereInput!]
+=======
+  NOT: [StyleSubmissionReportWhereInput!]
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
   id: ID
 
   """
@@ -31931,11 +33980,15 @@ input TagScalarWhereInput {
 
   """
   All values not starting with the given string.
+<<<<<<< HEAD
   """
   id_not_starts_with: ID
 
   """
   All values ending with the given string.
+=======
+  id_not_starts_with: I
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
   """
   id_ends_with: ID
 
@@ -31943,6 +33996,7 @@ input TagScalarWhereInput {
   All values not ending with the given string.
   """
   id_not_ends_with: ID
+<<<<<<< HEAD
   name: String
 
   """
@@ -31954,10 +34008,15 @@ input TagScalarWhereInput {
   All values that are contained in given list.
   """
   name_in: [String!]
+=======
+
+  """
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
 
   """
   All values that are not contained in given list.
   """
+<<<<<<< HEAD
   name_not_in: [String!]
 
   """
@@ -32010,30 +34069,51 @@ input TagScalarWhereInput {
   """
   name_not_ends_with: String
   description: String
+=======
+  status_not_in: [StyleSubmissionReportStatus!]
+  reportedAt: DateTime
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
 
   """
   All values that are not equal to given value.
   """
+<<<<<<< HEAD
   description_not: String
+=======
+  reportedAt_not: DateTime
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
 
   """
   All values that are contained in given list.
   """
+<<<<<<< HEAD
   description_in: [String!]
+=======
+  reportedAt_in: [DateTime!]
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
 
   """
   All values that are not contained in given list.
   """
+<<<<<<< HEAD
   description_not_in: [String!]
+=======
+  reportedAt_not_in: [DateTime!]
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
 
   """
   All values less than the given value.
   """
+<<<<<<< HEAD
   description_lt: String
+=======
+  reportedAt_lt: DateTime
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
 
   """
   All values less than or equal the given value.
   """
+<<<<<<< HEAD
   description_lte: String
 
   """
@@ -32114,6 +34194,13 @@ input TagScalarWhereInput {
   updatedAt: DateTime
 
   """
+=======
+  reportedAt_lte: DateTime
+
+  """
+  """
+  reportedAt_gte: DateTim
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
   All values that are not equal to given value.
   """
   updatedAt_not: DateTime
@@ -32138,6 +34225,7 @@ input TagScalarWhereInput {
   """
   updatedAt_lte: DateTime
 
+<<<<<<< HEAD
   """
   All values greater than the given value.
   """
@@ -32148,14 +34236,18 @@ input TagScalarWhereInput {
   """
   updatedAt_gte: DateTime
 }
+=======
+ All values greater than the given value.
+  """
+  updatedAt_gt: DateTime
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
 
-type TagSubscriptionPayload {
-  mutation: MutationType!
-  node: Tag
-  updatedFields: [String!]
-  previousValues: TagPreviousValues
-}
+  """
+  All values greater than or equal the given value.
+  """
+  upd: ID"
 
+<<<<<<< HEAD
 input TagSubscriptionWhereInput {
   """
   Logical AND on all given filters.
@@ -32193,18 +34285,81 @@ input TagSubscriptionWhereInput {
   updatedFields_contains_some: [String!]
   node: TagWhereInput
 }
+=======
+  """
+  All values that are contained in given list.
+  """
+  id_in: [ID!]
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
 
-input TagUpdateInput {
-  name: String
-  description: String
-  products: ProductUpdateManyWithoutTagsInput
-}
+  """
+  All values that are not contained in given list.
+  """
+  id_not_in: [ID!]
 
-input TagUpdateManyDataInput {
-  name: String
-  description: String
-}
+  """
+  All values less than the given value.
+  """
+  id_lt: ID
 
+  """
+  All values less than or equal the given value.
+  """
+  id_lte: ID
+
+  """
+  All values greater than the given value.
+  """
+  id_gt: ID
+
+  """
+  All values greater than or equal the given value.
+  """
+  id_gte: ID
+
+  """
+  All values containing the given string.
+  id_contains: ID
+
+  """
+  All values not containing the given string.
+  """
+  """
+  All values not starting with the given string.
+  """
+  id_not_starts_with: ID
+
+  """
+  All values ending with the given string.
+  """
+  id_ends_with: ID
+
+  """
+  All values not ending with the given string.
+  """
+  id_not_ends_with: ID
+  approved: Boolean
+
+ All values that are not equal to given value.
+  """
+  approved_not: Boolean
+  createdAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  createdAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  createdAt_in: [DateTime!]
+
+  """
+  All values that w uyRepoamodel and resolvers
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  u"givotteelptionWheraubscript
 input TagUpdateManyMutationInput {
   name: String
   description: String
@@ -32235,10 +34390,10 @@ input TagUpdateWithoutProductsDataInput {
 input TagUpdateWithWhereUniqueWithoutProductsInput {
   where: TagWhereUniqueInput!
   data: TagUpdateWithoutProductsDataInput!
-}
 
 input TagUpsertWithWhereUniqueWithoutProductsInput {
   where: TagWhereUniqueInput!
+<<<<<<< HEAD
   update: TagUpdateWithoutProductsDataInput!
   create: TagCreateWithoutProductsInput!
 }
@@ -32298,6 +34453,8 @@ input TagWhereInput {
   """
   All values containing the given string.
   """
+=======
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
   id_contains: ID
 
   """
@@ -32335,6 +34492,7 @@ input TagWhereInput {
   All values that are contained in given list.
   """
   name_in: [String!]
+<<<<<<< HEAD
 
   """
   All values that are not contained in given list.
@@ -32349,6 +34507,9 @@ input TagWhereInput {
   """
   All values less than or equal the given value.
   """
+=======
+n name_lt: String
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
   name_lte: String
 
   """
@@ -32360,6 +34521,7 @@ input TagWhereInput {
   All values greater than or equal the given value.
   """
   name_gte: String
+<<<<<<< HEAD
 
   """
   All values containing the given string.
@@ -32456,6 +34618,9 @@ input TagWhereInput {
   All values not ending with the given string.
   """
   description_not_ends_with: String
+=======
+  name_contains: Stringp_ng
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
   createdAt: DateTime
 
   """
@@ -33011,8 +35176,6 @@ type User implements Node {
   pushNotification: UserPushNotification
   verificationStatus: UserVerificationStatus!
   verificationMethod: UserVerificationMethod!
-  createdAt: DateTime!
-  updatedAt: DateTime!
   smsReceipts(
     where: SmsReceiptWhereInput
     orderBy: SmsReceiptOrderByInput
@@ -33022,6 +35185,17 @@ type User implements Node {
     first: Int
     last: Int
   ): [SmsReceipt!]
+  styleSubmissions(
+    where: StyleSubmissionWhereInput
+    orderBy: StyleSubmissionOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [StyleSubmission!]
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 """
@@ -33054,6 +35228,7 @@ input UserCreateInput {
   pushNotifications: PushNotificationReceiptCreateManyWithoutUsersInput
   pushNotification: UserPushNotificationCreateOneInput
   smsReceipts: SmsReceiptCreateManyInput
+  styleSubmissions: StyleSubmissionCreateManyWithoutUserInput
 }
 
 input UserCreateManyWithoutPushNotificationsInput {
@@ -33063,6 +35238,11 @@ input UserCreateManyWithoutPushNotificationsInput {
 
 input UserCreateOneInput {
   create: UserCreateInput
+  connect: UserWhereUniqueInput
+}
+
+input UserCreateOneWithoutStyleSubmissionsInput {
+  create: UserCreateWithoutStyleSubmissionsInput
   connect: UserWhereUniqueInput
 }
 
@@ -33081,6 +35261,23 @@ input UserCreateWithoutPushNotificationsInput {
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
   roles: UserCreaterolesInput
+  pushNotification: UserPushNotificationCreateOneInput
+  smsReceipts: SmsReceiptCreateManyInput
+  styleSubmissions: StyleSubmissionCreateManyWithoutUserInput
+}
+
+input UserCreateWithoutStyleSubmissionsInput {
+  id: ID
+  auth0Id: String!
+  email: String!
+  firstName: String!
+  lastName: String!
+  role: UserRole
+  pushNotificationStatus: PushNotificationStatus
+  verificationStatus: UserVerificationStatus
+  verificationMethod: UserVerificationMethod
+  roles: UserCreaterolesInput
+  pushNotifications: PushNotificationReceiptCreateManyWithoutUsersInput
   pushNotification: UserPushNotificationCreateOneInput
   smsReceipts: SmsReceiptCreateManyInput
 }
@@ -34463,6 +36660,7 @@ input UserUpdateDataInput {
   pushNotifications: PushNotificationReceiptUpdateManyWithoutUsersInput
   pushNotification: UserPushNotificationUpdateOneInput
   smsReceipts: SmsReceiptUpdateManyInput
+  styleSubmissions: StyleSubmissionUpdateManyWithoutUserInput
 }
 
 input UserUpdateInput {
@@ -34478,6 +36676,7 @@ input UserUpdateInput {
   pushNotifications: PushNotificationReceiptUpdateManyWithoutUsersInput
   pushNotification: UserPushNotificationUpdateOneInput
   smsReceipts: SmsReceiptUpdateManyInput
+  styleSubmissions: StyleSubmissionUpdateManyWithoutUserInput
 }
 
 input UserUpdateManyDataInput {
@@ -34537,6 +36736,13 @@ input UserUpdateOneRequiredInput {
   upsert: UserUpsertNestedInput
 }
 
+input UserUpdateOneRequiredWithoutStyleSubmissionsInput {
+  create: UserCreateWithoutStyleSubmissionsInput
+  connect: UserWhereUniqueInput
+  update: UserUpdateWithoutStyleSubmissionsDataInput
+  upsert: UserUpsertWithoutStyleSubmissionsInput
+}
+
 input UserUpdaterolesInput {
   set: [UserRole!]
 }
@@ -34553,6 +36759,22 @@ input UserUpdateWithoutPushNotificationsDataInput {
   roles: UserUpdaterolesInput
   pushNotification: UserPushNotificationUpdateOneInput
   smsReceipts: SmsReceiptUpdateManyInput
+  styleSubmissions: StyleSubmissionUpdateManyWithoutUserInput
+}
+
+input UserUpdateWithoutStyleSubmissionsDataInput {
+  auth0Id: String
+  email: String
+  firstName: String
+  lastName: String
+  role: UserRole
+  pushNotificationStatus: PushNotificationStatus
+  verificationStatus: UserVerificationStatus
+  verificationMethod: UserVerificationMethod
+  roles: UserUpdaterolesInput
+  pushNotifications: PushNotificationReceiptUpdateManyWithoutUsersInput
+  pushNotification: UserPushNotificationUpdateOneInput
+  smsReceipts: SmsReceiptUpdateManyInput
 }
 
 input UserUpdateWithWhereUniqueWithoutPushNotificationsInput {
@@ -34563,6 +36785,11 @@ input UserUpdateWithWhereUniqueWithoutPushNotificationsInput {
 input UserUpsertNestedInput {
   update: UserUpdateDataInput!
   create: UserCreateInput!
+}
+
+input UserUpsertWithoutStyleSubmissionsInput {
+  update: UserUpdateWithoutStyleSubmissionsDataInput!
+  create: UserCreateWithoutStyleSubmissionsInput!
 }
 
 input UserUpsertWithWhereUniqueWithoutPushNotificationsInput {
@@ -35071,6 +37298,18 @@ input UserWhereInput {
   smsReceipts_every: SmsReceiptWhereInput
   smsReceipts_some: SmsReceiptWhereInput
   smsReceipts_none: SmsReceiptWhereInput
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+  AND: [UserWhereInput!]
+  OR: [UserWhereInput!]
+  NOT: [UserWhereInput!]
+=======
+  styleSubmissions_every: StyleSubmissionWhereInput
+  styleSubmissions_some: StyleSubmissionWhereInput
+  styleSubmissions_none: StyleSubmissionWhereInput
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
 }
 
 input UserWhereUniqueInput {
@@ -35469,16 +37708,18 @@ input WarehouseLocationConstraintUpdateManyWithoutLocationsInput {
   upsert: [WarehouseLocationConstraintUpsertWithWhereUniqueWithoutLocationsInput!]
 }
 
-input WarehouseLocationConstraintUpdateManyWithWhereNestedInput {
-  where: WarehouseLocationConstraintScalarWhereInput!
+a where: WarehouseLocationConstraintScalarWhereInput!
   data: WarehouseLocationConstraintUpdateManyDataInput!
 }
 
+<<<<<<< HEAD
 input WarehouseLocationConstraintUpdateWithoutLocationsDataInput {
   limit: Int
   category: CategoryUpdateOneRequiredInput
 }
 
+=======
+>>>>>>> Add CommunityStyle+Report datamodel and resolvers
 input WarehouseLocationConstraintUpdateWithWhereUniqueWithoutLocationsInput {
   where: WarehouseLocationConstraintWhereUniqueInput!
   data: WarehouseLocationConstraintUpdateWithoutLocationsDataInput!

@@ -35,8 +35,7 @@ export class SMSService {
   }
 
   async startSMSVerification(
-    @Args()
-    { phoneNumber }: { phoneNumber: string },
+    @Args() { phoneNumber }: { phoneNumber: string },
     @Customer() customer,
     @User() user
   ): Promise<boolean> {

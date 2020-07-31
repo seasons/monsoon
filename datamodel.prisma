@@ -557,6 +557,32 @@ enum PushNotificationStatus {
   Granted
   Denied
 }
+ 
+type StyleSubmission {
+  id: ID! @id
+  user: User! @relation(name: "UserToStyleSubmissions")
+  image: Image!
+  location: Location
+  products: [Product!] @scalarList(strategy: RELATION)
+  approved: Boolean! @default(value: false)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+enum StyleSubmissionReportStatus {
+  AwaitingReview
+  UnderReview
+  Reviewed
+}
+
+type StyleSubmissionReport {
+  id: ID! @id
+  reporter: User!
+  reported: StyleSubmission!
+  status: StyleSubmissionReportStatus @default(value: AwaitingReview)
+  reportedAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
 
 type User {
   id: ID! @id
@@ -572,9 +598,10 @@ type User {
   pushNotification: UserPushNotification
   verificationStatus: UserVerificationStatus! @default(value: Pending)
   verificationMethod: UserVerificationMethod! @default(value: None)
+  smsReceipts: [SmsReceipt!]! @relation(name: "UserToSmsReceipts")
+  styleSubmissions: [StyleSubmission!]! @relation(name: "UserToStyleSubmissions")
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
-  smsReceipts: [SmsReceipt!]! @scalarList(strategy: RELATION)
 }
 
 type StylePreferences {
