@@ -115,12 +115,11 @@ input UpsertVariantInput {
   physicalProducts: [UpsertPhysicalProductInput!]!
 }
 
-# FIXME: this one is needs fixed
 input UpdateVariantInput {
   id: ID!
   manufacturerSizeNames: [String!]
   productType: ProductType!
-  weight: Float!
+  weight: Float
   # Top Size values
   sleeve: Float
   shoulder: Float
