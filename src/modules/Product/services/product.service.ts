@@ -27,6 +27,7 @@ import { head, pick } from "lodash"
 import { DateTime } from "luxon"
 
 import { UtilsService } from "../../Utils/services/utils.service"
+import { bottomSizeRegex } from "../constants"
 import { ProductWithPhysicalProducts } from "../product.types"
 import { PhysicalProductUtilsService } from "./physicalProduct.utils.service"
 import { ProductUtilsService } from "./product.utils.service"
@@ -182,6 +183,13 @@ export class ProductService {
   }
 
   async deepUpsertProduct(input) {
+    // Bottom size name validation
+    if (input.type === "Bottom") {
+      for (const variant of input.variants) {
+        this.validateInternalBottomSizeName(variant.internalSizeName)
+      }
+    }
+
     // get records whose associated data we need for other parts of the upsert
     const brand = await this.prisma.client.brand({ id: input.brandID })
     const color = await this.prisma.client.color({ colorCode: input.colorCode })
@@ -599,7 +607,10 @@ export class ProductService {
     const internalSize = await this.productUtils.deepUpsertSize({
       slug: `${variant.sku}-internal`,
       type,
-      display: variant.internalSizeName,
+      display: this.internalSizeNameToDisplaySize({
+        type,
+        sizeName: variant.internalSizeName,
+      }),
       topSizeData: type === "Top" && {
         letter: (variant.internalSizeName as LetterSize) || null,
         ...pick(variant, ["sleeve", "shoulder", "bamboo", "neck", "length"]),
@@ -831,6 +842,32 @@ export class ProductService {
           },
         })
       }
+    }
+  }
+
+  private internalSizeNameToDisplaySize({
+    type,
+    sizeName,
+  }: {
+    type: ProductType
+    sizeName
+  }) {
+    let displaySize
+    switch (type) {
+      case "Bottom":
+        this.validateInternalBottomSizeName(sizeName)
+        displaySize = sizeName.split("x")[0]
+        break
+      default:
+        displaySize = sizeName
+    }
+
+    return displaySize
+  }
+
+  private validateInternalBottomSizeName(sizeName) {
+    if (!sizeName.match(bottomSizeRegex)) {
+      throw new Error(`Invalid bottom size name: ${sizeName}`)
     }
   }
 }
