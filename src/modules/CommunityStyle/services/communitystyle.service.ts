@@ -59,15 +59,19 @@ export class CommunityStyleService {
       })
       .user()
       .email()
-    await this.pushNotificationService.pushNotifyUser({
-      email: submitterEmail,
-      pushNotifID: "Custom",
-      vars: {
-        title: "You've been featured!",
-        body:
-          "Your fit pic has been approved and is officially live. Tap to see it in the app.",
-      },
-    })
+    try {
+      await this.pushNotificationService.pushNotifyUser({
+        email: submitterEmail,
+        pushNotifID: "Custom",
+        vars: {
+          title: "You've been featured!",
+          body:
+            "Your fit pic has been approved and is officially live. Tap to see it in the app.",
+        },
+      })
+    } catch {
+      // couldn't send push notif
+    }
     return true
   }
 
@@ -83,6 +87,26 @@ export class CommunityStyleService {
   async communityStyle(@Info() info): Promise<[StyleSubmission]> {
     return await this.prisma.binding.query.styleSubmissions(
       { where: { approved: true } },
+      info
+    )
+  }
+
+  async unapprovedStyleSubmissions(
+    @Args() args,
+    @Info() info
+  ): Promise<[StyleSubmission]> {
+    return await this.prisma.binding.query.styleSubmissions(
+      { where: { approved: false, ...args.where } },
+      info
+    )
+  }
+
+  async communityStyleReports(
+    @Args() args,
+    @Info() info
+  ): Promise<[StyleSubmission]> {
+    return await this.prisma.binding.query.styleSubmissionReports(
+      { where: args.where },
       info
     )
   }

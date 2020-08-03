@@ -9,4 +9,11 @@ type Mutation {
 
 type Query {
   communityStyle: [StyleSubmission!]!
+
+  unapprovedStyleSubmissions(
+    where: StyleSubmissionWhereInput
+  ): [StyleSubmission!]! @hasRole(roles: [Admin])
+  communityStyleReports(
+    where: StyleSubmissionReportWhereInput
+  ): [StyleSubmissionReport!]! @hasRole(roles: [Admin])
 }
