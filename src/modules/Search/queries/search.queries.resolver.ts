@@ -4,31 +4,18 @@ import { SearchService } from "../services/search.service"
 
 @Resolver()
 export class SearchQueriesResolver {
-  constructor(private readonly searchService: SearchService) {}
+  constructor(private readonly service: SearchService) {}
 
   @Query()
   async search(@Args() { query }) {
-    const indexes = ["brands", "products"]
-    const result = await this.searchService.elasticsearch.search({
-      index: indexes
-        .map(a => `${a}-${process.env.NODE_ENV ?? "staging"}`)
-        .join(","),
-      body: {
-        query: {
-          query_string: {
-            query,
-          },
-        },
-      },
-    })
+    const result = await this.service.query(query)
 
-    const data = result.body.hits.hits.map(({ _score, _source }) => {
+    const data = result.map(data => {
       return {
-        data: _source,
-        score: _score,
+        kindOf: data.kindOf,
+        data: { id: data.objectID, ...data },
       }
     })
-
     return data
   }
 }

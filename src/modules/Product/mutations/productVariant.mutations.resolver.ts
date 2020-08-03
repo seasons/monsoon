@@ -1,10 +1,9 @@
 import { User } from "@app/decorators"
-import { ReservationService } from "@modules/Reservation"
 import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
 import { Product as PrismaBindingProduct } from "@prisma/prisma.binding"
 import { PrismaService } from "@prisma/prisma.service"
-import { pick } from "lodash"
 
+import { PhysicalProductUtilsService } from "../services/physicalProduct.utils.service"
 import { ProductService } from "../services/product.service"
 import { ProductVariantService } from "../services/productVariant.service"
 
@@ -13,7 +12,8 @@ export class ProductVariantMutationsResolver {
   constructor(
     private readonly prisma: PrismaService,
     private readonly productService: ProductService,
-    private readonly productVariantService: ProductVariantService
+    private readonly productVariantService: ProductVariantService,
+    private readonly physicalProductUtilsService: PhysicalProductUtilsService
   ) {}
 
   @Mutation()
@@ -70,9 +70,14 @@ export class ProductVariantMutationsResolver {
       return null
     }
 
+    const sequenceNumbers = await this.physicalProductUtilsService.groupedSequenceNumbers(
+      inputs
+    )
+
     const variants = await Promise.all(
-      inputs.map(async input =>
-        this.productService.deepUpsertProductVariant({
+      inputs.map(async (input, index) => {
+        return this.productService.deepUpsertProductVariant({
+          sequenceNumbers: sequenceNumbers[index],
           variant: input,
           colorCode: product.color.colorCode,
           productID,
@@ -80,7 +85,7 @@ export class ProductVariantMutationsResolver {
           status,
           type,
         })
-      )
+      })
     )
     return variants
   }

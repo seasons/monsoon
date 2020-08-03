@@ -55,7 +55,8 @@ export class AuthMutationsResolver {
       event: "Created Account",
       properties: {
         name: `${user.firstName} ${user.lastName}`,
-        email: user.email,
+        email: `${user.email}`,
+        customerID: customer.id,
       },
     })
 

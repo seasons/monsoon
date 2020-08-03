@@ -6,7 +6,6 @@ import { S3_BASE } from "@modules/Image/services/image.service"
 import { Injectable } from "@nestjs/common"
 import {
   BagItem,
-  BottomSizeCreateInput,
   BottomSizeType,
   Customer,
   ID_Input,
@@ -16,7 +15,6 @@ import {
   ProductFunction,
   ProductStatus,
   ProductType,
-  ProductUpdateInput,
   ProductWhereUniqueInput,
   RecentlyViewedProduct,
   Tag,
@@ -29,6 +27,7 @@ import { head, pick } from "lodash"
 import { DateTime } from "luxon"
 
 import { UtilsService } from "../../Utils/services/utils.service"
+import { bottomSizeRegex } from "../constants"
 import { ProductWithPhysicalProducts } from "../product.types"
 import { PhysicalProductUtilsService } from "./physicalProduct.utils.service"
 import { ProductUtilsService } from "./product.utils.service"
@@ -184,6 +183,13 @@ export class ProductService {
   }
 
   async deepUpsertProduct(input) {
+    // Bottom size name validation
+    if (input.type === "Bottom") {
+      for (const variant of input.variants) {
+        this.validateInternalBottomSizeName(variant.internalSizeName)
+      }
+    }
+
     // get records whose associated data we need for other parts of the upsert
     const brand = await this.prisma.client.brand({ id: input.brandID })
     const color = await this.prisma.client.color({ colorCode: input.colorCode })
@@ -242,6 +248,7 @@ export class ProductService {
         "status",
         "season",
         "architecture",
+        "photographyStatus",
       ]),
       brand: {
         connect: { id: input.brandID },
@@ -282,14 +289,20 @@ export class ProductService {
       update: data,
       where: { slug },
     })
+
+    const sequenceNumbers = await this.physicalProductUtils.groupedSequenceNumbers(
+      input.variants
+    )
+
     await Promise.all(
-      input.variants.map(a =>
-        this.deepUpsertProductVariant({
+      input.variants.map((a, i) => {
+        return this.deepUpsertProductVariant({
+          sequenceNumbers: sequenceNumbers[i],
           variant: a,
           productID: product.id,
           ...pick(input, ["type", "colorCode", "retailPrice", "status"]),
         })
-      )
+      })
     )
     return product
   }
@@ -575,6 +588,7 @@ export class ProductService {
    * @param productID: id of the parent product
    */
   async deepUpsertProductVariant({
+    sequenceNumbers,
     variant,
     type,
     colorCode,
@@ -582,6 +596,7 @@ export class ProductService {
     productID,
     status,
   }: {
+    sequenceNumbers
     variant
     type: ProductType
     colorCode: string
@@ -592,7 +607,10 @@ export class ProductService {
     const internalSize = await this.productUtils.deepUpsertSize({
       slug: `${variant.sku}-internal`,
       type,
-      display: variant.internalSizeName,
+      display: this.internalSizeNameToDisplaySize({
+        type,
+        sizeName: variant.internalSizeName,
+      }),
       topSizeData: type === "Top" && {
         letter: (variant.internalSizeName as LetterSize) || null,
         ...pick(variant, ["sleeve", "shoulder", "bamboo", "neck", "length"]),
@@ -657,17 +675,18 @@ export class ProductService {
       update: data,
     })
 
-    for (const physProdData of variant.physicalProducts) {
+    variant.physicalProducts.forEach(async (physProdData, index) => {
+      const sequenceNumber = sequenceNumbers[index]
       await this.prisma.client.upsertPhysicalProduct({
         where: { seasonsUID: physProdData.seasonsUID },
         create: {
           ...physProdData,
-          sequenceNumber: await this.physicalProductUtils.nextSequenceNumber(),
+          sequenceNumber,
           productVariant: { connect: { id: prodVar.id } },
         },
         update: physProdData,
       })
-    }
+    })
 
     return prodVar
   }
@@ -844,6 +863,32 @@ export class ProductService {
           },
         })
       }
+    }
+  }
+
+  private internalSizeNameToDisplaySize({
+    type,
+    sizeName,
+  }: {
+    type: ProductType
+    sizeName
+  }) {
+    let displaySize
+    switch (type) {
+      case "Bottom":
+        this.validateInternalBottomSizeName(sizeName)
+        displaySize = sizeName.split("x")[0]
+        break
+      default:
+        displaySize = sizeName
+    }
+
+    return displaySize
+  }
+
+  private validateInternalBottomSizeName(sizeName) {
+    if (!sizeName.match(bottomSizeRegex)) {
+      throw new Error(`Invalid bottom size name: ${sizeName}`)
     }
   }
 }

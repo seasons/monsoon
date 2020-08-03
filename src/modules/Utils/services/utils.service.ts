@@ -8,6 +8,8 @@ import cliProgress from "cli-progress"
 import { camelCase, isObject, mapKeys, snakeCase } from "lodash"
 import moment from "moment"
 
+import { bottomSizeRegex } from "../../Product/constants"
+
 enum ProductSize {
   XS = "XS",
   S = "S",
@@ -195,9 +197,8 @@ export class UtilsService {
         return "XXL"
     }
 
-    // If we get here, we're expecting a bottom with size WxL e.g 32x28 or 27x8 (shorts)
-    // Regex: (start)digit-digit-x-digit-(optionaldigit)(end)
-    if (!sizeName.match(/^\d\dx\d\d*$/)) {
+    // If we get here, we're expecting a bottom with size WxL e.g 32x28 or 27x8
+    if (!sizeName.match(bottomSizeRegex)) {
       throw new Error(`invalid sizeName: ${sizeName}`)
     }
     return sizeName.toLowerCase().replace("x", "") // 32x28 => 3238

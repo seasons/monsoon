@@ -11,10 +11,12 @@ import { Module } from "@nestjs/common"
 import { PrismaModule } from "@prisma/prisma.module"
 
 import { PaymentModule } from "../Payment/payment.module"
+import { SearchModule } from "../Search/search.module"
 import { DataScheduledJobs } from "./services/data.job.service"
 import { MembershipScheduledJobs } from "./services/membership.service"
 import { PaymentScheduledJobs } from "./services/payment.job.service"
 import { ReservationScheduledJobs } from "./services/reservations.job.service"
+import { SearchScheduledJobs } from "./services/search.job.service"
 
 @Module({
   imports: [
@@ -29,12 +31,14 @@ import { ReservationScheduledJobs } from "./services/reservations.job.service"
     ReservationModule,
     UtilsModule,
     PushNotificationModule,
+    SearchModule,
   ],
   providers: [
     ReservationScheduledJobs,
     DataScheduledJobs,
     MembershipScheduledJobs,
     PaymentScheduledJobs,
+    SearchScheduledJobs,
   ],
   exports: [DataScheduledJobs],
 })
