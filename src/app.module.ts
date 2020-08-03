@@ -33,6 +33,7 @@ import {
   UtilsModule,
   directiveResolvers,
 } from "./modules"
+import { AnalyticsModule } from "./modules/Analytics/analytics.module"
 import { TwilioModule } from "./modules/Twilio/twilio.module"
 
 const analytics = new Analytics(process.env.SEGMENT_MONSOON_WRITE_KEY)
@@ -84,6 +85,7 @@ const scheduleModule =
           },
         } as GqlModuleOptions),
     }),
+    AnalyticsModule,
     AirtableModule,
     BlogModule,
     CollectionModule,
