@@ -17626,23 +17626,26 @@ input ProductWhereInput {
   statusChanges_none: ProductStatusChangeWhereInput
 }
 
-input ProductWhereUniqueInput {
+input RecentlyViewedProductWhereUniqueInput {
   id: ID
-  slug: String
 }
 
 type PushNotificationReceipt implements Node {
   id: ID!
-  route: String
-  screen: String
-  uri: String
-  users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User!]
-  interest: String
-  body: String!
-  title: String
-  recordID: String
-  recordSlug: String
-  sentAt: DateTime!
+  user: User!
+  customer: Customer!
+  sentPackage: Package
+  returnedPackage: Package
+  products(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct!]
+  reservationNumber: Int!
+  phase: ReservationPhase!
+  shipped: Boolean!
+  status: ReservationStatus!
+  shippedAt: DateTime
+  receivedAt: DateTime
+  reminderSentAt: DateTime
+  receipt: ReservationReceipt
+  lastLocation: Location
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -17657,7 +17660,7 @@ type PushNotificationReceiptConnection {
   aggregate: AggregatePushNotificationReceipt!
 }
 
-input PushNotificationReceiptCreateInput {
+input ReservationCreateInput {
   id: ID
   route: String
   screen: String
@@ -17671,28 +17674,114 @@ input PushNotificationReceiptCreateInput {
   users: UserCreateManyWithoutPushNotificationsInput
 }
 
-input PushNotificationReceiptCreateManyInput {
-  create: [PushNotificationReceiptCreateInput!]
-  connect: [PushNotificationReceiptWhereUniqueInput!]
+input ReservationCreateManyWithoutCustomerInput {
+  create: [ReservationCreateWithoutCustomerInput!]
+  connect: [ReservationWhereUniqueInput!]
 }
 
-input PushNotificationReceiptCreateManyWithoutUsersInput {
-  create: [PushNotificationReceiptCreateWithoutUsersInput!]
-  connect: [PushNotificationReceiptWhereUniqueInput!]
+input ReservationCreateOneInput {
+  create: ReservationCreateInput
+  connect: ReservationWhereUniqueInput
 }
 
-input PushNotificationReceiptCreateWithoutUsersInput {
+input ReservationCreateOneWithoutReceiptInput {
+  create: ReservationCreateWithoutReceiptInput
+  connect: ReservationWhereUniqueInput
+}
+
+input ReservationCreateWithoutCustomerInput {
   id: ID
-  route: String
-  screen: String
-  uri: String
-  interest: String
-  body: String!
-  title: String
-  recordID: String
-  recordSlug: String
-  sentAt: DateTime!
+  reservationNumber: Int!
+  phase: ReservationPhase!
+  shipped: Boolean!
+  status: ReservationStatus!
+  shippedAt: DateTime
+  receivedAt: DateTime
+  reminderSentAt: DateTime
+  user: UserCreateOneInput!
+  sentPackage: PackageCreateOneInput
+  returnedPackage: PackageCreateOneInput
+  products: PhysicalProductCreateManyInput
+  receipt: ReservationReceiptCreateOneWithoutReservationInput
+  lastLocation: LocationCreateOneInput
 }
+
+input ReservationCreateWithoutReceiptInput {
+  id: ID
+  reservationNumber: Int!
+  phase: ReservationPhase!
+  shipped: Boolean!
+  status: ReservationStatus!
+  shippedAt: DateTime
+  receivedAt: DateTime
+  reminderSentAt: DateTime
+  user: UserCreateOneInput!
+  customer: CustomerCreateOneWithoutReservationsInput!
+  sentPackage: PackageCreateOneInput
+  returnedPackage: PackageCreateOneInput
+  products: PhysicalProductCreateManyInput
+  lastLocation: LocationCreateOneInput
+}
+
+"""An edge in a connection."""
+type ReservationEdge {
+  """The item at the end of the edge."""
+  node: Reservation!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+type ReservationFeedback implements Node {
+  id: ID!
+  comment: String
+  feedbacks(where: ProductVariantFeedbackWhereInput, orderBy: ProductVariantFeedbackOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariantFeedback!]
+  rating: Rating
+  user: User!
+  reservation: Reservation!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  respondedAt: DateTime
+}
+
+"""A connection to a list of items."""
+type ReservationFeedbackConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [ReservationFeedbackEdge]!
+  aggregate: AggregateReservationFeedback!
+}
+
+input ReservationFeedbackCreateInput {
+  id: ID
+  comment: String
+  rating: Rating
+  respondedAt: DateTime
+  feedbacks: ProductVariantFeedbackCreateManyWithoutReservationFeedbackInput
+  user: UserCreateOneInput!
+  reservation: ReservationCreateOneInput!
+}
+
+input ReservationFeedbackCreateOneWithoutFeedbacksInput {
+  create: ReservationFeedbackCreateWithoutFeedbacksInput
+  connect: ReservationFeedbackWhereUniqueInput
+}
+
+input ReservationFeedbackCreateWithoutFeedbacksInput {
+  id: ID
+  comment: String
+  rating: Rating
+  respondedAt: DateTime
+  user: UserCreateOneInput!
+  reservation: ReservationCreateOneInput!
+}
+
+"""An edge in a connection."""
+type ReservationFeedbackEdge {
+  """The item at the end of the edge."""
+  node: ReservationFeedback!
 
 """An edge in a connection."""
 type PushNotificationReceiptEdge {
@@ -17703,46 +17792,28 @@ type PushNotificationReceiptEdge {
   cursor: String!
 }
 
-enum PushNotificationReceiptOrderByInput {
+enum ReservationFeedbackOrderByInput {
   id_ASC
   id_DESC
-  route_ASC
-  route_DESC
-  screen_ASC
-  screen_DESC
-  uri_ASC
-  uri_DESC
-  interest_ASC
-  interest_DESC
-  body_ASC
-  body_DESC
-  title_ASC
-  title_DESC
-  recordID_ASC
-  recordID_DESC
-  recordSlug_ASC
-  recordSlug_DESC
-  sentAt_ASC
-  sentAt_DESC
+  comment_ASC
+  comment_DESC
+  rating_ASC
+  rating_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
   updatedAt_DESC
+  respondedAt_ASC
+  respondedAt_DESC
 }
 
-type PushNotificationReceiptPreviousValues {
+type ReservationFeedbackPreviousValues {
   id: ID!
-  route: String
-  screen: String
-  uri: String
-  interest: String
-  body: String!
-  title: String
-  recordID: String
-  recordSlug: String
-  sentAt: DateTime!
+  comment: String
+  rating: Rating
   createdAt: DateTime!
   updatedAt: DateTime!
+  respondedAt: DateTime
 }
 
 input PushNotificationReceiptScalarWhereInput {
@@ -18182,11 +18253,8 @@ input PushNotificationReceiptScalarWhereInput {
   updatedAt_gte: DateTime
 }
 
-type PushNotificationReceiptSubscriptionPayload {
-  mutation: MutationType!
-  node: PushNotificationReceipt
-  updatedFields: [String!]
-  previousValues: PushNotificationReceiptPreviousValues
+input ReservationFeedbackWhereUniqueInput {
+  id: ID
 }
 
 input PushNotificationReceiptSubscriptionWhereInput {
@@ -18245,16 +18313,12 @@ input PushNotificationReceiptUpdateInput {
   users: UserUpdateManyWithoutPushNotificationsInput
 }
 
-input PushNotificationReceiptUpdateManyDataInput {
-  route: String
-  screen: String
-  uri: String
-  interest: String
-  body: String
-  title: String
-  recordID: String
-  recordSlug: String
-  sentAt: DateTime
+type ReservationReceipt implements Node {
+  id: ID!
+  reservation: Reservation!
+  items(where: ReservationReceiptItemWhereInput, orderBy: ReservationReceiptItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ReservationReceiptItem!]
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 input PushNotificationReceiptUpdateManyInput {
@@ -18269,16 +18333,10 @@ input PushNotificationReceiptUpdateManyInput {
   upsert: [PushNotificationReceiptUpsertWithWhereUniqueNestedInput!]
 }
 
-input PushNotificationReceiptUpdateManyMutationInput {
-  route: String
-  screen: String
-  uri: String
-  interest: String
-  body: String
-  title: String
-  recordID: String
-  recordSlug: String
-  sentAt: DateTime
+input ReservationReceiptCreateInput {
+  id: ID
+  reservation: ReservationCreateOneWithoutReceiptInput!
+  items: ReservationReceiptItemCreateManyInput
 }
 
 input PushNotificationReceiptUpdateManyWithoutUsersInput {
@@ -18293,43 +18351,71 @@ input PushNotificationReceiptUpdateManyWithoutUsersInput {
   upsert: [PushNotificationReceiptUpsertWithWhereUniqueWithoutUsersInput!]
 }
 
-input PushNotificationReceiptUpdateManyWithWhereNestedInput {
-  where: PushNotificationReceiptScalarWhereInput!
-  data: PushNotificationReceiptUpdateManyDataInput!
+input ReservationReceiptCreateWithoutReservationInput {
+  id: ID
+  items: ReservationReceiptItemCreateManyInput
 }
 
-input PushNotificationReceiptUpdateWithoutUsersDataInput {
-  route: String
-  screen: String
-  uri: String
-  interest: String
-  body: String
-  title: String
-  recordID: String
-  recordSlug: String
-  sentAt: DateTime
+"""An edge in a connection."""
+type ReservationReceiptEdge {
+  """The item at the end of the edge."""
+  node: ReservationReceipt!
+
+  """A cursor for use in pagination."""
+  cursor: String!
 }
 
-input PushNotificationReceiptUpdateWithWhereUniqueNestedInput {
-  where: PushNotificationReceiptWhereUniqueInput!
-  data: PushNotificationReceiptUpdateDataInput!
+type ReservationReceiptItem implements Node {
+  id: ID!
+  product: PhysicalProduct!
+  productStatus: PhysicalProductStatus!
+  notes: String
 }
 
-input PushNotificationReceiptUpdateWithWhereUniqueWithoutUsersInput {
-  where: PushNotificationReceiptWhereUniqueInput!
-  data: PushNotificationReceiptUpdateWithoutUsersDataInput!
+"""A connection to a list of items."""
+type ReservationReceiptItemConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [ReservationReceiptItemEdge]!
+  aggregate: AggregateReservationReceiptItem!
 }
 
-input PushNotificationReceiptUpsertWithWhereUniqueNestedInput {
-  where: PushNotificationReceiptWhereUniqueInput!
-  update: PushNotificationReceiptUpdateDataInput!
-  create: PushNotificationReceiptCreateInput!
+input ReservationReceiptItemCreateInput {
+  id: ID
+  productStatus: PhysicalProductStatus!
+  notes: String
+  product: PhysicalProductCreateOneInput!
 }
 
-input PushNotificationReceiptUpsertWithWhereUniqueWithoutUsersInput {
-  where: PushNotificationReceiptWhereUniqueInput!
-  update: PushNotificationReceiptUpdateWithoutUsersDataInput!
-  create: PushNotificationReceiptCreateWithoutUsersInput!
+input ReservationReceiptItemCreateManyInput {
+  create: [ReservationReceiptItemCreateInput!]
+  connect: [ReservationReceiptItemWhereUniqueInput!]
+}
+
+"""An edge in a connection."""
+type ReservationReceiptItemEdge {
+  """The item at the end of the edge."""
+  node: ReservationReceiptItem!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum ReservationReceiptItemOrderByInput {
+  id_ASC
+  id_DESC
+  productStatus_ASC
+  productStatus_DESC
+  notes_ASC
+  notes_DESC
+}
+
+type ReservationReceiptItemPreviousValues {
+  id: ID!
+  productStatus: PhysicalProductStatus!
+  notes: String
 }
 
 input PushNotificationReceiptWhereInput {
@@ -18772,14 +18858,15 @@ input PushNotificationReceiptWhereInput {
   users_none: UserWhereInput
 }
 
-input PushNotificationReceiptWhereUniqueInput {
-  id: ID
+input ReservationReceiptItemUpdateInput {
+  productStatus: PhysicalProductStatus
+  notes: String
+  product: PhysicalProductUpdateOneRequiredInput
 }
 
-enum PushNotificationStatus {
-  Blocked
-  Granted
-  Denied
+input ReservationReceiptItemUpdateManyDataInput {
+  productStatus: PhysicalProductStatus
+  notes: String
 }
 
 type Query {
@@ -18935,15 +19022,25 @@ type Query {
   ): Node
 }
 
-enum QuestionType {
-  MultipleChoice
-  FreeResponse
+input ReservationReceiptItemUpdateManyMutationInput {
+  productStatus: PhysicalProductStatus
+  notes: String
 }
 
-enum Rating {
-  Disliked
-  Ok
-  Loved
+input ReservationReceiptItemUpdateManyWithWhereNestedInput {
+  where: ReservationReceiptItemScalarWhereInput!
+  data: ReservationReceiptItemUpdateManyDataInput!
+}
+
+input ReservationReceiptItemUpdateWithWhereUniqueNestedInput {
+  where: ReservationReceiptItemWhereUniqueInput!
+  data: ReservationReceiptItemUpdateDataInput!
+}
+
+input ReservationReceiptItemUpsertWithWhereUniqueNestedInput {
+  where: ReservationReceiptItemWhereUniqueInput!
+  update: ReservationReceiptItemUpdateDataInput!
+  create: ReservationReceiptItemCreateInput!
 }
 
 type RecentlyViewedProduct implements Node {
@@ -18981,29 +19078,26 @@ type RecentlyViewedProductEdge {
   cursor: String!
 }
 
-enum RecentlyViewedProductOrderByInput {
+enum ReservationReceiptOrderByInput {
   id_ASC
   id_DESC
-  viewCount_ASC
-  viewCount_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
   updatedAt_DESC
 }
 
-type RecentlyViewedProductPreviousValues {
+type ReservationReceiptPreviousValues {
   id: ID!
-  viewCount: Int!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
 
-type RecentlyViewedProductSubscriptionPayload {
+type ReservationReceiptSubscriptionPayload {
   mutation: MutationType!
-  node: RecentlyViewedProduct
+  node: ReservationReceipt
   updatedFields: [String!]
-  previousValues: RecentlyViewedProductPreviousValues
+  previousValues: ReservationReceiptPreviousValues
 }
 
 input RecentlyViewedProductSubscriptionWhereInput {
@@ -19042,9 +19136,8 @@ input RecentlyViewedProductUpdateInput {
   customer: CustomerUpdateOneRequiredInput
 }
 
-input RecentlyViewedProductUpdateManyMutationInput {
-  viewCount: Int
-}
+  """All values greater than the given value."""
+  reminderSentAt_gt: DateTime
 
 input RecentlyViewedProductWhereInput {
   """Logical AND on all given filters."""
@@ -19165,8 +19258,16 @@ input RecentlyViewedProductWhereInput {
   customer: CustomerWhereInput
 }
 
-input RecentlyViewedProductWhereUniqueInput {
-  id: ID
+enum ReservationStatus {
+  Queued
+  Packed
+  Shipped
+  Delivered
+  Completed
+  Cancelled
+  Blocked
+  Unknown
+  Received
 }
 
 type Reservation implements Node {
@@ -19217,19 +19318,27 @@ input ReservationCreateInput {
   lastLocation: LocationCreateOneInput
 }
 
-input ReservationCreateManyWithoutCustomerInput {
-  create: [ReservationCreateWithoutCustomerInput!]
-  connect: [ReservationWhereUniqueInput!]
-}
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ReservationSubscriptionWhereInput!]
 
-input ReservationCreateOneInput {
-  create: ReservationCreateInput
-  connect: ReservationWhereUniqueInput
-}
+  """The subscription event gets dispatched when it's listed in mutation_in"""
+  mutation_in: [MutationType!]
 
-input ReservationCreateOneWithoutReceiptInput {
-  create: ReservationCreateWithoutReceiptInput
-  connect: ReservationWhereUniqueInput
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: ReservationWhereInput
 }
 
 input ReservationCreateWithoutCustomerInput {
@@ -19330,35 +19439,28 @@ type ReservationFeedbackEdge {
   cursor: String!
 }
 
-enum ReservationFeedbackOrderByInput {
-  id_ASC
-  id_DESC
-  comment_ASC
-  comment_DESC
-  rating_ASC
-  rating_DESC
-  createdAt_ASC
-  createdAt_DESC
-  updatedAt_ASC
-  updatedAt_DESC
-  respondedAt_ASC
-  respondedAt_DESC
+input ReservationUpdateManyWithoutCustomerInput {
+  create: [ReservationCreateWithoutCustomerInput!]
+  connect: [ReservationWhereUniqueInput!]
+  set: [ReservationWhereUniqueInput!]
+  disconnect: [ReservationWhereUniqueInput!]
+  delete: [ReservationWhereUniqueInput!]
+  update: [ReservationUpdateWithWhereUniqueWithoutCustomerInput!]
+  updateMany: [ReservationUpdateManyWithWhereNestedInput!]
+  deleteMany: [ReservationScalarWhereInput!]
+  upsert: [ReservationUpsertWithWhereUniqueWithoutCustomerInput!]
 }
 
-type ReservationFeedbackPreviousValues {
-  id: ID!
-  comment: String
-  rating: Rating
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  respondedAt: DateTime
+input ReservationUpdateManyWithWhereNestedInput {
+  where: ReservationScalarWhereInput!
+  data: ReservationUpdateManyDataInput!
 }
 
-type ReservationFeedbackSubscriptionPayload {
-  mutation: MutationType!
-  node: ReservationFeedback
-  updatedFields: [String!]
-  previousValues: ReservationFeedbackPreviousValues
+input ReservationUpdateOneRequiredInput {
+  create: ReservationCreateInput
+  connect: ReservationWhereUniqueInput
+  update: ReservationUpdateDataInput
+  upsert: ReservationUpsertNestedInput
 }
 
 input ReservationFeedbackSubscriptionWhereInput {
@@ -19400,10 +19502,20 @@ input ReservationFeedbackUpdateInput {
   reservation: ReservationUpdateOneRequiredInput
 }
 
-input ReservationFeedbackUpdateManyMutationInput {
-  comment: String
-  rating: Rating
-  respondedAt: DateTime
+input ReservationUpdateWithoutReceiptDataInput {
+  reservationNumber: Int
+  phase: ReservationPhase
+  shipped: Boolean
+  status: ReservationStatus
+  shippedAt: DateTime
+  receivedAt: DateTime
+  reminderSentAt: DateTime
+  user: UserUpdateOneRequiredInput
+  customer: CustomerUpdateOneRequiredWithoutReservationsInput
+  sentPackage: PackageUpdateOneInput
+  returnedPackage: PackageUpdateOneInput
+  products: PhysicalProductUpdateManyInput
+  lastLocation: LocationUpdateOneInput
 }
 
 input ReservationFeedbackUpdateOneRequiredWithoutFeedbacksInput {
@@ -19421,9 +19533,9 @@ input ReservationFeedbackUpdateWithoutFeedbacksDataInput {
   reservation: ReservationUpdateOneRequiredInput
 }
 
-input ReservationFeedbackUpsertWithoutFeedbacksInput {
-  update: ReservationFeedbackUpdateWithoutFeedbacksDataInput!
-  create: ReservationFeedbackCreateWithoutFeedbacksInput!
+input ReservationUpsertWithoutReceiptInput {
+  update: ReservationUpdateWithoutReceiptDataInput!
+  create: ReservationCreateWithoutReceiptInput!
 }
 
 input ReservationFeedbackWhereInput {
@@ -19598,50 +19710,18 @@ input ReservationFeedbackWhereInput {
   reservation: ReservationWhereInput
 }
 
-input ReservationFeedbackWhereUniqueInput {
-  id: ID
-}
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
 
-enum ReservationOrderByInput {
-  id_ASC
-  id_DESC
-  reservationNumber_ASC
-  reservationNumber_DESC
-  phase_ASC
-  phase_DESC
-  shipped_ASC
-  shipped_DESC
-  status_ASC
-  status_DESC
-  shippedAt_ASC
-  shippedAt_DESC
-  receivedAt_ASC
-  receivedAt_DESC
-  reminderSentAt_ASC
-  reminderSentAt_DESC
-  createdAt_ASC
-  createdAt_DESC
-  updatedAt_ASC
-  updatedAt_DESC
-}
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  updatedAt: DateTime
 
-enum ReservationPhase {
-  BusinessToCustomer
-  CustomerToBusiness
-}
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
 
-type ReservationPreviousValues {
-  id: ID!
-  reservationNumber: Int!
-  phase: ReservationPhase!
-  shipped: Boolean!
-  status: ReservationStatus!
-  shippedAt: DateTime
-  receivedAt: DateTime
-  reminderSentAt: DateTime
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
 
 type ReservationReceipt implements Node {
   id: ID!
@@ -19661,20 +19741,23 @@ type ReservationReceiptConnection {
   aggregate: AggregateReservationReceipt!
 }
 
-input ReservationReceiptCreateInput {
-  id: ID
-  reservation: ReservationCreateOneWithoutReceiptInput!
-  items: ReservationReceiptItemCreateManyInput
-}
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
 
-input ReservationReceiptCreateOneWithoutReservationInput {
-  create: ReservationReceiptCreateWithoutReservationInput
-  connect: ReservationReceiptWhereUniqueInput
-}
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
 
-input ReservationReceiptCreateWithoutReservationInput {
-  id: ID
-  items: ReservationReceiptItemCreateManyInput
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
+  user: UserWhereInput
+  customer: CustomerWhereInput
+  sentPackage: PackageWhereInput
+  returnedPackage: PackageWhereInput
+  products_every: PhysicalProductWhereInput
+  products_some: PhysicalProductWhereInput
+  products_none: PhysicalProductWhereInput
+  receipt: ReservationReceiptWhereInput
+  lastLocation: LocationWhereInput
 }
 
 """An edge in a connection."""
@@ -19688,9 +19771,11 @@ type ReservationReceiptEdge {
 
 type ReservationReceiptItem implements Node {
   id: ID!
-  product: PhysicalProduct!
-  productStatus: PhysicalProductStatus!
-  notes: String
+  slug: String!
+  productType: ProductType
+  top: TopSize
+  bottom: BottomSize
+  display: String!
 }
 
 """A connection to a list of items."""
@@ -19703,16 +19788,16 @@ type ReservationReceiptItemConnection {
   aggregate: AggregateReservationReceiptItem!
 }
 
-input ReservationReceiptItemCreateInput {
+input SizeCreateInput {
   id: ID
   productStatus: PhysicalProductStatus!
   notes: String
   product: PhysicalProductCreateOneInput!
 }
 
-input ReservationReceiptItemCreateManyInput {
-  create: [ReservationReceiptItemCreateInput!]
-  connect: [ReservationReceiptItemWhereUniqueInput!]
+input SizeCreateManyInput {
+  create: [SizeCreateInput!]
+  connect: [SizeWhereUniqueInput!]
 }
 
 """An edge in a connection."""
@@ -19724,19 +19809,22 @@ type ReservationReceiptItemEdge {
   cursor: String!
 }
 
-enum ReservationReceiptItemOrderByInput {
+enum SizeOrderByInput {
   id_ASC
   id_DESC
-  productStatus_ASC
-  productStatus_DESC
-  notes_ASC
-  notes_DESC
+  slug_ASC
+  slug_DESC
+  productType_ASC
+  productType_DESC
+  display_ASC
+  display_DESC
 }
 
-type ReservationReceiptItemPreviousValues {
+type SizePreviousValues {
   id: ID!
-  productStatus: PhysicalProductStatus!
-  notes: String
+  slug: String!
+  productType: ProductType
+  display: String!
 }
 
 input ReservationReceiptItemScalarWhereInput {
@@ -19840,11 +19928,11 @@ input ReservationReceiptItemScalarWhereInput {
   notes_not_ends_with: String
 }
 
-type ReservationReceiptItemSubscriptionPayload {
+type SizeSubscriptionPayload {
   mutation: MutationType!
-  node: ReservationReceiptItem
+  node: Size
   updatedFields: [String!]
-  previousValues: ReservationReceiptItemPreviousValues
+  previousValues: SizePreviousValues
 }
 
 input ReservationReceiptItemSubscriptionWhereInput {
@@ -19889,9 +19977,10 @@ input ReservationReceiptItemUpdateInput {
   product: PhysicalProductUpdateOneRequiredInput
 }
 
-input ReservationReceiptItemUpdateManyDataInput {
-  productStatus: PhysicalProductStatus
-  notes: String
+input SizeUpdateManyDataInput {
+  slug: String
+  productType: ProductType
+  display: String
 }
 
 input ReservationReceiptItemUpdateManyInput {
@@ -19906,25 +19995,29 @@ input ReservationReceiptItemUpdateManyInput {
   upsert: [ReservationReceiptItemUpsertWithWhereUniqueNestedInput!]
 }
 
-input ReservationReceiptItemUpdateManyMutationInput {
-  productStatus: PhysicalProductStatus
-  notes: String
+input SizeUpdateManyMutationInput {
+  slug: String
+  productType: ProductType
+  display: String
 }
 
-input ReservationReceiptItemUpdateManyWithWhereNestedInput {
-  where: ReservationReceiptItemScalarWhereInput!
-  data: ReservationReceiptItemUpdateManyDataInput!
+input SizeUpdateManyWithWhereNestedInput {
+  where: SizeScalarWhereInput!
+  data: SizeUpdateManyDataInput!
 }
 
-input ReservationReceiptItemUpdateWithWhereUniqueNestedInput {
-  where: ReservationReceiptItemWhereUniqueInput!
-  data: ReservationReceiptItemUpdateDataInput!
+input SizeUpdateOneInput {
+  create: SizeCreateInput
+  connect: SizeWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: SizeUpdateDataInput
+  upsert: SizeUpsertNestedInput
 }
 
-input ReservationReceiptItemUpsertWithWhereUniqueNestedInput {
-  where: ReservationReceiptItemWhereUniqueInput!
-  update: ReservationReceiptItemUpdateDataInput!
-  create: ReservationReceiptItemCreateInput!
+input SizeUpdateWithWhereUniqueNestedInput {
+  where: SizeWhereUniqueInput!
+  data: SizeUpdateDataInput!
 }
 
 input ReservationReceiptItemWhereInput {
@@ -20029,31 +20122,117 @@ input ReservationReceiptItemWhereInput {
   product: PhysicalProductWhereInput
 }
 
-input ReservationReceiptItemWhereUniqueInput {
+  """All values that are not equal to given value."""
+  slug_not: String
+
+  """All values that are contained in given list."""
+  slug_in: [String!]
+
+  """All values that are not contained in given list."""
+  slug_not_in: [String!]
+
+  """All values less than the given value."""
+  slug_lt: String
+
+  """All values less than or equal the given value."""
+  slug_lte: String
+
+  """All values greater than the given value."""
+  slug_gt: String
+
+  """All values greater than or equal the given value."""
+  slug_gte: String
+
+  """All values containing the given string."""
+  slug_contains: String
+
+  """All values not containing the given string."""
+  slug_not_contains: String
+
+  """All values starting with the given string."""
+  slug_starts_with: String
+
+  """All values not starting with the given string."""
+  slug_not_starts_with: String
+
+  """All values ending with the given string."""
+  slug_ends_with: String
+
+  """All values not ending with the given string."""
+  slug_not_ends_with: String
+  productType: ProductType
+
+  """All values that are not equal to given value."""
+  productType_not: ProductType
+
+  """All values that are contained in given list."""
+  productType_in: [ProductType!]
+
+  """All values that are not contained in given list."""
+  productType_not_in: [ProductType!]
+  display: String
+
+  """All values that are not equal to given value."""
+  display_not: String
+
+  """All values that are contained in given list."""
+  display_in: [String!]
+
+  """All values that are not contained in given list."""
+  display_not_in: [String!]
+
+  """All values less than the given value."""
+  display_lt: String
+
+  """All values less than or equal the given value."""
+  display_lte: String
+
+  """All values greater than the given value."""
+  display_gt: String
+
+  """All values greater than or equal the given value."""
+  display_gte: String
+
+  """All values containing the given string."""
+  display_contains: String
+
+  """All values not containing the given string."""
+  display_not_contains: String
+
+  """All values starting with the given string."""
+  display_starts_with: String
+
+  """All values not starting with the given string."""
+  display_not_starts_with: String
+
+  """All values ending with the given string."""
+  display_ends_with: String
+
+  """All values not ending with the given string."""
+  display_not_ends_with: String
+  top: TopSizeWhereInput
+  bottom: BottomSizeWhereInput
+}
+
+input SizeWhereUniqueInput {
   id: ID
+  slug: String
 }
 
-enum ReservationReceiptOrderByInput {
-  id_ASC
-  id_DESC
-  createdAt_ASC
-  createdAt_DESC
-  updatedAt_ASC
-  updatedAt_DESC
-}
-
-type ReservationReceiptPreviousValues {
+type SmsReceipt implements Node {
   id: ID!
-  createdAt: DateTime!
+  externalId: String
+  body: String!
+  mediaUrls: [String!]!
+  status: SmsStatus!
+  sentAt: DateTime!
   updatedAt: DateTime!
 }
 
-type ReservationReceiptSubscriptionPayload {
-  mutation: MutationType!
-  node: ReservationReceipt
-  updatedFields: [String!]
-  previousValues: ReservationReceiptPreviousValues
-}
+"""A connection to a list of items."""
+type SmsReceiptConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
 
 input ReservationReceiptSubscriptionWhereInput {
   """Logical AND on all given filters."""
@@ -20085,9 +20264,12 @@ input ReservationReceiptSubscriptionWhereInput {
   node: ReservationReceiptWhereInput
 }
 
-input ReservationReceiptUpdateInput {
-  reservation: ReservationUpdateOneRequiredWithoutReceiptInput
-  items: ReservationReceiptItemUpdateManyInput
+input SmsReceiptCreateInput {
+  id: ID
+  externalId: String
+  body: String!
+  status: SmsStatus!
+  mediaUrls: SmsReceiptCreatemediaUrlsInput
 }
 
 input ReservationReceiptUpdateOneWithoutReservationInput {
@@ -20099,13 +20281,17 @@ input ReservationReceiptUpdateOneWithoutReservationInput {
   upsert: ReservationReceiptUpsertWithoutReservationInput
 }
 
-input ReservationReceiptUpdateWithoutReservationDataInput {
-  items: ReservationReceiptItemUpdateManyInput
+input SmsReceiptCreatemediaUrlsInput {
+  set: [String!]
 }
 
-input ReservationReceiptUpsertWithoutReservationInput {
-  update: ReservationReceiptUpdateWithoutReservationDataInput!
-  create: ReservationReceiptCreateWithoutReservationInput!
+"""An edge in a connection."""
+type SmsReceiptEdge {
+  """The item at the end of the edge."""
+  node: SmsReceipt!
+
+  """A cursor for use in pagination."""
+  cursor: String!
 }
 
 input ReservationReceiptWhereInput {
@@ -20207,8 +20393,14 @@ input ReservationReceiptWhereInput {
   items_none: ReservationReceiptItemWhereInput
 }
 
-input ReservationReceiptWhereUniqueInput {
-  id: ID
+type SmsReceiptPreviousValues {
+  id: ID!
+  externalId: String
+  body: String!
+  mediaUrls: [String!]!
+  status: SmsStatus!
+  sentAt: DateTime!
+  updatedAt: DateTime!
 }
 
 input ReservationScalarWhereInput {
@@ -20418,23 +20610,15 @@ input ReservationScalarWhereInput {
   updatedAt_gte: DateTime
 }
 
-enum ReservationStatus {
-  Queued
-  Packed
-  Shipped
-  Delivered
-  Completed
-  Cancelled
-  Blocked
-  Unknown
-  Received
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
 }
 
-type ReservationSubscriptionPayload {
+type SmsReceiptSubscriptionPayload {
   mutation: MutationType!
-  node: Reservation
+  node: SmsReceipt
   updatedFields: [String!]
-  previousValues: ReservationPreviousValues
+  previousValues: SmsReceiptPreviousValues
 }
 
 input ReservationSubscriptionWhereInput {
@@ -20501,24 +20685,18 @@ input ReservationUpdateInput {
   lastLocation: LocationUpdateOneInput
 }
 
-input ReservationUpdateManyDataInput {
-  reservationNumber: Int
-  phase: ReservationPhase
-  shipped: Boolean
-  status: ReservationStatus
-  shippedAt: DateTime
-  receivedAt: DateTime
-  reminderSentAt: DateTime
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: SmsReceiptWhereInput
 }
 
-input ReservationUpdateManyMutationInput {
-  reservationNumber: Int
-  phase: ReservationPhase
-  shipped: Boolean
-  status: ReservationStatus
-  shippedAt: DateTime
-  receivedAt: DateTime
-  reminderSentAt: DateTime
+input SmsReceiptUpdateDataInput {
+  externalId: String
+  body: String
+  status: SmsStatus
+  mediaUrls: SmsReceiptUpdatemediaUrlsInput
 }
 
 input ReservationUpdateManyWithoutCustomerInput {
@@ -20533,9 +20711,11 @@ input ReservationUpdateManyWithoutCustomerInput {
   upsert: [ReservationUpsertWithWhereUniqueWithoutCustomerInput!]
 }
 
-input ReservationUpdateManyWithWhereNestedInput {
-  where: ReservationScalarWhereInput!
-  data: ReservationUpdateManyDataInput!
+input SmsReceiptUpdateManyDataInput {
+  externalId: String
+  body: String
+  status: SmsStatus
+  mediaUrls: SmsReceiptUpdatemediaUrlsInput
 }
 
 input ReservationUpdateOneRequiredInput {
@@ -20584,26 +20764,23 @@ input ReservationUpdateWithoutReceiptDataInput {
   lastLocation: LocationUpdateOneInput
 }
 
-input ReservationUpdateWithWhereUniqueWithoutCustomerInput {
-  where: ReservationWhereUniqueInput!
-  data: ReservationUpdateWithoutCustomerDataInput!
+input SmsReceiptUpdateWithWhereUniqueNestedInput {
+  where: SmsReceiptWhereUniqueInput!
+  data: SmsReceiptUpdateDataInput!
 }
 
-input ReservationUpsertNestedInput {
-  update: ReservationUpdateDataInput!
-  create: ReservationCreateInput!
+input SmsReceiptUpsertWithWhereUniqueNestedInput {
+  where: SmsReceiptWhereUniqueInput!
+  update: SmsReceiptUpdateDataInput!
+  create: SmsReceiptCreateInput!
 }
 
-input ReservationUpsertWithoutReceiptInput {
-  update: ReservationUpdateWithoutReceiptDataInput!
-  create: ReservationCreateWithoutReceiptInput!
-}
+input SmsReceiptWhereInput {
+  """Logical AND on all given filters."""
+  AND: [SmsReceiptWhereInput!]
 
-input ReservationUpsertWithWhereUniqueWithoutCustomerInput {
-  where: ReservationWhereUniqueInput!
-  update: ReservationUpdateWithoutCustomerDataInput!
-  create: ReservationCreateWithoutCustomerInput!
-}
+  """Logical OR on all given filters."""
+  OR: [SmsReceiptWhereInput!]
 
 input ReservationWhereInput {
   """Logical AND on all given filters."""
@@ -20821,18 +20998,16 @@ input ReservationWhereInput {
   lastLocation: LocationWhereInput
 }
 
-input ReservationWhereUniqueInput {
+input SmsReceiptWhereUniqueInput {
   id: ID
-  reservationNumber: Int
 }
 
 type Size implements Node {
   id: ID!
-  slug: String!
-  productType: ProductType
-  top: TopSize
-  bottom: BottomSize
-  display: String!
+  styles: [String!]!
+  patterns: [String!]!
+  colors: [String!]!
+  brands: [String!]!
 }
 
 """A connection to a list of items."""
@@ -20845,7 +21020,15 @@ type SizeConnection {
   aggregate: AggregateSize!
 }
 
-input SizeCreateInput {
+input StylePreferencesCreatebrandsInput {
+  set: [String!]
+}
+
+input StylePreferencesCreatecolorsInput {
+  set: [String!]
+}
+
+input StylePreferencesCreateInput {
   id: ID
   slug: String!
   productType: ProductType
@@ -20854,14 +21037,13 @@ input SizeCreateInput {
   bottom: BottomSizeCreateOneInput
 }
 
-input SizeCreateManyInput {
-  create: [SizeCreateInput!]
-  connect: [SizeWhereUniqueInput!]
+input StylePreferencesCreateOneInput {
+  create: StylePreferencesCreateInput
+  connect: StylePreferencesWhereUniqueInput
 }
 
-input SizeCreateOneInput {
-  create: SizeCreateInput
-  connect: SizeWhereUniqueInput
+input StylePreferencesCreatepatternsInput {
+  set: [String!]
 }
 
 """An edge in a connection."""
@@ -20873,18 +21055,12 @@ type SizeEdge {
   cursor: String!
 }
 
-enum SizeOrderByInput {
+enum StylePreferencesOrderByInput {
   id_ASC
   id_DESC
-  slug_ASC
-  slug_DESC
-  productType_ASC
-  productType_DESC
-  display_ASC
-  display_DESC
 }
 
-type SizePreviousValues {
+type StylePreferencesPreviousValues {
   id: ID!
   slug: String!
   productType: ProductType
@@ -21032,11 +21208,11 @@ input SizeScalarWhereInput {
   display_not_ends_with: String
 }
 
-type SizeSubscriptionPayload {
+type StylePreferencesSubscriptionPayload {
   mutation: MutationType!
-  node: Size
+  node: StylePreferences
   updatedFields: [String!]
-  previousValues: SizePreviousValues
+  previousValues: StylePreferencesPreviousValues
 }
 
 input SizeSubscriptionWhereInput {
@@ -21085,10 +21261,8 @@ input SizeUpdateInput {
   bottom: BottomSizeUpdateOneInput
 }
 
-input SizeUpdateManyDataInput {
-  slug: String
-  productType: ProductType
-  display: String
+input StylePreferencesUpdatecolorsInput {
+  set: [String!]
 }
 
 input SizeUpdateManyInput {
@@ -21103,15 +21277,18 @@ input SizeUpdateManyInput {
   upsert: [SizeUpsertWithWhereUniqueNestedInput!]
 }
 
-input SizeUpdateManyMutationInput {
-  slug: String
-  productType: ProductType
-  display: String
+input StylePreferencesUpdateInput {
+  styles: StylePreferencesUpdatestylesInput
+  patterns: StylePreferencesUpdatepatternsInput
+  colors: StylePreferencesUpdatecolorsInput
+  brands: StylePreferencesUpdatebrandsInput
 }
 
-input SizeUpdateManyWithWhereNestedInput {
-  where: SizeScalarWhereInput!
-  data: SizeUpdateManyDataInput!
+input StylePreferencesUpdateManyMutationInput {
+  styles: StylePreferencesUpdatestylesInput
+  patterns: StylePreferencesUpdatepatternsInput
+  colors: StylePreferencesUpdatecolorsInput
+  brands: StylePreferencesUpdatebrandsInput
 }
 
 input SizeUpdateOneInput {
@@ -21123,20 +21300,17 @@ input SizeUpdateOneInput {
   upsert: SizeUpsertNestedInput
 }
 
-input SizeUpdateWithWhereUniqueNestedInput {
-  where: SizeWhereUniqueInput!
-  data: SizeUpdateDataInput!
+input StylePreferencesUpdatepatternsInput {
+  set: [String!]
 }
 
-input SizeUpsertNestedInput {
-  update: SizeUpdateDataInput!
-  create: SizeCreateInput!
+input StylePreferencesUpdatestylesInput {
+  set: [String!]
 }
 
-input SizeUpsertWithWhereUniqueNestedInput {
-  where: SizeWhereUniqueInput!
-  update: SizeUpdateDataInput!
-  create: SizeCreateInput!
+input StylePreferencesUpsertNestedInput {
+  update: StylePreferencesUpdateDataInput!
+  create: StylePreferencesCreateInput!
 }
 
 input SizeWhereInput {
@@ -21282,18 +21456,18 @@ input SizeWhereInput {
   bottom: BottomSizeWhereInput
 }
 
-input SizeWhereUniqueInput {
+input StylePreferencesWhereUniqueInput {
   id: ID
-  slug: String
 }
 
 type SmsReceipt implements Node {
   id: ID!
-  externalId: String
-  body: String!
-  mediaUrls: [String!]!
-  status: SmsStatus!
-  sentAt: DateTime!
+  user: User!
+  image: Image!
+  location: Location
+  products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
+  approved: Boolean!
+  createdAt: DateTime!
   updatedAt: DateTime!
 }
 
@@ -21307,7 +21481,7 @@ type SmsReceiptConnection {
   aggregate: AggregateSmsReceipt!
 }
 
-input SmsReceiptCreateInput {
+input StyleSubmissionCreateInput {
   id: ID
   externalId: String
   body: String!
@@ -21315,13 +21489,14 @@ input SmsReceiptCreateInput {
   mediaUrls: SmsReceiptCreatemediaUrlsInput
 }
 
-input SmsReceiptCreateManyInput {
-  create: [SmsReceiptCreateInput!]
-  connect: [SmsReceiptWhereUniqueInput!]
+input StyleSubmissionCreateManyWithoutUserInput {
+  create: [StyleSubmissionCreateWithoutUserInput!]
+  connect: [StyleSubmissionWhereUniqueInput!]
 }
 
-input SmsReceiptCreatemediaUrlsInput {
-  set: [String!]
+input StyleSubmissionCreateOneInput {
+  create: StyleSubmissionCreateInput
+  connect: StyleSubmissionWhereUniqueInput
 }
 
 """An edge in a connection."""
@@ -21333,29 +21508,13 @@ type SmsReceiptEdge {
   cursor: String!
 }
 
-enum SmsReceiptOrderByInput {
-  id_ASC
-  id_DESC
-  externalId_ASC
-  externalId_DESC
-  body_ASC
-  body_DESC
-  status_ASC
-  status_DESC
-  sentAt_ASC
-  sentAt_DESC
-  updatedAt_ASC
-  updatedAt_DESC
-}
+"""An edge in a connection."""
+type StyleSubmissionEdge {
+  """The item at the end of the edge."""
+  node: StyleSubmission!
 
-type SmsReceiptPreviousValues {
-  id: ID!
-  externalId: String
-  body: String!
-  mediaUrls: [String!]!
-  status: SmsStatus!
-  sentAt: DateTime!
-  updatedAt: DateTime!
+  """A cursor for use in pagination."""
+  cursor: String!
 }
 
 input SmsReceiptScalarWhereInput {
@@ -21543,11 +21702,11 @@ input SmsReceiptScalarWhereInput {
   updatedAt_gte: DateTime
 }
 
-type SmsReceiptSubscriptionPayload {
-  mutation: MutationType!
-  node: SmsReceipt
-  updatedFields: [String!]
-  previousValues: SmsReceiptPreviousValues
+type StyleSubmissionPreviousValues {
+  id: ID!
+  approved: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 input SmsReceiptSubscriptionWhereInput {
@@ -21620,24 +21779,52 @@ input SmsReceiptUpdateManyMutationInput {
   mediaUrls: SmsReceiptUpdatemediaUrlsInput
 }
 
-input SmsReceiptUpdateManyWithWhereNestedInput {
-  where: SmsReceiptScalarWhereInput!
-  data: SmsReceiptUpdateManyDataInput!
+enum StyleSubmissionReportStatus {
+  Pending
+  Reviewed
 }
 
-input SmsReceiptUpdatemediaUrlsInput {
-  set: [String!]
+type StyleSubmissionReportSubscriptionPayload {
+  mutation: MutationType!
+  node: StyleSubmissionReport
+  updatedFields: [String!]
+  previousValues: StyleSubmissionReportPreviousValues
 }
 
-input SmsReceiptUpdateWithWhereUniqueNestedInput {
-  where: SmsReceiptWhereUniqueInput!
-  data: SmsReceiptUpdateDataInput!
+input StyleSubmissionReportSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [StyleSubmissionReportSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [StyleSubmissionReportSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [StyleSubmissionReportSubscriptionWhereInput!]
+
+  """The subscription event gets dispatched when it's listed in mutation_in"""
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: StyleSubmissionReportWhereInput
 }
 
-input SmsReceiptUpsertWithWhereUniqueNestedInput {
-  where: SmsReceiptWhereUniqueInput!
-  update: SmsReceiptUpdateDataInput!
-  create: SmsReceiptCreateInput!
+input StyleSubmissionReportUpdateInput {
+  status: StyleSubmissionReportStatus
+  reporter: UserUpdateOneRequiredInput
+  reported: StyleSubmissionUpdateOneRequiredInput
 }
 
 input SmsReceiptWhereInput {
@@ -21825,24 +22012,13 @@ input SmsReceiptWhereInput {
   updatedAt_gte: DateTime
 }
 
-input SmsReceiptWhereUniqueInput {
+input StyleSubmissionReportWhereUniqueInput {
   id: ID
 }
 
-enum SmsStatus {
-  Queued
-  Sending
-  Sent
-  Failed
-  Delivered
-  Undelivered
-  Receiving
-  Received
-  Accepted
-  Scheduled
-  Read
-  PartiallyDelivered
-}
+input StyleSubmissionScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [StyleSubmissionScalarWhereInput!]
 
 type StylePreferences implements Node {
   id: ID!
@@ -21862,34 +22038,83 @@ type StylePreferencesConnection {
   aggregate: AggregateStylePreferences!
 }
 
-input StylePreferencesCreatebrandsInput {
-  set: [String!]
-}
+  """All values that are not equal to given value."""
+  id_not: ID
 
-input StylePreferencesCreatecolorsInput {
-  set: [String!]
-}
+  """All values that are contained in given list."""
+  id_in: [ID!]
 
-input StylePreferencesCreateInput {
-  id: ID
-  styles: StylePreferencesCreatestylesInput
-  patterns: StylePreferencesCreatepatternsInput
-  colors: StylePreferencesCreatecolorsInput
-  brands: StylePreferencesCreatebrandsInput
-}
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
 
-input StylePreferencesCreateOneInput {
-  create: StylePreferencesCreateInput
-  connect: StylePreferencesWhereUniqueInput
-}
+  """All values less than the given value."""
+  id_lt: ID
 
-input StylePreferencesCreatepatternsInput {
-  set: [String!]
-}
+  """All values less than or equal the given value."""
+  id_lte: ID
 
-input StylePreferencesCreatestylesInput {
-  set: [String!]
-}
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  approved: Boolean
+
+  """All values that are not equal to given value."""
+  approved_not: Boolean
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
 
 """An edge in a connection."""
 type StylePreferencesEdge {
@@ -21900,24 +22125,18 @@ type StylePreferencesEdge {
   cursor: String!
 }
 
-enum StylePreferencesOrderByInput {
-  id_ASC
-  id_DESC
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
 }
 
-type StylePreferencesPreviousValues {
-  id: ID!
-  styles: [String!]!
-  patterns: [String!]!
-  colors: [String!]!
-  brands: [String!]!
-}
-
-type StylePreferencesSubscriptionPayload {
+type StyleSubmissionSubscriptionPayload {
   mutation: MutationType!
-  node: StylePreferences
+  node: StyleSubmission
   updatedFields: [String!]
-  previousValues: StylePreferencesPreviousValues
+  previousValues: StyleSubmissionPreviousValues
 }
 
 input StylePreferencesSubscriptionWhereInput {
@@ -21950,33 +22169,40 @@ input StylePreferencesSubscriptionWhereInput {
   node: StylePreferencesWhereInput
 }
 
-input StylePreferencesUpdatebrandsInput {
-  set: [String!]
+input StyleSubmissionUpdateDataInput {
+  approved: Boolean
+  user: UserUpdateOneRequiredWithoutStyleSubmissionsInput
+  image: ImageUpdateOneRequiredInput
+  location: LocationUpdateOneInput
+  products: ProductUpdateManyInput
 }
 
-input StylePreferencesUpdatecolorsInput {
-  set: [String!]
+input StyleSubmissionUpdateInput {
+  approved: Boolean
+  user: UserUpdateOneRequiredWithoutStyleSubmissionsInput
+  image: ImageUpdateOneRequiredInput
+  location: LocationUpdateOneInput
+  products: ProductUpdateManyInput
 }
 
-input StylePreferencesUpdateDataInput {
-  styles: StylePreferencesUpdatestylesInput
-  patterns: StylePreferencesUpdatepatternsInput
-  colors: StylePreferencesUpdatecolorsInput
-  brands: StylePreferencesUpdatebrandsInput
+input StyleSubmissionUpdateManyDataInput {
+  approved: Boolean
 }
 
-input StylePreferencesUpdateInput {
-  styles: StylePreferencesUpdatestylesInput
-  patterns: StylePreferencesUpdatepatternsInput
-  colors: StylePreferencesUpdatecolorsInput
-  brands: StylePreferencesUpdatebrandsInput
+input StyleSubmissionUpdateManyMutationInput {
+  approved: Boolean
 }
 
-input StylePreferencesUpdateManyMutationInput {
-  styles: StylePreferencesUpdatestylesInput
-  patterns: StylePreferencesUpdatepatternsInput
-  colors: StylePreferencesUpdatecolorsInput
-  brands: StylePreferencesUpdatebrandsInput
+input StyleSubmissionUpdateManyWithoutUserInput {
+  create: [StyleSubmissionCreateWithoutUserInput!]
+  connect: [StyleSubmissionWhereUniqueInput!]
+  set: [StyleSubmissionWhereUniqueInput!]
+  disconnect: [StyleSubmissionWhereUniqueInput!]
+  delete: [StyleSubmissionWhereUniqueInput!]
+  update: [StyleSubmissionUpdateWithWhereUniqueWithoutUserInput!]
+  updateMany: [StyleSubmissionUpdateManyWithWhereNestedInput!]
+  deleteMany: [StyleSubmissionScalarWhereInput!]
+  upsert: [StyleSubmissionUpsertWithWhereUniqueWithoutUserInput!]
 }
 
 input StylePreferencesUpdateOneInput {
@@ -21988,17 +22214,23 @@ input StylePreferencesUpdateOneInput {
   upsert: StylePreferencesUpsertNestedInput
 }
 
-input StylePreferencesUpdatepatternsInput {
-  set: [String!]
+input StyleSubmissionUpdateOneRequiredInput {
+  create: StyleSubmissionCreateInput
+  connect: StyleSubmissionWhereUniqueInput
+  update: StyleSubmissionUpdateDataInput
+  upsert: StyleSubmissionUpsertNestedInput
 }
 
-input StylePreferencesUpdatestylesInput {
-  set: [String!]
+input StyleSubmissionUpdateWithoutUserDataInput {
+  approved: Boolean
+  image: ImageUpdateOneRequiredInput
+  location: LocationUpdateOneInput
+  products: ProductUpdateManyInput
 }
 
-input StylePreferencesUpsertNestedInput {
-  update: StylePreferencesUpdateDataInput!
-  create: StylePreferencesCreateInput!
+input StyleSubmissionUpdateWithWhereUniqueWithoutUserInput {
+  where: StyleSubmissionWhereUniqueInput!
+  data: StyleSubmissionUpdateWithoutUserDataInput!
 }
 
 input StylePreferencesWhereInput {
@@ -22052,7 +22284,7 @@ input StylePreferencesWhereInput {
   id_not_ends_with: ID
 }
 
-input StylePreferencesWhereUniqueInput {
+input StyleSubmissionWhereUniqueInput {
   id: ID
 }
 
