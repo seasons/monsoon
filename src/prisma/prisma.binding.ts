@@ -26302,8 +26302,7 @@ export type StyleSubmissionReportOrderByInput =   'id_ASC' |
   'updatedAt_ASC' |
   'updatedAt_DESC'
 
-export type StyleSubmissionReportStatus =   'AwaitingReview' |
-  'UnderReview' |
+export type StyleSubmissionReportStatus =   'Pending' |
   'Reviewed'
 
 export type TagOrderByInput =   'id_ASC' |

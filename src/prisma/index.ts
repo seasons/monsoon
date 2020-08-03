@@ -3163,10 +3163,7 @@ export type ReservationReceiptOrderByInput =
 
 export type StylePreferencesOrderByInput = "id_ASC" | "id_DESC";
 
-export type StyleSubmissionReportStatus =
-  | "AwaitingReview"
-  | "UnderReview"
-  | "Reviewed";
+export type StyleSubmissionReportStatus = "Pending" | "Reviewed";
 
 export type StyleSubmissionReportOrderByInput =
   | "id_ASC"

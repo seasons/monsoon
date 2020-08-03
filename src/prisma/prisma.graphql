@@ -33075,10 +33075,93 @@ input SmsReceiptWhereInput {
   """
   body_in: [String!]
 
+<<<<<<< HEAD
   """
   All values that are not contained in given list.
   """
   body_not_in: [String!]
+=======
+<<<<<<< HEAD
+type ReservationFeedbackSubscriptionPayload {
+=======
+type StyleSubmissionReport implements Node {
+  id: ID!
+  reporter: User!
+  reported: StyleSubmission!
+  status: StyleSubmissionReportStatus
+  reportedAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""
+A connection to a list of items.
+"""
+type StyleSubmissionReportConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+
+  """
+  A list of edges.
+  """
+  edges: [StyleSubmissionReportEdge]!
+  aggregate: AggregateStyleSubmissionReport!
+}
+
+input StyleSubmissionReportCreateInput {
+  id: ID
+  status: StyleSubmissionReportStatus
+  reporter: UserCreateOneInput!
+  reported: StyleSubmissionCreateOneInput!
+}
+
+"""
+An edge in a connection.
+"""
+type StyleSubmissionReportEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: StyleSubmissionReport!
+
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+}
+
+enum StyleSubmissionReportOrderByInput {
+  id_ASC
+  id_DESC
+  status_ASC
+  status_DESC
+  reportedAt_ASC
+  reportedAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type StyleSubmissionReportPreviousValues {
+  id: ID!
+  status: StyleSubmissionReportStatus
+  reportedAt: DateTime!
+  updatedAt: DateTime!
+}
+
+enum StyleSubmissionReportStatus {
+  Pending
+  Reviewed
+}
+
+type StyleSubmissionReportSubscriptionPayload {
+>>>>>>> Update CommunityStyleReportStatus and finish image uploading
+  mutation: MutationType!
+  node: ReservationFeedback
+  updatedFields: [String!]
+  previousValues: ReservationFeedbackPreviousValues
+}
+>>>>>>> Update CommunityStyleReportStatus and finish image uploading
 
   """
   All values less than the given value.

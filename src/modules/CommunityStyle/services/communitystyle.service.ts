@@ -1,10 +1,9 @@
 import { User } from "@app/decorators"
 import { ImageService } from "@app/modules/Image"
-import { Upload } from "@app/modules/Image/models/Upload.model"
 import { PushNotificationService } from "@app/modules/PushNotification"
 import { Injectable } from "@nestjs/common"
 import { Args, Info } from "@nestjs/graphql"
-import { StyleSubmission, UserWhereUniqueInput } from "@prisma/index"
+import { StyleSubmission } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
 
 @Injectable()
@@ -16,12 +15,13 @@ export class CommunityStyleService {
   ) {}
 
   async submitStyle(
-    @Args("image") image: Upload,
-    @User() user: UserWhereUniqueInput,
+    @Args() { image },
+    @User() user,
     @Info() info
   ): Promise<[StyleSubmission]> {
-    console.log("Got data:", image)
-    const imageData = await this.imageService.uploadImage(image, {})
+    const imageData = await this.imageService.uploadImage(image, {
+      imageName: `${user.id}-${Date.now()}.jpg`,
+    })
 
     const styleSubmission = await this.prisma.client.createStyleSubmission({
       user: {
@@ -36,16 +36,13 @@ export class CommunityStyleService {
       data: {
         styleSubmissions: { connect: [{ id: styleSubmission.id }] },
       },
-      where: user,
+      where: { id: user.id },
     })
 
     return this.communityStyle(info)
   }
 
-  async reportStyle(
-    @Args("id") id: string,
-    @User() user: UserWhereUniqueInput
-  ) {
+  async reportStyle(@Args() { id }: { id: string }, @User() user) {
     const style = this.prisma.client.styleSubmission({ id })
     if (!style) {
       throw new Error(`There exists no style with id ${id}`)
@@ -57,7 +54,7 @@ export class CommunityStyleService {
     return true
   }
 
-  async approveStyle(@Args("id") id: string, approved: boolean) {
+  async approveStyle(@Args() { id }: { id: string }, approved: boolean) {
     // Update submission approval status and notify user
     const submitterEmail = await this.prisma.client
       .updateStyleSubmission({
@@ -78,11 +75,12 @@ export class CommunityStyleService {
     return true
   }
 
-  async deleteStyle(@Args("id") id: string) {
+  async deleteStyle(@Args() { id }: { id: string }) {
     await this.prisma.client.deleteManyStyleSubmissionReports({
       reported: { id },
     })
     await this.prisma.client.deleteStyleSubmission({ id })
+    // delete image from s3?
     return true
   }
 

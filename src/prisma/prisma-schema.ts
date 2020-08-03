@@ -12838,8 +12838,7 @@ type StyleSubmissionReportPreviousValues {
 }
 
 enum StyleSubmissionReportStatus {
-  AwaitingReview
-  UnderReview
+  Pending
   Reviewed
 }
 

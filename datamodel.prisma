@@ -570,8 +570,7 @@ type StyleSubmission {
 }
 
 enum StyleSubmissionReportStatus {
-  AwaitingReview
-  UnderReview
+  Pending
   Reviewed
 }
 
@@ -579,7 +578,7 @@ type StyleSubmissionReport {
   id: ID! @id
   reporter: User!
   reported: StyleSubmission!
-  status: StyleSubmissionReportStatus @default(value: AwaitingReview)
+  status: StyleSubmissionReportStatus @default(value: Pending)
   reportedAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
