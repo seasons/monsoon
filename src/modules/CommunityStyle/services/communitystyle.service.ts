@@ -14,11 +14,7 @@ export class CommunityStyleService {
     private readonly pushNotificationService: PushNotificationService
   ) {}
 
-  async submitStyle(
-    @Args() { image },
-    @User() user,
-    @Info() info
-  ): Promise<[StyleSubmission]> {
+  async submitStyle(@Args() { image }, @User() user) {
     const imageData = await this.imageService.uploadImage(image, {
       imageName: `${user.id}-${Date.now()}.jpg`,
     })
@@ -39,7 +35,7 @@ export class CommunityStyleService {
       where: { id: user.id },
     })
 
-    return this.communityStyle(info)
+    return true
   }
 
   async reportStyle(@Args() { id }: { id: string }, @User() user) {

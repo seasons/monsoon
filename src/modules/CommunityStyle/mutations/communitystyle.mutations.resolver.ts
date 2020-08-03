@@ -8,8 +8,8 @@ export class CommunityStyleMutationsResolver {
   constructor(private readonly communityStyleService: CommunityStyleService) {}
 
   @Mutation()
-  async submitStyle(@Args() args, @User() user, @Info() info) {
-    return this.communityStyleService.submitStyle(args, user, info)
+  async submitStyle(@Args() args, @User() user) {
+    return this.communityStyleService.submitStyle(args, user)
   }
 
   @Mutation()

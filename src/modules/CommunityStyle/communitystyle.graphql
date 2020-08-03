@@ -1,5 +1,5 @@
 type Mutation {
-  submitStyle(image: Upload!): [StyleSubmission!]! @hasRole(roles: [Customer])
+  submitStyle(image: Upload!): Boolean! @hasRole(roles: [Customer])
   reportStyle(id: ID!): Boolean! @hasRole(roles: [Customer])
 
   approveStyle(id: ID!): Boolean! @hasRole(roles: [Admin])
@@ -8,5 +8,5 @@ type Mutation {
 }
 
 type Query {
-  communityStyle: [StyleSubmission!]! @hasRole(roles: [Customer])
+  communityStyle: [StyleSubmission!]!
 }
