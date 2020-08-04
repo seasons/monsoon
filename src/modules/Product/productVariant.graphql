@@ -127,6 +127,7 @@ input UpdateVariantInput {
   neck: Float
   length: Float
   # Bottom Size values
+  sku: String
   waist: Float
   rise: Float
   hem: Float

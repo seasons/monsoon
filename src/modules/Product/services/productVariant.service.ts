@@ -187,10 +187,12 @@ export class ProductVariantService {
         variant.manufacturerSizeNames?.map(async sizeName => {
           // sizeName is of the format "[size type] [size value]"", i.e. "WxL 32x30"
           const [sizeType, sizeValue] = sizeName.split(" ")
-          const slug = `${variant.sku}-manufacturer-${sizeValue.replace(
-            "x",
-            ""
-          )}`
+          if (!variant.sku) {
+            throw Error(`Variant sku is undefined`)
+          }
+          const slug = `${
+            variant.sku
+          }-manufacturer-${sizeType}-${sizeValue.replace("x", "")}`
           const size = await this.productUtils.deepUpsertSize({
             slug,
             type,
