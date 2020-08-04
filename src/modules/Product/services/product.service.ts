@@ -650,9 +650,8 @@ export class ProductService {
     )
 
     const manufacturerSizeIDs = await this.productVariantService.getManufacturerSizeIDs(
-      variant,
-      type,
-      variantWithSku.sku
+      { ...variant, sku: variantWithSku.sku },
+      type
     )
 
     const data = {
