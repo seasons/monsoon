@@ -1,5 +1,5 @@
 import { CustomerService } from "@app/modules/User"
-import { Plan, User } from "@app/prisma"
+import { CustomerStatus, Plan, User } from "@app/prisma"
 import { EmailService } from "@modules/Email/services/email.service"
 import { AuthService } from "@modules/User/services/auth.service"
 import { UtilsService } from "@modules/Utils"
@@ -142,6 +142,9 @@ export class PaymentService {
     const resumeDate = !!date
       ? { specific_date: DateTime.fromISO(date).toSeconds() }
       : "immediately"
+
+    let newStatus = "Active" as CustomerStatus
+
     try {
       await chargebee.subscription
         .resume(subscriptionId, {
@@ -154,7 +157,13 @@ export class PaymentService {
         e?.api_error_code &&
         e?.api_error_code !== "invalid_state_for_request"
       ) {
-        throw new Error(`Error resuming subscription: ${e}`)
+        throw new Error(`Error resuming subscription: ${JSON.stringify(e)}`)
+      } else if (
+        e?.api_error_code &&
+        e?.api_error_code === "payment_processing_failed"
+      ) {
+        // FIXME: We need to handle accounts where the credit card is no longer valid
+        newStatus = "Paused"
       }
     }
 
@@ -177,7 +186,7 @@ export class PaymentService {
 
     await this.prisma.client.updateCustomer({
       data: {
-        status: "Active",
+        status: newStatus,
       },
       where: { id: customer.id },
     })
