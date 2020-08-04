@@ -1,8 +1,10 @@
 import { AirtableService } from "@modules/Airtable/services/airtable.service"
 import { Injectable } from "@nestjs/common"
 import {
+  BottomSizeType,
   ID_Input,
   InventoryStatus,
+  LetterSize,
   Product,
   ProductVariant,
 } from "@prisma/index"
@@ -14,11 +16,13 @@ import {
   PhysicalProductUtilsService,
   PhysicalProductWithReservationSpecificData,
 } from "./physicalProduct.utils.service"
+import { ProductUtilsService } from "./product.utils.service"
 
 @Injectable()
 export class ProductVariantService {
   constructor(
     private readonly prisma: PrismaService,
+    private readonly productUtils: ProductUtilsService,
     private readonly physicalProductUtilsService: PhysicalProductUtilsService,
     private readonly airtableService: AirtableService
   ) {}
@@ -176,8 +180,37 @@ export class ProductVariantService {
     })
   }
 
+  async getManufacturerSizeIDs(variant, type) {
+    const IDs =
+      variant.manufacturerSizeNames &&
+      (await Promise.all(
+        variant.manufacturerSizeNames?.map(async sizeName => {
+          // sizeName is of the format "[size type] [size value]"", i.e. "WxL 32x30"
+          const [sizeType, sizeValue] = sizeName.split(" ")
+          const slug = `${variant.sku}-manufacturer-${sizeValue.replace(
+            "x",
+            ""
+          )}`
+          const size = await this.productUtils.deepUpsertSize({
+            slug,
+            type,
+            display: sizeName,
+            topSizeData: type === "Top" && {
+              letter: (sizeValue as LetterSize) || null,
+            },
+            bottomSizeData: type === "Bottom" && {
+              type: (sizeType as BottomSizeType) || null,
+              value: sizeValue || "",
+            },
+          })
+          return { id: size.id }
+        })
+      ))
+    return IDs
+  }
+
   async updateProductVariant(input, info): Promise<ProductVariant> {
-    const { id, productType, weight } = input
+    const { id, productType, weight, manufacturerSizeNames } = input
     const prodVarSize = await this.prisma.client
       .productVariant({ id })
       .internalSize()
@@ -204,9 +237,22 @@ export class ProductVariantService {
         })
         break
     }
+
+    const data = { weight } as any
+
+    if (!!manufacturerSizeNames?.length) {
+      const manufacturerSizeIDs = await this.getManufacturerSizeIDs(
+        input,
+        productType
+      )
+      data.manufacturerSizes = {
+        connect: manufacturerSizeIDs,
+      }
+    }
+
     const prodVar = await this.prisma.client.updateProductVariant({
-      data: { weight },
       where: { id },
+      data,
     })
     return await this.prisma.binding.query.productVariant(
       { where: { id: prodVar.id } },
