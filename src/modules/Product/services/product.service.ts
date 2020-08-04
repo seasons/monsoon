@@ -299,7 +299,7 @@ export class ProductService {
         return this.deepUpsertProductVariant({
           sequenceNumbers: sequenceNumbers[i],
           variant: a,
-          productID: product.id,
+          productID: slug,
           ...pick(input, ["type", "colorCode", "retailPrice", "status"]),
         })
       })
@@ -646,7 +646,7 @@ export class ProductService {
 
     const data = {
       productID,
-      product: { connect: { id: productID } },
+      product: { connect: { slug: productID } },
       color: {
         connect: { colorCode },
       },
