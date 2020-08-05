@@ -16,6 +16,7 @@ export interface Query {
     warehouseLocations: <T = Array<WarehouseLocation | null>>(args: { where?: WarehouseLocationWhereInput | null, orderBy?: WarehouseLocationOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     paymentPlans: <T = Array<PaymentPlan | null>>(args: { where?: PaymentPlanWhereInput | null, orderBy?: PaymentPlanOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     emailReceipts: <T = Array<EmailReceipt | null>>(args: { where?: EmailReceiptWhereInput | null, orderBy?: EmailReceiptOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    fitPicReports: <T = Array<FitPicReport | null>>(args: { where?: FitPicReportWhereInput | null, orderBy?: FitPicReportOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     bagItems: <T = Array<BagItem | null>>(args: { where?: BagItemWhereInput | null, orderBy?: BagItemOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     customerMemberships: <T = Array<CustomerMembership | null>>(args: { where?: CustomerMembershipWhereInput | null, orderBy?: CustomerMembershipOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     pauseRequests: <T = Array<PauseRequest | null>>(args: { where?: PauseRequestWhereInput | null, orderBy?: PauseRequestOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -32,9 +33,8 @@ export interface Query {
     userPushNotificationInterests: <T = Array<UserPushNotificationInterest | null>>(args: { where?: UserPushNotificationInterestWhereInput | null, orderBy?: UserPushNotificationInterestOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     billingInfoes: <T = Array<BillingInfo | null>>(args: { where?: BillingInfoWhereInput | null, orderBy?: BillingInfoOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     reservationReceiptItems: <T = Array<ReservationReceiptItem | null>>(args: { where?: ReservationReceiptItemWhereInput | null, orderBy?: ReservationReceiptItemOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    smsReceipts: <T = Array<SmsReceipt | null>>(args: { where?: SmsReceiptWhereInput | null, orderBy?: SmsReceiptOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     stylePreferenceses: <T = Array<StylePreferences | null>>(args: { where?: StylePreferencesWhereInput | null, orderBy?: StylePreferencesOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    images: <T = Array<Image | null>>(args: { where?: ImageWhereInput | null, orderBy?: ImageOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    fitPics: <T = Array<FitPic | null>>(args: { where?: FitPicWhereInput | null, orderBy?: FitPicOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     packages: <T = Array<Package | null>>(args: { where?: PackageWhereInput | null, orderBy?: PackageOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     sizes: <T = Array<Size | null>>(args: { where?: SizeWhereInput | null, orderBy?: SizeOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     productFunctions: <T = Array<ProductFunction | null>>(args: { where?: ProductFunctionWhereInput | null, orderBy?: ProductFunctionOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -46,6 +46,7 @@ export interface Query {
     bottomSizes: <T = Array<BottomSize | null>>(args: { where?: BottomSizeWhereInput | null, orderBy?: BottomSizeOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     packageTransitEvents: <T = Array<PackageTransitEvent | null>>(args: { where?: PackageTransitEventWhereInput | null, orderBy?: PackageTransitEventOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     labels: <T = Array<Label | null>>(args: { where?: LabelWhereInput | null, orderBy?: LabelOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    smsReceipts: <T = Array<SmsReceipt | null>>(args: { where?: SmsReceiptWhereInput | null, orderBy?: SmsReceiptOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     locations: <T = Array<Location | null>>(args: { where?: LocationWhereInput | null, orderBy?: LocationOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     physicalProducts: <T = Array<PhysicalProduct | null>>(args: { where?: PhysicalProductWhereInput | null, orderBy?: PhysicalProductOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     images: <T = Array<Image | null>>(args: { where?: ImageWhereInput | null, orderBy?: ImageOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -65,6 +66,7 @@ export interface Query {
     warehouseLocation: <T = WarehouseLocation | null>(args: { where: WarehouseLocationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     paymentPlan: <T = PaymentPlan | null>(args: { where: PaymentPlanWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     emailReceipt: <T = EmailReceipt | null>(args: { where: EmailReceiptWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    fitPicReport: <T = FitPicReport | null>(args: { where: FitPicReportWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     bagItem: <T = BagItem | null>(args: { where: BagItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     customerMembership: <T = CustomerMembership | null>(args: { where: CustomerMembershipWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     pauseRequest: <T = PauseRequest | null>(args: { where: PauseRequestWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -81,9 +83,8 @@ export interface Query {
     userPushNotificationInterest: <T = UserPushNotificationInterest | null>(args: { where: UserPushNotificationInterestWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     billingInfo: <T = BillingInfo | null>(args: { where: BillingInfoWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     reservationReceiptItem: <T = ReservationReceiptItem | null>(args: { where: ReservationReceiptItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    smsReceipt: <T = SmsReceipt | null>(args: { where: SmsReceiptWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     stylePreferences: <T = StylePreferences | null>(args: { where: StylePreferencesWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    image: <T = Image | null>(args: { where: ImageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    fitPic: <T = FitPic | null>(args: { where: FitPicWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     package: <T = Package | null>(args: { where: PackageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     size: <T = Size | null>(args: { where: SizeWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     productFunction: <T = ProductFunction | null>(args: { where: ProductFunctionWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -95,6 +96,7 @@ export interface Query {
     bottomSize: <T = BottomSize | null>(args: { where: BottomSizeWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     packageTransitEvent: <T = PackageTransitEvent | null>(args: { where: PackageTransitEventWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     label: <T = Label | null>(args: { where: LabelWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    smsReceipt: <T = SmsReceipt | null>(args: { where: SmsReceiptWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     location: <T = Location | null>(args: { where: LocationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     physicalProduct: <T = PhysicalProduct | null>(args: { where: PhysicalProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     image: <T = Image | null>(args: { where: ImageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -114,6 +116,7 @@ export interface Query {
     warehouseLocationsConnection: <T = WarehouseLocationConnection>(args: { where?: WarehouseLocationWhereInput | null, orderBy?: WarehouseLocationOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     paymentPlansConnection: <T = PaymentPlanConnection>(args: { where?: PaymentPlanWhereInput | null, orderBy?: PaymentPlanOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     emailReceiptsConnection: <T = EmailReceiptConnection>(args: { where?: EmailReceiptWhereInput | null, orderBy?: EmailReceiptOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    fitPicReportsConnection: <T = FitPicReportConnection>(args: { where?: FitPicReportWhereInput | null, orderBy?: FitPicReportOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     bagItemsConnection: <T = BagItemConnection>(args: { where?: BagItemWhereInput | null, orderBy?: BagItemOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     customerMembershipsConnection: <T = CustomerMembershipConnection>(args: { where?: CustomerMembershipWhereInput | null, orderBy?: CustomerMembershipOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     pauseRequestsConnection: <T = PauseRequestConnection>(args: { where?: PauseRequestWhereInput | null, orderBy?: PauseRequestOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -130,9 +133,8 @@ export interface Query {
     userPushNotificationInterestsConnection: <T = UserPushNotificationInterestConnection>(args: { where?: UserPushNotificationInterestWhereInput | null, orderBy?: UserPushNotificationInterestOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     billingInfoesConnection: <T = BillingInfoConnection>(args: { where?: BillingInfoWhereInput | null, orderBy?: BillingInfoOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     reservationReceiptItemsConnection: <T = ReservationReceiptItemConnection>(args: { where?: ReservationReceiptItemWhereInput | null, orderBy?: ReservationReceiptItemOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    smsReceiptsConnection: <T = SmsReceiptConnection>(args: { where?: SmsReceiptWhereInput | null, orderBy?: SmsReceiptOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     stylePreferencesesConnection: <T = StylePreferencesConnection>(args: { where?: StylePreferencesWhereInput | null, orderBy?: StylePreferencesOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    imagesConnection: <T = ImageConnection>(args: { where?: ImageWhereInput | null, orderBy?: ImageOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    fitPicsConnection: <T = FitPicConnection>(args: { where?: FitPicWhereInput | null, orderBy?: FitPicOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     packagesConnection: <T = PackageConnection>(args: { where?: PackageWhereInput | null, orderBy?: PackageOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     sizesConnection: <T = SizeConnection>(args: { where?: SizeWhereInput | null, orderBy?: SizeOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     productFunctionsConnection: <T = ProductFunctionConnection>(args: { where?: ProductFunctionWhereInput | null, orderBy?: ProductFunctionOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -144,6 +146,7 @@ export interface Query {
     bottomSizesConnection: <T = BottomSizeConnection>(args: { where?: BottomSizeWhereInput | null, orderBy?: BottomSizeOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     packageTransitEventsConnection: <T = PackageTransitEventConnection>(args: { where?: PackageTransitEventWhereInput | null, orderBy?: PackageTransitEventOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     labelsConnection: <T = LabelConnection>(args: { where?: LabelWhereInput | null, orderBy?: LabelOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    smsReceiptsConnection: <T = SmsReceiptConnection>(args: { where?: SmsReceiptWhereInput | null, orderBy?: SmsReceiptOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     locationsConnection: <T = LocationConnection>(args: { where?: LocationWhereInput | null, orderBy?: LocationOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     physicalProductsConnection: <T = PhysicalProductConnection>(args: { where?: PhysicalProductWhereInput | null, orderBy?: PhysicalProductOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     imagesConnection: <T = ImageConnection>(args: { where?: ImageWhereInput | null, orderBy?: ImageOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -167,6 +170,7 @@ export interface Mutation {
     createWarehouseLocation: <T = WarehouseLocation>(args: { data: WarehouseLocationCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createPaymentPlan: <T = PaymentPlan>(args: { data: PaymentPlanCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createEmailReceipt: <T = EmailReceipt>(args: { data: EmailReceiptCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    createFitPicReport: <T = FitPicReport>(args: { data: FitPicReportCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createBagItem: <T = BagItem>(args: { data: BagItemCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createCustomerMembership: <T = CustomerMembership>(args: { data: CustomerMembershipCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createPauseRequest: <T = PauseRequest>(args: { data: PauseRequestCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -183,9 +187,8 @@ export interface Mutation {
     createUserPushNotificationInterest: <T = UserPushNotificationInterest>(args: { data: UserPushNotificationInterestCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createBillingInfo: <T = BillingInfo>(args: { data: BillingInfoCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createReservationReceiptItem: <T = ReservationReceiptItem>(args: { data: ReservationReceiptItemCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    createSmsReceipt: <T = SmsReceipt>(args: { data: SmsReceiptCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createStylePreferences: <T = StylePreferences>(args: { data: StylePreferencesCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    createImage: <T = Image>(args: { data: ImageCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    createFitPic: <T = FitPic>(args: { data: FitPicCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createPackage: <T = Package>(args: { data: PackageCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createSize: <T = Size>(args: { data: SizeCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createProductFunction: <T = ProductFunction>(args: { data: ProductFunctionCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -197,6 +200,7 @@ export interface Mutation {
     createBottomSize: <T = BottomSize>(args: { data: BottomSizeCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createPackageTransitEvent: <T = PackageTransitEvent>(args: { data: PackageTransitEventCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createLabel: <T = Label>(args: { data: LabelCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    createSmsReceipt: <T = SmsReceipt>(args: { data: SmsReceiptCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createLocation: <T = Location>(args: { data: LocationCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createPhysicalProduct: <T = PhysicalProduct>(args: { data: PhysicalProductCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createImage: <T = Image>(args: { data: ImageCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -216,6 +220,7 @@ export interface Mutation {
     updateWarehouseLocation: <T = WarehouseLocation | null>(args: { data: WarehouseLocationUpdateInput, where: WarehouseLocationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updatePaymentPlan: <T = PaymentPlan | null>(args: { data: PaymentPlanUpdateInput, where: PaymentPlanWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateEmailReceipt: <T = EmailReceipt | null>(args: { data: EmailReceiptUpdateInput, where: EmailReceiptWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    updateFitPicReport: <T = FitPicReport | null>(args: { data: FitPicReportUpdateInput, where: FitPicReportWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateBagItem: <T = BagItem | null>(args: { data: BagItemUpdateInput, where: BagItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateCustomerMembership: <T = CustomerMembership | null>(args: { data: CustomerMembershipUpdateInput, where: CustomerMembershipWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updatePauseRequest: <T = PauseRequest | null>(args: { data: PauseRequestUpdateInput, where: PauseRequestWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -232,9 +237,8 @@ export interface Mutation {
     updateUserPushNotificationInterest: <T = UserPushNotificationInterest | null>(args: { data: UserPushNotificationInterestUpdateInput, where: UserPushNotificationInterestWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateBillingInfo: <T = BillingInfo | null>(args: { data: BillingInfoUpdateInput, where: BillingInfoWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateReservationReceiptItem: <T = ReservationReceiptItem | null>(args: { data: ReservationReceiptItemUpdateInput, where: ReservationReceiptItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    updateSmsReceipt: <T = SmsReceipt | null>(args: { data: SmsReceiptUpdateInput, where: SmsReceiptWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateStylePreferences: <T = StylePreferences | null>(args: { data: StylePreferencesUpdateInput, where: StylePreferencesWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    updateImage: <T = Image | null>(args: { data: ImageUpdateInput, where: ImageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    updateFitPic: <T = FitPic | null>(args: { data: FitPicUpdateInput, where: FitPicWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updatePackage: <T = Package | null>(args: { data: PackageUpdateInput, where: PackageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateSize: <T = Size | null>(args: { data: SizeUpdateInput, where: SizeWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateProductFunction: <T = ProductFunction | null>(args: { data: ProductFunctionUpdateInput, where: ProductFunctionWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -246,6 +250,7 @@ export interface Mutation {
     updateBottomSize: <T = BottomSize | null>(args: { data: BottomSizeUpdateInput, where: BottomSizeWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updatePackageTransitEvent: <T = PackageTransitEvent | null>(args: { data: PackageTransitEventUpdateInput, where: PackageTransitEventWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateLabel: <T = Label | null>(args: { data: LabelUpdateInput, where: LabelWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    updateSmsReceipt: <T = SmsReceipt | null>(args: { data: SmsReceiptUpdateInput, where: SmsReceiptWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateLocation: <T = Location | null>(args: { data: LocationUpdateInput, where: LocationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updatePhysicalProduct: <T = PhysicalProduct | null>(args: { data: PhysicalProductUpdateInput, where: PhysicalProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateImage: <T = Image | null>(args: { data: ImageUpdateInput, where: ImageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -265,6 +270,7 @@ export interface Mutation {
     deleteWarehouseLocation: <T = WarehouseLocation | null>(args: { where: WarehouseLocationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deletePaymentPlan: <T = PaymentPlan | null>(args: { where: PaymentPlanWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteEmailReceipt: <T = EmailReceipt | null>(args: { where: EmailReceiptWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deleteFitPicReport: <T = FitPicReport | null>(args: { where: FitPicReportWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteBagItem: <T = BagItem | null>(args: { where: BagItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteCustomerMembership: <T = CustomerMembership | null>(args: { where: CustomerMembershipWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deletePauseRequest: <T = PauseRequest | null>(args: { where: PauseRequestWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -281,9 +287,8 @@ export interface Mutation {
     deleteUserPushNotificationInterest: <T = UserPushNotificationInterest | null>(args: { where: UserPushNotificationInterestWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteBillingInfo: <T = BillingInfo | null>(args: { where: BillingInfoWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteReservationReceiptItem: <T = ReservationReceiptItem | null>(args: { where: ReservationReceiptItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    deleteSmsReceipt: <T = SmsReceipt | null>(args: { where: SmsReceiptWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteStylePreferences: <T = StylePreferences | null>(args: { where: StylePreferencesWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    deleteImage: <T = Image | null>(args: { where: ImageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deleteFitPic: <T = FitPic | null>(args: { where: FitPicWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deletePackage: <T = Package | null>(args: { where: PackageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteSize: <T = Size | null>(args: { where: SizeWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteProductFunction: <T = ProductFunction | null>(args: { where: ProductFunctionWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -295,6 +300,7 @@ export interface Mutation {
     deleteBottomSize: <T = BottomSize | null>(args: { where: BottomSizeWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deletePackageTransitEvent: <T = PackageTransitEvent | null>(args: { where: PackageTransitEventWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteLabel: <T = Label | null>(args: { where: LabelWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deleteSmsReceipt: <T = SmsReceipt | null>(args: { where: SmsReceiptWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteLocation: <T = Location | null>(args: { where: LocationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deletePhysicalProduct: <T = PhysicalProduct | null>(args: { where: PhysicalProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteImage: <T = Image | null>(args: { where: ImageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -314,6 +320,7 @@ export interface Mutation {
     upsertWarehouseLocation: <T = WarehouseLocation>(args: { where: WarehouseLocationWhereUniqueInput, create: WarehouseLocationCreateInput, update: WarehouseLocationUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertPaymentPlan: <T = PaymentPlan>(args: { where: PaymentPlanWhereUniqueInput, create: PaymentPlanCreateInput, update: PaymentPlanUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertEmailReceipt: <T = EmailReceipt>(args: { where: EmailReceiptWhereUniqueInput, create: EmailReceiptCreateInput, update: EmailReceiptUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    upsertFitPicReport: <T = FitPicReport>(args: { where: FitPicReportWhereUniqueInput, create: FitPicReportCreateInput, update: FitPicReportUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertBagItem: <T = BagItem>(args: { where: BagItemWhereUniqueInput, create: BagItemCreateInput, update: BagItemUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertCustomerMembership: <T = CustomerMembership>(args: { where: CustomerMembershipWhereUniqueInput, create: CustomerMembershipCreateInput, update: CustomerMembershipUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertPauseRequest: <T = PauseRequest>(args: { where: PauseRequestWhereUniqueInput, create: PauseRequestCreateInput, update: PauseRequestUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -330,9 +337,8 @@ export interface Mutation {
     upsertUserPushNotificationInterest: <T = UserPushNotificationInterest>(args: { where: UserPushNotificationInterestWhereUniqueInput, create: UserPushNotificationInterestCreateInput, update: UserPushNotificationInterestUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertBillingInfo: <T = BillingInfo>(args: { where: BillingInfoWhereUniqueInput, create: BillingInfoCreateInput, update: BillingInfoUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertReservationReceiptItem: <T = ReservationReceiptItem>(args: { where: ReservationReceiptItemWhereUniqueInput, create: ReservationReceiptItemCreateInput, update: ReservationReceiptItemUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    upsertSmsReceipt: <T = SmsReceipt>(args: { where: SmsReceiptWhereUniqueInput, create: SmsReceiptCreateInput, update: SmsReceiptUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertStylePreferences: <T = StylePreferences>(args: { where: StylePreferencesWhereUniqueInput, create: StylePreferencesCreateInput, update: StylePreferencesUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    upsertImage: <T = Image>(args: { where: ImageWhereUniqueInput, create: ImageCreateInput, update: ImageUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    upsertFitPic: <T = FitPic>(args: { where: FitPicWhereUniqueInput, create: FitPicCreateInput, update: FitPicUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertPackage: <T = Package>(args: { where: PackageWhereUniqueInput, create: PackageCreateInput, update: PackageUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertSize: <T = Size>(args: { where: SizeWhereUniqueInput, create: SizeCreateInput, update: SizeUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertProductFunction: <T = ProductFunction>(args: { where: ProductFunctionWhereUniqueInput, create: ProductFunctionCreateInput, update: ProductFunctionUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -344,6 +350,7 @@ export interface Mutation {
     upsertBottomSize: <T = BottomSize>(args: { where: BottomSizeWhereUniqueInput, create: BottomSizeCreateInput, update: BottomSizeUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertPackageTransitEvent: <T = PackageTransitEvent>(args: { where: PackageTransitEventWhereUniqueInput, create: PackageTransitEventCreateInput, update: PackageTransitEventUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertLabel: <T = Label>(args: { where: LabelWhereUniqueInput, create: LabelCreateInput, update: LabelUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    upsertSmsReceipt: <T = SmsReceipt>(args: { where: SmsReceiptWhereUniqueInput, create: SmsReceiptCreateInput, update: SmsReceiptUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertLocation: <T = Location>(args: { where: LocationWhereUniqueInput, create: LocationCreateInput, update: LocationUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertPhysicalProduct: <T = PhysicalProduct>(args: { where: PhysicalProductWhereUniqueInput, create: PhysicalProductCreateInput, update: PhysicalProductUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertImage: <T = Image>(args: { where: ImageWhereUniqueInput, create: ImageCreateInput, update: ImageUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -363,6 +370,7 @@ export interface Mutation {
     updateManyWarehouseLocations: <T = BatchPayload>(args: { data: WarehouseLocationUpdateManyMutationInput, where?: WarehouseLocationWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyPaymentPlans: <T = BatchPayload>(args: { data: PaymentPlanUpdateManyMutationInput, where?: PaymentPlanWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyEmailReceipts: <T = BatchPayload>(args: { data: EmailReceiptUpdateManyMutationInput, where?: EmailReceiptWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateManyFitPicReports: <T = BatchPayload>(args: { data: FitPicReportUpdateManyMutationInput, where?: FitPicReportWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyBagItems: <T = BatchPayload>(args: { data: BagItemUpdateManyMutationInput, where?: BagItemWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyCustomerMemberships: <T = BatchPayload>(args: { data: CustomerMembershipUpdateManyMutationInput, where?: CustomerMembershipWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyPauseRequests: <T = BatchPayload>(args: { data: PauseRequestUpdateManyMutationInput, where?: PauseRequestWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -378,9 +386,8 @@ export interface Mutation {
     updateManyUserPushNotificationInterests: <T = BatchPayload>(args: { data: UserPushNotificationInterestUpdateManyMutationInput, where?: UserPushNotificationInterestWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyBillingInfoes: <T = BatchPayload>(args: { data: BillingInfoUpdateManyMutationInput, where?: BillingInfoWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyReservationReceiptItems: <T = BatchPayload>(args: { data: ReservationReceiptItemUpdateManyMutationInput, where?: ReservationReceiptItemWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    updateManySmsReceipts: <T = BatchPayload>(args: { data: SmsReceiptUpdateManyMutationInput, where?: SmsReceiptWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyStylePreferenceses: <T = BatchPayload>(args: { data: StylePreferencesUpdateManyMutationInput, where?: StylePreferencesWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    updateManyImages: <T = BatchPayload>(args: { data: ImageUpdateManyMutationInput, where?: ImageWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateManyFitPics: <T = BatchPayload>(args: { data: FitPicUpdateManyMutationInput, where?: FitPicWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyPackages: <T = BatchPayload>(args: { data: PackageUpdateManyMutationInput, where?: PackageWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManySizes: <T = BatchPayload>(args: { data: SizeUpdateManyMutationInput, where?: SizeWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyProductFunctions: <T = BatchPayload>(args: { data: ProductFunctionUpdateManyMutationInput, where?: ProductFunctionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -392,6 +399,7 @@ export interface Mutation {
     updateManyBottomSizes: <T = BatchPayload>(args: { data: BottomSizeUpdateManyMutationInput, where?: BottomSizeWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyPackageTransitEvents: <T = BatchPayload>(args: { data: PackageTransitEventUpdateManyMutationInput, where?: PackageTransitEventWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyLabels: <T = BatchPayload>(args: { data: LabelUpdateManyMutationInput, where?: LabelWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateManySmsReceipts: <T = BatchPayload>(args: { data: SmsReceiptUpdateManyMutationInput, where?: SmsReceiptWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyLocations: <T = BatchPayload>(args: { data: LocationUpdateManyMutationInput, where?: LocationWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyPhysicalProducts: <T = BatchPayload>(args: { data: PhysicalProductUpdateManyMutationInput, where?: PhysicalProductWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyImages: <T = BatchPayload>(args: { data: ImageUpdateManyMutationInput, where?: ImageWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -411,6 +419,7 @@ export interface Mutation {
     deleteManyWarehouseLocations: <T = BatchPayload>(args: { where?: WarehouseLocationWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyPaymentPlans: <T = BatchPayload>(args: { where?: PaymentPlanWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyEmailReceipts: <T = BatchPayload>(args: { where?: EmailReceiptWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteManyFitPicReports: <T = BatchPayload>(args: { where?: FitPicReportWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyBagItems: <T = BatchPayload>(args: { where?: BagItemWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyCustomerMemberships: <T = BatchPayload>(args: { where?: CustomerMembershipWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyPauseRequests: <T = BatchPayload>(args: { where?: PauseRequestWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -427,9 +436,8 @@ export interface Mutation {
     deleteManyUserPushNotificationInterests: <T = BatchPayload>(args: { where?: UserPushNotificationInterestWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyBillingInfoes: <T = BatchPayload>(args: { where?: BillingInfoWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyReservationReceiptItems: <T = BatchPayload>(args: { where?: ReservationReceiptItemWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    deleteManySmsReceipts: <T = BatchPayload>(args: { where?: SmsReceiptWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyStylePreferenceses: <T = BatchPayload>(args: { where?: StylePreferencesWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    deleteManyImages: <T = BatchPayload>(args: { where?: ImageWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteManyFitPics: <T = BatchPayload>(args: { where?: FitPicWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyPackages: <T = BatchPayload>(args: { where?: PackageWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManySizes: <T = BatchPayload>(args: { where?: SizeWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyProductFunctions: <T = BatchPayload>(args: { where?: ProductFunctionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -441,6 +449,7 @@ export interface Mutation {
     deleteManyBottomSizes: <T = BatchPayload>(args: { where?: BottomSizeWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyPackageTransitEvents: <T = BatchPayload>(args: { where?: PackageTransitEventWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyLabels: <T = BatchPayload>(args: { where?: LabelWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteManySmsReceipts: <T = BatchPayload>(args: { where?: SmsReceiptWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyLocations: <T = BatchPayload>(args: { where?: LocationWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyPhysicalProducts: <T = BatchPayload>(args: { where?: PhysicalProductWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyImages: <T = BatchPayload>(args: { where?: ImageWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -463,6 +472,7 @@ export interface Subscription {
     warehouseLocation: <T = WarehouseLocationSubscriptionPayload | null>(args: { where?: WarehouseLocationSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     paymentPlan: <T = PaymentPlanSubscriptionPayload | null>(args: { where?: PaymentPlanSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     emailReceipt: <T = EmailReceiptSubscriptionPayload | null>(args: { where?: EmailReceiptSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
+    fitPicReport: <T = FitPicReportSubscriptionPayload | null>(args: { where?: FitPicReportSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     bagItem: <T = BagItemSubscriptionPayload | null>(args: { where?: BagItemSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     customerMembership: <T = CustomerMembershipSubscriptionPayload | null>(args: { where?: CustomerMembershipSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     pauseRequest: <T = PauseRequestSubscriptionPayload | null>(args: { where?: PauseRequestSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
@@ -479,9 +489,8 @@ export interface Subscription {
     userPushNotificationInterest: <T = UserPushNotificationInterestSubscriptionPayload | null>(args: { where?: UserPushNotificationInterestSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     billingInfo: <T = BillingInfoSubscriptionPayload | null>(args: { where?: BillingInfoSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     reservationReceiptItem: <T = ReservationReceiptItemSubscriptionPayload | null>(args: { where?: ReservationReceiptItemSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
-    smsReceipt: <T = SmsReceiptSubscriptionPayload | null>(args: { where?: SmsReceiptSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     stylePreferences: <T = StylePreferencesSubscriptionPayload | null>(args: { where?: StylePreferencesSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
-    image: <T = ImageSubscriptionPayload | null>(args: { where?: ImageSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
+    fitPic: <T = FitPicSubscriptionPayload | null>(args: { where?: FitPicSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     package: <T = PackageSubscriptionPayload | null>(args: { where?: PackageSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     size: <T = SizeSubscriptionPayload | null>(args: { where?: SizeSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     productFunction: <T = ProductFunctionSubscriptionPayload | null>(args: { where?: ProductFunctionSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
@@ -493,6 +502,7 @@ export interface Subscription {
     bottomSize: <T = BottomSizeSubscriptionPayload | null>(args: { where?: BottomSizeSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     packageTransitEvent: <T = PackageTransitEventSubscriptionPayload | null>(args: { where?: PackageTransitEventSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     label: <T = LabelSubscriptionPayload | null>(args: { where?: LabelSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
+    smsReceipt: <T = SmsReceiptSubscriptionPayload | null>(args: { where?: SmsReceiptSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     location: <T = LocationSubscriptionPayload | null>(args: { where?: LocationSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     physicalProduct: <T = PhysicalProductSubscriptionPayload | null>(args: { where?: PhysicalProductSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     image: <T = ImageSubscriptionPayload | null>(args: { where?: ImageSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
@@ -515,6 +525,7 @@ export interface Exists {
   WarehouseLocation: (where?: WarehouseLocationWhereInput) => Promise<boolean>
   PaymentPlan: (where?: PaymentPlanWhereInput) => Promise<boolean>
   EmailReceipt: (where?: EmailReceiptWhereInput) => Promise<boolean>
+  FitPicReport: (where?: FitPicReportWhereInput) => Promise<boolean>
   BagItem: (where?: BagItemWhereInput) => Promise<boolean>
   CustomerMembership: (where?: CustomerMembershipWhereInput) => Promise<boolean>
   PauseRequest: (where?: PauseRequestWhereInput) => Promise<boolean>
@@ -531,9 +542,8 @@ export interface Exists {
   UserPushNotificationInterest: (where?: UserPushNotificationInterestWhereInput) => Promise<boolean>
   BillingInfo: (where?: BillingInfoWhereInput) => Promise<boolean>
   ReservationReceiptItem: (where?: ReservationReceiptItemWhereInput) => Promise<boolean>
-  SmsReceipt: (where?: SmsReceiptWhereInput) => Promise<boolean>
   StylePreferences: (where?: StylePreferencesWhereInput) => Promise<boolean>
-  Image: (where?: ImageWhereInput) => Promise<boolean>
+  FitPic: (where?: FitPicWhereInput) => Promise<boolean>
   Package: (where?: PackageWhereInput) => Promise<boolean>
   Size: (where?: SizeWhereInput) => Promise<boolean>
   ProductFunction: (where?: ProductFunctionWhereInput) => Promise<boolean>
@@ -545,6 +555,7 @@ export interface Exists {
   BottomSize: (where?: BottomSizeWhereInput) => Promise<boolean>
   PackageTransitEvent: (where?: PackageTransitEventWhereInput) => Promise<boolean>
   Label: (where?: LabelWhereInput) => Promise<boolean>
+  SmsReceipt: (where?: SmsReceiptWhereInput) => Promise<boolean>
   Location: (where?: LocationWhereInput) => Promise<boolean>
   PhysicalProduct: (where?: PhysicalProductWhereInput) => Promise<boolean>
   Image: (where?: ImageWhereInput) => Promise<boolean>
@@ -6865,46 +6876,7 @@ input FitPicReportWhereUniqueInput {
   id: ID
 }
 
-"""An edge in a connection."""
-type ImageEdge {
-  """The item at the end of the edge."""
-  node: Image!
-
-  """A cursor for use in pagination."""
-  cursor: String!
-}
-
-enum ImageOrderByInput {
-  id_ASC
-  id_DESC
-  caption_ASC
-  caption_DESC
-  url_ASC
-  url_DESC
-  height_ASC
-  height_DESC
-  width_ASC
-  width_DESC
-  title_ASC
-  title_DESC
-  createdAt_ASC
-  createdAt_DESC
-  updatedAt_ASC
-  updatedAt_DESC
-}
-
-type ImagePreviousValues {
-  id: ID!
-  caption: String
-  url: String!
-  height: Int
-  width: Int
-  title: String
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
-input ImageScalarWhereInput {
+input FitPicScalarWhereInput {
   """Logical AND on all given filters."""
   AND: [FitPicScalarWhereInput!]
 
@@ -9348,6 +9320,7 @@ type Mutation {
   createWarehouseLocation(data: WarehouseLocationCreateInput!): WarehouseLocation!
   createPaymentPlan(data: PaymentPlanCreateInput!): PaymentPlan!
   createEmailReceipt(data: EmailReceiptCreateInput!): EmailReceipt!
+  createFitPicReport(data: FitPicReportCreateInput!): FitPicReport!
   createBagItem(data: BagItemCreateInput!): BagItem!
   createCustomerMembership(data: CustomerMembershipCreateInput!): CustomerMembership!
   createPauseRequest(data: PauseRequestCreateInput!): PauseRequest!
@@ -9364,9 +9337,8 @@ type Mutation {
   createUserPushNotificationInterest(data: UserPushNotificationInterestCreateInput!): UserPushNotificationInterest!
   createBillingInfo(data: BillingInfoCreateInput!): BillingInfo!
   createReservationReceiptItem(data: ReservationReceiptItemCreateInput!): ReservationReceiptItem!
-  createSmsReceipt(data: SmsReceiptCreateInput!): SmsReceipt!
   createStylePreferences(data: StylePreferencesCreateInput!): StylePreferences!
-  createImage(data: ImageCreateInput!): Image!
+  createFitPic(data: FitPicCreateInput!): FitPic!
   createPackage(data: PackageCreateInput!): Package!
   createSize(data: SizeCreateInput!): Size!
   createProductFunction(data: ProductFunctionCreateInput!): ProductFunction!
@@ -9378,6 +9350,7 @@ type Mutation {
   createBottomSize(data: BottomSizeCreateInput!): BottomSize!
   createPackageTransitEvent(data: PackageTransitEventCreateInput!): PackageTransitEvent!
   createLabel(data: LabelCreateInput!): Label!
+  createSmsReceipt(data: SmsReceiptCreateInput!): SmsReceipt!
   createLocation(data: LocationCreateInput!): Location!
   createPhysicalProduct(data: PhysicalProductCreateInput!): PhysicalProduct!
   createImage(data: ImageCreateInput!): Image!
@@ -9397,6 +9370,7 @@ type Mutation {
   updateWarehouseLocation(data: WarehouseLocationUpdateInput!, where: WarehouseLocationWhereUniqueInput!): WarehouseLocation
   updatePaymentPlan(data: PaymentPlanUpdateInput!, where: PaymentPlanWhereUniqueInput!): PaymentPlan
   updateEmailReceipt(data: EmailReceiptUpdateInput!, where: EmailReceiptWhereUniqueInput!): EmailReceipt
+  updateFitPicReport(data: FitPicReportUpdateInput!, where: FitPicReportWhereUniqueInput!): FitPicReport
   updateBagItem(data: BagItemUpdateInput!, where: BagItemWhereUniqueInput!): BagItem
   updateCustomerMembership(data: CustomerMembershipUpdateInput!, where: CustomerMembershipWhereUniqueInput!): CustomerMembership
   updatePauseRequest(data: PauseRequestUpdateInput!, where: PauseRequestWhereUniqueInput!): PauseRequest
@@ -9413,9 +9387,8 @@ type Mutation {
   updateUserPushNotificationInterest(data: UserPushNotificationInterestUpdateInput!, where: UserPushNotificationInterestWhereUniqueInput!): UserPushNotificationInterest
   updateBillingInfo(data: BillingInfoUpdateInput!, where: BillingInfoWhereUniqueInput!): BillingInfo
   updateReservationReceiptItem(data: ReservationReceiptItemUpdateInput!, where: ReservationReceiptItemWhereUniqueInput!): ReservationReceiptItem
-  updateSmsReceipt(data: SmsReceiptUpdateInput!, where: SmsReceiptWhereUniqueInput!): SmsReceipt
   updateStylePreferences(data: StylePreferencesUpdateInput!, where: StylePreferencesWhereUniqueInput!): StylePreferences
-  updateImage(data: ImageUpdateInput!, where: ImageWhereUniqueInput!): Image
+  updateFitPic(data: FitPicUpdateInput!, where: FitPicWhereUniqueInput!): FitPic
   updatePackage(data: PackageUpdateInput!, where: PackageWhereUniqueInput!): Package
   updateSize(data: SizeUpdateInput!, where: SizeWhereUniqueInput!): Size
   updateProductFunction(data: ProductFunctionUpdateInput!, where: ProductFunctionWhereUniqueInput!): ProductFunction
@@ -9427,6 +9400,7 @@ type Mutation {
   updateBottomSize(data: BottomSizeUpdateInput!, where: BottomSizeWhereUniqueInput!): BottomSize
   updatePackageTransitEvent(data: PackageTransitEventUpdateInput!, where: PackageTransitEventWhereUniqueInput!): PackageTransitEvent
   updateLabel(data: LabelUpdateInput!, where: LabelWhereUniqueInput!): Label
+  updateSmsReceipt(data: SmsReceiptUpdateInput!, where: SmsReceiptWhereUniqueInput!): SmsReceipt
   updateLocation(data: LocationUpdateInput!, where: LocationWhereUniqueInput!): Location
   updatePhysicalProduct(data: PhysicalProductUpdateInput!, where: PhysicalProductWhereUniqueInput!): PhysicalProduct
   updateImage(data: ImageUpdateInput!, where: ImageWhereUniqueInput!): Image
@@ -9446,6 +9420,7 @@ type Mutation {
   deleteWarehouseLocation(where: WarehouseLocationWhereUniqueInput!): WarehouseLocation
   deletePaymentPlan(where: PaymentPlanWhereUniqueInput!): PaymentPlan
   deleteEmailReceipt(where: EmailReceiptWhereUniqueInput!): EmailReceipt
+  deleteFitPicReport(where: FitPicReportWhereUniqueInput!): FitPicReport
   deleteBagItem(where: BagItemWhereUniqueInput!): BagItem
   deleteCustomerMembership(where: CustomerMembershipWhereUniqueInput!): CustomerMembership
   deletePauseRequest(where: PauseRequestWhereUniqueInput!): PauseRequest
@@ -9462,9 +9437,8 @@ type Mutation {
   deleteUserPushNotificationInterest(where: UserPushNotificationInterestWhereUniqueInput!): UserPushNotificationInterest
   deleteBillingInfo(where: BillingInfoWhereUniqueInput!): BillingInfo
   deleteReservationReceiptItem(where: ReservationReceiptItemWhereUniqueInput!): ReservationReceiptItem
-  deleteSmsReceipt(where: SmsReceiptWhereUniqueInput!): SmsReceipt
   deleteStylePreferences(where: StylePreferencesWhereUniqueInput!): StylePreferences
-  deleteImage(where: ImageWhereUniqueInput!): Image
+  deleteFitPic(where: FitPicWhereUniqueInput!): FitPic
   deletePackage(where: PackageWhereUniqueInput!): Package
   deleteSize(where: SizeWhereUniqueInput!): Size
   deleteProductFunction(where: ProductFunctionWhereUniqueInput!): ProductFunction
@@ -9476,6 +9450,7 @@ type Mutation {
   deleteBottomSize(where: BottomSizeWhereUniqueInput!): BottomSize
   deletePackageTransitEvent(where: PackageTransitEventWhereUniqueInput!): PackageTransitEvent
   deleteLabel(where: LabelWhereUniqueInput!): Label
+  deleteSmsReceipt(where: SmsReceiptWhereUniqueInput!): SmsReceipt
   deleteLocation(where: LocationWhereUniqueInput!): Location
   deletePhysicalProduct(where: PhysicalProductWhereUniqueInput!): PhysicalProduct
   deleteImage(where: ImageWhereUniqueInput!): Image
@@ -9495,6 +9470,7 @@ type Mutation {
   upsertWarehouseLocation(where: WarehouseLocationWhereUniqueInput!, create: WarehouseLocationCreateInput!, update: WarehouseLocationUpdateInput!): WarehouseLocation!
   upsertPaymentPlan(where: PaymentPlanWhereUniqueInput!, create: PaymentPlanCreateInput!, update: PaymentPlanUpdateInput!): PaymentPlan!
   upsertEmailReceipt(where: EmailReceiptWhereUniqueInput!, create: EmailReceiptCreateInput!, update: EmailReceiptUpdateInput!): EmailReceipt!
+  upsertFitPicReport(where: FitPicReportWhereUniqueInput!, create: FitPicReportCreateInput!, update: FitPicReportUpdateInput!): FitPicReport!
   upsertBagItem(where: BagItemWhereUniqueInput!, create: BagItemCreateInput!, update: BagItemUpdateInput!): BagItem!
   upsertCustomerMembership(where: CustomerMembershipWhereUniqueInput!, create: CustomerMembershipCreateInput!, update: CustomerMembershipUpdateInput!): CustomerMembership!
   upsertPauseRequest(where: PauseRequestWhereUniqueInput!, create: PauseRequestCreateInput!, update: PauseRequestUpdateInput!): PauseRequest!
@@ -9511,9 +9487,8 @@ type Mutation {
   upsertUserPushNotificationInterest(where: UserPushNotificationInterestWhereUniqueInput!, create: UserPushNotificationInterestCreateInput!, update: UserPushNotificationInterestUpdateInput!): UserPushNotificationInterest!
   upsertBillingInfo(where: BillingInfoWhereUniqueInput!, create: BillingInfoCreateInput!, update: BillingInfoUpdateInput!): BillingInfo!
   upsertReservationReceiptItem(where: ReservationReceiptItemWhereUniqueInput!, create: ReservationReceiptItemCreateInput!, update: ReservationReceiptItemUpdateInput!): ReservationReceiptItem!
-  upsertSmsReceipt(where: SmsReceiptWhereUniqueInput!, create: SmsReceiptCreateInput!, update: SmsReceiptUpdateInput!): SmsReceipt!
   upsertStylePreferences(where: StylePreferencesWhereUniqueInput!, create: StylePreferencesCreateInput!, update: StylePreferencesUpdateInput!): StylePreferences!
-  upsertImage(where: ImageWhereUniqueInput!, create: ImageCreateInput!, update: ImageUpdateInput!): Image!
+  upsertFitPic(where: FitPicWhereUniqueInput!, create: FitPicCreateInput!, update: FitPicUpdateInput!): FitPic!
   upsertPackage(where: PackageWhereUniqueInput!, create: PackageCreateInput!, update: PackageUpdateInput!): Package!
   upsertSize(where: SizeWhereUniqueInput!, create: SizeCreateInput!, update: SizeUpdateInput!): Size!
   upsertProductFunction(where: ProductFunctionWhereUniqueInput!, create: ProductFunctionCreateInput!, update: ProductFunctionUpdateInput!): ProductFunction!
@@ -9525,6 +9500,7 @@ type Mutation {
   upsertBottomSize(where: BottomSizeWhereUniqueInput!, create: BottomSizeCreateInput!, update: BottomSizeUpdateInput!): BottomSize!
   upsertPackageTransitEvent(where: PackageTransitEventWhereUniqueInput!, create: PackageTransitEventCreateInput!, update: PackageTransitEventUpdateInput!): PackageTransitEvent!
   upsertLabel(where: LabelWhereUniqueInput!, create: LabelCreateInput!, update: LabelUpdateInput!): Label!
+  upsertSmsReceipt(where: SmsReceiptWhereUniqueInput!, create: SmsReceiptCreateInput!, update: SmsReceiptUpdateInput!): SmsReceipt!
   upsertLocation(where: LocationWhereUniqueInput!, create: LocationCreateInput!, update: LocationUpdateInput!): Location!
   upsertPhysicalProduct(where: PhysicalProductWhereUniqueInput!, create: PhysicalProductCreateInput!, update: PhysicalProductUpdateInput!): PhysicalProduct!
   upsertImage(where: ImageWhereUniqueInput!, create: ImageCreateInput!, update: ImageUpdateInput!): Image!
@@ -9544,6 +9520,7 @@ type Mutation {
   updateManyWarehouseLocations(data: WarehouseLocationUpdateManyMutationInput!, where: WarehouseLocationWhereInput): BatchPayload!
   updateManyPaymentPlans(data: PaymentPlanUpdateManyMutationInput!, where: PaymentPlanWhereInput): BatchPayload!
   updateManyEmailReceipts(data: EmailReceiptUpdateManyMutationInput!, where: EmailReceiptWhereInput): BatchPayload!
+  updateManyFitPicReports(data: FitPicReportUpdateManyMutationInput!, where: FitPicReportWhereInput): BatchPayload!
   updateManyBagItems(data: BagItemUpdateManyMutationInput!, where: BagItemWhereInput): BatchPayload!
   updateManyCustomerMemberships(data: CustomerMembershipUpdateManyMutationInput!, where: CustomerMembershipWhereInput): BatchPayload!
   updateManyPauseRequests(data: PauseRequestUpdateManyMutationInput!, where: PauseRequestWhereInput): BatchPayload!
@@ -9559,9 +9536,8 @@ type Mutation {
   updateManyUserPushNotificationInterests(data: UserPushNotificationInterestUpdateManyMutationInput!, where: UserPushNotificationInterestWhereInput): BatchPayload!
   updateManyBillingInfoes(data: BillingInfoUpdateManyMutationInput!, where: BillingInfoWhereInput): BatchPayload!
   updateManyReservationReceiptItems(data: ReservationReceiptItemUpdateManyMutationInput!, where: ReservationReceiptItemWhereInput): BatchPayload!
-  updateManySmsReceipts(data: SmsReceiptUpdateManyMutationInput!, where: SmsReceiptWhereInput): BatchPayload!
   updateManyStylePreferenceses(data: StylePreferencesUpdateManyMutationInput!, where: StylePreferencesWhereInput): BatchPayload!
-  updateManyImages(data: ImageUpdateManyMutationInput!, where: ImageWhereInput): BatchPayload!
+  updateManyFitPics(data: FitPicUpdateManyMutationInput!, where: FitPicWhereInput): BatchPayload!
   updateManyPackages(data: PackageUpdateManyMutationInput!, where: PackageWhereInput): BatchPayload!
   updateManySizes(data: SizeUpdateManyMutationInput!, where: SizeWhereInput): BatchPayload!
   updateManyProductFunctions(data: ProductFunctionUpdateManyMutationInput!, where: ProductFunctionWhereInput): BatchPayload!
@@ -9573,6 +9549,7 @@ type Mutation {
   updateManyBottomSizes(data: BottomSizeUpdateManyMutationInput!, where: BottomSizeWhereInput): BatchPayload!
   updateManyPackageTransitEvents(data: PackageTransitEventUpdateManyMutationInput!, where: PackageTransitEventWhereInput): BatchPayload!
   updateManyLabels(data: LabelUpdateManyMutationInput!, where: LabelWhereInput): BatchPayload!
+  updateManySmsReceipts(data: SmsReceiptUpdateManyMutationInput!, where: SmsReceiptWhereInput): BatchPayload!
   updateManyLocations(data: LocationUpdateManyMutationInput!, where: LocationWhereInput): BatchPayload!
   updateManyPhysicalProducts(data: PhysicalProductUpdateManyMutationInput!, where: PhysicalProductWhereInput): BatchPayload!
   updateManyImages(data: ImageUpdateManyMutationInput!, where: ImageWhereInput): BatchPayload!
@@ -9592,6 +9569,7 @@ type Mutation {
   deleteManyWarehouseLocations(where: WarehouseLocationWhereInput): BatchPayload!
   deleteManyPaymentPlans(where: PaymentPlanWhereInput): BatchPayload!
   deleteManyEmailReceipts(where: EmailReceiptWhereInput): BatchPayload!
+  deleteManyFitPicReports(where: FitPicReportWhereInput): BatchPayload!
   deleteManyBagItems(where: BagItemWhereInput): BatchPayload!
   deleteManyCustomerMemberships(where: CustomerMembershipWhereInput): BatchPayload!
   deleteManyPauseRequests(where: PauseRequestWhereInput): BatchPayload!
@@ -9608,9 +9586,8 @@ type Mutation {
   deleteManyUserPushNotificationInterests(where: UserPushNotificationInterestWhereInput): BatchPayload!
   deleteManyBillingInfoes(where: BillingInfoWhereInput): BatchPayload!
   deleteManyReservationReceiptItems(where: ReservationReceiptItemWhereInput): BatchPayload!
-  deleteManySmsReceipts(where: SmsReceiptWhereInput): BatchPayload!
   deleteManyStylePreferenceses(where: StylePreferencesWhereInput): BatchPayload!
-  deleteManyImages(where: ImageWhereInput): BatchPayload!
+  deleteManyFitPics(where: FitPicWhereInput): BatchPayload!
   deleteManyPackages(where: PackageWhereInput): BatchPayload!
   deleteManySizes(where: SizeWhereInput): BatchPayload!
   deleteManyProductFunctions(where: ProductFunctionWhereInput): BatchPayload!
@@ -9622,6 +9599,7 @@ type Mutation {
   deleteManyBottomSizes(where: BottomSizeWhereInput): BatchPayload!
   deleteManyPackageTransitEvents(where: PackageTransitEventWhereInput): BatchPayload!
   deleteManyLabels(where: LabelWhereInput): BatchPayload!
+  deleteManySmsReceipts(where: SmsReceiptWhereInput): BatchPayload!
   deleteManyLocations(where: LocationWhereInput): BatchPayload!
   deleteManyPhysicalProducts(where: PhysicalProductWhereInput): BatchPayload!
   deleteManyImages(where: ImageWhereInput): BatchPayload!
@@ -18294,26 +18272,23 @@ input ProductWhereInput {
   statusChanges_none: ProductStatusChangeWhereInput
 }
 
-input RecentlyViewedProductWhereUniqueInput {
+input ProductWhereUniqueInput {
   id: ID
+  slug: String
 }
 
 type PushNotificationReceipt implements Node {
   id: ID!
-  user: User!
-  customer: Customer!
-  sentPackage: Package
-  returnedPackage: Package
-  products(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct!]
-  reservationNumber: Int!
-  phase: ReservationPhase!
-  shipped: Boolean!
-  status: ReservationStatus!
-  shippedAt: DateTime
-  receivedAt: DateTime
-  reminderSentAt: DateTime
-  receipt: ReservationReceipt
-  lastLocation: Location
+  route: String
+  screen: String
+  uri: String
+  users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User!]
+  interest: String
+  body: String!
+  title: String
+  recordID: String
+  recordSlug: String
+  sentAt: DateTime!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -18328,7 +18303,7 @@ type PushNotificationReceiptConnection {
   aggregate: AggregatePushNotificationReceipt!
 }
 
-input ReservationCreateInput {
+input PushNotificationReceiptCreateInput {
   id: ID
   route: String
   screen: String
@@ -18342,114 +18317,28 @@ input ReservationCreateInput {
   users: UserCreateManyWithoutPushNotificationsInput
 }
 
-input ReservationCreateManyWithoutCustomerInput {
-  create: [ReservationCreateWithoutCustomerInput!]
-  connect: [ReservationWhereUniqueInput!]
+input PushNotificationReceiptCreateManyInput {
+  create: [PushNotificationReceiptCreateInput!]
+  connect: [PushNotificationReceiptWhereUniqueInput!]
 }
 
-input ReservationCreateOneInput {
-  create: ReservationCreateInput
-  connect: ReservationWhereUniqueInput
+input PushNotificationReceiptCreateManyWithoutUsersInput {
+  create: [PushNotificationReceiptCreateWithoutUsersInput!]
+  connect: [PushNotificationReceiptWhereUniqueInput!]
 }
 
-input ReservationCreateOneWithoutReceiptInput {
-  create: ReservationCreateWithoutReceiptInput
-  connect: ReservationWhereUniqueInput
-}
-
-input ReservationCreateWithoutCustomerInput {
+input PushNotificationReceiptCreateWithoutUsersInput {
   id: ID
-  reservationNumber: Int!
-  phase: ReservationPhase!
-  shipped: Boolean!
-  status: ReservationStatus!
-  shippedAt: DateTime
-  receivedAt: DateTime
-  reminderSentAt: DateTime
-  user: UserCreateOneInput!
-  sentPackage: PackageCreateOneInput
-  returnedPackage: PackageCreateOneInput
-  products: PhysicalProductCreateManyInput
-  receipt: ReservationReceiptCreateOneWithoutReservationInput
-  lastLocation: LocationCreateOneInput
+  route: String
+  screen: String
+  uri: String
+  interest: String
+  body: String!
+  title: String
+  recordID: String
+  recordSlug: String
+  sentAt: DateTime!
 }
-
-input ReservationCreateWithoutReceiptInput {
-  id: ID
-  reservationNumber: Int!
-  phase: ReservationPhase!
-  shipped: Boolean!
-  status: ReservationStatus!
-  shippedAt: DateTime
-  receivedAt: DateTime
-  reminderSentAt: DateTime
-  user: UserCreateOneInput!
-  customer: CustomerCreateOneWithoutReservationsInput!
-  sentPackage: PackageCreateOneInput
-  returnedPackage: PackageCreateOneInput
-  products: PhysicalProductCreateManyInput
-  lastLocation: LocationCreateOneInput
-}
-
-"""An edge in a connection."""
-type ReservationEdge {
-  """The item at the end of the edge."""
-  node: Reservation!
-
-  """A cursor for use in pagination."""
-  cursor: String!
-}
-
-type ReservationFeedback implements Node {
-  id: ID!
-  comment: String
-  feedbacks(where: ProductVariantFeedbackWhereInput, orderBy: ProductVariantFeedbackOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariantFeedback!]
-  rating: Rating
-  user: User!
-  reservation: Reservation!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  respondedAt: DateTime
-}
-
-"""A connection to a list of items."""
-type ReservationFeedbackConnection {
-  """Information to aid in pagination."""
-  pageInfo: PageInfo!
-
-  """A list of edges."""
-  edges: [ReservationFeedbackEdge]!
-  aggregate: AggregateReservationFeedback!
-}
-
-input ReservationFeedbackCreateInput {
-  id: ID
-  comment: String
-  rating: Rating
-  respondedAt: DateTime
-  feedbacks: ProductVariantFeedbackCreateManyWithoutReservationFeedbackInput
-  user: UserCreateOneInput!
-  reservation: ReservationCreateOneInput!
-}
-
-input ReservationFeedbackCreateOneWithoutFeedbacksInput {
-  create: ReservationFeedbackCreateWithoutFeedbacksInput
-  connect: ReservationFeedbackWhereUniqueInput
-}
-
-input ReservationFeedbackCreateWithoutFeedbacksInput {
-  id: ID
-  comment: String
-  rating: Rating
-  respondedAt: DateTime
-  user: UserCreateOneInput!
-  reservation: ReservationCreateOneInput!
-}
-
-"""An edge in a connection."""
-type ReservationFeedbackEdge {
-  """The item at the end of the edge."""
-  node: ReservationFeedback!
 
 """An edge in a connection."""
 type PushNotificationReceiptEdge {
@@ -18460,28 +18349,46 @@ type PushNotificationReceiptEdge {
   cursor: String!
 }
 
-enum ReservationFeedbackOrderByInput {
+enum PushNotificationReceiptOrderByInput {
   id_ASC
   id_DESC
-  comment_ASC
-  comment_DESC
-  rating_ASC
-  rating_DESC
+  route_ASC
+  route_DESC
+  screen_ASC
+  screen_DESC
+  uri_ASC
+  uri_DESC
+  interest_ASC
+  interest_DESC
+  body_ASC
+  body_DESC
+  title_ASC
+  title_DESC
+  recordID_ASC
+  recordID_DESC
+  recordSlug_ASC
+  recordSlug_DESC
+  sentAt_ASC
+  sentAt_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
   updatedAt_DESC
-  respondedAt_ASC
-  respondedAt_DESC
 }
 
-type ReservationFeedbackPreviousValues {
+type PushNotificationReceiptPreviousValues {
   id: ID!
-  comment: String
-  rating: Rating
+  route: String
+  screen: String
+  uri: String
+  interest: String
+  body: String!
+  title: String
+  recordID: String
+  recordSlug: String
+  sentAt: DateTime!
   createdAt: DateTime!
   updatedAt: DateTime!
-  respondedAt: DateTime
 }
 
 input PushNotificationReceiptScalarWhereInput {
@@ -18921,8 +18828,11 @@ input PushNotificationReceiptScalarWhereInput {
   updatedAt_gte: DateTime
 }
 
-input ReservationFeedbackWhereUniqueInput {
-  id: ID
+type PushNotificationReceiptSubscriptionPayload {
+  mutation: MutationType!
+  node: PushNotificationReceipt
+  updatedFields: [String!]
+  previousValues: PushNotificationReceiptPreviousValues
 }
 
 input PushNotificationReceiptSubscriptionWhereInput {
@@ -18981,12 +18891,16 @@ input PushNotificationReceiptUpdateInput {
   users: UserUpdateManyWithoutPushNotificationsInput
 }
 
-type ReservationReceipt implements Node {
-  id: ID!
-  reservation: Reservation!
-  items(where: ReservationReceiptItemWhereInput, orderBy: ReservationReceiptItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ReservationReceiptItem!]
-  createdAt: DateTime!
-  updatedAt: DateTime!
+input PushNotificationReceiptUpdateManyDataInput {
+  route: String
+  screen: String
+  uri: String
+  interest: String
+  body: String
+  title: String
+  recordID: String
+  recordSlug: String
+  sentAt: DateTime
 }
 
 input PushNotificationReceiptUpdateManyInput {
@@ -19001,10 +18915,16 @@ input PushNotificationReceiptUpdateManyInput {
   upsert: [PushNotificationReceiptUpsertWithWhereUniqueNestedInput!]
 }
 
-input ReservationReceiptCreateInput {
-  id: ID
-  reservation: ReservationCreateOneWithoutReceiptInput!
-  items: ReservationReceiptItemCreateManyInput
+input PushNotificationReceiptUpdateManyMutationInput {
+  route: String
+  screen: String
+  uri: String
+  interest: String
+  body: String
+  title: String
+  recordID: String
+  recordSlug: String
+  sentAt: DateTime
 }
 
 input PushNotificationReceiptUpdateManyWithoutUsersInput {
@@ -19019,71 +18939,43 @@ input PushNotificationReceiptUpdateManyWithoutUsersInput {
   upsert: [PushNotificationReceiptUpsertWithWhereUniqueWithoutUsersInput!]
 }
 
-input ReservationReceiptCreateWithoutReservationInput {
-  id: ID
-  items: ReservationReceiptItemCreateManyInput
+input PushNotificationReceiptUpdateManyWithWhereNestedInput {
+  where: PushNotificationReceiptScalarWhereInput!
+  data: PushNotificationReceiptUpdateManyDataInput!
 }
 
-"""An edge in a connection."""
-type ReservationReceiptEdge {
-  """The item at the end of the edge."""
-  node: ReservationReceipt!
-
-  """A cursor for use in pagination."""
-  cursor: String!
+input PushNotificationReceiptUpdateWithoutUsersDataInput {
+  route: String
+  screen: String
+  uri: String
+  interest: String
+  body: String
+  title: String
+  recordID: String
+  recordSlug: String
+  sentAt: DateTime
 }
 
-type ReservationReceiptItem implements Node {
-  id: ID!
-  product: PhysicalProduct!
-  productStatus: PhysicalProductStatus!
-  notes: String
+input PushNotificationReceiptUpdateWithWhereUniqueNestedInput {
+  where: PushNotificationReceiptWhereUniqueInput!
+  data: PushNotificationReceiptUpdateDataInput!
 }
 
-"""A connection to a list of items."""
-type ReservationReceiptItemConnection {
-  """Information to aid in pagination."""
-  pageInfo: PageInfo!
-
-  """A list of edges."""
-  edges: [ReservationReceiptItemEdge]!
-  aggregate: AggregateReservationReceiptItem!
+input PushNotificationReceiptUpdateWithWhereUniqueWithoutUsersInput {
+  where: PushNotificationReceiptWhereUniqueInput!
+  data: PushNotificationReceiptUpdateWithoutUsersDataInput!
 }
 
-input ReservationReceiptItemCreateInput {
-  id: ID
-  productStatus: PhysicalProductStatus!
-  notes: String
-  product: PhysicalProductCreateOneInput!
+input PushNotificationReceiptUpsertWithWhereUniqueNestedInput {
+  where: PushNotificationReceiptWhereUniqueInput!
+  update: PushNotificationReceiptUpdateDataInput!
+  create: PushNotificationReceiptCreateInput!
 }
 
-input ReservationReceiptItemCreateManyInput {
-  create: [ReservationReceiptItemCreateInput!]
-  connect: [ReservationReceiptItemWhereUniqueInput!]
-}
-
-"""An edge in a connection."""
-type ReservationReceiptItemEdge {
-  """The item at the end of the edge."""
-  node: ReservationReceiptItem!
-
-  """A cursor for use in pagination."""
-  cursor: String!
-}
-
-enum ReservationReceiptItemOrderByInput {
-  id_ASC
-  id_DESC
-  productStatus_ASC
-  productStatus_DESC
-  notes_ASC
-  notes_DESC
-}
-
-type ReservationReceiptItemPreviousValues {
-  id: ID!
-  productStatus: PhysicalProductStatus!
-  notes: String
+input PushNotificationReceiptUpsertWithWhereUniqueWithoutUsersInput {
+  where: PushNotificationReceiptWhereUniqueInput!
+  update: PushNotificationReceiptUpdateWithoutUsersDataInput!
+  create: PushNotificationReceiptCreateWithoutUsersInput!
 }
 
 input PushNotificationReceiptWhereInput {
@@ -19526,15 +19418,14 @@ input PushNotificationReceiptWhereInput {
   users_none: UserWhereInput
 }
 
-input ReservationReceiptItemUpdateInput {
-  productStatus: PhysicalProductStatus
-  notes: String
-  product: PhysicalProductUpdateOneRequiredInput
+input PushNotificationReceiptWhereUniqueInput {
+  id: ID
 }
 
-input ReservationReceiptItemUpdateManyDataInput {
-  productStatus: PhysicalProductStatus
-  notes: String
+enum PushNotificationStatus {
+  Blocked
+  Granted
+  Denied
 }
 
 type Query {
@@ -19550,6 +19441,7 @@ type Query {
   warehouseLocations(where: WarehouseLocationWhereInput, orderBy: WarehouseLocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [WarehouseLocation]!
   paymentPlans(where: PaymentPlanWhereInput, orderBy: PaymentPlanOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PaymentPlan]!
   emailReceipts(where: EmailReceiptWhereInput, orderBy: EmailReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [EmailReceipt]!
+  fitPicReports(where: FitPicReportWhereInput, orderBy: FitPicReportOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [FitPicReport]!
   bagItems(where: BagItemWhereInput, orderBy: BagItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [BagItem]!
   customerMemberships(where: CustomerMembershipWhereInput, orderBy: CustomerMembershipOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CustomerMembership]!
   pauseRequests(where: PauseRequestWhereInput, orderBy: PauseRequestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PauseRequest]!
@@ -19566,9 +19458,8 @@ type Query {
   userPushNotificationInterests(where: UserPushNotificationInterestWhereInput, orderBy: UserPushNotificationInterestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [UserPushNotificationInterest]!
   billingInfoes(where: BillingInfoWhereInput, orderBy: BillingInfoOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [BillingInfo]!
   reservationReceiptItems(where: ReservationReceiptItemWhereInput, orderBy: ReservationReceiptItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ReservationReceiptItem]!
-  smsReceipts(where: SmsReceiptWhereInput, orderBy: SmsReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [SmsReceipt]!
   stylePreferenceses(where: StylePreferencesWhereInput, orderBy: StylePreferencesOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [StylePreferences]!
-  images(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Image]!
+  fitPics(where: FitPicWhereInput, orderBy: FitPicOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [FitPic]!
   packages(where: PackageWhereInput, orderBy: PackageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Package]!
   sizes(where: SizeWhereInput, orderBy: SizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Size]!
   productFunctions(where: ProductFunctionWhereInput, orderBy: ProductFunctionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductFunction]!
@@ -19580,6 +19471,7 @@ type Query {
   bottomSizes(where: BottomSizeWhereInput, orderBy: BottomSizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [BottomSize]!
   packageTransitEvents(where: PackageTransitEventWhereInput, orderBy: PackageTransitEventOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PackageTransitEvent]!
   labels(where: LabelWhereInput, orderBy: LabelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Label]!
+  smsReceipts(where: SmsReceiptWhereInput, orderBy: SmsReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [SmsReceipt]!
   locations(where: LocationWhereInput, orderBy: LocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Location]!
   physicalProducts(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct]!
   images(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Image]!
@@ -19599,6 +19491,7 @@ type Query {
   warehouseLocation(where: WarehouseLocationWhereUniqueInput!): WarehouseLocation
   paymentPlan(where: PaymentPlanWhereUniqueInput!): PaymentPlan
   emailReceipt(where: EmailReceiptWhereUniqueInput!): EmailReceipt
+  fitPicReport(where: FitPicReportWhereUniqueInput!): FitPicReport
   bagItem(where: BagItemWhereUniqueInput!): BagItem
   customerMembership(where: CustomerMembershipWhereUniqueInput!): CustomerMembership
   pauseRequest(where: PauseRequestWhereUniqueInput!): PauseRequest
@@ -19615,9 +19508,8 @@ type Query {
   userPushNotificationInterest(where: UserPushNotificationInterestWhereUniqueInput!): UserPushNotificationInterest
   billingInfo(where: BillingInfoWhereUniqueInput!): BillingInfo
   reservationReceiptItem(where: ReservationReceiptItemWhereUniqueInput!): ReservationReceiptItem
-  smsReceipt(where: SmsReceiptWhereUniqueInput!): SmsReceipt
   stylePreferences(where: StylePreferencesWhereUniqueInput!): StylePreferences
-  image(where: ImageWhereUniqueInput!): Image
+  fitPic(where: FitPicWhereUniqueInput!): FitPic
   package(where: PackageWhereUniqueInput!): Package
   size(where: SizeWhereUniqueInput!): Size
   productFunction(where: ProductFunctionWhereUniqueInput!): ProductFunction
@@ -19629,6 +19521,7 @@ type Query {
   bottomSize(where: BottomSizeWhereUniqueInput!): BottomSize
   packageTransitEvent(where: PackageTransitEventWhereUniqueInput!): PackageTransitEvent
   label(where: LabelWhereUniqueInput!): Label
+  smsReceipt(where: SmsReceiptWhereUniqueInput!): SmsReceipt
   location(where: LocationWhereUniqueInput!): Location
   physicalProduct(where: PhysicalProductWhereUniqueInput!): PhysicalProduct
   image(where: ImageWhereUniqueInput!): Image
@@ -19648,6 +19541,7 @@ type Query {
   warehouseLocationsConnection(where: WarehouseLocationWhereInput, orderBy: WarehouseLocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): WarehouseLocationConnection!
   paymentPlansConnection(where: PaymentPlanWhereInput, orderBy: PaymentPlanOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PaymentPlanConnection!
   emailReceiptsConnection(where: EmailReceiptWhereInput, orderBy: EmailReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): EmailReceiptConnection!
+  fitPicReportsConnection(where: FitPicReportWhereInput, orderBy: FitPicReportOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): FitPicReportConnection!
   bagItemsConnection(where: BagItemWhereInput, orderBy: BagItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BagItemConnection!
   customerMembershipsConnection(where: CustomerMembershipWhereInput, orderBy: CustomerMembershipOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CustomerMembershipConnection!
   pauseRequestsConnection(where: PauseRequestWhereInput, orderBy: PauseRequestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PauseRequestConnection!
@@ -19664,9 +19558,8 @@ type Query {
   userPushNotificationInterestsConnection(where: UserPushNotificationInterestWhereInput, orderBy: UserPushNotificationInterestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserPushNotificationInterestConnection!
   billingInfoesConnection(where: BillingInfoWhereInput, orderBy: BillingInfoOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BillingInfoConnection!
   reservationReceiptItemsConnection(where: ReservationReceiptItemWhereInput, orderBy: ReservationReceiptItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ReservationReceiptItemConnection!
-  smsReceiptsConnection(where: SmsReceiptWhereInput, orderBy: SmsReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): SmsReceiptConnection!
   stylePreferencesesConnection(where: StylePreferencesWhereInput, orderBy: StylePreferencesOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): StylePreferencesConnection!
-  imagesConnection(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ImageConnection!
+  fitPicsConnection(where: FitPicWhereInput, orderBy: FitPicOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): FitPicConnection!
   packagesConnection(where: PackageWhereInput, orderBy: PackageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PackageConnection!
   sizesConnection(where: SizeWhereInput, orderBy: SizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): SizeConnection!
   productFunctionsConnection(where: ProductFunctionWhereInput, orderBy: ProductFunctionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductFunctionConnection!
@@ -19678,6 +19571,7 @@ type Query {
   bottomSizesConnection(where: BottomSizeWhereInput, orderBy: BottomSizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BottomSizeConnection!
   packageTransitEventsConnection(where: PackageTransitEventWhereInput, orderBy: PackageTransitEventOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PackageTransitEventConnection!
   labelsConnection(where: LabelWhereInput, orderBy: LabelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): LabelConnection!
+  smsReceiptsConnection(where: SmsReceiptWhereInput, orderBy: SmsReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): SmsReceiptConnection!
   locationsConnection(where: LocationWhereInput, orderBy: LocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): LocationConnection!
   physicalProductsConnection(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PhysicalProductConnection!
   imagesConnection(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ImageConnection!
@@ -19693,25 +19587,15 @@ type Query {
   ): Node
 }
 
-input ReservationReceiptItemUpdateManyMutationInput {
-  productStatus: PhysicalProductStatus
-  notes: String
+enum QuestionType {
+  MultipleChoice
+  FreeResponse
 }
 
-input ReservationReceiptItemUpdateManyWithWhereNestedInput {
-  where: ReservationReceiptItemScalarWhereInput!
-  data: ReservationReceiptItemUpdateManyDataInput!
-}
-
-input ReservationReceiptItemUpdateWithWhereUniqueNestedInput {
-  where: ReservationReceiptItemWhereUniqueInput!
-  data: ReservationReceiptItemUpdateDataInput!
-}
-
-input ReservationReceiptItemUpsertWithWhereUniqueNestedInput {
-  where: ReservationReceiptItemWhereUniqueInput!
-  update: ReservationReceiptItemUpdateDataInput!
-  create: ReservationReceiptItemCreateInput!
+enum Rating {
+  Disliked
+  Ok
+  Loved
 }
 
 type RecentlyViewedProduct implements Node {
@@ -19749,26 +19633,29 @@ type RecentlyViewedProductEdge {
   cursor: String!
 }
 
-enum ReservationReceiptOrderByInput {
+enum RecentlyViewedProductOrderByInput {
   id_ASC
   id_DESC
+  viewCount_ASC
+  viewCount_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
   updatedAt_DESC
 }
 
-type ReservationReceiptPreviousValues {
+type RecentlyViewedProductPreviousValues {
   id: ID!
+  viewCount: Int!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
 
-type ReservationReceiptSubscriptionPayload {
+type RecentlyViewedProductSubscriptionPayload {
   mutation: MutationType!
-  node: ReservationReceipt
+  node: RecentlyViewedProduct
   updatedFields: [String!]
-  previousValues: ReservationReceiptPreviousValues
+  previousValues: RecentlyViewedProductPreviousValues
 }
 
 input RecentlyViewedProductSubscriptionWhereInput {
@@ -19807,8 +19694,9 @@ input RecentlyViewedProductUpdateInput {
   customer: CustomerUpdateOneRequiredInput
 }
 
-  """All values greater than the given value."""
-  reminderSentAt_gt: DateTime
+input RecentlyViewedProductUpdateManyMutationInput {
+  viewCount: Int
+}
 
 input RecentlyViewedProductWhereInput {
   """Logical AND on all given filters."""
@@ -19929,16 +19817,8 @@ input RecentlyViewedProductWhereInput {
   customer: CustomerWhereInput
 }
 
-enum ReservationStatus {
-  Queued
-  Packed
-  Shipped
-  Delivered
-  Completed
-  Cancelled
-  Blocked
-  Unknown
-  Received
+input RecentlyViewedProductWhereUniqueInput {
+  id: ID
 }
 
 type Reservation implements Node {
@@ -19989,27 +19869,19 @@ input ReservationCreateInput {
   lastLocation: LocationCreateOneInput
 }
 
-  """Logical NOT on all given filters combined by AND."""
-  NOT: [ReservationSubscriptionWhereInput!]
+input ReservationCreateManyWithoutCustomerInput {
+  create: [ReservationCreateWithoutCustomerInput!]
+  connect: [ReservationWhereUniqueInput!]
+}
 
-  """The subscription event gets dispatched when it's listed in mutation_in"""
-  mutation_in: [MutationType!]
+input ReservationCreateOneInput {
+  create: ReservationCreateInput
+  connect: ReservationWhereUniqueInput
+}
 
-  """
-  The subscription event gets only dispatched when one of the updated fields names is included in this list
-  """
-  updatedFields_contains: String
-
-  """
-  The subscription event gets only dispatched when all of the field names included in this list have been updated
-  """
-  updatedFields_contains_every: [String!]
-
-  """
-  The subscription event gets only dispatched when some of the field names included in this list have been updated
-  """
-  updatedFields_contains_some: [String!]
-  node: ReservationWhereInput
+input ReservationCreateOneWithoutReceiptInput {
+  create: ReservationCreateWithoutReceiptInput
+  connect: ReservationWhereUniqueInput
 }
 
 input ReservationCreateWithoutCustomerInput {
@@ -20110,28 +19982,35 @@ type ReservationFeedbackEdge {
   cursor: String!
 }
 
-input ReservationUpdateManyWithoutCustomerInput {
-  create: [ReservationCreateWithoutCustomerInput!]
-  connect: [ReservationWhereUniqueInput!]
-  set: [ReservationWhereUniqueInput!]
-  disconnect: [ReservationWhereUniqueInput!]
-  delete: [ReservationWhereUniqueInput!]
-  update: [ReservationUpdateWithWhereUniqueWithoutCustomerInput!]
-  updateMany: [ReservationUpdateManyWithWhereNestedInput!]
-  deleteMany: [ReservationScalarWhereInput!]
-  upsert: [ReservationUpsertWithWhereUniqueWithoutCustomerInput!]
+enum ReservationFeedbackOrderByInput {
+  id_ASC
+  id_DESC
+  comment_ASC
+  comment_DESC
+  rating_ASC
+  rating_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  respondedAt_ASC
+  respondedAt_DESC
 }
 
-input ReservationUpdateManyWithWhereNestedInput {
-  where: ReservationScalarWhereInput!
-  data: ReservationUpdateManyDataInput!
+type ReservationFeedbackPreviousValues {
+  id: ID!
+  comment: String
+  rating: Rating
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  respondedAt: DateTime
 }
 
-input ReservationUpdateOneRequiredInput {
-  create: ReservationCreateInput
-  connect: ReservationWhereUniqueInput
-  update: ReservationUpdateDataInput
-  upsert: ReservationUpsertNestedInput
+type ReservationFeedbackSubscriptionPayload {
+  mutation: MutationType!
+  node: ReservationFeedback
+  updatedFields: [String!]
+  previousValues: ReservationFeedbackPreviousValues
 }
 
 input ReservationFeedbackSubscriptionWhereInput {
@@ -20173,20 +20052,10 @@ input ReservationFeedbackUpdateInput {
   reservation: ReservationUpdateOneRequiredInput
 }
 
-input ReservationUpdateWithoutReceiptDataInput {
-  reservationNumber: Int
-  phase: ReservationPhase
-  shipped: Boolean
-  status: ReservationStatus
-  shippedAt: DateTime
-  receivedAt: DateTime
-  reminderSentAt: DateTime
-  user: UserUpdateOneRequiredInput
-  customer: CustomerUpdateOneRequiredWithoutReservationsInput
-  sentPackage: PackageUpdateOneInput
-  returnedPackage: PackageUpdateOneInput
-  products: PhysicalProductUpdateManyInput
-  lastLocation: LocationUpdateOneInput
+input ReservationFeedbackUpdateManyMutationInput {
+  comment: String
+  rating: Rating
+  respondedAt: DateTime
 }
 
 input ReservationFeedbackUpdateOneRequiredWithoutFeedbacksInput {
@@ -20204,9 +20073,9 @@ input ReservationFeedbackUpdateWithoutFeedbacksDataInput {
   reservation: ReservationUpdateOneRequiredInput
 }
 
-input ReservationUpsertWithoutReceiptInput {
-  update: ReservationUpdateWithoutReceiptDataInput!
-  create: ReservationCreateWithoutReceiptInput!
+input ReservationFeedbackUpsertWithoutFeedbacksInput {
+  update: ReservationFeedbackUpdateWithoutFeedbacksDataInput!
+  create: ReservationFeedbackCreateWithoutFeedbacksInput!
 }
 
 input ReservationFeedbackWhereInput {
@@ -20381,18 +20250,50 @@ input ReservationFeedbackWhereInput {
   reservation: ReservationWhereInput
 }
 
-  """All values greater than the given value."""
-  createdAt_gt: DateTime
+input ReservationFeedbackWhereUniqueInput {
+  id: ID
+}
 
-  """All values greater than or equal the given value."""
-  createdAt_gte: DateTime
-  updatedAt: DateTime
+enum ReservationOrderByInput {
+  id_ASC
+  id_DESC
+  reservationNumber_ASC
+  reservationNumber_DESC
+  phase_ASC
+  phase_DESC
+  shipped_ASC
+  shipped_DESC
+  status_ASC
+  status_DESC
+  shippedAt_ASC
+  shippedAt_DESC
+  receivedAt_ASC
+  receivedAt_DESC
+  reminderSentAt_ASC
+  reminderSentAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
 
-  """All values that are not equal to given value."""
-  updatedAt_not: DateTime
+enum ReservationPhase {
+  BusinessToCustomer
+  CustomerToBusiness
+}
 
-  """All values that are contained in given list."""
-  updatedAt_in: [DateTime!]
+type ReservationPreviousValues {
+  id: ID!
+  reservationNumber: Int!
+  phase: ReservationPhase!
+  shipped: Boolean!
+  status: ReservationStatus!
+  shippedAt: DateTime
+  receivedAt: DateTime
+  reminderSentAt: DateTime
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
 
 type ReservationReceipt implements Node {
   id: ID!
@@ -20412,23 +20313,20 @@ type ReservationReceiptConnection {
   aggregate: AggregateReservationReceipt!
 }
 
-  """All values less than or equal the given value."""
-  updatedAt_lte: DateTime
+input ReservationReceiptCreateInput {
+  id: ID
+  reservation: ReservationCreateOneWithoutReceiptInput!
+  items: ReservationReceiptItemCreateManyInput
+}
 
-  """All values greater than the given value."""
-  updatedAt_gt: DateTime
+input ReservationReceiptCreateOneWithoutReservationInput {
+  create: ReservationReceiptCreateWithoutReservationInput
+  connect: ReservationReceiptWhereUniqueInput
+}
 
-  """All values greater than or equal the given value."""
-  updatedAt_gte: DateTime
-  user: UserWhereInput
-  customer: CustomerWhereInput
-  sentPackage: PackageWhereInput
-  returnedPackage: PackageWhereInput
-  products_every: PhysicalProductWhereInput
-  products_some: PhysicalProductWhereInput
-  products_none: PhysicalProductWhereInput
-  receipt: ReservationReceiptWhereInput
-  lastLocation: LocationWhereInput
+input ReservationReceiptCreateWithoutReservationInput {
+  id: ID
+  items: ReservationReceiptItemCreateManyInput
 }
 
 """An edge in a connection."""
@@ -20442,11 +20340,9 @@ type ReservationReceiptEdge {
 
 type ReservationReceiptItem implements Node {
   id: ID!
-  slug: String!
-  productType: ProductType
-  top: TopSize
-  bottom: BottomSize
-  display: String!
+  product: PhysicalProduct!
+  productStatus: PhysicalProductStatus!
+  notes: String
 }
 
 """A connection to a list of items."""
@@ -20459,16 +20355,16 @@ type ReservationReceiptItemConnection {
   aggregate: AggregateReservationReceiptItem!
 }
 
-input SizeCreateInput {
+input ReservationReceiptItemCreateInput {
   id: ID
   productStatus: PhysicalProductStatus!
   notes: String
   product: PhysicalProductCreateOneInput!
 }
 
-input SizeCreateManyInput {
-  create: [SizeCreateInput!]
-  connect: [SizeWhereUniqueInput!]
+input ReservationReceiptItemCreateManyInput {
+  create: [ReservationReceiptItemCreateInput!]
+  connect: [ReservationReceiptItemWhereUniqueInput!]
 }
 
 """An edge in a connection."""
@@ -20480,22 +20376,19 @@ type ReservationReceiptItemEdge {
   cursor: String!
 }
 
-enum SizeOrderByInput {
+enum ReservationReceiptItemOrderByInput {
   id_ASC
   id_DESC
-  slug_ASC
-  slug_DESC
-  productType_ASC
-  productType_DESC
-  display_ASC
-  display_DESC
+  productStatus_ASC
+  productStatus_DESC
+  notes_ASC
+  notes_DESC
 }
 
-type SizePreviousValues {
+type ReservationReceiptItemPreviousValues {
   id: ID!
-  slug: String!
-  productType: ProductType
-  display: String!
+  productStatus: PhysicalProductStatus!
+  notes: String
 }
 
 input ReservationReceiptItemScalarWhereInput {
@@ -20599,11 +20492,11 @@ input ReservationReceiptItemScalarWhereInput {
   notes_not_ends_with: String
 }
 
-type SizeSubscriptionPayload {
+type ReservationReceiptItemSubscriptionPayload {
   mutation: MutationType!
-  node: Size
+  node: ReservationReceiptItem
   updatedFields: [String!]
-  previousValues: SizePreviousValues
+  previousValues: ReservationReceiptItemPreviousValues
 }
 
 input ReservationReceiptItemSubscriptionWhereInput {
@@ -20648,10 +20541,9 @@ input ReservationReceiptItemUpdateInput {
   product: PhysicalProductUpdateOneRequiredInput
 }
 
-input SizeUpdateManyDataInput {
-  slug: String
-  productType: ProductType
-  display: String
+input ReservationReceiptItemUpdateManyDataInput {
+  productStatus: PhysicalProductStatus
+  notes: String
 }
 
 input ReservationReceiptItemUpdateManyInput {
@@ -20666,29 +20558,25 @@ input ReservationReceiptItemUpdateManyInput {
   upsert: [ReservationReceiptItemUpsertWithWhereUniqueNestedInput!]
 }
 
-input SizeUpdateManyMutationInput {
-  slug: String
-  productType: ProductType
-  display: String
+input ReservationReceiptItemUpdateManyMutationInput {
+  productStatus: PhysicalProductStatus
+  notes: String
 }
 
-input SizeUpdateManyWithWhereNestedInput {
-  where: SizeScalarWhereInput!
-  data: SizeUpdateManyDataInput!
+input ReservationReceiptItemUpdateManyWithWhereNestedInput {
+  where: ReservationReceiptItemScalarWhereInput!
+  data: ReservationReceiptItemUpdateManyDataInput!
 }
 
-input SizeUpdateOneInput {
-  create: SizeCreateInput
-  connect: SizeWhereUniqueInput
-  disconnect: Boolean
-  delete: Boolean
-  update: SizeUpdateDataInput
-  upsert: SizeUpsertNestedInput
+input ReservationReceiptItemUpdateWithWhereUniqueNestedInput {
+  where: ReservationReceiptItemWhereUniqueInput!
+  data: ReservationReceiptItemUpdateDataInput!
 }
 
-input SizeUpdateWithWhereUniqueNestedInput {
-  where: SizeWhereUniqueInput!
-  data: SizeUpdateDataInput!
+input ReservationReceiptItemUpsertWithWhereUniqueNestedInput {
+  where: ReservationReceiptItemWhereUniqueInput!
+  update: ReservationReceiptItemUpdateDataInput!
+  create: ReservationReceiptItemCreateInput!
 }
 
 input ReservationReceiptItemWhereInput {
@@ -20793,117 +20681,31 @@ input ReservationReceiptItemWhereInput {
   product: PhysicalProductWhereInput
 }
 
-  """All values that are not equal to given value."""
-  slug_not: String
-
-  """All values that are contained in given list."""
-  slug_in: [String!]
-
-  """All values that are not contained in given list."""
-  slug_not_in: [String!]
-
-  """All values less than the given value."""
-  slug_lt: String
-
-  """All values less than or equal the given value."""
-  slug_lte: String
-
-  """All values greater than the given value."""
-  slug_gt: String
-
-  """All values greater than or equal the given value."""
-  slug_gte: String
-
-  """All values containing the given string."""
-  slug_contains: String
-
-  """All values not containing the given string."""
-  slug_not_contains: String
-
-  """All values starting with the given string."""
-  slug_starts_with: String
-
-  """All values not starting with the given string."""
-  slug_not_starts_with: String
-
-  """All values ending with the given string."""
-  slug_ends_with: String
-
-  """All values not ending with the given string."""
-  slug_not_ends_with: String
-  productType: ProductType
-
-  """All values that are not equal to given value."""
-  productType_not: ProductType
-
-  """All values that are contained in given list."""
-  productType_in: [ProductType!]
-
-  """All values that are not contained in given list."""
-  productType_not_in: [ProductType!]
-  display: String
-
-  """All values that are not equal to given value."""
-  display_not: String
-
-  """All values that are contained in given list."""
-  display_in: [String!]
-
-  """All values that are not contained in given list."""
-  display_not_in: [String!]
-
-  """All values less than the given value."""
-  display_lt: String
-
-  """All values less than or equal the given value."""
-  display_lte: String
-
-  """All values greater than the given value."""
-  display_gt: String
-
-  """All values greater than or equal the given value."""
-  display_gte: String
-
-  """All values containing the given string."""
-  display_contains: String
-
-  """All values not containing the given string."""
-  display_not_contains: String
-
-  """All values starting with the given string."""
-  display_starts_with: String
-
-  """All values not starting with the given string."""
-  display_not_starts_with: String
-
-  """All values ending with the given string."""
-  display_ends_with: String
-
-  """All values not ending with the given string."""
-  display_not_ends_with: String
-  top: TopSizeWhereInput
-  bottom: BottomSizeWhereInput
-}
-
-input SizeWhereUniqueInput {
+input ReservationReceiptItemWhereUniqueInput {
   id: ID
-  slug: String
 }
 
-type SmsReceipt implements Node {
+enum ReservationReceiptOrderByInput {
+  id_ASC
+  id_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type ReservationReceiptPreviousValues {
   id: ID!
-  externalId: String
-  body: String!
-  mediaUrls: [String!]!
-  status: SmsStatus!
-  sentAt: DateTime!
+  createdAt: DateTime!
   updatedAt: DateTime!
 }
 
-"""A connection to a list of items."""
-type SmsReceiptConnection {
-  """Information to aid in pagination."""
-  pageInfo: PageInfo!
+type ReservationReceiptSubscriptionPayload {
+  mutation: MutationType!
+  node: ReservationReceipt
+  updatedFields: [String!]
+  previousValues: ReservationReceiptPreviousValues
+}
 
 input ReservationReceiptSubscriptionWhereInput {
   """Logical AND on all given filters."""
@@ -20935,12 +20737,9 @@ input ReservationReceiptSubscriptionWhereInput {
   node: ReservationReceiptWhereInput
 }
 
-input SmsReceiptCreateInput {
-  id: ID
-  externalId: String
-  body: String!
-  status: SmsStatus!
-  mediaUrls: SmsReceiptCreatemediaUrlsInput
+input ReservationReceiptUpdateInput {
+  reservation: ReservationUpdateOneRequiredWithoutReceiptInput
+  items: ReservationReceiptItemUpdateManyInput
 }
 
 input ReservationReceiptUpdateOneWithoutReservationInput {
@@ -20952,17 +20751,13 @@ input ReservationReceiptUpdateOneWithoutReservationInput {
   upsert: ReservationReceiptUpsertWithoutReservationInput
 }
 
-input SmsReceiptCreatemediaUrlsInput {
-  set: [String!]
+input ReservationReceiptUpdateWithoutReservationDataInput {
+  items: ReservationReceiptItemUpdateManyInput
 }
 
-"""An edge in a connection."""
-type SmsReceiptEdge {
-  """The item at the end of the edge."""
-  node: SmsReceipt!
-
-  """A cursor for use in pagination."""
-  cursor: String!
+input ReservationReceiptUpsertWithoutReservationInput {
+  update: ReservationReceiptUpdateWithoutReservationDataInput!
+  create: ReservationReceiptCreateWithoutReservationInput!
 }
 
 input ReservationReceiptWhereInput {
@@ -21064,14 +20859,8 @@ input ReservationReceiptWhereInput {
   items_none: ReservationReceiptItemWhereInput
 }
 
-type SmsReceiptPreviousValues {
-  id: ID!
-  externalId: String
-  body: String!
-  mediaUrls: [String!]!
-  status: SmsStatus!
-  sentAt: DateTime!
-  updatedAt: DateTime!
+input ReservationReceiptWhereUniqueInput {
+  id: ID
 }
 
 input ReservationScalarWhereInput {
@@ -21281,15 +21070,23 @@ input ReservationScalarWhereInput {
   updatedAt_gte: DateTime
 }
 
-  """All values greater than or equal the given value."""
-  updatedAt_gte: DateTime
+enum ReservationStatus {
+  Queued
+  Packed
+  Shipped
+  Delivered
+  Completed
+  Cancelled
+  Blocked
+  Unknown
+  Received
 }
 
-type SmsReceiptSubscriptionPayload {
+type ReservationSubscriptionPayload {
   mutation: MutationType!
-  node: SmsReceipt
+  node: Reservation
   updatedFields: [String!]
-  previousValues: SmsReceiptPreviousValues
+  previousValues: ReservationPreviousValues
 }
 
 input ReservationSubscriptionWhereInput {
@@ -21356,18 +21153,24 @@ input ReservationUpdateInput {
   lastLocation: LocationUpdateOneInput
 }
 
-  """
-  The subscription event gets only dispatched when some of the field names included in this list have been updated
-  """
-  updatedFields_contains_some: [String!]
-  node: SmsReceiptWhereInput
+input ReservationUpdateManyDataInput {
+  reservationNumber: Int
+  phase: ReservationPhase
+  shipped: Boolean
+  status: ReservationStatus
+  shippedAt: DateTime
+  receivedAt: DateTime
+  reminderSentAt: DateTime
 }
 
-input SmsReceiptUpdateDataInput {
-  externalId: String
-  body: String
-  status: SmsStatus
-  mediaUrls: SmsReceiptUpdatemediaUrlsInput
+input ReservationUpdateManyMutationInput {
+  reservationNumber: Int
+  phase: ReservationPhase
+  shipped: Boolean
+  status: ReservationStatus
+  shippedAt: DateTime
+  receivedAt: DateTime
+  reminderSentAt: DateTime
 }
 
 input ReservationUpdateManyWithoutCustomerInput {
@@ -21382,11 +21185,9 @@ input ReservationUpdateManyWithoutCustomerInput {
   upsert: [ReservationUpsertWithWhereUniqueWithoutCustomerInput!]
 }
 
-input SmsReceiptUpdateManyDataInput {
-  externalId: String
-  body: String
-  status: SmsStatus
-  mediaUrls: SmsReceiptUpdatemediaUrlsInput
+input ReservationUpdateManyWithWhereNestedInput {
+  where: ReservationScalarWhereInput!
+  data: ReservationUpdateManyDataInput!
 }
 
 input ReservationUpdateOneRequiredInput {
@@ -21435,23 +21236,26 @@ input ReservationUpdateWithoutReceiptDataInput {
   lastLocation: LocationUpdateOneInput
 }
 
-input SmsReceiptUpdateWithWhereUniqueNestedInput {
-  where: SmsReceiptWhereUniqueInput!
-  data: SmsReceiptUpdateDataInput!
+input ReservationUpdateWithWhereUniqueWithoutCustomerInput {
+  where: ReservationWhereUniqueInput!
+  data: ReservationUpdateWithoutCustomerDataInput!
 }
 
-input SmsReceiptUpsertWithWhereUniqueNestedInput {
-  where: SmsReceiptWhereUniqueInput!
-  update: SmsReceiptUpdateDataInput!
-  create: SmsReceiptCreateInput!
+input ReservationUpsertNestedInput {
+  update: ReservationUpdateDataInput!
+  create: ReservationCreateInput!
 }
 
-input SmsReceiptWhereInput {
-  """Logical AND on all given filters."""
-  AND: [SmsReceiptWhereInput!]
+input ReservationUpsertWithoutReceiptInput {
+  update: ReservationUpdateWithoutReceiptDataInput!
+  create: ReservationCreateWithoutReceiptInput!
+}
 
-  """Logical OR on all given filters."""
-  OR: [SmsReceiptWhereInput!]
+input ReservationUpsertWithWhereUniqueWithoutCustomerInput {
+  where: ReservationWhereUniqueInput!
+  update: ReservationUpdateWithoutCustomerDataInput!
+  create: ReservationCreateWithoutCustomerInput!
+}
 
 input ReservationWhereInput {
   """Logical AND on all given filters."""
@@ -21669,16 +21473,18 @@ input ReservationWhereInput {
   lastLocation: LocationWhereInput
 }
 
-input SmsReceiptWhereUniqueInput {
+input ReservationWhereUniqueInput {
   id: ID
+  reservationNumber: Int
 }
 
 type Size implements Node {
   id: ID!
-  styles: [String!]!
-  patterns: [String!]!
-  colors: [String!]!
-  brands: [String!]!
+  slug: String!
+  productType: ProductType
+  top: TopSize
+  bottom: BottomSize
+  display: String!
 }
 
 """A connection to a list of items."""
@@ -21691,15 +21497,7 @@ type SizeConnection {
   aggregate: AggregateSize!
 }
 
-input StylePreferencesCreatebrandsInput {
-  set: [String!]
-}
-
-input StylePreferencesCreatecolorsInput {
-  set: [String!]
-}
-
-input StylePreferencesCreateInput {
+input SizeCreateInput {
   id: ID
   slug: String!
   productType: ProductType
@@ -21708,13 +21506,14 @@ input StylePreferencesCreateInput {
   bottom: BottomSizeCreateOneInput
 }
 
-input StylePreferencesCreateOneInput {
-  create: StylePreferencesCreateInput
-  connect: StylePreferencesWhereUniqueInput
+input SizeCreateManyInput {
+  create: [SizeCreateInput!]
+  connect: [SizeWhereUniqueInput!]
 }
 
-input StylePreferencesCreatepatternsInput {
-  set: [String!]
+input SizeCreateOneInput {
+  create: SizeCreateInput
+  connect: SizeWhereUniqueInput
 }
 
 """An edge in a connection."""
@@ -21726,12 +21525,18 @@ type SizeEdge {
   cursor: String!
 }
 
-enum StylePreferencesOrderByInput {
+enum SizeOrderByInput {
   id_ASC
   id_DESC
+  slug_ASC
+  slug_DESC
+  productType_ASC
+  productType_DESC
+  display_ASC
+  display_DESC
 }
 
-type StylePreferencesPreviousValues {
+type SizePreviousValues {
   id: ID!
   slug: String!
   productType: ProductType
@@ -21879,11 +21684,11 @@ input SizeScalarWhereInput {
   display_not_ends_with: String
 }
 
-type StylePreferencesSubscriptionPayload {
+type SizeSubscriptionPayload {
   mutation: MutationType!
-  node: StylePreferences
+  node: Size
   updatedFields: [String!]
-  previousValues: StylePreferencesPreviousValues
+  previousValues: SizePreviousValues
 }
 
 input SizeSubscriptionWhereInput {
@@ -21932,8 +21737,10 @@ input SizeUpdateInput {
   bottom: BottomSizeUpdateOneInput
 }
 
-input StylePreferencesUpdatecolorsInput {
-  set: [String!]
+input SizeUpdateManyDataInput {
+  slug: String
+  productType: ProductType
+  display: String
 }
 
 input SizeUpdateManyInput {
@@ -21948,18 +21755,15 @@ input SizeUpdateManyInput {
   upsert: [SizeUpsertWithWhereUniqueNestedInput!]
 }
 
-input StylePreferencesUpdateInput {
-  styles: StylePreferencesUpdatestylesInput
-  patterns: StylePreferencesUpdatepatternsInput
-  colors: StylePreferencesUpdatecolorsInput
-  brands: StylePreferencesUpdatebrandsInput
+input SizeUpdateManyMutationInput {
+  slug: String
+  productType: ProductType
+  display: String
 }
 
-input StylePreferencesUpdateManyMutationInput {
-  styles: StylePreferencesUpdatestylesInput
-  patterns: StylePreferencesUpdatepatternsInput
-  colors: StylePreferencesUpdatecolorsInput
-  brands: StylePreferencesUpdatebrandsInput
+input SizeUpdateManyWithWhereNestedInput {
+  where: SizeScalarWhereInput!
+  data: SizeUpdateManyDataInput!
 }
 
 input SizeUpdateOneInput {
@@ -21971,17 +21775,20 @@ input SizeUpdateOneInput {
   upsert: SizeUpsertNestedInput
 }
 
-input StylePreferencesUpdatepatternsInput {
-  set: [String!]
+input SizeUpdateWithWhereUniqueNestedInput {
+  where: SizeWhereUniqueInput!
+  data: SizeUpdateDataInput!
 }
 
-input StylePreferencesUpdatestylesInput {
-  set: [String!]
+input SizeUpsertNestedInput {
+  update: SizeUpdateDataInput!
+  create: SizeCreateInput!
 }
 
-input StylePreferencesUpsertNestedInput {
-  update: StylePreferencesUpdateDataInput!
-  create: StylePreferencesCreateInput!
+input SizeUpsertWithWhereUniqueNestedInput {
+  where: SizeWhereUniqueInput!
+  update: SizeUpdateDataInput!
+  create: SizeCreateInput!
 }
 
 input SizeWhereInput {
@@ -22127,18 +21934,18 @@ input SizeWhereInput {
   bottom: BottomSizeWhereInput
 }
 
-input StylePreferencesWhereUniqueInput {
+input SizeWhereUniqueInput {
   id: ID
+  slug: String
 }
 
 type SmsReceipt implements Node {
   id: ID!
-  user: User!
-  image: Image!
-  location: Location
-  products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
-  approved: Boolean!
-  createdAt: DateTime!
+  externalId: String
+  body: String!
+  mediaUrls: [String!]!
+  status: SmsStatus!
+  sentAt: DateTime!
   updatedAt: DateTime!
 }
 
@@ -22152,7 +21959,7 @@ type SmsReceiptConnection {
   aggregate: AggregateSmsReceipt!
 }
 
-input StyleSubmissionCreateInput {
+input SmsReceiptCreateInput {
   id: ID
   externalId: String
   body: String!
@@ -22160,14 +21967,13 @@ input StyleSubmissionCreateInput {
   mediaUrls: SmsReceiptCreatemediaUrlsInput
 }
 
-input StyleSubmissionCreateManyWithoutUserInput {
-  create: [StyleSubmissionCreateWithoutUserInput!]
-  connect: [StyleSubmissionWhereUniqueInput!]
+input SmsReceiptCreateManyInput {
+  create: [SmsReceiptCreateInput!]
+  connect: [SmsReceiptWhereUniqueInput!]
 }
 
-input StyleSubmissionCreateOneInput {
-  create: StyleSubmissionCreateInput
-  connect: StyleSubmissionWhereUniqueInput
+input SmsReceiptCreatemediaUrlsInput {
+  set: [String!]
 }
 
 """An edge in a connection."""
@@ -22179,13 +21985,29 @@ type SmsReceiptEdge {
   cursor: String!
 }
 
-"""An edge in a connection."""
-type StyleSubmissionEdge {
-  """The item at the end of the edge."""
-  node: StyleSubmission!
+enum SmsReceiptOrderByInput {
+  id_ASC
+  id_DESC
+  externalId_ASC
+  externalId_DESC
+  body_ASC
+  body_DESC
+  status_ASC
+  status_DESC
+  sentAt_ASC
+  sentAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
 
-  """A cursor for use in pagination."""
-  cursor: String!
+type SmsReceiptPreviousValues {
+  id: ID!
+  externalId: String
+  body: String!
+  mediaUrls: [String!]!
+  status: SmsStatus!
+  sentAt: DateTime!
+  updatedAt: DateTime!
 }
 
 input SmsReceiptScalarWhereInput {
@@ -22373,11 +22195,11 @@ input SmsReceiptScalarWhereInput {
   updatedAt_gte: DateTime
 }
 
-type StyleSubmissionPreviousValues {
-  id: ID!
-  approved: Boolean!
-  createdAt: DateTime!
-  updatedAt: DateTime!
+type SmsReceiptSubscriptionPayload {
+  mutation: MutationType!
+  node: SmsReceipt
+  updatedFields: [String!]
+  previousValues: SmsReceiptPreviousValues
 }
 
 input SmsReceiptSubscriptionWhereInput {
@@ -22450,52 +22272,24 @@ input SmsReceiptUpdateManyMutationInput {
   mediaUrls: SmsReceiptUpdatemediaUrlsInput
 }
 
-enum StyleSubmissionReportStatus {
-  Pending
-  Reviewed
+input SmsReceiptUpdateManyWithWhereNestedInput {
+  where: SmsReceiptScalarWhereInput!
+  data: SmsReceiptUpdateManyDataInput!
 }
 
-type StyleSubmissionReportSubscriptionPayload {
-  mutation: MutationType!
-  node: StyleSubmissionReport
-  updatedFields: [String!]
-  previousValues: StyleSubmissionReportPreviousValues
+input SmsReceiptUpdatemediaUrlsInput {
+  set: [String!]
 }
 
-input StyleSubmissionReportSubscriptionWhereInput {
-  """Logical AND on all given filters."""
-  AND: [StyleSubmissionReportSubscriptionWhereInput!]
-
-  """Logical OR on all given filters."""
-  OR: [StyleSubmissionReportSubscriptionWhereInput!]
-
-  """Logical NOT on all given filters combined by AND."""
-  NOT: [StyleSubmissionReportSubscriptionWhereInput!]
-
-  """The subscription event gets dispatched when it's listed in mutation_in"""
-  mutation_in: [MutationType!]
-
-  """
-  The subscription event gets only dispatched when one of the updated fields names is included in this list
-  """
-  updatedFields_contains: String
-
-  """
-  The subscription event gets only dispatched when all of the field names included in this list have been updated
-  """
-  updatedFields_contains_every: [String!]
-
-  """
-  The subscription event gets only dispatched when some of the field names included in this list have been updated
-  """
-  updatedFields_contains_some: [String!]
-  node: StyleSubmissionReportWhereInput
+input SmsReceiptUpdateWithWhereUniqueNestedInput {
+  where: SmsReceiptWhereUniqueInput!
+  data: SmsReceiptUpdateDataInput!
 }
 
-input StyleSubmissionReportUpdateInput {
-  status: StyleSubmissionReportStatus
-  reporter: UserUpdateOneRequiredInput
-  reported: StyleSubmissionUpdateOneRequiredInput
+input SmsReceiptUpsertWithWhereUniqueNestedInput {
+  where: SmsReceiptWhereUniqueInput!
+  update: SmsReceiptUpdateDataInput!
+  create: SmsReceiptCreateInput!
 }
 
 input SmsReceiptWhereInput {
@@ -22683,13 +22477,24 @@ input SmsReceiptWhereInput {
   updatedAt_gte: DateTime
 }
 
-input StyleSubmissionReportWhereUniqueInput {
+input SmsReceiptWhereUniqueInput {
   id: ID
 }
 
-input StyleSubmissionScalarWhereInput {
-  """Logical AND on all given filters."""
-  AND: [StyleSubmissionScalarWhereInput!]
+enum SmsStatus {
+  Queued
+  Sending
+  Sent
+  Failed
+  Delivered
+  Undelivered
+  Receiving
+  Received
+  Accepted
+  Scheduled
+  Read
+  PartiallyDelivered
+}
 
 type StylePreferences implements Node {
   id: ID!
@@ -22709,83 +22514,34 @@ type StylePreferencesConnection {
   aggregate: AggregateStylePreferences!
 }
 
-  """All values that are not equal to given value."""
-  id_not: ID
+input StylePreferencesCreatebrandsInput {
+  set: [String!]
+}
 
-  """All values that are contained in given list."""
-  id_in: [ID!]
+input StylePreferencesCreatecolorsInput {
+  set: [String!]
+}
 
-  """All values that are not contained in given list."""
-  id_not_in: [ID!]
+input StylePreferencesCreateInput {
+  id: ID
+  styles: StylePreferencesCreatestylesInput
+  patterns: StylePreferencesCreatepatternsInput
+  colors: StylePreferencesCreatecolorsInput
+  brands: StylePreferencesCreatebrandsInput
+}
 
-  """All values less than the given value."""
-  id_lt: ID
+input StylePreferencesCreateOneInput {
+  create: StylePreferencesCreateInput
+  connect: StylePreferencesWhereUniqueInput
+}
 
-  """All values less than or equal the given value."""
-  id_lte: ID
+input StylePreferencesCreatepatternsInput {
+  set: [String!]
+}
 
-  """All values greater than the given value."""
-  id_gt: ID
-
-  """All values greater than or equal the given value."""
-  id_gte: ID
-
-  """All values containing the given string."""
-  id_contains: ID
-
-  """All values not containing the given string."""
-  id_not_contains: ID
-
-  """All values starting with the given string."""
-  id_starts_with: ID
-
-  """All values not starting with the given string."""
-  id_not_starts_with: ID
-
-  """All values ending with the given string."""
-  id_ends_with: ID
-
-  """All values not ending with the given string."""
-  id_not_ends_with: ID
-  approved: Boolean
-
-  """All values that are not equal to given value."""
-  approved_not: Boolean
-  createdAt: DateTime
-
-  """All values that are not equal to given value."""
-  createdAt_not: DateTime
-
-  """All values that are contained in given list."""
-  createdAt_in: [DateTime!]
-
-  """All values that are not contained in given list."""
-  createdAt_not_in: [DateTime!]
-
-  """All values less than the given value."""
-  createdAt_lt: DateTime
-
-  """All values less than or equal the given value."""
-  createdAt_lte: DateTime
-
-  """All values greater than the given value."""
-  createdAt_gt: DateTime
-
-  """All values greater than or equal the given value."""
-  createdAt_gte: DateTime
-  updatedAt: DateTime
-
-  """All values that are not equal to given value."""
-  updatedAt_not: DateTime
-
-  """All values that are contained in given list."""
-  updatedAt_in: [DateTime!]
-
-  """All values that are not contained in given list."""
-  updatedAt_not_in: [DateTime!]
-
-  """All values less than the given value."""
-  updatedAt_lt: DateTime
+input StylePreferencesCreatestylesInput {
+  set: [String!]
+}
 
 """An edge in a connection."""
 type StylePreferencesEdge {
@@ -22796,18 +22552,24 @@ type StylePreferencesEdge {
   cursor: String!
 }
 
-  """All values greater than the given value."""
-  updatedAt_gt: DateTime
-
-  """All values greater than or equal the given value."""
-  updatedAt_gte: DateTime
+enum StylePreferencesOrderByInput {
+  id_ASC
+  id_DESC
 }
 
-type StyleSubmissionSubscriptionPayload {
+type StylePreferencesPreviousValues {
+  id: ID!
+  styles: [String!]!
+  patterns: [String!]!
+  colors: [String!]!
+  brands: [String!]!
+}
+
+type StylePreferencesSubscriptionPayload {
   mutation: MutationType!
-  node: StyleSubmission
+  node: StylePreferences
   updatedFields: [String!]
-  previousValues: StyleSubmissionPreviousValues
+  previousValues: StylePreferencesPreviousValues
 }
 
 input StylePreferencesSubscriptionWhereInput {
@@ -22840,40 +22602,33 @@ input StylePreferencesSubscriptionWhereInput {
   node: StylePreferencesWhereInput
 }
 
-input StyleSubmissionUpdateDataInput {
-  approved: Boolean
-  user: UserUpdateOneRequiredWithoutStyleSubmissionsInput
-  image: ImageUpdateOneRequiredInput
-  location: LocationUpdateOneInput
-  products: ProductUpdateManyInput
+input StylePreferencesUpdatebrandsInput {
+  set: [String!]
 }
 
-input StyleSubmissionUpdateInput {
-  approved: Boolean
-  user: UserUpdateOneRequiredWithoutStyleSubmissionsInput
-  image: ImageUpdateOneRequiredInput
-  location: LocationUpdateOneInput
-  products: ProductUpdateManyInput
+input StylePreferencesUpdatecolorsInput {
+  set: [String!]
 }
 
-input StyleSubmissionUpdateManyDataInput {
-  approved: Boolean
+input StylePreferencesUpdateDataInput {
+  styles: StylePreferencesUpdatestylesInput
+  patterns: StylePreferencesUpdatepatternsInput
+  colors: StylePreferencesUpdatecolorsInput
+  brands: StylePreferencesUpdatebrandsInput
 }
 
-input StyleSubmissionUpdateManyMutationInput {
-  approved: Boolean
+input StylePreferencesUpdateInput {
+  styles: StylePreferencesUpdatestylesInput
+  patterns: StylePreferencesUpdatepatternsInput
+  colors: StylePreferencesUpdatecolorsInput
+  brands: StylePreferencesUpdatebrandsInput
 }
 
-input StyleSubmissionUpdateManyWithoutUserInput {
-  create: [StyleSubmissionCreateWithoutUserInput!]
-  connect: [StyleSubmissionWhereUniqueInput!]
-  set: [StyleSubmissionWhereUniqueInput!]
-  disconnect: [StyleSubmissionWhereUniqueInput!]
-  delete: [StyleSubmissionWhereUniqueInput!]
-  update: [StyleSubmissionUpdateWithWhereUniqueWithoutUserInput!]
-  updateMany: [StyleSubmissionUpdateManyWithWhereNestedInput!]
-  deleteMany: [StyleSubmissionScalarWhereInput!]
-  upsert: [StyleSubmissionUpsertWithWhereUniqueWithoutUserInput!]
+input StylePreferencesUpdateManyMutationInput {
+  styles: StylePreferencesUpdatestylesInput
+  patterns: StylePreferencesUpdatepatternsInput
+  colors: StylePreferencesUpdatecolorsInput
+  brands: StylePreferencesUpdatebrandsInput
 }
 
 input StylePreferencesUpdateOneInput {
@@ -22885,23 +22640,17 @@ input StylePreferencesUpdateOneInput {
   upsert: StylePreferencesUpsertNestedInput
 }
 
-input StyleSubmissionUpdateOneRequiredInput {
-  create: StyleSubmissionCreateInput
-  connect: StyleSubmissionWhereUniqueInput
-  update: StyleSubmissionUpdateDataInput
-  upsert: StyleSubmissionUpsertNestedInput
+input StylePreferencesUpdatepatternsInput {
+  set: [String!]
 }
 
-input StyleSubmissionUpdateWithoutUserDataInput {
-  approved: Boolean
-  image: ImageUpdateOneRequiredInput
-  location: LocationUpdateOneInput
-  products: ProductUpdateManyInput
+input StylePreferencesUpdatestylesInput {
+  set: [String!]
 }
 
-input StyleSubmissionUpdateWithWhereUniqueWithoutUserInput {
-  where: StyleSubmissionWhereUniqueInput!
-  data: StyleSubmissionUpdateWithoutUserDataInput!
+input StylePreferencesUpsertNestedInput {
+  update: StylePreferencesUpdateDataInput!
+  create: StylePreferencesCreateInput!
 }
 
 input StylePreferencesWhereInput {
@@ -22955,7 +22704,7 @@ input StylePreferencesWhereInput {
   id_not_ends_with: ID
 }
 
-input StyleSubmissionWhereUniqueInput {
+input StylePreferencesWhereUniqueInput {
   id: ID
 }
 
@@ -22972,6 +22721,7 @@ type Subscription {
   warehouseLocation(where: WarehouseLocationSubscriptionWhereInput): WarehouseLocationSubscriptionPayload
   paymentPlan(where: PaymentPlanSubscriptionWhereInput): PaymentPlanSubscriptionPayload
   emailReceipt(where: EmailReceiptSubscriptionWhereInput): EmailReceiptSubscriptionPayload
+  fitPicReport(where: FitPicReportSubscriptionWhereInput): FitPicReportSubscriptionPayload
   bagItem(where: BagItemSubscriptionWhereInput): BagItemSubscriptionPayload
   customerMembership(where: CustomerMembershipSubscriptionWhereInput): CustomerMembershipSubscriptionPayload
   pauseRequest(where: PauseRequestSubscriptionWhereInput): PauseRequestSubscriptionPayload
@@ -22988,9 +22738,8 @@ type Subscription {
   userPushNotificationInterest(where: UserPushNotificationInterestSubscriptionWhereInput): UserPushNotificationInterestSubscriptionPayload
   billingInfo(where: BillingInfoSubscriptionWhereInput): BillingInfoSubscriptionPayload
   reservationReceiptItem(where: ReservationReceiptItemSubscriptionWhereInput): ReservationReceiptItemSubscriptionPayload
-  smsReceipt(where: SmsReceiptSubscriptionWhereInput): SmsReceiptSubscriptionPayload
   stylePreferences(where: StylePreferencesSubscriptionWhereInput): StylePreferencesSubscriptionPayload
-  image(where: ImageSubscriptionWhereInput): ImageSubscriptionPayload
+  fitPic(where: FitPicSubscriptionWhereInput): FitPicSubscriptionPayload
   package(where: PackageSubscriptionWhereInput): PackageSubscriptionPayload
   size(where: SizeSubscriptionWhereInput): SizeSubscriptionPayload
   productFunction(where: ProductFunctionSubscriptionWhereInput): ProductFunctionSubscriptionPayload
@@ -23002,6 +22751,7 @@ type Subscription {
   bottomSize(where: BottomSizeSubscriptionWhereInput): BottomSizeSubscriptionPayload
   packageTransitEvent(where: PackageTransitEventSubscriptionWhereInput): PackageTransitEventSubscriptionPayload
   label(where: LabelSubscriptionWhereInput): LabelSubscriptionPayload
+  smsReceipt(where: SmsReceiptSubscriptionWhereInput): SmsReceiptSubscriptionPayload
   location(where: LocationSubscriptionWhereInput): LocationSubscriptionPayload
   physicalProduct(where: PhysicalProductSubscriptionWhereInput): PhysicalProductSubscriptionPayload
   image(where: ImageSubscriptionWhereInput): ImageSubscriptionPayload
@@ -25347,6 +25097,9 @@ input UserWhereInput {
   smsReceipts_every: SmsReceiptWhereInput
   smsReceipts_some: SmsReceiptWhereInput
   smsReceipts_none: SmsReceiptWhereInput
+  fitPics_every: FitPicWhereInput
+  fitPics_some: FitPicWhereInput
+  fitPics_none: FitPicWhereInput
 }
 
 input UserWhereUniqueInput {
@@ -38142,6 +37895,9 @@ export interface UserWhereInput {
   smsReceipts_every?: SmsReceiptWhereInput | null
   smsReceipts_some?: SmsReceiptWhereInput | null
   smsReceipts_none?: SmsReceiptWhereInput | null
+  fitPics_every?: FitPicWhereInput | null
+  fitPics_some?: FitPicWhereInput | null
+  fitPics_none?: FitPicWhereInput | null
 }
 
 export interface UserWhereUniqueInput {
