@@ -187,10 +187,10 @@ export class ProductVariantService {
         variant.manufacturerSizeNames?.map(async sizeName => {
           // sizeName is of the format "[size type] [size value]"", i.e. "WxL 32x30"
           const [sizeType, sizeValue] = sizeName.split(" ")
-          const slug = `${variant.sku}-manufacturer-${sizeValue.replace(
-            "x",
-            ""
-          )}`
+          if (!variant.sku) {
+            throw new Error("No variant sku present in getManufacturerSizeIDs")
+          }
+          const slug = `${variant.sku}-manufacturer-${sizeType}-${sizeValue}`
           const size = await this.productUtils.deepUpsertSize({
             slug,
             type,
@@ -240,9 +240,19 @@ export class ProductVariantService {
 
     const data = { weight } as any
 
+    const variantWithSku = await this.prisma.binding.query.productVariant(
+      { where: { id } },
+      `
+      {
+        id
+        sku
+      }
+    `
+    )
+
     if (!!manufacturerSizeNames?.length) {
       const manufacturerSizeIDs = await this.getManufacturerSizeIDs(
-        input,
+        { input, sku: variantWithSku.sku },
         productType
       )
       data.manufacturerSizes = {
