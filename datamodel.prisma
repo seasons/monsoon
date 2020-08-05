@@ -558,9 +558,9 @@ enum PushNotificationStatus {
   Denied
 }
  
-type StyleSubmission {
+type FitPic {
   id: ID! @id
-  user: User! @relation(name: "UserToStyleSubmissions")
+  user: User! @relation(name: "UserToFitPic")
   image: Image!
   location: Location
   products: [Product!] @scalarList(strategy: RELATION)
@@ -569,16 +569,16 @@ type StyleSubmission {
   updatedAt: DateTime! @updatedAt
 }
 
-enum StyleSubmissionReportStatus {
+enum FitPicReportStatus {
   Pending
   Reviewed
 }
 
-type StyleSubmissionReport {
+type FitPicReport {
   id: ID! @id
   reporter: User!
-  reported: StyleSubmission!
-  status: StyleSubmissionReportStatus @default(value: Pending)
+  reported: FitPic!
+  status: FitPicReportStatus! @default(value: Pending)
   reportedAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
@@ -598,7 +598,7 @@ type User {
   verificationStatus: UserVerificationStatus! @default(value: Pending)
   verificationMethod: UserVerificationMethod! @default(value: None)
   smsReceipts: [SmsReceipt!]! @relation(name: "UserToSmsReceipts")
-  styleSubmissions: [StyleSubmission!]! @relation(name: "UserToStyleSubmissions")
+  fitPics: [FitPic!]! @relation(name: "UserToFitPic")
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }

@@ -1,0 +1,25 @@
+type Mutation {
+  submitFitPic(image: Upload!): Boolean! @hasRole(roles: [Customer])
+  reportFitPic(id: ID!): Boolean! @hasRole(roles: [Customer])
+
+  updateFitPicApproved(id: ID!, approved: Boolean!): Boolean!
+    @hasRole(roles: [Admin])
+  deleteFitPic(id: ID!): Boolean! @hasRole(roles: [Admin])
+  updateFitPicReportStatus(id: ID!, status: FitPicReportStatus!): Boolean!
+    @hasRole(roles: [Admin])
+}
+
+type Query {
+  fitPics(
+    where: FitPicWhereInput
+    orderBy: FitPicOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [FitPic!]!
+
+  fitPicReports(where: FitPicReportWhereInput): [FitPicReport!]!
+    @hasRole(roles: [Admin])
+}

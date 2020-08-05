@@ -48,6 +48,7 @@ export interface Query {
     labels: <T = Array<Label | null>>(args: { where?: LabelWhereInput | null, orderBy?: LabelOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     locations: <T = Array<Location | null>>(args: { where?: LocationWhereInput | null, orderBy?: LocationOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     physicalProducts: <T = Array<PhysicalProduct | null>>(args: { where?: PhysicalProductWhereInput | null, orderBy?: PhysicalProductOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    images: <T = Array<Image | null>>(args: { where?: ImageWhereInput | null, orderBy?: ImageOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     productVariants: <T = Array<ProductVariant | null>>(args: { where?: ProductVariantWhereInput | null, orderBy?: ProductVariantOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     products: <T = Array<Product | null>>(args: { where?: ProductWhereInput | null, orderBy?: ProductOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     reservations: <T = Array<Reservation | null>>(args: { where?: ReservationWhereInput | null, orderBy?: ReservationOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -96,6 +97,7 @@ export interface Query {
     label: <T = Label | null>(args: { where: LabelWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     location: <T = Location | null>(args: { where: LocationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     physicalProduct: <T = PhysicalProduct | null>(args: { where: PhysicalProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    image: <T = Image | null>(args: { where: ImageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     productVariant: <T = ProductVariant | null>(args: { where: ProductVariantWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     product: <T = Product | null>(args: { where: ProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     reservation: <T = Reservation | null>(args: { where: ReservationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -144,6 +146,7 @@ export interface Query {
     labelsConnection: <T = LabelConnection>(args: { where?: LabelWhereInput | null, orderBy?: LabelOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     locationsConnection: <T = LocationConnection>(args: { where?: LocationWhereInput | null, orderBy?: LocationOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     physicalProductsConnection: <T = PhysicalProductConnection>(args: { where?: PhysicalProductWhereInput | null, orderBy?: PhysicalProductOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    imagesConnection: <T = ImageConnection>(args: { where?: ImageWhereInput | null, orderBy?: ImageOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     productVariantsConnection: <T = ProductVariantConnection>(args: { where?: ProductVariantWhereInput | null, orderBy?: ProductVariantOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     productsConnection: <T = ProductConnection>(args: { where?: ProductWhereInput | null, orderBy?: ProductOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     reservationsConnection: <T = ReservationConnection>(args: { where?: ReservationWhereInput | null, orderBy?: ReservationOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -196,6 +199,7 @@ export interface Mutation {
     createLabel: <T = Label>(args: { data: LabelCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createLocation: <T = Location>(args: { data: LocationCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createPhysicalProduct: <T = PhysicalProduct>(args: { data: PhysicalProductCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    createImage: <T = Image>(args: { data: ImageCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createProductVariant: <T = ProductVariant>(args: { data: ProductVariantCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createProduct: <T = Product>(args: { data: ProductCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createReservation: <T = Reservation>(args: { data: ReservationCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -244,6 +248,7 @@ export interface Mutation {
     updateLabel: <T = Label | null>(args: { data: LabelUpdateInput, where: LabelWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateLocation: <T = Location | null>(args: { data: LocationUpdateInput, where: LocationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updatePhysicalProduct: <T = PhysicalProduct | null>(args: { data: PhysicalProductUpdateInput, where: PhysicalProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    updateImage: <T = Image | null>(args: { data: ImageUpdateInput, where: ImageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateProductVariant: <T = ProductVariant | null>(args: { data: ProductVariantUpdateInput, where: ProductVariantWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateProduct: <T = Product | null>(args: { data: ProductUpdateInput, where: ProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateReservation: <T = Reservation | null>(args: { data: ReservationUpdateInput, where: ReservationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -292,6 +297,7 @@ export interface Mutation {
     deleteLabel: <T = Label | null>(args: { where: LabelWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteLocation: <T = Location | null>(args: { where: LocationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deletePhysicalProduct: <T = PhysicalProduct | null>(args: { where: PhysicalProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deleteImage: <T = Image | null>(args: { where: ImageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteProductVariant: <T = ProductVariant | null>(args: { where: ProductVariantWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteProduct: <T = Product | null>(args: { where: ProductWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteReservation: <T = Reservation | null>(args: { where: ReservationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -340,6 +346,7 @@ export interface Mutation {
     upsertLabel: <T = Label>(args: { where: LabelWhereUniqueInput, create: LabelCreateInput, update: LabelUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertLocation: <T = Location>(args: { where: LocationWhereUniqueInput, create: LocationCreateInput, update: LocationUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertPhysicalProduct: <T = PhysicalProduct>(args: { where: PhysicalProductWhereUniqueInput, create: PhysicalProductCreateInput, update: PhysicalProductUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    upsertImage: <T = Image>(args: { where: ImageWhereUniqueInput, create: ImageCreateInput, update: ImageUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertProductVariant: <T = ProductVariant>(args: { where: ProductVariantWhereUniqueInput, create: ProductVariantCreateInput, update: ProductVariantUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertProduct: <T = Product>(args: { where: ProductWhereUniqueInput, create: ProductCreateInput, update: ProductUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertReservation: <T = Reservation>(args: { where: ReservationWhereUniqueInput, create: ReservationCreateInput, update: ReservationUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -387,6 +394,7 @@ export interface Mutation {
     updateManyLabels: <T = BatchPayload>(args: { data: LabelUpdateManyMutationInput, where?: LabelWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyLocations: <T = BatchPayload>(args: { data: LocationUpdateManyMutationInput, where?: LocationWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyPhysicalProducts: <T = BatchPayload>(args: { data: PhysicalProductUpdateManyMutationInput, where?: PhysicalProductWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateManyImages: <T = BatchPayload>(args: { data: ImageUpdateManyMutationInput, where?: ImageWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyProductVariants: <T = BatchPayload>(args: { data: ProductVariantUpdateManyMutationInput, where?: ProductVariantWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyProducts: <T = BatchPayload>(args: { data: ProductUpdateManyMutationInput, where?: ProductWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyReservations: <T = BatchPayload>(args: { data: ReservationUpdateManyMutationInput, where?: ReservationWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -435,6 +443,7 @@ export interface Mutation {
     deleteManyLabels: <T = BatchPayload>(args: { where?: LabelWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyLocations: <T = BatchPayload>(args: { where?: LocationWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyPhysicalProducts: <T = BatchPayload>(args: { where?: PhysicalProductWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteManyImages: <T = BatchPayload>(args: { where?: ImageWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyProductVariants: <T = BatchPayload>(args: { where?: ProductVariantWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyProducts: <T = BatchPayload>(args: { where?: ProductWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyReservations: <T = BatchPayload>(args: { where?: ReservationWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -486,6 +495,7 @@ export interface Subscription {
     label: <T = LabelSubscriptionPayload | null>(args: { where?: LabelSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     location: <T = LocationSubscriptionPayload | null>(args: { where?: LocationSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     physicalProduct: <T = PhysicalProductSubscriptionPayload | null>(args: { where?: PhysicalProductSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
+    image: <T = ImageSubscriptionPayload | null>(args: { where?: ImageSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     productVariant: <T = ProductVariantSubscriptionPayload | null>(args: { where?: ProductVariantSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     product: <T = ProductSubscriptionPayload | null>(args: { where?: ProductSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     reservation: <T = ReservationSubscriptionPayload | null>(args: { where?: ReservationSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
@@ -537,6 +547,7 @@ export interface Exists {
   Label: (where?: LabelWhereInput) => Promise<boolean>
   Location: (where?: LocationWhereInput) => Promise<boolean>
   PhysicalProduct: (where?: PhysicalProductWhereInput) => Promise<boolean>
+  Image: (where?: ImageWhereInput) => Promise<boolean>
   ProductVariant: (where?: ProductVariantWhereInput) => Promise<boolean>
   Product: (where?: ProductWhereInput) => Promise<boolean>
   Reservation: (where?: ReservationWhereInput) => Promise<boolean>
@@ -610,6 +621,14 @@ type AggregateCustomerMembership {
 }
 
 type AggregateEmailReceipt {
+  count: Int!
+}
+
+type AggregateFitPic {
+  count: Int!
+}
+
+type AggregateFitPicReport {
   count: Int!
 }
 
@@ -726,14 +745,6 @@ type AggregateSmsReceipt {
 }
 
 type AggregateStylePreferences {
-  count: Int!
-}
-
-type AggregateStyleSubmission {
-  count: Int!
-}
-
-type AggregateStyleSubmissionReport {
   count: Int!
 }
 
@@ -6563,6 +6574,652 @@ input EmailReceiptWhereUniqueInput {
   id: ID
 }
 
+type FitPic implements Node {
+  id: ID!
+  user: User!
+  image: Image!
+  location: Location
+  products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
+  approved: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""A connection to a list of items."""
+type FitPicConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [FitPicEdge]!
+  aggregate: AggregateFitPic!
+}
+
+input FitPicCreateInput {
+  id: ID
+  approved: Boolean
+  user: UserCreateOneWithoutFitPicsInput!
+  image: ImageCreateOneInput!
+  location: LocationCreateOneInput
+  products: ProductCreateManyInput
+}
+
+input FitPicCreateManyWithoutUserInput {
+  create: [FitPicCreateWithoutUserInput!]
+  connect: [FitPicWhereUniqueInput!]
+}
+
+input FitPicCreateOneInput {
+  create: FitPicCreateInput
+  connect: FitPicWhereUniqueInput
+}
+
+input FitPicCreateWithoutUserInput {
+  id: ID
+  approved: Boolean
+  image: ImageCreateOneInput!
+  location: LocationCreateOneInput
+  products: ProductCreateManyInput
+}
+
+"""An edge in a connection."""
+type FitPicEdge {
+  """The item at the end of the edge."""
+  node: FitPic!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum FitPicOrderByInput {
+  id_ASC
+  id_DESC
+  approved_ASC
+  approved_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type FitPicPreviousValues {
+  id: ID!
+  approved: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type FitPicReport implements Node {
+  id: ID!
+  reporter: User!
+  reported: FitPic!
+  status: FitPicReportStatus!
+  reportedAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""A connection to a list of items."""
+type FitPicReportConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [FitPicReportEdge]!
+  aggregate: AggregateFitPicReport!
+}
+
+input FitPicReportCreateInput {
+  id: ID
+  status: FitPicReportStatus
+  reporter: UserCreateOneInput!
+  reported: FitPicCreateOneInput!
+}
+
+"""An edge in a connection."""
+type FitPicReportEdge {
+  """The item at the end of the edge."""
+  node: FitPicReport!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum FitPicReportOrderByInput {
+  id_ASC
+  id_DESC
+  status_ASC
+  status_DESC
+  reportedAt_ASC
+  reportedAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type FitPicReportPreviousValues {
+  id: ID!
+  status: FitPicReportStatus!
+  reportedAt: DateTime!
+  updatedAt: DateTime!
+}
+
+enum FitPicReportStatus {
+  Pending
+  Reviewed
+}
+
+type FitPicReportSubscriptionPayload {
+  mutation: MutationType!
+  node: FitPicReport
+  updatedFields: [String!]
+  previousValues: FitPicReportPreviousValues
+}
+
+input FitPicReportSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [FitPicReportSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [FitPicReportSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [FitPicReportSubscriptionWhereInput!]
+
+  """The subscription event gets dispatched when it's listed in mutation_in"""
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: FitPicReportWhereInput
+}
+
+input FitPicReportUpdateInput {
+  status: FitPicReportStatus
+  reporter: UserUpdateOneRequiredInput
+  reported: FitPicUpdateOneRequiredInput
+}
+
+input FitPicReportUpdateManyMutationInput {
+  status: FitPicReportStatus
+}
+
+input FitPicReportWhereInput {
+  """Logical AND on all given filters."""
+  AND: [FitPicReportWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [FitPicReportWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [FitPicReportWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  status: FitPicReportStatus
+
+  """All values that are not equal to given value."""
+  status_not: FitPicReportStatus
+
+  """All values that are contained in given list."""
+  status_in: [FitPicReportStatus!]
+
+  """All values that are not contained in given list."""
+  status_not_in: [FitPicReportStatus!]
+  reportedAt: DateTime
+
+  """All values that are not equal to given value."""
+  reportedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  reportedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  reportedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  reportedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  reportedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  reportedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  reportedAt_gte: DateTime
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
+  reporter: UserWhereInput
+  reported: FitPicWhereInput
+}
+
+input FitPicReportWhereUniqueInput {
+  id: ID
+}
+
+"""An edge in a connection."""
+type ImageEdge {
+  """The item at the end of the edge."""
+  node: Image!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum ImageOrderByInput {
+  id_ASC
+  id_DESC
+  caption_ASC
+  caption_DESC
+  url_ASC
+  url_DESC
+  height_ASC
+  height_DESC
+  width_ASC
+  width_DESC
+  title_ASC
+  title_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type ImagePreviousValues {
+  id: ID!
+  caption: String
+  url: String!
+  height: Int
+  width: Int
+  title: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+input ImageScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [FitPicScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [FitPicScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [FitPicScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  approved: Boolean
+
+  """All values that are not equal to given value."""
+  approved_not: Boolean
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
+}
+
+type FitPicSubscriptionPayload {
+  mutation: MutationType!
+  node: FitPic
+  updatedFields: [String!]
+  previousValues: FitPicPreviousValues
+}
+
+input FitPicSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [FitPicSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [FitPicSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [FitPicSubscriptionWhereInput!]
+
+  """The subscription event gets dispatched when it's listed in mutation_in"""
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: FitPicWhereInput
+}
+
+input FitPicUpdateDataInput {
+  approved: Boolean
+  user: UserUpdateOneRequiredWithoutFitPicsInput
+  image: ImageUpdateOneRequiredInput
+  location: LocationUpdateOneInput
+  products: ProductUpdateManyInput
+}
+
+input FitPicUpdateInput {
+  approved: Boolean
+  user: UserUpdateOneRequiredWithoutFitPicsInput
+  image: ImageUpdateOneRequiredInput
+  location: LocationUpdateOneInput
+  products: ProductUpdateManyInput
+}
+
+input FitPicUpdateManyDataInput {
+  approved: Boolean
+}
+
+input FitPicUpdateManyMutationInput {
+  approved: Boolean
+}
+
+input FitPicUpdateManyWithoutUserInput {
+  create: [FitPicCreateWithoutUserInput!]
+  connect: [FitPicWhereUniqueInput!]
+  set: [FitPicWhereUniqueInput!]
+  disconnect: [FitPicWhereUniqueInput!]
+  delete: [FitPicWhereUniqueInput!]
+  update: [FitPicUpdateWithWhereUniqueWithoutUserInput!]
+  updateMany: [FitPicUpdateManyWithWhereNestedInput!]
+  deleteMany: [FitPicScalarWhereInput!]
+  upsert: [FitPicUpsertWithWhereUniqueWithoutUserInput!]
+}
+
+input FitPicUpdateManyWithWhereNestedInput {
+  where: FitPicScalarWhereInput!
+  data: FitPicUpdateManyDataInput!
+}
+
+input FitPicUpdateOneRequiredInput {
+  create: FitPicCreateInput
+  connect: FitPicWhereUniqueInput
+  update: FitPicUpdateDataInput
+  upsert: FitPicUpsertNestedInput
+}
+
+input FitPicUpdateWithoutUserDataInput {
+  approved: Boolean
+  image: ImageUpdateOneRequiredInput
+  location: LocationUpdateOneInput
+  products: ProductUpdateManyInput
+}
+
+input FitPicUpdateWithWhereUniqueWithoutUserInput {
+  where: FitPicWhereUniqueInput!
+  data: FitPicUpdateWithoutUserDataInput!
+}
+
+input FitPicUpsertNestedInput {
+  update: FitPicUpdateDataInput!
+  create: FitPicCreateInput!
+}
+
+input FitPicUpsertWithWhereUniqueWithoutUserInput {
+  where: FitPicWhereUniqueInput!
+  update: FitPicUpdateWithoutUserDataInput!
+  create: FitPicCreateWithoutUserInput!
+}
+
+input FitPicWhereInput {
+  """Logical AND on all given filters."""
+  AND: [FitPicWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [FitPicWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [FitPicWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  approved: Boolean
+
+  """All values that are not equal to given value."""
+  approved_not: Boolean
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
+  user: UserWhereInput
+  image: ImageWhereInput
+  location: LocationWhereInput
+  products_every: ProductWhereInput
+  products_some: ProductWhereInput
+  products_none: ProductWhereInput
+}
+
+input FitPicWhereUniqueInput {
+  id: ID
+}
+
 type HomepageProductRail implements Node {
   id: ID!
   slug: String!
@@ -6831,6 +7488,11 @@ input ImageCreateInput {
 input ImageCreateManyInput {
   create: [ImageCreateInput!]
   connect: [ImageWhereUniqueInput!]
+}
+
+input ImageCreateOneInput {
+  create: ImageCreateInput
+  connect: ImageWhereUniqueInput
 }
 
 """An edge in a connection."""
@@ -8718,6 +9380,7 @@ type Mutation {
   createLabel(data: LabelCreateInput!): Label!
   createLocation(data: LocationCreateInput!): Location!
   createPhysicalProduct(data: PhysicalProductCreateInput!): PhysicalProduct!
+  createImage(data: ImageCreateInput!): Image!
   createProductVariant(data: ProductVariantCreateInput!): ProductVariant!
   createProduct(data: ProductCreateInput!): Product!
   createReservation(data: ReservationCreateInput!): Reservation!
@@ -8766,6 +9429,7 @@ type Mutation {
   updateLabel(data: LabelUpdateInput!, where: LabelWhereUniqueInput!): Label
   updateLocation(data: LocationUpdateInput!, where: LocationWhereUniqueInput!): Location
   updatePhysicalProduct(data: PhysicalProductUpdateInput!, where: PhysicalProductWhereUniqueInput!): PhysicalProduct
+  updateImage(data: ImageUpdateInput!, where: ImageWhereUniqueInput!): Image
   updateProductVariant(data: ProductVariantUpdateInput!, where: ProductVariantWhereUniqueInput!): ProductVariant
   updateProduct(data: ProductUpdateInput!, where: ProductWhereUniqueInput!): Product
   updateReservation(data: ReservationUpdateInput!, where: ReservationWhereUniqueInput!): Reservation
@@ -8814,6 +9478,7 @@ type Mutation {
   deleteLabel(where: LabelWhereUniqueInput!): Label
   deleteLocation(where: LocationWhereUniqueInput!): Location
   deletePhysicalProduct(where: PhysicalProductWhereUniqueInput!): PhysicalProduct
+  deleteImage(where: ImageWhereUniqueInput!): Image
   deleteProductVariant(where: ProductVariantWhereUniqueInput!): ProductVariant
   deleteProduct(where: ProductWhereUniqueInput!): Product
   deleteReservation(where: ReservationWhereUniqueInput!): Reservation
@@ -8862,6 +9527,7 @@ type Mutation {
   upsertLabel(where: LabelWhereUniqueInput!, create: LabelCreateInput!, update: LabelUpdateInput!): Label!
   upsertLocation(where: LocationWhereUniqueInput!, create: LocationCreateInput!, update: LocationUpdateInput!): Location!
   upsertPhysicalProduct(where: PhysicalProductWhereUniqueInput!, create: PhysicalProductCreateInput!, update: PhysicalProductUpdateInput!): PhysicalProduct!
+  upsertImage(where: ImageWhereUniqueInput!, create: ImageCreateInput!, update: ImageUpdateInput!): Image!
   upsertProductVariant(where: ProductVariantWhereUniqueInput!, create: ProductVariantCreateInput!, update: ProductVariantUpdateInput!): ProductVariant!
   upsertProduct(where: ProductWhereUniqueInput!, create: ProductCreateInput!, update: ProductUpdateInput!): Product!
   upsertReservation(where: ReservationWhereUniqueInput!, create: ReservationCreateInput!, update: ReservationUpdateInput!): Reservation!
@@ -8909,6 +9575,7 @@ type Mutation {
   updateManyLabels(data: LabelUpdateManyMutationInput!, where: LabelWhereInput): BatchPayload!
   updateManyLocations(data: LocationUpdateManyMutationInput!, where: LocationWhereInput): BatchPayload!
   updateManyPhysicalProducts(data: PhysicalProductUpdateManyMutationInput!, where: PhysicalProductWhereInput): BatchPayload!
+  updateManyImages(data: ImageUpdateManyMutationInput!, where: ImageWhereInput): BatchPayload!
   updateManyProductVariants(data: ProductVariantUpdateManyMutationInput!, where: ProductVariantWhereInput): BatchPayload!
   updateManyProducts(data: ProductUpdateManyMutationInput!, where: ProductWhereInput): BatchPayload!
   updateManyReservations(data: ReservationUpdateManyMutationInput!, where: ReservationWhereInput): BatchPayload!
@@ -8957,6 +9624,7 @@ type Mutation {
   deleteManyLabels(where: LabelWhereInput): BatchPayload!
   deleteManyLocations(where: LocationWhereInput): BatchPayload!
   deleteManyPhysicalProducts(where: PhysicalProductWhereInput): BatchPayload!
+  deleteManyImages(where: ImageWhereInput): BatchPayload!
   deleteManyProductVariants(where: ProductVariantWhereInput): BatchPayload!
   deleteManyProducts(where: ProductWhereInput): BatchPayload!
   deleteManyReservations(where: ReservationWhereInput): BatchPayload!
@@ -18914,6 +19582,7 @@ type Query {
   labels(where: LabelWhereInput, orderBy: LabelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Label]!
   locations(where: LocationWhereInput, orderBy: LocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Location]!
   physicalProducts(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct]!
+  images(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Image]!
   productVariants(where: ProductVariantWhereInput, orderBy: ProductVariantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariant]!
   products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product]!
   reservations(where: ReservationWhereInput, orderBy: ReservationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Reservation]!
@@ -18962,6 +19631,7 @@ type Query {
   label(where: LabelWhereUniqueInput!): Label
   location(where: LocationWhereUniqueInput!): Location
   physicalProduct(where: PhysicalProductWhereUniqueInput!): PhysicalProduct
+  image(where: ImageWhereUniqueInput!): Image
   productVariant(where: ProductVariantWhereUniqueInput!): ProductVariant
   product(where: ProductWhereUniqueInput!): Product
   reservation(where: ReservationWhereUniqueInput!): Reservation
@@ -19010,6 +19680,7 @@ type Query {
   labelsConnection(where: LabelWhereInput, orderBy: LabelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): LabelConnection!
   locationsConnection(where: LocationWhereInput, orderBy: LocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): LocationConnection!
   physicalProductsConnection(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PhysicalProductConnection!
+  imagesConnection(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ImageConnection!
   productVariantsConnection(where: ProductVariantWhereInput, orderBy: ProductVariantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductVariantConnection!
   productsConnection(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductConnection!
   reservationsConnection(where: ReservationWhereInput, orderBy: ReservationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ReservationConnection!
@@ -22333,6 +23004,7 @@ type Subscription {
   label(where: LabelSubscriptionWhereInput): LabelSubscriptionPayload
   location(where: LocationSubscriptionWhereInput): LocationSubscriptionPayload
   physicalProduct(where: PhysicalProductSubscriptionWhereInput): PhysicalProductSubscriptionPayload
+  image(where: ImageSubscriptionWhereInput): ImageSubscriptionPayload
   productVariant(where: ProductVariantSubscriptionWhereInput): ProductVariantSubscriptionPayload
   product(where: ProductSubscriptionWhereInput): ProductSubscriptionPayload
   reservation(where: ReservationSubscriptionWhereInput): ReservationSubscriptionPayload
@@ -23188,7 +23860,7 @@ type User implements Node {
   verificationStatus: UserVerificationStatus!
   verificationMethod: UserVerificationMethod!
   smsReceipts(where: SmsReceiptWhereInput, orderBy: SmsReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [SmsReceipt!]
-  styleSubmissions(where: StyleSubmissionWhereInput, orderBy: StyleSubmissionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [StyleSubmission!]
+  fitPics(where: FitPicWhereInput, orderBy: FitPicOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [FitPic!]
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -23217,7 +23889,7 @@ input UserCreateInput {
   pushNotifications: PushNotificationReceiptCreateManyWithoutUsersInput
   pushNotification: UserPushNotificationCreateOneInput
   smsReceipts: SmsReceiptCreateManyInput
-  styleSubmissions: StyleSubmissionCreateManyWithoutUserInput
+  fitPics: FitPicCreateManyWithoutUserInput
 }
 
 input UserCreateManyWithoutPushNotificationsInput {
@@ -23230,13 +23902,29 @@ input UserCreateOneInput {
   connect: UserWhereUniqueInput
 }
 
-input UserCreateOneWithoutStyleSubmissionsInput {
-  create: UserCreateWithoutStyleSubmissionsInput
+input UserCreateOneWithoutFitPicsInput {
+  create: UserCreateWithoutFitPicsInput
   connect: UserWhereUniqueInput
 }
 
 input UserCreaterolesInput {
   set: [UserRole!]
+}
+
+input UserCreateWithoutFitPicsInput {
+  id: ID
+  auth0Id: String!
+  email: String!
+  firstName: String!
+  lastName: String!
+  role: UserRole
+  pushNotificationStatus: PushNotificationStatus
+  verificationStatus: UserVerificationStatus
+  verificationMethod: UserVerificationMethod
+  roles: UserCreaterolesInput
+  pushNotifications: PushNotificationReceiptCreateManyWithoutUsersInput
+  pushNotification: UserPushNotificationCreateOneInput
+  smsReceipts: SmsReceiptCreateManyInput
 }
 
 input UserCreateWithoutPushNotificationsInput {
@@ -23252,23 +23940,7 @@ input UserCreateWithoutPushNotificationsInput {
   roles: UserCreaterolesInput
   pushNotification: UserPushNotificationCreateOneInput
   smsReceipts: SmsReceiptCreateManyInput
-  styleSubmissions: StyleSubmissionCreateManyWithoutUserInput
-}
-
-input UserCreateWithoutStyleSubmissionsInput {
-  id: ID
-  auth0Id: String!
-  email: String!
-  firstName: String!
-  lastName: String!
-  role: UserRole
-  pushNotificationStatus: PushNotificationStatus
-  verificationStatus: UserVerificationStatus
-  verificationMethod: UserVerificationMethod
-  roles: UserCreaterolesInput
-  pushNotifications: PushNotificationReceiptCreateManyWithoutUsersInput
-  pushNotification: UserPushNotificationCreateOneInput
-  smsReceipts: SmsReceiptCreateManyInput
+  fitPics: FitPicCreateManyWithoutUserInput
 }
 
 """An edge in a connection."""
@@ -24225,7 +24897,7 @@ input UserUpdateDataInput {
   pushNotifications: PushNotificationReceiptUpdateManyWithoutUsersInput
   pushNotification: UserPushNotificationUpdateOneInput
   smsReceipts: SmsReceiptUpdateManyInput
-  styleSubmissions: StyleSubmissionUpdateManyWithoutUserInput
+  fitPics: FitPicUpdateManyWithoutUserInput
 }
 
 input UserUpdateInput {
@@ -24241,7 +24913,7 @@ input UserUpdateInput {
   pushNotifications: PushNotificationReceiptUpdateManyWithoutUsersInput
   pushNotification: UserPushNotificationUpdateOneInput
   smsReceipts: SmsReceiptUpdateManyInput
-  styleSubmissions: StyleSubmissionUpdateManyWithoutUserInput
+  fitPics: FitPicUpdateManyWithoutUserInput
 }
 
 input UserUpdateManyDataInput {
@@ -24301,33 +24973,18 @@ input UserUpdateOneRequiredInput {
   upsert: UserUpsertNestedInput
 }
 
-input UserUpdateOneRequiredWithoutStyleSubmissionsInput {
-  create: UserCreateWithoutStyleSubmissionsInput
+input UserUpdateOneRequiredWithoutFitPicsInput {
+  create: UserCreateWithoutFitPicsInput
   connect: UserWhereUniqueInput
-  update: UserUpdateWithoutStyleSubmissionsDataInput
-  upsert: UserUpsertWithoutStyleSubmissionsInput
+  update: UserUpdateWithoutFitPicsDataInput
+  upsert: UserUpsertWithoutFitPicsInput
 }
 
 input UserUpdaterolesInput {
   set: [UserRole!]
 }
 
-input UserUpdateWithoutPushNotificationsDataInput {
-  auth0Id: String
-  email: String
-  firstName: String
-  lastName: String
-  role: UserRole
-  pushNotificationStatus: PushNotificationStatus
-  verificationStatus: UserVerificationStatus
-  verificationMethod: UserVerificationMethod
-  roles: UserUpdaterolesInput
-  pushNotification: UserPushNotificationUpdateOneInput
-  smsReceipts: SmsReceiptUpdateManyInput
-  styleSubmissions: StyleSubmissionUpdateManyWithoutUserInput
-}
-
-input UserUpdateWithoutStyleSubmissionsDataInput {
+input UserUpdateWithoutFitPicsDataInput {
   auth0Id: String
   email: String
   firstName: String
@@ -24342,6 +24999,21 @@ input UserUpdateWithoutStyleSubmissionsDataInput {
   smsReceipts: SmsReceiptUpdateManyInput
 }
 
+input UserUpdateWithoutPushNotificationsDataInput {
+  auth0Id: String
+  email: String
+  firstName: String
+  lastName: String
+  role: UserRole
+  pushNotificationStatus: PushNotificationStatus
+  verificationStatus: UserVerificationStatus
+  verificationMethod: UserVerificationMethod
+  roles: UserUpdaterolesInput
+  pushNotification: UserPushNotificationUpdateOneInput
+  smsReceipts: SmsReceiptUpdateManyInput
+  fitPics: FitPicUpdateManyWithoutUserInput
+}
+
 input UserUpdateWithWhereUniqueWithoutPushNotificationsInput {
   where: UserWhereUniqueInput!
   data: UserUpdateWithoutPushNotificationsDataInput!
@@ -24352,9 +25024,9 @@ input UserUpsertNestedInput {
   create: UserCreateInput!
 }
 
-input UserUpsertWithoutStyleSubmissionsInput {
-  update: UserUpdateWithoutStyleSubmissionsDataInput!
-  create: UserCreateWithoutStyleSubmissionsInput!
+input UserUpsertWithoutFitPicsInput {
+  update: UserUpdateWithoutFitPicsDataInput!
+  create: UserCreateWithoutFitPicsInput!
 }
 
 input UserUpsertWithWhereUniqueWithoutPushNotificationsInput {
@@ -25990,6 +26662,27 @@ export type EmailReceiptOrderByInput =   'id_ASC' |
   'updatedAt_ASC' |
   'updatedAt_DESC'
 
+export type FitPicOrderByInput =   'id_ASC' |
+  'id_DESC' |
+  'approved_ASC' |
+  'approved_DESC' |
+  'createdAt_ASC' |
+  'createdAt_DESC' |
+  'updatedAt_ASC' |
+  'updatedAt_DESC'
+
+export type FitPicReportOrderByInput =   'id_ASC' |
+  'id_DESC' |
+  'status_ASC' |
+  'status_DESC' |
+  'reportedAt_ASC' |
+  'reportedAt_DESC' |
+  'updatedAt_ASC' |
+  'updatedAt_DESC'
+
+export type FitPicReportStatus =   'Pending' |
+  'Reviewed'
+
 export type HomepageProductRailOrderByInput =   'id_ASC' |
   'id_DESC' |
   'slug_ASC' |
@@ -26515,27 +27208,6 @@ export type SmsStatus =   'Queued' |
 
 export type StylePreferencesOrderByInput =   'id_ASC' |
   'id_DESC'
-
-export type StyleSubmissionOrderByInput =   'id_ASC' |
-  'id_DESC' |
-  'approved_ASC' |
-  'approved_DESC' |
-  'createdAt_ASC' |
-  'createdAt_DESC' |
-  'updatedAt_ASC' |
-  'updatedAt_DESC'
-
-export type StyleSubmissionReportOrderByInput =   'id_ASC' |
-  'id_DESC' |
-  'status_ASC' |
-  'status_DESC' |
-  'reportedAt_ASC' |
-  'reportedAt_DESC' |
-  'updatedAt_ASC' |
-  'updatedAt_DESC'
-
-export type StyleSubmissionReportStatus =   'Pending' |
-  'Reviewed'
 
 export type TagOrderByInput =   'id_ASC' |
   'id_DESC' |
@@ -29149,6 +29821,275 @@ export interface EmailReceiptWhereInput {
 }
 
 export interface EmailReceiptWhereUniqueInput {
+  id?: ID_Input | null
+}
+
+export interface FitPicCreateInput {
+  id?: ID_Input | null
+  approved?: Boolean | null
+  user: UserCreateOneWithoutFitPicsInput
+  image: ImageCreateOneInput
+  location?: LocationCreateOneInput | null
+  products?: ProductCreateManyInput | null
+}
+
+export interface FitPicCreateManyWithoutUserInput {
+  create?: FitPicCreateWithoutUserInput[] | FitPicCreateWithoutUserInput | null
+  connect?: FitPicWhereUniqueInput[] | FitPicWhereUniqueInput | null
+}
+
+export interface FitPicCreateOneInput {
+  create?: FitPicCreateInput | null
+  connect?: FitPicWhereUniqueInput | null
+}
+
+export interface FitPicCreateWithoutUserInput {
+  id?: ID_Input | null
+  approved?: Boolean | null
+  image: ImageCreateOneInput
+  location?: LocationCreateOneInput | null
+  products?: ProductCreateManyInput | null
+}
+
+export interface FitPicReportCreateInput {
+  id?: ID_Input | null
+  status?: FitPicReportStatus | null
+  reporter: UserCreateOneInput
+  reported: FitPicCreateOneInput
+}
+
+export interface FitPicReportSubscriptionWhereInput {
+  AND?: FitPicReportSubscriptionWhereInput[] | FitPicReportSubscriptionWhereInput | null
+  OR?: FitPicReportSubscriptionWhereInput[] | FitPicReportSubscriptionWhereInput | null
+  NOT?: FitPicReportSubscriptionWhereInput[] | FitPicReportSubscriptionWhereInput | null
+  mutation_in?: MutationType[] | MutationType | null
+  updatedFields_contains?: String | null
+  updatedFields_contains_every?: String[] | String | null
+  updatedFields_contains_some?: String[] | String | null
+  node?: FitPicReportWhereInput | null
+}
+
+export interface FitPicReportUpdateInput {
+  status?: FitPicReportStatus | null
+  reporter?: UserUpdateOneRequiredInput | null
+  reported?: FitPicUpdateOneRequiredInput | null
+}
+
+export interface FitPicReportUpdateManyMutationInput {
+  status?: FitPicReportStatus | null
+}
+
+export interface FitPicReportWhereInput {
+  AND?: FitPicReportWhereInput[] | FitPicReportWhereInput | null
+  OR?: FitPicReportWhereInput[] | FitPicReportWhereInput | null
+  NOT?: FitPicReportWhereInput[] | FitPicReportWhereInput | null
+  id?: ID_Input | null
+  id_not?: ID_Input | null
+  id_in?: ID_Output[] | ID_Output | null
+  id_not_in?: ID_Output[] | ID_Output | null
+  id_lt?: ID_Input | null
+  id_lte?: ID_Input | null
+  id_gt?: ID_Input | null
+  id_gte?: ID_Input | null
+  id_contains?: ID_Input | null
+  id_not_contains?: ID_Input | null
+  id_starts_with?: ID_Input | null
+  id_not_starts_with?: ID_Input | null
+  id_ends_with?: ID_Input | null
+  id_not_ends_with?: ID_Input | null
+  status?: FitPicReportStatus | null
+  status_not?: FitPicReportStatus | null
+  status_in?: FitPicReportStatus[] | FitPicReportStatus | null
+  status_not_in?: FitPicReportStatus[] | FitPicReportStatus | null
+  reportedAt?: DateTime | null
+  reportedAt_not?: DateTime | null
+  reportedAt_in?: DateTime[] | DateTime | null
+  reportedAt_not_in?: DateTime[] | DateTime | null
+  reportedAt_lt?: DateTime | null
+  reportedAt_lte?: DateTime | null
+  reportedAt_gt?: DateTime | null
+  reportedAt_gte?: DateTime | null
+  updatedAt?: DateTime | null
+  updatedAt_not?: DateTime | null
+  updatedAt_in?: DateTime[] | DateTime | null
+  updatedAt_not_in?: DateTime[] | DateTime | null
+  updatedAt_lt?: DateTime | null
+  updatedAt_lte?: DateTime | null
+  updatedAt_gt?: DateTime | null
+  updatedAt_gte?: DateTime | null
+  reporter?: UserWhereInput | null
+  reported?: FitPicWhereInput | null
+}
+
+export interface FitPicReportWhereUniqueInput {
+  id?: ID_Input | null
+}
+
+export interface FitPicScalarWhereInput {
+  AND?: FitPicScalarWhereInput[] | FitPicScalarWhereInput | null
+  OR?: FitPicScalarWhereInput[] | FitPicScalarWhereInput | null
+  NOT?: FitPicScalarWhereInput[] | FitPicScalarWhereInput | null
+  id?: ID_Input | null
+  id_not?: ID_Input | null
+  id_in?: ID_Output[] | ID_Output | null
+  id_not_in?: ID_Output[] | ID_Output | null
+  id_lt?: ID_Input | null
+  id_lte?: ID_Input | null
+  id_gt?: ID_Input | null
+  id_gte?: ID_Input | null
+  id_contains?: ID_Input | null
+  id_not_contains?: ID_Input | null
+  id_starts_with?: ID_Input | null
+  id_not_starts_with?: ID_Input | null
+  id_ends_with?: ID_Input | null
+  id_not_ends_with?: ID_Input | null
+  approved?: Boolean | null
+  approved_not?: Boolean | null
+  createdAt?: DateTime | null
+  createdAt_not?: DateTime | null
+  createdAt_in?: DateTime[] | DateTime | null
+  createdAt_not_in?: DateTime[] | DateTime | null
+  createdAt_lt?: DateTime | null
+  createdAt_lte?: DateTime | null
+  createdAt_gt?: DateTime | null
+  createdAt_gte?: DateTime | null
+  updatedAt?: DateTime | null
+  updatedAt_not?: DateTime | null
+  updatedAt_in?: DateTime[] | DateTime | null
+  updatedAt_not_in?: DateTime[] | DateTime | null
+  updatedAt_lt?: DateTime | null
+  updatedAt_lte?: DateTime | null
+  updatedAt_gt?: DateTime | null
+  updatedAt_gte?: DateTime | null
+}
+
+export interface FitPicSubscriptionWhereInput {
+  AND?: FitPicSubscriptionWhereInput[] | FitPicSubscriptionWhereInput | null
+  OR?: FitPicSubscriptionWhereInput[] | FitPicSubscriptionWhereInput | null
+  NOT?: FitPicSubscriptionWhereInput[] | FitPicSubscriptionWhereInput | null
+  mutation_in?: MutationType[] | MutationType | null
+  updatedFields_contains?: String | null
+  updatedFields_contains_every?: String[] | String | null
+  updatedFields_contains_some?: String[] | String | null
+  node?: FitPicWhereInput | null
+}
+
+export interface FitPicUpdateDataInput {
+  approved?: Boolean | null
+  user?: UserUpdateOneRequiredWithoutFitPicsInput | null
+  image?: ImageUpdateOneRequiredInput | null
+  location?: LocationUpdateOneInput | null
+  products?: ProductUpdateManyInput | null
+}
+
+export interface FitPicUpdateInput {
+  approved?: Boolean | null
+  user?: UserUpdateOneRequiredWithoutFitPicsInput | null
+  image?: ImageUpdateOneRequiredInput | null
+  location?: LocationUpdateOneInput | null
+  products?: ProductUpdateManyInput | null
+}
+
+export interface FitPicUpdateManyDataInput {
+  approved?: Boolean | null
+}
+
+export interface FitPicUpdateManyMutationInput {
+  approved?: Boolean | null
+}
+
+export interface FitPicUpdateManyWithoutUserInput {
+  create?: FitPicCreateWithoutUserInput[] | FitPicCreateWithoutUserInput | null
+  connect?: FitPicWhereUniqueInput[] | FitPicWhereUniqueInput | null
+  set?: FitPicWhereUniqueInput[] | FitPicWhereUniqueInput | null
+  disconnect?: FitPicWhereUniqueInput[] | FitPicWhereUniqueInput | null
+  delete?: FitPicWhereUniqueInput[] | FitPicWhereUniqueInput | null
+  update?: FitPicUpdateWithWhereUniqueWithoutUserInput[] | FitPicUpdateWithWhereUniqueWithoutUserInput | null
+  updateMany?: FitPicUpdateManyWithWhereNestedInput[] | FitPicUpdateManyWithWhereNestedInput | null
+  deleteMany?: FitPicScalarWhereInput[] | FitPicScalarWhereInput | null
+  upsert?: FitPicUpsertWithWhereUniqueWithoutUserInput[] | FitPicUpsertWithWhereUniqueWithoutUserInput | null
+}
+
+export interface FitPicUpdateManyWithWhereNestedInput {
+  where: FitPicScalarWhereInput
+  data: FitPicUpdateManyDataInput
+}
+
+export interface FitPicUpdateOneRequiredInput {
+  create?: FitPicCreateInput | null
+  connect?: FitPicWhereUniqueInput | null
+  update?: FitPicUpdateDataInput | null
+  upsert?: FitPicUpsertNestedInput | null
+}
+
+export interface FitPicUpdateWithoutUserDataInput {
+  approved?: Boolean | null
+  image?: ImageUpdateOneRequiredInput | null
+  location?: LocationUpdateOneInput | null
+  products?: ProductUpdateManyInput | null
+}
+
+export interface FitPicUpdateWithWhereUniqueWithoutUserInput {
+  where: FitPicWhereUniqueInput
+  data: FitPicUpdateWithoutUserDataInput
+}
+
+export interface FitPicUpsertNestedInput {
+  update: FitPicUpdateDataInput
+  create: FitPicCreateInput
+}
+
+export interface FitPicUpsertWithWhereUniqueWithoutUserInput {
+  where: FitPicWhereUniqueInput
+  update: FitPicUpdateWithoutUserDataInput
+  create: FitPicCreateWithoutUserInput
+}
+
+export interface FitPicWhereInput {
+  AND?: FitPicWhereInput[] | FitPicWhereInput | null
+  OR?: FitPicWhereInput[] | FitPicWhereInput | null
+  NOT?: FitPicWhereInput[] | FitPicWhereInput | null
+  id?: ID_Input | null
+  id_not?: ID_Input | null
+  id_in?: ID_Output[] | ID_Output | null
+  id_not_in?: ID_Output[] | ID_Output | null
+  id_lt?: ID_Input | null
+  id_lte?: ID_Input | null
+  id_gt?: ID_Input | null
+  id_gte?: ID_Input | null
+  id_contains?: ID_Input | null
+  id_not_contains?: ID_Input | null
+  id_starts_with?: ID_Input | null
+  id_not_starts_with?: ID_Input | null
+  id_ends_with?: ID_Input | null
+  id_not_ends_with?: ID_Input | null
+  approved?: Boolean | null
+  approved_not?: Boolean | null
+  createdAt?: DateTime | null
+  createdAt_not?: DateTime | null
+  createdAt_in?: DateTime[] | DateTime | null
+  createdAt_not_in?: DateTime[] | DateTime | null
+  createdAt_lt?: DateTime | null
+  createdAt_lte?: DateTime | null
+  createdAt_gt?: DateTime | null
+  createdAt_gte?: DateTime | null
+  updatedAt?: DateTime | null
+  updatedAt_not?: DateTime | null
+  updatedAt_in?: DateTime[] | DateTime | null
+  updatedAt_not_in?: DateTime[] | DateTime | null
+  updatedAt_lt?: DateTime | null
+  updatedAt_lte?: DateTime | null
+  updatedAt_gt?: DateTime | null
+  updatedAt_gte?: DateTime | null
+  user?: UserWhereInput | null
+  image?: ImageWhereInput | null
+  location?: LocationWhereInput | null
+  products_every?: ProductWhereInput | null
+  products_some?: ProductWhereInput | null
+  products_none?: ProductWhereInput | null
+}
+
+export interface FitPicWhereUniqueInput {
   id?: ID_Input | null
 }
 
@@ -36153,275 +37094,6 @@ export interface StylePreferencesWhereUniqueInput {
   id?: ID_Input | null
 }
 
-export interface StyleSubmissionCreateInput {
-  id?: ID_Input | null
-  approved?: Boolean | null
-  user: UserCreateOneWithoutStyleSubmissionsInput
-  image: ImageCreateOneInput
-  location?: LocationCreateOneInput | null
-  products?: ProductCreateManyInput | null
-}
-
-export interface StyleSubmissionCreateManyWithoutUserInput {
-  create?: StyleSubmissionCreateWithoutUserInput[] | StyleSubmissionCreateWithoutUserInput | null
-  connect?: StyleSubmissionWhereUniqueInput[] | StyleSubmissionWhereUniqueInput | null
-}
-
-export interface StyleSubmissionCreateOneInput {
-  create?: StyleSubmissionCreateInput | null
-  connect?: StyleSubmissionWhereUniqueInput | null
-}
-
-export interface StyleSubmissionCreateWithoutUserInput {
-  id?: ID_Input | null
-  approved?: Boolean | null
-  image: ImageCreateOneInput
-  location?: LocationCreateOneInput | null
-  products?: ProductCreateManyInput | null
-}
-
-export interface StyleSubmissionReportCreateInput {
-  id?: ID_Input | null
-  status?: StyleSubmissionReportStatus | null
-  reporter: UserCreateOneInput
-  reported: StyleSubmissionCreateOneInput
-}
-
-export interface StyleSubmissionReportSubscriptionWhereInput {
-  AND?: StyleSubmissionReportSubscriptionWhereInput[] | StyleSubmissionReportSubscriptionWhereInput | null
-  OR?: StyleSubmissionReportSubscriptionWhereInput[] | StyleSubmissionReportSubscriptionWhereInput | null
-  NOT?: StyleSubmissionReportSubscriptionWhereInput[] | StyleSubmissionReportSubscriptionWhereInput | null
-  mutation_in?: MutationType[] | MutationType | null
-  updatedFields_contains?: String | null
-  updatedFields_contains_every?: String[] | String | null
-  updatedFields_contains_some?: String[] | String | null
-  node?: StyleSubmissionReportWhereInput | null
-}
-
-export interface StyleSubmissionReportUpdateInput {
-  status?: StyleSubmissionReportStatus | null
-  reporter?: UserUpdateOneRequiredInput | null
-  reported?: StyleSubmissionUpdateOneRequiredInput | null
-}
-
-export interface StyleSubmissionReportUpdateManyMutationInput {
-  status?: StyleSubmissionReportStatus | null
-}
-
-export interface StyleSubmissionReportWhereInput {
-  AND?: StyleSubmissionReportWhereInput[] | StyleSubmissionReportWhereInput | null
-  OR?: StyleSubmissionReportWhereInput[] | StyleSubmissionReportWhereInput | null
-  NOT?: StyleSubmissionReportWhereInput[] | StyleSubmissionReportWhereInput | null
-  id?: ID_Input | null
-  id_not?: ID_Input | null
-  id_in?: ID_Output[] | ID_Output | null
-  id_not_in?: ID_Output[] | ID_Output | null
-  id_lt?: ID_Input | null
-  id_lte?: ID_Input | null
-  id_gt?: ID_Input | null
-  id_gte?: ID_Input | null
-  id_contains?: ID_Input | null
-  id_not_contains?: ID_Input | null
-  id_starts_with?: ID_Input | null
-  id_not_starts_with?: ID_Input | null
-  id_ends_with?: ID_Input | null
-  id_not_ends_with?: ID_Input | null
-  status?: StyleSubmissionReportStatus | null
-  status_not?: StyleSubmissionReportStatus | null
-  status_in?: StyleSubmissionReportStatus[] | StyleSubmissionReportStatus | null
-  status_not_in?: StyleSubmissionReportStatus[] | StyleSubmissionReportStatus | null
-  reportedAt?: DateTime | null
-  reportedAt_not?: DateTime | null
-  reportedAt_in?: DateTime[] | DateTime | null
-  reportedAt_not_in?: DateTime[] | DateTime | null
-  reportedAt_lt?: DateTime | null
-  reportedAt_lte?: DateTime | null
-  reportedAt_gt?: DateTime | null
-  reportedAt_gte?: DateTime | null
-  updatedAt?: DateTime | null
-  updatedAt_not?: DateTime | null
-  updatedAt_in?: DateTime[] | DateTime | null
-  updatedAt_not_in?: DateTime[] | DateTime | null
-  updatedAt_lt?: DateTime | null
-  updatedAt_lte?: DateTime | null
-  updatedAt_gt?: DateTime | null
-  updatedAt_gte?: DateTime | null
-  reporter?: UserWhereInput | null
-  reported?: StyleSubmissionWhereInput | null
-}
-
-export interface StyleSubmissionReportWhereUniqueInput {
-  id?: ID_Input | null
-}
-
-export interface StyleSubmissionScalarWhereInput {
-  AND?: StyleSubmissionScalarWhereInput[] | StyleSubmissionScalarWhereInput | null
-  OR?: StyleSubmissionScalarWhereInput[] | StyleSubmissionScalarWhereInput | null
-  NOT?: StyleSubmissionScalarWhereInput[] | StyleSubmissionScalarWhereInput | null
-  id?: ID_Input | null
-  id_not?: ID_Input | null
-  id_in?: ID_Output[] | ID_Output | null
-  id_not_in?: ID_Output[] | ID_Output | null
-  id_lt?: ID_Input | null
-  id_lte?: ID_Input | null
-  id_gt?: ID_Input | null
-  id_gte?: ID_Input | null
-  id_contains?: ID_Input | null
-  id_not_contains?: ID_Input | null
-  id_starts_with?: ID_Input | null
-  id_not_starts_with?: ID_Input | null
-  id_ends_with?: ID_Input | null
-  id_not_ends_with?: ID_Input | null
-  approved?: Boolean | null
-  approved_not?: Boolean | null
-  createdAt?: DateTime | null
-  createdAt_not?: DateTime | null
-  createdAt_in?: DateTime[] | DateTime | null
-  createdAt_not_in?: DateTime[] | DateTime | null
-  createdAt_lt?: DateTime | null
-  createdAt_lte?: DateTime | null
-  createdAt_gt?: DateTime | null
-  createdAt_gte?: DateTime | null
-  updatedAt?: DateTime | null
-  updatedAt_not?: DateTime | null
-  updatedAt_in?: DateTime[] | DateTime | null
-  updatedAt_not_in?: DateTime[] | DateTime | null
-  updatedAt_lt?: DateTime | null
-  updatedAt_lte?: DateTime | null
-  updatedAt_gt?: DateTime | null
-  updatedAt_gte?: DateTime | null
-}
-
-export interface StyleSubmissionSubscriptionWhereInput {
-  AND?: StyleSubmissionSubscriptionWhereInput[] | StyleSubmissionSubscriptionWhereInput | null
-  OR?: StyleSubmissionSubscriptionWhereInput[] | StyleSubmissionSubscriptionWhereInput | null
-  NOT?: StyleSubmissionSubscriptionWhereInput[] | StyleSubmissionSubscriptionWhereInput | null
-  mutation_in?: MutationType[] | MutationType | null
-  updatedFields_contains?: String | null
-  updatedFields_contains_every?: String[] | String | null
-  updatedFields_contains_some?: String[] | String | null
-  node?: StyleSubmissionWhereInput | null
-}
-
-export interface StyleSubmissionUpdateDataInput {
-  approved?: Boolean | null
-  user?: UserUpdateOneRequiredWithoutStyleSubmissionsInput | null
-  image?: ImageUpdateOneRequiredInput | null
-  location?: LocationUpdateOneInput | null
-  products?: ProductUpdateManyInput | null
-}
-
-export interface StyleSubmissionUpdateInput {
-  approved?: Boolean | null
-  user?: UserUpdateOneRequiredWithoutStyleSubmissionsInput | null
-  image?: ImageUpdateOneRequiredInput | null
-  location?: LocationUpdateOneInput | null
-  products?: ProductUpdateManyInput | null
-}
-
-export interface StyleSubmissionUpdateManyDataInput {
-  approved?: Boolean | null
-}
-
-export interface StyleSubmissionUpdateManyMutationInput {
-  approved?: Boolean | null
-}
-
-export interface StyleSubmissionUpdateManyWithoutUserInput {
-  create?: StyleSubmissionCreateWithoutUserInput[] | StyleSubmissionCreateWithoutUserInput | null
-  connect?: StyleSubmissionWhereUniqueInput[] | StyleSubmissionWhereUniqueInput | null
-  set?: StyleSubmissionWhereUniqueInput[] | StyleSubmissionWhereUniqueInput | null
-  disconnect?: StyleSubmissionWhereUniqueInput[] | StyleSubmissionWhereUniqueInput | null
-  delete?: StyleSubmissionWhereUniqueInput[] | StyleSubmissionWhereUniqueInput | null
-  update?: StyleSubmissionUpdateWithWhereUniqueWithoutUserInput[] | StyleSubmissionUpdateWithWhereUniqueWithoutUserInput | null
-  updateMany?: StyleSubmissionUpdateManyWithWhereNestedInput[] | StyleSubmissionUpdateManyWithWhereNestedInput | null
-  deleteMany?: StyleSubmissionScalarWhereInput[] | StyleSubmissionScalarWhereInput | null
-  upsert?: StyleSubmissionUpsertWithWhereUniqueWithoutUserInput[] | StyleSubmissionUpsertWithWhereUniqueWithoutUserInput | null
-}
-
-export interface StyleSubmissionUpdateManyWithWhereNestedInput {
-  where: StyleSubmissionScalarWhereInput
-  data: StyleSubmissionUpdateManyDataInput
-}
-
-export interface StyleSubmissionUpdateOneRequiredInput {
-  create?: StyleSubmissionCreateInput | null
-  connect?: StyleSubmissionWhereUniqueInput | null
-  update?: StyleSubmissionUpdateDataInput | null
-  upsert?: StyleSubmissionUpsertNestedInput | null
-}
-
-export interface StyleSubmissionUpdateWithoutUserDataInput {
-  approved?: Boolean | null
-  image?: ImageUpdateOneRequiredInput | null
-  location?: LocationUpdateOneInput | null
-  products?: ProductUpdateManyInput | null
-}
-
-export interface StyleSubmissionUpdateWithWhereUniqueWithoutUserInput {
-  where: StyleSubmissionWhereUniqueInput
-  data: StyleSubmissionUpdateWithoutUserDataInput
-}
-
-export interface StyleSubmissionUpsertNestedInput {
-  update: StyleSubmissionUpdateDataInput
-  create: StyleSubmissionCreateInput
-}
-
-export interface StyleSubmissionUpsertWithWhereUniqueWithoutUserInput {
-  where: StyleSubmissionWhereUniqueInput
-  update: StyleSubmissionUpdateWithoutUserDataInput
-  create: StyleSubmissionCreateWithoutUserInput
-}
-
-export interface StyleSubmissionWhereInput {
-  AND?: StyleSubmissionWhereInput[] | StyleSubmissionWhereInput | null
-  OR?: StyleSubmissionWhereInput[] | StyleSubmissionWhereInput | null
-  NOT?: StyleSubmissionWhereInput[] | StyleSubmissionWhereInput | null
-  id?: ID_Input | null
-  id_not?: ID_Input | null
-  id_in?: ID_Output[] | ID_Output | null
-  id_not_in?: ID_Output[] | ID_Output | null
-  id_lt?: ID_Input | null
-  id_lte?: ID_Input | null
-  id_gt?: ID_Input | null
-  id_gte?: ID_Input | null
-  id_contains?: ID_Input | null
-  id_not_contains?: ID_Input | null
-  id_starts_with?: ID_Input | null
-  id_not_starts_with?: ID_Input | null
-  id_ends_with?: ID_Input | null
-  id_not_ends_with?: ID_Input | null
-  approved?: Boolean | null
-  approved_not?: Boolean | null
-  createdAt?: DateTime | null
-  createdAt_not?: DateTime | null
-  createdAt_in?: DateTime[] | DateTime | null
-  createdAt_not_in?: DateTime[] | DateTime | null
-  createdAt_lt?: DateTime | null
-  createdAt_lte?: DateTime | null
-  createdAt_gt?: DateTime | null
-  createdAt_gte?: DateTime | null
-  updatedAt?: DateTime | null
-  updatedAt_not?: DateTime | null
-  updatedAt_in?: DateTime[] | DateTime | null
-  updatedAt_not_in?: DateTime[] | DateTime | null
-  updatedAt_lt?: DateTime | null
-  updatedAt_lte?: DateTime | null
-  updatedAt_gt?: DateTime | null
-  updatedAt_gte?: DateTime | null
-  user?: UserWhereInput | null
-  image?: ImageWhereInput | null
-  location?: LocationWhereInput | null
-  products_every?: ProductWhereInput | null
-  products_some?: ProductWhereInput | null
-  products_none?: ProductWhereInput | null
-}
-
-export interface StyleSubmissionWhereUniqueInput {
-  id?: ID_Input | null
-}
-
 export interface TagCreateInput {
   id?: ID_Input | null
   name: String
@@ -36785,7 +37457,7 @@ export interface UserCreateInput {
   pushNotifications?: PushNotificationReceiptCreateManyWithoutUsersInput | null
   pushNotification?: UserPushNotificationCreateOneInput | null
   smsReceipts?: SmsReceiptCreateManyInput | null
-  styleSubmissions?: StyleSubmissionCreateManyWithoutUserInput | null
+  fitPics?: FitPicCreateManyWithoutUserInput | null
 }
 
 export interface UserCreateManyWithoutPushNotificationsInput {
@@ -36798,13 +37470,29 @@ export interface UserCreateOneInput {
   connect?: UserWhereUniqueInput | null
 }
 
-export interface UserCreateOneWithoutStyleSubmissionsInput {
-  create?: UserCreateWithoutStyleSubmissionsInput | null
+export interface UserCreateOneWithoutFitPicsInput {
+  create?: UserCreateWithoutFitPicsInput | null
   connect?: UserWhereUniqueInput | null
 }
 
 export interface UserCreaterolesInput {
   set?: UserRole[] | UserRole | null
+}
+
+export interface UserCreateWithoutFitPicsInput {
+  id?: ID_Input | null
+  auth0Id: String
+  email: String
+  firstName: String
+  lastName: String
+  role?: UserRole | null
+  pushNotificationStatus?: PushNotificationStatus | null
+  verificationStatus?: UserVerificationStatus | null
+  verificationMethod?: UserVerificationMethod | null
+  roles?: UserCreaterolesInput | null
+  pushNotifications?: PushNotificationReceiptCreateManyWithoutUsersInput | null
+  pushNotification?: UserPushNotificationCreateOneInput | null
+  smsReceipts?: SmsReceiptCreateManyInput | null
 }
 
 export interface UserCreateWithoutPushNotificationsInput {
@@ -36820,23 +37508,7 @@ export interface UserCreateWithoutPushNotificationsInput {
   roles?: UserCreaterolesInput | null
   pushNotification?: UserPushNotificationCreateOneInput | null
   smsReceipts?: SmsReceiptCreateManyInput | null
-  styleSubmissions?: StyleSubmissionCreateManyWithoutUserInput | null
-}
-
-export interface UserCreateWithoutStyleSubmissionsInput {
-  id?: ID_Input | null
-  auth0Id: String
-  email: String
-  firstName: String
-  lastName: String
-  role?: UserRole | null
-  pushNotificationStatus?: PushNotificationStatus | null
-  verificationStatus?: UserVerificationStatus | null
-  verificationMethod?: UserVerificationMethod | null
-  roles?: UserCreaterolesInput | null
-  pushNotifications?: PushNotificationReceiptCreateManyWithoutUsersInput | null
-  pushNotification?: UserPushNotificationCreateOneInput | null
-  smsReceipts?: SmsReceiptCreateManyInput | null
+  fitPics?: FitPicCreateManyWithoutUserInput | null
 }
 
 export interface UserPushNotificationCreateInput {
@@ -37219,7 +37891,7 @@ export interface UserUpdateDataInput {
   pushNotifications?: PushNotificationReceiptUpdateManyWithoutUsersInput | null
   pushNotification?: UserPushNotificationUpdateOneInput | null
   smsReceipts?: SmsReceiptUpdateManyInput | null
-  styleSubmissions?: StyleSubmissionUpdateManyWithoutUserInput | null
+  fitPics?: FitPicUpdateManyWithoutUserInput | null
 }
 
 export interface UserUpdateInput {
@@ -37235,7 +37907,7 @@ export interface UserUpdateInput {
   pushNotifications?: PushNotificationReceiptUpdateManyWithoutUsersInput | null
   pushNotification?: UserPushNotificationUpdateOneInput | null
   smsReceipts?: SmsReceiptUpdateManyInput | null
-  styleSubmissions?: StyleSubmissionUpdateManyWithoutUserInput | null
+  fitPics?: FitPicUpdateManyWithoutUserInput | null
 }
 
 export interface UserUpdateManyDataInput {
@@ -37295,33 +37967,18 @@ export interface UserUpdateOneRequiredInput {
   upsert?: UserUpsertNestedInput | null
 }
 
-export interface UserUpdateOneRequiredWithoutStyleSubmissionsInput {
-  create?: UserCreateWithoutStyleSubmissionsInput | null
+export interface UserUpdateOneRequiredWithoutFitPicsInput {
+  create?: UserCreateWithoutFitPicsInput | null
   connect?: UserWhereUniqueInput | null
-  update?: UserUpdateWithoutStyleSubmissionsDataInput | null
-  upsert?: UserUpsertWithoutStyleSubmissionsInput | null
+  update?: UserUpdateWithoutFitPicsDataInput | null
+  upsert?: UserUpsertWithoutFitPicsInput | null
 }
 
 export interface UserUpdaterolesInput {
   set?: UserRole[] | UserRole | null
 }
 
-export interface UserUpdateWithoutPushNotificationsDataInput {
-  auth0Id?: String | null
-  email?: String | null
-  firstName?: String | null
-  lastName?: String | null
-  role?: UserRole | null
-  pushNotificationStatus?: PushNotificationStatus | null
-  verificationStatus?: UserVerificationStatus | null
-  verificationMethod?: UserVerificationMethod | null
-  roles?: UserUpdaterolesInput | null
-  pushNotification?: UserPushNotificationUpdateOneInput | null
-  smsReceipts?: SmsReceiptUpdateManyInput | null
-  styleSubmissions?: StyleSubmissionUpdateManyWithoutUserInput | null
-}
-
-export interface UserUpdateWithoutStyleSubmissionsDataInput {
+export interface UserUpdateWithoutFitPicsDataInput {
   auth0Id?: String | null
   email?: String | null
   firstName?: String | null
@@ -37336,6 +37993,21 @@ export interface UserUpdateWithoutStyleSubmissionsDataInput {
   smsReceipts?: SmsReceiptUpdateManyInput | null
 }
 
+export interface UserUpdateWithoutPushNotificationsDataInput {
+  auth0Id?: String | null
+  email?: String | null
+  firstName?: String | null
+  lastName?: String | null
+  role?: UserRole | null
+  pushNotificationStatus?: PushNotificationStatus | null
+  verificationStatus?: UserVerificationStatus | null
+  verificationMethod?: UserVerificationMethod | null
+  roles?: UserUpdaterolesInput | null
+  pushNotification?: UserPushNotificationUpdateOneInput | null
+  smsReceipts?: SmsReceiptUpdateManyInput | null
+  fitPics?: FitPicUpdateManyWithoutUserInput | null
+}
+
 export interface UserUpdateWithWhereUniqueWithoutPushNotificationsInput {
   where: UserWhereUniqueInput
   data: UserUpdateWithoutPushNotificationsDataInput
@@ -37346,9 +38018,9 @@ export interface UserUpsertNestedInput {
   create: UserCreateInput
 }
 
-export interface UserUpsertWithoutStyleSubmissionsInput {
-  update: UserUpdateWithoutStyleSubmissionsDataInput
-  create: UserCreateWithoutStyleSubmissionsInput
+export interface UserUpsertWithoutFitPicsInput {
+  update: UserUpdateWithoutFitPicsDataInput
+  create: UserCreateWithoutFitPicsInput
 }
 
 export interface UserUpsertWithWhereUniqueWithoutPushNotificationsInput {
@@ -38011,6 +38683,14 @@ export interface AggregateEmailReceipt {
   count: Int
 }
 
+export interface AggregateFitPic {
+  count: Int
+}
+
+export interface AggregateFitPicReport {
+  count: Int
+}
+
 export interface AggregateHomepageProductRail {
   count: Int
 }
@@ -38124,14 +38804,6 @@ export interface AggregateSmsReceipt {
 }
 
 export interface AggregateStylePreferences {
-  count: Int
-}
-
-export interface AggregateStyleSubmission {
-  count: Int
-}
-
-export interface AggregateStyleSubmissionReport {
   count: Int
 }
 
@@ -38754,6 +39426,92 @@ export interface EmailReceiptSubscriptionPayload {
   node?: EmailReceipt | null
   updatedFields?: Array<String> | null
   previousValues?: EmailReceiptPreviousValues | null
+}
+
+export interface FitPic extends Node {
+  id: ID_Output
+  user: User
+  image: Image
+  location?: Location | null
+  products?: Array<Product> | null
+  approved: Boolean
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+/*
+ * A connection to a list of items.
+
+ */
+export interface FitPicConnection {
+  pageInfo: PageInfo
+  edges: Array<FitPicEdge | null>
+  aggregate: AggregateFitPic
+}
+
+/*
+ * An edge in a connection.
+
+ */
+export interface FitPicEdge {
+  node: FitPic
+  cursor: String
+}
+
+export interface FitPicPreviousValues {
+  id: ID_Output
+  approved: Boolean
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+export interface FitPicReport extends Node {
+  id: ID_Output
+  reporter: User
+  reported: FitPic
+  status: FitPicReportStatus
+  reportedAt: DateTime
+  updatedAt: DateTime
+}
+
+/*
+ * A connection to a list of items.
+
+ */
+export interface FitPicReportConnection {
+  pageInfo: PageInfo
+  edges: Array<FitPicReportEdge | null>
+  aggregate: AggregateFitPicReport
+}
+
+/*
+ * An edge in a connection.
+
+ */
+export interface FitPicReportEdge {
+  node: FitPicReport
+  cursor: String
+}
+
+export interface FitPicReportPreviousValues {
+  id: ID_Output
+  status: FitPicReportStatus
+  reportedAt: DateTime
+  updatedAt: DateTime
+}
+
+export interface FitPicReportSubscriptionPayload {
+  mutation: MutationType
+  node?: FitPicReport | null
+  updatedFields?: Array<String> | null
+  previousValues?: FitPicReportPreviousValues | null
+}
+
+export interface FitPicSubscriptionPayload {
+  mutation: MutationType
+  node?: FitPic | null
+  updatedFields?: Array<String> | null
+  previousValues?: FitPicPreviousValues | null
 }
 
 export interface HomepageProductRail extends Node {
@@ -40244,7 +41002,7 @@ export interface User extends Node {
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
   smsReceipts?: Array<SmsReceipt> | null
-  styleSubmissions?: Array<StyleSubmission> | null
+  fitPics?: Array<FitPic> | null
   createdAt: DateTime
   updatedAt: DateTime
 }

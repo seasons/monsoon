@@ -30,6 +30,8 @@ export interface Exists {
     where?: CustomerMembershipWhereInput
   ) => Promise<boolean>;
   emailReceipt: (where?: EmailReceiptWhereInput) => Promise<boolean>;
+  fitPic: (where?: FitPicWhereInput) => Promise<boolean>;
+  fitPicReport: (where?: FitPicReportWhereInput) => Promise<boolean>;
   homepageProductRail: (
     where?: HomepageProductRailWhereInput
   ) => Promise<boolean>;
@@ -85,10 +87,6 @@ export interface Exists {
   size: (where?: SizeWhereInput) => Promise<boolean>;
   smsReceipt: (where?: SmsReceiptWhereInput) => Promise<boolean>;
   stylePreferences: (where?: StylePreferencesWhereInput) => Promise<boolean>;
-  styleSubmission: (where?: StyleSubmissionWhereInput) => Promise<boolean>;
-  styleSubmissionReport: (
-    where?: StyleSubmissionReportWhereInput
-  ) => Promise<boolean>;
   tag: (where?: TagWhereInput) => Promise<boolean>;
   topSize: (where?: TopSizeWhereInput) => Promise<boolean>;
   user: (where?: UserWhereInput) => Promise<boolean>;
@@ -361,6 +359,46 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => EmailReceiptConnectionPromise;
+  fitPic: (where: FitPicWhereUniqueInput) => FitPicNullablePromise;
+  fitPics: (args?: {
+    where?: FitPicWhereInput;
+    orderBy?: FitPicOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<FitPic>;
+  fitPicsConnection: (args?: {
+    where?: FitPicWhereInput;
+    orderBy?: FitPicOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FitPicConnectionPromise;
+  fitPicReport: (
+    where: FitPicReportWhereUniqueInput
+  ) => FitPicReportNullablePromise;
+  fitPicReports: (args?: {
+    where?: FitPicReportWhereInput;
+    orderBy?: FitPicReportOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<FitPicReport>;
+  fitPicReportsConnection: (args?: {
+    where?: FitPicReportWhereInput;
+    orderBy?: FitPicReportOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FitPicReportConnectionPromise;
   homepageProductRail: (
     where: HomepageProductRailWhereUniqueInput
   ) => HomepageProductRailNullablePromise;
@@ -956,48 +994,6 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => StylePreferencesConnectionPromise;
-  styleSubmission: (
-    where: StyleSubmissionWhereUniqueInput
-  ) => StyleSubmissionNullablePromise;
-  styleSubmissions: (args?: {
-    where?: StyleSubmissionWhereInput;
-    orderBy?: StyleSubmissionOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => FragmentableArray<StyleSubmission>;
-  styleSubmissionsConnection: (args?: {
-    where?: StyleSubmissionWhereInput;
-    orderBy?: StyleSubmissionOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => StyleSubmissionConnectionPromise;
-  styleSubmissionReport: (
-    where: StyleSubmissionReportWhereUniqueInput
-  ) => StyleSubmissionReportNullablePromise;
-  styleSubmissionReports: (args?: {
-    where?: StyleSubmissionReportWhereInput;
-    orderBy?: StyleSubmissionReportOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => FragmentableArray<StyleSubmissionReport>;
-  styleSubmissionReportsConnection: (args?: {
-    where?: StyleSubmissionReportWhereInput;
-    orderBy?: StyleSubmissionReportOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => StyleSubmissionReportConnectionPromise;
   tag: (where: TagWhereUniqueInput) => TagNullablePromise;
   tags: (args?: {
     where?: TagWhereInput;
@@ -1360,6 +1356,42 @@ export interface Prisma {
   ) => EmailReceiptPromise;
   deleteManyEmailReceipts: (
     where?: EmailReceiptWhereInput
+  ) => BatchPayloadPromise;
+  createFitPic: (data: FitPicCreateInput) => FitPicPromise;
+  updateFitPic: (args: {
+    data: FitPicUpdateInput;
+    where: FitPicWhereUniqueInput;
+  }) => FitPicPromise;
+  updateManyFitPics: (args: {
+    data: FitPicUpdateManyMutationInput;
+    where?: FitPicWhereInput;
+  }) => BatchPayloadPromise;
+  upsertFitPic: (args: {
+    where: FitPicWhereUniqueInput;
+    create: FitPicCreateInput;
+    update: FitPicUpdateInput;
+  }) => FitPicPromise;
+  deleteFitPic: (where: FitPicWhereUniqueInput) => FitPicPromise;
+  deleteManyFitPics: (where?: FitPicWhereInput) => BatchPayloadPromise;
+  createFitPicReport: (data: FitPicReportCreateInput) => FitPicReportPromise;
+  updateFitPicReport: (args: {
+    data: FitPicReportUpdateInput;
+    where: FitPicReportWhereUniqueInput;
+  }) => FitPicReportPromise;
+  updateManyFitPicReports: (args: {
+    data: FitPicReportUpdateManyMutationInput;
+    where?: FitPicReportWhereInput;
+  }) => BatchPayloadPromise;
+  upsertFitPicReport: (args: {
+    where: FitPicReportWhereUniqueInput;
+    create: FitPicReportCreateInput;
+    update: FitPicReportUpdateInput;
+  }) => FitPicReportPromise;
+  deleteFitPicReport: (
+    where: FitPicReportWhereUniqueInput
+  ) => FitPicReportPromise;
+  deleteManyFitPicReports: (
+    where?: FitPicReportWhereInput
   ) => BatchPayloadPromise;
   createHomepageProductRail: (
     data: HomepageProductRailCreateInput
@@ -1941,50 +1973,6 @@ export interface Prisma {
   deleteManyStylePreferenceses: (
     where?: StylePreferencesWhereInput
   ) => BatchPayloadPromise;
-  createStyleSubmission: (
-    data: StyleSubmissionCreateInput
-  ) => StyleSubmissionPromise;
-  updateStyleSubmission: (args: {
-    data: StyleSubmissionUpdateInput;
-    where: StyleSubmissionWhereUniqueInput;
-  }) => StyleSubmissionPromise;
-  updateManyStyleSubmissions: (args: {
-    data: StyleSubmissionUpdateManyMutationInput;
-    where?: StyleSubmissionWhereInput;
-  }) => BatchPayloadPromise;
-  upsertStyleSubmission: (args: {
-    where: StyleSubmissionWhereUniqueInput;
-    create: StyleSubmissionCreateInput;
-    update: StyleSubmissionUpdateInput;
-  }) => StyleSubmissionPromise;
-  deleteStyleSubmission: (
-    where: StyleSubmissionWhereUniqueInput
-  ) => StyleSubmissionPromise;
-  deleteManyStyleSubmissions: (
-    where?: StyleSubmissionWhereInput
-  ) => BatchPayloadPromise;
-  createStyleSubmissionReport: (
-    data: StyleSubmissionReportCreateInput
-  ) => StyleSubmissionReportPromise;
-  updateStyleSubmissionReport: (args: {
-    data: StyleSubmissionReportUpdateInput;
-    where: StyleSubmissionReportWhereUniqueInput;
-  }) => StyleSubmissionReportPromise;
-  updateManyStyleSubmissionReports: (args: {
-    data: StyleSubmissionReportUpdateManyMutationInput;
-    where?: StyleSubmissionReportWhereInput;
-  }) => BatchPayloadPromise;
-  upsertStyleSubmissionReport: (args: {
-    where: StyleSubmissionReportWhereUniqueInput;
-    create: StyleSubmissionReportCreateInput;
-    update: StyleSubmissionReportUpdateInput;
-  }) => StyleSubmissionReportPromise;
-  deleteStyleSubmissionReport: (
-    where: StyleSubmissionReportWhereUniqueInput
-  ) => StyleSubmissionReportPromise;
-  deleteManyStyleSubmissionReports: (
-    where?: StyleSubmissionReportWhereInput
-  ) => BatchPayloadPromise;
   createTag: (data: TagCreateInput) => TagPromise;
   updateTag: (args: {
     data: TagUpdateInput;
@@ -2166,6 +2154,12 @@ export interface Subscription {
   emailReceipt: (
     where?: EmailReceiptSubscriptionWhereInput
   ) => EmailReceiptSubscriptionPayloadSubscription;
+  fitPic: (
+    where?: FitPicSubscriptionWhereInput
+  ) => FitPicSubscriptionPayloadSubscription;
+  fitPicReport: (
+    where?: FitPicReportSubscriptionWhereInput
+  ) => FitPicReportSubscriptionPayloadSubscription;
   homepageProductRail: (
     where?: HomepageProductRailSubscriptionWhereInput
   ) => HomepageProductRailSubscriptionPayloadSubscription;
@@ -2253,12 +2247,6 @@ export interface Subscription {
   stylePreferences: (
     where?: StylePreferencesSubscriptionWhereInput
   ) => StylePreferencesSubscriptionPayloadSubscription;
-  styleSubmission: (
-    where?: StyleSubmissionSubscriptionWhereInput
-  ) => StyleSubmissionSubscriptionPayloadSubscription;
-  styleSubmissionReport: (
-    where?: StyleSubmissionReportSubscriptionWhereInput
-  ) => StyleSubmissionReportSubscriptionPayloadSubscription;
   tag: (
     where?: TagSubscriptionWhereInput
   ) => TagSubscriptionPayloadSubscription;
@@ -2452,7 +2440,7 @@ export type SmsReceiptOrderByInput =
   | "updatedAt_ASC"
   | "updatedAt_DESC";
 
-export type StyleSubmissionOrderByInput =
+export type FitPicOrderByInput =
   | "id_ASC"
   | "id_DESC"
   | "approved_ASC"
@@ -2985,6 +2973,18 @@ export type EmailReceiptOrderByInput =
   | "updatedAt_ASC"
   | "updatedAt_DESC";
 
+export type FitPicReportStatus = "Pending" | "Reviewed";
+
+export type FitPicReportOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "status_ASC"
+  | "status_DESC"
+  | "reportedAt_ASC"
+  | "reportedAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
+
 export type HomepageProductRailOrderByInput =
   | "id_ASC"
   | "id_DESC"
@@ -3162,18 +3162,6 @@ export type ReservationReceiptOrderByInput =
   | "updatedAt_DESC";
 
 export type StylePreferencesOrderByInput = "id_ASC" | "id_DESC";
-
-export type StyleSubmissionReportStatus = "Pending" | "Reviewed";
-
-export type StyleSubmissionReportOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "status_ASC"
-  | "status_DESC"
-  | "reportedAt_ASC"
-  | "reportedAt_DESC"
-  | "updatedAt_ASC"
-  | "updatedAt_DESC";
 
 export type TopSizeOrderByInput =
   | "id_ASC"
@@ -3474,9 +3462,9 @@ export interface UserWhereInput {
   smsReceipts_every?: Maybe<SmsReceiptWhereInput>;
   smsReceipts_some?: Maybe<SmsReceiptWhereInput>;
   smsReceipts_none?: Maybe<SmsReceiptWhereInput>;
-  styleSubmissions_every?: Maybe<StyleSubmissionWhereInput>;
-  styleSubmissions_some?: Maybe<StyleSubmissionWhereInput>;
-  styleSubmissions_none?: Maybe<StyleSubmissionWhereInput>;
+  fitPics_every?: Maybe<FitPicWhereInput>;
+  fitPics_some?: Maybe<FitPicWhereInput>;
+  fitPics_none?: Maybe<FitPicWhereInput>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -3652,7 +3640,7 @@ export interface SmsReceiptWhereInput {
   NOT?: Maybe<SmsReceiptWhereInput[] | SmsReceiptWhereInput>;
 }
 
-export interface StyleSubmissionWhereInput {
+export interface FitPicWhereInput {
   id?: Maybe<ID_Input>;
   id_not?: Maybe<ID_Input>;
   id_in?: Maybe<ID_Input[] | ID_Input>;
@@ -3691,9 +3679,9 @@ export interface StyleSubmissionWhereInput {
   updatedAt_lte?: Maybe<DateTimeInput>;
   updatedAt_gt?: Maybe<DateTimeInput>;
   updatedAt_gte?: Maybe<DateTimeInput>;
-  AND?: Maybe<StyleSubmissionWhereInput[] | StyleSubmissionWhereInput>;
-  OR?: Maybe<StyleSubmissionWhereInput[] | StyleSubmissionWhereInput>;
-  NOT?: Maybe<StyleSubmissionWhereInput[] | StyleSubmissionWhereInput>;
+  AND?: Maybe<FitPicWhereInput[] | FitPicWhereInput>;
+  OR?: Maybe<FitPicWhereInput[] | FitPicWhereInput>;
+  NOT?: Maybe<FitPicWhereInput[] | FitPicWhereInput>;
 }
 
 export interface ImageWhereInput {
@@ -6568,6 +6556,56 @@ export interface EmailReceiptWhereInput {
   NOT?: Maybe<EmailReceiptWhereInput[] | EmailReceiptWhereInput>;
 }
 
+export type FitPicWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
+export type FitPicReportWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
+export interface FitPicReportWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  reporter?: Maybe<UserWhereInput>;
+  reported?: Maybe<FitPicWhereInput>;
+  status?: Maybe<FitPicReportStatus>;
+  status_not?: Maybe<FitPicReportStatus>;
+  status_in?: Maybe<FitPicReportStatus[] | FitPicReportStatus>;
+  status_not_in?: Maybe<FitPicReportStatus[] | FitPicReportStatus>;
+  reportedAt?: Maybe<DateTimeInput>;
+  reportedAt_not?: Maybe<DateTimeInput>;
+  reportedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  reportedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  reportedAt_lt?: Maybe<DateTimeInput>;
+  reportedAt_lte?: Maybe<DateTimeInput>;
+  reportedAt_gt?: Maybe<DateTimeInput>;
+  reportedAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<FitPicReportWhereInput[] | FitPicReportWhereInput>;
+  OR?: Maybe<FitPicReportWhereInput[] | FitPicReportWhereInput>;
+  NOT?: Maybe<FitPicReportWhereInput[] | FitPicReportWhereInput>;
+}
+
 export type HomepageProductRailWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
   slug?: Maybe<String>;
@@ -7212,66 +7250,6 @@ export type StylePreferencesWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
 
-export type StyleSubmissionWhereUniqueInput = AtLeastOne<{
-  id: Maybe<ID_Input>;
-}>;
-
-export type StyleSubmissionReportWhereUniqueInput = AtLeastOne<{
-  id: Maybe<ID_Input>;
-}>;
-
-export interface StyleSubmissionReportWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  reporter?: Maybe<UserWhereInput>;
-  reported?: Maybe<StyleSubmissionWhereInput>;
-  status?: Maybe<StyleSubmissionReportStatus>;
-  status_not?: Maybe<StyleSubmissionReportStatus>;
-  status_in?: Maybe<
-    StyleSubmissionReportStatus[] | StyleSubmissionReportStatus
-  >;
-  status_not_in?: Maybe<
-    StyleSubmissionReportStatus[] | StyleSubmissionReportStatus
-  >;
-  reportedAt?: Maybe<DateTimeInput>;
-  reportedAt_not?: Maybe<DateTimeInput>;
-  reportedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  reportedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  reportedAt_lt?: Maybe<DateTimeInput>;
-  reportedAt_lte?: Maybe<DateTimeInput>;
-  reportedAt_gt?: Maybe<DateTimeInput>;
-  reportedAt_gte?: Maybe<DateTimeInput>;
-  updatedAt?: Maybe<DateTimeInput>;
-  updatedAt_not?: Maybe<DateTimeInput>;
-  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_lt?: Maybe<DateTimeInput>;
-  updatedAt_lte?: Maybe<DateTimeInput>;
-  updatedAt_gt?: Maybe<DateTimeInput>;
-  updatedAt_gte?: Maybe<DateTimeInput>;
-  AND?: Maybe<
-    StyleSubmissionReportWhereInput[] | StyleSubmissionReportWhereInput
-  >;
-  OR?: Maybe<
-    StyleSubmissionReportWhereInput[] | StyleSubmissionReportWhereInput
-  >;
-  NOT?: Maybe<
-    StyleSubmissionReportWhereInput[] | StyleSubmissionReportWhereInput
-  >;
-}
-
 export type TagWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
   name?: Maybe<String>;
@@ -7348,7 +7326,7 @@ export interface UserCreateInput {
   verificationStatus?: Maybe<UserVerificationStatus>;
   verificationMethod?: Maybe<UserVerificationMethod>;
   smsReceipts?: Maybe<SmsReceiptCreateManyInput>;
-  styleSubmissions?: Maybe<StyleSubmissionCreateManyWithoutUserInput>;
+  fitPics?: Maybe<FitPicCreateManyWithoutUserInput>;
 }
 
 export interface UserCreaterolesInput {
@@ -7455,7 +7433,7 @@ export interface UserCreateWithoutPushNotificationsInput {
   verificationStatus?: Maybe<UserVerificationStatus>;
   verificationMethod?: Maybe<UserVerificationMethod>;
   smsReceipts?: Maybe<SmsReceiptCreateManyInput>;
-  styleSubmissions?: Maybe<StyleSubmissionCreateManyWithoutUserInput>;
+  fitPics?: Maybe<FitPicCreateManyWithoutUserInput>;
 }
 
 export interface SmsReceiptCreateManyInput {
@@ -7475,17 +7453,12 @@ export interface SmsReceiptCreatemediaUrlsInput {
   set?: Maybe<String[] | String>;
 }
 
-export interface StyleSubmissionCreateManyWithoutUserInput {
-  create?: Maybe<
-    | StyleSubmissionCreateWithoutUserInput[]
-    | StyleSubmissionCreateWithoutUserInput
-  >;
-  connect?: Maybe<
-    StyleSubmissionWhereUniqueInput[] | StyleSubmissionWhereUniqueInput
-  >;
+export interface FitPicCreateManyWithoutUserInput {
+  create?: Maybe<FitPicCreateWithoutUserInput[] | FitPicCreateWithoutUserInput>;
+  connect?: Maybe<FitPicWhereUniqueInput[] | FitPicWhereUniqueInput>;
 }
 
-export interface StyleSubmissionCreateWithoutUserInput {
+export interface FitPicCreateWithoutUserInput {
   id?: Maybe<ID_Input>;
   image: ImageCreateOneInput;
   location?: Maybe<LocationCreateOneInput>;
@@ -8399,7 +8372,7 @@ export interface UserUpdateDataInput {
   verificationStatus?: Maybe<UserVerificationStatus>;
   verificationMethod?: Maybe<UserVerificationMethod>;
   smsReceipts?: Maybe<SmsReceiptUpdateManyInput>;
-  styleSubmissions?: Maybe<StyleSubmissionUpdateManyWithoutUserInput>;
+  fitPics?: Maybe<FitPicUpdateManyWithoutUserInput>;
 }
 
 export interface UserUpdaterolesInput {
@@ -8882,7 +8855,7 @@ export interface UserUpdateWithoutPushNotificationsDataInput {
   verificationStatus?: Maybe<UserVerificationStatus>;
   verificationMethod?: Maybe<UserVerificationMethod>;
   smsReceipts?: Maybe<SmsReceiptUpdateManyInput>;
-  styleSubmissions?: Maybe<StyleSubmissionUpdateManyWithoutUserInput>;
+  fitPics?: Maybe<FitPicUpdateManyWithoutUserInput>;
 }
 
 export interface SmsReceiptUpdateManyInput {
@@ -9008,46 +8981,33 @@ export interface SmsReceiptUpdateManyDataInput {
   status?: Maybe<SmsStatus>;
 }
 
-export interface StyleSubmissionUpdateManyWithoutUserInput {
-  create?: Maybe<
-    | StyleSubmissionCreateWithoutUserInput[]
-    | StyleSubmissionCreateWithoutUserInput
-  >;
-  delete?: Maybe<
-    StyleSubmissionWhereUniqueInput[] | StyleSubmissionWhereUniqueInput
-  >;
-  connect?: Maybe<
-    StyleSubmissionWhereUniqueInput[] | StyleSubmissionWhereUniqueInput
-  >;
-  set?: Maybe<
-    StyleSubmissionWhereUniqueInput[] | StyleSubmissionWhereUniqueInput
-  >;
-  disconnect?: Maybe<
-    StyleSubmissionWhereUniqueInput[] | StyleSubmissionWhereUniqueInput
-  >;
+export interface FitPicUpdateManyWithoutUserInput {
+  create?: Maybe<FitPicCreateWithoutUserInput[] | FitPicCreateWithoutUserInput>;
+  delete?: Maybe<FitPicWhereUniqueInput[] | FitPicWhereUniqueInput>;
+  connect?: Maybe<FitPicWhereUniqueInput[] | FitPicWhereUniqueInput>;
+  set?: Maybe<FitPicWhereUniqueInput[] | FitPicWhereUniqueInput>;
+  disconnect?: Maybe<FitPicWhereUniqueInput[] | FitPicWhereUniqueInput>;
   update?: Maybe<
-    | StyleSubmissionUpdateWithWhereUniqueWithoutUserInput[]
-    | StyleSubmissionUpdateWithWhereUniqueWithoutUserInput
+    | FitPicUpdateWithWhereUniqueWithoutUserInput[]
+    | FitPicUpdateWithWhereUniqueWithoutUserInput
   >;
   upsert?: Maybe<
-    | StyleSubmissionUpsertWithWhereUniqueWithoutUserInput[]
-    | StyleSubmissionUpsertWithWhereUniqueWithoutUserInput
+    | FitPicUpsertWithWhereUniqueWithoutUserInput[]
+    | FitPicUpsertWithWhereUniqueWithoutUserInput
   >;
-  deleteMany?: Maybe<
-    StyleSubmissionScalarWhereInput[] | StyleSubmissionScalarWhereInput
-  >;
+  deleteMany?: Maybe<FitPicScalarWhereInput[] | FitPicScalarWhereInput>;
   updateMany?: Maybe<
-    | StyleSubmissionUpdateManyWithWhereNestedInput[]
-    | StyleSubmissionUpdateManyWithWhereNestedInput
+    | FitPicUpdateManyWithWhereNestedInput[]
+    | FitPicUpdateManyWithWhereNestedInput
   >;
 }
 
-export interface StyleSubmissionUpdateWithWhereUniqueWithoutUserInput {
-  where: StyleSubmissionWhereUniqueInput;
-  data: StyleSubmissionUpdateWithoutUserDataInput;
+export interface FitPicUpdateWithWhereUniqueWithoutUserInput {
+  where: FitPicWhereUniqueInput;
+  data: FitPicUpdateWithoutUserDataInput;
 }
 
-export interface StyleSubmissionUpdateWithoutUserDataInput {
+export interface FitPicUpdateWithoutUserDataInput {
   image?: Maybe<ImageUpdateOneRequiredInput>;
   location?: Maybe<LocationUpdateOneInput>;
   products?: Maybe<ProductUpdateManyInput>;
@@ -11238,13 +11198,13 @@ export interface ProductUpsertWithWhereUniqueNestedInput {
   create: ProductCreateInput;
 }
 
-export interface StyleSubmissionUpsertWithWhereUniqueWithoutUserInput {
-  where: StyleSubmissionWhereUniqueInput;
-  update: StyleSubmissionUpdateWithoutUserDataInput;
-  create: StyleSubmissionCreateWithoutUserInput;
+export interface FitPicUpsertWithWhereUniqueWithoutUserInput {
+  where: FitPicWhereUniqueInput;
+  update: FitPicUpdateWithoutUserDataInput;
+  create: FitPicCreateWithoutUserInput;
 }
 
-export interface StyleSubmissionScalarWhereInput {
+export interface FitPicScalarWhereInput {
   id?: Maybe<ID_Input>;
   id_not?: Maybe<ID_Input>;
   id_in?: Maybe<ID_Input[] | ID_Input>;
@@ -11277,23 +11237,17 @@ export interface StyleSubmissionScalarWhereInput {
   updatedAt_lte?: Maybe<DateTimeInput>;
   updatedAt_gt?: Maybe<DateTimeInput>;
   updatedAt_gte?: Maybe<DateTimeInput>;
-  AND?: Maybe<
-    StyleSubmissionScalarWhereInput[] | StyleSubmissionScalarWhereInput
-  >;
-  OR?: Maybe<
-    StyleSubmissionScalarWhereInput[] | StyleSubmissionScalarWhereInput
-  >;
-  NOT?: Maybe<
-    StyleSubmissionScalarWhereInput[] | StyleSubmissionScalarWhereInput
-  >;
+  AND?: Maybe<FitPicScalarWhereInput[] | FitPicScalarWhereInput>;
+  OR?: Maybe<FitPicScalarWhereInput[] | FitPicScalarWhereInput>;
+  NOT?: Maybe<FitPicScalarWhereInput[] | FitPicScalarWhereInput>;
 }
 
-export interface StyleSubmissionUpdateManyWithWhereNestedInput {
-  where: StyleSubmissionScalarWhereInput;
-  data: StyleSubmissionUpdateManyDataInput;
+export interface FitPicUpdateManyWithWhereNestedInput {
+  where: FitPicScalarWhereInput;
+  data: FitPicUpdateManyDataInput;
 }
 
-export interface StyleSubmissionUpdateManyDataInput {
+export interface FitPicUpdateManyDataInput {
   approved?: Maybe<Boolean>;
 }
 
@@ -12938,6 +12892,117 @@ export interface EmailReceiptUpdateManyMutationInput {
   emailId?: Maybe<EmailId>;
 }
 
+export interface FitPicCreateInput {
+  id?: Maybe<ID_Input>;
+  user: UserCreateOneWithoutFitPicsInput;
+  image: ImageCreateOneInput;
+  location?: Maybe<LocationCreateOneInput>;
+  products?: Maybe<ProductCreateManyInput>;
+  approved?: Maybe<Boolean>;
+}
+
+export interface UserCreateOneWithoutFitPicsInput {
+  create?: Maybe<UserCreateWithoutFitPicsInput>;
+  connect?: Maybe<UserWhereUniqueInput>;
+}
+
+export interface UserCreateWithoutFitPicsInput {
+  id?: Maybe<ID_Input>;
+  auth0Id: String;
+  email: String;
+  firstName: String;
+  lastName: String;
+  role?: Maybe<UserRole>;
+  roles?: Maybe<UserCreaterolesInput>;
+  pushNotificationStatus?: Maybe<PushNotificationStatus>;
+  pushNotifications?: Maybe<PushNotificationReceiptCreateManyWithoutUsersInput>;
+  pushNotification?: Maybe<UserPushNotificationCreateOneInput>;
+  verificationStatus?: Maybe<UserVerificationStatus>;
+  verificationMethod?: Maybe<UserVerificationMethod>;
+  smsReceipts?: Maybe<SmsReceiptCreateManyInput>;
+}
+
+export interface FitPicUpdateInput {
+  user?: Maybe<UserUpdateOneRequiredWithoutFitPicsInput>;
+  image?: Maybe<ImageUpdateOneRequiredInput>;
+  location?: Maybe<LocationUpdateOneInput>;
+  products?: Maybe<ProductUpdateManyInput>;
+  approved?: Maybe<Boolean>;
+}
+
+export interface UserUpdateOneRequiredWithoutFitPicsInput {
+  create?: Maybe<UserCreateWithoutFitPicsInput>;
+  update?: Maybe<UserUpdateWithoutFitPicsDataInput>;
+  upsert?: Maybe<UserUpsertWithoutFitPicsInput>;
+  connect?: Maybe<UserWhereUniqueInput>;
+}
+
+export interface UserUpdateWithoutFitPicsDataInput {
+  auth0Id?: Maybe<String>;
+  email?: Maybe<String>;
+  firstName?: Maybe<String>;
+  lastName?: Maybe<String>;
+  role?: Maybe<UserRole>;
+  roles?: Maybe<UserUpdaterolesInput>;
+  pushNotificationStatus?: Maybe<PushNotificationStatus>;
+  pushNotifications?: Maybe<PushNotificationReceiptUpdateManyWithoutUsersInput>;
+  pushNotification?: Maybe<UserPushNotificationUpdateOneInput>;
+  verificationStatus?: Maybe<UserVerificationStatus>;
+  verificationMethod?: Maybe<UserVerificationMethod>;
+  smsReceipts?: Maybe<SmsReceiptUpdateManyInput>;
+}
+
+export interface UserUpsertWithoutFitPicsInput {
+  update: UserUpdateWithoutFitPicsDataInput;
+  create: UserCreateWithoutFitPicsInput;
+}
+
+export interface FitPicUpdateManyMutationInput {
+  approved?: Maybe<Boolean>;
+}
+
+export interface FitPicReportCreateInput {
+  id?: Maybe<ID_Input>;
+  reporter: UserCreateOneInput;
+  reported: FitPicCreateOneInput;
+  status?: Maybe<FitPicReportStatus>;
+}
+
+export interface FitPicCreateOneInput {
+  create?: Maybe<FitPicCreateInput>;
+  connect?: Maybe<FitPicWhereUniqueInput>;
+}
+
+export interface FitPicReportUpdateInput {
+  reporter?: Maybe<UserUpdateOneRequiredInput>;
+  reported?: Maybe<FitPicUpdateOneRequiredInput>;
+  status?: Maybe<FitPicReportStatus>;
+}
+
+export interface FitPicUpdateOneRequiredInput {
+  create?: Maybe<FitPicCreateInput>;
+  update?: Maybe<FitPicUpdateDataInput>;
+  upsert?: Maybe<FitPicUpsertNestedInput>;
+  connect?: Maybe<FitPicWhereUniqueInput>;
+}
+
+export interface FitPicUpdateDataInput {
+  user?: Maybe<UserUpdateOneRequiredWithoutFitPicsInput>;
+  image?: Maybe<ImageUpdateOneRequiredInput>;
+  location?: Maybe<LocationUpdateOneInput>;
+  products?: Maybe<ProductUpdateManyInput>;
+  approved?: Maybe<Boolean>;
+}
+
+export interface FitPicUpsertNestedInput {
+  update: FitPicUpdateDataInput;
+  create: FitPicCreateInput;
+}
+
+export interface FitPicReportUpdateManyMutationInput {
+  status?: Maybe<FitPicReportStatus>;
+}
+
 export interface HomepageProductRailCreateInput {
   id?: Maybe<ID_Input>;
   slug: String;
@@ -14461,117 +14526,6 @@ export interface StylePreferencesUpdateManyMutationInput {
   brands?: Maybe<StylePreferencesUpdatebrandsInput>;
 }
 
-export interface StyleSubmissionCreateInput {
-  id?: Maybe<ID_Input>;
-  user: UserCreateOneWithoutStyleSubmissionsInput;
-  image: ImageCreateOneInput;
-  location?: Maybe<LocationCreateOneInput>;
-  products?: Maybe<ProductCreateManyInput>;
-  approved?: Maybe<Boolean>;
-}
-
-export interface UserCreateOneWithoutStyleSubmissionsInput {
-  create?: Maybe<UserCreateWithoutStyleSubmissionsInput>;
-  connect?: Maybe<UserWhereUniqueInput>;
-}
-
-export interface UserCreateWithoutStyleSubmissionsInput {
-  id?: Maybe<ID_Input>;
-  auth0Id: String;
-  email: String;
-  firstName: String;
-  lastName: String;
-  role?: Maybe<UserRole>;
-  roles?: Maybe<UserCreaterolesInput>;
-  pushNotificationStatus?: Maybe<PushNotificationStatus>;
-  pushNotifications?: Maybe<PushNotificationReceiptCreateManyWithoutUsersInput>;
-  pushNotification?: Maybe<UserPushNotificationCreateOneInput>;
-  verificationStatus?: Maybe<UserVerificationStatus>;
-  verificationMethod?: Maybe<UserVerificationMethod>;
-  smsReceipts?: Maybe<SmsReceiptCreateManyInput>;
-}
-
-export interface StyleSubmissionUpdateInput {
-  user?: Maybe<UserUpdateOneRequiredWithoutStyleSubmissionsInput>;
-  image?: Maybe<ImageUpdateOneRequiredInput>;
-  location?: Maybe<LocationUpdateOneInput>;
-  products?: Maybe<ProductUpdateManyInput>;
-  approved?: Maybe<Boolean>;
-}
-
-export interface UserUpdateOneRequiredWithoutStyleSubmissionsInput {
-  create?: Maybe<UserCreateWithoutStyleSubmissionsInput>;
-  update?: Maybe<UserUpdateWithoutStyleSubmissionsDataInput>;
-  upsert?: Maybe<UserUpsertWithoutStyleSubmissionsInput>;
-  connect?: Maybe<UserWhereUniqueInput>;
-}
-
-export interface UserUpdateWithoutStyleSubmissionsDataInput {
-  auth0Id?: Maybe<String>;
-  email?: Maybe<String>;
-  firstName?: Maybe<String>;
-  lastName?: Maybe<String>;
-  role?: Maybe<UserRole>;
-  roles?: Maybe<UserUpdaterolesInput>;
-  pushNotificationStatus?: Maybe<PushNotificationStatus>;
-  pushNotifications?: Maybe<PushNotificationReceiptUpdateManyWithoutUsersInput>;
-  pushNotification?: Maybe<UserPushNotificationUpdateOneInput>;
-  verificationStatus?: Maybe<UserVerificationStatus>;
-  verificationMethod?: Maybe<UserVerificationMethod>;
-  smsReceipts?: Maybe<SmsReceiptUpdateManyInput>;
-}
-
-export interface UserUpsertWithoutStyleSubmissionsInput {
-  update: UserUpdateWithoutStyleSubmissionsDataInput;
-  create: UserCreateWithoutStyleSubmissionsInput;
-}
-
-export interface StyleSubmissionUpdateManyMutationInput {
-  approved?: Maybe<Boolean>;
-}
-
-export interface StyleSubmissionReportCreateInput {
-  id?: Maybe<ID_Input>;
-  reporter: UserCreateOneInput;
-  reported: StyleSubmissionCreateOneInput;
-  status?: Maybe<StyleSubmissionReportStatus>;
-}
-
-export interface StyleSubmissionCreateOneInput {
-  create?: Maybe<StyleSubmissionCreateInput>;
-  connect?: Maybe<StyleSubmissionWhereUniqueInput>;
-}
-
-export interface StyleSubmissionReportUpdateInput {
-  reporter?: Maybe<UserUpdateOneRequiredInput>;
-  reported?: Maybe<StyleSubmissionUpdateOneRequiredInput>;
-  status?: Maybe<StyleSubmissionReportStatus>;
-}
-
-export interface StyleSubmissionUpdateOneRequiredInput {
-  create?: Maybe<StyleSubmissionCreateInput>;
-  update?: Maybe<StyleSubmissionUpdateDataInput>;
-  upsert?: Maybe<StyleSubmissionUpsertNestedInput>;
-  connect?: Maybe<StyleSubmissionWhereUniqueInput>;
-}
-
-export interface StyleSubmissionUpdateDataInput {
-  user?: Maybe<UserUpdateOneRequiredWithoutStyleSubmissionsInput>;
-  image?: Maybe<ImageUpdateOneRequiredInput>;
-  location?: Maybe<LocationUpdateOneInput>;
-  products?: Maybe<ProductUpdateManyInput>;
-  approved?: Maybe<Boolean>;
-}
-
-export interface StyleSubmissionUpsertNestedInput {
-  update: StyleSubmissionUpdateDataInput;
-  create: StyleSubmissionCreateInput;
-}
-
-export interface StyleSubmissionReportUpdateManyMutationInput {
-  status?: Maybe<StyleSubmissionReportStatus>;
-}
-
 export interface TagCreateInput {
   id?: Maybe<ID_Input>;
   name: String;
@@ -14723,7 +14677,7 @@ export interface UserUpdateInput {
   verificationStatus?: Maybe<UserVerificationStatus>;
   verificationMethod?: Maybe<UserVerificationMethod>;
   smsReceipts?: Maybe<SmsReceiptUpdateManyInput>;
-  styleSubmissions?: Maybe<StyleSubmissionUpdateManyWithoutUserInput>;
+  fitPics?: Maybe<FitPicUpdateManyWithoutUserInput>;
 }
 
 export interface UserUpdateManyMutationInput {
@@ -15273,6 +15227,34 @@ export interface EmailReceiptSubscriptionWhereInput {
   >;
 }
 
+export interface FitPicSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<FitPicWhereInput>;
+  AND?: Maybe<FitPicSubscriptionWhereInput[] | FitPicSubscriptionWhereInput>;
+  OR?: Maybe<FitPicSubscriptionWhereInput[] | FitPicSubscriptionWhereInput>;
+  NOT?: Maybe<FitPicSubscriptionWhereInput[] | FitPicSubscriptionWhereInput>;
+}
+
+export interface FitPicReportSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<FitPicReportWhereInput>;
+  AND?: Maybe<
+    FitPicReportSubscriptionWhereInput[] | FitPicReportSubscriptionWhereInput
+  >;
+  OR?: Maybe<
+    FitPicReportSubscriptionWhereInput[] | FitPicReportSubscriptionWhereInput
+  >;
+  NOT?: Maybe<
+    FitPicReportSubscriptionWhereInput[] | FitPicReportSubscriptionWhereInput
+  >;
+}
+
 export interface HomepageProductRailSubscriptionWhereInput {
   mutation_in?: Maybe<MutationType[] | MutationType>;
   updatedFields_contains?: Maybe<String>;
@@ -15788,46 +15770,6 @@ export interface StylePreferencesSubscriptionWhereInput {
   >;
 }
 
-export interface StyleSubmissionSubscriptionWhereInput {
-  mutation_in?: Maybe<MutationType[] | MutationType>;
-  updatedFields_contains?: Maybe<String>;
-  updatedFields_contains_every?: Maybe<String[] | String>;
-  updatedFields_contains_some?: Maybe<String[] | String>;
-  node?: Maybe<StyleSubmissionWhereInput>;
-  AND?: Maybe<
-    | StyleSubmissionSubscriptionWhereInput[]
-    | StyleSubmissionSubscriptionWhereInput
-  >;
-  OR?: Maybe<
-    | StyleSubmissionSubscriptionWhereInput[]
-    | StyleSubmissionSubscriptionWhereInput
-  >;
-  NOT?: Maybe<
-    | StyleSubmissionSubscriptionWhereInput[]
-    | StyleSubmissionSubscriptionWhereInput
-  >;
-}
-
-export interface StyleSubmissionReportSubscriptionWhereInput {
-  mutation_in?: Maybe<MutationType[] | MutationType>;
-  updatedFields_contains?: Maybe<String>;
-  updatedFields_contains_every?: Maybe<String[] | String>;
-  updatedFields_contains_some?: Maybe<String[] | String>;
-  node?: Maybe<StyleSubmissionReportWhereInput>;
-  AND?: Maybe<
-    | StyleSubmissionReportSubscriptionWhereInput[]
-    | StyleSubmissionReportSubscriptionWhereInput
-  >;
-  OR?: Maybe<
-    | StyleSubmissionReportSubscriptionWhereInput[]
-    | StyleSubmissionReportSubscriptionWhereInput
-  >;
-  NOT?: Maybe<
-    | StyleSubmissionReportSubscriptionWhereInput[]
-    | StyleSubmissionReportSubscriptionWhereInput
-  >;
-}
-
 export interface TagSubscriptionWhereInput {
   mutation_in?: Maybe<MutationType[] | MutationType>;
   updatedFields_contains?: Maybe<String>;
@@ -16122,9 +16064,9 @@ export interface UserPromise extends Promise<User>, Fragmentable {
     first?: Int;
     last?: Int;
   }) => T;
-  styleSubmissions: <T = FragmentableArray<StyleSubmission>>(args?: {
-    where?: StyleSubmissionWhereInput;
-    orderBy?: StyleSubmissionOrderByInput;
+  fitPics: <T = FragmentableArray<FitPic>>(args?: {
+    where?: FitPicWhereInput;
+    orderBy?: FitPicOrderByInput;
     skip?: Int;
     after?: String;
     before?: String;
@@ -16169,11 +16111,9 @@ export interface UserSubscription
     first?: Int;
     last?: Int;
   }) => T;
-  styleSubmissions: <
-    T = Promise<AsyncIterator<StyleSubmissionSubscription>>
-  >(args?: {
-    where?: StyleSubmissionWhereInput;
-    orderBy?: StyleSubmissionOrderByInput;
+  fitPics: <T = Promise<AsyncIterator<FitPicSubscription>>>(args?: {
+    where?: FitPicWhereInput;
+    orderBy?: FitPicOrderByInput;
     skip?: Int;
     after?: String;
     before?: String;
@@ -16216,9 +16156,9 @@ export interface UserNullablePromise
     first?: Int;
     last?: Int;
   }) => T;
-  styleSubmissions: <T = FragmentableArray<StyleSubmission>>(args?: {
-    where?: StyleSubmissionWhereInput;
-    orderBy?: StyleSubmissionOrderByInput;
+  fitPics: <T = FragmentableArray<FitPic>>(args?: {
+    where?: FitPicWhereInput;
+    orderBy?: FitPicOrderByInput;
     skip?: Int;
     after?: String;
     before?: String;
@@ -16487,16 +16427,14 @@ export interface SmsReceiptNullablePromise
   updatedAt: () => Promise<DateTimeOutput>;
 }
 
-export interface StyleSubmission {
+export interface FitPic {
   id: ID_Output;
   approved: Boolean;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
 
-export interface StyleSubmissionPromise
-  extends Promise<StyleSubmission>,
-    Fragmentable {
+export interface FitPicPromise extends Promise<FitPic>, Fragmentable {
   id: () => Promise<ID_Output>;
   user: <T = UserPromise>() => T;
   image: <T = ImagePromise>() => T;
@@ -16515,8 +16453,8 @@ export interface StyleSubmissionPromise
   updatedAt: () => Promise<DateTimeOutput>;
 }
 
-export interface StyleSubmissionSubscription
-  extends Promise<AsyncIterator<StyleSubmission>>,
+export interface FitPicSubscription
+  extends Promise<AsyncIterator<FitPic>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   user: <T = UserSubscription>() => T;
@@ -16536,8 +16474,8 @@ export interface StyleSubmissionSubscription
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
-export interface StyleSubmissionNullablePromise
-  extends Promise<StyleSubmission | null>,
+export interface FitPicNullablePromise
+  extends Promise<FitPic | null>,
     Fragmentable {
   id: () => Promise<ID_Output>;
   user: <T = UserPromise>() => T;
@@ -19610,6 +19548,156 @@ export interface AggregateEmailReceiptSubscription
   count: () => Promise<AsyncIterator<Int>>;
 }
 
+export interface FitPicConnection {
+  pageInfo: PageInfo;
+  edges: FitPicEdge[];
+}
+
+export interface FitPicConnectionPromise
+  extends Promise<FitPicConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<FitPicEdge>>() => T;
+  aggregate: <T = AggregateFitPicPromise>() => T;
+}
+
+export interface FitPicConnectionSubscription
+  extends Promise<AsyncIterator<FitPicConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<FitPicEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateFitPicSubscription>() => T;
+}
+
+export interface FitPicEdge {
+  node: FitPic;
+  cursor: String;
+}
+
+export interface FitPicEdgePromise extends Promise<FitPicEdge>, Fragmentable {
+  node: <T = FitPicPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface FitPicEdgeSubscription
+  extends Promise<AsyncIterator<FitPicEdge>>,
+    Fragmentable {
+  node: <T = FitPicSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateFitPic {
+  count: Int;
+}
+
+export interface AggregateFitPicPromise
+  extends Promise<AggregateFitPic>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateFitPicSubscription
+  extends Promise<AsyncIterator<AggregateFitPic>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface FitPicReport {
+  id: ID_Output;
+  status: FitPicReportStatus;
+  reportedAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface FitPicReportPromise
+  extends Promise<FitPicReport>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  reporter: <T = UserPromise>() => T;
+  reported: <T = FitPicPromise>() => T;
+  status: () => Promise<FitPicReportStatus>;
+  reportedAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface FitPicReportSubscription
+  extends Promise<AsyncIterator<FitPicReport>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  reporter: <T = UserSubscription>() => T;
+  reported: <T = FitPicSubscription>() => T;
+  status: () => Promise<AsyncIterator<FitPicReportStatus>>;
+  reportedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface FitPicReportNullablePromise
+  extends Promise<FitPicReport | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  reporter: <T = UserPromise>() => T;
+  reported: <T = FitPicPromise>() => T;
+  status: () => Promise<FitPicReportStatus>;
+  reportedAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface FitPicReportConnection {
+  pageInfo: PageInfo;
+  edges: FitPicReportEdge[];
+}
+
+export interface FitPicReportConnectionPromise
+  extends Promise<FitPicReportConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<FitPicReportEdge>>() => T;
+  aggregate: <T = AggregateFitPicReportPromise>() => T;
+}
+
+export interface FitPicReportConnectionSubscription
+  extends Promise<AsyncIterator<FitPicReportConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<FitPicReportEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateFitPicReportSubscription>() => T;
+}
+
+export interface FitPicReportEdge {
+  node: FitPicReport;
+  cursor: String;
+}
+
+export interface FitPicReportEdgePromise
+  extends Promise<FitPicReportEdge>,
+    Fragmentable {
+  node: <T = FitPicReportPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface FitPicReportEdgeSubscription
+  extends Promise<AsyncIterator<FitPicReportEdge>>,
+    Fragmentable {
+  node: <T = FitPicReportSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateFitPicReport {
+  count: Int;
+}
+
+export interface AggregateFitPicReportPromise
+  extends Promise<AggregateFitPicReport>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateFitPicReportSubscription
+  extends Promise<AsyncIterator<AggregateFitPicReport>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
 export interface HomepageProductRail {
   id: ID_Output;
   slug: String;
@@ -21679,160 +21767,6 @@ export interface AggregateStylePreferencesSubscription
   count: () => Promise<AsyncIterator<Int>>;
 }
 
-export interface StyleSubmissionConnection {
-  pageInfo: PageInfo;
-  edges: StyleSubmissionEdge[];
-}
-
-export interface StyleSubmissionConnectionPromise
-  extends Promise<StyleSubmissionConnection>,
-    Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<StyleSubmissionEdge>>() => T;
-  aggregate: <T = AggregateStyleSubmissionPromise>() => T;
-}
-
-export interface StyleSubmissionConnectionSubscription
-  extends Promise<AsyncIterator<StyleSubmissionConnection>>,
-    Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<StyleSubmissionEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateStyleSubmissionSubscription>() => T;
-}
-
-export interface StyleSubmissionEdge {
-  node: StyleSubmission;
-  cursor: String;
-}
-
-export interface StyleSubmissionEdgePromise
-  extends Promise<StyleSubmissionEdge>,
-    Fragmentable {
-  node: <T = StyleSubmissionPromise>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface StyleSubmissionEdgeSubscription
-  extends Promise<AsyncIterator<StyleSubmissionEdge>>,
-    Fragmentable {
-  node: <T = StyleSubmissionSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
-}
-
-export interface AggregateStyleSubmission {
-  count: Int;
-}
-
-export interface AggregateStyleSubmissionPromise
-  extends Promise<AggregateStyleSubmission>,
-    Fragmentable {
-  count: () => Promise<Int>;
-}
-
-export interface AggregateStyleSubmissionSubscription
-  extends Promise<AsyncIterator<AggregateStyleSubmission>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
-}
-
-export interface StyleSubmissionReport {
-  id: ID_Output;
-  status?: StyleSubmissionReportStatus;
-  reportedAt: DateTimeOutput;
-  updatedAt: DateTimeOutput;
-}
-
-export interface StyleSubmissionReportPromise
-  extends Promise<StyleSubmissionReport>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  reporter: <T = UserPromise>() => T;
-  reported: <T = StyleSubmissionPromise>() => T;
-  status: () => Promise<StyleSubmissionReportStatus>;
-  reportedAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
-}
-
-export interface StyleSubmissionReportSubscription
-  extends Promise<AsyncIterator<StyleSubmissionReport>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  reporter: <T = UserSubscription>() => T;
-  reported: <T = StyleSubmissionSubscription>() => T;
-  status: () => Promise<AsyncIterator<StyleSubmissionReportStatus>>;
-  reportedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-}
-
-export interface StyleSubmissionReportNullablePromise
-  extends Promise<StyleSubmissionReport | null>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  reporter: <T = UserPromise>() => T;
-  reported: <T = StyleSubmissionPromise>() => T;
-  status: () => Promise<StyleSubmissionReportStatus>;
-  reportedAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
-}
-
-export interface StyleSubmissionReportConnection {
-  pageInfo: PageInfo;
-  edges: StyleSubmissionReportEdge[];
-}
-
-export interface StyleSubmissionReportConnectionPromise
-  extends Promise<StyleSubmissionReportConnection>,
-    Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<StyleSubmissionReportEdge>>() => T;
-  aggregate: <T = AggregateStyleSubmissionReportPromise>() => T;
-}
-
-export interface StyleSubmissionReportConnectionSubscription
-  extends Promise<AsyncIterator<StyleSubmissionReportConnection>>,
-    Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <
-    T = Promise<AsyncIterator<StyleSubmissionReportEdgeSubscription>>
-  >() => T;
-  aggregate: <T = AggregateStyleSubmissionReportSubscription>() => T;
-}
-
-export interface StyleSubmissionReportEdge {
-  node: StyleSubmissionReport;
-  cursor: String;
-}
-
-export interface StyleSubmissionReportEdgePromise
-  extends Promise<StyleSubmissionReportEdge>,
-    Fragmentable {
-  node: <T = StyleSubmissionReportPromise>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface StyleSubmissionReportEdgeSubscription
-  extends Promise<AsyncIterator<StyleSubmissionReportEdge>>,
-    Fragmentable {
-  node: <T = StyleSubmissionReportSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
-}
-
-export interface AggregateStyleSubmissionReport {
-  count: Int;
-}
-
-export interface AggregateStyleSubmissionReportPromise
-  extends Promise<AggregateStyleSubmissionReport>,
-    Fragmentable {
-  count: () => Promise<Int>;
-}
-
-export interface AggregateStyleSubmissionReportSubscription
-  extends Promise<AsyncIterator<AggregateStyleSubmissionReport>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
-}
-
 export interface TagConnection {
   pageInfo: PageInfo;
   edges: TagEdge[];
@@ -22973,6 +22907,106 @@ export interface EmailReceiptPreviousValuesSubscription
   id: () => Promise<AsyncIterator<ID_Output>>;
   emailId: () => Promise<AsyncIterator<EmailId>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface FitPicSubscriptionPayload {
+  mutation: MutationType;
+  node: FitPic;
+  updatedFields: String[];
+  previousValues: FitPicPreviousValues;
+}
+
+export interface FitPicSubscriptionPayloadPromise
+  extends Promise<FitPicSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = FitPicPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = FitPicPreviousValuesPromise>() => T;
+}
+
+export interface FitPicSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<FitPicSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = FitPicSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = FitPicPreviousValuesSubscription>() => T;
+}
+
+export interface FitPicPreviousValues {
+  id: ID_Output;
+  approved: Boolean;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface FitPicPreviousValuesPromise
+  extends Promise<FitPicPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  approved: () => Promise<Boolean>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface FitPicPreviousValuesSubscription
+  extends Promise<AsyncIterator<FitPicPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  approved: () => Promise<AsyncIterator<Boolean>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface FitPicReportSubscriptionPayload {
+  mutation: MutationType;
+  node: FitPicReport;
+  updatedFields: String[];
+  previousValues: FitPicReportPreviousValues;
+}
+
+export interface FitPicReportSubscriptionPayloadPromise
+  extends Promise<FitPicReportSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = FitPicReportPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = FitPicReportPreviousValuesPromise>() => T;
+}
+
+export interface FitPicReportSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<FitPicReportSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = FitPicReportSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = FitPicReportPreviousValuesSubscription>() => T;
+}
+
+export interface FitPicReportPreviousValues {
+  id: ID_Output;
+  status: FitPicReportStatus;
+  reportedAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface FitPicReportPreviousValuesPromise
+  extends Promise<FitPicReportPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  status: () => Promise<FitPicReportStatus>;
+  reportedAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface FitPicReportPreviousValuesSubscription
+  extends Promise<AsyncIterator<FitPicReportPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  status: () => Promise<AsyncIterator<FitPicReportStatus>>;
+  reportedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
@@ -24675,106 +24709,6 @@ export interface StylePreferencesPreviousValuesSubscription
   brands: () => Promise<AsyncIterator<String[]>>;
 }
 
-export interface StyleSubmissionSubscriptionPayload {
-  mutation: MutationType;
-  node: StyleSubmission;
-  updatedFields: String[];
-  previousValues: StyleSubmissionPreviousValues;
-}
-
-export interface StyleSubmissionSubscriptionPayloadPromise
-  extends Promise<StyleSubmissionSubscriptionPayload>,
-    Fragmentable {
-  mutation: () => Promise<MutationType>;
-  node: <T = StyleSubmissionPromise>() => T;
-  updatedFields: () => Promise<String[]>;
-  previousValues: <T = StyleSubmissionPreviousValuesPromise>() => T;
-}
-
-export interface StyleSubmissionSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<StyleSubmissionSubscriptionPayload>>,
-    Fragmentable {
-  mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = StyleSubmissionSubscription>() => T;
-  updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = StyleSubmissionPreviousValuesSubscription>() => T;
-}
-
-export interface StyleSubmissionPreviousValues {
-  id: ID_Output;
-  approved: Boolean;
-  createdAt: DateTimeOutput;
-  updatedAt: DateTimeOutput;
-}
-
-export interface StyleSubmissionPreviousValuesPromise
-  extends Promise<StyleSubmissionPreviousValues>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  approved: () => Promise<Boolean>;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
-}
-
-export interface StyleSubmissionPreviousValuesSubscription
-  extends Promise<AsyncIterator<StyleSubmissionPreviousValues>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  approved: () => Promise<AsyncIterator<Boolean>>;
-  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-}
-
-export interface StyleSubmissionReportSubscriptionPayload {
-  mutation: MutationType;
-  node: StyleSubmissionReport;
-  updatedFields: String[];
-  previousValues: StyleSubmissionReportPreviousValues;
-}
-
-export interface StyleSubmissionReportSubscriptionPayloadPromise
-  extends Promise<StyleSubmissionReportSubscriptionPayload>,
-    Fragmentable {
-  mutation: () => Promise<MutationType>;
-  node: <T = StyleSubmissionReportPromise>() => T;
-  updatedFields: () => Promise<String[]>;
-  previousValues: <T = StyleSubmissionReportPreviousValuesPromise>() => T;
-}
-
-export interface StyleSubmissionReportSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<StyleSubmissionReportSubscriptionPayload>>,
-    Fragmentable {
-  mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = StyleSubmissionReportSubscription>() => T;
-  updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = StyleSubmissionReportPreviousValuesSubscription>() => T;
-}
-
-export interface StyleSubmissionReportPreviousValues {
-  id: ID_Output;
-  status?: StyleSubmissionReportStatus;
-  reportedAt: DateTimeOutput;
-  updatedAt: DateTimeOutput;
-}
-
-export interface StyleSubmissionReportPreviousValuesPromise
-  extends Promise<StyleSubmissionReportPreviousValues>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  status: () => Promise<StyleSubmissionReportStatus>;
-  reportedAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
-}
-
-export interface StyleSubmissionReportPreviousValuesSubscription
-  extends Promise<AsyncIterator<StyleSubmissionReportPreviousValues>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  status: () => Promise<AsyncIterator<StyleSubmissionReportStatus>>;
-  reportedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-}
-
 export interface TagSubscriptionPayload {
   mutation: MutationType;
   node: Tag;
@@ -25428,15 +25362,15 @@ export const models: Model[] = [
     embedded: false
   },
   {
-    name: "StyleSubmission",
+    name: "FitPic",
     embedded: false
   },
   {
-    name: "StyleSubmissionReportStatus",
+    name: "FitPicReportStatus",
     embedded: false
   },
   {
-    name: "StyleSubmissionReport",
+    name: "FitPicReport",
     embedded: false
   },
   {

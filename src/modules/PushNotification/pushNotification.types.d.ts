@@ -9,6 +9,7 @@ export type PushNotificationID =
   | "ReservationDelivered"
   | "ResetBag"
   | "ReturnDue"
+  | "ApproveFitPic"
 export type PushNotificationInterest = "seasons-general-notifications"
 export type PushNotificationVars = NewBlogPostVars | {}
 
