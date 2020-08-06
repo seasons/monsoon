@@ -60,29 +60,32 @@ export class PhysicalProductService {
       id
       seasonsUID
       inventoryStatus
+      productStatus
       warehouseLocation {
         barcode
       }
     }`
     )) as PhysicalProduct & { warehouseLocation: WarehouseLocation }
 
+    let newData = cloneDeep(data)
+
     // Need to do this before we check for a changing inventory status because this
     // may update the inventoryStatus on data
     if (!!data.warehouseLocation) {
-      await this.preprocessUpdateWithWarehouseLocation({
+      newData = await this.preprocessUpdateWithWarehouseLocation({
         physProdBeforeUpdate,
         data,
       })
     } else if (
       !!physProdBeforeUpdate.warehouseLocation?.barcode &&
-      data.inventoryStatus !== "Reservable"
+      newData.inventoryStatus !== "Reservable"
     ) {
       throw new ApolloError(
         "Physical Products with warehouse locations can only be set to a status of Reservable"
       )
     }
 
-    if (this.changingInventoryStatus(data, physProdBeforeUpdate)) {
+    if (this.changingInventoryStatus(newData, physProdBeforeUpdate)) {
       if (physProdBeforeUpdate.inventoryStatus === "Stored") {
         throw new ApolloError(unstoreErrorMessage)
       }
@@ -97,22 +100,22 @@ export class PhysicalProductService {
       // might update the inventoryStatus, i.e. in offloadPhysicalProductIfNeeded
       await this.updateVariantCountsIfNeeded({
         where,
-        inventoryStatus: data.inventoryStatus,
+        inventoryStatus: newData.inventoryStatus,
       })
     }
 
     await this.offloadPhysicalProductIfNeeded({
       where,
-      ...pick(data, ["inventoryStatus", "offloadMethod", "offloadNotes"]),
+      ...pick(newData, ["inventoryStatus", "offloadMethod", "offloadNotes"]),
     } as OffloadPhysicalProductIfNeededInput)
 
-    await this.prisma.client.updatePhysicalProduct({ where, data })
+    await this.prisma.client.updatePhysicalProduct({ where, data: newData })
 
     // Do this at the end so it only happens *after* any status changes have occured
-    if (this.changingInventoryStatus(data, physProdBeforeUpdate)) {
+    if (this.changingInventoryStatus(newData, physProdBeforeUpdate)) {
       await this.prisma.client.createPhysicalProductInventoryStatusChange({
         old: physProdBeforeUpdate.inventoryStatus,
-        new: data.inventoryStatus,
+        new: newData.inventoryStatus,
         physicalProduct: { connect: where },
       })
     }
@@ -278,8 +281,10 @@ export class PhysicalProductService {
       },
     }
 
-    // All physical products with a warehouse location are clean
-    newData.productStatus = "Clean"
+    // All physical products with a warehouse location are either clean or new
+    if (physProdBeforeUpdate.productStatus !== "New") {
+      newData.productStatus = "Clean"
+    }
 
     return newData
   }
