@@ -36,6 +36,7 @@ export class AdmissionsService {
         orderBy: "createdAt_DESC",
       },
       `{
+        emailId
         createdAt
         user {
           id
