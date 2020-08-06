@@ -64,10 +64,13 @@ export class PhysicalProductService {
     // Need to do this before we check for a changing inventory status because this
     // may update the inventoryStatus on data
     if (!!data.warehouseLocation) {
+      // Make sure the barcode is valid and there is space for the item there
       await this.validateWarehouseLocationConstraints(
         await this.prisma.client.physicalProduct(where),
         data.warehouseLocation.connect
       )
+
+      // All physical products with a warehouse location should be reservable
       if (!!data.inventoryStatus && data.inventoryStatus !== "Reservable") {
         throw new ApolloError(
           `A physical product with a warehouse location can not be set to status ${data.inventoryStatus}. It must be Reservable`
@@ -76,12 +79,17 @@ export class PhysicalProductService {
       if (!data.inventoryStatus) {
         data.inventoryStatus = "Reservable"
       }
+
+      // All physical pdocuts with a warehouse location are located in the warehouse
       const location = await this.prisma.client.location({
         slug:
           process.env.SEASONS_CLEANER_LOCATION_SLUG ||
           "seasons-cleaners-official",
       })
       data.location = { connect: { id: location.id } }
+
+      // All physical products with a warehouse location are clean
+      data.productStatus = "Clean"
     }
 
     if (this.changingInventoryStatus(data, physProdBeforeUpdate)) {
