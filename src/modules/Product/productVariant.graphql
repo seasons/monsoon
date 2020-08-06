@@ -117,8 +117,9 @@ input UpsertVariantInput {
 
 input UpdateVariantInput {
   id: ID!
+  manufacturerSizeNames: [String!]
   productType: ProductType!
-  weight: Float!
+  weight: Float
   # Top Size values
   sleeve: Float
   shoulder: Float

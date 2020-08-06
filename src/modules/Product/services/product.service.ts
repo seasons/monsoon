@@ -299,7 +299,7 @@ export class ProductService {
         return this.deepUpsertProductVariant({
           sequenceNumbers: sequenceNumbers[i],
           variant: a,
-          productID: product.id,
+          productID: slug,
           ...pick(input, ["type", "colorCode", "retailPrice", "status"]),
         })
       })
@@ -468,6 +468,8 @@ export class ProductService {
       modelSizeName,
       tags,
       status,
+      variants,
+      photographyStatus,
       ...updateData
     } = data
     let functionIDs
@@ -482,6 +484,9 @@ export class ProductService {
           slug
           type
           status
+          variants {
+            id
+          }
           brand {
             id
             brandCode
@@ -498,6 +503,18 @@ export class ProductService {
       throw new ApolloError(
         "Unable to unstore a product. Code needs to be written"
       )
+    }
+    if (
+      !!status &&
+      status === "Available" &&
+      (!product?.variants?.length || photographyStatus !== "Done")
+    ) {
+      throw new ApolloError(
+        "Can not set product status to Available. Check that there are product variants and the photography status is done."
+      )
+    }
+    if (!!status && status === "Available" && product.status !== "Available") {
+      updateData.publishedAt = DateTime.local().toISO()
     }
     if (functions) {
       functionIDs = await this.upsertFunctions(functions)
@@ -622,35 +639,24 @@ export class ProductService {
       },
     })
 
-    const manufacturerSizeIDs: { id: string }[] | null =
-      variant.manufacturerSizeNames &&
-      (await Promise.all(
-        variant.manufacturerSizeNames?.map(async sizeName => {
-          // sizeName is of the format "[size type] [size value]"", i.e. "WxL 32x30"
-          const [sizeType, sizeValue] = sizeName.split(" ")
-          const slug = `${variant.sku}-manufacturer-${sizeValue.replace(
-            "x",
-            ""
-          )}`
-          const size = await this.productUtils.deepUpsertSize({
-            slug,
-            type,
-            display: sizeName,
-            topSizeData: type === "Top" && {
-              letter: (sizeValue as LetterSize) || null,
-            },
-            bottomSizeData: type === "Bottom" && {
-              type: (sizeType as BottomSizeType) || null,
-              value: sizeValue || "",
-            },
-          })
-          return { id: size.id }
-        })
-      ))
+    const variantWithSku = await this.prisma.binding.query.productVariant(
+      { where: { id: variant.id } },
+      `
+      {
+        id
+        sku
+      }
+    `
+    )
+
+    const manufacturerSizeIDs = await this.productVariantService.getManufacturerSizeIDs(
+      { ...variant, sku: variantWithSku.sku },
+      type
+    )
 
     const data = {
       productID,
-      product: { connect: { id: productID } },
+      product: { connect: { slug: productID } },
       color: {
         connect: { colorCode },
       },

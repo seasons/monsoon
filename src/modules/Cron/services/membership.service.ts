@@ -14,7 +14,7 @@ export class MembershipScheduledJobs {
     private readonly paymentService: PaymentService
   ) {}
 
-  @Cron(CronExpression.EVERY_MINUTE)
+  @Cron(CronExpression.EVERY_6_HOURS)
   async updatePausePendingToPaused() {
     const pauseRequests = await this.prisma.client.pauseRequests({
       where: {
