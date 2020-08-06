@@ -545,6 +545,7 @@ export class ProductService {
         modelSize: modelSizeID && { connect: { id: modelSizeID } },
         tags: tagIDs && { set: tagIDs },
         status,
+        photographyStatus,
       },
     })
     if (!!status) {
