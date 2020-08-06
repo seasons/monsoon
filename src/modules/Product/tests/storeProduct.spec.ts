@@ -3,7 +3,8 @@ import {
   AirtableService,
   AirtableUtilsService,
 } from "@app/modules/Airtable"
-import { TestUtilsService, UtilsService } from "@app/modules/Utils"
+import { TestUtilsService } from "@app/modules/Utils/services/test.service"
+import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { ID_Input, InventoryStatus, ProductCreateInput } from "@app/prisma"
 import { PrismaService } from "@app/prisma/prisma.service"
 import * as Airtable from "airtable"

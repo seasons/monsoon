@@ -27,12 +27,6 @@ export class UtilsService {
     return Math.random().toString(36).slice(2)
   }
 
-  deleteFieldsFromObject(obj: object, fieldsToDelete: string[]) {
-    const objCopy = { ...obj }
-    fieldsToDelete.forEach(a => delete objCopy[a])
-    return objCopy
-  }
-
   isXDaysBefore({
     beforeDate,
     afterDate,
@@ -57,6 +51,13 @@ export class UtilsService {
       )
     )
     return before.isBefore(after) && after.diff(before, "days") === numDays
+  }
+
+  // pass in an ISO datestring
+  isLessThanXDaysFromNow(dateString: string, x: number) {
+    var date = moment(dateString)
+    const sevenDaysFromNow = moment().add(x, "days")
+    return date.isSameOrBefore(sevenDaysFromNow)
   }
 
   isSameDay(first: Date, second: Date) {

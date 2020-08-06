@@ -1,8 +1,8 @@
 import fs from "fs"
 
 import { AirtableBaseService } from "@app/modules/Airtable"
+import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaService } from "@app/prisma/prisma.service"
-import { UtilsService } from "@modules/Utils/index"
 import { Injectable } from "@nestjs/common"
 import AWS from "aws-sdk"
 import chargebee from "chargebee"

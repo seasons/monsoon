@@ -13,7 +13,7 @@ import { CustomerMutationsResolver } from "./mutations/customer.mutations"
 import { UserMutationsResolver } from "./mutations/user.mutations"
 import { MeQueriesResolver } from "./queries/me.queries"
 import { UserQueriesResolver } from "./queries/user.queries.resolver"
-import { AdmissionsService } from "./services/admissions"
+import { AdmissionsService } from "./services/admissions.service"
 import { AuthService } from "./services/auth.service"
 import { CustomerService } from "./services/customer.service"
 

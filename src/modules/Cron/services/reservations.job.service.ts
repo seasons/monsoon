@@ -1,7 +1,7 @@
 import { SyncError } from "@app/errors"
 import { PushNotificationService } from "@app/modules/PushNotification"
 import { ReservationService } from "@app/modules/Reservation/services/reservation.service"
-import { UtilsService } from "@app/modules/Utils"
+import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import {
   AirtableInventoryStatus,
   AirtableProductVariantCounts,

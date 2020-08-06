@@ -1,4 +1,4 @@
-import { UtilsService } from "@app/modules/Utils"
+import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { Injectable } from "@nestjs/common"
 import { head, pick } from "lodash"
 import moment from "moment"

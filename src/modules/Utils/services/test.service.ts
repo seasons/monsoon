@@ -14,12 +14,12 @@ import { ProductUtilsService } from "@modules/Product/services/product.utils.ser
 import { ProductVariantService } from "@modules/Product/services/productVariant.service"
 import { ReservationUtilsService } from "@modules/Reservation/services/reservation.utils.service"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
-import { UtilsService } from "@modules/Utils/index"
 import { Customer, ID_Input, InventoryStatus, User } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
 import { sampleSize } from "lodash"
 
 import { ProductCountAndStatusSummary } from "../utils.types"
+import { UtilsService } from "./utils.service"
 
 export class TestUtilsService {
   private defaultProductVariantInfo = `{

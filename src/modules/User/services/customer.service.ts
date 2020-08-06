@@ -8,9 +8,10 @@ import {
   User,
 } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
+import * as Sentry from "@sentry/node"
 import { ApolloError } from "apollo-server"
 
-import { AdmissionsService } from "./admissions"
+import { AdmissionsService } from "./admissions.service"
 import { AuthService } from "./auth.service"
 
 type TriageCustomerResult = "Waitlisted" | "Authorized"
@@ -208,15 +209,21 @@ export class CustomerService {
     }
 
     let status = "Waitlisted" as TriageCustomerResult
-    if (
-      process.env.AUTOMATIC_ADMISSIONS === "true" &&
-      this.admissions.weServiceZipcode(
-        customer.detail.shippingAddress.zipCode
-      ) &&
-      this.admissions.belowWeeklyNewUsersOpsThreshold() &&
-      this.admissions.haveSufficientInventoryToServiceCustomer(customer)
-    ) {
-      status = "Authorized"
+    try {
+      if (
+        process.env.AUTOMATIC_ADMISSIONS === "true" &&
+        this.admissions.weServiceZipcode(
+          customer.detail.shippingAddress.zipCode
+        ) &&
+        (await this.admissions.belowWeeklyNewActiveUsersOpsThreshold()) &&
+        (await this.admissions.haveSufficientInventoryToServiceCustomer(
+          customer
+        ))
+      ) {
+        status = "Authorized"
+      }
+    } catch (err) {
+      Sentry.captureException(err)
     }
 
     await this.prisma.client.updateCustomer({

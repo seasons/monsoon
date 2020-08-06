@@ -3,7 +3,7 @@ import { INestApplication } from "@nestjs/common"
 import { Test } from "@nestjs/testing"
 
 import { PrismaService } from "../../../prisma/prisma.service"
-import { AdmissionsService } from "../services/admissions"
+import { AdmissionsService } from "../services/admissions.service"
 
 class PrismaServiceMock {
   binding = {
