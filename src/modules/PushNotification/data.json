@@ -22,6 +22,27 @@
       "route": "Account"
     }
   },
+  "PauseReminder": {
+    "alert": {
+      "title": "Your membership will resume in 2 days",
+      "body": "Tap here to extend your pause by a month or resume early"
+    },
+    "data": {
+      "route": "Account"
+    }
+  },
+  "ReservationShipped": {
+    "alert": {
+      "title": "Your reservation has been shipped",
+      "body": "We’ve packed up your items and they’re on the way"
+    }
+  },
+  "ReservationDelivered": {
+    "alert": {
+      "title": "Your reservation has been delivered",
+      "body": "We hope you enjoy your items and let us know if you have any questions."
+    }
+  },
   "NewBlogPost": {
     "alert": {
       "title": "Blog Post: {{{category}}}",

@@ -9,6 +9,8 @@ import { Token } from "@pusher/push-notifications-server"
 import { upperFirst } from "lodash"
 
 import {
+  PushNotificationID,
+  PushNotificationVars,
   PushNotifyInterestInput,
   PushNotifyUserInput,
 } from "../pushNotification.types"
@@ -87,6 +89,13 @@ export class PushNotificationService {
     await Promise.all(updates)
 
     return receipt
+  }
+
+  dataForPushNotificationID(
+    pushNotificationID: PushNotificationID,
+    vars?: PushNotificationVars
+  ) {
+    return this.data.getPushNotifData(pushNotificationID, vars)
   }
 
   async pushNotifyUser({
