@@ -1,6 +1,7 @@
 import { User } from "@app/decorators"
 import { hasRole } from "@app/directives/hasRole"
 import { ImageService } from "@app/modules/Image"
+import { IMGIX_BASE, S3_BASE } from "@app/modules/Image/services/image.service"
 import { PushNotificationService } from "@app/modules/PushNotification"
 import { UserRole } from "@app/prisma"
 import { Injectable } from "@nestjs/common"
@@ -31,13 +32,15 @@ export class FitPicService {
     const imageData = await this.image.uploadImage(image, {
       imageName: `${user.id}-${Date.now()}.jpg`,
     })
+    const imgixUrl = imageData.url.replace(S3_BASE, IMGIX_BASE)
 
     const fitPic = await this.prisma.client.createFitPic({
       user: {
         connect: { id: user.id },
       },
       image: {
-        create: imageData,
+        // override the imageData url with the imgixUrl
+        create: { ...imageData, url: imgixUrl },
       },
     })
 
