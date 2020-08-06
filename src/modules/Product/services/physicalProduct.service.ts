@@ -5,6 +5,7 @@ import {
   PhysicalProductOffloadMethod,
   PhysicalProductUpdateInput,
   PhysicalProductWhereUniqueInput,
+  WarehouseLocation,
   WarehouseLocationType,
   WarehouseLocationWhereUniqueInput,
 } from "@app/prisma"
@@ -59,11 +60,11 @@ export class PhysicalProductService {
       id
       seasonsUID
       inventoryStatus
+      warehouseLocation {
+        barcode
+      }
     }`
-    )) as PhysicalProduct
-
-    // TODO: If the physProd has a warehouse location before update, and we are attempting to update its
-    // status to anything but Reservable, throw an error. Leave out for now to avoid chaos.
+    )) as PhysicalProduct & { warehouseLocation: WarehouseLocation }
 
     // Need to do this before we check for a changing inventory status because this
     // may update the inventoryStatus on data
@@ -72,6 +73,13 @@ export class PhysicalProductService {
         physProdBeforeUpdate,
         data,
       })
+    } else if (
+      !!physProdBeforeUpdate.warehouseLocation?.barcode &&
+      data.inventoryStatus !== "Reservable"
+    ) {
+      throw new ApolloError(
+        "Physical Products with warehouse locations can only be set to a status of Reservable"
+      )
     }
 
     if (this.changingInventoryStatus(data, physProdBeforeUpdate)) {
