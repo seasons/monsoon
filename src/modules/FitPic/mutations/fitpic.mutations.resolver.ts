@@ -1,5 +1,5 @@
 import { User } from "@app/decorators"
-import { FitPicReportStatus } from "@app/prisma"
+import { FitPicReportUpdateInput } from "@app/prisma"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Args, Mutation, Resolver } from "@nestjs/graphql"
 
@@ -23,8 +23,8 @@ export class FitPicMutationsResolver {
   }
 
   @Mutation()
-  async updateFitPicApproved(@Args() args) {
-    return this.fitPic.updateFitPicApproved(args)
+  async updateFitPic(@Args() args) {
+    return this.fitPic.updateFitPic(args)
   }
 
   @Mutation()
@@ -33,11 +33,11 @@ export class FitPicMutationsResolver {
   }
 
   @Mutation()
-  async updateFitPicReportStatus(
-    @Args() { id, status }: { id: string; status: FitPicReportStatus }
+  async updateFitPicReport(
+    @Args() { id, data }: { id: string; data: FitPicReportUpdateInput }
   ) {
     await this.prisma.client.updateFitPicReport({
-      data: { status },
+      data,
       where: { id },
     })
     return true

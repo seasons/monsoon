@@ -2,14 +2,24 @@ type Mutation {
   submitFitPic(image: Upload!): Boolean! @hasRole(roles: [Customer])
   reportFitPic(id: ID!): Boolean! @hasRole(roles: [Customer])
 
-  updateFitPicApproved(id: ID!, approved: Boolean!): Boolean!
+  updateFitPic(id: ID!, data: FitPicUpdateInput!): Boolean!
     @hasRole(roles: [Admin])
   deleteFitPic(id: ID!): Boolean! @hasRole(roles: [Admin])
-  updateFitPicReportStatus(id: ID!, status: FitPicReportStatus!): Boolean!
+  updateFitPicReport(id: ID!, data: FitPicReportUpdateInput!): Boolean!
     @hasRole(roles: [Admin])
 }
 
 type Query {
+  publicFitPics(
+    where: PublicFitPicWhereInput
+    orderBy: PublicFitPicOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [PublicFitPic!]!
+
   fitPics(
     where: FitPicWhereInput
     orderBy: FitPicOrderByInput
@@ -18,8 +28,188 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): [FitPic!]!
+  ): [FitPic!]! @hasRole(roles: [Admin])
+}
 
-  fitPicReports(where: FitPicReportWhereInput): [FitPicReport!]!
-    @hasRole(roles: [Admin])
+type PublicFitPic {
+  id: ID!
+  author: String!
+  image: Image!
+  location: Location
+  products: [Product!]
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+input PublicFitPicWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [PublicFitPicWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [PublicFitPicWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [PublicFitPicWhereInput!]
+  id: ID
+
+  """
+  All values that are not equal to given value.
+  """
+  id_not: ID
+
+  """
+  All values that are contained in given list.
+  """
+  id_in: [ID!]
+
+  """
+  All values that are not contained in given list.
+  """
+  id_not_in: [ID!]
+
+  """
+  All values less than the given value.
+  """
+  id_lt: ID
+
+  """
+  All values less than or equal the given value.
+  """
+  id_lte: ID
+
+  """
+  All values greater than the given value.
+  """
+  id_gt: ID
+
+  """
+  All values greater than or equal the given value.
+  """
+  id_gte: ID
+
+  """
+  All values containing the given string.
+  """
+  id_contains: ID
+
+  """
+  All values not containing the given string.
+  """
+  id_not_contains: ID
+
+  """
+  All values starting with the given string.
+  """
+  id_starts_with: ID
+
+  """
+  All values not starting with the given string.
+  """
+  id_not_starts_with: ID
+
+  """
+  All values ending with the given string.
+  """
+  id_ends_with: ID
+
+  """
+  All values not ending with the given string.
+  """
+  id_not_ends_with: ID
+
+  """
+  All values that are not equal to given value.
+  """
+  createdAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  createdAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  createdAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  createdAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  createdAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  createdAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  createdAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  updatedAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  updatedAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  updatedAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  updatedAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  updatedAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  updatedAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  updatedAt_gte: DateTime
+  image: ImageWhereInput
+  location: LocationWhereInput
+  products_every: ProductWhereInput
+  products_some: ProductWhereInput
+  products_none: ProductWhereInput
+}
+
+enum PublicFitPicOrderByInput {
+  id_ASC
+  id_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
 }

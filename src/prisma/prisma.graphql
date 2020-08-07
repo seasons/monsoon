@@ -2,6 +2,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 # timestamp: Mon Aug 10 2020 14:13:28 GMT+0200 (Central European Summer Time)
 =======
 =======
@@ -46,6 +47,9 @@ type AggregateCollectionGroup {
 =======
 # timestamp: Wed Aug 05 2020 16:59:37 GMT-0600 (Mountain Daylight Time)
 >>>>>>> Regenerate prisma bindings
+=======
+# timestamp: Thu Aug 06 2020 13:55:12 GMT-0600 (Mountain Daylight Time)
+>>>>>>> Break fitPics query into two, generalize updateFitPic+Report for admin, create PublicFitPicFieldsResolver for author, and add reports field on FitPic
 
 type AggregateBagItem {
   count: Int!
@@ -8593,6 +8597,15 @@ type FitPic implements Node {
     first: Int
     last: Int
   ): [Product!]
+  reports(
+    where: FitPicReportWhereInput
+    orderBy: FitPicReportOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [FitPicReport!]
   approved: Boolean!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -8621,6 +8634,7 @@ input FitPicCreateInput {
   image: ImageCreateOneInput!
   location: LocationCreateOneInput
   products: ProductCreateManyInput
+  reports: FitPicReportCreateManyWithoutReportedInput
 }
 
 input FitPicCreateManyWithoutUserInput {
@@ -8628,9 +8642,18 @@ input FitPicCreateManyWithoutUserInput {
   connect: [FitPicWhereUniqueInput!]
 }
 
-input FitPicCreateOneInput {
-  create: FitPicCreateInput
+input FitPicCreateOneWithoutReportsInput {
+  create: FitPicCreateWithoutReportsInput
   connect: FitPicWhereUniqueInput
+}
+
+input FitPicCreateWithoutReportsInput {
+  id: ID
+  approved: Boolean
+  user: UserCreateOneWithoutFitPicsInput!
+  image: ImageCreateOneInput!
+  location: LocationCreateOneInput
+  products: ProductCreateManyInput
 }
 
 input FitPicCreateWithoutUserInput {
@@ -8639,6 +8662,7 @@ input FitPicCreateWithoutUserInput {
   image: ImageCreateOneInput!
   location: LocationCreateOneInput
   products: ProductCreateManyInput
+  reports: FitPicReportCreateManyWithoutReportedInput
 }
 
 """
@@ -8703,7 +8727,18 @@ input FitPicReportCreateInput {
   id: ID
   status: FitPicReportStatus
   reporter: UserCreateOneInput!
-  reported: FitPicCreateOneInput!
+  reported: FitPicCreateOneWithoutReportsInput!
+}
+
+input FitPicReportCreateManyWithoutReportedInput {
+  create: [FitPicReportCreateWithoutReportedInput!]
+  connect: [FitPicReportWhereUniqueInput!]
+}
+
+input FitPicReportCreateWithoutReportedInput {
+  id: ID
+  status: FitPicReportStatus
+  reporter: UserCreateOneInput!
 }
 
 """
@@ -8737,6 +8772,177 @@ type FitPicReportPreviousValues {
   status: FitPicReportStatus!
   reportedAt: DateTime!
   updatedAt: DateTime!
+}
+
+input FitPicReportScalarWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [FitPicReportScalarWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [FitPicReportScalarWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [FitPicReportScalarWhereInput!]
+  id: ID
+
+  """
+  All values that are not equal to given value.
+  """
+  id_not: ID
+
+  """
+  All values that are contained in given list.
+  """
+  id_in: [ID!]
+
+  """
+  All values that are not contained in given list.
+  """
+  id_not_in: [ID!]
+
+  """
+  All values less than the given value.
+  """
+  id_lt: ID
+
+  """
+  All values less than or equal the given value.
+  """
+  id_lte: ID
+
+  """
+  All values greater than the given value.
+  """
+  id_gt: ID
+
+  """
+  All values greater than or equal the given value.
+  """
+  id_gte: ID
+
+  """
+  All values containing the given string.
+  """
+  id_contains: ID
+
+  """
+  All values not containing the given string.
+  """
+  id_not_contains: ID
+
+  """
+  All values starting with the given string.
+  """
+  id_starts_with: ID
+
+  """
+  All values not starting with the given string.
+  """
+  id_not_starts_with: ID
+
+  """
+  All values ending with the given string.
+  """
+  id_ends_with: ID
+
+  """
+  All values not ending with the given string.
+  """
+  id_not_ends_with: ID
+  status: FitPicReportStatus
+
+  """
+  All values that are not equal to given value.
+  """
+  status_not: FitPicReportStatus
+
+  """
+  All values that are contained in given list.
+  """
+  status_in: [FitPicReportStatus!]
+
+  """
+  All values that are not contained in given list.
+  """
+  status_not_in: [FitPicReportStatus!]
+  reportedAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  reportedAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  reportedAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  reportedAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  reportedAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  reportedAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  reportedAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  reportedAt_gte: DateTime
+  updatedAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  updatedAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  updatedAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  updatedAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  updatedAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  updatedAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  updatedAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  updatedAt_gte: DateTime
 }
 
 enum FitPicReportStatus {
@@ -8792,11 +8998,48 @@ input FitPicReportSubscriptionWhereInput {
 input FitPicReportUpdateInput {
   status: FitPicReportStatus
   reporter: UserUpdateOneRequiredInput
-  reported: FitPicUpdateOneRequiredInput
+  reported: FitPicUpdateOneRequiredWithoutReportsInput
+}
+
+input FitPicReportUpdateManyDataInput {
+  status: FitPicReportStatus
 }
 
 input FitPicReportUpdateManyMutationInput {
   status: FitPicReportStatus
+}
+
+input FitPicReportUpdateManyWithoutReportedInput {
+  create: [FitPicReportCreateWithoutReportedInput!]
+  connect: [FitPicReportWhereUniqueInput!]
+  set: [FitPicReportWhereUniqueInput!]
+  disconnect: [FitPicReportWhereUniqueInput!]
+  delete: [FitPicReportWhereUniqueInput!]
+  update: [FitPicReportUpdateWithWhereUniqueWithoutReportedInput!]
+  updateMany: [FitPicReportUpdateManyWithWhereNestedInput!]
+  deleteMany: [FitPicReportScalarWhereInput!]
+  upsert: [FitPicReportUpsertWithWhereUniqueWithoutReportedInput!]
+}
+
+input FitPicReportUpdateManyWithWhereNestedInput {
+  where: FitPicReportScalarWhereInput!
+  data: FitPicReportUpdateManyDataInput!
+}
+
+input FitPicReportUpdateWithoutReportedDataInput {
+  status: FitPicReportStatus
+  reporter: UserUpdateOneRequiredInput
+}
+
+input FitPicReportUpdateWithWhereUniqueWithoutReportedInput {
+  where: FitPicReportWhereUniqueInput!
+  data: FitPicReportUpdateWithoutReportedDataInput!
+}
+
+input FitPicReportUpsertWithWhereUniqueWithoutReportedInput {
+  where: FitPicReportWhereUniqueInput!
+  update: FitPicReportUpdateWithoutReportedDataInput!
+  create: FitPicReportCreateWithoutReportedInput!
 }
 
 input FitPicReportWhereInput {
@@ -9182,20 +9425,13 @@ input FitPicSubscriptionWhereInput {
   node: FitPicWhereInput
 }
 
-input FitPicUpdateDataInput {
-  approved: Boolean
-  user: UserUpdateOneRequiredWithoutFitPicsInput
-  image: ImageUpdateOneRequiredInput
-  location: LocationUpdateOneInput
-  products: ProductUpdateManyInput
-}
-
 input FitPicUpdateInput {
   approved: Boolean
   user: UserUpdateOneRequiredWithoutFitPicsInput
   image: ImageUpdateOneRequiredInput
   location: LocationUpdateOneInput
   products: ProductUpdateManyInput
+  reports: FitPicReportUpdateManyWithoutReportedInput
 }
 
 input FitPicUpdateManyDataInput {
@@ -9223,11 +9459,19 @@ input FitPicUpdateManyWithWhereNestedInput {
   data: FitPicUpdateManyDataInput!
 }
 
-input FitPicUpdateOneRequiredInput {
-  create: FitPicCreateInput
+input FitPicUpdateOneRequiredWithoutReportsInput {
+  create: FitPicCreateWithoutReportsInput
   connect: FitPicWhereUniqueInput
-  update: FitPicUpdateDataInput
-  upsert: FitPicUpsertNestedInput
+  update: FitPicUpdateWithoutReportsDataInput
+  upsert: FitPicUpsertWithoutReportsInput
+}
+
+input FitPicUpdateWithoutReportsDataInput {
+  approved: Boolean
+  user: UserUpdateOneRequiredWithoutFitPicsInput
+  image: ImageUpdateOneRequiredInput
+  location: LocationUpdateOneInput
+  products: ProductUpdateManyInput
 }
 
 input FitPicUpdateWithoutUserDataInput {
@@ -9235,6 +9479,7 @@ input FitPicUpdateWithoutUserDataInput {
   image: ImageUpdateOneRequiredInput
   location: LocationUpdateOneInput
   products: ProductUpdateManyInput
+  reports: FitPicReportUpdateManyWithoutReportedInput
 }
 
 input FitPicUpdateWithWhereUniqueWithoutUserInput {
@@ -9242,9 +9487,9 @@ input FitPicUpdateWithWhereUniqueWithoutUserInput {
   data: FitPicUpdateWithoutUserDataInput!
 }
 
-input FitPicUpsertNestedInput {
-  update: FitPicUpdateDataInput!
-  create: FitPicCreateInput!
+input FitPicUpsertWithoutReportsInput {
+  update: FitPicUpdateWithoutReportsDataInput!
+  create: FitPicCreateWithoutReportsInput!
 }
 
 input FitPicUpsertWithWhereUniqueWithoutUserInput {
@@ -9418,6 +9663,9 @@ input FitPicWhereInput {
   products_every: ProductWhereInput
   products_some: ProductWhereInput
   products_none: ProductWhereInput
+  reports_every: FitPicReportWhereInput
+  reports_some: FitPicReportWhereInput
+  reports_none: FitPicReportWhereInput
 }
 
 input FitPicWhereUniqueInput {
@@ -12518,6 +12766,7 @@ Long can represent values between -(2^63) and 2^63 - 1.
 scalar Long
 
 <<<<<<< HEAD
+<<<<<<< HEAD
   """
   All values not ending with the given string.
   """
@@ -13766,6 +14015,8 @@ scalar Long
 >>>>>>> Rename CommunityStyle to FitPic and condense queries/mutations
 =======
 >>>>>>> Regenerate prisma bindings
+=======
+>>>>>>> Break fitPics query into two, generalize updateFitPic+Report for admin, create PublicFitPicFieldsResolver for author, and add reports field on FitPic
 type Mutation {
   createBrand(data: BrandCreateInput!): Brand!
   createCollectionGroup(data: CollectionGroupCreateInput!): CollectionGroup!
@@ -13794,6 +14045,7 @@ type Mutation {
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
   createStyleSubmissionReport(
     data: StyleSubmissionReportCreateInput!
@@ -13805,6 +14057,10 @@ type Mutation {
 =======
   createFitPicReport(data: FitPicReportCreateInput!): FitPicReport!
 >>>>>>> Regenerate prisma bindings
+=======
+  createFitPic(data: FitPicCreateInput!): FitPic!
+  createFitPicReport(data: FitPicReportCreateInput!): FitPicReport!
+>>>>>>> Break fitPics query into two, generalize updateFitPic+Report for admin, create PublicFitPicFieldsResolver for author, and add reports field on FitPic
   createBagItem(data: BagItemCreateInput!): BagItem!
   createCustomerMembership(
     data: CustomerMembershipCreateInput!
@@ -13844,6 +14100,7 @@ type Mutation {
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
   createSmsReceipt(data: SmsReceiptCreateInput!): SmsReceipt!
   createStylePreferences(data: StylePreferencesCreateInput!): StylePreferences!
   createImage(data: ImageCreateInput!): Image!
@@ -13851,10 +14108,13 @@ type Mutation {
   createSize(data: SizeCreateInput!): Size!
   createProductFunction(data: ProductFunctionCreateInput!): ProductFunction!
 =======
+=======
+>>>>>>> Break fitPics query into two, generalize updateFitPic+Report for admin, create PublicFitPicFieldsResolver for author, and add reports field on FitPic
   createStylePreferences(data: StylePreferencesCreateInput!): StylePreferences!
   createPackage(data: PackageCreateInput!): Package!
   createSize(data: SizeCreateInput!): Size!
   createProductFunction(data: ProductFunctionCreateInput!): ProductFunction!
+<<<<<<< HEAD
   createStyleSubmission(data: StyleSubmissionCreateInput!): StyleSubmission!
   createImage(data: ImageCreateInput!): Image!
 >>>>>>> Rebase
@@ -13870,6 +14130,8 @@ type Mutation {
 >>>>>>> Rename CommunityStyle to FitPic and condense queries/mutations
 =======
 >>>>>>> Regenerate prisma bindings
+=======
+>>>>>>> Break fitPics query into two, generalize updateFitPic+Report for admin, create PublicFitPicFieldsResolver for author, and add reports field on FitPic
   createColor(data: ColorCreateInput!): Color!
   createTopSize(data: TopSizeCreateInput!): TopSize!
   createCustomer(data: CustomerCreateInput!): Customer!
@@ -13885,6 +14147,7 @@ type Mutation {
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
   createSmsReceipt(data: SmsReceiptCreateInput!): SmsReceipt!
 >>>>>>> Rebase
@@ -13893,14 +14156,19 @@ type Mutation {
 =======
 =======
 >>>>>>> Regenerate prisma bindings
+=======
+>>>>>>> Break fitPics query into two, generalize updateFitPic+Report for admin, create PublicFitPicFieldsResolver for author, and add reports field on FitPic
   createSmsReceipt(data: SmsReceiptCreateInput!): SmsReceipt!
   createLocation(data: LocationCreateInput!): Location!
   createPhysicalProduct(data: PhysicalProductCreateInput!): PhysicalProduct!
   createImage(data: ImageCreateInput!): Image!
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> Rename CommunityStyle to FitPic and condense queries/mutations
 =======
 >>>>>>> Regenerate prisma bindings
+=======
+>>>>>>> Break fitPics query into two, generalize updateFitPic+Report for admin, create PublicFitPicFieldsResolver for author, and add reports field on FitPic
   createProductVariant(data: ProductVariantCreateInput!): ProductVariant!
   createProduct(data: ProductCreateInput!): Product!
   createReservation(data: ReservationCreateInput!): Reservation!
@@ -13947,6 +14215,7 @@ type Mutation {
     data: EmailReceiptUpdateInput!
     where: EmailReceiptWhereUniqueInput!
   ): EmailReceipt
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -14311,11 +14580,17 @@ type Mutation {
     where: StyleSubmissionReportWhereUniqueInput!
   ): StyleSubmissionReport
 =======
+=======
+  updateFitPic(data: FitPicUpdateInput!, where: FitPicWhereUniqueInput!): FitPic
+>>>>>>> Break fitPics query into two, generalize updateFitPic+Report for admin, create PublicFitPicFieldsResolver for author, and add reports field on FitPic
   updateFitPicReport(
     data: FitPicReportUpdateInput!
     where: FitPicReportWhereUniqueInput!
   ): FitPicReport
+<<<<<<< HEAD
 >>>>>>> Rename CommunityStyle to FitPic and condense queries/mutations
+=======
+>>>>>>> Break fitPics query into two, generalize updateFitPic+Report for admin, create PublicFitPicFieldsResolver for author, and add reports field on FitPic
   updateBagItem(
     data: BagItemUpdateInput!
     where: BagItemWhereUniqueInput!
@@ -14353,8 +14628,11 @@ type Mutation {
     where: ProductRequestWhereUniqueInput!
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> Rename CommunityStyle to FitPic and condense queries/mutations
+=======
+>>>>>>> Break fitPics query into two, generalize updateFitPic+Report for admin, create PublicFitPicFieldsResolver for author, and add reports field on FitPic
   ): ProductRequest
   updateProductVariantWant(
     data: ProductVariantWantUpdateInput!
@@ -14389,9 +14667,12 @@ type Mutation {
     where: StylePreferencesWhereUniqueInput!
   ): StylePreferences
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
   updateFitPic(data: FitPicUpdateInput!, where: FitPicWhereUniqueInput!): FitPic
 >>>>>>> Rename CommunityStyle to FitPic and condense queries/mutations
+=======
+>>>>>>> Break fitPics query into two, generalize updateFitPic+Report for admin, create PublicFitPicFieldsResolver for author, and add reports field on FitPic
   updatePackage(
     data: PackageUpdateInput!
     where: PackageWhereUniqueInput!
@@ -14402,6 +14683,7 @@ type Mutation {
     where: ProductFunctionWhereUniqueInput!
   ): ProductFunction
 <<<<<<< HEAD
+<<<<<<< HEAD
   updateStyleSubmission(
     data: StyleSubmissionUpdateInput!
     where: StyleSubmissionWhereUniqueInput!
@@ -14409,6 +14691,8 @@ type Mutation {
   updateImage(data: ImageUpdateInput!, where: ImageWhereUniqueInput!): Image
 =======
 >>>>>>> Rename CommunityStyle to FitPic and condense queries/mutations
+=======
+>>>>>>> Break fitPics query into two, generalize updateFitPic+Report for admin, create PublicFitPicFieldsResolver for author, and add reports field on FitPic
   updateColor(data: ColorUpdateInput!, where: ColorWhereUniqueInput!): Color
   updateTopSize(
     data: TopSizeUpdateInput!
@@ -14416,6 +14700,9 @@ type Mutation {
   ): TopSize
   updateCustomer(
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> Break fitPics query into two, generalize updateFitPic+Report for admin, create PublicFitPicFieldsResolver for author, and add reports field on FitPic
     data: CustomerUpdateInput!
     where: CustomerWhereUniqueInput!
   ): Customer
@@ -37835,6 +38122,7 @@ s   last: Int
   warehouseLocationConstraint(
     where: WarehouseLocationConstraintWhereUniqueInput!
   ): WarehouseLocationConstraint
+<<<<<<< HEAD
   warehouseLocation(
     where: WarehouseLocationWhereUniqueInput!
   ): WarehouseLocation
@@ -37848,6 +38136,157 @@ s   last: Int
 >>>>>>> Add CommunityStyle+Report datamodel and resolvers
   bagItem(where: BagItemWhereUniqueInput!): BagItem
   customerMembership(
+=======
+  deleteWarehouseLocation(
+    where: WarehouseLocationWhereUniqueInput!
+  ): WarehouseLocation
+  deletePaymentPlan(where: PaymentPlanWhereUniqueInput!): PaymentPlan
+  deleteEmailReceipt(where: EmailReceiptWhereUniqueInput!): EmailReceipt
+  deleteFitPic(where: FitPicWhereUniqueInput!): FitPic
+  deleteFitPicReport(where: FitPicReportWhereUniqueInput!): FitPicReport
+  deleteBagItem(where: BagItemWhereUniqueInput!): BagItem
+  deleteCustomerMembership(
+    where: CustomerMembershipWhereUniqueInput!
+  ): CustomerMembership
+  deletePauseRequest(where: PauseRequestWhereUniqueInput!): PauseRequest
+  deleteRecentlyViewedProduct(
+    where: RecentlyViewedProductWhereUniqueInput!
+  ): RecentlyViewedProduct
+  deleteReservationFeedback(
+    where: ReservationFeedbackWhereUniqueInput!
+  ): ReservationFeedback
+  deleteProductVariantFeedback(
+    where: ProductVariantFeedbackWhereUniqueInput!
+  ): ProductVariantFeedback
+  deleteProductVariantFeedbackQuestion(
+    where: ProductVariantFeedbackQuestionWhereUniqueInput!
+  ): ProductVariantFeedbackQuestion
+  deleteReservationReceipt(
+    where: ReservationReceiptWhereUniqueInput!
+  ): ReservationReceipt
+  deleteProductRequest(where: ProductRequestWhereUniqueInput!): ProductRequest
+  deleteProductVariantWant(
+    where: ProductVariantWantWhereUniqueInput!
+  ): ProductVariantWant
+  deleteCollection(where: CollectionWhereUniqueInput!): Collection
+  deletePushNotificationReceipt(
+    where: PushNotificationReceiptWhereUniqueInput!
+  ): PushNotificationReceipt
+  deleteCustomerDetail(where: CustomerDetailWhereUniqueInput!): CustomerDetail
+  deleteUserPushNotificationInterest(
+    where: UserPushNotificationInterestWhereUniqueInput!
+  ): UserPushNotificationInterest
+  deleteBillingInfo(where: BillingInfoWhereUniqueInput!): BillingInfo
+  deleteReservationReceiptItem(
+    where: ReservationReceiptItemWhereUniqueInput!
+  ): ReservationReceiptItem
+  deleteStylePreferences(
+    where: StylePreferencesWhereUniqueInput!
+  ): StylePreferences
+  deletePackage(where: PackageWhereUniqueInput!): Package
+  deleteSize(where: SizeWhereUniqueInput!): Size
+  deleteProductFunction(
+    where: ProductFunctionWhereUniqueInput!
+  ): ProductFunction
+  deleteColor(where: ColorWhereUniqueInput!): Color
+  deleteTopSize(where: TopSizeWhereUniqueInput!): TopSize
+  deleteCustomer(where: CustomerWhereUniqueInput!): Customer
+  deleteUserPushNotification(
+    where: UserPushNotificationWhereUniqueInput!
+  ): UserPushNotification
+  deleteCategory(where: CategoryWhereUniqueInput!): Category
+  deleteBottomSize(where: BottomSizeWhereUniqueInput!): BottomSize
+  deletePackageTransitEvent(
+    where: PackageTransitEventWhereUniqueInput!
+  ): PackageTransitEvent
+  deleteLabel(where: LabelWhereUniqueInput!): Label
+  deleteSmsReceipt(where: SmsReceiptWhereUniqueInput!): SmsReceipt
+  deleteLocation(where: LocationWhereUniqueInput!): Location
+  deletePhysicalProduct(
+    where: PhysicalProductWhereUniqueInput!
+  ): PhysicalProduct
+  deleteImage(where: ImageWhereUniqueInput!): Image
+  deleteProductVariant(where: ProductVariantWhereUniqueInput!): ProductVariant
+  deleteProduct(where: ProductWhereUniqueInput!): Product
+  deleteReservation(where: ReservationWhereUniqueInput!): Reservation
+  deleteUser(where: UserWhereUniqueInput!): User
+  upsertBrand(
+    where: BrandWhereUniqueInput!
+    create: BrandCreateInput!
+    update: BrandUpdateInput!
+  ): Brand!
+  upsertCollectionGroup(
+    where: CollectionGroupWhereUniqueInput!
+    create: CollectionGroupCreateInput!
+    update: CollectionGroupUpdateInput!
+  ): CollectionGroup!
+  upsertHomepageProductRail(
+    where: HomepageProductRailWhereUniqueInput!
+    create: HomepageProductRailCreateInput!
+    update: HomepageProductRailUpdateInput!
+  ): HomepageProductRail!
+  upsertTag(
+    where: TagWhereUniqueInput!
+    create: TagCreateInput!
+    update: TagUpdateInput!
+  ): Tag!
+  upsertProductStatusChange(
+    where: ProductStatusChangeWhereUniqueInput!
+    create: ProductStatusChangeCreateInput!
+    update: ProductStatusChangeUpdateInput!
+  ): ProductStatusChange!
+  upsertProductMaterialCategory(
+    where: ProductMaterialCategoryWhereUniqueInput!
+    create: ProductMaterialCategoryCreateInput!
+    update: ProductMaterialCategoryUpdateInput!
+  ): ProductMaterialCategory!
+  upsertProductModel(
+    where: ProductModelWhereUniqueInput!
+    create: ProductModelCreateInput!
+    update: ProductModelUpdateInput!
+  ): ProductModel!
+  upsertPhysicalProductInventoryStatusChange(
+    where: PhysicalProductInventoryStatusChangeWhereUniqueInput!
+    create: PhysicalProductInventoryStatusChangeCreateInput!
+    update: PhysicalProductInventoryStatusChangeUpdateInput!
+  ): PhysicalProductInventoryStatusChange!
+  upsertWarehouseLocationConstraint(
+    where: WarehouseLocationConstraintWhereUniqueInput!
+    create: WarehouseLocationConstraintCreateInput!
+    update: WarehouseLocationConstraintUpdateInput!
+  ): WarehouseLocationConstraint!
+  upsertWarehouseLocation(
+    where: WarehouseLocationWhereUniqueInput!
+    create: WarehouseLocationCreateInput!
+    update: WarehouseLocationUpdateInput!
+  ): WarehouseLocation!
+  upsertPaymentPlan(
+    where: PaymentPlanWhereUniqueInput!
+    create: PaymentPlanCreateInput!
+    update: PaymentPlanUpdateInput!
+  ): PaymentPlan!
+  upsertEmailReceipt(
+    where: EmailReceiptWhereUniqueInput!
+    create: EmailReceiptCreateInput!
+    update: EmailReceiptUpdateInput!
+  ): EmailReceipt!
+  upsertFitPic(
+    where: FitPicWhereUniqueInput!
+    create: FitPicCreateInput!
+    update: FitPicUpdateInput!
+  ): FitPic!
+  upsertFitPicReport(
+    where: FitPicReportWhereUniqueInput!
+    create: FitPicReportCreateInput!
+    update: FitPicReportUpdateInput!
+  ): FitPicReport!
+  upsertBagItem(
+    where: BagItemWhereUniqueInput!
+    create: BagItemCreateInput!
+    update: BagItemUpdateInput!
+  ): BagItem!
+  upsertCustomerMembership(
+>>>>>>> Break fitPics query into two, generalize updateFitPic+Report for admin, create PublicFitPicFieldsResolver for author, and add reports field on FitPic
     where: CustomerMembershipWhereUniqueInput!
   ): CustomerMembership
   pauseRequest(where: PauseRequestWhereUniqueInput!): PauseRequest
@@ -37881,6 +38320,7 @@ s   last: Int
   billingInfo(where: BillingInfoWhereUniqueInput!): BillingInfo
   reservationReceiptItem(
     where: ReservationReceiptItemWhereUniqueInput!
+<<<<<<< HEAD
   ): ReservationReceiptItem
 <<<<<<< HEAD
   smsReceipt(where: SmsReceiptWhereUniqueInput!): SmsReceipt
@@ -37901,6 +38341,47 @@ s   last: Int
   topSize(where: TopSizeWhereUniqueInput!): TopSize
   customer(where: CustomerWhereUniqueInput!): Customer
   userPushNotification(
+=======
+    create: ReservationReceiptItemCreateInput!
+    update: ReservationReceiptItemUpdateInput!
+  ): ReservationReceiptItem!
+  upsertStylePreferences(
+    where: StylePreferencesWhereUniqueInput!
+    create: StylePreferencesCreateInput!
+    update: StylePreferencesUpdateInput!
+  ): StylePreferences!
+  upsertPackage(
+    where: PackageWhereUniqueInput!
+    create: PackageCreateInput!
+    update: PackageUpdateInput!
+  ): Package!
+  upsertSize(
+    where: SizeWhereUniqueInput!
+    create: SizeCreateInput!
+    update: SizeUpdateInput!
+  ): Size!
+  upsertProductFunction(
+    where: ProductFunctionWhereUniqueInput!
+    create: ProductFunctionCreateInput!
+    update: ProductFunctionUpdateInput!
+  ): ProductFunction!
+  upsertColor(
+    where: ColorWhereUniqueInput!
+    create: ColorCreateInput!
+    update: ColorUpdateInput!
+  ): Color!
+  upsertTopSize(
+    where: TopSizeWhereUniqueInput!
+    create: TopSizeCreateInput!
+    update: TopSizeUpdateInput!
+  ): TopSize!
+  upsertCustomer(
+    where: CustomerWhereUniqueInput!
+    create: CustomerCreateInput!
+    update: CustomerUpdateInput!
+  ): Customer!
+  upsertUserPushNotification(
+>>>>>>> Break fitPics query into two, generalize updateFitPic+Report for admin, create PublicFitPicFieldsResolver for author, and add reports field on FitPic
     where: UserPushNotificationWhereUniqueInput!
   ): UserPushNotification
   category(where: CategoryWhereUniqueInput!): Category
@@ -38024,6 +38505,7 @@ s   last: Int
   ): PaymentPlanConnection!
   emailReceiptsConnection(
     where: EmailReceiptWhereInput
+<<<<<<< HEAD
     orderBy: EmailReceiptOrderByInput
     skip: Int
     after: String
@@ -38033,6 +38515,19 @@ s   last: Int
 <<<<<<< HEAD
   ): EmailReceiptConnection!
   bagItemsConnection(
+=======
+  ): BatchPayload!
+  updateManyFitPics(
+    data: FitPicUpdateManyMutationInput!
+    where: FitPicWhereInput
+  ): BatchPayload!
+  updateManyFitPicReports(
+    data: FitPicReportUpdateManyMutationInput!
+    where: FitPicReportWhereInput
+  ): BatchPayload!
+  updateManyBagItems(
+    data: BagItemUpdateManyMutationInput!
+>>>>>>> Break fitPics query into two, generalize updateFitPic+Report for admin, create PublicFitPicFieldsResolver for author, and add reports field on FitPic
     where: BagItemWhereInput
     orderBy: BagItemOrderByInput
     skip: Int
@@ -38222,6 +38717,7 @@ e   skip: Int
   ): SmsReceiptConnection!
   stylePreferencesesConnection(
     where: StylePreferencesWhereInput
+<<<<<<< HEAD
     orderBy: StylePreferencesOrderByInput
 =======
     last: Int
@@ -38261,6 +38757,11 @@ e   skip: Int
     last: Int
   ): ImageConnection!
   packagesConnection(
+=======
+  ): BatchPayload!
+  updateManyPackages(
+    data: PackageUpdateManyMutationInput!
+>>>>>>> Break fitPics query into two, generalize updateFitPic+Report for admin, create PublicFitPicFieldsResolver for author, and add reports field on FitPic
     where: PackageWhereInput
     orderBy: PackageOrderByInput
 =======
@@ -39332,6 +39833,7 @@ type Reservation implements Node {
   ): WarehouseLocation
   warehouseLocations(
     where: WarehouseLocationWhereInput
+<<<<<<< HEAD
     orderBy: WarehouseLocationOrderByInput
 >>>>>>> Add CommunityStyle+Report datamodel and resolvers
     skip: Int
@@ -39943,6 +40445,73 @@ enum ReservationOrderByInput {
   updatedAt_DESC
 =======
 >>>>>>> Regenerate prisma bindings
+=======
+  ): BatchPayload!
+  deleteManyPaymentPlans(where: PaymentPlanWhereInput): BatchPayload!
+  deleteManyEmailReceipts(where: EmailReceiptWhereInput): BatchPayload!
+  deleteManyFitPics(where: FitPicWhereInput): BatchPayload!
+  deleteManyFitPicReports(where: FitPicReportWhereInput): BatchPayload!
+  deleteManyBagItems(where: BagItemWhereInput): BatchPayload!
+  deleteManyCustomerMemberships(
+    where: CustomerMembershipWhereInput
+  ): BatchPayload!
+  deleteManyPauseRequests(where: PauseRequestWhereInput): BatchPayload!
+  deleteManyRecentlyViewedProducts(
+    where: RecentlyViewedProductWhereInput
+  ): BatchPayload!
+  deleteManyReservationFeedbacks(
+    where: ReservationFeedbackWhereInput
+  ): BatchPayload!
+  deleteManyProductVariantFeedbacks(
+    where: ProductVariantFeedbackWhereInput
+  ): BatchPayload!
+  deleteManyProductVariantFeedbackQuestions(
+    where: ProductVariantFeedbackQuestionWhereInput
+  ): BatchPayload!
+  deleteManyReservationReceipts(
+    where: ReservationReceiptWhereInput
+  ): BatchPayload!
+  deleteManyProductRequests(where: ProductRequestWhereInput): BatchPayload!
+  deleteManyProductVariantWants(
+    where: ProductVariantWantWhereInput
+  ): BatchPayload!
+  deleteManyCollections(where: CollectionWhereInput): BatchPayload!
+  deleteManyPushNotificationReceipts(
+    where: PushNotificationReceiptWhereInput
+  ): BatchPayload!
+  deleteManyCustomerDetails(where: CustomerDetailWhereInput): BatchPayload!
+  deleteManyUserPushNotificationInterests(
+    where: UserPushNotificationInterestWhereInput
+  ): BatchPayload!
+  deleteManyBillingInfoes(where: BillingInfoWhereInput): BatchPayload!
+  deleteManyReservationReceiptItems(
+    where: ReservationReceiptItemWhereInput
+  ): BatchPayload!
+  deleteManyStylePreferenceses(where: StylePreferencesWhereInput): BatchPayload!
+  deleteManyPackages(where: PackageWhereInput): BatchPayload!
+  deleteManySizes(where: SizeWhereInput): BatchPayload!
+  deleteManyProductFunctions(where: ProductFunctionWhereInput): BatchPayload!
+  deleteManyColors(where: ColorWhereInput): BatchPayload!
+  deleteManyTopSizes(where: TopSizeWhereInput): BatchPayload!
+  deleteManyCustomers(where: CustomerWhereInput): BatchPayload!
+  deleteManyUserPushNotifications(
+    where: UserPushNotificationWhereInput
+  ): BatchPayload!
+  deleteManyCategories(where: CategoryWhereInput): BatchPayload!
+  deleteManyBottomSizes(where: BottomSizeWhereInput): BatchPayload!
+  deleteManyPackageTransitEvents(
+    where: PackageTransitEventWhereInput
+  ): BatchPayload!
+  deleteManyLabels(where: LabelWhereInput): BatchPayload!
+  deleteManySmsReceipts(where: SmsReceiptWhereInput): BatchPayload!
+  deleteManyLocations(where: LocationWhereInput): BatchPayload!
+  deleteManyPhysicalProducts(where: PhysicalProductWhereInput): BatchPayload!
+  deleteManyImages(where: ImageWhereInput): BatchPayload!
+  deleteManyProductVariants(where: ProductVariantWhereInput): BatchPayload!
+  deleteManyProducts(where: ProductWhereInput): BatchPayload!
+  deleteManyReservations(where: ReservationWhereInput): BatchPayload!
+  deleteManyUsers(where: UserWhereInput): BatchPayload!
+>>>>>>> Break fitPics query into two, generalize updateFitPic+Report for admin, create PublicFitPicFieldsResolver for author, and add reports field on FitPic
 }
 
 enum MutationType {
@@ -53883,6 +54452,15 @@ type Query {
     first: Int
     last: Int
   ): [EmailReceipt]!
+  fitPics(
+    where: FitPicWhereInput
+    orderBy: FitPicOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [FitPic]!
   fitPicReports(
     where: FitPicReportWhereInput
     orderBy: FitPicReportOrderByInput
@@ -54045,15 +54623,6 @@ type Query {
     first: Int
     last: Int
   ): [StylePreferences]!
-  fitPics(
-    where: FitPicWhereInput
-    orderBy: FitPicOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [FitPic]!
   packages(
     where: PackageWhereInput
     orderBy: PackageOrderByInput
@@ -54249,6 +54818,7 @@ type Query {
   ): WarehouseLocation
   paymentPlan(where: PaymentPlanWhereUniqueInput!): PaymentPlan
   emailReceipt(where: EmailReceiptWhereUniqueInput!): EmailReceipt
+  fitPic(where: FitPicWhereUniqueInput!): FitPic
   fitPicReport(where: FitPicReportWhereUniqueInput!): FitPicReport
   bagItem(where: BagItemWhereUniqueInput!): BagItem
   customerMembership(
@@ -54287,7 +54857,6 @@ type Query {
     where: ReservationReceiptItemWhereUniqueInput!
   ): ReservationReceiptItem
   stylePreferences(where: StylePreferencesWhereUniqueInput!): StylePreferences
-  fitPic(where: FitPicWhereUniqueInput!): FitPic
   package(where: PackageWhereUniqueInput!): Package
   size(where: SizeWhereUniqueInput!): Size
   productFunction(where: ProductFunctionWhereUniqueInput!): ProductFunction
@@ -54419,6 +54988,15 @@ type Query {
     first: Int
     last: Int
   ): EmailReceiptConnection!
+  fitPicsConnection(
+    where: FitPicWhereInput
+    orderBy: FitPicOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): FitPicConnection!
   fitPicReportsConnection(
     where: FitPicReportWhereInput
     orderBy: FitPicReportOrderByInput
@@ -54581,15 +55159,6 @@ type Query {
     first: Int
     last: Int
   ): StylePreferencesConnection!
-  fitPicsConnection(
-    where: FitPicWhereInput
-    orderBy: FitPicOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): FitPicConnection!
   packagesConnection(
     where: PackageWhereInput
     orderBy: PackageOrderByInput
@@ -59187,6 +59756,7 @@ type Subscription {
   emailReceipt(
     where: EmailReceiptSubscriptionWhereInput
   ): EmailReceiptSubscriptionPayload
+  fitPic(where: FitPicSubscriptionWhereInput): FitPicSubscriptionPayload
   fitPicReport(
     where: FitPicReportSubscriptionWhereInput
   ): FitPicReportSubscriptionPayload
@@ -59239,7 +59809,6 @@ type Subscription {
   stylePreferences(
     where: StylePreferencesSubscriptionWhereInput
   ): StylePreferencesSubscriptionPayload
-  fitPic(where: FitPicSubscriptionWhereInput): FitPicSubscriptionPayload
   package(where: PackageSubscriptionWhereInput): PackageSubscriptionPayload
   size(where: SizeSubscriptionWhereInput): SizeSubscriptionPayload
   productFunction(

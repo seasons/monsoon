@@ -1,5 +1,5 @@
 import { PrismaService } from "@app/prisma/prisma.service"
-import { Args, Context, Info, Query, Resolver } from "@nestjs/graphql"
+import { Args, Info, Query, Resolver } from "@nestjs/graphql"
 
 import { FitPicService } from "../services/fitpic.service"
 
@@ -11,12 +11,12 @@ export class FitPicQueriesResolver {
   ) {}
 
   @Query()
-  async fitPics(@Args() args, @Info() info, @Context() ctx) {
-    return await this.fitPic.fitPics(args, info, ctx)
+  async fitPics(@Args() args, @Info() info) {
+    return await this.prisma.binding.query.fitPics(args, info)
   }
 
   @Query()
-  async fitPicReports(@Args() { where }, @Info() info) {
-    return await this.prisma.binding.query.fitPicReports({ where }, info)
+  async publicFitPics(@Args() args, @Info() info) {
+    return await this.fitPic.publicFitPics(args, info)
   }
 }

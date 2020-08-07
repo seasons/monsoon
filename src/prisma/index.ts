@@ -2366,6 +2366,8 @@ export type PhysicalProductOffloadMethod =
 
 export type WarehouseLocationType = "Conveyor" | "Rail" | "Bin";
 
+export type FitPicReportStatus = "Pending" | "Reviewed";
+
 export type PushNotificationReceiptOrderByInput =
   | "id_ASC"
   | "id_DESC"
@@ -2649,6 +2651,16 @@ export type WarehouseLocationOrderByInput =
   | "itemCode_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
+
+export type FitPicReportOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "status_ASC"
+  | "status_DESC"
+  | "reportedAt_ASC"
+  | "reportedAt_DESC"
   | "updatedAt_ASC"
   | "updatedAt_DESC";
 
@@ -2970,18 +2982,6 @@ export type EmailReceiptOrderByInput =
   | "emailId_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
-  | "updatedAt_ASC"
-  | "updatedAt_DESC";
-
-export type FitPicReportStatus = "Pending" | "Reviewed";
-
-export type FitPicReportOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "status_ASC"
-  | "status_DESC"
-  | "reportedAt_ASC"
-  | "reportedAt_DESC"
   | "updatedAt_ASC"
   | "updatedAt_DESC";
 
@@ -3661,6 +3661,9 @@ export interface FitPicWhereInput {
   products_every?: Maybe<ProductWhereInput>;
   products_some?: Maybe<ProductWhereInput>;
   products_none?: Maybe<ProductWhereInput>;
+  reports_every?: Maybe<FitPicReportWhereInput>;
+  reports_some?: Maybe<FitPicReportWhereInput>;
+  reports_none?: Maybe<FitPicReportWhereInput>;
   approved?: Maybe<Boolean>;
   approved_not?: Maybe<Boolean>;
   createdAt?: Maybe<DateTimeInput>;
@@ -5327,6 +5330,48 @@ export interface WarehouseLocationConstraintWhereInput {
   >;
 }
 
+export interface FitPicReportWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  reporter?: Maybe<UserWhereInput>;
+  reported?: Maybe<FitPicWhereInput>;
+  status?: Maybe<FitPicReportStatus>;
+  status_not?: Maybe<FitPicReportStatus>;
+  status_in?: Maybe<FitPicReportStatus[] | FitPicReportStatus>;
+  status_not_in?: Maybe<FitPicReportStatus[] | FitPicReportStatus>;
+  reportedAt?: Maybe<DateTimeInput>;
+  reportedAt_not?: Maybe<DateTimeInput>;
+  reportedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  reportedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  reportedAt_lt?: Maybe<DateTimeInput>;
+  reportedAt_lte?: Maybe<DateTimeInput>;
+  reportedAt_gt?: Maybe<DateTimeInput>;
+  reportedAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<FitPicReportWhereInput[] | FitPicReportWhereInput>;
+  OR?: Maybe<FitPicReportWhereInput[] | FitPicReportWhereInput>;
+  NOT?: Maybe<FitPicReportWhereInput[] | FitPicReportWhereInput>;
+}
+
 export interface PauseRequestWhereInput {
   id?: Maybe<ID_Input>;
   id_not?: Maybe<ID_Input>;
@@ -6564,48 +6609,6 @@ export type FitPicReportWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
 
-export interface FitPicReportWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  reporter?: Maybe<UserWhereInput>;
-  reported?: Maybe<FitPicWhereInput>;
-  status?: Maybe<FitPicReportStatus>;
-  status_not?: Maybe<FitPicReportStatus>;
-  status_in?: Maybe<FitPicReportStatus[] | FitPicReportStatus>;
-  status_not_in?: Maybe<FitPicReportStatus[] | FitPicReportStatus>;
-  reportedAt?: Maybe<DateTimeInput>;
-  reportedAt_not?: Maybe<DateTimeInput>;
-  reportedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  reportedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  reportedAt_lt?: Maybe<DateTimeInput>;
-  reportedAt_lte?: Maybe<DateTimeInput>;
-  reportedAt_gt?: Maybe<DateTimeInput>;
-  reportedAt_gte?: Maybe<DateTimeInput>;
-  updatedAt?: Maybe<DateTimeInput>;
-  updatedAt_not?: Maybe<DateTimeInput>;
-  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_lt?: Maybe<DateTimeInput>;
-  updatedAt_lte?: Maybe<DateTimeInput>;
-  updatedAt_gt?: Maybe<DateTimeInput>;
-  updatedAt_gte?: Maybe<DateTimeInput>;
-  AND?: Maybe<FitPicReportWhereInput[] | FitPicReportWhereInput>;
-  OR?: Maybe<FitPicReportWhereInput[] | FitPicReportWhereInput>;
-  NOT?: Maybe<FitPicReportWhereInput[] | FitPicReportWhereInput>;
-}
-
 export type HomepageProductRailWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
   slug?: Maybe<String>;
@@ -7463,6 +7466,7 @@ export interface FitPicCreateWithoutUserInput {
   image: ImageCreateOneInput;
   location?: Maybe<LocationCreateOneInput>;
   products?: Maybe<ProductCreateManyInput>;
+  reports?: Maybe<FitPicReportCreateManyWithoutReportedInput>;
   approved?: Maybe<Boolean>;
 }
 
@@ -8048,6 +8052,22 @@ export interface ProductCreateInput {
   architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
   publishedAt?: Maybe<DateTimeInput>;
+}
+
+export interface FitPicReportCreateManyWithoutReportedInput {
+  create?: Maybe<
+    | FitPicReportCreateWithoutReportedInput[]
+    | FitPicReportCreateWithoutReportedInput
+  >;
+  connect?: Maybe<
+    FitPicReportWhereUniqueInput[] | FitPicReportWhereUniqueInput
+  >;
+}
+
+export interface FitPicReportCreateWithoutReportedInput {
+  id?: Maybe<ID_Input>;
+  reporter: UserCreateOneInput;
+  status?: Maybe<FitPicReportStatus>;
 }
 
 export interface CustomerDetailCreateOneInput {
@@ -9011,6 +9031,7 @@ export interface FitPicUpdateWithoutUserDataInput {
   image?: Maybe<ImageUpdateOneRequiredInput>;
   location?: Maybe<LocationUpdateOneInput>;
   products?: Maybe<ProductUpdateManyInput>;
+  reports?: Maybe<FitPicReportUpdateManyWithoutReportedInput>;
   approved?: Maybe<Boolean>;
 }
 
@@ -11198,6 +11219,101 @@ export interface ProductUpsertWithWhereUniqueNestedInput {
   create: ProductCreateInput;
 }
 
+export interface FitPicReportUpdateManyWithoutReportedInput {
+  create?: Maybe<
+    | FitPicReportCreateWithoutReportedInput[]
+    | FitPicReportCreateWithoutReportedInput
+  >;
+  delete?: Maybe<FitPicReportWhereUniqueInput[] | FitPicReportWhereUniqueInput>;
+  connect?: Maybe<
+    FitPicReportWhereUniqueInput[] | FitPicReportWhereUniqueInput
+  >;
+  set?: Maybe<FitPicReportWhereUniqueInput[] | FitPicReportWhereUniqueInput>;
+  disconnect?: Maybe<
+    FitPicReportWhereUniqueInput[] | FitPicReportWhereUniqueInput
+  >;
+  update?: Maybe<
+    | FitPicReportUpdateWithWhereUniqueWithoutReportedInput[]
+    | FitPicReportUpdateWithWhereUniqueWithoutReportedInput
+  >;
+  upsert?: Maybe<
+    | FitPicReportUpsertWithWhereUniqueWithoutReportedInput[]
+    | FitPicReportUpsertWithWhereUniqueWithoutReportedInput
+  >;
+  deleteMany?: Maybe<
+    FitPicReportScalarWhereInput[] | FitPicReportScalarWhereInput
+  >;
+  updateMany?: Maybe<
+    | FitPicReportUpdateManyWithWhereNestedInput[]
+    | FitPicReportUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface FitPicReportUpdateWithWhereUniqueWithoutReportedInput {
+  where: FitPicReportWhereUniqueInput;
+  data: FitPicReportUpdateWithoutReportedDataInput;
+}
+
+export interface FitPicReportUpdateWithoutReportedDataInput {
+  reporter?: Maybe<UserUpdateOneRequiredInput>;
+  status?: Maybe<FitPicReportStatus>;
+}
+
+export interface FitPicReportUpsertWithWhereUniqueWithoutReportedInput {
+  where: FitPicReportWhereUniqueInput;
+  update: FitPicReportUpdateWithoutReportedDataInput;
+  create: FitPicReportCreateWithoutReportedInput;
+}
+
+export interface FitPicReportScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  status?: Maybe<FitPicReportStatus>;
+  status_not?: Maybe<FitPicReportStatus>;
+  status_in?: Maybe<FitPicReportStatus[] | FitPicReportStatus>;
+  status_not_in?: Maybe<FitPicReportStatus[] | FitPicReportStatus>;
+  reportedAt?: Maybe<DateTimeInput>;
+  reportedAt_not?: Maybe<DateTimeInput>;
+  reportedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  reportedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  reportedAt_lt?: Maybe<DateTimeInput>;
+  reportedAt_lte?: Maybe<DateTimeInput>;
+  reportedAt_gt?: Maybe<DateTimeInput>;
+  reportedAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<FitPicReportScalarWhereInput[] | FitPicReportScalarWhereInput>;
+  OR?: Maybe<FitPicReportScalarWhereInput[] | FitPicReportScalarWhereInput>;
+  NOT?: Maybe<FitPicReportScalarWhereInput[] | FitPicReportScalarWhereInput>;
+}
+
+export interface FitPicReportUpdateManyWithWhereNestedInput {
+  where: FitPicReportScalarWhereInput;
+  data: FitPicReportUpdateManyDataInput;
+}
+
+export interface FitPicReportUpdateManyDataInput {
+  status?: Maybe<FitPicReportStatus>;
+}
+
 export interface FitPicUpsertWithWhereUniqueWithoutUserInput {
   where: FitPicWhereUniqueInput;
   update: FitPicUpdateWithoutUserDataInput;
@@ -12898,6 +13014,7 @@ export interface FitPicCreateInput {
   image: ImageCreateOneInput;
   location?: Maybe<LocationCreateOneInput>;
   products?: Maybe<ProductCreateManyInput>;
+  reports?: Maybe<FitPicReportCreateManyWithoutReportedInput>;
   approved?: Maybe<Boolean>;
 }
 
@@ -12927,6 +13044,7 @@ export interface FitPicUpdateInput {
   image?: Maybe<ImageUpdateOneRequiredInput>;
   location?: Maybe<LocationUpdateOneInput>;
   products?: Maybe<ProductUpdateManyInput>;
+  reports?: Maybe<FitPicReportUpdateManyWithoutReportedInput>;
   approved?: Maybe<Boolean>;
 }
 
@@ -12964,29 +13082,38 @@ export interface FitPicUpdateManyMutationInput {
 export interface FitPicReportCreateInput {
   id?: Maybe<ID_Input>;
   reporter: UserCreateOneInput;
-  reported: FitPicCreateOneInput;
+  reported: FitPicCreateOneWithoutReportsInput;
   status?: Maybe<FitPicReportStatus>;
 }
 
-export interface FitPicCreateOneInput {
-  create?: Maybe<FitPicCreateInput>;
+export interface FitPicCreateOneWithoutReportsInput {
+  create?: Maybe<FitPicCreateWithoutReportsInput>;
   connect?: Maybe<FitPicWhereUniqueInput>;
+}
+
+export interface FitPicCreateWithoutReportsInput {
+  id?: Maybe<ID_Input>;
+  user: UserCreateOneWithoutFitPicsInput;
+  image: ImageCreateOneInput;
+  location?: Maybe<LocationCreateOneInput>;
+  products?: Maybe<ProductCreateManyInput>;
+  approved?: Maybe<Boolean>;
 }
 
 export interface FitPicReportUpdateInput {
   reporter?: Maybe<UserUpdateOneRequiredInput>;
-  reported?: Maybe<FitPicUpdateOneRequiredInput>;
+  reported?: Maybe<FitPicUpdateOneRequiredWithoutReportsInput>;
   status?: Maybe<FitPicReportStatus>;
 }
 
-export interface FitPicUpdateOneRequiredInput {
-  create?: Maybe<FitPicCreateInput>;
-  update?: Maybe<FitPicUpdateDataInput>;
-  upsert?: Maybe<FitPicUpsertNestedInput>;
+export interface FitPicUpdateOneRequiredWithoutReportsInput {
+  create?: Maybe<FitPicCreateWithoutReportsInput>;
+  update?: Maybe<FitPicUpdateWithoutReportsDataInput>;
+  upsert?: Maybe<FitPicUpsertWithoutReportsInput>;
   connect?: Maybe<FitPicWhereUniqueInput>;
 }
 
-export interface FitPicUpdateDataInput {
+export interface FitPicUpdateWithoutReportsDataInput {
   user?: Maybe<UserUpdateOneRequiredWithoutFitPicsInput>;
   image?: Maybe<ImageUpdateOneRequiredInput>;
   location?: Maybe<LocationUpdateOneInput>;
@@ -12994,9 +13121,9 @@ export interface FitPicUpdateDataInput {
   approved?: Maybe<Boolean>;
 }
 
-export interface FitPicUpsertNestedInput {
-  update: FitPicUpdateDataInput;
-  create: FitPicCreateInput;
+export interface FitPicUpsertWithoutReportsInput {
+  update: FitPicUpdateWithoutReportsDataInput;
+  create: FitPicCreateWithoutReportsInput;
 }
 
 export interface FitPicReportUpdateManyMutationInput {
@@ -16448,6 +16575,15 @@ export interface FitPicPromise extends Promise<FitPic>, Fragmentable {
     first?: Int;
     last?: Int;
   }) => T;
+  reports: <T = FragmentableArray<FitPicReport>>(args?: {
+    where?: FitPicReportWhereInput;
+    orderBy?: FitPicReportOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
   approved: () => Promise<Boolean>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
@@ -16469,6 +16605,15 @@ export interface FitPicSubscription
     first?: Int;
     last?: Int;
   }) => T;
+  reports: <T = Promise<AsyncIterator<FitPicReportSubscription>>>(args?: {
+    where?: FitPicReportWhereInput;
+    orderBy?: FitPicReportOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
   approved: () => Promise<AsyncIterator<Boolean>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
@@ -16484,6 +16629,15 @@ export interface FitPicNullablePromise
   products: <T = FragmentableArray<Product>>(args?: {
     where?: ProductWhereInput;
     orderBy?: ProductOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  reports: <T = FragmentableArray<FitPicReport>>(args?: {
+    where?: FitPicReportWhereInput;
+    orderBy?: FitPicReportOrderByInput;
     skip?: Int;
     after?: String;
     before?: String;
@@ -17981,6 +18135,46 @@ export interface WarehouseLocationConstraintNullablePromise
     last?: Int;
   }) => T;
   createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface FitPicReport {
+  id: ID_Output;
+  status: FitPicReportStatus;
+  reportedAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface FitPicReportPromise
+  extends Promise<FitPicReport>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  reporter: <T = UserPromise>() => T;
+  reported: <T = FitPicPromise>() => T;
+  status: () => Promise<FitPicReportStatus>;
+  reportedAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface FitPicReportSubscription
+  extends Promise<AsyncIterator<FitPicReport>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  reporter: <T = UserSubscription>() => T;
+  reported: <T = FitPicSubscription>() => T;
+  status: () => Promise<AsyncIterator<FitPicReportStatus>>;
+  reportedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface FitPicReportNullablePromise
+  extends Promise<FitPicReport | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  reporter: <T = UserPromise>() => T;
+  reported: <T = FitPicPromise>() => T;
+  status: () => Promise<FitPicReportStatus>;
+  reportedAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
 
@@ -19600,46 +19794,6 @@ export interface AggregateFitPicSubscription
   extends Promise<AsyncIterator<AggregateFitPic>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
-}
-
-export interface FitPicReport {
-  id: ID_Output;
-  status: FitPicReportStatus;
-  reportedAt: DateTimeOutput;
-  updatedAt: DateTimeOutput;
-}
-
-export interface FitPicReportPromise
-  extends Promise<FitPicReport>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  reporter: <T = UserPromise>() => T;
-  reported: <T = FitPicPromise>() => T;
-  status: () => Promise<FitPicReportStatus>;
-  reportedAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
-}
-
-export interface FitPicReportSubscription
-  extends Promise<AsyncIterator<FitPicReport>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  reporter: <T = UserSubscription>() => T;
-  reported: <T = FitPicSubscription>() => T;
-  status: () => Promise<AsyncIterator<FitPicReportStatus>>;
-  reportedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-}
-
-export interface FitPicReportNullablePromise
-  extends Promise<FitPicReport | null>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  reporter: <T = UserPromise>() => T;
-  reported: <T = FitPicPromise>() => T;
-  status: () => Promise<FitPicReportStatus>;
-  reportedAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface FitPicReportConnection {

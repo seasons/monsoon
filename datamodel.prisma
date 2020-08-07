@@ -564,6 +564,7 @@ type FitPic {
   image: Image!
   location: Location
   products: [Product!] @scalarList(strategy: RELATION)
+  reports: [FitPicReport!]! @relation(name: "FitPicToFitPicReport")
   approved: Boolean! @default(value: false)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
@@ -577,7 +578,7 @@ enum FitPicReportStatus {
 type FitPicReport {
   id: ID! @id
   reporter: User!
-  reported: FitPic!
+  reported: FitPic! @relation(name: "FitPicToFitPicReport")
   status: FitPicReportStatus! @default(value: Pending)
   reportedAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt

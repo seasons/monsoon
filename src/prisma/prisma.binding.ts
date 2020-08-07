@@ -16,6 +16,7 @@ export interface Query {
     warehouseLocations: <T = Array<WarehouseLocation | null>>(args: { where?: WarehouseLocationWhereInput | null, orderBy?: WarehouseLocationOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     paymentPlans: <T = Array<PaymentPlan | null>>(args: { where?: PaymentPlanWhereInput | null, orderBy?: PaymentPlanOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     emailReceipts: <T = Array<EmailReceipt | null>>(args: { where?: EmailReceiptWhereInput | null, orderBy?: EmailReceiptOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    fitPics: <T = Array<FitPic | null>>(args: { where?: FitPicWhereInput | null, orderBy?: FitPicOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     fitPicReports: <T = Array<FitPicReport | null>>(args: { where?: FitPicReportWhereInput | null, orderBy?: FitPicReportOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     bagItems: <T = Array<BagItem | null>>(args: { where?: BagItemWhereInput | null, orderBy?: BagItemOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     customerMemberships: <T = Array<CustomerMembership | null>>(args: { where?: CustomerMembershipWhereInput | null, orderBy?: CustomerMembershipOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -34,7 +35,6 @@ export interface Query {
     billingInfoes: <T = Array<BillingInfo | null>>(args: { where?: BillingInfoWhereInput | null, orderBy?: BillingInfoOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     reservationReceiptItems: <T = Array<ReservationReceiptItem | null>>(args: { where?: ReservationReceiptItemWhereInput | null, orderBy?: ReservationReceiptItemOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     stylePreferenceses: <T = Array<StylePreferences | null>>(args: { where?: StylePreferencesWhereInput | null, orderBy?: StylePreferencesOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    fitPics: <T = Array<FitPic | null>>(args: { where?: FitPicWhereInput | null, orderBy?: FitPicOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     packages: <T = Array<Package | null>>(args: { where?: PackageWhereInput | null, orderBy?: PackageOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     sizes: <T = Array<Size | null>>(args: { where?: SizeWhereInput | null, orderBy?: SizeOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     productFunctions: <T = Array<ProductFunction | null>>(args: { where?: ProductFunctionWhereInput | null, orderBy?: ProductFunctionOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -66,6 +66,7 @@ export interface Query {
     warehouseLocation: <T = WarehouseLocation | null>(args: { where: WarehouseLocationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     paymentPlan: <T = PaymentPlan | null>(args: { where: PaymentPlanWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     emailReceipt: <T = EmailReceipt | null>(args: { where: EmailReceiptWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    fitPic: <T = FitPic | null>(args: { where: FitPicWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     fitPicReport: <T = FitPicReport | null>(args: { where: FitPicReportWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     bagItem: <T = BagItem | null>(args: { where: BagItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     customerMembership: <T = CustomerMembership | null>(args: { where: CustomerMembershipWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -84,7 +85,6 @@ export interface Query {
     billingInfo: <T = BillingInfo | null>(args: { where: BillingInfoWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     reservationReceiptItem: <T = ReservationReceiptItem | null>(args: { where: ReservationReceiptItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     stylePreferences: <T = StylePreferences | null>(args: { where: StylePreferencesWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    fitPic: <T = FitPic | null>(args: { where: FitPicWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     package: <T = Package | null>(args: { where: PackageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     size: <T = Size | null>(args: { where: SizeWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     productFunction: <T = ProductFunction | null>(args: { where: ProductFunctionWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -116,6 +116,7 @@ export interface Query {
     warehouseLocationsConnection: <T = WarehouseLocationConnection>(args: { where?: WarehouseLocationWhereInput | null, orderBy?: WarehouseLocationOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     paymentPlansConnection: <T = PaymentPlanConnection>(args: { where?: PaymentPlanWhereInput | null, orderBy?: PaymentPlanOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     emailReceiptsConnection: <T = EmailReceiptConnection>(args: { where?: EmailReceiptWhereInput | null, orderBy?: EmailReceiptOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    fitPicsConnection: <T = FitPicConnection>(args: { where?: FitPicWhereInput | null, orderBy?: FitPicOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     fitPicReportsConnection: <T = FitPicReportConnection>(args: { where?: FitPicReportWhereInput | null, orderBy?: FitPicReportOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     bagItemsConnection: <T = BagItemConnection>(args: { where?: BagItemWhereInput | null, orderBy?: BagItemOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     customerMembershipsConnection: <T = CustomerMembershipConnection>(args: { where?: CustomerMembershipWhereInput | null, orderBy?: CustomerMembershipOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -134,7 +135,6 @@ export interface Query {
     billingInfoesConnection: <T = BillingInfoConnection>(args: { where?: BillingInfoWhereInput | null, orderBy?: BillingInfoOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     reservationReceiptItemsConnection: <T = ReservationReceiptItemConnection>(args: { where?: ReservationReceiptItemWhereInput | null, orderBy?: ReservationReceiptItemOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     stylePreferencesesConnection: <T = StylePreferencesConnection>(args: { where?: StylePreferencesWhereInput | null, orderBy?: StylePreferencesOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    fitPicsConnection: <T = FitPicConnection>(args: { where?: FitPicWhereInput | null, orderBy?: FitPicOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     packagesConnection: <T = PackageConnection>(args: { where?: PackageWhereInput | null, orderBy?: PackageOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     sizesConnection: <T = SizeConnection>(args: { where?: SizeWhereInput | null, orderBy?: SizeOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     productFunctionsConnection: <T = ProductFunctionConnection>(args: { where?: ProductFunctionWhereInput | null, orderBy?: ProductFunctionOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -170,6 +170,7 @@ export interface Mutation {
     createWarehouseLocation: <T = WarehouseLocation>(args: { data: WarehouseLocationCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createPaymentPlan: <T = PaymentPlan>(args: { data: PaymentPlanCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createEmailReceipt: <T = EmailReceipt>(args: { data: EmailReceiptCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    createFitPic: <T = FitPic>(args: { data: FitPicCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createFitPicReport: <T = FitPicReport>(args: { data: FitPicReportCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createBagItem: <T = BagItem>(args: { data: BagItemCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createCustomerMembership: <T = CustomerMembership>(args: { data: CustomerMembershipCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -188,7 +189,6 @@ export interface Mutation {
     createBillingInfo: <T = BillingInfo>(args: { data: BillingInfoCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createReservationReceiptItem: <T = ReservationReceiptItem>(args: { data: ReservationReceiptItemCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createStylePreferences: <T = StylePreferences>(args: { data: StylePreferencesCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    createFitPic: <T = FitPic>(args: { data: FitPicCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createPackage: <T = Package>(args: { data: PackageCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createSize: <T = Size>(args: { data: SizeCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createProductFunction: <T = ProductFunction>(args: { data: ProductFunctionCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -220,6 +220,7 @@ export interface Mutation {
     updateWarehouseLocation: <T = WarehouseLocation | null>(args: { data: WarehouseLocationUpdateInput, where: WarehouseLocationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updatePaymentPlan: <T = PaymentPlan | null>(args: { data: PaymentPlanUpdateInput, where: PaymentPlanWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateEmailReceipt: <T = EmailReceipt | null>(args: { data: EmailReceiptUpdateInput, where: EmailReceiptWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    updateFitPic: <T = FitPic | null>(args: { data: FitPicUpdateInput, where: FitPicWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateFitPicReport: <T = FitPicReport | null>(args: { data: FitPicReportUpdateInput, where: FitPicReportWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateBagItem: <T = BagItem | null>(args: { data: BagItemUpdateInput, where: BagItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateCustomerMembership: <T = CustomerMembership | null>(args: { data: CustomerMembershipUpdateInput, where: CustomerMembershipWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -238,7 +239,6 @@ export interface Mutation {
     updateBillingInfo: <T = BillingInfo | null>(args: { data: BillingInfoUpdateInput, where: BillingInfoWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateReservationReceiptItem: <T = ReservationReceiptItem | null>(args: { data: ReservationReceiptItemUpdateInput, where: ReservationReceiptItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateStylePreferences: <T = StylePreferences | null>(args: { data: StylePreferencesUpdateInput, where: StylePreferencesWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    updateFitPic: <T = FitPic | null>(args: { data: FitPicUpdateInput, where: FitPicWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updatePackage: <T = Package | null>(args: { data: PackageUpdateInput, where: PackageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateSize: <T = Size | null>(args: { data: SizeUpdateInput, where: SizeWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateProductFunction: <T = ProductFunction | null>(args: { data: ProductFunctionUpdateInput, where: ProductFunctionWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -270,6 +270,7 @@ export interface Mutation {
     deleteWarehouseLocation: <T = WarehouseLocation | null>(args: { where: WarehouseLocationWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deletePaymentPlan: <T = PaymentPlan | null>(args: { where: PaymentPlanWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteEmailReceipt: <T = EmailReceipt | null>(args: { where: EmailReceiptWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deleteFitPic: <T = FitPic | null>(args: { where: FitPicWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteFitPicReport: <T = FitPicReport | null>(args: { where: FitPicReportWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteBagItem: <T = BagItem | null>(args: { where: BagItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteCustomerMembership: <T = CustomerMembership | null>(args: { where: CustomerMembershipWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -288,7 +289,6 @@ export interface Mutation {
     deleteBillingInfo: <T = BillingInfo | null>(args: { where: BillingInfoWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteReservationReceiptItem: <T = ReservationReceiptItem | null>(args: { where: ReservationReceiptItemWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteStylePreferences: <T = StylePreferences | null>(args: { where: StylePreferencesWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
-    deleteFitPic: <T = FitPic | null>(args: { where: FitPicWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deletePackage: <T = Package | null>(args: { where: PackageWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteSize: <T = Size | null>(args: { where: SizeWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteProductFunction: <T = ProductFunction | null>(args: { where: ProductFunctionWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -320,6 +320,7 @@ export interface Mutation {
     upsertWarehouseLocation: <T = WarehouseLocation>(args: { where: WarehouseLocationWhereUniqueInput, create: WarehouseLocationCreateInput, update: WarehouseLocationUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertPaymentPlan: <T = PaymentPlan>(args: { where: PaymentPlanWhereUniqueInput, create: PaymentPlanCreateInput, update: PaymentPlanUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertEmailReceipt: <T = EmailReceipt>(args: { where: EmailReceiptWhereUniqueInput, create: EmailReceiptCreateInput, update: EmailReceiptUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    upsertFitPic: <T = FitPic>(args: { where: FitPicWhereUniqueInput, create: FitPicCreateInput, update: FitPicUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertFitPicReport: <T = FitPicReport>(args: { where: FitPicReportWhereUniqueInput, create: FitPicReportCreateInput, update: FitPicReportUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertBagItem: <T = BagItem>(args: { where: BagItemWhereUniqueInput, create: BagItemCreateInput, update: BagItemUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertCustomerMembership: <T = CustomerMembership>(args: { where: CustomerMembershipWhereUniqueInput, create: CustomerMembershipCreateInput, update: CustomerMembershipUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -338,7 +339,6 @@ export interface Mutation {
     upsertBillingInfo: <T = BillingInfo>(args: { where: BillingInfoWhereUniqueInput, create: BillingInfoCreateInput, update: BillingInfoUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertReservationReceiptItem: <T = ReservationReceiptItem>(args: { where: ReservationReceiptItemWhereUniqueInput, create: ReservationReceiptItemCreateInput, update: ReservationReceiptItemUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertStylePreferences: <T = StylePreferences>(args: { where: StylePreferencesWhereUniqueInput, create: StylePreferencesCreateInput, update: StylePreferencesUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    upsertFitPic: <T = FitPic>(args: { where: FitPicWhereUniqueInput, create: FitPicCreateInput, update: FitPicUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertPackage: <T = Package>(args: { where: PackageWhereUniqueInput, create: PackageCreateInput, update: PackageUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertSize: <T = Size>(args: { where: SizeWhereUniqueInput, create: SizeCreateInput, update: SizeUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertProductFunction: <T = ProductFunction>(args: { where: ProductFunctionWhereUniqueInput, create: ProductFunctionCreateInput, update: ProductFunctionUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -370,6 +370,7 @@ export interface Mutation {
     updateManyWarehouseLocations: <T = BatchPayload>(args: { data: WarehouseLocationUpdateManyMutationInput, where?: WarehouseLocationWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyPaymentPlans: <T = BatchPayload>(args: { data: PaymentPlanUpdateManyMutationInput, where?: PaymentPlanWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyEmailReceipts: <T = BatchPayload>(args: { data: EmailReceiptUpdateManyMutationInput, where?: EmailReceiptWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateManyFitPics: <T = BatchPayload>(args: { data: FitPicUpdateManyMutationInput, where?: FitPicWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyFitPicReports: <T = BatchPayload>(args: { data: FitPicReportUpdateManyMutationInput, where?: FitPicReportWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyBagItems: <T = BatchPayload>(args: { data: BagItemUpdateManyMutationInput, where?: BagItemWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyCustomerMemberships: <T = BatchPayload>(args: { data: CustomerMembershipUpdateManyMutationInput, where?: CustomerMembershipWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -387,7 +388,6 @@ export interface Mutation {
     updateManyBillingInfoes: <T = BatchPayload>(args: { data: BillingInfoUpdateManyMutationInput, where?: BillingInfoWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyReservationReceiptItems: <T = BatchPayload>(args: { data: ReservationReceiptItemUpdateManyMutationInput, where?: ReservationReceiptItemWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyStylePreferenceses: <T = BatchPayload>(args: { data: StylePreferencesUpdateManyMutationInput, where?: StylePreferencesWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    updateManyFitPics: <T = BatchPayload>(args: { data: FitPicUpdateManyMutationInput, where?: FitPicWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyPackages: <T = BatchPayload>(args: { data: PackageUpdateManyMutationInput, where?: PackageWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManySizes: <T = BatchPayload>(args: { data: SizeUpdateManyMutationInput, where?: SizeWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyProductFunctions: <T = BatchPayload>(args: { data: ProductFunctionUpdateManyMutationInput, where?: ProductFunctionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -419,6 +419,7 @@ export interface Mutation {
     deleteManyWarehouseLocations: <T = BatchPayload>(args: { where?: WarehouseLocationWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyPaymentPlans: <T = BatchPayload>(args: { where?: PaymentPlanWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyEmailReceipts: <T = BatchPayload>(args: { where?: EmailReceiptWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteManyFitPics: <T = BatchPayload>(args: { where?: FitPicWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyFitPicReports: <T = BatchPayload>(args: { where?: FitPicReportWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyBagItems: <T = BatchPayload>(args: { where?: BagItemWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyCustomerMemberships: <T = BatchPayload>(args: { where?: CustomerMembershipWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -437,7 +438,6 @@ export interface Mutation {
     deleteManyBillingInfoes: <T = BatchPayload>(args: { where?: BillingInfoWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyReservationReceiptItems: <T = BatchPayload>(args: { where?: ReservationReceiptItemWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyStylePreferenceses: <T = BatchPayload>(args: { where?: StylePreferencesWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
-    deleteManyFitPics: <T = BatchPayload>(args: { where?: FitPicWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyPackages: <T = BatchPayload>(args: { where?: PackageWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManySizes: <T = BatchPayload>(args: { where?: SizeWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyProductFunctions: <T = BatchPayload>(args: { where?: ProductFunctionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -472,6 +472,7 @@ export interface Subscription {
     warehouseLocation: <T = WarehouseLocationSubscriptionPayload | null>(args: { where?: WarehouseLocationSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     paymentPlan: <T = PaymentPlanSubscriptionPayload | null>(args: { where?: PaymentPlanSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     emailReceipt: <T = EmailReceiptSubscriptionPayload | null>(args: { where?: EmailReceiptSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
+    fitPic: <T = FitPicSubscriptionPayload | null>(args: { where?: FitPicSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     fitPicReport: <T = FitPicReportSubscriptionPayload | null>(args: { where?: FitPicReportSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     bagItem: <T = BagItemSubscriptionPayload | null>(args: { where?: BagItemSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     customerMembership: <T = CustomerMembershipSubscriptionPayload | null>(args: { where?: CustomerMembershipSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
@@ -490,7 +491,6 @@ export interface Subscription {
     billingInfo: <T = BillingInfoSubscriptionPayload | null>(args: { where?: BillingInfoSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     reservationReceiptItem: <T = ReservationReceiptItemSubscriptionPayload | null>(args: { where?: ReservationReceiptItemSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     stylePreferences: <T = StylePreferencesSubscriptionPayload | null>(args: { where?: StylePreferencesSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
-    fitPic: <T = FitPicSubscriptionPayload | null>(args: { where?: FitPicSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     package: <T = PackageSubscriptionPayload | null>(args: { where?: PackageSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     size: <T = SizeSubscriptionPayload | null>(args: { where?: SizeSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     productFunction: <T = ProductFunctionSubscriptionPayload | null>(args: { where?: ProductFunctionSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
@@ -525,6 +525,7 @@ export interface Exists {
   WarehouseLocation: (where?: WarehouseLocationWhereInput) => Promise<boolean>
   PaymentPlan: (where?: PaymentPlanWhereInput) => Promise<boolean>
   EmailReceipt: (where?: EmailReceiptWhereInput) => Promise<boolean>
+  FitPic: (where?: FitPicWhereInput) => Promise<boolean>
   FitPicReport: (where?: FitPicReportWhereInput) => Promise<boolean>
   BagItem: (where?: BagItemWhereInput) => Promise<boolean>
   CustomerMembership: (where?: CustomerMembershipWhereInput) => Promise<boolean>
@@ -543,7 +544,6 @@ export interface Exists {
   BillingInfo: (where?: BillingInfoWhereInput) => Promise<boolean>
   ReservationReceiptItem: (where?: ReservationReceiptItemWhereInput) => Promise<boolean>
   StylePreferences: (where?: StylePreferencesWhereInput) => Promise<boolean>
-  FitPic: (where?: FitPicWhereInput) => Promise<boolean>
   Package: (where?: PackageWhereInput) => Promise<boolean>
   Size: (where?: SizeWhereInput) => Promise<boolean>
   ProductFunction: (where?: ProductFunctionWhereInput) => Promise<boolean>
@@ -6591,6 +6591,7 @@ type FitPic implements Node {
   image: Image!
   location: Location
   products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
+  reports(where: FitPicReportWhereInput, orderBy: FitPicReportOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [FitPicReport!]
   approved: Boolean!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -6613,6 +6614,7 @@ input FitPicCreateInput {
   image: ImageCreateOneInput!
   location: LocationCreateOneInput
   products: ProductCreateManyInput
+  reports: FitPicReportCreateManyWithoutReportedInput
 }
 
 input FitPicCreateManyWithoutUserInput {
@@ -6620,9 +6622,18 @@ input FitPicCreateManyWithoutUserInput {
   connect: [FitPicWhereUniqueInput!]
 }
 
-input FitPicCreateOneInput {
-  create: FitPicCreateInput
+input FitPicCreateOneWithoutReportsInput {
+  create: FitPicCreateWithoutReportsInput
   connect: FitPicWhereUniqueInput
+}
+
+input FitPicCreateWithoutReportsInput {
+  id: ID
+  approved: Boolean
+  user: UserCreateOneWithoutFitPicsInput!
+  image: ImageCreateOneInput!
+  location: LocationCreateOneInput
+  products: ProductCreateManyInput
 }
 
 input FitPicCreateWithoutUserInput {
@@ -6631,6 +6642,7 @@ input FitPicCreateWithoutUserInput {
   image: ImageCreateOneInput!
   location: LocationCreateOneInput
   products: ProductCreateManyInput
+  reports: FitPicReportCreateManyWithoutReportedInput
 }
 
 """An edge in a connection."""
@@ -6683,7 +6695,18 @@ input FitPicReportCreateInput {
   id: ID
   status: FitPicReportStatus
   reporter: UserCreateOneInput!
-  reported: FitPicCreateOneInput!
+  reported: FitPicCreateOneWithoutReportsInput!
+}
+
+input FitPicReportCreateManyWithoutReportedInput {
+  create: [FitPicReportCreateWithoutReportedInput!]
+  connect: [FitPicReportWhereUniqueInput!]
+}
+
+input FitPicReportCreateWithoutReportedInput {
+  id: ID
+  status: FitPicReportStatus
+  reporter: UserCreateOneInput!
 }
 
 """An edge in a connection."""
@@ -6711,6 +6734,111 @@ type FitPicReportPreviousValues {
   status: FitPicReportStatus!
   reportedAt: DateTime!
   updatedAt: DateTime!
+}
+
+input FitPicReportScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [FitPicReportScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [FitPicReportScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [FitPicReportScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  status: FitPicReportStatus
+
+  """All values that are not equal to given value."""
+  status_not: FitPicReportStatus
+
+  """All values that are contained in given list."""
+  status_in: [FitPicReportStatus!]
+
+  """All values that are not contained in given list."""
+  status_not_in: [FitPicReportStatus!]
+  reportedAt: DateTime
+
+  """All values that are not equal to given value."""
+  reportedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  reportedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  reportedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  reportedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  reportedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  reportedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  reportedAt_gte: DateTime
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
 }
 
 enum FitPicReportStatus {
@@ -6758,11 +6886,48 @@ input FitPicReportSubscriptionWhereInput {
 input FitPicReportUpdateInput {
   status: FitPicReportStatus
   reporter: UserUpdateOneRequiredInput
-  reported: FitPicUpdateOneRequiredInput
+  reported: FitPicUpdateOneRequiredWithoutReportsInput
+}
+
+input FitPicReportUpdateManyDataInput {
+  status: FitPicReportStatus
 }
 
 input FitPicReportUpdateManyMutationInput {
   status: FitPicReportStatus
+}
+
+input FitPicReportUpdateManyWithoutReportedInput {
+  create: [FitPicReportCreateWithoutReportedInput!]
+  connect: [FitPicReportWhereUniqueInput!]
+  set: [FitPicReportWhereUniqueInput!]
+  disconnect: [FitPicReportWhereUniqueInput!]
+  delete: [FitPicReportWhereUniqueInput!]
+  update: [FitPicReportUpdateWithWhereUniqueWithoutReportedInput!]
+  updateMany: [FitPicReportUpdateManyWithWhereNestedInput!]
+  deleteMany: [FitPicReportScalarWhereInput!]
+  upsert: [FitPicReportUpsertWithWhereUniqueWithoutReportedInput!]
+}
+
+input FitPicReportUpdateManyWithWhereNestedInput {
+  where: FitPicReportScalarWhereInput!
+  data: FitPicReportUpdateManyDataInput!
+}
+
+input FitPicReportUpdateWithoutReportedDataInput {
+  status: FitPicReportStatus
+  reporter: UserUpdateOneRequiredInput
+}
+
+input FitPicReportUpdateWithWhereUniqueWithoutReportedInput {
+  where: FitPicReportWhereUniqueInput!
+  data: FitPicReportUpdateWithoutReportedDataInput!
+}
+
+input FitPicReportUpsertWithWhereUniqueWithoutReportedInput {
+  where: FitPicReportWhereUniqueInput!
+  update: FitPicReportUpdateWithoutReportedDataInput!
+  create: FitPicReportCreateWithoutReportedInput!
 }
 
 input FitPicReportWhereInput {
@@ -7012,20 +7177,13 @@ input FitPicSubscriptionWhereInput {
   node: FitPicWhereInput
 }
 
-input FitPicUpdateDataInput {
-  approved: Boolean
-  user: UserUpdateOneRequiredWithoutFitPicsInput
-  image: ImageUpdateOneRequiredInput
-  location: LocationUpdateOneInput
-  products: ProductUpdateManyInput
-}
-
 input FitPicUpdateInput {
   approved: Boolean
   user: UserUpdateOneRequiredWithoutFitPicsInput
   image: ImageUpdateOneRequiredInput
   location: LocationUpdateOneInput
   products: ProductUpdateManyInput
+  reports: FitPicReportUpdateManyWithoutReportedInput
 }
 
 input FitPicUpdateManyDataInput {
@@ -7053,11 +7211,19 @@ input FitPicUpdateManyWithWhereNestedInput {
   data: FitPicUpdateManyDataInput!
 }
 
-input FitPicUpdateOneRequiredInput {
-  create: FitPicCreateInput
+input FitPicUpdateOneRequiredWithoutReportsInput {
+  create: FitPicCreateWithoutReportsInput
   connect: FitPicWhereUniqueInput
-  update: FitPicUpdateDataInput
-  upsert: FitPicUpsertNestedInput
+  update: FitPicUpdateWithoutReportsDataInput
+  upsert: FitPicUpsertWithoutReportsInput
+}
+
+input FitPicUpdateWithoutReportsDataInput {
+  approved: Boolean
+  user: UserUpdateOneRequiredWithoutFitPicsInput
+  image: ImageUpdateOneRequiredInput
+  location: LocationUpdateOneInput
+  products: ProductUpdateManyInput
 }
 
 input FitPicUpdateWithoutUserDataInput {
@@ -7065,6 +7231,7 @@ input FitPicUpdateWithoutUserDataInput {
   image: ImageUpdateOneRequiredInput
   location: LocationUpdateOneInput
   products: ProductUpdateManyInput
+  reports: FitPicReportUpdateManyWithoutReportedInput
 }
 
 input FitPicUpdateWithWhereUniqueWithoutUserInput {
@@ -7072,9 +7239,9 @@ input FitPicUpdateWithWhereUniqueWithoutUserInput {
   data: FitPicUpdateWithoutUserDataInput!
 }
 
-input FitPicUpsertNestedInput {
-  update: FitPicUpdateDataInput!
-  create: FitPicCreateInput!
+input FitPicUpsertWithoutReportsInput {
+  update: FitPicUpdateWithoutReportsDataInput!
+  create: FitPicCreateWithoutReportsInput!
 }
 
 input FitPicUpsertWithWhereUniqueWithoutUserInput {
@@ -7186,6 +7353,9 @@ input FitPicWhereInput {
   products_every: ProductWhereInput
   products_some: ProductWhereInput
   products_none: ProductWhereInput
+  reports_every: FitPicReportWhereInput
+  reports_some: FitPicReportWhereInput
+  reports_none: FitPicReportWhereInput
 }
 
 input FitPicWhereUniqueInput {
@@ -9320,6 +9490,7 @@ type Mutation {
   createWarehouseLocation(data: WarehouseLocationCreateInput!): WarehouseLocation!
   createPaymentPlan(data: PaymentPlanCreateInput!): PaymentPlan!
   createEmailReceipt(data: EmailReceiptCreateInput!): EmailReceipt!
+  createFitPic(data: FitPicCreateInput!): FitPic!
   createFitPicReport(data: FitPicReportCreateInput!): FitPicReport!
   createBagItem(data: BagItemCreateInput!): BagItem!
   createCustomerMembership(data: CustomerMembershipCreateInput!): CustomerMembership!
@@ -9338,7 +9509,6 @@ type Mutation {
   createBillingInfo(data: BillingInfoCreateInput!): BillingInfo!
   createReservationReceiptItem(data: ReservationReceiptItemCreateInput!): ReservationReceiptItem!
   createStylePreferences(data: StylePreferencesCreateInput!): StylePreferences!
-  createFitPic(data: FitPicCreateInput!): FitPic!
   createPackage(data: PackageCreateInput!): Package!
   createSize(data: SizeCreateInput!): Size!
   createProductFunction(data: ProductFunctionCreateInput!): ProductFunction!
@@ -9370,6 +9540,7 @@ type Mutation {
   updateWarehouseLocation(data: WarehouseLocationUpdateInput!, where: WarehouseLocationWhereUniqueInput!): WarehouseLocation
   updatePaymentPlan(data: PaymentPlanUpdateInput!, where: PaymentPlanWhereUniqueInput!): PaymentPlan
   updateEmailReceipt(data: EmailReceiptUpdateInput!, where: EmailReceiptWhereUniqueInput!): EmailReceipt
+  updateFitPic(data: FitPicUpdateInput!, where: FitPicWhereUniqueInput!): FitPic
   updateFitPicReport(data: FitPicReportUpdateInput!, where: FitPicReportWhereUniqueInput!): FitPicReport
   updateBagItem(data: BagItemUpdateInput!, where: BagItemWhereUniqueInput!): BagItem
   updateCustomerMembership(data: CustomerMembershipUpdateInput!, where: CustomerMembershipWhereUniqueInput!): CustomerMembership
@@ -9388,7 +9559,6 @@ type Mutation {
   updateBillingInfo(data: BillingInfoUpdateInput!, where: BillingInfoWhereUniqueInput!): BillingInfo
   updateReservationReceiptItem(data: ReservationReceiptItemUpdateInput!, where: ReservationReceiptItemWhereUniqueInput!): ReservationReceiptItem
   updateStylePreferences(data: StylePreferencesUpdateInput!, where: StylePreferencesWhereUniqueInput!): StylePreferences
-  updateFitPic(data: FitPicUpdateInput!, where: FitPicWhereUniqueInput!): FitPic
   updatePackage(data: PackageUpdateInput!, where: PackageWhereUniqueInput!): Package
   updateSize(data: SizeUpdateInput!, where: SizeWhereUniqueInput!): Size
   updateProductFunction(data: ProductFunctionUpdateInput!, where: ProductFunctionWhereUniqueInput!): ProductFunction
@@ -9420,6 +9590,7 @@ type Mutation {
   deleteWarehouseLocation(where: WarehouseLocationWhereUniqueInput!): WarehouseLocation
   deletePaymentPlan(where: PaymentPlanWhereUniqueInput!): PaymentPlan
   deleteEmailReceipt(where: EmailReceiptWhereUniqueInput!): EmailReceipt
+  deleteFitPic(where: FitPicWhereUniqueInput!): FitPic
   deleteFitPicReport(where: FitPicReportWhereUniqueInput!): FitPicReport
   deleteBagItem(where: BagItemWhereUniqueInput!): BagItem
   deleteCustomerMembership(where: CustomerMembershipWhereUniqueInput!): CustomerMembership
@@ -9438,7 +9609,6 @@ type Mutation {
   deleteBillingInfo(where: BillingInfoWhereUniqueInput!): BillingInfo
   deleteReservationReceiptItem(where: ReservationReceiptItemWhereUniqueInput!): ReservationReceiptItem
   deleteStylePreferences(where: StylePreferencesWhereUniqueInput!): StylePreferences
-  deleteFitPic(where: FitPicWhereUniqueInput!): FitPic
   deletePackage(where: PackageWhereUniqueInput!): Package
   deleteSize(where: SizeWhereUniqueInput!): Size
   deleteProductFunction(where: ProductFunctionWhereUniqueInput!): ProductFunction
@@ -9470,6 +9640,7 @@ type Mutation {
   upsertWarehouseLocation(where: WarehouseLocationWhereUniqueInput!, create: WarehouseLocationCreateInput!, update: WarehouseLocationUpdateInput!): WarehouseLocation!
   upsertPaymentPlan(where: PaymentPlanWhereUniqueInput!, create: PaymentPlanCreateInput!, update: PaymentPlanUpdateInput!): PaymentPlan!
   upsertEmailReceipt(where: EmailReceiptWhereUniqueInput!, create: EmailReceiptCreateInput!, update: EmailReceiptUpdateInput!): EmailReceipt!
+  upsertFitPic(where: FitPicWhereUniqueInput!, create: FitPicCreateInput!, update: FitPicUpdateInput!): FitPic!
   upsertFitPicReport(where: FitPicReportWhereUniqueInput!, create: FitPicReportCreateInput!, update: FitPicReportUpdateInput!): FitPicReport!
   upsertBagItem(where: BagItemWhereUniqueInput!, create: BagItemCreateInput!, update: BagItemUpdateInput!): BagItem!
   upsertCustomerMembership(where: CustomerMembershipWhereUniqueInput!, create: CustomerMembershipCreateInput!, update: CustomerMembershipUpdateInput!): CustomerMembership!
@@ -9488,7 +9659,6 @@ type Mutation {
   upsertBillingInfo(where: BillingInfoWhereUniqueInput!, create: BillingInfoCreateInput!, update: BillingInfoUpdateInput!): BillingInfo!
   upsertReservationReceiptItem(where: ReservationReceiptItemWhereUniqueInput!, create: ReservationReceiptItemCreateInput!, update: ReservationReceiptItemUpdateInput!): ReservationReceiptItem!
   upsertStylePreferences(where: StylePreferencesWhereUniqueInput!, create: StylePreferencesCreateInput!, update: StylePreferencesUpdateInput!): StylePreferences!
-  upsertFitPic(where: FitPicWhereUniqueInput!, create: FitPicCreateInput!, update: FitPicUpdateInput!): FitPic!
   upsertPackage(where: PackageWhereUniqueInput!, create: PackageCreateInput!, update: PackageUpdateInput!): Package!
   upsertSize(where: SizeWhereUniqueInput!, create: SizeCreateInput!, update: SizeUpdateInput!): Size!
   upsertProductFunction(where: ProductFunctionWhereUniqueInput!, create: ProductFunctionCreateInput!, update: ProductFunctionUpdateInput!): ProductFunction!
@@ -9520,6 +9690,7 @@ type Mutation {
   updateManyWarehouseLocations(data: WarehouseLocationUpdateManyMutationInput!, where: WarehouseLocationWhereInput): BatchPayload!
   updateManyPaymentPlans(data: PaymentPlanUpdateManyMutationInput!, where: PaymentPlanWhereInput): BatchPayload!
   updateManyEmailReceipts(data: EmailReceiptUpdateManyMutationInput!, where: EmailReceiptWhereInput): BatchPayload!
+  updateManyFitPics(data: FitPicUpdateManyMutationInput!, where: FitPicWhereInput): BatchPayload!
   updateManyFitPicReports(data: FitPicReportUpdateManyMutationInput!, where: FitPicReportWhereInput): BatchPayload!
   updateManyBagItems(data: BagItemUpdateManyMutationInput!, where: BagItemWhereInput): BatchPayload!
   updateManyCustomerMemberships(data: CustomerMembershipUpdateManyMutationInput!, where: CustomerMembershipWhereInput): BatchPayload!
@@ -9537,7 +9708,6 @@ type Mutation {
   updateManyBillingInfoes(data: BillingInfoUpdateManyMutationInput!, where: BillingInfoWhereInput): BatchPayload!
   updateManyReservationReceiptItems(data: ReservationReceiptItemUpdateManyMutationInput!, where: ReservationReceiptItemWhereInput): BatchPayload!
   updateManyStylePreferenceses(data: StylePreferencesUpdateManyMutationInput!, where: StylePreferencesWhereInput): BatchPayload!
-  updateManyFitPics(data: FitPicUpdateManyMutationInput!, where: FitPicWhereInput): BatchPayload!
   updateManyPackages(data: PackageUpdateManyMutationInput!, where: PackageWhereInput): BatchPayload!
   updateManySizes(data: SizeUpdateManyMutationInput!, where: SizeWhereInput): BatchPayload!
   updateManyProductFunctions(data: ProductFunctionUpdateManyMutationInput!, where: ProductFunctionWhereInput): BatchPayload!
@@ -9569,6 +9739,7 @@ type Mutation {
   deleteManyWarehouseLocations(where: WarehouseLocationWhereInput): BatchPayload!
   deleteManyPaymentPlans(where: PaymentPlanWhereInput): BatchPayload!
   deleteManyEmailReceipts(where: EmailReceiptWhereInput): BatchPayload!
+  deleteManyFitPics(where: FitPicWhereInput): BatchPayload!
   deleteManyFitPicReports(where: FitPicReportWhereInput): BatchPayload!
   deleteManyBagItems(where: BagItemWhereInput): BatchPayload!
   deleteManyCustomerMemberships(where: CustomerMembershipWhereInput): BatchPayload!
@@ -9587,7 +9758,6 @@ type Mutation {
   deleteManyBillingInfoes(where: BillingInfoWhereInput): BatchPayload!
   deleteManyReservationReceiptItems(where: ReservationReceiptItemWhereInput): BatchPayload!
   deleteManyStylePreferenceses(where: StylePreferencesWhereInput): BatchPayload!
-  deleteManyFitPics(where: FitPicWhereInput): BatchPayload!
   deleteManyPackages(where: PackageWhereInput): BatchPayload!
   deleteManySizes(where: SizeWhereInput): BatchPayload!
   deleteManyProductFunctions(where: ProductFunctionWhereInput): BatchPayload!
@@ -19441,6 +19611,7 @@ type Query {
   warehouseLocations(where: WarehouseLocationWhereInput, orderBy: WarehouseLocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [WarehouseLocation]!
   paymentPlans(where: PaymentPlanWhereInput, orderBy: PaymentPlanOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PaymentPlan]!
   emailReceipts(where: EmailReceiptWhereInput, orderBy: EmailReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [EmailReceipt]!
+  fitPics(where: FitPicWhereInput, orderBy: FitPicOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [FitPic]!
   fitPicReports(where: FitPicReportWhereInput, orderBy: FitPicReportOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [FitPicReport]!
   bagItems(where: BagItemWhereInput, orderBy: BagItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [BagItem]!
   customerMemberships(where: CustomerMembershipWhereInput, orderBy: CustomerMembershipOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [CustomerMembership]!
@@ -19459,7 +19630,6 @@ type Query {
   billingInfoes(where: BillingInfoWhereInput, orderBy: BillingInfoOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [BillingInfo]!
   reservationReceiptItems(where: ReservationReceiptItemWhereInput, orderBy: ReservationReceiptItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ReservationReceiptItem]!
   stylePreferenceses(where: StylePreferencesWhereInput, orderBy: StylePreferencesOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [StylePreferences]!
-  fitPics(where: FitPicWhereInput, orderBy: FitPicOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [FitPic]!
   packages(where: PackageWhereInput, orderBy: PackageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Package]!
   sizes(where: SizeWhereInput, orderBy: SizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Size]!
   productFunctions(where: ProductFunctionWhereInput, orderBy: ProductFunctionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductFunction]!
@@ -19491,6 +19661,7 @@ type Query {
   warehouseLocation(where: WarehouseLocationWhereUniqueInput!): WarehouseLocation
   paymentPlan(where: PaymentPlanWhereUniqueInput!): PaymentPlan
   emailReceipt(where: EmailReceiptWhereUniqueInput!): EmailReceipt
+  fitPic(where: FitPicWhereUniqueInput!): FitPic
   fitPicReport(where: FitPicReportWhereUniqueInput!): FitPicReport
   bagItem(where: BagItemWhereUniqueInput!): BagItem
   customerMembership(where: CustomerMembershipWhereUniqueInput!): CustomerMembership
@@ -19509,7 +19680,6 @@ type Query {
   billingInfo(where: BillingInfoWhereUniqueInput!): BillingInfo
   reservationReceiptItem(where: ReservationReceiptItemWhereUniqueInput!): ReservationReceiptItem
   stylePreferences(where: StylePreferencesWhereUniqueInput!): StylePreferences
-  fitPic(where: FitPicWhereUniqueInput!): FitPic
   package(where: PackageWhereUniqueInput!): Package
   size(where: SizeWhereUniqueInput!): Size
   productFunction(where: ProductFunctionWhereUniqueInput!): ProductFunction
@@ -19541,6 +19711,7 @@ type Query {
   warehouseLocationsConnection(where: WarehouseLocationWhereInput, orderBy: WarehouseLocationOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): WarehouseLocationConnection!
   paymentPlansConnection(where: PaymentPlanWhereInput, orderBy: PaymentPlanOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PaymentPlanConnection!
   emailReceiptsConnection(where: EmailReceiptWhereInput, orderBy: EmailReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): EmailReceiptConnection!
+  fitPicsConnection(where: FitPicWhereInput, orderBy: FitPicOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): FitPicConnection!
   fitPicReportsConnection(where: FitPicReportWhereInput, orderBy: FitPicReportOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): FitPicReportConnection!
   bagItemsConnection(where: BagItemWhereInput, orderBy: BagItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BagItemConnection!
   customerMembershipsConnection(where: CustomerMembershipWhereInput, orderBy: CustomerMembershipOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CustomerMembershipConnection!
@@ -19559,7 +19730,6 @@ type Query {
   billingInfoesConnection(where: BillingInfoWhereInput, orderBy: BillingInfoOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BillingInfoConnection!
   reservationReceiptItemsConnection(where: ReservationReceiptItemWhereInput, orderBy: ReservationReceiptItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ReservationReceiptItemConnection!
   stylePreferencesesConnection(where: StylePreferencesWhereInput, orderBy: StylePreferencesOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): StylePreferencesConnection!
-  fitPicsConnection(where: FitPicWhereInput, orderBy: FitPicOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): FitPicConnection!
   packagesConnection(where: PackageWhereInput, orderBy: PackageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PackageConnection!
   sizesConnection(where: SizeWhereInput, orderBy: SizeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): SizeConnection!
   productFunctionsConnection(where: ProductFunctionWhereInput, orderBy: ProductFunctionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductFunctionConnection!
@@ -22721,6 +22891,7 @@ type Subscription {
   warehouseLocation(where: WarehouseLocationSubscriptionWhereInput): WarehouseLocationSubscriptionPayload
   paymentPlan(where: PaymentPlanSubscriptionWhereInput): PaymentPlanSubscriptionPayload
   emailReceipt(where: EmailReceiptSubscriptionWhereInput): EmailReceiptSubscriptionPayload
+  fitPic(where: FitPicSubscriptionWhereInput): FitPicSubscriptionPayload
   fitPicReport(where: FitPicReportSubscriptionWhereInput): FitPicReportSubscriptionPayload
   bagItem(where: BagItemSubscriptionWhereInput): BagItemSubscriptionPayload
   customerMembership(where: CustomerMembershipSubscriptionWhereInput): CustomerMembershipSubscriptionPayload
@@ -22739,7 +22910,6 @@ type Subscription {
   billingInfo(where: BillingInfoSubscriptionWhereInput): BillingInfoSubscriptionPayload
   reservationReceiptItem(where: ReservationReceiptItemSubscriptionWhereInput): ReservationReceiptItemSubscriptionPayload
   stylePreferences(where: StylePreferencesSubscriptionWhereInput): StylePreferencesSubscriptionPayload
-  fitPic(where: FitPicSubscriptionWhereInput): FitPicSubscriptionPayload
   package(where: PackageSubscriptionWhereInput): PackageSubscriptionPayload
   size(where: SizeSubscriptionWhereInput): SizeSubscriptionPayload
   productFunction(where: ProductFunctionSubscriptionWhereInput): ProductFunctionSubscriptionPayload
@@ -29584,6 +29754,7 @@ export interface FitPicCreateInput {
   image: ImageCreateOneInput
   location?: LocationCreateOneInput | null
   products?: ProductCreateManyInput | null
+  reports?: FitPicReportCreateManyWithoutReportedInput | null
 }
 
 export interface FitPicCreateManyWithoutUserInput {
@@ -29591,9 +29762,18 @@ export interface FitPicCreateManyWithoutUserInput {
   connect?: FitPicWhereUniqueInput[] | FitPicWhereUniqueInput | null
 }
 
-export interface FitPicCreateOneInput {
-  create?: FitPicCreateInput | null
+export interface FitPicCreateOneWithoutReportsInput {
+  create?: FitPicCreateWithoutReportsInput | null
   connect?: FitPicWhereUniqueInput | null
+}
+
+export interface FitPicCreateWithoutReportsInput {
+  id?: ID_Input | null
+  approved?: Boolean | null
+  user: UserCreateOneWithoutFitPicsInput
+  image: ImageCreateOneInput
+  location?: LocationCreateOneInput | null
+  products?: ProductCreateManyInput | null
 }
 
 export interface FitPicCreateWithoutUserInput {
@@ -29602,13 +29782,65 @@ export interface FitPicCreateWithoutUserInput {
   image: ImageCreateOneInput
   location?: LocationCreateOneInput | null
   products?: ProductCreateManyInput | null
+  reports?: FitPicReportCreateManyWithoutReportedInput | null
 }
 
 export interface FitPicReportCreateInput {
   id?: ID_Input | null
   status?: FitPicReportStatus | null
   reporter: UserCreateOneInput
-  reported: FitPicCreateOneInput
+  reported: FitPicCreateOneWithoutReportsInput
+}
+
+export interface FitPicReportCreateManyWithoutReportedInput {
+  create?: FitPicReportCreateWithoutReportedInput[] | FitPicReportCreateWithoutReportedInput | null
+  connect?: FitPicReportWhereUniqueInput[] | FitPicReportWhereUniqueInput | null
+}
+
+export interface FitPicReportCreateWithoutReportedInput {
+  id?: ID_Input | null
+  status?: FitPicReportStatus | null
+  reporter: UserCreateOneInput
+}
+
+export interface FitPicReportScalarWhereInput {
+  AND?: FitPicReportScalarWhereInput[] | FitPicReportScalarWhereInput | null
+  OR?: FitPicReportScalarWhereInput[] | FitPicReportScalarWhereInput | null
+  NOT?: FitPicReportScalarWhereInput[] | FitPicReportScalarWhereInput | null
+  id?: ID_Input | null
+  id_not?: ID_Input | null
+  id_in?: ID_Output[] | ID_Output | null
+  id_not_in?: ID_Output[] | ID_Output | null
+  id_lt?: ID_Input | null
+  id_lte?: ID_Input | null
+  id_gt?: ID_Input | null
+  id_gte?: ID_Input | null
+  id_contains?: ID_Input | null
+  id_not_contains?: ID_Input | null
+  id_starts_with?: ID_Input | null
+  id_not_starts_with?: ID_Input | null
+  id_ends_with?: ID_Input | null
+  id_not_ends_with?: ID_Input | null
+  status?: FitPicReportStatus | null
+  status_not?: FitPicReportStatus | null
+  status_in?: FitPicReportStatus[] | FitPicReportStatus | null
+  status_not_in?: FitPicReportStatus[] | FitPicReportStatus | null
+  reportedAt?: DateTime | null
+  reportedAt_not?: DateTime | null
+  reportedAt_in?: DateTime[] | DateTime | null
+  reportedAt_not_in?: DateTime[] | DateTime | null
+  reportedAt_lt?: DateTime | null
+  reportedAt_lte?: DateTime | null
+  reportedAt_gt?: DateTime | null
+  reportedAt_gte?: DateTime | null
+  updatedAt?: DateTime | null
+  updatedAt_not?: DateTime | null
+  updatedAt_in?: DateTime[] | DateTime | null
+  updatedAt_not_in?: DateTime[] | DateTime | null
+  updatedAt_lt?: DateTime | null
+  updatedAt_lte?: DateTime | null
+  updatedAt_gt?: DateTime | null
+  updatedAt_gte?: DateTime | null
 }
 
 export interface FitPicReportSubscriptionWhereInput {
@@ -29625,11 +29857,48 @@ export interface FitPicReportSubscriptionWhereInput {
 export interface FitPicReportUpdateInput {
   status?: FitPicReportStatus | null
   reporter?: UserUpdateOneRequiredInput | null
-  reported?: FitPicUpdateOneRequiredInput | null
+  reported?: FitPicUpdateOneRequiredWithoutReportsInput | null
+}
+
+export interface FitPicReportUpdateManyDataInput {
+  status?: FitPicReportStatus | null
 }
 
 export interface FitPicReportUpdateManyMutationInput {
   status?: FitPicReportStatus | null
+}
+
+export interface FitPicReportUpdateManyWithoutReportedInput {
+  create?: FitPicReportCreateWithoutReportedInput[] | FitPicReportCreateWithoutReportedInput | null
+  connect?: FitPicReportWhereUniqueInput[] | FitPicReportWhereUniqueInput | null
+  set?: FitPicReportWhereUniqueInput[] | FitPicReportWhereUniqueInput | null
+  disconnect?: FitPicReportWhereUniqueInput[] | FitPicReportWhereUniqueInput | null
+  delete?: FitPicReportWhereUniqueInput[] | FitPicReportWhereUniqueInput | null
+  update?: FitPicReportUpdateWithWhereUniqueWithoutReportedInput[] | FitPicReportUpdateWithWhereUniqueWithoutReportedInput | null
+  updateMany?: FitPicReportUpdateManyWithWhereNestedInput[] | FitPicReportUpdateManyWithWhereNestedInput | null
+  deleteMany?: FitPicReportScalarWhereInput[] | FitPicReportScalarWhereInput | null
+  upsert?: FitPicReportUpsertWithWhereUniqueWithoutReportedInput[] | FitPicReportUpsertWithWhereUniqueWithoutReportedInput | null
+}
+
+export interface FitPicReportUpdateManyWithWhereNestedInput {
+  where: FitPicReportScalarWhereInput
+  data: FitPicReportUpdateManyDataInput
+}
+
+export interface FitPicReportUpdateWithoutReportedDataInput {
+  status?: FitPicReportStatus | null
+  reporter?: UserUpdateOneRequiredInput | null
+}
+
+export interface FitPicReportUpdateWithWhereUniqueWithoutReportedInput {
+  where: FitPicReportWhereUniqueInput
+  data: FitPicReportUpdateWithoutReportedDataInput
+}
+
+export interface FitPicReportUpsertWithWhereUniqueWithoutReportedInput {
+  where: FitPicReportWhereUniqueInput
+  update: FitPicReportUpdateWithoutReportedDataInput
+  create: FitPicReportCreateWithoutReportedInput
 }
 
 export interface FitPicReportWhereInput {
@@ -29727,20 +29996,13 @@ export interface FitPicSubscriptionWhereInput {
   node?: FitPicWhereInput | null
 }
 
-export interface FitPicUpdateDataInput {
-  approved?: Boolean | null
-  user?: UserUpdateOneRequiredWithoutFitPicsInput | null
-  image?: ImageUpdateOneRequiredInput | null
-  location?: LocationUpdateOneInput | null
-  products?: ProductUpdateManyInput | null
-}
-
 export interface FitPicUpdateInput {
   approved?: Boolean | null
   user?: UserUpdateOneRequiredWithoutFitPicsInput | null
   image?: ImageUpdateOneRequiredInput | null
   location?: LocationUpdateOneInput | null
   products?: ProductUpdateManyInput | null
+  reports?: FitPicReportUpdateManyWithoutReportedInput | null
 }
 
 export interface FitPicUpdateManyDataInput {
@@ -29768,11 +30030,19 @@ export interface FitPicUpdateManyWithWhereNestedInput {
   data: FitPicUpdateManyDataInput
 }
 
-export interface FitPicUpdateOneRequiredInput {
-  create?: FitPicCreateInput | null
+export interface FitPicUpdateOneRequiredWithoutReportsInput {
+  create?: FitPicCreateWithoutReportsInput | null
   connect?: FitPicWhereUniqueInput | null
-  update?: FitPicUpdateDataInput | null
-  upsert?: FitPicUpsertNestedInput | null
+  update?: FitPicUpdateWithoutReportsDataInput | null
+  upsert?: FitPicUpsertWithoutReportsInput | null
+}
+
+export interface FitPicUpdateWithoutReportsDataInput {
+  approved?: Boolean | null
+  user?: UserUpdateOneRequiredWithoutFitPicsInput | null
+  image?: ImageUpdateOneRequiredInput | null
+  location?: LocationUpdateOneInput | null
+  products?: ProductUpdateManyInput | null
 }
 
 export interface FitPicUpdateWithoutUserDataInput {
@@ -29780,6 +30050,7 @@ export interface FitPicUpdateWithoutUserDataInput {
   image?: ImageUpdateOneRequiredInput | null
   location?: LocationUpdateOneInput | null
   products?: ProductUpdateManyInput | null
+  reports?: FitPicReportUpdateManyWithoutReportedInput | null
 }
 
 export interface FitPicUpdateWithWhereUniqueWithoutUserInput {
@@ -29787,9 +30058,9 @@ export interface FitPicUpdateWithWhereUniqueWithoutUserInput {
   data: FitPicUpdateWithoutUserDataInput
 }
 
-export interface FitPicUpsertNestedInput {
-  update: FitPicUpdateDataInput
-  create: FitPicCreateInput
+export interface FitPicUpsertWithoutReportsInput {
+  update: FitPicUpdateWithoutReportsDataInput
+  create: FitPicCreateWithoutReportsInput
 }
 
 export interface FitPicUpsertWithWhereUniqueWithoutUserInput {
@@ -29840,6 +30111,9 @@ export interface FitPicWhereInput {
   products_every?: ProductWhereInput | null
   products_some?: ProductWhereInput | null
   products_none?: ProductWhereInput | null
+  reports_every?: FitPicReportWhereInput | null
+  reports_some?: FitPicReportWhereInput | null
+  reports_none?: FitPicReportWhereInput | null
 }
 
 export interface FitPicWhereUniqueInput {
@@ -39190,6 +39464,7 @@ export interface FitPic extends Node {
   image: Image
   location?: Location | null
   products?: Array<Product> | null
+  reports?: Array<FitPicReport> | null
   approved: Boolean
   createdAt: DateTime
   updatedAt: DateTime

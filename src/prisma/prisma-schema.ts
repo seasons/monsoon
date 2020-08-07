@@ -3495,6 +3495,7 @@ type FitPic {
   image: Image!
   location: Location
   products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
+  reports(where: FitPicReportWhereInput, orderBy: FitPicReportOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [FitPicReport!]
   approved: Boolean!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -3512,6 +3513,7 @@ input FitPicCreateInput {
   image: ImageCreateOneInput!
   location: LocationCreateOneInput
   products: ProductCreateManyInput
+  reports: FitPicReportCreateManyWithoutReportedInput
   approved: Boolean
 }
 
@@ -3520,9 +3522,18 @@ input FitPicCreateManyWithoutUserInput {
   connect: [FitPicWhereUniqueInput!]
 }
 
-input FitPicCreateOneInput {
-  create: FitPicCreateInput
+input FitPicCreateOneWithoutReportsInput {
+  create: FitPicCreateWithoutReportsInput
   connect: FitPicWhereUniqueInput
+}
+
+input FitPicCreateWithoutReportsInput {
+  id: ID
+  user: UserCreateOneWithoutFitPicsInput!
+  image: ImageCreateOneInput!
+  location: LocationCreateOneInput
+  products: ProductCreateManyInput
+  approved: Boolean
 }
 
 input FitPicCreateWithoutUserInput {
@@ -3530,6 +3541,7 @@ input FitPicCreateWithoutUserInput {
   image: ImageCreateOneInput!
   location: LocationCreateOneInput
   products: ProductCreateManyInput
+  reports: FitPicReportCreateManyWithoutReportedInput
   approved: Boolean
 }
 
@@ -3574,7 +3586,18 @@ type FitPicReportConnection {
 input FitPicReportCreateInput {
   id: ID
   reporter: UserCreateOneInput!
-  reported: FitPicCreateOneInput!
+  reported: FitPicCreateOneWithoutReportsInput!
+  status: FitPicReportStatus
+}
+
+input FitPicReportCreateManyWithoutReportedInput {
+  create: [FitPicReportCreateWithoutReportedInput!]
+  connect: [FitPicReportWhereUniqueInput!]
+}
+
+input FitPicReportCreateWithoutReportedInput {
+  id: ID
+  reporter: UserCreateOneInput!
   status: FitPicReportStatus
 }
 
@@ -3599,6 +3622,46 @@ type FitPicReportPreviousValues {
   status: FitPicReportStatus!
   reportedAt: DateTime!
   updatedAt: DateTime!
+}
+
+input FitPicReportScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  status: FitPicReportStatus
+  status_not: FitPicReportStatus
+  status_in: [FitPicReportStatus!]
+  status_not_in: [FitPicReportStatus!]
+  reportedAt: DateTime
+  reportedAt_not: DateTime
+  reportedAt_in: [DateTime!]
+  reportedAt_not_in: [DateTime!]
+  reportedAt_lt: DateTime
+  reportedAt_lte: DateTime
+  reportedAt_gt: DateTime
+  reportedAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [FitPicReportScalarWhereInput!]
+  OR: [FitPicReportScalarWhereInput!]
+  NOT: [FitPicReportScalarWhereInput!]
 }
 
 enum FitPicReportStatus {
@@ -3626,12 +3689,49 @@ input FitPicReportSubscriptionWhereInput {
 
 input FitPicReportUpdateInput {
   reporter: UserUpdateOneRequiredInput
-  reported: FitPicUpdateOneRequiredInput
+  reported: FitPicUpdateOneRequiredWithoutReportsInput
+  status: FitPicReportStatus
+}
+
+input FitPicReportUpdateManyDataInput {
   status: FitPicReportStatus
 }
 
 input FitPicReportUpdateManyMutationInput {
   status: FitPicReportStatus
+}
+
+input FitPicReportUpdateManyWithoutReportedInput {
+  create: [FitPicReportCreateWithoutReportedInput!]
+  delete: [FitPicReportWhereUniqueInput!]
+  connect: [FitPicReportWhereUniqueInput!]
+  set: [FitPicReportWhereUniqueInput!]
+  disconnect: [FitPicReportWhereUniqueInput!]
+  update: [FitPicReportUpdateWithWhereUniqueWithoutReportedInput!]
+  upsert: [FitPicReportUpsertWithWhereUniqueWithoutReportedInput!]
+  deleteMany: [FitPicReportScalarWhereInput!]
+  updateMany: [FitPicReportUpdateManyWithWhereNestedInput!]
+}
+
+input FitPicReportUpdateManyWithWhereNestedInput {
+  where: FitPicReportScalarWhereInput!
+  data: FitPicReportUpdateManyDataInput!
+}
+
+input FitPicReportUpdateWithoutReportedDataInput {
+  reporter: UserUpdateOneRequiredInput
+  status: FitPicReportStatus
+}
+
+input FitPicReportUpdateWithWhereUniqueWithoutReportedInput {
+  where: FitPicReportWhereUniqueInput!
+  data: FitPicReportUpdateWithoutReportedDataInput!
+}
+
+input FitPicReportUpsertWithWhereUniqueWithoutReportedInput {
+  where: FitPicReportWhereUniqueInput!
+  update: FitPicReportUpdateWithoutReportedDataInput!
+  create: FitPicReportCreateWithoutReportedInput!
 }
 
 input FitPicReportWhereInput {
@@ -3736,19 +3836,12 @@ input FitPicSubscriptionWhereInput {
   NOT: [FitPicSubscriptionWhereInput!]
 }
 
-input FitPicUpdateDataInput {
-  user: UserUpdateOneRequiredWithoutFitPicsInput
-  image: ImageUpdateOneRequiredInput
-  location: LocationUpdateOneInput
-  products: ProductUpdateManyInput
-  approved: Boolean
-}
-
 input FitPicUpdateInput {
   user: UserUpdateOneRequiredWithoutFitPicsInput
   image: ImageUpdateOneRequiredInput
   location: LocationUpdateOneInput
   products: ProductUpdateManyInput
+  reports: FitPicReportUpdateManyWithoutReportedInput
   approved: Boolean
 }
 
@@ -3777,17 +3870,26 @@ input FitPicUpdateManyWithWhereNestedInput {
   data: FitPicUpdateManyDataInput!
 }
 
-input FitPicUpdateOneRequiredInput {
-  create: FitPicCreateInput
-  update: FitPicUpdateDataInput
-  upsert: FitPicUpsertNestedInput
+input FitPicUpdateOneRequiredWithoutReportsInput {
+  create: FitPicCreateWithoutReportsInput
+  update: FitPicUpdateWithoutReportsDataInput
+  upsert: FitPicUpsertWithoutReportsInput
   connect: FitPicWhereUniqueInput
+}
+
+input FitPicUpdateWithoutReportsDataInput {
+  user: UserUpdateOneRequiredWithoutFitPicsInput
+  image: ImageUpdateOneRequiredInput
+  location: LocationUpdateOneInput
+  products: ProductUpdateManyInput
+  approved: Boolean
 }
 
 input FitPicUpdateWithoutUserDataInput {
   image: ImageUpdateOneRequiredInput
   location: LocationUpdateOneInput
   products: ProductUpdateManyInput
+  reports: FitPicReportUpdateManyWithoutReportedInput
   approved: Boolean
 }
 
@@ -3796,9 +3898,9 @@ input FitPicUpdateWithWhereUniqueWithoutUserInput {
   data: FitPicUpdateWithoutUserDataInput!
 }
 
-input FitPicUpsertNestedInput {
-  update: FitPicUpdateDataInput!
-  create: FitPicCreateInput!
+input FitPicUpsertWithoutReportsInput {
+  update: FitPicUpdateWithoutReportsDataInput!
+  create: FitPicCreateWithoutReportsInput!
 }
 
 input FitPicUpsertWithWhereUniqueWithoutUserInput {
@@ -3828,6 +3930,9 @@ input FitPicWhereInput {
   products_every: ProductWhereInput
   products_some: ProductWhereInput
   products_none: ProductWhereInput
+  reports_every: FitPicReportWhereInput
+  reports_some: FitPicReportWhereInput
+  reports_none: FitPicReportWhereInput
   approved: Boolean
   approved_not: Boolean
   createdAt: DateTime
