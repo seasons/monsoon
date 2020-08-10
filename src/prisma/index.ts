@@ -2716,7 +2716,11 @@ export type BillingInfoOrderByInput =
   | "country_ASC"
   | "country_DESC"
   | "postal_code_ASC"
-  | "postal_code_DESC";
+  | "postal_code_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
 
 export type BottomSizeOrderByInput =
   | "id_ASC"
@@ -5732,6 +5736,22 @@ export interface BillingInfoWhereInput {
   postal_code_not_starts_with?: Maybe<String>;
   postal_code_ends_with?: Maybe<String>;
   postal_code_not_ends_with?: Maybe<String>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
   AND?: Maybe<BillingInfoWhereInput[] | BillingInfoWhereInput>;
   OR?: Maybe<BillingInfoWhereInput[] | BillingInfoWhereInput>;
   NOT?: Maybe<BillingInfoWhereInput[] | BillingInfoWhereInput>;
@@ -17573,6 +17593,8 @@ export interface BillingInfo {
   state?: String;
   country?: String;
   postal_code?: String;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
 }
 
 export interface BillingInfoPromise extends Promise<BillingInfo>, Fragmentable {
@@ -17588,6 +17610,8 @@ export interface BillingInfoPromise extends Promise<BillingInfo>, Fragmentable {
   state: () => Promise<String>;
   country: () => Promise<String>;
   postal_code: () => Promise<String>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface BillingInfoSubscription
@@ -17605,6 +17629,8 @@ export interface BillingInfoSubscription
   state: () => Promise<AsyncIterator<String>>;
   country: () => Promise<AsyncIterator<String>>;
   postal_code: () => Promise<AsyncIterator<String>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
 export interface BillingInfoNullablePromise
@@ -17622,6 +17648,8 @@ export interface BillingInfoNullablePromise
   state: () => Promise<String>;
   country: () => Promise<String>;
   postal_code: () => Promise<String>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface CustomerMembership {
@@ -21527,6 +21555,8 @@ export interface BillingInfoPreviousValues {
   state?: String;
   country?: String;
   postal_code?: String;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
 }
 
 export interface BillingInfoPreviousValuesPromise
@@ -21544,6 +21574,8 @@ export interface BillingInfoPreviousValuesPromise
   state: () => Promise<String>;
   country: () => Promise<String>;
   postal_code: () => Promise<String>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface BillingInfoPreviousValuesSubscription
@@ -21561,6 +21593,8 @@ export interface BillingInfoPreviousValuesSubscription
   state: () => Promise<AsyncIterator<String>>;
   country: () => Promise<AsyncIterator<String>>;
   postal_code: () => Promise<AsyncIterator<String>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
 export interface BottomSizeSubscriptionPayload {

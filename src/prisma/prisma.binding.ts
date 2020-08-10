@@ -1121,6 +1121,8 @@ type BillingInfo implements Node {
   state: String
   country: String
   postal_code: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 """A connection to a list of items."""
@@ -1187,6 +1189,10 @@ enum BillingInfoOrderByInput {
   country_DESC
   postal_code_ASC
   postal_code_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
 }
 
 type BillingInfoPreviousValues {
@@ -1202,6 +1208,8 @@ type BillingInfoPreviousValues {
   state: String
   country: String
   postal_code: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 type BillingInfoSubscriptionPayload {
@@ -1750,6 +1758,50 @@ input BillingInfoWhereInput {
 
   """All values not ending with the given string."""
   postal_code_not_ends_with: String
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
 }
 
 input BillingInfoWhereUniqueInput {
@@ -25439,7 +25491,11 @@ export type BillingInfoOrderByInput =   'id_ASC' |
   'country_ASC' |
   'country_DESC' |
   'postal_code_ASC' |
-  'postal_code_DESC'
+  'postal_code_DESC' |
+  'createdAt_ASC' |
+  'createdAt_DESC' |
+  'updatedAt_ASC' |
+  'updatedAt_DESC'
 
 export type BottomSizeOrderByInput =   'id_ASC' |
   'id_DESC' |
@@ -26672,6 +26728,22 @@ export interface BillingInfoWhereInput {
   postal_code_not_starts_with?: String | null
   postal_code_ends_with?: String | null
   postal_code_not_ends_with?: String | null
+  createdAt?: DateTime | null
+  createdAt_not?: DateTime | null
+  createdAt_in?: DateTime[] | DateTime | null
+  createdAt_not_in?: DateTime[] | DateTime | null
+  createdAt_lt?: DateTime | null
+  createdAt_lte?: DateTime | null
+  createdAt_gt?: DateTime | null
+  createdAt_gte?: DateTime | null
+  updatedAt?: DateTime | null
+  updatedAt_not?: DateTime | null
+  updatedAt_in?: DateTime[] | DateTime | null
+  updatedAt_not_in?: DateTime[] | DateTime | null
+  updatedAt_lt?: DateTime | null
+  updatedAt_lte?: DateTime | null
+  updatedAt_gt?: DateTime | null
+  updatedAt_gte?: DateTime | null
 }
 
 export interface BillingInfoWhereUniqueInput {
@@ -37476,6 +37548,8 @@ export interface BillingInfo extends Node {
   state?: String | null
   country?: String | null
   postal_code?: String | null
+  createdAt: DateTime
+  updatedAt: DateTime
 }
 
 /*
@@ -37510,6 +37584,8 @@ export interface BillingInfoPreviousValues {
   state?: String | null
   country?: String | null
   postal_code?: String | null
+  createdAt: DateTime
+  updatedAt: DateTime
 }
 
 export interface BillingInfoSubscriptionPayload {

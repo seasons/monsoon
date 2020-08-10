@@ -1,0 +1,13 @@
+type Mutation {
+  createEmbedURL(input: CreateEmbedURLInput): String @hasRole(roles: [Admin])
+}
+
+enum ViewType {
+  Dashboard
+  Look
+}
+
+input CreateEmbedURLInput {
+  type: ViewType
+  index: Int
+}

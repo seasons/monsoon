@@ -402,15 +402,17 @@ export class DataScheduledJobs {
 
       // Check warehouse location rules
       if (!!physProd.warehouseLocation) {
-        // If it does have a warehouse location, it should either be Reservable or be on a Queued Reservation
-        const isReservable = physProd.inventoryStatus === "Reservable"
+        // If it does have a warehouse location, it should either be Reservable, Stored or be on a Queued Reservation
+        const isReservableOrStored = ["Reservable", "Stored"].includes(
+          physProd.inventoryStatus
+        )
         const isOnQueuedReservation =
           activeReservationWithPhysProd?.status === "Queued"
-        if (!(isReservable || isOnQueuedReservation)) {
+        if (!(isReservableOrStored || isOnQueuedReservation)) {
           thisCase.issues.push(
             `Has warehouse location ${
               physProd.warehouseLocation.barcode
-            }. It should either be reservable, or be on a queued reservation. Active Reservation: ${
+            }. It should either be reservable, stored, or be on a queued reservation. Active Reservation: ${
               activeReservationWithPhysProd || "none"
             }`
           )
