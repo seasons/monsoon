@@ -5351,6 +5351,7 @@ type PauseRequest {
   pausePending: Boolean!
   pauseDate: DateTime
   resumeDate: DateTime
+  notified: Boolean!
   membership: CustomerMembership!
 }
 
@@ -5365,6 +5366,7 @@ input PauseRequestCreateInput {
   pausePending: Boolean!
   pauseDate: DateTime
   resumeDate: DateTime
+  notified: Boolean
   membership: CustomerMembershipCreateOneWithoutPauseRequestsInput!
 }
 
@@ -5378,6 +5380,7 @@ input PauseRequestCreateWithoutMembershipInput {
   pausePending: Boolean!
   pauseDate: DateTime
   resumeDate: DateTime
+  notified: Boolean
 }
 
 type PauseRequestEdge {
@@ -5398,6 +5401,8 @@ enum PauseRequestOrderByInput {
   pauseDate_DESC
   resumeDate_ASC
   resumeDate_DESC
+  notified_ASC
+  notified_DESC
 }
 
 type PauseRequestPreviousValues {
@@ -5407,6 +5412,7 @@ type PauseRequestPreviousValues {
   pausePending: Boolean!
   pauseDate: DateTime
   resumeDate: DateTime
+  notified: Boolean!
 }
 
 input PauseRequestScalarWhereInput {
@@ -5458,6 +5464,8 @@ input PauseRequestScalarWhereInput {
   resumeDate_lte: DateTime
   resumeDate_gt: DateTime
   resumeDate_gte: DateTime
+  notified: Boolean
+  notified_not: Boolean
   AND: [PauseRequestScalarWhereInput!]
   OR: [PauseRequestScalarWhereInput!]
   NOT: [PauseRequestScalarWhereInput!]
@@ -5485,6 +5493,7 @@ input PauseRequestUpdateInput {
   pausePending: Boolean
   pauseDate: DateTime
   resumeDate: DateTime
+  notified: Boolean
   membership: CustomerMembershipUpdateOneRequiredWithoutPauseRequestsInput
 }
 
@@ -5492,12 +5501,14 @@ input PauseRequestUpdateManyDataInput {
   pausePending: Boolean
   pauseDate: DateTime
   resumeDate: DateTime
+  notified: Boolean
 }
 
 input PauseRequestUpdateManyMutationInput {
   pausePending: Boolean
   pauseDate: DateTime
   resumeDate: DateTime
+  notified: Boolean
 }
 
 input PauseRequestUpdateManyWithoutMembershipInput {
@@ -5521,6 +5532,7 @@ input PauseRequestUpdateWithoutMembershipDataInput {
   pausePending: Boolean
   pauseDate: DateTime
   resumeDate: DateTime
+  notified: Boolean
 }
 
 input PauseRequestUpdateWithWhereUniqueWithoutMembershipInput {
@@ -5583,6 +5595,8 @@ input PauseRequestWhereInput {
   resumeDate_lte: DateTime
   resumeDate_gt: DateTime
   resumeDate_gte: DateTime
+  notified: Boolean
+  notified_not: Boolean
   membership: CustomerMembershipWhereInput
   AND: [PauseRequestWhereInput!]
   OR: [PauseRequestWhereInput!]

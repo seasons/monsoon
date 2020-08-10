@@ -1,3 +1,4 @@
+import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { PrismaService } from "@modules/../prisma/prisma.service"
 import { PaymentService } from "@modules/Payment/index"
 import { Injectable, Logger } from "@nestjs/common"
@@ -11,7 +12,8 @@ export class MembershipScheduledJobs {
 
   constructor(
     private readonly prisma: PrismaService,
-    private readonly paymentService: PaymentService
+    private readonly payment: PaymentService,
+    private readonly pushNotification: PushNotificationService
   ) {}
 
   @Cron(CronExpression.EVERY_6_HOURS)
@@ -66,7 +68,7 @@ export class MembershipScheduledJobs {
           }
 
           // Customer has an active reservation so we restart membership
-          this.paymentService.resumeSubscription(subscriptionId, null, customer)
+          this.payment.resumeSubscription(subscriptionId, null, customer)
           this.logger.log(`Resumed customer subscription: ${customerId}`)
         } else {
           // Otherwise we can pause the membership if no active reservations
@@ -87,7 +89,7 @@ export class MembershipScheduledJobs {
     }
   }
 
-  @Cron(CronExpression.EVERY_MINUTE)
+  @Cron(CronExpression.EVERY_6_HOURS)
   async restartMembership() {
     const pausedCustomers = await this.prisma.client.customers({
       where: {
@@ -108,11 +110,15 @@ export class MembershipScheduledJobs {
       })
 
       const pauseRequest = head(pauseRequests)
+      const resumeDate = DateTime.fromISO(pauseRequest?.resumeDate)
 
-      if (
-        !!pauseRequest &&
-        DateTime.fromISO(pauseRequest?.resumeDate) <= DateTime.local()
-      ) {
+      await this.sendReminderPushNotification(
+        customer,
+        pauseRequest,
+        resumeDate
+      )
+
+      if (!!pauseRequest && resumeDate <= DateTime.local()) {
         const customerWithMembership = (await this.prisma.binding.query.pauseRequest(
           { where: { id: pauseRequest.id } },
           `
@@ -134,7 +140,46 @@ export class MembershipScheduledJobs {
         }
 
         this.logger.log(`Paused customer subscription: ${customer.id}`)
-        this.paymentService.resumeSubscription(subscriptionId, null, customer)
+        this.payment.resumeSubscription(subscriptionId, null, customer)
+      }
+    }
+  }
+
+  async sendReminderPushNotification(customer, pauseRequest, resumeDate) {
+    // Send reminder two days before customer membership is set to resume
+    if (!!pauseRequest && resumeDate.minus({ days: 2 }) <= DateTime.local()) {
+      const user = await this.prisma.client.customer({ id: customer.id }).user()
+
+      const notificationID = "ResumeReminder"
+      const notificationVars = {
+        date: resumeDate,
+      }
+
+      // Check if push notification was sent before sending
+      const pauseRequests = await this.prisma.client.pauseRequests({
+        where: {
+          membership: {
+            customer: {
+              id: customer.id,
+            },
+          },
+        },
+        orderBy: "createdAt_DESC",
+      })
+
+      const pauseRequest = head(pauseRequests)
+
+      if (!pauseRequest.notified) {
+        await this.prisma.client.updatePauseRequest({
+          where: { id: pauseRequest.id },
+          data: { notified: true },
+        })
+
+        await this.pushNotification.pushNotifyUser({
+          email: user.email,
+          pushNotifID: notificationID,
+          vars: notificationVars,
+        })
       }
     }
   }

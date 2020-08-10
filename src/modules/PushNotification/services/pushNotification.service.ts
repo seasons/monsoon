@@ -9,6 +9,8 @@ import { Token } from "@pusher/push-notifications-server"
 import { upperFirst } from "lodash"
 
 import {
+  PushNotificationID,
+  PushNotificationVars,
   PushNotifyInterestInput,
   PushNotifyUserInput,
 } from "../pushNotification.types"

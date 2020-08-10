@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Wed Aug 05 2020 14:28:25 GMT-0400 (Eastern Daylight Time)
+# timestamp: Mon Aug 10 2020 14:13:28 GMT+0200 (Central European Summer Time)
 
 type AggregateBagItem {
   count: Int!
@@ -13552,6 +13552,7 @@ type PauseRequest implements Node {
   pausePending: Boolean!
   pauseDate: DateTime
   resumeDate: DateTime
+  notified: Boolean!
   membership: CustomerMembership!
 }
 
@@ -13576,6 +13577,7 @@ input PauseRequestCreateInput {
   pausePending: Boolean!
   pauseDate: DateTime
   resumeDate: DateTime
+  notified: Boolean
   membership: CustomerMembershipCreateOneWithoutPauseRequestsInput!
 }
 
@@ -13589,6 +13591,7 @@ input PauseRequestCreateWithoutMembershipInput {
   pausePending: Boolean!
   pauseDate: DateTime
   resumeDate: DateTime
+  notified: Boolean
 }
 
 """
@@ -13619,6 +13622,8 @@ enum PauseRequestOrderByInput {
   pauseDate_DESC
   resumeDate_ASC
   resumeDate_DESC
+  notified_ASC
+  notified_DESC
 }
 
 type PauseRequestPreviousValues {
@@ -13628,6 +13633,7 @@ type PauseRequestPreviousValues {
   pausePending: Boolean!
   pauseDate: DateTime
   resumeDate: DateTime
+  notified: Boolean!
 }
 
 input PauseRequestScalarWhereInput {
@@ -13861,6 +13867,12 @@ input PauseRequestScalarWhereInput {
   All values greater than or equal the given value.
   """
   resumeDate_gte: DateTime
+  notified: Boolean
+
+  """
+  All values that are not equal to given value.
+  """
+  notified_not: Boolean
 }
 
 type PauseRequestSubscriptionPayload {
@@ -13912,6 +13924,7 @@ input PauseRequestUpdateInput {
   pausePending: Boolean
   pauseDate: DateTime
   resumeDate: DateTime
+  notified: Boolean
   membership: CustomerMembershipUpdateOneRequiredWithoutPauseRequestsInput
 }
 
@@ -13919,12 +13932,14 @@ input PauseRequestUpdateManyDataInput {
   pausePending: Boolean
   pauseDate: DateTime
   resumeDate: DateTime
+  notified: Boolean
 }
 
 input PauseRequestUpdateManyMutationInput {
   pausePending: Boolean
   pauseDate: DateTime
   resumeDate: DateTime
+  notified: Boolean
 }
 
 input PauseRequestUpdateManyWithoutMembershipInput {
@@ -13948,6 +13963,7 @@ input PauseRequestUpdateWithoutMembershipDataInput {
   pausePending: Boolean
   pauseDate: DateTime
   resumeDate: DateTime
+  notified: Boolean
 }
 
 input PauseRequestUpdateWithWhereUniqueWithoutMembershipInput {
@@ -14192,6 +14208,12 @@ input PauseRequestWhereInput {
   All values greater than or equal the given value.
   """
   resumeDate_gte: DateTime
+  notified: Boolean
+
+  """
+  All values that are not equal to given value.
+  """
+  notified_not: Boolean
   membership: CustomerMembershipWhereInput
 }
 

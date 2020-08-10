@@ -9718,6 +9718,7 @@ type PauseRequest implements Node {
   pausePending: Boolean!
   pauseDate: DateTime
   resumeDate: DateTime
+  notified: Boolean!
   membership: CustomerMembership!
 }
 
@@ -9736,6 +9737,7 @@ input PauseRequestCreateInput {
   pausePending: Boolean!
   pauseDate: DateTime
   resumeDate: DateTime
+  notified: Boolean
   membership: CustomerMembershipCreateOneWithoutPauseRequestsInput!
 }
 
@@ -9749,6 +9751,7 @@ input PauseRequestCreateWithoutMembershipInput {
   pausePending: Boolean!
   pauseDate: DateTime
   resumeDate: DateTime
+  notified: Boolean
 }
 
 """An edge in a connection."""
@@ -9773,6 +9776,8 @@ enum PauseRequestOrderByInput {
   pauseDate_DESC
   resumeDate_ASC
   resumeDate_DESC
+  notified_ASC
+  notified_DESC
 }
 
 type PauseRequestPreviousValues {
@@ -9782,6 +9787,7 @@ type PauseRequestPreviousValues {
   pausePending: Boolean!
   pauseDate: DateTime
   resumeDate: DateTime
+  notified: Boolean!
 }
 
 input PauseRequestScalarWhereInput {
@@ -9925,6 +9931,10 @@ input PauseRequestScalarWhereInput {
 
   """All values greater than or equal the given value."""
   resumeDate_gte: DateTime
+  notified: Boolean
+
+  """All values that are not equal to given value."""
+  notified_not: Boolean
 }
 
 type PauseRequestSubscriptionPayload {
@@ -9968,6 +9978,7 @@ input PauseRequestUpdateInput {
   pausePending: Boolean
   pauseDate: DateTime
   resumeDate: DateTime
+  notified: Boolean
   membership: CustomerMembershipUpdateOneRequiredWithoutPauseRequestsInput
 }
 
@@ -9975,12 +9986,14 @@ input PauseRequestUpdateManyDataInput {
   pausePending: Boolean
   pauseDate: DateTime
   resumeDate: DateTime
+  notified: Boolean
 }
 
 input PauseRequestUpdateManyMutationInput {
   pausePending: Boolean
   pauseDate: DateTime
   resumeDate: DateTime
+  notified: Boolean
 }
 
 input PauseRequestUpdateManyWithoutMembershipInput {
@@ -10004,6 +10017,7 @@ input PauseRequestUpdateWithoutMembershipDataInput {
   pausePending: Boolean
   pauseDate: DateTime
   resumeDate: DateTime
+  notified: Boolean
 }
 
 input PauseRequestUpdateWithWhereUniqueWithoutMembershipInput {
@@ -10158,6 +10172,10 @@ input PauseRequestWhereInput {
 
   """All values greater than or equal the given value."""
   resumeDate_gte: DateTime
+  notified: Boolean
+
+  """All values that are not equal to given value."""
+  notified_not: Boolean
   membership: CustomerMembershipWhereInput
 }
 
@@ -25824,7 +25842,9 @@ export type PauseRequestOrderByInput =   'id_ASC' |
   'pauseDate_ASC' |
   'pauseDate_DESC' |
   'resumeDate_ASC' |
-  'resumeDate_DESC'
+  'resumeDate_DESC' |
+  'notified_ASC' |
+  'notified_DESC'
 
 export type PaymentPlanOrderByInput =   'id_ASC' |
   'id_DESC' |
@@ -29961,6 +29981,7 @@ export interface PauseRequestCreateInput {
   pausePending: Boolean
   pauseDate?: DateTime | null
   resumeDate?: DateTime | null
+  notified?: Boolean | null
   membership: CustomerMembershipCreateOneWithoutPauseRequestsInput
 }
 
@@ -29974,6 +29995,7 @@ export interface PauseRequestCreateWithoutMembershipInput {
   pausePending: Boolean
   pauseDate?: DateTime | null
   resumeDate?: DateTime | null
+  notified?: Boolean | null
 }
 
 export interface PauseRequestScalarWhereInput {
@@ -30028,6 +30050,8 @@ export interface PauseRequestScalarWhereInput {
   resumeDate_lte?: DateTime | null
   resumeDate_gt?: DateTime | null
   resumeDate_gte?: DateTime | null
+  notified?: Boolean | null
+  notified_not?: Boolean | null
 }
 
 export interface PauseRequestSubscriptionWhereInput {
@@ -30045,6 +30069,7 @@ export interface PauseRequestUpdateInput {
   pausePending?: Boolean | null
   pauseDate?: DateTime | null
   resumeDate?: DateTime | null
+  notified?: Boolean | null
   membership?: CustomerMembershipUpdateOneRequiredWithoutPauseRequestsInput | null
 }
 
@@ -30052,12 +30077,14 @@ export interface PauseRequestUpdateManyDataInput {
   pausePending?: Boolean | null
   pauseDate?: DateTime | null
   resumeDate?: DateTime | null
+  notified?: Boolean | null
 }
 
 export interface PauseRequestUpdateManyMutationInput {
   pausePending?: Boolean | null
   pauseDate?: DateTime | null
   resumeDate?: DateTime | null
+  notified?: Boolean | null
 }
 
 export interface PauseRequestUpdateManyWithoutMembershipInput {
@@ -30081,6 +30108,7 @@ export interface PauseRequestUpdateWithoutMembershipDataInput {
   pausePending?: Boolean | null
   pauseDate?: DateTime | null
   resumeDate?: DateTime | null
+  notified?: Boolean | null
 }
 
 export interface PauseRequestUpdateWithWhereUniqueWithoutMembershipInput {
@@ -30146,6 +30174,8 @@ export interface PauseRequestWhereInput {
   resumeDate_lte?: DateTime | null
   resumeDate_gt?: DateTime | null
   resumeDate_gte?: DateTime | null
+  notified?: Boolean | null
+  notified_not?: Boolean | null
   membership?: CustomerMembershipWhereInput | null
 }
 
@@ -38354,6 +38384,7 @@ export interface PauseRequest extends Node {
   pausePending: Boolean
   pauseDate?: DateTime | null
   resumeDate?: DateTime | null
+  notified: Boolean
   membership: CustomerMembership
 }
 
@@ -38383,6 +38414,7 @@ export interface PauseRequestPreviousValues {
   pausePending: Boolean
   pauseDate?: DateTime | null
   resumeDate?: DateTime | null
+  notified: Boolean
 }
 
 export interface PauseRequestSubscriptionPayload {
