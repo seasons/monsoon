@@ -90,10 +90,12 @@ export class AdmissionsService {
   async haveSufficientInventoryToServiceCustomer(
     where: CustomerWhereUniqueInput
   ): Promise<boolean> {
-    return (
-      (await this.reservableInventoryForCustomer(where)) >
-      parseInt(process.env.MIN_RESERVABLE_INVENTORY_PER_CUSTOMER, 10)
+    const inventoryThreshold =
+      parseInt(process.env.MIN_RESERVABLE_INVENTORY_PER_CUSTOMER, 10) || 15
+    const reservableInventoryForCustomer = await this.reservableInventoryForCustomer(
+      where
     )
+    return reservableInventoryForCustomer > inventoryThreshold
   }
 
   async reservableInventoryForCustomer(
@@ -146,7 +148,7 @@ export class AdmissionsService {
     }
 
     const preferredSizes = customer.detail[sizesKey]
-    const avaiableStyles = await this.prisma.binding.query.products({
+    const availableStyles = await this.prisma.binding.query.products({
       where: {
         AND: [
           { type: productType },
@@ -166,7 +168,9 @@ export class AdmissionsService {
       },
     })
 
-    // Find the competing users
+    // Find the competing users. Note that we assume all active customers without an active
+    // reservation may be a competing user, regardless of how long it's been since their last reservation
+    // return was processed. This is because more than 98% of users reserve within 1 week of being able to do so.
     const potentiallyCompetingUsers = [
       ...(await this.pausedUsersResumingThisWeek()),
       ...(await this.activeCustomersWithoutActiveReservation()),
@@ -175,11 +179,13 @@ export class AdmissionsService {
       a => !!intersection(a.detail[sizesKey], preferredSizes)
     )
 
+    // We assume reservations are 50/50 tops/bottoms, ergo the 1.5.
     const trueAvailableStyles =
-      avaiableStyles.length - 1.5 * competingUsers.length
+      availableStyles.length - 1.5 * competingUsers.length
 
     return trueAvailableStyles
   }
+
   // TODO: Test this logic
   private async pausedUsersResumingThisWeek() {
     const pausedCustomers = await this.prisma.binding.query.customers(
@@ -215,7 +221,6 @@ export class AdmissionsService {
     return pausedCustomersResumingThisWeek
   }
 
-  // TODO: Test this logic
   private async activeCustomersWithoutActiveReservation() {
     return await this.prisma.binding.query.customers(
       {
@@ -231,6 +236,9 @@ export class AdmissionsService {
       detail {
         topSizes
         waistSizes
+      }
+      reservations {
+        createdAt
       }
     }`
     )

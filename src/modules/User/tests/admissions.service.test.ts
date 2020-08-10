@@ -178,4 +178,22 @@ describe("Admissions Service", () => {
       expect(1).toBe(0)
     })
   })
+
+  describe("Inventory Threshold", () => {
+    it("correctly calculates the available inventory for a user with no competing users", () => {
+      expect(1).toBe(0)
+    })
+
+    it("correctly calculates the available inventory for a user with competing paused and active users", () => {
+      expect(1).toBe(0)
+    })
+
+    it("does not admit a user with insufficient available inventory", () => {
+      expect(1).toBe(0)
+    })
+
+    it("admits a user with sufficient inventory", () => {
+      expect(1).toBe(0)
+    })
+  })
 })
