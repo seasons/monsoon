@@ -2634,7 +2634,9 @@ export type PauseRequestOrderByInput =
   | "pauseDate_ASC"
   | "pauseDate_DESC"
   | "resumeDate_ASC"
-  | "resumeDate_DESC";
+  | "resumeDate_DESC"
+  | "notified_ASC"
+  | "notified_DESC";
 
 export type BagItemOrderByInput =
   | "id_ASC"
@@ -5217,6 +5219,8 @@ export interface PauseRequestWhereInput {
   resumeDate_lte?: Maybe<DateTimeInput>;
   resumeDate_gt?: Maybe<DateTimeInput>;
   resumeDate_gte?: Maybe<DateTimeInput>;
+  notified?: Maybe<Boolean>;
+  notified_not?: Maybe<Boolean>;
   membership?: Maybe<CustomerMembershipWhereInput>;
   AND?: Maybe<PauseRequestWhereInput[] | PauseRequestWhereInput>;
   OR?: Maybe<PauseRequestWhereInput[] | PauseRequestWhereInput>;
@@ -7884,6 +7888,7 @@ export interface PauseRequestCreateWithoutMembershipInput {
   pausePending: Boolean;
   pauseDate?: Maybe<DateTimeInput>;
   resumeDate?: Maybe<DateTimeInput>;
+  notified?: Maybe<Boolean>;
 }
 
 export interface ReservationCreateManyWithoutCustomerInput {
@@ -11126,6 +11131,7 @@ export interface PauseRequestUpdateWithoutMembershipDataInput {
   pausePending?: Maybe<Boolean>;
   pauseDate?: Maybe<DateTimeInput>;
   resumeDate?: Maybe<DateTimeInput>;
+  notified?: Maybe<Boolean>;
 }
 
 export interface PauseRequestUpsertWithWhereUniqueWithoutMembershipInput {
@@ -11183,6 +11189,8 @@ export interface PauseRequestScalarWhereInput {
   resumeDate_lte?: Maybe<DateTimeInput>;
   resumeDate_gt?: Maybe<DateTimeInput>;
   resumeDate_gte?: Maybe<DateTimeInput>;
+  notified?: Maybe<Boolean>;
+  notified_not?: Maybe<Boolean>;
   AND?: Maybe<PauseRequestScalarWhereInput[] | PauseRequestScalarWhereInput>;
   OR?: Maybe<PauseRequestScalarWhereInput[] | PauseRequestScalarWhereInput>;
   NOT?: Maybe<PauseRequestScalarWhereInput[] | PauseRequestScalarWhereInput>;
@@ -11197,6 +11205,7 @@ export interface PauseRequestUpdateManyDataInput {
   pausePending?: Maybe<Boolean>;
   pauseDate?: Maybe<DateTimeInput>;
   resumeDate?: Maybe<DateTimeInput>;
+  notified?: Maybe<Boolean>;
 }
 
 export interface CustomerMembershipUpsertWithoutCustomerInput {
@@ -12652,6 +12661,7 @@ export interface PauseRequestCreateInput {
   pausePending: Boolean;
   pauseDate?: Maybe<DateTimeInput>;
   resumeDate?: Maybe<DateTimeInput>;
+  notified?: Maybe<Boolean>;
   membership: CustomerMembershipCreateOneWithoutPauseRequestsInput;
 }
 
@@ -12670,6 +12680,7 @@ export interface PauseRequestUpdateInput {
   pausePending?: Maybe<Boolean>;
   pauseDate?: Maybe<DateTimeInput>;
   resumeDate?: Maybe<DateTimeInput>;
+  notified?: Maybe<Boolean>;
   membership?: Maybe<
     CustomerMembershipUpdateOneRequiredWithoutPauseRequestsInput
   >;
@@ -12696,6 +12707,7 @@ export interface PauseRequestUpdateManyMutationInput {
   pausePending?: Maybe<Boolean>;
   pauseDate?: Maybe<DateTimeInput>;
   resumeDate?: Maybe<DateTimeInput>;
+  notified?: Maybe<Boolean>;
 }
 
 export interface PaymentPlanCreateInput {
@@ -17675,6 +17687,7 @@ export interface PauseRequest {
   pausePending: Boolean;
   pauseDate?: DateTimeOutput;
   resumeDate?: DateTimeOutput;
+  notified: Boolean;
 }
 
 export interface PauseRequestPromise
@@ -17686,6 +17699,7 @@ export interface PauseRequestPromise
   pausePending: () => Promise<Boolean>;
   pauseDate: () => Promise<DateTimeOutput>;
   resumeDate: () => Promise<DateTimeOutput>;
+  notified: () => Promise<Boolean>;
   membership: <T = CustomerMembershipPromise>() => T;
 }
 
@@ -17698,6 +17712,7 @@ export interface PauseRequestSubscription
   pausePending: () => Promise<AsyncIterator<Boolean>>;
   pauseDate: () => Promise<AsyncIterator<DateTimeOutput>>;
   resumeDate: () => Promise<AsyncIterator<DateTimeOutput>>;
+  notified: () => Promise<AsyncIterator<Boolean>>;
   membership: <T = CustomerMembershipSubscription>() => T;
 }
 
@@ -17710,6 +17725,7 @@ export interface PauseRequestNullablePromise
   pausePending: () => Promise<Boolean>;
   pauseDate: () => Promise<DateTimeOutput>;
   resumeDate: () => Promise<DateTimeOutput>;
+  notified: () => Promise<Boolean>;
   membership: <T = CustomerMembershipPromise>() => T;
 }
 
@@ -22538,6 +22554,7 @@ export interface PauseRequestPreviousValues {
   pausePending: Boolean;
   pauseDate?: DateTimeOutput;
   resumeDate?: DateTimeOutput;
+  notified: Boolean;
 }
 
 export interface PauseRequestPreviousValuesPromise
@@ -22549,6 +22566,7 @@ export interface PauseRequestPreviousValuesPromise
   pausePending: () => Promise<Boolean>;
   pauseDate: () => Promise<DateTimeOutput>;
   resumeDate: () => Promise<DateTimeOutput>;
+  notified: () => Promise<Boolean>;
 }
 
 export interface PauseRequestPreviousValuesSubscription
@@ -22560,6 +22578,7 @@ export interface PauseRequestPreviousValuesSubscription
   pausePending: () => Promise<AsyncIterator<Boolean>>;
   pauseDate: () => Promise<AsyncIterator<DateTimeOutput>>;
   resumeDate: () => Promise<AsyncIterator<DateTimeOutput>>;
+  notified: () => Promise<AsyncIterator<Boolean>>;
 }
 
 export interface PaymentPlanSubscriptionPayload {

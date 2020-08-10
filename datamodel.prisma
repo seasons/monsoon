@@ -553,11 +553,11 @@ enum UserVerificationStatus {
 }
 
 enum PushNotificationStatus {
-   Blocked
-   Granted
-   Denied
- }
- 
+  Blocked
+  Granted
+  Denied
+}
+
 type User {
   id: ID! @id
   auth0Id: String! @unique
@@ -567,7 +567,8 @@ type User {
   role: UserRole! @default(value: Customer)
   roles: [UserRole!]! @scalarList(strategy: RELATION)
   pushNotificationStatus: PushNotificationStatus! @default(value: Denied)
-  pushNotifications: [PushNotificationReceipt!] @relation(name: "UserToPushNotificationReceipts")
+  pushNotifications: [PushNotificationReceipt!]
+    @relation(name: "UserToPushNotificationReceipts")
   pushNotification: UserPushNotification
   verificationStatus: UserVerificationStatus! @default(value: Pending)
   verificationMethod: UserVerificationMethod! @default(value: None)
@@ -654,6 +655,7 @@ type PauseRequest {
   pausePending: Boolean!
   pauseDate: DateTime
   resumeDate: DateTime
+  notified: Boolean! @default(value: false)
   membership: CustomerMembership!
     @relation(name: "CustomerMembershipToPauseRequest")
 }
