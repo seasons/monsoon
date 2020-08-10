@@ -4,7 +4,7 @@ export type PushNotificationID =
   | "Custom"
   | "CompleteAccount"
   | "NewBlogPost"
-  | "PauseReminder"
+  | "ResumeReminder"
   | "ReservationShipped"
   | "ReservationDelivered"
   | "ResetBag"

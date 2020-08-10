@@ -150,7 +150,7 @@ export class MembershipScheduledJobs {
     if (!!pauseRequest && resumeDate.minus({ days: 2 }) <= DateTime.local()) {
       const user = await this.prisma.client.customer({ id: customer.id }).user()
 
-      const notificationID = "PauseReminder"
+      const notificationID = "ResumeReminder"
       const notificationVars = {
         date: resumeDate,
       }
