@@ -1,4 +1,6 @@
+import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { UtilsModule } from "@app/modules/Utils/utils.module"
+import { EmailId } from "@app/prisma"
 import { PrismaModule } from "@app/prisma/prisma.module"
 import { INestApplication } from "@nestjs/common"
 import { Test } from "@nestjs/testing"
@@ -6,61 +8,82 @@ import { Test } from "@nestjs/testing"
 import { PrismaService } from "../../../prisma/prisma.service"
 import { AdmissionsService } from "../services/admissions.service"
 
-class PrismaServiceMock {
+const utils = new UtilsService(null)
+
+// Create a prisma service mock that has 11 account activations in the last week
+const numWelcomeToSeasonsEmailsSentXDaysAgo = {
+  1: 2,
+  2: 4,
+  6: 5,
+  20: 10,
+}
+class PrismaServiceMockElevenAccountActivations {
+  binding = {
+    query: {
+      emailReceipts: () =>
+        Promise.resolve(
+          createEmailReceipts(
+            numWelcomeToSeasonsEmailsSentXDaysAgo,
+            "WelcomeToSeasons"
+          )
+        ),
+    },
+  }
+  client = {}
+}
+
+// Create a prisma service mock that has 21 invitations sent in the last week
+const numCompleteAccountEmailsSentXDaysAgo = {
+  3: 10,
+  1: 1,
+  2: 2,
+  5: 1,
+  6: 5,
+}
+const numPriorityAccessEmailsSentXDaysAgo = {
+  4: 2,
+}
+class PrismaServiceMockTwentyOneAccountActivations {
   binding = {
     query: {
       emailReceipts: () =>
         Promise.resolve([
-          {
-            emailId: "WelcomeToSeasons",
-            createdAt: "2019-10-31 21:04:52.03",
-            user: { id: "1" },
-          },
-          {
-            emailId: "CompleteAccount",
-            createdAt: "2019-10-31 21:04:52.03",
-            user: { id: "1" },
-          },
-          {
-            emailId: "PriorityAccess",
-            createdAt: "2019-10-31 21:04:52.03",
-            user: { id: "1" },
-          },
+          ...createEmailReceipts(
+            numCompleteAccountEmailsSentXDaysAgo,
+            "CompleteAccount"
+          ),
+          ...createEmailReceipts(
+            numPriorityAccessEmailsSentXDaysAgo,
+            "PriorityAccess"
+          ),
         ]),
     },
   }
   client = {}
 }
 
+// Create a prisma service mock with 0 invitations and 0 account activiations in the past week
+class PrismaServiceMockNoInvitationsOrAccountActiviations {
+  binding = {
+    query: {
+      emailReceipts: () => Promise.resolve([]),
+    },
+  }
+  client = {}
+}
+
 describe("Admissions Service", () => {
-  let app: INestApplication
-  let prismaService: PrismaService
   let admissions: AdmissionsService
   let expectAdmit
   let expectNotAdmit
 
   beforeAll(async () => {
-    const PrismaServiceProvider = {
-      provide: PrismaService,
-      useClass: PrismaServiceMock,
-    }
-    const moduleRef = await Test.createTestingModule({
-      providers: [AdmissionsService],
-      imports: [PrismaModule, UtilsModule],
-    })
-      .overrideProvider(PrismaService)
-      .useClass(PrismaServiceMock)
-      .compile()
-
-    app = moduleRef.createNestApplication()
-    admissions = moduleRef.get<AdmissionsService>(AdmissionsService)
-    prismaService = moduleRef.get<PrismaService>(PrismaService)
+    admissions = await createTestAdmissionsService(null)
 
     expectAdmit = (zipcode: string) =>
       expect(admissions.weServiceZipcode(zipcode)).toBe(true)
     expectNotAdmit = (zipcode: string) =>
       expect(admissions.weServiceZipcode(zipcode)).toBe(false)
-    await app.init()
   })
 
   describe("Serviceable Zipcodes", () => {
@@ -166,16 +189,35 @@ describe("Admissions Service", () => {
   })
 
   describe("Ops Threshold", () => {
-    it("Returns false if we've activated too many users", () => {
-      expect(1).toBe(0)
+    it("Returns false if we've activated too many users", async () => {
+      process.env["WEEKLY_NEW_USERS_THRESHOLD"] = "10"
+      const admissions = await createTestAdmissionsService(
+        PrismaServiceMockElevenAccountActivations
+      )
+
+      const belowOpsThreshold = await admissions.belowWeeklyNewActiveUsersOpsThreshold()
+      expect(belowOpsThreshold).toBe(false)
     })
 
-    it("Returns false if we've sent out too many invitations", () => {
-      expect(1).toBe(0)
+    it("Returns false if we've sent out too many invitations", async () => {
+      process.env["WEEKLY_INVITATIONS_THRESHOLD"] = "20"
+      const admissions = await createTestAdmissionsService(
+        PrismaServiceMockTwentyOneAccountActivations
+      )
+
+      const belowOpsThreshold = await admissions.belowWeeklyNewActiveUsersOpsThreshold()
+      expect(belowOpsThreshold).toBe(false)
     })
 
-    it("Returns true if we're below the threshold", () => {
-      expect(1).toBe(0)
+    it("Returns true if we're below both thresholds", async () => {
+      process.env["WEEKLY_NEW_USERS_THRESHOLD"] = "1"
+      process.env["WEEKLY_INVITATIONS_THRESHOLD"] = "1"
+      const admissions = await createTestAdmissionsService(
+        PrismaServiceMockNoInvitationsOrAccountActiviations
+      )
+
+      const belowOpsThreshold = await admissions.belowWeeklyNewActiveUsersOpsThreshold()
+      expect(belowOpsThreshold).toBe(true)
     })
   })
 
@@ -197,3 +239,40 @@ describe("Admissions Service", () => {
     })
   })
 })
+
+const createTestAdmissionsService = async (
+  prismaServiceMockClass
+): Promise<AdmissionsService> => {
+  const moduleRef = await Test.createTestingModule({
+    providers: [AdmissionsService],
+    imports: [PrismaModule, UtilsModule],
+  })
+    .overrideProvider(PrismaService)
+    .useClass(prismaServiceMockClass)
+    .compile()
+
+  const admissions = moduleRef.get<AdmissionsService>(AdmissionsService)
+
+  return admissions
+}
+
+const createEmailReceipts = (
+  emailsSentXDaysAgoObject,
+  emailId: EmailId
+): Array<any> => {
+  return Object.keys(emailsSentXDaysAgoObject).reduce(
+    (emailReceipts, currentKey) => {
+      let i = 1
+      while (i <= emailsSentXDaysAgoObject[currentKey]) {
+        emailReceipts.push({
+          emailId,
+          createdAt: utils.xDaysAgoISOString(parseInt(currentKey, 10)),
+          user: { id: utils.randomString() },
+        })
+        i++
+      }
+      return emailReceipts
+    },
+    []
+  )
+}

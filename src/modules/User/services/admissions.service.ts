@@ -1,7 +1,7 @@
 import * as fs from "fs"
 
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import { CustomerWhereUniqueInput, LetterSize, ProductType } from "@app/prisma"
+import { CustomerWhereUniqueInput } from "@app/prisma"
 import { Injectable } from "@nestjs/common"
 import { PrismaService } from "@prisma/prisma.service"
 import { head, intersection, uniqBy } from "lodash"
@@ -26,7 +26,6 @@ export class AdmissionsService {
     return states.includes(state)
   }
 
-  // TODO: Test function. Consider reworking invitiations part
   async belowWeeklyNewActiveUsersOpsThreshold(): Promise<boolean> {
     const emailsSent = await this.prisma.binding.query.emailReceipts(
       {
@@ -43,9 +42,9 @@ export class AdmissionsService {
         }
       }`
     )
-    const now = moment(new Date())
+    const now = moment()
     const emailsSentPastWeek = emailsSent.filter(a => {
-      const numDaysSinceEmailSent = now.diff(moment(a.createdAt))
+      const numDaysSinceEmailSent = now.diff(moment(a.createdAt), "days")
       return numDaysSinceEmailSent <= 6 // 0-6 is 7 days
     })
 
