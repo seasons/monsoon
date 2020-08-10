@@ -2,75 +2,10 @@ import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { UtilsModule } from "@app/modules/Utils/utils.module"
 import { EmailId } from "@app/prisma"
 import { PrismaModule } from "@app/prisma/prisma.module"
-import { INestApplication } from "@nestjs/common"
 import { Test } from "@nestjs/testing"
 
 import { PrismaService } from "../../../prisma/prisma.service"
 import { AdmissionsService } from "../services/admissions.service"
-
-const utils = new UtilsService(null)
-
-// Create a prisma service mock that has 11 account activations in the last week
-const numWelcomeToSeasonsEmailsSentXDaysAgo = {
-  1: 2,
-  2: 4,
-  6: 5,
-  20: 10,
-}
-class PrismaServiceMockElevenAccountActivations {
-  binding = {
-    query: {
-      emailReceipts: () =>
-        Promise.resolve(
-          createEmailReceipts(
-            numWelcomeToSeasonsEmailsSentXDaysAgo,
-            "WelcomeToSeasons"
-          )
-        ),
-    },
-  }
-  client = {}
-}
-
-// Create a prisma service mock that has 21 invitations sent in the last week
-const numCompleteAccountEmailsSentXDaysAgo = {
-  3: 10,
-  1: 1,
-  2: 2,
-  5: 1,
-  6: 5,
-}
-const numPriorityAccessEmailsSentXDaysAgo = {
-  4: 2,
-}
-class PrismaServiceMockTwentyOneAccountActivations {
-  binding = {
-    query: {
-      emailReceipts: () =>
-        Promise.resolve([
-          ...createEmailReceipts(
-            numCompleteAccountEmailsSentXDaysAgo,
-            "CompleteAccount"
-          ),
-          ...createEmailReceipts(
-            numPriorityAccessEmailsSentXDaysAgo,
-            "PriorityAccess"
-          ),
-        ]),
-    },
-  }
-  client = {}
-}
-
-// Create a prisma service mock with 0 invitations and 0 account activiations in the past week
-class PrismaServiceMockNoInvitationsOrAccountActiviations {
-  binding = {
-    query: {
-      emailReceipts: () => Promise.resolve([]),
-    },
-  }
-  client = {}
-}
 
 describe("Admissions Service", () => {
   let admissions: AdmissionsService
@@ -190,6 +125,26 @@ describe("Admissions Service", () => {
 
   describe("Ops Threshold", () => {
     it("Returns false if we've activated too many users", async () => {
+      class PrismaServiceMockElevenAccountActivations {
+        binding = {
+          query: {
+            emailReceipts: () =>
+              Promise.resolve(
+                createEmailReceipts(
+                  {
+                    1: 2,
+                    2: 4,
+                    6: 5,
+                    20: 10,
+                  },
+                  "WelcomeToSeasons"
+                )
+              ),
+          },
+        }
+        client = {}
+      }
+
       process.env["WEEKLY_NEW_USERS_THRESHOLD"] = "10"
       const admissions = await createTestAdmissionsService(
         PrismaServiceMockElevenAccountActivations
@@ -200,6 +155,33 @@ describe("Admissions Service", () => {
     })
 
     it("Returns false if we've sent out too many invitations", async () => {
+      class PrismaServiceMockTwentyOneAccountActivations {
+        binding = {
+          query: {
+            emailReceipts: () =>
+              Promise.resolve([
+                ...createEmailReceipts(
+                  {
+                    3: 10,
+                    1: 1,
+                    2: 2,
+                    5: 1,
+                    6: 5,
+                  },
+                  "CompleteAccount"
+                ),
+                ...createEmailReceipts(
+                  {
+                    4: 2,
+                  },
+                  "PriorityAccess"
+                ),
+              ]),
+          },
+        }
+        client = {}
+      }
+
       process.env["WEEKLY_INVITATIONS_THRESHOLD"] = "20"
       const admissions = await createTestAdmissionsService(
         PrismaServiceMockTwentyOneAccountActivations
@@ -210,6 +192,15 @@ describe("Admissions Service", () => {
     })
 
     it("Returns true if we're below both thresholds", async () => {
+      class PrismaServiceMockNoInvitationsOrAccountActiviations {
+        binding = {
+          query: {
+            emailReceipts: () => Promise.resolve([]),
+          },
+        }
+        client = {}
+      }
+
       process.env["WEEKLY_NEW_USERS_THRESHOLD"] = "1"
       process.env["WEEKLY_INVITATIONS_THRESHOLD"] = "1"
       const admissions = await createTestAdmissionsService(
@@ -260,6 +251,8 @@ const createEmailReceipts = (
   emailsSentXDaysAgoObject,
   emailId: EmailId
 ): Array<any> => {
+  const utils = new UtilsService(null)
+
   return Object.keys(emailsSentXDaysAgoObject).reduce(
     (emailReceipts, currentKey) => {
       let i = 1
