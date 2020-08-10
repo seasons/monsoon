@@ -1,6 +1,6 @@
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { UtilsModule } from "@app/modules/Utils/utils.module"
-import { EmailId } from "@app/prisma"
+import { CustomerWhereInput, EmailId, ProductWhereInput } from "@app/prisma"
 import { PrismaModule } from "@app/prisma/prisma.module"
 import { Test } from "@nestjs/testing"
 
@@ -213,8 +213,131 @@ describe("Admissions Service", () => {
   })
 
   describe("Inventory Threshold", () => {
-    it("correctly calculates the available inventory for a user with no competing users", () => {
-      expect(1).toBe(0)
+    it("correctly calculates the available inventory for a user with no competing users", async () => {
+      const johnCustomer = {
+        id: "1",
+        detail: { topSizes: ["XS", "S"], waistSizes: [30, 31] },
+        membership: { pauseRequests: [] },
+      }
+      class PrismaServiceMockWith12AvailableStylesForUserJohn {
+        binding = {
+          query: {
+            customer: () => Promise.resolve(johnCustomer),
+            customers: ({ where }: { where: CustomerWhereInput }, info) => {
+              if (!!where) {
+                return Promise.resolve([])
+              }
+              return Promise.resolve([johnCustomer])
+            },
+            products: ({ where }: { where: ProductWhereInput }) => {
+              const allProducts = [
+                {
+                  productType: "Top",
+                  variants: [
+                    { reservable: 1, internalSize: { top: { letter: "XS" } } },
+                  ],
+                },
+                {
+                  productType: "Top",
+                  variants: [
+                    { reservable: 1, internalSize: { top: { letter: "S" } } },
+                  ],
+                },
+                {
+                  productType: "Top",
+                  variants: [
+                    { reservable: 1, internalSize: { top: { letter: "XS" } } },
+                  ],
+                },
+                {
+                  productType: "Top",
+                  variants: [
+                    { reservable: 1, internalSize: { top: { letter: "X" } } },
+                  ],
+                },
+                {
+                  productType: "Top",
+                  variants: [
+                    { reservable: 1, internalSize: { top: { letter: "XS" } } },
+                  ],
+                },
+                {
+                  productType: "Top",
+                  variants: [
+                    { reservable: 1, internalSize: { top: { letter: "S" } } },
+                  ],
+                },
+                {
+                  productType: "Top",
+                  variants: [
+                    { reservable: 1, internalSize: { top: { letter: "XS" } } },
+                  ],
+                },
+                {
+                  productType: "Top",
+                  variants: [
+                    { reservable: 1, internalSize: { top: { letter: "S" } } },
+                  ],
+                },
+                {
+                  productType: "Bottom",
+                  variants: [
+                    {
+                      reservable: 1,
+                      internalSize: { display: "30" },
+                    },
+                  ],
+                },
+                {
+                  productType: "Bottom",
+                  variants: [
+                    {
+                      reservable: 1,
+                      internalSize: { display: "31" },
+                    },
+                  ],
+                },
+                {
+                  productType: "Bottom",
+                  variants: [
+                    {
+                      reservable: 1,
+                      internalSize: { display: "30" },
+                    },
+                  ],
+                },
+                {
+                  productType: "Bottom",
+                  variants: [
+                    {
+                      reservable: 1,
+                      internalSize: { display: "31" },
+                    },
+                  ],
+                },
+              ]
+              let productsToReturn = allProducts
+              if ((where.AND as Array<any>).includes({ type: "Top" })) {
+                productsToReturn = productsToReturn.filter(
+                  a => a.productType === "Top"
+                )
+              }
+              return Promise.resolve(productsToReturn)
+            },
+          },
+        }
+        client = {}
+      }
+
+      const admissions = await createTestAdmissionsService(
+        PrismaServiceMockWith12AvailableStylesForUserJohn
+      )
+
+      const reservableStylesForCustomer = await admissions.reservableInventoryForCustomer(
+        { id: "1" }
+      )
+
+      expect(reservableStylesForCustomer).toBe(12)
     })
 
     it("correctly calculates the available inventory for a user with competing paused and active users", () => {

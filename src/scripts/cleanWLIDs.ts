@@ -18,7 +18,10 @@ const run = async () => {
     try {
       await ps.client.updatePhysicalProduct({
         where: { seasonsUID },
-        data: { warehouseLocation: { disconnect: true } },
+        data: {
+          warehouseLocation: { disconnect: true },
+          inventoryStatus: "NonReservable",
+        },
       })
       console.log(`'cleared WLID off ${seasonsUID}`)
     } catch (err) {

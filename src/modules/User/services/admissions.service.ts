@@ -137,9 +137,7 @@ export class AdmissionsService {
       case "Bottom":
         sizesKey = "waistSizes"
         internalSizeWhereInputCreateFunc = sizes => {
-          bottom: {
-            waist_in: sizes
-          }
+          display_in: sizes
         }
         break
       default:
