@@ -91,13 +91,6 @@ export class PushNotificationService {
     return receipt
   }
 
-  dataForPushNotificationID(
-    pushNotificationID: PushNotificationID,
-    vars?: PushNotificationVars
-  ) {
-    return this.data.getPushNotifData(pushNotificationID, vars)
-  }
-
   async pushNotifyUser({
     email,
     pushNotifID,
