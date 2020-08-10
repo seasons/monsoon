@@ -154,31 +154,28 @@ export class MembershipScheduledJobs {
       const notificationVars = {
         date: resumeDate,
       }
-      const notificationData = this.pushNotification.dataForPushNotificationID(
-        notificationID,
-        notificationVars
-      )
 
-      // Check if push notifiaction was sent before sending
-      const notificationReceipt = head(
-        await this.prisma.client.pushNotificationReceipts({
-          where: {
-            AND: [
-              {
-                users_every: {
-                  email: user.email,
-                },
-              },
-              {
-                title: notificationData.receiptPayload.title,
-              },
-            ],
+      // Check if push notification was sent before sending
+      const pauseRequests = await this.prisma.client.pauseRequests({
+        where: {
+          membership: {
+            customer: {
+              id: customer.id,
+            },
           },
-        })
-      )
+        },
+        orderBy: "createdAt_DESC",
+      })
 
-      if (!notificationReceipt) {
-        this.pushNotification.pushNotifyUser({
+      const pauseRequest = head(pauseRequests)
+
+      if (!pauseRequest.notified) {
+        await this.prisma.client.updatePauseRequest({
+          where: { id: pauseRequest.id },
+          data: { notified: true },
+        })
+
+        await this.pushNotification.pushNotifyUser({
           email: user.email,
           pushNotifID: notificationID,
           vars: notificationVars,
