@@ -50,7 +50,7 @@ describe("Shippo Controller", () => {
     const moduleRef = await Test.createTestingModule({
       controllers: [ShippoController],
       providers: [ShippoController, PrismaServiceProvider],
-      imports: [AppModule, PushNotificationModule],
+      imports: [PushNotificationModule],
     })
       .overrideProvider(PrismaService)
       .useClass(PrismaServiceMock)
