@@ -5,6 +5,7 @@ import { CreateTestProductInput } from "@app/modules/Utils/utils.types"
 import { EmailId, InventoryStatus, LetterSize, ProductType } from "@app/prisma"
 import { PrismaModule } from "@app/prisma/prisma.module"
 import { Test } from "@nestjs/testing"
+import { fill } from "lodash"
 
 import { PrismaService } from "../../../prisma/prisma.service"
 import { AdmissionsService } from "../services/admissions.service"
@@ -286,33 +287,19 @@ describe("Admissions Service", () => {
       const allTestProductsToCreate = [
         // 12 styles available for him. 11 are 100% reservable.
         // 1 has 1 reserved unit, 1 nonreservable unit
-        { ...topXSReservable },
-        { ...topXSReservable },
-        { ...topXSReservable },
-        { ...topXSReservable },
-        { ...topSReservable },
-        { ...topSReservable },
-        { ...topSReservable },
-        { ...topSReservable },
-        { ...bottom30Reservable },
-        { ...bottom30Reservable },
-        { ...bottom31Reservable },
-        { ...bottom30OneReservableOneNonReservable },
+        ...fill(Array(4), topXSReservable),
+        ...fill(Array(4), topSReservable),
+        ...fill(Array(2), bottom30Reservable),
+        bottom31Reservable,
+        bottom30OneReservableOneNonReservable,
         // some styles that are reservable but not in his size
-        { ...bottom35Reservable },
-        { ...bottom35Reservable },
-        { ...bottom35Reservable },
-        { ...bottom35Reservable },
-        { ...topMReservable },
-        { ...topMReservable },
-        { ...topMReservable },
-        { ...topMReservable },
+        ...fill(Array(4), bottom35Reservable),
+        ...fill(Array(4), topMReservable),
         // some styles that are in his size but not reservable
-        { ...topXSNonReservable },
-        { ...topXSNonReservable },
-        { ...bottom31Stored },
-        { ...bottom31Stored },
+        ...fill(Array(2), topXSNonReservable),
+        ...fill(Array(2), bottom31Stored),
       ] as CreateTestProductInput[]
+      console.log(allTestProductsToCreate)
       const cleanupFuncs = []
       for (const testProdToCreate of allTestProductsToCreate) {
         const {
