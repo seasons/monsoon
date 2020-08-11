@@ -630,9 +630,9 @@ type BagItem {
 
 type Customer {
   id: ID! @id
-  user: User! @unique
+  user: User! @unique @relation(name: "CustomerToUser", onDelete: CASCADE)
   status: CustomerStatus
-  detail: CustomerDetail
+  detail: CustomerDetail @relation(name: "CustomerToCustomerDetail", onDelete: CASCADE)
   billingInfo: BillingInfo
   plan: Plan
   membership: CustomerMembership

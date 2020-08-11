@@ -1,6 +1,8 @@
+import { TestUtilsService } from "@app/modules/Utils/services/test.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { UtilsModule } from "@app/modules/Utils/utils.module"
-import { CustomerWhereInput, EmailId, ProductWhereInput } from "@app/prisma"
+import { CreateTestProductInput } from "@app/modules/Utils/utils.types"
+import { EmailId, InventoryStatus, LetterSize, ProductType } from "@app/prisma"
 import { PrismaModule } from "@app/prisma/prisma.module"
 import { Test } from "@nestjs/testing"
 
@@ -213,131 +215,130 @@ describe("Admissions Service", () => {
   })
 
   describe("Inventory Threshold", () => {
-    it("correctly calculates the available inventory for a user with no competing users", async () => {
-      const johnCustomer = {
-        id: "1",
-        detail: { topSizes: ["XS", "S"], waistSizes: [30, 31] },
-        membership: { pauseRequests: [] },
-      }
-      class PrismaServiceMockWith12AvailableStylesForUserJohn {
-        binding = {
-          query: {
-            customer: () => Promise.resolve(johnCustomer),
-            customers: ({ where }: { where: CustomerWhereInput }, info) => {
-              if (!!where) {
-                return Promise.resolve([])
-              }
-              return Promise.resolve([johnCustomer])
-            },
-            products: ({ where }: { where: ProductWhereInput }) => {
-              const allProducts = [
-                {
-                  productType: "Top",
-                  variants: [
-                    { reservable: 1, internalSize: { top: { letter: "XS" } } },
-                  ],
-                },
-                {
-                  productType: "Top",
-                  variants: [
-                    { reservable: 1, internalSize: { top: { letter: "S" } } },
-                  ],
-                },
-                {
-                  productType: "Top",
-                  variants: [
-                    { reservable: 1, internalSize: { top: { letter: "XS" } } },
-                  ],
-                },
-                {
-                  productType: "Top",
-                  variants: [
-                    { reservable: 1, internalSize: { top: { letter: "X" } } },
-                  ],
-                },
-                {
-                  productType: "Top",
-                  variants: [
-                    { reservable: 1, internalSize: { top: { letter: "XS" } } },
-                  ],
-                },
-                {
-                  productType: "Top",
-                  variants: [
-                    { reservable: 1, internalSize: { top: { letter: "S" } } },
-                  ],
-                },
-                {
-                  productType: "Top",
-                  variants: [
-                    { reservable: 1, internalSize: { top: { letter: "XS" } } },
-                  ],
-                },
-                {
-                  productType: "Top",
-                  variants: [
-                    { reservable: 1, internalSize: { top: { letter: "S" } } },
-                  ],
-                },
-                {
-                  productType: "Bottom",
-                  variants: [
-                    {
-                      reservable: 1,
-                      internalSize: { display: "30" },
-                    },
-                  ],
-                },
-                {
-                  productType: "Bottom",
-                  variants: [
-                    {
-                      reservable: 1,
-                      internalSize: { display: "31" },
-                    },
-                  ],
-                },
-                {
-                  productType: "Bottom",
-                  variants: [
-                    {
-                      reservable: 1,
-                      internalSize: { display: "30" },
-                    },
-                  ],
-                },
-                {
-                  productType: "Bottom",
-                  variants: [
-                    {
-                      reservable: 1,
-                      internalSize: { display: "31" },
-                    },
-                  ],
-                },
-              ]
-              let productsToReturn = allProducts
-              if ((where.AND as Array<any>).includes({ type: "Top" })) {
-                productsToReturn = productsToReturn.filter(
-                  a => a.productType === "Top"
-                )
-              }
-              return Promise.resolve(productsToReturn)
-            },
+    let testUtils: TestUtilsService
+    let cleanupFunc
+    let topXSReservable
+    let topSReservable
+    let topMReservable
+    let bottom30Reservable
+    let bottom31Reservable
+    let bottom35Reservable
+    let topXSNonReservable
+    let bottom31Stored
+    let bottom30OneReservableOneNonReservable
+
+    beforeAll(() => {
+      const ps = new PrismaService()
+      testUtils = new TestUtilsService(
+        new PrismaService(),
+        new UtilsService(ps)
+      )
+
+      // reservable products
+      topXSReservable = createTestProductCreateInput("Top", "XS", "Reservable")
+      topSReservable = createTestProductCreateInput("Top", "S", "Reservable")
+      topMReservable = createTestProductCreateInput("Top", "M", "Reservable")
+      bottom30Reservable = createTestProductCreateInput(
+        "Bottom",
+        "30",
+        "Reservable"
+      )
+      bottom31Reservable = createTestProductCreateInput(
+        "Bottom",
+        "31",
+        "Reservable"
+      )
+      bottom35Reservable = createTestProductCreateInput(
+        "Bottom",
+        "35",
+        "Reservable"
+      )
+      bottom30OneReservableOneNonReservable = {
+        type: "Bottom",
+        variants: [
+          {
+            internalSize: { display: "30" },
+            physicalProducts: [
+              { inventoryStatus: "Reservable" },
+              { inventoryStatus: "NonReservable" },
+            ],
           },
+        ],
+      } as CreateTestProductInput
+
+      // non reservable products
+      topXSNonReservable = createTestProductCreateInput(
+        "Top",
+        "XS",
+        "NonReservable"
+      )
+      bottom31Stored = createTestProductCreateInput("Bottom", "31", "Stored")
+    })
+
+    afterEach(async done => {
+      await cleanupFunc()
+      cleanupFunc = async () => {}
+      done()
+    })
+
+    it("correctly calculates the available inventory for a user with no competing users", async done => {
+      // Create appropriate test data
+      const allTestProductsToCreate = [
+        // 12 styles available for him. 11 are 100% reservable.
+        // 1 has 1 reserved unit, 1 nonreservable unit
+        { ...topXSReservable },
+        { ...topXSReservable },
+        { ...topXSReservable },
+        { ...topXSReservable },
+        { ...topSReservable },
+        { ...topSReservable },
+        { ...topSReservable },
+        { ...topSReservable },
+        { ...bottom30Reservable },
+        { ...bottom30Reservable },
+        { ...bottom31Reservable },
+        { ...bottom30OneReservableOneNonReservable },
+        // some styles that are reservable but not in his size
+        { ...bottom35Reservable },
+        { ...bottom35Reservable },
+        { ...bottom35Reservable },
+        { ...bottom35Reservable },
+        { ...topMReservable },
+        { ...topMReservable },
+        { ...topMReservable },
+        { ...topMReservable },
+        // some styles that are in his size but not reservable
+        { ...topXSNonReservable },
+        { ...topXSNonReservable },
+        { ...bottom31Stored },
+        { ...bottom31Stored },
+      ] as CreateTestProductInput[]
+      const cleanupFuncs = []
+      for (const testProdToCreate of allTestProductsToCreate) {
+        const {
+          cleanupFunc: productCleanUpFUnc,
+        } = await testUtils.createTestProduct(testProdToCreate)
+        cleanupFuncs.push(productCleanUpFUnc)
+      }
+      const {
+        cleanupFunc: customerCleanUpFunc,
+        customer,
+      } = await testUtils.createTestCustomer({
+        detail: { topSizes: ["XS", "S"], waistSizes: [30, 31] },
+      })
+      cleanupFuncs.push(customerCleanUpFunc)
+      cleanupFunc = async () => {
+        for (const func of cleanupFuncs) {
+          await func()
         }
-        client = {}
       }
 
-      const admissions = await createTestAdmissionsService(
-        PrismaServiceMockWith12AvailableStylesForUserJohn
-      )
-
+      // Execute the test
       const reservableStylesForCustomer = await admissions.reservableInventoryForCustomer(
-        { id: "1" }
+        { id: customer.id }
       )
-
       expect(reservableStylesForCustomer).toBe(12)
+      done()
     })
 
     it("correctly calculates the available inventory for a user with competing paused and active users", () => {
@@ -357,16 +358,18 @@ describe("Admissions Service", () => {
 const createTestAdmissionsService = async (
   prismaServiceMockClass
 ): Promise<AdmissionsService> => {
-  const moduleRef = await Test.createTestingModule({
+  let moduleBuilder = Test.createTestingModule({
     providers: [AdmissionsService],
     imports: [PrismaModule, UtilsModule],
   })
-    .overrideProvider(PrismaService)
-    .useClass(prismaServiceMockClass)
-    .compile()
+  if (!!prismaServiceMockClass) {
+    moduleBuilder
+      .overrideProvider(PrismaService)
+      .useClass(prismaServiceMockClass)
+  }
+  const moduleRef = await moduleBuilder.compile()
 
   const admissions = moduleRef.get<AdmissionsService>(AdmissionsService)
-
   return admissions
 }
 
@@ -391,4 +394,31 @@ const createEmailReceipts = (
     },
     []
   )
+}
+
+const createTestProductCreateInput = (
+  type: ProductType,
+  sizeString: String | LetterSize,
+  inventoryStatus: InventoryStatus
+) => {
+  let input = {
+    type,
+    variants: [
+      {
+        internalSize: { display: sizeString },
+        physicalProducts: [{ inventoryStatus }],
+      },
+    ],
+  } as CreateTestProductInput
+
+  switch (type) {
+    case "Top":
+      input.variants[0].internalSize.top = { letter: sizeString as LetterSize }
+      break
+    case "Bottom":
+      break
+    default:
+      throw new Error(`invalid product type: ${type}`)
+  }
+  return input
 }

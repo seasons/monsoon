@@ -67,32 +67,34 @@ describe("Store Product", () => {
       ;({
         product: testProduct,
         cleanupFunc,
-      } = await testUtilsService.createTestProduct({
-        variants: [
-          {
-            physicalProducts: [
-              { inventoryStatus: "Reservable" },
-              { inventoryStatus: "Reserved" },
-            ],
-          },
-          {
-            physicalProducts: [
-              { inventoryStatus: "NonReservable" },
-              { inventoryStatus: "Offloaded" },
-            ],
-          },
-        ],
-        info: `{
-                  id
-                  variants {
-                    id
-                    physicalProducts {
-                      id
-                      inventoryStatus
-                    }
-                  }
-                }`,
-      }))
+      } = await testUtilsService.createTestProduct(
+        {
+          variants: [
+            {
+              physicalProducts: [
+                { inventoryStatus: "Reservable" },
+                { inventoryStatus: "Reserved" },
+              ],
+            },
+            {
+              physicalProducts: [
+                { inventoryStatus: "NonReservable" },
+                { inventoryStatus: "Offloaded" },
+              ],
+            },
+          ],
+        },
+        `{
+        id
+        variants {
+          id
+          physicalProducts {
+            id
+            inventoryStatus
+          }
+        }
+      }`
+      ))
       let testPhysicalProducts = productUtilsService.physicalProductsForProduct(
         testProduct as ProductWithPhysicalProducts
       )

@@ -1,29 +1,21 @@
 import {
+  CustomerDetailCreateInput,
   InventoryStatus,
   PhysicalProductStatus,
   ProductCreateInput,
+  SizeCreateOneInput,
 } from "@app/prisma"
-import { Product } from "@app/prisma/prisma.binding"
 import { PrismaService } from "@prisma/prisma.service"
 
+import {
+  CreateTestCustomerInput,
+  CreateTestCustomerOutput,
+  CreateTestPhysicalProductInput,
+  CreateTestProductInput,
+  CreateTestProductOutput,
+  CreateTestProductVariantInput,
+} from "../utils.types"
 import { UtilsService } from "./utils.service"
-
-interface CreateTestPhysicalProductInput {
-  inventoryStatus: InventoryStatus
-}
-
-interface CreateTestProductVariantInput {
-  physicalProducts: CreateTestPhysicalProductInput[]
-}
-interface CreateTestProductInput {
-  variants: CreateTestProductVariantInput[]
-  info: string
-}
-
-interface CreateTestProductOutput {
-  cleanupFunc: () => void
-  product: Product
-}
 
 export class TestUtilsService {
   constructor(
@@ -38,10 +30,10 @@ export class TestUtilsService {
     require things to be more fleshed out, we'll need to update this 
     method accordingly
   */
-  async createTestProduct({
-    variants,
-    info = `{id}`,
-  }: CreateTestProductInput): Promise<CreateTestProductOutput> {
+  async createTestProduct(
+    { variants, type = "Top" }: CreateTestProductInput,
+    info = `{id}`
+  ): Promise<CreateTestProductOutput> {
     const color = await this.prisma.client.createColor({
       slug: this.utils.randomString(),
       name: this.utils.randomString(),
@@ -60,36 +52,58 @@ export class TestUtilsService {
     })
 
     const data = {
+      type,
       slug: this.utils.randomString(),
       brand: { connect: { id: brand.id } },
       category: { connect: { id: category.id } },
       color: { connect: { id: color.id } },
       images: {},
       variants: {
-        create: variants.map((v: CreateTestProductVariantInput) => ({
-          color: {
-            connect: {
-              id: color.id,
+        create: variants.map((v: CreateTestProductVariantInput) => {
+          const internalSize = !!v.internalSize
+            ? {
+                create: {
+                  slug: this.utils.randomString(),
+                  productType: type,
+                  ...(type === "Top"
+                    ? {
+                        top: {
+                          create: { letter: v.internalSize?.top?.letter },
+                        },
+                      }
+                    : {}),
+                  ...(type === "Bottom" ? {} : {}),
+                  display: v.internalSize.display,
+                } as SizeCreateOneInput,
+              }
+            : {}
+
+          return {
+            color: {
+              connect: {
+                id: color.id,
+              },
             },
-          },
-          productID: this.utils.randomString(),
-          total: v.physicalProducts.length,
-          reservable: this.getInventoryStatusCount(v, "Reservable"),
-          reserved: this.getInventoryStatusCount(v, "Reserved"),
-          nonReservable: this.getInventoryStatusCount(v, "NonReservable"),
-          offloaded: this.getInventoryStatusCount(v, "Offloaded"),
-          stored: this.getInventoryStatusCount(v, "Stored"),
-          physicalProducts: {
-            create: v.physicalProducts.map(
-              (pp: CreateTestPhysicalProductInput) => ({
-                seasonsUID: this.utils.randomString(),
-                inventoryStatus: pp.inventoryStatus,
-                productStatus: "New" as PhysicalProductStatus,
-                sequenceNumber: 0,
-              })
-            ),
-          },
-        })),
+            productID: this.utils.randomString(),
+            total: v.physicalProducts.length,
+            reservable: this.getInventoryStatusCount(v, "Reservable"),
+            reserved: this.getInventoryStatusCount(v, "Reserved"),
+            nonReservable: this.getInventoryStatusCount(v, "NonReservable"),
+            offloaded: this.getInventoryStatusCount(v, "Offloaded"),
+            stored: this.getInventoryStatusCount(v, "Stored"),
+            internalSize,
+            physicalProducts: {
+              create: v.physicalProducts.map(
+                (pp: CreateTestPhysicalProductInput) => ({
+                  seasonsUID: this.utils.randomString(),
+                  inventoryStatus: pp.inventoryStatus,
+                  productStatus: "New" as PhysicalProductStatus,
+                  sequenceNumber: 0,
+                })
+              ),
+            },
+          }
+        }),
       },
       name: "",
     } as ProductCreateInput
@@ -110,6 +124,42 @@ export class TestUtilsService {
       cleanupFunc,
       product,
     }
+  }
+
+  async createTestCustomer(
+    input: CreateTestCustomerInput,
+    info = `{id}`
+  ): Promise<CreateTestCustomerOutput> {
+    const detail = !!input.detail
+      ? {
+          create: {
+            topSizes: { set: input.detail.topSizes || [] },
+            waistSizes: { set: input.detail.waistSizes || [] },
+          } as CustomerDetailCreateInput,
+        }
+      : {}
+
+    const customer = await this.prisma.binding.mutation.createCustomer(
+      {
+        data: {
+          user: {
+            create: {
+              auth0Id: this.utils.randomString(),
+              email: this.utils.randomString(),
+              firstName: this.utils.randomString(),
+              lastName: this.utils.randomString(),
+            },
+          },
+          detail,
+        },
+      },
+      info
+    )
+
+    const cleanupFunc = async () => {
+      await this.prisma.client.deleteCustomer({ id: customer.id })
+    }
+    return { cleanupFunc, customer }
   }
 
   // returns the number of physical products with the given inventory status

@@ -19,7 +19,7 @@
     "debug": "concurrently --kill-others 'yarn tsc -w' 'yarn debug:server'",
     "debug:server": "dotenv -- nodemon -e ts,graphql -x node --inspect -r dotenv/config -r ts-node/register src/index.ts",
     "debug:cli": "node --inspect-brk -r dotenv/config -r ts-node/register bin/cli.js",
-    "debug:test": "node --inspect-brk -r dotenv/config node_modules/.bin/jest --runInBand",
+    "debug:test": "node --inspect -r dotenv/config node_modules/.bin/jest --runInBand",
     "lint": "yarn tslint -c 'tslint.json' 'src/**/*.ts'",
     "prettier": "prettier --write 'src/**/*.{js,ts,tsx,md,graphql}' --ignore-path ./.prettierignore",
     "prisma:update-bindings": "graphql get-schema --project database && graphql codegen --project database",

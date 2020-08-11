@@ -128,17 +128,17 @@ export class AdmissionsService {
     switch (productType) {
       case "Top":
         sizesKey = "topSizes"
-        internalSizeWhereInputCreateFunc = sizes => {
+        internalSizeWhereInputCreateFunc = sizes => ({
           top: {
-            letter_in: sizes
-          }
-        }
+            letter_in: sizes,
+          },
+        })
         break
       case "Bottom":
         sizesKey = "waistSizes"
-        internalSizeWhereInputCreateFunc = sizes => {
-          display_in: sizes
-        }
+        internalSizeWhereInputCreateFunc = sizes => ({
+          display_in: sizes.map(a => `${a}`), // typecasting,
+        })
         break
       default:
         throw new Error(`Invalid product type: ${productType}`)
@@ -198,7 +198,7 @@ export class AdmissionsService {
         membership {
           pauseRequests {
             createdAt
-            resumeData
+            resumeDate
           }
         }
     }`
