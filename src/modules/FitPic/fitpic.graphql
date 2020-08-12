@@ -1,6 +1,7 @@
 type Mutation {
-  submitFitPic(image: Upload!): Boolean! @hasRole(roles: [Customer])
-  reportFitPic(id: ID!): Boolean! @hasRole(roles: [Customer])
+  submitFitPic(image: Upload!, location: LocationCreateOneInput): ID!
+    @hasRole(roles: [Admin, Customer])
+  reportFitPic(id: ID!): Boolean! @hasRole(roles: [Admin, Customer])
 
   updateFitPic(id: ID!, data: FitPicUpdateInput!): Boolean!
     @hasRole(roles: [Admin])
@@ -10,16 +11,7 @@ type Mutation {
 }
 
 type Query {
-  publicFitPics(
-    where: PublicFitPicWhereInput
-    orderBy: PublicFitPicOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [PublicFitPic!]!
-
+  fitPic(where: FitPicWhereUniqueInput!): FitPic
   fitPics(
     where: FitPicWhereInput
     orderBy: FitPicOrderByInput
@@ -28,34 +20,54 @@ type Query {
     before: String
     first: Int
     last: Int
-  ): [FitPic!]! @hasRole(roles: [Admin])
+  ): [FitPic!]!
+  fitPicsConnection(
+    where: FitPicWhereInput
+    orderBy: FitPicOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): FitPicConnection!
 }
 
-type PublicFitPic {
+type FitPic {
   id: ID!
   author: String!
   image: Image!
   location: Location
   products: [Product!]
+  reports: [FitPicReport!]! @hasRole(roles: [Admin])
+  approved: Boolean! @hasRole(roles: [Admin])
   createdAt: DateTime!
   updatedAt: DateTime!
 }
 
-input PublicFitPicWhereInput {
+enum FitPicAdminFilter {
+  Live
+  Submitted
+  Reported
+  Unapproved
+}
+
+input FitPicWhereInput {
+  adminFilter: FitPicAdminFilter
+
   """
   Logical AND on all given filters.
   """
-  AND: [PublicFitPicWhereInput!]
+  AND: [FitPicWhereInput!]
 
   """
   Logical OR on all given filters.
   """
-  OR: [PublicFitPicWhereInput!]
+  OR: [FitPicWhereInput!]
 
   """
   Logical NOT on all given filters combined by AND.
   """
-  NOT: [PublicFitPicWhereInput!]
+  NOT: [FitPicWhereInput!]
   id: ID
 
   """
@@ -122,10 +134,12 @@ input PublicFitPicWhereInput {
   All values not ending with the given string.
   """
   id_not_ends_with: ID
+  approved: Boolean
 
   """
   All values that are not equal to given value.
   """
+  approved_not: Boolean
   createdAt: DateTime
 
   """
@@ -198,18 +212,13 @@ input PublicFitPicWhereInput {
   All values greater than or equal the given value.
   """
   updatedAt_gte: DateTime
+  user: UserWhereInput
   image: ImageWhereInput
   location: LocationWhereInput
   products_every: ProductWhereInput
   products_some: ProductWhereInput
   products_none: ProductWhereInput
-}
-
-enum PublicFitPicOrderByInput {
-  id_ASC
-  id_DESC
-  createdAt_ASC
-  createdAt_DESC
-  updatedAt_ASC
-  updatedAt_DESC
+  reports_every: FitPicReportWhereInput
+  reports_some: FitPicReportWhereInput
+  reports_none: FitPicReportWhereInput
 }

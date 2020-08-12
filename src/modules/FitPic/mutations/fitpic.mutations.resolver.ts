@@ -1,4 +1,4 @@
-import { User } from "@app/decorators"
+import { Customer, User } from "@app/decorators"
 import { FitPicReportUpdateInput } from "@app/prisma"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Args, Mutation, Resolver } from "@nestjs/graphql"
@@ -13,8 +13,8 @@ export class FitPicMutationsResolver {
   ) {}
 
   @Mutation()
-  async submitFitPic(@Args() args, @User() user) {
-    return this.fitPic.submitFitPic(args, user)
+  async submitFitPic(@Args() args, @User() user, @Customer() customer) {
+    return this.fitPic.submitFitPic(args, user, customer)
   }
 
   @Mutation()

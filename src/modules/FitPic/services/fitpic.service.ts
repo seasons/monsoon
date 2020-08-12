@@ -1,7 +1,8 @@
 import { ImageService } from "@app/modules/Image"
 import { IMGIX_BASE, S3_BASE } from "@app/modules/Image/services/image.service"
 import { PushNotificationService } from "@app/modules/PushNotification"
-import { FitPicUpdateInput } from "@app/prisma"
+import { ShippingUtilsService } from "@app/modules/Shipping/services/shipping.utils.service"
+import { FitPicUpdateInput, LocationCreateOneInput } from "@app/prisma"
 import { Injectable } from "@nestjs/common"
 import { PrismaService } from "@prisma/prisma.service"
 import * as Sentry from "@sentry/node"
@@ -11,19 +12,51 @@ export class FitPicService {
   constructor(
     private readonly image: ImageService,
     private readonly prisma: PrismaService,
+    private readonly shippingUtils: ShippingUtilsService,
     private readonly pushNotification: PushNotificationService
   ) {}
 
-  async submitFitPic({ image }, user) {
+  async submitFitPic({ image, location }, user, customer) {
     const imageData = await this.image.uploadImage(image, {
       imageName: `${user.id}-${Date.now()}.jpg`,
     })
     const imgixUrl = imageData.url.replace(S3_BASE, IMGIX_BASE)
 
+    let fitPicLocation: LocationCreateOneInput
+    if (location?.create?.zipCode) {
+      if (location?.create?.city && location?.create?.state) {
+        fitPicLocation = location
+      } else {
+        const detail = await this.shippingUtils.getCityAndStateFromZipCode(
+          location.create.zipCode
+        )
+        fitPicLocation = {
+          create: {
+            zipCode: location.create.zipCode,
+            city: detail.city,
+            state: detail.state,
+          },
+        }
+      }
+    } else {
+      const shippingAddress = await this.prisma.client
+        .customer({ id: customer.id })
+        .detail()
+        .shippingAddress()
+      location = {
+        create: {
+          zipCode: shippingAddress.zipCode,
+          city: shippingAddress.city,
+          state: shippingAddress.state,
+        },
+      }
+    }
+
     const fitPic = await this.prisma.client.createFitPic({
       user: {
         connect: { id: user.id },
       },
+      location,
       image: {
         // override the imageData url with the imgixUrl
         create: { ...imageData, url: imgixUrl },
@@ -37,7 +70,7 @@ export class FitPicService {
       where: { id: user.id },
     })
 
-    return true
+    return fitPic.id
   }
 
   async reportFitPic({ id }: { id: string }, user) {

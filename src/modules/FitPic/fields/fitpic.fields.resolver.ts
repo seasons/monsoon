@@ -1,10 +1,9 @@
-import { Loader } from "@app/modules/DataLoader"
 import { FitPic } from "@app/prisma"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
 
-@Resolver("PublicFitPic")
-export class PublicFitPicFieldsResolver {
+@Resolver("FitPic")
+export class FitPicFieldsResolver {
   constructor(private readonly prisma: PrismaService) {}
 
   @ResolveField()

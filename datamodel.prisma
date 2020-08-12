@@ -557,7 +557,7 @@ enum PushNotificationStatus {
   Granted
   Denied
 }
- 
+
 type FitPic {
   id: ID! @id
   user: User! @relation(name: "UserToFitPic")

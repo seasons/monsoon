@@ -1,4 +1,5 @@
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
+import { ShippingUtilsService } from "@app/modules/Shipping/services/shipping.utils.service"
 import { CustomerDetail } from "@app/prisma/prisma.binding"
 import { Injectable } from "@nestjs/common"
 import {
@@ -30,7 +31,8 @@ interface Auth0User {
 export class AuthService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly pushNotification: PushNotificationService
+    private readonly pushNotification: PushNotificationService,
+    private readonly shippingUtils: ShippingUtilsService
   ) {}
 
   async signupUser({
@@ -325,41 +327,13 @@ export class AuthService {
     return user
   }
 
-  private async getCityAndStateFromZipCode(zipCode) {
-    const response = await axios.get(
-      `https://maps.googleapis.com/maps/api/geocode/json?key=${process.env.GOOGLE_MAPS_KEY}&address=${zipCode}`
-    )
-
-    const components = response?.data?.results?.[0].address_components
-    let state = ""
-    let city = ""
-    components.forEach(component => {
-      component.types.forEach(type => {
-        if (type === "sublocality" && !!component.long_name) {
-          city = component.long_name
-        }
-        if (type === "locality" && !city) {
-          city = component.long_name
-        }
-        // Occasionally there is no locality or sublocality and only a neighborhood for city
-        if (type === "neighborhood" && !city) {
-          city = component.long_name
-        }
-        if (type === "administrative_area_level_1") {
-          state = component.long_name
-        }
-      })
-      if (!city && response?.data?.results?.[0]?.postcode_localities?.[0]) {
-        city = response?.data?.results?.[0]?.postcode_localities?.[0]
-      }
-    })
-    return { city, state }
-  }
-
   private async createPrismaCustomerForExistingUser(userID, details, status) {
     if (details?.shippingAddress?.create?.zipCode) {
       try {
-        const { city, state } = (await this.getCityAndStateFromZipCode(
+        const {
+          city,
+          state,
+        } = (await this.shippingUtils.getCityAndStateFromZipCode(
           details?.shippingAddress?.create?.zipCode
         )) as any
         details.shippingAddress.create.city = city
