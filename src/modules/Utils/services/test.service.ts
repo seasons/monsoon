@@ -140,17 +140,21 @@ export class TestUtilsService {
         }
       : {}
 
+    // If there's a membership on the customer, we create it during the initial
+    // call to createCustomer. If there are pauseRequests on it, we create only
+    // the first one. We leave any subsequent pauseRequests for later, so the
+    // createdAt fields are different
     let membership
     if (!!input.membership) {
       membership = {
         create: {
           subscriptionId: this.utils.randomString(),
-          pauseRequests: { create: input.membership.pauseRequests },
+          pauseRequests: { create: input.membership.pauseRequests[0] },
         },
       }
     }
 
-    const customer = await this.prisma.binding.mutation.createCustomer(
+    let customer = await this.prisma.binding.mutation.createCustomer(
       {
         data: {
           status: input.status || "Active",
@@ -166,6 +170,28 @@ export class TestUtilsService {
           membership,
         },
       },
+      `{id}`
+    )
+
+    // If there are additional pause requests, create them in order
+    if (input.membership?.pauseRequests?.length > 1) {
+      for (const pauseRequestCreateInput of input.membership.pauseRequests.slice(
+        1
+      )) {
+        await new Promise(r => setTimeout(r, 2000))
+        await this.prisma.client.updateCustomer({
+          where: { id: customer.id },
+          data: {
+            membership: {
+              update: { pauseRequests: { create: pauseRequestCreateInput } },
+            },
+          },
+        })
+      }
+    }
+
+    customer = await this.prisma.binding.query.customer(
+      { where: { id: customer.id } },
       info
     )
 

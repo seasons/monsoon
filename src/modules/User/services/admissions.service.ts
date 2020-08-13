@@ -85,7 +85,6 @@ export class AdmissionsService {
     return true
   }
 
-  // TODO: Test Function
   async haveSufficientInventoryToServiceCustomer(
     where: CustomerWhereUniqueInput
   ): Promise<boolean> {
@@ -108,10 +107,7 @@ export class AdmissionsService {
       where,
       "Bottom"
     )
-    console.log(`available top styles: ${availableTopStyles}`)
-    // console.log(`available bottom styles: ${availableBottomStyles}`)
     return availableTopStyles + availableBottomStyles
-    // return availableTopStyles
   }
 
   private async availableStylesForCustomer(
@@ -177,7 +173,7 @@ export class AdmissionsService {
     // reservation may be a competing user, regardless of how long it's been since their last reservation
     // return was processed. This is because more than 98% of users reserve within 1 week of being able to do so.
     const potentiallyCompetingUsers = [
-      ...(await this.pausedUsersResumingThisWeek()),
+      ...(await this.pausedCustomersResumingThisWeek()),
       ...(await this.activeCustomersWithoutActiveReservation()),
     ]
     const competingUsers = potentiallyCompetingUsers.filter(a => {
@@ -187,12 +183,6 @@ export class AdmissionsService {
       return intersection(a.detail[sizesKey], preferredSizes).length > 0
     })
 
-    console.log(
-      `potentially competing users: ${potentiallyCompetingUsers.length}`
-    )
-    console.log(`num competing user: ${competingUsers.length}`)
-    // console.log(`competing users: ${potentiallyCompetingUsers.map(a => a.id)}`)
-
     // We assume reservations are 50/50 tops/bottoms, ergo the 1.5.
     const numStylesForCompetingUsers = 1.5 * competingUsers.length
     const numTrueAvailableStyles =
@@ -201,8 +191,7 @@ export class AdmissionsService {
     return Math.max(0, numTrueAvailableStyles)
   }
 
-  // TODO: Test this logic
-  private async pausedUsersResumingThisWeek() {
+  private async pausedCustomersResumingThisWeek() {
     const pausedCustomers = await this.prisma.binding.query.customers(
       {
         where: { status: "Paused" },

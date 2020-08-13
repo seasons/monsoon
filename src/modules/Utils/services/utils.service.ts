@@ -65,8 +65,10 @@ export class UtilsService {
   // pass in an ISO datestring
   isLessThanXDaysFromNow(dateString: string, x: number) {
     var date = moment(dateString)
-    const sevenDaysFromNow = moment().add(x, "days")
-    return date.isSameOrBefore(sevenDaysFromNow)
+    return (
+      date.isSameOrBefore(moment().add(x, "days")) &&
+      date.isSameOrAfter(moment())
+    )
   }
 
   isSameDay(first: Date, second: Date) {
