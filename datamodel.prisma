@@ -558,14 +558,20 @@ enum PushNotificationStatus {
   Denied
 }
 
+enum FitPicStatus {
+  Submitted
+  Published
+  Unpublished
+}
+
 type FitPic {
   id: ID! @id
-  user: User! @relation(name: "UserToFitPic")
   image: Image!
   location: Location
   products: [Product!] @scalarList(strategy: RELATION)
-  reports: [FitPicReport!]! @relation(name: "FitPicToFitPicReport")
-  approved: Boolean! @default(value: false)
+  reports: [FitPicReport!]! @relation(name: "FitPicToFitPicReport", onDelete: CASCADE)
+  status: FitPicStatus! @default(value: Submitted)
+  user: User! @relation(name: "UserToFitPic")
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }

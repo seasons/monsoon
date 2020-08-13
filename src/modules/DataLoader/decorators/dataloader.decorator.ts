@@ -48,7 +48,7 @@ export const Loader: (
 )
 
 const createKey = (type, operationName, variables, params) => {
-  let name = `${type}-${
+  const name = `${type}-${
     params ? params.query : ""
   }-${operationName}-${qs.stringify(variables)}`
 

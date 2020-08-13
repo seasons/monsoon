@@ -39,21 +39,12 @@ type FitPic {
   location: Location
   products: [Product!]
   reports: [FitPicReport!]! @hasRole(roles: [Admin])
-  approved: Boolean! @hasRole(roles: [Admin])
+  status: FitPicStatus! @hasRole(roles: [Admin])
   createdAt: DateTime!
   updatedAt: DateTime!
 }
 
-enum FitPicAdminFilter {
-  Live
-  Submitted
-  Reported
-  Unapproved
-}
-
 input FitPicWhereInput {
-  adminFilter: FitPicAdminFilter
-
   """
   Logical AND on all given filters.
   """
@@ -134,12 +125,22 @@ input FitPicWhereInput {
   All values not ending with the given string.
   """
   id_not_ends_with: ID
-  approved: Boolean
+  status: FitPicStatus
 
   """
   All values that are not equal to given value.
   """
-  approved_not: Boolean
+  status_not: FitPicStatus
+
+  """
+  All values that are contained in given list.
+  """
+  status_in: [FitPicStatus!]
+
+  """
+  All values that are not contained in given list.
+  """
+  status_not_in: [FitPicStatus!]
   createdAt: DateTime
 
   """
@@ -212,7 +213,6 @@ input FitPicWhereInput {
   All values greater than or equal the given value.
   """
   updatedAt_gte: DateTime
-  user: UserWhereInput
   image: ImageWhereInput
   location: LocationWhereInput
   products_every: ProductWhereInput
@@ -221,4 +221,5 @@ input FitPicWhereInput {
   reports_every: FitPicReportWhereInput
   reports_some: FitPicReportWhereInput
   reports_none: FitPicReportWhereInput
+  user: UserWhereInput
 }

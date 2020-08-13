@@ -28,8 +28,10 @@ export class FitPicMutationsResolver {
   }
 
   @Mutation()
-  async deleteFitPic(@Args() args) {
-    return this.fitPic.deleteFitPic(args)
+  async deleteFitPic(@Args() { id }: { id: string }) {
+    await this.prisma.client.deleteFitPic({ id })
+    // delete image from s3?
+    return true
   }
 
   @Mutation()

@@ -1,71 +1,11 @@
 import { User } from "@app/decorators"
+import { UserRole } from "@app/prisma"
 import { PrismaService } from "@app/prisma/prisma.service"
-import { AuthUtilsService } from "@modules/User/services/auth.utils.service"
 import { Args, Info, Query, Resolver } from "@nestjs/graphql"
-import { omit } from "lodash"
 
 @Resolver()
 export class FitPicQueriesResolver {
-  constructor(
-    private readonly authUtils: AuthUtilsService,
-    private readonly prisma: PrismaService
-  ) {}
-
-  private async sanitized({
-    args,
-    forUser,
-  }: {
-    args: any
-    forUser?: { id: string }
-  }) {
-    const adminOnlyFields = [
-      "adminFilter",
-      "approved",
-      "approved_not",
-      "reports",
-      "reports_every",
-      "reports_some",
-      "reports_none",
-    ]
-
-    if (await this.authUtils.isAdmin(forUser)) {
-      if (args?.where?.adminFilter) {
-        let filter = {}
-        switch (args.where.adminFilter) {
-          case "Live":
-            filter = { approved: true }
-            break
-          case "Submitted":
-            filter = { reports_none: {}, approved: false }
-            break
-          case "Reported":
-            filter = { reports_some: { status: "Pending" } }
-            break
-          case "Unapproved":
-            filter = { reports_some: {}, approved: false }
-            break
-        }
-        return {
-          ...args,
-          where: omit({ ...args?.where, ...filter }, "adminFilter"),
-        }
-      }
-      return args
-    } else {
-      if (adminOnlyFields.some(field => args?.where?.[field] !== undefined)) {
-        throw new Error(
-          "The query's where parameter included a field reserved for Admins only."
-        )
-      }
-      return {
-        ...args,
-        where: {
-          ...args?.where,
-          approved: true,
-        },
-      }
-    }
-  }
+  constructor(private readonly prisma: PrismaService) {}
 
   @Query()
   async fitPic(@Args() args, @Info() info) {
@@ -86,5 +26,46 @@ export class FitPicQueriesResolver {
       await this.sanitized({ args, forUser: user }),
       info
     )
+  }
+
+  private async sanitized({
+    args,
+    forUser,
+  }: {
+    args: any
+    forUser?: { roles: UserRole[] }
+  }) {
+    const adminOnlyFields = [
+      "status",
+      "status_not",
+      "status_in",
+      "status_not_in",
+      "reports",
+      "reports_every",
+      "reports_some",
+      "reports_none",
+    ]
+
+    if (forUser?.roles?.includes("Admin")) {
+      return args
+    } else {
+      const adminOnlyFieldsUsed = adminOnlyFields.filter(
+        field => args?.where?.[field] !== undefined
+      )
+      if (adminOnlyFieldsUsed.length > 0) {
+        throw new Error(
+          `The query's where parameter included one or more fields reserved for Admins only: ${adminOnlyFieldsUsed.join(
+            ", "
+          )}.`
+        )
+      }
+      return {
+        ...args,
+        where: {
+          ...args?.where,
+          status: "Published",
+        },
+      }
+    }
   }
 }

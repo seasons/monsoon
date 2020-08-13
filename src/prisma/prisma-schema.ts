@@ -3491,12 +3491,12 @@ input EmailReceiptWhereUniqueInput {
 
 type FitPic {
   id: ID!
-  user: User!
   image: Image!
   location: Location
   products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
   reports(where: FitPicReportWhereInput, orderBy: FitPicReportOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [FitPicReport!]
-  approved: Boolean!
+  status: FitPicStatus!
+  user: User!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -3509,12 +3509,12 @@ type FitPicConnection {
 
 input FitPicCreateInput {
   id: ID
-  user: UserCreateOneWithoutFitPicsInput!
   image: ImageCreateOneInput!
   location: LocationCreateOneInput
   products: ProductCreateManyInput
   reports: FitPicReportCreateManyWithoutReportedInput
-  approved: Boolean
+  status: FitPicStatus
+  user: UserCreateOneWithoutFitPicsInput!
 }
 
 input FitPicCreateManyWithoutUserInput {
@@ -3529,11 +3529,11 @@ input FitPicCreateOneWithoutReportsInput {
 
 input FitPicCreateWithoutReportsInput {
   id: ID
-  user: UserCreateOneWithoutFitPicsInput!
   image: ImageCreateOneInput!
   location: LocationCreateOneInput
   products: ProductCreateManyInput
-  approved: Boolean
+  status: FitPicStatus
+  user: UserCreateOneWithoutFitPicsInput!
 }
 
 input FitPicCreateWithoutUserInput {
@@ -3542,7 +3542,7 @@ input FitPicCreateWithoutUserInput {
   location: LocationCreateOneInput
   products: ProductCreateManyInput
   reports: FitPicReportCreateManyWithoutReportedInput
-  approved: Boolean
+  status: FitPicStatus
 }
 
 type FitPicEdge {
@@ -3553,8 +3553,8 @@ type FitPicEdge {
 enum FitPicOrderByInput {
   id_ASC
   id_DESC
-  approved_ASC
-  approved_DESC
+  status_ASC
+  status_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -3563,7 +3563,7 @@ enum FitPicOrderByInput {
 
 type FitPicPreviousValues {
   id: ID!
-  approved: Boolean!
+  status: FitPicStatus!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -3795,8 +3795,10 @@ input FitPicScalarWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
-  approved: Boolean
-  approved_not: Boolean
+  status: FitPicStatus
+  status_not: FitPicStatus
+  status_in: [FitPicStatus!]
+  status_not_in: [FitPicStatus!]
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -3818,6 +3820,12 @@ input FitPicScalarWhereInput {
   NOT: [FitPicScalarWhereInput!]
 }
 
+enum FitPicStatus {
+  Submitted
+  Published
+  Unpublished
+}
+
 type FitPicSubscriptionPayload {
   mutation: MutationType!
   node: FitPic
@@ -3837,20 +3845,20 @@ input FitPicSubscriptionWhereInput {
 }
 
 input FitPicUpdateInput {
-  user: UserUpdateOneRequiredWithoutFitPicsInput
   image: ImageUpdateOneRequiredInput
   location: LocationUpdateOneInput
   products: ProductUpdateManyInput
   reports: FitPicReportUpdateManyWithoutReportedInput
-  approved: Boolean
+  status: FitPicStatus
+  user: UserUpdateOneRequiredWithoutFitPicsInput
 }
 
 input FitPicUpdateManyDataInput {
-  approved: Boolean
+  status: FitPicStatus
 }
 
 input FitPicUpdateManyMutationInput {
-  approved: Boolean
+  status: FitPicStatus
 }
 
 input FitPicUpdateManyWithoutUserInput {
@@ -3878,11 +3886,11 @@ input FitPicUpdateOneRequiredWithoutReportsInput {
 }
 
 input FitPicUpdateWithoutReportsDataInput {
-  user: UserUpdateOneRequiredWithoutFitPicsInput
   image: ImageUpdateOneRequiredInput
   location: LocationUpdateOneInput
   products: ProductUpdateManyInput
-  approved: Boolean
+  status: FitPicStatus
+  user: UserUpdateOneRequiredWithoutFitPicsInput
 }
 
 input FitPicUpdateWithoutUserDataInput {
@@ -3890,7 +3898,7 @@ input FitPicUpdateWithoutUserDataInput {
   location: LocationUpdateOneInput
   products: ProductUpdateManyInput
   reports: FitPicReportUpdateManyWithoutReportedInput
-  approved: Boolean
+  status: FitPicStatus
 }
 
 input FitPicUpdateWithWhereUniqueWithoutUserInput {
@@ -3924,7 +3932,6 @@ input FitPicWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
-  user: UserWhereInput
   image: ImageWhereInput
   location: LocationWhereInput
   products_every: ProductWhereInput
@@ -3933,8 +3940,11 @@ input FitPicWhereInput {
   reports_every: FitPicReportWhereInput
   reports_some: FitPicReportWhereInput
   reports_none: FitPicReportWhereInput
-  approved: Boolean
-  approved_not: Boolean
+  status: FitPicStatus
+  status_not: FitPicStatus
+  status_in: [FitPicStatus!]
+  status_not_in: [FitPicStatus!]
+  user: UserWhereInput
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]

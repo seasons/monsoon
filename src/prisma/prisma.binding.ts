@@ -6587,12 +6587,12 @@ input EmailReceiptWhereUniqueInput {
 
 type FitPic implements Node {
   id: ID!
-  user: User!
   image: Image!
   location: Location
   products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
   reports(where: FitPicReportWhereInput, orderBy: FitPicReportOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [FitPicReport!]
-  approved: Boolean!
+  status: FitPicStatus!
+  user: User!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -6609,12 +6609,12 @@ type FitPicConnection {
 
 input FitPicCreateInput {
   id: ID
-  approved: Boolean
-  user: UserCreateOneWithoutFitPicsInput!
+  status: FitPicStatus
   image: ImageCreateOneInput!
   location: LocationCreateOneInput
   products: ProductCreateManyInput
   reports: FitPicReportCreateManyWithoutReportedInput
+  user: UserCreateOneWithoutFitPicsInput!
 }
 
 input FitPicCreateManyWithoutUserInput {
@@ -6629,16 +6629,16 @@ input FitPicCreateOneWithoutReportsInput {
 
 input FitPicCreateWithoutReportsInput {
   id: ID
-  approved: Boolean
-  user: UserCreateOneWithoutFitPicsInput!
+  status: FitPicStatus
   image: ImageCreateOneInput!
   location: LocationCreateOneInput
   products: ProductCreateManyInput
+  user: UserCreateOneWithoutFitPicsInput!
 }
 
 input FitPicCreateWithoutUserInput {
   id: ID
-  approved: Boolean
+  status: FitPicStatus
   image: ImageCreateOneInput!
   location: LocationCreateOneInput
   products: ProductCreateManyInput
@@ -6657,8 +6657,8 @@ type FitPicEdge {
 enum FitPicOrderByInput {
   id_ASC
   id_DESC
-  approved_ASC
-  approved_DESC
+  status_ASC
+  status_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -6667,7 +6667,7 @@ enum FitPicOrderByInput {
 
 type FitPicPreviousValues {
   id: ID!
-  approved: Boolean!
+  status: FitPicStatus!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -7090,10 +7090,16 @@ input FitPicScalarWhereInput {
 
   """All values not ending with the given string."""
   id_not_ends_with: ID
-  approved: Boolean
+  status: FitPicStatus
 
   """All values that are not equal to given value."""
-  approved_not: Boolean
+  status_not: FitPicStatus
+
+  """All values that are contained in given list."""
+  status_in: [FitPicStatus!]
+
+  """All values that are not contained in given list."""
+  status_not_in: [FitPicStatus!]
   createdAt: DateTime
 
   """All values that are not equal to given value."""
@@ -7140,6 +7146,12 @@ input FitPicScalarWhereInput {
   updatedAt_gte: DateTime
 }
 
+enum FitPicStatus {
+  Submitted
+  Published
+  Unpublished
+}
+
 type FitPicSubscriptionPayload {
   mutation: MutationType!
   node: FitPic
@@ -7178,20 +7190,20 @@ input FitPicSubscriptionWhereInput {
 }
 
 input FitPicUpdateInput {
-  approved: Boolean
-  user: UserUpdateOneRequiredWithoutFitPicsInput
+  status: FitPicStatus
   image: ImageUpdateOneRequiredInput
   location: LocationUpdateOneInput
   products: ProductUpdateManyInput
   reports: FitPicReportUpdateManyWithoutReportedInput
+  user: UserUpdateOneRequiredWithoutFitPicsInput
 }
 
 input FitPicUpdateManyDataInput {
-  approved: Boolean
+  status: FitPicStatus
 }
 
 input FitPicUpdateManyMutationInput {
-  approved: Boolean
+  status: FitPicStatus
 }
 
 input FitPicUpdateManyWithoutUserInput {
@@ -7219,15 +7231,15 @@ input FitPicUpdateOneRequiredWithoutReportsInput {
 }
 
 input FitPicUpdateWithoutReportsDataInput {
-  approved: Boolean
-  user: UserUpdateOneRequiredWithoutFitPicsInput
+  status: FitPicStatus
   image: ImageUpdateOneRequiredInput
   location: LocationUpdateOneInput
   products: ProductUpdateManyInput
+  user: UserUpdateOneRequiredWithoutFitPicsInput
 }
 
 input FitPicUpdateWithoutUserDataInput {
-  approved: Boolean
+  status: FitPicStatus
   image: ImageUpdateOneRequiredInput
   location: LocationUpdateOneInput
   products: ProductUpdateManyInput
@@ -7299,10 +7311,16 @@ input FitPicWhereInput {
 
   """All values not ending with the given string."""
   id_not_ends_with: ID
-  approved: Boolean
+  status: FitPicStatus
 
   """All values that are not equal to given value."""
-  approved_not: Boolean
+  status_not: FitPicStatus
+
+  """All values that are contained in given list."""
+  status_in: [FitPicStatus!]
+
+  """All values that are not contained in given list."""
+  status_not_in: [FitPicStatus!]
   createdAt: DateTime
 
   """All values that are not equal to given value."""
@@ -7347,7 +7365,6 @@ input FitPicWhereInput {
 
   """All values greater than or equal the given value."""
   updatedAt_gte: DateTime
-  user: UserWhereInput
   image: ImageWhereInput
   location: LocationWhereInput
   products_every: ProductWhereInput
@@ -7356,6 +7373,7 @@ input FitPicWhereInput {
   reports_every: FitPicReportWhereInput
   reports_some: FitPicReportWhereInput
   reports_none: FitPicReportWhereInput
+  user: UserWhereInput
 }
 
 input FitPicWhereUniqueInput {
@@ -26587,8 +26605,8 @@ export type EmailReceiptOrderByInput =   'id_ASC' |
 
 export type FitPicOrderByInput =   'id_ASC' |
   'id_DESC' |
-  'approved_ASC' |
-  'approved_DESC' |
+  'status_ASC' |
+  'status_DESC' |
   'createdAt_ASC' |
   'createdAt_DESC' |
   'updatedAt_ASC' |
@@ -26605,6 +26623,10 @@ export type FitPicReportOrderByInput =   'id_ASC' |
 
 export type FitPicReportStatus =   'Pending' |
   'Reviewed'
+
+export type FitPicStatus =   'Submitted' |
+  'Published' |
+  'Unpublished'
 
 export type HomepageProductRailOrderByInput =   'id_ASC' |
   'id_DESC' |
@@ -29749,12 +29771,12 @@ export interface EmailReceiptWhereUniqueInput {
 
 export interface FitPicCreateInput {
   id?: ID_Input | null
-  approved?: Boolean | null
-  user: UserCreateOneWithoutFitPicsInput
+  status?: FitPicStatus | null
   image: ImageCreateOneInput
   location?: LocationCreateOneInput | null
   products?: ProductCreateManyInput | null
   reports?: FitPicReportCreateManyWithoutReportedInput | null
+  user: UserCreateOneWithoutFitPicsInput
 }
 
 export interface FitPicCreateManyWithoutUserInput {
@@ -29769,16 +29791,16 @@ export interface FitPicCreateOneWithoutReportsInput {
 
 export interface FitPicCreateWithoutReportsInput {
   id?: ID_Input | null
-  approved?: Boolean | null
-  user: UserCreateOneWithoutFitPicsInput
+  status?: FitPicStatus | null
   image: ImageCreateOneInput
   location?: LocationCreateOneInput | null
   products?: ProductCreateManyInput | null
+  user: UserCreateOneWithoutFitPicsInput
 }
 
 export interface FitPicCreateWithoutUserInput {
   id?: ID_Input | null
-  approved?: Boolean | null
+  status?: FitPicStatus | null
   image: ImageCreateOneInput
   location?: LocationCreateOneInput | null
   products?: ProductCreateManyInput | null
@@ -29965,8 +29987,10 @@ export interface FitPicScalarWhereInput {
   id_not_starts_with?: ID_Input | null
   id_ends_with?: ID_Input | null
   id_not_ends_with?: ID_Input | null
-  approved?: Boolean | null
-  approved_not?: Boolean | null
+  status?: FitPicStatus | null
+  status_not?: FitPicStatus | null
+  status_in?: FitPicStatus[] | FitPicStatus | null
+  status_not_in?: FitPicStatus[] | FitPicStatus | null
   createdAt?: DateTime | null
   createdAt_not?: DateTime | null
   createdAt_in?: DateTime[] | DateTime | null
@@ -29997,20 +30021,20 @@ export interface FitPicSubscriptionWhereInput {
 }
 
 export interface FitPicUpdateInput {
-  approved?: Boolean | null
-  user?: UserUpdateOneRequiredWithoutFitPicsInput | null
+  status?: FitPicStatus | null
   image?: ImageUpdateOneRequiredInput | null
   location?: LocationUpdateOneInput | null
   products?: ProductUpdateManyInput | null
   reports?: FitPicReportUpdateManyWithoutReportedInput | null
+  user?: UserUpdateOneRequiredWithoutFitPicsInput | null
 }
 
 export interface FitPicUpdateManyDataInput {
-  approved?: Boolean | null
+  status?: FitPicStatus | null
 }
 
 export interface FitPicUpdateManyMutationInput {
-  approved?: Boolean | null
+  status?: FitPicStatus | null
 }
 
 export interface FitPicUpdateManyWithoutUserInput {
@@ -30038,15 +30062,15 @@ export interface FitPicUpdateOneRequiredWithoutReportsInput {
 }
 
 export interface FitPicUpdateWithoutReportsDataInput {
-  approved?: Boolean | null
-  user?: UserUpdateOneRequiredWithoutFitPicsInput | null
+  status?: FitPicStatus | null
   image?: ImageUpdateOneRequiredInput | null
   location?: LocationUpdateOneInput | null
   products?: ProductUpdateManyInput | null
+  user?: UserUpdateOneRequiredWithoutFitPicsInput | null
 }
 
 export interface FitPicUpdateWithoutUserDataInput {
-  approved?: Boolean | null
+  status?: FitPicStatus | null
   image?: ImageUpdateOneRequiredInput | null
   location?: LocationUpdateOneInput | null
   products?: ProductUpdateManyInput | null
@@ -30087,8 +30111,10 @@ export interface FitPicWhereInput {
   id_not_starts_with?: ID_Input | null
   id_ends_with?: ID_Input | null
   id_not_ends_with?: ID_Input | null
-  approved?: Boolean | null
-  approved_not?: Boolean | null
+  status?: FitPicStatus | null
+  status_not?: FitPicStatus | null
+  status_in?: FitPicStatus[] | FitPicStatus | null
+  status_not_in?: FitPicStatus[] | FitPicStatus | null
   createdAt?: DateTime | null
   createdAt_not?: DateTime | null
   createdAt_in?: DateTime[] | DateTime | null
@@ -30105,7 +30131,6 @@ export interface FitPicWhereInput {
   updatedAt_lte?: DateTime | null
   updatedAt_gt?: DateTime | null
   updatedAt_gte?: DateTime | null
-  user?: UserWhereInput | null
   image?: ImageWhereInput | null
   location?: LocationWhereInput | null
   products_every?: ProductWhereInput | null
@@ -30114,6 +30139,7 @@ export interface FitPicWhereInput {
   reports_every?: FitPicReportWhereInput | null
   reports_some?: FitPicReportWhereInput | null
   reports_none?: FitPicReportWhereInput | null
+  user?: UserWhereInput | null
 }
 
 export interface FitPicWhereUniqueInput {
@@ -39460,12 +39486,12 @@ export interface EmailReceiptSubscriptionPayload {
 
 export interface FitPic extends Node {
   id: ID_Output
-  user: User
   image: Image
   location?: Location | null
   products?: Array<Product> | null
   reports?: Array<FitPicReport> | null
-  approved: Boolean
+  status: FitPicStatus
+  user: User
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -39491,7 +39517,7 @@ export interface FitPicEdge {
 
 export interface FitPicPreviousValues {
   id: ID_Output
-  approved: Boolean
+  status: FitPicStatus
   createdAt: DateTime
   updatedAt: DateTime
 }

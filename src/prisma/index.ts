@@ -2368,6 +2368,8 @@ export type WarehouseLocationType = "Conveyor" | "Rail" | "Bin";
 
 export type FitPicReportStatus = "Pending" | "Reviewed";
 
+export type FitPicStatus = "Submitted" | "Published" | "Unpublished";
+
 export type PushNotificationReceiptOrderByInput =
   | "id_ASC"
   | "id_DESC"
@@ -2445,8 +2447,8 @@ export type SmsReceiptOrderByInput =
 export type FitPicOrderByInput =
   | "id_ASC"
   | "id_DESC"
-  | "approved_ASC"
-  | "approved_DESC"
+  | "status_ASC"
+  | "status_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -3655,7 +3657,6 @@ export interface FitPicWhereInput {
   id_not_starts_with?: Maybe<ID_Input>;
   id_ends_with?: Maybe<ID_Input>;
   id_not_ends_with?: Maybe<ID_Input>;
-  user?: Maybe<UserWhereInput>;
   image?: Maybe<ImageWhereInput>;
   location?: Maybe<LocationWhereInput>;
   products_every?: Maybe<ProductWhereInput>;
@@ -3664,8 +3665,11 @@ export interface FitPicWhereInput {
   reports_every?: Maybe<FitPicReportWhereInput>;
   reports_some?: Maybe<FitPicReportWhereInput>;
   reports_none?: Maybe<FitPicReportWhereInput>;
-  approved?: Maybe<Boolean>;
-  approved_not?: Maybe<Boolean>;
+  status?: Maybe<FitPicStatus>;
+  status_not?: Maybe<FitPicStatus>;
+  status_in?: Maybe<FitPicStatus[] | FitPicStatus>;
+  status_not_in?: Maybe<FitPicStatus[] | FitPicStatus>;
+  user?: Maybe<UserWhereInput>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -7467,7 +7471,7 @@ export interface FitPicCreateWithoutUserInput {
   location?: Maybe<LocationCreateOneInput>;
   products?: Maybe<ProductCreateManyInput>;
   reports?: Maybe<FitPicReportCreateManyWithoutReportedInput>;
-  approved?: Maybe<Boolean>;
+  status?: Maybe<FitPicStatus>;
 }
 
 export interface ImageCreateOneInput {
@@ -9032,7 +9036,7 @@ export interface FitPicUpdateWithoutUserDataInput {
   location?: Maybe<LocationUpdateOneInput>;
   products?: Maybe<ProductUpdateManyInput>;
   reports?: Maybe<FitPicReportUpdateManyWithoutReportedInput>;
-  approved?: Maybe<Boolean>;
+  status?: Maybe<FitPicStatus>;
 }
 
 export interface ImageUpdateOneRequiredInput {
@@ -11335,8 +11339,10 @@ export interface FitPicScalarWhereInput {
   id_not_starts_with?: Maybe<ID_Input>;
   id_ends_with?: Maybe<ID_Input>;
   id_not_ends_with?: Maybe<ID_Input>;
-  approved?: Maybe<Boolean>;
-  approved_not?: Maybe<Boolean>;
+  status?: Maybe<FitPicStatus>;
+  status_not?: Maybe<FitPicStatus>;
+  status_in?: Maybe<FitPicStatus[] | FitPicStatus>;
+  status_not_in?: Maybe<FitPicStatus[] | FitPicStatus>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -11364,7 +11370,7 @@ export interface FitPicUpdateManyWithWhereNestedInput {
 }
 
 export interface FitPicUpdateManyDataInput {
-  approved?: Maybe<Boolean>;
+  status?: Maybe<FitPicStatus>;
 }
 
 export interface UserUpsertWithWhereUniqueWithoutPushNotificationsInput {
@@ -13010,12 +13016,12 @@ export interface EmailReceiptUpdateManyMutationInput {
 
 export interface FitPicCreateInput {
   id?: Maybe<ID_Input>;
-  user: UserCreateOneWithoutFitPicsInput;
   image: ImageCreateOneInput;
   location?: Maybe<LocationCreateOneInput>;
   products?: Maybe<ProductCreateManyInput>;
   reports?: Maybe<FitPicReportCreateManyWithoutReportedInput>;
-  approved?: Maybe<Boolean>;
+  status?: Maybe<FitPicStatus>;
+  user: UserCreateOneWithoutFitPicsInput;
 }
 
 export interface UserCreateOneWithoutFitPicsInput {
@@ -13040,12 +13046,12 @@ export interface UserCreateWithoutFitPicsInput {
 }
 
 export interface FitPicUpdateInput {
-  user?: Maybe<UserUpdateOneRequiredWithoutFitPicsInput>;
   image?: Maybe<ImageUpdateOneRequiredInput>;
   location?: Maybe<LocationUpdateOneInput>;
   products?: Maybe<ProductUpdateManyInput>;
   reports?: Maybe<FitPicReportUpdateManyWithoutReportedInput>;
-  approved?: Maybe<Boolean>;
+  status?: Maybe<FitPicStatus>;
+  user?: Maybe<UserUpdateOneRequiredWithoutFitPicsInput>;
 }
 
 export interface UserUpdateOneRequiredWithoutFitPicsInput {
@@ -13076,7 +13082,7 @@ export interface UserUpsertWithoutFitPicsInput {
 }
 
 export interface FitPicUpdateManyMutationInput {
-  approved?: Maybe<Boolean>;
+  status?: Maybe<FitPicStatus>;
 }
 
 export interface FitPicReportCreateInput {
@@ -13093,11 +13099,11 @@ export interface FitPicCreateOneWithoutReportsInput {
 
 export interface FitPicCreateWithoutReportsInput {
   id?: Maybe<ID_Input>;
-  user: UserCreateOneWithoutFitPicsInput;
   image: ImageCreateOneInput;
   location?: Maybe<LocationCreateOneInput>;
   products?: Maybe<ProductCreateManyInput>;
-  approved?: Maybe<Boolean>;
+  status?: Maybe<FitPicStatus>;
+  user: UserCreateOneWithoutFitPicsInput;
 }
 
 export interface FitPicReportUpdateInput {
@@ -13114,11 +13120,11 @@ export interface FitPicUpdateOneRequiredWithoutReportsInput {
 }
 
 export interface FitPicUpdateWithoutReportsDataInput {
-  user?: Maybe<UserUpdateOneRequiredWithoutFitPicsInput>;
   image?: Maybe<ImageUpdateOneRequiredInput>;
   location?: Maybe<LocationUpdateOneInput>;
   products?: Maybe<ProductUpdateManyInput>;
-  approved?: Maybe<Boolean>;
+  status?: Maybe<FitPicStatus>;
+  user?: Maybe<UserUpdateOneRequiredWithoutFitPicsInput>;
 }
 
 export interface FitPicUpsertWithoutReportsInput {
@@ -16556,14 +16562,13 @@ export interface SmsReceiptNullablePromise
 
 export interface FitPic {
   id: ID_Output;
-  approved: Boolean;
+  status: FitPicStatus;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
 
 export interface FitPicPromise extends Promise<FitPic>, Fragmentable {
   id: () => Promise<ID_Output>;
-  user: <T = UserPromise>() => T;
   image: <T = ImagePromise>() => T;
   location: <T = LocationPromise>() => T;
   products: <T = FragmentableArray<Product>>(args?: {
@@ -16584,7 +16589,8 @@ export interface FitPicPromise extends Promise<FitPic>, Fragmentable {
     first?: Int;
     last?: Int;
   }) => T;
-  approved: () => Promise<Boolean>;
+  status: () => Promise<FitPicStatus>;
+  user: <T = UserPromise>() => T;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -16593,7 +16599,6 @@ export interface FitPicSubscription
   extends Promise<AsyncIterator<FitPic>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
-  user: <T = UserSubscription>() => T;
   image: <T = ImageSubscription>() => T;
   location: <T = LocationSubscription>() => T;
   products: <T = Promise<AsyncIterator<ProductSubscription>>>(args?: {
@@ -16614,7 +16619,8 @@ export interface FitPicSubscription
     first?: Int;
     last?: Int;
   }) => T;
-  approved: () => Promise<AsyncIterator<Boolean>>;
+  status: () => Promise<AsyncIterator<FitPicStatus>>;
+  user: <T = UserSubscription>() => T;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -16623,7 +16629,6 @@ export interface FitPicNullablePromise
   extends Promise<FitPic | null>,
     Fragmentable {
   id: () => Promise<ID_Output>;
-  user: <T = UserPromise>() => T;
   image: <T = ImagePromise>() => T;
   location: <T = LocationPromise>() => T;
   products: <T = FragmentableArray<Product>>(args?: {
@@ -16644,7 +16649,8 @@ export interface FitPicNullablePromise
     first?: Int;
     last?: Int;
   }) => T;
-  approved: () => Promise<Boolean>;
+  status: () => Promise<FitPicStatus>;
+  user: <T = UserPromise>() => T;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -23091,7 +23097,7 @@ export interface FitPicSubscriptionPayloadSubscription
 
 export interface FitPicPreviousValues {
   id: ID_Output;
-  approved: Boolean;
+  status: FitPicStatus;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -23100,7 +23106,7 @@ export interface FitPicPreviousValuesPromise
   extends Promise<FitPicPreviousValues>,
     Fragmentable {
   id: () => Promise<ID_Output>;
-  approved: () => Promise<Boolean>;
+  status: () => Promise<FitPicStatus>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -23109,7 +23115,7 @@ export interface FitPicPreviousValuesSubscription
   extends Promise<AsyncIterator<FitPicPreviousValues>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
-  approved: () => Promise<AsyncIterator<Boolean>>;
+  status: () => Promise<AsyncIterator<FitPicStatus>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -25513,6 +25519,10 @@ export const models: Model[] = [
   },
   {
     name: "PushNotificationStatus",
+    embedded: false
+  },
+  {
+    name: "FitPicStatus",
     embedded: false
   },
   {

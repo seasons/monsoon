@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Wed Aug 12 2020 22:39:30 GMT-0700 (Pacific Daylight Time)
+# timestamp: Thu Aug 13 2020 13:12:42 GMT-0700 (Pacific Daylight Time)
 
 type AggregateBagItem {
   count: Int!
@@ -8535,7 +8535,6 @@ input EmailReceiptWhereUniqueInput {
 
 type FitPic implements Node {
   id: ID!
-  user: User!
   image: Image!
   location: Location
   products(
@@ -8556,7 +8555,8 @@ type FitPic implements Node {
     first: Int
     last: Int
   ): [FitPicReport!]
-  approved: Boolean!
+  status: FitPicStatus!
+  user: User!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -8579,12 +8579,12 @@ type FitPicConnection {
 
 input FitPicCreateInput {
   id: ID
-  approved: Boolean
-  user: UserCreateOneWithoutFitPicsInput!
+  status: FitPicStatus
   image: ImageCreateOneInput!
   location: LocationCreateOneInput
   products: ProductCreateManyInput
   reports: FitPicReportCreateManyWithoutReportedInput
+  user: UserCreateOneWithoutFitPicsInput!
 }
 
 input FitPicCreateManyWithoutUserInput {
@@ -8599,16 +8599,16 @@ input FitPicCreateOneWithoutReportsInput {
 
 input FitPicCreateWithoutReportsInput {
   id: ID
-  approved: Boolean
-  user: UserCreateOneWithoutFitPicsInput!
+  status: FitPicStatus
   image: ImageCreateOneInput!
   location: LocationCreateOneInput
   products: ProductCreateManyInput
+  user: UserCreateOneWithoutFitPicsInput!
 }
 
 input FitPicCreateWithoutUserInput {
   id: ID
-  approved: Boolean
+  status: FitPicStatus
   image: ImageCreateOneInput!
   location: LocationCreateOneInput
   products: ProductCreateManyInput
@@ -8633,8 +8633,8 @@ type FitPicEdge {
 enum FitPicOrderByInput {
   id_ASC
   id_DESC
-  approved_ASC
-  approved_DESC
+  status_ASC
+  status_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -8643,7 +8643,7 @@ enum FitPicOrderByInput {
 
 type FitPicPreviousValues {
   id: ID!
-  approved: Boolean!
+  status: FitPicStatus!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -9250,12 +9250,22 @@ input FitPicScalarWhereInput {
   All values not ending with the given string.
   """
   id_not_ends_with: ID
-  approved: Boolean
+  status: FitPicStatus
 
   """
   All values that are not equal to given value.
   """
-  approved_not: Boolean
+  status_not: FitPicStatus
+
+  """
+  All values that are contained in given list.
+  """
+  status_in: [FitPicStatus!]
+
+  """
+  All values that are not contained in given list.
+  """
+  status_not_in: [FitPicStatus!]
   createdAt: DateTime
 
   """
@@ -9330,6 +9340,12 @@ input FitPicScalarWhereInput {
   updatedAt_gte: DateTime
 }
 
+enum FitPicStatus {
+  Submitted
+  Published
+  Unpublished
+}
+
 type FitPicSubscriptionPayload {
   mutation: MutationType!
   node: FitPic
@@ -9376,20 +9392,20 @@ input FitPicSubscriptionWhereInput {
 }
 
 input FitPicUpdateInput {
-  approved: Boolean
-  user: UserUpdateOneRequiredWithoutFitPicsInput
+  status: FitPicStatus
   image: ImageUpdateOneRequiredInput
   location: LocationUpdateOneInput
   products: ProductUpdateManyInput
   reports: FitPicReportUpdateManyWithoutReportedInput
+  user: UserUpdateOneRequiredWithoutFitPicsInput
 }
 
 input FitPicUpdateManyDataInput {
-  approved: Boolean
+  status: FitPicStatus
 }
 
 input FitPicUpdateManyMutationInput {
-  approved: Boolean
+  status: FitPicStatus
 }
 
 input FitPicUpdateManyWithoutUserInput {
@@ -9417,15 +9433,15 @@ input FitPicUpdateOneRequiredWithoutReportsInput {
 }
 
 input FitPicUpdateWithoutReportsDataInput {
-  approved: Boolean
-  user: UserUpdateOneRequiredWithoutFitPicsInput
+  status: FitPicStatus
   image: ImageUpdateOneRequiredInput
   location: LocationUpdateOneInput
   products: ProductUpdateManyInput
+  user: UserUpdateOneRequiredWithoutFitPicsInput
 }
 
 input FitPicUpdateWithoutUserDataInput {
-  approved: Boolean
+  status: FitPicStatus
   image: ImageUpdateOneRequiredInput
   location: LocationUpdateOneInput
   products: ProductUpdateManyInput
@@ -9529,12 +9545,22 @@ input FitPicWhereInput {
   All values not ending with the given string.
   """
   id_not_ends_with: ID
-  approved: Boolean
+  status: FitPicStatus
 
   """
   All values that are not equal to given value.
   """
-  approved_not: Boolean
+  status_not: FitPicStatus
+
+  """
+  All values that are contained in given list.
+  """
+  status_in: [FitPicStatus!]
+
+  """
+  All values that are not contained in given list.
+  """
+  status_not_in: [FitPicStatus!]
   createdAt: DateTime
 
   """
@@ -9607,7 +9633,6 @@ input FitPicWhereInput {
   All values greater than or equal the given value.
   """
   updatedAt_gte: DateTime
-  user: UserWhereInput
   image: ImageWhereInput
   location: LocationWhereInput
   products_every: ProductWhereInput
@@ -9616,6 +9641,7 @@ input FitPicWhereInput {
   reports_every: FitPicReportWhereInput
   reports_some: FitPicReportWhereInput
   reports_none: FitPicReportWhereInput
+  user: UserWhereInput
 }
 
 input FitPicWhereUniqueInput {

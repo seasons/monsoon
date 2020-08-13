@@ -14,7 +14,6 @@ import { UserMutationsResolver } from "./mutations/user.mutations"
 import { MeQueriesResolver } from "./queries/me.queries"
 import { UserQueriesResolver } from "./queries/user.queries.resolver"
 import { AuthService } from "./services/auth.service"
-import { AuthUtilsService } from "./services/auth.utils.service"
 import { CustomerService } from "./services/customer.service"
 
 @Module({
@@ -29,7 +28,6 @@ import { CustomerService } from "./services/customer.service"
   ],
   providers: [
     AuthService,
-    AuthUtilsService,
     CustomerService,
     MeFieldsResolver,
     MeQueriesResolver,
@@ -39,6 +37,6 @@ import { CustomerService } from "./services/customer.service"
     UserQueriesResolver,
     UserFieldsResolver,
   ],
-  exports: [AuthService, AuthUtilsService, CustomerService],
+  exports: [AuthService, CustomerService],
 })
 export class UserModule {}
