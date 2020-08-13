@@ -1,5 +1,6 @@
 import {
   CustomerDetailCreateInput,
+  CustomerMembershipCreateOneWithoutCustomerInput,
   InventoryStatus,
   PhysicalProductStatus,
   ProductCreateInput,
@@ -139,9 +140,20 @@ export class TestUtilsService {
         }
       : {}
 
+    let membership
+    if (!!input.membership) {
+      membership = {
+        create: {
+          subscriptionId: this.utils.randomString(),
+          pauseRequests: { create: input.membership.pauseRequests },
+        },
+      }
+    }
+
     const customer = await this.prisma.binding.mutation.createCustomer(
       {
         data: {
+          status: input.status || "Active",
           user: {
             create: {
               auth0Id: this.utils.randomString(),
@@ -151,6 +163,7 @@ export class TestUtilsService {
             },
           },
           detail,
+          membership,
         },
       },
       info

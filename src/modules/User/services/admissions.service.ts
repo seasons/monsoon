@@ -100,10 +100,17 @@ export class AdmissionsService {
   async reservableInventoryForCustomer(
     where: CustomerWhereUniqueInput
   ): Promise<number> {
-    return (
-      (await this.availableStylesForCustomer(where, "Top")) +
-      (await this.availableStylesForCustomer(where, "Bottom"))
+    const availableTopStyles = await this.availableStylesForCustomer(
+      where,
+      "Top"
     )
+    const availableBottomStyles = await this.availableStylesForCustomer(
+      where,
+      "Bottom"
+    )
+    // console.log(`available top styles: ${availableTopStyles}`)
+    // console.log(`available bottom styles: ${availableBottomStyles}`)
+    return availableTopStyles + availableBottomStyles
   }
 
   private async availableStylesForCustomer(
@@ -172,15 +179,25 @@ export class AdmissionsService {
       ...(await this.pausedUsersResumingThisWeek()),
       ...(await this.activeCustomersWithoutActiveReservation()),
     ]
-    const competingUsers = potentiallyCompetingUsers.filter(
-      a => !!intersection(a.detail[sizesKey], preferredSizes)
+    const competingUsers = potentiallyCompetingUsers.filter(a => {
+      if (a.id === customer.id) {
+        return false
+      }
+      return !!intersection(a.detail[sizesKey], preferredSizes)
+    })
+
+    console.log(
+      `potentially competing users: ${potentiallyCompetingUsers.length}`
     )
+    console.log(`num competing user: ${competingUsers.length}`)
+    // console.log(`competing users: ${potentiallyCompetingUsers.map(a => a.id)}`)
 
     // We assume reservations are 50/50 tops/bottoms, ergo the 1.5.
-    const trueAvailableStyles =
-      availableStyles.length - 1.5 * competingUsers.length
+    const numStylesForCompetingUsers = 1.5 * competingUsers.length
+    const numTrueAvailableStyles =
+      availableStyles.length - numStylesForCompetingUsers
 
-    return trueAvailableStyles
+    return numTrueAvailableStyles
   }
 
   // TODO: Test this logic

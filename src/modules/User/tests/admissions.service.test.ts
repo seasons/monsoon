@@ -18,206 +18,207 @@ describe("Admissions Service", () => {
   beforeAll(async () => {
     admissions = await createTestAdmissionsService(null)
 
-    expectAdmit = (zipcode: string) =>
-      expect(admissions.weServiceZipcode(zipcode)).toBe(true)
-    expectNotAdmit = (zipcode: string) =>
-      expect(admissions.weServiceZipcode(zipcode)).toBe(false)
+    // expectAdmit = (zipcode: string) =>
+    //   expect(admissions.weServiceZipcode(zipcode)).toBe(true)
+    // expectNotAdmit = (zipcode: string) =>
+    //   expect(admissions.weServiceZipcode(zipcode)).toBe(false)
   })
 
-  describe("Serviceable Zipcodes", () => {
-    it("admits New York", () => expectAdmit("11432"))
+  // describe("Serviceable Zipcodes", () => {
+  //   it("admits New York", () => expectAdmit("11432"))
 
-    it("admits Pennsylvania", () => expectAdmit("15001"))
+  //   it("admits Pennsylvania", () => expectAdmit("15001"))
 
-    it("admits New Jersey", () => expectAdmit("07001"))
+  //   it("admits New Jersey", () => expectAdmit("07001"))
 
-    it("admits Delaware", () => expectAdmit("19701"))
+  //   it("admits Delaware", () => expectAdmit("19701"))
 
-    it("admits Maryland", () => expectAdmit("20588"))
+  //   it("admits Maryland", () => expectAdmit("20588"))
 
-    it("admits Massachusetts", () => expectAdmit("01001"))
+  //   it("admits Massachusetts", () => expectAdmit("01001"))
 
-    it("admits New Hampshire", () => expectAdmit("03031"))
+  //   it("admits New Hampshire", () => expectAdmit("03031"))
 
-    it("admits Vermont", () => expectAdmit("05001"))
+  //   it("admits Vermont", () => expectAdmit("05001"))
 
-    it("admits Washington D.C.", () => expectAdmit("20011"))
+  //   it("admits Washington D.C.", () => expectAdmit("20011"))
 
-    it("admits Maine", () => expectAdmit("03901"))
+  //   it("admits Maine", () => expectAdmit("03901"))
 
-    it("admits Virginia", () => expectAdmit("20101"))
+  //   it("admits Virginia", () => expectAdmit("20101"))
 
-    it("admits Ohio", () => expectAdmit("43001"))
+  //   it("admits Ohio", () => expectAdmit("43001"))
 
-    it("admits West Virginia", () => expectAdmit("24701"))
+  //   it("admits West Virginia", () => expectAdmit("24701"))
 
-    it("admits Michigan", () => expectAdmit("49036"))
+  //   it("admits Michigan", () => expectAdmit("49036"))
 
-    it("admits North Carolina", () => expectAdmit("27565"))
+  //   it("admits North Carolina", () => expectAdmit("27565"))
 
-    it("admits Connecticut", () => expectAdmit("06101"))
+  //   it("admits Connecticut", () => expectAdmit("06101"))
 
-    it("admits Rhode Island", () => expectAdmit("02840"))
+  //   it("admits Rhode Island", () => expectAdmit("02840"))
 
-    it("admits Indiana", () => expectAdmit("46201"))
+  //   it("admits Indiana", () => expectAdmit("46201"))
 
-    it("admits Kentucky", () => expectAdmit("41701"))
+  //   it("admits Kentucky", () => expectAdmit("41701"))
 
-    it("admits Tennessee", () => expectAdmit("37201"))
+  //   it("admits Tennessee", () => expectAdmit("37201"))
 
-    it("admits South Carolina", () => expectAdmit("29020"))
+  //   it("admits South Carolina", () => expectAdmit("29020"))
 
-    it("admits Georgia", () => expectAdmit("30301"))
+  //   it("admits Georgia", () => expectAdmit("30301"))
 
-    it("admits Illinois", () => expectAdmit("60601"))
+  //   it("admits Illinois", () => expectAdmit("60601"))
 
-    it("does not admit Alabama", () => expectNotAdmit("35004"))
+  //   it("does not admit Alabama", () => expectNotAdmit("35004"))
 
-    it("does not admit Alaska", () => expectNotAdmit("99501"))
+  //   it("does not admit Alaska", () => expectNotAdmit("99501"))
 
-    it("does not admit Arizona", () => expectNotAdmit("85001"))
+  //   it("does not admit Arizona", () => expectNotAdmit("85001"))
 
-    it("does not admit Arkansas", () => expectNotAdmit("72201"))
+  //   it("does not admit Arkansas", () => expectNotAdmit("72201"))
 
-    it("does not admit California", () => expectNotAdmit("90001"))
+  //   it("does not admit California", () => expectNotAdmit("90001"))
 
-    it("does not admit Colorado", () => expectNotAdmit("80201"))
+  //   it("does not admit Colorado", () => expectNotAdmit("80201"))
 
-    it("does not admit Florida", () => expectNotAdmit("33124"))
+  //   it("does not admit Florida", () => expectNotAdmit("33124"))
 
-    it("does not admit Hawaii", () => expectNotAdmit("96801"))
+  //   it("does not admit Hawaii", () => expectNotAdmit("96801"))
 
-    it("does not admit Idaho", () => expectNotAdmit("83254"))
+  //   it("does not admit Idaho", () => expectNotAdmit("83254"))
 
-    it("does not admit Iowa", () => expectNotAdmit("52801"))
+  //   it("does not admit Iowa", () => expectNotAdmit("52801"))
 
-    it("does not admit Kansas", () => expectNotAdmit("67201"))
+  //   it("does not admit Kansas", () => expectNotAdmit("67201"))
 
-    it("does not admit Louisiana", () => expectNotAdmit("70112"))
+  //   it("does not admit Louisiana", () => expectNotAdmit("70112"))
 
-    it("does not admit Minnesota", () => expectNotAdmit("55801"))
+  //   it("does not admit Minnesota", () => expectNotAdmit("55801"))
 
-    it("does not admit Mississippi", () => expectNotAdmit("39530"))
+  //   it("does not admit Mississippi", () => expectNotAdmit("39530"))
 
-    it("does not admit Missouri", () => expectNotAdmit("63101"))
+  //   it("does not admit Missouri", () => expectNotAdmit("63101"))
 
-    it("does not admit Montana", () => expectNotAdmit("59044"))
+  //   it("does not admit Montana", () => expectNotAdmit("59044"))
 
-    it("does not admit Nebraska", () => expectNotAdmit("68901"))
+  //   it("does not admit Nebraska", () => expectNotAdmit("68901"))
 
-    it("does not admit Nevada", () => expectNotAdmit("89501"))
+  //   it("does not admit Nevada", () => expectNotAdmit("89501"))
 
-    it("does not admit New Mexico", () => expectNotAdmit("87500"))
+  //   it("does not admit New Mexico", () => expectNotAdmit("87500"))
 
-    it("does not admit North Dakota", () => expectNotAdmit("58282"))
+  //   it("does not admit North Dakota", () => expectNotAdmit("58282"))
 
-    it("does not admit Oklahoma", () => expectNotAdmit("74101"))
+  //   it("does not admit Oklahoma", () => expectNotAdmit("74101"))
 
-    it("does not admit Oregon", () => expectNotAdmit("97201"))
+  //   it("does not admit Oregon", () => expectNotAdmit("97201"))
 
-    it("does not admit South Dakota", () => expectNotAdmit("57401"))
+  //   it("does not admit South Dakota", () => expectNotAdmit("57401"))
 
-    it("does not admit Texas", () => expectNotAdmit("78701"))
+  //   it("does not admit Texas", () => expectNotAdmit("78701"))
 
-    it("does not admit Washington", () => expectNotAdmit("98004"))
+  //   it("does not admit Washington", () => expectNotAdmit("98004"))
 
-    it("does not admit Wisconsin", () => expectNotAdmit("53201"))
+  //   it("does not admit Wisconsin", () => expectNotAdmit("53201"))
 
-    it("does not admit Wyoming", () => expectNotAdmit("82941"))
-  })
+  //   it("does not admit Wyoming", () => expectNotAdmit("82941"))
+  // })
 
-  describe("Ops Threshold", () => {
-    it("Returns false if we've activated too many users", async () => {
-      class PrismaServiceMockElevenAccountActivations {
-        binding = {
-          query: {
-            emailReceipts: () =>
-              Promise.resolve(
-                createEmailReceipts(
-                  {
-                    1: 2,
-                    2: 4,
-                    6: 5,
-                    20: 10,
-                  },
-                  "WelcomeToSeasons"
-                )
-              ),
-          },
-        }
-        client = {}
-      }
+  // describe("Ops Threshold", () => {
+  //   it("Returns false if we've activated too many users", async () => {
+  //     class PrismaServiceMockElevenAccountActivations {
+  //       binding = {
+  //         query: {
+  //           emailReceipts: () =>
+  //             Promise.resolve(
+  //               createEmailReceipts(
+  //                 {
+  //                   1: 2,
+  //                   2: 4,
+  //                   6: 5,
+  //                   20: 10,
+  //                 },
+  //                 "WelcomeToSeasons"
+  //               )
+  //             ),
+  //         },
+  //       }
+  //       client = {}
+  //     }
 
-      process.env["WEEKLY_NEW_USERS_THRESHOLD"] = "10"
-      const admissions = await createTestAdmissionsService(
-        PrismaServiceMockElevenAccountActivations
-      )
+  //     process.env["WEEKLY_NEW_USERS_THRESHOLD"] = "10"
+  //     const admissions = await createTestAdmissionsService(
+  //       PrismaServiceMockElevenAccountActivations
+  //     )
 
-      const belowOpsThreshold = await admissions.belowWeeklyNewActiveUsersOpsThreshold()
-      expect(belowOpsThreshold).toBe(false)
-    })
+  //     const belowOpsThreshold = await admissions.belowWeeklyNewActiveUsersOpsThreshold()
+  //     expect(belowOpsThreshold).toBe(false)
+  //   })
 
-    it("Returns false if we've sent out too many invitations", async () => {
-      class PrismaServiceMockTwentyOneAccountActivations {
-        binding = {
-          query: {
-            emailReceipts: () =>
-              Promise.resolve([
-                ...createEmailReceipts(
-                  {
-                    3: 10,
-                    1: 1,
-                    2: 2,
-                    5: 1,
-                    6: 5,
-                  },
-                  "CompleteAccount"
-                ),
-                ...createEmailReceipts(
-                  {
-                    4: 2,
-                  },
-                  "PriorityAccess"
-                ),
-              ]),
-          },
-        }
-        client = {}
-      }
+  //   it("Returns false if we've sent out too many invitations", async () => {
+  //     class PrismaServiceMockTwentyOneAccountActivations {
+  //       binding = {
+  //         query: {
+  //           emailReceipts: () =>
+  //             Promise.resolve([
+  //               ...createEmailReceipts(
+  //                 {
+  //                   3: 10,
+  //                   1: 1,
+  //                   2: 2,
+  //                   5: 1,
+  //                   6: 5,
+  //                 },
+  //                 "CompleteAccount"
+  //               ),
+  //               ...createEmailReceipts(
+  //                 {
+  //                   4: 2,
+  //                 },
+  //                 "PriorityAccess"
+  //               ),
+  //             ]),
+  //         },
+  //       }
+  //       client = {}
+  //     }
 
-      process.env["WEEKLY_INVITATIONS_THRESHOLD"] = "20"
-      const admissions = await createTestAdmissionsService(
-        PrismaServiceMockTwentyOneAccountActivations
-      )
+  //     process.env["WEEKLY_INVITATIONS_THRESHOLD"] = "20"
+  //     const admissions = await createTestAdmissionsService(
+  //       PrismaServiceMockTwentyOneAccountActivations
+  //     )
 
-      const belowOpsThreshold = await admissions.belowWeeklyNewActiveUsersOpsThreshold()
-      expect(belowOpsThreshold).toBe(false)
-    })
+  //     const belowOpsThreshold = await admissions.belowWeeklyNewActiveUsersOpsThreshold()
+  //     expect(belowOpsThreshold).toBe(false)
+  //   })
 
-    it("Returns true if we're below both thresholds", async () => {
-      class PrismaServiceMockNoInvitationsOrAccountActiviations {
-        binding = {
-          query: {
-            emailReceipts: () => Promise.resolve([]),
-          },
-        }
-        client = {}
-      }
+  //   it("Returns true if we're below both thresholds", async () => {
+  //     class PrismaServiceMockNoInvitationsOrAccountActiviations {
+  //       binding = {
+  //         query: {
+  //           emailReceipts: () => Promise.resolve([]),
+  //         },
+  //       }
+  //       client = {}
+  //     }
 
-      process.env["WEEKLY_NEW_USERS_THRESHOLD"] = "1"
-      process.env["WEEKLY_INVITATIONS_THRESHOLD"] = "1"
-      const admissions = await createTestAdmissionsService(
-        PrismaServiceMockNoInvitationsOrAccountActiviations
-      )
+  //     process.env["WEEKLY_NEW_USERS_THRESHOLD"] = "1"
+  //     process.env["WEEKLY_INVITATIONS_THRESHOLD"] = "1"
+  //     const admissions = await createTestAdmissionsService(
+  //       PrismaServiceMockNoInvitationsOrAccountActiviations
+  //     )
 
-      const belowOpsThreshold = await admissions.belowWeeklyNewActiveUsersOpsThreshold()
-      expect(belowOpsThreshold).toBe(true)
-    })
-  })
+  //     const belowOpsThreshold = await admissions.belowWeeklyNewActiveUsersOpsThreshold()
+  //     expect(belowOpsThreshold).toBe(true)
+  //   })
+  // })
 
   describe("Inventory Threshold", () => {
     let testUtils: TestUtilsService
-    let cleanupFunc
+    let utils: UtilsService
+    let cleanupFuncs = []
     let topXSReservable
     let topSReservable
     let topMReservable
@@ -227,13 +228,12 @@ describe("Admissions Service", () => {
     let topXSNonReservable
     let bottom31Stored
     let bottom30OneReservableOneNonReservable
+    let testCustomer
 
     beforeAll(() => {
       const ps = new PrismaService()
-      testUtils = new TestUtilsService(
-        new PrismaService(),
-        new UtilsService(ps)
-      )
+      testUtils = new TestUtilsService(ps, new UtilsService(ps))
+      utils = new UtilsService(ps)
 
       // reservable products
       topXSReservable = createTestProductCreateInput("Top", "XS", "Reservable")
@@ -276,14 +276,8 @@ describe("Admissions Service", () => {
       bottom31Stored = createTestProductCreateInput("Bottom", "31", "Stored")
     })
 
-    afterEach(async done => {
-      await cleanupFunc()
-      cleanupFunc = async () => {}
-      done()
-    })
-
-    it("correctly calculates the available inventory for a user with no competing users", async done => {
-      // Create appropriate test data
+    beforeEach(async done => {
+      // Create test products
       const allTestProductsToCreate = [
         // 12 styles available for him. 11 are 100% reservable.
         // 1 has 1 reserved unit, 1 nonreservable unit
@@ -299,14 +293,16 @@ describe("Admissions Service", () => {
         ...fill(Array(2), topXSNonReservable),
         ...fill(Array(2), bottom31Stored),
       ] as CreateTestProductInput[]
-      console.log(allTestProductsToCreate)
-      const cleanupFuncs = []
+      const createdProducts = []
       for (const testProdToCreate of allTestProductsToCreate) {
-        const {
-          cleanupFunc: productCleanUpFUnc,
-        } = await testUtils.createTestProduct(testProdToCreate)
-        cleanupFuncs.push(productCleanUpFUnc)
+        const { cleanupFunc, product } = await testUtils.createTestProduct(
+          testProdToCreate
+        )
+        cleanupFuncs.push(cleanupFunc)
+        createdProducts.push(product)
       }
+
+      // Create test user
       const {
         cleanupFunc: customerCleanUpFunc,
         customer,
@@ -314,31 +310,65 @@ describe("Admissions Service", () => {
         detail: { topSizes: ["XS", "S"], waistSizes: [30, 31] },
       })
       cleanupFuncs.push(customerCleanUpFunc)
-      cleanupFunc = async () => {
-        for (const func of cleanupFuncs) {
-          await func()
-        }
-      }
+      testCustomer = customer
 
-      // Execute the test
+      console.log(`${createdProducts.length} products created`)
+      done()
+    })
+
+    afterEach(async done => {
+      for (const func of cleanupFuncs) {
+        await func()
+      }
+      cleanupFuncs = []
+      done()
+    })
+
+    it("correctly calculates the available inventory for a user with no competing users", async done => {
+      console.log(`test customer: ${testCustomer.id}`)
       const reservableStylesForCustomer = await admissions.reservableInventoryForCustomer(
-        { id: customer.id }
+        { id: testCustomer.id }
       )
       expect(reservableStylesForCustomer).toBe(12)
       done()
     })
 
-    it("correctly calculates the available inventory for a user with competing paused and active users", () => {
-      expect(1).toBe(0)
+    it("correctly calculates the available inventory for a user with competing paused users", async done => {
+      // Create a competing paused user
+      const { cleanupFunc } = await testUtils.createTestCustomer({
+        status: "Paused",
+        detail: { topSizes: ["XS"], waistSizes: [30, 31] },
+        membership: {
+          pauseRequests: [
+            {
+              notified: false,
+              pausePending: false,
+              pauseDate: utils.xDaysAgoISOString(25),
+              resumeDate: utils.xDaysFromNowISOString(6),
+            },
+          ],
+        },
+      })
+      cleanupFuncs.push(cleanupFunc)
+
+      const reservableStylesForCustomer = await admissions.reservableInventoryForCustomer(
+        { id: testCustomer.id }
+      )
+      expect(reservableStylesForCustomer).toBe(9) // 8 available tops - 1.5, 4 available bottoms minus 1.5
+      done()
     })
 
-    it("does not admit a user with insufficient available inventory", () => {
-      expect(1).toBe(0)
-    })
+    // it("correctly calculates the available inventory for a user with competing active users", () => {
+    //   expect(1).toBe(0)
+    // })
 
-    it("admits a user with sufficient inventory", () => {
-      expect(1).toBe(0)
-    })
+    // it("does not admit a user with insufficient available inventory", () => {
+    //   expect(1).toBe(0)
+    // })
+
+    // it("admits a user with sufficient inventory", () => {
+    //   expect(1).toBe(0)
+    // })
   })
 })
 

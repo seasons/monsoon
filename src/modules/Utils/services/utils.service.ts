@@ -28,6 +28,10 @@ export class UtilsService {
     return moment().subtract(x, "days").format()
   }
 
+  xDaysFromNowISOString(x: number) {
+    return moment().add(x, "days").format()
+  }
+
   randomString() {
     return Math.random().toString(36).slice(2)
   }
