@@ -4660,14 +4660,6 @@ type Location {
   physicalProducts(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct!]
   createdAt: DateTime!
   updatedAt: DateTime!
-<<<<<<< HEAD
-  pausePending: Boolean!
-  pauseDate: DateTime
-  resumeDate: DateTime
-  notified: Boolean!
-  membership: CustomerMembership!
-=======
->>>>>>> Rename CommunityStyle to FitPic and condense queries/mutations
 }
 
 type LocationConnection {
@@ -4678,13 +4670,6 @@ type LocationConnection {
 
 input LocationCreateInput {
   id: ID
-<<<<<<< HEAD
-  pausePending: Boolean!
-  pauseDate: DateTime
-  resumeDate: DateTime
-  notified: Boolean
-  membership: CustomerMembershipCreateOneWithoutPauseRequestsInput!
-=======
   slug: String
   name: String
   company: String
@@ -4699,7 +4684,6 @@ input LocationCreateInput {
   lat: Float
   lng: Float
   physicalProducts: PhysicalProductCreateManyWithoutLocationInput
->>>>>>> Rename CommunityStyle to FitPic and condense queries/mutations
 }
 
 input LocationCreateOneInput {
@@ -4714,12 +4698,6 @@ input LocationCreateOneWithoutPhysicalProductsInput {
 
 input LocationCreateWithoutPhysicalProductsInput {
   id: ID
-<<<<<<< HEAD
-  pausePending: Boolean!
-  pauseDate: DateTime
-  resumeDate: DateTime
-  notified: Boolean
-=======
   slug: String
   name: String
   company: String
@@ -4733,7 +4711,6 @@ input LocationCreateWithoutPhysicalProductsInput {
   user: UserCreateOneInput
   lat: Float
   lng: Float
->>>>>>> Rename CommunityStyle to FitPic and condense queries/mutations
 }
 
 type LocationEdge {
@@ -4772,17 +4749,6 @@ enum LocationOrderByInput {
   createdAt_DESC
   updatedAt_ASC
   updatedAt_DESC
-<<<<<<< HEAD
-  pausePending_ASC
-  pausePending_DESC
-  pauseDate_ASC
-  pauseDate_DESC
-  resumeDate_ASC
-  resumeDate_DESC
-  notified_ASC
-  notified_DESC
-=======
->>>>>>> Rename CommunityStyle to FitPic and condense queries/mutations
 }
 
 type LocationPreviousValues {
@@ -4801,69 +4767,6 @@ type LocationPreviousValues {
   lng: Float
   createdAt: DateTime!
   updatedAt: DateTime!
-<<<<<<< HEAD
-  pausePending: Boolean!
-  pauseDate: DateTime
-  resumeDate: DateTime
-  notified: Boolean!
-}
-
-input PauseRequestScalarWhereInput {
-  id: ID
-  id_not: ID
-  id_in: [ID!]
-  id_not_in: [ID!]
-  id_lt: ID
-  id_lte: ID
-  id_gt: ID
-  id_gte: ID
-  id_contains: ID
-  id_not_contains: ID
-  id_starts_with: ID
-  id_not_starts_with: ID
-  id_ends_with: ID
-  id_not_ends_with: ID
-  createdAt: DateTime
-  createdAt_not: DateTime
-  createdAt_in: [DateTime!]
-  createdAt_not_in: [DateTime!]
-  createdAt_lt: DateTime
-  createdAt_lte: DateTime
-  createdAt_gt: DateTime
-  createdAt_gte: DateTime
-  updatedAt: DateTime
-  updatedAt_not: DateTime
-  updatedAt_in: [DateTime!]
-  updatedAt_not_in: [DateTime!]
-  updatedAt_lt: DateTime
-  updatedAt_lte: DateTime
-  updatedAt_gt: DateTime
-  updatedAt_gte: DateTime
-  pausePending: Boolean
-  pausePending_not: Boolean
-  pauseDate: DateTime
-  pauseDate_not: DateTime
-  pauseDate_in: [DateTime!]
-  pauseDate_not_in: [DateTime!]
-  pauseDate_lt: DateTime
-  pauseDate_lte: DateTime
-  pauseDate_gt: DateTime
-  pauseDate_gte: DateTime
-  resumeDate: DateTime
-  resumeDate_not: DateTime
-  resumeDate_in: [DateTime!]
-  resumeDate_not_in: [DateTime!]
-  resumeDate_lt: DateTime
-  resumeDate_lte: DateTime
-  resumeDate_gt: DateTime
-  resumeDate_gte: DateTime
-  notified: Boolean
-  notified_not: Boolean
-  AND: [PauseRequestScalarWhereInput!]
-  OR: [PauseRequestScalarWhereInput!]
-  NOT: [PauseRequestScalarWhereInput!]
-=======
->>>>>>> Rename CommunityStyle to FitPic and condense queries/mutations
 }
 
 type LocationSubscriptionPayload {
@@ -4884,28 +4787,6 @@ input LocationSubscriptionWhereInput {
   NOT: [LocationSubscriptionWhereInput!]
 }
 
-<<<<<<< HEAD
-input PauseRequestUpdateInput {
-  pausePending: Boolean
-  pauseDate: DateTime
-  resumeDate: DateTime
-  notified: Boolean
-  membership: CustomerMembershipUpdateOneRequiredWithoutPauseRequestsInput
-}
-
-input PauseRequestUpdateManyDataInput {
-  pausePending: Boolean
-  pauseDate: DateTime
-  resumeDate: DateTime
-  notified: Boolean
-}
-
-input PauseRequestUpdateManyMutationInput {
-  pausePending: Boolean
-  pauseDate: DateTime
-  resumeDate: DateTime
-  notified: Boolean
-=======
 enum LocationType {
   Office
   Warehouse
@@ -4969,7 +4850,6 @@ input LocationUpdateOneInput {
   delete: Boolean
   disconnect: Boolean
   connect: LocationWhereUniqueInput
->>>>>>> Rename CommunityStyle to FitPic and condense queries/mutations
 }
 
 input LocationUpdateOneRequiredInput {
@@ -4988,13 +4868,6 @@ input LocationUpdateOneWithoutPhysicalProductsInput {
   connect: LocationWhereUniqueInput
 }
 
-<<<<<<< HEAD
-input PauseRequestUpdateWithoutMembershipDataInput {
-  pausePending: Boolean
-  pauseDate: DateTime
-  resumeDate: DateTime
-  notified: Boolean
-=======
 input LocationUpdateWithoutPhysicalProductsDataInput {
   slug: String
   name: String
@@ -5009,7 +4882,6 @@ input LocationUpdateWithoutPhysicalProductsDataInput {
   user: UserUpdateOneInput
   lat: Float
   lng: Float
->>>>>>> Rename CommunityStyle to FitPic and condense queries/mutations
 }
 
 input LocationUpsertNestedInput {
@@ -5203,32 +5075,6 @@ input LocationWhereInput {
   updatedAt_lte: DateTime
   updatedAt_gt: DateTime
   updatedAt_gte: DateTime
-<<<<<<< HEAD
-  pausePending: Boolean
-  pausePending_not: Boolean
-  pauseDate: DateTime
-  pauseDate_not: DateTime
-  pauseDate_in: [DateTime!]
-  pauseDate_not_in: [DateTime!]
-  pauseDate_lt: DateTime
-  pauseDate_lte: DateTime
-  pauseDate_gt: DateTime
-  pauseDate_gte: DateTime
-  resumeDate: DateTime
-  resumeDate_not: DateTime
-  resumeDate_in: [DateTime!]
-  resumeDate_not_in: [DateTime!]
-  resumeDate_lt: DateTime
-  resumeDate_lte: DateTime
-  resumeDate_gt: DateTime
-  resumeDate_gte: DateTime
-  notified: Boolean
-  notified_not: Boolean
-  membership: CustomerMembershipWhereInput
-  AND: [PauseRequestWhereInput!]
-  OR: [PauseRequestWhereInput!]
-  NOT: [PauseRequestWhereInput!]
-=======
   AND: [LocationWhereInput!]
   OR: [LocationWhereInput!]
   NOT: [LocationWhereInput!]
@@ -5541,7 +5387,6 @@ type Mutation {
   upsertWarehouseLocationConstraint(where: WarehouseLocationConstraintWhereUniqueInput!, create: WarehouseLocationConstraintCreateInput!, update: WarehouseLocationConstraintUpdateInput!): WarehouseLocationConstraint!
   deleteWarehouseLocationConstraint(where: WarehouseLocationConstraintWhereUniqueInput!): WarehouseLocationConstraint
   deleteManyWarehouseLocationConstraints(where: WarehouseLocationConstraintWhereInput): BatchPayload!
->>>>>>> Rename CommunityStyle to FitPic and condense queries/mutations
 }
 
 enum MutationType {
@@ -6014,6 +5859,7 @@ type PauseRequest {
   pausePending: Boolean!
   pauseDate: DateTime
   resumeDate: DateTime
+  notified: Boolean!
   membership: CustomerMembership!
 }
 
@@ -6028,6 +5874,7 @@ input PauseRequestCreateInput {
   pausePending: Boolean!
   pauseDate: DateTime
   resumeDate: DateTime
+  notified: Boolean
   membership: CustomerMembershipCreateOneWithoutPauseRequestsInput!
 }
 
@@ -6041,6 +5888,7 @@ input PauseRequestCreateWithoutMembershipInput {
   pausePending: Boolean!
   pauseDate: DateTime
   resumeDate: DateTime
+  notified: Boolean
 }
 
 type PauseRequestEdge {
@@ -6061,6 +5909,8 @@ enum PauseRequestOrderByInput {
   pauseDate_DESC
   resumeDate_ASC
   resumeDate_DESC
+  notified_ASC
+  notified_DESC
 }
 
 type PauseRequestPreviousValues {
@@ -6070,6 +5920,7 @@ type PauseRequestPreviousValues {
   pausePending: Boolean!
   pauseDate: DateTime
   resumeDate: DateTime
+  notified: Boolean!
 }
 
 input PauseRequestScalarWhereInput {
@@ -6121,6 +5972,8 @@ input PauseRequestScalarWhereInput {
   resumeDate_lte: DateTime
   resumeDate_gt: DateTime
   resumeDate_gte: DateTime
+  notified: Boolean
+  notified_not: Boolean
   AND: [PauseRequestScalarWhereInput!]
   OR: [PauseRequestScalarWhereInput!]
   NOT: [PauseRequestScalarWhereInput!]
@@ -6148,6 +6001,7 @@ input PauseRequestUpdateInput {
   pausePending: Boolean
   pauseDate: DateTime
   resumeDate: DateTime
+  notified: Boolean
   membership: CustomerMembershipUpdateOneRequiredWithoutPauseRequestsInput
 }
 
@@ -6155,12 +6009,14 @@ input PauseRequestUpdateManyDataInput {
   pausePending: Boolean
   pauseDate: DateTime
   resumeDate: DateTime
+  notified: Boolean
 }
 
 input PauseRequestUpdateManyMutationInput {
   pausePending: Boolean
   pauseDate: DateTime
   resumeDate: DateTime
+  notified: Boolean
 }
 
 input PauseRequestUpdateManyWithoutMembershipInput {
@@ -6184,6 +6040,7 @@ input PauseRequestUpdateWithoutMembershipDataInput {
   pausePending: Boolean
   pauseDate: DateTime
   resumeDate: DateTime
+  notified: Boolean
 }
 
 input PauseRequestUpdateWithWhereUniqueWithoutMembershipInput {
@@ -6246,6 +6103,8 @@ input PauseRequestWhereInput {
   resumeDate_lte: DateTime
   resumeDate_gt: DateTime
   resumeDate_gte: DateTime
+  notified: Boolean
+  notified_not: Boolean
   membership: CustomerMembershipWhereInput
   AND: [PauseRequestWhereInput!]
   OR: [PauseRequestWhereInput!]
