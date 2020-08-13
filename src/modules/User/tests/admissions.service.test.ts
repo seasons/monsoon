@@ -1,7 +1,10 @@
 import { TestUtilsService } from "@app/modules/Utils/services/test.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { UtilsModule } from "@app/modules/Utils/utils.module"
-import { CreateTestProductInput } from "@app/modules/Utils/utils.types"
+import {
+  CreateTestCustomerInput,
+  CreateTestProductInput,
+} from "@app/modules/Utils/utils.types"
 import { EmailId, InventoryStatus, LetterSize, ProductType } from "@app/prisma"
 import { PrismaModule } from "@app/prisma/prisma.module"
 import { Test } from "@nestjs/testing"
@@ -358,9 +361,29 @@ describe("Admissions Service", () => {
       done()
     })
 
-    // it("correctly calculates the available inventory for a user with competing active users", () => {
-    //   expect(1).toBe(0)
-    // })
+    it("correctly calculates the available inventory for a user with competing active users", async done => {
+      const testUserInputs = [
+        { status: "Active", detail: { topSizes: ["S"], waistSizes: [33, 34] } }, // 6.5 tops, 4 bottoms
+        { status: "Active", detail: { topSizes: ["M"], waistSizes: [30, 29] } }, // 6.5 tops, 2.5 bottoms
+        {
+          // 5 tops, 1 bottoms
+          status: "Active",
+          detail: { topSizes: ["XS"], waistSizes: [30, 31] },
+        },
+      ] as CreateTestCustomerInput[]
+
+      for (const input of testUserInputs) {
+        const { cleanupFunc } = await testUtils.createTestCustomer(input)
+        cleanupFuncs.push(cleanupFunc)
+      }
+
+      const reservableStylesForCustomer = await admissions.reservableInventoryForCustomer(
+        { id: testCustomer.id }
+      )
+      expect(reservableStylesForCustomer).toBe(6)
+
+      done()
+    })
 
     // it("does not admit a user with insufficient available inventory", () => {
     //   expect(1).toBe(0)

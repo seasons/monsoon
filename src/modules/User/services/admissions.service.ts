@@ -108,9 +108,10 @@ export class AdmissionsService {
       where,
       "Bottom"
     )
-    // console.log(`available top styles: ${availableTopStyles}`)
+    console.log(`available top styles: ${availableTopStyles}`)
     // console.log(`available bottom styles: ${availableBottomStyles}`)
     return availableTopStyles + availableBottomStyles
+    // return availableTopStyles
   }
 
   private async availableStylesForCustomer(
@@ -183,7 +184,7 @@ export class AdmissionsService {
       if (a.id === customer.id) {
         return false
       }
-      return !!intersection(a.detail[sizesKey], preferredSizes)
+      return intersection(a.detail[sizesKey], preferredSizes).length > 0
     })
 
     console.log(
@@ -197,7 +198,7 @@ export class AdmissionsService {
     const numTrueAvailableStyles =
       availableStyles.length - numStylesForCompetingUsers
 
-    return numTrueAvailableStyles
+    return Math.max(0, numTrueAvailableStyles)
   }
 
   // TODO: Test this logic
