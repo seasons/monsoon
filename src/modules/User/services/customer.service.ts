@@ -216,9 +216,7 @@ export class CustomerService {
           customer.detail.shippingAddress.zipCode
         ) &&
         (await this.admissions.belowWeeklyNewActiveUsersOpsThreshold()) &&
-        (await this.admissions.haveSufficientInventoryToServiceCustomer(
-          customer
-        ))
+        (await this.admissions.haveSufficientInventoryToServiceCustomer(where))
       ) {
         status = "Authorized"
       }
