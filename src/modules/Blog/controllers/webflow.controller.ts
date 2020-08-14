@@ -67,7 +67,6 @@ export class WebflowController {
           id,
           slug,
         },
-        debug: true,
       })
     }
 
