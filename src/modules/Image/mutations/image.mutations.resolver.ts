@@ -1,4 +1,4 @@
-import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
+import { Args, Mutation, Resolver } from "@nestjs/graphql"
 
 import { ImageService } from "../services/image.service"
 
