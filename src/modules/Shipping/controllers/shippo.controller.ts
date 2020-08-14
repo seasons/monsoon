@@ -1,3 +1,5 @@
+import { PushNotificationID } from "@app/modules/PushNotification/pushNotification.types"
+import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import {
   Package,
   PackageTransitEventStatus,
@@ -54,7 +56,10 @@ type ReservationWithPackage = Reservation & {
 export class ShippoController {
   private readonly logger = new Logger(ShippoController.name)
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly pushNotification: PushNotificationService
+  ) {}
 
   @Post()
   async handlePost(@Body() body: ShippoData) {
@@ -120,6 +125,10 @@ export class ShippoController {
 
         try {
           await this.updateLastLocation(reservationStatus, reservation, phase)
+          await this.sendPushNotificationForReservationStatus(
+            reservationStatus,
+            reservation
+          )
         } catch (e) {
           this.logger.error("Error while updating last location")
           this.logger.error(e)
@@ -218,6 +227,36 @@ export class ShippoController {
           },
         },
       })
+    }
+  }
+
+  async sendPushNotificationForReservationStatus(
+    status: ReservationStatus,
+    reservation: Reservation
+  ) {
+    const user = await this.prisma.client
+      .reservation({ id: reservation.id })
+      .user()
+
+    if (["Shipped", "Delivered"].includes(status)) {
+      const receipt = head(
+        await this.prisma.client.pushNotificationReceipts({
+          where: {
+            users_every: { id: user.id },
+            recordID: reservation.id,
+          },
+        })
+      )
+
+      if (!receipt) {
+        this.pushNotification.pushNotifyUser({
+          email: user.email,
+          pushNotifID: `Reservation${status}` as PushNotificationID,
+          vars: {
+            reservationID: reservation.id,
+          },
+        })
+      }
     }
   }
 
