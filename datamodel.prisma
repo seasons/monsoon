@@ -600,12 +600,12 @@ type User {
   roles: [UserRole!]! @scalarList(strategy: RELATION)
   pushNotificationStatus: PushNotificationStatus! @default(value: Denied)
   pushNotifications: [PushNotificationReceipt!]
-    @relation(name: "UserToPushNotificationReceipts")
+    @relation(name: "UserToPushNotificationReceipts", onDelete: CASCADE)
   pushNotification: UserPushNotification
   verificationStatus: UserVerificationStatus! @default(value: Pending)
   verificationMethod: UserVerificationMethod! @default(value: None)
-  smsReceipts: [SmsReceipt!]! @relation(name: "UserToSmsReceipts")
-  fitPics: [FitPic!]! @relation(name: "UserToFitPic")
+  smsReceipts: [SmsReceipt!]! @relation(name: "UserToSmsReceipts", onDelete: CASCADE)
+  fitPics: [FitPic!]! @relation(name: "UserToFitPic", onDelete: CASCADE)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
