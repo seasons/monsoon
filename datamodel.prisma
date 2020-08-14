@@ -799,8 +799,6 @@ type BillingInfo {
   state: String
   country: String
   postal_code: String
-  createdAt: DateTime! @createdAt
-  updatedAt: DateTime! @updatedAt
 }
 
 type ProductRequest {
