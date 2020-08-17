@@ -20,14 +20,16 @@ describe("Admissions Service", () => {
 
   beforeAll(async () => {
     admissions = await createTestAdmissionsService(null)
-
-    expectAdmit = (zipcode: string) =>
-      expect(admissions.weServiceZipcode(zipcode)).toBe(true)
-    expectNotAdmit = (zipcode: string) =>
-      expect(admissions.weServiceZipcode(zipcode)).toBe(false)
   })
 
   describe("Serviceable Zipcodes", () => {
+    beforeAll(() => {
+      expectAdmit = (zipcode: string) =>
+        expect(admissions.isZipcodeAllowed(zipcode)).toBe(true)
+      expectNotAdmit = (zipcode: string) =>
+        expect(admissions.isZipcodeAllowed(zipcode)).toBe(false)
+    })
+
     it("admits New York", () => expectAdmit("11432"))
 
     it("admits Pennsylvania", () => expectAdmit("15001"))
@@ -222,6 +224,7 @@ describe("Admissions Service", () => {
     let testUtils: TestUtilsService
     let utils: UtilsService
     let cleanupFuncs = []
+    let allTestProductsToCreate: CreateTestProductInput[]
     let topXSReservable
     let topSReservable
     let topMReservable
@@ -277,11 +280,9 @@ describe("Admissions Service", () => {
         "NonReservable"
       )
       bottom31Stored = createTestProductCreateInput("Bottom", "31", "Stored")
-    })
 
-    beforeEach(async () => {
-      // Create test products
-      const allTestProductsToCreate = [
+      // All the test products we create
+      allTestProductsToCreate = [
         // 12 styles available for him. 11 are 100% reservable.
         // 1 has 1 reserved unit, 1 nonreservable unit
         ...fill(Array(4), topXSReservable),
@@ -295,9 +296,12 @@ describe("Admissions Service", () => {
         // some styles that are in his size but not reservable
         ...fill(Array(2), topXSNonReservable),
         ...fill(Array(2), bottom31Stored),
-      ] as CreateTestProductInput[]
+      ]
+    })
+
+    beforeEach(async () => {
       for (const testProdToCreate of allTestProductsToCreate) {
-        const { cleanupFunc, product } = await testUtils.createTestProduct(
+        const { cleanupFunc } = await testUtils.createTestProduct(
           testProdToCreate
         )
         cleanupFuncs.push(cleanupFunc)
@@ -382,13 +386,16 @@ describe("Admissions Service", () => {
       const reservableStylesForCustomer = await admissions.reservableInventoryForCustomer(
         { id: testCustomer.id }
       )
-      expect(reservableStylesForCustomer).toBe(9)
+      expect(reservableStylesForCustomer).toBe(9) // 6.5 available top styles, 2.5 available bottom styles
     }, 20000)
 
     it("correctly calculates the available inventory for a user with competing active users", async () => {
       const testCustomerInputs = [
+        // shares a top size, doesn't share a bottom size
         { status: "Active", detail: { topSizes: ["S"], waistSizes: [33, 34] } },
+        // doesn't share a top size, shares a bottom size
         { status: "Active", detail: { topSizes: ["M"], waistSizes: [30, 29] } },
+        // shares a top size, shares both bottom sizes
         {
           status: "Active",
           detail: { topSizes: ["XS"], waistSizes: [30, 31] },

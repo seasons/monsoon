@@ -10,20 +10,28 @@ import zipcodes from "zipcodes"
 
 @Injectable()
 export class AdmissionsService {
+  serviceableStates: string[]
+
+  // We assume that each reservation is split 50/50 between tops and bottoms.
+  // That's not really accurate, but it's good enough for now.
+  averageTopsPerReservation = 1.5
+  averageBottomsPerReservation = 1.5
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly utils: UtilsService
-  ) {}
-
-  weServiceZipcode(zipcode: string): boolean {
-    const state = zipcodes.lookup(zipcode)?.state
-    let { states } = JSON.parse(
+  ) {
+    ;({ states: this.serviceableStates } = JSON.parse(
       fs.readFileSync(
         process.cwd() + "/src/modules/User/admissableStates.json",
         "utf-8"
       )
-    )
-    return states.includes(state)
+    ))
+  }
+
+  isZipcodeAllowed(zipcode: string): boolean {
+    const state = zipcodes.lookup(zipcode)?.state
+    return this.serviceableStates.includes(state)
   }
 
   async belowWeeklyNewActiveUsersOpsThreshold(): Promise<boolean> {
@@ -183,8 +191,12 @@ export class AdmissionsService {
       return intersection(a.detail[sizesKey], preferredSizes).length > 0
     })
 
-    // We assume reservations are 50/50 tops/bottoms, ergo the 1.5.
-    const numStylesForCompetingUsers = 1.5 * competingUsers.length
+    const numStylesPerReservation =
+      productType === "Top"
+        ? this.averageTopsPerReservation
+        : this.averageBottomsPerReservation
+    const numStylesForCompetingUsers =
+      numStylesPerReservation * competingUsers.length
     const numTrueAvailableStyles =
       availableStyles.length - numStylesForCompetingUsers
 
