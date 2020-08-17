@@ -663,12 +663,12 @@ type BagItem {
 
 type Customer {
   id: ID! @id
-  user: User! @unique
+  user: User! @unique @relation(name: "CustomerToUser", onDelete: CASCADE)
   status: CustomerStatus
-  detail: CustomerDetail
+  detail: CustomerDetail @relation(name: "CustomerToCustomerDetail", onDelete: CASCADE)
   billingInfo: BillingInfo
   plan: Plan
-  membership: CustomerMembership
+  membership: CustomerMembership @relation(name: "CustomerToCustomerMembership", onDelete: CASCADE)
   bagItems: [BagItem] @relation(name: "CustomerToBagItem")
   reservations: [Reservation] @relation(name: "CustomerToReservation")
 }
@@ -676,7 +676,7 @@ type Customer {
 type CustomerMembership {
   id: ID! @id
   subscriptionId: String!
-  customer: Customer! @relation(link: INLINE)
+  customer: Customer! @relation(name: "CustomerToCustomerMembership", link: INLINE, onDelete: SET_NULL)
   pauseRequests: [PauseRequest]
     @relation(name: "CustomerMembershipToPauseRequest", onDelete: CASCADE)
 }

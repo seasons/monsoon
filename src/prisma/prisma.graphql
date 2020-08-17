@@ -695,8 +695,6 @@ type BillingInfo implements Node {
   state: String
   country: String
   postal_code: String
-  createdAt: DateTime!
-  updatedAt: DateTime!
 }
 
 """
@@ -775,10 +773,6 @@ enum BillingInfoOrderByInput {
   country_DESC
   postal_code_ASC
   postal_code_DESC
-  createdAt_ASC
-  createdAt_DESC
-  updatedAt_ASC
-  updatedAt_DESC
 }
 
 type BillingInfoPreviousValues {
@@ -794,8 +788,6 @@ type BillingInfoPreviousValues {
   state: String
   country: String
   postal_code: String
-  createdAt: DateTime!
-  updatedAt: DateTime!
 }
 
 type BillingInfoSubscriptionPayload {
@@ -1646,78 +1638,6 @@ input BillingInfoWhereInput {
   All values not ending with the given string.
   """
   postal_code_not_ends_with: String
-  createdAt: DateTime
-
-  """
-  All values that are not equal to given value.
-  """
-  createdAt_not: DateTime
-
-  """
-  All values that are contained in given list.
-  """
-  createdAt_in: [DateTime!]
-
-  """
-  All values that are not contained in given list.
-  """
-  createdAt_not_in: [DateTime!]
-
-  """
-  All values less than the given value.
-  """
-  createdAt_lt: DateTime
-
-  """
-  All values less than or equal the given value.
-  """
-  createdAt_lte: DateTime
-
-  """
-  All values greater than the given value.
-  """
-  createdAt_gt: DateTime
-
-  """
-  All values greater than or equal the given value.
-  """
-  createdAt_gte: DateTime
-  updatedAt: DateTime
-
-  """
-  All values that are not equal to given value.
-  """
-  updatedAt_not: DateTime
-
-  """
-  All values that are contained in given list.
-  """
-  updatedAt_in: [DateTime!]
-
-  """
-  All values that are not contained in given list.
-  """
-  updatedAt_not_in: [DateTime!]
-
-  """
-  All values less than the given value.
-  """
-  updatedAt_lt: DateTime
-
-  """
-  All values less than or equal the given value.
-  """
-  updatedAt_lte: DateTime
-
-  """
-  All values greater than the given value.
-  """
-  updatedAt_gt: DateTime
-
-  """
-  All values greater than or equal the given value.
-  """
-  updatedAt_gte: DateTime
 }
 
 input BillingInfoWhereUniqueInput {
@@ -12796,7 +12716,6 @@ type Mutation {
   createPushNotificationReceipt(
     data: PushNotificationReceiptCreateInput!
   ): PushNotificationReceipt!
-  createCustomerDetail(data: CustomerDetailCreateInput!): CustomerDetail!
   createUserPushNotificationInterest(
     data: UserPushNotificationInterestCreateInput!
   ): UserPushNotificationInterest!
@@ -12816,6 +12735,7 @@ type Mutation {
   ): UserPushNotification!
   createCategory(data: CategoryCreateInput!): Category!
   createBottomSize(data: BottomSizeCreateInput!): BottomSize!
+  createUser(data: UserCreateInput!): User!
   createPackageTransitEvent(
     data: PackageTransitEventCreateInput!
   ): PackageTransitEvent!
@@ -12826,8 +12746,8 @@ type Mutation {
   createSmsReceipt(data: SmsReceiptCreateInput!): SmsReceipt!
   createProductVariant(data: ProductVariantCreateInput!): ProductVariant!
   createProduct(data: ProductCreateInput!): Product!
+  createCustomerDetail(data: CustomerDetailCreateInput!): CustomerDetail!
   createReservation(data: ReservationCreateInput!): Reservation!
-  createUser(data: UserCreateInput!): User!
   updateBrand(data: BrandUpdateInput!, where: BrandWhereUniqueInput!): Brand
   updateCollectionGroup(
     data: CollectionGroupUpdateInput!
@@ -12923,10 +12843,6 @@ type Mutation {
     data: PushNotificationReceiptUpdateInput!
     where: PushNotificationReceiptWhereUniqueInput!
   ): PushNotificationReceipt
-  updateCustomerDetail(
-    data: CustomerDetailUpdateInput!
-    where: CustomerDetailWhereUniqueInput!
-  ): CustomerDetail
   updateUserPushNotificationInterest(
     data: UserPushNotificationInterestUpdateInput!
     where: UserPushNotificationInterestWhereUniqueInput!
@@ -12973,6 +12889,7 @@ type Mutation {
     data: BottomSizeUpdateInput!
     where: BottomSizeWhereUniqueInput!
   ): BottomSize
+  updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   updatePackageTransitEvent(
     data: PackageTransitEventUpdateInput!
     where: PackageTransitEventWhereUniqueInput!
@@ -12999,11 +12916,14 @@ type Mutation {
     data: ProductUpdateInput!
     where: ProductWhereUniqueInput!
   ): Product
+  updateCustomerDetail(
+    data: CustomerDetailUpdateInput!
+    where: CustomerDetailWhereUniqueInput!
+  ): CustomerDetail
   updateReservation(
     data: ReservationUpdateInput!
     where: ReservationWhereUniqueInput!
   ): Reservation
-  updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   deleteBrand(where: BrandWhereUniqueInput!): Brand
   deleteCollectionGroup(
     where: CollectionGroupWhereUniqueInput!
@@ -13060,7 +12980,6 @@ type Mutation {
   deletePushNotificationReceipt(
     where: PushNotificationReceiptWhereUniqueInput!
   ): PushNotificationReceipt
-  deleteCustomerDetail(where: CustomerDetailWhereUniqueInput!): CustomerDetail
   deleteUserPushNotificationInterest(
     where: UserPushNotificationInterestWhereUniqueInput!
   ): UserPushNotificationInterest
@@ -13084,6 +13003,7 @@ type Mutation {
   ): UserPushNotification
   deleteCategory(where: CategoryWhereUniqueInput!): Category
   deleteBottomSize(where: BottomSizeWhereUniqueInput!): BottomSize
+  deleteUser(where: UserWhereUniqueInput!): User
   deletePackageTransitEvent(
     where: PackageTransitEventWhereUniqueInput!
   ): PackageTransitEvent
@@ -13096,8 +13016,8 @@ type Mutation {
   deleteSmsReceipt(where: SmsReceiptWhereUniqueInput!): SmsReceipt
   deleteProductVariant(where: ProductVariantWhereUniqueInput!): ProductVariant
   deleteProduct(where: ProductWhereUniqueInput!): Product
+  deleteCustomerDetail(where: CustomerDetailWhereUniqueInput!): CustomerDetail
   deleteReservation(where: ReservationWhereUniqueInput!): Reservation
-  deleteUser(where: UserWhereUniqueInput!): User
   upsertBrand(
     where: BrandWhereUniqueInput!
     create: BrandCreateInput!
@@ -13228,11 +13148,6 @@ type Mutation {
     create: PushNotificationReceiptCreateInput!
     update: PushNotificationReceiptUpdateInput!
   ): PushNotificationReceipt!
-  upsertCustomerDetail(
-    where: CustomerDetailWhereUniqueInput!
-    create: CustomerDetailCreateInput!
-    update: CustomerDetailUpdateInput!
-  ): CustomerDetail!
   upsertUserPushNotificationInterest(
     where: UserPushNotificationInterestWhereUniqueInput!
     create: UserPushNotificationInterestCreateInput!
@@ -13298,6 +13213,11 @@ type Mutation {
     create: BottomSizeCreateInput!
     update: BottomSizeUpdateInput!
   ): BottomSize!
+  upsertUser(
+    where: UserWhereUniqueInput!
+    create: UserCreateInput!
+    update: UserUpdateInput!
+  ): User!
   upsertPackageTransitEvent(
     where: PackageTransitEventWhereUniqueInput!
     create: PackageTransitEventCreateInput!
@@ -13338,16 +13258,16 @@ type Mutation {
     create: ProductCreateInput!
     update: ProductUpdateInput!
   ): Product!
+  upsertCustomerDetail(
+    where: CustomerDetailWhereUniqueInput!
+    create: CustomerDetailCreateInput!
+    update: CustomerDetailUpdateInput!
+  ): CustomerDetail!
   upsertReservation(
     where: ReservationWhereUniqueInput!
     create: ReservationCreateInput!
     update: ReservationUpdateInput!
   ): Reservation!
-  upsertUser(
-    where: UserWhereUniqueInput!
-    create: UserCreateInput!
-    update: UserUpdateInput!
-  ): User!
   updateManyBrands(
     data: BrandUpdateManyMutationInput!
     where: BrandWhereInput
@@ -13448,10 +13368,6 @@ type Mutation {
     data: PushNotificationReceiptUpdateManyMutationInput!
     where: PushNotificationReceiptWhereInput
   ): BatchPayload!
-  updateManyCustomerDetails(
-    data: CustomerDetailUpdateManyMutationInput!
-    where: CustomerDetailWhereInput
-  ): BatchPayload!
   updateManyUserPushNotificationInterests(
     data: UserPushNotificationInterestUpdateManyMutationInput!
     where: UserPushNotificationInterestWhereInput
@@ -13504,6 +13420,10 @@ type Mutation {
     data: BottomSizeUpdateManyMutationInput!
     where: BottomSizeWhereInput
   ): BatchPayload!
+  updateManyUsers(
+    data: UserUpdateManyMutationInput!
+    where: UserWhereInput
+  ): BatchPayload!
   updateManyPackageTransitEvents(
     data: PackageTransitEventUpdateManyMutationInput!
     where: PackageTransitEventWhereInput
@@ -13536,13 +13456,13 @@ type Mutation {
     data: ProductUpdateManyMutationInput!
     where: ProductWhereInput
   ): BatchPayload!
+  updateManyCustomerDetails(
+    data: CustomerDetailUpdateManyMutationInput!
+    where: CustomerDetailWhereInput
+  ): BatchPayload!
   updateManyReservations(
     data: ReservationUpdateManyMutationInput!
     where: ReservationWhereInput
-  ): BatchPayload!
-  updateManyUsers(
-    data: UserUpdateManyMutationInput!
-    where: UserWhereInput
   ): BatchPayload!
   deleteManyBrands(where: BrandWhereInput): BatchPayload!
   deleteManyCollectionGroups(where: CollectionGroupWhereInput): BatchPayload!
@@ -13598,7 +13518,6 @@ type Mutation {
   deleteManyPushNotificationReceipts(
     where: PushNotificationReceiptWhereInput
   ): BatchPayload!
-  deleteManyCustomerDetails(where: CustomerDetailWhereInput): BatchPayload!
   deleteManyUserPushNotificationInterests(
     where: UserPushNotificationInterestWhereInput
   ): BatchPayload!
@@ -13618,6 +13537,7 @@ type Mutation {
   ): BatchPayload!
   deleteManyCategories(where: CategoryWhereInput): BatchPayload!
   deleteManyBottomSizes(where: BottomSizeWhereInput): BatchPayload!
+  deleteManyUsers(where: UserWhereInput): BatchPayload!
   deleteManyPackageTransitEvents(
     where: PackageTransitEventWhereInput
   ): BatchPayload!
@@ -13628,8 +13548,8 @@ type Mutation {
   deleteManySmsReceipts(where: SmsReceiptWhereInput): BatchPayload!
   deleteManyProductVariants(where: ProductVariantWhereInput): BatchPayload!
   deleteManyProducts(where: ProductWhereInput): BatchPayload!
+  deleteManyCustomerDetails(where: CustomerDetailWhereInput): BatchPayload!
   deleteManyReservations(where: ReservationWhereInput): BatchPayload!
-  deleteManyUsers(where: UserWhereInput): BatchPayload!
 }
 
 enum MutationType {
@@ -27718,15 +27638,6 @@ type Query {
     first: Int
     last: Int
   ): [PushNotificationReceipt]!
-  customerDetails(
-    where: CustomerDetailWhereInput
-    orderBy: CustomerDetailOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [CustomerDetail]!
   userPushNotificationInterests(
     where: UserPushNotificationInterestWhereInput
     orderBy: UserPushNotificationInterestOrderByInput
@@ -27844,6 +27755,15 @@ type Query {
     first: Int
     last: Int
   ): [BottomSize]!
+  users(
+    where: UserWhereInput
+    orderBy: UserOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [User]!
   packageTransitEvents(
     where: PackageTransitEventWhereInput
     orderBy: PackageTransitEventOrderByInput
@@ -27916,6 +27836,15 @@ type Query {
     first: Int
     last: Int
   ): [Product]!
+  customerDetails(
+    where: CustomerDetailWhereInput
+    orderBy: CustomerDetailOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [CustomerDetail]!
   reservations(
     where: ReservationWhereInput
     orderBy: ReservationOrderByInput
@@ -27925,15 +27854,6 @@ type Query {
     first: Int
     last: Int
   ): [Reservation]!
-  users(
-    where: UserWhereInput
-    orderBy: UserOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [User]!
   brand(where: BrandWhereUniqueInput!): Brand
   collectionGroup(where: CollectionGroupWhereUniqueInput!): CollectionGroup
   homepageProductRail(
@@ -27988,7 +27908,6 @@ type Query {
   pushNotificationReceipt(
     where: PushNotificationReceiptWhereUniqueInput!
   ): PushNotificationReceipt
-  customerDetail(where: CustomerDetailWhereUniqueInput!): CustomerDetail
   userPushNotificationInterest(
     where: UserPushNotificationInterestWhereUniqueInput!
   ): UserPushNotificationInterest
@@ -28008,6 +27927,7 @@ type Query {
   ): UserPushNotification
   category(where: CategoryWhereUniqueInput!): Category
   bottomSize(where: BottomSizeWhereUniqueInput!): BottomSize
+  user(where: UserWhereUniqueInput!): User
   packageTransitEvent(
     where: PackageTransitEventWhereUniqueInput!
   ): PackageTransitEvent
@@ -28018,8 +27938,8 @@ type Query {
   smsReceipt(where: SmsReceiptWhereUniqueInput!): SmsReceipt
   productVariant(where: ProductVariantWhereUniqueInput!): ProductVariant
   product(where: ProductWhereUniqueInput!): Product
+  customerDetail(where: CustomerDetailWhereUniqueInput!): CustomerDetail
   reservation(where: ReservationWhereUniqueInput!): Reservation
-  user(where: UserWhereUniqueInput!): User
   brandsConnection(
     where: BrandWhereInput
     orderBy: BrandOrderByInput
@@ -28254,15 +28174,6 @@ type Query {
     first: Int
     last: Int
   ): PushNotificationReceiptConnection!
-  customerDetailsConnection(
-    where: CustomerDetailWhereInput
-    orderBy: CustomerDetailOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): CustomerDetailConnection!
   userPushNotificationInterestsConnection(
     where: UserPushNotificationInterestWhereInput
     orderBy: UserPushNotificationInterestOrderByInput
@@ -28380,6 +28291,15 @@ type Query {
     first: Int
     last: Int
   ): BottomSizeConnection!
+  usersConnection(
+    where: UserWhereInput
+    orderBy: UserOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): UserConnection!
   packageTransitEventsConnection(
     where: PackageTransitEventWhereInput
     orderBy: PackageTransitEventOrderByInput
@@ -28452,6 +28372,15 @@ type Query {
     first: Int
     last: Int
   ): ProductConnection!
+  customerDetailsConnection(
+    where: CustomerDetailWhereInput
+    orderBy: CustomerDetailOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): CustomerDetailConnection!
   reservationsConnection(
     where: ReservationWhereInput
     orderBy: ReservationOrderByInput
@@ -28461,15 +28390,6 @@ type Query {
     first: Int
     last: Int
   ): ReservationConnection!
-  usersConnection(
-    where: UserWhereInput
-    orderBy: UserOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): UserConnection!
 
   """
   Fetches an object given its ID
@@ -32934,9 +32854,6 @@ type Subscription {
   pushNotificationReceipt(
     where: PushNotificationReceiptSubscriptionWhereInput
   ): PushNotificationReceiptSubscriptionPayload
-  customerDetail(
-    where: CustomerDetailSubscriptionWhereInput
-  ): CustomerDetailSubscriptionPayload
   userPushNotificationInterest(
     where: UserPushNotificationInterestSubscriptionWhereInput
   ): UserPushNotificationInterestSubscriptionPayload
@@ -32964,6 +32881,7 @@ type Subscription {
   bottomSize(
     where: BottomSizeSubscriptionWhereInput
   ): BottomSizeSubscriptionPayload
+  user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
   packageTransitEvent(
     where: PackageTransitEventSubscriptionWhereInput
   ): PackageTransitEventSubscriptionPayload
@@ -32980,10 +32898,12 @@ type Subscription {
     where: ProductVariantSubscriptionWhereInput
   ): ProductVariantSubscriptionPayload
   product(where: ProductSubscriptionWhereInput): ProductSubscriptionPayload
+  customerDetail(
+    where: CustomerDetailSubscriptionWhereInput
+  ): CustomerDetailSubscriptionPayload
   reservation(
     where: ReservationSubscriptionWhereInput
   ): ReservationSubscriptionPayload
-  user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
 }
 
 type Tag implements Node {

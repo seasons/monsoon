@@ -8,16 +8,21 @@ import {
   User,
 } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
+import * as Sentry from "@sentry/node"
 import { ApolloError } from "apollo-server"
 
+import { AdmissionsService } from "./admissions.service"
 import { AuthService } from "./auth.service"
+
+type TriageCustomerResult = "Waitlisted" | "Authorized"
 
 @Injectable()
 export class CustomerService {
   constructor(
     private readonly authService: AuthService,
     private readonly prisma: PrismaService,
-    private readonly shippingService: ShippingService
+    private readonly shippingService: ShippingService,
+    private readonly admissions: AdmissionsService
   ) {}
 
   async setCustomerPrismaStatus(user: User, status: CustomerStatus) {
@@ -182,8 +187,20 @@ export class CustomerService {
 
   async triageCustomer(
     where: CustomerWhereUniqueInput
-  ): Promise<"Waitlisted" | "Authorized"> {
-    const customer = await this.prisma.client.customer(where)
+  ): Promise<TriageCustomerResult> {
+    const customer = await this.prisma.binding.query.customer(
+      { where },
+      `{
+        status
+        detail {
+          shippingAddress {
+            zipCode
+          }
+          topSizes
+          waistSizes
+        }
+      }`
+    )
 
     if (!["Created", "Invited"].includes(customer.status)) {
       throw new ApolloError(
@@ -191,10 +208,26 @@ export class CustomerService {
       )
     }
 
+    let status = "Waitlisted" as TriageCustomerResult
+    try {
+      if (
+        process.env.AUTOMATIC_ADMISSIONS === "true" &&
+        this.admissions.zipcodeAllowed(
+          customer.detail.shippingAddress.zipCode
+        ) &&
+        (await this.admissions.belowWeeklyNewActiveUsersOpsThreshold()) &&
+        (await this.admissions.haveSufficientInventoryToServiceCustomer(where))
+      ) {
+        status = "Authorized"
+      }
+    } catch (err) {
+      Sentry.captureException(err)
+    }
+
     await this.prisma.client.updateCustomer({
       where,
-      data: { status: "Waitlisted" },
+      data: { status },
     })
-    return "Waitlisted"
+    return status
   }
 }
