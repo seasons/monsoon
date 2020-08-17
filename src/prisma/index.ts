@@ -30,6 +30,8 @@ export interface Exists {
     where?: CustomerMembershipWhereInput
   ) => Promise<boolean>;
   emailReceipt: (where?: EmailReceiptWhereInput) => Promise<boolean>;
+  fitPic: (where?: FitPicWhereInput) => Promise<boolean>;
+  fitPicReport: (where?: FitPicReportWhereInput) => Promise<boolean>;
   homepageProductRail: (
     where?: HomepageProductRailWhereInput
   ) => Promise<boolean>;
@@ -357,6 +359,46 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => EmailReceiptConnectionPromise;
+  fitPic: (where: FitPicWhereUniqueInput) => FitPicNullablePromise;
+  fitPics: (args?: {
+    where?: FitPicWhereInput;
+    orderBy?: FitPicOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<FitPic>;
+  fitPicsConnection: (args?: {
+    where?: FitPicWhereInput;
+    orderBy?: FitPicOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FitPicConnectionPromise;
+  fitPicReport: (
+    where: FitPicReportWhereUniqueInput
+  ) => FitPicReportNullablePromise;
+  fitPicReports: (args?: {
+    where?: FitPicReportWhereInput;
+    orderBy?: FitPicReportOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<FitPicReport>;
+  fitPicReportsConnection: (args?: {
+    where?: FitPicReportWhereInput;
+    orderBy?: FitPicReportOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FitPicReportConnectionPromise;
   homepageProductRail: (
     where: HomepageProductRailWhereUniqueInput
   ) => HomepageProductRailNullablePromise;
@@ -1315,6 +1357,42 @@ export interface Prisma {
   deleteManyEmailReceipts: (
     where?: EmailReceiptWhereInput
   ) => BatchPayloadPromise;
+  createFitPic: (data: FitPicCreateInput) => FitPicPromise;
+  updateFitPic: (args: {
+    data: FitPicUpdateInput;
+    where: FitPicWhereUniqueInput;
+  }) => FitPicPromise;
+  updateManyFitPics: (args: {
+    data: FitPicUpdateManyMutationInput;
+    where?: FitPicWhereInput;
+  }) => BatchPayloadPromise;
+  upsertFitPic: (args: {
+    where: FitPicWhereUniqueInput;
+    create: FitPicCreateInput;
+    update: FitPicUpdateInput;
+  }) => FitPicPromise;
+  deleteFitPic: (where: FitPicWhereUniqueInput) => FitPicPromise;
+  deleteManyFitPics: (where?: FitPicWhereInput) => BatchPayloadPromise;
+  createFitPicReport: (data: FitPicReportCreateInput) => FitPicReportPromise;
+  updateFitPicReport: (args: {
+    data: FitPicReportUpdateInput;
+    where: FitPicReportWhereUniqueInput;
+  }) => FitPicReportPromise;
+  updateManyFitPicReports: (args: {
+    data: FitPicReportUpdateManyMutationInput;
+    where?: FitPicReportWhereInput;
+  }) => BatchPayloadPromise;
+  upsertFitPicReport: (args: {
+    where: FitPicReportWhereUniqueInput;
+    create: FitPicReportCreateInput;
+    update: FitPicReportUpdateInput;
+  }) => FitPicReportPromise;
+  deleteFitPicReport: (
+    where: FitPicReportWhereUniqueInput
+  ) => FitPicReportPromise;
+  deleteManyFitPicReports: (
+    where?: FitPicReportWhereInput
+  ) => BatchPayloadPromise;
   createHomepageProductRail: (
     data: HomepageProductRailCreateInput
   ) => HomepageProductRailPromise;
@@ -2076,6 +2154,12 @@ export interface Subscription {
   emailReceipt: (
     where?: EmailReceiptSubscriptionWhereInput
   ) => EmailReceiptSubscriptionPayloadSubscription;
+  fitPic: (
+    where?: FitPicSubscriptionWhereInput
+  ) => FitPicSubscriptionPayloadSubscription;
+  fitPicReport: (
+    where?: FitPicReportSubscriptionWhereInput
+  ) => FitPicReportSubscriptionPayloadSubscription;
   homepageProductRail: (
     where?: HomepageProductRailSubscriptionWhereInput
   ) => HomepageProductRailSubscriptionPayloadSubscription;
@@ -2223,6 +2307,69 @@ export type SmsStatus =
   | "Read"
   | "PartiallyDelivered";
 
+export type LocationType = "Office" | "Warehouse" | "Cleaner" | "Customer";
+
+export type ProductType = "Top" | "Bottom" | "Accessory" | "Shoe";
+
+export type LetterSize = "XS" | "S" | "M" | "L" | "XL" | "XXL";
+
+export type BottomSizeType = "WxL" | "US" | "EU" | "JP" | "Letter";
+
+export type BrandTier =
+  | "Tier0"
+  | "Tier1"
+  | "Tier2"
+  | "Niche"
+  | "Upcoming"
+  | "Retro"
+  | "Boutique"
+  | "Local"
+  | "Discovery";
+
+export type ProductStatus =
+  | "Available"
+  | "NotAvailable"
+  | "Stored"
+  | "Offloaded";
+
+export type ProductArchitecture = "Fashion" | "Showstopper" | "Staple";
+
+export type PhotographyStatus =
+  | "Done"
+  | "InProgress"
+  | "ReadyForEditing"
+  | "ReadyToShoot"
+  | "Steam";
+
+export type InventoryStatus =
+  | "NonReservable"
+  | "Reservable"
+  | "Reserved"
+  | "Stored"
+  | "Offloaded";
+
+export type PhysicalProductStatus =
+  | "New"
+  | "Used"
+  | "Dirty"
+  | "Damaged"
+  | "PermanentlyDamaged"
+  | "Clean"
+  | "Lost";
+
+export type PhysicalProductOffloadMethod =
+  | "SoldToUser"
+  | "SoldToThirdParty"
+  | "ReturnedToVendor"
+  | "Recycled"
+  | "Unknown";
+
+export type WarehouseLocationType = "Conveyor" | "Rail" | "Bin";
+
+export type FitPicReportStatus = "Pending" | "Reviewed";
+
+export type FitPicStatus = "Submitted" | "Published" | "Unpublished";
+
 export type PushNotificationReceiptOrderByInput =
   | "id_ASC"
   | "id_DESC"
@@ -2297,74 +2444,15 @@ export type SmsReceiptOrderByInput =
   | "updatedAt_ASC"
   | "updatedAt_DESC";
 
-export type CustomerStatus =
-  | "Invited"
-  | "Created"
-  | "Waitlisted"
-  | "Authorized"
-  | "Active"
-  | "Suspended"
-  | "Paused"
-  | "Deactivated";
-
-export type LocationType = "Office" | "Warehouse" | "Cleaner" | "Customer";
-
-export type ProductType = "Top" | "Bottom" | "Accessory" | "Shoe";
-
-export type LetterSize = "XS" | "S" | "M" | "L" | "XL" | "XXL";
-
-export type BottomSizeType = "WxL" | "US" | "EU" | "JP" | "Letter";
-
-export type BrandTier =
-  | "Tier0"
-  | "Tier1"
-  | "Tier2"
-  | "Niche"
-  | "Upcoming"
-  | "Retro"
-  | "Boutique"
-  | "Local"
-  | "Discovery";
-
-export type ProductStatus =
-  | "Available"
-  | "NotAvailable"
-  | "Stored"
-  | "Offloaded";
-
-export type ProductArchitecture = "Fashion" | "Showstopper" | "Staple";
-
-export type PhotographyStatus =
-  | "Done"
-  | "InProgress"
-  | "ReadyForEditing"
-  | "ReadyToShoot"
-  | "Steam";
-
-export type InventoryStatus =
-  | "NonReservable"
-  | "Reservable"
-  | "Reserved"
-  | "Stored"
-  | "Offloaded";
-
-export type PhysicalProductStatus =
-  | "New"
-  | "Used"
-  | "Dirty"
-  | "Damaged"
-  | "PermanentlyDamaged"
-  | "Clean"
-  | "Lost";
-
-export type PhysicalProductOffloadMethod =
-  | "SoldToUser"
-  | "SoldToThirdParty"
-  | "ReturnedToVendor"
-  | "Recycled"
-  | "Unknown";
-
-export type WarehouseLocationType = "Conveyor" | "Rail" | "Bin";
+export type FitPicOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "status_ASC"
+  | "status_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
 
 export type PhysicalProductOrderByInput =
   | "id_ASC"
@@ -2567,6 +2655,26 @@ export type WarehouseLocationOrderByInput =
   | "createdAt_DESC"
   | "updatedAt_ASC"
   | "updatedAt_DESC";
+
+export type FitPicReportOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "status_ASC"
+  | "status_DESC"
+  | "reportedAt_ASC"
+  | "reportedAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
+
+export type CustomerStatus =
+  | "Invited"
+  | "Created"
+  | "Waitlisted"
+  | "Authorized"
+  | "Active"
+  | "Suspended"
+  | "Paused"
+  | "Deactivated";
 
 export type Plan = "AllAccess" | "Essential";
 
@@ -3349,6 +3457,12 @@ export interface UserWhereInput {
   verificationMethod_not_in?: Maybe<
     UserVerificationMethod[] | UserVerificationMethod
   >;
+  smsReceipts_every?: Maybe<SmsReceiptWhereInput>;
+  smsReceipts_some?: Maybe<SmsReceiptWhereInput>;
+  smsReceipts_none?: Maybe<SmsReceiptWhereInput>;
+  fitPics_every?: Maybe<FitPicWhereInput>;
+  fitPics_some?: Maybe<FitPicWhereInput>;
+  fitPics_none?: Maybe<FitPicWhereInput>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -3365,9 +3479,6 @@ export interface UserWhereInput {
   updatedAt_lte?: Maybe<DateTimeInput>;
   updatedAt_gt?: Maybe<DateTimeInput>;
   updatedAt_gte?: Maybe<DateTimeInput>;
-  smsReceipts_every?: Maybe<SmsReceiptWhereInput>;
-  smsReceipts_some?: Maybe<SmsReceiptWhereInput>;
-  smsReceipts_none?: Maybe<SmsReceiptWhereInput>;
   AND?: Maybe<UserWhereInput[] | UserWhereInput>;
   OR?: Maybe<UserWhereInput[] | UserWhereInput>;
   NOT?: Maybe<UserWhereInput[] | UserWhereInput>;
@@ -3527,7 +3638,7 @@ export interface SmsReceiptWhereInput {
   NOT?: Maybe<SmsReceiptWhereInput[] | SmsReceiptWhereInput>;
 }
 
-export interface PhysicalProductWhereInput {
+export interface FitPicWhereInput {
   id?: Maybe<ID_Input>;
   id_not?: Maybe<ID_Input>;
   id_in?: Maybe<ID_Input[] | ID_Input>;
@@ -3542,96 +3653,19 @@ export interface PhysicalProductWhereInput {
   id_not_starts_with?: Maybe<ID_Input>;
   id_ends_with?: Maybe<ID_Input>;
   id_not_ends_with?: Maybe<ID_Input>;
-  seasonsUID?: Maybe<String>;
-  seasonsUID_not?: Maybe<String>;
-  seasonsUID_in?: Maybe<String[] | String>;
-  seasonsUID_not_in?: Maybe<String[] | String>;
-  seasonsUID_lt?: Maybe<String>;
-  seasonsUID_lte?: Maybe<String>;
-  seasonsUID_gt?: Maybe<String>;
-  seasonsUID_gte?: Maybe<String>;
-  seasonsUID_contains?: Maybe<String>;
-  seasonsUID_not_contains?: Maybe<String>;
-  seasonsUID_starts_with?: Maybe<String>;
-  seasonsUID_not_starts_with?: Maybe<String>;
-  seasonsUID_ends_with?: Maybe<String>;
-  seasonsUID_not_ends_with?: Maybe<String>;
+  image?: Maybe<ImageWhereInput>;
   location?: Maybe<LocationWhereInput>;
-  productVariant?: Maybe<ProductVariantWhereInput>;
-  inventoryStatus?: Maybe<InventoryStatus>;
-  inventoryStatus_not?: Maybe<InventoryStatus>;
-  inventoryStatus_in?: Maybe<InventoryStatus[] | InventoryStatus>;
-  inventoryStatus_not_in?: Maybe<InventoryStatus[] | InventoryStatus>;
-  inventoryStatusChanges_every?: Maybe<
-    PhysicalProductInventoryStatusChangeWhereInput
-  >;
-  inventoryStatusChanges_some?: Maybe<
-    PhysicalProductInventoryStatusChangeWhereInput
-  >;
-  inventoryStatusChanges_none?: Maybe<
-    PhysicalProductInventoryStatusChangeWhereInput
-  >;
-  productStatus?: Maybe<PhysicalProductStatus>;
-  productStatus_not?: Maybe<PhysicalProductStatus>;
-  productStatus_in?: Maybe<PhysicalProductStatus[] | PhysicalProductStatus>;
-  productStatus_not_in?: Maybe<PhysicalProductStatus[] | PhysicalProductStatus>;
-  offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
-  offloadMethod_not?: Maybe<PhysicalProductOffloadMethod>;
-  offloadMethod_in?: Maybe<
-    PhysicalProductOffloadMethod[] | PhysicalProductOffloadMethod
-  >;
-  offloadMethod_not_in?: Maybe<
-    PhysicalProductOffloadMethod[] | PhysicalProductOffloadMethod
-  >;
-  offloadNotes?: Maybe<String>;
-  offloadNotes_not?: Maybe<String>;
-  offloadNotes_in?: Maybe<String[] | String>;
-  offloadNotes_not_in?: Maybe<String[] | String>;
-  offloadNotes_lt?: Maybe<String>;
-  offloadNotes_lte?: Maybe<String>;
-  offloadNotes_gt?: Maybe<String>;
-  offloadNotes_gte?: Maybe<String>;
-  offloadNotes_contains?: Maybe<String>;
-  offloadNotes_not_contains?: Maybe<String>;
-  offloadNotes_starts_with?: Maybe<String>;
-  offloadNotes_not_starts_with?: Maybe<String>;
-  offloadNotes_ends_with?: Maybe<String>;
-  offloadNotes_not_ends_with?: Maybe<String>;
-  sequenceNumber?: Maybe<Int>;
-  sequenceNumber_not?: Maybe<Int>;
-  sequenceNumber_in?: Maybe<Int[] | Int>;
-  sequenceNumber_not_in?: Maybe<Int[] | Int>;
-  sequenceNumber_lt?: Maybe<Int>;
-  sequenceNumber_lte?: Maybe<Int>;
-  sequenceNumber_gt?: Maybe<Int>;
-  sequenceNumber_gte?: Maybe<Int>;
-  warehouseLocation?: Maybe<WarehouseLocationWhereInput>;
-  barcoded?: Maybe<Boolean>;
-  barcoded_not?: Maybe<Boolean>;
-  dateOrdered?: Maybe<DateTimeInput>;
-  dateOrdered_not?: Maybe<DateTimeInput>;
-  dateOrdered_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  dateOrdered_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  dateOrdered_lt?: Maybe<DateTimeInput>;
-  dateOrdered_lte?: Maybe<DateTimeInput>;
-  dateOrdered_gt?: Maybe<DateTimeInput>;
-  dateOrdered_gte?: Maybe<DateTimeInput>;
-  dateReceived?: Maybe<DateTimeInput>;
-  dateReceived_not?: Maybe<DateTimeInput>;
-  dateReceived_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  dateReceived_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  dateReceived_lt?: Maybe<DateTimeInput>;
-  dateReceived_lte?: Maybe<DateTimeInput>;
-  dateReceived_gt?: Maybe<DateTimeInput>;
-  dateReceived_gte?: Maybe<DateTimeInput>;
-  unitCost?: Maybe<Float>;
-  unitCost_not?: Maybe<Float>;
-  unitCost_in?: Maybe<Float[] | Float>;
-  unitCost_not_in?: Maybe<Float[] | Float>;
-  unitCost_lt?: Maybe<Float>;
-  unitCost_lte?: Maybe<Float>;
-  unitCost_gt?: Maybe<Float>;
-  unitCost_gte?: Maybe<Float>;
+  products_every?: Maybe<ProductWhereInput>;
+  products_some?: Maybe<ProductWhereInput>;
+  products_none?: Maybe<ProductWhereInput>;
+  reports_every?: Maybe<FitPicReportWhereInput>;
+  reports_some?: Maybe<FitPicReportWhereInput>;
+  reports_none?: Maybe<FitPicReportWhereInput>;
+  status?: Maybe<FitPicStatus>;
+  status_not?: Maybe<FitPicStatus>;
+  status_in?: Maybe<FitPicStatus[] | FitPicStatus>;
+  status_not_in?: Maybe<FitPicStatus[] | FitPicStatus>;
+  user?: Maybe<UserWhereInput>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -3648,9 +3682,103 @@ export interface PhysicalProductWhereInput {
   updatedAt_lte?: Maybe<DateTimeInput>;
   updatedAt_gt?: Maybe<DateTimeInput>;
   updatedAt_gte?: Maybe<DateTimeInput>;
-  AND?: Maybe<PhysicalProductWhereInput[] | PhysicalProductWhereInput>;
-  OR?: Maybe<PhysicalProductWhereInput[] | PhysicalProductWhereInput>;
-  NOT?: Maybe<PhysicalProductWhereInput[] | PhysicalProductWhereInput>;
+  AND?: Maybe<FitPicWhereInput[] | FitPicWhereInput>;
+  OR?: Maybe<FitPicWhereInput[] | FitPicWhereInput>;
+  NOT?: Maybe<FitPicWhereInput[] | FitPicWhereInput>;
+}
+
+export interface ImageWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  caption?: Maybe<String>;
+  caption_not?: Maybe<String>;
+  caption_in?: Maybe<String[] | String>;
+  caption_not_in?: Maybe<String[] | String>;
+  caption_lt?: Maybe<String>;
+  caption_lte?: Maybe<String>;
+  caption_gt?: Maybe<String>;
+  caption_gte?: Maybe<String>;
+  caption_contains?: Maybe<String>;
+  caption_not_contains?: Maybe<String>;
+  caption_starts_with?: Maybe<String>;
+  caption_not_starts_with?: Maybe<String>;
+  caption_ends_with?: Maybe<String>;
+  caption_not_ends_with?: Maybe<String>;
+  url?: Maybe<String>;
+  url_not?: Maybe<String>;
+  url_in?: Maybe<String[] | String>;
+  url_not_in?: Maybe<String[] | String>;
+  url_lt?: Maybe<String>;
+  url_lte?: Maybe<String>;
+  url_gt?: Maybe<String>;
+  url_gte?: Maybe<String>;
+  url_contains?: Maybe<String>;
+  url_not_contains?: Maybe<String>;
+  url_starts_with?: Maybe<String>;
+  url_not_starts_with?: Maybe<String>;
+  url_ends_with?: Maybe<String>;
+  url_not_ends_with?: Maybe<String>;
+  height?: Maybe<Int>;
+  height_not?: Maybe<Int>;
+  height_in?: Maybe<Int[] | Int>;
+  height_not_in?: Maybe<Int[] | Int>;
+  height_lt?: Maybe<Int>;
+  height_lte?: Maybe<Int>;
+  height_gt?: Maybe<Int>;
+  height_gte?: Maybe<Int>;
+  width?: Maybe<Int>;
+  width_not?: Maybe<Int>;
+  width_in?: Maybe<Int[] | Int>;
+  width_not_in?: Maybe<Int[] | Int>;
+  width_lt?: Maybe<Int>;
+  width_lte?: Maybe<Int>;
+  width_gt?: Maybe<Int>;
+  width_gte?: Maybe<Int>;
+  title?: Maybe<String>;
+  title_not?: Maybe<String>;
+  title_in?: Maybe<String[] | String>;
+  title_not_in?: Maybe<String[] | String>;
+  title_lt?: Maybe<String>;
+  title_lte?: Maybe<String>;
+  title_gt?: Maybe<String>;
+  title_gte?: Maybe<String>;
+  title_contains?: Maybe<String>;
+  title_not_contains?: Maybe<String>;
+  title_starts_with?: Maybe<String>;
+  title_not_starts_with?: Maybe<String>;
+  title_ends_with?: Maybe<String>;
+  title_not_ends_with?: Maybe<String>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<ImageWhereInput[] | ImageWhereInput>;
+  OR?: Maybe<ImageWhereInput[] | ImageWhereInput>;
+  NOT?: Maybe<ImageWhereInput[] | ImageWhereInput>;
 }
 
 export interface LocationWhereInput {
@@ -3837,6 +3965,132 @@ export interface LocationWhereInput {
   AND?: Maybe<LocationWhereInput[] | LocationWhereInput>;
   OR?: Maybe<LocationWhereInput[] | LocationWhereInput>;
   NOT?: Maybe<LocationWhereInput[] | LocationWhereInput>;
+}
+
+export interface PhysicalProductWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  seasonsUID?: Maybe<String>;
+  seasonsUID_not?: Maybe<String>;
+  seasonsUID_in?: Maybe<String[] | String>;
+  seasonsUID_not_in?: Maybe<String[] | String>;
+  seasonsUID_lt?: Maybe<String>;
+  seasonsUID_lte?: Maybe<String>;
+  seasonsUID_gt?: Maybe<String>;
+  seasonsUID_gte?: Maybe<String>;
+  seasonsUID_contains?: Maybe<String>;
+  seasonsUID_not_contains?: Maybe<String>;
+  seasonsUID_starts_with?: Maybe<String>;
+  seasonsUID_not_starts_with?: Maybe<String>;
+  seasonsUID_ends_with?: Maybe<String>;
+  seasonsUID_not_ends_with?: Maybe<String>;
+  location?: Maybe<LocationWhereInput>;
+  productVariant?: Maybe<ProductVariantWhereInput>;
+  inventoryStatus?: Maybe<InventoryStatus>;
+  inventoryStatus_not?: Maybe<InventoryStatus>;
+  inventoryStatus_in?: Maybe<InventoryStatus[] | InventoryStatus>;
+  inventoryStatus_not_in?: Maybe<InventoryStatus[] | InventoryStatus>;
+  inventoryStatusChanges_every?: Maybe<
+    PhysicalProductInventoryStatusChangeWhereInput
+  >;
+  inventoryStatusChanges_some?: Maybe<
+    PhysicalProductInventoryStatusChangeWhereInput
+  >;
+  inventoryStatusChanges_none?: Maybe<
+    PhysicalProductInventoryStatusChangeWhereInput
+  >;
+  productStatus?: Maybe<PhysicalProductStatus>;
+  productStatus_not?: Maybe<PhysicalProductStatus>;
+  productStatus_in?: Maybe<PhysicalProductStatus[] | PhysicalProductStatus>;
+  productStatus_not_in?: Maybe<PhysicalProductStatus[] | PhysicalProductStatus>;
+  offloadMethod?: Maybe<PhysicalProductOffloadMethod>;
+  offloadMethod_not?: Maybe<PhysicalProductOffloadMethod>;
+  offloadMethod_in?: Maybe<
+    PhysicalProductOffloadMethod[] | PhysicalProductOffloadMethod
+  >;
+  offloadMethod_not_in?: Maybe<
+    PhysicalProductOffloadMethod[] | PhysicalProductOffloadMethod
+  >;
+  offloadNotes?: Maybe<String>;
+  offloadNotes_not?: Maybe<String>;
+  offloadNotes_in?: Maybe<String[] | String>;
+  offloadNotes_not_in?: Maybe<String[] | String>;
+  offloadNotes_lt?: Maybe<String>;
+  offloadNotes_lte?: Maybe<String>;
+  offloadNotes_gt?: Maybe<String>;
+  offloadNotes_gte?: Maybe<String>;
+  offloadNotes_contains?: Maybe<String>;
+  offloadNotes_not_contains?: Maybe<String>;
+  offloadNotes_starts_with?: Maybe<String>;
+  offloadNotes_not_starts_with?: Maybe<String>;
+  offloadNotes_ends_with?: Maybe<String>;
+  offloadNotes_not_ends_with?: Maybe<String>;
+  sequenceNumber?: Maybe<Int>;
+  sequenceNumber_not?: Maybe<Int>;
+  sequenceNumber_in?: Maybe<Int[] | Int>;
+  sequenceNumber_not_in?: Maybe<Int[] | Int>;
+  sequenceNumber_lt?: Maybe<Int>;
+  sequenceNumber_lte?: Maybe<Int>;
+  sequenceNumber_gt?: Maybe<Int>;
+  sequenceNumber_gte?: Maybe<Int>;
+  warehouseLocation?: Maybe<WarehouseLocationWhereInput>;
+  barcoded?: Maybe<Boolean>;
+  barcoded_not?: Maybe<Boolean>;
+  dateOrdered?: Maybe<DateTimeInput>;
+  dateOrdered_not?: Maybe<DateTimeInput>;
+  dateOrdered_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  dateOrdered_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  dateOrdered_lt?: Maybe<DateTimeInput>;
+  dateOrdered_lte?: Maybe<DateTimeInput>;
+  dateOrdered_gt?: Maybe<DateTimeInput>;
+  dateOrdered_gte?: Maybe<DateTimeInput>;
+  dateReceived?: Maybe<DateTimeInput>;
+  dateReceived_not?: Maybe<DateTimeInput>;
+  dateReceived_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  dateReceived_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  dateReceived_lt?: Maybe<DateTimeInput>;
+  dateReceived_lte?: Maybe<DateTimeInput>;
+  dateReceived_gt?: Maybe<DateTimeInput>;
+  dateReceived_gte?: Maybe<DateTimeInput>;
+  unitCost?: Maybe<Float>;
+  unitCost_not?: Maybe<Float>;
+  unitCost_in?: Maybe<Float[] | Float>;
+  unitCost_not_in?: Maybe<Float[] | Float>;
+  unitCost_lt?: Maybe<Float>;
+  unitCost_lte?: Maybe<Float>;
+  unitCost_gt?: Maybe<Float>;
+  unitCost_gte?: Maybe<Float>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<PhysicalProductWhereInput[] | PhysicalProductWhereInput>;
+  OR?: Maybe<PhysicalProductWhereInput[] | PhysicalProductWhereInput>;
+  NOT?: Maybe<PhysicalProductWhereInput[] | PhysicalProductWhereInput>;
 }
 
 export interface ProductVariantWhereInput {
@@ -4634,100 +4888,6 @@ export interface CategoryWhereInput {
   NOT?: Maybe<CategoryWhereInput[] | CategoryWhereInput>;
 }
 
-export interface ImageWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  caption?: Maybe<String>;
-  caption_not?: Maybe<String>;
-  caption_in?: Maybe<String[] | String>;
-  caption_not_in?: Maybe<String[] | String>;
-  caption_lt?: Maybe<String>;
-  caption_lte?: Maybe<String>;
-  caption_gt?: Maybe<String>;
-  caption_gte?: Maybe<String>;
-  caption_contains?: Maybe<String>;
-  caption_not_contains?: Maybe<String>;
-  caption_starts_with?: Maybe<String>;
-  caption_not_starts_with?: Maybe<String>;
-  caption_ends_with?: Maybe<String>;
-  caption_not_ends_with?: Maybe<String>;
-  url?: Maybe<String>;
-  url_not?: Maybe<String>;
-  url_in?: Maybe<String[] | String>;
-  url_not_in?: Maybe<String[] | String>;
-  url_lt?: Maybe<String>;
-  url_lte?: Maybe<String>;
-  url_gt?: Maybe<String>;
-  url_gte?: Maybe<String>;
-  url_contains?: Maybe<String>;
-  url_not_contains?: Maybe<String>;
-  url_starts_with?: Maybe<String>;
-  url_not_starts_with?: Maybe<String>;
-  url_ends_with?: Maybe<String>;
-  url_not_ends_with?: Maybe<String>;
-  height?: Maybe<Int>;
-  height_not?: Maybe<Int>;
-  height_in?: Maybe<Int[] | Int>;
-  height_not_in?: Maybe<Int[] | Int>;
-  height_lt?: Maybe<Int>;
-  height_lte?: Maybe<Int>;
-  height_gt?: Maybe<Int>;
-  height_gte?: Maybe<Int>;
-  width?: Maybe<Int>;
-  width_not?: Maybe<Int>;
-  width_in?: Maybe<Int[] | Int>;
-  width_not_in?: Maybe<Int[] | Int>;
-  width_lt?: Maybe<Int>;
-  width_lte?: Maybe<Int>;
-  width_gt?: Maybe<Int>;
-  width_gte?: Maybe<Int>;
-  title?: Maybe<String>;
-  title_not?: Maybe<String>;
-  title_in?: Maybe<String[] | String>;
-  title_not_in?: Maybe<String[] | String>;
-  title_lt?: Maybe<String>;
-  title_lte?: Maybe<String>;
-  title_gt?: Maybe<String>;
-  title_gte?: Maybe<String>;
-  title_contains?: Maybe<String>;
-  title_not_contains?: Maybe<String>;
-  title_starts_with?: Maybe<String>;
-  title_not_starts_with?: Maybe<String>;
-  title_ends_with?: Maybe<String>;
-  title_not_ends_with?: Maybe<String>;
-  createdAt?: Maybe<DateTimeInput>;
-  createdAt_not?: Maybe<DateTimeInput>;
-  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_lt?: Maybe<DateTimeInput>;
-  createdAt_lte?: Maybe<DateTimeInput>;
-  createdAt_gt?: Maybe<DateTimeInput>;
-  createdAt_gte?: Maybe<DateTimeInput>;
-  updatedAt?: Maybe<DateTimeInput>;
-  updatedAt_not?: Maybe<DateTimeInput>;
-  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_lt?: Maybe<DateTimeInput>;
-  updatedAt_lte?: Maybe<DateTimeInput>;
-  updatedAt_gt?: Maybe<DateTimeInput>;
-  updatedAt_gte?: Maybe<DateTimeInput>;
-  AND?: Maybe<ImageWhereInput[] | ImageWhereInput>;
-  OR?: Maybe<ImageWhereInput[] | ImageWhereInput>;
-  NOT?: Maybe<ImageWhereInput[] | ImageWhereInput>;
-}
-
 export interface ProductModelWhereInput {
   id?: Maybe<ID_Input>;
   id_not?: Maybe<ID_Input>;
@@ -5168,6 +5328,48 @@ export interface WarehouseLocationConstraintWhereInput {
     | WarehouseLocationConstraintWhereInput[]
     | WarehouseLocationConstraintWhereInput
   >;
+}
+
+export interface FitPicReportWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  reporter?: Maybe<UserWhereInput>;
+  reported?: Maybe<FitPicWhereInput>;
+  status?: Maybe<FitPicReportStatus>;
+  status_not?: Maybe<FitPicReportStatus>;
+  status_in?: Maybe<FitPicReportStatus[] | FitPicReportStatus>;
+  status_not_in?: Maybe<FitPicReportStatus[] | FitPicReportStatus>;
+  reportedAt?: Maybe<DateTimeInput>;
+  reportedAt_not?: Maybe<DateTimeInput>;
+  reportedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  reportedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  reportedAt_lt?: Maybe<DateTimeInput>;
+  reportedAt_lte?: Maybe<DateTimeInput>;
+  reportedAt_gt?: Maybe<DateTimeInput>;
+  reportedAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<FitPicReportWhereInput[] | FitPicReportWhereInput>;
+  OR?: Maybe<FitPicReportWhereInput[] | FitPicReportWhereInput>;
+  NOT?: Maybe<FitPicReportWhereInput[] | FitPicReportWhereInput>;
 }
 
 export interface PauseRequestWhereInput {
@@ -6383,6 +6585,14 @@ export interface EmailReceiptWhereInput {
   NOT?: Maybe<EmailReceiptWhereInput[] | EmailReceiptWhereInput>;
 }
 
+export type FitPicWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
+export type FitPicReportWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
 export type HomepageProductRailWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
   slug?: Maybe<String>;
@@ -7103,6 +7313,7 @@ export interface UserCreateInput {
   verificationStatus?: Maybe<UserVerificationStatus>;
   verificationMethod?: Maybe<UserVerificationMethod>;
   smsReceipts?: Maybe<SmsReceiptCreateManyInput>;
+  fitPics?: Maybe<FitPicCreateManyWithoutUserInput>;
 }
 
 export interface UserCreaterolesInput {
@@ -7209,6 +7420,7 @@ export interface UserCreateWithoutPushNotificationsInput {
   verificationStatus?: Maybe<UserVerificationStatus>;
   verificationMethod?: Maybe<UserVerificationMethod>;
   smsReceipts?: Maybe<SmsReceiptCreateManyInput>;
+  fitPics?: Maybe<FitPicCreateManyWithoutUserInput>;
 }
 
 export interface SmsReceiptCreateManyInput {
@@ -7228,76 +7440,32 @@ export interface SmsReceiptCreatemediaUrlsInput {
   set?: Maybe<String[] | String>;
 }
 
-export interface CustomerDetailCreateOneInput {
-  create?: Maybe<CustomerDetailCreateInput>;
-  connect?: Maybe<CustomerDetailWhereUniqueInput>;
+export interface FitPicCreateManyWithoutUserInput {
+  create?: Maybe<FitPicCreateWithoutUserInput[] | FitPicCreateWithoutUserInput>;
+  connect?: Maybe<FitPicWhereUniqueInput[] | FitPicWhereUniqueInput>;
 }
 
-export interface CustomerDetailCreateInput {
+export interface FitPicCreateWithoutUserInput {
   id?: Maybe<ID_Input>;
-  phoneNumber?: Maybe<String>;
-  birthday?: Maybe<DateTimeInput>;
+  image: ImageCreateOneInput;
+  location?: Maybe<LocationCreateOneInput>;
+  products?: Maybe<ProductCreateManyInput>;
+  reports?: Maybe<FitPicReportCreateManyWithoutReportedInput>;
+  status?: Maybe<FitPicStatus>;
+}
+
+export interface ImageCreateOneInput {
+  create?: Maybe<ImageCreateInput>;
+  connect?: Maybe<ImageWhereUniqueInput>;
+}
+
+export interface ImageCreateInput {
+  id?: Maybe<ID_Input>;
+  caption?: Maybe<String>;
+  url: String;
   height?: Maybe<Int>;
-  weight?: Maybe<CustomerDetailCreateweightInput>;
-  bodyType?: Maybe<String>;
-  averageTopSize?: Maybe<String>;
-  topSizes?: Maybe<CustomerDetailCreatetopSizesInput>;
-  averageWaistSize?: Maybe<String>;
-  waistSizes?: Maybe<CustomerDetailCreatewaistSizesInput>;
-  averagePantLength?: Maybe<String>;
-  preferredPronouns?: Maybe<String>;
-  profession?: Maybe<String>;
-  partyFrequency?: Maybe<String>;
-  travelFrequency?: Maybe<String>;
-  shoppingFrequency?: Maybe<String>;
-  averageSpend?: Maybe<String>;
-  style?: Maybe<String>;
-  commuteStyle?: Maybe<String>;
-  stylePreferences?: Maybe<StylePreferencesCreateOneInput>;
-  shippingAddress?: Maybe<LocationCreateOneInput>;
-  phoneOS?: Maybe<String>;
-  insureShipment?: Maybe<Boolean>;
-}
-
-export interface CustomerDetailCreateweightInput {
-  set?: Maybe<Int[] | Int>;
-}
-
-export interface CustomerDetailCreatetopSizesInput {
-  set?: Maybe<String[] | String>;
-}
-
-export interface CustomerDetailCreatewaistSizesInput {
-  set?: Maybe<Int[] | Int>;
-}
-
-export interface StylePreferencesCreateOneInput {
-  create?: Maybe<StylePreferencesCreateInput>;
-  connect?: Maybe<StylePreferencesWhereUniqueInput>;
-}
-
-export interface StylePreferencesCreateInput {
-  id?: Maybe<ID_Input>;
-  styles?: Maybe<StylePreferencesCreatestylesInput>;
-  patterns?: Maybe<StylePreferencesCreatepatternsInput>;
-  colors?: Maybe<StylePreferencesCreatecolorsInput>;
-  brands?: Maybe<StylePreferencesCreatebrandsInput>;
-}
-
-export interface StylePreferencesCreatestylesInput {
-  set?: Maybe<String[] | String>;
-}
-
-export interface StylePreferencesCreatepatternsInput {
-  set?: Maybe<String[] | String>;
-}
-
-export interface StylePreferencesCreatecolorsInput {
-  set?: Maybe<String[] | String>;
-}
-
-export interface StylePreferencesCreatebrandsInput {
-  set?: Maybe<String[] | String>;
+  width?: Maybe<Int>;
+  title?: Maybe<String>;
 }
 
 export interface LocationCreateOneInput {
@@ -7570,15 +7738,6 @@ export interface ImageCreateManyInput {
   connect?: Maybe<ImageWhereUniqueInput[] | ImageWhereUniqueInput>;
 }
 
-export interface ImageCreateInput {
-  id?: Maybe<ID_Input>;
-  caption?: Maybe<String>;
-  url: String;
-  height?: Maybe<Int>;
-  width?: Maybe<Int>;
-  title?: Maybe<String>;
-}
-
 export interface ProductModelCreateOneWithoutProductsInput {
   create?: Maybe<ProductModelCreateWithoutProductsInput>;
   connect?: Maybe<ProductModelWhereUniqueInput>;
@@ -7842,6 +8001,131 @@ export interface ProductStatusChangeCreateWithoutProductInput {
   new: ProductStatus;
 }
 
+export interface ProductCreateManyInput {
+  create?: Maybe<ProductCreateInput[] | ProductCreateInput>;
+  connect?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
+}
+
+export interface ProductCreateInput {
+  id?: Maybe<ID_Input>;
+  slug: String;
+  name: String;
+  brand: BrandCreateOneWithoutProductsInput;
+  category: CategoryCreateOneWithoutProductsInput;
+  type?: Maybe<ProductType>;
+  description?: Maybe<String>;
+  externalURL?: Maybe<String>;
+  images?: Maybe<ImageCreateManyInput>;
+  modelHeight?: Maybe<Int>;
+  retailPrice?: Maybe<Int>;
+  model?: Maybe<ProductModelCreateOneWithoutProductsInput>;
+  modelSize?: Maybe<SizeCreateOneInput>;
+  color: ColorCreateOneInput;
+  secondaryColor?: Maybe<ColorCreateOneInput>;
+  tags?: Maybe<TagCreateManyWithoutProductsInput>;
+  functions?: Maybe<ProductFunctionCreateManyInput>;
+  materialCategory?: Maybe<
+    ProductMaterialCategoryCreateOneWithoutProductsInput
+  >;
+  innerMaterials?: Maybe<ProductCreateinnerMaterialsInput>;
+  outerMaterials?: Maybe<ProductCreateouterMaterialsInput>;
+  variants?: Maybe<ProductVariantCreateManyWithoutProductInput>;
+  status?: Maybe<ProductStatus>;
+  statusChanges?: Maybe<ProductStatusChangeCreateManyWithoutProductInput>;
+  season?: Maybe<String>;
+  architecture?: Maybe<ProductArchitecture>;
+  photographyStatus?: Maybe<PhotographyStatus>;
+  publishedAt?: Maybe<DateTimeInput>;
+}
+
+export interface FitPicReportCreateManyWithoutReportedInput {
+  create?: Maybe<
+    | FitPicReportCreateWithoutReportedInput[]
+    | FitPicReportCreateWithoutReportedInput
+  >;
+  connect?: Maybe<
+    FitPicReportWhereUniqueInput[] | FitPicReportWhereUniqueInput
+  >;
+}
+
+export interface FitPicReportCreateWithoutReportedInput {
+  id?: Maybe<ID_Input>;
+  reporter: UserCreateOneInput;
+  status?: Maybe<FitPicReportStatus>;
+}
+
+export interface CustomerDetailCreateOneInput {
+  create?: Maybe<CustomerDetailCreateInput>;
+  connect?: Maybe<CustomerDetailWhereUniqueInput>;
+}
+
+export interface CustomerDetailCreateInput {
+  id?: Maybe<ID_Input>;
+  phoneNumber?: Maybe<String>;
+  birthday?: Maybe<DateTimeInput>;
+  height?: Maybe<Int>;
+  weight?: Maybe<CustomerDetailCreateweightInput>;
+  bodyType?: Maybe<String>;
+  averageTopSize?: Maybe<String>;
+  topSizes?: Maybe<CustomerDetailCreatetopSizesInput>;
+  averageWaistSize?: Maybe<String>;
+  waistSizes?: Maybe<CustomerDetailCreatewaistSizesInput>;
+  averagePantLength?: Maybe<String>;
+  preferredPronouns?: Maybe<String>;
+  profession?: Maybe<String>;
+  partyFrequency?: Maybe<String>;
+  travelFrequency?: Maybe<String>;
+  shoppingFrequency?: Maybe<String>;
+  averageSpend?: Maybe<String>;
+  style?: Maybe<String>;
+  commuteStyle?: Maybe<String>;
+  stylePreferences?: Maybe<StylePreferencesCreateOneInput>;
+  shippingAddress?: Maybe<LocationCreateOneInput>;
+  phoneOS?: Maybe<String>;
+  insureShipment?: Maybe<Boolean>;
+}
+
+export interface CustomerDetailCreateweightInput {
+  set?: Maybe<Int[] | Int>;
+}
+
+export interface CustomerDetailCreatetopSizesInput {
+  set?: Maybe<String[] | String>;
+}
+
+export interface CustomerDetailCreatewaistSizesInput {
+  set?: Maybe<Int[] | Int>;
+}
+
+export interface StylePreferencesCreateOneInput {
+  create?: Maybe<StylePreferencesCreateInput>;
+  connect?: Maybe<StylePreferencesWhereUniqueInput>;
+}
+
+export interface StylePreferencesCreateInput {
+  id?: Maybe<ID_Input>;
+  styles?: Maybe<StylePreferencesCreatestylesInput>;
+  patterns?: Maybe<StylePreferencesCreatepatternsInput>;
+  colors?: Maybe<StylePreferencesCreatecolorsInput>;
+  brands?: Maybe<StylePreferencesCreatebrandsInput>;
+}
+
+export interface StylePreferencesCreatestylesInput {
+  set?: Maybe<String[] | String>;
+}
+
+export interface StylePreferencesCreatepatternsInput {
+  set?: Maybe<String[] | String>;
+}
+
+export interface StylePreferencesCreatecolorsInput {
+  set?: Maybe<String[] | String>;
+}
+
+export interface StylePreferencesCreatebrandsInput {
+  set?: Maybe<String[] | String>;
+}
+
 export interface BillingInfoCreateOneInput {
   create?: Maybe<BillingInfoCreateInput>;
   connect?: Maybe<BillingInfoWhereUniqueInput>;
@@ -8092,6 +8376,7 @@ export interface UserUpdateDataInput {
   verificationStatus?: Maybe<UserVerificationStatus>;
   verificationMethod?: Maybe<UserVerificationMethod>;
   smsReceipts?: Maybe<SmsReceiptUpdateManyInput>;
+  fitPics?: Maybe<FitPicUpdateManyWithoutUserInput>;
 }
 
 export interface UserUpdaterolesInput {
@@ -8574,6 +8859,7 @@ export interface UserUpdateWithoutPushNotificationsDataInput {
   verificationStatus?: Maybe<UserVerificationStatus>;
   verificationMethod?: Maybe<UserVerificationMethod>;
   smsReceipts?: Maybe<SmsReceiptUpdateManyInput>;
+  fitPics?: Maybe<FitPicUpdateManyWithoutUserInput>;
 }
 
 export interface SmsReceiptUpdateManyInput {
@@ -8699,246 +8985,58 @@ export interface SmsReceiptUpdateManyDataInput {
   status?: Maybe<SmsStatus>;
 }
 
-export interface UserUpsertWithWhereUniqueWithoutPushNotificationsInput {
-  where: UserWhereUniqueInput;
-  update: UserUpdateWithoutPushNotificationsDataInput;
-  create: UserCreateWithoutPushNotificationsInput;
-}
-
-export interface UserScalarWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  auth0Id?: Maybe<String>;
-  auth0Id_not?: Maybe<String>;
-  auth0Id_in?: Maybe<String[] | String>;
-  auth0Id_not_in?: Maybe<String[] | String>;
-  auth0Id_lt?: Maybe<String>;
-  auth0Id_lte?: Maybe<String>;
-  auth0Id_gt?: Maybe<String>;
-  auth0Id_gte?: Maybe<String>;
-  auth0Id_contains?: Maybe<String>;
-  auth0Id_not_contains?: Maybe<String>;
-  auth0Id_starts_with?: Maybe<String>;
-  auth0Id_not_starts_with?: Maybe<String>;
-  auth0Id_ends_with?: Maybe<String>;
-  auth0Id_not_ends_with?: Maybe<String>;
-  email?: Maybe<String>;
-  email_not?: Maybe<String>;
-  email_in?: Maybe<String[] | String>;
-  email_not_in?: Maybe<String[] | String>;
-  email_lt?: Maybe<String>;
-  email_lte?: Maybe<String>;
-  email_gt?: Maybe<String>;
-  email_gte?: Maybe<String>;
-  email_contains?: Maybe<String>;
-  email_not_contains?: Maybe<String>;
-  email_starts_with?: Maybe<String>;
-  email_not_starts_with?: Maybe<String>;
-  email_ends_with?: Maybe<String>;
-  email_not_ends_with?: Maybe<String>;
-  firstName?: Maybe<String>;
-  firstName_not?: Maybe<String>;
-  firstName_in?: Maybe<String[] | String>;
-  firstName_not_in?: Maybe<String[] | String>;
-  firstName_lt?: Maybe<String>;
-  firstName_lte?: Maybe<String>;
-  firstName_gt?: Maybe<String>;
-  firstName_gte?: Maybe<String>;
-  firstName_contains?: Maybe<String>;
-  firstName_not_contains?: Maybe<String>;
-  firstName_starts_with?: Maybe<String>;
-  firstName_not_starts_with?: Maybe<String>;
-  firstName_ends_with?: Maybe<String>;
-  firstName_not_ends_with?: Maybe<String>;
-  lastName?: Maybe<String>;
-  lastName_not?: Maybe<String>;
-  lastName_in?: Maybe<String[] | String>;
-  lastName_not_in?: Maybe<String[] | String>;
-  lastName_lt?: Maybe<String>;
-  lastName_lte?: Maybe<String>;
-  lastName_gt?: Maybe<String>;
-  lastName_gte?: Maybe<String>;
-  lastName_contains?: Maybe<String>;
-  lastName_not_contains?: Maybe<String>;
-  lastName_starts_with?: Maybe<String>;
-  lastName_not_starts_with?: Maybe<String>;
-  lastName_ends_with?: Maybe<String>;
-  lastName_not_ends_with?: Maybe<String>;
-  role?: Maybe<UserRole>;
-  role_not?: Maybe<UserRole>;
-  role_in?: Maybe<UserRole[] | UserRole>;
-  role_not_in?: Maybe<UserRole[] | UserRole>;
-  pushNotificationStatus?: Maybe<PushNotificationStatus>;
-  pushNotificationStatus_not?: Maybe<PushNotificationStatus>;
-  pushNotificationStatus_in?: Maybe<
-    PushNotificationStatus[] | PushNotificationStatus
+export interface FitPicUpdateManyWithoutUserInput {
+  create?: Maybe<FitPicCreateWithoutUserInput[] | FitPicCreateWithoutUserInput>;
+  delete?: Maybe<FitPicWhereUniqueInput[] | FitPicWhereUniqueInput>;
+  connect?: Maybe<FitPicWhereUniqueInput[] | FitPicWhereUniqueInput>;
+  set?: Maybe<FitPicWhereUniqueInput[] | FitPicWhereUniqueInput>;
+  disconnect?: Maybe<FitPicWhereUniqueInput[] | FitPicWhereUniqueInput>;
+  update?: Maybe<
+    | FitPicUpdateWithWhereUniqueWithoutUserInput[]
+    | FitPicUpdateWithWhereUniqueWithoutUserInput
   >;
-  pushNotificationStatus_not_in?: Maybe<
-    PushNotificationStatus[] | PushNotificationStatus
+  upsert?: Maybe<
+    | FitPicUpsertWithWhereUniqueWithoutUserInput[]
+    | FitPicUpsertWithWhereUniqueWithoutUserInput
   >;
-  verificationStatus?: Maybe<UserVerificationStatus>;
-  verificationStatus_not?: Maybe<UserVerificationStatus>;
-  verificationStatus_in?: Maybe<
-    UserVerificationStatus[] | UserVerificationStatus
+  deleteMany?: Maybe<FitPicScalarWhereInput[] | FitPicScalarWhereInput>;
+  updateMany?: Maybe<
+    | FitPicUpdateManyWithWhereNestedInput[]
+    | FitPicUpdateManyWithWhereNestedInput
   >;
-  verificationStatus_not_in?: Maybe<
-    UserVerificationStatus[] | UserVerificationStatus
-  >;
-  verificationMethod?: Maybe<UserVerificationMethod>;
-  verificationMethod_not?: Maybe<UserVerificationMethod>;
-  verificationMethod_in?: Maybe<
-    UserVerificationMethod[] | UserVerificationMethod
-  >;
-  verificationMethod_not_in?: Maybe<
-    UserVerificationMethod[] | UserVerificationMethod
-  >;
-  createdAt?: Maybe<DateTimeInput>;
-  createdAt_not?: Maybe<DateTimeInput>;
-  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_lt?: Maybe<DateTimeInput>;
-  createdAt_lte?: Maybe<DateTimeInput>;
-  createdAt_gt?: Maybe<DateTimeInput>;
-  createdAt_gte?: Maybe<DateTimeInput>;
-  updatedAt?: Maybe<DateTimeInput>;
-  updatedAt_not?: Maybe<DateTimeInput>;
-  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_lt?: Maybe<DateTimeInput>;
-  updatedAt_lte?: Maybe<DateTimeInput>;
-  updatedAt_gt?: Maybe<DateTimeInput>;
-  updatedAt_gte?: Maybe<DateTimeInput>;
-  AND?: Maybe<UserScalarWhereInput[] | UserScalarWhereInput>;
-  OR?: Maybe<UserScalarWhereInput[] | UserScalarWhereInput>;
-  NOT?: Maybe<UserScalarWhereInput[] | UserScalarWhereInput>;
 }
 
-export interface UserUpdateManyWithWhereNestedInput {
-  where: UserScalarWhereInput;
-  data: UserUpdateManyDataInput;
+export interface FitPicUpdateWithWhereUniqueWithoutUserInput {
+  where: FitPicWhereUniqueInput;
+  data: FitPicUpdateWithoutUserDataInput;
 }
 
-export interface UserUpdateManyDataInput {
-  auth0Id?: Maybe<String>;
-  email?: Maybe<String>;
-  firstName?: Maybe<String>;
-  lastName?: Maybe<String>;
-  role?: Maybe<UserRole>;
-  roles?: Maybe<UserUpdaterolesInput>;
-  pushNotificationStatus?: Maybe<PushNotificationStatus>;
-  verificationStatus?: Maybe<UserVerificationStatus>;
-  verificationMethod?: Maybe<UserVerificationMethod>;
+export interface FitPicUpdateWithoutUserDataInput {
+  image?: Maybe<ImageUpdateOneRequiredInput>;
+  location?: Maybe<LocationUpdateOneInput>;
+  products?: Maybe<ProductUpdateManyInput>;
+  reports?: Maybe<FitPicReportUpdateManyWithoutReportedInput>;
+  status?: Maybe<FitPicStatus>;
 }
 
-export interface PushNotificationReceiptUpsertWithWhereUniqueNestedInput {
-  where: PushNotificationReceiptWhereUniqueInput;
-  update: PushNotificationReceiptUpdateDataInput;
-  create: PushNotificationReceiptCreateInput;
+export interface ImageUpdateOneRequiredInput {
+  create?: Maybe<ImageCreateInput>;
+  update?: Maybe<ImageUpdateDataInput>;
+  upsert?: Maybe<ImageUpsertNestedInput>;
+  connect?: Maybe<ImageWhereUniqueInput>;
 }
 
-export interface UserPushNotificationUpsertNestedInput {
-  update: UserPushNotificationUpdateDataInput;
-  create: UserPushNotificationCreateInput;
-}
-
-export interface UserUpsertNestedInput {
-  update: UserUpdateDataInput;
-  create: UserCreateInput;
-}
-
-export interface CustomerDetailUpdateOneInput {
-  create?: Maybe<CustomerDetailCreateInput>;
-  update?: Maybe<CustomerDetailUpdateDataInput>;
-  upsert?: Maybe<CustomerDetailUpsertNestedInput>;
-  delete?: Maybe<Boolean>;
-  disconnect?: Maybe<Boolean>;
-  connect?: Maybe<CustomerDetailWhereUniqueInput>;
-}
-
-export interface CustomerDetailUpdateDataInput {
-  phoneNumber?: Maybe<String>;
-  birthday?: Maybe<DateTimeInput>;
+export interface ImageUpdateDataInput {
+  caption?: Maybe<String>;
+  url?: Maybe<String>;
   height?: Maybe<Int>;
-  weight?: Maybe<CustomerDetailUpdateweightInput>;
-  bodyType?: Maybe<String>;
-  averageTopSize?: Maybe<String>;
-  topSizes?: Maybe<CustomerDetailUpdatetopSizesInput>;
-  averageWaistSize?: Maybe<String>;
-  waistSizes?: Maybe<CustomerDetailUpdatewaistSizesInput>;
-  averagePantLength?: Maybe<String>;
-  preferredPronouns?: Maybe<String>;
-  profession?: Maybe<String>;
-  partyFrequency?: Maybe<String>;
-  travelFrequency?: Maybe<String>;
-  shoppingFrequency?: Maybe<String>;
-  averageSpend?: Maybe<String>;
-  style?: Maybe<String>;
-  commuteStyle?: Maybe<String>;
-  stylePreferences?: Maybe<StylePreferencesUpdateOneInput>;
-  shippingAddress?: Maybe<LocationUpdateOneInput>;
-  phoneOS?: Maybe<String>;
-  insureShipment?: Maybe<Boolean>;
+  width?: Maybe<Int>;
+  title?: Maybe<String>;
 }
 
-export interface CustomerDetailUpdateweightInput {
-  set?: Maybe<Int[] | Int>;
-}
-
-export interface CustomerDetailUpdatetopSizesInput {
-  set?: Maybe<String[] | String>;
-}
-
-export interface CustomerDetailUpdatewaistSizesInput {
-  set?: Maybe<Int[] | Int>;
-}
-
-export interface StylePreferencesUpdateOneInput {
-  create?: Maybe<StylePreferencesCreateInput>;
-  update?: Maybe<StylePreferencesUpdateDataInput>;
-  upsert?: Maybe<StylePreferencesUpsertNestedInput>;
-  delete?: Maybe<Boolean>;
-  disconnect?: Maybe<Boolean>;
-  connect?: Maybe<StylePreferencesWhereUniqueInput>;
-}
-
-export interface StylePreferencesUpdateDataInput {
-  styles?: Maybe<StylePreferencesUpdatestylesInput>;
-  patterns?: Maybe<StylePreferencesUpdatepatternsInput>;
-  colors?: Maybe<StylePreferencesUpdatecolorsInput>;
-  brands?: Maybe<StylePreferencesUpdatebrandsInput>;
-}
-
-export interface StylePreferencesUpdatestylesInput {
-  set?: Maybe<String[] | String>;
-}
-
-export interface StylePreferencesUpdatepatternsInput {
-  set?: Maybe<String[] | String>;
-}
-
-export interface StylePreferencesUpdatecolorsInput {
-  set?: Maybe<String[] | String>;
-}
-
-export interface StylePreferencesUpdatebrandsInput {
-  set?: Maybe<String[] | String>;
-}
-
-export interface StylePreferencesUpsertNestedInput {
-  update: StylePreferencesUpdateDataInput;
-  create: StylePreferencesCreateInput;
+export interface ImageUpsertNestedInput {
+  update: ImageUpdateDataInput;
+  create: ImageCreateInput;
 }
 
 export interface LocationUpdateOneInput {
@@ -8974,6 +9072,11 @@ export interface UserUpdateOneInput {
   delete?: Maybe<Boolean>;
   disconnect?: Maybe<Boolean>;
   connect?: Maybe<UserWhereUniqueInput>;
+}
+
+export interface UserUpsertNestedInput {
+  update: UserUpdateDataInput;
+  create: UserCreateInput;
 }
 
 export interface PhysicalProductUpdateManyWithoutLocationInput {
@@ -9439,14 +9542,6 @@ export interface ImageUpdateManyInput {
 export interface ImageUpdateWithWhereUniqueNestedInput {
   where: ImageWhereUniqueInput;
   data: ImageUpdateDataInput;
-}
-
-export interface ImageUpdateDataInput {
-  caption?: Maybe<String>;
-  url?: Maybe<String>;
-  height?: Maybe<Int>;
-  width?: Maybe<Int>;
-  title?: Maybe<String>;
 }
 
 export interface ImageUpsertWithWhereUniqueNestedInput {
@@ -11045,6 +11140,456 @@ export interface LocationUpsertNestedInput {
   create: LocationCreateInput;
 }
 
+export interface ProductUpdateManyInput {
+  create?: Maybe<ProductCreateInput[] | ProductCreateInput>;
+  update?: Maybe<
+    | ProductUpdateWithWhereUniqueNestedInput[]
+    | ProductUpdateWithWhereUniqueNestedInput
+  >;
+  upsert?: Maybe<
+    | ProductUpsertWithWhereUniqueNestedInput[]
+    | ProductUpsertWithWhereUniqueNestedInput
+  >;
+  delete?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
+  connect?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
+  set?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
+  disconnect?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
+  deleteMany?: Maybe<ProductScalarWhereInput[] | ProductScalarWhereInput>;
+  updateMany?: Maybe<
+    | ProductUpdateManyWithWhereNestedInput[]
+    | ProductUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface ProductUpdateWithWhereUniqueNestedInput {
+  where: ProductWhereUniqueInput;
+  data: ProductUpdateDataInput;
+}
+
+export interface ProductUpdateDataInput {
+  slug?: Maybe<String>;
+  name?: Maybe<String>;
+  brand?: Maybe<BrandUpdateOneRequiredWithoutProductsInput>;
+  category?: Maybe<CategoryUpdateOneRequiredWithoutProductsInput>;
+  type?: Maybe<ProductType>;
+  description?: Maybe<String>;
+  externalURL?: Maybe<String>;
+  images?: Maybe<ImageUpdateManyInput>;
+  modelHeight?: Maybe<Int>;
+  retailPrice?: Maybe<Int>;
+  model?: Maybe<ProductModelUpdateOneWithoutProductsInput>;
+  modelSize?: Maybe<SizeUpdateOneInput>;
+  color?: Maybe<ColorUpdateOneRequiredInput>;
+  secondaryColor?: Maybe<ColorUpdateOneInput>;
+  tags?: Maybe<TagUpdateManyWithoutProductsInput>;
+  functions?: Maybe<ProductFunctionUpdateManyInput>;
+  materialCategory?: Maybe<
+    ProductMaterialCategoryUpdateOneWithoutProductsInput
+  >;
+  innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
+  outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
+  variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
+  status?: Maybe<ProductStatus>;
+  statusChanges?: Maybe<ProductStatusChangeUpdateManyWithoutProductInput>;
+  season?: Maybe<String>;
+  architecture?: Maybe<ProductArchitecture>;
+  photographyStatus?: Maybe<PhotographyStatus>;
+  publishedAt?: Maybe<DateTimeInput>;
+}
+
+export interface ProductUpsertWithWhereUniqueNestedInput {
+  where: ProductWhereUniqueInput;
+  update: ProductUpdateDataInput;
+  create: ProductCreateInput;
+}
+
+export interface FitPicReportUpdateManyWithoutReportedInput {
+  create?: Maybe<
+    | FitPicReportCreateWithoutReportedInput[]
+    | FitPicReportCreateWithoutReportedInput
+  >;
+  delete?: Maybe<FitPicReportWhereUniqueInput[] | FitPicReportWhereUniqueInput>;
+  connect?: Maybe<
+    FitPicReportWhereUniqueInput[] | FitPicReportWhereUniqueInput
+  >;
+  set?: Maybe<FitPicReportWhereUniqueInput[] | FitPicReportWhereUniqueInput>;
+  disconnect?: Maybe<
+    FitPicReportWhereUniqueInput[] | FitPicReportWhereUniqueInput
+  >;
+  update?: Maybe<
+    | FitPicReportUpdateWithWhereUniqueWithoutReportedInput[]
+    | FitPicReportUpdateWithWhereUniqueWithoutReportedInput
+  >;
+  upsert?: Maybe<
+    | FitPicReportUpsertWithWhereUniqueWithoutReportedInput[]
+    | FitPicReportUpsertWithWhereUniqueWithoutReportedInput
+  >;
+  deleteMany?: Maybe<
+    FitPicReportScalarWhereInput[] | FitPicReportScalarWhereInput
+  >;
+  updateMany?: Maybe<
+    | FitPicReportUpdateManyWithWhereNestedInput[]
+    | FitPicReportUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface FitPicReportUpdateWithWhereUniqueWithoutReportedInput {
+  where: FitPicReportWhereUniqueInput;
+  data: FitPicReportUpdateWithoutReportedDataInput;
+}
+
+export interface FitPicReportUpdateWithoutReportedDataInput {
+  reporter?: Maybe<UserUpdateOneRequiredInput>;
+  status?: Maybe<FitPicReportStatus>;
+}
+
+export interface FitPicReportUpsertWithWhereUniqueWithoutReportedInput {
+  where: FitPicReportWhereUniqueInput;
+  update: FitPicReportUpdateWithoutReportedDataInput;
+  create: FitPicReportCreateWithoutReportedInput;
+}
+
+export interface FitPicReportScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  status?: Maybe<FitPicReportStatus>;
+  status_not?: Maybe<FitPicReportStatus>;
+  status_in?: Maybe<FitPicReportStatus[] | FitPicReportStatus>;
+  status_not_in?: Maybe<FitPicReportStatus[] | FitPicReportStatus>;
+  reportedAt?: Maybe<DateTimeInput>;
+  reportedAt_not?: Maybe<DateTimeInput>;
+  reportedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  reportedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  reportedAt_lt?: Maybe<DateTimeInput>;
+  reportedAt_lte?: Maybe<DateTimeInput>;
+  reportedAt_gt?: Maybe<DateTimeInput>;
+  reportedAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<FitPicReportScalarWhereInput[] | FitPicReportScalarWhereInput>;
+  OR?: Maybe<FitPicReportScalarWhereInput[] | FitPicReportScalarWhereInput>;
+  NOT?: Maybe<FitPicReportScalarWhereInput[] | FitPicReportScalarWhereInput>;
+}
+
+export interface FitPicReportUpdateManyWithWhereNestedInput {
+  where: FitPicReportScalarWhereInput;
+  data: FitPicReportUpdateManyDataInput;
+}
+
+export interface FitPicReportUpdateManyDataInput {
+  status?: Maybe<FitPicReportStatus>;
+}
+
+export interface FitPicUpsertWithWhereUniqueWithoutUserInput {
+  where: FitPicWhereUniqueInput;
+  update: FitPicUpdateWithoutUserDataInput;
+  create: FitPicCreateWithoutUserInput;
+}
+
+export interface FitPicScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  status?: Maybe<FitPicStatus>;
+  status_not?: Maybe<FitPicStatus>;
+  status_in?: Maybe<FitPicStatus[] | FitPicStatus>;
+  status_not_in?: Maybe<FitPicStatus[] | FitPicStatus>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<FitPicScalarWhereInput[] | FitPicScalarWhereInput>;
+  OR?: Maybe<FitPicScalarWhereInput[] | FitPicScalarWhereInput>;
+  NOT?: Maybe<FitPicScalarWhereInput[] | FitPicScalarWhereInput>;
+}
+
+export interface FitPicUpdateManyWithWhereNestedInput {
+  where: FitPicScalarWhereInput;
+  data: FitPicUpdateManyDataInput;
+}
+
+export interface FitPicUpdateManyDataInput {
+  status?: Maybe<FitPicStatus>;
+}
+
+export interface UserUpsertWithWhereUniqueWithoutPushNotificationsInput {
+  where: UserWhereUniqueInput;
+  update: UserUpdateWithoutPushNotificationsDataInput;
+  create: UserCreateWithoutPushNotificationsInput;
+}
+
+export interface UserScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  auth0Id?: Maybe<String>;
+  auth0Id_not?: Maybe<String>;
+  auth0Id_in?: Maybe<String[] | String>;
+  auth0Id_not_in?: Maybe<String[] | String>;
+  auth0Id_lt?: Maybe<String>;
+  auth0Id_lte?: Maybe<String>;
+  auth0Id_gt?: Maybe<String>;
+  auth0Id_gte?: Maybe<String>;
+  auth0Id_contains?: Maybe<String>;
+  auth0Id_not_contains?: Maybe<String>;
+  auth0Id_starts_with?: Maybe<String>;
+  auth0Id_not_starts_with?: Maybe<String>;
+  auth0Id_ends_with?: Maybe<String>;
+  auth0Id_not_ends_with?: Maybe<String>;
+  email?: Maybe<String>;
+  email_not?: Maybe<String>;
+  email_in?: Maybe<String[] | String>;
+  email_not_in?: Maybe<String[] | String>;
+  email_lt?: Maybe<String>;
+  email_lte?: Maybe<String>;
+  email_gt?: Maybe<String>;
+  email_gte?: Maybe<String>;
+  email_contains?: Maybe<String>;
+  email_not_contains?: Maybe<String>;
+  email_starts_with?: Maybe<String>;
+  email_not_starts_with?: Maybe<String>;
+  email_ends_with?: Maybe<String>;
+  email_not_ends_with?: Maybe<String>;
+  firstName?: Maybe<String>;
+  firstName_not?: Maybe<String>;
+  firstName_in?: Maybe<String[] | String>;
+  firstName_not_in?: Maybe<String[] | String>;
+  firstName_lt?: Maybe<String>;
+  firstName_lte?: Maybe<String>;
+  firstName_gt?: Maybe<String>;
+  firstName_gte?: Maybe<String>;
+  firstName_contains?: Maybe<String>;
+  firstName_not_contains?: Maybe<String>;
+  firstName_starts_with?: Maybe<String>;
+  firstName_not_starts_with?: Maybe<String>;
+  firstName_ends_with?: Maybe<String>;
+  firstName_not_ends_with?: Maybe<String>;
+  lastName?: Maybe<String>;
+  lastName_not?: Maybe<String>;
+  lastName_in?: Maybe<String[] | String>;
+  lastName_not_in?: Maybe<String[] | String>;
+  lastName_lt?: Maybe<String>;
+  lastName_lte?: Maybe<String>;
+  lastName_gt?: Maybe<String>;
+  lastName_gte?: Maybe<String>;
+  lastName_contains?: Maybe<String>;
+  lastName_not_contains?: Maybe<String>;
+  lastName_starts_with?: Maybe<String>;
+  lastName_not_starts_with?: Maybe<String>;
+  lastName_ends_with?: Maybe<String>;
+  lastName_not_ends_with?: Maybe<String>;
+  role?: Maybe<UserRole>;
+  role_not?: Maybe<UserRole>;
+  role_in?: Maybe<UserRole[] | UserRole>;
+  role_not_in?: Maybe<UserRole[] | UserRole>;
+  pushNotificationStatus?: Maybe<PushNotificationStatus>;
+  pushNotificationStatus_not?: Maybe<PushNotificationStatus>;
+  pushNotificationStatus_in?: Maybe<
+    PushNotificationStatus[] | PushNotificationStatus
+  >;
+  pushNotificationStatus_not_in?: Maybe<
+    PushNotificationStatus[] | PushNotificationStatus
+  >;
+  verificationStatus?: Maybe<UserVerificationStatus>;
+  verificationStatus_not?: Maybe<UserVerificationStatus>;
+  verificationStatus_in?: Maybe<
+    UserVerificationStatus[] | UserVerificationStatus
+  >;
+  verificationStatus_not_in?: Maybe<
+    UserVerificationStatus[] | UserVerificationStatus
+  >;
+  verificationMethod?: Maybe<UserVerificationMethod>;
+  verificationMethod_not?: Maybe<UserVerificationMethod>;
+  verificationMethod_in?: Maybe<
+    UserVerificationMethod[] | UserVerificationMethod
+  >;
+  verificationMethod_not_in?: Maybe<
+    UserVerificationMethod[] | UserVerificationMethod
+  >;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<UserScalarWhereInput[] | UserScalarWhereInput>;
+  OR?: Maybe<UserScalarWhereInput[] | UserScalarWhereInput>;
+  NOT?: Maybe<UserScalarWhereInput[] | UserScalarWhereInput>;
+}
+
+export interface UserUpdateManyWithWhereNestedInput {
+  where: UserScalarWhereInput;
+  data: UserUpdateManyDataInput;
+}
+
+export interface UserUpdateManyDataInput {
+  auth0Id?: Maybe<String>;
+  email?: Maybe<String>;
+  firstName?: Maybe<String>;
+  lastName?: Maybe<String>;
+  role?: Maybe<UserRole>;
+  roles?: Maybe<UserUpdaterolesInput>;
+  pushNotificationStatus?: Maybe<PushNotificationStatus>;
+  verificationStatus?: Maybe<UserVerificationStatus>;
+  verificationMethod?: Maybe<UserVerificationMethod>;
+}
+
+export interface PushNotificationReceiptUpsertWithWhereUniqueNestedInput {
+  where: PushNotificationReceiptWhereUniqueInput;
+  update: PushNotificationReceiptUpdateDataInput;
+  create: PushNotificationReceiptCreateInput;
+}
+
+export interface UserPushNotificationUpsertNestedInput {
+  update: UserPushNotificationUpdateDataInput;
+  create: UserPushNotificationCreateInput;
+}
+
+export interface CustomerDetailUpdateOneInput {
+  create?: Maybe<CustomerDetailCreateInput>;
+  update?: Maybe<CustomerDetailUpdateDataInput>;
+  upsert?: Maybe<CustomerDetailUpsertNestedInput>;
+  delete?: Maybe<Boolean>;
+  disconnect?: Maybe<Boolean>;
+  connect?: Maybe<CustomerDetailWhereUniqueInput>;
+}
+
+export interface CustomerDetailUpdateDataInput {
+  phoneNumber?: Maybe<String>;
+  birthday?: Maybe<DateTimeInput>;
+  height?: Maybe<Int>;
+  weight?: Maybe<CustomerDetailUpdateweightInput>;
+  bodyType?: Maybe<String>;
+  averageTopSize?: Maybe<String>;
+  topSizes?: Maybe<CustomerDetailUpdatetopSizesInput>;
+  averageWaistSize?: Maybe<String>;
+  waistSizes?: Maybe<CustomerDetailUpdatewaistSizesInput>;
+  averagePantLength?: Maybe<String>;
+  preferredPronouns?: Maybe<String>;
+  profession?: Maybe<String>;
+  partyFrequency?: Maybe<String>;
+  travelFrequency?: Maybe<String>;
+  shoppingFrequency?: Maybe<String>;
+  averageSpend?: Maybe<String>;
+  style?: Maybe<String>;
+  commuteStyle?: Maybe<String>;
+  stylePreferences?: Maybe<StylePreferencesUpdateOneInput>;
+  shippingAddress?: Maybe<LocationUpdateOneInput>;
+  phoneOS?: Maybe<String>;
+  insureShipment?: Maybe<Boolean>;
+}
+
+export interface CustomerDetailUpdateweightInput {
+  set?: Maybe<Int[] | Int>;
+}
+
+export interface CustomerDetailUpdatetopSizesInput {
+  set?: Maybe<String[] | String>;
+}
+
+export interface CustomerDetailUpdatewaistSizesInput {
+  set?: Maybe<Int[] | Int>;
+}
+
+export interface StylePreferencesUpdateOneInput {
+  create?: Maybe<StylePreferencesCreateInput>;
+  update?: Maybe<StylePreferencesUpdateDataInput>;
+  upsert?: Maybe<StylePreferencesUpsertNestedInput>;
+  delete?: Maybe<Boolean>;
+  disconnect?: Maybe<Boolean>;
+  connect?: Maybe<StylePreferencesWhereUniqueInput>;
+}
+
+export interface StylePreferencesUpdateDataInput {
+  styles?: Maybe<StylePreferencesUpdatestylesInput>;
+  patterns?: Maybe<StylePreferencesUpdatepatternsInput>;
+  colors?: Maybe<StylePreferencesUpdatecolorsInput>;
+  brands?: Maybe<StylePreferencesUpdatebrandsInput>;
+}
+
+export interface StylePreferencesUpdatestylesInput {
+  set?: Maybe<String[] | String>;
+}
+
+export interface StylePreferencesUpdatepatternsInput {
+  set?: Maybe<String[] | String>;
+}
+
+export interface StylePreferencesUpdatecolorsInput {
+  set?: Maybe<String[] | String>;
+}
+
+export interface StylePreferencesUpdatebrandsInput {
+  set?: Maybe<String[] | String>;
+}
+
+export interface StylePreferencesUpsertNestedInput {
+  update: StylePreferencesUpdateDataInput;
+  create: StylePreferencesCreateInput;
+}
+
 export interface CustomerDetailUpsertNestedInput {
   update: CustomerDetailUpdateDataInput;
   create: CustomerDetailCreateInput;
@@ -11996,43 +12541,6 @@ export interface CollectionCreateInput {
   products?: Maybe<ProductCreateManyInput>;
 }
 
-export interface ProductCreateManyInput {
-  create?: Maybe<ProductCreateInput[] | ProductCreateInput>;
-  connect?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
-}
-
-export interface ProductCreateInput {
-  id?: Maybe<ID_Input>;
-  slug: String;
-  name: String;
-  brand: BrandCreateOneWithoutProductsInput;
-  category: CategoryCreateOneWithoutProductsInput;
-  type?: Maybe<ProductType>;
-  description?: Maybe<String>;
-  externalURL?: Maybe<String>;
-  images?: Maybe<ImageCreateManyInput>;
-  modelHeight?: Maybe<Int>;
-  retailPrice?: Maybe<Int>;
-  model?: Maybe<ProductModelCreateOneWithoutProductsInput>;
-  modelSize?: Maybe<SizeCreateOneInput>;
-  color: ColorCreateOneInput;
-  secondaryColor?: Maybe<ColorCreateOneInput>;
-  tags?: Maybe<TagCreateManyWithoutProductsInput>;
-  functions?: Maybe<ProductFunctionCreateManyInput>;
-  materialCategory?: Maybe<
-    ProductMaterialCategoryCreateOneWithoutProductsInput
-  >;
-  innerMaterials?: Maybe<ProductCreateinnerMaterialsInput>;
-  outerMaterials?: Maybe<ProductCreateouterMaterialsInput>;
-  variants?: Maybe<ProductVariantCreateManyWithoutProductInput>;
-  status?: Maybe<ProductStatus>;
-  statusChanges?: Maybe<ProductStatusChangeCreateManyWithoutProductInput>;
-  season?: Maybe<String>;
-  architecture?: Maybe<ProductArchitecture>;
-  photographyStatus?: Maybe<PhotographyStatus>;
-  publishedAt?: Maybe<DateTimeInput>;
-}
-
 export interface CollectionUpdateInput {
   slug?: Maybe<String>;
   images?: Maybe<Json>;
@@ -12041,69 +12549,6 @@ export interface CollectionUpdateInput {
   descriptionTop?: Maybe<String>;
   descriptionBottom?: Maybe<String>;
   products?: Maybe<ProductUpdateManyInput>;
-}
-
-export interface ProductUpdateManyInput {
-  create?: Maybe<ProductCreateInput[] | ProductCreateInput>;
-  update?: Maybe<
-    | ProductUpdateWithWhereUniqueNestedInput[]
-    | ProductUpdateWithWhereUniqueNestedInput
-  >;
-  upsert?: Maybe<
-    | ProductUpsertWithWhereUniqueNestedInput[]
-    | ProductUpsertWithWhereUniqueNestedInput
-  >;
-  delete?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
-  connect?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
-  set?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
-  disconnect?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
-  deleteMany?: Maybe<ProductScalarWhereInput[] | ProductScalarWhereInput>;
-  updateMany?: Maybe<
-    | ProductUpdateManyWithWhereNestedInput[]
-    | ProductUpdateManyWithWhereNestedInput
-  >;
-}
-
-export interface ProductUpdateWithWhereUniqueNestedInput {
-  where: ProductWhereUniqueInput;
-  data: ProductUpdateDataInput;
-}
-
-export interface ProductUpdateDataInput {
-  slug?: Maybe<String>;
-  name?: Maybe<String>;
-  brand?: Maybe<BrandUpdateOneRequiredWithoutProductsInput>;
-  category?: Maybe<CategoryUpdateOneRequiredWithoutProductsInput>;
-  type?: Maybe<ProductType>;
-  description?: Maybe<String>;
-  externalURL?: Maybe<String>;
-  images?: Maybe<ImageUpdateManyInput>;
-  modelHeight?: Maybe<Int>;
-  retailPrice?: Maybe<Int>;
-  model?: Maybe<ProductModelUpdateOneWithoutProductsInput>;
-  modelSize?: Maybe<SizeUpdateOneInput>;
-  color?: Maybe<ColorUpdateOneRequiredInput>;
-  secondaryColor?: Maybe<ColorUpdateOneInput>;
-  tags?: Maybe<TagUpdateManyWithoutProductsInput>;
-  functions?: Maybe<ProductFunctionUpdateManyInput>;
-  materialCategory?: Maybe<
-    ProductMaterialCategoryUpdateOneWithoutProductsInput
-  >;
-  innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
-  outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
-  variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
-  status?: Maybe<ProductStatus>;
-  statusChanges?: Maybe<ProductStatusChangeUpdateManyWithoutProductInput>;
-  season?: Maybe<String>;
-  architecture?: Maybe<ProductArchitecture>;
-  photographyStatus?: Maybe<PhotographyStatus>;
-  publishedAt?: Maybe<DateTimeInput>;
-}
-
-export interface ProductUpsertWithWhereUniqueNestedInput {
-  where: ProductWhereUniqueInput;
-  update: ProductUpdateDataInput;
-  create: ProductCreateInput;
 }
 
 export interface CollectionUpdateManyMutationInput {
@@ -12547,6 +12992,128 @@ export interface EmailReceiptUpdateInput {
 
 export interface EmailReceiptUpdateManyMutationInput {
   emailId?: Maybe<EmailId>;
+}
+
+export interface FitPicCreateInput {
+  id?: Maybe<ID_Input>;
+  image: ImageCreateOneInput;
+  location?: Maybe<LocationCreateOneInput>;
+  products?: Maybe<ProductCreateManyInput>;
+  reports?: Maybe<FitPicReportCreateManyWithoutReportedInput>;
+  status?: Maybe<FitPicStatus>;
+  user: UserCreateOneWithoutFitPicsInput;
+}
+
+export interface UserCreateOneWithoutFitPicsInput {
+  create?: Maybe<UserCreateWithoutFitPicsInput>;
+  connect?: Maybe<UserWhereUniqueInput>;
+}
+
+export interface UserCreateWithoutFitPicsInput {
+  id?: Maybe<ID_Input>;
+  auth0Id: String;
+  email: String;
+  firstName: String;
+  lastName: String;
+  role?: Maybe<UserRole>;
+  roles?: Maybe<UserCreaterolesInput>;
+  pushNotificationStatus?: Maybe<PushNotificationStatus>;
+  pushNotifications?: Maybe<PushNotificationReceiptCreateManyWithoutUsersInput>;
+  pushNotification?: Maybe<UserPushNotificationCreateOneInput>;
+  verificationStatus?: Maybe<UserVerificationStatus>;
+  verificationMethod?: Maybe<UserVerificationMethod>;
+  smsReceipts?: Maybe<SmsReceiptCreateManyInput>;
+}
+
+export interface FitPicUpdateInput {
+  image?: Maybe<ImageUpdateOneRequiredInput>;
+  location?: Maybe<LocationUpdateOneInput>;
+  products?: Maybe<ProductUpdateManyInput>;
+  reports?: Maybe<FitPicReportUpdateManyWithoutReportedInput>;
+  status?: Maybe<FitPicStatus>;
+  user?: Maybe<UserUpdateOneRequiredWithoutFitPicsInput>;
+}
+
+export interface UserUpdateOneRequiredWithoutFitPicsInput {
+  create?: Maybe<UserCreateWithoutFitPicsInput>;
+  update?: Maybe<UserUpdateWithoutFitPicsDataInput>;
+  upsert?: Maybe<UserUpsertWithoutFitPicsInput>;
+  connect?: Maybe<UserWhereUniqueInput>;
+}
+
+export interface UserUpdateWithoutFitPicsDataInput {
+  auth0Id?: Maybe<String>;
+  email?: Maybe<String>;
+  firstName?: Maybe<String>;
+  lastName?: Maybe<String>;
+  role?: Maybe<UserRole>;
+  roles?: Maybe<UserUpdaterolesInput>;
+  pushNotificationStatus?: Maybe<PushNotificationStatus>;
+  pushNotifications?: Maybe<PushNotificationReceiptUpdateManyWithoutUsersInput>;
+  pushNotification?: Maybe<UserPushNotificationUpdateOneInput>;
+  verificationStatus?: Maybe<UserVerificationStatus>;
+  verificationMethod?: Maybe<UserVerificationMethod>;
+  smsReceipts?: Maybe<SmsReceiptUpdateManyInput>;
+}
+
+export interface UserUpsertWithoutFitPicsInput {
+  update: UserUpdateWithoutFitPicsDataInput;
+  create: UserCreateWithoutFitPicsInput;
+}
+
+export interface FitPicUpdateManyMutationInput {
+  status?: Maybe<FitPicStatus>;
+}
+
+export interface FitPicReportCreateInput {
+  id?: Maybe<ID_Input>;
+  reporter: UserCreateOneInput;
+  reported: FitPicCreateOneWithoutReportsInput;
+  status?: Maybe<FitPicReportStatus>;
+}
+
+export interface FitPicCreateOneWithoutReportsInput {
+  create?: Maybe<FitPicCreateWithoutReportsInput>;
+  connect?: Maybe<FitPicWhereUniqueInput>;
+}
+
+export interface FitPicCreateWithoutReportsInput {
+  id?: Maybe<ID_Input>;
+  image: ImageCreateOneInput;
+  location?: Maybe<LocationCreateOneInput>;
+  products?: Maybe<ProductCreateManyInput>;
+  status?: Maybe<FitPicStatus>;
+  user: UserCreateOneWithoutFitPicsInput;
+}
+
+export interface FitPicReportUpdateInput {
+  reporter?: Maybe<UserUpdateOneRequiredInput>;
+  reported?: Maybe<FitPicUpdateOneRequiredWithoutReportsInput>;
+  status?: Maybe<FitPicReportStatus>;
+}
+
+export interface FitPicUpdateOneRequiredWithoutReportsInput {
+  create?: Maybe<FitPicCreateWithoutReportsInput>;
+  update?: Maybe<FitPicUpdateWithoutReportsDataInput>;
+  upsert?: Maybe<FitPicUpsertWithoutReportsInput>;
+  connect?: Maybe<FitPicWhereUniqueInput>;
+}
+
+export interface FitPicUpdateWithoutReportsDataInput {
+  image?: Maybe<ImageUpdateOneRequiredInput>;
+  location?: Maybe<LocationUpdateOneInput>;
+  products?: Maybe<ProductUpdateManyInput>;
+  status?: Maybe<FitPicStatus>;
+  user?: Maybe<UserUpdateOneRequiredWithoutFitPicsInput>;
+}
+
+export interface FitPicUpsertWithoutReportsInput {
+  update: FitPicUpdateWithoutReportsDataInput;
+  create: FitPicCreateWithoutReportsInput;
+}
+
+export interface FitPicReportUpdateManyMutationInput {
+  status?: Maybe<FitPicReportStatus>;
 }
 
 export interface HomepageProductRailCreateInput {
@@ -14223,6 +14790,7 @@ export interface UserUpdateInput {
   verificationStatus?: Maybe<UserVerificationStatus>;
   verificationMethod?: Maybe<UserVerificationMethod>;
   smsReceipts?: Maybe<SmsReceiptUpdateManyInput>;
+  fitPics?: Maybe<FitPicUpdateManyWithoutUserInput>;
 }
 
 export interface UserUpdateManyMutationInput {
@@ -14769,6 +15337,34 @@ export interface EmailReceiptSubscriptionWhereInput {
   >;
   NOT?: Maybe<
     EmailReceiptSubscriptionWhereInput[] | EmailReceiptSubscriptionWhereInput
+  >;
+}
+
+export interface FitPicSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<FitPicWhereInput>;
+  AND?: Maybe<FitPicSubscriptionWhereInput[] | FitPicSubscriptionWhereInput>;
+  OR?: Maybe<FitPicSubscriptionWhereInput[] | FitPicSubscriptionWhereInput>;
+  NOT?: Maybe<FitPicSubscriptionWhereInput[] | FitPicSubscriptionWhereInput>;
+}
+
+export interface FitPicReportSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<FitPicReportWhereInput>;
+  AND?: Maybe<
+    FitPicReportSubscriptionWhereInput[] | FitPicReportSubscriptionWhereInput
+  >;
+  OR?: Maybe<
+    FitPicReportSubscriptionWhereInput[] | FitPicReportSubscriptionWhereInput
+  >;
+  NOT?: Maybe<
+    FitPicReportSubscriptionWhereInput[] | FitPicReportSubscriptionWhereInput
   >;
 }
 
@@ -15572,8 +16168,6 @@ export interface UserPromise extends Promise<User>, Fragmentable {
   pushNotification: <T = UserPushNotificationPromise>() => T;
   verificationStatus: () => Promise<UserVerificationStatus>;
   verificationMethod: () => Promise<UserVerificationMethod>;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
   smsReceipts: <T = FragmentableArray<SmsReceipt>>(args?: {
     where?: SmsReceiptWhereInput;
     orderBy?: SmsReceiptOrderByInput;
@@ -15583,6 +16177,17 @@ export interface UserPromise extends Promise<User>, Fragmentable {
     first?: Int;
     last?: Int;
   }) => T;
+  fitPics: <T = FragmentableArray<FitPic>>(args?: {
+    where?: FitPicWhereInput;
+    orderBy?: FitPicOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface UserSubscription
@@ -15610,8 +16215,6 @@ export interface UserSubscription
   pushNotification: <T = UserPushNotificationSubscription>() => T;
   verificationStatus: () => Promise<AsyncIterator<UserVerificationStatus>>;
   verificationMethod: () => Promise<AsyncIterator<UserVerificationMethod>>;
-  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   smsReceipts: <T = Promise<AsyncIterator<SmsReceiptSubscription>>>(args?: {
     where?: SmsReceiptWhereInput;
     orderBy?: SmsReceiptOrderByInput;
@@ -15621,6 +16224,17 @@ export interface UserSubscription
     first?: Int;
     last?: Int;
   }) => T;
+  fitPics: <T = Promise<AsyncIterator<FitPicSubscription>>>(args?: {
+    where?: FitPicWhereInput;
+    orderBy?: FitPicOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
 export interface UserNullablePromise
@@ -15646,8 +16260,6 @@ export interface UserNullablePromise
   pushNotification: <T = UserPushNotificationPromise>() => T;
   verificationStatus: () => Promise<UserVerificationStatus>;
   verificationMethod: () => Promise<UserVerificationMethod>;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
   smsReceipts: <T = FragmentableArray<SmsReceipt>>(args?: {
     where?: SmsReceiptWhereInput;
     orderBy?: SmsReceiptOrderByInput;
@@ -15657,6 +16269,17 @@ export interface UserNullablePromise
     first?: Int;
     last?: Int;
   }) => T;
+  fitPics: <T = FragmentableArray<FitPic>>(args?: {
+    where?: FitPicWhereInput;
+    orderBy?: FitPicOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface PushNotificationReceipt {
@@ -15917,158 +16540,147 @@ export interface SmsReceiptNullablePromise
   updatedAt: () => Promise<DateTimeOutput>;
 }
 
-export interface CustomerDetail {
+export interface FitPic {
   id: ID_Output;
-  phoneNumber?: String;
-  birthday?: DateTimeOutput;
-  height?: Int;
-  weight: Int[];
-  bodyType?: String;
-  averageTopSize?: String;
-  topSizes: String[];
-  averageWaistSize?: String;
-  waistSizes: Int[];
-  averagePantLength?: String;
-  preferredPronouns?: String;
-  profession?: String;
-  partyFrequency?: String;
-  travelFrequency?: String;
-  shoppingFrequency?: String;
-  averageSpend?: String;
-  style?: String;
-  commuteStyle?: String;
-  phoneOS?: String;
-  insureShipment: Boolean;
+  status: FitPicStatus;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
 
-export interface CustomerDetailPromise
-  extends Promise<CustomerDetail>,
-    Fragmentable {
+export interface FitPicPromise extends Promise<FitPic>, Fragmentable {
   id: () => Promise<ID_Output>;
-  phoneNumber: () => Promise<String>;
-  birthday: () => Promise<DateTimeOutput>;
-  height: () => Promise<Int>;
-  weight: () => Promise<Int[]>;
-  bodyType: () => Promise<String>;
-  averageTopSize: () => Promise<String>;
-  topSizes: () => Promise<String[]>;
-  averageWaistSize: () => Promise<String>;
-  waistSizes: () => Promise<Int[]>;
-  averagePantLength: () => Promise<String>;
-  preferredPronouns: () => Promise<String>;
-  profession: () => Promise<String>;
-  partyFrequency: () => Promise<String>;
-  travelFrequency: () => Promise<String>;
-  shoppingFrequency: () => Promise<String>;
-  averageSpend: () => Promise<String>;
-  style: () => Promise<String>;
-  commuteStyle: () => Promise<String>;
-  stylePreferences: <T = StylePreferencesPromise>() => T;
-  shippingAddress: <T = LocationPromise>() => T;
-  phoneOS: () => Promise<String>;
-  insureShipment: () => Promise<Boolean>;
+  image: <T = ImagePromise>() => T;
+  location: <T = LocationPromise>() => T;
+  products: <T = FragmentableArray<Product>>(args?: {
+    where?: ProductWhereInput;
+    orderBy?: ProductOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  reports: <T = FragmentableArray<FitPicReport>>(args?: {
+    where?: FitPicReportWhereInput;
+    orderBy?: FitPicReportOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  status: () => Promise<FitPicStatus>;
+  user: <T = UserPromise>() => T;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
 
-export interface CustomerDetailSubscription
-  extends Promise<AsyncIterator<CustomerDetail>>,
+export interface FitPicSubscription
+  extends Promise<AsyncIterator<FitPic>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
-  phoneNumber: () => Promise<AsyncIterator<String>>;
-  birthday: () => Promise<AsyncIterator<DateTimeOutput>>;
-  height: () => Promise<AsyncIterator<Int>>;
-  weight: () => Promise<AsyncIterator<Int[]>>;
-  bodyType: () => Promise<AsyncIterator<String>>;
-  averageTopSize: () => Promise<AsyncIterator<String>>;
-  topSizes: () => Promise<AsyncIterator<String[]>>;
-  averageWaistSize: () => Promise<AsyncIterator<String>>;
-  waistSizes: () => Promise<AsyncIterator<Int[]>>;
-  averagePantLength: () => Promise<AsyncIterator<String>>;
-  preferredPronouns: () => Promise<AsyncIterator<String>>;
-  profession: () => Promise<AsyncIterator<String>>;
-  partyFrequency: () => Promise<AsyncIterator<String>>;
-  travelFrequency: () => Promise<AsyncIterator<String>>;
-  shoppingFrequency: () => Promise<AsyncIterator<String>>;
-  averageSpend: () => Promise<AsyncIterator<String>>;
-  style: () => Promise<AsyncIterator<String>>;
-  commuteStyle: () => Promise<AsyncIterator<String>>;
-  stylePreferences: <T = StylePreferencesSubscription>() => T;
-  shippingAddress: <T = LocationSubscription>() => T;
-  phoneOS: () => Promise<AsyncIterator<String>>;
-  insureShipment: () => Promise<AsyncIterator<Boolean>>;
+  image: <T = ImageSubscription>() => T;
+  location: <T = LocationSubscription>() => T;
+  products: <T = Promise<AsyncIterator<ProductSubscription>>>(args?: {
+    where?: ProductWhereInput;
+    orderBy?: ProductOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  reports: <T = Promise<AsyncIterator<FitPicReportSubscription>>>(args?: {
+    where?: FitPicReportWhereInput;
+    orderBy?: FitPicReportOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  status: () => Promise<AsyncIterator<FitPicStatus>>;
+  user: <T = UserSubscription>() => T;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
-export interface CustomerDetailNullablePromise
-  extends Promise<CustomerDetail | null>,
+export interface FitPicNullablePromise
+  extends Promise<FitPic | null>,
     Fragmentable {
   id: () => Promise<ID_Output>;
-  phoneNumber: () => Promise<String>;
-  birthday: () => Promise<DateTimeOutput>;
-  height: () => Promise<Int>;
-  weight: () => Promise<Int[]>;
-  bodyType: () => Promise<String>;
-  averageTopSize: () => Promise<String>;
-  topSizes: () => Promise<String[]>;
-  averageWaistSize: () => Promise<String>;
-  waistSizes: () => Promise<Int[]>;
-  averagePantLength: () => Promise<String>;
-  preferredPronouns: () => Promise<String>;
-  profession: () => Promise<String>;
-  partyFrequency: () => Promise<String>;
-  travelFrequency: () => Promise<String>;
-  shoppingFrequency: () => Promise<String>;
-  averageSpend: () => Promise<String>;
-  style: () => Promise<String>;
-  commuteStyle: () => Promise<String>;
-  stylePreferences: <T = StylePreferencesPromise>() => T;
-  shippingAddress: <T = LocationPromise>() => T;
-  phoneOS: () => Promise<String>;
-  insureShipment: () => Promise<Boolean>;
+  image: <T = ImagePromise>() => T;
+  location: <T = LocationPromise>() => T;
+  products: <T = FragmentableArray<Product>>(args?: {
+    where?: ProductWhereInput;
+    orderBy?: ProductOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  reports: <T = FragmentableArray<FitPicReport>>(args?: {
+    where?: FitPicReportWhereInput;
+    orderBy?: FitPicReportOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  status: () => Promise<FitPicStatus>;
+  user: <T = UserPromise>() => T;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
 
-export interface StylePreferences {
+export interface Image {
   id: ID_Output;
-  styles: String[];
-  patterns: String[];
-  colors: String[];
-  brands: String[];
+  caption?: String;
+  url: String;
+  height?: Int;
+  width?: Int;
+  title?: String;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
 }
 
-export interface StylePreferencesPromise
-  extends Promise<StylePreferences>,
-    Fragmentable {
+export interface ImagePromise extends Promise<Image>, Fragmentable {
   id: () => Promise<ID_Output>;
-  styles: () => Promise<String[]>;
-  patterns: () => Promise<String[]>;
-  colors: () => Promise<String[]>;
-  brands: () => Promise<String[]>;
+  caption: () => Promise<String>;
+  url: () => Promise<String>;
+  height: () => Promise<Int>;
+  width: () => Promise<Int>;
+  title: () => Promise<String>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
 }
 
-export interface StylePreferencesSubscription
-  extends Promise<AsyncIterator<StylePreferences>>,
+export interface ImageSubscription
+  extends Promise<AsyncIterator<Image>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
-  styles: () => Promise<AsyncIterator<String[]>>;
-  patterns: () => Promise<AsyncIterator<String[]>>;
-  colors: () => Promise<AsyncIterator<String[]>>;
-  brands: () => Promise<AsyncIterator<String[]>>;
+  caption: () => Promise<AsyncIterator<String>>;
+  url: () => Promise<AsyncIterator<String>>;
+  height: () => Promise<AsyncIterator<Int>>;
+  width: () => Promise<AsyncIterator<Int>>;
+  title: () => Promise<AsyncIterator<String>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
-export interface StylePreferencesNullablePromise
-  extends Promise<StylePreferences | null>,
+export interface ImageNullablePromise
+  extends Promise<Image | null>,
     Fragmentable {
   id: () => Promise<ID_Output>;
-  styles: () => Promise<String[]>;
-  patterns: () => Promise<String[]>;
-  colors: () => Promise<String[]>;
-  brands: () => Promise<String[]>;
+  caption: () => Promise<String>;
+  url: () => Promise<String>;
+  height: () => Promise<Int>;
+  width: () => Promise<Int>;
+  title: () => Promise<String>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface Location {
@@ -17056,54 +17668,6 @@ export interface CategoryNullablePromise
   updatedAt: () => Promise<DateTimeOutput>;
 }
 
-export interface Image {
-  id: ID_Output;
-  caption?: String;
-  url: String;
-  height?: Int;
-  width?: Int;
-  title?: String;
-  createdAt: DateTimeOutput;
-  updatedAt: DateTimeOutput;
-}
-
-export interface ImagePromise extends Promise<Image>, Fragmentable {
-  id: () => Promise<ID_Output>;
-  caption: () => Promise<String>;
-  url: () => Promise<String>;
-  height: () => Promise<Int>;
-  width: () => Promise<Int>;
-  title: () => Promise<String>;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
-}
-
-export interface ImageSubscription
-  extends Promise<AsyncIterator<Image>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  caption: () => Promise<AsyncIterator<String>>;
-  url: () => Promise<AsyncIterator<String>>;
-  height: () => Promise<AsyncIterator<Int>>;
-  width: () => Promise<AsyncIterator<Int>>;
-  title: () => Promise<AsyncIterator<String>>;
-  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-}
-
-export interface ImageNullablePromise
-  extends Promise<Image | null>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  caption: () => Promise<String>;
-  url: () => Promise<String>;
-  height: () => Promise<Int>;
-  width: () => Promise<Int>;
-  title: () => Promise<String>;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
-}
-
 export interface ProductModel {
   id: ID_Output;
   name: String;
@@ -17558,6 +18122,200 @@ export interface WarehouseLocationConstraintNullablePromise
   }) => T;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface FitPicReport {
+  id: ID_Output;
+  status: FitPicReportStatus;
+  reportedAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface FitPicReportPromise
+  extends Promise<FitPicReport>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  reporter: <T = UserPromise>() => T;
+  reported: <T = FitPicPromise>() => T;
+  status: () => Promise<FitPicReportStatus>;
+  reportedAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface FitPicReportSubscription
+  extends Promise<AsyncIterator<FitPicReport>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  reporter: <T = UserSubscription>() => T;
+  reported: <T = FitPicSubscription>() => T;
+  status: () => Promise<AsyncIterator<FitPicReportStatus>>;
+  reportedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface FitPicReportNullablePromise
+  extends Promise<FitPicReport | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  reporter: <T = UserPromise>() => T;
+  reported: <T = FitPicPromise>() => T;
+  status: () => Promise<FitPicReportStatus>;
+  reportedAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface CustomerDetail {
+  id: ID_Output;
+  phoneNumber?: String;
+  birthday?: DateTimeOutput;
+  height?: Int;
+  weight: Int[];
+  bodyType?: String;
+  averageTopSize?: String;
+  topSizes: String[];
+  averageWaistSize?: String;
+  waistSizes: Int[];
+  averagePantLength?: String;
+  preferredPronouns?: String;
+  profession?: String;
+  partyFrequency?: String;
+  travelFrequency?: String;
+  shoppingFrequency?: String;
+  averageSpend?: String;
+  style?: String;
+  commuteStyle?: String;
+  phoneOS?: String;
+  insureShipment: Boolean;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface CustomerDetailPromise
+  extends Promise<CustomerDetail>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  phoneNumber: () => Promise<String>;
+  birthday: () => Promise<DateTimeOutput>;
+  height: () => Promise<Int>;
+  weight: () => Promise<Int[]>;
+  bodyType: () => Promise<String>;
+  averageTopSize: () => Promise<String>;
+  topSizes: () => Promise<String[]>;
+  averageWaistSize: () => Promise<String>;
+  waistSizes: () => Promise<Int[]>;
+  averagePantLength: () => Promise<String>;
+  preferredPronouns: () => Promise<String>;
+  profession: () => Promise<String>;
+  partyFrequency: () => Promise<String>;
+  travelFrequency: () => Promise<String>;
+  shoppingFrequency: () => Promise<String>;
+  averageSpend: () => Promise<String>;
+  style: () => Promise<String>;
+  commuteStyle: () => Promise<String>;
+  stylePreferences: <T = StylePreferencesPromise>() => T;
+  shippingAddress: <T = LocationPromise>() => T;
+  phoneOS: () => Promise<String>;
+  insureShipment: () => Promise<Boolean>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface CustomerDetailSubscription
+  extends Promise<AsyncIterator<CustomerDetail>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  phoneNumber: () => Promise<AsyncIterator<String>>;
+  birthday: () => Promise<AsyncIterator<DateTimeOutput>>;
+  height: () => Promise<AsyncIterator<Int>>;
+  weight: () => Promise<AsyncIterator<Int[]>>;
+  bodyType: () => Promise<AsyncIterator<String>>;
+  averageTopSize: () => Promise<AsyncIterator<String>>;
+  topSizes: () => Promise<AsyncIterator<String[]>>;
+  averageWaistSize: () => Promise<AsyncIterator<String>>;
+  waistSizes: () => Promise<AsyncIterator<Int[]>>;
+  averagePantLength: () => Promise<AsyncIterator<String>>;
+  preferredPronouns: () => Promise<AsyncIterator<String>>;
+  profession: () => Promise<AsyncIterator<String>>;
+  partyFrequency: () => Promise<AsyncIterator<String>>;
+  travelFrequency: () => Promise<AsyncIterator<String>>;
+  shoppingFrequency: () => Promise<AsyncIterator<String>>;
+  averageSpend: () => Promise<AsyncIterator<String>>;
+  style: () => Promise<AsyncIterator<String>>;
+  commuteStyle: () => Promise<AsyncIterator<String>>;
+  stylePreferences: <T = StylePreferencesSubscription>() => T;
+  shippingAddress: <T = LocationSubscription>() => T;
+  phoneOS: () => Promise<AsyncIterator<String>>;
+  insureShipment: () => Promise<AsyncIterator<Boolean>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface CustomerDetailNullablePromise
+  extends Promise<CustomerDetail | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  phoneNumber: () => Promise<String>;
+  birthday: () => Promise<DateTimeOutput>;
+  height: () => Promise<Int>;
+  weight: () => Promise<Int[]>;
+  bodyType: () => Promise<String>;
+  averageTopSize: () => Promise<String>;
+  topSizes: () => Promise<String[]>;
+  averageWaistSize: () => Promise<String>;
+  waistSizes: () => Promise<Int[]>;
+  averagePantLength: () => Promise<String>;
+  preferredPronouns: () => Promise<String>;
+  profession: () => Promise<String>;
+  partyFrequency: () => Promise<String>;
+  travelFrequency: () => Promise<String>;
+  shoppingFrequency: () => Promise<String>;
+  averageSpend: () => Promise<String>;
+  style: () => Promise<String>;
+  commuteStyle: () => Promise<String>;
+  stylePreferences: <T = StylePreferencesPromise>() => T;
+  shippingAddress: <T = LocationPromise>() => T;
+  phoneOS: () => Promise<String>;
+  insureShipment: () => Promise<Boolean>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface StylePreferences {
+  id: ID_Output;
+  styles: String[];
+  patterns: String[];
+  colors: String[];
+  brands: String[];
+}
+
+export interface StylePreferencesPromise
+  extends Promise<StylePreferences>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  styles: () => Promise<String[]>;
+  patterns: () => Promise<String[]>;
+  colors: () => Promise<String[]>;
+  brands: () => Promise<String[]>;
+}
+
+export interface StylePreferencesSubscription
+  extends Promise<AsyncIterator<StylePreferences>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  styles: () => Promise<AsyncIterator<String[]>>;
+  patterns: () => Promise<AsyncIterator<String[]>>;
+  colors: () => Promise<AsyncIterator<String[]>>;
+  brands: () => Promise<AsyncIterator<String[]>>;
+}
+
+export interface StylePreferencesNullablePromise
+  extends Promise<StylePreferences | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  styles: () => Promise<String[]>;
+  patterns: () => Promise<String[]>;
+  colors: () => Promise<String[]>;
+  brands: () => Promise<String[]>;
 }
 
 export interface BillingInfo {
@@ -18958,6 +19716,116 @@ export interface AggregateEmailReceiptPromise
 
 export interface AggregateEmailReceiptSubscription
   extends Promise<AsyncIterator<AggregateEmailReceipt>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface FitPicConnection {
+  pageInfo: PageInfo;
+  edges: FitPicEdge[];
+}
+
+export interface FitPicConnectionPromise
+  extends Promise<FitPicConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<FitPicEdge>>() => T;
+  aggregate: <T = AggregateFitPicPromise>() => T;
+}
+
+export interface FitPicConnectionSubscription
+  extends Promise<AsyncIterator<FitPicConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<FitPicEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateFitPicSubscription>() => T;
+}
+
+export interface FitPicEdge {
+  node: FitPic;
+  cursor: String;
+}
+
+export interface FitPicEdgePromise extends Promise<FitPicEdge>, Fragmentable {
+  node: <T = FitPicPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface FitPicEdgeSubscription
+  extends Promise<AsyncIterator<FitPicEdge>>,
+    Fragmentable {
+  node: <T = FitPicSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateFitPic {
+  count: Int;
+}
+
+export interface AggregateFitPicPromise
+  extends Promise<AggregateFitPic>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateFitPicSubscription
+  extends Promise<AsyncIterator<AggregateFitPic>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface FitPicReportConnection {
+  pageInfo: PageInfo;
+  edges: FitPicReportEdge[];
+}
+
+export interface FitPicReportConnectionPromise
+  extends Promise<FitPicReportConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<FitPicReportEdge>>() => T;
+  aggregate: <T = AggregateFitPicReportPromise>() => T;
+}
+
+export interface FitPicReportConnectionSubscription
+  extends Promise<AsyncIterator<FitPicReportConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<FitPicReportEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateFitPicReportSubscription>() => T;
+}
+
+export interface FitPicReportEdge {
+  node: FitPicReport;
+  cursor: String;
+}
+
+export interface FitPicReportEdgePromise
+  extends Promise<FitPicReportEdge>,
+    Fragmentable {
+  node: <T = FitPicReportPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface FitPicReportEdgeSubscription
+  extends Promise<AsyncIterator<FitPicReportEdge>>,
+    Fragmentable {
+  node: <T = FitPicReportSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateFitPicReport {
+  count: Int;
+}
+
+export interface AggregateFitPicReportPromise
+  extends Promise<AggregateFitPicReport>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateFitPicReportSubscription
+  extends Promise<AsyncIterator<AggregateFitPicReport>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
@@ -22168,6 +23036,106 @@ export interface EmailReceiptPreviousValuesSubscription
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
+export interface FitPicSubscriptionPayload {
+  mutation: MutationType;
+  node: FitPic;
+  updatedFields: String[];
+  previousValues: FitPicPreviousValues;
+}
+
+export interface FitPicSubscriptionPayloadPromise
+  extends Promise<FitPicSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = FitPicPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = FitPicPreviousValuesPromise>() => T;
+}
+
+export interface FitPicSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<FitPicSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = FitPicSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = FitPicPreviousValuesSubscription>() => T;
+}
+
+export interface FitPicPreviousValues {
+  id: ID_Output;
+  status: FitPicStatus;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface FitPicPreviousValuesPromise
+  extends Promise<FitPicPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  status: () => Promise<FitPicStatus>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface FitPicPreviousValuesSubscription
+  extends Promise<AsyncIterator<FitPicPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  status: () => Promise<AsyncIterator<FitPicStatus>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface FitPicReportSubscriptionPayload {
+  mutation: MutationType;
+  node: FitPicReport;
+  updatedFields: String[];
+  previousValues: FitPicReportPreviousValues;
+}
+
+export interface FitPicReportSubscriptionPayloadPromise
+  extends Promise<FitPicReportSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = FitPicReportPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = FitPicReportPreviousValuesPromise>() => T;
+}
+
+export interface FitPicReportSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<FitPicReportSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = FitPicReportSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = FitPicReportPreviousValuesSubscription>() => T;
+}
+
+export interface FitPicReportPreviousValues {
+  id: ID_Output;
+  status: FitPicReportStatus;
+  reportedAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface FitPicReportPreviousValuesPromise
+  extends Promise<FitPicReportPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  status: () => Promise<FitPicReportStatus>;
+  reportedAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface FitPicReportPreviousValuesSubscription
+  extends Promise<AsyncIterator<FitPicReportPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  status: () => Promise<AsyncIterator<FitPicReportStatus>>;
+  reportedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
 export interface HomepageProductRailSubscriptionPayload {
   mutation: MutationType;
   node: HomepageProductRail;
@@ -24517,6 +25485,22 @@ export const models: Model[] = [
   },
   {
     name: "PushNotificationStatus",
+    embedded: false
+  },
+  {
+    name: "FitPicStatus",
+    embedded: false
+  },
+  {
+    name: "FitPic",
+    embedded: false
+  },
+  {
+    name: "FitPicReportStatus",
+    embedded: false
+  },
+  {
+    name: "FitPicReport",
     embedded: false
   },
   {

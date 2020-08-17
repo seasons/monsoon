@@ -24,6 +24,7 @@ import { CustomerService } from "./services/customer.service"
     PrismaModule,
     ShippingModule,
     PushNotificationModule,
+    ShippingModule,
     UtilsModule,
   ],
   providers: [
