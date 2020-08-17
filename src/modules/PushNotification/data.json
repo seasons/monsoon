@@ -61,6 +61,12 @@
       "params": { "uri": "{{{uri}}}", "id": "{{id}}", "slug": "{{slug}}" }
     }
   },
+  "PublishFitPic": {
+    "alert": {
+      "title": "You've been featured!",
+      "body": "Your fit pic has been approved and is officially live. Tap to see it in the app."
+    }
+  },
   "Custom": {
     "alert": {
       "title": "{{{title}}}",
