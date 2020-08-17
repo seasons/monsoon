@@ -424,6 +424,8 @@ type BillingInfo {
   state: String
   country: String
   postal_code: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 type BillingInfoConnection {
@@ -482,6 +484,10 @@ enum BillingInfoOrderByInput {
   country_DESC
   postal_code_ASC
   postal_code_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
 }
 
 type BillingInfoPreviousValues {
@@ -497,6 +503,8 @@ type BillingInfoPreviousValues {
   state: String
   country: String
   postal_code: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 type BillingInfoSubscriptionPayload {
@@ -730,6 +738,22 @@ input BillingInfoWhereInput {
   postal_code_not_starts_with: String
   postal_code_ends_with: String
   postal_code_not_ends_with: String
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
   AND: [BillingInfoWhereInput!]
   OR: [BillingInfoWhereInput!]
   NOT: [BillingInfoWhereInput!]
@@ -5327,6 +5351,7 @@ type PauseRequest {
   pausePending: Boolean!
   pauseDate: DateTime
   resumeDate: DateTime
+  notified: Boolean!
   membership: CustomerMembership!
 }
 
@@ -5341,6 +5366,7 @@ input PauseRequestCreateInput {
   pausePending: Boolean!
   pauseDate: DateTime
   resumeDate: DateTime
+  notified: Boolean
   membership: CustomerMembershipCreateOneWithoutPauseRequestsInput!
 }
 
@@ -5354,6 +5380,7 @@ input PauseRequestCreateWithoutMembershipInput {
   pausePending: Boolean!
   pauseDate: DateTime
   resumeDate: DateTime
+  notified: Boolean
 }
 
 type PauseRequestEdge {
@@ -5374,6 +5401,8 @@ enum PauseRequestOrderByInput {
   pauseDate_DESC
   resumeDate_ASC
   resumeDate_DESC
+  notified_ASC
+  notified_DESC
 }
 
 type PauseRequestPreviousValues {
@@ -5383,6 +5412,7 @@ type PauseRequestPreviousValues {
   pausePending: Boolean!
   pauseDate: DateTime
   resumeDate: DateTime
+  notified: Boolean!
 }
 
 input PauseRequestScalarWhereInput {
@@ -5434,6 +5464,8 @@ input PauseRequestScalarWhereInput {
   resumeDate_lte: DateTime
   resumeDate_gt: DateTime
   resumeDate_gte: DateTime
+  notified: Boolean
+  notified_not: Boolean
   AND: [PauseRequestScalarWhereInput!]
   OR: [PauseRequestScalarWhereInput!]
   NOT: [PauseRequestScalarWhereInput!]
@@ -5461,6 +5493,7 @@ input PauseRequestUpdateInput {
   pausePending: Boolean
   pauseDate: DateTime
   resumeDate: DateTime
+  notified: Boolean
   membership: CustomerMembershipUpdateOneRequiredWithoutPauseRequestsInput
 }
 
@@ -5468,12 +5501,14 @@ input PauseRequestUpdateManyDataInput {
   pausePending: Boolean
   pauseDate: DateTime
   resumeDate: DateTime
+  notified: Boolean
 }
 
 input PauseRequestUpdateManyMutationInput {
   pausePending: Boolean
   pauseDate: DateTime
   resumeDate: DateTime
+  notified: Boolean
 }
 
 input PauseRequestUpdateManyWithoutMembershipInput {
@@ -5497,6 +5532,7 @@ input PauseRequestUpdateWithoutMembershipDataInput {
   pausePending: Boolean
   pauseDate: DateTime
   resumeDate: DateTime
+  notified: Boolean
 }
 
 input PauseRequestUpdateWithWhereUniqueWithoutMembershipInput {
@@ -5559,6 +5595,8 @@ input PauseRequestWhereInput {
   resumeDate_lte: DateTime
   resumeDate_gt: DateTime
   resumeDate_gte: DateTime
+  notified: Boolean
+  notified_not: Boolean
   membership: CustomerMembershipWhereInput
   AND: [PauseRequestWhereInput!]
   OR: [PauseRequestWhereInput!]

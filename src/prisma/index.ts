@@ -2634,7 +2634,9 @@ export type PauseRequestOrderByInput =
   | "pauseDate_ASC"
   | "pauseDate_DESC"
   | "resumeDate_ASC"
-  | "resumeDate_DESC";
+  | "resumeDate_DESC"
+  | "notified_ASC"
+  | "notified_DESC";
 
 export type BagItemOrderByInput =
   | "id_ASC"
@@ -2714,7 +2716,11 @@ export type BillingInfoOrderByInput =
   | "country_ASC"
   | "country_DESC"
   | "postal_code_ASC"
-  | "postal_code_DESC";
+  | "postal_code_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
 
 export type BottomSizeOrderByInput =
   | "id_ASC"
@@ -5217,6 +5223,8 @@ export interface PauseRequestWhereInput {
   resumeDate_lte?: Maybe<DateTimeInput>;
   resumeDate_gt?: Maybe<DateTimeInput>;
   resumeDate_gte?: Maybe<DateTimeInput>;
+  notified?: Maybe<Boolean>;
+  notified_not?: Maybe<Boolean>;
   membership?: Maybe<CustomerMembershipWhereInput>;
   AND?: Maybe<PauseRequestWhereInput[] | PauseRequestWhereInput>;
   OR?: Maybe<PauseRequestWhereInput[] | PauseRequestWhereInput>;
@@ -5728,6 +5736,22 @@ export interface BillingInfoWhereInput {
   postal_code_not_starts_with?: Maybe<String>;
   postal_code_ends_with?: Maybe<String>;
   postal_code_not_ends_with?: Maybe<String>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
   AND?: Maybe<BillingInfoWhereInput[] | BillingInfoWhereInput>;
   OR?: Maybe<BillingInfoWhereInput[] | BillingInfoWhereInput>;
   NOT?: Maybe<BillingInfoWhereInput[] | BillingInfoWhereInput>;
@@ -7884,6 +7908,7 @@ export interface PauseRequestCreateWithoutMembershipInput {
   pausePending: Boolean;
   pauseDate?: Maybe<DateTimeInput>;
   resumeDate?: Maybe<DateTimeInput>;
+  notified?: Maybe<Boolean>;
 }
 
 export interface ReservationCreateManyWithoutCustomerInput {
@@ -11126,6 +11151,7 @@ export interface PauseRequestUpdateWithoutMembershipDataInput {
   pausePending?: Maybe<Boolean>;
   pauseDate?: Maybe<DateTimeInput>;
   resumeDate?: Maybe<DateTimeInput>;
+  notified?: Maybe<Boolean>;
 }
 
 export interface PauseRequestUpsertWithWhereUniqueWithoutMembershipInput {
@@ -11183,6 +11209,8 @@ export interface PauseRequestScalarWhereInput {
   resumeDate_lte?: Maybe<DateTimeInput>;
   resumeDate_gt?: Maybe<DateTimeInput>;
   resumeDate_gte?: Maybe<DateTimeInput>;
+  notified?: Maybe<Boolean>;
+  notified_not?: Maybe<Boolean>;
   AND?: Maybe<PauseRequestScalarWhereInput[] | PauseRequestScalarWhereInput>;
   OR?: Maybe<PauseRequestScalarWhereInput[] | PauseRequestScalarWhereInput>;
   NOT?: Maybe<PauseRequestScalarWhereInput[] | PauseRequestScalarWhereInput>;
@@ -11197,6 +11225,7 @@ export interface PauseRequestUpdateManyDataInput {
   pausePending?: Maybe<Boolean>;
   pauseDate?: Maybe<DateTimeInput>;
   resumeDate?: Maybe<DateTimeInput>;
+  notified?: Maybe<Boolean>;
 }
 
 export interface CustomerMembershipUpsertWithoutCustomerInput {
@@ -12652,6 +12681,7 @@ export interface PauseRequestCreateInput {
   pausePending: Boolean;
   pauseDate?: Maybe<DateTimeInput>;
   resumeDate?: Maybe<DateTimeInput>;
+  notified?: Maybe<Boolean>;
   membership: CustomerMembershipCreateOneWithoutPauseRequestsInput;
 }
 
@@ -12670,6 +12700,7 @@ export interface PauseRequestUpdateInput {
   pausePending?: Maybe<Boolean>;
   pauseDate?: Maybe<DateTimeInput>;
   resumeDate?: Maybe<DateTimeInput>;
+  notified?: Maybe<Boolean>;
   membership?: Maybe<
     CustomerMembershipUpdateOneRequiredWithoutPauseRequestsInput
   >;
@@ -12696,6 +12727,7 @@ export interface PauseRequestUpdateManyMutationInput {
   pausePending?: Maybe<Boolean>;
   pauseDate?: Maybe<DateTimeInput>;
   resumeDate?: Maybe<DateTimeInput>;
+  notified?: Maybe<Boolean>;
 }
 
 export interface PaymentPlanCreateInput {
@@ -17561,6 +17593,8 @@ export interface BillingInfo {
   state?: String;
   country?: String;
   postal_code?: String;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
 }
 
 export interface BillingInfoPromise extends Promise<BillingInfo>, Fragmentable {
@@ -17576,6 +17610,8 @@ export interface BillingInfoPromise extends Promise<BillingInfo>, Fragmentable {
   state: () => Promise<String>;
   country: () => Promise<String>;
   postal_code: () => Promise<String>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface BillingInfoSubscription
@@ -17593,6 +17629,8 @@ export interface BillingInfoSubscription
   state: () => Promise<AsyncIterator<String>>;
   country: () => Promise<AsyncIterator<String>>;
   postal_code: () => Promise<AsyncIterator<String>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
 export interface BillingInfoNullablePromise
@@ -17610,6 +17648,8 @@ export interface BillingInfoNullablePromise
   state: () => Promise<String>;
   country: () => Promise<String>;
   postal_code: () => Promise<String>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface CustomerMembership {
@@ -17675,6 +17715,7 @@ export interface PauseRequest {
   pausePending: Boolean;
   pauseDate?: DateTimeOutput;
   resumeDate?: DateTimeOutput;
+  notified: Boolean;
 }
 
 export interface PauseRequestPromise
@@ -17686,6 +17727,7 @@ export interface PauseRequestPromise
   pausePending: () => Promise<Boolean>;
   pauseDate: () => Promise<DateTimeOutput>;
   resumeDate: () => Promise<DateTimeOutput>;
+  notified: () => Promise<Boolean>;
   membership: <T = CustomerMembershipPromise>() => T;
 }
 
@@ -17698,6 +17740,7 @@ export interface PauseRequestSubscription
   pausePending: () => Promise<AsyncIterator<Boolean>>;
   pauseDate: () => Promise<AsyncIterator<DateTimeOutput>>;
   resumeDate: () => Promise<AsyncIterator<DateTimeOutput>>;
+  notified: () => Promise<AsyncIterator<Boolean>>;
   membership: <T = CustomerMembershipSubscription>() => T;
 }
 
@@ -17710,6 +17753,7 @@ export interface PauseRequestNullablePromise
   pausePending: () => Promise<Boolean>;
   pauseDate: () => Promise<DateTimeOutput>;
   resumeDate: () => Promise<DateTimeOutput>;
+  notified: () => Promise<Boolean>;
   membership: <T = CustomerMembershipPromise>() => T;
 }
 
@@ -21511,6 +21555,8 @@ export interface BillingInfoPreviousValues {
   state?: String;
   country?: String;
   postal_code?: String;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
 }
 
 export interface BillingInfoPreviousValuesPromise
@@ -21528,6 +21574,8 @@ export interface BillingInfoPreviousValuesPromise
   state: () => Promise<String>;
   country: () => Promise<String>;
   postal_code: () => Promise<String>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface BillingInfoPreviousValuesSubscription
@@ -21545,6 +21593,8 @@ export interface BillingInfoPreviousValuesSubscription
   state: () => Promise<AsyncIterator<String>>;
   country: () => Promise<AsyncIterator<String>>;
   postal_code: () => Promise<AsyncIterator<String>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
 export interface BottomSizeSubscriptionPayload {
@@ -22538,6 +22588,7 @@ export interface PauseRequestPreviousValues {
   pausePending: Boolean;
   pauseDate?: DateTimeOutput;
   resumeDate?: DateTimeOutput;
+  notified: Boolean;
 }
 
 export interface PauseRequestPreviousValuesPromise
@@ -22549,6 +22600,7 @@ export interface PauseRequestPreviousValuesPromise
   pausePending: () => Promise<Boolean>;
   pauseDate: () => Promise<DateTimeOutput>;
   resumeDate: () => Promise<DateTimeOutput>;
+  notified: () => Promise<Boolean>;
 }
 
 export interface PauseRequestPreviousValuesSubscription
@@ -22560,6 +22612,7 @@ export interface PauseRequestPreviousValuesSubscription
   pausePending: () => Promise<AsyncIterator<Boolean>>;
   pauseDate: () => Promise<AsyncIterator<DateTimeOutput>>;
   resumeDate: () => Promise<AsyncIterator<DateTimeOutput>>;
+  notified: () => Promise<AsyncIterator<Boolean>>;
 }
 
 export interface PaymentPlanSubscriptionPayload {

@@ -98,7 +98,12 @@ export class TestUtilsService {
     const reservationService = new ReservationService(
       this.prisma,
       new ProductUtilsService(this.prisma),
-      new ProductVariantService(this.prisma, physProdService, airtableService),
+      new ProductVariantService(
+        this.prisma,
+        new ProductUtilsService(this.prisma),
+        physProdService,
+        airtableService
+      ),
       physProdService,
       airtableService,
       shippingService,
@@ -122,6 +127,7 @@ export class TestUtilsService {
       productUtilsService,
       new ProductVariantService(
         this.prisma,
+        new ProductUtilsService(this.prisma),
         new PhysicalProductUtilsService(this.prisma, productUtilsService),
         this.airtableService
       ),
