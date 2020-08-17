@@ -212,7 +212,7 @@ export class CustomerService {
     try {
       if (
         process.env.AUTOMATIC_ADMISSIONS === "true" &&
-        this.admissions.isZipcodeAllowed(
+        this.admissions.zipcodeAllowed(
           customer.detail.shippingAddress.zipCode
         ) &&
         (await this.admissions.belowWeeklyNewActiveUsersOpsThreshold()) &&

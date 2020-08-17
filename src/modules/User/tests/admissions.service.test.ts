@@ -25,9 +25,9 @@ describe("Admissions Service", () => {
   describe("Serviceable Zipcodes", () => {
     beforeAll(() => {
       expectAdmit = (zipcode: string) =>
-        expect(admissions.isZipcodeAllowed(zipcode)).toBe(true)
+        expect(admissions.zipcodeAllowed(zipcode)).toBe(true)
       expectNotAdmit = (zipcode: string) =>
-        expect(admissions.isZipcodeAllowed(zipcode)).toBe(false)
+        expect(admissions.zipcodeAllowed(zipcode)).toBe(false)
     })
 
     it("admits New York", () => expectAdmit("11432"))

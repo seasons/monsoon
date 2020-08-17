@@ -29,7 +29,7 @@ export class AdmissionsService {
     ))
   }
 
-  isZipcodeAllowed(zipcode: string): boolean {
+  zipcodeAllowed(zipcode: string): boolean {
     const state = zipcodes.lookup(zipcode)?.state
     return this.serviceableStates.includes(state)
   }
