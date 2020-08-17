@@ -253,7 +253,7 @@ export class ShippoController {
           email: user.email,
           pushNotifID: `Reservation${status}` as PushNotificationID,
           vars: {
-            reservationID: reservation.id,
+            id: reservation.id,
           },
         })
       }
