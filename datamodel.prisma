@@ -569,7 +569,8 @@ type FitPic {
   image: Image!
   location: Location
   products: [Product!] @scalarList(strategy: RELATION)
-  reports: [FitPicReport!]! @relation(name: "FitPicToFitPicReport", onDelete: CASCADE)
+  reports: [FitPicReport!]!
+    @relation(name: "FitPicToFitPicReport", onDelete: CASCADE)
   status: FitPicStatus! @default(value: Submitted)
   user: User! @relation(name: "UserToFitPic")
   createdAt: DateTime! @createdAt
@@ -604,7 +605,8 @@ type User {
   pushNotification: UserPushNotification
   verificationStatus: UserVerificationStatus! @default(value: Pending)
   verificationMethod: UserVerificationMethod! @default(value: None)
-  smsReceipts: [SmsReceipt!]! @relation(name: "UserToSmsReceipts", onDelete: CASCADE)
+  smsReceipts: [SmsReceipt!]!
+    @relation(name: "UserToSmsReceipts", onDelete: CASCADE)
   fitPics: [FitPic!]! @relation(name: "UserToFitPic", onDelete: CASCADE)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
@@ -665,10 +667,12 @@ type Customer {
   id: ID! @id
   user: User! @unique @relation(name: "CustomerToUser", onDelete: CASCADE)
   status: CustomerStatus
-  detail: CustomerDetail @relation(name: "CustomerToCustomerDetail", onDelete: CASCADE)
+  detail: CustomerDetail
+    @relation(name: "CustomerToCustomerDetail", onDelete: CASCADE)
   billingInfo: BillingInfo
   plan: Plan
-  membership: CustomerMembership @relation(name: "CustomerToCustomerMembership", onDelete: CASCADE)
+  membership: CustomerMembership
+    @relation(name: "CustomerToCustomerMembership", onDelete: CASCADE)
   bagItems: [BagItem] @relation(name: "CustomerToBagItem")
   reservations: [Reservation] @relation(name: "CustomerToReservation")
 }
@@ -676,7 +680,12 @@ type Customer {
 type CustomerMembership {
   id: ID! @id
   subscriptionId: String!
-  customer: Customer! @relation(name: "CustomerToCustomerMembership", link: INLINE, onDelete: SET_NULL)
+  customer: Customer!
+    @relation(
+      name: "CustomerToCustomerMembership"
+      link: INLINE
+      onDelete: SET_NULL
+    )
   pauseRequests: [PauseRequest]
     @relation(name: "CustomerMembershipToPauseRequest", onDelete: CASCADE)
 }
@@ -832,6 +841,8 @@ type BillingInfo {
   state: String
   country: String
   postal_code: String
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
 }
 
 type ProductRequest {
