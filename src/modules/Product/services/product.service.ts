@@ -640,18 +640,8 @@ export class ProductService {
       },
     })
 
-    const variantWithSku = await this.prisma.binding.query.productVariant(
-      { where: { id: variant.id } },
-      `
-      {
-        id
-        sku
-      }
-    `
-    )
-
     const manufacturerSizeIDs = await this.productVariantService.getManufacturerSizeIDs(
-      { ...variant, sku: variantWithSku.sku },
+      { ...variant, sku: variant.sku },
       type
     )
 
