@@ -8,7 +8,7 @@ export class BrandMutationsResolver {
 
   @Mutation()
   async createBrand(@Args() { input }) {
-    return await this.brandService.createBrand(input)
+    return await this.brandService.createBrand({ input })
   }
 
   @Mutation()
