@@ -142,6 +142,8 @@ type Mutation {
   upsertProduct(input: UpsertProductInput!): Product @hasRole(roles: [Admin])
   addProductRequest(reason: String!, url: String!): ProductRequest!
   createBrand(input: BrandCreateInput!): Brand @hasRole(roles: [Admin])
+  updateBrand(where: BrandWhereUniqueInput!, data: BrandUpdateInput!): Brand
+    @hasRole(roles: [Admin])
   publishProducts(productIDs: [String!]): PublishProductsResponse!
     @hasRole(roles: [Admin])
 }

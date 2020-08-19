@@ -1,12 +1,18 @@
 import { Args, Mutation, Resolver } from "@nestjs/graphql"
-import { PrismaService } from "@prisma/prisma.service"
+
+import { BrandService } from "../services/brand.service"
 
 @Resolver("Brand")
 export class BrandMutationsResolver {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly brandService: BrandService) {}
 
   @Mutation()
   async createBrand(@Args() { input }) {
-    return await this.prisma.client.createBrand(input)
+    return await this.brandService.createBrand(input)
+  }
+
+  @Mutation()
+  async updateBrand(@Args() { where, data }) {
+    return await this.brandService.updateBrand({ where, data })
   }
 }
