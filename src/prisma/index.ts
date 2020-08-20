@@ -2389,6 +2389,8 @@ export type PushNotificationReceiptOrderByInput =
   | "recordID_DESC"
   | "recordSlug_ASC"
   | "recordSlug_DESC"
+  | "notificationKey_ASC"
+  | "notificationKey_DESC"
   | "sentAt_ASC"
   | "sentAt_DESC"
   | "createdAt_ASC"
@@ -2824,11 +2826,7 @@ export type BillingInfoOrderByInput =
   | "country_ASC"
   | "country_DESC"
   | "postal_code_ASC"
-  | "postal_code_DESC"
-  | "createdAt_ASC"
-  | "createdAt_DESC"
-  | "updatedAt_ASC"
-  | "updatedAt_DESC";
+  | "postal_code_DESC";
 
 export type BottomSizeOrderByInput =
   | "id_ASC"
@@ -3323,6 +3321,20 @@ export interface PushNotificationReceiptWhereInput {
   recordSlug_not_starts_with?: Maybe<String>;
   recordSlug_ends_with?: Maybe<String>;
   recordSlug_not_ends_with?: Maybe<String>;
+  notificationKey?: Maybe<String>;
+  notificationKey_not?: Maybe<String>;
+  notificationKey_in?: Maybe<String[] | String>;
+  notificationKey_not_in?: Maybe<String[] | String>;
+  notificationKey_lt?: Maybe<String>;
+  notificationKey_lte?: Maybe<String>;
+  notificationKey_gt?: Maybe<String>;
+  notificationKey_gte?: Maybe<String>;
+  notificationKey_contains?: Maybe<String>;
+  notificationKey_not_contains?: Maybe<String>;
+  notificationKey_starts_with?: Maybe<String>;
+  notificationKey_not_starts_with?: Maybe<String>;
+  notificationKey_ends_with?: Maybe<String>;
+  notificationKey_not_ends_with?: Maybe<String>;
   sentAt?: Maybe<DateTimeInput>;
   sentAt_not?: Maybe<DateTimeInput>;
   sentAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -5938,22 +5950,6 @@ export interface BillingInfoWhereInput {
   postal_code_not_starts_with?: Maybe<String>;
   postal_code_ends_with?: Maybe<String>;
   postal_code_not_ends_with?: Maybe<String>;
-  createdAt?: Maybe<DateTimeInput>;
-  createdAt_not?: Maybe<DateTimeInput>;
-  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_lt?: Maybe<DateTimeInput>;
-  createdAt_lte?: Maybe<DateTimeInput>;
-  createdAt_gt?: Maybe<DateTimeInput>;
-  createdAt_gte?: Maybe<DateTimeInput>;
-  updatedAt?: Maybe<DateTimeInput>;
-  updatedAt_not?: Maybe<DateTimeInput>;
-  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_lt?: Maybe<DateTimeInput>;
-  updatedAt_lte?: Maybe<DateTimeInput>;
-  updatedAt_gt?: Maybe<DateTimeInput>;
-  updatedAt_gte?: Maybe<DateTimeInput>;
   AND?: Maybe<BillingInfoWhereInput[] | BillingInfoWhereInput>;
   OR?: Maybe<BillingInfoWhereInput[] | BillingInfoWhereInput>;
   NOT?: Maybe<BillingInfoWhereInput[] | BillingInfoWhereInput>;
@@ -7361,6 +7357,7 @@ export interface PushNotificationReceiptCreateWithoutUsersInput {
   title?: Maybe<String>;
   recordID?: Maybe<String>;
   recordSlug?: Maybe<String>;
+  notificationKey?: Maybe<String>;
   sentAt: DateTimeInput;
 }
 
@@ -7416,6 +7413,7 @@ export interface PushNotificationReceiptCreateInput {
   title?: Maybe<String>;
   recordID?: Maybe<String>;
   recordSlug?: Maybe<String>;
+  notificationKey?: Maybe<String>;
   sentAt: DateTimeInput;
 }
 
@@ -8456,6 +8454,7 @@ export interface PushNotificationReceiptUpdateWithoutUsersDataInput {
   title?: Maybe<String>;
   recordID?: Maybe<String>;
   recordSlug?: Maybe<String>;
+  notificationKey?: Maybe<String>;
   sentAt?: Maybe<DateTimeInput>;
 }
 
@@ -8592,6 +8591,20 @@ export interface PushNotificationReceiptScalarWhereInput {
   recordSlug_not_starts_with?: Maybe<String>;
   recordSlug_ends_with?: Maybe<String>;
   recordSlug_not_ends_with?: Maybe<String>;
+  notificationKey?: Maybe<String>;
+  notificationKey_not?: Maybe<String>;
+  notificationKey_in?: Maybe<String[] | String>;
+  notificationKey_not_in?: Maybe<String[] | String>;
+  notificationKey_lt?: Maybe<String>;
+  notificationKey_lte?: Maybe<String>;
+  notificationKey_gt?: Maybe<String>;
+  notificationKey_gte?: Maybe<String>;
+  notificationKey_contains?: Maybe<String>;
+  notificationKey_not_contains?: Maybe<String>;
+  notificationKey_starts_with?: Maybe<String>;
+  notificationKey_not_starts_with?: Maybe<String>;
+  notificationKey_ends_with?: Maybe<String>;
+  notificationKey_not_ends_with?: Maybe<String>;
   sentAt?: Maybe<DateTimeInput>;
   sentAt_not?: Maybe<DateTimeInput>;
   sentAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -8644,6 +8657,7 @@ export interface PushNotificationReceiptUpdateManyDataInput {
   title?: Maybe<String>;
   recordID?: Maybe<String>;
   recordSlug?: Maybe<String>;
+  notificationKey?: Maybe<String>;
   sentAt?: Maybe<DateTimeInput>;
 }
 
@@ -8836,6 +8850,7 @@ export interface PushNotificationReceiptUpdateDataInput {
   title?: Maybe<String>;
   recordID?: Maybe<String>;
   recordSlug?: Maybe<String>;
+  notificationKey?: Maybe<String>;
   sentAt?: Maybe<DateTimeInput>;
 }
 
@@ -14294,6 +14309,7 @@ export interface PushNotificationReceiptUpdateInput {
   title?: Maybe<String>;
   recordID?: Maybe<String>;
   recordSlug?: Maybe<String>;
+  notificationKey?: Maybe<String>;
   sentAt?: Maybe<DateTimeInput>;
 }
 
@@ -14306,6 +14322,7 @@ export interface PushNotificationReceiptUpdateManyMutationInput {
   title?: Maybe<String>;
   recordID?: Maybe<String>;
   recordSlug?: Maybe<String>;
+  notificationKey?: Maybe<String>;
   sentAt?: Maybe<DateTimeInput>;
 }
 
@@ -16312,6 +16329,7 @@ export interface PushNotificationReceipt {
   title?: String;
   recordID?: String;
   recordSlug?: String;
+  notificationKey?: String;
   sentAt: DateTimeOutput;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
@@ -16338,6 +16356,7 @@ export interface PushNotificationReceiptPromise
   title: () => Promise<String>;
   recordID: () => Promise<String>;
   recordSlug: () => Promise<String>;
+  notificationKey: () => Promise<String>;
   sentAt: () => Promise<DateTimeOutput>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
@@ -16364,6 +16383,7 @@ export interface PushNotificationReceiptSubscription
   title: () => Promise<AsyncIterator<String>>;
   recordID: () => Promise<AsyncIterator<String>>;
   recordSlug: () => Promise<AsyncIterator<String>>;
+  notificationKey: () => Promise<AsyncIterator<String>>;
   sentAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
@@ -16390,6 +16410,7 @@ export interface PushNotificationReceiptNullablePromise
   title: () => Promise<String>;
   recordID: () => Promise<String>;
   recordSlug: () => Promise<String>;
+  notificationKey: () => Promise<String>;
   sentAt: () => Promise<DateTimeOutput>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
@@ -18351,8 +18372,6 @@ export interface BillingInfo {
   state?: String;
   country?: String;
   postal_code?: String;
-  createdAt: DateTimeOutput;
-  updatedAt: DateTimeOutput;
 }
 
 export interface BillingInfoPromise extends Promise<BillingInfo>, Fragmentable {
@@ -18368,8 +18387,6 @@ export interface BillingInfoPromise extends Promise<BillingInfo>, Fragmentable {
   state: () => Promise<String>;
   country: () => Promise<String>;
   postal_code: () => Promise<String>;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface BillingInfoSubscription
@@ -18387,8 +18404,6 @@ export interface BillingInfoSubscription
   state: () => Promise<AsyncIterator<String>>;
   country: () => Promise<AsyncIterator<String>>;
   postal_code: () => Promise<AsyncIterator<String>>;
-  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
 export interface BillingInfoNullablePromise
@@ -18406,8 +18421,6 @@ export interface BillingInfoNullablePromise
   state: () => Promise<String>;
   country: () => Promise<String>;
   postal_code: () => Promise<String>;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface CustomerMembership {
@@ -22423,8 +22436,6 @@ export interface BillingInfoPreviousValues {
   state?: String;
   country?: String;
   postal_code?: String;
-  createdAt: DateTimeOutput;
-  updatedAt: DateTimeOutput;
 }
 
 export interface BillingInfoPreviousValuesPromise
@@ -22442,8 +22453,6 @@ export interface BillingInfoPreviousValuesPromise
   state: () => Promise<String>;
   country: () => Promise<String>;
   postal_code: () => Promise<String>;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface BillingInfoPreviousValuesSubscription
@@ -22461,8 +22470,6 @@ export interface BillingInfoPreviousValuesSubscription
   state: () => Promise<AsyncIterator<String>>;
   country: () => Promise<AsyncIterator<String>>;
   postal_code: () => Promise<AsyncIterator<String>>;
-  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
 export interface BottomSizeSubscriptionPayload {
@@ -24400,6 +24407,7 @@ export interface PushNotificationReceiptPreviousValues {
   title?: String;
   recordID?: String;
   recordSlug?: String;
+  notificationKey?: String;
   sentAt: DateTimeOutput;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
@@ -24417,6 +24425,7 @@ export interface PushNotificationReceiptPreviousValuesPromise
   title: () => Promise<String>;
   recordID: () => Promise<String>;
   recordSlug: () => Promise<String>;
+  notificationKey: () => Promise<String>;
   sentAt: () => Promise<DateTimeOutput>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
@@ -24434,6 +24443,7 @@ export interface PushNotificationReceiptPreviousValuesSubscription
   title: () => Promise<AsyncIterator<String>>;
   recordID: () => Promise<AsyncIterator<String>>;
   recordSlug: () => Promise<AsyncIterator<String>>;
+  notificationKey: () => Promise<AsyncIterator<String>>;
   sentAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;

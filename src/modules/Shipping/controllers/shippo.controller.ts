@@ -238,12 +238,15 @@ export class ShippoController {
       .reservation({ id: reservation.id })
       .user()
 
+    const pushNotifID = `Reservation${status}` as PushNotificationID
+
     if (["Shipped", "Delivered"].includes(status)) {
       const receipt = head(
         await this.prisma.client.pushNotificationReceipts({
           where: {
             users_every: { id: user.id },
             recordID: reservation.id,
+            notificationKey: pushNotifID,
           },
         })
       )
@@ -251,7 +254,7 @@ export class ShippoController {
       if (!receipt) {
         await this.pushNotification.pushNotifyUser({
           email: user.email,
-          pushNotifID: `Reservation${status}` as PushNotificationID,
+          pushNotifID,
           vars: {
             id: reservation.id,
           },
