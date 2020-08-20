@@ -4,15 +4,15 @@ import { BrandService } from "../services/brand.service"
 
 @Resolver("Brand")
 export class BrandMutationsResolver {
-  constructor(private readonly brandService: BrandService) {}
+  constructor(private readonly brand: BrandService) {}
 
   @Mutation()
   async createBrand(@Args() { input }) {
-    return await this.brandService.createBrand({ input })
+    return await this.brand.createBrand({ input })
   }
 
   @Mutation()
   async updateBrand(@Args() { where, data }) {
-    return await this.brandService.updateBrand({ where, data })
+    return await this.brand.updateBrand({ where, data })
   }
 }

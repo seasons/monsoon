@@ -533,7 +533,21 @@ export class ProductService {
       modelSizeID = modelSize.id
     }
     if (images) {
-      imageIDs = await this.upsertImages(images, product)
+      // Form appropriate image names
+      const imageNames = images.map(async (_image, index) => {
+        return await this.productUtils.getProductImageName(
+          product.brand.brandCode,
+          product.name,
+          product.color.name,
+          index + 1
+        )
+      })
+
+      imageIDs = await this.imageService.upsertImages(
+        images,
+        imageNames,
+        product.slug
+      )
     }
     await this.storeProductIfNeeded(where, status)
     await this.prisma.client.updateProduct({
@@ -718,69 +732,6 @@ export class ProductService {
       )
     )
     return prismaTags.filter(Boolean).map((tag: Tag) => ({ id: tag.id }))
-  }
-
-  /**
-   * Upserts images for a given product, uploading new ones to S3 when needed.
-   * The [images] argument is either an imageURL or an image file object
-   * @param images of type (string | File)[]
-   * @param product: of type Product as is defined in prisma.binding
-   */
-  private async upsertImages(
-    images: any[],
-    product: PrismaBindingProduct
-  ): Promise<{ id: ID_Input }[]> {
-    const imageDatas = await Promise.all(
-      images.map(async (image, index) => {
-        const data = await image
-        if (typeof data === "string") {
-          // This means that we received an image URL in which case
-          // we just have perfom an upsertImage with the url
-
-          // This URL is sent by the client which means it an Imgix URL.
-          // Thus, we need to convert it to s3 format and strip any query params as needed.
-          const s3BaseURL = S3_BASE.replace(/\/$/, "") // Remove trailing slash
-          const s3ImageURL = `${s3BaseURL}${url.parse(data).pathname}`
-          const prismaImage = await this.prisma.client.upsertImage({
-            create: { url: s3ImageURL, title: product.slug },
-            update: { url: s3ImageURL, title: product.slug },
-            where: { url: s3ImageURL },
-          })
-          return { id: prismaImage.id }
-        } else {
-          // This means that we received a new image in the form of
-          // a file in which case we have to upload the image to S3
-
-          // Form appropriate image name
-          const s3ImageName = await this.productUtils.getProductImageName(
-            product.brand.brandCode,
-            product.name,
-            product.color.name,
-            index + 1
-          )
-
-          // Upload to S3 and retrieve metadata
-          const { height, url, width } = await this.imageService.uploadImage(
-            data,
-            {
-              imageName: s3ImageName,
-            }
-          )
-
-          // Purge this image url in imgix cache
-          await this.imageService.purgeS3ImageFromImgix(url)
-
-          // Upsert the image with the s3 image url
-          const prismaImage = await this.prisma.client.upsertImage({
-            create: { height, url, width, title: product.slug },
-            update: { height, width, title: product.slug },
-            where: { url },
-          })
-          return { id: prismaImage.id }
-        }
-      })
-    )
-    return imageDatas
   }
 
   private async storeProductIfNeeded(
