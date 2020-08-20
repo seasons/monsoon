@@ -38,6 +38,7 @@ export class PushNotificationDataProvider {
       route: data?.route,
       screen: data?.screen,
       uri: data?.params?.uri,
+      notificationKey: pushNotifID,
       recordID: data?.params?.id,
       recordSlug: data?.params?.slug,
       sentAt: now.toISOString(),

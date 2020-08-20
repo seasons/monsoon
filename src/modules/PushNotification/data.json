@@ -37,7 +37,8 @@
       "body": "We’ve packed up your items and they’re on the way"
     },
     "data": {
-      "route": "BagStack"
+      "route": "BagStack",
+      "params": { "id": "{{id}}" }
     }
   },
   "ReservationDelivered": {
@@ -46,7 +47,8 @@
       "body": "We hope you enjoy your items and let us know if you have any questions."
     },
     "data": {
-      "route": "BagStack"
+      "route": "BagStack",
+      "params": { "id": "{{id}}" }
     }
   },
   "NewBlogPost": {

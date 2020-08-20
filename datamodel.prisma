@@ -535,6 +535,8 @@ type PushNotificationReceipt {
   recordID: String
   # slug we pass as a param
   recordSlug: String
+  # key/identifier of the notification payload
+  notificationKey: String
   sentAt: DateTime!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
