@@ -49,16 +49,6 @@ export class FitPicQueriesResolver {
     if (forUser?.roles?.includes("Admin")) {
       return args
     } else {
-      const adminOnlyFieldsUsed = adminOnlyFields.filter(
-        field => args?.where?.[field] !== undefined
-      )
-      if (adminOnlyFieldsUsed.length > 0) {
-        throw new Error(
-          `The query's where parameter included one or more fields reserved for Admins only: ${adminOnlyFieldsUsed.join(
-            ", "
-          )}.`
-        )
-      }
       return {
         ...args,
         where: {
