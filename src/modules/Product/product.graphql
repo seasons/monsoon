@@ -307,37 +307,3 @@ input CustomBrandUpdateInput {
   # Custom fields
   images: [Upload!]
 }
-
-type Brand {
-  id: ID!
-  slug: String!
-  brandCode: String!
-  description: String
-  isPrimaryBrand: Boolean!
-  logo: Json
-  name: String!
-  basedIn: String
-  products(
-    category: String
-    brand: String
-    where: ProductWhereInput
-    orderBy: ProductOrderByInput
-    sizes: [String!]
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [Product]!
-  images(
-    width: Int
-    height: Int
-    size: ImageSize
-    options: ImageOptionsInput
-  ): [Image!]!
-  since: DateTime
-  tier: BrandTier!
-  websiteUrl: String
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
