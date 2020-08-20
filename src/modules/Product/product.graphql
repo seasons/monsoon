@@ -141,7 +141,11 @@ type Mutation {
   addViewedProduct(item: ID!): RecentlyViewedProduct!
   upsertProduct(input: UpsertProductInput!): Product @hasRole(roles: [Admin])
   addProductRequest(reason: String!, url: String!): ProductRequest!
-  createBrand(input: BrandCreateInput!): Brand @hasRole(roles: [Admin])
+  createBrand(input: CustomBrandCreateInput!): Brand @hasRole(roles: [Admin])
+  updateBrand(
+    where: BrandWhereUniqueInput!
+    data: CustomBrandUpdateInput!
+  ): Brand @hasRole(roles: [Admin])
   publishProducts(productIDs: [String!]): PublishProductsResponse!
     @hasRole(roles: [Admin])
 }
@@ -269,4 +273,60 @@ input CustomProductUpdateInput {
   modelSizeDisplay: String
   modelSizeName: String
   tags: [String!]
+}
+
+input CustomBrandCreateInput {
+  id: ID
+  slug: String!
+  brandCode: String!
+  description: String
+  isPrimaryBrand: Boolean
+  logo: Json
+  name: String!
+  basedIn: String
+  since: DateTime
+  tier: BrandTier!
+  websiteUrl: String
+  products: ProductCreateManyWithoutBrandInput
+  # Custom fields
+  images: [Upload!]
+}
+
+input CustomBrandUpdateInput {
+  slug: String
+  brandCode: String
+  description: String
+  isPrimaryBrand: Boolean
+  logo: Json
+  name: String
+  basedIn: String
+  products: ProductUpdateManyWithoutBrandInput
+  since: DateTime
+  tier: BrandTier
+  websiteUrl: String
+  # Custom fields
+  images: [Upload!]
+}
+
+type Brand {
+  id: ID!
+  slug: String!
+  brandCode: String!
+  description: String
+  isPrimaryBrand: Boolean!
+  logo: Json
+  name: String!
+  basedIn: String
+  products: [Product!]!
+  images(
+    width: Int
+    height: Int
+    size: ImageSize
+    options: ImageOptionsInput
+  ): [Image!]!
+  since: DateTime
+  tier: BrandTier!
+  websiteUrl: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }

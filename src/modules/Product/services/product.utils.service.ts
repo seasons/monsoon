@@ -5,7 +5,6 @@ import {
   Category,
   Product,
   ProductMaterialCategoryCreateInput,
-  ProductMaterialCategoryUpdateInput,
 } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
 import { head, identity, pickBy, union, uniqBy } from "lodash"

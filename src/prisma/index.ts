@@ -2556,22 +2556,6 @@ export type ProductOrderByInput =
   | "updatedAt_ASC"
   | "updatedAt_DESC";
 
-export type CategoryOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "slug_ASC"
-  | "slug_DESC"
-  | "name_ASC"
-  | "name_DESC"
-  | "image_ASC"
-  | "image_DESC"
-  | "description_ASC"
-  | "description_DESC"
-  | "visible_ASC"
-  | "visible_DESC"
-  | "updatedAt_ASC"
-  | "updatedAt_DESC";
-
 export type ImageOrderByInput =
   | "id_ASC"
   | "id_DESC"
@@ -2587,6 +2571,22 @@ export type ImageOrderByInput =
   | "title_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
+
+export type CategoryOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "slug_ASC"
+  | "slug_DESC"
+  | "name_ASC"
+  | "name_DESC"
+  | "image_ASC"
+  | "image_DESC"
+  | "description_ASC"
+  | "description_DESC"
+  | "visible_ASC"
+  | "visible_DESC"
   | "updatedAt_ASC"
   | "updatedAt_DESC";
 
@@ -4783,6 +4783,9 @@ export interface BrandWhereInput {
   products_every?: Maybe<ProductWhereInput>;
   products_some?: Maybe<ProductWhereInput>;
   products_none?: Maybe<ProductWhereInput>;
+  images_every?: Maybe<ImageWhereInput>;
+  images_some?: Maybe<ImageWhereInput>;
+  images_none?: Maybe<ImageWhereInput>;
   since?: Maybe<DateTimeInput>;
   since_not?: Maybe<DateTimeInput>;
   since_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -7696,9 +7699,15 @@ export interface BrandCreateWithoutProductsInput {
   logo?: Maybe<Json>;
   name: String;
   basedIn?: Maybe<String>;
+  images?: Maybe<ImageCreateManyInput>;
   since?: Maybe<DateTimeInput>;
   tier: BrandTier;
   websiteUrl?: Maybe<String>;
+}
+
+export interface ImageCreateManyInput {
+  create?: Maybe<ImageCreateInput[] | ImageCreateInput>;
+  connect?: Maybe<ImageWhereUniqueInput[] | ImageWhereUniqueInput>;
 }
 
 export interface CategoryCreateOneWithoutProductsInput {
@@ -7769,11 +7778,6 @@ export interface ProductCreateWithoutCategoryInput {
   architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
   publishedAt?: Maybe<DateTimeInput>;
-}
-
-export interface ImageCreateManyInput {
-  create?: Maybe<ImageCreateInput[] | ImageCreateInput>;
-  connect?: Maybe<ImageWhereUniqueInput[] | ImageWhereUniqueInput>;
 }
 
 export interface ProductModelCreateOneWithoutProductsInput {
@@ -9453,125 +9457,10 @@ export interface BrandUpdateWithoutProductsDataInput {
   logo?: Maybe<Json>;
   name?: Maybe<String>;
   basedIn?: Maybe<String>;
+  images?: Maybe<ImageUpdateManyInput>;
   since?: Maybe<DateTimeInput>;
   tier?: Maybe<BrandTier>;
   websiteUrl?: Maybe<String>;
-}
-
-export interface BrandUpsertWithoutProductsInput {
-  update: BrandUpdateWithoutProductsDataInput;
-  create: BrandCreateWithoutProductsInput;
-}
-
-export interface CategoryUpdateOneRequiredWithoutProductsInput {
-  create?: Maybe<CategoryCreateWithoutProductsInput>;
-  update?: Maybe<CategoryUpdateWithoutProductsDataInput>;
-  upsert?: Maybe<CategoryUpsertWithoutProductsInput>;
-  connect?: Maybe<CategoryWhereUniqueInput>;
-}
-
-export interface CategoryUpdateWithoutProductsDataInput {
-  slug?: Maybe<String>;
-  name?: Maybe<String>;
-  image?: Maybe<Json>;
-  description?: Maybe<String>;
-  visible?: Maybe<Boolean>;
-  children?: Maybe<CategoryUpdateManyWithoutChildrenInput>;
-}
-
-export interface CategoryUpdateManyWithoutChildrenInput {
-  create?: Maybe<
-    CategoryCreateWithoutChildrenInput[] | CategoryCreateWithoutChildrenInput
-  >;
-  delete?: Maybe<CategoryWhereUniqueInput[] | CategoryWhereUniqueInput>;
-  connect?: Maybe<CategoryWhereUniqueInput[] | CategoryWhereUniqueInput>;
-  set?: Maybe<CategoryWhereUniqueInput[] | CategoryWhereUniqueInput>;
-  disconnect?: Maybe<CategoryWhereUniqueInput[] | CategoryWhereUniqueInput>;
-  update?: Maybe<
-    | CategoryUpdateWithWhereUniqueWithoutChildrenInput[]
-    | CategoryUpdateWithWhereUniqueWithoutChildrenInput
-  >;
-  upsert?: Maybe<
-    | CategoryUpsertWithWhereUniqueWithoutChildrenInput[]
-    | CategoryUpsertWithWhereUniqueWithoutChildrenInput
-  >;
-  deleteMany?: Maybe<CategoryScalarWhereInput[] | CategoryScalarWhereInput>;
-  updateMany?: Maybe<
-    | CategoryUpdateManyWithWhereNestedInput[]
-    | CategoryUpdateManyWithWhereNestedInput
-  >;
-}
-
-export interface CategoryUpdateWithWhereUniqueWithoutChildrenInput {
-  where: CategoryWhereUniqueInput;
-  data: CategoryUpdateWithoutChildrenDataInput;
-}
-
-export interface CategoryUpdateWithoutChildrenDataInput {
-  slug?: Maybe<String>;
-  name?: Maybe<String>;
-  image?: Maybe<Json>;
-  description?: Maybe<String>;
-  visible?: Maybe<Boolean>;
-  products?: Maybe<ProductUpdateManyWithoutCategoryInput>;
-}
-
-export interface ProductUpdateManyWithoutCategoryInput {
-  create?: Maybe<
-    ProductCreateWithoutCategoryInput[] | ProductCreateWithoutCategoryInput
-  >;
-  delete?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
-  connect?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
-  set?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
-  disconnect?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
-  update?: Maybe<
-    | ProductUpdateWithWhereUniqueWithoutCategoryInput[]
-    | ProductUpdateWithWhereUniqueWithoutCategoryInput
-  >;
-  upsert?: Maybe<
-    | ProductUpsertWithWhereUniqueWithoutCategoryInput[]
-    | ProductUpsertWithWhereUniqueWithoutCategoryInput
-  >;
-  deleteMany?: Maybe<ProductScalarWhereInput[] | ProductScalarWhereInput>;
-  updateMany?: Maybe<
-    | ProductUpdateManyWithWhereNestedInput[]
-    | ProductUpdateManyWithWhereNestedInput
-  >;
-}
-
-export interface ProductUpdateWithWhereUniqueWithoutCategoryInput {
-  where: ProductWhereUniqueInput;
-  data: ProductUpdateWithoutCategoryDataInput;
-}
-
-export interface ProductUpdateWithoutCategoryDataInput {
-  slug?: Maybe<String>;
-  name?: Maybe<String>;
-  brand?: Maybe<BrandUpdateOneRequiredWithoutProductsInput>;
-  type?: Maybe<ProductType>;
-  description?: Maybe<String>;
-  externalURL?: Maybe<String>;
-  images?: Maybe<ImageUpdateManyInput>;
-  modelHeight?: Maybe<Int>;
-  retailPrice?: Maybe<Int>;
-  model?: Maybe<ProductModelUpdateOneWithoutProductsInput>;
-  modelSize?: Maybe<SizeUpdateOneInput>;
-  color?: Maybe<ColorUpdateOneRequiredInput>;
-  secondaryColor?: Maybe<ColorUpdateOneInput>;
-  tags?: Maybe<TagUpdateManyWithoutProductsInput>;
-  functions?: Maybe<ProductFunctionUpdateManyInput>;
-  materialCategory?: Maybe<
-    ProductMaterialCategoryUpdateOneWithoutProductsInput
-  >;
-  innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
-  outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
-  variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
-  status?: Maybe<ProductStatus>;
-  statusChanges?: Maybe<ProductStatusChangeUpdateManyWithoutProductInput>;
-  season?: Maybe<String>;
-  architecture?: Maybe<ProductArchitecture>;
-  photographyStatus?: Maybe<PhotographyStatus>;
-  publishedAt?: Maybe<DateTimeInput>;
 }
 
 export interface ImageUpdateManyInput {
@@ -9710,6 +9599,122 @@ export interface ImageUpdateManyDataInput {
   height?: Maybe<Int>;
   width?: Maybe<Int>;
   title?: Maybe<String>;
+}
+
+export interface BrandUpsertWithoutProductsInput {
+  update: BrandUpdateWithoutProductsDataInput;
+  create: BrandCreateWithoutProductsInput;
+}
+
+export interface CategoryUpdateOneRequiredWithoutProductsInput {
+  create?: Maybe<CategoryCreateWithoutProductsInput>;
+  update?: Maybe<CategoryUpdateWithoutProductsDataInput>;
+  upsert?: Maybe<CategoryUpsertWithoutProductsInput>;
+  connect?: Maybe<CategoryWhereUniqueInput>;
+}
+
+export interface CategoryUpdateWithoutProductsDataInput {
+  slug?: Maybe<String>;
+  name?: Maybe<String>;
+  image?: Maybe<Json>;
+  description?: Maybe<String>;
+  visible?: Maybe<Boolean>;
+  children?: Maybe<CategoryUpdateManyWithoutChildrenInput>;
+}
+
+export interface CategoryUpdateManyWithoutChildrenInput {
+  create?: Maybe<
+    CategoryCreateWithoutChildrenInput[] | CategoryCreateWithoutChildrenInput
+  >;
+  delete?: Maybe<CategoryWhereUniqueInput[] | CategoryWhereUniqueInput>;
+  connect?: Maybe<CategoryWhereUniqueInput[] | CategoryWhereUniqueInput>;
+  set?: Maybe<CategoryWhereUniqueInput[] | CategoryWhereUniqueInput>;
+  disconnect?: Maybe<CategoryWhereUniqueInput[] | CategoryWhereUniqueInput>;
+  update?: Maybe<
+    | CategoryUpdateWithWhereUniqueWithoutChildrenInput[]
+    | CategoryUpdateWithWhereUniqueWithoutChildrenInput
+  >;
+  upsert?: Maybe<
+    | CategoryUpsertWithWhereUniqueWithoutChildrenInput[]
+    | CategoryUpsertWithWhereUniqueWithoutChildrenInput
+  >;
+  deleteMany?: Maybe<CategoryScalarWhereInput[] | CategoryScalarWhereInput>;
+  updateMany?: Maybe<
+    | CategoryUpdateManyWithWhereNestedInput[]
+    | CategoryUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface CategoryUpdateWithWhereUniqueWithoutChildrenInput {
+  where: CategoryWhereUniqueInput;
+  data: CategoryUpdateWithoutChildrenDataInput;
+}
+
+export interface CategoryUpdateWithoutChildrenDataInput {
+  slug?: Maybe<String>;
+  name?: Maybe<String>;
+  image?: Maybe<Json>;
+  description?: Maybe<String>;
+  visible?: Maybe<Boolean>;
+  products?: Maybe<ProductUpdateManyWithoutCategoryInput>;
+}
+
+export interface ProductUpdateManyWithoutCategoryInput {
+  create?: Maybe<
+    ProductCreateWithoutCategoryInput[] | ProductCreateWithoutCategoryInput
+  >;
+  delete?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
+  connect?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
+  set?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
+  disconnect?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
+  update?: Maybe<
+    | ProductUpdateWithWhereUniqueWithoutCategoryInput[]
+    | ProductUpdateWithWhereUniqueWithoutCategoryInput
+  >;
+  upsert?: Maybe<
+    | ProductUpsertWithWhereUniqueWithoutCategoryInput[]
+    | ProductUpsertWithWhereUniqueWithoutCategoryInput
+  >;
+  deleteMany?: Maybe<ProductScalarWhereInput[] | ProductScalarWhereInput>;
+  updateMany?: Maybe<
+    | ProductUpdateManyWithWhereNestedInput[]
+    | ProductUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface ProductUpdateWithWhereUniqueWithoutCategoryInput {
+  where: ProductWhereUniqueInput;
+  data: ProductUpdateWithoutCategoryDataInput;
+}
+
+export interface ProductUpdateWithoutCategoryDataInput {
+  slug?: Maybe<String>;
+  name?: Maybe<String>;
+  brand?: Maybe<BrandUpdateOneRequiredWithoutProductsInput>;
+  type?: Maybe<ProductType>;
+  description?: Maybe<String>;
+  externalURL?: Maybe<String>;
+  images?: Maybe<ImageUpdateManyInput>;
+  modelHeight?: Maybe<Int>;
+  retailPrice?: Maybe<Int>;
+  model?: Maybe<ProductModelUpdateOneWithoutProductsInput>;
+  modelSize?: Maybe<SizeUpdateOneInput>;
+  color?: Maybe<ColorUpdateOneRequiredInput>;
+  secondaryColor?: Maybe<ColorUpdateOneInput>;
+  tags?: Maybe<TagUpdateManyWithoutProductsInput>;
+  functions?: Maybe<ProductFunctionUpdateManyInput>;
+  materialCategory?: Maybe<
+    ProductMaterialCategoryUpdateOneWithoutProductsInput
+  >;
+  innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
+  outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
+  variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
+  status?: Maybe<ProductStatus>;
+  statusChanges?: Maybe<ProductStatusChangeUpdateManyWithoutProductInput>;
+  season?: Maybe<String>;
+  architecture?: Maybe<ProductArchitecture>;
+  photographyStatus?: Maybe<PhotographyStatus>;
+  publishedAt?: Maybe<DateTimeInput>;
 }
 
 export interface ProductModelUpdateOneWithoutProductsInput {
@@ -12433,6 +12438,7 @@ export interface BrandCreateInput {
   name: String;
   basedIn?: Maybe<String>;
   products?: Maybe<ProductCreateManyWithoutBrandInput>;
+  images?: Maybe<ImageCreateManyInput>;
   since?: Maybe<DateTimeInput>;
   tier: BrandTier;
   websiteUrl?: Maybe<String>;
@@ -12485,6 +12491,7 @@ export interface BrandUpdateInput {
   name?: Maybe<String>;
   basedIn?: Maybe<String>;
   products?: Maybe<ProductUpdateManyWithoutBrandInput>;
+  images?: Maybe<ImageUpdateManyInput>;
   since?: Maybe<DateTimeInput>;
   tier?: Maybe<BrandTier>;
   websiteUrl?: Maybe<String>;
@@ -17570,6 +17577,15 @@ export interface BrandPromise extends Promise<Brand>, Fragmentable {
     first?: Int;
     last?: Int;
   }) => T;
+  images: <T = FragmentableArray<Image>>(args?: {
+    where?: ImageWhereInput;
+    orderBy?: ImageOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
   since: () => Promise<DateTimeOutput>;
   tier: () => Promise<BrandTier>;
   websiteUrl: () => Promise<String>;
@@ -17597,6 +17613,15 @@ export interface BrandSubscription
     first?: Int;
     last?: Int;
   }) => T;
+  images: <T = Promise<AsyncIterator<ImageSubscription>>>(args?: {
+    where?: ImageWhereInput;
+    orderBy?: ImageOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
   since: () => Promise<AsyncIterator<DateTimeOutput>>;
   tier: () => Promise<AsyncIterator<BrandTier>>;
   websiteUrl: () => Promise<AsyncIterator<String>>;
@@ -17618,6 +17643,15 @@ export interface BrandNullablePromise
   products: <T = FragmentableArray<Product>>(args?: {
     where?: ProductWhereInput;
     orderBy?: ProductOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  images: <T = FragmentableArray<Image>>(args?: {
+    where?: ImageWhereInput;
+    orderBy?: ImageOrderByInput;
     skip?: Int;
     after?: String;
     before?: String;

@@ -225,6 +225,7 @@ type Brand {
   name: String!
   basedIn: String
   products: [Product!]!
+  images: [Image!]
   since: DateTime
   tier: BrandTier!
   websiteUrl: String

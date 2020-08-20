@@ -2198,6 +2198,7 @@ type Brand implements Node {
   name: String!
   basedIn: String
   products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
+  images(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Image!]
   since: DateTime
   tier: BrandTier!
   websiteUrl: String
@@ -2228,6 +2229,7 @@ input BrandCreateInput {
   tier: BrandTier!
   websiteUrl: String
   products: ProductCreateManyWithoutBrandInput
+  images: ImageCreateManyInput
 }
 
 input BrandCreateOneWithoutProductsInput {
@@ -2247,6 +2249,7 @@ input BrandCreateWithoutProductsInput {
   since: DateTime
   tier: BrandTier!
   websiteUrl: String
+  images: ImageCreateManyInput
 }
 
 """An edge in a connection."""
@@ -2364,6 +2367,7 @@ input BrandUpdateInput {
   tier: BrandTier
   websiteUrl: String
   products: ProductUpdateManyWithoutBrandInput
+  images: ImageUpdateManyInput
 }
 
 input BrandUpdateManyMutationInput {
@@ -2397,6 +2401,7 @@ input BrandUpdateWithoutProductsDataInput {
   since: DateTime
   tier: BrandTier
   websiteUrl: String
+  images: ImageUpdateManyInput
 }
 
 input BrandUpsertWithoutProductsInput {
@@ -2776,6 +2781,9 @@ input BrandWhereInput {
   products_every: ProductWhereInput
   products_some: ProductWhereInput
   products_none: ProductWhereInput
+  images_every: ImageWhereInput
+  images_some: ImageWhereInput
+  images_none: ImageWhereInput
 }
 
 input BrandWhereUniqueInput {
@@ -27941,6 +27949,7 @@ export interface BrandCreateInput {
   tier: BrandTier
   websiteUrl?: String | null
   products?: ProductCreateManyWithoutBrandInput | null
+  images?: ImageCreateManyInput | null
 }
 
 export interface BrandCreateOneWithoutProductsInput {
@@ -27960,6 +27969,7 @@ export interface BrandCreateWithoutProductsInput {
   since?: DateTime | null
   tier: BrandTier
   websiteUrl?: String | null
+  images?: ImageCreateManyInput | null
 }
 
 export interface BrandSubscriptionWhereInput {
@@ -27985,6 +27995,7 @@ export interface BrandUpdateInput {
   tier?: BrandTier | null
   websiteUrl?: String | null
   products?: ProductUpdateManyWithoutBrandInput | null
+  images?: ImageUpdateManyInput | null
 }
 
 export interface BrandUpdateManyMutationInput {
@@ -28018,6 +28029,7 @@ export interface BrandUpdateWithoutProductsDataInput {
   since?: DateTime | null
   tier?: BrandTier | null
   websiteUrl?: String | null
+  images?: ImageUpdateManyInput | null
 }
 
 export interface BrandUpsertWithoutProductsInput {
@@ -28160,6 +28172,9 @@ export interface BrandWhereInput {
   products_every?: ProductWhereInput | null
   products_some?: ProductWhereInput | null
   products_none?: ProductWhereInput | null
+  images_every?: ImageWhereInput | null
+  images_some?: ImageWhereInput | null
+  images_none?: ImageWhereInput | null
 }
 
 export interface BrandWhereUniqueInput {
@@ -39181,6 +39196,7 @@ export interface Brand extends Node {
   name: String
   basedIn?: String | null
   products?: Array<Product> | null
+  images?: Array<Image> | null
   since?: DateTime | null
   tier: BrandTier
   websiteUrl?: String | null

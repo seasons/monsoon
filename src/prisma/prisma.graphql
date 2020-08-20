@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Thu Aug 20 2020 12:33:15 GMT-0400 (Eastern Daylight Time)
+# timestamp: Thu Aug 20 2020 14:40:42 GMT-0400 (Eastern Daylight Time)
 
 type AggregateBagItem {
   count: Int!
@@ -2232,6 +2232,15 @@ type Brand implements Node {
     first: Int
     last: Int
   ): [Product!]
+  images(
+    where: ImageWhereInput
+    orderBy: ImageOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Image!]
   since: DateTime
   tier: BrandTier!
   websiteUrl: String
@@ -2268,6 +2277,7 @@ input BrandCreateInput {
   tier: BrandTier!
   websiteUrl: String
   products: ProductCreateManyWithoutBrandInput
+  images: ImageCreateManyInput
 }
 
 input BrandCreateOneWithoutProductsInput {
@@ -2287,6 +2297,7 @@ input BrandCreateWithoutProductsInput {
   since: DateTime
   tier: BrandTier!
   websiteUrl: String
+  images: ImageCreateManyInput
 }
 
 """
@@ -2418,6 +2429,7 @@ input BrandUpdateInput {
   tier: BrandTier
   websiteUrl: String
   products: ProductUpdateManyWithoutBrandInput
+  images: ImageUpdateManyInput
 }
 
 input BrandUpdateManyMutationInput {
@@ -2451,6 +2463,7 @@ input BrandUpdateWithoutProductsDataInput {
   since: DateTime
   tier: BrandTier
   websiteUrl: String
+  images: ImageUpdateManyInput
 }
 
 input BrandUpsertWithoutProductsInput {
@@ -3068,6 +3081,9 @@ input BrandWhereInput {
   products_every: ProductWhereInput
   products_some: ProductWhereInput
   products_none: ProductWhereInput
+  images_every: ImageWhereInput
+  images_some: ImageWhereInput
+  images_none: ImageWhereInput
 }
 
 input BrandWhereUniqueInput {

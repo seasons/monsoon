@@ -985,6 +985,7 @@ type Brand {
   name: String!
   basedIn: String
   products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
+  images(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Image!]
   since: DateTime
   tier: BrandTier!
   websiteUrl: String
@@ -1008,6 +1009,7 @@ input BrandCreateInput {
   name: String!
   basedIn: String
   products: ProductCreateManyWithoutBrandInput
+  images: ImageCreateManyInput
   since: DateTime
   tier: BrandTier!
   websiteUrl: String
@@ -1027,6 +1029,7 @@ input BrandCreateWithoutProductsInput {
   logo: Json
   name: String!
   basedIn: String
+  images: ImageCreateManyInput
   since: DateTime
   tier: BrandTier!
   websiteUrl: String
@@ -1121,6 +1124,7 @@ input BrandUpdateInput {
   name: String
   basedIn: String
   products: ProductUpdateManyWithoutBrandInput
+  images: ImageUpdateManyInput
   since: DateTime
   tier: BrandTier
   websiteUrl: String
@@ -1154,6 +1158,7 @@ input BrandUpdateWithoutProductsDataInput {
   logo: Json
   name: String
   basedIn: String
+  images: ImageUpdateManyInput
   since: DateTime
   tier: BrandTier
   websiteUrl: String
@@ -1254,6 +1259,9 @@ input BrandWhereInput {
   products_every: ProductWhereInput
   products_some: ProductWhereInput
   products_none: ProductWhereInput
+  images_every: ImageWhereInput
+  images_some: ImageWhereInput
+  images_none: ImageWhereInput
   since: DateTime
   since_not: DateTime
   since_in: [DateTime!]
