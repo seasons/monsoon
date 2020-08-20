@@ -70,8 +70,8 @@ export class BrandService {
         }`
       )
 
-      const imageNames = images.map(async (_image, index) => {
-        return `${brand.brandCode}-${index}.png`.toLowerCase()
+      const imageNames = images.map((_image, index) => {
+        return `${brand.brandCode}-${index + 1}.png`.toLowerCase()
       })
 
       imageIDs = await this.imageService.upsertImages(

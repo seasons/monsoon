@@ -534,8 +534,8 @@ export class ProductService {
     }
     if (images) {
       // Form appropriate image names
-      const imageNames = images.map(async (_image, index) => {
-        return await this.productUtils.getProductImageName(
+      const imageNames = images.map((_image, index) => {
+        return this.productUtils.getProductImageName(
           product.brand.brandCode,
           product.name,
           product.color.name,

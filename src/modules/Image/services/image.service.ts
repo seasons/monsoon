@@ -275,11 +275,10 @@ export class ImageService {
           // a file in which case we have to upload the image to S3
 
           // Upload to S3 and retrieve metadata
+          const imageName = imageNames[index]
           const { height, url, width } = await this.uploadImage(data, {
-            imageName: imageNames[index],
+            imageName,
           })
-
-          debugger
 
           // Purge this image url in imgix cache
           await this.purgeS3ImageFromImgix(url)
