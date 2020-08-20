@@ -23,14 +23,17 @@ enum ProductSize {
 export class UtilsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  randomString() {
-    return Math.random().toString(36).slice(2)
+  // Returns an ISO string for a date that's X days ago
+  xDaysAgoISOString(x: number) {
+    return moment().subtract(x, "days").format()
   }
 
-  deleteFieldsFromObject(obj: object, fieldsToDelete: string[]) {
-    const objCopy = { ...obj }
-    fieldsToDelete.forEach(a => delete objCopy[a])
-    return objCopy
+  xDaysFromNowISOString(x: number) {
+    return moment().add(x, "days").format()
+  }
+
+  randomString() {
+    return Math.random().toString(36).slice(2)
   }
 
   isXDaysBefore({
@@ -57,6 +60,15 @@ export class UtilsService {
       )
     )
     return before.isBefore(after) && after.diff(before, "days") === numDays
+  }
+
+  // pass in an ISO datestring
+  isLessThanXDaysFromNow(dateString: string, x: number) {
+    var date = moment(dateString)
+    return (
+      date.isSameOrBefore(moment().add(x, "days")) &&
+      date.isSameOrAfter(moment())
+    )
   }
 
   isSameDay(first: Date, second: Date) {

@@ -31,11 +31,11 @@ import {
   ShippingModule,
   SlackModule,
   UserModule,
-  UtilsModule,
   directiveResolvers,
 } from "./modules"
 import { AnalyticsModule } from "./modules/Analytics/analytics.module"
 import { TwilioModule } from "./modules/Twilio/twilio.module"
+import { UtilsModule } from "./modules/Utils/utils.module"
 
 const analytics = new Analytics(process.env.SEGMENT_MONSOON_WRITE_KEY)
 

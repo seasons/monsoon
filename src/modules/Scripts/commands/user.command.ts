@@ -1,6 +1,6 @@
 import { PaymentService } from "@app/modules/Payment/index"
 import { BillingAddress, Card } from "@app/modules/Payment/payment.types"
-import { UtilsService } from "@app/modules/Utils"
+import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { AuthService } from "@modules/User"
 import { Injectable, Logger } from "@nestjs/common"
 import { ModuleRef } from "@nestjs/core"

@@ -1,4 +1,4 @@
-import { UtilsService } from "@modules/Utils"
+import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { Injectable } from "@nestjs/common"
 import chargebee from "chargebee"
 import { chunk, concat, curry, groupBy, identity } from "lodash"

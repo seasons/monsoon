@@ -1,6 +1,6 @@
 import { AirtableService } from "@app/modules/Airtable"
+import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaService } from "@app/prisma/prisma.service"
-import { UtilsService } from "@modules/Utils/index"
 import { Injectable, Logger } from "@nestjs/common"
 import { ModuleRef } from "@nestjs/core"
 import { compact } from "lodash"

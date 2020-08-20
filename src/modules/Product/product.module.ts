@@ -26,7 +26,7 @@ import { ProductRequestService } from "./services/productRequest.service"
 import { ProductRequestUtilsService } from "./services/productRequest.utils.service"
 import { ProductVariantService } from "./services/productVariant.service"
 
-@Module({
+export const ProductModuleDef = {
   imports: [
     AirtableModule,
     EmailModule,
@@ -62,5 +62,6 @@ import { ProductVariantService } from "./services/productVariant.service"
     PhysicalProductUtilsService,
     PhysicalProductService,
   ],
-})
+}
+@Module(ProductModuleDef)
 export class ProductModule {}

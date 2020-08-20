@@ -1,5 +1,6 @@
 import { User } from "@app/decorators"
 import { Args, Context, Mutation, Resolver } from "@nestjs/graphql"
+import { pick } from "lodash"
 
 import { AuthService } from "../services/auth.service"
 
@@ -38,13 +39,15 @@ export class AuthMutationsResolver {
         ...this.authService.extractSegmentReservedTraitsFromCustomerDetail(
           details
         ),
-        firstName: user.firstName,
-        lastName: user.lastName,
+        ...pick(user, [
+          "firstName",
+          "lastName",
+          "id",
+          "roles",
+          "email",
+          "auth0Id",
+        ]),
         createdAt: now.toISOString(),
-        id: user.id,
-        roles: user.roles,
-        email: user.email,
-        auth0Id: user.auth0Id,
       },
     })
     ctx?.analytics?.track({
