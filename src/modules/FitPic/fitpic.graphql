@@ -35,7 +35,12 @@ type Query {
 type FitPic {
   id: ID!
   author: String!
-  image: Image!
+  image(
+    width: Int
+    height: Int
+    size: ImageSize
+    options: ImageOptionsInput
+  ): Image!
   location: Location
   products: [Product!]
   reports: [FitPicReport!]! @hasRole(roles: [Admin])
