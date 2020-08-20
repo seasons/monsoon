@@ -39,7 +39,7 @@ type FitPic {
   location: Location
   products: [Product!]
   reports: [FitPicReport!]! @hasRole(roles: [Admin])
-  status: FitPicStatus! @hasRole(roles: [Admin])
+  status: FitPicStatus!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
