@@ -1,7 +1,6 @@
 import { Loader } from "@app/modules/DataLoader"
 import { FitPic } from "@app/prisma"
 import { PrismaDataLoader, PrismaLoader } from "@app/prisma/prisma.loader"
-import { PrismaService } from "@app/prisma/prisma.service"
 import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
 
 @Resolver("FitPic")

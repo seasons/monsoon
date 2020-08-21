@@ -1,6 +1,7 @@
 import { User } from "@app/decorators"
 import { TransactionsForCustomersLoader } from "@app/modules/Payment/loaders/transactionsForCustomers.loader"
-import { PaymentPlan, Plan } from "@app/prisma"
+import { AdmissionsService } from "@app/modules/User/services/admissions.service"
+import { CustomerStatus, PaymentPlan, Plan } from "@app/prisma"
 import { PrismaDataLoader, PrismaLoader } from "@app/prisma/prisma.loader"
 import { Loader } from "@modules/DataLoader"
 import {
@@ -11,7 +12,7 @@ import {
   InvoicesDataLoader,
   TransactionsDataLoader,
 } from "@modules/Payment/payment.types"
-import { Info, Parent, ResolveField, Resolver } from "@nestjs/graphql"
+import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma/prisma.service"
 import { head, isObject } from "lodash"
 
@@ -25,11 +26,15 @@ const getUserIDGenerateParams = {
   }`,
   formatData: a => a.user.id,
 }
+
+type AdmissionsStatus = "Admissable" | "NonAdmissable" | "NotApplicable"
+
 @Resolver("Customer")
 export class CustomerFieldsResolver {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly paymentService: PaymentService
+    private readonly payment: PaymentService,
+    private readonly admissions: AdmissionsService
   ) {}
 
   @ResolveField()
@@ -81,7 +86,7 @@ export class CustomerFieldsResolver {
       return null
     }
     const userId = await prismaLoader.load(customer.id)
-    return this.paymentService.getCustomerTransactionHistory(
+    return this.payment.getCustomerTransactionHistory(
       userId,
       transactionsForCustomerLoader
     )
@@ -121,7 +126,7 @@ export class CustomerFieldsResolver {
       return null
     }
     const paymentPlan = await paymentPlanLoader.load(
-      this.paymentService.prismaPlanToChargebeePlanId(plan)
+      this.payment.prismaPlanToChargebeePlanId(plan)
     )
     return paymentPlan
   }
@@ -147,7 +152,7 @@ export class CustomerFieldsResolver {
       return null
     }
     const userId = await prismaLoader.load(customer.id)
-    return await this.paymentService.getCustomerInvoiceHistory(
+    return await this.payment.getCustomerInvoiceHistory(
       userId,
       invoicesLoader,
       transactionsForCustomerLoader
@@ -218,5 +223,34 @@ export class CustomerFieldsResolver {
     }
 
     return steps
+  }
+
+  @ResolveField()
+  async admissable(
+    @Parent() customer,
+    @Loader({
+      type: PrismaLoader.name,
+      params: {
+        query: "customers",
+        info: `{ id status }`,
+        formatData: a => a.status,
+      },
+    })
+    customerStatusLoader: PrismaDataLoader<CustomerStatus>
+  ): Promise<AdmissionsStatus> {
+    const status = await customerStatusLoader.load(customer.id)
+    // TODO: Q -- should we do this for Created users also?
+    if (!["Waitlisted", "Invited"].includes(status)) {
+      return "NotApplicable"
+    }
+
+    const admissable = await this.admissions.isAdmissable({
+      id: customer.id,
+    })
+
+    if (admissable) {
+      return "Admissable"
+    }
+    return "NonAdmissable"
   }
 }

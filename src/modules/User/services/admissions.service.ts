@@ -1,10 +1,19 @@
 import * as fs from "fs"
 
+import { GenerateParams } from "@app/modules/DataLoader/dataloader.types"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import { CustomerWhereUniqueInput } from "@app/prisma"
+import { CustomerDetail, CustomerWhereUniqueInput } from "@app/prisma"
+import {
+  LetterSize,
+  Product,
+  ProductType,
+  ProductWhereInput,
+  SizeWhereInput,
+} from "@app/prisma/prisma.binding"
+import { PrismaDataLoader, PrismaLoader } from "@app/prisma/prisma.loader"
 import { Injectable } from "@nestjs/common"
 import { PrismaService } from "@prisma/prisma.service"
-import { head, intersection, uniqBy } from "lodash"
+import { flatten, get, head, intersection, uniqBy } from "lodash"
 import moment from "moment"
 import zipcodes from "zipcodes"
 
@@ -17,9 +26,22 @@ export class AdmissionsService {
   averageTopsPerReservation = 1.5
   averageBottomsPerReservation = 1.5
 
+  // prisma loaders
+  availableStylesForCustomerCustomerDataloader: PrismaDataLoader<{
+    id: string
+    detail: Pick<CustomerDetail, "topSizes" | "waistSizes">
+  }>
+  availableStylesForCustomerAvailableTopStylesDataloader: PrismaDataLoader<
+    Product[]
+  >
+  availableStylesForCustomerAvailableBottomStylesDataloader: PrismaDataLoader<
+    Product[]
+  >
+
   constructor(
     private readonly prisma: PrismaService,
-    private readonly utils: UtilsService
+    private readonly utils: UtilsService,
+    private readonly prismaLoader: PrismaLoader
   ) {
     ;({ states: this.serviceableStates } = JSON.parse(
       fs.readFileSync(
@@ -27,6 +49,20 @@ export class AdmissionsService {
         "utf-8"
       )
     ))
+    this.generateAvailableStylesDataLoaders()
+  }
+
+  async isAdmissable(where: CustomerWhereUniqueInput): Promise<boolean> {
+    const customerZipcode = await this.prisma.client
+      .customer(where)
+      .detail()
+      .shippingAddress()
+      .zipCode()
+    return (
+      this.zipcodeAllowed(customerZipcode) &&
+      (await this.belowWeeklyNewActiveUsersOpsThreshold()) &&
+      (await this.haveSufficientInventoryToServiceCustomer(where))
+    )
   }
 
   zipcodeAllowed(zipcode: string): boolean {
@@ -122,60 +158,30 @@ export class AdmissionsService {
     where: CustomerWhereUniqueInput,
     productType: "Top" | "Bottom"
   ): Promise<number> {
-    const customer = await this.prisma.binding.query.customer(
-      {
-        where,
-      },
-      `{
-        id
-        detail {
-          topSizes
-          waistSizes
-        }
-      }`
+    const customer = await this.availableStylesForCustomerCustomerDataloader.load(
+      where.id as string
     )
 
     let sizesKey
-    let internalSizeWhereInputCreateFunc
+    let stylesLoader: PrismaDataLoader<Product[]>
     switch (productType) {
       case "Top":
         sizesKey = "topSizes"
-        internalSizeWhereInputCreateFunc = sizes => ({
-          top: {
-            letter_in: sizes,
-          },
-        })
+        stylesLoader = this
+          .availableStylesForCustomerAvailableTopStylesDataloader
         break
       case "Bottom":
         sizesKey = "waistSizes"
-        internalSizeWhereInputCreateFunc = sizes => ({
-          display_in: sizes.map(a => `${a}`), // typecasting,
-        })
+        stylesLoader = this
+          .availableStylesForCustomerAvailableBottomStylesDataloader
         break
       default:
         throw new Error(`Invalid product type: ${productType}`)
     }
 
     const preferredSizes = customer.detail[sizesKey]
-    const availableStyles = await this.prisma.binding.query.products({
-      where: {
-        AND: [
-          { type: productType },
-          {
-            variants_some: {
-              AND: [
-                {
-                  internalSize: internalSizeWhereInputCreateFunc(
-                    preferredSizes
-                  ),
-                },
-                { reservable_gte: 1 },
-              ],
-            },
-          },
-        ],
-      },
-    })
+    const availableStylesBySize = await stylesLoader.loadMany(preferredSizes)
+    const availableStyles = flatten(availableStylesBySize as any[])
 
     // Find the competing users. Note that we assume all active customers without an active
     // reservation may be a competing user, regardless of how long it's been since their last reservation
@@ -258,5 +264,96 @@ export class AdmissionsService {
       }
     }`
     )
+  }
+
+  private generateAvailableStylesDataLoaders() {
+    // Customer Loader
+    this.availableStylesForCustomerCustomerDataloader = this.prismaLoader.generateDataLoader(
+      { query: "customers", info: `{id detail {topSizes waistSizes}}` }
+    )
+
+    // Available Styles loaders
+    const availableStylesForCustomerAvailableStylesDataLoaderSharedParams = {
+      query: "products",
+      keyToDataRelationship: "ManyToMany",
+      info: `
+      { 
+        id 
+        variants {
+          internalSize { 
+            display
+            top {
+              letter
+            }
+          } 
+          reservable
+        }
+      }`,
+    } as GenerateParams
+    this.availableStylesForCustomerAvailableTopStylesDataloader = this.prismaLoader.generateDataLoader(
+      {
+        ...availableStylesForCustomerAvailableStylesDataLoaderSharedParams,
+        formatWhere: this.createAvailableStylesDataLoaderFormatWhereFunc(
+          "Top",
+          sizes => ({
+            top: { letter_in: sizes as LetterSize[] },
+          })
+        ),
+        getKeys: this.createAvailableStylesDataLoaderGetKeysFunc(
+          `internalSize.top.letter`
+        ),
+      }
+    )
+
+    this.availableStylesForCustomerAvailableBottomStylesDataloader = this.prismaLoader.generateDataLoader(
+      {
+        ...availableStylesForCustomerAvailableStylesDataLoaderSharedParams,
+        formatWhere: this.createAvailableStylesDataLoaderFormatWhereFunc(
+          "Bottom",
+          sizes => ({ display_in: (sizes as any[]).map(a => `${a}`) })
+        ),
+        getKeys: this.createAvailableStylesDataLoaderGetKeysFunc(
+          `internalSize.display`
+        ),
+      }
+    )
+  }
+
+  private createAvailableStylesDataLoaderFormatWhereFunc = (
+    productType: ProductType,
+    internalSizeWhereInputCreateFunc: (
+      sizes: string[] | number[]
+    ) => SizeWhereInput
+  ) => {
+    return sizes =>
+      ({
+        where: {
+          AND: [
+            { type: productType },
+            {
+              variants_some: {
+                AND: [
+                  {
+                    internalSize: internalSizeWhereInputCreateFunc(sizes),
+                  },
+                  { reservable_gte: 1 },
+                ],
+              },
+            },
+          ],
+        },
+      } as ProductWhereInput)
+  }
+
+  private createAvailableStylesDataLoaderGetKeysFunc = (variantKey: string) => {
+    return prod => {
+      const keys = []
+      for (const variant of prod.variants) {
+        if (variant.reservable >= 1) {
+          keys.push(get(variant, variantKey))
+        }
+      }
+      return keys
+    }
   }
 }

@@ -2,14 +2,12 @@ import { Loader } from "@app/modules/DataLoader"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaDataLoader, PrismaLoader } from "@app/prisma/prisma.loader"
-import { PrismaService } from "@app/prisma/prisma.service"
 import { Parent, ResolveField, Resolver } from "@nestjs/graphql"
 
 @Resolver("User")
 export class UserFieldsResolver {
   constructor(
     private readonly pushNotification: PushNotificationService,
-    private readonly prisma: PrismaService,
     private readonly utils: UtilsService
   ) {}
 

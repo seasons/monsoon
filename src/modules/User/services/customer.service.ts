@@ -212,11 +212,7 @@ export class CustomerService {
     try {
       if (
         process.env.AUTOMATIC_ADMISSIONS === "true" &&
-        this.admissions.zipcodeAllowed(
-          customer.detail.shippingAddress.zipCode
-        ) &&
-        (await this.admissions.belowWeeklyNewActiveUsersOpsThreshold()) &&
-        (await this.admissions.haveSufficientInventoryToServiceCustomer(where))
+        (await this.admissions.isAdmissable(where))
       ) {
         status = "Authorized"
       }

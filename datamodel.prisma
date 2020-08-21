@@ -125,12 +125,14 @@ enum Rating {
 }
 
 enum LetterSize {
+  XXS
   XS
   S
   M
   L
   XL
   XXL
+  XXXL
 }
 
 enum ProductArchitecture {

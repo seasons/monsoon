@@ -71,6 +71,7 @@ type Customer {
   user: User!
   shouldRequestFeedback: Boolean
   status: CustomerStatus
+  admissable: AdmissionsStatus
   detail: CustomerDetail
   billingInfo: BillingInfo
   plan: Plan
@@ -111,4 +112,10 @@ type CustomerMembership {
     first: Int
     last: Int
   ): [PauseRequest!]
+}
+
+enum AdmissionsStatus {
+  Admissable
+  NonAdmissable
+  NotApplicable
 }

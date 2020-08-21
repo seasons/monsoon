@@ -12,10 +12,26 @@ export type GenerateParamsInfo = string
 export interface GenerateParams {
   query: string
   info?: GenerateParamsInfo
+
+  // If pulling the info from the graphql execution context, pass this to
+  // add a fragment to it.
   infoFragment?: string
+
+  // Given a returned object from prisma, how we do find the associated key or keys.
+  // If keyToDataRelationship is "OneToOne" or "OneToMany", pass in getKey.
+  // Otherwise, pass in getKeys
   getKey?: (obj: any) => string | null
-  formatWhere?: (ids: string[]) => any
+  getKeys?: (obj: any) => string[] | null
+
+  // Given a set of keys, what is the {where: {}} object to pass into prisma?
+  formatWhere?: (keys: string[]) => any
+
+  // Given a returned object from prisma, returns the data in the desired format
   formatData?: (any) => any
+
+  // For a given key, what are we returning?
+  // If a single object, "Single" If multiple objects, "Array"
+  keyToDataRelationship?: "OneToOne" | "OneToMany" | "ManyToMany"
 }
 
 export interface LoaderParams {

@@ -110,7 +110,7 @@ export class TestUtilsService {
     } as ProductCreateInput
 
     const product = await this.prisma.binding.mutation.createProduct(
-      { data },
+      { data } as any,
       info
     )
 
@@ -168,7 +168,7 @@ export class TestUtilsService {
           },
           detail,
           membership,
-        },
+        } as any,
       },
       `{id}`
     )
