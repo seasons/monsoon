@@ -32,6 +32,6 @@ export class PaymentScheduledJobs {
       }
     })
 
-    this.logger.log("Update playment plans job ran")
+    this.logger.log("Update payment plans job ran")
   }
 }

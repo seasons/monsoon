@@ -6984,6 +6984,14 @@ download@^5.0.3:
     mkdirp "^0.5.1"
     pify "^2.3.0"
 
+drip-nodejs@^3.1.1:
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/drip-nodejs/-/drip-nodejs-3.1.1.tgz#e79b2fa8853337579d46d866530d32a5e3d1c45e"
+  integrity sha512-DIjHmRrjfCrloxIk3kB5s/d0FgWb9pthePyTpPbRO6LhiDFPpa9YShMSxjPHhcAFBOzlkjwGHhdFyw7oPyPTEg==
+  dependencies:
+    request "^2.88.0"
+    request-promise "^4.2.5"
+
 duplexer3@^0.1.4:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/duplexer3/-/duplexer3-0.1.4.tgz#ee01dd1cac0ed3cbc7fdbea37dc0a8f1ce002ce2"
@@ -11390,6 +11398,11 @@ lodash@4.17.5:
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.5.tgz#99a92d65c0272debe8c96b6057bc8fbfa3bed511"
   integrity sha512-svL3uiZf1RwhH+cWrfZn3A4+U58wbP0tGVTLQPbjplZxZ8ROD9VLuNgsRniTlLe7OlSqR79RUehXgpBW/s0IQw==
 
+lodash@^4.17.19:
+  version "4.17.20"
+  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.20.tgz#b44a9b6297bcb698f1c51a3545a2b3b368d59c52"
+  integrity sha512-PlhdFcillOINfeV7Ni6oF1TAEayyZBoZ8bcshTHqOYJYlrqzRK5hagpagky5o4HfCzzd1TRkXPMFq6cKk9rGmA==
+
 log-symbols@4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/log-symbols/-/log-symbols-4.0.0.tgz#69b3cc46d20f448eccdb75ea1fa733d9e821c920"
@@ -14455,6 +14468,13 @@ request-promise-core@1.1.3:
   dependencies:
     lodash "^4.17.15"
 
+request-promise-core@1.1.4:
+  version "1.1.4"
+  resolved "https://registry.yarnpkg.com/request-promise-core/-/request-promise-core-1.1.4.tgz#3eedd4223208d419867b78ce815167d10593a22f"
+  integrity sha512-TTbAfBBRdWD7aNNOoVOBH4pN/KigV6LyapYNNlAPA8JwbovRti1E88m3sYAwsLi5ryhPKsE9APwnjFTgdUjTpw==
+  dependencies:
+    lodash "^4.17.19"
+
 request-promise-native@^1.0.5, request-promise-native@^1.0.8:
   version "1.0.8"
   resolved "https://registry.yarnpkg.com/request-promise-native/-/request-promise-native-1.0.8.tgz#a455b960b826e44e2bf8999af64dff2bfe58cb36"
@@ -14471,6 +14491,16 @@ request-promise@^4.1.1:
   dependencies:
     bluebird "^3.5.0"
     request-promise-core "1.1.3"
+    stealthy-require "^1.1.1"
+    tough-cookie "^2.3.3"
+
+request-promise@^4.2.5:
+  version "4.2.6"
+  resolved "https://registry.yarnpkg.com/request-promise/-/request-promise-4.2.6.tgz#7e7e5b9578630e6f598e3813c0f8eb342a27f0a2"
+  integrity sha512-HCHI3DJJUakkOr8fNoCc73E5nU5bqITjOYFMDrKHYOXWXrgD/SBaC7LjwuPymUprRyuF06UK7hd/lMHkmUXglQ==
+  dependencies:
+    bluebird "^3.5.0"
+    request-promise-core "1.1.4"
     stealthy-require "^1.1.1"
     tough-cookie "^2.3.3"
 

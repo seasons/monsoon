@@ -2,6 +2,7 @@ import { Module } from "@nestjs/common"
 import { PrismaModule } from "@prisma/prisma.module"
 import { CommandModule } from "nestjs-command"
 
+import { DripModule } from "../Drip/drip.module"
 import { UtilsModule } from "../Utils/utils.module"
 import { DataCommands } from "./commands/data.command"
 import { ProductCommands } from "./commands/product.command"
@@ -19,6 +20,7 @@ import {
 @Module({
   imports: [
     CommandModule,
+    DripModule,
     SyncModule,
     PrismaModule,
     UserModule,

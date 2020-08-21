@@ -1,6 +1,6 @@
 import fs from "fs"
 
-import { DataScheduledJobs } from "@app/modules/Cron/services/data.job.service"
+import { DripSyncService } from "@app/modules/Drip/services/dripSync.service"
 import { AirtableSyncService } from "@modules/Sync/services/sync.airtable.service"
 import { PrismaSyncService } from "@modules/Sync/services/sync.prisma.service"
 import { Injectable } from "@nestjs/common"
@@ -20,8 +20,8 @@ export class SyncCommands {
   constructor(
     private readonly airtableSyncService: AirtableSyncService,
     private readonly prismaSyncService: PrismaSyncService,
+    private readonly dripSyncService: DripSyncService,
     private readonly scriptsService: ScriptsService,
-    private readonly dataJobs: DataScheduledJobs,
     private readonly moduleRef: ModuleRef
   ) {}
 
@@ -131,6 +131,48 @@ export class SyncCommands {
     } finally {
       fs.unlinkSync(pgpassFilepath)
       fs.unlinkSync(envFilepath)
+    }
+  }
+
+  @Command({
+    command: "sync:drip <table>",
+    describe: "sync prisma data with Drip",
+    aliases: "sd",
+  })
+  async syncDrip(
+    @Positional({
+      name: "table",
+      type: "string",
+      describe: "Name of the airtable base to sync",
+      choices: ["all", "customers"],
+    })
+    table,
+    @PrismaEnvOption({
+      choices: ["local", "staging", "production"],
+      default: "staging",
+    })
+    prismaEnv
+  ) {
+    await this.scriptsService.updateConnections({
+      prismaEnv,
+      moduleRef: this.moduleRef,
+    })
+
+    const shouldProceed = readlineSync.keyInYN(
+      `You are about sync ${
+        table === "all" ? "all the tables" : "the " + table
+      } from prisma at url ${process.env.PRISMA_ENDPOINT} to Drip .\n` +
+        `Proceed? (y/n)`
+    )
+    if (!shouldProceed) {
+      console.log("\nExited without running anything\n")
+      return
+    }
+
+    switch (table) {
+      case "customers":
+        await this.dripSyncService.syncCustomers()
+        break
     }
   }
 }
