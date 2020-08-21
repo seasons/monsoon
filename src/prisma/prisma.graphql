@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Fri Aug 14 2020 09:52:18 GMT-0700 (Pacific Daylight Time)
+# timestamp: Fri Aug 21 2020 16:57:14 GMT-0400 (Eastern Daylight Time)
 
 type AggregateBagItem {
   count: Int!
@@ -695,6 +695,8 @@ type BillingInfo implements Node {
   state: String
   country: String
   postal_code: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 """
@@ -773,6 +775,10 @@ enum BillingInfoOrderByInput {
   country_DESC
   postal_code_ASC
   postal_code_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
 }
 
 type BillingInfoPreviousValues {
@@ -788,6 +794,8 @@ type BillingInfoPreviousValues {
   state: String
   country: String
   postal_code: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 type BillingInfoSubscriptionPayload {
@@ -1638,6 +1646,78 @@ input BillingInfoWhereInput {
   All values not ending with the given string.
   """
   postal_code_not_ends_with: String
+  createdAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  createdAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  createdAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  createdAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  createdAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  createdAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  createdAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  updatedAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  updatedAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  updatedAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  updatedAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  updatedAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  updatedAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  updatedAt_gte: DateTime
 }
 
 input BillingInfoWhereUniqueInput {
@@ -11494,12 +11574,14 @@ input LabelWhereUniqueInput {
 }
 
 enum LetterSize {
+  XXS
   XS
   S
   M
   L
   XL
   XXL
+  XXXL
 }
 
 type Location implements Node {
