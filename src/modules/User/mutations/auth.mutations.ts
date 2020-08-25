@@ -1,16 +1,20 @@
 import { User } from "@app/decorators"
-import { Args, Context, Mutation, Resolver } from "@nestjs/graphql"
+import { SegmentService } from "@app/modules/Analytics/services/segment.service"
+import { Args, Mutation, Resolver } from "@nestjs/graphql"
 import { pick } from "lodash"
 
 import { AuthService } from "../services/auth.service"
 
 @Resolver()
 export class AuthMutationsResolver {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly auth: AuthService,
+    private readonly segment: SegmentService
+  ) {}
 
   @Mutation()
   async login(@Args() { email, password }, @User() requestUser) {
-    const data = await this.authService.loginUser({
+    const data = await this.auth.loginUser({
       email: email.toLowerCase(),
       password,
       requestUser,
@@ -19,11 +23,8 @@ export class AuthMutationsResolver {
   }
 
   @Mutation()
-  async signup(
-    @Args() { email, password, firstName, lastName, details },
-    @Context() ctx
-  ) {
-    const { user, tokenData, customer } = await this.authService.signupUser({
+  async signup(@Args() { email, password, firstName, lastName, details }) {
+    const { user, tokenData, customer } = await this.auth.signupUser({
       email: email.toLowerCase(),
       password,
       firstName,
@@ -33,12 +34,10 @@ export class AuthMutationsResolver {
 
     // Add them to segment and track their account creation event
     const now = new Date()
-    ctx?.analytics?.identify({
+    this.segment.client.identify({
       userId: user.id,
       traits: {
-        ...this.authService.extractSegmentReservedTraitsFromCustomerDetail(
-          details
-        ),
+        ...this.auth.extractSegmentReservedTraitsFromCustomerDetail(details),
         ...pick(user, [
           "firstName",
           "lastName",
@@ -50,7 +49,7 @@ export class AuthMutationsResolver {
         createdAt: now.toISOString(),
       },
     })
-    ctx?.analytics?.track({
+    this.segment.client.track({
       userId: user.id,
       event: "Created Account",
       properties: {
@@ -71,11 +70,11 @@ export class AuthMutationsResolver {
 
   @Mutation()
   async resetPassword(@Args() { email }) {
-    return await this.authService.resetPassword(email.toLowerCase())
+    return await this.auth.resetPassword(email.toLowerCase())
   }
 
   @Mutation()
   async refreshToken(@Args() { refreshToken }) {
-    return await this.authService.refreshToken(refreshToken)
+    return await this.auth.refreshToken(refreshToken)
   }
 }
