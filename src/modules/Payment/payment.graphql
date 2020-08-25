@@ -26,9 +26,6 @@ type Mutation {
     @hasRole(roles: [Customer])
   resumeSubscription(subscriptionID: String!, date: DateTime): Boolean
     @hasRole(roles: [Customer])
-  acknowledgeCompletedChargebeeHostedCheckout(
-    hostedPageID: String!
-  ): BillingInfoPayload
   refundInvoice(input: RefundInvoiceInput): Boolean! @hasRole(roles: [Admin])
 }
 
@@ -120,11 +117,6 @@ type CreditNote {
 
 type ChargebeePlanPayload {
   plans: [Plan]
-}
-
-type BillingInfoPayload {
-  billingInfo: BillingInfo
-  plan: Plan
 }
 
 type ChargebeeHostedPagePayload {
