@@ -144,7 +144,7 @@ export class SyncCommands {
       name: "table",
       type: "string",
       describe: "Name of the airtable base to sync",
-      choices: ["all", "customers"],
+      choices: ["customers"],
     })
     table,
     @PrismaEnvOption({

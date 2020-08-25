@@ -2,7 +2,7 @@ import "module-alias/register"
 
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Injectable, Logger } from "@nestjs/common"
-import { chunk, reject } from "lodash"
+import { chunk } from "lodash"
 
 import { DripService } from "./drip.service"
 
@@ -37,7 +37,7 @@ export class DripSyncService {
 
     this.logger.log(`Syncing ${customers.length} customers with Drip`)
 
-    const batch = {
+    const data = {
       batches: batches.map(customerBatch => ({
         subscribers: customerBatch.map(a => ({
           id: a.id,
@@ -53,7 +53,7 @@ export class DripSyncService {
     }
 
     const res = await new Promise((resolve, reject) => {
-      this.drip.client.updateBatchSubscribers(batch, (_, req, res) => {
+      this.drip.client.updateBatchSubscribers(data, (_, req, res) => {
         // Do stuff
         if (res.errors) {
           return reject(res.errors)
@@ -67,6 +67,3 @@ export class DripSyncService {
     return res
   }
 }
-
-const dss = new DripSyncService(new DripService(), new PrismaService())
-dss.syncCustomers()

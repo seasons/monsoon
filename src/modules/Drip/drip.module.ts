@@ -7,5 +7,6 @@ import { DripSyncService } from "./services/dripSync.service"
 @Module({
   imports: [PrismaModule],
   providers: [DripService, DripSyncService],
+  exports: [DripService, DripSyncService],
 })
 export class DripModule {}
