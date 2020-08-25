@@ -55,21 +55,25 @@ export class PrismaLoader implements NestDataLoader {
       )
 
     let map
+    let fallbackValue
     switch (keyToDataRelationship) {
       case "OneToOne":
         map = this.createOneToOneKeyDataMap({data, getKey, formatData})
+        fallbackValue = {}
         break
       case "OneToMany":
         map = this.createOneToManyKeyDataMap({data, getKey, formatData})
+        fallbackValue = []
         break
       case "ManyToMany":
         map = this.createManyToManyKeyDataMap({data, getKeys, formatData})
+        fallbackValue = []
         break
       default:
         throw new Error(`Invalid keyToDataRelationship: ${keyToDataRelationship}`)
     }
 
-    const result = keys.map(key => map[key])
+    const result = keys.map(key => map[key] || fallbackValue)
     return Promise.resolve(result)
   }
 
