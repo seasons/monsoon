@@ -1,9 +1,15 @@
 import * as fs from "fs"
 
+import { cache } from "@app/decorators/cache.decorator"
 import { GenerateParams } from "@app/modules/DataLoader/dataloader.types"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
-import { CustomerDetail, CustomerWhereUniqueInput } from "@app/prisma"
 import {
+  CustomerDetail,
+  CustomerWhereInput,
+  CustomerWhereUniqueInput,
+} from "@app/prisma"
+import {
+  Customer,
   LetterSize,
   Product,
   ProductType,
@@ -38,6 +44,14 @@ export class AdmissionsService {
     Product[]
   >
 
+  // These two are just for caching. In the future, we should implement a proper cache
+  pausedCustomersResumingThisWeekCustomerDataloader: PrismaDataLoader<
+    Customer[]
+  >
+  activeCustomersWithoutActiveReservationCustomerDataloader: PrismaDataLoader<
+    Customer[]
+  >
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly utils: UtilsService,
@@ -50,6 +64,57 @@ export class AdmissionsService {
       )
     ))
     this.generateAvailableStylesDataLoaders()
+    this.pausedCustomersResumingThisWeekCustomerDataloader = this.prismaLoader.generateDataLoader(
+      {
+        query: "customers",
+        formatWhere: keys =>
+          ({ where: { status_in: keys } } as CustomerWhereInput),
+        info: `{
+          id
+          status
+          detail {
+            topSizes
+            waistSizes
+          }
+          membership {
+            pauseRequests {
+              createdAt
+              resumeDate
+            }
+          }
+        }`,
+        getKey: a => a.status,
+        keyToDataRelationship: "OneToMany",
+      }
+    )
+    this.activeCustomersWithoutActiveReservationCustomerDataloader = this.prismaLoader.generateDataLoader(
+      {
+        query: "customers",
+        formatWhere: keys =>
+          ({
+            where: {
+              AND: [
+                {
+                  reservations_every: { status_in: ["Completed", "Cancelled"] },
+                },
+                { status_in: keys },
+              ],
+            },
+          } as CustomerWhereInput),
+        info: `{
+          id
+          detail {
+            topSizes
+            waistSizes
+          }
+          reservations {
+            createdAt
+          }
+        }`,
+        getKey: a => a.status,
+        keyToDataRelationship: "OneToMany",
+      }
+    )
   }
 
   async isAdmissable(where: CustomerWhereUniqueInput): Promise<boolean> {
@@ -210,23 +275,26 @@ export class AdmissionsService {
   }
 
   private async pausedCustomersResumingThisWeek() {
-    const pausedCustomers = await this.prisma.binding.query.customers(
-      {
-        where: { status: "Paused" },
-      },
-      `{
-        id
-        detail {
-          topSizes
-          waistSizes
-        }
-        membership {
-          pauseRequests {
-            createdAt
-            resumeDate
-          }
-        }
-    }`
+    // const pausedCustomers = await this.prisma.binding.query.customers(
+    //   {
+    //     where: { status: "Paused" },
+    //   },
+    //   `{
+    //     id
+    //     detail {
+    //       topSizes
+    //       waistSizes
+    //     }
+    //     membership {
+    //       pauseRequests {
+    //         createdAt
+    //         resumeDate
+    //       }
+    //     }
+    // }`
+    // )
+    const pausedCustomers = await this.pausedCustomersResumingThisWeekCustomerDataloader.load(
+      "Paused"
     )
     const pausedCustomersResumingThisWeek = pausedCustomers.filter(a => {
       const latestPauseRequest = head(
@@ -243,7 +311,11 @@ export class AdmissionsService {
     return pausedCustomersResumingThisWeek
   }
 
+  @cache(1000)
   private async activeCustomersWithoutActiveReservation() {
+    // return await this.activeCustomersWithoutActiveReservationCustomerDataloader.load(
+    //   "Active"
+    // )
     return await this.prisma.binding.query.customers(
       {
         where: {
@@ -254,15 +326,15 @@ export class AdmissionsService {
         },
       },
       `{
-      id
-      detail {
-        topSizes
-        waistSizes
-      }
-      reservations {
-        createdAt
-      }
-    }`
+        id
+        detail {
+          topSizes
+          waistSizes
+        }
+        reservations {
+          createdAt
+        }
+      }`
     )
   }
 
