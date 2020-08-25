@@ -1,8 +1,9 @@
 import { Customer, User } from "@app/decorators"
+import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { PaymentService } from "@modules/Payment/services/payment.service"
 import { AuthService } from "@modules/User/services/auth.service"
 import { UtilsService } from "@modules/Utils/services/utils.service"
-import { Args, Context, Query, Resolver } from "@nestjs/graphql"
+import { Args, Query, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma/prisma.service"
 
 @Resolver()
@@ -11,15 +12,15 @@ export class ChargebeeQueriesResolver {
     private readonly paymentService: PaymentService,
     private readonly prisma: PrismaService,
     private readonly utils: UtilsService,
-    private readonly authService: AuthService
+    private readonly authService: AuthService,
+    private readonly segment: SegmentService
   ) {}
 
   @Query()
   async hostedChargebeeCheckout(
     @Args() { planID },
     @Customer() customer,
-    @User() user,
-    @Context() ctx
+    @User() user
   ) {
     const { email, firstName, lastName } = user
     const { phoneNumber } = await this.prisma.client
@@ -35,7 +36,7 @@ export class ChargebeeQueriesResolver {
     )
 
     // Track the selection
-    ctx.analytics.track({
+    this.segment.client.track({
       userId: user.id,
       event: "Opened Hosted Checkout",
       properties: {
@@ -51,7 +52,7 @@ export class ChargebeeQueriesResolver {
   }
 
   @Query()
-  async chargebeeCheckout(@Args() { planID, userIDHash }, @Context() ctx) {
+  async chargebeeCheckout(@Args() { planID, userIDHash }) {
     const userID = this.utils.decryptUserIDHash(userIDHash)
     const user = await this.prisma.client.user({ id: userID })
     const { email, firstName, lastName } = user
@@ -70,7 +71,7 @@ export class ChargebeeQueriesResolver {
     )
 
     // Track the selection
-    ctx.analytics.track({
+    this.segment.client.track({
       userId: user.id,
       event: "Opened Checkout",
       properties: {
