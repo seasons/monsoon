@@ -302,10 +302,7 @@ export class PaymentService {
     planID: string
   ) {
     // Retrieve plan and billing data
-    const plan = { essential: "Essential", "all-access": "AllAccess" }[planID]
-    if (!plan) {
-      throw new Error(`Unexpected plan id: ${planID}`)
-    }
+    const plan = this.chargebeePlanIdToPrismPlan(planID as any)
     const billingInfo = this.paymentUtils.createBillingInfoObject(
       card,
       customer
@@ -335,72 +332,6 @@ export class PaymentService {
 
     // Send welcome to seasons email
     await this.emailService.sendWelcomeToSeasonsEmail(prismaUser)
-  }
-
-  async acknowledgeCompletedChargebeeHostedCheckout(hostedPageID) {
-    const authService = this.authService
-    const emailService = this.emailService
-    const prisma = this.prisma
-    return new Promise(async (resolve, reject) => {
-      try {
-        await chargebee.hosted_page
-          .acknowledge(hostedPageID)
-          .request(async (error, result) => {
-            if (error) {
-              reject(error)
-            } else {
-              const {
-                subscription,
-                card,
-                customer: chargebeeCustomer,
-              } = result.hosted_page.content
-
-              // Retrieve plan and billing data
-              const plan = {
-                essential: "Essential",
-                "all-access": "AllAccess",
-              }[subscription.plan_id]
-              if (!plan) {
-                reject(`unexpected plan-id: ${subscription.plan_id}`)
-              }
-              const billingInfo = this.paymentUtils.createBillingInfoObject(
-                card,
-                chargebeeCustomer
-              )
-
-              // Save it to prisma
-              const prismaUser = await prisma.client.user({
-                id: subscription.customer_id,
-              })
-              const prismaCustomer = await authService.getCustomerFromUserID(
-                prismaUser.id
-              )
-              await prisma.client.updateCustomer({
-                data: {
-                  plan,
-                  billingInfo: {
-                    create: billingInfo,
-                  },
-                  status: "Active",
-                },
-                where: { id: prismaCustomer.id },
-              })
-
-              // Send welcome to seasons email
-              await emailService.sendWelcomeToSeasonsEmail(prismaUser)
-
-              // Return
-              resolve({
-                userId: prismaUser.id,
-                customerId: prismaCustomer.id,
-                planId: plan,
-              })
-            }
-          })
-      } catch (err) {
-        throw err
-      }
-    })
   }
 
   async updateChargebeeBillingAddress(
@@ -566,6 +497,18 @@ export class PaymentService {
       throw new Error(`unrecognized planID: ${plan}`)
     }
     return chargebeePlanId
+  }
+
+  chargebeePlanIdToPrismPlan(planID: "all-access" | "essential"): Plan {
+    let prismaPlan
+    if (planID === "all-access") {
+      prismaPlan = "AllAccess"
+    } else if (planID === "essential") {
+      prismaPlan = "Essential"
+    } else {
+      throw new Error(`unrecognized planID: ${planID}`)
+    }
+    return prismaPlan
   }
 
   private getInvoiceTransactionIds(invoice): string[] {

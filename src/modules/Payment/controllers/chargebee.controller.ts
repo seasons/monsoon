@@ -1,3 +1,4 @@
+import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { Body, Controller, Post } from "@nestjs/common"
 
 import { PaymentService } from "../services/payment.service"
@@ -12,7 +13,10 @@ const CHARGEBEE_SUBSCRIPTION_CREATED = "subscription_created"
 
 @Controller("chargebee_events")
 export class ChargebeeController {
-  constructor(private readonly paymentService: PaymentService) {}
+  constructor(
+    private readonly payment: PaymentService,
+    private readonly segment: SegmentService
+  ) {}
 
   @Post()
   async handlePost(@Body() body: ChargebeeEvent) {
@@ -32,7 +36,15 @@ export class ChargebeeController {
       customer,
       card,
     } = content
-    await this.paymentService.chargebeeSubscriptionCreated(
+
+    this.segment.client.track({
+      userId: customer_id, // chargebee customer id is our internal user id
+      event: "Subscribed",
+      properties: {
+        plan: this.payment.chargebeePlanIdToPrismPlan(plan_id),
+      },
+    })
+    await this.payment.chargebeeSubscriptionCreated(
       customer_id,
       customer,
       card,
@@ -45,6 +57,6 @@ export class ChargebeeController {
       customer: { id },
       card,
     } = content
-    await this.paymentService.chargebeeCustomerChanged(id, card)
+    await this.payment.chargebeeCustomerChanged(id, card)
   }
 }
