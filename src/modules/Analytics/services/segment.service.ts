@@ -8,12 +8,15 @@ type TrackingEvent =
   | "Became Authorized"
   | "Created Account"
   | "Completed Waitlist Form"
+  | "Opened Hosted Checkout"
+  | "Opened Checkout"
 
 interface CommonTrackProperties {
   firstName: string
   lastName: string
   email: string
   client?: ClientType
+  customerID?: string
 }
 
 type BecameAuthorizedProperties = CommonTrackProperties & {
