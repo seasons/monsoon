@@ -29,7 +29,6 @@ type Mutation {
     password: String!
     firstName: String!
     lastName: String!
-    platform: Platform
     details: CustomerDetailCreateInput
   ): AuthPayload!
   login(email: String!, password: String!): AuthPayload!
@@ -60,11 +59,6 @@ type Me {
   activeReservation: Reservation
   bag: [BagItem!]
   savedItems: [BagItem!]
-}
-
-enum Platform {
-  Flare
-  Harvest
 }
 
 type User {

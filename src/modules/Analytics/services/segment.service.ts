@@ -1,14 +1,19 @@
+import { ClientType } from "@app/decorators/client.decorator"
 import { CustomerStatus } from "@app/prisma"
 import { Injectable } from "@nestjs/common"
 import * as Sentry from "@sentry/node"
 import Analytics from "analytics-node"
 
-type TrackingEvent = "Became Authorized" | "Created Account"
+type TrackingEvent =
+  | "Became Authorized"
+  | "Created Account"
+  | "Completed Waitlist Form"
 
 interface CommonTrackProperties {
   firstName: string
   lastName: string
   email: string
+  client?: ClientType
 }
 
 type BecameAuthorizedProperties = CommonTrackProperties & {
