@@ -302,7 +302,7 @@ export class PaymentService {
     planID: string
   ) {
     // Retrieve plan and billing data
-    const plan = this.chargebeePlanIdToPrismPlan(planID as any)
+    const plan = this.chargebeePlanIdToPrismaPlan(planID as any)
     const billingInfo = this.paymentUtils.createBillingInfoObject(
       card,
       customer
@@ -499,7 +499,7 @@ export class PaymentService {
     return chargebeePlanId
   }
 
-  chargebeePlanIdToPrismPlan(planID: "all-access" | "essential"): Plan {
+  chargebeePlanIdToPrismaPlan(planID: "all-access" | "essential"): Plan {
     let prismaPlan
     if (planID === "all-access") {
       prismaPlan = "AllAccess"

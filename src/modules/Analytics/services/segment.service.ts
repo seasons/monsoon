@@ -10,6 +10,8 @@ type TrackingEvent =
   | "Completed Waitlist Form"
   | "Opened Hosted Checkout"
   | "Opened Checkout"
+  | "Subscribed"
+  | "Reserved Items"
 
 interface CommonTrackProperties {
   firstName: string
