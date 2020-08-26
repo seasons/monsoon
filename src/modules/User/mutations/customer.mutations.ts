@@ -95,6 +95,7 @@ export class CustomerMutationsResolver {
         previousStatus: customer.status,
         firstName: customer.user.firstName,
         lastName: customer.user.lastName,
+        email: customer.user.email,
         method: "Manual",
       })
     }

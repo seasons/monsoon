@@ -3,11 +3,12 @@ import { Injectable } from "@nestjs/common"
 import * as Sentry from "@sentry/node"
 import Analytics from "analytics-node"
 
-type TrackingEvent = "Became Authorized"
+type TrackingEvent = "Became Authorized" | "Created Account"
 
 interface CommonTrackProperties {
   firstName: string
   lastName: string
+  email: string
 }
 
 type BecameAuthorizedProperties = CommonTrackProperties & {
@@ -18,6 +19,22 @@ type BecameAuthorizedProperties = CommonTrackProperties & {
 @Injectable()
 export class SegmentService {
   client = new Analytics(process.env.SEGMENT_MONSOON_WRITE_KEY)
+
+  track<T>(
+    userId: string,
+    event: TrackingEvent,
+    properties: CommonTrackProperties & T
+  ) {
+    this.trackEvent<CommonTrackProperties>(userId, event, properties)
+  }
+
+  identify(userId: string, traits) {
+    try {
+      this.client.identify({ userId, traits })
+    } catch (err) {
+      Sentry.captureException(err)
+    }
+  }
 
   trackBecameAuthorized(
     userId: string,
