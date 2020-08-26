@@ -63,6 +63,7 @@ export class CustomerMutationsResolver {
           id
           email
           firstName
+          lastName
         }
         status
       }`
@@ -88,6 +89,13 @@ export class CustomerMutationsResolver {
       await this.pushNotification.pushNotifyUser({
         email: customer.user.email,
         pushNotifID: "CompleteAccount",
+      })
+
+      this.segment.trackBecameAuthorized(customer.user.id, {
+        previousStatus: customer.status,
+        firstName: customer.user.firstName,
+        lastName: customer.user.lastName,
+        method: "Manual",
       })
     }
     return this.prisma.binding.mutation.updateCustomer(args, info)

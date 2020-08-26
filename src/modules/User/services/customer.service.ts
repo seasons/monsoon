@@ -1,3 +1,4 @@
+import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { Injectable } from "@nestjs/common"
 import {
@@ -19,14 +20,15 @@ type TriageCustomerResult = "Waitlisted" | "Authorized"
 @Injectable()
 export class CustomerService {
   constructor(
-    private readonly authService: AuthService,
+    private readonly auth: AuthService,
     private readonly prisma: PrismaService,
-    private readonly shippingService: ShippingService,
-    private readonly admissions: AdmissionsService
+    private readonly shipping: ShippingService,
+    private readonly admissions: AdmissionsService,
+    private readonly segment: SegmentService
   ) {}
 
   async setCustomerPrismaStatus(user: User, status: CustomerStatus) {
-    const customer = await this.authService.getCustomerFromUserID(user.id)
+    const customer = await this.auth.getCustomerFromUserID(user.id)
     await this.prisma.client.updateCustomer({
       data: { status },
       where: { id: customer.id },
@@ -56,7 +58,7 @@ export class CustomerService {
       }
       const {
         isValid: shippingAddressIsValid,
-      } = await this.shippingService.shippoValidateAddress({
+      } = await this.shipping.shippoValidateAddress({
         name,
         street1,
         city,
@@ -102,7 +104,7 @@ export class CustomerService {
     } = shippingAddress
     const {
       isValid: shippingAddressIsValid,
-    } = await this.shippingService.shippoValidateAddress({
+    } = await this.shipping.shippoValidateAddress({
       name: user.firstName,
       street1: shippingStreet1,
       city: shippingCity,
@@ -199,6 +201,11 @@ export class CustomerService {
           topSizes
           waistSizes
         }
+        user {
+          id
+          firstName
+          lastName
+        }
       }`
     )
 
@@ -219,6 +226,12 @@ export class CustomerService {
         (await this.admissions.haveSufficientInventoryToServiceCustomer(where))
       ) {
         status = "Authorized"
+        this.segment.trackBecameAuthorized(customer.user.id, {
+          previousStatus: customer.status,
+          firstName: customer.user.firstName,
+          lastName: customer.user.lastName,
+          method: "Automatic",
+        })
       }
     } catch (err) {
       Sentry.captureException(err)
