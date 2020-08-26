@@ -1,6 +1,6 @@
 import { ExecutionContext, createParamDecorator } from "@nestjs/common"
 
-export type ClientType = "Harvest" | "Flare" | "Unknown"
+export type ClientType = "Harvest" | "Flare" | "Spring" | "Unknown"
 
 export const Client = createParamDecorator(
   (data, context: ExecutionContext): ClientType => {
