@@ -1,5 +1,7 @@
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
+import { PrismaService } from "@app/prisma/prisma.service"
 import { Body, Controller, Post } from "@nestjs/common"
+import * as Sentry from "@sentry/node"
 
 import { PaymentService } from "../services/payment.service"
 
@@ -15,7 +17,8 @@ const CHARGEBEE_SUBSCRIPTION_CREATED = "subscription_created"
 export class ChargebeeController {
   constructor(
     private readonly payment: PaymentService,
-    private readonly segment: SegmentService
+    private readonly segment: SegmentService,
+    private readonly prisma: PrismaService
   ) {}
 
   @Post()
@@ -37,13 +40,22 @@ export class ChargebeeController {
       card,
     } = content
 
-    this.segment.client.track({
-      userId: customer_id, // chargebee customer id is our internal user id
-      event: "Subscribed",
-      properties: {
-        plan: this.payment.chargebeePlanIdToPrismPlan(plan_id),
-      },
-    })
+    try {
+      const user = await this.prisma.client.user({ id: customer_id }) // chargebee customer id is our internal user id
+      this.segment.client.track({
+        userId: customer_id,
+        event: "Subscribed",
+        properties: {
+          plan: this.payment.chargebeePlanIdToPrismPlan(plan_id),
+          firstName: user?.firstName || "",
+          lastName: user?.lastName || "",
+          email: user?.email || "",
+        },
+      })
+    } catch (err) {
+      Sentry.captureException(err)
+    }
+
     await this.payment.chargebeeSubscriptionCreated(
       customer_id,
       customer,
