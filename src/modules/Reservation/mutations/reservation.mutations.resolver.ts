@@ -1,4 +1,5 @@
 import { Customer, User } from "@app/decorators"
+import { Application } from "@app/decorators/application.decorator"
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
 import { addFragmentToInfo } from "graphql-binding"
@@ -23,7 +24,8 @@ export class ReservationMutationsResolver {
     @Args() { items },
     @User() user,
     @Customer() customer,
-    @Info() info
+    @Info() info,
+    @Application() application
   ) {
     const returnData = await this.reservation.reserveItems(
       items,
@@ -38,6 +40,7 @@ export class ReservationMutationsResolver {
       reservationID: returnData.id,
       items,
       units: returnData.products.map(a => a.seasonsUID),
+      application,
     })
 
     return returnData
