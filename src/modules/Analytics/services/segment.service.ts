@@ -1,4 +1,4 @@
-import { ClientType } from "@app/decorators/client.decorator"
+import { ApplicationType } from "@app/decorators/application.decorator"
 import { CustomerStatus } from "@app/prisma"
 import { Injectable } from "@nestjs/common"
 import * as Sentry from "@sentry/node"
@@ -17,7 +17,7 @@ interface CommonTrackProperties {
   firstName: string
   lastName: string
   email: string
-  client?: ClientType
+  application?: ApplicationType
   customerID?: string
 }
 

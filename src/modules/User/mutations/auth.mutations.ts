@@ -1,5 +1,5 @@
 import { User } from "@app/decorators"
-import { Client } from "@app/decorators/client.decorator"
+import { Application } from "@app/decorators/application.decorator"
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { Args, Mutation, Resolver } from "@nestjs/graphql"
 import { pick } from "lodash"
@@ -26,7 +26,7 @@ export class AuthMutationsResolver {
   @Mutation()
   async signup(
     @Args() { email, password, firstName, lastName, details },
-    @Client() client
+    @Application() application
   ) {
     const { user, tokenData, customer } = await this.auth.signupUser({
       email: email.toLowerCase(),
@@ -58,7 +58,7 @@ export class AuthMutationsResolver {
       name: `${user.firstName} ${user.lastName}`,
       ...pick(user, ["firstName", "lastName", "email"]),
       customerID: customer.id,
-      client,
+      application,
     })
 
     return {

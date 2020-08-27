@@ -1,5 +1,5 @@
 import { Customer, User } from "@app/decorators"
-import { Client } from "@app/decorators/client.decorator"
+import { Application } from "@app/decorators/application.decorator"
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { EmailService } from "@app/modules/Email/services/email.service"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
@@ -27,7 +27,7 @@ export class CustomerMutationsResolver {
     @Info() info,
     @Customer() customer,
     @User() user,
-    @Client() client
+    @Application() application
   ) {
     // They should not have included any "id" in the input
     if (details.id != null) {
@@ -46,7 +46,7 @@ export class CustomerMutationsResolver {
     if (!!event) {
       this.segment.track(user.id, eventNameMap[event], {
         ...pick(user, ["firstName", "lastName", "email"]),
-        client,
+        application,
       })
     }
 
@@ -54,7 +54,7 @@ export class CustomerMutationsResolver {
   }
 
   @Mutation()
-  async updateCustomer(@Args() args, @Info() info, @Client() client) {
+  async updateCustomer(@Args() args, @Info() info, @Application() application) {
     const { where, data } = args
     const customer = await this.prisma.binding.query.customer(
       {
@@ -100,19 +100,22 @@ export class CustomerMutationsResolver {
         lastName: customer.user.lastName,
         email: customer.user.email,
         method: "Manual",
-        client,
+        application,
       })
     }
     return this.prisma.binding.mutation.updateCustomer(args, info)
   }
 
   @Mutation()
-  async triageCustomer(@Customer() sessionCustomer, @Client() client) {
+  async triageCustomer(
+    @Customer() sessionCustomer,
+    @Application() application
+  ) {
     const returnValue = await this.customerService.triageCustomer(
       {
         id: sessionCustomer.id,
       },
-      client
+      application
     )
     return returnValue
   }
