@@ -6300,6 +6300,14 @@ cssstyle@^2.2.0:
   dependencies:
     cssom "~0.3.6"
 
+csv-parser@^2.3.3:
+  version "2.3.3"
+  resolved "https://registry.yarnpkg.com/csv-parser/-/csv-parser-2.3.3.tgz#978120ca14f879a17a8b977d9448daa738a38f65"
+  integrity sha512-czcyxc4/3Tt63w0oiK1zsnRgRD4PkqWaRSJ6eef63xC0f+5LVLuGdSYEcJwGp2euPgRHx+jmlH2Lb49anb1CGQ==
+  dependencies:
+    minimist "^1.2.0"
+    through2 "^3.0.1"
+
 cucumber-html-reporter@^3.0.4:
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/cucumber-html-reporter/-/cucumber-html-reporter-3.0.4.tgz#1be0dee83f30a2f4719207859a5440ce082ffadd"
@@ -14262,7 +14270,7 @@ readable-stream@1.1.x:
     isarray "0.0.1"
     string_decoder "~0.10.x"
 
-readable-stream@^3.0.0, readable-stream@^3.1.1, readable-stream@^3.4.0, readable-stream@^3.6.0:
+"readable-stream@2 || 3", readable-stream@^3.0.0, readable-stream@^3.1.1, readable-stream@^3.4.0, readable-stream@^3.6.0:
   version "3.6.0"
   resolved "https://registry.yarnpkg.com/readable-stream/-/readable-stream-3.6.0.tgz#337bbda3adc0706bd3e024426a286d4b4b2c9198"
   integrity sha512-BViHy7LKeTz4oNnkcLJ+lVSL6vpiFeX6/d3oSH8zCW7UxP2onchk+vTGB143xuFjHS3deTgkKoXXymXqymiIdA==
@@ -16080,6 +16088,14 @@ through2@^2.0.0, through2@^2.0.3:
   dependencies:
     readable-stream "~2.3.6"
     xtend "~4.0.1"
+
+through2@^3.0.1:
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/through2/-/through2-3.0.2.tgz#99f88931cfc761ec7678b41d5d7336b5b6a07bf4"
+  integrity sha512-enaDQ4MUyP2W6ZyT6EsMzqBPZaM/avg8iuo+l2d3QCs0J+6RaqkHV/2/lOwDTueBHeJ/2LG9lrLW3d5rWPucuQ==
+  dependencies:
+    inherits "^2.0.4"
+    readable-stream "2 || 3"
 
 through@2, through@^2.3.6, through@^2.3.8:
   version "2.3.8"
