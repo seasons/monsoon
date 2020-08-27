@@ -1,3 +1,4 @@
+import { ApplicationType } from "@app/decorators/application.decorator"
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { Injectable } from "@nestjs/common"
@@ -188,7 +189,8 @@ export class CustomerService {
   }
 
   async triageCustomer(
-    where: CustomerWhereUniqueInput
+    where: CustomerWhereUniqueInput,
+    application: ApplicationType
   ): Promise<TriageCustomerResult> {
     const customer = await this.prisma.binding.query.customer(
       { where },
@@ -230,7 +232,9 @@ export class CustomerService {
           previousStatus: customer.status,
           firstName: customer.user.firstName,
           lastName: customer.user.lastName,
+          email: customer.user.email,
           method: "Automatic",
+          application,
         })
       }
     } catch (err) {

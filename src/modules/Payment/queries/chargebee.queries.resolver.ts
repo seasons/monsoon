@@ -1,5 +1,7 @@
 import { Customer, User } from "@app/decorators"
+import { Application } from "@app/decorators/application.decorator"
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
+import { Plan } from "@app/prisma"
 import { PaymentService } from "@modules/Payment/services/payment.service"
 import { AuthService } from "@modules/User/services/auth.service"
 import { UtilsService } from "@modules/Utils/services/utils.service"
@@ -9,10 +11,10 @@ import { PrismaService } from "@prisma/prisma.service"
 @Resolver()
 export class ChargebeeQueriesResolver {
   constructor(
-    private readonly paymentService: PaymentService,
+    private readonly payment: PaymentService,
     private readonly prisma: PrismaService,
     private readonly utils: UtilsService,
-    private readonly authService: AuthService,
+    private readonly auth: AuthService,
     private readonly segment: SegmentService
   ) {}
 
@@ -20,13 +22,14 @@ export class ChargebeeQueriesResolver {
   async hostedChargebeeCheckout(
     @Args() { planID },
     @Customer() customer,
-    @User() user
+    @User() user,
+    @Application() application
   ) {
     const { email, firstName, lastName } = user
     const { phoneNumber } = await this.prisma.client
       .customer({ id: customer.id })
       .detail()
-    const hostedPage = await this.paymentService.getHostedCheckoutPage(
+    const hostedPage = await this.payment.getHostedCheckoutPage(
       planID,
       user.id,
       email,
@@ -36,32 +39,32 @@ export class ChargebeeQueriesResolver {
     )
 
     // Track the selection
-    this.segment.client.track({
-      userId: user.id,
-      event: "Opened Hosted Checkout",
-      properties: {
-        customerID: customer.id,
-        email,
-        firstName,
-        lastName,
-        plan: planID,
-      },
+    this.segment.track<{ plan: Plan }>(user.id, "Opened Hosted Checkout", {
+      email,
+      firstName,
+      lastName,
+      application,
+      customerID: customer.id,
+      plan: planID,
     })
 
     return hostedPage
   }
 
   @Query()
-  async chargebeeCheckout(@Args() { planID, userIDHash }) {
+  async chargebeeCheckout(
+    @Args() { planID, userIDHash },
+    @Application() application
+  ) {
     const userID = this.utils.decryptUserIDHash(userIDHash)
     const user = await this.prisma.client.user({ id: userID })
     const { email, firstName, lastName } = user
-    const customer = await this.authService.getCustomerFromUserID(userID)
+    const customer = await this.auth.getCustomerFromUserID(userID)
     const { phoneNumber } = await this.prisma.client
       .customer({ id: customer.id })
       .detail()
 
-    const hostedPage = await this.paymentService.getHostedCheckoutPage(
+    const hostedPage = await this.payment.getHostedCheckoutPage(
       planID,
       user.id,
       email,
@@ -71,12 +74,13 @@ export class ChargebeeQueriesResolver {
     )
 
     // Track the selection
-    this.segment.client.track({
-      userId: user.id,
-      event: "Opened Checkout",
-      properties: {
-        plan: planID,
-      },
+    this.segment.track<{ plan: Plan }>(user.id, "Opened Checkout", {
+      email,
+      firstName,
+      lastName,
+      application,
+      customerID: customer.id,
+      plan: planID,
     })
 
     return hostedPage
@@ -87,6 +91,6 @@ export class ChargebeeQueriesResolver {
    */
   @Query()
   async chargebeeUpdatePaymentPage(@Customer() customer, @User() user) {
-    return this.paymentService.getHostedUpdatePaymentPage(user.id)
+    return this.payment.getHostedUpdatePaymentPage(user.id)
   }
 }

@@ -42,15 +42,11 @@ export class ChargebeeController {
 
     try {
       const user = await this.prisma.client.user({ id: customer_id }) // chargebee customer id is our internal user id
-      this.segment.client.track({
-        userId: customer_id,
-        event: "Subscribed",
-        properties: {
-          plan: this.payment.chargebeePlanIdToPrismPlan(plan_id),
-          firstName: user?.firstName || "",
-          lastName: user?.lastName || "",
-          email: user?.email || "",
-        },
+      this.segment.track(customer_id, "Subscribed", {
+        plan: this.payment.chargebeePlanIdToPrismaPlan(plan_id),
+        firstName: user?.firstName || "",
+        lastName: user?.lastName || "",
+        email: user?.email || "",
       })
     } catch (err) {
       Sentry.captureException(err)

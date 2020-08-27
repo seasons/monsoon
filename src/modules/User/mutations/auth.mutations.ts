@@ -1,4 +1,5 @@
 import { User } from "@app/decorators"
+import { Application } from "@app/decorators/application.decorator"
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { Args, Mutation, Resolver } from "@nestjs/graphql"
 import { pick } from "lodash"
@@ -23,7 +24,10 @@ export class AuthMutationsResolver {
   }
 
   @Mutation()
-  async signup(@Args() { email, password, firstName, lastName, details }) {
+  async signup(
+    @Args() { email, password, firstName, lastName, details },
+    @Application() application
+  ) {
     const { user, tokenData, customer } = await this.auth.signupUser({
       email: email.toLowerCase(),
       password,
@@ -34,29 +38,27 @@ export class AuthMutationsResolver {
 
     // Add them to segment and track their account creation event
     const now = new Date()
-    this.segment.client.identify({
-      userId: user.id,
-      traits: {
-        ...this.auth.extractSegmentReservedTraitsFromCustomerDetail(details),
-        ...pick(user, [
-          "firstName",
-          "lastName",
-          "id",
-          "roles",
-          "email",
-          "auth0Id",
-        ]),
-        createdAt: now.toISOString(),
-      },
+    this.segment.identify(user.id, {
+      ...this.auth.extractSegmentReservedTraitsFromCustomerDetail(details),
+      ...pick(user, [
+        "firstName",
+        "lastName",
+        "id",
+        "roles",
+        "email",
+        "auth0Id",
+      ]),
+      createdAt: now.toISOString(),
     })
-    this.segment.client.track({
-      userId: user.id,
-      event: "Created Account",
-      properties: {
-        name: `${user.firstName} ${user.lastName}`,
-        email: `${user.email}`,
-        customerID: customer.id,
-      },
+
+    this.segment.track<{
+      customerID: string
+      name: string
+    }>(user.id, "Created Account", {
+      name: `${user.firstName} ${user.lastName}`,
+      ...pick(user, ["firstName", "lastName", "email"]),
+      customerID: customer.id,
+      application,
     })
 
     return {

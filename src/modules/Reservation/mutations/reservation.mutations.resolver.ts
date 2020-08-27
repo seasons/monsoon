@@ -1,7 +1,9 @@
 import { Customer, User } from "@app/decorators"
+import { Application } from "@app/decorators/application.decorator"
 import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
 import { addFragmentToInfo } from "graphql-binding"
+import { pick } from "lodash"
 
 import { ReservationService } from ".."
 
@@ -22,7 +24,8 @@ export class ReservationMutationsResolver {
     @Args() { items },
     @User() user,
     @Customer() customer,
-    @Info() info
+    @Info() info,
+    @Application() application
   ) {
     const returnData = await this.reservation.reserveItems(
       items,
@@ -32,15 +35,12 @@ export class ReservationMutationsResolver {
     )
 
     // Track the selection
-    this.segment.client.track({
-      userId: user.id,
-      event: "Reserved Items",
-      properties: {
-        email: user.email,
-        reservationID: returnData.id,
-        items,
-        units: returnData.products.map(a => a.seasonsUID),
-      },
+    this.segment.track(user.id, "Reserved Items", {
+      ...pick(user, ["email", "firstName", "lastName"]),
+      reservationID: returnData.id,
+      items,
+      units: returnData.products.map(a => a.seasonsUID),
+      application,
     })
 
     return returnData
