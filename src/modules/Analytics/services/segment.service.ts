@@ -1,8 +1,13 @@
 import { ApplicationType } from "@app/decorators/application.decorator"
-import { CustomerStatus } from "@app/prisma"
+import { CustomerStatus, Plan } from "@app/prisma"
 import { Injectable } from "@nestjs/common"
 import * as Sentry from "@sentry/node"
 import Analytics from "analytics-node"
+
+type SubscribedProperties = CommonTrackProperties & {
+  plan: Plan
+  method: "ApplePay" | "ChargebeeHostedCheckout"
+}
 
 type TrackingEvent =
   | "Became Authorized"
@@ -55,6 +60,10 @@ export class SegmentService {
       "Became Authorized",
       properties
     )
+  }
+
+  trackSubscribed(userId: string, properties: SubscribedProperties) {
+    this.trackEvent<SubscribedProperties>(userId, "Subscribed", properties)
   }
 
   private trackEvent<T>(userId: string, event: TrackingEvent, properties: T) {

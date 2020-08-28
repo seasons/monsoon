@@ -1,3 +1,4 @@
+import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { CustomerService } from "@app/modules/User"
 import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { CustomerStatus, Plan, User } from "@app/prisma"
@@ -28,7 +29,8 @@ export class PaymentService {
     private readonly emailService: EmailService,
     private readonly paymentUtils: PaymentUtilsService,
     private readonly prisma: PrismaService,
-    private readonly utils: UtilsService
+    private readonly utils: UtilsService,
+    private readonly segment: SegmentService
   ) {}
 
   async applePayUpdatePaymentMethod(planID, token, customer) {
@@ -158,6 +160,14 @@ export class PaymentService {
         customer: { connect: { id: customer.id } },
         subscriptionId: subscriptionID,
       },
+    })
+
+    this.segment.trackSubscribed(user.id, {
+      plan: this.chargebeePlanIdToPrismaPlan(planID),
+      method: "ApplePay",
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
     })
   }
 

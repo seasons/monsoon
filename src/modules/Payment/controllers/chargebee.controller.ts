@@ -44,14 +44,37 @@ export class ChargebeeController {
       card,
     } = content
 
+    const customerWithBillingAndUserData = await this.prisma.binding.query.customer(
+      { where: { id: customer.id } },
+      `
+        {
+          id
+          billingInfo {
+            id
+          }
+          user {
+            id
+            firstName
+            lastName
+            email
+          }
+        }
+      `
+    )
+
     try {
-      const user = await this.prisma.client.user({ id: customer_id }) // chargebee customer id is our internal user id
-      this.segment.track(customer_id, "Subscribed", {
-        plan: this.payment.chargebeePlanIdToPrismaPlan(plan_id),
-        firstName: user?.firstName || "",
-        lastName: user?.lastName || "",
-        email: user?.email || "",
-      })
+      // If they don't have a billing info this means they've create their account
+      // user the deprecated ChargebeeHostedCheckout
+      if (!customerWithBillingAndUserData?.billingInfo?.id) {
+        const user = customerWithBillingAndUserData.user
+        this.segment.track(customer_id, "Subscribed", {
+          plan: this.payment.chargebeePlanIdToPrismaPlan(plan_id),
+          method: "ChargebeeHostedCheckout",
+          firstName: user?.firstName || "",
+          lastName: user?.lastName || "",
+          email: user?.email || "",
+        })
+      }
     } catch (err) {
       Sentry.captureException(err)
     }
