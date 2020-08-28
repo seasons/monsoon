@@ -19,6 +19,19 @@ export class PaymentMutationsResolver {
   }
 
   @Mutation()
+  async applePayUpdatePaymentMethod(
+    @Args() { planID, token },
+    @Customer() customer
+  ) {
+    await this.paymentService.applePayUpdatePaymentMethod(
+      planID,
+      token,
+      customer
+    )
+    return true
+  }
+
+  @Mutation()
   async updateResumeDate(@Args() { date }, @Customer() customer) {
     await this.paymentService.updateResumeDate(date, customer)
     return true
