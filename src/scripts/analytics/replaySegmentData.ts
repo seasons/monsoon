@@ -4,34 +4,40 @@ import * as fs from "fs"
 
 import Analytics from "analytics-node"
 import csv from "csv-parser"
+import { camelCase, mapKeys, pick } from "lodash"
+
+import { PrismaService } from "../../prisma/prisma.service"
+
+const ps = new PrismaService()
 
 // Useful Docs: https://segment.com/docs/connections/sources/catalog/libraries/server/node/#identify
 
 const monsoonStagingWriteKey = ""
 const client = new Analytics(monsoonStagingWriteKey)
 
-interface CommonPayload {
-  userId: string
-  timestamp: Date
+interface TrackPayload {
+  properties: any
 }
+
+interface IdentifyPayload {
+  traits: any
+}
+
+type SegmentPayload = TrackPayload | IdentifyPayload
+
 const uploadCSV = ({
   csvName,
+  rowTransformFunc,
   event,
   method = "track",
-  rowTransformFunc,
+  getUserIDFunc = row => row.user_id,
 }: {
   csvName: string
+  rowTransformFunc: (row: any) => SegmentPayload
   event?: string
   method?: "track" | "identify"
-  rowTransformFunc: (
-    row: any
-  ) =>
-    | (CommonPayload & {
-        properties: any
-      })
-    | (CommonPayload & { traits: any })
+  getUserIDFunc?: (row: any) => string
 }) => {
-  let i = 0
   const fieldsToAddToPayloads = { integrations: { All: false, Mixpanel: true } }
   if (method === "track") {
     if (!event) {
@@ -39,16 +45,23 @@ const uploadCSV = ({
     }
     fieldsToAddToPayloads["event"] = event
   }
+  if (method === "identify" && !!event) {
+    throw new Error("Can not pass event on identify call")
+  }
+
+  let i = 0
   const pipe = fs
-    .createReadStream(`events/${csvName}`)
+    .createReadStream(`events/monsoon/${csvName}.csv`)
     .pipe(csv())
     .on("data", async row => {
       //   if (i <= 2) {
       console.log(`row ${i++}`)
       pipe.pause()
       client[method]({
+        userId: getUserIDFunc(row),
         ...rowTransformFunc(row),
-        event,
+        ...fieldsToAddToPayloads,
+        timestamp: new Date(row.sent_at),
       })
       pipe.resume()
       //   }
@@ -58,52 +71,118 @@ const uploadCSV = ({
     })
 }
 
+const createPropertiesFromColumns = (row, columnNames: string[]) =>
+  mapKeys(pick(row, columnNames), camelCase)
+
+const replayCreatedAccountsFromDBRecords = async () => {
+  const allCustomers = await ps.binding.query.customers(
+    {},
+    `{
+      id
+      detail {
+        phoneNumber
+      }
+      user {
+        id
+        email
+        firstName
+        lastName
+        auth0Id
+        roles
+      }
+    }`
+  )
+
+  const createCommonFields = user => ({
+    userId: user.id,
+    integrations: { All: false, Mixpanel: true },
+    timestamp: new Date(user.createdAt),
+  })
+
+  for (const cust of allCustomers) {
+    client.identify({
+      ...createCommonFields(cust.user),
+      traits: {
+        ...pick(cust.user, [
+          "firstName",
+          "lastName",
+          "id",
+          "email",
+          "auth0Id",
+          "roles",
+          "createdAt",
+        ]),
+        phone: cust.detail.phoneNumber,
+      },
+    })
+
+    client.track({
+      ...createCommonFields(cust.user),
+      properties: {
+        name: `${cust.user.firstName} ${cust.user.lastName}`,
+        ...pick(cust.user, ["firstName", "lastName", "email"]),
+        customerID: cust.id,
+        application: "harvest",
+      },
+    })
+  }
+}
+
 const replayMonsoonData = () => {
-  //   uploadCSV({
-  //     csvName: "created_account.csv",
-  //     event: "Created Account",
-  //     rowTransformFunc: row => ({
-  //       userId: row.user_id,
-  //       properties: {
-  //         customerID: row.customer_id,
-  //         email: row.email,
-  //         firstName: row.first_name || "",
-  //         lastName: row.last_name || "",
-  //         name: row.name,
-  //       },
-  //       timestamp: new Date(row.sent_at),
-  //     }),
-  //   })
-
-  //   uploadCSV({
-  //     csvName: "reserved_items.csv",
-  //     event: "Reserved Items",
-  //     rowTransformFunc: row => ({
-  //       userId: row.user_id,
-  //       properties: {
-  //         units: row.units,
-  //         items: row.items,
-  //         reservationID: row.reservation_id,
-  //         email: row.email,
-  //       },
-  //       timestamp: new Date(row.sent_at),
-  //     }),
-  //   })
-
   uploadCSV({
-    csvName: "identifies.csv",
+    csvName: "identifies",
     method: "identify",
     rowTransformFunc: row => ({
-      userId: row.user_id,
       traits: {
         auth0Id: row.auth0_id,
-        email: row.email,
-        lastName: row.last_name,
-        phone: row.phone || "",
-        firstName: row.first_name,
-        roles: row.roles,
+        ...createPropertiesFromColumns(row, [
+          "email",
+          "last_name",
+          "phone",
+          "first_name",
+          "roles",
+        ]),
       },
-      timestamp: new Date(row.sent_at),
+    }),
+  })
+
+  uploadCSV({
+    csvName: "created_account",
+    event: "Created Account",
+    rowTransformFunc: row => ({
+      properties: {
+        customerID: row.customer_id,
+        ...createPropertiesFromColumns(row, [
+          "name",
+          "last_name",
+          "email",
+          "first_name",
+        ]),
+      },
+    }),
+  })
+
+  uploadCSV({
+    csvName: "reserved_items",
+    event: "Reserved Items",
+    rowTransformFunc: row => ({
+      properties: {
+        reservationID: row.reservation_id,
+        ...createPropertiesFromColumns(row, ["email", "units", "items"]),
+      },
+    }),
+  })
+
+  uploadCSV({
+    csvName: "opened_hosted_checkout",
+    event: "Opened Hosted Checkout",
+    rowTransformFunc: row => ({
+      properties: createPropertiesFromColumns(row, [
+        "plan",
+        "last_name",
+        "email",
+        "first_name",
+      ]),
     }),
   })
 }
