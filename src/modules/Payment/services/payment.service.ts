@@ -31,6 +31,66 @@ export class PaymentService {
     private readonly utils: UtilsService
   ) {}
 
+  async applePayCheckout(planID, token, customer) {
+    const customerWithUserData = await this.prisma.binding.query.customer(
+      { where: { id: customer.id } },
+      `
+        {
+          id
+          user {
+            id
+            firstName
+            lastName
+            email
+          }
+        }
+      `
+    )
+
+    const { user } = customerWithUserData
+
+    const billingAddress = {
+      first_name: user.firstName || "",
+      last_name: user.lastName || "",
+      line1: token.card.addressLine1 || "",
+      line2: token.card?.addressLine2 || "",
+      city: token.card.addressCity || "",
+      state: token.card.addressState || "",
+      zip: token.card.addressZip || "",
+      country: token.card.addressCountry || "",
+    }
+
+    const createdCustomerResult = await chargebee.customer
+      .create({
+        first_name: user.firstName || "",
+        last_name: user.lastName || "",
+        email: user.email || "",
+        billing_address: billingAddress,
+      })
+      .request()
+
+    const paymentSource = await chargebee.payment_source
+      .create_using_temp_token({
+        tmp_token: token.tokenId,
+        type: "apple_pay",
+        customer_id: createdCustomerResult.customer.id,
+      })
+      .request()
+
+    const subscription = await chargebee.subscription
+      .create_for_customer(createdCustomerResult.customer.id, {
+        plan_id: planID,
+      })
+      .request()
+
+    this.chargebeeSubscriptionCreated(
+      user.id,
+      subscription.customer,
+      paymentSource.payment_source.card,
+      planID
+    )
+  }
+
   async updateResumeDate(date, customer) {
     const customerWithMembership = await this.prisma.binding.query.customer(
       { where: { id: customer.id } },
@@ -296,7 +356,7 @@ export class PaymentService {
   }
 
   async chargebeeSubscriptionCreated(
-    customerID: string,
+    userID: string,
     customer: any,
     card: any,
     planID: string
@@ -309,9 +369,9 @@ export class PaymentService {
     )
 
     // Save to prisma
-    const prismaUser = await this.prisma.client.user({ id: customerID })
+    const prismaUser = await this.prisma.client.user({ id: userID })
     if (!prismaUser) {
-      throw new Error(`Could not find user with id: ${customerID}`)
+      throw new Error(`Could not find user with id: ${userID}`)
     }
     const prismaCustomer = await this.authService.getCustomerFromUserID(
       prismaUser.id
@@ -493,6 +553,8 @@ export class PaymentService {
       chargebeePlanId = "all-access"
     } else if (plan === "Essential") {
       chargebeePlanId = "essential"
+    } else if (plan === "essential" || plan === "all-access") {
+      chargebeePlanId = plan
     } else {
       throw new Error(`unrecognized planID: ${plan}`)
     }

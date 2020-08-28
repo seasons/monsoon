@@ -8,7 +8,7 @@ export class PaymentUtilsService {
   createBillingInfoObject(card, chargebeeCustomer) {
     try {
       return {
-        brand: card.card_type,
+        brand: card.card_type || card.brand,
         name: `${card.first_name || ""} ${card.last_name || ""}`,
         last_digits: card.last4,
         expiration_month: card.expiry_month,

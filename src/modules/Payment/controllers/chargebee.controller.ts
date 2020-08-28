@@ -13,6 +13,10 @@ export type ChargebeeEvent = {
 const CHARGEBEE_CUSTOMER_CHANGED = "customer_changed"
 const CHARGEBEE_SUBSCRIPTION_CREATED = "subscription_created"
 
+/**
+ * DEPRECATED
+ * These hooks were necesarry for the the chargebee client checkout webview
+ */
 @Controller("chargebee_events")
 export class ChargebeeController {
   constructor(
