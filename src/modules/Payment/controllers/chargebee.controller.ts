@@ -2,6 +2,7 @@ import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Body, Controller, Post } from "@nestjs/common"
 import * as Sentry from "@sentry/node"
+import { head } from "lodash"
 
 import { PaymentService } from "../services/payment.service"
 
@@ -44,9 +45,10 @@ export class ChargebeeController {
       card,
     } = content
 
-    const customerWithBillingAndUserData = await this.prisma.binding.query.customer(
-      { where: { id: customer.id } },
-      `
+    const customerWithBillingAndUserData: any = head(
+      await this.prisma.binding.query.customers(
+        { where: { user: { id: customer_id } } },
+        `
         {
           id
           billingInfo {
@@ -60,6 +62,7 @@ export class ChargebeeController {
           }
         }
       `
+      )
     )
 
     try {
