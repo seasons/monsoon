@@ -6,10 +6,7 @@ import Analytics from "analytics-node"
 import csv from "csv-parser"
 import { camelCase, mapKeys, pick } from "lodash"
 
-import {
-  CustomerWhereInput,
-  EmailReceiptWhereInput,
-} from "../../prisma/prisma.binding"
+import { EmailReceiptWhereInput } from "../../prisma/prisma.binding"
 import { PrismaService } from "../../prisma/prisma.service"
 
 interface TrackPayload {
@@ -38,8 +35,8 @@ const ps = new PrismaService()
 
 // Useful Docs: https://segment.com/docs/connections/sources/catalog/libraries/server/node/#identify
 
-const monsoonStagingWriteKey = ""
-const client = new Analytics(monsoonStagingWriteKey)
+const writeKey = ""
+const client = new Analytics(writeKey)
 
 const uploadCSV = ({
   csvName,
@@ -57,7 +54,7 @@ const uploadCSV = ({
   const fieldsToAddToPayloads = { integrations: { All: false, Mixpanel: true } }
   if (method === "track") {
     if (!event) {
-      throw new Error("Must include error if replaying a track")
+      throw new Error("Must include event if replaying a track")
     }
     fieldsToAddToPayloads["event"] = event
   }
@@ -70,18 +67,16 @@ const uploadCSV = ({
     .createReadStream(`events/monsoon/${csvName}.csv`)
     .pipe(csv())
     .on("data", async row => {
-      if (i <= 2) {
-        console.log(`row ${i++}`)
-        pipe.pause()
-        const payload = {
-          userId: getUserIDFunc(row),
-          ...rowTransformFunc(row),
-          ...fieldsToAddToPayloads,
-          timestamp: new Date(row.sent_at),
-        }
-        client[method](payload)
-        pipe.resume()
+      console.log(`row ${i++}`)
+      pipe.pause()
+      const payload = {
+        userId: getUserIDFunc(row),
+        ...rowTransformFunc(row),
+        ...fieldsToAddToPayloads,
+        timestamp: new Date(row.sent_at),
       }
+      client[method](payload)
+      pipe.resume()
     })
     .on("end", () => {
       console.log("CSV file successfully processed")
@@ -125,9 +120,6 @@ const replayEventFromDBRecords = async ({
     const payloadKey = method === "identify" ? "traits" : "properties"
     let i = 0
     for (const rec of records) {
-      if (i > 5) {
-        break
-      }
       console.log(
         `Record ${i++} of ${(records as any[]).length} for ${
           method === "track" ? `event: ${event}` : "identify"
@@ -194,7 +186,6 @@ const replayMonsoonData = async () => {
       name: `${rec.user.firstName} ${rec.user.lastName}`,
       ...getNameAndEmailFromUser(rec.user),
       customerID: rec.id,
-      application: "harvest",
     }),
   } as ReplayEventsFromDBRecords)
 
