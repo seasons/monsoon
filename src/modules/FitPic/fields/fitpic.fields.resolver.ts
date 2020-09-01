@@ -1,17 +1,13 @@
 import { Loader } from "@app/modules/DataLoader"
 import { FitPic } from "@app/prisma"
-import { PrismaDataLoader, PrismaLoader } from "@app/prisma/prisma.loader"
+import { PrismaDataLoader } from "@app/prisma/prisma.loader"
 import { ImageService } from "@modules/Image"
 import { ImageOptions, ImageSize } from "@modules/Image/image.types"
 import { Args, Parent, ResolveField, Resolver } from "@nestjs/graphql"
-import { PrismaService } from "@prisma/prisma.service"
 
 @Resolver("FitPic")
 export class FitPicFieldsResolver {
-  constructor(
-    private readonly prisma: PrismaService,
-    private readonly imageService: ImageService
-  ) {}
+  constructor(private readonly imageService: ImageService) {}
 
   @ResolveField()
   async author(
