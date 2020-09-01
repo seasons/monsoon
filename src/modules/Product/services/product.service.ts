@@ -645,7 +645,7 @@ export class ProductService {
       }),
       topSizeData: type === "Top" && {
         letter: (variant.internalSizeName as LetterSize) || null,
-        ...pick(variant, ["sleeve", "shoulder", "bamboo", "neck", "length"]),
+        ...pick(variant, ["sleeve", "shoulder", "chest", "neck", "length"]),
       },
       bottomSizeData: type === "Bottom" && {
         type: (variant.bottomSizeType as BottomSizeType) || null,
