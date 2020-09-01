@@ -17,7 +17,6 @@ export class PaymentScheduledJobs {
     list.forEach(async item => {
       if (item?.plan?.id) {
         const data = {
-          description: item.plan.description,
           planID: item.plan.id,
           name: item.plan.name,
           price: item.plan.price,

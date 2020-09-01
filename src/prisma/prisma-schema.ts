@@ -6140,6 +6140,7 @@ type PaymentPlan {
   status: String
   name: String
   price: Int
+  tagline: String
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -6157,6 +6158,7 @@ input PaymentPlanCreateInput {
   status: String
   name: String
   price: Int
+  tagline: String
 }
 
 type PaymentPlanEdge {
@@ -6177,6 +6179,8 @@ enum PaymentPlanOrderByInput {
   name_DESC
   price_ASC
   price_DESC
+  tagline_ASC
+  tagline_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -6190,6 +6194,7 @@ type PaymentPlanPreviousValues {
   status: String
   name: String
   price: Int
+  tagline: String
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -6218,6 +6223,7 @@ input PaymentPlanUpdateInput {
   status: String
   name: String
   price: Int
+  tagline: String
 }
 
 input PaymentPlanUpdateManyMutationInput {
@@ -6226,6 +6232,7 @@ input PaymentPlanUpdateManyMutationInput {
   status: String
   name: String
   price: Int
+  tagline: String
 }
 
 input PaymentPlanWhereInput {
@@ -6307,6 +6314,20 @@ input PaymentPlanWhereInput {
   price_lte: Int
   price_gt: Int
   price_gte: Int
+  tagline: String
+  tagline_not: String
+  tagline_in: [String!]
+  tagline_not_in: [String!]
+  tagline_lt: String
+  tagline_lte: String
+  tagline_gt: String
+  tagline_gte: String
+  tagline_contains: String
+  tagline_not_contains: String
+  tagline_starts_with: String
+  tagline_not_starts_with: String
+  tagline_ends_with: String
+  tagline_not_ends_with: String
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]

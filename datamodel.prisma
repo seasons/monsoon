@@ -475,6 +475,7 @@ type PaymentPlan {
   status: String
   name: String
   price: Int
+  tagline: String
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }

@@ -78,15 +78,11 @@ const run = async () => {
         `
   )) as any
 
-  console.log("customerWithMembership", customerWithMembership.id)
-
   const subscriptionId = customerWithMembership?.membership?.subscriptionId
 
   if (!subscriptionId) {
     return
   }
-
-  console.log("subscriptionId", subscriptionId)
 
   paymentService.resumeSubscription(subscriptionId, null, pausedCustomer)
 }

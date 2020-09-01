@@ -11052,6 +11052,7 @@ type PaymentPlan implements Node {
   status: String
   name: String
   price: Int
+  tagline: String
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -11073,6 +11074,7 @@ input PaymentPlanCreateInput {
   status: String
   name: String
   price: Int
+  tagline: String
 }
 
 """An edge in a connection."""
@@ -11097,6 +11099,8 @@ enum PaymentPlanOrderByInput {
   name_DESC
   price_ASC
   price_DESC
+  tagline_ASC
+  tagline_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -11110,6 +11114,7 @@ type PaymentPlanPreviousValues {
   status: String
   name: String
   price: Int
+  tagline: String
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -11157,6 +11162,7 @@ input PaymentPlanUpdateInput {
   status: String
   name: String
   price: Int
+  tagline: String
 }
 
 input PaymentPlanUpdateManyMutationInput {
@@ -11165,6 +11171,7 @@ input PaymentPlanUpdateManyMutationInput {
   status: String
   name: String
   price: Int
+  tagline: String
 }
 
 input PaymentPlanWhereInput {
@@ -11398,6 +11405,46 @@ input PaymentPlanWhereInput {
 
   """All values greater than or equal the given value."""
   price_gte: Int
+  tagline: String
+
+  """All values that are not equal to given value."""
+  tagline_not: String
+
+  """All values that are contained in given list."""
+  tagline_in: [String!]
+
+  """All values that are not contained in given list."""
+  tagline_not_in: [String!]
+
+  """All values less than the given value."""
+  tagline_lt: String
+
+  """All values less than or equal the given value."""
+  tagline_lte: String
+
+  """All values greater than the given value."""
+  tagline_gt: String
+
+  """All values greater than or equal the given value."""
+  tagline_gte: String
+
+  """All values containing the given string."""
+  tagline_contains: String
+
+  """All values not containing the given string."""
+  tagline_not_contains: String
+
+  """All values starting with the given string."""
+  tagline_starts_with: String
+
+  """All values not starting with the given string."""
+  tagline_not_starts_with: String
+
+  """All values ending with the given string."""
+  tagline_ends_with: String
+
+  """All values not ending with the given string."""
+  tagline_not_ends_with: String
   createdAt: DateTime
 
   """All values that are not equal to given value."""
@@ -26901,6 +26948,8 @@ export type PaymentPlanOrderByInput =   'id_ASC' |
   'name_DESC' |
   'price_ASC' |
   'price_DESC' |
+  'tagline_ASC' |
+  'tagline_DESC' |
   'createdAt_ASC' |
   'createdAt_DESC' |
   'updatedAt_ASC' |
@@ -31636,6 +31685,7 @@ export interface PaymentPlanCreateInput {
   status?: String | null
   name?: String | null
   price?: Int | null
+  tagline?: String | null
 }
 
 export interface PaymentPlanSubscriptionWhereInput {
@@ -31655,6 +31705,7 @@ export interface PaymentPlanUpdateInput {
   status?: String | null
   name?: String | null
   price?: Int | null
+  tagline?: String | null
 }
 
 export interface PaymentPlanUpdateManyMutationInput {
@@ -31663,6 +31714,7 @@ export interface PaymentPlanUpdateManyMutationInput {
   status?: String | null
   name?: String | null
   price?: Int | null
+  tagline?: String | null
 }
 
 export interface PaymentPlanWhereInput {
@@ -31747,6 +31799,20 @@ export interface PaymentPlanWhereInput {
   price_lte?: Int | null
   price_gt?: Int | null
   price_gte?: Int | null
+  tagline?: String | null
+  tagline_not?: String | null
+  tagline_in?: String[] | String | null
+  tagline_not_in?: String[] | String | null
+  tagline_lt?: String | null
+  tagline_lte?: String | null
+  tagline_gt?: String | null
+  tagline_gte?: String | null
+  tagline_contains?: String | null
+  tagline_not_contains?: String | null
+  tagline_starts_with?: String | null
+  tagline_not_starts_with?: String | null
+  tagline_ends_with?: String | null
+  tagline_not_ends_with?: String | null
   createdAt?: DateTime | null
   createdAt_not?: DateTime | null
   createdAt_in?: DateTime[] | DateTime | null
@@ -40064,6 +40130,7 @@ export interface PaymentPlan extends Node {
   status?: String | null
   name?: String | null
   price?: Int | null
+  tagline?: String | null
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -40094,6 +40161,7 @@ export interface PaymentPlanPreviousValues {
   status?: String | null
   name?: String | null
   price?: Int | null
+  tagline?: String | null
   createdAt: DateTime
   updatedAt: DateTime
 }
