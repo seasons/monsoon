@@ -47,6 +47,11 @@ export const Loader: (
       adjustedData.params.info = info
     }
 
+    // If needed, get the orderBy from the context
+    if (data.includeOrderBy === true) {
+      adjustedData.params.orderBy = args.orderBy
+    }
+
     return ctx.getDataLoader(adjustedData)
   }
 )

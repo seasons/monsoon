@@ -102,9 +102,7 @@ export class CustomerFieldsResolver {
     prismaLoader: PrismaDataLoader<any>,
     @Loader({
       params: {
-        formatWhere: (ids: string[]) => ({
-          where: { planID_in: ids },
-        }),
+        formatWhere: (ids: string[]) => ({ planID_in: ids }),
         query: `paymentPlans`,
         infoFragment: `fragment EnsurePlanID on PaymentPlan {planID}`,
         getKey: a => a.planID,

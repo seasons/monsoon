@@ -35,6 +35,7 @@ export class PrismaLoader implements NestDataLoader {
     {
       query,
       info,
+      orderBy = null,
       infoFragment = null,
       formatData = identity,
       getKey,
@@ -51,7 +52,7 @@ export class PrismaLoader implements NestDataLoader {
     }
     
     const data = await this.prisma.binding.query[query](
-        formatWhere(keys),
+        { where: formatWhere(keys), orderBy},
         adjustedInfo
       )
 
@@ -118,7 +119,7 @@ export class PrismaLoader implements NestDataLoader {
     return map    
   }
 
-  private defaultFormatWhere = (keys: string[]) => ({where: {id_in: keys}})
+  private defaultFormatWhere = (keys: string[]) => ({id_in: keys})
 
   private validateGenerateParams({getKeys, keyToDataRelationship}: Pick<GenerateParams, "getKeys" | "keyToDataRelationship">) {
     switch (keyToDataRelationship) {

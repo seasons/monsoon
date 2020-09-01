@@ -57,7 +57,7 @@ export class UserFieldsResolver {
       params: {
         query: "customers",
         infoFragment: `fragment EnsureUserWithId on Customer {user {id}}`,
-        formatWhere: ids => ({ where: { user: { id_in: ids } } }),
+        formatWhere: ids => ({ user: { id_in: ids } }),
         getKey: a => a.user.id,
       },
       includeInfo: true,

@@ -7,11 +7,15 @@ export interface NestDataLoader {
    */
   generateDataLoader(generateParams: any): DataLoader<any, any>
 }
-export type GenerateParamsInfo = string
 
 export interface GenerateParams {
+  // basic parameters to cosntruct the prisma call
   query: string
-  info?: GenerateParamsInfo
+  info?: string | any
+  orderBy?: any
+  // Given a set of keys, what is where clause to pass into prisma?
+  // For example, the function (keys) => {id_in: keys} would result in a query input of {where: {id_in: keys}}
+  formatWhere?: (keys: string[]) => any
 
   // If pulling the info from the graphql execution context, pass this to
   // add a fragment to it.
@@ -22,9 +26,6 @@ export interface GenerateParams {
   // Otherwise, pass in getKeys
   getKey?: (obj: any) => string | null
   getKeys?: (obj: any) => string[] | null
-
-  // Given a set of keys, what is the {where: {}} object to pass into prisma?
-  formatWhere?: (keys: string[]) => any
 
   // Given a returned object from prisma, returns the data in the desired format
   formatData?: (any) => any
@@ -47,6 +48,9 @@ export interface LoaderParams {
 
   // pass true to forward the info input passed by the client
   includeInfo?: boolean
+
+  // pass true to forward the orderBy input passed by the client
+  includeOrderBy?: boolean
 }
 
 export interface DataloaderContext {
