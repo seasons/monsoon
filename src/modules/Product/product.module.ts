@@ -18,6 +18,7 @@ import { BrandQueriesResolver } from "./queries/brand.queries.resolver"
 import { ProductQueriesResolver } from "./queries/product.queries.resolver"
 import { SizeQueriesResolver } from "./queries/size.queries.resolver"
 import { BagService } from "./services/bag.service"
+import { BrandService } from "./services/brand.service"
 import { PhysicalProductService } from "./services/physicalProduct.service"
 import { PhysicalProductUtilsService } from "./services/physicalProduct.utils.service"
 import { ProductService } from "./services/product.service"
@@ -26,7 +27,7 @@ import { ProductRequestService } from "./services/productRequest.service"
 import { ProductRequestUtilsService } from "./services/productRequest.utils.service"
 import { ProductVariantService } from "./services/productVariant.service"
 
-@Module({
+export const ProductModuleDef = {
   imports: [
     AirtableModule,
     EmailModule,
@@ -38,6 +39,7 @@ import { ProductVariantService } from "./services/productVariant.service"
   ],
   providers: [
     BagService,
+    BrandService,
     BrandQueriesResolver,
     BrandMutationsResolver,
     ProductRequestService,
@@ -62,5 +64,6 @@ import { ProductVariantService } from "./services/productVariant.service"
     PhysicalProductUtilsService,
     PhysicalProductService,
   ],
-})
+}
+@Module(ProductModuleDef)
 export class ProductModule {}

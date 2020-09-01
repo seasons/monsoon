@@ -6,7 +6,6 @@ import { S3_BASE } from "@modules/Image/services/image.service"
 import { Injectable } from "@nestjs/common"
 import {
   BagItem,
-  BottomSizeCreateInput,
   BottomSizeType,
   Customer,
   ID_Input,
@@ -16,7 +15,6 @@ import {
   ProductFunction,
   ProductStatus,
   ProductType,
-  ProductUpdateInput,
   ProductWhereUniqueInput,
   RecentlyViewedProduct,
   Tag,
@@ -29,6 +27,7 @@ import { head, pick } from "lodash"
 import { DateTime } from "luxon"
 
 import { UtilsService } from "../../Utils/services/utils.service"
+import { bottomSizeRegex } from "../constants"
 import { ProductWithPhysicalProducts } from "../product.types"
 import { PhysicalProductUtilsService } from "./physicalProduct.utils.service"
 import { ProductUtilsService } from "./product.utils.service"
@@ -184,6 +183,13 @@ export class ProductService {
   }
 
   async deepUpsertProduct(input) {
+    // Bottom size name validation
+    if (input.type === "Bottom") {
+      for (const variant of input.variants) {
+        this.validateInternalBottomSizeName(variant.internalSizeName)
+      }
+    }
+
     // get records whose associated data we need for other parts of the upsert
     const brand = await this.prisma.client.brand({ id: input.brandID })
     const color = await this.prisma.client.color({ colorCode: input.colorCode })
@@ -242,6 +248,7 @@ export class ProductService {
         "status",
         "season",
         "architecture",
+        "photographyStatus",
       ]),
       brand: {
         connect: { id: input.brandID },
@@ -282,14 +289,20 @@ export class ProductService {
       update: data,
       where: { slug },
     })
+
+    const sequenceNumbers = await this.physicalProductUtils.groupedSequenceNumbers(
+      input.variants
+    )
+
     await Promise.all(
-      input.variants.map(a =>
-        this.deepUpsertProductVariant({
+      input.variants.map((a, i) => {
+        return this.deepUpsertProductVariant({
+          sequenceNumbers: sequenceNumbers[i],
           variant: a,
-          productID: product.id,
+          productID: slug,
           ...pick(input, ["type", "colorCode", "retailPrice", "status"]),
         })
-      )
+      })
     )
     return product
   }
@@ -455,6 +468,8 @@ export class ProductService {
       modelSizeName,
       tags,
       status,
+      variants,
+      photographyStatus,
       ...updateData
     } = data
     let functionIDs
@@ -469,6 +484,9 @@ export class ProductService {
           slug
           type
           status
+          variants {
+            id
+          }
           brand {
             id
             brandCode
@@ -485,6 +503,18 @@ export class ProductService {
       throw new ApolloError(
         "Unable to unstore a product. Code needs to be written"
       )
+    }
+    if (
+      !!status &&
+      status === "Available" &&
+      (!product?.variants?.length || photographyStatus !== "Done")
+    ) {
+      throw new ApolloError(
+        "Can not set product status to Available. Check that there are product variants and the photography status is done."
+      )
+    }
+    if (!!status && status === "Available" && product.status !== "Available") {
+      updateData.publishedAt = DateTime.local().toISO()
     }
     if (functions) {
       functionIDs = await this.upsertFunctions(functions)
@@ -503,7 +533,21 @@ export class ProductService {
       modelSizeID = modelSize.id
     }
     if (images) {
-      imageIDs = await this.upsertImages(images, product)
+      // Form appropriate image names
+      const imageNames = images.map((_image, index) => {
+        return this.productUtils.getProductImageName(
+          product.brand.brandCode,
+          product.name,
+          product.color.name,
+          index + 1
+        )
+      })
+
+      imageIDs = await this.imageService.upsertImages(
+        images,
+        imageNames,
+        product.slug
+      )
     }
     await this.storeProductIfNeeded(where, status)
     await this.prisma.client.updateProduct({
@@ -515,6 +559,7 @@ export class ProductService {
         modelSize: modelSizeID && { connect: { id: modelSizeID } },
         tags: tagIDs && { set: tagIDs },
         status,
+        photographyStatus,
       },
     })
     if (!!status) {
@@ -575,6 +620,7 @@ export class ProductService {
    * @param productID: id of the parent product
    */
   async deepUpsertProductVariant({
+    sequenceNumbers,
     variant,
     type,
     colorCode,
@@ -582,6 +628,7 @@ export class ProductService {
     productID,
     status,
   }: {
+    sequenceNumbers
     variant
     type: ProductType
     colorCode: string
@@ -592,7 +639,10 @@ export class ProductService {
     const internalSize = await this.productUtils.deepUpsertSize({
       slug: `${variant.sku}-internal`,
       type,
-      display: variant.internalSizeName,
+      display: this.internalSizeNameToDisplaySize({
+        type,
+        sizeName: variant.internalSizeName,
+      }),
       topSizeData: type === "Top" && {
         letter: (variant.internalSizeName as LetterSize) || null,
         ...pick(variant, ["sleeve", "shoulder", "bamboo", "neck", "length"]),
@@ -604,35 +654,14 @@ export class ProductService {
       },
     })
 
-    const manufacturerSizeIDs: { id: string }[] | null =
-      variant.manufacturerSizeNames &&
-      (await Promise.all(
-        variant.manufacturerSizeNames?.map(async sizeName => {
-          // sizeName is of the format "[size type] [size value]"", i.e. "WxL 32x30"
-          const [sizeType, sizeValue] = sizeName.split(" ")
-          const slug = `${variant.sku}-manufacturer-${sizeValue.replace(
-            "x",
-            ""
-          )}`
-          const size = await this.productUtils.deepUpsertSize({
-            slug,
-            type,
-            display: sizeName,
-            topSizeData: type === "Top" && {
-              letter: (sizeValue as LetterSize) || null,
-            },
-            bottomSizeData: type === "Bottom" && {
-              type: (sizeType as BottomSizeType) || null,
-              value: sizeValue || "",
-            },
-          })
-          return { id: size.id }
-        })
-      ))
+    const manufacturerSizeIDs = await this.productVariantService.getManufacturerSizeIDs(
+      variant,
+      type
+    )
 
     const data = {
       productID,
-      product: { connect: { id: productID } },
+      product: { connect: { slug: productID } },
       color: {
         connect: { colorCode },
       },
@@ -657,17 +686,18 @@ export class ProductService {
       update: data,
     })
 
-    for (const physProdData of variant.physicalProducts) {
+    variant.physicalProducts.forEach(async (physProdData, index) => {
+      const sequenceNumber = sequenceNumbers[index]
       await this.prisma.client.upsertPhysicalProduct({
         where: { seasonsUID: physProdData.seasonsUID },
         create: {
           ...physProdData,
-          sequenceNumber: await this.physicalProductUtils.nextSequenceNumber(),
+          sequenceNumber,
           productVariant: { connect: { id: prodVar.id } },
         },
         update: physProdData,
       })
-    }
+    })
 
     return prodVar
   }
@@ -702,69 +732,6 @@ export class ProductService {
       )
     )
     return prismaTags.filter(Boolean).map((tag: Tag) => ({ id: tag.id }))
-  }
-
-  /**
-   * Upserts images for a given product, uploading new ones to S3 when needed.
-   * The [images] argument is either an imageURL or an image file object
-   * @param images of type (string | File)[]
-   * @param product: of type Product as is defined in prisma.binding
-   */
-  private async upsertImages(
-    images: any[],
-    product: PrismaBindingProduct
-  ): Promise<{ id: ID_Input }[]> {
-    const imageDatas = await Promise.all(
-      images.map(async (image, index) => {
-        const data = await image
-        if (typeof data === "string") {
-          // This means that we received an image URL in which case
-          // we just have perfom an upsertImage with the url
-
-          // This URL is sent by the client which means it an Imgix URL.
-          // Thus, we need to convert it to s3 format and strip any query params as needed.
-          const s3BaseURL = S3_BASE.replace(/\/$/, "") // Remove trailing slash
-          const s3ImageURL = `${s3BaseURL}${url.parse(data).pathname}`
-          const prismaImage = await this.prisma.client.upsertImage({
-            create: { url: s3ImageURL, title: product.slug },
-            update: { url: s3ImageURL, title: product.slug },
-            where: { url: s3ImageURL },
-          })
-          return { id: prismaImage.id }
-        } else {
-          // This means that we received a new image in the form of
-          // a file in which case we have to upload the image to S3
-
-          // Form appropriate image name
-          const s3ImageName = await this.productUtils.getProductImageName(
-            product.brand.brandCode,
-            product.name,
-            product.color.name,
-            index + 1
-          )
-
-          // Upload to S3 and retrieve metadata
-          const { height, url, width } = await this.imageService.uploadImage(
-            data,
-            {
-              imageName: s3ImageName,
-            }
-          )
-
-          // Purge this image url in imgix cache
-          await this.imageService.purgeS3ImageFromImgix(url)
-
-          // Upsert the image with the s3 image url
-          const prismaImage = await this.prisma.client.upsertImage({
-            create: { height, url, width, title: product.slug },
-            update: { height, width, title: product.slug },
-            where: { url },
-          })
-          return { id: prismaImage.id }
-        }
-      })
-    )
-    return imageDatas
   }
 
   private async storeProductIfNeeded(
@@ -844,6 +811,32 @@ export class ProductService {
           },
         })
       }
+    }
+  }
+
+  private internalSizeNameToDisplaySize({
+    type,
+    sizeName,
+  }: {
+    type: ProductType
+    sizeName
+  }) {
+    let displaySize
+    switch (type) {
+      case "Bottom":
+        this.validateInternalBottomSizeName(sizeName)
+        displaySize = sizeName.split("x")[0]
+        break
+      default:
+        displaySize = sizeName
+    }
+
+    return displaySize
+  }
+
+  private validateInternalBottomSizeName(sizeName) {
+    if (!sizeName.match(bottomSizeRegex)) {
+      throw new Error(`Invalid bottom size name: ${sizeName}`)
     }
   }
 }

@@ -1,4 +1,4 @@
-import { UtilsService } from "@app/modules/Utils"
+import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { Brand } from "@app/prisma"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { ImageService } from "@modules/Image/services/image.service"
@@ -22,6 +22,7 @@ describe("Validate Warehouse Location", () => {
     )
     let productVariantService = new ProductVariantService(
       prismaService,
+      productUtilsService,
       physicalProductUtilsService,
       null
     )

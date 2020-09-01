@@ -29,6 +29,7 @@ import {
 import { PrismaService } from "@prisma/prisma.service"
 import * as Sentry from "@sentry/node"
 import { ApolloError } from "apollo-server"
+import { addFragmentToInfo } from "graphql-binding"
 import { head } from "lodash"
 
 import { ReservationUtilsService } from "./reservation.utils.service"
@@ -168,7 +169,7 @@ export class ReservationService {
       // Get return data
       reservationReturnData = await this.prisma.binding.query.reservation(
         { where: { id: prismaReservation.id } },
-        info
+        addFragmentToInfo(info, `fragment EnsureId on Reservation {id}`)
       )
     } catch (err) {
       for (const rollbackFunc of rollbackFuncs) {

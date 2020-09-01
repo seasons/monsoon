@@ -38,6 +38,9 @@ export class ProductFieldsResolver {
           fragment EnsureDisplay on ProductVariant {
               internalSize {
                   display
+                  bottom {
+                    value
+                  }
                   productType
               }
           }
@@ -49,17 +52,18 @@ export class ProductFieldsResolver {
 
     if (type === "Top") {
       return this.productUtilsService.sortVariants(productVariants)
+    } else {
+      // type === "Bottom". Note that if we add a new type, we may need to update this
+      const sortedVariants = productVariants.sort((a, b) => {
+        // @ts-ignore
+        return a?.internalSize?.display - b?.internalSize?.display
+      })
+      const uniqueVariants = sortedUniqBy(
+        sortedVariants,
+        (a: any) => a?.internalSize?.bottom?.value
+      )
+      return uniqueVariants
     }
-
-    const sortedVariants = productVariants.sort((a, b) => {
-      // @ts-ignore
-      return a?.internalSize?.display - b?.internalSize?.display
-    })
-    const uniqueVariants = sortedUniqBy(
-      sortedVariants,
-      (a: any) => a?.internalSize?.display
-    )
-    return uniqueVariants
   }
 
   @ResolveField()

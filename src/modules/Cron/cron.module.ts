@@ -10,15 +10,20 @@ import { UtilsModule } from "@modules/Utils/utils.module"
 import { Module } from "@nestjs/common"
 import { PrismaModule } from "@prisma/prisma.module"
 
+import { DripModule } from "../Drip/drip.module"
 import { PaymentModule } from "../Payment/payment.module"
+import { SearchModule } from "../Search/search.module"
 import { DataScheduledJobs } from "./services/data.job.service"
+import { MarketingScheduledJobs } from "./services/marketing.job.service"
 import { MembershipScheduledJobs } from "./services/membership.service"
 import { PaymentScheduledJobs } from "./services/payment.job.service"
 import { ReservationScheduledJobs } from "./services/reservations.job.service"
+import { SearchScheduledJobs } from "./services/search.job.service"
 
 @Module({
   imports: [
     AirtableModule,
+    DripModule,
     EmailModule,
     ErrorModule,
     PrismaModule,
@@ -29,12 +34,15 @@ import { ReservationScheduledJobs } from "./services/reservations.job.service"
     ReservationModule,
     UtilsModule,
     PushNotificationModule,
+    SearchModule,
   ],
   providers: [
     ReservationScheduledJobs,
     DataScheduledJobs,
+    MarketingScheduledJobs,
     MembershipScheduledJobs,
     PaymentScheduledJobs,
+    SearchScheduledJobs,
   ],
   exports: [DataScheduledJobs],
 })

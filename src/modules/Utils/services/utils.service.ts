@@ -8,6 +8,8 @@ import cliProgress from "cli-progress"
 import { camelCase, isObject, mapKeys, snakeCase } from "lodash"
 import moment from "moment"
 
+import { bottomSizeRegex } from "../../Product/constants"
+
 enum ProductSize {
   XS = "XS",
   S = "S",
@@ -21,14 +23,17 @@ enum ProductSize {
 export class UtilsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  randomString() {
-    return Math.random().toString(36).slice(2)
+  // Returns an ISO string for a date that's X days ago
+  xDaysAgoISOString(x: number) {
+    return moment().subtract(x, "days").format()
   }
 
-  deleteFieldsFromObject(obj: object, fieldsToDelete: string[]) {
-    const objCopy = { ...obj }
-    fieldsToDelete.forEach(a => delete objCopy[a])
-    return objCopy
+  xDaysFromNowISOString(x: number) {
+    return moment().add(x, "days").format()
+  }
+
+  randomString() {
+    return Math.random().toString(36).slice(2)
   }
 
   isXDaysBefore({
@@ -55,6 +60,15 @@ export class UtilsService {
       )
     )
     return before.isBefore(after) && after.diff(before, "days") === numDays
+  }
+
+  // pass in an ISO datestring
+  isLessThanXDaysFromNow(dateString: string, x: number) {
+    var date = moment(dateString)
+    return (
+      date.isSameOrBefore(moment().add(x, "days")) &&
+      date.isSameOrAfter(moment())
+    )
   }
 
   isSameDay(first: Date, second: Date) {
@@ -195,9 +209,8 @@ export class UtilsService {
         return "XXL"
     }
 
-    // If we get here, we're expecting a bottom with size WxL e.g 32x28 or 27x8 (shorts)
-    // Regex: (start)digit-digit-x-digit-(optionaldigit)(end)
-    if (!sizeName.match(/^\d\dx\d\d*$/)) {
+    // If we get here, we're expecting a bottom with size WxL e.g 32x28 or 27x8
+    if (!sizeName.match(bottomSizeRegex)) {
       throw new Error(`invalid sizeName: ${sizeName}`)
     }
     return sizeName.toLowerCase().replace("x", "") // 32x28 => 3238

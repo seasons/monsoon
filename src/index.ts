@@ -32,6 +32,7 @@ const handleErrors = (err, req, res, next) => {
 server.use(
   cors({
     origin: [
+      /spring-staging\.herokuapp\.com/,
       "seedling-staging.herokuapp.com",
       /flare\.now\.sh$/,
       /seasons\.nyc$/,

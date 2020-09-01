@@ -5,6 +5,7 @@ import {
   PhysicalProductOffloadMethod,
   PhysicalProductUpdateInput,
   PhysicalProductWhereUniqueInput,
+  WarehouseLocation,
   WarehouseLocationType,
   WarehouseLocationWhereUniqueInput,
 } from "@app/prisma"
@@ -12,7 +13,7 @@ import { Injectable } from "@nestjs/common"
 import { PrismaService } from "@prisma/prisma.service"
 import { ApolloError } from "apollo-server"
 import { GraphQLResolveInfo } from "graphql"
-import { head, identity, pick } from "lodash"
+import { cloneDeep, head, identity, pick } from "lodash"
 
 import { PhysicalProductUtilsService } from "./physicalProduct.utils.service"
 import { ProductService } from "./product.service"
@@ -31,6 +32,9 @@ interface ValidateWarehouseLocationStructureInput {
   locationCode: string
   itemCode: string
 }
+
+const unstoreErrorMessage =
+  "Can not unstore a physical product directly. Must do so from parent product."
 
 @Injectable()
 export class PhysicalProductService {
@@ -54,41 +58,36 @@ export class PhysicalProductService {
       { where },
       `{
       id
+      seasonsUID
       inventoryStatus
+      productStatus
+      warehouseLocation {
+        barcode
+      }
     }`
-    )) as PhysicalProduct
+    )) as PhysicalProduct & { warehouseLocation: WarehouseLocation }
 
-    // TODO: If the physProd has a warehouse location before update, and we are attempting to update its
-    // status to anything but Reservable, throw an error. Leave out for now to avoid chaos.
+    let newData = cloneDeep(data)
 
     // Need to do this before we check for a changing inventory status because this
     // may update the inventoryStatus on data
     if (!!data.warehouseLocation) {
-      await this.validateWarehouseLocationConstraints(
-        await this.prisma.client.physicalProduct(where),
-        data.warehouseLocation.connect
-      )
-      if (!!data.inventoryStatus && data.inventoryStatus !== "Reservable") {
-        throw new ApolloError(
-          `A physical product with a warehouse location can not be set to status ${data.inventoryStatus}. It must be Reservable`
-        )
-      }
-      if (!data.inventoryStatus) {
-        data.inventoryStatus = "Reservable"
-      }
-      const location = await this.prisma.client.location({
-        slug:
-          process.env.SEASONS_CLEANER_LOCATION_SLUG ||
-          "seasons-cleaners-official",
+      newData = await this.preprocessUpdateWithWarehouseLocation({
+        physProdBeforeUpdate,
+        data,
       })
-      data.location = { connect: { id: location.id } }
+    } else if (
+      !!physProdBeforeUpdate.warehouseLocation?.barcode &&
+      newData.inventoryStatus !== "Reservable"
+    ) {
+      throw new ApolloError(
+        "Physical Products with warehouse locations can only be set to a status of Reservable"
+      )
     }
 
-    if (this.changingInventoryStatus(data, physProdBeforeUpdate)) {
+    if (this.changingInventoryStatus(newData, physProdBeforeUpdate)) {
       if (physProdBeforeUpdate.inventoryStatus === "Stored") {
-        throw new ApolloError(
-          "Can not unstore a physical product directly. Must do so from parent product."
-        )
+        throw new ApolloError(unstoreErrorMessage)
       }
 
       if (physProdBeforeUpdate.inventoryStatus === "Offloaded") {
@@ -101,22 +100,22 @@ export class PhysicalProductService {
       // might update the inventoryStatus, i.e. in offloadPhysicalProductIfNeeded
       await this.updateVariantCountsIfNeeded({
         where,
-        inventoryStatus: data.inventoryStatus,
+        inventoryStatus: newData.inventoryStatus,
       })
     }
 
     await this.offloadPhysicalProductIfNeeded({
       where,
-      ...pick(data, ["inventoryStatus", "offloadMethod", "offloadNotes"]),
+      ...pick(newData, ["inventoryStatus", "offloadMethod", "offloadNotes"]),
     } as OffloadPhysicalProductIfNeededInput)
 
-    await this.prisma.client.updatePhysicalProduct({ where, data })
+    await this.prisma.client.updatePhysicalProduct({ where, data: newData })
 
     // Do this at the end so it only happens *after* any status changes have occured
-    if (this.changingInventoryStatus(data, physProdBeforeUpdate)) {
+    if (this.changingInventoryStatus(newData, physProdBeforeUpdate)) {
       await this.prisma.client.createPhysicalProductInventoryStatusChange({
         old: physProdBeforeUpdate.inventoryStatus,
-        new: data.inventoryStatus,
+        new: newData.inventoryStatus,
         physicalProduct: { connect: where },
       })
     }
@@ -228,6 +227,66 @@ export class PhysicalProductService {
     }
 
     return true
+  }
+
+  /*
+  Enforces a variety if rules that need to stay in place whenever we set
+  a warehouse location on a physical product
+  */
+  private async preprocessUpdateWithWarehouseLocation({
+    physProdBeforeUpdate,
+    data,
+  }: {
+    physProdBeforeUpdate: PhysicalProduct
+    data: PhysicalProductUpdateInput
+  }) {
+    // Copy the data object to keep the function pure
+    const newData = cloneDeep(data) as PhysicalProductUpdateInput
+
+    // Make sure the barcode is valid and there is space for the item there
+    await this.validateWarehouseLocationConstraints(
+      physProdBeforeUpdate,
+      newData.warehouseLocation.connect
+    )
+
+    // If we're stowing a physical product, one of two things can be true for its inventory status.
+    // Either it's currently "Stored" and we keep it that way. Or it's some other status and we make sure it's marked as Reservable.
+    // All stowed items should either be Stored or Reservable.
+    switch (physProdBeforeUpdate.inventoryStatus) {
+      case "Stored":
+        if (!!newData.inventoryStatus && newData.inventoryStatus !== "Stored") {
+          throw new ApolloError(unstoreErrorMessage)
+        }
+        newData.inventoryStatus = "Stored"
+        break
+      default:
+        if (
+          !!newData.inventoryStatus &&
+          newData.inventoryStatus !== "Reservable"
+        ) {
+          throw new ApolloError(
+            `A physical product with a warehouse location can not be set to status ${newData.inventoryStatus}. It must be Reservable`
+          )
+        }
+        newData.inventoryStatus = "Reservable"
+        break
+    }
+
+    // All physical products with a warehouse location are located in the warehouse
+    newData.location = {
+      connect: {
+        slug:
+          process.env.SEASONS_CLEANER_LOCATION_SLUG ||
+          "seasons-cleaners-official",
+      },
+    }
+
+    // All physical products with a warehouse location are either clean or new
+    if (physProdBeforeUpdate.productStatus !== "New") {
+      newData.productStatus = "Clean"
+    }
+
+    return newData
   }
 
   /**

@@ -50,6 +50,14 @@ type AggregateEmailReceipt {
   count: Int!
 }
 
+type AggregateFitPic {
+  count: Int!
+}
+
+type AggregateFitPicReport {
+  count: Int!
+}
+
 type AggregateHomepageProductRail {
   count: Int!
 }
@@ -424,6 +432,8 @@ type BillingInfo {
   state: String
   country: String
   postal_code: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 type BillingInfoConnection {
@@ -482,6 +492,10 @@ enum BillingInfoOrderByInput {
   country_DESC
   postal_code_ASC
   postal_code_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
 }
 
 type BillingInfoPreviousValues {
@@ -497,6 +511,8 @@ type BillingInfoPreviousValues {
   state: String
   country: String
   postal_code: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 type BillingInfoSubscriptionPayload {
@@ -730,6 +746,22 @@ input BillingInfoWhereInput {
   postal_code_not_starts_with: String
   postal_code_ends_with: String
   postal_code_not_ends_with: String
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
   AND: [BillingInfoWhereInput!]
   OR: [BillingInfoWhereInput!]
   NOT: [BillingInfoWhereInput!]
@@ -953,6 +985,7 @@ type Brand {
   name: String!
   basedIn: String
   products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
+  images(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Image!]
   since: DateTime
   tier: BrandTier!
   websiteUrl: String
@@ -976,6 +1009,7 @@ input BrandCreateInput {
   name: String!
   basedIn: String
   products: ProductCreateManyWithoutBrandInput
+  images: ImageCreateManyInput
   since: DateTime
   tier: BrandTier!
   websiteUrl: String
@@ -995,6 +1029,7 @@ input BrandCreateWithoutProductsInput {
   logo: Json
   name: String!
   basedIn: String
+  images: ImageCreateManyInput
   since: DateTime
   tier: BrandTier!
   websiteUrl: String
@@ -1089,6 +1124,7 @@ input BrandUpdateInput {
   name: String
   basedIn: String
   products: ProductUpdateManyWithoutBrandInput
+  images: ImageUpdateManyInput
   since: DateTime
   tier: BrandTier
   websiteUrl: String
@@ -1122,6 +1158,7 @@ input BrandUpdateWithoutProductsDataInput {
   logo: Json
   name: String
   basedIn: String
+  images: ImageUpdateManyInput
   since: DateTime
   tier: BrandTier
   websiteUrl: String
@@ -1222,6 +1259,9 @@ input BrandWhereInput {
   products_every: ProductWhereInput
   products_some: ProductWhereInput
   products_none: ProductWhereInput
+  images_every: ImageWhereInput
+  images_some: ImageWhereInput
+  images_none: ImageWhereInput
   since: DateTime
   since_not: DateTime
   since_in: [DateTime!]
@@ -3457,6 +3497,487 @@ input EmailReceiptWhereUniqueInput {
   id: ID
 }
 
+type FitPic {
+  id: ID!
+  image: Image!
+  location: Location
+  products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product!]
+  reports(where: FitPicReportWhereInput, orderBy: FitPicReportOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [FitPicReport!]
+  status: FitPicStatus!
+  user: User!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type FitPicConnection {
+  pageInfo: PageInfo!
+  edges: [FitPicEdge]!
+  aggregate: AggregateFitPic!
+}
+
+input FitPicCreateInput {
+  id: ID
+  image: ImageCreateOneInput!
+  location: LocationCreateOneInput
+  products: ProductCreateManyInput
+  reports: FitPicReportCreateManyWithoutReportedInput
+  status: FitPicStatus
+  user: UserCreateOneWithoutFitPicsInput!
+}
+
+input FitPicCreateManyWithoutUserInput {
+  create: [FitPicCreateWithoutUserInput!]
+  connect: [FitPicWhereUniqueInput!]
+}
+
+input FitPicCreateOneWithoutReportsInput {
+  create: FitPicCreateWithoutReportsInput
+  connect: FitPicWhereUniqueInput
+}
+
+input FitPicCreateWithoutReportsInput {
+  id: ID
+  image: ImageCreateOneInput!
+  location: LocationCreateOneInput
+  products: ProductCreateManyInput
+  status: FitPicStatus
+  user: UserCreateOneWithoutFitPicsInput!
+}
+
+input FitPicCreateWithoutUserInput {
+  id: ID
+  image: ImageCreateOneInput!
+  location: LocationCreateOneInput
+  products: ProductCreateManyInput
+  reports: FitPicReportCreateManyWithoutReportedInput
+  status: FitPicStatus
+}
+
+type FitPicEdge {
+  node: FitPic!
+  cursor: String!
+}
+
+enum FitPicOrderByInput {
+  id_ASC
+  id_DESC
+  status_ASC
+  status_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type FitPicPreviousValues {
+  id: ID!
+  status: FitPicStatus!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type FitPicReport {
+  id: ID!
+  reporter: User!
+  reported: FitPic!
+  status: FitPicReportStatus!
+  reportedAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type FitPicReportConnection {
+  pageInfo: PageInfo!
+  edges: [FitPicReportEdge]!
+  aggregate: AggregateFitPicReport!
+}
+
+input FitPicReportCreateInput {
+  id: ID
+  reporter: UserCreateOneInput!
+  reported: FitPicCreateOneWithoutReportsInput!
+  status: FitPicReportStatus
+}
+
+input FitPicReportCreateManyWithoutReportedInput {
+  create: [FitPicReportCreateWithoutReportedInput!]
+  connect: [FitPicReportWhereUniqueInput!]
+}
+
+input FitPicReportCreateWithoutReportedInput {
+  id: ID
+  reporter: UserCreateOneInput!
+  status: FitPicReportStatus
+}
+
+type FitPicReportEdge {
+  node: FitPicReport!
+  cursor: String!
+}
+
+enum FitPicReportOrderByInput {
+  id_ASC
+  id_DESC
+  status_ASC
+  status_DESC
+  reportedAt_ASC
+  reportedAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type FitPicReportPreviousValues {
+  id: ID!
+  status: FitPicReportStatus!
+  reportedAt: DateTime!
+  updatedAt: DateTime!
+}
+
+input FitPicReportScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  status: FitPicReportStatus
+  status_not: FitPicReportStatus
+  status_in: [FitPicReportStatus!]
+  status_not_in: [FitPicReportStatus!]
+  reportedAt: DateTime
+  reportedAt_not: DateTime
+  reportedAt_in: [DateTime!]
+  reportedAt_not_in: [DateTime!]
+  reportedAt_lt: DateTime
+  reportedAt_lte: DateTime
+  reportedAt_gt: DateTime
+  reportedAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [FitPicReportScalarWhereInput!]
+  OR: [FitPicReportScalarWhereInput!]
+  NOT: [FitPicReportScalarWhereInput!]
+}
+
+enum FitPicReportStatus {
+  Pending
+  Reviewed
+}
+
+type FitPicReportSubscriptionPayload {
+  mutation: MutationType!
+  node: FitPicReport
+  updatedFields: [String!]
+  previousValues: FitPicReportPreviousValues
+}
+
+input FitPicReportSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: FitPicReportWhereInput
+  AND: [FitPicReportSubscriptionWhereInput!]
+  OR: [FitPicReportSubscriptionWhereInput!]
+  NOT: [FitPicReportSubscriptionWhereInput!]
+}
+
+input FitPicReportUpdateInput {
+  reporter: UserUpdateOneRequiredInput
+  reported: FitPicUpdateOneRequiredWithoutReportsInput
+  status: FitPicReportStatus
+}
+
+input FitPicReportUpdateManyDataInput {
+  status: FitPicReportStatus
+}
+
+input FitPicReportUpdateManyMutationInput {
+  status: FitPicReportStatus
+}
+
+input FitPicReportUpdateManyWithoutReportedInput {
+  create: [FitPicReportCreateWithoutReportedInput!]
+  delete: [FitPicReportWhereUniqueInput!]
+  connect: [FitPicReportWhereUniqueInput!]
+  set: [FitPicReportWhereUniqueInput!]
+  disconnect: [FitPicReportWhereUniqueInput!]
+  update: [FitPicReportUpdateWithWhereUniqueWithoutReportedInput!]
+  upsert: [FitPicReportUpsertWithWhereUniqueWithoutReportedInput!]
+  deleteMany: [FitPicReportScalarWhereInput!]
+  updateMany: [FitPicReportUpdateManyWithWhereNestedInput!]
+}
+
+input FitPicReportUpdateManyWithWhereNestedInput {
+  where: FitPicReportScalarWhereInput!
+  data: FitPicReportUpdateManyDataInput!
+}
+
+input FitPicReportUpdateWithoutReportedDataInput {
+  reporter: UserUpdateOneRequiredInput
+  status: FitPicReportStatus
+}
+
+input FitPicReportUpdateWithWhereUniqueWithoutReportedInput {
+  where: FitPicReportWhereUniqueInput!
+  data: FitPicReportUpdateWithoutReportedDataInput!
+}
+
+input FitPicReportUpsertWithWhereUniqueWithoutReportedInput {
+  where: FitPicReportWhereUniqueInput!
+  update: FitPicReportUpdateWithoutReportedDataInput!
+  create: FitPicReportCreateWithoutReportedInput!
+}
+
+input FitPicReportWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  reporter: UserWhereInput
+  reported: FitPicWhereInput
+  status: FitPicReportStatus
+  status_not: FitPicReportStatus
+  status_in: [FitPicReportStatus!]
+  status_not_in: [FitPicReportStatus!]
+  reportedAt: DateTime
+  reportedAt_not: DateTime
+  reportedAt_in: [DateTime!]
+  reportedAt_not_in: [DateTime!]
+  reportedAt_lt: DateTime
+  reportedAt_lte: DateTime
+  reportedAt_gt: DateTime
+  reportedAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [FitPicReportWhereInput!]
+  OR: [FitPicReportWhereInput!]
+  NOT: [FitPicReportWhereInput!]
+}
+
+input FitPicReportWhereUniqueInput {
+  id: ID
+}
+
+input FitPicScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  status: FitPicStatus
+  status_not: FitPicStatus
+  status_in: [FitPicStatus!]
+  status_not_in: [FitPicStatus!]
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [FitPicScalarWhereInput!]
+  OR: [FitPicScalarWhereInput!]
+  NOT: [FitPicScalarWhereInput!]
+}
+
+enum FitPicStatus {
+  Submitted
+  Published
+  Unpublished
+}
+
+type FitPicSubscriptionPayload {
+  mutation: MutationType!
+  node: FitPic
+  updatedFields: [String!]
+  previousValues: FitPicPreviousValues
+}
+
+input FitPicSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: FitPicWhereInput
+  AND: [FitPicSubscriptionWhereInput!]
+  OR: [FitPicSubscriptionWhereInput!]
+  NOT: [FitPicSubscriptionWhereInput!]
+}
+
+input FitPicUpdateInput {
+  image: ImageUpdateOneRequiredInput
+  location: LocationUpdateOneInput
+  products: ProductUpdateManyInput
+  reports: FitPicReportUpdateManyWithoutReportedInput
+  status: FitPicStatus
+  user: UserUpdateOneRequiredWithoutFitPicsInput
+}
+
+input FitPicUpdateManyDataInput {
+  status: FitPicStatus
+}
+
+input FitPicUpdateManyMutationInput {
+  status: FitPicStatus
+}
+
+input FitPicUpdateManyWithoutUserInput {
+  create: [FitPicCreateWithoutUserInput!]
+  delete: [FitPicWhereUniqueInput!]
+  connect: [FitPicWhereUniqueInput!]
+  set: [FitPicWhereUniqueInput!]
+  disconnect: [FitPicWhereUniqueInput!]
+  update: [FitPicUpdateWithWhereUniqueWithoutUserInput!]
+  upsert: [FitPicUpsertWithWhereUniqueWithoutUserInput!]
+  deleteMany: [FitPicScalarWhereInput!]
+  updateMany: [FitPicUpdateManyWithWhereNestedInput!]
+}
+
+input FitPicUpdateManyWithWhereNestedInput {
+  where: FitPicScalarWhereInput!
+  data: FitPicUpdateManyDataInput!
+}
+
+input FitPicUpdateOneRequiredWithoutReportsInput {
+  create: FitPicCreateWithoutReportsInput
+  update: FitPicUpdateWithoutReportsDataInput
+  upsert: FitPicUpsertWithoutReportsInput
+  connect: FitPicWhereUniqueInput
+}
+
+input FitPicUpdateWithoutReportsDataInput {
+  image: ImageUpdateOneRequiredInput
+  location: LocationUpdateOneInput
+  products: ProductUpdateManyInput
+  status: FitPicStatus
+  user: UserUpdateOneRequiredWithoutFitPicsInput
+}
+
+input FitPicUpdateWithoutUserDataInput {
+  image: ImageUpdateOneRequiredInput
+  location: LocationUpdateOneInput
+  products: ProductUpdateManyInput
+  reports: FitPicReportUpdateManyWithoutReportedInput
+  status: FitPicStatus
+}
+
+input FitPicUpdateWithWhereUniqueWithoutUserInput {
+  where: FitPicWhereUniqueInput!
+  data: FitPicUpdateWithoutUserDataInput!
+}
+
+input FitPicUpsertWithoutReportsInput {
+  update: FitPicUpdateWithoutReportsDataInput!
+  create: FitPicCreateWithoutReportsInput!
+}
+
+input FitPicUpsertWithWhereUniqueWithoutUserInput {
+  where: FitPicWhereUniqueInput!
+  update: FitPicUpdateWithoutUserDataInput!
+  create: FitPicCreateWithoutUserInput!
+}
+
+input FitPicWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  image: ImageWhereInput
+  location: LocationWhereInput
+  products_every: ProductWhereInput
+  products_some: ProductWhereInput
+  products_none: ProductWhereInput
+  reports_every: FitPicReportWhereInput
+  reports_some: FitPicReportWhereInput
+  reports_none: FitPicReportWhereInput
+  status: FitPicStatus
+  status_not: FitPicStatus
+  status_in: [FitPicStatus!]
+  status_not_in: [FitPicStatus!]
+  user: UserWhereInput
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [FitPicWhereInput!]
+  OR: [FitPicWhereInput!]
+  NOT: [FitPicWhereInput!]
+}
+
+input FitPicWhereUniqueInput {
+  id: ID
+}
+
 type HomepageProductRail {
   id: ID!
   slug: String!
@@ -3611,6 +4132,11 @@ input ImageCreateInput {
 input ImageCreateManyInput {
   create: [ImageCreateInput!]
   connect: [ImageWhereUniqueInput!]
+}
+
+input ImageCreateOneInput {
+  create: ImageCreateInput
+  connect: ImageWhereUniqueInput
 }
 
 type ImageEdge {
@@ -3809,9 +4335,21 @@ input ImageUpdateManyWithWhereNestedInput {
   data: ImageUpdateManyDataInput!
 }
 
+input ImageUpdateOneRequiredInput {
+  create: ImageCreateInput
+  update: ImageUpdateDataInput
+  upsert: ImageUpsertNestedInput
+  connect: ImageWhereUniqueInput
+}
+
 input ImageUpdateWithWhereUniqueNestedInput {
   where: ImageWhereUniqueInput!
   data: ImageUpdateDataInput!
+}
+
+input ImageUpsertNestedInput {
+  update: ImageUpdateDataInput!
+  create: ImageCreateInput!
 }
 
 input ImageUpsertWithWhereUniqueNestedInput {
@@ -4640,6 +5178,18 @@ type Mutation {
   upsertEmailReceipt(where: EmailReceiptWhereUniqueInput!, create: EmailReceiptCreateInput!, update: EmailReceiptUpdateInput!): EmailReceipt!
   deleteEmailReceipt(where: EmailReceiptWhereUniqueInput!): EmailReceipt
   deleteManyEmailReceipts(where: EmailReceiptWhereInput): BatchPayload!
+  createFitPic(data: FitPicCreateInput!): FitPic!
+  updateFitPic(data: FitPicUpdateInput!, where: FitPicWhereUniqueInput!): FitPic
+  updateManyFitPics(data: FitPicUpdateManyMutationInput!, where: FitPicWhereInput): BatchPayload!
+  upsertFitPic(where: FitPicWhereUniqueInput!, create: FitPicCreateInput!, update: FitPicUpdateInput!): FitPic!
+  deleteFitPic(where: FitPicWhereUniqueInput!): FitPic
+  deleteManyFitPics(where: FitPicWhereInput): BatchPayload!
+  createFitPicReport(data: FitPicReportCreateInput!): FitPicReport!
+  updateFitPicReport(data: FitPicReportUpdateInput!, where: FitPicReportWhereUniqueInput!): FitPicReport
+  updateManyFitPicReports(data: FitPicReportUpdateManyMutationInput!, where: FitPicReportWhereInput): BatchPayload!
+  upsertFitPicReport(where: FitPicReportWhereUniqueInput!, create: FitPicReportCreateInput!, update: FitPicReportUpdateInput!): FitPicReport!
+  deleteFitPicReport(where: FitPicReportWhereUniqueInput!): FitPicReport
+  deleteManyFitPicReports(where: FitPicReportWhereInput): BatchPayload!
   createHomepageProductRail(data: HomepageProductRailCreateInput!): HomepageProductRail!
   updateHomepageProductRail(data: HomepageProductRailUpdateInput!, where: HomepageProductRailWhereUniqueInput!): HomepageProductRail
   updateManyHomepageProductRails(data: HomepageProductRailUpdateManyMutationInput!, where: HomepageProductRailWhereInput): BatchPayload!
@@ -5327,6 +5877,7 @@ type PauseRequest {
   pausePending: Boolean!
   pauseDate: DateTime
   resumeDate: DateTime
+  notified: Boolean!
   membership: CustomerMembership!
 }
 
@@ -5341,6 +5892,7 @@ input PauseRequestCreateInput {
   pausePending: Boolean!
   pauseDate: DateTime
   resumeDate: DateTime
+  notified: Boolean
   membership: CustomerMembershipCreateOneWithoutPauseRequestsInput!
 }
 
@@ -5354,6 +5906,7 @@ input PauseRequestCreateWithoutMembershipInput {
   pausePending: Boolean!
   pauseDate: DateTime
   resumeDate: DateTime
+  notified: Boolean
 }
 
 type PauseRequestEdge {
@@ -5374,6 +5927,8 @@ enum PauseRequestOrderByInput {
   pauseDate_DESC
   resumeDate_ASC
   resumeDate_DESC
+  notified_ASC
+  notified_DESC
 }
 
 type PauseRequestPreviousValues {
@@ -5383,6 +5938,7 @@ type PauseRequestPreviousValues {
   pausePending: Boolean!
   pauseDate: DateTime
   resumeDate: DateTime
+  notified: Boolean!
 }
 
 input PauseRequestScalarWhereInput {
@@ -5434,6 +5990,8 @@ input PauseRequestScalarWhereInput {
   resumeDate_lte: DateTime
   resumeDate_gt: DateTime
   resumeDate_gte: DateTime
+  notified: Boolean
+  notified_not: Boolean
   AND: [PauseRequestScalarWhereInput!]
   OR: [PauseRequestScalarWhereInput!]
   NOT: [PauseRequestScalarWhereInput!]
@@ -5461,6 +6019,7 @@ input PauseRequestUpdateInput {
   pausePending: Boolean
   pauseDate: DateTime
   resumeDate: DateTime
+  notified: Boolean
   membership: CustomerMembershipUpdateOneRequiredWithoutPauseRequestsInput
 }
 
@@ -5468,12 +6027,14 @@ input PauseRequestUpdateManyDataInput {
   pausePending: Boolean
   pauseDate: DateTime
   resumeDate: DateTime
+  notified: Boolean
 }
 
 input PauseRequestUpdateManyMutationInput {
   pausePending: Boolean
   pauseDate: DateTime
   resumeDate: DateTime
+  notified: Boolean
 }
 
 input PauseRequestUpdateManyWithoutMembershipInput {
@@ -5497,6 +6058,7 @@ input PauseRequestUpdateWithoutMembershipDataInput {
   pausePending: Boolean
   pauseDate: DateTime
   resumeDate: DateTime
+  notified: Boolean
 }
 
 input PauseRequestUpdateWithWhereUniqueWithoutMembershipInput {
@@ -5559,6 +6121,8 @@ input PauseRequestWhereInput {
   resumeDate_lte: DateTime
   resumeDate_gt: DateTime
   resumeDate_gte: DateTime
+  notified: Boolean
+  notified_not: Boolean
   membership: CustomerMembershipWhereInput
   AND: [PauseRequestWhereInput!]
   OR: [PauseRequestWhereInput!]
@@ -5576,6 +6140,7 @@ type PaymentPlan {
   status: String
   name: String
   price: Int
+  tagline: String
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -5593,6 +6158,7 @@ input PaymentPlanCreateInput {
   status: String
   name: String
   price: Int
+  tagline: String
 }
 
 type PaymentPlanEdge {
@@ -5613,6 +6179,8 @@ enum PaymentPlanOrderByInput {
   name_DESC
   price_ASC
   price_DESC
+  tagline_ASC
+  tagline_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -5626,6 +6194,7 @@ type PaymentPlanPreviousValues {
   status: String
   name: String
   price: Int
+  tagline: String
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -5654,6 +6223,7 @@ input PaymentPlanUpdateInput {
   status: String
   name: String
   price: Int
+  tagline: String
 }
 
 input PaymentPlanUpdateManyMutationInput {
@@ -5662,6 +6232,7 @@ input PaymentPlanUpdateManyMutationInput {
   status: String
   name: String
   price: Int
+  tagline: String
 }
 
 input PaymentPlanWhereInput {
@@ -5743,6 +6314,20 @@ input PaymentPlanWhereInput {
   price_lte: Int
   price_gt: Int
   price_gte: Int
+  tagline: String
+  tagline_not: String
+  tagline_in: [String!]
+  tagline_not_in: [String!]
+  tagline_lt: String
+  tagline_lte: String
+  tagline_gt: String
+  tagline_gte: String
+  tagline_contains: String
+  tagline_not_contains: String
+  tagline_starts_with: String
+  tagline_not_starts_with: String
+  tagline_ends_with: String
+  tagline_not_ends_with: String
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -10104,6 +10689,7 @@ type PushNotificationReceipt {
   title: String
   recordID: String
   recordSlug: String
+  notificationKey: String
   sentAt: DateTime!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -10126,6 +10712,7 @@ input PushNotificationReceiptCreateInput {
   title: String
   recordID: String
   recordSlug: String
+  notificationKey: String
   sentAt: DateTime!
 }
 
@@ -10149,6 +10736,7 @@ input PushNotificationReceiptCreateWithoutUsersInput {
   title: String
   recordID: String
   recordSlug: String
+  notificationKey: String
   sentAt: DateTime!
 }
 
@@ -10176,6 +10764,8 @@ enum PushNotificationReceiptOrderByInput {
   recordID_DESC
   recordSlug_ASC
   recordSlug_DESC
+  notificationKey_ASC
+  notificationKey_DESC
   sentAt_ASC
   sentAt_DESC
   createdAt_ASC
@@ -10194,6 +10784,7 @@ type PushNotificationReceiptPreviousValues {
   title: String
   recordID: String
   recordSlug: String
+  notificationKey: String
   sentAt: DateTime!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -10326,6 +10917,20 @@ input PushNotificationReceiptScalarWhereInput {
   recordSlug_not_starts_with: String
   recordSlug_ends_with: String
   recordSlug_not_ends_with: String
+  notificationKey: String
+  notificationKey_not: String
+  notificationKey_in: [String!]
+  notificationKey_not_in: [String!]
+  notificationKey_lt: String
+  notificationKey_lte: String
+  notificationKey_gt: String
+  notificationKey_gte: String
+  notificationKey_contains: String
+  notificationKey_not_contains: String
+  notificationKey_starts_with: String
+  notificationKey_not_starts_with: String
+  notificationKey_ends_with: String
+  notificationKey_not_ends_with: String
   sentAt: DateTime
   sentAt_not: DateTime
   sentAt_in: [DateTime!]
@@ -10383,6 +10988,7 @@ input PushNotificationReceiptUpdateDataInput {
   title: String
   recordID: String
   recordSlug: String
+  notificationKey: String
   sentAt: DateTime
 }
 
@@ -10396,6 +11002,7 @@ input PushNotificationReceiptUpdateInput {
   title: String
   recordID: String
   recordSlug: String
+  notificationKey: String
   sentAt: DateTime
 }
 
@@ -10408,6 +11015,7 @@ input PushNotificationReceiptUpdateManyDataInput {
   title: String
   recordID: String
   recordSlug: String
+  notificationKey: String
   sentAt: DateTime
 }
 
@@ -10432,6 +11040,7 @@ input PushNotificationReceiptUpdateManyMutationInput {
   title: String
   recordID: String
   recordSlug: String
+  notificationKey: String
   sentAt: DateTime
 }
 
@@ -10461,6 +11070,7 @@ input PushNotificationReceiptUpdateWithoutUsersDataInput {
   title: String
   recordID: String
   recordSlug: String
+  notificationKey: String
   sentAt: DateTime
 }
 
@@ -10616,6 +11226,20 @@ input PushNotificationReceiptWhereInput {
   recordSlug_not_starts_with: String
   recordSlug_ends_with: String
   recordSlug_not_ends_with: String
+  notificationKey: String
+  notificationKey_not: String
+  notificationKey_in: [String!]
+  notificationKey_not_in: [String!]
+  notificationKey_lt: String
+  notificationKey_lte: String
+  notificationKey_gt: String
+  notificationKey_gte: String
+  notificationKey_contains: String
+  notificationKey_not_contains: String
+  notificationKey_starts_with: String
+  notificationKey_not_starts_with: String
+  notificationKey_ends_with: String
+  notificationKey_not_ends_with: String
   sentAt: DateTime
   sentAt_not: DateTime
   sentAt_in: [DateTime!]
@@ -10692,6 +11316,12 @@ type Query {
   emailReceipt(where: EmailReceiptWhereUniqueInput!): EmailReceipt
   emailReceipts(where: EmailReceiptWhereInput, orderBy: EmailReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [EmailReceipt]!
   emailReceiptsConnection(where: EmailReceiptWhereInput, orderBy: EmailReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): EmailReceiptConnection!
+  fitPic(where: FitPicWhereUniqueInput!): FitPic
+  fitPics(where: FitPicWhereInput, orderBy: FitPicOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [FitPic]!
+  fitPicsConnection(where: FitPicWhereInput, orderBy: FitPicOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): FitPicConnection!
+  fitPicReport(where: FitPicReportWhereUniqueInput!): FitPicReport
+  fitPicReports(where: FitPicReportWhereInput, orderBy: FitPicReportOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [FitPicReport]!
+  fitPicReportsConnection(where: FitPicReportWhereInput, orderBy: FitPicReportOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): FitPicReportConnection!
   homepageProductRail(where: HomepageProductRailWhereUniqueInput!): HomepageProductRail
   homepageProductRails(where: HomepageProductRailWhereInput, orderBy: HomepageProductRailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [HomepageProductRail]!
   homepageProductRailsConnection(where: HomepageProductRailWhereInput, orderBy: HomepageProductRailOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): HomepageProductRailConnection!
@@ -12657,6 +13287,8 @@ type Subscription {
   customerDetail(where: CustomerDetailSubscriptionWhereInput): CustomerDetailSubscriptionPayload
   customerMembership(where: CustomerMembershipSubscriptionWhereInput): CustomerMembershipSubscriptionPayload
   emailReceipt(where: EmailReceiptSubscriptionWhereInput): EmailReceiptSubscriptionPayload
+  fitPic(where: FitPicSubscriptionWhereInput): FitPicSubscriptionPayload
+  fitPicReport(where: FitPicReportSubscriptionWhereInput): FitPicReportSubscriptionPayload
   homepageProductRail(where: HomepageProductRailSubscriptionWhereInput): HomepageProductRailSubscriptionPayload
   image(where: ImageSubscriptionWhereInput): ImageSubscriptionPayload
   label(where: LabelSubscriptionWhereInput): LabelSubscriptionPayload
@@ -13160,9 +13792,10 @@ type User {
   pushNotification: UserPushNotification
   verificationStatus: UserVerificationStatus!
   verificationMethod: UserVerificationMethod!
+  smsReceipts(where: SmsReceiptWhereInput, orderBy: SmsReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [SmsReceipt!]
+  fitPics(where: FitPicWhereInput, orderBy: FitPicOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [FitPic!]
   createdAt: DateTime!
   updatedAt: DateTime!
-  smsReceipts(where: SmsReceiptWhereInput, orderBy: SmsReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [SmsReceipt!]
 }
 
 type UserConnection {
@@ -13185,6 +13818,7 @@ input UserCreateInput {
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
   smsReceipts: SmsReceiptCreateManyInput
+  fitPics: FitPicCreateManyWithoutUserInput
 }
 
 input UserCreateManyWithoutPushNotificationsInput {
@@ -13197,8 +13831,29 @@ input UserCreateOneInput {
   connect: UserWhereUniqueInput
 }
 
+input UserCreateOneWithoutFitPicsInput {
+  create: UserCreateWithoutFitPicsInput
+  connect: UserWhereUniqueInput
+}
+
 input UserCreaterolesInput {
   set: [UserRole!]
+}
+
+input UserCreateWithoutFitPicsInput {
+  id: ID
+  auth0Id: String!
+  email: String!
+  firstName: String!
+  lastName: String!
+  role: UserRole
+  roles: UserCreaterolesInput
+  pushNotificationStatus: PushNotificationStatus
+  pushNotifications: PushNotificationReceiptCreateManyWithoutUsersInput
+  pushNotification: UserPushNotificationCreateOneInput
+  verificationStatus: UserVerificationStatus
+  verificationMethod: UserVerificationMethod
+  smsReceipts: SmsReceiptCreateManyInput
 }
 
 input UserCreateWithoutPushNotificationsInput {
@@ -13214,6 +13869,7 @@ input UserCreateWithoutPushNotificationsInput {
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
   smsReceipts: SmsReceiptCreateManyInput
+  fitPics: FitPicCreateManyWithoutUserInput
 }
 
 type UserEdge {
@@ -13743,6 +14399,7 @@ input UserUpdateDataInput {
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
   smsReceipts: SmsReceiptUpdateManyInput
+  fitPics: FitPicUpdateManyWithoutUserInput
 }
 
 input UserUpdateInput {
@@ -13758,6 +14415,7 @@ input UserUpdateInput {
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
   smsReceipts: SmsReceiptUpdateManyInput
+  fitPics: FitPicUpdateManyWithoutUserInput
 }
 
 input UserUpdateManyDataInput {
@@ -13817,8 +14475,30 @@ input UserUpdateOneRequiredInput {
   connect: UserWhereUniqueInput
 }
 
+input UserUpdateOneRequiredWithoutFitPicsInput {
+  create: UserCreateWithoutFitPicsInput
+  update: UserUpdateWithoutFitPicsDataInput
+  upsert: UserUpsertWithoutFitPicsInput
+  connect: UserWhereUniqueInput
+}
+
 input UserUpdaterolesInput {
   set: [UserRole!]
+}
+
+input UserUpdateWithoutFitPicsDataInput {
+  auth0Id: String
+  email: String
+  firstName: String
+  lastName: String
+  role: UserRole
+  roles: UserUpdaterolesInput
+  pushNotificationStatus: PushNotificationStatus
+  pushNotifications: PushNotificationReceiptUpdateManyWithoutUsersInput
+  pushNotification: UserPushNotificationUpdateOneInput
+  verificationStatus: UserVerificationStatus
+  verificationMethod: UserVerificationMethod
+  smsReceipts: SmsReceiptUpdateManyInput
 }
 
 input UserUpdateWithoutPushNotificationsDataInput {
@@ -13833,6 +14513,7 @@ input UserUpdateWithoutPushNotificationsDataInput {
   verificationStatus: UserVerificationStatus
   verificationMethod: UserVerificationMethod
   smsReceipts: SmsReceiptUpdateManyInput
+  fitPics: FitPicUpdateManyWithoutUserInput
 }
 
 input UserUpdateWithWhereUniqueWithoutPushNotificationsInput {
@@ -13843,6 +14524,11 @@ input UserUpdateWithWhereUniqueWithoutPushNotificationsInput {
 input UserUpsertNestedInput {
   update: UserUpdateDataInput!
   create: UserCreateInput!
+}
+
+input UserUpsertWithoutFitPicsInput {
+  update: UserUpdateWithoutFitPicsDataInput!
+  create: UserCreateWithoutFitPicsInput!
 }
 
 input UserUpsertWithWhereUniqueWithoutPushNotificationsInput {
@@ -13954,6 +14640,12 @@ input UserWhereInput {
   verificationMethod_not: UserVerificationMethod
   verificationMethod_in: [UserVerificationMethod!]
   verificationMethod_not_in: [UserVerificationMethod!]
+  smsReceipts_every: SmsReceiptWhereInput
+  smsReceipts_some: SmsReceiptWhereInput
+  smsReceipts_none: SmsReceiptWhereInput
+  fitPics_every: FitPicWhereInput
+  fitPics_some: FitPicWhereInput
+  fitPics_none: FitPicWhereInput
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -13970,9 +14662,6 @@ input UserWhereInput {
   updatedAt_lte: DateTime
   updatedAt_gt: DateTime
   updatedAt_gte: DateTime
-  smsReceipts_every: SmsReceiptWhereInput
-  smsReceipts_some: SmsReceiptWhereInput
-  smsReceipts_none: SmsReceiptWhereInput
   AND: [UserWhereInput!]
   OR: [UserWhereInput!]
   NOT: [UserWhereInput!]

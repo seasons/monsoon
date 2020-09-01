@@ -1,13 +1,13 @@
 import { AppModule } from "@app/app.module"
+import { PushNotificationModule } from "@app/modules/PushNotification/pushNotification.module"
 import { INestApplication } from "@nestjs/common"
 import { ContextIdFactory } from "@nestjs/core"
 import { Test } from "@nestjs/testing"
 import request from "supertest"
 
-import { PrismaModule } from "../../../prisma/prisma.module"
 import { PrismaService } from "../../../prisma/prisma.service"
 import { ShippoController } from "../controllers/shippo.controller"
-import { PackageArrived, PackageDeparted } from "./shippoEvents.stub"
+import { PackageDeparted } from "./shippoEvents.stub"
 
 class PrismaServiceMock {
   binding = {
@@ -50,7 +50,7 @@ describe("Shippo Controller", () => {
     const moduleRef = await Test.createTestingModule({
       controllers: [ShippoController],
       providers: [ShippoController, PrismaServiceProvider],
-      imports: [AppModule],
+      imports: [PushNotificationModule],
     })
       .overrideProvider(PrismaService)
       .useClass(PrismaServiceMock)

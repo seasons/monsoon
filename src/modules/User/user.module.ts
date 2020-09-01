@@ -2,6 +2,7 @@ import { Module } from "@nestjs/common"
 import { PrismaModule } from "@prisma/prisma.module"
 
 import { AirtableModule } from "../Airtable/airtable.module"
+import { AnalyticsModule } from "../Analytics/analytics.module"
 import { EmailModule } from "../Email/email.module"
 import { PushNotificationModule } from "../PushNotification/pushNotification.module"
 import { ShippingModule } from "../Shipping/shipping.module"
@@ -13,6 +14,7 @@ import { CustomerMutationsResolver } from "./mutations/customer.mutations"
 import { UserMutationsResolver } from "./mutations/user.mutations"
 import { MeQueriesResolver } from "./queries/me.queries"
 import { UserQueriesResolver } from "./queries/user.queries.resolver"
+import { AdmissionsService } from "./services/admissions.service"
 import { AuthService } from "./services/auth.service"
 import { CustomerService } from "./services/customer.service"
 
@@ -23,7 +25,9 @@ import { CustomerService } from "./services/customer.service"
     PrismaModule,
     ShippingModule,
     PushNotificationModule,
+    ShippingModule,
     UtilsModule,
+    AnalyticsModule,
   ],
   providers: [
     AuthService,
@@ -35,6 +39,7 @@ import { CustomerService } from "./services/customer.service"
     UserMutationsResolver,
     UserQueriesResolver,
     UserFieldsResolver,
+    AdmissionsService,
   ],
   exports: [AuthService, CustomerService],
 })

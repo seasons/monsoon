@@ -104,6 +104,18 @@ export class ProductQueriesResolver {
   }
 
   @Query()
+  async physicalProductsConnection(@Args() args, @Info() info) {
+    return await this.prisma.binding.query.physicalProductsConnection(
+      args,
+      addFragmentToInfo(
+        info,
+        // for computed fields
+        `fragment EnsureId on PhysicalProductConnection { edges { node { id } } }`
+      )
+    )
+  }
+
+  @Query()
   async categories(@Args() args, @Info() info) {
     return await this.prisma.binding.query.categories(args, info)
   }

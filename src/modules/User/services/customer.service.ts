@@ -1,3 +1,5 @@
+import { ApplicationType } from "@app/decorators/application.decorator"
+import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { Injectable } from "@nestjs/common"
 import {
@@ -8,20 +10,26 @@ import {
   User,
 } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
+import * as Sentry from "@sentry/node"
 import { ApolloError } from "apollo-server"
 
+import { AdmissionsService } from "./admissions.service"
 import { AuthService } from "./auth.service"
+
+type TriageCustomerResult = "Waitlisted" | "Authorized"
 
 @Injectable()
 export class CustomerService {
   constructor(
-    private readonly authService: AuthService,
+    private readonly auth: AuthService,
     private readonly prisma: PrismaService,
-    private readonly shippingService: ShippingService
+    private readonly shipping: ShippingService,
+    private readonly admissions: AdmissionsService,
+    private readonly segment: SegmentService
   ) {}
 
   async setCustomerPrismaStatus(user: User, status: CustomerStatus) {
-    const customer = await this.authService.getCustomerFromUserID(user.id)
+    const customer = await this.auth.getCustomerFromUserID(user.id)
     await this.prisma.client.updateCustomer({
       data: { status },
       where: { id: customer.id },
@@ -51,7 +59,7 @@ export class CustomerService {
       }
       const {
         isValid: shippingAddressIsValid,
-      } = await this.shippingService.shippoValidateAddress({
+      } = await this.shipping.shippoValidateAddress({
         name,
         street1,
         city,
@@ -97,7 +105,7 @@ export class CustomerService {
     } = shippingAddress
     const {
       isValid: shippingAddressIsValid,
-    } = await this.shippingService.shippoValidateAddress({
+    } = await this.shipping.shippoValidateAddress({
       name: user.firstName,
       street1: shippingStreet1,
       city: shippingCity,
@@ -181,9 +189,27 @@ export class CustomerService {
   }
 
   async triageCustomer(
-    where: CustomerWhereUniqueInput
-  ): Promise<"Waitlisted" | "Authorized"> {
-    const customer = await this.prisma.client.customer(where)
+    where: CustomerWhereUniqueInput,
+    application: ApplicationType
+  ): Promise<TriageCustomerResult> {
+    const customer = await this.prisma.binding.query.customer(
+      { where },
+      `{
+        status
+        detail {
+          shippingAddress {
+            zipCode
+          }
+          topSizes
+          waistSizes
+        }
+        user {
+          id
+          firstName
+          lastName
+        }
+      }`
+    )
 
     if (!["Created", "Invited"].includes(customer.status)) {
       throw new ApolloError(
@@ -191,10 +217,34 @@ export class CustomerService {
       )
     }
 
+    let status = "Waitlisted" as TriageCustomerResult
+    try {
+      if (
+        process.env.AUTOMATIC_ADMISSIONS === "true" &&
+        this.admissions.zipcodeAllowed(
+          customer.detail.shippingAddress.zipCode
+        ) &&
+        (await this.admissions.belowWeeklyNewActiveUsersOpsThreshold()) &&
+        (await this.admissions.haveSufficientInventoryToServiceCustomer(where))
+      ) {
+        status = "Authorized"
+        this.segment.trackBecameAuthorized(customer.user.id, {
+          previousStatus: customer.status,
+          firstName: customer.user.firstName,
+          lastName: customer.user.lastName,
+          email: customer.user.email,
+          method: "Automatic",
+          application,
+        })
+      }
+    } catch (err) {
+      Sentry.captureException(err)
+    }
+
     await this.prisma.client.updateCustomer({
       where,
-      data: { status: "Waitlisted" },
+      data: { status },
     })
-    return "Waitlisted"
+    return status
   }
 }

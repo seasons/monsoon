@@ -29,7 +29,7 @@ export class DataScheduledJobs {
   ) {}
 
   @Cron(CronExpression.MONDAY_TO_FRIDAY_AT_9AM)
-  async airtableToPrismaHealthCheck() {
+  async prismaHealthCheck() {
     let message = { channel: process.env.SLACK_DEV_CHANNEL_ID, text: "'" }
     const {
       SUIDToSKUMismatches,
@@ -348,9 +348,37 @@ export class DataScheduledJobs {
           break
         case "Reserved":
           if (!activeReservationWithPhysProd) {
-            thisCase.issues.push(
-              "Has status reserved but is not on an active reservation"
-            )
+            // check if the customer held onto it from their last completed reservation
+            const lastCompletedReservation = head(
+              await this.prisma.binding.query.reservations(
+                {
+                  where: {
+                    AND: [
+                      { products_some: { seasonsUID: physProd.seasonsUID } },
+                      { status: "Completed" },
+                    ],
+                  },
+                  orderBy: "createdAt_DESC",
+                },
+                `{
+                reservationNumber
+                status
+                returnedPackage {
+                 items {
+                   seasonsUID
+                 } 
+                }
+              }`
+              )
+            ) as any
+            const returnedItems =
+              lastCompletedReservation?.returnedPackage?.items?.map(
+                a => a.seasonsUID
+              ) || []
+            if (returnedItems.includes(physProd.inventoryStatus))
+              thisCase.issues.push(
+                `Has status reserved but is not on an active reservation. It was returned last on reservation ${lastCompletedReservation.reservationNumber}`
+              )
           }
           break
         case "Reservable":
@@ -374,13 +402,24 @@ export class DataScheduledJobs {
 
       // Check warehouse location rules
       if (!!physProd.warehouseLocation) {
-        if (physProd.inventoryStatus !== "Reservable") {
+        // If it does have a warehouse location, it should either be Reservable, Stored or be on a Queued Reservation
+        const isReservableOrStored = ["Reservable", "Stored"].includes(
+          physProd.inventoryStatus
+        )
+        const isOnQueuedReservation =
+          activeReservationWithPhysProd?.status === "Queued"
+        if (!(isReservableOrStored || isOnQueuedReservation)) {
           thisCase.issues.push(
-            `Has warehouse location ${physProd.warehouseLocation.barcode}. Either it shouldn't have one, or it should be Reservable`
+            `Has warehouse location ${
+              physProd.warehouseLocation.barcode
+            }. It should either be reservable, stored, or be on a queued reservation. Active Reservation: ${
+              activeReservationWithPhysProd || "none"
+            }`
           )
         }
       } else {
-        if (physProd.InventoryStatus === "Reservable") {
+        // If it doesn't have a warehouse location, it shouldn't be reservable
+        if (physProd.inventoryStatus === "Reservable") {
           thisCase.issues.push(`Has no warehouse location, but is reservable.`)
         }
       }

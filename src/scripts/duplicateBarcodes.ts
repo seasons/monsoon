@@ -1,10 +1,10 @@
 import "module-alias/register"
 
-import { uniqBy } from "lodash"
+import { head, uniqBy } from "lodash"
 
 import { PrismaService } from "../prisma/prisma.service"
 
-const run = async () => {
+const findDuplicates = async () => {
   const ps = new PrismaService()
   const sequenceNumbers = (await ps.client.physicalProducts()).map(
     a => a.sequenceNumber
@@ -28,4 +28,26 @@ const run = async () => {
   console.log(cases)
 }
 
-run()
+const fixProduct = async seasonsUID => {
+  const ps = new PrismaService()
+
+  const lastPhysicalProduct = head(
+    await ps.client.physicalProducts({
+      first: 1,
+      orderBy: "sequenceNumber_DESC",
+    })
+  )
+  let sequenceNumber = lastPhysicalProduct.sequenceNumber + 1
+
+  await ps.client.updatePhysicalProduct({
+    where: { seasonsUID },
+    data: {
+      sequenceNumber,
+    },
+  })
+  console.log(seasonsUID, ": ", sequenceNumber)
+}
+
+// fixProduct("<SUID HERE>")
+
+findDuplicates()

@@ -1,14 +1,42 @@
 type Query {
   search(query: String!, options: SearchOptions): [SearchResult]!
+    @hasRole(roles: [Admin])
 }
 
 input SearchOptions {
   includeTypes: [String]
 }
 
-union SearchResultType = Product | Brand
+enum SearchResultType {
+  Product
+  Brand
+  PhysicalProduct
+}
+
+union SearchResultData =
+    ProductSearchResultData
+  | PhysicalProductSearchResultData
 
 type SearchResult {
-  data: SearchResultType!
-  score: Float
+  kindOf: SearchResultType!
+  data: SearchResultData!
+}
+
+type ProductSearchResultData {
+  id: ID!
+  slug: String!
+  name: String!
+  brandName: String!
+  image: String
+  description: String
+  variantsCount: Int!
+  physicalProductsCount: Int!
+}
+
+type PhysicalProductSearchResultData {
+  id: ID!
+  productName: String!
+  seasonsUID: String!
+  inventoryStatus: InventoryStatus
+  barcode: String!
 }

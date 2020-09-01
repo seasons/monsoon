@@ -5,7 +5,6 @@ import {
   Category,
   Product,
   ProductMaterialCategoryCreateInput,
-  ProductMaterialCategoryUpdateInput,
 } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
 import { head, identity, pickBy, union, uniqBy } from "lodash"
@@ -107,7 +106,7 @@ export class ProductUtilsService {
         const category = allCategoriesWithChildren.find(
           cat => cat.slug === categorySlug
         )
-        if (category.children.length > 0) {
+        if (category?.children.length > 0) {
           category.children.forEach(child => {
             getChildren(child.slug, results)
           })

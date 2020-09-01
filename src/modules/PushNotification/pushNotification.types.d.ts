@@ -1,11 +1,15 @@
 import { PushNotificationReceiptCreateInput } from "@app/prisma/prisma.binding"
 
 export type PushNotificationID =
-  | "ResetBag"
-  | "ReturnDue"
-  | "NewBlogPost"
   | "Custom"
   | "CompleteAccount"
+  | "NewBlogPost"
+  | "ResumeReminder"
+  | "ReservationShipped"
+  | "ReservationDelivered"
+  | "ResetBag"
+  | "ReturnDue"
+  | "PublishFitPic"
 export type PushNotificationInterest = "seasons-general-notifications"
 export type PushNotificationVars = NewBlogPostVars | {}
 

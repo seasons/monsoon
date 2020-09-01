@@ -7,7 +7,6 @@ import { GqlModuleOptions, GraphQLModule } from "@nestjs/graphql"
 import { ScheduleModule } from "@nestjs/schedule"
 import sgMail from "@sendgrid/mail"
 import * as Airtable from "airtable"
-import Analytics from "analytics-node"
 import chargebee from "chargebee"
 import { importSchema } from "graphql-import"
 
@@ -19,6 +18,7 @@ import {
   CustomerModule,
   EmailModule,
   FAQModule,
+  FitPicModule,
   HomepageModule,
   ImageModule,
   PaymentModule,
@@ -30,12 +30,11 @@ import {
   ShippingModule,
   SlackModule,
   UserModule,
-  UtilsModule,
   directiveResolvers,
 } from "./modules"
+import { AnalyticsModule } from "./modules/Analytics/analytics.module"
 import { TwilioModule } from "./modules/Twilio/twilio.module"
-
-const analytics = new Analytics(process.env.SEGMENT_MONSOON_WRITE_KEY)
+import { UtilsModule } from "./modules/Utils/utils.module"
 
 Airtable.configure({
   endpointUrl: "https://api.airtable.com",
@@ -70,7 +69,6 @@ const scheduleModule =
           },
           directiveResolvers,
           context: ({ req }) => ({
-            analytics,
             req,
           }),
           uploads: {
@@ -84,9 +82,11 @@ const scheduleModule =
           },
         } as GqlModuleOptions),
     }),
+    AnalyticsModule,
     AirtableModule,
     BlogModule,
     CollectionModule,
+    FitPicModule,
     CustomerModule,
     EmailModule,
     FAQModule,

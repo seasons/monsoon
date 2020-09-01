@@ -225,6 +225,7 @@ type Brand {
   name: String!
   basedIn: String
   products: [Product!]!
+  images: [Image!]
   since: DateTime
   tier: BrandTier!
   websiteUrl: String
@@ -474,6 +475,7 @@ type PaymentPlan {
   status: String
   name: String
   price: Int
+  tagline: String
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
@@ -535,6 +537,8 @@ type PushNotificationReceipt {
   recordID: String
   # slug we pass as a param
   recordSlug: String
+  # key/identifier of the notification payload
+  notificationKey: String
   sentAt: DateTime!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
@@ -553,11 +557,44 @@ enum UserVerificationStatus {
 }
 
 enum PushNotificationStatus {
-   Blocked
-   Granted
-   Denied
- }
- 
+  Blocked
+  Granted
+  Denied
+}
+
+enum FitPicStatus {
+  Submitted
+  Published
+  Unpublished
+}
+
+type FitPic {
+  id: ID! @id
+  image: Image!
+  location: Location
+  products: [Product!] @scalarList(strategy: RELATION)
+  reports: [FitPicReport!]!
+    @relation(name: "FitPicToFitPicReport", onDelete: CASCADE)
+  status: FitPicStatus! @default(value: Submitted)
+  user: User! @relation(name: "UserToFitPic")
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+enum FitPicReportStatus {
+  Pending
+  Reviewed
+}
+
+type FitPicReport {
+  id: ID! @id
+  reporter: User!
+  reported: FitPic! @relation(name: "FitPicToFitPicReport")
+  status: FitPicReportStatus! @default(value: Pending)
+  reportedAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
 type User {
   id: ID! @id
   auth0Id: String! @unique
@@ -567,13 +604,16 @@ type User {
   role: UserRole! @default(value: Customer)
   roles: [UserRole!]! @scalarList(strategy: RELATION)
   pushNotificationStatus: PushNotificationStatus! @default(value: Denied)
-  pushNotifications: [PushNotificationReceipt!] @relation(name: "UserToPushNotificationReceipts")
+  pushNotifications: [PushNotificationReceipt!]
+    @relation(name: "UserToPushNotificationReceipts", onDelete: CASCADE)
   pushNotification: UserPushNotification
   verificationStatus: UserVerificationStatus! @default(value: Pending)
   verificationMethod: UserVerificationMethod! @default(value: None)
+  smsReceipts: [SmsReceipt!]!
+    @relation(name: "UserToSmsReceipts", onDelete: CASCADE)
+  fitPics: [FitPic!]! @relation(name: "UserToFitPic", onDelete: CASCADE)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
-  smsReceipts: [SmsReceipt!]! @scalarList(strategy: RELATION)
 }
 
 type StylePreferences {
@@ -629,12 +669,14 @@ type BagItem {
 
 type Customer {
   id: ID! @id
-  user: User! @unique
+  user: User! @unique @relation(name: "CustomerToUser", onDelete: CASCADE)
   status: CustomerStatus
   detail: CustomerDetail
+    @relation(name: "CustomerToCustomerDetail", onDelete: CASCADE)
   billingInfo: BillingInfo
   plan: Plan
   membership: CustomerMembership
+    @relation(name: "CustomerToCustomerMembership", onDelete: CASCADE)
   bagItems: [BagItem] @relation(name: "CustomerToBagItem")
   reservations: [Reservation] @relation(name: "CustomerToReservation")
 }
@@ -642,7 +684,12 @@ type Customer {
 type CustomerMembership {
   id: ID! @id
   subscriptionId: String!
-  customer: Customer! @relation(link: INLINE)
+  customer: Customer!
+    @relation(
+      name: "CustomerToCustomerMembership"
+      link: INLINE
+      onDelete: SET_NULL
+    )
   pauseRequests: [PauseRequest]
     @relation(name: "CustomerMembershipToPauseRequest", onDelete: CASCADE)
 }
@@ -654,6 +701,7 @@ type PauseRequest {
   pausePending: Boolean!
   pauseDate: DateTime
   resumeDate: DateTime
+  notified: Boolean! @default(value: false)
   membership: CustomerMembership!
     @relation(name: "CustomerMembershipToPauseRequest")
 }
@@ -797,6 +845,8 @@ type BillingInfo {
   state: String
   country: String
   postal_code: String
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
 }
 
 type ProductRequest {

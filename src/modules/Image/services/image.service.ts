@@ -1,6 +1,8 @@
 import qs from "querystring"
+import * as url from "url"
 
 import { Injectable, Logger } from "@nestjs/common"
+import { ID_Input } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
 import AWS from "aws-sdk"
 import { imageSize } from "image-size"
@@ -237,5 +239,60 @@ export class ImageService {
         }
       )
     })
+  }
+
+  /**
+   * Upserts images for a given product or brand, uploading new ones to S3 when needed.
+   * The [images] argument is either an imageURL or an image file object
+   * @param images of type (string | File)[]
+   * @param imageNames: an array of image names
+   * @param title: a title for the image, usually the record's slug
+   */
+  async upsertImages(
+    images: any[],
+    imageNames: string[],
+    title: string
+  ): Promise<{ id: ID_Input }[]> {
+    const imageDatas = await Promise.all(
+      images.map(async (image, index) => {
+        const data = await image
+        if (typeof data === "string") {
+          // This means that we received an image URL in which case
+          // we just have perfom an upsertImage with the url
+
+          // This URL is sent by the client which means it an Imgix URL.
+          // Thus, we need to convert it to s3 format and strip any query params as needed.
+          const s3BaseURL = S3_BASE.replace(/\/$/, "") // Remove trailing slash
+          const s3ImageURL = `${s3BaseURL}${url.parse(data).pathname}`
+          const prismaImage = await this.prisma.client.upsertImage({
+            create: { url: s3ImageURL, title },
+            update: { url: s3ImageURL, title },
+            where: { url: s3ImageURL },
+          })
+          return { id: prismaImage.id }
+        } else {
+          // This means that we received a new image in the form of
+          // a file in which case we have to upload the image to S3
+
+          // Upload to S3 and retrieve metadata
+          const imageName = imageNames[index]
+          const { height, url, width } = await this.uploadImage(data, {
+            imageName,
+          })
+
+          // Purge this image url in imgix cache
+          await this.purgeS3ImageFromImgix(url)
+
+          // Upsert the image with the s3 image url
+          const prismaImage = await this.prisma.client.upsertImage({
+            create: { height, url, width, title },
+            update: { height, width, title },
+            where: { url },
+          })
+          return { id: prismaImage.id }
+        }
+      })
+    )
+    return imageDatas
   }
 }

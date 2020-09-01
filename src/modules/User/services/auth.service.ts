@@ -1,4 +1,5 @@
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
+import { ShippingUtilsService } from "@app/modules/Shipping/services/shipping.utils.service"
 import { CustomerDetail } from "@app/prisma/prisma.binding"
 import { Injectable } from "@nestjs/common"
 import {
@@ -7,6 +8,7 @@ import {
 } from "@prisma/index"
 import { PrismaService } from "@prisma/prisma.service"
 import { ForbiddenError, UserInputError } from "apollo-server"
+import axios from "axios"
 import { head } from "lodash"
 import request from "request"
 
@@ -29,7 +31,8 @@ interface Auth0User {
 export class AuthService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly pushNotification: PushNotificationService
+    private readonly pushNotification: PushNotificationService,
+    private readonly shippingUtils: ShippingUtilsService
   ) {}
 
   async signupUser({
@@ -325,6 +328,23 @@ export class AuthService {
   }
 
   private async createPrismaCustomerForExistingUser(userID, details, status) {
+    if (details?.shippingAddress?.create?.zipCode) {
+      try {
+        const {
+          city,
+          state,
+        } = (await this.shippingUtils.getCityAndStateFromZipCode(
+          details?.shippingAddress?.create?.zipCode
+        )) as any
+        details.shippingAddress.create.city = city
+        details.shippingAddress.create.state = state
+      } catch (error) {
+        throw new Error(
+          `Error looking up city and state from zipCode: ${error}`
+        )
+      }
+    }
+
     return await this.prisma.client.createCustomer({
       user: {
         connect: { id: userID },

@@ -9,6 +9,15 @@ type Query {
     first: Int
     last: Int
   ): [PhysicalProduct]!
+  physicalProductsConnection(
+    where: PhysicalProductWhereInput
+    orderBy: PhysicalProductOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): PhysicalProductConnection!
   warehouseLocations(
     where: WarehouseLocationWhereInput
     orderBy: WarehouseLocationOrderByInput

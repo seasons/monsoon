@@ -1,5 +1,5 @@
 import { PushNotificationService } from "@app/modules/PushNotification"
-import { UtilsService } from "@app/modules/Utils"
+import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Body, Controller, Logger, Post } from "@nestjs/common"
 import { head, omit, upperFirst } from "lodash"
@@ -67,7 +67,6 @@ export class WebflowController {
           id,
           slug,
         },
-        debug: true,
       })
     }
 

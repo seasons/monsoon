@@ -1,6 +1,6 @@
 import * as fs from "fs"
 
-import { UtilsService } from "@app/modules/Utils"
+import { UtilsService } from "@app/modules/Utils/services/utils.service"
 import { Injectable } from "@nestjs/common"
 import { isEmpty } from "lodash"
 import slugify from "slugify"
