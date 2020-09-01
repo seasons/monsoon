@@ -11,10 +11,14 @@ export interface NestDataLoader {
 type KeyToDataRelationship = "OneToOne" | "OneToMany" | "ManyToMany"
 
 export interface GenerateParams {
-  // basic parameters to cosntruct the prisma call
+  // basic parameters to construct the prisma call
   query: string
   info?: string | any
   orderBy?: any
+
+  // if a given key does not resolve to any return value, what should we return?
+  fallbackValue?: any
+
   // Given a set of keys, what is where clause to pass into prisma?
   // For example, the function (keys) => {id_in: keys} would result in a query input of {where: {id_in: keys}}
   formatWhere?: (keys: string[]) => any

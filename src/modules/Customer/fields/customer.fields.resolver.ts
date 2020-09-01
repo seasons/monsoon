@@ -97,6 +97,7 @@ export class CustomerFieldsResolver {
           plan
         }`,
         formatData: a => a.plan,
+        fallbackValue: "",
       },
     })
     prismaLoader: PrismaDataLoader<any>,

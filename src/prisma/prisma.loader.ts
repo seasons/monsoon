@@ -43,6 +43,7 @@ export class PrismaLoader implements NestDataLoader {
     {
       query,
       info,
+      fallbackValue = null, 
       orderBy = null,
       infoFragment = null,
       formatData = identity,
@@ -64,10 +65,13 @@ export class PrismaLoader implements NestDataLoader {
 
     let map = this.createMap({formatData, data, getKeys, keyToDataRelationship})
 
-    let fallbackValue: any = [] // fallback value for OneToMany and ManyToMany
-    if (keyToDataRelationship === "OneToOne") {
-      fallbackValue = {}
-    }
+    if (fallbackValue === null) {
+      fallbackValue = [] // fallback value for OneToMany and ManyToMany
+      if (keyToDataRelationship === "OneToOne") {
+        fallbackValue = {}
+      }
+    } 
+    
     const result = keys.map(key => map[key] || fallbackValue)
     
     return Promise.resolve(result)
