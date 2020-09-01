@@ -38,8 +38,14 @@ export interface LoaderParams {
   // Should be unique across the application space, because all loaders
   // are stored on the request-level context object
   name?: string
-  type: string
+
+  // Type of the loader. Default value is PrismaLoader.name
+  type?: string
+
+  // Defines the prisma query and data mapping process
   params?: GenerateParams
+
+  // pass true to forward the info input passed by the client
   includeInfo?: boolean
 }
 

@@ -49,6 +49,7 @@ export class PrismaLoader implements NestDataLoader {
     if (typeof info === "object" && !isNull(infoFragment)) {
       adjustedInfo = addFragmentToInfo(info, infoFragment)
     }
+    
     const data = await this.prisma.binding.query[query](
         formatWhere(keys),
         adjustedInfo

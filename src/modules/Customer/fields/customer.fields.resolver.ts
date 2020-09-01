@@ -72,7 +72,6 @@ export class CustomerFieldsResolver {
     })
     transactionsForCustomerLoader: TransactionsDataLoader,
     @Loader({
-      type: PrismaLoader.name,
       params: getUserIDGenerateParams,
     })
     prismaLoader: PrismaDataLoader<string>
@@ -91,7 +90,6 @@ export class CustomerFieldsResolver {
   async paymentPlan(
     @Parent() customer,
     @Loader({
-      type: PrismaLoader.name,
       params: {
         query: `customers`,
         info: `{
@@ -103,7 +101,6 @@ export class CustomerFieldsResolver {
     })
     prismaLoader: PrismaDataLoader<any>,
     @Loader({
-      type: PrismaLoader.name,
       params: {
         formatWhere: (ids: string[]) => ({
           where: { planID_in: ids },
@@ -138,7 +135,6 @@ export class CustomerFieldsResolver {
     })
     transactionsForCustomerLoader: TransactionsDataLoader,
     @Loader({
-      type: PrismaLoader.name,
       params: getUserIDGenerateParams,
     })
     prismaLoader: PrismaDataLoader<string>
@@ -158,12 +154,10 @@ export class CustomerFieldsResolver {
   async user(
     @Parent() customer,
     @Loader({
-      type: PrismaLoader.name,
       params: getUserIDGenerateParams,
     })
     userIdLoader: PrismaDataLoader<string>,
     @Loader({
-      type: PrismaLoader.name,
       params: { query: "users" },
       includeInfo: true,
     })

@@ -12,7 +12,6 @@ export class PhysicalProductFieldsResolver {
   async barcode(
     @Parent() physicalProduct,
     @Loader({
-      type: PrismaLoader.name,
       params: {
         query: "physicalProducts",
         info: `{ id sequenceNumber }`,
@@ -28,7 +27,6 @@ export class PhysicalProductFieldsResolver {
   async reservations(
     @Parent() physicalProduct,
     @Loader({
-      type: PrismaLoader.name,
       params: {
         query: "reservations",
         infoFragment: `fragment EnsureProductIDs on Reservation {products {id}}`,

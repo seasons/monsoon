@@ -17,7 +17,6 @@ export class FitPicFieldsResolver {
   async author(
     @Parent() fitPic: FitPic,
     @Loader({
-      type: PrismaLoader.name,
       params: {
         query: "fitPics",
         info: "{ id user { firstName lastName } }",

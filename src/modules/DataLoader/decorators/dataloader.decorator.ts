@@ -1,5 +1,6 @@
 import qs from "querystring"
 
+import { PrismaLoader } from "@app/prisma/prisma.loader"
 import {
   ExecutionContext,
   InternalServerErrorException,
@@ -15,7 +16,10 @@ import { DataLoaderInterceptor } from "../interceptors/dataloader.interceptor"
 export const Loader: (
   params: LoaderParams
 ) => ParameterDecorator = createParamDecorator(
-  (data: LoaderParams, context: ExecutionContext) => {
+  (
+    { type = PrismaLoader.name, ...data }: LoaderParams,
+    context: ExecutionContext
+  ) => {
     const [obj, args, ctx, info]: [
       any,
       any,
@@ -31,10 +35,10 @@ export const Loader: (
 
     const { operationName, variables } = ctx.req.body
 
-    const key = createKey(data.type, operationName, variables, data.params)
+    const key = createKey(type, operationName, variables, data)
 
     const adjustedData = {
-      ...data,
+      ...{ type, ...data },
       name: key,
     }
 
