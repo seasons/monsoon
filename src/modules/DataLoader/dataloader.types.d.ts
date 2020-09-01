@@ -8,6 +8,8 @@ export interface NestDataLoader {
   generateDataLoader(generateParams: any): DataLoader<any, any>
 }
 
+type KeyToDataRelationship = "OneToOne" | "OneToMany" | "ManyToMany"
+
 export interface GenerateParams {
   // basic parameters to cosntruct the prisma call
   query: string
@@ -21,10 +23,8 @@ export interface GenerateParams {
   // add a fragment to it.
   infoFragment?: string
 
-  // Given a returned object from prisma, how we do find the associated key or keys.
-  // If keyToDataRelationship is "OneToOne" or "OneToMany", pass in getKey.
-  // Otherwise, pass in getKeys
-  getKey?: (obj: any) => string | null
+  // Given a returned object from prisma, how we do find the associated keys?
+  // If there's only key per returned object, return a length 1 array.
   getKeys?: (obj: any) => string[] | null
 
   // Given a returned object from prisma, returns the data in the desired format
@@ -32,7 +32,7 @@ export interface GenerateParams {
 
   // For a given key, what are we returning?
   // If a single object, "Single" If multiple objects, "Array"
-  keyToDataRelationship?: "OneToOne" | "OneToMany" | "ManyToMany"
+  keyToDataRelationship?: KeyToDataRelationship
 }
 
 export interface LoaderParams {

@@ -46,9 +46,6 @@ export class PhysicalProductFieldsResolver {
     })
     reservationsLoader: PrismaDataLoader<string>
   ) {
-    const reservations = (await reservationsLoader.load(
-      physicalProduct.id
-    )) as any
-    return reservations
+    return reservationsLoader.load(physicalProduct.id)
   }
 }

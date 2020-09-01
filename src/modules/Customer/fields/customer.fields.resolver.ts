@@ -105,7 +105,7 @@ export class CustomerFieldsResolver {
         formatWhere: (ids: string[]) => ({ planID_in: ids }),
         query: `paymentPlans`,
         infoFragment: `fragment EnsurePlanID on PaymentPlan {planID}`,
-        getKey: a => a.planID,
+        getKeys: a => [a.planID],
       },
       includeInfo: true,
     })
