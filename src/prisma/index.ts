@@ -36,6 +36,7 @@ export interface Exists {
     where?: HomepageProductRailWhereInput
   ) => Promise<boolean>;
   image: (where?: ImageWhereInput) => Promise<boolean>;
+  interestedUser: (where?: InterestedUserWhereInput) => Promise<boolean>;
   label: (where?: LabelWhereInput) => Promise<boolean>;
   location: (where?: LocationWhereInput) => Promise<boolean>;
   package: (where?: PackageWhereInput) => Promise<boolean>;
@@ -439,6 +440,27 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => ImageConnectionPromise;
+  interestedUser: (
+    where: InterestedUserWhereUniqueInput
+  ) => InterestedUserNullablePromise;
+  interestedUsers: (args?: {
+    where?: InterestedUserWhereInput;
+    orderBy?: InterestedUserOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<InterestedUser>;
+  interestedUsersConnection: (args?: {
+    where?: InterestedUserWhereInput;
+    orderBy?: InterestedUserOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => InterestedUserConnectionPromise;
   label: (where: LabelWhereUniqueInput) => LabelNullablePromise;
   labels: (args?: {
     where?: LabelWhereInput;
@@ -1431,6 +1453,28 @@ export interface Prisma {
   }) => ImagePromise;
   deleteImage: (where: ImageWhereUniqueInput) => ImagePromise;
   deleteManyImages: (where?: ImageWhereInput) => BatchPayloadPromise;
+  createInterestedUser: (
+    data: InterestedUserCreateInput
+  ) => InterestedUserPromise;
+  updateInterestedUser: (args: {
+    data: InterestedUserUpdateInput;
+    where: InterestedUserWhereUniqueInput;
+  }) => InterestedUserPromise;
+  updateManyInterestedUsers: (args: {
+    data: InterestedUserUpdateManyMutationInput;
+    where?: InterestedUserWhereInput;
+  }) => BatchPayloadPromise;
+  upsertInterestedUser: (args: {
+    where: InterestedUserWhereUniqueInput;
+    create: InterestedUserCreateInput;
+    update: InterestedUserUpdateInput;
+  }) => InterestedUserPromise;
+  deleteInterestedUser: (
+    where: InterestedUserWhereUniqueInput
+  ) => InterestedUserPromise;
+  deleteManyInterestedUsers: (
+    where?: InterestedUserWhereInput
+  ) => BatchPayloadPromise;
   createLabel: (data: LabelCreateInput) => LabelPromise;
   updateLabel: (args: {
     data: LabelUpdateInput;
@@ -2166,6 +2210,9 @@ export interface Subscription {
   image: (
     where?: ImageSubscriptionWhereInput
   ) => ImageSubscriptionPayloadSubscription;
+  interestedUser: (
+    where?: InterestedUserSubscriptionWhereInput
+  ) => InterestedUserSubscriptionPayloadSubscription;
   label: (
     where?: LabelSubscriptionWhereInput
   ) => LabelSubscriptionPayloadSubscription;
@@ -2996,6 +3043,18 @@ export type HomepageProductRailOrderByInput =
   | "slug_DESC"
   | "name_ASC"
   | "name_DESC";
+
+export type InterestedUserOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "email_ASC"
+  | "email_DESC"
+  | "zipcode_ASC"
+  | "zipcode_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
 
 export type LabelOrderByInput =
   | "id_ASC"
@@ -6692,6 +6751,74 @@ export type ImageWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
   url?: Maybe<String>;
 }>;
+
+export type InterestedUserWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
+export interface InterestedUserWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  email?: Maybe<String>;
+  email_not?: Maybe<String>;
+  email_in?: Maybe<String[] | String>;
+  email_not_in?: Maybe<String[] | String>;
+  email_lt?: Maybe<String>;
+  email_lte?: Maybe<String>;
+  email_gt?: Maybe<String>;
+  email_gte?: Maybe<String>;
+  email_contains?: Maybe<String>;
+  email_not_contains?: Maybe<String>;
+  email_starts_with?: Maybe<String>;
+  email_not_starts_with?: Maybe<String>;
+  email_ends_with?: Maybe<String>;
+  email_not_ends_with?: Maybe<String>;
+  zipcode?: Maybe<String>;
+  zipcode_not?: Maybe<String>;
+  zipcode_in?: Maybe<String[] | String>;
+  zipcode_not_in?: Maybe<String[] | String>;
+  zipcode_lt?: Maybe<String>;
+  zipcode_lte?: Maybe<String>;
+  zipcode_gt?: Maybe<String>;
+  zipcode_gte?: Maybe<String>;
+  zipcode_contains?: Maybe<String>;
+  zipcode_not_contains?: Maybe<String>;
+  zipcode_starts_with?: Maybe<String>;
+  zipcode_not_starts_with?: Maybe<String>;
+  zipcode_ends_with?: Maybe<String>;
+  zipcode_not_ends_with?: Maybe<String>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<InterestedUserWhereInput[] | InterestedUserWhereInput>;
+  OR?: Maybe<InterestedUserWhereInput[] | InterestedUserWhereInput>;
+  NOT?: Maybe<InterestedUserWhereInput[] | InterestedUserWhereInput>;
+}
 
 export type LabelWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
@@ -13212,6 +13339,22 @@ export interface ImageUpdateManyMutationInput {
   title?: Maybe<String>;
 }
 
+export interface InterestedUserCreateInput {
+  id?: Maybe<ID_Input>;
+  email: String;
+  zipcode?: Maybe<String>;
+}
+
+export interface InterestedUserUpdateInput {
+  email?: Maybe<String>;
+  zipcode?: Maybe<String>;
+}
+
+export interface InterestedUserUpdateManyMutationInput {
+  email?: Maybe<String>;
+  zipcode?: Maybe<String>;
+}
+
 export interface LabelUpdateInput {
   name?: Maybe<String>;
   image?: Maybe<String>;
@@ -15461,6 +15604,26 @@ export interface ImageSubscriptionWhereInput {
   AND?: Maybe<ImageSubscriptionWhereInput[] | ImageSubscriptionWhereInput>;
   OR?: Maybe<ImageSubscriptionWhereInput[] | ImageSubscriptionWhereInput>;
   NOT?: Maybe<ImageSubscriptionWhereInput[] | ImageSubscriptionWhereInput>;
+}
+
+export interface InterestedUserSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<InterestedUserWhereInput>;
+  AND?: Maybe<
+    | InterestedUserSubscriptionWhereInput[]
+    | InterestedUserSubscriptionWhereInput
+  >;
+  OR?: Maybe<
+    | InterestedUserSubscriptionWhereInput[]
+    | InterestedUserSubscriptionWhereInput
+  >;
+  NOT?: Maybe<
+    | InterestedUserSubscriptionWhereInput[]
+    | InterestedUserSubscriptionWhereInput
+  >;
 }
 
 export interface LabelSubscriptionWhereInput {
@@ -20102,6 +20265,100 @@ export interface AggregateImageSubscription
   count: () => Promise<AsyncIterator<Int>>;
 }
 
+export interface InterestedUser {
+  id: ID_Output;
+  email: String;
+  zipcode?: String;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface InterestedUserPromise
+  extends Promise<InterestedUser>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  email: () => Promise<String>;
+  zipcode: () => Promise<String>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface InterestedUserSubscription
+  extends Promise<AsyncIterator<InterestedUser>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  email: () => Promise<AsyncIterator<String>>;
+  zipcode: () => Promise<AsyncIterator<String>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface InterestedUserNullablePromise
+  extends Promise<InterestedUser | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  email: () => Promise<String>;
+  zipcode: () => Promise<String>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface InterestedUserConnection {
+  pageInfo: PageInfo;
+  edges: InterestedUserEdge[];
+}
+
+export interface InterestedUserConnectionPromise
+  extends Promise<InterestedUserConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<InterestedUserEdge>>() => T;
+  aggregate: <T = AggregateInterestedUserPromise>() => T;
+}
+
+export interface InterestedUserConnectionSubscription
+  extends Promise<AsyncIterator<InterestedUserConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<InterestedUserEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateInterestedUserSubscription>() => T;
+}
+
+export interface InterestedUserEdge {
+  node: InterestedUser;
+  cursor: String;
+}
+
+export interface InterestedUserEdgePromise
+  extends Promise<InterestedUserEdge>,
+    Fragmentable {
+  node: <T = InterestedUserPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface InterestedUserEdgeSubscription
+  extends Promise<AsyncIterator<InterestedUserEdge>>,
+    Fragmentable {
+  node: <T = InterestedUserSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateInterestedUser {
+  count: Int;
+}
+
+export interface AggregateInterestedUserPromise
+  extends Promise<AggregateInterestedUser>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateInterestedUserSubscription
+  extends Promise<AsyncIterator<AggregateInterestedUser>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
 export interface LabelConnection {
   pageInfo: PageInfo;
   edges: LabelEdge[];
@@ -23354,6 +23611,59 @@ export interface ImagePreviousValuesSubscription
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
+export interface InterestedUserSubscriptionPayload {
+  mutation: MutationType;
+  node: InterestedUser;
+  updatedFields: String[];
+  previousValues: InterestedUserPreviousValues;
+}
+
+export interface InterestedUserSubscriptionPayloadPromise
+  extends Promise<InterestedUserSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = InterestedUserPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = InterestedUserPreviousValuesPromise>() => T;
+}
+
+export interface InterestedUserSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<InterestedUserSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = InterestedUserSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = InterestedUserPreviousValuesSubscription>() => T;
+}
+
+export interface InterestedUserPreviousValues {
+  id: ID_Output;
+  email: String;
+  zipcode?: String;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface InterestedUserPreviousValuesPromise
+  extends Promise<InterestedUserPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  email: () => Promise<String>;
+  zipcode: () => Promise<String>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface InterestedUserPreviousValuesSubscription
+  extends Promise<AsyncIterator<InterestedUserPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  email: () => Promise<AsyncIterator<String>>;
+  zipcode: () => Promise<AsyncIterator<String>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
 export interface LabelSubscriptionPayload {
   mutation: MutationType;
   node: Label;
@@ -25616,6 +25926,10 @@ export const models: Model[] = [
     embedded: false
   },
   {
+    name: "InterestedUser",
+    embedded: false
+  },
+  {
     name: "User",
     embedded: false
   },
@@ -25724,7 +26038,7 @@ export const models: Model[] = [
 export const Prisma = makePrismaClientClass<ClientConstructor<Prisma>>({
   typeDefs,
   models,
-  endpoint: `${process.env["PRISMA_ENDPOINT"]}`,
+  endpoint: `http://localhost:4466/monsoon/dev`,
   secret: `${process.env["PRISMA_SECRET"]}`
 });
 export const prisma = new Prisma();

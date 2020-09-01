@@ -1,6 +1,7 @@
 import { Args, Info, Query, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma/prisma.service"
 import { addFragmentToInfo } from "graphql-binding"
+import { zip } from "lodash"
 
 @Resolver()
 export class UserQueriesResolver {
@@ -25,5 +26,10 @@ export class UserQueriesResolver {
   @Query()
   async usersConnection(@Args() args, @Info() info) {
     return await this.prisma.binding.query.usersConnection(args, info)
+  }
+
+  @Query()
+  async zipcodeServiced(@Args() args, @Info() info) {
+    return await this.prisma.binding.query.zipcodeServiced(args, info)
   }
 }

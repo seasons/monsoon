@@ -1,3 +1,5 @@
+import { info } from "console"
+
 import { User } from "@app/decorators"
 import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma/prisma.service"
@@ -49,5 +51,15 @@ export class UserMutationsResolver {
       data,
     })
     return result
+  }
+
+  @Mutation()
+  async createInterestedUser(@Args() { email }, @User() user, @Info() info) {
+    const interestUser = await this.prisma.binding.mutation.createInterestedUser(
+      { where: { id: user } }
+    )
+    if (!user) {
+      return interestUser
+    }
   }
 }

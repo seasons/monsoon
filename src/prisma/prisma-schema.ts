@@ -66,6 +66,10 @@ type AggregateImage {
   count: Int!
 }
 
+type AggregateInterestedUser {
+  count: Int!
+}
+
 type AggregateLabel {
   count: Int!
 }
@@ -4457,6 +4461,148 @@ input ImageWhereUniqueInput {
   url: String
 }
 
+type InterestedUser {
+  id: ID!
+  email: String!
+  zipcode: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type InterestedUserConnection {
+  pageInfo: PageInfo!
+  edges: [InterestedUserEdge]!
+  aggregate: AggregateInterestedUser!
+}
+
+input InterestedUserCreateInput {
+  id: ID
+  email: String!
+  zipcode: String
+}
+
+type InterestedUserEdge {
+  node: InterestedUser!
+  cursor: String!
+}
+
+enum InterestedUserOrderByInput {
+  id_ASC
+  id_DESC
+  email_ASC
+  email_DESC
+  zipcode_ASC
+  zipcode_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type InterestedUserPreviousValues {
+  id: ID!
+  email: String!
+  zipcode: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type InterestedUserSubscriptionPayload {
+  mutation: MutationType!
+  node: InterestedUser
+  updatedFields: [String!]
+  previousValues: InterestedUserPreviousValues
+}
+
+input InterestedUserSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: InterestedUserWhereInput
+  AND: [InterestedUserSubscriptionWhereInput!]
+  OR: [InterestedUserSubscriptionWhereInput!]
+  NOT: [InterestedUserSubscriptionWhereInput!]
+}
+
+input InterestedUserUpdateInput {
+  email: String
+  zipcode: String
+}
+
+input InterestedUserUpdateManyMutationInput {
+  email: String
+  zipcode: String
+}
+
+input InterestedUserWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  email: String
+  email_not: String
+  email_in: [String!]
+  email_not_in: [String!]
+  email_lt: String
+  email_lte: String
+  email_gt: String
+  email_gte: String
+  email_contains: String
+  email_not_contains: String
+  email_starts_with: String
+  email_not_starts_with: String
+  email_ends_with: String
+  email_not_ends_with: String
+  zipcode: String
+  zipcode_not: String
+  zipcode_in: [String!]
+  zipcode_not_in: [String!]
+  zipcode_lt: String
+  zipcode_lte: String
+  zipcode_gt: String
+  zipcode_gte: String
+  zipcode_contains: String
+  zipcode_not_contains: String
+  zipcode_starts_with: String
+  zipcode_not_starts_with: String
+  zipcode_ends_with: String
+  zipcode_not_ends_with: String
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [InterestedUserWhereInput!]
+  OR: [InterestedUserWhereInput!]
+  NOT: [InterestedUserWhereInput!]
+}
+
+input InterestedUserWhereUniqueInput {
+  id: ID
+}
+
 enum InventoryStatus {
   NonReservable
   Reservable
@@ -5202,6 +5348,12 @@ type Mutation {
   upsertImage(where: ImageWhereUniqueInput!, create: ImageCreateInput!, update: ImageUpdateInput!): Image!
   deleteImage(where: ImageWhereUniqueInput!): Image
   deleteManyImages(where: ImageWhereInput): BatchPayload!
+  createInterestedUser(data: InterestedUserCreateInput!): InterestedUser!
+  updateInterestedUser(data: InterestedUserUpdateInput!, where: InterestedUserWhereUniqueInput!): InterestedUser
+  updateManyInterestedUsers(data: InterestedUserUpdateManyMutationInput!, where: InterestedUserWhereInput): BatchPayload!
+  upsertInterestedUser(where: InterestedUserWhereUniqueInput!, create: InterestedUserCreateInput!, update: InterestedUserUpdateInput!): InterestedUser!
+  deleteInterestedUser(where: InterestedUserWhereUniqueInput!): InterestedUser
+  deleteManyInterestedUsers(where: InterestedUserWhereInput): BatchPayload!
   createLabel(data: LabelCreateInput!): Label!
   updateLabel(data: LabelUpdateInput!, where: LabelWhereUniqueInput!): Label
   updateManyLabels(data: LabelUpdateManyMutationInput!, where: LabelWhereInput): BatchPayload!
@@ -11307,6 +11459,9 @@ type Query {
   image(where: ImageWhereUniqueInput!): Image
   images(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Image]!
   imagesConnection(where: ImageWhereInput, orderBy: ImageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ImageConnection!
+  interestedUser(where: InterestedUserWhereUniqueInput!): InterestedUser
+  interestedUsers(where: InterestedUserWhereInput, orderBy: InterestedUserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [InterestedUser]!
+  interestedUsersConnection(where: InterestedUserWhereInput, orderBy: InterestedUserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): InterestedUserConnection!
   label(where: LabelWhereUniqueInput!): Label
   labels(where: LabelWhereInput, orderBy: LabelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Label]!
   labelsConnection(where: LabelWhereInput, orderBy: LabelOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): LabelConnection!
@@ -13270,6 +13425,7 @@ type Subscription {
   fitPicReport(where: FitPicReportSubscriptionWhereInput): FitPicReportSubscriptionPayload
   homepageProductRail(where: HomepageProductRailSubscriptionWhereInput): HomepageProductRailSubscriptionPayload
   image(where: ImageSubscriptionWhereInput): ImageSubscriptionPayload
+  interestedUser(where: InterestedUserSubscriptionWhereInput): InterestedUserSubscriptionPayload
   label(where: LabelSubscriptionWhereInput): LabelSubscriptionPayload
   location(where: LocationSubscriptionWhereInput): LocationSubscriptionPayload
   package(where: PackageSubscriptionWhereInput): PackageSubscriptionPayload
