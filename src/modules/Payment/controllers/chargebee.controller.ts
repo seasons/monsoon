@@ -70,7 +70,7 @@ export class ChargebeeController {
       // user the deprecated ChargebeeHostedCheckout
       if (!customerWithBillingAndUserData?.billingInfo?.id) {
         const user = customerWithBillingAndUserData.user
-        this.segment.track(customer_id, "Subscribed", {
+        this.segment.trackSubscribed(customer_id, {
           plan: this.payment.chargebeePlanIdToPrismaPlan(plan_id),
           method: "ChargebeeHostedCheckout",
           firstName: user?.firstName || "",

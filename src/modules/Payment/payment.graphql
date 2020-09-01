@@ -5,7 +5,7 @@ type Query {
   ): ChargebeeHostedPagePayload
   chargebeeUpdatePaymentPage: ChargebeeHostedPagePayload
     @hasRole(roles: [Customer])
-  hostedChargebeeCheckout: ChargebeeHostedPagePayload
+  hostedChargebeeCheckout(planID: PlanID!): ChargebeeHostedPagePayload
     @hasRole(roles: [Customer])
   paymentPlans(
     where: PaymentPlanWhereInput
