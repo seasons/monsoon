@@ -1,4 +1,8 @@
+import { SegmentService } from "@app/modules/Analytics/services/segment.service"
+import { PrismaService } from "@app/prisma/prisma.service"
 import { Body, Controller, Post } from "@nestjs/common"
+import * as Sentry from "@sentry/node"
+import { head } from "lodash"
 
 import { PaymentService } from "../services/payment.service"
 
@@ -10,9 +14,17 @@ export type ChargebeeEvent = {
 const CHARGEBEE_CUSTOMER_CHANGED = "customer_changed"
 const CHARGEBEE_SUBSCRIPTION_CREATED = "subscription_created"
 
+/**
+ * DEPRECATED
+ * These hooks were necesarry for the the chargebee client checkout webview
+ */
 @Controller("chargebee_events")
 export class ChargebeeController {
-  constructor(private readonly paymentService: PaymentService) {}
+  constructor(
+    private readonly payment: PaymentService,
+    private readonly segment: SegmentService,
+    private readonly prisma: PrismaService
+  ) {}
 
   @Post()
   async handlePost(@Body() body: ChargebeeEvent) {
@@ -32,7 +44,45 @@ export class ChargebeeController {
       customer,
       card,
     } = content
-    await this.paymentService.chargebeeSubscriptionCreated(
+
+    const customerWithBillingAndUserData: any = head(
+      await this.prisma.binding.query.customers(
+        { where: { user: { id: customer_id } } },
+        `
+        {
+          id
+          billingInfo {
+            id
+          }
+          user {
+            id
+            firstName
+            lastName
+            email
+          }
+        }
+      `
+      )
+    )
+
+    try {
+      // If they don't have a billing info this means they've create their account
+      // user the deprecated ChargebeeHostedCheckout
+      if (!customerWithBillingAndUserData?.billingInfo?.id) {
+        const user = customerWithBillingAndUserData.user
+        this.segment.trackSubscribed(customer_id, {
+          plan: this.payment.chargebeePlanIdToPrismaPlan(plan_id),
+          method: "ChargebeeHostedCheckout",
+          firstName: user?.firstName || "",
+          lastName: user?.lastName || "",
+          email: user?.email || "",
+        })
+      }
+    } catch (err) {
+      Sentry.captureException(err)
+    }
+
+    await this.payment.chargebeeSubscriptionCreated(
       customer_id,
       customer,
       card,
@@ -45,6 +95,6 @@ export class ChargebeeController {
       customer: { id },
       card,
     } = content
-    await this.paymentService.chargebeeCustomerChanged(id, card)
+    await this.payment.chargebeeCustomerChanged(id, card)
   }
 }

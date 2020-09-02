@@ -1,10 +1,13 @@
-import { Analytics, Customer, User } from "@app/decorators"
+import { Customer, User } from "@app/decorators"
+import { Application } from "@app/decorators/application.decorator"
+import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { EmailService } from "@app/modules/Email/services/email.service"
 import { PushNotificationService } from "@app/modules/PushNotification/services/pushNotification.service"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
 import { User as PrismaUser } from "@prisma/index"
-import { ApolloError, UserInputError } from "apollo-server"
+import { UserInputError } from "apollo-server"
+import { pick } from "lodash"
 
 import { CustomerService } from "../services/customer.service"
 
@@ -14,16 +17,17 @@ export class CustomerMutationsResolver {
     private readonly customerService: CustomerService,
     private readonly prisma: PrismaService,
     private readonly email: EmailService,
-    private readonly pushNotification: PushNotificationService
+    private readonly pushNotification: PushNotificationService,
+    private readonly segment: SegmentService
   ) {}
 
   @Mutation()
   async addCustomerDetails(
     @Args() { details, event, status },
     @Info() info,
-    @Analytics() analytics,
     @Customer() customer,
-    @User() user
+    @User() user,
+    @Application() application
   ) {
     // They should not have included any "id" in the input
     if (details.id != null) {
@@ -40,9 +44,9 @@ export class CustomerMutationsResolver {
     // Track the event, if its been passed
     const eventNameMap = { CompletedWaitlistForm: "Completed Waitlist Form" }
     if (!!event) {
-      analytics.track({
-        userId: user.id,
-        event: eventNameMap[event],
+      this.segment.track(user.id, eventNameMap[event], {
+        ...pick(user, ["firstName", "lastName", "email"]),
+        application,
       })
     }
 
@@ -50,7 +54,7 @@ export class CustomerMutationsResolver {
   }
 
   @Mutation()
-  async updateCustomer(@Args() args, @Info() info) {
+  async updateCustomer(@Args() args, @Info() info, @Application() application) {
     const { where, data } = args
     const customer = await this.prisma.binding.query.customer(
       {
@@ -62,6 +66,7 @@ export class CustomerMutationsResolver {
           id
           email
           firstName
+          lastName
         }
         status
       }`
@@ -88,15 +93,30 @@ export class CustomerMutationsResolver {
         email: customer.user.email,
         pushNotifID: "CompleteAccount",
       })
+
+      this.segment.trackBecameAuthorized(customer.user.id, {
+        previousStatus: customer.status,
+        firstName: customer.user.firstName,
+        lastName: customer.user.lastName,
+        email: customer.user.email,
+        method: "Manual",
+        application,
+      })
     }
     return this.prisma.binding.mutation.updateCustomer(args, info)
   }
 
   @Mutation()
-  async triageCustomer(@Customer() sessionCustomer) {
-    const returnValue = await this.customerService.triageCustomer({
-      id: sessionCustomer.id,
-    })
+  async triageCustomer(
+    @Customer() sessionCustomer,
+    @Application() application
+  ) {
+    const returnValue = await this.customerService.triageCustomer(
+      {
+        id: sessionCustomer.id,
+      },
+      application
+    )
     return returnValue
   }
 }

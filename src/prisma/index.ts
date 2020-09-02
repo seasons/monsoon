@@ -3066,6 +3066,8 @@ export type PaymentPlanOrderByInput =
   | "name_DESC"
   | "price_ASC"
   | "price_DESC"
+  | "tagline_ASC"
+  | "tagline_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -6798,6 +6800,20 @@ export interface PaymentPlanWhereInput {
   price_lte?: Maybe<Int>;
   price_gt?: Maybe<Int>;
   price_gte?: Maybe<Int>;
+  tagline?: Maybe<String>;
+  tagline_not?: Maybe<String>;
+  tagline_in?: Maybe<String[] | String>;
+  tagline_not_in?: Maybe<String[] | String>;
+  tagline_lt?: Maybe<String>;
+  tagline_lte?: Maybe<String>;
+  tagline_gt?: Maybe<String>;
+  tagline_gte?: Maybe<String>;
+  tagline_contains?: Maybe<String>;
+  tagline_not_contains?: Maybe<String>;
+  tagline_starts_with?: Maybe<String>;
+  tagline_not_starts_with?: Maybe<String>;
+  tagline_ends_with?: Maybe<String>;
+  tagline_not_ends_with?: Maybe<String>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -13346,6 +13362,7 @@ export interface PaymentPlanCreateInput {
   status?: Maybe<String>;
   name?: Maybe<String>;
   price?: Maybe<Int>;
+  tagline?: Maybe<String>;
 }
 
 export interface PaymentPlanUpdateInput {
@@ -13354,6 +13371,7 @@ export interface PaymentPlanUpdateInput {
   status?: Maybe<String>;
   name?: Maybe<String>;
   price?: Maybe<Int>;
+  tagline?: Maybe<String>;
 }
 
 export interface PaymentPlanUpdateManyMutationInput {
@@ -13362,6 +13380,7 @@ export interface PaymentPlanUpdateManyMutationInput {
   status?: Maybe<String>;
   name?: Maybe<String>;
   price?: Maybe<Int>;
+  tagline?: Maybe<String>;
 }
 
 export interface PhysicalProductUpdateInput {
@@ -20387,6 +20406,7 @@ export interface PaymentPlan {
   status?: String;
   name?: String;
   price?: Int;
+  tagline?: String;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -20398,6 +20418,7 @@ export interface PaymentPlanPromise extends Promise<PaymentPlan>, Fragmentable {
   status: () => Promise<String>;
   name: () => Promise<String>;
   price: () => Promise<Int>;
+  tagline: () => Promise<String>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -20411,6 +20432,7 @@ export interface PaymentPlanSubscription
   status: () => Promise<AsyncIterator<String>>;
   name: () => Promise<AsyncIterator<String>>;
   price: () => Promise<AsyncIterator<Int>>;
+  tagline: () => Promise<AsyncIterator<String>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -20424,6 +20446,7 @@ export interface PaymentPlanNullablePromise
   status: () => Promise<String>;
   name: () => Promise<String>;
   price: () => Promise<Int>;
+  tagline: () => Promise<String>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -23690,6 +23713,7 @@ export interface PaymentPlanPreviousValues {
   status?: String;
   name?: String;
   price?: Int;
+  tagline?: String;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -23703,6 +23727,7 @@ export interface PaymentPlanPreviousValuesPromise
   status: () => Promise<String>;
   name: () => Promise<String>;
   price: () => Promise<Int>;
+  tagline: () => Promise<String>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -23716,6 +23741,7 @@ export interface PaymentPlanPreviousValuesSubscription
   status: () => Promise<AsyncIterator<String>>;
   name: () => Promise<AsyncIterator<String>>;
   price: () => Promise<AsyncIterator<Int>>;
+  tagline: () => Promise<AsyncIterator<String>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }

@@ -1,20 +1,22 @@
-import { Analytics, Customer, User } from "@app/decorators"
-import { PrismaService } from "@app/prisma/prisma.service"
+import { Customer, User } from "@app/decorators"
+import { Application } from "@app/decorators/application.decorator"
+import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { Args, Info, Mutation, Resolver } from "@nestjs/graphql"
 import { addFragmentToInfo } from "graphql-binding"
+import { pick } from "lodash"
 
 import { ReservationService } from ".."
 
 @Resolver()
 export class ReservationMutationsResolver {
   constructor(
-    private readonly reservationService: ReservationService,
-    private readonly prisma: PrismaService
+    private readonly reservation: ReservationService,
+    private readonly segment: SegmentService
   ) {}
 
   @Mutation()
   async updateReservation(@Args() { data, where }, @Info() info) {
-    return this.reservationService.updateReservation(data, where, info)
+    return this.reservation.updateReservation(data, where, info)
   }
 
   @Mutation()
@@ -23,9 +25,9 @@ export class ReservationMutationsResolver {
     @User() user,
     @Customer() customer,
     @Info() info,
-    @Analytics() analytics
+    @Application() application
   ) {
-    const returnData = await this.reservationService.reserveItems(
+    const returnData = await this.reservation.reserveItems(
       items,
       user,
       customer,
@@ -33,15 +35,12 @@ export class ReservationMutationsResolver {
     )
 
     // Track the selection
-    analytics.track({
-      userId: user.id,
-      event: "Reserved Items",
-      properties: {
-        email: user.email,
-        reservationID: returnData.id,
-        items,
-        units: returnData.products.map(a => a.seasonsUID),
-      },
+    this.segment.track(user.id, "Reserved Items", {
+      ...pick(user, ["email", "firstName", "lastName"]),
+      reservationID: returnData.id,
+      items,
+      units: returnData.products.map(a => a.seasonsUID),
+      application,
     })
 
     return returnData
@@ -51,7 +50,7 @@ export class ReservationMutationsResolver {
   async processReservation(@Args() { data }) {
     const { reservationNumber, productStates } = data
 
-    const result = await this.reservationService.processReservation(
+    const result = await this.reservation.processReservation(
       reservationNumber,
       productStates
     )

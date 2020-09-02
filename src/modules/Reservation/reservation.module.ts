@@ -7,6 +7,7 @@ import { ShippingModule } from "@modules/Shipping/shipping.module"
 import { Module } from "@nestjs/common"
 import { PrismaModule } from "@prisma/prisma.module"
 
+import { AnalyticsModule } from "../Analytics/analytics.module"
 import { ReservationFeedbackMutationsResolver } from "../Reservation/mutations/reservationFeedback.mutations.resolver"
 import { ReservationFeedbackQueriesResolver } from "../Reservation/queries/reservationFeedback.queries.resolver"
 import { ReservationFieldsResolver } from "./fields/reservation.fields.resolver"
@@ -25,6 +26,7 @@ import { ReservationFeedbackService } from "./services/reservationFeedback.servi
     ProductModule,
     PushNotificationModule,
     ShippingModule,
+    AnalyticsModule,
   ],
   providers: [
     ReservationFeedbackMutationsResolver,

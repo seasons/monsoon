@@ -40,8 +40,6 @@ const query = async () => {
        }
     }`
   )
-  //   console.log(authorizedUsers)
-  //   console.log(authorizedUsers.length)
 
   const chargebeeCustomers = []
   for (const cust of authorizedCustomers) {
