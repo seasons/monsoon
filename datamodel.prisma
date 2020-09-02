@@ -39,6 +39,7 @@ enum UserRole {
   Admin
   Customer
   Partner
+  Marketer
 }
 
 enum InventoryStatus {
