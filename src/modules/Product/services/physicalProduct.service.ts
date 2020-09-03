@@ -77,6 +77,11 @@ export class PhysicalProductService {
         data,
       })
     } else if (
+      newData.warehouseLocation === { disconnect: true } &&
+      newData.inventoryStatus === "NonReservable"
+    ) {
+      // continue if we are picking this physical product
+    } else if (
       !!physProdBeforeUpdate.warehouseLocation?.barcode &&
       newData.inventoryStatus !== "Reservable"
     ) {
