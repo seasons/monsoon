@@ -1,15 +1,18 @@
 import { Customer, User } from "@app/decorators"
+import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { PaymentService } from "@modules/Payment/services/payment.service"
 import { ShippingService } from "@modules/Shipping/services/shipping.service"
 import { CustomerService } from "@modules/User/services/customer.service"
 import { Args, Mutation, Resolver } from "@nestjs/graphql"
+import { pick } from "lodash"
 
 @Resolver()
 export class PaymentMutationsResolver {
   constructor(
     private readonly customerService: CustomerService,
     private readonly paymentService: PaymentService,
-    private readonly shippingService: ShippingService
+    private readonly shippingService: ShippingService,
+    private readonly segment: SegmentService
   ) {}
 
   @Mutation()
@@ -38,17 +41,31 @@ export class PaymentMutationsResolver {
   }
 
   @Mutation()
-  async pauseSubscription(@Args() { subscriptionID }, @Customer() customer) {
+  async pauseSubscription(
+    @Args() { subscriptionID },
+    @Customer() customer,
+    @User() user
+  ) {
     await this.paymentService.pauseSubscription(subscriptionID, customer)
+
+    this.segment.track(user.id, "Paused Subscription", {
+      ...pick(user, ["firstName", "lastName", "email"]),
+      plan: customer.plan,
+    })
     return true
   }
 
   @Mutation()
   async resumeSubscription(
     @Args() { subscriptionID, date },
-    @Customer() customer
+    @Customer() customer,
+    @User() user
   ) {
     await this.paymentService.resumeSubscription(subscriptionID, date, customer)
+    this.segment.track(user.id, "Resumed Subscription", {
+      ...pick(user, ["firstName", "lastName", "email"]),
+      plan: customer.plan,
+    })
     return true
   }
 

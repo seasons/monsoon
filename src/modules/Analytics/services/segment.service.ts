@@ -17,6 +17,8 @@ type TrackingEvent =
   | "Opened Checkout"
   | "Subscribed"
   | "Reserved Items"
+  | "Paused Subscription"
+  | "Resumed Subscription"
 
 interface CommonTrackProperties {
   firstName: string
