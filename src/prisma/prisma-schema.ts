@@ -2,7 +2,88 @@
   // Please don't change this file manually but run `prisma generate` to update it.
   // For more information, please read the docs: https://www.prisma.io/docs/prisma-client/
 
-export const typeDefs = /* GraphQL */ `type AggregateBagItem {
+export const typeDefs = /* GraphQL */ `type ActiveAdminUser {
+  id: ID!
+  admin: User!
+}
+
+type ActiveAdminUserConnection {
+  pageInfo: PageInfo!
+  edges: [ActiveAdminUserEdge]!
+  aggregate: AggregateActiveAdminUser!
+}
+
+input ActiveAdminUserCreateInput {
+  id: ID
+  admin: UserCreateOneInput!
+}
+
+type ActiveAdminUserEdge {
+  node: ActiveAdminUser!
+  cursor: String!
+}
+
+enum ActiveAdminUserOrderByInput {
+  id_ASC
+  id_DESC
+}
+
+type ActiveAdminUserPreviousValues {
+  id: ID!
+}
+
+type ActiveAdminUserSubscriptionPayload {
+  mutation: MutationType!
+  node: ActiveAdminUser
+  updatedFields: [String!]
+  previousValues: ActiveAdminUserPreviousValues
+}
+
+input ActiveAdminUserSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: ActiveAdminUserWhereInput
+  AND: [ActiveAdminUserSubscriptionWhereInput!]
+  OR: [ActiveAdminUserSubscriptionWhereInput!]
+  NOT: [ActiveAdminUserSubscriptionWhereInput!]
+}
+
+input ActiveAdminUserUpdateInput {
+  admin: UserUpdateOneRequiredInput
+}
+
+input ActiveAdminUserWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  admin: UserWhereInput
+  AND: [ActiveAdminUserWhereInput!]
+  OR: [ActiveAdminUserWhereInput!]
+  NOT: [ActiveAdminUserWhereInput!]
+}
+
+input ActiveAdminUserWhereUniqueInput {
+  id: ID
+}
+
+type AggregateActiveAdminUser {
+  count: Int!
+}
+
+type AggregateBagItem {
   count: Int!
 }
 
@@ -5106,6 +5187,11 @@ input LocationWhereUniqueInput {
 scalar Long
 
 type Mutation {
+  createActiveAdminUser(data: ActiveAdminUserCreateInput!): ActiveAdminUser!
+  updateActiveAdminUser(data: ActiveAdminUserUpdateInput!, where: ActiveAdminUserWhereUniqueInput!): ActiveAdminUser
+  upsertActiveAdminUser(where: ActiveAdminUserWhereUniqueInput!, create: ActiveAdminUserCreateInput!, update: ActiveAdminUserUpdateInput!): ActiveAdminUser!
+  deleteActiveAdminUser(where: ActiveAdminUserWhereUniqueInput!): ActiveAdminUser
+  deleteManyActiveAdminUsers(where: ActiveAdminUserWhereInput): BatchPayload!
   createBagItem(data: BagItemCreateInput!): BagItem!
   updateBagItem(data: BagItemUpdateInput!, where: BagItemWhereUniqueInput!): BagItem
   updateManyBagItems(data: BagItemUpdateManyMutationInput!, where: BagItemWhereInput): BatchPayload!
@@ -11376,6 +11462,9 @@ enum PushNotificationStatus {
 }
 
 type Query {
+  activeAdminUser(where: ActiveAdminUserWhereUniqueInput!): ActiveAdminUser
+  activeAdminUsers(where: ActiveAdminUserWhereInput, orderBy: ActiveAdminUserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ActiveAdminUser]!
+  activeAdminUsersConnection(where: ActiveAdminUserWhereInput, orderBy: ActiveAdminUserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ActiveAdminUserConnection!
   bagItem(where: BagItemWhereUniqueInput!): BagItem
   bagItems(where: BagItemWhereInput, orderBy: BagItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [BagItem]!
   bagItemsConnection(where: BagItemWhereInput, orderBy: BagItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BagItemConnection!
@@ -13467,6 +13556,7 @@ input StylePreferencesWhereUniqueInput {
 }
 
 type Subscription {
+  activeAdminUser(where: ActiveAdminUserSubscriptionWhereInput): ActiveAdminUserSubscriptionPayload
   bagItem(where: BagItemSubscriptionWhereInput): BagItemSubscriptionPayload
   billingInfo(where: BillingInfoSubscriptionWhereInput): BillingInfoSubscriptionPayload
   bottomSize(where: BottomSizeSubscriptionWhereInput): BottomSizeSubscriptionPayload

@@ -904,3 +904,10 @@ type Size {
   bottom: BottomSize
   display: String!
 }
+
+# Helper table for audit logs. Should only ever have 0 or 1 records.
+# In the event that it has a record, stores a link to the admin currently making a change
+type ActiveAdminUser {
+  id: ID! @id
+  admin: User!
+}
