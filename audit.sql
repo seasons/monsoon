@@ -249,8 +249,11 @@ View showing all tables with auditing set up. Ordered by schema, then table.
 $body$;
 
 --- Add logs to tables
---DROP TRIGGER customer_audit on monsoon$dev."Customer";
-
-CREATE TRIGGER customer_audit
-AFTER INSERT OR DELETE OR UPDATE ON monsoon$dev."Customer" FOR EACH ROW
-EXECUTE PROCEDURE audit.if_modified_func()
+SELECT audit.audit_table('monsoon$dev."Customer"');
+SELECT audit.audit_table('monsoon$dev."User"');
+SELECT audit.audit_table('monsoon$dev."Product"');
+SELECT audit.audit_table('monsoon$dev."PhysicalProduct"');
+SELECT audit.audit_table('monsoon$dev."ProductVariant"');
+SELECT audit.audit_table('monsoon$dev."Brand"');
+SELECT audit.audit_table('monsoon$dev."Category"');
+-- add more 
