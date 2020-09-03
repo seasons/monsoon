@@ -78,11 +78,13 @@ DECLARE
     excluded_cols text[] = ARRAY[]::text[];
     user_session_id text;
 BEGIN
+    RAISE WARNING 'This is a log to show the audit trigger runs, yo!';
     IF TG_WHEN <> 'AFTER' THEN
         RAISE EXCEPTION 'audit.if_modified_func() may only run as an AFTER trigger';
     END IF;
 
     user_session_id = (SELECT admin FROM monsoon$dev."ActiveAdminUser" LIMIT 1);
+    -- Probably want to assert something here: https://www.postgresql.org/docs/current/plpgsql-errors-and-messages.html 
     audit_row = ROW(
         nextval('audit.logged_actions_event_id_seq'), -- event_id
         TG_TABLE_SCHEMA::text,                        -- schema_name
@@ -112,17 +114,22 @@ BEGIN
     END IF;
     
     IF (TG_OP = 'UPDATE' AND TG_LEVEL = 'ROW') THEN
+        RAISE WARNING 'We execute the update clause, yo!';
         audit_row.row_data = hstore(OLD.*) - excluded_cols;
         audit_row.changed_fields =  (hstore(NEW.*) - audit_row.row_data) - excluded_cols;
         IF audit_row.changed_fields = hstore('') THEN
+            RAISE WARNING 'audit_row.changed_fields = hstore('') yo!';
             -- All changed fields are ignored. Skip this update.
             RETURN NULL;
         END IF;
     ELSIF (TG_OP = 'DELETE' AND TG_LEVEL = 'ROW') THEN
+        RAISE WARNING 'We execute the delete clause, yo!';
         audit_row.row_data = hstore(OLD.*) - excluded_cols;
     ELSIF (TG_OP = 'INSERT' AND TG_LEVEL = 'ROW') THEN
+        RAISE WARNING 'We execute the insert clause, yo!';
         audit_row.row_data = hstore(NEW.*) - excluded_cols;
     ELSIF (TG_LEVEL = 'STATEMENT' AND TG_OP IN ('INSERT','UPDATE','DELETE','TRUNCATE')) THEN
+        RAISE WARNING 'We execute the statement clause, yo!';
         audit_row.statement_only = 't';
     ELSE
         RAISE EXCEPTION '[audit.if_modified_func] - Trigger func added as trigger for unhandled case: %, %',TG_OP, TG_LEVEL;
@@ -245,5 +252,5 @@ $body$;
 --DROP TRIGGER customer_audit on monsoon$dev."Customer";
 
 CREATE TRIGGER customer_audit
-AFTER INSERT OR DELETE ON monsoon$dev."Customer" FOR EACH ROW
+AFTER INSERT OR DELETE OR UPDATE ON monsoon$dev."Customer" FOR EACH ROW
 EXECUTE PROCEDURE audit.if_modified_func()
