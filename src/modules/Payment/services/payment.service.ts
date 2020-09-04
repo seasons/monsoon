@@ -162,13 +162,6 @@ export class PaymentService {
       },
     })
 
-    await this.prisma.client.updateCustomer({
-      data: {
-        status: "Active",
-      },
-      where: { id: customer.id },
-    })
-
     this.segment.trackSubscribed(user.id, {
       plan: this.chargebeePlanIdToPrismaPlan(planID),
       method: "ApplePay",
