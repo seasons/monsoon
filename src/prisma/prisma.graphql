@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Thu Sep 03 2020 14:07:26 GMT-0400 (Eastern Daylight Time)
+# timestamp: Tue Sep 08 2020 15:23:49 GMT-0400 (Eastern Daylight Time)
 
 type ActiveAdminUser implements Node {
   id: ID!
@@ -188,7 +188,343 @@ input ActiveAdminUserWhereUniqueInput {
   id: ID
 }
 
+enum AdminAction {
+  Insert
+  Delete
+  Update
+  Truncate
+}
+
+type AdminActionLog {
+  actionId: Int!
+  tableName: String
+  activeAdminUser: User!
+  triggeredAt: DateTime!
+  action: AdminAction
+  rowData: Json
+  changedFields: Json
+  statementOnly: Boolean
+}
+
+"""
+A connection to a list of items.
+"""
+type AdminActionLogConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+
+  """
+  A list of edges.
+  """
+  edges: [AdminActionLogEdge]!
+  aggregate: AggregateAdminActionLog!
+}
+
+input AdminActionLogCreateInput {
+  tableName: String
+  triggeredAt: DateTime!
+  action: AdminAction
+  rowData: Json
+  changedFields: Json
+  statementOnly: Boolean
+  activeAdminUser: UserCreateOneInput!
+}
+
+"""
+An edge in a connection.
+"""
+type AdminActionLogEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: AdminActionLog!
+
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+}
+
+enum AdminActionLogOrderByInput {
+  actionId_ASC
+  actionId_DESC
+  tableName_ASC
+  tableName_DESC
+  triggeredAt_ASC
+  triggeredAt_DESC
+  action_ASC
+  action_DESC
+  rowData_ASC
+  rowData_DESC
+  changedFields_ASC
+  changedFields_DESC
+  statementOnly_ASC
+  statementOnly_DESC
+}
+
+type AdminActionLogPreviousValues {
+  actionId: Int!
+  tableName: String
+  triggeredAt: DateTime!
+  action: AdminAction
+  rowData: Json
+  changedFields: Json
+  statementOnly: Boolean
+}
+
+type AdminActionLogSubscriptionPayload {
+  mutation: MutationType!
+  node: AdminActionLog
+  updatedFields: [String!]
+  previousValues: AdminActionLogPreviousValues
+}
+
+input AdminActionLogSubscriptionWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [AdminActionLogSubscriptionWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [AdminActionLogSubscriptionWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [AdminActionLogSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: AdminActionLogWhereInput
+}
+
+input AdminActionLogUpdateInput {
+  tableName: String
+  triggeredAt: DateTime
+  action: AdminAction
+  rowData: Json
+  changedFields: Json
+  statementOnly: Boolean
+  activeAdminUser: UserUpdateOneRequiredInput
+}
+
+input AdminActionLogUpdateManyMutationInput {
+  tableName: String
+  triggeredAt: DateTime
+  action: AdminAction
+  rowData: Json
+  changedFields: Json
+  statementOnly: Boolean
+}
+
+input AdminActionLogWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [AdminActionLogWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [AdminActionLogWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [AdminActionLogWhereInput!]
+  actionId: Int
+
+  """
+  All values that are not equal to given value.
+  """
+  actionId_not: Int
+
+  """
+  All values that are contained in given list.
+  """
+  actionId_in: [Int!]
+
+  """
+  All values that are not contained in given list.
+  """
+  actionId_not_in: [Int!]
+
+  """
+  All values less than the given value.
+  """
+  actionId_lt: Int
+
+  """
+  All values less than or equal the given value.
+  """
+  actionId_lte: Int
+
+  """
+  All values greater than the given value.
+  """
+  actionId_gt: Int
+
+  """
+  All values greater than or equal the given value.
+  """
+  actionId_gte: Int
+  tableName: String
+
+  """
+  All values that are not equal to given value.
+  """
+  tableName_not: String
+
+  """
+  All values that are contained in given list.
+  """
+  tableName_in: [String!]
+
+  """
+  All values that are not contained in given list.
+  """
+  tableName_not_in: [String!]
+
+  """
+  All values less than the given value.
+  """
+  tableName_lt: String
+
+  """
+  All values less than or equal the given value.
+  """
+  tableName_lte: String
+
+  """
+  All values greater than the given value.
+  """
+  tableName_gt: String
+
+  """
+  All values greater than or equal the given value.
+  """
+  tableName_gte: String
+
+  """
+  All values containing the given string.
+  """
+  tableName_contains: String
+
+  """
+  All values not containing the given string.
+  """
+  tableName_not_contains: String
+
+  """
+  All values starting with the given string.
+  """
+  tableName_starts_with: String
+
+  """
+  All values not starting with the given string.
+  """
+  tableName_not_starts_with: String
+
+  """
+  All values ending with the given string.
+  """
+  tableName_ends_with: String
+
+  """
+  All values not ending with the given string.
+  """
+  tableName_not_ends_with: String
+  triggeredAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  triggeredAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  triggeredAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  triggeredAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  triggeredAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  triggeredAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  triggeredAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  triggeredAt_gte: DateTime
+  action: AdminAction
+
+  """
+  All values that are not equal to given value.
+  """
+  action_not: AdminAction
+
+  """
+  All values that are contained in given list.
+  """
+  action_in: [AdminAction!]
+
+  """
+  All values that are not contained in given list.
+  """
+  action_not_in: [AdminAction!]
+  statementOnly: Boolean
+
+  """
+  All values that are not equal to given value.
+  """
+  statementOnly_not: Boolean
+  activeAdminUser: UserWhereInput
+}
+
+input AdminActionLogWhereUniqueInput {
+  actionId: Int
+}
+
 type AggregateActiveAdminUser {
+  count: Int!
+}
+
+type AggregateAdminActionLog {
   count: Int!
 }
 
@@ -13000,6 +13336,7 @@ type Mutation {
     data: ProductVariantWantCreateInput!
   ): ProductVariantWant!
   createActiveAdminUser(data: ActiveAdminUserCreateInput!): ActiveAdminUser!
+  createAdminActionLog(data: AdminActionLogCreateInput!): AdminActionLog!
   createCollection(data: CollectionCreateInput!): Collection!
   createPushNotificationReceipt(
     data: PushNotificationReceiptCreateInput!
@@ -13127,6 +13464,10 @@ type Mutation {
     data: ActiveAdminUserUpdateInput!
     where: ActiveAdminUserWhereUniqueInput!
   ): ActiveAdminUser
+  updateAdminActionLog(
+    data: AdminActionLogUpdateInput!
+    where: AdminActionLogWhereUniqueInput!
+  ): AdminActionLog
   updateCollection(
     data: CollectionUpdateInput!
     where: CollectionWhereUniqueInput!
@@ -13271,6 +13612,7 @@ type Mutation {
   deleteActiveAdminUser(
     where: ActiveAdminUserWhereUniqueInput!
   ): ActiveAdminUser
+  deleteAdminActionLog(where: AdminActionLogWhereUniqueInput!): AdminActionLog
   deleteCollection(where: CollectionWhereUniqueInput!): Collection
   deletePushNotificationReceipt(
     where: PushNotificationReceiptWhereUniqueInput!
@@ -13438,6 +13780,11 @@ type Mutation {
     create: ActiveAdminUserCreateInput!
     update: ActiveAdminUserUpdateInput!
   ): ActiveAdminUser!
+  upsertAdminActionLog(
+    where: AdminActionLogWhereUniqueInput!
+    create: AdminActionLogCreateInput!
+    update: AdminActionLogUpdateInput!
+  ): AdminActionLog!
   upsertCollection(
     where: CollectionWhereUniqueInput!
     create: CollectionCreateInput!
@@ -13660,6 +14007,10 @@ type Mutation {
     data: ProductVariantWantUpdateManyMutationInput!
     where: ProductVariantWantWhereInput
   ): BatchPayload!
+  updateManyAdminActionLogs(
+    data: AdminActionLogUpdateManyMutationInput!
+    where: AdminActionLogWhereInput
+  ): BatchPayload!
   updateManyCollections(
     data: CollectionUpdateManyMutationInput!
     where: CollectionWhereInput
@@ -13815,6 +14166,7 @@ type Mutation {
     where: ProductVariantWantWhereInput
   ): BatchPayload!
   deleteManyActiveAdminUsers(where: ActiveAdminUserWhereInput): BatchPayload!
+  deleteManyAdminActionLogs(where: AdminActionLogWhereInput): BatchPayload!
   deleteManyCollections(where: CollectionWhereInput): BatchPayload!
   deleteManyPushNotificationReceipts(
     where: PushNotificationReceiptWhereInput
@@ -28146,6 +28498,15 @@ type Query {
     first: Int
     last: Int
   ): [ActiveAdminUser]!
+  adminActionLogs(
+    where: AdminActionLogWhereInput
+    orderBy: AdminActionLogOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [AdminActionLog]!
   collections(
     where: CollectionWhereInput
     orderBy: CollectionOrderByInput
@@ -28431,6 +28792,7 @@ type Query {
     where: ProductVariantWantWhereUniqueInput!
   ): ProductVariantWant
   activeAdminUser(where: ActiveAdminUserWhereUniqueInput!): ActiveAdminUser
+  adminActionLog(where: AdminActionLogWhereUniqueInput!): AdminActionLog
   collection(where: CollectionWhereUniqueInput!): Collection
   pushNotificationReceipt(
     where: PushNotificationReceiptWhereUniqueInput!
@@ -28692,6 +29054,15 @@ type Query {
     first: Int
     last: Int
   ): ActiveAdminUserConnection!
+  adminActionLogsConnection(
+    where: AdminActionLogWhereInput
+    orderBy: AdminActionLogOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): AdminActionLogConnection!
   collectionsConnection(
     where: CollectionWhereInput
     orderBy: CollectionOrderByInput
@@ -33387,6 +33758,9 @@ type Subscription {
   activeAdminUser(
     where: ActiveAdminUserSubscriptionWhereInput
   ): ActiveAdminUserSubscriptionPayload
+  adminActionLog(
+    where: AdminActionLogSubscriptionWhereInput
+  ): AdminActionLogSubscriptionPayload
   collection(
     where: CollectionSubscriptionWhereInput
   ): CollectionSubscriptionPayload

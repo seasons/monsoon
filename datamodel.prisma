@@ -906,3 +906,20 @@ type ActiveAdminUser {
   id: ID! @id
   admin: User!
 }
+
+enum AdminAction {
+  Insert
+  Delete
+  Update
+  Truncate
+}
+type AdminActionLog {
+  actionId: Int! @id(strategy: AUTO)
+  tableName: String
+  activeAdminUser: User!
+  triggeredAt: DateTime!
+  action: AdminAction
+  rowData: Json
+  changedFields: Json
+  statementOnly: Boolean
+}

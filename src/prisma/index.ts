@@ -17,6 +17,7 @@ export type Maybe<T> = T | undefined | null;
 
 export interface Exists {
   activeAdminUser: (where?: ActiveAdminUserWhereInput) => Promise<boolean>;
+  adminActionLog: (where?: AdminActionLogWhereInput) => Promise<boolean>;
   bagItem: (where?: BagItemWhereInput) => Promise<boolean>;
   billingInfo: (where?: BillingInfoWhereInput) => Promise<boolean>;
   bottomSize: (where?: BottomSizeWhereInput) => Promise<boolean>;
@@ -143,6 +144,27 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => ActiveAdminUserConnectionPromise;
+  adminActionLog: (
+    where: AdminActionLogWhereUniqueInput
+  ) => AdminActionLogNullablePromise;
+  adminActionLogs: (args?: {
+    where?: AdminActionLogWhereInput;
+    orderBy?: AdminActionLogOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<AdminActionLog>;
+  adminActionLogsConnection: (args?: {
+    where?: AdminActionLogWhereInput;
+    orderBy?: AdminActionLogOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => AdminActionLogConnectionPromise;
   bagItem: (where: BagItemWhereUniqueInput) => BagItemNullablePromise;
   bagItems: (args?: {
     where?: BagItemWhereInput;
@@ -1181,6 +1203,28 @@ export interface Prisma {
   deleteManyActiveAdminUsers: (
     where?: ActiveAdminUserWhereInput
   ) => BatchPayloadPromise;
+  createAdminActionLog: (
+    data: AdminActionLogCreateInput
+  ) => AdminActionLogPromise;
+  updateAdminActionLog: (args: {
+    data: AdminActionLogUpdateInput;
+    where: AdminActionLogWhereUniqueInput;
+  }) => AdminActionLogPromise;
+  updateManyAdminActionLogs: (args: {
+    data: AdminActionLogUpdateManyMutationInput;
+    where?: AdminActionLogWhereInput;
+  }) => BatchPayloadPromise;
+  upsertAdminActionLog: (args: {
+    where: AdminActionLogWhereUniqueInput;
+    create: AdminActionLogCreateInput;
+    update: AdminActionLogUpdateInput;
+  }) => AdminActionLogPromise;
+  deleteAdminActionLog: (
+    where: AdminActionLogWhereUniqueInput
+  ) => AdminActionLogPromise;
+  deleteManyAdminActionLogs: (
+    where?: AdminActionLogWhereInput
+  ) => BatchPayloadPromise;
   createBagItem: (data: BagItemCreateInput) => BagItemPromise;
   updateBagItem: (args: {
     data: BagItemUpdateInput;
@@ -2161,6 +2205,9 @@ export interface Subscription {
   activeAdminUser: (
     where?: ActiveAdminUserSubscriptionWhereInput
   ) => ActiveAdminUserSubscriptionPayloadSubscription;
+  adminActionLog: (
+    where?: AdminActionLogSubscriptionWhereInput
+  ) => AdminActionLogSubscriptionPayloadSubscription;
   bagItem: (
     where?: BagItemSubscriptionWhereInput
   ) => BagItemSubscriptionPayloadSubscription;
@@ -2712,6 +2759,24 @@ export type FitPicReportOrderByInput =
   | "updatedAt_DESC";
 
 export type ActiveAdminUserOrderByInput = "id_ASC" | "id_DESC";
+
+export type AdminAction = "Insert" | "Delete" | "Update" | "Truncate";
+
+export type AdminActionLogOrderByInput =
+  | "actionId_ASC"
+  | "actionId_DESC"
+  | "tableName_ASC"
+  | "tableName_DESC"
+  | "triggeredAt_ASC"
+  | "triggeredAt_DESC"
+  | "action_ASC"
+  | "action_DESC"
+  | "rowData_ASC"
+  | "rowData_DESC"
+  | "changedFields_ASC"
+  | "changedFields_DESC"
+  | "statementOnly_ASC"
+  | "statementOnly_DESC";
 
 export type CustomerStatus =
   | "Invited"
@@ -5461,6 +5526,53 @@ export interface ActiveAdminUserWhereInput {
   AND?: Maybe<ActiveAdminUserWhereInput[] | ActiveAdminUserWhereInput>;
   OR?: Maybe<ActiveAdminUserWhereInput[] | ActiveAdminUserWhereInput>;
   NOT?: Maybe<ActiveAdminUserWhereInput[] | ActiveAdminUserWhereInput>;
+}
+
+export type AdminActionLogWhereUniqueInput = AtLeastOne<{
+  actionId: Maybe<Int>;
+}>;
+
+export interface AdminActionLogWhereInput {
+  actionId?: Maybe<Int>;
+  actionId_not?: Maybe<Int>;
+  actionId_in?: Maybe<Int[] | Int>;
+  actionId_not_in?: Maybe<Int[] | Int>;
+  actionId_lt?: Maybe<Int>;
+  actionId_lte?: Maybe<Int>;
+  actionId_gt?: Maybe<Int>;
+  actionId_gte?: Maybe<Int>;
+  tableName?: Maybe<String>;
+  tableName_not?: Maybe<String>;
+  tableName_in?: Maybe<String[] | String>;
+  tableName_not_in?: Maybe<String[] | String>;
+  tableName_lt?: Maybe<String>;
+  tableName_lte?: Maybe<String>;
+  tableName_gt?: Maybe<String>;
+  tableName_gte?: Maybe<String>;
+  tableName_contains?: Maybe<String>;
+  tableName_not_contains?: Maybe<String>;
+  tableName_starts_with?: Maybe<String>;
+  tableName_not_starts_with?: Maybe<String>;
+  tableName_ends_with?: Maybe<String>;
+  tableName_not_ends_with?: Maybe<String>;
+  activeAdminUser?: Maybe<UserWhereInput>;
+  triggeredAt?: Maybe<DateTimeInput>;
+  triggeredAt_not?: Maybe<DateTimeInput>;
+  triggeredAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  triggeredAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  triggeredAt_lt?: Maybe<DateTimeInput>;
+  triggeredAt_lte?: Maybe<DateTimeInput>;
+  triggeredAt_gt?: Maybe<DateTimeInput>;
+  triggeredAt_gte?: Maybe<DateTimeInput>;
+  action?: Maybe<AdminAction>;
+  action_not?: Maybe<AdminAction>;
+  action_in?: Maybe<AdminAction[] | AdminAction>;
+  action_not_in?: Maybe<AdminAction[] | AdminAction>;
+  statementOnly?: Maybe<Boolean>;
+  statementOnly_not?: Maybe<Boolean>;
+  AND?: Maybe<AdminActionLogWhereInput[] | AdminActionLogWhereInput>;
+  OR?: Maybe<AdminActionLogWhereInput[] | AdminActionLogWhereInput>;
+  NOT?: Maybe<AdminActionLogWhereInput[] | AdminActionLogWhereInput>;
 }
 
 export type BagItemWhereUniqueInput = AtLeastOne<{
@@ -11335,6 +11447,36 @@ export interface UserPushNotificationUpsertNestedInput {
   create: UserPushNotificationCreateInput;
 }
 
+export interface AdminActionLogCreateInput {
+  actionId?: Maybe<Int>;
+  tableName?: Maybe<String>;
+  activeAdminUser: UserCreateOneInput;
+  triggeredAt: DateTimeInput;
+  action?: Maybe<AdminAction>;
+  rowData?: Maybe<Json>;
+  changedFields?: Maybe<Json>;
+  statementOnly?: Maybe<Boolean>;
+}
+
+export interface AdminActionLogUpdateInput {
+  tableName?: Maybe<String>;
+  activeAdminUser?: Maybe<UserUpdateOneRequiredInput>;
+  triggeredAt?: Maybe<DateTimeInput>;
+  action?: Maybe<AdminAction>;
+  rowData?: Maybe<Json>;
+  changedFields?: Maybe<Json>;
+  statementOnly?: Maybe<Boolean>;
+}
+
+export interface AdminActionLogUpdateManyMutationInput {
+  tableName?: Maybe<String>;
+  triggeredAt?: Maybe<DateTimeInput>;
+  action?: Maybe<AdminAction>;
+  rowData?: Maybe<Json>;
+  changedFields?: Maybe<Json>;
+  statementOnly?: Maybe<Boolean>;
+}
+
 export interface BagItemCreateInput {
   id?: Maybe<ID_Input>;
   customer: CustomerCreateOneWithoutBagItemsInput;
@@ -15331,6 +15473,26 @@ export interface ActiveAdminUserSubscriptionWhereInput {
   >;
 }
 
+export interface AdminActionLogSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<AdminActionLogWhereInput>;
+  AND?: Maybe<
+    | AdminActionLogSubscriptionWhereInput[]
+    | AdminActionLogSubscriptionWhereInput
+  >;
+  OR?: Maybe<
+    | AdminActionLogSubscriptionWhereInput[]
+    | AdminActionLogSubscriptionWhereInput
+  >;
+  NOT?: Maybe<
+    | AdminActionLogSubscriptionWhereInput[]
+    | AdminActionLogSubscriptionWhereInput
+  >;
+}
+
 export interface BagItemSubscriptionWhereInput {
   mutation_in?: Maybe<MutationType[] | MutationType>;
   updatedFields_contains?: Maybe<String>;
@@ -18345,6 +18507,111 @@ export interface AggregateActiveAdminUserPromise
 
 export interface AggregateActiveAdminUserSubscription
   extends Promise<AsyncIterator<AggregateActiveAdminUser>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface AdminActionLog {
+  actionId: Int;
+  tableName?: String;
+  triggeredAt: DateTimeOutput;
+  action?: AdminAction;
+  rowData?: Json;
+  changedFields?: Json;
+  statementOnly?: Boolean;
+}
+
+export interface AdminActionLogPromise
+  extends Promise<AdminActionLog>,
+    Fragmentable {
+  actionId: () => Promise<Int>;
+  tableName: () => Promise<String>;
+  activeAdminUser: <T = UserPromise>() => T;
+  triggeredAt: () => Promise<DateTimeOutput>;
+  action: () => Promise<AdminAction>;
+  rowData: () => Promise<Json>;
+  changedFields: () => Promise<Json>;
+  statementOnly: () => Promise<Boolean>;
+}
+
+export interface AdminActionLogSubscription
+  extends Promise<AsyncIterator<AdminActionLog>>,
+    Fragmentable {
+  actionId: () => Promise<AsyncIterator<Int>>;
+  tableName: () => Promise<AsyncIterator<String>>;
+  activeAdminUser: <T = UserSubscription>() => T;
+  triggeredAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  action: () => Promise<AsyncIterator<AdminAction>>;
+  rowData: () => Promise<AsyncIterator<Json>>;
+  changedFields: () => Promise<AsyncIterator<Json>>;
+  statementOnly: () => Promise<AsyncIterator<Boolean>>;
+}
+
+export interface AdminActionLogNullablePromise
+  extends Promise<AdminActionLog | null>,
+    Fragmentable {
+  actionId: () => Promise<Int>;
+  tableName: () => Promise<String>;
+  activeAdminUser: <T = UserPromise>() => T;
+  triggeredAt: () => Promise<DateTimeOutput>;
+  action: () => Promise<AdminAction>;
+  rowData: () => Promise<Json>;
+  changedFields: () => Promise<Json>;
+  statementOnly: () => Promise<Boolean>;
+}
+
+export interface AdminActionLogConnection {
+  pageInfo: PageInfo;
+  edges: AdminActionLogEdge[];
+}
+
+export interface AdminActionLogConnectionPromise
+  extends Promise<AdminActionLogConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<AdminActionLogEdge>>() => T;
+  aggregate: <T = AggregateAdminActionLogPromise>() => T;
+}
+
+export interface AdminActionLogConnectionSubscription
+  extends Promise<AsyncIterator<AdminActionLogConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<AdminActionLogEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateAdminActionLogSubscription>() => T;
+}
+
+export interface AdminActionLogEdge {
+  node: AdminActionLog;
+  cursor: String;
+}
+
+export interface AdminActionLogEdgePromise
+  extends Promise<AdminActionLogEdge>,
+    Fragmentable {
+  node: <T = AdminActionLogPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface AdminActionLogEdgeSubscription
+  extends Promise<AsyncIterator<AdminActionLogEdge>>,
+    Fragmentable {
+  node: <T = AdminActionLogSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateAdminActionLog {
+  count: Int;
+}
+
+export interface AggregateAdminActionLogPromise
+  extends Promise<AggregateAdminActionLog>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateAdminActionLogSubscription
+  extends Promise<AsyncIterator<AggregateAdminActionLog>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
@@ -22654,6 +22921,65 @@ export interface ActiveAdminUserPreviousValuesSubscription
   id: () => Promise<AsyncIterator<ID_Output>>;
 }
 
+export interface AdminActionLogSubscriptionPayload {
+  mutation: MutationType;
+  node: AdminActionLog;
+  updatedFields: String[];
+  previousValues: AdminActionLogPreviousValues;
+}
+
+export interface AdminActionLogSubscriptionPayloadPromise
+  extends Promise<AdminActionLogSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = AdminActionLogPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = AdminActionLogPreviousValuesPromise>() => T;
+}
+
+export interface AdminActionLogSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<AdminActionLogSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = AdminActionLogSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = AdminActionLogPreviousValuesSubscription>() => T;
+}
+
+export interface AdminActionLogPreviousValues {
+  actionId: Int;
+  tableName?: String;
+  triggeredAt: DateTimeOutput;
+  action?: AdminAction;
+  rowData?: Json;
+  changedFields?: Json;
+  statementOnly?: Boolean;
+}
+
+export interface AdminActionLogPreviousValuesPromise
+  extends Promise<AdminActionLogPreviousValues>,
+    Fragmentable {
+  actionId: () => Promise<Int>;
+  tableName: () => Promise<String>;
+  triggeredAt: () => Promise<DateTimeOutput>;
+  action: () => Promise<AdminAction>;
+  rowData: () => Promise<Json>;
+  changedFields: () => Promise<Json>;
+  statementOnly: () => Promise<Boolean>;
+}
+
+export interface AdminActionLogPreviousValuesSubscription
+  extends Promise<AsyncIterator<AdminActionLogPreviousValues>>,
+    Fragmentable {
+  actionId: () => Promise<AsyncIterator<Int>>;
+  tableName: () => Promise<AsyncIterator<String>>;
+  triggeredAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  action: () => Promise<AsyncIterator<AdminAction>>;
+  rowData: () => Promise<AsyncIterator<Json>>;
+  changedFields: () => Promise<AsyncIterator<Json>>;
+  statementOnly: () => Promise<AsyncIterator<Boolean>>;
+}
+
 export interface BagItemSubscriptionPayload {
   mutation: MutationType;
   node: BagItem;
@@ -25964,6 +26290,14 @@ export const models: Model[] = [
   },
   {
     name: "ActiveAdminUser",
+    embedded: false
+  },
+  {
+    name: "AdminAction",
+    embedded: false
+  },
+  {
+    name: "AdminActionLog",
     embedded: false
   }
 ];

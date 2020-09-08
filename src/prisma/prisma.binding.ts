@@ -29,6 +29,7 @@ export interface Query {
     productRequests: <T = Array<ProductRequest | null>>(args: { where?: ProductRequestWhereInput | null, orderBy?: ProductRequestOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     productVariantWants: <T = Array<ProductVariantWant | null>>(args: { where?: ProductVariantWantWhereInput | null, orderBy?: ProductVariantWantOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     activeAdminUsers: <T = Array<ActiveAdminUser | null>>(args: { where?: ActiveAdminUserWhereInput | null, orderBy?: ActiveAdminUserOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    adminActionLogs: <T = Array<AdminActionLog | null>>(args: { where?: AdminActionLogWhereInput | null, orderBy?: AdminActionLogOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     collections: <T = Array<Collection | null>>(args: { where?: CollectionWhereInput | null, orderBy?: CollectionOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     pushNotificationReceipts: <T = Array<PushNotificationReceipt | null>>(args: { where?: PushNotificationReceiptWhereInput | null, orderBy?: PushNotificationReceiptOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     userPushNotificationInterests: <T = Array<UserPushNotificationInterest | null>>(args: { where?: UserPushNotificationInterestWhereInput | null, orderBy?: UserPushNotificationInterestOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -80,6 +81,7 @@ export interface Query {
     productRequest: <T = ProductRequest | null>(args: { where: ProductRequestWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     productVariantWant: <T = ProductVariantWant | null>(args: { where: ProductVariantWantWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     activeAdminUser: <T = ActiveAdminUser | null>(args: { where: ActiveAdminUserWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    adminActionLog: <T = AdminActionLog | null>(args: { where: AdminActionLogWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     collection: <T = Collection | null>(args: { where: CollectionWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     pushNotificationReceipt: <T = PushNotificationReceipt | null>(args: { where: PushNotificationReceiptWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     userPushNotificationInterest: <T = UserPushNotificationInterest | null>(args: { where: UserPushNotificationInterestWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -131,6 +133,7 @@ export interface Query {
     productRequestsConnection: <T = ProductRequestConnection>(args: { where?: ProductRequestWhereInput | null, orderBy?: ProductRequestOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     productVariantWantsConnection: <T = ProductVariantWantConnection>(args: { where?: ProductVariantWantWhereInput | null, orderBy?: ProductVariantWantOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     activeAdminUsersConnection: <T = ActiveAdminUserConnection>(args: { where?: ActiveAdminUserWhereInput | null, orderBy?: ActiveAdminUserOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    adminActionLogsConnection: <T = AdminActionLogConnection>(args: { where?: AdminActionLogWhereInput | null, orderBy?: AdminActionLogOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     collectionsConnection: <T = CollectionConnection>(args: { where?: CollectionWhereInput | null, orderBy?: CollectionOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     pushNotificationReceiptsConnection: <T = PushNotificationReceiptConnection>(args: { where?: PushNotificationReceiptWhereInput | null, orderBy?: PushNotificationReceiptOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     userPushNotificationInterestsConnection: <T = UserPushNotificationInterestConnection>(args: { where?: UserPushNotificationInterestWhereInput | null, orderBy?: UserPushNotificationInterestOrderByInput | null, skip?: Int | null, after?: String | null, before?: String | null, first?: Int | null, last?: Int | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -186,6 +189,7 @@ export interface Mutation {
     createProductRequest: <T = ProductRequest>(args: { data: ProductRequestCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createProductVariantWant: <T = ProductVariantWant>(args: { data: ProductVariantWantCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createActiveAdminUser: <T = ActiveAdminUser>(args: { data: ActiveAdminUserCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    createAdminActionLog: <T = AdminActionLog>(args: { data: AdminActionLogCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createCollection: <T = Collection>(args: { data: CollectionCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createPushNotificationReceipt: <T = PushNotificationReceipt>(args: { data: PushNotificationReceiptCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     createUserPushNotificationInterest: <T = UserPushNotificationInterest>(args: { data: UserPushNotificationInterestCreateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -237,6 +241,7 @@ export interface Mutation {
     updateProductRequest: <T = ProductRequest | null>(args: { data: ProductRequestUpdateInput, where: ProductRequestWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateProductVariantWant: <T = ProductVariantWant | null>(args: { data: ProductVariantWantUpdateInput, where: ProductVariantWantWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateActiveAdminUser: <T = ActiveAdminUser | null>(args: { data: ActiveAdminUserUpdateInput, where: ActiveAdminUserWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    updateAdminActionLog: <T = AdminActionLog | null>(args: { data: AdminActionLogUpdateInput, where: AdminActionLogWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateCollection: <T = Collection | null>(args: { data: CollectionUpdateInput, where: CollectionWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updatePushNotificationReceipt: <T = PushNotificationReceipt | null>(args: { data: PushNotificationReceiptUpdateInput, where: PushNotificationReceiptWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     updateUserPushNotificationInterest: <T = UserPushNotificationInterest | null>(args: { data: UserPushNotificationInterestUpdateInput, where: UserPushNotificationInterestWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -288,6 +293,7 @@ export interface Mutation {
     deleteProductRequest: <T = ProductRequest | null>(args: { where: ProductRequestWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteProductVariantWant: <T = ProductVariantWant | null>(args: { where: ProductVariantWantWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteActiveAdminUser: <T = ActiveAdminUser | null>(args: { where: ActiveAdminUserWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
+    deleteAdminActionLog: <T = AdminActionLog | null>(args: { where: AdminActionLogWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteCollection: <T = Collection | null>(args: { where: CollectionWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deletePushNotificationReceipt: <T = PushNotificationReceipt | null>(args: { where: PushNotificationReceiptWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
     deleteUserPushNotificationInterest: <T = UserPushNotificationInterest | null>(args: { where: UserPushNotificationInterestWhereUniqueInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T | null> ,
@@ -339,6 +345,7 @@ export interface Mutation {
     upsertProductRequest: <T = ProductRequest>(args: { where: ProductRequestWhereUniqueInput, create: ProductRequestCreateInput, update: ProductRequestUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertProductVariantWant: <T = ProductVariantWant>(args: { where: ProductVariantWantWhereUniqueInput, create: ProductVariantWantCreateInput, update: ProductVariantWantUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertActiveAdminUser: <T = ActiveAdminUser>(args: { where: ActiveAdminUserWhereUniqueInput, create: ActiveAdminUserCreateInput, update: ActiveAdminUserUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    upsertAdminActionLog: <T = AdminActionLog>(args: { where: AdminActionLogWhereUniqueInput, create: AdminActionLogCreateInput, update: AdminActionLogUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertCollection: <T = Collection>(args: { where: CollectionWhereUniqueInput, create: CollectionCreateInput, update: CollectionUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertPushNotificationReceipt: <T = PushNotificationReceipt>(args: { where: PushNotificationReceiptWhereUniqueInput, create: PushNotificationReceiptCreateInput, update: PushNotificationReceiptUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     upsertUserPushNotificationInterest: <T = UserPushNotificationInterest>(args: { where: UserPushNotificationInterestWhereUniqueInput, create: UserPushNotificationInterestCreateInput, update: UserPushNotificationInterestUpdateInput }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -388,6 +395,7 @@ export interface Mutation {
     updateManyProductVariantFeedbackQuestions: <T = BatchPayload>(args: { data: ProductVariantFeedbackQuestionUpdateManyMutationInput, where?: ProductVariantFeedbackQuestionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyProductRequests: <T = BatchPayload>(args: { data: ProductRequestUpdateManyMutationInput, where?: ProductRequestWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyProductVariantWants: <T = BatchPayload>(args: { data: ProductVariantWantUpdateManyMutationInput, where?: ProductVariantWantWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    updateManyAdminActionLogs: <T = BatchPayload>(args: { data: AdminActionLogUpdateManyMutationInput, where?: AdminActionLogWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyCollections: <T = BatchPayload>(args: { data: CollectionUpdateManyMutationInput, where?: CollectionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyPushNotificationReceipts: <T = BatchPayload>(args: { data: PushNotificationReceiptUpdateManyMutationInput, where?: PushNotificationReceiptWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     updateManyUserPushNotificationInterests: <T = BatchPayload>(args: { data: UserPushNotificationInterestUpdateManyMutationInput, where?: UserPushNotificationInterestWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -439,6 +447,7 @@ export interface Mutation {
     deleteManyProductRequests: <T = BatchPayload>(args: { where?: ProductRequestWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyProductVariantWants: <T = BatchPayload>(args: { where?: ProductVariantWantWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyActiveAdminUsers: <T = BatchPayload>(args: { where?: ActiveAdminUserWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
+    deleteManyAdminActionLogs: <T = BatchPayload>(args: { where?: AdminActionLogWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyCollections: <T = BatchPayload>(args: { where?: CollectionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyPushNotificationReceipts: <T = BatchPayload>(args: { where?: PushNotificationReceiptWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
     deleteManyUserPushNotificationInterests: <T = BatchPayload>(args: { where?: UserPushNotificationInterestWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<T> ,
@@ -493,6 +502,7 @@ export interface Subscription {
     productRequest: <T = ProductRequestSubscriptionPayload | null>(args: { where?: ProductRequestSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     productVariantWant: <T = ProductVariantWantSubscriptionPayload | null>(args: { where?: ProductVariantWantSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     activeAdminUser: <T = ActiveAdminUserSubscriptionPayload | null>(args: { where?: ActiveAdminUserSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
+    adminActionLog: <T = AdminActionLogSubscriptionPayload | null>(args: { where?: AdminActionLogSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     collection: <T = CollectionSubscriptionPayload | null>(args: { where?: CollectionSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     pushNotificationReceipt: <T = PushNotificationReceiptSubscriptionPayload | null>(args: { where?: PushNotificationReceiptSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
     userPushNotificationInterest: <T = UserPushNotificationInterestSubscriptionPayload | null>(args: { where?: UserPushNotificationInterestSubscriptionWhereInput | null }, info?: GraphQLResolveInfo | string, options?: Options) => Promise<AsyncIterator<T | null>> ,
@@ -547,6 +557,7 @@ export interface Exists {
   ProductRequest: (where?: ProductRequestWhereInput) => Promise<boolean>
   ProductVariantWant: (where?: ProductVariantWantWhereInput) => Promise<boolean>
   ActiveAdminUser: (where?: ActiveAdminUserWhereInput) => Promise<boolean>
+  AdminActionLog: (where?: AdminActionLogWhereInput) => Promise<boolean>
   Collection: (where?: CollectionWhereInput) => Promise<boolean>
   PushNotificationReceipt: (where?: PushNotificationReceiptWhereInput) => Promise<boolean>
   UserPushNotificationInterest: (where?: UserPushNotificationInterestWhereInput) => Promise<boolean>
@@ -732,7 +743,255 @@ input ActiveAdminUserWhereUniqueInput {
   id: ID
 }
 
+enum AdminAction {
+  Insert
+  Delete
+  Update
+  Truncate
+}
+
+type AdminActionLog {
+  actionId: Int!
+  tableName: String
+  activeAdminUser: User!
+  triggeredAt: DateTime!
+  action: AdminAction
+  rowData: Json
+  changedFields: Json
+  statementOnly: Boolean
+}
+
+"""A connection to a list of items."""
+type AdminActionLogConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [AdminActionLogEdge]!
+  aggregate: AggregateAdminActionLog!
+}
+
+input AdminActionLogCreateInput {
+  tableName: String
+  triggeredAt: DateTime!
+  action: AdminAction
+  rowData: Json
+  changedFields: Json
+  statementOnly: Boolean
+  activeAdminUser: UserCreateOneInput!
+}
+
+"""An edge in a connection."""
+type AdminActionLogEdge {
+  """The item at the end of the edge."""
+  node: AdminActionLog!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum AdminActionLogOrderByInput {
+  actionId_ASC
+  actionId_DESC
+  tableName_ASC
+  tableName_DESC
+  triggeredAt_ASC
+  triggeredAt_DESC
+  action_ASC
+  action_DESC
+  rowData_ASC
+  rowData_DESC
+  changedFields_ASC
+  changedFields_DESC
+  statementOnly_ASC
+  statementOnly_DESC
+}
+
+type AdminActionLogPreviousValues {
+  actionId: Int!
+  tableName: String
+  triggeredAt: DateTime!
+  action: AdminAction
+  rowData: Json
+  changedFields: Json
+  statementOnly: Boolean
+}
+
+type AdminActionLogSubscriptionPayload {
+  mutation: MutationType!
+  node: AdminActionLog
+  updatedFields: [String!]
+  previousValues: AdminActionLogPreviousValues
+}
+
+input AdminActionLogSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [AdminActionLogSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [AdminActionLogSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [AdminActionLogSubscriptionWhereInput!]
+
+  """The subscription event gets dispatched when it's listed in mutation_in"""
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: AdminActionLogWhereInput
+}
+
+input AdminActionLogUpdateInput {
+  tableName: String
+  triggeredAt: DateTime
+  action: AdminAction
+  rowData: Json
+  changedFields: Json
+  statementOnly: Boolean
+  activeAdminUser: UserUpdateOneRequiredInput
+}
+
+input AdminActionLogUpdateManyMutationInput {
+  tableName: String
+  triggeredAt: DateTime
+  action: AdminAction
+  rowData: Json
+  changedFields: Json
+  statementOnly: Boolean
+}
+
+input AdminActionLogWhereInput {
+  """Logical AND on all given filters."""
+  AND: [AdminActionLogWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [AdminActionLogWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [AdminActionLogWhereInput!]
+  actionId: Int
+
+  """All values that are not equal to given value."""
+  actionId_not: Int
+
+  """All values that are contained in given list."""
+  actionId_in: [Int!]
+
+  """All values that are not contained in given list."""
+  actionId_not_in: [Int!]
+
+  """All values less than the given value."""
+  actionId_lt: Int
+
+  """All values less than or equal the given value."""
+  actionId_lte: Int
+
+  """All values greater than the given value."""
+  actionId_gt: Int
+
+  """All values greater than or equal the given value."""
+  actionId_gte: Int
+  tableName: String
+
+  """All values that are not equal to given value."""
+  tableName_not: String
+
+  """All values that are contained in given list."""
+  tableName_in: [String!]
+
+  """All values that are not contained in given list."""
+  tableName_not_in: [String!]
+
+  """All values less than the given value."""
+  tableName_lt: String
+
+  """All values less than or equal the given value."""
+  tableName_lte: String
+
+  """All values greater than the given value."""
+  tableName_gt: String
+
+  """All values greater than or equal the given value."""
+  tableName_gte: String
+
+  """All values containing the given string."""
+  tableName_contains: String
+
+  """All values not containing the given string."""
+  tableName_not_contains: String
+
+  """All values starting with the given string."""
+  tableName_starts_with: String
+
+  """All values not starting with the given string."""
+  tableName_not_starts_with: String
+
+  """All values ending with the given string."""
+  tableName_ends_with: String
+
+  """All values not ending with the given string."""
+  tableName_not_ends_with: String
+  triggeredAt: DateTime
+
+  """All values that are not equal to given value."""
+  triggeredAt_not: DateTime
+
+  """All values that are contained in given list."""
+  triggeredAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  triggeredAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  triggeredAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  triggeredAt_lte: DateTime
+
+  """All values greater than the given value."""
+  triggeredAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  triggeredAt_gte: DateTime
+  action: AdminAction
+
+  """All values that are not equal to given value."""
+  action_not: AdminAction
+
+  """All values that are contained in given list."""
+  action_in: [AdminAction!]
+
+  """All values that are not contained in given list."""
+  action_not_in: [AdminAction!]
+  statementOnly: Boolean
+
+  """All values that are not equal to given value."""
+  statementOnly_not: Boolean
+  activeAdminUser: UserWhereInput
+}
+
+input AdminActionLogWhereUniqueInput {
+  actionId: Int
+}
+
 type AggregateActiveAdminUser {
+  count: Int!
+}
+
+type AggregateAdminActionLog {
   count: Int!
 }
 
@@ -9678,6 +9937,7 @@ type Mutation {
   createProductRequest(data: ProductRequestCreateInput!): ProductRequest!
   createProductVariantWant(data: ProductVariantWantCreateInput!): ProductVariantWant!
   createActiveAdminUser(data: ActiveAdminUserCreateInput!): ActiveAdminUser!
+  createAdminActionLog(data: AdminActionLogCreateInput!): AdminActionLog!
   createCollection(data: CollectionCreateInput!): Collection!
   createPushNotificationReceipt(data: PushNotificationReceiptCreateInput!): PushNotificationReceipt!
   createUserPushNotificationInterest(data: UserPushNotificationInterestCreateInput!): UserPushNotificationInterest!
@@ -9729,6 +9989,7 @@ type Mutation {
   updateProductRequest(data: ProductRequestUpdateInput!, where: ProductRequestWhereUniqueInput!): ProductRequest
   updateProductVariantWant(data: ProductVariantWantUpdateInput!, where: ProductVariantWantWhereUniqueInput!): ProductVariantWant
   updateActiveAdminUser(data: ActiveAdminUserUpdateInput!, where: ActiveAdminUserWhereUniqueInput!): ActiveAdminUser
+  updateAdminActionLog(data: AdminActionLogUpdateInput!, where: AdminActionLogWhereUniqueInput!): AdminActionLog
   updateCollection(data: CollectionUpdateInput!, where: CollectionWhereUniqueInput!): Collection
   updatePushNotificationReceipt(data: PushNotificationReceiptUpdateInput!, where: PushNotificationReceiptWhereUniqueInput!): PushNotificationReceipt
   updateUserPushNotificationInterest(data: UserPushNotificationInterestUpdateInput!, where: UserPushNotificationInterestWhereUniqueInput!): UserPushNotificationInterest
@@ -9780,6 +10041,7 @@ type Mutation {
   deleteProductRequest(where: ProductRequestWhereUniqueInput!): ProductRequest
   deleteProductVariantWant(where: ProductVariantWantWhereUniqueInput!): ProductVariantWant
   deleteActiveAdminUser(where: ActiveAdminUserWhereUniqueInput!): ActiveAdminUser
+  deleteAdminActionLog(where: AdminActionLogWhereUniqueInput!): AdminActionLog
   deleteCollection(where: CollectionWhereUniqueInput!): Collection
   deletePushNotificationReceipt(where: PushNotificationReceiptWhereUniqueInput!): PushNotificationReceipt
   deleteUserPushNotificationInterest(where: UserPushNotificationInterestWhereUniqueInput!): UserPushNotificationInterest
@@ -9831,6 +10093,7 @@ type Mutation {
   upsertProductRequest(where: ProductRequestWhereUniqueInput!, create: ProductRequestCreateInput!, update: ProductRequestUpdateInput!): ProductRequest!
   upsertProductVariantWant(where: ProductVariantWantWhereUniqueInput!, create: ProductVariantWantCreateInput!, update: ProductVariantWantUpdateInput!): ProductVariantWant!
   upsertActiveAdminUser(where: ActiveAdminUserWhereUniqueInput!, create: ActiveAdminUserCreateInput!, update: ActiveAdminUserUpdateInput!): ActiveAdminUser!
+  upsertAdminActionLog(where: AdminActionLogWhereUniqueInput!, create: AdminActionLogCreateInput!, update: AdminActionLogUpdateInput!): AdminActionLog!
   upsertCollection(where: CollectionWhereUniqueInput!, create: CollectionCreateInput!, update: CollectionUpdateInput!): Collection!
   upsertPushNotificationReceipt(where: PushNotificationReceiptWhereUniqueInput!, create: PushNotificationReceiptCreateInput!, update: PushNotificationReceiptUpdateInput!): PushNotificationReceipt!
   upsertUserPushNotificationInterest(where: UserPushNotificationInterestWhereUniqueInput!, create: UserPushNotificationInterestCreateInput!, update: UserPushNotificationInterestUpdateInput!): UserPushNotificationInterest!
@@ -9880,6 +10143,7 @@ type Mutation {
   updateManyProductVariantFeedbackQuestions(data: ProductVariantFeedbackQuestionUpdateManyMutationInput!, where: ProductVariantFeedbackQuestionWhereInput): BatchPayload!
   updateManyProductRequests(data: ProductRequestUpdateManyMutationInput!, where: ProductRequestWhereInput): BatchPayload!
   updateManyProductVariantWants(data: ProductVariantWantUpdateManyMutationInput!, where: ProductVariantWantWhereInput): BatchPayload!
+  updateManyAdminActionLogs(data: AdminActionLogUpdateManyMutationInput!, where: AdminActionLogWhereInput): BatchPayload!
   updateManyCollections(data: CollectionUpdateManyMutationInput!, where: CollectionWhereInput): BatchPayload!
   updateManyPushNotificationReceipts(data: PushNotificationReceiptUpdateManyMutationInput!, where: PushNotificationReceiptWhereInput): BatchPayload!
   updateManyUserPushNotificationInterests(data: UserPushNotificationInterestUpdateManyMutationInput!, where: UserPushNotificationInterestWhereInput): BatchPayload!
@@ -9931,6 +10195,7 @@ type Mutation {
   deleteManyProductRequests(where: ProductRequestWhereInput): BatchPayload!
   deleteManyProductVariantWants(where: ProductVariantWantWhereInput): BatchPayload!
   deleteManyActiveAdminUsers(where: ActiveAdminUserWhereInput): BatchPayload!
+  deleteManyAdminActionLogs(where: AdminActionLogWhereInput): BatchPayload!
   deleteManyCollections(where: CollectionWhereInput): BatchPayload!
   deleteManyPushNotificationReceipts(where: PushNotificationReceiptWhereInput): BatchPayload!
   deleteManyUserPushNotificationInterests(where: UserPushNotificationInterestWhereInput): BatchPayload!
@@ -19942,6 +20207,7 @@ type Query {
   productRequests(where: ProductRequestWhereInput, orderBy: ProductRequestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductRequest]!
   productVariantWants(where: ProductVariantWantWhereInput, orderBy: ProductVariantWantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariantWant]!
   activeAdminUsers(where: ActiveAdminUserWhereInput, orderBy: ActiveAdminUserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ActiveAdminUser]!
+  adminActionLogs(where: AdminActionLogWhereInput, orderBy: AdminActionLogOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [AdminActionLog]!
   collections(where: CollectionWhereInput, orderBy: CollectionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Collection]!
   pushNotificationReceipts(where: PushNotificationReceiptWhereInput, orderBy: PushNotificationReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PushNotificationReceipt]!
   userPushNotificationInterests(where: UserPushNotificationInterestWhereInput, orderBy: UserPushNotificationInterestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [UserPushNotificationInterest]!
@@ -19993,6 +20259,7 @@ type Query {
   productRequest(where: ProductRequestWhereUniqueInput!): ProductRequest
   productVariantWant(where: ProductVariantWantWhereUniqueInput!): ProductVariantWant
   activeAdminUser(where: ActiveAdminUserWhereUniqueInput!): ActiveAdminUser
+  adminActionLog(where: AdminActionLogWhereUniqueInput!): AdminActionLog
   collection(where: CollectionWhereUniqueInput!): Collection
   pushNotificationReceipt(where: PushNotificationReceiptWhereUniqueInput!): PushNotificationReceipt
   userPushNotificationInterest(where: UserPushNotificationInterestWhereUniqueInput!): UserPushNotificationInterest
@@ -20044,6 +20311,7 @@ type Query {
   productRequestsConnection(where: ProductRequestWhereInput, orderBy: ProductRequestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductRequestConnection!
   productVariantWantsConnection(where: ProductVariantWantWhereInput, orderBy: ProductVariantWantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductVariantWantConnection!
   activeAdminUsersConnection(where: ActiveAdminUserWhereInput, orderBy: ActiveAdminUserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ActiveAdminUserConnection!
+  adminActionLogsConnection(where: AdminActionLogWhereInput, orderBy: AdminActionLogOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): AdminActionLogConnection!
   collectionsConnection(where: CollectionWhereInput, orderBy: CollectionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CollectionConnection!
   pushNotificationReceiptsConnection(where: PushNotificationReceiptWhereInput, orderBy: PushNotificationReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PushNotificationReceiptConnection!
   userPushNotificationInterestsConnection(where: UserPushNotificationInterestWhereInput, orderBy: UserPushNotificationInterestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserPushNotificationInterestConnection!
@@ -23225,6 +23493,7 @@ type Subscription {
   productRequest(where: ProductRequestSubscriptionWhereInput): ProductRequestSubscriptionPayload
   productVariantWant(where: ProductVariantWantSubscriptionWhereInput): ProductVariantWantSubscriptionPayload
   activeAdminUser(where: ActiveAdminUserSubscriptionWhereInput): ActiveAdminUserSubscriptionPayload
+  adminActionLog(where: AdminActionLogSubscriptionWhereInput): AdminActionLogSubscriptionPayload
   collection(where: CollectionSubscriptionWhereInput): CollectionSubscriptionPayload
   pushNotificationReceipt(where: PushNotificationReceiptSubscriptionWhereInput): PushNotificationReceiptSubscriptionPayload
   userPushNotificationInterest(where: UserPushNotificationInterestSubscriptionWhereInput): UserPushNotificationInterestSubscriptionPayload
@@ -26681,6 +26950,26 @@ export const Prisma = makePrismaBindingClass<BindingConstructor<Prisma>>({typeDe
 export type ActiveAdminUserOrderByInput =   'id_ASC' |
   'id_DESC'
 
+export type AdminAction =   'Insert' |
+  'Delete' |
+  'Update' |
+  'Truncate'
+
+export type AdminActionLogOrderByInput =   'actionId_ASC' |
+  'actionId_DESC' |
+  'tableName_ASC' |
+  'tableName_DESC' |
+  'triggeredAt_ASC' |
+  'triggeredAt_DESC' |
+  'action_ASC' |
+  'action_DESC' |
+  'rowData_ASC' |
+  'rowData_DESC' |
+  'changedFields_ASC' |
+  'changedFields_DESC' |
+  'statementOnly_ASC' |
+  'statementOnly_DESC'
+
 export type BagItemOrderByInput =   'id_ASC' |
   'id_DESC' |
   'position_ASC' |
@@ -27617,6 +27906,93 @@ export interface ActiveAdminUserWhereInput {
 
 export interface ActiveAdminUserWhereUniqueInput {
   id?: ID_Input | null
+}
+
+export interface AdminActionLogCreateInput {
+  tableName?: String | null
+  triggeredAt: DateTime
+  action?: AdminAction | null
+  rowData?: Json | null
+  changedFields?: Json | null
+  statementOnly?: Boolean | null
+  activeAdminUser: UserCreateOneInput
+}
+
+export interface AdminActionLogSubscriptionWhereInput {
+  AND?: AdminActionLogSubscriptionWhereInput[] | AdminActionLogSubscriptionWhereInput | null
+  OR?: AdminActionLogSubscriptionWhereInput[] | AdminActionLogSubscriptionWhereInput | null
+  NOT?: AdminActionLogSubscriptionWhereInput[] | AdminActionLogSubscriptionWhereInput | null
+  mutation_in?: MutationType[] | MutationType | null
+  updatedFields_contains?: String | null
+  updatedFields_contains_every?: String[] | String | null
+  updatedFields_contains_some?: String[] | String | null
+  node?: AdminActionLogWhereInput | null
+}
+
+export interface AdminActionLogUpdateInput {
+  tableName?: String | null
+  triggeredAt?: DateTime | null
+  action?: AdminAction | null
+  rowData?: Json | null
+  changedFields?: Json | null
+  statementOnly?: Boolean | null
+  activeAdminUser?: UserUpdateOneRequiredInput | null
+}
+
+export interface AdminActionLogUpdateManyMutationInput {
+  tableName?: String | null
+  triggeredAt?: DateTime | null
+  action?: AdminAction | null
+  rowData?: Json | null
+  changedFields?: Json | null
+  statementOnly?: Boolean | null
+}
+
+export interface AdminActionLogWhereInput {
+  AND?: AdminActionLogWhereInput[] | AdminActionLogWhereInput | null
+  OR?: AdminActionLogWhereInput[] | AdminActionLogWhereInput | null
+  NOT?: AdminActionLogWhereInput[] | AdminActionLogWhereInput | null
+  actionId?: Int | null
+  actionId_not?: Int | null
+  actionId_in?: Int[] | Int | null
+  actionId_not_in?: Int[] | Int | null
+  actionId_lt?: Int | null
+  actionId_lte?: Int | null
+  actionId_gt?: Int | null
+  actionId_gte?: Int | null
+  tableName?: String | null
+  tableName_not?: String | null
+  tableName_in?: String[] | String | null
+  tableName_not_in?: String[] | String | null
+  tableName_lt?: String | null
+  tableName_lte?: String | null
+  tableName_gt?: String | null
+  tableName_gte?: String | null
+  tableName_contains?: String | null
+  tableName_not_contains?: String | null
+  tableName_starts_with?: String | null
+  tableName_not_starts_with?: String | null
+  tableName_ends_with?: String | null
+  tableName_not_ends_with?: String | null
+  triggeredAt?: DateTime | null
+  triggeredAt_not?: DateTime | null
+  triggeredAt_in?: DateTime[] | DateTime | null
+  triggeredAt_not_in?: DateTime[] | DateTime | null
+  triggeredAt_lt?: DateTime | null
+  triggeredAt_lte?: DateTime | null
+  triggeredAt_gt?: DateTime | null
+  triggeredAt_gte?: DateTime | null
+  action?: AdminAction | null
+  action_not?: AdminAction | null
+  action_in?: AdminAction[] | AdminAction | null
+  action_not_in?: AdminAction[] | AdminAction | null
+  statementOnly?: Boolean | null
+  statementOnly_not?: Boolean | null
+  activeAdminUser?: UserWhereInput | null
+}
+
+export interface AdminActionLogWhereUniqueInput {
+  actionId?: Int | null
 }
 
 export interface BagItemCreateInput {
@@ -39141,7 +39517,58 @@ export interface ActiveAdminUserSubscriptionPayload {
   previousValues?: ActiveAdminUserPreviousValues | null
 }
 
+export interface AdminActionLog {
+  actionId: Int
+  tableName?: String | null
+  activeAdminUser: User
+  triggeredAt: DateTime
+  action?: AdminAction | null
+  rowData?: Json | null
+  changedFields?: Json | null
+  statementOnly?: Boolean | null
+}
+
+/*
+ * A connection to a list of items.
+
+ */
+export interface AdminActionLogConnection {
+  pageInfo: PageInfo
+  edges: Array<AdminActionLogEdge | null>
+  aggregate: AggregateAdminActionLog
+}
+
+/*
+ * An edge in a connection.
+
+ */
+export interface AdminActionLogEdge {
+  node: AdminActionLog
+  cursor: String
+}
+
+export interface AdminActionLogPreviousValues {
+  actionId: Int
+  tableName?: String | null
+  triggeredAt: DateTime
+  action?: AdminAction | null
+  rowData?: Json | null
+  changedFields?: Json | null
+  statementOnly?: Boolean | null
+}
+
+export interface AdminActionLogSubscriptionPayload {
+  mutation: MutationType
+  node?: AdminActionLog | null
+  updatedFields?: Array<String> | null
+  previousValues?: AdminActionLogPreviousValues | null
+}
+
 export interface AggregateActiveAdminUser {
+  count: Int
+}
+
+export interface AggregateAdminActionLog {
   count: Int
 }
 
