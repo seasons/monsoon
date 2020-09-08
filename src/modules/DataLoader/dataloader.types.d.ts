@@ -7,24 +7,54 @@ export interface NestDataLoader {
    */
   generateDataLoader(generateParams: any): DataLoader<any, any>
 }
-export type GenerateParamsInfo = string
+
+type KeyToDataRelationship = "OneToOne" | "OneToMany" | "ManyToMany"
 
 export interface GenerateParams {
+  // basic parameters to construct the prisma call
   query: string
-  info?: GenerateParamsInfo
+  info?: string | any
+  orderBy?: any
+
+  // if a given key does not resolve to any return value, what should we return?
+  fallbackValue?: any
+
+  // Given a set of keys, what is where clause to pass into prisma?
+  // For example, the function (keys) => {id_in: keys} would result in a query input of {where: {id_in: keys}}
+  formatWhere?: (keys: string[]) => any
+
+  // If pulling the info from the graphql execution context, pass this to
+  // add a fragment to it.
   infoFragment?: string
-  getKey?: (obj: any) => string | null
-  formatWhere?: (ids: string[]) => any
+
+  // Given a returned object from prisma, how we do find the associated keys?
+  // If there's only key per returned object, return a length 1 array.
+  getKeys?: (obj: any) => string[] | null
+
+  // Given a returned object from prisma, returns the data in the desired format
   formatData?: (any) => any
+
+  // For a given key, what are we returning?
+  // If a single object, "Single" If multiple objects, "Array"
+  keyToDataRelationship?: KeyToDataRelationship
 }
 
 export interface LoaderParams {
   // Should be unique across the application space, because all loaders
   // are stored on the request-level context object
   name?: string
-  type: string
+
+  // Type of the loader. Default value is PrismaLoader.name
+  type?: string
+
+  // Defines the prisma query and data mapping process
   params?: GenerateParams
+
+  // pass true to forward the info input passed by the client
   includeInfo?: boolean
+
+  // pass true to forward the orderBy input passed by the client
+  includeOrderBy?: boolean
 }
 
 export interface DataloaderContext {

@@ -24634,6 +24634,7 @@ enum UserRole {
   Admin
   Customer
   Partner
+  Marketer
 }
 
 input UserScalarWhereInput {
@@ -27375,7 +27376,8 @@ export type UserPushNotificationOrderByInput =   'id_ASC' |
 
 export type UserRole =   'Admin' |
   'Customer' |
-  'Partner'
+  'Partner' |
+  'Marketer'
 
 export type UserVerificationMethod =   'SMS' |
   'Email' |

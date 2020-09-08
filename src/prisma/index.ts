@@ -2278,7 +2278,7 @@ export interface ClientConstructor<T> {
  * Types
  */
 
-export type UserRole = "Admin" | "Customer" | "Partner";
+export type UserRole = "Admin" | "Customer" | "Partner" | "Marketer";
 
 export type PushNotificationStatus = "Blocked" | "Granted" | "Denied";
 
