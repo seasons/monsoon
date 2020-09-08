@@ -96,12 +96,17 @@ export class PhysicalProductService {
         )
       }
 
-      // Must update counts before calling any other methods because they
-      // might update the inventoryStatus, i.e. in offloadPhysicalProductIfNeeded
-      await this.updateVariantCountsIfNeeded({
-        where,
-        inventoryStatus: newData.inventoryStatus,
-      })
+      // Unless we're changing status to Offloaded, update product variant counts.
+      // We don't do it if we're switching to offloaded because that could cause errors.
+      // e.g If the product is reserved, this would update the counts, but the `offloadPhysicalProductIfNeeded`
+      // code would error out because you can't offload a reseved product.
+      // The ideal solution here would be transactions, but we don't have those yet :()
+      if (newData.inventoryStatus !== "Offloaded") {
+        await this.updateVariantCountsIfNeeded({
+          where,
+          inventoryStatus: newData.inventoryStatus,
+        })
+      }
     }
 
     await this.offloadPhysicalProductIfNeeded({
@@ -415,6 +420,10 @@ export class PhysicalProductService {
       // Note that we do not create a PhysicalProductInventoryStatusChange record here
       // because this function is only called from the updatePhysicalProduct, where we
       // do create that record.
+      await this.updateVariantCountsIfNeeded({
+        where,
+        inventoryStatus: "Offloaded",
+      })
       await this.prisma.client.updatePhysicalProduct({
         where,
         data: { inventoryStatus, offloadMethod, offloadNotes },
