@@ -30,7 +30,7 @@ export class PrismaLoader implements NestDataLoader {
       infoFragment = null,
       formatData = identity,
       getKey = a => a.id,
-      formatWhere = this.defaultFormatWhere 
+      formatWhere = this.defaultFormatWhere
     }: GenerateParams
   ) {
     let adjustedInfo = info as any

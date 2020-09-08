@@ -8,6 +8,7 @@ import {
   ReservationStatus,
 } from "@app/prisma"
 import { PackageTransitEventSubStatus } from "@app/prisma"
+import { PackageTransitEvent } from "@app/prisma/prisma.binding"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Body, Controller, Logger, Post } from "@nestjs/common"
 import casify from "camelcase-keys"
@@ -78,13 +79,7 @@ export class ShippoController {
       ? upperFirst(camelCase(trackingStatus?.substatus?.code))
       : "Other") as PackageTransitEventSubStatus
 
-    const packageTransitEvent = await this.prisma.client.createPackageTransitEvent(
-      {
-        status,
-        subStatus,
-        data: result,
-      }
-    )
+    let packageTransitEvent: PackageTransitEvent
 
     switch (event) {
       case ShippoEventType.TrackUpdated:
@@ -134,26 +129,21 @@ export class ShippoController {
           this.logger.error(e)
         }
 
-        await this.prisma.client.updateReservation({
-          where: { id: reservation.id },
-          data: {
-            status: reservationStatus,
-            phase,
-            ...(reservationStatus === "Delivered"
-              ? { receivedAt: new Date() }
-              : {}),
-            ...(reservationStatus === "Shipped"
-              ? { shippedAt: new Date(), shipped: true }
-              : {}),
-          },
-        })
-
         const updatedPackage = head(
           await this.prisma.client.packages({
             where: {
               transactionID,
             },
           })
+        )
+
+        packageTransitEvent = await this.prisma.client.createPackageTransitEvent(
+          {
+            status,
+            subStatus,
+            data: result,
+            package: { connect: { id: updatedPackage.id } },
+          }
         )
 
         if (updatedPackage) {
@@ -170,6 +160,25 @@ export class ShippoController {
             },
           })
         }
+
+        await this.prisma.client.updateReservation({
+          where: { id: reservation.id },
+          data: {
+            status: reservationStatus,
+            packageEvents: {
+              connect: {
+                id: packageTransitEvent.id,
+              },
+            },
+            phase,
+            ...(reservationStatus === "Delivered"
+              ? { receivedAt: new Date() }
+              : {}),
+            ...(reservationStatus === "Shipped"
+              ? { shippedAt: new Date(), shipped: true }
+              : {}),
+          },
+        })
 
         break
     }

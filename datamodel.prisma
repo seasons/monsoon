@@ -724,6 +724,7 @@ type Reservation {
   returnedPackage: Package
     @relation(name: "CustomerToSeasonsPackage", onDelete: CASCADE)
   products: [PhysicalProduct!]!
+  packageEvents: [PackageTransitEvent!]
   reservationNumber: Int! @unique
   phase: ReservationPhase!
   shipped: Boolean!
@@ -819,6 +820,8 @@ type PackageTransitEvent {
   id: ID! @id
   status: PackageTransitEventStatus!
   subStatus: PackageTransitEventSubStatus!
+  package: Package!
+  reservation: Reservation
   data: Json!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
