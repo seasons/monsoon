@@ -19,6 +19,8 @@ interface ActiveAdminInterceptorContext {
 export class ActiveAdminInterceptor implements NestInterceptor {
   constructor(private readonly prisma: PrismaService) {}
 
+  loggerBlocked: boolean
+
   async intercept(
     context: ExecutionContext,
     next: CallHandler
@@ -27,6 +29,13 @@ export class ActiveAdminInterceptor implements NestInterceptor {
       context
     )
     const ctx: ActiveAdminInterceptorContext = graphqlExecutionContext.getContext()
+
+    // Ensure we're not colliding with another admin action by enforcing an empty ActiveAdminTable
+    await this.updateLoggedBlocked()
+    while (this.loggerBlocked) {
+      await this.sleep(200)
+      await this.updateLoggedBlocked()
+    }
 
     if (ctx.isAdminAction) {
       await this.prisma.client.createActiveAdminUser({
@@ -41,6 +50,11 @@ export class ActiveAdminInterceptor implements NestInterceptor {
     )
   }
 
+  async updateLoggedBlocked() {
+    this.loggerBlocked =
+      (await this.prisma.client.activeAdminUsers({})).length !== 0
+  }
+
   async destroyActiveAdminRecordIfNeeded(ctx: ActiveAdminInterceptorContext) {
     if (ctx.isAdminAction) {
       // Use a many so we can query by the admin field. Should only be deleting 1 record though
@@ -48,5 +62,9 @@ export class ActiveAdminInterceptor implements NestInterceptor {
         admin: { id: ctx.req.user.id },
       })
     }
+  }
+
+  async sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms))
   }
 }
