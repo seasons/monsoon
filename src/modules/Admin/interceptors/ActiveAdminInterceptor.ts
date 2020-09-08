@@ -1,3 +1,4 @@
+import { User } from "@app/prisma"
 import { PrismaService } from "@app/prisma/prisma.service"
 import {
   CallHandler,
@@ -11,33 +12,41 @@ import { tap } from "rxjs/operators"
 
 interface ActiveAdminInterceptorContext {
   isAdminAction: boolean
+  req: { user: User }
 }
 
 @Injectable()
 export class ActiveAdminInterceptor implements NestInterceptor {
   constructor(private readonly prisma: PrismaService) {}
 
-  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+  async intercept(
+    context: ExecutionContext,
+    next: CallHandler
+  ): Promise<Observable<any>> {
     const graphqlExecutionContext: GraphQLExecutionContext = GqlExecutionContext.create(
       context
     )
     const ctx: ActiveAdminInterceptorContext = graphqlExecutionContext.getContext()
 
     if (ctx.isAdminAction) {
-      console.log(`Before execution, set up an ActiveAdmin record`)
-    } else {
-      console.log(`Before execution, do nothing`)
+      await this.prisma.client.createActiveAdminUser({
+        admin: { connect: { id: ctx.req.user.id } },
+      })
     }
-    return next
-      .handle()
-      .pipe(tap(() => this.destroyActiveAdminRecordIfNeeded(ctx.isAdminAction)))
+
+    return next.handle().pipe(
+      tap(async () => {
+        await this.destroyActiveAdminRecordIfNeeded(ctx)
+      })
+    )
   }
 
-  destroyActiveAdminRecordIfNeeded(isAdminAction: boolean) {
-    if (isAdminAction) {
-      console.log(`After execution, destroy active admin record`)
-    } else {
-      console.log(`After execution, do nothing`)
+  async destroyActiveAdminRecordIfNeeded(ctx: ActiveAdminInterceptorContext) {
+    if (ctx.isAdminAction) {
+      // Use a many so we can query by the admin field. Should only be deleting 1 record though
+      await this.prisma.client.deleteManyActiveAdminUsers({
+        admin: { id: ctx.req.user.id },
+      })
     }
   }
 }
