@@ -15,8 +15,11 @@ BEGIN
         RAISE EXCEPTION 'monsoon$dev.if_modified_func() may only run as an AFTER trigger';
     END IF;
 
+    -- Only store a log if there's an active admin user
     active_admin_user = (SELECT admin FROM monsoon$dev."ActiveAdminUser" LIMIT 1);
-    -- Probably want to assert something here: https://www.postgresql.org/docs/current/plpgsql-errors-and-messages.html 
+    IF (active_admin_user = '') IS NOT FALSE THEN
+        RETURN NULL;
+    END IF;
 
     IF TG_ARGV[0] IS NOT NULL THEN
         excluded_cols = TG_ARGV[0]::text[];
