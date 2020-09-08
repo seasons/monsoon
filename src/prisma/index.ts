@@ -2775,6 +2775,8 @@ export type ReservationOrderByInput =
   | "receivedAt_DESC"
   | "reminderSentAt_ASC"
   | "reminderSentAt_DESC"
+  | "statusUpdatedAt_ASC"
+  | "statusUpdatedAt_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -6083,6 +6085,14 @@ export interface ReservationWhereInput {
   reminderSentAt_lte?: Maybe<DateTimeInput>;
   reminderSentAt_gt?: Maybe<DateTimeInput>;
   reminderSentAt_gte?: Maybe<DateTimeInput>;
+  statusUpdatedAt?: Maybe<DateTimeInput>;
+  statusUpdatedAt_not?: Maybe<DateTimeInput>;
+  statusUpdatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  statusUpdatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  statusUpdatedAt_lt?: Maybe<DateTimeInput>;
+  statusUpdatedAt_lte?: Maybe<DateTimeInput>;
+  statusUpdatedAt_gt?: Maybe<DateTimeInput>;
+  statusUpdatedAt_gte?: Maybe<DateTimeInput>;
   receipt?: Maybe<ReservationReceiptWhereInput>;
   lastLocation?: Maybe<LocationWhereInput>;
   createdAt?: Maybe<DateTimeInput>;
@@ -8260,6 +8270,7 @@ export interface ReservationCreateWithoutCustomerInput {
   shippedAt?: Maybe<DateTimeInput>;
   receivedAt?: Maybe<DateTimeInput>;
   reminderSentAt?: Maybe<DateTimeInput>;
+  statusUpdatedAt?: Maybe<DateTimeInput>;
   receipt?: Maybe<ReservationReceiptCreateOneWithoutReservationInput>;
   lastLocation?: Maybe<LocationCreateOneInput>;
 }
@@ -8359,6 +8370,7 @@ export interface ReservationCreateWithoutPackageEventsInput {
   shippedAt?: Maybe<DateTimeInput>;
   receivedAt?: Maybe<DateTimeInput>;
   reminderSentAt?: Maybe<DateTimeInput>;
+  statusUpdatedAt?: Maybe<DateTimeInput>;
   receipt?: Maybe<ReservationReceiptCreateOneWithoutReservationInput>;
   lastLocation?: Maybe<LocationCreateOneInput>;
 }
@@ -11975,6 +11987,7 @@ export interface ReservationUpdateWithoutCustomerDataInput {
   shippedAt?: Maybe<DateTimeInput>;
   receivedAt?: Maybe<DateTimeInput>;
   reminderSentAt?: Maybe<DateTimeInput>;
+  statusUpdatedAt?: Maybe<DateTimeInput>;
   receipt?: Maybe<ReservationReceiptUpdateOneWithoutReservationInput>;
   lastLocation?: Maybe<LocationUpdateOneInput>;
 }
@@ -12157,6 +12170,7 @@ export interface ReservationUpdateWithoutPackageEventsDataInput {
   shippedAt?: Maybe<DateTimeInput>;
   receivedAt?: Maybe<DateTimeInput>;
   reminderSentAt?: Maybe<DateTimeInput>;
+  statusUpdatedAt?: Maybe<DateTimeInput>;
   receipt?: Maybe<ReservationReceiptUpdateOneWithoutReservationInput>;
   lastLocation?: Maybe<LocationUpdateOneInput>;
 }
@@ -12661,6 +12675,14 @@ export interface ReservationScalarWhereInput {
   reminderSentAt_lte?: Maybe<DateTimeInput>;
   reminderSentAt_gt?: Maybe<DateTimeInput>;
   reminderSentAt_gte?: Maybe<DateTimeInput>;
+  statusUpdatedAt?: Maybe<DateTimeInput>;
+  statusUpdatedAt_not?: Maybe<DateTimeInput>;
+  statusUpdatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  statusUpdatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  statusUpdatedAt_lt?: Maybe<DateTimeInput>;
+  statusUpdatedAt_lte?: Maybe<DateTimeInput>;
+  statusUpdatedAt_gt?: Maybe<DateTimeInput>;
+  statusUpdatedAt_gte?: Maybe<DateTimeInput>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -12695,6 +12717,7 @@ export interface ReservationUpdateManyDataInput {
   shippedAt?: Maybe<DateTimeInput>;
   receivedAt?: Maybe<DateTimeInput>;
   reminderSentAt?: Maybe<DateTimeInput>;
+  statusUpdatedAt?: Maybe<DateTimeInput>;
 }
 
 export interface CustomerUpsertWithoutBagItemsInput {
@@ -14261,6 +14284,7 @@ export interface ReservationCreateInput {
   shippedAt?: Maybe<DateTimeInput>;
   receivedAt?: Maybe<DateTimeInput>;
   reminderSentAt?: Maybe<DateTimeInput>;
+  statusUpdatedAt?: Maybe<DateTimeInput>;
   receipt?: Maybe<ReservationReceiptCreateOneWithoutReservationInput>;
   lastLocation?: Maybe<LocationCreateOneInput>;
 }
@@ -14436,6 +14460,7 @@ export interface ReservationUpdateDataInput {
   shippedAt?: Maybe<DateTimeInput>;
   receivedAt?: Maybe<DateTimeInput>;
   reminderSentAt?: Maybe<DateTimeInput>;
+  statusUpdatedAt?: Maybe<DateTimeInput>;
   receipt?: Maybe<ReservationReceiptUpdateOneWithoutReservationInput>;
   lastLocation?: Maybe<LocationUpdateOneInput>;
 }
@@ -14632,6 +14657,7 @@ export interface ReservationUpdateInput {
   shippedAt?: Maybe<DateTimeInput>;
   receivedAt?: Maybe<DateTimeInput>;
   reminderSentAt?: Maybe<DateTimeInput>;
+  statusUpdatedAt?: Maybe<DateTimeInput>;
   receipt?: Maybe<ReservationReceiptUpdateOneWithoutReservationInput>;
   lastLocation?: Maybe<LocationUpdateOneInput>;
 }
@@ -14644,6 +14670,7 @@ export interface ReservationUpdateManyMutationInput {
   shippedAt?: Maybe<DateTimeInput>;
   receivedAt?: Maybe<DateTimeInput>;
   reminderSentAt?: Maybe<DateTimeInput>;
+  statusUpdatedAt?: Maybe<DateTimeInput>;
 }
 
 export interface ReservationFeedbackCreateInput {
@@ -14819,6 +14846,7 @@ export interface ReservationCreateWithoutReceiptInput {
   shippedAt?: Maybe<DateTimeInput>;
   receivedAt?: Maybe<DateTimeInput>;
   reminderSentAt?: Maybe<DateTimeInput>;
+  statusUpdatedAt?: Maybe<DateTimeInput>;
   lastLocation?: Maybe<LocationCreateOneInput>;
 }
 
@@ -14848,6 +14876,7 @@ export interface ReservationUpdateWithoutReceiptDataInput {
   shippedAt?: Maybe<DateTimeInput>;
   receivedAt?: Maybe<DateTimeInput>;
   reminderSentAt?: Maybe<DateTimeInput>;
+  statusUpdatedAt?: Maybe<DateTimeInput>;
   lastLocation?: Maybe<LocationUpdateOneInput>;
 }
 
@@ -18805,6 +18834,7 @@ export interface Reservation {
   shippedAt?: DateTimeOutput;
   receivedAt?: DateTimeOutput;
   reminderSentAt?: DateTimeOutput;
+  statusUpdatedAt?: DateTimeOutput;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -18840,6 +18870,7 @@ export interface ReservationPromise extends Promise<Reservation>, Fragmentable {
   shippedAt: () => Promise<DateTimeOutput>;
   receivedAt: () => Promise<DateTimeOutput>;
   reminderSentAt: () => Promise<DateTimeOutput>;
+  statusUpdatedAt: () => Promise<DateTimeOutput>;
   receipt: <T = ReservationReceiptPromise>() => T;
   lastLocation: <T = LocationPromise>() => T;
   createdAt: () => Promise<DateTimeOutput>;
@@ -18881,6 +18912,7 @@ export interface ReservationSubscription
   shippedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   receivedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   reminderSentAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  statusUpdatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   receipt: <T = ReservationReceiptSubscription>() => T;
   lastLocation: <T = LocationSubscription>() => T;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
@@ -18920,6 +18952,7 @@ export interface ReservationNullablePromise
   shippedAt: () => Promise<DateTimeOutput>;
   receivedAt: () => Promise<DateTimeOutput>;
   reminderSentAt: () => Promise<DateTimeOutput>;
+  statusUpdatedAt: () => Promise<DateTimeOutput>;
   receipt: <T = ReservationReceiptPromise>() => T;
   lastLocation: <T = LocationPromise>() => T;
   createdAt: () => Promise<DateTimeOutput>;
@@ -24849,6 +24882,7 @@ export interface ReservationPreviousValues {
   shippedAt?: DateTimeOutput;
   receivedAt?: DateTimeOutput;
   reminderSentAt?: DateTimeOutput;
+  statusUpdatedAt?: DateTimeOutput;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -24864,6 +24898,7 @@ export interface ReservationPreviousValuesPromise
   shippedAt: () => Promise<DateTimeOutput>;
   receivedAt: () => Promise<DateTimeOutput>;
   reminderSentAt: () => Promise<DateTimeOutput>;
+  statusUpdatedAt: () => Promise<DateTimeOutput>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -24879,6 +24914,7 @@ export interface ReservationPreviousValuesSubscription
   shippedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   receivedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   reminderSentAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  statusUpdatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }

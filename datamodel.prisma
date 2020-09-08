@@ -720,9 +720,9 @@ type Reservation {
   user: User!
   customer: Customer! @relation(name: "CustomerToReservation")
   sentPackage: Package
-    @relation(name: "SeasonsToCustomerPackage", onDelete: CASCADE)
+    @relation(link: INLINE, name: "SeasonsToCustomerPackage", onDelete: CASCADE)
   returnedPackage: Package
-    @relation(name: "CustomerToSeasonsPackage", onDelete: CASCADE)
+    @relation(link: INLINE, name: "CustomerToSeasonsPackage", onDelete: CASCADE)
   products: [PhysicalProduct!]!
   packageEvents: [PackageTransitEvent!]
   reservationNumber: Int! @unique
@@ -732,6 +732,7 @@ type Reservation {
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
+  statusUpdatedAt: DateTime
   receipt: ReservationReceipt
     @relation(
       link: INLINE

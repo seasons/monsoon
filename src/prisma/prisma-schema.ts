@@ -11678,6 +11678,7 @@ type Reservation {
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
+  statusUpdatedAt: DateTime
   receipt: ReservationReceipt
   lastLocation: Location
   createdAt: DateTime!
@@ -11705,6 +11706,7 @@ input ReservationCreateInput {
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
+  statusUpdatedAt: DateTime
   receipt: ReservationReceiptCreateOneWithoutReservationInput
   lastLocation: LocationCreateOneInput
 }
@@ -11743,6 +11745,7 @@ input ReservationCreateWithoutCustomerInput {
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
+  statusUpdatedAt: DateTime
   receipt: ReservationReceiptCreateOneWithoutReservationInput
   lastLocation: LocationCreateOneInput
 }
@@ -11761,6 +11764,7 @@ input ReservationCreateWithoutPackageEventsInput {
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
+  statusUpdatedAt: DateTime
   receipt: ReservationReceiptCreateOneWithoutReservationInput
   lastLocation: LocationCreateOneInput
 }
@@ -11780,6 +11784,7 @@ input ReservationCreateWithoutReceiptInput {
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
+  statusUpdatedAt: DateTime
   lastLocation: LocationCreateOneInput
 }
 
@@ -12000,6 +12005,8 @@ enum ReservationOrderByInput {
   receivedAt_DESC
   reminderSentAt_ASC
   reminderSentAt_DESC
+  statusUpdatedAt_ASC
+  statusUpdatedAt_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -12020,6 +12027,7 @@ type ReservationPreviousValues {
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
+  statusUpdatedAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -12410,6 +12418,14 @@ input ReservationScalarWhereInput {
   reminderSentAt_lte: DateTime
   reminderSentAt_gt: DateTime
   reminderSentAt_gte: DateTime
+  statusUpdatedAt: DateTime
+  statusUpdatedAt_not: DateTime
+  statusUpdatedAt_in: [DateTime!]
+  statusUpdatedAt_not_in: [DateTime!]
+  statusUpdatedAt_lt: DateTime
+  statusUpdatedAt_lte: DateTime
+  statusUpdatedAt_gt: DateTime
+  statusUpdatedAt_gte: DateTime
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -12475,6 +12491,7 @@ input ReservationUpdateDataInput {
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
+  statusUpdatedAt: DateTime
   receipt: ReservationReceiptUpdateOneWithoutReservationInput
   lastLocation: LocationUpdateOneInput
 }
@@ -12493,6 +12510,7 @@ input ReservationUpdateInput {
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
+  statusUpdatedAt: DateTime
   receipt: ReservationReceiptUpdateOneWithoutReservationInput
   lastLocation: LocationUpdateOneInput
 }
@@ -12505,6 +12523,7 @@ input ReservationUpdateManyDataInput {
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
+  statusUpdatedAt: DateTime
 }
 
 input ReservationUpdateManyMutationInput {
@@ -12515,6 +12534,7 @@ input ReservationUpdateManyMutationInput {
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
+  statusUpdatedAt: DateTime
 }
 
 input ReservationUpdateManyWithoutCustomerInput {
@@ -12570,6 +12590,7 @@ input ReservationUpdateWithoutCustomerDataInput {
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
+  statusUpdatedAt: DateTime
   receipt: ReservationReceiptUpdateOneWithoutReservationInput
   lastLocation: LocationUpdateOneInput
 }
@@ -12587,6 +12608,7 @@ input ReservationUpdateWithoutPackageEventsDataInput {
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
+  statusUpdatedAt: DateTime
   receipt: ReservationReceiptUpdateOneWithoutReservationInput
   lastLocation: LocationUpdateOneInput
 }
@@ -12605,6 +12627,7 @@ input ReservationUpdateWithoutReceiptDataInput {
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
+  statusUpdatedAt: DateTime
   lastLocation: LocationUpdateOneInput
 }
 
@@ -12701,6 +12724,14 @@ input ReservationWhereInput {
   reminderSentAt_lte: DateTime
   reminderSentAt_gt: DateTime
   reminderSentAt_gte: DateTime
+  statusUpdatedAt: DateTime
+  statusUpdatedAt_not: DateTime
+  statusUpdatedAt_in: [DateTime!]
+  statusUpdatedAt_not_in: [DateTime!]
+  statusUpdatedAt_lt: DateTime
+  statusUpdatedAt_lte: DateTime
+  statusUpdatedAt_gt: DateTime
+  statusUpdatedAt_gte: DateTime
   receipt: ReservationReceiptWhereInput
   lastLocation: LocationWhereInput
   createdAt: DateTime

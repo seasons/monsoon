@@ -31,7 +31,7 @@ export class ReservationQueriesResolver {
     const { where } = args
     const options: ReservationWhereInput = {}
 
-    if (where.phase) {
+    if (where && where.phase) {
       const clause = {
         slug: process.env.SEASONS_CLEANER_LOCATION_SLUG,
       }

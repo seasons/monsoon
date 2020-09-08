@@ -44,7 +44,7 @@ export type ShippoData = {
   test?: boolean
 }
 
-type ReservationWithPackage = Reservation & {
+export type ReservationWithPackage = Reservation & {
   sentPackage: Package
   returnedPackage: Package
 }
@@ -177,6 +177,7 @@ export class ShippoController {
             ...(reservationStatus === "Shipped"
               ? { shippedAt: new Date(), shipped: true }
               : {}),
+            statusUpdatedAt: new Date(),
           },
         })
 
