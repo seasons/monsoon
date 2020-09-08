@@ -38,6 +38,353 @@ type Mutation {
   ): Reservation
 }
 
+input ReservationWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [ReservationWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [ReservationWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [ReservationWhereInput!]
+  id: ID
+
+  """
+  All values that are not equal to given value.
+  """
+  id_not: ID
+
+  """
+  All values that are contained in given list.
+  """
+  id_in: [ID!]
+
+  """
+  All values that are not contained in given list.
+  """
+  id_not_in: [ID!]
+
+  """
+  All values less than the given value.
+  """
+  id_lt: ID
+
+  """
+  All values less than or equal the given value.
+  """
+  id_lte: ID
+
+  """
+  All values greater than the given value.
+  """
+  id_gt: ID
+
+  """
+  All values greater than or equal the given value.
+  """
+  id_gte: ID
+
+  """
+  All values containing the given string.
+  """
+  id_contains: ID
+
+  """
+  All values not containing the given string.
+  """
+  id_not_contains: ID
+
+  """
+  All values starting with the given string.
+  """
+  id_starts_with: ID
+
+  """
+  All values not starting with the given string.
+  """
+  id_not_starts_with: ID
+
+  """
+  All values ending with the given string.
+  """
+  id_ends_with: ID
+
+  """
+  All values not ending with the given string.
+  """
+  id_not_ends_with: ID
+  reservationNumber: Int
+
+  """
+  All values that are not equal to given value.
+  """
+  reservationNumber_not: Int
+
+  """
+  All values that are contained in given list.
+  """
+  reservationNumber_in: [Int!]
+
+  """
+  All values that are not contained in given list.
+  """
+  reservationNumber_not_in: [Int!]
+
+  """
+  All values less than the given value.
+  """
+  reservationNumber_lt: Int
+
+  """
+  All values less than or equal the given value.
+  """
+  reservationNumber_lte: Int
+
+  """
+  All values greater than the given value.
+  """
+  reservationNumber_gt: Int
+
+  """
+  All values greater than or equal the given value.
+  """
+  reservationNumber_gte: Int
+  phase: ReservationPhase
+
+  """
+  All values that are not equal to given value.
+  """
+  phase_not: ReservationPhase
+
+  """
+  All values that are contained in given list.
+  """
+  phase_in: [ReservationPhase!]
+
+  """
+  All values that are not contained in given list.
+  """
+  phase_not_in: [ReservationPhase!]
+  shipped: Boolean
+
+  """
+  All values that are not equal to given value.
+  """
+  shipped_not: Boolean
+  status: ReservationStatus
+
+  """
+  All values that are not equal to given value.
+  """
+  status_not: ReservationStatus
+
+  """
+  All values that are contained in given list.
+  """
+  status_in: [ReservationStatus!]
+
+  """
+  All values that are not contained in given list.
+  """
+  status_not_in: [ReservationStatus!]
+  shippedAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  shippedAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  shippedAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  shippedAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  shippedAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  shippedAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  shippedAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  shippedAt_gte: DateTime
+  receivedAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  receivedAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  receivedAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  receivedAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  receivedAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  receivedAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  receivedAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  receivedAt_gte: DateTime
+  reminderSentAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  reminderSentAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  reminderSentAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  reminderSentAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  reminderSentAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  reminderSentAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  reminderSentAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  reminderSentAt_gte: DateTime
+  createdAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  createdAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  createdAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  createdAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  createdAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  createdAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  createdAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  updatedAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  updatedAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  updatedAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  updatedAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  updatedAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  updatedAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  updatedAt_gte: DateTime
+  user: UserWhereInput
+  customer: CustomerWhereInput
+  sentPackage: PackageWhereInput
+  returnedPackage: PackageWhereInput
+  products_every: PhysicalProductWhereInput
+  products_some: PhysicalProductWhereInput
+  products_none: PhysicalProductWhereInput
+  receipt: ReservationReceiptWhereInput
+  lastLocation: LocationWhereInput
+  q: String
+}
+
 input ReservationProcessReturnInput {
   reservationNumber: Int!
   productStates: [ProductStateInput!]!
@@ -73,5 +420,4 @@ type Reservation {
   returnAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
-  phase: ReservationPhase!
 }
