@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Thu Sep 10 2020 15:06:58 GMT-0400 (Eastern Daylight Time)
+# timestamp: Thu Sep 10 2020 15:09:33 GMT-0400 (Eastern Daylight Time)
 
 type ActiveAdminUser implements Node {
   id: ID!
@@ -136,7 +136,255 @@ input ActiveAdminUserWhereUniqueInput {
   id: ID
 }
 
+enum AdminAction {
+  Insert
+  Delete
+  Update
+  Truncate
+}
+
+type AdminActionLog {
+  actionId: Int!
+  tableName: String
+  activeAdminUser: User!
+  triggeredAt: DateTime!
+  action: AdminAction
+  rowData: Json
+  changedFields: Json
+  statementOnly: Boolean
+}
+
+"""A connection to a list of items."""
+type AdminActionLogConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [AdminActionLogEdge]!
+  aggregate: AggregateAdminActionLog!
+}
+
+input AdminActionLogCreateInput {
+  tableName: String
+  triggeredAt: DateTime!
+  action: AdminAction
+  rowData: Json
+  changedFields: Json
+  statementOnly: Boolean
+  activeAdminUser: UserCreateOneInput!
+}
+
+"""An edge in a connection."""
+type AdminActionLogEdge {
+  """The item at the end of the edge."""
+  node: AdminActionLog!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum AdminActionLogOrderByInput {
+  actionId_ASC
+  actionId_DESC
+  tableName_ASC
+  tableName_DESC
+  triggeredAt_ASC
+  triggeredAt_DESC
+  action_ASC
+  action_DESC
+  rowData_ASC
+  rowData_DESC
+  changedFields_ASC
+  changedFields_DESC
+  statementOnly_ASC
+  statementOnly_DESC
+}
+
+type AdminActionLogPreviousValues {
+  actionId: Int!
+  tableName: String
+  triggeredAt: DateTime!
+  action: AdminAction
+  rowData: Json
+  changedFields: Json
+  statementOnly: Boolean
+}
+
+type AdminActionLogSubscriptionPayload {
+  mutation: MutationType!
+  node: AdminActionLog
+  updatedFields: [String!]
+  previousValues: AdminActionLogPreviousValues
+}
+
+input AdminActionLogSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [AdminActionLogSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [AdminActionLogSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [AdminActionLogSubscriptionWhereInput!]
+
+  """The subscription event gets dispatched when it's listed in mutation_in"""
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: AdminActionLogWhereInput
+}
+
+input AdminActionLogUpdateInput {
+  tableName: String
+  triggeredAt: DateTime
+  action: AdminAction
+  rowData: Json
+  changedFields: Json
+  statementOnly: Boolean
+  activeAdminUser: UserUpdateOneRequiredInput
+}
+
+input AdminActionLogUpdateManyMutationInput {
+  tableName: String
+  triggeredAt: DateTime
+  action: AdminAction
+  rowData: Json
+  changedFields: Json
+  statementOnly: Boolean
+}
+
+input AdminActionLogWhereInput {
+  """Logical AND on all given filters."""
+  AND: [AdminActionLogWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [AdminActionLogWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [AdminActionLogWhereInput!]
+  actionId: Int
+
+  """All values that are not equal to given value."""
+  actionId_not: Int
+
+  """All values that are contained in given list."""
+  actionId_in: [Int!]
+
+  """All values that are not contained in given list."""
+  actionId_not_in: [Int!]
+
+  """All values less than the given value."""
+  actionId_lt: Int
+
+  """All values less than or equal the given value."""
+  actionId_lte: Int
+
+  """All values greater than the given value."""
+  actionId_gt: Int
+
+  """All values greater than or equal the given value."""
+  actionId_gte: Int
+  tableName: String
+
+  """All values that are not equal to given value."""
+  tableName_not: String
+
+  """All values that are contained in given list."""
+  tableName_in: [String!]
+
+  """All values that are not contained in given list."""
+  tableName_not_in: [String!]
+
+  """All values less than the given value."""
+  tableName_lt: String
+
+  """All values less than or equal the given value."""
+  tableName_lte: String
+
+  """All values greater than the given value."""
+  tableName_gt: String
+
+  """All values greater than or equal the given value."""
+  tableName_gte: String
+
+  """All values containing the given string."""
+  tableName_contains: String
+
+  """All values not containing the given string."""
+  tableName_not_contains: String
+
+  """All values starting with the given string."""
+  tableName_starts_with: String
+
+  """All values not starting with the given string."""
+  tableName_not_starts_with: String
+
+  """All values ending with the given string."""
+  tableName_ends_with: String
+
+  """All values not ending with the given string."""
+  tableName_not_ends_with: String
+  triggeredAt: DateTime
+
+  """All values that are not equal to given value."""
+  triggeredAt_not: DateTime
+
+  """All values that are contained in given list."""
+  triggeredAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  triggeredAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  triggeredAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  triggeredAt_lte: DateTime
+
+  """All values greater than the given value."""
+  triggeredAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  triggeredAt_gte: DateTime
+  action: AdminAction
+
+  """All values that are not equal to given value."""
+  action_not: AdminAction
+
+  """All values that are contained in given list."""
+  action_in: [AdminAction!]
+
+  """All values that are not contained in given list."""
+  action_not_in: [AdminAction!]
+  statementOnly: Boolean
+
+  """All values that are not equal to given value."""
+  statementOnly_not: Boolean
+  activeAdminUser: UserWhereInput
+}
+
+input AdminActionLogWhereUniqueInput {
+  actionId: Int
+}
+
 type AggregateActiveAdminUser {
+  count: Int!
+}
+
+type AggregateAdminActionLog {
   count: Int!
 }
 
@@ -9083,6 +9331,7 @@ type Mutation {
   createProductRequest(data: ProductRequestCreateInput!): ProductRequest!
   createProductVariantWant(data: ProductVariantWantCreateInput!): ProductVariantWant!
   createActiveAdminUser(data: ActiveAdminUserCreateInput!): ActiveAdminUser!
+  createAdminActionLog(data: AdminActionLogCreateInput!): AdminActionLog!
   createCollection(data: CollectionCreateInput!): Collection!
   createPushNotificationReceipt(data: PushNotificationReceiptCreateInput!): PushNotificationReceipt!
   createUserPushNotificationInterest(data: UserPushNotificationInterestCreateInput!): UserPushNotificationInterest!
@@ -9134,6 +9383,7 @@ type Mutation {
   updateProductRequest(data: ProductRequestUpdateInput!, where: ProductRequestWhereUniqueInput!): ProductRequest
   updateProductVariantWant(data: ProductVariantWantUpdateInput!, where: ProductVariantWantWhereUniqueInput!): ProductVariantWant
   updateActiveAdminUser(data: ActiveAdminUserUpdateInput!, where: ActiveAdminUserWhereUniqueInput!): ActiveAdminUser
+  updateAdminActionLog(data: AdminActionLogUpdateInput!, where: AdminActionLogWhereUniqueInput!): AdminActionLog
   updateCollection(data: CollectionUpdateInput!, where: CollectionWhereUniqueInput!): Collection
   updatePushNotificationReceipt(data: PushNotificationReceiptUpdateInput!, where: PushNotificationReceiptWhereUniqueInput!): PushNotificationReceipt
   updateUserPushNotificationInterest(data: UserPushNotificationInterestUpdateInput!, where: UserPushNotificationInterestWhereUniqueInput!): UserPushNotificationInterest
@@ -9185,6 +9435,7 @@ type Mutation {
   deleteProductRequest(where: ProductRequestWhereUniqueInput!): ProductRequest
   deleteProductVariantWant(where: ProductVariantWantWhereUniqueInput!): ProductVariantWant
   deleteActiveAdminUser(where: ActiveAdminUserWhereUniqueInput!): ActiveAdminUser
+  deleteAdminActionLog(where: AdminActionLogWhereUniqueInput!): AdminActionLog
   deleteCollection(where: CollectionWhereUniqueInput!): Collection
   deletePushNotificationReceipt(where: PushNotificationReceiptWhereUniqueInput!): PushNotificationReceipt
   deleteUserPushNotificationInterest(where: UserPushNotificationInterestWhereUniqueInput!): UserPushNotificationInterest
@@ -9236,6 +9487,7 @@ type Mutation {
   upsertProductRequest(where: ProductRequestWhereUniqueInput!, create: ProductRequestCreateInput!, update: ProductRequestUpdateInput!): ProductRequest!
   upsertProductVariantWant(where: ProductVariantWantWhereUniqueInput!, create: ProductVariantWantCreateInput!, update: ProductVariantWantUpdateInput!): ProductVariantWant!
   upsertActiveAdminUser(where: ActiveAdminUserWhereUniqueInput!, create: ActiveAdminUserCreateInput!, update: ActiveAdminUserUpdateInput!): ActiveAdminUser!
+  upsertAdminActionLog(where: AdminActionLogWhereUniqueInput!, create: AdminActionLogCreateInput!, update: AdminActionLogUpdateInput!): AdminActionLog!
   upsertCollection(where: CollectionWhereUniqueInput!, create: CollectionCreateInput!, update: CollectionUpdateInput!): Collection!
   upsertPushNotificationReceipt(where: PushNotificationReceiptWhereUniqueInput!, create: PushNotificationReceiptCreateInput!, update: PushNotificationReceiptUpdateInput!): PushNotificationReceipt!
   upsertUserPushNotificationInterest(where: UserPushNotificationInterestWhereUniqueInput!, create: UserPushNotificationInterestCreateInput!, update: UserPushNotificationInterestUpdateInput!): UserPushNotificationInterest!
@@ -9285,6 +9537,7 @@ type Mutation {
   updateManyPackageTransitEvents(data: PackageTransitEventUpdateManyMutationInput!, where: PackageTransitEventWhereInput): BatchPayload!
   updateManyProductRequests(data: ProductRequestUpdateManyMutationInput!, where: ProductRequestWhereInput): BatchPayload!
   updateManyProductVariantWants(data: ProductVariantWantUpdateManyMutationInput!, where: ProductVariantWantWhereInput): BatchPayload!
+  updateManyAdminActionLogs(data: AdminActionLogUpdateManyMutationInput!, where: AdminActionLogWhereInput): BatchPayload!
   updateManyCollections(data: CollectionUpdateManyMutationInput!, where: CollectionWhereInput): BatchPayload!
   updateManyPushNotificationReceipts(data: PushNotificationReceiptUpdateManyMutationInput!, where: PushNotificationReceiptWhereInput): BatchPayload!
   updateManyUserPushNotificationInterests(data: UserPushNotificationInterestUpdateManyMutationInput!, where: UserPushNotificationInterestWhereInput): BatchPayload!
@@ -9336,6 +9589,7 @@ type Mutation {
   deleteManyProductRequests(where: ProductRequestWhereInput): BatchPayload!
   deleteManyProductVariantWants(where: ProductVariantWantWhereInput): BatchPayload!
   deleteManyActiveAdminUsers(where: ActiveAdminUserWhereInput): BatchPayload!
+  deleteManyAdminActionLogs(where: AdminActionLogWhereInput): BatchPayload!
   deleteManyCollections(where: CollectionWhereInput): BatchPayload!
   deleteManyPushNotificationReceipts(where: PushNotificationReceiptWhereInput): BatchPayload!
   deleteManyUserPushNotificationInterests(where: UserPushNotificationInterestWhereInput): BatchPayload!
@@ -19443,6 +19697,7 @@ type Query {
   productRequests(where: ProductRequestWhereInput, orderBy: ProductRequestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductRequest]!
   productVariantWants(where: ProductVariantWantWhereInput, orderBy: ProductVariantWantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariantWant]!
   activeAdminUsers(where: ActiveAdminUserWhereInput, orderBy: ActiveAdminUserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ActiveAdminUser]!
+  adminActionLogs(where: AdminActionLogWhereInput, orderBy: AdminActionLogOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [AdminActionLog]!
   collections(where: CollectionWhereInput, orderBy: CollectionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Collection]!
   pushNotificationReceipts(where: PushNotificationReceiptWhereInput, orderBy: PushNotificationReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PushNotificationReceipt]!
   userPushNotificationInterests(where: UserPushNotificationInterestWhereInput, orderBy: UserPushNotificationInterestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [UserPushNotificationInterest]!
@@ -19494,6 +19749,7 @@ type Query {
   productRequest(where: ProductRequestWhereUniqueInput!): ProductRequest
   productVariantWant(where: ProductVariantWantWhereUniqueInput!): ProductVariantWant
   activeAdminUser(where: ActiveAdminUserWhereUniqueInput!): ActiveAdminUser
+  adminActionLog(where: AdminActionLogWhereUniqueInput!): AdminActionLog
   collection(where: CollectionWhereUniqueInput!): Collection
   pushNotificationReceipt(where: PushNotificationReceiptWhereUniqueInput!): PushNotificationReceipt
   userPushNotificationInterest(where: UserPushNotificationInterestWhereUniqueInput!): UserPushNotificationInterest
@@ -19545,6 +19801,7 @@ type Query {
   productRequestsConnection(where: ProductRequestWhereInput, orderBy: ProductRequestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductRequestConnection!
   productVariantWantsConnection(where: ProductVariantWantWhereInput, orderBy: ProductVariantWantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ProductVariantWantConnection!
   activeAdminUsersConnection(where: ActiveAdminUserWhereInput, orderBy: ActiveAdminUserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ActiveAdminUserConnection!
+  adminActionLogsConnection(where: AdminActionLogWhereInput, orderBy: AdminActionLogOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): AdminActionLogConnection!
   collectionsConnection(where: CollectionWhereInput, orderBy: CollectionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CollectionConnection!
   pushNotificationReceiptsConnection(where: PushNotificationReceiptWhereInput, orderBy: PushNotificationReceiptOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PushNotificationReceiptConnection!
   userPushNotificationInterestsConnection(where: UserPushNotificationInterestWhereInput, orderBy: UserPushNotificationInterestOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserPushNotificationInterestConnection!
@@ -22850,6 +23107,7 @@ type Subscription {
   productRequest(where: ProductRequestSubscriptionWhereInput): ProductRequestSubscriptionPayload
   productVariantWant(where: ProductVariantWantSubscriptionWhereInput): ProductVariantWantSubscriptionPayload
   activeAdminUser(where: ActiveAdminUserSubscriptionWhereInput): ActiveAdminUserSubscriptionPayload
+  adminActionLog(where: AdminActionLogSubscriptionWhereInput): AdminActionLogSubscriptionPayload
   collection(where: CollectionSubscriptionWhereInput): CollectionSubscriptionPayload
   pushNotificationReceipt(where: PushNotificationReceiptSubscriptionWhereInput): PushNotificationReceiptSubscriptionPayload
   userPushNotificationInterest(where: UserPushNotificationInterestSubscriptionWhereInput): UserPushNotificationInterestSubscriptionPayload

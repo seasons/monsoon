@@ -3,26 +3,11 @@
 -- Need this datatype to store update logs as key/value data
 CREATE EXTENSION IF NOT EXISTS hstore;
 
-DROP TABLE monsoon$dev.AdminActionLogs CASCADE;
-
-CREATE TABLE monsoon$dev.AdminActionLogs (
-    event_id bigserial primary key,
-    table_name text not null,
-    active_admin_user text,
-    triggered_at TIMESTAMP WITH TIME ZONE NOT NULL,
-    action TEXT NOT NULL CHECK (action IN ('I','D','U', 'T')),
-    row_data hstore,
-    changed_fields hstore,
-    statement_only boolean not null
-);
-
-REVOKE ALL ON monsoon$dev.AdminActionLogs FROM public;
-
-CREATE INDEX AdminActionLogs_action_idx ON monsoon$dev.AdminActionLogs(action);
-
 CREATE OR REPLACE FUNCTION monsoon$dev.if_modified_func() RETURNS TRIGGER AS $body$
 DECLARE
-    audit_row monsoon$dev.AdminActionLogs;
+    audit_row monsoon$dev."AdminActionLog";
+    row_data hstore;
+    changed_fields hstore;
     excluded_cols text[] = ARRAY[]::text[];
     active_admin_user text;
 BEGIN
@@ -32,39 +17,40 @@ BEGIN
 
     active_admin_user = (SELECT admin FROM monsoon$dev."ActiveAdminUser" LIMIT 1);
     -- Probably want to assert something here: https://www.postgresql.org/docs/current/plpgsql-errors-and-messages.html 
-    audit_row = ROW(
-        nextval('monsoon$dev.AdminActionLogs_event_id_seq'), -- event_id
-        TG_TABLE_NAME::text,                          -- table_name
-        active_admin_user,                            -- id of currently active user
-        current_timestamp,                            -- triggered_at
-        substring(TG_OP,1,1),                         -- action
-        NULL, NULL,                                   -- row_data, changed_fields
-        'f'                                           -- statement_only
-        );
-
 
     IF TG_ARGV[0] IS NOT NULL THEN
         excluded_cols = TG_ARGV[0]::text[];
     END IF;
     
     IF (TG_OP = 'UPDATE' AND TG_LEVEL = 'ROW') THEN
-        audit_row.row_data = hstore(OLD.*) - excluded_cols;
-        audit_row.changed_fields =  (hstore(NEW.*) - audit_row.row_data) - excluded_cols;
-        IF audit_row.changed_fields = hstore('') THEN
+        row_data = hstore(OLD.*) - excluded_cols;
+        changed_fields =  (hstore(NEW.*) - row_data) - excluded_cols;
+        IF changed_fields = hstore('') THEN
             -- All changed fields are ignored. Skip this update.
             RETURN NULL;
         END IF;
     ELSIF (TG_OP = 'DELETE' AND TG_LEVEL = 'ROW') THEN
-        audit_row.row_data = hstore(OLD.*) - excluded_cols;
+        row_data = hstore(OLD.*) - excluded_cols;
     ELSIF (TG_OP = 'INSERT' AND TG_LEVEL = 'ROW') THEN
-        audit_row.row_data = hstore(NEW.*) - excluded_cols;
+        row_data = hstore(NEW.*) - excluded_cols;
     ELSIF (TG_LEVEL = 'STATEMENT' AND TG_OP IN ('INSERT','UPDATE','DELETE','TRUNCATE')) THEN
-        audit_row.statement_only = 't';
+        audit_row."statementOnly" = 't';
     ELSE
         RAISE EXCEPTION '[monsoon$dev.if_modified_func] - Trigger func added as trigger for unhandled case: %, %',TG_OP, TG_LEVEL;
         RETURN NULL;
     END IF;
-    INSERT INTO monsoon$dev.AdminActionLogs VALUES (audit_row.*);
+
+    audit_row."actionId" = nextval('monsoon$dev."AdminActionLog_actionId_seq"');
+    audit_row."tableName" = TG_TABLE_NAME::text;
+    audit_row."triggeredAt" = current_timestamp;
+    audit_row."action" = INITCAP(TG_OP);
+    audit_row."activeAdminUser" = active_admin_user;
+    audit_row."statementOnly" = 'f';
+    -- prisma doesn't support hstore. So convert hstore to JSON
+    audit_row."rowData" = hstore_to_json(row_data);
+    audit_row."changedFields" = hstore_to_json(changed_fields);
+
+    INSERT INTO monsoon$dev."AdminActionLog" VALUES (audit_row.*);
     RETURN NULL;
 END;
 $body$
