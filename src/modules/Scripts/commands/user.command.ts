@@ -11,7 +11,6 @@ import { head } from "lodash"
 import { Command, Option, Positional } from "nestjs-command"
 
 import {
-  AirtableIdOption,
   EmailOption,
   PasswordOption,
   PrismaEnvOption,
@@ -23,11 +22,11 @@ export class UserCommands {
   private readonly logger = new Logger(UserCommands.name)
 
   constructor(
-    private readonly scriptsService: ScriptsService,
-    private readonly authService: AuthService,
+    private readonly scripts: ScriptsService,
+    private readonly auth: AuthService,
     private readonly prisma: PrismaService,
     private readonly paymentService: PaymentService,
-    private readonly utilsService: UtilsService,
+    private readonly utils: UtilsService,
     private moduleRef: ModuleRef
   ) {}
 
@@ -56,7 +55,7 @@ export class UserCommands {
     })
     _password
   ) {
-    await this.scriptsService.updateConnections({
+    await this.scripts.updateConnections({
       prismaEnv,
       moduleRef: this.moduleRef,
     })
@@ -66,7 +65,7 @@ export class UserCommands {
       firstName,
       lastName,
     } = this.createTestUserBasics(_newEmail, _password)
-    const auth0Id = await this.authService.createAuth0User(newEmail, password, {
+    const auth0Id = await this.auth.createAuth0User(newEmail, password, {
       firstName,
       lastName,
     })
@@ -113,7 +112,7 @@ export class UserCommands {
       describe: "Roles of the user",
       type: "array",
       default: "Customer",
-      choices: ["Customer", "Admin", "Partner"],
+      choices: ["Customer", "Admin", "Partner", "Marketer"],
     })
     roles,
     @Option({
@@ -135,7 +134,7 @@ export class UserCommands {
     })
     status
   ) {
-    await this.scriptsService.updateConnections({
+    await this.scripts.updateConnections({
       prismaEnv,
       moduleRef: this.moduleRef,
     })
@@ -168,7 +167,7 @@ export class UserCommands {
     }
 
     try {
-      ;({ user, tokenData } = await this.authService.signupUser({
+      ;({ user, tokenData } = await this.auth.signupUser({
         email,
         password,
         firstName,
@@ -236,9 +235,9 @@ export class UserCommands {
       })
       await this.paymentService.createSubscription(
         plan,
-        this.utilsService.snakeCaseify(address),
+        this.utils.snakeCaseify(address),
         user,
-        this.utilsService.snakeCaseify(card)
+        this.utils.snakeCaseify(card)
       )
     }
 
