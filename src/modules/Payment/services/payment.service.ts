@@ -437,7 +437,7 @@ export class PaymentService {
 
   async chargebeeSubscriptionCreated(
     userID: string,
-    customer: any,
+    chargebeeCustomer: any,
     card: any,
     planID: string
   ) {
@@ -445,7 +445,7 @@ export class PaymentService {
     const plan = this.chargebeePlanIdToPrismaPlan(planID as any)
     const billingInfo = this.paymentUtils.createBillingInfoObject(
       card,
-      customer
+      chargebeeCustomer
     )
 
     // Save to prisma
