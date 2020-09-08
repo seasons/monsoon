@@ -139,8 +139,37 @@ export class ShippoController {
           data: {
             status: reservationStatus,
             phase,
+            ...(reservationStatus === "Delivered"
+              ? { receivedAt: new Date() }
+              : {}),
+            ...(reservationStatus === "Shipped"
+              ? { shippedAt: new Date(), shipped: true }
+              : {}),
           },
         })
+
+        const updatedPackage = head(
+          await this.prisma.client.packages({
+            where: {
+              transactionID,
+            },
+          })
+        )
+
+        if (updatedPackage) {
+          await this.prisma.client.updatePackage({
+            where: {
+              id: updatedPackage.id,
+            },
+            data: {
+              events: {
+                connect: {
+                  id: packageTransitEvent.id,
+                },
+              },
+            },
+          })
+        }
 
         break
     }
@@ -220,6 +249,7 @@ export class ShippoController {
       await this.prisma.client.updateReservation({
         where: { id: reservation.id },
         data: {
+          phase,
           lastLocation: {
             connect: {
               id: location.id,
