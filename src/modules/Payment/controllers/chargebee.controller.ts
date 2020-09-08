@@ -66,7 +66,7 @@ export class ChargebeeController {
     )
 
     try {
-      // If they don't have a billing info this means they've create their account
+      // If they don't have a billing info this means they've created their account
       // user the deprecated ChargebeeHostedCheckout
       if (!customerWithBillingAndUserData?.billingInfo?.id) {
         const user = customerWithBillingAndUserData.user
@@ -77,17 +77,17 @@ export class ChargebeeController {
           lastName: user?.lastName || "",
           email: user?.email || "",
         })
+        // Only create the billing info and send welcome email if user used chargebee checkout
+        await this.payment.chargebeeSubscriptionCreated(
+          customer_id,
+          customer,
+          card,
+          plan_id
+        )
       }
     } catch (err) {
       Sentry.captureException(err)
     }
-
-    await this.payment.chargebeeSubscriptionCreated(
-      customer_id,
-      customer,
-      card,
-      plan_id
-    )
   }
 
   private async chargebeeCustomerChanged(content: any) {
