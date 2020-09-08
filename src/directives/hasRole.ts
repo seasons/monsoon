@@ -18,6 +18,9 @@ export async function hasRole(
     .user({ id: userID })
     .roles()
 
+  // Set a flag so admin-related contextual work can happen. e.g Admin Audit logging
+  ctx.isAdminAction = permissibleRoles.includes("Admin")
+
   if (intersection(permissibleRoles, userRoles).length === 0) {
     if (nullable) {
       return null
