@@ -163,16 +163,16 @@ View showing all tables with auditing set up. Ordered by schema, then table.
 $body$;
 
 --- Add logs to tables
-SELECT monsoon$dev.audit_table('monsoon$dev."Reservation"');
+SELECT monsoon$dev.audit_table('monsoon$dev."Reservation"', BOOLEAN 't', ARRAY['updatedAt', 'createdAt']::text[]);
 
-SELECT monsoon$dev.audit_table('monsoon$dev."Customer"');
-SELECT monsoon$dev.audit_table('monsoon$dev."CustomerDetail"');
-SELECT monsoon$dev.audit_table('monsoon$dev."User"');
+SELECT monsoon$dev.audit_table('monsoon$dev."Customer"', BOOLEAN 't', ARRAY['updatedAt', 'createdAt']::text[]);
+SELECT monsoon$dev.audit_table('monsoon$dev."CustomerDetail"', BOOLEAN 't', ARRAY['updatedAt', 'createdAt']::text[]);
+SELECT monsoon$dev.audit_table('monsoon$dev."User"', BOOLEAN 't', ARRAY['updatedAt', 'createdAt']::text[]);
 
-SELECT monsoon$dev.audit_table('monsoon$dev."Product"');
-SELECT monsoon$dev.audit_table('monsoon$dev."ProductVariant"');
-SELECT monsoon$dev.audit_table('monsoon$dev."PhysicalProduct"');
+SELECT monsoon$dev.audit_table('monsoon$dev."Product"', BOOLEAN 't', ARRAY['updatedAt', 'createdAt']::text[]);
+SELECT monsoon$dev.audit_table('monsoon$dev."ProductVariant"', BOOLEAN 't', ARRAY['updatedAt', 'createdAt']::text[]);
+SELECT monsoon$dev.audit_table('monsoon$dev."PhysicalProduct"', BOOLEAN 't', ARRAY['updatedAt', 'createdAt']::text[]);
 
-SELECT monsoon$dev.audit_table('monsoon$dev."Brand"');
-SELECT monsoon$dev.audit_table('monsoon$dev."Category"');
+SELECT monsoon$dev.audit_table('monsoon$dev."Brand"', BOOLEAN 't', ARRAY['updatedAt', 'createdAt']::text[]);
+SELECT monsoon$dev.audit_table('monsoon$dev."Category"', BOOLEAN 't', ARRAY['updatedAt', 'createdAt']::text[]);
 -- add more 

@@ -35,7 +35,7 @@ type Mutation {
   updateReservation(
     data: ReservationUpdateInput!
     where: ReservationWhereUniqueInput!
-  ): Reservation
+  ): Reservation @hasRole(roles: [Admin])
 }
 
 input ReservationProcessReturnInput {
@@ -74,4 +74,5 @@ type Reservation {
   createdAt: DateTime!
   updatedAt: DateTime!
   phase: ReservationPhase!
+  adminLogs: [AdminActionLog!]! @hasRole(roles: [Admin])
 }

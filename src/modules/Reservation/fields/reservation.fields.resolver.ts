@@ -1,6 +1,6 @@
 import { ImageService } from "@modules/Image"
 import { ImageSize } from "@modules/Image/image.types"
-import { Args, Parent, ResolveField, Resolver } from "@nestjs/graphql"
+import { Args, Info, Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma/prisma.service"
 
 import { ReservationUtilsService } from "../services/reservation.utils.service"
@@ -19,6 +19,18 @@ export class ReservationFieldsResolver {
       id: parent.id,
     })
     return this.reservationService.returnDate(new Date(reservation?.createdAt))
+  }
+
+  @ResolveField()
+  async adminLogs(@Parent() reservation, @Info() info) {
+    return this.prisma.binding.query.adminActionLogs(
+      {
+        where: {
+          AND: [{ entityId: reservation.id }, { tableName: "Reservation" }],
+        },
+      },
+      info
+    )
   }
 
   @ResolveField()
