@@ -717,6 +717,10 @@ type AggregateProductRequest {
   count: Int!
 }
 
+type AggregateProductSeason {
+  count: Int!
+}
+
 type AggregateProductStatusChange {
   count: Int!
 }
@@ -758,6 +762,10 @@ type AggregateReservationReceipt {
 }
 
 type AggregateReservationReceiptItem {
+  count: Int!
+}
+
+type AggregateSeason {
   count: Int!
 }
 
@@ -13414,6 +13422,7 @@ type Mutation {
   createActiveAdminUser(data: ActiveAdminUserCreateInput!): ActiveAdminUser!
   createAdminActionLog(data: AdminActionLogCreateInput!): AdminActionLog!
   createCollection(data: CollectionCreateInput!): Collection!
+  createProductSeason(data: ProductSeasonCreateInput!): ProductSeason!
   createPushNotificationReceipt(
     data: PushNotificationReceiptCreateInput!
   ): PushNotificationReceipt!
@@ -13549,6 +13558,10 @@ type Mutation {
     data: CollectionUpdateInput!
     where: CollectionWhereUniqueInput!
   ): Collection
+  updateProductSeason(
+    data: ProductSeasonUpdateInput!
+    where: ProductSeasonWhereUniqueInput!
+  ): ProductSeason
   updatePushNotificationReceipt(
     data: PushNotificationReceiptUpdateInput!
     where: PushNotificationReceiptWhereUniqueInput!
@@ -13690,6 +13703,7 @@ type Mutation {
   ): ActiveAdminUser
   deleteAdminActionLog(where: AdminActionLogWhereUniqueInput!): AdminActionLog
   deleteCollection(where: CollectionWhereUniqueInput!): Collection
+  deleteProductSeason(where: ProductSeasonWhereUniqueInput!): ProductSeason
   deletePushNotificationReceipt(
     where: PushNotificationReceiptWhereUniqueInput!
   ): PushNotificationReceipt
@@ -13868,6 +13882,11 @@ type Mutation {
     create: CollectionCreateInput!
     update: CollectionUpdateInput!
   ): Collection!
+  upsertProductSeason(
+    where: ProductSeasonWhereUniqueInput!
+    create: ProductSeasonCreateInput!
+    update: ProductSeasonUpdateInput!
+  ): ProductSeason!
   upsertPushNotificationReceipt(
     where: PushNotificationReceiptWhereUniqueInput!
     create: PushNotificationReceiptCreateInput!
@@ -14092,6 +14111,10 @@ type Mutation {
     data: CollectionUpdateManyMutationInput!
     where: CollectionWhereInput
   ): BatchPayload!
+  updateManyProductSeasons(
+    data: ProductSeasonUpdateManyMutationInput!
+    where: ProductSeasonWhereInput
+  ): BatchPayload!
   updateManyPushNotificationReceipts(
     data: PushNotificationReceiptUpdateManyMutationInput!
     where: PushNotificationReceiptWhereInput
@@ -14244,6 +14267,7 @@ type Mutation {
   deleteManyActiveAdminUsers(where: ActiveAdminUserWhereInput): BatchPayload!
   deleteManyAdminActionLogs(where: AdminActionLogWhereInput): BatchPayload!
   deleteManyCollections(where: CollectionWhereInput): BatchPayload!
+  deleteManyProductSeasons(where: ProductSeasonWhereInput): BatchPayload!
   deleteManyPushNotificationReceipts(
     where: PushNotificationReceiptWhereInput
   ): BatchPayload!
@@ -18945,7 +18969,7 @@ type Product implements Node {
     first: Int
     last: Int
   ): [ProductStatusChange!]
-  season: String
+  season: ProductSeason
   seasonDeprecated: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
@@ -18990,7 +19014,6 @@ input ProductCreateInput {
   modelHeight: Int
   retailPrice: Int
   status: ProductStatus
-  season: String
   seasonDeprecated: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
@@ -19009,6 +19032,7 @@ input ProductCreateInput {
   materialCategory: ProductMaterialCategoryCreateOneWithoutProductsInput
   variants: ProductVariantCreateManyWithoutProductInput
   statusChanges: ProductStatusChangeCreateManyWithoutProductInput
+  season: ProductSeasonCreateOneInput
 }
 
 input ProductCreateManyInput {
@@ -19070,7 +19094,6 @@ input ProductCreateWithoutBrandInput {
   modelHeight: Int
   retailPrice: Int
   status: ProductStatus
-  season: String
   seasonDeprecated: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
@@ -19088,6 +19111,7 @@ input ProductCreateWithoutBrandInput {
   materialCategory: ProductMaterialCategoryCreateOneWithoutProductsInput
   variants: ProductVariantCreateManyWithoutProductInput
   statusChanges: ProductStatusChangeCreateManyWithoutProductInput
+  season: ProductSeasonCreateOneInput
 }
 
 input ProductCreateWithoutCategoryInput {
@@ -19100,7 +19124,6 @@ input ProductCreateWithoutCategoryInput {
   modelHeight: Int
   retailPrice: Int
   status: ProductStatus
-  season: String
   seasonDeprecated: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
@@ -19118,6 +19141,7 @@ input ProductCreateWithoutCategoryInput {
   materialCategory: ProductMaterialCategoryCreateOneWithoutProductsInput
   variants: ProductVariantCreateManyWithoutProductInput
   statusChanges: ProductStatusChangeCreateManyWithoutProductInput
+  season: ProductSeasonCreateOneInput
 }
 
 input ProductCreateWithoutMaterialCategoryInput {
@@ -19130,7 +19154,6 @@ input ProductCreateWithoutMaterialCategoryInput {
   modelHeight: Int
   retailPrice: Int
   status: ProductStatus
-  season: String
   seasonDeprecated: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
@@ -19148,6 +19171,7 @@ input ProductCreateWithoutMaterialCategoryInput {
   functions: ProductFunctionCreateManyInput
   variants: ProductVariantCreateManyWithoutProductInput
   statusChanges: ProductStatusChangeCreateManyWithoutProductInput
+  season: ProductSeasonCreateOneInput
 }
 
 input ProductCreateWithoutModelInput {
@@ -19160,7 +19184,6 @@ input ProductCreateWithoutModelInput {
   modelHeight: Int
   retailPrice: Int
   status: ProductStatus
-  season: String
   seasonDeprecated: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
@@ -19178,6 +19201,7 @@ input ProductCreateWithoutModelInput {
   materialCategory: ProductMaterialCategoryCreateOneWithoutProductsInput
   variants: ProductVariantCreateManyWithoutProductInput
   statusChanges: ProductStatusChangeCreateManyWithoutProductInput
+  season: ProductSeasonCreateOneInput
 }
 
 input ProductCreateWithoutStatusChangesInput {
@@ -19190,7 +19214,6 @@ input ProductCreateWithoutStatusChangesInput {
   modelHeight: Int
   retailPrice: Int
   status: ProductStatus
-  season: String
   seasonDeprecated: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
@@ -19208,6 +19231,7 @@ input ProductCreateWithoutStatusChangesInput {
   functions: ProductFunctionCreateManyInput
   materialCategory: ProductMaterialCategoryCreateOneWithoutProductsInput
   variants: ProductVariantCreateManyWithoutProductInput
+  season: ProductSeasonCreateOneInput
 }
 
 input ProductCreateWithoutTagsInput {
@@ -19220,7 +19244,6 @@ input ProductCreateWithoutTagsInput {
   modelHeight: Int
   retailPrice: Int
   status: ProductStatus
-  season: String
   seasonDeprecated: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
@@ -19238,6 +19261,7 @@ input ProductCreateWithoutTagsInput {
   materialCategory: ProductMaterialCategoryCreateOneWithoutProductsInput
   variants: ProductVariantCreateManyWithoutProductInput
   statusChanges: ProductStatusChangeCreateManyWithoutProductInput
+  season: ProductSeasonCreateOneInput
 }
 
 input ProductCreateWithoutVariantsInput {
@@ -19250,7 +19274,6 @@ input ProductCreateWithoutVariantsInput {
   modelHeight: Int
   retailPrice: Int
   status: ProductStatus
-  season: String
   seasonDeprecated: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
@@ -19268,6 +19291,7 @@ input ProductCreateWithoutVariantsInput {
   functions: ProductFunctionCreateManyInput
   materialCategory: ProductMaterialCategoryCreateOneWithoutProductsInput
   statusChanges: ProductStatusChangeCreateManyWithoutProductInput
+  season: ProductSeasonCreateOneInput
 }
 
 """
@@ -20454,8 +20478,6 @@ enum ProductOrderByInput {
   retailPrice_DESC
   status_ASC
   status_DESC
-  season_ASC
-  season_DESC
   seasonDeprecated_ASC
   seasonDeprecated_DESC
   architecture_ASC
@@ -20482,7 +20504,6 @@ type ProductPreviousValues {
   innerMaterials: [String!]!
   outerMaterials: [String!]!
   status: ProductStatus
-  season: String
   seasonDeprecated: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
@@ -21770,72 +21791,6 @@ input ProductScalarWhereInput {
   All values that are not contained in given list.
   """
   status_not_in: [ProductStatus!]
-  season: String
-
-  """
-  All values that are not equal to given value.
-  """
-  season_not: String
-
-  """
-  All values that are contained in given list.
-  """
-  season_in: [String!]
-
-  """
-  All values that are not contained in given list.
-  """
-  season_not_in: [String!]
-
-  """
-  All values less than the given value.
-  """
-  season_lt: String
-
-  """
-  All values less than or equal the given value.
-  """
-  season_lte: String
-
-  """
-  All values greater than the given value.
-  """
-  season_gt: String
-
-  """
-  All values greater than or equal the given value.
-  """
-  season_gte: String
-
-  """
-  All values containing the given string.
-  """
-  season_contains: String
-
-  """
-  All values not containing the given string.
-  """
-  season_not_contains: String
-
-  """
-  All values starting with the given string.
-  """
-  season_starts_with: String
-
-  """
-  All values not starting with the given string.
-  """
-  season_not_starts_with: String
-
-  """
-  All values ending with the given string.
-  """
-  season_ends_with: String
-
-  """
-  All values not ending with the given string.
-  """
-  season_not_ends_with: String
   seasonDeprecated: String
 
   """
@@ -22042,6 +21997,238 @@ input ProductScalarWhereInput {
   All values greater than or equal the given value.
   """
   updatedAt_gte: DateTime
+}
+
+type ProductSeason implements Node {
+  id: ID!
+  vendorSeason: Season
+  internalSeason: Season!
+  wearableSeasons: [SeasonString!]!
+}
+
+"""
+A connection to a list of items.
+"""
+type ProductSeasonConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+
+  """
+  A list of edges.
+  """
+  edges: [ProductSeasonEdge]!
+  aggregate: AggregateProductSeason!
+}
+
+input ProductSeasonCreateInput {
+  id: ID
+  wearableSeasons: ProductSeasonCreatewearableSeasonsInput
+  vendorSeason: SeasonCreateOneInput
+  internalSeason: SeasonCreateOneInput!
+}
+
+input ProductSeasonCreateOneInput {
+  create: ProductSeasonCreateInput
+  connect: ProductSeasonWhereUniqueInput
+}
+
+input ProductSeasonCreatewearableSeasonsInput {
+  set: [SeasonString!]
+}
+
+"""
+An edge in a connection.
+"""
+type ProductSeasonEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: ProductSeason!
+
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+}
+
+enum ProductSeasonOrderByInput {
+  id_ASC
+  id_DESC
+}
+
+type ProductSeasonPreviousValues {
+  id: ID!
+  wearableSeasons: [SeasonString!]!
+}
+
+type ProductSeasonSubscriptionPayload {
+  mutation: MutationType!
+  node: ProductSeason
+  updatedFields: [String!]
+  previousValues: ProductSeasonPreviousValues
+}
+
+input ProductSeasonSubscriptionWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [ProductSeasonSubscriptionWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [ProductSeasonSubscriptionWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [ProductSeasonSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: ProductSeasonWhereInput
+}
+
+input ProductSeasonUpdateDataInput {
+  wearableSeasons: ProductSeasonUpdatewearableSeasonsInput
+  vendorSeason: SeasonUpdateOneInput
+  internalSeason: SeasonUpdateOneRequiredInput
+}
+
+input ProductSeasonUpdateInput {
+  wearableSeasons: ProductSeasonUpdatewearableSeasonsInput
+  vendorSeason: SeasonUpdateOneInput
+  internalSeason: SeasonUpdateOneRequiredInput
+}
+
+input ProductSeasonUpdateManyMutationInput {
+  wearableSeasons: ProductSeasonUpdatewearableSeasonsInput
+}
+
+input ProductSeasonUpdateOneInput {
+  create: ProductSeasonCreateInput
+  connect: ProductSeasonWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: ProductSeasonUpdateDataInput
+  upsert: ProductSeasonUpsertNestedInput
+}
+
+input ProductSeasonUpdatewearableSeasonsInput {
+  set: [SeasonString!]
+}
+
+input ProductSeasonUpsertNestedInput {
+  update: ProductSeasonUpdateDataInput!
+  create: ProductSeasonCreateInput!
+}
+
+input ProductSeasonWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [ProductSeasonWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [ProductSeasonWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [ProductSeasonWhereInput!]
+  id: ID
+
+  """
+  All values that are not equal to given value.
+  """
+  id_not: ID
+
+  """
+  All values that are contained in given list.
+  """
+  id_in: [ID!]
+
+  """
+  All values that are not contained in given list.
+  """
+  id_not_in: [ID!]
+
+  """
+  All values less than the given value.
+  """
+  id_lt: ID
+
+  """
+  All values less than or equal the given value.
+  """
+  id_lte: ID
+
+  """
+  All values greater than the given value.
+  """
+  id_gt: ID
+
+  """
+  All values greater than or equal the given value.
+  """
+  id_gte: ID
+
+  """
+  All values containing the given string.
+  """
+  id_contains: ID
+
+  """
+  All values not containing the given string.
+  """
+  id_not_contains: ID
+
+  """
+  All values starting with the given string.
+  """
+  id_starts_with: ID
+
+  """
+  All values not starting with the given string.
+  """
+  id_not_starts_with: ID
+
+  """
+  All values ending with the given string.
+  """
+  id_ends_with: ID
+
+  """
+  All values not ending with the given string.
+  """
+  id_not_ends_with: ID
+  vendorSeason: SeasonWhereInput
+  internalSeason: SeasonWhereInput
+}
+
+input ProductSeasonWhereUniqueInput {
+  id: ID
 }
 
 enum ProductStatus {
@@ -22664,7 +22851,6 @@ input ProductUpdateDataInput {
   modelHeight: Int
   retailPrice: Int
   status: ProductStatus
-  season: String
   seasonDeprecated: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
@@ -22683,6 +22869,7 @@ input ProductUpdateDataInput {
   materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
   variants: ProductVariantUpdateManyWithoutProductInput
   statusChanges: ProductStatusChangeUpdateManyWithoutProductInput
+  season: ProductSeasonUpdateOneInput
 }
 
 input ProductUpdateinnerMaterialsInput {
@@ -22698,7 +22885,6 @@ input ProductUpdateInput {
   modelHeight: Int
   retailPrice: Int
   status: ProductStatus
-  season: String
   seasonDeprecated: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
@@ -22717,6 +22903,7 @@ input ProductUpdateInput {
   materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
   variants: ProductVariantUpdateManyWithoutProductInput
   statusChanges: ProductStatusChangeUpdateManyWithoutProductInput
+  season: ProductSeasonUpdateOneInput
 }
 
 input ProductUpdateManyDataInput {
@@ -22728,7 +22915,6 @@ input ProductUpdateManyDataInput {
   modelHeight: Int
   retailPrice: Int
   status: ProductStatus
-  season: String
   seasonDeprecated: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
@@ -22758,7 +22944,6 @@ input ProductUpdateManyMutationInput {
   modelHeight: Int
   retailPrice: Int
   status: ProductStatus
-  season: String
   seasonDeprecated: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
@@ -22866,7 +23051,6 @@ input ProductUpdateWithoutBrandDataInput {
   modelHeight: Int
   retailPrice: Int
   status: ProductStatus
-  season: String
   seasonDeprecated: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
@@ -22884,6 +23068,7 @@ input ProductUpdateWithoutBrandDataInput {
   materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
   variants: ProductVariantUpdateManyWithoutProductInput
   statusChanges: ProductStatusChangeUpdateManyWithoutProductInput
+  season: ProductSeasonUpdateOneInput
 }
 
 input ProductUpdateWithoutCategoryDataInput {
@@ -22895,7 +23080,6 @@ input ProductUpdateWithoutCategoryDataInput {
   modelHeight: Int
   retailPrice: Int
   status: ProductStatus
-  season: String
   seasonDeprecated: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
@@ -22913,6 +23097,7 @@ input ProductUpdateWithoutCategoryDataInput {
   materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
   variants: ProductVariantUpdateManyWithoutProductInput
   statusChanges: ProductStatusChangeUpdateManyWithoutProductInput
+  season: ProductSeasonUpdateOneInput
 }
 
 input ProductUpdateWithoutMaterialCategoryDataInput {
@@ -22924,7 +23109,6 @@ input ProductUpdateWithoutMaterialCategoryDataInput {
   modelHeight: Int
   retailPrice: Int
   status: ProductStatus
-  season: String
   seasonDeprecated: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
@@ -22942,6 +23126,7 @@ input ProductUpdateWithoutMaterialCategoryDataInput {
   functions: ProductFunctionUpdateManyInput
   variants: ProductVariantUpdateManyWithoutProductInput
   statusChanges: ProductStatusChangeUpdateManyWithoutProductInput
+  season: ProductSeasonUpdateOneInput
 }
 
 input ProductUpdateWithoutModelDataInput {
@@ -22953,7 +23138,6 @@ input ProductUpdateWithoutModelDataInput {
   modelHeight: Int
   retailPrice: Int
   status: ProductStatus
-  season: String
   seasonDeprecated: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
@@ -22971,6 +23155,7 @@ input ProductUpdateWithoutModelDataInput {
   materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
   variants: ProductVariantUpdateManyWithoutProductInput
   statusChanges: ProductStatusChangeUpdateManyWithoutProductInput
+  season: ProductSeasonUpdateOneInput
 }
 
 input ProductUpdateWithoutStatusChangesDataInput {
@@ -22982,7 +23167,6 @@ input ProductUpdateWithoutStatusChangesDataInput {
   modelHeight: Int
   retailPrice: Int
   status: ProductStatus
-  season: String
   seasonDeprecated: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
@@ -23000,6 +23184,7 @@ input ProductUpdateWithoutStatusChangesDataInput {
   functions: ProductFunctionUpdateManyInput
   materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
   variants: ProductVariantUpdateManyWithoutProductInput
+  season: ProductSeasonUpdateOneInput
 }
 
 input ProductUpdateWithoutTagsDataInput {
@@ -23011,7 +23196,6 @@ input ProductUpdateWithoutTagsDataInput {
   modelHeight: Int
   retailPrice: Int
   status: ProductStatus
-  season: String
   seasonDeprecated: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
@@ -23029,6 +23213,7 @@ input ProductUpdateWithoutTagsDataInput {
   materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
   variants: ProductVariantUpdateManyWithoutProductInput
   statusChanges: ProductStatusChangeUpdateManyWithoutProductInput
+  season: ProductSeasonUpdateOneInput
 }
 
 input ProductUpdateWithoutVariantsDataInput {
@@ -23040,7 +23225,6 @@ input ProductUpdateWithoutVariantsDataInput {
   modelHeight: Int
   retailPrice: Int
   status: ProductStatus
-  season: String
   seasonDeprecated: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
@@ -23058,6 +23242,7 @@ input ProductUpdateWithoutVariantsDataInput {
   functions: ProductFunctionUpdateManyInput
   materialCategory: ProductMaterialCategoryUpdateOneWithoutProductsInput
   statusChanges: ProductStatusChangeUpdateManyWithoutProductInput
+  season: ProductSeasonUpdateOneInput
 }
 
 input ProductUpdateWithWhereUniqueNestedInput {
@@ -26409,72 +26594,6 @@ input ProductWhereInput {
   All values that are not contained in given list.
   """
   status_not_in: [ProductStatus!]
-  season: String
-
-  """
-  All values that are not equal to given value.
-  """
-  season_not: String
-
-  """
-  All values that are contained in given list.
-  """
-  season_in: [String!]
-
-  """
-  All values that are not contained in given list.
-  """
-  season_not_in: [String!]
-
-  """
-  All values less than the given value.
-  """
-  season_lt: String
-
-  """
-  All values less than or equal the given value.
-  """
-  season_lte: String
-
-  """
-  All values greater than the given value.
-  """
-  season_gt: String
-
-  """
-  All values greater than or equal the given value.
-  """
-  season_gte: String
-
-  """
-  All values containing the given string.
-  """
-  season_contains: String
-
-  """
-  All values not containing the given string.
-  """
-  season_not_contains: String
-
-  """
-  All values starting with the given string.
-  """
-  season_starts_with: String
-
-  """
-  All values not starting with the given string.
-  """
-  season_not_starts_with: String
-
-  """
-  All values ending with the given string.
-  """
-  season_ends_with: String
-
-  """
-  All values not ending with the given string.
-  """
-  season_not_ends_with: String
   seasonDeprecated: String
 
   """
@@ -26703,6 +26822,7 @@ input ProductWhereInput {
   statusChanges_every: ProductStatusChangeWhereInput
   statusChanges_some: ProductStatusChangeWhereInput
   statusChanges_none: ProductStatusChangeWhereInput
+  season: ProductSeasonWhereInput
 }
 
 input ProductWhereUniqueInput {
@@ -28849,6 +28969,15 @@ type Query {
     first: Int
     last: Int
   ): [Collection]!
+  productSeasons(
+    where: ProductSeasonWhereInput
+    orderBy: ProductSeasonOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [ProductSeason]!
   pushNotificationReceipts(
     where: PushNotificationReceiptWhereInput
     orderBy: PushNotificationReceiptOrderByInput
@@ -29121,6 +29250,7 @@ type Query {
   activeAdminUser(where: ActiveAdminUserWhereUniqueInput!): ActiveAdminUser
   adminActionLog(where: AdminActionLogWhereUniqueInput!): AdminActionLog
   collection(where: CollectionWhereUniqueInput!): Collection
+  productSeason(where: ProductSeasonWhereUniqueInput!): ProductSeason
   pushNotificationReceipt(
     where: PushNotificationReceiptWhereUniqueInput!
   ): PushNotificationReceipt
@@ -29405,6 +29535,15 @@ type Query {
     first: Int
     last: Int
   ): CollectionConnection!
+  productSeasonsConnection(
+    where: ProductSeasonWhereInput
+    orderBy: ProductSeasonOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): ProductSeasonConnection!
   pushNotificationReceiptsConnection(
     where: PushNotificationReceiptWhereInput
     orderBy: PushNotificationReceiptOrderByInput
@@ -32436,6 +32575,305 @@ input ReservationWhereUniqueInput {
   reservationNumber: Int
 }
 
+type Season implements Node {
+  id: ID!
+  year: Int
+  seasonCode: SeasonCode
+}
+
+enum SeasonCode {
+  FW
+  SS
+  PS
+  PF
+  HO
+  AW
+}
+
+"""
+A connection to a list of items.
+"""
+type SeasonConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+
+  """
+  A list of edges.
+  """
+  edges: [SeasonEdge]!
+  aggregate: AggregateSeason!
+}
+
+input SeasonCreateInput {
+  id: ID
+  year: Int
+  seasonCode: SeasonCode
+}
+
+input SeasonCreateOneInput {
+  create: SeasonCreateInput
+  connect: SeasonWhereUniqueInput
+}
+
+"""
+An edge in a connection.
+"""
+type SeasonEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: Season!
+
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+}
+
+enum SeasonOrderByInput {
+  id_ASC
+  id_DESC
+  year_ASC
+  year_DESC
+  seasonCode_ASC
+  seasonCode_DESC
+}
+
+type SeasonPreviousValues {
+  id: ID!
+  year: Int
+  seasonCode: SeasonCode
+}
+
+enum SeasonString {
+  Spring
+  Summer
+  Winter
+  Fall
+}
+
+type SeasonSubscriptionPayload {
+  mutation: MutationType!
+  node: Season
+  updatedFields: [String!]
+  previousValues: SeasonPreviousValues
+}
+
+input SeasonSubscriptionWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [SeasonSubscriptionWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [SeasonSubscriptionWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [SeasonSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: SeasonWhereInput
+}
+
+input SeasonUpdateDataInput {
+  year: Int
+  seasonCode: SeasonCode
+}
+
+input SeasonUpdateInput {
+  year: Int
+  seasonCode: SeasonCode
+}
+
+input SeasonUpdateManyMutationInput {
+  year: Int
+  seasonCode: SeasonCode
+}
+
+input SeasonUpdateOneInput {
+  create: SeasonCreateInput
+  connect: SeasonWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: SeasonUpdateDataInput
+  upsert: SeasonUpsertNestedInput
+}
+
+input SeasonUpdateOneRequiredInput {
+  create: SeasonCreateInput
+  connect: SeasonWhereUniqueInput
+  update: SeasonUpdateDataInput
+  upsert: SeasonUpsertNestedInput
+}
+
+input SeasonUpsertNestedInput {
+  update: SeasonUpdateDataInput!
+  create: SeasonCreateInput!
+}
+
+input SeasonWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [SeasonWhereInput!]
+
+  """
+  Logical OR on all given filters.
+  """
+  OR: [SeasonWhereInput!]
+
+  """
+  Logical NOT on all given filters combined by AND.
+  """
+  NOT: [SeasonWhereInput!]
+  id: ID
+
+  """
+  All values that are not equal to given value.
+  """
+  id_not: ID
+
+  """
+  All values that are contained in given list.
+  """
+  id_in: [ID!]
+
+  """
+  All values that are not contained in given list.
+  """
+  id_not_in: [ID!]
+
+  """
+  All values less than the given value.
+  """
+  id_lt: ID
+
+  """
+  All values less than or equal the given value.
+  """
+  id_lte: ID
+
+  """
+  All values greater than the given value.
+  """
+  id_gt: ID
+
+  """
+  All values greater than or equal the given value.
+  """
+  id_gte: ID
+
+  """
+  All values containing the given string.
+  """
+  id_contains: ID
+
+  """
+  All values not containing the given string.
+  """
+  id_not_contains: ID
+
+  """
+  All values starting with the given string.
+  """
+  id_starts_with: ID
+
+  """
+  All values not starting with the given string.
+  """
+  id_not_starts_with: ID
+
+  """
+  All values ending with the given string.
+  """
+  id_ends_with: ID
+
+  """
+  All values not ending with the given string.
+  """
+  id_not_ends_with: ID
+  year: Int
+
+  """
+  All values that are not equal to given value.
+  """
+  year_not: Int
+
+  """
+  All values that are contained in given list.
+  """
+  year_in: [Int!]
+
+  """
+  All values that are not contained in given list.
+  """
+  year_not_in: [Int!]
+
+  """
+  All values less than the given value.
+  """
+  year_lt: Int
+
+  """
+  All values less than or equal the given value.
+  """
+  year_lte: Int
+
+  """
+  All values greater than the given value.
+  """
+  year_gt: Int
+
+  """
+  All values greater than or equal the given value.
+  """
+  year_gte: Int
+  seasonCode: SeasonCode
+
+  """
+  All values that are not equal to given value.
+  """
+  seasonCode_not: SeasonCode
+
+  """
+  All values that are contained in given list.
+  """
+  seasonCode_in: [SeasonCode!]
+
+  """
+  All values that are not contained in given list.
+  """
+  seasonCode_not_in: [SeasonCode!]
+}
+
+input SeasonWhereUniqueInput {
+  id: ID
+}
+
 type Size implements Node {
   id: ID!
   slug: String!
@@ -34251,6 +34689,9 @@ type Subscription {
   collection(
     where: CollectionSubscriptionWhereInput
   ): CollectionSubscriptionPayload
+  productSeason(
+    where: ProductSeasonSubscriptionWhereInput
+  ): ProductSeasonSubscriptionPayload
   pushNotificationReceipt(
     where: PushNotificationReceiptSubscriptionWhereInput
   ): PushNotificationReceiptSubscriptionPayload

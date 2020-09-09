@@ -130,6 +130,15 @@ type Query {
     first: Int
     last: Int
   ): [Tag]!
+  seasons(
+    where: SeasonWhereInput
+    orderBy: SeasonOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [Season]!
 }
 
 type Mutation {
@@ -174,6 +183,7 @@ type Product {
   photographyStatus: PhotographyStatus
   retailPrice: Int
   color: Color!
+  season: ProductSeason
   seasonDeprecated: String
   secondaryColor: Color
   tags: [Tag!]!

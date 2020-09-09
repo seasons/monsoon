@@ -57,6 +57,7 @@ export interface Exists {
   ) => Promise<boolean>;
   productModel: (where?: ProductModelWhereInput) => Promise<boolean>;
   productRequest: (where?: ProductRequestWhereInput) => Promise<boolean>;
+  productSeason: (where?: ProductSeasonWhereInput) => Promise<boolean>;
   productStatusChange: (
     where?: ProductStatusChangeWhereInput
   ) => Promise<boolean>;
@@ -86,6 +87,7 @@ export interface Exists {
   reservationReceiptItem: (
     where?: ReservationReceiptItemWhereInput
   ) => Promise<boolean>;
+  season: (where?: SeasonWhereInput) => Promise<boolean>;
   size: (where?: SizeWhereInput) => Promise<boolean>;
   smsReceipt: (where?: SmsReceiptWhereInput) => Promise<boolean>;
   stylePreferences: (where?: StylePreferencesWhereInput) => Promise<boolean>;
@@ -748,6 +750,27 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => ProductRequestConnectionPromise;
+  productSeason: (
+    where: ProductSeasonWhereUniqueInput
+  ) => ProductSeasonNullablePromise;
+  productSeasons: (args?: {
+    where?: ProductSeasonWhereInput;
+    orderBy?: ProductSeasonOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<ProductSeason>;
+  productSeasonsConnection: (args?: {
+    where?: ProductSeasonWhereInput;
+    orderBy?: ProductSeasonOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => ProductSeasonConnectionPromise;
   productStatusChange: (
     where: ProductStatusChangeWhereUniqueInput
   ) => ProductStatusChangeNullablePromise;
@@ -979,6 +1002,25 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => ReservationReceiptItemConnectionPromise;
+  season: (where: SeasonWhereUniqueInput) => SeasonNullablePromise;
+  seasons: (args?: {
+    where?: SeasonWhereInput;
+    orderBy?: SeasonOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<Season>;
+  seasonsConnection: (args?: {
+    where?: SeasonWhereInput;
+    orderBy?: SeasonOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => SeasonConnectionPromise;
   size: (where: SizeWhereUniqueInput) => SizeNullablePromise;
   sizes: (args?: {
     where?: SizeWhereInput;
@@ -1769,6 +1811,26 @@ export interface Prisma {
   deleteManyProductRequests: (
     where?: ProductRequestWhereInput
   ) => BatchPayloadPromise;
+  createProductSeason: (data: ProductSeasonCreateInput) => ProductSeasonPromise;
+  updateProductSeason: (args: {
+    data: ProductSeasonUpdateInput;
+    where: ProductSeasonWhereUniqueInput;
+  }) => ProductSeasonPromise;
+  updateManyProductSeasons: (args: {
+    data: ProductSeasonUpdateManyMutationInput;
+    where?: ProductSeasonWhereInput;
+  }) => BatchPayloadPromise;
+  upsertProductSeason: (args: {
+    where: ProductSeasonWhereUniqueInput;
+    create: ProductSeasonCreateInput;
+    update: ProductSeasonUpdateInput;
+  }) => ProductSeasonPromise;
+  deleteProductSeason: (
+    where: ProductSeasonWhereUniqueInput
+  ) => ProductSeasonPromise;
+  deleteManyProductSeasons: (
+    where?: ProductSeasonWhereInput
+  ) => BatchPayloadPromise;
   createProductStatusChange: (
     data: ProductStatusChangeCreateInput
   ) => ProductStatusChangePromise;
@@ -2003,6 +2065,22 @@ export interface Prisma {
   deleteManyReservationReceiptItems: (
     where?: ReservationReceiptItemWhereInput
   ) => BatchPayloadPromise;
+  createSeason: (data: SeasonCreateInput) => SeasonPromise;
+  updateSeason: (args: {
+    data: SeasonUpdateInput;
+    where: SeasonWhereUniqueInput;
+  }) => SeasonPromise;
+  updateManySeasons: (args: {
+    data: SeasonUpdateManyMutationInput;
+    where?: SeasonWhereInput;
+  }) => BatchPayloadPromise;
+  upsertSeason: (args: {
+    where: SeasonWhereUniqueInput;
+    create: SeasonCreateInput;
+    update: SeasonUpdateInput;
+  }) => SeasonPromise;
+  deleteSeason: (where: SeasonWhereUniqueInput) => SeasonPromise;
+  deleteManySeasons: (where?: SeasonWhereInput) => BatchPayloadPromise;
   createSize: (data: SizeCreateInput) => SizePromise;
   updateSize: (args: {
     data: SizeUpdateInput;
@@ -2295,6 +2373,9 @@ export interface Subscription {
   productRequest: (
     where?: ProductRequestSubscriptionWhereInput
   ) => ProductRequestSubscriptionPayloadSubscription;
+  productSeason: (
+    where?: ProductSeasonSubscriptionWhereInput
+  ) => ProductSeasonSubscriptionPayloadSubscription;
   productStatusChange: (
     where?: ProductStatusChangeSubscriptionWhereInput
   ) => ProductStatusChangeSubscriptionPayloadSubscription;
@@ -2328,6 +2409,9 @@ export interface Subscription {
   reservationReceiptItem: (
     where?: ReservationReceiptItemSubscriptionWhereInput
   ) => ReservationReceiptItemSubscriptionPayloadSubscription;
+  season: (
+    where?: SeasonSubscriptionWhereInput
+  ) => SeasonSubscriptionPayloadSubscription;
   size: (
     where?: SizeSubscriptionWhereInput
   ) => SizeSubscriptionPayloadSubscription;
@@ -2421,6 +2505,8 @@ export type ProductStatus =
   | "NotAvailable"
   | "Stored"
   | "Offloaded";
+
+export type SeasonCode = "FW" | "SS" | "PS" | "PF" | "HO" | "AW";
 
 export type ProductArchitecture = "Fashion" | "Showstopper" | "Staple";
 
@@ -2633,8 +2719,6 @@ export type ProductOrderByInput =
   | "retailPrice_DESC"
   | "status_ASC"
   | "status_DESC"
-  | "season_ASC"
-  | "season_DESC"
   | "seasonDeprecated_ASC"
   | "seasonDeprecated_DESC"
   | "architecture_ASC"
@@ -2711,6 +2795,8 @@ export type ProductStatusChangeOrderByInput =
   | "createdAt_DESC"
   | "updatedAt_ASC"
   | "updatedAt_DESC";
+
+export type SeasonString = "Spring" | "Summer" | "Winter" | "Fall";
 
 export type PhysicalProductInventoryStatusChangeOrderByInput =
   | "id_ASC"
@@ -3227,6 +3313,8 @@ export type ProductRequestOrderByInput =
   | "url_ASC"
   | "url_DESC";
 
+export type ProductSeasonOrderByInput = "id_ASC" | "id_DESC";
+
 export type QuestionType = "MultipleChoice" | "FreeResponse";
 
 export type Rating = "Disliked" | "Ok" | "Loved";
@@ -3282,6 +3370,14 @@ export type ReservationReceiptOrderByInput =
   | "createdAt_DESC"
   | "updatedAt_ASC"
   | "updatedAt_DESC";
+
+export type SeasonOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "year_ASC"
+  | "year_DESC"
+  | "seasonCode_ASC"
+  | "seasonCode_DESC";
 
 export type StylePreferencesOrderByInput = "id_ASC" | "id_DESC";
 
@@ -4760,20 +4856,7 @@ export interface ProductWhereInput {
   statusChanges_every?: Maybe<ProductStatusChangeWhereInput>;
   statusChanges_some?: Maybe<ProductStatusChangeWhereInput>;
   statusChanges_none?: Maybe<ProductStatusChangeWhereInput>;
-  season?: Maybe<String>;
-  season_not?: Maybe<String>;
-  season_in?: Maybe<String[] | String>;
-  season_not_in?: Maybe<String[] | String>;
-  season_lt?: Maybe<String>;
-  season_lte?: Maybe<String>;
-  season_gt?: Maybe<String>;
-  season_gte?: Maybe<String>;
-  season_contains?: Maybe<String>;
-  season_not_contains?: Maybe<String>;
-  season_starts_with?: Maybe<String>;
-  season_not_starts_with?: Maybe<String>;
-  season_ends_with?: Maybe<String>;
-  season_not_ends_with?: Maybe<String>;
+  season?: Maybe<ProductSeasonWhereInput>;
   seasonDeprecated?: Maybe<String>;
   seasonDeprecated_not?: Maybe<String>;
   seasonDeprecated_in?: Maybe<String[] | String>;
@@ -5284,6 +5367,60 @@ export interface ProductStatusChangeWhereInput {
   AND?: Maybe<ProductStatusChangeWhereInput[] | ProductStatusChangeWhereInput>;
   OR?: Maybe<ProductStatusChangeWhereInput[] | ProductStatusChangeWhereInput>;
   NOT?: Maybe<ProductStatusChangeWhereInput[] | ProductStatusChangeWhereInput>;
+}
+
+export interface ProductSeasonWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  vendorSeason?: Maybe<SeasonWhereInput>;
+  internalSeason?: Maybe<SeasonWhereInput>;
+  AND?: Maybe<ProductSeasonWhereInput[] | ProductSeasonWhereInput>;
+  OR?: Maybe<ProductSeasonWhereInput[] | ProductSeasonWhereInput>;
+  NOT?: Maybe<ProductSeasonWhereInput[] | ProductSeasonWhereInput>;
+}
+
+export interface SeasonWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  year?: Maybe<Int>;
+  year_not?: Maybe<Int>;
+  year_in?: Maybe<Int[] | Int>;
+  year_not_in?: Maybe<Int[] | Int>;
+  year_lt?: Maybe<Int>;
+  year_lte?: Maybe<Int>;
+  year_gt?: Maybe<Int>;
+  year_gte?: Maybe<Int>;
+  seasonCode?: Maybe<SeasonCode>;
+  seasonCode_not?: Maybe<SeasonCode>;
+  seasonCode_in?: Maybe<SeasonCode[] | SeasonCode>;
+  seasonCode_not_in?: Maybe<SeasonCode[] | SeasonCode>;
+  AND?: Maybe<SeasonWhereInput[] | SeasonWhereInput>;
+  OR?: Maybe<SeasonWhereInput[] | SeasonWhereInput>;
+  NOT?: Maybe<SeasonWhereInput[] | SeasonWhereInput>;
 }
 
 export interface PhysicalProductInventoryStatusChangeWhereInput {
@@ -7238,6 +7375,10 @@ export interface ProductRequestWhereInput {
   NOT?: Maybe<ProductRequestWhereInput[] | ProductRequestWhereInput>;
 }
 
+export type ProductSeasonWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
 export type ProductStatusChangeWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
@@ -7505,6 +7646,10 @@ export type ReservationReceiptWhereUniqueInput = AtLeastOne<{
 }>;
 
 export type ReservationReceiptItemWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
+export type SeasonWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
 
@@ -7904,7 +8049,7 @@ export interface ProductCreateWithoutVariantsInput {
   outerMaterials?: Maybe<ProductCreateouterMaterialsInput>;
   status?: Maybe<ProductStatus>;
   statusChanges?: Maybe<ProductStatusChangeCreateManyWithoutProductInput>;
-  season?: Maybe<String>;
+  season?: Maybe<ProductSeasonCreateOneInput>;
   seasonDeprecated?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
@@ -8000,7 +8145,7 @@ export interface ProductCreateWithoutCategoryInput {
   variants?: Maybe<ProductVariantCreateManyWithoutProductInput>;
   status?: Maybe<ProductStatus>;
   statusChanges?: Maybe<ProductStatusChangeCreateManyWithoutProductInput>;
-  season?: Maybe<String>;
+  season?: Maybe<ProductSeasonCreateOneInput>;
   seasonDeprecated?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
@@ -8270,6 +8415,33 @@ export interface ProductStatusChangeCreateWithoutProductInput {
   new: ProductStatus;
 }
 
+export interface ProductSeasonCreateOneInput {
+  create?: Maybe<ProductSeasonCreateInput>;
+  connect?: Maybe<ProductSeasonWhereUniqueInput>;
+}
+
+export interface ProductSeasonCreateInput {
+  id?: Maybe<ID_Input>;
+  vendorSeason?: Maybe<SeasonCreateOneInput>;
+  internalSeason: SeasonCreateOneInput;
+  wearableSeasons?: Maybe<ProductSeasonCreatewearableSeasonsInput>;
+}
+
+export interface SeasonCreateOneInput {
+  create?: Maybe<SeasonCreateInput>;
+  connect?: Maybe<SeasonWhereUniqueInput>;
+}
+
+export interface SeasonCreateInput {
+  id?: Maybe<ID_Input>;
+  year?: Maybe<Int>;
+  seasonCode?: Maybe<SeasonCode>;
+}
+
+export interface ProductSeasonCreatewearableSeasonsInput {
+  set?: Maybe<SeasonString[] | SeasonString>;
+}
+
 export interface ProductCreateManyInput {
   create?: Maybe<ProductCreateInput[] | ProductCreateInput>;
   connect?: Maybe<ProductWhereUniqueInput[] | ProductWhereUniqueInput>;
@@ -8301,7 +8473,7 @@ export interface ProductCreateInput {
   variants?: Maybe<ProductVariantCreateManyWithoutProductInput>;
   status?: Maybe<ProductStatus>;
   statusChanges?: Maybe<ProductStatusChangeCreateManyWithoutProductInput>;
-  season?: Maybe<String>;
+  season?: Maybe<ProductSeasonCreateOneInput>;
   seasonDeprecated?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
@@ -9366,7 +9538,7 @@ export interface ProductUpdateWithoutVariantsDataInput {
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
   status?: Maybe<ProductStatus>;
   statusChanges?: Maybe<ProductStatusChangeUpdateManyWithoutProductInput>;
-  season?: Maybe<String>;
+  season?: Maybe<ProductSeasonUpdateOneInput>;
   seasonDeprecated?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
@@ -9642,7 +9814,7 @@ export interface ProductUpdateWithoutCategoryDataInput {
   variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
   status?: Maybe<ProductStatus>;
   statusChanges?: Maybe<ProductStatusChangeUpdateManyWithoutProductInput>;
-  season?: Maybe<String>;
+  season?: Maybe<ProductSeasonUpdateOneInput>;
   seasonDeprecated?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
@@ -10841,6 +11013,56 @@ export interface ProductStatusChangeUpdateManyDataInput {
   new?: Maybe<ProductStatus>;
 }
 
+export interface ProductSeasonUpdateOneInput {
+  create?: Maybe<ProductSeasonCreateInput>;
+  update?: Maybe<ProductSeasonUpdateDataInput>;
+  upsert?: Maybe<ProductSeasonUpsertNestedInput>;
+  delete?: Maybe<Boolean>;
+  disconnect?: Maybe<Boolean>;
+  connect?: Maybe<ProductSeasonWhereUniqueInput>;
+}
+
+export interface ProductSeasonUpdateDataInput {
+  vendorSeason?: Maybe<SeasonUpdateOneInput>;
+  internalSeason?: Maybe<SeasonUpdateOneRequiredInput>;
+  wearableSeasons?: Maybe<ProductSeasonUpdatewearableSeasonsInput>;
+}
+
+export interface SeasonUpdateOneInput {
+  create?: Maybe<SeasonCreateInput>;
+  update?: Maybe<SeasonUpdateDataInput>;
+  upsert?: Maybe<SeasonUpsertNestedInput>;
+  delete?: Maybe<Boolean>;
+  disconnect?: Maybe<Boolean>;
+  connect?: Maybe<SeasonWhereUniqueInput>;
+}
+
+export interface SeasonUpdateDataInput {
+  year?: Maybe<Int>;
+  seasonCode?: Maybe<SeasonCode>;
+}
+
+export interface SeasonUpsertNestedInput {
+  update: SeasonUpdateDataInput;
+  create: SeasonCreateInput;
+}
+
+export interface SeasonUpdateOneRequiredInput {
+  create?: Maybe<SeasonCreateInput>;
+  update?: Maybe<SeasonUpdateDataInput>;
+  upsert?: Maybe<SeasonUpsertNestedInput>;
+  connect?: Maybe<SeasonWhereUniqueInput>;
+}
+
+export interface ProductSeasonUpdatewearableSeasonsInput {
+  set?: Maybe<SeasonString[] | SeasonString>;
+}
+
+export interface ProductSeasonUpsertNestedInput {
+  update: ProductSeasonUpdateDataInput;
+  create: ProductSeasonCreateInput;
+}
+
 export interface ProductUpsertWithWhereUniqueWithoutCategoryInput {
   where: ProductWhereUniqueInput;
   update: ProductUpdateWithoutCategoryDataInput;
@@ -10942,20 +11164,6 @@ export interface ProductScalarWhereInput {
   status_not?: Maybe<ProductStatus>;
   status_in?: Maybe<ProductStatus[] | ProductStatus>;
   status_not_in?: Maybe<ProductStatus[] | ProductStatus>;
-  season?: Maybe<String>;
-  season_not?: Maybe<String>;
-  season_in?: Maybe<String[] | String>;
-  season_not_in?: Maybe<String[] | String>;
-  season_lt?: Maybe<String>;
-  season_lte?: Maybe<String>;
-  season_gt?: Maybe<String>;
-  season_gte?: Maybe<String>;
-  season_contains?: Maybe<String>;
-  season_not_contains?: Maybe<String>;
-  season_starts_with?: Maybe<String>;
-  season_not_starts_with?: Maybe<String>;
-  season_ends_with?: Maybe<String>;
-  season_not_ends_with?: Maybe<String>;
   seasonDeprecated?: Maybe<String>;
   seasonDeprecated_not?: Maybe<String>;
   seasonDeprecated_in?: Maybe<String[] | String>;
@@ -11023,7 +11231,6 @@ export interface ProductUpdateManyDataInput {
   innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
   status?: Maybe<ProductStatus>;
-  season?: Maybe<String>;
   seasonDeprecated?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
@@ -11198,7 +11405,7 @@ export interface ProductUpdateDataInput {
   variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
   status?: Maybe<ProductStatus>;
   statusChanges?: Maybe<ProductStatusChangeUpdateManyWithoutProductInput>;
-  season?: Maybe<String>;
+  season?: Maybe<ProductSeasonUpdateOneInput>;
   seasonDeprecated?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
@@ -13102,7 +13309,7 @@ export interface ProductCreateWithoutBrandInput {
   variants?: Maybe<ProductVariantCreateManyWithoutProductInput>;
   status?: Maybe<ProductStatus>;
   statusChanges?: Maybe<ProductStatusChangeCreateManyWithoutProductInput>;
-  season?: Maybe<String>;
+  season?: Maybe<ProductSeasonCreateOneInput>;
   seasonDeprecated?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
@@ -13176,7 +13383,7 @@ export interface ProductUpdateWithoutBrandDataInput {
   variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
   status?: Maybe<ProductStatus>;
   statusChanges?: Maybe<ProductStatusChangeUpdateManyWithoutProductInput>;
-  season?: Maybe<String>;
+  season?: Maybe<ProductSeasonUpdateOneInput>;
   seasonDeprecated?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
@@ -14042,7 +14249,7 @@ export interface ProductUpdateInput {
   variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
   status?: Maybe<ProductStatus>;
   statusChanges?: Maybe<ProductStatusChangeUpdateManyWithoutProductInput>;
-  season?: Maybe<String>;
+  season?: Maybe<ProductSeasonUpdateOneInput>;
   seasonDeprecated?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
@@ -14060,7 +14267,6 @@ export interface ProductUpdateManyMutationInput {
   innerMaterials?: Maybe<ProductUpdateinnerMaterialsInput>;
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
   status?: Maybe<ProductStatus>;
-  season?: Maybe<String>;
   seasonDeprecated?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
@@ -14114,7 +14320,7 @@ export interface ProductCreateWithoutMaterialCategoryInput {
   variants?: Maybe<ProductVariantCreateManyWithoutProductInput>;
   status?: Maybe<ProductStatus>;
   statusChanges?: Maybe<ProductStatusChangeCreateManyWithoutProductInput>;
-  season?: Maybe<String>;
+  season?: Maybe<ProductSeasonCreateOneInput>;
   seasonDeprecated?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
@@ -14179,7 +14385,7 @@ export interface ProductUpdateWithoutMaterialCategoryDataInput {
   variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
   status?: Maybe<ProductStatus>;
   statusChanges?: Maybe<ProductStatusChangeUpdateManyWithoutProductInput>;
-  season?: Maybe<String>;
+  season?: Maybe<ProductSeasonUpdateOneInput>;
   seasonDeprecated?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
@@ -14236,7 +14442,7 @@ export interface ProductCreateWithoutModelInput {
   variants?: Maybe<ProductVariantCreateManyWithoutProductInput>;
   status?: Maybe<ProductStatus>;
   statusChanges?: Maybe<ProductStatusChangeCreateManyWithoutProductInput>;
-  season?: Maybe<String>;
+  season?: Maybe<ProductSeasonCreateOneInput>;
   seasonDeprecated?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
@@ -14301,7 +14507,7 @@ export interface ProductUpdateWithoutModelDataInput {
   variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
   status?: Maybe<ProductStatus>;
   statusChanges?: Maybe<ProductStatusChangeUpdateManyWithoutProductInput>;
-  season?: Maybe<String>;
+  season?: Maybe<ProductSeasonUpdateOneInput>;
   seasonDeprecated?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
@@ -14369,6 +14575,16 @@ export interface ProductRequestUpdateManyMutationInput {
   url?: Maybe<String>;
 }
 
+export interface ProductSeasonUpdateInput {
+  vendorSeason?: Maybe<SeasonUpdateOneInput>;
+  internalSeason?: Maybe<SeasonUpdateOneRequiredInput>;
+  wearableSeasons?: Maybe<ProductSeasonUpdatewearableSeasonsInput>;
+}
+
+export interface ProductSeasonUpdateManyMutationInput {
+  wearableSeasons?: Maybe<ProductSeasonUpdatewearableSeasonsInput>;
+}
+
 export interface ProductStatusChangeCreateInput {
   id?: Maybe<ID_Input>;
   old: ProductStatus;
@@ -14406,7 +14622,7 @@ export interface ProductCreateWithoutStatusChangesInput {
   outerMaterials?: Maybe<ProductCreateouterMaterialsInput>;
   variants?: Maybe<ProductVariantCreateManyWithoutProductInput>;
   status?: Maybe<ProductStatus>;
-  season?: Maybe<String>;
+  season?: Maybe<ProductSeasonCreateOneInput>;
   seasonDeprecated?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
@@ -14450,7 +14666,7 @@ export interface ProductUpdateWithoutStatusChangesDataInput {
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
   variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
   status?: Maybe<ProductStatus>;
-  season?: Maybe<String>;
+  season?: Maybe<ProductSeasonUpdateOneInput>;
   seasonDeprecated?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
@@ -15183,6 +15399,16 @@ export interface ReservationReceiptItemUpdateManyMutationInput {
   notes?: Maybe<String>;
 }
 
+export interface SeasonUpdateInput {
+  year?: Maybe<Int>;
+  seasonCode?: Maybe<SeasonCode>;
+}
+
+export interface SeasonUpdateManyMutationInput {
+  year?: Maybe<Int>;
+  seasonCode?: Maybe<SeasonCode>;
+}
+
 export interface SizeUpdateInput {
   slug?: Maybe<String>;
   productType?: Maybe<ProductType>;
@@ -15264,7 +15490,7 @@ export interface ProductCreateWithoutTagsInput {
   variants?: Maybe<ProductVariantCreateManyWithoutProductInput>;
   status?: Maybe<ProductStatus>;
   statusChanges?: Maybe<ProductStatusChangeCreateManyWithoutProductInput>;
-  season?: Maybe<String>;
+  season?: Maybe<ProductSeasonCreateOneInput>;
   seasonDeprecated?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
@@ -15329,7 +15555,7 @@ export interface ProductUpdateWithoutTagsDataInput {
   variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
   status?: Maybe<ProductStatus>;
   statusChanges?: Maybe<ProductStatusChangeUpdateManyWithoutProductInput>;
-  season?: Maybe<String>;
+  season?: Maybe<ProductSeasonUpdateOneInput>;
   seasonDeprecated?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
@@ -16246,6 +16472,23 @@ export interface ProductRequestSubscriptionWhereInput {
   >;
 }
 
+export interface ProductSeasonSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<ProductSeasonWhereInput>;
+  AND?: Maybe<
+    ProductSeasonSubscriptionWhereInput[] | ProductSeasonSubscriptionWhereInput
+  >;
+  OR?: Maybe<
+    ProductSeasonSubscriptionWhereInput[] | ProductSeasonSubscriptionWhereInput
+  >;
+  NOT?: Maybe<
+    ProductSeasonSubscriptionWhereInput[] | ProductSeasonSubscriptionWhereInput
+  >;
+}
+
 export interface ProductStatusChangeSubscriptionWhereInput {
   mutation_in?: Maybe<MutationType[] | MutationType>;
   updatedFields_contains?: Maybe<String>;
@@ -16461,6 +16704,17 @@ export interface ReservationReceiptItemSubscriptionWhereInput {
     | ReservationReceiptItemSubscriptionWhereInput[]
     | ReservationReceiptItemSubscriptionWhereInput
   >;
+}
+
+export interface SeasonSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<SeasonWhereInput>;
+  AND?: Maybe<SeasonSubscriptionWhereInput[] | SeasonSubscriptionWhereInput>;
+  OR?: Maybe<SeasonSubscriptionWhereInput[] | SeasonSubscriptionWhereInput>;
+  NOT?: Maybe<SeasonSubscriptionWhereInput[] | SeasonSubscriptionWhereInput>;
 }
 
 export interface SizeSubscriptionWhereInput {
@@ -17770,7 +18024,6 @@ export interface Product {
   innerMaterials: String[];
   outerMaterials: String[];
   status?: ProductStatus;
-  season?: String;
   seasonDeprecated?: String;
   architecture?: ProductArchitecture;
   photographyStatus?: PhotographyStatus;
@@ -17843,7 +18096,7 @@ export interface ProductPromise extends Promise<Product>, Fragmentable {
     first?: Int;
     last?: Int;
   }) => T;
-  season: () => Promise<String>;
+  season: <T = ProductSeasonPromise>() => T;
   seasonDeprecated: () => Promise<String>;
   architecture: () => Promise<ProductArchitecture>;
   photographyStatus: () => Promise<PhotographyStatus>;
@@ -17920,7 +18173,7 @@ export interface ProductSubscription
     first?: Int;
     last?: Int;
   }) => T;
-  season: () => Promise<AsyncIterator<String>>;
+  season: <T = ProductSeasonSubscription>() => T;
   seasonDeprecated: () => Promise<AsyncIterator<String>>;
   architecture: () => Promise<AsyncIterator<ProductArchitecture>>;
   photographyStatus: () => Promise<AsyncIterator<PhotographyStatus>>;
@@ -17995,7 +18248,7 @@ export interface ProductNullablePromise
     first?: Int;
     last?: Int;
   }) => T;
-  season: () => Promise<String>;
+  season: <T = ProductSeasonPromise>() => T;
   seasonDeprecated: () => Promise<String>;
   architecture: () => Promise<ProductArchitecture>;
   photographyStatus: () => Promise<PhotographyStatus>;
@@ -18723,6 +18976,74 @@ export interface FitPicReportNullablePromise
 export interface ActiveAdminUserConnection {
   pageInfo: PageInfo;
   edges: ActiveAdminUserEdge[];
+}
+
+export interface ProductSeason {
+  id: ID_Output;
+  wearableSeasons: SeasonString[];
+}
+
+export interface ProductSeasonPromise
+  extends Promise<ProductSeason>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  vendorSeason: <T = SeasonPromise>() => T;
+  internalSeason: <T = SeasonPromise>() => T;
+  wearableSeasons: () => Promise<SeasonString[]>;
+}
+
+export interface ProductSeasonSubscription
+  extends Promise<AsyncIterator<ProductSeason>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  vendorSeason: <T = SeasonSubscription>() => T;
+  internalSeason: <T = SeasonSubscription>() => T;
+  wearableSeasons: () => Promise<AsyncIterator<SeasonString[]>>;
+}
+
+export interface ProductSeasonNullablePromise
+  extends Promise<ProductSeason | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  vendorSeason: <T = SeasonPromise>() => T;
+  internalSeason: <T = SeasonPromise>() => T;
+  wearableSeasons: () => Promise<SeasonString[]>;
+}
+
+export interface Season {
+  id: ID_Output;
+  year?: Int;
+  seasonCode?: SeasonCode;
+}
+
+export interface SeasonPromise extends Promise<Season>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  year: () => Promise<Int>;
+  seasonCode: () => Promise<SeasonCode>;
+}
+
+export interface SeasonSubscription
+  extends Promise<AsyncIterator<Season>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  year: () => Promise<AsyncIterator<Int>>;
+  seasonCode: () => Promise<AsyncIterator<SeasonCode>>;
+}
+
+export interface SeasonNullablePromise
+  extends Promise<Season | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  year: () => Promise<Int>;
+  seasonCode: () => Promise<SeasonCode>;
+}
+
+export interface PhysicalProductInventoryStatusChange {
+  id: ID_Output;
+  old: InventoryStatus;
+  new: InventoryStatus;
+  createdAt: DateTimeOutput;
+  updatedAt?: DateTimeOutput;
 }
 
 export interface ActiveAdminUserConnectionPromise
@@ -21752,6 +22073,62 @@ export interface AggregateProductRequestSubscription
   count: () => Promise<AsyncIterator<Int>>;
 }
 
+export interface ProductSeasonConnection {
+  pageInfo: PageInfo;
+  edges: ProductSeasonEdge[];
+}
+
+export interface ProductSeasonConnectionPromise
+  extends Promise<ProductSeasonConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<ProductSeasonEdge>>() => T;
+  aggregate: <T = AggregateProductSeasonPromise>() => T;
+}
+
+export interface ProductSeasonConnectionSubscription
+  extends Promise<AsyncIterator<ProductSeasonConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<ProductSeasonEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateProductSeasonSubscription>() => T;
+}
+
+export interface ProductSeasonEdge {
+  node: ProductSeason;
+  cursor: String;
+}
+
+export interface ProductSeasonEdgePromise
+  extends Promise<ProductSeasonEdge>,
+    Fragmentable {
+  node: <T = ProductSeasonPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface ProductSeasonEdgeSubscription
+  extends Promise<AsyncIterator<ProductSeasonEdge>>,
+    Fragmentable {
+  node: <T = ProductSeasonSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateProductSeason {
+  count: Int;
+}
+
+export interface AggregateProductSeasonPromise
+  extends Promise<AggregateProductSeason>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateProductSeasonSubscription
+  extends Promise<AsyncIterator<AggregateProductSeason>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
 export interface ProductStatusChangeConnection {
   pageInfo: PageInfo;
   edges: ProductStatusChangeEdge[];
@@ -22633,6 +23010,60 @@ export interface AggregateReservationReceiptItemPromise
 
 export interface AggregateReservationReceiptItemSubscription
   extends Promise<AsyncIterator<AggregateReservationReceiptItem>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface SeasonConnection {
+  pageInfo: PageInfo;
+  edges: SeasonEdge[];
+}
+
+export interface SeasonConnectionPromise
+  extends Promise<SeasonConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<SeasonEdge>>() => T;
+  aggregate: <T = AggregateSeasonPromise>() => T;
+}
+
+export interface SeasonConnectionSubscription
+  extends Promise<AsyncIterator<SeasonConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<SeasonEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateSeasonSubscription>() => T;
+}
+
+export interface SeasonEdge {
+  node: Season;
+  cursor: String;
+}
+
+export interface SeasonEdgePromise extends Promise<SeasonEdge>, Fragmentable {
+  node: <T = SeasonPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface SeasonEdgeSubscription
+  extends Promise<AsyncIterator<SeasonEdge>>,
+    Fragmentable {
+  node: <T = SeasonSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateSeason {
+  count: Int;
+}
+
+export interface AggregateSeasonPromise
+  extends Promise<AggregateSeason>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateSeasonSubscription
+  extends Promise<AsyncIterator<AggregateSeason>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
@@ -24802,7 +25233,6 @@ export interface ProductPreviousValues {
   innerMaterials: String[];
   outerMaterials: String[];
   status?: ProductStatus;
-  season?: String;
   seasonDeprecated?: String;
   architecture?: ProductArchitecture;
   photographyStatus?: PhotographyStatus;
@@ -24825,7 +25255,6 @@ export interface ProductPreviousValuesPromise
   innerMaterials: () => Promise<String[]>;
   outerMaterials: () => Promise<String[]>;
   status: () => Promise<ProductStatus>;
-  season: () => Promise<String>;
   seasonDeprecated: () => Promise<String>;
   architecture: () => Promise<ProductArchitecture>;
   photographyStatus: () => Promise<PhotographyStatus>;
@@ -24848,7 +25277,6 @@ export interface ProductPreviousValuesSubscription
   innerMaterials: () => Promise<AsyncIterator<String[]>>;
   outerMaterials: () => Promise<AsyncIterator<String[]>>;
   status: () => Promise<AsyncIterator<ProductStatus>>;
-  season: () => Promise<AsyncIterator<String>>;
   seasonDeprecated: () => Promise<AsyncIterator<String>>;
   architecture: () => Promise<AsyncIterator<ProductArchitecture>>;
   photographyStatus: () => Promise<AsyncIterator<PhotographyStatus>>;
@@ -25066,6 +25494,50 @@ export interface ProductRequestPreviousValuesSubscription
   reason: () => Promise<AsyncIterator<String>>;
   sku: () => Promise<AsyncIterator<String>>;
   url: () => Promise<AsyncIterator<String>>;
+}
+
+export interface ProductSeasonSubscriptionPayload {
+  mutation: MutationType;
+  node: ProductSeason;
+  updatedFields: String[];
+  previousValues: ProductSeasonPreviousValues;
+}
+
+export interface ProductSeasonSubscriptionPayloadPromise
+  extends Promise<ProductSeasonSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = ProductSeasonPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = ProductSeasonPreviousValuesPromise>() => T;
+}
+
+export interface ProductSeasonSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<ProductSeasonSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = ProductSeasonSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = ProductSeasonPreviousValuesSubscription>() => T;
+}
+
+export interface ProductSeasonPreviousValues {
+  id: ID_Output;
+  wearableSeasons: SeasonString[];
+}
+
+export interface ProductSeasonPreviousValuesPromise
+  extends Promise<ProductSeasonPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  wearableSeasons: () => Promise<SeasonString[]>;
+}
+
+export interface ProductSeasonPreviousValuesSubscription
+  extends Promise<AsyncIterator<ProductSeasonPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  wearableSeasons: () => Promise<AsyncIterator<SeasonString[]>>;
 }
 
 export interface ProductStatusChangeSubscriptionPayload {
@@ -25696,6 +26168,53 @@ export interface ReservationReceiptItemPreviousValuesSubscription
   id: () => Promise<AsyncIterator<ID_Output>>;
   productStatus: () => Promise<AsyncIterator<PhysicalProductStatus>>;
   notes: () => Promise<AsyncIterator<String>>;
+}
+
+export interface SeasonSubscriptionPayload {
+  mutation: MutationType;
+  node: Season;
+  updatedFields: String[];
+  previousValues: SeasonPreviousValues;
+}
+
+export interface SeasonSubscriptionPayloadPromise
+  extends Promise<SeasonSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = SeasonPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = SeasonPreviousValuesPromise>() => T;
+}
+
+export interface SeasonSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<SeasonSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = SeasonSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = SeasonPreviousValuesSubscription>() => T;
+}
+
+export interface SeasonPreviousValues {
+  id: ID_Output;
+  year?: Int;
+  seasonCode?: SeasonCode;
+}
+
+export interface SeasonPreviousValuesPromise
+  extends Promise<SeasonPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  year: () => Promise<Int>;
+  seasonCode: () => Promise<SeasonCode>;
+}
+
+export interface SeasonPreviousValuesSubscription
+  extends Promise<AsyncIterator<SeasonPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  year: () => Promise<AsyncIterator<Int>>;
+  seasonCode: () => Promise<AsyncIterator<SeasonCode>>;
 }
 
 export interface SizeSubscriptionPayload {
@@ -26449,6 +26968,14 @@ export const models: Model[] = [
     embedded: false
   },
   {
+    name: "Season",
+    embedded: false
+  },
+  {
+    name: "ProductSeason",
+    embedded: false
+  },
+  {
     name: "ProductMaterialCategory",
     embedded: false
   },
@@ -26498,6 +27025,14 @@ export const models: Model[] = [
   },
   {
     name: "PushNotificationReceipt",
+    embedded: false
+  },
+  {
+    name: "SeasonCode",
+    embedded: false
+  },
+  {
+    name: "SeasonString",
     embedded: false
   },
   {
