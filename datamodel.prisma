@@ -360,7 +360,7 @@ type Product {
       link: TABLE
       onDelete: CASCADE
     )
-  season: String
+  seasonDeprecated: String @rename(oldName: "season")
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
