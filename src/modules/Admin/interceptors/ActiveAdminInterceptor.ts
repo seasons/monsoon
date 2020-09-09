@@ -46,10 +46,18 @@ export class ActiveAdminInterceptor implements NestInterceptor {
       })
     }
 
+    const cleanup = async () => {
+      await this.destroyActiveAdminRecordIfNeeded(ctx)
+    }
     return next.handle().pipe(
-      tap(async () => {
-        await this.destroyActiveAdminRecordIfNeeded(ctx)
-      })
+      tap(
+        // no next observable
+        null,
+        // if error, cleanup
+        cleanup,
+        // if success, cleanup
+        cleanup
+      )
     )
   }
 
