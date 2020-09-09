@@ -19,6 +19,8 @@ type TrackingEvent =
   | "Reserved Items"
   | "Paused Subscription"
   | "Resumed Subscription"
+  | "Entered Active Admin Queue"
+  | "Exited Active Admin Queue"
 
 interface CommonTrackProperties {
   firstName: string
