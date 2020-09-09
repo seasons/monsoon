@@ -1,3 +1,4 @@
+import { SegmentService } from "@app/modules/Analytics/services/segment.service"
 import { User } from "@app/prisma"
 import { PrismaService } from "@app/prisma/prisma.service"
 import {
@@ -7,6 +8,7 @@ import {
   NestInterceptor,
 } from "@nestjs/common"
 import { GqlExecutionContext, GraphQLExecutionContext } from "@nestjs/graphql"
+import { pick } from "lodash"
 import { Observable } from "rxjs"
 import { tap } from "rxjs/operators"
 
@@ -17,9 +19,17 @@ interface ActiveAdminInterceptorContext {
 
 @Injectable()
 export class ActiveAdminInterceptor implements NestInterceptor {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly segment: SegmentService
+  ) {}
 
+  // true if there's another admin action happening. We know this if there's a record
+  // in the ActiveAdmin table. False otherwise.
   loggerBlocked: boolean
+
+  // How many milliseconds to wait before trying to advance up the queue
+  pollInterval: number = 200
 
   async intercept(
     context: ExecutionContext,
@@ -30,15 +40,30 @@ export class ActiveAdminInterceptor implements NestInterceptor {
     )
     const ctx: ActiveAdminInterceptorContext = graphqlExecutionContext.getContext()
 
+    let numPolls = 0
     if (ctx.isAdminAction) {
       // Ensure we're not colliding with another admin action by enforcing an empty ActiveAdminTable
       // Note that this technically *could* fail if we have three simultaneous queries. But the probability
       // of that is basically 0 until we get real big
       await this.updateLoggerBlocked()
       while (this.loggerBlocked) {
-        // Sentry.captureMessage("") // log a message to sentry just for our awareness
-        await this.sleep(200)
+        if (numPolls === 0) {
+          this.segment.track(ctx.req.user.id, "Entered Active Admin Queue", {
+            ...pick(ctx.req.user, ["firstName", "lastName", "email"]),
+          })
+        }
+
+        await this.sleep(this.pollInterval)
         await this.updateLoggerBlocked()
+
+        numPolls++
+      }
+      if (numPolls > 0) {
+        this.segment.track(ctx.req.user.id, "Exited Active Admin Queue", {
+          ...pick(ctx.req.user, ["firstName", "lastName", "email"]),
+          numPolls,
+          pollInterval: this.pollInterval,
+        })
       }
 
       await this.prisma.client.createActiveAdminUser({
