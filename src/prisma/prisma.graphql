@@ -1,5 +1,5 @@
 # source: http://localhost:4466/monsoon/dev
-# timestamp: Thu Sep 10 2020 15:09:33 GMT-0400 (Eastern Daylight Time)
+# timestamp: Thu Sep 10 2020 15:10:48 GMT-0400 (Eastern Daylight Time)
 
 type ActiveAdminUser implements Node {
   id: ID!
@@ -145,13 +145,14 @@ enum AdminAction {
 
 type AdminActionLog {
   actionId: Int!
-  tableName: String
+  entityId: String!
+  tableName: String!
   activeAdminUser: User!
   triggeredAt: DateTime!
-  action: AdminAction
-  rowData: Json
+  action: AdminAction!
+  rowData: Json!
   changedFields: Json
-  statementOnly: Boolean
+  statementOnly: Boolean!
 }
 
 """A connection to a list of items."""
@@ -165,12 +166,13 @@ type AdminActionLogConnection {
 }
 
 input AdminActionLogCreateInput {
-  tableName: String
+  entityId: String!
+  tableName: String!
   triggeredAt: DateTime!
-  action: AdminAction
-  rowData: Json
+  action: AdminAction!
+  rowData: Json!
   changedFields: Json
-  statementOnly: Boolean
+  statementOnly: Boolean!
   activeAdminUser: UserCreateOneInput!
 }
 
@@ -186,6 +188,8 @@ type AdminActionLogEdge {
 enum AdminActionLogOrderByInput {
   actionId_ASC
   actionId_DESC
+  entityId_ASC
+  entityId_DESC
   tableName_ASC
   tableName_DESC
   triggeredAt_ASC
@@ -202,12 +206,13 @@ enum AdminActionLogOrderByInput {
 
 type AdminActionLogPreviousValues {
   actionId: Int!
-  tableName: String
+  entityId: String!
+  tableName: String!
   triggeredAt: DateTime!
-  action: AdminAction
-  rowData: Json
+  action: AdminAction!
+  rowData: Json!
   changedFields: Json
-  statementOnly: Boolean
+  statementOnly: Boolean!
 }
 
 type AdminActionLogSubscriptionPayload {
@@ -248,6 +253,7 @@ input AdminActionLogSubscriptionWhereInput {
 }
 
 input AdminActionLogUpdateInput {
+  entityId: String
   tableName: String
   triggeredAt: DateTime
   action: AdminAction
@@ -258,6 +264,7 @@ input AdminActionLogUpdateInput {
 }
 
 input AdminActionLogUpdateManyMutationInput {
+  entityId: String
   tableName: String
   triggeredAt: DateTime
   action: AdminAction
@@ -297,6 +304,46 @@ input AdminActionLogWhereInput {
 
   """All values greater than or equal the given value."""
   actionId_gte: Int
+  entityId: String
+
+  """All values that are not equal to given value."""
+  entityId_not: String
+
+  """All values that are contained in given list."""
+  entityId_in: [String!]
+
+  """All values that are not contained in given list."""
+  entityId_not_in: [String!]
+
+  """All values less than the given value."""
+  entityId_lt: String
+
+  """All values less than or equal the given value."""
+  entityId_lte: String
+
+  """All values greater than the given value."""
+  entityId_gt: String
+
+  """All values greater than or equal the given value."""
+  entityId_gte: String
+
+  """All values containing the given string."""
+  entityId_contains: String
+
+  """All values not containing the given string."""
+  entityId_not_contains: String
+
+  """All values starting with the given string."""
+  entityId_starts_with: String
+
+  """All values not starting with the given string."""
+  entityId_not_starts_with: String
+
+  """All values ending with the given string."""
+  entityId_ends_with: String
+
+  """All values not ending with the given string."""
+  entityId_not_ends_with: String
   tableName: String
 
   """All values that are not equal to given value."""

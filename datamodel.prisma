@@ -918,13 +918,15 @@ enum AdminAction {
   Update
   Truncate
 }
+
 type AdminActionLog {
   actionId: Int! @id(strategy: AUTO)
-  tableName: String
+  entityId: String!
+  tableName: String!
   activeAdminUser: User!
   triggeredAt: DateTime!
-  action: AdminAction
-  rowData: Json
+  action: AdminAction!
+  rowData: Json!
   changedFields: Json
-  statementOnly: Boolean
+  statementOnly: Boolean!
 }

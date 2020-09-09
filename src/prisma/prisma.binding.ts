@@ -752,13 +752,14 @@ enum AdminAction {
 
 type AdminActionLog {
   actionId: Int!
-  tableName: String
+  entityId: String!
+  tableName: String!
   activeAdminUser: User!
   triggeredAt: DateTime!
-  action: AdminAction
-  rowData: Json
+  action: AdminAction!
+  rowData: Json!
   changedFields: Json
-  statementOnly: Boolean
+  statementOnly: Boolean!
 }
 
 """A connection to a list of items."""
@@ -772,12 +773,13 @@ type AdminActionLogConnection {
 }
 
 input AdminActionLogCreateInput {
-  tableName: String
+  entityId: String!
+  tableName: String!
   triggeredAt: DateTime!
-  action: AdminAction
-  rowData: Json
+  action: AdminAction!
+  rowData: Json!
   changedFields: Json
-  statementOnly: Boolean
+  statementOnly: Boolean!
   activeAdminUser: UserCreateOneInput!
 }
 
@@ -793,6 +795,8 @@ type AdminActionLogEdge {
 enum AdminActionLogOrderByInput {
   actionId_ASC
   actionId_DESC
+  entityId_ASC
+  entityId_DESC
   tableName_ASC
   tableName_DESC
   triggeredAt_ASC
@@ -809,12 +813,13 @@ enum AdminActionLogOrderByInput {
 
 type AdminActionLogPreviousValues {
   actionId: Int!
-  tableName: String
+  entityId: String!
+  tableName: String!
   triggeredAt: DateTime!
-  action: AdminAction
-  rowData: Json
+  action: AdminAction!
+  rowData: Json!
   changedFields: Json
-  statementOnly: Boolean
+  statementOnly: Boolean!
 }
 
 type AdminActionLogSubscriptionPayload {
@@ -855,6 +860,7 @@ input AdminActionLogSubscriptionWhereInput {
 }
 
 input AdminActionLogUpdateInput {
+  entityId: String
   tableName: String
   triggeredAt: DateTime
   action: AdminAction
@@ -865,6 +871,7 @@ input AdminActionLogUpdateInput {
 }
 
 input AdminActionLogUpdateManyMutationInput {
+  entityId: String
   tableName: String
   triggeredAt: DateTime
   action: AdminAction
@@ -904,6 +911,46 @@ input AdminActionLogWhereInput {
 
   """All values greater than or equal the given value."""
   actionId_gte: Int
+  entityId: String
+
+  """All values that are not equal to given value."""
+  entityId_not: String
+
+  """All values that are contained in given list."""
+  entityId_in: [String!]
+
+  """All values that are not contained in given list."""
+  entityId_not_in: [String!]
+
+  """All values less than the given value."""
+  entityId_lt: String
+
+  """All values less than or equal the given value."""
+  entityId_lte: String
+
+  """All values greater than the given value."""
+  entityId_gt: String
+
+  """All values greater than or equal the given value."""
+  entityId_gte: String
+
+  """All values containing the given string."""
+  entityId_contains: String
+
+  """All values not containing the given string."""
+  entityId_not_contains: String
+
+  """All values starting with the given string."""
+  entityId_starts_with: String
+
+  """All values not starting with the given string."""
+  entityId_not_starts_with: String
+
+  """All values ending with the given string."""
+  entityId_ends_with: String
+
+  """All values not ending with the given string."""
+  entityId_not_ends_with: String
   tableName: String
 
   """All values that are not equal to given value."""
@@ -27178,6 +27225,8 @@ export type AdminAction =   'Insert' |
 
 export type AdminActionLogOrderByInput =   'actionId_ASC' |
   'actionId_DESC' |
+  'entityId_ASC' |
+  'entityId_DESC' |
   'tableName_ASC' |
   'tableName_DESC' |
   'triggeredAt_ASC' |
@@ -28133,12 +28182,13 @@ export interface ActiveAdminUserWhereUniqueInput {
 }
 
 export interface AdminActionLogCreateInput {
-  tableName?: String | null
+  entityId: String
+  tableName: String
   triggeredAt: DateTime
-  action?: AdminAction | null
-  rowData?: Json | null
+  action: AdminAction
+  rowData: Json
   changedFields?: Json | null
-  statementOnly?: Boolean | null
+  statementOnly: Boolean
   activeAdminUser: UserCreateOneInput
 }
 
@@ -28154,6 +28204,7 @@ export interface AdminActionLogSubscriptionWhereInput {
 }
 
 export interface AdminActionLogUpdateInput {
+  entityId?: String | null
   tableName?: String | null
   triggeredAt?: DateTime | null
   action?: AdminAction | null
@@ -28164,6 +28215,7 @@ export interface AdminActionLogUpdateInput {
 }
 
 export interface AdminActionLogUpdateManyMutationInput {
+  entityId?: String | null
   tableName?: String | null
   triggeredAt?: DateTime | null
   action?: AdminAction | null
@@ -28184,6 +28236,20 @@ export interface AdminActionLogWhereInput {
   actionId_lte?: Int | null
   actionId_gt?: Int | null
   actionId_gte?: Int | null
+  entityId?: String | null
+  entityId_not?: String | null
+  entityId_in?: String[] | String | null
+  entityId_not_in?: String[] | String | null
+  entityId_lt?: String | null
+  entityId_lte?: String | null
+  entityId_gt?: String | null
+  entityId_gte?: String | null
+  entityId_contains?: String | null
+  entityId_not_contains?: String | null
+  entityId_starts_with?: String | null
+  entityId_not_starts_with?: String | null
+  entityId_ends_with?: String | null
+  entityId_not_ends_with?: String | null
   tableName?: String | null
   tableName_not?: String | null
   tableName_in?: String[] | String | null
@@ -39928,13 +39994,14 @@ export interface ActiveAdminUserSubscriptionPayload {
 
 export interface AdminActionLog {
   actionId: Int
-  tableName?: String | null
+  entityId: String
+  tableName: String
   activeAdminUser: User
   triggeredAt: DateTime
-  action?: AdminAction | null
-  rowData?: Json | null
+  action: AdminAction
+  rowData: Json
   changedFields?: Json | null
-  statementOnly?: Boolean | null
+  statementOnly: Boolean
 }
 
 /*
@@ -39958,12 +40025,13 @@ export interface AdminActionLogEdge {
 
 export interface AdminActionLogPreviousValues {
   actionId: Int
-  tableName?: String | null
+  entityId: String
+  tableName: String
   triggeredAt: DateTime
-  action?: AdminAction | null
-  rowData?: Json | null
+  action: AdminAction
+  rowData: Json
   changedFields?: Json | null
-  statementOnly?: Boolean | null
+  statementOnly: Boolean
 }
 
 export interface AdminActionLogSubscriptionPayload {
