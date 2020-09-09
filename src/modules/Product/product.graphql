@@ -243,7 +243,11 @@ input UpsertProductInput {
   name: String!
   outerMaterials: [String!]!
   retailPrice: Int!
-  season: String
+  wearableSeasons: [String!]
+  internalSeasonSeasonCode: String
+  internalSeasonYear: Int
+  vendorSeasonSeasonCode: String
+  vendorSeasonYear: Int
   photographyStatus: PhotographyStatus
   secondaryColorCode: String
   status: ProductStatus!
@@ -267,7 +271,11 @@ input CustomProductUpdateInput {
   name: String
   outerMaterials: ProductUpdateouterMaterialsInput
   retailPrice: Int
-  season: String
+  wearableSeasons: [String!]
+  internalSeasonSeasonCode: String
+  internalSeasonYear: Int
+  vendorSeasonSeasonCode: String
+  vendorSeasonYear: Int
   secondaryColor: ColorUpdateOneInput
   slug: String
   status: ProductStatus
