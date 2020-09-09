@@ -44,6 +44,7 @@ BEGIN
     END IF;
 
     audit_row."actionId" = nextval('monsoon$dev."AdminActionLog_actionId_seq"');
+    audit_row."entityId" = row_data -> 'id';
     audit_row."tableName" = TG_TABLE_NAME::text;
     audit_row."triggeredAt" = current_timestamp;
     audit_row."action" = INITCAP(TG_OP);
@@ -162,11 +163,16 @@ View showing all tables with auditing set up. Ordered by schema, then table.
 $body$;
 
 --- Add logs to tables
+SELECT monsoon$dev.audit_table('monsoon$dev."Reservation"');
+
 SELECT monsoon$dev.audit_table('monsoon$dev."Customer"');
+SELECT monsoon$dev.audit_table('monsoon$dev."CustomerDetail"');
 SELECT monsoon$dev.audit_table('monsoon$dev."User"');
+
 SELECT monsoon$dev.audit_table('monsoon$dev."Product"');
-SELECT monsoon$dev.audit_table('monsoon$dev."PhysicalProduct"');
 SELECT monsoon$dev.audit_table('monsoon$dev."ProductVariant"');
+SELECT monsoon$dev.audit_table('monsoon$dev."PhysicalProduct"');
+
 SELECT monsoon$dev.audit_table('monsoon$dev."Brand"');
 SELECT monsoon$dev.audit_table('monsoon$dev."Category"');
 -- add more 

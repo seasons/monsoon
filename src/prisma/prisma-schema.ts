@@ -88,13 +88,14 @@ enum AdminAction {
 
 type AdminActionLog {
   actionId: Int!
-  tableName: String
+  entityId: String!
+  tableName: String!
   activeAdminUser: User!
   triggeredAt: DateTime!
-  action: AdminAction
-  rowData: Json
+  action: AdminAction!
+  rowData: Json!
   changedFields: Json
-  statementOnly: Boolean
+  statementOnly: Boolean!
 }
 
 type AdminActionLogConnection {
@@ -105,13 +106,14 @@ type AdminActionLogConnection {
 
 input AdminActionLogCreateInput {
   actionId: Int
-  tableName: String
+  entityId: String!
+  tableName: String!
   activeAdminUser: UserCreateOneInput!
   triggeredAt: DateTime!
-  action: AdminAction
-  rowData: Json
+  action: AdminAction!
+  rowData: Json!
   changedFields: Json
-  statementOnly: Boolean
+  statementOnly: Boolean!
 }
 
 type AdminActionLogEdge {
@@ -122,6 +124,8 @@ type AdminActionLogEdge {
 enum AdminActionLogOrderByInput {
   actionId_ASC
   actionId_DESC
+  entityId_ASC
+  entityId_DESC
   tableName_ASC
   tableName_DESC
   triggeredAt_ASC
@@ -138,12 +142,13 @@ enum AdminActionLogOrderByInput {
 
 type AdminActionLogPreviousValues {
   actionId: Int!
-  tableName: String
+  entityId: String!
+  tableName: String!
   triggeredAt: DateTime!
-  action: AdminAction
-  rowData: Json
+  action: AdminAction!
+  rowData: Json!
   changedFields: Json
-  statementOnly: Boolean
+  statementOnly: Boolean!
 }
 
 type AdminActionLogSubscriptionPayload {
@@ -165,6 +170,7 @@ input AdminActionLogSubscriptionWhereInput {
 }
 
 input AdminActionLogUpdateInput {
+  entityId: String
   tableName: String
   activeAdminUser: UserUpdateOneRequiredInput
   triggeredAt: DateTime
@@ -175,6 +181,7 @@ input AdminActionLogUpdateInput {
 }
 
 input AdminActionLogUpdateManyMutationInput {
+  entityId: String
   tableName: String
   triggeredAt: DateTime
   action: AdminAction
@@ -192,6 +199,20 @@ input AdminActionLogWhereInput {
   actionId_lte: Int
   actionId_gt: Int
   actionId_gte: Int
+  entityId: String
+  entityId_not: String
+  entityId_in: [String!]
+  entityId_not_in: [String!]
+  entityId_lt: String
+  entityId_lte: String
+  entityId_gt: String
+  entityId_gte: String
+  entityId_contains: String
+  entityId_not_contains: String
+  entityId_starts_with: String
+  entityId_not_starts_with: String
+  entityId_ends_with: String
+  entityId_not_ends_with: String
   tableName: String
   tableName_not: String
   tableName_in: [String!]

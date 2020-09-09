@@ -2765,6 +2765,8 @@ export type AdminAction = "Insert" | "Delete" | "Update" | "Truncate";
 export type AdminActionLogOrderByInput =
   | "actionId_ASC"
   | "actionId_DESC"
+  | "entityId_ASC"
+  | "entityId_DESC"
   | "tableName_ASC"
   | "tableName_DESC"
   | "triggeredAt_ASC"
@@ -5541,6 +5543,20 @@ export interface AdminActionLogWhereInput {
   actionId_lte?: Maybe<Int>;
   actionId_gt?: Maybe<Int>;
   actionId_gte?: Maybe<Int>;
+  entityId?: Maybe<String>;
+  entityId_not?: Maybe<String>;
+  entityId_in?: Maybe<String[] | String>;
+  entityId_not_in?: Maybe<String[] | String>;
+  entityId_lt?: Maybe<String>;
+  entityId_lte?: Maybe<String>;
+  entityId_gt?: Maybe<String>;
+  entityId_gte?: Maybe<String>;
+  entityId_contains?: Maybe<String>;
+  entityId_not_contains?: Maybe<String>;
+  entityId_starts_with?: Maybe<String>;
+  entityId_not_starts_with?: Maybe<String>;
+  entityId_ends_with?: Maybe<String>;
+  entityId_not_ends_with?: Maybe<String>;
   tableName?: Maybe<String>;
   tableName_not?: Maybe<String>;
   tableName_in?: Maybe<String[] | String>;
@@ -11449,16 +11465,18 @@ export interface UserPushNotificationUpsertNestedInput {
 
 export interface AdminActionLogCreateInput {
   actionId?: Maybe<Int>;
-  tableName?: Maybe<String>;
+  entityId: String;
+  tableName: String;
   activeAdminUser: UserCreateOneInput;
   triggeredAt: DateTimeInput;
-  action?: Maybe<AdminAction>;
-  rowData?: Maybe<Json>;
+  action: AdminAction;
+  rowData: Json;
   changedFields?: Maybe<Json>;
-  statementOnly?: Maybe<Boolean>;
+  statementOnly: Boolean;
 }
 
 export interface AdminActionLogUpdateInput {
+  entityId?: Maybe<String>;
   tableName?: Maybe<String>;
   activeAdminUser?: Maybe<UserUpdateOneRequiredInput>;
   triggeredAt?: Maybe<DateTimeInput>;
@@ -11469,6 +11487,7 @@ export interface AdminActionLogUpdateInput {
 }
 
 export interface AdminActionLogUpdateManyMutationInput {
+  entityId?: Maybe<String>;
   tableName?: Maybe<String>;
   triggeredAt?: Maybe<DateTimeInput>;
   action?: Maybe<AdminAction>;
@@ -18513,18 +18532,20 @@ export interface AggregateActiveAdminUserSubscription
 
 export interface AdminActionLog {
   actionId: Int;
-  tableName?: String;
+  entityId: String;
+  tableName: String;
   triggeredAt: DateTimeOutput;
-  action?: AdminAction;
-  rowData?: Json;
+  action: AdminAction;
+  rowData: Json;
   changedFields?: Json;
-  statementOnly?: Boolean;
+  statementOnly: Boolean;
 }
 
 export interface AdminActionLogPromise
   extends Promise<AdminActionLog>,
     Fragmentable {
   actionId: () => Promise<Int>;
+  entityId: () => Promise<String>;
   tableName: () => Promise<String>;
   activeAdminUser: <T = UserPromise>() => T;
   triggeredAt: () => Promise<DateTimeOutput>;
@@ -18538,6 +18559,7 @@ export interface AdminActionLogSubscription
   extends Promise<AsyncIterator<AdminActionLog>>,
     Fragmentable {
   actionId: () => Promise<AsyncIterator<Int>>;
+  entityId: () => Promise<AsyncIterator<String>>;
   tableName: () => Promise<AsyncIterator<String>>;
   activeAdminUser: <T = UserSubscription>() => T;
   triggeredAt: () => Promise<AsyncIterator<DateTimeOutput>>;
@@ -18551,6 +18573,7 @@ export interface AdminActionLogNullablePromise
   extends Promise<AdminActionLog | null>,
     Fragmentable {
   actionId: () => Promise<Int>;
+  entityId: () => Promise<String>;
   tableName: () => Promise<String>;
   activeAdminUser: <T = UserPromise>() => T;
   triggeredAt: () => Promise<DateTimeOutput>;
@@ -22948,18 +22971,20 @@ export interface AdminActionLogSubscriptionPayloadSubscription
 
 export interface AdminActionLogPreviousValues {
   actionId: Int;
-  tableName?: String;
+  entityId: String;
+  tableName: String;
   triggeredAt: DateTimeOutput;
-  action?: AdminAction;
-  rowData?: Json;
+  action: AdminAction;
+  rowData: Json;
   changedFields?: Json;
-  statementOnly?: Boolean;
+  statementOnly: Boolean;
 }
 
 export interface AdminActionLogPreviousValuesPromise
   extends Promise<AdminActionLogPreviousValues>,
     Fragmentable {
   actionId: () => Promise<Int>;
+  entityId: () => Promise<String>;
   tableName: () => Promise<String>;
   triggeredAt: () => Promise<DateTimeOutput>;
   action: () => Promise<AdminAction>;
@@ -22972,6 +22997,7 @@ export interface AdminActionLogPreviousValuesSubscription
   extends Promise<AsyncIterator<AdminActionLogPreviousValues>>,
     Fragmentable {
   actionId: () => Promise<AsyncIterator<Int>>;
+  entityId: () => Promise<AsyncIterator<String>>;
   tableName: () => Promise<AsyncIterator<String>>;
   triggeredAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   action: () => Promise<AsyncIterator<AdminAction>>;
