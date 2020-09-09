@@ -5,6 +5,7 @@ import { CommandModule } from "nestjs-command"
 import { DripModule } from "../Drip/drip.module"
 import { UtilsModule } from "../Utils/utils.module"
 import { DataCommands } from "./commands/data.command"
+import { HerokuCommands } from "./commands/heroku.command"
 import { ProductCommands } from "./commands/product.command"
 import { SyncCommands } from "./commands/sync.command"
 import { UserCommands } from "./commands/user.command"
@@ -35,6 +36,7 @@ import {
     ProductCommands,
     SyncCommands,
     DataCommands,
+    HerokuCommands,
   ],
 })
 export class ScriptsModule {}
