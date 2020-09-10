@@ -1,5 +1,6 @@
 import qs from "querystring"
 
+import { PrismaLoader } from "@app/prisma/prisma.loader"
 import {
   ExecutionContext,
   InternalServerErrorException,
@@ -15,7 +16,10 @@ import { DataLoaderInterceptor } from "../interceptors/dataloader.interceptor"
 export const Loader: (
   params: LoaderParams
 ) => ParameterDecorator = createParamDecorator(
-  (data: LoaderParams, context: ExecutionContext) => {
+  (
+    { type = PrismaLoader.name, ...data }: LoaderParams,
+    context: ExecutionContext
+  ) => {
     const [obj, args, ctx, info]: [
       any,
       any,
@@ -31,10 +35,10 @@ export const Loader: (
 
     const { operationName, variables } = ctx.req.body
 
-    const key = createKey(data.type, operationName, variables, data.params)
+    const key = createKey(type, operationName, variables, data)
 
     const adjustedData = {
-      ...data,
+      ...{ type, ...data },
       name: key,
     }
 
@@ -43,18 +47,24 @@ export const Loader: (
       adjustedData.params.info = info
     }
 
+    // If needed, get the orderBy from the context
+    if (data.includeOrderBy === true) {
+      adjustedData.params.orderBy = args.orderBy
+    }
+
     return ctx.getDataLoader(adjustedData)
   }
 )
 
-const createKey = (type, operationName, variables, params) => {
+const createKey = (type, operationName, variables, data) => {
+  const { params } = data
   const name = `${type}-${
     params ? params.query : ""
   }-${operationName}-${qs.stringify(variables)}`
 
   let paramString = ""
-  for (const key of Object.keys(params || {})) {
-    paramString += paramToString(params[key])
+  for (const key of Object.keys(data || {})) {
+    paramString += paramToString(data[key])
   }
 
   return `${name}-${sha1(paramString)}` // hash param string for brevity

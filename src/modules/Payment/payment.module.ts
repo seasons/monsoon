@@ -1,4 +1,5 @@
 import { AirtableModule } from "@modules/Airtable/airtable.module"
+import { AnalyticsModule } from "@modules/Analytics/analytics.module"
 import { EmailModule } from "@modules/Email/email.module"
 import { ShippingModule } from "@modules/Shipping/shipping.module"
 import { UserModule } from "@modules/User/user.module"
@@ -10,7 +11,6 @@ import { ChargebeeController } from "./controllers/chargebee.controller"
 import { InvoicesForCustomersLoader } from "./loaders/invoicesForCustomers.loaders"
 import { TransactionsLoader } from "./loaders/transactions.loaders"
 import { TransactionsForCustomersLoader } from "./loaders/transactionsForCustomers.loader"
-import { ChargebeeMutationsResolver } from "./mutations/chargebee.mutations.resolver"
 import { PaymentMutationsResolver } from "./mutations/payment.mutations"
 import { ChargebeeQueriesResolver } from "./queries/chargebee.queries.resolver"
 import { PaymentQueriesResolver } from "./queries/payment.queries.resolver"
@@ -28,9 +28,9 @@ import { PaymentUtilsService } from "./services/payment.utils.service"
     ShippingModule,
     UserModule,
     UtilsModule,
+    AnalyticsModule,
   ],
   providers: [
-    ChargebeeMutationsResolver,
     ChargebeeQueriesResolver,
     InvoicesForCustomersLoader,
     LoaderUtilsService,

@@ -1,5 +1,5 @@
-# source: http://localhost:4466/monsoon/dev
-# timestamp: Fri Aug 28 2020 12:51:16 GMT-0400 (Eastern Daylight Time)
+# source: https://monsoon-prisma-staging.herokuapp.com/monsoon/staging
+# timestamp: Thu Sep 10 2020 10:46:55 GMT+0200 (Central European Summer Time)
 
 type AggregateBagItem {
   count: Int!
@@ -13221,6 +13221,9 @@ type Mutation {
   createReservationReceipt(
     data: ReservationReceiptCreateInput!
   ): ReservationReceipt!
+  createPackageTransitEvent(
+    data: PackageTransitEventCreateInput!
+  ): PackageTransitEvent!
   createProductRequest(data: ProductRequestCreateInput!): ProductRequest!
   createProductVariantWant(
     data: ProductVariantWantCreateInput!
@@ -13249,9 +13252,6 @@ type Mutation {
   createCategory(data: CategoryCreateInput!): Category!
   createBottomSize(data: BottomSizeCreateInput!): BottomSize!
   createUser(data: UserCreateInput!): User!
-  createPackageTransitEvent(
-    data: PackageTransitEventCreateInput!
-  ): PackageTransitEvent!
   createLabel(data: LabelCreateInput!): Label!
   createLocation(data: LocationCreateInput!): Location!
   createPhysicalProduct(data: PhysicalProductCreateInput!): PhysicalProduct!
@@ -13344,6 +13344,10 @@ type Mutation {
     data: ReservationReceiptUpdateInput!
     where: ReservationReceiptWhereUniqueInput!
   ): ReservationReceipt
+  updatePackageTransitEvent(
+    data: PackageTransitEventUpdateInput!
+    where: PackageTransitEventWhereUniqueInput!
+  ): PackageTransitEvent
   updateProductRequest(
     data: ProductRequestUpdateInput!
     where: ProductRequestWhereUniqueInput!
@@ -13407,10 +13411,6 @@ type Mutation {
     where: BottomSizeWhereUniqueInput!
   ): BottomSize
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
-  updatePackageTransitEvent(
-    data: PackageTransitEventUpdateInput!
-    where: PackageTransitEventWhereUniqueInput!
-  ): PackageTransitEvent
   updateLabel(data: LabelUpdateInput!, where: LabelWhereUniqueInput!): Label
   updateLocation(
     data: LocationUpdateInput!
@@ -13490,6 +13490,9 @@ type Mutation {
   deleteReservationReceipt(
     where: ReservationReceiptWhereUniqueInput!
   ): ReservationReceipt
+  deletePackageTransitEvent(
+    where: PackageTransitEventWhereUniqueInput!
+  ): PackageTransitEvent
   deleteProductRequest(where: ProductRequestWhereUniqueInput!): ProductRequest
   deleteProductVariantWant(
     where: ProductVariantWantWhereUniqueInput!
@@ -13522,9 +13525,6 @@ type Mutation {
   deleteCategory(where: CategoryWhereUniqueInput!): Category
   deleteBottomSize(where: BottomSizeWhereUniqueInput!): BottomSize
   deleteUser(where: UserWhereUniqueInput!): User
-  deletePackageTransitEvent(
-    where: PackageTransitEventWhereUniqueInput!
-  ): PackageTransitEvent
   deleteLabel(where: LabelWhereUniqueInput!): Label
   deleteLocation(where: LocationWhereUniqueInput!): Location
   deletePhysicalProduct(
@@ -13651,6 +13651,11 @@ type Mutation {
     create: ReservationReceiptCreateInput!
     update: ReservationReceiptUpdateInput!
   ): ReservationReceipt!
+  upsertPackageTransitEvent(
+    where: PackageTransitEventWhereUniqueInput!
+    create: PackageTransitEventCreateInput!
+    update: PackageTransitEventUpdateInput!
+  ): PackageTransitEvent!
   upsertProductRequest(
     where: ProductRequestWhereUniqueInput!
     create: ProductRequestCreateInput!
@@ -13741,11 +13746,6 @@ type Mutation {
     create: UserCreateInput!
     update: UserUpdateInput!
   ): User!
-  upsertPackageTransitEvent(
-    where: PackageTransitEventWhereUniqueInput!
-    create: PackageTransitEventCreateInput!
-    update: PackageTransitEventUpdateInput!
-  ): PackageTransitEvent!
   upsertLabel(
     where: LabelWhereUniqueInput!
     create: LabelCreateInput!
@@ -13879,6 +13879,10 @@ type Mutation {
     data: ProductVariantFeedbackQuestionUpdateManyMutationInput!
     where: ProductVariantFeedbackQuestionWhereInput
   ): BatchPayload!
+  updateManyPackageTransitEvents(
+    data: PackageTransitEventUpdateManyMutationInput!
+    where: PackageTransitEventWhereInput
+  ): BatchPayload!
   updateManyProductRequests(
     data: ProductRequestUpdateManyMutationInput!
     where: ProductRequestWhereInput
@@ -13950,10 +13954,6 @@ type Mutation {
   updateManyUsers(
     data: UserUpdateManyMutationInput!
     where: UserWhereInput
-  ): BatchPayload!
-  updateManyPackageTransitEvents(
-    data: PackageTransitEventUpdateManyMutationInput!
-    where: PackageTransitEventWhereInput
   ): BatchPayload!
   updateManyLabels(
     data: LabelUpdateManyMutationInput!
@@ -14038,6 +14038,9 @@ type Mutation {
   deleteManyReservationReceipts(
     where: ReservationReceiptWhereInput
   ): BatchPayload!
+  deleteManyPackageTransitEvents(
+    where: PackageTransitEventWhereInput
+  ): BatchPayload!
   deleteManyProductRequests(where: ProductRequestWhereInput): BatchPayload!
   deleteManyProductVariantWants(
     where: ProductVariantWantWhereInput
@@ -14066,9 +14069,6 @@ type Mutation {
   deleteManyCategories(where: CategoryWhereInput): BatchPayload!
   deleteManyBottomSizes(where: BottomSizeWhereInput): BatchPayload!
   deleteManyUsers(where: UserWhereInput): BatchPayload!
-  deleteManyPackageTransitEvents(
-    where: PackageTransitEventWhereInput
-  ): BatchPayload!
   deleteManyLabels(where: LabelWhereInput): BatchPayload!
   deleteManyLocations(where: LocationWhereInput): BatchPayload!
   deleteManyPhysicalProducts(where: PhysicalProductWhereInput): BatchPayload!
@@ -14149,12 +14149,27 @@ input PackageCreateInput {
   shippingLabel: LabelCreateOneInput!
   fromAddress: LocationCreateOneInput!
   toAddress: LocationCreateOneInput!
-  events: PackageTransitEventCreateManyInput
+  events: PackageTransitEventCreateManyWithoutPackageInput
 }
 
 input PackageCreateOneInput {
   create: PackageCreateInput
   connect: PackageWhereUniqueInput
+}
+
+input PackageCreateOneWithoutEventsInput {
+  create: PackageCreateWithoutEventsInput
+  connect: PackageWhereUniqueInput
+}
+
+input PackageCreateWithoutEventsInput {
+  id: ID
+  transactionID: String!
+  weight: Float
+  items: PhysicalProductCreateManyInput
+  shippingLabel: LabelCreateOneInput!
+  fromAddress: LocationCreateOneInput!
+  toAddress: LocationCreateOneInput!
 }
 
 """
@@ -14242,6 +14257,8 @@ type PackageTransitEvent implements Node {
   id: ID!
   status: PackageTransitEventStatus!
   subStatus: PackageTransitEventSubStatus!
+  package: Package!
+  reservation: Reservation
   data: Json!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -14268,11 +14285,34 @@ input PackageTransitEventCreateInput {
   status: PackageTransitEventStatus!
   subStatus: PackageTransitEventSubStatus!
   data: Json!
+  package: PackageCreateOneWithoutEventsInput!
+  reservation: ReservationCreateOneWithoutPackageEventsInput
 }
 
-input PackageTransitEventCreateManyInput {
-  create: [PackageTransitEventCreateInput!]
+input PackageTransitEventCreateManyWithoutPackageInput {
+  create: [PackageTransitEventCreateWithoutPackageInput!]
   connect: [PackageTransitEventWhereUniqueInput!]
+}
+
+input PackageTransitEventCreateManyWithoutReservationInput {
+  create: [PackageTransitEventCreateWithoutReservationInput!]
+  connect: [PackageTransitEventWhereUniqueInput!]
+}
+
+input PackageTransitEventCreateWithoutPackageInput {
+  id: ID
+  status: PackageTransitEventStatus!
+  subStatus: PackageTransitEventSubStatus!
+  data: Json!
+  reservation: ReservationCreateOneWithoutPackageEventsInput
+}
+
+input PackageTransitEventCreateWithoutReservationInput {
+  id: ID
+  status: PackageTransitEventStatus!
+  subStatus: PackageTransitEventSubStatus!
+  data: Json!
+  package: PackageCreateOneWithoutEventsInput!
 }
 
 """
@@ -14585,16 +14625,12 @@ enum PackageTransitEventSubStatus {
   Other
 }
 
-input PackageTransitEventUpdateDataInput {
-  status: PackageTransitEventStatus
-  subStatus: PackageTransitEventSubStatus
-  data: Json
-}
-
 input PackageTransitEventUpdateInput {
   status: PackageTransitEventStatus
   subStatus: PackageTransitEventSubStatus
   data: Json
+  package: PackageUpdateOneRequiredWithoutEventsInput
+  reservation: ReservationUpdateOneWithoutPackageEventsInput
 }
 
 input PackageTransitEventUpdateManyDataInput {
@@ -14603,22 +14639,34 @@ input PackageTransitEventUpdateManyDataInput {
   data: Json
 }
 
-input PackageTransitEventUpdateManyInput {
-  create: [PackageTransitEventCreateInput!]
-  connect: [PackageTransitEventWhereUniqueInput!]
-  set: [PackageTransitEventWhereUniqueInput!]
-  disconnect: [PackageTransitEventWhereUniqueInput!]
-  delete: [PackageTransitEventWhereUniqueInput!]
-  update: [PackageTransitEventUpdateWithWhereUniqueNestedInput!]
-  updateMany: [PackageTransitEventUpdateManyWithWhereNestedInput!]
-  deleteMany: [PackageTransitEventScalarWhereInput!]
-  upsert: [PackageTransitEventUpsertWithWhereUniqueNestedInput!]
-}
-
 input PackageTransitEventUpdateManyMutationInput {
   status: PackageTransitEventStatus
   subStatus: PackageTransitEventSubStatus
   data: Json
+}
+
+input PackageTransitEventUpdateManyWithoutPackageInput {
+  create: [PackageTransitEventCreateWithoutPackageInput!]
+  connect: [PackageTransitEventWhereUniqueInput!]
+  set: [PackageTransitEventWhereUniqueInput!]
+  disconnect: [PackageTransitEventWhereUniqueInput!]
+  delete: [PackageTransitEventWhereUniqueInput!]
+  update: [PackageTransitEventUpdateWithWhereUniqueWithoutPackageInput!]
+  updateMany: [PackageTransitEventUpdateManyWithWhereNestedInput!]
+  deleteMany: [PackageTransitEventScalarWhereInput!]
+  upsert: [PackageTransitEventUpsertWithWhereUniqueWithoutPackageInput!]
+}
+
+input PackageTransitEventUpdateManyWithoutReservationInput {
+  create: [PackageTransitEventCreateWithoutReservationInput!]
+  connect: [PackageTransitEventWhereUniqueInput!]
+  set: [PackageTransitEventWhereUniqueInput!]
+  disconnect: [PackageTransitEventWhereUniqueInput!]
+  delete: [PackageTransitEventWhereUniqueInput!]
+  update: [PackageTransitEventUpdateWithWhereUniqueWithoutReservationInput!]
+  updateMany: [PackageTransitEventUpdateManyWithWhereNestedInput!]
+  deleteMany: [PackageTransitEventScalarWhereInput!]
+  upsert: [PackageTransitEventUpsertWithWhereUniqueWithoutReservationInput!]
 }
 
 input PackageTransitEventUpdateManyWithWhereNestedInput {
@@ -14626,15 +14674,40 @@ input PackageTransitEventUpdateManyWithWhereNestedInput {
   data: PackageTransitEventUpdateManyDataInput!
 }
 
-input PackageTransitEventUpdateWithWhereUniqueNestedInput {
-  where: PackageTransitEventWhereUniqueInput!
-  data: PackageTransitEventUpdateDataInput!
+input PackageTransitEventUpdateWithoutPackageDataInput {
+  status: PackageTransitEventStatus
+  subStatus: PackageTransitEventSubStatus
+  data: Json
+  reservation: ReservationUpdateOneWithoutPackageEventsInput
 }
 
-input PackageTransitEventUpsertWithWhereUniqueNestedInput {
+input PackageTransitEventUpdateWithoutReservationDataInput {
+  status: PackageTransitEventStatus
+  subStatus: PackageTransitEventSubStatus
+  data: Json
+  package: PackageUpdateOneRequiredWithoutEventsInput
+}
+
+input PackageTransitEventUpdateWithWhereUniqueWithoutPackageInput {
   where: PackageTransitEventWhereUniqueInput!
-  update: PackageTransitEventUpdateDataInput!
-  create: PackageTransitEventCreateInput!
+  data: PackageTransitEventUpdateWithoutPackageDataInput!
+}
+
+input PackageTransitEventUpdateWithWhereUniqueWithoutReservationInput {
+  where: PackageTransitEventWhereUniqueInput!
+  data: PackageTransitEventUpdateWithoutReservationDataInput!
+}
+
+input PackageTransitEventUpsertWithWhereUniqueWithoutPackageInput {
+  where: PackageTransitEventWhereUniqueInput!
+  update: PackageTransitEventUpdateWithoutPackageDataInput!
+  create: PackageTransitEventCreateWithoutPackageInput!
+}
+
+input PackageTransitEventUpsertWithWhereUniqueWithoutReservationInput {
+  where: PackageTransitEventWhereUniqueInput!
+  update: PackageTransitEventUpdateWithoutReservationDataInput!
+  create: PackageTransitEventCreateWithoutReservationInput!
 }
 
 input PackageTransitEventWhereInput {
@@ -14822,6 +14895,8 @@ input PackageTransitEventWhereInput {
   All values greater than or equal the given value.
   """
   updatedAt_gte: DateTime
+  package: PackageWhereInput
+  reservation: ReservationWhereInput
 }
 
 input PackageTransitEventWhereUniqueInput {
@@ -14835,7 +14910,7 @@ input PackageUpdateDataInput {
   shippingLabel: LabelUpdateOneRequiredInput
   fromAddress: LocationUpdateOneRequiredInput
   toAddress: LocationUpdateOneRequiredInput
-  events: PackageTransitEventUpdateManyInput
+  events: PackageTransitEventUpdateManyWithoutPackageInput
 }
 
 input PackageUpdateInput {
@@ -14845,7 +14920,7 @@ input PackageUpdateInput {
   shippingLabel: LabelUpdateOneRequiredInput
   fromAddress: LocationUpdateOneRequiredInput
   toAddress: LocationUpdateOneRequiredInput
-  events: PackageTransitEventUpdateManyInput
+  events: PackageTransitEventUpdateManyWithoutPackageInput
 }
 
 input PackageUpdateManyMutationInput {
@@ -14862,9 +14937,30 @@ input PackageUpdateOneInput {
   upsert: PackageUpsertNestedInput
 }
 
+input PackageUpdateOneRequiredWithoutEventsInput {
+  create: PackageCreateWithoutEventsInput
+  connect: PackageWhereUniqueInput
+  update: PackageUpdateWithoutEventsDataInput
+  upsert: PackageUpsertWithoutEventsInput
+}
+
+input PackageUpdateWithoutEventsDataInput {
+  transactionID: String
+  weight: Float
+  items: PhysicalProductUpdateManyInput
+  shippingLabel: LabelUpdateOneRequiredInput
+  fromAddress: LocationUpdateOneRequiredInput
+  toAddress: LocationUpdateOneRequiredInput
+}
+
 input PackageUpsertNestedInput {
   update: PackageUpdateDataInput!
   create: PackageCreateInput!
+}
+
+input PackageUpsertWithoutEventsInput {
+  update: PackageUpdateWithoutEventsDataInput!
+  create: PackageCreateWithoutEventsInput!
 }
 
 input PackageWhereInput {
@@ -15845,6 +15941,7 @@ type PaymentPlan implements Node {
   status: String
   name: String
   price: Int
+  tagline: String
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -15872,6 +15969,7 @@ input PaymentPlanCreateInput {
   status: String
   name: String
   price: Int
+  tagline: String
 }
 
 """
@@ -15902,6 +16000,8 @@ enum PaymentPlanOrderByInput {
   name_DESC
   price_ASC
   price_DESC
+  tagline_ASC
+  tagline_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -15915,6 +16015,7 @@ type PaymentPlanPreviousValues {
   status: String
   name: String
   price: Int
+  tagline: String
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -15970,6 +16071,7 @@ input PaymentPlanUpdateInput {
   status: String
   name: String
   price: Int
+  tagline: String
 }
 
 input PaymentPlanUpdateManyMutationInput {
@@ -15978,6 +16080,7 @@ input PaymentPlanUpdateManyMutationInput {
   status: String
   name: String
   price: Int
+  tagline: String
 }
 
 input PaymentPlanWhereInput {
@@ -16361,6 +16464,72 @@ input PaymentPlanWhereInput {
   All values greater than or equal the given value.
   """
   price_gte: Int
+  tagline: String
+
+  """
+  All values that are not equal to given value.
+  """
+  tagline_not: String
+
+  """
+  All values that are contained in given list.
+  """
+  tagline_in: [String!]
+
+  """
+  All values that are not contained in given list.
+  """
+  tagline_not_in: [String!]
+
+  """
+  All values less than the given value.
+  """
+  tagline_lt: String
+
+  """
+  All values less than or equal the given value.
+  """
+  tagline_lte: String
+
+  """
+  All values greater than the given value.
+  """
+  tagline_gt: String
+
+  """
+  All values greater than or equal the given value.
+  """
+  tagline_gte: String
+
+  """
+  All values containing the given string.
+  """
+  tagline_contains: String
+
+  """
+  All values not containing the given string.
+  """
+  tagline_not_contains: String
+
+  """
+  All values starting with the given string.
+  """
+  tagline_starts_with: String
+
+  """
+  All values not starting with the given string.
+  """
+  tagline_not_starts_with: String
+
+  """
+  All values ending with the given string.
+  """
+  tagline_ends_with: String
+
+  """
+  All values not ending with the given string.
+  """
+  tagline_not_ends_with: String
   createdAt: DateTime
 
   """
@@ -28282,6 +28451,15 @@ type Query {
     first: Int
     last: Int
   ): [ReservationReceipt]!
+  packageTransitEvents(
+    where: PackageTransitEventWhereInput
+    orderBy: PackageTransitEventOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [PackageTransitEvent]!
   productRequests(
     where: ProductRequestWhereInput
     orderBy: ProductRequestOrderByInput
@@ -28444,15 +28622,6 @@ type Query {
     first: Int
     last: Int
   ): [User]!
-  packageTransitEvents(
-    where: PackageTransitEventWhereInput
-    orderBy: PackageTransitEventOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): [PackageTransitEvent]!
   labels(
     where: LabelWhereInput
     orderBy: LabelOrderByInput
@@ -28581,6 +28750,9 @@ type Query {
   reservationReceipt(
     where: ReservationReceiptWhereUniqueInput!
   ): ReservationReceipt
+  packageTransitEvent(
+    where: PackageTransitEventWhereUniqueInput!
+  ): PackageTransitEvent
   productRequest(where: ProductRequestWhereUniqueInput!): ProductRequest
   productVariantWant(
     where: ProductVariantWantWhereUniqueInput!
@@ -28609,9 +28781,6 @@ type Query {
   category(where: CategoryWhereUniqueInput!): Category
   bottomSize(where: BottomSizeWhereUniqueInput!): BottomSize
   user(where: UserWhereUniqueInput!): User
-  packageTransitEvent(
-    where: PackageTransitEventWhereUniqueInput!
-  ): PackageTransitEvent
   label(where: LabelWhereUniqueInput!): Label
   location(where: LocationWhereUniqueInput!): Location
   physicalProduct(where: PhysicalProductWhereUniqueInput!): PhysicalProduct
@@ -28828,6 +28997,15 @@ type Query {
     first: Int
     last: Int
   ): ReservationReceiptConnection!
+  packageTransitEventsConnection(
+    where: PackageTransitEventWhereInput
+    orderBy: PackageTransitEventOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): PackageTransitEventConnection!
   productRequestsConnection(
     where: ProductRequestWhereInput
     orderBy: ProductRequestOrderByInput
@@ -28990,15 +29168,6 @@ type Query {
     first: Int
     last: Int
   ): UserConnection!
-  packageTransitEventsConnection(
-    where: PackageTransitEventWhereInput
-    orderBy: PackageTransitEventOrderByInput
-    skip: Int
-    after: String
-    before: String
-    first: Int
-    last: Int
-  ): PackageTransitEventConnection!
   labelsConnection(
     where: LabelWhereInput
     orderBy: LabelOrderByInput
@@ -29435,6 +29604,15 @@ type Reservation implements Node {
     first: Int
     last: Int
   ): [PhysicalProduct!]
+  packageEvents(
+    where: PackageTransitEventWhereInput
+    orderBy: PackageTransitEventOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [PackageTransitEvent!]
   reservationNumber: Int!
   phase: ReservationPhase!
   shipped: Boolean!
@@ -29442,6 +29620,7 @@ type Reservation implements Node {
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
+  statusUpdatedAt: DateTime
   receipt: ReservationReceipt
   lastLocation: Location
   createdAt: DateTime!
@@ -29473,11 +29652,13 @@ input ReservationCreateInput {
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
+  statusUpdatedAt: DateTime
   user: UserCreateOneInput!
   customer: CustomerCreateOneWithoutReservationsInput!
   sentPackage: PackageCreateOneInput
   returnedPackage: PackageCreateOneInput
   products: PhysicalProductCreateManyInput
+  packageEvents: PackageTransitEventCreateManyWithoutReservationInput
   receipt: ReservationReceiptCreateOneWithoutReservationInput
   lastLocation: LocationCreateOneInput
 }
@@ -29489,6 +29670,11 @@ input ReservationCreateManyWithoutCustomerInput {
 
 input ReservationCreateOneInput {
   create: ReservationCreateInput
+  connect: ReservationWhereUniqueInput
+}
+
+input ReservationCreateOneWithoutPackageEventsInput {
+  create: ReservationCreateWithoutPackageEventsInput
   connect: ReservationWhereUniqueInput
 }
 
@@ -29506,7 +29692,28 @@ input ReservationCreateWithoutCustomerInput {
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
+  statusUpdatedAt: DateTime
   user: UserCreateOneInput!
+  sentPackage: PackageCreateOneInput
+  returnedPackage: PackageCreateOneInput
+  products: PhysicalProductCreateManyInput
+  packageEvents: PackageTransitEventCreateManyWithoutReservationInput
+  receipt: ReservationReceiptCreateOneWithoutReservationInput
+  lastLocation: LocationCreateOneInput
+}
+
+input ReservationCreateWithoutPackageEventsInput {
+  id: ID
+  reservationNumber: Int!
+  phase: ReservationPhase!
+  shipped: Boolean!
+  status: ReservationStatus!
+  shippedAt: DateTime
+  receivedAt: DateTime
+  reminderSentAt: DateTime
+  statusUpdatedAt: DateTime
+  user: UserCreateOneInput!
+  customer: CustomerCreateOneWithoutReservationsInput!
   sentPackage: PackageCreateOneInput
   returnedPackage: PackageCreateOneInput
   products: PhysicalProductCreateManyInput
@@ -29523,11 +29730,13 @@ input ReservationCreateWithoutReceiptInput {
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
+  statusUpdatedAt: DateTime
   user: UserCreateOneInput!
   customer: CustomerCreateOneWithoutReservationsInput!
   sentPackage: PackageCreateOneInput
   returnedPackage: PackageCreateOneInput
   products: PhysicalProductCreateManyInput
+  packageEvents: PackageTransitEventCreateManyWithoutReservationInput
   lastLocation: LocationCreateOneInput
 }
 
@@ -30024,6 +30233,8 @@ enum ReservationOrderByInput {
   receivedAt_DESC
   reminderSentAt_ASC
   reminderSentAt_DESC
+  statusUpdatedAt_ASC
+  statusUpdatedAt_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -30044,6 +30255,7 @@ type ReservationPreviousValues {
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
+  statusUpdatedAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -31115,6 +31327,42 @@ input ReservationScalarWhereInput {
   All values greater than or equal the given value.
   """
   reminderSentAt_gte: DateTime
+  statusUpdatedAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  statusUpdatedAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  statusUpdatedAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  statusUpdatedAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  statusUpdatedAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  statusUpdatedAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  statusUpdatedAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  statusUpdatedAt_gte: DateTime
   createdAt: DateTime
 
   """
@@ -31254,11 +31502,13 @@ input ReservationUpdateDataInput {
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
+  statusUpdatedAt: DateTime
   user: UserUpdateOneRequiredInput
   customer: CustomerUpdateOneRequiredWithoutReservationsInput
   sentPackage: PackageUpdateOneInput
   returnedPackage: PackageUpdateOneInput
   products: PhysicalProductUpdateManyInput
+  packageEvents: PackageTransitEventUpdateManyWithoutReservationInput
   receipt: ReservationReceiptUpdateOneWithoutReservationInput
   lastLocation: LocationUpdateOneInput
 }
@@ -31271,11 +31521,13 @@ input ReservationUpdateInput {
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
+  statusUpdatedAt: DateTime
   user: UserUpdateOneRequiredInput
   customer: CustomerUpdateOneRequiredWithoutReservationsInput
   sentPackage: PackageUpdateOneInput
   returnedPackage: PackageUpdateOneInput
   products: PhysicalProductUpdateManyInput
+  packageEvents: PackageTransitEventUpdateManyWithoutReservationInput
   receipt: ReservationReceiptUpdateOneWithoutReservationInput
   lastLocation: LocationUpdateOneInput
 }
@@ -31288,6 +31540,7 @@ input ReservationUpdateManyDataInput {
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
+  statusUpdatedAt: DateTime
 }
 
 input ReservationUpdateManyMutationInput {
@@ -31298,6 +31551,7 @@ input ReservationUpdateManyMutationInput {
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
+  statusUpdatedAt: DateTime
 }
 
 input ReservationUpdateManyWithoutCustomerInput {
@@ -31331,6 +31585,15 @@ input ReservationUpdateOneRequiredWithoutReceiptInput {
   upsert: ReservationUpsertWithoutReceiptInput
 }
 
+input ReservationUpdateOneWithoutPackageEventsInput {
+  create: ReservationCreateWithoutPackageEventsInput
+  connect: ReservationWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: ReservationUpdateWithoutPackageEventsDataInput
+  upsert: ReservationUpsertWithoutPackageEventsInput
+}
+
 input ReservationUpdateWithoutCustomerDataInput {
   reservationNumber: Int
   phase: ReservationPhase
@@ -31339,7 +31602,27 @@ input ReservationUpdateWithoutCustomerDataInput {
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
+  statusUpdatedAt: DateTime
   user: UserUpdateOneRequiredInput
+  sentPackage: PackageUpdateOneInput
+  returnedPackage: PackageUpdateOneInput
+  products: PhysicalProductUpdateManyInput
+  packageEvents: PackageTransitEventUpdateManyWithoutReservationInput
+  receipt: ReservationReceiptUpdateOneWithoutReservationInput
+  lastLocation: LocationUpdateOneInput
+}
+
+input ReservationUpdateWithoutPackageEventsDataInput {
+  reservationNumber: Int
+  phase: ReservationPhase
+  shipped: Boolean
+  status: ReservationStatus
+  shippedAt: DateTime
+  receivedAt: DateTime
+  reminderSentAt: DateTime
+  statusUpdatedAt: DateTime
+  user: UserUpdateOneRequiredInput
+  customer: CustomerUpdateOneRequiredWithoutReservationsInput
   sentPackage: PackageUpdateOneInput
   returnedPackage: PackageUpdateOneInput
   products: PhysicalProductUpdateManyInput
@@ -31355,11 +31638,13 @@ input ReservationUpdateWithoutReceiptDataInput {
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
+  statusUpdatedAt: DateTime
   user: UserUpdateOneRequiredInput
   customer: CustomerUpdateOneRequiredWithoutReservationsInput
   sentPackage: PackageUpdateOneInput
   returnedPackage: PackageUpdateOneInput
   products: PhysicalProductUpdateManyInput
+  packageEvents: PackageTransitEventUpdateManyWithoutReservationInput
   lastLocation: LocationUpdateOneInput
 }
 
@@ -31371,6 +31656,11 @@ input ReservationUpdateWithWhereUniqueWithoutCustomerInput {
 input ReservationUpsertNestedInput {
   update: ReservationUpdateDataInput!
   create: ReservationCreateInput!
+}
+
+input ReservationUpsertWithoutPackageEventsInput {
+  update: ReservationUpdateWithoutPackageEventsDataInput!
+  create: ReservationCreateWithoutPackageEventsInput!
 }
 
 input ReservationUpsertWithoutReceiptInput {
@@ -31647,6 +31937,42 @@ input ReservationWhereInput {
   All values greater than or equal the given value.
   """
   reminderSentAt_gte: DateTime
+  statusUpdatedAt: DateTime
+
+  """
+  All values that are not equal to given value.
+  """
+  statusUpdatedAt_not: DateTime
+
+  """
+  All values that are contained in given list.
+  """
+  statusUpdatedAt_in: [DateTime!]
+
+  """
+  All values that are not contained in given list.
+  """
+  statusUpdatedAt_not_in: [DateTime!]
+
+  """
+  All values less than the given value.
+  """
+  statusUpdatedAt_lt: DateTime
+
+  """
+  All values less than or equal the given value.
+  """
+  statusUpdatedAt_lte: DateTime
+
+  """
+  All values greater than the given value.
+  """
+  statusUpdatedAt_gt: DateTime
+
+  """
+  All values greater than or equal the given value.
+  """
+  statusUpdatedAt_gte: DateTime
   createdAt: DateTime
 
   """
@@ -31726,6 +32052,9 @@ input ReservationWhereInput {
   products_every: PhysicalProductWhereInput
   products_some: PhysicalProductWhereInput
   products_none: PhysicalProductWhereInput
+  packageEvents_every: PackageTransitEventWhereInput
+  packageEvents_some: PackageTransitEventWhereInput
+  packageEvents_none: PackageTransitEventWhereInput
   receipt: ReservationReceiptWhereInput
   lastLocation: LocationWhereInput
 }
@@ -33535,6 +33864,9 @@ type Subscription {
   reservationReceipt(
     where: ReservationReceiptSubscriptionWhereInput
   ): ReservationReceiptSubscriptionPayload
+  packageTransitEvent(
+    where: PackageTransitEventSubscriptionWhereInput
+  ): PackageTransitEventSubscriptionPayload
   productRequest(
     where: ProductRequestSubscriptionWhereInput
   ): ProductRequestSubscriptionPayload
@@ -33575,9 +33907,6 @@ type Subscription {
     where: BottomSizeSubscriptionWhereInput
   ): BottomSizeSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
-  packageTransitEvent(
-    where: PackageTransitEventSubscriptionWhereInput
-  ): PackageTransitEventSubscriptionPayload
   label(where: LabelSubscriptionWhereInput): LabelSubscriptionPayload
   location(where: LocationSubscriptionWhereInput): LocationSubscriptionPayload
   physicalProduct(
@@ -35776,6 +36105,7 @@ enum UserRole {
   Admin
   Customer
   Partner
+  Marketer
 }
 
 input UserScalarWhereInput {

@@ -57,6 +57,7 @@ type PhysicalProduct {
   dateOrdered: DateTime
   dateReceived: DateTime
   unitCost: Float
+  reservations(orderBy: ReservationOrderByInput): [Reservation!]!
   createdAt: DateTime!
   updatedAt: DateTime!
 }

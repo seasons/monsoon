@@ -11,7 +11,6 @@ import { head } from "lodash"
 import { Command, Option, Positional } from "nestjs-command"
 
 import {
-  AirtableIdOption,
   EmailOption,
   PasswordOption,
   PrismaEnvOption,
@@ -23,11 +22,11 @@ export class UserCommands {
   private readonly logger = new Logger(UserCommands.name)
 
   constructor(
-    private readonly scriptsService: ScriptsService,
-    private readonly authService: AuthService,
+    private readonly scripts: ScriptsService,
+    private readonly auth: AuthService,
     private readonly prisma: PrismaService,
     private readonly paymentService: PaymentService,
-    private readonly utilsService: UtilsService,
+    private readonly utils: UtilsService,
     private moduleRef: ModuleRef
   ) {}
 
@@ -56,7 +55,7 @@ export class UserCommands {
     })
     _password
   ) {
-    await this.scriptsService.updateConnections({
+    await this.scripts.updateConnections({
       prismaEnv,
       moduleRef: this.moduleRef,
     })
@@ -66,7 +65,7 @@ export class UserCommands {
       firstName,
       lastName,
     } = this.createTestUserBasics(_newEmail, _password)
-    const auth0Id = await this.authService.createAuth0User(newEmail, password, {
+    const auth0Id = await this.auth.createAuth0User(newEmail, password, {
       firstName,
       lastName,
     })
@@ -95,10 +94,6 @@ export class UserCommands {
   async create(
     @PrismaEnvOption()
     prismaEnv,
-    @AirtableIdOption({
-      describeExtra: "If none given, will use staging",
-    })
-    abid,
     @EmailOption()
     _email,
     @PasswordOption()
@@ -117,7 +112,7 @@ export class UserCommands {
       describe: "Roles of the user",
       type: "array",
       default: "Customer",
-      choices: ["Customer", "Admin", "Partner"],
+      choices: ["Customer", "Admin", "Partner", "Marketer"],
     })
     roles,
     @Option({
@@ -139,14 +134,9 @@ export class UserCommands {
     })
     status
   ) {
-    await this.scriptsService.updateConnections({
+    await this.scripts.updateConnections({
       prismaEnv,
-      airtableEnv: abid,
       moduleRef: this.moduleRef,
-    })
-    chargebee.configure({
-      site: "seasons-test",
-      api_key: "test_fmWkxemy4L3CP1ku1XwPlTYQyJVKajXx",
     })
 
     let {
@@ -177,7 +167,7 @@ export class UserCommands {
     }
 
     try {
-      ;({ user, tokenData } = await this.authService.signupUser({
+      ;({ user, tokenData } = await this.auth.signupUser({
         email,
         password,
         firstName,
@@ -208,47 +198,52 @@ export class UserCommands {
       return
     }
 
-    // Give them valid billing data
-    const customer = head(
-      await this.prisma.client.customers({
-        where: { user: { id: user.id } },
+    // Give them valid billing data if appropriate
+    if (["Active", "Suspended", "Paused"].includes(status)) {
+      chargebee.configure({
+        site: "seasons-test",
+        api_key: "test_fmWkxemy4L3CP1ku1XwPlTYQyJVKajXx",
       })
-    )
-    const card: Card = {
-      number: "4242424242424242",
-      expiryMonth: "04",
-      expiryYear: "2022",
-      cvv: "222",
-    }
-    this.logger.log("Updating customer")
-    await this.prisma.client.updateCustomer({
-      data: {
-        plan,
-        billingInfo: {
-          create: {
-            brand: "Visa",
-            name: fullName,
-            last_digits: card.number.substr(12),
-            expiration_month: parseInt(card.expiryMonth, 10),
-            expiration_year: parseInt(card.expiryYear, 10),
+      const customer = head(
+        await this.prisma.client.customers({
+          where: { user: { id: user.id } },
+        })
+      )
+      const card: Card = {
+        number: "4242424242424242",
+        expiryMonth: "04",
+        expiryYear: "2022",
+        cvv: "222",
+      }
+      this.logger.log("Updating customer")
+      await this.prisma.client.updateCustomer({
+        data: {
+          plan,
+          billingInfo: {
+            create: {
+              brand: "Visa",
+              name: fullName,
+              last_digits: card.number.substr(12),
+              expiration_month: parseInt(card.expiryMonth, 10),
+              expiration_year: parseInt(card.expiryYear, 10),
+            },
           },
+          status,
+          user: { update: { roles: { set: roles } } },
         },
-        status,
-        user: { update: { roles: { set: roles } } },
-      },
-      where: { id: customer.id },
-    })
-    await this.paymentService.createSubscription(
-      plan,
-      this.utilsService.snakeCaseify(address),
-      user,
-      this.utilsService.snakeCaseify(card)
-    )
+        where: { id: customer.id },
+      })
+      await this.paymentService.createSubscription(
+        plan,
+        this.utils.snakeCaseify(address),
+        user,
+        this.utils.snakeCaseify(card)
+      )
+    }
 
     this.logger.log(
-      `User with email: ${email}, password: ${password} successfully created on ${prismaEnv} prisma and ${
-        abid || "staging"
-      } airtable`
+      `User with email: ${email}, password: ${password}, roles: ${roles}, status: ${status}` +
+        `successfully created on ${prismaEnv} prisma`
     )
     this.logger.log(`Access token: ${tokenData.access_token}`)
   }
