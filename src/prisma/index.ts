@@ -2874,7 +2874,8 @@ export type CustomerStatus =
   | "Active"
   | "Suspended"
   | "Paused"
-  | "Deactivated";
+  | "Deactivated"
+  | "PaymentFailed";
 
 export type Plan = "AllAccess" | "Essential";
 

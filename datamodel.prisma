@@ -33,6 +33,7 @@ enum CustomerStatus {
   Suspended
   Paused
   Deactivated
+  PaymentFailed
 }
 
 enum UserRole {

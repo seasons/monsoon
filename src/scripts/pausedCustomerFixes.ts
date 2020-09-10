@@ -21,6 +21,110 @@ import { UtilsService } from "../modules/Utils/services/utils.service"
 import { PrismaDataLoader, PrismaLoader } from "../prisma/prisma.loader"
 import { PrismaService } from "../prisma/prisma.service"
 
+const updateActiveInPrismaButPausedInChargebee = async () => {
+  const ps = new PrismaService()
+  const utilsService = new UtilsService(ps)
+  const admissions = new AdmissionsService(ps, utilsService)
+  const emailData = new EmailDataProvider()
+  const segment = new SegmentService()
+  const paymentUtils = new PaymentUtilsService()
+  const shippingUtils = new ShippingUtilsService()
+  const emailService = new EmailService(ps, utilsService, emailData)
+  const shippingService = new ShippingService(ps, utilsService)
+  const pusherService = new PusherService()
+  const pushNotificationDataProvider = new PushNotificationDataProvider()
+  const pushNotification = new PushNotificationService(
+    pusherService,
+    pushNotificationDataProvider,
+    ps
+  )
+  const authService = new AuthService(ps, pushNotification, shippingUtils)
+  const customerService = new CustomerService(
+    authService,
+    ps,
+    shippingService,
+    admissions,
+    segment
+  )
+  const paymentService = new PaymentService(
+    authService,
+    customerService,
+    emailService,
+    paymentUtils,
+    ps,
+    utilsService,
+    segment
+  )
+
+  chargebee.configure({
+    site: process.env.CHARGEBEE_SITE,
+    api_key: process.env.CHARGEBEE_API_KEY,
+  })
+
+  try {
+    const customers = await ps.client.customers({
+      where: { status: "Active" },
+    })
+
+    for (const customer of customers) {
+      const customerWithData = (await ps.binding.query.customer(
+        {
+          where: { id: customer.id },
+        },
+        `{
+          id
+          status
+          plan
+          membership {
+            id
+            subscriptionId
+            pauseRequests(orderBy: createdAt_DESC) {
+              id
+              pausePending
+              resumeDate
+              pauseDate
+            }
+          }
+          user {
+            id
+          }
+        }`
+      )) as any
+
+      const pausePending =
+        customerWithData?.membership?.pauseRequests?.[0]?.pausePending
+
+      const planID = customerWithData?.plan
+      if (planID) {
+        const subscriptions = await chargebee.subscription
+          .list({
+            plan_id: {
+              in: [paymentService.prismaPlanToChargebeePlanId(planID)],
+            },
+            customer_id: { is: customerWithData?.user.id },
+          })
+          .request()
+        const subscription = head(subscriptions.list) as any
+        const status = subscription?.subscription?.status
+        if (status === "paused" && !pausePending) {
+          console.log(
+            "User was active and now is paused",
+            subscription.customer.email
+          )
+          // await this.prisma.client.updateCustomer({
+          //   data: {
+          //     status: "Paused",
+          //   },
+          //   where: { id: customer.id },
+          // })
+        }
+      }
+    }
+  } catch (e) {
+    console.log("e", e)
+  }
+}
+
 const updatePausePendingCustomersToBeImmediatelyPaused = async () => {
   const ps = new PrismaService()
   const utilsService = new UtilsService(ps)
@@ -193,4 +297,4 @@ const fixPrismaPausedButChargebeeActive = async () => {
   }
 }
 
-updatePausePendingCustomersToBeImmediatelyPaused()
+updateActiveInPrismaButPausedInChargebee()
