@@ -21,6 +21,13 @@ class PrismaServiceMock {
             },
           },
         ]),
+      user: () =>
+        Promise.resolve({
+          id: "789",
+          pushNotification: {
+            status: "Granted",
+          },
+        }),
     },
   }
 
@@ -33,7 +40,20 @@ class PrismaServiceMock {
         data,
       })
     }),
+    reservation: () => ({
+      id: "123",
+      user: () => ({
+        id: "789",
+      }),
+    }),
+    packages: () => [
+      {
+        transactionID: "cab8f46684034257ba8d72c58347fc26",
+      },
+    ],
     updateReservation: jest.fn(),
+    pushNotificationReceipts: jest.fn(),
+    updatePackage: jest.fn(),
   }
 }
 

@@ -1,3 +1,4 @@
+import { ReservationWhereInput } from "@app/prisma"
 import { Args, Info, Query, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma/prisma.service"
 
@@ -27,8 +28,7 @@ export class ReservationQueriesResolver {
 
   @Query()
   async reservations(@Args() args, @Info() info) {
-    const data = await this.prisma.binding.query.reservations(args, info)
-    return data
+    return await this.prisma.binding.query.reservations(args, info)
   }
 
   @Query()
