@@ -56,14 +56,15 @@ export const Loader: (
   }
 )
 
-const createKey = (type, operationName, variables, params) => {
+const createKey = (type, operationName, variables, data) => {
+  const { params } = data
   const name = `${type}-${
     params ? params.query : ""
   }-${operationName}-${qs.stringify(variables)}`
 
   let paramString = ""
-  for (const key of Object.keys(params || {})) {
-    paramString += paramToString(params[key])
+  for (const key of Object.keys(data || {})) {
+    paramString += paramToString(data[key])
   }
 
   return `${name}-${sha1(paramString)}` // hash param string for brevity

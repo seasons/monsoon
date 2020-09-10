@@ -23,7 +23,7 @@ export class PhysicalProductFieldsResolver {
     })
     physicalProductsLoader: PrismaDataLoader<string>
   ) {
-    return physicalProductsLoader.load(physicalProduct.id)
+    return await physicalProductsLoader.load(physicalProduct.id)
   }
 
   @ResolveField()

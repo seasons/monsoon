@@ -59,6 +59,7 @@ const addEventsToReservations = async () => {
           `{
             id
             status
+            phase
             sentPackage {
               transactionID
             }

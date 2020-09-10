@@ -134,6 +134,7 @@ input ReservationWhereInput {
   AND: [ReservationWhereInput!]
   OR: [ReservationWhereInput!]
   NOT: [ReservationWhereInput!]
+  # Global search query which will be handled by algolia
   q: String
 }
 
