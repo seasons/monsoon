@@ -174,6 +174,7 @@ type Reservation {
   ): [PackageTransitEvent!]
   images(width: Int, height: Int, size: ImageSize): [Image!]!
   reservationNumber: Int!
+  phase: ReservationPhase!
   shipped: Boolean!
   status: ReservationStatus!
   shippedAt: DateTime
