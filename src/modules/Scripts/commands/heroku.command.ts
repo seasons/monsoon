@@ -8,7 +8,7 @@ export class HerokuCommands {
   @Command({
     command: "get:production-commit <app>",
     describe:
-      "returns an array of product variant ids with status reservable and 1+ available physical products",
+      "gets the latest commit to be deployed on the specified app",
     aliases: "gpc",
   })
   async create(
