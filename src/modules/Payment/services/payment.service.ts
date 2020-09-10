@@ -196,51 +196,61 @@ export class PaymentService {
   }
 
   async pauseSubscription(subscriptionId, customer) {
-    const result = await chargebee.subscription
-      .pause(subscriptionId, {
-        pause_option: "end_of_term",
-      })
-      .request()
+    try {
+      const result = await chargebee.subscription
+        .pause(subscriptionId, {
+          pause_option: "immediately",
+        })
+        .request()
 
-    const termEnd = result?.subscription?.current_term_end
+      const termEnd = result?.subscription?.current_term_end
 
-    const customerWithMembership = await this.prisma.binding.query.customer(
-      { where: { id: customer.id } },
-      `
-        {
-          id
-          membership {
+      const customerWithMembership = await this.prisma.binding.query.customer(
+        { where: { id: customer.id } },
+        `
+          {
             id
+            membership {
+              id
+            }
           }
-        }
-      `
-    )
+        `
+      )
 
-    const pauseDateISO = DateTime.fromSeconds(termEnd).toISO()
-    const resumeDateISO = DateTime.fromSeconds(termEnd)
-      .plus({ months: 1 })
-      .toISO()
+      const pauseDateISO = DateTime.fromSeconds(termEnd).toISO()
+      const resumeDateISO = DateTime.fromSeconds(termEnd)
+        .plus({ months: 1 })
+        .toISO()
 
-    let customerMembership
+      let customerMembership
 
-    if (!customerWithMembership.membership) {
-      customerMembership = await this.prisma.client.upsertCustomerMembership({
-        where: { id: customerWithMembership.membership?.id || "" },
-        create: { customer: { connect: { id: customer.id } }, subscriptionId },
-        update: { customer: { connect: { id: customer.id } }, subscriptionId },
+      if (!customerWithMembership.membership) {
+        customerMembership = await this.prisma.client.upsertCustomerMembership({
+          where: { id: customerWithMembership.membership?.id || "" },
+          create: {
+            customer: { connect: { id: customer.id } },
+            subscriptionId,
+          },
+          update: {
+            customer: { connect: { id: customer.id } },
+            subscriptionId,
+          },
+        })
+      } else {
+        customerMembership = await this.prisma.client.customerMembership({
+          id: customerWithMembership.membership?.id,
+        })
+      }
+
+      await this.prisma.client.createPauseRequest({
+        membership: { connect: { id: customerMembership.id } },
+        pausePending: true,
+        pauseDate: pauseDateISO,
+        resumeDate: resumeDateISO,
       })
-    } else {
-      customerMembership = await this.prisma.client.customerMembership({
-        id: customerWithMembership.membership?.id,
-      })
+    } catch (e) {
+      throw new Error(`Error pausing subscription: ${e}`)
     }
-
-    await this.prisma.client.createPauseRequest({
-      membership: { connect: { id: customerMembership.id } },
-      pausePending: true,
-      pauseDate: pauseDateISO,
-      resumeDate: resumeDateISO,
-    })
   }
 
   async removeScheduledPause(subscriptionId, customer) {
