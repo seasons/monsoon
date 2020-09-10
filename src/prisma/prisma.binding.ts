@@ -13122,7 +13122,7 @@ type Product implements Node {
   variants(where: ProductVariantWhereInput, orderBy: ProductVariantOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductVariant!]
   status: ProductStatus
   statusChanges(where: ProductStatusChangeWhereInput, orderBy: ProductStatusChangeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductStatusChange!]
-  seasonDeprecated: String
+  season: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -13160,7 +13160,7 @@ input ProductCreateInput {
   modelHeight: Int
   retailPrice: Int
   status: ProductStatus
-  seasonDeprecated: String
+  season: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -13239,7 +13239,7 @@ input ProductCreateWithoutBrandInput {
   modelHeight: Int
   retailPrice: Int
   status: ProductStatus
-  seasonDeprecated: String
+  season: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -13268,7 +13268,7 @@ input ProductCreateWithoutCategoryInput {
   modelHeight: Int
   retailPrice: Int
   status: ProductStatus
-  seasonDeprecated: String
+  season: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -13297,7 +13297,7 @@ input ProductCreateWithoutMaterialCategoryInput {
   modelHeight: Int
   retailPrice: Int
   status: ProductStatus
-  seasonDeprecated: String
+  season: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -13326,7 +13326,7 @@ input ProductCreateWithoutModelInput {
   modelHeight: Int
   retailPrice: Int
   status: ProductStatus
-  seasonDeprecated: String
+  season: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -13355,7 +13355,7 @@ input ProductCreateWithoutStatusChangesInput {
   modelHeight: Int
   retailPrice: Int
   status: ProductStatus
-  seasonDeprecated: String
+  season: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -13384,7 +13384,7 @@ input ProductCreateWithoutTagsInput {
   modelHeight: Int
   retailPrice: Int
   status: ProductStatus
-  seasonDeprecated: String
+  season: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -13413,7 +13413,7 @@ input ProductCreateWithoutVariantsInput {
   modelHeight: Int
   retailPrice: Int
   status: ProductStatus
-  seasonDeprecated: String
+  season: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -14274,8 +14274,8 @@ enum ProductOrderByInput {
   retailPrice_DESC
   status_ASC
   status_DESC
-  seasonDeprecated_ASC
-  seasonDeprecated_DESC
+  season_ASC
+  season_DESC
   architecture_ASC
   architecture_DESC
   photographyStatus_ASC
@@ -14300,7 +14300,7 @@ type ProductPreviousValues {
   innerMaterials: [String!]!
   outerMaterials: [String!]!
   status: ProductStatus
-  seasonDeprecated: String
+  season: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -15137,46 +15137,46 @@ input ProductScalarWhereInput {
 
   """All values that are not contained in given list."""
   status_not_in: [ProductStatus!]
-  seasonDeprecated: String
+  season: String
 
   """All values that are not equal to given value."""
-  seasonDeprecated_not: String
+  season_not: String
 
   """All values that are contained in given list."""
-  seasonDeprecated_in: [String!]
+  season_in: [String!]
 
   """All values that are not contained in given list."""
-  seasonDeprecated_not_in: [String!]
+  season_not_in: [String!]
 
   """All values less than the given value."""
-  seasonDeprecated_lt: String
+  season_lt: String
 
   """All values less than or equal the given value."""
-  seasonDeprecated_lte: String
+  season_lte: String
 
   """All values greater than the given value."""
-  seasonDeprecated_gt: String
+  season_gt: String
 
   """All values greater than or equal the given value."""
-  seasonDeprecated_gte: String
+  season_gte: String
 
   """All values containing the given string."""
-  seasonDeprecated_contains: String
+  season_contains: String
 
   """All values not containing the given string."""
-  seasonDeprecated_not_contains: String
+  season_not_contains: String
 
   """All values starting with the given string."""
-  seasonDeprecated_starts_with: String
+  season_starts_with: String
 
   """All values not starting with the given string."""
-  seasonDeprecated_not_starts_with: String
+  season_not_starts_with: String
 
   """All values ending with the given string."""
-  seasonDeprecated_ends_with: String
+  season_ends_with: String
 
   """All values not ending with the given string."""
-  seasonDeprecated_not_ends_with: String
+  season_not_ends_with: String
   architecture: ProductArchitecture
 
   """All values that are not equal to given value."""
@@ -15713,7 +15713,7 @@ input ProductUpdateDataInput {
   modelHeight: Int
   retailPrice: Int
   status: ProductStatus
-  seasonDeprecated: String
+  season: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -15746,7 +15746,7 @@ input ProductUpdateInput {
   modelHeight: Int
   retailPrice: Int
   status: ProductStatus
-  seasonDeprecated: String
+  season: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -15775,7 +15775,7 @@ input ProductUpdateManyDataInput {
   modelHeight: Int
   retailPrice: Int
   status: ProductStatus
-  seasonDeprecated: String
+  season: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -15804,7 +15804,7 @@ input ProductUpdateManyMutationInput {
   modelHeight: Int
   retailPrice: Int
   status: ProductStatus
-  seasonDeprecated: String
+  season: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -15911,7 +15911,7 @@ input ProductUpdateWithoutBrandDataInput {
   modelHeight: Int
   retailPrice: Int
   status: ProductStatus
-  seasonDeprecated: String
+  season: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -15939,7 +15939,7 @@ input ProductUpdateWithoutCategoryDataInput {
   modelHeight: Int
   retailPrice: Int
   status: ProductStatus
-  seasonDeprecated: String
+  season: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -15967,7 +15967,7 @@ input ProductUpdateWithoutMaterialCategoryDataInput {
   modelHeight: Int
   retailPrice: Int
   status: ProductStatus
-  seasonDeprecated: String
+  season: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -15995,7 +15995,7 @@ input ProductUpdateWithoutModelDataInput {
   modelHeight: Int
   retailPrice: Int
   status: ProductStatus
-  seasonDeprecated: String
+  season: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -16023,7 +16023,7 @@ input ProductUpdateWithoutStatusChangesDataInput {
   modelHeight: Int
   retailPrice: Int
   status: ProductStatus
-  seasonDeprecated: String
+  season: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -16051,7 +16051,7 @@ input ProductUpdateWithoutTagsDataInput {
   modelHeight: Int
   retailPrice: Int
   status: ProductStatus
-  seasonDeprecated: String
+  season: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -16079,7 +16079,7 @@ input ProductUpdateWithoutVariantsDataInput {
   modelHeight: Int
   retailPrice: Int
   status: ProductStatus
-  seasonDeprecated: String
+  season: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -18461,46 +18461,46 @@ input ProductWhereInput {
 
   """All values that are not contained in given list."""
   status_not_in: [ProductStatus!]
-  seasonDeprecated: String
+  season: String
 
   """All values that are not equal to given value."""
-  seasonDeprecated_not: String
+  season_not: String
 
   """All values that are contained in given list."""
-  seasonDeprecated_in: [String!]
+  season_in: [String!]
 
   """All values that are not contained in given list."""
-  seasonDeprecated_not_in: [String!]
+  season_not_in: [String!]
 
   """All values less than the given value."""
-  seasonDeprecated_lt: String
+  season_lt: String
 
   """All values less than or equal the given value."""
-  seasonDeprecated_lte: String
+  season_lte: String
 
   """All values greater than the given value."""
-  seasonDeprecated_gt: String
+  season_gt: String
 
   """All values greater than or equal the given value."""
-  seasonDeprecated_gte: String
+  season_gte: String
 
   """All values containing the given string."""
-  seasonDeprecated_contains: String
+  season_contains: String
 
   """All values not containing the given string."""
-  seasonDeprecated_not_contains: String
+  season_not_contains: String
 
   """All values starting with the given string."""
-  seasonDeprecated_starts_with: String
+  season_starts_with: String
 
   """All values not starting with the given string."""
-  seasonDeprecated_not_starts_with: String
+  season_not_starts_with: String
 
   """All values ending with the given string."""
-  seasonDeprecated_ends_with: String
+  season_ends_with: String
 
   """All values not ending with the given string."""
-  seasonDeprecated_not_ends_with: String
+  season_not_ends_with: String
   architecture: ProductArchitecture
 
   """All values that are not equal to given value."""
@@ -27278,8 +27278,8 @@ export type ProductOrderByInput =   'id_ASC' |
   'retailPrice_DESC' |
   'status_ASC' |
   'status_DESC' |
-  'seasonDeprecated_ASC' |
-  'seasonDeprecated_DESC' |
+  'season_ASC' |
+  'season_DESC' |
   'architecture_ASC' |
   'architecture_DESC' |
   'photographyStatus_ASC' |
@@ -32942,7 +32942,7 @@ export interface ProductCreateInput {
   modelHeight?: Int | null
   retailPrice?: Int | null
   status?: ProductStatus | null
-  seasonDeprecated?: String | null
+  season?: String | null
   architecture?: ProductArchitecture | null
   photographyStatus?: PhotographyStatus | null
   publishedAt?: DateTime | null
@@ -33021,7 +33021,7 @@ export interface ProductCreateWithoutBrandInput {
   modelHeight?: Int | null
   retailPrice?: Int | null
   status?: ProductStatus | null
-  seasonDeprecated?: String | null
+  season?: String | null
   architecture?: ProductArchitecture | null
   photographyStatus?: PhotographyStatus | null
   publishedAt?: DateTime | null
@@ -33050,7 +33050,7 @@ export interface ProductCreateWithoutCategoryInput {
   modelHeight?: Int | null
   retailPrice?: Int | null
   status?: ProductStatus | null
-  seasonDeprecated?: String | null
+  season?: String | null
   architecture?: ProductArchitecture | null
   photographyStatus?: PhotographyStatus | null
   publishedAt?: DateTime | null
@@ -33079,7 +33079,7 @@ export interface ProductCreateWithoutMaterialCategoryInput {
   modelHeight?: Int | null
   retailPrice?: Int | null
   status?: ProductStatus | null
-  seasonDeprecated?: String | null
+  season?: String | null
   architecture?: ProductArchitecture | null
   photographyStatus?: PhotographyStatus | null
   publishedAt?: DateTime | null
@@ -33108,7 +33108,7 @@ export interface ProductCreateWithoutModelInput {
   modelHeight?: Int | null
   retailPrice?: Int | null
   status?: ProductStatus | null
-  seasonDeprecated?: String | null
+  season?: String | null
   architecture?: ProductArchitecture | null
   photographyStatus?: PhotographyStatus | null
   publishedAt?: DateTime | null
@@ -33137,7 +33137,7 @@ export interface ProductCreateWithoutStatusChangesInput {
   modelHeight?: Int | null
   retailPrice?: Int | null
   status?: ProductStatus | null
-  seasonDeprecated?: String | null
+  season?: String | null
   architecture?: ProductArchitecture | null
   photographyStatus?: PhotographyStatus | null
   publishedAt?: DateTime | null
@@ -33166,7 +33166,7 @@ export interface ProductCreateWithoutTagsInput {
   modelHeight?: Int | null
   retailPrice?: Int | null
   status?: ProductStatus | null
-  seasonDeprecated?: String | null
+  season?: String | null
   architecture?: ProductArchitecture | null
   photographyStatus?: PhotographyStatus | null
   publishedAt?: DateTime | null
@@ -33195,7 +33195,7 @@ export interface ProductCreateWithoutVariantsInput {
   modelHeight?: Int | null
   retailPrice?: Int | null
   status?: ProductStatus | null
-  seasonDeprecated?: String | null
+  season?: String | null
   architecture?: ProductArchitecture | null
   photographyStatus?: PhotographyStatus | null
   publishedAt?: DateTime | null
@@ -33879,20 +33879,20 @@ export interface ProductScalarWhereInput {
   status_not?: ProductStatus | null
   status_in?: ProductStatus[] | ProductStatus | null
   status_not_in?: ProductStatus[] | ProductStatus | null
-  seasonDeprecated?: String | null
-  seasonDeprecated_not?: String | null
-  seasonDeprecated_in?: String[] | String | null
-  seasonDeprecated_not_in?: String[] | String | null
-  seasonDeprecated_lt?: String | null
-  seasonDeprecated_lte?: String | null
-  seasonDeprecated_gt?: String | null
-  seasonDeprecated_gte?: String | null
-  seasonDeprecated_contains?: String | null
-  seasonDeprecated_not_contains?: String | null
-  seasonDeprecated_starts_with?: String | null
-  seasonDeprecated_not_starts_with?: String | null
-  seasonDeprecated_ends_with?: String | null
-  seasonDeprecated_not_ends_with?: String | null
+  season?: String | null
+  season_not?: String | null
+  season_in?: String[] | String | null
+  season_not_in?: String[] | String | null
+  season_lt?: String | null
+  season_lte?: String | null
+  season_gt?: String | null
+  season_gte?: String | null
+  season_contains?: String | null
+  season_not_contains?: String | null
+  season_starts_with?: String | null
+  season_not_starts_with?: String | null
+  season_ends_with?: String | null
+  season_not_ends_with?: String | null
   architecture?: ProductArchitecture | null
   architecture_not?: ProductArchitecture | null
   architecture_in?: ProductArchitecture[] | ProductArchitecture | null
@@ -34118,7 +34118,7 @@ export interface ProductUpdateDataInput {
   modelHeight?: Int | null
   retailPrice?: Int | null
   status?: ProductStatus | null
-  seasonDeprecated?: String | null
+  season?: String | null
   architecture?: ProductArchitecture | null
   photographyStatus?: PhotographyStatus | null
   publishedAt?: DateTime | null
@@ -34151,7 +34151,7 @@ export interface ProductUpdateInput {
   modelHeight?: Int | null
   retailPrice?: Int | null
   status?: ProductStatus | null
-  seasonDeprecated?: String | null
+  season?: String | null
   architecture?: ProductArchitecture | null
   photographyStatus?: PhotographyStatus | null
   publishedAt?: DateTime | null
@@ -34180,7 +34180,7 @@ export interface ProductUpdateManyDataInput {
   modelHeight?: Int | null
   retailPrice?: Int | null
   status?: ProductStatus | null
-  seasonDeprecated?: String | null
+  season?: String | null
   architecture?: ProductArchitecture | null
   photographyStatus?: PhotographyStatus | null
   publishedAt?: DateTime | null
@@ -34209,7 +34209,7 @@ export interface ProductUpdateManyMutationInput {
   modelHeight?: Int | null
   retailPrice?: Int | null
   status?: ProductStatus | null
-  seasonDeprecated?: String | null
+  season?: String | null
   architecture?: ProductArchitecture | null
   photographyStatus?: PhotographyStatus | null
   publishedAt?: DateTime | null
@@ -34316,7 +34316,7 @@ export interface ProductUpdateWithoutBrandDataInput {
   modelHeight?: Int | null
   retailPrice?: Int | null
   status?: ProductStatus | null
-  seasonDeprecated?: String | null
+  season?: String | null
   architecture?: ProductArchitecture | null
   photographyStatus?: PhotographyStatus | null
   publishedAt?: DateTime | null
@@ -34344,7 +34344,7 @@ export interface ProductUpdateWithoutCategoryDataInput {
   modelHeight?: Int | null
   retailPrice?: Int | null
   status?: ProductStatus | null
-  seasonDeprecated?: String | null
+  season?: String | null
   architecture?: ProductArchitecture | null
   photographyStatus?: PhotographyStatus | null
   publishedAt?: DateTime | null
@@ -34372,7 +34372,7 @@ export interface ProductUpdateWithoutMaterialCategoryDataInput {
   modelHeight?: Int | null
   retailPrice?: Int | null
   status?: ProductStatus | null
-  seasonDeprecated?: String | null
+  season?: String | null
   architecture?: ProductArchitecture | null
   photographyStatus?: PhotographyStatus | null
   publishedAt?: DateTime | null
@@ -34400,7 +34400,7 @@ export interface ProductUpdateWithoutModelDataInput {
   modelHeight?: Int | null
   retailPrice?: Int | null
   status?: ProductStatus | null
-  seasonDeprecated?: String | null
+  season?: String | null
   architecture?: ProductArchitecture | null
   photographyStatus?: PhotographyStatus | null
   publishedAt?: DateTime | null
@@ -34428,7 +34428,7 @@ export interface ProductUpdateWithoutStatusChangesDataInput {
   modelHeight?: Int | null
   retailPrice?: Int | null
   status?: ProductStatus | null
-  seasonDeprecated?: String | null
+  season?: String | null
   architecture?: ProductArchitecture | null
   photographyStatus?: PhotographyStatus | null
   publishedAt?: DateTime | null
@@ -34456,7 +34456,7 @@ export interface ProductUpdateWithoutTagsDataInput {
   modelHeight?: Int | null
   retailPrice?: Int | null
   status?: ProductStatus | null
-  seasonDeprecated?: String | null
+  season?: String | null
   architecture?: ProductArchitecture | null
   photographyStatus?: PhotographyStatus | null
   publishedAt?: DateTime | null
@@ -34484,7 +34484,7 @@ export interface ProductUpdateWithoutVariantsDataInput {
   modelHeight?: Int | null
   retailPrice?: Int | null
   status?: ProductStatus | null
-  seasonDeprecated?: String | null
+  season?: String | null
   architecture?: ProductArchitecture | null
   photographyStatus?: PhotographyStatus | null
   publishedAt?: DateTime | null
@@ -35677,20 +35677,20 @@ export interface ProductWhereInput {
   status_not?: ProductStatus | null
   status_in?: ProductStatus[] | ProductStatus | null
   status_not_in?: ProductStatus[] | ProductStatus | null
-  seasonDeprecated?: String | null
-  seasonDeprecated_not?: String | null
-  seasonDeprecated_in?: String[] | String | null
-  seasonDeprecated_not_in?: String[] | String | null
-  seasonDeprecated_lt?: String | null
-  seasonDeprecated_lte?: String | null
-  seasonDeprecated_gt?: String | null
-  seasonDeprecated_gte?: String | null
-  seasonDeprecated_contains?: String | null
-  seasonDeprecated_not_contains?: String | null
-  seasonDeprecated_starts_with?: String | null
-  seasonDeprecated_not_starts_with?: String | null
-  seasonDeprecated_ends_with?: String | null
-  seasonDeprecated_not_ends_with?: String | null
+  season?: String | null
+  season_not?: String | null
+  season_in?: String[] | String | null
+  season_not_in?: String[] | String | null
+  season_lt?: String | null
+  season_lte?: String | null
+  season_gt?: String | null
+  season_gte?: String | null
+  season_contains?: String | null
+  season_not_contains?: String | null
+  season_starts_with?: String | null
+  season_not_starts_with?: String | null
+  season_ends_with?: String | null
+  season_not_ends_with?: String | null
   architecture?: ProductArchitecture | null
   architecture_not?: ProductArchitecture | null
   architecture_in?: ProductArchitecture[] | ProductArchitecture | null
@@ -40713,7 +40713,7 @@ export interface Product extends Node {
   variants?: Array<ProductVariant> | null
   status?: ProductStatus | null
   statusChanges?: Array<ProductStatusChange> | null
-  seasonDeprecated?: String | null
+  season?: String | null
   architecture?: ProductArchitecture | null
   photographyStatus?: PhotographyStatus | null
   publishedAt?: DateTime | null
@@ -40867,7 +40867,7 @@ export interface ProductPreviousValues {
   innerMaterials: Array<String>
   outerMaterials: Array<String>
   status?: ProductStatus | null
-  seasonDeprecated?: String | null
+  season?: String | null
   architecture?: ProductArchitecture | null
   photographyStatus?: PhotographyStatus | null
   publishedAt?: DateTime | null

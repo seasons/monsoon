@@ -296,7 +296,7 @@ export class PaymentService {
     let newStatus = "Active" as CustomerStatus
 
     try {
-      const response = await chargebee.subscription
+      await chargebee.subscription
         .resume(subscriptionId, {
           resume_option: resumeDate,
           unpaid_invoices_handling: "schedule_payment_collection",
