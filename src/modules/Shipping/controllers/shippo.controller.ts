@@ -8,7 +8,6 @@ import {
   ReservationStatus,
 } from "@app/prisma"
 import { PackageTransitEventSubStatus } from "@app/prisma"
-import { PackageTransitEvent } from "@app/prisma/prisma.binding"
 import { PrismaService } from "@app/prisma/prisma.service"
 import { Body, Controller, Logger, Post } from "@nestjs/common"
 import casify from "camelcase-keys"
@@ -79,7 +78,7 @@ export class ShippoController {
       ? upperFirst(camelCase(trackingStatus?.substatus?.code))
       : "Other") as PackageTransitEventSubStatus
 
-    let packageTransitEvent: PackageTransitEvent
+    let packageTransitEvent: any
 
     switch (event) {
       case ShippoEventType.TrackUpdated:
