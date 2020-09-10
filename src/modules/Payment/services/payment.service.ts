@@ -302,8 +302,6 @@ export class PaymentService {
           unpaid_invoices_handling: "schedule_payment_collection",
         })
         .request()
-
-      console.log("response", response)
     } catch (e) {
       if (
         e?.api_error_code &&

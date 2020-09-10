@@ -2545,8 +2545,6 @@ export type ProductOrderByInput =
   | "status_DESC"
   | "season_ASC"
   | "season_DESC"
-  | "seasonDeprecated_ASC"
-  | "seasonDeprecated_DESC"
   | "architecture_ASC"
   | "architecture_DESC"
   | "photographyStatus_ASC"
@@ -4662,20 +4660,6 @@ export interface ProductWhereInput {
   season_not_starts_with?: Maybe<String>;
   season_ends_with?: Maybe<String>;
   season_not_ends_with?: Maybe<String>;
-  seasonDeprecated?: Maybe<String>;
-  seasonDeprecated_not?: Maybe<String>;
-  seasonDeprecated_in?: Maybe<String[] | String>;
-  seasonDeprecated_not_in?: Maybe<String[] | String>;
-  seasonDeprecated_lt?: Maybe<String>;
-  seasonDeprecated_lte?: Maybe<String>;
-  seasonDeprecated_gt?: Maybe<String>;
-  seasonDeprecated_gte?: Maybe<String>;
-  seasonDeprecated_contains?: Maybe<String>;
-  seasonDeprecated_not_contains?: Maybe<String>;
-  seasonDeprecated_starts_with?: Maybe<String>;
-  seasonDeprecated_not_starts_with?: Maybe<String>;
-  seasonDeprecated_ends_with?: Maybe<String>;
-  seasonDeprecated_not_ends_with?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
   architecture_not?: Maybe<ProductArchitecture>;
   architecture_in?: Maybe<ProductArchitecture[] | ProductArchitecture>;
@@ -7727,7 +7711,6 @@ export interface ProductCreateWithoutVariantsInput {
   status?: Maybe<ProductStatus>;
   statusChanges?: Maybe<ProductStatusChangeCreateManyWithoutProductInput>;
   season?: Maybe<String>;
-  seasonDeprecated?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
   publishedAt?: Maybe<DateTimeInput>;
@@ -7823,7 +7806,6 @@ export interface ProductCreateWithoutCategoryInput {
   status?: Maybe<ProductStatus>;
   statusChanges?: Maybe<ProductStatusChangeCreateManyWithoutProductInput>;
   season?: Maybe<String>;
-  seasonDeprecated?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
   publishedAt?: Maybe<DateTimeInput>;
@@ -8124,7 +8106,6 @@ export interface ProductCreateInput {
   status?: Maybe<ProductStatus>;
   statusChanges?: Maybe<ProductStatusChangeCreateManyWithoutProductInput>;
   season?: Maybe<String>;
-  seasonDeprecated?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
   publishedAt?: Maybe<DateTimeInput>;
@@ -9579,7 +9560,6 @@ export interface ProductUpdateWithoutVariantsDataInput {
   status?: Maybe<ProductStatus>;
   statusChanges?: Maybe<ProductStatusChangeUpdateManyWithoutProductInput>;
   season?: Maybe<String>;
-  seasonDeprecated?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
   publishedAt?: Maybe<DateTimeInput>;
@@ -9855,7 +9835,6 @@ export interface ProductUpdateWithoutCategoryDataInput {
   status?: Maybe<ProductStatus>;
   statusChanges?: Maybe<ProductStatusChangeUpdateManyWithoutProductInput>;
   season?: Maybe<String>;
-  seasonDeprecated?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
   publishedAt?: Maybe<DateTimeInput>;
@@ -11168,20 +11147,6 @@ export interface ProductScalarWhereInput {
   season_not_starts_with?: Maybe<String>;
   season_ends_with?: Maybe<String>;
   season_not_ends_with?: Maybe<String>;
-  seasonDeprecated?: Maybe<String>;
-  seasonDeprecated_not?: Maybe<String>;
-  seasonDeprecated_in?: Maybe<String[] | String>;
-  seasonDeprecated_not_in?: Maybe<String[] | String>;
-  seasonDeprecated_lt?: Maybe<String>;
-  seasonDeprecated_lte?: Maybe<String>;
-  seasonDeprecated_gt?: Maybe<String>;
-  seasonDeprecated_gte?: Maybe<String>;
-  seasonDeprecated_contains?: Maybe<String>;
-  seasonDeprecated_not_contains?: Maybe<String>;
-  seasonDeprecated_starts_with?: Maybe<String>;
-  seasonDeprecated_not_starts_with?: Maybe<String>;
-  seasonDeprecated_ends_with?: Maybe<String>;
-  seasonDeprecated_not_ends_with?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
   architecture_not?: Maybe<ProductArchitecture>;
   architecture_in?: Maybe<ProductArchitecture[] | ProductArchitecture>;
@@ -11236,7 +11201,6 @@ export interface ProductUpdateManyDataInput {
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
   status?: Maybe<ProductStatus>;
   season?: Maybe<String>;
-  seasonDeprecated?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
   publishedAt?: Maybe<DateTimeInput>;
@@ -11411,7 +11375,6 @@ export interface ProductUpdateDataInput {
   status?: Maybe<ProductStatus>;
   statusChanges?: Maybe<ProductStatusChangeUpdateManyWithoutProductInput>;
   season?: Maybe<String>;
-  seasonDeprecated?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
   publishedAt?: Maybe<DateTimeInput>;
@@ -12863,7 +12826,6 @@ export interface ProductCreateWithoutBrandInput {
   status?: Maybe<ProductStatus>;
   statusChanges?: Maybe<ProductStatusChangeCreateManyWithoutProductInput>;
   season?: Maybe<String>;
-  seasonDeprecated?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
   publishedAt?: Maybe<DateTimeInput>;
@@ -12937,7 +12899,6 @@ export interface ProductUpdateWithoutBrandDataInput {
   status?: Maybe<ProductStatus>;
   statusChanges?: Maybe<ProductStatusChangeUpdateManyWithoutProductInput>;
   season?: Maybe<String>;
-  seasonDeprecated?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
   publishedAt?: Maybe<DateTimeInput>;
@@ -13803,7 +13764,6 @@ export interface ProductUpdateInput {
   status?: Maybe<ProductStatus>;
   statusChanges?: Maybe<ProductStatusChangeUpdateManyWithoutProductInput>;
   season?: Maybe<String>;
-  seasonDeprecated?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
   publishedAt?: Maybe<DateTimeInput>;
@@ -13821,7 +13781,6 @@ export interface ProductUpdateManyMutationInput {
   outerMaterials?: Maybe<ProductUpdateouterMaterialsInput>;
   status?: Maybe<ProductStatus>;
   season?: Maybe<String>;
-  seasonDeprecated?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
   publishedAt?: Maybe<DateTimeInput>;
@@ -13875,7 +13834,6 @@ export interface ProductCreateWithoutMaterialCategoryInput {
   status?: Maybe<ProductStatus>;
   statusChanges?: Maybe<ProductStatusChangeCreateManyWithoutProductInput>;
   season?: Maybe<String>;
-  seasonDeprecated?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
   publishedAt?: Maybe<DateTimeInput>;
@@ -13940,7 +13898,6 @@ export interface ProductUpdateWithoutMaterialCategoryDataInput {
   status?: Maybe<ProductStatus>;
   statusChanges?: Maybe<ProductStatusChangeUpdateManyWithoutProductInput>;
   season?: Maybe<String>;
-  seasonDeprecated?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
   publishedAt?: Maybe<DateTimeInput>;
@@ -13997,7 +13954,6 @@ export interface ProductCreateWithoutModelInput {
   status?: Maybe<ProductStatus>;
   statusChanges?: Maybe<ProductStatusChangeCreateManyWithoutProductInput>;
   season?: Maybe<String>;
-  seasonDeprecated?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
   publishedAt?: Maybe<DateTimeInput>;
@@ -14062,7 +14018,6 @@ export interface ProductUpdateWithoutModelDataInput {
   status?: Maybe<ProductStatus>;
   statusChanges?: Maybe<ProductStatusChangeUpdateManyWithoutProductInput>;
   season?: Maybe<String>;
-  seasonDeprecated?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
   publishedAt?: Maybe<DateTimeInput>;
@@ -14167,7 +14122,6 @@ export interface ProductCreateWithoutStatusChangesInput {
   variants?: Maybe<ProductVariantCreateManyWithoutProductInput>;
   status?: Maybe<ProductStatus>;
   season?: Maybe<String>;
-  seasonDeprecated?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
   publishedAt?: Maybe<DateTimeInput>;
@@ -14211,7 +14165,6 @@ export interface ProductUpdateWithoutStatusChangesDataInput {
   variants?: Maybe<ProductVariantUpdateManyWithoutProductInput>;
   status?: Maybe<ProductStatus>;
   season?: Maybe<String>;
-  seasonDeprecated?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
   publishedAt?: Maybe<DateTimeInput>;
@@ -15025,7 +14978,6 @@ export interface ProductCreateWithoutTagsInput {
   status?: Maybe<ProductStatus>;
   statusChanges?: Maybe<ProductStatusChangeCreateManyWithoutProductInput>;
   season?: Maybe<String>;
-  seasonDeprecated?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
   publishedAt?: Maybe<DateTimeInput>;
@@ -15090,7 +15042,6 @@ export interface ProductUpdateWithoutTagsDataInput {
   status?: Maybe<ProductStatus>;
   statusChanges?: Maybe<ProductStatusChangeUpdateManyWithoutProductInput>;
   season?: Maybe<String>;
-  seasonDeprecated?: Maybe<String>;
   architecture?: Maybe<ProductArchitecture>;
   photographyStatus?: Maybe<PhotographyStatus>;
   publishedAt?: Maybe<DateTimeInput>;
@@ -17598,7 +17549,6 @@ export interface Product {
   outerMaterials: String[];
   status?: ProductStatus;
   season?: String;
-  seasonDeprecated?: String;
   architecture?: ProductArchitecture;
   photographyStatus?: PhotographyStatus;
   publishedAt?: DateTimeOutput;
@@ -17671,7 +17621,6 @@ export interface ProductPromise extends Promise<Product>, Fragmentable {
     last?: Int;
   }) => T;
   season: () => Promise<String>;
-  seasonDeprecated: () => Promise<String>;
   architecture: () => Promise<ProductArchitecture>;
   photographyStatus: () => Promise<PhotographyStatus>;
   publishedAt: () => Promise<DateTimeOutput>;
@@ -17748,7 +17697,6 @@ export interface ProductSubscription
     last?: Int;
   }) => T;
   season: () => Promise<AsyncIterator<String>>;
-  seasonDeprecated: () => Promise<AsyncIterator<String>>;
   architecture: () => Promise<AsyncIterator<ProductArchitecture>>;
   photographyStatus: () => Promise<AsyncIterator<PhotographyStatus>>;
   publishedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
@@ -17823,7 +17771,6 @@ export interface ProductNullablePromise
     last?: Int;
   }) => T;
   season: () => Promise<String>;
-  seasonDeprecated: () => Promise<String>;
   architecture: () => Promise<ProductArchitecture>;
   photographyStatus: () => Promise<PhotographyStatus>;
   publishedAt: () => Promise<DateTimeOutput>;
@@ -24230,7 +24177,6 @@ export interface ProductPreviousValues {
   outerMaterials: String[];
   status?: ProductStatus;
   season?: String;
-  seasonDeprecated?: String;
   architecture?: ProductArchitecture;
   photographyStatus?: PhotographyStatus;
   publishedAt?: DateTimeOutput;
@@ -24253,7 +24199,6 @@ export interface ProductPreviousValuesPromise
   outerMaterials: () => Promise<String[]>;
   status: () => Promise<ProductStatus>;
   season: () => Promise<String>;
-  seasonDeprecated: () => Promise<String>;
   architecture: () => Promise<ProductArchitecture>;
   photographyStatus: () => Promise<PhotographyStatus>;
   publishedAt: () => Promise<DateTimeOutput>;
@@ -24276,7 +24221,6 @@ export interface ProductPreviousValuesSubscription
   outerMaterials: () => Promise<AsyncIterator<String[]>>;
   status: () => Promise<AsyncIterator<ProductStatus>>;
   season: () => Promise<AsyncIterator<String>>;
-  seasonDeprecated: () => Promise<AsyncIterator<String>>;
   architecture: () => Promise<AsyncIterator<ProductArchitecture>>;
   photographyStatus: () => Promise<AsyncIterator<PhotographyStatus>>;
   publishedAt: () => Promise<AsyncIterator<DateTimeOutput>>;

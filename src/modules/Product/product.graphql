@@ -174,7 +174,7 @@ type Product {
   photographyStatus: PhotographyStatus
   retailPrice: Int
   color: Color!
-  seasonDeprecated: String
+  season: String
   secondaryColor: Color
   tags: [Tag!]!
   images(
