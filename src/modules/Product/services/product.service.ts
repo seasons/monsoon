@@ -207,31 +207,9 @@ export class ProductService {
       color.name
     )
 
-    const {
-      wearableSeasons,
-      internalSeasonSeasonCode,
-      internalSeasonYear,
-      vendorSeasonSeasonCode,
-      vendorSeasonYear,
-    } = input
-
-    let productSeason
-
-    if (
-      wearableSeasons ||
-      internalSeasonSeasonCode ||
-      internalSeasonYear ||
-      vendorSeasonSeasonCode ||
-      vendorSeasonYear
-    ) {
-      productSeason = await this.upsertProductSeason(
-        wearableSeasons,
-        internalSeasonSeasonCode,
-        internalSeasonYear,
-        vendorSeasonSeasonCode,
-        vendorSeasonYear
-      )
-    }
+    const { season } = input
+    const productSeason =
+      season && (await this.upsertProductSeason(season, slug))
 
     // Store images and get their record ids to connect to the product
     const imageDatas: ImageData[] = await Promise.all(
@@ -497,11 +475,7 @@ export class ProductService {
       status,
       variants,
       photographyStatus,
-      wearableSeasons,
-      internalSeasonSeasonCode,
-      internalSeasonYear,
-      vendorSeasonSeasonCode,
-      vendorSeasonYear,
+      season,
       ...updateData
     } = data
     let functionIDs
@@ -565,20 +539,8 @@ export class ProductService {
       })
       modelSizeID = modelSize.id
     }
-    if (
-      wearableSeasons ||
-      internalSeasonSeasonCode ||
-      internalSeasonYear ||
-      vendorSeasonSeasonCode ||
-      vendorSeasonYear
-    ) {
-      productSeason = await this.upsertProductSeason(
-        wearableSeasons,
-        internalSeasonSeasonCode,
-        internalSeasonYear,
-        vendorSeasonSeasonCode,
-        vendorSeasonYear
-      )
+    if (season) {
+      productSeason = await this.upsertProductSeason(season, product.slug)
     }
     if (images) {
       // Form appropriate image names
@@ -769,25 +731,32 @@ export class ProductService {
       .map((func: ProductFunction) => ({ id: func.id }))
   }
 
-  private async upsertProductSeason(
-    wearableSeasons,
-    internalSeasonSeasonCode,
-    internalSeasonYear,
-    vendorSeasonSeasonCode,
-    vendorSeasonYear
-  ) {
+  private async upsertProductSeason(season, productSlug) {
     let internalSeason
     let vendorSeason
+    const {
+      wearableSeasons,
+      internalSeasonSeasonCode,
+      internalSeasonYear,
+      vendorSeasonSeasonCode,
+      vendorSeasonYear,
+    } = season
     if (internalSeasonSeasonCode || internalSeasonYear) {
+      let where
+      if (internalSeasonSeasonCode && internalSeasonYear) {
+        where = {
+          AND: [
+            { year: internalSeasonYear },
+            { seasonCode: internalSeasonSeasonCode },
+          ],
+        }
+      } else {
+        throw new Error("You must provide both a season and a year")
+      }
       const existingSeason = head(
         await this.prisma.binding.query.seasons(
           {
-            where: {
-              AND: [
-                { year: internalSeasonYear },
-                { seasonCode: internalSeasonSeasonCode },
-              ],
-            },
+            where,
           },
           `{
             id
@@ -797,36 +766,36 @@ export class ProductService {
       if (existingSeason?.id) {
         internalSeason = existingSeason
       } else {
-        internalSeason = await this.prisma.client.upsertSeason({
-          where: { id: "" },
-          create: {
-            year: internalSeasonYear,
-            seasonCode: internalSeasonSeasonCode,
-          },
-          update: {
-            year: internalSeasonYear,
-            seasonCode: internalSeasonSeasonCode,
-          },
+        internalSeason = await this.prisma.client.createSeason({
+          year: internalSeasonYear,
+          seasonCode: internalSeasonSeasonCode,
         })
       }
     }
 
     if (vendorSeasonSeasonCode || vendorSeasonYear) {
+      let where
+      if (vendorSeasonSeasonCode && vendorSeasonYear) {
+        where = {
+          AND: [
+            { year: vendorSeasonYear },
+            { seasonCode: vendorSeasonSeasonCode },
+          ],
+        }
+      } else {
+        throw new Error("You must provide both a season and a year")
+      }
       const existingSeason = head(
         await this.prisma.binding.query.seasons(
           {
-            where: {
-              AND: [
-                { year: vendorSeasonYear },
-                { seasonCode: vendorSeasonSeasonCode },
-              ],
-            },
+            where,
           },
           `{
             id
         }`
         )
       ) as any
+
       if (existingSeason?.id) {
         vendorSeason = existingSeason
       } else {
@@ -844,7 +813,19 @@ export class ProductService {
       }
     }
 
-    return await this.prisma.client.createProductSeason({
+    const product = await this.prisma.binding.query.product(
+      {
+        where: { slug: productSlug },
+      },
+      `{
+        id
+        season {
+          id
+        }
+      }`
+    )
+
+    const upsertDate = {
       internalSeason: {
         connect: { id: internalSeason?.id },
       },
@@ -852,6 +833,12 @@ export class ProductService {
         connect: { id: vendorSeason?.id },
       },
       wearableSeasons: { set: wearableSeasons },
+    }
+
+    return await this.prisma.client.upsertProductSeason({
+      where: { id: product?.season?.id || "" },
+      create: upsertDate,
+      update: upsertDate,
     })
   }
 
