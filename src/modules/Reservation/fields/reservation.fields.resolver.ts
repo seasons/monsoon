@@ -1,3 +1,4 @@
+import { InterpretLogsService } from "@app/modules/Admin/services/interpretLogs.service"
 import { ImageService } from "@modules/Image"
 import { ImageSize } from "@modules/Image/image.types"
 import { Args, Info, Parent, ResolveField, Resolver } from "@nestjs/graphql"
@@ -10,7 +11,8 @@ export class ReservationFieldsResolver {
   constructor(
     private readonly reservationService: ReservationUtilsService,
     private readonly imageService: ImageService,
-    private readonly prisma: PrismaService
+    private readonly prisma: PrismaService,
+    private readonly interpretLogs: InterpretLogsService
   ) {}
 
   @ResolveField()
@@ -23,13 +25,15 @@ export class ReservationFieldsResolver {
 
   @ResolveField()
   async adminLogs(@Parent() reservation, @Info() info) {
-    return this.prisma.binding.query.adminActionLogs(
-      {
-        where: {
-          AND: [{ entityId: reservation.id }, { tableName: "Reservation" }],
+    return this.interpretLogs.interpretReservationLogs(
+      await this.prisma.binding.query.adminActionLogs(
+        {
+          where: {
+            AND: [{ entityId: reservation.id }, { tableName: "Reservation" }],
+          },
         },
-      },
-      info
+        info
+      )
     )
   }
 

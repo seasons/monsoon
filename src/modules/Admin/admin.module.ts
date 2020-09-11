@@ -4,6 +4,7 @@ import { APP_INTERCEPTOR } from "@nestjs/core"
 
 import { AnalyticsModule } from "../Analytics/analytics.module"
 import { ActiveAdminInterceptor } from "./interceptors/ActiveAdminInterceptor"
+import { InterpretLogsService } from "./services/interpretLogs.service"
 
 @Module({
   imports: [PrismaModule, AnalyticsModule],
@@ -12,6 +13,8 @@ import { ActiveAdminInterceptor } from "./interceptors/ActiveAdminInterceptor"
       provide: APP_INTERCEPTOR,
       useClass: ActiveAdminInterceptor,
     },
+    InterpretLogsService,
   ],
+  exports: [InterpretLogsService],
 })
 export class AdminModule {}
