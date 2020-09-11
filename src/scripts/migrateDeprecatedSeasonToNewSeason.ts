@@ -55,16 +55,9 @@ const createSeasons = async () => {
 
   for (const year of years) {
     for (const season of seasons) {
-      await ps.client.upsertSeason({
-        where: { id: "" },
-        create: {
-          year,
-          seasonCode: season,
-        },
-        update: {
-          year,
-          seasonCode: season,
-        },
+      await ps.client.createSeason({
+        year,
+        seasonCode: season,
       })
     }
   }
