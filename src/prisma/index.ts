@@ -18715,6 +18715,66 @@ export interface ProductStatusChangeNullablePromise
   updatedAt: () => Promise<DateTimeOutput>;
 }
 
+export interface ProductSeason {
+  id: ID_Output;
+  wearableSeasons: SeasonString[];
+}
+
+export interface ProductSeasonPromise
+  extends Promise<ProductSeason>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  vendorSeason: <T = SeasonPromise>() => T;
+  internalSeason: <T = SeasonPromise>() => T;
+  wearableSeasons: () => Promise<SeasonString[]>;
+}
+
+export interface ProductSeasonSubscription
+  extends Promise<AsyncIterator<ProductSeason>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  vendorSeason: <T = SeasonSubscription>() => T;
+  internalSeason: <T = SeasonSubscription>() => T;
+  wearableSeasons: () => Promise<AsyncIterator<SeasonString[]>>;
+}
+
+export interface ProductSeasonNullablePromise
+  extends Promise<ProductSeason | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  vendorSeason: <T = SeasonPromise>() => T;
+  internalSeason: <T = SeasonPromise>() => T;
+  wearableSeasons: () => Promise<SeasonString[]>;
+}
+
+export interface Season {
+  id: ID_Output;
+  year?: Int;
+  seasonCode?: SeasonCode;
+}
+
+export interface SeasonPromise extends Promise<Season>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  year: () => Promise<Int>;
+  seasonCode: () => Promise<SeasonCode>;
+}
+
+export interface SeasonSubscription
+  extends Promise<AsyncIterator<Season>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  year: () => Promise<AsyncIterator<Int>>;
+  seasonCode: () => Promise<AsyncIterator<SeasonCode>>;
+}
+
+export interface SeasonNullablePromise
+  extends Promise<Season | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  year: () => Promise<Int>;
+  seasonCode: () => Promise<SeasonCode>;
+}
+
 export interface PhysicalProductInventoryStatusChange {
   id: ID_Output;
   old: InventoryStatus;
@@ -18969,74 +19029,6 @@ export interface FitPicReportNullablePromise
 export interface ActiveAdminUserConnection {
   pageInfo: PageInfo;
   edges: ActiveAdminUserEdge[];
-}
-
-export interface ProductSeason {
-  id: ID_Output;
-  wearableSeasons: SeasonString[];
-}
-
-export interface ProductSeasonPromise
-  extends Promise<ProductSeason>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  vendorSeason: <T = SeasonPromise>() => T;
-  internalSeason: <T = SeasonPromise>() => T;
-  wearableSeasons: () => Promise<SeasonString[]>;
-}
-
-export interface ProductSeasonSubscription
-  extends Promise<AsyncIterator<ProductSeason>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  vendorSeason: <T = SeasonSubscription>() => T;
-  internalSeason: <T = SeasonSubscription>() => T;
-  wearableSeasons: () => Promise<AsyncIterator<SeasonString[]>>;
-}
-
-export interface ProductSeasonNullablePromise
-  extends Promise<ProductSeason | null>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  vendorSeason: <T = SeasonPromise>() => T;
-  internalSeason: <T = SeasonPromise>() => T;
-  wearableSeasons: () => Promise<SeasonString[]>;
-}
-
-export interface Season {
-  id: ID_Output;
-  year?: Int;
-  seasonCode?: SeasonCode;
-}
-
-export interface SeasonPromise extends Promise<Season>, Fragmentable {
-  id: () => Promise<ID_Output>;
-  year: () => Promise<Int>;
-  seasonCode: () => Promise<SeasonCode>;
-}
-
-export interface SeasonSubscription
-  extends Promise<AsyncIterator<Season>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  year: () => Promise<AsyncIterator<Int>>;
-  seasonCode: () => Promise<AsyncIterator<SeasonCode>>;
-}
-
-export interface SeasonNullablePromise
-  extends Promise<Season | null>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  year: () => Promise<Int>;
-  seasonCode: () => Promise<SeasonCode>;
-}
-
-export interface PhysicalProductInventoryStatusChange {
-  id: ID_Output;
-  old: InventoryStatus;
-  new: InventoryStatus;
-  createdAt: DateTimeOutput;
-  updatedAt?: DateTimeOutput;
 }
 
 export interface ActiveAdminUserConnectionPromise
