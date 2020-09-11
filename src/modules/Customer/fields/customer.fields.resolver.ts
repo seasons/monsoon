@@ -142,7 +142,6 @@ export class CustomerFieldsResolver {
       return null
     }
     const userId = await prismaLoader.load(customer.id)
-    console.log(`userId in invoices loader: ${userId}`)
     return await this.paymentService.getCustomerInvoiceHistory(
       userId,
       invoicesLoader,
