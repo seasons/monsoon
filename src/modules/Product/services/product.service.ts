@@ -799,16 +799,9 @@ export class ProductService {
       if (existingSeason?.id) {
         vendorSeason = existingSeason
       } else {
-        vendorSeason = await this.prisma.client.upsertSeason({
-          where: { id: "" },
-          create: {
-            year: vendorSeasonYear,
-            seasonCode: vendorSeasonSeasonCode,
-          },
-          update: {
-            year: vendorSeasonYear,
-            seasonCode: vendorSeasonSeasonCode,
-          },
+        vendorSeason = await this.prisma.client.createSeason({
+          year: vendorSeasonYear,
+          seasonCode: vendorSeasonSeasonCode,
         })
       }
     }
