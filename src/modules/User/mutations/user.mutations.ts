@@ -55,9 +55,9 @@ export class UserMutationsResolver {
 
   @Mutation()
   async createInterestedUser(@Args() { email }, @User() user, @Info() info) {
-    const interestUser = await this.prisma.binding.mutation.createInterestedUser(
-      { where: { id: user } }
-    )
+    const interestUser = await this.prisma.client.createInterestedUser({
+      email,
+    })
     if (!user) {
       return interestUser
     }
