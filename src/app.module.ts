@@ -32,6 +32,7 @@ import {
   UserModule,
   directiveResolvers,
 } from "./modules"
+import { AdminModule } from "./modules/Admin/admin.module"
 import { AnalyticsModule } from "./modules/Analytics/analytics.module"
 import { TwilioModule } from "./modules/Twilio/twilio.module"
 import { UtilsModule } from "./modules/Utils/utils.module"
@@ -82,6 +83,7 @@ const scheduleModule =
           },
         } as GqlModuleOptions),
     }),
+    AdminModule,
     AnalyticsModule,
     AirtableModule,
     BlogModule,
