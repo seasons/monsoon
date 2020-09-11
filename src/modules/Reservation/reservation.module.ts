@@ -7,6 +7,7 @@ import { ShippingModule } from "@modules/Shipping/shipping.module"
 import { Module } from "@nestjs/common"
 import { PrismaModule } from "@prisma/prisma.module"
 
+import { AdminModule } from "../Admin/admin.module"
 import { AnalyticsModule } from "../Analytics/analytics.module"
 import { ReservationFeedbackMutationsResolver } from "../Reservation/mutations/reservationFeedback.mutations.resolver"
 import { ReservationFeedbackQueriesResolver } from "../Reservation/queries/reservationFeedback.queries.resolver"

@@ -1,5 +1,6 @@
 import { RollbackError } from "@app/errors"
 import { PushNotificationService } from "@app/modules/PushNotification"
+import { AdminActionLog } from "@app/prisma/prisma.binding"
 import { AirtableService } from "@modules/Airtable"
 import { EmailService } from "@modules/Email/services/email.service"
 import {
@@ -30,7 +31,7 @@ import { PrismaService } from "@prisma/prisma.service"
 import * as Sentry from "@sentry/node"
 import { ApolloError } from "apollo-server"
 import { addFragmentToInfo } from "graphql-binding"
-import { head } from "lodash"
+import { head, omit } from "lodash"
 
 import { ReservationUtilsService } from "./reservation.utils.service"
 
@@ -348,6 +349,32 @@ export class ReservationService {
       returnedPhysicalProducts,
       reservation
     )
+  }
+
+  interpretReservationLogs(logs: AdminActionLog[]) {
+    // for now, just filter these out of the changed logs
+    const keysWeDontCareAbout = [
+      "receipt",
+      "id",
+      "sentPackage",
+      "returnedPackage",
+    ]
+
+    return logs
+      .map(a => {
+        const filteredLog = { ...a }
+        filteredLog.changedFields = omit(a.changedFields, keysWeDontCareAbout)
+        return filteredLog
+      })
+      .filter(b => {
+        if (
+          b.action === "Update" &&
+          Object.keys(b.changedFields).length === 0
+        ) {
+          return false
+        }
+        return true
+      })
   }
 
   async updateReservation(
