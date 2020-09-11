@@ -100,7 +100,7 @@ export class CustomerFieldsResolver {
         fallbackValue: "",
       },
     })
-    planLoader: PrismaDataLoader<any>,
+    prismaLoader: PrismaDataLoader<any>,
     @Loader({
       params: {
         formatWhere: (ids: string[]) => ({ planID_in: ids }),
@@ -112,7 +112,7 @@ export class CustomerFieldsResolver {
     })
     paymentPlanLoader: PrismaDataLoader<PaymentPlan>
   ) {
-    const plan = await planLoader.load(customer.id)
+    const plan = await prismaLoader.load(customer.id)
     if (!plan) {
       return null
     }
