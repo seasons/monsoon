@@ -879,6 +879,7 @@ export class ProductService {
           }
         }`
     )
+
     if (status === "Stored" && productBeforeUpdate.status !== "Stored") {
       // Update product status
       // Don't create a `ProductStatusChange` record here because this function should

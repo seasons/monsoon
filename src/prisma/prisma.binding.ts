@@ -15768,7 +15768,7 @@ input ProductScalarWhereInput {
 type ProductSeason implements Node {
   id: ID!
   vendorSeason: Season
-  internalSeason: Season!
+  internalSeason: Season
   wearableSeasons: [SeasonString!]!
 }
 
@@ -15786,7 +15786,7 @@ input ProductSeasonCreateInput {
   id: ID
   wearableSeasons: ProductSeasonCreatewearableSeasonsInput
   vendorSeason: SeasonCreateOneInput
-  internalSeason: SeasonCreateOneInput!
+  internalSeason: SeasonCreateOneInput
 }
 
 input ProductSeasonCreateOneInput {
@@ -15857,13 +15857,13 @@ input ProductSeasonSubscriptionWhereInput {
 input ProductSeasonUpdateDataInput {
   wearableSeasons: ProductSeasonUpdatewearableSeasonsInput
   vendorSeason: SeasonUpdateOneInput
-  internalSeason: SeasonUpdateOneRequiredInput
+  internalSeason: SeasonUpdateOneInput
 }
 
 input ProductSeasonUpdateInput {
   wearableSeasons: ProductSeasonUpdatewearableSeasonsInput
   vendorSeason: SeasonUpdateOneInput
-  internalSeason: SeasonUpdateOneRequiredInput
+  internalSeason: SeasonUpdateOneInput
 }
 
 input ProductSeasonUpdateManyMutationInput {
@@ -22855,13 +22855,6 @@ input SeasonUpdateOneInput {
   connect: SeasonWhereUniqueInput
   disconnect: Boolean
   delete: Boolean
-  update: SeasonUpdateDataInput
-  upsert: SeasonUpsertNestedInput
-}
-
-input SeasonUpdateOneRequiredInput {
-  create: SeasonCreateInput
-  connect: SeasonWhereUniqueInput
   update: SeasonUpdateDataInput
   upsert: SeasonUpsertNestedInput
 }
@@ -35064,7 +35057,7 @@ export interface ProductSeasonCreateInput {
   id?: ID_Input | null
   wearableSeasons?: ProductSeasonCreatewearableSeasonsInput | null
   vendorSeason?: SeasonCreateOneInput | null
-  internalSeason: SeasonCreateOneInput
+  internalSeason?: SeasonCreateOneInput | null
 }
 
 export interface ProductSeasonCreateOneInput {
@@ -35090,13 +35083,13 @@ export interface ProductSeasonSubscriptionWhereInput {
 export interface ProductSeasonUpdateDataInput {
   wearableSeasons?: ProductSeasonUpdatewearableSeasonsInput | null
   vendorSeason?: SeasonUpdateOneInput | null
-  internalSeason?: SeasonUpdateOneRequiredInput | null
+  internalSeason?: SeasonUpdateOneInput | null
 }
 
 export interface ProductSeasonUpdateInput {
   wearableSeasons?: ProductSeasonUpdatewearableSeasonsInput | null
   vendorSeason?: SeasonUpdateOneInput | null
-  internalSeason?: SeasonUpdateOneRequiredInput | null
+  internalSeason?: SeasonUpdateOneInput | null
 }
 
 export interface ProductSeasonUpdateManyMutationInput {
@@ -38483,13 +38476,6 @@ export interface SeasonUpdateOneInput {
   connect?: SeasonWhereUniqueInput | null
   disconnect?: Boolean | null
   delete?: Boolean | null
-  update?: SeasonUpdateDataInput | null
-  upsert?: SeasonUpsertNestedInput | null
-}
-
-export interface SeasonUpdateOneRequiredInput {
-  create?: SeasonCreateInput | null
-  connect?: SeasonWhereUniqueInput | null
   update?: SeasonUpdateDataInput | null
   upsert?: SeasonUpsertNestedInput | null
 }
@@ -42358,7 +42344,7 @@ export interface ProductRequestSubscriptionPayload {
 export interface ProductSeason extends Node {
   id: ID_Output
   vendorSeason?: Season | null
-  internalSeason: Season
+  internalSeason?: Season | null
   wearableSeasons: Array<SeasonString>
 }
 

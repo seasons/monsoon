@@ -379,7 +379,7 @@ type Season {
 type ProductSeason {
   id: ID! @id
 	vendorSeason: Season @relation(name: "ProductSeasonVendorSeason")
-	internalSeason: Season! @relation(name: "ProductSeasonInternalSeason")
+	internalSeason: Season @relation(name: "ProductSeasonInternalSeason")
   wearableSeasons: [SeasonString!] @scalarList(strategy: RELATION)
 }
 

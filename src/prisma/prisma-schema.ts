@@ -8973,7 +8973,7 @@ input ProductScalarWhereInput {
 type ProductSeason {
   id: ID!
   vendorSeason: Season
-  internalSeason: Season!
+  internalSeason: Season
   wearableSeasons: [SeasonString!]!
 }
 
@@ -8986,7 +8986,7 @@ type ProductSeasonConnection {
 input ProductSeasonCreateInput {
   id: ID
   vendorSeason: SeasonCreateOneInput
-  internalSeason: SeasonCreateOneInput!
+  internalSeason: SeasonCreateOneInput
   wearableSeasons: ProductSeasonCreatewearableSeasonsInput
 }
 
@@ -9034,13 +9034,13 @@ input ProductSeasonSubscriptionWhereInput {
 
 input ProductSeasonUpdateDataInput {
   vendorSeason: SeasonUpdateOneInput
-  internalSeason: SeasonUpdateOneRequiredInput
+  internalSeason: SeasonUpdateOneInput
   wearableSeasons: ProductSeasonUpdatewearableSeasonsInput
 }
 
 input ProductSeasonUpdateInput {
   vendorSeason: SeasonUpdateOneInput
-  internalSeason: SeasonUpdateOneRequiredInput
+  internalSeason: SeasonUpdateOneInput
   wearableSeasons: ProductSeasonUpdatewearableSeasonsInput
 }
 
@@ -13299,13 +13299,6 @@ input SeasonUpdateOneInput {
   upsert: SeasonUpsertNestedInput
   delete: Boolean
   disconnect: Boolean
-  connect: SeasonWhereUniqueInput
-}
-
-input SeasonUpdateOneRequiredInput {
-  create: SeasonCreateInput
-  update: SeasonUpdateDataInput
-  upsert: SeasonUpsertNestedInput
   connect: SeasonWhereUniqueInput
 }
 

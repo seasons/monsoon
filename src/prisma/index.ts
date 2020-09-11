@@ -8423,7 +8423,7 @@ export interface ProductSeasonCreateOneInput {
 export interface ProductSeasonCreateInput {
   id?: Maybe<ID_Input>;
   vendorSeason?: Maybe<SeasonCreateOneInput>;
-  internalSeason: SeasonCreateOneInput;
+  internalSeason?: Maybe<SeasonCreateOneInput>;
   wearableSeasons?: Maybe<ProductSeasonCreatewearableSeasonsInput>;
 }
 
@@ -11024,7 +11024,7 @@ export interface ProductSeasonUpdateOneInput {
 
 export interface ProductSeasonUpdateDataInput {
   vendorSeason?: Maybe<SeasonUpdateOneInput>;
-  internalSeason?: Maybe<SeasonUpdateOneRequiredInput>;
+  internalSeason?: Maybe<SeasonUpdateOneInput>;
   wearableSeasons?: Maybe<ProductSeasonUpdatewearableSeasonsInput>;
 }
 
@@ -11045,13 +11045,6 @@ export interface SeasonUpdateDataInput {
 export interface SeasonUpsertNestedInput {
   update: SeasonUpdateDataInput;
   create: SeasonCreateInput;
-}
-
-export interface SeasonUpdateOneRequiredInput {
-  create?: Maybe<SeasonCreateInput>;
-  update?: Maybe<SeasonUpdateDataInput>;
-  upsert?: Maybe<SeasonUpsertNestedInput>;
-  connect?: Maybe<SeasonWhereUniqueInput>;
 }
 
 export interface ProductSeasonUpdatewearableSeasonsInput {
@@ -14577,7 +14570,7 @@ export interface ProductRequestUpdateManyMutationInput {
 
 export interface ProductSeasonUpdateInput {
   vendorSeason?: Maybe<SeasonUpdateOneInput>;
-  internalSeason?: Maybe<SeasonUpdateOneRequiredInput>;
+  internalSeason?: Maybe<SeasonUpdateOneInput>;
   wearableSeasons?: Maybe<ProductSeasonUpdatewearableSeasonsInput>;
 }
 
