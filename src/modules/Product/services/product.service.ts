@@ -827,12 +827,12 @@ export class ProductService {
 
     const upsertDate = {
       internalSeason: {
-        connect: { id: internalSeason?.id },
+        connect: internalSeason && { id: internalSeason?.id },
       },
-      vendorSeason: {
+      vendorSeason: vendorSeason && {
         connect: { id: vendorSeason?.id },
       },
-      wearableSeasons: { set: wearableSeasons },
+      wearableSeasons: wearableSeasons && { set: wearableSeasons },
     }
 
     return await this.prisma.client.upsertProductSeason({
