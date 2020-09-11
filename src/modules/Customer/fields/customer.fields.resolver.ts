@@ -100,7 +100,7 @@ export class CustomerFieldsResolver {
         fallbackValue: "",
       },
     })
-    prismaLoader: PrismaDataLoader<any>,
+    planLoader: PrismaDataLoader<any>,
     @Loader({
       params: {
         formatWhere: (ids: string[]) => ({ planID_in: ids }),
@@ -112,7 +112,7 @@ export class CustomerFieldsResolver {
     })
     paymentPlanLoader: PrismaDataLoader<PaymentPlan>
   ) {
-    const plan = await prismaLoader.load(customer.id)
+    const plan = await planLoader.load(customer.id)
     if (!plan) {
       return null
     }
@@ -142,6 +142,7 @@ export class CustomerFieldsResolver {
       return null
     }
     const userId = await prismaLoader.load(customer.id)
+    console.log(`userId in invoices loader: ${userId}`)
     return await this.paymentService.getCustomerInvoiceHistory(
       userId,
       invoicesLoader,

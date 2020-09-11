@@ -71,5 +71,7 @@ const createKey = (type, operationName, variables, data) => {
 }
 
 const paramToString = p => {
-  return p.toString().replace(/ /g, "").replace(/\n/g, "")
+  const s = JSON.stringify(p)
+  const sWithoutSpacesOrNewLines = s.replace(/\s+/g, "").replace(/\\n/g, "")
+  return sWithoutSpacesOrNewLines
 }
