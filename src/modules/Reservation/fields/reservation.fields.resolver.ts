@@ -1,4 +1,3 @@
-import { InterpretLogsService } from "@app/modules/Admin/services/interpretLogs.service"
 import { ImageService } from "@modules/Image"
 import { ImageSize } from "@modules/Image/image.types"
 import { Args, Info, Parent, ResolveField, Resolver } from "@nestjs/graphql"
@@ -13,7 +12,7 @@ export class ReservationFieldsResolver {
     private readonly reservationUtils: ReservationUtilsService,
     private readonly reservationService: ReservationService,
     private readonly imageService: ImageService,
-    private readonly prisma: PrismaService // private readonly interpretLogs: InterpretLogsService
+    private readonly prisma: PrismaService
   ) {}
 
   @ResolveField()
