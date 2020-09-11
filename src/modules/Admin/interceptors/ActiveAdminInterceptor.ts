@@ -57,6 +57,10 @@ export class ActiveAdminInterceptor implements NestInterceptor {
         await this.updateLoggerBlocked()
 
         numPolls++
+
+        if (numPolls * this.pollInterval > 5000) {
+          throw new Error("Timed out after 5 seconds in queue")
+        }
       }
       if (numPolls > 0) {
         this.segment.track(ctx.req.user.id, "Exited Active Admin Queue", {
