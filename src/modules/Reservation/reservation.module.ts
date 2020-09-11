@@ -28,7 +28,6 @@ import { ReservationFeedbackService } from "./services/reservationFeedback.servi
     PushNotificationModule,
     ShippingModule,
     AnalyticsModule,
-    AdminModule,
   ],
   providers: [
     ReservationFeedbackMutationsResolver,

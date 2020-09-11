@@ -4,15 +4,16 @@ import { ImageSize } from "@modules/Image/image.types"
 import { Args, Info, Parent, ResolveField, Resolver } from "@nestjs/graphql"
 import { PrismaService } from "@prisma/prisma.service"
 
+import { ReservationService } from "../services/reservation.service"
 import { ReservationUtilsService } from "../services/reservation.utils.service"
 
 @Resolver("Reservation")
 export class ReservationFieldsResolver {
   constructor(
-    private readonly reservationService: ReservationUtilsService,
+    private readonly reservationUtils: ReservationUtilsService,
+    private readonly reservationService: ReservationService,
     private readonly imageService: ImageService,
-    private readonly prisma: PrismaService,
-    private readonly interpretLogs: InterpretLogsService
+    private readonly prisma: PrismaService // private readonly interpretLogs: InterpretLogsService
   ) {}
 
   @ResolveField()
@@ -20,12 +21,12 @@ export class ReservationFieldsResolver {
     const reservation = await this.prisma.client.reservation({
       id: parent.id,
     })
-    return this.reservationService.returnDate(new Date(reservation?.createdAt))
+    return this.reservationUtils.returnDate(new Date(reservation?.createdAt))
   }
 
   @ResolveField()
   async adminLogs(@Parent() reservation, @Info() info) {
-    return this.interpretLogs.interpretReservationLogs(
+    return this.reservationService.interpretReservationLogs(
       await this.prisma.binding.query.adminActionLogs(
         {
           where: {
