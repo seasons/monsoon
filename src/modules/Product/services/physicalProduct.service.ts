@@ -77,11 +77,6 @@ export class PhysicalProductService {
         data,
       })
     } else if (
-      newData.warehouseLocation === { disconnect: true } &&
-      newData.inventoryStatus === "NonReservable"
-    ) {
-      // continue if we are picking this physical product
-    } else if (
       !!physProdBeforeUpdate.warehouseLocation?.barcode &&
       newData.inventoryStatus !== "Reservable"
     ) {
@@ -245,6 +240,16 @@ export class PhysicalProductService {
     physProdBeforeUpdate: PhysicalProduct
     data: PhysicalProductUpdateInput
   }) {
+    const isPickingPhysicalProduct =
+      data.warehouseLocation &&
+      data.warehouseLocation === { disconnect: true } &&
+      data.inventoryStatus &&
+      data.inventoryStatus === "NonReservable"
+
+    if (isPickingPhysicalProduct) {
+      return data
+    }
+
     // Copy the data object to keep the function pure
     const newData = cloneDeep(data) as PhysicalProductUpdateInput
 

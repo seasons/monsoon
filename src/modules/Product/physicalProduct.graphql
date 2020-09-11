@@ -63,6 +63,7 @@ type PhysicalProduct {
 
 input WarehouseLocationConnectWhereUniqueInput {
   connect: WarehouseLocationWhereUniqueInput
+  disconnect: Boolean
 }
 
 input PhysicalProductUpdateInput {
