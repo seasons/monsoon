@@ -7699,7 +7699,6 @@ type Product {
   status: ProductStatus
   statusChanges(where: ProductStatusChangeWhereInput, orderBy: ProductStatusChangeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductStatusChange!]
   season: ProductSeason
-  seasonDeprecated: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -7748,7 +7747,6 @@ input ProductCreateInput {
   status: ProductStatus
   statusChanges: ProductStatusChangeCreateManyWithoutProductInput
   season: ProductSeasonCreateOneInput
-  seasonDeprecated: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -7827,7 +7825,6 @@ input ProductCreateWithoutBrandInput {
   status: ProductStatus
   statusChanges: ProductStatusChangeCreateManyWithoutProductInput
   season: ProductSeasonCreateOneInput
-  seasonDeprecated: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -7857,7 +7854,6 @@ input ProductCreateWithoutCategoryInput {
   status: ProductStatus
   statusChanges: ProductStatusChangeCreateManyWithoutProductInput
   season: ProductSeasonCreateOneInput
-  seasonDeprecated: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -7887,7 +7883,6 @@ input ProductCreateWithoutMaterialCategoryInput {
   status: ProductStatus
   statusChanges: ProductStatusChangeCreateManyWithoutProductInput
   season: ProductSeasonCreateOneInput
-  seasonDeprecated: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -7917,7 +7912,6 @@ input ProductCreateWithoutModelInput {
   status: ProductStatus
   statusChanges: ProductStatusChangeCreateManyWithoutProductInput
   season: ProductSeasonCreateOneInput
-  seasonDeprecated: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -7947,7 +7941,6 @@ input ProductCreateWithoutStatusChangesInput {
   variants: ProductVariantCreateManyWithoutProductInput
   status: ProductStatus
   season: ProductSeasonCreateOneInput
-  seasonDeprecated: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -7977,7 +7970,6 @@ input ProductCreateWithoutTagsInput {
   status: ProductStatus
   statusChanges: ProductStatusChangeCreateManyWithoutProductInput
   season: ProductSeasonCreateOneInput
-  seasonDeprecated: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -8007,7 +7999,6 @@ input ProductCreateWithoutVariantsInput {
   status: ProductStatus
   statusChanges: ProductStatusChangeCreateManyWithoutProductInput
   season: ProductSeasonCreateOneInput
-  seasonDeprecated: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -8514,8 +8505,6 @@ enum ProductOrderByInput {
   retailPrice_DESC
   status_ASC
   status_DESC
-  seasonDeprecated_ASC
-  seasonDeprecated_DESC
   architecture_ASC
   architecture_DESC
   photographyStatus_ASC
@@ -8540,7 +8529,6 @@ type ProductPreviousValues {
   innerMaterials: [String!]!
   outerMaterials: [String!]!
   status: ProductStatus
-  seasonDeprecated: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -8919,20 +8907,6 @@ input ProductScalarWhereInput {
   status_not: ProductStatus
   status_in: [ProductStatus!]
   status_not_in: [ProductStatus!]
-  seasonDeprecated: String
-  seasonDeprecated_not: String
-  seasonDeprecated_in: [String!]
-  seasonDeprecated_not_in: [String!]
-  seasonDeprecated_lt: String
-  seasonDeprecated_lte: String
-  seasonDeprecated_gt: String
-  seasonDeprecated_gte: String
-  seasonDeprecated_contains: String
-  seasonDeprecated_not_contains: String
-  seasonDeprecated_starts_with: String
-  seasonDeprecated_not_starts_with: String
-  seasonDeprecated_ends_with: String
-  seasonDeprecated_not_ends_with: String
   architecture: ProductArchitecture
   architecture_not: ProductArchitecture
   architecture_in: [ProductArchitecture!]
@@ -9367,7 +9341,6 @@ input ProductUpdateDataInput {
   status: ProductStatus
   statusChanges: ProductStatusChangeUpdateManyWithoutProductInput
   season: ProductSeasonUpdateOneInput
-  seasonDeprecated: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -9401,7 +9374,6 @@ input ProductUpdateInput {
   status: ProductStatus
   statusChanges: ProductStatusChangeUpdateManyWithoutProductInput
   season: ProductSeasonUpdateOneInput
-  seasonDeprecated: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -9418,7 +9390,6 @@ input ProductUpdateManyDataInput {
   innerMaterials: ProductUpdateinnerMaterialsInput
   outerMaterials: ProductUpdateouterMaterialsInput
   status: ProductStatus
-  seasonDeprecated: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -9447,7 +9418,6 @@ input ProductUpdateManyMutationInput {
   innerMaterials: ProductUpdateinnerMaterialsInput
   outerMaterials: ProductUpdateouterMaterialsInput
   status: ProductStatus
-  seasonDeprecated: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -9566,7 +9536,6 @@ input ProductUpdateWithoutBrandDataInput {
   status: ProductStatus
   statusChanges: ProductStatusChangeUpdateManyWithoutProductInput
   season: ProductSeasonUpdateOneInput
-  seasonDeprecated: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -9595,7 +9564,6 @@ input ProductUpdateWithoutCategoryDataInput {
   status: ProductStatus
   statusChanges: ProductStatusChangeUpdateManyWithoutProductInput
   season: ProductSeasonUpdateOneInput
-  seasonDeprecated: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -9624,7 +9592,6 @@ input ProductUpdateWithoutMaterialCategoryDataInput {
   status: ProductStatus
   statusChanges: ProductStatusChangeUpdateManyWithoutProductInput
   season: ProductSeasonUpdateOneInput
-  seasonDeprecated: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -9653,7 +9620,6 @@ input ProductUpdateWithoutModelDataInput {
   status: ProductStatus
   statusChanges: ProductStatusChangeUpdateManyWithoutProductInput
   season: ProductSeasonUpdateOneInput
-  seasonDeprecated: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -9682,7 +9648,6 @@ input ProductUpdateWithoutStatusChangesDataInput {
   variants: ProductVariantUpdateManyWithoutProductInput
   status: ProductStatus
   season: ProductSeasonUpdateOneInput
-  seasonDeprecated: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -9711,7 +9676,6 @@ input ProductUpdateWithoutTagsDataInput {
   status: ProductStatus
   statusChanges: ProductStatusChangeUpdateManyWithoutProductInput
   season: ProductSeasonUpdateOneInput
-  seasonDeprecated: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -9740,7 +9704,6 @@ input ProductUpdateWithoutVariantsDataInput {
   status: ProductStatus
   statusChanges: ProductStatusChangeUpdateManyWithoutProductInput
   season: ProductSeasonUpdateOneInput
-  seasonDeprecated: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
@@ -11147,20 +11110,6 @@ input ProductWhereInput {
   statusChanges_some: ProductStatusChangeWhereInput
   statusChanges_none: ProductStatusChangeWhereInput
   season: ProductSeasonWhereInput
-  seasonDeprecated: String
-  seasonDeprecated_not: String
-  seasonDeprecated_in: [String!]
-  seasonDeprecated_not_in: [String!]
-  seasonDeprecated_lt: String
-  seasonDeprecated_lte: String
-  seasonDeprecated_gt: String
-  seasonDeprecated_gte: String
-  seasonDeprecated_contains: String
-  seasonDeprecated_not_contains: String
-  seasonDeprecated_starts_with: String
-  seasonDeprecated_not_starts_with: String
-  seasonDeprecated_ends_with: String
-  seasonDeprecated_not_ends_with: String
   architecture: ProductArchitecture
   architecture_not: ProductArchitecture
   architecture_in: [ProductArchitecture!]
