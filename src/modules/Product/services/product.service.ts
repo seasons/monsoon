@@ -818,7 +818,7 @@ export class ProductService {
       }`
     )
 
-    const upsertDate = {
+    const upsertData = {
       internalSeason: {
         connect: internalSeason && { id: internalSeason?.id },
       },
@@ -830,8 +830,8 @@ export class ProductService {
 
     return await this.prisma.client.upsertProductSeason({
       where: { id: product?.season?.id || "" },
-      create: upsertDate,
-      update: upsertDate,
+      create: upsertData,
+      update: upsertData,
     })
   }
 
