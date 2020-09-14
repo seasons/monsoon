@@ -130,14 +130,14 @@ export class PrismaSyncService {
       env: { ...process.env, PGPASSFILE: "/tmp/.pgpass" },
     })
 
+    const creds = `--host=${toHost} --port=${toPort} --username=${toUsername} --no-password --dbname=${toDBName}`
     // Copy monsoon$production schema and all contained tables as is to destination DB.
     // We are ok with this throwing a few errors.
     try {
       execSyncWithOptions(
         `pg_dump --format=t --clean --create --no-password --host=${process.env.DB_PRODUCTION_HOST}\
    --port=${process.env.DB_PRODUCTION_PORT} --username=${process.env.DB_PRODUCTION_USERNAME}\
-   ${process.env.DB_PRODUCTION_DBNAME} | pg_restore --host=${toHost} --port=${toPort}\
-   --username=${toUsername} --no-password --dbname=${toDBName}`
+   ${process.env.DB_PRODUCTION_DBNAME} | pg_restore ${creds}`
       )
     } catch (err) {
       console.log(err)
@@ -145,14 +145,18 @@ export class PrismaSyncService {
 
     //  Drop the (old) monsoon$staging or monsoon$dev schema and all contained tables
     execSyncWithOptions(
-      `echo 'DROP SCHEMA "${toSchema}" CASCADE' | psql --host=${toHost}\
-   --port=${toPort} --username=${toUsername} --no-password --dbname=${toDBName}`
+      `echo 'DROP SCHEMA "${toSchema}" CASCADE' | psql ${creds}`
     )
 
     // Adjust the name of the schema to be appropriate for staging or dev
     execSyncWithOptions(
-      `echo 'ALTER SCHEMA "monsoon$production" RENAME TO "${toSchema}"' | psql --host=${toHost}\
-   --port=${toPort} --username=${toUsername} --no-password --dbname=${toDBName}`
+      `echo 'ALTER SCHEMA "monsoon$production" RENAME TO "${toSchema}"' | psql ${creds}`
+    )
+
+    // Drop the audit trigger from the inherited schema. Should technically also recreate it, but
+    // we can pick that up another day
+    execSyncWithOptions(
+      `echo 'DROP FUNCTION ${toSchema}.if_modified_func() CASCADE' | psql ${creds}`
     )
   }
 
