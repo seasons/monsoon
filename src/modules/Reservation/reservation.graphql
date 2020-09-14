@@ -35,7 +35,107 @@ type Mutation {
   updateReservation(
     data: ReservationUpdateInput!
     where: ReservationWhereUniqueInput!
-  ): Reservation
+  ): Reservation @hasRole(roles: [Admin])
+}
+
+input ReservationWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  user: UserWhereInput
+  customer: CustomerWhereInput
+  sentPackage: PackageWhereInput
+  returnedPackage: PackageWhereInput
+  products_every: PhysicalProductWhereInput
+  products_some: PhysicalProductWhereInput
+  products_none: PhysicalProductWhereInput
+  packageEvents_every: PackageTransitEventWhereInput
+  packageEvents_some: PackageTransitEventWhereInput
+  packageEvents_none: PackageTransitEventWhereInput
+  reservationNumber: Int
+  reservationNumber_not: Int
+  reservationNumber_in: [Int!]
+  reservationNumber_not_in: [Int!]
+  reservationNumber_lt: Int
+  reservationNumber_lte: Int
+  reservationNumber_gt: Int
+  reservationNumber_gte: Int
+  phase: ReservationPhase
+  phase_not: ReservationPhase
+  phase_in: [ReservationPhase!]
+  phase_not_in: [ReservationPhase!]
+  shipped: Boolean
+  shipped_not: Boolean
+  status: ReservationStatus
+  status_not: ReservationStatus
+  status_in: [ReservationStatus!]
+  status_not_in: [ReservationStatus!]
+  shippedAt: DateTime
+  shippedAt_not: DateTime
+  shippedAt_in: [DateTime!]
+  shippedAt_not_in: [DateTime!]
+  shippedAt_lt: DateTime
+  shippedAt_lte: DateTime
+  shippedAt_gt: DateTime
+  shippedAt_gte: DateTime
+  receivedAt: DateTime
+  receivedAt_not: DateTime
+  receivedAt_in: [DateTime!]
+  receivedAt_not_in: [DateTime!]
+  receivedAt_lt: DateTime
+  receivedAt_lte: DateTime
+  receivedAt_gt: DateTime
+  receivedAt_gte: DateTime
+  reminderSentAt: DateTime
+  reminderSentAt_not: DateTime
+  reminderSentAt_in: [DateTime!]
+  reminderSentAt_not_in: [DateTime!]
+  reminderSentAt_lt: DateTime
+  reminderSentAt_lte: DateTime
+  reminderSentAt_gt: DateTime
+  reminderSentAt_gte: DateTime
+  statusUpdatedAt: DateTime
+  statusUpdatedAt_not: DateTime
+  statusUpdatedAt_in: [DateTime!]
+  statusUpdatedAt_not_in: [DateTime!]
+  statusUpdatedAt_lt: DateTime
+  statusUpdatedAt_lte: DateTime
+  statusUpdatedAt_gt: DateTime
+  statusUpdatedAt_gte: DateTime
+  receipt: ReservationReceiptWhereInput
+  lastLocation: LocationWhereInput
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [ReservationWhereInput!]
+  OR: [ReservationWhereInput!]
+  NOT: [ReservationWhereInput!]
+  # Global search query which will be handled by algolia
+  q: String
 }
 
 input ReservationProcessReturnInput {
@@ -63,15 +163,26 @@ type Reservation {
   feedback: ReservationFeedback
   lastLocation: Location
   products: [PhysicalProduct!]!
+  packageEvents(
+    where: PackageTransitEventWhereInput
+    orderBy: PackageTransitEventOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): [PackageTransitEvent!]
   images(width: Int, height: Int, size: ImageSize): [Image!]!
   reservationNumber: Int!
+  phase: ReservationPhase!
   shipped: Boolean!
   status: ReservationStatus!
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
+  statusUpdatedAt: DateTime
   returnAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
-  phase: ReservationPhase!
+  adminLogs: [AdminActionLog!]! @hasRole(roles: [Admin])
 }

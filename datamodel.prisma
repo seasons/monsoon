@@ -39,6 +39,7 @@ enum UserRole {
   Admin
   Customer
   Partner
+  Marketer
 }
 
 enum InventoryStatus {
@@ -475,6 +476,7 @@ type PaymentPlan {
   status: String
   name: String
   price: Int
+  tagline: String
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
@@ -719,10 +721,11 @@ type Reservation {
   user: User!
   customer: Customer! @relation(name: "CustomerToReservation")
   sentPackage: Package
-    @relation(name: "SeasonsToCustomerPackage", onDelete: CASCADE)
+    @relation(link: INLINE, name: "SeasonsToCustomerPackage", onDelete: CASCADE)
   returnedPackage: Package
-    @relation(name: "CustomerToSeasonsPackage", onDelete: CASCADE)
+    @relation(link: INLINE, name: "CustomerToSeasonsPackage", onDelete: CASCADE)
   products: [PhysicalProduct!]!
+  packageEvents: [PackageTransitEvent!]
   reservationNumber: Int! @unique
   phase: ReservationPhase!
   shipped: Boolean!
@@ -730,6 +733,7 @@ type Reservation {
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
+  statusUpdatedAt: DateTime
   receipt: ReservationReceipt
     @relation(
       link: INLINE
@@ -818,6 +822,8 @@ type PackageTransitEvent {
   id: ID! @id
   status: PackageTransitEventStatus!
   subStatus: PackageTransitEventSubStatus!
+  package: Package!
+  reservation: Reservation
   data: Json!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
@@ -897,4 +903,30 @@ type Size {
   top: TopSize
   bottom: BottomSize
   display: String!
+}
+
+# Helper table for audit logs. Should only ever have 0 or 1 records.
+# In the event that it has a record, stores a link to the admin currently making a change
+type ActiveAdminUser {
+  id: ID! @id
+  admin: User!
+}
+
+enum AdminAction {
+  Insert
+  Delete
+  Update
+  Truncate
+}
+
+type AdminActionLog {
+  actionId: Int! @id(strategy: AUTO)
+  entityId: String!
+  tableName: String!
+  activeAdminUser: User!
+  triggeredAt: DateTime!
+  action: AdminAction!
+  rowData: Json!
+  changedFields: Json
+  statementOnly: Boolean!
 }

@@ -43,7 +43,7 @@ export type ShippoData = {
   test?: boolean
 }
 
-type ReservationWithPackage = Reservation & {
+export type ReservationWithPackage = Reservation & {
   sentPackage: Package
   returnedPackage: Package
 }
@@ -78,13 +78,7 @@ export class ShippoController {
       ? upperFirst(camelCase(trackingStatus?.substatus?.code))
       : "Other") as PackageTransitEventSubStatus
 
-    const packageTransitEvent = await this.prisma.client.createPackageTransitEvent(
-      {
-        status,
-        subStatus,
-        data: result,
-      }
-    )
+    let packageTransitEvent: any
 
     switch (event) {
       case ShippoEventType.TrackUpdated:
@@ -134,11 +128,55 @@ export class ShippoController {
           this.logger.error(e)
         }
 
+        const updatedPackage = head(
+          await this.prisma.client.packages({
+            where: {
+              transactionID,
+            },
+          })
+        )
+
+        packageTransitEvent = await this.prisma.client.createPackageTransitEvent(
+          {
+            status,
+            subStatus,
+            data: result,
+            package: { connect: { id: updatedPackage.id } },
+          }
+        )
+
+        if (updatedPackage) {
+          await this.prisma.client.updatePackage({
+            where: {
+              id: updatedPackage.id,
+            },
+            data: {
+              events: {
+                connect: {
+                  id: packageTransitEvent.id,
+                },
+              },
+            },
+          })
+        }
+
         await this.prisma.client.updateReservation({
           where: { id: reservation.id },
           data: {
             status: reservationStatus,
+            packageEvents: {
+              connect: {
+                id: packageTransitEvent.id,
+              },
+            },
             phase,
+            ...(reservationStatus === "Delivered"
+              ? { receivedAt: new Date() }
+              : {}),
+            ...(reservationStatus === "Shipped"
+              ? { shippedAt: new Date(), shipped: true }
+              : {}),
+            statusUpdatedAt: new Date(),
           },
         })
 
@@ -220,6 +258,7 @@ export class ShippoController {
       await this.prisma.client.updateReservation({
         where: { id: reservation.id },
         data: {
+          phase,
           lastLocation: {
             connect: {
               id: location.id,

@@ -2,7 +2,264 @@
   // Please don't change this file manually but run `prisma generate` to update it.
   // For more information, please read the docs: https://www.prisma.io/docs/prisma-client/
 
-export const typeDefs = /* GraphQL */ `type AggregateBagItem {
+export const typeDefs = /* GraphQL */ `type ActiveAdminUser {
+  id: ID!
+  admin: User!
+}
+
+type ActiveAdminUserConnection {
+  pageInfo: PageInfo!
+  edges: [ActiveAdminUserEdge]!
+  aggregate: AggregateActiveAdminUser!
+}
+
+input ActiveAdminUserCreateInput {
+  id: ID
+  admin: UserCreateOneInput!
+}
+
+type ActiveAdminUserEdge {
+  node: ActiveAdminUser!
+  cursor: String!
+}
+
+enum ActiveAdminUserOrderByInput {
+  id_ASC
+  id_DESC
+}
+
+type ActiveAdminUserPreviousValues {
+  id: ID!
+}
+
+type ActiveAdminUserSubscriptionPayload {
+  mutation: MutationType!
+  node: ActiveAdminUser
+  updatedFields: [String!]
+  previousValues: ActiveAdminUserPreviousValues
+}
+
+input ActiveAdminUserSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: ActiveAdminUserWhereInput
+  AND: [ActiveAdminUserSubscriptionWhereInput!]
+  OR: [ActiveAdminUserSubscriptionWhereInput!]
+  NOT: [ActiveAdminUserSubscriptionWhereInput!]
+}
+
+input ActiveAdminUserUpdateInput {
+  admin: UserUpdateOneRequiredInput
+}
+
+input ActiveAdminUserWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  admin: UserWhereInput
+  AND: [ActiveAdminUserWhereInput!]
+  OR: [ActiveAdminUserWhereInput!]
+  NOT: [ActiveAdminUserWhereInput!]
+}
+
+input ActiveAdminUserWhereUniqueInput {
+  id: ID
+}
+
+enum AdminAction {
+  Insert
+  Delete
+  Update
+  Truncate
+}
+
+type AdminActionLog {
+  actionId: Int!
+  entityId: String!
+  tableName: String!
+  activeAdminUser: User!
+  triggeredAt: DateTime!
+  action: AdminAction!
+  rowData: Json!
+  changedFields: Json
+  statementOnly: Boolean!
+}
+
+type AdminActionLogConnection {
+  pageInfo: PageInfo!
+  edges: [AdminActionLogEdge]!
+  aggregate: AggregateAdminActionLog!
+}
+
+input AdminActionLogCreateInput {
+  actionId: Int
+  entityId: String!
+  tableName: String!
+  activeAdminUser: UserCreateOneInput!
+  triggeredAt: DateTime!
+  action: AdminAction!
+  rowData: Json!
+  changedFields: Json
+  statementOnly: Boolean!
+}
+
+type AdminActionLogEdge {
+  node: AdminActionLog!
+  cursor: String!
+}
+
+enum AdminActionLogOrderByInput {
+  actionId_ASC
+  actionId_DESC
+  entityId_ASC
+  entityId_DESC
+  tableName_ASC
+  tableName_DESC
+  triggeredAt_ASC
+  triggeredAt_DESC
+  action_ASC
+  action_DESC
+  rowData_ASC
+  rowData_DESC
+  changedFields_ASC
+  changedFields_DESC
+  statementOnly_ASC
+  statementOnly_DESC
+}
+
+type AdminActionLogPreviousValues {
+  actionId: Int!
+  entityId: String!
+  tableName: String!
+  triggeredAt: DateTime!
+  action: AdminAction!
+  rowData: Json!
+  changedFields: Json
+  statementOnly: Boolean!
+}
+
+type AdminActionLogSubscriptionPayload {
+  mutation: MutationType!
+  node: AdminActionLog
+  updatedFields: [String!]
+  previousValues: AdminActionLogPreviousValues
+}
+
+input AdminActionLogSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: AdminActionLogWhereInput
+  AND: [AdminActionLogSubscriptionWhereInput!]
+  OR: [AdminActionLogSubscriptionWhereInput!]
+  NOT: [AdminActionLogSubscriptionWhereInput!]
+}
+
+input AdminActionLogUpdateInput {
+  entityId: String
+  tableName: String
+  activeAdminUser: UserUpdateOneRequiredInput
+  triggeredAt: DateTime
+  action: AdminAction
+  rowData: Json
+  changedFields: Json
+  statementOnly: Boolean
+}
+
+input AdminActionLogUpdateManyMutationInput {
+  entityId: String
+  tableName: String
+  triggeredAt: DateTime
+  action: AdminAction
+  rowData: Json
+  changedFields: Json
+  statementOnly: Boolean
+}
+
+input AdminActionLogWhereInput {
+  actionId: Int
+  actionId_not: Int
+  actionId_in: [Int!]
+  actionId_not_in: [Int!]
+  actionId_lt: Int
+  actionId_lte: Int
+  actionId_gt: Int
+  actionId_gte: Int
+  entityId: String
+  entityId_not: String
+  entityId_in: [String!]
+  entityId_not_in: [String!]
+  entityId_lt: String
+  entityId_lte: String
+  entityId_gt: String
+  entityId_gte: String
+  entityId_contains: String
+  entityId_not_contains: String
+  entityId_starts_with: String
+  entityId_not_starts_with: String
+  entityId_ends_with: String
+  entityId_not_ends_with: String
+  tableName: String
+  tableName_not: String
+  tableName_in: [String!]
+  tableName_not_in: [String!]
+  tableName_lt: String
+  tableName_lte: String
+  tableName_gt: String
+  tableName_gte: String
+  tableName_contains: String
+  tableName_not_contains: String
+  tableName_starts_with: String
+  tableName_not_starts_with: String
+  tableName_ends_with: String
+  tableName_not_ends_with: String
+  activeAdminUser: UserWhereInput
+  triggeredAt: DateTime
+  triggeredAt_not: DateTime
+  triggeredAt_in: [DateTime!]
+  triggeredAt_not_in: [DateTime!]
+  triggeredAt_lt: DateTime
+  triggeredAt_lte: DateTime
+  triggeredAt_gt: DateTime
+  triggeredAt_gte: DateTime
+  action: AdminAction
+  action_not: AdminAction
+  action_in: [AdminAction!]
+  action_not_in: [AdminAction!]
+  statementOnly: Boolean
+  statementOnly_not: Boolean
+  AND: [AdminActionLogWhereInput!]
+  OR: [AdminActionLogWhereInput!]
+  NOT: [AdminActionLogWhereInput!]
+}
+
+input AdminActionLogWhereUniqueInput {
+  actionId: Int
+}
+
+type AggregateActiveAdminUser {
+  count: Int!
+}
+
+type AggregateAdminActionLog {
+  count: Int!
+}
+
+type AggregateBagItem {
   count: Int!
 }
 
@@ -5106,6 +5363,17 @@ input LocationWhereUniqueInput {
 scalar Long
 
 type Mutation {
+  createActiveAdminUser(data: ActiveAdminUserCreateInput!): ActiveAdminUser!
+  updateActiveAdminUser(data: ActiveAdminUserUpdateInput!, where: ActiveAdminUserWhereUniqueInput!): ActiveAdminUser
+  upsertActiveAdminUser(where: ActiveAdminUserWhereUniqueInput!, create: ActiveAdminUserCreateInput!, update: ActiveAdminUserUpdateInput!): ActiveAdminUser!
+  deleteActiveAdminUser(where: ActiveAdminUserWhereUniqueInput!): ActiveAdminUser
+  deleteManyActiveAdminUsers(where: ActiveAdminUserWhereInput): BatchPayload!
+  createAdminActionLog(data: AdminActionLogCreateInput!): AdminActionLog!
+  updateAdminActionLog(data: AdminActionLogUpdateInput!, where: AdminActionLogWhereUniqueInput!): AdminActionLog
+  updateManyAdminActionLogs(data: AdminActionLogUpdateManyMutationInput!, where: AdminActionLogWhereInput): BatchPayload!
+  upsertAdminActionLog(where: AdminActionLogWhereUniqueInput!, create: AdminActionLogCreateInput!, update: AdminActionLogUpdateInput!): AdminActionLog!
+  deleteAdminActionLog(where: AdminActionLogWhereUniqueInput!): AdminActionLog
+  deleteManyAdminActionLogs(where: AdminActionLogWhereInput): BatchPayload!
   createBagItem(data: BagItemCreateInput!): BagItem!
   updateBagItem(data: BagItemUpdateInput!, where: BagItemWhereUniqueInput!): BagItem
   updateManyBagItems(data: BagItemUpdateManyMutationInput!, where: BagItemWhereInput): BatchPayload!
@@ -5444,12 +5712,27 @@ input PackageCreateInput {
   fromAddress: LocationCreateOneInput!
   toAddress: LocationCreateOneInput!
   weight: Float
-  events: PackageTransitEventCreateManyInput
+  events: PackageTransitEventCreateManyWithoutPackageInput
 }
 
 input PackageCreateOneInput {
   create: PackageCreateInput
   connect: PackageWhereUniqueInput
+}
+
+input PackageCreateOneWithoutEventsInput {
+  create: PackageCreateWithoutEventsInput
+  connect: PackageWhereUniqueInput
+}
+
+input PackageCreateWithoutEventsInput {
+  id: ID
+  items: PhysicalProductCreateManyInput
+  transactionID: String!
+  shippingLabel: LabelCreateOneInput!
+  fromAddress: LocationCreateOneInput!
+  toAddress: LocationCreateOneInput!
+  weight: Float
 }
 
 type PackageEdge {
@@ -5500,6 +5783,8 @@ type PackageTransitEvent {
   id: ID!
   status: PackageTransitEventStatus!
   subStatus: PackageTransitEventSubStatus!
+  package: Package!
+  reservation: Reservation
   data: Json!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -5515,12 +5800,35 @@ input PackageTransitEventCreateInput {
   id: ID
   status: PackageTransitEventStatus!
   subStatus: PackageTransitEventSubStatus!
+  package: PackageCreateOneWithoutEventsInput!
+  reservation: ReservationCreateOneWithoutPackageEventsInput
   data: Json!
 }
 
-input PackageTransitEventCreateManyInput {
-  create: [PackageTransitEventCreateInput!]
+input PackageTransitEventCreateManyWithoutPackageInput {
+  create: [PackageTransitEventCreateWithoutPackageInput!]
   connect: [PackageTransitEventWhereUniqueInput!]
+}
+
+input PackageTransitEventCreateManyWithoutReservationInput {
+  create: [PackageTransitEventCreateWithoutReservationInput!]
+  connect: [PackageTransitEventWhereUniqueInput!]
+}
+
+input PackageTransitEventCreateWithoutPackageInput {
+  id: ID
+  status: PackageTransitEventStatus!
+  subStatus: PackageTransitEventSubStatus!
+  reservation: ReservationCreateOneWithoutPackageEventsInput
+  data: Json!
+}
+
+input PackageTransitEventCreateWithoutReservationInput {
+  id: ID
+  status: PackageTransitEventStatus!
+  subStatus: PackageTransitEventSubStatus!
+  package: PackageCreateOneWithoutEventsInput!
+  data: Json!
 }
 
 type PackageTransitEventEdge {
@@ -5653,15 +5961,11 @@ enum PackageTransitEventSubStatus {
   Other
 }
 
-input PackageTransitEventUpdateDataInput {
-  status: PackageTransitEventStatus
-  subStatus: PackageTransitEventSubStatus
-  data: Json
-}
-
 input PackageTransitEventUpdateInput {
   status: PackageTransitEventStatus
   subStatus: PackageTransitEventSubStatus
+  package: PackageUpdateOneRequiredWithoutEventsInput
+  reservation: ReservationUpdateOneWithoutPackageEventsInput
   data: Json
 }
 
@@ -5671,22 +5975,34 @@ input PackageTransitEventUpdateManyDataInput {
   data: Json
 }
 
-input PackageTransitEventUpdateManyInput {
-  create: [PackageTransitEventCreateInput!]
-  update: [PackageTransitEventUpdateWithWhereUniqueNestedInput!]
-  upsert: [PackageTransitEventUpsertWithWhereUniqueNestedInput!]
-  delete: [PackageTransitEventWhereUniqueInput!]
-  connect: [PackageTransitEventWhereUniqueInput!]
-  set: [PackageTransitEventWhereUniqueInput!]
-  disconnect: [PackageTransitEventWhereUniqueInput!]
-  deleteMany: [PackageTransitEventScalarWhereInput!]
-  updateMany: [PackageTransitEventUpdateManyWithWhereNestedInput!]
-}
-
 input PackageTransitEventUpdateManyMutationInput {
   status: PackageTransitEventStatus
   subStatus: PackageTransitEventSubStatus
   data: Json
+}
+
+input PackageTransitEventUpdateManyWithoutPackageInput {
+  create: [PackageTransitEventCreateWithoutPackageInput!]
+  delete: [PackageTransitEventWhereUniqueInput!]
+  connect: [PackageTransitEventWhereUniqueInput!]
+  set: [PackageTransitEventWhereUniqueInput!]
+  disconnect: [PackageTransitEventWhereUniqueInput!]
+  update: [PackageTransitEventUpdateWithWhereUniqueWithoutPackageInput!]
+  upsert: [PackageTransitEventUpsertWithWhereUniqueWithoutPackageInput!]
+  deleteMany: [PackageTransitEventScalarWhereInput!]
+  updateMany: [PackageTransitEventUpdateManyWithWhereNestedInput!]
+}
+
+input PackageTransitEventUpdateManyWithoutReservationInput {
+  create: [PackageTransitEventCreateWithoutReservationInput!]
+  delete: [PackageTransitEventWhereUniqueInput!]
+  connect: [PackageTransitEventWhereUniqueInput!]
+  set: [PackageTransitEventWhereUniqueInput!]
+  disconnect: [PackageTransitEventWhereUniqueInput!]
+  update: [PackageTransitEventUpdateWithWhereUniqueWithoutReservationInput!]
+  upsert: [PackageTransitEventUpsertWithWhereUniqueWithoutReservationInput!]
+  deleteMany: [PackageTransitEventScalarWhereInput!]
+  updateMany: [PackageTransitEventUpdateManyWithWhereNestedInput!]
 }
 
 input PackageTransitEventUpdateManyWithWhereNestedInput {
@@ -5694,15 +6010,40 @@ input PackageTransitEventUpdateManyWithWhereNestedInput {
   data: PackageTransitEventUpdateManyDataInput!
 }
 
-input PackageTransitEventUpdateWithWhereUniqueNestedInput {
-  where: PackageTransitEventWhereUniqueInput!
-  data: PackageTransitEventUpdateDataInput!
+input PackageTransitEventUpdateWithoutPackageDataInput {
+  status: PackageTransitEventStatus
+  subStatus: PackageTransitEventSubStatus
+  reservation: ReservationUpdateOneWithoutPackageEventsInput
+  data: Json
 }
 
-input PackageTransitEventUpsertWithWhereUniqueNestedInput {
+input PackageTransitEventUpdateWithoutReservationDataInput {
+  status: PackageTransitEventStatus
+  subStatus: PackageTransitEventSubStatus
+  package: PackageUpdateOneRequiredWithoutEventsInput
+  data: Json
+}
+
+input PackageTransitEventUpdateWithWhereUniqueWithoutPackageInput {
   where: PackageTransitEventWhereUniqueInput!
-  update: PackageTransitEventUpdateDataInput!
-  create: PackageTransitEventCreateInput!
+  data: PackageTransitEventUpdateWithoutPackageDataInput!
+}
+
+input PackageTransitEventUpdateWithWhereUniqueWithoutReservationInput {
+  where: PackageTransitEventWhereUniqueInput!
+  data: PackageTransitEventUpdateWithoutReservationDataInput!
+}
+
+input PackageTransitEventUpsertWithWhereUniqueWithoutPackageInput {
+  where: PackageTransitEventWhereUniqueInput!
+  update: PackageTransitEventUpdateWithoutPackageDataInput!
+  create: PackageTransitEventCreateWithoutPackageInput!
+}
+
+input PackageTransitEventUpsertWithWhereUniqueWithoutReservationInput {
+  where: PackageTransitEventWhereUniqueInput!
+  update: PackageTransitEventUpdateWithoutReservationDataInput!
+  create: PackageTransitEventCreateWithoutReservationInput!
 }
 
 input PackageTransitEventWhereInput {
@@ -5728,6 +6069,8 @@ input PackageTransitEventWhereInput {
   subStatus_not: PackageTransitEventSubStatus
   subStatus_in: [PackageTransitEventSubStatus!]
   subStatus_not_in: [PackageTransitEventSubStatus!]
+  package: PackageWhereInput
+  reservation: ReservationWhereInput
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -5760,7 +6103,7 @@ input PackageUpdateDataInput {
   fromAddress: LocationUpdateOneRequiredInput
   toAddress: LocationUpdateOneRequiredInput
   weight: Float
-  events: PackageTransitEventUpdateManyInput
+  events: PackageTransitEventUpdateManyWithoutPackageInput
 }
 
 input PackageUpdateInput {
@@ -5770,7 +6113,7 @@ input PackageUpdateInput {
   fromAddress: LocationUpdateOneRequiredInput
   toAddress: LocationUpdateOneRequiredInput
   weight: Float
-  events: PackageTransitEventUpdateManyInput
+  events: PackageTransitEventUpdateManyWithoutPackageInput
 }
 
 input PackageUpdateManyMutationInput {
@@ -5787,9 +6130,30 @@ input PackageUpdateOneInput {
   connect: PackageWhereUniqueInput
 }
 
+input PackageUpdateOneRequiredWithoutEventsInput {
+  create: PackageCreateWithoutEventsInput
+  update: PackageUpdateWithoutEventsDataInput
+  upsert: PackageUpsertWithoutEventsInput
+  connect: PackageWhereUniqueInput
+}
+
+input PackageUpdateWithoutEventsDataInput {
+  items: PhysicalProductUpdateManyInput
+  transactionID: String
+  shippingLabel: LabelUpdateOneRequiredInput
+  fromAddress: LocationUpdateOneRequiredInput
+  toAddress: LocationUpdateOneRequiredInput
+  weight: Float
+}
+
 input PackageUpsertNestedInput {
   update: PackageUpdateDataInput!
   create: PackageCreateInput!
+}
+
+input PackageUpsertWithoutEventsInput {
+  update: PackageUpdateWithoutEventsDataInput!
+  create: PackageCreateWithoutEventsInput!
 }
 
 input PackageWhereInput {
@@ -6140,6 +6504,7 @@ type PaymentPlan {
   status: String
   name: String
   price: Int
+  tagline: String
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -6157,6 +6522,7 @@ input PaymentPlanCreateInput {
   status: String
   name: String
   price: Int
+  tagline: String
 }
 
 type PaymentPlanEdge {
@@ -6177,6 +6543,8 @@ enum PaymentPlanOrderByInput {
   name_DESC
   price_ASC
   price_DESC
+  tagline_ASC
+  tagline_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -6190,6 +6558,7 @@ type PaymentPlanPreviousValues {
   status: String
   name: String
   price: Int
+  tagline: String
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -6218,6 +6587,7 @@ input PaymentPlanUpdateInput {
   status: String
   name: String
   price: Int
+  tagline: String
 }
 
 input PaymentPlanUpdateManyMutationInput {
@@ -6226,6 +6596,7 @@ input PaymentPlanUpdateManyMutationInput {
   status: String
   name: String
   price: Int
+  tagline: String
 }
 
 input PaymentPlanWhereInput {
@@ -6307,6 +6678,20 @@ input PaymentPlanWhereInput {
   price_lte: Int
   price_gt: Int
   price_gte: Int
+  tagline: String
+  tagline_not: String
+  tagline_in: [String!]
+  tagline_not_in: [String!]
+  tagline_lt: String
+  tagline_lte: String
+  tagline_gt: String
+  tagline_gte: String
+  tagline_contains: String
+  tagline_not_contains: String
+  tagline_starts_with: String
+  tagline_not_starts_with: String
+  tagline_ends_with: String
+  tagline_not_ends_with: String
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -11259,6 +11644,12 @@ enum PushNotificationStatus {
 }
 
 type Query {
+  activeAdminUser(where: ActiveAdminUserWhereUniqueInput!): ActiveAdminUser
+  activeAdminUsers(where: ActiveAdminUserWhereInput, orderBy: ActiveAdminUserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ActiveAdminUser]!
+  activeAdminUsersConnection(where: ActiveAdminUserWhereInput, orderBy: ActiveAdminUserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ActiveAdminUserConnection!
+  adminActionLog(where: AdminActionLogWhereUniqueInput!): AdminActionLog
+  adminActionLogs(where: AdminActionLogWhereInput, orderBy: AdminActionLogOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [AdminActionLog]!
+  adminActionLogsConnection(where: AdminActionLogWhereInput, orderBy: AdminActionLogOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): AdminActionLogConnection!
   bagItem(where: BagItemWhereUniqueInput!): BagItem
   bagItems(where: BagItemWhereInput, orderBy: BagItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [BagItem]!
   bagItemsConnection(where: BagItemWhereInput, orderBy: BagItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BagItemConnection!
@@ -11553,6 +11944,7 @@ type Reservation {
   sentPackage: Package
   returnedPackage: Package
   products(where: PhysicalProductWhereInput, orderBy: PhysicalProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PhysicalProduct!]
+  packageEvents(where: PackageTransitEventWhereInput, orderBy: PackageTransitEventOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PackageTransitEvent!]
   reservationNumber: Int!
   phase: ReservationPhase!
   shipped: Boolean!
@@ -11560,6 +11952,7 @@ type Reservation {
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
+  statusUpdatedAt: DateTime
   receipt: ReservationReceipt
   lastLocation: Location
   createdAt: DateTime!
@@ -11579,6 +11972,7 @@ input ReservationCreateInput {
   sentPackage: PackageCreateOneInput
   returnedPackage: PackageCreateOneInput
   products: PhysicalProductCreateManyInput
+  packageEvents: PackageTransitEventCreateManyWithoutReservationInput
   reservationNumber: Int!
   phase: ReservationPhase!
   shipped: Boolean!
@@ -11586,6 +11980,7 @@ input ReservationCreateInput {
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
+  statusUpdatedAt: DateTime
   receipt: ReservationReceiptCreateOneWithoutReservationInput
   lastLocation: LocationCreateOneInput
 }
@@ -11600,6 +11995,11 @@ input ReservationCreateOneInput {
   connect: ReservationWhereUniqueInput
 }
 
+input ReservationCreateOneWithoutPackageEventsInput {
+  create: ReservationCreateWithoutPackageEventsInput
+  connect: ReservationWhereUniqueInput
+}
+
 input ReservationCreateOneWithoutReceiptInput {
   create: ReservationCreateWithoutReceiptInput
   connect: ReservationWhereUniqueInput
@@ -11611,6 +12011,7 @@ input ReservationCreateWithoutCustomerInput {
   sentPackage: PackageCreateOneInput
   returnedPackage: PackageCreateOneInput
   products: PhysicalProductCreateManyInput
+  packageEvents: PackageTransitEventCreateManyWithoutReservationInput
   reservationNumber: Int!
   phase: ReservationPhase!
   shipped: Boolean!
@@ -11618,11 +12019,12 @@ input ReservationCreateWithoutCustomerInput {
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
+  statusUpdatedAt: DateTime
   receipt: ReservationReceiptCreateOneWithoutReservationInput
   lastLocation: LocationCreateOneInput
 }
 
-input ReservationCreateWithoutReceiptInput {
+input ReservationCreateWithoutPackageEventsInput {
   id: ID
   user: UserCreateOneInput!
   customer: CustomerCreateOneWithoutReservationsInput!
@@ -11636,6 +12038,27 @@ input ReservationCreateWithoutReceiptInput {
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
+  statusUpdatedAt: DateTime
+  receipt: ReservationReceiptCreateOneWithoutReservationInput
+  lastLocation: LocationCreateOneInput
+}
+
+input ReservationCreateWithoutReceiptInput {
+  id: ID
+  user: UserCreateOneInput!
+  customer: CustomerCreateOneWithoutReservationsInput!
+  sentPackage: PackageCreateOneInput
+  returnedPackage: PackageCreateOneInput
+  products: PhysicalProductCreateManyInput
+  packageEvents: PackageTransitEventCreateManyWithoutReservationInput
+  reservationNumber: Int!
+  phase: ReservationPhase!
+  shipped: Boolean!
+  status: ReservationStatus!
+  shippedAt: DateTime
+  receivedAt: DateTime
+  reminderSentAt: DateTime
+  statusUpdatedAt: DateTime
   lastLocation: LocationCreateOneInput
 }
 
@@ -11856,6 +12279,8 @@ enum ReservationOrderByInput {
   receivedAt_DESC
   reminderSentAt_ASC
   reminderSentAt_DESC
+  statusUpdatedAt_ASC
+  statusUpdatedAt_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -11876,6 +12301,7 @@ type ReservationPreviousValues {
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
+  statusUpdatedAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -12266,6 +12692,14 @@ input ReservationScalarWhereInput {
   reminderSentAt_lte: DateTime
   reminderSentAt_gt: DateTime
   reminderSentAt_gte: DateTime
+  statusUpdatedAt: DateTime
+  statusUpdatedAt_not: DateTime
+  statusUpdatedAt_in: [DateTime!]
+  statusUpdatedAt_not_in: [DateTime!]
+  statusUpdatedAt_lt: DateTime
+  statusUpdatedAt_lte: DateTime
+  statusUpdatedAt_gt: DateTime
+  statusUpdatedAt_gte: DateTime
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -12323,6 +12757,7 @@ input ReservationUpdateDataInput {
   sentPackage: PackageUpdateOneInput
   returnedPackage: PackageUpdateOneInput
   products: PhysicalProductUpdateManyInput
+  packageEvents: PackageTransitEventUpdateManyWithoutReservationInput
   reservationNumber: Int
   phase: ReservationPhase
   shipped: Boolean
@@ -12330,6 +12765,7 @@ input ReservationUpdateDataInput {
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
+  statusUpdatedAt: DateTime
   receipt: ReservationReceiptUpdateOneWithoutReservationInput
   lastLocation: LocationUpdateOneInput
 }
@@ -12340,6 +12776,7 @@ input ReservationUpdateInput {
   sentPackage: PackageUpdateOneInput
   returnedPackage: PackageUpdateOneInput
   products: PhysicalProductUpdateManyInput
+  packageEvents: PackageTransitEventUpdateManyWithoutReservationInput
   reservationNumber: Int
   phase: ReservationPhase
   shipped: Boolean
@@ -12347,6 +12784,7 @@ input ReservationUpdateInput {
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
+  statusUpdatedAt: DateTime
   receipt: ReservationReceiptUpdateOneWithoutReservationInput
   lastLocation: LocationUpdateOneInput
 }
@@ -12359,6 +12797,7 @@ input ReservationUpdateManyDataInput {
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
+  statusUpdatedAt: DateTime
 }
 
 input ReservationUpdateManyMutationInput {
@@ -12369,6 +12808,7 @@ input ReservationUpdateManyMutationInput {
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
+  statusUpdatedAt: DateTime
 }
 
 input ReservationUpdateManyWithoutCustomerInput {
@@ -12402,11 +12842,21 @@ input ReservationUpdateOneRequiredWithoutReceiptInput {
   connect: ReservationWhereUniqueInput
 }
 
+input ReservationUpdateOneWithoutPackageEventsInput {
+  create: ReservationCreateWithoutPackageEventsInput
+  update: ReservationUpdateWithoutPackageEventsDataInput
+  upsert: ReservationUpsertWithoutPackageEventsInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: ReservationWhereUniqueInput
+}
+
 input ReservationUpdateWithoutCustomerDataInput {
   user: UserUpdateOneRequiredInput
   sentPackage: PackageUpdateOneInput
   returnedPackage: PackageUpdateOneInput
   products: PhysicalProductUpdateManyInput
+  packageEvents: PackageTransitEventUpdateManyWithoutReservationInput
   reservationNumber: Int
   phase: ReservationPhase
   shipped: Boolean
@@ -12414,11 +12864,12 @@ input ReservationUpdateWithoutCustomerDataInput {
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
+  statusUpdatedAt: DateTime
   receipt: ReservationReceiptUpdateOneWithoutReservationInput
   lastLocation: LocationUpdateOneInput
 }
 
-input ReservationUpdateWithoutReceiptDataInput {
+input ReservationUpdateWithoutPackageEventsDataInput {
   user: UserUpdateOneRequiredInput
   customer: CustomerUpdateOneRequiredWithoutReservationsInput
   sentPackage: PackageUpdateOneInput
@@ -12431,6 +12882,26 @@ input ReservationUpdateWithoutReceiptDataInput {
   shippedAt: DateTime
   receivedAt: DateTime
   reminderSentAt: DateTime
+  statusUpdatedAt: DateTime
+  receipt: ReservationReceiptUpdateOneWithoutReservationInput
+  lastLocation: LocationUpdateOneInput
+}
+
+input ReservationUpdateWithoutReceiptDataInput {
+  user: UserUpdateOneRequiredInput
+  customer: CustomerUpdateOneRequiredWithoutReservationsInput
+  sentPackage: PackageUpdateOneInput
+  returnedPackage: PackageUpdateOneInput
+  products: PhysicalProductUpdateManyInput
+  packageEvents: PackageTransitEventUpdateManyWithoutReservationInput
+  reservationNumber: Int
+  phase: ReservationPhase
+  shipped: Boolean
+  status: ReservationStatus
+  shippedAt: DateTime
+  receivedAt: DateTime
+  reminderSentAt: DateTime
+  statusUpdatedAt: DateTime
   lastLocation: LocationUpdateOneInput
 }
 
@@ -12442,6 +12913,11 @@ input ReservationUpdateWithWhereUniqueWithoutCustomerInput {
 input ReservationUpsertNestedInput {
   update: ReservationUpdateDataInput!
   create: ReservationCreateInput!
+}
+
+input ReservationUpsertWithoutPackageEventsInput {
+  update: ReservationUpdateWithoutPackageEventsDataInput!
+  create: ReservationCreateWithoutPackageEventsInput!
 }
 
 input ReservationUpsertWithoutReceiptInput {
@@ -12477,6 +12953,9 @@ input ReservationWhereInput {
   products_every: PhysicalProductWhereInput
   products_some: PhysicalProductWhereInput
   products_none: PhysicalProductWhereInput
+  packageEvents_every: PackageTransitEventWhereInput
+  packageEvents_some: PackageTransitEventWhereInput
+  packageEvents_none: PackageTransitEventWhereInput
   reservationNumber: Int
   reservationNumber_not: Int
   reservationNumber_in: [Int!]
@@ -12519,6 +12998,14 @@ input ReservationWhereInput {
   reminderSentAt_lte: DateTime
   reminderSentAt_gt: DateTime
   reminderSentAt_gte: DateTime
+  statusUpdatedAt: DateTime
+  statusUpdatedAt_not: DateTime
+  statusUpdatedAt_in: [DateTime!]
+  statusUpdatedAt_not_in: [DateTime!]
+  statusUpdatedAt_lt: DateTime
+  statusUpdatedAt_lte: DateTime
+  statusUpdatedAt_gt: DateTime
+  statusUpdatedAt_gte: DateTime
   receipt: ReservationReceiptWhereInput
   lastLocation: LocationWhereInput
   createdAt: DateTime
@@ -13254,6 +13741,8 @@ input StylePreferencesWhereUniqueInput {
 }
 
 type Subscription {
+  activeAdminUser(where: ActiveAdminUserSubscriptionWhereInput): ActiveAdminUserSubscriptionPayload
+  adminActionLog(where: AdminActionLogSubscriptionWhereInput): AdminActionLogSubscriptionPayload
   bagItem(where: BagItemSubscriptionWhereInput): BagItemSubscriptionPayload
   billingInfo(where: BillingInfoSubscriptionWhereInput): BillingInfoSubscriptionPayload
   bottomSize(where: BottomSizeSubscriptionWhereInput): BottomSizeSubscriptionPayload
@@ -14237,6 +14726,7 @@ enum UserRole {
   Admin
   Customer
   Partner
+  Marketer
 }
 
 input UserScalarWhereInput {

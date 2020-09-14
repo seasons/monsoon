@@ -26,12 +26,12 @@ type Mutation {
   pushNotifyUser(
     where: UserWhereUniqueInput
     data: PushNotifDataInput
-  ): PushNotificationReceipt @hasRole(roles: [Admin])
+  ): PushNotificationReceipt @hasRole(roles: [Marketer])
   pushNotifyInterest(
     interest: PushNotificationInterest
     data: PushNotifDataInput
     debug: Boolean
-  ): PushNotificationReceipt @hasRole(roles: [Admin])
+  ): PushNotificationReceipt @hasRole(roles: [Marketer])
 }
 
 input PushNotifDataInput {
