@@ -78,6 +78,7 @@ export class PhysicalProductService {
       })
     } else if (
       !!physProdBeforeUpdate.warehouseLocation?.barcode &&
+      !!newData.inventoryStatus &&
       newData.inventoryStatus !== "Reservable"
     ) {
       throw new ApolloError(
