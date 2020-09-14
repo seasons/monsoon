@@ -360,9 +360,7 @@ type Product {
       link: TABLE
       onDelete: CASCADE
     )
-  # season: String
   season: ProductSeason
-  seasonDeprecated: String
   architecture: ProductArchitecture
   photographyStatus: PhotographyStatus
   publishedAt: DateTime
