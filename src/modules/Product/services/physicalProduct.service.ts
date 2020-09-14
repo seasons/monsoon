@@ -249,47 +249,61 @@ export class PhysicalProductService {
     // Copy the data object to keep the function pure
     const newData = cloneDeep(data) as PhysicalProductUpdateInput
 
-    // Make sure the barcode is valid and there is space for the item there
-    await this.validateWarehouseLocationConstraints(
-      physProdBeforeUpdate,
-      newData.warehouseLocation.connect
-    )
+    // If we're just disconnecting a warehouse location, then let it be
+    if (newData.warehouseLocation.disconnect) {
+      if (newData.inventoryStatus !== "NonReservable") {
+        throw new Error(
+          "If disconnecting a warehouse location from a physical product, you must set it to NonReservable"
+        )
+      }
+    } else {
+      // If we're setting a warehouse location, apply constraints and checks
 
-    // If we're stowing a physical product, one of two things can be true for its inventory status.
-    // Either it's currently "Stored" and we keep it that way. Or it's some other status and we make sure it's marked as Reservable.
-    // All stowed items should either be Stored or Reservable.
-    switch (physProdBeforeUpdate.inventoryStatus) {
-      case "Stored":
-        if (!!newData.inventoryStatus && newData.inventoryStatus !== "Stored") {
-          throw new ApolloError(unstoreErrorMessage)
-        }
-        newData.inventoryStatus = "Stored"
-        break
-      default:
-        if (
-          !!newData.inventoryStatus &&
-          newData.inventoryStatus !== "Reservable"
-        ) {
-          throw new ApolloError(
-            `A physical product with a warehouse location can not be set to status ${newData.inventoryStatus}. It must be Reservable`
-          )
-        }
-        newData.inventoryStatus = "Reservable"
-        break
-    }
+      // Make sure the barcode is valid and there is space for the item there
+      await this.validateWarehouseLocationConstraints(
+        physProdBeforeUpdate,
+        newData.warehouseLocation.connect
+      )
 
-    // All physical products with a warehouse location are located in the warehouse
-    newData.location = {
-      connect: {
-        slug:
-          process.env.SEASONS_CLEANER_LOCATION_SLUG ||
-          "seasons-cleaners-official",
-      },
-    }
+      // If we're stowing a physical product, one of two things can be true for its inventory status.
+      // Either it's currently "Stored" and we keep it that way. Or it's some other status and we make sure it's marked as Reservable.
+      // All stowed items should either be Stored or Reservable.
+      switch (physProdBeforeUpdate.inventoryStatus) {
+        case "Stored":
+          if (
+            !!newData.inventoryStatus &&
+            newData.inventoryStatus !== "Stored"
+          ) {
+            throw new ApolloError(unstoreErrorMessage)
+          }
+          newData.inventoryStatus = "Stored"
+          break
+        default:
+          if (
+            !!newData.inventoryStatus &&
+            newData.inventoryStatus !== "Reservable"
+          ) {
+            throw new ApolloError(
+              `A physical product with a warehouse location can not be set to status ${newData.inventoryStatus}. It must be Reservable`
+            )
+          }
+          newData.inventoryStatus = "Reservable"
+          break
+      }
 
-    // All physical products with a warehouse location are either clean or new
-    if (physProdBeforeUpdate.productStatus !== "New") {
-      newData.productStatus = "Clean"
+      // All physical products with a warehouse location are located in the warehouse
+      newData.location = {
+        connect: {
+          slug:
+            process.env.SEASONS_CLEANER_LOCATION_SLUG ||
+            "seasons-cleaners-official",
+        },
+      }
+
+      // All physical products with a warehouse location are either clean or new
+      if (physProdBeforeUpdate.productStatus !== "New") {
+        newData.productStatus = "Clean"
+      }
     }
 
     return newData
