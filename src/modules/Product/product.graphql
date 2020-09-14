@@ -174,7 +174,8 @@ type Product {
   photographyStatus: PhotographyStatus
   retailPrice: Int
   color: Color!
-  season: String
+  season: ProductSeason
+  seasonDeprecated: String
   secondaryColor: Color
   tags: [Tag!]!
   images(
@@ -233,7 +234,7 @@ input UpsertProductInput {
   name: String!
   outerMaterials: [String!]!
   retailPrice: Int!
-  season: String
+  season: UpsertSeasonInput
   photographyStatus: PhotographyStatus
   secondaryColorCode: String
   status: ProductStatus!
@@ -257,7 +258,7 @@ input CustomProductUpdateInput {
   name: String
   outerMaterials: ProductUpdateouterMaterialsInput
   retailPrice: Int
-  season: String
+  season: UpsertSeasonInput
   secondaryColor: ColorUpdateOneInput
   slug: String
   status: ProductStatus
@@ -273,6 +274,14 @@ input CustomProductUpdateInput {
   modelSizeDisplay: String
   modelSizeName: String
   tags: [String!]
+}
+
+input UpsertSeasonInput {
+  wearableSeasons: [String!]
+  internalSeasonSeasonCode: String
+  internalSeasonYear: Int
+  vendorSeasonSeasonCode: String
+  vendorSeasonYear: Int
 }
 
 input CustomBrandCreateInput {
