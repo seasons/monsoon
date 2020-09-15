@@ -11656,7 +11656,9 @@ type PaymentPlan implements Node {
   status: String
   name: String
   price: Int
+  itemCount: Int
   tagline: String
+  tier: PaymentPlanTier
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -11678,7 +11680,9 @@ input PaymentPlanCreateInput {
   status: String
   name: String
   price: Int
+  itemCount: Int
   tagline: String
+  tier: PaymentPlanTier
 }
 
 """An edge in a connection."""
@@ -11703,8 +11707,12 @@ enum PaymentPlanOrderByInput {
   name_DESC
   price_ASC
   price_DESC
+  itemCount_ASC
+  itemCount_DESC
   tagline_ASC
   tagline_DESC
+  tier_ASC
+  tier_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -11718,7 +11726,9 @@ type PaymentPlanPreviousValues {
   status: String
   name: String
   price: Int
+  itemCount: Int
   tagline: String
+  tier: PaymentPlanTier
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -11760,13 +11770,20 @@ input PaymentPlanSubscriptionWhereInput {
   node: PaymentPlanWhereInput
 }
 
+enum PaymentPlanTier {
+  Essential
+  AllAccess
+}
+
 input PaymentPlanUpdateInput {
   description: String
   planID: String
   status: String
   name: String
   price: Int
+  itemCount: Int
   tagline: String
+  tier: PaymentPlanTier
 }
 
 input PaymentPlanUpdateManyMutationInput {
@@ -11775,7 +11792,9 @@ input PaymentPlanUpdateManyMutationInput {
   status: String
   name: String
   price: Int
+  itemCount: Int
   tagline: String
+  tier: PaymentPlanTier
 }
 
 input PaymentPlanWhereInput {
@@ -12009,6 +12028,28 @@ input PaymentPlanWhereInput {
 
   """All values greater than or equal the given value."""
   price_gte: Int
+  itemCount: Int
+
+  """All values that are not equal to given value."""
+  itemCount_not: Int
+
+  """All values that are contained in given list."""
+  itemCount_in: [Int!]
+
+  """All values that are not contained in given list."""
+  itemCount_not_in: [Int!]
+
+  """All values less than the given value."""
+  itemCount_lt: Int
+
+  """All values less than or equal the given value."""
+  itemCount_lte: Int
+
+  """All values greater than the given value."""
+  itemCount_gt: Int
+
+  """All values greater than or equal the given value."""
+  itemCount_gte: Int
   tagline: String
 
   """All values that are not equal to given value."""
@@ -12049,6 +12090,16 @@ input PaymentPlanWhereInput {
 
   """All values not ending with the given string."""
   tagline_not_ends_with: String
+  tier: PaymentPlanTier
+
+  """All values that are not equal to given value."""
+  tier_not: PaymentPlanTier
+
+  """All values that are contained in given list."""
+  tier_in: [PaymentPlanTier!]
+
+  """All values that are not contained in given list."""
+  tier_not_in: [PaymentPlanTier!]
   createdAt: DateTime
 
   """All values that are not equal to given value."""
@@ -28034,12 +28085,19 @@ export type PaymentPlanOrderByInput =   'id_ASC' |
   'name_DESC' |
   'price_ASC' |
   'price_DESC' |
+  'itemCount_ASC' |
+  'itemCount_DESC' |
   'tagline_ASC' |
   'tagline_DESC' |
+  'tier_ASC' |
+  'tier_DESC' |
   'createdAt_ASC' |
   'createdAt_DESC' |
   'updatedAt_ASC' |
   'updatedAt_DESC'
+
+export type PaymentPlanTier =   'Essential' |
+  'AllAccess'
 
 export type PhotographyStatus =   'Done' |
   'InProgress' |
@@ -33037,7 +33095,9 @@ export interface PaymentPlanCreateInput {
   status?: String | null
   name?: String | null
   price?: Int | null
+  itemCount?: Int | null
   tagline?: String | null
+  tier?: PaymentPlanTier | null
 }
 
 export interface PaymentPlanSubscriptionWhereInput {
@@ -33057,7 +33117,9 @@ export interface PaymentPlanUpdateInput {
   status?: String | null
   name?: String | null
   price?: Int | null
+  itemCount?: Int | null
   tagline?: String | null
+  tier?: PaymentPlanTier | null
 }
 
 export interface PaymentPlanUpdateManyMutationInput {
@@ -33066,7 +33128,9 @@ export interface PaymentPlanUpdateManyMutationInput {
   status?: String | null
   name?: String | null
   price?: Int | null
+  itemCount?: Int | null
   tagline?: String | null
+  tier?: PaymentPlanTier | null
 }
 
 export interface PaymentPlanWhereInput {
@@ -33151,6 +33215,14 @@ export interface PaymentPlanWhereInput {
   price_lte?: Int | null
   price_gt?: Int | null
   price_gte?: Int | null
+  itemCount?: Int | null
+  itemCount_not?: Int | null
+  itemCount_in?: Int[] | Int | null
+  itemCount_not_in?: Int[] | Int | null
+  itemCount_lt?: Int | null
+  itemCount_lte?: Int | null
+  itemCount_gt?: Int | null
+  itemCount_gte?: Int | null
   tagline?: String | null
   tagline_not?: String | null
   tagline_in?: String[] | String | null
@@ -33165,6 +33237,10 @@ export interface PaymentPlanWhereInput {
   tagline_not_starts_with?: String | null
   tagline_ends_with?: String | null
   tagline_not_ends_with?: String | null
+  tier?: PaymentPlanTier | null
+  tier_not?: PaymentPlanTier | null
+  tier_in?: PaymentPlanTier[] | PaymentPlanTier | null
+  tier_not_in?: PaymentPlanTier[] | PaymentPlanTier | null
   createdAt?: DateTime | null
   createdAt_not?: DateTime | null
   createdAt_in?: DateTime[] | DateTime | null
@@ -41820,7 +41896,9 @@ export interface PaymentPlan extends Node {
   status?: String | null
   name?: String | null
   price?: Int | null
+  itemCount?: Int | null
   tagline?: String | null
+  tier?: PaymentPlanTier | null
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -41851,7 +41929,9 @@ export interface PaymentPlanPreviousValues {
   status?: String | null
   name?: String | null
   price?: Int | null
+  itemCount?: Int | null
   tagline?: String | null
+  tier?: PaymentPlanTier | null
   createdAt: DateTime
   updatedAt: DateTime
 }

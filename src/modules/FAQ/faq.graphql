@@ -4,6 +4,7 @@ type Query {
 
 type Faq {
   sections: [FaqSection!]!
+  paymentPlanFaqSections: [FaqSection!]!
 }
 
 type FaqSection {

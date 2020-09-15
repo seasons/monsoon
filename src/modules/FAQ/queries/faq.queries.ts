@@ -10,6 +10,7 @@ export class FAQQueriesResolver {
   faq() {
     return {
       sections: this.faqService.getSections(),
+      paymentPlanFaqSections: this.faqService.getPaymentPlanFaqSections(),
     }
   }
 }

@@ -6524,7 +6524,9 @@ type PaymentPlan {
   status: String
   name: String
   price: Int
+  itemCount: Int
   tagline: String
+  tier: PaymentPlanTier
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -6542,7 +6544,9 @@ input PaymentPlanCreateInput {
   status: String
   name: String
   price: Int
+  itemCount: Int
   tagline: String
+  tier: PaymentPlanTier
 }
 
 type PaymentPlanEdge {
@@ -6563,8 +6567,12 @@ enum PaymentPlanOrderByInput {
   name_DESC
   price_ASC
   price_DESC
+  itemCount_ASC
+  itemCount_DESC
   tagline_ASC
   tagline_DESC
+  tier_ASC
+  tier_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -6578,7 +6586,9 @@ type PaymentPlanPreviousValues {
   status: String
   name: String
   price: Int
+  itemCount: Int
   tagline: String
+  tier: PaymentPlanTier
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -6601,13 +6611,20 @@ input PaymentPlanSubscriptionWhereInput {
   NOT: [PaymentPlanSubscriptionWhereInput!]
 }
 
+enum PaymentPlanTier {
+  Essential
+  AllAccess
+}
+
 input PaymentPlanUpdateInput {
   description: String
   planID: String
   status: String
   name: String
   price: Int
+  itemCount: Int
   tagline: String
+  tier: PaymentPlanTier
 }
 
 input PaymentPlanUpdateManyMutationInput {
@@ -6616,7 +6633,9 @@ input PaymentPlanUpdateManyMutationInput {
   status: String
   name: String
   price: Int
+  itemCount: Int
   tagline: String
+  tier: PaymentPlanTier
 }
 
 input PaymentPlanWhereInput {
@@ -6698,6 +6717,14 @@ input PaymentPlanWhereInput {
   price_lte: Int
   price_gt: Int
   price_gte: Int
+  itemCount: Int
+  itemCount_not: Int
+  itemCount_in: [Int!]
+  itemCount_not_in: [Int!]
+  itemCount_lt: Int
+  itemCount_lte: Int
+  itemCount_gt: Int
+  itemCount_gte: Int
   tagline: String
   tagline_not: String
   tagline_in: [String!]
@@ -6712,6 +6739,10 @@ input PaymentPlanWhereInput {
   tagline_not_starts_with: String
   tagline_ends_with: String
   tagline_not_ends_with: String
+  tier: PaymentPlanTier
+  tier_not: PaymentPlanTier
+  tier_in: [PaymentPlanTier!]
+  tier_not_in: [PaymentPlanTier!]
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]

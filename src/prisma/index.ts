@@ -3253,6 +3253,8 @@ export type PackageOrderByInput =
   | "updatedAt_ASC"
   | "updatedAt_DESC";
 
+export type PaymentPlanTier = "Essential" | "AllAccess";
+
 export type PaymentPlanOrderByInput =
   | "id_ASC"
   | "id_DESC"
@@ -3266,8 +3268,12 @@ export type PaymentPlanOrderByInput =
   | "name_DESC"
   | "price_ASC"
   | "price_DESC"
+  | "itemCount_ASC"
+  | "itemCount_DESC"
   | "tagline_ASC"
   | "tagline_DESC"
+  | "tier_ASC"
+  | "tier_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -7150,6 +7156,14 @@ export interface PaymentPlanWhereInput {
   price_lte?: Maybe<Int>;
   price_gt?: Maybe<Int>;
   price_gte?: Maybe<Int>;
+  itemCount?: Maybe<Int>;
+  itemCount_not?: Maybe<Int>;
+  itemCount_in?: Maybe<Int[] | Int>;
+  itemCount_not_in?: Maybe<Int[] | Int>;
+  itemCount_lt?: Maybe<Int>;
+  itemCount_lte?: Maybe<Int>;
+  itemCount_gt?: Maybe<Int>;
+  itemCount_gte?: Maybe<Int>;
   tagline?: Maybe<String>;
   tagline_not?: Maybe<String>;
   tagline_in?: Maybe<String[] | String>;
@@ -7164,6 +7178,10 @@ export interface PaymentPlanWhereInput {
   tagline_not_starts_with?: Maybe<String>;
   tagline_ends_with?: Maybe<String>;
   tagline_not_ends_with?: Maybe<String>;
+  tier?: Maybe<PaymentPlanTier>;
+  tier_not?: Maybe<PaymentPlanTier>;
+  tier_in?: Maybe<PaymentPlanTier[] | PaymentPlanTier>;
+  tier_not_in?: Maybe<PaymentPlanTier[] | PaymentPlanTier>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -14045,7 +14063,9 @@ export interface PaymentPlanCreateInput {
   status?: Maybe<String>;
   name?: Maybe<String>;
   price?: Maybe<Int>;
+  itemCount?: Maybe<Int>;
   tagline?: Maybe<String>;
+  tier?: Maybe<PaymentPlanTier>;
 }
 
 export interface PaymentPlanUpdateInput {
@@ -14054,7 +14074,9 @@ export interface PaymentPlanUpdateInput {
   status?: Maybe<String>;
   name?: Maybe<String>;
   price?: Maybe<Int>;
+  itemCount?: Maybe<Int>;
   tagline?: Maybe<String>;
+  tier?: Maybe<PaymentPlanTier>;
 }
 
 export interface PaymentPlanUpdateManyMutationInput {
@@ -14063,7 +14085,9 @@ export interface PaymentPlanUpdateManyMutationInput {
   status?: Maybe<String>;
   name?: Maybe<String>;
   price?: Maybe<Int>;
+  itemCount?: Maybe<Int>;
   tagline?: Maybe<String>;
+  tier?: Maybe<PaymentPlanTier>;
 }
 
 export interface PhysicalProductUpdateInput {
@@ -21437,7 +21461,9 @@ export interface PaymentPlan {
   status?: String;
   name?: String;
   price?: Int;
+  itemCount?: Int;
   tagline?: String;
+  tier?: PaymentPlanTier;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -21449,7 +21475,9 @@ export interface PaymentPlanPromise extends Promise<PaymentPlan>, Fragmentable {
   status: () => Promise<String>;
   name: () => Promise<String>;
   price: () => Promise<Int>;
+  itemCount: () => Promise<Int>;
   tagline: () => Promise<String>;
+  tier: () => Promise<PaymentPlanTier>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -21463,7 +21491,9 @@ export interface PaymentPlanSubscription
   status: () => Promise<AsyncIterator<String>>;
   name: () => Promise<AsyncIterator<String>>;
   price: () => Promise<AsyncIterator<Int>>;
+  itemCount: () => Promise<AsyncIterator<Int>>;
   tagline: () => Promise<AsyncIterator<String>>;
+  tier: () => Promise<AsyncIterator<PaymentPlanTier>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -21477,7 +21507,9 @@ export interface PaymentPlanNullablePromise
   status: () => Promise<String>;
   name: () => Promise<String>;
   price: () => Promise<Int>;
+  itemCount: () => Promise<Int>;
   tagline: () => Promise<String>;
+  tier: () => Promise<PaymentPlanTier>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -24957,7 +24989,9 @@ export interface PaymentPlanPreviousValues {
   status?: String;
   name?: String;
   price?: Int;
+  itemCount?: Int;
   tagline?: String;
+  tier?: PaymentPlanTier;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -24971,7 +25005,9 @@ export interface PaymentPlanPreviousValuesPromise
   status: () => Promise<String>;
   name: () => Promise<String>;
   price: () => Promise<Int>;
+  itemCount: () => Promise<Int>;
   tagline: () => Promise<String>;
+  tier: () => Promise<PaymentPlanTier>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -24985,7 +25021,9 @@ export interface PaymentPlanPreviousValuesSubscription
   status: () => Promise<AsyncIterator<String>>;
   name: () => Promise<AsyncIterator<String>>;
   price: () => Promise<AsyncIterator<Int>>;
+  itemCount: () => Promise<AsyncIterator<Int>>;
   tagline: () => Promise<AsyncIterator<String>>;
+  tier: () => Promise<AsyncIterator<PaymentPlanTier>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -26938,6 +26976,10 @@ export const models: Model[] = [
   },
   {
     name: "PaymentPlan",
+    embedded: false
+  },
+  {
+    name: "PaymentPlanTier",
     embedded: false
   },
   {
